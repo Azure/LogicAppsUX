@@ -369,13 +369,13 @@ export const dataMapSlice = createSlice({
     },
 
     makeConnection: (state, action: PayloadAction<ConnectionAction>) => {
-      const numConnections = Object.keys(state.curDataMapOperation.dataMapConnections).length;
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
       };
 
       addConnection(newState.dataMapConnections, action.payload);
+      const afterConnectionMade = { ...newState.dataMapConnections };
 
       // Add any repeating parent nodes as well
       // Get all the source nodes in case we have sources from multiple source chains
@@ -415,7 +415,7 @@ export const dataMapSlice = createSlice({
           );
 
           // If new parent connection has been made
-          if (Object.keys(newState.dataMapConnections).length !== numConnections + 2) {
+          if (JSON.stringify(newState.dataMapConnections) !== JSON.stringify(afterConnectionMade)) {
             state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
           }
 
