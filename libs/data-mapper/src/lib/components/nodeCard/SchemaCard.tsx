@@ -312,14 +312,7 @@ const NBadge = ({ isOutput }: NBadgeProps) => {
 
   return (
     <div>
-      <Popover
-        size="small"
-        withArrow
-        appearance="inverted"
-        //openOnHover={true}
-        open={true}
-        inline={true}
-      >
+      <Popover size="small" withArrow appearance="inverted" openOnHover={true} inline={true}>
         <PopoverTrigger>
           <Badge
             className={isOutput ? classes.outputArrayBadge : classes.inputArrayBadge}
