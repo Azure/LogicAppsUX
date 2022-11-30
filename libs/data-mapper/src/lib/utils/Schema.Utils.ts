@@ -47,7 +47,7 @@ export const parsePropertiesIntoNodeProperties = (propertiesString: string): Sch
   return [];
 };
 
-export const flattenSchema = (schema: SchemaExtended, schemaType: SchemaType): SchemaNodeDictionary => {
+export const flattenSchemaIntoDictionary = (schema: SchemaExtended, schemaType: SchemaType): SchemaNodeDictionary => {
   const result: SchemaNodeDictionary = {};
   const idPrefix = schemaType === SchemaType.Source ? sourcePrefix : targetPrefix;
   const schemaNodeArray = flattenSchemaNode(schema.schemaTreeRoot);
@@ -61,11 +61,15 @@ export const flattenSchema = (schema: SchemaExtended, schemaType: SchemaType): S
   return result;
 };
 
-const flattenSchemaNode = (schemaNode: SchemaNodeExtended): SchemaNodeExtended[] => {
-  const childArray = schemaNode.children.flatMap((childNode) => flattenSchemaNode(childNode));
-  childArray.push(schemaNode);
+export const flattenSchemaIntoSortArray = (schemaNode: SchemaNodeExtended): string[] => {
+  return flattenSchemaNode(schemaNode).map((node) => node.key);
+};
 
-  return childArray;
+const flattenSchemaNode = (schemaNode: SchemaNodeExtended): SchemaNodeExtended[] => {
+  const result: SchemaNodeExtended[] = [schemaNode];
+  const childArray = schemaNode.children.flatMap((childNode) => flattenSchemaNode(childNode));
+
+  return result.concat(childArray);
 };
 
 export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNode.children.length < 1;

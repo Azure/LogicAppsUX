@@ -11,7 +11,7 @@ import type { MapDefinitionEntry } from '../../models';
 import { SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import { addParentConnectionForRepeatingElementsNested, convertFromMapDefinition, getSourceValueFromLoop } from '../DataMap.Utils';
-import { convertSchemaToSchemaExtended, flattenSchema } from '../Schema.Utils';
+import { convertSchemaToSchemaExtended, flattenSchemaIntoDictionary } from '../Schema.Utils';
 import {
   manyToManyConnectionFromSource,
   manyToManyConnectionFromTarget,
@@ -144,8 +144,8 @@ describe('utils/DataMap', () => {
   describe('addParentConnectionForRepeatingElementsNested', () => {
     const extendedLoopSource = convertSchemaToSchemaExtended(layeredLoopSourceMockSchema);
     const extendedLoopTarget = convertSchemaToSchemaExtended(layeredLoopTargetMockSchema);
-    const flattenedLoopSource = flattenSchema(extendedLoopSource, SchemaType.Source);
-    const flattenedLoopTarget = flattenSchema(extendedLoopTarget, SchemaType.Target);
+    const flattenedLoopSource = flattenSchemaIntoDictionary(extendedLoopSource, SchemaType.Source);
+    const flattenedLoopTarget = flattenSchemaIntoDictionary(extendedLoopTarget, SchemaType.Target);
 
     it('adds parent connections for nested loops', () => {
       const sourceNodeParent = flattenedLoopSource[manyToManyConnectionSourceName];
