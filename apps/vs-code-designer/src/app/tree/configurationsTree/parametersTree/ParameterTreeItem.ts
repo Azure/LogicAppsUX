@@ -19,7 +19,7 @@ export class ParameterTreeItem extends AzExtTreeItem {
     super(parent);
     this.name = name;
     this.content = content;
-    this.commandId = 'azureLogicAppsStandard.viewContent';
+    this.commandId = 'logicAppsExtension.viewContent';
   }
 
   public get id(): string {

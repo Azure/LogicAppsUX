@@ -47,7 +47,7 @@
         {
           "id": "newAzLogicApps",
           "name": "New Logic Apps (Standard)",
-          "when": "config.azureLogicAppsStandard.showExplorer == true"
+          "when": "config.logicAppsExtension.showExplorer == true"
         }
       ]
     },
@@ -81,11 +81,23 @@
           "when": "resourceFilename==workflow.json"
         },
         {
-          "command": "azureLogicAppsStandard.loadMore",
+          "command": "logicAppsExtension.loadMore",
           "when": "never"
         }
       ]
-    }
+    },
+    "configuration": [
+      {
+        "title": "Azure New Logic Apps (Standard)",
+        "properties": {
+          "logicAppsExtension.showExplorer": {
+            "type": "boolean",
+            "default": true,
+            "description": "Show or hide the Azure Functions Explorer"
+          }
+        }
+      }
+    ]
   },
   "extensionDependencies": [
     "ms-vscode.azure-account"

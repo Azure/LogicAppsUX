@@ -36,7 +36,7 @@ export class ConnectionTreeItem extends AzExtTreeItem {
       !this._isManaged && (content as FunctionConnectionModel | ServiceProviderConnectionModel).displayName
         ? `${name} - ${(content as FunctionConnectionModel | ServiceProviderConnectionModel).displayName}`
         : name;
-    this.commandId = 'azureLogicAppsStandard.viewContent';
+    this.commandId = 'logicAppsExtension.viewContent';
   }
 
   public get id(): string {

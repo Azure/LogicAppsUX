@@ -23,10 +23,9 @@ export class ParametersTreeItem extends AzExtParentTreeItem {
   }
 
   public static async createParametersTreeItem(parent: ConfigurationsTreeItem): Promise<ParametersTreeItem> {
-    const ti: ParametersTreeItem = new ParametersTreeItem(parent);
-    // initialize
-    await ti.refreshImpl();
-    return ti;
+    const treeItem: ParametersTreeItem = new ParametersTreeItem(parent);
+    await treeItem.refreshImpl();
+    return treeItem;
   }
 
   public async refreshImpl(): Promise<void> {
@@ -62,7 +61,7 @@ export class ParametersTreeItem extends AzExtParentTreeItem {
 
     return await this.createTreeItemsWithErrorHandling(
       parameters,
-      'azFuncInvalidParameter',
+      'azLogicAppInvalidParameter',
       async (parameter) => await ParameterTreeItem.create(this, parameter),
       (parameter) => parameter.name
     );

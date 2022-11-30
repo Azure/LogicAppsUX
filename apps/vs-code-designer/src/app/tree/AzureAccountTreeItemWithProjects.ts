@@ -20,6 +20,7 @@ export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
   /* eslint-disable no-param-reassign */
   public constructor(testAccount?: Record<string, any>) {
     super(undefined, testAccount);
+
     this.disposables.push(
       workspace.onDidChangeWorkspaceFolders(async () => {
         await callWithTelemetryAndErrorHandling(
@@ -32,6 +33,7 @@ export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
         );
       })
     );
+
     this.disposables.push(
       workspace.onDidChangeConfiguration(async (e) => {
         await callWithTelemetryAndErrorHandling(

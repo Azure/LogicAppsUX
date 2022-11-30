@@ -23,9 +23,9 @@ export class ConnectionsTreeItem extends AzExtParentTreeItem {
   }
 
   public static async createConnectionsTreeItem(parent: ConfigurationsTreeItem): Promise<ConnectionsTreeItem> {
-    const ti: ConnectionsTreeItem = new ConnectionsTreeItem(parent);
-    await ti.refreshImpl();
-    return ti;
+    const treeItem: ConnectionsTreeItem = new ConnectionsTreeItem(parent);
+    await treeItem.refreshImpl();
+    return treeItem;
   }
 
   public async refreshImpl(): Promise<void> {
@@ -61,7 +61,7 @@ export class ConnectionsTreeItem extends AzExtParentTreeItem {
 
     return await this.createTreeItemsWithErrorHandling(
       connections,
-      'azFuncInvalidConnection',
+      'azLogicAppInvalidConnection',
       async (connection) => await ConnectionTreeItem.create(this, connection),
       (connection) => connection.name
     );

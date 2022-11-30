@@ -68,11 +68,9 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
   /* eslint-disable no-param-reassign */
   public async createChildImpl(context: ICreateFuntionAppContext): Promise<AzExtTreeItem> {
-    // Work to be done
+    // TODO (ccastrotrejo) - Implementation of create logic app
     const version: FuncVersion = await getDefaultFuncVersion(context);
-    context.telemetry.properties.projectRuntime = version;
     const language: string | undefined = getWorkspaceSettingFromAnyFolder(projectLanguageSetting);
-    context.telemetry.properties.projectLanguage = language;
 
     const wizardContext: IFunctionAppWizardContext = Object.assign(context, this.subscription, {
       newSiteKind: AppKind.workflowapp,

@@ -29,9 +29,9 @@ export class ConfigurationsTreeItem extends AzExtParentTreeItem {
   }
 
   public static async createConfigurationsTreeItem(parent: SlotTreeItemBase, context: IActionContext): Promise<ConfigurationsTreeItem> {
-    const ti: ConfigurationsTreeItem = new ConfigurationsTreeItem(parent);
-    await ti.refreshImpl(context);
-    return ti;
+    const treeItem: ConfigurationsTreeItem = new ConfigurationsTreeItem(parent);
+    await treeItem.refreshImpl(context);
+    return treeItem;
   }
 
   public async refreshImpl(context: IActionContext): Promise<void> {
