@@ -1,4 +1,5 @@
 # Logic Apps Designer
+
 ### [0.2.29](https://github.com/Azure/LogicAppsUX/compare/v0.2.28...v0.2.29) (2022-11-30)
 
 ### [0.2.28](https://github.com/Azure/LogicAppsUX/compare/v0.2.27...v0.2.28) (2022-11-29)
@@ -13,25 +14,22 @@
 
 ### [0.2.23](https://github.com/Azure/LogicAppsUX/compare/v0.2.22...v0.2.23) (2022-11-24)
 
-
 ### Logic Apps Designer Bug Fixes
 
-* Fixed operation parameter visibility / optional dropdown bugs ([#1346](https://github.com/Azure/LogicAppsUX/issues/1346)) ([2cf2f71](https://github.com/Azure/LogicAppsUX/commit/2cf2f713497f0fb69114114718ad1cc7f221a46a))
+- Fixed operation parameter visibility / optional dropdown bugs ([#1346](https://github.com/Azure/LogicAppsUX/issues/1346)) ([2cf2f71](https://github.com/Azure/LogicAppsUX/commit/2cf2f713497f0fb69114114718ad1cc7f221a46a))
 
 ### [0.2.22](https://github.com/Azure/LogicAppsUX/compare/v0.2.21...v0.2.22) (2022-11-23)
 
 ### [0.2.21](https://github.com/Azure/LogicAppsUX/compare/v0.2.20...v0.2.21) (2022-11-22)
 
-
 ### Logic Apps Designer Bug Fixes
 
-* [#1282](https://github.com/Azure/LogicAppsUX/issues/1282) - Cloning action definition to avoid object mutation during deserialization ([#1319](https://github.com/Azure/LogicAppsUX/issues/1319)) ([094fc06](https://github.com/Azure/LogicAppsUX/commit/094fc066167628ebdec1727930de80a96c4a7395))
-
+- [#1282](https://github.com/Azure/LogicAppsUX/issues/1282) - Cloning action definition to avoid object mutation during deserialization ([#1319](https://github.com/Azure/LogicAppsUX/issues/1319)) ([094fc06](https://github.com/Azure/LogicAppsUX/commit/094fc066167628ebdec1727930de80a96c4a7395))
 
 ### Logic Apps Designer Changes
 
-* Array Editor ([#1309](https://github.com/Azure/LogicAppsUX/issues/1309)) ([0ab696b](https://github.com/Azure/LogicAppsUX/commit/0ab696bd38812f463ef3943b847d56a7443d2455))
-* Nodes now show error state on canvas card ([#1324](https://github.com/Azure/LogicAppsUX/issues/1324)) ([24771af](https://github.com/Azure/LogicAppsUX/commit/24771afa2650b429ff57c524c609d6c27616daad))
+- Array Editor ([#1309](https://github.com/Azure/LogicAppsUX/issues/1309)) ([0ab696b](https://github.com/Azure/LogicAppsUX/commit/0ab696bd38812f463ef3943b847d56a7443d2455))
+- Nodes now show error state on canvas card ([#1324](https://github.com/Azure/LogicAppsUX/issues/1324)) ([24771af](https://github.com/Azure/LogicAppsUX/commit/24771afa2650b429ff57c524c609d6c27616daad))
 
 ### [0.2.20](https://github.com/Azure/LogicAppsUX/compare/v0.2.19...v0.2.20) (2022-11-16)
 

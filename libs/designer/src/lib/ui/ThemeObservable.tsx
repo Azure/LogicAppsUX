@@ -1,9 +1,5 @@
+import { Theme } from '@microsoft-logic-apps/utils';
 import { useEffect } from 'react';
-
-export enum Theme {
-  Dark = 'dark',
-  Light = 'light',
-}
 
 export const getTheme = (element: HTMLElement): Theme => {
   const { classList } = element;

@@ -206,18 +206,18 @@ export class ParametersProcessor {
       itemSchema: schema.items,
       schema,
       permission: schema[Constants.ExtensionProperties.Permission],
-      dynamicSchema: getParameterDynamicSchema(parameter as OpenAPIV2.SchemaObject),
+      dynamicSchema: getParameterDynamicSchema(parameter as unknown as OpenAPIV2.SchemaObject),
     };
   }
 
   private _getScalarParameter(parameter: Parameter, key?: string, keyProjectionOption: KeyProjectionOptions = {}): InputParameter {
-    const dynamicValues = getParameterDynamicValues(parameter as OpenAPIV2.SchemaObject);
+    const dynamicValues = getParameterDynamicValues(parameter as unknown as OpenAPIV2.SchemaObject);
     const $default = parameter.default,
       description = parameter.description,
       editor = dynamicValues ? 'combobox' : parameter[Constants.ExtensionProperties.Editor],
       editorOptions = dynamicValues ? { options: [] } : parameter[Constants.ExtensionProperties.EditorOptions],
       encode = parameter[Constants.ExtensionProperties.Encode],
-      $enum = getEnum(parameter as OpenAPIV2.SchemaObject, parameter.required),
+      $enum = getEnum(parameter as unknown as OpenAPIV2.SchemaObject, parameter.required),
       format = parameter.format,
       $in = parameter.in,
       name = encodePropertySegment(parameter.name),
@@ -232,7 +232,7 @@ export class ParametersProcessor {
       key: key ?? (create([...this._getMergedKeySegments($in, keyProjectionOption), name]) as string),
       default: $default,
       description,
-      dynamicValues: getParameterDynamicValues(parameter as OpenAPIV2.SchemaObject),
+      dynamicValues: getParameterDynamicValues(parameter as unknown as OpenAPIV2.SchemaObject),
       editor,
       editorOptions,
       encode,

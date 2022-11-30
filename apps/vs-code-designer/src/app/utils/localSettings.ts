@@ -4,40 +4,45 @@
  *--------------------------------------------------------------------------------------------*/
 import { localSettingsFileName } from '../../constants';
 import { localize } from '../../localize';
-import * as fsUtil from '../utils/fs';
+import { writeFormattedJson } from '../utils/fs';
 import { parseJson } from '../utils/parseJson';
+import type { ILocalSettingsJson } from '@microsoft-logic-apps/utils';
 import { DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
+import * as path from 'path';
 import type { MessageItem } from 'vscode';
 
-import path = require('path');
-
-export interface ILocalSettingsJson {
-  IsEncrypted?: boolean;
-  Values?: { [key: string]: string };
-  Host?: { [key: string]: string };
-  ConnectionStrings?: { [key: string]: string };
-}
-
+/**
+ * Updates local.settings.json file
+ * @param {IActionContext} context - Command context.
+ * @param {string} projectPath - Project path with local.settings.json file.
+ * @param {boolean} settingsToAdd - Settings data to updata.
+ */
 export async function addOrUpdateLocalAppSettings(
   context: IActionContext,
-  functionAppPath: string,
+  projectPath: string,
   settingsToAdd: Record<string, string>
 ): Promise<void> {
-  const localSettingsPath: string = path.join(functionAppPath, localSettingsFileName);
+  const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
   const settings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
 
-  // tslint:disable-next-line:strict-boolean-expressions
   settings.Values = settings.Values || {};
   settings.Values = {
     ...settings.Values,
     ...settingsToAdd,
   };
 
-  await fsUtil.writeFormattedJson(localSettingsPath, settings);
+  await writeFormattedJson(localSettingsPath, settings);
 }
 
+/**
+ * Gets local.settings.json file
+ * @param {IActionContext} context - Command context.
+ * @param {string} localSettingsPath - File path.
+ * @param {boolean} allowOverwrite - Allow overwrite on file.
+ * @returns {Promise<ILocalSettingsJson>} local.setting.json file.
+ */
 export async function getLocalSettingsJson(
   context: IActionContext,
   localSettingsPath: string,
@@ -45,6 +50,7 @@ export async function getLocalSettingsJson(
 ): Promise<ILocalSettingsJson> {
   if (await fse.pathExists(localSettingsPath)) {
     const data: string = (await fse.readFile(localSettingsPath)).toString();
+
     if (/[^\s]/.test(data)) {
       try {
         return parseJson(data);
