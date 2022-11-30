@@ -97,17 +97,24 @@ export const ifPseudoFunction: FunctionData = {
 export const directAccessPseudoFunctionKey = 'directAccess';
 export const directAccessPseudoFunction: FunctionData = {
   key: directAccessPseudoFunctionKey,
-  maxNumberOfInputs: 2,
+  maxNumberOfInputs: 3,
   type: 'PseudoFunction',
-  functionName: 'TODO',
+  functionName: '',
   outputValueType: NormalizedDataType.Any,
   inputs: [
     {
       name: 'Source Index',
+      allowedTypes: [NormalizedDataType.Number, NormalizedDataType.Any],
+      isOptional: false,
+      allowCustomInput: true,
+      placeHolder: 'The source index value',
+    },
+    {
+      name: 'Source property',
       allowedTypes: [NormalizedDataType.Any],
       isOptional: false,
       allowCustomInput: false,
-      placeHolder: 'The source index value',
+      placeHolder: 'Where to apply the index',
     },
     {
       name: 'Output property',
@@ -124,7 +131,7 @@ export const directAccessPseudoFunction: FunctionData = {
 
 export const pseudoFunctions: FunctionData[] = [indexPseudoFunction, ifPseudoFunction, directAccessPseudoFunction];
 
-// Temp until we get the manifest plugged in
+// Used when the function host isn't running
 export const functionMock: FunctionData[] = [
   {
     key: 'Maximum',
