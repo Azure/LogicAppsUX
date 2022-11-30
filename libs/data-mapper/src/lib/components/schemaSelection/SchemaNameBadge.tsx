@@ -43,7 +43,7 @@ export const SchemaNameBadge = ({ schemaName, tgtSchemaTreeRootXPos }: SchemaNam
         left: schemaNameBadgeCoords.x,
         transform: `scale(${reactFlowViewport.zoom})`,
         transformOrigin: 'top left',
-        zIndex: 4,
+        zIndex: 3,
       }}
     >
       {schemaName}
