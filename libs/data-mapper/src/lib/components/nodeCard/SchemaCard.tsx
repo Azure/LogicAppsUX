@@ -99,6 +99,11 @@ const useStyles = makeStyles({
     flexBasis: '44px',
     marginRight: '8px',
   },
+  nPopover: {
+    paddingTop: '5px',
+    paddingBottom: '7px',
+    zIndex: 4,
+  },
   cardText: {
     ...typographyStyles.body1Strong,
     display: 'inline-block',
@@ -295,14 +300,14 @@ const NBadge = ({ isOutput }: NBadgeProps) => {
   const intl = useIntl();
   const classes = useStyles();
 
-  const arrayMappingTooltip = intl.formatMessage({
-    defaultMessage: 'Array Mapping',
+  const arrayMappingLabel = intl.formatMessage({
+    defaultMessage: 'Repeating',
     description: 'Label for array connection',
   });
 
   return (
     <div>
-      <Tooltip content={arrayMappingTooltip} relationship="label">
+      <Tooltip relationship="label" withArrow appearance="inverted" content={arrayMappingLabel}>
         <Badge
           className={isOutput ? classes.outputArrayBadge : classes.inputArrayBadge}
           shape="rounded"
