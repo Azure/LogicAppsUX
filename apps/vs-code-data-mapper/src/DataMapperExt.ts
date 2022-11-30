@@ -75,6 +75,11 @@ export default class DataMapperExt {
   public static handleUpdateMapDirtyState(isMapStateDirty: boolean) {
     DataMapperExt.currentDataMapStateIsDirty = isMapStateDirty;
     DataMapperExt.updateWebviewPanelTitle();
+
+    // If map updates to not be dirty (Discard/undo/etc), we can safely remove the draft file
+    if (!isMapStateDirty) {
+      DataMapperExt.deleteDraftDataMapDefinition();
+    }
   }
 
   public static handleLoadMapDefinitionIfAny() {
@@ -170,14 +175,7 @@ export default class DataMapperExt {
 
       // If mapDef, check for and delete *draft* map definition as it's no longer needed
       if (isDefinition) {
-        const draftMapDefinitionPath = path.join(
-          DataMapperExt.getWorkspaceFolderFsPath(),
-          dataMapDefinitionsPath,
-          `${DataMapperExt.currentDataMapName}${draftMapDefinitionSuffix}${mapDefinitionExtension}`
-        );
-        if (fileExistsSync(draftMapDefinitionPath)) {
-          removeFileSync(draftMapDefinitionPath);
-        }
+        DataMapperExt.deleteDraftDataMapDefinition();
       }
 
       const fileName = `${DataMapperExt.currentDataMapName}${isDefinition ? mapDefinitionExtension : mapXsltExtension}`;
@@ -222,6 +220,17 @@ export default class DataMapperExt {
         fs.writeFile(filePath, mapDefFileContents, 'utf8');
       })
       .catch(DataMapperExt.showError);
+  }
+
+  public static deleteDraftDataMapDefinition() {
+    const draftMapDefinitionPath = path.join(
+      DataMapperExt.getWorkspaceFolderFsPath(),
+      dataMapDefinitionsPath,
+      `${DataMapperExt.currentDataMapName}${draftMapDefinitionSuffix}${mapDefinitionExtension}`
+    );
+    if (fileExistsSync(draftMapDefinitionPath)) {
+      removeFileSync(draftMapDefinitionPath);
+    }
   }
 
   public static checkForAndSetXsltFilename() {
