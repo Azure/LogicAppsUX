@@ -658,10 +658,12 @@ export const deleteParentRepeatingConnections = (connections: ConnectionDictiona
     if (hasAnyChildRepeatingConnections) {
       // break
     } else {
-      // remove parent id
-      // where output is directly to repeating output???
+      connections[parentId].outputs.forEach((output) => {
+        if (output.reactFlowKey.includes('target')) {
+          deleteConnectionFromConnections(connections, parentId, connections[parentId].outputs[0].reactFlowKey);
+        }
+      });
 
-      deleteConnectionFromConnections(connections, parentId, connections[parentId].outputs[0].reactFlowKey);
       deleteParentRepeatingConnections(connections, parentId);
     }
   }

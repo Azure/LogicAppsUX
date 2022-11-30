@@ -4,7 +4,12 @@ import type { ConnectionDictionary } from '../../../models/Connection';
 import { addNodeToConnections, flattenInputs } from '../../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../../../utils/Schema.Utils';
-import { fullMapForSimplifiedLoop, manyToManyConnectionSourceName } from '../../../utils/__mocks__';
+import {
+  fullConnectionDictionaryForOneToManyLoop,
+  fullMapForSimplifiedLoop,
+  indexedConnections,
+  manyToManyConnectionSourceName,
+} from '../../../utils/__mocks__';
 import {
   canDeleteConnection,
   deleteConnectionFromConnections,
@@ -201,17 +206,39 @@ describe('DataMapSlice', () => {
 
   describe('deleteParentRepeatingConnections', () => {
     it('deletes all parent connections when selected deleted connection is only one', () => {
-      const connections = { ...fullMapForSimplifiedLoop };
-      // connections['target-/ns0:Root/ManyToMany/Year/Month/Day/Date'].inputs = [];
-      connections['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate'].outputs = [];
-      deleteParentRepeatingConnections(connections, manyToManyConnectionSourceName);
-      expect(connections['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay'].outputs).toHaveLength(0);
-      expect(connections['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth'].outputs).toHaveLength(0);
-      expect(connections['source-/ns0:Root/ManyToMany/SourceYear'].outputs).toHaveLength(0);
+      const connections1 = JSON.parse(JSON.stringify(fullMapForSimplifiedLoop));
+      // removing the connection that is 'deleted
+      connections1['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate'].outputs = [];
+      deleteParentRepeatingConnections(connections1, manyToManyConnectionSourceName);
+      expect(connections1['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay'].outputs).toHaveLength(0);
+      expect(connections1['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth'].outputs).toHaveLength(0);
+      expect(connections1['source-/ns0:Root/ManyToMany/SourceYear'].outputs).toHaveLength(0);
     });
-  });
-  it('deleteParentRepeatingConnections', () => {
-    deleteParentRepeatingConnections(fullMapForSimplifiedLoop, node.key);
+
+    it('doesnt delete any other parent connections if another child is connected', () => {
+      const connections = { ...fullMapForSimplifiedLoop };
+      deleteParentRepeatingConnections(connections, manyToManyConnectionSourceName);
+      expect(connections['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay'].outputs).toHaveLength(1);
+      expect(connections['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth'].outputs).toHaveLength(1);
+      expect(connections['source-/ns0:Root/ManyToMany/SourceYear'].outputs).toHaveLength(1);
+    });
+
+    it('doesnt delete parent connection if index is being used', () => {
+      const connections = { ...indexedConnections };
+      // removing the connection that is 'deleted
+      connections['source-/ns0:Root/Looping/Employee/TelephoneNumber'].outputs = [];
+      deleteParentRepeatingConnections(connections, 'source-/ns0:Root/Looping/Employee/TelephoneNumber');
+      expect(connections['source-/ns0:Root/Looping/Employee'].outputs).toHaveLength(1); // has one output to the index
+    });
+
+    it('deletes all connections for many-to-one', () => {
+      const connections = fullConnectionDictionaryForOneToManyLoop;
+      connections['source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate'].outputs = [];
+      deleteParentRepeatingConnections(connections, 'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate');
+      expect(connections['source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay'].outputs).toHaveLength(0);
+      expect(connections['source-/ns0:Root/ManyToOne/SourceYear/SourceMonth'].outputs).toHaveLength(0);
+      expect(connections['source-/ns0:Root/ManyToOne/SourceYear'].outputs).toHaveLength(0);
+    });
   });
 });
 
