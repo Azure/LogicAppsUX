@@ -585,32 +585,36 @@ export const deleteConnectionFromConnections = (connections: ConnectionDictionar
 export const deleteParentRepeatingConnections = (connections: ConnectionDictionary, inputKey: string /* contains prefix */) => {
   // get direct parent ID
   const parentId = getParentId(inputKey);
+  if (parentId.length < 10) {
+    return;
+  }
   // if parent is repeating
 
   // find connections for parent
   const allConnectionIds = Object.keys(connections);
   // make sure connection is direct to target, not an index or anything like that
-  const allConnectionsToParent = allConnectionIds.filter((id: string) => {
-    if (id.endsWith(parentId)) {
-      return true;
-    }
-    return false;
-  });
+  const parentSourceIsConnected = allConnectionIds.includes(parentId);
   // danielle does this need to go directly to the target?
-  if (allConnectionsToParent.length === 0) {
+  if (!parentSourceIsConnected) {
     deleteParentRepeatingConnections(connections, parentId);
+    return;
   }
-  const parentNode = connections[allConnectionsToParent[0]].self.node;
+  console.log(JSON.stringify(connections));
+  const parentNode = connections[parentId].self.node;
   if (isSchemaNodeExtended(parentNode) && parentNode.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
     // find all connections with this as a parent. if any, break
     const hasAnyChildRepeatingConnections = allConnectionIds.some((id) => {
-      return id.includes(parentId) && id !== parentId;
+      const hasChildConnection = id.includes(parentId) && id !== parentId;
+      const hasOutputs = connections[id].outputs.length !== 0;
+      return hasChildConnection && hasOutputs;
     });
     if (hasAnyChildRepeatingConnections) {
       // break
     } else {
       // remove parent id
-      deleteNodeFromConnections(connections, allConnectionsToParent[0]);
+      // where output is directly to repeating output???
+
+      deleteConnectionFromConnections(connections, parentId, connections[parentId].outputs[0].reactFlowKey);
       deleteParentRepeatingConnections(connections, parentId);
     }
   }
@@ -691,18 +695,16 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
   const sourceId = getSourceIdFromReactFlowConnectionId(reactFlowKey);
   const sourceSchema = curDataMapState.curDataMapOperation.flattenedSourceSchema;
   const canDelete = canDeleteConnection(sourceId, sourceSchema);
+  const connections = { ...curDataMapState.curDataMapOperation.dataMapConnections };
 
   if (canDelete) {
     deleteConnectionFromConnections(
-      curDataMapState.curDataMapOperation.dataMapConnections,
+      connections,
       getSourceIdFromReactFlowConnectionId(reactFlowKey),
       getDestinationIdFromReactFlowConnectionId(reactFlowKey)
     );
     // danielle account for func connections next by getting sourceid
-    deleteParentRepeatingConnections(
-      curDataMapState.curDataMapOperation.dataMapConnections,
-      getSourceIdFromReactFlowConnectionId(reactFlowKey)
-    );
+    deleteParentRepeatingConnections(connections, getSourceIdFromReactFlowConnectionId(reactFlowKey));
 
     curDataMapState.notificationData = {
       type: NotificationTypes.ConnectionDeleted,
@@ -719,7 +721,7 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
 
   doDataMapOperation(curDataMapState, {
     ...curDataMapState.curDataMapOperation,
-    dataMapConnections: { ...curDataMapState.curDataMapOperation.dataMapConnections },
+    dataMapConnections: { ...connections },
   });
 };
 

@@ -202,9 +202,12 @@ describe('DataMapSlice', () => {
   describe('deleteParentRepeatingConnections', () => {
     it('deletes all parent connections when selected deleted connection is only one', () => {
       const connections = { ...fullMapForSimplifiedLoop };
-      delete connections['target-/ns0:Root/ManyToMany/Year/Month/Day/Date'];
-      delete connections['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate'];
+      // connections['target-/ns0:Root/ManyToMany/Year/Month/Day/Date'].inputs = [];
+      connections['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate'].outputs = [];
       deleteParentRepeatingConnections(connections, manyToManyConnectionSourceName);
+      expect(connections['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay'].outputs).toHaveLength(0);
+      expect(connections['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth'].outputs).toHaveLength(0);
+      expect(connections['source-/ns0:Root/ManyToMany/SourceYear'].outputs).toHaveLength(0);
     });
   });
   it('deleteParentRepeatingConnections', () => {
