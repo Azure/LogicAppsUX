@@ -40,6 +40,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
     const panelGroupKey = ext.webViewKey.designerAzure;
 
     super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey);
+
     this.node = node;
     this.workflow = node.workflowFileContent;
     this.baseUrl = getWorkflowManagementBaseURI(node);
@@ -125,6 +126,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
     const parameters = await this.node.getParametersData();
     const credentials: ServiceClientCredentials = this.node.credentials;
     const accessToken: string = await getAuthorizationToken(credentials);
+
     return {
       connectionsData: await this.node.getConnectionsData(),
       parametersData: await this.node.getParametersData(),

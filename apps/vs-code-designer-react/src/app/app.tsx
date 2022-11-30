@@ -18,7 +18,7 @@ const httpClient = new HttpClient();
 export const App = () => {
   const vscodeState = useSelector((state: RootState) => state.designer);
   const { panelMetaData, connectionReferences, baseUrl, apiHubServiceDetails } = vscodeState;
-  const codelessApp = panelMetaData?.workflowContent;
+  const codelessApp = panelMetaData?.codelessApp;
 
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
 
