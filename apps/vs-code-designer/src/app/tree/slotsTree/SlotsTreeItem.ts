@@ -49,7 +49,7 @@ export class SlotsTreeItem extends AzExtParentTreeItem {
 
     return await this.createTreeItemsWithErrorHandling(
       webAppCollection,
-      'azFuncInvalidSlot',
+      'azLogicAppInvalidSlot',
       async (site: Site) => {
         return new SlotTreeItem(this, new ParsedSite(site, this.subscription));
       },

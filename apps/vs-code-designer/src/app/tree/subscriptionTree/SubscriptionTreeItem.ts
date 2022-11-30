@@ -52,7 +52,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
     return await this.createTreeItemsWithErrorHandling(
       webAppCollection,
-      'azFuncInvalidFunctionApp',
+      'azLogicAppInvalidLogicApp',
       async (site: Site) => {
         const parsedSite = new ParsedSite(site, this.subscription);
         if (site.kind.includes(logicAppKind)) {
