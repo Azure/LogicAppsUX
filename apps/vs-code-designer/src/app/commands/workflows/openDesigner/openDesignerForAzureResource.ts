@@ -11,26 +11,14 @@ import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationT
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { OpenDesignerBase } from './openDesignerBase';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
-import type { Artifacts, AzureConnectorDetails, CodelessApp, Parameter } from '@microsoft-logic-apps/utils';
+import type { IDesignerPanelMetadata, IWorkflowFileContent } from '@microsoft-logic-apps/utils';
 import { ExtensionCommand } from '@microsoft-logic-apps/utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-interface IDesignerPanelMetadata {
-  accessToken: string;
-  codelessApp: CodelessApp;
-  scriptPath: string;
-  connectionsData: string;
-  parametersData: Record<string, Parameter>;
-  localSettings: Record<string, string>;
-  azureDetails: AzureConnectorDetails;
-  artifacts: Artifacts;
-  workflowDetails: Record<string, any>;
-}
-
 export class OpenDesignerForAzureResource extends OpenDesignerBase {
   private readonly node: RemoteWorkflowTreeItem;
-  private readonly workflow: object;
+  private readonly workflow: IWorkflowFileContent;
   private panelMetadata: IDesignerPanelMetadata;
 
   constructor(context: IAzureConnectorsContext, node: RemoteWorkflowTreeItem) {
@@ -82,11 +70,27 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
 
   private async _handleWebviewMsg(msg: any) {
     switch (msg.command) {
-      case 'GetCallbackUrl': {
+      case ExtensionCommand.initialize: {
+        this.sendMsgToWebview({
+          command: ExtensionCommand.initialize_frame,
+          data: {
+            panelMetadata: this.panelMetadata,
+            connectionReferences: this.connectionReferences,
+            baseUrl: this.baseUrl,
+            apiHubServiceDetails: this.apiHubServiceDetails,
+            readOnly: true,
+            isLocal: false,
+          },
+        });
+        break;
+      }
+      case ExtensionCommand.getCallbackUrl: {
         const callbackInfo = await this.node.getCallbackUrl(this.node, msg.triggerName);
         await this.panel.webview.postMessage({
-          command: 'ReceiveCallback',
-          callbackInfo: { ...callbackInfo, urlTemplate: callbackInfo?.value },
+          command: ExtensionCommand.receiveCallback,
+          data: {
+            callbackInfo,
+          },
         });
         break;
       }
@@ -97,19 +101,6 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
           command: 'ReceiveConnectionConfiguration',
           connectionId,
           configuration,
-        });
-        break;
-      }
-      case ExtensionCommand.initialize: {
-        this.sendMsgToWebview({
-          command: ExtensionCommand.initialize_frame,
-          data: {
-            panelMetadata: this.panelMetadata,
-            connectionReferences: this.connectionReferences,
-            baseUrl: this.baseUrl,
-            apiHubServiceDetails: this.apiHubServiceDetails,
-            readOnly: true,
-          },
         });
         break;
       }

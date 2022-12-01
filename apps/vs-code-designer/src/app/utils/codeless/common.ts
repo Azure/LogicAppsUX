@@ -49,7 +49,11 @@ export function removeWebviewPanelFromCache(category: string, name: string): voi
   }
 }
 
-export function getCodelessAppData(workflowName: string, workflow: any, parameters: Record<string, Parameter>): CodelessApp {
+export function getCodelessAppData(
+  workflowName: string,
+  workflow: IWorkflowFileContent,
+  parameters: Record<string, Parameter>
+): CodelessApp {
   const { definition, kind, runtimeConfiguration } = workflow;
   const statelessRunMode = runtimeConfiguration && runtimeConfiguration.statelessRunMode ? runtimeConfiguration.statelessRunMode : '';
   const operationOptions = runtimeConfiguration && runtimeConfiguration.operationOptions ? runtimeConfiguration.operationOptions : '';
