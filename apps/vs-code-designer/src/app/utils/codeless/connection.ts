@@ -10,8 +10,8 @@ import type {
   ConnectionAndSettings,
   ConnectionReferenceModel,
   Parameter,
-} from '@microsoft-logic-apps/utils';
-import { HTTP_METHODS } from '@microsoft-logic-apps/utils';
+} from '@microsoft/utils-logic-apps';
+import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';

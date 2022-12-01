@@ -1,4 +1,4 @@
-import type { OperationManifest } from '@microsoft-logic-apps/utils';
+import type { OperationManifest } from '@microsoft/utils-logic-apps';
 
 export const createItem: OperationManifest = {
   properties: {

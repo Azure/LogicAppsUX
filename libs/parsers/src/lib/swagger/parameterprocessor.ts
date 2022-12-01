@@ -6,8 +6,8 @@ import { SchemaProcessor } from '../common/schemaprocessor';
 import type { InputParameter, InputParameters } from '../models/operation';
 import { toInputParameter } from '../models/operation';
 import type { KeyProjectionOptions } from './parser';
-import { getIntl } from '@microsoft-logic-apps/intl';
-import { aggregate, equals, includes, map } from '@microsoft-logic-apps/utils';
+import { getIntl } from '@@microsoft/logicappsux/intl';
+import { aggregate, equals, includes, map } from '@microsoft/utils-logic-apps';
 
 export interface ParametersProcessorOptions {
   excludeAdvanced?: boolean;

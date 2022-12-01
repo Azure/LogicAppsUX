@@ -16,9 +16,9 @@ import {
   parameterValueToString,
   tryConvertStringToExpression,
 } from './helper';
-import type { ListDynamicValue, ManagedIdentityRequestProperties } from '@microsoft-logic-apps/designer-client-services';
-import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import { getIntl } from '@microsoft-logic-apps/intl';
+import type { ListDynamicValue, ManagedIdentityRequestProperties } from '@@microsoft/logicappsux/designer-client-services';
+import { OperationManifestService } from '@@microsoft/logicappsux/designer-client-services';
+import { getIntl } from '@@microsoft/logicappsux/intl';
 import type {
   DynamicParameters,
   InputParameter,
@@ -27,7 +27,7 @@ import type {
   ResolvedParameter,
   SchemaProcessorOptions,
   SwaggerParser,
-} from '@microsoft-logic-apps/parsers';
+} from '@@microsoft/logicappsux/parsers';
 import {
   parseEx,
   removeConnectionPrefix,
@@ -43,8 +43,9 @@ import {
   ParameterLocations,
   SchemaProcessor,
   WildIndexSegment,
-} from '@microsoft-logic-apps/parsers';
-import type { Connection, OperationInfo, OperationManifest } from '@microsoft-logic-apps/utils';
+} from '@@microsoft/logicappsux/parsers';
+import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+import type { Connection, OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 import {
   first,
   getObjectPropertyValue,
@@ -67,8 +68,7 @@ import {
   map,
   copy,
   unmap,
-} from '@microsoft-logic-apps/utils';
-import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+} from '@microsoft/utils-logic-apps';
 
 export async function getDynamicValues(
   dependencyInfo: DependencyInfo,

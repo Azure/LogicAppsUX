@@ -3,7 +3,7 @@ import { localize } from '../../../localize';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
 import { getFunctionProjectRoot } from './connection';
-import type { Parameter, WorkflowParameter } from '@microsoft-logic-apps/utils';
+import type { Parameter, WorkflowParameter } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { parseError } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';

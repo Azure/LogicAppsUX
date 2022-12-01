@@ -3,7 +3,7 @@ import { ValueSegmentType } from '../editor';
 import type { ChangeHandler } from '../editor/base';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { SelectableOptionMenuItemType, Dropdown } from '@fluentui/react';
-import { guid } from '@microsoft-logic-apps/utils';
+import { guid } from '@microsoft/utils-logic-apps';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 

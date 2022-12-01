@@ -13,8 +13,8 @@ import {
   DetailsListLayoutMode,
   Selection,
 } from '@fluentui/react';
-import type { Connection } from '@microsoft-logic-apps/utils';
-import { getConnectionErrors, getIdLeaf } from '@microsoft-logic-apps/utils';
+import type { Connection } from '@microsoft/utils-logic-apps';
+import { getConnectionErrors, getIdLeaf } from '@microsoft/utils-logic-apps';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 

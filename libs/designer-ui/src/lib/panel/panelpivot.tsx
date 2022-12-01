@@ -4,7 +4,7 @@ import type { PageActionTelemetryData } from '../telemetry/models';
 import type { PanelTab } from './panelUtil';
 import type { IPivotItemProps, IPivotStyles } from '@fluentui/react/lib/Pivot';
 import { Pivot, PivotItem } from '@fluentui/react/lib/Pivot';
-import { RUN_AFTER_COLORS } from '@microsoft-logic-apps/utils';
+import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import React from 'react';
 import { useIntl } from 'react-intl';
 

@@ -16,11 +16,13 @@ import {
 } from '../../utils/parameters/helper';
 import { buildOperationDetailsFromControls } from '../../utils/swagger/inputsbuilder';
 import type { Settings } from './settings';
-import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import { getIntl } from '@microsoft-logic-apps/intl';
-import type { Segment } from '@microsoft-logic-apps/parsers';
-import { create, removeConnectionPrefix, cleanIndexedValue, isAncestorKey, parseEx, SegmentType } from '@microsoft-logic-apps/parsers';
-import type { OperationManifest, SubGraphDetail } from '@microsoft-logic-apps/utils';
+import { LogEntryLevel, LoggerService, OperationManifestService } from '@@microsoft/logicappsux/designer-client-services';
+import { getIntl } from '@@microsoft/logicappsux/intl';
+import type { Segment } from '@@microsoft/logicappsux/parsers';
+import { create, removeConnectionPrefix, cleanIndexedValue, isAncestorKey, parseEx, SegmentType } from '@@microsoft/logicappsux/parsers';
+import type { ParameterInfo } from '@microsoft/designer-ui';
+import { UIConstants } from '@microsoft/designer-ui';
+import type { OperationManifest, SubGraphDetail } from '@microsoft/utils-logic-apps';
 import {
   equals,
   isNullOrUndefined,
@@ -33,9 +35,7 @@ import {
   first,
   isNullOrEmpty,
   WORKFLOW_NODE_TYPES,
-} from '@microsoft-logic-apps/utils';
-import type { ParameterInfo } from '@microsoft/designer-ui';
-import { UIConstants } from '@microsoft/designer-ui';
+} from '@microsoft/utils-logic-apps';
 import merge from 'lodash.merge';
 
 export interface SerializeOptions {

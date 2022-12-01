@@ -11,8 +11,8 @@ import {
   StandardOAuthService,
   StandardOperationManifestService,
   StandardSearchService,
-} from '@microsoft-logic-apps/designer-client-services';
-import { ResourceIdentityType } from '@microsoft-logic-apps/utils';
+} from '@@microsoft/logicappsux/designer-client-services';
+import { ResourceIdentityType } from '@microsoft/utils-logic-apps';
 
 export default {
   component: DesignerProvider,

@@ -20,8 +20,8 @@ import type {
   ILocalSettingsJson,
   IParsedHostJson,
   IProjectTreeItem,
-} from '@microsoft-logic-apps/utils';
-import { isString, latestGAVersion, ProjectSource } from '@microsoft-logic-apps/utils';
+} from '@microsoft/utils-logic-apps';
+import { isString, latestGAVersion, ProjectSource } from '@microsoft/utils-logic-apps';
 import {
   AppSettingsTreeItem,
   DeleteLastServicePlanStep,

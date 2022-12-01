@@ -1,8 +1,8 @@
 import { ext } from '../../../../extensionVariables';
 import { tryGetWebviewPanel } from '../../../utils/codeless/common';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
-import { ResolutionService } from '@microsoft-logic-apps/parsers';
-import type { Artifacts, AzureConnectorDetails, Parameter } from '@microsoft-logic-apps/utils';
+import { ResolutionService } from '@@microsoft/logicappsux/parsers';
+import type { Artifacts, AzureConnectorDetails, Parameter } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { promises as fs } from 'fs';
 import { join } from 'path';

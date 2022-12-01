@@ -1,6 +1,6 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
-import { SearchService } from '@microsoft-logic-apps/designer-client-services';
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
+import { SearchService } from '@@microsoft/logicappsux/designer-client-services';
+import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
 import { useQuery } from 'react-query';
 
 //This allows preloading to start at designer load so operations are ready

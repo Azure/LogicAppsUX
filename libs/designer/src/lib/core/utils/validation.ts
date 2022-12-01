@@ -1,14 +1,14 @@
 import Constants from '../../common/constants';
-import { getIntl } from '@microsoft-logic-apps/intl';
-import type { Expression, ExpressionLiteral } from '@microsoft-logic-apps/parsers';
+import { getIntl } from '@@microsoft/logicappsux/intl';
+import type { Expression, ExpressionLiteral } from '@@microsoft/logicappsux/parsers';
 import {
   ExpressionParser,
   ExpressionType,
   isStringInterpolation,
   isStringLiteral,
   isTemplateExpression,
-} from '@microsoft-logic-apps/parsers';
-import { endsWith, equals, startsWith } from '@microsoft-logic-apps/utils';
+} from '@@microsoft/logicappsux/parsers';
+import { endsWith, equals, startsWith } from '@microsoft/utils-logic-apps';
 
 const regex = {
   datetime:

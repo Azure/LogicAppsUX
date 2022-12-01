@@ -5,7 +5,7 @@ import { notEqual } from '../editor/base/utils/helper';
 import { ItemMenuButton, renderLabel } from './expandedsimplearray';
 import type { IIconProps } from '@fluentui/react';
 import { DefaultButton } from '@fluentui/react';
-import { guid } from '@microsoft-logic-apps/utils';
+import { guid } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 const addItemButtonIconProps: IIconProps = {

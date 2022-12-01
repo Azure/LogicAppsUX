@@ -22,15 +22,15 @@ import { getInputParametersFromManifest, getOutputParametersFromManifest, update
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings } from './settings';
-import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import type { SwaggerParser } from '@microsoft-logic-apps/parsers';
+import { ConnectionService, OperationManifestService } from '@@microsoft/logicappsux/designer-client-services';
+import type { SwaggerParser } from '@@microsoft/logicappsux/parsers';
 import type {
   DiscoveryOperation,
   DiscoveryResultTypes,
   OperationManifest,
   SomeKindOfAzureOperationDiscovery,
-} from '@microsoft-logic-apps/utils';
-import { equals } from '@microsoft-logic-apps/utils';
+} from '@microsoft/utils-logic-apps';
+import { equals } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 

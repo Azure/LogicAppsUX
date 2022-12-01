@@ -3,7 +3,7 @@ import { SimpleDictionary } from './dictionary/simpledictionary';
 import type { SettingProps } from './settingtoggle';
 import { TextField } from '@fluentui/react';
 import type { ITextFieldStyles } from '@fluentui/react';
-import { isObject } from '@microsoft-logic-apps/utils';
+import { isObject } from '@microsoft/utils-logic-apps';
 
 export type InputChangeHandler = (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => void;
 

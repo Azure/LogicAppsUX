@@ -1,6 +1,6 @@
 import type { SelectConnectionProps } from './';
 import { SelectConnection } from './';
-import type { Connection } from '@microsoft-logic-apps/utils';
+import type { Connection } from '@microsoft/utils-logic-apps';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
