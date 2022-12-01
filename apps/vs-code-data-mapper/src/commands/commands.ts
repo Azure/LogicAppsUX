@@ -1,5 +1,4 @@
 import DataMapperExt from '../DataMapperExt';
-import { startBackendRuntime } from '../FxWorkflowRuntime';
 import { draftMapDefinitionSuffix, schemasPath } from '../extensionConfig';
 import { callWithTelemetryAndErrorHandling, registerCommand } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -10,31 +9,17 @@ import { window } from 'vscode';
 import type { Uri } from 'vscode';
 
 export const registerCommands = () => {
-  registerCommand('azureDataMapper.openDataMapper', () => openDataMapperCmd());
   registerCommand('azureDataMapper.createNewDataMap', () => createNewDataMapCmd());
   registerCommand('azureDataMapper.loadDataMapFile', (_context: IActionContext, uri: Uri) => loadDataMapFileCmd(uri));
 };
 
-const openDataMapperCmd = async () => {
-  const workflowFolder = DataMapperExt.getWorkspaceFolderFsPath();
-
-  if (workflowFolder) {
-    await startBackendRuntime(workflowFolder);
-
-    DataMapperExt.createOrShow();
-  }
-};
-
 const createNewDataMapCmd = () => {
-  // TODO: Data map name validation
   window.showInputBox({ prompt: 'Data Map name: ' }).then(async (newDatamapName) => {
     if (!newDatamapName) {
       return;
     }
 
-    DataMapperExt.currentDataMapName = newDatamapName;
-
-    openDataMapperCmd();
+    DataMapperExt.openDataMapperPanel(newDatamapName);
   });
 };
 
@@ -122,14 +107,12 @@ const loadDataMapFileCmd = async (uri: Uri) => {
     }
   }
 
-  DataMapperExt.currentDataMapName = path.basename(uri.fsPath, path.extname(uri.fsPath)).replace(draftMapDefinitionSuffix, ''); // Gets filename w/o ext (and w/o draft suffix)
+  const dataMapName = path.basename(uri.fsPath, path.extname(uri.fsPath)).replace(draftMapDefinitionSuffix, ''); // Gets filename w/o ext (and w/o draft suffix)
 
-  openDataMapperCmd();
-
-  // Set map definition data to be loaded once webview sends webviewLoaded msg\
-  DataMapperExt.loadMapDefinitionData = {
-    mapDefinition: mapDefinition,
+  // Set map definition data to be loaded once webview sends webviewLoaded msg
+  DataMapperExt.openDataMapperPanel(dataMapName, {
+    mapDefinition,
     sourceSchemaFileName: path.basename(srcSchemaPath),
     targetSchemaFileName: path.basename(tgtSchemaPath),
-  };
+  });
 };
