@@ -16,10 +16,10 @@ import {
   parameterValueToString,
   tryConvertStringToExpression,
 } from './helper';
+import type { ListDynamicValue, ManagedIdentityRequestProperties } from '@microsoft/designer-client-services-logic-apps';
+import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { ListDynamicValue, ManagedIdentityRequestProperties } from '@microsoft/logicappsux/designer-client-services';
-import { OperationManifestService } from '@microsoft/logicappsux/designer-client-services';
 import type {
   DynamicParameters,
   InputParameter,
@@ -28,7 +28,7 @@ import type {
   ResolvedParameter,
   SchemaProcessorOptions,
   SwaggerParser,
-} from '@microsoft/logicappsux/parsers';
+} from '@microsoft/parsers-logic-apps';
 import {
   parseEx,
   removeConnectionPrefix,
@@ -44,7 +44,7 @@ import {
   ParameterLocations,
   SchemaProcessor,
   WildIndexSegment,
-} from '@microsoft/logicappsux/parsers';
+} from '@microsoft/parsers-logic-apps';
 import type { Connection, OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 import {
   first,

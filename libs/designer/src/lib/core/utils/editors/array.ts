@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
 import { isArrayOrObjectValueCompatibleWithSchema, getAndEscapeSegment } from '../parameters/helper';
-import type { InputParameter } from '@microsoft/logicappsux/parsers';
+import type { InputParameter } from '@microsoft/parsers-logic-apps';
 import {
   createEx,
   ExtensionProperties,
@@ -12,7 +12,7 @@ import {
   SchemaProcessor,
   SegmentType,
   WildIndexSegment,
-} from '@microsoft/logicappsux/parsers';
+} from '@microsoft/parsers-logic-apps';
 import { isObject } from '@microsoft/utils-logic-apps';
 
 /**

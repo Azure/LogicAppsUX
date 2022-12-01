@@ -7,7 +7,7 @@ import type {
   ISearchService,
   IOAuthService,
   IWorkflowService,
-} from '@microsoft/logicappsux/designer-client-services';
+} from '@microsoft/designer-client-services-logic-apps';
 
 export interface DesignerOptionsState {
   readOnly?: boolean;

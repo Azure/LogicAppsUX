@@ -1,13 +1,13 @@
 import Constants from '../../common/constants';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Expression, ExpressionLiteral } from '@microsoft/logicappsux/parsers';
+import type { Expression, ExpressionLiteral } from '@microsoft/parsers-logic-apps';
 import {
   ExpressionParser,
   ExpressionType,
   isStringInterpolation,
   isStringLiteral,
   isTemplateExpression,
-} from '@microsoft/logicappsux/parsers';
+} from '@microsoft/parsers-logic-apps';
 import { endsWith, equals, startsWith } from '@microsoft/utils-logic-apps';
 
 const regex = {

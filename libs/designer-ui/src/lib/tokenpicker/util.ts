@@ -1,5 +1,5 @@
-import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logicappsux/parsers';
-import { ExpressionType } from '@microsoft/logicappsux/parsers';
+import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/parsers-logic-apps';
+import { ExpressionType } from '@microsoft/parsers-logic-apps';
 import { UnsupportedException } from '@microsoft/utils-logic-apps';
 
 export function getExpressionTokenTitle(expression: Expression): string {

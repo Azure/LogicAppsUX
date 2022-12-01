@@ -3,8 +3,8 @@ import type { NodeOperation, NodeOutputs } from '../../state/operation/operation
 import { getSplitOnOptions } from '../../utils/outputs';
 import { getTokenExpressionValue } from '../../utils/parameters/helper';
 import { TokenType } from '@microsoft/designer-ui';
-import type { SwaggerParser } from '@microsoft/logicappsux/parsers';
-import { convertToStringLiteral, getSplitOnArrayAliasMetadata } from '@microsoft/logicappsux/parsers';
+import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
+import { convertToStringLiteral, getSplitOnArrayAliasMetadata } from '@microsoft/parsers-logic-apps';
 import type {
   DownloadChunkMetadata,
   OperationManifest,

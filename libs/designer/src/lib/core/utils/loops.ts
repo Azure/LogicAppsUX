@@ -24,10 +24,10 @@ import {
 } from './parameters/helper';
 import { isTokenValueSegment } from './parameters/segment';
 import { TokenSegmentConvertor } from './parameters/tokensegment';
+import { foreachOperationInfo, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { OutputToken, Token } from '@microsoft/designer-ui';
 import { TokenType } from '@microsoft/designer-ui';
-import { foreachOperationInfo, OperationManifestService } from '@microsoft/logicappsux/designer-client-services';
-import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral, Segment } from '@microsoft/logicappsux/parsers';
+import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral, Segment } from '@microsoft/parsers-logic-apps';
 import {
   containsWildIndexSegment,
   convertToStringLiteral,
@@ -42,7 +42,7 @@ import {
   OutputKeys,
   parseEx,
   SegmentType,
-} from '@microsoft/logicappsux/parsers';
+} from '@microsoft/parsers-logic-apps';
 import { equals, first, isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 

@@ -1,7 +1,7 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
-import type { ListDynamicValue, ManagedIdentityRequestProperties } from '@microsoft/logicappsux/designer-client-services';
-import { ConnectorService } from '@microsoft/logicappsux/designer-client-services';
-import type { LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft/logicappsux/parsers';
+import type { ListDynamicValue, ManagedIdentityRequestProperties } from '@microsoft/designer-client-services-logic-apps';
+import { ConnectorService } from '@microsoft/designer-client-services-logic-apps';
+import type { LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft/parsers-logic-apps';
 
 export const getLegacyDynamicValues = async (
   connectionId: string,

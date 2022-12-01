@@ -44,6 +44,7 @@ import {
   isVariableToken,
   ValueSegmentConvertor,
 } from './segment';
+import { WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type {
   AuthProps,
   ComboboxItem,
@@ -66,7 +67,6 @@ import {
   TokenType,
 } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import { WorkflowService } from '@microsoft/logicappsux/designer-client-services';
 import type {
   DynamicParameters,
   Expression,
@@ -79,7 +79,7 @@ import type {
   SchemaProperty,
   Segment,
   SwaggerParser,
-} from '@microsoft/logicappsux/parsers';
+} from '@microsoft/parsers-logic-apps';
 import {
   getKnownTitles,
   isLegacyDynamicValuesExtension,
@@ -98,7 +98,7 @@ import {
   SchemaProcessor,
   SegmentType,
   Visibility,
-} from '@microsoft/logicappsux/parsers';
+} from '@microsoft/parsers-logic-apps';
 import type { Exception, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import {
   isUndefinedOrEmptyString,

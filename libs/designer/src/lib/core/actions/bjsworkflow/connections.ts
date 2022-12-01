@@ -7,8 +7,8 @@ import { getConnectionReference } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
 import { updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { getAllVariables } from '../../utils/variables';
-import type { IOperationManifestService } from '@microsoft/logicappsux/designer-client-services';
-import { OperationManifestService } from '@microsoft/logicappsux/designer-client-services';
+import type { IOperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { ConnectionParameter, Connector, OperationManifest } from '@microsoft/utils-logic-apps';
 import {
   isHiddenConnectionParameter,

@@ -1,14 +1,14 @@
 import { SettingsBox } from '../../components/settings_box';
 import type { RootState } from '../../state/store';
 import { HttpClient } from './httpClient';
-import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import {
   StandardConnectionService,
   StandardOperationManifestService,
   StandardSearchService,
   StandardOAuthService,
   StandardGatewayService,
-} from '@microsoft/logicappsux/designer-client-services';
+} from '@microsoft/designer-client-services-logic-apps';
+import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import { ResourceIdentityType } from '@microsoft/utils-logic-apps';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';

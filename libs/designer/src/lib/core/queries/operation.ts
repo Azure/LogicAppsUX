@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { getReactQueryClient } from '../ReactQueryProvider';
-import { ConnectionService, OperationManifestService } from '@microsoft/logicappsux/designer-client-services';
+import { ConnectionService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { Connector, OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 
 export const getOperationInfo = async (

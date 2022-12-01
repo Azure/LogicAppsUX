@@ -2,7 +2,7 @@ import constants from '../constants';
 import type { Token } from '../editor';
 import { TokenType } from '../editor';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import { decodePropertySegment, OutputKeys } from '@microsoft/logicappsux/parsers';
+import { decodePropertySegment, OutputKeys } from '@microsoft/parsers-logic-apps';
 import { ArgumentException, endsWith, equals, UnsupportedException } from '@microsoft/utils-logic-apps';
 
 enum OperationCategory {
