@@ -1,6 +1,7 @@
 import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import { store } from '../../core/state/Store';
 import type { RootState } from '../../core/state/Store';
+import { SchemaType } from '../../models';
 import {
   isValidFunctionNodeToSchemaNodeConnection,
   isValidInputToFunctionNode,
@@ -84,7 +85,7 @@ const HandleWrapper = ({ type, position, shouldDisplay, nodeReactFlowType, nodeR
     (connection: ReactFlowConnection): boolean => {
       let isValid = false;
 
-      if (type === 'source') {
+      if (type === SchemaType.Source) {
         if (nodeReactFlowType === ReactFlowNodeType.SchemaNode) {
           isValid = isValidConnectionFromSchemaNode(connection);
         } else {
@@ -103,13 +104,14 @@ const HandleWrapper = ({ type, position, shouldDisplay, nodeReactFlowType, nodeR
       position={position}
       style={{
         visibility: shouldDisplay ? 'visible' : 'hidden',
-        transform: nodeReactFlowType === ReactFlowNodeType.FunctionNode ? `translate(${type === 'target' ? '-' : ''}30%, -55%)` : undefined,
+        transform:
+          nodeReactFlowType === ReactFlowNodeType.FunctionNode ? `translate(${type === SchemaType.Target ? '-' : ''}30%, -55%)` : undefined,
       }}
       isValidConnection={checkConnectionValidity}
       onMouseEnter={() => setIsHandleHovered(true)}
       onMouseLeave={() => setIsHandleHovered(false)}
     >
-      {type === 'source' && (isHandleHovered || thisNodeIsTheSourceOfTheActivelyDrawnConnection) && <AddConnectionSvg />}
+      {type === SchemaType.Source && (isHandleHovered || thisNodeIsTheSourceOfTheActivelyDrawnConnection) && <AddConnectionSvg />}
     </Handle>
   );
 };

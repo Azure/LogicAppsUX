@@ -22,7 +22,7 @@ enum VsCodeThemeType {
 
 interface SchemaFile {
   path: string;
-  type: 'source' | 'target';
+  type: SchemaType;
 }
 
 export const App = () => {

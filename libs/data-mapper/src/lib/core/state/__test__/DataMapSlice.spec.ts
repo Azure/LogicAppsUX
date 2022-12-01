@@ -1,10 +1,21 @@
-import type { Schema, SchemaExtended } from '../../../models';
-import { SchemaType } from '../../../models';
+import type { Schema, SchemaExtended, SchemaNodeExtended } from '../../../models';
+import { SchemaType, SchemaNodeProperty } from '../../../models';
 import type { ConnectionDictionary } from '../../../models/Connection';
 import { addNodeToConnections, flattenInputs } from '../../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../../../utils/Schema.Utils';
-import { deleteConnectionFromConnections, deleteNodeFromConnections } from '../DataMapSlice';
+import {
+  fullConnectionDictionaryForOneToManyLoop,
+  fullMapForSimplifiedLoop,
+  indexedConnections,
+  manyToManyConnectionSourceName,
+} from '../../../utils/__mocks__';
+import {
+  canDeleteConnection,
+  deleteConnectionFromConnections,
+  deleteNodeFromConnections,
+  deleteParentRepeatingConnections,
+} from '../DataMapSlice';
 import { simpleMockSchema } from '../__mocks__';
 import { concatFunction } from '../__mocks__/FunctionMock';
 
@@ -182,4 +193,59 @@ describe('DataMapSlice', () => {
       expect(flattenInputs(connections[destinationId].inputs).length).toEqual(0);
     });
   });
+
+  describe('canDeleteConnection', () => {
+    it('returns true with non-repeating connection', () => {
+      const connections: ConnectionDictionary = {};
+      const source = 'abc';
+      const target = '';
+      const canDelete = canDeleteConnection(connections, source, target, { abc: simpleSourceNode }, {});
+      expect(canDelete).toBeTruthy();
+    });
+  });
+
+  describe('deleteParentRepeatingConnections', () => {
+    it('deletes all parent connections when selected deleted connection is only one', () => {
+      const connections1 = JSON.parse(JSON.stringify(fullMapForSimplifiedLoop));
+      // removing the connection that is 'deleted
+      connections1['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate'].outputs = [];
+      deleteParentRepeatingConnections(connections1, manyToManyConnectionSourceName);
+      expect(connections1['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay'].outputs).toHaveLength(0);
+      expect(connections1['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth'].outputs).toHaveLength(0);
+      expect(connections1['source-/ns0:Root/ManyToMany/SourceYear'].outputs).toHaveLength(0);
+    });
+
+    it('doesnt delete any other parent connections if another child is connected', () => {
+      const connections = { ...fullMapForSimplifiedLoop };
+      deleteParentRepeatingConnections(connections, manyToManyConnectionSourceName);
+      expect(connections['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay'].outputs).toHaveLength(1);
+      expect(connections['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth'].outputs).toHaveLength(1);
+      expect(connections['source-/ns0:Root/ManyToMany/SourceYear'].outputs).toHaveLength(1);
+    });
+
+    it('doesnt delete parent connection if index is being used', () => {
+      const connections = { ...indexedConnections };
+      // removing the connection that is 'deleted
+      connections['source-/ns0:Root/Looping/Employee/TelephoneNumber'].outputs = [];
+      deleteParentRepeatingConnections(connections, 'source-/ns0:Root/Looping/Employee/TelephoneNumber');
+      expect(connections['source-/ns0:Root/Looping/Employee'].outputs).toHaveLength(1); // has one output to the index
+    });
+
+    it('deletes all connections for many-to-one', () => {
+      const connections = fullConnectionDictionaryForOneToManyLoop;
+      connections['source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate'].outputs = [];
+      deleteParentRepeatingConnections(connections, 'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate');
+      expect(connections['source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay'].outputs).toHaveLength(0);
+      expect(connections['source-/ns0:Root/ManyToOne/SourceYear/SourceMonth'].outputs).toHaveLength(0);
+      expect(connections['source-/ns0:Root/ManyToOne/SourceYear'].outputs).toHaveLength(0);
+    });
+  });
 });
+
+const simpleSourceNode: SchemaNodeExtended = {
+  children: [],
+  nodeProperties: [SchemaNodeProperty.NotSpecified],
+  pathToRoot: [],
+  key: 'abc',
+  fullName: 'ABC',
+} as unknown as SchemaNodeExtended;

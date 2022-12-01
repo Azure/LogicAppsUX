@@ -247,7 +247,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
         onMouseEnter={() => setIsCardHovered(true)}
       >
         <HandleWrapper
-          type={isSourceSchemaNode ? 'source' : 'target'}
+          type={isSourceSchemaNode ? SchemaType.Source : SchemaType.Target}
           position={isSourceSchemaNode ? Position.Right : Position.Left}
           nodeReactFlowType={ReactFlowNodeType.SchemaNode}
           nodeReactFlowId={reactFlowId}
