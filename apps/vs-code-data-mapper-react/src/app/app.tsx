@@ -10,6 +10,7 @@ import {
   getSelectedSchema,
   InitDataMapperApiService,
 } from '@microsoft/logic-apps-data-mapper';
+import type { MessageToVsix, SchemaType } from '@microsoft/logic-apps-data-mapper';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -21,7 +22,7 @@ enum VsCodeThemeType {
 
 interface SchemaFile {
   path: string;
-  type: 'source' | 'target';
+  type: SchemaType;
 }
 
 export const App = () => {
@@ -42,6 +43,13 @@ export const App = () => {
 
   const runtimePort = useSelector((state: RootState) => state.dataMapDataLoader.runtimePort);
 
+  const sendMsgToVsix = useCallback(
+    (msg: MessageToVsix) => {
+      vscode.postMessage(msg);
+    },
+    [vscode]
+  );
+
   const saveStateCall = (dataMapDefinition: string, dataMapXslt: string) => {
     saveDataMapDefinition(dataMapDefinition);
 
@@ -49,41 +57,41 @@ export const App = () => {
   };
 
   const addSchemaFromFile = (selectedSchemaFile: SchemaFile) => {
-    vscode.postMessage({
+    sendMsgToVsix({
       command: 'addSchemaFromFile',
-      data: { path: selectedSchemaFile.path, type: selectedSchemaFile.type },
+      data: { path: selectedSchemaFile.path, type: selectedSchemaFile.type as SchemaType },
     });
   };
 
   const readLocalFileOptions = useCallback(() => {
-    vscode.postMessage({
+    sendMsgToVsix({
       command: 'readLocalFileOptions',
     });
-  }, [vscode]);
+  }, [sendMsgToVsix]);
 
   const saveDataMapDefinition = (dataMapDefinition: string) => {
-    vscode.postMessage({
+    sendMsgToVsix({
       command: 'saveDataMapDefinition',
       data: dataMapDefinition,
     });
   };
 
   const saveDataMap = (dataMapXslt: string) => {
-    vscode.postMessage({
+    sendMsgToVsix({
       command: 'saveDataMapXslt',
       data: dataMapXslt,
     });
   };
 
   const saveDraftDataMapDefinition = (dataMapDefinition: string) => {
-    vscode.postMessage({
+    sendMsgToVsix({
       command: 'saveDraftDataMapDefinition',
       data: dataMapDefinition,
     });
   };
 
   const setIsMapStateDirty = (isMapStateDirty: boolean) => {
-    vscode.postMessage({
+    sendMsgToVsix({
       command: 'setIsMapStateDirty',
       data: isMapStateDirty,
     });
@@ -101,20 +109,20 @@ export const App = () => {
         errorMsg = 'Unknown error';
       }
 
-      vscode.postMessage({
+      sendMsgToVsix({
         command: 'webviewRscLoadError',
         data: errorMsg,
       });
     },
-    [vscode]
+    [sendMsgToVsix]
   );
 
   // Notify VS Code that webview is loaded
   useEffect(() => {
-    vscode.postMessage({
+    sendMsgToVsix({
       command: 'webviewLoaded',
     });
-  }, [vscode]);
+  }, [sendMsgToVsix]);
 
   // Monitor document.body for VS Code theme changes
   useEffect(() => {

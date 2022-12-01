@@ -2,13 +2,13 @@ import { sourcePrefix, targetPrefix } from '../../constants/ReactFlowConstants';
 import appInsights from '../../core/services/appInsights/AppInsights';
 import {
   addFunctionNode,
-  makeConnection,
   deleteConnection,
+  makeConnection,
   setCanvasToolboxTabToDisplay,
   setInlineFunctionInputOutputKeys,
 } from '../../core/state/DataMapSlice';
-import { store } from '../../core/state/Store';
 import type { AppDispatch, RootState } from '../../core/state/Store';
+import { store } from '../../core/state/Store';
 import { NormalizedDataType } from '../../models';
 import type { FunctionData } from '../../models/Function';
 import { FunctionCategory } from '../../models/Function';
@@ -104,7 +104,7 @@ export const FunctionList = () => {
       if (functionData) {
         const functionCategoryDictionary: { [key: string]: FunctionDataTreeItem } = {};
         let functionsList: FunctionData[] = [...functionData];
-        functionsList.sort((a, b) => a.key.localeCompare(b.key)); // Alphabetically sort Functions
+        functionsList.sort((a, b) => a.displayName.localeCompare(b.displayName)); // Alphabetically sort Functions
 
         // Create dictionary for Function Categories
         Object.values(FunctionCategory).forEach((category) => {

@@ -1,5 +1,5 @@
 import { CanvasControls } from '../components/canvasControls/CanvasControls';
-import { ToolboxPanelTabs, CanvasToolbox } from '../components/canvasToolbox/CanvasToolbox';
+import { CanvasToolbox, ToolboxPanelTabs } from '../components/canvasToolbox/CanvasToolbox';
 import { ConnectionEdge } from '../components/edge/ConnectionEdge';
 import { FunctionCard } from '../components/nodeCard/FunctionCard';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
@@ -31,7 +31,7 @@ import { useLayout } from '../utils/ReactFlow.Util';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import type { KeyboardEventHandler, MouseEvent as ReactMouseEvent } from 'react';
-import React, { useRef, useMemo, useEffect } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode, OnConnectStartParams } from 'reactflow';
 // eslint-disable-next-line import/no-named-as-default
@@ -73,6 +73,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
+  const sourceSchemaOrdering = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchemaOrdering);
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const notificationData = useSelector((state: RootState) => state.dataMap.notificationData);
 
@@ -114,7 +115,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
 
   const onConnectStart = (_event: React.MouseEvent, { nodeId, handleType }: OnConnectStartParams) => {
     // handleType check prevents other nodes' handles being displayed when attempting to draw from right-to-left (currently not allowed)
-    if (!nodeId || !handleType || handleType === 'target') {
+    if (!nodeId || !handleType || handleType === SchemaType.Target) {
       return;
     }
 
@@ -137,11 +138,11 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
 
   const [nodes, edges] = useLayout(
     currentSourceSchemaNodes,
-    flattenedSourceSchema,
     currentFunctionNodes,
     currentTargetSchemaNode,
     connections,
-    selectedItemKey
+    selectedItemKey,
+    sourceSchemaOrdering
   );
 
   // Find first target schema node (should be schemaTreeRoot) to use its xPos for schema name badge

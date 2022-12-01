@@ -18,3 +18,10 @@ export enum LanguageScript {
   PowerShell = 'run.ps1',
   TypeScript = 'index.ts',
 }
+
+export enum WorkerRuntime {
+  Node = 'node',
+  Dotnet = 'dotnet',
+  Java = 'java',
+  PowerShell = 'powershell',
+}

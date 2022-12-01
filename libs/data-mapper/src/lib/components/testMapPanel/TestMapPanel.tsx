@@ -57,6 +57,7 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
   const styles = useStyles();
 
   const dataMapXsltFilename = useSelector((state: RootState) => state.dataMap.curDataMapOperation.xsltFilename);
+  const currentTheme = useSelector((state: RootState) => state.app.theme);
 
   const [selectedInputOption, setSelectedInputOption] = useState<string | undefined>('pasteSample');
   const [selectedPivotItem, setSelectedPivotItem] = useState<PanelPivotItems>(PanelPivotItems.Input);
@@ -152,6 +153,7 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
       closeButtonAriaLabel={closeLoc}
       onRenderFooterContent={getFooterContent}
       isFooterAtBottom={true}
+      overlayProps={{ isDarkThemed: currentTheme === 'dark' }}
       isLightDismiss
     >
       <Pivot
