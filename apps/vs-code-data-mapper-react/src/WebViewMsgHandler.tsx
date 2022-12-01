@@ -7,7 +7,8 @@ import {
   changeXsltFilename,
 } from './state/DataMapDataLoader';
 import type { AppDispatch } from './state/Store';
-import { MessageToWebview, SchemaType } from '@microsoft/logic-apps-data-mapper';
+import type { MessageToWebview } from '@microsoft/logic-apps-data-mapper';
+import { SchemaType } from '@microsoft/logic-apps-data-mapper';
 import React, { createContext } from 'react';
 import { useDispatch } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';

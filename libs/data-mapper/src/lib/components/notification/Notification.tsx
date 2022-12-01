@@ -74,6 +74,7 @@ export const Notification = (props: NotificationProps) => {
     switch (type) {
       // Error icon
       case NotificationTypes.SaveFailed:
+      case NotificationTypes.RepeatingConnectionCannotDelete:
       case NotificationTypes.SourceNodeRemoveFailed:
       case NotificationTypes.CircularLogicError:
       case NotificationTypes.TargetNodeCannotDelete:
