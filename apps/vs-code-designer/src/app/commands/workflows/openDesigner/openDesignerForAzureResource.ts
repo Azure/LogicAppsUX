@@ -86,7 +86,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
       }
       case ExtensionCommand.getCallbackUrl: {
         const callbackInfo = await this.node.getCallbackUrl(this.node, msg.triggerName);
-        await this.panel.webview.postMessage({
+        this.sendMsgToWebview({
           command: ExtensionCommand.receiveCallback,
           data: {
             callbackInfo,
@@ -97,7 +97,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
       case 'GetConnectionConfiguration': {
         const connectionId = msg.connectionId;
         const configuration = await this.node.getConnectionConfiguration(connectionId);
-        this.panel.webview.postMessage({
+        this.sendMsgToWebview({
           command: 'ReceiveConnectionConfiguration',
           connectionId,
           configuration,
