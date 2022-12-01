@@ -1,5 +1,5 @@
 {
-  "name": "microsoft-logic-apps",
+  "name": "@microsoft/logicappsux",
   "version": "0.2.30",
   "license": "MIT",
   "scripts": {
