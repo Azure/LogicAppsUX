@@ -8,7 +8,6 @@ import { RunAfter } from './sections/runafterconfiguration';
 import { CustomizableMessageBar } from './validation/errorbar';
 import { Separator, useTheme, Icon, IconButton, TooltipHost, Dropdown } from '@fluentui/react';
 import { MessageBarType } from '@fluentui/react/lib/MessageBar';
-import { guid } from '@microsoft-logic-apps/utils';
 import {
   isHighContrastBlack,
   MultiSelectSetting,
@@ -38,6 +37,7 @@ import type {
   SettingDictionaryProps,
   SettingDropdownProps,
 } from '@microsoft/designer-ui';
+import { guid } from '@microsoft/utils-logic-apps';
 import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';

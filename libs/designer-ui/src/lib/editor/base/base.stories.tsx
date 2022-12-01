@@ -3,7 +3,7 @@ import { ValueSegmentType } from '../models/parameter';
 // import { testTokenSegment } from '../shared/testtokensegment';
 import type { BaseEditorProps } from './';
 import { BaseEditor } from './';
-import { guid } from '@microsoft-logic-apps/utils';
+import { guid } from '@microsoft/utils-logic-apps';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {

@@ -1,5 +1,5 @@
 {
-  "npmScope": "microsoft-logic-apps",
+  "npmScope": "@microsoft/logicappsux",
   "affected": {
     "defaultBase": "main"
   },

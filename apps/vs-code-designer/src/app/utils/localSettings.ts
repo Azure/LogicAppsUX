@@ -6,7 +6,7 @@ import { localSettingsFileName } from '../../constants';
 import { localize } from '../../localize';
 import { writeFormattedJson } from '../utils/fs';
 import { parseJson } from '../utils/parseJson';
-import type { ILocalSettingsJson } from '@microsoft-logic-apps/utils';
+import type { ILocalSettingsJson } from '@microsoft/utils-logic-apps';
 import { DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';

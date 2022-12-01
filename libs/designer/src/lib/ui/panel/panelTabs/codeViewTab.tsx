@@ -2,9 +2,9 @@ import constants from '../../../common/constants';
 import { serializeOperation } from '../../../core/actions/bjsworkflow/serializer';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import type { RootState } from '../../../core/store';
-import { isNullOrEmpty } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { Peek } from '@microsoft/designer-ui';
+import { isNullOrEmpty } from '@microsoft/utils-logic-apps';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 

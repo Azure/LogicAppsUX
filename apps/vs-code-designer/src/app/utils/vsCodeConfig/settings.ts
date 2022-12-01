@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
-import { isString, ProjectLanguage, WorkerRuntime } from '@microsoft-logic-apps/utils';
+import { isString, ProjectLanguage, WorkerRuntime } from '@microsoft/utils-logic-apps';
 import { Uri, workspace } from 'vscode';
 import type { WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
 

@@ -1,7 +1,7 @@
 import type { OutputToken } from '../../tokenpicker';
 import type { ValueSegment } from '../models/parameter';
 import { TokenType, ValueSegmentType } from '../models/parameter';
-import { guid } from '@microsoft-logic-apps/utils';
+import { guid } from '@microsoft/utils-logic-apps';
 
 export const testTokenSegment: ValueSegment = {
   id: guid(),

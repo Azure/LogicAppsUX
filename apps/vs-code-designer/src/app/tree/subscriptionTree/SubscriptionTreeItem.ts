@@ -9,8 +9,8 @@ import { isProjectCV, isRemoteProjectCV } from '../../utils/tree/projectContextV
 import { getWorkspaceSettingFromAnyFolder } from '../../utils/vsCodeConfig/settings';
 import { ProductionSlotTreeItem } from '../slotsTree/ProductionSlotTreeItem';
 import type { Site, WebSiteManagementClient } from '@azure/arm-appservice';
-import { isNullOrUndefined } from '@microsoft-logic-apps/utils';
-import type { FuncVersion, IFunctionAppWizardContext } from '@microsoft-logic-apps/utils';
+import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import type { FuncVersion, IFunctionAppWizardContext } from '@microsoft/utils-logic-apps';
 import { AppKind, createWebSiteClient, ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { SubscriptionTreeItemBase, uiUtils } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtTreeItem, IActionContext, ICreateChildImplContext } from '@microsoft/vscode-azext-utils';

@@ -24,8 +24,10 @@ import {
 } from './parameters/helper';
 import { isTokenValueSegment } from './parameters/segment';
 import { TokenSegmentConvertor } from './parameters/tokensegment';
-import { foreachOperationInfo, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral, Segment } from '@microsoft-logic-apps/parsers';
+import { foreachOperationInfo, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import type { OutputToken, Token } from '@microsoft/designer-ui';
+import { TokenType } from '@microsoft/designer-ui';
+import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral, Segment } from '@microsoft/parsers-logic-apps';
 import {
   containsWildIndexSegment,
   convertToStringLiteral,
@@ -40,10 +42,8 @@ import {
   OutputKeys,
   parseEx,
   SegmentType,
-} from '@microsoft-logic-apps/parsers';
-import { equals, first, isNullOrUndefined } from '@microsoft-logic-apps/utils';
-import type { OutputToken, Token } from '@microsoft/designer-ui';
-import { TokenType } from '@microsoft/designer-ui';
+} from '@microsoft/parsers-logic-apps';
+import { equals, first, isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 interface ImplicitForeachDetails {

@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { contextValuePrefix, contextValueSeparator } from '../../../constants';
-import { isString, ProjectSource } from '@microsoft-logic-apps/utils';
-import type { ProjectAccess, ProjectResource } from '@microsoft-logic-apps/utils';
+import { isString, ProjectSource } from '@microsoft/utils-logic-apps';
+import type { ProjectAccess, ProjectResource } from '@microsoft/utils-logic-apps';
 
 export function isProjectCV(contextValue: string | RegExp): boolean {
   const data: string = normalizeContextValue(contextValue);

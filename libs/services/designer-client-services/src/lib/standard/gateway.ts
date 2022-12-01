@@ -1,7 +1,7 @@
 import type { IGatewayService } from '../gateway';
 import type { HttpRequestOptions, IHttpClient } from '../httpClient';
-import type { Gateway, ArmResources, Subscription, SubscriptionsResponse } from '@microsoft-logic-apps/utils';
-import { ArgumentException } from '@microsoft-logic-apps/utils';
+import type { Gateway, ArmResources, Subscription, SubscriptionsResponse } from '@microsoft/utils-logic-apps';
+import { ArgumentException } from '@microsoft/utils-logic-apps';
 
 interface StandardGatewayServiceArgs {
   baseUrl: string;

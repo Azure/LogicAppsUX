@@ -1,7 +1,6 @@
 import constants from '../../../common/constants';
 import type { TokenGroup } from '../../../core/utils/tokens';
 import { getExpressionTokenSections } from '../../../core/utils/tokens';
-import { guid } from '@microsoft-logic-apps/utils';
 import type { OutputToken, PanelTab, TokenPickerHandler, ValueSegment } from '@microsoft/designer-ui';
 import {
   ArrayEditor,
@@ -20,6 +19,7 @@ import {
   outputToken,
   outputToken2, // RowDropdownOptions,
 } from '@microsoft/designer-ui';
+import { guid } from '@microsoft/utils-logic-apps';
 
 const testTokenGroup: TokenGroup[] = [
   { id: guid(), label: 'Checks if Blob exists in Azure Storage', tokens: [outputToken, outputToken2] },

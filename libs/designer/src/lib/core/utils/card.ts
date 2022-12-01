@@ -1,5 +1,5 @@
-import type { Connector, OperationManifest } from '@microsoft-logic-apps/utils';
-import { getObjectPropertyValue } from '@microsoft-logic-apps/utils';
+import type { Connector, OperationManifest } from '@microsoft/utils-logic-apps';
+import { getObjectPropertyValue } from '@microsoft/utils-logic-apps';
 
 export function getBrandColorFromManifest(manifest: OperationManifest): string {
   return getObjectPropertyValue(manifest, ['properties', 'brandColor']);

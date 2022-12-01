@@ -1,5 +1,5 @@
-import type { ManagedIdentity } from '@microsoft-logic-apps/utils';
-import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/utils';
+import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
+import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface CallbackInfo {
   method?: string;

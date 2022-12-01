@@ -1,5 +1,5 @@
 import Constants from '../../constants';
-import { hexToRgbA } from '@microsoft-logic-apps/utils';
+import { hexToRgbA } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 export interface SecureDataSectionProps {

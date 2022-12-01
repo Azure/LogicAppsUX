@@ -1,5 +1,5 @@
-import type { OperationManifest } from '@microsoft-logic-apps/utils';
-import { RecurrenceType, SettingScope } from '@microsoft-logic-apps/utils';
+import type { OperationManifest } from '@microsoft/utils-logic-apps';
+import { RecurrenceType, SettingScope } from '@microsoft/utils-logic-apps';
 
 export const frequencyValues = [
   {

@@ -1,7 +1,7 @@
 import { parameterValueToJSONString, parameterValueToString } from '../helper';
-import { ExpressionType } from '@microsoft-logic-apps/parsers';
 import type { ParameterInfo, ValueSegment } from '@microsoft/designer-ui';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+import { ExpressionType } from '@microsoft/parsers-logic-apps';
 
 describe('parameterValueToJSONString', () => {
   it('should parse user typed json containing null, array, numeric, and nested values', () => {

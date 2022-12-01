@@ -1,6 +1,6 @@
-import type { Expression, ExpressionFunction } from '@microsoft-logic-apps/parsers';
-import { isFunction, isStringLiteral } from '@microsoft-logic-apps/parsers';
-import { equals } from '@microsoft-logic-apps/utils';
+import type { Expression, ExpressionFunction } from '@microsoft/parsers-logic-apps';
+import { isFunction, isStringLiteral } from '@microsoft/parsers-logic-apps';
+import { equals } from '@microsoft/utils-logic-apps';
 
 export interface UncastResult {
   expression: Expression;

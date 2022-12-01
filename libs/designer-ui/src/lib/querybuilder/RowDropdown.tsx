@@ -2,7 +2,7 @@ import type { DropdownItem } from '../dropdown';
 import { DropdownEditor } from '../dropdown';
 import { ValueSegmentType } from '../editor';
 import type { ChangeHandler } from '../editor/base';
-import { guid } from '@microsoft-logic-apps/utils';
+import { guid } from '@microsoft/utils-logic-apps';
 
 interface RowDropdownProps {
   condition?: string;

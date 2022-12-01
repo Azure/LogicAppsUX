@@ -1,5 +1,5 @@
-import type { Gateway, Subscription } from '@microsoft-logic-apps/utils';
-import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/utils';
+import type { Gateway, Subscription } from '@microsoft/utils-logic-apps';
+import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface IGatewayService {
   /**

@@ -1,6 +1,6 @@
 import type { CreateConnectionProps } from '.';
 import { CreateConnection } from '.';
-import type { Connector } from '@microsoft-logic-apps/utils';
+import type { Connector } from '@microsoft/utils-logic-apps';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {

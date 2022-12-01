@@ -1,6 +1,6 @@
 import type { DeleteNodeModalProps } from './DeleteNodeModal';
 import { DeleteNodeModal } from './DeleteNodeModal';
-import { WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
+import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {

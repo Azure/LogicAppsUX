@@ -7,7 +7,7 @@ import { serializeAuthentication } from '../util';
 import { css } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
-import { guid } from '@microsoft-logic-apps/utils';
+import { guid } from '@microsoft/utils-logic-apps';
 import type { EditorState } from 'lexical';
 import { $getRoot } from 'lexical';
 import type { Dispatch, SetStateAction } from 'react';

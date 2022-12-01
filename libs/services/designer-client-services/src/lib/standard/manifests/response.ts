@@ -1,5 +1,5 @@
-import { OperationOptions, OutputSecureDataMode, SettingScope } from '@microsoft-logic-apps/utils';
-import type { OperationManifest } from '@microsoft-logic-apps/utils';
+import { OperationOptions, OutputSecureDataMode, SettingScope } from '@microsoft/utils-logic-apps';
+import type { OperationManifest } from '@microsoft/utils-logic-apps';
 
 export default {
   properties: {

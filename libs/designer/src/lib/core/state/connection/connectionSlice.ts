@@ -1,5 +1,5 @@
 import type { ConnectionReferences } from '../../../common/models/workflow';
-import { equals, getUniqueName } from '@microsoft-logic-apps/utils';
+import { equals, getUniqueName } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 

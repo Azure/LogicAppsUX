@@ -25,8 +25,8 @@ import type {
   ConnectionParameterSets,
   Gateway,
   Subscription,
-} from '@microsoft-logic-apps/utils';
-import { ConnectionParameterTypes } from '@microsoft-logic-apps/utils';
+} from '@microsoft/utils-logic-apps';
+import { ConnectionParameterTypes } from '@microsoft/utils-logic-apps';
 import type { FormEvent } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';

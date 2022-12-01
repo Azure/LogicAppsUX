@@ -37,10 +37,11 @@ import type {
   ISearchService,
   IOAuthService,
   IWorkflowService,
-} from '@microsoft-logic-apps/designer-client-services';
-import { WorkflowService, LoggerService, LogEntryLevel, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import { getIntl } from '@microsoft-logic-apps/intl';
-import type { SchemaProperty, InputParameter } from '@microsoft-logic-apps/parsers';
+} from '@microsoft/designer-client-services-logic-apps';
+import { WorkflowService, LoggerService, LogEntryLevel, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
+import { getIntl } from '@microsoft/intl-logic-apps';
+import type { SchemaProperty, InputParameter } from '@microsoft/parsers-logic-apps';
 import {
   isDynamicListExtension,
   isDynamicPropertiesExtension,
@@ -49,10 +50,9 @@ import {
   DynamicSchemaType,
   ManifestParser,
   PropertyName,
-} from '@microsoft-logic-apps/parsers';
-import type { OperationManifest } from '@microsoft-logic-apps/utils';
-import { clone, equals, ConnectionReferenceKeyFormat, unmap } from '@microsoft-logic-apps/utils';
-import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
+} from '@microsoft/parsers-logic-apps';
+import type { OperationManifest } from '@microsoft/utils-logic-apps';
+import { clone, equals, ConnectionReferenceKeyFormat, unmap } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface ServiceOptions {

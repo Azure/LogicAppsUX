@@ -14,8 +14,8 @@ import type {
   IParametersFileContent,
   IWorkflowFileContent,
   Parameter,
-} from '@microsoft-logic-apps/utils';
-import { HTTP_METHODS } from '@microsoft-logic-apps/utils';
+} from '@microsoft/utils-logic-apps';
+import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';

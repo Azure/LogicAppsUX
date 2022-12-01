@@ -19,7 +19,7 @@ import { Security, type SecuritySectionProps } from './sections/security';
 import { Tracking, type TrackingSectionProps } from './sections/tracking';
 import { useValidate } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
-import { equals, isObject } from '@microsoft-logic-apps/utils';
+import { equals, isObject } from '@microsoft/utils-logic-apps';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 

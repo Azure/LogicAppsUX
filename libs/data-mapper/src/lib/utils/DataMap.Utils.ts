@@ -32,7 +32,7 @@ import {
 } from './Function.Utils';
 import { addReactFlowPrefix, addTargetReactFlowPrefix, createReactFlowFunctionKey } from './ReactFlow.Util';
 import { findNodeForKey, flattenSchemaIntoDictionary, isSchemaNodeExtended } from './Schema.Utils';
-import { isAGuid } from '@microsoft-logic-apps/utils';
+import { isAGuid } from '@microsoft/utils-logic-apps';
 import yaml from 'js-yaml';
 
 interface OutputPathItem {

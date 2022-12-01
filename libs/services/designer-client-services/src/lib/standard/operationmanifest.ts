@@ -39,8 +39,8 @@ import {
   initializeManifest,
   setManifest,
 } from './manifests/variables';
-import { ExpressionParser, isFunction, isStringLiteral, isTemplateExpression } from '@microsoft-logic-apps/parsers';
-import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft-logic-apps/parsers';
+import { ExpressionParser, isFunction, isStringLiteral, isTemplateExpression } from '@microsoft/parsers-logic-apps';
+import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/parsers-logic-apps';
 import {
   ArgumentException,
   AssertionErrorCode,
@@ -50,8 +50,8 @@ import {
   equals,
   format,
   UnsupportedException,
-} from '@microsoft-logic-apps/utils';
-import type { OperationInfo, OperationManifest, SplitOn } from '@microsoft-logic-apps/utils';
+} from '@microsoft/utils-logic-apps';
+import type { OperationInfo, OperationManifest, SplitOn } from '@microsoft/utils-logic-apps';
 
 type SchemaObject = OpenAPIV2.SchemaObject;
 

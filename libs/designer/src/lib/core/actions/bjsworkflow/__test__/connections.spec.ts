@@ -6,15 +6,15 @@ import {
 } from '../../../actions/bjsworkflow/connections';
 import type { OperationMetadataState } from '../../../state/operation/operationMetadataSlice';
 import type { RootState } from '../../../store';
-import type { StandardOperationManifestServiceOptions, IHttpClient } from '@microsoft-logic-apps/designer-client-services';
+import type { StandardOperationManifestServiceOptions, IHttpClient } from '@microsoft/designer-client-services-logic-apps';
 import {
   InitOperationManifestService,
   StandardOperationManifestService,
   OperationManifestService,
-} from '@microsoft-logic-apps/designer-client-services';
-import { createItem } from '@microsoft-logic-apps/parsers';
-import type { OperationManifest } from '@microsoft-logic-apps/utils';
-import { ConnectionReferenceKeyFormat } from '@microsoft-logic-apps/utils';
+} from '@microsoft/designer-client-services-logic-apps';
+import { createItem } from '@microsoft/parsers-logic-apps';
+import type { OperationManifest } from '@microsoft/utils-logic-apps';
+import { ConnectionReferenceKeyFormat } from '@microsoft/utils-logic-apps';
 
 class MockHttpClient implements IHttpClient {
   dispose() {

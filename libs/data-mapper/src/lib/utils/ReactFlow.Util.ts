@@ -13,7 +13,7 @@ import { flattenInputs, isConnectionUnit } from './Connection.Utils';
 import { getFunctionBrandingForCategory } from './Function.Utils';
 import { applyElkLayout, convertDataMapNodesToElkGraph } from './Layout.Utils';
 import { isLeafNode } from './Schema.Utils';
-import { guid } from '@microsoft-logic-apps/utils';
+import { guid } from '@microsoft/utils-logic-apps';
 import type { ElkNode } from 'elkjs';
 import { useEffect, useState } from 'react';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';

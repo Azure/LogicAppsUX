@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { isNullOrUndefined } from '@microsoft-logic-apps/utils';
+import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 
 const _separator = '.';
 

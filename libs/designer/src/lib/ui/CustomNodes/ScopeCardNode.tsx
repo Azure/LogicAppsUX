@@ -17,9 +17,9 @@ import {
 import { toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
-import { WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { DeleteNodeModal, MenuItemType, ScopeCard } from '@microsoft/designer-ui';
+import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { memo, useCallback, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';

@@ -17,9 +17,9 @@ import { useSettingValidationErrors } from '../../core/state/setting/settingSele
 import { useIsLeafNode, useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
-import { WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { Card, MenuItemType, DeleteNodeModal } from '@microsoft/designer-ui';
+import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';

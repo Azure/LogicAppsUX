@@ -10,7 +10,7 @@ import type { MoveOption } from './Group';
 import { RowDropdown } from './RowDropdown';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
 import { IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
-import { guid } from '@microsoft-logic-apps/utils';
+import { guid } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 

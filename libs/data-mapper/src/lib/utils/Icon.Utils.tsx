@@ -55,39 +55,32 @@ import {
 
 type iconSize = 16 | 24;
 
-export const iconForNormalizedDataType = (nodeType: NormalizedDataType, size: iconSize, bundled: boolean) => {
-  let convertedType: SchemaNodeDataType = SchemaNodeDataType.AnyAtomicType;
-
-  switch (nodeType) {
+export const getSchemaNodeDataTypeFromNormalizedDataType = (normalizedDataType: NormalizedDataType): SchemaNodeDataType => {
+  switch (normalizedDataType) {
     case NormalizedDataType.Any:
-      break;
     case NormalizedDataType.Binary:
-      convertedType = SchemaNodeDataType.Base64Binary;
-      break;
+      return SchemaNodeDataType.Base64Binary;
     case NormalizedDataType.Boolean:
-      convertedType = SchemaNodeDataType.Boolean;
-      break;
+      return SchemaNodeDataType.Boolean;
     case NormalizedDataType.ComplexType:
-      convertedType = SchemaNodeDataType.None;
-      break;
+      return SchemaNodeDataType.None;
     case NormalizedDataType.DateTime:
-      convertedType = SchemaNodeDataType.DateTime;
-      break;
+      return SchemaNodeDataType.DateTime;
     case NormalizedDataType.Decimal:
-      convertedType = SchemaNodeDataType.Decimal;
-      break;
+      return SchemaNodeDataType.Decimal;
     case NormalizedDataType.Integer:
     case NormalizedDataType.Number:
-      convertedType = SchemaNodeDataType.Integer;
-      break;
+      return SchemaNodeDataType.Integer;
     case NormalizedDataType.String:
-      convertedType = SchemaNodeDataType.String;
-      break;
+      return SchemaNodeDataType.String;
     default:
-      console.error(`Icon.Utils Error: No corresponding SchemaNodeDataType found for NormalizedDataType ${nodeType}`);
+      console.error(`Icon.Utils Error: No corresponding SchemaNodeDataType found for NormalizedDataType ${normalizedDataType}`);
+      return SchemaNodeDataType.AnyAtomicType;
   }
+};
 
-  return iconForSchemaNodeDataType(convertedType, size, bundled);
+export const iconForNormalizedDataType = (nodeType: NormalizedDataType, size: iconSize, bundled: boolean) => {
+  return iconForSchemaNodeDataType(getSchemaNodeDataTypeFromNormalizedDataType(nodeType), size, bundled);
 };
 
 export const iconForSchemaNodeDataType = (

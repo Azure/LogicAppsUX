@@ -1,5 +1,5 @@
 import { Stack } from '@fluentui/react';
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
+import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
 import React from 'react';
 
 export type ConnectorAllOperationsSummaryProps = {

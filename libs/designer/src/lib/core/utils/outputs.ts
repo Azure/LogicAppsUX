@@ -12,9 +12,10 @@ import { getTokenExpressionValueForManifestBasedOperation } from './loops';
 import { getDynamicOutputsFromSchema, getDynamicSchema } from './parameters/dynamicdata';
 import { getAllInputParameters, isDynamicDataReadyToLoad } from './parameters/helper';
 import { convertOutputsToTokens } from './tokens';
-import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import { getIntl } from '@microsoft-logic-apps/intl';
-import type { Expression, ExpressionFunction, ExpressionLiteral, OutputParameter, OutputParameters } from '@microsoft-logic-apps/parsers';
+import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import { generateSchemaFromJsonString, ValueSegmentType } from '@microsoft/designer-ui';
+import { getIntl } from '@microsoft/intl-logic-apps';
+import type { Expression, ExpressionFunction, ExpressionLiteral, OutputParameter, OutputParameters } from '@microsoft/parsers-logic-apps';
 import {
   create,
   OutputKeys,
@@ -23,8 +24,8 @@ import {
   isTemplateExpression,
   isFunction,
   isStringLiteral,
-} from '@microsoft-logic-apps/parsers';
-import type { OperationManifest } from '@microsoft-logic-apps/utils';
+} from '@microsoft/parsers-logic-apps';
+import type { OperationManifest } from '@microsoft/utils-logic-apps';
 import {
   getObjectPropertyValue,
   safeSetObjectPropertyValue,
@@ -33,8 +34,7 @@ import {
   AssertionException,
   clone,
   equals,
-} from '@microsoft-logic-apps/utils';
-import { generateSchemaFromJsonString, ValueSegmentType } from '@microsoft/designer-ui';
+} from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export const toOutputInfo = (output: OutputParameter): OutputInfo => {

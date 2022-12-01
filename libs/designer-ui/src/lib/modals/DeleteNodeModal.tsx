@@ -1,6 +1,6 @@
 import { DefaultButton, Modal, PrimaryButton } from '@fluentui/react';
-import type { WorkflowNodeType } from '@microsoft-logic-apps/utils';
-import { idDisplayCase, WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
+import type { WorkflowNodeType } from '@microsoft/utils-logic-apps';
+import { idDisplayCase, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 export interface DeleteNodeModalProps {

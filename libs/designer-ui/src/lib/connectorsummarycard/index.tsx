@@ -1,6 +1,6 @@
 import { InfoDot } from '../infoDot';
 import { Text, css } from '@fluentui/react';
-import { isBuiltInConnector } from '@microsoft-logic-apps/utils';
+import { isBuiltInConnector } from '@microsoft/utils-logic-apps';
 
 export interface ConnectorSummaryCardProps {
   id: string;

@@ -1,9 +1,9 @@
 import { useAllConnectors, useAllOperations, useTriggerCapabilities } from '../../../core/queries/browse';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { Spinner, SpinnerSize } from '@fluentui/react';
-import type { Connector } from '@microsoft-logic-apps/utils';
-import { isBuiltInConnector } from '@microsoft-logic-apps/utils';
 import { BrowseGrid } from '@microsoft/designer-ui';
+import type { Connector } from '@microsoft/utils-logic-apps';
+import { isBuiltInConnector } from '@microsoft/utils-logic-apps';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';

@@ -1,6 +1,6 @@
 import { InvalidJsonSchemaTypeException } from '../exceptions/invalidjsonschematype';
-import { isTemplateExpression } from '@microsoft-logic-apps/parsers';
-import { createCopy, clone } from '@microsoft-logic-apps/utils';
+import { isTemplateExpression } from '@microsoft/parsers-logic-apps';
+import { createCopy, clone } from '@microsoft/utils-logic-apps';
 
 export const Types = {
   object: 'object',

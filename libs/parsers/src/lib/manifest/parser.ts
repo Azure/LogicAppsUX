@@ -4,8 +4,8 @@ import type { SchemaProcessorOptions } from '../common/schemaprocessor';
 import { SchemaProcessor } from '../common/schemaprocessor';
 import type { InputParameter, OutputParameter } from '../models/operation';
 import { toInputParameter } from '../models/operation';
-import type { OperationManifest } from '@microsoft-logic-apps/utils';
-import { getObjectPropertyValue, map } from '@microsoft-logic-apps/utils';
+import type { OperationManifest } from '@microsoft/utils-logic-apps';
+import { getObjectPropertyValue, map } from '@microsoft/utils-logic-apps';
 
 type SchemaObject = OpenAPIV2.SchemaObject;
 

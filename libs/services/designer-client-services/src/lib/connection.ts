@@ -1,4 +1,4 @@
-import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/utils';
+import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 import type {
   Connector,
   Connection,
@@ -6,7 +6,7 @@ import type {
   ConnectionParameterSet as ParameterSet,
   ConnectionParameterSetValues,
   ConnectionType,
-} from '@microsoft-logic-apps/utils';
+} from '@microsoft/utils-logic-apps';
 
 export interface ConnectorWithSwagger {
   connector: Connector;

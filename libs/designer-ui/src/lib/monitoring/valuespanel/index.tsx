@@ -2,7 +2,7 @@ import Constants from '../../constants';
 import type { BoundParameters } from './types';
 import { ValueLink } from './valuelink';
 import { ValueList } from './valuelist';
-import { hexToRgbA } from '@microsoft-logic-apps/utils';
+import { hexToRgbA } from '@microsoft/utils-logic-apps';
 import React from 'react';
 
 export interface ValuesPanelProps {

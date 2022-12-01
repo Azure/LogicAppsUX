@@ -1,5 +1,5 @@
-import type { Connector, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
-import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/utils';
+import type { Connector, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
+import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface ISearchService {
   search(term: string): Promise<SearchResult>;

@@ -8,7 +8,7 @@ import { getThemedIconPath } from '../../../utils/tree/assets';
 import { getProjectContextValue } from '../../../utils/tree/projectContextValues';
 import type { ConfigurationsTreeItem } from '../ConfigurationsTreeItem';
 import { ConnectionTreeItem } from './ConnectionTreeItem';
-import { ProjectAccess, ProjectResource } from '@microsoft-logic-apps/utils';
+import { ProjectAccess, ProjectResource } from '@microsoft/utils-logic-apps';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, ILoadingTreeContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 

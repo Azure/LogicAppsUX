@@ -4,7 +4,7 @@ import { isTemplateExpression } from '../common/helpers/expression';
 import type { Dereference, Expression, ExpressionFunction, ExpressionStringInterpolation, ExpressionToken } from '../models/expression';
 import { ExpressionType, ExpressionTokenType } from '../models/expression';
 import { ExpressionScanner } from './scanner';
-import { equals } from '@microsoft-logic-apps/utils';
+import { equals } from '@microsoft/utils-logic-apps';
 
 interface TokenToParse {
   tokenType: ExpressionTokenType;

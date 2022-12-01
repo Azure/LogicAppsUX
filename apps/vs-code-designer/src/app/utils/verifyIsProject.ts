@@ -5,7 +5,7 @@
 import { hostFileName } from '../../constants';
 import { localize } from '../../localize';
 import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/settings';
-import { isString } from '@microsoft-logic-apps/utils';
+import { isString } from '@microsoft/utils-logic-apps';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as path from 'path';

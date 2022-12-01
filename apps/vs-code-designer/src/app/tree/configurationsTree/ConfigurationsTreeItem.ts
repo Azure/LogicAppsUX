@@ -8,7 +8,7 @@ import { getProjectContextValue } from '../../utils/tree/projectContextValues';
 import type { SlotTreeItemBase } from '../slotsTree/SlotTreeItemBase';
 import { ConnectionsTreeItem } from './connectionsTree/ConnectionsTreeItem';
 import { ParametersTreeItem } from './parametersTree/ParametersTreeItem';
-import { ProjectAccess, ProjectResource } from '@microsoft-logic-apps/utils';
+import { ProjectAccess, ProjectResource } from '@microsoft/utils-logic-apps';
 import { AppSettingsTreeItem } from '@microsoft/vscode-azext-azureappservice';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
