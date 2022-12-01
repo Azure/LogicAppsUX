@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'microsoft-logic-apps-designer',
+  displayName: '@microsoft/logic-apps-designer',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['./jest.setup.js'],
   transform: {
@@ -29,5 +29,5 @@ export default {
     '@fluentui/react/lib/(.*)$': '@fluentui/react/lib-commonjs/$1',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../coverage/libs/microsoft-logic-apps-designer',
+  coverageDirectory: '../../coverage/libs/designer',
 };

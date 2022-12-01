@@ -19,7 +19,7 @@ import type {
   AzureConnectorDetails,
   WorkflowParameter,
   IWorkflowFileContent,
-} from '@microsoft-logic-apps/utils';
+} from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as os from 'os';

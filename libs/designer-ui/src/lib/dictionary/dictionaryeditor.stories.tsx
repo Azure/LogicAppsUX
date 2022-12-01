@@ -2,7 +2,7 @@ import { ValueSegmentType } from '../editor/models/parameter';
 // import { testTokenSegment } from '../editor/shared/testtokensegment';
 import type { DictionaryEditorProps } from './';
 import { DictionaryEditor } from './';
-import { guid } from '@microsoft-logic-apps/utils';
+import { guid } from '@microsoft/utils-logic-apps';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {

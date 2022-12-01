@@ -7,9 +7,9 @@ import {
   StandardOAuthService,
   StandardOperationManifestService,
   StandardSearchService,
-} from '@microsoft-logic-apps/designer-client-services';
-import { HTTP_METHODS, ResourceIdentityType, Theme } from '@microsoft-logic-apps/utils';
+} from '@microsoft/designer-client-services-logic-apps';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
+import { HTTP_METHODS, ResourceIdentityType, Theme } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 

@@ -5,7 +5,7 @@ import { AuthenticationProperty } from '../AuthenticationProperty';
 import { CertificateAuthentication } from '../CertificateAuth';
 import { AUTHENTICATION_PROPERTIES } from '../util';
 import { AuthenticationOAuthType } from './AADOAuth';
-import { AssertionErrorCode, AssertionException, format } from '@microsoft-logic-apps/utils';
+import { AssertionErrorCode, AssertionException, format } from '@microsoft/utils-logic-apps';
 import type { Dispatch, SetStateAction } from 'react';
 
 interface AadOAuthCredentialsProps {

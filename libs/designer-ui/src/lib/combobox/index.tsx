@@ -13,8 +13,8 @@ import type {
   ITooltipHostStyles,
 } from '@fluentui/react';
 import { Spinner, SpinnerSize, IconButton, TooltipHost, SelectableOptionMenuItemType, ComboBox } from '@fluentui/react';
-import { getIntl } from '@microsoft-logic-apps/intl';
-import { guid } from '@microsoft-logic-apps/utils';
+import { getIntl } from '@microsoft/intl-logic-apps';
+import { guid } from '@microsoft/utils-logic-apps';
 import { useUpdateEffect } from '@react-hookz/web';
 import { useRef, useState, useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';

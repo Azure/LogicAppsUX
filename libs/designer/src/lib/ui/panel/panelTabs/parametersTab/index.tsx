@@ -23,9 +23,9 @@ import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { Spinner, SpinnerSize } from '@fluentui/react';
-import { equals } from '@microsoft-logic-apps/utils';
 import { DynamicCallStatus, TokenPicker, ValueSegmentType } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
+import { equals } from '@microsoft/utils-logic-apps';
 import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 

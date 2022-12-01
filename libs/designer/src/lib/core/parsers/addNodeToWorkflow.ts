@@ -12,8 +12,8 @@ import {
   removeEdge,
   moveRunAfterTarget,
 } from './restructuringHelpers';
-import type { DiscoveryOperation, DiscoveryResultTypes, SubgraphType } from '@microsoft-logic-apps/utils';
-import { SUBGRAPH_TYPES, WORKFLOW_EDGE_TYPES, isScopeOperation, WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
+import type { DiscoveryOperation, DiscoveryResultTypes, SubgraphType } from '@microsoft/utils-logic-apps';
+import { SUBGRAPH_TYPES, WORKFLOW_EDGE_TYPES, isScopeOperation, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 
 export interface AddNodePayload {
   operation: DiscoveryOperation<DiscoveryResultTypes>;

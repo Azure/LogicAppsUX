@@ -1,8 +1,8 @@
 import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import type { Settings } from '../../actions/bjsworkflow/settings';
-import type { InputParameter, OutputParameter } from '@microsoft-logic-apps/parsers';
-import type { OperationInfo } from '@microsoft-logic-apps/utils';
 import type { ParameterInfo } from '@microsoft/designer-ui';
+import type { InputParameter, OutputParameter } from '@microsoft/parsers-logic-apps';
+import type { OperationInfo } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
