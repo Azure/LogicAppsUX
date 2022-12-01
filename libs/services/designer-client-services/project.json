@@ -1,10 +1,11 @@
 {
+  "name": "services-designer-client-services",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/services/designer-client-services/src",
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/web:rollup",
+      "executor": "@nrwl/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/services/designer-client-services",
@@ -46,7 +47,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/services/designer-client-services"],
+      "outputs": ["{workspaceRoot}/coverage/libs/services/designer-client-services"],
       "options": {
         "jestConfig": "libs/services/designer-client-services/jest.config.ts",
         "passWithNoTests": true

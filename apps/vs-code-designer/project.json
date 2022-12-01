@@ -1,10 +1,11 @@
 {
+  "name": "vs-code-designer",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/vs-code-designer/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/node:webpack",
+      "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/vs-code-designer",
@@ -19,7 +20,9 @@
             "output": "node_modules/@microsoft/vscode-azext-azureutils/resources"
           }
         ],
-        "externalDependencies": ["vscode", "commonjs"]
+        "externalDependencies": ["vscode", "commonjs"],
+        "target": "node",
+        "compiler": "tsc"
       },
       "configurations": {
         "production": {
@@ -50,7 +53,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/vs-code-designer"],
+      "outputs": ["{workspaceRoot}/coverage/apps/vs-code-designer"],
       "options": {
         "jestConfig": "apps/vs-code-designer/jest.config.ts",
         "passWithNoTests": true

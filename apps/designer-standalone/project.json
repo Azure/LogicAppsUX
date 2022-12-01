@@ -1,10 +1,11 @@
 {
+  "name": "designer-standalone",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/designer-standalone/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/web:webpack",
+      "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/designer-standalone",
@@ -44,7 +45,7 @@
       "defaultConfiguration": "production"
     },
     "serve": {
-      "executor": "@nrwl/web:dev-server",
+      "executor": "@nrwl/webpack:dev-server",
       "options": {
         "buildTarget": "designer-standalone:build",
         "hmr": true,
@@ -81,7 +82,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/designer-standalone"],
+      "outputs": ["{workspaceRoot}/coverage/apps/designer-standalone"],
       "options": {
         "jestConfig": "apps/designer-standalone/jest.config.ts",
         "passWithNoTests": true

@@ -1,10 +1,11 @@
 {
+  "name": "vs-code-data-mapper-react",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/vs-code-data-mapper-react/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/web:webpack",
+      "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
@@ -44,7 +45,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/web:dev-server",
+      "executor": "@nrwl/webpack:dev-server",
       "options": {
         "buildTarget": "vs-code-data-mapper-react:build",
         "hmr": true
@@ -69,7 +70,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/vs-code-data-mapper-react"],
+      "outputs": ["{workspaceRoot}/coverage/apps/vs-code-data-mapper-react"],
       "options": {
         "jestConfig": "apps/vs-code-data-mapper-react/jest.config.ts",
         "passWithNoTests": true

@@ -1,10 +1,11 @@
 {
+  "name": "vs-code-data-mapper",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/vs-code-data-mapper/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/node:webpack",
+      "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/vs-code-data-mapper",
@@ -15,7 +16,9 @@
           "apps/vs-code-data-mapper/src/package.json",
           "apps/vs-code-data-mapper/src/LICENSE.md"
         ],
-        "externalDependencies": ["vscode", "commonjs"]
+        "externalDependencies": ["vscode", "commonjs"],
+        "target": "node",
+        "compiler": "tsc"
       },
       "configurations": {
         "production": {
@@ -46,7 +49,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/vs-code-data-mapper"],
+      "outputs": ["{workspaceRoot}/coverage/apps/vs-code-data-mapper"],
       "options": {
         "jestConfig": "apps/vs-code-data-mapper/jest.config.ts",
         "passWithNoTests": true

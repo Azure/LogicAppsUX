@@ -1,10 +1,11 @@
 {
+  "name": "parsers",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/parsers/src",
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/web:rollup",
+      "executor": "@nrwl/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/parsers",
@@ -46,7 +47,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/parsers"],
+      "outputs": ["{workspaceRoot}/coverage/libs/parsers"],
       "options": {
         "jestConfig": "libs/parsers/jest.config.ts",
         "passWithNoTests": true

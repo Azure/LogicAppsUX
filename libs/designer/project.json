@@ -1,10 +1,11 @@
 {
+  "name": "designer",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/designer/src",
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/web:rollup",
+      "executor": "@nrwl/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/designer",
@@ -52,7 +53,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/designer"],
+      "outputs": ["{workspaceRoot}/coverage/libs/designer"],
       "options": {
         "jestConfig": "libs/designer/jest.config.ts",
         "passWithNoTests": true

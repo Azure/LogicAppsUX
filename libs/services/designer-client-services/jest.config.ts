@@ -9,7 +9,24 @@ export default {
   },
   transform: {
     '^.+\\.[tj]s$': 'ts-jest',
-    '^.+\\.[tj]sx?$': 'babel-jest',
+    '^.+\\.[tj]sx?$': [
+      'babel-jest',
+      {
+        presets: ['@nrwl/react/babel'],
+        plugins: [
+          [
+            'formatjs',
+            {
+              idInterpolationPattern: '[sha512:contenthash:base64:6]',
+              ast: true,
+            },
+          ],
+        ],
+      },
+    ],
+  },
+  moduleNameMapper: {
+    '@fluentui/react/lib/(.*)$': '@fluentui/react/lib-commonjs/$1',
   },
   moduleFileExtensions: ['ts', 'js', 'tsx', 'jsx', 'html'],
   coverageDirectory: '../../../coverage/libs/services/designer',
