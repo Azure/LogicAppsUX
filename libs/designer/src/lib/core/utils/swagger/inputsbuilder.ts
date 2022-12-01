@@ -2,7 +2,7 @@ import Constants from '../../../common/constants';
 import type { SerializedParameter } from '../../actions/bjsworkflow/serializer';
 import { constructInputValues } from '../../actions/bjsworkflow/serializer';
 import { getAndEscapeSegment, transformInputParameter, updateParameterWithValues } from '../parameters/helper';
-import { getIntl } from '@microsoft/logicappsux/intl';
+import { getIntl } from '@microsoft/intl-logic-apps';
 import type { Expression, ExpressionFunction, InputParameter, Segment } from '@microsoft/logicappsux/parsers';
 import {
   create,

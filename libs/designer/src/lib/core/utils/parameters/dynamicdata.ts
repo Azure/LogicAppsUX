@@ -17,9 +17,9 @@ import {
   tryConvertStringToExpression,
 } from './helper';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+import { getIntl } from '@microsoft/intl-logic-apps';
 import type { ListDynamicValue, ManagedIdentityRequestProperties } from '@microsoft/logicappsux/designer-client-services';
 import { OperationManifestService } from '@microsoft/logicappsux/designer-client-services';
-import { getIntl } from '@microsoft/logicappsux/intl';
 import type {
   DynamicParameters,
   InputParameter,

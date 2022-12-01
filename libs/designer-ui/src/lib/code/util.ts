@@ -1,7 +1,7 @@
 import constants from '../constants';
 import type { Token } from '../editor';
 import { TokenType } from '../editor';
-import { getIntl } from '@microsoft/logicappsux/intl';
+import { getIntl } from '@microsoft/intl-logic-apps';
 import { decodePropertySegment, OutputKeys } from '@microsoft/logicappsux/parsers';
 import { ArgumentException, endsWith, equals, UnsupportedException } from '@microsoft/utils-logic-apps';
 

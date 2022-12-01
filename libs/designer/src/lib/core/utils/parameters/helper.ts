@@ -65,8 +65,8 @@ import {
   ValueSegmentType,
   TokenType,
 } from '@microsoft/designer-ui';
+import { getIntl } from '@microsoft/intl-logic-apps';
 import { WorkflowService } from '@microsoft/logicappsux/designer-client-services';
-import { getIntl } from '@microsoft/logicappsux/intl';
 import type {
   DynamicParameters,
   Expression,

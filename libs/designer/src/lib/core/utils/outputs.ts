@@ -13,8 +13,8 @@ import { getDynamicOutputsFromSchema, getDynamicSchema } from './parameters/dyna
 import { getAllInputParameters, isDynamicDataReadyToLoad } from './parameters/helper';
 import { convertOutputsToTokens } from './tokens';
 import { generateSchemaFromJsonString, ValueSegmentType } from '@microsoft/designer-ui';
+import { getIntl } from '@microsoft/intl-logic-apps';
 import { OperationManifestService } from '@microsoft/logicappsux/designer-client-services';
-import { getIntl } from '@microsoft/logicappsux/intl';
 import type { Expression, ExpressionFunction, ExpressionLiteral, OutputParameter, OutputParameters } from '@microsoft/logicappsux/parsers';
 import {
   create,

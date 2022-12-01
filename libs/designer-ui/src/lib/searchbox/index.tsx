@@ -1,5 +1,5 @@
 import { SearchBox } from '@fluentui/react/lib/SearchBox';
-import { getIntl } from '@microsoft/logicappsux/intl';
+import { getIntl } from '@microsoft/intl-logic-apps';
 
 export interface SearchBoxProps {
   searchCallback: (term: string) => void;

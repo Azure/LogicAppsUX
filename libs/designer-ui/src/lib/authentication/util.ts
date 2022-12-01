@@ -7,7 +7,7 @@ import { ValueSegmentType } from '../editor';
 import { convertStringToSegments } from '../editor/base/utils/editorToSegement';
 import { getChildrenNodes } from '../editor/base/utils/helper';
 import { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
-import { getIntl } from '@microsoft/logicappsux/intl';
+import { getIntl } from '@microsoft/intl-logic-apps';
 import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
 import { guid, equals, ResourceIdentityType } from '@microsoft/utils-logic-apps';
 import { $getRoot } from 'lexical';

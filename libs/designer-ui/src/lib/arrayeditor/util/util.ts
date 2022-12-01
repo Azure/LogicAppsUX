@@ -2,7 +2,7 @@ import type { ComplexArrayItem, ComplexArrayItems, SimpleArrayItem } from '..';
 import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
-import { getIntl } from '@microsoft/logicappsux/intl';
+import { getIntl } from '@microsoft/intl-logic-apps';
 import { guid } from '@microsoft/utils-logic-apps';
 
 export const getOneDimensionalSchema = (itemSchema: any): any[] => {

@@ -13,7 +13,7 @@ import { LogEntryLevel } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
 import { azureFunctionConnectorId } from './operationmanifest';
-import { getIntl } from '@microsoft/logicappsux/intl';
+import { getIntl } from '@microsoft/intl-logic-apps';
 import type { Connection, ConnectionParameter, Connector, ManagedIdentity } from '@microsoft/utils-logic-apps';
 import {
   getUniqueName,

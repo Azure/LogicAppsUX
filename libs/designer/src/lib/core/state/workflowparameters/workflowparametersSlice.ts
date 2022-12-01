@@ -4,7 +4,7 @@ import { convertWorkflowParameterTypeToSwaggerType } from '../../utils/tokens';
 import { validateType } from '../../utils/validation';
 import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/logicappsux/intl';
+import { getIntl } from '@microsoft/intl-logic-apps';
 import { equals, guid } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';

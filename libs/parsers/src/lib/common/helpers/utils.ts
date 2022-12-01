@@ -3,7 +3,7 @@ import { DynamicSchemaType, DynamicValuesType } from '../../models/operation';
 import * as Constants from '../constants';
 import { OutputKeys } from '../constants';
 import { parseEx } from './keysutility';
-import { getIntl } from '@microsoft/logicappsux/intl';
+import { getIntl } from '@microsoft/intl-logic-apps';
 import { equals, isNullOrUndefined } from '@microsoft/utils-logic-apps';
 
 type SchemaObject = OpenAPIV2.SchemaObject;

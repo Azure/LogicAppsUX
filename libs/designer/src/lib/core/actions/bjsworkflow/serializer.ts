@@ -18,8 +18,8 @@ import { buildOperationDetailsFromControls } from '../../utils/swagger/inputsbui
 import type { Settings } from './settings';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
+import { getIntl } from '@microsoft/intl-logic-apps';
 import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft/logicappsux/designer-client-services';
-import { getIntl } from '@microsoft/logicappsux/intl';
 import type { Segment } from '@microsoft/logicappsux/parsers';
 import { create, removeConnectionPrefix, cleanIndexedValue, isAncestorKey, parseEx, SegmentType } from '@microsoft/logicappsux/parsers';
 import type { OperationManifest, SubGraphDetail } from '@microsoft/utils-logic-apps';

@@ -8,7 +8,7 @@ import { ThemeProvider } from '@fluentui/react';
 import type { Theme } from '@fluentui/react-components';
 import { FluentProvider, themeToTokensObject, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { AppInsightsContext } from '@microsoft/applicationinsights-react-js';
-import { IntlProvider } from '@microsoft/logicappsux/intl';
+import { IntlProvider } from '@microsoft/intl-logic-apps';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 

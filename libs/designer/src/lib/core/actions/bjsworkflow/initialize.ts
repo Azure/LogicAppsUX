@@ -32,6 +32,7 @@ import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../..
 import type { NodeInputsWithDependencies, NodeOutputsWithDependencies } from './operationdeserializer';
 import type { Settings } from './settings';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
+import { getIntl } from '@microsoft/intl-logic-apps';
 import type {
   IConnectionService,
   IOperationManifestService,
@@ -40,7 +41,6 @@ import type {
   IWorkflowService,
 } from '@microsoft/logicappsux/designer-client-services';
 import { WorkflowService, LoggerService, LogEntryLevel, OperationManifestService } from '@microsoft/logicappsux/designer-client-services';
-import { getIntl } from '@microsoft/logicappsux/intl';
 import type { SchemaProperty, InputParameter } from '@microsoft/logicappsux/parsers';
 import {
   isDynamicListExtension,

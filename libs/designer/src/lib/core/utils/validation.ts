@@ -1,5 +1,5 @@
 import Constants from '../../common/constants';
-import { getIntl } from '@microsoft/logicappsux/intl';
+import { getIntl } from '@microsoft/intl-logic-apps';
 import type { Expression, ExpressionLiteral } from '@microsoft/logicappsux/parsers';
 import {
   ExpressionParser,

@@ -6,7 +6,7 @@ import { SchemaProcessor } from '../common/schemaprocessor';
 import type { InputParameter, InputParameters } from '../models/operation';
 import { toInputParameter } from '../models/operation';
 import type { KeyProjectionOptions } from './parser';
-import { getIntl } from '@microsoft/logicappsux/intl';
+import { getIntl } from '@microsoft/intl-logic-apps';
 import { aggregate, equals, includes, map } from '@microsoft/utils-logic-apps';
 
 export interface ParametersProcessorOptions {
