@@ -101,3 +101,7 @@ export const calculateIndexValue = (currentNode: SchemaNodeExtended): string => 
 
   return result;
 };
+
+export const formatDirectAccess = (indexValue: string, scope: string, destination: string) => {
+  return destination.replace(scope, `${scope}[${indexValue}]`);
+};

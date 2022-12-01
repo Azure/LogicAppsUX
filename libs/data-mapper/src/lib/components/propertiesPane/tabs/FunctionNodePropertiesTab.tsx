@@ -3,10 +3,12 @@ import { updateConnectionInput } from '../../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
 import type { Connection, InputConnection } from '../../../models/Connection';
 import type { FunctionData } from '../../../models/Function';
-import { indexPseudoFunctionKey } from '../../../models/Function';
+import { directAccessPseudoFunctionKey, indexPseudoFunctionKey } from '../../../models/Function';
 import { isConnectionUnit, isCustomValue } from '../../../utils/Connection.Utils';
+import { getInputValues } from '../../../utils/DataMap.Utils';
 import {
   calculateIndexValue,
+  formatDirectAccess,
   functionInputHasInputs,
   getFunctionBrandingForCategory,
   getFunctionOutputValue,
@@ -165,17 +167,28 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
 
     setInputValueArrays(newInputValueArrays);
 
-    const indexFunctionSourceNode =
-      functionData.key === indexPseudoFunctionKey &&
-      connection &&
-      connection.inputs[0][0] &&
-      isConnectionUnit(connection.inputs[0][0]) &&
-      isSchemaNodeExtended(connection.inputs[0][0].node) &&
-      connection.inputs[0][0].node;
+    let newOutputValue: string;
+    if (functionData.key === indexPseudoFunctionKey) {
+      const indexFunctionSourceNode =
+        connection &&
+        connection.inputs[0][0] &&
+        isConnectionUnit(connection.inputs[0][0]) &&
+        isSchemaNodeExtended(connection.inputs[0][0].node) &&
+        connection.inputs[0][0].node;
 
-    const newOutputValue = indexFunctionSourceNode
-      ? calculateIndexValue(indexFunctionSourceNode)
-      : getFunctionOutputValue(newInputNameArrays, functionData.functionName);
+      newOutputValue = indexFunctionSourceNode
+        ? calculateIndexValue(indexFunctionSourceNode)
+        : getFunctionOutputValue(newInputNameArrays, functionData.functionName);
+    } else if (functionData.key === directAccessPseudoFunctionKey) {
+      const functionValues = getInputValues(connection, connectionDictionary);
+      newOutputValue =
+        functionValues.length === 3
+          ? formatDirectAccess(functionValues[0], functionValues[1], functionValues[2])
+          : getFunctionOutputValue(newInputNameArrays, functionData.functionName);
+    } else {
+      newOutputValue = getFunctionOutputValue(newInputNameArrays, functionData.functionName);
+    }
+
     setOutputValue(newOutputValue);
   }, [functionData, connection, connectionDictionary]);
 
