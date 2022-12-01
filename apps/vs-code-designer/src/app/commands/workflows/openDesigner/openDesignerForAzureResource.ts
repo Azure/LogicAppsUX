@@ -77,6 +77,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
             panelMetadata: this.panelMetadata,
             connectionReferences: this.connectionReferences,
             baseUrl: this.baseUrl,
+            apiVersion: this.apiVersion,
             apiHubServiceDetails: this.apiHubServiceDetails,
             readOnly: true,
             isLocal: false,

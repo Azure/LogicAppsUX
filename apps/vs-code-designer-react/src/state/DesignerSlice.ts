@@ -8,6 +8,7 @@ export interface designerState {
   panelMetaData: IDesignerPanelMetadata | null;
   connectionReferences: ConnectionReferences;
   baseUrl: string;
+  apiVersion: string;
   apiHubServiceDetails: IApiHubServiceDetails;
   readOnly: boolean;
   isLocal: boolean;
@@ -17,6 +18,7 @@ export interface designerState {
 const initialState: designerState = {
   panelMetaData: null,
   baseUrl: '/url',
+  apiVersion: '',
   connectionReferences: {},
   apiHubServiceDetails: {
     apiVersion: '2018-07-01-preview',
@@ -38,11 +40,12 @@ export const designerSlice = createSlice({
   initialState,
   reducers: {
     initializeDesigner: (state, action: PayloadAction<any>) => {
-      const { panelMetadata, connectionReferences, baseUrl, apiHubServiceDetails, readOnly, isLocal } = action.payload;
+      const { panelMetadata, connectionReferences, baseUrl, apiVersion, apiHubServiceDetails, readOnly, isLocal } = action.payload;
 
       state.panelMetaData = panelMetadata;
       state.connectionReferences = connectionReferences;
       state.baseUrl = baseUrl;
+      state.apiVersion = apiVersion;
       state.apiHubServiceDetails = apiHubServiceDetails;
       state.readOnly = readOnly;
       state.isLocal = isLocal;

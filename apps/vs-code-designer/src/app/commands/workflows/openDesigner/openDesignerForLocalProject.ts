@@ -109,6 +109,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             panelMetadata: this.panelMetadata,
             connectionReferences: this.connectionReferences,
             baseUrl: this.baseUrl,
+            apiVersion: this.apiVersion,
             apiHubServiceDetails: this.apiHubServiceDetails,
             readOnly: false,
             isLocal: true,

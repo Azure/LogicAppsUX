@@ -13,6 +13,7 @@ import type { WebviewApi } from 'vscode-webview';
 
 export const getDesignerServices = (
   baseUrl: string,
+  apiVersion: string,
   httpClient: HttpClient,
   apiHubServiceDetails: IApiHubServiceDetails,
   isLocal: boolean,
@@ -20,7 +21,7 @@ export const getDesignerServices = (
 ): any => {
   const connectionService = new StandardConnectionService({
     baseUrl,
-    apiVersion: '2018-11-01',
+    apiVersion,
     httpClient,
     apiHubServiceDetails,
     workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
@@ -28,7 +29,7 @@ export const getDesignerServices = (
   });
 
   const connectorService = new StandardConnectorService({
-    apiVersion: '2018-11-01',
+    apiVersion,
     baseUrl,
     httpClient,
     apiHubServiceDetails,
@@ -91,14 +92,14 @@ export const getDesignerServices = (
   });
 
   const operationManifestService = new StandardOperationManifestService({
-    apiVersion: '2018-11-01',
+    apiVersion,
     baseUrl,
     httpClient,
   });
 
   const searchService = new StandardSearchService({
     baseUrl,
-    apiVersion: '2018-11-01',
+    apiVersion,
     httpClient,
     apiHubServiceDetails,
     isDev: true,
@@ -106,7 +107,7 @@ export const getDesignerServices = (
 
   const oAuthService = new StandardOAuthService({
     baseUrl,
-    apiVersion: '2018-11-01',
+    apiVersion,
     httpClient,
     subscriptionId: '',
     resourceGroup: '',

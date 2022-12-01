@@ -12,7 +12,7 @@ const httpClient = new HttpClient();
 
 export const App = () => {
   const vscodeState = useSelector((state: RootState) => state.designer);
-  const { panelMetaData, connectionReferences, baseUrl, apiHubServiceDetails, readOnly, isLocal } = vscodeState;
+  const { panelMetaData, connectionReferences, baseUrl, apiHubServiceDetails, readOnly, isLocal, callbackInfo, apiVersion } = vscodeState;
   const codelessApp = panelMetaData?.codelessApp;
   const vscode = useContext(VSCodeContext);
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
@@ -22,8 +22,8 @@ export const App = () => {
   });
 
   const services = useMemo(() => {
-    return getDesignerServices(baseUrl, httpClient, apiHubServiceDetails, isLocal, vscode);
-  }, [baseUrl, apiHubServiceDetails, isLocal, vscode]);
+    return getDesignerServices(baseUrl, apiVersion, httpClient, apiHubServiceDetails, isLocal, vscode);
+  }, [baseUrl, apiVersion, apiHubServiceDetails, isLocal, vscode, callbackInfo]);
 
   return (
     <DesignerProvider
