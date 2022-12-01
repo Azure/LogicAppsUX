@@ -104,7 +104,7 @@ export default class DataMapperExt {
     });
   }
 
-  public static addSchemaFromFile(filePath: string, schemaType: 'source' | 'target') {
+  public static addSchemaFromFile(filePath: string, schemaType: SchemaType) {
     callWithTelemetryAndErrorHandlingSync('azureDataMapper.addSchemaFromFile', (_context: IActionContext) => {
       fs.readFile(filePath, 'utf8').then((text: string) => {
         const primarySchemaFileName = path.basename(filePath); // Ex: inpSchema.xsd

@@ -7,7 +7,7 @@ import {
   changeXsltFilename,
 } from './state/DataMapDataLoader';
 import type { AppDispatch } from './state/Store';
-import type { MessageToWebview } from '@microsoft/logic-apps-data-mapper';
+import { MessageToWebview, SchemaType } from '@microsoft/logic-apps-data-mapper';
 import React, { createContext } from 'react';
 import { useDispatch } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';
@@ -33,7 +33,7 @@ export const WebViewMsgHandler = ({ children }: WebViewMsgHandlerProps) => {
         dispatch(changeRuntimePort(msg.data));
         break;
       case 'fetchSchema':
-        if (msg.data.type === 'source') {
+        if (msg.data.type === SchemaType.Source) {
           dispatch(changeSourceSchemaFilename(msg.data.fileName));
         } else {
           dispatch(changeTargetSchemaFilename(msg.data.fileName));

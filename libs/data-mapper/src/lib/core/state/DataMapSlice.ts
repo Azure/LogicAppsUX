@@ -621,7 +621,7 @@ export const deleteConnectionFromConnections = (connections: ConnectionDictionar
 
 export const deleteParentRepeatingConnections = (connections: ConnectionDictionary, inputKey: string /* contains prefix */) => {
   const parentId = getParentId(inputKey);
-  if (parentId.endsWith('source-')) {
+  if (parentId.endsWith(SchemaType.Source + '-')) {
     return;
   }
 
@@ -737,9 +737,7 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
       getDestinationIdFromReactFlowConnectionId(reactFlowKey)
     );
     const tempConn = connections[getSourceIdFromReactFlowConnectionId(reactFlowKey)];
-    console.log(JSON.stringify(tempConn));
     const id = getConnectedSourceSchemaNodes([tempConn], connections);
-    console.log('initial node: ' + id[0].key);
     deleteParentRepeatingConnections(connections, 'source-' + id[0].key);
 
     curDataMapState.notificationData = {
