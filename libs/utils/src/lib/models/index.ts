@@ -9,3 +9,4 @@ export * from './workflowNode';
 export * from './vscodeExtension';
 export * from './gateway';
 export * from './subscription';
+export * from './theme';
