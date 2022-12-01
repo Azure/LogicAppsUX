@@ -180,11 +180,6 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const [isChevronHovered, setIsChevronHovered] = useState<boolean>(false);
   const [isTooltipEnabled, setIsTooltipEnabled] = useState<boolean>(false);
 
-  const deleteNode = intl.formatMessage({
-    defaultMessage: 'Delete',
-    description: 'Remove item from canvas',
-  });
-
   const isNodeConnected = useMemo(
     () =>
       connections[reactFlowId] &&
@@ -244,32 +239,24 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const ChevronIcon = bundleIcon(ChevronRight16Filled, ChevronRight16Regular);
   const BundledTypeIcon = iconForSchemaNodeDataType(schemaNode.schemaNodeDataType, 24, false, schemaNode.nodeProperties);
   const contextMenu = useCardContextMenu();
-  const getDeleteMenuItem = (): MenuItemOption => {
-    const deleteDescription = intl.formatMessage({
-      defaultMessage: 'Delete',
-      description: 'Delete text',
-    });
-
-    const disableTriggerDeleteText = intl.formatMessage({
-      defaultMessage: 'Triggers cannot be deleted.',
-      description: 'Text to explain that triggers cannot be deleted',
+  const getRemoveMenuItem = (): MenuItemOption => {
+    const deleteNode = intl.formatMessage({
+      defaultMessage: 'Remove',
+      description: 'Remove card from canvas',
     });
 
     return {
-      key: deleteDescription,
+      key: deleteNode,
       disabled: false,
-      disabledReason: disableTriggerDeleteText,
       iconName: 'Delete',
-      title: deleteDescription,
+      title: deleteNode,
       type: MenuItemType.Advanced,
       onClick: handleDeleteClick,
     };
   };
 
   const handleDeleteClick = () => {
-    if (isSourceSchemaNode) {
-      dispatch(removeSourceSchemaNodes([schemaNode]));
-    }
+    dispatch(removeSourceSchemaNodes([schemaNode]));
   };
 
   return (
@@ -277,6 +264,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
       {isNBadgeRequired && !isSourceSchemaNode && <NBadge isOutput />}
 
       <div
+        onContextMenu={isSourceSchemaNode ? contextMenu.handle : undefined}
         className={containerStyle}
         style={isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId ? selectedCardStyles : undefined}
         onMouseLeave={() => setIsCardHovered(false)}
@@ -323,9 +311,9 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
         )}
         {isSourceSchemaNode && (
           <CardContextMenu
-            title={deleteNode}
+            title={'remove'}
             contextMenuLocation={contextMenu.location}
-            contextMenuOptions={[getDeleteMenuItem()]}
+            contextMenuOptions={[getRemoveMenuItem()]}
             showContextMenu={contextMenu.isShowing}
             onSetShowContextMenu={contextMenu.setIsShowing}
           />
