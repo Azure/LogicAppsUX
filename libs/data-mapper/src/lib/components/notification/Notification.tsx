@@ -12,6 +12,7 @@ export enum NotificationTypes {
   SourceNodeRemoved = 'sourceNodeRemoved',
   SourceNodeRemoveFailed = 'sourceNodeRemoveFailed',
   TargetNodeCannotDelete = 'targetNodeCannotDelete',
+  RepeatingConnectionCannotDelete = 'repeatingConnectionCannotDelete',
   FunctionNodeDeleted = 'functionNodeDeleted',
   ConnectionDeleted = 'connectionDeleted',
   ArrayConnectionAdded = 'arrayConnectionAdded',
@@ -73,6 +74,7 @@ export const Notification = (props: NotificationProps) => {
     switch (type) {
       // Error icon
       case NotificationTypes.SaveFailed:
+      case NotificationTypes.RepeatingConnectionCannotDelete:
       case NotificationTypes.SourceNodeRemoveFailed:
       case NotificationTypes.CircularLogicError:
       case NotificationTypes.TargetNodeCannotDelete:
@@ -113,6 +115,13 @@ export const Notification = (props: NotificationProps) => {
         {
           nodeName: msgParam ?? '',
         }
+      ),
+      [NotificationTypes.RepeatingConnectionCannotDelete]: intl.formatMessage(
+        {
+          defaultMessage: 'Remove all mappings within source element `{nodeName}‘ first.',
+          description: 'Message informing that mapping to child elements need to be deleted prior to selected one.',
+        },
+        { nodeName: msgParam ?? '' }
       ),
       [NotificationTypes.TargetNodeCannotDelete]: intl.formatMessage({
         defaultMessage: `Target schema element cannot be deleted.`,
