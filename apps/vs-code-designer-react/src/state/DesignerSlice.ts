@@ -9,6 +9,7 @@ export interface designerState {
   connectionReferences: ConnectionReferences;
   baseUrl: string;
   apiHubServiceDetails: IApiHubServiceDetails;
+  readOnly: boolean;
 }
 
 const initialState: designerState = {
@@ -22,6 +23,7 @@ const initialState: designerState = {
     resourceGroup: '',
     location: '',
   },
+  readOnly: true,
 };
 
 export const designerSlice = createSlice({

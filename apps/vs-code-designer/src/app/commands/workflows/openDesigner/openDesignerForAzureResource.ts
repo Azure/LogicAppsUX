@@ -1,6 +1,5 @@
 import { workflowAppApiVersion } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
-import { localize } from '../../../../localize';
 import type { RemoteWorkflowTreeItem } from '../../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import {
   removeWebviewPanelFromCache,
@@ -91,10 +90,6 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
         });
         break;
       }
-      case 'ShowError': {
-        await vscode.window.showErrorMessage(msg.errorMessage, localize('OK', 'OK'));
-        break;
-      }
       case 'GetConnectionConfiguration': {
         const connectionId = msg.connectionId;
         const configuration = await this.node.getConnectionConfiguration(connectionId);
@@ -113,6 +108,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
             connectionReferences: this.connectionReferences,
             baseUrl: this.baseUrl,
             apiHubServiceDetails: this.apiHubServiceDetails,
+            readOnly: true,
           },
         });
         break;

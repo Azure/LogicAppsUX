@@ -17,7 +17,7 @@ const httpClient = new HttpClient();
 
 export const App = () => {
   const vscodeState = useSelector((state: RootState) => state.designer);
-  const { panelMetaData, connectionReferences, baseUrl, apiHubServiceDetails } = vscodeState;
+  const { panelMetaData, connectionReferences, baseUrl, apiHubServiceDetails, readOnly } = vscodeState;
   const codelessApp = panelMetaData?.codelessApp;
 
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
@@ -74,6 +74,7 @@ export const App = () => {
       locale="en-US"
       options={{
         isDarkMode: theme === Theme.Dark,
+        readOnly,
         services: {
           connectionService,
           operationManifestService,

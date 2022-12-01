@@ -110,6 +110,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             connectionReferences: this.connectionReferences,
             baseUrl: this.baseUrl,
             apiHubServiceDetails: this.apiHubServiceDetails,
+            readOnly: false,
           },
         });
         break;
