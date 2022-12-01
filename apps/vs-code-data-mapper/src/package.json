@@ -11,10 +11,6 @@
   "contributes": {
     "commands": [
       {
-        "command": "azureDataMapper.openDataMapper",
-        "title": "Open Data Mapper"
-      },
-      {
         "command": "azureDataMapper.createNewDataMap",
         "title": "Create new data map",
         "icon": "$(add)"
@@ -72,7 +68,6 @@
     "ms-vscode.azure-account"
   ],
   "activationEvents": [
-    "onCommand:azureDataMapper.openDataMapper",
     "workspaceContains:host.json",
     "workspaceContains:**/.xsd",
     "workspaceContains:**/.xslt",
