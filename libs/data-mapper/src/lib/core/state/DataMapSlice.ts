@@ -639,7 +639,6 @@ export const deleteParentRepeatingConnections = (connections: ConnectionDictiona
     const hasAnyChildRepeatingConnections = allConnectionIds.some((id) => {
       const hasChildConnection = id.includes(parentId) && id !== parentId;
       const possibleTargetOutput = getConnectedTargetSchemaNodes([connections[id]], connections);
-      //const hasOutputs = connections[id].outputs.some(output => output.reactFlowKey.includes("target")) // danielle logic needs to be has specific output eventually
       const hasOutputThatReachesTarget = possibleTargetOutput.length !== 0;
       return hasChildConnection && hasOutputThatReachesTarget;
     });
@@ -737,7 +736,6 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
       getSourceIdFromReactFlowConnectionId(reactFlowKey),
       getDestinationIdFromReactFlowConnectionId(reactFlowKey)
     );
-    // danielle get the souce NODE ID
     const tempConn = connections[getSourceIdFromReactFlowConnectionId(reactFlowKey)];
     console.log(JSON.stringify(tempConn));
     const id = getConnectedSourceSchemaNodes([tempConn], connections);
