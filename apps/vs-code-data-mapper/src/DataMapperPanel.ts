@@ -47,7 +47,7 @@ export default class DataMapperPanel {
 
     this.panel.onDidDispose(
       () => {
-        DataMapperExt.currentPanel = undefined;
+        delete DataMapperExt.panelManagers[this.dataMapName];
         schemaFolderWatcher.dispose();
       },
       null,
