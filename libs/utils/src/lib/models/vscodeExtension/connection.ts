@@ -49,3 +49,14 @@ export interface ConnectionAndSettings {
   connections: ConnectionsData;
   settings: Record<string, string>;
 }
+
+export enum StorageOptions {
+  AzureStorage = 'Azure Storage',
+  SQL = 'SQL',
+}
+
+export interface IConnectionsFileContent {
+  name: string;
+  content: ConnectionReferenceModel | FunctionConnectionModel | ServiceProviderConnectionModel;
+  isManaged: boolean;
+}

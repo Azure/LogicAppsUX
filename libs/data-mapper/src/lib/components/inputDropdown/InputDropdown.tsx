@@ -290,7 +290,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
       const inputs = connectionDictionary[key].inputs[0];
       const sourceNode = inputs && inputs[0];
       const nodeName =
-        isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node)
+        node.key === indexPseudoFunctionKey && isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node)
           ? calculateIndexValue(sourceNode.node)
           : getFunctionOutputValue(fnInputValues, node.functionName);
 
