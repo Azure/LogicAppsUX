@@ -4,7 +4,21 @@ export default {
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['./jest.setup.js'],
   transform: {
-    '^.+\\.[tj]sx?$': 'babel-jest',
+    '^.+\\.[tj]sx?$': [
+      'babel-jest',
+      {
+        presets: ['@nrwl/react/babel'],
+        plugins: [
+          [
+            'formatjs',
+            {
+              idInterpolationPattern: '[sha512:contenthash:base64:6]',
+              ast: true,
+            },
+          ],
+        ],
+      },
+    ],
     '^.+\\.svg$': '../../__mocks__/svgTransform.js',
   },
   moduleNameMapper: {
