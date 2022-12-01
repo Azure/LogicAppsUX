@@ -1,8 +1,8 @@
 import type { ConnectionReference } from '../../../common/models/workflow';
 import type { RootState } from '../../store';
 import { useOperationManifest, useOperationInfo } from '../selectors/actionMetadataSelector';
-import { ConnectionService, GatewayService } from '@microsoft-logic-apps/designer-client-services';
-import type { Connector } from '@microsoft-logic-apps/utils';
+import { ConnectionService, GatewayService } from '@@microsoft/logicappsux/designer-client-services';
+import type { Connector } from '@microsoft/utils-logic-apps';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 

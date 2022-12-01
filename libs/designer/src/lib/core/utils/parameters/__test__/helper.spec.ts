@@ -1,5 +1,5 @@
 import { parameterValueToJSONString, parameterValueToString } from '../helper';
-import { ExpressionType } from '@microsoft-logic-apps/parsers';
+import { ExpressionType } from '@@microsoft/logicappsux/parsers';
 import type { ParameterInfo, ValueSegment } from '@microsoft/designer-ui';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 

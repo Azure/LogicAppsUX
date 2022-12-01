@@ -2,8 +2,8 @@ import type { ComplexArrayItem, ComplexArrayItems, SimpleArrayItem } from '..';
 import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
-import { getIntl } from '@microsoft-logic-apps/intl';
-import { guid } from '@microsoft-logic-apps/utils';
+import { getIntl } from '@@microsoft/logicappsux/intl';
+import { guid } from '@microsoft/utils-logic-apps';
 
 export const getOneDimensionalSchema = (itemSchema: any): any[] => {
   const flattenedSchema = flattenObject(itemSchema);

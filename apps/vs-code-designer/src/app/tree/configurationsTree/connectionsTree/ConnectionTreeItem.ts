@@ -5,13 +5,13 @@
 import { getIconPath } from '../../../utils/tree/assets';
 import { getProjectContextValue } from '../../../utils/tree/projectContextValues';
 import type { ConnectionsTreeItem } from './ConnectionsTreeItem';
-import { ProjectResource } from '@microsoft-logic-apps/utils';
+import { ProjectResource } from '@microsoft/utils-logic-apps';
 import type {
   ConnectionReferenceModel,
   FunctionConnectionModel,
   IConnectionsFileContent,
   ServiceProviderConnectionModel,
-} from '@microsoft-logic-apps/utils';
+} from '@microsoft/utils-logic-apps';
 import type { TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import { AzExtTreeItem } from '@microsoft/vscode-azext-utils';
 

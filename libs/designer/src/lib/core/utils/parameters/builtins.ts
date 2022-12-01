@@ -1,10 +1,10 @@
 import { loadParameterValuesFromDefault, toParameterInfoMap } from './helper';
-import { frequencyValues } from '@microsoft-logic-apps/designer-client-services';
-import { getIntl } from '@microsoft-logic-apps/intl';
-import { OutputMapKey, parseEx, SchemaProcessor, toInputParameter } from '@microsoft-logic-apps/parsers';
-import type { RecurrenceSetting } from '@microsoft-logic-apps/utils';
-import { getObjectPropertyValue, map, RecurrenceType } from '@microsoft-logic-apps/utils';
+import { frequencyValues } from '@@microsoft/logicappsux/designer-client-services';
+import { getIntl } from '@@microsoft/logicappsux/intl';
+import { OutputMapKey, parseEx, SchemaProcessor, toInputParameter } from '@@microsoft/logicappsux/parsers';
 import type { ParameterInfo } from '@microsoft/designer-ui';
+import type { RecurrenceSetting } from '@microsoft/utils-logic-apps';
+import { getObjectPropertyValue, map, RecurrenceType } from '@microsoft/utils-logic-apps';
 
 const intl = getIntl();
 

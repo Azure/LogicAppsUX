@@ -1,5 +1,5 @@
-import type { LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft-logic-apps/parsers';
-import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/utils';
+import type { LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@@microsoft/logicappsux/parsers';
+import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface ListDynamicValue {
   value: any;

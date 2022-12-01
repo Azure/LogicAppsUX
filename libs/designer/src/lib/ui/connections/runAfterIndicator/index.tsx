@@ -1,6 +1,6 @@
 import { Text, TooltipHost, useTheme } from '@fluentui/react';
-import { idDisplayCase, RUN_AFTER_COLORS, RUN_AFTER_STATUS } from '@microsoft-logic-apps/utils';
 import { EmptyTrafficLightDot, Failed, Skipped, Succeeded, TimedOut, TrafficLightDot } from '@microsoft/designer-ui';
+import { idDisplayCase, RUN_AFTER_COLORS, RUN_AFTER_STATUS } from '@microsoft/utils-logic-apps';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 

@@ -2,8 +2,9 @@ import Constants from '../../../common/constants';
 import type { NodeOperation, NodeOutputs } from '../../state/operation/operationMetadataSlice';
 import { getSplitOnOptions } from '../../utils/outputs';
 import { getTokenExpressionValue } from '../../utils/parameters/helper';
-import type { SwaggerParser } from '@microsoft-logic-apps/parsers';
-import { convertToStringLiteral, getSplitOnArrayAliasMetadata } from '@microsoft-logic-apps/parsers';
+import type { SwaggerParser } from '@@microsoft/logicappsux/parsers';
+import { convertToStringLiteral, getSplitOnArrayAliasMetadata } from '@@microsoft/logicappsux/parsers';
+import { TokenType } from '@microsoft/designer-ui';
 import type {
   DownloadChunkMetadata,
   OperationManifest,
@@ -11,7 +12,7 @@ import type {
   OperationManifestSettings,
   SecureDataOptions,
   UploadChunkMetadata,
-} from '@microsoft-logic-apps/utils';
+} from '@microsoft/utils-logic-apps';
 import {
   equals,
   getObjectPropertyValue,
@@ -20,8 +21,7 @@ import {
   SettingScope,
   ValidationErrorCode,
   ValidationException,
-} from '@microsoft-logic-apps/utils';
-import { TokenType } from '@microsoft/designer-ui';
+} from '@microsoft/utils-logic-apps';
 
 type OperationManifestSettingType = UploadChunkMetadata | DownloadChunkMetadata | SecureDataOptions | OperationOptions[] | void;
 

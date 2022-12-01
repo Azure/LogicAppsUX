@@ -2,8 +2,8 @@ import Constants from '../../../common/constants';
 import type { SerializedParameter } from '../../actions/bjsworkflow/serializer';
 import { constructInputValues } from '../../actions/bjsworkflow/serializer';
 import { getAndEscapeSegment, transformInputParameter, updateParameterWithValues } from '../parameters/helper';
-import { getIntl } from '@microsoft-logic-apps/intl';
-import type { Expression, ExpressionFunction, InputParameter, Segment } from '@microsoft-logic-apps/parsers';
+import { getIntl } from '@@microsoft/logicappsux/intl';
+import type { Expression, ExpressionFunction, InputParameter, Segment } from '@@microsoft/logicappsux/parsers';
 import {
   create,
   ExpressionBuilder,
@@ -16,7 +16,7 @@ import {
   ParameterLocations,
   parseEx,
   PropertyName,
-} from '@microsoft-logic-apps/parsers';
+} from '@@microsoft/logicappsux/parsers';
 import {
   AssertionErrorCode,
   AssertionException,
@@ -29,7 +29,7 @@ import {
   parsePathnameAndQueryKeyFromUri,
   startsWith,
   UnsupportedException,
-} from '@microsoft-logic-apps/utils';
+} from '@microsoft/utils-logic-apps';
 
 const operationPathDelimiter = '<DELIMITER>';
 

@@ -5,10 +5,10 @@ import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { BrowseView } from './browseView';
 import { OperationGroupDetailView } from './operationGroupDetailView';
 import { SearchView } from './searchView';
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
-import { areApiIdsEqual } from '@microsoft-logic-apps/utils';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { RecommendationPanel, OperationSearchHeader } from '@microsoft/designer-ui';
+import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
+import { areApiIdsEqual } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 

@@ -12,7 +12,7 @@ import type {
   ITextStyles,
 } from '@fluentui/react';
 import { Dropdown, FontWeights, getTheme, Label, Text, TextField } from '@fluentui/react';
-import { equals, format } from '@microsoft-logic-apps/utils';
+import { equals, format } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 

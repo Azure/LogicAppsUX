@@ -1,6 +1,6 @@
 import { ParameterIcon, VariableIcon } from '../helper';
 import { ValueSegmentConvertor } from '../segment';
-import { convertToStringLiteral, OutputSource } from '@microsoft-logic-apps/parsers';
+import { convertToStringLiteral, OutputSource } from '@@microsoft/logicappsux/parsers';
 import type { ValueSegment } from '@microsoft/designer-ui';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 

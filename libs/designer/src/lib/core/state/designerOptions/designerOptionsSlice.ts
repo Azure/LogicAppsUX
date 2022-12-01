@@ -1,5 +1,5 @@
 import type { DesignerOptionsState, ServiceOptions } from './designerOptionsInterfaces';
-import type { ILoggerService } from '@microsoft-logic-apps/designer-client-services';
+import type { ILoggerService } from '@@microsoft/logicappsux/designer-client-services';
 import {
   InitLoggerService,
   DevLogger,
@@ -10,7 +10,7 @@ import {
   InitSearchService,
   InitOAuthService,
   InitWorkflowService,
-} from '@microsoft-logic-apps/designer-client-services';
+} from '@@microsoft/logicappsux/designer-client-services';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 

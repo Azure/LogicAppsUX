@@ -1,5 +1,5 @@
-import type { Expression, ParameterSerializationOptions } from '@microsoft-logic-apps/parsers';
-import type { Exception } from '@microsoft-logic-apps/utils';
+import type { Expression, ParameterSerializationOptions } from '@@microsoft/logicappsux/parsers';
+import type { Exception } from '@microsoft/utils-logic-apps';
 
 export interface ParameterInfo {
   alternativeKey?: string;

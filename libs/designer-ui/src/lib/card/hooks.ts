@@ -1,6 +1,6 @@
 import { isDeleteKey, isEnterKey, isSpaceKey } from '../utils';
 import type { MenuItemOption } from './types';
-import { equals } from '@microsoft-logic-apps/utils';
+import { equals } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 
 export const useCardContextMenu = () => {

@@ -13,8 +13,8 @@ import { LogEntryLevel } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
 import { azureFunctionConnectorId } from './operationmanifest';
-import { getIntl } from '@microsoft-logic-apps/intl';
-import type { Connection, ConnectionParameter, Connector, ManagedIdentity } from '@microsoft-logic-apps/utils';
+import { getIntl } from '@@microsoft/logicappsux/intl';
+import type { Connection, ConnectionParameter, Connector, ManagedIdentity } from '@microsoft/utils-logic-apps';
 import {
   getUniqueName,
   isIdentityAssociatedWithLogicApp,
@@ -30,7 +30,7 @@ import {
   safeSetObjectPropertyValue,
   ArgumentException,
   equals,
-} from '@microsoft-logic-apps/utils';
+} from '@microsoft/utils-logic-apps';
 
 interface ServiceProviderConnectionModel {
   parameterValues: Record<string, any>;

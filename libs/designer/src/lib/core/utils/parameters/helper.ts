@@ -44,8 +44,8 @@ import {
   isVariableToken,
   ValueSegmentConvertor,
 } from './segment';
-import { WorkflowService } from '@microsoft-logic-apps/designer-client-services';
-import { getIntl } from '@microsoft-logic-apps/intl';
+import { WorkflowService } from '@@microsoft/logicappsux/designer-client-services';
+import { getIntl } from '@@microsoft/logicappsux/intl';
 import type {
   DynamicParameters,
   Expression,
@@ -58,7 +58,7 @@ import type {
   SchemaProperty,
   Segment,
   SwaggerParser,
-} from '@microsoft-logic-apps/parsers';
+} from '@@microsoft/logicappsux/parsers';
 import {
   getKnownTitles,
   isLegacyDynamicValuesExtension,
@@ -77,27 +77,7 @@ import {
   SchemaProcessor,
   SegmentType,
   Visibility,
-} from '@microsoft-logic-apps/parsers';
-import type { Exception, OperationManifest, RecurrenceSetting } from '@microsoft-logic-apps/utils';
-import {
-  isUndefinedOrEmptyString,
-  aggregate,
-  clone,
-  endsWith,
-  equals,
-  first,
-  format,
-  getPropertyValue,
-  guid,
-  includes,
-  isNullOrUndefined,
-  isObject,
-  startsWith,
-  unmap,
-  UnsupportedException,
-  ValidationErrorCode,
-  ValidationException,
-} from '@microsoft-logic-apps/utils';
+} from '@@microsoft/logicappsux/parsers';
 import type {
   AuthProps,
   ComboboxItem,
@@ -119,6 +99,26 @@ import {
   ValueSegmentType,
   TokenType,
 } from '@microsoft/designer-ui';
+import type { Exception, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
+import {
+  isUndefinedOrEmptyString,
+  aggregate,
+  clone,
+  endsWith,
+  equals,
+  first,
+  format,
+  getPropertyValue,
+  guid,
+  includes,
+  isNullOrUndefined,
+  isObject,
+  startsWith,
+  unmap,
+  UnsupportedException,
+  ValidationErrorCode,
+  ValidationException,
+} from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 // import { debounce } from 'lodash';

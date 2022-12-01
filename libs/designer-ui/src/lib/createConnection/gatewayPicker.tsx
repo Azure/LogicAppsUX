@@ -1,6 +1,6 @@
 import type { IDropdownOption } from '@fluentui/react';
 import { Dropdown } from '@fluentui/react';
-import type { Gateway, Subscription } from '@microsoft-logic-apps/utils';
+import type { Gateway, Subscription } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 const GatewayPicker = (props: any) => {

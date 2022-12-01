@@ -7,9 +7,9 @@ import { getConnectionReference } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
 import { updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { getAllVariables } from '../../utils/variables';
-import type { IOperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import type { ConnectionParameter, Connector, OperationManifest } from '@microsoft-logic-apps/utils';
+import type { IOperationManifestService } from '@@microsoft/logicappsux/designer-client-services';
+import { OperationManifestService } from '@@microsoft/logicappsux/designer-client-services';
+import type { ConnectionParameter, Connector, OperationManifest } from '@microsoft/utils-logic-apps';
 import {
   isHiddenConnectionParameter,
   getConnectorName,
@@ -18,7 +18,7 @@ import {
   ConnectionParameterTypes,
   equals,
   ConnectionReferenceKeyFormat,
-} from '@microsoft-logic-apps/utils';
+} from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
