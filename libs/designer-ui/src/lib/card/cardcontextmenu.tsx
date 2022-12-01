@@ -13,7 +13,7 @@ export interface CardContextMenuProps extends Pick<CardProps, 'contextMenuOption
 const calloutProps: ICalloutProps = {
   preventDismissOnLostFocus: false,
   preventDismissOnResize: false,
-  preventDismissOnScroll: false,
+  preventDismissOnScroll: false, // danielle this might be it
 };
 
 export const CardContextMenu: React.FC<CardContextMenuProps> = ({
