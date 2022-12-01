@@ -6,9 +6,8 @@ import {
   sourceMockSchema,
   targetMockSchema,
 } from '../../__mocks__';
-import { concatFunction, conditionalFunction, greaterThanFunction } from '../../__mocks__/FunctionMock';
 import type { MapDefinitionEntry } from '../../models';
-import { SchemaType } from '../../models';
+import { functionMock, SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import { addParentConnectionForRepeatingElementsNested, convertFromMapDefinition, getSourceValueFromLoop } from '../DataMap.Utils';
 import { convertSchemaToSchemaExtended, flattenSchemaIntoDictionary } from '../Schema.Utils';
@@ -46,61 +45,82 @@ describe('utils/DataMap', () => {
   const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
   const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema);
 
-  it('creates a simple connection between one source and target node', () => {
-    const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, [concatFunction]);
-    expect(result['target-/ns0:Root/DirectTranslation/Employee/Name']).toBeTruthy();
-    expect(result['source-/ns0:Root/DirectTranslation/EmployeeName']).toBeTruthy();
-  });
+  describe('convertFromMapDefinition', () => {
+    it('creates a simple connection between one source and target node', () => {
+      const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
+      expect(result['target-/ns0:Root/DirectTranslation/Employee/Name']).toBeTruthy();
+      expect(result['source-/ns0:Root/DirectTranslation/EmployeeName']).toBeTruthy();
+    });
 
-  it('creates a simple connection between one source, one function and one target', () => {
-    simpleMap['ns0:Root'] = {
-      DirectTranslation: {
-        Employee: {
-          Name: 'concat(/ns0:Root/DirectTranslation/EmployeeName)',
-        },
-      },
-    };
-    const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, [concatFunction]);
-    // target lists function as input
-    const targetInput = result['target-/ns0:Root/DirectTranslation/Employee/Name'].inputs['0'][0] as ConnectionUnit;
-    expect(targetInput.reactFlowKey).toContain('Concat');
-
-    // source lists function as output
-    const sourceOutput = result['source-/ns0:Root/DirectTranslation/EmployeeName'].outputs[0];
-    expect(sourceOutput.reactFlowKey).toContain('Concat');
-
-    // function lists source as input
-
-    // function lists target as output
-
-    expect(Object.keys(result).some((key) => key.includes('Concat')));
-  });
-
-  it('creates a conditional connection', () => {
-    simpleMap['ns0:Root'] = {
-      DirectTranslation: {
-        Employee: {
-          Name: '$if(is-greater-than(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity))',
-        },
-      },
-    };
-    const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, [greaterThanFunction, conditionalFunction]);
-    expect(result).toBeTruthy();
-    // console.log(JSON.stringify(result));  // danielle need to find a way to better verify this
-  });
-
-  it('creates a loop connection', () => {
-    simpleMap['ns0:Root'] = {
-      Looping: {
-        '$for(/ns0:Root/Looping/Employee)': {
-          Person: {
-            Name: 'TelephoneNumber',
+    it('creates a simple connection between one source, one function and one target', () => {
+      simpleMap['ns0:Root'] = {
+        DirectTranslation: {
+          Employee: {
+            Name: 'concat(/ns0:Root/DirectTranslation/EmployeeName)',
           },
         },
-      },
-    };
-    const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, []);
-    expect(result).toBeTruthy();
+      };
+      const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
+      // target lists function as input
+      const targetInput = result['target-/ns0:Root/DirectTranslation/Employee/Name'].inputs['0'][0] as ConnectionUnit;
+      expect(targetInput.reactFlowKey).toContain('Concat');
+
+      // source lists function as output
+      const sourceOutput = result['source-/ns0:Root/DirectTranslation/EmployeeName'].outputs[0];
+      expect(sourceOutput.reactFlowKey).toContain('Concat');
+
+      // function lists source as input
+
+      // function lists target as output
+
+      expect(Object.keys(result).some((key) => key.includes('Concat')));
+    });
+
+    it('creates a conditional connection', () => {
+      simpleMap['ns0:Root'] = {
+        DirectTranslation: {
+          Employee: {
+            Name: '$if(is-greater-than(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity))',
+          },
+        },
+      };
+      const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
+      expect(result).toBeTruthy();
+      // console.log(JSON.stringify(result));  // danielle need to find a way to better verify this
+    });
+
+    it('creates a loop connection', () => {
+      simpleMap['ns0:Root'] = {
+        Looping: {
+          '$for(/ns0:Root/Looping/Employee)': {
+            Person: {
+              Name: 'TelephoneNumber',
+            },
+          },
+        },
+      };
+      const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, []);
+      expect(result).toBeTruthy();
+    });
+
+    it.skip('creates a looping conditional connection', () => {
+      simpleMap['ns0:Root'] = {
+        ConditionalLooping: {
+          CategorizedCatalog: {
+            '$for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product)': {
+              '$if(is-equal(substring(SKU, 1, 2), "11"))': {
+                PetProduct: {
+                  Name: 'Name',
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
+      expect(result).toBeTruthy();
+    });
   });
 
   it('creates a nested loop connection', () => {
