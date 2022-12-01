@@ -1,10 +1,10 @@
 import Constants from '../../../common/constants';
 import { getNormalizedName } from './helper';
 import { createOutputToken, createParameterToken, createTokenValueSegment, createVariableToken } from './segment';
-import { encodePropertySegment, ExpressionType, isStringLiteral, OutputKeys, OutputSource } from '@@microsoft/logicappsux/parsers';
-import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral } from '@@microsoft/logicappsux/parsers';
 import { TokenType } from '@microsoft/designer-ui';
 import type { ValueSegment } from '@microsoft/designer-ui';
+import { encodePropertySegment, ExpressionType, isStringLiteral, OutputKeys, OutputSource } from '@microsoft/logicappsux/parsers';
+import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logicappsux/parsers';
 import { equals } from '@microsoft/utils-logic-apps';
 
 /**

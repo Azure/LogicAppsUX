@@ -1,6 +1,6 @@
 import { store } from '../../../../core/store';
 import { SearchView } from '../searchView';
-import { InitSearchService, StandardSearchService } from '@@microsoft/logicappsux/designer-client-services';
+import { InitSearchService, StandardSearchService } from '@microsoft/logicappsux/designer-client-services';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import TestRenderer from 'react-test-renderer';

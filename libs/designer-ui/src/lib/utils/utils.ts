@@ -1,5 +1,5 @@
 import Constants from '../constants';
-import { getIntl } from '@@microsoft/logicappsux/intl';
+import { getIntl } from '@microsoft/logicappsux/intl';
 import { isBuiltInConnector } from '@microsoft/utils-logic-apps';
 
 /**

@@ -3,7 +3,9 @@ import { VariableBrandColor, FxIcon, ParameterIcon, VariableIcon } from './helpe
 import { JsonSplitter } from './jsonsplitter';
 import { TokenSegmentConvertor } from './tokensegment';
 import { UncastingUtility } from './uncast';
-import type { Expression, ExpressionFunction, ExpressionLiteral } from '@@microsoft/logicappsux/parsers';
+import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+import type { Token, ValueSegment } from '@microsoft/designer-ui';
+import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logicappsux/parsers';
 import {
   ExpressionParser,
   ExpressionType,
@@ -11,9 +13,7 @@ import {
   isStringInterpolation,
   isStringLiteral,
   isTemplateExpression,
-} from '@@microsoft/logicappsux/parsers';
-import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
-import type { Token, ValueSegment } from '@microsoft/designer-ui';
+} from '@microsoft/logicappsux/parsers';
 import { format, guid, isNullOrUndefined, startsWith, UnsupportedException } from '@microsoft/utils-logic-apps';
 
 /**

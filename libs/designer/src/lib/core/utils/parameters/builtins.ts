@@ -1,8 +1,8 @@
 import { loadParameterValuesFromDefault, toParameterInfoMap } from './helper';
-import { frequencyValues } from '@@microsoft/logicappsux/designer-client-services';
-import { getIntl } from '@@microsoft/logicappsux/intl';
-import { OutputMapKey, parseEx, SchemaProcessor, toInputParameter } from '@@microsoft/logicappsux/parsers';
 import type { ParameterInfo } from '@microsoft/designer-ui';
+import { frequencyValues } from '@microsoft/logicappsux/designer-client-services';
+import { getIntl } from '@microsoft/logicappsux/intl';
+import { OutputMapKey, parseEx, SchemaProcessor, toInputParameter } from '@microsoft/logicappsux/parsers';
 import type { RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import { getObjectPropertyValue, map, RecurrenceType } from '@microsoft/utils-logic-apps';
 

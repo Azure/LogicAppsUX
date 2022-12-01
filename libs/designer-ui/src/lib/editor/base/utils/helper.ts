@@ -3,7 +3,7 @@ import { AUTHENTICATION_PROPERTIES, containsToken, PROPERTY_NAMES_FOR_AUTHENTICA
 import type { ValueSegment, TokenType } from '../../models/parameter';
 import { ValueSegmentType } from '../../models/parameter';
 import { $isTokenNode } from '../nodes/tokenNode';
-import { getIntl } from '@@microsoft/logicappsux/intl';
+import { getIntl } from '@microsoft/logicappsux/intl';
 import { format } from '@microsoft/utils-logic-apps';
 import type { ElementNode } from 'lexical';
 import { $getNodeByKey, $isElementNode, $isTextNode } from 'lexical';

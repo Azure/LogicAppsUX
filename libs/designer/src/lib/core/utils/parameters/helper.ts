@@ -44,40 +44,6 @@ import {
   isVariableToken,
   ValueSegmentConvertor,
 } from './segment';
-import { WorkflowService } from '@@microsoft/logicappsux/designer-client-services';
-import { getIntl } from '@@microsoft/logicappsux/intl';
-import type {
-  DynamicParameters,
-  Expression,
-  ExpressionFunction,
-  ExpressionLiteral,
-  InputParameter,
-  OutputParameter,
-  ResolvedParameter,
-  SchemaProcessorOptions,
-  SchemaProperty,
-  Segment,
-  SwaggerParser,
-} from '@@microsoft/logicappsux/parsers';
-import {
-  getKnownTitles,
-  isLegacyDynamicValuesExtension,
-  ParameterLocations,
-  ExpressionType,
-  createEx,
-  convertToStringLiteral,
-  decodePropertySegment,
-  DefaultKeyPrefix,
-  encodePropertySegment,
-  isAncestorKey,
-  isTemplateExpression,
-  OutputKeys,
-  OutputSource,
-  parseEx,
-  SchemaProcessor,
-  SegmentType,
-  Visibility,
-} from '@@microsoft/logicappsux/parsers';
 import type {
   AuthProps,
   ComboboxItem,
@@ -99,6 +65,40 @@ import {
   ValueSegmentType,
   TokenType,
 } from '@microsoft/designer-ui';
+import { WorkflowService } from '@microsoft/logicappsux/designer-client-services';
+import { getIntl } from '@microsoft/logicappsux/intl';
+import type {
+  DynamicParameters,
+  Expression,
+  ExpressionFunction,
+  ExpressionLiteral,
+  InputParameter,
+  OutputParameter,
+  ResolvedParameter,
+  SchemaProcessorOptions,
+  SchemaProperty,
+  Segment,
+  SwaggerParser,
+} from '@microsoft/logicappsux/parsers';
+import {
+  getKnownTitles,
+  isLegacyDynamicValuesExtension,
+  ParameterLocations,
+  ExpressionType,
+  createEx,
+  convertToStringLiteral,
+  decodePropertySegment,
+  DefaultKeyPrefix,
+  encodePropertySegment,
+  isAncestorKey,
+  isTemplateExpression,
+  OutputKeys,
+  OutputSource,
+  parseEx,
+  SchemaProcessor,
+  SegmentType,
+  Visibility,
+} from '@microsoft/logicappsux/parsers';
 import type { Exception, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import {
   isUndefinedOrEmptyString,

@@ -1,5 +1,5 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
-import { SearchService } from '@@microsoft/logicappsux/designer-client-services';
+import { SearchService } from '@microsoft/logicappsux/designer-client-services';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
 import { useQuery } from 'react-query';
 

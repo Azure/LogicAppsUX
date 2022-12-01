@@ -39,8 +39,8 @@ import {
   initializeManifest,
   setManifest,
 } from './manifests/variables';
-import { ExpressionParser, isFunction, isStringLiteral, isTemplateExpression } from '@@microsoft/logicappsux/parsers';
-import type { Expression, ExpressionFunction, ExpressionLiteral } from '@@microsoft/logicappsux/parsers';
+import { ExpressionParser, isFunction, isStringLiteral, isTemplateExpression } from '@microsoft/logicappsux/parsers';
+import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logicappsux/parsers';
 import {
   ArgumentException,
   AssertionErrorCode,

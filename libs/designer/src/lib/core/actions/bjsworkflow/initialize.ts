@@ -31,16 +31,17 @@ import { getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import type { NodeInputsWithDependencies, NodeOutputsWithDependencies } from './operationdeserializer';
 import type { Settings } from './settings';
+import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import type {
   IConnectionService,
   IOperationManifestService,
   ISearchService,
   IOAuthService,
   IWorkflowService,
-} from '@@microsoft/logicappsux/designer-client-services';
-import { WorkflowService, LoggerService, LogEntryLevel, OperationManifestService } from '@@microsoft/logicappsux/designer-client-services';
-import { getIntl } from '@@microsoft/logicappsux/intl';
-import type { SchemaProperty, InputParameter } from '@@microsoft/logicappsux/parsers';
+} from '@microsoft/logicappsux/designer-client-services';
+import { WorkflowService, LoggerService, LogEntryLevel, OperationManifestService } from '@microsoft/logicappsux/designer-client-services';
+import { getIntl } from '@microsoft/logicappsux/intl';
+import type { SchemaProperty, InputParameter } from '@microsoft/logicappsux/parsers';
 import {
   isDynamicListExtension,
   isDynamicPropertiesExtension,
@@ -49,8 +50,7 @@ import {
   DynamicSchemaType,
   ManifestParser,
   PropertyName,
-} from '@@microsoft/logicappsux/parsers';
-import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
+} from '@microsoft/logicappsux/parsers';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
 import { clone, equals, ConnectionReferenceKeyFormat, unmap } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';

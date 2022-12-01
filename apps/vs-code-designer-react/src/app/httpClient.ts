@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import type { HttpRequestOptions, IHttpClient } from '@@microsoft/logicappsux/designer-client-services';
+import type { HttpRequestOptions, IHttpClient } from '@microsoft/logicappsux/designer-client-services';
 
 export class HttpClient implements IHttpClient {
   dispose(): void {}

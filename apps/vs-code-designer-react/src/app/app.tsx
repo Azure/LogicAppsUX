@@ -1,14 +1,14 @@
 import type { RootState } from '../state/Store';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import { HttpClient } from './httpClient';
+import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
 import {
   StandardConnectionService,
   StandardGatewayService,
   StandardOAuthService,
   StandardOperationManifestService,
   StandardSearchService,
-} from '@@microsoft/logicappsux/designer-client-services';
-import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
+} from '@microsoft/logicappsux/designer-client-services';
 import { HTTP_METHODS, ResourceIdentityType, Theme } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';

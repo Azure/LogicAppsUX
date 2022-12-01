@@ -6,13 +6,13 @@ import {
 } from '../../../actions/bjsworkflow/connections';
 import type { OperationMetadataState } from '../../../state/operation/operationMetadataSlice';
 import type { RootState } from '../../../store';
-import type { StandardOperationManifestServiceOptions, IHttpClient } from '@@microsoft/logicappsux/designer-client-services';
+import type { StandardOperationManifestServiceOptions, IHttpClient } from '@microsoft/logicappsux/designer-client-services';
 import {
   InitOperationManifestService,
   StandardOperationManifestService,
   OperationManifestService,
-} from '@@microsoft/logicappsux/designer-client-services';
-import { createItem } from '@@microsoft/logicappsux/parsers';
+} from '@microsoft/logicappsux/designer-client-services';
+import { createItem } from '@microsoft/logicappsux/parsers';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
 import { ConnectionReferenceKeyFormat } from '@microsoft/utils-logic-apps';
 

@@ -2,13 +2,13 @@ import type { DataMapperDesignerContext } from './DataMapperDesignerContext';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import { reactPlugin } from './services/appInsights/AppInsights';
 import { store } from './state/Store';
-import { IntlProvider } from '@@microsoft/logicappsux/intl';
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import { ThemeProvider } from '@fluentui/react';
 import type { Theme } from '@fluentui/react-components';
 import { FluentProvider, themeToTokensObject, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { AppInsightsContext } from '@microsoft/applicationinsights-react-js';
+import { IntlProvider } from '@microsoft/logicappsux/intl';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 

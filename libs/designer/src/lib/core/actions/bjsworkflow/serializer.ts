@@ -16,12 +16,12 @@ import {
 } from '../../utils/parameters/helper';
 import { buildOperationDetailsFromControls } from '../../utils/swagger/inputsbuilder';
 import type { Settings } from './settings';
-import { LogEntryLevel, LoggerService, OperationManifestService } from '@@microsoft/logicappsux/designer-client-services';
-import { getIntl } from '@@microsoft/logicappsux/intl';
-import type { Segment } from '@@microsoft/logicappsux/parsers';
-import { create, removeConnectionPrefix, cleanIndexedValue, isAncestorKey, parseEx, SegmentType } from '@@microsoft/logicappsux/parsers';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
+import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft/logicappsux/designer-client-services';
+import { getIntl } from '@microsoft/logicappsux/intl';
+import type { Segment } from '@microsoft/logicappsux/parsers';
+import { create, removeConnectionPrefix, cleanIndexedValue, isAncestorKey, parseEx, SegmentType } from '@microsoft/logicappsux/parsers';
 import type { OperationManifest, SubGraphDetail } from '@microsoft/utils-logic-apps';
 import {
   equals,

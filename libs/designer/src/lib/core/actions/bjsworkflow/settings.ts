@@ -2,9 +2,9 @@ import Constants from '../../../common/constants';
 import type { NodeOperation, NodeOutputs } from '../../state/operation/operationMetadataSlice';
 import { getSplitOnOptions } from '../../utils/outputs';
 import { getTokenExpressionValue } from '../../utils/parameters/helper';
-import type { SwaggerParser } from '@@microsoft/logicappsux/parsers';
-import { convertToStringLiteral, getSplitOnArrayAliasMetadata } from '@@microsoft/logicappsux/parsers';
 import { TokenType } from '@microsoft/designer-ui';
+import type { SwaggerParser } from '@microsoft/logicappsux/parsers';
+import { convertToStringLiteral, getSplitOnArrayAliasMetadata } from '@microsoft/logicappsux/parsers';
 import type {
   DownloadChunkMetadata,
   OperationManifest,

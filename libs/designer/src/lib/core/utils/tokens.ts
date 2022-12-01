@@ -22,11 +22,11 @@ import {
 import { createTokenValueSegment } from './parameters/segment';
 import { hasSecureOutputs } from './setting';
 import { getVariableTokens } from './variables';
-import { OperationManifestService } from '@@microsoft/logicappsux/designer-client-services';
-import { getIntl } from '@@microsoft/logicappsux/intl';
-import { getKnownTitles, OutputKeys } from '@@microsoft/logicappsux/parsers';
 import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
 import { UIConstants, TemplateFunctions, TokenType } from '@microsoft/designer-ui';
+import { OperationManifestService } from '@microsoft/logicappsux/designer-client-services';
+import { getIntl } from '@microsoft/logicappsux/intl';
+import { getKnownTitles, OutputKeys } from '@microsoft/logicappsux/parsers';
 import type { BuiltInOutput, OperationManifest } from '@microsoft/utils-logic-apps';
 import { labelCase, unmap, equals } from '@microsoft/utils-logic-apps';
 

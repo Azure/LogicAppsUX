@@ -2,9 +2,9 @@ import type { DictionaryEditorItemProps, DictionaryEditorProps } from '../dictio
 import { DictionaryEditor, DictionaryType } from '../dictionary';
 import { ValueSegmentType } from '../editor';
 import type { ChangeState } from '../editor/base';
-import { getIntl } from '@@microsoft/logicappsux/intl';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { Dropdown } from '@fluentui/react';
+import { getIntl } from '@microsoft/logicappsux/intl';
 import { guid } from '@microsoft/utils-logic-apps';
 import type { FormEvent } from 'react';
 import { useState } from 'react';

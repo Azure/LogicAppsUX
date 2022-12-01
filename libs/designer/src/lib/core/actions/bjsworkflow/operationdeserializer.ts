@@ -21,8 +21,8 @@ import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../..
 import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
 import { getInputParametersFromManifest, getOutputParametersFromManifest, updateCallbackUrlInInputs } from './initialize';
 import { getOperationSettings } from './settings';
-import { LogEntryLevel, LoggerService, OperationManifestService } from '@@microsoft/logicappsux/designer-client-services';
-import type { InputParameter, OutputParameter } from '@@microsoft/logicappsux/parsers';
+import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft/logicappsux/designer-client-services';
+import type { InputParameter, OutputParameter } from '@microsoft/logicappsux/parsers';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
 import { isArmResourceId, uniqueArray, getPropertyValue, map, aggregate, equals } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';

@@ -1,8 +1,8 @@
 import type { IConnectorService, ListDynamicValue, ManagedIdentityRequestProperties } from '../connector';
 import type { IHttpClient } from '../httpClient';
-import { getIntl } from '@@microsoft/logicappsux/intl';
-import type { LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@@microsoft/logicappsux/parsers';
-import { Types } from '@@microsoft/logicappsux/parsers';
+import { getIntl } from '@microsoft/logicappsux/intl';
+import type { LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft/logicappsux/parsers';
+import { Types } from '@microsoft/logicappsux/parsers';
 import type { OperationInfo } from '@microsoft/utils-logic-apps';
 import {
   UnsupportedException,

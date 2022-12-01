@@ -3,7 +3,6 @@ import { ValueSegmentType } from '../editor';
 import type { BaseEditorProps, CallbackHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
 import { Change } from '../editor/base/plugins/Change';
-import { getIntl } from '@@microsoft/logicappsux/intl';
 import type {
   IButtonStyles,
   IComboBox,
@@ -14,6 +13,7 @@ import type {
   ITooltipHostStyles,
 } from '@fluentui/react';
 import { Spinner, SpinnerSize, IconButton, TooltipHost, SelectableOptionMenuItemType, ComboBox } from '@fluentui/react';
+import { getIntl } from '@microsoft/logicappsux/intl';
 import { guid } from '@microsoft/utils-logic-apps';
 import { useUpdateEffect } from '@react-hookz/web';
 import { useRef, useState, useCallback, useMemo } from 'react';

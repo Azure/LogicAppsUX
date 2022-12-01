@@ -1,5 +1,5 @@
 import { InvalidJsonSchemaTypeException } from '../exceptions/invalidjsonschematype';
-import { isTemplateExpression } from '@@microsoft/logicappsux/parsers';
+import { isTemplateExpression } from '@microsoft/logicappsux/parsers';
 import { createCopy, clone } from '@microsoft/utils-logic-apps';
 
 export const Types = {

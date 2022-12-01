@@ -1,4 +1,4 @@
-import { getIntl } from '@@microsoft/logicappsux/intl';
+import { getIntl } from '@microsoft/logicappsux/intl';
 import type { Exception } from '@microsoft/utils-logic-apps';
 import { isException } from '@microsoft/utils-logic-apps';
 

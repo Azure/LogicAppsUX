@@ -26,15 +26,15 @@ import {
   updateParameterWithValues,
 } from '../parameters/helper';
 import { loadInputValuesFromDefinition } from './inputsbuilder';
-import { LogEntryLevel, LoggerService } from '@@microsoft/logicappsux/designer-client-services';
-import type { Operation, OutputParameter, SwaggerParser } from '@@microsoft/logicappsux/parsers';
+import { LogEntryLevel, LoggerService } from '@microsoft/logicappsux/designer-client-services';
+import type { Operation, OutputParameter, SwaggerParser } from '@microsoft/logicappsux/parsers';
 import {
   create,
   isDynamicSchemaExtension,
   ParameterLocations,
   removeConnectionPrefix,
   isTemplateExpression,
-} from '@@microsoft/logicappsux/parsers';
+} from '@microsoft/logicappsux/parsers';
 import type { OperationInfo } from '@microsoft/utils-logic-apps';
 import { copyArray, map, RecurrenceType, equals, parsePathnameAndQueryKeyFromUri, startsWith, unmap } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';

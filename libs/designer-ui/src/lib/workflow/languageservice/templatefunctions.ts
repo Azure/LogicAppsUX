@@ -1,4 +1,4 @@
-import { getIntl } from '@@microsoft/logicappsux/intl';
+import { getIntl } from '@microsoft/logicappsux/intl';
 
 export interface FunctionGroupDefinition {
   id: string;

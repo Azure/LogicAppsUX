@@ -6,10 +6,10 @@ import { useConnectorByNodeId } from '../../../core/state/connection/connectionS
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, selectPanelTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useNodeConnectionId } from '../../../core/state/selectors/actionMetadataSelector';
-import { ConnectionService } from '@@microsoft/logicappsux/designer-client-services';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { SelectConnection } from '@microsoft/designer-ui';
+import { ConnectionService } from '@microsoft/logicappsux/designer-client-services';
 import type { Connection } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';

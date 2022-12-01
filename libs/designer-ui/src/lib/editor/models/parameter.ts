@@ -1,4 +1,4 @@
-import type { Expression, ParameterSerializationOptions } from '@@microsoft/logicappsux/parsers';
+import type { Expression, ParameterSerializationOptions } from '@microsoft/logicappsux/parsers';
 import type { Exception } from '@microsoft/utils-logic-apps';
 
 export interface ParameterInfo {
