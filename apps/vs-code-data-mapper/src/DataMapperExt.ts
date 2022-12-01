@@ -8,6 +8,8 @@ import * as path from 'path';
 import { Uri, ViewColumn, window, workspace } from 'vscode';
 import type { ExtensionContext } from 'vscode';
 
+type DataMapperPanelDictionary = { [key: string]: DataMapperPanel }; // key == dataMapName
+
 export default class DataMapperExt {
   public static context: ExtensionContext;
   public static extensionPath: string;
@@ -15,7 +17,7 @@ export default class DataMapperExt {
   public static backendRuntimePort: number;
   public static backendRuntimeChildProcess: ChildProcess | undefined;
 
-  public static currentPanel: DataMapperPanel | undefined;
+  public static panelManagers: DataMapperPanelDictionary = {};
 
   public static async openDataMapperPanel(dataMapName: string, loadMapDefinitionData?: MapDefinitionData) {
     const workflowFolder = DataMapperExt.getWorkspaceFolderFsPath();
@@ -29,22 +31,17 @@ export default class DataMapperExt {
 
   public static createOrShow(dataMapName: string, loadMapDefinitionData?: MapDefinitionData) {
     // If a panel has already been created, re-show it
-    if (DataMapperExt.currentPanel) {
+    if (DataMapperExt.panelManagers[dataMapName]) {
       // NOTE: Shouldn't need to re-send runtime port if webview has already been loaded/set up
 
-      // If loading a data map, handle that + xslt filename
-      DataMapperExt.currentPanel.dataMapName = dataMapName;
-      DataMapperExt.currentPanel.loadMapDefinitionData = loadMapDefinitionData;
-      DataMapperExt.currentPanel.handleLoadMapDefinitionIfAny();
-      DataMapperExt.currentPanel.updateWebviewPanelTitle();
-
-      DataMapperExt.currentPanel.panel.reveal(ViewColumn.Active);
+      window.showInformationMessage(`A Data Mapper panel is already open for this data map (${dataMapName}).`);
+      DataMapperExt.panelManagers[dataMapName].panel.reveal(ViewColumn.Active);
       return;
     }
 
     const panel = window.createWebviewPanel(
       webviewType, // Key used to reference the panel
-      'Data Mapper', // Title display in the tab
+      dataMapName, // Title displayed in the tab
       ViewColumn.Active, // Editor column to show the new webview panel in
       {
         enableScripts: true,
@@ -54,13 +51,13 @@ export default class DataMapperExt {
       }
     );
 
-    DataMapperExt.currentPanel = new DataMapperPanel(panel, dataMapName);
-    DataMapperExt.currentPanel.panel.iconPath = {
+    DataMapperExt.panelManagers[dataMapName] = new DataMapperPanel(panel, dataMapName);
+    DataMapperExt.panelManagers[dataMapName].panel.iconPath = {
       light: Uri.file(path.join(DataMapperExt.context.extensionPath, 'assets', 'wand-light.png')),
       dark: Uri.file(path.join(DataMapperExt.context.extensionPath, 'assets', 'wand-dark.png')),
     };
-    DataMapperExt.currentPanel.updateWebviewPanelTitle();
-    DataMapperExt.currentPanel.loadMapDefinitionData = loadMapDefinitionData;
+    DataMapperExt.panelManagers[dataMapName].updateWebviewPanelTitle();
+    DataMapperExt.panelManagers[dataMapName].loadMapDefinitionData = loadMapDefinitionData;
 
     // From here, VSIX will handle any other initial-load-time events once receive webviewLoaded msg
   }
