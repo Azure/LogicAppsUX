@@ -5,10 +5,12 @@ import {
   workflowResourceGroupNameKey,
   workflowLocationKey,
   workflowManagementBaseURIKey,
+  managementApiPrefix,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { createAzureWizard } from '../../commands/workflows/azureConnectorWizard';
 import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
+import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { getLocalSettingsJson } from '../localSettings';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
@@ -47,7 +49,11 @@ export function removeWebviewPanelFromCache(category: string, name: string): voi
   }
 }
 
-export function getCodelessAppData(workflowName: string, workflow: any, parameters: Record<string, Parameter>): CodelessApp {
+export function getCodelessAppData(
+  workflowName: string,
+  workflow: IWorkflowFileContent,
+  parameters: Record<string, Parameter>
+): CodelessApp {
   const { definition, kind, runtimeConfiguration } = workflow;
   const statelessRunMode = runtimeConfiguration && runtimeConfiguration.statelessRunMode ? runtimeConfiguration.statelessRunMode : '';
   const operationOptions = runtimeConfiguration && runtimeConfiguration.operationOptions ? runtimeConfiguration.operationOptions : '';
@@ -206,4 +212,12 @@ export function getRequestTriggerSchema(workflowContent: IWorkflowFileContent): 
   }
 
   return undefined;
+}
+
+export function getWorkflowManagementBaseURI(node: RemoteWorkflowTreeItem): string {
+  let resourceManagerUri: string = node.parent.subscription.environment.resourceManagerEndpointUrl;
+  if (resourceManagerUri.endsWith('/')) {
+    resourceManagerUri = resourceManagerUri.slice(0, -1);
+  }
+  return `${resourceManagerUri}${node.parent.parent.id}/hostruntime${managementApiPrefix}`;
 }
