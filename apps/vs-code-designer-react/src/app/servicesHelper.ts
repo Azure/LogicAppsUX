@@ -1,4 +1,4 @@
-import type { HttpClient } from './httpClient';
+import { HttpClient } from './httpClient';
 import {
   StandardConnectionService,
   StandardConnectorService,
@@ -11,10 +11,11 @@ import type { IApiHubServiceDetails } from '@microsoft-logic-apps/designer-clien
 import { ResourceIdentityType, HTTP_METHODS, ExtensionCommand } from '@microsoft-logic-apps/utils';
 import type { WebviewApi } from 'vscode-webview';
 
+const httpClient = new HttpClient();
+
 export const getDesignerServices = (
   baseUrl: string,
   apiVersion: string,
-  httpClient: HttpClient,
   apiHubServiceDetails: IApiHubServiceDetails,
   isLocal: boolean,
   vscode: WebviewApi<unknown>
@@ -136,7 +137,7 @@ export const getDesignerServices = (
           triggerName,
         });
 
-        return Promise.resolve('');
+        return Promise.resolve({ method: HTTP_METHODS.POST, value: 'Dummy url' });
       }
     },
   };
