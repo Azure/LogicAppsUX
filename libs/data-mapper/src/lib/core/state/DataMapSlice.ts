@@ -28,6 +28,7 @@ import { isFunctionData } from '../../utils/Function.Utils';
 import {
   addReactFlowPrefix,
   addSourceReactFlowPrefix,
+  addTargetReactFlowPrefix,
   createReactFlowFunctionKey,
   getDestinationIdFromReactFlowConnectionId,
   getSourceIdFromReactFlowConnectionId,
@@ -679,21 +680,46 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
   // Handle deleting source schema node
   const sourceNode = curDataMapState.curDataMapOperation.flattenedSourceSchema[reactFlowKey];
   if (sourceNode) {
-    // Check if it has outputs - if so, cancel it and show notification
+    // Check if it has outputs *on the current canvas level* - if so, cancel it and show notification
     const potentialSrcSchemaNodeConnection = curDataMapState.curDataMapOperation.dataMapConnections[reactFlowKey];
     if (potentialSrcSchemaNodeConnection && potentialSrcSchemaNodeConnection.outputs.length > 0) {
-      curDataMapState.notificationData = {
-        type: NotificationTypes.SourceNodeRemoveFailed,
-        msgParam: sourceNode.name,
-        autoHideDurationMs: errorNotificationAutoHideDuration,
-      };
-      return;
+      // Check that there's no outputs on the current canvas level by checking for outputs in current function and target schema nodes
+      const hasOutputsOnCurrentCanvasLevel = potentialSrcSchemaNodeConnection.outputs.some((output) => {
+        const potentialConnectedFnNode = curDataMapState.curDataMapOperation.currentFunctionNodes[output.reactFlowKey];
+        const potentialConnectedTargetNode = curDataMapState.curDataMapOperation.currentTargetSchemaNode;
+
+        if (potentialConnectedFnNode) {
+          return true;
+        }
+
+        // Check if currentTargetSchemaNode or any of its children matches an output
+        if (
+          potentialConnectedTargetNode &&
+          (addTargetReactFlowPrefix(potentialConnectedTargetNode.key) === output.reactFlowKey ||
+            potentialConnectedTargetNode.children.some((child) => addTargetReactFlowPrefix(child.key) === output.reactFlowKey))
+        ) {
+          return true;
+        }
+
+        return false;
+      });
+
+      if (hasOutputsOnCurrentCanvasLevel) {
+        curDataMapState.notificationData = {
+          type: NotificationTypes.SourceNodeRemoveFailed,
+          msgParam: sourceNode.name,
+          autoHideDurationMs: errorNotificationAutoHideDuration,
+        };
+        return;
+      }
     }
 
     const filteredCurrentSrcSchemaNodes = curDataMapState.curDataMapOperation.currentSourceSchemaNodes.filter(
       (node) => node.key !== sourceNode.key
     );
-    deleteNodeFromConnections(curDataMapState.curDataMapOperation.dataMapConnections, reactFlowKey);
+
+    // NOTE: Do NOT delete source schema node from connections - at this stage, it's guaranteed that
+    // there are no connections to it, and we don't want to accidentally delete connections on other layers
 
     curDataMapState.curDataMapOperation.selectedItemKey = undefined;
     doDataMapOperation(curDataMapState, {
