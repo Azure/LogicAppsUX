@@ -301,7 +301,10 @@ export const InputDropdown = (props: InputDropdownProps) => {
         nodeName = calculateIndexValue(sourceNode.node);
       } else if (node.key === directAccessPseudoFunctionKey) {
         const functionValues = getInputValues(connectionDictionary[key], connectionDictionary);
-        nodeName = formatDirectAccess(functionValues[0], functionValues[1], functionValues[2]);
+        nodeName =
+          functionValues.length === 3
+            ? formatDirectAccess(functionValues[0], functionValues[1], functionValues[2])
+            : getFunctionOutputValue(fnInputValues, node.functionName);
       } else {
         nodeName = getFunctionOutputValue(fnInputValues, node.functionName);
       }

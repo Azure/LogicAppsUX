@@ -110,7 +110,7 @@ export const directAccessPseudoFunction: FunctionData = {
       placeHolder: 'The source index value',
     },
     {
-      name: 'Source property',
+      name: 'Scope',
       allowedTypes: [NormalizedDataType.Any],
       isOptional: false,
       allowCustomInput: false,
@@ -125,7 +125,7 @@ export const directAccessPseudoFunction: FunctionData = {
     },
   ],
   displayName: 'Direct Access',
-  category: FunctionCategory.Logical,
+  category: FunctionCategory.Collection,
   description: 'Directly access the value specified by the index and the given property',
 };
 
