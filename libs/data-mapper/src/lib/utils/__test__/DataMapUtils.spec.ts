@@ -7,7 +7,7 @@ import {
   targetMockSchema,
 } from '../../__mocks__';
 import type { MapDefinitionEntry } from '../../models';
-import { functionMock, SchemaType } from '../../models';
+import { ifPseudoFunctionKey, functionMock, SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import { addParentConnectionForRepeatingElementsNested, convertFromMapDefinition, getSourceValueFromLoop } from '../DataMap.Utils';
 import { convertSchemaToSchemaExtended, flattenSchemaIntoDictionary } from '../Schema.Utils';
@@ -84,9 +84,27 @@ describe('utils/DataMap', () => {
           },
         },
       };
+
       const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
-      expect(result).toBeTruthy();
-      // console.log(JSON.stringify(result));  // danielle need to find a way to better verify this
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+
+      expect(resultEntries.length).toEqual(5);
+
+      expect(resultEntries[0][0]).toContain('IsGreater');
+      expect(resultEntries[0][1]).toBeTruthy();
+
+      expect(resultEntries[1][0]).toContain(ifPseudoFunctionKey);
+      expect(resultEntries[1][1]).toBeTruthy();
+
+      expect(resultEntries[2][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+      expect(resultEntries[2][1]).toBeTruthy();
+
+      expect(resultEntries[3][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
+      expect(resultEntries[3][1]).toBeTruthy();
+
+      expect(resultEntries[4][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+      expect(resultEntries[4][1]).toBeTruthy();
     });
 
     it('creates a loop connection', () => {
@@ -99,8 +117,24 @@ describe('utils/DataMap', () => {
           },
         },
       };
+
       const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, []);
-      expect(result).toBeTruthy();
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+
+      expect(resultEntries.length).toEqual(4);
+
+      expect(resultEntries[0][0]).toEqual('source-/ns0:Root/Looping/Employee');
+      expect(resultEntries[0][1]).toBeTruthy();
+
+      expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Looping/Employee/TelephoneNumber');
+      expect(resultEntries[1][1]).toBeTruthy();
+
+      expect(resultEntries[2][0]).toEqual('target-/ns0:Root/Looping/Person');
+      expect(resultEntries[2][1]).toBeTruthy();
+
+      expect(resultEntries[3][0]).toEqual('target-/ns0:Root/Looping/Person/Name');
+      expect(resultEntries[3][1]).toBeTruthy();
     });
 
     it.skip('creates a looping conditional connection', () => {
@@ -119,7 +153,26 @@ describe('utils/DataMap', () => {
       };
 
       const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
-      expect(result).toBeTruthy();
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+      /*
+      expect(resultEntries.length).toEqual(5);
+
+      expect(resultEntries[0][0]).toContain('IsGreater');
+      expect(resultEntries[0][1]).toBeTruthy();
+
+      expect(resultEntries[1][0]).toContain(ifPseudoFunctionKey);
+      expect(resultEntries[1][1]).toBeTruthy();
+
+      expect(resultEntries[2][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+      expect(resultEntries[2][1]).toBeTruthy();
+
+      expect(resultEntries[3][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
+      expect(resultEntries[3][1]).toBeTruthy();
+
+      expect(resultEntries[4][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+      expect(resultEntries[4][1]).toBeTruthy();
+      */
     });
   });
 
@@ -137,8 +190,24 @@ describe('utils/DataMap', () => {
         },
       },
     };
+
     const result = convertFromMapDefinition(simpleMap, extendedLoopSource, extendedLoopTarget, []);
-    expect(result).toBeTruthy();
+    const resultEntries = Object.entries(result);
+    resultEntries.sort();
+
+    expect(resultEntries.length).toEqual(4);
+
+    expect(resultEntries[0][0]).toEqual('source-/ns0:Root/Year/Month');
+    expect(resultEntries[0][1]).toBeTruthy();
+
+    expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Year/Month/Day');
+    expect(resultEntries[1][1]).toBeTruthy();
+
+    expect(resultEntries[2][0]).toEqual('target-/ns0:Root/Ano/Mes');
+    expect(resultEntries[2][1]).toBeTruthy();
+
+    expect(resultEntries[3][0]).toEqual('target-/ns0:Root/Ano/Mes/Dia');
+    expect(resultEntries[3][1]).toBeTruthy();
   });
 
   describe('getSourceValueFromLoop', () => {
