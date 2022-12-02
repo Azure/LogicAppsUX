@@ -1,4 +1,4 @@
-import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
+import { reactFlowFitViewOptions, ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import { customTokens } from '../../core';
 import { ButtonContainer } from '../buttonContainer/ButtonContainer';
 import type { ButtonContainerProps } from '../buttonContainer/ButtonContainer';
@@ -80,7 +80,7 @@ export const CanvasControls = ({ displayMiniMap, toggleDisplayMiniMap }: CanvasC
           tooltip: fitViewLoc,
           regularIcon: PageFit20Regular,
           filledIcon: PageFit20Filled,
-          onClick: fitView,
+          onClick: () => fitView(reactFlowFitViewOptions),
         },
         {
           tooltip: displayMiniMap ? hideMiniMapLoc : showMiniMapLoc,
