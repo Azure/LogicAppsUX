@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
-import { RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft-logic-apps/utils';
+import { RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
 
 ///////////////////////////////////////////////////////////
 // EDGES

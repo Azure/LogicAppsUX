@@ -2,8 +2,8 @@
 import type { AppDispatch } from '../../core';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
-import { guid } from '@microsoft-logic-apps/utils';
 import { AddActionCard, ADD_CARD_TYPE } from '@microsoft/designer-ui';
+import { guid } from '@microsoft/utils-logic-apps';
 import { memo, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { Handle, Position } from 'reactflow';

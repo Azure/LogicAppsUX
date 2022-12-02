@@ -1,5 +1,5 @@
 import type { OperationActionData } from '../interfaces';
-import type { OperationApi } from '@microsoft-logic-apps/utils';
+import type { OperationApi } from '@microsoft/utils-logic-apps';
 
 export const mockOperationApi: OperationApi = {
   id: 'id',

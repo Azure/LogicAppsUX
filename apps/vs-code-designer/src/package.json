@@ -1,25 +1,66 @@
 {
-  "name": "microsoft-logic-app-vscode-extension",
+  "name": "@microsoft/logic-apps-vscode-extension",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "0.2.27",
+  "version": "0.2.32",
   "aiKey": "2fc394da-7c11-4c1c-b776-17763031415d",
   "main": "main.js",
   "engines": {
     "vscode": "^1.64.0"
   },
   "contributes": {
+    "breakpoints": [
+      {
+        "language": "json"
+      }
+    ],
     "commands": [
+      {
+        "command": "logicAppsExtension.selectSubscriptions",
+        "title": "Select Subscriptions...",
+        "icon": {
+          "light": "assets/light/filter.svg",
+          "dark": "assets/dark/filter.svg"
+        }
+      },
       {
         "command": "logicAppsExtension.openDesigner",
         "title": "Open New Designer",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.loadMore",
+        "title": "Load More",
+        "category": "Azure Logic Apps"
       }
     ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "azure",
+          "title": "Azure",
+          "icon": "resources/azure.svg"
+        }
+      ]
+    },
+    "views": {
+      "azure": [
+        {
+          "id": "newAzLogicApps",
+          "name": "New Logic Apps (Standard)",
+          "when": "config.logicAppsExtension.showExplorer == true"
+        }
+      ]
+    },
     "menus": {
       "view/item/context": [
         {
+          "command": "logicAppsExtension.selectSubscriptions",
+          "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
+          "group": "inline"
+        },
+        {
           "command": "logicAppsExtension.openDesigner",
-          "when": "view == azLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
+          "when": "view == newAzLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "1@2"
         }
       ],
@@ -32,17 +73,40 @@
       ],
       "commandPalette": [
         {
+          "command": "logicAppsExtension.selectSubscriptions",
+          "when": "never"
+        },
+        {
           "command": "logicAppsExtension.openDesigner",
           "when": "resourceFilename==workflow.json"
+        },
+        {
+          "command": "logicAppsExtension.loadMore",
+          "when": "never"
         }
       ]
-    }
+    },
+    "configuration": [
+      {
+        "title": "Azure New Logic Apps (Standard)",
+        "properties": {
+          "logicAppsExtension.showExplorer": {
+            "type": "boolean",
+            "default": true,
+            "description": "Show or hide the Azure Functions Explorer"
+          }
+        }
+      }
+    ]
   },
   "extensionDependencies": [
     "ms-vscode.azure-account"
   ],
   "activationEvents": [
-    "onCommand:logicAppsExtension.openDesigner"
+    "onCommand:logicAppsExtension.openDesigner",
+    "onCommand:logicAppsExtension.loadMore",
+    "onView:newAzLogicApps",
+    "onDebugInitialConfigurations"
   ],
   "galleryBanner": {
     "color": "#015cda",

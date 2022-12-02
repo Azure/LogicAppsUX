@@ -7,7 +7,7 @@ import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark'
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
-import { IntlProvider } from '@microsoft-logic-apps/intl';
+import { IntlProvider } from '@microsoft/intl-logic-apps';
 import React, { useEffect } from 'react';
 import { Provider as ReduxProvider, useDispatch } from 'react-redux';
 

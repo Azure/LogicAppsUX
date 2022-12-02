@@ -1,8 +1,8 @@
 {
-  "name": "microsoft-data-mapper-vscode-extension",
+  "name": "@microsoft/data-mapper-vscode-extension",
   "displayName": "Azure Logic Apps - Data Mapper",
   "description": "Create mappings between schemas",
-  "version": "0.2.27",
+  "version": "0.2.32",
   "main": "main.js",
   "repository": "https://github.com/Azure/logic_apps_designer",
   "engines": {
@@ -11,17 +11,13 @@
   "contributes": {
     "commands": [
       {
-        "command": "azureDataMapper.openDataMapper",
-        "title": "Open Data Mapper"
-      },
-      {
         "command": "azureDataMapper.createNewDataMap",
-        "title": "Create new data map",
+        "title": "Data Mapper: Create new data map",
         "icon": "$(add)"
       },
       {
         "command": "azureDataMapper.loadDataMapFile",
-        "title": "Load data map"
+        "title": "Data Mapper: Load existing data map"
       }
     ],
     "views": {
@@ -35,7 +31,7 @@
     "viewsWelcome": [
       {
         "view": "azDataMapper",
-        "contents": "[Create new data map](command:azureDataMapper.createNewDataMap)"
+        "contents": "[Create new data map](command:azureDataMapper.createNewDataMap)\n[Load existing data map](command:azureDataMapper.loadDataMapFile)"
       }
     ],
     "menus": {
@@ -72,7 +68,6 @@
     "ms-vscode.azure-account"
   ],
   "activationEvents": [
-    "onCommand:azureDataMapper.openDataMapper",
     "workspaceContains:host.json",
     "workspaceContains:**/.xsd",
     "workspaceContains:**/.xslt",

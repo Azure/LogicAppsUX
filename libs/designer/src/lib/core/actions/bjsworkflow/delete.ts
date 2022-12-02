@@ -7,7 +7,7 @@ import { setValidationError } from '../../state/setting/settingSlice';
 import { deinitializeTokensAndVariables } from '../../state/tokensSlice';
 import { clearFocusNode, deleteNode } from '../../state/workflow/workflowSlice';
 import { updateAllUpstreamNodes } from './initialize';
-import { WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
+import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 

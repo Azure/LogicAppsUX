@@ -5,7 +5,7 @@ import { OperationSearchHeader } from './operationSearchHeader';
 import type { RecommendationPanelProps } from './recommendationpanel';
 import { RecommendationPanel } from './recommendationpanel';
 import { SearchResultsGrid } from './searchResult';
-import { connectorsSearchResultsMock, MockSearchOperations } from '@microsoft-logic-apps/utils';
+import { connectorsSearchResultsMock, MockSearchOperations } from '@microsoft/utils-logic-apps';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import type { PropsWithChildren } from 'react';
 

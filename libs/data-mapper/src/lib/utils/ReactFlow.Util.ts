@@ -7,13 +7,13 @@ import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from
 import appInsights from '../core/services/appInsights/AppInsights';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
-import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
+import type { SchemaNodeExtended } from '../models/Schema';
 import { SchemaType } from '../models/Schema';
 import { flattenInputs, isConnectionUnit } from './Connection.Utils';
 import { getFunctionBrandingForCategory } from './Function.Utils';
 import { applyElkLayout, convertDataMapNodesToElkGraph } from './Layout.Utils';
 import { isLeafNode } from './Schema.Utils';
-import { guid } from '@microsoft-logic-apps/utils';
+import { guid } from '@microsoft/utils-logic-apps';
 import type { ElkNode } from 'elkjs';
 import { useEffect, useState } from 'react';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
@@ -38,11 +38,11 @@ const placeholderReactFlowNode: ReactFlowNode = {
 
 export const useLayout = (
   currentSourceSchemaNodes: SchemaNodeExtended[],
-  allSourceSchemaNodes: SchemaNodeDictionary,
   currentFunctionNodes: FunctionDictionary,
   currentTargetSchemaNode: SchemaNodeExtended | undefined,
   connections: ConnectionDictionary,
-  selectedItemKey: string | undefined
+  selectedItemKey: string | undefined,
+  sourceSchemaOrdering: string[]
 ): [ReactFlowNode[], ReactFlowEdge[]] => {
   const [reactFlowNodes, setReactFlowNodes] = useState<ReactFlowNode[]>([]);
   const [reactFlowEdges, setReactFlowEdges] = useState<ReactFlowEdge[]>([]);
@@ -51,11 +51,8 @@ export const useLayout = (
   useEffect(() => {
     if (currentTargetSchemaNode) {
       // Sort source schema nodes according to their order in the schema
-      const flattenedKeys = Object.values(allSourceSchemaNodes).map((node) => node.key);
-      const sortedSourceSchemaNodes = [...currentSourceSchemaNodes].sort((nodeA, nodeB) =>
-        nodeA.pathToRoot.length !== nodeB.pathToRoot.length
-          ? nodeA.pathToRoot.length - nodeB.pathToRoot.length
-          : flattenedKeys.indexOf(nodeA.key) - flattenedKeys.indexOf(nodeB.key)
+      const sortedSourceSchemaNodes = [...currentSourceSchemaNodes].sort(
+        (nodeA, nodeB) => sourceSchemaOrdering.indexOf(nodeA.key) - sourceSchemaOrdering.indexOf(nodeB.key)
       );
 
       // Build ELK node/edges data
@@ -89,7 +86,7 @@ export const useLayout = (
     } else {
       setReactFlowNodes([]);
     }
-  }, [currentTargetSchemaNode, currentSourceSchemaNodes, allSourceSchemaNodes, currentFunctionNodes, connections]);
+  }, [currentTargetSchemaNode, currentSourceSchemaNodes, currentFunctionNodes, connections, sourceSchemaOrdering]);
 
   // Edges
   useEffect(() => {
@@ -150,6 +147,7 @@ const convertSourceToReactFlowParentAndChildNodes = (
 
     reactFlowNodes.push({
       id: nodeReactFlowId,
+      zIndex: 101, // Just for schema nodes to render N-badge over edges
       data: {
         schemaNode: srcNode,
         schemaType: SchemaType.Source,
@@ -200,6 +198,7 @@ export const convertToReactFlowParentAndChildNodes = (
 
   reactFlowNodes.push({
     id: parentNodeReactFlowId,
+    zIndex: 101, // Just for schema nodes to render N-badge over edges
     data: {
       schemaNode: parentSchemaNode,
       schemaType,
@@ -268,6 +267,7 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
     reactFlowNodes.push({
       id: functionKey,
       data: {
+        displayName: fnNode.displayName,
         functionName: fnNode.functionName,
         displayHandle: true,
         maxNumberOfInputs: fnNode.maxNumberOfInputs,

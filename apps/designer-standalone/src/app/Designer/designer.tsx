@@ -7,9 +7,9 @@ import {
   StandardSearchService,
   StandardOAuthService,
   StandardGatewayService,
-} from '@microsoft-logic-apps/designer-client-services';
-import { ResourceIdentityType } from '@microsoft-logic-apps/utils';
+} from '@microsoft/designer-client-services-logic-apps';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
+import { ResourceIdentityType } from '@microsoft/utils-logic-apps';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 

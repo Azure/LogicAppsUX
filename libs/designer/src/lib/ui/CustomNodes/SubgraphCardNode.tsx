@@ -17,9 +17,9 @@ import {
 } from '../../core/state/workflow/workflowSelectors';
 import { addSwitchCase, deleteSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import { DropZone } from '../connections/dropzone';
-import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { DeleteNodeModal, MenuItemType, SubgraphCard } from '@microsoft/designer-ui';
+import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';

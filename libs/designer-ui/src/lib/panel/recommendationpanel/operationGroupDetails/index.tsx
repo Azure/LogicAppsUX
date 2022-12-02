@@ -2,7 +2,7 @@ import type { OperationActionData } from '../interfaces';
 import { OperationSearchCard } from '../operationSearchCard';
 import HybridNotice from './HybridNotice';
 import { OperationGroupHeader } from './operationGroupHeader';
-import type { OperationApi } from '@microsoft-logic-apps/utils';
+import type { OperationApi } from '@microsoft/utils-logic-apps';
 
 export interface OperationGroupDetailsPageProps {
   operationApi: OperationApi;

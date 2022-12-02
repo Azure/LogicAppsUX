@@ -12,6 +12,7 @@ export enum NotificationTypes {
   SourceNodeRemoved = 'sourceNodeRemoved',
   SourceNodeRemoveFailed = 'sourceNodeRemoveFailed',
   TargetNodeCannotDelete = 'targetNodeCannotDelete',
+  RepeatingConnectionCannotDelete = 'repeatingConnectionCannotDelete',
   FunctionNodeDeleted = 'functionNodeDeleted',
   ConnectionDeleted = 'connectionDeleted',
   ArrayConnectionAdded = 'arrayConnectionAdded',
@@ -31,7 +32,8 @@ export const deletedNotificationAutoHideDuration = 3000;
 export const errorNotificationAutoHideDuration = 7000;
 
 const useStyles = makeStyles({
-  toastStyles: {
+  toast: {
+    minWidth: '320px',
     position: 'absolute',
     bottom: '16px',
     left: '50%',
@@ -40,15 +42,20 @@ const useStyles = makeStyles({
     boxShadow: tokens.shadow16,
     backgroundColor: tokens.colorNeutralBackground1,
     ...shorthands.padding('12px'),
-    zIndex: 10,
+    zIndex: 12,
   },
-  msgTitleStyles: {
+  msgTitle: {
     ...typographyStyles.body1Strong,
     color: tokens.colorNeutralForeground1,
   },
-  msgBodyStyles: {
+  msgBody: {
     ...typographyStyles.body1,
     color: tokens.colorNeutralForeground1,
+  },
+  undoBtn: {
+    ...shorthands.padding('2px'),
+    display: 'block',
+    minWidth: '60px',
   },
 });
 
@@ -67,6 +74,7 @@ export const Notification = (props: NotificationProps) => {
     switch (type) {
       // Error icon
       case NotificationTypes.SaveFailed:
+      case NotificationTypes.RepeatingConnectionCannotDelete:
       case NotificationTypes.SourceNodeRemoveFailed:
       case NotificationTypes.CircularLogicError:
       case NotificationTypes.TargetNodeCannotDelete:
@@ -108,6 +116,13 @@ export const Notification = (props: NotificationProps) => {
           nodeName: msgParam ?? '',
         }
       ),
+      [NotificationTypes.RepeatingConnectionCannotDelete]: intl.formatMessage(
+        {
+          defaultMessage: 'Remove all mappings within source element `{nodeName}‘ first.',
+          description: 'Message informing that mapping to child elements need to be deleted prior to selected one.',
+        },
+        { nodeName: msgParam ?? '' }
+      ),
       [NotificationTypes.TargetNodeCannotDelete]: intl.formatMessage({
         defaultMessage: `Target schema element cannot be deleted.`,
         description: 'Message informing that target element cannot be removed',
@@ -147,14 +162,14 @@ export const Notification = (props: NotificationProps) => {
   }, [autoHideDuration, onClose]);
 
   return (
-    <div className={styles.toastStyles}>
-      <Stack horizontal verticalAlign="center">
+    <div className={styles.toast}>
+      <Stack horizontal>
         {notificationIcon}
 
         <Stack style={{ marginRight: 12 }}>
-          <Text className={styles.msgTitleStyles}>{LocResources[type]}</Text>
+          <Text className={styles.msgTitle}>{LocResources[type]}</Text>
           {msgBody && (
-            <Text className={styles.msgBodyStyles} style={{ marginTop: 4 }}>
+            <Text className={styles.msgBody} style={{ marginTop: 4 }}>
               {msgBody}
             </Text>
           )}
@@ -162,7 +177,7 @@ export const Notification = (props: NotificationProps) => {
 
         <div style={{ marginLeft: 'auto' }}>
           {type === NotificationTypes.ElementsAndMappingsRemoved ? (
-            <Button appearance="transparent" onClick={handleDataMapUndo}>
+            <Button className={styles.undoBtn} appearance="transparent" onClick={handleDataMapUndo}>
               {undoLoc}
             </Button>
           ) : (

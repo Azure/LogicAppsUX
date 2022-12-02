@@ -1,13 +1,22 @@
 import { showNotification, updateConnectionInput } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaNodeDataType, SchemaNodeExtended } from '../../models';
+import type { SchemaNodeDataType, SchemaNodeExtended, SchemaNodeProperty } from '../../models';
 import { NormalizedDataType } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
-import { isCustomValue, newConnectionWillHaveCircularLogic } from '../../utils/Connection.Utils';
-import { functionInputHasInputs, getFunctionOutputValue, isFunctionData } from '../../utils/Function.Utils';
+import { directAccessPseudoFunctionKey, indexPseudoFunctionKey } from '../../models/Function';
+import { isConnectionUnit, isCustomValue, newConnectionWillHaveCircularLogic } from '../../utils/Connection.Utils';
+import { getInputValues } from '../../utils/DataMap.Utils';
+import {
+  calculateIndexValue,
+  formatDirectAccess,
+  functionInputHasInputs,
+  getFunctionOutputValue,
+  isFunctionData,
+} from '../../utils/Function.Utils';
 import { iconForNormalizedDataType, iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
 import { addSourceReactFlowPrefix } from '../../utils/ReactFlow.Util';
+import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import { errorNotificationAutoHideDuration, NotificationTypes } from '../notification/Notification';
 import type { IDropdownOption, IRawStyle } from '@fluentui/react';
 import { Dropdown, SelectableOptionMenuItemType, Stack, TextField } from '@fluentui/react';
@@ -23,6 +32,7 @@ const customValueDebounceDelay = 300;
 
 interface SharedOptionData {
   isFunction: boolean;
+  nodeProperties?: SchemaNodeProperty[]; // Should just be source schema nodes
   schemaNodeDataType?: SchemaNodeDataType; // Will be preferentially used over normalized type if present (should just be source schema nodes)
   normalizedDataType: NormalizedDataType;
 }
@@ -92,7 +102,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
     }
 
     const TypeIcon = items[0].data.schemaNodeDataType
-      ? iconForSchemaNodeDataType(items[0].data.schemaNodeDataType, 16, false)
+      ? iconForSchemaNodeDataType(items[0].data.schemaNodeDataType, 16, false, items[0].data.nodeProperties)
       : iconForNormalizedDataType(items[0].data.normalizedDataType, 16, false);
 
     return (
@@ -116,7 +126,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
       }
 
       const TypeIcon = item.data.schemaNodeDataType
-        ? iconForSchemaNodeDataType(item.data.schemaNodeDataType, 16, false)
+        ? iconForSchemaNodeDataType(item.data.schemaNodeDataType, 16, false, item.data.nodeProperties)
         : iconForNormalizedDataType(item.data.normalizedDataType, 16, false);
 
       return (
@@ -233,6 +243,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
         nodeKey: addSourceReactFlowPrefix(srcNode.key),
         nodeName: srcNode.name,
         isFunction: false,
+        nodeProperties: srcNode.nodeProperties,
         schemaNodeDataType: srcNode.schemaNodeDataType,
         normalizedDataType: srcNode.normalizedDataType,
       });
@@ -259,10 +270,17 @@ export const InputDropdown = (props: InputDropdownProps) => {
             if (!input) {
               return undefined;
             }
+
             if (isCustomValue(input)) {
               return input;
             }
+
             if (isFunctionData(input.node)) {
+              if (input.node.key === indexPseudoFunctionKey) {
+                const sourceNode = connectionDictionary[input.reactFlowKey].inputs[0][0];
+                return isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node) ? calculateIndexValue(sourceNode.node) : '';
+              }
+
               if (functionInputHasInputs(input.reactFlowKey, connectionDictionary)) {
                 return `${input.node.functionName}(...)`;
               } else {
@@ -276,11 +294,25 @@ export const InputDropdown = (props: InputDropdownProps) => {
           .filter((value) => !!value) as string[];
       }
 
+      const inputs = connectionDictionary[key].inputs[0];
+      const sourceNode = inputs && inputs[0];
+      let nodeName: string;
+      if (node.key === indexPseudoFunctionKey && isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node)) {
+        nodeName = calculateIndexValue(sourceNode.node);
+      } else if (node.key === directAccessPseudoFunctionKey) {
+        const functionValues = getInputValues(connectionDictionary[key], connectionDictionary);
+        nodeName =
+          functionValues.length === 3
+            ? formatDirectAccess(functionValues[0], functionValues[1], functionValues[2])
+            : getFunctionOutputValue(fnInputValues, node.functionName);
+      } else {
+        nodeName = getFunctionOutputValue(fnInputValues, node.functionName);
+      }
+
       newPossibleInputOptionsDictionary[node.outputValueType].push({
         nodeKey: key,
-        nodeName: getFunctionOutputValue(fnInputValues, node.functionName),
+        nodeName,
         isFunction: true,
-        schemaNodeDataType: undefined,
         normalizedDataType: node.outputValueType,
       });
     });
@@ -300,6 +332,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
           text: possibleOption.nodeName,
           data: {
             isFunction: possibleOption.isFunction,
+            nodeProperties: possibleOption.nodeProperties,
             schemaNodeDataType: possibleOption.schemaNodeDataType,
             normalizedDataType: possibleOption.normalizedDataType,
           },
@@ -360,7 +393,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
       {!inputIsCustomValue ? (
         <Dropdown
           options={modifiedDropdownOptions}
-          selectedKey={inputValue}
+          selectedKey={inputValue ?? null}
           onChange={(_e, option) => onSelectOption(option)}
           label={label}
           placeholder={placeholder}
