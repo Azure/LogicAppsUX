@@ -28,19 +28,25 @@ export abstract class OpenDesignerBase {
   protected panel: WebviewPanel;
   protected apiHubServiceDetails: Record<string, any>;
   protected readonly context: IActionContext | IAzureConnectorsContext;
+  protected readOnly: boolean;
+  protected isLocal: boolean;
 
   protected constructor(
     context: IActionContext | IAzureConnectorsContext,
     workflowName: string,
     panelName: string,
     apiVersion: string,
-    panelGroupKey: string
+    panelGroupKey: string,
+    readOnly: boolean,
+    isLocal: boolean
   ) {
     this.context = context;
     this.workflowName = workflowName;
     this.panelName = panelName;
     this.apiVersion = apiVersion;
     this.panelGroupKey = panelGroupKey;
+    this.readOnly = readOnly;
+    this.isLocal = isLocal;
   }
 
   protected abstract createPanel(): Promise<void>;

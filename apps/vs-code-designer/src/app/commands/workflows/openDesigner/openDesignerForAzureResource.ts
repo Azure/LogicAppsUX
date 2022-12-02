@@ -26,7 +26,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
     const panelName = `${vscode.workspace.name}-${workflowName}`;
     const panelGroupKey = ext.webViewKey.designerAzure;
 
-    super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey);
+    super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey, true, false);
 
     this.node = node;
     this.workflow = node.workflowFileContent;
@@ -79,29 +79,9 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
             baseUrl: this.baseUrl,
             apiVersion: this.apiVersion,
             apiHubServiceDetails: this.apiHubServiceDetails,
-            readOnly: true,
-            isLocal: false,
+            readOnly: this.readOnly,
+            isLocal: this.isLocal,
           },
-        });
-        break;
-      }
-      case ExtensionCommand.getCallbackUrl: {
-        const callbackInfo = await this.node.getCallbackUrl(this.node, msg.triggerName);
-        this.sendMsgToWebview({
-          command: ExtensionCommand.receiveCallback,
-          data: {
-            callbackInfo,
-          },
-        });
-        break;
-      }
-      case 'GetConnectionConfiguration': {
-        const connectionId = msg.connectionId;
-        const configuration = await this.node.getConnectionConfiguration(connectionId);
-        this.sendMsgToWebview({
-          command: 'ReceiveConnectionConfiguration',
-          connectionId,
-          configuration,
         });
         break;
       }

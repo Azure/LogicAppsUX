@@ -8,8 +8,7 @@ import {
   StandardGatewayService,
 } from '@microsoft-logic-apps/designer-client-services';
 import type { IApiHubServiceDetails } from '@microsoft-logic-apps/designer-client-services';
-import { ResourceIdentityType, HTTP_METHODS, ExtensionCommand } from '@microsoft-logic-apps/utils';
-import type { WebviewApi } from 'vscode-webview';
+import { ResourceIdentityType, HTTP_METHODS } from '@microsoft-logic-apps/utils';
 
 const httpClient = new HttpClient();
 
@@ -17,8 +16,7 @@ export const getDesignerServices = (
   baseUrl: string,
   apiVersion: string,
   apiHubServiceDetails: IApiHubServiceDetails,
-  isLocal: boolean,
-  vscode: WebviewApi<unknown>
+  isLocal: boolean
 ): any => {
   const connectionService = new StandardConnectionService({
     baseUrl,
@@ -125,18 +123,13 @@ export const getDesignerServices = (
   });
 
   const workflowService = {
-    getCallbackUrl: async (triggerName: any) => {
+    getCallbackUrl: async () => {
       if (isLocal) {
         return Promise.resolve({
           method: HTTP_METHODS.POST,
           value: 'Url not available during authoring in local project. Check Overview page.',
         });
       } else {
-        vscode.postMessage({
-          command: ExtensionCommand.getCallbackUrl,
-          triggerName,
-        });
-
         return Promise.resolve({ method: HTTP_METHODS.POST, value: 'Dummy url' });
       }
     },

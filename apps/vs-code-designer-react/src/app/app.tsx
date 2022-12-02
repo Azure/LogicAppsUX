@@ -1,17 +1,15 @@
 import type { RootState } from '../state/Store';
-import { VSCodeContext } from '../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import { getDesignerServices } from './servicesHelper';
 import { Theme } from '@microsoft-logic-apps/utils';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
-import { useContext, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 export const App = () => {
   const vscodeState = useSelector((state: RootState) => state.designer);
   const { panelMetaData, connectionReferences, baseUrl, apiHubServiceDetails, readOnly, isLocal, apiVersion } = vscodeState;
   const codelessApp = panelMetaData?.codelessApp;
-  const vscode = useContext(VSCodeContext);
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
 
   useThemeObserver(document.body, theme, setTheme, {
@@ -19,8 +17,8 @@ export const App = () => {
   });
 
   const services = useMemo(() => {
-    return getDesignerServices(baseUrl, apiVersion, apiHubServiceDetails, isLocal, vscode);
-  }, [baseUrl, apiVersion, apiHubServiceDetails, isLocal, vscode]);
+    return getDesignerServices(baseUrl, apiVersion, apiHubServiceDetails, isLocal);
+  }, [baseUrl, apiVersion, apiHubServiceDetails, isLocal]);
 
   return (
     <DesignerProvider
