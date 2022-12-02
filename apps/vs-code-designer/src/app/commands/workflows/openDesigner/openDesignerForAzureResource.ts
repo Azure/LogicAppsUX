@@ -11,8 +11,8 @@ import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationT
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { OpenDesignerBase } from './openDesignerBase';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
-import type { IDesignerPanelMetadata, IWorkflowFileContent } from '@microsoft-logic-apps/utils';
-import { ExtensionCommand } from '@microsoft-logic-apps/utils';
+import type { IDesignerPanelMetadata, IWorkflowFileContent } from '@microsoft/utils-logic-apps';
+import { ExtensionCommand } from '@microsoft/utils-logic-apps';
 import * as path from 'path';
 import * as vscode from 'vscode';
 

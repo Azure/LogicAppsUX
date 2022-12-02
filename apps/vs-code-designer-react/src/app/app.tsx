@@ -1,8 +1,8 @@
 import type { RootState } from '../state/Store';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import { getDesignerServices } from './servicesHelper';
-import { Theme } from '@microsoft-logic-apps/utils';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
+import { Theme } from '@microsoft/utils-logic-apps';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 

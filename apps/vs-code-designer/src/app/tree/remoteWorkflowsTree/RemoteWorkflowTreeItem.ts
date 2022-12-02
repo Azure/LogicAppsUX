@@ -13,14 +13,14 @@ import { getProjectContextValue } from '../../utils/tree/projectContextValues';
 import type { RemoteWorkflowsTreeItem } from './RemoteWorkflowsTreeItem';
 import type { StringDictionary } from '@azure/arm-appservice';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
+import { ProjectResource, isEmptyString, HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type {
+  IWorkflowFileContent,
   Artifacts,
   Parameter,
-  IWorkflowFileContent,
-  ServiceProviderConnectionModel,
   ICallbackUrlResponse,
-} from '@microsoft-logic-apps/utils';
-import { ProjectResource, isEmptyString, HTTP_METHODS } from '@microsoft-logic-apps/utils';
+  ServiceProviderConnectionModel,
+} from '@microsoft/utils-logic-apps';
 import { AzExtTreeItem, DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { AzExtParentTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import { ProgressLocation, window } from 'vscode';

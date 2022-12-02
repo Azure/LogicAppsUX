@@ -6,9 +6,9 @@ import {
   StandardSearchService,
   StandardOAuthService,
   StandardGatewayService,
-} from '@microsoft-logic-apps/designer-client-services';
-import type { IApiHubServiceDetails } from '@microsoft-logic-apps/designer-client-services';
-import { ResourceIdentityType, HTTP_METHODS } from '@microsoft-logic-apps/utils';
+} from '@microsoft/designer-client-services-logic-apps';
+import type { IApiHubServiceDetails } from '@microsoft/designer-client-services-logic-apps';
+import { ResourceIdentityType, HTTP_METHODS } from '@microsoft/utils-logic-apps';
 
 const httpClient = new HttpClient();
 
