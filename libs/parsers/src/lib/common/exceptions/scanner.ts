@@ -1,5 +1,5 @@
 import type { ExpressionExceptionCode } from './expression';
-import { BaseException } from '@microsoft-logic-apps/utils';
+import { BaseException } from '@microsoft/utils-logic-apps';
 
 export const ScannerExceptionName = 'Workflow.ExpressionScannerException';
 

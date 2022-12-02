@@ -1,19 +1,36 @@
 import DataMapperExt from './DataMapperExt';
-import { schemasPath, supportedSchemaFileExts } from './extensionConfig';
-import type { MessageToVsix, MessageToWebview } from '@microsoft/logic-apps-data-mapper';
-import { promises as fs } from 'fs';
+import {
+  supportedSchemaFileExts,
+  dataMapDefinitionsPath,
+  dataMapsPath,
+  draftMapDefinitionSuffix,
+  mapDefinitionExtension,
+  mapXsltExtension,
+  schemasPath,
+} from './extensionConfig';
+import type { MessageToVsix, MessageToWebview, MapDefinitionData, SchemaType } from '@microsoft/logic-apps-data-mapper';
+import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { promises as fs, existsSync as fileExistsSync, copyFileSync, unlinkSync as removeFileSync } from 'fs';
 import * as path from 'path';
-import { RelativePattern, Uri, workspace } from 'vscode';
+import { RelativePattern, Uri, workspace, window } from 'vscode';
 import type { WebviewPanel } from 'vscode';
 
 export default class DataMapperPanel {
   public panel: WebviewPanel;
-  private readonly _extensionPath: string;
 
-  constructor(panel: WebviewPanel, extPath: string) {
+  public dataMapName: string;
+  public dataMapStateIsDirty: boolean;
+  public loadMapDefinitionData: MapDefinitionData | undefined;
+
+  constructor(panel: WebviewPanel, dataMapName: string) {
     this.panel = panel;
-    this._extensionPath = extPath;
-    DataMapperExt.context?.subscriptions.push(panel);
+    this.dataMapName = dataMapName;
+    this.dataMapStateIsDirty = false;
+    this.handleReadSchemaFileOptions = this.handleReadSchemaFileOptions.bind(this); // Bind these as they're used as callbacks
+    this._handleWebviewMsg = this._handleWebviewMsg.bind(this);
+
+    DataMapperExt.context.subscriptions.push(panel);
 
     this._setWebviewHtml();
 
@@ -22,25 +39,25 @@ export default class DataMapperPanel {
     const schemaFolderWatcher = workspace.createFileSystemWatcher(
       new RelativePattern(schemaFolderPath, `**/*${supportedSchemaFileExts[0]}`)
     );
-    schemaFolderWatcher.onDidCreate(DataMapperExt.handleReadSchemaFileOptions);
-    schemaFolderWatcher.onDidDelete(DataMapperExt.handleReadSchemaFileOptions);
+    schemaFolderWatcher.onDidCreate(this.handleReadSchemaFileOptions);
+    schemaFolderWatcher.onDidDelete(this.handleReadSchemaFileOptions);
 
     // Handle messages from the webview (Data Mapper component)
-    this.panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, DataMapperExt.context?.subscriptions);
+    this.panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, DataMapperExt.context.subscriptions);
 
     this.panel.onDidDispose(
       () => {
-        DataMapperExt.currentPanel = undefined;
+        delete DataMapperExt.panelManagers[this.dataMapName];
         schemaFolderWatcher.dispose();
       },
       null,
-      DataMapperExt.context?.subscriptions
+      DataMapperExt.context.subscriptions
     );
   }
 
   private async _setWebviewHtml() {
     // Get webview content, converting links to VS Code URIs
-    const indexPath = path.join(this._extensionPath, '/webview/index.html');
+    const indexPath = path.join(DataMapperExt.extensionPath, '/webview/index.html');
     const html = await fs.readFile(indexPath, 'utf-8');
     // 1. Get all links prefixed by href or src
     const matchLinks = /(href|src)="([^"]*)"/g;
@@ -51,7 +68,7 @@ export default class DataMapperPanel {
         return `${prefix}="${link}"`;
       }
       // For scripts & links
-      const pth = path.join(this._extensionPath, '/webview/', link);
+      const pth = path.join(DataMapperExt.extensionPath, '/webview/', link);
       const uri = Uri.file(pth);
       return `${prefix}="${this.panel.webview.asWebviewUri(uri)}"`;
     };
@@ -59,14 +76,18 @@ export default class DataMapperPanel {
     this.panel.webview.html = html.replace(matchLinks, toUri);
   }
 
+  public sendMsgToWebview(msg: MessageToWebview) {
+    this.panel.webview.postMessage(msg);
+  }
+
   private _handleWebviewMsg(msg: MessageToVsix) {
     switch (msg.command) {
       case 'webviewLoaded':
         // Send runtime port to webview
-        DataMapperExt.currentPanel?.sendMsgToWebview({ command: 'setRuntimePort', data: `${DataMapperExt.backendRuntimePort}` });
+        this.sendMsgToWebview({ command: 'setRuntimePort', data: `${DataMapperExt.backendRuntimePort}` });
 
-        // IF loading a data map, handle that + xslt filename
-        DataMapperExt.handleLoadMapDefinitionIfAny();
+        // If loading a data map, handle that + xslt filename
+        this.handleLoadMapDefinitionIfAny();
 
         break;
       case 'webviewRscLoadError':
@@ -74,35 +95,182 @@ export default class DataMapperPanel {
         DataMapperExt.showError(`Error loading Data Mapper resource: ${msg.data}`);
         break;
       case 'addSchemaFromFile': {
-        DataMapperExt.addSchemaFromFile(msg.data.path, msg.data.type);
+        this.addSchemaFromFile(msg.data.path, msg.data.type);
         break;
       }
       case 'readLocalFileOptions': {
-        DataMapperExt.handleReadSchemaFileOptions();
+        this.handleReadSchemaFileOptions();
         break;
       }
       case 'saveDataMapDefinition': {
-        DataMapperExt.saveDataMap(true, msg.data);
+        this.saveDataMap(true, msg.data);
         break;
       }
       case 'saveDataMapXslt': {
-        DataMapperExt.saveDataMap(false, msg.data);
+        this.saveDataMap(false, msg.data);
         break;
       }
       case 'saveDraftDataMapDefinition': {
-        if (DataMapperExt.currentDataMapStateIsDirty) {
-          DataMapperExt.saveDraftDataMapDefinition(msg.data);
+        if (this.dataMapStateIsDirty) {
+          this.saveDraftDataMapDefinition(msg.data);
         }
         break;
       }
       case 'setIsMapStateDirty': {
-        DataMapperExt.handleUpdateMapDirtyState(msg.data);
+        this.handleUpdateMapDirtyState(msg.data);
         break;
       }
     }
   }
 
-  public sendMsgToWebview(msg: MessageToWebview) {
-    this.panel.webview.postMessage(msg);
+  public updateWebviewPanelTitle() {
+    this.panel.title = `${this.dataMapName ?? 'Untitled'} ${this.dataMapStateIsDirty ? '●' : ''}`;
+  }
+
+  public handleUpdateMapDirtyState(isMapStateDirty: boolean) {
+    this.dataMapStateIsDirty = isMapStateDirty;
+    this.updateWebviewPanelTitle();
+
+    // If map updates to not be dirty (Discard/undo/etc), we can safely remove the draft file
+    if (!isMapStateDirty) {
+      this.deleteDraftDataMapDefinition();
+    }
+  }
+
+  public handleLoadMapDefinitionIfAny() {
+    if (this.loadMapDefinitionData) {
+      this.sendMsgToWebview({
+        command: 'loadDataMap',
+        data: this.loadMapDefinitionData,
+      });
+
+      this.checkForAndSetXsltFilename();
+
+      this.loadMapDefinitionData = undefined;
+    }
+  }
+
+  public handleReadSchemaFileOptions() {
+    fs.readdir(path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath)).then((result) => {
+      this.sendMsgToWebview({
+        command: 'showAvailableSchemas',
+        data: result.filter((file) => path.extname(file).toLowerCase() === '.xsd'),
+      });
+    });
+  }
+
+  public addSchemaFromFile(filePath: string, schemaType: SchemaType) {
+    callWithTelemetryAndErrorHandlingSync('azureDataMapper.addSchemaFromFile', (_context: IActionContext) => {
+      fs.readFile(filePath, 'utf8').then((text: string) => {
+        const primarySchemaFileName = path.basename(filePath); // Ex: inpSchema.xsd
+        const expectedPrimarySchemaPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath, primarySchemaFileName);
+
+        // Examine the loaded text for the 'schemaLocation' attribute to auto-load in any dependencies too
+        // NOTE: We only check in the same directory as the primary schema file (also, it doesn't attempt to deal with complicated paths/URLs, just filenames)
+        const schemaFileDependencies = [...text.matchAll(/schemaLocation="[A-Za-z.]*"/g)].map((schemaFileAttributeMatch) => {
+          // Trim down to just the filename
+          return schemaFileAttributeMatch[0].split('"')[1];
+        });
+
+        schemaFileDependencies.forEach((schemaFile) => {
+          const schemaFilePath = path.join(path.dirname(filePath), schemaFile);
+
+          // Check that the schema file dependency exists in the same directory as the primary schema file
+          if (!fileExistsSync(schemaFilePath)) {
+            DataMapperExt.showError(
+              `Schema loading error: couldn't find schema file dependency ${schemaFile} in the same directory as ${primarySchemaFileName}. ${primarySchemaFileName} will still be copied to the Schemas folder.`
+            );
+            return;
+          }
+
+          // Check that the schema file dependency doesn't already exist in the Schemas folder
+          const expectedSchemaFilePath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath, schemaFile);
+          if (!fileExistsSync(expectedSchemaFilePath)) {
+            copyFileSync(schemaFilePath, expectedSchemaFilePath);
+          }
+        });
+
+        // Check if in Artifacts/Schemas, and if not, create it and send it to DM for API call
+        if (!fileExistsSync(expectedPrimarySchemaPath)) {
+          copyFileSync(filePath, expectedPrimarySchemaPath);
+        }
+
+        this.sendMsgToWebview({
+          command: 'fetchSchema',
+          data: { fileName: primarySchemaFileName, type: schemaType as SchemaType },
+        });
+      });
+    });
+  }
+
+  public saveDataMap(isDefinition: boolean, fileContents: string) {
+    callWithTelemetryAndErrorHandlingSync('azureDataMapper.saveDataMap', (_context: IActionContext) => {
+      // If mapDef, check for and delete *draft* map definition as it's no longer needed
+      if (isDefinition) {
+        this.deleteDraftDataMapDefinition();
+      }
+
+      const fileName = `${this.dataMapName}${isDefinition ? mapDefinitionExtension : mapXsltExtension}`;
+      const dataMapFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), isDefinition ? dataMapDefinitionsPath : dataMapsPath);
+      const filePath = path.join(dataMapFolderPath, fileName);
+
+      // Mkdir as extra insurance that directory exists so file can be written
+      // - harmless if directory already exists
+      fs.mkdir(dataMapFolderPath, { recursive: true })
+        .then(() => {
+          fs.writeFile(filePath, fileContents, 'utf8').then(() => {
+            if (!isDefinition) {
+              // If XSLT, show notification and re-check/set xslt filename
+              const openMapBtnText = `Open ${fileName}`;
+              window.showInformationMessage('Map saved and .XSLT file generated.', openMapBtnText).then((clickedButton?: string) => {
+                if (clickedButton && clickedButton === openMapBtnText) {
+                  workspace.openTextDocument(filePath).then(window.showTextDocument);
+                }
+              });
+
+              this.checkForAndSetXsltFilename();
+            }
+          });
+        })
+        .catch(DataMapperExt.showError);
+    });
+  }
+
+  public saveDraftDataMapDefinition(mapDefFileContents: string) {
+    const mapDefileName = `${this.dataMapName}${draftMapDefinitionSuffix}${mapDefinitionExtension}`;
+    const dataMapDefFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapDefinitionsPath);
+    const filePath = path.join(dataMapDefFolderPath, mapDefileName);
+
+    // Mkdir as extra insurance that directory exists so file can be written
+    // - harmless if directory already exists
+    fs.mkdir(dataMapDefFolderPath, { recursive: true })
+      .then(() => {
+        fs.writeFile(filePath, mapDefFileContents, 'utf8');
+      })
+      .catch(DataMapperExt.showError);
+  }
+
+  public deleteDraftDataMapDefinition() {
+    const draftMapDefinitionPath = path.join(
+      DataMapperExt.getWorkspaceFolderFsPath(),
+      dataMapDefinitionsPath,
+      `${this.dataMapName}${draftMapDefinitionSuffix}${mapDefinitionExtension}`
+    );
+    if (fileExistsSync(draftMapDefinitionPath)) {
+      removeFileSync(draftMapDefinitionPath);
+    }
+  }
+
+  public checkForAndSetXsltFilename() {
+    const expectedXsltPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapsPath, `${this.dataMapName}${mapXsltExtension}`);
+
+    if (fileExistsSync(expectedXsltPath)) {
+      this.sendMsgToWebview({
+        command: 'setXsltFilename',
+        data: this.dataMapName,
+      });
+    } else {
+      DataMapperExt.showError(`XSLT data map file not detected for ${this.dataMapName} - save your data map to generate it`);
+    }
   }
 }

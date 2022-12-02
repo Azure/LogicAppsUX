@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import type { RemoteWorkflowTreeItem } from '../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { isPathEqual, isSubpath } from './fs';
-import { isNullOrUndefined } from '@microsoft-logic-apps/utils';
+import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import * as vscode from 'vscode';
 
 /**

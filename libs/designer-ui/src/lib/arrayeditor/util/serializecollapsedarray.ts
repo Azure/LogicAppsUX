@@ -4,7 +4,7 @@ import { ValueSegmentType } from '../../editor';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
 import { getChildrenNodes } from '../../editor/base/utils/helper';
 import { convertComplexItemtoSchema, validationAndSerializeComplexArray, validationAndSerializeSimpleArray } from './util';
-import { guid } from '@microsoft-logic-apps/utils';
+import { guid } from '@microsoft/utils-logic-apps';
 import type { LexicalEditor } from 'lexical';
 import { $getRoot } from 'lexical';
 

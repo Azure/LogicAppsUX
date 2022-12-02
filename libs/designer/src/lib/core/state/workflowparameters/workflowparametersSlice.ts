@@ -2,10 +2,10 @@ import Constants from '../../../common/constants';
 import type { WorkflowParameter } from '../../../common/models/workflow';
 import { convertWorkflowParameterTypeToSwaggerType } from '../../utils/tokens';
 import { validateType } from '../../utils/validation';
-import { getIntl } from '@microsoft-logic-apps/intl';
-import { equals, guid } from '@microsoft-logic-apps/utils';
 import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
+import { getIntl } from '@microsoft/intl-logic-apps';
+import { equals, guid } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 

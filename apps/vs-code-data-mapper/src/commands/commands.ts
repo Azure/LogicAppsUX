@@ -1,51 +1,60 @@
 import DataMapperExt from '../DataMapperExt';
-import { startBackendRuntime } from '../FxWorkflowRuntime';
-import { draftMapDefinitionSuffix, schemasPath } from '../extensionConfig';
+import {
+  dataMapDefinitionsPath,
+  draftMapDefinitionSuffix,
+  schemasPath,
+  supportedDataMapDefinitionFileExts,
+  supportedSchemaFileExts,
+} from '../extensionConfig';
 import { callWithTelemetryAndErrorHandling, registerCommand } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { promises as fs, existsSync as fileExistsSync } from 'fs';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
-import { window } from 'vscode';
-import type { Uri } from 'vscode';
+import { window, Uri } from 'vscode';
 
 export const registerCommands = () => {
-  registerCommand('azureDataMapper.openDataMapper', () => openDataMapperCmd());
   registerCommand('azureDataMapper.createNewDataMap', () => createNewDataMapCmd());
   registerCommand('azureDataMapper.loadDataMapFile', (_context: IActionContext, uri: Uri) => loadDataMapFileCmd(uri));
 };
 
-const openDataMapperCmd = async () => {
-  const workflowFolder = DataMapperExt.getWorkspaceFolderFsPath();
-
-  if (workflowFolder) {
-    await startBackendRuntime(workflowFolder);
-
-    DataMapperExt.createOrShow();
-  }
-};
-
 const createNewDataMapCmd = () => {
-  // TODO: Data map name validation
   window.showInputBox({ prompt: 'Data Map name: ' }).then(async (newDatamapName) => {
     if (!newDatamapName) {
       return;
     }
 
-    DataMapperExt.currentDataMapName = newDatamapName;
-
-    openDataMapperCmd();
+    DataMapperExt.openDataMapperPanel(newDatamapName);
   });
 };
 
 const loadDataMapFileCmd = async (uri: Uri) => {
+  let mapDefinitionPath: string | undefined = uri?.fsPath;
   let draftFileIsFoundAndShouldBeUsed = false;
 
+  // Handle if Uri isn't provided/defined (cmd pallette or btn)
+  if (!mapDefinitionPath) {
+    const fileUris = await window.showOpenDialog({
+      title: 'Select a data map definition to load',
+      defaultUri: Uri.file(path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapDefinitionsPath)),
+      canSelectMany: false,
+      canSelectFiles: true,
+      canSelectFolders: false,
+      filters: { 'Data Map Definition': supportedDataMapDefinitionFileExts.map((ext) => ext.replace('.', '')) },
+    });
+
+    if (fileUris && fileUris.length > 0) {
+      mapDefinitionPath = fileUris[0].fsPath;
+    } else {
+      return;
+    }
+  }
+
   // Check if there's a draft version of the map (more up-to-date version) definition first, and load that if so
-  const mapDefinitionFileName = path.basename(uri.fsPath);
+  const mapDefinitionFileName = path.basename(mapDefinitionPath);
   const mapDefFileExt = path.extname(mapDefinitionFileName);
   const draftMapDefinitionPath = path.join(
-    path.dirname(uri.fsPath),
+    path.dirname(mapDefinitionPath),
     mapDefinitionFileName.replace(mapDefFileExt, `${draftMapDefinitionSuffix}${mapDefFileExt}`)
   );
 
@@ -56,19 +65,21 @@ const loadDataMapFileCmd = async (uri: Uri) => {
     }
   }
 
-  const mapDefinition = yaml.load(await fs.readFile(draftFileIsFoundAndShouldBeUsed ? draftMapDefinitionPath : uri.fsPath, 'utf-8')) as {
+  const mapDefinition = yaml.load(
+    await fs.readFile(draftFileIsFoundAndShouldBeUsed ? draftMapDefinitionPath : mapDefinitionPath, 'utf-8')
+  ) as {
     $sourceSchema: string;
     $targetSchema: string;
     [key: string]: any;
   };
 
-  // Attempt to load schema files if specified
-  const workflowFolder = DataMapperExt.getWorkspaceFolderFsPath();
-  if (!workflowFolder) {
-    throw new Error('No workflow folder found onLoadDataMapFile');
+  if (!mapDefinition.$sourceSchema || !mapDefinition.$targetSchema) {
+    DataMapperExt.showError('Invalid data map definition: $sourceSchema and $targetSchema must be defined.');
+    return;
   }
 
-  const schemasFolder = path.join(workflowFolder, schemasPath);
+  // Attempt to load schema files if specified
+  const schemasFolder = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath);
   const srcSchemaPath = path.join(schemasFolder, mapDefinition.$sourceSchema);
   const tgtSchemaPath = path.join(schemasFolder, mapDefinition.$targetSchema);
 
@@ -84,10 +95,11 @@ const loadDataMapFileCmd = async (uri: Uri) => {
 
         if (clickedButton && clickedButton === findSchemaFileButton) {
           const fileUris = await window.showOpenDialog({
+            title: 'Select the missing schema file',
             canSelectMany: false,
             canSelectFiles: true,
             canSelectFolders: false,
-            filters: { 'XML Schema Definition': ['xsd'] },
+            filters: { 'XML Schema Definition': supportedSchemaFileExts.map((ext) => ext.replace('.', '')) },
           });
 
           if (fileUris && fileUris.length > 0) {
@@ -122,14 +134,12 @@ const loadDataMapFileCmd = async (uri: Uri) => {
     }
   }
 
-  DataMapperExt.currentDataMapName = path.basename(uri.fsPath, path.extname(uri.fsPath)).replace(draftMapDefinitionSuffix, ''); // Gets filename w/o ext (and w/o draft suffix)
+  const dataMapName = path.basename(mapDefinitionPath, path.extname(mapDefinitionPath)).replace(draftMapDefinitionSuffix, ''); // Gets filename w/o ext (and w/o draft suffix)
 
-  openDataMapperCmd();
-
-  // Set map definition data to be loaded once webview sends webviewLoaded msg\
-  DataMapperExt.loadMapDefinitionData = {
-    mapDefinition: mapDefinition,
+  // Set map definition data to be loaded once webview sends webviewLoaded msg
+  DataMapperExt.openDataMapperPanel(dataMapName, {
+    mapDefinition,
     sourceSchemaFileName: path.basename(srcSchemaPath),
     targetSchemaFileName: path.basename(tgtSchemaPath),
-  };
+  });
 };

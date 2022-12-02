@@ -10,8 +10,8 @@ import { getThemedIconPath } from '../../utils/tree/assets';
 import { getProjectContextValue } from '../../utils/tree/projectContextValues';
 import type { SlotTreeItemBase } from '../slotsTree/SlotTreeItemBase';
 import { RemoteWorkflowTreeItem } from './RemoteWorkflowTreeItem';
-import { isNullOrEmpty, ProjectAccess, ProjectResource } from '@microsoft-logic-apps/utils';
-import type { Artifacts, Parameter } from '@microsoft-logic-apps/utils';
+import { isNullOrEmpty, ProjectAccess, ProjectResource } from '@microsoft/utils-logic-apps';
+import type { Artifacts, Parameter } from '@microsoft/utils-logic-apps';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 

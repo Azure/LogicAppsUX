@@ -16,7 +16,7 @@ import type {
 } from '../models/expression';
 import { ExpressionFunctionNames, ExpressionType } from '../models/expression';
 import { isParametersObject } from '../models/parameters';
-import { copy, equals, isNullOrUndefined } from '@microsoft-logic-apps/utils';
+import { copy, equals, isNullOrUndefined } from '@microsoft/utils-logic-apps';
 
 export class ResolutionService {
   private _context: ExpressionEvaluationContext;

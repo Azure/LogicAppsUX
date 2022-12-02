@@ -16,6 +16,7 @@ export function activate(context: ExtensionContext) {
   ]);
 
   DataMapperExt.context = context;
+  DataMapperExt.extensionPath = context.extensionPath;
   DataMapperExt.outputChannel = createAzExtOutputChannel(outputChannelTitle, outputChannelPrefix);
   registerUIExtensionVariables(DataMapperExt);
 

@@ -1,7 +1,7 @@
 import type { ValueSegment } from '../../models/parameter';
 import { ValueSegmentType } from '../../models/parameter';
 import { $isTokenNode } from '../nodes/tokenNode';
-import { guid } from '@microsoft-logic-apps/utils';
+import { guid } from '@microsoft/utils-logic-apps';
 import type { EditorState, ElementNode } from 'lexical';
 import { $getNodeByKey, $getRoot, $isElementNode, $isTextNode } from 'lexical';
 

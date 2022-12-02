@@ -115,7 +115,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
 
   const onConnectStart = (_event: React.MouseEvent, { nodeId, handleType }: OnConnectStartParams) => {
     // handleType check prevents other nodes' handles being displayed when attempting to draw from right-to-left (currently not allowed)
-    if (!nodeId || !handleType || handleType === 'target') {
+    if (!nodeId || !handleType || handleType === SchemaType.Target) {
       return;
     }
 
