@@ -18,7 +18,7 @@ export interface designerState {
 const initialState: designerState = {
   panelMetaData: null,
   baseUrl: '/url',
-  apiVersion: '',
+  apiVersion: '2018-11-01',
   connectionReferences: {},
   apiHubServiceDetails: {
     apiVersion: '2018-07-01-preview',
