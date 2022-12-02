@@ -280,9 +280,16 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                   </Stack>
                 ))}
 
-              <Button appearance="subtle" icon={<Add20Regular />} onClick={addUnboundedInput} style={{ width: '124px', marginTop: 12 }}>
-                {addFieldLoc}
-              </Button>
+              <div>
+                <Button
+                  appearance="subtle"
+                  icon={<Add20Regular />}
+                  onClick={addUnboundedInput}
+                  style={{ minWidth: '50px', maxWidth: '300px', marginTop: '12px', padding: '4px' }}
+                >
+                  {addFieldLoc}
+                </Button>
+              </div>
 
               {inputValueArrays && // Any other inputs after the first unbounded input
                 inputValueArrays.slice(1).map(
