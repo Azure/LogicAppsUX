@@ -93,6 +93,10 @@
         {
           "command": "logicAppsExtension.loadMore",
           "when": "never"
+        },
+        {
+          "command": "logicAppsExtension.viewContent",
+          "when": "never"
         }
       ]
     },
