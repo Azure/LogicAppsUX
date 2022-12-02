@@ -7,7 +7,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import { Uri } from 'vscode';
-import type { WebviewPanel } from 'vscode';
+import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';
 
 export interface IDesingerOptions {
   references?: any;
@@ -28,19 +28,25 @@ export abstract class OpenDesignerBase {
   protected panel: WebviewPanel;
   protected apiHubServiceDetails: Record<string, any>;
   protected readonly context: IActionContext | IAzureConnectorsContext;
+  protected readOnly: boolean;
+  protected isLocal: boolean;
 
   protected constructor(
     context: IActionContext | IAzureConnectorsContext,
     workflowName: string,
     panelName: string,
     apiVersion: string,
-    panelGroupKey: string
+    panelGroupKey: string,
+    readOnly: boolean,
+    isLocal: boolean
   ) {
     this.context = context;
     this.workflowName = workflowName;
     this.panelName = panelName;
     this.apiVersion = apiVersion;
     this.panelGroupKey = panelGroupKey;
+    this.readOnly = readOnly;
+    this.isLocal = isLocal;
   }
 
   protected abstract createPanel(): Promise<void>;
@@ -49,13 +55,19 @@ export abstract class OpenDesignerBase {
     return tryGetWebviewPanel(this.panelGroupKey, this.panelName);
   }
 
+  protected getPanelOptions(): WebviewOptions & WebviewPanelOptions {
+    return {
+      enableScripts: true,
+      retainContextWhenHidden: true,
+    };
+  }
+
   protected sendMsgToWebview(msg: any) {
     this.panel.webview.postMessage(msg);
   }
 
   protected async getWebviewContent(options: IDesingerOptions): Promise<string> {
     const { parametersData, localSettings, artifacts, azureDetails } = options;
-
     let { connectionsData } = options;
 
     const mapArtifacts = {};

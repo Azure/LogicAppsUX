@@ -22,5 +22,5 @@ export const useThemeObserver = (ref: any, theme: string, callback: any, options
     });
     observer.observe(ref, options);
     return () => observer.disconnect();
-  }, [callback, options]);
+  }, [callback, options, ref, theme]);
 };

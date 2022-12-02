@@ -1,4 +1,4 @@
-import { initializeDesigner } from './state/DesignerSlice';
+import { initializeDesigner, updateCallbackUrl } from './state/DesignerSlice';
 import type { AppDispatch } from './state/Store';
 import { ExtensionCommand } from '@microsoft/utils-logic-apps';
 import useEventListener from '@use-it/event-listener';
@@ -19,6 +19,9 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
     switch (message.command) {
       case ExtensionCommand.initialize_frame:
         dispatch(initializeDesigner(message.data));
+        break;
+      case ExtensionCommand.receiveCallback:
+        dispatch(updateCallbackUrl(message.data));
         break;
       default:
         break;

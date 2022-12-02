@@ -16,10 +16,11 @@ export interface IDesignerPanelMetadata {
   parametersData: Record<string, Parameter>;
   localSettings: Record<string, string>;
   azureDetails: AzureConnectorDetails;
-  workflowContent: any;
   workflowDetails: Record<string, any>;
   artifacts: Artifacts;
-  configuredWebhookEndpoint: string;
+  workflowContent?: any;
+  configuredWebhookEndpoint?: string;
+  accessToken?: string;
 }
 
 export interface CodelessApp {
@@ -50,7 +51,19 @@ export interface WorkflowParameter {
 
 export interface IWorkflowFileContent {
   name: string;
-  definition: Record<string, any>;
+  definition: any; // Work to be done
   kind: string;
-  isDisabled: boolean;
+  runtimeConfiguration: {
+    statelessRunMode: string;
+    operationOptions: string;
+  };
+}
+
+export interface ICallbackUrlResponse {
+  value: string;
+  method: string;
+  basePath?: string;
+  relativePath?: string;
+  relativeParameters?: [];
+  queries?: Record<string, any>;
 }
