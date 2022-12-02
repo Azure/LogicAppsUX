@@ -12,12 +12,12 @@
     "commands": [
       {
         "command": "azureDataMapper.createNewDataMap",
-        "title": "Create new data map",
+        "title": "Data Mapper: Create new data map",
         "icon": "$(add)"
       },
       {
         "command": "azureDataMapper.loadDataMapFile",
-        "title": "Load data map"
+        "title": "Data Mapper: Load existing data map"
       }
     ],
     "views": {
@@ -31,7 +31,7 @@
     "viewsWelcome": [
       {
         "view": "azDataMapper",
-        "contents": "[Create new data map](command:azureDataMapper.createNewDataMap)"
+        "contents": "[Create new data map](command:azureDataMapper.createNewDataMap)\n[Load existing data map](command:azureDataMapper.loadDataMapFile)"
       }
     ],
     "menus": {
