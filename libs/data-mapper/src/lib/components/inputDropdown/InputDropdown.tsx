@@ -393,7 +393,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
       {!inputIsCustomValue ? (
         <Dropdown
           options={modifiedDropdownOptions}
-          selectedKey={inputValue}
+          selectedKey={inputValue ?? null}
           onChange={(_e, option) => onSelectOption(option)}
           label={label}
           placeholder={placeholder}
