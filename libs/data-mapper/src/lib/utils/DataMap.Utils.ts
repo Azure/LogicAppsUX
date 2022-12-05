@@ -15,6 +15,7 @@ import type { PathItem, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended
 import { SchemaNodeProperty, SchemaType } from '../models/Schema';
 import { findLast } from './Array.Utils';
 import {
+  addCustomValueToConnections,
   addNodeToConnections,
   collectTargetNodesForConnectionChain,
   flattenInputs,
@@ -454,6 +455,9 @@ const parseDefinitionToConnection = (
 
     if (sourceNode && destinationNode) {
       addNodeToConnections(connections, sourceNode, sourceKey, destinationNode, destinationKey);
+    } else if (destinationNode) {
+      // Custom values
+      addCustomValueToConnections(connections, amendedSourceKey, destinationNode, destinationKey);
     }
 
     // Need to extract and create connections for nested functions
