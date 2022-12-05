@@ -21,6 +21,18 @@
       "value": "\"."
     }
   ],
+  "+3efoo": [
+    {
+      "type": 0,
+      "value": "No schema is added"
+    }
+  ],
+  "+DxBpE": [
+    {
+      "type": 0,
+      "value": "Failed loading the schema. Please try again."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -55,6 +67,12 @@
     {
       "type": 0,
       "value": "Разбивка на страницы"
+    }
+  ],
+  "/9r9ML": [
+    {
+      "type": 0,
+      "value": "Add target schema"
     }
   ],
   "/AtN16": [
@@ -195,6 +213,12 @@
       "value": "Выполняет декодирование URL входной строки"
     }
   ],
+  "0IRUjM": [
+    {
+      "type": 0,
+      "value": "Select a target schema node to start mapping"
+    }
+  ],
   "0JTHTZ": [
     {
       "type": 0,
@@ -285,6 +309,12 @@
       "value": "Возвращает порт из URI. Если порт не указан, возвращает порт по умолчанию для протокола"
     }
   ],
+  "11qu8f": [
+    {
+      "type": 0,
+      "value": "Enter a valid integer."
+    }
+  ],
   "14lYtE": [
     {
       "type": 0,
@@ -295,6 +325,12 @@
     {
       "type": 0,
       "value": "Комментарий"
+    }
+  ],
+  "1ANUHk": [
+    {
+      "type": 0,
+      "value": "Loading functions..."
     }
   ],
   "1D047X": [
@@ -383,6 +419,12 @@
       "value": "count"
     }
   ],
+  "1REk6u": [
+    {
+      "type": 0,
+      "value": "Enter a valid email."
+    }
+  ],
   "1TE0e8": [
     {
       "type": 0,
@@ -393,12 +435,6 @@
     {
       "type": 0,
       "value": "Укажите выражения, которые должны быть истинными для срабатывания триггера."
-    }
-  ],
-  "1X4U/1": [
-    {
-      "type": 0,
-      "value": "Показать представление кода"
     }
   ],
   "1ZDLZA": [
@@ -431,10 +467,22 @@
       "value": "Обязательное поле. Объект, который нужно сравнить со значением на отношение \"меньше\"."
     }
   ],
+  "1nODUD": [
+    {
+      "type": 0,
+      "value": "Hide functions"
+    }
+  ],
   "1nvvw1": [
     {
       "type": 0,
       "value": "Введите значение для заголовка авторизации"
+    }
+  ],
+  "1pjO9s": [
+    {
+      "type": 0,
+      "value": "Hide source schema"
     }
   ],
   "1uGBLP": [
@@ -649,6 +697,12 @@
       "value": "(UTC+09:00) Чита"
     }
   ],
+  "3eeli7": [
+    {
+      "type": 0,
+      "value": "Select a source schema"
+    }
+  ],
   "3ewBbk": [
     {
       "type": 0,
@@ -719,12 +773,6 @@
       "value": "(UTC+04:00) Ереван"
     }
   ],
-  "438H98": [
-    {
-      "type": 0,
-      "value": "Отменить изменения"
-    }
-  ],
   "45ubha": [
     {
       "type": 0,
@@ -743,6 +791,18 @@
       "value": "Требуется. Число добавляемых дней. Значение может быть отрицательным для вычитания дней."
     }
   ],
+  "4Ekn9t": [
+    {
+      "type": 0,
+      "value": "Undo"
+    }
+  ],
+  "4IS4yp": [
+    {
+      "type": 0,
+      "value": "Retry Policy"
+    }
+  ],
   "4Q7WzU": [
     {
       "type": 0,
@@ -759,6 +819,12 @@
     {
       "type": 0,
       "value": "Обязательно. Единица измерения времени интервала."
+    }
+  ],
+  "4aaixN": [
+    {
+      "type": 0,
+      "value": "Tour"
     }
   ],
   "4c0uPQ": [
@@ -797,12 +863,6 @@
       "value": "Идентификатор запроса службы"
     }
   ],
-  "4wavwk": [
-    {
-      "type": 0,
-      "value": "Обзор/учебник"
-    }
-  ],
   "4wjJs0": [
     {
       "type": 0,
@@ -815,16 +875,16 @@
       "value": "Тип действия"
     }
   ],
+  "5+MuPz": [
+    {
+      "type": 0,
+      "value": "Enter a valid double."
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
       "value": "Обязательное поле. Выражение XPath для вычисления."
-    }
-  ],
-  "5P8UWJ": [
-    {
-      "type": 0,
-      "value": "Выберите исходную схему"
     }
   ],
   "5SAQOb": [
@@ -851,6 +911,12 @@
       "value": "Требуется. Имя цикла, элемент которого нужно получить."
     }
   ],
+  "5hWg4V": [
+    {
+      "type": 0,
+      "value": "Select element"
+    }
+  ],
   "5qzZMo": [
     {
       "type": 0,
@@ -869,6 +935,12 @@
       "value": "Гибридный соединитель"
     }
   ],
+  "62Ypnr": [
+    {
+      "type": 0,
+      "value": "Error loading operation data"
+    }
+  ],
   "63/zYN": [
     {
       "type": 0,
@@ -879,12 +951,6 @@
     {
       "type": 0,
       "value": "(UTC+08:45) Юкла"
-    }
-  ],
-  "6Ld/c8": [
-    {
-      "type": 0,
-      "value": "Выберите целевую схему"
     }
   ],
   "6OSgRP": [
@@ -903,6 +969,12 @@
     {
       "type": 0,
       "value": "(UTC+09:30) Аделаида"
+    }
+  ],
+  "6grB5C": [
+    {
+      "type": 0,
+      "value": "Invalid node settings"
     }
   ],
   "6jiO7t": [
@@ -947,6 +1019,12 @@
       "value": "Требуется. Число, на которое умножается множитель 2."
     }
   ],
+  "73iM9+": [
+    {
+      "type": 0,
+      "value": "Update source schema"
+    }
+  ],
   "7GSk99": [
     {
       "type": 0,
@@ -977,6 +1055,12 @@
     {
       "type": 0,
       "value": "Обязательное поле. Строка, из которой извлекается подстрока."
+    }
+  ],
+  "7WVgiU": [
+    {
+      "type": 0,
+      "value": "Configure"
     }
   ],
   "7ZR1xr": [
@@ -1025,6 +1109,12 @@
     {
       "type": 0,
       "value": "Обязательное поле. Строка, которая может содержать значение."
+    }
+  ],
+  "8+0teU": [
+    {
+      "type": 0,
+      "value": "Parameter name already exists."
     }
   ],
   "84D91Y": [
@@ -1177,6 +1267,24 @@
       "value": "Значение"
     }
   ],
+  "92OUl9": [
+    {
+      "type": 0,
+      "value": "Array Element "
+    },
+    {
+      "type": 1,
+      "value": "index"
+    },
+    {
+      "type": 0,
+      "value": " is missing required property "
+    },
+    {
+      "type": 1,
+      "value": "property"
+    }
+  ],
   "93svjx": [
     {
       "type": 0,
@@ -1247,6 +1355,12 @@
     {
       "type": 0,
       "value": "Возвращает значение true, если оба параметра имеют значение true"
+    }
+  ],
+  "A5Ferh": [
+    {
+      "type": 0,
+      "value": "Source element removed from view."
     }
   ],
   "ADM1Z8": [
@@ -1331,6 +1445,12 @@
       "value": "Требуется. Строка, которая кодируется в представление base64."
     }
   ],
+  "AsqIUa": [
+    {
+      "type": 0,
+      "value": "Maximum Interval"
+    }
+  ],
   "Az0QvG": [
     {
       "type": 0,
@@ -1411,6 +1531,12 @@
       "value": "Нет доступного динамического содержимого"
     }
   ],
+  "B999mz": [
+    {
+      "type": 0,
+      "value": "Line deleted."
+    }
+  ],
   "BAgRzO": [
     {
       "type": 0,
@@ -1429,10 +1555,22 @@
       "value": "Один символ описателя формата или шаблон с пользовательским форматом, который указывает, как форматировать значение этой метки времени. Если формат не указан, используется ISO 8601 (\"o\")."
     }
   ],
+  "BEZWxB": [
+    {
+      "type": 0,
+      "value": "Clear custom value"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
       "value": "Требуется. Строка в кодировке URI."
+    }
+  ],
+  "BJNUxN": [
+    {
+      "type": 0,
+      "value": "Path Parameters"
     }
   ],
   "BKL0ZG": [
@@ -1507,10 +1645,10 @@
       "value": "Выходные данные"
     }
   ],
-  "CkfIxl": [
+  "ClZW2r": [
     {
       "type": 0,
-      "value": "Исходный узел удален из представления."
+      "value": "Value"
     }
   ],
   "CsPY74": [
@@ -1529,6 +1667,12 @@
     {
       "type": 0,
       "value": "Возвращает путь и запрос из URI"
+    }
+  ],
+  "D/xTXV": [
+    {
+      "type": 0,
+      "value": "Show source schema"
     }
   ],
   "D1lgsT": [
@@ -1571,6 +1715,12 @@
     {
       "type": 0,
       "value": "(UTC –10:00) Алеутские острова"
+    }
+  ],
+  "Dhu3IS": [
+    {
+      "type": 0,
+      "value": "Show mini-map"
     }
   ],
   "DsPDVB": [
@@ -1695,6 +1845,12 @@
       "value": "(UTC+08:00) Иркутск"
     }
   ],
+  "F9dR1Q": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "FDF4Qb": [
     {
       "type": 0,
@@ -1741,6 +1897,12 @@
     {
       "type": 0,
       "value": "Возвращает тело части в составных выходных данных триггера"
+    }
+  ],
+  "FS06y3": [
+    {
+      "type": 0,
+      "value": "Must provide name of parameter."
     }
   ],
   "FUhNu4": [
@@ -1821,12 +1983,6 @@
       "value": "hours"
     }
   ],
-  "FemgEF": [
-    {
-      "type": 0,
-      "value": "Отмена"
-    }
-  ],
   "Fgq3Db": [
     {
       "type": 0,
@@ -1849,12 +2005,6 @@
     {
       "type": 0,
       "value": "Состояние"
-    }
-  ],
-  "FuXqJI": [
-    {
-      "type": 0,
-      "value": "Обновить целевую схему"
     }
   ],
   "G/CC5/": [
@@ -1895,6 +2045,12 @@
       "value": "Обязательное поле. Объект, который необходимо найти в коллекции."
     }
   ],
+  "GXXLuT": [
+    {
+      "type": 0,
+      "value": "Enter a valid boolean."
+    }
+  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1917,6 +2073,12 @@
     {
       "type": 0,
       "value": "Показать меньше"
+    }
+  ],
+  "Gi7czD": [
+    {
+      "type": 0,
+      "value": "Source schema element"
     }
   ],
   "Gmya+V": [
@@ -1955,10 +2117,10 @@
       "value": "Обязательно. Строка для среза."
     }
   ],
-  "H7t3Pm": [
+  "H5VikC": [
     {
       "type": 0,
-      "value": "Целевая схема будет заменена, и вы не сможете вернуться к предыдущим изменениям. Продолжить изменение целевой схемы?"
+      "value": "Invalid connection, mapping must not form a closed loop."
     }
   ],
   "H8bEUn": [
@@ -2005,6 +2167,18 @@
       "value": "Выберите карточку, чтобы просмотреть содержимое."
     }
   ],
+  "HmcHoE": [
+    {
+      "type": 0,
+      "value": "Error fetching manifest"
+    }
+  ],
+  "HoQiVa": [
+    {
+      "type": 0,
+      "value": "Enter a valid datetime."
+    }
+  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -2013,6 +2187,20 @@
     {
       "type": 0,
       "value": " Установить шлюз"
+    }
+  ],
+  "Hyp0Ao": [
+    {
+      "type": 0,
+      "value": "Remove parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" and its value"
     }
   ],
   "HzS2gJ": [
@@ -2051,16 +2239,10 @@
       "value": "Преобразует переданную строку метки времени в формате UTC в целевой часовой пояс"
     }
   ],
-  "Ie4sUt": [
+  "IXy91L": [
     {
       "type": 0,
-      "value": "Настроить"
-    }
-  ],
-  "IgNz8Y": [
-    {
-      "type": 0,
-      "value": "Действие"
+      "value": "Add a target schema"
     }
   ],
   "IjZFjQ": [
@@ -2117,6 +2299,12 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "J9wWry": [
+    {
+      "type": 0,
+      "value": "Parameters"
     }
   ],
   "JErLDT": [
@@ -2313,6 +2501,12 @@
       "value": "Удалить граф рабочего процесса"
     }
   ],
+  "LCXZLM": [
+    {
+      "type": 0,
+      "value": "Loading Function Apps..."
+    }
+  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -2337,6 +2531,12 @@
     {
       "type": 0,
       "value": "\". Разделение отсутствует в массиве."
+    }
+  ],
+  "LR/3Lr": [
+    {
+      "type": 0,
+      "value": "Configure"
     }
   ],
   "LS8rfZ": [
@@ -2497,6 +2697,12 @@
       "value": "Возвращает текущую метку времени в виде строки"
     }
   ],
+  "MVrv+N": [
+    {
+      "type": 0,
+      "value": "Enter a valid array."
+    }
+  ],
   "MYgKHu": [
     {
       "type": 0,
@@ -2513,6 +2719,18 @@
     {
       "type": 0,
       "value": "Следующее со сбоем"
+    }
+  ],
+  "Mgcs5s": [
+    {
+      "type": 0,
+      "value": "Enter a valid number."
+    }
+  ],
+  "MirIsS": [
+    {
+      "type": 0,
+      "value": "Show code"
     }
   ],
   "MmBfD1": [
@@ -2539,6 +2757,12 @@
       "value": "Требуется. Имя ключа возвращаемых значений данных форм."
     }
   ],
+  "N4dEVo": [
+    {
+      "type": 0,
+      "value": "Headers"
+    }
+  ],
   "NPUFgH": [
     {
       "type": 0,
@@ -2555,12 +2779,6 @@
     {
       "type": 0,
       "value": "(UTC+03:00) Минск"
-    }
-  ],
-  "Nn/DN4": [
-    {
-      "type": 0,
-      "value": "This connection would introduce circular logic."
     }
   ],
   "NnD8gF": [
@@ -2591,20 +2809,6 @@
     {
       "type": 0,
       "value": "Выберите удостоверение."
-    }
-  ],
-  "NtY1mD": [
-    {
-      "type": 0,
-      "value": "Удалите все ссылки на узел \""
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "\" перед удалением узла."
     }
   ],
   "NvANon": [
@@ -2725,12 +2929,6 @@
       "value": "Комментарий"
     }
   ],
-  "OUS2wX": [
-    {
-      "type": 0,
-      "value": "Выберите схему для раскрывающегося списка"
-    }
-  ],
   "OVvieE": [
     {
       "type": 0,
@@ -2839,12 +3037,6 @@
       "value": "Требуется. Число, которое прибавляется к слагаемому 1."
     }
   ],
-  "PMMNKR": [
-    {
-      "type": 0,
-      "value": "Узел исходной схемы"
-    }
-  ],
   "PP63jY": [
     {
       "type": 0,
@@ -2861,6 +3053,12 @@
     {
       "type": 0,
       "value": "Требуется. Число добавляемых секунд. Значение может быть отрицательным для вычитания секунд."
+    }
+  ],
+  "PSrCNL": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "PXa0D4": [
@@ -2899,6 +3097,12 @@
       "value": "Не создавать, если значение отсутствует"
     }
   ],
+  "PvWTxR": [
+    {
+      "type": 0,
+      "value": "Show functions"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2927,12 +3131,6 @@
     {
       "type": 0,
       "value": "Отменить"
-    }
-  ],
-  "QBOaAu": [
-    {
-      "type": 0,
-      "value": "Выберите исходную схему"
     }
   ],
   "QEp3C8": [
@@ -2973,6 +3171,12 @@
     {
       "type": 0,
       "value": "Элемент"
+    }
+  ],
+  "QdJUaS": [
+    {
+      "type": 0,
+      "value": "Pencil icon"
     }
   ],
   "QeE0k/": [
@@ -3027,12 +3231,6 @@
       "value": "Триггеры удалить невозможно."
     }
   ],
-  "R7v2iQ": [
-    {
-      "type": 0,
-      "value": "Линия между элементами массива автоматически создается для обозначения элементов цикла."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -3055,6 +3253,12 @@
     {
       "type": 0,
       "value": "Переключиться на ввод всего массива"
+    }
+  ],
+  "RZO5Ic": [
+    {
+      "type": 0,
+      "value": "Add or replace your schemas."
     }
   ],
   "RhH4pF": [
@@ -3115,12 +3319,6 @@
     {
       "type": 0,
       "value": "6"
-    }
-  ],
-  "Rno87I": [
-    {
-      "type": 0,
-      "value": "Вы хотите отменить все несохраненные изменения?"
     }
   ],
   "S8P4N5": [
@@ -3215,6 +3413,12 @@
     {
       "type": 0,
       "value": "Имя"
+    }
+  ],
+  "T7Xwii": [
+    {
+      "type": 0,
+      "value": "Interval"
     }
   ],
   "T7zcR6": [
@@ -3331,6 +3535,12 @@
       "value": "Свернуть/развернуть"
     }
   ],
+  "U086AA": [
+    {
+      "type": 0,
+      "value": "Target schema element"
+    }
+  ],
   "U1NiVg": [
     {
       "type": 0,
@@ -3373,6 +3583,12 @@
       "value": "Заменяет строку заданной строкой"
     }
   ],
+  "UR1CS5": [
+    {
+      "type": 0,
+      "value": "Hide code"
+    }
+  ],
   "USVffu": [
     {
       "type": 0,
@@ -3387,6 +3603,12 @@
     {
       "type": 0,
       "value": " (имя файла)"
+    }
+  ],
+  "UnrrzF": [
+    {
+      "type": 0,
+      "value": "Source schema"
     }
   ],
   "Ur+wph": [
@@ -3437,10 +3659,28 @@
       "value": "Развернуть"
     }
   ],
+  "VJa7sh": [
+    {
+      "type": 0,
+      "value": "Browse operations"
+    }
+  ],
   "VKAk5g": [
     {
       "type": 0,
       "value": "Указанное имя запуска рабочего процесса недопустимо."
+    }
+  ],
+  "VL9wOu": [
+    {
+      "type": 0,
+      "value": "Must provide value for parameter."
+    }
+  ],
+  "VLc3FV": [
+    {
+      "type": 0,
+      "value": "Source schema"
     }
   ],
   "VUH9aj": [
@@ -3543,12 +3783,6 @@
     {
       "type": 0,
       "value": "Требуется. Первое целое число в массиве."
-    }
-  ],
-  "WTTJ89": [
-    {
-      "type": 0,
-      "value": "Выберите целевую схему"
     }
   ],
   "WUe3DY": [
@@ -3681,6 +3915,30 @@
       "value": "(UTC-08:00) Тихоокеанское время (США и Канада)"
     }
   ],
+  "XbtEq9": [
+    {
+      "type": 0,
+      "value": "Count"
+    }
+  ],
+  "Xj0Gr/": [
+    {
+      "type": 0,
+      "value": "Target schema element cannot be deleted."
+    }
+  ],
+  "XkBxv5": [
+    {
+      "type": 0,
+      "value": "Select a target schema"
+    }
+  ],
+  "Xkt2vD": [
+    {
+      "type": 0,
+      "value": "Select a function app function"
+    }
+  ],
   "Xnn0uj": [
     {
       "type": 0,
@@ -3709,12 +3967,6 @@
     {
       "type": 0,
       "value": "Требуется. Имя действия, выходные данные текста которого нужны."
-    }
-  ],
-  "XylNMU": [
-    {
-      "type": 0,
-      "value": "Исходная схема будет заменена, и вы не сможете вернуться к предыдущим изменениям. Продолжить изменение исходной схемы?"
     }
   ],
   "Y/bcmG": [
@@ -3805,6 +4057,34 @@
     {
       "type": 0,
       "value": "Уменьшить"
+    }
+  ],
+  "Z9PWl/": [
+    {
+      "type": 0,
+      "value": "Retry Policy count is invalid (Must be from "
+    },
+    {
+      "type": 1,
+      "value": "min"
+    },
+    {
+      "type": 0,
+      "value": " to "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "ZCFMoe": [
+    {
+      "type": 0,
+      "value": "Body"
     }
   ],
   "ZM1mRy": [
@@ -3905,36 +4185,28 @@
       "value": "(UTC+05:00) Ашхабад, Ташкент"
     }
   ],
+  "aJxefp": [
+    {
+      "type": 0,
+      "value": "Add new parameters"
+    }
+  ],
   "aK4iLW": [
     {
       "type": 0,
       "value": "Обработка данных"
     }
   ],
-  "aL0Uut": [
-    {
-      "type": 0,
-      "value": "Функция"
-    }
-  ],
-  "aRKDWL": [
-    {
-      "type": 0,
-      "value": "Сбой с ошибкой: "
-    },
-    {
-      "type": 1,
-      "value": "errorMessage"
-    },
-    {
-      "type": 0,
-      "value": ". Войдите еще раз."
-    }
-  ],
   "ahsVI/": [
     {
       "type": 0,
       "value": "Введите PFX"
+    }
+  ],
+  "amRYtC": [
+    {
+      "type": 0,
+      "value": "Enter a valid float."
     }
   ],
   "auUI93": [
@@ -3957,12 +4229,6 @@
     {
       "type": 1,
       "value": "controls"
-    }
-  ],
-  "bCQ6JT": [
-    {
-      "type": 0,
-      "value": "Сопоставление массива"
     }
   ],
   "bG9rjv": [
@@ -4071,6 +4337,12 @@
       "value": "Возвращает объект со свойством, равным указанному значению"
     }
   ],
+  "c4GQZE": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "c6XbVI": [
     {
       "type": 0,
@@ -4081,12 +4353,6 @@
     {
       "type": 0,
       "value": "Динамическое содержимое можно также добавить из других источников."
-    }
-  ],
-  "cCYmTK": [
-    {
-      "type": 0,
-      "value": "Конфигурация"
     }
   ],
   "cJm+ah": [
@@ -4101,6 +4367,18 @@
       "value": "Просмотреть документацию"
     }
   ],
+  "cP4UkW": [
+    {
+      "type": 0,
+      "value": "Retry Policy interval is invalid, must match ISO 8601 duration format"
+    }
+  ],
+  "cR9RtV": [
+    {
+      "type": 0,
+      "value": "Discard changes"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -4111,12 +4389,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Триполи"
-    }
-  ],
-  "cbL6Gv": [
-    {
-      "type": 0,
-      "value": "Добавьте или замените схемы."
     }
   ],
   "cgq/+y": [
@@ -4161,12 +4433,6 @@
       "value": "Обязательное поле. Коллекция, для которой необходимо пропустить указанное количество объектов с начала."
     }
   ],
-  "d32jcW": [
-    {
-      "type": 0,
-      "value": "Предупреждение"
-    }
-  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -4177,12 +4443,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Хараре, Претория"
-    }
-  ],
-  "dA6SUc": [
-    {
-      "type": 0,
-      "value": "Подключение удалено."
     }
   ],
   "dDYCuU": [
@@ -4213,12 +4473,6 @@
     {
       "type": 0,
       "value": "Защита входных данных операции."
-    }
-  ],
-  "dWeRGU": [
-    {
-      "type": 0,
-      "value": "значок карандаша"
     }
   ],
   "dWx21B": [
@@ -4287,12 +4541,6 @@
     {
       "type": 0,
       "value": "Не указано"
-    }
-  ],
-  "eCkaMR": [
-    {
-      "type": 0,
-      "value": "Обновить исходную схему"
     }
   ],
   "eGa1Wa": [
@@ -4385,36 +4633,38 @@
       "value": "Число подкачки превышает максимальное значение"
     }
   ],
-  "fLSetk": [
-    {
-      "type": 0,
-      "value": "Исходная схема"
-    }
-  ],
   "faSDuD": [
     {
       "type": 0,
       "value": "(UTC+04:00) Порт-Луи"
     }
   ],
+  "faUrud": [
+    {
+      "type": 0,
+      "value": "Loading connection data..."
+    }
+  ],
   "fc1AV8": [
     {
       "type": 0,
-      "value": "HTTP "
+      "value": "URL-адрес HTTP "
     },
     {
       "type": 1,
       "value": "method"
-    },
-    {
-      "type": 0,
-      "value": " URL"
     }
   ],
   "fg/34o": [
     {
       "type": 0,
       "value": "Логические функции"
+    }
+  ],
+  "fqNVDv": [
+    {
+      "type": 0,
+      "value": "Back"
     }
   ],
   "froV/0": [
@@ -4565,6 +4815,18 @@
       "value": "Введите или вставьте пример полезной нагрузки JSON."
     }
   ],
+  "h40rpg": [
+    {
+      "type": 0,
+      "value": "Specify interval in ISO 8601 format."
+    }
+  ],
+  "h6vVbX": [
+    {
+      "type": 0,
+      "value": "Add a source schema first, then select elements to build your map"
+    }
+  ],
   "hBLPXK": [
     {
       "type": 0,
@@ -4645,6 +4907,12 @@
       "value": "\""
     }
   ],
+  "hic23z": [
+    {
+      "type": 0,
+      "value": "The value is too large."
+    }
+  ],
   "hq1mk6": [
     {
       "type": 0,
@@ -4667,6 +4935,12 @@
     {
       "type": 0,
       "value": "Продолжительность"
+    }
+  ],
+  "htj+eZ": [
+    {
+      "type": 0,
+      "value": "Update target schema"
     }
   ],
   "hvbclb": [
@@ -4821,6 +5095,18 @@
       "value": " с"
     }
   ],
+  "isnFBi": [
+    {
+      "type": 0,
+      "value": "Elements and mappings not connected to a target element are removed."
+    }
+  ],
+  "ittN0l": [
+    {
+      "type": 0,
+      "value": "No resources of this type found under this subscription."
+    }
+  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -4843,6 +5129,12 @@
     {
       "type": 0,
       "value": "Возвращает значения указанной переменной."
+    }
+  ],
+  "j5z8Vd": [
+    {
+      "type": 0,
+      "value": "Repeating"
     }
   ],
   "jA6Wrp": [
@@ -4873,6 +5165,18 @@
     {
       "type": 0,
       "value": "Обязательное поле. Значение, которое будет преобразовано в строку."
+    }
+  ],
+  "jQjteB": [
+    {
+      "type": 0,
+      "value": "Add a source schema"
+    }
+  ],
+  "jUDhbs": [
+    {
+      "type": 0,
+      "value": "Target schema"
     }
   ],
   "jVpanH": [
@@ -4911,12 +5215,6 @@
     {
       "type": 0,
       "value": "\""
-    }
-  ],
-  "jsEMSu": [
-    {
-      "type": 0,
-      "value": "Инструментарий"
     }
   ],
   "juR40n": [
@@ -4973,16 +5271,22 @@
       "value": " с"
     }
   ],
+  "kJD/bW": [
+    {
+      "type": 0,
+      "value": "Loading search results..."
+    }
+  ],
+  "kM+Mr0": [
+    {
+      "type": 0,
+      "value": "Loading..."
+    }
+  ],
   "kN6kce": [
     {
       "type": 0,
       "value": "Возвращает строковое представление входной строки в формате Base 64"
-    }
-  ],
-  "kV/U0C": [
-    {
-      "type": 0,
-      "value": "Показать мини-карту"
     }
   ],
   "kYivbS": [
@@ -5039,6 +5343,12 @@
       "value": "Отсутствует свойство типа проверки подлинности \"type\"."
     }
   ],
+  "kxMDyM": [
+    {
+      "type": 0,
+      "value": "Enter a valid json."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -5075,16 +5385,16 @@
       "value": "Запустить триггер"
     }
   ],
+  "lQNKUB": [
+    {
+      "type": 0,
+      "value": "A line for the parent element is added automatically."
+    }
+  ],
   "lV77P8": [
     {
       "type": 0,
       "value": "Заголовок"
-    }
-  ],
-  "lWjfm3": [
-    {
-      "type": 0,
-      "value": "Назад"
     }
   ],
   "lZT0JI": [
@@ -5105,6 +5415,20 @@
       "value": "Введите допустимый массив"
     }
   ],
+  "lexzgJ": [
+    {
+      "type": 0,
+      "value": "Remove all references to element ' "
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " ' before you remove the element."
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -5117,10 +5441,22 @@
       "value": "Сокращение для actions('actionName').outputs.body"
     }
   ],
-  "lztiwS": [
+  "lzBHHT": [
     {
       "type": 0,
-      "value": "Фактическое значение"
+      "value": "Array Element "
+    },
+    {
+      "type": 1,
+      "value": "index"
+    },
+    {
+      "type": 0,
+      "value": " has unknown property "
+    },
+    {
+      "type": 1,
+      "value": "property"
     }
   ],
   "m7Y6Qf": [
@@ -5273,12 +5609,6 @@
       "value": "Обязательно. Количество единиц измерения времени, на которое желаемая дата находится в будущем по отношению к текущему времени."
     }
   ],
-  "nQxMfu": [
-    {
-      "type": 0,
-      "value": "Очистить пользовательское значение и выбрать повторно"
-    }
-  ],
   "nSan4V": [
     {
       "type": 0,
@@ -5307,12 +5637,6 @@
     {
       "type": 0,
       "value": "Добавляет целое число минут в метку времени строки, переданной в функцию"
-    }
-  ],
-  "ntiOaL": [
-    {
-      "type": 0,
-      "value": "Закрыть"
     }
   ],
   "nx25nq": [
@@ -5347,22 +5671,34 @@
       "value": "max_page"
     }
   ],
+  "o2Cmny": [
+    {
+      "type": 0,
+      "value": "Enter a valid uri."
+    }
+  ],
+  "o3SfI4": [
+    {
+      "type": 0,
+      "value": "Zoom to fit"
+    }
+  ],
   "oAFcW6": [
     {
       "type": 0,
       "value": "Требуется. dataURI для декодирования в двоичное представление."
     }
   ],
+  "oDHXKh": [
+    {
+      "type": 0,
+      "value": "Item"
+    }
+  ],
   "oLtwMw": [
     {
       "type": 0,
       "value": "Передача содержимого"
-    }
-  ],
-  "oM6q96": [
-    {
-      "type": 0,
-      "value": "Обзор операций"
     }
   ],
   "oRvVIW": [
@@ -5377,6 +5713,12 @@
       "value": "Введите идентификатор запуска, чтобы открыть его"
     }
   ],
+  "oVVPst": [
+    {
+      "type": 0,
+      "value": "Do you want to discard all unsaved changes?"
+    }
+  ],
   "odQ554": [
     {
       "type": 0,
@@ -5387,12 +5729,6 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Сальвадор"
-    }
-  ],
-  "orhWzV": [
-    {
-      "type": 0,
-      "value": "Не удалось загрузить схему. Повторите попытку."
     }
   ],
   "oxH1L/": [
@@ -5671,6 +6007,16 @@
       "value": "Возвращает число элементов в массиве или строке"
     }
   ],
+  "qiIs4V": [
+    {
+      "type": 0,
+      "value": "Example: "
+    },
+    {
+      "type": 1,
+      "value": "example"
+    }
+  ],
   "qnI4Y1": [
     {
       "type": 0,
@@ -5689,6 +6035,20 @@
       "value": "При использовании асинхронного отклика приложение логики может отправлять ответ 202 (Принято), чтобы показать, что запрос принят к обработке. Для получения окончательного состояния будет предоставлен заголовок расположения."
     }
   ],
+  "qwn2o/": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "‘ first."
+    }
+  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -5699,6 +6059,12 @@
     {
       "type": 0,
       "value": "Отменить"
+    }
+  ],
+  "r7vZ5a": [
+    {
+      "type": 0,
+      "value": "Minimum Interval"
     }
   ],
   "r8aZXs": [
@@ -5737,6 +6103,12 @@
       "value": "Является ли подключение недопустимым"
     }
   ],
+  "rSIBjh": [
+    {
+      "type": 0,
+      "value": "Enter value for parameter."
+    }
+  ],
   "raBiud": [
     {
       "type": 0,
@@ -5753,6 +6125,12 @@
     {
       "type": 0,
       "value": "Выражение"
+    }
+  ],
+  "rsdJcV": [
+    {
+      "type": 0,
+      "value": "Select source schema elements to build your map"
     }
   ],
   "rstpaK": [
@@ -5983,6 +6361,12 @@
       "value": "Выберите элемент для начала настройки"
     }
   ],
+  "uM1i27": [
+    {
+      "type": 0,
+      "value": "Specify a retry count from 1 to 90"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -6037,6 +6421,12 @@
       "value": "(UTC-11:00) Время в формате UTC-11"
     }
   ],
+  "uesaee": [
+    {
+      "type": 0,
+      "value": "Expression"
+    }
+  ],
   "ui7GCl": [
     {
       "type": 0,
@@ -6053,12 +6443,6 @@
     {
       "type": 0,
       "value": "4"
-    }
-  ],
-  "ut5Med": [
-    {
-      "type": 0,
-      "value": "Значение по умолчанию"
     }
   ],
   "uzsleE": [
@@ -6101,6 +6485,12 @@
     {
       "type": 0,
       "value": "Удалить"
+    }
+  ],
+  "vT0DCP": [
+    {
+      "type": 0,
+      "value": "Outputs"
     }
   ],
   "vVJuus": [
@@ -6183,16 +6573,16 @@
       "value": "Свойства рабочего процесса"
     }
   ],
+  "w16qh+": [
+    {
+      "type": 0,
+      "value": "Queries"
+    }
+  ],
   "w5Hhig": [
     {
       "type": 0,
       "value": "Воскресенье"
-    }
-  ],
-  "w9OL8U": [
-    {
-      "type": 0,
-      "value": "По размеру страницы"
     }
   ],
   "wEaGWn": [
@@ -6255,6 +6645,12 @@
       "value": "Возвращает указанное значение в зависимости от результата выражения: true или false"
     }
   ],
+  "wl7X0l": [
+    {
+      "type": 0,
+      "value": "Hide mini-map"
+    }
+  ],
   "wmDUGV": [
     {
       "type": 0,
@@ -6273,6 +6669,12 @@
       "value": "URL-адрес обратного вызова"
     }
   ],
+  "woq0x0": [
+    {
+      "type": 0,
+      "value": "Add source schema"
+    }
+  ],
   "wzEneQ": [
     {
       "type": 0,
@@ -6289,6 +6691,12 @@
     {
       "type": 0,
       "value": "Обязательное поле. Коллекция, длину которой нужно определить."
+    }
+  ],
+  "x10E1p": [
+    {
+      "type": 0,
+      "value": "Status Code"
     }
   ],
   "xFQXAI": [
@@ -6453,12 +6861,6 @@
       "value": "Меню"
     }
   ],
-  "z4YYlQ": [
-    {
-      "type": 0,
-      "value": "Введите для параметра значение по умолчанию."
-    }
-  ],
   "z9kH+0": [
     {
       "type": 0,
@@ -6477,16 +6879,16 @@
       "value": "Введите значение"
     }
   ],
-  "zGRgUE": [
-    {
-      "type": 0,
-      "value": "Целевая схема"
-    }
-  ],
   "zIDVd9": [
     {
       "type": 0,
       "value": "Обязательное поле. Строка, которая преобразуется в значение собственного типа."
+    }
+  ],
+  "zNesUZ": [
+    {
+      "type": 0,
+      "value": "A retry policy applies to intermittent failures, characterized as HTTP status codes 408, 429, and 5xx, in addition to any connectivity exceptions. The default is an exponential interval policy set to retry 4 times."
     }
   ],
   "zTKAc9": [
@@ -6499,12 +6901,6 @@
     {
       "type": 0,
       "value": "Удалить пользовательское значение"
-    }
-  ],
-  "zUs2yb": [
-    {
-      "type": 0,
-      "value": "Узел целевой схемы"
     }
   ],
   "zbtUQ/": [
