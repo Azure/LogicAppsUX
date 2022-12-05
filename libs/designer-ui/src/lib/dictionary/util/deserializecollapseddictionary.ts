@@ -2,7 +2,7 @@ import type { DictionaryEditorItemProps } from '..';
 import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
 import { isEmpty } from './helper';
-import { guid } from '@microsoft-logic-apps/utils';
+import { guid } from '@microsoft/utils-logic-apps';
 
 export const convertItemsToSegments = (items: DictionaryEditorItemProps[]): ValueSegment[] => {
   const itemsToConvert = items.filter((item) => {

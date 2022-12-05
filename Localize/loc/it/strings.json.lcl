@@ -5443,7 +5443,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC+5.30) Chennai, Kolkata (Calcutta), Mumbai, Nuova Delhi]]></Val>
+            <Val><![CDATA[(UTC+05.30) Chennai, Kolkata (Calcutta), Mumbai, Nuova Delhi]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

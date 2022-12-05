@@ -8,8 +8,8 @@ import { SchemaNameBadge } from '../components/schemaSelection/SchemaNameBadge';
 import { SourceSchemaPlaceholder } from '../components/schemaSelection/SourceSchemaPlaceholder';
 import {
   checkerboardBackgroundImage,
-  defaultCanvasZoom,
   ReactFlowEdgeType,
+  reactFlowFitViewOptions,
   ReactFlowNodeType,
   sourcePrefix,
   targetPrefix,
@@ -115,7 +115,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
 
   const onConnectStart = (_event: React.MouseEvent, { nodeId, handleType }: OnConnectStartParams) => {
     // handleType check prevents other nodes' handles being displayed when attempting to draw from right-to-left (currently not allowed)
-    if (!nodeId || !handleType || handleType === 'target') {
+    if (!nodeId || !handleType || handleType === SchemaType.Target) {
       return;
     }
 
@@ -179,7 +179,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
         borderRadius: tokens.borderRadiusMedium,
       }}
       onEdgeClick={onEdgeClick}
-      fitViewOptions={{ maxZoom: defaultCanvasZoom, includeHiddenNodes: true }}
+      fitViewOptions={reactFlowFitViewOptions}
       fitView
     >
       <CanvasToolbox canvasBlockHeight={canvasBlockHeight} />

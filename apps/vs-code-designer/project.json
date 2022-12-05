@@ -1,17 +1,28 @@
 {
+  "name": "vs-code-designer",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/vs-code-designer/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/node:webpack",
+      "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/vs-code-designer",
         "main": "apps/vs-code-designer/src/main.ts",
         "tsConfig": "apps/vs-code-designer/tsconfig.app.json",
-        "assets": ["apps/vs-code-designer/src/assets", "apps/vs-code-designer/src/package.json"],
-        "externalDependencies": ["vscode", "commonjs"]
+        "assets": [
+          "apps/vs-code-designer/src/assets",
+          "apps/vs-code-designer/src/package.json",
+          {
+            "glob": "**/*.svg",
+            "input": "node_modules/@microsoft/vscode-azext-azureutils/resources",
+            "output": "node_modules/@microsoft/vscode-azext-azureutils/resources"
+          }
+        ],
+        "externalDependencies": ["vscode", "commonjs"],
+        "target": "node",
+        "compiler": "tsc"
       },
       "configurations": {
         "production": {
@@ -42,7 +53,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/vs-code-designer"],
+      "outputs": ["{workspaceRoot}/coverage/apps/vs-code-designer"],
       "options": {
         "jestConfig": "apps/vs-code-designer/jest.config.ts",
         "passWithNoTests": true

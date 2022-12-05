@@ -11,8 +11,8 @@ import type {
   DiscoveryOperation,
   DiscoveryResultTypes,
   SomeKindOfAzureOperationDiscovery,
-} from '@microsoft-logic-apps/utils';
-import { ArgumentException, connectorsSearchResultsMock, MockSearchOperations } from '@microsoft-logic-apps/utils';
+} from '@microsoft/utils-logic-apps';
+import { ArgumentException, connectorsSearchResultsMock, MockSearchOperations } from '@microsoft/utils-logic-apps';
 
 interface ContinuationTokenResponse<T> {
   // danielle to move

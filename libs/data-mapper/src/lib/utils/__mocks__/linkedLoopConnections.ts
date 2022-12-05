@@ -460,7 +460,7 @@ export const fullMapForSimplifiedLoop: ConnectionDictionary = {
       '0': [
         {
           node: {
-            key: '/ns0:Root/ManyToMany/Year/Month/Day/Date',
+            key: '/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate',
             name: 'Date',
             schemaNodeDataType: 'String',
             normalizedDataType: 'String',
@@ -478,7 +478,7 @@ export const fullMapForSimplifiedLoop: ConnectionDictionary = {
               { key: '/ns0:Root/ManyToMany/Year/Month/Day/Date', name: 'Date', fullName: 'Date', repeating: false },
             ],
           },
-          reactFlowKey: 'source-/ns0:Root/ManyToMany/Year/Month/Day/Date',
+          reactFlowKey: 'source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate',
         },
       ],
     },
@@ -848,7 +848,7 @@ export const fullMapForSimplifiedLoop: ConnectionDictionary = {
               { key: '/ns0:Root/ManyToMany/Year/Month', name: 'Month', fullName: 'Month', repeating: true },
             ],
           },
-          reactFlowKey: 'source-/ns0:Root/ManyToMany/Year/Month',
+          reactFlowKey: 'source-/ns0:Root/ManyToMany/SourceYear/SourceMonth',
         },
       ],
     },

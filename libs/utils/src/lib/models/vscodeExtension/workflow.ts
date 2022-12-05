@@ -1,3 +1,13 @@
+import type { Artifacts } from './artifact';
+import type { Parameter } from './parameter';
+
+export interface ILocalSettingsJson {
+  IsEncrypted?: boolean;
+  Values?: { [key: string]: string };
+  Host?: { [key: string]: string };
+  ConnectionStrings?: { [key: string]: string };
+}
+
 export interface IDesignerPanelMetadata {
   appSettingNames?: string[];
   codelessApp: CodelessApp;
@@ -6,27 +16,20 @@ export interface IDesignerPanelMetadata {
   parametersData: Record<string, Parameter>;
   localSettings: Record<string, string>;
   azureDetails: AzureConnectorDetails;
-  workflowContent: any;
   workflowDetails: Record<string, any>;
   artifacts: Artifacts;
-  configuredWebhookEndpoint: string;
+  workflowContent?: any;
+  configuredWebhookEndpoint?: string;
+  accessToken?: string;
 }
 
 export interface CodelessApp {
   statelessRunMode?: string;
-  definition: any;
+  definition: LogicAppsV2.WorkflowDefinition;
   name: string;
   stateful: boolean;
   kind: string;
   operationOptions: string;
-}
-
-export interface Parameter {
-  type: string;
-  metadata?: any;
-  description?: string;
-  allowedValues?: any[];
-  value: any;
 }
 
 export interface AzureConnectorDetails {
@@ -39,20 +42,28 @@ export interface AzureConnectorDetails {
   workflowManagementBaseUrl?: string;
 }
 
-export interface Artifacts {
-  maps: Record<string, FileDetails[]>;
-  schemas: FileDetails[];
-}
-
-interface FileDetails {
-  name: string;
-  fileName: string;
-  relativePath: string;
-}
-
 export interface WorkflowParameter {
   type: string;
   defaultValue: any;
   allowedValues?: any[];
   metadata?: any;
+}
+
+export interface IWorkflowFileContent {
+  name: string;
+  definition: any; // Work to be done
+  kind: string;
+  runtimeConfiguration: {
+    statelessRunMode: string;
+    operationOptions: string;
+  };
+}
+
+export interface ICallbackUrlResponse {
+  value: string;
+  method: string;
+  basePath?: string;
+  relativePath?: string;
+  relativeParameters?: [];
+  queries?: Record<string, any>;
 }

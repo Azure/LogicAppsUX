@@ -4,9 +4,16 @@ import type { SchemaNodeDataType, SchemaNodeExtended, SchemaNodeProperty } from 
 import { NormalizedDataType } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
-import { indexPseudoFunctionKey } from '../../models/Function';
+import { directAccessPseudoFunctionKey, indexPseudoFunctionKey } from '../../models/Function';
 import { isConnectionUnit, isCustomValue, newConnectionWillHaveCircularLogic } from '../../utils/Connection.Utils';
-import { calculateIndexValue, functionInputHasInputs, getFunctionOutputValue, isFunctionData } from '../../utils/Function.Utils';
+import { getInputValues } from '../../utils/DataMap.Utils';
+import {
+  calculateIndexValue,
+  formatDirectAccess,
+  functionInputHasInputs,
+  getFunctionOutputValue,
+  isFunctionData,
+} from '../../utils/Function.Utils';
 import { iconForNormalizedDataType, iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
 import { addSourceReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
@@ -289,10 +296,18 @@ export const InputDropdown = (props: InputDropdownProps) => {
 
       const inputs = connectionDictionary[key].inputs[0];
       const sourceNode = inputs && inputs[0];
-      const nodeName =
-        node.key === indexPseudoFunctionKey && isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node)
-          ? calculateIndexValue(sourceNode.node)
-          : getFunctionOutputValue(fnInputValues, node.functionName);
+      let nodeName: string;
+      if (node.key === indexPseudoFunctionKey && isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node)) {
+        nodeName = calculateIndexValue(sourceNode.node);
+      } else if (node.key === directAccessPseudoFunctionKey) {
+        const functionValues = getInputValues(connectionDictionary[key], connectionDictionary);
+        nodeName =
+          functionValues.length === 3
+            ? formatDirectAccess(functionValues[0], functionValues[1], functionValues[2])
+            : getFunctionOutputValue(fnInputValues, node.functionName);
+      } else {
+        nodeName = getFunctionOutputValue(fnInputValues, node.functionName);
+      }
 
       newPossibleInputOptionsDictionary[node.outputValueType].push({
         nodeKey: key,
@@ -378,7 +393,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
       {!inputIsCustomValue ? (
         <Dropdown
           options={modifiedDropdownOptions}
-          selectedKey={inputValue}
+          selectedKey={inputValue ?? null}
           onChange={(_e, option) => onSelectOption(option)}
           label={label}
           placeholder={placeholder}

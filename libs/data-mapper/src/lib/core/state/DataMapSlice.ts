@@ -6,7 +6,7 @@ import {
   NotificationTypes,
 } from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
-import { SchemaType } from '../../models';
+import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import { findLast } from '../../utils/Array.Utils';
@@ -23,11 +23,12 @@ import {
   nodeHasSpecificInputEventually,
   updateConnectionInputValue,
 } from '../../utils/Connection.Utils';
-import { addParentConnectionForRepeatingElementsNested } from '../../utils/DataMap.Utils';
+import { addParentConnectionForRepeatingElementsNested, getParentId } from '../../utils/DataMap.Utils';
 import { isFunctionData } from '../../utils/Function.Utils';
 import {
   addReactFlowPrefix,
   addSourceReactFlowPrefix,
+  addTargetReactFlowPrefix,
   createReactFlowFunctionKey,
   getDestinationIdFromReactFlowConnectionId,
   getSourceIdFromReactFlowConnectionId,
@@ -619,6 +620,53 @@ export const deleteConnectionFromConnections = (connections: ConnectionDictionar
   );
 };
 
+export const deleteParentRepeatingConnections = (connections: ConnectionDictionary, inputKey: string /* contains prefix */) => {
+  const parentId = getParentId(inputKey);
+  if (parentId.endsWith(SchemaType.Source + '-')) {
+    return;
+  }
+
+  // find connections for parent
+  const allConnectionIds = Object.keys(connections);
+  const parentSourceIsConnected = allConnectionIds.includes(parentId);
+  if (!parentSourceIsConnected) {
+    deleteParentRepeatingConnections(connections, parentId);
+    return;
+  }
+
+  const parentNode = connections[parentId].self.node;
+  if (isSchemaNodeExtended(parentNode) && parentNode.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
+    // find all connections with this parent, if any, break
+    const hasAnyChildRepeatingConnections = allConnectionIds.some((id) => {
+      const hasChildConnection = id.includes(parentId) && id !== parentId;
+      const possibleTargetOutput = getConnectedTargetSchemaNodes([connections[id]], connections);
+      const hasOutputThatReachesTarget = possibleTargetOutput.length !== 0;
+      return hasChildConnection && hasOutputThatReachesTarget;
+    });
+    if (!hasAnyChildRepeatingConnections) {
+      connections[parentId].outputs.forEach((output) => {
+        if (output.reactFlowKey.includes('target')) {
+          // make sure connection is direct to target, not an index or other func
+          deleteConnectionFromConnections(connections, parentId, connections[parentId].outputs[0].reactFlowKey);
+        }
+      });
+
+      deleteParentRepeatingConnections(connections, parentId);
+    }
+  }
+};
+
+export const canDeleteConnection = (sourceNodeId: string, sourceSchema: SchemaNodeDictionary) => {
+  const sourceNode = sourceSchema[sourceNodeId];
+  if (sourceNode && !sourceNode.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
+    return true;
+  }
+  if (!sourceNode) {
+    return true;
+  }
+  return false;
+};
+
 export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: string) => {
   const targetNode = curDataMapState.curDataMapOperation.flattenedTargetSchema[reactFlowKey];
   if (targetNode) {
@@ -632,21 +680,46 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
   // Handle deleting source schema node
   const sourceNode = curDataMapState.curDataMapOperation.flattenedSourceSchema[reactFlowKey];
   if (sourceNode) {
-    // Check if it has outputs - if so, cancel it and show notification
+    // Check if it has outputs *on the current canvas level* - if so, cancel it and show notification
     const potentialSrcSchemaNodeConnection = curDataMapState.curDataMapOperation.dataMapConnections[reactFlowKey];
     if (potentialSrcSchemaNodeConnection && potentialSrcSchemaNodeConnection.outputs.length > 0) {
-      curDataMapState.notificationData = {
-        type: NotificationTypes.SourceNodeRemoveFailed,
-        msgParam: sourceNode.name,
-        autoHideDurationMs: errorNotificationAutoHideDuration,
-      };
-      return;
+      // Check that there's no outputs on the current canvas level by checking for outputs in current function and target schema nodes
+      const hasOutputsOnCurrentCanvasLevel = potentialSrcSchemaNodeConnection.outputs.some((output) => {
+        const potentialConnectedFnNode = curDataMapState.curDataMapOperation.currentFunctionNodes[output.reactFlowKey];
+        const potentialConnectedTargetNode = curDataMapState.curDataMapOperation.currentTargetSchemaNode;
+
+        if (potentialConnectedFnNode) {
+          return true;
+        }
+
+        // Check if currentTargetSchemaNode or any of its children matches an output
+        if (
+          potentialConnectedTargetNode &&
+          (addTargetReactFlowPrefix(potentialConnectedTargetNode.key) === output.reactFlowKey ||
+            potentialConnectedTargetNode.children.some((child) => addTargetReactFlowPrefix(child.key) === output.reactFlowKey))
+        ) {
+          return true;
+        }
+
+        return false;
+      });
+
+      if (hasOutputsOnCurrentCanvasLevel) {
+        curDataMapState.notificationData = {
+          type: NotificationTypes.SourceNodeRemoveFailed,
+          msgParam: sourceNode.name,
+          autoHideDurationMs: errorNotificationAutoHideDuration,
+        };
+        return;
+      }
     }
 
     const filteredCurrentSrcSchemaNodes = curDataMapState.curDataMapOperation.currentSourceSchemaNodes.filter(
       (node) => node.key !== sourceNode.key
     );
-    deleteNodeFromConnections(curDataMapState.curDataMapOperation.dataMapConnections, reactFlowKey);
+
+    // NOTE: Do NOT delete source schema node from connections - at this stage, it's guaranteed that
+    // there are no connections to it, and we don't want to accidentally delete connections on other layers
 
     curDataMapState.curDataMapOperation.selectedItemKey = undefined;
     doDataMapOperation(curDataMapState, {
@@ -677,18 +750,39 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
     return;
   }
 
-  // Handle deleting edge
-  deleteConnectionFromConnections(
-    curDataMapState.curDataMapOperation.dataMapConnections,
-    getSourceIdFromReactFlowConnectionId(reactFlowKey),
-    getDestinationIdFromReactFlowConnectionId(reactFlowKey)
-  );
+  // item to be deleted is a connection
+  const sourceId = getSourceIdFromReactFlowConnectionId(reactFlowKey);
+  const sourceSchema = curDataMapState.curDataMapOperation.flattenedSourceSchema;
+  const canDelete = canDeleteConnection(sourceId, sourceSchema);
+  const connections = { ...curDataMapState.curDataMapOperation.dataMapConnections };
+
+  if (canDelete) {
+    deleteConnectionFromConnections(
+      connections,
+      getSourceIdFromReactFlowConnectionId(reactFlowKey),
+      getDestinationIdFromReactFlowConnectionId(reactFlowKey)
+    );
+    const tempConn = connections[getSourceIdFromReactFlowConnectionId(reactFlowKey)];
+    const id = getConnectedSourceSchemaNodes([tempConn], connections);
+    deleteParentRepeatingConnections(connections, 'source-' + id[0].key);
+
+    curDataMapState.notificationData = {
+      type: NotificationTypes.ConnectionDeleted,
+      autoHideDurationMs: deletedNotificationAutoHideDuration,
+    };
+  } else {
+    const sourceNode = sourceSchema[sourceId];
+    curDataMapState.notificationData = {
+      type: NotificationTypes.RepeatingConnectionCannotDelete,
+      msgParam: sourceNode.name,
+      autoHideDurationMs: errorNotificationAutoHideDuration,
+    };
+  }
 
   doDataMapOperation(curDataMapState, {
     ...curDataMapState.curDataMapOperation,
-    dataMapConnections: { ...curDataMapState.curDataMapOperation.dataMapConnections },
+    dataMapConnections: { ...connections },
   });
-  curDataMapState.notificationData = { type: NotificationTypes.ConnectionDeleted, autoHideDurationMs: deletedNotificationAutoHideDuration };
 };
 
 export const addParentConnectionForRepeatingElements = (
