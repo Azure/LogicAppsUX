@@ -82,6 +82,7 @@ const CreateConnectionTab = () => {
       setErrorMessage(undefined);
 
       let outputParameterValues = parameterValues;
+      if (selectedParameterSet) outputParameterValues.type = selectedParameterSet.name;
 
       try {
         // Assign azure function as parameters
