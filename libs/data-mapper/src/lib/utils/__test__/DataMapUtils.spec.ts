@@ -52,7 +52,7 @@ describe('utils/DataMap', () => {
       expect(result['source-/ns0:Root/DirectTranslation/EmployeeName']).toBeTruthy();
     });
 
-    it.skip('creates a connection between a custom value and target node', () => {
+    it('creates a connection between a custom value and target node', () => {
       simpleMap['ns0:Root'] = {
         DirectTranslation: {
           Employee: {
@@ -85,20 +85,60 @@ describe('utils/DataMap', () => {
           },
         },
       };
+
       const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
-      // target lists function as input
-      const targetInput = result['target-/ns0:Root/DirectTranslation/Employee/Name'].inputs['0'][0] as ConnectionUnit;
-      expect(targetInput.reactFlowKey).toContain('Concat');
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
 
-      // source lists function as output
-      const sourceOutput = result['source-/ns0:Root/DirectTranslation/EmployeeName'].outputs[0];
-      expect(sourceOutput.reactFlowKey).toContain('Concat');
+      expect(resultEntries.length).toEqual(3);
 
-      // function lists source as input
+      const concatId = resultEntries[0][0];
 
-      // function lists target as output
+      expect(resultEntries[0][0]).toEqual(concatId);
+      expect(resultEntries[0][1]).toBeTruthy();
+      expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+      expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
 
-      expect(Object.keys(result).some((key) => key.includes('Concat')));
+      expect(resultEntries[1][0]).toContain('source-/ns0:Root/DirectTranslation/EmployeeName');
+      expect(resultEntries[1][1]).toBeTruthy();
+      expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual(concatId);
+
+      expect(resultEntries[2][0]).toContain('target-/ns0:Root/DirectTranslation/Employee/Name');
+      expect(resultEntries[2][1]).toBeTruthy();
+      expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
+    });
+
+    it('creates a connection between a source, a function with custom value and a target', () => {
+      simpleMap['ns0:Root'] = {
+        DirectTranslation: {
+          Employee: {
+            Name: 'concat("Employee Name: ", /ns0:Root/DirectTranslation/EmployeeName, ", Esq")',
+          },
+        },
+      };
+
+      const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+
+      expect(resultEntries.length).toEqual(3);
+
+      const concatId = resultEntries[0][0];
+
+      expect(resultEntries[0][0]).toEqual(concatId);
+      expect(resultEntries[0][1]).toBeTruthy();
+      expect(resultEntries[0][1].inputs[0][0]).toEqual('"Employee Name: "');
+      expect((resultEntries[0][1].inputs[0][1] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+      expect(resultEntries[0][1].inputs[0][2]).toEqual('", Esq"');
+      expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+
+      expect(resultEntries[1][0]).toContain('source-/ns0:Root/DirectTranslation/EmployeeName');
+      expect(resultEntries[1][1]).toBeTruthy();
+      expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual(concatId);
+
+      expect(resultEntries[2][0]).toContain('target-/ns0:Root/DirectTranslation/Employee/Name');
+      expect(resultEntries[2][1]).toBeTruthy();
+      expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
     });
 
     it.skip('creates a conditional connection', () => {
