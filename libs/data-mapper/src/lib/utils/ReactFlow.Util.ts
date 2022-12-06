@@ -81,14 +81,29 @@ export const useLayout = (
             ),
           ]);
 
-          const simpleElkEdgeResults: SimplifiedElkEdge[] = !layoutedElkTree.edges
-            ? []
-            : layoutedElkTree.edges.map((elkEdge) => {
+          const simpleElkEdgeResults: SimplifiedElkEdge[] = [];
+
+          if (layoutedElkTree.edges) {
+            simpleElkEdgeResults.push(
+              ...layoutedElkTree.edges.map((elkEdge) => {
                 return {
                   srcRfId: elkEdge.sources[0],
                   tgtRfId: elkEdge.targets[0],
                 };
-              });
+              })
+            );
+          }
+
+          if (layoutedElkTree.children && layoutedElkTree.children.length === 3 && layoutedElkTree.children[1].edges) {
+            simpleElkEdgeResults.push(
+              ...layoutedElkTree.children[1].edges.map((elkEdge) => {
+                return {
+                  srcRfId: elkEdge.sources[0],
+                  tgtRfId: elkEdge.targets[0],
+                };
+              })
+            );
+          }
 
           setReactFlowEdges(convertToReactFlowEdges(simpleElkEdgeResults, selectedItemKey));
         })

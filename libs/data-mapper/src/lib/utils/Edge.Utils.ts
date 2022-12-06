@@ -1,7 +1,29 @@
+import * as PF from 'pathfinding';
 import { Position } from 'reactflow';
-import type { XYPosition } from 'reactflow';
+import type { Node as ReactFlowNode, XYPosition } from 'reactflow';
 
-interface GetSmoothStepPathParams {
+interface BoundingBox {
+  width: number;
+  height: number;
+  topLeft: XYPosition;
+  bottomLeft: XYPosition;
+  topRight: XYPosition;
+  bottomRight: XYPosition;
+}
+
+interface NodeBoundingBox extends BoundingBox {
+  id: string;
+}
+
+interface GraphBoundingBox extends BoundingBox {
+  xMax: number;
+  yMax: number;
+  xMin: number;
+  yMin: number;
+}
+
+interface GetSmoothStepEdgeParams {
+  nodes: ReactFlowNode[];
   sourceX: number;
   sourceY: number;
   sourcePosition?: Position;
@@ -9,203 +31,407 @@ interface GetSmoothStepPathParams {
   targetY: number;
   targetPosition?: Position;
   borderRadius?: number;
-  centerX?: number;
-  centerY?: number;
-  offset?: number;
+  pfGridSize?: number;
+  nodePadding?: number;
+  edgeBendOffsetRatio?: number;
 }
 
-const handleDirections = {
-  [Position.Left]: { x: -1, y: 0 },
-  [Position.Right]: { x: 1, y: 0 },
-  [Position.Top]: { x: 0, y: -1 },
-  [Position.Bottom]: { x: 0, y: 1 },
-};
+const getLinearDistance = (a: XYPosition, b: XYPosition) => Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2));
 
-const getEdgeCenter = ({
-  sourceX,
-  sourceY,
-  targetX,
-  targetY,
-}: {
-  sourceX: number;
-  sourceY: number;
-  targetX: number;
-  targetY: number;
-}): [number, number, number, number] => {
-  const xOffset = Math.abs(targetX - sourceX) / 2;
-  const centerX = targetX < sourceX ? targetX + xOffset : targetX - xOffset;
+const getQuadraticCurve = (a: XYPosition, b: XYPosition, c: XYPosition, borderRadius: number): string => {
+  const bendSize = Math.min(getLinearDistance(a, b) / 2, getLinearDistance(b, c) / 2, borderRadius);
+  const { x: midX, y: midY } = b;
 
-  const yOffset = Math.abs(targetY - sourceY) / 2;
-  const centerY = targetY < sourceY ? targetY + yOffset : targetY - yOffset;
-
-  return [centerX, centerY, xOffset, yOffset];
-};
-
-const getDirection = ({
-  source,
-  sourcePosition = Position.Bottom,
-  target,
-}: {
-  source: XYPosition;
-  sourcePosition: Position;
-  target: XYPosition;
-}): XYPosition => {
-  if (sourcePosition === Position.Left || sourcePosition === Position.Right) {
-    return source.x < target.x ? { x: 1, y: 0 } : { x: -1, y: 0 };
-  }
-  return source.y < target.y ? { x: 0, y: 1 } : { x: 0, y: -1 };
-};
-
-const distance = (a: XYPosition, b: XYPosition) => Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2));
-
-const getPoints = ({
-  source,
-  sourcePosition = Position.Bottom,
-  target,
-  targetPosition = Position.Top,
-  center,
-  offset,
-}: {
-  source: XYPosition;
-  sourcePosition: Position;
-  target: XYPosition;
-  targetPosition: Position;
-  center: Partial<XYPosition>;
-  offset: number;
-}): [XYPosition[], number, number, number, number] => {
-  const sourceDir = handleDirections[sourcePosition];
-  const targetDir = handleDirections[targetPosition];
-  const sourceGapped: XYPosition = { x: source.x + sourceDir.x * offset, y: source.y + sourceDir.y * offset };
-  const targetGapped: XYPosition = { x: target.x + targetDir.x * offset, y: target.y + targetDir.y * offset };
-  const dir = getDirection({
-    source: sourceGapped,
-    sourcePosition,
-    target: targetGapped,
-  });
-  const dirAccessor = dir.x !== 0 ? 'x' : 'y';
-  const currDir = dir[dirAccessor];
-
-  let points: XYPosition[] = [];
-  let centerX, centerY;
-  const [defaultCenterX, defaultCenterY, defaultOffsetX, defaultOffsetY] = getEdgeCenter({
-    sourceX: source.x,
-    sourceY: source.y,
-    targetX: target.x,
-    targetY: target.y,
-  });
-
-  // opposite handle positions, default case
-  if (sourceDir[dirAccessor] * targetDir[dirAccessor] === -1) {
-    centerX = center.x || defaultCenterX;
-    centerY = center.y || defaultCenterY;
-    //    --->
-    //    |
-    // >---
-    const verticalSplit: XYPosition[] = [
-      { x: centerX, y: sourceGapped.y },
-      { x: centerX, y: targetGapped.y },
-    ];
-    //    |
-    //  ---
-    //  |
-    const horizontalSplit: XYPosition[] = [
-      { x: sourceGapped.x, y: centerY },
-      { x: targetGapped.x, y: centerY },
-    ];
-
-    if (sourceDir[dirAccessor] === currDir) {
-      points = dirAccessor === 'x' ? verticalSplit : horizontalSplit;
-    } else {
-      points = dirAccessor === 'x' ? horizontalSplit : verticalSplit;
-    }
-  } else {
-    // sourceTarget means we take x from source and y from target, targetSource is the opposite
-    const sourceTarget: XYPosition[] = [{ x: sourceGapped.x, y: targetGapped.y }];
-    const targetSource: XYPosition[] = [{ x: targetGapped.x, y: sourceGapped.y }];
-    // this handles edges with same handle positions
-    if (dirAccessor === 'x') {
-      points = sourceDir.x === currDir ? targetSource : sourceTarget;
-    } else {
-      points = sourceDir.y === currDir ? sourceTarget : targetSource;
-    }
-
-    // these are conditions for handling mixed handle positions like Right -> Bottom for example
-    if (sourcePosition !== targetPosition) {
-      const dirAccessorOpposite = dirAccessor === 'x' ? 'y' : 'x';
-      const isSameDir = sourceDir[dirAccessor] === targetDir[dirAccessorOpposite];
-      const sourceGtTargetOppo = sourceGapped[dirAccessorOpposite] > targetGapped[dirAccessorOpposite];
-      const sourceLtTargetOppo = sourceGapped[dirAccessorOpposite] < targetGapped[dirAccessorOpposite];
-      const flipSourceTarget =
-        (sourceDir[dirAccessor] === 1 && ((!isSameDir && sourceGtTargetOppo) || (isSameDir && sourceLtTargetOppo))) ||
-        (sourceDir[dirAccessor] !== 1 && ((!isSameDir && sourceLtTargetOppo) || (isSameDir && sourceGtTargetOppo)));
-
-      if (flipSourceTarget) {
-        points = dirAccessor === 'x' ? sourceTarget : targetSource;
-      }
-    }
-
-    centerX = points[0].x;
-    centerY = points[0].y;
+  // No bend
+  if ((a.x === midX && midX === c.x) || (a.y === midY && midY === c.y)) {
+    return `L${midX} ${midY}`;
   }
 
-  const pathPoints = [source, sourceGapped, ...points, targetGapped, target];
-
-  return [pathPoints, centerX, centerY, defaultOffsetX, defaultOffsetY];
-};
-
-const getBend = (a: XYPosition, b: XYPosition, c: XYPosition, borderRadius: number): string => {
-  const bendSize = Math.min(distance(a, b) / 2, distance(b, c) / 2, borderRadius);
-  const { x, y } = b;
-
-  // no bend
-  if ((a.x === x && x === c.x) || (a.y === y && y === c.y)) {
-    return `L${x} ${y}`;
-  }
-
-  // first segment is horizontal
-  if (a.y === y) {
+  // First segment is horizontal
+  if (a.y === midY) {
     const xDir = a.x < c.x ? -1 : 1;
     const yDir = a.y < c.y ? 1 : -1;
-    return `L ${x + bendSize * xDir},${y}Q ${x},${y} ${x},${y + bendSize * yDir}`;
+    return `L ${midX + bendSize * xDir},${midY}Q ${midX},${midY} ${midX},${midY + bendSize * yDir}`;
   }
 
   const xDir = a.x < c.x ? 1 : -1;
   const yDir = a.y < c.y ? -1 : 1;
-  return `L ${x},${y + bendSize * yDir}Q ${x},${y} ${x + bendSize * xDir},${y}`;
+  return `L ${midX},${midY + bendSize * yDir}Q ${midX},${midY} ${midX + bendSize * xDir},${midY}`;
 };
 
-export const getSmoothStepPath = ({
-  sourceX,
-  sourceY,
-  sourcePosition = Position.Bottom,
-  targetX,
-  targetY,
-  targetPosition = Position.Top,
-  borderRadius = 5,
-  centerX,
-  centerY,
-  offset = 20,
-}: GetSmoothStepPathParams): [path: string, labelX: number, labelY: number, offsetX: number, offsetY: number] => {
-  const [points, labelX, labelY, offsetX, offsetY] = getPoints({
-    source: { x: sourceX, y: sourceY },
-    sourcePosition,
-    target: { x: targetX, y: targetY },
-    targetPosition,
-    center: { x: centerX, y: centerY },
-    offset,
-  });
+const getNextPointFromPosition = (curPoint: XYPosition, position: Position): XYPosition => {
+  switch (position) {
+    case Position.Top:
+      return { x: curPoint.x, y: curPoint.y - 1 };
+    case Position.Bottom:
+      return { x: curPoint.x, y: curPoint.y + 1 };
+    case Position.Left:
+      return { x: curPoint.x - 1, y: curPoint.y };
+    case Position.Right:
+      return { x: curPoint.x + 1, y: curPoint.y };
+  }
+};
 
-  const path = points.reduce<string>((res, p, i) => {
-    let segment = '';
+const guaranteeWalkablePath = (grid: PF.Grid, curPoint: XYPosition, position: Position) => {
+  let node = grid.getNodeAt(curPoint.x, curPoint.y);
 
-    if (i > 0 && i < points.length - 1) {
-      segment = getBend(points[i - 1], p, points[i + 1], borderRadius);
-    } else {
-      segment = `${i === 0 ? 'M' : 'L'}${p.x} ${p.y}`;
+  while (!node.walkable) {
+    grid.setWalkableAt(node.x, node.y, true);
+    const next = getNextPointFromPosition(node, position);
+    node = grid.getNodeAt(next.x, next.y);
+  }
+};
+
+const generateBoundingBoxes = (nodes: ReactFlowNode[], nodePadding = 2, roundTo = 2) => {
+  let xMax = Number.MIN_SAFE_INTEGER;
+  let yMax = Number.MIN_SAFE_INTEGER;
+  let xMin = Number.MAX_SAFE_INTEGER;
+  let yMin = Number.MAX_SAFE_INTEGER;
+
+  const nodeBoxes: NodeBoundingBox[] = nodes.map((node) => {
+    const width = Math.max(node.width || 0, 1);
+    const height = Math.max(node.height || 0, 1);
+
+    const position: XYPosition = {
+      x: node.positionAbsolute?.x || 0,
+      y: node.positionAbsolute?.y || 0,
+    };
+
+    const topLeft: XYPosition = {
+      x: position.x - nodePadding,
+      y: position.y - nodePadding,
+    };
+    const bottomLeft: XYPosition = {
+      x: position.x - nodePadding,
+      y: position.y + height + nodePadding,
+    };
+    const topRight: XYPosition = {
+      x: position.x + width + nodePadding,
+      y: position.y - nodePadding,
+    };
+    const bottomRight: XYPosition = {
+      x: position.x + width + nodePadding,
+      y: position.y + height + nodePadding,
+    };
+
+    if (roundTo > 0) {
+      topLeft.x = Math.floor(topLeft.x / roundTo) * roundTo;
+      topLeft.y = Math.floor(topLeft.y / roundTo) * roundTo;
+      bottomLeft.x = Math.floor(bottomLeft.x / roundTo) * roundTo;
+      bottomLeft.y = Math.ceil(bottomLeft.y / roundTo) * roundTo;
+      topRight.x = Math.ceil(topRight.x / roundTo) * roundTo;
+      topRight.y = Math.floor(topRight.y / roundTo) * roundTo;
+      bottomRight.x = Math.ceil(bottomRight.x / roundTo) * roundTo;
+      bottomRight.y = Math.ceil(bottomRight.y / roundTo) * roundTo;
     }
 
-    return res + segment;
+    if (topLeft.y < yMin) {
+      yMin = topLeft.y;
+    }
+    if (topLeft.x < xMin) {
+      xMin = topLeft.x;
+    }
+    if (bottomRight.y > yMax) {
+      yMax = bottomRight.y;
+    }
+    if (bottomRight.x > xMax) {
+      xMax = bottomRight.x;
+    }
+
+    return {
+      id: node.id,
+      width,
+      height,
+      topLeft,
+      bottomLeft,
+      topRight,
+      bottomRight,
+    };
+  });
+
+  const graphPadding = nodePadding * 2;
+
+  xMax = Math.ceil((xMax + graphPadding) / roundTo) * roundTo;
+  yMax = Math.ceil((yMax + graphPadding) / roundTo) * roundTo;
+  xMin = Math.floor((xMin - graphPadding) / roundTo) * roundTo;
+  yMin = Math.floor((yMin - graphPadding) / roundTo) * roundTo;
+
+  const topLeft: XYPosition = {
+    x: xMin,
+    y: yMin,
+  };
+
+  const bottomLeft: XYPosition = {
+    x: xMin,
+    y: yMax,
+  };
+
+  const topRight: XYPosition = {
+    x: xMax,
+    y: yMin,
+  };
+
+  const bottomRight: XYPosition = {
+    x: xMax,
+    y: yMax,
+  };
+
+  const width = Math.abs(topLeft.x - topRight.x);
+  const height = Math.abs(topLeft.y - bottomLeft.y);
+
+  const graphBox: GraphBoundingBox = {
+    topLeft,
+    bottomLeft,
+    topRight,
+    bottomRight,
+    width,
+    height,
+    xMax,
+    yMax,
+    xMin,
+    yMin,
+  };
+
+  return { graphBox, nodeBoxes };
+};
+
+const convertCanvasToGridPoint = (canvasPoint: XYPosition, smallestX: number, smallestY: number, gridSize: number): XYPosition => {
+  let x = canvasPoint.x / gridSize;
+  let y = canvasPoint.y / gridSize;
+
+  let referenceX = smallestX / gridSize;
+  let referenceY = smallestY / gridSize;
+
+  if (referenceX < 1) {
+    while (referenceX !== 1) {
+      referenceX++;
+      x++;
+    }
+  } else if (referenceX > 1) {
+    while (referenceX !== 1) {
+      referenceX--;
+      x--;
+    }
+  }
+
+  if (referenceY < 1) {
+    while (referenceY !== 1) {
+      referenceY++;
+      y++;
+    }
+  } else if (referenceY > 1) {
+    while (referenceY !== 1) {
+      referenceY--;
+      y--;
+    }
+  }
+
+  return { x, y };
+};
+
+const convertGridToCanvasPoint = (gridPoint: XYPosition, smallestX: number, smallestY: number, gridSize: number): XYPosition => {
+  let x = gridPoint.x * gridSize;
+  let y = gridPoint.y * gridSize;
+
+  let referenceX = smallestX;
+  let referenceY = smallestY;
+
+  if (referenceX < gridSize) {
+    while (referenceX !== gridSize) {
+      referenceX = referenceX + gridSize;
+      x = x - gridSize;
+    }
+  } else if (referenceX > gridSize) {
+    while (referenceX !== gridSize) {
+      referenceX = referenceX - gridSize;
+      x = x + gridSize;
+    }
+  }
+
+  if (referenceY < gridSize) {
+    while (referenceY !== gridSize) {
+      referenceY = referenceY + gridSize;
+      y = y - gridSize;
+    }
+  } else if (referenceY > gridSize) {
+    while (referenceY !== gridSize) {
+      referenceY = referenceY - gridSize;
+      y = y + gridSize;
+    }
+  }
+
+  return { x, y };
+};
+
+const generatePathfindingGrid = (
+  graph: GraphBoundingBox,
+  nodes: NodeBoundingBox[],
+  sourceCoords: XYPosition,
+  sourcePos: Position,
+  targetCoords: XYPosition,
+  targetPos: Position,
+  gridSize: number
+) => {
+  const { xMin, yMin, width, height } = graph;
+
+  // Create a grid representation of the canvas (w/ squares of edge size gridSize)
+  const mapColumns = Math.ceil(width / gridSize) + 1;
+  const mapRows = Math.ceil(height / gridSize) + 1;
+
+  const grid = new PF.Grid(mapColumns, mapRows);
+
+  // Set grid squares occupied by nodes to be non-walkable
+  nodes.forEach((node) => {
+    const nodeStart = convertCanvasToGridPoint(node.topLeft, xMin, yMin, gridSize);
+    const nodeEnd = convertCanvasToGridPoint(node.bottomRight, xMin, yMin, gridSize);
+
+    for (let x = nodeStart.x; x < nodeEnd.x; x++) {
+      for (let y = nodeStart.y; y < nodeEnd.y; y++) {
+        grid.setWalkableAt(x, y, false);
+      }
+    }
+  });
+
+  // Convert the starting and ending graph points to grid points
+  const startGrid = convertCanvasToGridPoint(
+    {
+      x: Math.round(sourceCoords.x / gridSize) * gridSize,
+      y: Math.round(sourceCoords.y / gridSize) * gridSize,
+    },
+    xMin,
+    yMin,
+    gridSize
+  );
+
+  const endGrid = convertCanvasToGridPoint(
+    {
+      x: Math.round(targetCoords.x / gridSize) * gridSize,
+      y: Math.round(targetCoords.y / gridSize) * gridSize,
+    },
+    xMin,
+    yMin,
+    gridSize
+  );
+
+  const startingNode = grid.getNodeAt(startGrid.x, startGrid.y);
+  guaranteeWalkablePath(grid, startingNode, sourcePos);
+  const endingNode = grid.getNodeAt(endGrid.x, endGrid.y);
+  guaranteeWalkablePath(grid, endingNode, targetPos);
+
+  // Start at points offset from the node edges
+  const start = getNextPointFromPosition(startingNode, sourcePos);
+  const end = getNextPointFromPosition(endingNode, targetPos);
+
+  return { grid, start, end };
+};
+
+const findPath = (grid: PF.Grid, start: XYPosition, end: XYPosition): number[][] => {
+  const pathfinder = PF.JumpPointFinder({ diagonalMovement: PF.DiagonalMovement.Never });
+
+  const path = pathfinder.findPath(start.x, start.y, end.x, end.y, grid);
+
+  if (path.length === 0) {
+    console.error(`Unable to find path between (${start.x}, ${start.y}) and (${end.x}, ${end.y}) - using simple path instead `);
+
+    const simplePathStart = [start.x, start.y];
+    const simplePathMid = [(start.x + end.x) / 2, (start.y + end.y) / 2];
+    const simplePathEnd = [end.x, end.y];
+    return [simplePathStart, simplePathMid, simplePathEnd];
+  }
+
+  return path;
+};
+
+export const getSmoothStepEdge = ({
+  nodes,
+  sourceX,
+  sourceY,
+  sourcePosition = Position.Right,
+  targetX,
+  targetY,
+  targetPosition = Position.Left,
+  borderRadius = 5,
+  pfGridSize = 10,
+  nodePadding = 10,
+  edgeBendOffsetRatio = 15,
+}: GetSmoothStepEdgeParams): [svgPath: string, labelX: number, labelY: number] => {
+  // Pathfinding: Generate grid from ReactFlow nodes, then use that to find a path
+  const { graphBox, nodeBoxes } = generateBoundingBoxes(nodes, nodePadding, pfGridSize);
+  const { grid, start, end } = generatePathfindingGrid(
+    graphBox,
+    nodeBoxes,
+    { x: sourceX, y: sourceY },
+    sourcePosition,
+    { x: targetX, y: targetY },
+    targetPosition,
+    pfGridSize
+  );
+  const pathfindingPath = PF.Util.compressPath(findPath(grid, start, end));
+
+  // Convert pathfinding coordinates back to ReactFlow canvas coordinates
+  const canvasPath = pathfindingPath.map((point) =>
+    convertGridToCanvasPoint({ x: point[0], y: point[1] }, graphBox.xMin, graphBox.yMin, pfGridSize)
+  );
+
+  const firstPointYPos = canvasPath[0].y;
+  const lastPointYPos = canvasPath[canvasPath.length - 1].y;
+  const edgeBendOffset = sourceY / edgeBendOffsetRatio; // Edge offset based on sourceY
+
+  canvasPath.forEach((point, idx) => {
+    // Set first and last point yPos's (and any other points that share them) to the source and target yPos's
+    if (idx === 0) {
+      canvasPath[idx].y = sourceY;
+    } else if (point.y === firstPointYPos) {
+      canvasPath[idx].y = sourceY;
+    } else if (point.y === lastPointYPos) {
+      canvasPath[idx].y = targetY;
+    } else {
+      // Offset horizontal bendPoint-line-stretches
+      canvasPath[idx].y += 2 * (edgeBendOffset / 10);
+    }
+
+    // Marginally offset vertical bendPoint-line-stretches
+    if (idx === canvasPath.length - 1) {
+      canvasPath[idx].x -= edgeBendOffset / 2;
+      canvasPath[idx].y = targetY; // Carryover from setting yPos for last point
+    } else {
+      canvasPath[idx].x += edgeBendOffset;
+    }
+  });
+
+  // Check that paths with only two points are in fact straight lines, otherwise fix it
+  // *Pathfinder's use of grid means that extremely close yPos's are seen as "on the same level"
+  // - meaning it doesn't generate a bend point, which results in a diagonal line
+  if (canvasPath.length === 2 && sourceY !== targetY) {
+    const midX = Math.abs(canvasPath[0].x + canvasPath[1].x) / 2;
+    const midY = Math.abs(canvasPath[0].y + canvasPath[1].y) / 2;
+
+    // Have to add these points so the quadratic curves form properly
+    canvasPath.splice(1, 0, { x: midX, y: sourceY });
+    canvasPath.splice(2, 0, { x: midX, y: midY });
+    canvasPath.splice(3, 0, { x: midX, y: targetY });
+  }
+
+  // Finally, add in handle points
+  canvasPath.splice(0, 0, { x: sourceX, y: sourceY });
+  canvasPath.push({ x: targetX, y: targetY });
+
+  // Calculate labelX/Y (midpoint-ish)
+  // TODO: Find either middle two, or longest, bend points/stretch and set labelX/Y to that (if no bend points, just use x1+x2/2, yPos)
+  const midPoint = canvasPath[Math.floor(canvasPath.length / 2)];
+
+  // Generate SVG path from pathfinding result
+  const svgPath = canvasPath.reduce<string>((resultPath, curPoint, idx) => {
+    let segment = '';
+
+    if (idx > 0 && idx < canvasPath.length - 1) {
+      segment = getQuadraticCurve(canvasPath[idx - 1], curPoint, canvasPath[idx + 1], borderRadius);
+    } else {
+      segment = `${idx === 0 ? 'M' : 'L'}${curPoint.x} ${curPoint.y}`;
+    }
+
+    return resultPath + segment;
   }, '');
 
-  return [path, labelX, labelY, offsetX, offsetY];
+  return [svgPath, midPoint.x, midPoint.y];
 };

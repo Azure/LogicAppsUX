@@ -1,6 +1,6 @@
 import { setCanvasToolboxTabToDisplay, setInlineFunctionInputOutputKeys } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { getSmoothStepPath } from '../../utils/Edge.Utils';
+import { getSmoothStepEdge } from '../../utils/Edge.Utils';
 import { getDestinationIdFromReactFlowConnectionId, getSourceIdFromReactFlowConnectionId } from '../../utils/ReactFlow.Util';
 import { ToolboxPanelTabs } from '../canvasToolbox/CanvasToolbox';
 import { Button, makeStyles, shorthands, tokens, Tooltip } from '@fluentui/react-components';
@@ -8,7 +8,7 @@ import { Add20Filled } from '@fluentui/react-icons';
 import React, { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
-import { BaseEdge } from 'reactflow';
+import { BaseEdge, useNodes } from 'reactflow';
 import type { EdgeProps } from 'reactflow';
 
 const addFunctionBtnSize = 24;
@@ -62,6 +62,7 @@ export const ConnectionEdge = (props: EdgeProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useStyles();
+  const reactFlowNodes = useNodes();
 
   const inlineFunctionInputOutputKeys = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inlineFunctionInputOutputKeys);
 
@@ -72,26 +73,27 @@ export const ConnectionEdge = (props: EdgeProps) => {
     description: 'Message to insert function',
   });
 
-  const baseEdgeProperties = useMemo(
-    () => ({
+  const { svgPath, labelX, labelY } = useMemo(() => {
+    const [edgePath, labelX, labelY] = getSmoothStepEdge({
+      nodes: reactFlowNodes,
       sourcePosition,
       targetPosition,
       sourceX,
       sourceY,
       targetX,
       targetY,
-    }),
-    [sourcePosition, targetPosition, sourceX, sourceY, targetX, targetY]
-  );
+      pfGridSize: 10,
+      nodePadding: 15,
+      edgeBendOffsetRatio: 5,
+      borderRadius: 8,
+    });
 
-  const { svgPathString, edgeCenterX, edgeCenterY } = useMemo(() => {
-    const [edgePath, labelX, labelY] = getSmoothStepPath({ ...baseEdgeProperties });
     return {
-      svgPathString: edgePath,
-      edgeCenterX: labelX,
-      edgeCenterY: labelY,
+      svgPath: edgePath,
+      labelX,
+      labelY,
     };
-  }, [baseEdgeProperties]);
+  }, [reactFlowNodes, sourcePosition, targetPosition, sourceX, sourceY, targetX, targetY]);
 
   const isAddingInlineFunctionOnThisEdge = useMemo(() => {
     return (
@@ -118,9 +120,9 @@ export const ConnectionEdge = (props: EdgeProps) => {
   return (
     <svg onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
       <BaseEdge
-        path={svgPathString}
-        labelX={edgeCenterX}
-        labelY={edgeCenterY}
+        path={svgPath}
+        labelX={labelX}
+        labelY={labelY}
         {...props}
         style={{
           strokeWidth: tokens.strokeWidthThick,
@@ -132,8 +134,8 @@ export const ConnectionEdge = (props: EdgeProps) => {
       <foreignObject
         width={parentTotalSize}
         height={parentTotalSize}
-        x={edgeCenterX - parentTotalSize / 2 - parentPadding / 2}
-        y={edgeCenterY - parentTotalSize / 2 - parentPadding / 2}
+        x={labelX - parentTotalSize / 2 - parentPadding / 2}
+        y={labelX - parentTotalSize / 2 - parentPadding / 2}
         style={{
           borderRadius: tokens.borderRadiusCircular,
           padding: parentPadding,
