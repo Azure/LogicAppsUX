@@ -1,5 +1,6 @@
 import { nestedLoopMapDefinition } from '../../../../__mocks__/mapDefinitions/NestedLoopMapDefinition';
 import { customerOrderMapDefinition } from '../../../../__mocks__/mapDefinitions/SimpleCustomerOrder';
+import { demoScriptMapDefinition } from '../../../../__mocks__/mapDefinitions/TranscriptMapDefinitions';
 import { dataMapDataLoaderSlice, loadDataMap, type ThemeType } from '../state/DataMapDataLoader';
 import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
@@ -13,20 +14,21 @@ const themeOptions = ['Light', 'Dark'];
 const themeDropdownOptions = themeOptions.map((theme) => ({ key: theme, text: theme }));
 
 export const mapDefinitionDropdownOptions: IDropdownOption<string>[] = [
-  { key: 'NestedLoopMapDefinition', text: 'Nested Map Definition', data: nestedLoopMapDefinition },
-  { key: 'customerOrderMapDefinition', text: 'Simple Schema Map Definition', data: customerOrderMapDefinition },
+  { key: 'demoScriptMapDefinition', text: 'Demo Script MD', data: demoScriptMapDefinition },
+  { key: 'customerOrderMapDefinition', text: 'Customer Orders MD', data: customerOrderMapDefinition },
+  { key: 'nestedLoopMapDefinition', text: 'Nested Loops MD', data: nestedLoopMapDefinition },
 ];
 export const sourceSchemaFileOptions = [
   'SourceSchema.json',
   'SimpleInputOrderSchema.json',
-  'LayeredLoopSourceSchema.json',
   'SimpleLoopSource.json',
+  'LayeredLoopSourceSchema.json',
 ];
 export const targetSchemaFileOptions = [
   'TargetSchema.json',
   'SimpleOutputOrderSchema.json',
-  'LayeredLoopTargetSchema.json',
   'SimpleLoopTarget.json',
+  'LayeredLoopTargetSchema.json',
 ];
 
 export const DevToolbox: React.FC = () => {
@@ -79,6 +81,9 @@ export const DevToolbox: React.FC = () => {
       } else if (item?.key === 'customerOrderMapDefinition') {
         inputRscPath = sourceSchemaFileOptions[1];
         outputRscPath = targetSchemaFileOptions[1];
+      } else if (item?.key === 'nestedLoopMapDefinition') {
+        inputRscPath = sourceSchemaFileOptions[3];
+        outputRscPath = targetSchemaFileOptions[3];
       }
 
       dispatch(schemaDataLoaderSlice.actions.changeInputResourcePath(inputRscPath));
