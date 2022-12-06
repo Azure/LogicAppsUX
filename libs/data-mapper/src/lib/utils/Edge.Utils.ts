@@ -42,18 +42,19 @@ const getQuadraticCurve = (a: XYPosition, b: XYPosition, c: XYPosition, borderRa
   const bendSize = Math.min(getLinearDistance(a, b) / 2, getLinearDistance(b, c) / 2, borderRadius);
   const { x: midX, y: midY } = b;
 
-  // No bend
+  // No bend - straight line
   if ((a.x === midX && midX === c.x) || (a.y === midY && midY === c.y)) {
     return `L${midX} ${midY}`;
   }
 
-  // First segment is horizontal
+  // Horizontal stretch going into a vertical stretch
   if (a.y === midY) {
     const xDir = a.x < c.x ? -1 : 1;
     const yDir = a.y < c.y ? 1 : -1;
     return `L ${midX + bendSize * xDir},${midY}Q ${midX},${midY} ${midX},${midY + bendSize * yDir}`;
   }
 
+  // Vertical stretch going into a horizontal stretch
   const xDir = a.x < c.x ? 1 : -1;
   const yDir = a.y < c.y ? -1 : 1;
   return `L ${midX},${midY + bendSize * yDir}Q ${midX},${midY} ${midX + bendSize * xDir},${midY}`;
