@@ -15,6 +15,7 @@ import type { PathItem, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended
 import { SchemaNodeProperty, SchemaType } from '../models/Schema';
 import { findLast } from './Array.Utils';
 import {
+  addCustomValueToConnections,
   addNodeToConnections,
   collectTargetNodesForConnectionChain,
   flattenInputs,
@@ -390,10 +391,23 @@ export const convertFromMapDefinition = (
   const connections: ConnectionDictionary = {};
   const parsedYamlKeys: string[] = Object.keys(mapDefinition);
 
+  const sourceFlattened = flattenSchemaIntoDictionary(sourceSchema, SchemaType.Source);
+  const targetFlattened = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
+
   const rootNodeKey = parsedYamlKeys.filter((key) => reservedMapDefinitionKeysArray.indexOf(key) < 0)[0];
 
   if (rootNodeKey) {
-    parseDefinitionToConnection(mapDefinition[rootNodeKey], `/${rootNodeKey}`, connections, {}, sourceSchema, targetSchema, functions);
+    parseDefinitionToConnection(
+      mapDefinition[rootNodeKey],
+      `/${rootNodeKey}`,
+      connections,
+      {},
+      sourceSchema,
+      sourceFlattened,
+      targetSchema,
+      targetFlattened,
+      functions
+    );
   }
   return connections;
 };
@@ -404,7 +418,9 @@ const parseDefinitionToConnection = (
   connections: ConnectionDictionary,
   createdNodes: { [completeFunction: string]: string },
   sourceSchema: SchemaExtended,
+  sourceSchemaFlattened: SchemaNodeDictionary,
   targetSchema: SchemaExtended,
+  targetSchemaFlattened: SchemaNodeDictionary,
   functions: FunctionData[]
 ) => {
   if (typeof sourceNodeObject === 'string') {
@@ -432,21 +448,16 @@ const parseDefinitionToConnection = (
 
     if (targetKey.includes(mapNodeParams.for)) {
       // if has for, add parent connection
-      const sourceFlattened = flattenSchemaIntoDictionary(sourceSchema, SchemaType.Source);
-      const targetFlattened = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       if (sourceNode && destinationNode) {
-        addParentConnectionForRepeatingElements(
-          destinationNode as SchemaNodeExtended,
-          sourceNode as SchemaNodeExtended,
-          sourceFlattened,
-          targetFlattened,
-          connections
-        ); // danielle fix typing
+        addParentConnectionForRepeatingElements(destinationNode, sourceNode, sourceSchemaFlattened, targetSchemaFlattened, connections);
       }
     }
 
     if (sourceNode && destinationNode) {
       addNodeToConnections(connections, sourceNode, sourceKey, destinationNode, destinationKey);
+    } else if (destinationNode) {
+      // Custom values
+      addCustomValueToConnections(connections, amendedSourceKey, destinationNode, destinationKey);
     }
 
     // Need to extract and create connections for nested functions
@@ -454,7 +465,17 @@ const parseDefinitionToConnection = (
       const childFunctions = splitKeyIntoChildren(sourceNodeObject);
 
       childFunctions.forEach((childFunction) => {
-        parseDefinitionToConnection(childFunction, sourceKey, connections, createdNodes, sourceSchema, targetSchema, functions);
+        parseDefinitionToConnection(
+          childFunction,
+          sourceKey,
+          connections,
+          createdNodes,
+          sourceSchema,
+          sourceSchemaFlattened,
+          targetSchema,
+          targetSchemaFlattened,
+          functions
+        );
       });
     }
 
@@ -469,7 +490,9 @@ const parseDefinitionToConnection = (
         connections,
         createdNodes,
         sourceSchema,
+        sourceSchemaFlattened,
         targetSchema,
+        targetSchemaFlattened,
         functions
       );
     }
