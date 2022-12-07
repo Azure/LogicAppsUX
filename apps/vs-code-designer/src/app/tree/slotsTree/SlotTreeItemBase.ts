@@ -8,11 +8,6 @@ import { parseHostJson } from '../../funcConfig/host';
 import { getFileOrFolderContent } from '../../utils/codeless/apiUtils';
 import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getLocalSettingsJson } from '../../utils/localSettings';
-import { getIconPath } from '../../utils/tree/assets';
-import { ConfigurationsTreeItem } from '../configurationsTree/ConfigurationsTreeItem';
-import { RemoteWorkflowsTreeItem } from '../remoteWorkflowsTree/RemoteWorkflowsTreeItem';
-import { ArtifactsTreeItem } from './artifactsTree/ArtifactsTreeItem';
-import type { SiteConfig, SiteSourceControl, StringDictionary } from '@azure/arm-appservice';
 import type {
   ApplicationSettings,
   FuncHostRequest,
@@ -20,8 +15,14 @@ import type {
   ILocalSettingsJson,
   IParsedHostJson,
   IProjectTreeItem,
-} from '@microsoft/utils-logic-apps';
-import { isString, latestGAVersion, ProjectSource } from '@microsoft/utils-logic-apps';
+} from '../../utils/models';
+import { latestGAVersion, ProjectSource } from '../../utils/models';
+import { getIconPath } from '../../utils/tree/assets';
+import { ConfigurationsTreeItem } from '../configurationsTree/ConfigurationsTreeItem';
+import { RemoteWorkflowsTreeItem } from '../remoteWorkflowsTree/RemoteWorkflowsTreeItem';
+import { ArtifactsTreeItem } from './artifactsTree/ArtifactsTreeItem';
+import type { SiteConfig, SiteSourceControl, StringDictionary } from '@azure/arm-appservice';
+import { isString } from '@microsoft/utils-logic-apps';
 import {
   AppSettingsTreeItem,
   DeleteLastServicePlanStep,

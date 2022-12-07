@@ -60,6 +60,11 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
     description: 'Target schema',
   });
 
+  const targetSchemaExpandCollapseLoc = intl.formatMessage({
+    defaultMessage: 'Expand/collapse target schema',
+    description: 'Expand/collapse target schema',
+  });
+
   const onTargetSchemaItemClick = (schemaNode: SchemaNodeExtended) => {
     // If click schema name, return to Overview
     if (schemaNode.key === schemaRootKey) {
@@ -155,6 +160,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
           style={{ color: !targetSchema ? tokens.colorNeutralForegroundDisabled : tokens.colorNeutralForeground2 }}
           onClick={() => setIsExpanded(!isExpanded)}
           disabled={!targetSchema}
+          aria-label={targetSchemaExpandCollapseLoc}
         />
 
         <Text
