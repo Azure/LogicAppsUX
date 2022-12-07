@@ -18,7 +18,7 @@ import { generateDataMapXslt } from '../core/queries/datamap';
 import appInsights from '../core/services/appInsights/AppInsights';
 import { redoDataMapOperation, saveDataMap, showNotification, undoDataMapOperation } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
-import { convertToMapDefinition } from '../utils/DataMap.Utils';
+import { convertToMapDefinition } from '../mapDefinitions';
 import './ReactFlowStyleOverrides.css';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Stack } from '@fluentui/react';
