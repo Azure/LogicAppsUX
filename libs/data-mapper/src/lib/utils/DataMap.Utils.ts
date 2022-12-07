@@ -15,6 +15,7 @@ import type { PathItem, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended
 import { SchemaNodeProperty, SchemaType } from '../models/Schema';
 import { findLast } from './Array.Utils';
 import {
+  addCustomValueToConnections,
   addNodeToConnections,
   collectTargetNodesForConnectionChain,
   flattenInputs,
@@ -228,9 +229,29 @@ const addLoopingToNewPathItems = (
   newPath: OutputPathItem[]
 ) => {
   const rootSourceNodes = [...rootTargetConnection.inputs[0]];
+
   rootSourceNodes.sort((nodeA, nodeB) => {
     if (isConnectionUnit(nodeA) && isConnectionUnit(nodeB)) {
-      return nodeA.reactFlowKey.localeCompare(nodeB.reactFlowKey);
+      let nodeAToUse = nodeA;
+      let nodeBToUse = nodeB;
+
+      // If we are using indices, we want to instead sort off of the schema node, not the index
+      // That way if we have layered index pseudo functions they are sorted correctly
+      if (nodeA.node.key === indexPseudoFunctionKey) {
+        const sourceInput = connections[nodeA.reactFlowKey].inputs[0][0];
+        if (isConnectionUnit(sourceInput)) {
+          nodeAToUse = sourceInput;
+        }
+      }
+
+      if (nodeB.node.key === indexPseudoFunctionKey) {
+        const sourceInput = connections[nodeB.reactFlowKey].inputs[0][0];
+        if (isConnectionUnit(sourceInput)) {
+          nodeBToUse = sourceInput;
+        }
+      }
+
+      return nodeAToUse.reactFlowKey.localeCompare(nodeBToUse.reactFlowKey);
     }
     return 0;
   });
@@ -241,19 +262,19 @@ const addLoopingToNewPathItems = (
       if (isFunctionData(sourceNode.node)) {
         if (sourceNode.node.key === ifPseudoFunctionKey) {
           const sourceSchemaNodeConnection = connections[sourceNode.reactFlowKey].inputs[1][0];
-          const [sourceSchemaNodeReactFlowKey, sourceSchemaNodeKey] = (isConnectionUnit(sourceSchemaNodeConnection) && [
-            sourceSchemaNodeConnection.reactFlowKey,
-            sourceSchemaNodeConnection.node.key,
-          ]) || ['', ''];
+          const sourceSchemaNodeReactFlowKey =
+            (isConnectionUnit(sourceSchemaNodeConnection) && sourceSchemaNodeConnection.reactFlowKey) || '';
 
           const indexFunctions = collectTargetNodesForConnectionChain(connections[sourceSchemaNodeReactFlowKey], connections).filter(
             (connection) => connection.node.key === indexPseudoFunctionKey
           );
 
           if (indexFunctions.length > 0) {
-            loopValue = `${mapNodeParams.for}(${sourceSchemaNodeKey}, ${getIndexValueForCurrentConnection(
-              connections[indexFunctions[0].reactFlowKey]
-            )})`;
+            const indexConnection = connections[indexFunctions[0].reactFlowKey];
+            const inputConnection = indexConnection.inputs[0][0];
+            const inputKey = isConnectionUnit(inputConnection) && inputConnection.node.key;
+
+            loopValue = `${mapNodeParams.for}(${inputKey}, ${getIndexValueForCurrentConnection(indexConnection)})`;
           } else {
             loopValue = `${mapNodeParams.for}(${loopValue})`;
           }
@@ -266,10 +287,19 @@ const addLoopingToNewPathItems = (
           // Loop with an index
           const indexFunctionKey = sourceNode.reactFlowKey;
           const sourceSchemaNodeConnection = connections[indexFunctionKey].inputs[0][0];
-          const sourceSchemaNodeKey = (isConnectionUnit(sourceSchemaNodeConnection) && sourceSchemaNodeConnection.node.key) || '';
+          const sourceSchemaNode = isConnectionUnit(sourceSchemaNodeConnection) && sourceSchemaNodeConnection.node;
           const indexFunctionInput = connections[indexFunctionKey];
 
-          loopValue = `${mapNodeParams.for}(${sourceSchemaNodeKey}, ${getIndexValueForCurrentConnection(indexFunctionInput)})`;
+          if (sourceSchemaNode && isSchemaNodeExtended(sourceSchemaNode)) {
+            const valueToTrim = findLast(
+              sourceSchemaNode.pathToRoot,
+              (pathItem) => pathItem.repeating && pathItem.key !== sourceSchemaNode.key
+            )?.key;
+            loopValue = sourceSchemaNode.key.replace(`${valueToTrim}/`, '');
+            loopValue = `${mapNodeParams.for}(${loopValue}, ${getIndexValueForCurrentConnection(indexFunctionInput)})`;
+          } else {
+            console.error(`Failed to generate proper loopValue: ${loopValue}`);
+          }
 
           // For entry
           newPath.push({ key: loopValue });
@@ -390,10 +420,23 @@ export const convertFromMapDefinition = (
   const connections: ConnectionDictionary = {};
   const parsedYamlKeys: string[] = Object.keys(mapDefinition);
 
+  const sourceFlattened = flattenSchemaIntoDictionary(sourceSchema, SchemaType.Source);
+  const targetFlattened = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
+
   const rootNodeKey = parsedYamlKeys.filter((key) => reservedMapDefinitionKeysArray.indexOf(key) < 0)[0];
 
   if (rootNodeKey) {
-    parseDefinitionToConnection(mapDefinition[rootNodeKey], `/${rootNodeKey}`, connections, {}, sourceSchema, targetSchema, functions);
+    parseDefinitionToConnection(
+      mapDefinition[rootNodeKey],
+      `/${rootNodeKey}`,
+      connections,
+      {},
+      sourceSchema,
+      sourceFlattened,
+      targetSchema,
+      targetFlattened,
+      functions
+    );
   }
   return connections;
 };
@@ -404,7 +447,9 @@ const parseDefinitionToConnection = (
   connections: ConnectionDictionary,
   createdNodes: { [completeFunction: string]: string },
   sourceSchema: SchemaExtended,
+  sourceSchemaFlattened: SchemaNodeDictionary,
   targetSchema: SchemaExtended,
+  targetSchemaFlattened: SchemaNodeDictionary,
   functions: FunctionData[]
 ) => {
   if (typeof sourceNodeObject === 'string') {
@@ -432,21 +477,16 @@ const parseDefinitionToConnection = (
 
     if (targetKey.includes(mapNodeParams.for)) {
       // if has for, add parent connection
-      const sourceFlattened = flattenSchemaIntoDictionary(sourceSchema, SchemaType.Source);
-      const targetFlattened = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       if (sourceNode && destinationNode) {
-        addParentConnectionForRepeatingElements(
-          destinationNode as SchemaNodeExtended,
-          sourceNode as SchemaNodeExtended,
-          sourceFlattened,
-          targetFlattened,
-          connections
-        ); // danielle fix typing
+        addParentConnectionForRepeatingElements(destinationNode, sourceNode, sourceSchemaFlattened, targetSchemaFlattened, connections);
       }
     }
 
     if (sourceNode && destinationNode) {
       addNodeToConnections(connections, sourceNode, sourceKey, destinationNode, destinationKey);
+    } else if (destinationNode) {
+      // Custom values
+      addCustomValueToConnections(connections, amendedSourceKey, destinationNode, destinationKey);
     }
 
     // Need to extract and create connections for nested functions
@@ -454,7 +494,17 @@ const parseDefinitionToConnection = (
       const childFunctions = splitKeyIntoChildren(sourceNodeObject);
 
       childFunctions.forEach((childFunction) => {
-        parseDefinitionToConnection(childFunction, sourceKey, connections, createdNodes, sourceSchema, targetSchema, functions);
+        parseDefinitionToConnection(
+          childFunction,
+          sourceKey,
+          connections,
+          createdNodes,
+          sourceSchema,
+          sourceSchemaFlattened,
+          targetSchema,
+          targetSchemaFlattened,
+          functions
+        );
       });
     }
 
@@ -469,7 +519,9 @@ const parseDefinitionToConnection = (
         connections,
         createdNodes,
         sourceSchema,
+        sourceSchemaFlattened,
         targetSchema,
+        targetSchemaFlattened,
         functions
       );
     }
