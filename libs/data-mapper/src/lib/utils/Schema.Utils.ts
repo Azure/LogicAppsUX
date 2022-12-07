@@ -86,7 +86,6 @@ export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended):
 
   let result: SchemaNodeExtended | undefined = undefined;
   schemaNode.children.forEach((childNode) => {
-    // found this issue in test, children can be undefined? Ask Reid maybe
     const tempResult = findNodeForKey(tempKey, childNode);
 
     if (tempResult) {

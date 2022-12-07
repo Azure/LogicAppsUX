@@ -6,6 +6,7 @@ import {
   sourceMockSchema,
   targetMockSchema,
 } from '../../__mocks__';
+import { conditionalFunction, greaterThanFunction } from '../../__mocks__/FunctionMock';
 import type { MapDefinitionEntry } from '../../models';
 import { functionMock, ifPseudoFunctionKey, SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
@@ -161,6 +162,18 @@ describe('utils/DataMap', () => {
 
       expect(resultEntries[3][0]).toEqual('target-/ns0:Root/Looping/Person/Name');
       expect(resultEntries[3][1]).toBeTruthy();
+    });
+
+    it('creates a simple conditional connection', () => {
+      simpleMap['ns0:Root'] = {
+        DataTranslation: {
+          EmployeeName: {
+            RegularFullTime: '$if(is-greater-than(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity))',
+          },
+        },
+      };
+      const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, [greaterThanFunction, conditionalFunction]);
+      expect(result).toBeTruthy();
     });
 
     it.skip('creates a looping conditional connection', () => {

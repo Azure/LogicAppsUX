@@ -438,12 +438,8 @@ const parseDefinitionToConnection = (
         : `${sourcePrefix}${amendedSourceKey}`;
     createdNodes[amendedSourceKey] = sourceKey;
 
-    const destinationFunctionKey = targetKey.slice(0, targetKey.indexOf('-'));
-    const destinationFunctionGuid = targetKey.slice(targetKey.indexOf('-') + 1);
-    const destinationNode = isAGuid(destinationFunctionGuid)
-      ? findFunctionForKey(destinationFunctionKey, functions)
-      : findNodeForKey(targetKey, targetSchema.schemaTreeRoot);
-    const destinationKey = isAGuid(destinationFunctionGuid) ? targetKey : `${targetPrefix}${destinationNode?.key}`;
+    const destinationNode = getDestinationNode(targetKey, functions, targetSchema.schemaTreeRoot);
+    const destinationKey = getDestinationKey(targetKey, destinationNode);
 
     if (targetKey.includes(mapNodeParams.for)) {
       // if has for, add parent connection
@@ -457,6 +453,7 @@ const parseDefinitionToConnection = (
     }
 
     // Need to extract and create connections for nested functions
+    // danielle maybe re-calculate this
     if (sourceEndOfFunction > -1) {
       const childFunctions = splitKeyIntoChildren(sourceNodeObject);
 
@@ -493,6 +490,28 @@ const parseDefinitionToConnection = (
       );
     }
   }
+};
+
+type UnknownNode = SchemaNodeExtended | FunctionData | undefined;
+
+export const getDestinationNode = (targetKey: string, functions: FunctionData[], schemaTreeRoot: SchemaNodeExtended): UnknownNode => {
+  const dashIndex = targetKey.indexOf('-');
+  const destinationFunctionKey = dashIndex === -1 ? targetKey : targetKey.slice(0, dashIndex); // what is the purpose of this??
+  const destinationFunctionGuid = targetKey.slice(dashIndex + 1);
+  const destinationNode = isAGuid(destinationFunctionGuid) // danielle this needs to be amended for conditional
+    ? findFunctionForKey(destinationFunctionKey, functions)
+    : findNodeForKey(targetKey, schemaTreeRoot);
+  return destinationNode;
+};
+
+export const getDestinationKey = (targetKey: string, destinationNode: UnknownNode): string => {
+  if (destinationNode === undefined) {
+    return targetKey;
+  }
+  if (isSchemaNodeExtended(destinationNode)) {
+    return `${targetPrefix}${destinationNode?.key}`;
+  }
+  return targetKey;
 };
 
 // Exported for testing purposes only
