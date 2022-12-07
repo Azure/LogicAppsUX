@@ -100,6 +100,11 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
     description: `Function doesn't have or require inputs`,
   });
 
+  const removeInputLoc = intl.formatMessage({
+    defaultMessage: 'Remove input',
+    description: 'Remove input',
+  });
+
   const updateInput = (inputIndex: number, newValue: InputConnection | null) => {
     if (!selectedItemKey) {
       console.error('PropPane - Function: Attempted to update input with nothing selected on canvas');
@@ -276,6 +281,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                       icon={<Delete20Regular />}
                       onClick={() => removeUnboundedInput(idx)}
                       style={{ marginLeft: '16px' }}
+                      aria-label={removeInputLoc}
                     />
                   </Stack>
                 ))}

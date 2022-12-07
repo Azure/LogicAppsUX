@@ -149,6 +149,10 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         defaultMessage: 'Publish',
         description: 'Button text for publish',
       }),
+      DIVIDER: intl.formatMessage({
+        defaultMessage: 'Divider',
+        description: 'Aria label for divider',
+      }),
     }),
     [intl]
   );
@@ -198,6 +202,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       {
         ...divider,
         key: 'discard-test-divider',
+        ariaLabel: Resources.DIVIDER,
       },
       {
         key: 'test',
@@ -212,6 +217,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       {
         ...divider,
         key: 'test-config-divider',
+        ariaLabel: Resources.DIVIDER,
       },
       {
         key: 'configuration',
