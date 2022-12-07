@@ -134,8 +134,8 @@ export const ConnectionEdge = (props: EdgeProps) => {
       <foreignObject
         width={parentTotalSize}
         height={parentTotalSize}
-        x={labelX - parentTotalSize / 2 - parentPadding / 2}
-        y={labelX - parentTotalSize / 2 - parentPadding / 2}
+        x={Math.round(labelX - parentTotalSize / 2)}
+        y={labelY - parentTotalSize / 2}
         style={{
           borderRadius: tokens.borderRadiusCircular,
           padding: parentPadding,

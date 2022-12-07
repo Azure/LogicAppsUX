@@ -38,6 +38,9 @@ interface GetSmoothStepEdgeParams {
 
 const getLinearDistance = (a: XYPosition, b: XYPosition) => Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2));
 
+// Theoretically more efficient getLinearDistance for midpoint calculations
+const getLineStretchLength = (a: XYPosition, b: XYPosition) => (a.x === b.x ? Math.abs(a.y - b.y) : Math.abs(a.x - b.x));
+
 const getQuadraticCurve = (a: XYPosition, b: XYPosition, c: XYPosition, borderRadius: number): string => {
   const bendSize = Math.min(getLinearDistance(a, b) / 2, getLinearDistance(b, c) / 2, borderRadius);
   const { x: midX, y: midY } = b;
@@ -377,6 +380,10 @@ export const getSmoothStepEdge = ({
   const firstPointYPos = canvasPath[0].y;
   const lastPointYPos = canvasPath[canvasPath.length - 1].y;
   const edgeBendOffset = sourceY / edgeBendOffsetRatio; // Edge offset based on sourceY
+  const longestEdgeInfo = {
+    edgeStartIdx: 0,
+    length: getLineStretchLength(canvasPath[0], canvasPath[1]),
+  };
 
   canvasPath.forEach((point, idx) => {
     // Set first and last point yPos's (and any other points that share them) to the source and target yPos's
@@ -398,6 +405,18 @@ export const getSmoothStepEdge = ({
     } else {
       canvasPath[idx].x += edgeBendOffset;
     }
+
+    // Keep track of longest line stretch to use for midpoint (labelX/Y)
+    if (idx > 1) {
+      const prevPoint = canvasPath[idx - 1];
+      const curPoint = canvasPath[idx];
+      const curLength = getLineStretchLength(prevPoint, curPoint);
+
+      if (curLength > longestEdgeInfo.length) {
+        longestEdgeInfo.edgeStartIdx = idx - 1;
+        longestEdgeInfo.length = curLength;
+      }
+    }
   });
 
   // Check that paths with only two points are in fact straight lines, otherwise fix it
@@ -413,13 +432,14 @@ export const getSmoothStepEdge = ({
     canvasPath.splice(3, 0, { x: midX, y: targetY });
   }
 
+  const midPoint: XYPosition = {
+    x: Math.abs(canvasPath[longestEdgeInfo.edgeStartIdx].x + canvasPath[longestEdgeInfo.edgeStartIdx + 1].x) / 2,
+    y: Math.abs(canvasPath[longestEdgeInfo.edgeStartIdx].y + canvasPath[longestEdgeInfo.edgeStartIdx + 1].y) / 2,
+  };
+
   // Finally, add in handle points
   canvasPath.splice(0, 0, { x: sourceX, y: sourceY });
   canvasPath.push({ x: targetX, y: targetY });
-
-  // Calculate labelX/Y (midpoint-ish)
-  // TODO: Find either middle two, or longest, bend points/stretch and set labelX/Y to that (if no bend points, just use x1+x2/2, yPos)
-  const midPoint = canvasPath[Math.floor(canvasPath.length / 2)];
 
   // Generate SVG path from pathfinding result
   const svgPath = canvasPath.reduce<string>((resultPath, curPoint, idx) => {
