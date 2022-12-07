@@ -1,5 +1,5 @@
 {
-  "name": "@microsoft/data-mapper-vscode-extension",
+  "name": "data-mapper-vscode-extension",
   "displayName": "Azure Logic Apps - Data Mapper",
   "description": "Create mappings between schemas",
   "version": "0.2.37",
