@@ -14,20 +14,19 @@ const defaultTreeLayoutOptions: Record<string, string> = {
   // General layout settings
   direction: 'RIGHT',
   algorithm: 'layered',
-  hierarchyHandling: 'INCLUDE_CHILDREN',
   'layering.strategy': 'INTERACTIVE',
-  'edge.thickness': '20.0',
+  hierarchyHandling: 'INCLUDE_CHILDREN',
+  'partitioning.activate': 'true', // Allows blocks/node-groups to be forced into specific "slots"
+  'edge.thickness': '8.0',
   'spacing.nodeNodeBetweenLayers': '120.0', // Spacing between node groups (Source schema/Functions/Target schema)
   // Settings related to node ordering (when attempting to minimize edge crossing)
   'crossingMinimization.semiInteractive': 'true',
   'considerModelOrder.strategy': 'NODES_AND_EDGES',
-  // Allows blocks/node-groups to be forced into specific "slots"
-  'partitioning.activate': 'true',
 };
 
 const sourceSchemaLayoutOptions: Record<string, string> = {
-  'partitioning.partition': '0',
   'crossingMinimization.forceNodeModelOrder': 'true', // Ensures that node order is maintained
+  'partitioning.partition': '0',
   'spacing.nodeNode': '12.0', // Vertical spacing between nodes
   'spacing.nodeNodeBetweenLayers': '0.0', // Horizontal spacing between nodes
   // The below settings stop some weird extra horizontal spacing when a connection/edge is present
@@ -37,25 +36,15 @@ const sourceSchemaLayoutOptions: Record<string, string> = {
 };
 
 const functionsLayoutOptions: Record<string, string> = {
+  ...sourceSchemaLayoutOptions,
   'partitioning.partition': '1',
-  'crossingMinimization.forceNodeModelOrder': 'true',
   'spacing.nodeNodeBetweenLayers': '80.0', // Horizontal spacing between nodes
   'spacing.nodeNode': '24.0', // Vertical spacing between nodes
-  // The below settings stop some weird extra horizontal spacing when a connection/edge is present
-  'spacing.edgeEdge': '0.0',
-  'spacing.edgeNodeBetweenLayers': '0.0',
-  'spacing.edgeEdgeBetweenLayers': '0.0',
 };
 
 const targetSchemaLayoutOptions: Record<string, string> = {
+  ...sourceSchemaLayoutOptions,
   'partitioning.partition': '2',
-  'crossingMinimization.forceNodeModelOrder': 'true',
-  'spacing.nodeNode': '12.0', // Vertical spacing between nodes
-  'spacing.nodeNodeBetweenLayers': '0.0', // Horizontal spacing between nodes
-  // The below settings stop some weird extra horizontal spacing when a connection/edge is present
-  'spacing.edgeEdge': '0.0',
-  'spacing.edgeNodeBetweenLayers': '0.0',
-  'spacing.edgeEdgeBetweenLayers': '0.0',
 };
 
 export const convertDataMapNodesToElkGraph = (
@@ -71,7 +60,7 @@ export const convertDataMapNodesToElkGraph = (
   const interBlockEdges: ElkExtendedEdge[] = [];
 
   Object.values(connections).forEach((connection) => {
-    // Make sure that this connection and its nodes are actively on the canvas
+    // Make sure that each connection and its nodes are actively on the canvas
     if (
       !currentFunctionNodes[connection.self.reactFlowKey] &&
       !currentSourceSchemaNodes.some((srcSchemaNode) => srcSchemaNode.key === connection.self.node.key) &&
