@@ -6,15 +6,8 @@ import { connectionsFileName, managementApiPrefix, parametersFileName, workflowA
 import { localize } from '../../../localize';
 import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import type { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
+import type { Artifacts, IArtifactFile, IConnectionsFileContent, IParametersFileContent, IWorkflowFileContent, Parameter } from '../models';
 import { sendAzureRequest } from '../requestUtils';
-import type {
-  Artifacts,
-  IArtifactFile,
-  IConnectionsFileContent,
-  IParametersFileContent,
-  IWorkflowFileContent,
-  Parameter,
-} from '@microsoft/utils-logic-apps';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
