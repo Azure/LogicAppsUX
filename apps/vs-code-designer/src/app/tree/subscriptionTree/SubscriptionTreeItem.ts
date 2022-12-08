@@ -5,7 +5,6 @@
 import { logicAppKind, projectLanguageSetting, workflowappRuntime } from '../../../constants';
 import { localize } from '../../../localize';
 import { getDefaultFuncVersion } from '../../utils/funcCoreTools/funcVersion';
-import type { FuncVersion, IFunctionAppWizardContext } from '../../utils/models';
 import { isProjectCV, isRemoteProjectCV } from '../../utils/tree/projectContextValues';
 import { getWorkspaceSettingFromAnyFolder } from '../../utils/vsCodeConfig/settings';
 import { ProductionSlotTreeItem } from '../slotsTree/ProductionSlotTreeItem';
@@ -15,6 +14,7 @@ import { AppKind, createWebSiteClient, ParsedSite } from '@microsoft/vscode-azex
 import { SubscriptionTreeItemBase, uiUtils } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtTreeItem, IActionContext, ICreateChildImplContext } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, parseError } from '@microsoft/vscode-azext-utils';
+import type { FuncVersion, IFunctionAppWizardContext } from '@microsoft/vscode-extension';
 
 export interface ICreateFuntionAppContext extends ICreateChildImplContext {
   newResourceGroupName?: string;
