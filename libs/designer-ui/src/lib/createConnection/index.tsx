@@ -130,6 +130,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     [checkOAuthCallback, isMultiAuth, multiAuthParams, singleAuthParams]
   );
 
+  // Don't show name for simple connections
   const showNameInput = useMemo(() => isMultiAuth || Object.keys(parameters).length > 0, [isMultiAuth, parameters]);
 
   const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
@@ -142,9 +143,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     );
   }, [connectionDisplayName, needsAzureFunction, parameterValues, parameters, selectedFunctionId, showNameInput]);
 
-  const canSubmit = useMemo(() => {
-    return !isLoading && validParams;
-  }, [isLoading, validParams]);
+  const canSubmit = useMemo(() => !isLoading && validParams, [isLoading, validParams]);
 
   const submitCallback = useCallback(() => {
     return createConnectionCallback?.(
@@ -260,7 +259,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     [functionAppsQuery.data]
   );
 
-  const showConfigParameters = useMemo(() => !functionApps, [functionApps]);
+  const showConfigParameters = useMemo(() => !needsAzureFunction, [needsAzureFunction]);
 
   // RENDER
 
