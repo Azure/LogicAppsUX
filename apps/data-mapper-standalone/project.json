@@ -59,6 +59,14 @@
           "sslKey": "local-key.pem",
           "sslCert": "local-cert.pem"
         },
+        "citest": {
+          "buildTarget": "data-mapper-standalone:build:development",
+          "hmr": false,
+          "host": "localhost",
+          "ssl": true,
+          "sslKey": "ci-key.pem",
+          "sslCert": "ci-cert.pem"
+        },
         "development": {
           "buildTarget": "data-mapper-standalone:build:development"
         }

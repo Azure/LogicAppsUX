@@ -18,12 +18,17 @@ import { useEffect, useState } from 'react';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
 import { Position } from 'reactflow';
 
+export const overviewTgtSchemaX = 600;
+
 interface SimplifiedElkEdge {
   srcRfId: string;
   tgtRfId: string;
 }
 
-export const overviewTgtSchemaX = 600;
+interface Size2D {
+  width: number;
+  height: number;
+}
 
 // Hidden dummy node placed at 0,0 (same as source schema block) to allow initial load fitView to center diagram
 // NOTE: Not documented, but hidden nodes need a width/height to properly affect fitView when includeHiddenNodes option is true
@@ -47,9 +52,10 @@ export const useLayout = (
   connections: ConnectionDictionary,
   selectedItemKey: string | undefined,
   sourceSchemaOrdering: string[]
-): [ReactFlowNode[], ReactFlowEdge[]] => {
+): [ReactFlowNode[], ReactFlowEdge[], Size2D] => {
   const [reactFlowNodes, setReactFlowNodes] = useState<ReactFlowNode[]>([]);
   const [reactFlowEdges, setReactFlowEdges] = useState<ReactFlowEdge[]>([]);
+  const [diagramSize, setDiagramSize] = useState<Size2D>({ width: 0, height: 0 });
 
   useEffect(() => {
     if (currentTargetSchemaNode) {
@@ -106,6 +112,12 @@ export const useLayout = (
           }
 
           setReactFlowEdges(convertToReactFlowEdges(simpleElkEdgeResults, selectedItemKey));
+
+          // Calculate diagram size
+          setDiagramSize({
+            width: layoutedElkTree.width ?? 0,
+            height: layoutedElkTree.height ?? 0,
+          });
         })
         .catch((error) => {
           console.error(`Elk Layout Error: ${error}`);
@@ -114,10 +126,11 @@ export const useLayout = (
     } else {
       setReactFlowNodes([]);
       setReactFlowEdges([]);
+      setDiagramSize({ width: 0, height: 0 });
     }
   }, [currentTargetSchemaNode, currentSourceSchemaNodes, currentFunctionNodes, connections, sourceSchemaOrdering, selectedItemKey]);
 
-  return [reactFlowNodes, reactFlowEdges];
+  return [reactFlowNodes, reactFlowEdges, diagramSize];
 };
 
 export const convertToReactFlowNodes = (
@@ -277,7 +290,7 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
 ): ReactFlowNode<FunctionCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<FunctionCardProps>[] = [];
 
-  Object.entries(currentFunctionNodes).forEach(([functionKey, fnNode]) => {
+  Object.entries(currentFunctionNodes).forEach(([functionKey, fnNode], idx) => {
     const elkNode = functionsElkTree.children?.find((node) => node.id === functionKey);
     if (!elkNode || !elkNode.x || !elkNode.y || !functionsElkTree.x || !functionsElkTree.y) {
       console.error('Layout error: Function ElkNode not found, or missing x/y');
@@ -295,6 +308,7 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
         functionBranding: getFunctionBrandingForCategory(fnNode.category),
         disabled: false,
         error: false,
+        dataTestId: `${fnNode.key}-${idx}`, // For e2e testing
       },
       type: ReactFlowNodeType.FunctionNode,
       sourcePosition: Position.Right,
