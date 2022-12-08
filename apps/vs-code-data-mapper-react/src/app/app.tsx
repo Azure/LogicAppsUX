@@ -139,7 +139,13 @@ export const App = () => {
   useEffect(() => {
     const fetchFunctionList = async () => {
       try {
-        dispatch(changeFetchedFunctions(await getFunctions()));
+        const fnManifest = await getFunctions();
+
+        if (typeof fnManifest !== 'string') {
+          dispatch(changeFetchedFunctions(fnManifest));
+        } else {
+          throw new Error(`Failed to fetch Function manifest: ${fnManifest}}`);
+        }
       } catch (error) {
         handleRscLoadError(error);
       }

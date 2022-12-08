@@ -1,5 +1,6 @@
 import type { RootState } from './Store';
 import type { IDropdownOption } from '@fluentui/react';
+import { functionMock } from '@microsoft/logic-apps-data-mapper';
 import type { MapDefinitionEntry, FunctionData } from '@microsoft/logic-apps-data-mapper';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -23,6 +24,7 @@ const initialState: DataMapLoadingState = {
   rawDefinition: {} as IDropdownOption<string>,
   mapDefinition: {},
   xsltFilename: '',
+  fetchedFunctions: [...functionMock],
 };
 
 export const loadDataMap = createAsyncThunk('loadDataMap', async (_: void, thunkAPI) => {

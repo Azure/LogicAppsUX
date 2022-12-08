@@ -277,7 +277,7 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
 ): ReactFlowNode<FunctionCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<FunctionCardProps>[] = [];
 
-  Object.entries(currentFunctionNodes).forEach(([functionKey, fnNode]) => {
+  Object.entries(currentFunctionNodes).forEach(([functionKey, fnNode], idx) => {
     const elkNode = functionsElkTree.children?.find((node) => node.id === functionKey);
     if (!elkNode || !elkNode.x || !elkNode.y || !functionsElkTree.x || !functionsElkTree.y) {
       console.error('Layout error: Function ElkNode not found, or missing x/y');
@@ -295,6 +295,7 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
         functionBranding: getFunctionBrandingForCategory(fnNode.category),
         disabled: false,
         error: false,
+        dataTestId: `${fnNode.key}-${idx}`, // For e2e testing
       },
       type: ReactFlowNodeType.FunctionNode,
       sourcePosition: Position.Right,
