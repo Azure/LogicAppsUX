@@ -17,7 +17,8 @@
     "vs-code-data-mapper-react": "apps/vs-code-data-mapper-react",
     "vs-code-designer": "apps/vs-code-designer",
     "vs-code-designer-react": "apps/vs-code-designer-react",
-    "vs-code-react": "apps/vs-code-react"
+    "vs-code-react": "apps/vs-code-react",
+    "vscode-extension": "libs/vscode-extension"
   },
   "$schema": "./node_modules/nx/schemas/workspace-schema.json"
 }

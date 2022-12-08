@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../localize';
-import { ProjectAccess, ProjectResource } from '../../utils/models';
 import { getThemedIconPath } from '../../utils/tree/assets';
 import { getProjectContextValue } from '../../utils/tree/projectContextValues';
 import type { SlotTreeItemBase } from '../slotsTree/SlotTreeItemBase';
@@ -12,6 +11,7 @@ import { ParametersTreeItem } from './parametersTree/ParametersTreeItem';
 import { AppSettingsTreeItem } from '@microsoft/vscode-azext-azureappservice';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
+import { ProjectAccess, ProjectResource } from '@microsoft/vscode-extension';
 
 export class ConfigurationsTreeItem extends AzExtParentTreeItem {
   public static contextValue = 'azFuncConfigurations';

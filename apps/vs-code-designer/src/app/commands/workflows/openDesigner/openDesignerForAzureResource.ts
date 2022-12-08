@@ -9,11 +9,11 @@ import {
   getWorkflowManagementBaseURI,
 } from '../../../utils/codeless/common';
 import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationToken';
-import type { IDesignerPanelMetadata, IWorkflowFileContent } from '../../../utils/models';
-import { ExtensionCommand } from '../../../utils/models';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { OpenDesignerBase } from './openDesignerBase';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
+import type { IWorkflowFileContent, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
+import { ExtensionCommand } from '@microsoft/vscode-extension';
 import * as path from 'path';
 import * as vscode from 'vscode';
 

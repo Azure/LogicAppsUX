@@ -1,10 +1,10 @@
 import { funcVersionSetting } from '../../../constants';
 import { ext } from '../../../extensionVariables';
-import { FuncVersion, latestGAVersion } from '../models';
 import { getWorkspaceSettingFromAnyFolder } from '../vsCodeConfig/settings';
 import { executeCommand } from './cpUtils';
 import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { FuncVersion, latestGAVersion } from '@microsoft/vscode-extension';
 import * as semver from 'semver';
 
 /**

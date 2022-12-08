@@ -6,8 +6,6 @@ import { connectionsFileName, parametersFileName } from '../../../constants';
 import { localize } from '../../../localize';
 import { getAllArtifacts, getOptionalFileContent, listWorkflows } from '../../utils/codeless/apiUtils';
 import { getRequestTriggerSchema } from '../../utils/codeless/common';
-import type { Artifacts, Parameter } from '../../utils/models';
-import { ProjectAccess, ProjectResource } from '../../utils/models';
 import { getThemedIconPath } from '../../utils/tree/assets';
 import { getProjectContextValue } from '../../utils/tree/projectContextValues';
 import type { SlotTreeItemBase } from '../slotsTree/SlotTreeItemBase';
@@ -15,6 +13,8 @@ import { RemoteWorkflowTreeItem } from './RemoteWorkflowTreeItem';
 import { isNullOrEmpty } from '@microsoft/utils-logic-apps';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
+import { ProjectAccess, ProjectResource } from '@microsoft/vscode-extension';
+import type { Artifacts, Parameter } from '@microsoft/vscode-extension';
 
 export class RemoteWorkflowsTreeItem extends AzExtParentTreeItem {
   public readonly label: string = localize('Workflows', 'Workflows');

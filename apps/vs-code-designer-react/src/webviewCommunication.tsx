@@ -1,6 +1,6 @@
 import { initializeDesigner, updateCallbackUrl } from './state/DesignerSlice';
 import type { AppDispatch } from './state/Store';
-import { ExtensionCommand } from '@microsoft/utils-logic-apps';
+import { ExtensionCommand } from '@microsoft/vscode-extension';
 import useEventListener from '@use-it/event-listener';
 import type { ReactNode } from 'react';
 import React, { useEffect } from 'react';

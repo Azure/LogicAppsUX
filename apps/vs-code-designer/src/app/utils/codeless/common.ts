@@ -12,10 +12,17 @@ import { createAzureWizard } from '../../commands/workflows/azureConnectorWizard
 import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
 import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { getLocalSettingsJson } from '../localSettings';
-import type { Parameter, CodelessApp, Artifacts, AzureConnectorDetails, WorkflowParameter, IWorkflowFileContent } from '../models';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type {
+  IWorkflowFileContent,
+  Parameter,
+  CodelessApp,
+  WorkflowParameter,
+  Artifacts,
+  AzureConnectorDetails,
+} from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';

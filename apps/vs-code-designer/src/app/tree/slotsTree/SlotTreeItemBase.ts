@@ -8,15 +8,6 @@ import { parseHostJson } from '../../funcConfig/host';
 import { getFileOrFolderContent } from '../../utils/codeless/apiUtils';
 import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getLocalSettingsJson } from '../../utils/localSettings';
-import type {
-  ApplicationSettings,
-  FuncHostRequest,
-  FuncVersion,
-  ILocalSettingsJson,
-  IParsedHostJson,
-  IProjectTreeItem,
-} from '../../utils/models';
-import { latestGAVersion, ProjectSource } from '../../utils/models';
 import { getIconPath } from '../../utils/tree/assets';
 import { ConfigurationsTreeItem } from '../configurationsTree/ConfigurationsTreeItem';
 import { RemoteWorkflowsTreeItem } from '../remoteWorkflowsTree/RemoteWorkflowsTreeItem';
@@ -37,6 +28,9 @@ import {
 import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { AzExtParentTreeItem, AzureWizard, DeleteConfirmationStep, nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
+import type { ApplicationSettings, FuncHostRequest, FuncVersion, IParsedHostJson, IProjectTreeItem } from '@microsoft/vscode-extension';
+import { latestGAVersion, ProjectSource } from '@microsoft/vscode-extension';
+import type { ILocalSettingsJson } from '@microsoft/vscode-extension';
 import * as path from 'path';
 
 export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IProjectTreeItem {

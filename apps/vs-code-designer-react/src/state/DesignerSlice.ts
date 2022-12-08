@@ -1,6 +1,6 @@
 import type { IApiHubServiceDetails } from '@microsoft/designer-client-services-logic-apps';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
-import type { ICallbackUrlResponse, IDesignerPanelMetadata } from '@microsoft/utils-logic-apps';
+import type { ICallbackUrlResponse, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 

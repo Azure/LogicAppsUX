@@ -4,13 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../localize';
 import { getConnections } from '../../../utils/codeless/apiUtils';
-import { ProjectAccess, ProjectResource } from '../../../utils/models';
 import { getThemedIconPath } from '../../../utils/tree/assets';
 import { getProjectContextValue } from '../../../utils/tree/projectContextValues';
 import type { ConfigurationsTreeItem } from '../ConfigurationsTreeItem';
 import { ConnectionTreeItem } from './ConnectionTreeItem';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, ILoadingTreeContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
+import { ProjectAccess, ProjectResource } from '@microsoft/vscode-extension';
 
 export class ConnectionsTreeItem extends AzExtParentTreeItem {
   public readonly label: string = localize('Connections', 'Connections');

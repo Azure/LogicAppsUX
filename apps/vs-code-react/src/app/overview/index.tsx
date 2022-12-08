@@ -2,7 +2,7 @@ import type { RunDisplayItem } from '../../run-service';
 import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { App } from './app';
-import { ExtensionCommand } from '@microsoft/utils-logic-apps';
+import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 
