@@ -114,7 +114,7 @@ export const DataMapperDesigner = ({
   const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
 
-  const centerViewHeight = useCenterViewHeight();
+  const { centerViewHeight, centerViewWidth } = useCenterViewHeight();
   const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!selectedItemKey);
   const [propPaneExpandedHeight, setPropPaneExpandedHeight] = useState(basePropPaneContentHeight);
   const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
@@ -264,7 +264,8 @@ export const DataMapperDesigner = ({
                       <MapOverview />
                     ) : (
                       <ReactFlowProvider>
-                        <ReactFlowWrapper canvasBlockHeight={getCanvasAreaHeight()} />
+                        {/* TODO: Update width calculations once Code View becomes resizable */}
+                        <ReactFlowWrapper canvasBlockHeight={getCanvasAreaHeight()} canvasBlockWidth={centerViewWidth} />
                       </ReactFlowProvider>
                     )}
                   </div>
@@ -303,6 +304,7 @@ export const DataMapperDesigner = ({
 };
 
 const useCenterViewHeight = () => {
+  const [centerViewWidth, setCenterViewWidth] = useState(0);
   const [centerViewHeight, setCenterViewHeight] = useState(0);
 
   useEffect(() => {
@@ -311,6 +313,7 @@ const useCenterViewHeight = () => {
     const centerViewResizeObserver = new ResizeObserver((entries) => {
       if (entries.length && entries.length > 0) {
         setCenterViewHeight(entries[0].contentRect.height);
+        setCenterViewWidth(entries[0].contentRect.width);
       }
     });
 
@@ -321,5 +324,5 @@ const useCenterViewHeight = () => {
     return () => centerViewResizeObserver.disconnect();
   }, []);
 
-  return centerViewHeight;
+  return { centerViewWidth, centerViewHeight };
 };
