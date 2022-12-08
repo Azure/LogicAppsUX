@@ -6,8 +6,10 @@ import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { Notification } from '../components/notification/Notification';
 import { SchemaNameBadge } from '../components/schemaSelection/SchemaNameBadge';
 import { SourceSchemaPlaceholder } from '../components/schemaSelection/SourceSchemaPlaceholder';
+import { schemaNodeCardHeight, schemaNodeCardWidth } from '../constants/NodeConstants';
 import {
   checkerboardBackgroundImage,
+  defaultCanvasZoom,
   ReactFlowEdgeType,
   reactFlowFitViewOptions,
   ReactFlowNodeType,
@@ -31,20 +33,23 @@ import { useLayout } from '../utils/ReactFlow.Util';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import type { KeyboardEventHandler, MouseEvent as ReactMouseEvent } from 'react';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode, OnConnectStartParams } from 'reactflow';
 // eslint-disable-next-line import/no-named-as-default
 import ReactFlow, { ConnectionLineType, useKeyPress } from 'reactflow';
+
+type CanvasExtent = [[number, number], [number, number]];
 
 export const nodeTypes = { [ReactFlowNodeType.SchemaNode]: SchemaCard, [ReactFlowNodeType.FunctionNode]: FunctionCard };
 export const edgeTypes = { [ReactFlowEdgeType.ConnectionEdge]: ConnectionEdge };
 
 interface ReactFlowWrapperProps {
   canvasBlockHeight: number;
+  canvasBlockWidth: number;
 }
 
-export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) => {
+export const ReactFlowWrapper = ({ canvasBlockHeight, canvasBlockWidth }: ReactFlowWrapperProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const reactFlowRef = useRef<HTMLDivElement>(null);
 
@@ -61,6 +66,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const notificationData = useSelector((state: RootState) => state.dataMap.notificationData);
 
+  const [canvasZoom, setCanvasZoom] = useState(defaultCanvasZoom);
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
 
   const onPaneClick = (_event: ReactMouseEvent | MouseEvent | TouchEvent): void => {
@@ -134,7 +140,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
     }
   }, [ctrlYPressed, dispatch]);
 
-  const [nodes, edges] = useLayout(
+  const [nodes, edges, diagramSize] = useLayout(
     currentSourceSchemaNodes,
     currentFunctionNodes,
     currentTargetSchemaNode,
@@ -150,21 +156,38 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
     [nodes]
   );
 
+  // Restrict canvas panning to certain bounds
+  const translateExtent = useMemo<CanvasExtent>(() => {
+    const xOffset = schemaNodeCardWidth * 2;
+    const yOffset = schemaNodeCardHeight * 2;
+
+    const xPos = canvasBlockWidth / canvasZoom - xOffset;
+    const yPos = canvasBlockHeight / canvasZoom - yOffset;
+
+    return [
+      [-xPos, -yPos],
+      [xPos + diagramSize.width, yPos + diagramSize.height],
+    ];
+  }, [diagramSize, canvasBlockHeight, canvasBlockWidth, canvasZoom]);
+
   return (
     <ReactFlow
       ref={reactFlowRef}
-      onKeyDown={keyDownHandler}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
       nodes={nodes}
       edges={edges}
+      onPaneClick={onPaneClick}
+      // Not ideal, but it's this or useViewport that re-renders 3000 (due to x/y changes)
+      onMove={(_e, viewport) => setCanvasZoom(viewport.zoom)}
+      onKeyDown={keyDownHandler}
       onConnect={onConnect}
       onConnectStart={onConnectStart}
       onConnectEnd={onConnectEnd}
-      onPaneClick={onPaneClick}
+      onEdgeClick={onEdgeClick}
       onNodeClick={onNodeSingleClick}
       nodesDraggable={false}
-      // With custom edge component, only affects appearance when drawing edge
+      // When using custom edge component, only affects appearance when drawing edge
       connectionLineType={ConnectionLineType.SmoothStep}
       proOptions={{
         account: 'paid-sponsor',
@@ -176,7 +199,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
         backgroundSize: '22px 22px',
         borderRadius: tokens.borderRadiusMedium,
       }}
-      onEdgeClick={onEdgeClick}
+      translateExtent={translateExtent}
       fitViewOptions={reactFlowFitViewOptions}
       fitView
     >
