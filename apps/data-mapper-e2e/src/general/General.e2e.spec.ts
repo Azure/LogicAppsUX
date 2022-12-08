@@ -1,7 +1,8 @@
+import { baseUrl } from '../utils';
 import { test, expect } from '@playwright/test';
 
 test('Data Mapper - General E2E', async ({ page }) => {
-  await page.goto('http://localhost:4200/');
+  await page.goto(baseUrl);
 
   await page.getByText('Select a map definition').click();
 
