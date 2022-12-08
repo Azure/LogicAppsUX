@@ -19,11 +19,11 @@ import {
 import { saveParameters } from '../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
 import { getLocalSettingsJson } from '../../../utils/localSettings';
-import type { AzureConnectorDetails, IDesignerPanelMetadata, Parameter } from '../../../utils/models';
 import { sendRequest } from '../../../utils/requestUtils';
 import { OpenDesignerBase } from './openDesignerBase';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { AzureConnectorDetails, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { writeFileSync, readFileSync } from 'fs';
 import * as path from 'path';

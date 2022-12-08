@@ -7,8 +7,8 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getWorkflow } from '../../utils/codeless/apiUtils';
 import { resolveSettingsInConnection } from '../../utils/codeless/connection';
-import type { IWorkflowFileContent, Artifacts, Parameter, ICallbackUrlResponse, ServiceProviderConnectionModel } from '../../utils/models';
 import { ProjectResource } from '../../utils/models';
+import type { ServiceProviderConnectionModel } from '../../utils/models';
 import { sendAzureRequest } from '../../utils/requestUtils';
 import { getThemedIconPath } from '../../utils/tree/assets';
 import { getProjectContextValue } from '../../utils/tree/projectContextValues';
@@ -18,6 +18,7 @@ import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { isEmptyString, HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import { AzExtTreeItem, DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { AzExtParentTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
+import type { IWorkflowFileContent, Artifacts, Parameter, ICallbackUrlResponse } from '@microsoft/vscode-extension';
 import { ProgressLocation, window } from 'vscode';
 
 export class RemoteWorkflowTreeItem extends AzExtTreeItem {

@@ -1,11 +1,11 @@
 import { parametersFileName } from '../../../constants';
 import { localize } from '../../../localize';
 import { writeFormattedJson } from '../fs';
-import type { Parameter, WorkflowParameter } from '../models';
 import { parseJson } from '../parseJson';
 import { getFunctionProjectRoot } from './connection';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { parseError } from '@microsoft/vscode-azext-utils';
+import type { Parameter, WorkflowParameter } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 

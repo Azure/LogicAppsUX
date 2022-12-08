@@ -1,7 +1,7 @@
 import { connectionsFileName } from '../../../constants';
 import { writeFormattedJson } from '../fs';
 import { addOrUpdateLocalAppSettings } from '../localSettings';
-import type { ServiceProviderConnectionModel, ConnectionAndSettings, ConnectionReferenceModel, Parameter } from '../models';
+import type { ServiceProviderConnectionModel, ConnectionAndSettings, ConnectionReferenceModel } from '../models';
 import { tryGetFunctionProjectRoot } from '../verifyIsProject';
 import { getContainingWorkspace } from '../workspace';
 import { getAuthorizationToken } from './getAuthorizationToken';
@@ -9,6 +9,7 @@ import { getParametersJson } from './parameter';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { Parameter } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as requestP from 'request-promise';
