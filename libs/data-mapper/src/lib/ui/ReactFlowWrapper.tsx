@@ -48,22 +48,6 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
   const dispatch = useDispatch<AppDispatch>();
   const reactFlowRef = useRef<HTMLDivElement>(null);
 
-  const ctrlZPressed = useKeyPress(['Meta+z', 'ctrl+z']);
-  useEffect(() => {
-    if (ctrlZPressed) {
-      dispatch(undoDataMapOperation());
-      console.log('Z');
-    }
-  }, [ctrlZPressed, dispatch]);
-
-  const ctrlYPressed = useKeyPress(['Meta+y', 'ctrl+y']);
-  useEffect(() => {
-    if (ctrlYPressed) {
-      dispatch(redoDataMapOperation());
-      console.log('Y');
-    }
-  }, [ctrlYPressed, dispatch]);
-
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
   const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
@@ -135,6 +119,20 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
       dispatch(deleteCurrentlySelectedItem());
     }
   };
+
+  const ctrlZPressed = useKeyPress(['Meta+z', 'ctrl+z']);
+  useEffect(() => {
+    if (ctrlZPressed) {
+      dispatch(undoDataMapOperation());
+    }
+  }, [ctrlZPressed, dispatch]);
+
+  const ctrlYPressed = useKeyPress(['Meta+y', 'ctrl+y']);
+  useEffect(() => {
+    if (ctrlYPressed) {
+      dispatch(redoDataMapOperation());
+    }
+  }, [ctrlYPressed, dispatch]);
 
   const [nodes, edges] = useLayout(
     currentSourceSchemaNodes,
