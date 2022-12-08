@@ -10,11 +10,11 @@ import { getWorkspaceSettingFromAnyFolder } from '../../utils/vsCodeConfig/setti
 import { ProductionSlotTreeItem } from '../slotsTree/ProductionSlotTreeItem';
 import type { Site, WebSiteManagementClient } from '@azure/arm-appservice';
 import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
-import type { FuncVersion, IFunctionAppWizardContext } from '@microsoft/utils-logic-apps';
 import { AppKind, createWebSiteClient, ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { SubscriptionTreeItemBase, uiUtils } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtTreeItem, IActionContext, ICreateChildImplContext } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, parseError } from '@microsoft/vscode-azext-utils';
+import type { FuncVersion, IFunctionAppWizardContext } from '@microsoft/vscode-extension';
 
 export interface ICreateFuntionAppContext extends ICreateChildImplContext {
   newResourceGroupName?: string;

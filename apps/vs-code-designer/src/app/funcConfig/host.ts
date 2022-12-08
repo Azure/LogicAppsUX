@@ -3,8 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { defaultRoutePrefix } from '../../constants';
-import type { IBundleMetadata, IHostJsonV1, IHostJsonV2, IParsedHostJson } from '@microsoft/utils-logic-apps';
-import { FuncVersion, isObject, isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { isObject, isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import type { IBundleMetadata, IHostJsonV1, IHostJsonV2, IParsedHostJson } from '@microsoft/vscode-extension';
+import { FuncVersion } from '@microsoft/vscode-extension';
 
 class ParsedHostJsonV2 implements IParsedHostJson {
   public data: IHostJsonV2;

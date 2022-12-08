@@ -4,7 +4,7 @@ import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { Status } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { PrimaryButton } from '@fluentui/react';
-import { ExtensionCommand } from '@microsoft/utils-logic-apps';
+import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { useContext } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';

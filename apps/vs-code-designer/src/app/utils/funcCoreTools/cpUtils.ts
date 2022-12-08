@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../localize';
-import type { ICommandResult } from '@microsoft/utils-logic-apps';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
+import type { ICommandResult } from '@microsoft/vscode-extension';
 import * as cp from 'child_process';
 import * as os from 'os';
 

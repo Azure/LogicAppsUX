@@ -6,10 +6,10 @@ import { extensionCommand } from '../../../../constants';
 import { getThemedIconPath } from '../../../utils/tree/assets';
 import { getProjectContextValue } from '../../../utils/tree/projectContextValues';
 import type { ParametersTreeItem } from './ParametersTreeItem';
-import { ProjectResource } from '@microsoft/utils-logic-apps';
-import type { IParametersFileContent, Parameter } from '@microsoft/utils-logic-apps';
 import { AzExtTreeItem } from '@microsoft/vscode-azext-utils';
 import type { TreeItemIconPath } from '@microsoft/vscode-azext-utils';
+import { ProjectResource } from '@microsoft/vscode-extension';
+import type { Parameter, IParametersFileContent } from '@microsoft/vscode-extension';
 
 export class ParameterTreeItem extends AzExtTreeItem {
   public readonly parent: ParametersTreeItem;

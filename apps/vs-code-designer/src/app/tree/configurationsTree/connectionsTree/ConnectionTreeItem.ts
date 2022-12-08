@@ -6,15 +6,15 @@ import { extensionCommand } from '../../../../constants';
 import { getIconPath } from '../../../utils/tree/assets';
 import { getProjectContextValue } from '../../../utils/tree/projectContextValues';
 import type { ConnectionsTreeItem } from './ConnectionsTreeItem';
-import { ProjectResource } from '@microsoft/utils-logic-apps';
+import type { TreeItemIconPath } from '@microsoft/vscode-azext-utils';
+import { AzExtTreeItem } from '@microsoft/vscode-azext-utils';
 import type {
   ConnectionReferenceModel,
   FunctionConnectionModel,
   IConnectionsFileContent,
   ServiceProviderConnectionModel,
-} from '@microsoft/utils-logic-apps';
-import type { TreeItemIconPath } from '@microsoft/vscode-azext-utils';
-import { AzExtTreeItem } from '@microsoft/vscode-azext-utils';
+} from '@microsoft/vscode-extension';
+import { ProjectResource } from '@microsoft/vscode-extension';
 
 export class ConnectionTreeItem extends AzExtTreeItem {
   public readonly parent: ConnectionsTreeItem;

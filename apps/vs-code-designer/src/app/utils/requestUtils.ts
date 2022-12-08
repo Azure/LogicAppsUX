@@ -7,10 +7,11 @@ import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { RestError } from '@azure/ms-rest-js';
 import type { HttpOperationResponse, RequestPrepareOptions, ServiceClient } from '@azure/ms-rest-js';
-import type { HTTP_METHODS, IIdentityWizardContext } from '@microsoft/utils-logic-apps';
+import type { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import { createGenericClient } from '@microsoft/vscode-azext-azureutils';
 import { parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
+import type { IIdentityWizardContext } from '@microsoft/vscode-extension';
 
 /**
  * Checks if it is a timeout error.
