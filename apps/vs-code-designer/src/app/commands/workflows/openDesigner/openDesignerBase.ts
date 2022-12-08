@@ -1,9 +1,9 @@
 import { ext } from '../../../../extensionVariables';
 import { tryGetWebviewPanel } from '../../../utils/codeless/common';
-import type { Artifacts, AzureConnectorDetails, Parameter } from '../../../utils/models';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { ResolutionService } from '@microsoft/parsers-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { Artifacts, AzureConnectorDetails, Parameter } from '@microsoft/vscode-extension';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import { Uri } from 'vscode';
