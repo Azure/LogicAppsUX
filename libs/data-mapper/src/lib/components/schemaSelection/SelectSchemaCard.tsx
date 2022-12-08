@@ -6,7 +6,7 @@ import CardOnHoverDark from './card_onHover_dark.svg';
 import CardOnRest from './card_onRest.svg';
 import CardOnRestDark from './card_onRest_dark.svg';
 import { Image, Stack } from '@fluentui/react';
-import { makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
+import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -82,18 +82,19 @@ export const SelectSchemaCard = ({ schemaType, style }: SelectSchemaCardProps) =
   };
 
   return (
-    <Stack
-      verticalAlign="center"
-      horizontalAlign="center"
-      className={styles.selectSchemaCard}
-      onClick={onClickSchemaCard}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
-      style={style}
-    >
-      <Image src={isHovering ? cardOnHoverSvg : cardOnRestSvg} alt="Schema selection card" style={{ paddingBottom: '28px' }} />
+    <Button appearance="transparent" onClick={onClickSchemaCard} style={{ padding: 0 }} aria-label={selectSchemaMsg}>
+      <Stack
+        verticalAlign="center"
+        horizontalAlign="center"
+        className={styles.selectSchemaCard}
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+        style={style}
+      >
+        <Image src={isHovering ? cardOnHoverSvg : cardOnRestSvg} alt="Schema selection card" style={{ paddingBottom: '28px' }} />
 
-      <Text className={styles.selectSchemaText}>{selectSchemaMsg}</Text>
-    </Stack>
+        <Text className={styles.selectSchemaText}>{selectSchemaMsg}</Text>
+      </Stack>
+    </Button>
   );
 };
