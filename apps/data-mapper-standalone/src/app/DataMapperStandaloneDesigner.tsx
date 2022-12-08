@@ -35,7 +35,11 @@ export const DataMapperStandaloneDesigner = () => {
 
   useEffect(() => {
     const fetchFunctionList = async () => {
-      dispatch(dataMapDataLoaderSlice.actions.changeFetchedFunctions(await getFunctions()));
+      const fnManifest = await getFunctions();
+
+      if (typeof fnManifest !== 'string') {
+        dispatch(dataMapDataLoaderSlice.actions.changeFetchedFunctions(fnManifest));
+      }
     };
 
     // Standalone uses default/dev runtime settings - can just run 'func host start' in the workflow root

@@ -7,10 +7,6 @@ test('Data Mapper - General E2E', async ({ page }) => {
 
   await page.getByRole('option', { name: 'Demo Script MD' }).click();
 
-  // Wait for data map definition data to load
-  // (if you start navigating before it's loaded, it returns to the overview)
-  await page.waitForTimeout(3000);
-
   await page.getByTestId('rf__node-target-/ns0:Root/DirectTranslation').getByRole('button').nth(1).click();
 
   await page.getByTestId('rf__node-target-/ns0:Root/DirectTranslation/Employee').getByRole('button').nth(1).click();
