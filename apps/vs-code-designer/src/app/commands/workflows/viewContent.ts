@@ -5,15 +5,15 @@
 import { ConnectionTreeItem } from '../../tree/configurationsTree/connectionsTree/ConnectionTreeItem';
 import { ParameterTreeItem } from '../../tree/configurationsTree/parametersTree/ParameterTreeItem';
 import { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
+import { openReadOnlyJson } from '@microsoft/vscode-azext-utils';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
   Parameter,
   ConnectionReferenceModel,
   FunctionConnectionModel,
   ServiceProviderConnectionModel,
   IWorkflowFileContent,
-} from '@microsoft/utils-logic-apps';
-import { openReadOnlyJson } from '@microsoft/vscode-azext-utils';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+} from '@microsoft/vscode-extension';
 
 export async function viewContent(_context: IActionContext, node: ConnectionTreeItem | RemoteWorkflowTreeItem): Promise<void> {
   let data:
