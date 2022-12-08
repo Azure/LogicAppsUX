@@ -82,7 +82,7 @@ export const SelectSchemaCard = ({ schemaType, style }: SelectSchemaCardProps) =
   };
 
   return (
-    <Button appearance="transparent" onClick={onClickSchemaCard} style={{ padding: 0 }}>
+    <Button appearance="transparent" onClick={onClickSchemaCard} style={{ padding: 0 }} aria-label={selectSchemaMsg}>
       <Stack
         verticalAlign="center"
         horizontalAlign="center"
