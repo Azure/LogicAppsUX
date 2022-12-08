@@ -406,6 +406,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
           }}
           onRenderTitle={onRenderTitle}
           onRenderOption={onRenderOption}
+          data-testid={`inputDropdown-dropdown-${inputIndex}`}
         />
       ) : (
         <div style={{ position: 'relative', ...inputStyles }}>
@@ -422,6 +423,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
                 label: { root: { ...typographyStyles.body1, color: tokens.colorNeutralForeground1 } },
               },
             }}
+            data-testid={`inputDropdown-textField-${inputIndex}`}
           />
           <Tooltip relationship="label" content={clearCustomValueLoc}>
             <Button

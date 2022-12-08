@@ -7,11 +7,26 @@ test('Data Mapper - General E2E', async ({ page }) => {
 
   await page.getByRole('option', { name: 'Demo Script MD' }).click();
 
+  // Wait for data map definition data to load
+  // (if you start navigating before it's loaded, it returns to the overview)
+  await page.waitForTimeout(3000);
+
   await page.getByTestId('rf__node-target-/ns0:Root/DirectTranslation').getByRole('button').nth(1).click();
 
   await page.getByTestId('rf__node-target-/ns0:Root/DirectTranslation/Employee').getByRole('button').nth(1).click();
 
-  await page.getByTestId('rf__node-target-/ns0:Root/DirectTranslation/Employee/ID').click();
+  await expect(page.getByTestId('ToString-1')).toBeDefined();
+  await page.getByTestId('ToString-1').getByRole('button').click();
 
-  await expect(page.getByTestId('rf__node-source-/ns0:Root/DirectTranslation/EmployeeID')).toBeDefined();
+  await page.getByTestId('inputDropdown-dropdown-0').locator('span:has-text("EmployeeID")').click();
+
+  await page.getByRole('option', { name: 'Enter custom value' }).click();
+
+  await page.getByTestId('inputDropdown-textField-0').click();
+
+  await page.getByTestId('inputDropdown-textField-0').fill('Hello');
+
+  await page.getByRole('button', { name: 'Show code' }).click();
+
+  await expect(page.getByText('EmployeeName, string(Hello)')).toBeDefined();
 });
