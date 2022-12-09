@@ -10,8 +10,15 @@ import { addReactFlowPrefix, addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
 import type { WritableDraft } from 'immer/dist/internal';
 
-// NOTE: This method should be the gateway for anything getting into dataMapConnections
-// - meaning all default inputs/etc can safely be managed in this singular spot
+/**
+ * Creates a connection entry in the connections dictionary if it doesn't already exist.
+ * This is the gateway for any entries made into dataMapConnections - meaning all default
+ * inputs/etc can safely be managed in this singular spot.
+ *
+ * @param connections The connections dictionary to add the entry to
+ * @param node The node to create the connection entry for
+ * @param reactFlowKey The reactFlowKey of the node
+ */
 export const createConnectionEntryIfNeeded = (
   connections: ConnectionDictionary,
   node: SchemaNodeExtended | FunctionData,
@@ -40,7 +47,18 @@ export const createConnectionEntryIfNeeded = (
   }
 };
 
-// NOTE: This should be the gateway for setting any input values in dataMapConnections
+/**
+ * Creates or updates a connection entry's input value.
+ * This is the gateway for *setting ANY input values* in dataMapConnections - including
+ * both those that are deserialized, handle-drawn, or InputDropdown-set.
+ *
+ * @param connections The connections dictionary to add the entry to
+ * @param targetNode The node to create the connection entry for
+ * @param targetNodeReactFlowKey The reactFlowKey of `targetNode`
+ * @param inputIndex The index of the input to set the value for (only needed if NOT `isHandleDrawnOrDeserialized`)
+ * @param value The value to set the input to (InputConnection, or `null` to delete an unbounded input)
+ * @param isHandleDrawnOrDeserialized Whether the new connection being made is handle-drawn or a deserialization
+ */
 export const setConnectionInputValue = (
   connections: ConnectionDictionary,
   { targetNode, targetNodeReactFlowKey, inputIndex, value, isHandleDrawnOrDeserialized }: SetConnectionInputAction
