@@ -1,7 +1,7 @@
 import type { QueryParameters } from '../httpClient';
 import type { DiscoveryOpArray } from '../standard/search';
 import { StandardSearchService } from '../standard/search';
-import type { Connector } from '@microsoft-logic-apps/utils';
+import type { Connector } from '@microsoft/utils-logic-apps';
 
 export class ConsumptionSearchService extends StandardSearchService {
   public override async getAllOperations(): Promise<DiscoveryOpArray> {
