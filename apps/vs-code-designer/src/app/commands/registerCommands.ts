@@ -19,5 +19,7 @@ export function registerCommands(): void {
     async (context: IActionContext, node: AzExtTreeItem) => await ext.tree.loadMore(node, context)
   );
   registerCommand(extensionCommand.selectSubscriptions, () => commands.executeCommand(extensionCommand.azureSelectSubscriptions));
-  registerCommand(extensionCommand.openFile, (context: IActionContext, node: FileTreeItem) => executeOnFunctions(openFile, context, node));
+  registerCommand(extensionCommand.openFile, (context: IActionContext, node: FileTreeItem) =>
+    executeOnFunctions(openFile, context, context, node)
+  );
 }
