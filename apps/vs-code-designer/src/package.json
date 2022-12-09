@@ -1,7 +1,7 @@
 {
   "name": "@microsoft/logic-apps-vscode-extension",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "0.2.40",
+  "version": "0.2.41",
   "aiKey": "2fc394da-7c11-4c1c-b776-17763031415d",
   "main": "main.js",
   "engines": {
@@ -30,6 +30,11 @@
       {
         "command": "logicAppsExtension.loadMore",
         "title": "Load More",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.viewContent",
+        "title": "View Content",
         "category": "Azure Logic Apps"
       }
     ],
@@ -62,6 +67,11 @@
           "command": "logicAppsExtension.openDesigner",
           "when": "view == newAzLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "1@2"
+        },
+        {
+          "command": "logicAppsExtension.viewContent",
+          "when": "view == newAzLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
+          "group": "2@1"
         }
       ],
       "explorer/context": [
@@ -82,6 +92,10 @@
         },
         {
           "command": "logicAppsExtension.loadMore",
+          "when": "never"
+        },
+        {
+          "command": "logicAppsExtension.viewContent",
           "when": "never"
         }
       ]
@@ -106,6 +120,7 @@
   "activationEvents": [
     "onCommand:logicAppsExtension.openDesigner",
     "onCommand:logicAppsExtension.loadMore",
+    "onCommand:logicAppsExtension.viewContent",
     "onView:newAzLogicApps",
     "onDebugInitialConfigurations"
   ],

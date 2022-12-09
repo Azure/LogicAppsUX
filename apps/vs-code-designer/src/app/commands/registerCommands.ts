@@ -7,6 +7,7 @@ import { ext } from '../../extensionVariables';
 import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt';
 import { openFile } from './openFile';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
+import { viewContent } from './workflows/viewContent';
 import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
 import { registerCommand } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
@@ -22,4 +23,5 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.openFile, (context: IActionContext, node: FileTreeItem) =>
     executeOnFunctions(openFile, context, context, node)
   );
+  registerCommand(extensionCommand.viewContent, viewContent);
 }
