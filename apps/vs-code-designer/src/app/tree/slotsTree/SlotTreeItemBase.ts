@@ -28,9 +28,15 @@ import {
 import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { AzExtParentTreeItem, AzureWizard, DeleteConfirmationStep, nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
-import type { ApplicationSettings, FuncHostRequest, FuncVersion, IParsedHostJson, IProjectTreeItem } from '@microsoft/vscode-extension';
+import type {
+  ApplicationSettings,
+  ILocalSettingsJson,
+  FuncHostRequest,
+  FuncVersion,
+  IParsedHostJson,
+  IProjectTreeItem,
+} from '@microsoft/vscode-extension';
 import { latestGAVersion, ProjectSource } from '@microsoft/vscode-extension';
-import type { ILocalSettingsJson } from '@microsoft/vscode-extension';
 import * as path from 'path';
 
 export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IProjectTreeItem {
