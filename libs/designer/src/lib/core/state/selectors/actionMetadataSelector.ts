@@ -4,8 +4,8 @@ import type { RootState } from '../../store';
 import { getConnectionId } from '../../utils/connectors/connections';
 import { useConnector } from '../connection/connectionSelector';
 import type { NodeOperation } from '../operation/operationMetadataSlice';
-import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import { getObjectPropertyValue } from '@microsoft-logic-apps/utils';
+import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import { getObjectPropertyValue } from '@microsoft/utils-logic-apps';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 

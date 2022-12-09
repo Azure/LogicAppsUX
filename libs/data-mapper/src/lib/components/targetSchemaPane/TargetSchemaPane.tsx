@@ -60,6 +60,11 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
     description: 'Target schema',
   });
 
+  const targetSchemaExpandCollapseLoc = intl.formatMessage({
+    defaultMessage: 'Expand/collapse target schema',
+    description: 'Expand/collapse target schema',
+  });
+
   const onTargetSchemaItemClick = (schemaNode: SchemaNodeExtended) => {
     // If click schema name, return to Overview
     if (schemaNode.key === schemaRootKey) {
@@ -73,7 +78,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
     const nodesWithConnections: { [key: string]: true } = {};
 
     Object.values(connectionDictionary).forEach((connection) => {
-      if (connection.self.reactFlowKey in targetSchemaDictionary) {
+      if (connection.self.reactFlowKey in targetSchemaDictionary && connection.inputs[0] && connection.inputs[0].length > 0) {
         nodesWithConnections[connection.self.node.key] = true;
       }
     });
@@ -155,6 +160,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
           style={{ color: !targetSchema ? tokens.colorNeutralForegroundDisabled : tokens.colorNeutralForeground2 }}
           onClick={() => setIsExpanded(!isExpanded)}
           disabled={!targetSchema}
+          aria-label={targetSchemaExpandCollapseLoc}
         />
 
         <Text
@@ -181,6 +187,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
           width: 290,
           flex: '1 1 1px',
           overflowY: 'auto',
+          position: 'relative',
         }}
       >
         <TreeHeader onSearch={setTargetSchemaSearchTerm} onClear={() => setTargetSchemaSearchTerm('')} />
@@ -219,12 +226,12 @@ const handleObjectParentToggledState = (
   nodeChildrenToggledAmt: number,
   nodeChildrenAmt: number
 ) => {
-  if (nodeChildrenToggledAmt === nodeChildrenAmt) {
-    stateDict[nodeKey] = ItemToggledState.Completed;
-    return 1;
-  } else if (nodeChildrenToggledAmt === 0) {
+  if (nodeChildrenToggledAmt === 0) {
     stateDict[nodeKey] = ItemToggledState.NotStarted;
     return 0;
+  } else if (nodeChildrenToggledAmt === nodeChildrenAmt) {
+    stateDict[nodeKey] = ItemToggledState.Completed;
+    return 1;
   } else {
     stateDict[nodeKey] = ItemToggledState.InProgress;
     return 0.5;
@@ -246,21 +253,24 @@ const handleNodeWithValue = (
 };
 
 export const checkNodeStatuses = (
-  schemaNode: any,
+  schemaNode: SchemaNodeExtended,
   stateDict: NodeToggledStateDictionary,
   targetNodesWithConnections: TargetNodesWithConnectionsDictionary
 ) => {
   let numChildrenToggled = 0;
 
-  schemaNode.children.forEach((child: any) => {
+  schemaNode.children.forEach((child) => {
     numChildrenToggled += checkNodeStatuses(child, stateDict, targetNodesWithConnections);
   });
 
-  if (schemaNode.schemaNodeDataType === SchemaNodeDataType.None || schemaNode.normalizedDataType === NormalizedDataType.ComplexType) {
-    // Is object parent
+  if (
+    (schemaNode.schemaNodeDataType === SchemaNodeDataType.None || schemaNode.normalizedDataType === NormalizedDataType.ComplexType) &&
+    schemaNode.children.length > 0
+  ) {
+    // Object/parent/array-elements (if they don't have children, treat them as leaf nodes (below))
     return handleObjectParentToggledState(stateDict, schemaNode.key, numChildrenToggled, schemaNode.children.length);
   } else {
-    // Is node that can have value/connection (*could still have children, but its toggled state will be based off itself instead of them)
+    // Node that can have value/connection (*could still have children, but its toggled state will be based off itself instead of them)
     return handleNodeWithValue(stateDict, schemaNode.key, targetNodesWithConnections);
   }
 };

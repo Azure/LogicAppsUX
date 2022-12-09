@@ -1,5 +1,5 @@
-import type { WorkflowEdgeType, WorkflowNodeType } from '@microsoft-logic-apps/utils';
-import { WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
+import type { WorkflowEdgeType, WorkflowNodeType } from '@microsoft/utils-logic-apps';
+import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 
 export interface WorkflowNode {
   id: string;

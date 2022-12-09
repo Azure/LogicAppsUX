@@ -1,10 +1,11 @@
 {
+  "name": "data-mapper-standalone",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/data-mapper-standalone/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/web:webpack",
+      "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/data-mapper-standalone",
@@ -44,7 +45,7 @@
       "defaultConfiguration": "production"
     },
     "serve": {
-      "executor": "@nrwl/web:dev-server",
+      "executor": "@nrwl/webpack:dev-server",
       "options": {
         "buildTarget": "data-mapper-standalone:build",
         "hmr": true
@@ -57,6 +58,14 @@
           "ssl": true,
           "sslKey": "local-key.pem",
           "sslCert": "local-cert.pem"
+        },
+        "citest": {
+          "buildTarget": "data-mapper-standalone:build:development",
+          "hmr": false,
+          "host": "localhost",
+          "ssl": true,
+          "sslKey": "ci-key.pem",
+          "sslCert": "ci-cert.pem"
         },
         "development": {
           "buildTarget": "data-mapper-standalone:build:development"
@@ -73,7 +82,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/data-mapper-standalone"],
+      "outputs": ["{workspaceRoot}/coverage/apps/data-mapper-standalone"],
       "options": {
         "jestConfig": "apps/data-mapper-standalone/jest.config.ts",
         "passWithNoTests": true

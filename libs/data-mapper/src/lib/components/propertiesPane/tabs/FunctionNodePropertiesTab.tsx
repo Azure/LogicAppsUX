@@ -3,16 +3,18 @@ import { updateConnectionInput } from '../../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
 import type { Connection, InputConnection } from '../../../models/Connection';
 import type { FunctionData } from '../../../models/Function';
-import { indexPseudoFunctionKey } from '../../../models/Function';
+import { directAccessPseudoFunctionKey, indexPseudoFunctionKey } from '../../../models/Function';
 import { isConnectionUnit, isCustomValue } from '../../../utils/Connection.Utils';
+import { getInputValues } from '../../../utils/DataMap.Utils';
 import {
   calculateIndexValue,
+  formatDirectAccess,
   functionInputHasInputs,
   getFunctionBrandingForCategory,
   getFunctionOutputValue,
   isFunctionData,
 } from '../../../utils/Function.Utils';
-import { getIconForFunction } from '../../../utils/Icon.Utils';
+import { getIconForFunction, iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { isSchemaNodeExtended } from '../../../utils/Schema.Utils';
 import { InputDropdown } from '../../inputDropdown/InputDropdown';
 import { Stack } from '@fluentui/react';
@@ -98,6 +100,11 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
     description: `Function doesn't have or require inputs`,
   });
 
+  const removeInputLoc = intl.formatMessage({
+    defaultMessage: 'Remove input',
+    description: 'Remove input',
+  });
+
   const updateInput = (inputIndex: number, newValue: InputConnection | null) => {
     if (!selectedItemKey) {
       console.error('PropPane - Function: Attempted to update input with nothing selected on canvas');
@@ -119,6 +126,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
   };
 
   const functionBranding = useMemo(() => getFunctionBrandingForCategory(functionData.category), [functionData]);
+  const OutputValueTypeIcon = iconForNormalizedDataType(functionData.outputValueType, 16, false);
 
   const connection = useMemo<Connection | undefined>(
     () => connectionDictionary[selectedItemKey ?? ''],
@@ -164,17 +172,28 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
 
     setInputValueArrays(newInputValueArrays);
 
-    const indexFunctionSourceNode =
-      functionData.key === indexPseudoFunctionKey &&
-      connection &&
-      connection.inputs[0][0] &&
-      isConnectionUnit(connection.inputs[0][0]) &&
-      isSchemaNodeExtended(connection.inputs[0][0].node) &&
-      connection.inputs[0][0].node;
+    let newOutputValue: string;
+    if (functionData.key === indexPseudoFunctionKey) {
+      const indexFunctionSourceNode =
+        connection &&
+        connection.inputs[0][0] &&
+        isConnectionUnit(connection.inputs[0][0]) &&
+        isSchemaNodeExtended(connection.inputs[0][0].node) &&
+        connection.inputs[0][0].node;
 
-    const newOutputValue = indexFunctionSourceNode
-      ? calculateIndexValue(indexFunctionSourceNode)
-      : getFunctionOutputValue(newInputNameArrays, functionData.functionName);
+      newOutputValue = indexFunctionSourceNode
+        ? calculateIndexValue(indexFunctionSourceNode)
+        : getFunctionOutputValue(newInputNameArrays, functionData.functionName);
+    } else if (functionData.key === directAccessPseudoFunctionKey) {
+      const functionValues = getInputValues(connection, connectionDictionary);
+      newOutputValue =
+        functionValues.length === 3
+          ? formatDirectAccess(functionValues[0], functionValues[1], functionValues[2])
+          : getFunctionOutputValue(newInputNameArrays, functionData.functionName);
+    } else {
+      newOutputValue = getFunctionOutputValue(newInputNameArrays, functionData.functionName);
+    }
+
     setOutputValue(newOutputValue);
   }, [functionData, connection, connectionDictionary]);
 
@@ -201,7 +220,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
         </Stack>
 
         <Text className={styles.bodyText}>{functionData.description}</Text>
-        {functionData.functionName ?? (
+        {functionData.functionName && (
           <Text className={styles.codeEx}>
             <Text className={styles.fnName}>{functionData.functionName}</Text>()
           </Text>
@@ -262,13 +281,21 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                       icon={<Delete20Regular />}
                       onClick={() => removeUnboundedInput(idx)}
                       style={{ marginLeft: '16px' }}
+                      aria-label={removeInputLoc}
                     />
                   </Stack>
                 ))}
 
-              <Button appearance="subtle" icon={<Add20Regular />} onClick={addUnboundedInput} style={{ width: '124px', marginTop: 12 }}>
-                {addFieldLoc}
-              </Button>
+              <div>
+                <Button
+                  appearance="subtle"
+                  icon={<Add20Regular />}
+                  onClick={addUnboundedInput}
+                  style={{ minWidth: '50px', maxWidth: '300px', marginTop: '12px', padding: '4px' }}
+                >
+                  {addFieldLoc}
+                </Button>
+              </div>
 
               {inputValueArrays && // Any other inputs after the first unbounded input
                 inputValueArrays.slice(1).map(
@@ -310,9 +337,13 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
         <Stack className={styles.inputOutputStack}>
           <Text className={styles.inputOutputStackTitle}>{expressionLoc}</Text>
 
-          <Text className={styles.bodyText} style={{ marginTop: 16 }}>
-            {outputValue}
-          </Text>
+          <Stack horizontal verticalAlign="center" style={{ marginTop: 16 }}>
+            <OutputValueTypeIcon />
+
+            <Text className={styles.bodyText} style={{ marginLeft: 4 }}>
+              {outputValue}
+            </Text>
+          </Stack>
         </Stack>
       </Stack>
     </div>

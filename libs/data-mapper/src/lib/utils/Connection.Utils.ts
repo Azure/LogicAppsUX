@@ -98,6 +98,47 @@ export const addNodeToConnections = (
   }
 };
 
+export const addCustomValueToConnections = (
+  connections: ConnectionDictionary,
+  customValue: string,
+  destination: SchemaNodeExtended | FunctionData,
+  destinationReactFlowKey: string
+) => {
+  createConnectionEntryIfNeeded(connections, destination, destinationReactFlowKey);
+  const currentConnectionInputs = connections[destinationReactFlowKey].inputs;
+
+  // Schema nodes can only ever have 1 input as long as it is not repeating
+  if (isSchemaNodeExtended(destination)) {
+    if (destination.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
+      currentConnectionInputs[0].push(customValue);
+    } else {
+      currentConnectionInputs[0] = [customValue];
+    }
+  } else {
+    // If the destination has unlimited inputs, all should go on the first input
+    if (destination.maxNumberOfInputs === -1) {
+      // Check if an undefined input field exists first (created through PropPane)
+      const indexOfFirstOpenInput = currentConnectionInputs[0].findIndex((inputCon) => !inputCon);
+
+      if (indexOfFirstOpenInput >= 0) {
+        currentConnectionInputs[0][indexOfFirstOpenInput] = customValue;
+      } else {
+        // Otherwise we can safely just append its value to the end
+        currentConnectionInputs[0].push(customValue);
+      }
+    } else {
+      // Add input to first available that has a custom value allowed
+      let added = false;
+      Object.entries(currentConnectionInputs).forEach(([key, value], idx) => {
+        if (!added && value.length < 1 && destination.inputs[idx].allowCustomInput) {
+          currentConnectionInputs[key].push(customValue);
+          added = true;
+        }
+      });
+    }
+  }
+};
+
 // Primarily used by PropPane InputDropdowns
 export const updateConnectionInputValue = (
   connections: ConnectionDictionary,
@@ -306,6 +347,30 @@ export const nodeHasSpecificInputEventually = (
 
   return nonCustomInputs.some((input) =>
     nodeHasSpecificInputEventually(sourceKey, connections[input.reactFlowKey], connections, exactMatch)
+  );
+};
+
+export const nodeHasSpecificOutputEventually = (
+  sourceKey: string,
+  currentConnection: Connection,
+  connections: ConnectionDictionary,
+  exactMatch: boolean
+): boolean => {
+  if (!currentConnection) {
+    return false;
+  }
+
+  if (
+    (exactMatch && currentConnection.self.reactFlowKey === sourceKey) ||
+    (!exactMatch && currentConnection.self.reactFlowKey.indexOf(sourceKey) > -1)
+  ) {
+    return true;
+  }
+
+  const nonCustomOutputs: ConnectionUnit[] = currentConnection.outputs.filter(isConnectionUnit);
+
+  return nonCustomOutputs.some((output) =>
+    nodeHasSpecificOutputEventually(sourceKey, connections[output.reactFlowKey], connections, exactMatch)
   );
 };
 

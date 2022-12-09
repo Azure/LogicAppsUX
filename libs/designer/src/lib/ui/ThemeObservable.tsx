@@ -1,9 +1,5 @@
+import { Theme } from '@microsoft/utils-logic-apps';
 import { useEffect } from 'react';
-
-export enum Theme {
-  Dark = 'dark',
-  Light = 'light',
-}
 
 export const getTheme = (element: HTMLElement): Theme => {
   const { classList } = element;
@@ -26,5 +22,5 @@ export const useThemeObserver = (ref: any, theme: string, callback: any, options
     });
     observer.observe(ref, options);
     return () => observer.disconnect();
-  }, [callback, options]);
+  }, [callback, options, ref, theme]);
 };

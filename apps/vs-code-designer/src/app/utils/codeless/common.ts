@@ -5,15 +5,24 @@ import {
   workflowResourceGroupNameKey,
   workflowLocationKey,
   workflowManagementBaseURIKey,
+  managementApiPrefix,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { createAzureWizard } from '../../commands/workflows/azureConnectorWizard';
 import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
-import { getLocalSettingsJson } from '../../funcConfig/local.settings';
+import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
+import { getLocalSettingsJson } from '../localSettings';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
-import type { Parameter, CodelessApp, Artifacts, AzureConnectorDetails, WorkflowParameter } from '@microsoft-logic-apps/utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type {
+  IWorkflowFileContent,
+  Parameter,
+  CodelessApp,
+  WorkflowParameter,
+  Artifacts,
+  AzureConnectorDetails,
+} from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
@@ -40,7 +49,11 @@ export function removeWebviewPanelFromCache(category: string, name: string): voi
   }
 }
 
-export function getCodelessAppData(workflowName: string, workflow: any, parameters: Record<string, Parameter>): CodelessApp {
+export function getCodelessAppData(
+  workflowName: string,
+  workflow: IWorkflowFileContent,
+  parameters: Record<string, Parameter>
+): CodelessApp {
   const { definition, kind, runtimeConfiguration } = workflow;
   const statelessRunMode = runtimeConfiguration && runtimeConfiguration.statelessRunMode ? runtimeConfiguration.statelessRunMode : '';
   const operationOptions = runtimeConfiguration && runtimeConfiguration.operationOptions ? runtimeConfiguration.operationOptions : '';
@@ -183,4 +196,28 @@ export async function getAzureConnectorDetailsForLocalProject(
     tenantId: enabled ? tenantId : undefined,
     workflowManagementBaseUrl: enabled ? workflowManagementBaseUrl : undefined,
   };
+}
+
+export function getRequestTriggerSchema(workflowContent: IWorkflowFileContent): any {
+  const {
+    definition: { triggers },
+  } = workflowContent;
+  const triggerNames = Object.keys(triggers);
+
+  if (triggerNames.length === 1) {
+    const trigger = triggers[triggerNames[0]];
+    if (trigger.type.toLowerCase() === 'request') {
+      return trigger.inputs && trigger.inputs.schema ? trigger.inputs.schema : {};
+    }
+  }
+
+  return undefined;
+}
+
+export function getWorkflowManagementBaseURI(node: RemoteWorkflowTreeItem): string {
+  let resourceManagerUri: string = node.parent.subscription.environment.resourceManagerEndpointUrl;
+  if (resourceManagerUri.endsWith('/')) {
+    resourceManagerUri = resourceManagerUri.slice(0, -1);
+  }
+  return `${resourceManagerUri}${node.parent.parent.id}/hostruntime${managementApiPrefix}`;
 }

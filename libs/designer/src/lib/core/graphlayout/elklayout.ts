@@ -2,8 +2,8 @@ import type { WorkflowNode } from '../parsers/models/workflowNode';
 import { isWorkflowNode } from '../parsers/models/workflowNode';
 import { useReadOnly } from '../state/designerOptions/designerOptionsSelectors';
 import { getRootWorkflowGraphForLayout } from '../state/workflow/workflowSelectors';
-import { LogEntryLevel, LoggerService } from '@microsoft-logic-apps/designer-client-services';
-import { useThrottledEffect, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft-logic-apps/utils';
+import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
+import { useThrottledEffect, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
 import { useState } from 'react';
@@ -55,9 +55,12 @@ const elkLayout = async (graph: ElkNode, readOnly?: boolean) => {
   return layout;
 };
 
-const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
+const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[], number[]] => {
   const nodes: Node[] = [];
   const edges: Edge[] = [];
+
+  let flowWidth: number = graph?.width ?? 0;
+  let flowHeight: number = graph?.height ?? 0;
 
   const processChildren = (node: ElkNode) => {
     if (node.edges) {
@@ -84,12 +87,18 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[]] => {
           type: n.layoutOptions?.['nodeType'] ?? defaultNodeType,
           style: n?.children && n?.height ? { height: n?.height, width: n?.width } : undefined,
         });
+
+        const farWidth = (n?.x ?? 0) + (n?.width ?? 0);
+        const farHeight = (n?.y ?? 0) + (n?.height ?? 0);
+        if (farWidth > flowWidth) flowWidth = farWidth;
+        if (farHeight > flowHeight) flowHeight = farHeight;
+
         processChildren(n);
       }
     }
   };
   processChildren(graph);
-  return [nodes, edges];
+  return [nodes, edges, [flowWidth, flowHeight]];
 };
 
 const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
@@ -138,9 +147,10 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
   }
 };
 
-export const useLayout = (): [Node[], Edge[]] => {
+export const useLayout = (): [Node[], Edge[], number[]] => {
   const [reactFlowNodes, setReactFlowNodes] = useState<Node[]>([]);
   const [reactFlowEdges, setReactFlowEdges] = useState<Edge[]>([]);
+  const [reactFlowSize, setReactFlowSize] = useState<number[]>([0, 0]);
   const workflowGraph = useSelector(getRootWorkflowGraphForLayout);
 
   const readOnly = useReadOnly();
@@ -157,9 +167,10 @@ export const useLayout = (): [Node[], Edge[]] => {
       });
       elkLayout(elkGraph, readOnly)
         .then((g) => {
-          const [n, e] = convertElkGraphToReactFlow(g);
+          const [n, e, s] = convertElkGraphToReactFlow(g);
           setReactFlowNodes(n);
           setReactFlowEdges(e);
+          setReactFlowSize(s);
           LoggerService().endTrace(traceId);
         })
         .catch((err) => {
@@ -174,7 +185,7 @@ export const useLayout = (): [Node[], Edge[]] => {
     200
   );
 
-  return [reactFlowNodes, reactFlowEdges];
+  return [reactFlowNodes, reactFlowEdges, reactFlowSize];
 };
 
 export const exportForTesting = {

@@ -1,7 +1,6 @@
 import { localSettingsFileName, managementApiPrefix } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
-import { getLocalSettingsJson } from '../../../funcConfig/local.settings';
 import {
   cacheWebviewPanel,
   getArtifactsInLocalProject,
@@ -19,11 +18,13 @@ import {
 } from '../../../utils/codeless/connection';
 import { saveParameters } from '../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
+import { getLocalSettingsJson } from '../../../utils/localSettings';
 import { sendRequest } from '../../../utils/requestUtils';
 import { OpenDesignerBase } from './openDesignerBase';
-import { ExtensionCommand, HTTP_METHODS } from '@microsoft-logic-apps/utils';
-import type { IDesignerPanelMetadata, AzureConnectorDetails, Parameter } from '@microsoft-logic-apps/utils';
+import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { AzureConnectorDetails, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension';
+import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { writeFileSync, readFileSync } from 'fs';
 import * as path from 'path';
 import * as requestP from 'request-promise';
@@ -42,7 +43,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     const panelName = `${workspace.name}-${workflowName}`;
     const panelGroupKey = ext.webViewKey.designerLocal;
 
-    super(context, workflowName, panelName, apiVersion, panelGroupKey);
+    super(context, workflowName, panelName, apiVersion, panelGroupKey, false, true);
 
     this.workflowFilePath = node.fsPath;
   }
@@ -72,8 +73,9 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       this.panelGroupKey, // Key used to reference the panel
       this.panelName, // Title display in the tab
       ViewColumn.Active, // Editor column to show the new webview panel in.
-      { enableScripts: true }
+      this.getPanelOptions()
     );
+
     this.migrationOptions = await this._getMigrationOptions(this.baseUrl);
     this.panelMetadata = await this._getDesignerPanelMetadata(this.migrationOptions);
 
@@ -108,7 +110,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             panelMetadata: this.panelMetadata,
             connectionReferences: this.connectionReferences,
             baseUrl: this.baseUrl,
+            apiVersion: this.apiVersion,
             apiHubServiceDetails: this.apiHubServiceDetails,
+            readOnly: this.readOnly,
+            isLocal: this.isLocal,
           },
         });
         break;

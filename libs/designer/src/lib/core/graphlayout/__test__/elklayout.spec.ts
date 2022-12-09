@@ -1,8 +1,8 @@
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { createWorkflowNode, createWorkflowEdge, createElkNode, createElkEdge } from '../../utils/graph';
 import { exportForTesting } from '../elklayout';
-import type { WorkflowEdgeType } from '@microsoft-logic-apps/utils';
-import { WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft-logic-apps/utils';
+import type { WorkflowEdgeType } from '@microsoft/utils-logic-apps';
+import { WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
 import type { ElkNode } from 'elkjs/lib/elk-api';
 import type { Edge, Node } from 'reactflow';
 
@@ -156,7 +156,7 @@ describe('elklayout', () => {
         layoutOptions: elkGraphLayoutOptions,
       };
 
-      const expectedOutput: [Node[], Edge[]] = [
+      const expectedOutput: [Node[], Edge[], number[]] = [
         [
           {
             id: 'node1',
@@ -194,6 +194,7 @@ describe('elklayout', () => {
             },
           },
         ],
+        [210, 50],
       ];
       const output = convertElkGraphToReactFlow(input);
       expect(output).toEqual(expectedOutput);
@@ -261,7 +262,7 @@ describe('elklayout', () => {
         ],
       };
 
-      const expectedOutput: [Node[], Edge[]] = [
+      const expectedOutput: [Node[], Edge[], number[]] = [
         [
           // ROOT
           {
@@ -376,6 +377,7 @@ describe('elklayout', () => {
           createSharedEdge('Increment_variable2', 'Increment_variable4'),
           createSharedEdge('ActionIf-elseActions-#subgraph', 'Increment_variable3'),
         ],
+        [507, 348],
       ];
 
       const output = convertElkGraphToReactFlow(input);

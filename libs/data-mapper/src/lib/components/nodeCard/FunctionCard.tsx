@@ -6,8 +6,8 @@ import type { RootState } from '../../core/state/Store';
 import type { FunctionInput } from '../../models/Function';
 import { getIconForFunction } from '../../utils/Icon.Utils';
 import HandleWrapper from './HandleWrapper';
-import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
 import type { CardProps } from './NodeCard';
+import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
 import {
   Button,
   createFocusOutlineStyle,
@@ -65,16 +65,19 @@ const useStyles = makeStyles({
 });
 
 export interface FunctionCardProps extends CardProps {
+  displayName: string;
   functionName: string;
   maxNumberOfInputs: number;
   inputs: FunctionInput[];
   iconFileName?: string;
   functionBranding: FunctionGroupBranding;
+  dataTestId: string;
 }
 
 export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const reactFlowId = props.id;
-  const { functionName, maxNumberOfInputs, disabled, error, functionBranding, displayHandle, onClick } = props.data; // iconFileName
+  const { displayName, functionName, maxNumberOfInputs, disabled, error, functionBranding, displayHandle, onClick, dataTestId } =
+    props.data; // iconFileName
   const classes = useStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
@@ -98,6 +101,7 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
       className={mergeClasses(classes.container, 'nopan')}
       onMouseEnter={() => setIsCardHovered(true)}
       onMouseLeave={() => setIsCardHovered(false)}
+      data-testid={dataTestId}
     >
       <HandleWrapper
         type="target"
@@ -111,7 +115,7 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
 
       <Tooltip
         content={{
-          children: <Text size={200}>{functionName}</Text>,
+          children: <Text size={200}>{displayName}</Text>,
         }}
         relationship="label"
       >

@@ -1,14 +1,15 @@
 import { connectionsFileName } from '../../../constants';
-import { addOrUpdateLocalAppSettings } from '../../funcConfig/local.settings';
-import * as fsUtil from '../fs';
+import { writeFormattedJson } from '../fs';
+import { addOrUpdateLocalAppSettings } from '../localSettings';
 import { tryGetFunctionProjectRoot } from '../verifyIsProject';
 import { getContainingWorkspace } from '../workspace';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import { getParametersJson } from './parameter';
-import { HTTP_METHODS } from '@microsoft-logic-apps/utils';
-import type { ConnectionAndSettings, ConnectionReferenceModel, Parameter } from '@microsoft-logic-apps/utils';
+import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { ServiceProviderConnectionModel, ConnectionAndSettings, ConnectionReferenceModel } from '@microsoft/vscode-extension';
+import type { Parameter } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as requestP from 'request-promise';
@@ -133,7 +134,7 @@ export async function saveConectionReferences(
   const connectionsFilePath = path.join(projectPath, connectionsFileName);
 
   if (connections && Object.keys(connections).length) {
-    await fsUtil.writeFormattedJson(connectionsFilePath, connections);
+    await writeFormattedJson(connectionsFilePath, connections);
   }
 
   if (Object.keys(settings).length) {
@@ -153,6 +154,26 @@ export function containsApiHubConnectionReference(references: any): boolean {
   return false;
 }
 
-function isApiHubConnectionId(connectionId: any): boolean {
+function isApiHubConnectionId(connectionId: string): boolean {
   return connectionId.startsWith('/subscriptions/');
+}
+
+export function resolveSettingsInConnection(
+  connectionInfo: ServiceProviderConnectionModel,
+  settings: Record<string, string>
+): ServiceProviderConnectionModel {
+  return connectionInfo.parameterValues
+    ? {
+        ...connectionInfo,
+        parameterValues: Object.keys(connectionInfo.parameterValues).reduce((result: Record<string, string>, parameterKey: string) => {
+          let value = connectionInfo.parameterValues[parameterKey];
+          if (value.startsWith("@appsetting('")) {
+            const settingKey = value.substring(13, value.lastIndexOf("')"));
+            value = settings[settingKey];
+          }
+
+          return { ...result, [parameterKey]: value };
+        }, {}),
+      }
+    : connectionInfo;
 }

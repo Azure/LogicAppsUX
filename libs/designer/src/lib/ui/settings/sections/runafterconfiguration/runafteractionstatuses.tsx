@@ -1,6 +1,6 @@
 import type { onChangeHandler } from './runafteractiondetails';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
-import { RUN_AFTER_STATUS } from '@microsoft-logic-apps/utils';
+import { RUN_AFTER_STATUS } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 export interface RunAfterActionStatusesProps {

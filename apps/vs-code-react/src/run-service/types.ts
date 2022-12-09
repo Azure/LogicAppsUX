@@ -1,5 +1,5 @@
 import type { InitializePayload, Status } from '../state/vscodeSlice';
-import type { ExtensionCommand } from '@microsoft-logic-apps/utils';
+import type { ExtensionCommand } from '@microsoft/vscode-extension';
 
 export interface IRunService {
   getContent(contentLink: ContentLink): Promise<any>;
