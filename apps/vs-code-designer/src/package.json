@@ -100,7 +100,8 @@
     ]
   },
   "extensionDependencies": [
-    "ms-vscode.azure-account"
+    "ms-vscode.azure-account",
+    "ms-azuretools.vscode-azurefunctions"
   ],
   "activationEvents": [
     "onCommand:logicAppsExtension.openDesigner",
