@@ -1,4 +1,4 @@
-import { showNotification, updateConnectionInput } from '../../core/state/DataMapSlice';
+import { showNotification, setConnectionInput } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeDataType, SchemaNodeExtended, SchemaNodeProperty } from '../../models';
 import { NormalizedDataType } from '../../models';
@@ -64,10 +64,11 @@ export interface InputDropdownProps {
   label?: string;
   placeholder?: string;
   isUnboundedInput?: boolean;
+  inputAllowsCustomValues?: boolean;
 }
 
 export const InputDropdown = (props: InputDropdownProps) => {
-  const { currentNode, inputValue, inputIndex, inputStyles, label, placeholder, isUnboundedInput } = props;
+  const { currentNode, inputValue, inputIndex, inputStyles, label, placeholder, isUnboundedInput, inputAllowsCustomValues = true } = props;
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useStyles();
@@ -213,7 +214,15 @@ export const InputDropdown = (props: InputDropdownProps) => {
     }
 
     const targetNodeReactFlowKey = selectedItemKey;
-    dispatch(updateConnectionInput({ targetNode: currentNode, targetNodeReactFlowKey, inputIndex, value: newValue, isUnboundedInput }));
+    dispatch(
+      setConnectionInput({
+        targetNode: currentNode,
+        targetNodeReactFlowKey,
+        inputIndex,
+        value: newValue,
+        isFunctionUnboundedInputOrRepeatingSchemaNode: isUnboundedInput,
+      })
+    );
   };
 
   useEffect(() => {
@@ -372,21 +381,22 @@ export const InputDropdown = (props: InputDropdownProps) => {
   const modifiedDropdownOptions = useMemo(() => {
     const newModifiedOptions = typeMatchedInputOptions ? [...typeMatchedInputOptions] : [];
 
-    // Divider
-    newModifiedOptions.push({
-      key: 'divider',
-      text: '',
-      itemType: SelectableOptionMenuItemType.Divider,
-    });
+    // Custom value option (if allowed)
+    if (inputAllowsCustomValues) {
+      newModifiedOptions.push({
+        key: 'divider',
+        text: '',
+        itemType: SelectableOptionMenuItemType.Divider,
+      });
 
-    // Custom value option
-    newModifiedOptions.push({
-      key: customValueOptionKey,
-      text: customValueOptionLoc,
-    });
+      newModifiedOptions.push({
+        key: customValueOptionKey,
+        text: customValueOptionLoc,
+      });
+    }
 
     return newModifiedOptions;
-  }, [typeMatchedInputOptions, customValueOptionLoc]);
+  }, [typeMatchedInputOptions, customValueOptionLoc, inputAllowsCustomValues]);
 
   return (
     <>

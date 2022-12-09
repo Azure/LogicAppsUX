@@ -5,13 +5,12 @@ import type { Connection, ConnectionDictionary, ConnectionUnit } from '../../mod
 import type { FunctionData, FunctionInput } from '../../models/Function';
 import { FunctionCategory, functionMock } from '../../models/Function';
 import {
-  addNodeToConnections,
   bringInParentSourceNodesForRepeating,
   createConnectionEntryIfNeeded,
   isCustomValue,
   isValidInputToFunctionNode,
   newConnectionWillHaveCircularLogic,
-  updateConnectionInputValue,
+  setConnectionInputValue,
 } from '../Connection.Utils';
 import { fullConnectionDictionaryForOneToManyLoop, fullMapForSimplifiedLoop } from '../__mocks__';
 
@@ -89,7 +88,7 @@ describe('utils/Connections', () => {
     });
   });
 
-  describe('addNodeToConnections (primarily drawn connections)', () => {
+  describe('Drawn connections', () => {
     const mockSourceReactFlowKey = 'sourceKey';
     const mockSelfReactFlowKey = 'selfKey';
     const mockSourceNode: SchemaNodeExtended = {
@@ -118,7 +117,16 @@ describe('utils/Connections', () => {
         pathToRoot: [],
       };
 
-      addNodeToConnections(mockConnections, mockSourceNode, mockSourceReactFlowKey, mockSelfNode, mockSelfReactFlowKey);
+      setConnectionInputValue(mockConnections, {
+        targetNode: mockSelfNode,
+        targetNodeReactFlowKey: mockSelfReactFlowKey,
+        isFunctionUnboundedInputOrRepeatingSchemaNode: parentTargetNode.nodeProperties.includes(SchemaNodeProperty.Repeating),
+        isHandleDrawnOrDeserialized: true,
+        value: {
+          reactFlowKey: mockSourceReactFlowKey,
+          node: mockSourceNode,
+        },
+      });
 
       expect(mockConnections[mockSourceReactFlowKey]).toBeDefined();
       expect(mockConnections[mockSourceReactFlowKey].outputs.some((output) => output.reactFlowKey === mockSelfReactFlowKey)).toEqual(true);
@@ -145,7 +153,16 @@ describe('utils/Connections', () => {
         outputValueType: NormalizedDataType.Integer,
       };
 
-      addNodeToConnections(mockConnections, mockSourceNode, mockSourceReactFlowKey, mockSelfNode, mockSelfReactFlowKey);
+      setConnectionInputValue(mockConnections, {
+        targetNode: mockSelfNode,
+        targetNodeReactFlowKey: mockSelfReactFlowKey,
+        isFunctionUnboundedInputOrRepeatingSchemaNode: parentTargetNode.nodeProperties.includes(SchemaNodeProperty.Repeating),
+        isHandleDrawnOrDeserialized: true,
+        value: {
+          reactFlowKey: mockSourceReactFlowKey,
+          node: mockSourceNode,
+        },
+      });
 
       expect(mockConnections[mockSourceReactFlowKey]).toBeDefined();
       expect(mockConnections[mockSourceReactFlowKey].outputs.some((output) => output.reactFlowKey === mockSelfReactFlowKey)).toEqual(true);
@@ -159,7 +176,7 @@ describe('utils/Connections', () => {
     });
   });
 
-  describe('updateConnectionInputValue (primarily InputDropdown connections)', () => {
+  describe('InputDropdown connections', () => {
     const currentNodeReactFlowKey = 'currentNodeKey';
     const atypicallyMockFunctionNode: FunctionData = {
       key: currentNodeReactFlowKey,
@@ -190,7 +207,7 @@ describe('utils/Connections', () => {
     };
 
     it('Test new input connection is made (and old connection is removed)', () => {
-      updateConnectionInputValue(mockConnections, {
+      setConnectionInputValue(mockConnections, {
         targetNode: atypicallyMockFunctionNode,
         targetNodeReactFlowKey: currentNodeReactFlowKey,
         inputIndex: 0,
@@ -202,7 +219,7 @@ describe('utils/Connections', () => {
     });
 
     it('Test adding custom value input', () => {
-      updateConnectionInputValue(mockConnections, {
+      setConnectionInputValue(mockConnections, {
         targetNode: atypicallyMockFunctionNode,
         targetNodeReactFlowKey: currentNodeReactFlowKey,
         inputIndex: 1,
@@ -213,7 +230,7 @@ describe('utils/Connections', () => {
     });
 
     it('Test clear a custom value - bounded input', () => {
-      updateConnectionInputValue(mockConnections, {
+      setConnectionInputValue(mockConnections, {
         targetNode: atypicallyMockFunctionNode,
         targetNodeReactFlowKey: currentNodeReactFlowKey,
         inputIndex: 1,
@@ -225,32 +242,32 @@ describe('utils/Connections', () => {
 
     it('Test adding an unbounded input or clearing its custom value', () => {
       // This call is just setup for the next test
-      updateConnectionInputValue(mockConnections, {
+      setConnectionInputValue(mockConnections, {
         targetNode: atypicallyMockFunctionNode,
         targetNodeReactFlowKey: currentNodeReactFlowKey,
         inputIndex: 0,
         value: undefined,
-        isUnboundedInput: true,
+        isFunctionUnboundedInputOrRepeatingSchemaNode: true,
       });
 
-      updateConnectionInputValue(mockConnections, {
+      setConnectionInputValue(mockConnections, {
         targetNode: atypicallyMockFunctionNode,
         targetNodeReactFlowKey: currentNodeReactFlowKey,
         inputIndex: 1,
         value: undefined,
-        isUnboundedInput: true,
+        isFunctionUnboundedInputOrRepeatingSchemaNode: true,
       });
 
       expect(mockConnections[currentNodeReactFlowKey].inputs[0][1]).toEqual(undefined);
     });
 
     it('Test delete unbounded input value', () => {
-      updateConnectionInputValue(mockConnections, {
+      setConnectionInputValue(mockConnections, {
         targetNode: atypicallyMockFunctionNode,
         targetNodeReactFlowKey: currentNodeReactFlowKey,
         inputIndex: 0,
         value: null,
-        isUnboundedInput: true,
+        isFunctionUnboundedInputOrRepeatingSchemaNode: true,
       });
 
       expect(mockConnections[currentNodeReactFlowKey].inputs[0].length).toEqual(1);

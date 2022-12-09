@@ -15,14 +15,13 @@ import type { PathItem, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended
 import { SchemaNodeProperty, SchemaType } from '../models/Schema';
 import { findLast } from './Array.Utils';
 import {
-  addCustomValueToConnections,
-  addNodeToConnections,
   collectTargetNodesForConnectionChain,
   flattenInputs,
   isConnectionUnit,
   isCustomValue,
   nodeHasSourceNodeEventually,
   nodeHasSpecificInputEventually,
+  setConnectionInputValue,
 } from './Connection.Utils';
 import {
   findFunctionForFunctionName,
@@ -482,11 +481,20 @@ const parseDefinitionToConnection = (
       }
     }
 
-    if (sourceNode && destinationNode) {
-      addNodeToConnections(connections, sourceNode, sourceKey, destinationNode, destinationKey);
-    } else if (destinationNode) {
-      // Custom values
-      addCustomValueToConnections(connections, amendedSourceKey, destinationNode, destinationKey);
+    if (destinationNode) {
+      setConnectionInputValue(connections, {
+        targetNode: destinationNode,
+        targetNodeReactFlowKey: destinationKey,
+        isFunctionUnboundedInputOrRepeatingSchemaNode:
+          sourceNode && isSchemaNodeExtended(sourceNode) ? sourceNode.nodeProperties.includes(SchemaNodeProperty.Repeating) : false,
+        isHandleDrawnOrDeserialized: true,
+        value: sourceNode
+          ? {
+              reactFlowKey: sourceKey,
+              node: sourceNode,
+            }
+          : amendedSourceKey,
+      });
     }
 
     // Need to extract and create connections for nested functions
@@ -636,7 +644,16 @@ export const addParentConnectionForRepeatingElementsNested = (
       );
 
       if (!parentsAlreadyConnected) {
-        addNodeToConnections(dataMapConnections, firstRepeatingSourceNode, prefixedSourceKey, firstRepeatingTargetNode, prefixedTargetKey);
+        setConnectionInputValue(dataMapConnections, {
+          targetNode: firstRepeatingTargetNode,
+          targetNodeReactFlowKey: prefixedTargetKey,
+          isFunctionUnboundedInputOrRepeatingSchemaNode: firstRepeatingSourceNode.nodeProperties.includes(SchemaNodeProperty.Repeating),
+          isHandleDrawnOrDeserialized: true,
+          value: {
+            reactFlowKey: prefixedSourceKey,
+            node: firstRepeatingSourceNode,
+          },
+        });
       }
 
       let nextTargetNode = flattenedTargetSchema[addReactFlowPrefix(firstRepeatingTargetNode.parentKey ?? '', SchemaType.Target)];
