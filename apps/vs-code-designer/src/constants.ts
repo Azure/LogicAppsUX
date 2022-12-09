@@ -41,6 +41,7 @@ export enum extensionCommand {
   loadMore = 'logicAppsExtension.loadMore',
   activate = 'logicAppsExtension.activate',
   selectSubscriptions = 'logicAppsExtension.selectSubscriptions',
+  viewContent = 'logicAppsExtension.viewContent',
   azureSelectSubscriptions = 'azure-account.selectSubscriptions',
 }
 
