@@ -120,7 +120,6 @@ describe('utils/Connections', () => {
       setConnectionInputValue(mockConnections, {
         targetNode: mockSelfNode,
         targetNodeReactFlowKey: mockSelfReactFlowKey,
-        isFunctionUnboundedInputOrRepeatingSchemaNode: parentTargetNode.nodeProperties.includes(SchemaNodeProperty.Repeating),
         isHandleDrawnOrDeserialized: true,
         value: {
           reactFlowKey: mockSourceReactFlowKey,
@@ -156,7 +155,6 @@ describe('utils/Connections', () => {
       setConnectionInputValue(mockConnections, {
         targetNode: mockSelfNode,
         targetNodeReactFlowKey: mockSelfReactFlowKey,
-        isFunctionUnboundedInputOrRepeatingSchemaNode: parentTargetNode.nodeProperties.includes(SchemaNodeProperty.Repeating),
         isHandleDrawnOrDeserialized: true,
         value: {
           reactFlowKey: mockSourceReactFlowKey,
@@ -241,13 +239,14 @@ describe('utils/Connections', () => {
     });
 
     it('Test adding an unbounded input or clearing its custom value', () => {
+      atypicallyMockFunctionNode.maxNumberOfInputs = -1;
+
       // This call is just setup for the next test
       setConnectionInputValue(mockConnections, {
         targetNode: atypicallyMockFunctionNode,
         targetNodeReactFlowKey: currentNodeReactFlowKey,
         inputIndex: 0,
         value: undefined,
-        isFunctionUnboundedInputOrRepeatingSchemaNode: true,
       });
 
       setConnectionInputValue(mockConnections, {
@@ -255,7 +254,6 @@ describe('utils/Connections', () => {
         targetNodeReactFlowKey: currentNodeReactFlowKey,
         inputIndex: 1,
         value: undefined,
-        isFunctionUnboundedInputOrRepeatingSchemaNode: true,
       });
 
       expect(mockConnections[currentNodeReactFlowKey].inputs[0][1]).toEqual(undefined);
@@ -267,7 +265,6 @@ describe('utils/Connections', () => {
         targetNodeReactFlowKey: currentNodeReactFlowKey,
         inputIndex: 0,
         value: null,
-        isFunctionUnboundedInputOrRepeatingSchemaNode: true,
       });
 
       expect(mockConnections[currentNodeReactFlowKey].inputs[0].length).toEqual(1);

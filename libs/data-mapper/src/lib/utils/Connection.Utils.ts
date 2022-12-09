@@ -43,14 +43,7 @@ export const createConnectionEntryIfNeeded = (
 // NOTE: This should be the gateway for setting any input values in dataMapConnections
 export const setConnectionInputValue = (
   connections: ConnectionDictionary,
-  {
-    targetNode,
-    targetNodeReactFlowKey,
-    inputIndex,
-    value,
-    isFunctionUnboundedInputOrRepeatingSchemaNode,
-    isHandleDrawnOrDeserialized,
-  }: SetConnectionInputAction
+  { targetNode, targetNodeReactFlowKey, inputIndex, value, isHandleDrawnOrDeserialized }: SetConnectionInputAction
 ) => {
   if (!isHandleDrawnOrDeserialized && inputIndex === undefined) {
     console.error('Invalid Connection Input Op: inputIndex was not provided for a non-handle-drawn/deserialized connection');
@@ -67,6 +60,14 @@ export const setConnectionInputValue = (
   }
 
   let connection = connections[targetNodeReactFlowKey];
+
+  let isFunctionUnboundedInputOrRepeatingSchemaNode = false;
+
+  if (isSchemaNodeExtended(targetNode) && targetNode.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
+    isFunctionUnboundedInputOrRepeatingSchemaNode = true;
+  } else if (isFunctionData(targetNode) && targetNode.maxNumberOfInputs === -1) {
+    isFunctionUnboundedInputOrRepeatingSchemaNode = true;
+  }
 
   if (!isHandleDrawnOrDeserialized && inputIndex !== undefined) {
     // Verify if we're updating an old value that's a ConnectionUnit, and if so, remove it from source's outputs[]

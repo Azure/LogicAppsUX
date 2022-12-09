@@ -105,8 +105,6 @@ export interface SetConnectionInputAction {
   targetNodeReactFlowKey: string;
   inputIndex?: number;
   value: InputConnection | null; // null is indicator to remove an unbounded input value
-  // If true, inputIndex becomes the value's index within inputs[0] (instead of inputs[inputIndex])
-  isFunctionUnboundedInputOrRepeatingSchemaNode?: boolean;
   isHandleDrawnOrDeserialized?: boolean;
 }
 
@@ -554,9 +552,6 @@ const addConnection = (newConnections: ConnectionDictionary, nodes: ConnectionAc
   setConnectionInputValue(newConnections, {
     targetNode: nodes.destination,
     targetNodeReactFlowKey: nodes.reactFlowDestination,
-    isFunctionUnboundedInputOrRepeatingSchemaNode: isSchemaNodeExtended(nodes.destination)
-      ? nodes.destination.nodeProperties.includes(SchemaNodeProperty.Repeating)
-      : false,
     isHandleDrawnOrDeserialized: true,
     value: {
       reactFlowKey: nodes.reactFlowSource,
@@ -799,7 +794,6 @@ export const addParentConnectionForRepeatingElements = (
           setConnectionInputValue(dataMapConnections, {
             targetNode: parentTargetNode,
             targetNodeReactFlowKey: parentPrefixedTargetKey,
-            isFunctionUnboundedInputOrRepeatingSchemaNode: parentTargetNode.nodeProperties.includes(SchemaNodeProperty.Repeating),
             isHandleDrawnOrDeserialized: true,
             value: {
               reactFlowKey: parentPrefixedSourceKey,

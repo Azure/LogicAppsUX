@@ -63,12 +63,11 @@ export interface InputDropdownProps {
   inputStyles?: IRawStyle & React.CSSProperties;
   label?: string;
   placeholder?: string;
-  isUnboundedInput?: boolean;
   inputAllowsCustomValues?: boolean;
 }
 
 export const InputDropdown = (props: InputDropdownProps) => {
-  const { currentNode, inputValue, inputIndex, inputStyles, label, placeholder, isUnboundedInput, inputAllowsCustomValues = true } = props;
+  const { currentNode, inputValue, inputIndex, inputStyles, label, placeholder, inputAllowsCustomValues = true } = props;
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useStyles();
@@ -220,7 +219,6 @@ export const InputDropdown = (props: InputDropdownProps) => {
         targetNodeReactFlowKey,
         inputIndex,
         value: newValue,
-        isFunctionUnboundedInputOrRepeatingSchemaNode: isUnboundedInput,
       })
     );
   };
@@ -370,13 +368,13 @@ export const InputDropdown = (props: InputDropdownProps) => {
     };
 
     if (isFunctionData(currentNode)) {
-      currentNode.inputs[isUnboundedInput ? 0 : inputIndex].allowedTypes.forEach(handleAnyOrSpecificType);
+      currentNode.inputs[inputIndex].allowedTypes.forEach(handleAnyOrSpecificType);
     } else {
       handleAnyOrSpecificType(currentNode.normalizedDataType);
     }
 
     return newInputOptions;
-  }, [isUnboundedInput, inputIndex, typeSortedInputOptions, currentNode]);
+  }, [inputIndex, typeSortedInputOptions, currentNode]);
 
   const modifiedDropdownOptions = useMemo(() => {
     const newModifiedOptions = typeMatchedInputOptions ? [...typeMatchedInputOptions] : [];

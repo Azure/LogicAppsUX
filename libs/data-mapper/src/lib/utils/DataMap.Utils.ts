@@ -485,8 +485,6 @@ const parseDefinitionToConnection = (
       setConnectionInputValue(connections, {
         targetNode: destinationNode,
         targetNodeReactFlowKey: destinationKey,
-        isFunctionUnboundedInputOrRepeatingSchemaNode:
-          sourceNode && isSchemaNodeExtended(sourceNode) ? sourceNode.nodeProperties.includes(SchemaNodeProperty.Repeating) : false,
         isHandleDrawnOrDeserialized: true,
         value: sourceNode
           ? {
@@ -647,7 +645,6 @@ export const addParentConnectionForRepeatingElementsNested = (
         setConnectionInputValue(dataMapConnections, {
           targetNode: firstRepeatingTargetNode,
           targetNodeReactFlowKey: prefixedTargetKey,
-          isFunctionUnboundedInputOrRepeatingSchemaNode: firstRepeatingSourceNode.nodeProperties.includes(SchemaNodeProperty.Repeating),
           isHandleDrawnOrDeserialized: true,
           value: {
             reactFlowKey: prefixedSourceKey,
