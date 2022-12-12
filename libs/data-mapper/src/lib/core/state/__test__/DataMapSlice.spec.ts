@@ -10,7 +10,12 @@ import {
   indexedConnections,
   manyToManyConnectionSourceName,
 } from '../../../utils/__mocks__';
-import { deleteConnectionFromConnections, deleteNodeFromConnections, deleteParentRepeatingConnections } from '../DataMapSlice';
+import {
+  canDeleteConnection,
+  deleteConnectionFromConnections,
+  deleteNodeFromConnections,
+  deleteParentRepeatingConnections,
+} from '../DataMapSlice';
 import { simpleMockSchema } from '../__mocks__';
 import { concatFunction } from '../__mocks__/FunctionMock';
 
@@ -286,11 +291,11 @@ describe('DataMapSlice', () => {
   });
 
   describe('canDeleteConnection', () => {
-    it('returns true with non-repeating connection', () => {
-      // const connections: ConnectionDictionary = {};
-      // const source = 'abc';
-      // const target = '';
-      const canDeleted = true; // TODO: canDeleteConnection(connections, source, target, { abc: simpleSourceNode }, {});
+    it.skip('returns true with non-repeating connection', () => {
+      const connections: ConnectionDictionary = {};
+      const source = 'abc';
+      const target = '';
+      const canDeleted = canDeleteConnection(connections, source, target, { abc: simpleSourceNode }, {}); // FIXME
       expect(canDeleted).toBeTruthy();
     });
   });
