@@ -4,9 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from './localize';
 
+// Project
 export const projectLanguageSetting = 'projectLanguage';
 export const funcVersionSetting = 'projectRuntime';
 export const projectSubpathSetting = 'projectSubpath';
+export const projectTemplateKeySetting = 'projectTemplateKey';
+export const projectOpenBehaviorSetting = 'projectOpenBehavior';
 
 // File names
 export const hostFileName = 'host.json';
@@ -45,6 +48,7 @@ export enum extensionCommand {
   viewContent = 'logicAppsExtension.viewContent',
   azureSelectSubscriptions = 'azure-account.selectSubscriptions',
   openFile = 'logicAppsExtension.openFile',
+  createNewProject = 'logicAppsExtension.createNewProject',
   azureFunctionsOpenFile = 'azureFunctions.openFile',
 }
 

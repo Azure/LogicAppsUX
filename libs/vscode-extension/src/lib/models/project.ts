@@ -1,6 +1,10 @@
+import type { IWorkerRuntime } from './cliFeed';
 import type { FuncVersion } from './functions';
 import type { IParsedHostJson } from './host';
+import type { ProjectLanguage } from './language';
+import type { WorkflowProjectType } from './workflow';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { Uri, WorkspaceFolder } from 'vscode';
 
 export enum ProjectSource {
   Remote = 'Remote',
@@ -24,6 +28,8 @@ export enum ProjectResource {
   Parameter = 'Parameter',
 }
 
+export type ProjectVersion = '~1' | '~2' | '~3' | '~4';
+
 export type ApplicationSettings = { [propertyName: string]: string };
 
 export type FuncHostRequest = { url: string; rejectUnauthorized?: boolean };
@@ -36,3 +42,24 @@ export interface IProjectTreeItem {
   getApplicationSettings(context: IActionContext): Promise<ApplicationSettings>;
   setApplicationSetting(context: IActionContext, key: string, value: string): Promise<void>;
 }
+
+export interface IProjectWizardContext extends IActionContext {
+  projectPath: string;
+  workspacePath: string;
+  workspaceFolder: WorkspaceFolder | undefined;
+
+  language?: ProjectLanguage;
+  languageFilter?: RegExp;
+  version: FuncVersion;
+  workerRuntime?: IWorkerRuntime;
+  openBehavior?: OpenBehavior;
+  workflowProjectType?: WorkflowProjectType;
+  projectTemplateKey: string | undefined;
+
+  generateFromOpenAPI?: boolean;
+  openApiSpecificationFile?: Uri[];
+
+  targetFramework?: string | string[];
+}
+
+export type OpenBehavior = 'AddToWorkspace' | 'OpenInNewWindow' | 'OpenInCurrentWindow' | 'AlreadyOpen' | 'DontOpen';

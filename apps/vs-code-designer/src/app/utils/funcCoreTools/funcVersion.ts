@@ -1,3 +1,7 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 import { funcVersionSetting } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { getWorkspaceSettingFromAnyFolder } from '../vsCodeConfig/settings';
@@ -61,7 +65,7 @@ export async function getDefaultFuncVersion(context: IActionContext): Promise<Fu
  * Gets functions core tools version from local cli command.
  * @returns {Promise<FuncVersion | undefined>} Functions core tools version.
  */
-async function tryGetLocalFuncVersion(): Promise<FuncVersion | undefined> {
+export async function tryGetLocalFuncVersion(): Promise<FuncVersion | undefined> {
   try {
     const version: string | null = await getLocalFuncCoreToolsVersion();
     if (version) {

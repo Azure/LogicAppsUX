@@ -67,3 +67,8 @@ export interface ICallbackUrlResponse {
   relativeParameters?: [];
   queries?: Record<string, any>;
 }
+
+export enum WorkflowProjectType {
+  Nuget = 'Nuget',
+  Bundle = 'Bundle',
+}

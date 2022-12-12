@@ -5,6 +5,7 @@
 import { extensionCommand } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt';
+import { createNewProjectFromCommand } from './createNewProject/createNewProject';
 import { openFile } from './openFile';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
 import { viewContent } from './workflows/viewContent';
@@ -24,4 +25,5 @@ export function registerCommands(): void {
     executeOnFunctions(openFile, context, context, node)
   );
   registerCommand(extensionCommand.viewContent, viewContent);
+  registerCommand(extensionCommand.createNewProject, createNewProjectFromCommand);
 }
