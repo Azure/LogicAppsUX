@@ -36,6 +36,15 @@
         "command": "logicAppsExtension.viewContent",
         "title": "View Content",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.createNewProject",
+        "title": "Create New Project...",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/CreateNewProject.svg",
+          "dark": "assets/dark/CreateNewProject.svg"
+        }
       }
     ],
     "viewsContainers": {
@@ -57,6 +66,13 @@
       ]
     },
     "menus": {
+      "view/title": [
+        {
+          "command": "logicAppsExtension.createNewProject",
+          "when": "view == newAzLogicApps",
+          "group": "navigation@1"
+        }
+      ],
       "view/item/context": [
         {
           "command": "logicAppsExtension.selectSubscriptions",
@@ -121,6 +137,7 @@
     "onCommand:logicAppsExtension.openDesigner",
     "onCommand:logicAppsExtension.loadMore",
     "onCommand:logicAppsExtension.viewContent",
+    "onCommand:logicAppsExtension.createNewProject",
     "onView:newAzLogicApps",
     "onDebugInitialConfigurations"
   ],
