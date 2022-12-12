@@ -1,4 +1,11 @@
 # Logic Apps Designer
+
+### [0.2.44](https://github.com/Azure/LogicAppsUX/compare/v0.2.43...v0.2.44) (2022-12-12)
+
+### [0.2.43](https://github.com/Azure/LogicAppsUX/compare/v0.2.42...v0.2.43) (2022-12-11)
+
+### [0.2.42](https://github.com/Azure/LogicAppsUX/compare/v0.2.41...v0.2.42) (2022-12-10)
+
 ### [0.2.41](https://github.com/Azure/LogicAppsUX/compare/v0.2.40...v0.2.41) (2022-12-09)
 
 ### [0.2.40](https://github.com/Azure/LogicAppsUX/compare/v0.2.39...v0.2.40) (2022-12-08)
@@ -17,10 +24,9 @@
 
 ### [0.2.33](https://github.com/Azure/LogicAppsUX/compare/v0.2.32...v0.2.33) (2022-12-03)
 
-
 ### Logic Apps Designer Changes
 
-* Workflow is clamped to remain in view  ([#1349](https://github.com/Azure/LogicAppsUX/issues/1349)) ([ce4adb6](https://github.com/Azure/LogicAppsUX/commit/ce4adb62564a2242811151fe9810aba34b09cb59))
+- Workflow is clamped to remain in view ([#1349](https://github.com/Azure/LogicAppsUX/issues/1349)) ([ce4adb6](https://github.com/Azure/LogicAppsUX/commit/ce4adb62564a2242811151fe9810aba34b09cb59))
 
 ### [0.2.32](https://github.com/Azure/LogicAppsUX/compare/v0.2.31...v0.2.32) (2022-12-02)
 
