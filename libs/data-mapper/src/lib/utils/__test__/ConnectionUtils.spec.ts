@@ -88,7 +88,7 @@ describe('utils/Connections', () => {
     });
   });
 
-  describe('Drawn connections', () => {
+  describe('setConnectionInputValue - Drawn connections', () => {
     const mockSourceReactFlowKey = 'sourceKey';
     const mockSelfReactFlowKey = 'selfKey';
     const mockSourceNode: SchemaNodeExtended = {
@@ -174,7 +174,7 @@ describe('utils/Connections', () => {
     });
   });
 
-  describe('InputDropdown connections', () => {
+  describe('setConnectionInputValue - InputDropdown connections', () => {
     const currentNodeReactFlowKey = 'currentNodeKey';
     const atypicallyMockFunctionNode: FunctionData = {
       key: currentNodeReactFlowKey,
