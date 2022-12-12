@@ -431,8 +431,15 @@ export const dataMapSlice = createSlice({
     /* TODO: Un-deprecate / re-integrate
     // NOTE: Specifically for dragging existing connection to a new target
     changeConnection: (state, action: PayloadAction<ConnectionAction & DeleteConnectionAction>) => {
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
+      };
+
       deleteConnectionFromConnections(newState.dataMapConnections, action.payload.inputKey, action.payload.connectionKey);
       addConnection(newState.dataMapConnections, action.payload);
+
+      doDataMapOperation(state, newState);
     };
     */
 
