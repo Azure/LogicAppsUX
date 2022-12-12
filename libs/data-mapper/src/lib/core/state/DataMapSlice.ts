@@ -105,7 +105,7 @@ export interface SetConnectionInputAction {
   targetNodeReactFlowKey: string;
   inputIndex?: number;
   value: InputConnection | null; // null is indicator to remove an unbounded input value
-  isHandleDrawnOrDeserialized?: boolean;
+  findInputSlot?: boolean;
 }
 
 export interface DeleteConnectionAction {
@@ -567,7 +567,7 @@ const addConnection = (newConnections: ConnectionDictionary, nodes: ConnectionAc
   setConnectionInputValue(newConnections, {
     targetNode: nodes.destination,
     targetNodeReactFlowKey: nodes.reactFlowDestination,
-    isHandleDrawnOrDeserialized: true,
+    findInputSlot: true,
     value: {
       reactFlowKey: nodes.reactFlowSource,
       node: nodes.source,
@@ -809,7 +809,7 @@ export const addParentConnectionForRepeatingElements = (
           setConnectionInputValue(dataMapConnections, {
             targetNode: parentTargetNode,
             targetNodeReactFlowKey: parentPrefixedTargetKey,
-            isHandleDrawnOrDeserialized: true,
+            findInputSlot: true,
             value: {
               reactFlowKey: parentPrefixedSourceKey,
               node: parentSourceNode,

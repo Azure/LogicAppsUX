@@ -41,7 +41,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetNode.children[0].children[0],
         targetNodeReactFlowKey: addReactFlowPrefix(targetNode.children[0].children[0].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceNode.children[0].key, SchemaType.Source),
           node: sourceNode.children[0],
@@ -51,7 +51,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetNode.children[0].children[1],
         targetNodeReactFlowKey: addReactFlowPrefix(targetNode.children[0].children[1].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceNode.children[1].key, SchemaType.Source),
           node: sourceNode.children[1],
@@ -90,7 +90,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetNode.children[0],
         targetNodeReactFlowKey: addReactFlowPrefix(targetNode.children[0].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceNode.children[2].key, SchemaType.Source),
           node: sourceNode.children[2],
@@ -100,7 +100,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetNode,
         targetNodeReactFlowKey: addReactFlowPrefix(targetNode.key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceNode.children[0].key, SchemaType.Source),
           node: sourceNode.children[0],
@@ -140,7 +140,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: concatFunction,
         targetNodeReactFlowKey: concatFunctionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceNode.children[0].key, SchemaType.Source),
           node: sourceNode.children[0],
@@ -149,7 +149,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: concatFunction,
         targetNodeReactFlowKey: concatFunctionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceNode.children[1].key, SchemaType.Source),
           node: sourceNode.children[1],
@@ -159,7 +159,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetNode.children[0].children[0],
         targetNodeReactFlowKey: addReactFlowPrefix(targetNode.children[0].children[0].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: concatFunctionId,
           node: concatFunction,
@@ -168,7 +168,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetNode.children[0].children[1],
         targetNodeReactFlowKey: addReactFlowPrefix(targetNode.children[0].children[1].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceNode.children[1].key, SchemaType.Source),
           node: sourceNode.children[1],
@@ -210,7 +210,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: greaterThanFunction,
         targetNodeReactFlowKey: greaterThanId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceNode.children[0].key, SchemaType.Source),
           node: sourceNode.children[0],
@@ -219,7 +219,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: greaterThanFunction,
         targetNodeReactFlowKey: greaterThanId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceNode.children[1].key, SchemaType.Source),
           node: sourceNode.children[1],
@@ -230,7 +230,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: ifPseudoFunction,
         targetNodeReactFlowKey: ifFunctionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: greaterThanId,
           node: greaterThanFunction,
@@ -239,7 +239,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: ifPseudoFunction,
         targetNodeReactFlowKey: ifFunctionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceNode.children[0].key, SchemaType.Source),
           node: sourceNode.children[0],
@@ -250,7 +250,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetNode.children[0],
         targetNodeReactFlowKey: addReactFlowPrefix(targetNode.children[0].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: ifFunctionId,
           node: ifPseudoFunction,
@@ -298,7 +298,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode.children[1],
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[1].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].key, SchemaType.Source),
           node: sourceChildNode.children[0],
@@ -309,7 +309,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode,
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.key, SchemaType.Source),
           node: sourceChildNode,
@@ -319,7 +319,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode.children[0],
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.children[1].key, SchemaType.Source),
           node: sourceChildNode.children[1],
@@ -375,7 +375,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode.children[1],
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[1].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].key, SchemaType.Source),
           node: sourceChildNode.children[0],
@@ -386,7 +386,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode,
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.key, SchemaType.Source),
           node: sourceChildNode,
@@ -444,7 +444,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode,
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.key, SchemaType.Source),
           node: sourceChildNode,
@@ -453,7 +453,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode.children[0],
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].key, SchemaType.Source),
           node: sourceChildNode.children[0],
@@ -462,7 +462,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode.children[0].children[0],
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].children[0].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].children[0].key, SchemaType.Source),
           node: sourceChildNode.children[0].children[0],
@@ -471,7 +471,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode.children[0].children[0].children[0],
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].children[0].children[0].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].children[0].children[0].key, SchemaType.Source),
           node: sourceChildNode.children[0].children[0].children[0],
@@ -547,7 +547,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode,
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.key, SchemaType.Source),
           node: sourceChildNode,
@@ -556,7 +556,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode,
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].key, SchemaType.Source),
           node: sourceChildNode.children[0],
@@ -565,7 +565,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode,
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].children[0].key, SchemaType.Source),
           node: sourceChildNode.children[0].children[0],
@@ -574,7 +574,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode.children[0],
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].children[0].children[0].key, SchemaType.Source),
           node: sourceChildNode.children[0].children[0].children[0],
@@ -637,7 +637,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: concatFunction,
         targetNodeReactFlowKey: concatFunctionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].key, SchemaType.Source),
           node: sourceChildNode.children[0],
@@ -646,7 +646,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: concatFunction,
         targetNodeReactFlowKey: concatFunctionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.children[1].key, SchemaType.Source),
           node: sourceChildNode.children[1],
@@ -655,7 +655,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode.children[2],
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[2].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: concatFunctionId,
           node: concatFunction,
@@ -666,7 +666,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode,
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.key, SchemaType.Source),
           node: sourceChildNode,
@@ -676,7 +676,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode.children[0],
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.children[1].key, SchemaType.Source),
           node: sourceChildNode.children[1],
@@ -729,7 +729,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode.children[1],
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[1].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].key, SchemaType.Source),
           node: sourceChildNode.children[0],
@@ -740,7 +740,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: indexPseudoFunction,
         targetNodeReactFlowKey: indexFunctionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.key, SchemaType.Source),
           node: sourceChildNode,
@@ -749,7 +749,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode,
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: indexFunctionId,
           node: indexPseudoFunction,
@@ -758,7 +758,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode.children[0],
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.children[1].key, SchemaType.Source),
           node: sourceChildNode.children[1],
@@ -812,7 +812,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: indexPseudoFunction,
         targetNodeReactFlowKey: indexFunctionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.key, SchemaType.Source),
           node: sourceChildNode,
@@ -821,7 +821,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode,
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: indexFunctionId,
           node: indexPseudoFunction,
@@ -830,7 +830,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode.children[0],
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: indexFunctionId,
           node: indexPseudoFunction,
@@ -882,7 +882,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode.children[1],
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[1].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].key, SchemaType.Source),
           node: sourceChildNode.children[0],
@@ -893,7 +893,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: indexPseudoFunction,
         targetNodeReactFlowKey: indexFunctionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.key, SchemaType.Source),
           node: sourceChildNode,
@@ -902,7 +902,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode,
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: indexFunctionId,
           node: indexPseudoFunction,
@@ -912,7 +912,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: concatFunction,
         targetNodeReactFlowKey: concatFunctionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.children[1].key, SchemaType.Source),
           node: sourceChildNode.children[1],
@@ -921,7 +921,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: concatFunction,
         targetNodeReactFlowKey: concatFunctionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: indexFunctionId,
           node: indexPseudoFunction,
@@ -930,7 +930,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode.children[0],
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: concatFunctionId,
           node: concatFunction,
@@ -989,7 +989,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: indexPseudoFunction,
         targetNodeReactFlowKey: yearIndex,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.key, SchemaType.Source),
           node: sourceChildNode,
@@ -998,7 +998,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode,
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: yearIndex,
           node: indexPseudoFunction,
@@ -1009,7 +1009,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: indexPseudoFunction,
         targetNodeReactFlowKey: monthIndex,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].key, SchemaType.Source),
           node: sourceChildNode.children[0],
@@ -1018,7 +1018,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode,
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: monthIndex,
           node: indexPseudoFunction,
@@ -1029,7 +1029,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: indexPseudoFunction,
         targetNodeReactFlowKey: dayIndex,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].children[0].key, SchemaType.Source),
           node: sourceChildNode.children[0].children[0],
@@ -1038,7 +1038,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode,
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: dayIndex,
           node: indexPseudoFunction,
@@ -1048,7 +1048,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetChildNode.children[0],
         targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].children[0].children[0].key, SchemaType.Source),
           node: sourceChildNode.children[0].children[0].children[0],
@@ -1106,7 +1106,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: greaterThanFunction,
         targetNodeReactFlowKey: greaterThanId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceNode.children[0].key, SchemaType.Source),
           node: sourceNode.children[0],
@@ -1115,7 +1115,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: greaterThanFunction,
         targetNodeReactFlowKey: greaterThanId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceNode.children[1].key, SchemaType.Source),
           node: sourceNode.children[1],
@@ -1126,7 +1126,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: ifPseudoFunction,
         targetNodeReactFlowKey: ifFunctionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: greaterThanId,
           node: greaterThanFunction,
@@ -1135,7 +1135,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: ifPseudoFunction,
         targetNodeReactFlowKey: ifFunctionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceNode.key, SchemaType.Source),
           node: sourceNode,
@@ -1146,7 +1146,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetNode.children[0],
         targetNodeReactFlowKey: addReactFlowPrefix(targetNode.children[0].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: ifFunctionId,
           node: ifPseudoFunction,
@@ -1157,7 +1157,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetNode.children[0].children[0],
         targetNodeReactFlowKey: addReactFlowPrefix(targetNode.children[0].children[0].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceNode.children[0].key, SchemaType.Source),
           node: sourceNode.children[0],
@@ -1168,7 +1168,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: targetNode,
         targetNodeReactFlowKey: addReactFlowPrefix(targetNode.key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(sourceNode.key, SchemaType.Source),
           node: sourceNode,
@@ -1238,7 +1238,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: indexPseudoFunction,
         targetNodeReactFlowKey: indexFunctionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(parentSourceNode.key, SchemaType.Source),
           node: parentSourceNode,
@@ -1249,7 +1249,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: greaterThanFunction,
         targetNodeReactFlowKey: greaterThanId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: indexFunctionId,
           node: indexPseudoFunction,
@@ -1266,7 +1266,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: ifPseudoFunction,
         targetNodeReactFlowKey: ifFunctionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: greaterThanId,
           node: greaterThanFunction,
@@ -1275,7 +1275,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: ifPseudoFunction,
         targetNodeReactFlowKey: ifFunctionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(parentSourceNode.key, SchemaType.Source),
           node: parentSourceNode,
@@ -1286,7 +1286,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: parentTargetNode,
         targetNodeReactFlowKey: addReactFlowPrefix(parentTargetNode.key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: ifFunctionId,
           node: ifPseudoFunction,
@@ -1297,7 +1297,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: parentTargetNode.children[1],
         targetNodeReactFlowKey: addReactFlowPrefix(parentTargetNode.children[1].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(parentSourceNode.children[0].key, SchemaType.Source),
           node: parentSourceNode.children[0],
@@ -1371,7 +1371,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: directAccessPseudoFunction,
         targetNodeReactFlowKey: directAccessId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(parentSourceNode.key, SchemaType.Source),
           node: parentSourceNode,
@@ -1380,7 +1380,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: directAccessPseudoFunction,
         targetNodeReactFlowKey: directAccessId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(parentSourceNode.children[0].key, SchemaType.Source),
           node: parentSourceNode.children[0],
@@ -1391,7 +1391,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: parentTargetNode.children[1],
         targetNodeReactFlowKey: addReactFlowPrefix(parentTargetNode.children[1].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: directAccessId,
           node: directAccessPseudoFunction,
@@ -1448,7 +1448,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: indexPseudoFunction,
         targetNodeReactFlowKey: indexFunctionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(parentSourceNode.key, SchemaType.Source),
           node: parentSourceNode,
@@ -1459,7 +1459,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: parentTargetNode,
         targetNodeReactFlowKey: addReactFlowPrefix(parentTargetNode.key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: indexFunctionId,
           node: indexPseudoFunction,
@@ -1470,7 +1470,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: directAccessPseudoFunction,
         targetNodeReactFlowKey: directAccessId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: indexFunctionId,
           node: indexPseudoFunction,
@@ -1479,7 +1479,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: directAccessPseudoFunction,
         targetNodeReactFlowKey: directAccessId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(parentSourceNode.key, SchemaType.Source),
           node: parentSourceNode,
@@ -1488,7 +1488,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: directAccessPseudoFunction,
         targetNodeReactFlowKey: directAccessId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(parentSourceNode.children[0].key, SchemaType.Source),
           node: parentSourceNode.children[0],
@@ -1499,7 +1499,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: parentTargetNode.children[1],
         targetNodeReactFlowKey: addReactFlowPrefix(parentTargetNode.children[1].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: directAccessId,
           node: directAccessPseudoFunction,
@@ -1564,7 +1564,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: indexPseudoFunction,
         targetNodeReactFlowKey: indexFunctionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(parentSourceNode.key, SchemaType.Source),
           node: parentSourceNode,
@@ -1575,7 +1575,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: greaterThanFunction,
         targetNodeReactFlowKey: greaterThanId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: indexFunctionId,
           node: indexPseudoFunction,
@@ -1592,7 +1592,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: ifPseudoFunction,
         targetNodeReactFlowKey: ifFunctionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: greaterThanId,
           node: greaterThanFunction,
@@ -1601,7 +1601,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: ifPseudoFunction,
         targetNodeReactFlowKey: ifFunctionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(parentSourceNode.key, SchemaType.Source),
           node: parentSourceNode,
@@ -1612,7 +1612,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: parentTargetNode,
         targetNodeReactFlowKey: addReactFlowPrefix(parentTargetNode.key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: ifFunctionId,
           node: ifPseudoFunction,
@@ -1623,7 +1623,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: directAccessPseudoFunction,
         targetNodeReactFlowKey: directAccessId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: indexFunctionId,
           node: indexPseudoFunction,
@@ -1632,7 +1632,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: directAccessPseudoFunction,
         targetNodeReactFlowKey: directAccessId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(parentSourceNode.key, SchemaType.Source),
           node: parentSourceNode,
@@ -1641,7 +1641,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: directAccessPseudoFunction,
         targetNodeReactFlowKey: directAccessId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: addReactFlowPrefix(parentSourceNode.children[0].key, SchemaType.Source),
           node: parentSourceNode.children[0],
@@ -1652,7 +1652,7 @@ describe('Map definition conversions', () => {
       setConnectionInputValue(connections, {
         targetNode: parentTargetNode.children[1],
         targetNodeReactFlowKey: addReactFlowPrefix(parentTargetNode.children[1].key, SchemaType.Target),
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: directAccessId,
           node: directAccessPseudoFunction,

@@ -36,7 +36,7 @@ describe('DataMapSlice', () => {
       setConnectionInputValue(connections, {
         targetNode: node,
         targetNodeReactFlowKey: destinationId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: sourceId,
           node: node,
@@ -62,7 +62,7 @@ describe('DataMapSlice', () => {
       setConnectionInputValue(connections, {
         targetNode: node,
         targetNodeReactFlowKey: destinationId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: functionId,
           node: concatFunction,
@@ -71,7 +71,7 @@ describe('DataMapSlice', () => {
       setConnectionInputValue(connections, {
         targetNode: concatFunction,
         targetNodeReactFlowKey: functionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: sourceId,
           node: node,
@@ -102,7 +102,7 @@ describe('DataMapSlice', () => {
       setConnectionInputValue(connections, {
         targetNode: node,
         targetNodeReactFlowKey: destinationId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: functionId,
           node: concatFunction,
@@ -111,7 +111,7 @@ describe('DataMapSlice', () => {
       setConnectionInputValue(connections, {
         targetNode: concatFunction,
         targetNodeReactFlowKey: functionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: sourceId,
           node: node,
@@ -120,7 +120,7 @@ describe('DataMapSlice', () => {
       setConnectionInputValue(connections, {
         targetNode: node,
         targetNodeReactFlowKey: destinationId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: functionId,
           node: concatFunction,
@@ -161,7 +161,7 @@ describe('DataMapSlice', () => {
       setConnectionInputValue(connections, {
         targetNode: node,
         targetNodeReactFlowKey: destinationId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: sourceId,
           node: node,
@@ -185,7 +185,7 @@ describe('DataMapSlice', () => {
       setConnectionInputValue(connections, {
         targetNode: node,
         targetNodeReactFlowKey: destinationId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: functionId,
           node: concatFunction,
@@ -194,7 +194,7 @@ describe('DataMapSlice', () => {
       setConnectionInputValue(connections, {
         targetNode: concatFunction,
         targetNodeReactFlowKey: functionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: sourceId,
           node: node,
@@ -226,7 +226,7 @@ describe('DataMapSlice', () => {
       setConnectionInputValue(connections, {
         targetNode: node,
         targetNodeReactFlowKey: destinationId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: sourceId,
           node: node,
@@ -253,7 +253,7 @@ describe('DataMapSlice', () => {
       setConnectionInputValue(connections, {
         targetNode: node,
         targetNodeReactFlowKey: destinationId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: functionId,
           node: concatFunction,
@@ -262,7 +262,7 @@ describe('DataMapSlice', () => {
       setConnectionInputValue(connections, {
         targetNode: concatFunction,
         targetNodeReactFlowKey: functionId,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: {
           reactFlowKey: sourceId,
           node: node,

@@ -121,7 +121,7 @@ describe('utils/Connections', () => {
         setConnectionInputValue(mockConnections, {
           targetNode: mockSelfNode,
           targetNodeReactFlowKey: mockSelfReactFlowKey,
-          isHandleDrawnOrDeserialized: true,
+          findInputSlot: true,
           value: {
             reactFlowKey: mockSourceReactFlowKey,
             node: mockSourceNode,
@@ -158,7 +158,7 @@ describe('utils/Connections', () => {
         setConnectionInputValue(mockConnections, {
           targetNode: mockSelfNode,
           targetNodeReactFlowKey: mockSelfReactFlowKey,
-          isHandleDrawnOrDeserialized: true,
+          findInputSlot: true,
           value: {
             reactFlowKey: mockSourceReactFlowKey,
             node: mockSourceNode,

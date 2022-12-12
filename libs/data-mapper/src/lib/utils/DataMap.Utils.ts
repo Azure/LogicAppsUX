@@ -485,7 +485,7 @@ const parseDefinitionToConnection = (
       setConnectionInputValue(connections, {
         targetNode: destinationNode,
         targetNodeReactFlowKey: destinationKey,
-        isHandleDrawnOrDeserialized: true,
+        findInputSlot: true,
         value: sourceNode
           ? {
               reactFlowKey: sourceKey,
@@ -645,7 +645,7 @@ export const addParentConnectionForRepeatingElementsNested = (
         setConnectionInputValue(dataMapConnections, {
           targetNode: firstRepeatingTargetNode,
           targetNodeReactFlowKey: prefixedTargetKey,
-          isHandleDrawnOrDeserialized: true,
+          findInputSlot: true,
           value: {
             reactFlowKey: prefixedSourceKey,
             node: firstRepeatingSourceNode,

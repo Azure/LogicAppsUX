@@ -55,25 +55,25 @@ export const createConnectionEntryIfNeeded = (
  * @param connections The connections dictionary to add the entry to
  * @param targetNode The node to create the connection entry for
  * @param targetNodeReactFlowKey The reactFlowKey of `targetNode`
- * @param inputIndex The index of the input to set the value for (only needed if NOT `isHandleDrawnOrDeserialized`)
+ * @param inputIndex The index of the input to set the value for (only needed if NOT `findInputSlot`)
  * @param value The value to set the input to (InputConnection, or `null` to delete an unbounded input)
- * @param isHandleDrawnOrDeserialized Whether the new connection being made is handle-drawn or a deserialization
+ * @param findInputSlot Flag to find an available input spot if `true`, or use inputIndex if `false`/`undefined` (used for drawn and deserialized connections)
  */
 export const setConnectionInputValue = (
   connections: ConnectionDictionary,
-  { targetNode, targetNodeReactFlowKey, inputIndex, value, isHandleDrawnOrDeserialized }: SetConnectionInputAction
+  { targetNode, targetNodeReactFlowKey, inputIndex, value, findInputSlot }: SetConnectionInputAction
 ) => {
-  if (!isHandleDrawnOrDeserialized && inputIndex === undefined) {
+  if (!findInputSlot && inputIndex === undefined) {
     console.error('Invalid Connection Input Op: inputIndex was not provided for a non-handle-drawn/deserialized connection');
     return;
   }
 
-  if (isHandleDrawnOrDeserialized && (value === undefined || value === null)) {
+  if (findInputSlot && (value === undefined || value === null)) {
     console.error('Invalid Connection Input Op: value is undefined or null for a handle-drawn/deserialized connection');
     return;
   }
 
-  if (isHandleDrawnOrDeserialized && inputIndex !== undefined) {
+  if (findInputSlot && inputIndex !== undefined) {
     console.warn('Invalid Connection Input Op: inputIndex was provided for a handle-drawn/deserialized connection');
   }
 
@@ -87,7 +87,7 @@ export const setConnectionInputValue = (
     isFunctionUnboundedInputOrRepeatingSchemaNode = true;
   }
 
-  if (!isHandleDrawnOrDeserialized && inputIndex !== undefined) {
+  if (!findInputSlot && inputIndex !== undefined) {
     // Verify if we're updating an old value that's a ConnectionUnit, and if so, remove it from source's outputs[]
     if (connection?.inputs) {
       let inputConnection: InputConnection = undefined;
@@ -111,8 +111,7 @@ export const setConnectionInputValue = (
 
   let confirmedInputIndex = inputIndex ?? 0;
 
-  // Find appropriate input slot (for handle-drawn/deserialized connections)
-  if (isHandleDrawnOrDeserialized && value !== undefined && value !== null) {
+  if (findInputSlot && value !== undefined && value !== null) {
     // Schema nodes can only ever have 1 input as long as it is not repeating
     if (isSchemaNodeExtended(targetNode)) {
       if (targetNode.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
