@@ -15,10 +15,10 @@ import { TargetSchemaPane } from '../components/targetSchemaPane/TargetSchemaPan
 import { TestMapPanel } from '../components/testMapPanel/TestMapPanel';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import { generateDataMapXslt } from '../core/queries/datamap';
-import appInsights from '../core/services/appInsights/AppInsights';
 import { redoDataMapOperation, saveDataMap, showNotification, undoDataMapOperation } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
+import { LogCategory, LogService } from '../utils/Logging.Utils';
 import './ReactFlowStyleOverrides.css';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Stack } from '@fluentui/react';
@@ -132,16 +132,16 @@ export const DataMapperDesigner = ({
 
         return newDataMapDefinition;
       } catch (error) {
-        // NOTE: Doing it this way so that the error, whatever it is, just gets formatted/logged on its own
-        // - can and maybe should change if we add more infrastructure around error classes/types
-        console.error(`-----------------Error generating map definition-----------------`);
-        console.error(error);
-
+        let errorMessage = '';
         if (typeof error === 'string') {
-          appInsights.trackException({ exception: new Error(error) });
+          errorMessage = error;
         } else if (error instanceof Error) {
-          appInsights.trackException({ exception: error });
+          errorMessage = error.message;
         }
+
+        LogService.error(LogCategory.DataMapperDesigner, 'dataMapDefinition', {
+          message: errorMessage,
+        });
 
         return '';
       }
@@ -172,6 +172,10 @@ export const DataMapperDesigner = ({
         );
       })
       .catch((error: Error) => {
+        LogService.error(LogCategory.DataMapperDesigner, 'onSaveClick', {
+          message: error.message,
+        });
+
         dispatch(
           showNotification({
             type: NotificationTypes.SaveFailed,

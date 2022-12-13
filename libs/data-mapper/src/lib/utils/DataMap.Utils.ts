@@ -30,6 +30,7 @@ import {
   getIndexValueForCurrentConnection,
   isFunctionData,
 } from './Function.Utils';
+import { LogCategory, LogService } from './Logging.Utils';
 import { addReactFlowPrefix, addTargetReactFlowPrefix, createReactFlowFunctionKey } from './ReactFlow.Util';
 import { findNodeForKey, flattenSchemaIntoDictionary, isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid } from '@microsoft/utils-logic-apps';
@@ -297,7 +298,9 @@ const addLoopingToNewPathItems = (
             loopValue = sourceSchemaNode.key.replace(`${valueToTrim}/`, '');
             loopValue = `${mapNodeParams.for}(${loopValue}, ${getIndexValueForCurrentConnection(indexFunctionInput)})`;
           } else {
-            console.error(`Failed to generate proper loopValue: ${loopValue}`);
+            LogService.error(LogCategory.DataMapUtils, 'addLoopingToNewPathItems', {
+              message: `Failed to generate proper loopValue: ${loopValue}`,
+            });
           }
 
           // For entry

@@ -1,6 +1,7 @@
+import { LogCategory, LogService } from './Logging.Utils';
 import * as PF from 'pathfinding';
-import { Position } from 'reactflow';
 import type { Node as ReactFlowNode, XYPosition } from 'reactflow';
+import { Position } from 'reactflow';
 
 interface BoundingBox {
   width: number;
@@ -335,7 +336,9 @@ const findPath = (grid: PF.Grid, start: XYPosition, end: XYPosition): number[][]
   const path = pathfinder.findPath(start.x, start.y, end.x, end.y, grid);
 
   if (path.length === 0) {
-    console.error(`Unable to find path between (${start.x}, ${start.y}) and (${end.x}, ${end.y}) - using simple path instead `);
+    LogService.error(LogCategory.EdgeUtils, 'findPath', {
+      message: `Unable to find path between (${start.x}, ${start.y}) and (${end.x}, ${end.y}) - using simple path instead`,
+    });
 
     const simplePathStart = [start.x, start.y];
     const simplePathMid = [(start.x + end.x) / 2, (start.y + end.y) / 2];
