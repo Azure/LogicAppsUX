@@ -11,7 +11,7 @@ export const projectSubpathSetting = 'projectSubpath';
 export const projectTemplateKeySetting = 'projectTemplateKey';
 export const projectOpenBehaviorSetting = 'projectOpenBehavior';
 export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';
-export const defaultVersionRange = '[1.*, 2.0.0)';
+export const defaultVersionRange = '[1.*, 2.0.0)'; // Need to be changed
 export const templateFilterSetting = 'templateFilter';
 
 // File names

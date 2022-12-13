@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { azureWebJobsStorageKey, gitignoreFileName, hostFileName, localSettingsFileName } from '../../../../constants';
 import { localize } from '../../../../localize';
+import { validateDotnetInstalled } from '../../../utils/dotnet/dotnetTemplateCommand';
 import { wrapArgInQuotes } from '../../../utils/funcCoreTools/cpUtils';
 import { getMajorVersion } from '../../../utils/funcCoreTools/funcVersion';
 import { setLocalAppSetting } from '../../../utils/localSettings';
@@ -20,8 +21,8 @@ export class DotnetProjectCreateStep extends ProjectCreateStepBase {
     super();
   }
 
-  public static async createStep(_context: IActionContext): Promise<DotnetProjectCreateStep> {
-    //await validateDotnetInstalled(context);
+  public static async createStep(context: IActionContext): Promise<DotnetProjectCreateStep> {
+    await validateDotnetInstalled(context);
     return new DotnetProjectCreateStep();
   }
 
