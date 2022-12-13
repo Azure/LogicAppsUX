@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { extensionCommand } from '../../../../constants';
 import { getThemedIconPath } from '../../../utils/tree/assets';
 import { getProjectContextValue } from '../../../utils/tree/projectContextValues';
 import type { ParametersTreeItem } from './ParametersTreeItem';
@@ -19,7 +20,7 @@ export class ParameterTreeItem extends AzExtTreeItem {
     super(parent);
     this.name = name;
     this.content = content;
-    this.commandId = 'logicAppsExtension.viewContent';
+    this.commandId = extensionCommand.viewContent;
   }
 
   public get id(): string {

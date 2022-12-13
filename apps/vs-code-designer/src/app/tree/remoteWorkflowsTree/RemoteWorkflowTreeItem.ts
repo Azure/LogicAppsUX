@@ -17,8 +17,13 @@ import { isEmptyString, HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import { AzExtTreeItem, DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { AzExtParentTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import { ProjectResource } from '@microsoft/vscode-extension';
-import type { ServiceProviderConnectionModel } from '@microsoft/vscode-extension';
-import type { IWorkflowFileContent, Artifacts, Parameter, ICallbackUrlResponse } from '@microsoft/vscode-extension';
+import type {
+  ServiceProviderConnectionModel,
+  IWorkflowFileContent,
+  Artifacts,
+  Parameter,
+  ICallbackUrlResponse,
+} from '@microsoft/vscode-extension';
 import { ProgressLocation, window } from 'vscode';
 
 export class RemoteWorkflowTreeItem extends AzExtTreeItem {

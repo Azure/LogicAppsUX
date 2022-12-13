@@ -4,7 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 import { extensionCommand } from '../../constants';
 import { ext } from '../../extensionVariables';
+import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt';
+import { openFile } from './openFile';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
+import { viewContent } from './workflows/viewContent';
+import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
 import { registerCommand } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
 import { commands } from 'vscode';
@@ -16,4 +20,8 @@ export function registerCommands(): void {
     async (context: IActionContext, node: AzExtTreeItem) => await ext.tree.loadMore(node, context)
   );
   registerCommand(extensionCommand.selectSubscriptions, () => commands.executeCommand(extensionCommand.azureSelectSubscriptions));
+  registerCommand(extensionCommand.openFile, (context: IActionContext, node: FileTreeItem) =>
+    executeOnFunctions(openFile, context, context, node)
+  );
+  registerCommand(extensionCommand.viewContent, viewContent);
 }
