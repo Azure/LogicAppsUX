@@ -86,3 +86,11 @@ export async function selectWorkspaceFolder(
     getSubPath
   );
 }
+
+export function isMultiRootWorkspace(): boolean {
+  return (
+    !!vscode.workspace.workspaceFolders &&
+    vscode.workspace.workspaceFolders.length > 0 &&
+    vscode.workspace.name !== vscode.workspace.workspaceFolders[0].name
+  ); // multi-root workspaces always have something like "(Workspace)" appended to their name
+}

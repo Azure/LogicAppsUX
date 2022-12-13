@@ -4,22 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from './localize';
 
-// Project
-export const projectLanguageSetting = 'projectLanguage';
-export const funcVersionSetting = 'projectRuntime';
-export const projectSubpathSetting = 'projectSubpath';
-export const projectTemplateKeySetting = 'projectTemplateKey';
-export const projectOpenBehaviorSetting = 'projectOpenBehavior';
-export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';
-export const defaultVersionRange = '[1.*, 2.0.0)'; // Need to be changed
-export const templateFilterSetting = 'templateFilter';
-
 // File names
 export const hostFileName = 'host.json';
 export const localSettingsFileName = 'local.settings.json';
 export const connectionsFileName = 'connections.json';
 export const parametersFileName = 'parameters.json';
 export const gitignoreFileName = '.gitignore';
+export const tasksFileName = 'tasks.json';
+export const launchFileName = 'launch.json';
+export const settingsFileName = 'settings.json';
 
 // Functions
 export const func = 'func';
@@ -70,3 +63,22 @@ export const contextValueSeparator = ';';
 
 // Git
 export const gitCommand = 'git';
+
+// Project
+export const projectLanguageSetting = 'projectLanguage';
+export const funcVersionSetting = 'projectRuntime';
+export const projectSubpathSetting = 'projectSubpath';
+export const projectTemplateKeySetting = 'projectTemplateKey';
+export const projectOpenBehaviorSetting = 'projectOpenBehavior';
+export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';
+export const defaultVersionRange = '[1.*, 2.0.0)'; // Need to be changed
+export const templateFilterSetting = 'templateFilter';
+export const hostStartCommand = 'host start';
+export const funcWatchProblemMatcher = '$func-watch';
+export const extInstallCommand = 'extensions install';
+export const extInstallTaskName = `${func}: ${extInstallCommand}`;
+
+export const deploySubpathSetting = 'deploySubpath';
+export const tasksVersion = '2.0.0';
+export const launchVersion = '0.2.0';
+export const preDeployTaskSetting = 'preDeployTask';

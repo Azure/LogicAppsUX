@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { azureWebJobsStorageKey, gitignoreFileName, hostFileName, localSettingsFileName } from '../../../../constants';
 import { localize } from '../../../../localize';
-import { validateDotnetInstalled } from '../../../utils/dotnet/dotnetTemplateCommand';
+import { executeDotnetTemplateCommand, validateDotnetInstalled } from '../../../utils/dotnet/dotnetTemplateCommand';
 import { wrapArgInQuotes } from '../../../utils/funcCoreTools/cpUtils';
 import { getMajorVersion } from '../../../utils/funcCoreTools/funcVersion';
 import { setLocalAppSetting } from '../../../utils/localSettings';
@@ -41,12 +41,12 @@ export class DotnetProjectCreateStep extends ProjectCreateStepBase {
       identity = identity.replace('CSharp', 'FSharp'); // they don't have FSharp in the feed yet
     }
     const functionsVersion: string = 'v' + majorVersion;
-    //const projTemplateKey = nonNullProp(context, 'projectTemplateKey');
+    const projTemplateKey = nonNullProp(context, 'projectTemplateKey');
     const args = ['--identity', identity, '--arg:name', wrapArgInQuotes(projectName), '--arg:AzureFunctionsVersion', functionsVersion];
     // defaults to net6.0 if there is no targetFramework
     args.push('--arg:Framework', wrapArgInQuotes(context.workerRuntime?.targetFramework));
 
-    // await executeDotnetTemplateCommand(context, version, projTemplateKey, context.projectPath, 'create', ...args);
+    await executeDotnetTemplateCommand(context, version, projTemplateKey, context.projectPath, 'create', ...args);
 
     await setLocalAppSetting(context, context.projectPath, azureWebJobsStorageKey, '', MismatchBehavior.Overwrite);
   }

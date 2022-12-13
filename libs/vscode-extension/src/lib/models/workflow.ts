@@ -89,3 +89,9 @@ export enum MismatchBehavior {
    */
   DontChange,
 }
+
+export interface ISettingToAdd {
+  key: string;
+  value: string | boolean | Record<string, any>;
+  prefix?: string;
+}

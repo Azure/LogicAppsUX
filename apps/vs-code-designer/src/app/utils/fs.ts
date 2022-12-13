@@ -62,3 +62,27 @@ export async function confirmOverwriteFile(context: IActionContext, fsPath: stri
     return true;
   }
 }
+
+export async function confirmEditJsonFile(
+  context: IActionContext,
+  fsPath: string,
+  editJson: (existingData: Record<string, any>) => Record<string, any>
+): Promise<void> {
+  let newData: Record<string, any>;
+  if (await fse.pathExists(fsPath)) {
+    try {
+      newData = editJson((await fse.readJson(fsPath)) as Record<string, any>);
+    } catch (error) {
+      // If we failed to parse or edit the existing file, just ask to overwrite the file completely
+      if (await confirmOverwriteFile(context, fsPath)) {
+        newData = editJson({});
+      } else {
+        return;
+      }
+    }
+  } else {
+    newData = editJson({});
+  }
+
+  await writeFormattedJson(fsPath, newData);
+}

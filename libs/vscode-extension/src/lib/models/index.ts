@@ -11,3 +11,5 @@ export * from './host';
 export * from './cliFeed';
 export * from './templates';
 export * from './bundleFeed';
+export * from './tasks';
+export * from './launch';

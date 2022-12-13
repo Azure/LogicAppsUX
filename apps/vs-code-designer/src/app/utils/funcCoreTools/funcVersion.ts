@@ -83,7 +83,7 @@ export async function tryGetLocalFuncVersion(): Promise<FuncVersion | undefined>
  * Executes version command and gets it from cli.
  * @returns {Promise<string | null>} Functions core tools version.
  */
-async function getLocalFuncCoreToolsVersion(): Promise<string | null> {
+export async function getLocalFuncCoreToolsVersion(): Promise<string | null> {
   const output: string = await executeCommand(undefined, undefined, ext.funcCliPath, '--version');
   const version: string | null = semver.clean(output);
   if (version) {
