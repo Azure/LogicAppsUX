@@ -76,7 +76,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const brandColor = useBrandColor(scopeId);
   const iconUri = useIconUri(scopeId);
   const isLeaf = useIsLeafNode(id);
-  const isScopeNode = useOperationInfo(scopeId).type.toLowerCase() === constants.NODE.TYPE.SCOPE;
+  const isScopeNode = useOperationInfo(scopeId)?.type.toLowerCase() === constants.NODE.TYPE.SCOPE;
 
   const label = useNodeDisplayName(scopeId);
   const nodeClick = useCallback(() => {
@@ -97,7 +97,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     return null;
   }
 
-  const normalizedType = node.type.toLowerCase();
+  const normalizedType = node?.type.toLowerCase();
   const actionCount = metadata?.actionCount ?? 0;
 
   const actionString = intl.formatMessage(
