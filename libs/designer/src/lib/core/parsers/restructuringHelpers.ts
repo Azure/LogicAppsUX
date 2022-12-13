@@ -55,6 +55,7 @@ export const reassignEdgeSources = (
 
   // Remove would-be duplicate edges
   const targetEdges = graph.edges?.filter((edge) => edge.source === oldSourceId) ?? [];
+  if (targetEdges.length === 0) return;
   targetEdges.forEach((tEdge) => {
     if (graph.edges?.some((aEdge) => aEdge.source === newSourceId && aEdge.target === tEdge.target)) {
       removeEdge(state, oldSourceId, tEdge.target, graph);
@@ -112,10 +113,9 @@ const moveRunAfterSource = (
 
 export const applyIsRootNode = (state: WorkflowState, rootNodeId: string, graph: WorkflowNode, metadata: NodesMetadata) => {
   graph.edges?.forEach((edge) => {
-    if (edge.source === rootNodeId)
-      if (metadata?.[edge.target]) {
-        delete metadata[edge.target].isRoot;
-        (state.operations[edge.target] as LogicAppsV2.ActionDefinition).runAfter = {};
-      }
+    if (edge.source === rootNodeId && metadata?.[edge.target]) {
+      delete metadata[edge.target].isRoot;
+      (state.operations[edge.target] as LogicAppsV2.ActionDefinition).runAfter = {};
+    }
   });
 };
