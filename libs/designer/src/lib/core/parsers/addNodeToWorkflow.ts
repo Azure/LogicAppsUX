@@ -2,7 +2,7 @@
 import CONSTANTS from '../../common/constants';
 import type { RelationshipIds } from '../state/panel/panelInterfaces';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
-import { createWorkflowNode, createWorkflowEdge, isRootNodeInGraph } from '../utils/graph';
+import { createWorkflowNode, createWorkflowEdge } from '../utils/graph';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
 import {
   reassignEdgeSources,
@@ -44,14 +44,14 @@ export const addNodeToWorkflow = (
 
   // Update metadata
   const isTrigger = !!operation.properties?.trigger;
-  const isRoot = isTrigger ?? (parentId ? parentId?.split('-#')[0] === graphId : false);
+  const isRoot = isTrigger || (parentId ? parentId?.split('-#')[0] === graphId : false);
   const parentNodeId = graphId !== 'root' ? graphId : undefined;
   nodesMetadata[newNodeId] = { graphId, parentNodeId, isRoot };
 
   state.operations[newNodeId] = { ...state.operations[newNodeId], type: payload.operation.type };
   state.newlyAddedOperations[newNodeId] = newNodeId;
 
-  const shouldAddRunAfters = parentId ? !isRootNodeInGraph(parentId, 'root', state.nodesMetadata) : true;
+  const shouldAddRunAfters = !isRoot;
 
   // Parallel Branch creation, just add the singular node
   if (payload.isParallelBranch && parentId) {
