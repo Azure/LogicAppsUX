@@ -5,6 +5,7 @@
 import { localize } from '../../../../localize';
 import { getContainingWorkspace, selectWorkspaceFolder } from '../../../utils/workspace';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
+import { OpenBehavior } from '@microsoft/vscode-extension';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
 
 export class FolderListStep extends AzureWizardPromptStep<IProjectWizardContext> {
@@ -16,7 +17,7 @@ export class FolderListStep extends AzureWizardPromptStep<IProjectWizardContext>
     context.workspaceFolder = getContainingWorkspace(projectPath);
     context.workspacePath = (context.workspaceFolder && context.workspaceFolder.uri.fsPath) || projectPath;
     if (context.workspaceFolder) {
-      context.openBehavior = 'AlreadyOpen';
+      context.openBehavior = OpenBehavior.alreadyOpen;
     }
   }
   /* eslint-enable no-param-reassign */

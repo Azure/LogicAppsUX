@@ -10,16 +10,21 @@ export const funcVersionSetting = 'projectRuntime';
 export const projectSubpathSetting = 'projectSubpath';
 export const projectTemplateKeySetting = 'projectTemplateKey';
 export const projectOpenBehaviorSetting = 'projectOpenBehavior';
+export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';
+export const defaultVersionRange = '[1.*, 2.0.0)';
+export const templateFilterSetting = 'templateFilter';
 
 // File names
 export const hostFileName = 'host.json';
 export const localSettingsFileName = 'local.settings.json';
 export const connectionsFileName = 'connections.json';
 export const parametersFileName = 'parameters.json';
+export const gitignoreFileName = '.gitignore';
 
 // Functions
 export const func = 'func';
 export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
+export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
 
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
@@ -28,6 +33,7 @@ export const workflowSubscriptionIdKey = 'WORKFLOWS_SUBSCRIPTION_ID';
 export const workflowTenantIdKey = 'WORKFLOWS_TENANT_ID';
 export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
 export const workflowAppApiVersion = '2018-11-01';
+export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
 
 export const logicAppKind = 'workflowapp';
 export const workflowappRuntime = 'node|14';
@@ -61,3 +67,6 @@ export const timeoutKey = 'requestTimeout';
 
 // Tree
 export const contextValueSeparator = ';';
+
+// Git
+export const gitCommand = 'git';

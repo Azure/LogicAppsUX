@@ -62,4 +62,10 @@ export interface IProjectWizardContext extends IActionContext {
   targetFramework?: string | string[];
 }
 
-export type OpenBehavior = 'AddToWorkspace' | 'OpenInNewWindow' | 'OpenInCurrentWindow' | 'AlreadyOpen' | 'DontOpen';
+export enum OpenBehavior {
+  addToWorkspace = 'AddToWorkspace',
+  openInNewWindow = 'OpenInNewWindow',
+  openInCurrentWindow = 'OpenInCurrentWindow',
+  alreadyOpen = 'AlreadyOpen',
+  dontOpen = 'DontOpen',
+}

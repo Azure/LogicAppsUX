@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../localize';
+import { isString } from '@microsoft/utils-logic-apps';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { ICommandResult } from '@microsoft/vscode-extension';
 import * as cp from 'child_process';
@@ -95,3 +96,12 @@ export async function tryExecuteCommand(
   });
 }
 /* eslint-enable no-param-reassign */
+
+/**
+ * Ensures spaces and special characters (most notably $) are preserved
+ */
+export function wrapArgInQuotes(arg?: string | boolean | number): string {
+  const quotationMark: string = process.platform === 'win32' ? '"' : "'";
+  const argument = arg ?? '';
+  return isString(argument) ? quotationMark + argument + quotationMark : String(argument);
+}

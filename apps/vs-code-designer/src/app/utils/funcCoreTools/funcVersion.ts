@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { funcVersionSetting } from '../../../constants';
 import { ext } from '../../../extensionVariables';
+import { localize } from '../../../localize';
 import { getWorkspaceSettingFromAnyFolder } from '../vsCodeConfig/settings';
 import { executeCommand } from './cpUtils';
 import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
@@ -101,4 +102,12 @@ async function getLocalFuncCoreToolsVersion(): Promise<string | null> {
 
     return null;
   }
+}
+
+export function getMajorVersion(data: string): string {
+  const majorVersion: string | undefined = tryGetMajorVersion(data);
+  if (!majorVersion) {
+    throw new Error(localize('invalidVersion', 'Invalid version "{0}".', data));
+  }
+  return majorVersion;
 }

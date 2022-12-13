@@ -7,10 +7,11 @@ import { localize } from '../../../localize';
 import { tryGetLocalFuncVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getGlobalSetting, getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { FolderListStep } from './createProjectSteps/FolderListStep';
+import { NewProjectLanguageStep } from './createProjectSteps/NewProjectLanguageStep';
 import { isString } from '@microsoft/utils-logic-apps';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { latestGAVersion } from '@microsoft/vscode-extension';
+import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension';
 import type { ICreateFunctionOptions, IFunctionWizardContext, ProjectLanguage, ProjectVersion } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -56,7 +57,7 @@ export async function createNewProjectInternal(context: IActionContext, options:
   }
 
   if (options.suppressOpenFolder) {
-    wizardContext.openBehavior = 'DontOpen';
+    wizardContext.openBehavior = OpenBehavior.dontOpen;
   } else if (!wizardContext.openBehavior) {
     wizardContext.openBehavior = getWorkspaceSetting(projectOpenBehaviorSetting);
     // eslint-disable-next-line no-param-reassign
@@ -66,7 +67,8 @@ export async function createNewProjectInternal(context: IActionContext, options:
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
     title: localize('createNewProject', 'Create new project'),
     promptSteps: [
-      new FolderListStep() /*new NewProjectLanguageStep(options.templateId, options.functionSettings), new OpenBehaviorStep()*/,
+      new FolderListStep(),
+      new NewProjectLanguageStep(options.templateId, options.functionSettings) /*, new OpenBehaviorStep()*/,
     ],
     executeSteps: [
       /*new OpenFolderStep()*/
@@ -77,7 +79,6 @@ export async function createNewProjectInternal(context: IActionContext, options:
 
   await createArtifactsFolder(context as IFunctionWizardContext);
 
-  // don't wait
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
 }
 

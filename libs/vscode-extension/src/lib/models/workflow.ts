@@ -72,3 +72,20 @@ export enum WorkflowProjectType {
   Nuget = 'Nuget',
   Bundle = 'Bundle',
 }
+
+export enum MismatchBehavior {
+  /**
+   * Asks the user if they want to overwrite
+   */
+  Prompt,
+
+  /**
+   * Overwrites without prompting
+   */
+  Overwrite,
+
+  /**
+   * Returns without changing anything
+   */
+  DontChange,
+}

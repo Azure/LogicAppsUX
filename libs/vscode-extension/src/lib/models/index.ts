@@ -9,3 +9,5 @@ export * from './connection';
 export * from './project';
 export * from './host';
 export * from './cliFeed';
+export * from './templates';
+export * from './bundleFeed';

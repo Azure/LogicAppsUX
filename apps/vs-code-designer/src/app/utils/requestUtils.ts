@@ -5,11 +5,13 @@
 import { timeoutKey } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
+import { getWorkspaceSetting } from './vsCodeConfig/settings';
 import { RestError } from '@azure/ms-rest-js';
 import type { HttpOperationResponse, RequestPrepareOptions, ServiceClient } from '@azure/ms-rest-js';
 import type { HTTP_METHODS } from '@microsoft/utils-logic-apps';
-import { createGenericClient } from '@microsoft/vscode-azext-azureutils';
-import { parseError } from '@microsoft/vscode-azext-utils';
+import { createGenericClient, sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
+import type { AzExtRequestPrepareOptions } from '@microsoft/vscode-azext-azureutils';
+import { nonNullValue, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import type { IIdentityWizardContext } from '@microsoft/vscode-extension';
 
@@ -49,6 +51,29 @@ async function sendAndParseResponse(client: ServiceClient, options: RequestPrepa
     } else {
       return response;
     }
+  } catch (error) {
+    if (isTimeoutError(error)) {
+      throw new Error(
+        localize('timeoutFeed', 'Request timed out. Modify setting "{0}.{1}" if you want to extend the timeout.', ext.prefix, timeoutKey)
+      );
+    } else {
+      throw error;
+    }
+  }
+}
+
+/**
+ * Send a request using the extension's user-controlled timeout setting
+ */
+export async function sendRequestWithExtTimeout(
+  context: IActionContext,
+  options: AzExtRequestPrepareOptions
+): Promise<HttpOperationResponse> {
+  // Shouldn't be null because the setting has a default value
+  const timeout: number = nonNullValue(getWorkspaceSetting<number>(timeoutKey), timeoutKey) * 1000;
+
+  try {
+    return await sendRequestWithTimeout(context, options, timeout, undefined);
   } catch (error) {
     if (isTimeoutError(error)) {
       throw new Error(

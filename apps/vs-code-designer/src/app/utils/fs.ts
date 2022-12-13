@@ -2,10 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { localize } from '../../localize';
 import { isEmptyString } from '@microsoft/utils-logic-apps';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { pathRelativeFunc } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
+import type { MessageItem } from 'vscode';
 
 /**
  * Writes data to file in json format
@@ -38,4 +42,23 @@ export function isPathEqual(fsPath1: string, fsPath2: string, relativeFunc: path
 export function isSubpath(expectedParent: string, expectedChild: string, relativeFunc: pathRelativeFunc = path.relative): boolean {
   const relativePath: string = relativeFunc(expectedParent, expectedChild);
   return !isEmptyString(relativePath) && !relativePath.startsWith('..') && relativePath !== expectedChild;
+}
+
+export async function confirmOverwriteFile(context: IActionContext, fsPath: string): Promise<boolean> {
+  if (await fse.pathExists(fsPath)) {
+    const result: MessageItem | undefined = await context.ui.showWarningMessage(
+      localize('fileAlreadyExists', 'File "{0}" already exists. Overwrite?', fsPath),
+      { modal: true },
+      DialogResponses.yes,
+      DialogResponses.no,
+      DialogResponses.cancel
+    );
+    if (result === DialogResponses.yes) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return true;
+  }
 }
