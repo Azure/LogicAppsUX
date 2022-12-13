@@ -6,6 +6,7 @@ import { funcVersionSetting, projectLanguageSetting, projectOpenBehaviorSetting,
 import { localize } from '../../../localize';
 import { tryGetLocalFuncVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getGlobalSetting, getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
+import { OpenBehaviorStep } from './OpenBehaviorStep';
 import { OpenFolderStep } from './OpenFolderStep';
 import { FolderListStep } from './createProjectSteps/FolderListStep';
 import { NewProjectLanguageStep } from './createProjectSteps/NewProjectLanguageStep';
@@ -67,10 +68,7 @@ export async function createNewProjectInternal(context: IActionContext, options:
 
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
     title: localize('createNewProject', 'Create new project'),
-    promptSteps: [
-      new FolderListStep(),
-      new NewProjectLanguageStep(options.templateId, options.functionSettings) /*, new OpenBehaviorStep()*/,
-    ],
+    promptSteps: [new FolderListStep(), new NewProjectLanguageStep(options.templateId, options.functionSettings), new OpenBehaviorStep()],
     executeSteps: [new OpenFolderStep()],
   });
   await wizard.prompt();
