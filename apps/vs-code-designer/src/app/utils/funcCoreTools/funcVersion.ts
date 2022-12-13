@@ -111,3 +111,17 @@ export function getMajorVersion(data: string): string {
   }
   return majorVersion;
 }
+
+/* eslint-disable no-param-reassign */
+export function addLocalFuncTelemetry(context: IActionContext): void {
+  context.telemetry.properties.funcCliVersion = 'unknown';
+
+  getLocalFuncCoreToolsVersion()
+    .then((version: string) => {
+      context.telemetry.properties.funcCliVersion = version || 'none';
+    })
+    .catch(() => {
+      context.telemetry.properties.funcCliVersion = 'none';
+    });
+}
+/* eslint-enable no-param-reassign */

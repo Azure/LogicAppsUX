@@ -71,7 +71,7 @@ export const projectSubpathSetting = 'projectSubpath';
 export const projectTemplateKeySetting = 'projectTemplateKey';
 export const projectOpenBehaviorSetting = 'projectOpenBehavior';
 export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';
-export const defaultVersionRange = '[1.*, 2.0.0)'; // Need to be changed
+export const defaultVersionRange = '[1.*, 2.0.0)'; // Might need to be changed
 export const templateFilterSetting = 'templateFilter';
 export const hostStartCommand = 'host start';
 export const funcWatchProblemMatcher = '$func-watch';
@@ -83,3 +83,6 @@ export const tasksVersion = '2.0.0';
 export const launchVersion = '0.2.0';
 export const preDeployTaskSetting = 'preDeployTask';
 export const dotnetPublishTaskLabel = 'publish';
+
+// local.settings.json
+export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';

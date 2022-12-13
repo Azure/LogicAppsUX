@@ -41,7 +41,6 @@ export class FunctionListStep extends AzureWizardPromptStep<IFunctionWizardConte
       //promptSteps.push(new ScriptFunctionNameStep());
       //executeSteps.push(await CodelessFunctionCreateStep.createStep(context));
 
-      // Add settings to context that were programatically passed in
       for (const key of Object.keys(this.triggerSettings)) {
         // eslint-disable-next-line no-param-reassign
         context[key.toLowerCase()] = this.triggerSettings[key];

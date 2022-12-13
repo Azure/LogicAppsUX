@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { funcVersionSetting, projectLanguageSetting, projectOpenBehaviorSetting, projectTemplateKeySetting } from '../../../constants';
 import { localize } from '../../../localize';
-import { tryGetLocalFuncVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
+import { addLocalFuncTelemetry, tryGetLocalFuncVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getGlobalSetting, getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { OpenBehaviorStep } from './OpenBehaviorStep';
 import { OpenFolderStep } from './OpenFolderStep';
@@ -41,11 +41,9 @@ export async function createNewProjectFromCommand(
 }
 
 export async function createNewProjectInternal(context: IActionContext, options: ICreateFunctionOptions): Promise<void> {
-  //addLocalFuncTelemetry(context);
+  addLocalFuncTelemetry(context);
 
-  // tslint:disable-next-line: strict-boolean-expressions
   const language: ProjectLanguage | undefined = (options.language as ProjectLanguage) || getGlobalSetting(projectLanguageSetting);
-  // tslint:disable-next-line: strict-boolean-expressions
   const version: string = options.version || getGlobalSetting(funcVersionSetting) || (await tryGetLocalFuncVersion()) || latestGAVersion;
   const projectTemplateKey: string | undefined = getGlobalSetting(projectTemplateKeySetting);
   const wizardContext: Partial<IFunctionWizardContext> & IActionContext = Object.assign(context, options, {
