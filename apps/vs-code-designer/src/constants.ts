@@ -82,3 +82,4 @@ export const deploySubpathSetting = 'deploySubpath';
 export const tasksVersion = '2.0.0';
 export const launchVersion = '0.2.0';
 export const preDeployTaskSetting = 'preDeployTask';
+export const dotnetPublishTaskLabel = 'publish';

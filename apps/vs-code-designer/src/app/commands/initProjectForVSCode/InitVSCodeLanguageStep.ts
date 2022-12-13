@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../localize';
+import { DotnetInitVSCodeStep } from './DotnetInitVSCodeStep';
 import { WorkflowInitVSCodeStep } from './WorkflowInitVSCodeStep';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
@@ -53,7 +54,7 @@ export async function addInitVSCodeSteps(
       executeSteps.push(new WorkflowInitVSCodeStep());
       break;
     case WorkflowProjectType.Nuget:
-      executeSteps.push(/*new DotnetInitVSCodeStep()*/);
+      executeSteps.push(new DotnetInitVSCodeStep());
       break;
   }
 }
