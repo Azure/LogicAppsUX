@@ -16,6 +16,7 @@ export const parametersFileName = 'parameters.json';
 
 // Functions
 export const func = 'func';
+export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
 
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
@@ -41,7 +42,10 @@ export enum extensionCommand {
   loadMore = 'logicAppsExtension.loadMore',
   activate = 'logicAppsExtension.activate',
   selectSubscriptions = 'logicAppsExtension.selectSubscriptions',
+  viewContent = 'logicAppsExtension.viewContent',
   azureSelectSubscriptions = 'azure-account.selectSubscriptions',
+  openFile = 'logicAppsExtension.openFile',
+  azureFunctionsOpenFile = 'azureFunctions.openFile',
 }
 
 // Context

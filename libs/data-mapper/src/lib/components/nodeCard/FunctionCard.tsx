@@ -71,11 +71,13 @@ export interface FunctionCardProps extends CardProps {
   inputs: FunctionInput[];
   iconFileName?: string;
   functionBranding: FunctionGroupBranding;
+  dataTestId: string;
 }
 
 export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const reactFlowId = props.id;
-  const { displayName, functionName, maxNumberOfInputs, disabled, error, functionBranding, displayHandle, onClick } = props.data; // iconFileName
+  const { displayName, functionName, maxNumberOfInputs, disabled, error, functionBranding, displayHandle, onClick, dataTestId } =
+    props.data; // iconFileName
   const classes = useStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
@@ -99,6 +101,7 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
       className={mergeClasses(classes.container, 'nopan')}
       onMouseEnter={() => setIsCardHovered(true)}
       onMouseLeave={() => setIsCardHovered(false)}
+      data-testid={dataTestId}
     >
       <HandleWrapper
         type="target"

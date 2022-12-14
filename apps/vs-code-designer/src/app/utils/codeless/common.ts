@@ -14,15 +14,15 @@ import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/Remo
 import { getLocalSettingsJson } from '../localSettings';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
+  IWorkflowFileContent,
   Parameter,
   CodelessApp,
+  WorkflowParameter,
   Artifacts,
   AzureConnectorDetails,
-  WorkflowParameter,
-  IWorkflowFileContent,
-} from '@microsoft/utils-logic-apps';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+} from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';

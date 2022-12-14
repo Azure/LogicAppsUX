@@ -42,6 +42,11 @@ export const CodeView = ({ dataMapDefinition, isCodeViewOpen, setIsCodeViewOpen,
     description: 'Code view title',
   });
 
+  const closeCodeViewLoc = intl.formatMessage({
+    defaultMessage: 'Close code view',
+    description: 'Close code view button',
+  });
+
   return (
     <div className={styles.containerStyle} style={{ display: isCodeViewOpen ? 'flex' : 'none' }}>
       <Stack horizontal verticalAlign="center" style={{ justifyContent: 'space-between', marginBottom: '12px', marginTop: '4px' }}>
@@ -52,7 +57,7 @@ export const CodeView = ({ dataMapDefinition, isCodeViewOpen, setIsCodeViewOpen,
           </Text>
         </Stack>
 
-        <Button icon={<Dismiss20Regular />} appearance="subtle" onClick={() => setIsCodeViewOpen(false)} />
+        <Button icon={<Dismiss20Regular />} appearance="subtle" onClick={() => setIsCodeViewOpen(false)} aria-label={closeCodeViewLoc} />
       </Stack>
 
       <div style={{ display: 'flex', flexDirection: 'column', flex: '1 1 auto' }}>

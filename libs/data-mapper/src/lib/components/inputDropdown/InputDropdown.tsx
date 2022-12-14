@@ -1,4 +1,4 @@
-import { showNotification, updateConnectionInput } from '../../core/state/DataMapSlice';
+import { showNotification, setConnectionInput } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeDataType, SchemaNodeExtended, SchemaNodeProperty } from '../../models';
 import { NormalizedDataType } from '../../models';
@@ -63,11 +63,11 @@ export interface InputDropdownProps {
   inputStyles?: IRawStyle & React.CSSProperties;
   label?: string;
   placeholder?: string;
-  isUnboundedInput?: boolean;
+  inputAllowsCustomValues?: boolean;
 }
 
 export const InputDropdown = (props: InputDropdownProps) => {
-  const { currentNode, inputValue, inputIndex, inputStyles, label, placeholder, isUnboundedInput } = props;
+  const { currentNode, inputValue, inputIndex, inputStyles, label, placeholder, inputAllowsCustomValues = true } = props;
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useStyles();
@@ -213,7 +213,14 @@ export const InputDropdown = (props: InputDropdownProps) => {
     }
 
     const targetNodeReactFlowKey = selectedItemKey;
-    dispatch(updateConnectionInput({ targetNode: currentNode, targetNodeReactFlowKey, inputIndex, value: newValue, isUnboundedInput }));
+    dispatch(
+      setConnectionInput({
+        targetNode: currentNode,
+        targetNodeReactFlowKey,
+        inputIndex,
+        value: newValue,
+      })
+    );
   };
 
   useEffect(() => {
@@ -361,32 +368,33 @@ export const InputDropdown = (props: InputDropdownProps) => {
     };
 
     if (isFunctionData(currentNode)) {
-      currentNode.inputs[isUnboundedInput ? 0 : inputIndex].allowedTypes.forEach(handleAnyOrSpecificType);
+      currentNode.inputs[inputIndex].allowedTypes.forEach(handleAnyOrSpecificType);
     } else {
       handleAnyOrSpecificType(currentNode.normalizedDataType);
     }
 
     return newInputOptions;
-  }, [isUnboundedInput, inputIndex, typeSortedInputOptions, currentNode]);
+  }, [inputIndex, typeSortedInputOptions, currentNode]);
 
   const modifiedDropdownOptions = useMemo(() => {
     const newModifiedOptions = typeMatchedInputOptions ? [...typeMatchedInputOptions] : [];
 
-    // Divider
-    newModifiedOptions.push({
-      key: 'divider',
-      text: '',
-      itemType: SelectableOptionMenuItemType.Divider,
-    });
+    // Custom value option (if allowed)
+    if (inputAllowsCustomValues) {
+      newModifiedOptions.push({
+        key: 'divider',
+        text: '',
+        itemType: SelectableOptionMenuItemType.Divider,
+      });
 
-    // Custom value option
-    newModifiedOptions.push({
-      key: customValueOptionKey,
-      text: customValueOptionLoc,
-    });
+      newModifiedOptions.push({
+        key: customValueOptionKey,
+        text: customValueOptionLoc,
+      });
+    }
 
     return newModifiedOptions;
-  }, [typeMatchedInputOptions, customValueOptionLoc]);
+  }, [typeMatchedInputOptions, customValueOptionLoc, inputAllowsCustomValues]);
 
   return (
     <>
@@ -406,6 +414,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
           }}
           onRenderTitle={onRenderTitle}
           onRenderOption={onRenderOption}
+          data-testid={`inputDropdown-dropdown-${inputIndex}`}
         />
       ) : (
         <div style={{ position: 'relative', ...inputStyles }}>
@@ -422,6 +431,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
                 label: { root: { ...typographyStyles.body1, color: tokens.colorNeutralForeground1 } },
               },
             }}
+            data-testid={`inputDropdown-textField-${inputIndex}`}
           />
           <Tooltip relationship="label" content={clearCustomValueLoc}>
             <Button

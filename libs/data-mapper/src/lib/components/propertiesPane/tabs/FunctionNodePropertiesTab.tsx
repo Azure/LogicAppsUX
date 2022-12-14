@@ -1,5 +1,5 @@
 import { customTokens } from '../../../core';
-import { updateConnectionInput } from '../../../core/state/DataMapSlice';
+import { setConnectionInput } from '../../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
 import type { Connection, InputConnection } from '../../../models/Connection';
 import type { FunctionData } from '../../../models/Function';
@@ -100,6 +100,11 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
     description: `Function doesn't have or require inputs`,
   });
 
+  const removeInputLoc = intl.formatMessage({
+    defaultMessage: 'Remove input',
+    description: 'Remove input',
+  });
+
   const updateInput = (inputIndex: number, newValue: InputConnection | null) => {
     if (!selectedItemKey) {
       console.error('PropPane - Function: Attempted to update input with nothing selected on canvas');
@@ -108,7 +113,12 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
 
     const targetNodeReactFlowKey = selectedItemKey;
     dispatch(
-      updateConnectionInput({ targetNode: functionData, targetNodeReactFlowKey, inputIndex, value: newValue, isUnboundedInput: true })
+      setConnectionInput({
+        targetNode: functionData,
+        targetNodeReactFlowKey,
+        inputIndex,
+        value: newValue,
+      })
     );
   };
 
@@ -246,6 +256,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                       }
                       inputIndex={idx}
                       inputStyles={{ width: '100%' }}
+                      inputAllowsCustomValues={input.allowCustomInput}
                     />
                   </Tooltip>
                 </div>
@@ -267,7 +278,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                         inputValue={unboundedInputValue}
                         inputIndex={idx}
                         inputStyles={{ width: '100%' }}
-                        isUnboundedInput
+                        inputAllowsCustomValues={functionData.inputs[0].allowCustomInput}
                       />
                     </Tooltip>
 
@@ -276,6 +287,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                       icon={<Delete20Regular />}
                       onClick={() => removeUnboundedInput(idx)}
                       style={{ marginLeft: '16px' }}
+                      aria-label={removeInputLoc}
                     />
                   </Stack>
                 ))}
@@ -307,6 +319,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                             inputValue={inputValueArray.length > 0 ? inputValueArray[0] : undefined}
                             inputIndex={idx + 1}
                             inputStyles={{ width: '100%' }}
+                            inputAllowsCustomValues={functionData.inputs[idx + 1].allowCustomInput}
                           />
                         </Tooltip>
                       </div>

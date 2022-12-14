@@ -13,15 +13,7 @@ import { ConfigurationsTreeItem } from '../configurationsTree/ConfigurationsTree
 import { RemoteWorkflowsTreeItem } from '../remoteWorkflowsTree/RemoteWorkflowsTreeItem';
 import { ArtifactsTreeItem } from './artifactsTree/ArtifactsTreeItem';
 import type { SiteConfig, SiteSourceControl, StringDictionary } from '@azure/arm-appservice';
-import type {
-  ApplicationSettings,
-  FuncHostRequest,
-  FuncVersion,
-  ILocalSettingsJson,
-  IParsedHostJson,
-  IProjectTreeItem,
-} from '@microsoft/utils-logic-apps';
-import { isString, latestGAVersion, ProjectSource } from '@microsoft/utils-logic-apps';
+import { isString } from '@microsoft/utils-logic-apps';
 import {
   AppSettingsTreeItem,
   DeleteLastServicePlanStep,
@@ -36,6 +28,15 @@ import {
 import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { AzExtParentTreeItem, AzureWizard, DeleteConfirmationStep, nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
+import type {
+  ApplicationSettings,
+  ILocalSettingsJson,
+  FuncHostRequest,
+  FuncVersion,
+  IParsedHostJson,
+  IProjectTreeItem,
+} from '@microsoft/vscode-extension';
+import { latestGAVersion, ProjectSource } from '@microsoft/vscode-extension';
 import * as path from 'path';
 
 export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IProjectTreeItem {

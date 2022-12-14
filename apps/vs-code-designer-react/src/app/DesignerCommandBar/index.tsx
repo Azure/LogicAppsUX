@@ -2,7 +2,7 @@ import { VSCodeContext } from '../../webviewCommunication';
 import type { ICommandBarItemProps } from '@fluentui/react';
 import { CommandBar } from '@fluentui/react';
 import { serializeWorkflow as serializeBJSWorkflow, store as DesignerStore } from '@microsoft/logic-apps-designer';
-import { ExtensionCommand } from '@microsoft/utils-logic-apps';
+import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { useContext } from 'react';
 import { useIntl } from 'react-intl';
 

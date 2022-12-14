@@ -5,6 +5,7 @@ import { Button, mergeClasses } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import { bundleIcon, ChevronDown12Regular, ChevronDown12Filled, ChevronRight12Regular, ChevronRight12Filled } from '@fluentui/react-icons';
 import React, { useMemo } from 'react';
+import { useIntl } from 'react-intl';
 
 const defaultChildPadding = 16;
 
@@ -25,6 +26,7 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
     shouldShowIndicator,
     parentItemClickShouldExpand,
   } = props;
+  const intl = useIntl();
   const styles = useTreeStyles();
   const [isExpanded, { toggle: toggleExpanded }] = useBoolean(level === 0);
   const [isHovered, { setFalse: setNotHovered, setTrue: setIsHovered }] = useBoolean(false);
@@ -32,6 +34,16 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
 
   const hasChildren = useMemo<boolean>(() => !!(node.children && node.children.length > 0), [node]);
   const isNodeExpanded = useMemo<boolean>(() => (node.isExpanded === undefined ? isExpanded : node.isExpanded), [node, isExpanded]);
+
+  const expandTreeNodeLoc = intl.formatMessage({
+    defaultMessage: 'Expand tree node',
+    description: 'Expand tree node',
+  });
+
+  const collapseTreeNodeLoc = intl.formatMessage({
+    defaultMessage: 'Collapse tree node',
+    description: 'Collapse tree node',
+  });
 
   const handleItemClick = () => {
     if (hasChildren && parentItemClickShouldExpand) {
@@ -74,9 +86,9 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
           size="small"
           icon={
             isNodeExpanded ? (
-              <BundledChevronDownIcon filled={isChevronHovered ? true : undefined} />
+              <BundledChevronDownIcon filled={isChevronHovered ? true : undefined} aria-label={collapseTreeNodeLoc} />
             ) : (
-              <BundledChevronRightIcon filled={isChevronHovered ? true : undefined} />
+              <BundledChevronRightIcon filled={isChevronHovered ? true : undefined} aria-label={expandTreeNodeLoc} />
             )
           }
           onClick={handleChevronClick}
