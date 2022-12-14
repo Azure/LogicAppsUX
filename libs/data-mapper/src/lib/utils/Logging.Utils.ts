@@ -11,6 +11,7 @@ export class LogService {
     if (LogService._logToAppInsights) {
       LogService._trackEvent(errorId, data);
     }
+
     if (LogService._logToConsole) {
       console.error(`[${category}] - ${LogService._getDataString(data)}`);
     }
@@ -26,6 +27,7 @@ export class LogService {
     if (LogService._logToAppInsights) {
       LogService._trackEvent(warningId, data);
     }
+
     if (LogService._logToConsole) {
       console.warn(`[${category}] - ${LogService._getDataString(data)}`);
     }
@@ -41,6 +43,7 @@ export class LogService {
     if (LogService._logToAppInsights) {
       LogService._trackEvent(logId, data);
     }
+
     if (LogService._logToConsole) {
       console.log(`%c[${category}] - ${LogService._getDataString(data)}`, 'color: #ff8c00');
     }
@@ -50,6 +53,7 @@ export class LogService {
     if (LogService._logToAppInsights) {
       AppInsights.startTrackPage(pageName);
     }
+
     if (LogService._logToConsole) {
       console.log(`${LogService._getTime()} [Start Track Page] - ${pageName}`);
     }
@@ -69,6 +73,7 @@ export class LogService {
     if (LogService._logToAppInsights) {
       AppInsights.startTrackEvent(eventName);
     }
+
     if (LogService._logToConsole) {
       console.log(`${LogService._getTime()} [Start Track Event] - ${eventName}`);
     }
@@ -79,6 +84,7 @@ export class LogService {
     if (LogService._logToAppInsights) {
       AppInsights.stopTrackEvent(eventName, data);
     }
+
     if (LogService._logToConsole) {
       console.log(`${LogService._getTime()} [Stop Track Event] - ${eventName}`);
     }
