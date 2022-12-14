@@ -3,7 +3,7 @@ import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import { BrowseGrid } from '@microsoft/designer-ui';
 import type { Connector } from '@microsoft/utils-logic-apps';
-import { isBuiltInConnector } from '@microsoft/utils-logic-apps';
+import { isCustomConnector, isBuiltInConnector } from '@microsoft/utils-logic-apps';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -24,15 +24,17 @@ export const BrowseView = ({ filters }: { filters: Record<string, string> }) => 
       if (filters['runtime']) {
         if (filters['runtime'] === 'inapp') {
           ret = isBuiltInConnector(connector.id);
-        } else {
-          ret = !isBuiltInConnector(connector.id);
+        } else if (filters['runtime'] === 'custom') {
+          ret = isCustomConnector(connector.id);
+        } else if (filters['runtime'] === 'shared') {
+          ret = !isBuiltInConnector(connector.id) && !isCustomConnector(connector.id);
         }
       }
       if (filters['actionType']) {
         let hasAMatchingActionType = false;
         if (filters['actionType'].toLowerCase() === 'triggers') {
           hasAMatchingActionType = triggerCapabilities?.[connector.id.toLowerCase()]?.trigger ?? false;
-        } else {
+        } else if (filters['actionType'].toLowerCase() === 'actions') {
           hasAMatchingActionType = triggerCapabilities?.[connector.id.toLowerCase()]?.action ?? false;
         }
         ret = ret && hasAMatchingActionType;
