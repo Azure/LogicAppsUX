@@ -31,15 +31,15 @@ export class LogService {
     }
   }
 
-  public static trackEvent(category: LogCategory, id: string, data: any) {
+  public static log(category: LogCategory, id: string, data: any) {
     LogService._validateCategory(category);
     LogService._validateId(id);
     LogService._validateData(data);
 
-    const eventId = `/event/${category}/${id}`;
+    const logId = `/log/${category}/${id}`;
 
     if (LogService._logToAppInsights) {
-      LogService._trackEvent(eventId, data);
+      LogService._trackEvent(logId, data);
     }
     if (LogService._logToConsole) {
       console.log(`%c[${category}] - ${LogService._getDataString(data)}`, 'color: #ff8c00');
@@ -149,4 +149,5 @@ export enum LogCategory {
   FunctionUtils = 'FunctionUtils',
   IconUtils = 'IconUtils',
   ReactFlowUtils = 'ReactFlowUtils',
+  ExtensionCommands = 'ExtensionCommands',
 }
