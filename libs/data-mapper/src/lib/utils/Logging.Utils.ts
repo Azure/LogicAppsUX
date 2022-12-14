@@ -1,4 +1,4 @@
-import AppInsights from '../core/services/appInsights/AppInsights';
+import appInsights from '../core/services/appInsights/AppInsights';
 
 export class LogService {
   public static error(category: LogCategory, id: string, data: any) {
@@ -51,7 +51,7 @@ export class LogService {
 
   public static startTrackPage(pageName: string) {
     if (LogService._logToAppInsights) {
-      AppInsights.startTrackPage(pageName);
+      appInsights.startTrackPage(pageName);
     }
 
     if (LogService._logToConsole) {
@@ -61,7 +61,7 @@ export class LogService {
 
   public static stopTrackPage(pageName: string, data: any) {
     if (LogService._logToAppInsights) {
-      AppInsights.stopTrackPage(pageName, window.location.href, data);
+      appInsights.stopTrackPage(pageName, window.location.href, data);
     }
 
     if (LogService._logToConsole) {
@@ -71,7 +71,7 @@ export class LogService {
 
   public static startTrackEvent(eventName: string) {
     if (LogService._logToAppInsights) {
-      AppInsights.startTrackEvent(eventName);
+      appInsights.startTrackEvent(eventName);
     }
 
     if (LogService._logToConsole) {
@@ -82,7 +82,7 @@ export class LogService {
   public static stopTrackEvent(eventName: string, data: any) {
     LogService._validateData(data);
     if (LogService._logToAppInsights) {
-      AppInsights.stopTrackEvent(eventName, data);
+      appInsights.stopTrackEvent(eventName, data);
     }
 
     if (LogService._logToConsole) {
@@ -99,7 +99,7 @@ export class LogService {
     }
   }
 
-  private static _logToAppInsights = process.env.NODE_ENV !== 'development' && !!AppInsights;
+  private static _logToAppInsights = process.env.NODE_ENV !== 'development' && !!appInsights;
   // TODO Allow manual turning on of console logging by providing a variable
   private static _logToConsole = process.env.NODE_ENV !== 'production';
 
@@ -132,7 +132,7 @@ export class LogService {
 
   private static _trackEvent(name: string, data: any) {
     const properties = LogService._getTrackingData(data);
-    AppInsights.trackEvent({ name }, properties);
+    appInsights.trackEvent({ name }, properties);
   }
 
   private static _getTrackingData(data: any) {
