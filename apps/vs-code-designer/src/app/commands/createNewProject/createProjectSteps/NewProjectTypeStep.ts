@@ -11,7 +11,7 @@ import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-util
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
 import { ProjectLanguage, WorkflowProjectType } from '@microsoft/vscode-extension';
 
-export class NewProjectLanguageStep extends AzureWizardPromptStep<IProjectWizardContext> {
+export class NewProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
   private readonly templateId?: string;
   private readonly functionSettings?: { [key: string]: string | undefined };

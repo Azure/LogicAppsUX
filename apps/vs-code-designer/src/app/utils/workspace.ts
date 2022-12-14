@@ -39,6 +39,14 @@ export const getWorkflowNode = (node: vscode.Uri | RemoteWorkflowTreeItem | unde
   return node;
 };
 
+/**
+ * Opens a dialog and gets item from workspace.
+ * @param {IActionContext} context - Command context.
+ * @param {string} placeHolder - Placeholder for input.
+ * @param {vscode.OpenDialogOptions} options - Options configuration for the dialog.
+ * @param {Function} getSubPath - Function to get subpath inside workspace folder.
+ * @returns {Promise<string>} Workspace folder path.
+ */
 export async function selectWorkspaceItem(
   context: IActionContext,
   placeHolder: string,
@@ -66,6 +74,13 @@ export async function selectWorkspaceItem(
   return folder && folder.data ? folder.data : (await context.ui.showOpenDialog(options))[0].fsPath;
 }
 
+/**
+ * Gets workspace folder path from dialog.
+ * @param {IActionContext} context - Command context.
+ * @param {string} placeHolder - Placeholder for input.
+ * @param {Function} getSubPath - Function to get subpath inside workspace folder.
+ * @returns {Promise<string>} Workspace folder path.
+ */
 export async function selectWorkspaceFolder(
   context: IActionContext,
   placeHolder: string,

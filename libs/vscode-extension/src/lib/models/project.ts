@@ -45,20 +45,17 @@ export interface IProjectTreeItem {
 
 export interface IProjectWizardContext extends IActionContext {
   projectPath: string;
+  version: FuncVersion;
   workspacePath: string;
   workspaceFolder: WorkspaceFolder | undefined;
-
+  projectTemplateKey: string | undefined;
   language?: ProjectLanguage;
   languageFilter?: RegExp;
-  version: FuncVersion;
   workerRuntime?: IWorkerRuntime;
   openBehavior?: OpenBehavior;
   workflowProjectType?: WorkflowProjectType;
-  projectTemplateKey: string | undefined;
-
   generateFromOpenAPI?: boolean;
   openApiSpecificationFile?: Uri[];
-
   targetFramework?: string | string[];
 }
 
