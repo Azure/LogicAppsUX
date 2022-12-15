@@ -15,6 +15,7 @@ import {
   isFunctionData,
 } from '../../../utils/Function.Utils';
 import { getIconForFunction, iconForNormalizedDataType } from '../../../utils/Icon.Utils';
+import { LogCategory, LogService } from '../../../utils/Logging.Utils';
 import { isSchemaNodeExtended } from '../../../utils/Schema.Utils';
 import { InputDropdown } from '../../inputDropdown/InputDropdown';
 import { Stack } from '@fluentui/react';
@@ -107,7 +108,10 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
 
   const updateInput = (inputIndex: number, newValue: InputConnection | null) => {
     if (!selectedItemKey) {
-      console.error('PropPane - Function: Attempted to update input with nothing selected on canvas');
+      LogService.error(LogCategory.FunctionNodePropertiesTab, 'updateInput', {
+        message: 'Attempted to update input with nothing selected on canvas',
+      });
+
       return;
     }
 
@@ -149,8 +153,11 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
       if (connection?.inputs) {
         Object.values(connection.inputs).forEach((inputValueArray, idx) => {
           if (!(idx in newInputValueArrays)) {
-            console.error('Connection inputs had more input-value-arrays than its Function had input slots - connection.inputs ->');
-            console.error(Object.values(connection.inputs));
+            LogService.error(LogCategory.FunctionNodePropertiesTab, 'useEffect', {
+              message: 'Connection inputs had more input-value-arrays than its Function had input slots',
+              inputs: Object.values(connection.inputs),
+            });
+
             return;
           }
 
@@ -324,11 +331,13 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                         </Tooltip>
                       </div>
                     ) : (
-                      console.error(
-                        `inputValueArrays had value-array for an unspecified input on Function ${functionData.functionName} at idx ${
-                          idx + 1
-                        }: ${inputValueArray.map((inputVal) => (inputVal === undefined ? 'undefined' : `'${inputVal}'`)).toString()}`
-                      )
+                      LogService.error(LogCategory.FunctionNodePropertiesTab, 'render', {
+                        message: `inputValueArrays had value-array for an unspecified input on Function ${
+                          functionData.functionName
+                        } at idx ${idx + 1}: ${inputValueArray
+                          .map((inputVal) => (inputVal === undefined ? 'undefined' : `'${inputVal}'`))
+                          .toString()}`,
+                      })
                     )
                 )}
             </>

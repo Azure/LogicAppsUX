@@ -30,6 +30,7 @@ import {
 } from '../images/DataType24Icons';
 import { FunctionCategory } from '../models/Function';
 import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperty } from '../models/Schema';
+import { LogCategory, LogService } from './Logging.Utils';
 import { Image } from '@fluentui/react-components';
 import {
   AddSubtractCircle16Filled,
@@ -74,7 +75,10 @@ export const getSchemaNodeDataTypeFromNormalizedDataType = (normalizedDataType: 
     case NormalizedDataType.String:
       return SchemaNodeDataType.String;
     default:
-      console.error(`Icon.Utils Error: No corresponding SchemaNodeDataType found for NormalizedDataType ${normalizedDataType}`);
+      LogService.error(LogCategory.IconUtils, 'getSchemaNodeDataTypeFromNormalizedDataType', {
+        message: `No corresponding SchemaNodeDataType found for NormalizedDataType ${normalizedDataType}`,
+      });
+
       return SchemaNodeDataType.AnyAtomicType;
   }
 };
@@ -183,7 +187,9 @@ export const iconForSchemaNodeDataType = (
       break;
     }
     default: {
-      console.error(`Icon.Utils Error: No icon found for type ${nodeType}`);
+      LogService.error(LogCategory.IconUtils, 'iconForSchemaNodeDataType', {
+        message: `Icon.Utils Error: No icon found for type ${nodeType}`,
+      });
 
       // Null
       icons = [CircleOff16Regular, CircleOff16Filled];
@@ -215,7 +221,10 @@ export const iconForFunctionCategory = (functionCategory: FunctionCategory) => {
       return Wrench20Regular;
     }
     default: {
-      console.error(`Invalid category type: ${functionCategory}`);
+      LogService.error(LogCategory.IconUtils, 'iconForFunctionCategory', {
+        message: `Invalid category type: ${functionCategory}`,
+      });
+
       return Wrench20Regular;
     }
   }

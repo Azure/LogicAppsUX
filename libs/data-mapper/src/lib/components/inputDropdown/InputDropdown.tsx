@@ -15,6 +15,7 @@ import {
   isFunctionData,
 } from '../../utils/Function.Utils';
 import { iconForNormalizedDataType, iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
+import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { addSourceReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import { errorNotificationAutoHideDuration, NotificationTypes } from '../notification/Notification';
@@ -97,7 +98,10 @@ export const InputDropdown = (props: InputDropdownProps) => {
     }
 
     if (items.length > 1) {
-      console.error('InputDropdown attempted to render more than one selected item');
+      LogService.error(LogCategory.InputDropDown, 'onRenderTitle', {
+        message: 'Attempted to render more than one selected item',
+      });
+
       return null;
     }
 
@@ -157,7 +161,10 @@ export const InputDropdown = (props: InputDropdownProps) => {
 
   const validateAndCreateConnection = (option: IDropdownOption<SharedOptionData>) => {
     if (!option.data) {
-      console.error('InputDropdown called to create connection without necessary data');
+      LogService.error(LogCategory.InputDropDown, 'validateAndCreateConnection', {
+        message: 'Called to create connection without necessary data',
+      });
+
       return;
     }
 
@@ -208,7 +215,10 @@ export const InputDropdown = (props: InputDropdownProps) => {
 
   const updateInput = (newValue: InputConnection) => {
     if (!selectedItemKey) {
-      console.error('PropPane - Function: Attempted to update input with nothing selected on canvas');
+      LogService.error(LogCategory.InputDropDown, 'updateInput', {
+        message: 'Attempted to update input with nothing selected on canvas',
+      });
+
       return;
     }
 

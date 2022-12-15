@@ -1,10 +1,11 @@
 import type { TestMapResponse } from '../../core';
 import { testDataMap } from '../../core/queries/datamap';
 import type { RootState } from '../../core/state/Store';
+import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { ChoiceGroup, DefaultButton, Panel, PanelType, Pivot, PivotItem, PrimaryButton, Text } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
-import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
 import type { MonacoProps } from '@microsoft/designer-ui';
+import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -128,8 +129,11 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
         setTestMapResponse(response);
       })
       .catch((error: Error) => {
+        LogService.error(LogCategory.TestMapPanel, 'testDataMap', {
+          message: error.message,
+        });
+
         setTestMapResponse(undefined);
-        console.error(error.message);
       });
   };
 

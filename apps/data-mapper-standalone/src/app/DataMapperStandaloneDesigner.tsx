@@ -27,6 +27,7 @@ export const DataMapperStandaloneDesigner = () => {
   const targetSchema = useSelector((state: RootState) => state.schemaDataLoader.targetSchema);
 
   const saveStateCall = (dataMapDefinition: string, dataMapXslt: string) => {
+    // We don't need to persist this to telemetry
     console.log('Map Definition\n===============');
     console.log(dataMapDefinition);
     console.log('\nXSLT\n===============');
