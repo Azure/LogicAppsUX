@@ -145,11 +145,12 @@ export const splitKeyIntoChildren = (sourceKey: string): string[] => {
 
 export const getSourceValueFromLoop = (sourceKey: string, targetKey: string): string => {
   let constructedSourceKey = '';
-  // TODO: Confirm if we need to match the '/' after the $for's closing parenthesis
-  const matchArr = targetKey.match(/(?:\$for\()[^)]+(?:\)\/)/g);
+  const matchArr = targetKey.match(/\$for\(((?!\)).)+\)\//g);
   let match = matchArr?.[matchArr.length - 1];
-  // TODO: Confirm if we still need to do this, and if we can just handle it in the regex if so
-  match = match?.replace(')', '');
+  if (match) {
+    match = match.replace('$for(', '').replace(')', '');
+  }
+
   const endOfLastFunctionIndex = sourceKey.lastIndexOf('(');
   if (endOfLastFunctionIndex > 0) {
     constructedSourceKey =
