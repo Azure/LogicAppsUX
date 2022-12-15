@@ -124,6 +124,37 @@
             "type": "boolean",
             "default": true,
             "description": "Show or hide the Azure Functions Explorer"
+          },
+          "logicAppsExtension.projectRuntime": {
+            "scope": "resource",
+            "type": "string",
+            "enum": [
+              "~4",
+              "~3"
+            ],
+            "description": "The default version of the Azure Functions runtime to use when performing operations like \"Create New Logic App\".",
+            "enumDescriptions": [
+              "Azure Functions v4",
+              "Azure Functions v3 (.NET Core)"
+            ]
+          },
+          "logicAppsExtension.projectLanguage": {
+            "scope": "resource",
+            "type": "string",
+            "enum": [
+              "C#",
+              "JavaScript"
+            ],
+            "readOnly": true,
+            "description": "The default language to use when performing operations like \"Create New Workflow\".",
+            "enumDescriptions": [
+              ""
+            ]
+          },
+          "logicAppsExtension.deploySubpath": {
+            "scope": "resource",
+            "type": "string",
+            "description": "The default subpath of a workspace folder to use when deploying. If set, you will not be prompted for the folder path when deploying."
           }
         }
       }
