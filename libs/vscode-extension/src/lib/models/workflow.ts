@@ -73,23 +73,6 @@ export enum WorkflowProjectType {
   Bundle = 'Bundle',
 }
 
-export enum MismatchBehavior {
-  /**
-   * Asks the user if they want to overwrite
-   */
-  Prompt,
-
-  /**
-   * Overwrites without prompting
-   */
-  Overwrite,
-
-  /**
-   * Returns without changing anything
-   */
-  DontChange,
-}
-
 export interface ISettingToAdd {
   key: string;
   value: string | boolean | Record<string, any>;

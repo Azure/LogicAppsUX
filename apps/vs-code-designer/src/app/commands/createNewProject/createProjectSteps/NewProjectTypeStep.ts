@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import { FunctionListStep } from '../../createCodeless/createCodelessSteps/FunctionListStep';
 import { addInitVSCodeSteps } from '../../initProjectForVSCode/InitVSCodeLanguageStep';
-import { DotnetProjectCreateStep } from './DotnetProjectCreateStep';
 import { WorkflowProjectCreateStep } from './WorkflowProjectCreateStep';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
@@ -42,9 +41,6 @@ export class NewProjectTypeStep extends AzureWizardPromptStep<IProjectWizardCont
     switch (projectType) {
       case WorkflowProjectType.Bundle:
         executeSteps.push(new WorkflowProjectCreateStep());
-        break;
-      case WorkflowProjectType.Nuget:
-        executeSteps.push(await DotnetProjectCreateStep.createStep(context));
         break;
     }
 

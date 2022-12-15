@@ -69,6 +69,7 @@ export async function createNewProjectInternal(context: IActionContext, options:
     promptSteps: [new FolderListStep(), new NewProjectTypeStep(options.templateId, options.functionSettings), new OpenBehaviorStep()],
     executeSteps: [new OpenFolderStep()],
   });
+
   await wizard.prompt();
   await wizard.execute();
 
