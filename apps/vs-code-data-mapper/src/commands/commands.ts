@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import DataMapperExt from '../DataMapperExt';
 import {
   dataMapDefinitionsPath,
@@ -6,29 +7,32 @@ import {
   supportedDataMapDefinitionFileExts,
   supportedSchemaFileExts,
 } from '../extensionConfig';
-import { callWithTelemetryAndErrorHandling, registerCommand } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { promises as fs, existsSync as fileExistsSync } from 'fs';
+import { callWithTelemetryAndErrorHandling, registerCommand } from '@microsoft/vscode-azext-utils';
+import { existsSync as fileExistsSync, promises as fs } from 'fs';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
-import { window, Uri } from 'vscode';
+import { Uri, window } from 'vscode';
 
 export const registerCommands = () => {
-  registerCommand('azureDataMapper.createNewDataMap', () => createNewDataMapCmd());
-  registerCommand('azureDataMapper.loadDataMapFile', (_context: IActionContext, uri: Uri) => loadDataMapFileCmd(uri));
+  registerCommand('azureDataMapper.createNewDataMap', (context: IActionContext) => createNewDataMapCmd(context));
+  registerCommand('azureDataMapper.loadDataMapFile', (context: IActionContext, uri: Uri) => loadDataMapFileCmd(context, uri));
 };
 
-const createNewDataMapCmd = () => {
-  window.showInputBox({ prompt: 'Data Map name: ' }).then(async (newDatamapName) => {
-    if (!newDatamapName) {
+const createNewDataMapCmd = (context: IActionContext) => {
+  window.showInputBox({ prompt: 'Data Map name: ' }).then(async (newDataMapName) => {
+    if (!newDataMapName) {
+      context.telemetry.properties.result = 'Canceled';
       return;
     }
 
-    DataMapperExt.openDataMapperPanel(newDatamapName);
+    context.telemetry.properties.result = 'Succeeded';
+
+    DataMapperExt.openDataMapperPanel(newDataMapName);
   });
 };
 
-const loadDataMapFileCmd = async (uri: Uri) => {
+const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
   let mapDefinitionPath: string | undefined = uri?.fsPath;
   let draftFileIsFoundAndShouldBeUsed = false;
 
@@ -46,6 +50,8 @@ const loadDataMapFileCmd = async (uri: Uri) => {
     if (fileUris && fileUris.length > 0) {
       mapDefinitionPath = fileUris[0].fsPath;
     } else {
+      context.telemetry.properties.result = 'Canceled';
+      context.telemetry.properties.wasUsingFilePicker = 'true';
       return;
     }
   }
@@ -74,6 +80,7 @@ const loadDataMapFileCmd = async (uri: Uri) => {
   };
 
   if (!mapDefinition.$sourceSchema || !mapDefinition.$targetSchema) {
+    context.telemetry.properties.eventDescription = 'Attempted to load invalid map, missing schema definitions';
     DataMapperExt.showError('Invalid data map definition: $sourceSchema and $targetSchema must be defined.');
     return;
   }
@@ -105,11 +112,16 @@ const loadDataMapFileCmd = async (uri: Uri) => {
           if (fileUris && fileUris.length > 0) {
             // Copy the schema file they selected to the Schemas folder (can safely continue map definition loading)
             await fs.copyFile(fileUris[0].fsPath, schemaPath);
+            context.telemetry.properties.result = 'Succeeded';
+
             return true;
           }
         }
 
         // If user doesn't select a file, or doesn't click the above action, just return (cancel loading the MapDef)
+        context.telemetry.properties.result = 'Canceled';
+        context.telemetry.properties.wasResolvingMissingSchemaFile = 'true';
+
         return false;
       }
     ));
@@ -120,6 +132,9 @@ const loadDataMapFileCmd = async (uri: Uri) => {
     const successfullyFoundAndCopiedSchemaFile = await attemptToResolveMissingSchemaFile(mapDefinition.$sourceSchema, srcSchemaPath);
 
     if (!successfullyFoundAndCopiedSchemaFile) {
+      context.telemetry.properties.result = 'Canceled';
+      context.telemetry.properties.missingSourceSchema = 'true';
+
       DataMapperExt.showError('No source schema file was selected. Aborting load...');
       return;
     }
@@ -129,6 +144,9 @@ const loadDataMapFileCmd = async (uri: Uri) => {
     const successfullyFoundAndCopiedSchemaFile = await attemptToResolveMissingSchemaFile(mapDefinition.$targetSchema, tgtSchemaPath);
 
     if (!successfullyFoundAndCopiedSchemaFile) {
+      context.telemetry.properties.result = 'Canceled';
+      context.telemetry.properties.missingTargetSchema = 'true';
+
       DataMapperExt.showError('No target schema file was selected. Aborting load...');
       return;
     }
