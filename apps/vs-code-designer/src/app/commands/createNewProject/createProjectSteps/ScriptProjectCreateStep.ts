@@ -27,6 +27,7 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
   ): Promise<void> {
     const version: FuncVersion = nonNullProp(context, 'version');
     const hostJsonPath: string = path.join(context.projectPath, hostFileName);
+
     if (await confirmOverwriteFile(context, hostJsonPath)) {
       const hostJson: IHostJsonV2 | IHostJsonV1 = version === FuncVersion.v1 ? {} : await this.getHostContent(context);
       await writeFormattedJson(hostJsonPath, hostJson);
@@ -55,11 +56,11 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
       await fse.writeFile(
         gitignorePath,
         this.gitignore.concat(`
-# Azure Functions artifacts
-bin
-obj
-appsettings.json
-local.settings.json`)
+          # Azure Functions artifacts
+          bin
+          obj
+          appsettings.json
+          local.settings.json`)
       );
     }
 

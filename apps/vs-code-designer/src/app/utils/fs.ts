@@ -44,6 +44,12 @@ export function isSubpath(expectedParent: string, expectedChild: string, relativ
   return !isEmptyString(relativePath) && !relativePath.startsWith('..') && relativePath !== expectedChild;
 }
 
+/**
+ * Displays warning message to select if desire to overwrite file.
+ * @param {IActionContext} context - Command context.
+ * @param {string} fsPath - File path.
+ * @returns {Promise<boolean>} True if user wants to overwrite file.
+ */
 export async function confirmOverwriteFile(context: IActionContext, fsPath: string): Promise<boolean> {
   if (await fse.pathExists(fsPath)) {
     const result: MessageItem | undefined = await context.ui.showWarningMessage(
