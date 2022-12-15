@@ -2,19 +2,11 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { templateFilterSetting } from '../../../../constants';
 import { localize } from '../../../../localize';
-import { getWorkspaceSetting, updateWorkspaceSetting } from '../../../utils/vsCodeConfig/settings';
-import type {
-  AzureWizardExecuteStep,
-  IActionContext,
-  IAzureQuickPickItem,
-  IAzureQuickPickOptions,
-  IWizardOptions,
-} from '@microsoft/vscode-azext-utils';
+import type { AzureWizardExecuteStep, IAzureQuickPickItem, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type { IFunctionTemplate, IFunctionWizardContext, ProjectLanguage } from '@microsoft/vscode-extension';
-import { OpenBehavior, TemplateCategory, TemplateFilter, TemplatePromptResult } from '@microsoft/vscode-extension';
+import type { IFunctionListStepOptions, IFunctionTemplate, IFunctionWizardContext, ProjectLanguage } from '@microsoft/vscode-extension';
+import { TemplateCategory, TemplatePromptResult } from '@microsoft/vscode-extension';
 
 export class FunctionListStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   public hideStepCount = true;
@@ -34,9 +26,11 @@ export class FunctionListStep extends AzureWizardPromptStep<IFunctionWizardConte
 
   public async getSubWizard(context: IFunctionWizardContext): Promise<IWizardOptions<IFunctionWizardContext> | undefined> {
     const template: IFunctionTemplate | undefined = context.functionTemplate;
+
     if (template) {
       const promptSteps: AzureWizardPromptStep<IFunctionWizardContext>[] = [];
       const executeSteps: AzureWizardExecuteStep<IFunctionWizardContext>[] = [];
+      const title: string = localize('createCodeless', 'Create new {0}', template.name);
 
       //promptSteps.push(new ScriptFunctionNameStep());
       //executeSteps.push(await CodelessFunctionCreateStep.createStep(context));
@@ -46,7 +40,6 @@ export class FunctionListStep extends AzureWizardPromptStep<IFunctionWizardConte
         context[key.toLowerCase()] = this.triggerSettings[key];
       }
 
-      const title: string = localize('createCodeless', 'Create new {0}', template.name);
       return { promptSteps, executeSteps, title };
     } else {
       return undefined;
@@ -54,43 +47,30 @@ export class FunctionListStep extends AzureWizardPromptStep<IFunctionWizardConte
   }
 
   public async prompt(context: IFunctionWizardContext): Promise<void> {
-    let templateFilter: TemplateFilter =
-      getWorkspaceSetting<TemplateFilter>(templateFilterSetting, context.projectPath) || TemplateFilter.Verified;
-
     while (!context.functionTemplate) {
       const placeHolder: string = this.isProjectWizard
         ? localize('selectFirstFuncTemplate', "Select a template for your project's first workflow")
         : localize('selectFuncTemplate', 'Select a template for your workflow');
-      const result: IFunctionTemplate | TemplatePromptResult = (
-        await context.ui.showQuickPick(this.getPicks(context, templateFilter), { placeHolder })
-      ).data;
+
+      const result: IFunctionTemplate | TemplatePromptResult = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder }))
+        .data;
+
       if (result === TemplatePromptResult.skipForNow) {
         // eslint-disable-next-line no-param-reassign
         context.telemetry.properties.templateId = TemplatePromptResult.skipForNow;
         break;
-      } else if (result === TemplatePromptResult.changeFilter) {
-        templateFilter = await promptForTemplateFilter(context);
-        // can only update setting if it's open in a workspace
-        if (!this.isProjectWizard || context.openBehavior === OpenBehavior.alreadyOpen) {
-          await updateWorkspaceSetting(templateFilterSetting, templateFilter, context.projectPath);
-        }
       } else {
         // eslint-disable-next-line no-param-reassign
         context.functionTemplate = result;
       }
     }
-    // eslint-disable-next-line no-param-reassign
-    context.telemetry.properties.templateFilter = templateFilter;
   }
 
   public shouldPrompt(context: IFunctionWizardContext): boolean {
     return !context.functionTemplate;
   }
 
-  private async getPicks(
-    context: IFunctionWizardContext,
-    _templateFilter: TemplateFilter
-  ): Promise<IAzureQuickPickItem<IFunctionTemplate | TemplatePromptResult>[]> {
+  private async getPicks(context: IFunctionWizardContext): Promise<IAzureQuickPickItem<IFunctionTemplate | TemplatePromptResult>[]> {
     const language: ProjectLanguage = nonNullProp(context, 'language');
     const picks: IAzureQuickPickItem<IFunctionTemplate | TemplatePromptResult>[] = [];
 
@@ -104,10 +84,6 @@ export class FunctionListStep extends AzureWizardPromptStep<IFunctionWizardConte
       userPromptedSettings: [],
       categories: [TemplateCategory.Core],
     };
-    picks.push({
-      label: stateful.name,
-      data: stateful,
-    });
 
     const stateless: IFunctionTemplate = {
       id: 'Stateless-Codeless',
@@ -119,6 +95,12 @@ export class FunctionListStep extends AzureWizardPromptStep<IFunctionWizardConte
       userPromptedSettings: [],
       categories: [TemplateCategory.Core],
     };
+
+    picks.push({
+      label: stateful.name,
+      data: stateful,
+    });
+
     picks.push({
       label: stateless.name,
       data: stateless,
@@ -133,25 +115,4 @@ export class FunctionListStep extends AzureWizardPromptStep<IFunctionWizardConte
     }
     return picks;
   }
-}
-
-interface IFunctionListStepOptions {
-  isProjectWizard: boolean;
-  templateId: string | undefined;
-  triggerSettings: { [key: string]: string | undefined } | undefined;
-}
-
-async function promptForTemplateFilter(context: IActionContext): Promise<TemplateFilter> {
-  const picks: IAzureQuickPickItem<TemplateFilter>[] = [
-    {
-      label: TemplateFilter.Verified,
-      description: localize('verifiedDescription', '(Subset of "Core" that has been verified in VS Code)'),
-      data: TemplateFilter.Verified,
-    },
-    { label: TemplateFilter.Core, data: TemplateFilter.Core },
-    { label: TemplateFilter.All, data: TemplateFilter.All },
-  ];
-
-  const options: IAzureQuickPickOptions = { suppressPersistence: true, placeHolder: localize('selectFilter', 'Select a template filter') };
-  return (await context.ui.showQuickPick(picks, options)).data;
 }

@@ -95,3 +95,9 @@ export interface ISettingToAdd {
   value: string | boolean | Record<string, any>;
   prefix?: string;
 }
+
+export interface IFunctionListStepOptions {
+  isProjectWizard: boolean;
+  templateId: string | undefined;
+  triggerSettings: { [key: string]: string | undefined } | undefined;
+}

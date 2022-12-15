@@ -7,14 +7,7 @@ export interface ITemplatesRelease {
   resources: string;
 }
 
-export enum TemplateFilter {
-  All = 'All',
-  Core = 'Core',
-  Verified = 'Verified',
-}
-
 export enum TemplatePromptResult {
-  changeFilter = 'changeFilter',
   skipForNow = 'skipForNow',
 }
 

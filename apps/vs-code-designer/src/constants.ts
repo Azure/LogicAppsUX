@@ -72,7 +72,6 @@ export const projectTemplateKeySetting = 'projectTemplateKey';
 export const projectOpenBehaviorSetting = 'projectOpenBehavior';
 export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';
 export const defaultVersionRange = '[1.*, 2.0.0)'; // Might need to be changed
-export const templateFilterSetting = 'templateFilter';
 export const hostStartCommand = 'host start';
 export const funcWatchProblemMatcher = '$func-watch';
 export const extInstallCommand = 'extensions install';
