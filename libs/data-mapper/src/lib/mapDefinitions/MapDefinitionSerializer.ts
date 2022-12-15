@@ -10,6 +10,7 @@ import { findLast } from '../utils/Array.Utils';
 import { collectTargetNodesForConnectionChain, flattenInputs, isConnectionUnit, isCustomValue } from '../utils/Connection.Utils';
 import { collectConditionalValues, collectFunctionValue, getInputValues, isValidToMakeMapDefinition } from '../utils/DataMap.Utils';
 import { formatDirectAccess, getIndexValueForCurrentConnection, isFunctionData } from '../utils/Function.Utils';
+import { LogCategory, LogService } from '../utils/Logging.Utils';
 import { addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../utils/Schema.Utils';
 import yaml from 'js-yaml';
@@ -281,7 +282,9 @@ const addLoopingToNewPathItems = (
             loopValue = sourceSchemaNode.key.replace(`${valueToTrim}/`, '');
             loopValue = `${mapNodeParams.for}(${loopValue}, ${getIndexValueForCurrentConnection(indexFunctionInput)})`;
           } else {
-            console.error(`Failed to generate proper loopValue: ${loopValue}`);
+            LogService.error(LogCategory.DataMapUtils, 'addLoopingToNewPathItems', {
+              message: `Failed to generate proper loopValue: ${loopValue}`,
+            });
           }
 
           // For entry

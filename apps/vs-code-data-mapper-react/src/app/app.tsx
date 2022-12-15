@@ -1,6 +1,7 @@
 import { VSCodeContext } from '../WebViewMsgHandler';
 import { changeFetchedFunctions, changeSourceSchema, changeTargetSchema } from '../state/DataMapDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
+import type { MessageToVsix, SchemaType } from '@microsoft/logic-apps-data-mapper';
 import {
   DataMapDataProvider,
   DataMapperDesigner,
@@ -10,7 +11,6 @@ import {
   getSelectedSchema,
   InitDataMapperApiService,
 } from '@microsoft/logic-apps-data-mapper';
-import type { MessageToVsix, SchemaType } from '@microsoft/logic-apps-data-mapper';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -144,7 +144,9 @@ export const App = () => {
         if (typeof fnManifest !== 'string') {
           dispatch(changeFetchedFunctions(fnManifest));
         } else {
-          throw new Error(`Failed to fetch Function manifest: ${fnManifest}}`);
+          const errorMessage = `Failed to fetch Function manifest: ${fnManifest}}`;
+
+          throw new Error(errorMessage);
         }
       } catch (error) {
         handleRscLoadError(error);
