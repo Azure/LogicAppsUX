@@ -17,7 +17,7 @@ import { WarningModal } from '../components/warningModal/WarningModal';
 import { generateDataMapXslt } from '../core/queries/datamap';
 import { redoDataMapOperation, saveDataMap, showNotification, undoDataMapOperation } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
-import { convertToMapDefinition } from '../utils/DataMap.Utils';
+import { convertToMapDefinition } from '../mapDefinitions';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
 import './ReactFlowStyleOverrides.css';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
