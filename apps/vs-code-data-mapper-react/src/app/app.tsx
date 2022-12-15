@@ -10,8 +10,6 @@ import {
   getFunctions,
   getSelectedSchema,
   InitDataMapperApiService,
-  LogCategory,
-  LogService,
 } from '@microsoft/logic-apps-data-mapper';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -147,9 +145,6 @@ export const App = () => {
           dispatch(changeFetchedFunctions(fnManifest));
         } else {
           const errorMessage = `Failed to fetch Function manifest: ${fnManifest}}`;
-          LogService.error(LogCategory.DataMapperDesigner, 'dataMapDefinition', {
-            message: errorMessage,
-          });
 
           throw new Error(errorMessage);
         }
