@@ -13,6 +13,7 @@ export const gitignoreFileName = '.gitignore';
 export const tasksFileName = 'tasks.json';
 export const launchFileName = 'launch.json';
 export const settingsFileName = 'settings.json';
+export const extensionsFileName = 'extensions.json';
 
 // Functions
 export const func = 'func';

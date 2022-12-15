@@ -9,6 +9,12 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleFeed, IBundleMetadata, IHostJsonV2 } from '@microsoft/vscode-extension';
 import { TemplateSource } from '@microsoft/vscode-extension';
 
+/**
+ * Gets bundle extension feed.
+ * @param {IActionContext} context - Command context.
+ * @param {IBundleMetadata | undefined} bundleMetadata - Bundle meta data.
+ * @returns {Promise<IBundleFeed>} Returns bundle extension object.
+ */
 async function getBundleFeed(context: IActionContext, bundleMetadata: IBundleMetadata | undefined): Promise<IBundleFeed> {
   const bundleId: string = (bundleMetadata && bundleMetadata.id) || defaultBundleId;
 
@@ -27,11 +33,21 @@ async function getBundleFeed(context: IActionContext, bundleMetadata: IBundleMet
   return getJsonFeed(context, url);
 }
 
+/**
+ * Gets lates bundle extension version range.
+ * @param {IActionContext} context - Command context.
+ * @returns {Promise<string>} Returns lates version range.
+ */
 export async function getLatestVersionRange(context: IActionContext): Promise<string> {
   const feed: IBundleFeed = await getBundleFeed(context, undefined);
   return feed.defaultVersionRange;
 }
 
+/**
+ * Add bundle extension version to host.json configuration.
+ * @param {IActionContext} context - Command context.
+ * @param {IHostJsonV2} hostJson - Host.json configuration.
+ */
 export async function addDefaultBundle(context: IActionContext, hostJson: IHostJsonV2): Promise<void> {
   let versionRange: string;
   try {

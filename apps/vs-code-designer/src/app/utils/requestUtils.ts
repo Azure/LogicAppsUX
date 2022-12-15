@@ -64,6 +64,9 @@ async function sendAndParseResponse(client: ServiceClient, options: RequestPrepa
 
 /**
  * Send a request using the extension's user-controlled timeout setting
+ * @param {IActionContext} context - Command context.
+ * @param {AzExtRequestPrepareOptions} options - Options for the request.
+ * @returns {Promise<HttpOperationResponse>} True if error type is a timeout error.
  */
 export async function sendRequestWithExtTimeout(
   context: IActionContext,

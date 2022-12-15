@@ -33,6 +33,7 @@ export class ScriptInitVSCodeStep extends InitVSCodeStepBase {
   protected async executeCore(context: IProjectWizardContext): Promise<void> {
     try {
       const extensionsCsprojPath: string = path.join(context.projectPath, 'extensions.csproj');
+
       if (await fse.pathExists(extensionsCsprojPath)) {
         this.useFuncExtensionsInstall = true;
         // eslint-disable-next-line no-param-reassign

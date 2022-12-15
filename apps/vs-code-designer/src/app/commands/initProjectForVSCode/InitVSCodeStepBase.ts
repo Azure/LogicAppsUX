@@ -14,6 +14,7 @@ import {
   settingsFileName,
   preDeployTaskSetting,
   launchFileName,
+  extensionsFileName,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -49,9 +50,15 @@ import type { TaskDefinition, DebugConfiguration, WorkspaceFolder } from 'vscode
 /* eslint-disable no-param-reassign */
 export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 20;
-
   protected preDeployTask?: string;
   protected settings: ISettingToAdd[] = [];
+
+  protected abstract executeCore(context: IProjectWizardContext): Promise<void>;
+  protected abstract getTasks(): TaskDefinition[];
+  protected getTaskInputs?(): ITaskInputs[];
+  protected getWorkspaceSettings?(): ISettingToAdd[];
+  protected getDebugConfiguration?(version: FuncVersion): DebugConfiguration;
+  protected getRecommendedExtensions?(language: ProjectLanguage): string[];
 
   public async execute(context: IProjectWizardContext): Promise<void> {
     await this.executeCore(context);
@@ -84,13 +91,6 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
     return true;
   }
 
-  protected abstract executeCore(context: IProjectWizardContext): Promise<void>;
-  protected abstract getTasks(): TaskDefinition[];
-  protected getTaskInputs?(): ITaskInputs[];
-  protected getWorkspaceSettings?(): ISettingToAdd[];
-  protected getDebugConfiguration?(version: FuncVersion): DebugConfiguration;
-  protected getRecommendedExtensions?(language: ProjectLanguage): string[];
-
   protected setDeploySubpath(context: IProjectWizardContext, deploySubpath: string): string {
     deploySubpath = this.addSubDir(context, deploySubpath);
     this.settings.push({ key: deploySubpathSetting, value: deploySubpath });
@@ -105,6 +105,7 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
 
   private async writeTasksJson(context: IProjectWizardContext, vscodePath: string): Promise<void> {
     const newTasks: TaskDefinition[] = this.getTasks();
+
     for (const task of newTasks) {
       let cwd: string = (task.options && task.options.cwd) || '.';
       cwd = this.addSubDir(context, cwd);
@@ -297,7 +298,7 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
   }
 
   private async writeExtensionsJson(context: IActionContext, vscodePath: string, language: ProjectLanguage): Promise<void> {
-    const extensionsJsonPath: string = path.join(vscodePath, 'extensions.json');
+    const extensionsJsonPath: string = path.join(vscodePath, extensionsFileName);
     await confirmEditJsonFile(context, extensionsJsonPath, (data: IExtensionsJson): Record<string, any> => {
       const recommendations: string[] = ['ms-azuretools.vscode-azurefunctions'];
       if (this.getRecommendedExtensions) {
