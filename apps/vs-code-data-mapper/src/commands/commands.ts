@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import DataMapperExt from '../DataMapperExt';
 import {
   dataMapDefinitionsPath,
@@ -14,33 +15,24 @@ import * as path from 'path';
 import { Uri, window } from 'vscode';
 
 export const registerCommands = () => {
-  registerCommand('azureDataMapper.createNewDataMap', () => createNewDataMapCmd());
-  registerCommand('azureDataMapper.loadDataMapFile', (_context: IActionContext, uri: Uri) => loadDataMapFileCmd(uri));
+  registerCommand('azureDataMapper.createNewDataMap', (context: IActionContext) => createNewDataMapCmd(context));
+  registerCommand('azureDataMapper.loadDataMapFile', (context: IActionContext, uri: Uri) => loadDataMapFileCmd(context, uri));
 };
 
-const createNewDataMapCmd = () => {
+const createNewDataMapCmd = (context: IActionContext) => {
   window.showInputBox({ prompt: 'Data Map name: ' }).then(async (newDataMapName) => {
     if (!newDataMapName) {
-      /* TODO
-      LogService.log(LogCategory.ExtensionCommands, 'createNewDataMapCmd', {
-        message: 'Create new map canceled',
-      });
-      */
-
+      context.telemetry.properties.result = 'Canceled';
       return;
     }
 
-    /* TODO
-    LogService.log(LogCategory.ExtensionCommands, 'createNewDataMapCmd', {
-      message: 'New map created',
-    });
-    */
+    context.telemetry.properties.result = 'Succeeded';
 
     DataMapperExt.openDataMapperPanel(newDataMapName);
   });
 };
 
-const loadDataMapFileCmd = async (uri: Uri) => {
+const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
   let mapDefinitionPath: string | undefined = uri?.fsPath;
   let draftFileIsFoundAndShouldBeUsed = false;
 
@@ -58,12 +50,8 @@ const loadDataMapFileCmd = async (uri: Uri) => {
     if (fileUris && fileUris.length > 0) {
       mapDefinitionPath = fileUris[0].fsPath;
     } else {
-      /* TODO
-      LogService.log(LogCategory.ExtensionCommands, 'loadDataMapFileCmd', {
-        message: 'Load map canceled when selecting data map',
-      });
-      */
-
+      context.telemetry.properties.result = 'Canceled';
+      context.telemetry.properties.wasUsingFilePicker = 'true';
       return;
     }
   }
@@ -92,12 +80,7 @@ const loadDataMapFileCmd = async (uri: Uri) => {
   };
 
   if (!mapDefinition.$sourceSchema || !mapDefinition.$targetSchema) {
-    /* TODO
-    LogService.error(LogCategory.ExtensionCommands, 'loadDataMapFileCmd', {
-      message: 'Attempted to load invalid map, missing schema definitions',
-    });
-    */
-
+    context.telemetry.properties.eventDescription = 'Attempted to load invalid map, missing schema definitions';
     DataMapperExt.showError('Invalid data map definition: $sourceSchema and $targetSchema must be defined.');
     return;
   }
@@ -129,22 +112,15 @@ const loadDataMapFileCmd = async (uri: Uri) => {
           if (fileUris && fileUris.length > 0) {
             // Copy the schema file they selected to the Schemas folder (can safely continue map definition loading)
             await fs.copyFile(fileUris[0].fsPath, schemaPath);
-            /* TODO
-            LogService.log(LogCategory.ExtensionCommands, 'loadDataMapFileCmd', {
-              message: 'Load map successful',
-            });
-            */
+            context.telemetry.properties.result = 'Succeeded';
 
             return true;
           }
         }
 
         // If user doesn't select a file, or doesn't click the above action, just return (cancel loading the MapDef)
-        /* TODO
-        LogService.log(LogCategory.ExtensionCommands, 'loadDataMapFileCmd', {
-          message: 'Load map canceled during schema selection',
-        });
-        */
+        context.telemetry.properties.result = 'Canceled';
+        context.telemetry.properties.wasResolvingMissingSchemaFile = 'true';
 
         return false;
       }
@@ -156,11 +132,8 @@ const loadDataMapFileCmd = async (uri: Uri) => {
     const successfullyFoundAndCopiedSchemaFile = await attemptToResolveMissingSchemaFile(mapDefinition.$sourceSchema, srcSchemaPath);
 
     if (!successfullyFoundAndCopiedSchemaFile) {
-      /* TODO
-      LogService.log(LogCategory.ExtensionCommands, 'loadDataMapFileCmd', {
-        message: 'Load map canceled, no source schema selected',
-      });
-      */
+      context.telemetry.properties.result = 'Canceled';
+      context.telemetry.properties.missingSourceSchema = 'true';
 
       DataMapperExt.showError('No source schema file was selected. Aborting load...');
       return;
@@ -171,11 +144,8 @@ const loadDataMapFileCmd = async (uri: Uri) => {
     const successfullyFoundAndCopiedSchemaFile = await attemptToResolveMissingSchemaFile(mapDefinition.$targetSchema, tgtSchemaPath);
 
     if (!successfullyFoundAndCopiedSchemaFile) {
-      /* TODO
-      LogService.log(LogCategory.ExtensionCommands, 'loadDataMapFileCmd', {
-        message: 'Load map canceled, no target schema selected',
-      });
-      */
+      context.telemetry.properties.result = 'Canceled';
+      context.telemetry.properties.missingTargetSchema = 'true';
 
       DataMapperExt.showError('No target schema file was selected. Aborting load...');
       return;
