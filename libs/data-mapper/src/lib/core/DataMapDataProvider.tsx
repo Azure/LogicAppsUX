@@ -1,8 +1,8 @@
+import { convertFromMapDefinition } from '../mapDefinitions';
 import type { FunctionData } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { Schema } from '../models/Schema';
 import { SchemaType } from '../models/Schema';
-import { convertFromMapDefinition } from '../utils/DataMap.Utils';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import type { ThemeType } from './DataMapperDesignerProvider';
