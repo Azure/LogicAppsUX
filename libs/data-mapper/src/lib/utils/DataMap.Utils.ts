@@ -145,7 +145,7 @@ export const splitKeyIntoChildren = (sourceKey: string): string[] => {
 
 export const getSourceValueFromLoop = (sourceKey: string, targetKey: string): string => {
   let constructedSourceKey = '';
-  const matchArr = targetKey.match(/\$for\(([^)]+)\)\//g);
+  const matchArr = targetKey.match(/(\$for\()([^)]+)\)\//g);
   let match = matchArr?.[matchArr.length - 1];
   match = match?.replace('$for(', '');
   match = match?.replace(')', '');
