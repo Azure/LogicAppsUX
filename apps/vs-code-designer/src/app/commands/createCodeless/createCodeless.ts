@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { projectTemplateKeySetting } from '../../../constants';
 import { localize } from '../../../localize';
+import { getProjFiles } from '../../utils/dotnet/dotnet';
 import { NoWorkspaceError } from '../../utils/errors';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
 import { verifyAndPromptToCreateProject } from '../../utils/verifyIsProject';
@@ -13,8 +14,8 @@ import { getContainingWorkspace } from '../../utils/workspace';
 import { WorkflowListStep } from './createCodelessSteps/WorkflowListStep';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzureWizard, UserCancelledError } from '@microsoft/vscode-azext-utils';
-import type { ProjectLanguage, IFunctionWizardContext } from '@microsoft/vscode-extension';
-import { FuncVersion, WorkflowProjectType } from '@microsoft/vscode-extension';
+import type { IFunctionWizardContext } from '@microsoft/vscode-extension';
+import { ProjectLanguage, FuncVersion, WorkflowProjectType } from '@microsoft/vscode-extension';
 import { commands, window, workspace } from 'vscode';
 import type { MessageItem, Uri, WorkspaceFolder } from 'vscode';
 
@@ -45,7 +46,7 @@ export async function createCodeless(
   }
 
   let workflowProjectType: WorkflowProjectType = WorkflowProjectType.Bundle;
-  const projectFiles = { length: 0 }; //await getProjFiles(context, ProjectLanguage.CSharp, projectPath); // work to be done
+  const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, projectPath);
   if (projectFiles.length > 0) {
     workflowProjectType = WorkflowProjectType.Nuget;
   }
