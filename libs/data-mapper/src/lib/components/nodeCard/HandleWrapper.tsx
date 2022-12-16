@@ -2,12 +2,7 @@ import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import { store } from '../../core/state/Store';
 import type { RootState } from '../../core/state/Store';
 import { SchemaType } from '../../models';
-import {
-  isValidFunctionNodeToSchemaNodeConnection,
-  isValidInputToFunctionNode,
-  isValidSchemaNodeToSchemaNodeConnection,
-  newConnectionWillHaveCircularLogic,
-} from '../../utils/Connection.Utils';
+import { isFunctionInputSlotAvailable, newConnectionWillHaveCircularLogic } from '../../utils/Connection.Utils';
 import { makeStaticStyles, tokens } from '@fluentui/react-components';
 import { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -81,19 +76,15 @@ const HandleWrapper = ({ type, position, shouldDisplay, nodeReactFlowType, nodeR
     [connectionIsActivelyBeingDrawn, sourceNodeConnectionBeingDrawnFromId, nodeReactFlowId]
   );
 
-  const checkConnectionValidity = useCallback(
+  const checkIfConnectionPossible = useCallback(
     (connection: ReactFlowConnection): boolean => {
-      let isValid = false;
-
       if (type === SchemaType.Source) {
-        if (nodeReactFlowType === ReactFlowNodeType.SchemaNode) {
-          isValid = isValidConnectionFromSchemaNode(connection);
-        } else {
-          isValid = isValidConnectionFromFunctionNode(connection);
-        }
+        return nodeReactFlowType === ReactFlowNodeType.SchemaNode
+          ? isValidConnectionFromSchemaNode(connection)
+          : isValidConnectionFromFunctionNode(connection);
       }
 
-      return isValid;
+      return false;
     },
     [type, nodeReactFlowType]
   );
@@ -107,7 +98,7 @@ const HandleWrapper = ({ type, position, shouldDisplay, nodeReactFlowType, nodeR
         transform:
           nodeReactFlowType === ReactFlowNodeType.FunctionNode ? `translate(${type === SchemaType.Target ? '-' : ''}30%, -55%)` : undefined,
       }}
-      isValidConnection={checkConnectionValidity}
+      isValidConnection={checkIfConnectionPossible}
       onMouseEnter={() => setIsHandleHovered(true)}
       onMouseLeave={() => setIsHandleHovered(false)}
     >
@@ -132,26 +123,11 @@ const isValidConnectionFromSchemaNode = (connection: ReactFlowConnection): boole
     functionDictionary &&
     connectionDictionary
   ) {
-    const sourceSchemaNode = flattenedSourceSchema[connection.source];
-    // Target is either a function, or target schema, node
+    // Target must be either a function or target schema node
     const targetFunctionNode = functionDictionary[connection.target];
-    const targetSchemaNode = flattenedTargetSchema[connection.target];
     const currentTargetConnection = connectionDictionary[connection.target];
 
-    if (targetFunctionNode) {
-      return isValidInputToFunctionNode(
-        sourceSchemaNode.normalizedDataType,
-        currentTargetConnection,
-        targetFunctionNode.maxNumberOfInputs,
-        targetFunctionNode.inputs
-      );
-    }
-
-    if (targetSchemaNode) {
-      return isValidSchemaNodeToSchemaNodeConnection(sourceSchemaNode.normalizedDataType, targetSchemaNode.normalizedDataType);
-    }
-
-    return false;
+    return targetFunctionNode ? isFunctionInputSlotAvailable(currentTargetConnection, targetFunctionNode.maxNumberOfInputs) : true;
   }
 
   return false;
@@ -163,31 +139,19 @@ const isValidConnectionFromFunctionNode = (connection: ReactFlowConnection) => {
   const connectionDictionary = store.getState().dataMap.curDataMapOperation.dataMapConnections;
 
   if (connection.source && connection.target && flattenedTargetSchema && functionDictionary && connectionDictionary) {
-    const sourceFunctionNode = functionDictionary[connection.source];
-    // Target is either a function, or target schema, node
     const targetFunctionNode = functionDictionary[connection.target];
-    const targetSchemaNode = flattenedTargetSchema[connection.target];
     const targetNodeConnection = connectionDictionary[connection.target];
 
-    if (targetSchemaNode) {
-      return isValidFunctionNodeToSchemaNodeConnection(sourceFunctionNode.outputValueType, targetSchemaNode.normalizedDataType);
-    }
-
     if (targetFunctionNode) {
-      // Verify the connection (Function<->Function) won't create circular logic
+      // Verify that the Function<->Function connection won't create circular logic
       if (newConnectionWillHaveCircularLogic(connection.target, connection.source, connectionDictionary)) {
         return false;
       } else {
-        return isValidInputToFunctionNode(
-          sourceFunctionNode.outputValueType,
-          targetNodeConnection,
-          targetFunctionNode.maxNumberOfInputs,
-          targetFunctionNode.inputs
-        );
+        return isFunctionInputSlotAvailable(targetNodeConnection, targetFunctionNode.maxNumberOfInputs);
       }
     }
 
-    return false;
+    return true;
   }
 
   return false;
