@@ -65,10 +65,11 @@ export interface InputDropdownProps {
   label?: string;
   placeholder?: string;
   inputAllowsCustomValues?: boolean;
+  isUnboundedInput?: boolean;
 }
 
 export const InputDropdown = (props: InputDropdownProps) => {
-  const { currentNode, inputValue, inputIndex, inputStyles, label, placeholder, inputAllowsCustomValues = true } = props;
+  const { currentNode, inputValue, inputIndex, inputStyles, label, placeholder, inputAllowsCustomValues = true, isUnboundedInput } = props;
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useStyles();
@@ -378,13 +379,14 @@ export const InputDropdown = (props: InputDropdownProps) => {
     };
 
     if (isFunctionData(currentNode)) {
-      currentNode.inputs[inputIndex].allowedTypes.forEach(handleAnyOrSpecificType);
+      const inputIndexForType = isUnboundedInput ? 0 : inputIndex;
+      currentNode.inputs[inputIndexForType].allowedTypes.forEach(handleAnyOrSpecificType);
     } else {
       handleAnyOrSpecificType(currentNode.normalizedDataType);
     }
 
     return newInputOptions;
-  }, [inputIndex, typeSortedInputOptions, currentNode]);
+  }, [inputIndex, isUnboundedInput, typeSortedInputOptions, currentNode]);
 
   const modifiedDropdownOptions = useMemo(() => {
     const newModifiedOptions = typeMatchedInputOptions ? [...typeMatchedInputOptions] : [];

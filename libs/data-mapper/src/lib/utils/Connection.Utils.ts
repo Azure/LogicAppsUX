@@ -84,6 +84,7 @@ export const setConnectionInputValue = (
   if (isSchemaNodeExtended(targetNode) && targetNode.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
     isFunctionUnboundedInputOrRepeatingSchemaNode = true;
   } else if (isFunctionData(targetNode) && targetNode.maxNumberOfInputs === -1) {
+    // TODO: Re-support changing value of inputs after the first unbounded one
     isFunctionUnboundedInputOrRepeatingSchemaNode = true;
   }
 

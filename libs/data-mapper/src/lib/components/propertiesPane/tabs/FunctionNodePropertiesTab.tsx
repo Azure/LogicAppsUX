@@ -286,6 +286,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                         inputIndex={idx}
                         inputStyles={{ width: '100%' }}
                         inputAllowsCustomValues={functionData.inputs[0].allowCustomInput}
+                        isUnboundedInput
                       />
                     </Tooltip>
 
