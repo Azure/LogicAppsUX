@@ -45,6 +45,15 @@
           "light": "assets/light/CreateNewProject.svg",
           "dark": "assets/dark/CreateNewProject.svg"
         }
+      },
+      {
+        "command": "logicAppsExtension.createCodeless",
+        "title": "Create Workflow...",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/Codeless.svg",
+          "dark": "assets/dark/Codeless.svg"
+        }
       }
     ],
     "viewsContainers": {
@@ -71,6 +80,11 @@
           "command": "logicAppsExtension.createNewProject",
           "when": "view == newAzLogicApps",
           "group": "navigation@1"
+        },
+        {
+          "command": "logicAppsExtension.createCodeless",
+          "when": "view == newAzLogicApps",
+          "group": "navigation@2"
         }
       ],
       "view/item/context": [
@@ -169,6 +183,7 @@
     "onCommand:logicAppsExtension.loadMore",
     "onCommand:logicAppsExtension.viewContent",
     "onCommand:logicAppsExtension.createNewProject",
+    "onCommand:logicAppsExtension.createCodeless",
     "onView:newAzLogicApps",
     "onDebugInitialConfigurations"
   ],
