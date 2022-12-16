@@ -2,7 +2,7 @@
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { DataMapOperationState, SetConnectionInputAction } from '../core/state/DataMapSlice';
 import type { SchemaNodeExtended } from '../models';
-import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperty, SchemaType } from '../models';
+import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '../models';
 import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection, InputConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionInput } from '../models/Function';
 import { isFunctionData } from './Function.Utils';
@@ -195,8 +195,8 @@ export const setConnectionInputValue = (
   }
 };
 
-export const isValidSchemaNodeToSchemaNodeConnection = (srcDataType: SchemaNodeDataType, tgtDataType: SchemaNodeDataType) =>
-  srcDataType === SchemaNodeDataType.AnyAtomicType || tgtDataType === SchemaNodeDataType.AnyAtomicType || srcDataType === tgtDataType;
+export const isValidSchemaNodeToSchemaNodeConnection = (srcDataType: NormalizedDataType, tgtDataType: NormalizedDataType) =>
+  srcDataType === NormalizedDataType.Any || tgtDataType === NormalizedDataType.Any || srcDataType === tgtDataType;
 export const isValidFunctionNodeToSchemaNodeConnection = (srcDataType: NormalizedDataType, tgtDataType: NormalizedDataType) =>
   srcDataType === NormalizedDataType.Any || tgtDataType === NormalizedDataType.Any || srcDataType === tgtDataType;
 

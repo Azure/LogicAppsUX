@@ -148,7 +148,7 @@ const isValidConnectionFromSchemaNode = (connection: ReactFlowConnection): boole
     }
 
     if (targetSchemaNode) {
-      return isValidSchemaNodeToSchemaNodeConnection(sourceSchemaNode.schemaNodeDataType, targetSchemaNode.schemaNodeDataType);
+      return isValidSchemaNodeToSchemaNodeConnection(sourceSchemaNode.normalizedDataType, targetSchemaNode.normalizedDataType);
     }
 
     return false;
