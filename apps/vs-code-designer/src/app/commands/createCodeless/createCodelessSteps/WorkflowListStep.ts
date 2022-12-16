@@ -5,10 +5,10 @@
 import { localize } from '../../../../localize';
 import type { AzureWizardExecuteStep, IAzureQuickPickItem, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type { IFunctionListStepOptions, IFunctionTemplate, IFunctionWizardContext, ProjectLanguage } from '@microsoft/vscode-extension';
+import type { IWorkflowListStepOptions, IFunctionTemplate, IFunctionWizardContext, ProjectLanguage } from '@microsoft/vscode-extension';
 import { TemplateCategory, TemplatePromptResult } from '@microsoft/vscode-extension';
 
-export class FunctionListStep extends AzureWizardPromptStep<IFunctionWizardContext> {
+export class WorkflowListStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   public hideStepCount = true;
 
   private readonly triggerSettings: { [key: string]: string | undefined };
@@ -20,8 +20,8 @@ export class FunctionListStep extends AzureWizardPromptStep<IFunctionWizardConte
     this.isProjectWizard = !!isProjectWizard;
   }
 
-  public static async create(_context: IFunctionWizardContext, options: IFunctionListStepOptions): Promise<FunctionListStep> {
-    return new FunctionListStep(options.triggerSettings, options.isProjectWizard);
+  public static async create(_context: IFunctionWizardContext, options: IWorkflowListStepOptions): Promise<WorkflowListStep> {
+    return new WorkflowListStep(options.triggerSettings, options.isProjectWizard);
   }
 
   public async getSubWizard(context: IFunctionWizardContext): Promise<IWizardOptions<IFunctionWizardContext> | undefined> {

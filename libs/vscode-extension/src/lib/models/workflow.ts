@@ -79,7 +79,7 @@ export interface ISettingToAdd {
   prefix?: string;
 }
 
-export interface IFunctionListStepOptions {
+export interface IWorkflowListStepOptions {
   isProjectWizard: boolean;
   templateId: string | undefined;
   triggerSettings: { [key: string]: string | undefined } | undefined;

@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { FunctionListStep } from '../../createCodeless/createCodelessSteps/FunctionListStep';
+import { WorkflowListStep } from '../../createCodeless/createCodelessSteps/WorkflowListStep';
 import { addInitVSCodeSteps } from '../../initProjectForVSCode/InitVSCodeLanguageStep';
 import { WorkflowProjectCreateStep } from './WorkflowProjectCreateStep';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
@@ -49,7 +49,7 @@ export class NewProjectTypeStep extends AzureWizardPromptStep<IProjectWizardCont
     const wizardOptions: IWizardOptions<IProjectWizardContext> = { promptSteps, executeSteps };
 
     promptSteps.push(
-      await FunctionListStep.create(context, {
+      await WorkflowListStep.create(context, {
         isProjectWizard: true,
         templateId: this.templateId,
         triggerSettings: this.functionSettings,
