@@ -17,7 +17,6 @@ export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
   private _currentLoggedInSessions: any;
   private _projectDisposables: Disposable[] = [];
 
-  /* eslint-disable no-param-reassign */
   public constructor(testAccount?: Record<string, any>) {
     super(undefined, testAccount);
 
@@ -50,7 +49,6 @@ export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
       })
     );
   }
-  /* eslint-enable no-param-reassign */
 
   public dispose(): void {
     super.dispose();

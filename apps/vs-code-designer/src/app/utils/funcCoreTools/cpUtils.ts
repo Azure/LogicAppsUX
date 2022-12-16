@@ -43,7 +43,6 @@ export async function executeCommand(
   return result.cmdOutput;
 }
 
-/* eslint-disable no-param-reassign */
 export async function tryExecuteCommand(
   outputChannel: IAzExtOutputChannel | undefined,
   workingDirectory: string | undefined,
@@ -94,4 +93,3 @@ export async function tryExecuteCommand(
     });
   });
 }
-/* eslint-enable no-param-reassign */

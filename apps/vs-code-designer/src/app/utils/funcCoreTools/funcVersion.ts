@@ -42,7 +42,6 @@ function tryGetMajorVersion(data: string): string | undefined {
  * @param {string} context - Command context.
  * @returns {Promise<FuncVersion>} Major version.
  */
-/* eslint-disable no-param-reassign */
 export async function getDefaultFuncVersion(context: IActionContext): Promise<FuncVersion> {
   let version: FuncVersion | undefined = tryParseFuncVersion(getWorkspaceSettingFromAnyFolder(funcVersionSetting));
   context.telemetry.properties.runtimeSource = 'VSCodeSetting';
@@ -59,7 +58,6 @@ export async function getDefaultFuncVersion(context: IActionContext): Promise<Fu
 
   return version;
 }
-/* eslint-enable no-param-reassign */
 
 /**
  * Gets functions core tools version from local cli command.
@@ -103,7 +101,6 @@ export async function getLocalFuncCoreToolsVersion(): Promise<string | null> {
   }
 }
 
-/* eslint-disable no-param-reassign */
 export function addLocalFuncTelemetry(context: IActionContext): void {
   context.telemetry.properties.funcCliVersion = 'unknown';
 
@@ -115,4 +112,3 @@ export function addLocalFuncTelemetry(context: IActionContext): void {
       context.telemetry.properties.funcCliVersion = 'none';
     });
 }
-/* eslint-enable no-param-reassign */

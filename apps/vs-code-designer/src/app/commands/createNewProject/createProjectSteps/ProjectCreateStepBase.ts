@@ -22,11 +22,9 @@ export abstract class ProjectCreateStepBase extends AzureWizardExecuteStep<IProj
     context: IProjectWizardContext,
     progress: Progress<{ message?: string | undefined; increment?: number | undefined }>
   ): Promise<void> {
-    /* eslint-disable no-param-reassign */
     context.telemetry.properties.projectLanguage = context.language;
     context.telemetry.properties.projectRuntime = context.version;
     context.telemetry.properties.openBehavior = context.openBehavior;
-    /* eslint-enable no-param-reassign */
 
     progress.report({ message: localize('creating', 'Creating new project...') });
     await fse.ensureDir(context.projectPath);

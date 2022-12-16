@@ -13,7 +13,6 @@ export abstract class WorkflowNameStepBase<T extends IFunctionWizardContext> ext
     const template: IFunctionTemplate = nonNullProp(context, 'functionTemplate');
     const uniqueWorkflowName: string | undefined = await this.getUniqueFunctionName(context);
 
-    // eslint-disable-next-line no-param-reassign
     context.functionName = await context.ui.showInputBox({
       placeHolder: localize('workflowNamePlaceholder', 'Workflow name'),
       prompt: localize('workflowNamePrompt', 'Provide a workflow name'),

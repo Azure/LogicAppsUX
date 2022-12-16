@@ -37,7 +37,6 @@ export class WorkflowListStep extends AzureWizardPromptStep<IFunctionWizardConte
       //executeSteps.push(await CodelessFunctionCreateStep.createStep(context));
 
       for (const key of Object.keys(this.triggerSettings)) {
-        // eslint-disable-next-line no-param-reassign
         context[key.toLowerCase()] = this.triggerSettings[key];
       }
 
@@ -57,11 +56,9 @@ export class WorkflowListStep extends AzureWizardPromptStep<IFunctionWizardConte
         .data;
 
       if (result === TemplatePromptResult.skipForNow) {
-        // eslint-disable-next-line no-param-reassign
         context.telemetry.properties.templateId = TemplatePromptResult.skipForNow;
         break;
       } else {
-        // eslint-disable-next-line no-param-reassign
         context.functionTemplate = result;
       }
     }

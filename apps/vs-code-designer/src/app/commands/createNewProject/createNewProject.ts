@@ -60,7 +60,6 @@ export async function createNewProjectInternal(context: IActionContext, options:
     wizardContext.openBehavior = OpenBehavior.dontOpen;
   } else if (!wizardContext.openBehavior) {
     wizardContext.openBehavior = getWorkspaceSetting(projectOpenBehaviorSetting);
-    // eslint-disable-next-line no-param-reassign
     context.telemetry.properties.openBehaviorFromSetting = String(!!wizardContext.openBehavior);
   }
 

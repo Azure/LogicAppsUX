@@ -156,7 +156,6 @@
             "scope": "resource",
             "type": "string",
             "enum": [
-              "C#",
               "JavaScript"
             ],
             "readOnly": true,

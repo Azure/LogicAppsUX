@@ -21,12 +21,10 @@ export class NewProjectTypeStep extends AzureWizardPromptStep<IProjectWizardCont
     this.functionSettings = functionSettings;
   }
 
-  /* eslint-disable no-param-reassign */
   public async prompt(context: IProjectWizardContext): Promise<void> {
     context.workflowProjectType = WorkflowProjectType.Bundle;
     context.language = ProjectLanguage.JavaScript;
   }
-  /* eslint-enable no-param-reassign */
 
   public shouldPrompt(context: IProjectWizardContext): boolean {
     return context.workflowProjectType === undefined;

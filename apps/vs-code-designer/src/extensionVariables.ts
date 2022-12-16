@@ -20,7 +20,6 @@ class ActionVariable<T> {
   }
 
   public registerActionVariable(value: T, context: IActionContext): void {
-    // eslint-disable-next-line no-param-reassign
     context[this.key] = value;
   }
 
