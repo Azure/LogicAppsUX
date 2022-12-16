@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../localize';
+import { ScriptWorkflowNameStep } from './ScriptSteps/ScriptWorkflowNameStep';
 import type { AzureWizardExecuteStep, IAzureQuickPickItem, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IWorkflowListStepOptions, IFunctionTemplate, IFunctionWizardContext, ProjectLanguage } from '@microsoft/vscode-extension';
@@ -32,7 +33,7 @@ export class WorkflowListStep extends AzureWizardPromptStep<IFunctionWizardConte
       const executeSteps: AzureWizardExecuteStep<IFunctionWizardContext>[] = [];
       const title: string = localize('createCodeless', 'Create new {0}', template.name);
 
-      //promptSteps.push(new ScriptFunctionNameStep());
+      promptSteps.push(new ScriptWorkflowNameStep());
       //executeSteps.push(await CodelessFunctionCreateStep.createStep(context));
 
       for (const key of Object.keys(this.triggerSettings)) {
