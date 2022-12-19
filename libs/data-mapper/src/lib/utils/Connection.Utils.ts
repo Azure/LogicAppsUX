@@ -194,11 +194,15 @@ export const isValidCustomValueByType = (customValue: string, tgtDataType: Norma
     case NormalizedDataType.Number:
       return !isNaN(Number(customValue));
 
-    case NormalizedDataType.Integer:
-      return !isNaN(Number(customValue)) && Number.isInteger(Number(customValue));
+    case NormalizedDataType.Integer: {
+      const integerMatch = customValue.match(/^[-+]?[0-9]*$/g);
+      return integerMatch ? integerMatch.length > 0 : false;
+    }
 
-    case NormalizedDataType.Decimal:
-      return !isNaN(Number(customValue)) && !Number.isInteger(Number(customValue));
+    case NormalizedDataType.Decimal: {
+      const decimalMatch = customValue.match(/^[-+]?[0-9]*(\.[0-9]+)+$/g);
+      return decimalMatch ? decimalMatch.length > 0 : false;
+    }
 
     case NormalizedDataType.Boolean:
       return customValue === 'true' || customValue === 'false';
