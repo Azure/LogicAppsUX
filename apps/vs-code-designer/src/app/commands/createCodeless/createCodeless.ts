@@ -11,7 +11,8 @@ import { verifyAndPromptToCreateProject } from '../../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { verifyInitForVSCode } from '../../utils/vsCodeConfig/verifyInitForVSCode';
 import { getContainingWorkspace } from '../../utils/workspace';
-import { WorkflowListStep } from './createCodelessSteps/WorkflowListStep';
+import { WorkflowStateTypeStep } from './createCodelessSteps/WorkflowStateTypeStep';
+import { isString } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzureWizard, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import type { IFunctionWizardContext } from '@microsoft/vscode-extension';
@@ -30,7 +31,7 @@ export async function createCodeless(
 ): Promise<void> {
   addLocalFuncTelemetry(context);
 
-  workspacePath = typeof workspacePath === 'string' ? workspacePath : undefined;
+  workspacePath = isString(workspacePath) ? workspacePath : undefined;
 
   let workspaceFolder: WorkspaceFolder | undefined;
   if (workspacePath === undefined) {
@@ -76,7 +77,7 @@ export async function createCodeless(
     projectTemplateKey,
   });
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
-    promptSteps: [await WorkflowListStep.create(wizardContext, { templateId, triggerSettings, isProjectWizard: false })],
+    promptSteps: [await WorkflowStateTypeStep.create(wizardContext, { templateId, triggerSettings, isProjectWizard: false })],
   });
   await wizard.prompt();
   await wizard.execute();
@@ -92,7 +93,7 @@ async function getWorkspaceFolder(context: IActionContext): Promise<WorkspaceFol
 
     if (result === newProject) {
       // don't wait
-      commands.executeCommand('azureLogicAppsStandard.createNewProject');
+      commands.executeCommand('logicAppsExtension.createNewProject');
       context.telemetry.properties.noWorkspaceResult = 'createNewProject';
     } else {
       const uri: Uri[] = await context.ui.showOpenDialog({

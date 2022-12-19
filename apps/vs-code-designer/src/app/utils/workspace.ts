@@ -5,7 +5,7 @@
 import { localize } from '../../localize';
 import type { RemoteWorkflowTreeItem } from '../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { isPathEqual, isSubpath } from './fs';
-import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { isNullOrUndefined, isString } from '@microsoft/utils-logic-apps';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import * as globby from 'globby';
 import * as path from 'path';
@@ -120,7 +120,7 @@ export function isMultiRootWorkspace(): boolean {
  */
 export async function findFiles(base: vscode.WorkspaceFolder | string, pattern: string): Promise<vscode.Uri[]> {
   // Per globby docs: "Note that glob patterns can only contain forward-slashes, not backward-slashes, so if you want to construct a glob pattern from path components, you need to use path.posix.join() instead of path.join()"
-  const posixBase = path.posix.normalize(typeof base === 'string' ? base : base.uri.fsPath).replace(/\\/g, '/');
+  const posixBase = path.posix.normalize(isString(base) ? base : base.uri.fsPath).replace(/\\/g, '/');
   const escapedBase = escapeCharacters(posixBase);
   const fullPattern = path.posix.join(escapedBase, pattern);
   return (await globby(fullPattern)).map((s) => vscode.Uri.file(s));

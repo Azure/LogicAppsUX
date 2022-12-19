@@ -3,13 +3,19 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../localize';
+import { CodelessWorkflowCreateStep } from './CodelessWorkflowCreateStep';
 import { ScriptWorkflowNameStep } from './ScriptSteps/ScriptWorkflowNameStep';
 import type { AzureWizardExecuteStep, IAzureQuickPickItem, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type { IWorkflowListStepOptions, IFunctionTemplate, IFunctionWizardContext, ProjectLanguage } from '@microsoft/vscode-extension';
+import type {
+  IWorkflowStateTypeStepOptions,
+  IFunctionTemplate,
+  IFunctionWizardContext,
+  ProjectLanguage,
+} from '@microsoft/vscode-extension';
 import { TemplateCategory, TemplatePromptResult } from '@microsoft/vscode-extension';
 
-export class WorkflowListStep extends AzureWizardPromptStep<IFunctionWizardContext> {
+export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   public hideStepCount = true;
 
   private readonly triggerSettings: { [key: string]: string | undefined };
@@ -21,8 +27,8 @@ export class WorkflowListStep extends AzureWizardPromptStep<IFunctionWizardConte
     this.isProjectWizard = !!isProjectWizard;
   }
 
-  public static async create(_context: IFunctionWizardContext, options: IWorkflowListStepOptions): Promise<WorkflowListStep> {
-    return new WorkflowListStep(options.triggerSettings, options.isProjectWizard);
+  public static async create(_context: IFunctionWizardContext, options: IWorkflowStateTypeStepOptions): Promise<WorkflowStateTypeStep> {
+    return new WorkflowStateTypeStep(options.triggerSettings, options.isProjectWizard);
   }
 
   public async getSubWizard(context: IFunctionWizardContext): Promise<IWizardOptions<IFunctionWizardContext> | undefined> {
@@ -34,7 +40,7 @@ export class WorkflowListStep extends AzureWizardPromptStep<IFunctionWizardConte
       const title: string = localize('createCodeless', 'Create new {0}', template.name);
 
       promptSteps.push(new ScriptWorkflowNameStep());
-      //executeSteps.push(await CodelessFunctionCreateStep.createStep(context));
+      executeSteps.push(await CodelessWorkflowCreateStep.createStep(context));
 
       for (const key of Object.keys(this.triggerSettings)) {
         context[key.toLowerCase()] = this.triggerSettings[key];

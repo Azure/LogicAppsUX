@@ -57,7 +57,7 @@ export namespace ext {
   export let deploymentFolderPath: string;
 
   // Templates
-  export const templateProvider = new ActionVariable<any>('_centralTemplateProvider'); // TODO
+  export const templateProvider = new ActionVariable<any>('_centralTemplateProvider');
 
   // Functions
   export const funcCliPath: string = func;
