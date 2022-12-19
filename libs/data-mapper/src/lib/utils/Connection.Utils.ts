@@ -187,8 +187,36 @@ export const setConnectionInputValue = (
 };
 
 export const isValidCustomValueByType = (customValue: string, tgtDataType: NormalizedDataType) => {
-  // TODO: Custom value validation
-  return true || (customValue && tgtDataType);
+  switch (tgtDataType) {
+    case NormalizedDataType.String:
+      return customValue.startsWith('"') && customValue.endsWith('"');
+
+    case NormalizedDataType.Number:
+      return !isNaN(Number(customValue));
+
+    case NormalizedDataType.Integer:
+      return !isNaN(Number(customValue)) && Number.isInteger(Number(customValue));
+
+    case NormalizedDataType.Decimal:
+      return !isNaN(Number(customValue)) && !Number.isInteger(Number(customValue));
+
+    case NormalizedDataType.Boolean:
+      return customValue === 'true' || customValue === 'false';
+
+    case NormalizedDataType.Binary:
+      // TODO
+      return true;
+
+    case NormalizedDataType.DateTime:
+      // TODO
+      return true;
+
+    case NormalizedDataType.Any:
+      return true;
+
+    default:
+      return false;
+  }
 };
 
 export const isValidConnectionByType = (srcDataType: NormalizedDataType, tgtDataType: NormalizedDataType) =>
