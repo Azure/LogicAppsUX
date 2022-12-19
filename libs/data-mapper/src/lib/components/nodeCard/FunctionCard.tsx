@@ -129,8 +129,6 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
                     inputValMatchedOneOfAllowedTypes = true;
                   }
                 } else if (isValidConnectionByType(allowedInputType, inputVal.node.outputValueType)) {
-                  console.log('allowedInputType', allowedInputType);
-                  console.log('inputVal.node.outputValueType', inputVal.node.outputValueType);
                   inputValMatchedOneOfAllowedTypes = true;
                 }
               }
