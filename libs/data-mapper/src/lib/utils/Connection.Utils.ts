@@ -2,9 +2,9 @@
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { DataMapOperationState, SetConnectionInputAction } from '../core/state/DataMapSlice';
 import type { SchemaNodeExtended } from '../models';
-import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperty, SchemaType } from '../models';
+import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '../models';
 import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection, InputConnectionDictionary } from '../models/Connection';
-import type { FunctionData, FunctionInput } from '../models/Function';
+import type { FunctionData } from '../models/Function';
 import { isFunctionData } from './Function.Utils';
 import { addReactFlowPrefix, addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
@@ -126,16 +126,8 @@ export const setConnectionInputValue = (
         confirmedInputIndex = indexOfFirstOpenInput >= 0 ? indexOfFirstOpenInput : -1;
       } else {
         if (isConnectionUnit(value)) {
-          // Add input to first available and type-matched place (handle & PropPane validation should guarantee there's at least one)
-          confirmedInputIndex = Object.values(connection.inputs).findIndex(
-            (inputCon, idx) =>
-              inputCon.length < 1 &&
-              targetNode.inputs[idx].allowedTypes.some(
-                (type) =>
-                  type === NormalizedDataType.Any ||
-                  (isSchemaNodeExtended(value.node) ? type === value.node.normalizedDataType : type === value.node.outputValueType)
-              )
-          );
+          // Add input to first available slot (Handle & PropPane validation should guarantee there's at least one)
+          confirmedInputIndex = Object.values(connection.inputs).findIndex((inputCon) => inputCon.length < 1);
         } else if (isCustomValue(value)) {
           // Add input to first available that allows custom values
           confirmedInputIndex = Object.values(connection.inputs).findIndex(
@@ -194,90 +186,16 @@ export const setConnectionInputValue = (
   }
 };
 
-export const isValidSchemaNodeToSchemaNodeConnection = (srcDataType: SchemaNodeDataType, tgtDataType: SchemaNodeDataType) =>
-  srcDataType === SchemaNodeDataType.AnyAtomicType || tgtDataType === SchemaNodeDataType.AnyAtomicType || srcDataType === tgtDataType;
-export const isValidFunctionNodeToSchemaNodeConnection = (srcDataType: NormalizedDataType, tgtDataType: NormalizedDataType) =>
+export const isValidConnectionByType = (srcDataType: NormalizedDataType, tgtDataType: NormalizedDataType) =>
   srcDataType === NormalizedDataType.Any || tgtDataType === NormalizedDataType.Any || srcDataType === tgtDataType;
 
-export const isValidInputToFunctionNode = (
-  srcNodeType: NormalizedDataType,
-  targetNodeConnection: Connection | undefined,
-  tgtMaxNumInputs: number,
-  tgtInputs: FunctionInput[]
-) => {
-  try {
-    // If Function has unbounded inputs, just check if type matches
-    if (tgtMaxNumInputs === -1) {
-      return isFunctionTypeSupported(srcNodeType, tgtInputs);
-    }
-
-    // Make sure there's available inputs
-    if (targetNodeConnection) {
-      if (flattenInputs(targetNodeConnection.inputs).length === tgtMaxNumInputs) {
-        return false;
-      }
-    }
-
-    return isFunctionTypeSupportedAndAvailable(srcNodeType, targetNodeConnection, tgtInputs);
-  } catch (e) {
-    console.error(`Error validating Function input!`);
-    console.error(e);
-
-    console.error(`--------Related Details------------`);
-    console.error(`Src node type: ${srcNodeType}`);
-    console.error(`Target node connection:`);
-    console.error(targetNodeConnection);
-    console.error(`Target function max inputs: ${tgtMaxNumInputs}`);
-    console.error(`Target function input info:`);
-    console.error(tgtInputs);
-
+export const isFunctionInputSlotAvailable = (targetNodeConnection: Connection | undefined, tgtMaxNumInputs: number) => {
+  // Make sure there's available inputs (unless it's an unbounded input)
+  if (tgtMaxNumInputs !== -1 && targetNodeConnection && flattenInputs(targetNodeConnection.inputs).length === tgtMaxNumInputs) {
     return false;
   }
-};
 
-const isFunctionTypeSupportedAndAvailable = (
-  inputNodeType: NormalizedDataType,
-  connection: Connection | undefined,
-  tgtInputs: FunctionInput[]
-) => {
-  if (connection) {
-    // No inputs, so just verify type
-    if (Object.keys(connection.inputs).length === 0 && isFunctionTypeSupported(inputNodeType, tgtInputs)) {
-      return true;
-    }
-
-    // If inputs, verify that there's an open/undefined spot that matches type
-    let supportedTypeInputIsAvailable = false;
-    tgtInputs.forEach((targetInput, index) => {
-      if (
-        inputNodeType === NormalizedDataType.Any ||
-        targetInput.allowedTypes.some((allowedType) => allowedType === inputNodeType || allowedType === NormalizedDataType.Any)
-      ) {
-        if (!connection.inputs || !(index in connection.inputs) || connection.inputs[index].length < 1) {
-          supportedTypeInputIsAvailable = true;
-        }
-      }
-    });
-
-    return supportedTypeInputIsAvailable;
-  } else {
-    // No existing connection, so just make sure (bounded) inputs have a matching type
-    if (isFunctionTypeSupported(inputNodeType, tgtInputs)) {
-      return true;
-    }
-  }
-
-  return false;
-};
-
-// Iterate through each input's supported types for a match
-const isFunctionTypeSupported = (inputNodeType: NormalizedDataType, tgtInputs: FunctionInput[]) => {
-  return (
-    inputNodeType === NormalizedDataType.Any ||
-    tgtInputs.some((input) =>
-      input.allowedTypes.some((allowedType) => allowedType === NormalizedDataType.Any || allowedType === inputNodeType)
-    )
-  );
+  return true;
 };
 
 export const flattenInputs = (inputs: InputConnectionDictionary): InputConnection[] => Object.values(inputs).flatMap((value) => value);
