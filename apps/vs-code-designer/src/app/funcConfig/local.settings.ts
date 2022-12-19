@@ -10,7 +10,7 @@ import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension';
 import { MismatchBehavior } from '@microsoft/vscode-extension';
-import path from 'path';
+import * as path from 'path';
 
 export async function setLocalAppSetting(
   context: IActionContext,
