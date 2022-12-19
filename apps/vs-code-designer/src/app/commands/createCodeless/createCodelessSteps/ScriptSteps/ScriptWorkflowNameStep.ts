@@ -5,13 +5,13 @@
 import { localize } from '../../../../../localize';
 import { WorkflowNameStepBase } from '../WorkflowNameStepBase';
 import { nonNullProp } from '@microsoft/vscode-azext-utils';
-import type { IFunctionTemplate, IScriptFunctionWizardContext } from '@microsoft/vscode-extension';
+import type { IWorkflowTemplate, IScriptFunctionWizardContext } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 
 export class ScriptWorkflowNameStep extends WorkflowNameStepBase<IScriptFunctionWizardContext> {
   protected async getUniqueFunctionName(context: IScriptFunctionWizardContext): Promise<string | undefined> {
-    const template: IFunctionTemplate = nonNullProp(context, 'functionTemplate');
+    const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     return await this.getUniqueFsPath(context.projectPath, template.defaultFunctionName);
   }
 

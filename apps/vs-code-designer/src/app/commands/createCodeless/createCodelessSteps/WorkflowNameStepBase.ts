@@ -4,13 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../localize';
 import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
-import type { IFunctionWizardContext, IFunctionTemplate } from '@microsoft/vscode-extension';
+import type { IFunctionWizardContext, IWorkflowTemplate } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 
 export abstract class WorkflowNameStepBase<T extends IFunctionWizardContext> extends AzureWizardPromptStep<T> {
   public async prompt(context: T): Promise<void> {
-    const template: IFunctionTemplate = nonNullProp(context, 'functionTemplate');
+    const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     const uniqueWorkflowName: string | undefined = await this.getUniqueFunctionName(context);
 
     context.functionName = await context.ui.showInputBox({

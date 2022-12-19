@@ -9,7 +9,7 @@ import type { AzureWizardExecuteStep, IAzureQuickPickItem, IWizardOptions } from
 import { nonNullProp, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type {
   IWorkflowStateTypeStepOptions,
-  IFunctionTemplate,
+  IWorkflowTemplate,
   IFunctionWizardContext,
   ProjectLanguage,
 } from '@microsoft/vscode-extension';
@@ -32,7 +32,7 @@ export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizard
   }
 
   public async getSubWizard(context: IFunctionWizardContext): Promise<IWizardOptions<IFunctionWizardContext> | undefined> {
-    const template: IFunctionTemplate | undefined = context.functionTemplate;
+    const template: IWorkflowTemplate | undefined = context.functionTemplate;
 
     if (template) {
       const promptSteps: AzureWizardPromptStep<IFunctionWizardContext>[] = [];
@@ -58,7 +58,7 @@ export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizard
         ? localize('selectFirstFuncTemplate', "Select a template for your project's first workflow")
         : localize('selectFuncTemplate', 'Select a template for your workflow');
 
-      const result: IFunctionTemplate | TemplatePromptResult = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder }))
+      const result: IWorkflowTemplate | TemplatePromptResult = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder }))
         .data;
 
       if (result === TemplatePromptResult.skipForNow) {
@@ -74,11 +74,11 @@ export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizard
     return !context.functionTemplate;
   }
 
-  private async getPicks(context: IFunctionWizardContext): Promise<IAzureQuickPickItem<IFunctionTemplate | TemplatePromptResult>[]> {
+  private async getPicks(context: IFunctionWizardContext): Promise<IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[]> {
     const language: ProjectLanguage = nonNullProp(context, 'language');
-    const picks: IAzureQuickPickItem<IFunctionTemplate | TemplatePromptResult>[] = [];
+    const picks: IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[] = [];
 
-    const stateful: IFunctionTemplate = {
+    const stateful: IWorkflowTemplate = {
       id: 'Stateful-Codeless',
       name: localize('Stateful', 'Stateful Workflow'),
       defaultFunctionName: 'Stateful',
@@ -89,7 +89,7 @@ export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizard
       categories: [TemplateCategory.Core],
     };
 
-    const stateless: IFunctionTemplate = {
+    const stateless: IWorkflowTemplate = {
       id: 'Stateless-Codeless',
       name: localize('Stateless', 'Stateless Workflow'),
       defaultFunctionName: 'Stateless',

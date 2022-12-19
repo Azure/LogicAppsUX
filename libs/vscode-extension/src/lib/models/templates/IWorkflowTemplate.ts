@@ -9,7 +9,7 @@ export enum TemplateCategory {
   Core = '$temp_category_core',
 }
 
-export interface IFunctionTemplate {
+export interface IWorkflowTemplate {
   id: string;
   name: string;
   defaultFunctionName: string;
@@ -21,5 +21,5 @@ export interface IFunctionTemplate {
 }
 
 export interface IScriptFunctionWizardContext extends IFunctionWizardContext {
-  functionTemplate?: IFunctionTemplate;
+  functionTemplate?: IWorkflowTemplate;
 }

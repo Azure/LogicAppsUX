@@ -7,7 +7,7 @@ import { localize } from '../../../../localize';
 import { getContainingWorkspace } from '../../../utils/workspace';
 import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IFunctionWizardContext, IFunctionTemplate } from '@microsoft/vscode-extension';
+import type { IFunctionWizardContext, IWorkflowTemplate } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import { Uri, window, workspace } from 'vscode';
 import type { Progress } from 'vscode';
@@ -40,7 +40,7 @@ export abstract class WorkflowCreateStepBase<T extends IFunctionWizardContext> e
   public abstract executeCore(context: T): Promise<string>;
 
   public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
-    const template: IFunctionTemplate = nonNullProp(context, 'functionTemplate');
+    const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
 
     context.telemetry.properties.projectLanguage = context.language;
     context.telemetry.properties.projectRuntime = context.version;

@@ -22,7 +22,7 @@ import { WorkflowCreateStepBase } from './WorkflowCreateStepBase';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses, nonNullProp, parseError } from '@microsoft/vscode-azext-utils';
 import { WorkflowProjectType, MismatchBehavior } from '@microsoft/vscode-extension';
-import type { IFunctionWizardContext, IFunctionTemplate, IHostJsonV2 } from '@microsoft/vscode-extension';
+import type { IFunctionWizardContext, IWorkflowTemplate, IHostJsonV2 } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
@@ -38,7 +38,7 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
   }
 
   public async executeCore(context: IFunctionWizardContext): Promise<string> {
-    const template: IFunctionTemplate = nonNullProp(context, 'functionTemplate');
+    const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     const functionPath: string = path.join(context.projectPath, nonNullProp(context, 'functionName'));
     const emptyStatefulDefinition: Record<string, any> = {
       definition: {
