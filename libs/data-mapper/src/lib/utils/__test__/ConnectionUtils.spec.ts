@@ -8,7 +8,7 @@ import {
   bringInParentSourceNodesForRepeating,
   createConnectionEntryIfNeeded,
   isCustomValue,
-  isValidInputToFunctionNode,
+  isFunctionInputSlotAvailable,
   newConnectionWillHaveCircularLogic,
   setConnectionInputValue,
 } from '../Connection.Utils';
@@ -34,17 +34,6 @@ const mockBoundedFunctionInputs: FunctionInput[] = [
     allowCustomInput: false,
     tooltip: 'The scope to use',
     placeHolder: 'The scope',
-  },
-];
-
-const mockUnboundedFunctionInput: FunctionInput[] = [
-  {
-    name: 'Value',
-    allowedTypes: [NormalizedDataType.String],
-    isOptional: false,
-    allowCustomInput: true,
-    tooltip: 'The value to use',
-    placeHolder: 'The value',
   },
 ];
 
@@ -277,8 +266,8 @@ describe('utils/Connections', () => {
     });
   });
 
-  describe('isValidInputToFunctionNode', () => {
-    it('Test specific-typed, matching input with no slot available', () => {
+  describe('isFunctionInputSlotAvailable', () => {
+    it('Test bounded input with NO available slot', () => {
       const mockConnection: Connection = {
         self: {
           reactFlowKey: 'Placeholder',
@@ -292,31 +281,15 @@ describe('utils/Connections', () => {
         mockConnection.inputs[idx] = [''];
       });
 
-      expect(
-        isValidInputToFunctionNode(NormalizedDataType.Integer, mockConnection, mockBoundedFunctionInputs.length, mockBoundedFunctionInputs)
-      ).toEqual(false);
+      expect(isFunctionInputSlotAvailable(mockConnection, mockBoundedFunctionInputs.length)).toEqual(false);
     });
 
-    it('Test specific-typed, matching input with slot available', () => {
-      expect(
-        isValidInputToFunctionNode(NormalizedDataType.Integer, undefined, mockBoundedFunctionInputs.length, mockBoundedFunctionInputs)
-      ).toEqual(true);
+    it('Test bounded input with an available slot', () => {
+      expect(isFunctionInputSlotAvailable(undefined, mockBoundedFunctionInputs.length)).toEqual(true);
     });
 
-    it('Test type-Any input with slot available', () => {
-      expect(
-        isValidInputToFunctionNode(NormalizedDataType.Any, undefined, mockBoundedFunctionInputs.length, mockBoundedFunctionInputs)
-      ).toEqual(true);
-    });
-
-    it('Test specific-typed, NON-matching input with slot available', () => {
-      expect(
-        isValidInputToFunctionNode(NormalizedDataType.Boolean, undefined, mockBoundedFunctionInputs.length, mockBoundedFunctionInputs)
-      ).toEqual(false);
-    });
-
-    it('Test type-matched input to unbounded input', () => {
-      expect(isValidInputToFunctionNode(NormalizedDataType.String, undefined, -1, mockUnboundedFunctionInput)).toEqual(true);
+    it('Test unbounded input', () => {
+      expect(isFunctionInputSlotAvailable(undefined, -1)).toEqual(true);
     });
   });
 

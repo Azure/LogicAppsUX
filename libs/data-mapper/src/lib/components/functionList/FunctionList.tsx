@@ -8,11 +8,8 @@ import {
   setInlineFunctionInputOutputKeys,
 } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { store } from '../../core/state/Store';
-import { NormalizedDataType } from '../../models';
 import type { FunctionData } from '../../models/Function';
 import { FunctionCategory } from '../../models/Function';
-import { isFunctionData } from '../../utils/Function.Utils';
 import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import Tree from '../tree/Tree';
 import { TreeHeader } from '../tree/TreeHeader';
@@ -115,10 +112,10 @@ export const FunctionList = () => {
           functionCategoryDictionary[category] = categoryItem;
         });
 
-        // Filter out functions if we're adding an inline function and/or have a searchTerm
+        // NOTE: Explicitly use this instead of isAddingInlineFunction to track inlineFunctionInputOutputKeys value changes
         if (inlineFunctionInputOutputKeys.length === 2) {
-          // NOTE: Explicitly use this instead of isAddingInlineFunction to non-warningly add inlineFunction...Keys to dependencies to track value changes
-          functionsList = typeValidatePotentialInlineFunctions(functionsList);
+          // Functions with no inputs shouldn't be shown when adding inline functions
+          functionsList = functionsList.filter((functionNode) => functionNode.inputs.length !== 0);
         }
 
         if (searchTerm) {
@@ -172,61 +169,4 @@ export const FunctionList = () => {
       />
     </>
   );
-};
-
-// Returns copy of type-validated array
-const typeValidatePotentialInlineFunctions = (functionsToTypeValidate: FunctionData[]): FunctionData[] => {
-  const inlineFunctionInputOutputKeys = store.getState().dataMap.curDataMapOperation.inlineFunctionInputOutputKeys;
-  const flattenedSourceSchema = store.getState().dataMap.curDataMapOperation.flattenedSourceSchema;
-  const currentFunctionNodes = store.getState().dataMap.curDataMapOperation.currentFunctionNodes;
-  const flattenedTargetSchema = store.getState().dataMap.curDataMapOperation.flattenedTargetSchema;
-
-  const reactFlowSource = inlineFunctionInputOutputKeys[0];
-  const reactFlowDestination = inlineFunctionInputOutputKeys[1];
-  const source = reactFlowSource.startsWith(sourcePrefix) ? flattenedSourceSchema[reactFlowSource] : currentFunctionNodes[reactFlowSource];
-  const destination = reactFlowDestination.startsWith(targetPrefix)
-    ? flattenedTargetSchema[reactFlowDestination]
-    : currentFunctionNodes[reactFlowDestination];
-
-  // NOTE: Here, we can just flatMap all of a Function's inputs' types as all inputs
-  // are guaranteed to be empty as we're creating a new Function (as opposed to what the InputDropdown handles)
-
-  // Obtain input's normalized output type, and compare it against each function's inputs' allowedTypes
-  const inputNormalizedOutputType = isFunctionData(source) ? source.outputValueType : source.normalizedDataType;
-
-  // Obtain the output's normalized input type (schema node), or a list of its inputs' allowedTypes (function node)
-  // and compare it against each function's output type
-  const outputNormalizedInputTypes = isFunctionData(destination)
-    ? destination.inputs.flatMap((input) => input.allowedTypes)
-    : [destination.normalizedDataType];
-
-  return functionsToTypeValidate.filter((functionNode) => {
-    // Functions with no inputs shouldn't be shown when adding inline functions
-    if (functionNode.inputs.length === 0) {
-      return false;
-    }
-
-    const functionInputTypes = functionNode.inputs.flatMap((input) => input.allowedTypes);
-    const functionOutputType = functionNode.outputValueType;
-
-    // NOTE: This case will only happen when the existing connection is to a Function node
-    // What would happen if we didn't return false here is that we'd be saying this potential new Function's output type
-    // matches one of the output Function's inputs' types, but for a different input slot than the existing one goes to
-    // - which raises the question - do we overwrite that new slot if there's something in it? Etc etc...
-    // So, TODO: figure out how we want to handle this case, and likely handle it here
-    if (
-      functionOutputType !== inputNormalizedOutputType &&
-      functionOutputType !== NormalizedDataType.Any &&
-      inputNormalizedOutputType !== NormalizedDataType.Any
-    ) {
-      return false;
-    }
-
-    return (
-      (inputNormalizedOutputType === NormalizedDataType.Any ||
-        functionInputTypes.some((type) => type === NormalizedDataType.Any || type === inputNormalizedOutputType)) &&
-      (functionOutputType === NormalizedDataType.Any ||
-        outputNormalizedInputTypes.some((type) => type === NormalizedDataType.Any || type === functionOutputType))
-    );
-  });
 };
