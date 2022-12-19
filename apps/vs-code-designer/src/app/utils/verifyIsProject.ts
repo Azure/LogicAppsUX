@@ -83,7 +83,7 @@ async function promptForProjectSubpath(context: IActionContext, workspacePath: s
 }
 
 /**
- * Checks if the path is already a function project. If not, it will prompt to create a new project.
+ * Checks if the path is already a logic app project. If not, it will prompt to create a new project.
  * @param {IActionContext} fsPath - Command context.
  * @param {string} fsPath - Workflow file path.
  * @param {ICreateFunctionOptions} options - Options to create a new project.
@@ -99,7 +99,7 @@ export async function verifyAndPromptToCreateProject(
   const projectPath: string | undefined = await tryGetFunctionProjectRoot(context, fsPath);
   if (!projectPath) {
     if (!options.suppressCreateProjectPrompt) {
-      const message: string = localize('notFunctionApp', 'The selected folder is not a function project. Create new project?');
+      const message: string = localize('notLogicApp', 'The selected folder is not a logic app project. Create new project?');
       // No need to check result - cancel will throw a UserCancelledError
       await context.ui.showWarningMessage(message, { modal: true }, DialogResponses.yes);
     }

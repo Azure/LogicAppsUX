@@ -20,6 +20,6 @@ export interface IWorkflowTemplate {
   categories: TemplateCategory[];
 }
 
-export interface IScriptFunctionWizardContext extends IFunctionWizardContext {
-  functionTemplate?: IWorkflowTemplate;
+export interface IScriptWorkflowWizardContext extends IFunctionWizardContext {
+  workflowTemplate?: IWorkflowTemplate;
 }

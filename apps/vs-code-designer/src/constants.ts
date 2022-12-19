@@ -87,7 +87,7 @@ export const dotnetPublishTaskLabel = 'publish';
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 
-// ,NET
+// .NET
 export enum DotnetVersion {
   net6 = 'net6.0',
   net3 = 'netcoreapp3.1',

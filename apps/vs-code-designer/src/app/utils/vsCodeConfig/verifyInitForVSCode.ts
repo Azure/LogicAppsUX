@@ -11,6 +11,14 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses, nonNullOrEmptyValue } from '@microsoft/vscode-azext-utils';
 import type { ProjectLanguage, FuncVersion } from '@microsoft/vscode-extension';
 
+/**
+ * Verifies vscode workspace is initialized for a Logic App project.
+ * @param {IActionContext} context - Command context.
+ * @param {ProjectLanguage} fsPath - Workspace path.
+ * @param {string} language - Language from project.
+ * @param {string} version - Functions core tools version.
+ * @returns {Promise<ProjectFile[]>} Array of files.
+ */
 export async function verifyInitForVSCode(
   context: IActionContext,
   fsPath: string,

@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { funcVersionSetting } from '../../../constants';
 import { ext } from '../../../extensionVariables';
+import { localize } from '../../../localize';
 import { getWorkspaceSettingFromAnyFolder } from '../vsCodeConfig/settings';
 import { executeCommand } from './cpUtils';
 import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
@@ -101,6 +102,10 @@ export async function getLocalFuncCoreToolsVersion(): Promise<string | null> {
   }
 }
 
+/**
+ * Adds functions cli version to telemetry.
+ * @param {IActionContext} context - Command context.
+ */
 export function addLocalFuncTelemetry(context: IActionContext): void {
   context.telemetry.properties.funcCliVersion = 'unknown';
 
@@ -111,4 +116,21 @@ export function addLocalFuncTelemetry(context: IActionContext): void {
     .catch(() => {
       context.telemetry.properties.funcCliVersion = 'none';
     });
+}
+
+/**
+ * Checks installed functions core tools version is supported.
+ * @param {string} version - Placeholder for input.
+ */
+export function checkSupportedFuncVersion(version: FuncVersion) {
+  if (version !== FuncVersion.v2 && version !== FuncVersion.v3 && version !== FuncVersion.v4) {
+    throw new Error(
+      localize(
+        'versionNotSupported',
+        'Functions core tools version "{0}" not supported. Only version "{1}" is currently supported for Codeless.',
+        version,
+        FuncVersion.v2
+      )
+    );
+  }
 }

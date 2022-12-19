@@ -12,21 +12,28 @@ import path from 'path';
 export class ProjectFile {
   public name: string;
   public fullPath: string;
-  // We likely need to check a few things in quick succession, so we'll cache the contents here
-  private _cachedContents: string | undefined;
+  private cachedContents: string | undefined;
+
   constructor(name: string, projectPath: string) {
     this.name = name;
     this.fullPath = path.join(projectPath, name);
   }
 
   public async getContents(): Promise<string> {
-    if (this._cachedContents === undefined) {
-      this._cachedContents = await AzExtFsExtra.readFile(this.fullPath);
+    if (this.cachedContents === undefined) {
+      this.cachedContents = await AzExtFsExtra.readFile(this.fullPath);
     }
-    return this._cachedContents;
+    return this.cachedContents;
   }
 }
 
+/**
+ * Gets .NET files from workspace.
+ * @param {IActionContext} context - Command context.
+ * @param {ProjectLanguage} projectLanguage - Language from project.
+ * @param {string} projectPath - Workspace path.
+ * @returns {Promise<ProjectFile[]>} Array of files.
+ */
 export async function getProjFiles(context: IActionContext, projectLanguage: ProjectLanguage, projectPath: string): Promise<ProjectFile[]> {
   return await runWithDurationTelemetry(context, 'getNetProjFiles', async () => {
     const pattern = projectLanguage === ProjectLanguage.FSharp ? '*.fsproj' : '*.csproj';
