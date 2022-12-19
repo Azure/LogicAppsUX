@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { workflowType } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { CodelessWorkflowCreateStep } from './CodelessWorkflowCreateStep';
 import { ScriptWorkflowNameStep } from './ScriptSteps/ScriptWorkflowNameStep';
@@ -79,7 +80,7 @@ export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizard
     const picks: IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[] = [];
 
     const stateful: IWorkflowTemplate = {
-      id: 'Stateful-Codeless',
+      id: workflowType.stateful,
       name: localize('Stateful', 'Stateful Workflow'),
       defaultFunctionName: 'Stateful',
       language: language,
@@ -90,7 +91,7 @@ export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizard
     };
 
     const stateless: IWorkflowTemplate = {
-      id: 'Stateless-Codeless',
+      id: workflowType.stateless,
       name: localize('Stateless', 'Stateless Workflow'),
       defaultFunctionName: 'Stateless',
       language: language,

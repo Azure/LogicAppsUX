@@ -9,6 +9,9 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 
 export abstract class WorkflowNameStepBase<T extends IFunctionWizardContext> extends AzureWizardPromptStep<T> {
+  protected abstract getUniqueFunctionName(context: T): Promise<string | undefined>;
+  protected abstract validateFunctionNameCore(context: T, name: string): Promise<string | undefined>;
+
   public async prompt(context: T): Promise<void> {
     const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     const uniqueWorkflowName: string | undefined = await this.getUniqueFunctionName(context);
@@ -25,12 +28,6 @@ export abstract class WorkflowNameStepBase<T extends IFunctionWizardContext> ext
     return !context.functionName;
   }
 
-  protected abstract getUniqueFunctionName(context: T): Promise<string | undefined>;
-  protected abstract validateFunctionNameCore(context: T, name: string): Promise<string | undefined>;
-
-  /**
-   * NOTE: This will always at least add `1` to the default value to (hopefully) make clear the function name is an instance of the template
-   */
   protected async getUniqueFsPath(folderPath: string, defaultValue: string, fileExtension?: string): Promise<string | undefined> {
     let count = 1;
     const maxCount = 1024;

@@ -12,7 +12,7 @@ import * as fse from 'fs-extra';
 import { Uri, window, workspace } from 'vscode';
 import type { Progress } from 'vscode';
 
-interface ICachedFunction {
+interface ICachedWorfkflow {
   projectPath: string;
   newFilePath: string;
   isHttpTrigger: boolean;
@@ -21,7 +21,7 @@ interface ICachedFunction {
 const cacheKey = 'azLAPostWorkflowCreate';
 
 export function runPostFunctionCreateStepsFromCache(): void {
-  const cachedFunc: ICachedFunction | undefined = ext.context.globalState.get(cacheKey);
+  const cachedFunc: ICachedWorfkflow | undefined = ext.context.globalState.get(cacheKey);
   if (cachedFunc) {
     try {
       runPostFunctionCreateSteps(cachedFunc);
@@ -34,9 +34,6 @@ export function runPostFunctionCreateStepsFromCache(): void {
 export abstract class WorkflowCreateStepBase<T extends IFunctionWizardContext> extends AzureWizardExecuteStep<T> {
   public priority = 220;
 
-  /**
-   * Returns the full path to the new function file
-   */
   public abstract executeCore(context: T): Promise<string>;
 
   public async execute(context: T, progress: Progress<{ message?: string | undefined; increment?: number | undefined }>): Promise<void> {
@@ -50,7 +47,7 @@ export abstract class WorkflowCreateStepBase<T extends IFunctionWizardContext> e
 
     const newFilePath = await this.executeCore(context);
 
-    const cachedFunc: ICachedFunction = { projectPath: context.projectPath, newFilePath, isHttpTrigger: template.isHttpTrigger };
+    const cachedFunc: ICachedWorfkflow = { projectPath: context.projectPath, newFilePath, isHttpTrigger: template.isHttpTrigger };
 
     if (context.openBehavior) {
       // OpenFolderStep sometimes restarts the extension host, so we will cache this to run on the next extension activation
@@ -69,13 +66,13 @@ export abstract class WorkflowCreateStepBase<T extends IFunctionWizardContext> e
   }
 }
 
-function runPostFunctionCreateSteps(func: ICachedFunction): void {
+function runPostFunctionCreateSteps(workflow: ICachedWorfkflow): void {
   callWithTelemetryAndErrorHandling('postWorkflowCreate', async (context: IActionContext) => {
     context.telemetry.suppressIfSuccessful = true;
 
-    if (getContainingWorkspace(func.projectPath)) {
-      if (await fse.pathExists(func.newFilePath)) {
-        window.showTextDocument(await workspace.openTextDocument(Uri.file(func.newFilePath)));
+    if (getContainingWorkspace(workflow.projectPath)) {
+      if (await fse.pathExists(workflow.newFilePath)) {
+        window.showTextDocument(await workspace.openTextDocument(Uri.file(workflow.newFilePath)));
       }
     }
   });

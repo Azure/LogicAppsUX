@@ -20,6 +20,7 @@ import { window, workspace } from 'vscode';
 export async function initProjectForVSCode(context: IActionContext, fsPath?: string, language?: ProjectLanguage): Promise<void> {
   let workspaceFolder: WorkspaceFolder | undefined;
   let workspacePath: string;
+
   if (fsPath === undefined) {
     if (!workspace.workspaceFolders || workspace.workspaceFolders.length === 0) {
       throw new NoWorkspaceError();
@@ -58,6 +59,5 @@ export async function initProjectForVSCode(context: IActionContext, fsPath?: str
   await wizard.prompt();
   await wizard.execute();
 
-  // don't wait
   window.showInformationMessage(localize('finishedInitializing', 'Finished initializing for use with VS Code.'));
 }

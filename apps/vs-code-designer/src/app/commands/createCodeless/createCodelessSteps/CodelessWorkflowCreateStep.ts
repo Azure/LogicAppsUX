@@ -2,7 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { hostFileName, azureWebJobsStorageKey, localSettingsFileName } from '../../../../constants';
+import {
+  hostFileName,
+  azureWebJobsStorageKey,
+  localSettingsFileName,
+  workflowFileName,
+  workflowType,
+  localEmulatorConnectionString,
+} from '../../../../constants';
 import { localize } from '../../../../localize';
 import { setLocalAppSetting } from '../../../funcConfig/local.settings';
 import {
@@ -11,8 +18,6 @@ import {
   getDotnetBuildFile,
   suppressJavaScriptBuildWarnings,
   updateFunctionsSDKVersion,
-  updateTargetFramework,
-  updateVscodeFiles,
   writeBuildFileToDisk,
 } from '../../../utils/codeless/updateBuildFile';
 import { getFramework, validateDotnetInstalled } from '../../../utils/dotnet/executeDotnetTemplateCommand';
@@ -22,7 +27,7 @@ import { WorkflowCreateStepBase } from './WorkflowCreateStepBase';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses, nonNullProp, parseError } from '@microsoft/vscode-azext-utils';
 import { WorkflowProjectType, MismatchBehavior } from '@microsoft/vscode-extension';
-import type { IFunctionWizardContext, IWorkflowTemplate, IHostJsonV2 } from '@microsoft/vscode-extension';
+import type { IFunctionWizardContext, IWorkflowTemplate, IHostJsonV2, CodelessApp } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
@@ -40,7 +45,8 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
   public async executeCore(context: IFunctionWizardContext): Promise<string> {
     const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     const functionPath: string = path.join(context.projectPath, nonNullProp(context, 'functionName'));
-    const emptyStatefulDefinition: Record<string, any> = {
+
+    const emptyStatefulDefinition: CodelessApp = {
       definition: {
         $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
         actions: {},
@@ -51,7 +57,7 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
       kind: 'Stateful',
     };
 
-    const emptyStatelessDefinition: Record<string, any> = {
+    const emptyStatelessDefinition: CodelessApp = {
       definition: {
         $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
         actions: {},
@@ -62,9 +68,9 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
       kind: 'Stateless',
     };
 
-    const codelessDefinition: object = template?.id === 'Stateful-Codeless' ? emptyStatefulDefinition : emptyStatelessDefinition;
+    const codelessDefinition: CodelessApp = template?.id === workflowType.stateful ? emptyStatefulDefinition : emptyStatelessDefinition;
 
-    const workflowJsonFullPath: string = path.join(functionPath, 'workflow.json');
+    const workflowJsonFullPath: string = path.join(functionPath, workflowFileName);
 
     await fse.ensureDir(functionPath);
     await writeFormattedJson(workflowJsonFullPath, codelessDefinition);
@@ -79,17 +85,10 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
 
       xmlBuildFile = JSON.parse(xmlBuildFile);
       xmlBuildFile = addFolderToBuildPath(xmlBuildFile, workflowName);
-
-      const version = nonNullProp(context, 'version');
-
       xmlBuildFile = addNugetPackagesToBuildFile(xmlBuildFile);
       xmlBuildFile = suppressJavaScriptBuildWarnings(xmlBuildFile);
       xmlBuildFile = updateFunctionsSDKVersion(xmlBuildFile, dotnetVersion);
 
-      if (version === '~2') {
-        xmlBuildFile = updateTargetFramework(xmlBuildFile);
-        await updateVscodeFiles(context.projectPath, ['settings.json', 'tasks.json']);
-      }
       await writeBuildFileToDisk(context, xmlBuildFile, context.projectPath);
     }
 
@@ -124,7 +123,7 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
       context,
       context.projectPath,
       azureWebJobsStorageKey,
-      'UseDevelopmentStorage=true',
+      localEmulatorConnectionString,
       MismatchBehavior.Overwrite
     );
   }

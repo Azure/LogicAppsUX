@@ -10,11 +10,21 @@ import { coerce as semVerCoerce } from 'semver';
 
 let cachedFramework: string | undefined;
 
+/**
+ * Validates .NET is installed.
+ * @param {IActionContext} context - Command context.
+ */
 export async function validateDotnetInstalled(context: IActionContext): Promise<void> {
   // NOTE: Doesn't feel obvious that `getFramework` would validate dotnet is installed, hence creating a separate function named `validateDotnetInstalled` to export from this file
   await getFramework(context, undefined);
 }
 
+/**
+ * Gets .NET framework version.
+ * @param {IActionContext} context - Command context.
+ * @param {string | undefined} workingDirectory - Workspace path.
+ * @returns {Promise<string>} .NET version.
+ */
 export async function getFramework(context: IActionContext, workingDirectory: string | undefined): Promise<string> {
   if (!cachedFramework) {
     let versions = '';

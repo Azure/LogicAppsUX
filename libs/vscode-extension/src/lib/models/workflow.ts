@@ -26,10 +26,10 @@ export interface IDesignerPanelMetadata {
 export interface CodelessApp {
   statelessRunMode?: string;
   definition: LogicAppsV2.WorkflowDefinition;
-  name: string;
-  stateful: boolean;
+  name?: string;
+  stateful?: boolean;
   kind: string;
-  operationOptions: string;
+  operationOptions?: string;
 }
 
 export interface AzureConnectorDetails {

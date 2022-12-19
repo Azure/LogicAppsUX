@@ -15,6 +15,7 @@ export const launchFileName = 'launch.json';
 export const settingsFileName = 'settings.json';
 export const extensionsFileName = 'extensions.json';
 export const vscodeFolderName = '.vscode';
+export const workflowFileName = 'workflow.json';
 
 // Functions
 export const func = 'func';
@@ -32,6 +33,11 @@ export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
 export const logicAppKind = 'workflowapp';
 export const workflowappRuntime = 'node|14';
 export const viewOutput = localize('viewOutput', 'View Output');
+
+export enum workflowType {
+  stateful = 'Stateful-Codeless',
+  stateless = 'Stateless-Codeless',
+}
 
 // Designer
 export const managementApiPrefix = '/runtime/webhooks/workflow/api/management';

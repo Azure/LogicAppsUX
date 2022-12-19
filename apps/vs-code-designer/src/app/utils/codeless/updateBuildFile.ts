@@ -5,7 +5,6 @@
 import { DotnetVersion } from '../../../constants';
 import { localize } from '../../../localize';
 import { getProjFiles } from '../dotnet/dotnet';
-import { writeFormattedJson } from '../fs';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProjectLanguage } from '@microsoft/vscode-extension';
 import * as fs from 'fs';
@@ -52,7 +51,6 @@ export function addNugetPackagesToBuildFile(xmlBuildFile: object): object {
         },
       },
     };
-    // tslint:disable-next-line:no-string-literal no-unsafe-any
     xmlBuildFile['Project']['ItemGroup'].push(itemGroup);
   }
   return xmlBuildFile;
@@ -85,21 +83,6 @@ export async function writeBuildFileToDisk(context: IActionContext, xmlObject: o
     fs.writeFileSync(newProjFile.fsPath, xml);
   } else {
     throw new Error(localize('dotnetProjectFileNotFound', 'Dotnet project file could not be found.'));
-  }
-}
-
-export function updateTargetFramework(xmlBuildFile: object): object {
-  xmlBuildFile['Project']['PropertyGroup']['TargetFramework'] = 'netcoreapp2.2';
-  return xmlBuildFile;
-}
-
-//TODO(vikanand): This is a temporary hack to get workflows working with netcoreapp2.2. We should revert before merging to main branch.
-export async function updateVscodeFiles(projectPath: string, filenames: string[]): Promise<void> {
-  for (const filename of filenames) {
-    const fileUri: string = path.join(projectPath, '.vscode', filename);
-    const fileData: string = fs.readFileSync(fileUri, 'utf8').toString();
-    const updatedFile: string = fileData.replace(/netcoreapp2.1/gi, 'netcoreapp2.2');
-    await writeFormattedJson(fileUri, JSON.parse(updatedFile));
   }
 }
 

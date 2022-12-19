@@ -4,6 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
+/**
+ * Executes function and logs duration in telemetry.
+ * @param {IActionContext} context - Command context.
+ * @param {string} prefix - Key prefix to log.
+ * @param {void} callback - Callback function to execute.
+ * @returns {Promise<T>} Returns what callback function returns.
+ */
 export async function runWithDurationTelemetry<T>(context: IActionContext, prefix: string, callback: () => Promise<T>): Promise<T> {
   const start = Date.now();
   try {
