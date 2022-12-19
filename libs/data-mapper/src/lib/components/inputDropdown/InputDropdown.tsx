@@ -451,7 +451,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
           errorMessage={typeValidationMessage}
         />
       ) : (
-        <div style={{ position: 'relative', ...inputStyles }}>
+        <div style={inputStyles}>
           <TextField
             value={customValue}
             onChange={(_e, newValue) => onChangeCustomValue(newValue)}
@@ -464,24 +464,16 @@ export const InputDropdown = (props: InputDropdownProps) => {
               subComponentStyles: {
                 label: { root: { ...typographyStyles.body1, color: tokens.colorNeutralForeground1 } },
               },
+              suffix: { backgroundColor: 'transparent', padding: '0px' },
             }}
             data-testid={`inputDropdown-textField-${inputIndex}`}
             errorMessage={typeValidationMessage}
+            onRenderSuffix={() => (
+              <Tooltip relationship="label" content={clearCustomValueLoc}>
+                <Button appearance="transparent" icon={<Dismiss20Regular />} onClick={onClearCustomValue} />
+              </Tooltip>
+            )}
           />
-          <Tooltip relationship="label" content={clearCustomValueLoc}>
-            <Button
-              appearance="transparent"
-              icon={<Dismiss20Regular />}
-              onClick={onClearCustomValue}
-              style={{
-                boxSizing: 'border-box',
-                position: 'absolute',
-                top: label ? '76%' : '50%',
-                right: 0,
-                transform: 'translate(0, -50%)',
-              }}
-            />
-          </Tooltip>
         </div>
       )}
     </>
