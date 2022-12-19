@@ -4,7 +4,13 @@ import type { SchemaNodeDataType, SchemaNodeExtended, SchemaNodeProperty, Normal
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
 import { directAccessPseudoFunctionKey, indexPseudoFunctionKey } from '../../models/Function';
-import { isConnectionUnit, isCustomValue, newConnectionWillHaveCircularLogic } from '../../utils/Connection.Utils';
+import {
+  isConnectionUnit,
+  isCustomValue,
+  isValidConnectionByType,
+  isValidCustomValueByType,
+  newConnectionWillHaveCircularLogic,
+} from '../../utils/Connection.Utils';
 import { getInputValues } from '../../utils/DataMap.Utils';
 import {
   calculateIndexValue,
@@ -55,10 +61,11 @@ export interface InputDropdownProps {
   label?: string;
   placeholder?: string;
   inputAllowsCustomValues?: boolean;
+  isUnboundedInput?: boolean;
 }
 
 export const InputDropdown = (props: InputDropdownProps) => {
-  const { currentNode, inputValue, inputIndex, inputStyles, label, placeholder, inputAllowsCustomValues = true } = props;
+  const { currentNode, inputValue, inputIndex, inputStyles, label, placeholder, inputAllowsCustomValues = true, isUnboundedInput } = props;
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useStyles();
@@ -80,6 +87,26 @@ export const InputDropdown = (props: InputDropdownProps) => {
   const clearCustomValueLoc = intl.formatMessage({
     defaultMessage: 'Clear custom value',
     description: 'Tooltip content for clearing custom value',
+  });
+
+  const customValueSchemaNodeTypeMismatchLoc = intl.formatMessage({
+    defaultMessage: `Custom value does not match the schema node's type`,
+    description: 'Error message for when custom value does not match schema node type',
+  });
+
+  const customValueAllowedTypesMismatchLoc = intl.formatMessage({
+    defaultMessage: `Custom value does not match one of the allowed types for this input`,
+    description: `Error message for when custom value does not match one of the function node input's allowed types`,
+  });
+
+  const nodeTypeSchemaNodeTypeMismatchLoc = intl.formatMessage({
+    defaultMessage: `Input node type does not match the schema node's type`,
+    description: 'Error message for when input node type does not match schema node type',
+  });
+
+  const nodeTypeAllowedTypesMismatchLoc = intl.formatMessage({
+    defaultMessage: `Input node type does not match one of the allowed types for this input`,
+    description: `Error message for when input node type does not match one of the function node input's allowed types`,
   });
 
   const onRenderTitle = (items?: IDropdownOption<SharedOptionData>[]) => {
@@ -341,6 +368,67 @@ export const InputDropdown = (props: InputDropdownProps) => {
     return newModifiedOptions;
   }, [availableInputOptions, customValueOptionLoc, inputAllowsCustomValues]);
 
+  const typeValidationMessage = useMemo<string | undefined>(() => {
+    if (inputValue !== undefined) {
+      // Custom value validation
+      if (inputIsCustomValue) {
+        // Schema node (single type)
+        if (isSchemaNodeExtended(currentNode)) {
+          if (!isValidCustomValueByType(inputValue, currentNode.normalizedDataType)) {
+            return customValueSchemaNodeTypeMismatchLoc;
+          }
+        } else {
+          // Function nodes (>= 1 allowed types)
+          let someTypeMatched = false;
+          currentNode.inputs[isUnboundedInput ? 0 : inputIndex].allowedTypes.forEach((type) => {
+            if (isValidCustomValueByType(inputValue, type)) {
+              someTypeMatched = true;
+            }
+          });
+
+          if (!someTypeMatched) {
+            return customValueAllowedTypesMismatchLoc;
+          }
+        }
+      } else {
+        const inputType = availableInputOptions.find((option) => option.key === inputValue)?.data?.normalizedDataType;
+
+        if (inputType) {
+          // Node value validation
+          if (isSchemaNodeExtended(currentNode)) {
+            if (!isValidConnectionByType(inputType, currentNode.normalizedDataType)) {
+              return nodeTypeSchemaNodeTypeMismatchLoc;
+            }
+          } else {
+            let someTypeMatched = false;
+            currentNode.inputs[isUnboundedInput ? 0 : inputIndex].allowedTypes.forEach((type) => {
+              if (isValidConnectionByType(inputType, type)) {
+                someTypeMatched = true;
+              }
+            });
+
+            if (!someTypeMatched) {
+              return nodeTypeAllowedTypesMismatchLoc;
+            }
+          }
+        }
+      }
+    }
+
+    return undefined;
+  }, [
+    inputValue,
+    isUnboundedInput,
+    inputIndex,
+    currentNode,
+    inputIsCustomValue,
+    availableInputOptions,
+    customValueSchemaNodeTypeMismatchLoc,
+    customValueAllowedTypesMismatchLoc,
+    nodeTypeSchemaNodeTypeMismatchLoc,
+    nodeTypeAllowedTypesMismatchLoc,
+  ]);
+
   return (
     <>
       {!inputIsCustomValue ? (
@@ -360,6 +448,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
           onRenderTitle={onRenderTitle}
           onRenderOption={onRenderOption}
           data-testid={`inputDropdown-dropdown-${inputIndex}`}
+          errorMessage={typeValidationMessage}
         />
       ) : (
         <div style={{ position: 'relative', ...inputStyles }}>
@@ -377,6 +466,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
               },
             }}
             data-testid={`inputDropdown-textField-${inputIndex}`}
+            errorMessage={typeValidationMessage}
           />
           <Tooltip relationship="label" content={clearCustomValueLoc}>
             <Button
