@@ -186,6 +186,11 @@ export const setConnectionInputValue = (
   }
 };
 
+export const isValidCustomValueByType = (customValue: string, tgtDataType: NormalizedDataType) => {
+  // TODO: Custom value validation
+  return true || (customValue && tgtDataType);
+};
+
 export const isValidConnectionByType = (srcDataType: NormalizedDataType, tgtDataType: NormalizedDataType) =>
   srcDataType === NormalizedDataType.Any || tgtDataType === NormalizedDataType.Any || srcDataType === tgtDataType;
 
