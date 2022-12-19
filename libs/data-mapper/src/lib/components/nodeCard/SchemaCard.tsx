@@ -278,7 +278,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
           nodeReactFlowId={reactFlowId}
           shouldDisplay={isSourceSchemaNode ? shouldDisplaySourceHandle : shouldDisplayTargetHandle}
         />
-        {!isInputValid && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}
+        {!isInputValid && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge} />}
         {connectionStatusIcon && <span style={{ position: 'absolute', right: -16, top: 0 }}>{connectionStatusIcon}</span>}
         <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
           <span className={classes.cardIcon}>
