@@ -217,7 +217,7 @@ export class StandardSearchService implements ISearchService {
   }
 }
 
-function getClientBuiltInOperations(showStatefulOperations = false): DiscoveryOperation<BuiltInOperation>[] {
+export function getClientBuiltInOperations(showStatefulOperations = false): DiscoveryOperation<BuiltInOperation>[] {
   const allOperations: DiscoveryOperation<BuiltInOperation>[] = [
     ClientOperationsData.requestOperation,
     ClientOperationsData.responseOperation,
@@ -256,7 +256,7 @@ function getClientBuiltInOperations(showStatefulOperations = false): DiscoveryOp
   return allOperations.filter((operation) => filterStateful(operation, showStatefulOperations));
 }
 
-function getClientBuiltInConnectors(showStatefulOperations = false): Connector[] {
+export function getClientBuiltInConnectors(showStatefulOperations = false): Connector[] {
   const allConnectors: any[] = [
     ClientOperationsData.requestGroup,
     ClientOperationsData.httpGroup,

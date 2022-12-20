@@ -1,3 +1,25 @@
+export const composeOperation = {
+  name: 'composeNew',
+  id: 'composeNew',
+  type: 'compose',
+  properties: {
+    api: {
+      id: 'connectionProviders/dataOperationNew',
+      name: 'dataOperationNew',
+      displayName: 'Data Operations new',
+      iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/compose.svg',
+      brandColor: '#8c6cff',
+      description: 'Data Operations new',
+    },
+    summary: 'Compose',
+    description: "Constructs an arbitrary object from the action's inputs.",
+    visibility: 'Important',
+    operationType: 'Compose',
+    brandColor: '#8c6cff',
+    iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/compose.svg',
+  },
+};
+
 export const parseJsonOperation = {
   name: 'parsejson',
   id: 'parsejson',

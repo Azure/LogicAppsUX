@@ -1,13 +1,17 @@
 import type { QueryParameters } from '../httpClient';
+import * as ClientOperationsData from '../standard/operations';
 import type { DiscoveryOpArray } from '../standard/search';
-import { StandardSearchService } from '../standard/search';
+import { getClientBuiltInConnectors, getClientBuiltInOperations, StandardSearchService } from '../standard/search';
 import type { Connector } from '@microsoft/utils-logic-apps';
 
 export class ConsumptionSearchService extends StandardSearchService {
+  // Operations
+
   public override async getAllOperations(): Promise<DiscoveryOpArray> {
     const azureOperations = await this.getAllAzureOperations();
     const customApiOperations = await this.getAllCustomApiOperations();
-    return [...azureOperations, ...customApiOperations];
+    const clientBuiltInOperations = this.getConsumptionBuiltInOperations();
+    return [...azureOperations, ...customApiOperations, ...clientBuiltInOperations];
   }
 
   public async getAllCustomApiOperations(): Promise<DiscoveryOpArray> {
@@ -27,10 +31,31 @@ export class ConsumptionSearchService extends StandardSearchService {
     }
   }
 
+  public getConsumptionBuiltInOperations(): DiscoveryOpArray {
+    const clientBuiltInOperations = getClientBuiltInOperations(true);
+    const consumptionBuiltIn: any[] = [
+      ClientOperationsData.inlineCodeOperation,
+      ClientOperationsData.composeOperation,
+      ClientOperationsData.flatFileDecodingOperations,
+      ClientOperationsData.flatFileEncodingOperations,
+      ClientOperationsData.integrationAccountArtifactLookupOperation,
+      ClientOperationsData.liquidJsonToJsonOperation,
+      ClientOperationsData.liquidJsonToTextOperation,
+      ClientOperationsData.liquidXmlToJsonOperation,
+      ClientOperationsData.liquidXmlToTextOperation,
+      ClientOperationsData.xmlTransformOperation,
+      ClientOperationsData.xmlValidationOperation,
+    ];
+    return [...clientBuiltInOperations, ...consumptionBuiltIn];
+  }
+
+  // Connectors
+
   public override async getAllConnectors(): Promise<Connector[]> {
     const azureConnectors = await this.getAllAzureConnectors();
     const customApiConnectors = await this.getAllCustomApiConnectors();
-    return [...azureConnectors, ...customApiConnectors];
+    const clientBuiltInConnectors = this.getConsumptionBuiltInConnectors();
+    return [...azureConnectors, ...customApiConnectors, ...clientBuiltInConnectors];
   }
 
   public async getAllCustomApiConnectors(): Promise<Connector[]> {
@@ -48,5 +73,18 @@ export class ConsumptionSearchService extends StandardSearchService {
       console.error(error);
       return [];
     }
+  }
+
+  public getConsumptionBuiltInConnectors(): Connector[] {
+    const clientBuiltInConnectors = getClientBuiltInConnectors(true);
+    const consumptionBuiltIn: any[] = [
+      ClientOperationsData.inlineCodeGroup,
+      ClientOperationsData.dataOperationsGroup,
+      ClientOperationsData.flatFileGroup,
+      ClientOperationsData.integrationAccountGroup,
+      ClientOperationsData.liquidGroup,
+      ClientOperationsData.xmlGroup,
+    ];
+    return [...clientBuiltInConnectors, ...consumptionBuiltIn];
   }
 }
