@@ -102,7 +102,6 @@ export class ConsumptionSearchService extends StandardSearchService {
       $filter: `contains(Trigger, 'Batch') and (${ISE_RESOURCE_ID} eq null)`,
     };
     const response = await this.getAzureResourceRecursive(uri, queryParameters);
-    console.log(response);
     return response;
   }
 }
