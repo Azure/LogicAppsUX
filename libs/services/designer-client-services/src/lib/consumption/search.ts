@@ -4,6 +4,8 @@ import type { DiscoveryOpArray } from '../standard/search';
 import { getClientBuiltInConnectors, getClientBuiltInOperations, StandardSearchService } from '../standard/search';
 import type { Connector } from '@microsoft/utils-logic-apps';
 
+const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
+
 export class ConsumptionSearchService extends StandardSearchService {
   // Operations
 
@@ -22,7 +24,7 @@ export class ConsumptionSearchService extends StandardSearchService {
       const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
       const queryParameters: QueryParameters = {
         'api-version': apiVersion,
-        $filter: `type eq 'Microsoft.Web/customApis/apiOperations' and properties/integrationServiceEnvironmentResourceId eq null`,
+        $filter: `type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
       };
       return await this.batchAzureResourceRequests(uri, queryParameters);
     } catch (error) {
@@ -66,7 +68,7 @@ export class ConsumptionSearchService extends StandardSearchService {
       const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/customApis`;
       const queryParameters: QueryParameters = {
         'api-version': apiVersion,
-        $filter: `properties/integrationServiceEnvironmentResourceId eq null`,
+        $filter: `${ISE_RESOURCE_ID} eq null`,
       };
       return await this.getAzureResourceRecursive(uri, queryParameters);
     } catch (error) {
@@ -86,5 +88,21 @@ export class ConsumptionSearchService extends StandardSearchService {
       ClientOperationsData.xmlGroup,
     ];
     return [...clientBuiltInConnectors, ...consumptionBuiltIn];
+  }
+
+  // Get 'Batch' Connector Data - Not implemented yet
+
+  public async getBatchWorkflows(): Promise<any[]> {
+    const {
+      apiHubServiceDetails: { apiVersion, subscriptionId },
+    } = this.options;
+    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Logic/workflows`;
+    const queryParameters: QueryParameters = {
+      'api-version': apiVersion,
+      $filter: `contains(Trigger, 'Batch') and (${ISE_RESOURCE_ID} eq null)`,
+    };
+    const response = await this.getAzureResourceRecursive(uri, queryParameters);
+    console.log(response);
+    return response;
   }
 }
