@@ -77,7 +77,7 @@ export default {
           type: 'object',
           title: 'Headers',
         },
-        pathParameters: {
+        relativePathParameters: {
           type: 'object',
           title: 'Path Parameters',
         },
@@ -95,7 +95,7 @@ export default {
           schema: 'Value',
         },
         {
-          outputLocation: ['properties', 'pathParameters'],
+          outputLocation: ['properties', 'relativePathParameters'],
           name: 'relativePath',
           schema: 'UriTemplate',
         },
