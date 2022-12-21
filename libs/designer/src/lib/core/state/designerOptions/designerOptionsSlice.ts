@@ -19,6 +19,7 @@ const initialState: DesignerOptionsState = {
   isMonitoringView: false,
   isDarkMode: false,
   servicesInitialized: false,
+  isConsumption: false,
 };
 
 export const initializeServices = createAsyncThunk(
@@ -67,6 +68,7 @@ export const designerOptionsSlice = createSlice({
       state.readOnly = action.payload.readOnly;
       state.isMonitoringView = action.payload.isMonitoringView;
       state.isDarkMode = action.payload.isDarkMode;
+      state.isConsumption = action.payload.isConsumption;
     },
   },
   extraReducers: (builder) => {

@@ -19,6 +19,7 @@ interface OperationSearchHeaderProps {
   onDismiss: () => void;
   navigateBack: () => void;
   isTriggerNode: boolean;
+  isConsumption?: boolean;
 }
 
 export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
@@ -27,13 +28,42 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
     onGroupToggleChange,
     isGrouped = false,
     searchTerm,
+    filters,
+    setFilters,
     selectedGroupId,
     onDismiss,
     navigateBack,
     isTriggerNode,
+    isConsumption,
   } = props;
 
   const intl = useIntl();
+
+  const runtimeFilters = [
+    {
+      key: 'runtime',
+      text: intl.formatMessage({
+        defaultMessage: 'Runtime',
+        description: 'Filter by runtime header',
+      }),
+      itemType: DropdownMenuItemType.Header,
+    },
+    {
+      key: 'runtime-inapp',
+      text: intl.formatMessage({ defaultMessage: 'In-App', description: 'Filter by In App category of connectors' }),
+    },
+    {
+      key: 'runtime-shared',
+      text: intl.formatMessage({ defaultMessage: 'Shared', description: 'Filter by Shared category of connectors' }),
+    },
+  ];
+
+  if (isConsumption) {
+    runtimeFilters.push({
+      key: 'runtime-custom',
+      text: intl.formatMessage({ defaultMessage: 'Custom', description: 'Filter by Custom category of connectors' }),
+    });
+  }
 
   const actionFilters = isTriggerNode
     ? []
@@ -55,25 +85,9 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
           text: intl.formatMessage({ defaultMessage: 'Actions', description: 'Filter by Actions category of connectors' }),
         },
       ];
-  const DropdownControlledMultiExampleOptions = [
-    {
-      key: 'runtime',
-      text: intl.formatMessage({
-        defaultMessage: 'Runtime',
-        description: 'Filter by runtime header',
-      }),
-      itemType: DropdownMenuItemType.Header,
-    },
-    {
-      key: 'runtime-inapp',
-      text: intl.formatMessage({ defaultMessage: 'In-App', description: 'Filter by In App category of connectors' }),
-    },
-    {
-      key: 'runtime-shared',
-      text: intl.formatMessage({ defaultMessage: 'Shared', description: 'Filter by Shared category of connectors' }),
-    },
-    ...actionFilters,
-  ];
+
+  const DropdownControlledMultiExampleOptions = [...runtimeFilters, ...actionFilters];
+
   const searchResultsText = intl.formatMessage(
     {
       defaultMessage: 'Search results for: {searchTerm}',
@@ -124,11 +138,11 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
     if (item) {
       const [k, v] = (item.key as string).split('-');
       if (item.selected) {
-        props.setFilters?.({ ...props.filters, [k]: v });
+        setFilters?.({ ...filters, [k]: v });
       } else {
-        const newFilters = { ...props.filters };
+        const newFilters = { ...filters };
         delete newFilters[k];
-        props.setFilters?.(newFilters);
+        setFilters?.(newFilters);
       }
     }
   };

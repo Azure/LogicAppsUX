@@ -74,6 +74,7 @@ export const DesignerWrapper = () => {
     readOnly,
     isMonitoringView: monitoringView,
     isDarkMode: darkMode,
+    isConsumption: false,
   };
 
   useEffect(() => document.body.classList.add('is-standalone'), []);

@@ -14,6 +14,7 @@ export interface DesignerOptionsState {
   isMonitoringView?: boolean;
   isDarkMode?: boolean;
   servicesInitialized?: boolean;
+  isConsumption?: boolean;
 }
 
 export interface ServiceOptions {

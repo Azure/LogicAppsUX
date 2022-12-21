@@ -20,8 +20,8 @@ interface ContinuationTokenResponse<T> {
   nextLink: string;
 }
 
-type AzureOperationsFetchResponse = ContinuationTokenResponse<DiscoveryOperation<SomeKindOfAzureOperationDiscovery>[]>;
-type DiscoveryOpArray = DiscoveryOperation<DiscoveryResultTypes>[];
+export type AzureOperationsFetchResponse = ContinuationTokenResponse<DiscoveryOperation<SomeKindOfAzureOperationDiscovery>[]>;
+export type DiscoveryOpArray = DiscoveryOperation<DiscoveryResultTypes>[];
 
 interface StandardSearchServiceArgs {
   apiVersion: string;
@@ -37,7 +37,7 @@ interface StandardSearchServiceArgs {
 }
 
 export class StandardSearchService implements ISearchService {
-  private _isDev = false; // TODO: Find a better way to do this, can't use process.env.NODE_ENV here
+  _isDev = false; // TODO: Find a better way to do this, can't use process.env.NODE_ENV here
 
   constructor(public readonly options: StandardSearchServiceArgs) {
     const { apiHubServiceDetails, apiVersion, baseUrl, isDev } = options;
@@ -68,7 +68,7 @@ export class StandardSearchService implements ISearchService {
   }
 
   // TODO - Need to add extra filtering for trigger/action
-  private async getAllBuiltInOperations(): Promise<DiscoveryOpArray> {
+  async getAllBuiltInOperations(): Promise<DiscoveryOpArray> {
     if (this._isDev) {
       return Promise.resolve([...almostAllBuiltInOperations, ...getClientBuiltInOperations(this.options.showStatefulOperations)]);
     }
@@ -83,7 +83,7 @@ export class StandardSearchService implements ISearchService {
     return [...response.value, ...getClientBuiltInOperations(showStatefulOperations)];
   }
 
-  private async getAzureResourceByPage(uri: string, queryParams?: any, pageNumber = 0): Promise<{ value: any[]; hasMore: boolean }> {
+  async getAzureResourceByPage(uri: string, queryParams?: any, pageNumber = 0): Promise<{ value: any[]; hasMore: boolean }> {
     if (this._isDev) return { value: [], hasMore: false };
 
     const {
@@ -99,11 +99,15 @@ export class StandardSearchService implements ISearchService {
       ...queryParams,
     };
 
-    const { nextLink, value } = await httpClient.get<ContinuationTokenResponse<Connector[]>>({ uri, queryParameters });
-    return { value, hasMore: !!nextLink };
+    try {
+      const { nextLink, value } = await httpClient.get<ContinuationTokenResponse<Connector[]>>({ uri, queryParameters });
+      return { value, hasMore: !!nextLink };
+    } catch (error) {
+      return { value: [], hasMore: false };
+    }
   }
 
-  private async batchAzureResourceRequests(uri: string, queryParams?: any): Promise<any[]> {
+  async batchAzureResourceRequests(uri: string, queryParams?: any): Promise<any[]> {
     const batchSize = 50; // Number of calls to make in parallel
 
     const output: any[] = [];
@@ -127,7 +131,24 @@ export class StandardSearchService implements ISearchService {
     return output;
   }
 
-  private async getAllAzureOperations(): Promise<DiscoveryOpArray> {
+  async getAzureResourceRecursive(uri: string, queryParams: any): Promise<any[]> {
+    const { httpClient } = this.options;
+
+    const requestPage = async (uri: string, value: any[], queryParameters?: any): Promise<any> => {
+      try {
+        const { nextLink, value: newValue } = await httpClient.get<ContinuationTokenResponse<Connector[]>>({ uri, queryParameters });
+        value.push(...newValue);
+        if (nextLink) return await requestPage(nextLink, value);
+        return value;
+      } catch (error) {
+        return value;
+      }
+    };
+
+    return requestPage(uri, [], queryParams);
+  }
+
+  async getAllAzureOperations(): Promise<DiscoveryOpArray> {
     const traceId = LoggerService().startTrace({
       name: 'Get All Azure Operations',
       action: 'getAllAzureOperations',
@@ -151,14 +172,7 @@ export class StandardSearchService implements ISearchService {
   }
 
   async getAllConnectors(): Promise<Connector[]> {
-    const allBuiltInConnectorsPromise = this.getAllBuiltInConnectors();
-    const allAzureConnectorsPromise = this.getAllAzureConnectors();
-    return Promise.all([allBuiltInConnectorsPromise, allAzureConnectorsPromise]).then((values) => {
-      const builtInResults = values[0];
-      const azureResults = values[1];
-      // danielle possibly tag built in vs azure
-      return [...builtInResults, ...azureResults];
-    });
+    return Promise.all([this.getAllBuiltInConnectors(), this.getAllAzureConnectors()]).then((values) => values.flat());
   }
 
   // TODO - Need to add extra filtering for trigger/action
@@ -175,7 +189,7 @@ export class StandardSearchService implements ISearchService {
     return [...response.value, ...getClientBuiltInConnectors(showStatefulOperations)];
   }
 
-  private async getAllAzureConnectors(): Promise<Connector[]> {
+  async getAllAzureConnectors(): Promise<Connector[]> {
     if (this._isDev) {
       const connectors = AzureConnectorMock.value as Connector[];
       const formattedConnectors = this.moveGeneralInformation(connectors);
@@ -203,7 +217,7 @@ export class StandardSearchService implements ISearchService {
   }
 }
 
-function getClientBuiltInOperations(showStatefulOperations = false): DiscoveryOperation<BuiltInOperation>[] {
+export function getClientBuiltInOperations(showStatefulOperations = false): DiscoveryOperation<BuiltInOperation>[] {
   const allOperations: DiscoveryOperation<BuiltInOperation>[] = [
     ClientOperationsData.requestOperation,
     ClientOperationsData.responseOperation,
@@ -242,7 +256,7 @@ function getClientBuiltInOperations(showStatefulOperations = false): DiscoveryOp
   return allOperations.filter((operation) => filterStateful(operation, showStatefulOperations));
 }
 
-function getClientBuiltInConnectors(showStatefulOperations = false): Connector[] {
+export function getClientBuiltInConnectors(showStatefulOperations = false): Connector[] {
   const allConnectors: any[] = [
     ClientOperationsData.requestGroup,
     ClientOperationsData.httpGroup,
