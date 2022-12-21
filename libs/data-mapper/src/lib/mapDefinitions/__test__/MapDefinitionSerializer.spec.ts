@@ -1,15 +1,14 @@
-import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, sourceMockSchema, targetMockSchema } from '../__mocks__';
-import { concatFunction, greaterThanFunction } from '../__mocks__/FunctionMock';
-import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '../models';
-import { SchemaType } from '../models';
-import type { ConnectionDictionary } from '../models/Connection';
-import { directAccessPseudoFunction, ifPseudoFunction, indexPseudoFunction } from '../models/Function';
-import { setConnectionInputValue } from '../utils/Connection.Utils';
-import { generateMapDefinitionBody, generateMapDefinitionHeader, splitKeyIntoChildren } from '../utils/DataMap.Utils';
-import { addReactFlowPrefix, createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
-import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
+import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, sourceMockSchema, targetMockSchema } from '../../__mocks__';
+import { concatFunction, greaterThanFunction } from '../../__mocks__/FunctionMock';
+import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '../../models';
+import { directAccessPseudoFunction, ifPseudoFunction, indexPseudoFunction, SchemaType } from '../../models';
+import type { ConnectionDictionary } from '../../models/Connection';
+import { setConnectionInputValue } from '../../utils/Connection.Utils';
+import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
+import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
+import { generateMapDefinitionBody, generateMapDefinitionHeader } from '../MapDefinitionSerializer';
 
-describe('Map definition conversions', () => {
+describe('mapDefinitions/MapDefinitionSerializer', () => {
   describe('generateMapDefinitionHeader', () => {
     const sourceSchema: Schema = sourceMockSchema;
     const extendedSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(sourceSchema);
@@ -1696,55 +1695,6 @@ describe('Map definition conversions', () => {
       expect(dayChildren.length).toEqual(1);
       expect(dayChildren[0][0]).toEqual('Pressure');
       expect(dayChildren[0][1]).toEqual('/ns0:Root/LoopingWithIndex/WeatherReport[$a]/@Pressure');
-    });
-  });
-
-  describe('splitKeyIntoChildren', () => {
-    it('No nested functions', async () => {
-      expect(splitKeyIntoChildren('to-lower(EmployeeName)')).toEqual(['EmployeeName']);
-    });
-
-    it('Multiple node ids', async () => {
-      expect(splitKeyIntoChildren('concat(EmployeeName, EmployeeID)')).toEqual(['EmployeeName', 'EmployeeID']);
-    });
-
-    it('Content enricher', async () => {
-      expect(splitKeyIntoChildren('get-date()')).toEqual([]);
-    });
-
-    it('Mixed node and function', async () => {
-      expect(splitKeyIntoChildren('concat(EmployeeName, string(EmployeeID))')).toEqual(['EmployeeName', 'string(EmployeeID)']);
-    });
-
-    it('Multiple functions', async () => {
-      expect(splitKeyIntoChildren('concat(to-lower(EmployeeName), string(EmployeeID))')).toEqual([
-        'to-lower(EmployeeName)',
-        'string(EmployeeID)',
-      ]);
-    });
-
-    it('Single constant', async () => {
-      expect(splitKeyIntoChildren('to-lower("UpperCase")')).toEqual([`"UpperCase"`]);
-    });
-
-    it('Constants with parenthesis', async () => {
-      expect(splitKeyIntoChildren('to-lower("(UpperCase)")')).toEqual([`"(UpperCase)"`]);
-    });
-
-    it('Constants with half parenthesis', async () => {
-      expect(splitKeyIntoChildren('concat(to-lower("(SingleLeft"), "(2ndSingleLeft")')).toEqual([
-        `to-lower("(SingleLeft")`,
-        `"(2ndSingleLeft"`,
-      ]);
-    });
-
-    it('Complex', async () => {
-      expect(splitKeyIntoChildren('concat(to-lower(EmployeeName), "Start Date: ", get-date(), string(EmployeeID))')).toEqual([
-        'to-lower(EmployeeName)',
-        `"Start Date: "`,
-        'get-date()',
-        'string(EmployeeID)',
-      ]);
     });
   });
 });
