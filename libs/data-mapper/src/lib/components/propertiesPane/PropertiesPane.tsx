@@ -268,9 +268,9 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
           {tabToDisplay === PropertiesPaneTabs.Properties && (
             <>
               {isFunctionData(currentNode) ? (
-                <FunctionNodePropertiesTab functionData={currentNode} />
+                <FunctionNodePropertiesTab key={currentNode.key} functionData={currentNode} />
               ) : (
-                <SchemaNodePropertiesTab currentNode={currentNode} />
+                <SchemaNodePropertiesTab key={currentNode.key} currentNode={currentNode} />
               )}
             </>
           )}

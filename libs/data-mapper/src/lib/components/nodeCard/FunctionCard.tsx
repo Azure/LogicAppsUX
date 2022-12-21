@@ -4,7 +4,9 @@ import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import { customTokens } from '../../core';
 import type { RootState } from '../../core/state/Store';
 import type { FunctionInput } from '../../models/Function';
+import { isCustomValue, isValidConnectionByType, isValidCustomValueByType } from '../../utils/Connection.Utils';
 import { getIconForFunction } from '../../utils/Icon.Utils';
+import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import HandleWrapper from './HandleWrapper';
 import type { CardProps } from './NodeCard';
 import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
@@ -47,7 +49,7 @@ const useStyles = makeStyles({
       color: `${tokens.colorNeutralBackground1} !important`,
     },
   },
-  badge: {
+  errorBadge: {
     position: 'absolute',
     top: '1px',
     right: '-2px',
@@ -76,13 +78,23 @@ export interface FunctionCardProps extends CardProps {
 
 export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const reactFlowId = props.id;
-  const { displayName, functionName, maxNumberOfInputs, disabled, error, functionBranding, displayHandle, onClick, dataTestId } =
-    props.data; // iconFileName
+  const {
+    displayName,
+    functionName,
+    inputs: fnInputs,
+    maxNumberOfInputs,
+    disabled,
+    functionBranding,
+    displayHandle,
+    onClick,
+    dataTestId,
+  } = props.data; // iconFileName
   const classes = useStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
   const sourceNodeConnectionBeingDrawnFromId = useSelector((state: RootState) => state.dataMap.sourceNodeConnectionBeingDrawnFromId);
+  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   const [isCardHovered, setIsCardHovered] = useState<boolean>(false);
 
@@ -95,6 +107,43 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
     !!sourceNodeConnectionBeingDrawnFromId &&
     sourceNodeConnectionBeingDrawnFromId !== reactFlowId;
   const shouldDisplaySourceHandle = displayHandle && shouldDisplayHandles;
+
+  const areCurrentInputsValid = useMemo(() => {
+    let isEveryInputValid = true;
+    const curConn = connections[reactFlowId];
+
+    if (curConn) {
+      Object.values(curConn.inputs).forEach((inputArr, inputIdx) => {
+        inputArr.forEach((inputVal) => {
+          let inputValMatchedOneOfAllowedTypes = false;
+
+          fnInputs[inputIdx].allowedTypes.forEach((allowedInputType) => {
+            if (inputVal !== undefined) {
+              if (isCustomValue(inputVal)) {
+                if (isValidCustomValueByType(inputVal, allowedInputType)) {
+                  inputValMatchedOneOfAllowedTypes = true;
+                }
+              } else {
+                if (isSchemaNodeExtended(inputVal.node)) {
+                  if (isValidConnectionByType(allowedInputType, inputVal.node.normalizedDataType)) {
+                    inputValMatchedOneOfAllowedTypes = true;
+                  }
+                } else if (isValidConnectionByType(allowedInputType, inputVal.node.outputValueType)) {
+                  inputValMatchedOneOfAllowedTypes = true;
+                }
+              }
+            }
+          });
+
+          if (!inputValMatchedOneOfAllowedTypes) {
+            isEveryInputValid = false;
+          }
+        });
+      });
+    }
+
+    return isEveryInputValid;
+  }, [connections, reactFlowId, fnInputs]);
 
   return (
     <div
@@ -111,7 +160,7 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
         nodeReactFlowId={reactFlowId}
       />
 
-      {error && <PresenceBadge size="extra-small" status="busy" className={classes.badge} />}
+      {!areCurrentInputsValid && <PresenceBadge size="extra-small" status="busy" className={classes.errorBadge} />}
 
       <Tooltip
         content={{

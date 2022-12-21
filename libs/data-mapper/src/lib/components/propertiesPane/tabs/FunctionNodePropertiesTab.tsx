@@ -276,7 +276,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
               {inputValueArrays &&
                 0 in inputValueArrays && // Unbounded input value mapping
                 inputValueArrays[0].map((unboundedInputValue, idx) => (
-                  <Stack key={`${functionData.inputs[0].name}-${idx}`} horizontal verticalAlign="end" style={{ marginTop: 8 }}>
+                  <Stack key={`${functionData.inputs[0].name}-${idx}`} horizontal verticalAlign="start" style={{ marginTop: 8 }}>
                     <Tooltip relationship="label" content={functionData.inputs[0].tooltip || ''}>
                       <InputDropdown
                         currentNode={functionData}
@@ -286,6 +286,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                         inputIndex={idx}
                         inputStyles={{ width: '100%' }}
                         inputAllowsCustomValues={functionData.inputs[0].allowCustomInput}
+                        isUnboundedInput
                       />
                     </Tooltip>
 
@@ -293,7 +294,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                       appearance="subtle"
                       icon={<Delete20Regular />}
                       onClick={() => removeUnboundedInput(idx)}
-                      style={{ marginLeft: '16px' }}
+                      style={{ marginLeft: '16px', marginTop: '26px' }}
                       aria-label={removeInputLoc}
                     />
                   </Stack>

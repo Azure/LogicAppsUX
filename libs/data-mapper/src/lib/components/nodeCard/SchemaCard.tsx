@@ -6,8 +6,9 @@ import type { SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { Connection } from '../../models/Connection';
 import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
-import { flattenInputs } from '../../utils/Connection.Utils';
+import { flattenInputs, isCustomValue, isValidConnectionByType, isValidCustomValueByType } from '../../utils/Connection.Utils';
 import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
+import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import { ItemToggledState } from '../tree/TargetSchemaTreeItem';
 import HandleWrapper from './HandleWrapper';
 import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
@@ -163,7 +164,7 @@ export interface SchemaCardProps extends CardProps {
 
 export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const reactFlowId = props.id;
-  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron, connectionStatus } = props.data;
+  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, displayHandle, displayChevron, connectionStatus } = props.data;
   const dispatch = useDispatch<AppDispatch>();
   const sharedStyles = getStylesForSharedState();
   const classes = useStyles();
@@ -227,6 +228,30 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     }
   }, [connectionStatus]);
 
+  const isInputValid = useMemo(() => {
+    const curConn = connections[reactFlowId];
+
+    // Only calculate validity if a target schema node with an input
+    if (isSourceSchemaNode || !curConn || !isNodeConnected) {
+      return true;
+    }
+
+    const curInput = flattenInputs(curConn.inputs)[0];
+    if (curInput === undefined) {
+      return true;
+    }
+
+    if (isCustomValue(curInput)) {
+      return isValidCustomValueByType(curInput, schemaNode.normalizedDataType);
+    } else {
+      if (isSchemaNodeExtended(curInput.node)) {
+        return isValidConnectionByType(schemaNode.normalizedDataType, curInput.node.normalizedDataType);
+      } else {
+        return isValidConnectionByType(schemaNode.normalizedDataType, curInput.node.outputValueType);
+      }
+    }
+  }, [isSourceSchemaNode, connections, reactFlowId, isNodeConnected, schemaNode.normalizedDataType]);
+
   const outputChevronOnClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     dispatch(setCurrentTargetSchemaNode(schemaNode));
@@ -253,7 +278,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
           nodeReactFlowId={reactFlowId}
           shouldDisplay={isSourceSchemaNode ? shouldDisplaySourceHandle : shouldDisplayTargetHandle}
         />
-        {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}
+        {!isInputValid && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge} />}
         {connectionStatusIcon && <span style={{ position: 'absolute', right: -16, top: 0 }}>{connectionStatusIcon}</span>}
         <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
           <span className={classes.cardIcon}>
