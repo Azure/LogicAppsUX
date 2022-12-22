@@ -31,8 +31,70 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
   describe('convertFromMapDefinition', () => {
     it('creates a simple connection between one source and target node', () => {
       const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
-      expect(result['target-/ns0:Root/DirectTranslation/Employee/Name']).toBeTruthy();
-      expect(result['source-/ns0:Root/DirectTranslation/EmployeeName']).toBeTruthy();
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+
+      expect(resultEntries.length).toEqual(2);
+
+      expect(resultEntries[0][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+      expect(resultEntries[0][1]).toBeTruthy();
+      expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+
+      expect(resultEntries[1][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+      expect(resultEntries[1][1]).toBeTruthy();
+      expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+    });
+
+    it('creates a connection between one source and target node with leading @', () => {
+      simpleMap['ns0:Root'] = {
+        DataTranslation: {
+          EmployeeName: {
+            '$@RegularFulltime': '/ns0:Root/DataTranslation/Employee/EmploymentStatus',
+          },
+        },
+      };
+
+      const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+
+      expect(resultEntries.length).toEqual(2);
+
+      expect(resultEntries[0][0]).toEqual('source-/ns0:Root/DataTranslation/Employee/EmploymentStatus');
+      expect(resultEntries[0][1]).toBeTruthy();
+      expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DataTranslation/EmployeeName/@RegularFulltime');
+
+      expect(resultEntries[1][0]).toEqual('target-/ns0:Root/DataTranslation/EmployeeName/@RegularFulltime');
+      expect(resultEntries[1][1]).toBeTruthy();
+      expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/DataTranslation/Employee/EmploymentStatus'
+      );
+    });
+
+    it('creates a connection between one source and target nodes value', () => {
+      simpleMap['ns0:Root'] = {
+        DataTranslation: {
+          EmployeeName: {
+            $value: '/ns0:Root/DataTranslation/Employee/FirstName',
+          },
+        },
+      };
+
+      const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+
+      expect(resultEntries.length).toEqual(2);
+
+      expect(resultEntries[0][0]).toEqual('source-/ns0:Root/DataTranslation/Employee/FirstName');
+      expect(resultEntries[0][1]).toBeTruthy();
+      expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DataTranslation/EmployeeName');
+
+      expect(resultEntries[1][0]).toEqual('target-/ns0:Root/DataTranslation/EmployeeName');
+      expect(resultEntries[1][1]).toBeTruthy();
+      expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/DataTranslation/Employee/FirstName'
+      );
     });
 
     it('creates a connection between a custom value and target node', () => {
@@ -51,11 +113,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
       expect(resultEntries.length).toEqual(2);
 
-      expect(resultEntries[0][0]).toContain('target-/ns0:Root/DirectTranslation/Employee/ID');
+      expect(resultEntries[0][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/ID');
       expect(resultEntries[0][1]).toBeTruthy();
       expect(resultEntries[0][1].inputs[0][0]).toEqual('10');
 
-      expect(resultEntries[1][0]).toContain('target-/ns0:Root/DirectTranslation/Employee/Name');
+      expect(resultEntries[1][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
       expect(resultEntries[1][1]).toBeTruthy();
       expect(resultEntries[1][1].inputs[0][0]).toEqual('"Steve"');
     });
@@ -82,11 +144,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
       expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
 
-      expect(resultEntries[1][0]).toContain('source-/ns0:Root/DirectTranslation/EmployeeName');
+      expect(resultEntries[1][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
       expect(resultEntries[1][1]).toBeTruthy();
       expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual(concatId);
 
-      expect(resultEntries[2][0]).toContain('target-/ns0:Root/DirectTranslation/Employee/Name');
+      expect(resultEntries[2][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
       expect(resultEntries[2][1]).toBeTruthy();
       expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
     });
@@ -115,11 +177,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect(resultEntries[0][1].inputs[0][2]).toEqual('", Esq"');
       expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
 
-      expect(resultEntries[1][0]).toContain('source-/ns0:Root/DirectTranslation/EmployeeName');
+      expect(resultEntries[1][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
       expect(resultEntries[1][1]).toBeTruthy();
       expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual(concatId);
 
-      expect(resultEntries[2][0]).toContain('target-/ns0:Root/DirectTranslation/Employee/Name');
+      expect(resultEntries[2][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
       expect(resultEntries[2][1]).toBeTruthy();
       expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
     });
