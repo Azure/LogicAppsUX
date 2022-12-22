@@ -67,3 +67,20 @@ export interface ICallbackUrlResponse {
   relativeParameters?: [];
   queries?: Record<string, any>;
 }
+
+export enum WorkflowProjectType {
+  Nuget = 'Nuget',
+  Bundle = 'Bundle',
+}
+
+export interface ISettingToAdd {
+  key: string;
+  value: string | boolean | Record<string, any>;
+  prefix?: string;
+}
+
+export interface IWorkflowListStepOptions {
+  isProjectWizard: boolean;
+  templateId: string | undefined;
+  triggerSettings: { [key: string]: string | undefined } | undefined;
+}
