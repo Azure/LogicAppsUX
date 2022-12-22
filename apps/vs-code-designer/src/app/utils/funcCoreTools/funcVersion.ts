@@ -1,3 +1,7 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 import { funcVersionSetting } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { getWorkspaceSettingFromAnyFolder } from '../vsCodeConfig/settings';
@@ -61,7 +65,7 @@ export async function getDefaultFuncVersion(context: IActionContext): Promise<Fu
  * Gets functions core tools version from local cli command.
  * @returns {Promise<FuncVersion | undefined>} Functions core tools version.
  */
-async function tryGetLocalFuncVersion(): Promise<FuncVersion | undefined> {
+export async function tryGetLocalFuncVersion(): Promise<FuncVersion | undefined> {
   try {
     const version: string | null = await getLocalFuncCoreToolsVersion();
     if (version) {
@@ -78,7 +82,7 @@ async function tryGetLocalFuncVersion(): Promise<FuncVersion | undefined> {
  * Executes version command and gets it from cli.
  * @returns {Promise<string | null>} Functions core tools version.
  */
-async function getLocalFuncCoreToolsVersion(): Promise<string | null> {
+export async function getLocalFuncCoreToolsVersion(): Promise<string | null> {
   const output: string = await executeCommand(undefined, undefined, ext.funcCliPath, '--version');
   const version: string | null = semver.clean(output);
   if (version) {
@@ -98,3 +102,17 @@ async function getLocalFuncCoreToolsVersion(): Promise<string | null> {
     return null;
   }
 }
+
+/* eslint-disable no-param-reassign */
+export function addLocalFuncTelemetry(context: IActionContext): void {
+  context.telemetry.properties.funcCliVersion = 'unknown';
+
+  getLocalFuncCoreToolsVersion()
+    .then((version: string) => {
+      context.telemetry.properties.funcCliVersion = version || 'none';
+    })
+    .catch(() => {
+      context.telemetry.properties.funcCliVersion = 'none';
+    });
+}
+/* eslint-enable no-param-reassign */

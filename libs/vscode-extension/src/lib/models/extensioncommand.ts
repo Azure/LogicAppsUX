@@ -13,3 +13,7 @@ export enum ExtensionCommand {
   getCallbackUrl = 'GetCallbackUrl',
   receiveCallback = 'ReceiveCallback',
 }
+
+export interface IExtensionsJson {
+  recommendations?: string[];
+}

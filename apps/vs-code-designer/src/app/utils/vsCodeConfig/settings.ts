@@ -47,10 +47,6 @@ export function getFunctionsWorkerRuntime(language: string | undefined): WorkerR
     case ProjectLanguage.CSharp:
     case ProjectLanguage.FSharp:
       return WorkerRuntime.Dotnet;
-    case ProjectLanguage.Java:
-      return WorkerRuntime.Java;
-    case ProjectLanguage.PowerShell:
-      return WorkerRuntime.PowerShell;
     default:
       return undefined;
   }
