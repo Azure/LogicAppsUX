@@ -1395,6 +1395,12 @@
       "value": "Gereed"
     }
   ],
+  "AX7dq3": [
+    {
+      "type": 0,
+      "value": "Input node type does not match the schema node's type"
+    }
+  ],
   "AYaqW/": [
     {
       "type": 0,
@@ -1683,6 +1689,12 @@
     {
       "type": 0,
       "value": "Duur"
+    }
+  ],
+  "DZc8wP": [
+    {
+      "type": 0,
+      "value": "Custom value does not match the schema node's type"
     }
   ],
   "DfS13/": [
@@ -3957,6 +3969,12 @@
       "value": "Zoektips"
     }
   ],
+  "Yh5OVd": [
+    {
+      "type": 0,
+      "value": "Custom value does not match one of the allowed types for this input"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -4209,6 +4227,12 @@
       "value": "Geef parameters op om de uitvoer te testen."
     }
   ],
+  "byTBrn": [
+    {
+      "type": 0,
+      "value": "Custom"
+    }
+  ],
   "bzF/qn": [
     {
       "type": 0,
@@ -4309,6 +4333,12 @@
     {
       "type": 0,
       "value": "Geannuleerd"
+    }
+  ],
+  "cjcEOf": [
+    {
+      "type": 0,
+      "value": "Input node type does not match one of the allowed types for this input"
     }
   ],
   "cmTCsW": [

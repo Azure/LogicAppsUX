@@ -5,13 +5,21 @@ on:
     branches:
       - main
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [opened, synchronize, reopened, closed, labeled]
     branches:
       - main
 
 jobs:
   build_and_deploy_job:
-    if: (github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')) && github.actor != 'csigs' &&  github.actor != 'azure-logic-apps-automation'
+    if: |
+      (
+        github.event_name == 'push' 
+        || (github.event_name == 'pull_request' && github.event.action != 'closed') 
+        || (github.event.label.name == 'Storybook')
+      ) 
+      && github.actor != 'csigs'
+      &&  github.actor != 'azure-logic-apps-automation' 
+      && contains(github.event.pull_request.labels.*.name, 'Storybook')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:

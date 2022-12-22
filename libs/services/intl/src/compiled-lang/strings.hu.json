@@ -1395,6 +1395,12 @@
       "value": "Kész"
     }
   ],
+  "AX7dq3": [
+    {
+      "type": 0,
+      "value": "Input node type does not match the schema node's type"
+    }
+  ],
   "AYaqW/": [
     {
       "type": 0,
@@ -1683,6 +1689,12 @@
     {
       "type": 0,
       "value": "Időtartam"
+    }
+  ],
+  "DZc8wP": [
+    {
+      "type": 0,
+      "value": "Custom value does not match the schema node's type"
     }
   ],
   "DfS13/": [
@@ -3965,6 +3977,12 @@
       "value": "Tippek a kereséshez"
     }
   ],
+  "Yh5OVd": [
+    {
+      "type": 0,
+      "value": "Custom value does not match one of the allowed types for this input"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -4229,6 +4247,12 @@
       "value": "Adja meg a paramétereket a kimenet teszteléséhez."
     }
   ],
+  "byTBrn": [
+    {
+      "type": 0,
+      "value": "Custom"
+    }
+  ],
   "bzF/qn": [
     {
       "type": 0,
@@ -4329,6 +4353,12 @@
     {
       "type": 0,
       "value": "Megszakítva"
+    }
+  ],
+  "cjcEOf": [
+    {
+      "type": 0,
+      "value": "Input node type does not match one of the allowed types for this input"
     }
   ],
   "cmTCsW": [
