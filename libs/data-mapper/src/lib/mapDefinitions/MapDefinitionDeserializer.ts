@@ -122,10 +122,7 @@ const parseDefinitionToConnection = (
   for (const childKey in sourceNodeObject) {
     let childTargetKey = targetKey;
     if (childKey !== mapNodeParams.value) {
-      const trimmedChildKey =
-        childKey.startsWith('$') && !(childKey.startsWith(mapNodeParams.for) || childKey.startsWith(mapNodeParams.if))
-          ? childKey.substring(1)
-          : childKey;
+      const trimmedChildKey = childKey.startsWith('$@') ? childKey.substring(1) : childKey;
       childTargetKey = `${targetKey}/${trimmedChildKey}`;
     }
 

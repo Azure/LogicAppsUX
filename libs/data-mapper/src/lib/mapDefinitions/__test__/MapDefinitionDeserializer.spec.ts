@@ -153,6 +153,30 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
     });
 
+    it('creates a connection between a content enricher function and target', () => {
+      simpleMap['ns0:Root'] = {
+        ContentEnrich: {
+          DateOfDemo: 'current-date()',
+        },
+      };
+
+      const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+
+      expect(resultEntries.length).toEqual(2);
+
+      const currentDateId = resultEntries[0][0];
+
+      expect(resultEntries[0][0]).toEqual(currentDateId);
+      expect(resultEntries[0][1]).toBeTruthy();
+      expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ContentEnrich/DateOfDemo');
+
+      expect(resultEntries[1][0]).toEqual('target-/ns0:Root/ContentEnrich/DateOfDemo');
+      expect(resultEntries[1][1]).toBeTruthy();
+      expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(currentDateId);
+    });
+
     it('creates a connection between a source, a function with custom value and a target', () => {
       simpleMap['ns0:Root'] = {
         DirectTranslation: {
