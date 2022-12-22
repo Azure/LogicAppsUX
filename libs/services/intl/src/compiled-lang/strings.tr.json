@@ -1363,6 +1363,12 @@
       "value": "Bitti"
     }
   ],
+  "AX7dq3": [
+    {
+      "type": 0,
+      "value": "Input node type does not match the schema node's type"
+    }
+  ],
   "AYaqW/": [
     {
       "type": 0,
@@ -1635,6 +1641,12 @@
     {
       "type": 0,
       "value": "Süre"
+    }
+  ],
+  "DZc8wP": [
+    {
+      "type": 0,
+      "value": "Custom value does not match the schema node's type"
     }
   ],
   "DfS13/": [
@@ -3845,6 +3857,12 @@
       "value": "Arama İpuçları"
     }
   ],
+  "Yh5OVd": [
+    {
+      "type": 0,
+      "value": "Custom value does not match one of the allowed types for this input"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -4097,6 +4115,12 @@
       "value": "Çıkışı test etmek için parametreleri belirtin."
     }
   ],
+  "byTBrn": [
+    {
+      "type": 0,
+      "value": "Custom"
+    }
+  ],
   "bzF/qn": [
     {
       "type": 0,
@@ -4197,6 +4221,12 @@
     {
       "type": 0,
       "value": "İptal Edildi"
+    }
+  ],
+  "cjcEOf": [
+    {
+      "type": 0,
+      "value": "Input node type does not match one of the allowed types for this input"
     }
   ],
   "cmTCsW": [
