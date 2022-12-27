@@ -54,6 +54,15 @@
           "light": "assets/light/Codeless.svg",
           "dark": "assets/dark/Codeless.svg"
         }
+      },
+      {
+        "command": "logicAppsExtension.deploy",
+        "title": "Deploy to Logic App...",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/deploy.svg",
+          "dark": "assets/dark/deploy.svg"
+        }
       }
     ],
     "viewsContainers": {
@@ -85,6 +94,11 @@
           "command": "logicAppsExtension.createCodeless",
           "when": "view == newAzLogicApps",
           "group": "navigation@2"
+        },
+        {
+          "command": "logicAppsExtension.deploy",
+          "when": "view == newAzLogicApps",
+          "group": "navigation@3"
         }
       ],
       "view/item/context": [
@@ -102,9 +116,19 @@
           "command": "logicAppsExtension.viewContent",
           "when": "view == newAzLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "2@1"
+        },
+        {
+          "command": "logicAppsExtension.deploy",
+          "when": "view == newAzLogicApps && viewItem == azFuncProductionSlot",
+          "group": "3@1"
         }
       ],
       "explorer/context": [
+        {
+          "command": "logicAppsExtension.deploy",
+          "when": "explorerResourceIsFolder == true",
+          "group": "zzz_LogicApptools@1"
+        },
         {
           "command": "logicAppsExtension.openDesigner",
           "when": "resourceFilename==workflow.json",
@@ -183,6 +207,7 @@
     "onCommand:logicAppsExtension.viewContent",
     "onCommand:logicAppsExtension.createNewProject",
     "onCommand:logicAppsExtension.createCodeless",
+    "onCommand:logicAppsExtension.deploy",
     "onView:newAzLogicApps",
     "onDebugInitialConfigurations"
   ],
