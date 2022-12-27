@@ -12,10 +12,17 @@ import type { WorkspaceFolder } from 'vscode';
 import { workspace } from 'vscode';
 
 /**
- * If only one project is open and the default local settings file exists, return that.
- * Otherwise, prompt
+ * Returns local settings file path if exists and if only one project. Otherwise, prompts a dialog
+ * @param {IActionContext} context - Command context.
+ * @param {string} placeHolder - Placeholder for input.
+ * @param {WorkspaceFolder} workspaceFolder - Workspace folder.
+ * @returns {Promise<string>} Local settings file path.
  */
-export async function getLocalSettingsFile(context: IActionContext, message: string, workspaceFolder?: WorkspaceFolder): Promise<string> {
+export async function getLocalSettingsFile(
+  context: IActionContext,
+  placeHolder: string,
+  workspaceFolder?: WorkspaceFolder
+): Promise<string> {
   workspaceFolder = workspaceFolder || workspace.workspaceFolders?.[0];
   if (workspaceFolder) {
     const projectPath: string | undefined = await tryGetFunctionProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
@@ -27,7 +34,7 @@ export async function getLocalSettingsFile(context: IActionContext, message: str
     }
   }
 
-  return await selectWorkspaceFile(context, message, async (f: WorkspaceFolder): Promise<string> => {
+  return await selectWorkspaceFile(context, placeHolder, async (f: WorkspaceFolder): Promise<string> => {
     const projectPath: string = (await tryGetFunctionProjectRoot(context, f, true /* suppressPrompt */)) || f.uri.fsPath;
     return path.relative(f.uri.fsPath, path.join(projectPath, localSettingsFileName));
   });

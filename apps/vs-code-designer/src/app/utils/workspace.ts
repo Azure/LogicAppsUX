@@ -175,6 +175,13 @@ function escapeCharacters(nonPattern: string): string {
   return nonPattern.replace(/[$^*+?()[\\]]/g, '\\$&');
 }
 
+/**
+ * Opens a dialog and gets file from workspace.
+ * @param {IActionContext} context - Command context.
+ * @param {string} placeHolder - Placeholder for input.
+ * @param {Function} getSubPath - Function to get subpath inside workspace folder.
+ * @returns {Promise<string>} Workspace file path.
+ */
 export async function selectWorkspaceFile(
   context: IActionContext,
   placeHolder: string,

@@ -10,6 +10,11 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import type { Uri } from 'vscode';
 
+/**
+ * Executes command to decrypt local settings file.
+ * @param {IActionContext} context - Command context.
+ * @param {Uri} uri - Uri of local settings file.
+ */
 export async function decryptLocalSettings(context: IActionContext, uri?: Uri): Promise<void> {
   const message: string = localize('selectLocalSettings', 'Select the settings file to decrypt.');
   const localSettingsPath: string = uri ? uri.fsPath : await getLocalSettingsFile(context, message);
