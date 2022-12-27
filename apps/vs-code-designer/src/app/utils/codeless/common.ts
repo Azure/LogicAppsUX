@@ -225,6 +225,12 @@ export function getWorkflowManagementBaseURI(node: RemoteWorkflowTreeItem): stri
   return `${resourceManagerUri}${node.parent.parent.id}/hostruntime${managementApiPrefix}`;
 }
 
+/**
+ * Verifies local and remot and resource group are the same, otherwise propmts message.
+ * @param {IActionContext} context - Command context.
+ * @param {string} workflowResourceGroupRemote - Remote resource group name.
+ * @param {string} originalDeployFsPath - Workflow path to deploy.
+ */
 export async function verifyDeploymentResourceGroup(
   context: IActionContext,
   workflowResourceGroupRemote: string,

@@ -9,44 +9,53 @@ import { verifyDeploymentResourceGroup } from '../../utils/codeless/common';
 import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getFunctionsWorkerRuntime } from '../../utils/vsCodeConfig/settings';
 import type { StringDictionary } from '@azure/arm-appservice';
-import type { SiteClient } from '@microsoft/vscode-azext-azureappservice';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension';
+import { WorkerRuntime } from '@microsoft/vscode-extension';
 import type { MessageItem } from 'vscode';
 
+/**
+ * Verifies remote app settings.
+ * @param {IActionContext} context - Command context.
+ * @param {SlotTreeItemBase} node - Logic app node structure.
+ * @param {FuncVersion} version - Function core tools local version.
+ * @param {ProjectLanguage} language - Project local language.
+ * @param {string} originalDeployFsPath - Workflow path to deploy.
+ * @param {boolean} isNewLogicApp - Determines if it is a new logic app.
+ */
 export async function verifyAppSettings(
   context: IActionContext,
   node: SlotTreeItemBase,
   version: FuncVersion,
   language: ProjectLanguage,
   originalDeployFsPath: string,
-  isNewFunctionApp: boolean
+  isNewLogicApp: boolean
 ): Promise<void> {
   const client = await node.site.createClient(context);
   const appSettings: StringDictionary = await client.listApplicationSettings();
   if (appSettings.properties) {
     await verifyVersionAndLanguage(context, client.fullName, version, language, appSettings.properties);
 
-    if (!isNewFunctionApp) {
+    if (!isNewLogicApp) {
       await verifyConnectionResourceGroup(context, node, originalDeployFsPath);
-    }
-
-    const updateAppSettings: boolean = await verifyWebContentSettings(node, context, appSettings.properties);
-    if (updateAppSettings) {
-      await client.updateApplicationSettings(appSettings);
-      // if the user cancels the deployment, the app settings node doesn't reflect the updated settings
-      await node.configurationsTreeItem.appSettingsTreeItem.refresh(context);
     }
   }
 }
 
+/**
+ * Verifies azure core tools version and runtime language.
+ * @param {IActionContext} context - Command context.
+ * @param {string} siteName - Remote logic app name.
+ * @param {FuncVersion} localVersion - Function core tools local version.
+ * @param {ProjectLanguage} localLanguage - Project local language.
+ * @param {Record<string,string>} remoteProperties - List of remote logic app local.settings properties.
+ */
 export async function verifyVersionAndLanguage(
   context: IActionContext,
   siteName: string,
   localVersion: FuncVersion,
   localLanguage: ProjectLanguage,
-  remoteProperties: { [propertyName: string]: string }
+  remoteProperties: Record<string, string>
 ): Promise<void> {
   const rawAzureVersion: string = remoteProperties[extensionVersionKey];
   context.telemetry.properties.remoteVersion = rawAzureVersion;
@@ -54,8 +63,9 @@ export async function verifyVersionAndLanguage(
 
   const azureWorkerRuntime: string | undefined = remoteProperties[workerRuntimeKey];
   context.telemetry.properties.remoteRuntime = azureWorkerRuntime;
-  const localWorkerRuntime: string | undefined = getFunctionsWorkerRuntime(localLanguage);
-  if (azureWorkerRuntime != 'node' && azureWorkerRuntime != 'dotnet') {
+  const localWorkerRuntime: WorkerRuntime | undefined = getFunctionsWorkerRuntime(localLanguage);
+
+  if (azureWorkerRuntime != WorkerRuntime.Node && azureWorkerRuntime != WorkerRuntime.Dotnet) {
     throw new Error(
       localize(
         'incompatibleRuntime',
@@ -75,6 +85,7 @@ export async function verifyVersionAndLanguage(
       siteName,
       localVersion
     );
+
     const deployAnyway: MessageItem = { title: localize('deployAnyway', 'Deploy Anyway') };
     const learnMoreLink = 'https://aka.ms/azFuncRuntime';
     context.telemetry.properties.cancelStep = 'incompatibleVersion';
@@ -85,42 +96,11 @@ export async function verifyVersionAndLanguage(
 }
 
 /**
- * We need this check due to this issue: https://github.com/Microsoft/vscode-azurefunctions/issues/625
- * Only applies to Linux Consumption apps
+ * Gets remote resource group and verifies deployment of it.
+ * @param {IActionContext} context - Command context.
+ * @param {SlotTreeItemBase} node - Logic app node structure.
+ * @param {string} originalDeployFsPath - Workflow path to deploy.
  */
-async function verifyWebContentSettings(
-  node: SlotTreeItemBase,
-  context: IActionContext,
-  remoteProperties: { [propertyName: string]: string }
-): Promise<boolean> {
-  const isConsumption: boolean = await node.getIsConsumption(context);
-  const client: SiteClient = await node.site.createClient(context);
-  if (client.isLinux && isConsumption) {
-    const WEBSITE_CONTENTAZUREFILECONNECTIONSTRING = 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING';
-    const WEBSITE_CONTENTSHARE = 'WEBSITE_CONTENTSHARE';
-    if (remoteProperties[WEBSITE_CONTENTAZUREFILECONNECTIONSTRING] || remoteProperties[WEBSITE_CONTENTSHARE]) {
-      context.telemetry.properties.webContentSettingsRemoved = 'false';
-      await context.ui.showWarningMessage(
-        localize(
-          'notConfiguredForDeploy',
-          'The selected app is not configured for deployment through VS Code. Remove app settings "{0}" and "{1}"?',
-          WEBSITE_CONTENTAZUREFILECONNECTIONSTRING,
-          WEBSITE_CONTENTSHARE
-        ),
-        { modal: true },
-        DialogResponses.yes,
-        DialogResponses.cancel
-      );
-      delete remoteProperties[WEBSITE_CONTENTAZUREFILECONNECTIONSTRING];
-      delete remoteProperties[WEBSITE_CONTENTSHARE];
-      context.telemetry.properties.webContentSettingsRemoved = 'true';
-      return true;
-    }
-  }
-
-  return false;
-}
-
 export async function verifyConnectionResourceGroup(
   context: IActionContext,
   node: SlotTreeItemBase,

@@ -63,7 +63,7 @@ async function deploy(
   addLocalFuncTelemetry(actionContext);
 
   let deployProjectPathForWorkflowApp: string | undefined;
-  const settingsToExclude: string[] = [webhookRedirectHostUri]; // NOTE(psamband): We should not be uploading this setting to cloud to support Webhook actions.
+  const settingsToExclude: string[] = [webhookRedirectHostUri];
   const deployPaths = await getDeployFsPath(actionContext, target);
   const context: IDeployContext = Object.assign(actionContext, deployPaths, { defaultAppSetting: 'defaultFunctionAppToDeploy' });
   const { originalDeployFsPath, effectiveDeployFsPath, workspaceFolder } = deployPaths;
@@ -115,6 +115,7 @@ async function deploy(
   const client = await node.site.createClient(actionContext);
   const siteConfig: SiteConfigResource = await client.getSiteConfig();
   const isZipDeploy: boolean = siteConfig.scmType !== ScmType.LocalGit && siteConfig.scmType !== ScmType.GitHub;
+
   if (getWorkspaceSetting<boolean>('showDeployConfirmation', workspaceFolder.uri.fsPath) && !isNewFunctionApp && isZipDeploy) {
     const warning: string = localize(
       'confirmDeploy',
@@ -130,7 +131,6 @@ async function deploy(
   await runPreDeployTask(context, effectiveDeployFsPath, siteConfig.scmType);
 
   if (isZipDeploy) {
-    // tslint:disable-next-line:no-floating-promises
     validateGlobSettings(context, effectiveDeployFsPath);
   }
 
@@ -169,6 +169,7 @@ async function validateGlobSettings(context: IActionContext, fsPath: string): Pr
   const excludeKey = 'zipIgnorePattern';
   const includeSetting: string | undefined = getWorkspaceSetting(includeKey, fsPath);
   const excludeSetting: string | string[] | undefined = getWorkspaceSetting(excludeKey, fsPath);
+
   if (includeSetting || excludeSetting) {
     context.telemetry.properties.hasOldGlobSettings = 'true';
     const message: string = localize(

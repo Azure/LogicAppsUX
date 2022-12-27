@@ -12,6 +12,12 @@ import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils
 import type { MessageItem, WorkspaceFolder } from 'vscode';
 import { window } from 'vscode';
 
+/**
+ * Shows information message after deployment has been completed and let user select post actions.
+ * @param {SlotTreeItemBase} node - Logic app node structure.
+ * @param {WorkspaceFolder} workspaceFolder - Workspace folder path.
+ * @param {string[]} settingsToExclude - Array of settings to exclude from uploading.
+ */
 export async function notifyDeployComplete(
   node: SlotTreeItemBase,
   workspaceFolder: WorkspaceFolder,

@@ -16,6 +16,14 @@ import type { ILocalSettingsJson } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
 
+/**
+ * Uploads local settings file to the portal.
+ * @param {IActionContext} context - Command context.
+ * @param {AppSettingsTreeItem} node - App settings node structure.
+ * @param {vscode.WorkspaceFolder} workspacePath - Workspace folder path.
+ * @param {string[]} settingsToExclude - Array of settings to exclude from uploading.
+ * @returns {Promise<string>} Workspace file path.
+ */
 export async function uploadAppSettings(
   context: IActionContext,
   node?: AppSettingsTreeItem,
