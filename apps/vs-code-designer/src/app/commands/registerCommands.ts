@@ -7,7 +7,7 @@ import { ext } from '../../extensionVariables';
 import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt';
 import { createCodeless } from './createCodeless/createCodeless';
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
-import { deployProductionSlot } from './deploy/deploy';
+import { deployProductionSlot, deploySlot } from './deploy/deploy';
 import { openFile } from './openFile';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
 import { viewContent } from './workflows/viewContent';
@@ -31,4 +31,5 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.createNewProject, createNewProjectFromCommand);
   registerCommand(extensionCommand.createCodeless, createCodeless);
   registerSiteCommand(extensionCommand.deploy, deployProductionSlot);
+  registerSiteCommand(extensionCommand.deploySlot, deploySlot);
 }

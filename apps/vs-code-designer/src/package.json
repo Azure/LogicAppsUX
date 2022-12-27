@@ -63,6 +63,11 @@
           "light": "assets/light/deploy.svg",
           "dark": "assets/dark/deploy.svg"
         }
+      },
+      {
+        "command": "logicAppsExtension.deploySlot",
+        "title": "Deploy to Slot...",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -121,6 +126,11 @@
           "command": "logicAppsExtension.deploy",
           "when": "view == newAzLogicApps && viewItem == azFuncProductionSlot",
           "group": "3@1"
+        },
+        {
+          "command": "logicAppsExtension.deploySlot",
+          "when": "view == newAzLogicApps && viewItem == azFuncSlot",
+          "group": "3@2"
         }
       ],
       "explorer/context": [
@@ -208,6 +218,7 @@
     "onCommand:logicAppsExtension.createNewProject",
     "onCommand:logicAppsExtension.createCodeless",
     "onCommand:logicAppsExtension.deploy",
+    "onCommand:logicAppsExtension.deploySlot",
     "onView:newAzLogicApps",
     "onDebugInitialConfigurations"
   ],

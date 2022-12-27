@@ -16,6 +16,7 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { ProductionSlotTreeItem } from '../../tree/slotsTree/ProductionSlotTreeItem';
+import { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import type { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
 import { createAclInConnectionIfNeeded, getConnectionsJson } from '../../utils/codeless/connection';
 import { getParametersJson } from '../../utils/codeless/parameter';
@@ -52,6 +53,14 @@ export async function deployProductionSlot(
   functionAppId?: string | Record<string, any>
 ): Promise<void> {
   await deploy(context, target, functionAppId, ProductionSlotTreeItem.contextValue);
+}
+
+export async function deploySlot(
+  context: IActionContext,
+  target?: Uri | string | SlotTreeItemBase,
+  functionAppId?: string | Record<string, any>
+): Promise<void> {
+  await deploy(context, target, functionAppId, SlotTreeItem.contextValue);
 }
 
 async function deploy(
