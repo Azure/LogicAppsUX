@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
+import { executeCommand } from '../funcCoreTools/cpUtils';
 import { getLocalSettingsFile } from './getLocalSettingsFile';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';

@@ -5,9 +5,9 @@
 import { localSettingsFileName } from '../../../constants';
 import { localize } from '../../../localize';
 import { parseHostJson } from '../../funcConfig/host';
+import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import { getFileOrFolderContent } from '../../utils/codeless/apiUtils';
 import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
-import { getLocalSettingsJson } from '../../utils/localSettings';
 import { getIconPath } from '../../utils/tree/assets';
 import { ConfigurationsTreeItem } from '../configurationsTree/ConfigurationsTreeItem';
 import { RemoteWorkflowsTreeItem } from '../remoteWorkflowsTree/RemoteWorkflowsTreeItem';

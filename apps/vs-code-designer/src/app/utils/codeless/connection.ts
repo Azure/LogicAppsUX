@@ -1,7 +1,7 @@
 import { connectionsFileName } from '../../../constants';
 import type { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
+import { addOrUpdateLocalAppSettings } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
-import { addOrUpdateLocalAppSettings } from '../localSettings';
 import { sendAzureRequest } from '../requestUtils';
 import { tryGetFunctionProjectRoot } from '../verifyIsProject';
 import { getContainingWorkspace } from '../workspace';
