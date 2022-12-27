@@ -21,6 +21,7 @@ export const workflowFileName = 'workflow.json';
 export const func = 'func';
 export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
 export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
+export const extensionVersionKey = 'FUNCTIONS_EXTENSION_VERSION';
 
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
@@ -33,6 +34,11 @@ export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
 export const logicAppKind = 'workflowapp';
 export const workflowappRuntime = 'node|14';
 export const viewOutput = localize('viewOutput', 'View Output');
+export const webhookRedirectHostUri = 'Workflows.WebhookRedirectHostUri';
+export const workflowAppAADClientId = 'WORKFLOWAPP_AAD_CLIENTID';
+export const workflowAppAADObjectId = 'WORKFLOWAPP_AAD_OBJECTID';
+export const workflowAppAADTenantId = 'WORKFLOWAPP_AAD_TENANTID';
+export const workflowAppAADClientSecret = 'WORKFLOWAPP_AAD_CLIENTSECRET';
 
 export enum workflowType {
   stateful = 'Stateful-Codeless',
@@ -54,6 +60,7 @@ export enum extensionCommand {
   openFile = 'logicAppsExtension.openFile',
   createNewProject = 'logicAppsExtension.createNewProject',
   createCodeless = 'logicAppsExtension.createCodeless',
+  deploy = 'logicAppsExtension.deploy',
   azureFunctionsOpenFile = 'azureFunctions.openFile',
   azureSelectSubscriptions = 'azure-account.selectSubscriptions',
 }
@@ -100,3 +107,6 @@ export enum DotnetVersion {
   net2 = 'netcoreapp2.1',
   net48 = 'net48',
 }
+
+// Resources
+export const kubernetesKind = 'kubernetes';

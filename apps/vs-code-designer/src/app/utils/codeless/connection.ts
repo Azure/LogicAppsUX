@@ -1,6 +1,8 @@
 import { connectionsFileName } from '../../../constants';
+import type { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
 import { writeFormattedJson } from '../fs';
 import { addOrUpdateLocalAppSettings } from '../localSettings';
+import { sendAzureRequest } from '../requestUtils';
 import { tryGetFunctionProjectRoot } from '../verifyIsProject';
 import { getContainingWorkspace } from '../workspace';
 import { getAuthorizationToken } from './getAuthorizationToken';
@@ -13,6 +15,8 @@ import type {
   Parameter,
   ConnectionAndSettings,
   ConnectionReferenceModel,
+  IIdentityWizardContext,
+  ConnectionAcl,
 } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -180,4 +184,83 @@ export function resolveSettingsInConnection(
         }, {}),
       }
     : connectionInfo;
+}
+
+export async function createAclInConnectionIfNeeded(
+  identityWizardContext: IIdentityWizardContext,
+  connectionId: string,
+  node: SlotTreeItemBase
+): Promise<void> {
+  if (
+    (!node.site || !node.site.rawSite.identity || node.site.rawSite.identity.type !== 'SystemAssigned') &&
+    !identityWizardContext?.useAdvancedIdentity
+  ) {
+    return;
+  }
+
+  let connectionAcls: ConnectionAcl[];
+  const identity = identityWizardContext?.useAdvancedIdentity
+    ? { principalId: identityWizardContext.objectId, tenantId: identityWizardContext.tenantId }
+    : node.site.rawSite.identity;
+  const url = `${connectionId}/accessPolicies?api-version=2018-07-01-preview`;
+
+  try {
+    const response = await sendAzureRequest(url, identityWizardContext, 'GET', node.site.subscription);
+    connectionAcls = response.parsedBody.value;
+  } catch (error) {
+    // NOTE(psamband): If connection access policies cannot be get, we will create new one.
+    connectionAcls = [];
+  }
+
+  if (
+    !connectionAcls.some(
+      (acl) =>
+        acl.properties?.principal.identity.objectId === identity?.principalId &&
+        acl.properties?.principal.identity.tenantId === identity?.tenantId
+    )
+  ) {
+    return createAccessPolicyInConnection(identityWizardContext, connectionId, node, identity);
+  }
+}
+
+async function createAccessPolicyInConnection(
+  identityWizardContext: IIdentityWizardContext,
+  connectionId: string,
+  node: SlotTreeItemBase,
+  identity: any
+): Promise<void> {
+  const accessToken = await getAuthorizationToken(undefined, undefined);
+  const getUrl = `${connectionId}?api-version=2018-07-01-preview`;
+  let connection: any;
+
+  try {
+    const response = await sendAzureRequest(getUrl, identityWizardContext, 'GET', node.site.subscription);
+    connection = response.parsedBody;
+  } catch (error) {
+    throw new Error(`Error in getting connection - ${connectionId}. ${error}`);
+  }
+
+  const { principalId: objectId, tenantId } = identity;
+  const name = `${node.site.fullName}-${objectId}`;
+  const options = {
+    json: true,
+    headers: { authorization: accessToken },
+    method: 'PUT',
+    body: {
+      name,
+      type: 'Microsoft.Web/connections/accessPolicy',
+      location: connection.location,
+      properties: {
+        principal: {
+          type: 'ActiveDirectory',
+          identity: { objectId, tenantId },
+        },
+      },
+    },
+    uri: `https://management.azure.com/${connectionId}/accessPolicies/${name}?api-version=2018-07-01-preview`,
+  };
+
+  return requestP(options).catch((error) => {
+    throw new Error(`Error in creating accessPolicy - ${name} for connection - ${connectionId}. ${error}`);
+  });
 }

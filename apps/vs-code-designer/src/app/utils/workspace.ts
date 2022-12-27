@@ -174,3 +174,31 @@ export async function findFiles(base: vscode.WorkspaceFolder | string, pattern: 
 function escapeCharacters(nonPattern: string): string {
   return nonPattern.replace(/[$^*+?()[\\]]/g, '\\$&');
 }
+
+export async function selectWorkspaceFile(
+  context: IActionContext,
+  placeHolder: string,
+  getSubPath?: (f: vscode.WorkspaceFolder) => string | undefined | Promise<string | undefined>
+): Promise<string> {
+  let defaultUri: vscode.Uri | undefined;
+  if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0 && getSubPath) {
+    const firstFolder: vscode.WorkspaceFolder = vscode.workspace.workspaceFolders[0];
+    const subPath: string | undefined = await getSubPath(firstFolder);
+    if (subPath) {
+      defaultUri = vscode.Uri.file(path.join(firstFolder.uri.fsPath, subPath));
+    }
+  }
+
+  return await selectWorkspaceItem(
+    context,
+    placeHolder,
+    {
+      canSelectFiles: true,
+      canSelectFolders: false,
+      canSelectMany: false,
+      defaultUri: defaultUri,
+      openLabel: localize('select', 'Select'),
+    },
+    getSubPath
+  );
+}
