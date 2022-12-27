@@ -1,6 +1,6 @@
 import type { ProjectLanguage } from './language';
 import type { IProjectWizardContext, ProjectVersion } from './project';
-import type { IFunctionTemplate } from './templates/IFunctionTemplate';
+import type { IWorkflowTemplate } from './templates';
 import type { ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 
 export enum FuncVersion {
@@ -29,7 +29,7 @@ export interface ICommandResult {
 export type pathRelativeFunc = (fsPath1: string, fsPath2: string) => string;
 
 export interface IFunctionWizardContext extends Partial<ISubscriptionContext>, IProjectWizardContext {
-  functionTemplate?: IFunctionTemplate;
+  functionTemplate?: IWorkflowTemplate;
   functionName?: string;
 }
 

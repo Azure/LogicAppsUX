@@ -11,7 +11,6 @@ import type { IProjectWizardContext } from '@microsoft/vscode-extension';
 export class FolderListStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
 
-  /* eslint-disable no-param-reassign */
   public static setProjectPath(context: Partial<IProjectWizardContext>, projectPath: string): void {
     context.projectPath = projectPath;
     context.workspaceFolder = getContainingWorkspace(projectPath);
@@ -20,7 +19,6 @@ export class FolderListStep extends AzureWizardPromptStep<IProjectWizardContext>
       context.openBehavior = OpenBehavior.alreadyOpen;
     }
   }
-  /* eslint-enable no-param-reassign */
 
   public async prompt(context: IProjectWizardContext): Promise<void> {
     const placeHolder: string = localize('selectNewProjectFolder', 'Select the folder that will contain your workflow project');

@@ -56,11 +56,11 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
       await fse.writeFile(
         gitignorePath,
         this.gitignore.concat(`
-          # Azure Functions artifacts
-          bin
-          obj
-          appsettings.json
-          local.settings.json`)
+# Azure Functions artifacts
+bin
+obj
+appsettings.json
+local.settings.json`)
       );
     }
 

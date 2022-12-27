@@ -3,11 +3,13 @@
   "ignorePatterns": ["!**/*"],
   "overrides": [
     {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {}
+      "files": ["*.ts"],
+      "rules": {
+        "no-param-reassign": "off"
+      }
     },
     {
-      "files": ["*.ts", "*.tsx"],
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {}
     },
     {

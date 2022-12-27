@@ -9,7 +9,10 @@ import { Uri, workspace } from 'vscode';
 import type { WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
 
 /**
- * Uses ext.prefix 'azureFunctions' unless otherwise specified
+ * Gets global setting from vscode.
+ * @param {string} key - Setting key.
+ * @param {string} prefix - Extension prefix.
+ * @returns {T | undefined} Returns the setting from the workspace.
  */
 export function getGlobalSetting<T>(key: string, prefix: string = ext.prefix): T | undefined {
   const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix);
@@ -66,7 +69,11 @@ export async function updateWorkspaceSetting<T = string>(
 }
 
 /**
- * Uses ext.prefix 'azureFunctions' unless otherwise specified
+ * Gets a setting from the vscode workspace.
+ * @param {string} key - Setting key.
+ * @param {string | WorkspaceFolder} fsPath - Workspace path.
+ * @param {string} prefix - Extension prefix.
+ * @returns {T | undefined} Returns the setting from the workspace.
  */
 export function getWorkspaceSetting<T>(key: string, fsPath?: string | WorkspaceFolder, prefix: string = ext.prefix): T | undefined {
   const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix, getScope(fsPath));

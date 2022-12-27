@@ -66,9 +66,8 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     );
   }
 
-  /* eslint-disable no-param-reassign */
   public async createChildImpl(context: ICreateFuntionAppContext): Promise<AzExtTreeItem> {
-    // TODO (ccastrotrejo) - Implementation of create logic app
+    // TODO (ccastrotrejo) - Implementation of create logic app Work to be done
     const version: FuncVersion = await getDefaultFuncVersion(context);
     const language: string | undefined = getWorkspaceSettingFromAnyFolder(projectLanguageSetting);
 
@@ -83,7 +82,6 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     const site = new ParsedSite(nonNullProp(wizardContext, 'site'), this.subscription);
     return new ProductionSlotTreeItem(this, site);
   }
-  /* eslint-enable no-param-reassign */
 
   public isAncestorOfImpl(contextValue: string | RegExp): boolean {
     return !isProjectCV(contextValue) || isRemoteProjectCV(contextValue);

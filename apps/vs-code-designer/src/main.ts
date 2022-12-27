@@ -1,3 +1,4 @@
+import { runPostFunctionCreateStepsFromCache } from './app/commands/createCodeless/createCodelessSteps/WorkflowCreateStepBase';
 import { registerCommands } from './app/commands/registerCommands';
 import { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
@@ -21,6 +22,8 @@ export async function activate(context: vscode.ExtensionContext) {
   registerAppServiceExtensionVariables(ext);
 
   await callWithTelemetryAndErrorHandling(extensionCommand.activate, async () => {
+    runPostFunctionCreateStepsFromCache();
+
     ext.azureAccountTreeItem = new AzureAccountTreeItemWithProjects();
     ext.tree = new AzExtTreeDataProvider(ext.azureAccountTreeItem, extensionCommand.loadMore);
     ext.treeView = vscode.window.createTreeView(ext.treeViewName, {

@@ -13,7 +13,6 @@ export class OpenFolderStep extends AzureWizardExecuteStep<IProjectWizardContext
   public async execute(context: IProjectWizardContext): Promise<void> {
     const openFolders = workspace.workspaceFolders || [];
     if (context.openBehavior === OpenBehavior.addToWorkspace && openFolders.length === 0) {
-      // eslint-disable-next-line no-param-reassign
       context.openBehavior = OpenBehavior.openInCurrentWindow;
     }
 

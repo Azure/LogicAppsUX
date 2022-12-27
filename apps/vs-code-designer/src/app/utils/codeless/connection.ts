@@ -72,7 +72,7 @@ async function getConnectionReference(
   return requestP(options)
     .then((response) => {
       const appSettingKey = `${referenceKey}-connectionKey`;
-      settingsToAdd[appSettingKey] = response.connectionKey; // eslint-disable-line no-param-reassign
+      settingsToAdd[appSettingKey] = response.connectionKey;
 
       return {
         api: { id },

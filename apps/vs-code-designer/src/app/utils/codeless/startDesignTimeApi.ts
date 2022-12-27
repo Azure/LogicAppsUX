@@ -126,7 +126,6 @@ function startDesignTimeProcess(
   let cmdOutput = '';
   let cmdOutputIncludingStderr = '';
   const formattedArgs: string = args.join(' ');
-  // eslint-disable-next-line no-param-reassign
   workingDirectory = workingDirectory || os.tmpdir();
   const options: cp.SpawnOptions = {
     cwd: workingDirectory,
@@ -139,7 +138,6 @@ function startDesignTimeProcess(
   }
 
   ext.workflowDesignChildProcess.stdout.on('data', (data: string | Buffer) => {
-    // eslint-disable-next-line no-param-reassign
     data = data.toString();
     cmdOutput = cmdOutput.concat(data);
     cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
@@ -149,7 +147,6 @@ function startDesignTimeProcess(
   });
 
   ext.workflowDesignChildProcess.stderr.on('data', (data: string | Buffer) => {
-    // eslint-disable-next-line no-param-reassign
     data = data.toString();
     cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
     if (outputChannel) {

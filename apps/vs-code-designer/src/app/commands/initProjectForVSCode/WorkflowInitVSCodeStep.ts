@@ -37,7 +37,7 @@ export class WorkflowInitVSCodeStep extends ScriptInitVSCodeStep {
       {
         id: 'getDebugSymbolDll',
         type: 'command',
-        command: 'azureLogicAppsStandard.getDebugSymbolDll',
+        command: 'logicAppsExtension.getDebugSymbolDll',
       },
     ];
   }
@@ -47,7 +47,7 @@ export class WorkflowInitVSCodeStep extends ScriptInitVSCodeStep {
       name: localize('attachToNetFunc', 'Attach to .NET Functions'),
       type: version === FuncVersion.v1 ? 'clr' : 'coreclr',
       request: 'attach',
-      processId: '{command:azureLogicAppsStandard.pickProcess}',
+      processId: '{command:logicAppsExtension.pickProcess}',
     };
   }
 

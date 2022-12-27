@@ -5,6 +5,7 @@
 import { extensionCommand } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt';
+import { createCodeless } from './createCodeless/createCodeless';
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
 import { openFile } from './openFile';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
@@ -26,4 +27,5 @@ export function registerCommands(): void {
   );
   registerCommand(extensionCommand.viewContent, viewContent);
   registerCommand(extensionCommand.createNewProject, createNewProjectFromCommand);
+  registerCommand(extensionCommand.createCodeless, createCodeless);
 }

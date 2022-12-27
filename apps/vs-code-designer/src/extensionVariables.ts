@@ -20,7 +20,6 @@ class ActionVariable<T> {
   }
 
   public registerActionVariable(value: T, context: IActionContext): void {
-    // eslint-disable-next-line no-param-reassign
     context[this.key] = value;
   }
 
@@ -58,7 +57,7 @@ export namespace ext {
   export let deploymentFolderPath: string;
 
   // Templates
-  export const templateProvider = new ActionVariable<any>('_centralTemplateProvider'); // TODO
+  export const templateProvider = new ActionVariable<any>('_centralTemplateProvider');
 
   // Functions
   export const funcCliPath: string = func;
