@@ -47,7 +47,6 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { TaskDefinition, DebugConfiguration, WorkspaceFolder } from 'vscode';
 
-/* eslint-disable no-param-reassign */
 export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 20;
   protected preDeployTask?: string;
@@ -315,4 +314,3 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
     });
   }
 }
-/* eslint-enable no-param-reassign */

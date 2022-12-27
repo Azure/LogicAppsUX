@@ -14,6 +14,8 @@ export const tasksFileName = 'tasks.json';
 export const launchFileName = 'launch.json';
 export const settingsFileName = 'settings.json';
 export const extensionsFileName = 'extensions.json';
+export const vscodeFolderName = '.vscode';
+export const workflowFileName = 'workflow.json';
 
 // Functions
 export const func = 'func';
@@ -28,11 +30,14 @@ export const workflowTenantIdKey = 'WORKFLOWS_TENANT_ID';
 export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
 export const workflowAppApiVersion = '2018-11-01';
 export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
-
 export const logicAppKind = 'workflowapp';
 export const workflowappRuntime = 'node|14';
-
 export const viewOutput = localize('viewOutput', 'View Output');
+
+export enum workflowType {
+  stateful = 'Stateful-Codeless',
+  stateless = 'Stateless-Codeless',
+}
 
 // Designer
 export const managementApiPrefix = '/runtime/webhooks/workflow/api/management';
@@ -46,10 +51,11 @@ export enum extensionCommand {
   activate = 'logicAppsExtension.activate',
   selectSubscriptions = 'logicAppsExtension.selectSubscriptions',
   viewContent = 'logicAppsExtension.viewContent',
-  azureSelectSubscriptions = 'azure-account.selectSubscriptions',
   openFile = 'logicAppsExtension.openFile',
   createNewProject = 'logicAppsExtension.createNewProject',
+  createCodeless = 'logicAppsExtension.createCodeless',
   azureFunctionsOpenFile = 'azureFunctions.openFile',
+  azureSelectSubscriptions = 'azure-account.selectSubscriptions',
 }
 
 // Context
@@ -86,3 +92,11 @@ export const dotnetPublishTaskLabel = 'publish';
 
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
+
+// .NET
+export enum DotnetVersion {
+  net6 = 'net6.0',
+  net3 = 'netcoreapp3.1',
+  net2 = 'netcoreapp2.1',
+  net48 = 'net48',
+}

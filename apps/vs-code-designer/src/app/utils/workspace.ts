@@ -4,9 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../localize';
 import type { RemoteWorkflowTreeItem } from '../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
+import { NoWorkspaceError } from './errors';
 import { isPathEqual, isSubpath } from './fs';
-import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { isNullOrUndefined, isString } from '@microsoft/utils-logic-apps';
+import { UserCancelledError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
+import * as globby from 'globby';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
@@ -20,6 +23,49 @@ export function getContainingWorkspace(fsPath: string): vscode.WorkspaceFolder |
   return openFolders.find((folder: vscode.WorkspaceFolder): boolean => {
     return isPathEqual(folder.uri.fsPath, fsPath) || isSubpath(folder.uri.fsPath, fsPath);
   });
+}
+
+/**
+ * Gets workspace folder of project.
+ * @param {IActionContext} context - Command context.
+ * @returns {Promise<WorkspaceFolder>} Returns either the new project workspace, the already open workspace or the selected workspace.
+ */
+export async function getWorkspaceFolder(context: IActionContext): Promise<vscode.WorkspaceFolder> {
+  let folder: vscode.WorkspaceFolder | undefined;
+
+  if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
+    const message: string = localize('noWorkspaceWarning', 'You must have a project open to create a workflow.');
+    const newProject: vscode.MessageItem = { title: localize('createNewProject', 'Create new project') };
+    const openExistingProject: vscode.MessageItem = { title: localize('openExistingProject', 'Open existing project') };
+    const result: vscode.MessageItem = await context.ui.showWarningMessage(message, { modal: true }, newProject, openExistingProject);
+
+    if (result === newProject) {
+      vscode.commands.executeCommand('logicAppsExtension.createNewProject');
+      context.telemetry.properties.noWorkspaceResult = 'createNewProject';
+    } else {
+      const uri: vscode.Uri[] = await context.ui.showOpenDialog({
+        canSelectFiles: false,
+        canSelectFolders: true,
+        canSelectMany: false,
+        openLabel: localize('open', 'Open'),
+      });
+      vscode.commands.executeCommand('vscode.openFolder', uri[0]);
+      context.telemetry.properties.noWorkspaceResult = 'openExistingProject';
+    }
+
+    context.errorHandling.suppressDisplay = true;
+    throw new NoWorkspaceError();
+  } else if (vscode.workspace.workspaceFolders.length === 1) {
+    folder = vscode.workspace.workspaceFolders[0];
+  } else {
+    const placeHolder: string = localize('selectProjectFolder', 'Select the folder containing your logic app project');
+    folder = await vscode.window.showWorkspaceFolderPick({ placeHolder });
+    if (!folder) {
+      throw new UserCancelledError();
+    }
+  }
+
+  return folder;
 }
 
 /**
@@ -112,4 +158,19 @@ export function isMultiRootWorkspace(): boolean {
     vscode.workspace.workspaceFolders.length > 0 &&
     vscode.workspace.name !== vscode.workspace.workspaceFolders[0].name
   ); // multi-root workspaces always have something like "(Workspace)" appended to their name
+}
+
+/**
+ * Alternative to `vscode.workspace.findFiles` which always returns an empty array if no workspace is open
+ */
+export async function findFiles(base: vscode.WorkspaceFolder | string, pattern: string): Promise<vscode.Uri[]> {
+  // Per globby docs: "Note that glob patterns can only contain forward-slashes, not backward-slashes, so if you want to construct a glob pattern from path components, you need to use path.posix.join() instead of path.join()"
+  const posixBase = path.posix.normalize(isString(base) ? base : base.uri.fsPath).replace(/\\/g, '/');
+  const escapedBase = escapeCharacters(posixBase);
+  const fullPattern = path.posix.join(escapedBase, pattern);
+  return (await globby(fullPattern)).map((s) => vscode.Uri.file(s));
+}
+
+function escapeCharacters(nonPattern: string): string {
+  return nonPattern.replace(/[$^*+?()[\\]]/g, '\\$&');
 }

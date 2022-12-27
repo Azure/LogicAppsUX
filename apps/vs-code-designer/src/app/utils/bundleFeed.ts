@@ -56,7 +56,6 @@ export async function addDefaultBundle(context: IActionContext, hostJson: IHostJ
     versionRange = defaultVersionRange;
   }
 
-  // eslint-disable-next-line no-param-reassign
   hostJson.extensionBundle = {
     id: defaultBundleId,
     version: versionRange,

@@ -26,10 +26,10 @@ export interface IDesignerPanelMetadata {
 export interface CodelessApp {
   statelessRunMode?: string;
   definition: LogicAppsV2.WorkflowDefinition;
-  name: string;
-  stateful: boolean;
+  name?: string;
+  stateful?: boolean;
   kind: string;
-  operationOptions: string;
+  operationOptions?: string;
 }
 
 export interface AzureConnectorDetails {
@@ -79,8 +79,25 @@ export interface ISettingToAdd {
   prefix?: string;
 }
 
-export interface IWorkflowListStepOptions {
+export interface IWorkflowStateTypeStepOptions {
   isProjectWizard: boolean;
   templateId: string | undefined;
   triggerSettings: { [key: string]: string | undefined } | undefined;
+}
+
+export enum MismatchBehavior {
+  /**
+   * Asks the user if they want to overwrite
+   */
+  Prompt,
+
+  /**
+   * Overwrites without prompting
+   */
+  Overwrite,
+
+  /**
+   * Returns without changing anything
+   */
+  DontChange,
 }

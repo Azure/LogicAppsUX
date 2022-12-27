@@ -17,7 +17,6 @@ export class OpenBehaviorStep extends AzureWizardPromptStep<IProjectWizardContex
     ];
 
     const placeHolder: string = localize('selectOpenBehavior', 'Select how you would like to open your project');
-    // eslint-disable-next-line no-param-reassign
     context.openBehavior = (await context.ui.showQuickPick(picks, { placeHolder })).data;
   }
 

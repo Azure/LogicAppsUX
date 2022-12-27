@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { WorkflowListStep } from '../../createCodeless/createCodelessSteps/WorkflowListStep';
+import { WorkflowStateTypeStep } from '../../createCodeless/createCodelessSteps/WorkflowStateTypeStep';
 import { addInitVSCodeSteps } from '../../initProjectForVSCode/InitVSCodeLanguageStep';
 import { WorkflowProjectCreateStep } from './WorkflowProjectCreateStep';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
@@ -21,12 +21,10 @@ export class NewProjectTypeStep extends AzureWizardPromptStep<IProjectWizardCont
     this.functionSettings = functionSettings;
   }
 
-  /* eslint-disable no-param-reassign */
   public async prompt(context: IProjectWizardContext): Promise<void> {
     context.workflowProjectType = WorkflowProjectType.Bundle;
     context.language = ProjectLanguage.JavaScript;
   }
-  /* eslint-enable no-param-reassign */
 
   public shouldPrompt(context: IProjectWizardContext): boolean {
     return context.workflowProjectType === undefined;
@@ -49,7 +47,7 @@ export class NewProjectTypeStep extends AzureWizardPromptStep<IProjectWizardCont
     const wizardOptions: IWizardOptions<IProjectWizardContext> = { promptSteps, executeSteps };
 
     promptSteps.push(
-      await WorkflowListStep.create(context, {
+      await WorkflowStateTypeStep.create(context, {
         isProjectWizard: true,
         templateId: this.templateId,
         triggerSettings: this.functionSettings,

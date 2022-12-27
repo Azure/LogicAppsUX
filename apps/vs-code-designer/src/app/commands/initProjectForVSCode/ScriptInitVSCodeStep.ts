@@ -36,7 +36,6 @@ export class ScriptInitVSCodeStep extends InitVSCodeStepBase {
 
       if (await fse.pathExists(extensionsCsprojPath)) {
         this.useFuncExtensionsInstall = true;
-        // eslint-disable-next-line no-param-reassign
         context.telemetry.properties.hasExtensionsCsproj = 'true';
       } else if (context.version === FuncVersion.v2) {
         // no need to check v1 or v3+

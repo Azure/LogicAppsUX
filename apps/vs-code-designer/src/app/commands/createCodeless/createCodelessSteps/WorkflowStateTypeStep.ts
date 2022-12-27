@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { workflowType } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { CodelessWorkflowCreateStep } from './CodelessWorkflowCreateStep';
 import { ScriptWorkflowNameStep } from './ScriptSteps/ScriptWorkflowNameStep';
@@ -15,7 +16,7 @@ import type {
 } from '@microsoft/vscode-extension';
 import { TemplateCategory, TemplatePromptResult } from '@microsoft/vscode-extension';
 
-export class WorkflowListStep extends AzureWizardPromptStep<IFunctionWizardContext> {
+export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   public hideStepCount = true;
 
   private readonly triggerSettings: { [key: string]: string | undefined };
@@ -27,8 +28,8 @@ export class WorkflowListStep extends AzureWizardPromptStep<IFunctionWizardConte
     this.isProjectWizard = !!isProjectWizard;
   }
 
-  public static async create(_context: IFunctionWizardContext, options: IWorkflowStateTypeStepOptions): Promise<WorkflowListStep> {
-    return new WorkflowListStep(options.triggerSettings, options.isProjectWizard);
+  public static async create(_context: IFunctionWizardContext, options: IWorkflowStateTypeStepOptions): Promise<WorkflowStateTypeStep> {
+    return new WorkflowStateTypeStep(options.triggerSettings, options.isProjectWizard);
   }
 
   public async getSubWizard(context: IFunctionWizardContext): Promise<IWizardOptions<IFunctionWizardContext> | undefined> {
@@ -79,7 +80,7 @@ export class WorkflowListStep extends AzureWizardPromptStep<IFunctionWizardConte
     const picks: IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[] = [];
 
     const stateful: IWorkflowTemplate = {
-      id: 'Stateful-Codeless',
+      id: workflowType.stateful,
       name: localize('Stateful', 'Stateful Workflow'),
       defaultFunctionName: 'Stateful',
       language: language,
@@ -90,7 +91,7 @@ export class WorkflowListStep extends AzureWizardPromptStep<IFunctionWizardConte
     };
 
     const stateless: IWorkflowTemplate = {
-      id: 'Stateless-Codeless',
+      id: workflowType.stateless,
       name: localize('Stateless', 'Stateless Workflow'),
       defaultFunctionName: 'Stateless',
       language: language,
