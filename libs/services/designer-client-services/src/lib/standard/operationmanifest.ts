@@ -1,5 +1,6 @@
 import type { IHttpClient } from '../httpClient';
 import type { IOperationManifestService } from '../operationmanifest';
+import { composeManifest } from './manifests/compose';
 import conditionManifest from './manifests/condition';
 import csvManifest from './manifests/csvtable';
 import {
@@ -10,6 +11,7 @@ import {
   getPastTimeManifest,
   subtractFromTimeManifest,
 } from './manifests/datetime';
+import { flatFileDecodingManifest, flatFileEncodingManifest } from './manifests/flatfile';
 import foreachManifest from './manifests/foreach';
 import htmlManifest from './manifests/htmltable';
 import {
@@ -20,7 +22,10 @@ import {
   httpWebhookManifest,
   httpWebhookTriggerManifest,
 } from './manifests/http';
+import { inlineCodeManifest } from './manifests/inlinecode';
+import { integrationAccountArtifactLookupManifest } from './manifests/integrationaccountartifactlookup';
 import joinManifest from './manifests/join';
+import { liquidJsonToJsonManifest, liquidJsonToTextManifest, liquidXmlToJsonManifest, liquidXmlToTextManifest } from './manifests/liquid';
 import parsejsonManifest from './manifests/parsejson';
 import queryManifest from './manifests/query';
 import requestManifest from './manifests/request';
@@ -39,6 +44,7 @@ import {
   initializeManifest,
   setManifest,
 } from './manifests/variables';
+import { xmlTransformManifest, xmlValidationManifest } from './manifests/xml';
 import { ExpressionParser, isFunction, isStringLiteral, isTemplateExpression } from '@microsoft/parsers-logic-apps';
 import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/parsers-logic-apps';
 import {
@@ -55,6 +61,7 @@ import type { OperationInfo, OperationManifest, SplitOn } from '@microsoft/utils
 
 type SchemaObject = OpenAPIV2.SchemaObject;
 
+// Standard + Consumption
 const as2Encode = 'as2encode';
 const as2Decode = 'as2decode';
 const invokefunction = 'invokefunction';
@@ -76,6 +83,8 @@ const flatfiledecoding = 'flatfiledecoding';
 const flatfileencoding = 'flatfileencoding';
 const swiftdecode = 'swiftdecode';
 const swiftencode = 'swiftencode';
+const swiftmtdecode = 'swiftmtdecode';
+const swiftmtencode = 'swiftmtencode';
 const scope = 'scope';
 const foreach = 'foreach';
 const condition = 'if';
@@ -111,6 +120,20 @@ const incrementvariable = 'incrementvariable';
 const decrementvariable = 'decrementvariable';
 const appendtoarrayvariable = 'appendtoarrayvariable';
 const appendtostringvariable = 'appendtostringvariable';
+
+// Consumption only
+// const compose = 'compose';
+const composenew = 'composenew';
+const integrationaccountartifactlookup = 'integrationaccountartifactlookup';
+const liquidjsontojson = 'liquidjsontojson';
+const liquidjsontotext = 'liquidjsontotext';
+const liquidxmltojson = 'liquidxmltojson';
+const liquidxmltotext = 'liquidxmltotext';
+const xmltransform = 'xmltransform';
+// const xmlvalidation = 'xmlvalidation';
+const inlinecode = 'javascriptcode';
+// const flatfiledecoding = 'flatfiledecoding';
+// const flatfileencoding = 'flatfileencoding';
 
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
 const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
@@ -173,7 +196,7 @@ export interface StandardOperationManifestServiceOptions {
 }
 
 export class StandardOperationManifestService implements IOperationManifestService {
-  constructor(private readonly options: StandardOperationManifestServiceOptions) {
+  constructor(readonly options: StandardOperationManifestServiceOptions) {
     const { apiVersion, baseUrl, httpClient } = options;
     if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
@@ -377,6 +400,8 @@ function isBuiltInOperation(definition: any): boolean {
     case scope:
     case swiftdecode:
     case swiftencode:
+    case swiftmtdecode:
+    case swiftmtencode:
     case table:
     case terminate:
     case until:
@@ -393,7 +418,7 @@ function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Operation
   const kind = definition.kind ? definition.kind.toLowerCase() : undefined;
 
   if (kind === undefined) {
-    const operationInfo = inBuiltOperationsMetadata[normalizedOperationType];
+    const operationInfo = builtInOperationsMetadata[normalizedOperationType];
     if (operationInfo) {
       return operationInfo;
     }
@@ -506,7 +531,7 @@ function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Operation
   }
 }
 
-const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
+const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [appendtoarrayvariable]: {
     connectorId: variableConnectorId,
     operationId: appendtoarrayvariable,
@@ -623,6 +648,14 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: 'connectionProviders/swiftOperations',
     operationId: 'swiftEncode',
   },
+  [swiftmtdecode]: {
+    connectorId: 'connectionProviders/swiftOperations',
+    operationId: 'swiftMtDecode',
+  },
+  [swiftmtencode]: {
+    connectorId: 'connectionProviders/swiftOperations',
+    operationId: 'swiftMtEncode',
+  },
   [terminate]: {
     connectorId: controlConnectorId,
     operationId: terminate,
@@ -633,7 +666,7 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
   },
 };
 
-const supportedManifestObjects = new Map<string, OperationManifest>([
+export const supportedManifestObjects = new Map<string, OperationManifest>([
   [appendtoarrayvariable, appendArrayManifest],
   [appendtostringvariable, appendStringManifest],
   [addtotime, addToTimeManifest],
@@ -670,6 +703,21 @@ const supportedManifestObjects = new Map<string, OperationManifest>([
   [switchType, switchManifest],
   [terminate, terminateManifest],
   [until, untilManifest],
+]);
+
+export const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
+  ...supportedManifestObjects,
+  [composenew, composeManifest],
+  [integrationaccountartifactlookup, integrationAccountArtifactLookupManifest],
+  [liquidjsontojson, liquidJsonToJsonManifest],
+  [liquidjsontotext, liquidJsonToTextManifest],
+  [liquidxmltojson, liquidXmlToJsonManifest],
+  [liquidxmltotext, liquidXmlToTextManifest],
+  [xmltransform, xmlTransformManifest],
+  [xmlvalidation, xmlValidationManifest],
+  [inlinecode, inlineCodeManifest],
+  [flatfiledecoding, flatFileDecodingManifest],
+  [flatfileencoding, flatFileEncodingManifest],
 ]);
 
 export const foreachOperationInfo = {
