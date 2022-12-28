@@ -15,6 +15,11 @@ import { createAppInsightsClient } from '@microsoft/vscode-azext-azureappservice
 import { DialogResponses, nonNullProp, openUrl } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
 
+/**
+ * Start streaming logs to remote app.
+ * @param {IActionContext} context - Workflow file path.
+ * @param {SlotTreeItemBase} treeItem - Logic app node structure.
+ */
 export async function startStreamingLogs(context: IActionContext, treeItem?: SlotTreeItemBase): Promise<void> {
   if (!treeItem) {
     treeItem = await ext.tree.showTreeItemPicker<SlotTreeItemBase>(ProductionSlotTreeItem.contextValue, context);
@@ -24,7 +29,6 @@ export async function startStreamingLogs(context: IActionContext, treeItem?: Slo
 
   if (site.isLinux) {
     try {
-      // https://github.com/microsoft/vscode-azurefunctions/issues/1472
       await appservice.pingFunctionApp(context, site);
     } catch {
       // ignore and open portal anyways
@@ -85,7 +89,6 @@ async function openLiveMetricsStream(context: IActionContext, site: ParsedSite, 
       );
       const resourceId: string = encodeURIComponent(nonNullProp(component, 'id'));
 
-      // Not using `openInPortal` because this url is so unconventional
       const url = `${node.subscription.environment.portalUrl}/#blade/AppInsightsExtension/QuickPulseBladeV2/ComponentId/${componentId}/ResourceId/${resourceId}`;
       await openUrl(url);
     }

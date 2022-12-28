@@ -186,6 +186,12 @@ export function resolveSettingsInConnection(
     : connectionInfo;
 }
 
+/**
+ * Creates acknowledge connections to managed api connections.
+ * @param {IIdentityWizardContext} identityWizardContext - Identity context.
+ * @param {string} connectionId - Connection ID.
+ * @param {SlotTreeItemBase} node - Logic app node structure.
+ */
 export async function createAclInConnectionIfNeeded(
   identityWizardContext: IIdentityWizardContext,
   connectionId: string,
@@ -208,7 +214,6 @@ export async function createAclInConnectionIfNeeded(
     const response = await sendAzureRequest(url, identityWizardContext, 'GET', node.site.subscription);
     connectionAcls = response.parsedBody.value;
   } catch (error) {
-    // NOTE(psamband): If connection access policies cannot be get, we will create new one.
     connectionAcls = [];
   }
 

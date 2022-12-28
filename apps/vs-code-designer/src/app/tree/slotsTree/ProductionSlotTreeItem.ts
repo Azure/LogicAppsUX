@@ -27,7 +27,7 @@ export class ProductionSlotTreeItem extends SlotTreeItemBase {
 
   public async loadMoreChildrenImpl(clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
     const children: AzExtTreeItem[] = await super.loadMoreChildrenImpl(clearCache, context);
-    if (await this.supportsSlots(context)) {
+    if (await this.supportsSlots()) {
       children.push(this._slotsTreeItem);
     }
     return children;
@@ -38,10 +38,10 @@ export class ProductionSlotTreeItem extends SlotTreeItemBase {
       switch (expectedContextValue) {
         case SlotsTreeItem.contextValue:
         case SlotTreeItem.contextValue:
-          if (await this.supportsSlots(context)) {
+          if (await this.supportsSlots()) {
             return this._slotsTreeItem;
           } else {
-            throw new Error(localize('slotNotSupported', 'Linux Consumption apps do not support slots.'));
+            throw new Error(localize('slotNotSupported', 'Linux apps do not support slots.'));
           }
         default:
       }
@@ -50,8 +50,8 @@ export class ProductionSlotTreeItem extends SlotTreeItemBase {
     return super.pickTreeItemImpl(expectedContextValues, context);
   }
 
-  private async supportsSlots(context: IActionContext): Promise<boolean> {
+  private async supportsSlots(): Promise<boolean> {
     // Slots are not yet supported for Linux Consumption
-    return !this.site.isLinux || !(await this.getIsConsumption(context));
+    return !this.site.isLinux;
   }
 }

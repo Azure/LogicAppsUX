@@ -53,7 +53,6 @@ export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IP
   private readonly _siteFilesTreeItem: SiteFilesTreeItem;
   private _cachedVersion: FuncVersion | undefined;
   private _cachedHostJson: IParsedHostJson | undefined;
-  private _cachedIsConsumption: boolean | undefined;
   private _workflowsTreeItem: RemoteWorkflowsTreeItem | undefined;
   private _artifactsTreeItem: ArtifactsTreeItem;
 
@@ -100,7 +99,6 @@ export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IP
   public async refreshImpl(context: IActionContext): Promise<void> {
     this._cachedVersion = undefined;
     this._cachedHostJson = undefined;
-    this._cachedIsConsumption = undefined;
 
     const client = await this.site.createClient(context);
     this.site = new ParsedSite(nonNullValue(await client.getSite(), 'site'), this.subscription);
@@ -158,22 +156,6 @@ export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IP
     }
     settings.properties[key] = value;
     await client.updateApplicationSettings(settings);
-  }
-
-  public async getIsConsumption(context: IActionContext): Promise<boolean> {
-    let result: boolean | undefined = this._cachedIsConsumption;
-    if (result === undefined) {
-      try {
-        const client = await this.site.createClient(context);
-        result = await client.getIsConsumption(context);
-      } catch {
-        // ignore and use default
-        result = true;
-      }
-      this._cachedIsConsumption = result;
-    }
-
-    return result;
   }
 
   public async loadMoreChildrenImpl(_clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
