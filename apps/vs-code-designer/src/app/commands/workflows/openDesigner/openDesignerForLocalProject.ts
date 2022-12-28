@@ -163,7 +163,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           await saveParameters(this.context, filePath, parametersFromDefinition);
         }
 
-        workflow.definition = definitionToSave; // eslint-disable-line no-param-reassign
+        workflow.definition = definitionToSave;
 
         if (parameters?.$connections?.value) {
           const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(

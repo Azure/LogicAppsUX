@@ -1,5 +1,10 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 import { funcVersionSetting } from '../../../constants';
 import { ext } from '../../../extensionVariables';
+import { localize } from '../../../localize';
 import { getWorkspaceSettingFromAnyFolder } from '../vsCodeConfig/settings';
 import { executeCommand } from './cpUtils';
 import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
@@ -38,7 +43,6 @@ function tryGetMajorVersion(data: string): string | undefined {
  * @param {string} context - Command context.
  * @returns {Promise<FuncVersion>} Major version.
  */
-/* eslint-disable no-param-reassign */
 export async function getDefaultFuncVersion(context: IActionContext): Promise<FuncVersion> {
   let version: FuncVersion | undefined = tryParseFuncVersion(getWorkspaceSettingFromAnyFolder(funcVersionSetting));
   context.telemetry.properties.runtimeSource = 'VSCodeSetting';
@@ -55,13 +59,12 @@ export async function getDefaultFuncVersion(context: IActionContext): Promise<Fu
 
   return version;
 }
-/* eslint-enable no-param-reassign */
 
 /**
  * Gets functions core tools version from local cli command.
  * @returns {Promise<FuncVersion | undefined>} Functions core tools version.
  */
-async function tryGetLocalFuncVersion(): Promise<FuncVersion | undefined> {
+export async function tryGetLocalFuncVersion(): Promise<FuncVersion | undefined> {
   try {
     const version: string | null = await getLocalFuncCoreToolsVersion();
     if (version) {
@@ -78,7 +81,7 @@ async function tryGetLocalFuncVersion(): Promise<FuncVersion | undefined> {
  * Executes version command and gets it from cli.
  * @returns {Promise<string | null>} Functions core tools version.
  */
-async function getLocalFuncCoreToolsVersion(): Promise<string | null> {
+export async function getLocalFuncCoreToolsVersion(): Promise<string | null> {
   const output: string = await executeCommand(undefined, undefined, ext.funcCliPath, '--version');
   const version: string | null = semver.clean(output);
   if (version) {
@@ -96,5 +99,38 @@ async function getLocalFuncCoreToolsVersion(): Promise<string | null> {
     }
 
     return null;
+  }
+}
+
+/**
+ * Adds functions cli version to telemetry.
+ * @param {IActionContext} context - Command context.
+ */
+export function addLocalFuncTelemetry(context: IActionContext): void {
+  context.telemetry.properties.funcCliVersion = 'unknown';
+
+  getLocalFuncCoreToolsVersion()
+    .then((version: string) => {
+      context.telemetry.properties.funcCliVersion = version || 'none';
+    })
+    .catch(() => {
+      context.telemetry.properties.funcCliVersion = 'none';
+    });
+}
+
+/**
+ * Checks installed functions core tools version is supported.
+ * @param {string} version - Placeholder for input.
+ */
+export function checkSupportedFuncVersion(version: FuncVersion) {
+  if (version !== FuncVersion.v2 && version !== FuncVersion.v3 && version !== FuncVersion.v4) {
+    throw new Error(
+      localize(
+        'versionNotSupported',
+        'Functions core tools version "{0}" not supported. Only version "{1}" is currently supported for Codeless.',
+        version,
+        FuncVersion.v2
+      )
+    );
   }
 }

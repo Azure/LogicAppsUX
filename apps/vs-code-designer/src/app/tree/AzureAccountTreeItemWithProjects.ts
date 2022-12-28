@@ -14,10 +14,9 @@ import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils
 import { commands, Disposable, extensions, workspace } from 'vscode';
 
 export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
-  private _currentLoggedInSessions: any;
-  private _projectDisposables: Disposable[] = [];
+  private currentLoggedInSessions: any;
+  private projectDisposables: Disposable[] = [];
 
-  /* eslint-disable no-param-reassign */
   public constructor(testAccount?: Record<string, any>) {
     super(undefined, testAccount);
 
@@ -50,11 +49,10 @@ export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
       })
     );
   }
-  /* eslint-enable no-param-reassign */
 
   public dispose(): void {
     super.dispose();
-    Disposable.from(...this._projectDisposables).dispose();
+    Disposable.from(...this.projectDisposables).dispose();
   }
 
   public createSubscriptionTreeItem(root: ISubscriptionContext): SubscriptionTreeItem {
@@ -73,11 +71,11 @@ export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
       }
 
       await azureAccount.waitForFilters();
-      this._currentLoggedInSessions = azureAccount.sessions;
+      this.currentLoggedInSessions = azureAccount.sessions;
     }
 
-    if (this._currentLoggedInSessions) {
-      return this._getCredentialsForSessions(this._currentLoggedInSessions, tenantId);
+    if (this.currentLoggedInSessions) {
+      return this._getCredentialsForSessions(this.currentLoggedInSessions, tenantId);
     }
 
     return undefined;

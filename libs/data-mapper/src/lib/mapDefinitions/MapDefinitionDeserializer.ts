@@ -120,18 +120,22 @@ const parseDefinitionToConnection = (
   }
 
   for (const childKey in sourceNodeObject) {
+    let childTargetKey = targetKey;
     if (childKey !== mapNodeParams.value) {
-      parseDefinitionToConnection(
-        sourceNodeObject[childKey],
-        `${targetKey}/${childKey}`,
-        connections,
-        createdNodes,
-        sourceSchema,
-        sourceSchemaFlattened,
-        targetSchema,
-        targetSchemaFlattened,
-        functions
-      );
+      const trimmedChildKey = childKey.startsWith('$@') ? childKey.substring(1) : childKey;
+      childTargetKey = `${targetKey}/${trimmedChildKey}`;
     }
+
+    parseDefinitionToConnection(
+      sourceNodeObject[childKey],
+      childTargetKey,
+      connections,
+      createdNodes,
+      sourceSchema,
+      sourceSchemaFlattened,
+      targetSchema,
+      targetSchemaFlattened,
+      functions
+    );
   }
 };

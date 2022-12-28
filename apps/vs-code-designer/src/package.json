@@ -36,6 +36,24 @@
         "command": "logicAppsExtension.viewContent",
         "title": "View Content",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.createNewProject",
+        "title": "Create New Project...",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/CreateNewProject.svg",
+          "dark": "assets/dark/CreateNewProject.svg"
+        }
+      },
+      {
+        "command": "logicAppsExtension.createCodeless",
+        "title": "Create Workflow...",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/Codeless.svg",
+          "dark": "assets/dark/Codeless.svg"
+        }
       }
     ],
     "viewsContainers": {
@@ -57,6 +75,18 @@
       ]
     },
     "menus": {
+      "view/title": [
+        {
+          "command": "logicAppsExtension.createNewProject",
+          "when": "view == newAzLogicApps",
+          "group": "navigation@1"
+        },
+        {
+          "command": "logicAppsExtension.createCodeless",
+          "when": "view == newAzLogicApps",
+          "group": "navigation@2"
+        }
+      ],
       "view/item/context": [
         {
           "command": "logicAppsExtension.selectSubscriptions",
@@ -108,6 +138,36 @@
             "type": "boolean",
             "default": true,
             "description": "Show or hide the Azure Functions Explorer"
+          },
+          "logicAppsExtension.projectRuntime": {
+            "scope": "resource",
+            "type": "string",
+            "enum": [
+              "~4",
+              "~3"
+            ],
+            "description": "The default version of the Azure Functions runtime to use when performing operations like \"Create New Logic App\".",
+            "enumDescriptions": [
+              "Azure Functions v4",
+              "Azure Functions v3 (.NET Core)"
+            ]
+          },
+          "logicAppsExtension.projectLanguage": {
+            "scope": "resource",
+            "type": "string",
+            "enum": [
+              "JavaScript"
+            ],
+            "readOnly": true,
+            "description": "The default language to use when performing operations like \"Create New Workflow\".",
+            "enumDescriptions": [
+              ""
+            ]
+          },
+          "logicAppsExtension.deploySubpath": {
+            "scope": "resource",
+            "type": "string",
+            "description": "The default subpath of a workspace folder to use when deploying. If set, you will not be prompted for the folder path when deploying."
           }
         }
       }
@@ -121,6 +181,8 @@
     "onCommand:logicAppsExtension.openDesigner",
     "onCommand:logicAppsExtension.loadMore",
     "onCommand:logicAppsExtension.viewContent",
+    "onCommand:logicAppsExtension.createNewProject",
+    "onCommand:logicAppsExtension.createCodeless",
     "onView:newAzLogicApps",
     "onDebugInitialConfigurations"
   ],

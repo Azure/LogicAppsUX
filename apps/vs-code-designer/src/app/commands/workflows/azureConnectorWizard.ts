@@ -40,7 +40,6 @@ class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureConnectorsC
       { label: localize('useConnectorsFromAzure', 'Use connectors from Azure'), data: 'yes' },
       { label: localize('skipConnectorsFromAzure', 'Skip for now'), data: 'no' },
     ];
-    // eslint-disable-next-line no-param-reassign
     context.enabled = (await context.ui.showQuickPick(picks, { placeHolder })).data === 'yes';
   }
 
