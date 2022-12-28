@@ -54,6 +54,11 @@
           "light": "assets/light/Codeless.svg",
           "dark": "assets/dark/Codeless.svg"
         }
+      },
+      {
+        "command": "logicAppsExtension.createLogicApp",
+        "title": "Create Logic App in Azure...",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -92,6 +97,11 @@
           "command": "logicAppsExtension.selectSubscriptions",
           "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
           "group": "inline"
+        },
+        {
+          "command": "logicAppsExtension.createLogicApp",
+          "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
+          "group": "1@1"
         },
         {
           "command": "logicAppsExtension.openDesigner",
@@ -183,6 +193,7 @@
     "onCommand:logicAppsExtension.viewContent",
     "onCommand:logicAppsExtension.createNewProject",
     "onCommand:logicAppsExtension.createCodeless",
+    "onCommand:logicAppsExtension.createLogicApp",
     "onView:newAzLogicApps",
     "onDebugInitialConfigurations"
   ],
