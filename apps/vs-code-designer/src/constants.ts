@@ -54,6 +54,7 @@ export enum extensionCommand {
   openFile = 'logicAppsExtension.openFile',
   createNewProject = 'logicAppsExtension.createNewProject',
   createCodeless = 'logicAppsExtension.createCodeless',
+  createLogicApp = 'logicAppsExtension.createLogicApp',
   azureFunctionsOpenFile = 'azureFunctions.openFile',
   azureSelectSubscriptions = 'azure-account.selectSubscriptions',
 }
