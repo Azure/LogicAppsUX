@@ -32,4 +32,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.createCodeless, createCodeless);
   registerSiteCommand(extensionCommand.deploy, deployProductionSlot);
   registerSiteCommand(extensionCommand.deploySlot, deploySlot);
+  registerCommand(extensionCommand.showOutputChannel, () => {
+    ext.outputChannel.show();
+  });
 }

@@ -62,6 +62,7 @@ export enum extensionCommand {
   createCodeless = 'logicAppsExtension.createCodeless',
   deploy = 'logicAppsExtension.deploy',
   deploySlot = 'logicAppsExtension.deploySlot',
+  showOutputChannel = 'logicAppsExtension.showOutputChannel',
   azureFunctionsOpenFile = 'azureFunctions.openFile',
   azureSelectSubscriptions = 'azure-account.selectSubscriptions',
 }
