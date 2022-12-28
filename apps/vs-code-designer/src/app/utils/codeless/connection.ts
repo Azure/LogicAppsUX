@@ -211,7 +211,7 @@ export async function createAclInConnectionIfNeeded(
   const url = `${connectionId}/accessPolicies?api-version=2018-07-01-preview`;
 
   try {
-    const response = await sendAzureRequest(url, identityWizardContext, 'GET', node.site.subscription);
+    const response = await sendAzureRequest(url, identityWizardContext, HTTP_METHODS.GET, node.site.subscription);
     connectionAcls = response.parsedBody.value;
   } catch (error) {
     connectionAcls = [];
@@ -239,7 +239,7 @@ async function createAccessPolicyInConnection(
   let connection: any;
 
   try {
-    const response = await sendAzureRequest(getUrl, identityWizardContext, 'GET', node.site.subscription);
+    const response = await sendAzureRequest(getUrl, identityWizardContext, HTTP_METHODS.GET, node.site.subscription);
     connection = response.parsedBody;
   } catch (error) {
     throw new Error(`Error in getting connection - ${connectionId}. ${error}`);
@@ -250,7 +250,7 @@ async function createAccessPolicyInConnection(
   const options = {
     json: true,
     headers: { authorization: accessToken },
-    method: 'PUT',
+    method: HTTP_METHODS.PUT,
     body: {
       name,
       type: 'Microsoft.Web/connections/accessPolicy',
