@@ -124,12 +124,12 @@
         },
         {
           "command": "logicAppsExtension.deploy",
-          "when": "view == newAzLogicApps && viewItem == azFuncProductionSlot",
+          "when": "view == newAzLogicApps && viewItem == azLogicAppsProductionSlot",
           "group": "3@1"
         },
         {
           "command": "logicAppsExtension.deploySlot",
-          "when": "view == newAzLogicApps && viewItem == azFuncSlot",
+          "when": "view == newAzLogicApps && viewItem == azLogicAppsSlot",
           "group": "3@2"
         }
       ],

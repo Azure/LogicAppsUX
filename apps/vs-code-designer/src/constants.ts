@@ -67,7 +67,7 @@ export enum extensionCommand {
 }
 
 // Context
-export const contextValuePrefix = 'azFunc';
+export const contextValuePrefix = 'azLogicApps';
 
 // API
 export const defaultRoutePrefix = 'api';

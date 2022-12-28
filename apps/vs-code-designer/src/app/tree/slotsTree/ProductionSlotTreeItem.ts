@@ -11,7 +11,7 @@ import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import type { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
 
 export class ProductionSlotTreeItem extends SlotTreeItemBase {
-  public static contextValue = 'azFuncProductionSlot';
+  public static contextValue = 'azLogicAppsProductionSlot';
   public readonly contextValue: string = ProductionSlotTreeItem.contextValue;
 
   private readonly _slotsTreeItem: SlotsTreeItem;
