@@ -1,16 +1,15 @@
 /* eslint-disable no-param-reassign */
 import { mapNodeParams, reservedMapDefinitionKeysArray } from '../constants/MapDefinitionConstants';
-import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
+import { sourcePrefix } from '../constants/ReactFlowConstants';
 import { addParentConnectionForRepeatingElements } from '../core/state/DataMapSlice';
 import type { FunctionData, MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary } from '../models';
 import { SchemaType } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import { setConnectionInputValue } from '../utils/Connection.Utils';
-import { getSourceValueFromLoop, splitKeyIntoChildren } from '../utils/DataMap.Utils';
-import { findFunctionForFunctionName, findFunctionForKey, isFunctionData } from '../utils/Function.Utils';
+import { getDestinationKey, getDestinationNode, getSourceValueFromLoop, splitKeyIntoChildren } from '../utils/DataMap.Utils';
+import { findFunctionForFunctionName, isFunctionData } from '../utils/Function.Utils';
 import { createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
 import { findNodeForKey, flattenSchemaIntoDictionary } from '../utils/Schema.Utils';
-import { isAGuid } from '@microsoft/utils-logic-apps';
 
 export const convertFromMapDefinition = (
   mapDefinition: MapDefinitionEntry,
@@ -61,23 +60,26 @@ const parseDefinitionToConnection = (
       sourceEndOfFunction > -1
         ? findFunctionForFunctionName(amendedSourceKey.substring(0, sourceEndOfFunction), functions)
         : findNodeForKey(amendedSourceKey, sourceSchema.schemaTreeRoot);
-    const sourceKey =
-      sourceNode && isFunctionData(sourceNode)
-        ? createdNodes[amendedSourceKey]
-          ? createdNodes[amendedSourceKey]
-          : createReactFlowFunctionKey(sourceNode)
-        : `${sourcePrefix}${amendedSourceKey}`;
+
+    let sourceKey: string;
+    let functionAlreadyCreated = false;
+    if (sourceNode && isFunctionData(sourceNode)) {
+      if (createdNodes[amendedSourceKey]) {
+        functionAlreadyCreated = true;
+        sourceKey = createdNodes[amendedSourceKey];
+      } else {
+        sourceKey = createReactFlowFunctionKey(sourceNode);
+      }
+    } else {
+      sourceKey = `${sourcePrefix}${amendedSourceKey}`;
+    }
     createdNodes[amendedSourceKey] = sourceKey;
 
-    const destinationFunctionKey = targetKey.slice(0, targetKey.indexOf('-'));
-    const destinationFunctionGuid = targetKey.slice(targetKey.indexOf('-') + 1);
-    const destinationNode = isAGuid(destinationFunctionGuid)
-      ? findFunctionForKey(destinationFunctionKey, functions)
-      : findNodeForKey(targetKey, targetSchema.schemaTreeRoot);
-    const destinationKey = isAGuid(destinationFunctionGuid) ? targetKey : `${targetPrefix}${destinationNode?.key}`;
+    const destinationNode = getDestinationNode(targetKey, functions, targetSchema.schemaTreeRoot);
+    const destinationKey = getDestinationKey(targetKey, destinationNode);
 
     if (targetKey.includes(mapNodeParams.for)) {
-      // if has for, add parent connection
+      // if has $for, add parent connection
       if (sourceNode && destinationNode) {
         addParentConnectionForRepeatingElements(destinationNode, sourceNode, sourceSchemaFlattened, targetSchemaFlattened, connections);
       }
@@ -98,7 +100,7 @@ const parseDefinitionToConnection = (
     }
 
     // Need to extract and create connections for nested functions
-    if (sourceEndOfFunction > -1) {
+    if (sourceEndOfFunction > -1 && !functionAlreadyCreated) {
       const childFunctions = splitKeyIntoChildren(sourceNodeObject);
 
       childFunctions.forEach((childFunction) => {
@@ -119,15 +121,138 @@ const parseDefinitionToConnection = (
     return;
   }
 
-  for (const childKey in sourceNodeObject) {
+  const childEntries = Object.entries(sourceNodeObject);
+  childEntries.forEach((childEntry) => {
     let childTargetKey = targetKey;
-    if (childKey !== mapNodeParams.value) {
-      const trimmedChildKey = childKey.startsWith('$@') ? childKey.substring(1) : childKey;
+    if (childEntry[0] !== mapNodeParams.value) {
+      const trimmedChildKey = childEntry[0].startsWith('$@') ? childEntry[0].substring(1) : childEntry[0];
+      childTargetKey = `${targetKey}/${trimmedChildKey}`;
+    }
+
+    if (childEntry[0].startsWith(mapNodeParams.if)) {
+      /*
+      parseDefinitionToConnection(
+        childEntry[1],
+        targetKey,
+        connections,
+        createdNodes,
+        sourceSchema,
+        sourceSchemaFlattened,
+        targetSchema,
+        targetSchemaFlattened,
+        functions
+      );*/
+
+      parseDefinitionToConditionalConnection(
+        sourceNodeObject[childEntry[0]],
+        childEntry[0],
+        targetKey,
+        connections,
+        createdNodes,
+        sourceSchema,
+        sourceSchemaFlattened,
+        targetSchema,
+        targetSchemaFlattened,
+        functions
+      );
+    } else {
+      parseDefinitionToConnection(
+        childEntry[1],
+        childTargetKey,
+        connections,
+        createdNodes,
+        sourceSchema,
+        sourceSchemaFlattened,
+        targetSchema,
+        targetSchemaFlattened,
+        functions
+      );
+    }
+  });
+};
+
+const parseDefinitionToConditionalConnection = (
+  sourceNodeObject: any,
+  sourceNodeObjectAsString: string,
+  targetKey: string,
+  connections: ConnectionDictionary,
+  createdNodes: { [completeFunction: string]: string },
+  sourceSchema: SchemaExtended,
+  sourceSchemaFlattened: SchemaNodeDictionary,
+  targetSchema: SchemaExtended,
+  targetSchemaFlattened: SchemaNodeDictionary,
+  functions: FunctionData[]
+) => {
+  const sourceEndOfFunction = sourceNodeObjectAsString.indexOf('(');
+  const amendedSourceKey = targetKey.includes(mapNodeParams.for)
+    ? getSourceValueFromLoop(sourceNodeObjectAsString, targetKey)
+    : sourceNodeObjectAsString;
+
+  const sourceNode =
+    sourceEndOfFunction > -1
+      ? findFunctionForFunctionName(amendedSourceKey.substring(0, sourceEndOfFunction), functions)
+      : findNodeForKey(amendedSourceKey, sourceSchema.schemaTreeRoot);
+
+  let sourceKey: string;
+  let functionAlreadyCreated = false;
+  if (sourceNode && isFunctionData(sourceNode)) {
+    if (createdNodes[amendedSourceKey]) {
+      functionAlreadyCreated = true;
+      sourceKey = createdNodes[amendedSourceKey];
+    } else {
+      sourceKey = createReactFlowFunctionKey(sourceNode);
+    }
+  } else {
+    sourceKey = `${sourcePrefix}${amendedSourceKey}`;
+  }
+  createdNodes[amendedSourceKey] = sourceKey;
+
+  const destinationNode = getDestinationNode(targetKey, functions, targetSchema.schemaTreeRoot);
+  const destinationKey = getDestinationKey(targetKey, destinationNode);
+
+  if (destinationNode) {
+    setConnectionInputValue(connections, {
+      targetNode: destinationNode,
+      targetNodeReactFlowKey: destinationKey,
+      findInputSlot: true,
+      value: sourceNode
+        ? {
+            reactFlowKey: sourceKey,
+            node: sourceNode,
+          }
+        : amendedSourceKey,
+    });
+  }
+
+  // Need to extract and create connections for nested functions
+  if (sourceEndOfFunction > -1 && !functionAlreadyCreated) {
+    const childFunctions = splitKeyIntoChildren(sourceNodeObjectAsString);
+
+    childFunctions.forEach((childFunction) => {
+      parseDefinitionToConnection(
+        childFunction,
+        sourceKey,
+        connections,
+        createdNodes,
+        sourceSchema,
+        sourceSchemaFlattened,
+        targetSchema,
+        targetSchemaFlattened,
+        functions
+      );
+    });
+  }
+
+  const childEntries = Object.entries(sourceNodeObject);
+  childEntries.forEach((childEntry) => {
+    let childTargetKey = targetKey;
+    if (childEntry[0] !== mapNodeParams.value) {
+      const trimmedChildKey = childEntry[0].startsWith('$@') ? childEntry[0].substring(1) : childEntry[0];
       childTargetKey = `${targetKey}/${trimmedChildKey}`;
     }
 
     parseDefinitionToConnection(
-      sourceNodeObject[childKey],
+      childEntry[1],
       childTargetKey,
       connections,
       createdNodes,
@@ -137,5 +262,5 @@ const parseDefinitionToConnection = (
       targetSchemaFlattened,
       functions
     );
-  }
+  });
 };
