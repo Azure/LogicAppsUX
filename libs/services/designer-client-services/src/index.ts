@@ -10,5 +10,6 @@ export * from './lib/common/exceptions';
 export * from './lib/logger';
 export * from './lib/logging/devLogger';
 export * from './lib/logging/logEntry';
+export * from './lib/base';
 export * from './lib/standard';
 export * from './lib/consumption';
