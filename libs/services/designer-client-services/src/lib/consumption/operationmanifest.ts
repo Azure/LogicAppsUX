@@ -1,48 +1,44 @@
+import { supportedBaseManifestObjects } from '../base/operationManifest';
 import { StandardOperationManifestService } from '../standard';
-import { supportedConsumptionManifestObjects } from '../standard/operationmanifest';
+// import { equals, ConnectionType } from '@microsoft/utils-logic-apps';
+import { composeManifest } from './manifests/compose';
+import { flatFileDecodingManifest, flatFileEncodingManifest } from './manifests/flatfile';
+import { inlineCodeManifest } from './manifests/inlinecode';
+import { integrationAccountArtifactLookupManifest } from './manifests/integrationaccountartifactlookup';
+import { liquidJsonToJsonManifest, liquidJsonToTextManifest, liquidXmlToJsonManifest, liquidXmlToTextManifest } from './manifests/liquid';
+import { xmlTransformManifest, xmlValidationManifest } from './manifests/xml';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
-import { equals, ConnectionType } from '@microsoft/utils-logic-apps';
 
 export class ConsumptionOperationManifestService extends StandardOperationManifestService {
-  override async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
+  override async getOperationManifest(_connectorId: string, operationId: string): Promise<OperationManifest> {
     const supportedManifest = supportedConsumptionManifestObjects.get(operationId);
-
-    if (supportedManifest) {
-      return supportedManifest;
-    }
-
-    const { apiVersion, baseUrl, httpClient } = this.options;
-    const connectorName = connectorId.split('/').slice(-1)[0];
-    const operationName = operationId.split('/').slice(-1)[0];
-    const queryParameters = {
-      'api-version': apiVersion,
-      $expand: 'properties/manifest',
-    };
-
-    try {
-      const response = await httpClient.get<any>({
-        uri: `${baseUrl}/operationGroups/${connectorName}/operations/${operationName}`,
-        queryParameters,
-      });
-
-      const {
-        properties: { brandColor, description, iconUri, manifest, operationType },
-      } = response;
-
-      // TODO: Remove below patching of connection when backend api sends correct information for service providers
-      const operationManifest = {
-        properties: {
-          brandColor,
-          description,
-          iconUri,
-          connection: equals(operationType, 'serviceprovider') ? { required: true, type: ConnectionType.ServiceProvider } : undefined,
-          ...manifest,
-        },
-      };
-
-      return operationManifest;
-    } catch (error) {
-      return { properties: {} } as any;
-    }
+    return supportedManifest ?? ({ properties: {} } as any);
   }
 }
+
+const composenew = 'composenew';
+const integrationaccountartifactlookup = 'integrationaccountartifactlookup';
+const liquidjsontojson = 'liquidjsontojson';
+const liquidjsontotext = 'liquidjsontotext';
+const liquidxmltojson = 'liquidxmltojson';
+const liquidxmltotext = 'liquidxmltotext';
+const xmltransform = 'xmltransform';
+const xmlvalidation = 'xmlvalidation';
+const inlinecode = 'javascriptcode';
+const flatfiledecoding = 'flatfiledecoding';
+const flatfileencoding = 'flatfileencoding';
+
+const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
+  ...supportedBaseManifestObjects,
+  [composenew, composeManifest],
+  [integrationaccountartifactlookup, integrationAccountArtifactLookupManifest],
+  [liquidjsontojson, liquidJsonToJsonManifest],
+  [liquidjsontotext, liquidJsonToTextManifest],
+  [liquidxmltojson, liquidXmlToJsonManifest],
+  [liquidxmltotext, liquidXmlToTextManifest],
+  [xmltransform, xmlTransformManifest],
+  [xmlvalidation, xmlValidationManifest],
+  [inlinecode, inlineCodeManifest],
+  [flatfiledecoding, flatFileDecodingManifest],
+  [flatfileencoding, flatFileEncodingManifest],
+]);

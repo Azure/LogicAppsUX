@@ -34,7 +34,7 @@ export const xmlTransformManifest = {
           summary: 'Function container',
           description: 'The function container',
           type: 'string',
-          visibility: 'internal',
+          hideInUI: true,
           'x-ms-dynamic-values': {
             operationId: 'xslt_get_containers',
             'value-collection': 'value',
@@ -48,7 +48,7 @@ export const xmlTransformManifest = {
           summary: 'Function',
           description: 'The function to use for transform',
           type: 'string',
-          visibility: 'internal',
+          hideInUI: true,
           'x-ms-dynamic-values': {
             operationId: 'xslt_get_functions_in_container',
             parameters: {
@@ -91,7 +91,7 @@ export const xmlTransformManifest = {
           title: 'XSLT Parameters',
           summary: 'Map parameters',
           description: 'The map parameters',
-          required: true,
+          hideInUI: true,
           schema: {
             type: 'object',
             'x-ms-dynamic-schema': {
