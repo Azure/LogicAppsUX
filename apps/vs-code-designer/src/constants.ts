@@ -31,7 +31,6 @@ export const workflowTenantIdKey = 'WORKFLOWS_TENANT_ID';
 export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
 export const workflowAppApiVersion = '2018-11-01';
 export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
-export const logicAppKind = 'workflowapp';
 export const workflowappRuntime = 'node|14';
 export const viewOutput = localize('viewOutput', 'View Output');
 export const webhookRedirectHostUri = 'Workflows.WebhookRedirectHostUri';
@@ -113,3 +112,6 @@ export enum DotnetVersion {
 
 // Resources
 export const kubernetesKind = 'kubernetes';
+export const functionAppKind = 'functionapp';
+export const logicAppKind = 'workflowapp';
+export const logicAppKindAppSetting = 'workflowApp';

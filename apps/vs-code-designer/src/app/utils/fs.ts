@@ -7,6 +7,7 @@ import { isEmptyString } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { pathRelativeFunc } from '@microsoft/vscode-extension';
+import * as crypto from 'crypto';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
@@ -67,6 +68,11 @@ export async function confirmOverwriteFile(context: IActionContext, fsPath: stri
   } else {
     return true;
   }
+}
+
+export function getRandomHexString(length = 10): string {
+  const buffer: Buffer = crypto.randomBytes(Math.ceil(length / 2));
+  return buffer.toString('hex').slice(0, length);
 }
 
 export async function confirmEditJsonFile(

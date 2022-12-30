@@ -6,12 +6,12 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import type { ProductionSlotTreeItem } from '../../tree/slotsTree/ProductionSlotTreeItem';
 import { SubscriptionTreeItem } from '../../tree/subscriptionTree/SubscriptionTreeItem';
-import type { ICreateFuntionAppContext } from '../../tree/subscriptionTree/SubscriptionTreeItem';
 import { isString } from '@microsoft/utils-logic-apps';
 import type { AzExtParentTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
+import type { ICreateLogicAppContext } from '@microsoft/vscode-extension';
 
 export async function createLogicApp(
-  context: IActionContext & Partial<ICreateFuntionAppContext>,
+  context: IActionContext & Partial<ICreateLogicAppContext>,
   subscription?: AzExtParentTreeItem | string,
   newResourceGroupName?: string
 ): Promise<string> {

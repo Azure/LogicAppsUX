@@ -28,6 +28,7 @@ export abstract class WorkflowNameStepBase<T extends IFunctionWizardContext> ext
     return !context.functionName;
   }
 
+  // Work to be done
   protected async getUniqueFsPath(folderPath: string, defaultValue: string, fileExtension?: string): Promise<string | undefined> {
     let count = 1;
     const maxCount = 1024;
