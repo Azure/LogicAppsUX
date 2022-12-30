@@ -45,6 +45,8 @@ export enum FunctionCategory {
 
 export type FunctionDictionary = { [key: string]: FunctionData };
 
+export const FunctionCategoryIconPrefix = 'dm_category_';
+
 export const indexPseudoFunctionKey = 'index';
 export const indexPseudoFunction: FunctionData = {
   key: indexPseudoFunctionKey,
