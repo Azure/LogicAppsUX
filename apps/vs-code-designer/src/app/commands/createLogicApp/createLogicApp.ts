@@ -6,6 +6,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import type { ProductionSlotTreeItem } from '../../tree/slotsTree/ProductionSlotTreeItem';
 import { SubscriptionTreeItem } from '../../tree/subscriptionTree/SubscriptionTreeItem';
+import { notifyCreateLogicAppComplete } from './notifyCreateLogicAppComplete';
 import { isString } from '@microsoft/utils-logic-apps';
 import type { AzExtParentTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ICreateLogicAppContext } from '@microsoft/vscode-extension';
@@ -29,7 +30,11 @@ export async function createLogicApp(
   }
 
   context.newResourceGroupName = newResourceGroupName;
-  const funcAppNode: ProductionSlotTreeItem = await node.createChild(context);
-
-  return funcAppNode.fullId;
+  try {
+    const funcAppNode: ProductionSlotTreeItem = await node.createChild(context);
+    await notifyCreateLogicAppComplete(funcAppNode);
+    return funcAppNode.fullId;
+  } catch (error) {
+    throw new Error(`Error in creating logic app. ${error}`);
+  }
 }
