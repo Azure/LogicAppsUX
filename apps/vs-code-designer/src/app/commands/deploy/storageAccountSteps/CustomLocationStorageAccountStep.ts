@@ -20,11 +20,11 @@ import { StorageOptions } from '@microsoft/vscode-extension';
 import type { QuickPickItem, QuickPickOptions } from 'vscode';
 
 export class CustomLocationStorageAccountStep extends AzureWizardPromptStep<IFunctionAppWizardContext> {
-  private readonly _context: ICreateLogicAppContext;
+  private readonly context: ICreateLogicAppContext;
 
   public constructor(context: ICreateLogicAppContext) {
     super();
-    this._context = context;
+    this.context = context;
   }
 
   public async prompt(wizardContext: IFunctionAppWizardContext): Promise<void> {
@@ -47,7 +47,7 @@ export class CustomLocationStorageAccountStep extends AzureWizardPromptStep<IFun
     };
 
     if (storageType === StorageOptions.AzureStorage) {
-      if (!this._context.advancedCreation) {
+      if (!this.context.advancedCreation) {
         return {
           executeSteps: [new StorageAccountCreateStep(storageAccountCreateOptions), new AppInsightsCreateStep()],
         };
