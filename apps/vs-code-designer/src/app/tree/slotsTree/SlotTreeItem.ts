@@ -7,7 +7,7 @@ import type { SlotsTreeItem } from './SlotsTreeItem';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 
 export class SlotTreeItem extends SlotTreeItemBase {
-  public static contextValue = 'azFuncSlot';
+  public static contextValue = 'azLogicAppsSlot';
   public readonly contextValue: string = SlotTreeItem.contextValue;
   public readonly parent: SlotsTreeItem;
 

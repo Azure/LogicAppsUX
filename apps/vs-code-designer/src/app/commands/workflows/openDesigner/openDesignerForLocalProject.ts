@@ -1,6 +1,7 @@
 import { localSettingsFileName, managementApiPrefix } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
+import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
 import {
   cacheWebviewPanel,
   getArtifactsInLocalProject,
@@ -18,7 +19,6 @@ import {
 } from '../../../utils/codeless/connection';
 import { saveParameters } from '../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
-import { getLocalSettingsJson } from '../../../utils/localSettings';
 import { sendRequest } from '../../../utils/requestUtils';
 import { OpenDesignerBase } from './openDesignerBase';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
