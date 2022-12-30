@@ -2,7 +2,7 @@
 import CONSTANTS from '../../common/constants';
 import type { RelationshipIds } from '../state/panel/panelInterfaces';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
-import { createWorkflowNode, createWorkflowEdge, isRootNodeInGraph } from '../utils/graph';
+import { createWorkflowNode, createWorkflowEdge } from '../utils/graph';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
 import {
   reassignEdgeSources,
@@ -12,8 +12,8 @@ import {
   removeEdge,
   moveRunAfterTarget,
 } from './restructuringHelpers';
-import type { DiscoveryOperation, DiscoveryResultTypes, SubgraphType } from '@microsoft-logic-apps/utils';
-import { SUBGRAPH_TYPES, WORKFLOW_EDGE_TYPES, isScopeOperation, WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
+import type { DiscoveryOperation, DiscoveryResultTypes, SubgraphType } from '@microsoft/utils-logic-apps';
+import { SUBGRAPH_TYPES, WORKFLOW_EDGE_TYPES, isScopeOperation, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 
 export interface AddNodePayload {
   operation: DiscoveryOperation<DiscoveryResultTypes>;
@@ -44,14 +44,14 @@ export const addNodeToWorkflow = (
 
   // Update metadata
   const isTrigger = !!operation.properties?.trigger;
-  const isRoot = isTrigger ?? (parentId ? parentId?.split('-#')[0] === graphId : false);
+  const isRoot = isTrigger || (parentId ? parentId?.split('-#')[0] === graphId : false);
   const parentNodeId = graphId !== 'root' ? graphId : undefined;
   nodesMetadata[newNodeId] = { graphId, parentNodeId, isRoot };
 
   state.operations[newNodeId] = { ...state.operations[newNodeId], type: payload.operation.type };
   state.newlyAddedOperations[newNodeId] = newNodeId;
 
-  const shouldAddRunAfters = parentId ? !isRootNodeInGraph(parentId, 'root', state.nodesMetadata) : true;
+  const shouldAddRunAfters = !isRoot;
 
   // Parallel Branch creation, just add the singular node
   if (payload.isParallelBranch && parentId) {
@@ -109,6 +109,7 @@ const createSubgraphNode = (
     graphId: parent.id,
     subgraphType,
     actionCount: 0,
+    parentNodeId: parent.id === 'root' ? undefined : parent.id,
   };
   addChildEdge(parent, createWorkflowEdge(`${parent.id}-#scope`, node.id, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
 };
@@ -187,6 +188,7 @@ export const addSwitchCaseToWorkflow = (caseId: string, switchNode: WorkflowNode
   addChildNode(caseNode, caseHeading);
   nodesMetadata[caseId] = {
     graphId: switchNode.id,
+    parentNodeId: switchNode.id,
     subgraphType: SUBGRAPH_TYPES.SWITCH_CASE,
     actionCount: 0,
   };

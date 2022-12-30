@@ -1,7 +1,7 @@
 import { TokenSegmentConvertor } from '../tokensegment';
 import { expectOutputTokenSegment, expectParameterTokenSegment, expectVariableTokenSegment } from './segment.spec';
-import type { ExpressionFunction } from '@microsoft-logic-apps/parsers';
-import { ExpressionParser, OutputKeys, OutputSource } from '@microsoft-logic-apps/parsers';
+import type { ExpressionFunction } from '@microsoft/parsers-logic-apps';
+import { ExpressionParser, OutputKeys, OutputSource } from '@microsoft/parsers-logic-apps';
 
 describe('core/utils/parameters/tokensegment', () => {
   describe('TokenSegmentConvertor', () => {

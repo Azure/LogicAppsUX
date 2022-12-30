@@ -9,12 +9,12 @@ import { isProjectCV, isRemoteProjectCV } from '../../utils/tree/projectContextV
 import { getWorkspaceSettingFromAnyFolder } from '../../utils/vsCodeConfig/settings';
 import { ProductionSlotTreeItem } from '../slotsTree/ProductionSlotTreeItem';
 import type { Site, WebSiteManagementClient } from '@azure/arm-appservice';
-import { isNullOrUndefined } from '@microsoft-logic-apps/utils';
-import type { FuncVersion, IFunctionAppWizardContext } from '@microsoft-logic-apps/utils';
+import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import { AppKind, createWebSiteClient, ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { SubscriptionTreeItemBase, uiUtils } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtTreeItem, IActionContext, ICreateChildImplContext } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, parseError } from '@microsoft/vscode-azext-utils';
+import type { FuncVersion, IFunctionAppWizardContext } from '@microsoft/vscode-extension';
 
 export interface ICreateFuntionAppContext extends ICreateChildImplContext {
   newResourceGroupName?: string;
@@ -66,9 +66,8 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     );
   }
 
-  /* eslint-disable no-param-reassign */
   public async createChildImpl(context: ICreateFuntionAppContext): Promise<AzExtTreeItem> {
-    // TODO (ccastrotrejo) - Implementation of create logic app
+    // TODO (ccastrotrejo) - Implementation of create logic app Work to be done
     const version: FuncVersion = await getDefaultFuncVersion(context);
     const language: string | undefined = getWorkspaceSettingFromAnyFolder(projectLanguageSetting);
 
@@ -83,7 +82,6 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     const site = new ParsedSite(nonNullProp(wizardContext, 'site'), this.subscription);
     return new ProductionSlotTreeItem(this, site);
   }
-  /* eslint-enable no-param-reassign */
 
   public isAncestorOfImpl(contextValue: string | RegExp): boolean {
     return !isProjectCV(contextValue) || isRemoteProjectCV(contextValue);

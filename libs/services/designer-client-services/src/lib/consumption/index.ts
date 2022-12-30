@@ -1,0 +1,1 @@
+export { ConsumptionSearchService } from './search';

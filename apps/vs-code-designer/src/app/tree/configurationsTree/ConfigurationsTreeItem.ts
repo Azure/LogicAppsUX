@@ -8,13 +8,13 @@ import { getProjectContextValue } from '../../utils/tree/projectContextValues';
 import type { SlotTreeItemBase } from '../slotsTree/SlotTreeItemBase';
 import { ConnectionsTreeItem } from './connectionsTree/ConnectionsTreeItem';
 import { ParametersTreeItem } from './parametersTree/ParametersTreeItem';
-import { ProjectAccess, ProjectResource } from '@microsoft-logic-apps/utils';
 import { AppSettingsTreeItem } from '@microsoft/vscode-azext-azureappservice';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
+import { ProjectAccess, ProjectResource } from '@microsoft/vscode-extension';
 
 export class ConfigurationsTreeItem extends AzExtParentTreeItem {
-  public static contextValue = 'azFuncConfigurations';
+  public static contextValue = 'azLogicAppsConfigurations';
   public readonly label: string = localize('Configurations', 'Configurations');
   public readonly parent: SlotTreeItemBase;
   public readonly appSettingsTreeItem: AppSettingsTreeItem;

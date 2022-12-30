@@ -5,23 +5,15 @@
 import { localSettingsFileName } from '../../../constants';
 import { localize } from '../../../localize';
 import { parseHostJson } from '../../funcConfig/host';
+import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import { getFileOrFolderContent } from '../../utils/codeless/apiUtils';
 import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
-import { getLocalSettingsJson } from '../../utils/localSettings';
 import { getIconPath } from '../../utils/tree/assets';
 import { ConfigurationsTreeItem } from '../configurationsTree/ConfigurationsTreeItem';
 import { RemoteWorkflowsTreeItem } from '../remoteWorkflowsTree/RemoteWorkflowsTreeItem';
 import { ArtifactsTreeItem } from './artifactsTree/ArtifactsTreeItem';
 import type { SiteConfig, SiteSourceControl, StringDictionary } from '@azure/arm-appservice';
-import type {
-  ApplicationSettings,
-  FuncHostRequest,
-  FuncVersion,
-  ILocalSettingsJson,
-  IParsedHostJson,
-  IProjectTreeItem,
-} from '@microsoft-logic-apps/utils';
-import { isString, latestGAVersion, ProjectSource } from '@microsoft-logic-apps/utils';
+import { isString } from '@microsoft/utils-logic-apps';
 import {
   AppSettingsTreeItem,
   DeleteLastServicePlanStep,
@@ -36,6 +28,15 @@ import {
 import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { AzExtParentTreeItem, AzureWizard, DeleteConfirmationStep, nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
+import type {
+  ApplicationSettings,
+  ILocalSettingsJson,
+  FuncHostRequest,
+  FuncVersion,
+  IParsedHostJson,
+  IProjectTreeItem,
+} from '@microsoft/vscode-extension';
+import { latestGAVersion, ProjectSource } from '@microsoft/vscode-extension';
 import * as path from 'path';
 
 export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IProjectTreeItem {
@@ -52,7 +53,6 @@ export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IP
   private readonly _siteFilesTreeItem: SiteFilesTreeItem;
   private _cachedVersion: FuncVersion | undefined;
   private _cachedHostJson: IParsedHostJson | undefined;
-  private _cachedIsConsumption: boolean | undefined;
   private _workflowsTreeItem: RemoteWorkflowsTreeItem | undefined;
   private _artifactsTreeItem: ArtifactsTreeItem;
 
@@ -99,7 +99,6 @@ export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IP
   public async refreshImpl(context: IActionContext): Promise<void> {
     this._cachedVersion = undefined;
     this._cachedHostJson = undefined;
-    this._cachedIsConsumption = undefined;
 
     const client = await this.site.createClient(context);
     this.site = new ParsedSite(nonNullValue(await client.getSite(), 'site'), this.subscription);
@@ -157,22 +156,6 @@ export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IP
     }
     settings.properties[key] = value;
     await client.updateApplicationSettings(settings);
-  }
-
-  public async getIsConsumption(context: IActionContext): Promise<boolean> {
-    let result: boolean | undefined = this._cachedIsConsumption;
-    if (result === undefined) {
-      try {
-        const client = await this.site.createClient(context);
-        result = await client.getIsConsumption(context);
-      } catch {
-        // ignore and use default
-        result = true;
-      }
-      this._cachedIsConsumption = result;
-    }
-
-    return result;
   }
 
   public async loadMoreChildrenImpl(_clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {

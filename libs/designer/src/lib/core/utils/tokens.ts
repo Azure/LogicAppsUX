@@ -22,13 +22,13 @@ import {
 import { createTokenValueSegment } from './parameters/segment';
 import { hasSecureOutputs } from './setting';
 import { getVariableTokens } from './variables';
-import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import { getIntl } from '@microsoft-logic-apps/intl';
-import { getKnownTitles, OutputKeys } from '@microsoft-logic-apps/parsers';
-import type { BuiltInOutput, OperationManifest } from '@microsoft-logic-apps/utils';
-import { labelCase, unmap, equals } from '@microsoft-logic-apps/utils';
+import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
 import { UIConstants, TemplateFunctions, TokenType } from '@microsoft/designer-ui';
+import { getIntl } from '@microsoft/intl-logic-apps';
+import { getKnownTitles, OutputKeys } from '@microsoft/parsers-logic-apps';
+import type { BuiltInOutput, OperationManifest } from '@microsoft/utils-logic-apps';
+import { labelCase, unmap, equals } from '@microsoft/utils-logic-apps';
 
 export interface TokenGroup {
   id: string;

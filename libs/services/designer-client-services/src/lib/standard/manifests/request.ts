@@ -1,5 +1,5 @@
-import { OperationOptions, SettingScope } from '@microsoft-logic-apps/utils';
-import type { OperationManifest } from '@microsoft-logic-apps/utils';
+import { OperationOptions, SettingScope } from '@microsoft/utils-logic-apps';
+import type { OperationManifest } from '@microsoft/utils-logic-apps';
 
 export default {
   properties: {
@@ -77,7 +77,7 @@ export default {
           type: 'object',
           title: 'Headers',
         },
-        pathParameters: {
+        relativePathParameters: {
           type: 'object',
           title: 'Path Parameters',
         },
@@ -95,7 +95,7 @@ export default {
           schema: 'Value',
         },
         {
-          outputLocation: ['properties', 'pathParameters'],
+          outputLocation: ['properties', 'relativePathParameters'],
           name: 'relativePath',
           schema: 'UriTemplate',
         },

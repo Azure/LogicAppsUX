@@ -10,10 +10,11 @@ import { getThemedIconPath } from '../../utils/tree/assets';
 import { getProjectContextValue } from '../../utils/tree/projectContextValues';
 import type { SlotTreeItemBase } from '../slotsTree/SlotTreeItemBase';
 import { RemoteWorkflowTreeItem } from './RemoteWorkflowTreeItem';
-import { isNullOrEmpty, ProjectAccess, ProjectResource } from '@microsoft-logic-apps/utils';
-import type { Artifacts, Parameter } from '@microsoft-logic-apps/utils';
+import { isNullOrEmpty } from '@microsoft/utils-logic-apps';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
+import { ProjectAccess, ProjectResource } from '@microsoft/vscode-extension';
+import type { Artifacts, Parameter } from '@microsoft/vscode-extension';
 
 export class RemoteWorkflowsTreeItem extends AzExtParentTreeItem {
   public readonly label: string = localize('Workflows', 'Workflows');
@@ -80,7 +81,7 @@ export class RemoteWorkflowsTreeItem extends AzExtParentTreeItem {
 
     return await this.createTreeItemsWithErrorHandling(
       workflows,
-      'azFuncInvalidWorkflow',
+      'azLogicAppsInvalidWorkflow',
       async (workflow: any) => await RemoteWorkflowTreeItem.create(this, workflow),
       (workflow: any) => {
         return workflow.name;

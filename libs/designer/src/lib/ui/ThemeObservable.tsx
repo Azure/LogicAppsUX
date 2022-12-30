@@ -1,4 +1,4 @@
-import { Theme } from '@microsoft-logic-apps/utils';
+import { Theme } from '@microsoft/utils-logic-apps';
 import { useEffect } from 'react';
 
 export const getTheme = (element: HTMLElement): Theme => {
@@ -22,5 +22,5 @@ export const useThemeObserver = (ref: any, theme: string, callback: any, options
     });
     observer.observe(ref, options);
     return () => observer.disconnect();
-  }, [callback, options]);
+  }, [callback, options, ref, theme]);
 };

@@ -2,18 +2,19 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { extensionCommand } from '../../../../constants';
 import { getIconPath } from '../../../utils/tree/assets';
 import { getProjectContextValue } from '../../../utils/tree/projectContextValues';
 import type { ConnectionsTreeItem } from './ConnectionsTreeItem';
-import { ProjectResource } from '@microsoft-logic-apps/utils';
+import type { TreeItemIconPath } from '@microsoft/vscode-azext-utils';
+import { AzExtTreeItem } from '@microsoft/vscode-azext-utils';
 import type {
   ConnectionReferenceModel,
   FunctionConnectionModel,
   IConnectionsFileContent,
   ServiceProviderConnectionModel,
-} from '@microsoft-logic-apps/utils';
-import type { TreeItemIconPath } from '@microsoft/vscode-azext-utils';
-import { AzExtTreeItem } from '@microsoft/vscode-azext-utils';
+} from '@microsoft/vscode-extension';
+import { ProjectResource } from '@microsoft/vscode-extension';
 
 export class ConnectionTreeItem extends AzExtTreeItem {
   public readonly parent: ConnectionsTreeItem;
@@ -36,7 +37,7 @@ export class ConnectionTreeItem extends AzExtTreeItem {
       !this._isManaged && (content as FunctionConnectionModel | ServiceProviderConnectionModel).displayName
         ? `${name} - ${(content as FunctionConnectionModel | ServiceProviderConnectionModel).displayName}`
         : name;
-    this.commandId = 'logicAppsExtension.viewContent';
+    this.commandId = extensionCommand.viewContent;
   }
 
   public get id(): string {

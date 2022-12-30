@@ -21,6 +21,18 @@
       "value": "\"."
     }
   ],
+  "+3efoo": [
+    {
+      "type": 0,
+      "value": "No schema is added"
+    }
+  ],
+  "+DxBpE": [
+    {
+      "type": 0,
+      "value": "Failed loading the schema. Please try again."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -55,6 +67,12 @@
     {
       "type": 0,
       "value": "Paginierung"
+    }
+  ],
+  "/9r9ML": [
+    {
+      "type": 0,
+      "value": "Add target schema"
     }
   ],
   "/AtN16": [
@@ -195,6 +213,12 @@
       "value": "URL decodiert die Eingabezeichenfolge."
     }
   ],
+  "0IRUjM": [
+    {
+      "type": 0,
+      "value": "Select a target schema node to start mapping"
+    }
+  ],
   "0JTHTZ": [
     {
       "type": 0,
@@ -285,6 +309,12 @@
       "value": "Gibt den Port aus einem URI zurück. Falls der Port nicht angegeben ist, wird der Standardport für das Protokoll zurückgegeben."
     }
   ],
+  "11qu8f": [
+    {
+      "type": 0,
+      "value": "Enter a valid integer."
+    }
+  ],
   "14lYtE": [
     {
       "type": 0,
@@ -295,6 +325,12 @@
     {
       "type": 0,
       "value": "Kommentar"
+    }
+  ],
+  "1ANUHk": [
+    {
+      "type": 0,
+      "value": "Loading functions..."
     }
   ],
   "1D047X": [
@@ -361,6 +397,12 @@
       "value": "count"
     }
   ],
+  "1REk6u": [
+    {
+      "type": 0,
+      "value": "Enter a valid email."
+    }
+  ],
   "1TE0e8": [
     {
       "type": 0,
@@ -371,12 +413,6 @@
     {
       "type": 0,
       "value": "Geben Sie mindestens einen Ausdruck an, der zum Auslösen des Triggers den Wert TRUE aufweisen muss."
-    }
-  ],
-  "1X4U/1": [
-    {
-      "type": 0,
-      "value": "Codeansicht anzeigen"
     }
   ],
   "1ZDLZA": [
@@ -409,10 +445,22 @@
       "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es kleiner als der Vergleichswert ist."
     }
   ],
+  "1nODUD": [
+    {
+      "type": 0,
+      "value": "Hide functions"
+    }
+  ],
   "1nvvw1": [
     {
       "type": 0,
       "value": "Geben Sie den Wert des Autorisierungsheaders ein."
+    }
+  ],
+  "1pjO9s": [
+    {
+      "type": 0,
+      "value": "Hide source schema"
     }
   ],
   "1uGBLP": [
@@ -461,6 +509,12 @@
     {
       "type": 0,
       "value": "Aktivieren Sie die aufgeteilte Ausführung, um für jedes Element im ausgewählten Array eine Instanz des Workflows zu starten. Jede Instanz kann auch eine eigene Nachverfolgungs-ID aufweisen."
+    }
+  ],
+  "2JA3gY": [
+    {
+      "type": 0,
+      "value": "Expand tree node"
     }
   ],
   "2K2fAj": [
@@ -627,6 +681,18 @@
       "value": "(UTC+09:00) Chita"
     }
   ],
+  "3cZZKj": [
+    {
+      "type": 0,
+      "value": "Divider"
+    }
+  ],
+  "3eeli7": [
+    {
+      "type": 0,
+      "value": "Select a source schema"
+    }
+  ],
   "3ewBbk": [
     {
       "type": 0,
@@ -679,6 +745,12 @@
       "value": "Erforderlich. Das Objekt, aus dem die Eigenschaft entfernt werden soll."
     }
   ],
+  "3sJlV+": [
+    {
+      "type": 0,
+      "value": "Close code view"
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -695,12 +767,6 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Eriwan"
-    }
-  ],
-  "438H98": [
-    {
-      "type": 0,
-      "value": "Änderungen verwerfen"
     }
   ],
   "45ubha": [
@@ -721,6 +787,18 @@
       "value": "Erforderlich. Die Anzahl der zu addierenden Tage. Kann negativ sein, um Tage zu subtrahieren."
     }
   ],
+  "4Ekn9t": [
+    {
+      "type": 0,
+      "value": "Undo"
+    }
+  ],
+  "4IS4yp": [
+    {
+      "type": 0,
+      "value": "Retry Policy"
+    }
+  ],
   "4Q7WzU": [
     {
       "type": 0,
@@ -737,6 +815,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Hiermit wird die im Intervall festgelegte Zeiteinheit angegeben."
+    }
+  ],
+  "4aaixN": [
+    {
+      "type": 0,
+      "value": "Tour"
     }
   ],
   "4c0uPQ": [
@@ -775,12 +859,6 @@
       "value": "Dienstanforderungs-ID"
     }
   ],
-  "4wavwk": [
-    {
-      "type": 0,
-      "value": "Führung/Tutorial"
-    }
-  ],
   "4wjJs0": [
     {
       "type": 0,
@@ -793,16 +871,16 @@
       "value": "Aktionstyp"
     }
   ],
+  "5+MuPz": [
+    {
+      "type": 0,
+      "value": "Enter a valid double."
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
       "value": "Erforderlich. Der XPath-Ausdruck, der ausgewertet werden soll."
-    }
-  ],
-  "5P8UWJ": [
-    {
-      "type": 0,
-      "value": "Quellschema auswählen"
     }
   ],
   "5SAQOb": [
@@ -829,6 +907,12 @@
       "value": "Erforderlich. Der Name der Schleife, deren Element Sie abrufen möchten."
     }
   ],
+  "5hWg4V": [
+    {
+      "type": 0,
+      "value": "Select element"
+    }
+  ],
   "5qzZMo": [
     {
       "type": 0,
@@ -847,6 +931,12 @@
       "value": "Hybridconnector"
     }
   ],
+  "62Ypnr": [
+    {
+      "type": 0,
+      "value": "Error loading operation data"
+    }
+  ],
   "63/zYN": [
     {
       "type": 0,
@@ -857,12 +947,6 @@
     {
       "type": 0,
       "value": "(UTC+08:45) Eucla"
-    }
-  ],
-  "6Ld/c8": [
-    {
-      "type": 0,
-      "value": "Zielschema auswählen"
     }
   ],
   "6OSgRP": [
@@ -881,6 +965,12 @@
     {
       "type": 0,
       "value": "(UTC+09:30) Adelaide"
+    }
+  ],
+  "6grB5C": [
+    {
+      "type": 0,
+      "value": "Invalid node settings"
     }
   ],
   "6jiO7t": [
@@ -925,6 +1015,12 @@
       "value": "Erforderlich. Die Zahl, mit der Multiplikand 2 multipliziert werden soll."
     }
   ],
+  "73iM9+": [
+    {
+      "type": 0,
+      "value": "Update source schema"
+    }
+  ],
   "7GSk99": [
     {
       "type": 0,
@@ -955,6 +1051,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Zeichenfolge, aus der die Teilzeichenfolge entnommen wird."
+    }
+  ],
+  "7WVgiU": [
+    {
+      "type": 0,
+      "value": "Configure"
     }
   ],
   "7ZR1xr": [
@@ -1003,6 +1105,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Zeichenfolge, die möglicherweise den Wert enthält."
+    }
+  ],
+  "8+0teU": [
+    {
+      "type": 0,
+      "value": "Parameter name already exists."
     }
   ],
   "84D91Y": [
@@ -1155,6 +1263,24 @@
       "value": "Wert"
     }
   ],
+  "92OUl9": [
+    {
+      "type": 0,
+      "value": "Array Element "
+    },
+    {
+      "type": 1,
+      "value": "index"
+    },
+    {
+      "type": 0,
+      "value": " is missing required property "
+    },
+    {
+      "type": 1,
+      "value": "property"
+    }
+  ],
   "93svjx": [
     {
       "type": 0,
@@ -1227,6 +1353,12 @@
       "value": "Gibt TRUE zurück, wenn beide Parameter TRUE sind."
     }
   ],
+  "A5Ferh": [
+    {
+      "type": 0,
+      "value": "Source element removed from view."
+    }
+  ],
   "ADM1Z8": [
     {
       "type": 0,
@@ -1261,6 +1393,12 @@
     {
       "type": 0,
       "value": "Fertig"
+    }
+  ],
+  "AX7dq3": [
+    {
+      "type": 0,
+      "value": "Input node type does not match the schema node's type"
     }
   ],
   "AYaqW/": [
@@ -1307,6 +1445,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Zeichenfolge, die als Base64-Darstellung codiert werden soll."
+    }
+  ],
+  "AsqIUa": [
+    {
+      "type": 0,
+      "value": "Maximum Interval"
     }
   ],
   "Az0QvG": [
@@ -1367,6 +1511,12 @@
       "value": "Kein dynamischer Inhalt verfügbar"
     }
   ],
+  "B999mz": [
+    {
+      "type": 0,
+      "value": "Line deleted."
+    }
+  ],
   "BAgRzO": [
     {
       "type": 0,
@@ -1385,10 +1535,22 @@
       "value": "Hiermit wird entweder ein einzelnes Zeichen als Formatbezeichner oder ein benutzerdefiniertes Formatmuster angegeben, das festlegt, wie der Wert dieses Zeitstempels formatiert werden soll. Wenn kein Format angegeben wird, wird das ISO 8601-Format (\"o\") verwendet."
     }
   ],
+  "BEZWxB": [
+    {
+      "type": 0,
+      "value": "Clear custom value"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
       "value": "Erforderlich. Die URI-codierte Zeichenfolge."
+    }
+  ],
+  "BJNUxN": [
+    {
+      "type": 0,
+      "value": "Path Parameters"
     }
   ],
   "BKL0ZG": [
@@ -1463,10 +1625,10 @@
       "value": "Ausgabe"
     }
   ],
-  "CkfIxl": [
+  "ClZW2r": [
     {
       "type": 0,
-      "value": "Der Quellknoten wurde aus der Ansicht entfernt."
+      "value": "Value"
     }
   ],
   "CsPY74": [
@@ -1485,6 +1647,12 @@
     {
       "type": 0,
       "value": "Gibt Pfad und Abfrage aus einem URI zurück."
+    }
+  ],
+  "D/xTXV": [
+    {
+      "type": 0,
+      "value": "Show source schema"
     }
   ],
   "D1lgsT": [
@@ -1523,10 +1691,22 @@
       "value": "Dauer"
     }
   ],
+  "DZc8wP": [
+    {
+      "type": 0,
+      "value": "Custom value does not match the schema node's type"
+    }
+  ],
   "DfS13/": [
     {
       "type": 0,
       "value": "(UTC-10:00) Aleuten-Inseln"
+    }
+  ],
+  "Dhu3IS": [
+    {
+      "type": 0,
+      "value": "Show mini-map"
     }
   ],
   "DsPDVB": [
@@ -1651,6 +1831,12 @@
       "value": "(UTC+08:00) Irkutsk"
     }
   ],
+  "F9dR1Q": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "FDF4Qb": [
     {
       "type": 0,
@@ -1697,6 +1883,12 @@
     {
       "type": 0,
       "value": "Gibt den Text für einen Teil in einer mehrteiligen Ausgabe des Triggers zurück."
+    }
+  ],
+  "FS06y3": [
+    {
+      "type": 0,
+      "value": "Must provide name of parameter."
     }
   ],
   "FUhNu4": [
@@ -1755,12 +1947,6 @@
       "value": "hours"
     }
   ],
-  "FemgEF": [
-    {
-      "type": 0,
-      "value": "Abbrechen"
-    }
-  ],
   "Fgq3Db": [
     {
       "type": 0,
@@ -1783,12 +1969,6 @@
     {
       "type": 0,
       "value": "Status"
-    }
-  ],
-  "FuXqJI": [
-    {
-      "type": 0,
-      "value": "Zielschema aktualisieren"
     }
   ],
   "G/CC5/": [
@@ -1829,6 +2009,12 @@
       "value": "Erforderlich. Das Objekt, das in der Within-Sammlung gesucht werden soll."
     }
   ],
+  "GXXLuT": [
+    {
+      "type": 0,
+      "value": "Enter a valid boolean."
+    }
+  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1851,6 +2037,12 @@
     {
       "type": 0,
       "value": "Weniger anzeigen"
+    }
+  ],
+  "Gi7czD": [
+    {
+      "type": 0,
+      "value": "Source schema element"
     }
   ],
   "Gmya+V": [
@@ -1889,10 +2081,10 @@
       "value": "Erforderlich. Die zu segmentierende Zeichenfolge."
     }
   ],
-  "H7t3Pm": [
+  "H5VikC": [
     {
       "type": 0,
-      "value": "Das Zielschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Zielschemas fortfahren?"
+      "value": "Invalid connection, mapping must not form a closed loop."
     }
   ],
   "H8bEUn": [
@@ -1939,6 +2131,18 @@
       "value": "Wählen Sie eine Karte aus, um den Inhalt anzuzeigen."
     }
   ],
+  "HmcHoE": [
+    {
+      "type": 0,
+      "value": "Error fetching manifest"
+    }
+  ],
+  "HoQiVa": [
+    {
+      "type": 0,
+      "value": "Enter a valid datetime."
+    }
+  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -1947,6 +2151,20 @@
     {
       "type": 0,
       "value": " Gateway installieren"
+    }
+  ],
+  "Hyp0Ao": [
+    {
+      "type": 0,
+      "value": "Remove parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" and its value"
     }
   ],
   "HzS2gJ": [
@@ -1985,16 +2203,10 @@
       "value": "Hiermit wird ein aus einem UTC-Wert übergebener Zeichenfolgen-Zeitstempel in eine Zielzeitzone konvertiert."
     }
   ],
-  "Ie4sUt": [
+  "IXy91L": [
     {
       "type": 0,
-      "value": "Konfigurieren"
-    }
-  ],
-  "IgNz8Y": [
-    {
-      "type": 0,
-      "value": "Aktion"
+      "value": "Add a target schema"
     }
   ],
   "IjZFjQ": [
@@ -2051,6 +2263,12 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "J9wWry": [
+    {
+      "type": 0,
+      "value": "Parameters"
     }
   ],
   "JErLDT": [
@@ -2225,6 +2443,12 @@
       "value": "Workflowdiagramm löschen"
     }
   ],
+  "LCXZLM": [
+    {
+      "type": 0,
+      "value": "Loading Function Apps..."
+    }
+  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -2249,6 +2473,12 @@
     {
       "type": 0,
       "value": "“. „Aufteilung auf“ nicht in Array."
+    }
+  ],
+  "LR/3Lr": [
+    {
+      "type": 0,
+      "value": "Configure"
     }
   ],
   "LS8rfZ": [
@@ -2409,6 +2639,12 @@
       "value": "Gibt den aktuellen Zeitstempel als Zeichenfolge zurück."
     }
   ],
+  "MVrv+N": [
+    {
+      "type": 0,
+      "value": "Enter a valid array."
+    }
+  ],
   "MYgKHu": [
     {
       "type": 0,
@@ -2425,6 +2661,18 @@
     {
       "type": 0,
       "value": "Nächster Fehler"
+    }
+  ],
+  "Mgcs5s": [
+    {
+      "type": 0,
+      "value": "Enter a valid number."
+    }
+  ],
+  "MirIsS": [
+    {
+      "type": 0,
+      "value": "Show code"
     }
   ],
   "MmBfD1": [
@@ -2451,6 +2699,12 @@
       "value": "Erforderlich. Der Schlüsselname der zurückzugebenden Formulardatenwerte."
     }
   ],
+  "N4dEVo": [
+    {
+      "type": 0,
+      "value": "Headers"
+    }
+  ],
   "NPUFgH": [
     {
       "type": 0,
@@ -2467,12 +2721,6 @@
     {
       "type": 0,
       "value": "(UTC+03:00) Minsk"
-    }
-  ],
-  "Nn/DN4": [
-    {
-      "type": 0,
-      "value": "This connection would introduce circular logic."
     }
   ],
   "NnD8gF": [
@@ -2503,20 +2751,6 @@
     {
       "type": 0,
       "value": "Wählen Sie eine Identität aus."
-    }
-  ],
-  "NtY1mD": [
-    {
-      "type": 0,
-      "value": "Entfernen Sie alle Verweise auf den Knoten „"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "“, bevor Sie den Knoten entfernen."
     }
   ],
   "NvANon": [
@@ -2637,12 +2871,6 @@
       "value": "Kommentar"
     }
   ],
-  "OUS2wX": [
-    {
-      "type": 0,
-      "value": "Wählen Sie das Schema für die Dropdownliste aus."
-    }
-  ],
   "OVvieE": [
     {
       "type": 0,
@@ -2751,12 +2979,6 @@
       "value": "Erforderlich. Die Zahl, die mit Summand 1 addiert werden soll."
     }
   ],
-  "PMMNKR": [
-    {
-      "type": 0,
-      "value": "Quellschemaknoten"
-    }
-  ],
   "PP63jY": [
     {
       "type": 0,
@@ -2773,6 +2995,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Anzahl der zu addierenden Sekunden. Kann negativ sein, um Sekunden zu subtrahieren."
+    }
+  ],
+  "PSrCNL": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "PXa0D4": [
@@ -2811,6 +3039,12 @@
       "value": "Nicht generieren, wenn kein Wert vorhanden ist"
     }
   ],
+  "PvWTxR": [
+    {
+      "type": 0,
+      "value": "Show functions"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2839,12 +3073,6 @@
     {
       "type": 0,
       "value": "Verwerfen"
-    }
-  ],
-  "QBOaAu": [
-    {
-      "type": 0,
-      "value": "Quellschema auswählen"
     }
   ],
   "QEp3C8": [
@@ -2889,6 +3117,12 @@
     {
       "type": 0,
       "value": "Element"
+    }
+  ],
+  "QdJUaS": [
+    {
+      "type": 0,
+      "value": "Pencil icon"
     }
   ],
   "QeE0k/": [
@@ -2943,12 +3177,6 @@
       "value": "Trigger können nicht gelöscht werden."
     }
   ],
-  "R7v2iQ": [
-    {
-      "type": 0,
-      "value": "Eine Linie zwischen Arrayelementen wird automatisch erstellt, um Elemente in einer Schleife anzuzeigen."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2971,6 +3199,12 @@
     {
       "type": 0,
       "value": "Hiermit wird zur Eingabe für das gesamte Array gewechselt."
+    }
+  ],
+  "RZO5Ic": [
+    {
+      "type": 0,
+      "value": "Add or replace your schemas."
     }
   ],
   "RhH4pF": [
@@ -3011,12 +3245,6 @@
       "value": "6"
     }
   ],
-  "Rno87I": [
-    {
-      "type": 0,
-      "value": "Möchten Sie alle nicht gespeicherten Änderungen verwerfen?"
-    }
-  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3045,6 +3273,12 @@
     {
       "type": 0,
       "value": "Parameter in ganze Zahl konvertieren"
+    }
+  ],
+  "SLJkRn": [
+    {
+      "type": 0,
+      "value": "Remove input"
     }
   ],
   "SLZ0n4": [
@@ -3109,6 +3343,12 @@
     {
       "type": 0,
       "value": "Name"
+    }
+  ],
+  "T7Xwii": [
+    {
+      "type": 0,
+      "value": "Interval"
     }
   ],
   "T7zcR6": [
@@ -3225,6 +3465,12 @@
       "value": "Reduzieren/Erweitern"
     }
   ],
+  "U086AA": [
+    {
+      "type": 0,
+      "value": "Target schema element"
+    }
+  ],
   "U1NiVg": [
     {
       "type": 0,
@@ -3267,6 +3513,12 @@
       "value": "Ersetzt eine Zeichenfolge durch eine angegebene Zeichenfolge."
     }
   ],
+  "UR1CS5": [
+    {
+      "type": 0,
+      "value": "Hide code"
+    }
+  ],
   "USVffu": [
     {
       "type": 0,
@@ -3281,6 +3533,12 @@
     {
       "type": 0,
       "value": " (Dateiname)"
+    }
+  ],
+  "UnrrzF": [
+    {
+      "type": 0,
+      "value": "Source schema"
     }
   ],
   "Ur+wph": [
@@ -3331,10 +3589,28 @@
       "value": "Erweitern"
     }
   ],
+  "VJa7sh": [
+    {
+      "type": 0,
+      "value": "Browse operations"
+    }
+  ],
   "VKAk5g": [
     {
       "type": 0,
       "value": "Der angegebene Name der Workflowausführung ist ungültig."
+    }
+  ],
+  "VL9wOu": [
+    {
+      "type": 0,
+      "value": "Must provide value for parameter."
+    }
+  ],
+  "VLc3FV": [
+    {
+      "type": 0,
+      "value": "Source schema"
     }
   ],
   "VUH9aj": [
@@ -3437,12 +3713,6 @@
     {
       "type": 0,
       "value": "Erforderlich. Die erste ganze Zahl im Array."
-    }
-  ],
-  "WTTJ89": [
-    {
-      "type": 0,
-      "value": "Zielschema auswählen"
     }
   ],
   "WUe3DY": [
@@ -3575,6 +3845,30 @@
       "value": "(UTC-08:00) Pacific Time (USA und Kanada)"
     }
   ],
+  "XbtEq9": [
+    {
+      "type": 0,
+      "value": "Count"
+    }
+  ],
+  "Xj0Gr/": [
+    {
+      "type": 0,
+      "value": "Target schema element cannot be deleted."
+    }
+  ],
+  "XkBxv5": [
+    {
+      "type": 0,
+      "value": "Select a target schema"
+    }
+  ],
+  "Xkt2vD": [
+    {
+      "type": 0,
+      "value": "Select a function app function"
+    }
+  ],
   "Xnn0uj": [
     {
       "type": 0,
@@ -3603,12 +3897,6 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Name der Aktion, deren Textausgaben Sie erhalten möchten."
-    }
-  ],
-  "XylNMU": [
-    {
-      "type": 0,
-      "value": "Das Quellschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Quellschemas fortfahren?"
     }
   ],
   "Y/bcmG": [
@@ -3689,6 +3977,12 @@
       "value": "Suchtipps"
     }
   ],
+  "Yh5OVd": [
+    {
+      "type": 0,
+      "value": "Custom value does not match one of the allowed types for this input"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -3699,6 +3993,34 @@
     {
       "type": 0,
       "value": "Verkleinern"
+    }
+  ],
+  "Z9PWl/": [
+    {
+      "type": 0,
+      "value": "Retry Policy count is invalid (Must be from "
+    },
+    {
+      "type": 1,
+      "value": "min"
+    },
+    {
+      "type": 0,
+      "value": " to "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "ZCFMoe": [
+    {
+      "type": 0,
+      "value": "Body"
     }
   ],
   "ZM1mRy": [
@@ -3791,36 +4113,28 @@
       "value": "(UTC+05:00) Aschgabat, Taschkent"
     }
   ],
+  "aJxefp": [
+    {
+      "type": 0,
+      "value": "Add new parameters"
+    }
+  ],
   "aK4iLW": [
     {
       "type": 0,
       "value": "Datenverarbeitung"
     }
   ],
-  "aL0Uut": [
-    {
-      "type": 0,
-      "value": "Funktion"
-    }
-  ],
-  "aRKDWL": [
-    {
-      "type": 0,
-      "value": "Fehlgeschlagen mit Fehler: "
-    },
-    {
-      "type": 1,
-      "value": "errorMessage"
-    },
-    {
-      "type": 0,
-      "value": ". Bitte melden Sie sich erneut an."
-    }
-  ],
   "ahsVI/": [
     {
       "type": 0,
       "value": "PFX eingeben"
+    }
+  ],
+  "amRYtC": [
+    {
+      "type": 0,
+      "value": "Enter a valid float."
     }
   ],
   "auUI93": [
@@ -3843,12 +4157,6 @@
     {
       "type": 1,
       "value": "controls"
-    }
-  ],
-  "bCQ6JT": [
-    {
-      "type": 0,
-      "value": "Array-Mapping"
     }
   ],
   "bG9rjv": [
@@ -3931,6 +4239,12 @@
       "value": "Geben Sie Parameter zum Testen der Ausgabe an."
     }
   ],
+  "byTBrn": [
+    {
+      "type": 0,
+      "value": "Custom"
+    }
+  ],
   "bzF/qn": [
     {
       "type": 0,
@@ -3961,6 +4275,12 @@
       "value": "Gibt ein Objekt zurück, für das eine Eigenschaft auf den angegebenen Wert festgelegt wurde."
     }
   ],
+  "c4GQZE": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "c6XbVI": [
     {
       "type": 0,
@@ -3971,12 +4291,6 @@
     {
       "type": 0,
       "value": "Dynamische Inhalte können auch aus anderen Quellen hinzugefügt werden."
-    }
-  ],
-  "cCYmTK": [
-    {
-      "type": 0,
-      "value": "Konfiguration"
     }
   ],
   "cJm+ah": [
@@ -3991,6 +4305,18 @@
       "value": "Dokumentation anzeigen"
     }
   ],
+  "cP4UkW": [
+    {
+      "type": 0,
+      "value": "Retry Policy interval is invalid, must match ISO 8601 duration format"
+    }
+  ],
+  "cR9RtV": [
+    {
+      "type": 0,
+      "value": "Discard changes"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -4001,12 +4327,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripolis"
-    }
-  ],
-  "cbL6Gv": [
-    {
-      "type": 0,
-      "value": "Fügen Sie Ihre Schemas hinzu, oder ersetzen Sie diese."
     }
   ],
   "cgq/+y": [
@@ -4025,6 +4345,12 @@
     {
       "type": 0,
       "value": "Abgebrochen"
+    }
+  ],
+  "cjcEOf": [
+    {
+      "type": 0,
+      "value": "Input node type does not match one of the allowed types for this input"
     }
   ],
   "cmTCsW": [
@@ -4051,12 +4377,6 @@
       "value": "Erforderlich. Die Sammlung, in der die ersten Count-Objekte übersprungen werden sollen."
     }
   ],
-  "d32jcW": [
-    {
-      "type": 0,
-      "value": "Warnung"
-    }
-  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -4067,12 +4387,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Harare, Pretoria"
-    }
-  ],
-  "dA6SUc": [
-    {
-      "type": 0,
-      "value": "Verbindung wurde gelöscht."
     }
   ],
   "dDYCuU": [
@@ -4103,12 +4417,6 @@
     {
       "type": 0,
       "value": "Hiermit sorgen Sie für sichere Eingaben für den Vorgang."
-    }
-  ],
-  "dWeRGU": [
-    {
-      "type": 0,
-      "value": "Bleistiftsymbol"
     }
   ],
   "dWx21B": [
@@ -4177,12 +4485,6 @@
     {
       "type": 0,
       "value": "Nicht angegeben"
-    }
-  ],
-  "eCkaMR": [
-    {
-      "type": 0,
-      "value": "Quellschema aktualisieren"
     }
   ],
   "eGa1Wa": [
@@ -4275,16 +4577,16 @@
       "value": "Die Auslagerungsanzahl überschreitet den Maximalwert"
     }
   ],
-  "fLSetk": [
-    {
-      "type": 0,
-      "value": "Quellschema"
-    }
-  ],
   "faSDuD": [
     {
       "type": 0,
       "value": "(UTC+04:00) Port Louis"
+    }
+  ],
+  "faUrud": [
+    {
+      "type": 0,
+      "value": "Loading connection data..."
     }
   ],
   "fc1AV8": [
@@ -4298,13 +4600,19 @@
     },
     {
       "type": 0,
-      "value": " URL"
+      "value": "-URL"
     }
   ],
   "fg/34o": [
     {
       "type": 0,
       "value": "Logische Funktionen"
+    }
+  ],
+  "fqNVDv": [
+    {
+      "type": 0,
+      "value": "Back"
     }
   ],
   "froV/0": [
@@ -4451,6 +4759,18 @@
       "value": "Geben oder fügen Sie JSON-Beispielnutzdaten ein."
     }
   ],
+  "h40rpg": [
+    {
+      "type": 0,
+      "value": "Specify interval in ISO 8601 format."
+    }
+  ],
+  "h6vVbX": [
+    {
+      "type": 0,
+      "value": "Add a source schema first, then select elements to build your map"
+    }
+  ],
   "hBLPXK": [
     {
       "type": 0,
@@ -4501,6 +4821,12 @@
       "value": "ALT/OPTION + Klicken Sie, um {displayName} herunterzuladen"
     }
   ],
+  "hic23z": [
+    {
+      "type": 0,
+      "value": "The value is too large."
+    }
+  ],
   "hq1mk6": [
     {
       "type": 0,
@@ -4523,6 +4849,12 @@
     {
       "type": 0,
       "value": "Dauer"
+    }
+  ],
+  "htj+eZ": [
+    {
+      "type": 0,
+      "value": "Update target schema"
     }
   ],
   "hvbclb": [
@@ -4677,6 +5009,18 @@
       "value": "s"
     }
   ],
+  "isnFBi": [
+    {
+      "type": 0,
+      "value": "Elements and mappings not connected to a target element are removed."
+    }
+  ],
+  "ittN0l": [
+    {
+      "type": 0,
+      "value": "No resources of this type found under this subscription."
+    }
+  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -4699,6 +5043,12 @@
     {
       "type": 0,
       "value": "Gibt den Wert der angegebenen Variablen zurück."
+    }
+  ],
+  "j5z8Vd": [
+    {
+      "type": 0,
+      "value": "Repeating"
     }
   ],
   "jA6Wrp": [
@@ -4729,6 +5079,18 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Wert, der in eine Zeichenfolge konvertiert wird."
+    }
+  ],
+  "jQjteB": [
+    {
+      "type": 0,
+      "value": "Add a source schema"
+    }
+  ],
+  "jUDhbs": [
+    {
+      "type": 0,
+      "value": "Target schema"
     }
   ],
   "jVpanH": [
@@ -4767,12 +5129,6 @@
     {
       "type": 0,
       "value": "“"
-    }
-  ],
-  "jsEMSu": [
-    {
-      "type": 0,
-      "value": "Toolbox"
     }
   ],
   "juR40n": [
@@ -4829,16 +5185,22 @@
       "value": "s"
     }
   ],
+  "kJD/bW": [
+    {
+      "type": 0,
+      "value": "Loading search results..."
+    }
+  ],
+  "kM+Mr0": [
+    {
+      "type": 0,
+      "value": "Loading..."
+    }
+  ],
   "kN6kce": [
     {
       "type": 0,
       "value": "Gibt eine Zeichenfolgendarstellung einer Base64-Eingabezeichenfolge zurück."
-    }
-  ],
-  "kV/U0C": [
-    {
-      "type": 0,
-      "value": "Miniaturansicht anzeigen"
     }
   ],
   "kYivbS": [
@@ -4895,6 +5257,12 @@
       "value": "Fehlende Authentifizierungstypeigenschaft: \"type\"."
     }
   ],
+  "kxMDyM": [
+    {
+      "type": 0,
+      "value": "Enter a valid json."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4931,16 +5299,16 @@
       "value": "Trigger ausführen"
     }
   ],
+  "lQNKUB": [
+    {
+      "type": 0,
+      "value": "A line for the parent element is added automatically."
+    }
+  ],
   "lV77P8": [
     {
       "type": 0,
       "value": "Titel"
-    }
-  ],
-  "lWjfm3": [
-    {
-      "type": 0,
-      "value": "Zurück"
     }
   ],
   "lZT0JI": [
@@ -4961,6 +5329,20 @@
       "value": "Bitte geben Sie einen gültigen Array ein"
     }
   ],
+  "lexzgJ": [
+    {
+      "type": 0,
+      "value": "Remove all references to element ' "
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " ' before you remove the element."
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -4973,10 +5355,22 @@
       "value": "Kompakteigenschaft für actions(\"Aktionsname\").outputs.body"
     }
   ],
-  "lztiwS": [
+  "lzBHHT": [
     {
       "type": 0,
-      "value": "Istwert"
+      "value": "Array Element "
+    },
+    {
+      "type": 1,
+      "value": "index"
+    },
+    {
+      "type": 0,
+      "value": " has unknown property "
+    },
+    {
+      "type": 1,
+      "value": "property"
     }
   ],
   "m7Y6Qf": [
@@ -5129,12 +5523,6 @@
       "value": "Erforderlich. Hiermit wird angegeben, um wie viele Zeiteinheiten die gewünschte Uhrzeit in der Zukunft liegt."
     }
   ],
-  "nQxMfu": [
-    {
-      "type": 0,
-      "value": "Benutzerdefinierten Wert löschen und erneut auswählen"
-    }
-  ],
   "nSan4V": [
     {
       "type": 0,
@@ -5163,12 +5551,6 @@
     {
       "type": 0,
       "value": "Fügt einem übergebenen Zeichenfolgen-Zeitstempel eine ganze Zahl von Minuten hinzu."
-    }
-  ],
-  "ntiOaL": [
-    {
-      "type": 0,
-      "value": "Schließen"
     }
   ],
   "nx25nq": [
@@ -5203,22 +5585,34 @@
       "value": "max_page"
     }
   ],
+  "o2Cmny": [
+    {
+      "type": 0,
+      "value": "Enter a valid uri."
+    }
+  ],
+  "o3SfI4": [
+    {
+      "type": 0,
+      "value": "Zoom to fit"
+    }
+  ],
   "oAFcW6": [
     {
       "type": 0,
       "value": "Erforderlich. Der dataURI, der in die Binärdarstellung decodiert werden soll."
     }
   ],
+  "oDHXKh": [
+    {
+      "type": 0,
+      "value": "Item"
+    }
+  ],
   "oLtwMw": [
     {
       "type": 0,
       "value": "Inhaltsübertragung"
-    }
-  ],
-  "oM6q96": [
-    {
-      "type": 0,
-      "value": "Browsenvorgänge"
     }
   ],
   "oRvVIW": [
@@ -5233,6 +5627,12 @@
       "value": "Geben Sie den Ausführungsbezeichner ein, um die Ausführung zu öffnen."
     }
   ],
+  "oVVPst": [
+    {
+      "type": 0,
+      "value": "Do you want to discard all unsaved changes?"
+    }
+  ],
   "odQ554": [
     {
       "type": 0,
@@ -5243,12 +5643,6 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Salvador"
-    }
-  ],
-  "orhWzV": [
-    {
-      "type": 0,
-      "value": "Fehler beim Laden des Schemas. Versuchen Sie es bitte noch einmal."
     }
   ],
   "oxH1L/": [
@@ -5489,6 +5883,16 @@
       "value": "Gibt die Anzahl von Elementen in einem Array oder einer Zeichenfolge zurück."
     }
   ],
+  "qiIs4V": [
+    {
+      "type": 0,
+      "value": "Example: "
+    },
+    {
+      "type": 1,
+      "value": "example"
+    }
+  ],
   "qnI4Y1": [
     {
       "type": 0,
@@ -5507,6 +5911,20 @@
       "value": "\"Asynchrone Antwort\" ermöglicht es einer Logik-App, durch die Antwort \"202 (Zulässig)\" darauf hinzuweisen, dass die Anforderung zur Verarbeitung akzeptiert wurde. Es wird ein Adressheader bereitgestellt, um den Endzustand abzurufen. "
     }
   ],
+  "qwn2o/": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "‘ first."
+    }
+  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -5517,6 +5935,12 @@
     {
       "type": 0,
       "value": "Rückgängig machen"
+    }
+  ],
+  "r7vZ5a": [
+    {
+      "type": 0,
+      "value": "Minimum Interval"
     }
   ],
   "r8aZXs": [
@@ -5555,6 +5979,12 @@
       "value": "Verbindung ist ungültig"
     }
   ],
+  "rSIBjh": [
+    {
+      "type": 0,
+      "value": "Enter value for parameter."
+    }
+  ],
   "raBiud": [
     {
       "type": 0,
@@ -5571,6 +6001,12 @@
     {
       "type": 0,
       "value": "Ausdruck"
+    }
+  ],
+  "rsdJcV": [
+    {
+      "type": 0,
+      "value": "Select source schema elements to build your map"
     }
   ],
   "rstpaK": [
@@ -5747,6 +6183,12 @@
       "value": "(UTC+06:00) Nowosibirsk"
     }
   ],
+  "tRgTTN": [
+    {
+      "type": 0,
+      "value": "Expand/collapse target schema"
+    }
+  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -5763,6 +6205,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Anzahl der zu addierenden Stunden. Kann negativ sein, um Stunden zu subtrahieren."
+    }
+  ],
+  "td5//c": [
+    {
+      "type": 0,
+      "value": "Collapse tree node"
     }
   ],
   "teZwo6": [
@@ -5799,6 +6247,12 @@
     {
       "type": 0,
       "value": "Wählen Sie ein Element aus, um mit der Konfiguration zu beginnen."
+    }
+  ],
+  "uM1i27": [
+    {
+      "type": 0,
+      "value": "Specify a retry count from 1 to 90"
     }
   ],
   "uN4zFU": [
@@ -5855,6 +6309,12 @@
       "value": "(UTC-11:00) Koordinierte Weltzeit -11"
     }
   ],
+  "uesaee": [
+    {
+      "type": 0,
+      "value": "Expression"
+    }
+  ],
   "ui7GCl": [
     {
       "type": 0,
@@ -5871,12 +6331,6 @@
     {
       "type": 0,
       "value": "4"
-    }
-  ],
-  "ut5Med": [
-    {
-      "type": 0,
-      "value": "Standardwert"
     }
   ],
   "uzsleE": [
@@ -5919,6 +6373,12 @@
     {
       "type": 0,
       "value": "Löschen"
+    }
+  ],
+  "vT0DCP": [
+    {
+      "type": 0,
+      "value": "Outputs"
     }
   ],
   "vVJuus": [
@@ -6001,16 +6461,16 @@
       "value": "Workfloweigenschaften"
     }
   ],
+  "w16qh+": [
+    {
+      "type": 0,
+      "value": "Queries"
+    }
+  ],
   "w5Hhig": [
     {
       "type": 0,
       "value": "Sonntag"
-    }
-  ],
-  "w9OL8U": [
-    {
-      "type": 0,
-      "value": "Seite anpassen"
     }
   ],
   "wEaGWn": [
@@ -6073,6 +6533,12 @@
       "value": "Gibt einen angegebenen Wert basierend darauf zurück, ob der Ausdruck in TRUE oder FALSE ausgewertet wurde."
     }
   ],
+  "wl7X0l": [
+    {
+      "type": 0,
+      "value": "Hide mini-map"
+    }
+  ],
   "wmDUGV": [
     {
       "type": 0,
@@ -6091,6 +6557,12 @@
       "value": "Rückruf-URL:"
     }
   ],
+  "woq0x0": [
+    {
+      "type": 0,
+      "value": "Add source schema"
+    }
+  ],
   "wzEneQ": [
     {
       "type": 0,
@@ -6107,6 +6579,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Sammlung, für die die Länge abgerufen werden soll."
+    }
+  ],
+  "x10E1p": [
+    {
+      "type": 0,
+      "value": "Status Code"
     }
   ],
   "xFQXAI": [
@@ -6271,12 +6749,6 @@
       "value": "Menü"
     }
   ],
-  "z4YYlQ": [
-    {
-      "type": 0,
-      "value": "Geben Sie einen Standardwert für den Parameter ein."
-    }
-  ],
   "z9kH+0": [
     {
       "type": 0,
@@ -6295,16 +6767,16 @@
       "value": "Wert eingeben"
     }
   ],
-  "zGRgUE": [
-    {
-      "type": 0,
-      "value": "Zielschema"
-    }
-  ],
   "zIDVd9": [
     {
       "type": 0,
       "value": "Erforderlich. Der Wert, der in einen nativen Typwert konvertiert wird."
+    }
+  ],
+  "zNesUZ": [
+    {
+      "type": 0,
+      "value": "A retry policy applies to intermittent failures, characterized as HTTP status codes 408, 429, and 5xx, in addition to any connectivity exceptions. The default is an exponential interval policy set to retry 4 times."
     }
   ],
   "zTKAc9": [
@@ -6317,12 +6789,6 @@
     {
       "type": 0,
       "value": "Benutzerdefinierten Wert löschen"
-    }
-  ],
-  "zUs2yb": [
-    {
-      "type": 0,
-      "value": "Zielschemaknoten"
     }
   ],
   "zbtUQ/": [

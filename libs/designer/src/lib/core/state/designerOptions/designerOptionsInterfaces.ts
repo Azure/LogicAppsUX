@@ -7,13 +7,14 @@ import type {
   ISearchService,
   IOAuthService,
   IWorkflowService,
-} from '@microsoft-logic-apps/designer-client-services';
+} from '@microsoft/designer-client-services-logic-apps';
 
 export interface DesignerOptionsState {
   readOnly?: boolean;
   isMonitoringView?: boolean;
   isDarkMode?: boolean;
   servicesInitialized?: boolean;
+  isConsumption?: boolean;
 }
 
 export interface ServiceOptions {

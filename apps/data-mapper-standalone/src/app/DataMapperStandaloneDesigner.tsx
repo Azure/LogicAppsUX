@@ -27,6 +27,7 @@ export const DataMapperStandaloneDesigner = () => {
   const targetSchema = useSelector((state: RootState) => state.schemaDataLoader.targetSchema);
 
   const saveStateCall = (dataMapDefinition: string, dataMapXslt: string) => {
+    // We don't need to persist this to telemetry
     console.log('Map Definition\n===============');
     console.log(dataMapDefinition);
     console.log('\nXSLT\n===============');
@@ -35,7 +36,11 @@ export const DataMapperStandaloneDesigner = () => {
 
   useEffect(() => {
     const fetchFunctionList = async () => {
-      dispatch(dataMapDataLoaderSlice.actions.changeFetchedFunctions(await getFunctions()));
+      const fnManifest = await getFunctions();
+
+      if (typeof fnManifest !== 'string') {
+        dispatch(dataMapDataLoaderSlice.actions.changeFetchedFunctions(fnManifest));
+      }
     };
 
     // Standalone uses default/dev runtime settings - can just run 'func host start' in the workflow root

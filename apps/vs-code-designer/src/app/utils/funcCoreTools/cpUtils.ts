@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../localize';
-import type { ICommandResult } from '@microsoft-logic-apps/utils';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
+import type { ICommandResult } from '@microsoft/vscode-extension';
 import * as cp from 'child_process';
 import * as os from 'os';
 
@@ -43,7 +43,6 @@ export async function executeCommand(
   return result.cmdOutput;
 }
 
-/* eslint-disable no-param-reassign */
 export async function tryExecuteCommand(
   outputChannel: IAzExtOutputChannel | undefined,
   workingDirectory: string | undefined,
@@ -94,4 +93,3 @@ export async function tryExecuteCommand(
     });
   });
 }
-/* eslint-enable no-param-reassign */

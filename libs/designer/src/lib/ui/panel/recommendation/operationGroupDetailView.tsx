@@ -1,10 +1,10 @@
 import type { AppDispatch, RootState } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useRelationshipIds, useIsParallelBranch } from '../../../core/state/panel/panelSelectors';
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
-import { guid } from '@microsoft-logic-apps/utils';
 import type { OperationActionData } from '@microsoft/designer-ui';
 import { OperationActionDataFromOperation, OperationGroupDetailsPage } from '@microsoft/designer-ui';
+import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/utils-logic-apps';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 

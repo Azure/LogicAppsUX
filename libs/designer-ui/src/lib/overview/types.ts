@@ -1,4 +1,4 @@
-import { isObject } from '@microsoft-logic-apps/utils';
+import { isObject } from '@microsoft/utils-logic-apps';
 
 export type CallbackInfo = CallbackInfoWithRelativePath | CallbackInfoWithValue;
 

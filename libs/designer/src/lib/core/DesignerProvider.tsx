@@ -7,7 +7,7 @@ import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark'
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
-import { IntlProvider } from '@microsoft-logic-apps/intl';
+import { IntlProvider } from '@microsoft/intl-logic-apps';
 import React, { useEffect } from 'react';
 import { Provider as ReduxProvider, useDispatch } from 'react-redux';
 
@@ -22,7 +22,12 @@ const OptionsStateSet = ({ options, children }: any) => {
   useEffect(() => {
     if (!options) return; // TODO: This dispatch keeps getting ran out of order in storybook, overwriting the options with null values each time.  This is just a quick temp safeguard.
     dispatch(
-      initDesignerOptions({ readOnly: options.readOnly, isMonitoringView: options.isMonitoringView, isDarkMode: options.isDarkMode })
+      initDesignerOptions({
+        readOnly: options.readOnly,
+        isMonitoringView: options.isMonitoringView,
+        isDarkMode: options.isDarkMode,
+        isConsumption: options.isConsumption,
+      })
     );
   }, [dispatch, options]);
   return <>{children}</>;

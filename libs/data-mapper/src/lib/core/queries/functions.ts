@@ -1,8 +1,10 @@
 import type { FunctionData } from '../../models/Function';
-import { functionMock, pseudoFunctions } from '../../models/Function';
+import { pseudoFunctions } from '../../models/Function';
+import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { DataMapperApiServiceInstance } from '../services';
 
-export const getFunctions = (): Promise<FunctionData[]> => {
+// Returns a Promise of either the Function manifest, or the response's error message
+export const getFunctions = (): Promise<FunctionData[] | string> => {
   const service = DataMapperApiServiceInstance();
 
   return service
@@ -19,9 +21,10 @@ export const getFunctions = (): Promise<FunctionData[]> => {
       return [...filteredFunctions, ...pseudoFunctions];
     })
     .catch((error: Error) => {
-      // Returning functionMock on expected failure to reach API for dev-ing w/o runtime
-      console.error(`Error getting functions manifest: ${error.message}`);
+      LogService.error(LogCategory.FunctionsQuery, 'getFunctionsManifest', {
+        message: `Error getting functions manifest: ${error.message}`,
+      });
 
-      return Promise.resolve(functionMock);
+      return error.message;
     });
 };

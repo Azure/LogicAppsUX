@@ -8,9 +8,9 @@ import { getThemedIconPath } from '../../../utils/tree/assets';
 import { getProjectContextValue } from '../../../utils/tree/projectContextValues';
 import type { ConfigurationsTreeItem } from '../../configurationsTree/ConfigurationsTreeItem';
 import { ParameterTreeItem } from './ParameterTreeItem';
-import { ProjectAccess, ProjectResource } from '@microsoft-logic-apps/utils';
 import type { AzExtTreeItem, ILoadingTreeContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
+import { ProjectAccess, ProjectResource } from '@microsoft/vscode-extension';
 
 export class ParametersTreeItem extends AzExtParentTreeItem {
   public readonly label: string = localize('Parameters', 'Parameters');

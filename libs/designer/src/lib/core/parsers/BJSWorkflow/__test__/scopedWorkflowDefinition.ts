@@ -1,7 +1,7 @@
 import type { NodesMetadata, Operations } from '../../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../../utils/graph';
 import type { WorkflowNode } from '../../models/workflowNode';
-import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft-logic-apps/utils';
+import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
 
 export const scopedWorkflowDefinitionInput = {
   $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
@@ -209,11 +209,13 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
     ActionIf: { graphId: 'root', actionCount: 2 },
     'ActionIf-actions': {
       graphId: 'ActionIf',
+      parentNodeId: 'ActionIf',
       actionCount: 2,
       subgraphType: SUBGRAPH_TYPES.CONDITIONAL_TRUE,
     },
     'ActionIf-elseActions': {
       graphId: 'ActionIf',
+      parentNodeId: 'ActionIf',
       actionCount: 1,
       subgraphType: SUBGRAPH_TYPES.CONDITIONAL_FALSE,
     },

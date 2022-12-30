@@ -1,7 +1,7 @@
 import { ConnectorSummaryCard } from '../../connectorsummarycard';
 import { getConnectorCategoryString } from '../../utils';
 import { List } from '@fluentui/react';
-import type { Connector } from '@microsoft-logic-apps/utils';
+import type { Connector } from '@microsoft/utils-logic-apps';
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 export type BrowseGridProps = {

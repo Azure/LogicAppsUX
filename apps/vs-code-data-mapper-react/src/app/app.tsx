@@ -1,6 +1,7 @@
 import { VSCodeContext } from '../WebViewMsgHandler';
 import { changeFetchedFunctions, changeSourceSchema, changeTargetSchema } from '../state/DataMapDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
+import type { MessageToVsix, SchemaType } from '@microsoft/logic-apps-data-mapper';
 import {
   DataMapDataProvider,
   DataMapperDesigner,
@@ -10,7 +11,6 @@ import {
   getSelectedSchema,
   InitDataMapperApiService,
 } from '@microsoft/logic-apps-data-mapper';
-import type { MessageToVsix, SchemaType } from '@microsoft/logic-apps-data-mapper';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -22,7 +22,7 @@ enum VsCodeThemeType {
 
 interface SchemaFile {
   path: string;
-  type: 'source' | 'target';
+  type: SchemaType;
 }
 
 export const App = () => {
@@ -139,7 +139,15 @@ export const App = () => {
   useEffect(() => {
     const fetchFunctionList = async () => {
       try {
-        dispatch(changeFetchedFunctions(await getFunctions()));
+        const fnManifest = await getFunctions();
+
+        if (typeof fnManifest !== 'string') {
+          dispatch(changeFetchedFunctions(fnManifest));
+        } else {
+          const errorMessage = `Failed to fetch Function manifest: ${fnManifest}}`;
+
+          throw new Error(errorMessage);
+        }
       } catch (error) {
         handleRscLoadError(error);
       }

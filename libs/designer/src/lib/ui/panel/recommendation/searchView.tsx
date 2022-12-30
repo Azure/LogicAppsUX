@@ -3,9 +3,9 @@ import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useRelationshipIds, useIsParallelBranch } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { Spinner, SpinnerSize } from '@fluentui/react';
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
-import { isBuiltInConnector, guid } from '@microsoft-logic-apps/utils';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
+import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
+import { isCustomConnector, isBuiltInConnector, guid } from '@microsoft/utils-logic-apps';
 import { useDebouncedEffect } from '@react-hookz/web';
 import Fuse from 'fuse.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -41,14 +41,16 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
       if (filters['runtime']) {
         if (filters['runtime'] === 'inapp') {
           ret = isBuiltInConnector(searchResult.item.properties.api.id);
-        } else {
-          ret = !isBuiltInConnector(searchResult.item.properties.api.id);
+        } else if (filters['runtime'] === 'custom') {
+          ret = isCustomConnector(searchResult.item.properties.api.id);
+        } else if (filters['runtime'] === 'shared') {
+          ret = !isBuiltInConnector(searchResult.item.properties.api.id) && !isCustomConnector(searchResult.item.properties.api.id);
         }
       }
       if (filters['actionType']) {
         if (filters['actionType'] === 'actions') {
           ret = ret ? !searchResult.item.properties.trigger : false;
-        } else {
+        } else if (filters['actionType'] === 'triggers') {
           ret = ret ? !!searchResult.item.properties.trigger : false;
         }
       }

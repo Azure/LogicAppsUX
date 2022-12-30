@@ -1,7 +1,7 @@
 {
-  "name": "microsoft-logic-app-vscode-extension",
+  "name": "@microsoft/logic-apps-vscode-extension",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "0.2.30",
+  "version": "0.2.52",
   "aiKey": "2fc394da-7c11-4c1c-b776-17763031415d",
   "main": "main.js",
   "engines": {
@@ -31,6 +31,43 @@
         "command": "logicAppsExtension.loadMore",
         "title": "Load More",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.viewContent",
+        "title": "View Content",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.createNewProject",
+        "title": "Create New Project...",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/CreateNewProject.svg",
+          "dark": "assets/dark/CreateNewProject.svg"
+        }
+      },
+      {
+        "command": "logicAppsExtension.createCodeless",
+        "title": "Create Workflow...",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/Codeless.svg",
+          "dark": "assets/dark/Codeless.svg"
+        }
+      },
+      {
+        "command": "logicAppsExtension.deploy",
+        "title": "Deploy to Logic App...",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/deploy.svg",
+          "dark": "assets/dark/deploy.svg"
+        }
+      },
+      {
+        "command": "logicAppsExtension.deploySlot",
+        "title": "Deploy to Slot...",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -52,6 +89,23 @@
       ]
     },
     "menus": {
+      "view/title": [
+        {
+          "command": "logicAppsExtension.createNewProject",
+          "when": "view == newAzLogicApps",
+          "group": "navigation@1"
+        },
+        {
+          "command": "logicAppsExtension.createCodeless",
+          "when": "view == newAzLogicApps",
+          "group": "navigation@2"
+        },
+        {
+          "command": "logicAppsExtension.deploy",
+          "when": "view == newAzLogicApps",
+          "group": "navigation@3"
+        }
+      ],
       "view/item/context": [
         {
           "command": "logicAppsExtension.selectSubscriptions",
@@ -62,9 +116,29 @@
           "command": "logicAppsExtension.openDesigner",
           "when": "view == newAzLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "1@2"
+        },
+        {
+          "command": "logicAppsExtension.viewContent",
+          "when": "view == newAzLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
+          "group": "2@1"
+        },
+        {
+          "command": "logicAppsExtension.deploy",
+          "when": "view == newAzLogicApps && viewItem == azLogicAppsProductionSlot",
+          "group": "3@1"
+        },
+        {
+          "command": "logicAppsExtension.deploySlot",
+          "when": "view == newAzLogicApps && viewItem == azLogicAppsSlot",
+          "group": "3@2"
         }
       ],
       "explorer/context": [
+        {
+          "command": "logicAppsExtension.deploy",
+          "when": "explorerResourceIsFolder == true",
+          "group": "zzz_LogicApptools@1"
+        },
         {
           "command": "logicAppsExtension.openDesigner",
           "when": "resourceFilename==workflow.json",
@@ -83,6 +157,10 @@
         {
           "command": "logicAppsExtension.loadMore",
           "when": "never"
+        },
+        {
+          "command": "logicAppsExtension.viewContent",
+          "when": "never"
         }
       ]
     },
@@ -94,17 +172,53 @@
             "type": "boolean",
             "default": true,
             "description": "Show or hide the Azure Functions Explorer"
+          },
+          "logicAppsExtension.projectRuntime": {
+            "scope": "resource",
+            "type": "string",
+            "enum": [
+              "~4",
+              "~3"
+            ],
+            "description": "The default version of the Azure Functions runtime to use when performing operations like \"Create New Logic App\".",
+            "enumDescriptions": [
+              "Azure Functions v4",
+              "Azure Functions v3 (.NET Core)"
+            ]
+          },
+          "logicAppsExtension.projectLanguage": {
+            "scope": "resource",
+            "type": "string",
+            "enum": [
+              "JavaScript"
+            ],
+            "readOnly": true,
+            "description": "The default language to use when performing operations like \"Create New Workflow\".",
+            "enumDescriptions": [
+              ""
+            ]
+          },
+          "logicAppsExtension.deploySubpath": {
+            "scope": "resource",
+            "type": "string",
+            "description": "The default subpath of a workspace folder to use when deploying. If set, you will not be prompted for the folder path when deploying."
           }
         }
       }
     ]
   },
   "extensionDependencies": [
-    "ms-vscode.azure-account"
+    "ms-vscode.azure-account",
+    "ms-azuretools.vscode-azurefunctions"
   ],
   "activationEvents": [
     "onCommand:logicAppsExtension.openDesigner",
     "onCommand:logicAppsExtension.loadMore",
+    "onCommand:logicAppsExtension.viewContent",
+    "onCommand:logicAppsExtension.createNewProject",
+    "onCommand:logicAppsExtension.createCodeless",
+    "onCommand:logicAppsExtension.deploy",
+    "onCommand:logicAppsExtension.deploySlot",
     "onView:newAzLogicApps",
     "onDebugInitialConfigurations"
   ],

@@ -17,6 +17,18 @@
       "value": "1"
     }
   ],
+  "+3efoo": [
+    {
+      "type": 0,
+      "value": "No schema is added"
+    }
+  ],
+  "+DxBpE": [
+    {
+      "type": 0,
+      "value": "Failed loading the schema. Please try again."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -51,6 +63,12 @@
     {
       "type": 0,
       "value": "Stránkování"
+    }
+  ],
+  "/9r9ML": [
+    {
+      "type": 0,
+      "value": "Add target schema"
     }
   ],
   "/AtN16": [
@@ -191,6 +209,12 @@
       "value": "Dekóduje vstupní řetězec jako adresu URL."
     }
   ],
+  "0IRUjM": [
+    {
+      "type": 0,
+      "value": "Select a target schema node to start mapping"
+    }
+  ],
   "0JTHTZ": [
     {
       "type": 0,
@@ -281,6 +305,12 @@
       "value": "Vrátí port z identifikátoru URI. Pokud se port nezadá, vrátí výchozí port protokolu."
     }
   ],
+  "11qu8f": [
+    {
+      "type": 0,
+      "value": "Enter a valid integer."
+    }
+  ],
   "14lYtE": [
     {
       "type": 0,
@@ -291,6 +321,12 @@
     {
       "type": 0,
       "value": "Komentář"
+    }
+  ],
+  "1ANUHk": [
+    {
+      "type": 0,
+      "value": "Loading functions..."
     }
   ],
   "1D047X": [
@@ -391,6 +427,12 @@
       "value": "count"
     }
   ],
+  "1REk6u": [
+    {
+      "type": 0,
+      "value": "Enter a valid email."
+    }
+  ],
   "1TE0e8": [
     {
       "type": 0,
@@ -401,12 +443,6 @@
     {
       "type": 0,
       "value": "Zadejte alespoň jeden výraz, který musí být true, aby se trigger aktivoval."
-    }
-  ],
-  "1X4U/1": [
-    {
-      "type": 0,
-      "value": "Zobrazit zobrazení kódu"
     }
   ],
   "1ZDLZA": [
@@ -439,10 +475,22 @@
       "value": "Vyžadováno. Objekt, u kterého se má zkontrolovat, zda není menší než porovnávaná hodnota."
     }
   ],
+  "1nODUD": [
+    {
+      "type": 0,
+      "value": "Hide functions"
+    }
+  ],
   "1nvvw1": [
     {
       "type": 0,
       "value": "Zadejte hodnotu autorizační hlavičky."
+    }
+  ],
+  "1pjO9s": [
+    {
+      "type": 0,
+      "value": "Hide source schema"
     }
   ],
   "1uGBLP": [
@@ -491,6 +539,12 @@
     {
       "type": 0,
       "value": "Pokud chcete spustit instanci pracovního postupu pro jednotlivé položky ve vybraném poli, povolte dělení. Každá instance navíc může mít své vlastní ID pro sledování."
+    }
+  ],
+  "2JA3gY": [
+    {
+      "type": 0,
+      "value": "Expand tree node"
     }
   ],
   "2K2fAj": [
@@ -657,6 +711,18 @@
       "value": "(UTC+09:00) Čita"
     }
   ],
+  "3cZZKj": [
+    {
+      "type": 0,
+      "value": "Divider"
+    }
+  ],
+  "3eeli7": [
+    {
+      "type": 0,
+      "value": "Select a source schema"
+    }
+  ],
   "3ewBbk": [
     {
       "type": 0,
@@ -709,6 +775,12 @@
       "value": "Povinné. Objekt, ze kterého se odebere vlastnost"
     }
   ],
+  "3sJlV+": [
+    {
+      "type": 0,
+      "value": "Close code view"
+    }
+  ],
   "3vCCY7": [
     {
       "type": 0,
@@ -725,12 +797,6 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Jerevan"
-    }
-  ],
-  "438H98": [
-    {
-      "type": 0,
-      "value": "Zahodit změny"
     }
   ],
   "45ubha": [
@@ -751,6 +817,18 @@
       "value": "Povinný parametr. Počet dnů, které se mají přičíst. Může to být i záporná hodnota, při které se dny odečtou."
     }
   ],
+  "4Ekn9t": [
+    {
+      "type": 0,
+      "value": "Undo"
+    }
+  ],
+  "4IS4yp": [
+    {
+      "type": 0,
+      "value": "Retry Policy"
+    }
+  ],
   "4Q7WzU": [
     {
       "type": 0,
@@ -767,6 +845,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Jednotka času zadaného v intervalu"
+    }
+  ],
+  "4aaixN": [
+    {
+      "type": 0,
+      "value": "Tour"
     }
   ],
   "4c0uPQ": [
@@ -805,12 +889,6 @@
       "value": "ID žádosti o služby"
     }
   ],
-  "4wavwk": [
-    {
-      "type": 0,
-      "value": "Prohlídka/kurz"
-    }
-  ],
   "4wjJs0": [
     {
       "type": 0,
@@ -823,16 +901,16 @@
       "value": "Typ akce"
     }
   ],
+  "5+MuPz": [
+    {
+      "type": 0,
+      "value": "Enter a valid double."
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
       "value": "Vyžadováno. Výraz jazyka XPath, který se má vyhodnotit."
-    }
-  ],
-  "5P8UWJ": [
-    {
-      "type": 0,
-      "value": "Vyberte zdrojové schéma."
     }
   ],
   "5SAQOb": [
@@ -859,6 +937,12 @@
       "value": "Povinný parametr. Název smyčky, jejíž položku chcete získat."
     }
   ],
+  "5hWg4V": [
+    {
+      "type": 0,
+      "value": "Select element"
+    }
+  ],
   "5qzZMo": [
     {
       "type": 0,
@@ -877,6 +961,12 @@
       "value": "Hybridní konektor"
     }
   ],
+  "62Ypnr": [
+    {
+      "type": 0,
+      "value": "Error loading operation data"
+    }
+  ],
   "63/zYN": [
     {
       "type": 0,
@@ -887,12 +977,6 @@
     {
       "type": 0,
       "value": "(UTC+08:45) Eucla"
-    }
-  ],
-  "6Ld/c8": [
-    {
-      "type": 0,
-      "value": "Vyberte cílové schéma."
     }
   ],
   "6OSgRP": [
@@ -911,6 +995,12 @@
     {
       "type": 0,
       "value": "(UTC+09:30) Adelaide"
+    }
+  ],
+  "6grB5C": [
+    {
+      "type": 0,
+      "value": "Invalid node settings"
     }
   ],
   "6jiO7t": [
@@ -955,6 +1045,12 @@
       "value": "Povinný parametr. Číslo, kterým se má vynásobit násobenec 2."
     }
   ],
+  "73iM9+": [
+    {
+      "type": 0,
+      "value": "Update source schema"
+    }
+  ],
   "7GSk99": [
     {
       "type": 0,
@@ -985,6 +1081,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Řetězec, ze kterého se má získat podřetězec."
+    }
+  ],
+  "7WVgiU": [
+    {
+      "type": 0,
+      "value": "Configure"
     }
   ],
   "7ZR1xr": [
@@ -1033,6 +1135,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Řetězec, který může obsahovat hodnotu."
+    }
+  ],
+  "8+0teU": [
+    {
+      "type": 0,
+      "value": "Parameter name already exists."
     }
   ],
   "84D91Y": [
@@ -1181,6 +1289,24 @@
       "value": "Hodnota"
     }
   ],
+  "92OUl9": [
+    {
+      "type": 0,
+      "value": "Array Element "
+    },
+    {
+      "type": 1,
+      "value": "index"
+    },
+    {
+      "type": 0,
+      "value": " is missing required property "
+    },
+    {
+      "type": 1,
+      "value": "property"
+    }
+  ],
   "93svjx": [
     {
       "type": 0,
@@ -1253,6 +1379,12 @@
       "value": "Vrátí true, pokud jsou oba parametry true."
     }
   ],
+  "A5Ferh": [
+    {
+      "type": 0,
+      "value": "Source element removed from view."
+    }
+  ],
   "ADM1Z8": [
     {
       "type": 0,
@@ -1287,6 +1419,12 @@
     {
       "type": 0,
       "value": "Hotovo"
+    }
+  ],
+  "AX7dq3": [
+    {
+      "type": 0,
+      "value": "Input node type does not match the schema node's type"
     }
   ],
   "AYaqW/": [
@@ -1333,6 +1471,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Řetězec, který se má kódovat do formátu base64."
+    }
+  ],
+  "AsqIUa": [
+    {
+      "type": 0,
+      "value": "Maximum Interval"
     }
   ],
   "Az0QvG": [
@@ -1415,6 +1559,12 @@
       "value": "Není k dispozici žádný dynamický obsah"
     }
   ],
+  "B999mz": [
+    {
+      "type": 0,
+      "value": "Line deleted."
+    }
+  ],
   "BAgRzO": [
     {
       "type": 0,
@@ -1433,10 +1583,22 @@
       "value": "Jednoznakový specifikátor formátu nebo vlastní formátovací vzor, který určuje, jak formátovat hodnotu tohoto časového razítka. Pokud není formát zadaný, použije se formát ISO 8601 (o)."
     }
   ],
+  "BEZWxB": [
+    {
+      "type": 0,
+      "value": "Clear custom value"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
       "value": "Povinný parametr. Řetězec kódovaný jako identifikátor URI."
+    }
+  ],
+  "BJNUxN": [
+    {
+      "type": 0,
+      "value": "Path Parameters"
     }
   ],
   "BKL0ZG": [
@@ -1511,10 +1673,10 @@
       "value": "Výstup"
     }
   ],
-  "CkfIxl": [
+  "ClZW2r": [
     {
       "type": 0,
-      "value": "Zdrojový uzel byl odebrán ze zobrazení."
+      "value": "Value"
     }
   ],
   "CsPY74": [
@@ -1533,6 +1695,12 @@
     {
       "type": 0,
       "value": "Vrátí cestu a dotaz z identifikátoru URI."
+    }
+  ],
+  "D/xTXV": [
+    {
+      "type": 0,
+      "value": "Show source schema"
     }
   ],
   "D1lgsT": [
@@ -1571,10 +1739,22 @@
       "value": "Doba trvání"
     }
   ],
+  "DZc8wP": [
+    {
+      "type": 0,
+      "value": "Custom value does not match the schema node's type"
+    }
+  ],
   "DfS13/": [
     {
       "type": 0,
       "value": "(UTC-10:00) Aleutské ostrovy"
+    }
+  ],
+  "Dhu3IS": [
+    {
+      "type": 0,
+      "value": "Show mini-map"
     }
   ],
   "DsPDVB": [
@@ -1699,6 +1879,12 @@
       "value": "(UTC+08:00) Irkutsk"
     }
   ],
+  "F9dR1Q": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "FDF4Qb": [
     {
       "type": 0,
@@ -1745,6 +1931,12 @@
     {
       "type": 0,
       "value": "Vrátí text pro určitou část ve výstupu triggeru s několika částmi."
+    }
+  ],
+  "FS06y3": [
+    {
+      "type": 0,
+      "value": "Must provide name of parameter."
     }
   ],
   "FUhNu4": [
@@ -1825,12 +2017,6 @@
       "value": "hours"
     }
   ],
-  "FemgEF": [
-    {
-      "type": 0,
-      "value": "Zrušit"
-    }
-  ],
   "Fgq3Db": [
     {
       "type": 0,
@@ -1853,12 +2039,6 @@
     {
       "type": 0,
       "value": "Stav"
-    }
-  ],
-  "FuXqJI": [
-    {
-      "type": 0,
-      "value": "Aktualizovat cílové schéma"
     }
   ],
   "G/CC5/": [
@@ -1899,6 +2079,12 @@
       "value": "Vyžadováno. Objekt, který se má najít v kolekci Within."
     }
   ],
+  "GXXLuT": [
+    {
+      "type": 0,
+      "value": "Enter a valid boolean."
+    }
+  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1921,6 +2107,12 @@
     {
       "type": 0,
       "value": "Zobrazit méně"
+    }
+  ],
+  "Gi7czD": [
+    {
+      "type": 0,
+      "value": "Source schema element"
     }
   ],
   "Gmya+V": [
@@ -1959,10 +2151,10 @@
       "value": "Povinné. Řetězec, který se má rozdělit"
     }
   ],
-  "H7t3Pm": [
+  "H5VikC": [
     {
       "type": 0,
-      "value": "Cílové schéma se nahradí a nebudete se moct vrátit k předchozím změnám. Chcete pokračovat ve změně cílového schématu?"
+      "value": "Invalid connection, mapping must not form a closed loop."
     }
   ],
   "H8bEUn": [
@@ -2009,6 +2201,18 @@
       "value": "Pokud si chcete zobrazit obsah, vyberte prosím kartu."
     }
   ],
+  "HmcHoE": [
+    {
+      "type": 0,
+      "value": "Error fetching manifest"
+    }
+  ],
+  "HoQiVa": [
+    {
+      "type": 0,
+      "value": "Enter a valid datetime."
+    }
+  ],
   "HsO1Rd": [
     {
       "type": 1,
@@ -2017,6 +2221,20 @@
     {
       "type": 0,
       "value": " Nainstalovat bránu"
+    }
+  ],
+  "Hyp0Ao": [
+    {
+      "type": 0,
+      "value": "Remove parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" and its value"
     }
   ],
   "HzS2gJ": [
@@ -2055,16 +2273,10 @@
       "value": "Převede předané řetězcové časové razítko z formátu UTC na cílové časové pásmo."
     }
   ],
-  "Ie4sUt": [
+  "IXy91L": [
     {
       "type": 0,
-      "value": "Nakonfigurovat"
-    }
-  ],
-  "IgNz8Y": [
-    {
-      "type": 0,
-      "value": "Akce"
+      "value": "Add a target schema"
     }
   ],
   "IjZFjQ": [
@@ -2117,6 +2329,12 @@
     {
       "type": 1,
       "value": "length"
+    }
+  ],
+  "J9wWry": [
+    {
+      "type": 0,
+      "value": "Parameters"
     }
   ],
   "JErLDT": [
@@ -2313,6 +2531,12 @@
       "value": "Odstranit graf pracovního postupu"
     }
   ],
+  "LCXZLM": [
+    {
+      "type": 0,
+      "value": "Loading Function Apps..."
+    }
+  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -2337,6 +2561,12 @@
     {
       "type": 0,
       "value": "“ – rozdělení není v poli."
+    }
+  ],
+  "LR/3Lr": [
+    {
+      "type": 0,
+      "value": "Configure"
     }
   ],
   "LS8rfZ": [
@@ -2501,6 +2731,12 @@
       "value": "Vrátí aktuální časové razítko jako řetězec."
     }
   ],
+  "MVrv+N": [
+    {
+      "type": 0,
+      "value": "Enter a valid array."
+    }
+  ],
   "MYgKHu": [
     {
       "type": 0,
@@ -2517,6 +2753,18 @@
     {
       "type": 0,
       "value": "Další neúspěšné"
+    }
+  ],
+  "Mgcs5s": [
+    {
+      "type": 0,
+      "value": "Enter a valid number."
+    }
+  ],
+  "MirIsS": [
+    {
+      "type": 0,
+      "value": "Show code"
     }
   ],
   "MmBfD1": [
@@ -2543,6 +2791,12 @@
       "value": "Povinný parametr. Název klíče datových hodnot ve formuláři, které se mají vrátit."
     }
   ],
+  "N4dEVo": [
+    {
+      "type": 0,
+      "value": "Headers"
+    }
+  ],
   "NPUFgH": [
     {
       "type": 0,
@@ -2559,12 +2813,6 @@
     {
       "type": 0,
       "value": "(UTC+03:00) Minsk"
-    }
-  ],
-  "Nn/DN4": [
-    {
-      "type": 0,
-      "value": "This connection would introduce circular logic."
     }
   ],
   "NnD8gF": [
@@ -2599,20 +2847,6 @@
     {
       "type": 0,
       "value": "Vyberte prosím identitu."
-    }
-  ],
-  "NtY1mD": [
-    {
-      "type": 0,
-      "value": "Před odebráním uzlu "
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": " odeberte všechny příslušné odkazy."
     }
   ],
   "NvANon": [
@@ -2733,12 +2967,6 @@
       "value": "Komentář"
     }
   ],
-  "OUS2wX": [
-    {
-      "type": 0,
-      "value": "Vyberte schéma pro rozevírací nabídku"
-    }
-  ],
   "OVvieE": [
     {
       "type": 0,
@@ -2847,12 +3075,6 @@
       "value": "Povinný parametr. Číslo, které se má přičíst ke sčítanci 1."
     }
   ],
-  "PMMNKR": [
-    {
-      "type": 0,
-      "value": "Uzel zdrojového schématu"
-    }
-  ],
   "PP63jY": [
     {
       "type": 0,
@@ -2869,6 +3091,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Počet sekund, které se mají přičíst. Může to být i záporná hodnota, při které se sekundy odečtou."
+    }
+  ],
+  "PSrCNL": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "PXa0D4": [
@@ -2907,6 +3135,12 @@
       "value": "Negenerovat, pokud žádná hodnota"
     }
   ],
+  "PvWTxR": [
+    {
+      "type": 0,
+      "value": "Show functions"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2935,12 +3169,6 @@
     {
       "type": 0,
       "value": "Zahodit"
-    }
-  ],
-  "QBOaAu": [
-    {
-      "type": 0,
-      "value": "Vyberte zdrojové schéma."
     }
   ],
   "QEp3C8": [
@@ -2981,6 +3209,12 @@
     {
       "type": 0,
       "value": "Položka"
+    }
+  ],
+  "QdJUaS": [
+    {
+      "type": 0,
+      "value": "Pencil icon"
     }
   ],
   "QeE0k/": [
@@ -3035,12 +3269,6 @@
       "value": "Aktivační události nelze odstranit."
     }
   ],
-  "R7v2iQ": [
-    {
-      "type": 0,
-      "value": "Automaticky se vytvoří čára mezi prvky pole, která indikuje prvky smyčky."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -3063,6 +3291,12 @@
     {
       "type": 0,
       "value": "Přepne na vstup celého pole."
+    }
+  ],
+  "RZO5Ic": [
+    {
+      "type": 0,
+      "value": "Add or replace your schemas."
     }
   ],
   "RhH4pF": [
@@ -3125,12 +3359,6 @@
       "value": "6"
     }
   ],
-  "Rno87I": [
-    {
-      "type": 0,
-      "value": "Chcete zahodit všechny neuložené změny?"
-    }
-  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3159,6 +3387,12 @@
     {
       "type": 0,
       "value": "Převede parametr na celé číslo."
+    }
+  ],
+  "SLJkRn": [
+    {
+      "type": 0,
+      "value": "Remove input"
     }
   ],
   "SLZ0n4": [
@@ -3223,6 +3457,12 @@
     {
       "type": 0,
       "value": "Název"
+    }
+  ],
+  "T7Xwii": [
+    {
+      "type": 0,
+      "value": "Interval"
     }
   ],
   "T7zcR6": [
@@ -3339,6 +3579,12 @@
       "value": "Sbalit nebo rozbalit"
     }
   ],
+  "U086AA": [
+    {
+      "type": 0,
+      "value": "Target schema element"
+    }
+  ],
   "U1NiVg": [
     {
       "type": 0,
@@ -3381,6 +3627,12 @@
       "value": "Nahradí řetězec daným řetězcem."
     }
   ],
+  "UR1CS5": [
+    {
+      "type": 0,
+      "value": "Hide code"
+    }
+  ],
   "USVffu": [
     {
       "type": 0,
@@ -3395,6 +3647,12 @@
     {
       "type": 0,
       "value": " (název souboru)"
+    }
+  ],
+  "UnrrzF": [
+    {
+      "type": 0,
+      "value": "Source schema"
     }
   ],
   "Ur+wph": [
@@ -3445,10 +3703,28 @@
       "value": "Rozbalit"
     }
   ],
+  "VJa7sh": [
+    {
+      "type": 0,
+      "value": "Browse operations"
+    }
+  ],
   "VKAk5g": [
     {
       "type": 0,
       "value": "Název běhu pracovního postupu není platný."
+    }
+  ],
+  "VL9wOu": [
+    {
+      "type": 0,
+      "value": "Must provide value for parameter."
+    }
+  ],
+  "VLc3FV": [
+    {
+      "type": 0,
+      "value": "Source schema"
     }
   ],
   "VUH9aj": [
@@ -3551,12 +3827,6 @@
     {
       "type": 0,
       "value": "Povinný parametr. První celé číslo v poli."
-    }
-  ],
-  "WTTJ89": [
-    {
-      "type": 0,
-      "value": "Vyberte cílové schéma."
     }
   ],
   "WUe3DY": [
@@ -3689,6 +3959,30 @@
       "value": "(UTC-08:00) Tichomoří (USA a Kanada)"
     }
   ],
+  "XbtEq9": [
+    {
+      "type": 0,
+      "value": "Count"
+    }
+  ],
+  "Xj0Gr/": [
+    {
+      "type": 0,
+      "value": "Target schema element cannot be deleted."
+    }
+  ],
+  "XkBxv5": [
+    {
+      "type": 0,
+      "value": "Select a target schema"
+    }
+  ],
+  "Xkt2vD": [
+    {
+      "type": 0,
+      "value": "Select a function app function"
+    }
+  ],
   "Xnn0uj": [
     {
       "type": 0,
@@ -3717,12 +4011,6 @@
     {
       "type": 0,
       "value": "Povinný parametr. Název akce, jejíž textové výstupy požadujete."
-    }
-  ],
-  "XylNMU": [
-    {
-      "type": 0,
-      "value": "Zdrojové schéma se nahradí a nebudete se moct vrátit k předchozím změnám. Chcete pokračovat ve změně zdrojového schématu?"
     }
   ],
   "Y/bcmG": [
@@ -3803,6 +4091,12 @@
       "value": "Tipy pro vyhledávání"
     }
   ],
+  "Yh5OVd": [
+    {
+      "type": 0,
+      "value": "Custom value does not match one of the allowed types for this input"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -3813,6 +4107,34 @@
     {
       "type": 0,
       "value": "Oddálit"
+    }
+  ],
+  "Z9PWl/": [
+    {
+      "type": 0,
+      "value": "Retry Policy count is invalid (Must be from "
+    },
+    {
+      "type": 1,
+      "value": "min"
+    },
+    {
+      "type": 0,
+      "value": " to "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "ZCFMoe": [
+    {
+      "type": 0,
+      "value": "Body"
     }
   ],
   "ZM1mRy": [
@@ -3913,36 +4235,28 @@
       "value": "(UTC+05:00) Ašchabád, Taškent"
     }
   ],
+  "aJxefp": [
+    {
+      "type": 0,
+      "value": "Add new parameters"
+    }
+  ],
   "aK4iLW": [
     {
       "type": 0,
       "value": "Zpracování dat"
     }
   ],
-  "aL0Uut": [
-    {
-      "type": 0,
-      "value": "Funkce"
-    }
-  ],
-  "aRKDWL": [
-    {
-      "type": 0,
-      "value": "Selhalo s chybou: "
-    },
-    {
-      "type": 1,
-      "value": "errorMessage"
-    },
-    {
-      "type": 0,
-      "value": ". Přihlaste se prosím znovu."
-    }
-  ],
   "ahsVI/": [
     {
       "type": 0,
       "value": "Zadejte PFX."
+    }
+  ],
+  "amRYtC": [
+    {
+      "type": 0,
+      "value": "Enter a valid float."
     }
   ],
   "auUI93": [
@@ -3965,12 +4279,6 @@
     {
       "type": 1,
       "value": "controls"
-    }
-  ],
-  "bCQ6JT": [
-    {
-      "type": 0,
-      "value": "Mapování pole"
     }
   ],
   "bG9rjv": [
@@ -4049,6 +4357,12 @@
       "value": "Zadejte parametry pro otestování výstupu."
     }
   ],
+  "byTBrn": [
+    {
+      "type": 0,
+      "value": "Custom"
+    }
+  ],
   "bzF/qn": [
     {
       "type": 0,
@@ -4079,6 +4393,12 @@
       "value": "Vrátí objekt, ve kterém se určitá vlastnost nastavila na poskytnutou hodnotu."
     }
   ],
+  "c4GQZE": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "c6XbVI": [
     {
       "type": 0,
@@ -4089,12 +4409,6 @@
     {
       "type": 0,
       "value": "Dynamický obsah se dá přidat i z jiných zdrojů."
-    }
-  ],
-  "cCYmTK": [
-    {
-      "type": 0,
-      "value": "Konfigurace"
     }
   ],
   "cJm+ah": [
@@ -4109,6 +4423,18 @@
       "value": "Zobrazit dokumentaci"
     }
   ],
+  "cP4UkW": [
+    {
+      "type": 0,
+      "value": "Retry Policy interval is invalid, must match ISO 8601 duration format"
+    }
+  ],
+  "cR9RtV": [
+    {
+      "type": 0,
+      "value": "Discard changes"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -4119,12 +4445,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripolis"
-    }
-  ],
-  "cbL6Gv": [
-    {
-      "type": 0,
-      "value": "Přidejte nebo nahraďte schémata."
     }
   ],
   "cgq/+y": [
@@ -4143,6 +4463,12 @@
     {
       "type": 0,
       "value": "Zrušeno"
+    }
+  ],
+  "cjcEOf": [
+    {
+      "type": 0,
+      "value": "Input node type does not match one of the allowed types for this input"
     }
   ],
   "cmTCsW": [
@@ -4169,12 +4495,6 @@
       "value": "Vyžadováno. Kolekce, ze které se mají přeskočit první objekty Count."
     }
   ],
-  "d32jcW": [
-    {
-      "type": 0,
-      "value": "Upozornění"
-    }
-  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -4185,12 +4505,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Harare, Pretoria"
-    }
-  ],
-  "dA6SUc": [
-    {
-      "type": 0,
-      "value": "Připojení se odstranilo."
     }
   ],
   "dDYCuU": [
@@ -4221,12 +4535,6 @@
     {
       "type": 0,
       "value": "Umožňuje zabezpečit vstupy operace."
-    }
-  ],
-  "dWeRGU": [
-    {
-      "type": 0,
-      "value": "ikona tužky"
     }
   ],
   "dWx21B": [
@@ -4295,12 +4603,6 @@
     {
       "type": 0,
       "value": "Neuvedeno"
-    }
-  ],
-  "eCkaMR": [
-    {
-      "type": 0,
-      "value": "Aktualizovat zdrojové schéma"
     }
   ],
   "eGa1Wa": [
@@ -4393,36 +4695,38 @@
       "value": "Počet stránkování překračuje maximální hodnotu."
     }
   ],
-  "fLSetk": [
-    {
-      "type": 0,
-      "value": "Zdrojové schéma"
-    }
-  ],
   "faSDuD": [
     {
       "type": 0,
       "value": "(UTC+04:00) Port Louis"
     }
   ],
+  "faUrud": [
+    {
+      "type": 0,
+      "value": "Loading connection data..."
+    }
+  ],
   "fc1AV8": [
     {
       "type": 0,
-      "value": "HTTP "
+      "value": "Adresa URL HTTP "
     },
     {
       "type": 1,
       "value": "method"
-    },
-    {
-      "type": 0,
-      "value": " URL"
     }
   ],
   "fg/34o": [
     {
       "type": 0,
       "value": "Logické funkce"
+    }
+  ],
+  "fqNVDv": [
+    {
+      "type": 0,
+      "value": "Back"
     }
   ],
   "froV/0": [
@@ -4569,6 +4873,18 @@
       "value": "Zadejte nebo vložte ukázkovou datovou část JSON."
     }
   ],
+  "h40rpg": [
+    {
+      "type": 0,
+      "value": "Specify interval in ISO 8601 format."
+    }
+  ],
+  "h6vVbX": [
+    {
+      "type": 0,
+      "value": "Add a source schema first, then select elements to build your map"
+    }
+  ],
   "hBLPXK": [
     {
       "type": 0,
@@ -4645,6 +4961,12 @@
       "value": "displayName"
     }
   ],
+  "hic23z": [
+    {
+      "type": 0,
+      "value": "The value is too large."
+    }
+  ],
   "hq1mk6": [
     {
       "type": 0,
@@ -4671,6 +4993,12 @@
     {
       "type": 0,
       "value": "Doba trvání"
+    }
+  ],
+  "htj+eZ": [
+    {
+      "type": 0,
+      "value": "Update target schema"
     }
   ],
   "hvbclb": [
@@ -4821,6 +5149,18 @@
       "value": " s"
     }
   ],
+  "isnFBi": [
+    {
+      "type": 0,
+      "value": "Elements and mappings not connected to a target element are removed."
+    }
+  ],
+  "ittN0l": [
+    {
+      "type": 0,
+      "value": "No resources of this type found under this subscription."
+    }
+  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -4843,6 +5183,12 @@
     {
       "type": 0,
       "value": "Vrátí hodnotu zadané proměnné."
+    }
+  ],
+  "j5z8Vd": [
+    {
+      "type": 0,
+      "value": "Repeating"
     }
   ],
   "jA6Wrp": [
@@ -4873,6 +5219,18 @@
     {
       "type": 0,
       "value": "Vyžadováno. Hodnota, která se má převést na řetězec."
+    }
+  ],
+  "jQjteB": [
+    {
+      "type": 0,
+      "value": "Add a source schema"
+    }
+  ],
+  "jUDhbs": [
+    {
+      "type": 0,
+      "value": "Target schema"
     }
   ],
   "jVpanH": [
@@ -4907,12 +5265,6 @@
     {
       "type": 1,
       "value": "referenceKeyFormat"
-    }
-  ],
-  "jsEMSu": [
-    {
-      "type": 0,
-      "value": "Sada nástrojů"
     }
   ],
   "juR40n": [
@@ -4969,16 +5321,22 @@
       "value": " s"
     }
   ],
+  "kJD/bW": [
+    {
+      "type": 0,
+      "value": "Loading search results..."
+    }
+  ],
+  "kM+Mr0": [
+    {
+      "type": 0,
+      "value": "Loading..."
+    }
+  ],
   "kN6kce": [
     {
       "type": 0,
       "value": "Vrátí řetězcovou reprezentaci vstupního řetězce Base 64."
-    }
-  ],
-  "kV/U0C": [
-    {
-      "type": 0,
-      "value": "Zobrazit minimapu"
     }
   ],
   "kYivbS": [
@@ -5035,6 +5393,12 @@
       "value": "Chybí vlastnost typu ověřování: type"
     }
   ],
+  "kxMDyM": [
+    {
+      "type": 0,
+      "value": "Enter a valid json."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -5071,16 +5435,16 @@
       "value": "Aktivační událost spuštění"
     }
   ],
+  "lQNKUB": [
+    {
+      "type": 0,
+      "value": "A line for the parent element is added automatically."
+    }
+  ],
   "lV77P8": [
     {
       "type": 0,
       "value": "Název"
-    }
-  ],
-  "lWjfm3": [
-    {
-      "type": 0,
-      "value": "Zpět"
     }
   ],
   "lZT0JI": [
@@ -5101,6 +5465,20 @@
       "value": "Zadejte prosím platné pole."
     }
   ],
+  "lexzgJ": [
+    {
+      "type": 0,
+      "value": "Remove all references to element ' "
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " ' before you remove the element."
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -5113,10 +5491,22 @@
       "value": "Zkratka pro actions('actionName').outputs.body"
     }
   ],
-  "lztiwS": [
+  "lzBHHT": [
     {
       "type": 0,
-      "value": "Skutečná hodnota"
+      "value": "Array Element "
+    },
+    {
+      "type": 1,
+      "value": "index"
+    },
+    {
+      "type": 0,
+      "value": " has unknown property "
+    },
+    {
+      "type": 1,
+      "value": "property"
     }
   ],
   "m7Y6Qf": [
@@ -5269,12 +5659,6 @@
       "value": "Povinný parametr. Počet časových jednotek, o který je požadovaný čas v budoucnosti"
     }
   ],
-  "nQxMfu": [
-    {
-      "type": 0,
-      "value": "Vymazat vlastní hodnotu a znovu vybrat"
-    }
-  ],
   "nSan4V": [
     {
       "type": 0,
@@ -5303,12 +5687,6 @@
     {
       "type": 0,
       "value": "Přidá celočíselný počet minut do předaného řetězcového časového razítka."
-    }
-  ],
-  "ntiOaL": [
-    {
-      "type": 0,
-      "value": "Zavřít"
     }
   ],
   "nx25nq": [
@@ -5343,22 +5721,34 @@
       "value": "max_page"
     }
   ],
+  "o2Cmny": [
+    {
+      "type": 0,
+      "value": "Enter a valid uri."
+    }
+  ],
+  "o3SfI4": [
+    {
+      "type": 0,
+      "value": "Zoom to fit"
+    }
+  ],
   "oAFcW6": [
     {
       "type": 0,
       "value": "Povinný parametr. Identifikátor URI dat, který se má dekódovat do binárního formátu."
     }
   ],
+  "oDHXKh": [
+    {
+      "type": 0,
+      "value": "Item"
+    }
+  ],
   "oLtwMw": [
     {
       "type": 0,
       "value": "Přenos obsahu"
-    }
-  ],
-  "oM6q96": [
-    {
-      "type": 0,
-      "value": "Procházet operace"
     }
   ],
   "oRvVIW": [
@@ -5373,6 +5763,12 @@
       "value": "Zadejte identifikátor spuštění a spuštění otevřete."
     }
   ],
+  "oVVPst": [
+    {
+      "type": 0,
+      "value": "Do you want to discard all unsaved changes?"
+    }
+  ],
   "odQ554": [
     {
       "type": 0,
@@ -5383,12 +5779,6 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Salvador"
-    }
-  ],
-  "orhWzV": [
-    {
-      "type": 0,
-      "value": "Načtení schématu se nezdařilo. Opakujte akci."
     }
   ],
   "oxH1L/": [
@@ -5663,6 +6053,16 @@
       "value": "Vrátí počet prvků v poli nebo řetězci."
     }
   ],
+  "qiIs4V": [
+    {
+      "type": 0,
+      "value": "Example: "
+    },
+    {
+      "type": 1,
+      "value": "example"
+    }
+  ],
   "qnI4Y1": [
     {
       "type": 0,
@@ -5681,6 +6081,20 @@
       "value": "Asynchronní odpověď umožní aplikaci Logic Apps odpovědět kódem 202 (Přijato) a dát tak vědět, že se požadavek přijal ke zpracování. Pomocí poskytnuté hlavičky umístění půjde načíst koncový stav."
     }
   ],
+  "qwn2o/": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "‘ first."
+    }
+  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -5691,6 +6105,12 @@
     {
       "type": 0,
       "value": "Zpět"
+    }
+  ],
+  "r7vZ5a": [
+    {
+      "type": 0,
+      "value": "Minimum Interval"
     }
   ],
   "r8aZXs": [
@@ -5729,6 +6149,12 @@
       "value": "Připojení je neplatné"
     }
   ],
+  "rSIBjh": [
+    {
+      "type": 0,
+      "value": "Enter value for parameter."
+    }
+  ],
   "raBiud": [
     {
       "type": 0,
@@ -5745,6 +6171,12 @@
     {
       "type": 0,
       "value": "Výraz"
+    }
+  ],
+  "rsdJcV": [
+    {
+      "type": 0,
+      "value": "Select source schema elements to build your map"
     }
   ],
   "rstpaK": [
@@ -5921,6 +6353,12 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
+  "tRgTTN": [
+    {
+      "type": 0,
+      "value": "Expand/collapse target schema"
+    }
+  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -5937,6 +6375,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Počet hodin, které se mají přičíst. Může to být i záporná hodnota, při které se hodiny odečtou."
+    }
+  ],
+  "td5//c": [
+    {
+      "type": 0,
+      "value": "Collapse tree node"
     }
   ],
   "teZwo6": [
@@ -5973,6 +6417,12 @@
     {
       "type": 0,
       "value": "Výběrem elementu spustíte konfiguraci"
+    }
+  ],
+  "uM1i27": [
+    {
+      "type": 0,
+      "value": "Specify a retry count from 1 to 90"
     }
   ],
   "uN4zFU": [
@@ -6029,6 +6479,12 @@
       "value": "(UTC-11:00) Koordinovaný univerzální čas (UTC)-11"
     }
   ],
+  "uesaee": [
+    {
+      "type": 0,
+      "value": "Expression"
+    }
+  ],
   "ui7GCl": [
     {
       "type": 0,
@@ -6045,12 +6501,6 @@
     {
       "type": 0,
       "value": "4"
-    }
-  ],
-  "ut5Med": [
-    {
-      "type": 0,
-      "value": "Výchozí hodnota"
     }
   ],
   "uzsleE": [
@@ -6093,6 +6543,12 @@
     {
       "type": 0,
       "value": "Odstranit"
+    }
+  ],
+  "vT0DCP": [
+    {
+      "type": 0,
+      "value": "Outputs"
     }
   ],
   "vVJuus": [
@@ -6175,16 +6631,16 @@
       "value": "Vlastnosti pracovního postupu"
     }
   ],
+  "w16qh+": [
+    {
+      "type": 0,
+      "value": "Queries"
+    }
+  ],
   "w5Hhig": [
     {
       "type": 0,
       "value": "Neděle"
-    }
-  ],
-  "w9OL8U": [
-    {
-      "type": 0,
-      "value": "Přizpůsobení stránky"
     }
   ],
   "wEaGWn": [
@@ -6247,6 +6703,12 @@
       "value": "Vrátí zadanou hodnotu podle toho, jestli se daný výraz vyhodnotil jako true, nebo false."
     }
   ],
+  "wl7X0l": [
+    {
+      "type": 0,
+      "value": "Hide mini-map"
+    }
+  ],
   "wmDUGV": [
     {
       "type": 0,
@@ -6265,6 +6727,12 @@
       "value": "Adresa URL pro zpětné volání:"
     }
   ],
+  "woq0x0": [
+    {
+      "type": 0,
+      "value": "Add source schema"
+    }
+  ],
   "wzEneQ": [
     {
       "type": 0,
@@ -6281,6 +6749,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Kolekce, pro kterou se má získat délka."
+    }
+  ],
+  "x10E1p": [
+    {
+      "type": 0,
+      "value": "Status Code"
     }
   ],
   "xFQXAI": [
@@ -6445,12 +6919,6 @@
       "value": "Nabídka"
     }
   ],
-  "z4YYlQ": [
-    {
-      "type": 0,
-      "value": "Zadejte výchozí hodnotu parametru."
-    }
-  ],
   "z9kH+0": [
     {
       "type": 0,
@@ -6469,16 +6937,16 @@
       "value": "Zadejte hodnotu"
     }
   ],
-  "zGRgUE": [
-    {
-      "type": 0,
-      "value": "Cílové schéma"
-    }
-  ],
   "zIDVd9": [
     {
       "type": 0,
       "value": "Vyžadováno. Řetězec, který se převede na hodnotu nativního typu."
+    }
+  ],
+  "zNesUZ": [
+    {
+      "type": 0,
+      "value": "A retry policy applies to intermittent failures, characterized as HTTP status codes 408, 429, and 5xx, in addition to any connectivity exceptions. The default is an exponential interval policy set to retry 4 times."
     }
   ],
   "zTKAc9": [
@@ -6491,12 +6959,6 @@
     {
       "type": 0,
       "value": "Vymazat vlastní hodnotu"
-    }
-  ],
-  "zUs2yb": [
-    {
-      "type": 0,
-      "value": "Uzel cílového schématu"
     }
   ],
   "zbtUQ/": [

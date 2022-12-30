@@ -7,16 +7,16 @@ import { localize } from '../../../localize';
 import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import type { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
 import { sendAzureRequest } from '../requestUtils';
-import type {
-  Artifacts,
-  IArtifactFile,
-  IConnectionsFileContent,
-  IParametersFileContent,
-  IWorkflowFileContent,
-  Parameter,
-} from '@microsoft-logic-apps/utils';
-import { HTTP_METHODS } from '@microsoft-logic-apps/utils';
+import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type {
+  IParametersFileContent,
+  IConnectionsFileContent,
+  Parameter,
+  IWorkflowFileContent,
+  IArtifactFile,
+  Artifacts,
+} from '@microsoft/vscode-extension';
 import * as path from 'path';
 import * as vscode from 'vscode';
 

@@ -1,9 +1,9 @@
 import type { IConnectorService, ListDynamicValue, ManagedIdentityRequestProperties } from '../connector';
 import type { IHttpClient } from '../httpClient';
-import { getIntl } from '@microsoft-logic-apps/intl';
-import type { LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft-logic-apps/parsers';
-import { Types } from '@microsoft-logic-apps/parsers';
-import type { OperationInfo } from '@microsoft-logic-apps/utils';
+import { getIntl } from '@microsoft/intl-logic-apps';
+import type { LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft/parsers-logic-apps';
+import { Types } from '@microsoft/parsers-logic-apps';
+import type { OperationInfo } from '@microsoft/utils-logic-apps';
 import {
   UnsupportedException,
   getJSONValue,
@@ -14,7 +14,7 @@ import {
   ConnectorServiceErrorCode,
   ConnectorServiceException,
   equals,
-} from '@microsoft-logic-apps/utils';
+} from '@microsoft/utils-logic-apps';
 import type { IntlShape } from 'react-intl';
 
 type GetSchemaFunction = (args: Record<string, any>) => Promise<OpenAPIV2.SchemaObject>;

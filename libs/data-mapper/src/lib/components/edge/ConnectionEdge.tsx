@@ -5,17 +5,17 @@ import {
   setSelectedItem,
 } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
+import { getSmoothStepEdge } from '../../utils/Edge.Utils';
 import { getDestinationIdFromReactFlowConnectionId, getSourceIdFromReactFlowConnectionId } from '../../utils/ReactFlow.Util';
 import { ToolboxPanelTabs } from '../canvasToolbox/CanvasToolbox';
 import { Button, makeStyles, shorthands, tokens, Tooltip } from '@fluentui/react-components';
 import { Add20Filled } from '@fluentui/react-icons';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
-import { getSmartEdge, pathfindingJumpPointNoDiagonal, svgDrawSmoothLinePath } from '@tisoap/react-flow-smart-edge';
 import React, { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
-import { BaseEdge, getSmoothStepPath, useNodes } from 'reactflow';
+import { BaseEdge, useNodes } from 'reactflow';
 import type { EdgeProps } from 'reactflow';
 
 const addFunctionBtnSize = 24;
@@ -80,68 +80,27 @@ export const ConnectionEdge = (props: EdgeProps) => {
     description: 'Message to insert function',
   });
 
-  const baseEdgeProperties = useMemo(
-    () => ({
+  const { svgPath, labelX, labelY } = useMemo(() => {
+    const [edgePath, labelX, labelY] = getSmoothStepEdge({
+      nodes: reactFlowNodes,
       sourcePosition,
       targetPosition,
-      sourceX: sourceX,
+      sourceX,
       sourceY,
-      targetX: targetX,
+      targetX,
       targetY,
-    }),
-    [sourcePosition, targetPosition, sourceX, sourceY, targetX, targetY]
-  );
+      pfGridSize: 10,
+      nodePadding: 15,
+      edgeBendOffsetRatio: 5,
+      borderRadius: 8,
+    });
 
-  const smartEdge = useMemo(
-    () =>
-      getSmartEdge({
-        ...baseEdgeProperties,
-        nodes: reactFlowNodes,
-        options: {
-          // nodePadding
-          // gridRatio
-          // SmoothStep edge equivalent
-          drawEdge: (source, target, path) => {
-            // NOTE: Due to the use of a larger-scale and thus less accurate grid (10x10 pixels by default),
-            // the Y value of the portions of the path that go straight into the nodes handles would not be
-            // exactly on-level with the node-handle's Y value...so we just force that to be the case below
-            const modifiedPath: any[] = [...path];
-
-            const sourceY = source.y;
-            const targetY = target.y;
-
-            const pathStartLegY = path[0][1];
-            const pathEndLegY = path[path.length - 1][1];
-
-            modifiedPath.forEach((point, idx) => {
-              if (point[1] === pathStartLegY) {
-                modifiedPath[idx][1] = sourceY;
-              } else if (point[1] === pathEndLegY) {
-                modifiedPath[idx][1] = targetY;
-              }
-            });
-
-            return svgDrawSmoothLinePath(source, target, modifiedPath);
-          },
-          generatePath: pathfindingJumpPointNoDiagonal,
-        },
-      }),
-    [baseEdgeProperties, reactFlowNodes]
-  );
-
-  const { svgPathString, edgeCenterX, edgeCenterY } = useMemo(() => {
-    if (smartEdge) {
-      return smartEdge;
-    } else {
-      // getSmartEdge failed to find a valid path, so we'll just default to ReactFlow's built-in edge
-      const [edgePath, labelX, labelY] = getSmoothStepPath({ ...baseEdgeProperties });
-      return {
-        svgPathString: edgePath,
-        edgeCenterX: labelX,
-        edgeCenterY: labelY,
-      };
-    }
-  }, [smartEdge, baseEdgeProperties]);
+    return {
+      svgPath: edgePath,
+      labelX,
+      labelY,
+    };
+  }, [reactFlowNodes, sourcePosition, targetPosition, sourceX, sourceY, targetX, targetY]);
 
   const isAddingInlineFunctionOnThisEdge = useMemo(() => {
     return (
@@ -190,9 +149,9 @@ export const ConnectionEdge = (props: EdgeProps) => {
   return (
     <svg onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
       <BaseEdge
-        path={svgPathString}
-        labelX={edgeCenterX}
-        labelY={edgeCenterY}
+        path={svgPath}
+        labelX={labelX}
+        labelY={labelY}
         {...props}
         style={{
           strokeWidth: tokens.strokeWidthThick,
@@ -204,8 +163,8 @@ export const ConnectionEdge = (props: EdgeProps) => {
       <foreignObject
         width={parentTotalSize}
         height={parentTotalSize}
-        x={edgeCenterX - parentTotalSize / 2 - parentPadding / 2}
-        y={edgeCenterY - parentTotalSize / 2 - parentPadding / 2}
+        x={Math.round(labelX - parentTotalSize / 2)}
+        y={labelY - parentTotalSize / 2}
         style={{
           borderRadius: tokens.borderRadiusCircular,
           padding: parentPadding,

@@ -1,6 +1,6 @@
 import type { ConnectorSummaryCardProps } from '..';
 import { ConnectorSummaryCard } from '..';
-import { ConnectorsMock } from '@microsoft-logic-apps/utils';
+import { ConnectorsMock } from '@microsoft/utils-logic-apps';
 import ShallowRenderer from 'react-test-renderer/shallow';
 
 describe('recommendation panel', () => {

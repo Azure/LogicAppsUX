@@ -7,7 +7,7 @@ import type {
 } from './run-service';
 import type { AppDispatch } from './state/store';
 import { initialize, updateAccessToken, updateTargetDirectory, addStatus, setFinalStatus } from './state/vscodeSlice';
-import { ExtensionCommand } from '@microsoft-logic-apps/utils';
+import { ExtensionCommand } from '@microsoft/vscode-extension';
 import useEventListener from '@use-it/event-listener';
 import type { ReactNode } from 'react';
 import React, { useEffect } from 'react';

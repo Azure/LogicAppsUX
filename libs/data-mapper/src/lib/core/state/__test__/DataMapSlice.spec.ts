@@ -1,10 +1,21 @@
 import type { Schema, SchemaExtended } from '../../../models';
 import { SchemaType } from '../../../models';
 import type { ConnectionDictionary } from '../../../models/Connection';
-import { addNodeToConnections, flattenInputs } from '../../../utils/Connection.Utils';
+import { setConnectionInputValue, flattenInputs } from '../../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../../../utils/Schema.Utils';
-import { deleteConnectionFromConnections, deleteNodeFromConnections } from '../DataMapSlice';
+import {
+  fullConnectionDictionaryForOneToManyLoop,
+  fullMapForSimplifiedLoop,
+  indexedConnections,
+  manyToManyConnectionSourceName,
+} from '../../../utils/__mocks__';
+import {
+  canDeleteConnection,
+  deleteConnectionFromConnections,
+  deleteNodeFromConnections,
+  deleteParentRepeatingConnections,
+} from '../DataMapSlice';
 import { simpleMockSchema } from '../__mocks__';
 import { concatFunction } from '../__mocks__/FunctionMock';
 
@@ -18,11 +29,19 @@ describe('DataMapSlice', () => {
   const destinationId = addReactFlowPrefix(node.key, SchemaType.Target);
   const functionId = createReactFlowFunctionKey(concatFunction);
 
-  describe('addNodeToConnections', () => {
+  describe('Simulate handle-drawn / deserialization-made connection', () => {
     it('Add passthrough connection', () => {
       const connections: ConnectionDictionary = {};
 
-      addNodeToConnections(connections, node, sourceId, node, destinationId);
+      setConnectionInputValue(connections, {
+        targetNode: node,
+        targetNodeReactFlowKey: destinationId,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: sourceId,
+          node: node,
+        },
+      });
 
       expect(Object.keys(connections).length).toEqual(2);
 
@@ -40,8 +59,24 @@ describe('DataMapSlice', () => {
     it('Add function connection', () => {
       const connections: ConnectionDictionary = {};
 
-      addNodeToConnections(connections, concatFunction, functionId, node, destinationId);
-      addNodeToConnections(connections, node, sourceId, concatFunction, functionId);
+      setConnectionInputValue(connections, {
+        targetNode: node,
+        targetNodeReactFlowKey: destinationId,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: functionId,
+          node: concatFunction,
+        },
+      });
+      setConnectionInputValue(connections, {
+        targetNode: concatFunction,
+        targetNodeReactFlowKey: functionId,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: sourceId,
+          node: node,
+        },
+      });
 
       expect(Object.keys(connections).length).toEqual(3);
 
@@ -64,9 +99,33 @@ describe('DataMapSlice', () => {
     it('Add same function connection twice', () => {
       const connections: ConnectionDictionary = {};
 
-      addNodeToConnections(connections, concatFunction, functionId, node, destinationId);
-      addNodeToConnections(connections, node, sourceId, concatFunction, functionId);
-      addNodeToConnections(connections, concatFunction, functionId, node, destinationId);
+      setConnectionInputValue(connections, {
+        targetNode: node,
+        targetNodeReactFlowKey: destinationId,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: functionId,
+          node: concatFunction,
+        },
+      });
+      setConnectionInputValue(connections, {
+        targetNode: concatFunction,
+        targetNodeReactFlowKey: functionId,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: sourceId,
+          node: node,
+        },
+      });
+      setConnectionInputValue(connections, {
+        targetNode: node,
+        targetNodeReactFlowKey: destinationId,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: functionId,
+          node: concatFunction,
+        },
+      });
 
       expect(Object.keys(connections).length).toEqual(3);
 
@@ -99,7 +158,15 @@ describe('DataMapSlice', () => {
     it('Delete node with a connection', () => {
       const connections: ConnectionDictionary = {};
 
-      addNodeToConnections(connections, node, sourceId, node, destinationId);
+      setConnectionInputValue(connections, {
+        targetNode: node,
+        targetNodeReactFlowKey: destinationId,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: sourceId,
+          node: node,
+        },
+      });
       deleteNodeFromConnections(connections, destinationId);
 
       expect(Object.keys(connections).length).toEqual(1);
@@ -115,8 +182,24 @@ describe('DataMapSlice', () => {
     it('Delete function node', () => {
       const connections: ConnectionDictionary = {};
 
-      addNodeToConnections(connections, concatFunction, functionId, node, destinationId);
-      addNodeToConnections(connections, node, sourceId, concatFunction, functionId);
+      setConnectionInputValue(connections, {
+        targetNode: node,
+        targetNodeReactFlowKey: destinationId,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: functionId,
+          node: concatFunction,
+        },
+      });
+      setConnectionInputValue(connections, {
+        targetNode: concatFunction,
+        targetNodeReactFlowKey: functionId,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: sourceId,
+          node: node,
+        },
+      });
 
       deleteNodeFromConnections(connections, functionId);
 
@@ -140,7 +223,15 @@ describe('DataMapSlice', () => {
     it('Delete passthrough connection', () => {
       const connections: ConnectionDictionary = {};
 
-      addNodeToConnections(connections, node, sourceId, node, destinationId);
+      setConnectionInputValue(connections, {
+        targetNode: node,
+        targetNodeReactFlowKey: destinationId,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: sourceId,
+          node: node,
+        },
+      });
       deleteConnectionFromConnections(connections, sourceId, destinationId);
 
       expect(Object.keys(connections).length).toEqual(2);
@@ -159,8 +250,24 @@ describe('DataMapSlice', () => {
     it('Delete function connection', () => {
       const connections: ConnectionDictionary = {};
 
-      addNodeToConnections(connections, concatFunction, functionId, node, destinationId);
-      addNodeToConnections(connections, node, sourceId, concatFunction, functionId);
+      setConnectionInputValue(connections, {
+        targetNode: node,
+        targetNodeReactFlowKey: destinationId,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: functionId,
+          node: concatFunction,
+        },
+      });
+      setConnectionInputValue(connections, {
+        targetNode: concatFunction,
+        targetNodeReactFlowKey: functionId,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: sourceId,
+          node: node,
+        },
+      });
 
       deleteConnectionFromConnections(connections, functionId, destinationId);
 
@@ -182,4 +289,59 @@ describe('DataMapSlice', () => {
       expect(flattenInputs(connections[destinationId].inputs).length).toEqual(0);
     });
   });
+
+  describe('canDeleteConnection', () => {
+    it.skip('returns true with non-repeating connection', () => {
+      const connections: ConnectionDictionary = {};
+      const source = 'abc';
+      const target = '';
+      const canDeleted = canDeleteConnection(connections, source, target, { abc: simpleSourceNode }, {}); // FIXME
+      expect(canDeleted).toBeTruthy();
+    });
+  });
+
+  describe('deleteParentRepeatingConnections', () => {
+    it('deletes all parent connections when selected deleted connection is only one', () => {
+      const connections1 = JSON.parse(JSON.stringify(fullMapForSimplifiedLoop));
+      // removing the connection that is 'deleted
+      connections1['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate'].outputs = [];
+      deleteParentRepeatingConnections(connections1, manyToManyConnectionSourceName);
+      expect(connections1['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay'].outputs).toHaveLength(0);
+      expect(connections1['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth'].outputs).toHaveLength(0);
+      expect(connections1['source-/ns0:Root/ManyToMany/SourceYear'].outputs).toHaveLength(0);
+    });
+
+    it('doesnt delete any other parent connections if another child is connected', () => {
+      const connections = { ...fullMapForSimplifiedLoop };
+      deleteParentRepeatingConnections(connections, manyToManyConnectionSourceName);
+      expect(connections['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay'].outputs).toHaveLength(1);
+      expect(connections['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth'].outputs).toHaveLength(1);
+      expect(connections['source-/ns0:Root/ManyToMany/SourceYear'].outputs).toHaveLength(1);
+    });
+
+    it('doesnt delete parent connection if index is being used', () => {
+      const connections = { ...indexedConnections };
+      // removing the connection that is 'deleted
+      connections['source-/ns0:Root/Looping/Employee/TelephoneNumber'].outputs = [];
+      deleteParentRepeatingConnections(connections, 'source-/ns0:Root/Looping/Employee/TelephoneNumber');
+      expect(connections['source-/ns0:Root/Looping/Employee'].outputs).toHaveLength(1); // has one output to the index
+    });
+
+    it('deletes all connections for many-to-one', () => {
+      const connections = fullConnectionDictionaryForOneToManyLoop;
+      connections['source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate'].outputs = [];
+      deleteParentRepeatingConnections(connections, 'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate');
+      expect(connections['source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay'].outputs).toHaveLength(0);
+      expect(connections['source-/ns0:Root/ManyToOne/SourceYear/SourceMonth'].outputs).toHaveLength(0);
+      expect(connections['source-/ns0:Root/ManyToOne/SourceYear'].outputs).toHaveLength(0);
+    });
+  });
 });
+
+/*const simpleSourceNode: SchemaNodeExtended = {
+  children: [],
+  nodeProperties: [SchemaNodeProperty.NotSpecified],
+  pathToRoot: [],
+  key: 'abc',
+  fullName: 'ABC',
+} as unknown as SchemaNodeExtended; */

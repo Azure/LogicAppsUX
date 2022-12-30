@@ -1,5 +1,5 @@
 import type { DesignerOptionsState, ServiceOptions } from './designerOptionsInterfaces';
-import type { ILoggerService } from '@microsoft-logic-apps/designer-client-services';
+import type { ILoggerService } from '@microsoft/designer-client-services-logic-apps';
 import {
   InitLoggerService,
   DevLogger,
@@ -10,7 +10,7 @@ import {
   InitSearchService,
   InitOAuthService,
   InitWorkflowService,
-} from '@microsoft-logic-apps/designer-client-services';
+} from '@microsoft/designer-client-services-logic-apps';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -19,6 +19,7 @@ const initialState: DesignerOptionsState = {
   isMonitoringView: false,
   isDarkMode: false,
   servicesInitialized: false,
+  isConsumption: false,
 };
 
 export const initializeServices = createAsyncThunk(
@@ -67,6 +68,7 @@ export const designerOptionsSlice = createSlice({
       state.readOnly = action.payload.readOnly;
       state.isMonitoringView = action.payload.isMonitoringView;
       state.isDarkMode = action.payload.isDarkMode;
+      state.isConsumption = action.payload.isConsumption;
     },
   },
   extraReducers: (builder) => {

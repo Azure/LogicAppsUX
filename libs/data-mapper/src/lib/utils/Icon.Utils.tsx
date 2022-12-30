@@ -30,6 +30,7 @@ import {
 } from '../images/DataType24Icons';
 import { FunctionCategory } from '../models/Function';
 import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperty } from '../models/Schema';
+import { LogCategory, LogService } from './Logging.Utils';
 import { Image } from '@fluentui/react-components';
 import {
   AddSubtractCircle16Filled,
@@ -55,39 +56,35 @@ import {
 
 type iconSize = 16 | 24;
 
-export const iconForNormalizedDataType = (nodeType: NormalizedDataType, size: iconSize, bundled: boolean) => {
-  let convertedType: SchemaNodeDataType = SchemaNodeDataType.AnyAtomicType;
-
-  switch (nodeType) {
+export const getSchemaNodeDataTypeFromNormalizedDataType = (normalizedDataType: NormalizedDataType): SchemaNodeDataType => {
+  switch (normalizedDataType) {
     case NormalizedDataType.Any:
-      break;
     case NormalizedDataType.Binary:
-      convertedType = SchemaNodeDataType.Base64Binary;
-      break;
+      return SchemaNodeDataType.Base64Binary;
     case NormalizedDataType.Boolean:
-      convertedType = SchemaNodeDataType.Boolean;
-      break;
+      return SchemaNodeDataType.Boolean;
     case NormalizedDataType.ComplexType:
-      convertedType = SchemaNodeDataType.None;
-      break;
+      return SchemaNodeDataType.None;
     case NormalizedDataType.DateTime:
-      convertedType = SchemaNodeDataType.DateTime;
-      break;
+      return SchemaNodeDataType.DateTime;
     case NormalizedDataType.Decimal:
-      convertedType = SchemaNodeDataType.Decimal;
-      break;
+      return SchemaNodeDataType.Decimal;
     case NormalizedDataType.Integer:
     case NormalizedDataType.Number:
-      convertedType = SchemaNodeDataType.Integer;
-      break;
+      return SchemaNodeDataType.Integer;
     case NormalizedDataType.String:
-      convertedType = SchemaNodeDataType.String;
-      break;
+      return SchemaNodeDataType.String;
     default:
-      console.error(`Icon.Utils Error: No corresponding SchemaNodeDataType found for NormalizedDataType ${nodeType}`);
-  }
+      LogService.error(LogCategory.IconUtils, 'getSchemaNodeDataTypeFromNormalizedDataType', {
+        message: `No corresponding SchemaNodeDataType found for NormalizedDataType ${normalizedDataType}`,
+      });
 
-  return iconForSchemaNodeDataType(convertedType, size, bundled);
+      return SchemaNodeDataType.AnyAtomicType;
+  }
+};
+
+export const iconForNormalizedDataType = (nodeType: NormalizedDataType, size: iconSize, bundled: boolean) => {
+  return iconForSchemaNodeDataType(getSchemaNodeDataTypeFromNormalizedDataType(nodeType), size, bundled);
 };
 
 export const iconForSchemaNodeDataType = (
@@ -190,7 +187,9 @@ export const iconForSchemaNodeDataType = (
       break;
     }
     default: {
-      console.error(`Icon.Utils Error: No icon found for type ${nodeType}`);
+      LogService.error(LogCategory.IconUtils, 'iconForSchemaNodeDataType', {
+        message: `Icon.Utils Error: No icon found for type ${nodeType}`,
+      });
 
       // Null
       icons = [CircleOff16Regular, CircleOff16Filled];
@@ -222,7 +221,10 @@ export const iconForFunctionCategory = (functionCategory: FunctionCategory) => {
       return Wrench20Regular;
     }
     default: {
-      console.error(`Invalid category type: ${functionCategory}`);
+      LogService.error(LogCategory.IconUtils, 'iconForFunctionCategory', {
+        message: `Invalid category type: ${functionCategory}`,
+      });
+
       return Wrench20Regular;
     }
   }

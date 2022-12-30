@@ -1,5 +1,5 @@
-import { isObject } from '@microsoft-logic-apps/utils';
 import type { ContentHash, ContentLink, SecureData, Xml } from './types';
+import { isObject } from '@microsoft/utils-logic-apps';
 
 export function isContentLink(value: any): value is ContentLink {
   return (

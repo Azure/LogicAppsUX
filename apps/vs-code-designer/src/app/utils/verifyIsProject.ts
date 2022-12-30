@@ -4,9 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 import { hostFileName } from '../../constants';
 import { localize } from '../../localize';
+import { createNewProjectInternal } from '../commands/createNewProject/createNewProject';
 import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/settings';
-import { isString } from '@microsoft-logic-apps/utils';
+import { isString } from '@microsoft/utils-logic-apps';
+import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
+import type { ICreateFunctionOptions } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem, WorkspaceFolder } from 'vscode';
@@ -77,4 +80,34 @@ async function promptForProjectSubpath(context: IActionContext, workspacePath: s
   await updateWorkspaceSetting(projectSubpathKey, subpath, workspacePath);
 
   return subpath;
+}
+
+/**
+ * Checks if the path is already a logic app project. If not, it will prompt to create a new project.
+ * @param {IActionContext} fsPath - Command context.
+ * @param {string} fsPath - Workflow file path.
+ * @param {ICreateFunctionOptions} options - Options to create a new project.
+ * @returns {Promise<string | undefined>} Returns project path if exists, otherwise returns undefined.
+ */
+export async function verifyAndPromptToCreateProject(
+  context: IActionContext,
+  fsPath: string,
+  options?: ICreateFunctionOptions
+): Promise<string | undefined> {
+  options = options || {};
+
+  const projectPath: string | undefined = await tryGetFunctionProjectRoot(context, fsPath);
+  if (!projectPath) {
+    if (!options.suppressCreateProjectPrompt) {
+      const message: string = localize('notLogicApp', 'The selected folder is not a logic app project. Create new project?');
+      // No need to check result - cancel will throw a UserCancelledError
+      await context.ui.showWarningMessage(message, { modal: true }, DialogResponses.yes);
+    }
+
+    options.folderPath = fsPath;
+    await createNewProjectInternal(context, options);
+    return undefined;
+  } else {
+    return projectPath;
+  }
 }

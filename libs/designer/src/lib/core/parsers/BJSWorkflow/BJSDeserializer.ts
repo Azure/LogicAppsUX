@@ -3,8 +3,8 @@ import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/
 import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
-import { getIntl } from '@microsoft-logic-apps/intl';
-import type { SubgraphType } from '@microsoft-logic-apps/utils';
+import { getIntl } from '@microsoft/intl-logic-apps';
+import type { SubgraphType } from '@microsoft/utils-logic-apps';
 import {
   WORKFLOW_NODE_TYPES,
   WORKFLOW_EDGE_TYPES,
@@ -12,7 +12,7 @@ import {
   equals,
   isNullOrEmpty,
   isNullOrUndefined,
-} from '@microsoft-logic-apps/utils';
+} from '@microsoft/utils-logic-apps';
 import { title } from 'process';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
@@ -202,6 +202,7 @@ const processScopeActions = (
       ...nodesMetadata,
       [subgraphId]: {
         graphId: graphId,
+        parentNodeId: graphId === 'root' ? undefined : graphId,
         subgraphType,
         actionCount: graph.children.filter((node) => !node.id.includes('-#'))?.length ?? -1,
       },
