@@ -70,11 +70,22 @@ export async function confirmOverwriteFile(context: IActionContext, fsPath: stri
   }
 }
 
+/**
+ * Gets a random hex string of specific length.
+ * @param {number} length - Command context.
+ * @returns {string} Random hex string.
+ */
 export function getRandomHexString(length = 10): string {
   const buffer: Buffer = crypto.randomBytes(Math.ceil(length / 2));
   return buffer.toString('hex').slice(0, length);
 }
 
+/**
+ * If file exists waits for confirmation to update it, otherwise creates a new json file.
+ * @param {IActionContext} context - Command context.
+ * @param {string} fsPath - File path.
+ * @param {Function} editJson - Function to edit the json file.
+ */
 export async function confirmEditJsonFile(
   context: IActionContext,
   fsPath: string,

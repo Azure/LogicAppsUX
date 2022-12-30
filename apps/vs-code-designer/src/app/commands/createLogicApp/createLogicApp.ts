@@ -16,6 +16,7 @@ export async function createLogicApp(
   newResourceGroupName?: string
 ): Promise<string> {
   let node: AzExtParentTreeItem | undefined;
+
   if (isString(subscription)) {
     node = await ext.tree.findTreeItem(`/subscriptions/${subscription}`, context);
     if (!node) {

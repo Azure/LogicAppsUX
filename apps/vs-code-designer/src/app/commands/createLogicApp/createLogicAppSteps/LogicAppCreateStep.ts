@@ -252,8 +252,9 @@ async function getStorageConnectionStrings(context: IFunctionAppWizardContext): 
     websiteContentAzureFileValue: '',
   };
 
+  const azureStorageConnectionString = (await getStorageConnectionString(context)).connectionString;
+
   if (context.customLocation) {
-    const azureStorageConnectionString = (await getStorageConnectionString(context)).connectionString;
     if (context.storageType === StorageOptions.SQL) {
       connectionStrings.sqlConnectionStringValue = context.sqlConnectionString;
       connectionStrings.azureWebJobsStorageKeyValue = azureStorageConnectionString;
@@ -266,7 +267,6 @@ async function getStorageConnectionStrings(context: IFunctionAppWizardContext): 
       connectionStrings.websiteContentAzureFileValue = azureStorageConnectionString;
     }
   } else {
-    const azureStorageConnectionString = (await getStorageConnectionString(context)).connectionString;
     if (context.storageType === StorageOptions.SQL) {
       connectionStrings.sqlConnectionStringValue = context.sqlConnectionString;
       connectionStrings.azureWebJobsStorageKeyValue = azureStorageConnectionString;

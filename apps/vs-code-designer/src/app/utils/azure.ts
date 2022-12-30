@@ -6,9 +6,18 @@ import { localize } from '../../localize';
 import { createStorageClient } from './azureClients';
 import type { StorageAccount, StorageAccountListKeysResult, StorageManagementClient } from '@azure/arm-storage';
 import type { IStorageAccountWizardContext } from '@microsoft/vscode-azext-azureutils';
-import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, nonNullValue } from '@microsoft/vscode-azext-utils';
 
+export interface IResourceResult {
+  name: string;
+  connectionString: string;
+}
+
+/**
+ * Gets the IDs involed in the azure resource ID.
+ * @param {string} id - Azure resource ID.
+ * @returns {RegExpMatchArray} Array with IDs.
+ */
 function parseResourceId(id: string): RegExpMatchArray {
   const matches: RegExpMatchArray | null = id.match(/\/subscriptions\/(.*)\/resourceGroups\/(.*)\/providers\/(.*)\/(.*)/);
 
@@ -19,50 +28,20 @@ function parseResourceId(id: string): RegExpMatchArray {
   return matches;
 }
 
+/**
+ * Gets the resource group from storage account id.
+ * @param {string} id - Storage account ID.
+ * @returns {string} Resource group ID.
+ */
 export function getResourceGroupFromId(id: string): string {
   return parseResourceId(id)[2];
 }
 
-export function getSubscriptionFromId(id: string): string {
-  return parseResourceId(id)[1];
-}
-
-export function getNameFromId(id: string): string {
-  return parseResourceId(id)[4];
-}
-
-export interface IBaseResourceWithName {
-  name?: string;
-  _description?: string;
-}
-
-export async function promptForResource<T extends IBaseResourceWithName>(
-  context: IActionContext,
-  placeHolder: string,
-  resourcesTask: Promise<T[]>
-): Promise<T | undefined> {
-  const picksTask: Promise<IAzureQuickPickItem<T | undefined>[]> = resourcesTask.then((resources: T[]) => {
-    const picks: IAzureQuickPickItem<T | undefined>[] = !Array.isArray(resources)
-      ? []
-      : (resources
-          .map((r: T) => (r.name ? { data: r, label: r.name, description: r._description } : undefined))
-          .filter((p: IAzureQuickPickItem<T> | undefined) => p) as IAzureQuickPickItem<T>[]);
-    picks.push({
-      label: localize('skipForNow', '$(clock) Skip for now'),
-      data: undefined,
-      suppressPersistence: true,
-    });
-    return picks;
-  });
-
-  return (await context.ui.showQuickPick(picksTask, { placeHolder })).data;
-}
-
-export interface IResourceResult {
-  name: string;
-  connectionString: string;
-}
-
+/**
+ * Gets storage account resource.
+ * @param {IStorageAccountWizardContext} context - Commmand context.
+ * @returns {Promise<IResourceResult>} Returns the connection resource.
+ */
 export async function getStorageConnectionString(context: IStorageAccountWizardContext): Promise<IResourceResult> {
   const client: StorageManagementClient = await createStorageClient(context);
   const storageAccount: StorageAccount = nonNullProp(context, 'storageAccount') as StorageAccount;
@@ -73,7 +52,7 @@ export async function getStorageConnectionString(context: IStorageAccountWizardC
   const key: string = nonNullProp(nonNullValue(nonNullProp(result, 'keys')[0], 'keys[0]'), 'value');
 
   let endpointSuffix: string = nonNullProp(context.environment, 'storageEndpointSuffix');
-  // https://github.com/Azure/azure-sdk-for-node/issues/4706
+
   if (endpointSuffix.startsWith('.')) {
     endpointSuffix = endpointSuffix.substr(1);
   }
