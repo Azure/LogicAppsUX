@@ -74,7 +74,7 @@ export interface FunctionCardProps extends CardProps {
 
 export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const reactFlowId = props.id;
-  const { functionData, disabled, functionBranding, displayHandle, onClick, dataTestId } = props.data; // iconFileName
+  const { functionData, disabled, functionBranding, displayHandle, onClick, dataTestId } = props.data;
   const classes = useStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
