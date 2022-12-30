@@ -209,11 +209,13 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
     ActionIf: { graphId: 'root', actionCount: 2 },
     'ActionIf-actions': {
       graphId: 'ActionIf',
+      parentNodeId: 'ActionIf',
       actionCount: 2,
       subgraphType: SUBGRAPH_TYPES.CONDITIONAL_TRUE,
     },
     'ActionIf-elseActions': {
       graphId: 'ActionIf',
+      parentNodeId: 'ActionIf',
       actionCount: 1,
       subgraphType: SUBGRAPH_TYPES.CONDITIONAL_FALSE,
     },
