@@ -13,7 +13,7 @@ import type { AzExtTreeItem, IActionContext, TreeItemIconPath, ICreateChildImplC
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 
 export class SlotsTreeItem extends AzExtParentTreeItem {
-  public static contextValue = 'azFuncSlots';
+  public static contextValue = 'azLogicAppsSlots';
   public readonly contextValue: string = SlotsTreeItem.contextValue;
   public readonly label: string = localize('slots', 'Slots');
   public readonly childTypeLabel: string = localize('slot', 'Slot');

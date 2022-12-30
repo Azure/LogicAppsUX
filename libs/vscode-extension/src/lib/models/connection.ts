@@ -60,3 +60,19 @@ export interface IConnectionsFileContent {
   content: ConnectionReferenceModel | FunctionConnectionModel | ServiceProviderConnectionModel;
   isManaged: boolean;
 }
+
+export interface ConnectionAcl {
+  id: string;
+  name: string;
+  type: string;
+  location: string;
+  properties: {
+    principal: {
+      type: string;
+      identity: {
+        objectId: string;
+        tenantId: string;
+      };
+    };
+  };
+}

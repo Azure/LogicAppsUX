@@ -14,7 +14,7 @@ import type { AzExtTreeItem, IActionContext, TreeItemIconPath } from '@microsoft
 import { ProjectAccess, ProjectResource } from '@microsoft/vscode-extension';
 
 export class ConfigurationsTreeItem extends AzExtParentTreeItem {
-  public static contextValue = 'azFuncConfigurations';
+  public static contextValue = 'azLogicAppsConfigurations';
   public readonly label: string = localize('Configurations', 'Configurations');
   public readonly parent: SlotTreeItemBase;
   public readonly appSettingsTreeItem: AppSettingsTreeItem;

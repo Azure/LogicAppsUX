@@ -81,7 +81,7 @@ export class RemoteWorkflowsTreeItem extends AzExtParentTreeItem {
 
     return await this.createTreeItemsWithErrorHandling(
       workflows,
-      'azFuncInvalidWorkflow',
+      'azLogicAppsInvalidWorkflow',
       async (workflow: any) => await RemoteWorkflowTreeItem.create(this, workflow),
       (workflow: any) => {
         return workflow.name;

@@ -174,3 +174,38 @@ export async function findFiles(base: vscode.WorkspaceFolder | string, pattern: 
 function escapeCharacters(nonPattern: string): string {
   return nonPattern.replace(/[$^*+?()[\\]]/g, '\\$&');
 }
+
+/**
+ * Opens a dialog and gets file from workspace.
+ * @param {IActionContext} context - Command context.
+ * @param {string} placeHolder - Placeholder for input.
+ * @param {Function} getSubPath - Function to get subpath inside workspace folder.
+ * @returns {Promise<string>} Workspace file path.
+ */
+export async function selectWorkspaceFile(
+  context: IActionContext,
+  placeHolder: string,
+  getSubPath?: (f: vscode.WorkspaceFolder) => string | undefined | Promise<string | undefined>
+): Promise<string> {
+  let defaultUri: vscode.Uri | undefined;
+  if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0 && getSubPath) {
+    const firstFolder: vscode.WorkspaceFolder = vscode.workspace.workspaceFolders[0];
+    const subPath: string | undefined = await getSubPath(firstFolder);
+    if (subPath) {
+      defaultUri = vscode.Uri.file(path.join(firstFolder.uri.fsPath, subPath));
+    }
+  }
+
+  return await selectWorkspaceItem(
+    context,
+    placeHolder,
+    {
+      canSelectFiles: true,
+      canSelectFolders: false,
+      canSelectMany: false,
+      defaultUri: defaultUri,
+      openLabel: localize('select', 'Select'),
+    },
+    getSubPath
+  );
+}
