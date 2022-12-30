@@ -147,7 +147,7 @@ export const ConnectionEdge = (props: EdgeProps) => {
   };
 
   return (
-    <svg onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+    <svg onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} onContextMenu={contextMenu.handle}>
       <BaseEdge
         path={svgPath}
         labelX={labelX}
