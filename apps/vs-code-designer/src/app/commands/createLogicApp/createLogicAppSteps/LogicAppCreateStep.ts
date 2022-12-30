@@ -4,10 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   azureWebJobsStorageKey,
+  defaultVersionRange,
+  extensionBundleId,
   extensionVersionKey,
   functionAppKind,
   logicAppKind,
   logicAppKindAppSetting,
+  webhookRedirectHostUri,
   workerRuntimeKey,
 } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
@@ -42,6 +45,10 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<IFunctionAppWizar
     const rgName: string = nonNullProp(nonNullProp(context, 'resourceGroup'), 'name');
 
     context.site = await client.webApps.beginCreateOrUpdateAndWait(rgName, siteName, await this.getNewSite(context));
+  }
+
+  public shouldExecute(context: IFunctionAppWizardContext): boolean {
+    return !context.site;
   }
 
   private async getNewSite(context: IFunctionAppWizardContext): Promise<Site> {
@@ -89,10 +96,6 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<IFunctionAppWizar
     (site as any).extendedLocation = { name: customLocation.id, type: 'customLocation' };
   }
 
-  public shouldExecute(context: IFunctionAppWizardContext): boolean {
-    return !context.site;
-  }
-
   private async getNewSiteConfig(context: IFunctionAppWizardContext): Promise<SiteConfig> {
     const newSiteConfig: SiteConfig = {};
     if (context.newSiteOS === WebsiteOS.linux) {
@@ -128,7 +131,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<IFunctionAppWizar
         value: runtimeWithoutVersion,
       },
       {
-        name: 'Workflows.WebhookRedirectHostUri',
+        name: webhookRedirectHostUri,
         value: '',
       },
     ];
@@ -159,11 +162,11 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<IFunctionAppWizar
         },
         {
           name: 'AzureFunctionsJobHost__extensionBundle__id',
-          value: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows',
+          value: extensionBundleId,
         },
         {
           name: 'AzureFunctionsJobHost__extensionBundle__version',
-          value: '[1.*, 2.0.0)',
+          value: defaultVersionRange,
         }
       );
     }
@@ -228,14 +231,12 @@ function getSiteKind(context: IFunctionAppWizardContext): string {
   return kinds.join(',');
 }
 
-const separator = '|';
-
 function getRuntimeWithoutVersion(runtime: string): string {
-  return runtime.split(separator)[0].trim();
+  return runtime.split('|')[0].trim();
 }
 
 function getRuntimeVersion(runtime: string): string {
-  return nonNullOrEmptyValue(runtime.split(separator)[1].trim(), 'runtimeVersion');
+  return nonNullOrEmptyValue(runtime.split('|')[1].trim(), 'runtimeVersion');
 }
 
 function getNewFileShareName(siteName: string): string {

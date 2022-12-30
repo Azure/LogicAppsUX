@@ -9,6 +9,8 @@ import {
   workflowFileName,
   workflowType,
   localEmulatorConnectionString,
+  extensionBundleId,
+  defaultVersionRange,
 } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { setLocalAppSetting } from '../../../funcConfig/local.settings';
@@ -103,14 +105,14 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
     if (
       nonNullProp(context, 'workflowProjectType') === WorkflowProjectType.Bundle &&
       (hostJson.extensionBundle === undefined ||
-        hostJson.extensionBundle.id !== 'Microsoft.Azure.Functions.ExtensionBundle.Workflows' ||
-        hostJson.extensionBundle.version !== '[1.*, 2.0.0)')
+        hostJson.extensionBundle.id !== extensionBundleId ||
+        hostJson.extensionBundle.version !== defaultVersionRange)
     ) {
       hostJson = {
         ...hostJson,
         extensionBundle: {
-          id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows',
-          version: '[1.*, 2.0.0)',
+          id: extensionBundleId,
+          version: defaultVersionRange,
         },
       };
       hostJsonUpdated = true;

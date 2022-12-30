@@ -102,6 +102,9 @@ export const dotnetPublishTaskLabel = 'publish';
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 
+// host.json
+export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
+
 // .NET
 export enum DotnetVersion {
   net6 = 'net6.0',

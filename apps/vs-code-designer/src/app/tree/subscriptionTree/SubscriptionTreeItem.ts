@@ -214,7 +214,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 }
 
 async function setRegionsTask(context: IFunctionAppWizardContext): Promise<void> {
-  /* NOTE(psamband): To filter out georegions which only support WorkflowStandard we have to use 'ElasticPremium' as orgDomain
+  /* To filter out georegions which only support WorkflowStandard we have to use 'ElasticPremium' as orgDomain
   since no new orgDomain is added for WorkflowStandard we will overwrite here so it filters region correctly. */
   const originalPlan = context.newPlanSku ? { ...context.newPlanSku } : undefined;
 
