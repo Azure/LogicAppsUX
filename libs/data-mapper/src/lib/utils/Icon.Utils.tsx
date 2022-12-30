@@ -197,9 +197,11 @@ export const iconForSchemaNodeDataType = (
   return bundled ? bundleIcon(icons[1], icons[0]) : icons[0];
 };
 
+export const iconBaseUrl = 'https://logicappsv2resources.blob.core.windows.net/icons/datamapper/';
+
 export const iconForFunctionCategory = (functionCategory: FunctionCategory) => {
   const functionCategories = Object.values(FunctionCategory);
-  const functionIconUrlPrefix = `https://dmcdndani.azureedge.net/icons/${FunctionCategoryIconPrefix}`;
+  const functionIconUrlPrefix = `${iconBaseUrl}${FunctionCategoryIconPrefix}`;
   if (functionCategories.indexOf(functionCategory) >= 0) {
     return `${functionIconUrlPrefix}${functionCategory.toLowerCase().replace(' ', '')}.svg`;
   } else {
@@ -209,7 +211,7 @@ export const iconForFunctionCategory = (functionCategory: FunctionCategory) => {
 
 export const iconUriForIconImageName = (iconImageName: string) => {
   // TODO Temp CDN, will need to be moved into a production location
-  return `https://datamappericons.azureedge.net/icons/${iconImageName}`;
+  return `${iconBaseUrl}${iconImageName}`;
 };
 
 export const getIconForFunction = (
