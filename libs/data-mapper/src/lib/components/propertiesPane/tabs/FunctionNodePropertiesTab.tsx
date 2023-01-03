@@ -221,8 +221,8 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
               borderRadius: '50%',
             }}
           >
-            <div style={{ paddingTop: '4px', color: tokens.colorNeutralBackground1, textAlign: 'center' }}>
-              {getIconForFunction(functionData.functionName, undefined, functionBranding)}
+            <div style={{ paddingTop: '4px', color: tokens.colorNeutralBackground1, display: 'flex', justifyContent: 'center' }}>
+              {getIconForFunction(functionData.functionName, functionData.category, functionData.iconFileName, functionBranding)}
             </div>
           </span>
 

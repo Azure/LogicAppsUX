@@ -3,7 +3,7 @@ import { functionNodeCardSize } from '../../constants/NodeConstants';
 import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import { customTokens } from '../../core';
 import type { RootState } from '../../core/state/Store';
-import type { FunctionInput } from '../../models/Function';
+import type { FunctionData } from '../../models/Function';
 import { isCustomValue, isValidConnectionByType, isValidCustomValueByType } from '../../utils/Connection.Utils';
 import { getIconForFunction } from '../../utils/Icon.Utils';
 import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
@@ -67,28 +67,14 @@ const useStyles = makeStyles({
 });
 
 export interface FunctionCardProps extends CardProps {
-  displayName: string;
-  functionName: string;
-  maxNumberOfInputs: number;
-  inputs: FunctionInput[];
-  iconFileName?: string;
+  functionData: FunctionData;
   functionBranding: FunctionGroupBranding;
   dataTestId: string;
 }
 
 export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const reactFlowId = props.id;
-  const {
-    displayName,
-    functionName,
-    inputs: fnInputs,
-    maxNumberOfInputs,
-    disabled,
-    functionBranding,
-    displayHandle,
-    onClick,
-    dataTestId,
-  } = props.data; // iconFileName
+  const { functionData, disabled, functionBranding, displayHandle, onClick, dataTestId } = props.data;
   const classes = useStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
@@ -103,7 +89,7 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const shouldDisplayHandles = !sourceNodeConnectionBeingDrawnFromId && (isCardHovered || isCurrentNodeSelected);
   const shouldDisplayTargetHandle =
     displayHandle &&
-    maxNumberOfInputs !== 0 &&
+    functionData.maxNumberOfInputs !== 0 &&
     !!sourceNodeConnectionBeingDrawnFromId &&
     sourceNodeConnectionBeingDrawnFromId !== reactFlowId;
   const shouldDisplaySourceHandle = displayHandle && shouldDisplayHandles;
@@ -117,7 +103,7 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
         inputArr.forEach((inputVal) => {
           let inputValMatchedOneOfAllowedTypes = false;
 
-          fnInputs[inputIdx].allowedTypes.forEach((allowedInputType) => {
+          functionData.inputs[inputIdx].allowedTypes.forEach((allowedInputType) => {
             if (inputVal !== undefined) {
               if (isCustomValue(inputVal)) {
                 if (isValidCustomValueByType(inputVal, allowedInputType)) {
@@ -143,7 +129,7 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
     }
 
     return isEveryInputValid;
-  }, [connections, reactFlowId, fnInputs]);
+  }, [connections, reactFlowId, functionData.inputs]);
 
   return (
     <div
@@ -164,7 +150,7 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
 
       <Tooltip
         content={{
-          children: <Text size={200}>{displayName}</Text>,
+          children: <Text size={200}>{functionData.displayName}</Text>,
         }}
         relationship="label"
       >
@@ -178,7 +164,7 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
           }
           disabled={!!disabled}
         >
-          {getIconForFunction(functionName, undefined, functionBranding) /* TODO: undefined -> iconFileName once all SVGs in */}
+          {getIconForFunction(functionData.functionName, functionData.category, functionData.iconFileName, functionBranding)}
         </Button>
       </Tooltip>
 
