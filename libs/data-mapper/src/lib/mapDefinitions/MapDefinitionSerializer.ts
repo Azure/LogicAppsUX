@@ -23,12 +23,16 @@ interface OutputPathItem {
 export const convertToMapDefinition = (
   connections: ConnectionDictionary,
   sourceSchema: SchemaExtended | undefined,
-  targetSchema: SchemaExtended | undefined
+  targetSchema: SchemaExtended | undefined,
+  generateHeader = true
 ): string => {
   if (sourceSchema && targetSchema && isValidToMakeMapDefinition(connections)) {
     const mapDefinition: MapDefinitionEntry = {};
 
-    generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
+    if (generateHeader) {
+      generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
+    }
+
     generateMapDefinitionBody(mapDefinition, connections);
 
     return yaml.dump(mapDefinition, { quotingType: '"', replacer: yamlReplacer }).replaceAll('\\"', '');
