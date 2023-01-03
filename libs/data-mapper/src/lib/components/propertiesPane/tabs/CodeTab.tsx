@@ -47,7 +47,6 @@ export const CodeTab = ({ currentNode, contentHeight }: CodeTabProps) => {
       if (!fnNodeConnection) {
         return `${currentNode.functionName}()`;
       } else {
-        // TODO: isolate mapDef function value generation *HARDer PART*
         return collectFunctionValue(currentNode, fnNodeConnection, connectionDictionary);
       }
     } else {
