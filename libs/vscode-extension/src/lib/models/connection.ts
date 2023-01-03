@@ -76,3 +76,10 @@ export interface ConnectionAcl {
     };
   };
 }
+
+export interface ConnectionStrings {
+  sqlConnectionStringValue: string;
+  azureWebJobsStorageKeyValue: string;
+  azureWebJobsDashboardValue: string;
+  websiteContentAzureFileValue: string;
+}

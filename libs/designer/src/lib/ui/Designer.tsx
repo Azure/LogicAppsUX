@@ -1,5 +1,6 @@
 import { useLayout } from '../core/graphlayout';
 import { useAllOperations, useAllConnectors } from '../core/queries/browse';
+import { useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
@@ -107,6 +108,7 @@ export const CanvasFinder = () => {
 export const Designer = () => {
   const [nodes, edges, flowSize] = useLayout();
   const isEmpty = useIsGraphEmpty();
+  const isReadOnly = useReadOnly();
   const dispatch = useDispatch();
 
   useAllOperations();
@@ -130,7 +132,7 @@ export const Designer = () => {
     },
   ];
 
-  const nodesWithPlaceholder = !isEmpty ? nodes : emptyWorkflowPlaceholderNodes;
+  const nodesWithPlaceholder = !isEmpty ? nodes : isReadOnly ? [] : emptyWorkflowPlaceholderNodes;
 
   const graph = useSelector((state: RootState) => state.workflow.graph);
   useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);
