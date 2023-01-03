@@ -10,6 +10,7 @@ import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createL
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
 import { openFile } from './openFile';
+import { startLogicApp } from './startLogicApp';
 import { stopLogicApp } from './stopLogicApp';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
 import { viewContent } from './workflows/viewContent';
@@ -39,5 +40,6 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.showOutputChannel, () => {
     ext.outputChannel.show();
   });
+  registerCommand(extensionCommand.startLogicApp, startLogicApp);
   registerCommand(extensionCommand.stopLogicApp, stopLogicApp);
 }
