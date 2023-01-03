@@ -64,6 +64,9 @@ export enum extensionCommand {
   deploy = 'logicAppsExtension.deploy',
   deploySlot = 'logicAppsExtension.deploySlot',
   showOutputChannel = 'logicAppsExtension.showOutputChannel',
+  startLogicApp = 'logicAppsExtension.startLogicApp',
+  stopLogicApp = 'logicAppsExtension.stopLogicApp',
+  restartLogicApp = 'logicAppsExtension.restartLogicApp',
   azureFunctionsOpenFile = 'azureFunctions.openFile',
   azureSelectSubscriptions = 'azure-account.selectSubscriptions',
 }
