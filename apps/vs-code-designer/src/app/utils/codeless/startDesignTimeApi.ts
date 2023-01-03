@@ -2,7 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { designerStartApi, hostFileName, localSettingsFileName, workflowDesignerLoadTimeout } from '../../../constants';
+import {
+  defaultVersionRange,
+  designerStartApi,
+  extensionBundleId,
+  hostFileName,
+  localSettingsFileName,
+  workflowDesignerLoadTimeout,
+} from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { updateFuncIgnore } from '../codeless/common';
@@ -22,8 +29,8 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
   const hostFileContent: any = {
     version: '2.0',
     extensionBundle: {
-      id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows',
-      version: '[1.*, 2.0.0)',
+      id: extensionBundleId,
+      version: defaultVersionRange,
     },
     extensions: {
       workflow: {

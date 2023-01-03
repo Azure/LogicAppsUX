@@ -68,6 +68,11 @@
         "command": "logicAppsExtension.deploySlot",
         "title": "Deploy to Slot...",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.createLogicApp",
+        "title": "Create Logic App in Azure...",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -111,6 +116,11 @@
           "command": "logicAppsExtension.selectSubscriptions",
           "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
           "group": "inline"
+        },
+        {
+          "command": "logicAppsExtension.createLogicApp",
+          "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
+          "group": "1@1"
         },
         {
           "command": "logicAppsExtension.openDesigner",

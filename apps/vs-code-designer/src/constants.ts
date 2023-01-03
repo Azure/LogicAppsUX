@@ -31,7 +31,6 @@ export const workflowTenantIdKey = 'WORKFLOWS_TENANT_ID';
 export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
 export const workflowAppApiVersion = '2018-11-01';
 export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
-export const logicAppKind = 'workflowapp';
 export const workflowappRuntime = 'node|14';
 export const viewOutput = localize('viewOutput', 'View Output');
 export const webhookRedirectHostUri = 'Workflows.WebhookRedirectHostUri';
@@ -60,6 +59,7 @@ export enum extensionCommand {
   openFile = 'logicAppsExtension.openFile',
   createNewProject = 'logicAppsExtension.createNewProject',
   createCodeless = 'logicAppsExtension.createCodeless',
+  createLogicApp = 'logicAppsExtension.createLogicApp',
   deploy = 'logicAppsExtension.deploy',
   deploySlot = 'logicAppsExtension.deploySlot',
   showOutputChannel = 'logicAppsExtension.showOutputChannel',
@@ -102,6 +102,9 @@ export const dotnetPublishTaskLabel = 'publish';
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 
+// host.json
+export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
+
 // .NET
 export enum DotnetVersion {
   net6 = 'net6.0',
@@ -112,3 +115,6 @@ export enum DotnetVersion {
 
 // Resources
 export const kubernetesKind = 'kubernetes';
+export const functionAppKind = 'functionapp';
+export const logicAppKind = 'workflowapp';
+export const logicAppKindAppSetting = 'workflowApp';
