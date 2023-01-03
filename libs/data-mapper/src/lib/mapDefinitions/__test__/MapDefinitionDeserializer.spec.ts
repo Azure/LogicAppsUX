@@ -296,7 +296,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect(resultEntries[3][1]).toBeTruthy();
     });
 
-    it.skip('creates a looping conditional connection', () => {
+    it('creates a looping conditional connection', () => {
       simpleMap['ns0:Root'] = {
         ConditionalLooping: {
           CategorizedCatalog: {
