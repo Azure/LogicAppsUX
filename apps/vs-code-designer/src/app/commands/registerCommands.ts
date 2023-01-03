@@ -6,7 +6,7 @@ import { extensionCommand } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt';
 import { createCodeless } from './createCodeless/createCodeless';
-import { createLogicApp } from './createLogicApp/createLogicApp';
+import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
 import { openFile } from './openFile';
@@ -32,6 +32,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.createNewProject, createNewProjectFromCommand);
   registerCommand(extensionCommand.createCodeless, createCodeless);
   registerCommand(extensionCommand.createLogicApp, createLogicApp);
+  registerCommand(extensionCommand.createLogicAppAdvanced, createLogicAppAdvanced);
   registerSiteCommand(extensionCommand.deploy, deployProductionSlot);
   registerSiteCommand(extensionCommand.deploySlot, deploySlot);
   registerCommand(extensionCommand.showOutputChannel, () => {

@@ -60,6 +60,7 @@ export enum extensionCommand {
   createNewProject = 'logicAppsExtension.createNewProject',
   createCodeless = 'logicAppsExtension.createCodeless',
   createLogicApp = 'logicAppsExtension.createLogicApp',
+  createLogicAppAdvanced = 'logicAppsExtension.createLogicAppAdvanced',
   deploy = 'logicAppsExtension.deploy',
   deploySlot = 'logicAppsExtension.deploySlot',
   showOutputChannel = 'logicAppsExtension.showOutputChannel',
