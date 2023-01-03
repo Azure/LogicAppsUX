@@ -14,7 +14,6 @@ const calloutProps: ICalloutProps = {
   preventDismissOnLostFocus: false, // danielle use prevent on preventDismissOnEvent
   preventDismissOnResize: false,
   preventDismissOnScroll: false, // danielle this might be it, true
-  shouldDismissOnWindowFocus: true,
 };
 
 // const preventDismiss = (ev: Event | React.FocusEvent | React.KeyboardEvent | React.MouseEvent):boolean => {
