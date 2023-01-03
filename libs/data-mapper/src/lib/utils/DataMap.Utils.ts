@@ -12,9 +12,12 @@ import {
   nodeHasSpecificInputEventually,
   setConnectionInputValue,
 } from './Connection.Utils';
-import { getIndexValueForCurrentConnection, isFunctionData } from './Function.Utils';
+import { findFunctionForKey, getIndexValueForCurrentConnection, isFunctionData } from './Function.Utils';
 import { addReactFlowPrefix } from './ReactFlow.Util';
-import { isSchemaNodeExtended } from './Schema.Utils';
+import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
+import { isAGuid } from '@microsoft/utils-logic-apps';
+
+type UnknownNode = SchemaNodeExtended | FunctionData | undefined;
 
 export const getParentId = (id: string): string => {
   const last = id.lastIndexOf('/');
@@ -91,6 +94,26 @@ export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): b
 
   // Is valid to generate the map definition
   return allNodesTerminateIntoSource && allRequiredInputsFilledOut;
+};
+
+export const getDestinationNode = (targetKey: string, functions: FunctionData[], schemaTreeRoot: SchemaNodeExtended): UnknownNode => {
+  const dashIndex = targetKey.indexOf('-');
+  const destinationFunctionKey = dashIndex === -1 ? targetKey : targetKey.slice(0, dashIndex); // what is the purpose of this??
+  const destinationFunctionGuid = targetKey.slice(dashIndex + 1);
+  const destinationNode = isAGuid(destinationFunctionGuid) // danielle this needs to be amended for conditional
+    ? findFunctionForKey(destinationFunctionKey, functions)
+    : findNodeForKey(targetKey, schemaTreeRoot);
+  return destinationNode;
+};
+
+export const getDestinationKey = (targetKey: string, destinationNode: UnknownNode): string => {
+  if (destinationNode === undefined) {
+    return targetKey;
+  }
+  if (isSchemaNodeExtended(destinationNode)) {
+    return `${targetPrefix}${destinationNode?.key}`;
+  }
+  return targetKey;
 };
 
 export const splitKeyIntoChildren = (sourceKey: string): string[] => {

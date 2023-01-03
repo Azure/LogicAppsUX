@@ -21,6 +21,7 @@ export const workflowFileName = 'workflow.json';
 export const func = 'func';
 export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
 export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
+export const extensionVersionKey = 'FUNCTIONS_EXTENSION_VERSION';
 
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
@@ -30,9 +31,13 @@ export const workflowTenantIdKey = 'WORKFLOWS_TENANT_ID';
 export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
 export const workflowAppApiVersion = '2018-11-01';
 export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
-export const logicAppKind = 'workflowapp';
 export const workflowappRuntime = 'node|14';
 export const viewOutput = localize('viewOutput', 'View Output');
+export const webhookRedirectHostUri = 'Workflows.WebhookRedirectHostUri';
+export const workflowAppAADClientId = 'WORKFLOWAPP_AAD_CLIENTID';
+export const workflowAppAADObjectId = 'WORKFLOWAPP_AAD_OBJECTID';
+export const workflowAppAADTenantId = 'WORKFLOWAPP_AAD_TENANTID';
+export const workflowAppAADClientSecret = 'WORKFLOWAPP_AAD_CLIENTSECRET';
 
 export enum workflowType {
   stateful = 'Stateful-Codeless',
@@ -54,12 +59,17 @@ export enum extensionCommand {
   openFile = 'logicAppsExtension.openFile',
   createNewProject = 'logicAppsExtension.createNewProject',
   createCodeless = 'logicAppsExtension.createCodeless',
+  createLogicApp = 'logicAppsExtension.createLogicApp',
+  createLogicAppAdvanced = 'logicAppsExtension.createLogicAppAdvanced',
+  deploy = 'logicAppsExtension.deploy',
+  deploySlot = 'logicAppsExtension.deploySlot',
+  showOutputChannel = 'logicAppsExtension.showOutputChannel',
   azureFunctionsOpenFile = 'azureFunctions.openFile',
   azureSelectSubscriptions = 'azure-account.selectSubscriptions',
 }
 
 // Context
-export const contextValuePrefix = 'azFunc';
+export const contextValuePrefix = 'azLogicApps';
 
 // API
 export const defaultRoutePrefix = 'api';
@@ -93,6 +103,9 @@ export const dotnetPublishTaskLabel = 'publish';
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 
+// host.json
+export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
+
 // .NET
 export enum DotnetVersion {
   net6 = 'net6.0',
@@ -100,3 +113,9 @@ export enum DotnetVersion {
   net2 = 'netcoreapp2.1',
   net48 = 'net48',
 }
+
+// Resources
+export const kubernetesKind = 'kubernetes';
+export const functionAppKind = 'functionapp';
+export const logicAppKind = 'workflowapp';
+export const logicAppKindAppSetting = 'workflowApp';

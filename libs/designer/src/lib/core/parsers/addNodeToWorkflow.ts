@@ -109,6 +109,7 @@ const createSubgraphNode = (
     graphId: parent.id,
     subgraphType,
     actionCount: 0,
+    parentNodeId: parent.id === 'root' ? undefined : parent.id,
   };
   addChildEdge(parent, createWorkflowEdge(`${parent.id}-#scope`, node.id, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
 };
@@ -187,6 +188,7 @@ export const addSwitchCaseToWorkflow = (caseId: string, switchNode: WorkflowNode
   addChildNode(caseNode, caseHeading);
   nodesMetadata[caseId] = {
     graphId: switchNode.id,
+    parentNodeId: switchNode.id,
     subgraphType: SUBGRAPH_TYPES.SWITCH_CASE,
     actionCount: 0,
   };

@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 import { localSettingsFileName } from '../../constants';
 import { localize } from '../../localize';
+import { getLocalSettingsJson } from '../utils/appSettings/localSettings';
 import { writeFormattedJson } from '../utils/fs';
-import { getLocalSettingsJson } from '../utils/localSettings';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension';

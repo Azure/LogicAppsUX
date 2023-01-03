@@ -54,6 +54,30 @@
           "light": "assets/light/Codeless.svg",
           "dark": "assets/dark/Codeless.svg"
         }
+      },
+      {
+        "command": "logicAppsExtension.deploy",
+        "title": "Deploy to Logic App...",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/deploy.svg",
+          "dark": "assets/dark/deploy.svg"
+        }
+      },
+      {
+        "command": "logicAppsExtension.deploySlot",
+        "title": "Deploy to Slot...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.createLogicApp",
+        "title": "Create Logic App in Azure...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.createLogicAppAdvanced",
+        "title": "Create Logic App in Azure... (Advanced)",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -85,6 +109,11 @@
           "command": "logicAppsExtension.createCodeless",
           "when": "view == newAzLogicApps",
           "group": "navigation@2"
+        },
+        {
+          "command": "logicAppsExtension.deploy",
+          "when": "view == newAzLogicApps",
+          "group": "navigation@3"
         }
       ],
       "view/item/context": [
@@ -92,6 +121,16 @@
           "command": "logicAppsExtension.selectSubscriptions",
           "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
           "group": "inline"
+        },
+        {
+          "command": "logicAppsExtension.createLogicApp",
+          "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
+          "group": "1@1"
+        },
+        {
+          "command": "logicAppsExtension.createLogicAppAdvanced",
+          "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
+          "group": "1@2"
         },
         {
           "command": "logicAppsExtension.openDesigner",
@@ -102,9 +141,24 @@
           "command": "logicAppsExtension.viewContent",
           "when": "view == newAzLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "2@1"
+        },
+        {
+          "command": "logicAppsExtension.deploy",
+          "when": "view == newAzLogicApps && viewItem == azLogicAppsProductionSlot",
+          "group": "3@1"
+        },
+        {
+          "command": "logicAppsExtension.deploySlot",
+          "when": "view == newAzLogicApps && viewItem == azLogicAppsSlot",
+          "group": "3@2"
         }
       ],
       "explorer/context": [
+        {
+          "command": "logicAppsExtension.deploy",
+          "when": "explorerResourceIsFolder == true",
+          "group": "zzz_LogicApptools@1"
+        },
         {
           "command": "logicAppsExtension.openDesigner",
           "when": "resourceFilename==workflow.json",
@@ -183,6 +237,10 @@
     "onCommand:logicAppsExtension.viewContent",
     "onCommand:logicAppsExtension.createNewProject",
     "onCommand:logicAppsExtension.createCodeless",
+    "onCommand:logicAppsExtension.deploy",
+    "onCommand:logicAppsExtension.deploySlot",
+    "onCommand:logicAppsExtension.createLogicApp",
+    "onCommand:logicAppsExtension.createLogicAppAdvanced",
     "onView:newAzLogicApps",
     "onDebugInitialConfigurations"
   ],

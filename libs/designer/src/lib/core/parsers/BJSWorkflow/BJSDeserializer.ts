@@ -202,6 +202,7 @@ const processScopeActions = (
       ...nodesMetadata,
       [subgraphId]: {
         graphId: graphId,
+        parentNodeId: graphId === 'root' ? undefined : graphId,
         subgraphType,
         actionCount: graph.children.filter((node) => !node.id.includes('-#'))?.length ?? -1,
       },
