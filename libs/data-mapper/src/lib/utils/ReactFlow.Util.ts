@@ -343,11 +343,8 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
     reactFlowNodes.push({
       id: functionKey,
       data: {
-        displayName: fnNode.displayName,
-        functionName: fnNode.functionName,
+        functionData: fnNode,
         displayHandle: true,
-        maxNumberOfInputs: fnNode.maxNumberOfInputs,
-        inputs: fnNode.inputs,
         functionBranding: getFunctionBrandingForCategory(fnNode.category),
         disabled: false,
         error: false,

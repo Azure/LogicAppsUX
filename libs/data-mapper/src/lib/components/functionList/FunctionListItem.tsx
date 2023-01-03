@@ -47,8 +47,7 @@ const FunctionListItem = ({ functionData }: FunctionListItemProps) => {
   const cardStyles = useCardStyles();
 
   const fnBranding = getFunctionBrandingForCategory(functionData.category);
-  // TODO: undefined -> functionData.iconFileName once all SVGs in
-  const fnIcon = getIconForFunction(functionData.displayName, undefined, fnBranding);
+  const fnIcon = getIconForFunction(functionData.functionName, functionData.category, functionData.iconFileName, fnBranding);
 
   return (
     <Button key={functionData.key} alt-text={functionData.displayName} className={cardStyles.button}>
