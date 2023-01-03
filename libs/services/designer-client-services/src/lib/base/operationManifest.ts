@@ -171,7 +171,7 @@ export interface BaseOperationManifestServiceOptions {
   supportedTypes?: string[];
 }
 
-export class BaseOperationManifestService implements IOperationManifestService {
+export abstract class BaseOperationManifestService implements IOperationManifestService {
   constructor(readonly options: BaseOperationManifestServiceOptions) {
     const { apiVersion, baseUrl, httpClient } = options;
     if (!apiVersion) {
@@ -191,28 +191,9 @@ export class BaseOperationManifestService implements IOperationManifestService {
       : supportedManifestTypes.indexOf(normalizedOperationType) > -1;
   }
 
-  async getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo> {
-    if (isBuiltInOperation(definition)) {
-      return getBuiltInOperationInfo(definition, isTrigger);
-    } else if (isServiceProviderOperation(definition)) {
-      return {
-        connectorId: definition.inputs.serviceProviderConfiguration.serviceProviderId,
-        operationId: definition.inputs.serviceProviderConfiguration.operationId,
-      };
-    }
+  abstract getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo>;
 
-    return {
-      connectorId: 'Unknown',
-      operationId: 'Unknown',
-    };
-
-    //throw new UnsupportedException(`Operation type: ${definition.type} does not support manifest.`);
-  }
-
-  async getOperationManifest(_connectorId: string, _operationId: string): Promise<OperationManifest> {
-    // This is overriden in the extended classes for standard and consumption
-    return { properties: {} } as any;
-  }
+  abstract getOperationManifest(_connectorId: string, _operationId: string): Promise<OperationManifest>;
 
   getSplitOnOutputs(manifest: OperationManifest, splitOn: SplitOn): SchemaObject {
     if (splitOn === undefined) {
@@ -298,11 +279,7 @@ function isSupportedSplitOnExpression(expression: Expression): boolean {
   return true;
 }
 
-function isServiceProviderOperation(definition: any): boolean {
-  return equals(definition.type, 'ServiceProvider');
-}
-
-function isBuiltInOperation(definition: any): boolean {
+export function isBuiltInOperation(definition: any): boolean {
   switch (definition?.type?.toLowerCase()) {
     case as2Decode:
     case as2Encode:
@@ -350,7 +327,7 @@ function isBuiltInOperation(definition: any): boolean {
   }
 }
 
-function getBuiltInOperationInfo(definition: any, isTrigger: boolean): OperationInfo {
+export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): OperationInfo {
   const normalizedOperationType = definition.type.toLowerCase();
   const kind = definition.kind ? definition.kind.toLowerCase() : undefined;
 

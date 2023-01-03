@@ -1,5 +1,5 @@
-import { supportedBaseManifestObjects } from '../base/operationManifest';
-import { StandardOperationManifestService } from '../standard';
+import { BaseOperationManifestService } from '../base';
+import { getBuiltInOperationInfo, isBuiltInOperation, supportedBaseManifestObjects } from '../base/operationmanifest';
 // import { equals, ConnectionType } from '@microsoft/utils-logic-apps';
 import { composeManifest } from './manifests/compose';
 import { flatFileDecodingManifest, flatFileEncodingManifest } from './manifests/flatfile';
@@ -7,9 +7,22 @@ import { inlineCodeManifest } from './manifests/inlinecode';
 import { integrationAccountArtifactLookupManifest } from './manifests/integrationaccountartifactlookup';
 import { liquidJsonToJsonManifest, liquidJsonToTextManifest, liquidXmlToJsonManifest, liquidXmlToTextManifest } from './manifests/liquid';
 import { xmlTransformManifest, xmlValidationManifest } from './manifests/xml';
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
+import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 
-export class ConsumptionOperationManifestService extends StandardOperationManifestService {
+export class ConsumptionOperationManifestService extends BaseOperationManifestService {
+  override async getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo> {
+    if (isBuiltInOperation(definition)) {
+      return getBuiltInOperationInfo(definition, isTrigger);
+    }
+
+    return {
+      connectorId: 'Unknown',
+      operationId: 'Unknown',
+    };
+
+    //throw new UnsupportedException(`Operation type: ${definition.type} does not support manifest.`);
+  }
+
   override async getOperationManifest(_connectorId: string, operationId: string): Promise<OperationManifest> {
     const supportedManifest = supportedConsumptionManifestObjects.get(operationId);
     return supportedManifest ?? ({ properties: {} } as any);

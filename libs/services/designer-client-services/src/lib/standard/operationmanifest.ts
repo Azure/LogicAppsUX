@@ -1,9 +1,27 @@
 import { BaseOperationManifestService } from '../base';
-import { supportedBaseManifestObjects } from '../base/operationManifest';
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
+import { getBuiltInOperationInfo, isBuiltInOperation, supportedBaseManifestObjects } from '../base/operationmanifest';
+import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 import { equals, ConnectionType } from '@microsoft/utils-logic-apps';
 
 export class StandardOperationManifestService extends BaseOperationManifestService {
+  override async getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo> {
+    if (isBuiltInOperation(definition)) {
+      return getBuiltInOperationInfo(definition, isTrigger);
+    } else if (isServiceProviderOperation(definition)) {
+      return {
+        connectorId: definition.inputs.serviceProviderConfiguration.serviceProviderId,
+        operationId: definition.inputs.serviceProviderConfiguration.operationId,
+      };
+    }
+
+    return {
+      connectorId: 'Unknown',
+      operationId: 'Unknown',
+    };
+
+    //throw new UnsupportedException(`Operation type: ${definition.type} does not support manifest.`);
+  }
+
   override async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
     const supportedManifest = supportedBaseManifestObjects.get(operationId);
 
@@ -43,4 +61,8 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
       return { properties: {} } as any;
     }
   }
+}
+
+function isServiceProviderOperation(definition: any): boolean {
+  return equals(definition.type, 'ServiceProvider');
 }
