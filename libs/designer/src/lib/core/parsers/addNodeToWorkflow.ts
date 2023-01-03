@@ -109,7 +109,7 @@ const createSubgraphNode = (
     graphId: parent.id,
     subgraphType,
     actionCount: 0,
-    parentNodeId: parent.id === 'root' ? undefined : parent.id
+    parentNodeId: parent.id === 'root' ? undefined : parent.id,
   };
   addChildEdge(parent, createWorkflowEdge(`${parent.id}-#scope`, node.id, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
 };

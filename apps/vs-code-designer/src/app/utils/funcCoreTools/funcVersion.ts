@@ -33,7 +33,7 @@ export function tryParseFuncVersion(data: string | undefined): FuncVersion | und
  * @param {string} data - Package version.
  * @returns {string | undefined} Major version.
  */
-function tryGetMajorVersion(data: string): string | undefined {
+export function tryGetMajorVersion(data: string): string | undefined {
   const match: RegExpMatchArray | null = data.match(/^[~v]?([0-9]+)/i);
   return match ? match[1] : undefined;
 }

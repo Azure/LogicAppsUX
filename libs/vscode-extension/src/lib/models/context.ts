@@ -1,7 +1,7 @@
 import type { StorageOptions } from './connection';
 import type { FuncVersion } from './functions';
 import type { IAppServiceWizardContext } from '@microsoft/vscode-azext-azureappservice';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { IActionContext, ICreateChildImplContext } from '@microsoft/vscode-azext-utils';
 
 export interface IIdentityWizardContext extends IActionContext {
   clientId?: string;
@@ -18,4 +18,8 @@ export interface IFunctionAppWizardContext extends IAppServiceWizardContext {
   runtimeFilter?: string;
   storageType?: StorageOptions;
   sqlConnectionString?: string;
+}
+
+export interface ICreateLogicAppContext extends ICreateChildImplContext {
+  newResourceGroupName?: string;
 }

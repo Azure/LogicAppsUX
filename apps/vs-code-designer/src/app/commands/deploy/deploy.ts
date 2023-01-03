@@ -29,7 +29,7 @@ import {
   AdvancedIdentityClientIdStep,
   AdvancedIdentityTenantIdStep,
   AdvancedIdentityClientSecretStep,
-} from '../createFunctionApp/advancedIdentityPromptSteps';
+} from '../createLogicApp/createLogicAppSteps/AdvancedIdentityPromptSteps';
 import { getDeployNode as getInnerDeployNode } from './getDeployNode';
 import type { IDeployNode } from './getDeployNode';
 import { notifyDeployComplete } from './notifyDeployComplete';
