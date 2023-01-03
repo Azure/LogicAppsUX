@@ -78,6 +78,21 @@
         "command": "logicAppsExtension.createLogicAppAdvanced",
         "title": "Create Logic App in Azure... (Advanced)",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.startLogicApp",
+        "title": "Start",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.stopLogicApp",
+        "title": "Stop",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.restartLogicApp",
+        "title": "Restart",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -151,6 +166,21 @@
           "command": "logicAppsExtension.deploySlot",
           "when": "view == newAzLogicApps && viewItem == azLogicAppsSlot",
           "group": "3@2"
+        },
+        {
+          "command": "logicAppsExtension.startLogicApp",
+          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "group": "2@1"
+        },
+        {
+          "command": "logicAppsExtension.stopLogicApp",
+          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "group": "2@2"
+        },
+        {
+          "command": "logicAppsExtension.restartLogicApp",
+          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "group": "2@3"
         }
       ],
       "explorer/context": [
@@ -241,6 +271,9 @@
     "onCommand:logicAppsExtension.deploySlot",
     "onCommand:logicAppsExtension.createLogicApp",
     "onCommand:logicAppsExtension.createLogicAppAdvanced",
+    "onCommand:logicAppsExtension.startLogicApp",
+    "onCommand:logicAppsExtension.stopLogicApp",
+    "onCommand:logicAppsExtension.restartLogicApp",
     "onView:newAzLogicApps",
     "onDebugInitialConfigurations"
   ],
