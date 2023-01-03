@@ -11,10 +11,18 @@ export interface CardContextMenuProps extends Pick<CardProps, 'contextMenuOption
 }
 
 const calloutProps: ICalloutProps = {
-  preventDismissOnLostFocus: false,
+  preventDismissOnLostFocus: false, // danielle use prevent on preventDismissOnEvent
   preventDismissOnResize: false,
-  preventDismissOnScroll: false, // danielle this might be it
+  preventDismissOnScroll: false, // danielle this might be it, true
+  shouldDismissOnWindowFocus: true,
 };
+
+// const preventDismiss = (ev: Event | React.FocusEvent | React.KeyboardEvent | React.MouseEvent):boolean => {
+//   if (ev) {
+//     return true;
+//   }
+//   return false;
+// }
 
 export const CardContextMenu: React.FC<CardContextMenuProps> = ({
   contextMenuLocation,

@@ -272,7 +272,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
     return {
       key: deleteNode,
-      disabled: false,
+      disabled: !isSourceSchemaNode,
       iconName: 'Delete',
       title: deleteNode,
       type: MenuItemType.Advanced,
@@ -289,7 +289,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
       {isNBadgeRequired && !isSourceSchemaNode && <NBadge isOutput />}
 
       <div
-        onContextMenu={isSourceSchemaNode ? contextMenu.handle : undefined}
+        onContextMenu={contextMenu.handle}
         className={containerStyle}
         style={isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId ? selectedCardStyles : undefined}
         onMouseLeave={() => setIsCardHovered(false)}
@@ -334,7 +334,8 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
             onMouseLeave={() => setIsChevronHovered(false)}
           />
         )}
-        {isSourceSchemaNode && (
+        {
+          // danielle maybe show blank menu for target node? Kinda odd that the regular right-click loads
           <CardContextMenu
             title={'remove'}
             contextMenuLocation={contextMenu.location}
@@ -342,7 +343,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
             showContextMenu={contextMenu.isShowing}
             onSetShowContextMenu={contextMenu.setIsShowing}
           />
-        )}
+        }
       </div>
 
       {isNBadgeRequired && isSourceSchemaNode && <NBadge />}
