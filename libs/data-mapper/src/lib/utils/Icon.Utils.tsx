@@ -210,7 +210,6 @@ export const iconForFunctionCategory = (functionCategory: FunctionCategory) => {
 };
 
 export const iconUriForIconImageName = (iconImageName: string) => {
-  // TODO Temp CDN, will need to be moved into a production location
   return `${iconBaseUrl}${iconImageName}`;
 };
 
