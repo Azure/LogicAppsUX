@@ -105,11 +105,8 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     [selectedParamSetIndex]
   );
 
-  const hasOptionalOnPremGateway = useMemo(
-    () => connectorCapabilities?.includes(Capabilities[Capabilities.gateway]),
-    [connectorCapabilities]
-  );
-  const [showOptionalOnPremGateway, setShowOptionalOnPremGateway] = useState<boolean>(false);
+  const hasOptionalGateway = useMemo(() => connectorCapabilities?.includes(Capabilities[Capabilities.gateway]), [connectorCapabilities]);
+  const [optionalGatewayEnabled, setOptionalGatewayEnabled] = useState<boolean>(false);
 
   const isParamVisible = useCallback(
     (parameter: ParamType) => {
@@ -118,11 +115,11 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
       const dependencyParam = constraints?.dependentParameter;
       if (dependencyParam && parameterValues[dependencyParam.parameter] !== dependencyParam.value) return false;
       if (parameter.type === ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]) return false;
-      if (!showOptionalOnPremGateway && parameter.uiDefinition?.constraints?.capability?.includes(Capabilities[Capabilities.gateway]))
+      if (!optionalGatewayEnabled && parameter.uiDefinition?.constraints?.capability?.includes(Capabilities[Capabilities.gateway]))
         return false;
       return true;
     },
-    [parameterValues, showOptionalOnPremGateway]
+    [parameterValues, optionalGatewayEnabled]
   );
 
   const singleAuthParams = useMemo(() => connectionParameters ?? {}, [connectionParameters]);
@@ -136,14 +133,14 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     return filterRecord<any>(params, (_key, value) => isParamVisible(value));
   }, [isMultiAuth, isParamVisible, multiAuthParams, singleAuthParams]);
   const hasOAuth = useMemo(
-    () => checkOAuthCallback(isMultiAuth ? multiAuthParams : singleAuthParams) && !showOptionalOnPremGateway,
-    [checkOAuthCallback, isMultiAuth, multiAuthParams, showOptionalOnPremGateway, singleAuthParams]
+    () => checkOAuthCallback(isMultiAuth ? multiAuthParams : singleAuthParams) && !optionalGatewayEnabled,
+    [checkOAuthCallback, isMultiAuth, multiAuthParams, optionalGatewayEnabled, singleAuthParams]
   );
 
   // Don't show name for simple connections
   const showNameInput = useMemo(
-    () => (isMultiAuth || Object.keys(parameters).length > 0) && !hasOptionalOnPremGateway,
-    [hasOptionalOnPremGateway, isMultiAuth, parameters]
+    () => (isMultiAuth || Object.keys(parameters).length > 0) && !hasOptionalGateway,
+    [hasOptionalGateway, isMultiAuth, parameters]
   );
 
   const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
@@ -298,15 +295,15 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
       {/* Parameters */}
       <div className="connection-params-container">
         {/* OptionalGateway Check */}
-        {hasOptionalOnPremGateway && (
+        {hasOptionalGateway && (
           <div className="param-row center">
             <Checkbox
               label={intl.formatMessage({
                 defaultMessage: 'Connect via on-premises data gateway',
                 description: 'Checkbox label for using an on-premises gateway',
               })}
-              checked={showOptionalOnPremGateway}
-              onChange={() => setShowOptionalOnPremGateway(!showOptionalOnPremGateway)}
+              checked={optionalGatewayEnabled}
+              onChange={() => setOptionalGatewayEnabled(!optionalGatewayEnabled)}
               disabled={isLoading}
             />
             <TooltipHost content={gatewayTooltipText}>
