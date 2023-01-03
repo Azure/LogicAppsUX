@@ -164,12 +164,12 @@
         },
         {
           "command": "logicAppsExtension.startLogicApp",
-          "when": "view == newAzLogicApps && viewItem =~ /^azFunc(Production|)Slot$/",
+          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "2@1"
         },
         {
           "command": "logicAppsExtension.stopLogicApp",
-          "when": "view == newAzLogicApps && viewItem =~ /^azFunc(Production|)Slot$/",
+          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "2@2"
         }
       ],

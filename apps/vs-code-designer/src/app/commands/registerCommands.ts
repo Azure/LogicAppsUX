@@ -10,6 +10,7 @@ import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createL
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
 import { openFile } from './openFile';
+import { stopLogicApp } from './stopLogicApp';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
 import { viewContent } from './workflows/viewContent';
 import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
@@ -38,4 +39,5 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.showOutputChannel, () => {
     ext.outputChannel.show();
   });
+  registerCommand(extensionCommand.stopLogicApp, stopLogicApp);
 }
