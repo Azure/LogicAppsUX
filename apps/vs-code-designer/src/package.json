@@ -93,6 +93,11 @@
         "command": "logicAppsExtension.restartLogicApp",
         "title": "Restart",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.pickProcess",
+        "title": "Pick Process",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -211,6 +216,10 @@
         {
           "command": "logicAppsExtension.viewContent",
           "when": "never"
+        },
+        {
+          "command": "logicAppsExtension.pickProcess",
+          "when": "never"
         }
       ]
     },
@@ -252,6 +261,11 @@
             "scope": "resource",
             "type": "string",
             "description": "The default subpath of a workspace folder to use when deploying. If set, you will not be prompted for the folder path when deploying."
+          },
+          "logicAppsExtension.pickProcessTimeout": {
+            "type": "integer",
+            "description": "The timeout (in seconds) to be used when searching for the Azure Functions host process. Since a build is required every time you F5, you may need to adjust this based on how long your build takes.",
+            "default": 60
           }
         }
       }
@@ -274,6 +288,7 @@
     "onCommand:logicAppsExtension.startLogicApp",
     "onCommand:logicAppsExtension.stopLogicApp",
     "onCommand:logicAppsExtension.restartLogicApp",
+    "onCommand:logicAppsExtension.pickProcess",
     "onView:newAzLogicApps",
     "onDebugInitialConfigurations"
   ],
