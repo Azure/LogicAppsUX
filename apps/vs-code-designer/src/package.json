@@ -88,6 +88,11 @@
         "command": "logicAppsExtension.stopLogicApp",
         "title": "Stop",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.restartLogicApp",
+        "title": "Restart",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -171,6 +176,11 @@
           "command": "logicAppsExtension.stopLogicApp",
           "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "2@2"
+        },
+        {
+          "command": "logicAppsExtension.restartLogicApp",
+          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "group": "2@3"
         }
       ],
       "explorer/context": [
@@ -263,6 +273,7 @@
     "onCommand:logicAppsExtension.createLogicAppAdvanced",
     "onCommand:logicAppsExtension.startLogicApp",
     "onCommand:logicAppsExtension.stopLogicApp",
+    "onCommand:logicAppsExtension.restartLogicApp",
     "onView:newAzLogicApps",
     "onDebugInitialConfigurations"
   ],
