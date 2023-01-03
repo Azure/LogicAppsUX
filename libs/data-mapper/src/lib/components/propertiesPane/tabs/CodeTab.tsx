@@ -3,6 +3,7 @@ import type { RootState } from '../../../core/state/Store';
 import { convertToMapDefinition } from '../../../mapDefinitions';
 import type { SchemaNodeExtended, FunctionData } from '../../../models';
 import type { ConnectionDictionary } from '../../../models/Connection';
+import { collectFunctionValue } from '../../../utils/DataMap.Utils';
 import { isFunctionData } from '../../../utils/Function.Utils';
 import { addSourceReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
@@ -47,7 +48,7 @@ export const CodeTab = ({ currentNode, contentHeight }: CodeTabProps) => {
         return `${currentNode.functionName}()`;
       } else {
         // TODO: isolate mapDef function value generation *HARDer PART*
-        return 'TODO';
+        return collectFunctionValue(currentNode, fnNodeConnection, connectionDictionary);
       }
     } else {
       const srcSchemaNode = sourceSchemaDictionary[addSourceReactFlowPrefix(currentNode.key)];
