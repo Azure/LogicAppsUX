@@ -17,6 +17,12 @@
       "value": "Failed loading the schema. Please try again."
     }
   ],
+  "+JCU+Y": [
+    {
+      "type": 0,
+      "value": "Select this if you are configuring an on-prem connection"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -5805,6 +5811,12 @@
     {
       "type": 0,
       "value": "Int"
+    }
+  ],
+  "rAwCdh": [
+    {
+      "type": 0,
+      "value": "Connect via on-premises data gateway"
     }
   ],
   "rAyuzv": [

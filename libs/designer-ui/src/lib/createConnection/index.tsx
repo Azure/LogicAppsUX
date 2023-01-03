@@ -26,7 +26,7 @@ import type {
   Gateway,
   Subscription,
 } from '@microsoft/utils-logic-apps';
-import { ConnectionParameterTypes } from '@microsoft/utils-logic-apps';
+import { Capabilities, ConnectionParameterTypes } from '@microsoft/utils-logic-apps';
 import type { FormEvent } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -34,6 +34,7 @@ import type { UseQueryResult } from 'react-query';
 
 export interface CreateConnectionProps {
   connectorDisplayName: string;
+  connectorCapabilities?: string[];
   connectionParameters?: Record<string, ConnectionParameter>;
   connectionParameterSets?: ConnectionParameterSets;
   isLoading?: boolean;
@@ -66,6 +67,7 @@ type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const {
     connectorDisplayName,
+    connectorCapabilities,
     connectionParameters,
     connectionParameterSets,
     isLoading,
@@ -103,6 +105,12 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     [selectedParamSetIndex]
   );
 
+  const hasOptionalOnPremGateway = useMemo(
+    () => connectorCapabilities?.includes(Capabilities[Capabilities.gateway]),
+    [connectorCapabilities]
+  );
+  const [showOptionalOnPremGateway, setShowOptionalOnPremGateway] = useState<boolean>(false);
+
   const isParamVisible = useCallback(
     (parameter: ParamType) => {
       const constraints = parameter?.uiDefinition?.constraints;
@@ -110,9 +118,11 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
       const dependencyParam = constraints?.dependentParameter;
       if (dependencyParam && parameterValues[dependencyParam.parameter] !== dependencyParam.value) return false;
       if (parameter.type === ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]) return false;
+      if (!showOptionalOnPremGateway && parameter.uiDefinition?.constraints?.capability?.includes(Capabilities[Capabilities.gateway]))
+        return false;
       return true;
     },
-    [parameterValues]
+    [parameterValues, showOptionalOnPremGateway]
   );
 
   const singleAuthParams = useMemo(() => connectionParameters ?? {}, [connectionParameters]);
@@ -126,12 +136,15 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     return filterRecord<any>(params, (_key, value) => isParamVisible(value));
   }, [isMultiAuth, isParamVisible, multiAuthParams, singleAuthParams]);
   const hasOAuth = useMemo(
-    () => checkOAuthCallback(isMultiAuth ? multiAuthParams : singleAuthParams),
-    [checkOAuthCallback, isMultiAuth, multiAuthParams, singleAuthParams]
+    () => checkOAuthCallback(isMultiAuth ? multiAuthParams : singleAuthParams) && !showOptionalOnPremGateway,
+    [checkOAuthCallback, isMultiAuth, multiAuthParams, showOptionalOnPremGateway, singleAuthParams]
   );
 
   // Don't show name for simple connections
-  const showNameInput = useMemo(() => isMultiAuth || Object.keys(parameters).length > 0, [isMultiAuth, parameters]);
+  const showNameInput = useMemo(
+    () => (isMultiAuth || Object.keys(parameters).length > 0) && !hasOptionalOnPremGateway,
+    [hasOptionalOnPremGateway, isMultiAuth, parameters]
+  );
 
   const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
   const validParams = useMemo(() => {
@@ -239,6 +252,11 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     description: 'Label for function app selection',
   });
 
+  const gatewayTooltipText = intl.formatMessage({
+    defaultMessage: 'Select this if you are configuring an on-prem connection',
+    description: 'Tooltip for on-prem gateway connection checkbox',
+  });
+
   const connectorDescription = useMemo(() => {
     if (hasOAuth) return authDescriptionText;
     if (Object.keys(parameters ?? {}).length === 0) return simpleDescriptionText;
@@ -279,6 +297,24 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
 
       {/* Parameters */}
       <div className="connection-params-container">
+        {/* OptionalGateway Check */}
+        {hasOptionalOnPremGateway && (
+          <div className="param-row center">
+            <Checkbox
+              label={intl.formatMessage({
+                defaultMessage: 'Connect via on-premises data gateway',
+                description: 'Checkbox label for using an on-premises gateway',
+              })}
+              checked={showOptionalOnPremGateway}
+              onChange={() => setShowOptionalOnPremGateway(!showOptionalOnPremGateway)}
+              disabled={isLoading}
+            />
+            <TooltipHost content={gatewayTooltipText}>
+              <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
+            </TooltipHost>
+          </div>
+        )}
+
         {/* Name */}
         {showNameInput && (
           <div className="param-row">
@@ -333,7 +369,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
             if (parameter?.type === ConnectionParameterTypes[ConnectionParameterTypes.gatewaySetting]) {
               inputComponent = (
                 <GatewayPicker
-                  key={key}
+                  gatewayKey={key}
                   selectedSubscriptionId={selectedSubscriptionId}
                   selectSubscriptionCallback={selectSubscriptionCallback}
                   availableGateways={availableGateways}
@@ -403,7 +439,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
             return (
               <div key={key} className="param-row">
                 <Label className="label" required={constraints?.required === 'true'} htmlFor={key} disabled={isLoading}>
-                  {data?.displayName}
+                  {data?.displayName ?? key}
                   <TooltipHost content={data?.tooltip}>
                     <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
                   </TooltipHost>

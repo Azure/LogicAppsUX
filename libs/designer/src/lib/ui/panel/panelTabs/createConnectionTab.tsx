@@ -178,6 +178,7 @@ const CreateConnectionTab = () => {
   return (
     <CreateConnection
       connectorDisplayName={connector.properties.displayName}
+      connectorCapabilities={connector.properties.capabilities}
       connectionParameters={connector.properties.connectionParameters}
       connectionParameterSets={connector.properties.connectionParameterSets}
       createConnectionCallback={createConnectionCallback}
