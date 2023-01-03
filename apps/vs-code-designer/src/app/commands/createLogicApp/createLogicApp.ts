@@ -38,3 +38,11 @@ export async function createLogicApp(
     throw new Error(`Error in creating logic app. ${error}`);
   }
 }
+
+export async function createLogicAppAdvanced(
+  context: IActionContext,
+  subscription?: AzExtParentTreeItem | string,
+  newResourceGroupName?: string
+): Promise<string> {
+  return await createLogicApp({ ...context, advancedCreation: true }, subscription, newResourceGroupName);
+}
