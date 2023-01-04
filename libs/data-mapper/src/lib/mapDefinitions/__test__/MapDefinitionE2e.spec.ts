@@ -19,9 +19,6 @@ describe('mapDefinitions/MapDefinitionE2e', () => {
     functionMock
   );
 
-  // TODO: remove
-  console.dir(Object.entries(deserializedConnectionDictionary).slice(3, 8), { depth: null });
-
   describe('Initial deserialization', () => {
     it('Direct translation (passthrough)', () => {
       expect(
@@ -38,12 +35,17 @@ describe('mapDefinitions/MapDefinitionE2e', () => {
           .reactFlowKey
       ).toBe('source-/ns0:Root/DataTranslation/Employee/EmploymentStatus');
 
-      expect(
-        (
-          deserializedConnectionDictionary['target-/ns0:Root/DataTranslation/EmployeeName']?.inputs[0][0] as ConnectionUnit
-        ).reactFlowKey.includes('Concat')
-      ).toBe(true);
-      // TODO: Ensure the Concat node's inputs match what the map definition specifies
+      const concatRfKey = (
+        deserializedConnectionDictionary['target-/ns0:Root/DataTranslation/EmployeeName']?.inputs[0][0] as ConnectionUnit
+      ).reactFlowKey;
+      expect(concatRfKey.includes('Concat')).toBe(true);
+      expect((deserializedConnectionDictionary[concatRfKey]?.inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/DataTranslation/Employee/FirstName'
+      );
+      expect(deserializedConnectionDictionary[concatRfKey]?.inputs[0][1] as ConnectionUnit).toBe(`" "`);
+      expect((deserializedConnectionDictionary[concatRfKey]?.inputs[0][2] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/DataTranslation/Employee/LastName'
+      );
     });
 
     it('Content enrichment', () => {
@@ -79,7 +81,7 @@ describe('mapDefinitions/MapDefinitionE2e', () => {
     // TODO (Support deserialization): WI #16700908 - this scenario technically occurs within that ^ category
     // from the mapDef, so may need to do some rearranging/re-labeling
 
-    it('Name value transforms (???)', () => {
+    it.skip('Name value transforms (???)', () => {
       // TODO: Figure out what this category is testing for (or if it's just demo'ing a different real-world scenario)
       expect(true).toBeTruthy();
     });
