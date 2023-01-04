@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { azureFunctionConnectorId } from '../base/operationmanifest';
+import { azureFunctionConnectorId } from '../base/tempoperationmanifest';
 import type { HttpResponse } from '../common/exceptions/service';
 import type {
   ConnectionCreationInfo,

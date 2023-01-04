@@ -1,5 +1,5 @@
 import { BaseOperationManifestService } from '../base';
-import { getBuiltInOperationInfo, isBuiltInOperation, supportedBaseManifestObjects } from '../base/operationmanifest';
+import { getBuiltInOperationInfo, isBuiltInOperation, supportedBaseManifestObjects } from '../base/tempoperationmanifest';
 // import { equals, ConnectionType } from '@microsoft/utils-logic-apps';
 import { composeManifest } from './manifests/compose';
 import { flatFileDecodingManifest, flatFileEncodingManifest } from './manifests/flatfile';

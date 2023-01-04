@@ -1,2 +1,2 @@
-export { BaseOperationManifestService, foreachOperationInfo } from './operationmanifest';
-export type { BaseOperationManifestServiceOptions } from './operationmanifest';
+export { BaseOperationManifestService, foreachOperationInfo } from './tempoperationmanifest';
+export type { BaseOperationManifestServiceOptions } from './tempoperationmanifest';
