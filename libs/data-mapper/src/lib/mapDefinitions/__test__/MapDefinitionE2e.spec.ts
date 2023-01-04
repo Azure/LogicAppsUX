@@ -18,6 +18,7 @@ describe('mapDefinitions/MapDefinitionE2e', () => {
     mockTargetSchema,
     functionMock
   );
+
   describe('Initial deserialization', () => {
     it('TODO: Each individual deserialization case', () => {
       expect(true).toBeTruthy();
@@ -28,8 +29,10 @@ describe('mapDefinitions/MapDefinitionE2e', () => {
   const reserializedMapDefinition: MapDefinitionEntry = yaml.load(
     convertToMapDefinition(deserializedConnectionDictionary, mockSourceSchema, mockTargetSchema)
   ) as MapDefinitionEntry;
+
   describe('Re-serialization', () => {
     it('Unmodified / re-serialized map definition reproduces exact same initial map definition', () => {
+      // NOTE: toEqual will log the specific properties/values that differ
       expect(reserializedMapDefinition).toEqual(mockTranscriptMapDefinition);
     });
   });
