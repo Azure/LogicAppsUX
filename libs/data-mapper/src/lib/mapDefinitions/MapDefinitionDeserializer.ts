@@ -117,6 +117,54 @@ const parseDefinitionToConditionalConnection = (
   );
 };
 
+const callChildObjects = (
+  sourceNodeObject: string | object | any,
+  targetKey: string,
+  connections: ConnectionDictionary,
+  createdNodes: { [completeFunction: string]: string },
+  sourceSchema: SchemaExtended,
+  sourceSchemaFlattened: SchemaNodeDictionary,
+  targetSchema: SchemaExtended,
+  targetSchemaFlattened: SchemaNodeDictionary,
+  functions: FunctionData[]
+) => {
+  const childEntries = Object.entries(sourceNodeObject);
+  childEntries.forEach((childEntry) => {
+    let childTargetKey = targetKey;
+    if (childEntry[0] !== mapNodeParams.value) {
+      const trimmedChildKey = childEntry[0].startsWith('$@') ? childEntry[0].substring(1) : childEntry[0];
+      childTargetKey = `${targetKey}/${trimmedChildKey}`;
+    }
+
+    if (childEntry[0].startsWith(mapNodeParams.if)) {
+      parseDefinitionToConditionalConnection(
+        sourceNodeObject[childEntry[0]],
+        childEntry[0],
+        targetKey,
+        connections,
+        createdNodes,
+        sourceSchema,
+        sourceSchemaFlattened,
+        targetSchema,
+        targetSchemaFlattened,
+        functions
+      );
+    } else {
+      parseDefinitionToConnection(
+        childEntry[1],
+        childTargetKey,
+        connections,
+        createdNodes,
+        sourceSchema,
+        sourceSchemaFlattened,
+        targetSchema,
+        targetSchemaFlattened,
+        functions
+      );
+    }
+  });
+};
+
 const createConnections = (
   sourceNodeString: string,
   targetKey: string,
@@ -192,52 +240,4 @@ const createConnections = (
       );
     });
   }
-};
-
-const callChildObjects = (
-  sourceNodeObject: string | object | any,
-  targetKey: string,
-  connections: ConnectionDictionary,
-  createdNodes: { [completeFunction: string]: string },
-  sourceSchema: SchemaExtended,
-  sourceSchemaFlattened: SchemaNodeDictionary,
-  targetSchema: SchemaExtended,
-  targetSchemaFlattened: SchemaNodeDictionary,
-  functions: FunctionData[]
-) => {
-  const childEntries = Object.entries(sourceNodeObject);
-  childEntries.forEach((childEntry) => {
-    let childTargetKey = targetKey;
-    if (childEntry[0] !== mapNodeParams.value) {
-      const trimmedChildKey = childEntry[0].startsWith('$@') ? childEntry[0].substring(1) : childEntry[0];
-      childTargetKey = `${targetKey}/${trimmedChildKey}`;
-    }
-
-    if (childEntry[0].startsWith(mapNodeParams.if)) {
-      parseDefinitionToConditionalConnection(
-        sourceNodeObject[childEntry[0]],
-        childEntry[0],
-        targetKey,
-        connections,
-        createdNodes,
-        sourceSchema,
-        sourceSchemaFlattened,
-        targetSchema,
-        targetSchemaFlattened,
-        functions
-      );
-    } else {
-      parseDefinitionToConnection(
-        childEntry[1],
-        childTargetKey,
-        connections,
-        createdNodes,
-        sourceSchema,
-        sourceSchemaFlattened,
-        targetSchema,
-        targetSchemaFlattened,
-        functions
-      );
-    }
-  });
 };
