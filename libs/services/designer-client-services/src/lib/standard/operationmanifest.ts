@@ -1,5 +1,5 @@
 import { BaseOperationManifestService } from '../base';
-import { getBuiltInOperationInfo, isBuiltInOperation, supportedBaseManifestObjects } from '../base/tempoperationmanifest';
+import { getBuiltInOperationInfo, isBuiltInOperation, supportedBaseManifestObjects } from '../base/operationmanifest';
 import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 import { equals, ConnectionType } from '@microsoft/utils-logic-apps';
 
