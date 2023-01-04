@@ -1,10 +1,17 @@
-import { setCanvasToolboxTabToDisplay, setInlineFunctionInputOutputKeys } from '../../core/state/DataMapSlice';
+import {
+  deleteCurrentlySelectedItem,
+  setCanvasToolboxTabToDisplay,
+  setInlineFunctionInputOutputKeys,
+  setSelectedItem,
+} from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { getSmoothStepEdge } from '../../utils/Edge.Utils';
 import { getDestinationIdFromReactFlowConnectionId, getSourceIdFromReactFlowConnectionId } from '../../utils/ReactFlow.Util';
 import { ToolboxPanelTabs } from '../canvasToolbox/CanvasToolbox';
 import { Button, makeStyles, shorthands, tokens, Tooltip } from '@fluentui/react-components';
 import { Add20Filled } from '@fluentui/react-icons';
+import type { MenuItemOption } from '@microsoft/designer-ui';
+import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
 import React, { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -117,8 +124,30 @@ export const ConnectionEdge = (props: EdgeProps) => {
     dispatch(setCanvasToolboxTabToDisplay(ToolboxPanelTabs.functionsList));
   };
 
+  const contextMenu = useCardContextMenu();
+  const getRemoveMenuItem = (): MenuItemOption => {
+    const deleteLine = intl.formatMessage({
+      defaultMessage: 'Delete',
+      description: 'Remove line from canvas',
+    });
+
+    return {
+      key: deleteLine,
+      disabled: false,
+      iconName: 'Delete',
+      title: deleteLine,
+      type: MenuItemType.Advanced,
+      onClick: handleDeleteClick,
+    };
+  };
+
+  const handleDeleteClick = () => {
+    dispatch(setSelectedItem(id));
+    dispatch(deleteCurrentlySelectedItem());
+  };
+
   return (
-    <svg onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+    <svg onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} onContextMenu={contextMenu.handle}>
       <BaseEdge
         path={svgPath}
         labelX={labelX}
@@ -161,6 +190,13 @@ export const ConnectionEdge = (props: EdgeProps) => {
           </Tooltip>
         ) : null}
       </foreignObject>
+      <CardContextMenu
+        title={'Delete'}
+        contextMenuLocation={contextMenu.location}
+        contextMenuOptions={[getRemoveMenuItem()]}
+        showContextMenu={contextMenu.isShowing}
+        onSetShowContextMenu={contextMenu.setIsShowing}
+      />
     </svg>
   );
 };

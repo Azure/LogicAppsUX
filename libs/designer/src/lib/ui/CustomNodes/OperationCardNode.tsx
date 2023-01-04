@@ -126,7 +126,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     };
   };
 
-  const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
+  const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()]; // danielle look here
 
   const opQuery = useOperationQuery(id);
 
