@@ -22,11 +22,10 @@ import {
   DeploymentTreeItem,
   getFile,
   LogFilesTreeItem,
-  ParsedSite,
   SiteFilesTreeItem,
 } from '@microsoft/vscode-azext-azureappservice';
-import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
-import { AzExtParentTreeItem, AzureWizard, DeleteConfirmationStep, nonNullValue } from '@microsoft/vscode-azext-utils';
+import type { IDeployContext, ParsedSite } from '@microsoft/vscode-azext-azureappservice';
+import { AzExtParentTreeItem, AzureWizard, DeleteConfirmationStep } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import type {
   ApplicationSettings,
@@ -51,6 +50,7 @@ export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IP
 
   private readonly _logFilesTreeItem: LogFilesTreeItem;
   private readonly _siteFilesTreeItem: SiteFilesTreeItem;
+  private _state?: string;
   private _cachedVersion: FuncVersion | undefined;
   private _cachedHostJson: IParsedHostJson | undefined;
   private _workflowsTreeItem: RemoteWorkflowsTreeItem | undefined;
@@ -59,6 +59,7 @@ export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IP
   public constructor(parent: AzExtParentTreeItem, site: ParsedSite) {
     super(parent);
     this.site = site;
+    this._state = this.site.rawSite.state;
     this._siteFilesTreeItem = new SiteFilesTreeItem(this, {
       site: site,
       isReadOnly: true,
@@ -71,6 +72,10 @@ export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IP
 
   public get id(): string {
     return this.site.id;
+  }
+
+  public get description(): string | undefined {
+    return this._state && this._state.toLowerCase() !== 'running' ? this._state : undefined;
   }
 
   public get iconPath(): TreeItemIconPath {
@@ -99,9 +104,13 @@ export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IP
   public async refreshImpl(context: IActionContext): Promise<void> {
     this._cachedVersion = undefined;
     this._cachedHostJson = undefined;
-
     const client = await this.site.createClient(context);
-    this.site = new ParsedSite(nonNullValue(await client.getSite(), 'site'), this.subscription);
+
+    try {
+      this._state = await client.getState();
+    } catch {
+      this._state = 'Unknown';
+    }
   }
 
   public async getVersion(context: IActionContext): Promise<FuncVersion> {
@@ -244,7 +253,11 @@ export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IP
       ? localize('confirmDeleteFunctionApp', 'Are you sure you want to delete function app "{0}"?', fullName)
       : localize('confirmDeleteWebApp', 'Are you sure you want to delete web app "{0}"?', fullName);
 
-    const wizard = new AzureWizard(context, {
+    const wizardContext = Object.assign(context, {
+      site: this.site,
+    });
+
+    const wizard = new AzureWizard(wizardContext, {
       title: localize('deleteSwa', 'Delete Function App "{0}"', this.label),
       promptSteps: [new DeleteConfirmationStep(confirmationMessage), new DeleteLastServicePlanStep()],
       executeSteps: [new DeleteSiteStep()],

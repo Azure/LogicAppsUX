@@ -99,12 +99,12 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
     description: 'Label for properties tab',
   });
 
-  /*const codeLoc = intl.formatMessage({
+  const codeLoc = intl.formatMessage({
     defaultMessage: 'Code',
     description: 'Label for code tab',
   });
 
-  const testLoc = intl.formatMessage({
+  /*const testLoc = intl.formatMessage({
     defaultMessage: 'Test',
     description: 'Label for test tab',
   });*/
@@ -234,7 +234,7 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
               size="small"
             >
               <Tab value={PropertiesPaneTabs.Properties}>{propertiesLoc}</Tab>
-              {/*<Tab value={PropertiesPaneTabs.Code}>{codeLoc}</Tab>*/}
+              <Tab value={PropertiesPaneTabs.Code}>{codeLoc}</Tab>
               {/*isTargetSchemaNode && <Tab value={PropertiesPaneTabs.Test}>{testLoc}</Tab>*/}
             </TabList>
           </>
@@ -275,7 +275,9 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
             </>
           )}
 
-          {tabToDisplay === PropertiesPaneTabs.Code && <CodeTab />}
+          {tabToDisplay === PropertiesPaneTabs.Code && (
+            <CodeTab key={currentNode.key} currentNode={currentNode} contentHeight={contentHeight} />
+          )}
 
           {tabToDisplay === PropertiesPaneTabs.Test && <TestTab currentTargetSchemaNodeKey={currentNode.key} />}
         </div>
