@@ -66,24 +66,25 @@ describe('mapDefinitions/MapDefinitionE2e', () => {
       expect(true).toBeTruthy(); // TODO
     });
 
+    // TODO (Support deserialization): WI #16700904
     it('Conditional looping', () => {
       expect(true).toBeTruthy(); // TODO
     });
 
-    // TODO: WI #16700911
+    // TODO (Support deserialization): WI #16700911
     it.skip('Looping w/ index', () => {
       expect(true).toBeTruthy();
     });
 
-    // TODO: WI #16700908 - this scenario technically occurs within that ^ category
+    // TODO (Support deserialization): WI #16700908 - this scenario technically occurs within that ^ category
     // from the mapDef, so may need to do some rearranging/re-labeling
 
-    // TODO: Figure out what this category is testing for (or if it's just demo'ing a different real-world scenario)
     it('Name value transforms (???)', () => {
+      // TODO: Figure out what this category is testing for (or if it's just demo'ing a different real-world scenario)
       expect(true).toBeTruthy();
     });
 
-    // TODO: WI #16701021
+    // TODO (Support deserialization): WI #16701021
     it.skip('Dot value-access', () => {
       expect(true).toBeTruthy();
     });
