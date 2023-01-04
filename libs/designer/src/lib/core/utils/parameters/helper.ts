@@ -294,7 +294,7 @@ function getVisibility(parameter: any) {
 
 function shouldHideInUI(parameter: ResolvedParameter): boolean {
   const visibility = getVisibility(parameter);
-  return parameter?.hideInUI || equals(visibility, 'hideInUI') || equals(visibility, Visibility.Internal);
+  return parameter?.hideInUI || parameter?.schema?.hideInUI || equals(visibility, 'hideInUI') || equals(visibility, Visibility.Internal);
 }
 
 function shouldSoftHide(parameter: ResolvedParameter): boolean {
