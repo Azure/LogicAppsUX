@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localSettingsFileName } from '../../constants';
+import { azureWebJobsStorageKey, localSettingsFileName } from '../../constants';
 import { localize } from '../../localize';
 import { getLocalSettingsJson } from '../utils/appSettings/localSettings';
 import { writeFormattedJson } from '../utils/fs';
@@ -40,4 +40,14 @@ export async function setLocalAppSetting(
 
   settings.Values[key] = value;
   await writeFormattedJson(localSettingsPath, settings);
+}
+
+export async function getAzureWebJobsStorage(context: IActionContext, projectPath: string): Promise<string | undefined> {
+  // func cli uses environment variable if it's defined on the machine, so no need to prompt
+  if (process.env[azureWebJobsStorageKey]) {
+    return process.env[azureWebJobsStorageKey];
+  }
+
+  const settings: ILocalSettingsJson = await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName));
+  return settings.Values && settings.Values[azureWebJobsStorageKey];
 }
