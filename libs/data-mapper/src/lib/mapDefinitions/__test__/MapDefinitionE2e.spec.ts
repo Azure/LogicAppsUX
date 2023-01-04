@@ -7,6 +7,7 @@ import { convertFromMapDefinition } from '../MapDefinitionDeserializer';
 import { convertToMapDefinition } from '../MapDefinitionSerializer';
 import * as yaml from 'js-yaml';
 
+// TODO: Un-skip once all deserialization scenarios are supported/working
 describe.skip('mapDefinitions/MapDefinitionE2e', () => {
   const mockSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(sourceMockSchema);
   const mockTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(targetMockSchema);
@@ -19,7 +20,6 @@ describe.skip('mapDefinitions/MapDefinitionE2e', () => {
     functionMock
   );
 
-  // TODO: Un-skip once all deserialization scenarios are supported/working
   // Compare YAML as parsed objects to disregard any comments
   const reserializedMapDefinitionString: string = convertToMapDefinition(
     deserializedConnectionDictionary,
