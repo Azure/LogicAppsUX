@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { PackageManager } from '../../constants';
+import { validateFuncCoreToolsSetting } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { executeCommand } from '../utils/funcCoreTools/cpUtils';
@@ -20,7 +21,7 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
   await callWithTelemetryAndErrorHandling('logicAppsExtension.validateFuncCoreToolsInstalled', async (innerContext: IActionContext) => {
     innerContext.errorHandling.suppressDisplay = true;
 
-    if (!getWorkspaceSetting<boolean>('validateFuncCoreTools', fsPath)) {
+    if (!getWorkspaceSetting<boolean>(validateFuncCoreToolsSetting, fsPath)) {
       innerContext.telemetry.properties.validateFuncCoreTools = 'false';
       installed = true;
     } else if (await funcToolsInstalled()) {

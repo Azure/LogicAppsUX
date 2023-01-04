@@ -266,6 +266,21 @@
             "type": "integer",
             "description": "The timeout (in seconds) to be used when searching for the Azure Functions host process. Since a build is required every time you F5, you may need to adjust this based on how long your build takes.",
             "default": 60
+          },
+          "logicAppsExtension.stopFuncTaskPostDebug": {
+            "type": "boolean",
+            "description": "Automatically stop the task running the Azure Functions host when a debug sessions ends.",
+            "default": true
+          },
+          "logicAppsExtension.validateFuncCoreTools": {
+            "type": "boolean",
+            "description": "Validate the Azure Functions Core Tools is installed before debugging.",
+            "default": true
+          },
+          "logicAppsExtension.showDeployConfirmation": {
+            "type": "boolean",
+            "description": "Ask for confirmation before deploying to a Function App in Azure (deploying will overwrite any previous deployment and cannot be undone).",
+            "default": true
           }
         }
       }

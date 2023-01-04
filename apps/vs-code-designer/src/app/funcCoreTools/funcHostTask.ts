@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { defaultFuncPort, localSettingsFileName } from '../../constants';
+import { defaultFuncPort, localSettingsFileName, stopFuncTaskPostDebugSetting } from '../../constants';
 import { getLocalSettingsJson } from '../utils/appSettings/localSettings';
 import { tryGetFunctionProjectRoot } from '../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../utils/vsCodeConfig/settings';
@@ -57,7 +57,7 @@ async function stopFuncTaskIfRunning(context: IActionContext, debugSession: vsco
   context.errorHandling.suppressDisplay = true;
   context.telemetry.suppressIfSuccessful = true;
 
-  if (getWorkspaceSetting<boolean>('stopFuncTaskPostDebug')) {
+  if (getWorkspaceSetting<boolean>(stopFuncTaskPostDebugSetting)) {
     if (debugSession.workspaceFolder) {
       const funcExecution: vscode.TaskExecution | undefined = vscode.tasks.taskExecutions.find((te: vscode.TaskExecution) => {
         return te.task.scope === debugSession.workspaceFolder && isFuncHostTask(te.task);
