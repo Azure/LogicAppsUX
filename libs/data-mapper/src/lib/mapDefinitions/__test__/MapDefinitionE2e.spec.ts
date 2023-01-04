@@ -57,7 +57,38 @@ describe('mapDefinitions/MapDefinitionE2e', () => {
     });
 
     it('Cumulative expression (loops w/ functions)', () => {
-      expect(true).toBeTruthy(); // TODO
+      expect(
+        (deserializedConnectionDictionary['target-/ns0:Root/CumulativeExpression/PopulationSummary/State']?.inputs[0][0] as ConnectionUnit)
+          .reactFlowKey
+      ).toBe('source-/ns0:Root/CumulativeExpression/Population/State');
+      expect(
+        (
+          deserializedConnectionDictionary['target-/ns0:Root/CumulativeExpression/PopulationSummary/State/Name']
+            ?.inputs[0][0] as ConnectionUnit
+        ).reactFlowKey
+      ).toBe('source-/ns0:Root/CumulativeExpression/Population/State/Name');
+
+      // TODO/ISSUE: Deserialization failure - 'divide(count(County/Person/Sex/Male), count(/ns0:Root/CumulativeExpression/Population/State/County/Person/Sex/Female))'
+      // console.log(deserializedConnectionDictionary['target-/ns0:Root/CumulativeExpression/PopulationSummary/State/SexRatio']?.inputs);
+
+      const divideRfKey = (
+        deserializedConnectionDictionary['target-/ns0:Root/CumulativeExpression/PopulationSummary/State/SexRatio']
+          ?.inputs[0][0] as ConnectionUnit
+      ).reactFlowKey;
+      expect(divideRfKey.includes('Divide')).toBe(true);
+      const divideConnection = deserializedConnectionDictionary[divideRfKey];
+
+      const firstCountRfKey = (divideConnection?.inputs[0][0] as ConnectionUnit).reactFlowKey;
+      const secondCountRfKey = (divideConnection?.inputs[1][0] as ConnectionUnit).reactFlowKey;
+      expect(firstCountRfKey.includes('Count')).toBe(true);
+      expect(secondCountRfKey.includes('Count')).toBe(true);
+
+      expect((deserializedConnectionDictionary[firstCountRfKey]?.inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/CumulativeExpression/Population/County/Person/Sex/Male'
+      );
+      expect((deserializedConnectionDictionary[secondCountRfKey]?.inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/CumulativeExpression/Population/County/Person/Sex/Female'
+      );
     });
 
     it('Conditional mapping', () => {
