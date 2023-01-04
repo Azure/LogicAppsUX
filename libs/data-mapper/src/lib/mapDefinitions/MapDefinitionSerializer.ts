@@ -5,7 +5,7 @@ import type { Connection, ConnectionDictionary, InputConnection } from '../model
 import { directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
-import { SchemaNodeProperty } from '../models/Schema';
+import { NormalizedDataType, SchemaNodeProperty } from '../models/Schema';
 import { findLast } from '../utils/Array.Utils';
 import { collectTargetNodesForConnectionChain, flattenInputs, isConnectionUnit, isCustomValue } from '../utils/Connection.Utils';
 import { collectConditionalValues, collectFunctionValue, getInputValues, isValidToMakeMapDefinition } from '../utils/DataMap.Utils';
@@ -83,6 +83,7 @@ export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, con
       return false;
     }
   });
+
   targetSchemaConnections.forEach(([_key, connection]) => {
     const flattenedInputs = flattenInputs(connection.inputs);
     flattenedInputs.forEach((input) => {
@@ -180,7 +181,7 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
           // Standard property to value
           newPath.push({
             key: isObjectValue ? mapNodeParams.value : pathItem.fullName.startsWith('@') ? `$${pathItem.fullName}` : pathItem.fullName,
-            value: value ? value : undefined,
+            value: value && targetNode.normalizedDataType !== NormalizedDataType.ComplexType ? value : undefined,
           });
         }
       }
