@@ -6,14 +6,14 @@ import { useIntl } from 'react-intl';
 
 const GatewayPicker = (props: any) => {
   const {
-    gatewayKey,
+    parameterKey,
     selectedSubscriptionId,
     selectSubscriptionCallback,
     availableGateways,
     availableSubscriptions,
     isLoading,
-    setParameterValues,
-    parameterValues,
+    value,
+    setValue,
   } = props;
 
   const intl = useIntl();
@@ -70,7 +70,7 @@ const GatewayPicker = (props: any) => {
   return (
     <div style={{ width: 'inherit' }}>
       <Dropdown
-        id={`connection-param-${gatewayKey}-subscriptions`}
+        id={`connection-param-${parameterKey}-subscriptions`}
         label={subscriptionDropdownLabel}
         className="connection-parameter-input"
         selectedKey={selectedSubscriptionId}
@@ -82,15 +82,15 @@ const GatewayPicker = (props: any) => {
         styles={{ callout: { height: '300px' } }}
       />
       <Dropdown
-        id={`connection-param-${gatewayKey}-gateways`}
+        id={`connection-param-${parameterKey}-gateways`}
         label={gatewayDropdownLabel}
         className="connection-parameter-input"
-        selectedKey={parameterValues[gatewayKey]?.id}
+        selectedKey={value?.id}
         onChange={(e: any, newVal?: IDropdownOption) => {
           if (newVal?.key === newGatewayUrl) {
             window.open(newGatewayUrl, '_blank');
           } else {
-            setParameterValues({ ...parameterValues, [gatewayKey]: { id: newVal?.key.toString() } });
+            setValue({ id: newVal?.key.toString() });
           }
         }}
         disabled={isLoading || !selectedSubscriptionId}
