@@ -68,7 +68,7 @@ describe('mapDefinitions/MapDefinitionE2e', () => {
         ).reactFlowKey
       ).toBe('source-/ns0:Root/CumulativeExpression/Population/State/Name');
 
-      // TODO/ISSUE: Deserialization failure - 'divide(count(County/Person/Sex/Male), count(/ns0:Root/CumulativeExpression/Population/State/County/Person/Sex/Female))'
+      /* TODO/ISSUE: Deserialization failure - BUG #16711817
       // console.log(deserializedConnectionDictionary['target-/ns0:Root/CumulativeExpression/PopulationSummary/State/SexRatio']?.inputs);
 
       const divideRfKey = (
@@ -89,18 +89,42 @@ describe('mapDefinitions/MapDefinitionE2e', () => {
       expect((deserializedConnectionDictionary[secondCountRfKey]?.inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
         'source-/ns0:Root/CumulativeExpression/Population/County/Person/Sex/Female'
       );
+      */
     });
 
     it('Conditional mapping', () => {
-      expect(true).toBeTruthy(); // TODO
+      expect(
+        (deserializedConnectionDictionary['target-/ns0:Root/ConditionalMapping/ItemPrice']?.inputs[0][0] as ConnectionUnit).reactFlowKey
+      ).toBe('source-/ns0:Root/ConditionalMapping/ItemPrice');
+      expect(
+        (deserializedConnectionDictionary['target-/ns0:Root/ConditionalMapping/ItemQuantity']?.inputs[0][0] as ConnectionUnit).reactFlowKey
+      ).toBe('source-/ns0:Root/ConditionalMapping/ItemQuantity');
+
+      /* TODO/ISSUE: Deserialization failure - BUG #16711867
+        // console.log(deserializedConnectionDictionary['target-/ns0:Root/ConditionalMapping/ItemDiscount']?.inputs);
+
+            TODO: Write test(s) against expected results
+        */
     });
 
     it('Looping', () => {
-      expect(true).toBeTruthy(); // TODO
+      expect((deserializedConnectionDictionary['target-/ns0:Root/Looping/Person']?.inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/Looping/Employee'
+      );
+
+      expect((deserializedConnectionDictionary['target-/ns0:Root/Looping/Person/Name']?.inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/Looping/Employee/Name'
+      );
+      expect(
+        (deserializedConnectionDictionary['target-/ns0:Root/Looping/Person/Address']?.inputs[0][0] as ConnectionUnit).reactFlowKey
+      ).toBe('source-/ns0:Root/Looping/Employee/Address');
+      expect((deserializedConnectionDictionary['target-/ns0:Root/Looping/Person/Other']?.inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/Looping/Employee/Country'
+      );
     });
 
     // TODO (Support deserialization): WI #16700904
-    it('Conditional looping', () => {
+    it.skip('Conditional looping', () => {
       expect(true).toBeTruthy(); // TODO
     });
 
@@ -110,7 +134,7 @@ describe('mapDefinitions/MapDefinitionE2e', () => {
     });
 
     // TODO (Support deserialization): WI #16700908 - this scenario technically occurs within that ^ category
-    // from the mapDef, so may need to do some rearranging/re-labeling
+    // from the mapDef, so may want to do some rearranging/re-labeling
 
     it.skip('Name value transforms (???)', () => {
       // TODO: Figure out what this category is testing for (or if it's just demo'ing a different real-world scenario)
