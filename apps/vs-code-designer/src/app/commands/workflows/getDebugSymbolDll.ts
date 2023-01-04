@@ -29,6 +29,10 @@ export async function getDebugSymbolDll(): Promise<string> {
   return path.join(bundleFolder, bundleVersionNumber, 'bin', debugSymbolDll);
 }
 
+/**
+ * Gets extension bundle folder path.
+ * @returns {string} Extension bundle folder path.
+ */
 async function getExtensionBundleFolder(): Promise<string> {
   const command = 'func GetExtensionBundlePath';
   const outputChannel = ext.outputChannel;
@@ -56,6 +60,12 @@ async function getExtensionBundleFolder(): Promise<string> {
   return extensionBundlePath;
 }
 
+/**
+ * Compares and gets biggest extension bundle version.
+ * @param version1 - Extension bundle version.
+ * @param version2 - Extension bundle version.
+ * @returns {string} Biggest extension bundle version.
+ */
 function getMaxVersion(version1, version2): string {
   let maxVersion = '';
   let arr1 = version1.split('.');

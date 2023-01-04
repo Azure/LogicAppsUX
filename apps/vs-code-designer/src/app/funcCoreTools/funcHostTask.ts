@@ -19,9 +19,13 @@ export interface IRunningFuncTask {
 
 export const runningFuncTaskMap: Map<vscode.WorkspaceFolder | vscode.TaskScope, IRunningFuncTask> = new Map();
 
+/**
+ * Returns wheter the task is a func host start task.
+ * @param {vscode.Task} task - Function task.
+ * @returns {number} Returns true if the task is a func host start task, otherwise returns false.
+ */
 export function isFuncHostTask(task: vscode.Task): boolean {
   const commandLine: string | undefined = task.execution && (task.execution as vscode.ShellExecution).commandLine;
-  // tslint:disable-next-line: strict-boolean-expressions
   return /func (host )?start/i.test(commandLine || '');
 }
 

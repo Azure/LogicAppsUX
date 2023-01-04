@@ -102,6 +102,7 @@ export const validateFuncCoreToolsSetting = 'validateFuncCoreTools';
 export const showDeployConfirmationSetting = 'showDeployConfirmation';
 export const deploySubpathSetting = 'deploySubpath';
 export const preDeployTaskSetting = 'preDeployTask';
+export const pickProcessTimeoutSetting = 'pickProcessTimeout';
 
 // Project
 export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';

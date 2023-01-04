@@ -36,7 +36,8 @@ export function isTaskEqual(task1: Task, task2: Task): boolean {
 }
 
 /**
- * Handles condition where we don't need to start the task because it's already running
+ * Handles condition where we don't need to start the task because it's already running.
+ * @param {vscode.Task} task - Function task.
  */
 export async function executeIfNotActive(task: Task): Promise<void> {
   if (!codeTasks.taskExecutions.find((t) => isTaskEqual(t.task, task))) {
