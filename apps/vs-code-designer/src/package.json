@@ -93,6 +93,11 @@
         "command": "logicAppsExtension.restartLogicApp",
         "title": "Restart",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.deleteLogicApp",
+        "title": "Delete Logic App...",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -146,6 +151,11 @@
           "command": "logicAppsExtension.createLogicAppAdvanced",
           "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
           "group": "1@2"
+        },
+        {
+          "command": "logicAppsExtension.deleteLogicApp",
+          "when": "view == newAzLogicApps && viewItem == azLogicAppsProductionSlot",
+          "group": "2@5"
         },
         {
           "command": "logicAppsExtension.openDesigner",
@@ -274,6 +284,7 @@
     "onCommand:logicAppsExtension.startLogicApp",
     "onCommand:logicAppsExtension.stopLogicApp",
     "onCommand:logicAppsExtension.restartLogicApp",
+    "onCommand:logicAppsExtension.deleteLogicApp",
     "onView:newAzLogicApps",
     "onDebugInitialConfigurations"
   ],
