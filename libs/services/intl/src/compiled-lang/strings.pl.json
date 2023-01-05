@@ -3843,6 +3843,12 @@
       "value": "Skrót dla trigger().outputs"
     }
   ],
+  "WcnIF8": [
+    {
+      "type": 0,
+      "value": "Remove"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -7003,6 +7009,12 @@
     {
       "type": 0,
       "value": "(UTC+03:00) Nairobi"
+    }
+  ],
+  "ziXw25": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "ziYCiA": [

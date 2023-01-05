@@ -3558,6 +3558,12 @@
       "value": "trigger().outputs 的速記"
     }
   ],
+  "WcnIF8": [
+    {
+      "type": 0,
+      "value": "Remove"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -6588,6 +6594,12 @@
     {
       "type": 0,
       "value": "(UTC+03:00) 奈洛比"
+    }
+  ],
+  "ziXw25": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "ziYCiA": [
