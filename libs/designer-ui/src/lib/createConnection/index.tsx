@@ -1,5 +1,5 @@
 import { filterRecord } from '../utils';
-import { UniversalConnectionParameter } from './UniversalConnectionParameter';
+import { UniversalConnectionParameter } from './universalConnectionParameter';
 import FunctionAppEntry from './functionAppEntry';
 import {
   Text,
