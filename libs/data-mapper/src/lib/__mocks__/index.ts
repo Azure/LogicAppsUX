@@ -4,4 +4,3 @@ export { default as layeredLoopSourceMockSchema } from './LayeredLoopSourceMockS
 export { default as layeredLoopTargetMockSchema } from './LayeredLoopTargetMockSchema.json';
 export { default as simpleLoopSource } from './SimpleLoopSource.json';
 export { default as simpleLoopTarget } from './SimpleLoopTarget.json';
-export * from './TranscriptMockMapDefinition';
