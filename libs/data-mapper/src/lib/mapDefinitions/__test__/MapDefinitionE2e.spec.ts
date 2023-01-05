@@ -1,4 +1,5 @@
-import { sourceMockSchema, targetMockSchema, transcriptMockMapDefinitionString } from '../../__mocks__';
+import { fullTranscriptMapDefinitionString } from '../../../../../../__mocks__/mapDefinitions/FullTranscriptMapDefinition';
+import { sourceMockSchema, targetMockSchema } from '../../__mocks__';
 import { functionMock } from '../../models';
 import type { MapDefinitionEntry, SchemaExtended } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
@@ -11,7 +12,7 @@ import * as yaml from 'js-yaml';
 describe.skip('mapDefinitions/MapDefinitionE2e', () => {
   const mockSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(sourceMockSchema);
   const mockTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(targetMockSchema);
-  const mockTranscriptMapDefinition: MapDefinitionEntry = yaml.load(transcriptMockMapDefinitionString) as MapDefinitionEntry;
+  const mockTranscriptMapDefinition: MapDefinitionEntry = yaml.load(fullTranscriptMapDefinitionString) as MapDefinitionEntry;
 
   const deserializedConnectionDictionary: ConnectionDictionary = convertFromMapDefinition(
     mockTranscriptMapDefinition,

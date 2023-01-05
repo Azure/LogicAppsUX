@@ -1,4 +1,4 @@
-﻿export const transcriptMockMapDefinitionString = `
+﻿export const fullTranscriptMapDefinitionString = `
 $version: 1.0
 $input: XML
 $output: XML
