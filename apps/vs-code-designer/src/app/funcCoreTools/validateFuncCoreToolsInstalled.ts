@@ -13,6 +13,13 @@ import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl } from '@mi
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { MessageItem } from 'vscode';
 
+/**
+ * Checks if functions core tools is installed, and installs it if needed.
+ * @param {IActionContext} context - Workflow file path.
+ * @param {string} message - Message for warning.
+ * @param {string} fsPath - Workspace file system path.
+ * @returns {Promise<boolean>} Returns true if it is installed or was sucessfully installed, otherwise returns false.
+ */
 export async function validateFuncCoreToolsInstalled(context: IActionContext, message: string, fsPath: string): Promise<boolean> {
   let input: MessageItem | undefined;
   let installed = false;
@@ -24,7 +31,7 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
     if (!getWorkspaceSetting<boolean>(validateFuncCoreToolsSetting, fsPath)) {
       innerContext.telemetry.properties.validateFuncCoreTools = 'false';
       installed = true;
-    } else if (await funcToolsInstalled()) {
+    } else if (await isFuncToolsInstalled()) {
       installed = true;
     } else {
       const items: MessageItem[] = [];
@@ -65,7 +72,11 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
   return installed;
 }
 
-export async function funcToolsInstalled(): Promise<boolean> {
+/**
+ * Check is functions core tools is installed.
+ * @returns {Promise<boolean>} Returns true if installed, otherwise returns false.
+ */
+export async function isFuncToolsInstalled(): Promise<boolean> {
   try {
     await executeCommand(undefined, undefined, ext.funcCliPath, '--version');
     return true;

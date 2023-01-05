@@ -6,6 +6,11 @@ import { isPathEqual } from './fs';
 import type { Task, WorkspaceFolder } from 'vscode';
 import { tasks as codeTasks } from 'vscode';
 
+/**
+ * Gets task's file system path.
+ * @param {vscode.Task} task - Function task.
+ * @returns {string | undefined} Returns task's file system path if task is an object, otherwise returns undefined.
+ */
 export function getFsPathFromTask(task: Task): string | undefined {
   if (typeof task.scope === 'object') {
     const workspaceFolder: Partial<WorkspaceFolder> = task.scope;
@@ -15,6 +20,12 @@ export function getFsPathFromTask(task: Task): string | undefined {
   }
 }
 
+/**
+ * Checks if tasks scope are equal.
+ * @param {vscode.Task} task1 - Function task.
+ * @param {vscode.Task} task2 - Function task.
+ * @returns {boolean} Returns true if both tasks have same scope or path, otherwise returns false.
+ */
 export function isTaskScopeEqual(task1: Task, task2: Task): boolean {
   if (task1.scope === task2.scope) {
     // handles the case where the scopes are not associated with a path
@@ -26,6 +37,12 @@ export function isTaskScopeEqual(task1: Task, task2: Task): boolean {
   }
 }
 
+/**
+ * Checks if tasks are equal.
+ * @param {vscode.Task} task1 - Function task.
+ * @param {vscode.Task} task2 - Function task.
+ * @returns {boolean} Returns true if both tasks are equal, otherwise returns false.
+ */
 export function isTaskEqual(task1: Task, task2: Task): boolean {
   return (
     isTaskScopeEqual(task1, task2) &&

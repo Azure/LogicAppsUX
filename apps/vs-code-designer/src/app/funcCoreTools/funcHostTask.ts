@@ -7,6 +7,7 @@ import { getLocalSettingsJson } from '../utils/appSettings/localSettings';
 import { tryGetFunctionProjectRoot } from '../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../utils/vsCodeConfig/settings';
 import { delay } from '@azure/ms-rest-js';
+import { isString } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { registerEvent } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
@@ -98,7 +99,7 @@ export async function getFuncPortFromTaskOrProject(
 ): Promise<string> {
   try {
     // First, check the task itself
-    if (funcTask && typeof funcTask.definition.command === 'string') {
+    if (funcTask && isString(funcTask.definition.command)) {
       const match = funcTask.definition.command.match(/\s+(?:"|'|)(?:-p|--port)(?:"|'|)\s+(?:"|'|)([0-9]+)/i);
       if (match) {
         return match[1];
@@ -107,7 +108,7 @@ export async function getFuncPortFromTaskOrProject(
 
     // Second, check local.settings.json
     let projectPath: string | undefined;
-    if (typeof projectPathOrTaskScope === 'string') {
+    if (isString(projectPathOrTaskScope)) {
       projectPath = projectPathOrTaskScope;
     } else if (typeof projectPathOrTaskScope === 'object') {
       projectPath = await tryGetFunctionProjectRoot(context, projectPathOrTaskScope);
