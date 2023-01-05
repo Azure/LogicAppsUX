@@ -5,6 +5,7 @@
 import { localSettingsFileName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
+import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { decryptLocalSettings } from './decryptLocalSettings';
 import { encryptLocalSettings } from './encryptLocalSettings';
 import { getLocalSettingsFile } from './getLocalSettingsFile';
@@ -45,11 +46,11 @@ export async function uploadAppSettings(
     ext.outputChannel.appendLog(localize('uploadStart', 'Uploading settings to "{0}"...', client.fullName));
     let localSettings: ILocalSettingsJson = (await fse.readJson(localSettingsPath)) as ILocalSettingsJson;
     if (localSettings.IsEncrypted) {
-      await decryptLocalSettings(context, localSettingsUri);
+      await executeOnFunctions(decryptLocalSettings, context, localSettingsUri);
       try {
         localSettings = (await fse.readJson(localSettingsPath)) as ILocalSettingsJson;
       } finally {
-        await encryptLocalSettings(context, localSettingsUri);
+        await executeOnFunctions(encryptLocalSettings, context, localSettingsUri);
       }
     }
 
