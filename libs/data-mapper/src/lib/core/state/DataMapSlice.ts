@@ -214,9 +214,17 @@ export const dataMapSlice = createSlice({
         if (!existingNode) {
           nodes.push(payloadNode);
         }
+        const firstSourceNodeWithRepeatingPathItem = findLast(payloadNode.pathToRoot, (pathItem) => pathItem.repeating);
+        const parentNodeToAdd =
+          firstSourceNodeWithRepeatingPathItem &&
+          state.curDataMapOperation.flattenedSourceSchema[addSourceReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key)];
+        if (parentNodeToAdd) {
+          nodes.push(parentNodeToAdd);
+        }
       });
 
-      // calculate width with new add
+      // Danielle calculate width with new add
+      // Danielle add parent repeating element
 
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
