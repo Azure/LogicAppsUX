@@ -50,7 +50,7 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'row',
     height: `${schemaNodeCardHeight}px`,
-    width: `${schemaNodeCardWidth}px`,
+    width: `${schemaNodeCardWidth}px`, // danielle this is width
     opacity: 1,
     float: 'right',
     alignItems: 'center',
