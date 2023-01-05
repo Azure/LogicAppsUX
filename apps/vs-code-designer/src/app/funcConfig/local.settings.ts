@@ -42,8 +42,13 @@ export async function setLocalAppSetting(
   await writeFormattedJson(localSettingsPath, settings);
 }
 
+/**
+ * Gets azure web storage or emulator configuration.
+ * @param {IActionContext} context - Command context.
+ * @param {string} projectPath - Project path.
+ * @returns {Promise<string | undefined>} Azure web storage or emulator configuration.
+ */
 export async function getAzureWebJobsStorage(context: IActionContext, projectPath: string): Promise<string | undefined> {
-  // func cli uses environment variable if it's defined on the machine, so no need to prompt
   if (process.env[azureWebJobsStorageKey]) {
     return process.env[azureWebJobsStorageKey];
   }

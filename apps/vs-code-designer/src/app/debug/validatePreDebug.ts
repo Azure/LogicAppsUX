@@ -18,14 +18,16 @@ import { getWorkspaceSetting, getFunctionsWorkerRuntime } from '../utils/vsCodeC
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { parseError } from '@microsoft/vscode-azext-utils';
 import { MismatchBehavior } from '@microsoft/vscode-extension';
+import type { IPreDebugValidateResult } from '@microsoft/vscode-extension';
 import * as azureStorage from 'azure-storage';
 import * as vscode from 'vscode';
 
-export interface IPreDebugValidateResult {
-  workspace: vscode.WorkspaceFolder;
-  shouldContinue: boolean;
-}
-
+/**
+ * Validates functions core tools is installed and azure emulator is running
+ * @param {IActionContext} context - Command context.
+ * @param {vscode.DebugConfiguration} debugConfig - Workspace debug configuration.
+ * @returns {IPreDebugValidateResult} Structure to determine if debug should continue.
+ */
 export async function preDebugValidate(context: IActionContext, debugConfig: vscode.DebugConfiguration): Promise<IPreDebugValidateResult> {
   const workspace: vscode.WorkspaceFolder = getMatchingWorkspace(debugConfig);
   let shouldContinue: boolean;
@@ -93,7 +95,10 @@ function getMatchingWorkspace(debugConfig: vscode.DebugConfiguration): vscode.Wo
 }
 
 /**
- * Automatically add worker runtime setting since it's required to debug, but often gets deleted since it's stored in "local.settings.json" which isn't tracked in source control
+ * Automatically adds worker runtime setting since it's required to debug, but often gets deleted since it's stored in "local.settings.json" which isn't tracked in source control
+ * @param {IActionContext} context - Command context.
+ * @param {string | undefinedn} projectLanguage - Project language.
+ * @param {string} projectPath - Project path.
  */
 async function validateWorkerRuntime(context: IActionContext, projectLanguage: string | undefined, projectPath: string): Promise<void> {
   const runtime: string | undefined = getFunctionsWorkerRuntime(projectLanguage);
@@ -105,16 +110,19 @@ async function validateWorkerRuntime(context: IActionContext, projectLanguage: s
 
 /**
  * If AzureWebJobsStorage is set, pings the emulator to make sure it's actually running
+ * @param {IActionContext} context - Command context.
+ * @param {string} projectPath - Project path.
+ * @returns {boolean} Returns true if a valid emulator is running, otherwise returns false.
  */
 async function validateEmulatorIsRunning(context: IActionContext, projectPath: string): Promise<boolean> {
   const azureWebJobsStorage: string | undefined = await getAzureWebJobsStorage(context, projectPath);
+
   if (azureWebJobsStorage && azureWebJobsStorage.toLowerCase() === localEmulatorConnectionString.toLowerCase()) {
     try {
       const client: azureStorage.BlobService = azureStorage.createBlobService(azureWebJobsStorage);
       await new Promise<void>((resolve, reject) => {
         // Checking against a common container for functions, but doesn't really matter what call we make here
         client.doesContainerExist('azure-webjob-hosts', (err: Error | undefined) => {
-          // tslint:disable-next-line: no-void-expression
           err ? reject(err) : resolve();
         });
       });
@@ -125,6 +133,7 @@ async function validateEmulatorIsRunning(context: IActionContext, projectPath: s
         azureWebJobsStorageKey,
         localSettingsFileName
       );
+
       const learnMoreLink: string = process.platform === 'win32' ? 'https://aka.ms/AA4ym56' : 'https://aka.ms/AA4yef8';
       const debugAnyway: vscode.MessageItem = { title: localize('debugAnyway', 'Debug anyway') };
       const result: vscode.MessageItem = await context.ui.showWarningMessage(message, { learnMoreLink, modal: true }, debugAnyway);

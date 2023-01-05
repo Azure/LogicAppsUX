@@ -7,6 +7,11 @@ import { executeCommand } from '../utils/funcCoreTools/cpUtils';
 import { tryGetInstalledBrewPackageName } from './getBrewPackageName';
 import { FuncVersion } from '@microsoft/vscode-extension';
 
+/**
+ * Gets package managers installed in the system.
+ * @param {boolean} isFuncInstalled - Is functions core tools installed.
+ * @returns {Promise<PackageManager[]>} Returns array of package managers.
+ */
 export async function getFuncPackageManagers(isFuncInstalled: boolean): Promise<PackageManager[]> {
   const result: PackageManager[] = [];
   switch (process.platform) {
@@ -31,6 +36,11 @@ export async function getFuncPackageManagers(isFuncInstalled: boolean): Promise<
   return result;
 }
 
+/**
+ * Checks if the system has brew installed.
+ * @param {boolean} isFuncInstalled - Is functions core tools installed.
+ * @returns {Promise<boolean>} Returns true if the system has brew installed, otherwise returns false.
+ */
 async function hasBrew(isFuncInstalled: boolean): Promise<boolean> {
   for (const version of Object.values(FuncVersion)) {
     if (version !== FuncVersion.v1) {

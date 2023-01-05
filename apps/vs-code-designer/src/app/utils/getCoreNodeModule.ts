@@ -5,7 +5,9 @@
 import * as vscode from 'vscode';
 
 /**
- * Returns a node module installed with VSCode, or undefined if it fails.
+ * GReturns a node module installed with VSCode, or undefined if it fails.
+ * @param {string} moduleName - Module name to check.
+ * @returns {T | undefined} If finds the module returns the module, otherwise returns undefined.
  */
 export function getCoreNodeModule<T>(moduleName: string): T | undefined {
   try {

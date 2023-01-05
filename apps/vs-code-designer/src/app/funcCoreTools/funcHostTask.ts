@@ -83,6 +83,14 @@ async function stopFuncTaskIfRunning(context: IActionContext, debugSession: vsco
     }
   }
 }
+
+/**
+ * Gets functions port from the task, local.settings.json or the defaultPort.
+ * @param {string} context - Command context.
+ * @param {string} fsPath - Workflow file path.
+ * @param {string} fsPath - Workflow file path.\
+ * @returns {vscode.WorkspaceFolder | undefined} Workflow folder.
+ */
 export async function getFuncPortFromTaskOrProject(
   context: IActionContext,
   funcTask: vscode.Task | undefined,

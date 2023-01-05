@@ -5,7 +5,6 @@
 import { defaultFuncPort, hostStartTaskName, pickProcessTimeoutSetting } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
-import type { IPreDebugValidateResult } from '../debug/validatePreDebug';
 import { preDebugValidate } from '../debug/validatePreDebug';
 import { getFuncPortFromTaskOrProject, isFuncHostTask, runningFuncTaskMap } from '../funcCoreTools/funcHostTask';
 import type { IRunningFuncTask } from '../funcCoreTools/funcHostTask';
@@ -23,6 +22,7 @@ import { sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
 import { UserCancelledError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProjectLanguage } from '@microsoft/vscode-extension';
+import type { IPreDebugValidateResult } from '@microsoft/vscode-extension';
 import * as unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
 import * as parse from 'yargs-parser';

@@ -7,10 +7,20 @@ import { executeCommand } from '../utils/funcCoreTools/cpUtils';
 import { tryGetMajorVersion } from '../utils/funcCoreTools/funcVersion';
 import { FuncVersion } from '@microsoft/vscode-extension';
 
+/**
+ * Gets functions core tools brew package name.
+ * @param {FuncVersion} version - Package version.
+ * @returns {string} Returns full package name for brew.
+ */
 export function getBrewPackageName(version: FuncVersion): string {
   return `${funcPackageName}@${tryGetMajorVersion(version)}`;
 }
 
+/**
+ * Gets installed functions core tools brew package.
+ * @param {FuncVersion} version - Package version.
+ * @returns {Promise<string | undefined>} Returns installed full package name for brew.
+ */
 export async function tryGetInstalledBrewPackageName(version: FuncVersion): Promise<string | undefined> {
   const brewPackageName: string = getBrewPackageName(version);
   if (await isBrewPackageInstalled(brewPackageName)) {
@@ -31,6 +41,11 @@ export async function tryGetInstalledBrewPackageName(version: FuncVersion): Prom
   }
 }
 
+/**
+ * Checks if the package is installed via brew.
+ * @param {string} packageName - Package name.
+ * @returns {Promise<boolean>} Returns true if the package is installed, otherwise returns false.
+ */
 async function isBrewPackageInstalled(packageName: string): Promise<boolean> {
   try {
     await executeCommand(undefined, undefined, 'brew', 'ls', packageName);
