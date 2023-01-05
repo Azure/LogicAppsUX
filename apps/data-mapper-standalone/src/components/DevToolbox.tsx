@@ -1,6 +1,7 @@
+import { fullTranscriptMapDefinitionString } from '../../../../__mocks__/mapDefinitions/FullTranscriptMapDefinition';
 import { nestedLoopMapDefinition } from '../../../../__mocks__/mapDefinitions/NestedLoopMapDefinition';
+import { shortenedDemoScriptMapDefinition } from '../../../../__mocks__/mapDefinitions/ShortTranscriptMapDefinitions';
 import { customerOrderMapDefinition } from '../../../../__mocks__/mapDefinitions/SimpleCustomerOrder';
-import { demoScriptMapDefinition } from '../../../../__mocks__/mapDefinitions/TranscriptMapDefinitions';
 import { dataMapDataLoaderSlice, loadDataMap, type ThemeType } from '../state/DataMapDataLoader';
 import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
@@ -14,7 +15,8 @@ const themeOptions = ['Light', 'Dark'];
 const themeDropdownOptions = themeOptions.map((theme) => ({ key: theme, text: theme }));
 
 export const mapDefinitionDropdownOptions: IDropdownOption<string>[] = [
-  { key: 'demoScriptMapDefinition', text: 'Demo Script MD', data: demoScriptMapDefinition },
+  { key: 'shortenedDemoScriptMapDefinition', text: 'Short Demo Script MD', data: shortenedDemoScriptMapDefinition },
+  { key: 'fullDemoScriptMapDefinition', text: 'Full Demo Script MD', data: fullTranscriptMapDefinitionString },
   { key: 'customerOrderMapDefinition', text: 'Customer Orders MD', data: customerOrderMapDefinition },
   { key: 'nestedLoopMapDefinition', text: 'Nested Loops MD', data: nestedLoopMapDefinition },
 ];
@@ -75,7 +77,7 @@ export const DevToolbox: React.FC = () => {
       let inputRscPath = '';
       let outputRscPath = '';
 
-      if (item?.key === 'demoScriptMapDefinition') {
+      if (item?.key === 'shortenedDemoScriptMapDefinition' || item?.key === 'fullDemoScriptMapDefinition') {
         inputRscPath = sourceSchemaFileOptions[0];
         outputRscPath = targetSchemaFileOptions[0];
       } else if (item?.key === 'customerOrderMapDefinition') {
