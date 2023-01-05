@@ -133,7 +133,7 @@ export const directAccessPseudoFunction: FunctionData = {
 
 export const pseudoFunctions: FunctionData[] = [indexPseudoFunction, ifPseudoFunction, directAccessPseudoFunction];
 
-// Used when the function host isn't running
+// Used in Standalone when the function host isn't running, or for testing
 export const functionMock: FunctionData[] = [
   {
     key: 'Maximum',

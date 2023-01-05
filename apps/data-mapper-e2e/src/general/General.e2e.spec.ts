@@ -6,7 +6,7 @@ test('Data Mapper - General E2E', async ({ page }) => {
 
   await page.getByText('Select a map definition').click();
 
-  await page.getByRole('option', { name: 'Demo Script MD' }).click();
+  await page.getByRole('option', { name: 'Short Demo Script MD' }).click();
 
   await page.getByTestId('rf__node-target-/ns0:Root/DirectTranslation').getByRole('button').nth(1).click();
 

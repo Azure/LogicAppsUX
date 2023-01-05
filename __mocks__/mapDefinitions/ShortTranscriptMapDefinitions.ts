@@ -1,4 +1,4 @@
-export const demoScriptMapDefinition = `$version: '1.0'
+export const shortenedDemoScriptMapDefinition = `$version: '1.0'
 $input: XML
 $output: XML
 $sourceSchema: Source.xsd
