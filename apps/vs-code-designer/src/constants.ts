@@ -67,6 +67,7 @@ export enum extensionCommand {
   startLogicApp = 'logicAppsExtension.startLogicApp',
   stopLogicApp = 'logicAppsExtension.stopLogicApp',
   restartLogicApp = 'logicAppsExtension.restartLogicApp',
+  deleteLogicApp = 'logicAppsExtension.deleteLogicApp',
   azureFunctionsOpenFile = 'azureFunctions.openFile',
   azureSelectSubscriptions = 'azure-account.selectSubscriptions',
 }
