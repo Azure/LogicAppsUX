@@ -3558,6 +3558,12 @@
       "value": "trigger().outputs の短縮形"
     }
   ],
+  "WcnIF8": [
+    {
+      "type": 0,
+      "value": "Remove"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -6388,6 +6394,12 @@
       "value": "必須。新規または既存のプロパティの名前。"
     }
   ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
+    }
+  ],
   "xYyPR8": [
     {
       "type": 0,
@@ -6566,6 +6578,12 @@
     {
       "type": 0,
       "value": "(UTC+03:00) ナイロビ"
+    }
+  ],
+  "ziXw25": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "ziYCiA": [
