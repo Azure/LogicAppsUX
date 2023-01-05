@@ -5,7 +5,7 @@ import {
   errorNotificationAutoHideDuration,
   NotificationTypes,
 } from '../../components/notification/Notification';
-import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
+import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended, SourceSchemaNodeExtended } from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
@@ -54,7 +54,7 @@ export interface DataMapOperationState {
   sourceSchemaOrdering: string[];
   targetSchema?: SchemaExtended;
   flattenedTargetSchema: SchemaNodeDictionary;
-  currentSourceSchemaNodes: SchemaNodeExtended[];
+  currentSourceSchemaNodes: SourceSchemaNodeExtended[];
   currentTargetSchemaNode?: SchemaNodeExtended;
   currentFunctionNodes: FunctionDictionary;
   selectedItemKey?: string;
@@ -215,6 +215,8 @@ export const dataMapSlice = createSlice({
           nodes.push(payloadNode);
         }
       });
+
+      // calculate width with new add
 
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,

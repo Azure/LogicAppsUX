@@ -6,7 +6,7 @@ import { childTargetNodeCardIndent, schemaNodeCardHeight, schemaNodeCardWidth } 
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
-import type { SchemaNodeExtended } from '../models/Schema';
+import type { SchemaNodeExtended, SourceSchemaNodeExtended } from '../models/Schema';
 import { SchemaType } from '../models/Schema';
 import { getFunctionBrandingForCategory } from './Function.Utils';
 import { applyElkLayout, convertDataMapNodesToElkGraph } from './Layout.Utils';
@@ -46,7 +46,7 @@ const placeholderReactFlowNode: ReactFlowNode = {
 };
 
 export const useLayout = (
-  currentSourceSchemaNodes: SchemaNodeExtended[],
+  currentSourceSchemaNodes: SourceSchemaNodeExtended[],
   currentFunctionNodes: FunctionDictionary,
   currentTargetSchemaNode: SchemaNodeExtended | undefined,
   connections: ConnectionDictionary,
@@ -63,6 +63,8 @@ export const useLayout = (
       const sortedSourceSchemaNodes = [...currentSourceSchemaNodes].sort(
         (nodeA, nodeB) => sourceSchemaOrdering.indexOf(nodeA.key) - sourceSchemaOrdering.indexOf(nodeB.key)
       );
+
+      // danielle Call getWidth here
 
       // Build ELK node/edges data
       const elkTreeFromCanvasNodes = convertDataMapNodesToElkGraph(

@@ -2,43 +2,6 @@ import type { SourceSchemaNodeExtended } from '../../models';
 
 export const sourceSchemaNodes: SourceSchemaNodeExtended[] = [
   {
-    key: '/ns0:Root/Looping/Employee/TelephoneNumber',
-    name: 'TelephoneNumber',
-    schemaNodeDataType: 'String',
-    normalizedDataType: 'String',
-    properties: 'NotSpecified',
-    fullName: 'TelephoneNumber',
-    parentKey: '/ns0:Root/Looping/Employee',
-    nodeProperties: ['NotSpecified'],
-    children: [],
-    pathToRoot: [
-      {
-        key: '/ns0:Root',
-        name: 'Root',
-        fullName: 'ns0:Root',
-        repeating: false,
-      },
-      {
-        key: '/ns0:Root/Looping',
-        name: 'Looping',
-        fullName: 'Looping',
-        repeating: false,
-      },
-      {
-        key: '/ns0:Root/Looping/Employee',
-        name: 'Employee',
-        fullName: 'Employee',
-        repeating: true,
-      },
-      {
-        key: '/ns0:Root/Looping/Employee/TelephoneNumber',
-        name: 'TelephoneNumber',
-        fullName: 'TelephoneNumber',
-        repeating: false,
-      },
-    ],
-  },
-  {
     key: '/ns0:Root/Looping/Employee',
     name: 'Employee',
     schemaNodeDataType: 'None',
@@ -289,6 +252,43 @@ export const sourceSchemaNodes: SourceSchemaNodeExtended[] = [
         name: 'Employee',
         fullName: 'Employee',
         repeating: true,
+      },
+    ],
+  },
+  {
+    key: '/ns0:Root/Looping/Employee/TelephoneNumber',
+    name: 'TelephoneNumber',
+    schemaNodeDataType: 'String',
+    normalizedDataType: 'String',
+    properties: 'NotSpecified',
+    fullName: 'TelephoneNumber',
+    parentKey: '/ns0:Root/Looping/Employee',
+    nodeProperties: ['NotSpecified'],
+    children: [],
+    pathToRoot: [
+      {
+        key: '/ns0:Root',
+        name: 'Root',
+        fullName: 'ns0:Root',
+        repeating: false,
+      },
+      {
+        key: '/ns0:Root/Looping',
+        name: 'Looping',
+        fullName: 'Looping',
+        repeating: false,
+      },
+      {
+        key: '/ns0:Root/Looping/Employee',
+        name: 'Employee',
+        fullName: 'Employee',
+        repeating: true,
+      },
+      {
+        key: '/ns0:Root/Looping/Employee/TelephoneNumber',
+        name: 'TelephoneNumber',
+        fullName: 'TelephoneNumber',
+        repeating: false,
       },
     ],
   },
