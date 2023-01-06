@@ -47,6 +47,7 @@ export namespace ext {
   export let workflowDesignTimePort: number;
   export let workflowDesignChildProcess: cp.ChildProcess | undefined;
   export let outputChannel: IAzExtOutputChannel;
+  export let workflowRuntimePort: number;
   export const prefix = 'logicAppsExtension';
 
   // Tree item view

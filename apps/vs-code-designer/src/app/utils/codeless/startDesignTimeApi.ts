@@ -14,6 +14,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
+import { delay } from '@azure/ms-rest-js';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import * as cp from 'child_process';
 import * as fs from 'fs';
@@ -109,10 +110,6 @@ async function waitForDesingTimeStartUp(url: string, initialTime: number): Promi
   } else {
     return Promise.reject();
   }
-}
-
-async function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function isDesignTimeUp(url: string): Promise<boolean> {

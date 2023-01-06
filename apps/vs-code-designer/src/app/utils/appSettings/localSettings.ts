@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localSettingsFileName } from '../../../constants';
+import { azureWebJobsStorageKey, localSettingsFileName } from '../../../constants';
 import { localize } from '../../../localize';
 import { decryptLocalSettings } from '../../commands/appSettings/decryptLocalSettings';
 import { encryptLocalSettings } from '../../commands/appSettings/encryptLocalSettings';
@@ -159,4 +159,19 @@ export async function setLocalAppSetting(
 
   settings.Values[key] = value;
   await writeFormattedJson(localSettingsPath, settings);
+}
+
+/**
+ * Gets azure web storage or emulator configuration.
+ * @param {IActionContext} context - Command context.
+ * @param {string} projectPath - Project path.
+ * @returns {Promise<string | undefined>} Azure web storage or emulator configuration.
+ */
+export async function getAzureWebJobsStorage(context: IActionContext, projectPath: string): Promise<string | undefined> {
+  if (process.env[azureWebJobsStorageKey]) {
+    return process.env[azureWebJobsStorageKey];
+  }
+
+  const settings: ILocalSettingsJson = await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName));
+  return settings.Values && settings.Values[azureWebJobsStorageKey];
 }
