@@ -65,6 +65,7 @@ export const useLayout = (
       );
 
       // danielle Call getWidth here
+      //setWidthForSourceNodes([...sortedSourceSchemaNodes])
 
       // Build ELK node/edges data
       const elkTreeFromCanvasNodes = convertDataMapNodesToElkGraph(

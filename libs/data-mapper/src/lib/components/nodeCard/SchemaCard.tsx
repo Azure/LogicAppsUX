@@ -2,7 +2,7 @@ import { childTargetNodeCardWidth, schemaNodeCardHeight, schemaNodeCardWidth } f
 import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import { removeSourceSchemaNodes, setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaNodeExtended } from '../../models';
+import type { SchemaNodeExtended, SourceSchemaNodeExtended } from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { Connection } from '../../models/Connection';
 import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
@@ -154,7 +154,7 @@ const useStyles = makeStyles({
 });
 
 export interface SchemaCardProps extends CardProps {
-  schemaNode: SchemaNodeExtended;
+  schemaNode: SchemaNodeExtended | SourceSchemaNodeExtended;
   schemaType: SchemaType;
   displayHandle: boolean;
   displayChevron: boolean;
@@ -284,6 +284,8 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     dispatch(removeSourceSchemaNodes([schemaNode]));
   };
 
+  const selectedNodeStyles = isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId ? selectedCardStyles : undefined;
+
   return (
     <div className={classes.badgeContainer}>
       {isNBadgeRequired && !isSourceSchemaNode && <NBadge isOutput />}
@@ -291,7 +293,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
       <div
         onContextMenu={contextMenu.handle}
         className={containerStyle}
-        style={isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId ? selectedCardStyles : undefined}
+        style={{ ...selectedNodeStyles, width: isSourceSchemaNode && schemaNode.width ? schemaNode.width : schemaNodeCardWidth }}
         onMouseLeave={() => setIsCardHovered(false)}
         onMouseEnter={() => setIsCardHovered(true)}
       >

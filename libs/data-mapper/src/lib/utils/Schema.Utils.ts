@@ -36,6 +36,7 @@ const convertSchemaNodeToSchemaNodeExtended = (schemaNode: SchemaNode, parentPat
 
   const extendedSchemaNode: SchemaNodeExtended = {
     ...schemaNode,
+    width: 0,
     nodeProperties,
     children: schemaNode.children ? schemaNode.children.map((child) => convertSchemaNodeToSchemaNodeExtended(child, pathToRoot)) : [],
     pathToRoot: pathToRoot,

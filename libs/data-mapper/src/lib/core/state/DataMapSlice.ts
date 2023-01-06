@@ -214,6 +214,8 @@ export const dataMapSlice = createSlice({
         if (!existingNode) {
           nodes.push(payloadNode);
         }
+
+        // Danielle add parent repeating element
         const firstSourceNodeWithRepeatingPathItem = findLast(payloadNode.pathToRoot, (pathItem) => pathItem.repeating);
         const parentNodeToAdd =
           firstSourceNodeWithRepeatingPathItem &&
@@ -222,9 +224,6 @@ export const dataMapSlice = createSlice({
           nodes.push(parentNodeToAdd);
         }
       });
-
-      // Danielle calculate width with new add
-      // Danielle add parent repeating element
 
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
