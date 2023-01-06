@@ -22,7 +22,12 @@ const OptionsStateSet = ({ options, children }: any) => {
   useEffect(() => {
     if (!options) return; // TODO: This dispatch keeps getting ran out of order in storybook, overwriting the options with null values each time.  This is just a quick temp safeguard.
     dispatch(
-      initDesignerOptions({ readOnly: options.readOnly, isMonitoringView: options.isMonitoringView, isDarkMode: options.isDarkMode })
+      initDesignerOptions({
+        readOnly: options.readOnly,
+        isMonitoringView: options.isMonitoringView,
+        isDarkMode: options.isDarkMode,
+        isConsumption: options.isConsumption,
+      })
     );
   }, [dispatch, options]);
   return <>{children}</>;

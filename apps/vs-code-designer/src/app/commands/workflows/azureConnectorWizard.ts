@@ -11,7 +11,7 @@ import {
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { addOrUpdateLocalAppSettings } from '../../utils/localSettings';
+import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
 import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem, IWizardOptions } from '@microsoft/vscode-azext-utils';
@@ -40,7 +40,6 @@ class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureConnectorsC
       { label: localize('useConnectorsFromAzure', 'Use connectors from Azure'), data: 'yes' },
       { label: localize('skipConnectorsFromAzure', 'Skip for now'), data: 'no' },
     ];
-    // eslint-disable-next-line no-param-reassign
     context.enabled = (await context.ui.showQuickPick(picks, { placeHolder })).data === 'yes';
   }
 

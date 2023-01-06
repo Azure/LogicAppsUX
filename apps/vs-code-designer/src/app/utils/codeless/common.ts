@@ -8,13 +8,15 @@ import {
   managementApiPrefix,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
+import { localize } from '../../../localize';
 import { createAzureWizard } from '../../commands/workflows/azureConnectorWizard';
 import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
 import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
-import { getLocalSettingsJson } from '../localSettings';
+import { getLocalSettingsJson } from '../appSettings/localSettings';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import type {
   IWorkflowFileContent,
   Parameter,
@@ -22,11 +24,12 @@ import type {
   WorkflowParameter,
   Artifacts,
   AzureConnectorDetails,
+  ILocalSettingsJson,
 } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
-import type { WebviewPanel } from 'vscode';
+import type { MessageItem, WebviewPanel } from 'vscode';
 
 export function tryGetWebviewPanel(category: string, name: string): WebviewPanel | undefined {
   const currentPanels = ext.openWebviewPanels[category];
@@ -220,4 +223,28 @@ export function getWorkflowManagementBaseURI(node: RemoteWorkflowTreeItem): stri
     resourceManagerUri = resourceManagerUri.slice(0, -1);
   }
   return `${resourceManagerUri}${node.parent.parent.id}/hostruntime${managementApiPrefix}`;
+}
+
+/**
+ * Verifies local and remot and resource group are the same, otherwise propmts message.
+ * @param {IActionContext} context - Command context.
+ * @param {string} workflowResourceGroupRemote - Remote resource group name.
+ * @param {string} originalDeployFsPath - Workflow path to deploy.
+ */
+export async function verifyDeploymentResourceGroup(
+  context: IActionContext,
+  workflowResourceGroupRemote: string,
+  originalDeployFsPath: string
+): Promise<void> {
+  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, path.join(originalDeployFsPath, localSettingsFileName));
+  const workflowResourceGroupLocal: string = localSettings.Values[workflowResourceGroupNameKey];
+
+  if (workflowResourceGroupLocal && workflowResourceGroupLocal.toLowerCase() !== workflowResourceGroupRemote.toLowerCase()) {
+    const warning: string = localize(
+      'resourceGroupMismatch',
+      'For optimal performance, put managed connections in the same resource group as your workflow. Are you sure you want to deploy?'
+    );
+    const deployButton: MessageItem = { title: localize('deploy', 'Deploy') };
+    await context.ui.showWarningMessage(warning, { modal: true }, deployButton, DialogResponses.cancel);
+  }
 }

@@ -1,11 +1,16 @@
 import { showNotification, setConnectionInput } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaNodeDataType, SchemaNodeExtended, SchemaNodeProperty } from '../../models';
-import { NormalizedDataType } from '../../models';
+import type { SchemaNodeDataType, SchemaNodeExtended, SchemaNodeProperty, NormalizedDataType } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
 import { directAccessPseudoFunctionKey, indexPseudoFunctionKey } from '../../models/Function';
-import { isConnectionUnit, isCustomValue, newConnectionWillHaveCircularLogic } from '../../utils/Connection.Utils';
+import {
+  isConnectionUnit,
+  isCustomValue,
+  isValidConnectionByType,
+  isValidCustomValueByType,
+  newConnectionWillHaveCircularLogic,
+} from '../../utils/Connection.Utils';
 import { getInputValues } from '../../utils/DataMap.Utils';
 import {
   calculateIndexValue,
@@ -15,6 +20,7 @@ import {
   isFunctionData,
 } from '../../utils/Function.Utils';
 import { iconForNormalizedDataType, iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
+import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { addSourceReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import { errorNotificationAutoHideDuration, NotificationTypes } from '../notification/Notification';
@@ -37,15 +43,6 @@ interface SharedOptionData {
   normalizedDataType: NormalizedDataType;
 }
 
-interface InputOption extends SharedOptionData {
-  nodeKey: string;
-  nodeName: string;
-}
-
-type InputOptionDictionary = {
-  [key: string]: InputOption[];
-};
-
 const useStyles = makeStyles({
   inputStyles: {
     width: '100%',
@@ -64,10 +61,11 @@ export interface InputDropdownProps {
   label?: string;
   placeholder?: string;
   inputAllowsCustomValues?: boolean;
+  isUnboundedInput?: boolean;
 }
 
 export const InputDropdown = (props: InputDropdownProps) => {
-  const { currentNode, inputValue, inputIndex, inputStyles, label, placeholder, inputAllowsCustomValues = true } = props;
+  const { currentNode, inputValue, inputIndex, inputStyles, label, placeholder, inputAllowsCustomValues = true, isUnboundedInput } = props;
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useStyles();
@@ -91,13 +89,36 @@ export const InputDropdown = (props: InputDropdownProps) => {
     description: 'Tooltip content for clearing custom value',
   });
 
+  const customValueSchemaNodeTypeMismatchLoc = intl.formatMessage({
+    defaultMessage: `Custom value does not match the schema node's type`,
+    description: 'Error message for when custom value does not match schema node type',
+  });
+
+  const customValueAllowedTypesMismatchLoc = intl.formatMessage({
+    defaultMessage: `Custom value does not match one of the allowed types for this input`,
+    description: `Error message for when custom value does not match one of the function node input's allowed types`,
+  });
+
+  const nodeTypeSchemaNodeTypeMismatchLoc = intl.formatMessage({
+    defaultMessage: `Input node type does not match the schema node's type`,
+    description: 'Error message for when input node type does not match schema node type',
+  });
+
+  const nodeTypeAllowedTypesMismatchLoc = intl.formatMessage({
+    defaultMessage: `Input node type does not match one of the allowed types for this input`,
+    description: `Error message for when input node type does not match one of the function node input's allowed types`,
+  });
+
   const onRenderTitle = (items?: IDropdownOption<SharedOptionData>[]) => {
     if (!items || items.length === 0 || !items[0].data) {
       return null;
     }
 
     if (items.length > 1) {
-      console.error('InputDropdown attempted to render more than one selected item');
+      LogService.error(LogCategory.InputDropDown, 'onRenderTitle', {
+        message: 'Attempted to render more than one selected item',
+      });
+
       return null;
     }
 
@@ -157,7 +178,10 @@ export const InputDropdown = (props: InputDropdownProps) => {
 
   const validateAndCreateConnection = (option: IDropdownOption<SharedOptionData>) => {
     if (!option.data) {
-      console.error('InputDropdown called to create connection without necessary data');
+      LogService.error(LogCategory.InputDropDown, 'validateAndCreateConnection', {
+        message: 'Called to create connection without necessary data',
+      });
+
       return;
     }
 
@@ -208,7 +232,10 @@ export const InputDropdown = (props: InputDropdownProps) => {
 
   const updateInput = (newValue: InputConnection) => {
     if (!selectedItemKey) {
-      console.error('PropPane - Function: Attempted to update input with nothing selected on canvas');
+      LogService.error(LogCategory.InputDropDown, 'updateInput', {
+        message: 'Attempted to update input with nothing selected on canvas',
+      });
+
       return;
     }
 
@@ -237,31 +264,23 @@ export const InputDropdown = (props: InputDropdownProps) => {
     }
   }, [inputValue, sourceSchemaDictionary, functionNodeDictionary]);
 
-  const typeSortedInputOptions = useMemo<InputOptionDictionary>(() => {
-    const newPossibleInputOptionsDictionary = {} as InputOptionDictionary;
+  const availableInputOptions = useMemo<IDropdownOption<SharedOptionData>[]>(() => {
+    // Add source schema nodes currently on the canvas
+    const newAvailableInputOptions: IDropdownOption<SharedOptionData>[] = currentSourceSchemaNodes.map<IDropdownOption<SharedOptionData>>(
+      (srcSchemaNode) => ({
+        key: addSourceReactFlowPrefix(srcSchemaNode.key),
+        text: srcSchemaNode.name,
+        data: {
+          isFunction: false,
+          nodeProperties: srcSchemaNode.nodeProperties,
+          schemaNodeDataType: srcSchemaNode.schemaNodeDataType,
+          normalizedDataType: srcSchemaNode.normalizedDataType,
+        },
+      })
+    );
 
-    // Sort source schema nodes on the canvas by type
-    currentSourceSchemaNodes.forEach((srcNode) => {
-      if (!newPossibleInputOptionsDictionary[srcNode.normalizedDataType]) {
-        newPossibleInputOptionsDictionary[srcNode.normalizedDataType] = [];
-      }
-
-      newPossibleInputOptionsDictionary[srcNode.normalizedDataType].push({
-        nodeKey: addSourceReactFlowPrefix(srcNode.key),
-        nodeName: srcNode.name,
-        isFunction: false,
-        nodeProperties: srcNode.nodeProperties,
-        schemaNodeDataType: srcNode.schemaNodeDataType,
-        normalizedDataType: srcNode.normalizedDataType,
-      });
-    });
-
-    // Sort function nodes on the canvas by type
+    // Add function nodes currently on the canvas
     Object.entries(functionNodeDictionary).forEach(([key, node]) => {
-      if (!newPossibleInputOptionsDictionary[node.outputValueType]) {
-        newPossibleInputOptionsDictionary[node.outputValueType] = [];
-      }
-
       // Don't list currentNode as an option
       if (key === selectedItemKey) {
         return;
@@ -316,70 +335,23 @@ export const InputDropdown = (props: InputDropdownProps) => {
         nodeName = getFunctionOutputValue(fnInputValues, node.functionName);
       }
 
-      newPossibleInputOptionsDictionary[node.outputValueType].push({
-        nodeKey: key,
-        nodeName,
-        isFunction: true,
-        normalizedDataType: node.outputValueType,
+      newAvailableInputOptions.push({
+        key,
+        text: nodeName,
+        data: {
+          isFunction: true,
+          normalizedDataType: node.outputValueType,
+        },
       });
     });
 
-    return newPossibleInputOptionsDictionary;
+    return newAvailableInputOptions;
   }, [currentSourceSchemaNodes, functionNodeDictionary, connectionDictionary, selectedItemKey]);
 
-  // Compile options from the possible type-sorted input options based on the input's type
-  const typeMatchedInputOptions = useMemo<IDropdownOption<SharedOptionData>[] | undefined>(() => {
-    let newInputOptions: IDropdownOption<SharedOptionData>[] = [];
-
-    const addTypeMatchedOptions = (typeEntryArray: InputOption[]) => {
-      newInputOptions = [
-        ...newInputOptions,
-        ...typeEntryArray.map<IDropdownOption<SharedOptionData>>((possibleOption) => ({
-          key: possibleOption.nodeKey,
-          text: possibleOption.nodeName,
-          data: {
-            isFunction: possibleOption.isFunction,
-            nodeProperties: possibleOption.nodeProperties,
-            schemaNodeDataType: possibleOption.schemaNodeDataType,
-            normalizedDataType: possibleOption.normalizedDataType,
-          },
-        })),
-      ];
-    };
-
-    const addAllOptions = () => {
-      Object.values(typeSortedInputOptions).forEach((typeEntryArray) => {
-        addTypeMatchedOptions(typeEntryArray);
-      });
-    };
-
-    const handleAnyOrSpecificType = (type: NormalizedDataType) => {
-      if (type === NormalizedDataType.Any) {
-        addAllOptions();
-      } else if (typeSortedInputOptions[type]) {
-        // If not type Any, check if any possible input options were found/compiled for provided type
-        addTypeMatchedOptions(typeSortedInputOptions[type]);
-
-        // Also add any options whose output type is Any - if there are any
-        if (typeSortedInputOptions[NormalizedDataType.Any]) {
-          addTypeMatchedOptions(typeSortedInputOptions[NormalizedDataType.Any]);
-        }
-      }
-    };
-
-    if (isFunctionData(currentNode)) {
-      currentNode.inputs[inputIndex].allowedTypes.forEach(handleAnyOrSpecificType);
-    } else {
-      handleAnyOrSpecificType(currentNode.normalizedDataType);
-    }
-
-    return newInputOptions;
-  }, [inputIndex, typeSortedInputOptions, currentNode]);
-
+  // Add divider + custom value option if allowed
   const modifiedDropdownOptions = useMemo(() => {
-    const newModifiedOptions = typeMatchedInputOptions ? [...typeMatchedInputOptions] : [];
+    const newModifiedOptions = availableInputOptions ? [...availableInputOptions] : [];
 
-    // Custom value option (if allowed)
     if (inputAllowsCustomValues) {
       newModifiedOptions.push({
         key: 'divider',
@@ -394,7 +366,68 @@ export const InputDropdown = (props: InputDropdownProps) => {
     }
 
     return newModifiedOptions;
-  }, [typeMatchedInputOptions, customValueOptionLoc, inputAllowsCustomValues]);
+  }, [availableInputOptions, customValueOptionLoc, inputAllowsCustomValues]);
+
+  const typeValidationMessage = useMemo<string | undefined>(() => {
+    if (inputValue !== undefined) {
+      // Custom value validation
+      if (inputIsCustomValue) {
+        // Schema node (single type)
+        if (isSchemaNodeExtended(currentNode)) {
+          if (!isValidCustomValueByType(inputValue, currentNode.normalizedDataType)) {
+            return customValueSchemaNodeTypeMismatchLoc;
+          }
+        } else {
+          // Function nodes (>= 1 allowed types)
+          let someTypeMatched = false;
+          currentNode.inputs[isUnboundedInput ? 0 : inputIndex].allowedTypes.forEach((type) => {
+            if (isValidCustomValueByType(inputValue, type)) {
+              someTypeMatched = true;
+            }
+          });
+
+          if (!someTypeMatched) {
+            return customValueAllowedTypesMismatchLoc;
+          }
+        }
+      } else {
+        const inputType = availableInputOptions.find((option) => option.key === inputValue)?.data?.normalizedDataType;
+
+        if (inputType) {
+          // Node value validation
+          if (isSchemaNodeExtended(currentNode)) {
+            if (!isValidConnectionByType(inputType, currentNode.normalizedDataType)) {
+              return nodeTypeSchemaNodeTypeMismatchLoc;
+            }
+          } else {
+            let someTypeMatched = false;
+            currentNode.inputs[isUnboundedInput ? 0 : inputIndex].allowedTypes.forEach((type) => {
+              if (isValidConnectionByType(inputType, type)) {
+                someTypeMatched = true;
+              }
+            });
+
+            if (!someTypeMatched) {
+              return nodeTypeAllowedTypesMismatchLoc;
+            }
+          }
+        }
+      }
+    }
+
+    return undefined;
+  }, [
+    inputValue,
+    isUnboundedInput,
+    inputIndex,
+    currentNode,
+    inputIsCustomValue,
+    availableInputOptions,
+    customValueSchemaNodeTypeMismatchLoc,
+    customValueAllowedTypesMismatchLoc,
+    nodeTypeSchemaNodeTypeMismatchLoc,
+    nodeTypeAllowedTypesMismatchLoc,
+  ]);
 
   return (
     <>
@@ -415,9 +448,10 @@ export const InputDropdown = (props: InputDropdownProps) => {
           onRenderTitle={onRenderTitle}
           onRenderOption={onRenderOption}
           data-testid={`inputDropdown-dropdown-${inputIndex}`}
+          errorMessage={typeValidationMessage}
         />
       ) : (
-        <div style={{ position: 'relative', ...inputStyles }}>
+        <div style={inputStyles}>
           <TextField
             value={customValue}
             onChange={(_e, newValue) => onChangeCustomValue(newValue)}
@@ -430,23 +464,16 @@ export const InputDropdown = (props: InputDropdownProps) => {
               subComponentStyles: {
                 label: { root: { ...typographyStyles.body1, color: tokens.colorNeutralForeground1 } },
               },
+              suffix: { backgroundColor: 'transparent', padding: '0px' },
             }}
             data-testid={`inputDropdown-textField-${inputIndex}`}
+            errorMessage={typeValidationMessage}
+            onRenderSuffix={() => (
+              <Tooltip relationship="label" content={clearCustomValueLoc}>
+                <Button appearance="transparent" icon={<Dismiss20Regular />} onClick={onClearCustomValue} />
+              </Tooltip>
+            )}
           />
-          <Tooltip relationship="label" content={clearCustomValueLoc}>
-            <Button
-              appearance="transparent"
-              icon={<Dismiss20Regular />}
-              onClick={onClearCustomValue}
-              style={{
-                boxSizing: 'border-box',
-                position: 'absolute',
-                top: label ? '76%' : '50%',
-                right: 0,
-                transform: 'translate(0, -50%)',
-              }}
-            />
-          </Tooltip>
         </div>
       )}
     </>

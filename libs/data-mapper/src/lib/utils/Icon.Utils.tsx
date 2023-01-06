@@ -1,5 +1,4 @@
 import type { FunctionGroupBranding } from '../constants/FunctionConstants';
-import { Collection20Regular, StringCategory20Regular } from '../images/CategoryIcons';
 import {
   Any16Filled,
   Any16Regular,
@@ -28,19 +27,18 @@ import {
   String24Filled,
   String24Regular,
 } from '../images/DataType24Icons';
-import { FunctionCategory } from '../models/Function';
+import { FunctionCategory, FunctionCategoryIconPrefix } from '../models/Function';
 import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperty } from '../models/Schema';
-import { Image } from '@fluentui/react-components';
+import { LogCategory, LogService } from './Logging.Utils';
+import { Image, ImageLoadState } from '@fluentui/react';
 import {
   AddSubtractCircle16Filled,
   AddSubtractCircle16Regular,
-  AddSubtractCircle20Filled,
   AddSubtractCircle24Filled,
   AddSubtractCircle24Regular,
   bundleIcon,
   CalendarClock16Filled,
   CalendarClock16Regular,
-  CalendarClock20Regular,
   CalendarClock24Filled,
   CalendarClock24Regular,
   CircleOff16Filled,
@@ -49,9 +47,9 @@ import {
   Cube16Regular,
   Cube24Filled,
   Cube24Regular,
-  MathSymbols20Regular,
-  Wrench20Regular,
 } from '@fluentui/react-icons';
+
+// Using Fluent v8 as it has option for fallback icon
 
 type iconSize = 16 | 24;
 
@@ -74,7 +72,10 @@ export const getSchemaNodeDataTypeFromNormalizedDataType = (normalizedDataType: 
     case NormalizedDataType.String:
       return SchemaNodeDataType.String;
     default:
-      console.error(`Icon.Utils Error: No corresponding SchemaNodeDataType found for NormalizedDataType ${normalizedDataType}`);
+      LogService.error(LogCategory.IconUtils, 'getSchemaNodeDataTypeFromNormalizedDataType', {
+        message: `No corresponding SchemaNodeDataType found for NormalizedDataType ${normalizedDataType}`,
+      });
+
       return SchemaNodeDataType.AnyAtomicType;
   }
 };
@@ -183,7 +184,9 @@ export const iconForSchemaNodeDataType = (
       break;
     }
     default: {
-      console.error(`Icon.Utils Error: No icon found for type ${nodeType}`);
+      LogService.error(LogCategory.IconUtils, 'iconForSchemaNodeDataType', {
+        message: `Icon.Utils Error: No icon found for type ${nodeType}`,
+      });
 
       // Null
       icons = [CircleOff16Regular, CircleOff16Filled];
@@ -194,38 +197,47 @@ export const iconForSchemaNodeDataType = (
   return bundled ? bundleIcon(icons[1], icons[0]) : icons[0];
 };
 
+export const iconBaseUrl = 'https://logicappsv2resources.blob.core.windows.net/icons/datamapper/';
+
 export const iconForFunctionCategory = (functionCategory: FunctionCategory) => {
-  switch (functionCategory) {
-    case FunctionCategory.Collection: {
-      return Collection20Regular;
-    }
-    case FunctionCategory.DateTime: {
-      return CalendarClock20Regular;
-    }
-    case FunctionCategory.Logical: {
-      return AddSubtractCircle20Filled;
-    }
-    case FunctionCategory.Math: {
-      return MathSymbols20Regular;
-    }
-    case FunctionCategory.String: {
-      return StringCategory20Regular;
-    }
-    case FunctionCategory.Utility: {
-      return Wrench20Regular;
-    }
-    default: {
-      console.error(`Invalid category type: ${functionCategory}`);
-      return Wrench20Regular;
-    }
+  const functionCategories = Object.values(FunctionCategory);
+  const functionIconUrlPrefix = `${iconBaseUrl}${FunctionCategoryIconPrefix}`;
+  if (functionCategories.indexOf(functionCategory) >= 0) {
+    return `${functionIconUrlPrefix}${functionCategory.toLowerCase().replace(' ', '')}.svg`;
+  } else {
+    return `${functionIconUrlPrefix}${FunctionCategory.Utility.toLowerCase()}.svg`;
   }
 };
 
 export const iconUriForIconImageName = (iconImageName: string) => {
-  // TODO Temp CDN, will need to be moved into a production location
-  return `https://datamappericons.azureedge.net/icons/${iconImageName}`;
+  return `${iconBaseUrl}${iconImageName}`;
 };
 
-export const getIconForFunction = (name: string, fileName: string | undefined, branding: FunctionGroupBranding) => {
-  return fileName ? <Image src={iconUriForIconImageName(fileName)} height={20} width={20} alt={name} /> : <>{branding.icon}</>;
+export const getIconForFunction = (
+  name: string,
+  categoryName: FunctionCategory,
+  fileName: string | undefined,
+  _branding: FunctionGroupBranding
+) => {
+  const functionIcon = iconUriForIconImageName(fileName ?? '');
+  const categoryIcon = iconForFunctionCategory(categoryName);
+  let isError = false;
+
+  const loadBackupFunctionCategory = (loadState: ImageLoadState) => {
+    if (loadState === ImageLoadState.error) {
+      isError = true;
+    } else {
+      isError = false;
+    }
+  };
+  return (
+    <Image
+      src={isError ? functionIcon : categoryIcon}
+      shouldFadeIn={false}
+      height={20}
+      width={20}
+      alt={name}
+      onLoadingStateChange={loadBackupFunctionCategory}
+    />
+  );
 };

@@ -12,6 +12,7 @@ import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import { FunctionCategory } from '../models/Function';
 import { isConnectionUnit } from './Connection.Utils';
+import { LogCategory, LogService } from './Logging.Utils';
 import { isSchemaNodeExtended } from './Schema.Utils';
 
 export const getFunctionBrandingForCategory = (functionCategory: FunctionCategory) => {
@@ -38,7 +39,10 @@ export const getFunctionBrandingForCategory = (functionCategory: FunctionCategor
       return conversionBranding;
     }
     default: {
-      console.error(`Invalid category provided: ${functionCategory}`);
+      LogService.error(LogCategory.FunctionUtils, 'getFunctionBrandingForCategory', {
+        message: `Invalid category provided: ${functionCategory}`,
+      });
+
       return utilityBranding;
     }
   }
@@ -81,7 +85,11 @@ export const getIndexValueForCurrentConnection = (currentConnection: Connection)
   if (inputNode) {
     return calculateIndexValue(inputNode);
   } else {
-    console.error(`Didn't find inputNode to make index value: ${inputNode}`);
+    LogService.error(LogCategory.FunctionUtils, 'getIndexValueForCurrentConnection', {
+      message: `Didn't find inputNode to make index value`,
+      connection: currentConnection,
+    });
+
     return '';
   }
 };

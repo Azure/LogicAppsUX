@@ -1363,6 +1363,12 @@
       "value": "Bitti"
     }
   ],
+  "AX7dq3": [
+    {
+      "type": 0,
+      "value": "Input node type does not match the schema node's type"
+    }
+  ],
   "AYaqW/": [
     {
       "type": 0,
@@ -1635,6 +1641,12 @@
     {
       "type": 0,
       "value": "Süre"
+    }
+  ],
+  "DZc8wP": [
+    {
+      "type": 0,
+      "value": "Custom value does not match the schema node's type"
     }
   ],
   "DfS13/": [
@@ -3597,6 +3609,12 @@
       "value": "trigger().outputs için kısayol"
     }
   ],
+  "WcnIF8": [
+    {
+      "type": 0,
+      "value": "Remove"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -3843,6 +3861,12 @@
     {
       "type": 0,
       "value": "Arama İpuçları"
+    }
+  ],
+  "Yh5OVd": [
+    {
+      "type": 0,
+      "value": "Custom value does not match one of the allowed types for this input"
     }
   ],
   "YoQara": [
@@ -4097,6 +4121,12 @@
       "value": "Çıkışı test etmek için parametreleri belirtin."
     }
   ],
+  "byTBrn": [
+    {
+      "type": 0,
+      "value": "Custom"
+    }
+  ],
   "bzF/qn": [
     {
       "type": 0,
@@ -4197,6 +4227,12 @@
     {
       "type": 0,
       "value": "İptal Edildi"
+    }
+  ],
+  "cjcEOf": [
+    {
+      "type": 0,
+      "value": "Input node type does not match one of the allowed types for this input"
     }
   ],
   "cmTCsW": [
@@ -6431,6 +6467,12 @@
       "value": "Gerekli. Yeni veya mevcut özelliğin adı."
     }
   ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
+    }
+  ],
   "xYyPR8": [
     {
       "type": 0,
@@ -6609,6 +6651,12 @@
     {
       "type": 0,
       "value": "(UTC+03:00) Nairobi"
+    }
+  ],
+  "ziXw25": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "ziYCiA": [

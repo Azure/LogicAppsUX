@@ -2,9 +2,12 @@ import type { FunctionGroupBranding } from '../../constants/FunctionConstants';
 import { functionNodeCardSize } from '../../constants/NodeConstants';
 import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import { customTokens } from '../../core';
+import { deleteCurrentlySelectedItem, setSelectedItem } from '../../core/state/DataMapSlice';
 import type { RootState } from '../../core/state/Store';
-import type { FunctionInput } from '../../models/Function';
+import type { FunctionData } from '../../models/Function';
+import { isCustomValue, isValidConnectionByType, isValidCustomValueByType } from '../../utils/Connection.Utils';
 import { getIconForFunction } from '../../utils/Icon.Utils';
+import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import HandleWrapper from './HandleWrapper';
 import type { CardProps } from './NodeCard';
 import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
@@ -19,8 +22,11 @@ import {
   tokens,
   Tooltip,
 } from '@fluentui/react-components';
+import type { MenuItemOption } from '@microsoft/designer-ui';
+import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
 import { useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useIntl } from 'react-intl';
+import { useDispatch, useSelector } from 'react-redux';
 import type { NodeProps } from 'reactflow';
 import { Position } from 'reactflow';
 
@@ -47,7 +53,7 @@ const useStyles = makeStyles({
       color: `${tokens.colorNeutralBackground1} !important`,
     },
   },
-  badge: {
+  errorBadge: {
     position: 'absolute',
     top: '1px',
     right: '-2px',
@@ -65,39 +71,97 @@ const useStyles = makeStyles({
 });
 
 export interface FunctionCardProps extends CardProps {
-  displayName: string;
-  functionName: string;
-  maxNumberOfInputs: number;
-  inputs: FunctionInput[];
-  iconFileName?: string;
+  functionData: FunctionData;
   functionBranding: FunctionGroupBranding;
   dataTestId: string;
 }
 
 export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
+  const dispatch = useDispatch();
   const reactFlowId = props.id;
-  const { displayName, functionName, maxNumberOfInputs, disabled, error, functionBranding, displayHandle, onClick, dataTestId } =
-    props.data; // iconFileName
+  const { functionData, disabled, functionBranding, displayHandle, onClick, dataTestId } = props.data;
   const classes = useStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
   const sourceNodeConnectionBeingDrawnFromId = useSelector((state: RootState) => state.dataMap.sourceNodeConnectionBeingDrawnFromId);
+  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   const [isCardHovered, setIsCardHovered] = useState<boolean>(false);
 
   const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
 
+  const intl = useIntl();
+  const contextMenu = useCardContextMenu();
+  const getDeleteMenuItem = (): MenuItemOption => {
+    const deleteDescription = intl.formatMessage({
+      defaultMessage: 'Delete',
+      description: 'Delete text',
+    });
+
+    return {
+      key: deleteDescription,
+      disabled: false,
+      iconName: 'Delete',
+      title: deleteDescription,
+      type: MenuItemType.Advanced,
+      onClick: handleDeleteClick,
+    };
+  };
+
+  const handleDeleteClick = () => {
+    dispatch(setSelectedItem(reactFlowId));
+    dispatch(deleteCurrentlySelectedItem());
+  };
+
   const shouldDisplayHandles = !sourceNodeConnectionBeingDrawnFromId && (isCardHovered || isCurrentNodeSelected);
   const shouldDisplayTargetHandle =
     displayHandle &&
-    maxNumberOfInputs !== 0 &&
+    functionData.maxNumberOfInputs !== 0 &&
     !!sourceNodeConnectionBeingDrawnFromId &&
     sourceNodeConnectionBeingDrawnFromId !== reactFlowId;
   const shouldDisplaySourceHandle = displayHandle && shouldDisplayHandles;
 
+  const areCurrentInputsValid = useMemo(() => {
+    let isEveryInputValid = true;
+    const curConn = connections[reactFlowId];
+
+    if (curConn) {
+      Object.values(curConn.inputs).forEach((inputArr, inputIdx) => {
+        inputArr.forEach((inputVal) => {
+          let inputValMatchedOneOfAllowedTypes = false;
+
+          functionData.inputs[inputIdx].allowedTypes.forEach((allowedInputType) => {
+            if (inputVal !== undefined) {
+              if (isCustomValue(inputVal)) {
+                if (isValidCustomValueByType(inputVal, allowedInputType)) {
+                  inputValMatchedOneOfAllowedTypes = true;
+                }
+              } else {
+                if (isSchemaNodeExtended(inputVal.node)) {
+                  if (isValidConnectionByType(allowedInputType, inputVal.node.normalizedDataType)) {
+                    inputValMatchedOneOfAllowedTypes = true;
+                  }
+                } else if (isValidConnectionByType(allowedInputType, inputVal.node.outputValueType)) {
+                  inputValMatchedOneOfAllowedTypes = true;
+                }
+              }
+            }
+          });
+
+          if (!inputValMatchedOneOfAllowedTypes) {
+            isEveryInputValid = false;
+          }
+        });
+      });
+    }
+
+    return isEveryInputValid;
+  }, [connections, reactFlowId, functionData.inputs]);
+
   return (
     <div
+      onContextMenu={contextMenu.handle}
       className={mergeClasses(classes.container, 'nopan')}
       onMouseEnter={() => setIsCardHovered(true)}
       onMouseLeave={() => setIsCardHovered(false)}
@@ -111,11 +175,11 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
         nodeReactFlowId={reactFlowId}
       />
 
-      {error && <PresenceBadge size="extra-small" status="busy" className={classes.badge} />}
+      {!areCurrentInputsValid && <PresenceBadge size="extra-small" status="busy" className={classes.errorBadge} />}
 
       <Tooltip
         content={{
-          children: <Text size={200}>{displayName}</Text>,
+          children: <Text size={200}>{functionData.displayName}</Text>,
         }}
         relationship="label"
       >
@@ -129,7 +193,7 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
           }
           disabled={!!disabled}
         >
-          {getIconForFunction(functionName, undefined, functionBranding) /* TODO: undefined -> iconFileName once all SVGs in */}
+          {getIconForFunction(functionData.functionName, functionData.category, functionData.iconFileName, functionBranding)}
         </Button>
       </Tooltip>
 
@@ -139,6 +203,13 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
         shouldDisplay={shouldDisplaySourceHandle}
         nodeReactFlowType={ReactFlowNodeType.FunctionNode}
         nodeReactFlowId={reactFlowId}
+      />
+      <CardContextMenu
+        title={'Delete'}
+        contextMenuLocation={contextMenu.location}
+        contextMenuOptions={[getDeleteMenuItem()]}
+        showContextMenu={contextMenu.isShowing}
+        onSetShowContextMenu={contextMenu.setIsShowing}
       />
     </div>
   );

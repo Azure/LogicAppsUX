@@ -4,13 +4,13 @@ import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import type { NodeToggledStateDictionary } from '../components/tree/TargetSchemaTreeItem';
 import { childTargetNodeCardIndent, schemaNodeCardHeight, schemaNodeCardWidth } from '../constants/NodeConstants';
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import appInsights from '../core/services/appInsights/AppInsights';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { SchemaNodeExtended } from '../models/Schema';
 import { SchemaType } from '../models/Schema';
 import { getFunctionBrandingForCategory } from './Function.Utils';
 import { applyElkLayout, convertDataMapNodesToElkGraph } from './Layout.Utils';
+import { LogCategory, LogService } from './Logging.Utils';
 import { isLeafNode } from './Schema.Utils';
 import { guid } from '@microsoft/utils-logic-apps';
 import type { ElkNode } from 'elkjs';
@@ -120,8 +120,9 @@ export const useLayout = (
           });
         })
         .catch((error) => {
-          console.error(`Elk Layout Error: ${error}`);
-          appInsights.trackException({ exception: error });
+          LogService.error(LogCategory.ReactFlowUtils, 'useEffect', {
+            message: `Elk Layout Error: ${error}`,
+          });
         });
     } else {
       setReactFlowNodes([]);
@@ -141,7 +142,10 @@ export const convertToReactFlowNodes = (
   connections: ConnectionDictionary
 ): ReactFlowNode<CardProps>[] => {
   if (!elkTree.children || elkTree.children.length !== 3) {
-    console.error('Layout error: outputted root elkTree does not have necessary children');
+    LogService.error(LogCategory.ReactFlowUtils, 'convertToReactFlowNodes', {
+      message: 'Layout error: outputted root elkTree does not have necessary children',
+    });
+
     return [];
   }
 
@@ -164,7 +168,10 @@ const convertSourceToReactFlowParentAndChildNodes = (
   const reactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
 
   if (!sourceSchemaElkTree.children) {
-    console.error('Layout error: sourceSchemaElkTree missing children');
+    LogService.error(LogCategory.ReactFlowUtils, 'convertSourceToReactFlowParentAndChildNodes', {
+      message: 'Layout error: sourceSchemaElkTree missing children',
+    });
+
     return reactFlowNodes;
   }
 
@@ -174,7 +181,16 @@ const convertSourceToReactFlowParentAndChildNodes = (
 
     const elkNode = sourceSchemaElkTree.children?.find((node) => node.id === nodeReactFlowId);
     if (!elkNode || !elkNode.x || !elkNode.y || !sourceSchemaElkTree.x || !sourceSchemaElkTree.y) {
-      console.error('Layout error: sourceSchema ElkNode not found, or missing x/y');
+      LogService.error(LogCategory.ReactFlowUtils, 'convertSourceToReactFlowParentAndChildNodes', {
+        message: 'Layout error: sourceSchema ElkNode not found, or missing x/y',
+        elkData: {
+          elkNodeX: elkNode?.x,
+          elkNodeY: elkNode?.y,
+          sourceSchemaElkTreeX: sourceSchemaElkTree?.x,
+          sourceSchemaElkTreeY: sourceSchemaElkTree?.y,
+        },
+      });
+
       return;
     }
 
@@ -225,7 +241,16 @@ export const convertToReactFlowParentAndChildNodes = (
   const parentNodeReactFlowId = addReactFlowPrefix(parentSchemaNode.key, schemaType);
   const parentElkNode = elkTree.children?.find((node) => node.id === parentNodeReactFlowId);
   if (!parentElkNode || !parentElkNode.x || !parentElkNode.y || !elkTree.x || !elkTree.y) {
-    console.error('Layout error: Schema parent ElkNode not found, or missing x/y');
+    LogService.error(LogCategory.ReactFlowUtils, 'convertToReactFlowParentAndChildNodes', {
+      message: 'Layout error: Schema parent ElkNode not found, or missing x/y',
+      elkData: {
+        parentElkNodeX: parentElkNode?.x,
+        parentElkNodeY: parentElkNode?.y,
+        elkTreeX: elkTree?.x,
+        elkTreeY: elkTree?.y,
+      },
+    });
+
     return reactFlowNodes;
   }
 
@@ -255,12 +280,22 @@ export const convertToReactFlowParentAndChildNodes = (
     const childNodeReactFlowId = addReactFlowPrefix(childNode.key, schemaType);
     const childElkNode = elkTree.children?.find((node) => node.id === childNodeReactFlowId);
     if (!childElkNode || !childElkNode.x || !childElkNode.y || !elkTree.x || !elkTree.y) {
-      console.error('Layout error: Schema child ElkNode not found, or missing x/y');
+      LogService.error(LogCategory.ReactFlowUtils, 'convertToReactFlowParentAndChildNodes', {
+        message: 'Layout error: Schema child ElkNode not found, or missing x/y',
+        elkData: {
+          childElkNodeX: childElkNode?.x,
+          childElkNodeY: childElkNode?.y,
+          elkTreeX: elkTree?.x,
+          elkTreeY: elkTree?.y,
+        },
+      });
+
       return;
     }
 
     reactFlowNodes.push({
       id: childNodeReactFlowId,
+      zIndex: 101, // Just for schema nodes to render N-badge over edges
       data: {
         schemaNode: childNode,
         schemaType,
@@ -293,18 +328,24 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
   Object.entries(currentFunctionNodes).forEach(([functionKey, fnNode], idx) => {
     const elkNode = functionsElkTree.children?.find((node) => node.id === functionKey);
     if (!elkNode || !elkNode.x || !elkNode.y || !functionsElkTree.x || !functionsElkTree.y) {
-      console.error('Layout error: Function ElkNode not found, or missing x/y');
+      LogService.error(LogCategory.ReactFlowUtils, 'convertToReactFlowParentAndChildNodes', {
+        message: 'Layout error: Function ElkNode not found, or missing x/y',
+        elkData: {
+          elkNodeX: elkNode?.x,
+          elkNodeY: elkNode?.y,
+          functionsElkTreeX: functionsElkTree?.x,
+          functionsElkTreeY: functionsElkTree?.y,
+        },
+      });
+
       return;
     }
 
     reactFlowNodes.push({
       id: functionKey,
       data: {
-        displayName: fnNode.displayName,
-        functionName: fnNode.functionName,
+        functionData: fnNode,
         displayHandle: true,
-        maxNumberOfInputs: fnNode.maxNumberOfInputs,
-        inputs: fnNode.inputs,
         functionBranding: getFunctionBrandingForCategory(fnNode.category),
         disabled: false,
         error: false,

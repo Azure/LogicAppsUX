@@ -1,15 +1,14 @@
-import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, sourceMockSchema, targetMockSchema } from '../__mocks__';
-import { concatFunction, greaterThanFunction } from '../__mocks__/FunctionMock';
-import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '../models';
-import { SchemaType } from '../models';
-import type { ConnectionDictionary } from '../models/Connection';
-import { directAccessPseudoFunction, ifPseudoFunction, indexPseudoFunction } from '../models/Function';
-import { setConnectionInputValue } from '../utils/Connection.Utils';
-import { generateMapDefinitionBody, generateMapDefinitionHeader, splitKeyIntoChildren } from '../utils/DataMap.Utils';
-import { addReactFlowPrefix, createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
-import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
+import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, sourceMockSchema, targetMockSchema } from '../../__mocks__';
+import { concatFunction, greaterThanFunction } from '../../__mocks__/FunctionMock';
+import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '../../models';
+import { directAccessPseudoFunction, ifPseudoFunction, indexPseudoFunction, SchemaType } from '../../models';
+import type { ConnectionDictionary } from '../../models/Connection';
+import { setConnectionInputValue } from '../../utils/Connection.Utils';
+import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
+import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
+import { generateMapDefinitionBody, generateMapDefinitionHeader } from '../MapDefinitionSerializer';
 
-describe('Map definition conversions', () => {
+describe('mapDefinitions/MapDefinitionSerializer', () => {
   describe('generateMapDefinitionHeader', () => {
     const sourceSchema: Schema = sourceMockSchema;
     const extendedSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(sourceSchema);
@@ -198,7 +197,7 @@ describe('Map definition conversions', () => {
       expect(employeeChildren[1][1]).toEqual('/ns0:Root/DirectTranslation/EmployeeName');
     });
 
-    it('Generates body with a conditional', async () => {
+    it('Generates body with a property conditional', async () => {
       const sourceNode = extendedSourceSchema.schemaTreeRoot.children[3];
       const targetNode = extendedTargetSchema.schemaTreeRoot.children[4];
       const ifFunctionId = createReactFlowFunctionKey(ifPseudoFunction);
@@ -257,6 +256,17 @@ describe('Map definition conversions', () => {
         },
       });
 
+      //Second property not connected to the conditional
+      setConnectionInputValue(connections, {
+        targetNode: targetNode.children[1],
+        targetNodeReactFlowKey: addReactFlowPrefix(targetNode.children[1].key, SchemaType.Target),
+        findInputSlot: true,
+        value: {
+          reactFlowKey: addReactFlowPrefix(sourceNode.children[1].key, SchemaType.Source),
+          node: sourceNode.children[1],
+        },
+      });
+
       generateMapDefinitionBody(mapDefinition, connections);
 
       expect(Object.keys(mapDefinition).length).toEqual(1);
@@ -267,11 +277,13 @@ describe('Map definition conversions', () => {
 
       const conditionalMappingObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['ConditionalMapping'] as MapDefinitionEntry;
       const conditionalMappingChildren = Object.entries(conditionalMappingObject);
-      expect(conditionalMappingChildren.length).toEqual(1);
+      expect(conditionalMappingChildren.length).toEqual(2);
       expect(conditionalMappingChildren[0][0]).toEqual(
         '$if(is-greater-than(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity))'
       );
       expect(conditionalMappingChildren[0][1]).not.toBe('string');
+      expect(conditionalMappingChildren[1][0]).toEqual('ItemQuantity');
+      expect(conditionalMappingChildren[1][1]).toEqual('/ns0:Root/ConditionalMapping/ItemQuantity');
 
       const ifObject = conditionalMappingObject[
         '$if(is-greater-than(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity))'
@@ -280,6 +292,112 @@ describe('Map definition conversions', () => {
       expect(ifChildren.length).toEqual(1);
       expect(ifChildren[0][0]).toEqual('ItemPrice');
       expect(ifChildren[0][1]).toEqual('/ns0:Root/ConditionalMapping/ItemPrice');
+    });
+
+    it('Generates body with an object conditional', async () => {
+      const sourceNode = extendedSourceSchema.schemaTreeRoot.children[3];
+      const targetNode = extendedTargetSchema.schemaTreeRoot.children[4];
+      const ifFunctionId = createReactFlowFunctionKey(ifPseudoFunction);
+      const greaterThanId = createReactFlowFunctionKey(greaterThanFunction);
+      const mapDefinition: MapDefinitionEntry = {};
+      const connections: ConnectionDictionary = {};
+
+      // Source to greater than
+      setConnectionInputValue(connections, {
+        targetNode: greaterThanFunction,
+        targetNodeReactFlowKey: greaterThanId,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: addReactFlowPrefix(sourceNode.children[0].key, SchemaType.Source),
+          node: sourceNode.children[0],
+        },
+      });
+      setConnectionInputValue(connections, {
+        targetNode: greaterThanFunction,
+        targetNodeReactFlowKey: greaterThanId,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: addReactFlowPrefix(sourceNode.children[1].key, SchemaType.Source),
+          node: sourceNode.children[1],
+        },
+      });
+
+      // Inputs to conditional
+      setConnectionInputValue(connections, {
+        targetNode: ifPseudoFunction,
+        targetNodeReactFlowKey: ifFunctionId,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: greaterThanId,
+          node: greaterThanFunction,
+        },
+      });
+      setConnectionInputValue(connections, {
+        targetNode: ifPseudoFunction,
+        targetNodeReactFlowKey: ifFunctionId,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: addReactFlowPrefix(sourceNode.key, SchemaType.Source),
+          node: sourceNode,
+        },
+      });
+
+      //Conditional to target
+      setConnectionInputValue(connections, {
+        targetNode: targetNode,
+        targetNodeReactFlowKey: addReactFlowPrefix(targetNode.key, SchemaType.Target),
+        findInputSlot: true,
+        value: {
+          reactFlowKey: ifFunctionId,
+          node: ifPseudoFunction,
+        },
+      });
+
+      //Child property not connected to the conditional
+      setConnectionInputValue(connections, {
+        targetNode: targetNode.children[0],
+        targetNodeReactFlowKey: addReactFlowPrefix(targetNode.children[0].key, SchemaType.Target),
+        findInputSlot: true,
+        value: {
+          reactFlowKey: addReactFlowPrefix(sourceNode.children[0].key, SchemaType.Source),
+          node: sourceNode.children[0],
+        },
+      });
+      setConnectionInputValue(connections, {
+        targetNode: targetNode.children[1],
+        targetNodeReactFlowKey: addReactFlowPrefix(targetNode.children[1].key, SchemaType.Target),
+        findInputSlot: true,
+        value: {
+          reactFlowKey: addReactFlowPrefix(sourceNode.children[1].key, SchemaType.Source),
+          node: sourceNode.children[1],
+        },
+      });
+
+      generateMapDefinitionBody(mapDefinition, connections);
+
+      expect(Object.keys(mapDefinition).length).toEqual(1);
+      const rootChildren = Object.entries(mapDefinition['ns0:Root']);
+      expect(rootChildren.length).toEqual(1);
+      expect(rootChildren[0][0]).toEqual(
+        '$if(is-greater-than(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity))'
+      );
+      expect(rootChildren[0][1]).not.toBe('string');
+
+      const ifObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)[
+        '$if(is-greater-than(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity))'
+      ] as MapDefinitionEntry;
+      const ifChildren = Object.entries(ifObject);
+      expect(ifChildren.length).toEqual(1);
+      expect(ifChildren[0][0]).toEqual('ConditionalMapping');
+      expect(ifChildren[0][1]).not.toBe('string');
+
+      const conditionalMappingObject = ifObject['ConditionalMapping'] as MapDefinitionEntry;
+      const conditionalMappingChildren = Object.entries(conditionalMappingObject);
+      expect(conditionalMappingChildren.length).toEqual(2);
+      expect(conditionalMappingChildren[0][0]).toEqual('ItemPrice');
+      expect(conditionalMappingChildren[0][1]).toEqual('/ns0:Root/ConditionalMapping/ItemPrice');
+      expect(conditionalMappingChildren[1][0]).toEqual('ItemQuantity');
+      expect(conditionalMappingChildren[1][1]).toEqual('/ns0:Root/ConditionalMapping/ItemQuantity');
     });
 
     it('Generates body with loop', async () => {
@@ -1696,55 +1814,6 @@ describe('Map definition conversions', () => {
       expect(dayChildren.length).toEqual(1);
       expect(dayChildren[0][0]).toEqual('Pressure');
       expect(dayChildren[0][1]).toEqual('/ns0:Root/LoopingWithIndex/WeatherReport[$a]/@Pressure');
-    });
-  });
-
-  describe('splitKeyIntoChildren', () => {
-    it('No nested functions', async () => {
-      expect(splitKeyIntoChildren('to-lower(EmployeeName)')).toEqual(['EmployeeName']);
-    });
-
-    it('Multiple node ids', async () => {
-      expect(splitKeyIntoChildren('concat(EmployeeName, EmployeeID)')).toEqual(['EmployeeName', 'EmployeeID']);
-    });
-
-    it('Content enricher', async () => {
-      expect(splitKeyIntoChildren('get-date()')).toEqual([]);
-    });
-
-    it('Mixed node and function', async () => {
-      expect(splitKeyIntoChildren('concat(EmployeeName, string(EmployeeID))')).toEqual(['EmployeeName', 'string(EmployeeID)']);
-    });
-
-    it('Multiple functions', async () => {
-      expect(splitKeyIntoChildren('concat(to-lower(EmployeeName), string(EmployeeID))')).toEqual([
-        'to-lower(EmployeeName)',
-        'string(EmployeeID)',
-      ]);
-    });
-
-    it('Single constant', async () => {
-      expect(splitKeyIntoChildren('to-lower("UpperCase")')).toEqual([`"UpperCase"`]);
-    });
-
-    it('Constants with parenthesis', async () => {
-      expect(splitKeyIntoChildren('to-lower("(UpperCase)")')).toEqual([`"(UpperCase)"`]);
-    });
-
-    it('Constants with half parenthesis', async () => {
-      expect(splitKeyIntoChildren('concat(to-lower("(SingleLeft"), "(2ndSingleLeft")')).toEqual([
-        `to-lower("(SingleLeft")`,
-        `"(2ndSingleLeft"`,
-      ]);
-    });
-
-    it('Complex', async () => {
-      expect(splitKeyIntoChildren('concat(to-lower(EmployeeName), "Start Date: ", get-date(), string(EmployeeID))')).toEqual([
-        'to-lower(EmployeeName)',
-        `"Start Date: "`,
-        'get-date()',
-        'string(EmployeeID)',
-      ]);
     });
   });
 });

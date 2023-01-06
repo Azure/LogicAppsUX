@@ -2,11 +2,19 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { designerStartApi, hostFileName, localSettingsFileName, workflowDesignerLoadTimeout } from '../../../constants';
+import {
+  defaultVersionRange,
+  designerStartApi,
+  extensionBundleId,
+  hostFileName,
+  localSettingsFileName,
+  workflowDesignerLoadTimeout,
+} from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
+import { delay } from '@azure/ms-rest-js';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import * as cp from 'child_process';
 import * as fs from 'fs';
@@ -22,8 +30,8 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
   const hostFileContent: any = {
     version: '2.0',
     extensionBundle: {
-      id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows',
-      version: '[1.*, 2.0.0)',
+      id: extensionBundleId,
+      version: defaultVersionRange,
     },
     extensions: {
       workflow: {
@@ -104,10 +112,6 @@ async function waitForDesingTimeStartUp(url: string, initialTime: number): Promi
   }
 }
 
-async function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 async function isDesignTimeUp(url: string): Promise<boolean> {
   try {
     await requestP(url);
@@ -126,7 +130,6 @@ function startDesignTimeProcess(
   let cmdOutput = '';
   let cmdOutputIncludingStderr = '';
   const formattedArgs: string = args.join(' ');
-  // eslint-disable-next-line no-param-reassign
   workingDirectory = workingDirectory || os.tmpdir();
   const options: cp.SpawnOptions = {
     cwd: workingDirectory,
@@ -139,7 +142,6 @@ function startDesignTimeProcess(
   }
 
   ext.workflowDesignChildProcess.stdout.on('data', (data: string | Buffer) => {
-    // eslint-disable-next-line no-param-reassign
     data = data.toString();
     cmdOutput = cmdOutput.concat(data);
     cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
@@ -149,7 +151,6 @@ function startDesignTimeProcess(
   });
 
   ext.workflowDesignChildProcess.stderr.on('data', (data: string | Buffer) => {
-    // eslint-disable-next-line no-param-reassign
     data = data.toString();
     cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
     if (outputChannel) {

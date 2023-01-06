@@ -1,7 +1,7 @@
 {
   "name": "@microsoft/logic-apps-vscode-extension",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "0.2.46",
+  "version": "0.2.52",
   "aiKey": "2fc394da-7c11-4c1c-b776-17763031415d",
   "main": "main.js",
   "engines": {
@@ -36,6 +36,73 @@
         "command": "logicAppsExtension.viewContent",
         "title": "View Content",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.createNewProject",
+        "title": "Create New Project...",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/CreateNewProject.svg",
+          "dark": "assets/dark/CreateNewProject.svg"
+        }
+      },
+      {
+        "command": "logicAppsExtension.createCodeless",
+        "title": "Create Workflow...",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/Codeless.svg",
+          "dark": "assets/dark/Codeless.svg"
+        }
+      },
+      {
+        "command": "logicAppsExtension.deploy",
+        "title": "Deploy to Logic App...",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/deploy.svg",
+          "dark": "assets/dark/deploy.svg"
+        }
+      },
+      {
+        "command": "logicAppsExtension.deploySlot",
+        "title": "Deploy to Slot...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.createLogicApp",
+        "title": "Create Logic App in Azure...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.createLogicAppAdvanced",
+        "title": "Create Logic App in Azure... (Advanced)",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.startLogicApp",
+        "title": "Start",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.stopLogicApp",
+        "title": "Stop",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.restartLogicApp",
+        "title": "Restart",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.deleteLogicApp",
+        "title": "Delete Logic App...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.pickProcess",
+        "title": "Pick Process",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -57,11 +124,43 @@
       ]
     },
     "menus": {
+      "view/title": [
+        {
+          "command": "logicAppsExtension.createNewProject",
+          "when": "view == newAzLogicApps",
+          "group": "navigation@1"
+        },
+        {
+          "command": "logicAppsExtension.createCodeless",
+          "when": "view == newAzLogicApps",
+          "group": "navigation@2"
+        },
+        {
+          "command": "logicAppsExtension.deploy",
+          "when": "view == newAzLogicApps",
+          "group": "navigation@3"
+        }
+      ],
       "view/item/context": [
         {
           "command": "logicAppsExtension.selectSubscriptions",
           "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
           "group": "inline"
+        },
+        {
+          "command": "logicAppsExtension.createLogicApp",
+          "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
+          "group": "1@1"
+        },
+        {
+          "command": "logicAppsExtension.createLogicAppAdvanced",
+          "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
+          "group": "1@2"
+        },
+        {
+          "command": "logicAppsExtension.deleteLogicApp",
+          "when": "view == newAzLogicApps && viewItem == azLogicAppsProductionSlot",
+          "group": "2@5"
         },
         {
           "command": "logicAppsExtension.openDesigner",
@@ -72,9 +171,39 @@
           "command": "logicAppsExtension.viewContent",
           "when": "view == newAzLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "2@1"
+        },
+        {
+          "command": "logicAppsExtension.deploy",
+          "when": "view == newAzLogicApps && viewItem == azLogicAppsProductionSlot",
+          "group": "3@1"
+        },
+        {
+          "command": "logicAppsExtension.deploySlot",
+          "when": "view == newAzLogicApps && viewItem == azLogicAppsSlot",
+          "group": "3@2"
+        },
+        {
+          "command": "logicAppsExtension.startLogicApp",
+          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "group": "2@1"
+        },
+        {
+          "command": "logicAppsExtension.stopLogicApp",
+          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "group": "2@2"
+        },
+        {
+          "command": "logicAppsExtension.restartLogicApp",
+          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "group": "2@3"
         }
       ],
       "explorer/context": [
+        {
+          "command": "logicAppsExtension.deploy",
+          "when": "explorerResourceIsFolder == true",
+          "group": "zzz_LogicApptools@1"
+        },
         {
           "command": "logicAppsExtension.openDesigner",
           "when": "resourceFilename==workflow.json",
@@ -97,6 +226,10 @@
         {
           "command": "logicAppsExtension.viewContent",
           "when": "never"
+        },
+        {
+          "command": "logicAppsExtension.pickProcess",
+          "when": "never"
         }
       ]
     },
@@ -108,6 +241,56 @@
             "type": "boolean",
             "default": true,
             "description": "Show or hide the Azure Functions Explorer"
+          },
+          "logicAppsExtension.projectRuntime": {
+            "scope": "resource",
+            "type": "string",
+            "enum": [
+              "~4",
+              "~3"
+            ],
+            "description": "The default version of the Azure Functions runtime to use when performing operations like \"Create New Logic App\".",
+            "enumDescriptions": [
+              "Azure Functions v4",
+              "Azure Functions v3 (.NET Core)"
+            ]
+          },
+          "logicAppsExtension.projectLanguage": {
+            "scope": "resource",
+            "type": "string",
+            "enum": [
+              "JavaScript"
+            ],
+            "readOnly": true,
+            "description": "The default language to use when performing operations like \"Create New Workflow\".",
+            "enumDescriptions": [
+              ""
+            ]
+          },
+          "logicAppsExtension.deploySubpath": {
+            "scope": "resource",
+            "type": "string",
+            "description": "The default subpath of a workspace folder to use when deploying. If set, you will not be prompted for the folder path when deploying."
+          },
+          "logicAppsExtension.pickProcessTimeout": {
+            "type": "integer",
+            "description": "The timeout (in seconds) to be used when searching for the Azure Functions host process. Since a build is required every time you F5, you may need to adjust this based on how long your build takes.",
+            "default": 60
+          },
+          "logicAppsExtension.stopFuncTaskPostDebug": {
+            "type": "boolean",
+            "description": "Automatically stop the task running the Azure Functions host when a debug sessions ends.",
+            "default": true
+          },
+          "logicAppsExtension.validateFuncCoreTools": {
+            "type": "boolean",
+            "description": "Validate the Azure Functions Core Tools is installed before debugging.",
+            "default": true
+          },
+          "logicAppsExtension.showDeployConfirmation": {
+            "type": "boolean",
+            "description": "Ask for confirmation before deploying to a Function App in Azure (deploying will overwrite any previous deployment and cannot be undone).",
+            "default": true
           }
         }
       }
@@ -121,6 +304,17 @@
     "onCommand:logicAppsExtension.openDesigner",
     "onCommand:logicAppsExtension.loadMore",
     "onCommand:logicAppsExtension.viewContent",
+    "onCommand:logicAppsExtension.createNewProject",
+    "onCommand:logicAppsExtension.createCodeless",
+    "onCommand:logicAppsExtension.deploy",
+    "onCommand:logicAppsExtension.deploySlot",
+    "onCommand:logicAppsExtension.createLogicApp",
+    "onCommand:logicAppsExtension.createLogicAppAdvanced",
+    "onCommand:logicAppsExtension.startLogicApp",
+    "onCommand:logicAppsExtension.stopLogicApp",
+    "onCommand:logicAppsExtension.restartLogicApp",
+    "onCommand:logicAppsExtension.pickProcess",
+    "onCommand:logicAppsExtension.deleteLogicApp",
     "onView:newAzLogicApps",
     "onDebugInitialConfigurations"
   ],

@@ -40,10 +40,12 @@ export enum FunctionCategory {
   Logical = 'Logical',
   Math = 'Math',
   String = 'String',
-  Utility = 'Utilities',
+  Utility = 'Utility',
 }
 
 export type FunctionDictionary = { [key: string]: FunctionData };
+
+export const FunctionCategoryIconPrefix = 'dm_category_';
 
 export const indexPseudoFunctionKey = 'index';
 export const indexPseudoFunction: FunctionData = {
@@ -131,7 +133,7 @@ export const directAccessPseudoFunction: FunctionData = {
 
 export const pseudoFunctions: FunctionData[] = [indexPseudoFunction, ifPseudoFunction, directAccessPseudoFunction];
 
-// Used when the function host isn't running
+// Used in Standalone when the function host isn't running, or for testing
 export const functionMock: FunctionData[] = [
   {
     key: 'Maximum',
@@ -362,6 +364,115 @@ export const functionMock: FunctionData[] = [
     category: FunctionCategory.Math,
     iconFileName: 'dm_category_math.svg',
     description: 'Returns the product from multiplying two or more numbers.',
+  },
+  {
+    key: 'IsEqual',
+    maxNumberOfInputs: 2,
+    type: 'TransformationFunction',
+    functionName: 'is-equal',
+    outputValueType: NormalizedDataType.Boolean,
+    inputs: [
+      {
+        name: 'Object A',
+        allowedTypes: [NormalizedDataType.Any],
+        isOptional: false,
+        allowCustomInput: true,
+        placeHolder: 'An object to compare',
+      },
+      {
+        name: 'Object B',
+        allowedTypes: [NormalizedDataType.Any],
+        isOptional: false,
+        allowCustomInput: true,
+        placeHolder: 'An object to compare',
+      },
+    ],
+    displayName: 'Is equal',
+    category: FunctionCategory.Logical,
+    iconFileName: 'dm_category_logical.svg',
+    description: 'Returns whether two objects are equal',
+  },
+  {
+    key: 'SubString',
+    maxNumberOfInputs: 3,
+    type: 'TransformationFunction',
+    functionName: 'substring',
+    outputValueType: NormalizedDataType.String,
+    inputs: [
+      {
+        name: 'String',
+        allowedTypes: [NormalizedDataType.String],
+        isOptional: false,
+        allowCustomInput: true,
+        placeHolder: 'The source string',
+      },
+      {
+        name: 'Start index',
+        allowedTypes: [NormalizedDataType.Integer],
+        isOptional: false,
+        allowCustomInput: true,
+        placeHolder: 'The index to start the substring at',
+      },
+      {
+        name: 'End index',
+        allowedTypes: [NormalizedDataType.Integer],
+        isOptional: false,
+        allowCustomInput: true,
+        placeHolder: 'The index to end the substring at',
+      },
+    ],
+    displayName: 'Substring',
+    category: FunctionCategory.String,
+    iconFileName: 'dm_category_string.svg',
+    description: 'Returns a substring of the current string',
+  },
+  {
+    key: 'Count',
+    maxNumberOfInputs: 1,
+    type: 'TransformationFunction',
+    functionName: 'count',
+    outputValueType: NormalizedDataType.Integer,
+    inputs: [
+      {
+        name: 'Value',
+        allowedTypes: [NormalizedDataType.Any],
+        isOptional: false,
+        allowCustomInput: false,
+        placeHolder: '',
+      },
+    ],
+    displayName: 'Count',
+    category: FunctionCategory.Collection,
+    iconFileName: 'dm_category_collection.svg',
+    description: 'Returns the count of an item in a collection.',
+  },
+  {
+    key: 'Divide',
+    maxNumberOfInputs: 2,
+    type: 'TransformationFunction',
+    functionName: 'divide',
+    outputValueType: NormalizedDataType.Number,
+    inputs: [
+      {
+        name: 'Dividend',
+        allowedTypes: [NormalizedDataType.Number, NormalizedDataType.Integer, NormalizedDataType.Decimal],
+        isOptional: false,
+        allowCustomInput: true,
+        placeHolder: 'The number to divide by the divisor',
+      },
+      {
+        name: 'Divisor',
+        allowedTypes: [NormalizedDataType.Number, NormalizedDataType.Integer, NormalizedDataType.Decimal],
+        isOptional: false,
+        allowCustomInput: true,
+        placeHolder: 'The number that divides the dividend.',
+        tooltip: `Can't be zero.`,
+      },
+    ],
+    displayName: 'Divide',
+    category: FunctionCategory.Math,
+    iconFileName: 'dm_category_math.svg',
+    description: 'Returns the result from dividing two numbers.',
   },
   ...pseudoFunctions,
 ];

@@ -1388,6 +1388,12 @@
       "value": "完成"
     }
   ],
+  "AX7dq3": [
+    {
+      "type": 0,
+      "value": "Input node type does not match the schema node's type"
+    }
+  ],
   "AYaqW/": [
     {
       "type": 0,
@@ -1665,6 +1671,12 @@
     {
       "type": 0,
       "value": "持续时间"
+    }
+  ],
+  "DZc8wP": [
+    {
+      "type": 0,
+      "value": "Custom value does not match the schema node's type"
     }
   ],
   "DfS13/": [
@@ -3646,6 +3658,12 @@
       "value": "trigger().outputs 的速记"
     }
   ],
+  "WcnIF8": [
+    {
+      "type": 0,
+      "value": "Remove"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -3900,6 +3918,12 @@
     {
       "type": 0,
       "value": "搜索提示"
+    }
+  ],
+  "Yh5OVd": [
+    {
+      "type": 0,
+      "value": "Custom value does not match one of the allowed types for this input"
     }
   ],
   "YoQara": [
@@ -4166,6 +4190,12 @@
       "value": "提供参数以测试输出。"
     }
   ],
+  "byTBrn": [
+    {
+      "type": 0,
+      "value": "Custom"
+    }
+  ],
   "bzF/qn": [
     {
       "type": 0,
@@ -4266,6 +4296,12 @@
     {
       "type": 0,
       "value": "已取消"
+    }
+  ],
+  "cjcEOf": [
+    {
+      "type": 0,
+      "value": "Input node type does not match one of the allowed types for this input"
     }
   ],
   "cmTCsW": [
@@ -6550,6 +6586,12 @@
       "value": "必填。新属性或现有属性的名称。"
     }
   ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
+    }
+  ],
   "xYyPR8": [
     {
       "type": 0,
@@ -6728,6 +6770,12 @@
     {
       "type": 0,
       "value": "(UTC+03:00)内罗比"
+    }
+  ],
+  "ziXw25": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "ziYCiA": [

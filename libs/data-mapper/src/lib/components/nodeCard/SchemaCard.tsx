@@ -1,13 +1,14 @@
 import { childTargetNodeCardWidth, schemaNodeCardHeight, schemaNodeCardWidth } from '../../constants/NodeConstants';
 import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
-import { setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
+import { removeSourceSchemaNodes, setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { Connection } from '../../models/Connection';
 import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
-import { flattenInputs } from '../../utils/Connection.Utils';
+import { flattenInputs, isCustomValue, isValidConnectionByType, isValidCustomValueByType } from '../../utils/Connection.Utils';
 import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
+import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import { ItemToggledState } from '../tree/TargetSchemaTreeItem';
 import HandleWrapper from './HandleWrapper';
 import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
@@ -32,6 +33,8 @@ import {
   CircleHalfFill12Regular,
   Circle12Regular,
 } from '@fluentui/react-icons';
+import type { MenuItemOption } from '@microsoft/designer-ui';
+import { MenuItemType, useCardContextMenu, CardContextMenu } from '@microsoft/designer-ui';
 import { useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -163,10 +166,11 @@ export interface SchemaCardProps extends CardProps {
 
 export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const reactFlowId = props.id;
-  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron, connectionStatus } = props.data;
+  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, displayHandle, displayChevron, connectionStatus } = props.data;
   const dispatch = useDispatch<AppDispatch>();
   const sharedStyles = getStylesForSharedState();
   const classes = useStyles();
+  const intl = useIntl();
 
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
   const sourceNodeConnectionBeingDrawnFromId = useSelector((state: RootState) => state.dataMap.sourceNodeConnectionBeingDrawnFromId);
@@ -227,6 +231,30 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     }
   }, [connectionStatus]);
 
+  const isInputValid = useMemo(() => {
+    const curConn = connections[reactFlowId];
+
+    // Only calculate validity if a target schema node with an input
+    if (isSourceSchemaNode || !curConn || !isNodeConnected) {
+      return true;
+    }
+
+    const curInput = flattenInputs(curConn.inputs)[0];
+    if (curInput === undefined) {
+      return true;
+    }
+
+    if (isCustomValue(curInput)) {
+      return isValidCustomValueByType(curInput, schemaNode.normalizedDataType);
+    } else {
+      if (isSchemaNodeExtended(curInput.node)) {
+        return isValidConnectionByType(schemaNode.normalizedDataType, curInput.node.normalizedDataType);
+      } else {
+        return isValidConnectionByType(schemaNode.normalizedDataType, curInput.node.outputValueType);
+      }
+    }
+  }, [isSourceSchemaNode, connections, reactFlowId, isNodeConnected, schemaNode.normalizedDataType]);
+
   const outputChevronOnClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     dispatch(setCurrentTargetSchemaNode(schemaNode));
@@ -235,12 +263,33 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
   const ChevronIcon = bundleIcon(ChevronRight16Filled, ChevronRight16Regular);
   const BundledTypeIcon = iconForSchemaNodeDataType(schemaNode.schemaNodeDataType, 24, false, schemaNode.nodeProperties);
+  const contextMenu = useCardContextMenu();
+  const getRemoveMenuItem = (): MenuItemOption => {
+    const deleteNode = intl.formatMessage({
+      defaultMessage: 'Remove',
+      description: 'Remove card from canvas',
+    });
+
+    return {
+      key: deleteNode,
+      disabled: !isSourceSchemaNode,
+      iconName: 'Delete',
+      title: deleteNode,
+      type: MenuItemType.Advanced,
+      onClick: handleDeleteClick,
+    };
+  };
+
+  const handleDeleteClick = () => {
+    dispatch(removeSourceSchemaNodes([schemaNode]));
+  };
 
   return (
     <div className={classes.badgeContainer}>
       {isNBadgeRequired && !isSourceSchemaNode && <NBadge isOutput />}
 
       <div
+        onContextMenu={contextMenu.handle}
         className={containerStyle}
         style={isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId ? selectedCardStyles : undefined}
         onMouseLeave={() => setIsCardHovered(false)}
@@ -253,7 +302,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
           nodeReactFlowId={reactFlowId}
           shouldDisplay={isSourceSchemaNode ? shouldDisplaySourceHandle : shouldDisplayTargetHandle}
         />
-        {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}
+        {!isInputValid && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge} />}
         {connectionStatusIcon && <span style={{ position: 'absolute', right: -16, top: 0 }}>{connectionStatusIcon}</span>}
         <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
           <span className={classes.cardIcon}>
@@ -285,6 +334,16 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
             onMouseLeave={() => setIsChevronHovered(false)}
           />
         )}
+        {
+          // danielle maybe show blank menu for target node? Kinda odd that the regular right-click loads
+          <CardContextMenu
+            title={'remove'}
+            contextMenuLocation={contextMenu.location}
+            contextMenuOptions={[getRemoveMenuItem()]}
+            showContextMenu={contextMenu.isShowing}
+            onSetShowContextMenu={contextMenu.setIsShowing}
+          />
+        }
       </div>
 
       {isNBadgeRequired && isSourceSchemaNode && <NBadge />}
