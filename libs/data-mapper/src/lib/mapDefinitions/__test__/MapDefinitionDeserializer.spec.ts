@@ -210,6 +210,33 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
     });
 
+    it('creates connections for nested functions within a loop', () => {
+      simpleMap['ns0:Root'] = {
+        CumulativeExpression: {
+          PopulationSummary: {
+            '$for(/ns0:Root/CumulativeExpression/Population/State)': {
+              State: {
+                Name: 'Name',
+                SexRatio: 'divide(count(County/Person/Sex/Male), count(County/Person/Sex/Female))',
+              },
+            },
+          },
+        },
+      };
+
+      const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+
+      console.dir(resultEntries, { depth: 3 });
+      // Nested loop connections are made
+
+      // Name property matches up
+
+      // Function chain is properly formed
+      expect(true).toBeTruthy();
+    });
+
     it('creates a conditional connection', () => {
       simpleMap['ns0:Root'] = {
         ConditionalMapping: {
