@@ -5,7 +5,7 @@
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import type { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
-import { uploadAppSettings } from '../../utils/appSettings/uploadAppSettings';
+import { uploadAppSettings } from '../appSettings/uploadAppSettings';
 import { startStreamingLogs } from '../logstream/startStreamingLogs';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
