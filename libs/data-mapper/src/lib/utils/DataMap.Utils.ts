@@ -1,3 +1,4 @@
+import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { targetPrefix } from '../constants/ReactFlowConstants';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import { SchemaType } from '../models';
@@ -12,7 +13,7 @@ import {
   nodeHasSpecificInputEventually,
   setConnectionInputValue,
 } from './Connection.Utils';
-import { findFunctionForKey, getIndexValueForCurrentConnection, isFunctionData } from './Function.Utils';
+import { findFunctionForFunctionName, findFunctionForKey, getIndexValueForCurrentConnection, isFunctionData } from './Function.Utils';
 import { addReactFlowPrefix } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid } from '@microsoft/utils-logic-apps';
@@ -97,12 +98,18 @@ export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): b
 };
 
 export const getDestinationNode = (targetKey: string, functions: FunctionData[], schemaTreeRoot: SchemaNodeExtended): UnknownNode => {
+  if (targetKey.startsWith(mapNodeParams.if)) {
+    return findFunctionForFunctionName(mapNodeParams.if, functions);
+  }
+
   const dashIndex = targetKey.indexOf('-');
-  const destinationFunctionKey = dashIndex === -1 ? targetKey : targetKey.slice(0, dashIndex); // what is the purpose of this??
+  const destinationFunctionKey = dashIndex === -1 ? targetKey : targetKey.slice(0, dashIndex);
   const destinationFunctionGuid = targetKey.slice(dashIndex + 1);
-  const destinationNode = isAGuid(destinationFunctionGuid) // danielle this needs to be amended for conditional
+
+  const destinationNode = isAGuid(destinationFunctionGuid)
     ? findFunctionForKey(destinationFunctionKey, functions)
     : findNodeForKey(targetKey, schemaTreeRoot);
+
   return destinationNode;
 };
 
@@ -110,9 +117,11 @@ export const getDestinationKey = (targetKey: string, destinationNode: UnknownNod
   if (destinationNode === undefined) {
     return targetKey;
   }
+
   if (isSchemaNodeExtended(destinationNode)) {
     return `${targetPrefix}${destinationNode?.key}`;
   }
+
   return targetKey;
 };
 
