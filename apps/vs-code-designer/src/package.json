@@ -103,6 +103,11 @@
         "command": "logicAppsExtension.pickProcess",
         "title": "Pick Process",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.openOverview",
+        "title": "Overview",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -196,6 +201,11 @@
           "command": "logicAppsExtension.restartLogicApp",
           "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "2@3"
+        },
+        {
+          "command": "logicAppsExtension.openOverview",
+          "when": "view == newAzLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
+          "group": "1@1"
         }
       ],
       "explorer/context": [
@@ -203,6 +213,11 @@
           "command": "logicAppsExtension.deploy",
           "when": "explorerResourceIsFolder == true",
           "group": "zzz_LogicApptools@1"
+        },
+        {
+          "command": "logicAppsExtension.openOverview",
+          "when": "resourceFilename==workflow.json",
+          "group": "navigation@1"
         },
         {
           "command": "logicAppsExtension.openDesigner",
@@ -230,6 +245,10 @@
         {
           "command": "logicAppsExtension.pickProcess",
           "when": "never"
+        },
+        {
+          "command": "logicAppsExtension.openOverview",
+          "when": "resourceFilename==workflow.json"
         }
       ]
     },
@@ -315,6 +334,7 @@
     "onCommand:logicAppsExtension.restartLogicApp",
     "onCommand:logicAppsExtension.pickProcess",
     "onCommand:logicAppsExtension.deleteLogicApp",
+    "onCommand:logicAppsExtension.openOverview",
     "onView:newAzLogicApps",
     "onDebugInitialConfigurations"
   ],
