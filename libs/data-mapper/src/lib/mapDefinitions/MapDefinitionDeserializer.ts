@@ -224,7 +224,7 @@ const createConnections = (
 
   // Need to extract and create connections for nested functions
   if (sourceEndOfFunction > -1 && !functionAlreadyCreated) {
-    const childFunctions = splitKeyIntoChildren(sourceNodeString);
+    const childFunctions = splitKeyIntoChildren(amendedSourceKey);
 
     childFunctions.forEach((childFunction) => {
       parseDefinitionToConnection(
