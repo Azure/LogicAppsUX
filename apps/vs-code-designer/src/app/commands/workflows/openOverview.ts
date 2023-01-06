@@ -100,7 +100,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     options
   );
 
-  const indexPath = join(ext.context.extensionPath, 'dist/designer/vs-code-react/index.html');
+  const indexPath = join(ext.context.extensionPath, 'vs-code-react/index.html');
   const html = (await fs.readFile(indexPath, 'utf-8')) as string;
   // 1. Get all link prefixed by href or src
   const matchLinks = /(href|src)="([^"]*)"/g;
@@ -111,7 +111,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
       return `${prefix}="${link}"`;
     }
     // For scripts & links
-    const path = join(ext.context.extensionPath, 'dist/designer/vs-code-react', link);
+    const path = join(ext.context.extensionPath, 'vs-code-react', link);
     const uri = vscode.Uri.file(path);
     return `${prefix}="${panel.webview.asWebviewUri(uri)}"`;
   };
