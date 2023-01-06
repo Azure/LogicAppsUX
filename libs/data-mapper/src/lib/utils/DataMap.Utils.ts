@@ -173,7 +173,7 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string): st
   const forMatch = forMatchArr?.[forMatchArr.length - 1];
   const srcKeyWithinFor = forMatch ? forMatch.replace('$for(', '').replace(')', '') : '';
 
-  const relativeSrcKeyMatchArr = sourceKey.match(/(?:[^(),\s]+)(?![(])(?![\w-])/g);
+  const relativeSrcKeyMatchArr = sourceKey.match(/[^(),\s]+(?![(\w-])/g);
 
   if (relativeSrcKeyMatchArr) {
     relativeSrcKeyMatchArr.forEach((relativeKeyMatch) => {
