@@ -176,21 +176,43 @@ export const splitKeyIntoChildren = (sourceKey: string): string[] => {
 };
 
 export const getSourceValueFromLoop = (sourceKey: string, targetKey: string): string => {
-  let constructedSourceKey = '';
-  const matchArr = targetKey.match(/\$for\(((?!\)).)+\)\//g);
-  let match = matchArr?.[matchArr.length - 1];
-  if (match) {
-    match = match.replace('$for(', '').replace(')', '');
-  }
+  let constructedSourceKey = sourceKey;
 
-  const endOfLastFunctionIndex = sourceKey.lastIndexOf('(');
-  if (endOfLastFunctionIndex > 0) {
-    constructedSourceKey =
-      sourceKey.substring(0, sourceKey.lastIndexOf('(') + 1) +
-      match +
-      sourceKey.substring(sourceKey.lastIndexOf('(') + 1, sourceKey.length + 1);
+  const forMatchArr = targetKey.match(/\$for\(((?!\)).)+\)\//g);
+  const forMatch = forMatchArr?.[forMatchArr.length - 1];
+  const srcKeyWithinFor = forMatch ? forMatch.replace('$for(', '').replace(')', '') : '';
+
+  const relativeSrcKeyArr = sourceKey
+    .split(', ')
+    .map((keyChunk) => {
+      let modifiedKeyChunk = keyChunk;
+
+      // Functions with no inputs
+      if (modifiedKeyChunk.includes('()')) {
+        return '';
+      }
+
+      // Will only ever be one or zero '(' after splitting on commas
+      const openParenIdx = modifiedKeyChunk.lastIndexOf('(');
+      if (openParenIdx >= 0) {
+        modifiedKeyChunk = modifiedKeyChunk.substring(openParenIdx + 1);
+      }
+
+      // Should only ever be one or zero ')' after ruling out substrings w/ functions w/ no inputs
+      modifiedKeyChunk = modifiedKeyChunk.replaceAll(')', '');
+
+      return modifiedKeyChunk;
+    })
+    .filter((keyChunk) => keyChunk !== '');
+
+  if (relativeSrcKeyArr.length > 0) {
+    relativeSrcKeyArr.forEach((relativeKeyMatch) => {
+      if (!relativeKeyMatch.includes(srcKeyWithinFor)) {
+        constructedSourceKey = constructedSourceKey.replace(relativeKeyMatch, `${srcKeyWithinFor}${relativeKeyMatch}`);
+      }
+    });
   } else {
-    constructedSourceKey = match + sourceKey;
+    constructedSourceKey = srcKeyWithinFor + sourceKey;
   }
   return constructedSourceKey;
 };
