@@ -225,16 +225,28 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       };
 
       const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
-      const resultEntries = Object.entries(result);
-      resultEntries.sort();
+      expect((result['target-/ns0:Root/CumulativeExpression/PopulationSummary/State'].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/CumulativeExpression/Population/State'
+      );
+      expect(
+        (result['target-/ns0:Root/CumulativeExpression/PopulationSummary/State/Name'].inputs[0][0] as ConnectionUnit).reactFlowKey
+      ).toEqual('source-/ns0:Root/CumulativeExpression/Population/State/Name');
 
-      console.dir(resultEntries, { depth: 3 });
-      // Nested loop connections are made
+      const divideRfKey = (result['target-/ns0:Root/CumulativeExpression/PopulationSummary/State/SexRatio'].inputs[0][0] as ConnectionUnit)
+        .reactFlowKey;
+      expect(divideRfKey.includes('Divide')).toBe(true);
 
-      // Name property matches up
+      const count1RfKey = (result[divideRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(count1RfKey.includes('Count')).toBe(true);
+      expect((result[count1RfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/CumulativeExpression/Population/State/County/Person/Sex/Male'
+      );
 
-      // Function chain is properly formed
-      expect(true).toBeTruthy();
+      const count2RfKey = (result[divideRfKey].inputs[1][0] as ConnectionUnit).reactFlowKey;
+      expect(count2RfKey.includes('Count')).toBe(true);
+      expect((result[count2RfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/CumulativeExpression/Population/State/County/Person/Sex/Female'
+      );
     });
 
     it('creates a conditional connection', () => {
