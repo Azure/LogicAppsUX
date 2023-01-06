@@ -10,8 +10,8 @@ import {
   localSettingsFileName,
 } from '../../constants';
 import { localize } from '../../localize';
-import { getAzureWebJobsStorage, setLocalAppSetting } from '../funcConfig/local.settings';
 import { validateFuncCoreToolsInstalled } from '../funcCoreTools/validateFuncCoreToolsInstalled';
+import { getAzureWebJobsStorage, setLocalAppSetting } from '../utils/appSettings/localSettings';
 import { tryGetFunctionProjectRoot } from '../utils/verifyIsProject';
 import { getDebugConfigs, isDebugConfigEqual } from '../utils/vsCodeConfig/launch';
 import { getWorkspaceSetting, getFunctionsWorkerRuntime } from '../utils/vsCodeConfig/settings';
