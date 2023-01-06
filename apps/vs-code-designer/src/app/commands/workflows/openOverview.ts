@@ -16,6 +16,7 @@ import {
 } from '../../utils/codeless/common';
 import { getFunctionProjectRoot } from '../../utils/codeless/connection';
 import { getAuthorizationToken } from '../../utils/codeless/getAuthorizationToken';
+import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import { sendRequest } from '../../utils/requestUtils';
 import { getWorkflowNode } from '../../utils/workspace';
 import type { IAzureConnectorsContext } from './azureConnectorWizard';
@@ -24,7 +25,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { ICallbackUrlResponse } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
-import { promises as fs, readFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import * as vscode from 'vscode';
 
@@ -100,22 +101,8 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     options
   );
 
-  const indexPath = join(ext.context.extensionPath, 'vs-code-react/index.html');
-  const html = (await fs.readFile(indexPath, 'utf-8')) as string;
-  // 1. Get all link prefixed by href or src
-  const matchLinks = /(href|src)="([^"]*)"/g;
-  // 2. Transform the result of the regex into a vscode's URI format
-  const toUri = (_, prefix: 'href' | 'src', link: string) => {
-    // For
-    if (link === '#') {
-      return `${prefix}="${link}"`;
-    }
-    // For scripts & links
-    const path = join(ext.context.extensionPath, 'vs-code-react', link);
-    const uri = vscode.Uri.file(path);
-    return `${prefix}="${panel.webview.asWebviewUri(uri)}"`;
-  };
-  panel.webview.html = html.replace(matchLinks, toUri);
+  panel.webview.html = await getWebViewHTML('vs-code-react', panel);
+
   let interval;
   panel.webview.onDidReceiveMessage(async (message) => {
     switch (message.command) {
