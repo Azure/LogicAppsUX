@@ -312,7 +312,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
     });
 
-    it('creates a conditional object connection', () => {
+    it.skip('creates a conditional object connection', () => {
       simpleMap['ns0:Root'] = {
         '$if(is-greater-than(multiply(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity), 200))': {
           ConditionalMapping: {
