@@ -12,6 +12,7 @@ import {
   workflowAppAADObjectId,
   workflowAppAADTenantId,
   kubernetesKind,
+  showDeployConfirmationSetting,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -125,7 +126,7 @@ async function deploy(
   const siteConfig: SiteConfigResource = await client.getSiteConfig();
   const isZipDeploy: boolean = siteConfig.scmType !== ScmType.LocalGit && siteConfig.scmType !== ScmType.GitHub;
 
-  if (getWorkspaceSetting<boolean>('showDeployConfirmation', workspaceFolder.uri.fsPath) && !isNewFunctionApp && isZipDeploy) {
+  if (getWorkspaceSetting<boolean>(showDeployConfirmationSetting, workspaceFolder.uri.fsPath) && !isNewFunctionApp && isZipDeploy) {
     const warning: string = localize(
       'confirmDeploy',
       'Are you sure you want to deploy to "{0}"? This will overwrite any previous deployment and cannot be undone.',
