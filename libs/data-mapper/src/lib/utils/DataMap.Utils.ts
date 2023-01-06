@@ -173,10 +173,31 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string): st
   const forMatch = forMatchArr?.[forMatchArr.length - 1];
   const srcKeyWithinFor = forMatch ? forMatch.replace('$for(', '').replace(')', '') : '';
 
-  const relativeSrcKeyMatchArr = sourceKey.match(/[^(),\s]+(?![(\w-])/g);
+  const relativeSrcKeyArr = sourceKey
+    .split(', ')
+    .map((keyChunk) => {
+      let modifiedKeyChunk = keyChunk;
 
-  if (relativeSrcKeyMatchArr) {
-    relativeSrcKeyMatchArr.forEach((relativeKeyMatch) => {
+      // Functions with no inputs
+      if (modifiedKeyChunk.includes('()')) {
+        return '';
+      }
+
+      // Will only ever be one or zero '(' after splitting on commas
+      const openParenIdx = modifiedKeyChunk.lastIndexOf('(');
+      if (openParenIdx >= 0) {
+        modifiedKeyChunk = modifiedKeyChunk.substring(openParenIdx + 1);
+      }
+
+      // Should only ever be one or zero ')' after ruling out substrings w/ functions w/ no inputs
+      modifiedKeyChunk = modifiedKeyChunk.replaceAll(')', '');
+
+      return modifiedKeyChunk;
+    })
+    .filter((keyChunk) => keyChunk !== '');
+
+  if (relativeSrcKeyArr.length > 0) {
+    relativeSrcKeyArr.forEach((relativeKeyMatch) => {
       if (!relativeKeyMatch.includes(srcKeyWithinFor)) {
         constructedSourceKey = constructedSourceKey.replace(relativeKeyMatch, `${srcKeyWithinFor}${relativeKeyMatch}`);
       }
