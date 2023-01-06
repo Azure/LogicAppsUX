@@ -4,6 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 import { localSettingsFileName } from '../../../constants';
 import { localize } from '../../../localize';
+import { decryptLocalSettings } from '../../commands/appSettings/decryptLocalSettings';
+import { encryptLocalSettings } from '../../commands/appSettings/encryptLocalSettings';
+import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
 import { DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
@@ -12,9 +15,10 @@ import type { ILocalSettingsJson } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
+import { Uri } from 'vscode';
 
 /**
- * Updates local.settings.json file
+ * Updates local.settings.json file.
  * @param {IActionContext} context - Command context.
  * @param {string} projectPath - Project path with local.settings.json file.
  * @param {boolean} settingsToAdd - Settings data to updata.
@@ -37,7 +41,32 @@ export async function addOrUpdateLocalAppSettings(
 }
 
 /**
- * Gets local.settings.json file
+ * Gets decrypted local.settings.
+ * @param {IActionContext} context - Command context.
+ * @param {ILocalSettingsJson} localSettings - Parsed local settings.
+ * @param {Uri} localSettingsUri - File Uri.
+ * @param {string} localSettingsPath - File path.
+ * @returns {Promise<ILocalSettingsJson>} local.setting.json file.
+ */
+async function getDecriptedLocalSettings(
+  context: IActionContext,
+  localSettings: ILocalSettingsJson,
+  localSettingsUri: Uri,
+  localSettingsPath: string
+): Promise<ILocalSettingsJson> {
+  if (localSettings.IsEncrypted) {
+    await executeOnFunctions(decryptLocalSettings, context, localSettingsUri);
+    try {
+      return (await fse.readJson(localSettingsPath)) as ILocalSettingsJson;
+    } finally {
+      await executeOnFunctions(encryptLocalSettings, context, localSettingsUri);
+    }
+  }
+  return localSettings;
+}
+
+/**
+ * Gets local.settings.json file.
  * @param {IActionContext} context - Command context.
  * @param {string} localSettingsPath - File path.
  * @param {boolean} allowOverwrite - Allow overwrite on file.
@@ -50,10 +79,12 @@ export async function getLocalSettingsJson(
 ): Promise<ILocalSettingsJson> {
   if (await fse.pathExists(localSettingsPath)) {
     const data: string = (await fse.readFile(localSettingsPath)).toString();
+    const localSettingsUri: Uri = Uri.file(localSettingsPath);
 
     if (/[^\s]/.test(data)) {
       try {
-        return parseJson(data);
+        const localSettings = parseJson(data) as ILocalSettingsJson;
+        return getDecriptedLocalSettings(context, localSettings, localSettingsUri, localSettingsPath);
       } catch (error) {
         if (allowOverwrite) {
           const message: string = localize(

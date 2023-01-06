@@ -5,35 +5,31 @@
 import { localSettingsFileName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
-import { decryptLocalSettings } from './decryptLocalSettings';
-import { encryptLocalSettings } from './encryptLocalSettings';
+import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import { getLocalSettingsFile } from './getLocalSettingsFile';
 import type { StringDictionary } from '@azure/arm-appservice';
 import type { IAppSettingsClient } from '@microsoft/vscode-azext-azureappservice';
 import { AppSettingsTreeItem, confirmOverwriteSettings } from '@microsoft/vscode-azext-azureappservice';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension';
-import * as fse from 'fs-extra';
-import * as vscode from 'vscode';
+import type { WorkspaceFolder } from 'vscode';
 
 /**
  * Uploads local settings file to the portal.
  * @param {IActionContext} context - Command context.
  * @param {AppSettingsTreeItem} node - App settings node structure.
- * @param {vscode.WorkspaceFolder} workspacePath - Workspace folder path.
+ * @param {WorkspaceFolder} workspacePath - Workspace folder path.
  * @param {string[]} settingsToExclude - Array of settings to exclude from uploading.
  * @returns {Promise<string>} Workspace file path.
  */
 export async function uploadAppSettings(
   context: IActionContext,
   node?: AppSettingsTreeItem,
-  workspacePath?: vscode.WorkspaceFolder,
+  workspacePath?: WorkspaceFolder,
   settingsToExclude: string[] = []
 ): Promise<void> {
   const message: string = localize('selectLocalSettings', 'Select the local settings file to upload.');
   const localSettingsPath: string = await getLocalSettingsFile(context, message, workspacePath);
-  const localSettingsUri: vscode.Uri = vscode.Uri.file(localSettingsPath);
 
   if (!node) {
     node = await ext.tree.showTreeItemPicker<AppSettingsTreeItem>(AppSettingsTreeItem.contextValue, context);
@@ -44,15 +40,7 @@ export async function uploadAppSettings(
   await node.runWithTemporaryDescription(context, localize('uploading', 'Uploading...'), async () => {
     ext.outputChannel.show(true);
     ext.outputChannel.appendLog(localize('uploadStart', 'Uploading settings to "{0}"...', client.fullName));
-    let localSettings: ILocalSettingsJson = (await fse.readJson(localSettingsPath)) as ILocalSettingsJson;
-    if (localSettings.IsEncrypted) {
-      await executeOnFunctions(decryptLocalSettings, context, localSettingsUri);
-      try {
-        localSettings = (await fse.readJson(localSettingsPath)) as ILocalSettingsJson;
-      } finally {
-        await executeOnFunctions(encryptLocalSettings, context, localSettingsUri);
-      }
-    }
+    const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
 
     if (localSettings.Values) {
       const remoteSettings: StringDictionary = await client.listApplicationSettings();
