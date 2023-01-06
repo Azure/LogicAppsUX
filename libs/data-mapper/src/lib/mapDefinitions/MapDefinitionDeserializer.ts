@@ -268,9 +268,9 @@ const createConnections = (
     });
   }
 
-  // Need to extract and create connections for nested functions
+  // Extract and create connections for nested functions
   if (sourceEndOfFunction > -1 && !sourceFunctionAlreadyCreated) {
-    const childFunctions = splitKeyIntoChildren(sourceNodeString);
+    const childFunctions = splitKeyIntoChildren(amendedSourceKey);
 
     childFunctions.forEach((childFunction) => {
       parseDefinitionToConnection(

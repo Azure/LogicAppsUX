@@ -210,6 +210,46 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
     });
 
+    it('creates connections for nested functions within a loop', () => {
+      simpleMap['ns0:Root'] = {
+        CumulativeExpression: {
+          PopulationSummary: {
+            '$for(/ns0:Root/CumulativeExpression/Population/State)': {
+              State: {
+                Name: 'Name',
+                SexRatio: 'divide(count(County/Person/Sex/Male), count(County/Person/Sex/Female))',
+              },
+            },
+          },
+        },
+      };
+
+      const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
+
+      expect((result['target-/ns0:Root/CumulativeExpression/PopulationSummary/State'].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/CumulativeExpression/Population/State'
+      );
+      expect(
+        (result['target-/ns0:Root/CumulativeExpression/PopulationSummary/State/Name'].inputs[0][0] as ConnectionUnit).reactFlowKey
+      ).toEqual('source-/ns0:Root/CumulativeExpression/Population/State/Name');
+
+      const divideRfKey = (result['target-/ns0:Root/CumulativeExpression/PopulationSummary/State/SexRatio'].inputs[0][0] as ConnectionUnit)
+        .reactFlowKey;
+      expect(divideRfKey.includes('Divide')).toBe(true);
+
+      const count1RfKey = (result[divideRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(count1RfKey.includes('Count')).toBe(true);
+      expect((result[count1RfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/CumulativeExpression/Population/State/County/Person/Sex/Male'
+      );
+
+      const count2RfKey = (result[divideRfKey].inputs[1][0] as ConnectionUnit).reactFlowKey;
+      expect(count2RfKey.includes('Count')).toBe(true);
+      expect((result[count2RfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/CumulativeExpression/Population/State/County/Person/Sex/Female'
+      );
+    });
+
     it('creates a simple conditional property connection', () => {
       simpleMap['ns0:Root'] = {
         ConditionalMapping: {
