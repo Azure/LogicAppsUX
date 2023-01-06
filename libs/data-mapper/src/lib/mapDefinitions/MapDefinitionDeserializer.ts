@@ -152,12 +152,11 @@ const callChildObjects = (
         );
       });
 
-      const temp = Object.keys(childEntry[1])[0];
-
+      const childSubKey = Object.keys(childEntry[1])[0];
       parseDefinitionToConditionalConnection(
         sourceNodeObject[childEntry[0]],
         childEntry[0],
-        `${targetKey}/${temp}`,
+        `${targetKey}/${childSubKey}`,
         connections,
         createdNodes,
         sourceSchema,
