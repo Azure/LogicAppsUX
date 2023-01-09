@@ -63,10 +63,7 @@ export const useOperationManifest = (operationInfo: NodeOperation) => {
   const operationId = operationInfo?.operationId?.toLowerCase();
   return useQuery(
     ['manifest', { connectorId }, { operationId }],
-    () =>
-      operationManifestService.isSupported(operationInfo.type, operationInfo.kind)
-        ? operationManifestService.getOperationManifest(connectorId, operationId)
-        : undefined,
+    () => operationManifestService.getOperationManifest(connectorId, operationId),
     {
       enabled: !!connectorId && !!operationId,
       placeholderData: undefined,
@@ -85,7 +82,6 @@ export const useOperationQuery = (nodeId: string) => {
 
   const operationManifestService = OperationManifestService();
   const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
-
   return useManifest ? manifestQuery : connectorQuery;
 };
 

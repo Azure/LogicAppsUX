@@ -93,6 +93,16 @@
         "command": "logicAppsExtension.restartLogicApp",
         "title": "Restart",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.deleteLogicApp",
+        "title": "Delete Logic App...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.pickProcess",
+        "title": "Pick Process",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -146,6 +156,11 @@
           "command": "logicAppsExtension.createLogicAppAdvanced",
           "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
           "group": "1@2"
+        },
+        {
+          "command": "logicAppsExtension.deleteLogicApp",
+          "when": "view == newAzLogicApps && viewItem == azLogicAppsProductionSlot",
+          "group": "2@5"
         },
         {
           "command": "logicAppsExtension.openDesigner",
@@ -211,6 +226,10 @@
         {
           "command": "logicAppsExtension.viewContent",
           "when": "never"
+        },
+        {
+          "command": "logicAppsExtension.pickProcess",
+          "when": "never"
         }
       ]
     },
@@ -252,6 +271,26 @@
             "scope": "resource",
             "type": "string",
             "description": "The default subpath of a workspace folder to use when deploying. If set, you will not be prompted for the folder path when deploying."
+          },
+          "logicAppsExtension.pickProcessTimeout": {
+            "type": "integer",
+            "description": "The timeout (in seconds) to be used when searching for the Azure Functions host process. Since a build is required every time you F5, you may need to adjust this based on how long your build takes.",
+            "default": 60
+          },
+          "logicAppsExtension.stopFuncTaskPostDebug": {
+            "type": "boolean",
+            "description": "Automatically stop the task running the Azure Functions host when a debug sessions ends.",
+            "default": true
+          },
+          "logicAppsExtension.validateFuncCoreTools": {
+            "type": "boolean",
+            "description": "Validate the Azure Functions Core Tools is installed before debugging.",
+            "default": true
+          },
+          "logicAppsExtension.showDeployConfirmation": {
+            "type": "boolean",
+            "description": "Ask for confirmation before deploying to a Function App in Azure (deploying will overwrite any previous deployment and cannot be undone).",
+            "default": true
           }
         }
       }
@@ -274,6 +313,8 @@
     "onCommand:logicAppsExtension.startLogicApp",
     "onCommand:logicAppsExtension.stopLogicApp",
     "onCommand:logicAppsExtension.restartLogicApp",
+    "onCommand:logicAppsExtension.pickProcess",
+    "onCommand:logicAppsExtension.deleteLogicApp",
     "onView:newAzLogicApps",
     "onDebugInitialConfigurations"
   ],

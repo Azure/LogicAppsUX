@@ -1,3 +1,4 @@
+import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { targetPrefix } from '../constants/ReactFlowConstants';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import { SchemaType } from '../models';
@@ -12,7 +13,7 @@ import {
   nodeHasSpecificInputEventually,
   setConnectionInputValue,
 } from './Connection.Utils';
-import { findFunctionForKey, getIndexValueForCurrentConnection, isFunctionData } from './Function.Utils';
+import { findFunctionForFunctionName, findFunctionForKey, getIndexValueForCurrentConnection, isFunctionData } from './Function.Utils';
 import { addReactFlowPrefix } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid } from '@microsoft/utils-logic-apps';
@@ -97,12 +98,18 @@ export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): b
 };
 
 export const getDestinationNode = (targetKey: string, functions: FunctionData[], schemaTreeRoot: SchemaNodeExtended): UnknownNode => {
+  if (targetKey.startsWith(mapNodeParams.if)) {
+    return findFunctionForFunctionName(mapNodeParams.if, functions);
+  }
+
   const dashIndex = targetKey.indexOf('-');
-  const destinationFunctionKey = dashIndex === -1 ? targetKey : targetKey.slice(0, dashIndex); // what is the purpose of this??
+  const destinationFunctionKey = dashIndex === -1 ? targetKey : targetKey.slice(0, dashIndex);
   const destinationFunctionGuid = targetKey.slice(dashIndex + 1);
-  const destinationNode = isAGuid(destinationFunctionGuid) // danielle this needs to be amended for conditional
+
+  const destinationNode = isAGuid(destinationFunctionGuid)
     ? findFunctionForKey(destinationFunctionKey, functions)
     : findNodeForKey(targetKey, schemaTreeRoot);
+
   return destinationNode;
 };
 
@@ -110,9 +117,11 @@ export const getDestinationKey = (targetKey: string, destinationNode: UnknownNod
   if (destinationNode === undefined) {
     return targetKey;
   }
+
   if (isSchemaNodeExtended(destinationNode)) {
     return `${targetPrefix}${destinationNode?.key}`;
   }
+
   return targetKey;
 };
 
@@ -167,21 +176,43 @@ export const splitKeyIntoChildren = (sourceKey: string): string[] => {
 };
 
 export const getSourceValueFromLoop = (sourceKey: string, targetKey: string): string => {
-  let constructedSourceKey = '';
-  const matchArr = targetKey.match(/\$for\(((?!\)).)+\)\//g);
-  let match = matchArr?.[matchArr.length - 1];
-  if (match) {
-    match = match.replace('$for(', '').replace(')', '');
-  }
+  let constructedSourceKey = sourceKey;
 
-  const endOfLastFunctionIndex = sourceKey.lastIndexOf('(');
-  if (endOfLastFunctionIndex > 0) {
-    constructedSourceKey =
-      sourceKey.substring(0, sourceKey.lastIndexOf('(') + 1) +
-      match +
-      sourceKey.substring(sourceKey.lastIndexOf('(') + 1, sourceKey.length + 1);
+  const forMatchArr = targetKey.match(/\$for\(((?!\)).)+\)\//g);
+  const forMatch = forMatchArr?.[forMatchArr.length - 1];
+  const srcKeyWithinFor = forMatch ? forMatch.replace('$for(', '').replace(')', '') : '';
+
+  const relativeSrcKeyArr = sourceKey
+    .split(', ')
+    .map((keyChunk) => {
+      let modifiedKeyChunk = keyChunk;
+
+      // Functions with no inputs
+      if (modifiedKeyChunk.includes('()')) {
+        return '';
+      }
+
+      // Will only ever be one or zero '(' after splitting on commas
+      const openParenIdx = modifiedKeyChunk.lastIndexOf('(');
+      if (openParenIdx >= 0) {
+        modifiedKeyChunk = modifiedKeyChunk.substring(openParenIdx + 1);
+      }
+
+      // Should only ever be one or zero ')' after ruling out substrings w/ functions w/ no inputs
+      modifiedKeyChunk = modifiedKeyChunk.replaceAll(')', '');
+
+      return modifiedKeyChunk;
+    })
+    .filter((keyChunk) => keyChunk !== '');
+
+  if (relativeSrcKeyArr.length > 0) {
+    relativeSrcKeyArr.forEach((relativeKeyMatch) => {
+      if (!relativeKeyMatch.includes(srcKeyWithinFor)) {
+        constructedSourceKey = constructedSourceKey.replace(relativeKeyMatch, `${srcKeyWithinFor}${relativeKeyMatch}`);
+      }
+    });
   } else {
-    constructedSourceKey = match + sourceKey;
+    constructedSourceKey = srcKeyWithinFor + sourceKey;
   }
   return constructedSourceKey;
 };

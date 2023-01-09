@@ -12,7 +12,7 @@ export const integrationAccountArtifactLookupOperation = {
       displayName: 'Integration Account',
       iconUri,
       brandColor: '#f1f1f1',
-      description: 'Inline Code',
+      description: 'Integration Account',
     },
     summary: 'Integration Account Artifact Lookup',
     description: 'Integration Account Artifact Lookup',

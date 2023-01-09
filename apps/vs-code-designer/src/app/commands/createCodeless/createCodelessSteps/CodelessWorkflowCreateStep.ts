@@ -13,7 +13,7 @@ import {
   defaultVersionRange,
 } from '../../../../constants';
 import { localize } from '../../../../localize';
-import { setLocalAppSetting } from '../../../funcConfig/local.settings';
+import { setLocalAppSetting } from '../../../utils/appSettings/localSettings';
 import {
   addFolderToBuildPath,
   addNugetPackagesToBuildFile,
