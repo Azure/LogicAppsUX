@@ -54,4 +54,5 @@ export function registerCommands(): void {
     extensionCommand.deleteLogicApp,
     async (context: IActionContext, node?: AzExtTreeItem) => await deleteNode(context, ProductionSlotTreeItem.contextValue, node)
   );
+  registerCommand(extensionCommand.refresh, async (context: IActionContext, node?: AzExtTreeItem) => await ext.tree.refresh(context, node));
 }
