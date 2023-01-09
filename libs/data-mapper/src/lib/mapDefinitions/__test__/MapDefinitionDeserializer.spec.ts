@@ -490,7 +490,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect(resultEntries[4][1]).toBeTruthy();
     });
 
-    it.skip('creates a direct index connection', () => {
+    it('creates a direct index connection', () => {
       simpleMap['ns0:Root'] = {
         LoopingWithIndex: {
           WeatherSummary: {
@@ -498,31 +498,43 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
               Name: '"Day 1"',
               Pressure: '/ns0:Root/LoopingWithIndex/WeatherReport[1]/@Pressure',
             },
+            Day2: {
+              Name: '"Day 2"',
+              Temperature: '/ns0:Root/LoopingWithIndex/WeatherReport[2]/@Temperature',
+            },
           },
         },
       };
 
       const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
-      const resultEntries = Object.entries(result);
-      resultEntries.sort();
 
-      // All these expects might be incorrect
-      expect(resultEntries.length).toEqual(5);
+      expect(Object.entries(result).length).toEqual(9);
+      expect(result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day1/Name'].inputs[0][0] as string).toBe('"Day 1"');
+      expect(result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day2/Name'].inputs[0][0] as string).toBe('"Day 2"');
 
-      expect(resultEntries[0][0]).toContain('IsGreater');
-      expect(resultEntries[0][1]).toBeTruthy();
+      const directAccess1Key = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day1/Pressure'].inputs[0][0] as ConnectionUnit)
+        .reactFlowKey;
+      const directAccess2Key = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day2/Temperature'].inputs[0][0] as ConnectionUnit)
+        .reactFlowKey;
 
-      expect(resultEntries[1][0]).toContain(ifPseudoFunctionKey);
-      expect(resultEntries[1][1]).toBeTruthy();
+      expect(directAccess1Key.includes('directAccess')).toBe(true);
+      expect(directAccess2Key.includes('directAccess')).toBe(true);
 
-      expect(resultEntries[2][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
-      expect(resultEntries[2][1]).toBeTruthy();
+      expect(result[directAccess1Key].inputs[0][0] as string).toBe('1');
+      expect((result[directAccess1Key].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/LoopingWithIndex/WeatherReport'
+      );
+      expect((result[directAccess1Key].inputs[2][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/LoopingWithIndex/WeatherReport/@Pressure'
+      );
 
-      expect(resultEntries[3][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
-      expect(resultEntries[3][1]).toBeTruthy();
-
-      expect(resultEntries[4][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
-      expect(resultEntries[4][1]).toBeTruthy();
+      expect(result[directAccess2Key].inputs[0][0] as string).toBe('2');
+      expect((result[directAccess2Key].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/LoopingWithIndex/WeatherReport'
+      );
+      expect((result[directAccess2Key].inputs[2][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/LoopingWithIndex/WeatherReport/@Temperature'
+      );
     });
 
     it.skip('creates a direct index looping connection', () => {
