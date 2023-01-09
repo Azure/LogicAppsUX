@@ -215,13 +215,29 @@ export const dataMapSlice = createSlice({
           nodes.push(payloadNode);
         }
 
-        // Danielle add parent repeating element
-        const firstSourceNodeWithRepeatingPathItem = findLast(payloadNode.pathToRoot, (pathItem) => pathItem.repeating);
+        // if parent already exists on the canvas, add all interim ones
+        const grandparentNodesOnCanvas = state.curDataMapOperation.currentSourceSchemaNodes.filter(
+          (node) => existingNode?.key.includes(node.key) && existingNode.parentKey !== node.key
+        );
+        if (grandparentNodesOnCanvas) {
+          // add all nodes between child and grandparent
+        }
+
+        // else do this
+        // Danielle add interim parents so that tree makes sense
+        const pathToRootWithoutCurrent = payloadNode.pathToRoot.filter((node) => node.key !== payloadNode.key);
+        const firstSourceNodeWithRepeatingPathItem = findLast(pathToRootWithoutCurrent, (pathItem) => pathItem.repeating);
         const parentNodeToAdd =
+          firstSourceNodeWithRepeatingPathItem &&
           firstSourceNodeWithRepeatingPathItem &&
           state.curDataMapOperation.flattenedSourceSchema[addSourceReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key)];
         if (parentNodeToAdd) {
-          nodes.push(parentNodeToAdd);
+          const parentIfAdded = state.curDataMapOperation.currentSourceSchemaNodes.find(
+            (currentNode) => currentNode.key === payloadNode.key
+          );
+          if (!parentIfAdded) {
+            nodes.push(parentNodeToAdd);
+          }
         }
       });
 
