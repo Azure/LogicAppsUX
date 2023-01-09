@@ -199,6 +199,8 @@ const createConnections = (
   let mockDirectAccessFnKey: string | undefined = undefined;
   const [daOpenBracketIdx, daClosedBracketIdx] = [amendedSourceKey.indexOf('['), amendedSourceKey.indexOf(']')];
 
+  console.log(sourceNodeString, targetKey);
+
   // Identify source schema node, or Function(Data) from source key
   let sourceNode: SchemaNodeExtended | FunctionData | undefined = undefined;
   if (sourceEndOfFunction > -1) {
