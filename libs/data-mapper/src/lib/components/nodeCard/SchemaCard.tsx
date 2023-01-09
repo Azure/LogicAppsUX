@@ -165,6 +165,7 @@ export interface SchemaCardProps extends CardProps {
 }
 
 export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
+  const maxWidth = 200;
   const reactFlowId = props.id;
   const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, displayHandle, displayChevron, connectionStatus } = props.data;
   const dispatch = useDispatch<AppDispatch>();
@@ -286,14 +287,17 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const selectedNodeStyles = isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId ? selectedCardStyles : undefined;
 
+  const cardWidth = isSourceSchemaNode && schemaNode.width ? schemaNode.width : schemaNodeCardWidth;
+  const sourceCardMargin = isSourceSchemaNode ? maxWidth - cardWidth : 0;
+
   return (
-    <div className={classes.badgeContainer}>
+    <div className={classes.badgeContainer} style={{ marginLeft: sourceCardMargin }}>
       {isNBadgeRequired && !isSourceSchemaNode && <NBadge isOutput />}
 
       <div
         onContextMenu={contextMenu.handle}
         className={containerStyle}
-        style={{ ...selectedNodeStyles, width: isSourceSchemaNode && schemaNode.width ? schemaNode.width : schemaNodeCardWidth }}
+        style={{ ...selectedNodeStyles, width: cardWidth }}
         onMouseLeave={() => setIsCardHovered(false)}
         onMouseEnter={() => setIsCardHovered(true)}
       >
