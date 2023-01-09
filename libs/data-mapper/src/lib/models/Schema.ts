@@ -105,7 +105,7 @@ export interface SchemaExtended extends Schema {
   schemaTreeRoot: SchemaNodeExtended;
 }
 
-export type SourceSchemaNodeExtended = SchemaNodeExtended & { width?: number };
+export type SourceSchemaNodeExtended = SchemaNodeExtended & { width?: number }; // Danielle remove
 export interface SchemaNodeExtended extends SchemaNode {
   children: SchemaNodeExtended[];
   nodeProperties: SchemaNodeProperty[];

@@ -7,7 +7,7 @@ import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { SchemaNodeExtended, SourceSchemaNodeExtended } from '../models/Schema';
-import { SchemaType } from '../models/Schema';
+import { SchemaNodeProperty, SchemaType } from '../models/Schema';
 import { getFunctionBrandingForCategory } from './Function.Utils';
 import { applyElkLayout, convertDataMapNodesToElkGraph } from './Layout.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
@@ -63,9 +63,6 @@ export const useLayout = (
       const sortedSourceSchemaNodes = [...currentSourceSchemaNodes].sort(
         (nodeA, nodeB) => sourceSchemaOrdering.indexOf(nodeA.key) - sourceSchemaOrdering.indexOf(nodeB.key)
       );
-
-      // danielle Call getWidth here
-      //setWidthForSourceNodes([...sortedSourceSchemaNodes])
 
       // Build ELK node/edges data
       const elkTreeFromCanvasNodes = convertDataMapNodesToElkGraph(
@@ -197,11 +194,23 @@ const convertSourceToReactFlowParentAndChildNodes = (
       return;
     }
 
+    // danielle for the node find all parents on with repeating
+    let srcWidth = 200;
+    const sourceNodesCopy = [...combinedSourceSchemaNodes];
+    sourceNodesCopy.filter((node) => node.nodeProperties.includes(SchemaNodeProperty.Repeating));
+    const sourceKeySet: Set<string> = new Set();
+    sourceNodesCopy.forEach((node) => sourceKeySet.add(node.key));
+    sourceKeySet.forEach((possibleParent) => {
+      if (srcNode.key.includes(possibleParent) && possibleParent !== srcNode.key) {
+        srcWidth = srcWidth - 24;
+      }
+    });
+
     reactFlowNodes.push({
       id: nodeReactFlowId,
       zIndex: 101, // Just for schema nodes to render N-badge over edges
       data: {
-        schemaNode: srcNode,
+        schemaNode: { ...srcNode, width: srcWidth },
         schemaType: SchemaType.Source,
         displayHandle: true,
         displayChevron: true,

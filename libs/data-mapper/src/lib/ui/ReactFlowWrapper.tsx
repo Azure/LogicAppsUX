@@ -30,7 +30,6 @@ import {
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { SchemaType } from '../models';
 import { useLayout } from '../utils/ReactFlow.Util';
-import { setWidthForSourceNodes } from '../utils/Schema.Utils';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import type { KeyboardEventHandler, MouseEvent as ReactMouseEvent } from 'react';
@@ -141,12 +140,8 @@ export const ReactFlowWrapper = ({ canvasBlockHeight, canvasBlockWidth }: ReactF
     }
   }, [ctrlYPressed, dispatch]);
 
-  const copiedNodes = JSON.parse(JSON.stringify(currentSourceSchemaNodes));
-
-  setWidthForSourceNodes(copiedNodes);
-
   const [nodes, edges, diagramSize] = useLayout(
-    copiedNodes,
+    currentSourceSchemaNodes,
     currentFunctionNodes,
     currentTargetSchemaNode,
     connections,
