@@ -201,10 +201,10 @@ const createConnections = (
 
   // Identify source schema node, or Function(Data) from source key
   let sourceNode: SchemaNodeExtended | FunctionData | undefined = undefined;
-  if (sourceEndOfFunction >= 0) {
+  if (sourceEndOfFunction > -1) {
     // We found a Function in source key -> let's find its data
     sourceNode = findFunctionForFunctionName(amendedSourceKey.substring(0, sourceEndOfFunction), functions);
-  } else if (daOpenBracketIdx >= 0 && daClosedBracketIdx >= 0) {
+  } else if (daOpenBracketIdx > -1 && daClosedBracketIdx > -1) {
     // One of the source key's chunks contained a Direct Access, so let's format it
     // into the Function syntax the deserializer can parse
     sourceNode = directAccessPseudoFunction;
@@ -284,7 +284,7 @@ const createConnections = (
   }
 
   // Extract and create connections for function inputs
-  if ((sourceEndOfFunction >= 0 && !isSourceFunctionAlreadyCreated) || mockDirectAccessFnKey) {
+  if ((sourceEndOfFunction > -1 && !isSourceFunctionAlreadyCreated) || mockDirectAccessFnKey) {
     const fnInputKeys = splitKeyIntoChildren(mockDirectAccessFnKey ?? amendedSourceKey);
 
     fnInputKeys.forEach((fnInputKey) => {
