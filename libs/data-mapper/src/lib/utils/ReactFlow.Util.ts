@@ -175,6 +175,26 @@ const convertSourceToReactFlowParentAndChildNodes = (
     return reactFlowNodes;
   }
 
+  const sourceNodesCopy = [...combinedSourceSchemaNodes];
+  sourceNodesCopy.filter((node) => node.nodeProperties.includes(SchemaNodeProperty.Repeating));
+  const sourceKeySet: Set<string> = new Set();
+  sourceNodesCopy.forEach((node) => sourceKeySet.add(node.key));
+  const widthDict: Map<string, number> = new Map<string, number>();
+  let maxSize = 200;
+  combinedSourceSchemaNodes.forEach((srcNode) => {
+    // danielle for the node find all parents on with repeating
+    let srcWidth = 0;
+    sourceKeySet.forEach((possibleParent) => {
+      if (srcNode.key.includes(possibleParent) && possibleParent !== srcNode.key) {
+        srcWidth = srcWidth + 24;
+      }
+    });
+    widthDict.set(srcNode.key, srcWidth);
+    if (srcWidth > 72) {
+      maxSize += 24;
+    }
+  });
+
   combinedSourceSchemaNodes.forEach((srcNode) => {
     const nodeReactFlowId = addSourceReactFlowPrefix(srcNode.key);
     const relatedConnections = getConnectionsForNode(connections, srcNode.key, SchemaType.Source);
@@ -194,23 +214,11 @@ const convertSourceToReactFlowParentAndChildNodes = (
       return;
     }
 
-    // danielle for the node find all parents on with repeating
-    let srcWidth = 200;
-    const sourceNodesCopy = [...combinedSourceSchemaNodes];
-    sourceNodesCopy.filter((node) => node.nodeProperties.includes(SchemaNodeProperty.Repeating));
-    const sourceKeySet: Set<string> = new Set();
-    sourceNodesCopy.forEach((node) => sourceKeySet.add(node.key));
-    sourceKeySet.forEach((possibleParent) => {
-      if (srcNode.key.includes(possibleParent) && possibleParent !== srcNode.key) {
-        srcWidth = srcWidth - 24;
-      }
-    });
-
     reactFlowNodes.push({
       id: nodeReactFlowId,
       zIndex: 101, // Just for schema nodes to render N-badge over edges
       data: {
-        schemaNode: { ...srcNode, width: srcWidth },
+        schemaNode: { ...srcNode, width: maxSize - (widthDict.get(srcNode.key) || 200) },
         schemaType: SchemaType.Source,
         displayHandle: true,
         displayChevron: true,
