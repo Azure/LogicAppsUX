@@ -160,16 +160,16 @@ export interface RepetitionReference {
 export function getParametersSortedByVisibility(parameters: ParameterInfo[]): ParameterInfo[] {
   // Sorted by ( Required, Important, Advanced, Other )
   return parameters.sort((a, b) => {
-    if (a.required && !b.required) return 1;
-    if (!a.required && b.required) return -1;
+    if (a.required && !b.required) return -1;
+    if (!a.required && b.required) return 1;
 
     const aVisibility = getVisibility(a);
     const bVisibility = getVisibility(b);
     if (aVisibility === bVisibility) return 0;
-    if (aVisibility === Visibility.Important) return 1;
-    if (bVisibility === Visibility.Important) return -1;
-    if (aVisibility === Visibility.Advanced) return 1;
-    if (bVisibility === Visibility.Advanced) return -1;
+    if (aVisibility === Visibility.Important) return -1;
+    if (bVisibility === Visibility.Important) return 1;
+    if (aVisibility === Visibility.Advanced) return -1;
+    if (bVisibility === Visibility.Advanced) return 1;
     return 0;
   });
 }
