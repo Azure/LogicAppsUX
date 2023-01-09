@@ -8,10 +8,9 @@ import { localize } from '../../localize';
 import { executeCommand } from '../utils/funcCoreTools/cpUtils';
 import { promptForFuncVersion } from '../utils/vsCodeConfig/settings';
 import { getBrewPackageName } from './getBrewPackageName';
-import type { INpmDistTag } from './getNpmDistTag';
 import { getNpmDistTag } from './getNpmDistTag';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { FuncVersion } from '@microsoft/vscode-extension';
+import type { FuncVersion, INpmDistTag } from '@microsoft/vscode-extension';
 
 export async function installFuncCoreTools(
   context: IActionContext,
@@ -25,7 +24,6 @@ export async function installFuncCoreTools(
   const distTag: INpmDistTag = await getNpmDistTag(context, version);
   const brewPackageName: string = getBrewPackageName(version);
 
-  // Use the first package manager
   switch (packageManagers[0]) {
     case PackageManager.npm:
       await executeCommand(ext.outputChannel, undefined, 'npm', 'install', '-g', `${funcPackageName}@${distTag.tag}`);

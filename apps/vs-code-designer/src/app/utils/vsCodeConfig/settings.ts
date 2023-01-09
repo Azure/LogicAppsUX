@@ -91,6 +91,12 @@ function osSupportsVersion(version: FuncVersion | undefined): boolean {
   return version !== FuncVersion.v1 || process.platform === 'win32';
 }
 
+/**
+ * Prompts dialog to gets a functions core tools to install.
+ * @param {IActionContext} context - Command context.
+ * @param {string} message - Message for dialog.
+ * @returns {Promise<FuncVersion>} Returns core tools version to install.
+ */
 export async function promptForFuncVersion(context: IActionContext, message?: string): Promise<FuncVersion> {
   const recommended: string = localize('recommended', '(Recommended)');
   let picks: IAzureQuickPickItem<FuncVersion | undefined>[] = [
