@@ -2,8 +2,8 @@
 import { mapNodeParams, reservedMapDefinitionKeysArray } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import { addParentConnectionForRepeatingElements } from '../core/state/DataMapSlice';
-import type { FunctionData, MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary } from '../models';
-import { SchemaType } from '../models';
+import type { FunctionData, MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
+import { SchemaType, directAccessPseudoFunction } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import { setConnectionInputValue } from '../utils/Connection.Utils';
 import { getDestinationNode, getSourceValueFromLoop, splitKeyIntoChildren } from '../utils/DataMap.Utils';
@@ -192,19 +192,37 @@ const createConnections = (
   targetSchemaFlattened: SchemaNodeDictionary,
   functions: FunctionData[]
 ) => {
+  const isLoop: boolean = targetKey.includes(mapNodeParams.for);
+  const isConditional: boolean = targetKey.startsWith(mapNodeParams.if);
   const sourceEndOfFunction = sourceNodeString.indexOf('(');
-  const amendedSourceKey = targetKey.includes(mapNodeParams.for) ? getSourceValueFromLoop(sourceNodeString, targetKey) : sourceNodeString;
+  const amendedSourceKey = isLoop ? getSourceValueFromLoop(sourceNodeString, targetKey) : sourceNodeString;
+  let mockDirectAccessFnKey: string | undefined = undefined;
+  const [daOpenBracketIdx, daClosedBracketIdx] = [amendedSourceKey.indexOf('['), amendedSourceKey.indexOf(']')];
 
-  const sourceNode =
-    sourceEndOfFunction > -1
-      ? findFunctionForFunctionName(amendedSourceKey.substring(0, sourceEndOfFunction), functions)
-      : findNodeForKey(amendedSourceKey, sourceSchema.schemaTreeRoot);
+  // Identify source schema node, or Function(Data) from source key
+  let sourceNode: SchemaNodeExtended | FunctionData | undefined = undefined;
+  if (sourceEndOfFunction > -1) {
+    // We found a Function in source key -> let's find its data
+    sourceNode = findFunctionForFunctionName(amendedSourceKey.substring(0, sourceEndOfFunction), functions);
+  } else if (daOpenBracketIdx > -1 && daClosedBracketIdx > -1) {
+    // One of the source key's chunks contained a Direct Access, so let's format it
+    // into the Function syntax the deserializer can parse
+    sourceNode = directAccessPseudoFunction;
+
+    mockDirectAccessFnKey = `directAccess(`;
+    mockDirectAccessFnKey += `${amendedSourceKey.substring(daOpenBracketIdx + 1, daClosedBracketIdx)}, `; // Index value
+    mockDirectAccessFnKey += `${amendedSourceKey.substring(0, daOpenBracketIdx)}, `; // Scope (source loop element)
+    mockDirectAccessFnKey += `${amendedSourceKey.substring(0, daOpenBracketIdx)}${amendedSourceKey.substring(daClosedBracketIdx + 1)}`; // Output value
+    mockDirectAccessFnKey += ')';
+  } else {
+    sourceNode = findNodeForKey(amendedSourceKey, sourceSchema.schemaTreeRoot);
+  }
 
   let sourceKey: string;
-  let sourceFunctionAlreadyCreated = false;
+  let isSourceFunctionAlreadyCreated = false;
   if (sourceNode && isFunctionData(sourceNode)) {
     if (createdNodes[amendedSourceKey]) {
-      sourceFunctionAlreadyCreated = true;
+      isSourceFunctionAlreadyCreated = true;
       sourceKey = createdNodes[amendedSourceKey];
     } else {
       sourceKey = createReactFlowFunctionKey(sourceNode);
@@ -230,16 +248,13 @@ const createConnections = (
     destinationKey = `${targetPrefix}${destinationNode?.key}`;
   }
 
-  if (targetKey.includes(mapNodeParams.for)) {
-    // if has $for, add parent connection
-    if (sourceNode && destinationNode) {
-      addParentConnectionForRepeatingElements(destinationNode, sourceNode, sourceSchemaFlattened, targetSchemaFlattened, connections);
-    }
+  if (isLoop && sourceNode && destinationNode) {
+    addParentConnectionForRepeatingElements(destinationNode, sourceNode, sourceSchemaFlattened, targetSchemaFlattened, connections);
   }
 
   if (destinationNode) {
-    if (targetKey.startsWith(mapNodeParams.if)) {
-      // We need to make sure we create the contents of the conditional as well and attach it as an input
+    if (isConditional) {
+      // Create connections for conditional's contents as well
       const trimmedTargetKey = targetKey.substring(mapNodeParams.if.length + 1, targetKey.length - 1);
 
       createConnections(
@@ -268,13 +283,13 @@ const createConnections = (
     });
   }
 
-  // Extract and create connections for nested functions
-  if (sourceEndOfFunction > -1 && !sourceFunctionAlreadyCreated) {
-    const childFunctions = splitKeyIntoChildren(amendedSourceKey);
+  // Extract and create connections for function inputs
+  if ((sourceEndOfFunction > -1 && !isSourceFunctionAlreadyCreated) || mockDirectAccessFnKey) {
+    const fnInputKeys = splitKeyIntoChildren(mockDirectAccessFnKey ?? amendedSourceKey);
 
-    childFunctions.forEach((childFunction) => {
+    fnInputKeys.forEach((fnInputKey) => {
       parseDefinitionToConnection(
-        childFunction,
+        fnInputKey,
         sourceKey,
         connections,
         createdNodes,
