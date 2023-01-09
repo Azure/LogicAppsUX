@@ -2,7 +2,7 @@
 import { mapNodeParams, reservedMapDefinitionKeysArray } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import { addParentConnectionForRepeatingElements } from '../core/state/DataMapSlice';
-import type { FunctionData, MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary } from '../models';
+import type { FunctionData, MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import { SchemaType } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import { setConnectionInputValue } from '../utils/Connection.Utils';
@@ -192,19 +192,25 @@ const createConnections = (
   targetSchemaFlattened: SchemaNodeDictionary,
   functions: FunctionData[]
 ) => {
+  const isLoop: boolean = targetKey.includes(mapNodeParams.for);
+  const isConditional: boolean = targetKey.startsWith(mapNodeParams.if);
   const sourceEndOfFunction = sourceNodeString.indexOf('(');
-  const amendedSourceKey = targetKey.includes(mapNodeParams.for) ? getSourceValueFromLoop(sourceNodeString, targetKey) : sourceNodeString;
+  const amendedSourceKey = isLoop ? getSourceValueFromLoop(sourceNodeString, targetKey) : sourceNodeString;
 
-  const sourceNode =
-    sourceEndOfFunction > -1
-      ? findFunctionForFunctionName(amendedSourceKey.substring(0, sourceEndOfFunction), functions)
-      : findNodeForKey(amendedSourceKey, sourceSchema.schemaTreeRoot);
+  // Identify source schema node, or Function(Data) from source key
+  let sourceNode: SchemaNodeExtended | FunctionData | undefined = undefined;
+  if (sourceEndOfFunction >= 0) {
+    // We found a Function in source key -> let's find its data
+    sourceNode = findFunctionForFunctionName(amendedSourceKey.substring(0, sourceEndOfFunction), functions);
+  } else {
+    sourceNode = findNodeForKey(amendedSourceKey, sourceSchema.schemaTreeRoot);
+  }
 
   let sourceKey: string;
-  let sourceFunctionAlreadyCreated = false;
+  let isSourceFunctionAlreadyCreated = false;
   if (sourceNode && isFunctionData(sourceNode)) {
     if (createdNodes[amendedSourceKey]) {
-      sourceFunctionAlreadyCreated = true;
+      isSourceFunctionAlreadyCreated = true;
       sourceKey = createdNodes[amendedSourceKey];
     } else {
       sourceKey = createReactFlowFunctionKey(sourceNode);
@@ -230,16 +236,13 @@ const createConnections = (
     destinationKey = `${targetPrefix}${destinationNode?.key}`;
   }
 
-  if (targetKey.includes(mapNodeParams.for)) {
-    // if has $for, add parent connection
-    if (sourceNode && destinationNode) {
-      addParentConnectionForRepeatingElements(destinationNode, sourceNode, sourceSchemaFlattened, targetSchemaFlattened, connections);
-    }
+  if (isLoop && sourceNode && destinationNode) {
+    addParentConnectionForRepeatingElements(destinationNode, sourceNode, sourceSchemaFlattened, targetSchemaFlattened, connections);
   }
 
   if (destinationNode) {
-    if (targetKey.startsWith(mapNodeParams.if)) {
-      // We need to make sure we create the contents of the conditional as well and attach it as an input
+    if (isConditional) {
+      // Create connections for conditional's contents as well
       const trimmedTargetKey = targetKey.substring(mapNodeParams.if.length + 1, targetKey.length - 1);
 
       createConnections(
@@ -269,7 +272,7 @@ const createConnections = (
   }
 
   // Extract and create connections for nested functions
-  if (sourceEndOfFunction > -1 && !sourceFunctionAlreadyCreated) {
+  if (sourceEndOfFunction > -1 && !isSourceFunctionAlreadyCreated) {
     const childFunctions = splitKeyIntoChildren(amendedSourceKey);
 
     childFunctions.forEach((childFunction) => {
