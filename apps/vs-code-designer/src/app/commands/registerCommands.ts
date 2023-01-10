@@ -56,4 +56,5 @@ export function registerCommands(): void {
     async (context: IActionContext, node?: AzExtTreeItem) => await deleteNode(context, ProductionSlotTreeItem.contextValue, node)
   );
   registerCommand(extensionCommand.openOverview, openOverview);
+  registerCommand(extensionCommand.refresh, async (context: IActionContext, node?: AzExtTreeItem) => await ext.tree.refresh(context, node));
 }
