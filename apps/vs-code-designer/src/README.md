@@ -8,13 +8,13 @@ Use the Azure Logic Apps (Standard) extension to quickly create, debug, manage, 
 
 1. Select the button to create a new project in the Azure Logic Apps explorer
 
-1. Select a new, _empty_ folder to contain your project
+2. Select a new, _empty_ folder to contain your project
 
-1. Select "Stateful" for your project's first function
+3. Select "Stateful" for your project's first function
 
-1. Use "Stateful1" as the function name
+4. Use "Stateful1" as the function name
 
-1. If the selected folder is not already open, select "Open in current window" to open it
+5. If the selected folder is not already open, select "Open in current window" to open it
 
 ## Run the logic app locally
 
@@ -22,11 +22,12 @@ This extension integrates with the [Azure Functions Core Tools](https://docs.mic
 
 1. To start your project, press F5 or the "play" button
 
-1. If you do not have the [Azure Functions Core Tools](https://github.com/Azure/azure-functions-core-tools/releases/tag/3.0.2931) installed, you will be automatically prompted to install. Follow the specified instructions, or skip to the "Deploy" step if you would rather deploy without running locally.
+2. If you do not have the [Azure Functions Core Tools](https://github.com/Azure/azure-functions-core-tools/releases/tag/4.0.4915) installed, you will be automatically prompted to install. Follow the specified instructions, or skip to the "Deploy" step if you would rather deploy without running locally.
 
    > TIP: The "Terminal" panel should pop up automatically and you know your project is running if you see output
 
-1. Make sure you have [Azure Storage Emulator](https://docs.microsoft.com/azure/storage/common/storage-use-emulator) installed and running. Alternatively, edit the value of `AzureWebJobsStorage` in `local.settings.json` under the project's root folder and under `/workflow-designtime` to a valid connection string for an Azure storage account.
+3. Make sure you have [Azurite Emulator](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite?tabs=visual-studio-code) installed and running. Alternatively, edit the value of `AzureWebJobsStorage` in `local.settings.json` under the project's root folder and under `/workflow-designtime` to a valid connection string for an Azure storage account.
+   > **WARNING**: [Azure Storage Emulator](https://docs.microsoft.com/azure/storage/common/storage-use-emulator) has been deprecated.
 
 ## Deploy to Azure
 
@@ -34,17 +35,17 @@ This extension integrates with the [Azure Functions Core Tools](https://docs.mic
 
    > If you don't already have an Azure Account, click "Create a Free Azure Account"
 
-1. Select the button to deploy
+2. Select the button to deploy
 
-1. Choose "Create new Logic App in Azure..."
+3. Choose "Create new Logic App in Azure..."
 
-1. Enter a globally unique name for your Logic App
+4. Enter a globally unique name for your Logic App
 
-1. Select a location
+5. Select a location
 
-1. Wait for deployment to complete. Progress will be shown in the bottom right corner of your window
+6. Wait for deployment to complete. Progress will be shown in the bottom right corner of your window
 
-1. Once deployment is complete, expand your _subscription_ in the Azure Logic explorer to view it
+7. Once deployment is complete, expand your _subscription_ in the Azure Logic explorer to view it
 
 ## Development Notes
 
@@ -58,7 +59,7 @@ You can see known issues [here](https://github.com/Azure/logicapps/blob/master/a
 
 1. You can open issues [here](https://github.com/Azure/logicapps/issues) on GitHub.
 
-1. You can submit feedbacks and comments using [this form](https://aka.ms/lafeedback).
+2. You can submit feedbacks and comments using [this form](https://aka.ms/lafeedback).
 
 ### Code of Conduct
 
