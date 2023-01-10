@@ -3,7 +3,13 @@ import { mapNodeParams, reservedMapDefinitionKeysArray } from '../constants/MapD
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import { addParentConnectionForRepeatingElements } from '../core/state/DataMapSlice';
 import type { FunctionData, MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
-import { SchemaType, directAccessPseudoFunction, directAccessPseudoFunctionKey } from '../models';
+import {
+  SchemaType,
+  directAccessPseudoFunction,
+  directAccessPseudoFunctionKey,
+  indexPseudoFunction,
+  indexPseudoFunctionKey,
+} from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import { setConnectionInputValue } from '../utils/Connection.Utils';
 import { getDestinationNode, getSourceValueFromLoop, splitKeyIntoChildren } from '../utils/DataMap.Utils';
@@ -195,16 +201,9 @@ const createConnections = (
   const isLoop: boolean = targetKey.includes(mapNodeParams.for);
   const isConditional: boolean = targetKey.startsWith(mapNodeParams.if);
   const sourceEndOfFunction = sourceNodeString.indexOf('(');
-  const amendedSourceKey = isLoop ? getSourceValueFromLoop(sourceNodeString, targetKey) : sourceNodeString;
+  let amendedSourceKey = isLoop ? getSourceValueFromLoop(sourceNodeString, targetKey) : sourceNodeString;
   let mockDirectAccessFnKey: string | undefined = undefined;
   const [daOpenBracketIdx, daClosedBracketIdx] = [amendedSourceKey.indexOf('['), amendedSourceKey.indexOf(']')];
-
-  console.log(sourceNodeString, '||', amendedSourceKey, '||', targetKey);
-
-  // Handle index variable usage
-  if (amendedSourceKey.includes('$')) {
-    console.log('Source key contains index variable');
-  }
 
   // Identify source schema node, or Function(Data) from source key
   let sourceNode: SchemaNodeExtended | FunctionData | undefined = undefined;
@@ -221,6 +220,10 @@ const createConnections = (
     mockDirectAccessFnKey += `${amendedSourceKey.substring(0, daOpenBracketIdx)}, `; // Scope (source loop element)
     mockDirectAccessFnKey += `${amendedSourceKey.substring(0, daOpenBracketIdx)}${amendedSourceKey.substring(daClosedBracketIdx + 1)}`; // Output value
     mockDirectAccessFnKey += ')';
+  } else if (amendedSourceKey.startsWith(indexPseudoFunctionKey)) {
+    // Handle index variable usage
+    sourceNode = indexPseudoFunction;
+    createdNodes[amendedSourceKey] = amendedSourceKey; // Bypass below block since we already have rfKey here
   } else {
     sourceNode = findNodeForKey(amendedSourceKey, sourceSchema.schemaTreeRoot);
   }
@@ -256,11 +259,42 @@ const createConnections = (
   }
 
   if (isLoop && sourceNode && destinationNode) {
-    // Make loop connection with index variable function
-    if (destinationKey.includes('$')) {
-      console.log('Creating connection between loop parents (with index())');
-    } else {
-      addParentConnectionForRepeatingElements(destinationNode, sourceNode, sourceSchemaFlattened, targetSchemaFlattened, connections);
+    let indexFnRfKey: string | undefined = undefined;
+
+    // TODO: Ensure support for nested loops w/ index variables
+
+    // Loop index variable handling (create index() node, match up variables to respective nodes, etc)
+    const idxOfIdxVariable = targetKey.replaceAll('$for', '').lastIndexOf('$');
+    if (idxOfIdxVariable > -1) {
+      const [forPathFirstPart, forPathSecondPart] = targetKey.split(')/');
+      const forTgtBasePath = forPathFirstPart + ')/' + forPathSecondPart.substring(0, forPathSecondPart.indexOf('/') ?? undefined);
+
+      // Check if an index() node/id has already been created for this $for()'s index variable
+      if (createdNodes[forTgtBasePath]) {
+        indexFnRfKey = createdNodes[forTgtBasePath];
+      } else {
+        indexFnRfKey = createReactFlowFunctionKey(indexPseudoFunction);
+        createdNodes[forTgtBasePath] = indexFnRfKey;
+      }
+
+      const idxVariable = targetKey.replaceAll('$for', '').substring(idxOfIdxVariable, idxOfIdxVariable + 2);
+      amendedSourceKey = amendedSourceKey.replaceAll(idxVariable, indexFnRfKey);
+      mockDirectAccessFnKey = mockDirectAccessFnKey?.replaceAll(idxVariable, indexFnRfKey);
+    }
+
+    const srcLoopNodeKey = amendedSourceKey.includes('[')
+      ? `${amendedSourceKey.substring(0, amendedSourceKey.indexOf('['))}${amendedSourceKey.substring(amendedSourceKey.indexOf(']') + 1)}`
+      : amendedSourceKey;
+    const srcLoopNode = findNodeForKey(srcLoopNodeKey, sourceSchema.schemaTreeRoot);
+    if (srcLoopNode) {
+      addParentConnectionForRepeatingElements(
+        destinationNode,
+        srcLoopNode,
+        sourceSchemaFlattened,
+        targetSchemaFlattened,
+        connections,
+        indexFnRfKey
+      );
     }
   }
 

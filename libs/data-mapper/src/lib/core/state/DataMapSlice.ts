@@ -9,6 +9,7 @@ import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '.
 import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
+import { indexPseudoFunction } from '../../models/Function';
 import { findLast } from '../../utils/Array.Utils';
 import {
   bringInParentSourceNodesForRepeating,
@@ -741,7 +742,7 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
     return;
   }
 
-  // item to be deleted is a connection
+  // Item to be deleted is a connection
   const sourceId = getSourceIdFromReactFlowConnectionId(reactFlowKey);
   const sourceSchema = curDataMapState.curDataMapOperation.flattenedSourceSchema;
   const canDelete = canDeleteConnection(sourceId, sourceSchema);
@@ -781,7 +782,8 @@ export const addParentConnectionForRepeatingElements = (
   sourceNode: FunctionData | SchemaNodeExtended,
   flattenedSourceSchema: SchemaNodeDictionary,
   flattenedTargetSchema: SchemaNodeDictionary,
-  dataMapConnections: ConnectionDictionary
+  dataMapConnections: ConnectionDictionary,
+  indexFnRfKey: string | undefined // For deserialization
 ) => {
   if (isSchemaNodeExtended(sourceNode) && isSchemaNodeExtended(targetNode)) {
     if (sourceNode.parentKey) {
@@ -806,15 +808,40 @@ export const addParentConnectionForRepeatingElements = (
         );
 
         if (!parentsAlreadyConnected) {
-          setConnectionInputValue(dataMapConnections, {
-            targetNode: parentTargetNode,
-            targetNodeReactFlowKey: parentPrefixedTargetKey,
-            findInputSlot: true,
-            value: {
-              reactFlowKey: parentPrefixedSourceKey,
-              node: parentSourceNode,
-            },
-          });
+          if (!indexFnRfKey) {
+            setConnectionInputValue(dataMapConnections, {
+              targetNode: parentTargetNode,
+              targetNodeReactFlowKey: parentPrefixedTargetKey,
+              findInputSlot: true,
+              value: {
+                reactFlowKey: parentPrefixedSourceKey,
+                node: parentSourceNode,
+              },
+            });
+          } else {
+            // If provided, we need to plug in an index() between the parent loop elements
+            // Source schema node -> Index()
+            setConnectionInputValue(dataMapConnections, {
+              targetNode: indexPseudoFunction,
+              targetNodeReactFlowKey: indexFnRfKey,
+              findInputSlot: true,
+              value: {
+                reactFlowKey: parentPrefixedSourceKey,
+                node: parentSourceNode,
+              },
+            });
+
+            // Index() -> target schema node
+            setConnectionInputValue(dataMapConnections, {
+              targetNode: parentTargetNode,
+              targetNodeReactFlowKey: parentPrefixedTargetKey,
+              findInputSlot: true,
+              value: {
+                reactFlowKey: indexFnRfKey,
+                node: indexPseudoFunction,
+              },
+            });
+          }
         }
       }
     }
