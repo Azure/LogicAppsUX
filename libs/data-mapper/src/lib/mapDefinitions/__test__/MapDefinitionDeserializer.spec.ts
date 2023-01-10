@@ -611,11 +611,9 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       };
 
       const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
-      const resultEntries = Object.entries(result);
-      resultEntries.sort();
 
       // TODO: Update expects
-      expect(resultEntries.length).toEqual(5);
+      expect(Object.entries(result).length).toEqual(5);
     });
 
     it.skip('creates a looping connection w/ index variable, conditional, and relative property path', () => {
