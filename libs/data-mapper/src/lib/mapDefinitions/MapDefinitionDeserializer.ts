@@ -3,7 +3,7 @@ import { mapNodeParams, reservedMapDefinitionKeysArray } from '../constants/MapD
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import { addParentConnectionForRepeatingElements } from '../core/state/DataMapSlice';
 import type { FunctionData, MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
-import { SchemaType, directAccessPseudoFunction } from '../models';
+import { SchemaType, directAccessPseudoFunction, directAccessPseudoFunctionKey } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import { setConnectionInputValue } from '../utils/Connection.Utils';
 import { getDestinationNode, getSourceValueFromLoop, splitKeyIntoChildren } from '../utils/DataMap.Utils';
@@ -199,7 +199,12 @@ const createConnections = (
   let mockDirectAccessFnKey: string | undefined = undefined;
   const [daOpenBracketIdx, daClosedBracketIdx] = [amendedSourceKey.indexOf('['), amendedSourceKey.indexOf(']')];
 
-  console.log(sourceNodeString, targetKey);
+  console.log(sourceNodeString, '||', amendedSourceKey, '||', targetKey);
+
+  // Handle index variable usage
+  if (amendedSourceKey.includes('$')) {
+    console.log('Source key contains index variable');
+  }
 
   // Identify source schema node, or Function(Data) from source key
   let sourceNode: SchemaNodeExtended | FunctionData | undefined = undefined;
@@ -211,7 +216,7 @@ const createConnections = (
     // into the Function syntax the deserializer can parse
     sourceNode = directAccessPseudoFunction;
 
-    mockDirectAccessFnKey = `directAccess(`;
+    mockDirectAccessFnKey = `${directAccessPseudoFunctionKey}(`;
     mockDirectAccessFnKey += `${amendedSourceKey.substring(daOpenBracketIdx + 1, daClosedBracketIdx)}, `; // Index value
     mockDirectAccessFnKey += `${amendedSourceKey.substring(0, daOpenBracketIdx)}, `; // Scope (source loop element)
     mockDirectAccessFnKey += `${amendedSourceKey.substring(0, daOpenBracketIdx)}${amendedSourceKey.substring(daClosedBracketIdx + 1)}`; // Output value
@@ -251,7 +256,12 @@ const createConnections = (
   }
 
   if (isLoop && sourceNode && destinationNode) {
-    addParentConnectionForRepeatingElements(destinationNode, sourceNode, sourceSchemaFlattened, targetSchemaFlattened, connections);
+    // Make loop connection with index variable function
+    if (destinationKey.includes('$')) {
+      console.log('Creating connection between loop parents (with index())');
+    } else {
+      addParentConnectionForRepeatingElements(destinationNode, sourceNode, sourceSchemaFlattened, targetSchemaFlattened, connections);
+    }
   }
 
   if (destinationNode) {

@@ -14,8 +14,10 @@ $targetNamespaces:
   td: http://tempuri.org/TypeDefinition.xsd
 # This map code includes example of map including schema with unqualified defaultFormElement and defaultFormAttribute.
 ns0:Root:
-  Trips:
+  Looping:
+    Trips:
       $for(/ns0:Root/Looping/VehicleTrips/Trips, $i):
         Trip:
-          VehicleRegistration: /ns0:Root/Looping/VehicleTrips/Vehicle[is-equal(VehicleID, /ns0:Root/Looping/VehicleTrips/Trips[$i]/VehicleId)]/VehicleRegistration
+          # VehicleRegistration: /ns0:Root/Looping/VehicleTrips/Vehicle[is-equal(VehicleID, /ns0:Root/Looping/VehicleTrips/Trips[$i]/VehicleId)]/VehicleRegistration
+          Distance: /ns0:Root/Looping/VehicleTrips/Vehicle[$i]/VehicleRegistration
 `;

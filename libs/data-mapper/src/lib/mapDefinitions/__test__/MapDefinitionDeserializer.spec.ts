@@ -537,8 +537,19 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       );
     });
 
-    it.skip('creates a direct index looping connection', () => {
+    it.skip('creates a direct index looping connection w/ conditional and relative property path', () => {
       simpleMap['ns0:Root'] = {
+        Looping: {
+          Trips: {
+            '$for(/ns0:Root/Looping/VehicleTrips/Trips, $i)': {
+              Trip: {
+                VehicleRegistration:
+                  '/ns0:Root/Looping/VehicleTrips/Vehicle[is-equal(VehicleID, /ns0:Root/Looping/VehicleTrips/Trips[$i]/VehicleId)]/VehicleRegistration',
+                Distance: '/ns0:Root/Looping/VehicleTrips/Vehicle[$i]/VehicleRegistration',
+              },
+            },
+          },
+        },
         LoopingWithIndex: {
           WeatherSummary: {
             '$for(/ns0:Root/LoopingWithIndex/WeatherReport, $a)': {
@@ -557,23 +568,8 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       const resultEntries = Object.entries(result);
       resultEntries.sort();
 
-      // All these expects might be incorrect
+      // TODO: Update expects
       expect(resultEntries.length).toEqual(5);
-
-      expect(resultEntries[0][0]).toContain('IsGreater');
-      expect(resultEntries[0][1]).toBeTruthy();
-
-      expect(resultEntries[1][0]).toContain(ifPseudoFunctionKey);
-      expect(resultEntries[1][1]).toBeTruthy();
-
-      expect(resultEntries[2][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
-      expect(resultEntries[2][1]).toBeTruthy();
-
-      expect(resultEntries[3][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
-      expect(resultEntries[3][1]).toBeTruthy();
-
-      expect(resultEntries[4][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
-      expect(resultEntries[4][1]).toBeTruthy();
     });
 
     it('creates a nested loop connection', () => {
