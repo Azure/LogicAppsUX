@@ -238,9 +238,9 @@ const processScopeActions = (
       },
     };
 
-    // Connect scopeHeader to first child
-    if (graph.children?.[0]) {
-      edges.push(createWorkflowEdge(scopeCardNode.id, graph.children[0].id));
+    // Connect graph header to all top level nodes
+    for (const child of graph.children ?? []) {
+      if (metadata[child.id]?.isRoot) edges.push(createWorkflowEdge(scopeCardNode.id, child.id, WORKFLOW_EDGE_TYPES.HEADING_EDGE));
     }
 
     const footerId = `${graphId}-#footer`;
