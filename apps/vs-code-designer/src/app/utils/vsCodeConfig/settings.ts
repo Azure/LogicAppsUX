@@ -8,7 +8,7 @@ import { isString } from '@microsoft/utils-logic-apps';
 import type { IActionContext, IAzureQuickPickItem, IAzureQuickPickOptions } from '@microsoft/vscode-azext-utils';
 import { openUrl } from '@microsoft/vscode-azext-utils';
 import { FuncVersion, ProjectLanguage, WorkerRuntime } from '@microsoft/vscode-extension';
-import { Uri, workspace } from 'vscode';
+import { ConfigurationTarget, Uri, workspace } from 'vscode';
 import type { WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
 
 /**
@@ -121,4 +121,12 @@ export async function promptForFuncVersion(context: IActionContext, message?: st
   } else {
     return version;
   }
+}
+
+/**
+ * Uses ext.prefix 'azureFunctions' unless otherwise specified
+ */
+export async function updateGlobalSetting<T = string>(section: string, value: T, prefix: string = ext.prefix): Promise<void> {
+  const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix);
+  await projectConfiguration.update(section, value, ConfigurationTarget.Global);
 }

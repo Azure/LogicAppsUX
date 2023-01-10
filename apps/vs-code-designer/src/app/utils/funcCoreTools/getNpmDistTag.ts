@@ -2,10 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localize } from '../../localize';
-import { tryGetMajorVersion } from '../utils/funcCoreTools/funcVersion';
-import { parseJson } from '../utils/parseJson';
-import { sendRequestWithExtTimeout } from '../utils/requestUtils';
+import { localize } from '../../../localize';
+import { parseJson } from '../parseJson';
+import { sendRequestWithExtTimeout } from '../requestUtils';
+import { tryGetMajorVersion } from './funcVersion';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { FuncVersion, INpmDistTag, IPackageMetadata } from '@microsoft/vscode-extension';

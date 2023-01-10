@@ -2,14 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import type { PackageManager } from '../../constants';
-import { funcVersionSetting, validateFuncCoreToolsSetting } from '../../constants';
-import { ext } from '../../extensionVariables';
-import { localize } from '../../localize';
-import { executeCommand } from '../utils/funcCoreTools/cpUtils';
-import { tryParseFuncVersion } from '../utils/funcCoreTools/funcVersion';
-import { getWorkspaceSetting } from '../utils/vsCodeConfig/settings';
-import { getFuncPackageManagers } from './getFuncPackageManagers';
+import type { PackageManager } from '../../../constants';
+import { validateFuncCoreToolsSetting, funcVersionSetting } from '../../../constants';
+import { ext } from '../../../extensionVariables';
+import { localize } from '../../../localize';
+import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
+import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
+import { getFuncPackageManagers } from '../../utils/funcCoreTools/getFuncPackageManagers';
+import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { installFuncCoreTools } from './installFuncCoreTools';
 import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';

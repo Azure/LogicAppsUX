@@ -2,13 +2,13 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { funcPackageName, PackageManager } from '../../constants';
-import { ext } from '../../extensionVariables';
-import { localize } from '../../localize';
-import { executeCommand } from '../utils/funcCoreTools/cpUtils';
-import { promptForFuncVersion } from '../utils/vsCodeConfig/settings';
-import { getBrewPackageName } from './getBrewPackageName';
-import { getNpmDistTag } from './getNpmDistTag';
+import { funcPackageName, PackageManager } from '../../../constants';
+import { ext } from '../../../extensionVariables';
+import { localize } from '../../../localize';
+import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
+import { getBrewPackageName } from '../../utils/funcCoreTools/getBrewPackageName';
+import { getNpmDistTag } from '../../utils/funcCoreTools/getNpmDistTag';
+import { promptForFuncVersion } from '../../utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { FuncVersion, INpmDistTag } from '@microsoft/vscode-extension';
 
