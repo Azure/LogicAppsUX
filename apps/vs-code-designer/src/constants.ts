@@ -80,6 +80,7 @@ export enum extensionCommand {
   azureFunctionsAppSettingsEncrypt = 'azureFunctions.appSettings.encrypt',
   azureFunctionsAppSettingsDecrypt = 'azureFunctions.appSettings.decrypt',
   azureSelectSubscriptions = 'azure-account.selectSubscriptions',
+  openOverview = 'logicAppsExtension.openOverview',
 }
 
 // Context
