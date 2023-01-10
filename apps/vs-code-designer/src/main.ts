@@ -52,7 +52,7 @@ export async function activate(context: vscode.ExtensionContext) {
   });
 }
 
-export function deactivateInternal(): Promise<any> {
+export function deactivate(): Promise<any> {
   stopDesignTimeApi();
   return undefined;
 }
