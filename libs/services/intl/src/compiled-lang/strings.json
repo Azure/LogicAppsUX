@@ -269,6 +269,16 @@
       "value": "Required. The string that may contain the value."
     }
   ],
+  "0qcKzG": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+    }
+  ],
   "0uj1Li": [
     {
       "type": 0,
@@ -397,6 +407,12 @@
     {
       "type": 0,
       "value": "Specify one or more expressions which must be true for the trigger to fire."
+    }
+  ],
+  "1YEc9e": [
+    {
+      "type": 0,
+      "value": "Enter a valid condition."
     }
   ],
   "1ZDLZA": [
@@ -829,6 +845,16 @@
     {
       "type": 0,
       "value": "Button to add dynamic content if TokenPicker is hidden"
+    }
+  ],
+  "4sYR0J": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is required."
     }
   ],
   "4vcnOA": [
@@ -1941,6 +1967,12 @@
       "value": "Returns the query from a URI"
     }
   ],
+  "GCjJnP": [
+    {
+      "type": 0,
+      "value": "Enter a valid Json."
+    }
+  ],
   "GDUGlm": [
     {
       "type": 0,
@@ -2077,6 +2109,20 @@
     {
       "type": 0,
       "value": "Enter a valid datetime."
+    }
+  ],
+  "Hs5+Mk": [
+    {
+      "type": 0,
+      "value": "Enter a valid value for "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "HsO1Rd": [

@@ -1,4 +1,7 @@
 import Constants from '../../common/constants';
+import { isParameterRequired, parameterValueToJSONString, recurseSerializeCondition } from './parameters/helper';
+import { isTokenValueSegment } from './parameters/segment';
+import type { ParameterInfo, ValueSegment } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { Expression, ExpressionLiteral } from '@microsoft/parsers-logic-apps';
 import {
@@ -23,6 +26,67 @@ const regex = {
   zipcode: /^[0-9]{5}$/,
   zipcode4: /^[0-9]{5}(?:-[0-9]{4})$/,
 };
+
+/**
+ * Checks that the entered expression meets requirements for the parameter specified by its type, format, and pattern
+ * @arg {ParameterInfo} parameterMetadata - The metadata of the parameter as described by its swagger
+ * @arg {string} parameterValue - The current value of the expression entered for the parameter
+ * @arg {string} shouldValidateUnknownParameterAsError - Flag indicating whether to consider unknown parameters as errors
+ * @return {string[]} - An array of strings with validation error messages, if there are any
+ */
+export function validateStaticParameterInfo(
+  parameterMetadata: ParameterInfo,
+  parameterValue: string,
+  shouldValidateUnknownParameterAsError: boolean
+): string[] {
+  const intl = getIntl();
+
+  const parameterFormat = parameterMetadata.info.format,
+    parameterName = formatParameterName(parameterMetadata.parameterName),
+    pattern = parameterMetadata.pattern,
+    type = parameterMetadata.type,
+    required = isParameterRequired(parameterMetadata),
+    parameterErrorMessages: string[] = [],
+    typeError = validateType(type, parameterFormat ?? '', parameterValue),
+    isUnknown = parameterMetadata.info.isUnknown;
+
+  if (typeError) {
+    parameterErrorMessages.push(typeError);
+  }
+
+  if (pattern && !new RegExp(pattern).test(parameterValue)) {
+    parameterErrorMessages.push(
+      intl.formatMessage(
+        { defaultMessage: 'Enter a valid value for {parameterName}.', description: 'Invalid Pattern error message' },
+        { parameterName }
+      )
+    );
+  }
+
+  if (required && !parameterValue) {
+    parameterErrorMessages.push(
+      intl.formatMessage(
+        { defaultMessage: '{parameterName} is required.', description: 'Required Parameter error message' },
+        { parameterName }
+      )
+    );
+  }
+
+  if (shouldValidateUnknownParameterAsError && isUnknown && parameterValue) {
+    parameterErrorMessages.push(
+      intl.formatMessage(
+        {
+          defaultMessage:
+            '{parameterName} is no longer present in the operation schema. It should be removed before the workflow is re-saved.',
+          description: 'Unknown Parameter error message',
+        },
+        { parameterName }
+      )
+    );
+  }
+
+  return parameterErrorMessages;
+}
 
 /**
  * @arg {string} type - The type of the parameter.
@@ -172,6 +236,80 @@ function validateStringFormat(parameterFormat: string, parameterValue: string, i
   return '';
 }
 
+/**
+ * @arg {ParameterInfo} parameterMetadata - An object with metadata describing a parameter
+ * @arg {ValueSegment[]} parameterValue - An array of valuesegments from a parameter value to validate
+ * @return {string[]} - An array of validation error messages, if there are any
+ */
+export function validateJSONParameter(parameterMetadata: ParameterInfo, parameterValue: ValueSegment[]): string[] {
+  const intl = getIntl();
+  const isConditionEditor = parameterMetadata.editor === Constants.EDITOR.CONDITION;
+  const value = isConditionEditor
+    ? JSON.stringify(recurseSerializeCondition(parameterMetadata, parameterMetadata.editorViewModel.items, true))
+    : parameterValueToJSONString(parameterValue, false, true);
+
+  const errors: string[] = [];
+  const parameterName = formatParameterName(parameterMetadata.parameterName);
+  const required = isParameterRequired(parameterMetadata);
+  if (required && !value) {
+    return [
+      intl.formatMessage(
+        { defaultMessage: '{parameterName} is required.', description: 'Required Parameter error message' },
+        { parameterName }
+      ),
+    ];
+  }
+
+  if (shouldValidateJSON(parameterValue) && value) {
+    try {
+      JSON.parse(value);
+      if (isConditionEditor) {
+        validateConditionalEditor(value, errors);
+      }
+    } catch {
+      if (!parameterHasOnlyTokenBinding(parameterValue)) {
+        errors.push(intl.formatMessage({ defaultMessage: 'Enter a valid Json.', description: 'Invalid Json' }));
+      }
+    }
+  }
+
+  return errors;
+}
+
+const validateConditionalEditor = (value: string, errors: string[]) => {
+  const intl = getIntl();
+  if (value.indexOf('null') !== -1) {
+    errors.push(intl.formatMessage({ defaultMessage: 'Enter a valid condition.', description: 'Invalid Json' }));
+  }
+};
+
+function shouldValidateJSON(expressions: ValueSegment[]): boolean {
+  const shouldValidate = true;
+
+  if (shouldValidate && expressions.length) {
+    const firstSegmentValue = expressions[0].token?.value;
+    if (firstSegmentValue) {
+      return startsWith(firstSegmentValue, '@@') || startsWith(firstSegmentValue, '@{') || !startsWith(firstSegmentValue, '@');
+    }
+  }
+
+  return shouldValidate;
+}
+
+export function parameterHasOnlyTokenBinding(parameterValue: ValueSegment[]): boolean {
+  const trimmedValue = trimParameterValue(parameterValue);
+  return trimmedValue.length === 1 && isTokenValueSegment(trimmedValue[0]);
+}
+
+/**
+ * Removes empty segments that are part of a parameter value, which might exist between tokens or at the end of the value.
+ * @arg {ValueSegment[]} value - The parameter value.
+ * @return {ValueSegment[]} - The trimmed value.
+ */
+export function trimParameterValue(value: ValueSegment[]): ValueSegment[] {
+  return (value || []).filter((segment) => segment.token?.value !== '');
+}
+
 function validateEmailLiteralsFromExpression(expressionString: string): string {
   const emailfields: Expression[][] = [];
   let currentField = 0;
@@ -246,4 +384,8 @@ function isValidJSONObjectFormat(value: string): boolean {
 export const isISO8601 = (s: string) => {
   const ISO_8601_REGEX = /^P(?!$)(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(?=\d+[HMS])(\d+H)?(\d+M)?(\d+S)?)?$/;
   return ISO_8601_REGEX.test(s);
+};
+
+export const formatParameterName = (s: string): string => {
+  return s && "'" + s[0].toUpperCase() + s.slice(1) + "'";
 };

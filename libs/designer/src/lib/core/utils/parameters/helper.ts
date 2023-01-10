@@ -27,6 +27,7 @@ import { getParentArrayKey, isForeachActionNameForLoopsource } from '../loops';
 import { loadDynamicOutputsInNode } from '../outputs';
 import { hasSecureOutputs } from '../setting';
 import { convertWorkflowParameterTypeToSwaggerType } from '../tokens';
+import { validateJSONParameter, validateStaticParameterInfo } from '../validation';
 import { getRecurrenceParameters } from './builtins';
 import { addCastToExpression, addFoldingCastToExpression } from './casting';
 import { getDynamicInputsFromSchema, getDynamicSchema, getDynamicValues } from './dynamicdata';
@@ -361,7 +362,7 @@ const destructureSchema = (schema: any): any => {
   return newSchema;
 };
 
-const toConditionViewModel = (input: any): { items: GroupItemProps } => {
+export const toConditionViewModel = (input: any): { items: GroupItemProps } => {
   const getConditionOption = getConditionalSelectedOption(input);
   const items: GroupItemProps = {
     type: GroupType.GROUP,
@@ -1294,12 +1295,14 @@ export async function updateParameterAndDependencies(
 ): Promise<void> {
   const parameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.id === parameterId) ?? {};
   const updatedParameter = { ...parameter, ...properties } as ParameterInfo;
+  updatedParameter.validationErrors = validateParameter(updatedParameter, updatedParameter.value);
+  const propertiesWithValidations = { ...properties, validationErrors: validateParameter(updatedParameter, updatedParameter.value) };
 
   const parametersToUpdate = [
     {
       groupId,
       parameterId,
-      propertiesToUpdate: properties,
+      propertiesToUpdate: propertiesWithValidations,
     },
   ];
   const payload: UpdateParametersPayload = {
@@ -1328,6 +1331,8 @@ export async function updateParameterAndDependencies(
       }
     }
   }
+  console.log(payload);
+  // console.log(updatedParameter);
 
   dispatch(updateNodeParameters(payload));
 
@@ -1643,7 +1648,7 @@ function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefi
   }
 }
 
-const recurseSerializeCondition = (parameter: ParameterInfo, editorViewModel: any, isDefinitionValue: boolean): any => {
+export const recurseSerializeCondition = (parameter: ParameterInfo, editorViewModel: any, isDefinitionValue: boolean): any => {
   const returnVal: any = {};
   const commonProperties = { supressCasting: parameter.suppressCasting, info: parameter.info };
   if (editorViewModel.type === GroupType.ROW) {
@@ -1690,7 +1695,6 @@ const recurseSerializeCondition = (parameter: ParameterInfo, editorViewModel: an
       return recurseSerializeCondition(parameter, item, isDefinitionValue);
     });
   }
-
   return returnVal;
 };
 
@@ -2507,4 +2511,18 @@ export function getArrayTypeForOutputs(parsedSwagger: SwaggerParser, operationId
   }
 
   return itemKeyOutputParameter?.type ?? '';
+}
+
+export function isParameterRequired(parameterInfo: ParameterInfo): boolean {
+  return parameterInfo && parameterInfo.required && !(parameterInfo.info.parentProperty && parameterInfo.info.parentProperty.optional);
+}
+
+export function validateParameter(parameter: ParameterInfo, parameterValue: ValueSegment[]): string[] {
+  const parameterType = getInferredParameterType(parameterValue, parameter.type);
+  const parameterValueString = parameterValueToStringWithoutCasting(parameterValue, /* forValidation */ true);
+  const isJsonObject = parameterType === constants.SWAGGER.TYPE.OBJECT;
+
+  return isJsonObject
+    ? validateJSONParameter(parameter, parameterValue)
+    : validateStaticParameterInfo(parameter, parameterValueString, true);
 }
