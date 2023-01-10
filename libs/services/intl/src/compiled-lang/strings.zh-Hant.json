@@ -3558,6 +3558,12 @@
       "value": "trigger().outputs 的速記"
     }
   ],
+  "WcnIF8": [
+    {
+      "type": 0,
+      "value": "Remove"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -6404,6 +6410,12 @@
       "value": "必要。新屬性或現有屬性的名稱。"
     }
   ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
+    }
+  ],
   "xYyPR8": [
     {
       "type": 0,
@@ -6582,6 +6594,12 @@
     {
       "type": 0,
       "value": "(UTC+03:00) 奈洛比"
+    }
+  ],
+  "ziXw25": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "ziYCiA": [

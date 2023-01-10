@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { azureFunctionConnectorId } from '../base/operationmanifest';
 import type { HttpResponse } from '../common/exceptions/service';
 import type {
   ConnectionCreationInfo,
@@ -12,7 +13,6 @@ import { LoggerService } from '../logger';
 import { LogEntryLevel } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
-import { azureFunctionConnectorId } from './operationmanifest';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { Connection, ConnectionParameter, Connector, ManagedIdentity } from '@microsoft/utils-logic-apps';
 import {

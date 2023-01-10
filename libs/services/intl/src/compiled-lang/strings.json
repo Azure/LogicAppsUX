@@ -3663,6 +3663,12 @@
       "value": "Shorthand for trigger().outputs"
     }
   ],
+  "WcnIF8": [
+    {
+      "type": 0,
+      "value": "Remove"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -6527,6 +6533,12 @@
       "value": "Required. The name of the new or existing property."
     }
   ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
+    }
+  ],
   "xYyPR8": [
     {
       "type": 0,
@@ -6705,6 +6717,12 @@
     {
       "type": 0,
       "value": "(UTC+03:00) Nairobi"
+    }
+  ],
+  "ziXw25": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "ziYCiA": [
