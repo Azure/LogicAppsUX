@@ -1,6 +1,6 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { targetPrefix } from '../constants/ReactFlowConstants';
-import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models';
+import type { MapDefinitionEntry, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import { SchemaType } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
@@ -271,4 +271,14 @@ export const addParentConnectionForRepeatingElementsNested = (
       );
     }
   }
+};
+
+export const flattenMapDefinitionValues = (node: MapDefinitionEntry): string[] => {
+  return Object.values(node).flatMap((nodeValue) => {
+    if (typeof nodeValue === 'string') {
+      return [nodeValue];
+    } else {
+      return flattenMapDefinitionValues(nodeValue);
+    }
+  });
 };
