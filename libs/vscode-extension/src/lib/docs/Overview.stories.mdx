@@ -2,43 +2,24 @@ import { Meta } from '@storybook/addon-docs';
 
 <Meta title="Docs/VS Code Extension/Overview" />
 
-# Data Mapper (VS Code / Portal) - Overview
+# VS Code Extension - Overview
 
-## Purpose
+Azure Logic Apps extension allows to quickly create, debug, manage, and deploy Logic Apps directly from VS Code.
 
-To provide a graphical way to map data from a source schema to a target schema using direct mappings and functions, handling any translation between supported schema types in the backend
+## Table of Contents
 
-## Data Flow
+- [Prerequisites](#prerequisites)
 
-From a fresh start, the data flow is as follows:
+## Prerequisites
 
-1. .xsd (XML) schema files
-2. GET schemaTree API - takes any supported schema format (XML/JSON/etc) and returns it as JSON
-3. Internal state management of schema/schemaExtended
-4. onSave - save the locally serialized data map definition (YAML) and API-generated XSLT data map
+- `git clone`, and run `npm install` in, the logic_apps_designer repo
+- Install nx if you haven't already - `npm install -g nx`
 
-## Backend
+- .NET Core SDK 3.1 (https://dotnet.microsoft.com/en-us/download/dotnet/3.1)
+- Azure Functions Core Tools (https://github.com/Azure/azure-functions-core-tools or `npm i -g azure-functions-core-tools --unsafe-perm true`)
+- **VS Code Extensions:** Azure Tools, Azure Logic Apps (Standard)
 
-### Test data
-
-Test data (XSLTs, map definitions, schemas, etc.) to be utilized within Data Mapper can be found in the following repo: https://msazure.visualstudio.com/One/_git/AzureUX-BPM?path=/src/DataMapper&version=GBmaster
-
-### API
-
-#### Schema Translation - GET schemaTree
-
-Translates any supported schema format into JSON consumed by the Data Mapper frontend
-
-**Endpoint:** http://{localhost:7071}/runtime/webhooks/workflow/api/management/schemas/CBRSourceSchema/contents/schemaTree?api-version=2019-10-01-edge-preview
-
-#### Data Map XSLT generation - POST generateXslt
-
-Formats a data map with all of its connections into the XSLT (.xslt) Formats
-
-**Endpoint:** http://{localhost:7071}/runtime/webhooks/workflow/api/management/generateXslt
-
-#### Test Mappings/Connections - POST testMap
-
-Tests data map and its connections to ensure that a specified input schema value produces the expected output schema value
-
-**Endpoint:** http://{localhost:7071}/runtime/webhooks/workflow/api/management/maps/{mapXsltFilename}/testMap
+- Logic Apps workflow (folder - w/ schemas) - see steps to create below:
+  1.  In Azure Tools extension tab under Logic Apps (Standard), click the 'Create New Project' icon, and choose where you want the project folder
+  2.  Open that folder in VS Code, then go back to Logic Apps (Standard), and click 'Create New Workflow' -> Stateless -> Press Enter
+  3.  Make sure that ./Artifacts/Schemas exists within the project folder, and add an .xsd schema for testing (see the DM Overview doc for test data)
