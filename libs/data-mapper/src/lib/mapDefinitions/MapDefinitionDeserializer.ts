@@ -9,11 +9,13 @@ import {
   directAccessPseudoFunctionKey,
   indexPseudoFunction,
   indexPseudoFunctionKey,
+  ifPseudoFunctionKey,
 } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import { setConnectionInputValue } from '../utils/Connection.Utils';
-import { getDestinationNode, getSourceValueFromLoop, splitKeyIntoChildren } from '../utils/DataMap.Utils';
+import { flattenMapDefinitionValues, getDestinationNode, getSourceValueFromLoop, splitKeyIntoChildren } from '../utils/DataMap.Utils';
 import { findFunctionForFunctionName, isFunctionData } from '../utils/Function.Utils';
+import { LogCategory, LogService } from '../utils/Logging.Utils';
 import { createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
 import { findNodeForKey, flattenSchemaIntoDictionary } from '../utils/Schema.Utils';
 import { isAGuid } from '@microsoft/utils-logic-apps';
@@ -71,6 +73,7 @@ const parseDefinitionToConnection = (
       targetSchemaFlattened,
       functions
     );
+
     return;
   }
 
@@ -136,32 +139,44 @@ const callChildObjects = (
   functions: FunctionData[]
 ) => {
   const childEntries = Object.entries<MapDefinitionEntry>(sourceNodeObject);
-  childEntries.forEach((childEntry) => {
-    let childTargetKey = targetKey;
-    if (childEntry[0] !== mapNodeParams.value) {
-      const trimmedChildKey = childEntry[0].startsWith('$@') ? childEntry[0].substring(1) : childEntry[0];
-      childTargetKey = `${targetKey}/${trimmedChildKey}`;
-    }
+  childEntries.forEach(([childKey, childValue]) => {
+    if (childKey.startsWith(mapNodeParams.if)) {
+      Object.entries(childValue).forEach(([childSubKey, childSubValue]) => {
+        if (typeof childSubValue === 'string') {
+          parseDefinitionToConnection(
+            childSubValue,
+            childKey,
+            connections,
+            createdNodes,
+            sourceSchema,
+            sourceSchemaFlattened,
+            targetSchema,
+            targetSchemaFlattened,
+            functions
+          );
+        } else {
+          Object.entries(childSubValue).forEach(([newDestinationKey, newSourceKey]) => {
+            const finalNewDestinationKey = `${targetKey}/${childSubKey}/${newDestinationKey}`;
 
-    if (childEntry[0].startsWith(mapNodeParams.if)) {
-      Object.values(childEntry[1]).forEach((childSubValue) => {
-        parseDefinitionToConnection(
-          childSubValue,
-          childEntry[0],
-          connections,
-          createdNodes,
-          sourceSchema,
-          sourceSchemaFlattened,
-          targetSchema,
-          targetSchemaFlattened,
-          functions
-        );
+            parseDefinitionToConnection(
+              newSourceKey,
+              finalNewDestinationKey,
+              connections,
+              createdNodes,
+              sourceSchema,
+              sourceSchemaFlattened,
+              targetSchema,
+              targetSchemaFlattened,
+              functions
+            );
+          });
+        }
       });
 
-      const childSubKey = Object.keys(childEntry[1])[0];
+      const childSubKey = Object.keys(childValue)[0];
       parseDefinitionToConditionalConnection(
-        sourceNodeObject[childEntry[0]],
-        childEntry[0],
+        sourceNodeObject[childKey],
+        childKey,
         `${targetKey}/${childSubKey}`,
         connections,
         createdNodes,
@@ -172,17 +187,66 @@ const callChildObjects = (
         functions
       );
     } else {
-      parseDefinitionToConnection(
-        childEntry[1],
-        childTargetKey,
-        connections,
-        createdNodes,
-        sourceSchema,
-        sourceSchemaFlattened,
-        targetSchema,
-        targetSchemaFlattened,
-        functions
-      );
+      let childTargetKey = targetKey;
+      if (childKey !== mapNodeParams.value && !(childTargetKey.indexOf(mapNodeParams.if) > -1 && childTargetKey.endsWith(')'))) {
+        const trimmedChildKey = childKey.startsWith('$@') ? childKey.substring(1) : childKey;
+        if (!targetKey.endsWith(trimmedChildKey) || targetSchemaFlattened[`${targetPrefix}${targetKey}/${trimmedChildKey}`]) {
+          childTargetKey = `${targetKey}/${trimmedChildKey}`;
+          parseDefinitionToConnection(
+            childValue,
+            childTargetKey,
+            connections,
+            createdNodes,
+            sourceSchema,
+            sourceSchemaFlattened,
+            targetSchema,
+            targetSchemaFlattened,
+            functions
+          );
+        } else {
+          // The only time this case should be valid is when making a object level conditional
+          const flattenedChildValues = flattenMapDefinitionValues(childValue);
+          const flattenedChildValueParents = flattenedChildValues.map((flattenedValue) =>
+            flattenedValue.substring(0, flattenedValue.lastIndexOf('/'))
+          );
+          const lowestCommonParent = flattenedChildValueParents.reduce((a, b) => (a.lastIndexOf('/') <= b.lastIndexOf('/') ? a : b));
+          const ifConnectionEntry = Object.entries(connections).find(
+            ([_connectionKey, connectionValue]) =>
+              connectionValue.self.node.key === ifPseudoFunctionKey &&
+              connectionValue.outputs.some((output) => output.reactFlowKey === `${targetPrefix}${childTargetKey}`)
+          );
+
+          if (ifConnectionEntry) {
+            parseDefinitionToConnection(
+              lowestCommonParent,
+              ifConnectionEntry[0],
+              connections,
+              createdNodes,
+              sourceSchema,
+              sourceSchemaFlattened,
+              targetSchema,
+              targetSchemaFlattened,
+              functions
+            );
+          } else {
+            LogService.error(LogCategory.MapDefinitionDeserializer, 'callChildObjects', {
+              message: 'Failed to find conditional connection key',
+            });
+          }
+        }
+      } else {
+        parseDefinitionToConnection(
+          childValue,
+          childTargetKey,
+          connections,
+          createdNodes,
+          sourceSchema,
+          sourceSchemaFlattened,
+          targetSchema,
+          targetSchemaFlattened,
+          functions
+        );
+      }
     }
   });
 };
