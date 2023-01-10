@@ -34,7 +34,6 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
     runPostWorkflowCreateStepsFromCache();
-
     validateFuncCoreToolsIsLatest();
 
     ext.azureAccountTreeItem = new AzureAccountTreeItemWithProjects();

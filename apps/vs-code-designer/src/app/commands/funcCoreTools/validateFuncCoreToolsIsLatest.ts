@@ -13,6 +13,7 @@ import { sendRequestWithExtTimeout } from '../../utils/requestUtils';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { uninstallFuncCoreTools } from './uninstallFuncCoreTools';
 import { updateFuncCoreTools } from './updateFuncCoreTools';
+import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { FuncVersion } from '@microsoft/vscode-extension';
@@ -114,9 +115,10 @@ async function getNewestFunctionRuntimeVersion(
     if (packageManager === PackageManager.brew) {
       const packageName: string = getBrewPackageName(versionFromSetting);
       const brewRegistryUri = `https://raw.githubusercontent.com/Azure/homebrew-functions/master/Formula/${packageName}.rb`;
-      const response = await sendRequestWithExtTimeout(context, { url: brewRegistryUri, method: 'GET' });
+      const response = await sendRequestWithExtTimeout(context, { url: brewRegistryUri, method: HTTP_METHODS.GET });
       const brewInfo: string = response.bodyAsText;
       const matches: RegExpMatchArray | null = brewInfo.match(/version\s+["']([^"']+)["']/i);
+
       if (matches && matches.length > 1) {
         return matches[1];
       }
