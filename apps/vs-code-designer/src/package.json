@@ -103,6 +103,15 @@
         "command": "logicAppsExtension.pickProcess",
         "title": "Pick Process",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.refresh",
+        "title": "Refresh",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/refresh.svg",
+          "dark": "assets/dark/refresh.svg"
+        }
       }
     ],
     "viewsContainers": {
@@ -139,6 +148,11 @@
           "command": "logicAppsExtension.deploy",
           "when": "view == newAzLogicApps",
           "group": "navigation@3"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps",
+          "group": "navigation@5"
         }
       ],
       "view/item/context": [
@@ -196,6 +210,56 @@
           "command": "logicAppsExtension.restartLogicApp",
           "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "2@3"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
+          "group": "3@1"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "group": "6@2"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps && viewItem == azLogicAppsSlots",
+          "group": "2@1"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps && viewItem =~ /Workflows;/i",
+          "group": "1@1"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps && viewItem == applicationSettings",
+          "group": "2@1"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps && viewItem == azFuncProxies",
+          "group": "1@1"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps && viewItem =~ /^deployments(C|Unc)onnected$/",
+          "group": "2@1"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps && viewItem == siteFiles",
+          "group": "1@1"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps && viewItem == logFiles",
+          "group": "1@1"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps && viewItem == folder",
+          "group": "1@1"
         }
       ],
       "explorer/context": [
@@ -229,6 +293,10 @@
         },
         {
           "command": "logicAppsExtension.pickProcess",
+          "when": "never"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
           "when": "never"
         }
       ]
@@ -315,6 +383,7 @@
     "onCommand:logicAppsExtension.restartLogicApp",
     "onCommand:logicAppsExtension.pickProcess",
     "onCommand:logicAppsExtension.deleteLogicApp",
+    "onCommand:logicAppsExtension.refresh",
     "onView:newAzLogicApps",
     "onDebugInitialConfigurations"
   ],
