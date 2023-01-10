@@ -16,7 +16,7 @@ import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@micr
 import { LogEntryLevel, LoggerService, ConnectionService } from '@microsoft/designer-client-services-logic-apps';
 import { CreateConnection } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
-import type { Connection, ConnectionParameterSet, ConnectionParameterSetValues, ConnectionType } from '@microsoft/utils-logic-apps';
+import type { Connection, ConnectionParameterSet, ConnectionParameterSetValues } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
@@ -120,7 +120,7 @@ const CreateConnectionTab = () => {
         };
 
         const parametersMetadata: ConnectionParametersMetadata = {
-          connectionType: connectionMetadata?.type as ConnectionType,
+          connectionMetadata: connectionMetadata,
           connectionParameterSet: selectedParameterSet,
           connectionParameters: selectedParameterSet?.parameters ?? connector?.properties.connectionParameters,
         };
@@ -156,7 +156,7 @@ const CreateConnectionTab = () => {
       }
       setIsLoading(false);
     },
-    [applyNewConnection, connectionMetadata?.type, connector, dispatch, needsAzureFunction, selectedAzureFunction]
+    [applyNewConnection, connectionMetadata, connector, dispatch, needsAzureFunction, selectedAzureFunction]
   );
 
   const cancelCallback = useCallback(() => {
