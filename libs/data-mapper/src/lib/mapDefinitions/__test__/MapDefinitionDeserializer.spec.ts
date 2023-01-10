@@ -595,7 +595,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       );
     });
 
-    it.skip('creates a direct index looping connection w/ conditional and relative property path', () => {
+    it.skip('creates a looping connection w/ index variable and direct access', () => {
       simpleMap['ns0:Root'] = {
         Looping: {
           Trips: {
@@ -608,6 +608,18 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
             },
           },
         },
+      };
+
+      const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+
+      // TODO: Update expects
+      expect(resultEntries.length).toEqual(5);
+    });
+
+    it.skip('creates a looping connection w/ index variable, conditional, and relative property path', () => {
+      simpleMap['ns0:Root'] = {
         LoopingWithIndex: {
           WeatherSummary: {
             '$for(/ns0:Root/LoopingWithIndex/WeatherReport, $a)': {
