@@ -754,8 +754,10 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
       getDestinationIdFromReactFlowConnectionId(reactFlowKey)
     );
     const tempConn = connections[getSourceIdFromReactFlowConnectionId(reactFlowKey)];
-    const id = getConnectedSourceSchemaNodes([tempConn], connections);
-    deleteParentRepeatingConnections(connections, addSourceReactFlowPrefix(id[0].key));
+    const ids = getConnectedSourceSchemaNodes([tempConn], connections);
+    if (ids.length > 0) {
+      deleteParentRepeatingConnections(connections, addSourceReactFlowPrefix(ids[0].key));
+    }
 
     curDataMapState.notificationData = {
       type: NotificationTypes.ConnectionDeleted,
