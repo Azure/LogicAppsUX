@@ -2,10 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { defaultFuncPort, localSettingsFileName, stopFuncTaskPostDebugSetting } from '../../constants';
-import { getLocalSettingsJson } from '../utils/appSettings/localSettings';
-import { tryGetFunctionProjectRoot } from '../utils/verifyIsProject';
-import { getWorkspaceSetting } from '../utils/vsCodeConfig/settings';
+import { defaultFuncPort, localSettingsFileName, stopFuncTaskPostDebugSetting } from '../../../constants';
+import { getLocalSettingsJson } from '../appSettings/localSettings';
+import { tryGetFunctionProjectRoot } from '../verifyIsProject';
+import { getWorkspaceSetting } from '../vsCodeConfig/settings';
 import { delay } from '@azure/ms-rest-js';
 import { isString } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
