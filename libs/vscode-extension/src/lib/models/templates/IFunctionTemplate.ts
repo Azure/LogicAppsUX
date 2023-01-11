@@ -2,11 +2,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import type { TemplateCategory } from '..';
 import type { IBindingSetting } from './IBindingTemplate';
-
-export enum TemplateCategory {
-  Core = '$temp_category_core',
-}
 
 /**
  * Describes a template used for creating a function trigger (i.e. an HttpTrigger or TimerTrigger)

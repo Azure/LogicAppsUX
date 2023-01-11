@@ -16,6 +16,7 @@ export const settingsFileName = 'settings.json';
 export const extensionsFileName = 'extensions.json';
 export const vscodeFolderName = '.vscode';
 export const workflowFileName = 'workflow.json';
+export const funcIgnoreFileName = '.funcignore';
 
 // Functions
 export const func = 'func';
@@ -76,6 +77,7 @@ export enum extensionCommand {
   getDebugSymbolDll = 'logicAppsExtension.getDebugSymbolDll',
   deleteLogicApp = 'logicAppsExtension.deleteLogicApp',
   refresh = 'logicAppsExtension.refresh',
+  switchToDotnetProject = 'logicAppsExtension.switchToDotnetProject',
   azureFunctionsOpenFile = 'azureFunctions.openFile',
   azureFunctionsAppSettingsEncrypt = 'azureFunctions.appSettings.encrypt',
   azureFunctionsAppSettingsDecrypt = 'azureFunctions.appSettings.decrypt',

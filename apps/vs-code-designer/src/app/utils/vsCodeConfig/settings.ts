@@ -5,7 +5,7 @@
 import { ext } from '../../../extensionVariables';
 import { isString } from '@microsoft/utils-logic-apps';
 import { ProjectLanguage, WorkerRuntime } from '@microsoft/vscode-extension';
-import { Uri, workspace } from 'vscode';
+import { ConfigurationTarget, Uri, workspace } from 'vscode';
 import type { WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
 
 /**
@@ -82,4 +82,12 @@ export function getWorkspaceSetting<T>(key: string, fsPath?: string | WorkspaceF
 
 function getScope(fsPath: WorkspaceFolder | string | undefined): Uri | WorkspaceFolder | undefined {
   return isString(fsPath) ? Uri.file(fsPath) : fsPath;
+}
+
+/**
+ * Uses ext.prefix 'azureFunctions' unless otherwise specified
+ */
+export async function updateGlobalSetting<T = string>(section: string, value: T, prefix: string = ext.prefix): Promise<void> {
+  const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix);
+  await projectConfiguration.update(section, value, ConfigurationTarget.Global);
 }
