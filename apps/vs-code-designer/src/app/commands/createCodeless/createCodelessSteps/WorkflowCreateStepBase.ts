@@ -24,7 +24,7 @@ export function runPostWorkflowCreateStepsFromCache(): void {
   const cachedFunc: ICachedWorfkflow | undefined = ext.context.globalState.get(cacheKey);
   if (cachedFunc) {
     try {
-      runPostWorflowCreateSteps(cachedFunc);
+      runPostWorkflowCreateSteps(cachedFunc);
     } finally {
       ext.context.globalState.update(cacheKey, undefined);
     }
@@ -58,7 +58,7 @@ export abstract class WorkflowCreateStepBase<T extends IFunctionWizardContext> e
       }, 5 * 1000);
     }
 
-    runPostWorflowCreateSteps(cachedFunc);
+    runPostWorkflowCreateSteps(cachedFunc);
   }
 
   public shouldExecute(context: T): boolean {
@@ -66,7 +66,7 @@ export abstract class WorkflowCreateStepBase<T extends IFunctionWizardContext> e
   }
 }
 
-function runPostWorflowCreateSteps(workflow: ICachedWorfkflow): void {
+function runPostWorkflowCreateSteps(workflow: ICachedWorfkflow): void {
   callWithTelemetryAndErrorHandling('postWorkflowCreate', async (context: IActionContext) => {
     context.telemetry.suppressIfSuccessful = true;
 
