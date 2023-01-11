@@ -1,5 +1,5 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
-import { targetPrefix } from '../constants/ReactFlowConstants';
+import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { MapDefinitionEntry, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import { SchemaType } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
@@ -180,7 +180,7 @@ export const getSourceLoopKey = (targetKey: string): string => {
   return forArgs.split(',')[0]; // Filter out index variable if any
 };
 
-export const getSourceValueFromLoop = (sourceKey: string, targetKey: string): string => {
+export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sourceSchemaFlattened: SchemaNodeDictionary): string => {
   let constructedSourceKey = sourceKey;
   const srcKeyWithinFor = getSourceLoopKey(targetKey);
 
@@ -207,14 +207,27 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string): st
     })
     .filter((keyChunk) => keyChunk !== '');
 
-  relativeSrcKeyArr.forEach((relativeKeyMatch) => {
-    // Make sure it's not already an absolute path (containing root)
-    if (!relativeKeyMatch.includes(srcKeyWithinFor.split('/')[1])) {
-      constructedSourceKey = constructedSourceKey.replace(relativeKeyMatch, `${srcKeyWithinFor}/${relativeKeyMatch}`);
-    }
-  });
-
+  if (relativeSrcKeyArr.length > 0) {
+    relativeSrcKeyArr.forEach((relativeKeyMatch) => {
+      if (!relativeKeyMatch.includes(srcKeyWithinFor)) {
+        const fullyQualifiedSourceKey = `${srcKeyWithinFor}${relativeKeyMatch}`;
+        constructedSourceKey = constructedSourceKey.replace(
+          relativeKeyMatch,
+          sourceSchemaFlattened[`${sourcePrefix}${fullyQualifiedSourceKey}`] ? fullyQualifiedSourceKey : relativeKeyMatch
+        );
+      }
+    });
+  } else {
+    const fullyQualifiedSourceKey = srcKeyWithinFor + sourceKey;
+    constructedSourceKey = sourceSchemaFlattened[`${sourcePrefix}${fullyQualifiedSourceKey}`] ? fullyQualifiedSourceKey : sourceKey;
+  }
   return constructedSourceKey;
+};
+
+export const getTargetValueWithoutLoop = (targetKey: string): string => {
+  const forMatchArr = targetKey.match(/\$for\(((?!\)).)+\)\//g);
+  const forMatch = forMatchArr?.[forMatchArr.length - 1];
+  return forMatch ? targetKey.replace(forMatch, '') : targetKey;
 };
 
 export const addParentConnectionForRepeatingElementsNested = (
