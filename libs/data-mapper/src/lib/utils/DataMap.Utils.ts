@@ -175,12 +175,14 @@ export const splitKeyIntoChildren = (sourceKey: string): string[] => {
   return results;
 };
 
+export const getSourceLoopKey = (targetKey: string): string => {
+  const forArgs = targetKey.substring(targetKey.lastIndexOf(mapNodeParams.for) + mapNodeParams.for.length + 1, targetKey.lastIndexOf(')'));
+  return forArgs.split(',')[0]; // Filter out index variable if any
+};
+
 export const getSourceValueFromLoop = (sourceKey: string, targetKey: string): string => {
   let constructedSourceKey = sourceKey;
-
-  const forMatchArr = targetKey.match(/\$for\(((?!\)).)+\)\//g);
-  const forMatch = forMatchArr?.[forMatchArr.length - 1];
-  const srcKeyWithinFor = forMatch ? forMatch.replace('$for(', '').replace(')', '') : '';
+  const srcKeyWithinFor = getSourceLoopKey(targetKey);
 
   const relativeSrcKeyArr = sourceKey
     .split(', ')
@@ -205,15 +207,13 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string): st
     })
     .filter((keyChunk) => keyChunk !== '');
 
-  if (relativeSrcKeyArr.length > 0) {
-    relativeSrcKeyArr.forEach((relativeKeyMatch) => {
-      if (!relativeKeyMatch.includes(srcKeyWithinFor)) {
-        constructedSourceKey = constructedSourceKey.replace(relativeKeyMatch, `${srcKeyWithinFor}${relativeKeyMatch}`);
-      }
-    });
-  } else {
-    constructedSourceKey = srcKeyWithinFor + sourceKey;
-  }
+  relativeSrcKeyArr.forEach((relativeKeyMatch) => {
+    // Make sure it's not already an absolute path (containing root)
+    if (!relativeKeyMatch.includes(srcKeyWithinFor.split('/')[1])) {
+      constructedSourceKey = constructedSourceKey.replace(relativeKeyMatch, `${srcKeyWithinFor}/${relativeKeyMatch}`);
+    }
+  });
+
   return constructedSourceKey;
 };
 
