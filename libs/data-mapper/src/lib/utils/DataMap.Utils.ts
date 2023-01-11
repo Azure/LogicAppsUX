@@ -176,7 +176,7 @@ export const splitKeyIntoChildren = (sourceKey: string): string[] => {
 };
 
 export const getSourceLoopKey = (targetKey: string): string => {
-  const forArgs = targetKey.substring(targetKey.lastIndexOf('$for(') + 5, targetKey.lastIndexOf(')'));
+  const forArgs = targetKey.substring(targetKey.lastIndexOf(mapNodeParams.for) + mapNodeParams.for.length + 1, targetKey.lastIndexOf(')'));
   return forArgs.split(',')[0]; // Filter out index variable if any
 };
 
