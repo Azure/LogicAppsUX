@@ -303,8 +303,6 @@ const createConnections = (
       amendedSourceKey.substring(0, keyWithDaStartIdx) + mockDirectAccessFnKey + amendedSourceKey.substring(keyWithDaEndIdx);
   }
 
-  console.log(sourceNodeString, targetKey);
-
   // Identify source schema node, or Function(Data) from source key
   let sourceNode: SchemaNodeExtended | FunctionData | undefined = undefined;
   if (amendedSourceKey.startsWith(indexPseudoFunctionKey)) {
