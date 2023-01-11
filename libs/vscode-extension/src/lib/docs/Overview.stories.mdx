@@ -8,9 +8,16 @@ Azure Logic Apps extension allows to quickly create, debug, manage, and deploy L
 
 ## Table of Contents
 
-- <a href="#prerequisites">Prerequisites</a>
-- <a href="#build">Build (Dev/Debug)</a>
-- <a href="#run">Run (Dev/Debug)</a>
+- [Prerequisites](#prerequisites)
+- [Build (Dev/Debug)](#build)
+- [Run (Dev/Debug)](#run)
+- [App architecture](#architecture)
+  - [vs-code-designer](#vs-code-designer)
+  - [vs-code-designer-react](#vs-code-designer-react)
+  - [vs-code-react](#vs-code-react)
+  - [vscode-extension](#vscode-extension)
+- [How to implement a new feature](#feature)
+  - [package.json](#package.json)
 
 <h2 id="prerequisites">Prerequisites</h2>
 
@@ -40,3 +47,15 @@ To run the VS Code extension (in debug mode):
 
 > As soon as a debugging session starts, a new VS Code workspace prompts with the running app, now you are able to add [breakpoints](https://code.visualstudio.com/docs/editor/debugging#_breakpoints) and
 > debug it with the [debug actions](https://code.visualstudio.com/docs/editor/debugging#_debug-actions)
+
+<h2 id="architecture">App architecture</h2>
+
+![App architecture](./img/screenshot.png)
+
+<h3 id="vs-code-designer">vs-code-designer</h3>
+<h3 id="vs-code-designer-react">vs-code-designer-react</h3>
+<h3 id="vs-code-react">vs-code-react</h3>
+<h3 id="vscode-extension">vscode-extension</h3>
+
+<h2 id="feature">How to implement a new feature</h2>
+<h3 id="package.json">package.json</h3>
