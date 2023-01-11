@@ -210,7 +210,7 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sou
   if (relativeSrcKeyArr.length > 0) {
     relativeSrcKeyArr.forEach((relativeKeyMatch) => {
       if (!relativeKeyMatch.includes(srcKeyWithinFor)) {
-        const fullyQualifiedSourceKey = `${srcKeyWithinFor}${relativeKeyMatch}`;
+        const fullyQualifiedSourceKey = `${srcKeyWithinFor}/${relativeKeyMatch}`;
         constructedSourceKey = constructedSourceKey.replace(
           relativeKeyMatch,
           sourceSchemaFlattened[`${sourcePrefix}${fullyQualifiedSourceKey}`] ? fullyQualifiedSourceKey : relativeKeyMatch
@@ -218,7 +218,7 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sou
       }
     });
   } else {
-    const fullyQualifiedSourceKey = srcKeyWithinFor + sourceKey;
+    const fullyQualifiedSourceKey = `${srcKeyWithinFor}/${sourceKey}`;
     constructedSourceKey = sourceSchemaFlattened[`${sourcePrefix}${fullyQualifiedSourceKey}`] ? fullyQualifiedSourceKey : sourceKey;
   }
   return constructedSourceKey;
