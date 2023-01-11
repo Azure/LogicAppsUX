@@ -2,8 +2,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { funcPackageName, PackageManager } from '../../constants';
-import { executeCommand } from '../utils/funcCoreTools/cpUtils';
+import { funcPackageName, PackageManager } from '../../../constants';
+import { executeCommand } from './cpUtils';
 import { tryGetInstalledBrewPackageName } from './getBrewPackageName';
 import { FuncVersion } from '@microsoft/vscode-extension';
 
