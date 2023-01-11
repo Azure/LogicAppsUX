@@ -1,6 +1,7 @@
+import MyImage from '../../assets/architecture.png';
 import { Meta } from '@storybook/addon-docs';
 
-<Meta title="Docs/VS Code Extension/Overview" />
+<Meta title="Docs/VS Code Extension" />
 
 # VS Code Extension - Overview
 
@@ -18,6 +19,7 @@ Azure Logic Apps extension allows to quickly create, debug, manage, and deploy L
   - [vscode-extension](#vscode-extension)
 - [How to implement a new feature](#feature)
   - [package.json](#package.json)
+  - [main.ts](#main.ts)
 
 <h2 id="prerequisites">Prerequisites</h2>
 
@@ -45,17 +47,36 @@ To run the VS Code extension (in debug mode):
 2.  Click the 'Run and Debug' icon in the Activity bar on the left side of VS Code. You can also use the shortcut: `Ctrl`+`Shift`+`D`
 3.  Select 'Run Designer Extension In Dev Mode' in the dropdown at the top, then click the 'Start debugging' icon
 
-> As soon as a debugging session starts, a new VS Code workspace prompts with the running app, now you are able to add [breakpoints](https://code.visualstudio.com/docs/editor/debugging#_breakpoints) and
-> debug it with the [debug actions](https://code.visualstudio.com/docs/editor/debugging#_debug-actions)
+> As soon as a debugging session starts, a new VS Code workspace prompts with the running app, now you are able to add [breakpoints](https://code.visualstudio.com/docs/editor/debugging#_breakpoints) and debug it with the [debug actions](https://code.visualstudio.com/docs/editor/debugging#_debug-actions)
 
 <h2 id="architecture">App architecture</h2>
 
-![App architecture](./img/screenshot.png)
+<img src={MyImage} alt="App architecture" />
 
 <h3 id="vs-code-designer">vs-code-designer</h3>
+
+Host all the code needed to run the vscode extension.
+
+> You can learn more about [Extensions API](https://code.visualstudio.com/api) and [Extensions anatomy](https://code.visualstudio.com/api/get-started/extension-anatomy)
+
 <h3 id="vs-code-designer-react">vs-code-designer-react</h3>
+
+Host React project exclusively for remote and local desginer webviews. Webview is triggered by the `openDesigner` command.
+
+> You can learn more about [VS Code webviews](https://code.visualstudio.com/api/extension-guides/webview)
+
 <h3 id="vs-code-react">vs-code-react</h3>
+
+Host React project for the extension's webvies. Webviews are triggered by the `openOverview`, `exportLogicApp` and `reviewValidation` commands.
+
+> You can learn more about [VS Code webviews](https://code.visualstudio.com/api/extension-guides/webview)
+
 <h3 id="vscode-extension">vscode-extension</h3>
+
+Host a shared library with helpers and models that are used across all the projects related to the VS Code extension.
+
+> You can use the library by importing `@microsoft/vscode-extension`
 
 <h2 id="feature">How to implement a new feature</h2>
 <h3 id="package.json">package.json</h3>
+<h3 id="main.ts">main.ts</h3>
