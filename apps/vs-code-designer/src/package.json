@@ -378,6 +378,16 @@
             "type": "boolean",
             "description": "Ask for confirmation before deploying to a Function App in Azure (deploying will overwrite any previous deployment and cannot be undone).",
             "default": true
+          },
+          "logicAppsExtension.showCoreToolsWarning": {
+            "type": "boolean",
+            "description": "Show a warning if your installed version of Azure Functions Core Tools is out-of-date.",
+            "default": true
+          },
+          "logicAppsExtension.showMultiCoreToolsWarning": {
+            "type": "boolean",
+            "description": "Show a warning if multiple installs of Azure Functions Core Tools are detected.",
+            "default": true
           }
         }
       }

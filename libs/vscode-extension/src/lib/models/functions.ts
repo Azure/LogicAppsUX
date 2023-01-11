@@ -91,3 +91,12 @@ export interface ICreateFunctionOptions {
    */
   suppressOpenFolder?: boolean;
 }
+
+export interface INpmDistTag {
+  tag: string;
+  value: string;
+}
+
+export interface IPackageMetadata {
+  versions: { [version: string]: Record<string, any> };
+}
