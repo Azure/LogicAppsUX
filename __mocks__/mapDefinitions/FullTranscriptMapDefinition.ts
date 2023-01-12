@@ -45,7 +45,7 @@ ns0:Root:
     Trips:
       $for(/ns0:Root/Looping/VehicleTrips/Trips, $i):
         Trip:
-          VehicleRegistration: /ns0:Root/Looping/VehicleTrips/Vehicle[is-equal(VehicleID, /ns0:Root/Looping/VehicleTrips/Trips[$i]/VehicleId)]/VehicleRegistration
+          VehicleRegistration: /ns0:Root/Looping/VehicleTrips/Vehicle[is-equal(VehicleId, /ns0:Root/Looping/VehicleTrips/Trips[$i]/VehicleId)]/VehicleRegistration
           Distance: Distance
           Duration: Duration
   ConditionalLooping:

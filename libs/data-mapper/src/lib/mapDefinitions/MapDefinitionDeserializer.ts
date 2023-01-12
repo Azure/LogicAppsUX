@@ -16,6 +16,7 @@ import { setConnectionInputValue } from '../utils/Connection.Utils';
 import {
   flattenMapDefinitionValues,
   getDestinationNode,
+  getSourceLoopKey,
   getSourceValueFromLoop,
   getTargetValueWithoutLoop,
   splitKeyIntoChildren,
@@ -357,6 +358,7 @@ const createConnections = (
   }
 
   if (isLoop && sourceNode && destinationNode) {
+    let srcLoopNodeKey = amendedSourceKey;
     let indexFnRfKey: string | undefined = undefined;
 
     // TODO: Ensure support for nested loops w/ index variables
@@ -378,11 +380,10 @@ const createConnections = (
       const idxVariable = targetKey.replaceAll(mapNodeParams.for, '').substring(idxOfIdxVariable, idxOfIdxVariable + 2);
       amendedSourceKey = amendedSourceKey.replaceAll(idxVariable, indexFnRfKey);
       mockDirectAccessFnKey = mockDirectAccessFnKey?.replaceAll(idxVariable, indexFnRfKey);
+
+      srcLoopNodeKey = getSourceLoopKey(targetKey);
     }
 
-    const srcLoopNodeKey = amendedSourceKey.startsWith(directAccessPseudoFunctionKey)
-      ? amendedSourceKey.split(', ')[2].split(')')[0]
-      : amendedSourceKey;
     const srcLoopNode = findNodeForKey(srcLoopNodeKey, sourceSchema.schemaTreeRoot);
     if (srcLoopNode) {
       addParentConnectionForRepeatingElements(

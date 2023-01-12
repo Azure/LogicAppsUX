@@ -1,6 +1,6 @@
 import { simpleLoopSource, simpleLoopTarget, sourceMockSchema, targetMockSchema } from '../../__mocks__';
 import type { MapDefinitionEntry } from '../../models';
-import { functionMock, ifPseudoFunctionKey } from '../../models';
+import { functionMock, ifPseudoFunctionKey, directAccessPseudoFunctionKey, indexPseudoFunctionKey } from '../../models';
 import type { ConnectionUnit } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { convertFromMapDefinition } from '../MapDefinitionDeserializer';
@@ -235,16 +235,16 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
       const divideRfKey = (result['target-/ns0:Root/CumulativeExpression/PopulationSummary/State/SexRatio'].inputs[0][0] as ConnectionUnit)
         .reactFlowKey;
-      expect(divideRfKey.includes('Divide')).toBe(true);
+      expect(divideRfKey).toContain('Divide');
 
       const count1RfKey = (result[divideRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey;
-      expect(count1RfKey.includes('Count')).toBe(true);
+      expect(count1RfKey).toContain('Count');
       expect((result[count1RfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
         'source-/ns0:Root/CumulativeExpression/Population/State/County/Person/Sex/Male'
       );
 
       const count2RfKey = (result[divideRfKey].inputs[1][0] as ConnectionUnit).reactFlowKey;
-      expect(count2RfKey.includes('Count')).toBe(true);
+      expect(count2RfKey).toContain('Count');
       expect((result[count2RfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
         'source-/ns0:Root/CumulativeExpression/Population/State/County/Person/Sex/Female'
       );
@@ -599,8 +599,8 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       const directAccess2Key = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day2/Temperature'].inputs[0][0] as ConnectionUnit)
         .reactFlowKey;
 
-      expect(directAccess1Key.includes('directAccess')).toBe(true);
-      expect(directAccess2Key.includes('directAccess')).toBe(true);
+      expect(directAccess1Key).toContain(directAccessPseudoFunctionKey);
+      expect(directAccess2Key).toContain(directAccessPseudoFunctionKey);
 
       expect(result[directAccess1Key].inputs[0][0] as string).toBe('1');
       expect((result[directAccess1Key].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
@@ -619,14 +619,14 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       );
     });
 
-    it.skip('creates a looping connection w/ index variable and direct access', () => {
+    it('creates a looping connection w/ index variable and direct access', () => {
       simpleMap['ns0:Root'] = {
         Looping: {
           Trips: {
             '$for(/ns0:Root/Looping/VehicleTrips/Trips, $i)': {
               Trip: {
                 VehicleRegistration:
-                  '/ns0:Root/Looping/VehicleTrips/Vehicle[is-equal(VehicleID, /ns0:Root/Looping/VehicleTrips/Trips[$i]/VehicleId)]/VehicleRegistration',
+                  '/ns0:Root/Looping/VehicleTrips/Vehicle[is-equal(VehicleId, /ns0:Root/Looping/VehicleTrips/Trips[$i]/VehicleId)]/VehicleRegistration',
                 Distance: '/ns0:Root/Looping/VehicleTrips/Vehicle[$i]/VehicleRegistration',
               },
             },
@@ -636,8 +636,44 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
       const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
 
-      // TODO: Update expects
-      expect(Object.entries(result).length).toEqual(5);
+      expect(Object.entries(result).length).toEqual(12);
+
+      const indexRfKey = (result['target-/ns0:Root/Looping/Trips/Trip'].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(indexRfKey).toContain(indexPseudoFunctionKey);
+      expect((result[indexRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/Looping/VehicleTrips/Trips');
+
+      const directAccessRfKey1 = (result['target-/ns0:Root/Looping/Trips/Trip/VehicleRegistration'].inputs[0][0] as ConnectionUnit)
+        .reactFlowKey;
+      expect(directAccessRfKey1).toContain(directAccessPseudoFunctionKey);
+      const isEqualRfKey = (result[directAccessRfKey1].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(isEqualRfKey).toContain('IsEqual');
+      expect((result[directAccessRfKey1].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/Looping/VehicleTrips/Vehicle'
+      );
+      expect((result[directAccessRfKey1].inputs[2][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/Looping/VehicleTrips/Vehicle/VehicleRegistration'
+      );
+
+      const directAccessRfKey2 = (result['target-/ns0:Root/Looping/Trips/Trip/Distance'].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(directAccessRfKey2).toContain(directAccessPseudoFunctionKey);
+      expect((result[directAccessRfKey2].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(indexRfKey);
+      expect((result[directAccessRfKey2].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/Looping/VehicleTrips/Vehicle'
+      );
+      expect((result[directAccessRfKey2].inputs[2][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/Looping/VehicleTrips/Vehicle/VehicleRegistration'
+      );
+
+      expect((result[isEqualRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/Looping/VehicleTrips/Trips/VehicleId'
+      );
+      const directAccessRfKey3 = (result[isEqualRfKey].inputs[1][0] as ConnectionUnit).reactFlowKey;
+      expect(directAccessRfKey3).toContain(directAccessPseudoFunctionKey);
+      expect((result[directAccessRfKey3].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(indexRfKey);
+      expect((result[directAccessRfKey3].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/Looping/VehicleTrips/Trips');
+      expect((result[directAccessRfKey3].inputs[2][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/Looping/VehicleTrips/Trips/VehicleId'
+      );
     });
 
     it.skip('creates a looping connection w/ index variable, conditional, and relative property path', () => {
@@ -697,5 +733,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect(resultEntries[3][0]).toEqual('target-/ns0:Root/Ano/Mes/Dia');
       expect(resultEntries[3][1]).toBeTruthy();
     });
+
+    // TODO: Nested loops w/ index variables and directAccess's
   });
 });
