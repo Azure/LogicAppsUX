@@ -23,6 +23,7 @@ export const overviewTgtSchemaX = 600;
 interface SimplifiedElkEdge {
   srcRfId: string;
   tgtRfId: string;
+  tgtPort?: string;
 }
 
 interface Size2D {
@@ -95,6 +96,7 @@ export const useLayout = (
                 return {
                   srcRfId: elkEdge.sources[0],
                   tgtRfId: elkEdge.targets[0],
+                  tgtPort: elkEdge.labels && elkEdge.labels.length > 0 ? elkEdge.labels[0].text : undefined,
                 };
               })
             );
@@ -106,6 +108,7 @@ export const useLayout = (
                 return {
                   srcRfId: elkEdge.sources[0],
                   tgtRfId: elkEdge.targets[0],
+                  tgtPort: elkEdge.labels && elkEdge.labels.length > 0 ? elkEdge.labels[0].text : undefined,
                 };
               })
             );
@@ -366,13 +369,14 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
 export const convertToReactFlowEdges = (elkEdges: SimplifiedElkEdge[], selectedItemKey: string | undefined): ReactFlowEdge[] => {
   // NOTE: All validation (Ex: making sure edges given to ELK are actively on canvas) is handled pre-elk-layouting
   return elkEdges
-    .map((elkEdge) => {
+    .map<ReactFlowEdge>((elkEdge) => {
       // Sort the resulting edges so that the selected edge is rendered last and thus on top of all other edges
       const id = createReactFlowConnectionId(elkEdge.srcRfId, elkEdge.tgtRfId);
       return {
         id,
         source: elkEdge.srcRfId,
         target: elkEdge.tgtRfId,
+        targetHandle: elkEdge.tgtPort,
         type: ReactFlowEdgeType.ConnectionEdge,
         selected: selectedItemKey === id,
       };

@@ -1,7 +1,7 @@
 import { CanvasControls } from '../components/canvasControls/CanvasControls';
 import { CanvasToolbox, ToolboxPanelTabs } from '../components/canvasToolbox/CanvasToolbox';
 import { ConnectionEdge } from '../components/edge/ConnectionEdge';
-import { FunctionCard } from '../components/nodeCard/FunctionCard';
+import { AdvancedFunctionCard } from '../components/nodeCard/AdvancedFunctionCard';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { Notification } from '../components/notification/Notification';
 import { SchemaNameBadge } from '../components/schemaSelection/SchemaNameBadge';
@@ -41,7 +41,7 @@ import ReactFlow, { ConnectionLineType, useKeyPress } from 'reactflow';
 
 type CanvasExtent = [[number, number], [number, number]];
 
-export const nodeTypes = { [ReactFlowNodeType.SchemaNode]: SchemaCard, [ReactFlowNodeType.FunctionNode]: FunctionCard };
+export const nodeTypes = { [ReactFlowNodeType.SchemaNode]: SchemaCard, [ReactFlowNodeType.FunctionNode]: AdvancedFunctionCard };
 export const edgeTypes = { [ReactFlowEdgeType.ConnectionEdge]: ConnectionEdge };
 
 interface ReactFlowWrapperProps {
