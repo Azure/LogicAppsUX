@@ -4,7 +4,6 @@
   "targetNamespace": "http://tempuri.org/Target.xsd",
   "namespaces": {
     "ns0": "http://tempuri.org/Target.xsd",
-    "td": "http://tempuri.org/TypeDefinition.xsd",
     "xs": "http://www.w3.org/2001/XMLSchema"
   },
   "schemaTreeRoot": {
