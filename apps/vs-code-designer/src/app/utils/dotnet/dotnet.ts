@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { DotnetVersion } from '../../../constants';
+import { DotnetVersion, isolatedSdkName } from '../../../constants';
 import { localize } from '../../../localize';
 import { runWithDurationTelemetry } from '../telemetry';
 import { findFiles } from '../workspace';
@@ -28,8 +28,6 @@ export class ProjectFile {
     return this.cachedContents;
   }
 }
-
-export const isolatedSdkName = 'Microsoft.Azure.Functions.Worker.Sdk';
 
 /**
  * Gets .NET files from workspace.

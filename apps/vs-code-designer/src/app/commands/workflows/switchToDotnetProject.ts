@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import { connectionsFileName, funcIgnoreFileName, funcVersionSetting, hostFileName, localSettingsFileName } from '../../../constants';
 import { localize } from '../../../localize';
-import { executeDotnetTemplateCommand } from '../../../templates/dotnet/executeDotnetTemplateCommand';
 import { initProjectForVSCode } from '../../commands/initProjectForVSCode/initProjectForVSCode';
 import {
   getDotnetBuildFile,
@@ -16,7 +15,7 @@ import {
   addFileToBuildPath,
 } from '../../utils/codeless/updateBuildFile';
 import { getProjFiles, getTemplateKeyFromProjFile } from '../../utils/dotnet/dotnet';
-import { validateDotnetInstalled, getFramework } from '../../utils/dotnet/executeDotnetTemplateCommand';
+import { validateDotnetInstalled, getFramework, executeDotnetTemplateCommand } from '../../utils/dotnet/executeDotnetTemplateCommand';
 import { wrapArgInQuotes } from '../../utils/funcCoreTools/cpUtils';
 import { tryGetMajorVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';

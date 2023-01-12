@@ -30,7 +30,7 @@ async function getBundleFeed(context: IActionContext, bundleMetadata: IBundleMet
 }
 
 /**
- * Gets lates bundle extension version range.
+ * Gets latest bundle extension version range.
  * @param {IActionContext} context - Command context.
  * @returns {Promise<string>} Returns lates version range.
  */

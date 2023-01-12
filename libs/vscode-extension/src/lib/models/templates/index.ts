@@ -1,6 +1,5 @@
 export * from './IBindingTemplate';
 export * from './IWorkflowTemplate';
-export * from './IFunctionTemplate';
 
 export interface ITemplatesRelease {
   functions: string;
