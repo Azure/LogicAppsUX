@@ -225,7 +225,7 @@ export const dataMapSlice = createSlice({
     },
 
     removeSourceSchemaNodes: (state, action: PayloadAction<SchemaNodeExtended[]>) => {
-      // TODO: So far we only ever remove one node at a time, but if that changes, we need to alter this
+      // NOTE: So far we only ever remove one node at a time, but if that changes, we need to alter this
       // as currently each node deletion will generate a new undo/redo state
       action.payload.forEach((srcSchemaNode) => {
         deleteNodeWithKey(state, addSourceReactFlowPrefix(srcSchemaNode.key));
