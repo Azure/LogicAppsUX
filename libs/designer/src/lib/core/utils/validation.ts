@@ -243,7 +243,7 @@ function validateStringFormat(parameterFormat: string, parameterValue: string, i
  */
 export function validateJSONParameter(parameterMetadata: ParameterInfo, parameterValue: ValueSegment[]): string[] {
   const intl = getIntl();
-  const isConditionEditor = parameterMetadata.editor === Constants.EDITOR.CONDITION;
+  const isConditionEditor = parameterMetadata.editor === Constants.EDITOR.CONDITION && !parameterMetadata.editorOptions?.isOldFormat;
   const value = isConditionEditor
     ? JSON.stringify(recurseSerializeCondition(parameterMetadata, parameterMetadata.editorViewModel.items, true))
     : parameterValueToJSONString(parameterValue, false, true);

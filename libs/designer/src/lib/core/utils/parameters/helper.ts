@@ -330,7 +330,13 @@ export function getParameterEditorProps(parameter: InputParameter, shouldIgnoreD
     editorViewModel = toAuthenticationViewModel(value);
     editorOptions = { ...editorOptions, identity: WorkflowService().getAppIdentity?.() };
   } else if (editor === constants.EDITOR.CONDITION) {
-    editorViewModel = toConditionViewModel(value);
+    if (editorOptions?.isOldFormat) {
+      editorViewModel = toUntilViewModel(value);
+      console.log(toUntilViewModel(value));
+      console.log(value);
+    } else {
+      editorViewModel = toConditionViewModel(value);
+    }
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     editor = undefined;
   }
@@ -360,6 +366,44 @@ const destructureSchema = (schema: any): any => {
     newSchema[schemaItem] = destructureSchema(schema[schemaItem]);
   }
   return newSchema;
+};
+
+const toUntilViewModel = (input: any): { isOldFormat: boolean; items: RowItemProps } => {
+  let operand1: ValueSegment[], operand2: ValueSegment[], operation: string;
+  try {
+    const valSegments = loadParameterValue({ value: input } as InputParameter);
+    if (valSegments.length === 1 && valSegments[0].type === ValueSegmentType.TOKEN) {
+      operand1 = [
+        {
+          id: guid(),
+          type: ValueSegmentType.LITERAL,
+          value: ((valSegments[0].token?.expression as ExpressionFunction).arguments[0] as ExpressionLiteral).value,
+        },
+      ];
+      operand2 = [
+        {
+          id: guid(),
+          type: ValueSegmentType.LITERAL,
+          value: ((valSegments[0].token?.expression as ExpressionFunction).arguments[1] as ExpressionLiteral).value,
+        },
+      ];
+      operation = (valSegments[0].token?.expression as ExpressionFunction).name;
+    } else {
+      operation = input.substring(input.indexOf('@') + 1, input.indexOf('('));
+      const operations = input.split(',');
+      operand1 = loadParameterValue({ value: operations[0].substring(operations[0].indexOf('(') + 1).trim() } as InputParameter);
+      operand2 = loadParameterValue({ value: operations[1].substring(0, operations[1].indexOf(')')).trim() } as InputParameter);
+    }
+  } catch {
+    operation = 'equals';
+    operand1 = [];
+    operand2 = [];
+  }
+
+  return {
+    isOldFormat: true,
+    items: { type: GroupType.ROW, operator: operation, operand1, operand2 },
+  };
 };
 
 export const toConditionViewModel = (input: any): { items: GroupItemProps } => {
@@ -1331,8 +1375,6 @@ export async function updateParameterAndDependencies(
       }
     }
   }
-  console.log(payload);
-  // console.log(updatedParameter);
 
   dispatch(updateNodeParameters(payload));
 
@@ -1642,11 +1684,17 @@ function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefi
       }
       return undefined;
     case constants.EDITOR.CONDITION:
-      return JSON.stringify(recurseSerializeCondition(parameter, editorViewModel.items, isDefinitionValue));
+      return editorOptions?.isOldFormat
+        ? serializeUntil(editorViewModel)
+        : JSON.stringify(recurseSerializeCondition(parameter, editorViewModel.items, isDefinitionValue));
     default:
       return undefined;
   }
 }
+
+export const serializeUntil = (editorViewModel: any): string => {
+  return editorViewModel.value;
+};
 
 export const recurseSerializeCondition = (parameter: ParameterInfo, editorViewModel: any, isDefinitionValue: boolean): any => {
   const returnVal: any = {};

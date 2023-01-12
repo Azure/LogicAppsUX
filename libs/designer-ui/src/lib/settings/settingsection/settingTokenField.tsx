@@ -10,6 +10,7 @@ import type { CallbackHandler, ChangeHandler, TokenPickerHandler } from '../../e
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { QueryBuilderEditor } from '../../querybuilder';
+import { UntilEditor } from '../../querybuilder/until';
 import { SchemaEditor } from '../../schemaeditor';
 import { TableEditor } from '../../table';
 import type { TokenGroup } from '../../tokenpicker/models/token';
@@ -186,7 +187,13 @@ const TokenField = ({
       );
 
     case 'condition':
-      return (
+      return editorViewModel.isOldFormat ? (
+        <UntilEditor
+          items={JSON.parse(JSON.stringify(editorViewModel.items))}
+          tokenPickerHandler={tokenPickerHandler}
+          onChange={onValueChange}
+        />
+      ) : (
         <QueryBuilderEditor
           groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
           onChange={onValueChange}
