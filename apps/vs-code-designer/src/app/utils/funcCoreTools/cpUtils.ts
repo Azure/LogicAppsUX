@@ -96,7 +96,9 @@ export async function tryExecuteCommand(
 }
 
 /**
- * Ensures spaces and special characters (most notably $) are preserved
+ * Gets argument wrapped in quotation marks to ensure spaces and special characters (most notably $) are preserved
+ * @param {string | boolean | number} arg - Argument to be wrapped.
+ * @returns {string} Argument wrapped in quotation marks.
  */
 export function wrapArgInQuotes(arg?: string | boolean | number): string {
   const quotationMark: string = process.platform === 'win32' ? '"' : "'";

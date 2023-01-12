@@ -3,11 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { defaultVersionRange, defaultBundleId } from '../../constants';
-import { ext } from '../../extensionVariables';
 import { getJsonFeed } from './feed';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleFeed, IBundleMetadata, IHostJsonV2 } from '@microsoft/vscode-extension';
-import { TemplateSource } from '@microsoft/vscode-extension';
 
 /**
  * Gets bundle extension feed.
@@ -21,12 +19,10 @@ async function getBundleFeed(context: IActionContext, bundleMetadata: IBundleMet
   const envVarUri: string | undefined = process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
   // Only use an aka.ms link for the most common case, otherwise we will dynamically construct the url
   let url: string;
-  const templateProvider = ext.templateProvider.get(context);
-  if (!envVarUri && bundleId === defaultBundleId && templateProvider.templateSource !== TemplateSource.Staging) {
+  if (!envVarUri && bundleId === defaultBundleId) {
     url = 'https://aka.ms/AA66i2x';
   } else {
-    const suffix: string = templateProvider.templateSource === TemplateSource.Staging ? 'staging' : '';
-    const baseUrl: string = envVarUri || `https://functionscdn${suffix}.azureedge.net/public`;
+    const baseUrl: string = envVarUri || 'https://functionscdn.azureedge.net/public';
     url = `${baseUrl}/ExtensionBundles/${bundleId}/index-v2.json`;
   }
 

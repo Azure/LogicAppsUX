@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import { connectionsFileName, funcIgnoreFileName, funcVersionSetting, hostFileName, localSettingsFileName } from '../../../constants';
 import { localize } from '../../../localize';
-import { DotnetTemplateProvider } from '../../../templates/dotnet/DotnetTemplateProvider';
 import { executeDotnetTemplateCommand } from '../../../templates/dotnet/executeDotnetTemplateCommand';
 import { initProjectForVSCode } from '../../commands/initProjectForVSCode/initProjectForVSCode';
 import {
@@ -16,7 +15,7 @@ import {
   writeBuildFileToDisk,
   addFileToBuildPath,
 } from '../../utils/codeless/updateBuildFile';
-import { getProjFiles } from '../../utils/dotnet/dotnet';
+import { getProjFiles, getTemplateKeyFromProjFile } from '../../utils/dotnet/dotnet';
 import { validateDotnetInstalled, getFramework } from '../../utils/dotnet/executeDotnetTemplateCommand';
 import { wrapArgInQuotes } from '../../utils/funcCoreTools/cpUtils';
 import { tryGetMajorVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
@@ -25,7 +24,7 @@ import { getContainingWorkspace } from '../../utils/workspace';
 import { DotnetInitVSCodeStep } from '../initProjectForVSCode/DotnetInitVSCodeStep';
 import { DialogResponses, nonNullOrEmptyValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext, FuncVersion, ITemplates } from '@microsoft/vscode-extension';
+import type { IProjectWizardContext, FuncVersion } from '@microsoft/vscode-extension';
 import { ProjectLanguage } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -55,27 +54,6 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
     ) as FuncVersion;
   }
 
-  const dotnetTemplateProvider = new DotnetTemplateProvider(version, target.fsPath);
-
-  // We need to get the templates first to ensure that the we can create the dotnet project
-  // 1. try to get cached templates
-  let templates: ITemplates | undefined = await dotnetTemplateProvider.getCachedTemplates(context);
-
-  // 2. try to download the latest templates
-  if (!templates) {
-    const templateVersion: string = await dotnetTemplateProvider.getLatestTemplateVersion(context);
-    templates = await dotnetTemplateProvider.getLatestTemplates(context, templateVersion);
-  }
-
-  // 3. try to get the backup templates
-  if (!templates) {
-    templates = await dotnetTemplateProvider.getBackupTemplates(context);
-  }
-
-  if (!templates) {
-    throw new Error(localize('dotnetTemplateError', 'Dotnet templates could not be found.'));
-  }
-
   const warning: string = localize(
     'confirmMoveToDotnet',
     'This action moves your Logic App project to a NuGet-based project. Confirm that you want to move to a NuGet-based project?'
@@ -89,7 +67,7 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
   const majorVersion: string = tryGetMajorVersion(version);
   const identity = `Microsoft.AzureFunctions.ProjectTemplate.${templateLanguage}.${parseInt(majorVersion) < 4 ? majorVersion : 3}.x`;
   const functionsVersion: string = 'v' + majorVersion;
-  const projTemplateKey = await dotnetTemplateProvider.getProjKey(context);
+  const projTemplateKey = await getTemplateKeyFromProjFile(context, this.projectPath, this.version, ProjectLanguage.CSharp);
   const projectPath: string = target.fsPath;
   const dotnetVersion = await getFramework(context, projectPath);
 

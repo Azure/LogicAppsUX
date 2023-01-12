@@ -18,27 +18,3 @@ export interface IWorkerRuntime {
     csharp: string;
   };
 }
-
-export interface ICliFeed {
-  tags: {
-    [tag: string]: ITag | undefined;
-  };
-  releases: {
-    [version: string]: IRelease;
-  };
-}
-
-export interface IRelease {
-  templates: string;
-  workerRuntimes: {
-    dotnet: {
-      [key: string]: IWorkerRuntime;
-    };
-  };
-}
-
-export interface ITag {
-  release: string;
-  displayName: string;
-  hidden: boolean;
-}

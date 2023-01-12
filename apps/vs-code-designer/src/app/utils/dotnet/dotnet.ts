@@ -9,7 +9,6 @@ import { findFiles } from '../workspace';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzExtFsExtra } from '@microsoft/vscode-azext-utils';
 import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension';
-import type { IWorkerRuntime } from '@microsoft/vscode-extension';
 import * as path from 'path';
 
 export class ProjectFile {
@@ -89,9 +88,8 @@ export async function getTemplateKeyFromProjFile(
 ): Promise<string> {
   let isIsolated = false;
   let targetFramework: string;
-  switch (
-    version // set up defaults
-  ) {
+
+  switch (version) {
     case FuncVersion.v4:
       targetFramework = DotnetVersion.net6;
       break;
@@ -115,11 +113,6 @@ export async function getTemplateKeyFromProjFile(
   }
 
   return getProjectTemplateKey(targetFramework, isIsolated);
-}
-
-export function getTemplateKeyFromFeedEntry(runtimeInfo: IWorkerRuntime): string {
-  const isIsolated = runtimeInfo.sdk.name.toLowerCase() === isolatedSdkName.toLowerCase();
-  return getProjectTemplateKey(runtimeInfo.targetFramework, isIsolated);
 }
 
 export function getDotnetDebugSubpath(targetFramework: string): string {
