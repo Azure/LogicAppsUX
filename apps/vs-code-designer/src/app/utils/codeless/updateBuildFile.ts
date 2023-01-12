@@ -98,6 +98,12 @@ export async function getXMLString(csproj: string, options: any): Promise<Record
   });
 }
 
+/**
+ * Add file to xml build path.
+ * @param {Record<string, any>} xmlBuildFile - XML build file.
+ * @param {string} fileName - File name
+ * @returns {Record<string, any>} XML build file.
+ */
 export function addFileToBuildPath(xmlBuildFile: Record<string, any>, fileName: string): Record<string, any> {
   const itemGroup: Record<string, any> = {
     None: {

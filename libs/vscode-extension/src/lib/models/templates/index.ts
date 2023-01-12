@@ -10,7 +10,3 @@ export interface ITemplatesRelease {
 export enum TemplatePromptResult {
   skipForNow = 'skipForNow',
 }
-
-export enum TemplateCategory {
-  Core = '$temp_category_core',
-}

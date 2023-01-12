@@ -47,6 +47,11 @@ export async function getProjFiles(context: IActionContext, projectLanguage: Pro
   });
 }
 
+/**
+ * Checks if the project file has isolated azure functions sdk.
+ * @param {ProjectFile} projFile - File.
+ * @returns {Promise<string>} Returns true if it has isolated sdk, otherwise returns false.
+ */
 export async function getIsIsolated(projFile: ProjectFile): Promise<boolean> {
   try {
     return (await projFile.getContents()).toLowerCase().includes(isolatedSdkName.toLowerCase());
@@ -55,6 +60,12 @@ export async function getIsIsolated(projFile: ProjectFile): Promise<boolean> {
   }
 }
 
+/**
+ * Gets template key.
+ * @param {string} targetFramework - Target framework for template.
+ * @param {boolean} isIsolated - Project path.
+ * @returns {string} Template key.
+ */
 function getProjectTemplateKey(targetFramework: string, isIsolated: boolean): string {
   // Remove any OS-specific stuff from target framework if present https://docs.microsoft.com/dotnet/standard/frameworks#net-5-os-specific-tfms
   let result = targetFramework.split('-')[0];
@@ -64,20 +75,39 @@ function getProjectTemplateKey(targetFramework: string, isIsolated: boolean): st
   return result;
 }
 
-async function getPropertyInProjFile(projFile: ProjectFile, prop: string): Promise<string> {
-  const regExp = new RegExp(`<${prop}>(.*)<\\/${prop}>`);
+/**
+ * Gets property in project file.
+ * @param {ProjectFile} projFile - File.
+ * @param {string} property - Property key name.
+ * @returns {Promise<string>} Property value.
+ */
+async function getPropertyInProjFile(projFile: ProjectFile, property: string): Promise<string> {
+  const regExp = new RegExp(`<${property}>(.*)<\\/${property}>`);
   const matches: RegExpMatchArray | null = (await projFile.getContents()).match(regExp);
   if (!matches) {
-    throw new Error(localize('failedToFindProp', 'Failed to find "{0}" in project file "{1}".', prop, projFile.name));
+    throw new Error(localize('failedToFindProp', 'Failed to find "{0}" in project file "{1}".', property, projFile.name));
   } else {
     return matches[1];
   }
 }
 
+/**
+ * Gets target framework property in project file.
+ * @param {ProjectFile} projFile - File.
+ * @returns {Promise<string>} Property value.
+ */
 export async function getTargetFramework(projFile: ProjectFile): Promise<string> {
   return await getPropertyInProjFile(projFile, 'TargetFramework');
 }
 
+/**
+ * Gets template key from project file or from framework version.
+ * @param {IActionContext} context - Command context.
+ * @param {string | undefined} projectPath - Project path.
+ * @param {FuncVersion} version - Functions core tools version.
+ * @param {ProjectLanguage} language - Project language.
+ * @returns {Promise<string>} Template key.
+ */
 export async function getTemplateKeyFromProjFile(
   context: IActionContext,
   projectPath: string | undefined,
@@ -113,10 +143,20 @@ export async function getTemplateKeyFromProjFile(
   return getProjectTemplateKey(targetFramework, isIsolated);
 }
 
+/**
+ * Gets Dotnet debug path.
+ * @param {string} targetFramework - Target framework for template.
+ * @returns {string} Dotnet debug path.
+ */
 export function getDotnetDebugSubpath(targetFramework: string): string {
   return path.posix.join('bin', 'Debug', targetFramework);
 }
 
+/**
+ * Gets azure functions version property in project file.
+ * @param {ProjectFile} projFile - File.
+ * @returns {Promise<string | undefined>} Property value.
+ */
 export async function tryGetFuncVersion(projFile: ProjectFile): Promise<string | undefined> {
   try {
     return await getPropertyInProjFile(projFile, 'AzureFunctionsVersion');

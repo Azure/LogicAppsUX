@@ -66,8 +66,8 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
   const majorVersion: string = tryGetMajorVersion(version);
   const identity = `Microsoft.AzureFunctions.ProjectTemplate.${templateLanguage}.${parseInt(majorVersion) < 4 ? majorVersion : 3}.x`;
   const functionsVersion: string = 'v' + majorVersion;
-  const projTemplateKey = await getTemplateKeyFromProjFile(context, this.projectPath, this.version, ProjectLanguage.CSharp);
   const projectPath: string = target.fsPath;
+  const projTemplateKey = await getTemplateKeyFromProjFile(context, projectPath, version, ProjectLanguage.CSharp);
   const dotnetVersion = await getFramework(context, projectPath);
 
   await deleteBundleProjectFiles(target);
