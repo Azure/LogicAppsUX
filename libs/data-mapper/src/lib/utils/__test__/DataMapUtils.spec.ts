@@ -1,4 +1,4 @@
-import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema } from '../../__mocks__';
+import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, simpleLoopSource, sourceMockSchema } from '../../__mocks__';
 import { SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import { addParentConnectionForRepeatingElementsNested, getSourceValueFromLoop, splitKeyIntoChildren } from '../DataMap.Utils';
@@ -17,20 +17,38 @@ import {
 describe('utils/DataMap', () => {
   describe('getSourceValueFromLoop', () => {
     it('gets the source key from a looped target string', () => {
-      const result = getSourceValueFromLoop('TelephoneNumber', '/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name');
+      const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
+      const flattenedSchema = flattenSchemaIntoDictionary(extendedSource, SchemaType.Source);
+
+      const result = getSourceValueFromLoop(
+        'TelephoneNumber',
+        '/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name',
+        flattenedSchema
+      );
       expect(result).toEqual('/ns0:Root/Looping/Employee/TelephoneNumber');
     });
 
     it('gets the source key from a looped target string with a function', () => {
+      const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
+      const flattenedSchema = flattenSchemaIntoDictionary(extendedSource, SchemaType.Source);
+
       const result = getSourceValueFromLoop(
         'lower-case(TelephoneNumber)',
-        '/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name'
+        '/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name',
+        flattenedSchema
       );
       expect(result).toEqual('lower-case(/ns0:Root/Looping/Employee/TelephoneNumber)');
     });
 
     it('gets the source key from a nested looped target string', () => {
-      const result = getSourceValueFromLoop('Day', '/ns0:Root/Ano/$for(/ns0:Root/Year)/Mes/$for(/ns0:Root/Year/Month)/Dia');
+      const extendedSource = convertSchemaToSchemaExtended(simpleLoopSource);
+      const flattenedSchema = flattenSchemaIntoDictionary(extendedSource, SchemaType.Source);
+
+      const result = getSourceValueFromLoop(
+        'Day',
+        '/ns0:Root/Ano/$for(/ns0:Root/Year)/Mes/$for(/ns0:Root/Year/Month)/Dia',
+        flattenedSchema
+      );
       expect(result).toEqual('/ns0:Root/Year/Month/Day');
     });
   });

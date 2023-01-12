@@ -497,11 +497,13 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect(resultEntries[3][1]).toBeTruthy();
     });
 
-    it.skip('creates a looping conditional connection', () => {
+    // TODO: 16770037 - Once the BE fixes how loops are parsed in getSchemaTree we should restore this to match
+    // the transcript yml file
+    it('creates a looping conditional connection', () => {
       simpleMap['ns0:Root'] = {
         ConditionalLooping: {
-          CategorizedCatalog: {
-            '$for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product)': {
+          '$for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product)': {
+            CategorizedCatalog: {
               '$if(is-equal(substring(SKU, 1, 2), "1"))': {
                 PetProduct: {
                   Name: 'Name',
@@ -516,36 +518,58 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       const resultEntries = Object.entries(result);
       resultEntries.sort();
 
-      expect(resultEntries.length).toEqual(7);
+      expect(resultEntries.length).toEqual(9);
 
       expect(resultEntries[0][0]).toContain('IsEqual');
       expect(resultEntries[0][1]).toBeTruthy();
-      expect(resultEntries[0][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
       expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('SubString');
       expect(resultEntries[0][1].inputs[1][0]).toEqual('"1"');
+      expect(resultEntries[0][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
 
       expect(resultEntries[1][0]).toContain('SubString');
       expect(resultEntries[1][1]).toBeTruthy();
-      expect(resultEntries[1][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
-      expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('SKU');
+      expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product/SKU'
+      );
       expect(resultEntries[1][1].inputs[1][0]).toEqual('1');
       expect(resultEntries[1][1].inputs[2][0]).toEqual('2');
+      expect(resultEntries[1][1].outputs[0].reactFlowKey).toContain('IsEqual');
 
       expect(resultEntries[2][0]).toContain(ifPseudoFunctionKey);
       expect(resultEntries[2][1]).toBeTruthy();
-      expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual('PetProduct');
-      expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('SKU');
-      expect(resultEntries[2][1].inputs[1][0]).toContain('IsEqual');
-      expect(resultEntries[2][1].inputs[2][0]).toEqual('PetProduct');
+      expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IsEqual');
+      expect((resultEntries[2][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product'
+      );
+      expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalLooping/CategorizedCatalog/PetProduct');
 
-      expect(resultEntries[2][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
-      expect(resultEntries[2][1]).toBeTruthy();
-
-      expect(resultEntries[3][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
+      expect(resultEntries[3][0]).toEqual('source-/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product');
       expect(resultEntries[3][1]).toBeTruthy();
+      expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalLooping/CategorizedCatalog');
 
-      expect(resultEntries[4][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+      expect(resultEntries[4][0]).toEqual('source-/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product/Name');
       expect(resultEntries[4][1]).toBeTruthy();
+      expect(resultEntries[4][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalLooping/CategorizedCatalog/PetProduct/Name');
+
+      expect(resultEntries[5][0]).toEqual('source-/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product/SKU');
+      expect(resultEntries[5][1]).toBeTruthy();
+      expect(resultEntries[5][1].outputs[0].reactFlowKey).toContain('SubString');
+
+      expect(resultEntries[6][0]).toEqual('target-/ns0:Root/ConditionalLooping/CategorizedCatalog');
+      expect(resultEntries[6][1]).toBeTruthy();
+      expect((resultEntries[6][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product'
+      );
+
+      expect(resultEntries[7][0]).toEqual('target-/ns0:Root/ConditionalLooping/CategorizedCatalog/PetProduct');
+      expect(resultEntries[7][1]).toBeTruthy();
+      expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain(ifPseudoFunctionKey);
+
+      expect(resultEntries[8][0]).toEqual('target-/ns0:Root/ConditionalLooping/CategorizedCatalog/PetProduct/Name');
+      expect(resultEntries[8][1]).toBeTruthy();
+      expect((resultEntries[8][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product/Name'
+      );
     });
 
     it('creates a direct index connection', () => {
