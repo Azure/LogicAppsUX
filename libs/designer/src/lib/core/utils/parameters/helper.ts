@@ -332,8 +332,6 @@ export function getParameterEditorProps(parameter: InputParameter, shouldIgnoreD
   } else if (editor === constants.EDITOR.CONDITION) {
     if (editorOptions?.isOldFormat) {
       editorViewModel = toUntilViewModel(value);
-      console.log(toUntilViewModel(value));
-      console.log(value);
     } else {
       editorViewModel = toConditionViewModel(value);
     }
