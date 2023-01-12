@@ -1,4 +1,11 @@
-import { simpleLoopSource, simpleLoopTarget, sourceMockSchema, targetMockSchema } from '../../__mocks__';
+import {
+  layeredLoopSourceMockSchema,
+  layeredLoopTargetMockSchema,
+  simpleLoopSource,
+  simpleLoopTarget,
+  sourceMockSchema,
+  targetMockSchema,
+} from '../../__mocks__';
 import type { MapDefinitionEntry } from '../../models';
 import { functionMock, ifPseudoFunctionKey, directAccessPseudoFunctionKey, indexPseudoFunctionKey } from '../../models';
 import type { ConnectionUnit } from '../../models/Connection';
@@ -734,6 +741,30 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect(resultEntries[3][1]).toBeTruthy();
     });
 
-    // TODO: Nested loops w/ index variables and directAccess's
+    it('creates a many-to-one loop connection with nested index variables', () => {
+      const extendedLayeredLoopSource = convertSchemaToSchemaExtended(layeredLoopSourceMockSchema);
+      const extendedLayeredLoopTarget = convertSchemaToSchemaExtended(layeredLoopTargetMockSchema);
+      simpleMap['ns0:Root'] = {
+        ManyToOne: {
+          '$for(/ns0:Root/ManyToOne/SourceYear, $a)': {
+            '$for(SourceMonth, $b)': {
+              '$for(SourceDay, $c)': {
+                Date: {
+                  DayName: '/ns0:Root/ManyToOne/SourceYear[$c]/SourceMonth/SourceDate',
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const result = convertFromMapDefinition(simpleMap, extendedLayeredLoopSource, extendedLayeredLoopTarget, []);
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+
+      // TODO: Update expects
+      console.dir(resultEntries, { depth: null });
+      expect(resultEntries.length).toEqual(4);
+    });
   });
 });

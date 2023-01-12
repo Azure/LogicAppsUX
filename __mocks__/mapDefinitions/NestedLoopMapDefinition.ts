@@ -12,7 +12,9 @@ $targetNamespaces:
   xs: http://www.w3.org/2001/XMLSchema
 ns0:Root:
   ManyToOne:
-    $for(/ns0:Root/ManyToOne/Year/Month/Day):
-      Date:
-        DayName: Date
+    $for(/ns0:Root/ManyToOne/SourceYear, $a):
+      $for(SourceMonth, $b):
+        $for(SourceDay, $c):
+          Date:
+            DayName: /ns0:Root/ManyToOne/SourceYear[$c]/SourceMonth/SourceDate
 `;
