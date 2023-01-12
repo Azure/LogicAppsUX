@@ -33,7 +33,7 @@ export async function executeDotnetTemplateCommand(
 ): Promise<string> {
   const framework: string = await getFramework(context, workingDirectory);
   const jsonDllPath: string = ext.context.asAbsolutePath(
-    path.join('resources', 'dotnetJsonCli', framework, 'Microsoft.TemplateEngine.JsonCli.dll')
+    path.join('assets', 'dotnetJsonCli', framework, 'Microsoft.TemplateEngine.JsonCli.dll')
   );
 
   return await executeCommand(

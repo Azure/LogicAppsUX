@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { dotnetPublishTaskLabel, extensionCommand, func, funcWatchProblemMatcher, hostStartCommand } from '../../../constants';
+import { dotnetPublishTaskLabel, func, funcWatchProblemMatcher, hostStartCommand } from '../../../constants';
 import { localize } from '../../../localize';
 import { getProjFiles, getTargetFramework, getDotnetDebugSubpath, tryGetFuncVersion } from '../../utils/dotnet/dotnet';
 import type { ProjectFile } from '../../utils/dotnet/dotnet';
@@ -13,20 +13,11 @@ import { DialogResponses, nonNullProp, openUrl, parseError } from '@microsoft/vs
 import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
 import * as path from 'path';
-import type { DebugConfiguration, MessageItem, TaskDefinition } from 'vscode';
+import type { MessageItem, TaskDefinition } from 'vscode';
 
 export class DotnetInitVSCodeStep extends InitVSCodeStepBase {
   protected preDeployTask: string = dotnetPublishTaskLabel;
   private debugSubpath: string;
-
-  protected getDebugConfiguration(version: FuncVersion): DebugConfiguration {
-    return {
-      name: localize('attachToNetFunc', 'Attach to .NET Functions'),
-      type: version === FuncVersion.v1 ? 'clr' : 'coreclr',
-      request: 'attach',
-      processId: `\${command:${extensionCommand.pickProcess}}`,
-    };
-  }
 
   protected getRecommendedExtensions(language: ProjectLanguage): string[] {
     const recs: string[] = ['ms-dotnettools.csharp'];
