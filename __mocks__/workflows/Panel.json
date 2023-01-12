@@ -2,10 +2,80 @@
   "definition": {
     "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
     "actions": {
+      "Initialize_variable": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "stringvar",
+              "type": "string",
+              "value": "sdfsdf"
+            }
+          ]
+        },
+        "runAfter": {},
+        "type": "InitializeVariable"
+      },
+      "Initialize_variable_1": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "IntegerVar",
+              "type": "integer",
+              "value": "test@{triggerOutputs()['headers']}@{variables('stringvar')}"
+            }
+          ]
+        },
+        "runAfter": {
+          "Initialize_variable": ["SUCCEEDED"]
+        },
+        "type": "InitializeVariable"
+      },
+      "Parse_JSON": {
+        "inputs": {
+          "content": "@triggerBody()",
+          "schema": {
+            "properties": {
+              "a": {
+                "type": "string"
+              },
+              "number": {
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "runAfter": {
+          "Initialize_variable_1": ["SUCCEEDED"]
+        },
+        "runtimeConfiguration": {
+          "secureData": {
+            "properties": ["inputs"]
+          }
+        },
+        "type": "ParseJson"
+      },
+      "For_each": {
+        "type": "Foreach",
+        "foreach": "@body('Parse_JSON')",
+        "actions": {
+          "Response": {
+            "type": "Response",
+            "kind": "Http",
+            "inputs": {
+              "statusCode": 200
+            }
+          }
+        },
+        "runAfter": {
+          "Parse_JSON": ["SUCCEEDED"]
+        }
+      },
       "Until": {
         "actions": {},
         "expression": "@equals('test', 123)",
         "limit": {
+          "count": 60,
           "timeout": "PT1H"
         },
         "runAfter": {},
