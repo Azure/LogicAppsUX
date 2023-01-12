@@ -2226,7 +2226,7 @@ export function parameterValueToString(
         return '';
       }
     } else {
-      return parameter.required ? '' : parameter.schema.default ?? undefined;
+      return parameter.required ? '' : undefined;
     }
   }
 

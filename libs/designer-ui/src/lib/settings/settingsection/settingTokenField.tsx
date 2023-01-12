@@ -10,7 +10,7 @@ import type { CallbackHandler, ChangeHandler, TokenPickerHandler } from '../../e
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { QueryBuilderEditor } from '../../querybuilder';
-import { UntilEditor } from '../../querybuilder/until';
+import { UntilEditor } from '../../querybuilder/Until';
 import { SchemaEditor } from '../../schemaeditor';
 import { TableEditor } from '../../table';
 import type { TokenGroup } from '../../tokenpicker/models/token';
