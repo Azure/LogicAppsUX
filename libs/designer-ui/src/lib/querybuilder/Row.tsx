@@ -1,4 +1,4 @@
-import type { GroupedItems, GroupItemProps, RowItemProps } from '.';
+import type { GroupedItems, GroupItems } from '.';
 import { GroupType } from '.';
 import { Checkbox } from '../checkbox';
 import type { ValueSegment } from '../editor';
@@ -9,7 +9,7 @@ import { StringEditor } from '../editor/string';
 import type { MoveOption } from './Group';
 import { RowDropdown } from './RowDropdown';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
-import { IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
+import { css, IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
 import { guid } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -27,7 +27,7 @@ const menuIconProps: IIconProps = {
 
 const emptyValueSegmentArray: ValueSegment[] = [{ type: ValueSegmentType.LITERAL, value: '', id: guid() }];
 
-interface RowProps {
+type RowProps = {
   checked?: boolean;
   operand1?: ValueSegment[];
   operand2?: ValueSegment[];
@@ -41,8 +41,9 @@ interface RowProps {
   tokenPickerHandler: TokenPickerHandler;
   handleMove?: (childIndex: number, moveOption: MoveOption) => void;
   handleDeleteChild?: (indexToDelete: number | number[]) => void;
-  handleUpdateParent: (newProps: RowItemProps | GroupItemProps, index: number) => void;
-}
+  isUntil?: boolean;
+  handleUpdateParent: (newProps: GroupItems, index: number) => void;
+};
 
 export const Row = ({
   checked = false,
@@ -57,6 +58,7 @@ export const Row = ({
   // isTop,
   // isBottom,
   // handleMove,
+  isUntil,
   handleDeleteChild,
   handleUpdateParent,
 }: RowProps) => {
@@ -151,6 +153,7 @@ export const Row = ({
       setKey([]);
     }
   };
+
   const handleKeySave = (newState: ChangeState) => {
     if (notEqual(operand1, newState.value)) {
       setKey(newState.value);
@@ -224,15 +227,20 @@ export const Row = ({
     defaultMessage: 'Choose a value',
     description: 'placeholder text for row values',
   });
+
   return (
-    <div className="msla-querybuilder-row-container">
-      <div className="msla-querybuilder-row-gutter-hook" />
-      <Checkbox
-        className="msla-querybuilder-row-checkbox"
-        initialChecked={checked}
-        onChange={handleCheckbox}
-        key={JSON.stringify(checked)}
-      />
+    <div className={css('msla-querybuilder-row-container', !isUntil && 'showBorder')}>
+      {isUntil ? null : (
+        <>
+          <div className="msla-querybuilder-row-gutter-hook" />
+          <Checkbox
+            className="msla-querybuilder-row-checkbox"
+            initialChecked={checked}
+            onChange={handleCheckbox}
+            key={JSON.stringify(checked)}
+          />
+        </>
+      )}
       <div className="msla-querybuilder-row-content">
         <StringEditor
           className={'msla-querybuilder-row-value-input'}
@@ -254,16 +262,18 @@ export const Row = ({
           editorBlur={handleValueSave}
         />
       </div>
-      <OverflowSet
-        className="msla-querybuilder-row-more"
-        styles={overflowStyle}
-        items={[]}
-        overflowItems={rowMenuItems}
-        onRenderOverflowButton={onRenderOverflowButton}
-        onRenderItem={function (_item: IOverflowSetItemProps) {
-          throw new Error('No items in overflowset');
-        }}
-      />
+      {isUntil ? null : (
+        <OverflowSet
+          className="msla-querybuilder-row-more"
+          styles={overflowStyle}
+          items={[]}
+          overflowItems={rowMenuItems}
+          onRenderOverflowButton={onRenderOverflowButton}
+          onRenderItem={function (_item: IOverflowSetItemProps) {
+            throw new Error('No items in overflowset');
+          }}
+        />
+      )}
     </div>
   );
 };
