@@ -16,5 +16,5 @@ ns0:Root:
       $for(SourceMonth, $b):
         $for(SourceDay, $c):
           Date:
-            DayName: /ns0:Root/ManyToOne/SourceYear[$c]/SourceMonth/SourceDate
+            DayName: /ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay[$c]/SourceDate
 `;
