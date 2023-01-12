@@ -1,5 +1,5 @@
 import type { GroupedItems, GroupItemProps, RowItemProps } from '.';
-import { GroupType } from '.';
+import { RowDropdownOptions, GroupType } from '.';
 import { Checkbox } from '../checkbox';
 import type { ChangeState, TokenPickerHandler } from '../editor/base';
 import { AddSection } from './AddSection';
@@ -32,6 +32,7 @@ export enum MoveOption {
 }
 
 interface GroupProps {
+  readonly?: boolean;
   checked?: boolean;
   groupProps: GroupItemProps;
   isRootGroup?: boolean;
@@ -58,6 +59,7 @@ export const Group = ({
   isTop,
   isBottom,
   tokenPickerHandler,
+  readonly,
   // handleMove,
   handleDeleteChild,
   handleUngroupChild,
@@ -85,7 +87,7 @@ export const Group = ({
   const handleUngroup = (indexToAddAt: number, items: (GroupItemProps | RowItemProps)[]) => {
     let itemsToInsert = items;
     if (items.length === 0) {
-      itemsToInsert = [{ type: GroupType.ROW }];
+      itemsToInsert = [{ type: GroupType.ROW, operand1: [], operand2: [], operator: RowDropdownOptions.EQUALS }];
     }
     const newItems = { ...groupProps };
     newItems.items.splice(indexToAddAt, 1, ...itemsToInsert);
@@ -258,6 +260,7 @@ export const Group = ({
           <>
             {!isRootGroup ? (
               <Checkbox
+                disabled={readonly}
                 className="msla-querybuilder-group-checkbox"
                 initialChecked={groupProps.checked}
                 onChange={handleCheckbox}
@@ -265,10 +268,16 @@ export const Group = ({
               />
             ) : null}
             <div className="msla-querybuilder-row-section">
-              <GroupDropdown condition={groupProps.condition} onChange={handleSelectedOption} key={groupProps.condition} />
+              <GroupDropdown
+                condition={groupProps.condition}
+                onChange={handleSelectedOption}
+                key={groupProps.condition}
+                readonly={readonly}
+              />
               {groupProps.items.map((item, currIndex) => {
                 return item.type === GroupType.ROW ? (
                   <Row
+                    readonly={readonly}
                     key={`row ${currIndex} ${JSON.stringify(item.operand1)} ${JSON.stringify(item.operand2)}`}
                     checked={item.checked}
                     operand1={item.operand1}
@@ -287,6 +296,7 @@ export const Group = ({
                   />
                 ) : (
                   <Group
+                    readonly={readonly}
                     key={`${GroupType.GROUP} ${currIndex}`}
                     groupProps={{
                       type: GroupType.GROUP,
@@ -312,6 +322,7 @@ export const Group = ({
                 <>
                   {groupProps.items.length === 0 ? (
                     <Row
+                      readonly={readonly}
                       key={`row 0`}
                       index={0}
                       isGroupable={isGroupable}
@@ -326,6 +337,7 @@ export const Group = ({
                     />
                   ) : null}
                   <AddSection
+                    readonly={readonly}
                     handleUpdateParent={handleUpdateNewParent}
                     index={groupProps.items.length}
                     addEmptyRow={groupProps.items.length === 0}
@@ -335,7 +347,7 @@ export const Group = ({
             </div>
           </>
         ) : (
-          <GroupDropdown condition={groupProps.condition} onChange={handleSelectedOption} key={groupProps.condition} />
+          <GroupDropdown condition={groupProps.condition} onChange={handleSelectedOption} key={groupProps.condition} readonly={readonly} />
         )}
         <div className={css('msla-querybuilder-group-controlbar', collapsed && 'collapsed')}>
           {!isRootGroup ? (

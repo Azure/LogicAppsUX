@@ -7,7 +7,7 @@ import type { ChangeState, TokenPickerHandler } from '../editor/base';
 import { notEqual } from '../editor/base/utils/helper';
 import { StringEditor } from '../editor/string';
 import type { MoveOption } from './Group';
-import { RowDropdown } from './RowDropdown';
+import { RowDropdown, RowDropdownOptions } from './RowDropdown';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
 import { css, IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
 import { guid } from '@microsoft/utils-logic-apps';
@@ -39,9 +39,10 @@ type RowProps = {
   isTop: boolean;
   isBottom: boolean;
   tokenPickerHandler: TokenPickerHandler;
+  readonly?: boolean;
   handleMove?: (childIndex: number, moveOption: MoveOption) => void;
   handleDeleteChild?: (indexToDelete: number | number[]) => void;
-  isUntil?: boolean;
+  forceSingleCondition?: boolean;
   handleUpdateParent: (newProps: GroupItems, index: number) => void;
 };
 
@@ -58,7 +59,8 @@ export const Row = ({
   // isTop,
   // isBottom,
   // handleMove,
-  isUntil,
+  forceSingleCondition,
+  readonly,
   handleDeleteChild,
   handleUpdateParent,
 }: RowProps) => {
@@ -199,7 +201,10 @@ export const Row = ({
   };
 
   const handleCheckbox = () => {
-    handleUpdateParent({ type: GroupType.ROW, checked: !checked, operand1: operand1, operator: operator, operand2: operand2 }, index);
+    handleUpdateParent(
+      { type: GroupType.ROW, checked: !checked, operand1: operand1, operator: operator ?? RowDropdownOptions.EQUALS, operand2: operand2 },
+      index
+    );
   };
 
   const onRenderOverflowButton = (): JSX.Element => {
@@ -229,11 +234,12 @@ export const Row = ({
   });
 
   return (
-    <div className={css('msla-querybuilder-row-container', !isUntil && 'showBorder')}>
-      {isUntil ? null : (
+    <div className={css('msla-querybuilder-row-container', !forceSingleCondition && 'showBorder')}>
+      {forceSingleCondition ? null : (
         <>
           <div className="msla-querybuilder-row-gutter-hook" />
           <Checkbox
+            disabled={readonly}
             className="msla-querybuilder-row-checkbox"
             initialChecked={checked}
             onChange={handleCheckbox}
@@ -243,6 +249,7 @@ export const Row = ({
       )}
       <div className="msla-querybuilder-row-content">
         <StringEditor
+          readonly={readonly}
           className={'msla-querybuilder-row-value-input'}
           initialValue={operand1}
           placeholder={rowValueInputPlaceholder}
@@ -251,9 +258,9 @@ export const Row = ({
           editorBlur={handleKeySave}
           tokenPickerHandler={{ ...tokenPickerHandler, tokenPickerButtonProps: { customButton: true } }}
         />
-        <RowDropdown disabled={key.length === 0} condition={operator} onChange={handleSelectedOption} key={operator} />
+        <RowDropdown disabled={readonly || key.length === 0} condition={operator} onChange={handleSelectedOption} key={operator} />
         <StringEditor
-          readonly={key.length === 0}
+          readonly={readonly || key.length === 0}
           className={'msla-querybuilder-row-value-input'}
           initialValue={operand2}
           placeholder={rowValueInputPlaceholder}
@@ -262,7 +269,7 @@ export const Row = ({
           editorBlur={handleValueSave}
         />
       </div>
-      {isUntil ? null : (
+      {forceSingleCondition ? null : (
         <OverflowSet
           className="msla-querybuilder-row-more"
           styles={overflowStyle}
