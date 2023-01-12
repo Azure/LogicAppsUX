@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { getLatestVersion, getRelease } from '../../app/utils/cliFeed';
-import type { IRelease } from '../../app/utils/cliFeed';
 import { getTemplateKeyFromFeedEntry, getTemplateKeyFromProjFile } from '../../app/utils/dotnet/dotnet';
 import { validateDotnetInstalled } from '../../app/utils/dotnet/executeDotnetTemplateCommand';
 import { parseJson } from '../../app/utils/parseJson';
@@ -13,7 +12,7 @@ import { getDotnetProjectTemplatePath, getDotnetItemTemplatePath, executeDotnetT
 import { parseDotnetTemplates } from './parseDotnetTemplates';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzExtFsExtra, nonNullValue } from '@microsoft/vscode-azext-utils';
-import type { IWorkerRuntime, ITemplates } from '@microsoft/vscode-extension';
+import type { IWorkerRuntime, ITemplates, IRelease } from '@microsoft/vscode-extension';
 import { ProjectLanguage } from '@microsoft/vscode-extension';
 import * as path from 'path';
 

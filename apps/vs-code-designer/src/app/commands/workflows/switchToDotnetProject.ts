@@ -48,6 +48,7 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
     const message: string = localize('initFolder', 'Initialize project for use with VS Code?');
     await context.ui.showWarningMessage(message, { modal: true }, DialogResponses.yes);
     await initProjectForVSCode(context, target.fsPath);
+
     version = nonNullOrEmptyValue(
       tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, target.fsPath)),
       funcVersionSetting
@@ -79,6 +80,7 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
     'confirmMoveToDotnet',
     'This action moves your Logic App project to a NuGet-based project. Confirm that you want to move to a NuGet-based project?'
   );
+
   const moveButton: vscode.MessageItem = { title: localize('move', 'Move to a NuGet-based project') };
   await context.ui.showWarningMessage(warning, { modal: true }, moveButton, DialogResponses.cancel);
 

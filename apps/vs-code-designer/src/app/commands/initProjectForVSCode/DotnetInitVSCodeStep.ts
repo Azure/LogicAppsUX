@@ -17,8 +17,7 @@ import type { DebugConfiguration, MessageItem, TaskDefinition } from 'vscode';
 
 export class DotnetInitVSCodeStep extends InitVSCodeStepBase {
   protected preDeployTask: string = dotnetPublishTaskLabel;
-
-  private _debugSubpath: string;
+  private debugSubpath: string;
 
   protected getDebugConfiguration(version: FuncVersion): DebugConfiguration {
     return {
@@ -30,7 +29,6 @@ export class DotnetInitVSCodeStep extends InitVSCodeStepBase {
   }
 
   protected getRecommendedExtensions(language: ProjectLanguage): string[] {
-    // The csharp extension is really a 'dotnet' extension because it provides debugging for both
     const recs: string[] = ['ms-dotnettools.csharp'];
     if (language === ProjectLanguage.FSharp) {
       recs.push('ionide.ionide-fsharp');
@@ -49,6 +47,7 @@ export class DotnetInitVSCodeStep extends InitVSCodeStepBase {
     let projFile: ProjectFile;
     const projFiles = await getProjFiles(context, language, projectPath);
     const fileExt: string = language === ProjectLanguage.FSharp ? 'fsproj' : 'csproj';
+
     if (projFiles.length === 1) {
       projFile = projFiles[0];
     } else if (projFiles.length === 0) {
@@ -69,23 +68,26 @@ export class DotnetInitVSCodeStep extends InitVSCodeStepBase {
 
     const versionInProjFile: string | undefined = await tryGetFuncVersion(projFile);
     context.telemetry.properties.versionInProjFile = versionInProjFile;
+
     // The version from the proj file takes precedence over whatever was set in `context` before this
-    // tslint:disable-next-line: strict-boolean-expressions
     context.version = tryParseFuncVersion(versionInProjFile) || context.version;
 
     if (context.version === FuncVersion.v1) {
       const settingKey = 'show64BitWarning';
+
       if (getWorkspaceSetting<boolean>(settingKey)) {
         const message: string = localize(
           '64BitWarning',
           'In order to debug .NET Framework functions in VS Code, you must install a 64-bit version of the Azure Functions Core Tools.'
         );
+
         try {
           const result: MessageItem = await context.ui.showWarningMessage(
             message,
             DialogResponses.learnMore,
             DialogResponses.dontWarnAgain
           );
+
           if (result === DialogResponses.learnMore) {
             await openUrl('https://aka.ms/azFunc64bit');
           } else if (result === DialogResponses.dontWarnAgain) {
@@ -102,7 +104,7 @@ export class DotnetInitVSCodeStep extends InitVSCodeStepBase {
 
     const targetFramework: string = await getTargetFramework(projFile);
     this.setDeploySubpath(context, `bin/Release/${targetFramework}/publish`);
-    this._debugSubpath = getDotnetDebugSubpath(targetFramework);
+    this.debugSubpath = getDotnetDebugSubpath(targetFramework);
   }
 
   protected getTasks(): TaskDefinition[] {
@@ -148,7 +150,7 @@ export class DotnetInitVSCodeStep extends InitVSCodeStepBase {
         type: func,
         dependsOn: 'build',
         options: {
-          cwd: this._debugSubpath,
+          cwd: this.debugSubpath,
         },
         command: hostStartCommand,
         isBackground: true,
