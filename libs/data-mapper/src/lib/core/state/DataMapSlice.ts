@@ -791,13 +791,16 @@ export const addParentConnectionForRepeatingElements = (
     if (sourceNode.parentKey) {
       const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
 
-      const prefixedSourceKey = addReactFlowPrefix(sourceNode.parentKey, SchemaType.Source);
-      const parentSourceNode = flattenedSourceSchema[prefixedSourceKey];
+      const parentSourceNode = flattenedSourceSchema[addReactFlowPrefix(sourceNode.parentKey, SchemaType.Source)];
       const firstSourceNodeWithRepeatingPathItem = findLast(parentSourceNode.pathToRoot, (pathItem) => pathItem.repeating);
 
-      if (firstSourceNodeWithRepeatingPathItem && firstTargetNodeWithRepeatingPathItem) {
-        const parentPrefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
-        const parentSourceNode = flattenedSourceSchema[parentPrefixedSourceKey];
+      if ((firstSourceNodeWithRepeatingPathItem || indexFnRfKey) && firstTargetNodeWithRepeatingPathItem) {
+        // If adding an index() too, our sourceNode will already be the parent we want
+        const parentSourceNode =
+          indexFnRfKey || !firstSourceNodeWithRepeatingPathItem
+            ? sourceNode
+            : flattenedSourceSchema[addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source)];
+        const parentPrefixedSourceKey = addReactFlowPrefix(parentSourceNode.key, SchemaType.Source);
 
         const parentPrefixedTargetKey = addReactFlowPrefix(firstTargetNodeWithRepeatingPathItem.key, SchemaType.Target);
         const parentTargetNode = flattenedTargetSchema[parentPrefixedTargetKey];

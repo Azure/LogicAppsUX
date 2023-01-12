@@ -13,7 +13,13 @@ import {
 } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import { setConnectionInputValue } from '../utils/Connection.Utils';
-import { flattenMapDefinitionValues, getDestinationNode, getSourceValueFromLoop, splitKeyIntoChildren } from '../utils/DataMap.Utils';
+import {
+  flattenMapDefinitionValues,
+  getDestinationNode,
+  getSourceLoopKey,
+  getSourceValueFromLoop,
+  splitKeyIntoChildren,
+} from '../utils/DataMap.Utils';
 import { findFunctionForFunctionName, isFunctionData } from '../utils/Function.Utils';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
 import { createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
@@ -349,6 +355,7 @@ const createConnections = (
   }
 
   if (isLoop && sourceNode && destinationNode) {
+    let srcLoopNodeKey = amendedSourceKey;
     let indexFnRfKey: string | undefined = undefined;
 
     // TODO: Ensure support for nested loops w/ index variables
@@ -370,11 +377,10 @@ const createConnections = (
       const idxVariable = targetKey.replaceAll(mapNodeParams.for, '').substring(idxOfIdxVariable, idxOfIdxVariable + 2);
       amendedSourceKey = amendedSourceKey.replaceAll(idxVariable, indexFnRfKey);
       mockDirectAccessFnKey = mockDirectAccessFnKey?.replaceAll(idxVariable, indexFnRfKey);
+
+      srcLoopNodeKey = getSourceLoopKey(targetKey);
     }
 
-    const srcLoopNodeKey = amendedSourceKey.startsWith(directAccessPseudoFunctionKey)
-      ? amendedSourceKey.split(', ')[2].split(')')[0]
-      : amendedSourceKey;
     const srcLoopNode = findNodeForKey(srcLoopNodeKey, sourceSchema.schemaTreeRoot);
     if (srcLoopNode) {
       addParentConnectionForRepeatingElements(
