@@ -43,6 +43,7 @@ export default {
       },
       required: ['expression'],
     },
+    inputsLocation: [],
     isInputsOptional: false,
 
     repetition: {},

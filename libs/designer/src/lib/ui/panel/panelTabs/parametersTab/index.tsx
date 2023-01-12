@@ -254,7 +254,8 @@ const ParameterSection = ({
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI)
     .map((param) => {
-      const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility } = param;
+      const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
+        param;
       const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel, conditionalVisibility };
       const { editor, editorOptions } = getEditorAndOptions(param, upstreamNodeIds ?? [], variables);
 
@@ -285,6 +286,7 @@ const ParameterSection = ({
           isTrigger,
           isLoading: dynamicData?.status === DynamicCallStatus.STARTED,
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
+          validationErrors,
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
           tokenPickerHandler: {

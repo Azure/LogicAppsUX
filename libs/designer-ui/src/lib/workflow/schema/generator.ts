@@ -25,7 +25,7 @@ export function generateSchemaFromJsonString(jsonString: string): SchemaObject {
   return generateSchemaFromValue(value);
 }
 
-function generateSchemaFromValue(value: any): SchemaObject {
+export function generateSchemaFromValue(value: any): SchemaObject {
   const type = typeof value;
   let valueType;
   switch (type) {

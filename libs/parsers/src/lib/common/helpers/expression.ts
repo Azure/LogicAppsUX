@@ -6,6 +6,17 @@ export function isNumeric(ch: string) {
   return /[0-9]/g.test(ch);
 }
 
+export function isNumber(ch: string) {
+  return /^\d+$/.test(ch);
+}
+
+export function isBoolean(ch: string) {
+  if (ch === 'true' || ch === 'false') {
+    return true;
+  }
+  return false;
+}
+
 export function isWhitespace(ch: string) {
   // Note: https://msdn.microsoft.com/en-us/library/system.char.iswhitespace.aspx
   switch (ch) {

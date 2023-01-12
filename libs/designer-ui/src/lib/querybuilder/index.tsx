@@ -15,7 +15,7 @@ export interface GroupedItems {
   item: GroupItemProps | RowItemProps;
 }
 
-type GroupItems = GroupItemProps | RowItemProps;
+export type GroupItems = GroupItemProps | RowItemProps;
 
 export enum GroupType {
   ROW = 'row',
@@ -28,19 +28,23 @@ export interface RowItemProps {
   operator?: string;
   operand2?: ValueSegment[];
 }
+
 export interface GroupItemProps {
   type: GroupType.GROUP;
   checked?: boolean;
   condition?: GroupDropdownOptions;
   items: GroupItems[];
 }
+
 export interface QueryBuilderProps {
   readonly?: boolean;
   groupProps: GroupItemProps;
   tokenPickerHandler: TokenPickerHandler;
   onChange?: ChangeHandler;
 }
+
 const emptyValue = [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }];
+
 export const QueryBuilderEditor = ({ tokenPickerHandler, groupProps, onChange }: QueryBuilderProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [heights, setHeights] = useState<number[]>([]);
