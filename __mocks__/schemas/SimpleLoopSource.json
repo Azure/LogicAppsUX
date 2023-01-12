@@ -1,17 +1,16 @@
 {
-  "name": "Target.xsd",
+  "name": "Source.xsd",
   "type": "XML",
-  "targetNamespace": "http://tempuri.org/Target.xsd",
+  "targetNamespace": "http://tempuri.org/Source.xsd",
   "namespaces": {
-    "ns0": "http://tempuri.org/Target.xsd",
-    "td": "http://tempuri.org/TypeDefinition.xsd",
+    "ns0": "http://tempuri.org/Source.xsd",
     "xs": "http://www.w3.org/2001/XMLSchema"
   },
   "schemaTreeRoot": {
     "key": "/ns0:Root",
     "name": "Root",
     "namespacePrefix": "ns0",
-    "namespaceUri": "http://tempuri.org/Target.xsd",
+    "namespaceUri": "http://tempuri.org/Source.xsd",
     "schemaNodeDataType": "None",
     "normalizedDataType": "ComplexType",
     "properties": "NotSpecified",
