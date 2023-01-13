@@ -175,14 +175,14 @@ export const splitKeyIntoChildren = (sourceKey: string): string[] => {
   return results;
 };
 
-export const getSourceLoopKey = (targetKey: string): string => {
+export const getSourceKeyOfLastLoop = (targetKey: string): string => {
   const forArgs = targetKey.substring(targetKey.lastIndexOf(mapNodeParams.for) + mapNodeParams.for.length + 1, targetKey.lastIndexOf(')'));
   return forArgs.split(',')[0]; // Filter out index variable if any
 };
 
 export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sourceSchemaFlattened: SchemaNodeDictionary): string => {
   let constructedSourceKey = sourceKey;
-  const srcKeyWithinFor = getSourceLoopKey(targetKey);
+  const srcKeyWithinFor = getSourceKeyOfLastLoop(targetKey);
 
   const relativeSrcKeyArr = sourceKey
     .split(', ')
@@ -222,6 +222,32 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sou
     constructedSourceKey = sourceSchemaFlattened[`${sourcePrefix}${fullyQualifiedSourceKey}`] ? fullyQualifiedSourceKey : sourceKey;
   }
   return constructedSourceKey;
+};
+
+export const qualifyLoopRelativeSourceKeys = (targetKey: string): string => {
+  let qualifiedTargetKey = targetKey;
+  const srcKeys: string[] = [];
+
+  const splitLoops = qualifiedTargetKey.split(')');
+  splitLoops.forEach((splitLoop) => {
+    if (splitLoop.includes(mapNodeParams.for)) {
+      srcKeys.push(getSourceKeyOfLastLoop(`${splitLoop})`));
+    }
+  });
+
+  let curSrcParentKey = srcKeys[0];
+  srcKeys.forEach((srcKey) => {
+    if (!srcKey.includes(curSrcParentKey)) {
+      const fullyQualifiedSrcKey = `${curSrcParentKey}/${srcKey}`;
+      qualifiedTargetKey = qualifiedTargetKey.replace(srcKey, fullyQualifiedSrcKey);
+
+      curSrcParentKey = fullyQualifiedSrcKey;
+    } else {
+      curSrcParentKey = srcKey;
+    }
+  });
+
+  return qualifiedTargetKey;
 };
 
 export const getTargetValueWithoutLoop = (targetKey: string): string => {
