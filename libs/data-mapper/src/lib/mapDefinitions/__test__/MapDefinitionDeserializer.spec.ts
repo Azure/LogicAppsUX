@@ -1,4 +1,11 @@
-import { simpleLoopSource, simpleLoopTarget, sourceMockSchema, targetMockSchema } from '../../__mocks__';
+import {
+  layeredLoopSourceMockSchema,
+  layeredLoopTargetMockSchema,
+  simpleLoopSource,
+  simpleLoopTarget,
+  sourceMockSchema,
+  targetMockSchema,
+} from '../../__mocks__';
 import type { MapDefinitionEntry } from '../../models';
 import { functionMock, ifPseudoFunctionKey, directAccessPseudoFunctionKey, indexPseudoFunctionKey } from '../../models';
 import type { ConnectionUnit } from '../../models/Connection';
@@ -734,6 +741,50 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect(resultEntries[3][1]).toBeTruthy();
     });
 
-    // TODO: Nested loops w/ index variables and directAccess's
+    it('creates a many-to-one loop connection with nested index variables', () => {
+      const extendedLayeredLoopSource = convertSchemaToSchemaExtended(layeredLoopSourceMockSchema);
+      const extendedLayeredLoopTarget = convertSchemaToSchemaExtended(layeredLoopTargetMockSchema);
+      simpleMap['ns0:Root'] = {
+        ManyToOne: {
+          '$for(/ns0:Root/ManyToOne/SourceYear, $a)': {
+            '$for(SourceMonth, $b)': {
+              '$for(SourceDay, $c)': {
+                Date: {
+                  DayName: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay[$b]/SourceDate',
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const result = convertFromMapDefinition(simpleMap, extendedLayeredLoopSource, extendedLayeredLoopTarget, functionMock);
+
+      expect(Object.entries(result).length).toEqual(10);
+
+      const indexRfKey1 = (result['target-/ns0:Root/ManyToOne/Date'].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(indexRfKey1).toContain(indexPseudoFunctionKey);
+      expect((result[indexRfKey1].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay'
+      );
+
+      const indexRfKey2 = (result['target-/ns0:Root/ManyToOne/Date'].inputs[0][1] as ConnectionUnit).reactFlowKey;
+      expect(indexRfKey2).toContain(indexPseudoFunctionKey);
+      expect((result[indexRfKey2].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/ManyToOne/SourceYear/SourceMonth');
+
+      const indexRfKey3 = (result['target-/ns0:Root/ManyToOne/Date'].inputs[0][2] as ConnectionUnit).reactFlowKey;
+      expect(indexRfKey3).toContain(indexPseudoFunctionKey);
+      expect((result[indexRfKey3].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/ManyToOne/SourceYear');
+
+      const directAccessRfKey = (result['target-/ns0:Root/ManyToOne/Date/DayName'].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(directAccessRfKey).toContain(directAccessPseudoFunctionKey);
+      expect((result[directAccessRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(indexRfKey2);
+      expect((result[directAccessRfKey].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay'
+      );
+      expect((result[directAccessRfKey].inputs[2][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate'
+      );
+    });
   });
 });
