@@ -6,9 +6,9 @@ import { defaultFuncPort, hostStartTaskName, pickProcessTimeoutSetting } from '.
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { preDebugValidate } from '../debug/validatePreDebug';
-import { getFuncPortFromTaskOrProject, isFuncHostTask, runningFuncTaskMap } from '../funcCoreTools/funcHostTask';
-import type { IRunningFuncTask } from '../funcCoreTools/funcHostTask';
 import { getProjFiles } from '../utils/dotnet/dotnet';
+import { getFuncPortFromTaskOrProject, isFuncHostTask, runningFuncTaskMap } from '../utils/funcCoreTools/funcHostTask';
+import type { IRunningFuncTask } from '../utils/funcCoreTools/funcHostTask';
 import { isTimeoutError } from '../utils/requestUtils';
 import { executeIfNotActive } from '../utils/taskUtils';
 import { getWorkspaceSetting } from '../utils/vsCodeConfig/settings';

@@ -1,12 +1,13 @@
-import { ext } from '../../../../extensionVariables';
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 import { tryGetWebviewPanel } from '../../../utils/codeless/common';
+import { getWebViewHTML } from '../../../utils/codeless/getWebViewHTML';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { ResolutionService } from '@microsoft/parsers-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { Artifacts, AzureConnectorDetails, Parameter } from '@microsoft/vscode-extension';
-import { promises as fs } from 'fs';
-import { join } from 'path';
-import { Uri } from 'vscode';
 import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';
 
 export interface IDesingerOptions {
@@ -93,24 +94,7 @@ export abstract class OpenDesignerBase {
     this.connectionReferences = this.getConnectionReferences(resolvedConnections);
     this.apiHubServiceDetails = this.getApiHubServiceDetails(azureDetails);
 
-    // Get webview content, converting links to VS Code URIs
-    const indexPath = join(ext.context.extensionPath, 'webview/index.html');
-    const html = await fs.readFile(indexPath, 'utf-8');
-    // 1. Get all link prefixed by href or src
-    const matchLinks = /(href|src)="([^"]*)"/g;
-    // 2. Transform the result of the regex into a vscode's URI format
-    const toUri = (_, prefix: 'href' | 'src', link: string) => {
-      // For
-      if (link === '#') {
-        return `${prefix}="${link}"`;
-      }
-      // For scripts & links
-      const path = join(ext.context.extensionPath, 'webview', link);
-      const uri = Uri.file(path);
-      return `${prefix}="${this.panel.webview.asWebviewUri(uri)}"`;
-    };
-
-    return html.replace(matchLinks, toUri);
+    return await getWebViewHTML('webview', this.panel);
   }
 
   private getConnectionReferences(connectionsData) {

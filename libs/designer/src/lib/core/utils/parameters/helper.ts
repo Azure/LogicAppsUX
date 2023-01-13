@@ -27,6 +27,7 @@ import { getParentArrayKey, isForeachActionNameForLoopsource } from '../loops';
 import { loadDynamicOutputsInNode } from '../outputs';
 import { hasSecureOutputs } from '../setting';
 import { convertWorkflowParameterTypeToSwaggerType } from '../tokens';
+import { validateJSONParameter, validateStaticParameterInfo } from '../validation';
 import { getRecurrenceParameters } from './builtins';
 import { addCastToExpression, addFoldingCastToExpression } from './casting';
 import { getDynamicInputsFromSchema, getDynamicSchema, getDynamicValues } from './dynamicdata';
@@ -160,16 +161,16 @@ export interface RepetitionReference {
 export function getParametersSortedByVisibility(parameters: ParameterInfo[]): ParameterInfo[] {
   // Sorted by ( Required, Important, Advanced, Other )
   return parameters.sort((a, b) => {
-    if (a.required && !b.required) return 1;
-    if (!a.required && b.required) return -1;
+    if (a.required && !b.required) return -1;
+    if (!a.required && b.required) return 1;
 
     const aVisibility = getVisibility(a);
     const bVisibility = getVisibility(b);
     if (aVisibility === bVisibility) return 0;
-    if (aVisibility === Visibility.Important) return 1;
-    if (bVisibility === Visibility.Important) return -1;
-    if (aVisibility === Visibility.Advanced) return 1;
-    if (bVisibility === Visibility.Advanced) return -1;
+    if (aVisibility === Visibility.Important) return -1;
+    if (bVisibility === Visibility.Important) return 1;
+    if (aVisibility === Visibility.Advanced) return -1;
+    if (bVisibility === Visibility.Advanced) return 1;
     return 0;
   });
 }
@@ -329,7 +330,7 @@ export function getParameterEditorProps(parameter: InputParameter, shouldIgnoreD
     editorViewModel = toAuthenticationViewModel(value);
     editorOptions = { ...editorOptions, identity: WorkflowService().getAppIdentity?.() };
   } else if (editor === constants.EDITOR.CONDITION) {
-    editorViewModel = toConditionViewModel(value);
+    editorViewModel = editorOptions?.isOldFormat ? toUntilViewModel(value) : toConditionViewModel(value);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     editor = undefined;
   }
@@ -361,7 +362,45 @@ const destructureSchema = (schema: any): any => {
   return newSchema;
 };
 
-const toConditionViewModel = (input: any): { items: GroupItemProps } => {
+const toUntilViewModel = (input: any): { isOldFormat: boolean; items: RowItemProps } => {
+  let operand1: ValueSegment[], operand2: ValueSegment[], operation: string;
+  try {
+    const valSegments = loadParameterValue({ value: input } as InputParameter);
+    if (valSegments.length === 1 && valSegments[0].type === ValueSegmentType.TOKEN) {
+      operand1 = [
+        {
+          id: guid(),
+          type: ValueSegmentType.LITERAL,
+          value: ((valSegments[0].token?.expression as ExpressionFunction).arguments[0] as ExpressionLiteral).value,
+        },
+      ];
+      operand2 = [
+        {
+          id: guid(),
+          type: ValueSegmentType.LITERAL,
+          value: ((valSegments[0].token?.expression as ExpressionFunction).arguments[1] as ExpressionLiteral).value,
+        },
+      ];
+      operation = (valSegments[0].token?.expression as ExpressionFunction).name;
+    } else {
+      operation = input.substring(input.indexOf('@') + 1, input.indexOf('('));
+      const operations = input.split(',');
+      operand1 = loadParameterValue({ value: operations[0].substring(operations[0].indexOf('(') + 1).trim() } as InputParameter);
+      operand2 = loadParameterValue({ value: operations[1].substring(0, operations[1].indexOf(')')).trim() } as InputParameter);
+    }
+  } catch {
+    operation = 'equals';
+    operand1 = [];
+    operand2 = [];
+  }
+
+  return {
+    isOldFormat: true,
+    items: { type: GroupType.ROW, operator: operation, operand1, operand2 },
+  };
+};
+
+export const toConditionViewModel = (input: any): { items: GroupItemProps } => {
   const getConditionOption = getConditionalSelectedOption(input);
   const items: GroupItemProps = {
     type: GroupType.GROUP,
@@ -1294,12 +1333,14 @@ export async function updateParameterAndDependencies(
 ): Promise<void> {
   const parameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.id === parameterId) ?? {};
   const updatedParameter = { ...parameter, ...properties } as ParameterInfo;
+  updatedParameter.validationErrors = validateParameter(updatedParameter, updatedParameter.value);
+  const propertiesWithValidations = { ...properties, validationErrors: validateParameter(updatedParameter, updatedParameter.value) };
 
   const parametersToUpdate = [
     {
       groupId,
       parameterId,
-      propertiesToUpdate: properties,
+      propertiesToUpdate: propertiesWithValidations,
     },
   ];
   const payload: UpdateParametersPayload = {
@@ -1637,13 +1678,19 @@ function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefi
       }
       return undefined;
     case constants.EDITOR.CONDITION:
-      return JSON.stringify(recurseSerializeCondition(parameter, editorViewModel.items, isDefinitionValue));
+      return editorOptions?.isOldFormat
+        ? serializeUntil(editorViewModel)
+        : JSON.stringify(recurseSerializeCondition(parameter, editorViewModel.items, isDefinitionValue));
     default:
       return undefined;
   }
 }
 
-const recurseSerializeCondition = (parameter: ParameterInfo, editorViewModel: any, isDefinitionValue: boolean): any => {
+export const serializeUntil = (editorViewModel: any): string => {
+  return editorViewModel.value;
+};
+
+export const recurseSerializeCondition = (parameter: ParameterInfo, editorViewModel: any, isDefinitionValue: boolean): any => {
   const returnVal: any = {};
   const commonProperties = { supressCasting: parameter.suppressCasting, info: parameter.info };
   if (editorViewModel.type === GroupType.ROW) {
@@ -1690,7 +1737,6 @@ const recurseSerializeCondition = (parameter: ParameterInfo, editorViewModel: an
       return recurseSerializeCondition(parameter, item, isDefinitionValue);
     });
   }
-
   return returnVal;
 };
 
@@ -2507,4 +2553,18 @@ export function getArrayTypeForOutputs(parsedSwagger: SwaggerParser, operationId
   }
 
   return itemKeyOutputParameter?.type ?? '';
+}
+
+export function isParameterRequired(parameterInfo: ParameterInfo): boolean {
+  return parameterInfo && parameterInfo.required && !(parameterInfo.info.parentProperty && parameterInfo.info.parentProperty.optional);
+}
+
+export function validateParameter(parameter: ParameterInfo, parameterValue: ValueSegment[]): string[] {
+  const parameterType = getInferredParameterType(parameterValue, parameter.type);
+  const parameterValueString = parameterValueToStringWithoutCasting(parameterValue, /* forValidation */ true);
+  const isJsonObject = parameterType === constants.SWAGGER.TYPE.OBJECT;
+
+  return isJsonObject
+    ? validateJSONParameter(parameter, parameterValue)
+    : validateStaticParameterInfo(parameter, parameterValueString, true);
 }

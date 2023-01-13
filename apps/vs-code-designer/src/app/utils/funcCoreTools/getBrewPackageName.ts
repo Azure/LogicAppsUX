@@ -2,9 +2,9 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { funcPackageName } from '../../constants';
-import { executeCommand } from '../utils/funcCoreTools/cpUtils';
-import { tryGetMajorVersion } from '../utils/funcCoreTools/funcVersion';
+import { funcPackageName } from '../../../constants';
+import { executeCommand } from './cpUtils';
+import { tryGetMajorVersion } from './funcVersion';
 import { FuncVersion } from '@microsoft/vscode-extension';
 
 /**
