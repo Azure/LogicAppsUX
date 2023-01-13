@@ -332,11 +332,7 @@ export function getParameterEditorProps(parameter: InputParameter, shouldIgnoreD
     editorViewModel = toAuthenticationViewModel(value);
     editorOptions = { ...editorOptions, identity: WorkflowService().getAppIdentity?.() };
   } else if (editor === constants.EDITOR.CONDITION) {
-    if (editorOptions?.isOldFormat) {
-      editorViewModel = toUntilViewModel(value);
-    } else {
-      editorViewModel = toConditionViewModel(value);
-    }
+    editorViewModel = editorOptions?.isOldFormat ? toUntilViewModel(value) : toConditionViewModel(value);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     editor = undefined;
   }

@@ -16,9 +16,10 @@ import { setConnectionInputValue } from '../utils/Connection.Utils';
 import {
   flattenMapDefinitionValues,
   getDestinationNode,
-  getSourceLoopKey,
+  getSourceKeyOfLastLoop,
   getSourceValueFromLoop,
   getTargetValueWithoutLoop,
+  qualifyLoopRelativeSourceKeys,
   splitKeyIntoChildren,
 } from '../utils/DataMap.Utils';
 import { findFunctionForFunctionName, isFunctionData } from '../utils/Function.Utils';
@@ -274,7 +275,8 @@ const createConnections = (
   const isLoop: boolean = targetKey.includes(mapNodeParams.for);
   const isConditional: boolean = targetKey.startsWith(mapNodeParams.if);
   const sourceEndOfFunctionName = sourceNodeString.indexOf('(');
-  let amendedSourceKey = isLoop ? getSourceValueFromLoop(sourceNodeString, targetKey, sourceSchemaFlattened) : sourceNodeString;
+  const amendedTargetKey = isLoop ? qualifyLoopRelativeSourceKeys(targetKey) : targetKey;
+  let amendedSourceKey = isLoop ? getSourceValueFromLoop(sourceNodeString, amendedTargetKey, sourceSchemaFlattened) : sourceNodeString;
   let mockDirectAccessFnKey: string | undefined = undefined;
   const [daOpenBracketIdx, daClosedBracketIdx] = [amendedSourceKey.indexOf('['), amendedSourceKey.lastIndexOf(']')];
 
@@ -341,17 +343,17 @@ const createConnections = (
   }
   createdNodes[amendedSourceKey] = sourceKey;
 
-  const destinationNode = getDestinationNode(targetKey, functions, targetSchema.schemaTreeRoot);
+  const destinationNode = getDestinationNode(amendedTargetKey, functions, targetSchema.schemaTreeRoot);
 
   let destinationKey: string;
   if (destinationNode && isFunctionData(destinationNode)) {
-    if (createdNodes[targetKey]) {
-      destinationKey = createdNodes[targetKey];
-    } else if (isAGuid(targetKey.substring(targetKey.length - 36))) {
-      destinationKey = targetKey;
+    if (createdNodes[amendedTargetKey]) {
+      destinationKey = createdNodes[amendedTargetKey];
+    } else if (isAGuid(amendedTargetKey.substring(amendedTargetKey.length - 36))) {
+      destinationKey = amendedTargetKey;
     } else {
       destinationKey = createReactFlowFunctionKey(destinationNode);
-      createdNodes[targetKey] = destinationKey;
+      createdNodes[amendedTargetKey] = destinationKey;
     }
   } else {
     destinationKey = `${targetPrefix}${destinationNode?.key}`;
@@ -361,46 +363,51 @@ const createConnections = (
     let srcLoopNodeKey = amendedSourceKey;
     let indexFnRfKey: string | undefined = undefined;
 
-    // TODO: Ensure support for nested loops w/ index variables
-
     // Loop index variable handling (create index() node, match up variables to respective nodes, etc)
-    const idxOfIdxVariable = targetKey.replaceAll(mapNodeParams.for, '').lastIndexOf('$');
-    if (idxOfIdxVariable > -1) {
-      const [forPathFirstPart, forPathSecondPart] = targetKey.split(')/');
-      const forTgtBasePath = forPathFirstPart + ')/' + forPathSecondPart.substring(0, forPathSecondPart.indexOf('/') ?? undefined);
+    let idxOfIdxVariable = amendedTargetKey.length;
+    while (idxOfIdxVariable > -1) {
+      // Back-track index variables in target key (if there's multiple)
+      const placeholderFor = `&${mapNodeParams.for.substring(1)}`;
+      idxOfIdxVariable = amendedTargetKey.replaceAll(mapNodeParams.for, placeholderFor).substring(0, idxOfIdxVariable).lastIndexOf('$');
 
-      // Check if an index() node/id has already been created for this $for()'s index variable
-      if (createdNodes[forTgtBasePath]) {
-        indexFnRfKey = createdNodes[forTgtBasePath];
-      } else {
-        indexFnRfKey = createReactFlowFunctionKey(indexPseudoFunction);
-        createdNodes[forTgtBasePath] = indexFnRfKey;
+      if (idxOfIdxVariable > -1) {
+        const forTgtBasePath = amendedTargetKey.substring(0, amendedTargetKey.indexOf('/', idxOfIdxVariable + 4) ?? undefined);
+        const idxVariable = amendedTargetKey
+          .replaceAll(mapNodeParams.for, placeholderFor)
+          .substring(idxOfIdxVariable, idxOfIdxVariable + 2);
+
+        // Check if an index() node/id has already been created for this $for()'s index variable
+        if (createdNodes[forTgtBasePath]) {
+          indexFnRfKey = createdNodes[forTgtBasePath];
+        } else {
+          indexFnRfKey = createReactFlowFunctionKey(indexPseudoFunction);
+          createdNodes[forTgtBasePath] = indexFnRfKey;
+        }
+
+        amendedSourceKey = amendedSourceKey.replaceAll(idxVariable, indexFnRfKey);
+        mockDirectAccessFnKey = mockDirectAccessFnKey?.replaceAll(idxVariable, indexFnRfKey);
+
+        srcLoopNodeKey = getSourceKeyOfLastLoop(amendedTargetKey.substring(0, idxOfIdxVariable + 4));
       }
 
-      const idxVariable = targetKey.replaceAll(mapNodeParams.for, '').substring(idxOfIdxVariable, idxOfIdxVariable + 2);
-      amendedSourceKey = amendedSourceKey.replaceAll(idxVariable, indexFnRfKey);
-      mockDirectAccessFnKey = mockDirectAccessFnKey?.replaceAll(idxVariable, indexFnRfKey);
-
-      srcLoopNodeKey = getSourceLoopKey(targetKey);
-    }
-
-    const srcLoopNode = findNodeForKey(srcLoopNodeKey, sourceSchema.schemaTreeRoot);
-    if (srcLoopNode) {
-      addParentConnectionForRepeatingElements(
-        destinationNode,
-        srcLoopNode,
-        sourceSchemaFlattened,
-        targetSchemaFlattened,
-        connections,
-        indexFnRfKey
-      );
+      const srcLoopNode = findNodeForKey(srcLoopNodeKey, sourceSchema.schemaTreeRoot);
+      if (srcLoopNode) {
+        addParentConnectionForRepeatingElements(
+          destinationNode,
+          srcLoopNode,
+          sourceSchemaFlattened,
+          targetSchemaFlattened,
+          connections,
+          indexFnRfKey
+        );
+      }
     }
   }
 
   if (destinationNode) {
     if (isConditional) {
       // Create connections for conditional's contents as well
-      const trimmedTargetKey = targetKey.substring(mapNodeParams.if.length + 1, targetKey.length - 1);
+      const trimmedTargetKey = amendedTargetKey.substring(mapNodeParams.if.length + 1, amendedTargetKey.length - 1);
 
       createConnections(
         trimmedTargetKey,

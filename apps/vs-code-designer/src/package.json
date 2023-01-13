@@ -117,6 +117,11 @@
         "command": "logicAppsExtension.openOverview",
         "title": "Overview",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.switchToDotnetProject",
+        "title": "Convert to NuGet-based Logic App project",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -287,6 +292,11 @@
           "command": "logicAppsExtension.openDesigner",
           "when": "resourceFilename==workflow.json",
           "group": "navigation@3"
+        },
+        {
+          "command": "logicAppsExtension.switchToDotnetProject",
+          "when": "explorerResourceIsRoot == true",
+          "group": "zzz_LogicApptools@3"
         }
       ],
       "commandPalette": [
@@ -388,6 +398,11 @@
             "type": "boolean",
             "description": "Show a warning if multiple installs of Azure Functions Core Tools are detected.",
             "default": true
+          },
+          "logicAppsExtension.requestTimeout": {
+            "type": "number",
+            "description": "The timeout (in seconds) to be used when making requests, for example getting the latest templates.",
+            "default": 15
           }
         }
       }
@@ -414,6 +429,7 @@
     "onCommand:logicAppsExtension.deleteLogicApp",
     "onCommand:logicAppsExtension.openOverview",
     "onCommand:logicAppsExtension.refresh",
+    "onCommand:logicAppsExtension.switchToDotnetProject",
     "onView:newAzLogicApps",
     "onDebugInitialConfigurations"
   ],

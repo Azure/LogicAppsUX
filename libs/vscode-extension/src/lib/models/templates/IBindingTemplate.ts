@@ -5,6 +5,18 @@
 export type BindingSettingValue = string | boolean | number | undefined;
 
 /**
+ * Describes a template used for creating a binding
+ */
+export interface IBindingTemplate {
+  type: string;
+  direction: string;
+  displayName: string;
+  isHttpTrigger: boolean;
+  isTimerTrigger: boolean;
+  settings: IBindingSetting[];
+}
+
+/**
  * Describes a setting used when creating a binding (i.e. 'AuthorizationLevel' for an HttpTrigger or 'Schedule' for a TimerTrigger)
  */
 export interface IBindingSetting {

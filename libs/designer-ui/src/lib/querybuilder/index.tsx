@@ -24,9 +24,9 @@ export enum GroupType {
 export interface RowItemProps {
   type: GroupType.ROW;
   checked?: boolean;
-  operand1?: ValueSegment[];
-  operator?: string;
-  operand2?: ValueSegment[];
+  operand1: ValueSegment[];
+  operator: string;
+  operand2: ValueSegment[];
 }
 
 export interface GroupItemProps {
@@ -45,7 +45,7 @@ export interface QueryBuilderProps {
 
 const emptyValue = [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }];
 
-export const QueryBuilderEditor = ({ tokenPickerHandler, groupProps, onChange }: QueryBuilderProps) => {
+export const QueryBuilderEditor = ({ tokenPickerHandler, groupProps, readonly, onChange }: QueryBuilderProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [heights, setHeights] = useState<number[]>([]);
   const [groupedItems, setGroupedItems] = useState<GroupedItems[]>([]);
@@ -75,6 +75,7 @@ export const QueryBuilderEditor = ({ tokenPickerHandler, groupProps, onChange }:
   return (
     <div className="msla-querybuilder-container" ref={containerRef}>
       <Group
+        readonly={readonly}
         isTop={true}
         isBottom={true}
         groupProps={getRootProp()}
