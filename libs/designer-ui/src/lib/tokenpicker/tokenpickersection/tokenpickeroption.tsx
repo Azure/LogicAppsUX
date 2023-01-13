@@ -9,6 +9,7 @@ import { useBoolean } from '@fluentui/react-hooks';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import Fuse from 'fuse.js';
 import type { LexicalEditor } from 'lexical';
+import { CLEAR_EDITOR_COMMAND } from 'lexical';
 import type { editor } from 'monaco-editor';
 import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
@@ -138,11 +139,12 @@ export const TokenPickerOptions = ({
     if (tokenClickedCallback) {
       tokenClickedCallback(segment);
     } else {
+      editor?.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
       editor?.dispatchCommand(INSERT_TOKEN_NODE, {
         brandColor,
         description,
         title,
-        icon: icon ?? 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+        icon: icon,
         value,
         data: segment,
       });

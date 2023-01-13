@@ -16,6 +16,7 @@ import { ExpressionParser } from '@microsoft/parsers-logic-apps';
 import type { Expression } from '@microsoft/parsers-logic-apps';
 import { guid } from '@microsoft/utils-logic-apps';
 import type { LexicalEditor, NodeKey } from 'lexical';
+import { CLEAR_EDITOR_COMMAND } from 'lexical';
 import type { editor } from 'monaco-editor';
 import type { MutableRefObject } from 'react';
 import { useRef } from 'react';
@@ -113,6 +114,7 @@ export const TokenPickerSearch = ({
         nodeKey: updatingExpression as NodeKey,
       });
     } else {
+      editor?.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
       editor?.dispatchCommand(INSERT_TOKEN_NODE, {
         brandColor: token.brandColor,
         description: token.description,

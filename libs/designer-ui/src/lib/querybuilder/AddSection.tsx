@@ -1,5 +1,5 @@
 import type { GroupItemProps, RowItemProps } from '.';
-import { GroupType } from '.';
+import { RowDropdownOptions, GroupType } from '.';
 import type { IContextualMenuProps, IIconProps } from '@fluentui/react';
 import { DefaultButton } from '@fluentui/react';
 import { useIntl } from 'react-intl';
@@ -10,9 +10,10 @@ interface AddSectionProps {
   handleUpdateParent: (newProps: GroupItemProps | RowItemProps, index: number) => void;
   index: number;
   addEmptyRow: boolean;
+  readonly?: boolean;
 }
 
-export const AddSection = ({ handleUpdateParent, index, addEmptyRow }: AddSectionProps) => {
+export const AddSection = ({ readonly, handleUpdateParent, index, addEmptyRow }: AddSectionProps) => {
   const intl = useIntl();
   const addRowText = intl.formatMessage({
     defaultMessage: 'Add Row',
@@ -26,14 +27,17 @@ export const AddSection = ({ handleUpdateParent, index, addEmptyRow }: AddSectio
 
   const handleAddRow = () => {
     if (addEmptyRow) {
-      handleUpdateParent({ type: GroupType.ROW }, index);
+      handleUpdateParent({ type: GroupType.ROW, operand1: [], operand2: [], operator: RowDropdownOptions.EQUALS }, index);
     }
-    handleUpdateParent({ type: GroupType.ROW }, index + (addEmptyRow ? 1 : 0));
+    handleUpdateParent(
+      { type: GroupType.ROW, operand1: [], operand2: [], operator: RowDropdownOptions.EQUALS },
+      index + (addEmptyRow ? 1 : 0)
+    );
   };
 
   const handleAddGroup = () => {
     if (addEmptyRow) {
-      handleUpdateParent({ type: GroupType.ROW }, index);
+      handleUpdateParent({ type: GroupType.ROW, operand1: [], operand2: [], operator: RowDropdownOptions.EQUALS }, index);
     }
     handleUpdateParent({ type: GroupType.GROUP, items: [] }, index + (addEmptyRow ? 1 : 0));
   };
@@ -58,7 +62,7 @@ export const AddSection = ({ handleUpdateParent, index, addEmptyRow }: AddSectio
   return (
     <div className="msla-querybuilder-row-add-container">
       <div className="msla-querybuilder-row-gutter-hook" />
-      <DefaultButton text="New item" iconProps={addIcon} menuProps={menuProps} allowDisabledFocus />
+      <DefaultButton text="New item" iconProps={addIcon} menuProps={menuProps} allowDisabledFocus disabled={readonly} />
     </div>
   );
 };
