@@ -269,6 +269,16 @@
       "value": "必要。包含值的字串。"
     }
   ],
+  "0qcKzG": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+    }
+  ],
   "0uj1Li": [
     {
       "type": 0,
@@ -386,6 +396,12 @@
     {
       "type": 0,
       "value": "指定一或多個必須為 true 的運算式，才可引發觸發程序。"
+    }
+  ],
+  "1YEc9e": [
+    {
+      "type": 0,
+      "value": "Enter a valid condition."
     }
   ],
   "1ZDLZA": [
@@ -818,6 +834,16 @@
     {
       "type": 0,
       "value": "當 TokenPicker 隱藏時新增動態內容的按鈕"
+    }
+  ],
+  "4sYR0J": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is required."
     }
   ],
   "4vcnOA": [
@@ -1308,6 +1334,12 @@
     {
       "type": 0,
       "value": "若兩個參數皆為 True，則傳回 True"
+    }
+  ],
+  "9x8hg8": [
+    {
+      "type": 0,
+      "value": "Edit in basic mode"
     }
   ],
   "A5Ferh": [
@@ -1908,6 +1940,12 @@
       "value": "傳回 URI 的查詢"
     }
   ],
+  "GCjJnP": [
+    {
+      "type": 0,
+      "value": "Enter a valid Json."
+    }
+  ],
   "GDUGlm": [
     {
       "type": 0,
@@ -2044,6 +2082,20 @@
     {
       "type": 0,
       "value": "Enter a valid datetime."
+    }
+  ],
+  "Hs5+Mk": [
+    {
+      "type": 0,
+      "value": "Enter a valid value for "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "HsO1Rd": [
@@ -2529,6 +2581,12 @@
     {
       "type": 0,
       "value": "下一個失敗"
+    }
+  ],
+  "MfAdfx": [
+    {
+      "type": 0,
+      "value": "Edit in advanced mode"
     }
   ],
   "Mgcs5s": [

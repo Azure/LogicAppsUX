@@ -269,6 +269,16 @@
       "value": "필수 항목으로, 값을 포함할 수 있는 문자열입니다."
     }
   ],
+  "0qcKzG": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+    }
+  ],
   "0uj1Li": [
     {
       "type": 0,
@@ -386,6 +396,12 @@
     {
       "type": 0,
       "value": "트리거를 발생시키기 위해 true여야 하는 하나 이상의 식을 지정합니다."
+    }
+  ],
+  "1YEc9e": [
+    {
+      "type": 0,
+      "value": "Enter a valid condition."
     }
   ],
   "1ZDLZA": [
@@ -818,6 +834,16 @@
     {
       "type": 0,
       "value": "TokenPicker가 숨겨진 경우 동적 콘텐츠를 추가하는 버튼"
+    }
+  ],
+  "4sYR0J": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is required."
     }
   ],
   "4vcnOA": [
@@ -1308,6 +1334,12 @@
     {
       "type": 0,
       "value": "두 매개 변수가 모두 true인 경우 true를 반환합니다."
+    }
+  ],
+  "9x8hg8": [
+    {
+      "type": 0,
+      "value": "Edit in basic mode"
     }
   ],
   "A5Ferh": [
@@ -1908,6 +1940,12 @@
       "value": "URI에서 쿼리 반환"
     }
   ],
+  "GCjJnP": [
+    {
+      "type": 0,
+      "value": "Enter a valid Json."
+    }
+  ],
   "GDUGlm": [
     {
       "type": 0,
@@ -2044,6 +2082,20 @@
     {
       "type": 0,
       "value": "Enter a valid datetime."
+    }
+  ],
+  "Hs5+Mk": [
+    {
+      "type": 0,
+      "value": "Enter a valid value for "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "HsO1Rd": [
@@ -2529,6 +2581,12 @@
     {
       "type": 0,
       "value": "다음 항목 실패"
+    }
+  ],
+  "MfAdfx": [
+    {
+      "type": 0,
+      "value": "Edit in advanced mode"
     }
   ],
   "Mgcs5s": [
