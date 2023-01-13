@@ -16,6 +16,7 @@ export const settingsFileName = 'settings.json';
 export const extensionsFileName = 'extensions.json';
 export const vscodeFolderName = '.vscode';
 export const workflowFileName = 'workflow.json';
+export const funcIgnoreFileName = '.funcignore';
 
 // Functions
 export const func = 'func';
@@ -26,6 +27,7 @@ export const hostStartCommand = 'host start';
 export const hostStartTaskName = `${func}: ${hostStartCommand}`;
 export const funcPackageName = 'azure-functions-core-tools';
 export const defaultFuncPort = '7071';
+export const isolatedSdkName = 'Microsoft.Azure.Functions.Worker.Sdk';
 
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
@@ -76,6 +78,7 @@ export enum extensionCommand {
   getDebugSymbolDll = 'logicAppsExtension.getDebugSymbolDll',
   deleteLogicApp = 'logicAppsExtension.deleteLogicApp',
   refresh = 'logicAppsExtension.refresh',
+  switchToDotnetProject = 'logicAppsExtension.switchToDotnetProject',
   azureFunctionsOpenFile = 'azureFunctions.openFile',
   azureFunctionsUninstallFuncCoreTools = 'azureFunctions.uninstallFuncCoreTools',
   azureFunctionsAppSettingsEncrypt = 'azureFunctions.appSettings.encrypt',

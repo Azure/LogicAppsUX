@@ -18,14 +18,14 @@ export async function getDotnetBuildFile(context: IActionContext, projectPath: s
   if (projFileName) {
     const buildFileUri: Uri = Uri.file(path.join(projectPath, projFileName));
     const xmlString: string = fs.readFileSync(buildFileUri.fsPath, 'utf8').toString();
-    const xmlObject: object | undefined = await getXMLString(xmlString, { explicitArray: false });
+    const xmlObject: Record<string, any> | undefined = await getXMLString(xmlString, { explicitArray: false });
     return JSON.stringify(xmlObject);
   } else {
     throw new Error(localize('dotnetProjectFileNotFound', 'Dotnet project file could not be found.'));
   }
 }
 
-export function addFolderToBuildPath(xmlBuildFile: object, folderName: string): object {
+export function addFolderToBuildPath(xmlBuildFile: Record<string, any>, folderName: string): Record<string, any> {
   const itemGroup: Record<string, any> = {
     None: {
       $: {
@@ -38,7 +38,7 @@ export function addFolderToBuildPath(xmlBuildFile: object, folderName: string): 
   return xmlBuildFile;
 }
 
-export function addNugetPackagesToBuildFile(xmlBuildFile: object): object {
+export function addNugetPackagesToBuildFile(xmlBuildFile: Record<string, any>): Record<string, any> {
   const packageName = 'Microsoft.Azure.Workflows.WebJobs.Extension';
   const packageVersion = '1.2.*';
   const xmlBuildFileString = JSON.stringify(xmlBuildFile);
@@ -56,12 +56,12 @@ export function addNugetPackagesToBuildFile(xmlBuildFile: object): object {
   return xmlBuildFile;
 }
 
-export function suppressJavaScriptBuildWarnings(xmlBuildFile: object): object {
+export function suppressJavaScriptBuildWarnings(xmlBuildFile: Record<string, any>): Record<string, any> {
   xmlBuildFile['Project']['PropertyGroup']['MSBuildWarningsAsMessages'] = 'MSB3246;$(MSBuildWarningsAsMessages)';
   return xmlBuildFile;
 }
 
-export function updateFunctionsSDKVersion(xmlBuildFile: object, dotnetVersion: string): object {
+export function updateFunctionsSDKVersion(xmlBuildFile: Record<string, any>, dotnetVersion: string): Record<string, any> {
   for (const item of xmlBuildFile['Project']['ItemGroup']) {
     if ('PackageReference' in item && item['PackageReference']['$']['Include'] == 'Microsoft.NET.Sdk.Functions') {
       const packageVersion = dotnetVersion === DotnetVersion.net6 ? '4.1.3' : '3.0.13';
@@ -73,7 +73,7 @@ export function updateFunctionsSDKVersion(xmlBuildFile: object, dotnetVersion: s
   return xmlBuildFile;
 }
 
-export async function writeBuildFileToDisk(context: IActionContext, xmlObject: object, projectPath: string): Promise<void> {
+export async function writeBuildFileToDisk(context: IActionContext, xmlObject: Record<string, any>, projectPath: string): Promise<void> {
   const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, projectPath);
   const projFileName: string | undefined = projectFiles.length === 1 ? projectFiles[0].name : undefined;
   if (projFileName) {
@@ -86,8 +86,8 @@ export async function writeBuildFileToDisk(context: IActionContext, xmlObject: o
   }
 }
 
-export async function getXMLString(csproj: string, options: any): Promise<object | undefined> {
-  return await new Promise((resolve: (ret: object | undefined) => void): void => {
+export async function getXMLString(csproj: string, options: any): Promise<Record<string, any> | undefined> {
+  return await new Promise((resolve: (ret: Record<string, any> | undefined) => void): void => {
     // tslint:disable-next-line:no-any
     xml2js.parseString(csproj, options, (err: any, result: any): void => {
       if (result && !err) {
@@ -96,4 +96,23 @@ export async function getXMLString(csproj: string, options: any): Promise<object
       resolve(undefined);
     });
   });
+}
+
+/**
+ * Add file to xml build path.
+ * @param {Record<string, any>} xmlBuildFile - XML build file.
+ * @param {string} fileName - File name
+ * @returns {Record<string, any>} XML build file.
+ */
+export function addFileToBuildPath(xmlBuildFile: Record<string, any>, fileName: string): Record<string, any> {
+  const itemGroup: Record<string, any> = {
+    None: {
+      $: {
+        Update: `${fileName}`,
+      },
+      CopyToOutputDirectory: 'PreserveNewest',
+    },
+  };
+  xmlBuildFile['Project']['ItemGroup'].push(itemGroup);
+  return xmlBuildFile;
 }
