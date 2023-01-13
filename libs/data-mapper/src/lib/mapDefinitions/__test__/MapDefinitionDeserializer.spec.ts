@@ -750,7 +750,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
             '$for(SourceMonth, $b)': {
               '$for(SourceDay, $c)': {
                 Date: {
-                  DayName: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay[$c]/SourceDate',
+                  DayName: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay[$b]/SourceDate',
                 },
               },
             },
@@ -758,15 +758,9 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         },
       };
 
-      const result = convertFromMapDefinition(simpleMap, extendedLayeredLoopSource, extendedLayeredLoopTarget, []);
+      const result = convertFromMapDefinition(simpleMap, extendedLayeredLoopSource, extendedLayeredLoopTarget, functionMock);
 
-      expect(Object.entries(result).length).toEqual(9);
-
-      /* REMOVE
-      Object.values(result).forEach((res) => {
-        console.log(res.self.reactFlowKey);
-        console.dir(res.inputs, { depth: 3 });
-      });*/
+      expect(Object.entries(result).length).toEqual(10);
 
       const indexRfKey1 = (result['target-/ns0:Root/ManyToOne/Date'].inputs[0][0] as ConnectionUnit).reactFlowKey;
       expect(indexRfKey1).toContain(indexPseudoFunctionKey);
@@ -784,7 +778,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
       const directAccessRfKey = (result['target-/ns0:Root/ManyToOne/Date/DayName'].inputs[0][0] as ConnectionUnit).reactFlowKey;
       expect(directAccessRfKey).toContain(directAccessPseudoFunctionKey);
-      expect((result[directAccessRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(indexRfKey1);
+      expect((result[directAccessRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(indexRfKey2);
       expect((result[directAccessRfKey].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
         'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay'
       );
