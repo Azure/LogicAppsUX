@@ -44,6 +44,7 @@ type RowProps = {
   handleDeleteChild?: (indexToDelete: number | number[]) => void;
   forceSingleCondition?: boolean;
   handleUpdateParent: (newProps: GroupItems, index: number) => void;
+  clearEditorOnTokenInsertion?: boolean;
 };
 
 export const Row = ({
@@ -61,6 +62,7 @@ export const Row = ({
   // handleMove,
   forceSingleCondition,
   readonly,
+  clearEditorOnTokenInsertion,
   handleDeleteChild,
   handleUpdateParent,
 }: RowProps) => {
@@ -254,9 +256,10 @@ export const Row = ({
           initialValue={operand1}
           placeholder={rowValueInputPlaceholder}
           singleLine={true}
+          tokenPickerHandler={{ ...tokenPickerHandler, tokenPickerButtonProps: { customButton: true } }}
+          clearEditorOnTokenInsertion={clearEditorOnTokenInsertion}
           onChange={handleKeyChange}
           editorBlur={handleKeySave}
-          tokenPickerHandler={{ ...tokenPickerHandler, tokenPickerButtonProps: { customButton: true } }}
         />
         <RowDropdown disabled={readonly || key.length === 0} condition={operator} onChange={handleSelectedOption} key={operator} />
         <StringEditor
@@ -267,6 +270,7 @@ export const Row = ({
           singleLine={true}
           tokenPickerHandler={{ ...tokenPickerHandler, tokenPickerButtonProps: { customButton: true } }}
           editorBlur={handleValueSave}
+          clearEditorOnTokenInsertion={clearEditorOnTokenInsertion}
         />
       </div>
       {forceSingleCondition ? null : (
