@@ -1,3 +1,4 @@
+import { commonCodeEditorProps } from '../testMapPanel/TestMapPanel';
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { Code20Regular, Dismiss20Regular } from '@fluentui/react-icons';
@@ -69,12 +70,9 @@ export const CodeView = ({ dataMapDefinition, isCodeViewOpen, setIsCodeViewOpen,
         <MonacoEditor
           language={EditorLanguage.yaml}
           value={dataMapDefinition === '' ? noMapDefLoc : dataMapDefinition}
-          lineNumbers="on"
-          scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
           className={styles.editorStyle}
+          {...commonCodeEditorProps}
           height={`${Math.max(200, canvasAreaHeight - 75)}px`}
-          wordWrap="on"
-          wrappingIndent="indent"
           readOnly
         />
       </div>
