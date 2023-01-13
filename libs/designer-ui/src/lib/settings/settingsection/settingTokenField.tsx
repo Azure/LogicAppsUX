@@ -189,12 +189,14 @@ const TokenField = ({
     case 'condition':
       return editorViewModel.isOldFormat ? (
         <UntilEditor
+          readonly={readOnly}
           items={JSON.parse(JSON.stringify(editorViewModel.items))}
           tokenPickerHandler={tokenPickerHandler}
           onChange={onValueChange}
         />
       ) : (
         <QueryBuilderEditor
+          readonly={readOnly}
           groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
           onChange={onValueChange}
           tokenPickerHandler={tokenPickerHandler}

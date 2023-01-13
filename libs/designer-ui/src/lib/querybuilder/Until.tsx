@@ -91,8 +91,10 @@ export const UntilEditor = ({ tokenPickerHandler, items, readonly, onChange }: U
           operator={items.operator}
           tokenPickerHandler={tokenPickerHandler}
           handleUpdateParent={handleUpdateParent}
-          isUntil={true}
+          forceSingleCondition={true}
           groupedItems={[]}
+          readonly={readonly}
+          clearEditorOnTokenInsertion={true}
         />
       )}
       <ActionButton
