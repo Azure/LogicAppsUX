@@ -3,12 +3,15 @@ import type { TokenGroup } from '../../../core/utils/tokens';
 import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import type { OutputToken, PanelTab, TokenPickerHandler, ValueSegment } from '@microsoft/designer-ui';
 import {
+  RowDropdownOptions,
+  GroupType,
   ArrayEditor,
   ArrayType, // DictionaryEditor,
   // TokenType,
   // GroupType,
   // GroupDropdownOptions,
   // QueryBuilderEditor, // DictionaryType, // EditorLanguage,
+  UntilEditor,
   ValueSegmentType, // CodeEditor, // HTMLEditor,
   TokenPicker, // TokenType,
   // DictionaryEditor,
@@ -351,6 +354,12 @@ export const ScratchTab = () => {
           tokenPickerHandler={tokenPickerHandler}
         /> */}
         {/* <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail" tokenPickerHandler={tokenPickerHandler} /> */}
+        {
+          <UntilEditor
+            tokenPickerHandler={tokenPickerHandler}
+            items={{ type: GroupType.ROW, operand1: [], operand2: [], operator: RowDropdownOptions.EQUALS }}
+          />
+        }
       </>
     );
   };
