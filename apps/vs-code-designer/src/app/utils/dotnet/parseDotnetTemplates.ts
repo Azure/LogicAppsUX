@@ -4,31 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { ValueType, ProjectLanguage, TemplateCategory } from '@microsoft/vscode-extension';
 import type { IBindingSetting, ITemplates, IWorkflowTemplate } from '@microsoft/vscode-extension';
-
-/**
- * Describes a dotnet template before it has been parsed
- */
-interface IRawTemplate {
-  DefaultName: string;
-  Name: string;
-  Identity: string;
-  Parameters: Record<string, any>[];
-}
-
-/**
- * Describes a dotnet template setting before it has been parsed
- */
-interface IRawSetting {
-  Documentation: string | undefined;
-  Name: string;
-  DefaultValue: string | undefined;
-  DataType: string | undefined;
-  Choices:
-    | {
-        [key: string]: string;
-      }
-    | undefined;
-}
+import type { IRawSetting, IRawTemplate } from '@microsoft/vscode-extension';
 
 function parseDotnetSetting(rawSetting: IRawSetting): IBindingSetting {
   return {

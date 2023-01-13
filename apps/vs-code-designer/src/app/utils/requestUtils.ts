@@ -74,7 +74,6 @@ export async function sendRequestWithExtTimeout(
   context: IActionContext,
   options: AzExtRequestPrepareOptions
 ): Promise<HttpOperationResponse> {
-  // Shouldn't be null because the setting has a default value
   const timeout: number = nonNullValue(getWorkspaceSetting<number>(timeoutKey), timeoutKey) * 1000;
 
   try {
@@ -90,6 +89,12 @@ export async function sendRequestWithExtTimeout(
   }
 }
 
+/**
+ * Downloads file
+ * @param {IActionContext} context - Command context.
+ * @param {string | RequestPrepareOptions} requestOptionsOrUrl - Url string or options structure for call header.
+ * @param {string} filePath - File path to download.
+ */
 export async function downloadFile(
   context: IActionContext,
   requestOptionsOrUrl: string | RequestPrepareOptions,

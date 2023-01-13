@@ -6,8 +6,8 @@ import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { NotImplementedError } from '../utils/errors';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IBindingTemplate, ITemplates, IWorkflowTemplate } from '@microsoft/vscode-extension';
-import { FuncVersion } from '@microsoft/vscode-extension';
+import type { ITemplates } from '@microsoft/vscode-extension';
+import { FuncVersion, TemplateType } from '@microsoft/vscode-extension';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { Disposable } from 'vscode';
@@ -15,12 +15,6 @@ import { Disposable } from 'vscode';
 const v3BackupTemplatesVersion = '3.4.1';
 const v2BackupTemplatesVersion = '2.47.1';
 const v1BackupTemplatesVersion = '1.11.0';
-
-export enum TemplateType {
-  Script = 'Script',
-  ScriptBundle = 'ScriptBundle',
-  Dotnet = '.NET',
-}
 
 export abstract class TemplateProviderBase implements Disposable {
   protected static templateVersionCacheKey = 'templateVersion';
@@ -95,7 +89,7 @@ export abstract class TemplateProviderBase implements Disposable {
   /**
    * Unless this is overidden, all templates will be included
    */
-  public includeTemplate(_template: IWorkflowTemplate | IBindingTemplate): boolean {
+  public includeTemplate(): boolean {
     return true;
   }
 

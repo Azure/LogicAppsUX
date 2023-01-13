@@ -13,11 +13,11 @@ import {
 import { parseDotnetTemplates } from '../../utils/dotnet/parseDotnetTemplates';
 import { parseJson } from '../../utils/parseJson';
 import { downloadFile } from '../../utils/requestUtils';
-import { TemplateProviderBase, TemplateType } from '../TemplateProviderBase';
+import { TemplateProviderBase } from '../TemplateProviderBase';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzExtFsExtra, nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IRelease, ITemplates, IWorkerRuntime } from '@microsoft/vscode-extension';
-import { ProjectLanguage } from '@microsoft/vscode-extension';
+import { ProjectLanguage, TemplateType } from '@microsoft/vscode-extension';
 import * as path from 'path';
 
 export class DotnetTemplateProvider extends TemplateProviderBase {
