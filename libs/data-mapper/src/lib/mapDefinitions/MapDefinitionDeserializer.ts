@@ -4,16 +4,23 @@ import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import { addParentConnectionForRepeatingElements } from '../core/state/DataMapSlice';
 import type { FunctionData, MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import {
-  SchemaType,
   directAccessPseudoFunction,
   directAccessPseudoFunctionKey,
+  ifPseudoFunctionKey,
   indexPseudoFunction,
   indexPseudoFunctionKey,
-  ifPseudoFunctionKey,
+  SchemaType,
 } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import { setConnectionInputValue } from '../utils/Connection.Utils';
-import { flattenMapDefinitionValues, getDestinationNode, getSourceValueFromLoop, splitKeyIntoChildren } from '../utils/DataMap.Utils';
+import {
+  flattenMapDefinitionValues,
+  getDestinationNode,
+  getSourceLoopKey,
+  getSourceValueFromLoop,
+  getTargetValueWithoutLoop,
+  splitKeyIntoChildren,
+} from '../utils/DataMap.Utils';
 import { findFunctionForFunctionName, isFunctionData } from '../utils/Function.Utils';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
 import { createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
@@ -205,15 +212,17 @@ const callChildObjects = (
           );
         } else {
           // The only time this case should be valid is when making a object level conditional
+          const childTargetKeyWithoutLoop = getTargetValueWithoutLoop(childTargetKey);
           const flattenedChildValues = flattenMapDefinitionValues(childValue);
-          const flattenedChildValueParents = flattenedChildValues.map((flattenedValue) =>
-            flattenedValue.substring(0, flattenedValue.lastIndexOf('/'))
-          );
+          const flattenedChildValueParents = flattenedChildValues.map((flattenedValue) => {
+            const fqChild = getSourceValueFromLoop(flattenedValue, childTargetKey, sourceSchemaFlattened);
+            return fqChild.substring(0, fqChild.lastIndexOf('/'));
+          });
           const lowestCommonParent = flattenedChildValueParents.reduce((a, b) => (a.lastIndexOf('/') <= b.lastIndexOf('/') ? a : b));
           const ifConnectionEntry = Object.entries(connections).find(
             ([_connectionKey, connectionValue]) =>
               connectionValue.self.node.key === ifPseudoFunctionKey &&
-              connectionValue.outputs.some((output) => output.reactFlowKey === `${targetPrefix}${childTargetKey}`)
+              connectionValue.outputs.some((output) => output.reactFlowKey === `${targetPrefix}${childTargetKeyWithoutLoop}`)
           );
 
           if (ifConnectionEntry) {
@@ -265,7 +274,7 @@ const createConnections = (
   const isLoop: boolean = targetKey.includes(mapNodeParams.for);
   const isConditional: boolean = targetKey.startsWith(mapNodeParams.if);
   const sourceEndOfFunctionName = sourceNodeString.indexOf('(');
-  let amendedSourceKey = isLoop ? getSourceValueFromLoop(sourceNodeString, targetKey) : sourceNodeString;
+  let amendedSourceKey = isLoop ? getSourceValueFromLoop(sourceNodeString, targetKey, sourceSchemaFlattened) : sourceNodeString;
   let mockDirectAccessFnKey: string | undefined = undefined;
   const [daOpenBracketIdx, daClosedBracketIdx] = [amendedSourceKey.indexOf('['), amendedSourceKey.lastIndexOf(']')];
 
@@ -349,6 +358,7 @@ const createConnections = (
   }
 
   if (isLoop && sourceNode && destinationNode) {
+    let srcLoopNodeKey = amendedSourceKey;
     let indexFnRfKey: string | undefined = undefined;
 
     // TODO: Ensure support for nested loops w/ index variables
@@ -370,11 +380,10 @@ const createConnections = (
       const idxVariable = targetKey.replaceAll(mapNodeParams.for, '').substring(idxOfIdxVariable, idxOfIdxVariable + 2);
       amendedSourceKey = amendedSourceKey.replaceAll(idxVariable, indexFnRfKey);
       mockDirectAccessFnKey = mockDirectAccessFnKey?.replaceAll(idxVariable, indexFnRfKey);
+
+      srcLoopNodeKey = getSourceLoopKey(targetKey);
     }
 
-    const srcLoopNodeKey = amendedSourceKey.startsWith(directAccessPseudoFunctionKey)
-      ? amendedSourceKey.split(', ')[2].split(')')[0]
-      : amendedSourceKey;
     const srcLoopNode = findNodeForKey(srcLoopNodeKey, sourceSchema.schemaTreeRoot);
     if (srcLoopNode) {
       addParentConnectionForRepeatingElements(
