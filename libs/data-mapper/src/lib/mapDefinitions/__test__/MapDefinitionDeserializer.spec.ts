@@ -750,7 +750,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
             '$for(SourceMonth, $b)': {
               '$for(SourceDay, $c)': {
                 Date: {
-                  DayName: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay[$b]/SourceDate',
+                  DayName: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay[$c]/SourceDate',
                 },
               },
             },
@@ -760,11 +760,19 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
       const result = convertFromMapDefinition(simpleMap, extendedLayeredLoopSource, extendedLayeredLoopTarget, []);
 
-      expect(Object.entries(result).length).toEqual(10); // Update amount
+      expect(Object.entries(result).length).toEqual(9);
+
+      /* REMOVE
+      Object.values(result).forEach((res) => {
+        console.log(res.self.reactFlowKey);
+        console.dir(res.inputs, { depth: 3 });
+      });*/
 
       const indexRfKey1 = (result['target-/ns0:Root/ManyToOne/Date'].inputs[0][0] as ConnectionUnit).reactFlowKey;
       expect(indexRfKey1).toContain(indexPseudoFunctionKey);
-      expect((result[indexRfKey1].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/ManyToOne/SourceYear');
+      expect((result[indexRfKey1].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay'
+      );
 
       const indexRfKey2 = (result['target-/ns0:Root/ManyToOne/Date'].inputs[0][1] as ConnectionUnit).reactFlowKey;
       expect(indexRfKey2).toContain(indexPseudoFunctionKey);
@@ -772,13 +780,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
       const indexRfKey3 = (result['target-/ns0:Root/ManyToOne/Date'].inputs[0][2] as ConnectionUnit).reactFlowKey;
       expect(indexRfKey3).toContain(indexPseudoFunctionKey);
-      expect((result[indexRfKey3].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
-        'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay'
-      );
+      expect((result[indexRfKey3].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/ManyToOne/SourceYear');
 
       const directAccessRfKey = (result['target-/ns0:Root/ManyToOne/Date/DayName'].inputs[0][0] as ConnectionUnit).reactFlowKey;
       expect(directAccessRfKey).toContain(directAccessPseudoFunctionKey);
-      expect((result[directAccessRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(indexRfKey2);
+      expect((result[directAccessRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(indexRfKey1);
       expect((result[directAccessRfKey].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
         'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay'
       );
