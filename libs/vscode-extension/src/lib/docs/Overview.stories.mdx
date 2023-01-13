@@ -17,9 +17,9 @@ Azure Logic Apps extension allows to quickly create, debug, manage, and deploy L
   - [vs-code-designer-react](#vs-code-designer-react)
   - [vs-code-react](#vs-code-react)
   - [vscode-extension](#vscode-extension)
-- [How to implement a new feature](#feature)
+- [Key Insights](#insights)
   - [package.json](#package.json)
-  - [main.ts](#main.ts)
+  - [registerCommands.ts](#registerCommands.ts)
 
 <h2 id="prerequisites">Prerequisites</h2>
 
@@ -81,6 +81,25 @@ Host a shared library with helpers and models that are used across all the proje
 
 > You can use the library by importing `@microsoft/vscode-extension`
 
-<h2 id="feature">How to implement a new feature</h2>
-<h3 id="package.json">package.json</h3>
-<h3 id="main.ts">main.ts</h3>
+<h2 id="insights">Key Insights</h2>
+
+<h3 id="package.json">
+  package.json <span>(apps/vs-code-designer/src/package.json)</span>{' '}
+</h3>
+
+The package.json file works as the project [manifest](https://code.visualstudio.com/api/references/extension-manifest). Therefore, there are properties you need to check out:
+
+1.  [Activation Events](https://code.visualstudio.com/api/references/activation-events): States when to activate the extension, make sure to set the command or any other event if needed.
+2.  [Contribution Points](https://code.visualstudio.com/api/references/contribution-points): These help us to implement the functionalities within Visual Studio Code.
+    - [Commands](https://code.visualstudio.com/api/references/contribution-points#contributes.commands): List of commands/functionalities in the extension. Consisting of a title, category, and enabled state. Enablement is expressed with [when clauses](https://code.visualstudio.com/api/references/when-clause-contexts).
+    - [Menus](https://code.visualstudio.com/api/references/contribution-points#contributes.menus): Contains the command that should be invoked when selected and the condition under which the item should show.
+    - [Configuration](https://code.visualstudio.com/api/references/contribution-points#contributes.configuration): Configuration options that are stated as user or workspace settings.
+    - [Views](https://code.visualstudio.com/api/references/contribution-points#contributes.views): States the extension view container in the Azure activity bar.
+
+> You can learn more about [creating new commands.](https://code.visualstudio.com/api/extension-guides/command#creating-new-commands)
+
+<h3 id="registerCommands.ts">
+  registerCommands.ts <span>(apps/vs-code-designer/src/app/commands/registerCommands.ts)</span>{' '}
+</h3>
+
+This is the main function that help us bind a command ID to a handler function in our extension.

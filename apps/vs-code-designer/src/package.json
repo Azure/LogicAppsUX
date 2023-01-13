@@ -432,6 +432,8 @@
     "onCommand:logicAppsExtension.refresh",
     "onCommand:logicAppsExtension.switchToDotnetProject",
     "onView:newAzLogicApps",
+    "workspaceContains:host.json",
+    "workspaceContains:*/host.json",
     "onDebugInitialConfigurations"
   ],
   "galleryBanner": {
