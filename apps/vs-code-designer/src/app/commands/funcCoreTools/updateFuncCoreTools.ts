@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { PackageManager, funcPackageName } from '../../../constants';
+import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import { getBrewPackageName, tryGetInstalledBrewPackageName } from '../../utils/funcCoreTools/getBrewPackageName';
 import { getNpmDistTag } from '../../utils/funcCoreTools/getNpmDistTag';
-import { ext } from '@microsoft/vscode-azext-azureappservice/out/src/extensionVariables';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { FuncVersion, INpmDistTag } from '@microsoft/vscode-extension';

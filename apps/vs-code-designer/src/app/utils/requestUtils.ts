@@ -6,14 +6,16 @@ import { timeoutKey } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { getWorkspaceSetting } from './vsCodeConfig/settings';
-import { RestError } from '@azure/ms-rest-js';
+import { RestError, WebResource } from '@azure/ms-rest-js';
 import type { HttpOperationResponse, RequestPrepareOptions, ServiceClient } from '@azure/ms-rest-js';
-import type { HTTP_METHODS } from '@microsoft/utils-logic-apps';
+import { HTTP_METHODS, isString } from '@microsoft/utils-logic-apps';
 import { createGenericClient, sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtRequestPrepareOptions } from '@microsoft/vscode-azext-azureutils';
-import { nonNullValue, parseError } from '@microsoft/vscode-azext-utils';
+import { nonNullProp, nonNullValue, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import type { IIdentityWizardContext } from '@microsoft/vscode-extension';
+import * as fse from 'fs-extra';
+import * as path from 'path';
 
 /**
  * Checks if it is a timeout error.
@@ -72,7 +74,6 @@ export async function sendRequestWithExtTimeout(
   context: IActionContext,
   options: AzExtRequestPrepareOptions
 ): Promise<HttpOperationResponse> {
-  // Shouldn't be null because the setting has a default value
   const timeout: number = nonNullValue(getWorkspaceSetting<number>(timeoutKey), timeoutKey) * 1000;
 
   try {
@@ -86,4 +87,28 @@ export async function sendRequestWithExtTimeout(
       throw error;
     }
   }
+}
+
+/**
+ * Downloads file
+ * @param {IActionContext} context - Command context.
+ * @param {string | RequestPrepareOptions} requestOptionsOrUrl - Url string or options structure for call header.
+ * @param {string} filePath - File path to download.
+ */
+export async function downloadFile(
+  context: IActionContext,
+  requestOptionsOrUrl: string | RequestPrepareOptions,
+  filePath: string
+): Promise<void> {
+  await fse.ensureDir(path.dirname(filePath));
+  const request: WebResource = new WebResource();
+  request.prepare(isString(requestOptionsOrUrl) ? { method: HTTP_METHODS.GET, url: requestOptionsOrUrl } : requestOptionsOrUrl);
+  request.streamResponseBody = true;
+  const client: ServiceClient = await createGenericClient(context, undefined);
+  const response: HttpOperationResponse = await client.sendRequest(request);
+  const stream: NodeJS.ReadableStream = nonNullProp(response, 'readableStreamBody');
+
+  await new Promise((resolve, reject): void => {
+    stream.pipe(fse.createWriteStream(filePath).on('finish', resolve).on('error', reject));
+  });
 }

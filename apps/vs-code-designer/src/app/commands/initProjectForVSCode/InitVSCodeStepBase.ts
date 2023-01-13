@@ -15,6 +15,7 @@ import {
   preDeployTaskSetting,
   launchFileName,
   extensionsFileName,
+  extensionCommand,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -34,7 +35,6 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
   ISettingToAdd,
   IProjectWizardContext,
-  FuncVersion,
   ProjectLanguage,
   ITask,
   ITaskInputs,
@@ -42,7 +42,7 @@ import type {
   ILaunchJson,
   IExtensionsJson,
 } from '@microsoft/vscode-extension';
-import { WorkflowProjectType } from '@microsoft/vscode-extension';
+import { WorkflowProjectType, FuncVersion } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { TaskDefinition, DebugConfiguration, WorkspaceFolder } from 'vscode';
@@ -56,7 +56,16 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
   protected abstract getTasks(): TaskDefinition[];
   protected getTaskInputs?(): ITaskInputs[];
   protected getWorkspaceSettings?(): ISettingToAdd[];
-  protected getDebugConfiguration?(version: FuncVersion): DebugConfiguration;
+
+  protected getDebugConfiguration(version: FuncVersion): DebugConfiguration {
+    return {
+      name: localize('attachToNetFunc', 'Attach to .NET Functions'),
+      type: version === FuncVersion.v1 ? 'clr' : 'coreclr',
+      request: 'attach',
+      processId: `\${command:${extensionCommand.pickProcess}}`,
+    };
+  }
+
   protected getRecommendedExtensions?(language: ProjectLanguage): string[];
 
   public async execute(context: IProjectWizardContext): Promise<void> {

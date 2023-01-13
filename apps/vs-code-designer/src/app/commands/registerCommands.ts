@@ -19,6 +19,7 @@ import { stopLogicApp } from './stopLogicApp';
 import { getDebugSymbolDll } from './workflows/getDebugSymbolDll';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
 import { openOverview } from './workflows/openOverview';
+import { switchToDotnetProject } from './workflows/switchToDotnetProject';
 import { viewContent } from './workflows/viewContent';
 import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
 import { registerSiteCommand } from '@microsoft/vscode-azext-azureappservice';
@@ -57,4 +58,5 @@ export function registerCommands(): void {
   );
   registerCommand(extensionCommand.openOverview, openOverview);
   registerCommand(extensionCommand.refresh, async (context: IActionContext, node?: AzExtTreeItem) => await ext.tree.refresh(context, node));
+  registerCommand(extensionCommand.switchToDotnetProject, switchToDotnetProject);
 }

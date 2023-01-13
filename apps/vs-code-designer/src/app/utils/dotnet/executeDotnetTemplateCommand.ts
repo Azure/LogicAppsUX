@@ -2,13 +2,70 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { executeCommand } from '../funcCoreTools/cpUtils';
+import { executeCommand, wrapArgInQuotes } from '../funcCoreTools/cpUtils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { FuncVersion } from '@microsoft/vscode-extension';
+import * as path from 'path';
 import type { SemVer } from 'semver';
 import { coerce as semVerCoerce } from 'semver';
 
 let cachedFramework: string | undefined;
+
+/**
+ * Executes dotnet command in command line.
+ * @param {IActionContext} context - Command context.
+ * @param {FuncVersion} version - Functions core tools version.
+ * @param {string} projTemplateKey - Template key.
+ * @param {string | undefined} workingDirectory - Workspace path.
+ * @param {string} operation - Operation argument for command.
+ * @param {string[]} args - Rest of arguments for command.
+ * @returns {Promise<string>} Command result.
+ */
+export async function executeDotnetTemplateCommand(
+  context: IActionContext,
+  version: FuncVersion,
+  projTemplateKey: string,
+  workingDirectory: string | undefined,
+  operation: 'list' | 'create',
+  ...args: string[]
+): Promise<string> {
+  const framework: string = await getFramework(context, workingDirectory);
+  const jsonDllPath: string = ext.context.asAbsolutePath(
+    path.join('assets', 'dotnetJsonCli', framework, 'Microsoft.TemplateEngine.JsonCli.dll')
+  );
+
+  return await executeCommand(
+    undefined,
+    workingDirectory,
+    'dotnet',
+    wrapArgInQuotes(jsonDllPath),
+    '--templateDir',
+    wrapArgInQuotes(getDotnetTemplateDir(version, projTemplateKey)),
+    '--operation',
+    operation,
+    ...args
+  );
+}
+
+export function getDotnetItemTemplatePath(version: FuncVersion, projTemplateKey: string): string {
+  return path.join(getDotnetTemplateDir(version, projTemplateKey), 'item.nupkg');
+}
+
+export function getDotnetProjectTemplatePath(version: FuncVersion, projTemplateKey: string): string {
+  return path.join(getDotnetTemplateDir(version, projTemplateKey), 'project.nupkg');
+}
+
+/**
+ * Gets dotnet template directory.
+ * @param {FuncVersion} version - Functions core tools version.
+ * @param {string} projTemplateKey - Template key.
+ * @returns {string} Template directory.
+ */
+export function getDotnetTemplateDir(version: FuncVersion, projTemplateKey: string): string {
+  return path.join(ext.context.globalStorageUri.path, version, projTemplateKey);
+}
 
 /**
  * Validates .NET is installed.
