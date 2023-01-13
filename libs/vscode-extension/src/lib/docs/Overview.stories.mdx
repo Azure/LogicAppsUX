@@ -1,4 +1,4 @@
-import MyImage from '../../assets/architecture.png';
+import Architecture from '../../assets/architecture.png';
 import { Meta } from '@storybook/addon-docs';
 
 <Meta title="Docs/VS Code Extension" />
@@ -10,7 +10,7 @@ Azure Logic Apps extension allows to quickly create, debug, manage, and deploy L
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
-- [Build (Dev/Debug)](#build)
+- [Build/Compile](#build)
 - [Run (Dev/Debug)](#run)
 - [App architecture](#architecture)
   - [vs-code-designer](#vs-code-designer)
@@ -31,7 +31,7 @@ Azure Logic Apps extension allows to quickly create, debug, manage, and deploy L
 - Install the following VS Code Extensions: [Azure Tools](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-node-azure-pack), [Azure Account](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account)
   and [Azure Functions](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions)
 
-<h2 id="build">Build (Dev/Debug)</h2>
+<h2 id="build">Build/Compile</h2>
 
 To build, run the following commands from the root of the repo folder:
 
@@ -43,15 +43,19 @@ npm run build:vscode-designer
 
 To run the VS Code extension (in debug mode):
 
-1.  Open the repo folder in VS Code
-2.  Click the 'Run and Debug' icon in the Activity bar on the left side of VS Code. You can also use the shortcut: `Ctrl`+`Shift`+`D`
-3.  Select 'Run Designer Extension In Dev Mode' in the dropdown at the top, then click the 'Start debugging' icon
+1.  Open the repo folder in VS Code.
+2.  Click the 'Run and Debug' icon in the Activity bar on the left side of VS Code. You can also use the shortcut: `Ctrl`+`Shift`+`D`.
+3.  Select 'Run Designer Extension In Dev Mode' in the dropdown at the top, then click the 'Start debugging' icon.
 
-> As soon as a debugging session starts, a new VS Code workspace prompts with the running app, now you are able to add [breakpoints](https://code.visualstudio.com/docs/editor/debugging#_breakpoints) and debug it with the [debug actions](https://code.visualstudio.com/docs/editor/debugging#_debug-actions)
+> As soon as a debugging session starts, a new VS Code workspace prompts with the running app, now you are able to add [breakpoints](https://code.visualstudio.com/docs/editor/debugging#_breakpoints) and debug it with the [debug actions.](https://code.visualstudio.com/docs/editor/debugging#_debug-actions)
+
+> If you want to debug the app with the common browser's debugging console (e.g. using `console.log()` or check the network calls), you can use the shortcut: `Ctrl`+`Shift`+`I` to reveal it.
+
+> You can learn more about [debuggin VS Code extensions.](https://code.visualstudio.com/docs/editor/debugging)
 
 <h2 id="architecture">App architecture</h2>
 
-<img src={MyImage} alt="App architecture" />
+<img src={Architecture} alt="App architecture" />
 
 <h3 id="vs-code-designer">vs-code-designer</h3>
 
