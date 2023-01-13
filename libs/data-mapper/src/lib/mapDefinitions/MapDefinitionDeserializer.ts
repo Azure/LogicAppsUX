@@ -3,10 +3,24 @@ import { mapNodeParams, reservedMapDefinitionKeysArray } from '../constants/MapD
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import { addParentConnectionForRepeatingElements } from '../core/state/DataMapSlice';
 import type { FunctionData, MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
-import { directAccessPseudoFunction, ifPseudoFunctionKey, SchemaType } from '../models';
+import {
+  directAccessPseudoFunction,
+  directAccessPseudoFunctionKey,
+  ifPseudoFunctionKey,
+  indexPseudoFunction,
+  indexPseudoFunctionKey,
+  SchemaType,
+} from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import { setConnectionInputValue } from '../utils/Connection.Utils';
-import { flattenMapDefinitionValues, getDestinationNode, getSourceValueFromLoop, splitKeyIntoChildren } from '../utils/DataMap.Utils';
+import {
+  flattenMapDefinitionValues,
+  getDestinationNode,
+  getSourceLoopKey,
+  getSourceValueFromLoop,
+  getTargetValueWithoutLoop,
+  splitKeyIntoChildren,
+} from '../utils/DataMap.Utils';
 import { findFunctionForFunctionName, isFunctionData } from '../utils/Function.Utils';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
 import { createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
@@ -198,15 +212,17 @@ const callChildObjects = (
           );
         } else {
           // The only time this case should be valid is when making a object level conditional
+          const childTargetKeyWithoutLoop = getTargetValueWithoutLoop(childTargetKey);
           const flattenedChildValues = flattenMapDefinitionValues(childValue);
-          const flattenedChildValueParents = flattenedChildValues.map((flattenedValue) =>
-            flattenedValue.substring(0, flattenedValue.lastIndexOf('/'))
-          );
+          const flattenedChildValueParents = flattenedChildValues.map((flattenedValue) => {
+            const fqChild = getSourceValueFromLoop(flattenedValue, childTargetKey, sourceSchemaFlattened);
+            return fqChild.substring(0, fqChild.lastIndexOf('/'));
+          });
           const lowestCommonParent = flattenedChildValueParents.reduce((a, b) => (a.lastIndexOf('/') <= b.lastIndexOf('/') ? a : b));
           const ifConnectionEntry = Object.entries(connections).find(
             ([_connectionKey, connectionValue]) =>
               connectionValue.self.node.key === ifPseudoFunctionKey &&
-              connectionValue.outputs.some((output) => output.reactFlowKey === `${targetPrefix}${childTargetKey}`)
+              connectionValue.outputs.some((output) => output.reactFlowKey === `${targetPrefix}${childTargetKeyWithoutLoop}`)
           );
 
           if (ifConnectionEntry) {
@@ -257,26 +273,56 @@ const createConnections = (
 ) => {
   const isLoop: boolean = targetKey.includes(mapNodeParams.for);
   const isConditional: boolean = targetKey.startsWith(mapNodeParams.if);
-  const sourceEndOfFunction = sourceNodeString.indexOf('(');
-  const amendedSourceKey = isLoop ? getSourceValueFromLoop(sourceNodeString, targetKey) : sourceNodeString;
+  const sourceEndOfFunctionName = sourceNodeString.indexOf('(');
+  let amendedSourceKey = isLoop ? getSourceValueFromLoop(sourceNodeString, targetKey, sourceSchemaFlattened) : sourceNodeString;
   let mockDirectAccessFnKey: string | undefined = undefined;
-  const [daOpenBracketIdx, daClosedBracketIdx] = [amendedSourceKey.indexOf('['), amendedSourceKey.indexOf(']')];
+  const [daOpenBracketIdx, daClosedBracketIdx] = [amendedSourceKey.indexOf('['), amendedSourceKey.lastIndexOf(']')];
+
+  // Parse the outermost Direct Access (if present) into the typical Function format
+  if (daOpenBracketIdx > -1 && daClosedBracketIdx > -1) {
+    // Need to isolate the singular key the DA is apart of as it could be wrapped in a function, etc.
+    let keyWithDaStartIdx = 0;
+    let keyWithDaEndIdx = amendedSourceKey.length;
+    // For start, back track until idx-0, whitespace, or '('
+    for (let i = daOpenBracketIdx; i >= 0; i--) {
+      if (amendedSourceKey[i] === ' ' || amendedSourceKey[i] === '(') {
+        keyWithDaStartIdx = i + 1; // +1 as substr includes start idx but excludes end idx
+        break;
+      }
+    }
+    // For end, idx-length-1, ',', or ')'
+    for (let i = daClosedBracketIdx; i < amendedSourceKey.length; i++) {
+      if (amendedSourceKey[i] === ',' || amendedSourceKey[i] === ')') {
+        keyWithDaEndIdx = i;
+        break;
+      }
+    }
+
+    mockDirectAccessFnKey = `${directAccessPseudoFunctionKey}(`;
+    mockDirectAccessFnKey += `${amendedSourceKey.substring(daOpenBracketIdx + 1, daClosedBracketIdx)}, `; // Index value
+    mockDirectAccessFnKey += `${amendedSourceKey.substring(keyWithDaStartIdx, daOpenBracketIdx)}, `; // Scope (source loop element)
+    mockDirectAccessFnKey += `${amendedSourceKey.substring(keyWithDaStartIdx, daOpenBracketIdx)}${amendedSourceKey.substring(
+      daClosedBracketIdx + 1,
+      keyWithDaEndIdx
+    )}`; // Output value
+    mockDirectAccessFnKey += ')';
+
+    // Replace the previous DA format within amendedSourceKey with the new one
+    amendedSourceKey =
+      amendedSourceKey.substring(0, keyWithDaStartIdx) + mockDirectAccessFnKey + amendedSourceKey.substring(keyWithDaEndIdx);
+  }
 
   // Identify source schema node, or Function(Data) from source key
   let sourceNode: SchemaNodeExtended | FunctionData | undefined = undefined;
-  if (sourceEndOfFunction > -1) {
-    // We found a Function in source key -> let's find its data
-    sourceNode = findFunctionForFunctionName(amendedSourceKey.substring(0, sourceEndOfFunction), functions);
-  } else if (daOpenBracketIdx > -1 && daClosedBracketIdx > -1) {
-    // One of the source key's chunks contained a Direct Access, so let's format it
-    // into the Function syntax the deserializer can parse
+  if (amendedSourceKey.startsWith(indexPseudoFunctionKey)) {
+    // Handle index variable usage
+    sourceNode = indexPseudoFunction;
+    createdNodes[amendedSourceKey] = amendedSourceKey; // Bypass below block since we already have rfKey here
+  } else if (amendedSourceKey.startsWith(directAccessPseudoFunctionKey)) {
     sourceNode = directAccessPseudoFunction;
-
-    mockDirectAccessFnKey = `directAccess(`;
-    mockDirectAccessFnKey += `${amendedSourceKey.substring(daOpenBracketIdx + 1, daClosedBracketIdx)}, `; // Index value
-    mockDirectAccessFnKey += `${amendedSourceKey.substring(0, daOpenBracketIdx)}, `; // Scope (source loop element)
-    mockDirectAccessFnKey += `${amendedSourceKey.substring(0, daOpenBracketIdx)}${amendedSourceKey.substring(daClosedBracketIdx + 1)}`; // Output value
-    mockDirectAccessFnKey += ')';
+  } else if (sourceEndOfFunctionName > -1) {
+    // We found a Function in source key -> let's find its data
+    sourceNode = findFunctionForFunctionName(amendedSourceKey.substring(0, sourceEndOfFunctionName), functions);
   } else {
     sourceNode = findNodeForKey(amendedSourceKey, sourceSchema.schemaTreeRoot);
   }
@@ -312,7 +358,43 @@ const createConnections = (
   }
 
   if (isLoop && sourceNode && destinationNode) {
-    addParentConnectionForRepeatingElements(destinationNode, sourceNode, sourceSchemaFlattened, targetSchemaFlattened, connections);
+    let srcLoopNodeKey = amendedSourceKey;
+    let indexFnRfKey: string | undefined = undefined;
+
+    // TODO: Ensure support for nested loops w/ index variables
+
+    // Loop index variable handling (create index() node, match up variables to respective nodes, etc)
+    const idxOfIdxVariable = targetKey.replaceAll(mapNodeParams.for, '').lastIndexOf('$');
+    if (idxOfIdxVariable > -1) {
+      const [forPathFirstPart, forPathSecondPart] = targetKey.split(')/');
+      const forTgtBasePath = forPathFirstPart + ')/' + forPathSecondPart.substring(0, forPathSecondPart.indexOf('/') ?? undefined);
+
+      // Check if an index() node/id has already been created for this $for()'s index variable
+      if (createdNodes[forTgtBasePath]) {
+        indexFnRfKey = createdNodes[forTgtBasePath];
+      } else {
+        indexFnRfKey = createReactFlowFunctionKey(indexPseudoFunction);
+        createdNodes[forTgtBasePath] = indexFnRfKey;
+      }
+
+      const idxVariable = targetKey.replaceAll(mapNodeParams.for, '').substring(idxOfIdxVariable, idxOfIdxVariable + 2);
+      amendedSourceKey = amendedSourceKey.replaceAll(idxVariable, indexFnRfKey);
+      mockDirectAccessFnKey = mockDirectAccessFnKey?.replaceAll(idxVariable, indexFnRfKey);
+
+      srcLoopNodeKey = getSourceLoopKey(targetKey);
+    }
+
+    const srcLoopNode = findNodeForKey(srcLoopNodeKey, sourceSchema.schemaTreeRoot);
+    if (srcLoopNode) {
+      addParentConnectionForRepeatingElements(
+        destinationNode,
+        srcLoopNode,
+        sourceSchemaFlattened,
+        targetSchemaFlattened,
+        connections,
+        indexFnRfKey
+      );
+    }
   }
 
   if (destinationNode) {
@@ -347,8 +429,8 @@ const createConnections = (
   }
 
   // Extract and create connections for function inputs
-  if ((sourceEndOfFunction > -1 && !isSourceFunctionAlreadyCreated) || mockDirectAccessFnKey) {
-    const fnInputKeys = splitKeyIntoChildren(mockDirectAccessFnKey ?? amendedSourceKey);
+  if ((sourceEndOfFunctionName > -1 && !isSourceFunctionAlreadyCreated) || mockDirectAccessFnKey) {
+    const fnInputKeys = splitKeyIntoChildren(amendedSourceKey);
 
     fnInputKeys.forEach((fnInputKey) => {
       parseDefinitionToConnection(

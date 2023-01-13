@@ -17,6 +17,7 @@ export interface ParameterInfo {
   label: string;
   parameterKey: string;
   parameterName: string;
+  pattern?: string;
   placeholder?: string;
   preservedValue?: any;
   required: boolean;

@@ -11,6 +11,7 @@ export enum GroupDropdownOptions {
 
 interface GroupDropdownProps {
   condition?: GroupDropdownOptions;
+  readonly?: boolean;
   onChange: ChangeHandler;
 }
 
@@ -19,7 +20,7 @@ const items: DropdownItem[] = [
   { key: GroupDropdownOptions.OR, displayName: 'OR', value: GroupDropdownOptions.OR },
 ];
 
-export const GroupDropdown = ({ condition, onChange }: GroupDropdownProps) => {
+export const GroupDropdown = ({ condition, readonly, onChange }: GroupDropdownProps) => {
   return (
     <div className="msla-querybuilder-group-dropdown-container">
       <DropdownEditor
@@ -30,6 +31,7 @@ export const GroupDropdown = ({ condition, onChange }: GroupDropdownProps) => {
         }
         options={items}
         onChange={onChange}
+        readonly={readonly}
       />
     </div>
   );
