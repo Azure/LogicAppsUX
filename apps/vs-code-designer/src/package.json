@@ -398,6 +398,11 @@
             "type": "boolean",
             "description": "Show a warning if multiple installs of Azure Functions Core Tools are detected.",
             "default": true
+          },
+          "logicAppsExtension.requestTimeout": {
+            "type": "number",
+            "description": "The timeout (in seconds) to be used when making requests, for example getting the latest templates.",
+            "default": 15
           }
         }
       }

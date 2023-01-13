@@ -49,6 +49,14 @@ export async function executeDotnetTemplateCommand(
   );
 }
 
+export function getDotnetItemTemplatePath(version: FuncVersion, projTemplateKey: string): string {
+  return path.join(getDotnetTemplateDir(version, projTemplateKey), 'item.nupkg');
+}
+
+export function getDotnetProjectTemplatePath(version: FuncVersion, projTemplateKey: string): string {
+  return path.join(getDotnetTemplateDir(version, projTemplateKey), 'project.nupkg');
+}
+
 /**
  * Gets dotnet template directory.
  * @param {FuncVersion} version - Functions core tools version.

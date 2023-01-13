@@ -5,6 +5,7 @@
 import { connectionsFileName, funcIgnoreFileName, funcVersionSetting, hostFileName, localSettingsFileName } from '../../../constants';
 import { localize } from '../../../localize';
 import { initProjectForVSCode } from '../../commands/initProjectForVSCode/initProjectForVSCode';
+import { DotnetTemplateProvider } from '../../templates/dotnet/DotnetTemplateProvider';
 import {
   getDotnetBuildFile,
   addNugetPackagesToBuildFile,
@@ -23,7 +24,7 @@ import { getContainingWorkspace } from '../../utils/workspace';
 import { DotnetInitVSCodeStep } from '../initProjectForVSCode/DotnetInitVSCodeStep';
 import { DialogResponses, nonNullOrEmptyValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext, FuncVersion } from '@microsoft/vscode-extension';
+import type { IProjectWizardContext, FuncVersion, ITemplates } from '@microsoft/vscode-extension';
 import { ProjectLanguage } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -51,6 +52,27 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
       tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, target.fsPath)),
       funcVersionSetting
     ) as FuncVersion;
+  }
+
+  const dotnetTemplateProvider = new DotnetTemplateProvider(version, target.fsPath);
+
+  // We need to get the templates first to ensure that the we can create the dotnet project
+  // 1. try to get cached templates
+  let templates: ITemplates | undefined = await dotnetTemplateProvider.getCachedTemplates(context);
+
+  // 2. try to download the latest templates
+  if (!templates) {
+    const templateVersion: string = await dotnetTemplateProvider.getLatestTemplateVersion(context);
+    templates = await dotnetTemplateProvider.getLatestTemplates(context, templateVersion);
+  }
+
+  // 3. try to get the backup templates
+  if (!templates) {
+    templates = await dotnetTemplateProvider.getBackupTemplates(context);
+  }
+
+  if (!templates) {
+    throw new Error(localize('dotnetTemplateError', 'Dotnet templates could not be found.'));
   }
 
   const warning: string = localize(

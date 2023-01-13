@@ -8,6 +8,7 @@ import { runWithDurationTelemetry } from '../telemetry';
 import { findFiles } from '../workspace';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzExtFsExtra } from '@microsoft/vscode-azext-utils';
+import type { IWorkerRuntime } from '@microsoft/vscode-extension';
 import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension';
 import * as path from 'path';
 
@@ -163,4 +164,9 @@ export async function tryGetFuncVersion(projFile: ProjectFile): Promise<string |
   } catch {
     return undefined;
   }
+}
+
+export function getTemplateKeyFromFeedEntry(runtimeInfo: IWorkerRuntime): string {
+  const isIsolated = runtimeInfo.sdk.name.toLowerCase() === isolatedSdkName.toLowerCase();
+  return getProjectTemplateKey(runtimeInfo.targetFramework, isIsolated);
 }
