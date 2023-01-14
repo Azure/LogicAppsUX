@@ -16,7 +16,7 @@ import { TableEditor } from '../../table';
 import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
-import React, { useState } from 'react';
+import React from 'react';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -42,17 +42,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   validationErrors?: string[];
 }
 
-interface TokenFieldProps extends SettingTokenFieldProps {
-  updateErrorMessage?: (message?: string) => void;
-}
-
 export const SettingTokenField: React.FC<SettingTokenFieldProps> = (props) => {
-  const [errorMessage, setErrorMessage] = useState(props.validationErrors?.[0]);
-
-  const updateErrorMessage = (updatedMessage?: string) => {
-    setErrorMessage(updatedMessage ?? '');
-  };
-
   return (
     <>
       <div className="msla-input-parameter-label">
@@ -60,8 +50,7 @@ export const SettingTokenField: React.FC<SettingTokenFieldProps> = (props) => {
           {props.label}
         </Label>
       </div>
-      <TokenField {...props} updateErrorMessage={updateErrorMessage} />
-      {errorMessage ? <div className="msla-input-parameter-error"> {errorMessage} </div> : null}
+      <TokenField {...props} />
     </>
   );
 };
@@ -81,7 +70,7 @@ const TokenField = ({
   onValueChange,
   onComboboxMenuOpen,
   tokenPickerHandler,
-}: TokenFieldProps) => {
+}: SettingTokenFieldProps) => {
   switch (editor?.toLowerCase()) {
     case 'copyable':
       return <CopyInputControl placeholder={placeholder} text={value[0].value} />;

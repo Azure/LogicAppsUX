@@ -3,6 +3,7 @@ import type { AppDispatch } from '../../core';
 import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
 import {
@@ -139,15 +140,30 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const settingValidationErrors = useSettingValidationErrors(id);
   const settingValidationErrorText = intl.formatMessage({
-    defaultMessage: 'Invalid node settings',
+    defaultMessage: 'Invalid settings',
     description: 'Text to explain that there are invalid settings for this node',
+  });
+
+  const parameterValidationErrors = useParameterValidationErrors(id);
+  const parameterValidationErrorText = intl.formatMessage({
+    defaultMessage: 'Invalid parameters',
+    description: 'Text to explain that there are invalid parameters for this node',
   });
 
   const { errorMessage, errorLevel } = useMemo(() => {
     if (opQuery?.isError) return { errorMessage: opManifestErrorText, errorLevel: MessageBarType.error };
-    if (settingValidationErrors?.length) return { errorMessage: settingValidationErrorText, errorLevel: MessageBarType.severeWarning };
+    if (settingValidationErrors?.length > 0) return { errorMessage: settingValidationErrorText, errorLevel: MessageBarType.severeWarning };
+    if (parameterValidationErrors?.length > 0)
+      return { errorMessage: parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
     return { errorMessage: undefined, errorLevel: undefined };
-  }, [opQuery?.isError, opManifestErrorText, settingValidationErrorText, settingValidationErrors?.length]);
+  }, [
+    opQuery?.isError,
+    opManifestErrorText,
+    settingValidationErrors?.length,
+    settingValidationErrorText,
+    parameterValidationErrors?.length,
+    parameterValidationErrorText,
+  ]);
 
   return (
     <>

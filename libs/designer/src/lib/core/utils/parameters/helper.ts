@@ -12,6 +12,8 @@ import type {
   UpdateParametersPayload,
 } from '../../state/operation/operationMetadataSlice';
 import {
+  removeParameterValidationError,
+  updateParameterValidation,
   DynamicLoadStatus,
   addDynamicInputs,
   clearDynamicInputs,
@@ -1334,7 +1336,7 @@ export async function updateParameterAndDependencies(
   const parameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.id === parameterId) ?? {};
   const updatedParameter = { ...parameter, ...properties } as ParameterInfo;
   updatedParameter.validationErrors = validateParameter(updatedParameter, updatedParameter.value);
-  const propertiesWithValidations = { ...properties, validationErrors: validateParameter(updatedParameter, updatedParameter.value) };
+  const propertiesWithValidations = { ...properties, validationErrors: updatedParameter.validationErrors };
 
   const parametersToUpdate = [
     {
@@ -1371,6 +1373,10 @@ export async function updateParameterAndDependencies(
   }
 
   dispatch(updateNodeParameters(payload));
+
+  if (operationInfo.type.toLowerCase() === 'until') {
+    validateUntilAction(dispatch, nodeId, groupId, parameterId, nodeInputs.parameterGroups[groupId].parameters, properties);
+  }
 
   if (dependenciesToUpdate) {
     loadDynamicData(
@@ -2567,4 +2573,61 @@ export function validateParameter(parameter: ParameterInfo, parameterValue: Valu
   return isJsonObject
     ? validateJSONParameter(parameter, parameterValue)
     : validateStaticParameterInfo(parameter, parameterValueString, true);
+}
+
+// Riley - This is a very specific case where the either of the limit properties can be filled, but they cannot both be empty
+// Integrating it with the rest of the validation logic would be unnecessarily complex imo
+export function validateUntilAction(
+  dispatch: Dispatch,
+  nodeId: string,
+  groupId: string,
+  parameterId: string,
+  parameters: ParameterInfo[],
+  changedParameter: Partial<ParameterInfo>
+) {
+  console.log('### Changed', changedParameter);
+
+  const errorMessage = 'Either limit count or timout must be specified.';
+
+  const countParameter = parameters.find((parameter) => parameter.parameterName === 'limit.count');
+  const timeoutParameter = parameters.find((parameter) => parameter.parameterName === 'limit.timeout');
+
+  const countValue = countParameter?.id === parameterId ? changedParameter?.value ?? [] : countParameter?.value ?? [];
+  const timeoutValue = timeoutParameter?.id === parameterId ? changedParameter?.value ?? [] : timeoutParameter?.value ?? [];
+
+  if ((countValue.length ?? 0) === 0 && (timeoutValue.length ?? 0) === 0) {
+    dispatch(
+      updateParameterValidation({
+        nodeId,
+        groupId,
+        parameterId: countParameter?.id ?? '',
+        validationErrors: [errorMessage],
+      })
+    );
+    dispatch(
+      updateParameterValidation({
+        nodeId,
+        groupId,
+        parameterId: timeoutParameter?.id ?? '',
+        validationErrors: [errorMessage],
+      })
+    );
+  } else {
+    dispatch(
+      removeParameterValidationError({
+        nodeId,
+        groupId,
+        parameterId: countParameter?.id ?? '',
+        validationError: errorMessage,
+      })
+    );
+    dispatch(
+      removeParameterValidationError({
+        nodeId,
+        groupId,
+        parameterId: timeoutParameter?.id ?? '',
+        validationError: errorMessage,
+      })
+    );
+  }
 }

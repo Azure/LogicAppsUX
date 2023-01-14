@@ -31,9 +31,9 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({ errorLevel, errorMessa
 
   return (
     <TooltipHost content={errorMessage} overflowMode={TooltipOverflowMode.Parent}>
-      <div className={css('panel-card-error', MessageBarType[errorLevel])}>
-        <Icon iconName={ICON_MAP[errorLevel]} className="panel-card-error-icon" styles={iconStyles} />
-        <p className="panel-card-error-text">{errorMessage}</p>
+      <div className={css('msla-panel-card-error', MessageBarType[errorLevel])}>
+        <Icon iconName={ICON_MAP[errorLevel]} className="msla-panel-card-error-icon" styles={iconStyles} />
+        <div className="msla-panel-card-error-text">{errorMessage}</div>
       </div>
     </TooltipHost>
   );

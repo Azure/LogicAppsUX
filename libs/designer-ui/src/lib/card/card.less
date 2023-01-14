@@ -744,7 +744,7 @@ body.dark {
   }
 
   .msla-panel-card-container {
-    .panel-card-error {
+    .msla-panel-card-error {
       &.error,
       &.blocked {
         color: #f1707b;
@@ -797,7 +797,6 @@ body.dark {
   box-sizing: border-box;
   box-shadow: 0 0.3px 0.9px rgba(0, 0, 0, 0.1), 0 1.6px 3.6px rgba(0, 0, 0, 0.13);
   font-size: 12px;
-  display: inline-block;
   border-radius: 2px;
   width: @panel-mode-card-width;
   -webkit-user-select: none;
@@ -934,14 +933,14 @@ body.dark {
       }
     }
 
-    .panel-card-error {
+    .msla-panel-card-error {
       margin: -4px 12px 6px;
       text-align: left;
       display: flex;
       align-items: center;
       gap: 4px;
 
-      .panel-card-error-text {
+      .msla-panel-card-error-text {
         margin: 0px;
         white-space: nowrap;
         overflow: hidden;
