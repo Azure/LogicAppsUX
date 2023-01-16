@@ -1023,12 +1023,6 @@
       "value": "(UTC+09:30) Adelaide"
     }
   ],
-  "6grB5C": [
-    {
-      "type": 0,
-      "value": "Invalid node settings"
-    }
-  ],
   "6jiO7t": [
     {
       "type": 0,
@@ -2431,6 +2425,12 @@
       "value": "Vrátí true, pokud slovník obsahuje daný klíč, pokud pole obsahuje danou hodnotu nebo pokud řetězec obsahuje daný podřetězec."
     }
   ],
+  "Jil/Wa": [
+    {
+      "type": 0,
+      "value": "Invalid settings"
+    }
+  ],
   "JjTfC7": [
     {
       "type": 0,
@@ -3611,6 +3611,12 @@
     {
       "type": 0,
       "value": "Vlastní"
+    }
+  ],
+  "Tmr/9e": [
+    {
+      "type": 0,
+      "value": "Invalid parameters"
     }
   ],
   "ToPmjE": [
