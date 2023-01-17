@@ -188,16 +188,47 @@ export const AdvancedFunctionCard = (props: NodeProps<AdvancedFunctionCardProps>
     </Button>
   );
 
-  const inputsForBody = functionData.inputs.map((input, index) => {
-    const handleTop = index * 30 + 45;
-    return (
-      <div key={input.name} style={{ padding: '0px 10px', height: '30px' }}>
-        <Handle id={input.name} type="target" position={Position.Left} style={{ top: `${handleTop}px` }} />
-        {input.name}
-        {input.isOptional ? '' : '*'}
-      </div>
-    );
-  });
+  const inputsForBody = [];
+  if (connections[reactFlowId]) {
+    if (functionData.maxNumberOfInputs > -1) {
+      inputsForBody.push(
+        functionData.inputs.map((input, index) => {
+          const handleTop = index * 30 + 45;
+          return (
+            <div key={input.name} style={{ padding: '0px 10px', height: '30px' }}>
+              <Handle id={input.name} type="target" position={Position.Left} style={{ top: `${handleTop}px` }} />
+              {input.name}
+              {input.isOptional ? '' : '*'}
+            </div>
+          );
+        })
+      );
+    } else {
+      inputsForBody.push(
+        connections[reactFlowId].inputs[0].map((input, index) => {
+          const handleTop = index * 30 + 45;
+          const id = `${functionData.inputs[0].name}${index}`;
+          const name = `${functionData.inputs[0].name} ${index}`;
+          return (
+            <div key={id} style={{ padding: '0px 10px', height: '30px' }}>
+              <Handle
+                id={id}
+                type="target"
+                position={Position.Left}
+                style={{
+                  top: `${handleTop}px`,
+                  backgroundColor:
+                    typeof input === 'string' ? (input ? tokens.colorPaletteGreenBackground3 : tokens.colorPaletteRedBackground3) : '',
+                }}
+              />
+              {name}
+              {functionData.inputs[0].isOptional ? '' : '*'}
+            </div>
+          );
+        })
+      );
+    }
+  }
 
   const bodyForExpanded = (
     <div style={{ display: 'flex' }}>
