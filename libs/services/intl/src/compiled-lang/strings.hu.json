@@ -993,12 +993,6 @@
       "value": "(UTC+09:30) Adelaide"
     }
   ],
-  "6grB5C": [
-    {
-      "type": 0,
-      "value": "Invalid node settings"
-    }
-  ],
   "6jiO7t": [
     {
       "type": 0,
@@ -2365,6 +2359,12 @@
       "value": "Igaz értéket ad vissza, ha egy szótár kulcsot tartalmaz, ha egy tömb értéket tartalmaz, vagy ha egy sztring sztringrészletet tartalmaz."
     }
   ],
+  "Jil/Wa": [
+    {
+      "type": 0,
+      "value": "Invalid settings"
+    }
+  ],
   "JjTfC7": [
     {
       "type": 0,
@@ -3497,6 +3497,12 @@
     {
       "type": 0,
       "value": "Egyéni"
+    }
+  ],
+  "Tmr/9e": [
+    {
+      "type": 0,
+      "value": "Invalid parameters"
     }
   ],
   "ToPmjE": [

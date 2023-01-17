@@ -986,12 +986,6 @@
       "value": "(UTC+09:30)阿德莱德"
     }
   ],
-  "6grB5C": [
-    {
-      "type": 0,
-      "value": "Invalid node settings"
-    }
-  ],
   "6jiO7t": [
     {
       "type": 0,
@@ -2328,6 +2322,12 @@
       "value": "如果字典包含密钥、数组包含值或字符串包含子字符串，则返回 true"
     }
   ],
+  "Jil/Wa": [
+    {
+      "type": 0,
+      "value": "Invalid settings"
+    }
+  ],
   "JjTfC7": [
     {
       "type": 0,
@@ -3430,6 +3430,12 @@
     {
       "type": 0,
       "value": "自定义"
+    }
+  ],
+  "Tmr/9e": [
+    {
+      "type": 0,
+      "value": "Invalid parameters"
     }
   ],
   "ToPmjE": [

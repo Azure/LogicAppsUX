@@ -257,6 +257,32 @@ export const operationMetadataSlice = createSlice({
         if (value === false) state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].value = [];
       }
     },
+    updateParameterValidation: (
+      state,
+      action: PayloadAction<{ nodeId: string; groupId: string; parameterId: string; validationErrors: string[] | undefined }>
+    ) => {
+      const { nodeId, groupId, parameterId, validationErrors } = action.payload;
+      const index = state.inputParameters[nodeId].parameterGroups[groupId].parameters.findIndex(
+        (parameter) => parameter.id === parameterId
+      );
+      if (index > -1) {
+        state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].validationErrors = validationErrors;
+      }
+    },
+    removeParameterValidationError: (
+      state,
+      action: PayloadAction<{ nodeId: string; groupId: string; parameterId: string; validationError: string }>
+    ) => {
+      const { nodeId, groupId, parameterId, validationError } = action.payload;
+      const index = state.inputParameters[nodeId].parameterGroups[groupId].parameters.findIndex(
+        (parameter) => parameter.id === parameterId
+      );
+      if (index > -1) {
+        state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].validationErrors = state.inputParameters[
+          nodeId
+        ].parameterGroups[groupId].parameters[index].validationErrors?.filter((error) => error !== validationError);
+      }
+    },
     updateOutputs: (state, action: PayloadAction<{ id: string; nodeOutputs: NodeOutputs }>) => {
       const { id, nodeOutputs } = action.payload;
       if (state.outputParameters[id]) state.outputParameters[id] = nodeOutputs;
@@ -288,6 +314,8 @@ export const {
   clearDynamicOutputs,
   updateNodeSettings,
   updateParameterConditionalVisibility,
+  updateParameterValidation,
+  removeParameterValidationError,
   updateOutputs,
   deinitializeOperationInfo,
   deinitializeNodes,

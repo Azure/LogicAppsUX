@@ -5,11 +5,12 @@ import { useIntl } from 'react-intl';
 interface NodeCollapseToggleProps {
   disabled?: boolean;
   collapsed?: boolean;
+  onSmallCard?: boolean;
   handleCollapse?: (event: { currentTarget: any }) => void;
 }
 
 const NodeCollapseToggle = (props: NodeCollapseToggleProps) => {
-  const { disabled = false, collapsed = false, handleCollapse } = props;
+  const { disabled = false, collapsed = false, onSmallCard = false, handleCollapse } = props;
 
   const intl = useIntl();
   const EXPAND_TEXT = intl.formatMessage({
@@ -30,7 +31,7 @@ const NodeCollapseToggle = (props: NodeCollapseToggleProps) => {
       <button
         aria-label={toggleText}
         disabled={disabled}
-        className={css('msla-collapse-toggle', disabled && 'disabled')}
+        className={css('msla-collapse-toggle', disabled && 'disabled', onSmallCard && 'small')}
         onClick={handleCollapse}
       >
         <Icon iconName={iconName} styles={{ root: { fontSize: FontSizes.small } }} />
