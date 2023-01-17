@@ -6,6 +6,7 @@ import type { ConnectionDictionary } from '../../../models/Connection';
 import { collectFunctionValue } from '../../../utils/DataMap.Utils';
 import { isFunctionData } from '../../../utils/Function.Utils';
 import { addSourceReactFlowPrefix } from '../../../utils/ReactFlow.Util';
+import { commonCodeEditorProps } from '../../testMapPanel/TestMapPanel';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { MonacoEditor, EditorLanguage } from '@microsoft/designer-ui';
 import { useMemo } from 'react';
@@ -73,11 +74,8 @@ export const CodeTab = ({ currentNode, contentHeight }: CodeTabProps) => {
       language={EditorLanguage.yaml}
       value={mapDefChunk}
       className={styles.editorStyles}
+      {...commonCodeEditorProps}
       height={`${contentHeight - 50}px`}
-      lineNumbers="on"
-      scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
-      wordWrap="on"
-      minimapEnabled
       readOnly
     />
   );
