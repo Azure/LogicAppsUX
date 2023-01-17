@@ -215,10 +215,12 @@ const callChildObjects = (
           // The only time this case should be valid is when making a object level conditional
           const childTargetKeyWithoutLoop = getTargetValueWithoutLoop(childTargetKey);
           const flattenedChildValues = flattenMapDefinitionValues(childValue);
-          const flattenedChildValueParents = flattenedChildValues.map((flattenedValue) => {
-            const fqChild = getSourceValueFromLoop(flattenedValue, childTargetKey, sourceSchemaFlattened);
-            return fqChild.substring(0, fqChild.lastIndexOf('/'));
-          });
+          const flattenedChildValueParents = flattenedChildValues
+            .map((flattenedValue) => {
+              const fqChild = getSourceValueFromLoop(flattenedValue, childTargetKey, sourceSchemaFlattened);
+              return fqChild.substring(0, fqChild.lastIndexOf('/'));
+            })
+            .filter((parentVal) => parentVal !== ''); // Functions will map as ''
           const lowestCommonParent = flattenedChildValueParents.reduce((a, b) => (a.lastIndexOf('/') <= b.lastIndexOf('/') ? a : b));
           const ifConnectionEntry = Object.entries(connections).find(
             ([_connectionKey, connectionValue]) =>
@@ -280,7 +282,7 @@ const createConnections = (
   let mockDirectAccessFnKey: string | undefined = undefined;
   const [daOpenBracketIdx, daClosedBracketIdx] = [amendedSourceKey.indexOf('['), amendedSourceKey.lastIndexOf(']')];
 
-  console.log(amendedTargetKey, ': ', amendedSourceKey);
+  console.log(amendedTargetKey, ': ', amendedSourceKey); // REMOVE
 
   // Parse the outermost Direct Access (if present) into the typical Function format
   if (daOpenBracketIdx > -1 && daClosedBracketIdx > -1) {
