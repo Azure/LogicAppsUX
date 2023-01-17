@@ -62,6 +62,7 @@ export interface MonacoOptions {
   scrollbar?: editor.IEditorScrollbarOptions;
   overviewRulerLanes?: number;
   overviewRulerBorder?: boolean;
+  wrappingIndent?: 'none' | 'same' | 'indent' | 'deepIndent';
 }
 
 export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps>(

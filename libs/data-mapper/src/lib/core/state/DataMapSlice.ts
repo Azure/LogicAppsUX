@@ -632,12 +632,10 @@ export const deleteParentRepeatingConnections = (connections: ConnectionDictiona
 
 export const canDeleteConnection = (sourceNodeId: string, sourceSchema: SchemaNodeDictionary) => {
   const sourceNode = sourceSchema[sourceNodeId];
-  if (sourceNode && !sourceNode.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
+  if (!sourceNode || (sourceNode && !sourceNode.nodeProperties.includes(SchemaNodeProperty.Repeating))) {
     return true;
   }
-  if (!sourceNode) {
-    return true;
-  }
+
   return false;
 };
 

@@ -1,8 +1,9 @@
 {
-  "name": "@microsoft/logic-apps-vscode-extension",
+  "name": "logic-apps-vscode-extension",
   "displayName": "Azure Logic Apps (Standard)",
   "version": "0.2.52",
   "aiKey": "2fc394da-7c11-4c1c-b776-17763031415d",
+  "repository": "https://github.com/Azure/logic_apps_designer",
   "main": "main.js",
   "engines": {
     "vscode": "^1.64.0"
@@ -431,6 +432,8 @@
     "onCommand:logicAppsExtension.refresh",
     "onCommand:logicAppsExtension.switchToDotnetProject",
     "onView:newAzLogicApps",
+    "workspaceContains:host.json",
+    "workspaceContains:*/host.json",
     "onDebugInitialConfigurations"
   ],
   "galleryBanner": {
