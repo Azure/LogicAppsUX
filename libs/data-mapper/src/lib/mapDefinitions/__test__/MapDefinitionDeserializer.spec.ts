@@ -683,7 +683,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       );
     });
 
-    it.skip('creates a looping connection w/ index variable, conditional, and relative property path', () => {
+    it('creates a looping connection w/ index variable, conditional, and relative attribute path', () => {
       simpleMap['ns0:Root'] = {
         LoopingWithIndex: {
           WeatherSummary: {
@@ -700,11 +700,33 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       };
 
       const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
-      const resultEntries = Object.entries(result);
-      resultEntries.sort();
 
-      // TODO: Update expects
-      expect(resultEntries.length).toEqual(5);
+      expect(Object.entries(result).length).toEqual(9);
+
+      const indexFnRfKey = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day'].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(indexFnRfKey).toContain(indexPseudoFunctionKey);
+      expect((result[indexFnRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/LoopingWithIndex/WeatherReport');
+
+      const conditionalFnRfKey = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day'].inputs[0][1] as ConnectionUnit)
+        .reactFlowKey;
+      expect(conditionalFnRfKey).toContain(ifPseudoFunctionKey);
+      expect((result[conditionalFnRfKey].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/LoopingWithIndex/WeatherReport'
+      );
+      const greaterFnRfKey = (result[conditionalFnRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(greaterFnRfKey).toContain('IsGreater');
+      expect((result[greaterFnRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(indexFnRfKey);
+      expect(result[greaterFnRfKey].inputs[1][0] as string).toBe('2');
+
+      const concatFnRfKey = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day/Name'].inputs[0][0] as ConnectionUnit)
+        .reactFlowKey;
+      expect(concatFnRfKey).toContain('Concat');
+      expect(result[concatFnRfKey].inputs[0][0] as string).toBe('"Day "');
+      expect((result[concatFnRfKey].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(indexFnRfKey);
+
+      expect((result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day/Pressure'].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/LoopingWithIndex/WeatherReport/@Pressure'
+      );
     });
 
     it('creates a nested loop connection', () => {
