@@ -1,3 +1,4 @@
+import { commonCodeEditorProps } from '../testMapPanel/TestMapPanel';
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { Code20Regular, Dismiss20Regular } from '@fluentui/react-icons';
@@ -47,6 +48,11 @@ export const CodeView = ({ dataMapDefinition, isCodeViewOpen, setIsCodeViewOpen,
     description: 'Close code view button',
   });
 
+  const noMapDefLoc = intl.formatMessage({
+    defaultMessage: 'Unable to generate data map definition',
+    description: `Message to display when the data map definition can't be generated`,
+  });
+
   return (
     <div className={styles.containerStyle} style={{ display: isCodeViewOpen ? 'flex' : 'none' }}>
       <Stack horizontal verticalAlign="center" style={{ justifyContent: 'space-between', marginBottom: '12px', marginTop: '4px' }}>
@@ -63,12 +69,10 @@ export const CodeView = ({ dataMapDefinition, isCodeViewOpen, setIsCodeViewOpen,
       <div style={{ display: 'flex', flexDirection: 'column', flex: '1 1 auto' }}>
         <MonacoEditor
           language={EditorLanguage.yaml}
-          value={dataMapDefinition}
-          lineNumbers="on"
-          scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
+          value={dataMapDefinition === '' ? noMapDefLoc : dataMapDefinition}
           className={styles.editorStyle}
+          {...commonCodeEditorProps}
           height={`${Math.max(200, canvasAreaHeight - 75)}px`}
-          wordWrap="on"
           readOnly
         />
       </div>
