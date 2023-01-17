@@ -17,7 +17,16 @@ import * as path from 'path';
 import type { Progress } from 'vscode';
 
 export class ScriptProjectCreateStep extends ProjectCreateStepBase {
-  protected funcignore: string[] = ['.git*', '.vscode', 'local.settings.json', 'test', '.debug'];
+  protected funcignore: string[] = [
+    '__blobstorage__',
+    '__queuestorage__',
+    '__azurite_db*__.json',
+    '.git*',
+    '.vscode',
+    'local.settings.json',
+    'test',
+    '.debug',
+  ];
   protected gitignore = '';
   protected supportsManagedDependencies = false;
 
@@ -60,7 +69,10 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
 bin
 obj
 appsettings.json
-local.settings.json`)
+local.settings.json
+__blobstorage__
+__queuestorage__
+__azurite_db*__.json`)
       );
     }
 
