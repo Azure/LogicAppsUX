@@ -1,7 +1,6 @@
 import { filterRecord } from '../utils';
 import FunctionAppEntry from './functionAppEntry';
-import GatewayPicker from './gatewayPicker';
-import type { IDropdownOption } from '@fluentui/react';
+import { UniversalConnectionParameter } from './universalConnectionParameter';
 import {
   Text,
   List,
@@ -19,14 +18,13 @@ import {
 } from '@fluentui/react';
 import type {
   ConnectionParameter,
-  ConnectionParameterAllowedValue,
   ConnectionParameterSet,
   ConnectionParameterSetParameter,
   ConnectionParameterSets,
   Gateway,
   Subscription,
 } from '@microsoft/utils-logic-apps';
-import { ConnectionParameterTypes } from '@microsoft/utils-logic-apps';
+import { Capabilities, ConnectionParameterTypes } from '@microsoft/utils-logic-apps';
 import type { FormEvent } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -34,6 +32,7 @@ import type { UseQueryResult } from 'react-query';
 
 export interface CreateConnectionProps {
   connectorDisplayName: string;
+  connectorCapabilities?: string[];
   connectionParameters?: Record<string, ConnectionParameter>;
   connectionParameterSets?: ConnectionParameterSets;
   isLoading?: boolean;
@@ -66,6 +65,7 @@ type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const {
     connectorDisplayName,
+    connectorCapabilities,
     connectionParameters,
     connectionParameterSets,
     isLoading,
@@ -103,6 +103,33 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     [selectedParamSetIndex]
   );
 
+  const singleAuthParams = useMemo(() => connectionParameters ?? {}, [connectionParameters]);
+  const multiAuthParams = useMemo(
+    () => connectionParameterSets?.values[selectedParamSetIndex].parameters ?? {},
+    [connectionParameterSets, selectedParamSetIndex]
+  );
+  const isMultiAuth = useMemo(() => (connectionParameterSets?.values?.length ?? 0) > 1, [connectionParameterSets?.values]);
+
+  const isOnlyGatewayCapable = useCallback(
+    (capabilities: string[] = []) =>
+      (capabilities?.includes(Capabilities[Capabilities.gateway]) && !capabilities?.includes(Capabilities[Capabilities.cloud])) ?? false,
+    []
+  );
+
+  const hasOnlyOnPremGateway = useMemo(() => isOnlyGatewayCapable(connectorCapabilities), [connectorCapabilities, isOnlyGatewayCapable]);
+
+  const [enabledCapabilities, setEnabledCapabilities] = useState<Capabilities[]>([]);
+  const toggleCapability = useCallback(
+    (capability: Capabilities) => {
+      if (enabledCapabilities.includes(capability)) {
+        setEnabledCapabilities(enabledCapabilities.filter((c) => c !== capability));
+      } else {
+        setEnabledCapabilities([...enabledCapabilities, capability]);
+      }
+    },
+    [enabledCapabilities]
+  );
+
   const isParamVisible = useCallback(
     (parameter: ParamType) => {
       const constraints = parameter?.uiDefinition?.constraints;
@@ -115,44 +142,91 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     [parameterValues]
   );
 
-  const singleAuthParams = useMemo(() => connectionParameters ?? {}, [connectionParameters]);
-  const multiAuthParams = useMemo(
-    () => connectionParameterSets?.values[selectedParamSetIndex].parameters ?? {},
-    [connectionParameterSets, selectedParamSetIndex]
-  );
-  const isMultiAuth = useMemo(() => (connectionParameterSets?.values?.length ?? 0) > 1, [connectionParameterSets?.values]);
-  const parameters = useMemo(() => {
-    const params = (isMultiAuth ? { ...multiAuthParams } : { ...singleAuthParams }) ?? {};
-    return filterRecord<any>(params, (_key, value) => isParamVisible(value));
-  }, [isMultiAuth, isParamVisible, multiAuthParams, singleAuthParams]);
-  const hasOAuth = useMemo(
-    () => checkOAuthCallback(isMultiAuth ? multiAuthParams : singleAuthParams),
-    [checkOAuthCallback, isMultiAuth, multiAuthParams, singleAuthParams]
+  const unfilteredParameters: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = useMemo(
+    () => (isMultiAuth ? { ...multiAuthParams } : { ...singleAuthParams }) ?? {},
+    [isMultiAuth, multiAuthParams, singleAuthParams]
   );
 
+  const parameters: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = useMemo(
+    () => filterRecord<any>(unfilteredParameters, (_, value) => isParamVisible(value)),
+    [isParamVisible, unfilteredParameters]
+  );
+
+  // Parameters record, under a layer of singular capability, if it has none or more than one it's under "general"
+  const parametersByCapability = useMemo(() => {
+    const output: { [_: string]: { [_: string]: ConnectionParameter | ConnectionParameterSetParameter } } = {};
+    Object.entries(parameters ?? {}).forEach(([key, parameter]) => {
+      const capability =
+        (parameter.uiDefinition?.constraints?.capability?.length ?? 0) === 1
+          ? parameter.uiDefinition?.constraints?.capability?.[0] ?? 'general'
+          : 'general';
+      output[capability] = {
+        ...output[capability],
+        [key]: parameter,
+      };
+    });
+    return output;
+  }, [parameters]);
+
+  const getParametersByCapability = useCallback(
+    (capability: Capabilities) => parametersByCapability?.[Capabilities[capability]] ?? {},
+    [parametersByCapability]
+  );
+  const capabilityEnabledParameters = useMemo(() => {
+    let output: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = parametersByCapability['general'];
+    Object.entries(parametersByCapability).forEach(([capabilityText, parameters]) => {
+      if (enabledCapabilities.map((c) => Capabilities[c]).includes(capabilityText))
+        output = {
+          ...output,
+          ...parameters,
+        };
+    });
+    return output ?? {};
+  }, [enabledCapabilities, parametersByCapability]);
+
   // Don't show name for simple connections
-  const showNameInput = useMemo(() => isMultiAuth || Object.keys(parameters).length > 0, [isMultiAuth, parameters]);
+  const showNameInput = useMemo(
+    () => isMultiAuth || Object.keys(parametersByCapability['general'] ?? {}).length > 0,
+    [isMultiAuth, parametersByCapability]
+  );
+
+  const hasOAuth = useMemo(
+    () => checkOAuthCallback(isMultiAuth ? multiAuthParams : singleAuthParams) && !enabledCapabilities.includes(Capabilities.gateway),
+    [checkOAuthCallback, enabledCapabilities, isMultiAuth, multiAuthParams, singleAuthParams]
+  );
 
   const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
   const validParams = useMemo(() => {
     if (showNameInput && !connectionDisplayName) return false;
     if (needsAzureFunction && !selectedFunctionId) return false;
-    if (Object.keys(parameters).length === 0) return true;
-    return Object.entries(parameters).every(
+    if (Object.keys(capabilityEnabledParameters ?? {}).length === 0) return true;
+    return Object.entries(capabilityEnabledParameters).every(
       ([key, parameter]) => parameter?.uiDefinition?.constraints?.required !== 'true' || !!parameterValues[key]
     );
-  }, [connectionDisplayName, needsAzureFunction, parameterValues, parameters, selectedFunctionId, showNameInput]);
+  }, [connectionDisplayName, needsAzureFunction, parameterValues, capabilityEnabledParameters, selectedFunctionId, showNameInput]);
 
   const canSubmit = useMemo(() => !isLoading && validParams, [isLoading, validParams]);
 
   const submitCallback = useCallback(() => {
+    const visibleParameterValues = Object.fromEntries(
+      Object.entries(parameterValues).filter(([key]) => Object.keys(capabilityEnabledParameters).includes(key)) ?? []
+    );
+
     return createConnectionCallback?.(
       connectionDisplayName,
       connectionParameterSets?.values[selectedParamSetIndex],
-      parameterValues,
+      visibleParameterValues,
       hasOAuth
     );
-  }, [createConnectionCallback, connectionDisplayName, connectionParameterSets?.values, selectedParamSetIndex, parameterValues, hasOAuth]);
+  }, [
+    parameterValues,
+    createConnectionCallback,
+    connectionDisplayName,
+    connectionParameterSets?.values,
+    selectedParamSetIndex,
+    hasOAuth,
+    capabilityEnabledParameters,
+  ]);
 
   // INTL STRINGS
 
@@ -237,6 +311,11 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const functionAppsLabel = intl.formatMessage({
     defaultMessage: 'Select a function app function',
     description: 'Label for function app selection',
+  });
+
+  const gatewayTooltipText = intl.formatMessage({
+    defaultMessage: 'Select this if you are configuring an on-prem connection',
+    description: 'Tooltip for on-prem gateway connection checkbox',
   });
 
   const connectorDescription = useMemo(() => {
@@ -324,94 +403,61 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
 
         {/* Connector Parameters */}
         {showConfigParameters &&
-          Object.entries(parameters)?.map(([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => {
-            const data = parameter?.uiDefinition;
-            const constraints = parameter?.uiDefinition?.constraints;
-            let inputComponent = undefined;
+          Object.entries(parametersByCapability['general'] ?? {})?.map(
+            ([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => (
+              <UniversalConnectionParameter
+                key={key}
+                parameterKey={key}
+                parameter={parameter}
+                value={parameterValues[key]}
+                setValue={(val: any) => setParameterValues({ ...parameterValues, [key]: val })}
+                isLoading={isLoading}
+                selectedSubscriptionId={selectedSubscriptionId}
+                selectSubscriptionCallback={selectSubscriptionCallback}
+                availableGateways={availableGateways}
+                availableSubscriptions={availableSubscriptions}
+              />
+            )
+          )}
 
-            // Gateway setting parameter
-            if (parameter?.type === ConnectionParameterTypes[ConnectionParameterTypes.gatewaySetting]) {
-              inputComponent = (
-                <GatewayPicker
-                  key={key}
-                  selectedSubscriptionId={selectedSubscriptionId}
-                  selectSubscriptionCallback={selectSubscriptionCallback}
-                  availableGateways={availableGateways}
-                  availableSubscriptions={availableSubscriptions}
-                  isLoading={isLoading}
-                  setParameterValues={setParameterValues}
-                  parameterValues={parameterValues}
-                />
-              );
-            }
-
-            // Boolean parameter
-            else if (parameter?.type === ConnectionParameterTypes[ConnectionParameterTypes.bool]) {
-              inputComponent = (
-                <Checkbox
-                  checked={parameterValues[key]}
-                  onChange={(e: any, checked?: boolean) => {
-                    setParameterValues({ ...parameterValues, [key]: checked });
-                  }}
-                  label={data?.description}
-                />
-              );
-            }
-
-            // Dropdown Parameter
-            else if ((constraints?.allowedValues?.length ?? 0) > 0) {
-              inputComponent = (
-                <Dropdown
-                  id={`connection-param-${key}`}
-                  className="connection-parameter-input"
-                  selectedKey={constraints?.allowedValues?.findIndex((value) => value.text === parameterValues[key])}
-                  onChange={(e: any, newVal?: IDropdownOption) => {
-                    setParameterValues({ ...parameterValues, [key]: newVal?.text });
-                  }}
-                  disabled={isLoading}
-                  ariaLabel={data?.description}
-                  placeholder={data?.description}
-                  options={(constraints?.allowedValues ?? []).map((allowedValue: ConnectionParameterAllowedValue, index) => ({
-                    key: index,
-                    text: allowedValue.text ?? '',
-                  }))}
-                />
-              );
-            }
-
-            // Text Input Parameter
-            else {
-              const isSecure = parameter.type === 'securestring' && !constraints?.clearText;
-              const type = isSecure ? 'password' : 'text';
-
-              inputComponent = (
-                <TextField
-                  id={key}
-                  className="connection-parameter-input"
-                  disabled={isLoading}
-                  autoComplete="off"
-                  type={type}
-                  canRevealPassword
-                  ariaLabel={data?.description}
-                  placeholder={data?.description}
-                  value={parameterValues[key]}
-                  onChange={(e: any, newVal?: string) => setParameterValues({ ...parameterValues, [key]: newVal })}
-                />
-              );
-            }
-
-            return (
-              <div key={key} className="param-row">
-                <Label className="label" required={constraints?.required === 'true'} htmlFor={key} disabled={isLoading}>
-                  {data?.displayName}
-                  <TooltipHost content={data?.tooltip}>
-                    <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
-                  </TooltipHost>
-                </Label>
-                {inputComponent}
-              </div>
-            );
-          })}
+        {!hasOnlyOnPremGateway && Object.keys(getParametersByCapability(Capabilities.gateway)).length > 0 && (
+          <>
+            {/* OptionalGateway Checkbox */}
+            <div className="param-row center" style={{ margin: '8px 0px' }}>
+              <Checkbox
+                label={intl.formatMessage({
+                  defaultMessage: 'Connect via on-premises data gateway',
+                  description: 'Checkbox label for using an on-premises gateway',
+                })}
+                checked={enabledCapabilities.includes(Capabilities.gateway)}
+                onChange={() => toggleCapability(Capabilities.gateway)}
+                disabled={isLoading}
+              />
+              <TooltipHost content={gatewayTooltipText}>
+                <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
+              </TooltipHost>
+            </div>
+            {/* Gateway-Specific Parameters */}
+            {showConfigParameters &&
+              enabledCapabilities.includes(Capabilities.gateway) &&
+              Object.entries(getParametersByCapability(Capabilities.gateway))?.map(
+                ([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => (
+                  <UniversalConnectionParameter
+                    key={key}
+                    parameterKey={key}
+                    parameter={parameter}
+                    value={parameterValues[key]}
+                    setValue={(val: any) => setParameterValues({ ...parameterValues, [key]: val })}
+                    isLoading={isLoading}
+                    selectedSubscriptionId={selectedSubscriptionId}
+                    selectSubscriptionCallback={selectSubscriptionCallback}
+                    availableGateways={availableGateways}
+                    availableSubscriptions={availableSubscriptions}
+                  />
+                )
+              )}
+          </>
+        )}
 
         {/* Function Apps */}
         {needsAzureFunction && (
