@@ -181,7 +181,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
           ...parameters,
         };
     });
-    return output;
+    return output ?? {};
   }, [enabledCapabilities, parametersByCapability]);
 
   // Don't show name for simple connections
@@ -208,13 +208,25 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const canSubmit = useMemo(() => !isLoading && validParams, [isLoading, validParams]);
 
   const submitCallback = useCallback(() => {
+    const visibleParameterValues = Object.fromEntries(
+      Object.entries(parameterValues).filter(([key]) => Object.keys(capabilityEnabledParameters).includes(key)) ?? []
+    );
+
     return createConnectionCallback?.(
       connectionDisplayName,
       connectionParameterSets?.values[selectedParamSetIndex],
-      parameterValues,
+      visibleParameterValues,
       hasOAuth
     );
-  }, [createConnectionCallback, connectionDisplayName, connectionParameterSets?.values, selectedParamSetIndex, parameterValues, hasOAuth]);
+  }, [
+    parameterValues,
+    createConnectionCallback,
+    connectionDisplayName,
+    connectionParameterSets?.values,
+    selectedParamSetIndex,
+    hasOAuth,
+    capabilityEnabledParameters,
+  ]);
 
   // INTL STRINGS
 
