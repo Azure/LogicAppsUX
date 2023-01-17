@@ -1,9 +1,10 @@
+import { sourceMockSchema } from '../../../__mocks__';
 import type { Schema, SchemaExtended } from '../../../models';
 import { SchemaType } from '../../../models';
 import type { ConnectionDictionary } from '../../../models/Connection';
 import { setConnectionInputValue, flattenInputs } from '../../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../../utils/ReactFlow.Util';
-import { convertSchemaToSchemaExtended } from '../../../utils/Schema.Utils';
+import { convertSchemaToSchemaExtended, flattenSchemaIntoDictionary } from '../../../utils/Schema.Utils';
 import {
   fullConnectionDictionaryForOneToManyLoop,
   fullMapForSimplifiedLoop,
@@ -291,12 +292,19 @@ describe('DataMapSlice', () => {
   });
 
   describe('canDeleteConnection', () => {
-    it.skip('returns true with non-repeating connection', () => {
-      const connections: ConnectionDictionary = {};
-      const source = 'abc';
-      const target = '';
-      const canDeleted = canDeleteConnection(connections, source, target, { abc: simpleSourceNode }, {}); // FIXME
-      expect(canDeleted).toBeTruthy();
+    const extendedSchema: SchemaExtended = convertSchemaToSchemaExtended(sourceMockSchema as Schema);
+    const flattenedSrcSchema = flattenSchemaIntoDictionary(extendedSchema, SchemaType.Source);
+    const repeatingNodeId = 'source-/ns0:Root/Looping/VehicleTrips/Trips';
+    const nonRepeatingNodeId = 'source-/ns0:Root/DirectTranslation/EmployeeID';
+
+    it('returns true with non-repeating connection', () => {
+      const canBeDeleted = canDeleteConnection(nonRepeatingNodeId, flattenedSrcSchema);
+      expect(canBeDeleted).toBe(true);
+    });
+
+    it('returns false with repeating connection', () => {
+      const canBeDeleted = canDeleteConnection(repeatingNodeId, flattenedSrcSchema);
+      expect(canBeDeleted).toBe(false);
     });
   });
 
@@ -337,11 +345,3 @@ describe('DataMapSlice', () => {
     });
   });
 });
-
-/*const simpleSourceNode: SchemaNodeExtended = {
-  children: [],
-  nodeProperties: [SchemaNodeProperty.NotSpecified],
-  pathToRoot: [],
-  key: 'abc',
-  fullName: 'ABC',
-} as unknown as SchemaNodeExtended; */
