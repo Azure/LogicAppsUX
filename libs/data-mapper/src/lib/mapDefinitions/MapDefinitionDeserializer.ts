@@ -280,6 +280,8 @@ const createConnections = (
   let mockDirectAccessFnKey: string | undefined = undefined;
   const [daOpenBracketIdx, daClosedBracketIdx] = [amendedSourceKey.indexOf('['), amendedSourceKey.lastIndexOf(']')];
 
+  console.log(amendedTargetKey, ': ', amendedSourceKey);
+
   // Parse the outermost Direct Access (if present) into the typical Function format
   if (daOpenBracketIdx > -1 && daClosedBracketIdx > -1) {
     // Need to isolate the singular key the DA is apart of as it could be wrapped in a function, etc.
@@ -371,7 +373,9 @@ const createConnections = (
       idxOfIdxVariable = amendedTargetKey.replaceAll(mapNodeParams.for, placeholderFor).substring(0, idxOfIdxVariable).lastIndexOf('$');
 
       if (idxOfIdxVariable > -1) {
-        const forTgtBasePath = amendedTargetKey.substring(0, amendedTargetKey.indexOf('/', idxOfIdxVariable + 4) ?? undefined);
+        const startIdxOfChildrenPath = amendedTargetKey.indexOf('/', idxOfIdxVariable + 4);
+        const forTgtBasePath =
+          startIdxOfChildrenPath > -1 ? amendedTargetKey.substring(0, startIdxOfChildrenPath) : amendedTargetKey.substring(0);
         const idxVariable = amendedTargetKey
           .replaceAll(mapNodeParams.for, placeholderFor)
           .substring(idxOfIdxVariable, idxOfIdxVariable + 2);
