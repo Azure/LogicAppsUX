@@ -103,6 +103,25 @@
         "command": "logicAppsExtension.pickProcess",
         "title": "Pick Process",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.refresh",
+        "title": "Refresh",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/refresh.svg",
+          "dark": "assets/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "logicAppsExtension.openOverview",
+        "title": "Overview",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.switchToDotnetProject",
+        "title": "Convert to NuGet-based Logic App project",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -139,6 +158,11 @@
           "command": "logicAppsExtension.deploy",
           "when": "view == newAzLogicApps",
           "group": "navigation@3"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps",
+          "group": "navigation@5"
         }
       ],
       "view/item/context": [
@@ -196,6 +220,61 @@
           "command": "logicAppsExtension.restartLogicApp",
           "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "2@3"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
+          "group": "3@1"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "group": "6@2"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps && viewItem == azLogicAppsSlots",
+          "group": "2@1"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps && viewItem =~ /Workflows;/i",
+          "group": "1@1"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps && viewItem == applicationSettings",
+          "group": "2@1"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps && viewItem == azFuncProxies",
+          "group": "1@1"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps && viewItem =~ /^deployments(C|Unc)onnected$/",
+          "group": "2@1"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps && viewItem == siteFiles",
+          "group": "1@1"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps && viewItem == logFiles",
+          "group": "1@1"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "view == newAzLogicApps && viewItem == folder",
+          "group": "1@1"
+        },
+        {
+          "command": "logicAppsExtension.openOverview",
+          "when": "view == newAzLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
+          "group": "1@1"
         }
       ],
       "explorer/context": [
@@ -205,9 +284,19 @@
           "group": "zzz_LogicApptools@1"
         },
         {
+          "command": "logicAppsExtension.openOverview",
+          "when": "resourceFilename==workflow.json",
+          "group": "navigation@1"
+        },
+        {
           "command": "logicAppsExtension.openDesigner",
           "when": "resourceFilename==workflow.json",
           "group": "navigation@3"
+        },
+        {
+          "command": "logicAppsExtension.switchToDotnetProject",
+          "when": "explorerResourceIsRoot == true",
+          "group": "zzz_LogicApptools@3"
         }
       ],
       "commandPalette": [
@@ -230,6 +319,14 @@
         {
           "command": "logicAppsExtension.pickProcess",
           "when": "never"
+        },
+        {
+          "command": "logicAppsExtension.refresh",
+          "when": "never"
+        },
+        {
+          "command": "logicAppsExtension.openOverview",
+          "when": "resourceFilename==workflow.json"
         }
       ]
     },
@@ -291,6 +388,21 @@
             "type": "boolean",
             "description": "Ask for confirmation before deploying to a Function App in Azure (deploying will overwrite any previous deployment and cannot be undone).",
             "default": true
+          },
+          "logicAppsExtension.showCoreToolsWarning": {
+            "type": "boolean",
+            "description": "Show a warning if your installed version of Azure Functions Core Tools is out-of-date.",
+            "default": true
+          },
+          "logicAppsExtension.showMultiCoreToolsWarning": {
+            "type": "boolean",
+            "description": "Show a warning if multiple installs of Azure Functions Core Tools are detected.",
+            "default": true
+          },
+          "logicAppsExtension.requestTimeout": {
+            "type": "number",
+            "description": "The timeout (in seconds) to be used when making requests, for example getting the latest templates.",
+            "default": 15
           }
         }
       }
@@ -315,6 +427,9 @@
     "onCommand:logicAppsExtension.restartLogicApp",
     "onCommand:logicAppsExtension.pickProcess",
     "onCommand:logicAppsExtension.deleteLogicApp",
+    "onCommand:logicAppsExtension.openOverview",
+    "onCommand:logicAppsExtension.refresh",
+    "onCommand:logicAppsExtension.switchToDotnetProject",
     "onView:newAzLogicApps",
     "onDebugInitialConfigurations"
   ],

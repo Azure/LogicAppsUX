@@ -167,7 +167,7 @@ export interface OperationManifestProperties {
   outputTokens?: {
     selfReference?: boolean;
     disableTokens?: boolean;
-    builtIns: BuiltInOutput[];
+    builtIns?: BuiltInOutput[];
   };
 
   repetition?: RepetitionInfo;

@@ -15,7 +15,7 @@ export interface GroupedItems {
   item: GroupItemProps | RowItemProps;
 }
 
-type GroupItems = GroupItemProps | RowItemProps;
+export type GroupItems = GroupItemProps | RowItemProps;
 
 export enum GroupType {
   ROW = 'row',
@@ -24,24 +24,28 @@ export enum GroupType {
 export interface RowItemProps {
   type: GroupType.ROW;
   checked?: boolean;
-  operand1?: ValueSegment[];
-  operator?: string;
-  operand2?: ValueSegment[];
+  operand1: ValueSegment[];
+  operator: string;
+  operand2: ValueSegment[];
 }
+
 export interface GroupItemProps {
   type: GroupType.GROUP;
   checked?: boolean;
   condition?: GroupDropdownOptions;
   items: GroupItems[];
 }
+
 export interface QueryBuilderProps {
   readonly?: boolean;
   groupProps: GroupItemProps;
   tokenPickerHandler: TokenPickerHandler;
   onChange?: ChangeHandler;
 }
+
 const emptyValue = [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }];
-export const QueryBuilderEditor = ({ tokenPickerHandler, groupProps, onChange }: QueryBuilderProps) => {
+
+export const QueryBuilderEditor = ({ tokenPickerHandler, groupProps, readonly, onChange }: QueryBuilderProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [heights, setHeights] = useState<number[]>([]);
   const [groupedItems, setGroupedItems] = useState<GroupedItems[]>([]);
@@ -71,6 +75,7 @@ export const QueryBuilderEditor = ({ tokenPickerHandler, groupProps, onChange }:
   return (
     <div className="msla-querybuilder-container" ref={containerRef}>
       <Group
+        readonly={readonly}
         isTop={true}
         isBottom={true}
         groupProps={getRootProp()}
