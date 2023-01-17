@@ -722,7 +722,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         .reactFlowKey;
       expect(concatFnRfKey).toContain('Concat');
       expect(result[concatFnRfKey].inputs[0][0] as string).toBe('"Day "');
-      expect((result[concatFnRfKey].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(indexFnRfKey);
+      expect((result[concatFnRfKey].inputs[0][1] as ConnectionUnit).reactFlowKey).toBe(indexFnRfKey);
 
       expect((result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day/Pressure'].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
         'source-/ns0:Root/LoopingWithIndex/WeatherReport/@Pressure'
