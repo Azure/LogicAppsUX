@@ -282,8 +282,6 @@ const createConnections = (
   let mockDirectAccessFnKey: string | undefined = undefined;
   const [daOpenBracketIdx, daClosedBracketIdx] = [amendedSourceKey.indexOf('['), amendedSourceKey.lastIndexOf(']')];
 
-  console.log(amendedTargetKey, ': ', amendedSourceKey); // REMOVE
-
   // Parse the outermost Direct Access (if present) into the typical Function format
   if (daOpenBracketIdx > -1 && daClosedBracketIdx > -1) {
     // Need to isolate the singular key the DA is apart of as it could be wrapped in a function, etc.
