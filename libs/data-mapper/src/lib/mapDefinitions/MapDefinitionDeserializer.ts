@@ -221,7 +221,12 @@ const callChildObjects = (
               return fqChild.substring(0, fqChild.lastIndexOf('/'));
             })
             .filter((parentVal) => parentVal !== ''); // Functions will map as ''
-          const lowestCommonParent = flattenedChildValueParents.reduce((a, b) => (a.lastIndexOf('/') <= b.lastIndexOf('/') ? a : b));
+          const lowestCommonParent =
+            flattenedChildValueParents.length > 1
+              ? flattenedChildValueParents.reduce((a, b) => (a.lastIndexOf('/') <= b.lastIndexOf('/') ? a : b))
+              : flattenedChildValueParents.length === 1
+              ? flattenedChildValueParents[0]
+              : '';
           const ifConnectionEntry = Object.entries(connections).find(
             ([_connectionKey, connectionValue]) =>
               connectionValue.self.node.key === ifPseudoFunctionKey &&
