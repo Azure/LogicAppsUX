@@ -285,6 +285,16 @@
       "value": "Obligatoire. Chaîne pouvant contenir la valeur."
     }
   ],
+  "0qcKzG": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+    }
+  ],
   "0uj1Li": [
     {
       "type": 0,
@@ -424,6 +434,12 @@
     {
       "type": 0,
       "value": "Spécifiez une ou plusieurs expressions qui doivent être vraies pour que le déclencheur se déclenche."
+    }
+  ],
+  "1YEc9e": [
+    {
+      "type": 0,
+      "value": "Enter a valid condition."
     }
   ],
   "1ZDLZA": [
@@ -858,6 +874,16 @@
       "value": "Bouton permettant d’ajouter du contenu dynamique si TokenPicker est masqué"
     }
   ],
+  "4sYR0J": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is required."
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -976,12 +1002,6 @@
     {
       "type": 0,
       "value": "(UTC+09:30) Adélaïde"
-    }
-  ],
-  "6grB5C": [
-    {
-      "type": 0,
-      "value": "Invalid node settings"
     }
   ],
   "6jiO7t": [
@@ -1362,6 +1382,12 @@
     {
       "type": 0,
       "value": "Retourne true si les deux paramètres ont la valeur true"
+    }
+  ],
+  "9x8hg8": [
+    {
+      "type": 0,
+      "value": "Edit in basic mode"
     }
   ],
   "A5Ferh": [
@@ -2022,6 +2048,12 @@
       "value": "Renvoie la requête d’un URI"
     }
   ],
+  "GCjJnP": [
+    {
+      "type": 0,
+      "value": "Enter a valid Json."
+    }
+  ],
   "GDUGlm": [
     {
       "type": 0,
@@ -2166,6 +2198,20 @@
     {
       "type": 0,
       "value": "Enter a valid datetime."
+    }
+  ],
+  "Hs5+Mk": [
+    {
+      "type": 0,
+      "value": "Enter a valid value for "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "HsO1Rd": [
@@ -2336,6 +2382,12 @@
     {
       "type": 0,
       "value": "Retourne true si un dictionnaire contient une clé, si un tableau contient une valeur ou si une chaîne contient une sous-chaîne"
+    }
+  ],
+  "Jil/Wa": [
+    {
+      "type": 0,
+      "value": "Invalid settings"
     }
   ],
   "JjTfC7": [
@@ -2689,6 +2741,12 @@
     {
       "type": 0,
       "value": "Échec suivant"
+    }
+  ],
+  "MfAdfx": [
+    {
+      "type": 0,
+      "value": "Edit in advanced mode"
     }
   ],
   "Mgcs5s": [
@@ -3474,6 +3532,12 @@
     {
       "type": 0,
       "value": "Personnalisée"
+    }
+  ],
+  "Tmr/9e": [
+    {
+      "type": 0,
+      "value": "Invalid parameters"
     }
   ],
   "ToPmjE": [

@@ -285,6 +285,16 @@
       "value": "Obligatorio. La cadena que debería contener el valor."
     }
   ],
+  "0qcKzG": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+    }
+  ],
   "0uj1Li": [
     {
       "type": 0,
@@ -424,6 +434,12 @@
     {
       "type": 0,
       "value": "Especifique una o varias expresiones que deben ser \"true\" para que se active el desencadenador."
+    }
+  ],
+  "1YEc9e": [
+    {
+      "type": 0,
+      "value": "Enter a valid condition."
     }
   ],
   "1ZDLZA": [
@@ -858,6 +874,16 @@
       "value": "Botón para agregar contenido dinámico si TokenPicker está oculto"
     }
   ],
+  "4sYR0J": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is required."
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -976,12 +1002,6 @@
     {
       "type": 0,
       "value": "(UTC+09:30) Adelaida"
-    }
-  ],
-  "6grB5C": [
-    {
-      "type": 0,
-      "value": "Invalid node settings"
     }
   ],
   "6jiO7t": [
@@ -1362,6 +1382,12 @@
     {
       "type": 0,
       "value": "Devuelve true si ambos parámetros son verdaderos."
+    }
+  ],
+  "9x8hg8": [
+    {
+      "type": 0,
+      "value": "Edit in basic mode"
     }
   ],
   "A5Ferh": [
@@ -2022,6 +2048,12 @@
       "value": "Devuelve la consulta de un URI."
     }
   ],
+  "GCjJnP": [
+    {
+      "type": 0,
+      "value": "Enter a valid Json."
+    }
+  ],
   "GDUGlm": [
     {
       "type": 0,
@@ -2166,6 +2198,20 @@
     {
       "type": 0,
       "value": "Enter a valid datetime."
+    }
+  ],
+  "Hs5+Mk": [
+    {
+      "type": 0,
+      "value": "Enter a valid value for "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "HsO1Rd": [
@@ -2336,6 +2382,12 @@
     {
       "type": 0,
       "value": "Devuelve true si un diccionario contiene una clave, una matriz contiene un valor o una cadena contiene una subcadena."
+    }
+  ],
+  "Jil/Wa": [
+    {
+      "type": 0,
+      "value": "Invalid settings"
     }
   ],
   "JjTfC7": [
@@ -2689,6 +2741,12 @@
     {
       "type": 0,
       "value": "Siguiente con error"
+    }
+  ],
+  "MfAdfx": [
+    {
+      "type": 0,
+      "value": "Edit in advanced mode"
     }
   ],
   "Mgcs5s": [
@@ -3474,6 +3532,12 @@
     {
       "type": 0,
       "value": "Personalizado"
+    }
+  ],
+  "Tmr/9e": [
+    {
+      "type": 0,
+      "value": "Invalid parameters"
     }
   ],
   "ToPmjE": [

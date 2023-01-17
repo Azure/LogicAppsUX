@@ -10,6 +10,7 @@ import type { CallbackHandler, ChangeHandler, TokenPickerHandler } from '../../e
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { QueryBuilderEditor } from '../../querybuilder';
+import { UntilEditor } from '../../querybuilder/Until';
 import { SchemaEditor } from '../../schemaeditor';
 import { TableEditor } from '../../table';
 import type { TokenGroup } from '../../tokenpicker/models/token';
@@ -38,6 +39,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
   tokenPickerHandler: TokenPickerHandler;
+  validationErrors?: string[];
 }
 
 export const SettingTokenField: React.FC<SettingTokenFieldProps> = (props) => {
@@ -174,8 +176,16 @@ const TokenField = ({
       );
 
     case 'condition':
-      return (
+      return editorViewModel.isOldFormat ? (
+        <UntilEditor
+          readonly={readOnly}
+          items={JSON.parse(JSON.stringify(editorViewModel.items))}
+          tokenPickerHandler={tokenPickerHandler}
+          onChange={onValueChange}
+        />
+      ) : (
         <QueryBuilderEditor
+          readonly={readOnly}
           groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
           onChange={onValueChange}
           tokenPickerHandler={tokenPickerHandler}
