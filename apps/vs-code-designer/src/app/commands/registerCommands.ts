@@ -11,6 +11,7 @@ import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createL
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
 import { deleteNode } from './deleteNode';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
+import { redeployDeployment } from './deployments/redeployDeployment';
 import { openFile } from './openFile';
 import { pickFuncProcess } from './pickFuncProcess';
 import { restartLogicApp } from './restartLogicApp';
@@ -44,6 +45,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.createLogicAppAdvanced, createLogicAppAdvanced);
   registerSiteCommand(extensionCommand.deploy, deployProductionSlot);
   registerSiteCommand(extensionCommand.deploySlot, deploySlot);
+  registerSiteCommand(extensionCommand.redeploy, redeployDeployment);
   registerCommand(extensionCommand.showOutputChannel, () => {
     ext.outputChannel.show();
   });

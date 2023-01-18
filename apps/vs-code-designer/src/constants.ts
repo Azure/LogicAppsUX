@@ -70,6 +70,7 @@ export enum extensionCommand {
   createLogicAppAdvanced = 'logicAppsExtension.createLogicAppAdvanced',
   deploy = 'logicAppsExtension.deploy',
   deploySlot = 'logicAppsExtension.deploySlot',
+  redeploy = 'logicAppsExtension.redeploy',
   showOutputChannel = 'logicAppsExtension.showOutputChannel',
   startLogicApp = 'logicAppsExtension.startLogicApp',
   stopLogicApp = 'logicAppsExtension.stopLogicApp',
