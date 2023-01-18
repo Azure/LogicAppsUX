@@ -33,6 +33,12 @@
       "value": "Failed loading the schema. Please try again."
     }
   ],
+  "+JCU+Y": [
+    {
+      "type": 0,
+      "value": "Select this if you are configuring an on-prem connection"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -285,6 +291,16 @@
       "value": "Vereist. De tekenreeks die de waarde mag bevatten."
     }
   ],
+  "0qcKzG": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+    }
+  ],
   "0uj1Li": [
     {
       "type": 0,
@@ -413,6 +429,12 @@
     {
       "type": 0,
       "value": "Geef een of meer expressies op die waar moeten zijn om de trigger te activeren."
+    }
+  ],
+  "1YEc9e": [
+    {
+      "type": 0,
+      "value": "Enter a valid condition."
     }
   ],
   "1ZDLZA": [
@@ -847,6 +869,16 @@
       "value": "Knop om dynamische inhoud toe te voegen als TokenPicker is verborgen"
     }
   ],
+  "4sYR0J": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is required."
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -965,12 +997,6 @@
     {
       "type": 0,
       "value": "(UTC+09:30) Adelaide"
-    }
-  ],
-  "6grB5C": [
-    {
-      "type": 0,
-      "value": "Invalid node settings"
     }
   ],
   "6jiO7t": [
@@ -1351,6 +1377,12 @@
     {
       "type": 0,
       "value": "Indien beide parameters waar zijn, wordt Waar geretourneerd"
+    }
+  ],
+  "9x8hg8": [
+    {
+      "type": 0,
+      "value": "Edit in basic mode"
     }
   ],
   "A5Ferh": [
@@ -1997,6 +2029,12 @@
       "value": "Hiermee worden de query van een URI geretourneerd"
     }
   ],
+  "GCjJnP": [
+    {
+      "type": 0,
+      "value": "Enter a valid Json."
+    }
+  ],
   "GDUGlm": [
     {
       "type": 0,
@@ -2141,6 +2179,20 @@
     {
       "type": 0,
       "value": "Enter a valid datetime."
+    }
+  ],
+  "Hs5+Mk": [
+    {
+      "type": 0,
+      "value": "Enter a valid value for "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "HsO1Rd": [
@@ -2311,6 +2363,12 @@
     {
       "type": 0,
       "value": "Indien een woordenlijst een sleutel bevat, een matrix een waarde of een tekenreeks een subtekenreeks, wordt Waar geretourneerd"
+    }
+  ],
+  "Jil/Wa": [
+    {
+      "type": 0,
+      "value": "Invalid settings"
     }
   ],
   "JjTfC7": [
@@ -2657,6 +2715,12 @@
     {
       "type": 0,
       "value": "Volgende mislukt"
+    }
+  ],
+  "MfAdfx": [
+    {
+      "type": 0,
+      "value": "Edit in advanced mode"
     }
   ],
   "Mgcs5s": [
@@ -3431,6 +3495,12 @@
     {
       "type": 0,
       "value": "Aangepast"
+    }
+  ],
+  "Tmr/9e": [
+    {
+      "type": 0,
+      "value": "Invalid parameters"
     }
   ],
   "ToPmjE": [
@@ -5961,6 +6031,12 @@
       "value": "Int"
     }
   ],
+  "rAwCdh": [
+    {
+      "type": 0,
+      "value": "Connect via on-premises data gateway"
+    }
+  ],
   "rAyuzv": [
     {
       "type": 0,
@@ -6109,6 +6185,12 @@
     {
       "type": 0,
       "value": "Nieuwe parameter"
+    }
+  ],
+  "sv+IcU": [
+    {
+      "type": 0,
+      "value": "Unable to generate data map definition"
     }
   ],
   "syiNc+": [

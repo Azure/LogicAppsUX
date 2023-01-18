@@ -2,12 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { func, funcWatchProblemMatcher, hostStartCommand } from '../../../constants';
-import { localize } from '../../../localize';
+import { extensionCommand, func, funcWatchProblemMatcher, hostStartCommand } from '../../../constants';
 import { ScriptInitVSCodeStep } from './ScriptInitVSCodeStep';
-import { FuncVersion } from '@microsoft/vscode-extension';
 import type { IProjectWizardContext, ITaskInputs, ISettingToAdd } from '@microsoft/vscode-extension';
-import type { DebugConfiguration, TaskDefinition } from 'vscode';
+import type { TaskDefinition } from 'vscode';
 
 export class WorkflowInitVSCodeStep extends ScriptInitVSCodeStep {
   protected async executeCore(context: IProjectWizardContext): Promise<void> {
@@ -37,18 +35,9 @@ export class WorkflowInitVSCodeStep extends ScriptInitVSCodeStep {
       {
         id: 'getDebugSymbolDll',
         type: 'command',
-        command: 'logicAppsExtension.getDebugSymbolDll',
+        command: extensionCommand.getDebugSymbolDll,
       },
     ];
-  }
-
-  protected getDebugConfiguration(version: FuncVersion): DebugConfiguration {
-    return {
-      name: localize('attachToNetFunc', 'Attach to .NET Functions'),
-      type: version === FuncVersion.v1 ? 'clr' : 'coreclr',
-      request: 'attach',
-      processId: '{command:logicAppsExtension.pickProcess}',
-    };
   }
 
   protected getWorkspaceSettings(): ISettingToAdd[] {

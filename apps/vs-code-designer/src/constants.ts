@@ -16,12 +16,18 @@ export const settingsFileName = 'settings.json';
 export const extensionsFileName = 'extensions.json';
 export const vscodeFolderName = '.vscode';
 export const workflowFileName = 'workflow.json';
+export const funcIgnoreFileName = '.funcignore';
 
 // Functions
 export const func = 'func';
 export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
 export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
 export const extensionVersionKey = 'FUNCTIONS_EXTENSION_VERSION';
+export const hostStartCommand = 'host start';
+export const hostStartTaskName = `${func}: ${hostStartCommand}`;
+export const funcPackageName = 'azure-functions-core-tools';
+export const defaultFuncPort = '7071';
+export const isolatedSdkName = 'Microsoft.Azure.Functions.Worker.Sdk';
 
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
@@ -38,6 +44,7 @@ export const workflowAppAADClientId = 'WORKFLOWAPP_AAD_CLIENTID';
 export const workflowAppAADObjectId = 'WORKFLOWAPP_AAD_OBJECTID';
 export const workflowAppAADTenantId = 'WORKFLOWAPP_AAD_TENANTID';
 export const workflowAppAADClientSecret = 'WORKFLOWAPP_AAD_CLIENTSECRET';
+export const debugSymbolDll = 'Microsoft.Azure.Workflows.BuildTasks.DebugSymbolGenerator.dll';
 
 export enum workflowType {
   stateful = 'Stateful-Codeless',
@@ -67,8 +74,17 @@ export enum extensionCommand {
   startLogicApp = 'logicAppsExtension.startLogicApp',
   stopLogicApp = 'logicAppsExtension.stopLogicApp',
   restartLogicApp = 'logicAppsExtension.restartLogicApp',
+  pickProcess = 'logicAppsExtension.pickProcess',
+  getDebugSymbolDll = 'logicAppsExtension.getDebugSymbolDll',
+  deleteLogicApp = 'logicAppsExtension.deleteLogicApp',
+  refresh = 'logicAppsExtension.refresh',
+  switchToDotnetProject = 'logicAppsExtension.switchToDotnetProject',
   azureFunctionsOpenFile = 'azureFunctions.openFile',
+  azureFunctionsUninstallFuncCoreTools = 'azureFunctions.uninstallFuncCoreTools',
+  azureFunctionsAppSettingsEncrypt = 'azureFunctions.appSettings.encrypt',
+  azureFunctionsAppSettingsDecrypt = 'azureFunctions.appSettings.decrypt',
   azureSelectSubscriptions = 'azure-account.selectSubscriptions',
+  openOverview = 'logicAppsExtension.openOverview',
 }
 
 // Context
@@ -84,23 +100,27 @@ export const contextValueSeparator = ';';
 // Git
 export const gitCommand = 'git';
 
-// Project
+// Project settings
 export const projectLanguageSetting = 'projectLanguage';
 export const funcVersionSetting = 'projectRuntime';
 export const projectSubpathSetting = 'projectSubpath';
 export const projectTemplateKeySetting = 'projectTemplateKey';
 export const projectOpenBehaviorSetting = 'projectOpenBehavior';
+export const stopFuncTaskPostDebugSetting = 'stopFuncTaskPostDebug';
+export const validateFuncCoreToolsSetting = 'validateFuncCoreTools';
+export const showDeployConfirmationSetting = 'showDeployConfirmation';
+export const deploySubpathSetting = 'deploySubpath';
+export const preDeployTaskSetting = 'preDeployTask';
+export const pickProcessTimeoutSetting = 'pickProcessTimeout';
+
+// Project
 export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';
 export const defaultVersionRange = '[1.*, 2.0.0)'; // Might need to be changed
-export const hostStartCommand = 'host start';
 export const funcWatchProblemMatcher = '$func-watch';
 export const extInstallCommand = 'extensions install';
 export const extInstallTaskName = `${func}: ${extInstallCommand}`;
-
-export const deploySubpathSetting = 'deploySubpath';
 export const tasksVersion = '2.0.0';
 export const launchVersion = '0.2.0';
-export const preDeployTaskSetting = 'preDeployTask';
 export const dotnetPublishTaskLabel = 'publish';
 
 // local.settings.json
@@ -115,6 +135,12 @@ export enum DotnetVersion {
   net3 = 'netcoreapp3.1',
   net2 = 'netcoreapp2.1',
   net48 = 'net48',
+}
+
+// Packages Manager
+export enum PackageManager {
+  npm = 'npm',
+  brew = 'brew',
 }
 
 // Resources

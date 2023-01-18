@@ -1,7 +1,12 @@
-import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema } from '../../__mocks__';
+import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, simpleLoopSource, sourceMockSchema } from '../../__mocks__';
 import { SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
-import { addParentConnectionForRepeatingElementsNested, getSourceValueFromLoop, splitKeyIntoChildren } from '../DataMap.Utils';
+import {
+  addParentConnectionForRepeatingElementsNested,
+  getSourceValueFromLoop,
+  qualifyLoopRelativeSourceKeys,
+  splitKeyIntoChildren,
+} from '../DataMap.Utils';
 import { convertSchemaToSchemaExtended, flattenSchemaIntoDictionary } from '../Schema.Utils';
 import {
   manyToManyConnectionFromSource,
@@ -17,20 +22,38 @@ import {
 describe('utils/DataMap', () => {
   describe('getSourceValueFromLoop', () => {
     it('gets the source key from a looped target string', () => {
-      const result = getSourceValueFromLoop('TelephoneNumber', '/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name');
+      const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
+      const flattenedSchema = flattenSchemaIntoDictionary(extendedSource, SchemaType.Source);
+
+      const result = getSourceValueFromLoop(
+        'TelephoneNumber',
+        '/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name',
+        flattenedSchema
+      );
       expect(result).toEqual('/ns0:Root/Looping/Employee/TelephoneNumber');
     });
 
     it('gets the source key from a looped target string with a function', () => {
+      const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
+      const flattenedSchema = flattenSchemaIntoDictionary(extendedSource, SchemaType.Source);
+
       const result = getSourceValueFromLoop(
         'lower-case(TelephoneNumber)',
-        '/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name'
+        '/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name',
+        flattenedSchema
       );
       expect(result).toEqual('lower-case(/ns0:Root/Looping/Employee/TelephoneNumber)');
     });
 
     it('gets the source key from a nested looped target string', () => {
-      const result = getSourceValueFromLoop('Day', '/ns0:Root/Ano/$for(/ns0:Root/Year)/Mes/$for(/ns0:Root/Year/Month)/Dia');
+      const extendedSource = convertSchemaToSchemaExtended(simpleLoopSource);
+      const flattenedSchema = flattenSchemaIntoDictionary(extendedSource, SchemaType.Source);
+
+      const result = getSourceValueFromLoop(
+        'Day',
+        '/ns0:Root/Ano/$for(/ns0:Root/Year)/Mes/$for(/ns0:Root/Year/Month)/Dia',
+        flattenedSchema
+      );
       expect(result).toEqual('/ns0:Root/Year/Month/Day');
     });
   });
@@ -140,6 +163,34 @@ describe('utils/DataMap', () => {
         'get-date()',
         'string(EmployeeID)',
       ]);
+    });
+  });
+
+  describe('qualifyLoopRelativeSourceKeys', () => {
+    it('Nested loops with relative source keys', () => {
+      expect(
+        qualifyLoopRelativeSourceKeys(
+          '/ns0:Root/ManyToOne/$for(/ns0:Root/ManyToOne/SourceYear, $a)/$for(SourceMonth)/$for(SourceDay, $c)/Date/DayName'
+        )
+      ).toBe(
+        '/ns0:Root/ManyToOne/$for(/ns0:Root/ManyToOne/SourceYear, $a)/$for(/ns0:Root/ManyToOne/SourceYear/SourceMonth)/$for(/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay, $c)/Date/DayName'
+      );
+    });
+
+    it('Nested loops with already-qualified/absolute source keys', () => {
+      expect(
+        qualifyLoopRelativeSourceKeys(
+          '/ns0:Root/ManyToOne/$for(/ns0:Root/ManyToOne/SourceYear, $a)/$for(/ns0:Root/ManyToOne/SourceYear/SourceMonth, $b)/$for(/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay, $c)/Date/DayName'
+        )
+      ).toBe(
+        '/ns0:Root/ManyToOne/$for(/ns0:Root/ManyToOne/SourceYear, $a)/$for(/ns0:Root/ManyToOne/SourceYear/SourceMonth, $b)/$for(/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay, $c)/Date/DayName'
+      );
+    });
+
+    it('Single loop (fully-qualified/absolute)', () => {
+      expect(qualifyLoopRelativeSourceKeys('/ns0:Root/ManyToOne/$for(/ns0:Root/ManyToOne/SourceYear, $a)/RandomKey')).toBe(
+        '/ns0:Root/ManyToOne/$for(/ns0:Root/ManyToOne/SourceYear, $a)/RandomKey'
+      );
     });
   });
 });

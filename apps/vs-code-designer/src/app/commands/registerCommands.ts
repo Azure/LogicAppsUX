@@ -5,15 +5,21 @@
 import { extensionCommand } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt';
+import { ProductionSlotTreeItem } from '../tree/slotsTree/ProductionSlotTreeItem';
 import { createCodeless } from './createCodeless/createCodeless';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
+import { deleteNode } from './deleteNode';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
 import { openFile } from './openFile';
+import { pickFuncProcess } from './pickFuncProcess';
 import { restartLogicApp } from './restartLogicApp';
 import { startLogicApp } from './startLogicApp';
 import { stopLogicApp } from './stopLogicApp';
+import { getDebugSymbolDll } from './workflows/getDebugSymbolDll';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
+import { openOverview } from './workflows/openOverview';
+import { switchToDotnetProject } from './workflows/switchToDotnetProject';
 import { viewContent } from './workflows/viewContent';
 import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
 import { registerSiteCommand } from '@microsoft/vscode-azext-azureappservice';
@@ -44,4 +50,13 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.startLogicApp, startLogicApp);
   registerCommand(extensionCommand.stopLogicApp, stopLogicApp);
   registerCommand(extensionCommand.restartLogicApp, restartLogicApp);
+  registerCommand(extensionCommand.pickProcess, pickFuncProcess);
+  registerCommand(extensionCommand.getDebugSymbolDll, getDebugSymbolDll);
+  registerCommand(
+    extensionCommand.deleteLogicApp,
+    async (context: IActionContext, node?: AzExtTreeItem) => await deleteNode(context, ProductionSlotTreeItem.contextValue, node)
+  );
+  registerCommand(extensionCommand.openOverview, openOverview);
+  registerCommand(extensionCommand.refresh, async (context: IActionContext, node?: AzExtTreeItem) => await ext.tree.refresh(context, node));
+  registerCommand(extensionCommand.switchToDotnetProject, switchToDotnetProject);
 }

@@ -25,7 +25,7 @@
     "build:designer-client-services": "nx run services-designer-client-services:build",
     "build:parsers": "nx run parsers:build",
     "build:vscode-react": "nx run vs-code-react:build",
-    "build:vscode-designer": "nx run vs-code-designer:build && nx run vs-code-designer-react:build",
+    "build:vscode-designer": "nx run vs-code-designer:build && nx run vs-code-designer-react:build && nx run vs-code-react:build",
     "build:utils": "nx run utils:build",
     "bump": "standard-version --no-verify",
     "vscode:designer:pack": "cd ./dist/apps/vs-code-designer && npm install && vsce package",
@@ -115,7 +115,9 @@
     "url": "^0.11.0",
     "util": "^0.12.4",
     "vscode-nls": "^4.1.1",
-    "web-worker": "1.2.0"
+    "web-worker": "1.2.0",
+    "ps-tree": "^1.1.1",
+    "azure-storage": "^2.10.3"
   },
   "devDependencies": {
     "@babel/core": "7.18.13",

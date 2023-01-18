@@ -198,16 +198,7 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
   );
 };
 
-const Setting = ({
-  id,
-  settings,
-  isReadOnly,
-}: {
-  id?: string;
-  settings: Settings[];
-  isReadOnly?: boolean;
-  validationErrors?: ValidationError[];
-}): JSX.Element => {
+const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings[]; isReadOnly?: boolean }): JSX.Element => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const nodeId = useSelectedNodeId();
@@ -228,8 +219,9 @@ const Setting = ({
     <div className="msla-setting-section-settings">
       {settings?.map((setting, i) => {
         const { settingType, settingProp, visible = true } = setting;
-        const { id: parameterId, conditionalVisibility, readOnly } = settingProp as any;
+        const { id: parameterId, conditionalVisibility, readOnly, validationErrors } = settingProp as any;
         if (!readOnly) settingProp.readOnly = isReadOnly;
+        const errorMessage = validationErrors?.reduce((acc: string, message: any) => acc + message + ' ', '');
 
         const getClassName = (): string =>
           settingType === 'RunAfter'
@@ -296,6 +288,7 @@ const Setting = ({
           <div key={i} style={{ display: 'flex', gap: '4px' }}>
             <div className={getClassName()} style={{ flex: '1 1 auto' }}>
               {renderSetting()}
+              {errorMessage && <div className="msla-input-parameter-error">{errorMessage}</div>}
             </div>
             <RemoveConditionalParameter />
           </div>

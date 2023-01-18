@@ -1,6 +1,13 @@
-import { simpleLoopSource, simpleLoopTarget, sourceMockSchema, targetMockSchema } from '../../__mocks__';
+import {
+  layeredLoopSourceMockSchema,
+  layeredLoopTargetMockSchema,
+  simpleLoopSource,
+  simpleLoopTarget,
+  sourceMockSchema,
+  targetMockSchema,
+} from '../../__mocks__';
 import type { MapDefinitionEntry } from '../../models';
-import { functionMock, ifPseudoFunctionKey } from '../../models';
+import { functionMock, ifPseudoFunctionKey, directAccessPseudoFunctionKey, indexPseudoFunctionKey } from '../../models';
 import type { ConnectionUnit } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { convertFromMapDefinition } from '../MapDefinitionDeserializer';
@@ -210,7 +217,92 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
     });
 
-    it('creates a conditional connection', () => {
+    it('creates connections for nested functions within a loop', () => {
+      simpleMap['ns0:Root'] = {
+        CumulativeExpression: {
+          PopulationSummary: {
+            '$for(/ns0:Root/CumulativeExpression/Population/State)': {
+              State: {
+                Name: 'Name',
+                SexRatio: 'divide(count(County/Person/Sex/Male), count(County/Person/Sex/Female))',
+              },
+            },
+          },
+        },
+      };
+
+      const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
+
+      expect((result['target-/ns0:Root/CumulativeExpression/PopulationSummary/State'].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/CumulativeExpression/Population/State'
+      );
+      expect(
+        (result['target-/ns0:Root/CumulativeExpression/PopulationSummary/State/Name'].inputs[0][0] as ConnectionUnit).reactFlowKey
+      ).toEqual('source-/ns0:Root/CumulativeExpression/Population/State/Name');
+
+      const divideRfKey = (result['target-/ns0:Root/CumulativeExpression/PopulationSummary/State/SexRatio'].inputs[0][0] as ConnectionUnit)
+        .reactFlowKey;
+      expect(divideRfKey).toContain('Divide');
+
+      const count1RfKey = (result[divideRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(count1RfKey).toContain('Count');
+      expect((result[count1RfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/CumulativeExpression/Population/State/County/Person/Sex/Male'
+      );
+
+      const count2RfKey = (result[divideRfKey].inputs[1][0] as ConnectionUnit).reactFlowKey;
+      expect(count2RfKey).toContain('Count');
+      expect((result[count2RfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/CumulativeExpression/Population/State/County/Person/Sex/Female'
+      );
+    });
+
+    it('creates a simple conditional property connection', () => {
+      simpleMap['ns0:Root'] = {
+        ConditionalMapping: {
+          ItemPrice: '/ns0:Root/ConditionalMapping/ItemPrice',
+          '$if(is-greater-than(/ns0:Root/ConditionalMapping/ItemQuantity, 200))': {
+            ItemDiscount: '/ns0:Root/ConditionalMapping/ItemPrice',
+          },
+        },
+      };
+
+      const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+
+      expect(resultEntries.length).toEqual(6);
+
+      expect(resultEntries[0][0]).toContain('IsGreater');
+      expect(resultEntries[0][1]).toBeTruthy();
+      expect(resultEntries[0][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
+      expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
+      expect(resultEntries[0][1].inputs[1][0]).toEqual('200');
+
+      expect(resultEntries[1][0]).toContain(ifPseudoFunctionKey);
+      expect(resultEntries[1][1]).toBeTruthy();
+      expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
+      expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
+      expect((resultEntries[1][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+
+      expect(resultEntries[2][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+      expect(resultEntries[2][1]).toBeTruthy();
+      expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping/ItemPrice');
+
+      expect(resultEntries[3][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
+      expect(resultEntries[3][1]).toBeTruthy();
+      expect(resultEntries[3][1].outputs[0].reactFlowKey).toContain('IsGreater');
+
+      expect(resultEntries[4][0]).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
+      expect(resultEntries[4][1]).toBeTruthy();
+      expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain(ifPseudoFunctionKey);
+
+      expect(resultEntries[5][0]).toEqual('target-/ns0:Root/ConditionalMapping/ItemPrice');
+      expect(resultEntries[5][1]).toBeTruthy();
+      expect((resultEntries[5][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+    });
+
+    it('creates a conditional property connection', () => {
       simpleMap['ns0:Root'] = {
         ConditionalMapping: {
           ItemPrice: '/ns0:Root/ConditionalMapping/ItemPrice',
@@ -224,7 +316,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       const resultEntries = Object.entries(result);
       resultEntries.sort();
 
-      expect(resultEntries.length).toEqual(9);
+      expect(resultEntries.length).toEqual(8);
 
       expect(resultEntries[0][0]).toContain('IsGreater');
       expect(resultEntries[0][1]).toBeTruthy();
@@ -243,8 +335,9 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
       expect(resultEntries[3][0]).toContain(ifPseudoFunctionKey);
       expect(resultEntries[3][1]).toBeTruthy();
-      expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping');
+      expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
       expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
+      expect((resultEntries[3][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toContain('Multiply');
 
       expect(resultEntries[4][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
       expect(resultEntries[4][1]).toBeTruthy();
@@ -257,13 +350,128 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect(resultEntries[5][1].outputs[0].reactFlowKey).toContain('Multiply');
       expect(resultEntries[5][1].outputs[1].reactFlowKey).toContain('Multiply');
 
-      expect(resultEntries[6][0]).toEqual('target-/ns0:Root/ConditionalMapping');
+      expect(resultEntries[6][0]).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
       expect(resultEntries[6][1]).toBeTruthy();
       expect((resultEntries[6][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain(ifPseudoFunctionKey);
 
-      expect(resultEntries[7][0]).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
+      expect(resultEntries[7][0]).toEqual('target-/ns0:Root/ConditionalMapping/ItemPrice');
       expect(resultEntries[7][1]).toBeTruthy();
-      expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('Multiply');
+      expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+    });
+
+    it('creates a simple conditional object connection', () => {
+      simpleMap['ns0:Root'] = {
+        '$if(is-greater-than(/ns0:Root/ConditionalMapping/ItemQuantity, 200))': {
+          ConditionalMapping: {
+            ItemPrice: '/ns0:Root/ConditionalMapping/ItemPrice',
+          },
+        },
+      };
+
+      const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+
+      expect(resultEntries.length).toEqual(7);
+
+      expect(resultEntries[0][0]).toContain('IsGreater');
+      expect(resultEntries[0][1]).toBeTruthy();
+      expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
+      expect(resultEntries[0][1].inputs[1][0]).toEqual('200');
+      expect(resultEntries[0][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
+
+      expect(resultEntries[1][0]).toContain(ifPseudoFunctionKey);
+      expect(resultEntries[1][1]).toBeTruthy();
+      expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
+      expect((resultEntries[1][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping');
+      expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping');
+
+      expect(resultEntries[2][0]).toEqual('source-/ns0:Root/ConditionalMapping');
+      expect(resultEntries[2][1]).toBeTruthy();
+      expect(resultEntries[2][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
+
+      expect(resultEntries[3][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+      expect(resultEntries[3][1]).toBeTruthy();
+      expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping/ItemPrice');
+
+      expect(resultEntries[4][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
+      expect(resultEntries[4][1]).toBeTruthy();
+      expect(resultEntries[4][1].outputs[0].reactFlowKey).toContain('IsGreater');
+
+      expect(resultEntries[5][0]).toEqual('target-/ns0:Root/ConditionalMapping');
+      expect(resultEntries[5][1]).toBeTruthy();
+      expect((resultEntries[5][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain(ifPseudoFunctionKey);
+
+      expect(resultEntries[6][0]).toEqual('target-/ns0:Root/ConditionalMapping/ItemPrice');
+      expect(resultEntries[6][1]).toBeTruthy();
+      expect((resultEntries[6][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+    });
+
+    it('creates a conditional object connection', () => {
+      simpleMap['ns0:Root'] = {
+        '$if(is-greater-than(multiply(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity), 200))': {
+          ConditionalMapping: {
+            ItemPrice: '/ns0:Root/ConditionalMapping/ItemPrice',
+            ItemDiscount: 'multiply(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity, 0.05)',
+          },
+        },
+      };
+
+      const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+
+      expect(resultEntries.length).toEqual(10);
+
+      expect(resultEntries[0][0]).toContain('IsGreater');
+      expect(resultEntries[0][1]).toBeTruthy();
+      expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('Multiply');
+      expect(resultEntries[0][1].inputs[1][0]).toEqual('200');
+      expect(resultEntries[0][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
+
+      // Non-deterministic about which Multiply will come first
+      expect(resultEntries[1][0]).toContain('Multiply');
+      expect(resultEntries[1][1]).toBeTruthy();
+      expect(resultEntries[1][1].inputs[0].length).toBeGreaterThan(1);
+      expect(resultEntries[1][1].outputs.length).toBeGreaterThan(0);
+
+      expect(resultEntries[2][0]).toContain('Multiply');
+      expect(resultEntries[2][1]).toBeTruthy();
+      expect(resultEntries[2][1].inputs[0].length).toBeGreaterThan(1);
+      expect(resultEntries[2][1].outputs.length).toBeGreaterThan(0);
+
+      expect(resultEntries[3][0]).toContain(ifPseudoFunctionKey);
+      expect(resultEntries[3][1]).toBeTruthy();
+      expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
+      expect((resultEntries[3][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping');
+      expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping');
+
+      expect(resultEntries[4][0]).toEqual('source-/ns0:Root/ConditionalMapping');
+      expect(resultEntries[4][1]).toBeTruthy();
+      expect(resultEntries[4][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
+
+      expect(resultEntries[5][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+      expect(resultEntries[5][1]).toBeTruthy();
+      expect(resultEntries[5][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping/ItemPrice');
+      expect(resultEntries[5][1].outputs[1].reactFlowKey).toContain('Multiply');
+      expect(resultEntries[5][1].outputs[2].reactFlowKey).toContain('Multiply');
+
+      expect(resultEntries[6][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
+      expect(resultEntries[6][1]).toBeTruthy();
+      expect(resultEntries[6][1].outputs[0].reactFlowKey).toContain('Multiply');
+      expect(resultEntries[6][1].outputs[1].reactFlowKey).toContain('Multiply');
+
+      expect(resultEntries[7][0]).toEqual('target-/ns0:Root/ConditionalMapping');
+      expect(resultEntries[7][1]).toBeTruthy();
+      expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain(ifPseudoFunctionKey);
+
+      expect(resultEntries[8][0]).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
+      expect(resultEntries[8][1]).toBeTruthy();
+      expect((resultEntries[8][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('Multiply');
+
+      expect(resultEntries[9][0]).toEqual('target-/ns0:Root/ConditionalMapping/ItemPrice');
+      expect(resultEntries[9][1]).toBeTruthy();
+      expect((resultEntries[9][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
     });
 
     it('creates a loop connection', () => {
@@ -296,11 +504,13 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect(resultEntries[3][1]).toBeTruthy();
     });
 
-    it.skip('creates a looping conditional connection', () => {
+    // TODO: 16770037 - Once the BE fixes how loops are parsed in getSchemaTree we should restore this to match
+    // the transcript yml file
+    it('creates a looping conditional connection', () => {
       simpleMap['ns0:Root'] = {
         ConditionalLooping: {
-          CategorizedCatalog: {
-            '$for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product)': {
+          '$for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product)': {
+            CategorizedCatalog: {
               '$if(is-equal(substring(SKU, 1, 2), "1"))': {
                 PetProduct: {
                   Name: 'Name',
@@ -315,26 +525,61 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       const resultEntries = Object.entries(result);
       resultEntries.sort();
 
-      // All these expects might be incorrect
-      expect(resultEntries.length).toEqual(5);
+      expect(resultEntries.length).toEqual(9);
 
-      expect(resultEntries[0][0]).toContain('IsGreater');
+      expect(resultEntries[0][0]).toContain('IsEqual');
       expect(resultEntries[0][1]).toBeTruthy();
+      expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('SubString');
+      expect(resultEntries[0][1].inputs[1][0]).toEqual('"1"');
+      expect(resultEntries[0][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
 
-      expect(resultEntries[1][0]).toContain(ifPseudoFunctionKey);
+      expect(resultEntries[1][0]).toContain('SubString');
       expect(resultEntries[1][1]).toBeTruthy();
+      expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product/SKU'
+      );
+      expect(resultEntries[1][1].inputs[1][0]).toEqual('1');
+      expect(resultEntries[1][1].inputs[2][0]).toEqual('2');
+      expect(resultEntries[1][1].outputs[0].reactFlowKey).toContain('IsEqual');
 
-      expect(resultEntries[2][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+      expect(resultEntries[2][0]).toContain(ifPseudoFunctionKey);
       expect(resultEntries[2][1]).toBeTruthy();
+      expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IsEqual');
+      expect((resultEntries[2][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product'
+      );
+      expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalLooping/CategorizedCatalog/PetProduct');
 
-      expect(resultEntries[3][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
+      expect(resultEntries[3][0]).toEqual('source-/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product');
       expect(resultEntries[3][1]).toBeTruthy();
+      expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalLooping/CategorizedCatalog');
 
-      expect(resultEntries[4][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+      expect(resultEntries[4][0]).toEqual('source-/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product/Name');
       expect(resultEntries[4][1]).toBeTruthy();
+      expect(resultEntries[4][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalLooping/CategorizedCatalog/PetProduct/Name');
+
+      expect(resultEntries[5][0]).toEqual('source-/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product/SKU');
+      expect(resultEntries[5][1]).toBeTruthy();
+      expect(resultEntries[5][1].outputs[0].reactFlowKey).toContain('SubString');
+
+      expect(resultEntries[6][0]).toEqual('target-/ns0:Root/ConditionalLooping/CategorizedCatalog');
+      expect(resultEntries[6][1]).toBeTruthy();
+      expect((resultEntries[6][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product'
+      );
+
+      expect(resultEntries[7][0]).toEqual('target-/ns0:Root/ConditionalLooping/CategorizedCatalog/PetProduct');
+      expect(resultEntries[7][1]).toBeTruthy();
+      expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain(ifPseudoFunctionKey);
+
+      expect(resultEntries[8][0]).toEqual('target-/ns0:Root/ConditionalLooping/CategorizedCatalog/PetProduct/Name');
+      expect(resultEntries[8][1]).toBeTruthy();
+      expect((resultEntries[8][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product/Name'
+      );
     });
 
-    it.skip('creates a direct index connection', () => {
+    it('creates a direct index connection', () => {
       simpleMap['ns0:Root'] = {
         LoopingWithIndex: {
           WeatherSummary: {
@@ -342,34 +587,103 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
               Name: '"Day 1"',
               Pressure: '/ns0:Root/LoopingWithIndex/WeatherReport[1]/@Pressure',
             },
+            Day2: {
+              Name: '"Day 2"',
+              Temperature: '/ns0:Root/LoopingWithIndex/WeatherReport[2]/@Temperature',
+            },
           },
         },
       };
 
       const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
-      const resultEntries = Object.entries(result);
-      resultEntries.sort();
 
-      // All these expects might be incorrect
-      expect(resultEntries.length).toEqual(5);
+      expect(Object.entries(result).length).toEqual(9);
+      expect(result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day1/Name'].inputs[0][0] as string).toBe('"Day 1"');
+      expect(result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day2/Name'].inputs[0][0] as string).toBe('"Day 2"');
 
-      expect(resultEntries[0][0]).toContain('IsGreater');
-      expect(resultEntries[0][1]).toBeTruthy();
+      const directAccess1Key = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day1/Pressure'].inputs[0][0] as ConnectionUnit)
+        .reactFlowKey;
+      const directAccess2Key = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day2/Temperature'].inputs[0][0] as ConnectionUnit)
+        .reactFlowKey;
 
-      expect(resultEntries[1][0]).toContain(ifPseudoFunctionKey);
-      expect(resultEntries[1][1]).toBeTruthy();
+      expect(directAccess1Key).toContain(directAccessPseudoFunctionKey);
+      expect(directAccess2Key).toContain(directAccessPseudoFunctionKey);
 
-      expect(resultEntries[2][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
-      expect(resultEntries[2][1]).toBeTruthy();
+      expect(result[directAccess1Key].inputs[0][0] as string).toBe('1');
+      expect((result[directAccess1Key].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/LoopingWithIndex/WeatherReport'
+      );
+      expect((result[directAccess1Key].inputs[2][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/LoopingWithIndex/WeatherReport/@Pressure'
+      );
 
-      expect(resultEntries[3][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
-      expect(resultEntries[3][1]).toBeTruthy();
-
-      expect(resultEntries[4][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
-      expect(resultEntries[4][1]).toBeTruthy();
+      expect(result[directAccess2Key].inputs[0][0] as string).toBe('2');
+      expect((result[directAccess2Key].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/LoopingWithIndex/WeatherReport'
+      );
+      expect((result[directAccess2Key].inputs[2][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/LoopingWithIndex/WeatherReport/@Temperature'
+      );
     });
 
-    it.skip('creates a direct index looping connection', () => {
+    it('creates a looping connection w/ index variable and direct access', () => {
+      simpleMap['ns0:Root'] = {
+        Looping: {
+          Trips: {
+            '$for(/ns0:Root/Looping/VehicleTrips/Trips, $i)': {
+              Trip: {
+                VehicleRegistration:
+                  '/ns0:Root/Looping/VehicleTrips/Vehicle[is-equal(VehicleId, /ns0:Root/Looping/VehicleTrips/Trips[$i]/VehicleId)]/VehicleRegistration',
+                Distance: '/ns0:Root/Looping/VehicleTrips/Vehicle[$i]/VehicleRegistration',
+              },
+            },
+          },
+        },
+      };
+
+      const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
+
+      expect(Object.entries(result).length).toEqual(12);
+
+      const indexRfKey = (result['target-/ns0:Root/Looping/Trips/Trip'].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(indexRfKey).toContain(indexPseudoFunctionKey);
+      expect((result[indexRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/Looping/VehicleTrips/Trips');
+
+      const directAccessRfKey1 = (result['target-/ns0:Root/Looping/Trips/Trip/VehicleRegistration'].inputs[0][0] as ConnectionUnit)
+        .reactFlowKey;
+      expect(directAccessRfKey1).toContain(directAccessPseudoFunctionKey);
+      const isEqualRfKey = (result[directAccessRfKey1].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(isEqualRfKey).toContain('IsEqual');
+      expect((result[directAccessRfKey1].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/Looping/VehicleTrips/Vehicle'
+      );
+      expect((result[directAccessRfKey1].inputs[2][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/Looping/VehicleTrips/Vehicle/VehicleRegistration'
+      );
+
+      const directAccessRfKey2 = (result['target-/ns0:Root/Looping/Trips/Trip/Distance'].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(directAccessRfKey2).toContain(directAccessPseudoFunctionKey);
+      expect((result[directAccessRfKey2].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(indexRfKey);
+      expect((result[directAccessRfKey2].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/Looping/VehicleTrips/Vehicle'
+      );
+      expect((result[directAccessRfKey2].inputs[2][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/Looping/VehicleTrips/Vehicle/VehicleRegistration'
+      );
+
+      expect((result[isEqualRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/Looping/VehicleTrips/Trips/VehicleId'
+      );
+      const directAccessRfKey3 = (result[isEqualRfKey].inputs[1][0] as ConnectionUnit).reactFlowKey;
+      expect(directAccessRfKey3).toContain(directAccessPseudoFunctionKey);
+      expect((result[directAccessRfKey3].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(indexRfKey);
+      expect((result[directAccessRfKey3].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/Looping/VehicleTrips/Trips');
+      expect((result[directAccessRfKey3].inputs[2][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/Looping/VehicleTrips/Trips/VehicleId'
+      );
+    });
+
+    it('creates a looping connection w/ index variable, conditional, and relative attribute path', () => {
       simpleMap['ns0:Root'] = {
         LoopingWithIndex: {
           WeatherSummary: {
@@ -386,26 +700,33 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       };
 
       const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
-      const resultEntries = Object.entries(result);
-      resultEntries.sort();
 
-      // All these expects might be incorrect
-      expect(resultEntries.length).toEqual(5);
+      expect(Object.entries(result).length).toEqual(9);
 
-      expect(resultEntries[0][0]).toContain('IsGreater');
-      expect(resultEntries[0][1]).toBeTruthy();
+      const indexFnRfKey = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day'].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(indexFnRfKey).toContain(indexPseudoFunctionKey);
+      expect((result[indexFnRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/LoopingWithIndex/WeatherReport');
 
-      expect(resultEntries[1][0]).toContain(ifPseudoFunctionKey);
-      expect(resultEntries[1][1]).toBeTruthy();
+      const conditionalFnRfKey = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day'].inputs[0][1] as ConnectionUnit)
+        .reactFlowKey;
+      expect(conditionalFnRfKey).toContain(ifPseudoFunctionKey);
+      expect((result[conditionalFnRfKey].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/LoopingWithIndex/WeatherReport'
+      );
+      const greaterFnRfKey = (result[conditionalFnRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(greaterFnRfKey).toContain('IsGreater');
+      expect((result[greaterFnRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(indexFnRfKey);
+      expect(result[greaterFnRfKey].inputs[1][0] as string).toBe('2');
 
-      expect(resultEntries[2][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
-      expect(resultEntries[2][1]).toBeTruthy();
+      const concatFnRfKey = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day/Name'].inputs[0][0] as ConnectionUnit)
+        .reactFlowKey;
+      expect(concatFnRfKey).toContain('Concat');
+      expect(result[concatFnRfKey].inputs[0][0] as string).toBe('"Day "');
+      expect((result[concatFnRfKey].inputs[0][1] as ConnectionUnit).reactFlowKey).toBe(indexFnRfKey);
 
-      expect(resultEntries[3][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
-      expect(resultEntries[3][1]).toBeTruthy();
-
-      expect(resultEntries[4][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
-      expect(resultEntries[4][1]).toBeTruthy();
+      expect((result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day/Pressure'].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/LoopingWithIndex/WeatherReport/@Pressure'
+      );
     });
 
     it('creates a nested loop connection', () => {
@@ -440,6 +761,52 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
       expect(resultEntries[3][0]).toEqual('target-/ns0:Root/Ano/Mes/Dia');
       expect(resultEntries[3][1]).toBeTruthy();
+    });
+
+    it('creates a many-to-one loop connection with nested index variables', () => {
+      const extendedLayeredLoopSource = convertSchemaToSchemaExtended(layeredLoopSourceMockSchema);
+      const extendedLayeredLoopTarget = convertSchemaToSchemaExtended(layeredLoopTargetMockSchema);
+      simpleMap['ns0:Root'] = {
+        ManyToOne: {
+          '$for(/ns0:Root/ManyToOne/SourceYear, $a)': {
+            '$for(SourceMonth, $b)': {
+              '$for(SourceDay, $c)': {
+                Date: {
+                  DayName: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay[$b]/SourceDate',
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const result = convertFromMapDefinition(simpleMap, extendedLayeredLoopSource, extendedLayeredLoopTarget, functionMock);
+
+      expect(Object.entries(result).length).toEqual(10);
+
+      const indexRfKey1 = (result['target-/ns0:Root/ManyToOne/Date'].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(indexRfKey1).toContain(indexPseudoFunctionKey);
+      expect((result[indexRfKey1].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay'
+      );
+
+      const indexRfKey2 = (result['target-/ns0:Root/ManyToOne/Date'].inputs[0][1] as ConnectionUnit).reactFlowKey;
+      expect(indexRfKey2).toContain(indexPseudoFunctionKey);
+      expect((result[indexRfKey2].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/ManyToOne/SourceYear/SourceMonth');
+
+      const indexRfKey3 = (result['target-/ns0:Root/ManyToOne/Date'].inputs[0][2] as ConnectionUnit).reactFlowKey;
+      expect(indexRfKey3).toContain(indexPseudoFunctionKey);
+      expect((result[indexRfKey3].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/ManyToOne/SourceYear');
+
+      const directAccessRfKey = (result['target-/ns0:Root/ManyToOne/Date/DayName'].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(directAccessRfKey).toContain(directAccessPseudoFunctionKey);
+      expect((result[directAccessRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(indexRfKey2);
+      expect((result[directAccessRfKey].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay'
+      );
+      expect((result[directAccessRfKey].inputs[2][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate'
+      );
     });
   });
 });

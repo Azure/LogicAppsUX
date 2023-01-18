@@ -7,10 +7,18 @@ import { useState } from 'react';
 
 export interface StringEditorProps extends BaseEditorProps {
   singleLine?: boolean;
+  clearEditorOnTokenInsertion?: boolean;
   editorBlur?: ChangeHandler;
 }
 
-export const StringEditor = ({ singleLine, initialValue, editorBlur, onChange, ...baseEditorProps }: StringEditorProps) => {
+export const StringEditor = ({
+  singleLine,
+  initialValue,
+  clearEditorOnTokenInsertion,
+  editorBlur,
+  onChange,
+  ...baseEditorProps
+}: StringEditorProps) => {
   const [value, setValue] = useState(initialValue);
 
   const onValueChange = (newValue: ValueSegment[]): void => {
@@ -26,7 +34,7 @@ export const StringEditor = ({ singleLine, initialValue, editorBlur, onChange, .
       placeholder={baseEditorProps.placeholder}
       className={baseEditorProps.className}
       initialValue={initialValue}
-      BasePlugins={{ tokens: baseEditorProps.BasePlugins?.tokens ?? true }}
+      BasePlugins={{ tokens: baseEditorProps.BasePlugins?.tokens ?? true, clearEditor: clearEditorOnTokenInsertion }}
       readonly={baseEditorProps.readonly}
       isTrigger={baseEditorProps.isTrigger}
       tokenPickerHandler={baseEditorProps.tokenPickerHandler}

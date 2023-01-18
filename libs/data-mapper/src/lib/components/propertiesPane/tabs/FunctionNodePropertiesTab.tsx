@@ -21,7 +21,8 @@ import { InputDropdown } from '../../inputDropdown/InputDropdown';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, makeStyles, Text, tokens, Tooltip, typographyStyles } from '@fluentui/react-components';
 import { Add20Regular, Delete20Regular } from '@fluentui/react-icons';
-import { useEffect, useMemo, useState } from 'react';
+import { useDebouncedEffect } from '@react-hookz/web';
+import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -143,71 +144,76 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
   );
 
   // Compile Function's input value(-array)s from its Connection
-  useEffect(() => {
-    let newInputValueArrays: InputValueMatrix = [];
-    const newInputNameArrays: string[] = []; // Node name or formatted custom value for fnOutputValue
+  useDebouncedEffect(
+    () => {
+      let newInputValueArrays: InputValueMatrix = [];
+      const newInputNameArrays: string[] = []; // Node name or formatted custom value for fnOutputValue
 
-    if (functionData.maxNumberOfInputs !== 0) {
-      newInputValueArrays = functionData.inputs.map((_input) => []);
+      if (functionData.maxNumberOfInputs !== 0) {
+        newInputValueArrays = functionData.inputs.map((_input) => []);
 
-      if (connection?.inputs) {
-        Object.values(connection.inputs).forEach((inputValueArray, idx) => {
-          if (!(idx in newInputValueArrays)) {
-            LogService.error(LogCategory.FunctionNodePropertiesTab, 'useEffect', {
-              message: 'Connection inputs had more input-value-arrays than its Function had input slots',
-              inputs: Object.values(connection.inputs),
-            });
+        if (connection?.inputs) {
+          Object.values(connection.inputs).forEach((inputValueArray, idx) => {
+            if (!(idx in newInputValueArrays)) {
+              LogService.error(LogCategory.FunctionNodePropertiesTab, 'useEffect', {
+                message: 'Connection inputs had more input-value-arrays than its Function had input slots',
+                inputs: Object.values(connection.inputs),
+              });
 
-            return;
-          }
-
-          inputValueArray.forEach((inputValue) => {
-            if (inputValue === undefined) {
-              newInputValueArrays[idx].push(undefined);
-            } else if (isCustomValue(inputValue)) {
-              newInputValueArrays[idx].push(inputValue);
-              newInputNameArrays.push(inputValue);
-            } else {
-              newInputValueArrays[idx].push(inputValue.reactFlowKey);
-              if (isFunctionData(inputValue.node)) {
-                newInputNameArrays.push(
-                  `${inputValue.node.functionName}(${functionInputHasInputs(inputValue.reactFlowKey, connectionDictionary) ? '...' : ''})`
-                );
-              } else {
-                newInputNameArrays.push(inputValue.node.name);
-              }
+              return;
             }
+
+            inputValueArray.forEach((inputValue) => {
+              if (inputValue === undefined) {
+                newInputValueArrays[idx].push(undefined);
+              } else if (isCustomValue(inputValue)) {
+                newInputValueArrays[idx].push(inputValue);
+                newInputNameArrays.push(inputValue);
+              } else {
+                newInputValueArrays[idx].push(inputValue.reactFlowKey);
+                if (isFunctionData(inputValue.node)) {
+                  newInputNameArrays.push(
+                    `${inputValue.node.functionName}(${functionInputHasInputs(inputValue.reactFlowKey, connectionDictionary) ? '...' : ''})`
+                  );
+                } else {
+                  newInputNameArrays.push(inputValue.node.name);
+                }
+              }
+            });
           });
-        });
+        }
       }
-    }
 
-    setInputValueArrays(newInputValueArrays);
+      setInputValueArrays(newInputValueArrays);
 
-    let newOutputValue: string;
-    if (functionData.key === indexPseudoFunctionKey) {
-      const indexFunctionSourceNode =
-        connection &&
-        connection.inputs[0][0] &&
-        isConnectionUnit(connection.inputs[0][0]) &&
-        isSchemaNodeExtended(connection.inputs[0][0].node) &&
-        connection.inputs[0][0].node;
+      let newOutputValue: string;
+      if (functionData.key === indexPseudoFunctionKey) {
+        const indexFunctionSourceNode =
+          connection &&
+          connection.inputs[0][0] &&
+          isConnectionUnit(connection.inputs[0][0]) &&
+          isSchemaNodeExtended(connection.inputs[0][0].node) &&
+          connection.inputs[0][0].node;
 
-      newOutputValue = indexFunctionSourceNode
-        ? calculateIndexValue(indexFunctionSourceNode)
-        : getFunctionOutputValue(newInputNameArrays, functionData.functionName);
-    } else if (functionData.key === directAccessPseudoFunctionKey) {
-      const functionValues = getInputValues(connection, connectionDictionary);
-      newOutputValue =
-        functionValues.length === 3
-          ? formatDirectAccess(functionValues[0], functionValues[1], functionValues[2])
+        newOutputValue = indexFunctionSourceNode
+          ? calculateIndexValue(indexFunctionSourceNode)
           : getFunctionOutputValue(newInputNameArrays, functionData.functionName);
-    } else {
-      newOutputValue = getFunctionOutputValue(newInputNameArrays, functionData.functionName);
-    }
+      } else if (functionData.key === directAccessPseudoFunctionKey) {
+        const functionValues = getInputValues(connection, connectionDictionary);
+        newOutputValue =
+          functionValues.length === 3
+            ? formatDirectAccess(functionValues[0], functionValues[1], functionValues[2])
+            : getFunctionOutputValue(newInputNameArrays, functionData.functionName);
+      } else {
+        newOutputValue = getFunctionOutputValue(newInputNameArrays, functionData.functionName);
+      }
 
-    setOutputValue(newOutputValue);
-  }, [functionData, connection, connectionDictionary]);
+      setOutputValue(newOutputValue);
+    },
+    [functionData, connection, connectionDictionary],
+    10,
+    10
+  );
 
   return (
     <div style={{ height: '100%' }}>
