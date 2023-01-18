@@ -9,6 +9,16 @@
     "vscode": "^1.64.0"
   },
   "contributes": {
+    "configuration": {
+      "title": "Azure Data Mapper",
+      "properties": {
+        "azureDataMapper.useExpandedFunctionCards": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use the larger function cards that contain more information on them."
+        }
+      }
+    },
     "commands": [
       {
         "command": "azureDataMapper.createNewDataMap",

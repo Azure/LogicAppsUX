@@ -34,7 +34,7 @@ export default class DataMapperPanel {
 
     this._setWebviewHtml();
 
-    // Watch Schemas folder for changes to update availabe schemas list within Data Mapper
+    // Watch Schemas folder for changes to update available schemas list within Data Mapper
     const schemaFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath);
     const schemaFolderWatcher = workspace.createFileSystemWatcher(
       new RelativePattern(schemaFolderPath, `**/*${supportedSchemaFileExts[0]}`)
@@ -119,6 +119,9 @@ export default class DataMapperPanel {
       case 'setIsMapStateDirty': {
         this.handleUpdateMapDirtyState(msg.data);
         break;
+      }
+      case 'setFunctionDisplayExpanded': {
+        this.updateConfigurationSetting('useExpandedFunctionCards', msg.data);
       }
     }
   }
@@ -272,5 +275,10 @@ export default class DataMapperPanel {
     } else {
       DataMapperExt.showError(`XSLT data map file not detected for ${this.dataMapName} - save your data map to generate it`);
     }
+  }
+
+  public updateConfigurationSetting(configSetting: string, value: boolean) {
+    const azureDataMapperConfig = workspace.getConfiguration('azureDataMapper');
+    azureDataMapperConfig.update(configSetting, value);
   }
 }

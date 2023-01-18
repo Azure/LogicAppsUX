@@ -1,5 +1,5 @@
 import { VSCodeContext } from '../WebViewMsgHandler';
-import { changeFetchedFunctions, changeSourceSchema, changeTargetSchema } from '../state/DataMapDataLoader';
+import { changeFetchedFunctions, changeSourceSchema, changeTargetSchema, changeUseExpandedFunctionCards } from '../state/DataMapDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
 import type { MessageToVsix, SchemaType } from '@microsoft/logic-apps-data-mapper';
 import {
@@ -13,6 +13,7 @@ import {
 } from '@microsoft/logic-apps-data-mapper';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { workspace } from 'vscode';
 
 enum VsCodeThemeType {
   VsCodeLight = 'vscode-light',
@@ -40,6 +41,7 @@ export const App = () => {
   const targetSchema = useSelector((state: RootState) => state.dataMapDataLoader.targetSchema);
   const schemaFileList = useSelector((state: RootState) => state.dataMapDataLoader.schemaFileList);
   const fetchedFunctions = useSelector((state: RootState) => state.dataMapDataLoader.fetchedFunctions);
+  const useExpandedFunctionCards = useSelector((state: RootState) => state.dataMapDataLoader.useExpandedFunctionCards);
 
   const runtimePort = useSelector((state: RootState) => state.dataMapDataLoader.runtimePort);
 
@@ -96,6 +98,21 @@ export const App = () => {
       data: isMapStateDirty,
     });
   };
+
+  const setFunctionDisplayExpanded = (isFunctionDisplaySimple: boolean) => {
+    sendMsgToVsix({
+      command: 'setFunctionDisplayExpanded',
+      data: isFunctionDisplaySimple,
+    });
+
+    dispatch(changeUseExpandedFunctionCards(isFunctionDisplaySimple));
+  };
+
+  useEffect(() => {
+    const azureDataMapperConfig = workspace.getConfiguration('azureDataMapper');
+    const useExpandedFunctionCards = azureDataMapperConfig.get('useExpandedFunctionCards');
+    dispatch(changeUseExpandedFunctionCards(!useExpandedFunctionCards));
+  }, [dispatch]);
 
   const handleRscLoadError = useCallback(
     (error: unknown) => {
@@ -196,6 +213,8 @@ export const App = () => {
           addSchemaFromFile={addSchemaFromFile}
           readCurrentSchemaOptions={readLocalFileOptions}
           setIsMapStateDirty={setIsMapStateDirty}
+          setFunctionDisplayExpanded={setFunctionDisplayExpanded}
+          useExpandedFunctionCards={useExpandedFunctionCards}
         />
       </DataMapDataProvider>
     </DataMapperDesignerProvider>

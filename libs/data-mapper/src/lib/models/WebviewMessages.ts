@@ -32,4 +32,8 @@ export type MessageToVsix =
   | {
       command: 'setIsMapStateDirty';
       data: boolean;
+    }
+  | {
+      command: 'setFunctionDisplayExpanded';
+      data: boolean;
     };

@@ -14,11 +14,13 @@ export interface DataMapLoadingState {
   schemaFileList?: string[];
   xsltFilename: string;
   fetchedFunctions?: FunctionData[];
+  useExpandedFunctionCards: boolean;
 }
 
 const initialState: DataMapLoadingState = {
   loadingMethod: 'file',
   xsltFilename: '',
+  useExpandedFunctionCards: false,
 };
 
 export const dataMapDataLoaderSlice = createSlice({
@@ -58,6 +60,9 @@ export const dataMapDataLoaderSlice = createSlice({
     changeFetchedFunctions: (state, action: PayloadAction<FunctionData[]>) => {
       state.fetchedFunctions = action.payload;
     },
+    changeUseExpandedFunctionCards: (state, action: PayloadAction<boolean>) => {
+      state.useExpandedFunctionCards = action.payload;
+    },
   },
 });
 
@@ -73,6 +78,7 @@ export const {
   changeTargetSchema,
   changeSchemaList,
   changeFetchedFunctions,
+  changeUseExpandedFunctionCards,
 } = dataMapDataLoaderSlice.actions;
 
 export default dataMapDataLoaderSlice.reducer;
