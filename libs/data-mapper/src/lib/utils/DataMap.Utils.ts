@@ -274,7 +274,7 @@ export const qualifyLoopRelativeSourceKeys = (targetKey: string): string => {
   return qualifiedTargetKey;
 };
 
-export const getTargetValueWithoutLoop = (targetKey: string): string => {
+export const getTargetValueWithoutLastLoop = (targetKey: string): string => {
   const forMatchArr = targetKey.match(/\$for\(((?!\)).)+\)\//g);
   const forMatch = forMatchArr?.[forMatchArr.length - 1];
   return forMatch ? targetKey.replace(forMatch, '') : targetKey;

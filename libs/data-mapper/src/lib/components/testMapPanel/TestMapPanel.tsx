@@ -22,7 +22,7 @@ export const commonCodeEditorProps: Partial<MonacoProps> = {
   scrollbar: { horizontal: 'hidden', vertical: 'auto' },
   height: '650px',
   wordWrap: 'on',
-  wrappingIndent: 'indent',
+  wrappingIndent: 'same',
 };
 
 const headerTextStyle: React.CSSProperties = {

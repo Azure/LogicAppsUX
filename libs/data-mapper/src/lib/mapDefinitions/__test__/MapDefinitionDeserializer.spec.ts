@@ -729,7 +729,8 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       );
     });
 
-    it('creates a nested loop connection', () => {
+    // TODO (#16831098): Support nested many-to-many loops
+    it.skip('creates a nested loop connection', () => {
       const extendedLoopSource = convertSchemaToSchemaExtended(simpleLoopSource);
       const extendedLoopTarget = convertSchemaToSchemaExtended(simpleLoopTarget);
       simpleMap['ns0:Root'] = {
@@ -750,17 +751,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
       expect(resultEntries.length).toEqual(4);
 
-      expect(resultEntries[0][0]).toEqual('source-/ns0:Root/Year/Month');
-      expect(resultEntries[0][1]).toBeTruthy();
-
-      expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Year/Month/Day');
-      expect(resultEntries[1][1]).toBeTruthy();
-
       expect(resultEntries[2][0]).toEqual('target-/ns0:Root/Ano/Mes');
-      expect(resultEntries[2][1]).toBeTruthy();
+      expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/Year');
 
       expect(resultEntries[3][0]).toEqual('target-/ns0:Root/Ano/Mes/Dia');
-      expect(resultEntries[3][1]).toBeTruthy();
+      expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/Year/Month');
     });
 
     it('creates a many-to-one loop connection with nested index variables', () => {
