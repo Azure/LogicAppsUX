@@ -1,4 +1,5 @@
 import type { IConnectorService, ListDynamicValue, ManagedIdentityRequestProperties } from '../connector';
+import { getClientRequestIdFromHeaders, pathCombine } from '../helpers';
 import type { IHttpClient } from '../httpClient';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft/parsers-logic-apps';
@@ -39,8 +40,8 @@ export interface BaseConnectorServiceOptions {
   workflowReferenceId: string;
 }
 
-export class BaseConnectorService implements IConnectorService {
-  constructor(private readonly options: BaseConnectorServiceOptions) {
+export abstract class BaseConnectorService implements IConnectorService {
+  constructor(protected readonly options: BaseConnectorServiceOptions) {
     const { apiVersion, baseUrl, httpClient, clientSupportedOperations, schemaClient, valuesClient } = options;
     if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
@@ -104,32 +105,14 @@ export class BaseConnectorService implements IConnectorService {
     return response;
   }
 
-  async getListDynamicValues(
+  abstract getListDynamicValues(
     connectionId: string | undefined,
     connectorId: string,
     operationId: string,
-    _parameterAlias: string | undefined,
+    parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any
-  ): Promise<ListDynamicValue[]> {
-    const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
-    const { operationId: dynamicOperation } = dynamicState;
-
-    const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
-    const configuration = await getConfiguration(connectionId ?? '');
-
-    if (this._isClientSupportedOperation(connectorId, operationId)) {
-      return this.options.valuesClient[dynamicOperation]({ parameters: invokeParameters, configuration });
-    }
-
-    const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`;
-    const response = await httpClient.post({
-      uri,
-      queryParameters: { 'api-version': apiVersion },
-      content: { parameters: invokeParameters, configuration },
-    });
-    return this._getResponseFromDynamicApi(response, uri);
-  }
+  ): Promise<ListDynamicValue[]>;
 
   async getLegacyDynamicSchema(
     connectionId: string,
@@ -160,43 +143,22 @@ export class BaseConnectorService implements IConnectorService {
       : { properties: response, type: Types.Object };
   }
 
-  async getDynamicSchema(
+  abstract getDynamicSchema(
     connectionId: string | undefined,
     connectorId: string,
     operationId: string,
-    _parameterAlias: string | undefined,
+    parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any
-  ): Promise<OpenAPIV2.SchemaObject> {
-    const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
-    const {
-      extension: { operationId: dynamicOperation },
-      isInput,
-    } = dynamicState;
+  ): Promise<OpenAPIV2.SchemaObject>;
 
-    const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
-    const configuration = await getConfiguration(connectionId ?? '');
-
-    if (this._isClientSupportedOperation(connectorId, operationId)) {
-      return this.options.schemaClient[dynamicOperation]({ parameters: invokeParameters, isInput, configuration });
-    }
-
-    const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`;
-    const response = await httpClient.post({
-      uri,
-      queryParameters: { 'api-version': apiVersion },
-      content: { parameters: invokeParameters, configuration },
-    });
-    return this._getResponseFromDynamicApi(response, uri);
-  }
-
-  private _isClientSupportedOperation(connectorId: string, operationId: string): boolean {
+  protected _isClientSupportedOperation(connectorId: string, operationId: string): boolean {
     return this.options.clientSupportedOperations.some(
       (operationInfo) => equals(connectorId, operationInfo.connectorId) && equals(operationId, operationInfo.operationId)
     );
   }
 
-  private _getInvokeParameters(parameters: Record<string, any>, dynamicState: any): Record<string, any> {
+  protected _getInvokeParameters(parameters: Record<string, any>, dynamicState: any): Record<string, any> {
     // tslint:disable-line: no-any
     const invokeParameters = { ...parameters };
     const additionalParameters = dynamicState.parameters;
@@ -214,7 +176,7 @@ export class BaseConnectorService implements IConnectorService {
     return invokeParameters;
   }
 
-  private _getResponseFromDynamicApi(responseJson: any, requestUrl: string): any {
+  protected _getResponseFromDynamicApi(responseJson: any, requestUrl: string): any {
     const intl = getIntl();
     const connectorResponse = responseJson.response ?? responseJson;
     if (connectorResponse.statusCode === 'OK') {
@@ -231,7 +193,7 @@ export class BaseConnectorService implements IConnectorService {
     }
   }
 
-  private _getErrorMessageFromConnectorResponse(
+  protected _getErrorMessageFromConnectorResponse(
     response: any,
     defaultErrorMessage: string,
     intl: IntlShape,
@@ -252,10 +214,8 @@ export class BaseConnectorService implements IConnectorService {
         },
         { errorCode, message }
       );
-    } else if (error && error.message) {
-      errorMessage = error.message;
     } else {
-      errorMessage = defaultErrorMessage;
+      errorMessage = error?.message ?? defaultErrorMessage;
     }
 
     return clientRequestId
@@ -269,7 +229,7 @@ export class BaseConnectorService implements IConnectorService {
       : errorMessage;
   }
 
-  private async _executeAzureDynamicApi(
+  protected async _executeAzureDynamicApi(
     connectionId: string,
     connectorId: string,
     parameters: Record<string, any>,
@@ -362,36 +322,4 @@ export class BaseConnectorService implements IConnectorService {
       }
     }
   }
-}
-
-function pathCombine(url: string, path: string): string {
-  let pathUrl: string;
-
-  if (!url || !path) {
-    pathUrl = url || path;
-    return pathUrl;
-  }
-
-  return `${trimUrl(url)}/${trimUrl(path)}`;
-}
-
-function getClientRequestIdFromHeaders(headers: Headers | Record<string, string>): string {
-  if (headers) {
-    return headers instanceof Headers ? (headers.get('x-ms-client-request-id') as string) : (headers['x-ms-client-request-id'] as string);
-  }
-
-  return '';
-}
-
-function trimUrl(url: string): string {
-  let updatedUrl = url;
-  if (updatedUrl[0] === '/') {
-    updatedUrl = updatedUrl.substring(1, updatedUrl.length);
-  }
-
-  if (updatedUrl[updatedUrl.length - 1] === '/') {
-    updatedUrl = updatedUrl.substring(0, updatedUrl.length - 1);
-  }
-
-  return updatedUrl;
 }
