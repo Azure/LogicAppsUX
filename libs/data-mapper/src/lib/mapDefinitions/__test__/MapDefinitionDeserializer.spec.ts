@@ -808,5 +808,32 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate'
       );
     });
+
+    it('creates a loop connection with dot access', () => {
+      const extendedLoopSource = convertSchemaToSchemaExtended(sourceMockSchema);
+      const extendedLoopTarget = convertSchemaToSchemaExtended(targetMockSchema);
+      simpleMap['ns0:Root'] = {
+        NameValueTransforms: {
+          PO_Status: {
+            '$for(/ns0:Root/NameValueTransforms/PurchaseOrderStatus/ns0:LineItem)': {
+              Product: {
+                ProductIdentifier: '.',
+              },
+            },
+          },
+        },
+      };
+
+      const result = convertFromMapDefinition(simpleMap, extendedLoopSource, extendedLoopTarget, []);
+
+      expect(Object.entries(result).length).toEqual(3);
+
+      expect((result['target-/ns0:Root/NameValueTransforms/PO_Status/Product'].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/NameValueTransforms/PurchaseOrderStatus/ns0:LineItem'
+      );
+      expect(
+        (result['target-/ns0:Root/NameValueTransforms/PO_Status/Product/ProductIdentifier'].inputs[0][0] as ConnectionUnit).reactFlowKey
+      ).toBe('source-/ns0:Root/NameValueTransforms/PurchaseOrderStatus/ns0:LineItem');
+    });
   });
 });
