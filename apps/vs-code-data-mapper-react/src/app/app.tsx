@@ -13,7 +13,6 @@ import {
 } from '@microsoft/logic-apps-data-mapper';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { workspace } from 'vscode';
 
 enum VsCodeThemeType {
   VsCodeLight = 'vscode-light',
@@ -108,12 +107,6 @@ export const App = () => {
     dispatch(changeUseExpandedFunctionCards(isFunctionDisplaySimple));
   };
 
-  useEffect(() => {
-    const azureDataMapperConfig = workspace.getConfiguration('azureDataMapper');
-    const useExpandedFunctionCards = azureDataMapperConfig.get('useExpandedFunctionCards');
-    dispatch(changeUseExpandedFunctionCards(!useExpandedFunctionCards));
-  }, [dispatch]);
-
   const handleRscLoadError = useCallback(
     (error: unknown) => {
       let errorMsg: string;
@@ -133,6 +126,12 @@ export const App = () => {
     },
     [sendMsgToVsix]
   );
+
+  useEffect(() => {
+    sendMsgToVsix({
+      command: 'getFunctionDisplayExpanded',
+    });
+  }, [sendMsgToVsix]);
 
   // Notify VS Code that webview is loaded
   useEffect(() => {

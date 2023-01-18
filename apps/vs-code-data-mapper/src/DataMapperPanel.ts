@@ -1,20 +1,20 @@
 import DataMapperExt from './DataMapperExt';
 import {
-  supportedSchemaFileExts,
   dataMapDefinitionsPath,
   dataMapsPath,
   draftMapDefinitionSuffix,
   mapDefinitionExtension,
   mapXsltExtension,
   schemasPath,
+  supportedSchemaFileExts,
 } from './extensionConfig';
-import type { MessageToVsix, MessageToWebview, MapDefinitionData, SchemaType } from '@microsoft/logic-apps-data-mapper';
-import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
+import type { MapDefinitionData, MessageToVsix, MessageToWebview, SchemaType } from '@microsoft/logic-apps-data-mapper';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { promises as fs, existsSync as fileExistsSync, copyFileSync, unlinkSync as removeFileSync } from 'fs';
+import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
+import { copyFileSync, existsSync as fileExistsSync, promises as fs, unlinkSync as removeFileSync } from 'fs';
 import * as path from 'path';
-import { RelativePattern, Uri, workspace, window } from 'vscode';
 import type { WebviewPanel } from 'vscode';
+import { RelativePattern, Uri, window, workspace } from 'vscode';
 
 export default class DataMapperPanel {
   public panel: WebviewPanel;
@@ -120,8 +120,13 @@ export default class DataMapperPanel {
         this.handleUpdateMapDirtyState(msg.data);
         break;
       }
+      case 'getFunctionDisplayExpanded': {
+        this.getConfigurationSetting('useExpandedFunctionCards');
+        break;
+      }
       case 'setFunctionDisplayExpanded': {
         this.updateConfigurationSetting('useExpandedFunctionCards', msg.data);
+        break;
       }
     }
   }
@@ -275,6 +280,15 @@ export default class DataMapperPanel {
     } else {
       DataMapperExt.showError(`XSLT data map file not detected for ${this.dataMapName} - save your data map to generate it`);
     }
+  }
+
+  public getConfigurationSetting(configSetting: string) {
+    const azureDataMapperConfig = workspace.getConfiguration('azureDataMapper');
+    const configValue = azureDataMapperConfig.get<boolean>(configSetting) ?? true;
+    this.sendMsgToWebview({
+      command: 'getConfigurationSetting',
+      data: configValue,
+    });
   }
 
   public updateConfigurationSetting(configSetting: string, value: boolean) {
