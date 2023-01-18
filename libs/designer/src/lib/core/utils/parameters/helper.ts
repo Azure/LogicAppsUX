@@ -210,7 +210,8 @@ export const getDependentParameters = (
 ): Record<string, { isValid: boolean }> => {
   return Object.keys(parameters).reduce((result: Record<string, { isValid: boolean }>, key: string) => {
     const parameter = parameters[key];
-    const operationInput = getParameterFromName(inputs, parameter?.parameter ?? parameter.parameterReference);
+    if (!parameter) return result;
+    const operationInput = getParameterFromName(inputs, parameter?.parameter ?? parameter?.parameterReference ?? 'undefined');
     if (operationInput) {
       return {
         ...result,
