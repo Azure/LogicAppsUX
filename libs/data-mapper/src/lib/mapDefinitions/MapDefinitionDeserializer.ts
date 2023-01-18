@@ -18,7 +18,7 @@ import {
   getDestinationNode,
   getSourceKeyOfLastLoop,
   getSourceValueFromLoop,
-  getTargetValueWithoutLoop,
+  getTargetValueWithoutLastLoop,
   qualifyLoopRelativeSourceKeys,
   splitKeyIntoChildren,
 } from '../utils/DataMap.Utils';
@@ -213,7 +213,7 @@ const callChildObjects = (
           );
         } else {
           // The only time this case should be valid is when making a object level conditional
-          const childTargetKeyWithoutLoop = getTargetValueWithoutLoop(childTargetKey);
+          const childTargetKeyWithoutLoop = getTargetValueWithoutLastLoop(childTargetKey);
           const flattenedChildValues = flattenMapDefinitionValues(childValue);
           const flattenedChildValueParents = flattenedChildValues
             .map((flattenedValue) => {
