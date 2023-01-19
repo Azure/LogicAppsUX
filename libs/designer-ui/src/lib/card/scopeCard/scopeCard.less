@@ -39,16 +39,23 @@
     overflow: hidden;
   }
 
-  .msla-scope-card-title-box {
+  .msla-scope-card-title-button {
     border: none;
     padding: 0px;
     color: white;
     flex-grow: 1;
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     background-color: var(--brand-color, black);
     .node-button-interaction();
+  }
+
+  .msla-scope-card-title-box {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
   }
 
   .gripper-section {
@@ -73,5 +80,38 @@
     margin: 10px 8px 10px 0;
     text-align: left;
     word-break: break-word;
+  }
+
+  .msla-panel-card-error {
+    margin: -2px 16px 10px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .msla-panel-card-error-text {
+      margin: 0px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &.error,
+    &.blocked {
+      color: #ffffff;
+    }
+
+    &.severeWarning {
+      color: #ffffff;
+    }
+
+    &.success {
+      color: #ffffff;
+    }
+
+    &.info,
+    &.warning {
+      color: #ffffff;
+    }
   }
 }

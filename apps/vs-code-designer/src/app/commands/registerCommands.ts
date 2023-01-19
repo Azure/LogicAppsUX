@@ -6,12 +6,15 @@ import { extensionCommand } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt';
 import { ProductionSlotTreeItem } from '../tree/slotsTree/ProductionSlotTreeItem';
+import { browseWebsite } from './browseWebsite';
 import { createCodeless } from './createCodeless/createCodeless';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
 import { deleteNode } from './deleteNode';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
+import { redeployDeployment } from './deployments/redeployDeployment';
 import { openFile } from './openFile';
+import { openInPortal } from './openInPortal';
 import { pickFuncProcess } from './pickFuncProcess';
 import { restartLogicApp } from './restartLogicApp';
 import { startLogicApp } from './startLogicApp';
@@ -20,6 +23,7 @@ import { exportLogicApp } from './workflows/exportLogicApp';
 import { getDebugSymbolDll } from './workflows/getDebugSymbolDll';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
 import { openOverview } from './workflows/openOverview';
+import { switchToDotnetProject } from './workflows/switchToDotnetProject';
 import { viewContent } from './workflows/viewContent';
 import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
 import { registerSiteCommand } from '@microsoft/vscode-azext-azureappservice';
@@ -44,6 +48,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.createLogicAppAdvanced, createLogicAppAdvanced);
   registerSiteCommand(extensionCommand.deploy, deployProductionSlot);
   registerSiteCommand(extensionCommand.deploySlot, deploySlot);
+  registerSiteCommand(extensionCommand.redeploy, redeployDeployment);
   registerCommand(extensionCommand.showOutputChannel, () => {
     ext.outputChannel.show();
   });
@@ -59,4 +64,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.openOverview, openOverview);
   registerCommand(extensionCommand.refresh, async (context: IActionContext, node?: AzExtTreeItem) => await ext.tree.refresh(context, node));
   registerCommand(extensionCommand.exportLogicApp, exportLogicApp);
+  registerCommand(extensionCommand.switchToDotnetProject, switchToDotnetProject);
+  registerCommand(extensionCommand.openInPortal, openInPortal);
+  registerCommand(extensionCommand.browseWebsite, browseWebsite);
 }

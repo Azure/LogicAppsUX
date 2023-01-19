@@ -632,12 +632,10 @@ export const deleteParentRepeatingConnections = (connections: ConnectionDictiona
 
 export const canDeleteConnection = (sourceNodeId: string, sourceSchema: SchemaNodeDictionary) => {
   const sourceNode = sourceSchema[sourceNodeId];
-  if (sourceNode && !sourceNode.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
+  if (!sourceNode || (sourceNode && !sourceNode.nodeProperties.includes(SchemaNodeProperty.Repeating))) {
     return true;
   }
-  if (!sourceNode) {
-    return true;
-  }
+
   return false;
 };
 
@@ -776,10 +774,13 @@ export const addParentConnectionForRepeatingElements = (
       const parentSourceNode = flattenedSourceSchema[addReactFlowPrefix(sourceNode.parentKey, SchemaType.Source)];
       const firstSourceNodeWithRepeatingPathItem = findLast(parentSourceNode.pathToRoot, (pathItem) => pathItem.repeating);
 
-      if ((firstSourceNodeWithRepeatingPathItem || indexFnRfKey) && firstTargetNodeWithRepeatingPathItem) {
+      if (
+        (firstSourceNodeWithRepeatingPathItem || indexFnRfKey || sourceNode.nodeProperties.includes(SchemaNodeProperty.Repeating)) &&
+        firstTargetNodeWithRepeatingPathItem
+      ) {
         // If adding an index() too, our sourceNode will already be the parent we want
         const parentSourceNode =
-          indexFnRfKey || !firstSourceNodeWithRepeatingPathItem
+          indexFnRfKey || sourceNode.nodeProperties.includes(SchemaNodeProperty.Repeating) || !firstSourceNodeWithRepeatingPathItem
             ? sourceNode
             : flattenedSourceSchema[addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source)];
         const parentPrefixedSourceKey = addReactFlowPrefix(parentSourceNode.key, SchemaType.Source);
