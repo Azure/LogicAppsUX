@@ -1,8 +1,9 @@
 {
-  "name": "@microsoft/logic-apps-vscode-extension",
+  "name": "logic-apps-vscode-extension",
   "displayName": "Azure Logic Apps (Standard)",
   "version": "0.2.52",
   "aiKey": "2fc394da-7c11-4c1c-b776-17763031415d",
+  "repository": "https://github.com/Azure/logic_apps_designer",
   "main": "main.js",
   "engines": {
     "vscode": "^1.64.0"
@@ -121,6 +122,11 @@
       {
         "command": "logicAppsExtension.switchToDotnetProject",
         "title": "Convert to NuGet-based Logic App project",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.redeploy",
+        "title": "Redeploy",
         "category": "Azure Logic Apps"
       },
       {
@@ -280,6 +286,11 @@
           "command": "logicAppsExtension.openOverview",
           "when": "view == newAzLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "1@1"
+        },
+        {
+          "command": "logicAppsExtension.redeploy",
+          "when": "view == newAzLogicApps && viewItem =~ /^deployment//",
+          "group": "1@2"
         },
         {
           "command": "logicAppsExtension.openInPortal",
@@ -451,7 +462,10 @@
     "onCommand:logicAppsExtension.refresh",
     "onCommand:logicAppsExtension.switchToDotnetProject",
     "onCommand:logicAppsExtension.openInPortal",
+    "onCommand:logicAppsExtension.redeploy",
     "onView:newAzLogicApps",
+    "workspaceContains:host.json",
+    "workspaceContains:*/host.json",
     "onDebugInitialConfigurations"
   ],
   "galleryBanner": {

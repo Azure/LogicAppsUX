@@ -18,7 +18,7 @@ import {
   getDestinationNode,
   getSourceKeyOfLastLoop,
   getSourceValueFromLoop,
-  getTargetValueWithoutLoop,
+  getTargetValueWithoutLastLoop,
   qualifyLoopRelativeSourceKeys,
   splitKeyIntoChildren,
 } from '../utils/DataMap.Utils';
@@ -213,13 +213,20 @@ const callChildObjects = (
           );
         } else {
           // The only time this case should be valid is when making a object level conditional
-          const childTargetKeyWithoutLoop = getTargetValueWithoutLoop(childTargetKey);
+          const childTargetKeyWithoutLoop = getTargetValueWithoutLastLoop(childTargetKey);
           const flattenedChildValues = flattenMapDefinitionValues(childValue);
-          const flattenedChildValueParents = flattenedChildValues.map((flattenedValue) => {
-            const fqChild = getSourceValueFromLoop(flattenedValue, childTargetKey, sourceSchemaFlattened);
-            return fqChild.substring(0, fqChild.lastIndexOf('/'));
-          });
-          const lowestCommonParent = flattenedChildValueParents.reduce((a, b) => (a.lastIndexOf('/') <= b.lastIndexOf('/') ? a : b));
+          const flattenedChildValueParents = flattenedChildValues
+            .map((flattenedValue) => {
+              const fqChild = getSourceValueFromLoop(flattenedValue, childTargetKey, sourceSchemaFlattened);
+              return fqChild.substring(0, fqChild.lastIndexOf('/'));
+            })
+            .filter((parentVal) => parentVal !== ''); // Functions will map as ''
+          const lowestCommonParent =
+            flattenedChildValueParents.length > 1
+              ? flattenedChildValueParents.reduce((a, b) => (a.lastIndexOf('/') <= b.lastIndexOf('/') ? a : b))
+              : flattenedChildValueParents.length === 1
+              ? flattenedChildValueParents[0]
+              : '';
           const ifConnectionEntry = Object.entries(connections).find(
             ([_connectionKey, connectionValue]) =>
               connectionValue.self.node.key === ifPseudoFunctionKey &&
@@ -371,7 +378,9 @@ const createConnections = (
       idxOfIdxVariable = amendedTargetKey.replaceAll(mapNodeParams.for, placeholderFor).substring(0, idxOfIdxVariable).lastIndexOf('$');
 
       if (idxOfIdxVariable > -1) {
-        const forTgtBasePath = amendedTargetKey.substring(0, amendedTargetKey.indexOf('/', idxOfIdxVariable + 4) ?? undefined);
+        const startIdxOfChildrenPath = amendedTargetKey.indexOf('/', idxOfIdxVariable + 4);
+        const forTgtBasePath =
+          startIdxOfChildrenPath > -1 ? amendedTargetKey.substring(0, startIdxOfChildrenPath) : amendedTargetKey.substring(0);
         const idxVariable = amendedTargetKey
           .replaceAll(mapNodeParams.for, placeholderFor)
           .substring(idxOfIdxVariable, idxOfIdxVariable + 2);

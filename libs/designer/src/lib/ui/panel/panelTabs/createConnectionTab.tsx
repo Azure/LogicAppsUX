@@ -89,7 +89,6 @@ const CreateConnectionTab = () => {
       try {
         // Assign azure function as parameters
         if (needsAzureFunction && selectedAzureFunction) {
-          console.log('Assigning azure function as parameters');
           const authCodeValue = await ConnectionService().fetchFunctionKey(selectedAzureFunction?.id);
           const triggerUrl = selectedAzureFunction?.properties?.invoke_url_template;
           const functionAsParameters = {
@@ -178,6 +177,7 @@ const CreateConnectionTab = () => {
   return (
     <CreateConnection
       connectorDisplayName={connector.properties.displayName}
+      connectorCapabilities={connector.properties.capabilities}
       connectionParameters={connector.properties.connectionParameters}
       connectionParameterSets={connector.properties.connectionParameterSets}
       createConnectionCallback={createConnectionCallback}
