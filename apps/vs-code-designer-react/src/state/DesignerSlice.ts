@@ -12,6 +12,7 @@ export interface designerState {
   apiHubServiceDetails: IApiHubServiceDetails;
   readOnly: boolean;
   isLocal: boolean;
+  isMonitoringView: boolean;
   callbackInfo: ICallbackUrlResponse;
 }
 
@@ -29,6 +30,7 @@ const initialState: designerState = {
   },
   readOnly: true,
   isLocal: true,
+  isMonitoringView: false,
   callbackInfo: {
     value: '',
     method: '',
@@ -40,7 +42,8 @@ export const designerSlice = createSlice({
   initialState,
   reducers: {
     initializeDesigner: (state, action: PayloadAction<any>) => {
-      const { panelMetadata, connectionReferences, baseUrl, apiVersion, apiHubServiceDetails, readOnly, isLocal } = action.payload;
+      const { panelMetadata, connectionReferences, baseUrl, apiVersion, apiHubServiceDetails, readOnly, isLocal, isMonitoringView } =
+        action.payload;
 
       state.panelMetaData = panelMetadata;
       state.connectionReferences = connectionReferences;
@@ -49,6 +52,7 @@ export const designerSlice = createSlice({
       state.apiHubServiceDetails = apiHubServiceDetails;
       state.readOnly = readOnly;
       state.isLocal = isLocal;
+      state.isMonitoringView = isMonitoringView;
     },
     updateCallbackUrl: (state, action: PayloadAction<any>) => {
       const { callbackInfo } = action.payload;

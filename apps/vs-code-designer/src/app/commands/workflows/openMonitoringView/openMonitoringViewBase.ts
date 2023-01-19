@@ -4,30 +4,35 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../../extensionVariables';
 import { tryGetWebviewPanel } from '../../../utils/codeless/common';
+import { OpenDesignerBase } from '../openDesigner/openDesignerBase';
 import { openReadOnlyJson } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { WebviewPanel } from 'vscode';
 import * as vscode from 'vscode';
 
-export abstract class OpenMonitoringViewBase {
+export abstract class OpenMonitoringViewBase extends OpenDesignerBase {
   protected panel: WebviewPanel;
-  protected panelName: string;
   protected panelGroupKey: ext.webViewKey;
   protected runId: string;
   protected baseUrl: string;
   protected runName: string;
   protected workflowName: string;
   protected workflowFilePath: string;
-  protected readonly context: IActionContext;
+  protected localSettings: Record<string, string>;
 
   protected constructor(context: IActionContext, runId: string, workflowFilePath: string) {
-    this.context = context;
-    this.runId = runId.endsWith('/') ? runId.substring(0, runId.length - 1) : runId;
-    this.runName = runId.split('/').slice(-1)[0];
-    this.workflowName = runId.split('/').slice(-3)[0];
+    const runWorflowId = runId.endsWith('/') ? runId.substring(0, runId.length - 1) : runId;
+    const runName = runId.split('/').slice(-1)[0];
+    const workflowName = runId.split('/').slice(-3)[0];
+    const panelName = `${vscode.workspace.name}-${workflowName}-${runName}`;
+    const apiVersion = '2019-10-01-edge-preview';
+    const panelGroupKey = ext.webViewKey.monitoring;
+
+    super(context, workflowName, panelName, apiVersion, panelGroupKey, true, true, true);
+
+    this.runId = runWorflowId;
+    this.runName = runName;
     this.workflowFilePath = workflowFilePath;
-    this.panelName = `${vscode.workspace.name}-${this.workflowName}-${this.runName}`;
-    this.panelGroupKey = ext.webViewKey.monitoring;
   }
 
   protected async openContent(header: number, id: string, title: string, content: string): Promise<void> {

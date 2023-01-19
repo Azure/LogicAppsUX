@@ -6,7 +6,13 @@ import { localSettingsFileName, managementApiPrefix } from '../../../../constant
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
-import { removeWebviewPanelFromCache, cacheWebviewPanel, getTriggerName } from '../../../utils/codeless/common';
+import {
+  removeWebviewPanelFromCache,
+  cacheWebviewPanel,
+  getTriggerName,
+  getAzureConnectorDetailsForLocalProject,
+  getArtifactsInLocalProject,
+} from '../../../utils/codeless/common';
 import { getConnectionsFromFile, getFunctionProjectRoot, getParametersFromFile } from '../../../utils/codeless/connection';
 import { sendRequest } from '../../../utils/requestUtils';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
@@ -46,22 +52,25 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       ViewColumn.Active, // Editor column to show the new webview panel in.
       this.getPanelOptions()
     );
-    /*eslint-disable @typescript-eslint/no-unused-vars */
 
     this.projectPath = await getFunctionProjectRoot(this.context, this.workflowFilePath);
     const connectionsData = await getConnectionsFromFile(this.context, this.workflowFilePath);
     const parametersData = await getParametersFromFile(this.context, this.workflowFilePath);
     this.baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
 
-    let localSettings: Record<string, string>;
-
     if (this.projectPath) {
-      localSettings = (await getLocalSettingsJson(this.context, path.join(this.projectPath, localSettingsFileName))).Values;
+      this.localSettings = (await getLocalSettingsJson(this.context, path.join(this.projectPath, localSettingsFileName))).Values;
     } else {
       throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
     }
 
-    /*eslint-enable */
+    this.panel.webview.html = await this.getWebviewContent({
+      connectionsData: connectionsData,
+      parametersData: parametersData,
+      localSettings: this.localSettings,
+      artifacts: await getArtifactsInLocalProject(this.projectPath),
+      azureDetails: await getAzureConnectorDetailsForLocalProject(this.context, this.projectPath),
+    });
 
     this.panel.webview.onDidReceiveMessage(
       async (message) => await this._handleWebviewMsg(message),
@@ -83,6 +92,21 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
 
   private async _handleWebviewMsg(message: any) {
     switch (message.command) {
+      case ExtensionCommand.initialize: {
+        this.sendMsgToWebview({
+          command: ExtensionCommand.initialize_frame,
+          data: {
+            connectionReferences: this.connectionReferences,
+            baseUrl: this.baseUrl,
+            apiVersion: this.apiVersion,
+            apiHubServiceDetails: this.apiHubServiceDetails,
+            readOnly: this.readOnly,
+            isLocal: this.isLocal,
+            isMonitoringView: this.isMonitoringView,
+          },
+        });
+        break;
+      }
       case ExtensionCommand.showContent: {
         await this.openContent(message.header, message.id, message.title, message.content);
         break;

@@ -8,7 +8,8 @@ import { useSelector } from 'react-redux';
 
 export const App = () => {
   const vscodeState = useSelector((state: RootState) => state.designer);
-  const { panelMetaData, connectionReferences, baseUrl, apiHubServiceDetails, readOnly, isLocal, apiVersion } = vscodeState;
+  const { panelMetaData, connectionReferences, baseUrl, apiHubServiceDetails, readOnly, isLocal, apiVersion, isMonitoringView } =
+    vscodeState;
   const codelessApp = panelMetaData?.codelessApp;
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
 
@@ -26,6 +27,7 @@ export const App = () => {
       options={{
         isDarkMode: theme === Theme.Dark,
         readOnly,
+        isMonitoringView,
         services: services,
       }}
     >
