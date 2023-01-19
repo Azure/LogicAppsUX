@@ -16,9 +16,8 @@ import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-const generalQuerySettings = {
-  staleTime: 1000 * 60 * 5,
-  cacheTime: 1000 * 60 * 5,
+const schemaFileQuerySettings = {
+  cacheTime: 0,
   retry: false, // Don't retry as it stops error from making its way through
 };
 
@@ -46,7 +45,7 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
     [selectedSourceSchema?.text],
     async () => await getSelectedSchema(selectedSourceSchema?.text ?? ''),
     {
-      ...generalQuerySettings,
+      ...schemaFileQuerySettings,
       enabled: selectedSourceSchema !== undefined,
     }
   );
@@ -55,7 +54,7 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
     [selectedTargetSchema?.text],
     async () => await getSelectedSchema(selectedTargetSchema?.text ?? ''),
     {
-      ...generalQuerySettings,
+      ...schemaFileQuerySettings,
       enabled: selectedTargetSchema !== undefined,
     }
   );
