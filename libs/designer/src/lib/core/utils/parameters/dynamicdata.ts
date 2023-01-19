@@ -318,7 +318,7 @@ function getParametersForDynamicInvoke(
   const operationParameters: SerializedParameter[] = [];
 
   for (const [parameterName, parameter] of Object.entries(referenceParameters ?? {})) {
-    const referenceParameterName = (parameter.parameterReference ?? parameter.parameter) as string;
+    const referenceParameterName = (parameter?.parameterReference ?? parameter?.parameter ?? 'undefined') as string;
     const referencedParameter = getParameterFromName(nodeInputs, referenceParameterName);
 
     if (!referencedParameter) {
