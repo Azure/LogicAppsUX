@@ -165,7 +165,7 @@
         },
         {
           "command": "azureLogicAppsStandard.exportLogicApp",
-          "when": "view == azLogicApps",
+          "when": "view == newAzLogicApps",
           "group": "navigation@4"
         },
         {
