@@ -6,6 +6,7 @@ import { extensionCommand } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt';
 import { ProductionSlotTreeItem } from '../tree/slotsTree/ProductionSlotTreeItem';
+import { browseWebsite } from './browseWebsite';
 import { createCodeless } from './createCodeless/createCodeless';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
@@ -63,4 +64,5 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.refresh, async (context: IActionContext, node?: AzExtTreeItem) => await ext.tree.refresh(context, node));
   registerCommand(extensionCommand.switchToDotnetProject, switchToDotnetProject);
   registerCommand(extensionCommand.openInPortal, openInPortal);
+  registerCommand(extensionCommand.browseWebsite, browseWebsite);
 }
