@@ -3,8 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { ValueType, ProjectLanguage, TemplateCategory } from '@microsoft/vscode-extension';
-import type { IBindingSetting, ITemplates, IWorkflowTemplate } from '@microsoft/vscode-extension';
-import type { IRawSetting, IRawTemplate } from '@microsoft/vscode-extension';
+import type { IBindingSetting, ITemplates, IWorkflowTemplate, IRawSetting, IRawTemplate } from '@microsoft/vscode-extension';
 
 function parseDotnetSetting(rawSetting: IRawSetting): IBindingSetting {
   return {
