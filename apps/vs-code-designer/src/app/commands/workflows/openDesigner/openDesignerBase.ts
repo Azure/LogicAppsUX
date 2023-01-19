@@ -196,4 +196,11 @@ export abstract class OpenDesignerBase {
         }
       : undefined;
   }
+
+  protected normalizeLocation(location: string): string {
+    if (!location) {
+      return '';
+    }
+    return location.toLowerCase().replace(/ /g, '');
+  }
 }

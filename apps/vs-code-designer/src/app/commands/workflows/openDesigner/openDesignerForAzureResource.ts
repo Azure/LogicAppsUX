@@ -116,11 +116,4 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
       codelessApp: getCodelessAppData(this.workflowName, this.workflow, parameters),
     };
   }
-
-  private normalizeLocation(location: string): string {
-    if (!location) {
-      return '';
-    }
-    return location.toLowerCase().replace(/ /g, '');
-  }
 }

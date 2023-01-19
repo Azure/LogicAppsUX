@@ -2,36 +2,34 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localSettingsFileName, managementApiPrefix } from '../../../../constants';
+import { workflowAppApiVersion } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
-import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
+import type { RemoteWorkflowTreeItem } from '../../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import {
   removeWebviewPanelFromCache,
   cacheWebviewPanel,
   getTriggerName,
-  getAzureConnectorDetailsForLocalProject,
-  getArtifactsInLocalProject,
+  getWorkflowManagementBaseURI,
 } from '../../../utils/codeless/common';
-import { getConnectionsFromFile, getFunctionProjectRoot, getParametersFromFile } from '../../../utils/codeless/connection';
-import { sendRequest } from '../../../utils/requestUtils';
+import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationToken';
+import { sendAzureRequest } from '../../../utils/requestUtils';
+import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
-import { promises } from 'fs';
-import * as path from 'path';
 import * as vscode from 'vscode';
 import type { WebviewPanel } from 'vscode';
 import { ViewColumn } from 'vscode';
 
-export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
-  private projectPath: string | undefined;
+export default class openMonitoringViewForAzureResource extends OpenMonitoringViewBase {
+  private node: RemoteWorkflowTreeItem;
 
-  constructor(context: IActionContext, runId: string, workflowFilePath: string) {
-    const apiVersion = '2019-10-01-edge-preview';
+  constructor(context: IAzureConnectorsContext | IActionContext, runId: string, workflowFilePath: string, node: RemoteWorkflowTreeItem) {
+    super(context, runId, workflowFilePath, false, workflowAppApiVersion);
 
-    super(context, runId, workflowFilePath, true, apiVersion);
+    this.node = node;
   }
 
   public async createPanel(): Promise<void> {
@@ -53,23 +51,24 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       this.getPanelOptions()
     );
 
-    this.projectPath = await getFunctionProjectRoot(this.context, this.workflowFilePath);
-    const connectionsData = await getConnectionsFromFile(this.context, this.workflowFilePath);
-    const parametersData = await getParametersFromFile(this.context, this.workflowFilePath);
-    this.baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
-
-    if (this.projectPath) {
-      this.localSettings = (await getLocalSettingsJson(this.context, path.join(this.projectPath, localSettingsFileName))).Values;
-    } else {
-      throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
-    }
+    this.baseUrl = getWorkflowManagementBaseURI(this.node);
+    const accessToken = await getAuthorizationToken(this.node.credentials);
+    const connectionsData: string = await this.node.getConnectionsData();
+    const parametersData = await this.node.getParametersData();
 
     this.panel.webview.html = await this.getWebviewContent({
       connectionsData: connectionsData,
       parametersData: parametersData,
-      localSettings: this.localSettings,
-      artifacts: await getArtifactsInLocalProject(this.projectPath),
-      azureDetails: await getAzureConnectorDetailsForLocalProject(this.context, this.projectPath),
+      localSettings: {},
+      azureDetails: {
+        enabled: true,
+        accessToken,
+        subscriptionId: this.node.subscription.subscriptionId,
+        resourceGroupName: (this.context as IAzureConnectorsContext).resourceGroup,
+        location: this.normalizeLocation(this.node?.parent?.parent?.site.location),
+        workflowManagementBaseUrl: this.node?.parent?.subscription?.environment?.resourceManagerEndpointUrl,
+      },
+      artifacts: await this.node.getArtifacts(),
     });
 
     this.panel.webview.onDidReceiveMessage(
@@ -127,13 +126,11 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
     };
 
     await vscode.window.withProgress(options, async () => {
-      try {
-        const fileContent = await promises.readFile(this.workflowFilePath, 'utf8');
-        const workflowContent: any = JSON.parse(fileContent);
-        const triggerName = getTriggerName(workflowContent.definition);
-        const url = `${this.baseUrl}/workflows/${this.workflowName}/triggers/${triggerName}/histories/${this.runName}/resubmit?api-version=${this.apiVersion}`;
+      const triggerName = getTriggerName(this.node.workflowFileContent.definition);
+      const url = `${this.baseUrl}/workflows/${this.workflowName}/triggers/${triggerName}/histories/${this.runName}/resubmit?api-version=${this.apiVersion}`;
 
-        await sendRequest(this.context, { url, method: HTTP_METHODS.POST });
+      try {
+        await sendAzureRequest(url, this.context, HTTP_METHODS.POST, this.node.subscription);
       } catch (error) {
         const errorMessage = localize('runResubmitFailed', 'Workflow run resubmit failed: ') + error.message;
         await vscode.window.showErrorMessage(errorMessage, localize('OK', 'OK'));

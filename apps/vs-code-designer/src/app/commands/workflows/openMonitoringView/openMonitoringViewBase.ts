@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../../extensionVariables';
 import { tryGetWebviewPanel } from '../../../utils/codeless/common';
+import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { OpenDesignerBase } from '../openDesigner/openDesignerBase';
 import { openReadOnlyJson } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -20,15 +21,20 @@ export abstract class OpenMonitoringViewBase extends OpenDesignerBase {
   protected workflowFilePath: string;
   protected localSettings: Record<string, string>;
 
-  protected constructor(context: IActionContext, runId: string, workflowFilePath: string) {
+  protected constructor(
+    context: IActionContext | IAzureConnectorsContext,
+    runId: string,
+    workflowFilePath: string,
+    isLocal: boolean,
+    apiVersion: string
+  ) {
     const runWorflowId = runId.endsWith('/') ? runId.substring(0, runId.length - 1) : runId;
     const runName = runId.split('/').slice(-1)[0];
     const workflowName = runId.split('/').slice(-3)[0];
     const panelName = `${vscode.workspace.name}-${workflowName}-${runName}`;
-    const apiVersion = '2019-10-01-edge-preview';
     const panelGroupKey = ext.webViewKey.monitoring;
 
-    super(context, workflowName, panelName, apiVersion, panelGroupKey, true, true, true);
+    super(context, workflowName, panelName, apiVersion, panelGroupKey, true, isLocal, true);
 
     this.runId = runWorflowId;
     this.runName = runName;
