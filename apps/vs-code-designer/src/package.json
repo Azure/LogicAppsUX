@@ -117,6 +117,15 @@
         "command": "logicAppsExtension.openOverview",
         "title": "Overview",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.exportLogicApp",
+        "title": "Export Logic App...",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/export.svg",
+          "dark": "assets/dark/export.svg"
+        }
       }
     ],
     "viewsContainers": {
@@ -153,6 +162,11 @@
           "command": "logicAppsExtension.deploy",
           "when": "view == newAzLogicApps",
           "group": "navigation@3"
+        },
+        {
+          "command": "azureLogicAppsStandard.exportLogicApp",
+          "when": "view == azLogicApps",
+          "group": "navigation@4"
         },
         {
           "command": "logicAppsExtension.refresh",
@@ -414,6 +428,7 @@
     "onCommand:logicAppsExtension.deleteLogicApp",
     "onCommand:logicAppsExtension.openOverview",
     "onCommand:logicAppsExtension.refresh",
+    "onCommand:azureLogicAppsStandard.exportLogicApp",
     "onView:newAzLogicApps",
     "onDebugInitialConfigurations"
   ],
