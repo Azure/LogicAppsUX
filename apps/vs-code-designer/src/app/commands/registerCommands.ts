@@ -13,6 +13,7 @@ import { deleteNode } from './deleteNode';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
 import { redeployDeployment } from './deployments/redeployDeployment';
 import { openFile } from './openFile';
+import { openInPortal } from './openInPortal';
 import { pickFuncProcess } from './pickFuncProcess';
 import { restartLogicApp } from './restartLogicApp';
 import { startLogicApp } from './startLogicApp';
@@ -61,4 +62,5 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.openOverview, openOverview);
   registerCommand(extensionCommand.refresh, async (context: IActionContext, node?: AzExtTreeItem) => await ext.tree.refresh(context, node));
   registerCommand(extensionCommand.switchToDotnetProject, switchToDotnetProject);
+  registerCommand(extensionCommand.openInPortal, openInPortal);
 }

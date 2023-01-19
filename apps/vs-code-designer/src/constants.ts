@@ -80,6 +80,7 @@ export enum extensionCommand {
   deleteLogicApp = 'logicAppsExtension.deleteLogicApp',
   refresh = 'logicAppsExtension.refresh',
   switchToDotnetProject = 'logicAppsExtension.switchToDotnetProject',
+  openInPortal = 'logicAppsExtension.openInPortal',
   azureFunctionsOpenFile = 'azureFunctions.openFile',
   azureFunctionsUninstallFuncCoreTools = 'azureFunctions.uninstallFuncCoreTools',
   azureFunctionsAppSettingsEncrypt = 'azureFunctions.appSettings.encrypt',
