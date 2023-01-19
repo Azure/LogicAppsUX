@@ -16,7 +16,7 @@
 - Added support to Azure Functions Core Tools 4.x and .NET 6.
 - Added support for dynamic calls in local projects and cloud apps.
 - Added support for Open Designer and Overview commands using the command palette.
-- Added telemetry in Monitoring View.
+- Added telemetry to workflow run history view.
 - Fixed bug related to sorting subscriptions in alphabetical order.
 
 ## [1.0.43] - 2022-10-21
