@@ -27,6 +27,7 @@ export const convertToMapDefinition = (
   generateHeader = true
 ): string => {
   if (sourceSchema && targetSchema && isValidToMakeMapDefinition(connections)) {
+    console.log('---------------------------BEGIN----------------------');
     const mapDefinition: MapDefinitionEntry = {};
 
     if (generateHeader) {
@@ -246,6 +247,7 @@ const addLoopingToNewPathItems = (
   });
 
   rootSourceNodes.forEach((sourceNode) => {
+    console.log('SOURCE NODE: ', sourceNode);
     let loopValue = '';
     if (sourceNode && isConnectionUnit(sourceNode)) {
       if (isFunctionData(sourceNode.node)) {
@@ -271,6 +273,8 @@ const addLoopingToNewPathItems = (
           // For entry
           newPath.push({ key: loopValue });
 
+          console.log('HERE1', loopValue, newPath);
+
           addConditionalToNewPathItems(connections[sourceNode.reactFlowKey], connections, newPath);
         } else {
           // Loop with an index
@@ -294,6 +298,7 @@ const addLoopingToNewPathItems = (
 
           // For entry
           newPath.push({ key: loopValue });
+          console.log('HERE2', loopValue, newPath);
         }
       } else {
         // Normal loop
@@ -307,6 +312,7 @@ const addLoopingToNewPathItems = (
 
         // For entry
         newPath.push({ key: loopValue });
+        console.log('HERE3', loopValue, newPath);
       }
     }
   });
