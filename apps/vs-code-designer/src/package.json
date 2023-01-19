@@ -133,6 +133,11 @@
         "command": "logicAppsExtension.openInPortal",
         "title": "Open in Portal",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.browseWebsite",
+        "title": "Browse Website",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -306,6 +311,11 @@
           "command": "logicAppsExtension.openInPortal",
           "when": "view == newAzLogicApps && viewItem =~ /^deployment//",
           "group": "1@3"
+        },
+        {
+          "command": "logicAppsExtension.browseWebsite",
+          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "group": "1@2"
         }
       ],
       "explorer/context": [
@@ -463,6 +473,7 @@
     "onCommand:logicAppsExtension.switchToDotnetProject",
     "onCommand:logicAppsExtension.openInPortal",
     "onCommand:logicAppsExtension.redeploy",
+    "onCommand:logicAppsExtension.browseWebsite",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
