@@ -47,6 +47,9 @@ export const AddOrUpdateSchemaView = ({
   const intl = useIntl();
   const schemaFileInputRef = useRef<HTMLInputElement>(null);
 
+  const { sourceSchema: curSourceSchema, targetSchema: curTargetSchema } = useSelector(
+    (state: RootState) => state.dataMap.curDataMapOperation
+  );
   const currentPanelView = useSelector((state: RootState) => state.panel.currentPanelView);
   const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
 
@@ -161,6 +164,11 @@ export const AddOrUpdateSchemaView = ({
     [availableSchemaList]
   );
 
+  const isOverwritingSchema = useMemo(
+    () => (schemaType === SchemaType.Source ? !!curSourceSchema : !!curTargetSchema),
+    [schemaType, curSourceSchema, curTargetSchema]
+  );
+
   return (
     <div>
       {currentPanelView === ConfigPanelView.UpdateSchema && (
@@ -169,9 +177,11 @@ export const AddOrUpdateSchemaView = ({
             {schemaType === SchemaType.Source ? updateSourceSchemaHeaderMsg : updateTargetSchemaHeaderMsg}
           </Text>
 
-          <MessageBar messageBarType={MessageBarType.warning} styles={{ root: { marginTop: 20 } }}>
-            {replaceSchemaWarningLoc}
-          </MessageBar>
+          {isOverwritingSchema && (
+            <MessageBar messageBarType={MessageBarType.warning} styles={{ root: { marginTop: 20 } }}>
+              {replaceSchemaWarningLoc}
+            </MessageBar>
+          )}
         </div>
       )}
 
