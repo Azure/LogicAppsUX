@@ -10,7 +10,10 @@
       "trace": false,
       "internalConsoleOptions": "openOnFirstSessionStart",
       "outFiles": ["${workspaceFolder}/dist/apps/vs-code-designer"],
-      "preLaunchTask": "npm: build:vscode-designer"
+      "preLaunchTask": "npm: build:vscode-designer",
+      "env": {
+        "DEBUGTELEMETRY": "v"
+      }
     },
     {
       "name": "Run Data Mapper Extension In Dev Mode",
