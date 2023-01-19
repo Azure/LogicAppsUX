@@ -40,7 +40,7 @@ export enum FunctionCategory {
   Logical = 'Logical',
   Math = 'Math',
   String = 'String',
-  Utility = 'Utility',
+  Utility = 'Utilities',
 }
 
 export type FunctionDictionary = { [key: string]: FunctionData };

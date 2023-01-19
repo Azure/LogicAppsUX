@@ -45,7 +45,7 @@ export const stringBranding: FunctionGroupBranding = {
 };
 
 export const utilityBranding: FunctionGroupBranding = {
-  displayName: 'Utility',
+  displayName: 'Utilities',
   colorTokenName: 'colorFnCategoryUtility',
   icon: <Wrench20Regular />,
 };
