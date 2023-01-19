@@ -128,6 +128,11 @@
         "command": "logicAppsExtension.redeploy",
         "title": "Redeploy",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.openInPortal",
+        "title": "Open in Portal",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -286,6 +291,21 @@
           "command": "logicAppsExtension.redeploy",
           "when": "view == newAzLogicApps && viewItem =~ /^deployment//",
           "group": "1@2"
+        },
+        {
+          "command": "logicAppsExtension.openInPortal",
+          "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
+          "group": "2@1"
+        },
+        {
+          "command": "logicAppsExtension.openInPortal",
+          "when": "view == newAzLogicApps && viewItem == azLogicAppsProductionSlot",
+          "group": "1@1"
+        },
+        {
+          "command": "logicAppsExtension.openInPortal",
+          "when": "view == newAzLogicApps && viewItem =~ /^deployment//",
+          "group": "1@3"
         }
       ],
       "explorer/context": [
@@ -441,6 +461,7 @@
     "onCommand:logicAppsExtension.openOverview",
     "onCommand:logicAppsExtension.refresh",
     "onCommand:logicAppsExtension.switchToDotnetProject",
+    "onCommand:logicAppsExtension.openInPortal",
     "onCommand:logicAppsExtension.redeploy",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",
