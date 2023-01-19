@@ -124,10 +124,6 @@ export default class DataMapperPanel {
         this.getConfigurationSetting('useExpandedFunctionCards');
         break;
       }
-      case 'setFunctionDisplayExpanded': {
-        this.updateConfigurationSetting('useExpandedFunctionCards', msg.data);
-        break;
-      }
     }
   }
 
@@ -289,10 +285,5 @@ export default class DataMapperPanel {
       command: 'getConfigurationSetting',
       data: configValue,
     });
-  }
-
-  public updateConfigurationSetting(configSetting: string, value: boolean) {
-    const azureDataMapperConfig = workspace.getConfiguration('azureDataMapper');
-    azureDataMapperConfig.update(configSetting, value);
   }
 }

@@ -36,8 +36,4 @@ export type MessageToVsix =
     }
   | {
       command: 'getFunctionDisplayExpanded';
-    }
-  | {
-      command: 'setFunctionDisplayExpanded';
-      data: boolean;
     };

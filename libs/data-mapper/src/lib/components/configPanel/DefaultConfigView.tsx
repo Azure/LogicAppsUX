@@ -1,6 +1,7 @@
 import { openUpdateSourceSchemaPanelView, openUpdateTargetSchemaPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { SchemaType } from '../../models';
+import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import type { IChoiceGroupOption } from '@fluentui/react';
 import { ChoiceGroup, IconButton, Label, Stack, StackItem, Text } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
@@ -91,6 +92,10 @@ export const DefaultConfigView = ({ setFunctionDisplayExpanded, useExpandedFunct
   const choiceGroupOnChange = useCallback(
     (_event?: any, option?: IChoiceGroupOption) => {
       if (option) {
+        LogService.log(LogCategory.FunctionUtils, 'choiceGroupOnChange', {
+          message: `Changing function style: ${option.key}`,
+        });
+
         setFunctionDisplayExpanded(option.key === 'expanded');
       }
     },

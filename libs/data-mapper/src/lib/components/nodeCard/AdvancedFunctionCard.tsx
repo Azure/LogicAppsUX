@@ -68,13 +68,13 @@ const useStyles = makeStyles({
   }),
 });
 
-export interface AdvancedFunctionCardProps extends CardProps {
+export interface ExpandedFunctionCardProps extends CardProps {
   functionData: FunctionData;
   functionBranding: FunctionGroupBranding;
   dataTestId: string;
 }
 
-export const AdvancedFunctionCard = (props: NodeProps<AdvancedFunctionCardProps>) => {
+export const ExpandedFunctionCard = (props: NodeProps<ExpandedFunctionCardProps>) => {
   const dispatch = useDispatch();
   const reactFlowId = props.id;
   const { functionData, functionBranding, dataTestId } = props.data;

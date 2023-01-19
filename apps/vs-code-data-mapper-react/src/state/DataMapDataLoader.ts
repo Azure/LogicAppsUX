@@ -20,7 +20,7 @@ export interface DataMapLoadingState {
 const initialState: DataMapLoadingState = {
   loadingMethod: 'file',
   xsltFilename: '',
-  useExpandedFunctionCards: false,
+  useExpandedFunctionCards: true,
 };
 
 export const dataMapDataLoaderSlice = createSlice({

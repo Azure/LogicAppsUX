@@ -15,7 +15,7 @@
         "azureDataMapper.useExpandedFunctionCards": {
           "type": "boolean",
           "default": true,
-          "description": "Use the larger function cards that contain more information on them."
+          "description": "Default the mapper to use the expanded function cards."
         }
       }
     },

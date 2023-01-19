@@ -1,7 +1,7 @@
 import { CanvasControls } from '../components/canvasControls/CanvasControls';
 import { CanvasToolbox, ToolboxPanelTabs } from '../components/canvasToolbox/CanvasToolbox';
 import { ConnectionEdge } from '../components/edge/ConnectionEdge';
-import { AdvancedFunctionCard } from '../components/nodeCard/AdvancedFunctionCard';
+import { ExpandedFunctionCard } from '../components/nodeCard/ExpandedFunctionCard';
 import { FunctionCard } from '../components/nodeCard/FunctionCard';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { Notification } from '../components/notification/Notification';
@@ -71,7 +71,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight, canvasBlockWidth, useExpan
   const nodeTypes = useMemo(
     () => ({
       [ReactFlowNodeType.SchemaNode]: SchemaCard,
-      [ReactFlowNodeType.FunctionNode]: useExpandedFunctionCards ? AdvancedFunctionCard : FunctionCard,
+      [ReactFlowNodeType.FunctionNode]: useExpandedFunctionCards ? ExpandedFunctionCard : FunctionCard,
     }),
     [useExpandedFunctionCards]
   );

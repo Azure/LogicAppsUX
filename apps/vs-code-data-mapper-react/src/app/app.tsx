@@ -99,11 +99,6 @@ export const App = () => {
   };
 
   const setFunctionDisplayExpanded = (isFunctionDisplaySimple: boolean) => {
-    sendMsgToVsix({
-      command: 'setFunctionDisplayExpanded',
-      data: isFunctionDisplaySimple,
-    });
-
     dispatch(changeUseExpandedFunctionCards(isFunctionDisplaySimple));
   };
 
