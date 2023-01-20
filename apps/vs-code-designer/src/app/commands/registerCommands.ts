@@ -15,6 +15,7 @@ import { createSlot } from './createSlot';
 import { deleteNode } from './deleteNode';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
 import { redeployDeployment } from './deployments/redeployDeployment';
+import { viewDeploymentLogs } from './deployments/viewDeploymentLogs';
 import { openFile } from './openFile';
 import { openInPortal } from './openInPortal';
 import { pickFuncProcess } from './pickFuncProcess';
@@ -76,4 +77,5 @@ export function registerCommands(): void {
     extensionCommand.deleteSlot,
     async (context: IActionContext, node?: AzExtTreeItem) => await deleteNode(context, SlotTreeItem.contextValue, node)
   );
+  registerSiteCommand(extensionCommand.viewDeploymentLogs, viewDeploymentLogs);
 }
