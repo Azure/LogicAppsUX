@@ -377,19 +377,9 @@
           "group": "4@1"
         },
         {
-          "command": "logicAppsExtension.startStreamingLogs",
-          "when": "view == newAzLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
-          "group": "3@1"
-        },
-        {
           "command": "logicAppsExtension.stopStreamingLogs",
           "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "4@2"
-        },
-        {
-          "command": "logicAppsExtension.stopStreamingLogs",
-          "when": "view == newAzLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
-          "group": "3@2"
         }
       ],
       "explorer/context": [
