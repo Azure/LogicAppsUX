@@ -89,6 +89,7 @@ export enum extensionCommand {
   openOverview = 'logicAppsExtension.openOverview',
   exportLogicApp = 'logicAppsExtension.exportLogicApp',
   browseWebsite = 'logicAppsExtension.browseWebsite',
+  viewProperties = 'logicAppsExtension.viewProperties',
 }
 
 // Context
