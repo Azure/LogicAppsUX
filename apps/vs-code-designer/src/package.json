@@ -484,7 +484,7 @@
     "onCommand:logicAppsExtension.deleteLogicApp",
     "onCommand:logicAppsExtension.openOverview",
     "onCommand:logicAppsExtension.refresh",
-    "onCommand:azureLogicAppsStandard.exportLogicApp",
+    "onCommand:logicAppsExtension.exportLogicApp",
     "onCommand:logicAppsExtension.switchToDotnetProject",
     "onCommand:logicAppsExtension.openInPortal",
     "onCommand:logicAppsExtension.redeploy",
