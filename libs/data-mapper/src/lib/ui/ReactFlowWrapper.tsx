@@ -1,9 +1,9 @@
 import { CanvasControls } from '../components/canvasControls/CanvasControls';
 import { CanvasToolbox, ToolboxPanelTabs } from '../components/canvasToolbox/CanvasToolbox';
 import { ConnectionEdge } from '../components/edge/ConnectionEdge';
-import { ExpandedFunctionCard } from '../components/nodeCard/ExpandedFunctionCard';
-import { FunctionCard } from '../components/nodeCard/FunctionCard';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
+import { ExpandedFunctionCard } from '../components/nodeCard/functionCard/ExpandedFunctionCard';
+import { SimpleFunctionCard } from '../components/nodeCard/functionCard/SimpleFunctionCard';
 import { Notification } from '../components/notification/Notification';
 import { SchemaNameBadge } from '../components/schemaSelection/SchemaNameBadge';
 import { SourceSchemaPlaceholder } from '../components/schemaSelection/SourceSchemaPlaceholder';
@@ -71,7 +71,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight, canvasBlockWidth, useExpan
   const nodeTypes = useMemo(
     () => ({
       [ReactFlowNodeType.SchemaNode]: SchemaCard,
-      [ReactFlowNodeType.FunctionNode]: useExpandedFunctionCards ? ExpandedFunctionCard : FunctionCard,
+      [ReactFlowNodeType.FunctionNode]: useExpandedFunctionCards ? ExpandedFunctionCard : SimpleFunctionCard,
     }),
     [useExpandedFunctionCards]
   );

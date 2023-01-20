@@ -1,24 +1,11 @@
-import type { FunctionGroupBranding } from '../../constants/FunctionConstants';
-import { functionNodeCardSize } from '../../constants/NodeConstants';
-import { customTokens } from '../../core';
-import { deleteCurrentlySelectedItem, setSelectedItem } from '../../core/state/DataMapSlice';
-import type { RootState } from '../../core/state/Store';
-import type { FunctionData } from '../../models/Function';
-import { isCustomValue, isValidConnectionByType, isValidCustomValueByType } from '../../utils/Connection.Utils';
-import { getIconForFunction, iconForNormalizedDataType } from '../../utils/Icon.Utils';
-import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
-import type { CardProps } from './NodeCard';
-import {
-  Button,
-  createFocusOutlineStyle,
-  makeStyles,
-  mergeClasses,
-  PresenceBadge,
-  shorthands,
-  Text,
-  tokens,
-  Tooltip,
-} from '@fluentui/react-components';
+import { customTokens } from '../../../core';
+import { deleteCurrentlySelectedItem, setSelectedItem } from '../../../core/state/DataMapSlice';
+import type { RootState } from '../../../core/state/Store';
+import { getIconForFunction, iconForNormalizedDataType } from '../../../utils/Icon.Utils';
+import { selectedCardStyles } from '../NodeCard';
+import type { FunctionCardProps } from './FunctionCard';
+import { inputsValid, useFunctionCardStyles } from './FunctionCard';
+import { Button, mergeClasses, PresenceBadge, Text, tokens, Tooltip } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
@@ -28,58 +15,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { NodeProps } from 'reactflow';
 import { Handle, Position } from 'reactflow';
 
-const sharedHalfCardSize = functionNodeCardSize / 2;
-
-const useStyles = makeStyles({
-  root: {
-    ...shorthands.borderRadius(tokens.borderRadiusCircular),
-    color: tokens.colorNeutralBackground1,
-    fontSize: '20px',
-    height: `${sharedHalfCardSize}px`,
-    width: `${sharedHalfCardSize}px`,
-    minWidth: `${sharedHalfCardSize}px`,
-    textAlign: 'center',
-    position: 'relative',
-    justifyContent: 'center',
-    ...shorthands.padding('0px'),
-    ...shorthands.margin(tokens.strokeWidthThick),
-    '&:hover': {
-      color: tokens.colorNeutralBackground1,
-    },
-    '&:active': {
-      // Not sure what was overwriting the base color, but the important overwrites the overwrite
-      color: `${tokens.colorNeutralBackground1} !important`,
-    },
-  },
-  errorBadge: {
-    position: 'absolute',
-    top: '1px',
-    right: '-2px',
-    zIndex: '1',
-  },
-  container: {
-    position: 'relative',
-  },
-  focusIndicator: createFocusOutlineStyle({
-    selector: 'focus-within',
-    style: {
-      outlineRadius: '100px',
-    },
-  }),
-});
-
-export interface ExpandedFunctionCardProps extends CardProps {
-  functionData: FunctionData;
-  functionBranding: FunctionGroupBranding;
-  dataTestId: string;
-}
-
-export const ExpandedFunctionCard = (props: NodeProps<ExpandedFunctionCardProps>) => {
-  const dispatch = useDispatch();
-  const reactFlowId = props.id;
+export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const { functionData, functionBranding, dataTestId } = props.data;
-  const classes = useStyles();
+  const reactFlowId = props.id;
+  const dispatch = useDispatch();
+  const classes = useFunctionCardStyles();
+
+  const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
+  const sourceNodeConnectionBeingDrawnFromId = useSelector((state: RootState) => state.dataMap.sourceNodeConnectionBeingDrawnFromId);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+
+  const [isExpanded, { toggle: toggleIsExpanded }] = useBoolean(false);
+  const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
 
   const intl = useIntl();
   const contextMenu = useCardContextMenu();
@@ -105,45 +52,9 @@ export const ExpandedFunctionCard = (props: NodeProps<ExpandedFunctionCardProps>
   };
 
   const areCurrentInputsValid = useMemo(() => {
-    let isEveryInputValid = true;
-    const curConn = connections[reactFlowId];
+    return inputsValid(reactFlowId, functionData, connections);
+  }, [connections, reactFlowId, functionData]);
 
-    if (curConn) {
-      Object.values(curConn.inputs).forEach((inputArr, inputIdx) => {
-        inputArr.forEach((inputVal) => {
-          let inputValMatchedOneOfAllowedTypes = false;
-
-          functionData.inputs[inputIdx].allowedTypes.forEach((allowedInputType) => {
-            if (inputVal !== undefined) {
-              if (isCustomValue(inputVal)) {
-                if (isValidCustomValueByType(inputVal, allowedInputType)) {
-                  inputValMatchedOneOfAllowedTypes = true;
-                }
-              } else {
-                if (isSchemaNodeExtended(inputVal.node)) {
-                  if (isValidConnectionByType(allowedInputType, inputVal.node.normalizedDataType)) {
-                    inputValMatchedOneOfAllowedTypes = true;
-                  }
-                } else if (isValidConnectionByType(allowedInputType, inputVal.node.outputValueType)) {
-                  inputValMatchedOneOfAllowedTypes = true;
-                }
-              }
-            }
-          });
-
-          if (!inputValMatchedOneOfAllowedTypes) {
-            isEveryInputValid = false;
-          }
-        });
-      });
-    }
-
-    return isEveryInputValid;
-  }, [connections, reactFlowId, functionData.inputs]);
-
-  //#region Content
-
-  const [isExpanded, { toggle: toggleIsExpanded }] = useBoolean(false);
   const OutputIcon = iconForNormalizedDataType(functionData.outputValueType, 24, false);
 
   const headerForExpanded = (
@@ -197,8 +108,17 @@ export const ExpandedFunctionCard = (props: NodeProps<ExpandedFunctionCardProps>
           return (
             <div key={input.name} style={{ padding: '0px 10px', height: '30px' }}>
               <Handle id={input.name} type="target" position={Position.Left} style={{ top: `${handleTop}px` }} />
-              {input.name}
-              {input.isOptional ? '' : '*'}
+              <Tooltip
+                content={{
+                  children: <Text size={200}>{input.tooltip}</Text>,
+                }}
+                relationship="label"
+              >
+                <Text>
+                  {input.name}
+                  {input.isOptional ? '' : '*'}
+                </Text>
+              </Tooltip>
             </div>
           );
         })
@@ -221,8 +141,17 @@ export const ExpandedFunctionCard = (props: NodeProps<ExpandedFunctionCardProps>
                     typeof input === 'string' ? (input ? tokens.colorPaletteGreenBackground3 : tokens.colorPaletteRedBackground3) : '',
                 }}
               />
-              {name}
-              {functionData.inputs[0].isOptional ? '' : '*'}
+              <Tooltip
+                content={{
+                  children: <Text size={200}>{functionData.inputs[0].tooltip}</Text>,
+                }}
+                relationship="label"
+              >
+                <Text>
+                  {name}
+                  {functionData.inputs[0].isOptional ? '' : '*'}
+                </Text>
+              </Tooltip>
             </div>
           );
         })
@@ -240,7 +169,11 @@ export const ExpandedFunctionCard = (props: NodeProps<ExpandedFunctionCardProps>
     </div>
   );
 
-  //#endregion
+  let divStyle = { borderRadius: tokens.borderRadiusMedium, backgroundColor: customTokens[functionBranding.colorTokenName] };
+
+  if (isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId) {
+    divStyle = { ...selectedCardStyles, ...divStyle };
+  }
 
   return (
     <div onContextMenu={contextMenu.handle} className={mergeClasses(classes.container, 'nopan')} data-testid={dataTestId}>
@@ -252,7 +185,7 @@ export const ExpandedFunctionCard = (props: NodeProps<ExpandedFunctionCardProps>
         }}
         relationship="label"
       >
-        <div style={{ borderRadius: '20px', backgroundColor: customTokens[functionBranding.colorTokenName] }}>
+        <div style={divStyle}>
           {isExpanded ? headerForExpanded : headerForCollapsed}
           {isExpanded ? bodyForExpanded : null}
         </div>

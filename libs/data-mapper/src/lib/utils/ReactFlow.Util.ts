@@ -1,6 +1,6 @@
-import type { FunctionCardProps } from '../components/nodeCard/FunctionCard';
 import type { CardProps } from '../components/nodeCard/NodeCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
+import type { FunctionCardProps } from '../components/nodeCard/functionCard/FunctionCard';
 import type { NodeToggledStateDictionary } from '../components/tree/TargetSchemaTreeItem';
 import { childTargetNodeCardIndent, schemaNodeCardHeight, schemaNodeCardWidth } from '../constants/NodeConstants';
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
