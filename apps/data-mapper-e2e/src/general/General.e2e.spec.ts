@@ -12,7 +12,7 @@ test('Data Mapper - General E2E', async ({ page }) => {
 
   await page.getByTestId('rf__node-target-/ns0:Root/DirectTranslation/Employee').getByRole('button').nth(1).click();
 
-  await page.getByTestId('rf__node-target-/ns0:Root/DirectTranslation/Employee/ID').getByRole('button').nth(1).click();
+  await page.getByTestId('rf__node-target-/ns0:Root/DirectTranslation/Employee/ID').getByRole('button').click();
 
   expect(page.getByTestId('inputDropdown-dropdown-0').locator('span:has-text("EmployeeID")')).toBeDefined();
   await page.getByTestId('inputDropdown-dropdown-0').locator('span:has-text("EmployeeID")').click();
