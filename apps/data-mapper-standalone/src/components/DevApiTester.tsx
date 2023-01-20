@@ -26,7 +26,7 @@ export const DevApiTester = () => {
   const styles = useStyles();
 
   const [schemaFilename, setSchemaFilename] = useState<string>('');
-  const [apiResponse, setApiResponse] = useState<string>('Trigger a request to see the response here');
+  const [apiResponse, setApiResponse] = useState<string>('"Trigger a request to see the response here"');
 
   const getSchemaTree = async () => {
     try {
