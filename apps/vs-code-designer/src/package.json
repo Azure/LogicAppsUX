@@ -157,6 +157,11 @@
         "command": "logicAppsExtension.createSlot",
         "title": "Create Slot...",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.deleteSlot",
+        "title": "Delete Slot...",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -350,6 +355,11 @@
           "command": "logicAppsExtension.createSlot",
           "when": "view == newAzLogicApps && viewItem == azLogicAppsSlots",
           "group": "1@1"
+        },
+        {
+          "command": "logicAppsExtension.deleteSlot",
+          "when": "view == newAzLogicApps && viewItem == azLogicAppsSlot",
+          "group": "2@5"
         }
       ],
       "explorer/context": [
@@ -511,6 +521,7 @@
     "onCommand:logicAppsExtension.browseWebsite",
     "onCommand:logicAppsExtension.viewProperties",
     "onCommand:logicAppsExtension.createSlot",
+    "onCommand:logicAppsExtension.deleteSlot",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
