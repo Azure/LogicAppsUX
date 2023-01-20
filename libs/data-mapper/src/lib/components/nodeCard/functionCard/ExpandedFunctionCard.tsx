@@ -202,6 +202,7 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
   );
 };
 
+// TODO need to get design approved header colors
 const adjustColor = (color: string, amount: number) => {
   return (
     '#' +
