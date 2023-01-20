@@ -147,6 +147,11 @@
         "command": "logicAppsExtension.browseWebsite",
         "title": "Browse Website",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.viewProperties",
+        "title": "View Properties",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -330,6 +335,16 @@
           "command": "logicAppsExtension.browseWebsite",
           "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "1@2"
+        },
+        {
+          "command": "logicAppsExtension.viewProperties",
+          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "group": "6@1"
+        },
+        {
+          "command": "logicAppsExtension.viewProperties",
+          "when": "view == newAzLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
+          "group": "4@1"
         }
       ],
       "explorer/context": [
@@ -489,6 +504,7 @@
     "onCommand:logicAppsExtension.openInPortal",
     "onCommand:logicAppsExtension.redeploy",
     "onCommand:logicAppsExtension.browseWebsite",
+    "onCommand:logicAppsExtension.viewProperties",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
