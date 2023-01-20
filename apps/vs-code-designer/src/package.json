@@ -152,6 +152,11 @@
         "command": "logicAppsExtension.viewProperties",
         "title": "View Properties",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.createSlot",
+        "title": "Create Slot...",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -340,6 +345,11 @@
           "command": "logicAppsExtension.viewProperties",
           "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "6@1"
+        },
+        {
+          "command": "logicAppsExtension.createSlot",
+          "when": "view == newAzLogicApps && viewItem == azLogicAppsSlots",
+          "group": "1@1"
         }
       ],
       "explorer/context": [
@@ -500,6 +510,7 @@
     "onCommand:logicAppsExtension.redeploy",
     "onCommand:logicAppsExtension.browseWebsite",
     "onCommand:logicAppsExtension.viewProperties",
+    "onCommand:logicAppsExtension.createSlot",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
