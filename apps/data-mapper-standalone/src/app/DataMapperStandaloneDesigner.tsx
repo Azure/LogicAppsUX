@@ -1,3 +1,4 @@
+import { DevApiTester } from '../components/DevApiTester';
 import { DevToolbox } from '../components/DevToolbox';
 import { dataMapDataLoaderSlice } from '../state/DataMapDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
@@ -57,6 +58,7 @@ export const DataMapperStandaloneDesigner = () => {
       <div style={{ flex: '0 1 1px' }}>
         <FluentProvider theme={theme === 'Light' ? webLightTheme : webDarkTheme}>
           <DevToolbox />
+          <DevApiTester />
         </FluentProvider>
       </div>
 
