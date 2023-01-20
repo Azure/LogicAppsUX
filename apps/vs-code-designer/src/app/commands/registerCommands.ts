@@ -15,6 +15,7 @@ import { createSlot } from './createSlot';
 import { deleteNode } from './deleteNode';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
 import { redeployDeployment } from './deployments/redeployDeployment';
+import { viewDeploymentLogs } from './deployments/viewDeploymentLogs';
 import { startStreamingLogs } from './logstream/startStreamingLogs';
 import { stopStreamingLogs } from './logstream/stopStreamingLogs';
 import { openFile } from './openFile';
@@ -80,4 +81,5 @@ export function registerCommands(): void {
   );
   registerCommand(extensionCommand.startStreamingLogs, startStreamingLogs);
   registerCommand(extensionCommand.stopStreamingLogs, stopStreamingLogs);
+  registerSiteCommand(extensionCommand.viewDeploymentLogs, viewDeploymentLogs);
 }
