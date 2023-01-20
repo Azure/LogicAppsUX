@@ -340,11 +340,6 @@
           "command": "logicAppsExtension.viewProperties",
           "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "6@1"
-        },
-        {
-          "command": "logicAppsExtension.viewProperties",
-          "when": "view == newAzLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
-          "group": "4@1"
         }
       ],
       "explorer/context": [

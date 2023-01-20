@@ -19,6 +19,7 @@ import { pickFuncProcess } from './pickFuncProcess';
 import { restartLogicApp } from './restartLogicApp';
 import { startLogicApp } from './startLogicApp';
 import { stopLogicApp } from './stopLogicApp';
+import { viewProperties } from './viewProperties';
 import { exportLogicApp } from './workflows/exportLogicApp';
 import { getDebugSymbolDll } from './workflows/getDebugSymbolDll';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
@@ -67,4 +68,5 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.switchToDotnetProject, switchToDotnetProject);
   registerCommand(extensionCommand.openInPortal, openInPortal);
   registerCommand(extensionCommand.browseWebsite, browseWebsite);
+  registerCommand(extensionCommand.viewProperties, viewProperties);
 }
