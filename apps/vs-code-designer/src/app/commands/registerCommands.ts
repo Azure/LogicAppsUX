@@ -6,10 +6,12 @@ import { extensionCommand } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt';
 import { ProductionSlotTreeItem } from '../tree/slotsTree/ProductionSlotTreeItem';
+import { SlotTreeItem } from '../tree/slotsTree/SlotTreeItem';
 import { browseWebsite } from './browseWebsite';
 import { createCodeless } from './createCodeless/createCodeless';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
+import { createSlot } from './createSlot';
 import { deleteNode } from './deleteNode';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
 import { redeployDeployment } from './deployments/redeployDeployment';
@@ -69,4 +71,9 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.openInPortal, openInPortal);
   registerCommand(extensionCommand.browseWebsite, browseWebsite);
   registerCommand(extensionCommand.viewProperties, viewProperties);
+  registerCommand(extensionCommand.createSlot, createSlot);
+  registerCommand(
+    extensionCommand.deleteSlot,
+    async (context: IActionContext, node?: AzExtTreeItem) => await deleteNode(context, SlotTreeItem.contextValue, node)
+  );
 }
