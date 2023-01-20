@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { mapDefinitionVersion, mapNodeParams, reservedMapDefinitionKeys } from '../constants/MapDefinitionConstants';
-import { targetPrefix } from '../constants/ReactFlowConstants';
+import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary, InputConnection } from '../models/Connection';
 import { directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
@@ -27,7 +27,6 @@ export const convertToMapDefinition = (
   generateHeader = true
 ): string => {
   if (sourceSchema && targetSchema && isValidToMakeMapDefinition(connections)) {
-    console.log('---------------------------BEGIN----------------------');
     const mapDefinition: MapDefinitionEntry = {};
 
     if (generateHeader) {
@@ -246,9 +245,10 @@ const addLoopingToNewPathItems = (
     return 0;
   });
 
+  let prevPathItemWasConditional = false;
   rootSourceNodes.forEach((sourceNode) => {
-    console.log('SOURCE NODE: ', sourceNode);
     let loopValue = '';
+
     if (sourceNode && isConnectionUnit(sourceNode)) {
       if (isFunctionData(sourceNode.node)) {
         if (sourceNode.node.key === ifPseudoFunctionKey) {
@@ -267,52 +267,57 @@ const addLoopingToNewPathItems = (
 
             loopValue = `${mapNodeParams.for}(${inputKey}, ${getIndexValueForCurrentConnection(indexConnection)})`;
           } else {
-            loopValue = `${mapNodeParams.for}(${loopValue})`;
+            loopValue = `${mapNodeParams.for}(${sourceSchemaNodeReactFlowKey.replace(sourcePrefix, '')})`;
           }
 
           // For entry
           newPath.push({ key: loopValue });
-
-          console.log('HERE1', loopValue, newPath);
 
           addConditionalToNewPathItems(connections[sourceNode.reactFlowKey], connections, newPath);
+          prevPathItemWasConditional = true;
         } else {
           // Loop with an index
-          const indexFunctionKey = sourceNode.reactFlowKey;
-          const sourceSchemaNodeConnection = connections[indexFunctionKey].inputs[0][0];
-          const sourceSchemaNode = isConnectionUnit(sourceSchemaNodeConnection) && sourceSchemaNodeConnection.node;
-          const indexFunctionInput = connections[indexFunctionKey];
+          if (!prevPathItemWasConditional) {
+            const indexFunctionKey = sourceNode.reactFlowKey;
+            const sourceSchemaNodeConnection = connections[indexFunctionKey].inputs[0][0];
+            const sourceSchemaNode = isConnectionUnit(sourceSchemaNodeConnection) && sourceSchemaNodeConnection.node;
+            const indexFunctionInput = connections[indexFunctionKey];
 
-          if (sourceSchemaNode && isSchemaNodeExtended(sourceSchemaNode)) {
-            const valueToTrim = findLast(
-              sourceSchemaNode.pathToRoot,
-              (pathItem) => pathItem.repeating && pathItem.key !== sourceSchemaNode.key
-            )?.key;
-            loopValue = sourceSchemaNode.key.replace(`${valueToTrim}/`, '');
-            loopValue = `${mapNodeParams.for}(${loopValue}, ${getIndexValueForCurrentConnection(indexFunctionInput)})`;
-          } else {
-            LogService.error(LogCategory.DataMapUtils, 'addLoopingToNewPathItems', {
-              message: `Failed to generate proper loopValue: ${loopValue}`,
-            });
+            if (sourceSchemaNode && isSchemaNodeExtended(sourceSchemaNode)) {
+              const valueToTrim = findLast(
+                sourceSchemaNode.pathToRoot,
+                (pathItem) => pathItem.repeating && pathItem.key !== sourceSchemaNode.key
+              )?.key;
+              loopValue = sourceSchemaNode.key.replace(`${valueToTrim}/`, '');
+              loopValue = `${mapNodeParams.for}(${loopValue}, ${getIndexValueForCurrentConnection(indexFunctionInput)})`;
+            } else {
+              LogService.error(LogCategory.DataMapUtils, 'addLoopingToNewPathItems', {
+                message: `Failed to generate proper loopValue: ${loopValue}`,
+              });
+            }
+
+            // For entry
+            newPath.push({ key: loopValue });
           }
 
-          // For entry
-          newPath.push({ key: loopValue });
-          console.log('HERE2', loopValue, newPath);
+          prevPathItemWasConditional = false;
         }
       } else {
         // Normal loop
-        loopValue = sourceNode.node.key;
-        const valueToTrim = findLast(sourceNode.node.pathToRoot, (pathItem) => pathItem.repeating && pathItem.key !== loopValue)?.key;
-        if (valueToTrim) {
-          loopValue = loopValue.replace(`${valueToTrim}/`, '');
+        if (!prevPathItemWasConditional) {
+          loopValue = sourceNode.node.key;
+          const valueToTrim = findLast(sourceNode.node.pathToRoot, (pathItem) => pathItem.repeating && pathItem.key !== loopValue)?.key;
+          if (valueToTrim) {
+            loopValue = loopValue.replace(`${valueToTrim}/`, '');
+          }
+
+          loopValue = `${mapNodeParams.for}(${loopValue})`;
+
+          // For entry
+          newPath.push({ key: loopValue });
         }
 
-        loopValue = `${mapNodeParams.for}(${loopValue})`;
-
-        // For entry
-        newPath.push({ key: loopValue });
-        console.log('HERE3', loopValue, newPath);
+        prevPathItemWasConditional = false;
       }
     }
   });
