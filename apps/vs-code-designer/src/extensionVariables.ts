@@ -34,10 +34,14 @@ export namespace ext {
   export enum webViewKey {
     designerLocal = 'designerLocal',
     designerAzure = 'designerAzure',
+    export = 'export',
+    overview = 'overview',
   }
   export const openWebviewPanels: Record<string, Record<string, WebviewPanel>> = {
     [webViewKey.designerLocal]: {},
     [webViewKey.designerAzure]: {},
+    [webViewKey.export]: {},
+    [webViewKey.overview]: {},
   };
 }
 
