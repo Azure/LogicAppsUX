@@ -9,17 +9,17 @@ import {
   workflowSubscriptionIdKey,
   workflowTenantIdKey,
 } from '../../../constants';
-import { ext, ExtensionCommand } from '../../../extensionVariables';
+import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../utils/codeless/common';
 import { getAuthorizationToken } from '../../utils/codeless/getAuthorizationToken';
-import { delay } from '../../utils/delay';
+import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import { getRandomHexString } from '../../utils/fs';
+import { delay } from '@azure/ms-rest-js';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { promises as fs, writeFileSync } from 'fs';
+import { ExtensionCommand } from '@microsoft/vscode-extension';
+import { writeFileSync } from 'fs';
 import * as fse from 'fs-extra';
-import { join } from 'path';
 import * as requestP from 'request-promise';
 import * as vscode from 'vscode';
 
@@ -292,8 +292,9 @@ class ExportEngine {
   }
 }
 
-export async function exportLogicApp(_context: IActionContext): Promise<void> {
+export async function exportLogicApp(): Promise<void> {
   const panelName: string = localize('export', 'Export');
+  const panelGroupKey = ext.webViewKey.export;
   let accessToken: string;
   const credentials: ServiceClientCredentials | undefined = await ext.azureAccountTreeItem.getAccountCredentials();
   const apiVersion = '2021-03-01';
@@ -305,7 +306,7 @@ export async function exportLogicApp(_context: IActionContext): Promise<void> {
     canSelectFolders: true,
   };
 
-  const existingPanel: vscode.WebviewPanel | undefined = tryGetWebviewPanel('export', panelName);
+  const existingPanel: vscode.WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
 
   accessToken = await getAuthorizationToken(credentials);
 
@@ -323,25 +324,7 @@ export async function exportLogicApp(_context: IActionContext): Promise<void> {
   };
 
   const panel: vscode.WebviewPanel = vscode.window.createWebviewPanel('ExportLA', `${panelName}`, vscode.ViewColumn.Active, options);
-
-  const indexPath = join(ext.context.extensionPath, 'dist/designer/vs-code-react/index.html');
-
-  const html = (await fs.readFile(indexPath, 'utf-8')) as string;
-  // 1. Get all link prefixed by href or src
-  const matchLinks = /(href|src)="([^"]*)"/g;
-  // 2. Transform the result of the regex into a vscode's URI format
-  const toUri = (_, prefix: 'href' | 'src', link: string) => {
-    // For
-    if (link === '#') {
-      return `${prefix}="${link}"`;
-    }
-    // For scripts & links
-    const path = join(ext.context.extensionPath, 'dist/designer/vs-code-react', link);
-    const uri = vscode.Uri.file(path);
-    return `${prefix}="${panel.webview.asWebviewUri(uri)}"`;
-  };
-
-  panel.webview.html = html.replace(matchLinks, toUri);
+  panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 
   let interval;
 
@@ -422,11 +405,11 @@ export async function exportLogicApp(_context: IActionContext): Promise<void> {
 
   panel.onDidDispose(
     () => {
-      removeWebviewPanelFromCache('export', panelName);
+      removeWebviewPanelFromCache(panelGroupKey, panelName);
       clearInterval(interval);
     },
     null,
     ext.context.subscriptions
   );
-  cacheWebviewPanel('export', panelName, panel);
+  cacheWebviewPanel(panelGroupKey, panelName, panel);
 }
