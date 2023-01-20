@@ -19,6 +19,8 @@ import { pickFuncProcess } from './pickFuncProcess';
 import { restartLogicApp } from './restartLogicApp';
 import { startLogicApp } from './startLogicApp';
 import { stopLogicApp } from './stopLogicApp';
+import { viewProperties } from './viewProperties';
+import { exportLogicApp } from './workflows/exportLogicApp';
 import { getDebugSymbolDll } from './workflows/getDebugSymbolDll';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
 import { openOverview } from './workflows/openOverview';
@@ -62,7 +64,9 @@ export function registerCommands(): void {
   );
   registerCommand(extensionCommand.openOverview, openOverview);
   registerCommand(extensionCommand.refresh, async (context: IActionContext, node?: AzExtTreeItem) => await ext.tree.refresh(context, node));
+  registerCommand(extensionCommand.exportLogicApp, exportLogicApp);
   registerCommand(extensionCommand.switchToDotnetProject, switchToDotnetProject);
   registerCommand(extensionCommand.openInPortal, openInPortal);
   registerCommand(extensionCommand.browseWebsite, browseWebsite);
+  registerCommand(extensionCommand.viewProperties, viewProperties);
 }

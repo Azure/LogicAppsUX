@@ -2,7 +2,7 @@
   "name": "logic-apps-vscode-extension",
   "displayName": "Azure Logic Apps (Standard)",
   "version": "0.2.52",
-  "aiKey": "2fc394da-7c11-4c1c-b776-17763031415d",
+  "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/logic_apps_designer",
   "main": "main.js",
   "engines": {
@@ -120,6 +120,15 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "azureLogicAppsStandard.exportLogicApp",
+        "title": "Export Logic App...",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/export.svg",
+          "dark": "assets/dark/export.svg"
+        }
+      },
+      {
         "command": "logicAppsExtension.switchToDotnetProject",
         "title": "Convert to NuGet-based Logic App project",
         "category": "Azure Logic Apps"
@@ -137,6 +146,11 @@
       {
         "command": "logicAppsExtension.browseWebsite",
         "title": "Browse Website",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.viewProperties",
+        "title": "View Properties",
         "category": "Azure Logic Apps"
       }
     ],
@@ -174,6 +188,11 @@
           "command": "logicAppsExtension.deploy",
           "when": "view == newAzLogicApps",
           "group": "navigation@3"
+        },
+        {
+          "command": "azureLogicAppsStandard.exportLogicApp",
+          "when": "view == newAzLogicApps",
+          "group": "navigation@4"
         },
         {
           "command": "logicAppsExtension.refresh",
@@ -316,6 +335,11 @@
           "command": "logicAppsExtension.browseWebsite",
           "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "1@2"
+        },
+        {
+          "command": "logicAppsExtension.viewProperties",
+          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "group": "6@1"
         }
       ],
       "explorer/context": [
@@ -470,10 +494,12 @@
     "onCommand:logicAppsExtension.deleteLogicApp",
     "onCommand:logicAppsExtension.openOverview",
     "onCommand:logicAppsExtension.refresh",
+    "onCommand:logicAppsExtension.exportLogicApp",
     "onCommand:logicAppsExtension.switchToDotnetProject",
     "onCommand:logicAppsExtension.openInPortal",
     "onCommand:logicAppsExtension.redeploy",
     "onCommand:logicAppsExtension.browseWebsite",
+    "onCommand:logicAppsExtension.viewProperties",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
