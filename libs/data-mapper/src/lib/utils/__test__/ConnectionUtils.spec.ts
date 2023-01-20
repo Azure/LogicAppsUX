@@ -10,6 +10,7 @@ import {
   isCustomValue,
   isFunctionInputSlotAvailable,
   newConnectionWillHaveCircularLogic,
+  nodeHasSourceNodeEventually,
   setConnectionInputValue,
 } from '../Connection.Utils';
 import { fullConnectionDictionaryForOneToManyLoop, fullMapForSimplifiedLoop } from '../__mocks__';
@@ -344,6 +345,27 @@ describe('utils/Connections', () => {
       dmState.currentSourceSchemaNodes = [];
       bringInParentSourceNodesForRepeating(parentManyToOneTargetNode, dmState as DataMapOperationState);
       expect(dmState.currentSourceSchemaNodes?.length).toEqual(3);
+    });
+  });
+
+  describe('nodeHasSourceNodeEventually', () => {
+    const dummyNode = {} as SchemaNodeExtended;
+    const testNode2 = 'testNode2';
+    const mockConnections: ConnectionDictionary = {
+      testNode1: {
+        self: { node: dummyNode, reactFlowKey: 'testNode1' },
+        inputs: {},
+        outputs: [{ node: dummyNode, reactFlowKey: 'testNode2' }],
+      },
+      [testNode2]: {
+        self: { node: dummyNode, reactFlowKey: 'testNode2' },
+        inputs: { '0': [{ reactFlowKey: 'testNode1', node: dummyNode }] },
+        outputs: [],
+      },
+    };
+
+    it('basic test', () => {
+      expect(nodeHasSourceNodeEventually(mockConnections['testNode2'], mockConnections)).toEqual(true);
     });
   });
 });
