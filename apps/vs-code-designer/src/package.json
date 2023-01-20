@@ -120,6 +120,15 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "azureLogicAppsStandard.exportLogicApp",
+        "title": "Export Logic App...",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/export.svg",
+          "dark": "assets/dark/export.svg"
+        }
+      },
+      {
         "command": "logicAppsExtension.switchToDotnetProject",
         "title": "Convert to NuGet-based Logic App project",
         "category": "Azure Logic Apps"
@@ -174,6 +183,11 @@
           "command": "logicAppsExtension.deploy",
           "when": "view == newAzLogicApps",
           "group": "navigation@3"
+        },
+        {
+          "command": "azureLogicAppsStandard.exportLogicApp",
+          "when": "view == newAzLogicApps",
+          "group": "navigation@4"
         },
         {
           "command": "logicAppsExtension.refresh",
@@ -470,6 +484,7 @@
     "onCommand:logicAppsExtension.deleteLogicApp",
     "onCommand:logicAppsExtension.openOverview",
     "onCommand:logicAppsExtension.refresh",
+    "onCommand:azureLogicAppsStandard.exportLogicApp",
     "onCommand:logicAppsExtension.switchToDotnetProject",
     "onCommand:logicAppsExtension.openInPortal",
     "onCommand:logicAppsExtension.redeploy",
