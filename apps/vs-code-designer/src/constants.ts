@@ -90,6 +90,8 @@ export enum extensionCommand {
   exportLogicApp = 'logicAppsExtension.exportLogicApp',
   browseWebsite = 'logicAppsExtension.browseWebsite',
   viewProperties = 'logicAppsExtension.viewProperties',
+  createSlot = 'logicAppsExtension.createSlot',
+  deleteSlot = 'logicAppsExtension.deleteSlot',
 }
 
 // Context
