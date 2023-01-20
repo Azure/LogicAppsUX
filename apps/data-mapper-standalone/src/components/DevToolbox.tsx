@@ -1,4 +1,4 @@
-import { fullTranscriptMapDefinitionString } from '../../../../__mocks__/mapDefinitions/FullTranscriptMapDefinition';
+import { fullTranscriptMapDefinitionString, comprehensiveMapDefinition } from '../../../../__mocks__/mapDefinitions';
 import { dataMapDataLoaderSlice, loadDataMap, LoadingMethod, type ThemeType } from '../state/DataMapDataLoader';
 import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
@@ -17,13 +17,18 @@ interface MapDefDropdownData {
 }
 export type MapDefDropdownOption = IDropdownOption<MapDefDropdownData>;
 
-const sourceSchemaFileOptions = ['SourceSchema.json'];
-const targetSchemaFileOptions = ['TargetSchema.json'];
+const sourceSchemaFileOptions = ['SourceSchema.json', 'ComprehensiveSourceSchema.json'];
+const targetSchemaFileOptions = ['TargetSchema.json', 'ComprehensiveTargetSchema.json'];
 const mapDefinitionDropdownOptions: MapDefDropdownOption[] = [
   {
     key: 'fullDemoScriptMapDefinition',
     text: 'Transcript',
     data: { mapDefinitionString: fullTranscriptMapDefinitionString, associatedSchemaIdx: 0 },
+  },
+  {
+    key: 'comprehensiveMapDefinition',
+    text: 'Comprehensive',
+    data: { mapDefinitionString: comprehensiveMapDefinition, associatedSchemaIdx: 1 },
   },
 ];
 
