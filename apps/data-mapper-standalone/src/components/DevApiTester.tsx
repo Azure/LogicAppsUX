@@ -1,4 +1,4 @@
-import { Stack, StackItem } from '@fluentui/react';
+import { Stack, StackItem, TextField } from '@fluentui/react';
 import {
   Accordion,
   AccordionHeader,
@@ -11,7 +11,7 @@ import {
   tokens,
 } from '@fluentui/react-components';
 import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
-import { getFunctions } from '@microsoft/logic-apps-data-mapper';
+import { getFunctions, getSelectedSchema } from '@microsoft/logic-apps-data-mapper';
 import { useState } from 'react';
 
 const useStyles = makeStyles({
@@ -25,10 +25,16 @@ const useStyles = makeStyles({
 export const DevApiTester = () => {
   const styles = useStyles();
 
+  const [schemaFilename, setSchemaFilename] = useState<string>('');
   const [apiResponse, setApiResponse] = useState<string>('Trigger a request to see the response here');
 
   const getSchemaTree = async () => {
-    setApiResponse('Heres the schema tree!');
+    try {
+      const schemaTree = await getSelectedSchema(schemaFilename);
+      setApiResponse(JSON.stringify(schemaTree, null, 2));
+    } catch (error: unknown) {
+      setApiResponse(JSON.stringify((error as Error).message, null, 2));
+    }
   };
 
   const getFunctionManifest = async () => {
@@ -47,13 +53,20 @@ export const DevApiTester = () => {
               <StackItem style={{ width: '250px' }}>
                 <Stack verticalAlign="space-around" style={{ height: '100%' }}>
                   <Stack tokens={{ childrenGap: '8px' }}>
-                    <Text>Schema Tree</Text>
+                    <Text style={{ fontWeight: 'bold', fontSize: '22px' }}>Schema Tree</Text>
+
+                    <TextField
+                      label="Schema Filename"
+                      placeholder="Schema filename (w/o .xsd)"
+                      value={schemaFilename ?? ''}
+                      onChange={(_e, newValue) => setSchemaFilename(newValue ?? '')}
+                    />
 
                     <Button onClick={getSchemaTree}>GET schemaTree</Button>
                   </Stack>
 
                   <Stack tokens={{ childrenGap: '8px' }}>
-                    <Text>Function Manifest</Text>
+                    <Text style={{ fontWeight: 'bold', fontSize: '22px' }}>Function Manifest</Text>
 
                     <Button onClick={getFunctionManifest}>GET mapTransformations</Button>
                   </Stack>
@@ -61,7 +74,7 @@ export const DevApiTester = () => {
               </StackItem>
 
               <StackItem>
-                <Text>Response</Text>
+                <Text style={{ fontWeight: 'bold', fontSize: '22px', display: 'block', marginBottom: '12px' }}>Response</Text>
                 <MonacoEditor
                   language={EditorLanguage.json}
                   value={apiResponse}

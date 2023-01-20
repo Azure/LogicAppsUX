@@ -190,7 +190,7 @@ export const DevToolbox = () => {
         <StackItem key={'armTokenTextField'} style={{ width: '250px' }}>
           <TextField
             label="ARM Token"
-            description="auth token: include 'bearer' when pasting"
+            description="Auth token: include 'bearer' when pasting"
             onChange={changeArmTokenCB}
             value={armToken ?? ''}
           />
