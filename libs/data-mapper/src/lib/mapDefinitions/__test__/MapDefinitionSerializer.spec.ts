@@ -1552,6 +1552,8 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
       ) as SchemaNodeExtended;
       const directAccessId = createReactFlowFunctionKey(directAccessPseudoFunction);
       const indexFunctionId = createReactFlowFunctionKey(indexPseudoFunction);
+      const ifId = createReactFlowFunctionKey(ifPseudoFunction);
+      const greaterThanId = createReactFlowFunctionKey(greaterThanFunction);
       const mapDefinition: MapDefinitionEntry = {};
       const connections: ConnectionDictionary = {};
 
@@ -1624,7 +1626,54 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         },
       });
 
+      // Conditional setup
+      setConnectionInputValue(connections, {
+        targetNode: parentTargetNode,
+        targetNodeReactFlowKey: addReactFlowPrefix(parentTargetNode.key, SchemaType.Target),
+        findInputSlot: true,
+        value: {
+          reactFlowKey: ifId,
+          node: ifPseudoFunction,
+        },
+      });
+
+      setConnectionInputValue(connections, {
+        targetNode: ifPseudoFunction,
+        targetNodeReactFlowKey: ifId,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: greaterThanId,
+          node: greaterThanFunction,
+        },
+      });
+      setConnectionInputValue(connections, {
+        targetNode: ifPseudoFunction,
+        targetNodeReactFlowKey: ifId,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: addReactFlowPrefix(parentSourceNode.key, SchemaType.Source),
+          node: parentSourceNode,
+        },
+      });
+
+      setConnectionInputValue(connections, {
+        targetNode: greaterThanFunction,
+        targetNodeReactFlowKey: greaterThanId,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: indexFunctionId,
+          node: indexPseudoFunction,
+        },
+      });
+      setConnectionInputValue(connections, {
+        targetNode: greaterThanFunction,
+        targetNodeReactFlowKey: greaterThanId,
+        findInputSlot: true,
+        value: '2',
+      });
+
       generateMapDefinitionBody(mapDefinition, connections);
+      console.dir(Object.entries(mapDefinition), { depth: null });
 
       expect(Object.keys(mapDefinition).length).toEqual(1);
       const rootChildren = Object.entries(mapDefinition['ns0:Root']);
@@ -1647,10 +1696,16 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
       const forObject = weatherSummaryObject['$for(/ns0:Root/LoopingWithIndex/WeatherReport, $a)'] as MapDefinitionEntry;
       const forChildren = Object.entries(forObject);
       expect(forChildren.length).toEqual(1);
-      expect(forChildren[0][0]).toEqual('Day');
+      expect(forChildren[0][0]).toEqual('$if(is-greater-than($a, 2))');
       expect(forChildren[0][1]).not.toBe('string');
 
-      const dayObject = forObject['Day'] as MapDefinitionEntry;
+      const ifObject = forObject['$if(is-greater-than($a, 2))'] as MapDefinitionEntry;
+      const ifChildren = Object.entries(ifObject);
+      expect(ifChildren.length).toEqual(1);
+      expect(ifChildren[0][0]).toEqual('Day');
+      expect(ifChildren[0][1]).not.toBe('string');
+
+      const dayObject = ifObject['Day'] as MapDefinitionEntry;
       const dayChildren = Object.entries(dayObject);
       expect(dayChildren.length).toEqual(1);
       expect(dayChildren[0][0]).toEqual('Pressure');

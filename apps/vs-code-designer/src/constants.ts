@@ -87,7 +87,16 @@ export enum extensionCommand {
   azureFunctionsAppSettingsDecrypt = 'azureFunctions.appSettings.decrypt',
   azureSelectSubscriptions = 'azure-account.selectSubscriptions',
   openOverview = 'logicAppsExtension.openOverview',
+  exportLogicApp = 'logicAppsExtension.exportLogicApp',
+  reviewValidation = 'logicAppsExtension.reviewValidation',
   browseWebsite = 'logicAppsExtension.browseWebsite',
+  viewProperties = 'logicAppsExtension.viewProperties',
+  createSlot = 'logicAppsExtension.createSlot',
+  deleteSlot = 'logicAppsExtension.deleteSlot',
+  swapSlot = 'logicAppsExtension.swapSlot',
+  startStreamingLogs = 'logicAppsExtension.startStreamingLogs',
+  stopStreamingLogs = 'logicAppsExtension.stopStreamingLogs',
+  viewDeploymentLogs = 'logicAppsExtension.viewDeploymentLogs',
 }
 
 // Context

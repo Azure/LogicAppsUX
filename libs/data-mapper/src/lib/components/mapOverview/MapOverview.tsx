@@ -1,12 +1,12 @@
-import { reactFlowFitViewOptions } from '../../constants/ReactFlowConstants';
+import { reactFlowFitViewOptions, ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import type { RootState } from '../../core/state/Store';
 import { SchemaType } from '../../models/';
-import { nodeTypes } from '../../ui/ReactFlowWrapper';
 import { overviewTgtSchemaX, useOverviewLayout } from '../../utils/ReactFlow.Util';
+import { SchemaCard } from '../nodeCard/SchemaCard';
 import { SchemaNameBadge } from '../schemaSelection/SchemaNameBadge';
 import { SelectSchemaCard } from '../schemaSelection/SelectSchemaCard';
-import { checkNodeStatuses } from '../targetSchemaPane/TargetSchemaPane';
 import type { TargetNodesWithConnectionsDictionary } from '../targetSchemaPane/TargetSchemaPane';
+import { checkNodeStatuses } from '../targetSchemaPane/TargetSchemaPane';
 import type { NodeToggledStateDictionary } from '../tree/TargetSchemaTreeItem';
 import { Stack } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
@@ -77,9 +77,11 @@ const OverviewReactFlowWrapper = () => {
     fitView(reactFlowFitViewOptions);
   }, [fitView, sourceSchema?.schemaTreeRoot.key, targetSchema?.schemaTreeRoot.key]);
 
+  const schemaNodeTypes = useMemo(() => ({ [ReactFlowNodeType.SchemaNode]: SchemaCard }), []);
+
   return (
     <ReactFlow
-      nodeTypes={nodeTypes}
+      nodeTypes={schemaNodeTypes}
       nodes={reactFlowNodes}
       nodesDraggable={false}
       proOptions={{
