@@ -40,7 +40,7 @@ export enum FunctionCategory {
   Logical = 'Logical',
   Math = 'Math',
   String = 'String',
-  Utility = 'Utility',
+  Utility = 'Utilities',
 }
 
 export type FunctionDictionary = { [key: string]: FunctionData };
@@ -113,7 +113,7 @@ export const directAccessPseudoFunction: FunctionData = {
     },
     {
       name: 'Scope',
-      allowedTypes: [NormalizedDataType.Any],
+      allowedTypes: [NormalizedDataType.ComplexType],
       isOptional: false,
       allowCustomInput: false,
       placeHolder: 'Where to apply the index',

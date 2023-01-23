@@ -3,9 +3,11 @@ import { deleteGraphNode } from '../../core/actions/bjsworkflow/delete';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import type { WorkflowNode } from '../../core/parsers/models/workflowNode';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
-import { useBrandColor, useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
+import { useBrandColor, useIconUri, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
+import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import {
   useActionMetadata,
   useIsGraphCollapsed,
@@ -17,10 +19,11 @@ import {
 import { toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
+import { MessageBarType } from '@fluentui/react';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { DeleteNodeModal, MenuItemType, ScopeCard } from '@microsoft/designer-ui';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -93,6 +96,42 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const handleDeleteClick = () => setShowDeleteModal(true);
   const handleDelete = () => dispatch(deleteGraphNode({ graphId: scopeId ?? '', graphNode }));
 
+  const opQuery = useOperationQuery(scopeId);
+
+  const isLoading = useMemo(() => opQuery.isLoading || (!brandColor && !iconUri), [brandColor, iconUri, opQuery.isLoading]);
+
+  const opManifestErrorText = intl.formatMessage({
+    defaultMessage: 'Error fetching manifest',
+    description: 'Error message when manifest fails to load',
+  });
+
+  const settingValidationErrors = useSettingValidationErrors(scopeId);
+  const settingValidationErrorText = intl.formatMessage({
+    defaultMessage: 'Invalid settings',
+    description: 'Text to explain that there are invalid settings for this node',
+  });
+
+  const parameterValidationErrors = useParameterValidationErrors(scopeId);
+  const parameterValidationErrorText = intl.formatMessage({
+    defaultMessage: 'Invalid parameters',
+    description: 'Text to explain that there are invalid parameters for this node',
+  });
+
+  const { errorMessage, errorLevel } = useMemo(() => {
+    if (opQuery?.isError) return { errorMessage: opManifestErrorText, errorLevel: MessageBarType.error };
+    if (settingValidationErrors?.length > 0) return { errorMessage: settingValidationErrorText, errorLevel: MessageBarType.severeWarning };
+    if (parameterValidationErrors?.length > 0)
+      return { errorMessage: parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
+    return { errorMessage: undefined, errorLevel: undefined };
+  }, [
+    opQuery?.isError,
+    opManifestErrorText,
+    settingValidationErrors?.length,
+    settingValidationErrorText,
+    parameterValidationErrors?.length,
+    parameterValidationErrorText,
+  ]);
+
   if (!node) {
     return null;
   }
@@ -150,12 +189,14 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
           <ScopeCard
             brandColor={brandColor}
             icon={iconUri}
-            isLoading={!brandColor && !iconUri}
+            isLoading={isLoading}
             collapsed={graphCollapsed}
             handleCollapse={handleGraphCollapse}
             drag={drag}
             draggable={!readOnly}
             dragPreview={dragPreview}
+            errorLevel={errorLevel}
+            errorMessage={errorMessage}
             isDragging={isDragging}
             id={scopeId}
             isMonitoringView={isMonitoringView}

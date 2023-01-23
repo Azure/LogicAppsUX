@@ -33,6 +33,12 @@
       "value": "Failed loading the schema. Please try again."
     }
   ],
+  "+JCU+Y": [
+    {
+      "type": 0,
+      "value": "Select this if you are configuring an on-prem connection"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -285,6 +291,16 @@
       "value": "Kötelező megadni. Az a sztring, amely az értéket tartalmazhatja."
     }
   ],
+  "0qcKzG": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+    }
+  ],
   "0uj1Li": [
     {
       "type": 0,
@@ -413,6 +429,12 @@
     {
       "type": 0,
       "value": "Adjon meg egy vagy több olyan kifejezést, amelynek igaznak kell lennie a trigger aktiválásához."
+    }
+  ],
+  "1YEc9e": [
+    {
+      "type": 0,
+      "value": "Enter a valid condition."
     }
   ],
   "1ZDLZA": [
@@ -847,6 +869,16 @@
       "value": "Dinamikus tartalom hozzáadására szolgáló gomb, ha a TokenPicker rejtett"
     }
   ],
+  "4sYR0J": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is required."
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -965,12 +997,6 @@
     {
       "type": 0,
       "value": "(UTC+09:30) Adelaide"
-    }
-  ],
-  "6grB5C": [
-    {
-      "type": 0,
-      "value": "Invalid node settings"
     }
   ],
   "6jiO7t": [
@@ -1351,6 +1377,12 @@
     {
       "type": 0,
       "value": "Igaz értéket ad vissza, ha mindkét paraméter igaz."
+    }
+  ],
+  "9x8hg8": [
+    {
+      "type": 0,
+      "value": "Edit in basic mode"
     }
   ],
   "A5Ferh": [
@@ -1997,6 +2029,12 @@
       "value": "A lekérdezés visszaadása egy URI azonosítóból"
     }
   ],
+  "GCjJnP": [
+    {
+      "type": 0,
+      "value": "Enter a valid Json."
+    }
+  ],
   "GDUGlm": [
     {
       "type": 0,
@@ -2141,6 +2179,20 @@
     {
       "type": 0,
       "value": "Enter a valid datetime."
+    }
+  ],
+  "Hs5+Mk": [
+    {
+      "type": 0,
+      "value": "Enter a valid value for "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "HsO1Rd": [
@@ -2311,6 +2363,12 @@
     {
       "type": 0,
       "value": "Igaz értéket ad vissza, ha egy szótár kulcsot tartalmaz, ha egy tömb értéket tartalmaz, vagy ha egy sztring sztringrészletet tartalmaz."
+    }
+  ],
+  "Jil/Wa": [
+    {
+      "type": 0,
+      "value": "Invalid settings"
     }
   ],
   "JjTfC7": [
@@ -2661,6 +2719,12 @@
     {
       "type": 0,
       "value": "Következő sikertelen"
+    }
+  ],
+  "MfAdfx": [
+    {
+      "type": 0,
+      "value": "Edit in advanced mode"
     }
   ],
   "Mgcs5s": [
@@ -3439,6 +3503,12 @@
     {
       "type": 0,
       "value": "Egyéni"
+    }
+  ],
+  "Tmr/9e": [
+    {
+      "type": 0,
+      "value": "Invalid parameters"
     }
   ],
   "ToPmjE": [
@@ -5989,6 +6059,12 @@
       "value": "Int"
     }
   ],
+  "rAwCdh": [
+    {
+      "type": 0,
+      "value": "Connect via on-premises data gateway"
+    }
+  ],
   "rAyuzv": [
     {
       "type": 0,
@@ -6137,6 +6213,12 @@
     {
       "type": 0,
       "value": "Új paraméter"
+    }
+  ],
+  "sv+IcU": [
+    {
+      "type": 0,
+      "value": "Unable to generate data map definition"
     }
   ],
   "syiNc+": [

@@ -2,15 +2,18 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import type { PackageManager } from '../../constants';
-import { validateFuncCoreToolsSetting } from '../../constants';
-import { ext } from '../../extensionVariables';
-import { localize } from '../../localize';
-import { executeCommand } from '../utils/funcCoreTools/cpUtils';
-import { getWorkspaceSetting } from '../utils/vsCodeConfig/settings';
-import { getFuncPackageManagers } from './getFuncPackageManagers';
+import type { PackageManager } from '../../../constants';
+import { validateFuncCoreToolsSetting, funcVersionSetting } from '../../../constants';
+import { ext } from '../../../extensionVariables';
+import { localize } from '../../../localize';
+import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
+import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
+import { getFuncPackageManagers } from '../../utils/funcCoreTools/getFuncPackageManagers';
+import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
+import { installFuncCoreTools } from './installFuncCoreTools';
 import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { FuncVersion } from '@microsoft/vscode-extension';
 import type { MessageItem } from 'vscode';
 
 /**
@@ -47,9 +50,8 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
       innerContext.telemetry.properties.dialogResult = input.title;
 
       if (input === install) {
-        // TODO (ccastrotrejo): Work to be done when implement install func core tools
-        // const version: FuncVersion | undefined = tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, fsPath));
-        // await installFuncCoreTools(innerContext,packageManagers, version);
+        const version: FuncVersion | undefined = tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, fsPath));
+        await installFuncCoreTools(innerContext, packageManagers, version);
         installed = true;
       } else if (input === DialogResponses.learnMore) {
         await openUrl('https://aka.ms/Dqur4e');

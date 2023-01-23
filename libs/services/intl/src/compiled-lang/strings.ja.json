@@ -17,6 +17,12 @@
       "value": "Failed loading the schema. Please try again."
     }
   ],
+  "+JCU+Y": [
+    {
+      "type": 0,
+      "value": "Select this if you are configuring an on-prem connection"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -269,6 +275,16 @@
       "value": "必須。その値が含まれている可能性のある文字列。"
     }
   ],
+  "0qcKzG": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+    }
+  ],
   "0uj1Li": [
     {
       "type": 0,
@@ -386,6 +402,12 @@
     {
       "type": 0,
       "value": "トリガーを起動するために true にすべき 1 つまたは複数の式を指定します。"
+    }
+  ],
+  "1YEc9e": [
+    {
+      "type": 0,
+      "value": "Enter a valid condition."
     }
   ],
   "1ZDLZA": [
@@ -820,6 +842,16 @@
       "value": "TokenPicker が非表示になっている場合に動的なコンテンツを追加するボタン"
     }
   ],
+  "4sYR0J": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is required."
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -938,12 +970,6 @@
     {
       "type": 0,
       "value": "(UTC+09:30) アデレード"
-    }
-  ],
-  "6grB5C": [
-    {
-      "type": 0,
-      "value": "Invalid node settings"
     }
   ],
   "6jiO7t": [
@@ -1308,6 +1334,12 @@
     {
       "type": 0,
       "value": "両方のパラメーターが true の場合は true を返します"
+    }
+  ],
+  "9x8hg8": [
+    {
+      "type": 0,
+      "value": "Edit in basic mode"
     }
   ],
   "A5Ferh": [
@@ -1908,6 +1940,12 @@
       "value": "URI からクエリを返します"
     }
   ],
+  "GCjJnP": [
+    {
+      "type": 0,
+      "value": "Enter a valid Json."
+    }
+  ],
   "GDUGlm": [
     {
       "type": 0,
@@ -2044,6 +2082,20 @@
     {
       "type": 0,
       "value": "Enter a valid datetime."
+    }
+  ],
+  "Hs5+Mk": [
+    {
+      "type": 0,
+      "value": "Enter a valid value for "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "HsO1Rd": [
@@ -2214,6 +2266,12 @@
     {
       "type": 0,
       "value": "辞書にキーが含まれている場合、アレイに値が含まれている場合、または文字列に部分文字列が含まれている場合は true を返します"
+    }
+  ],
+  "Jil/Wa": [
+    {
+      "type": 0,
+      "value": "Invalid settings"
     }
   ],
   "JjTfC7": [
@@ -2529,6 +2587,12 @@
     {
       "type": 0,
       "value": "次の失敗"
+    }
+  ],
+  "MfAdfx": [
+    {
+      "type": 0,
+      "value": "Edit in advanced mode"
     }
   ],
   "Mgcs5s": [
@@ -3276,6 +3340,12 @@
     {
       "type": 0,
       "value": "カスタム"
+    }
+  ],
+  "Tmr/9e": [
+    {
+      "type": 0,
+      "value": "Invalid parameters"
     }
   ],
   "ToPmjE": [
@@ -5724,6 +5794,12 @@
       "value": "INT"
     }
   ],
+  "rAwCdh": [
+    {
+      "type": 0,
+      "value": "Connect via on-premises data gateway"
+    }
+  ],
   "rAyuzv": [
     {
       "type": 0,
@@ -5872,6 +5948,12 @@
     {
       "type": 0,
       "value": "新しいパラメーター"
+    }
+  ],
+  "sv+IcU": [
+    {
+      "type": 0,
+      "value": "Unable to generate data map definition"
     }
   ],
   "syiNc+": [

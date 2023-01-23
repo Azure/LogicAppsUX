@@ -38,4 +38,5 @@ export const useWindowDimensions = () => {
   return windowDimensions;
 };
 
-export const useConsoleLog = (value: any) => useEffect(() => console.log(value), [value]);
+export const useConsoleLog = (value: any) =>
+  useEffect(() => console.log(`%c UseConsole>`, `color: #3386FF; font-weight: bold;`, value), [value]);

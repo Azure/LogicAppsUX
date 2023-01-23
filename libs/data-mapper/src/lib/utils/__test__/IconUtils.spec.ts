@@ -5,12 +5,12 @@ describe('icon utils', () => {
   describe('iconForFunctionCategory', () => {
     it('returns correct icon url for given category', () => {
       const result = iconForFunctionCategory(FunctionCategory.String);
-      expect(result).toEqual(`${iconBaseUrl}dm_category_string.svg`);
+      expect(result).toEqual(`${iconBaseUrl}dm_category_${FunctionCategory.String.toLowerCase()}.svg`);
     });
 
     it('returns correct icon url if category does not exist on frontend', () => {
       const result = iconForFunctionCategory('not real category' as FunctionCategory);
-      expect(result).toEqual(`${iconBaseUrl}dm_category_utility.svg`);
+      expect(result).toEqual(`${iconBaseUrl}dm_category_${FunctionCategory.Utility.toLowerCase()}.svg`);
     });
   });
 });

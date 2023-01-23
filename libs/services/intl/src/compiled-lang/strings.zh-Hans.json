@@ -33,6 +33,12 @@
       "value": "Failed loading the schema. Please try again."
     }
   ],
+  "+JCU+Y": [
+    {
+      "type": 0,
+      "value": "Select this if you are configuring an on-prem connection"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -285,6 +291,16 @@
       "value": "必需。可包含值的字符串。"
     }
   ],
+  "0qcKzG": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is no longer present in the operation schema. It should be removed before the workflow is re-saved."
+    }
+  ],
   "0uj1Li": [
     {
       "type": 0,
@@ -406,6 +422,12 @@
     {
       "type": 0,
       "value": "指定要触发触发器的必须为 true 的一个或多个表达式。"
+    }
+  ],
+  "1YEc9e": [
+    {
+      "type": 0,
+      "value": "Enter a valid condition."
     }
   ],
   "1ZDLZA": [
@@ -840,6 +862,16 @@
       "value": "当 TokenPicker 隐藏时添加动态内容的按钮"
     }
   ],
+  "4sYR0J": [
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " is required."
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -958,12 +990,6 @@
     {
       "type": 0,
       "value": "(UTC+09:30)阿德莱德"
-    }
-  ],
-  "6grB5C": [
-    {
-      "type": 0,
-      "value": "Invalid node settings"
     }
   ],
   "6jiO7t": [
@@ -1344,6 +1370,12 @@
     {
       "type": 0,
       "value": "如果两个参数均为 true，则返回 true"
+    }
+  ],
+  "9x8hg8": [
+    {
+      "type": 0,
+      "value": "Edit in basic mode"
     }
   ],
   "A5Ferh": [
@@ -1960,6 +1992,12 @@
       "value": "返回 URI 的查询"
     }
   ],
+  "GCjJnP": [
+    {
+      "type": 0,
+      "value": "Enter a valid Json."
+    }
+  ],
   "GDUGlm": [
     {
       "type": 0,
@@ -2104,6 +2142,20 @@
     {
       "type": 0,
       "value": "Enter a valid datetime."
+    }
+  ],
+  "Hs5+Mk": [
+    {
+      "type": 0,
+      "value": "Enter a valid value for "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "HsO1Rd": [
@@ -2274,6 +2326,12 @@
     {
       "type": 0,
       "value": "如果字典包含密钥、数组包含值或字符串包含子字符串，则返回 true"
+    }
+  ],
+  "Jil/Wa": [
+    {
+      "type": 0,
+      "value": "Invalid settings"
     }
   ],
   "JjTfC7": [
@@ -2609,6 +2667,12 @@
     {
       "type": 0,
       "value": "下一次失败"
+    }
+  ],
+  "MfAdfx": [
+    {
+      "type": 0,
+      "value": "Edit in advanced mode"
     }
   ],
   "Mgcs5s": [
@@ -3372,6 +3436,12 @@
     {
       "type": 0,
       "value": "自定义"
+    }
+  ],
+  "Tmr/9e": [
+    {
+      "type": 0,
+      "value": "Invalid parameters"
     }
   ],
   "ToPmjE": [
@@ -5912,6 +5982,12 @@
       "value": "Int"
     }
   ],
+  "rAwCdh": [
+    {
+      "type": 0,
+      "value": "Connect via on-premises data gateway"
+    }
+  ],
   "rAyuzv": [
     {
       "type": 0,
@@ -6060,6 +6136,12 @@
     {
       "type": 0,
       "value": "新建参数"
+    }
+  ],
+  "sv+IcU": [
+    {
+      "type": 0,
+      "value": "Unable to generate data map definition"
     }
   ],
   "syiNc+": [

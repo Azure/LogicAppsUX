@@ -17,11 +17,12 @@ enum PanelPivotItems {
   Output = 'output',
 }
 
-const commonCodeEditorProps: Partial<MonacoProps> = {
+export const commonCodeEditorProps: Partial<MonacoProps> = {
   lineNumbers: 'on',
   scrollbar: { horizontal: 'hidden', vertical: 'auto' },
   height: '650px',
   wordWrap: 'on',
+  wrappingIndent: 'same',
 };
 
 const headerTextStyle: React.CSSProperties = {

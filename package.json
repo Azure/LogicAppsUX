@@ -25,7 +25,7 @@
     "build:designer-client-services": "nx run services-designer-client-services:build",
     "build:parsers": "nx run parsers:build",
     "build:vscode-react": "nx run vs-code-react:build",
-    "build:vscode-designer": "nx run vs-code-designer:build && nx run vs-code-designer-react:build",
+    "build:vscode-designer": "nx run vs-code-designer:build && nx run vs-code-designer-react:build && nx run vs-code-react:build",
     "build:utils": "nx run utils:build",
     "bump": "standard-version --no-verify",
     "vscode:designer:pack": "cd ./dist/apps/vs-code-designer && npm install && vsce package",
@@ -69,6 +69,7 @@
     "@types/pathfinding": "^0.0.6",
     "@use-it/event-listener": "0.1.7",
     "axios": "^0.27.2",
+    "azure-storage": "^2.10.3",
     "buffer": "^6.0.3",
     "consola": "2.15.3",
     "core-js": "3.24.1",
@@ -88,6 +89,7 @@
     "pathfinding": "^0.4.18",
     "prism-react-renderer": "1.3.5",
     "process": "^0.11.10",
+    "ps-tree": "^1.1.1",
     "react": "18.2.0",
     "react-dnd": "16.0.1",
     "react-dnd-accessible-backend": "1.0.1",
@@ -115,9 +117,7 @@
     "url": "^0.11.0",
     "util": "^0.12.4",
     "vscode-nls": "^4.1.1",
-    "web-worker": "1.2.0",
-    "ps-tree": "^1.1.1",
-    "azure-storage": "^2.10.3"
+    "web-worker": "1.2.0"
   },
   "devDependencies": {
     "@babel/core": "7.18.13",
@@ -170,6 +170,7 @@
     "@typescript-eslint/eslint-plugin": "5.45.0",
     "@typescript-eslint/parser": "5.45.0",
     "@vscode/test-electron": "2.1.5",
+    "adm-zip": "^0.5.10",
     "babel-jest": "28.1.3",
     "babel-loader": "8.2.5",
     "babel-plugin-formatjs": "10.3.27",
