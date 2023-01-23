@@ -4,24 +4,6 @@ In Visual Studio Code, you can use the Azure Logic Apps (Standard) extension to 
 
 > Sign up today for your free Azure account and receive 12 months of free popular services, $200 free credit and 25+ always free services 👉 [Start Free](https://azure.microsoft.com/free/open-source).
 
-## Deploy to Azure
-
-1. Sign in to your Azure Account by clicking "Sign in to Azure..." in the Azure Logic Apps explorer
-
-   > If you don't already have an Azure Account, click "Create a Free Azure Account"
-
-2. Select the button to deploy
-
-3. Choose "Create new Logic App in Azure..."
-
-4. Enter a globally unique name for your Logic App
-
-5. Select a location
-
-6. Wait for deployment to complete. Progress will be shown in the bottom right corner of your window
-
-7. Once deployment is complete, expand your _subscription_ in the Azure Logic explorer to view it
-
 ## Development Notes
 
 If building the extension make sure you are using node version 14. If you are using [NVM](https://github.com/nvm-sh/nvm) or [NVM Windows](https://github.com/coreybutler/nvm-windows) you can just use 'nvm use' in this repo to switch to the supported version.
