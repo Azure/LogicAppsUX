@@ -92,6 +92,8 @@ export enum extensionCommand {
   viewProperties = 'logicAppsExtension.viewProperties',
   createSlot = 'logicAppsExtension.createSlot',
   deleteSlot = 'logicAppsExtension.deleteSlot',
+  startStreamingLogs = 'logicAppsExtension.startStreamingLogs',
+  stopStreamingLogs = 'logicAppsExtension.stopStreamingLogs',
   viewDeploymentLogs = 'logicAppsExtension.viewDeploymentLogs',
 }
 
