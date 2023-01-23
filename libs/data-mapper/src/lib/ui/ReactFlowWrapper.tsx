@@ -75,7 +75,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight, canvasBlockWidth, useExpan
     }),
     [useExpandedFunctionCards]
   );
-  const edgeTypes = { [ReactFlowEdgeType.ConnectionEdge]: ConnectionEdge };
+  const edgeTypes = useMemo(() => ({ [ReactFlowEdgeType.ConnectionEdge]: ConnectionEdge }), []);
 
   const onPaneClick = (_event: ReactMouseEvent | MouseEvent | TouchEvent): void => {
     // If user clicks on pane (empty canvas area), "deselect" node

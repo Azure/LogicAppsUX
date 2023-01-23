@@ -77,13 +77,11 @@ const OverviewReactFlowWrapper = () => {
     fitView(reactFlowFitViewOptions);
   }, [fitView, sourceSchema?.schemaTreeRoot.key, targetSchema?.schemaTreeRoot.key]);
 
-  const schemaNodeType = {
-    [ReactFlowNodeType.SchemaNode]: SchemaCard,
-  };
+  const schemaNodeTypes = useMemo(() => ({ [ReactFlowNodeType.SchemaNode]: SchemaCard }), []);
 
   return (
     <ReactFlow
-      nodeTypes={schemaNodeType}
+      nodeTypes={schemaNodeTypes}
       nodes={reactFlowNodes}
       nodesDraggable={false}
       proOptions={{
