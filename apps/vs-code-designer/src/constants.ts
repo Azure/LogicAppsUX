@@ -88,6 +88,7 @@ export enum extensionCommand {
   azureSelectSubscriptions = 'azure-account.selectSubscriptions',
   openOverview = 'logicAppsExtension.openOverview',
   exportLogicApp = 'logicAppsExtension.exportLogicApp',
+  reviewValidation = 'logicAppsExtension.reviewValidation',
   browseWebsite = 'logicAppsExtension.browseWebsite',
   viewProperties = 'logicAppsExtension.viewProperties',
   createSlot = 'logicAppsExtension.createSlot',
