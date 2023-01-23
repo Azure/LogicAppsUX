@@ -1,5 +1,5 @@
 {
-  "name": "Target.xsd",
+  "name": "ComprehensiveTarget.xsd",
   "type": "XML",
   "targetNamespace": "http://tempuri.org/Target.xsd",
   "namespaces": {
@@ -7,8 +7,9 @@
     "xs": "http://www.w3.org/2001/XMLSchema"
   },
   "schemaTreeRoot": {
-    "key": "/ns0:Root",
-    "name": "Root",
+    "key": "/ns0:SchemaRoot",
+    "name": "SchemaRoot",
+    "fullName": "ns0:SchemaRoot",
     "namespacePrefix": "ns0",
     "namespaceUri": "http://tempuri.org/Target.xsd",
     "schemaNodeDataType": "None",
@@ -16,37 +17,149 @@
     "properties": "NotSpecified",
     "children": [
       {
-        "key": "/ns0:Root/Ano",
-        "name": "Ano",
+        "key": "/ns0:SchemaRoot/DirectTranslation",
+        "name": "DirectTranslation",
+        "fullName": "DirectTranslation",
+        "parentKey": "/ns0:SchemaRoot",
         "schemaNodeDataType": "None",
         "normalizedDataType": "ComplexType",
-        "properties": "Repeating",
+        "properties": "NotSpecified",
         "children": [
           {
-            "key": "/ns0:Root/Ano/Mes",
-            "name": "Mes",
-            "schemaNodeDataType": "None",
-            "normalizedDataType": "ComplexType",
-            "properties": "Repeating",
-            "children": [
-              {
-                "key": "/ns0:Root/Ano/Mes/Dia",
-                "name": "Dia",
-                "schemaNodeDataType": "String",
-                "normalizedDataType": "String",
-                "properties": "NotSpecified",
-                "fullName": "Dia",
-                "parentKey": "/ns0:Root/Ano/Mes"
-              }
-            ],
-            "fullName": "Mes",
-            "parentKey": "/ns0:Root/Ano"
+            "key": "/ns0:SchemaRoot/DirectTranslation/FullName",
+            "name": "FullName",
+            "fullName": "FullName",
+            "parentKey": "/ns0:SchemaRoot/DirectTranslation",
+            "schemaNodeDataType": "String",
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "children": []
+          },
+          {
+            "key": "/ns0:SchemaRoot/DirectTranslation/NumCorgis",
+            "name": "NumCorgis",
+            "fullName": "NumCorgis",
+            "parentKey": "/ns0:SchemaRoot/DirectTranslation",
+            "schemaNodeDataType": "Integer",
+            "normalizedDataType": "Number",
+            "properties": "NotSpecified",
+            "children": []
+          },
+          {
+            "key": "/ns0:SchemaRoot/DirectTranslation/@IsTheNewGuy",
+            "name": "IsTheNewGuy",
+            "fullName": "@IsTheNewGuy",
+            "parentKey": "/ns0:SchemaRoot/DirectTranslation",
+            "schemaNodeDataType": "Boolean",
+            "normalizedDataType": "Boolean",
+            "properties": "Attribute",
+            "children": []
           }
-        ],
-        "fullName": "Ano",
-        "parentKey": "/ns0:Root"
+        ]
+      },
+      {
+        "key": "/ns0:SchemaRoot/ContentEnrichment",
+        "name": "ContentEnrichment",
+        "fullName": "ContentEnrichment",
+        "parentKey": "/ns0:SchemaRoot",
+        "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:SchemaRoot/ContentEnrichment/Timestamp",
+            "name": "Timestamp",
+            "fullName": "Timestamp",
+            "parentKey": "/ns0:SchemaRoot/ContentEnrichment",
+            "schemaNodeDataType": "DateTime",
+            "normalizedDataType": "DateTime",
+            "properties": "NotSpecified",
+            "children": []
+          }
+        ]
+      },
+      {
+        "key": "/ns0:SchemaRoot/Transformations",
+        "name": "Transformations",
+        "fullName": "Transformations",
+        "parentKey": "/ns0:SchemaRoot",
+        "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:SchemaRoot/Transformations/FullName",
+            "name": "FullName",
+            "fullName": "FullName",
+            "parentKey": "/ns0:SchemaRoot/Transformations",
+            "schemaNodeDataType": "String",
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "children": []
+          },
+          {
+            "key": "/ns0:SchemaRoot/Transformations/NumCoffees",
+            "name": "NumCoffees",
+            "fullName": "NumCoffees",
+            "parentKey": "/ns0:SchemaRoot/Transformations",
+            "schemaNodeDataType": "Integer",
+            "normalizedDataType": "Number",
+            "properties": "NotSpecified",
+            "children": []
+          }
+        ]
+      },
+      {
+        "key": "/ns0:SchemaRoot/CustomValues",
+        "name": "CustomValues",
+        "fullName": "CustomValues",
+        "parentKey": "/ns0:SchemaRoot",
+        "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:SchemaRoot/SuperSecretKey",
+            "name": "SuperSecretKey",
+            "fullName": "SuperSecretKey",
+            "parentKey": "/ns0:SchemaRoot",
+            "schemaNodeDataType": "String",
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "children": []
+          },
+          {
+            "key": "/ns0:SchemaRoot/MOTD",
+            "name": "MOTD",
+            "fullName": "MOTD",
+            "parentKey": "/ns0:SchemaRoot",
+            "schemaNodeDataType": "String",
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "children": []
+          }
+        ]
+      },
+      {
+        "key": "/ns0:SchemaRoot/Conditionals",
+        "name": "Conditionals",
+        "fullName": "Conditionals",
+        "parentKey": "/ns0:SchemaRoot",
+        "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": []
+      },
+      {
+        "key": "/ns0:SchemaRoot/Looping",
+        "name": "Looping",
+        "fullName": "Looping",
+        "parentKey": "/ns0:SchemaRoot",
+        "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": []
       }
-    ],
-    "fullName": "ns0:Root"
+    ]
   }
 }

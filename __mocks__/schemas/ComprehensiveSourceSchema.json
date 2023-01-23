@@ -1,5 +1,5 @@
 {
-  "name": "Source.xsd",
+  "name": "ComprehensiveSource.xsd",
   "type": "XML",
   "targetNamespace": "http://tempuri.org/Source.xsd",
   "namespaces": {
@@ -7,8 +7,9 @@
     "xs": "http://www.w3.org/2001/XMLSchema"
   },
   "schemaTreeRoot": {
-    "key": "/ns0:Root",
-    "name": "Root",
+    "key": "/ns0:SchemaRoot",
+    "name": "SchemaRoot",
+    "fullName": "ns0:SchemaRoot",
     "namespacePrefix": "ns0",
     "namespaceUri": "http://tempuri.org/Source.xsd",
     "schemaNodeDataType": "None",
@@ -16,37 +17,117 @@
     "properties": "NotSpecified",
     "children": [
       {
-        "key": "/ns0:Root/Year",
-        "name": "Year",
+        "key": "/ns0:SchemaRoot/DirectTranslation",
+        "name": "DirectTranslation",
+        "fullName": "DirectTranslation",
+        "parentKey": "/ns0:SchemaRoot",
         "schemaNodeDataType": "None",
         "normalizedDataType": "ComplexType",
-        "properties": "Repeating",
+        "properties": "NotSpecified",
         "children": [
           {
-            "key": "/ns0:Root/Year/Month",
-            "name": "Month",
-            "schemaNodeDataType": "None",
-            "normalizedDataType": "ComplexType",
-            "properties": "Repeating",
-            "children": [
-              {
-                "key": "/ns0:Root/Year/Month/Day",
-                "name": "Day",
-                "schemaNodeDataType": "String",
-                "normalizedDataType": "String",
-                "properties": "NotSpecified",
-                "fullName": "Day",
-                "parentKey": "/ns0:Root/Year/Month"
-              }
-            ],
-            "fullName": "Month",
-            "parentKey": "/ns0:Root/Year"
+            "key": "/ns0:SchemaRoot/DirectTranslation/FullName",
+            "name": "FullName",
+            "fullName": "FullName",
+            "parentKey": "/ns0:SchemaRoot/DirectTranslation",
+            "schemaNodeDataType": "String",
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "children": []
+          },
+          {
+            "key": "/ns0:SchemaRoot/DirectTranslation/NumCorgis",
+            "name": "NumCorgis",
+            "fullName": "NumCorgis",
+            "parentKey": "/ns0:SchemaRoot/DirectTranslation",
+            "schemaNodeDataType": "Integer",
+            "normalizedDataType": "Number",
+            "properties": "NotSpecified",
+            "children": []
+          },
+          {
+            "key": "/ns0:SchemaRoot/DirectTranslation/@IsTheNewGuy",
+            "name": "IsTheNewGuy",
+            "fullName": "@IsTheNewGuy",
+            "parentKey": "/ns0:SchemaRoot/DirectTranslation",
+            "schemaNodeDataType": "Boolean",
+            "normalizedDataType": "Boolean",
+            "properties": "Attribute",
+            "children": []
           }
-        ],
-        "fullName": "Year",
-        "parentKey": "/ns0:Root"
+        ]
+      },
+      {
+        "key": "/ns0:SchemaRoot/Transformations",
+        "name": "Transformations",
+        "fullName": "Transformations",
+        "parentKey": "/ns0:SchemaRoot",
+        "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:SchemaRoot/Transformations/FirstName",
+            "name": "FirstName",
+            "fullName": "FirstName",
+            "parentKey": "/ns0:SchemaRoot/Transformations",
+            "schemaNodeDataType": "String",
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "children": []
+          },
+          {
+            "key": "/ns0:SchemaRoot/Transformations/LastName",
+            "name": "LastName",
+            "fullName": "LastName",
+            "parentKey": "/ns0:SchemaRoot/Transformations",
+            "schemaNodeDataType": "String",
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "children": []
+          },
+          {
+            "key": "/ns0:SchemaRoot/Transformations/AssignedTasks",
+            "name": "AssignedTasks",
+            "fullName": "AssignedTasks",
+            "parentKey": "/ns0:SchemaRoot/Transformations",
+            "schemaNodeDataType": "Integer",
+            "normalizedDataType": "Number",
+            "properties": "NotSpecified",
+            "children": []
+          },
+          {
+            "key": "/ns0:SchemaRoot/Transformations/SleepDeprivationLevel",
+            "name": "SleepDeprivationLevel",
+            "fullName": "SleepDeprivationLevel",
+            "parentKey": "/ns0:SchemaRoot/Transformations",
+            "schemaNodeDataType": "Integer",
+            "normalizedDataType": "Number",
+            "properties": "NotSpecified",
+            "children": []
+          }
+        ]
+      },
+      {
+        "key": "/ns0:SchemaRoot/Conditionals",
+        "name": "Conditionals",
+        "fullName": "Conditionals",
+        "parentKey": "/ns0:SchemaRoot",
+        "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": []
+      },
+      {
+        "key": "/ns0:SchemaRoot/Looping",
+        "name": "Looping",
+        "fullName": "Looping",
+        "parentKey": "/ns0:SchemaRoot",
+        "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": []
       }
-    ],
-    "fullName": "ns0:Root"
+    ]
   }
 }

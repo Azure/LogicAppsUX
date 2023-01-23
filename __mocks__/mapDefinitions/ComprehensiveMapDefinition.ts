@@ -10,10 +10,21 @@ $sourceNamespaces:
 $targetNamespaces:
   ns0: http://tempuri.org/Target.xsd
   xs: http://www.w3.org/2001/XMLSchema
-ns0:Root:
-  $for(/ns0:Root/Year):
-    Ano:
-      $for(Month):
-        Mes:
-          Dia: Day
+ns0:SchemaRoot:
+  DirectTranslation:
+    FullName: /ns0:SchemaRoot/DirectTranslation/FullName
+    NumCorgis: /ns0:SchemaRoot/DirectTranslation/NumCorgis
+    $@IsTheNewGuy: /ns0:SchemaRoot/DirectTranslation/@IsTheNewGuy
+  ContentEnrichment:
+    Timestamp: current-date()
+  Transformations:
+    FullName: >-
+      concat(/ns0:SchemaRoot/Transformations/FirstName, " ",
+      /ns0:SchemaRoot/Transformations/LastName)
+    NumCoffees: >-
+      multiply(/ns0:SchemaRoot/Transformations/AssignedTasks,
+      /ns0:SchemaRoot/Transformations/SleepDeprivationLevel)
+  CustomValues:
+    SuperSecretKey: "password"
+    MOTD: concat("Welcome! Today's date is ", string(current-date()))
 `;
