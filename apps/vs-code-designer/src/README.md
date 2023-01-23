@@ -1,33 +1,8 @@
 # Azure Logic Apps for Visual Studio Code (Standard)
 
-In Visual Studio Code, you can use the Azure Logic Apps (Standard) extension to quickly create, debug, manage, and deploy logic apps directly to Azure.
+In Visual Studio Code, you can use the Azure Logic Apps (Standard) extension to quickly create, debug, manage, and deploy logic apps directly to Azure. For requirements and more information, see [Create a Standard logic app workflow using Visual Studio Code](https://go.microsoft.com/fwlink/?linkid=2222287).
 
 > Sign up today for your free Azure account and receive 12 months of free popular services, $200 free credit and 25+ always free services 👉 [Start Free](https://azure.microsoft.com/free/open-source).
-
-## Create your first logic app
-
-1. Select the button to create a new project in the Azure Logic Apps explorer
-
-2. Select a new, _empty_ folder to contain your project
-
-3. Select "Stateful" for your project's first function
-
-4. Use "Stateful1" as the function name
-
-5. If the selected folder is not already open, select "Open in current window" to open it
-
-## Run the logic app locally
-
-This extension integrates with the [Azure Functions Core Tools](https://docs.microsoft.com/azure/azure-functions/functions-run-local) to let you run your project locally before publishing to Azure.
-
-1. To start your project, press F5 or the "play" button
-
-2. If you do not have the [Azure Functions Core Tools](https://github.com/Azure/azure-functions-core-tools/releases/tag/4.0.4915) installed, you will be automatically prompted to install. Follow the specified instructions, or skip to the "Deploy" step if you would rather deploy without running locally.
-
-   > TIP: The "Terminal" panel should pop up automatically and you know your project is running if you see output
-
-3. Make sure you have [Azurite Emulator](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite?tabs=visual-studio-code) installed and running. Alternatively, edit the value of `AzureWebJobsStorage` in `local.settings.json` under the project's root folder and under `/workflow-designtime` to a valid connection string for an Azure storage account.
-   > **WARNING**: [Azure Storage Emulator](https://docs.microsoft.com/azure/storage/common/storage-use-emulator) has been deprecated.
 
 ## Deploy to Azure
 
