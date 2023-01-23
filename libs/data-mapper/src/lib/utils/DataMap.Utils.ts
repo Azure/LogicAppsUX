@@ -33,6 +33,7 @@ export const getInputValues = (currentConnection: Connection | undefined, connec
             return undefined;
           }
 
+          // Handle custom values, source schema node, and Function inputs for Function nodes
           if (isCustomValue(input)) {
             return input;
           } else if (isSchemaNodeExtended(input.node)) {
