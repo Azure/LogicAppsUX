@@ -10,7 +10,7 @@ import {
   getFunctions,
   InitDataMapperApiService,
 } from '@microsoft/logic-apps-data-mapper';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const workflowSchemaFilenames = ['Source.xsd', 'Target.xsd'];
@@ -25,6 +25,8 @@ export const DataMapperStandaloneDesigner = () => {
   const fetchedFunctions = useSelector((state: RootState) => state.dataMapDataLoader.fetchedFunctions);
   const sourceSchema = useSelector((state: RootState) => state.schemaDataLoader.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.schemaDataLoader.targetSchema);
+
+  const [functionDisplay, setFunctionDisplayExpanded] = useState<boolean>(true);
 
   const saveStateCall = (dataMapDefinition: string, dataMapXslt: string) => {
     // We don't need to persist this to telemetry
@@ -71,7 +73,11 @@ export const DataMapperStandaloneDesigner = () => {
             fetchedFunctions={fetchedFunctions}
             theme={theme === 'Light' ? 'light' : 'dark'}
           >
-            <DataMapperDesigner saveStateCall={saveStateCall} />
+            <DataMapperDesigner
+              saveStateCall={saveStateCall}
+              setFunctionDisplayExpanded={setFunctionDisplayExpanded}
+              useExpandedFunctionCards={functionDisplay}
+            />
           </DataMapDataProvider>
         </DataMapperDesignerProvider>
       </div>
