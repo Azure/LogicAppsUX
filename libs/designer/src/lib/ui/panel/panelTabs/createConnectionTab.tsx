@@ -158,7 +158,7 @@ const CreateConnectionTab = () => {
       }
       setIsLoading(false);
     },
-    [applyNewConnection, connectionMetadata?.type, connector, dispatch, needsAzureFunction, selectedAzureFunction]
+    [applyNewConnection, connectionMetadata?.type, connector, dispatch, isConsumption, needsAzureFunction, selectedAzureFunction]
   );
 
   const cancelCallback = useCallback(() => {

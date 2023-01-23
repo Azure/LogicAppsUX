@@ -269,7 +269,7 @@ export abstract class BaseConnectorService implements IConnectorService {
             ? ex.message
             : intl.formatMessage(
                 {
-                  defaultMessage: `Error executing the api '{parameters}'.`,
+                  defaultMessage: "Error executing the api '{parameters}'.",
                   description: 'Error message when execute dynamic api in managed connector',
                 },
                 { parameters: parameters['path'] }
@@ -307,7 +307,7 @@ export abstract class BaseConnectorService implements IConnectorService {
             ? ex.message
             : intl.formatMessage(
                 {
-                  defaultMessage: `Error executing the api '{parameters}'.`,
+                  defaultMessage: "Error executing the api '{parameters}'.",
                   description: 'Error message when execute dynamic api in managed connector',
                 },
                 { parameters: parameters['path'] }

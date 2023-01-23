@@ -9,22 +9,13 @@ import type {
   ConnectorWithSwagger,
 } from '../connection';
 import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
-import { LoggerService } from '../logger';
-import { LogEntryLevel } from '../logging/logEntry';
-import type { IOAuthPopup } from '../oAuth';
-import { OAuthService } from '../oAuth';
-import { getIntl } from '@microsoft/intl-logic-apps';
 import type { Connection, ConnectionParameter, Connector, ManagedIdentity } from '@microsoft/utils-logic-apps';
 import {
   getUniqueName,
-  isIdentityAssociatedWithLogicApp,
   HTTP_METHODS,
   UserErrorCode,
   UserException,
-  ResourceIdentityType,
   isArmResourceId,
-  AssertionErrorCode,
-  AssertionException,
   ConnectionParameterSource,
   ConnectionType,
   safeSetObjectPropertyValue,
@@ -114,22 +105,6 @@ interface ConnectionsData {
   functionConnections?: Record<string, FunctionsConnectionModel>;
 }
 
-interface ConnectionAcl {
-  id: string;
-  location: string;
-  name: string;
-  properties: {
-    principal: {
-      type: string;
-      identity: {
-        objectId: string;
-        tenantId: string;
-      };
-    };
-  };
-  type: string;
-}
-
 type LocalConnectionModel = FunctionsConnectionModel | ServiceProviderConnectionModel | APIManagementConnectionModel;
 type ReadConnectionsFunc = () => Promise<ConnectionsData>;
 type WriteConnectionFunc = (connectionData: ConnectionAndAppSetting<LocalConnectionModel>) => Promise<void>;
@@ -138,9 +113,9 @@ const serviceProviderLocation = 'serviceProviderConnections';
 const functionsLocation = 'functionConnections';
 
 export abstract class BaseConnectionService implements IConnectionService {
-  private _connections: Record<string, Connection> = {};
-  private _subscriptionResourceGroupWebUrl = '';
-  private _allConnectionsInitialized = false;
+  protected _connections: Record<string, Connection> = {};
+  protected _subscriptionResourceGroupWebUrl = '';
+  protected _allConnectionsInitialized = false;
 
   protected _vVersion: 'V1' | 'V2' = 'V1';
 
@@ -245,192 +220,22 @@ export abstract class BaseConnectionService implements IConnectionService {
     ];
   }
 
-  async createConnection(
+  abstract createConnection(
     connectionId: string,
     connector: Connector,
     connectionInfo: ConnectionCreationInfo,
     parametersMetadata?: ConnectionParametersMetadata
-  ): Promise<Connection> {
-    const connectionName = connectionId.split('/').at(-1) as string;
+  ): Promise<Connection>;
 
-    try {
-      const logId = LoggerService().startTrace({
-        action: 'createConnection',
-        name: 'Creating Connection',
-        source: 'connection.ts',
-      });
-
-      if (connector.properties.testConnectionUrl) await this.pretestServiceProviderConnection(connector, connectionInfo);
-
-      const connection = isArmResourceId(connector.id)
-        ? await this.createConnectionInApiHub(connectionName, connector.id, connectionInfo)
-        : await this.createConnectionInLocal(
-            connectionName,
-            connector.id,
-            connectionInfo,
-            parametersMetadata as ConnectionParametersMetadata
-          );
-      await this.testConnection(connection);
-      LoggerService().endTrace(logId);
-      return connection;
-    } catch (error) {
-      this.deleteConnection(connectionId);
-      const errorMessage = `Failed to create connection: ${this.tryParseErrorMessage(error)}`;
-      LoggerService().log({
-        level: LogEntryLevel.Error,
-        area: 'createConnection',
-        message: errorMessage,
-      });
-      return Promise.reject(errorMessage);
-    }
-  }
-
-  async createConnectionAclIfNeeded(connection: Connection): Promise<void> {
-    const { tenantId, workflowAppDetails } = this.options;
-    if (!isArmResourceId(connection.id) || !workflowAppDetails) {
-      return;
-    }
-
-    const intl = getIntl();
-
-    if (!isIdentityAssociatedWithLogicApp(workflowAppDetails.identity)) {
-      throw new Error(
-        intl.formatMessage({
-          defaultMessage: 'A managed identity is not configured on the logic app.',
-          description: 'Error message when no identity is associated',
-        })
-      );
-    }
-
-    const connectionAcls = (await this._getConnectionAcls(connection.id)) || [];
-    const { identity, appName } = workflowAppDetails;
-    const identityDetailsForApiHubAuth = this._getIdentityDetailsForApiHubAuth(identity as ManagedIdentity, tenantId as string);
-
-    try {
-      if (
-        !connectionAcls.some((acl) => {
-          const { identity: principalIdentity } = acl.properties.principal;
-          return principalIdentity.objectId === identityDetailsForApiHubAuth.principalId && principalIdentity.tenantId === tenantId;
-        })
-      ) {
-        await this._createAccessPolicyInConnection(connection.id, appName, identityDetailsForApiHubAuth, connection.location as string);
-      }
-    } catch {
-      LoggerService().log({ level: LogEntryLevel.Error, area: 'ConnectionACLCreate', message: 'Acl creation failed for connection.' });
-    }
-  }
-
-  private async createConnectionInApiHub(
+  abstract createConnectionInApiHub(
     connectionName: string,
     connectorId: string,
     connectionInfo: ConnectionCreationInfo
-  ): Promise<Connection> {
-    const {
-      httpClient,
-      apiHubServiceDetails: { apiVersion, baseUrl },
-      workflowAppDetails,
-    } = this.options;
-    const intl = getIntl();
+  ): Promise<Connection>;
 
-    // NOTE: Block connection creation if identity does not exist on Logic App.
-    if (workflowAppDetails && !isIdentityAssociatedWithLogicApp(workflowAppDetails.identity)) {
-      throw new Error(
-        intl.formatMessage({
-          defaultMessage: 'To create and use an API connection, you must have a managed identity configured on this logic app.',
-          description: 'Error message to show when logic app does not have managed identity when creating azure connection',
-        })
-      );
-    }
+  abstract setupConnectionIfNeeded(connection: Connection): Promise<void>;
 
-    const connectionId = this.getConnectionRequestPath(connectionName);
-    const connection = await httpClient.put<any, Connection>({
-      uri: `${baseUrl}${connectionId}`,
-      queryParameters: { 'api-version': apiVersion },
-      content: connectionInfo?.externalAlternativeParameterValues
-        ? this._getRequestForCreateConnectionWithAlternativeParameters(connectorId, connectionName, connectionInfo)
-        : this._getRequestForCreateConnection(connectorId, connectionName, connectionInfo),
-    });
-
-    try {
-      await this.createConnectionAclIfNeeded(connection);
-    } catch {
-      // NOTE: Delete the connection created in this method if Acl creation failed.
-      this.deleteConnection(connectionId);
-      const error = new Error(
-        intl.formatMessage({
-          defaultMessage: 'Acl creation failed for connection. Deleting the connection.',
-          description: 'Error while creating acl',
-        })
-      );
-      throw error;
-    }
-
-    return connection;
-  }
-
-  // NOTE: Use the system-assigned MI if exists, else use the first user assigned identity.
-  private _getIdentityDetailsForApiHubAuth(managedIdentity: ManagedIdentity, tenantId: string): { principalId: string; tenantId: string } {
-    return equals(managedIdentity.type, ResourceIdentityType.SYSTEM_ASSIGNED) ||
-      equals(managedIdentity.type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)
-      ? { principalId: managedIdentity.principalId as string, tenantId: managedIdentity.tenantId as string }
-      : {
-          principalId: managedIdentity.userAssignedIdentities?.[Object.keys(managedIdentity.userAssignedIdentities)[0]]
-            .principalId as string,
-          tenantId,
-        };
-  }
-
-  private async _getConnectionAcls(connectionId: string): Promise<ConnectionAcl[]> {
-    const {
-      apiHubServiceDetails: { apiVersion },
-      httpClient,
-    } = this.options;
-
-    // TODO: Handle nextLink from this response as well.
-    const response = await httpClient.get<any>({
-      uri: `${connectionId}/accessPolicies`,
-      queryParameters: { 'api-version': apiVersion },
-      headers: { 'x-ms-command-name': 'LADesigner.getConnectionAcls' },
-    });
-
-    return response.value;
-  }
-
-  private async _createAccessPolicyInConnection(
-    connectionId: string,
-    appName: string,
-    identityDetails: Record<string, any>,
-    location: string
-  ): Promise<void> {
-    const {
-      apiHubServiceDetails: { apiVersion, baseUrl },
-      httpClient,
-    } = this.options;
-    const { principalId: objectId, tenantId } = identityDetails;
-    const policyName = `${appName}-${objectId}`;
-
-    await httpClient.put({
-      uri: `${baseUrl}${connectionId}/accessPolicies/${policyName}`,
-      queryParameters: { 'api-version': apiVersion },
-      headers: {
-        'If-Match': '*',
-        'x-ms-command-name': 'LADesigner.createAccessPolicyInConnection',
-      },
-      content: {
-        name: appName,
-        type: 'Microsoft.Web/connections/accessPolicy',
-        location,
-        properties: {
-          principal: {
-            type: 'ActiveDirectory',
-            identity: { objectId, tenantId },
-          },
-        },
-      },
-    });
-  }
-
-  private _getRequestForCreateConnection(connectorId: string, connectionName: string, connectionInfo: ConnectionCreationInfo): any {
+  protected _getRequestForCreateConnection(connectorId: string, _connectionName: string, connectionInfo: ConnectionCreationInfo): any {
     const parameterValues = connectionInfo?.connectionParameters;
     const parameterValueSet = connectionInfo?.connectionParametersSet;
     const displayName = connectionInfo?.displayName;
@@ -449,7 +254,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     };
   }
 
-  private _getRequestForCreateConnectionWithAlternativeParameters(
+  protected _getRequestForCreateConnectionWithAlternativeParameters(
     connectorId: string,
     connectionName: string,
     properties: ConnectionCreationInfo
@@ -473,71 +278,14 @@ export abstract class BaseConnectionService implements IConnectionService {
     };
   }
 
-  private async createConnectionInLocal(
-    connectionName: string,
-    connectorId: string,
-    connectionInfo: ConnectionCreationInfo,
-    parametersMetadata: ConnectionParametersMetadata
-  ): Promise<Connection> {
-    const { connectionsData, connection } = this.getConnectionsConfiguration(
-      connectionName,
-      connectionInfo,
-      connectorId,
-      parametersMetadata
-    );
-
-    const { writeConnection } = this.options;
-    if (!writeConnection) {
-      throw new AssertionException(AssertionErrorCode.CALLBACK_NOTREGISTERED, 'Callback for write connection is not passed in service.');
-    }
-
-    await this.options.writeConnection?.(connectionsData);
-    this._connections[connection.id] = connection;
-
-    return connection;
-  }
-
-  async createAndAuthorizeOAuthConnection(
+  abstract createAndAuthorizeOAuthConnection(
     connectionId: string,
     connectorId: string,
     connectionInfo: ConnectionCreationInfo,
     parametersMetadata?: ConnectionParametersMetadata
-  ): Promise<CreateConnectionResult> {
-    const connector = await this.getConnector(connectorId);
-    const connection = await this.createConnection(connectionId, connector, connectionInfo, parametersMetadata);
-    const oAuthService = OAuthService();
-    let oAuthPopupInstance: IOAuthPopup | undefined;
+  ): Promise<CreateConnectionResult>;
 
-    try {
-      const consentUrl = await oAuthService.fetchConsentUrlForConnection(connectionId);
-      oAuthPopupInstance = oAuthService.openLoginPopup({ consentUrl });
-
-      const loginResponse = await oAuthPopupInstance.loginPromise;
-      if (loginResponse.error) {
-        throw new Error(atob(loginResponse.error));
-      } else if (loginResponse.code) {
-        await oAuthService.confirmConsentCodeForConnection(connectionId, loginResponse.code);
-      }
-
-      await this.createConnectionAclIfNeeded(connection);
-
-      await this.testConnection(connection);
-
-      const fetchedConnection = await this.getConnection(connection.id);
-      return { connection: fetchedConnection };
-    } catch (error: any) {
-      this.deleteConnection(connectionId);
-      const errorMessage = `Failed to create OAuth connection: ${this.tryParseErrorMessage(error)}`;
-      LoggerService().log({
-        level: LogEntryLevel.Error,
-        area: 'create oauth connection',
-        message: errorMessage,
-      });
-      return { errorMessage: this.tryParseErrorMessage(error) };
-    }
-  }
-
-  private async testConnection(connection: Connection): Promise<void> {
+  protected async testConnection(connection: Connection): Promise<void> {
     let response: HttpResponse<any> | undefined = undefined;
     try {
       const testLinks = connection.properties.testLinks;
@@ -548,7 +296,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     }
   }
 
-  private async requestTestOtherConnections(connection: Connection): Promise<HttpResponse<any>> {
+  protected async requestTestOtherConnections(connection: Connection): Promise<HttpResponse<any>> {
     const testLinks = connection.properties.testLinks;
     if (!testLinks || testLinks.length === 0) return Promise.reject('No test links found');
     const { httpClient } = this.options;
@@ -565,7 +313,10 @@ export abstract class BaseConnectionService implements IConnectionService {
     return response;
   }
 
-  private async pretestServiceProviderConnection(connector: Connector, connectionInfo: ConnectionCreationInfo): Promise<HttpResponse<any>> {
+  protected async pretestServiceProviderConnection(
+    connector: Connector,
+    connectionInfo: ConnectionCreationInfo
+  ): Promise<HttpResponse<any>> {
     try {
       const { testConnectionUrl } = connector.properties;
       if (!testConnectionUrl) return Promise.reject();
@@ -604,7 +355,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     }
   }
 
-  private handleTestConnectionResponse(response?: HttpResponse<any>): void {
+  protected handleTestConnectionResponse(response?: HttpResponse<any>): void {
     if (!response) return;
     const defaultErrorResponse = 'Please check your account info and/or permissions and try again.';
     if (response.status >= 400 && response.status < 500 && response.status !== 429) {
@@ -615,11 +366,11 @@ export abstract class BaseConnectionService implements IConnectionService {
     }
   }
 
-  private tryParseErrorMessage(error: any, defaultErrorMessage?: string): string {
+  protected tryParseErrorMessage(error: any, defaultErrorMessage?: string): string {
     return error?.message ?? error?.Message ?? error?.error?.message ?? error?.responseText ?? defaultErrorMessage ?? 'Unknown error';
   }
 
-  private getConnectionsConfiguration(
+  protected getConnectionsConfiguration(
     connectionName: string,
     connectionInfo: ConnectionCreationInfo,
     connectorId: string,
@@ -652,7 +403,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     return { connectionsData, connection };
   }
 
-  private async getConnectionsForConnector(connectorId: string): Promise<Connection[]> {
+  protected async getConnectionsForConnector(connectorId: string): Promise<Connection[]> {
     if (isArmResourceId(connectorId)) {
       const {
         apiHubServiceDetails: { location, apiVersion },
@@ -677,7 +428,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     }
   }
 
-  private async getConnectionInApiHub(connectionId: string): Promise<Connection> {
+  protected async getConnectionInApiHub(connectionId: string): Promise<Connection> {
     const {
       apiHubServiceDetails: { apiVersion },
       httpClient,
@@ -690,7 +441,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     return connection;
   }
 
-  private async getConnectionsInApiHub(): Promise<Connection[]> {
+  protected async getConnectionsInApiHub(): Promise<Connection[]> {
     const {
       filterByLocation,
       httpClient,
@@ -716,7 +467,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     }
   }
 
-  private getConnectionRequestPath(connectionName: string): string {
+  protected getConnectionRequestPath(connectionName: string): string {
     const {
       apiHubServiceDetails: { subscriptionId, resourceGroup },
     } = this.options;
@@ -743,7 +494,7 @@ export abstract class BaseConnectionService implements IConnectionService {
       : connectionName;
   }
 
-  private async _getUniqueConnectionNameInApiHub(
+  protected async _getUniqueConnectionNameInApiHub(
     connectorName: string,
     connectorId: string,
     connectionName: string,
@@ -760,7 +511,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     }
   }
 
-  private _testConnectionIdUniquenessInApiHub(id: string): Promise<boolean> {
+  protected _testConnectionIdUniquenessInApiHub(id: string): Promise<boolean> {
     const request = {
       uri: id,
       queryParameters: { 'api-version': this.options.apiHubServiceDetails.apiVersion },
@@ -772,7 +523,7 @@ export abstract class BaseConnectionService implements IConnectionService {
       .catch(() => true);
   }
 
-  private getFunctionAppsRequestPath(): string {
+  protected getFunctionAppsRequestPath(): string {
     const { subscriptionId } = this.options.apiHubServiceDetails;
     return `/subscriptions/${subscriptionId}/providers/Microsoft.Web/sites`;
   }
