@@ -24,6 +24,7 @@ import { pickFuncProcess } from './pickFuncProcess';
 import { restartLogicApp } from './restartLogicApp';
 import { startLogicApp } from './startLogicApp';
 import { stopLogicApp } from './stopLogicApp';
+import { swapSlot } from './swapSlot';
 import { viewProperties } from './viewProperties';
 import { exportLogicApp } from './workflows/exportLogicApp';
 import { getDebugSymbolDll } from './workflows/getDebugSymbolDll';
@@ -81,6 +82,7 @@ export function registerCommands(): void {
     extensionCommand.deleteSlot,
     async (context: IActionContext, node?: AzExtTreeItem) => await deleteNode(context, SlotTreeItem.contextValue, node)
   );
+  registerCommand(extensionCommand.swapSlot, swapSlot);
   registerCommand(extensionCommand.startStreamingLogs, startStreamingLogs);
   registerCommand(extensionCommand.stopStreamingLogs, stopStreamingLogs);
   registerSiteCommand(extensionCommand.viewDeploymentLogs, viewDeploymentLogs);
