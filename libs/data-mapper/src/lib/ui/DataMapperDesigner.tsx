@@ -94,6 +94,8 @@ export interface DataMapperDesignerProps {
   addSchemaFromFile?: (selectedSchemaFile: SchemaFile) => void;
   readCurrentSchemaOptions?: () => void;
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
+  setFunctionDisplayExpanded: (isFunctionDisplaySimple: boolean) => void;
+  useExpandedFunctionCards: boolean;
 }
 
 export const DataMapperDesigner = ({
@@ -102,6 +104,8 @@ export const DataMapperDesigner = ({
   addSchemaFromFile,
   readCurrentSchemaOptions,
   setIsMapStateDirty,
+  setFunctionDisplayExpanded,
+  useExpandedFunctionCards,
 }: DataMapperDesignerProps) => {
   const dispatch = useDispatch<AppDispatch>();
   useStaticStyles();
@@ -269,7 +273,11 @@ export const DataMapperDesigner = ({
                     ) : (
                       <ReactFlowProvider>
                         {/* TODO: Update width calculations once Code View becomes resizable */}
-                        <ReactFlowWrapper canvasBlockHeight={getCanvasAreaHeight()} canvasBlockWidth={centerViewWidth} />
+                        <ReactFlowWrapper
+                          canvasBlockHeight={getCanvasAreaHeight()}
+                          canvasBlockWidth={centerViewWidth}
+                          useExpandedFunctionCards={useExpandedFunctionCards}
+                        />
                       </ReactFlowProvider>
                     )}
                   </div>
@@ -300,7 +308,12 @@ export const DataMapperDesigner = ({
         </div>
 
         <WarningModal />
-        <ConfigPanel onSubmitSchemaFileSelection={onSubmitSchemaFileSelection} readCurrentSchemaOptions={readCurrentSchemaOptions} />
+        <ConfigPanel
+          onSubmitSchemaFileSelection={onSubmitSchemaFileSelection}
+          readCurrentSchemaOptions={readCurrentSchemaOptions}
+          setFunctionDisplayExpanded={setFunctionDisplayExpanded}
+          useExpandedFunctionCards={useExpandedFunctionCards}
+        />
         <TestMapPanel isOpen={isTestMapPanelOpen} onClose={() => setIsTestMapPanelOpen(false)} />
       </div>
     </DndProvider>
