@@ -1,5 +1,5 @@
 import { VSCodeContext } from '../WebViewMsgHandler';
-import { changeFetchedFunctions, changeSourceSchema, changeTargetSchema } from '../state/DataMapDataLoader';
+import { changeFetchedFunctions, changeSourceSchema, changeTargetSchema, changeUseExpandedFunctionCards } from '../state/DataMapDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
 import type { MessageToVsix, SchemaType } from '@microsoft/logic-apps-data-mapper';
 import {
@@ -40,6 +40,7 @@ export const App = () => {
   const targetSchema = useSelector((state: RootState) => state.dataMapDataLoader.targetSchema);
   const schemaFileList = useSelector((state: RootState) => state.dataMapDataLoader.schemaFileList);
   const fetchedFunctions = useSelector((state: RootState) => state.dataMapDataLoader.fetchedFunctions);
+  const useExpandedFunctionCards = useSelector((state: RootState) => state.dataMapDataLoader.useExpandedFunctionCards);
 
   const runtimePort = useSelector((state: RootState) => state.dataMapDataLoader.runtimePort);
 
@@ -97,6 +98,10 @@ export const App = () => {
     });
   };
 
+  const setFunctionDisplayExpanded = (isFunctionDisplaySimple: boolean) => {
+    dispatch(changeUseExpandedFunctionCards(isFunctionDisplaySimple));
+  };
+
   const handleRscLoadError = useCallback(
     (error: unknown) => {
       let errorMsg: string;
@@ -116,6 +121,12 @@ export const App = () => {
     },
     [sendMsgToVsix]
   );
+
+  useEffect(() => {
+    sendMsgToVsix({
+      command: 'getFunctionDisplayExpanded',
+    });
+  }, [sendMsgToVsix]);
 
   // Notify VS Code that webview is loaded
   useEffect(() => {
@@ -196,6 +207,8 @@ export const App = () => {
           addSchemaFromFile={addSchemaFromFile}
           readCurrentSchemaOptions={readLocalFileOptions}
           setIsMapStateDirty={setIsMapStateDirty}
+          setFunctionDisplayExpanded={setFunctionDisplayExpanded}
+          useExpandedFunctionCards={useExpandedFunctionCards}
         />
       </DataMapDataProvider>
     </DataMapperDesignerProvider>

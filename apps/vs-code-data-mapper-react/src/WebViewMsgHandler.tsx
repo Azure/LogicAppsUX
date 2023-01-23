@@ -4,6 +4,7 @@ import {
   changeSchemaList,
   changeSourceSchemaFilename,
   changeTargetSchemaFilename,
+  changeUseExpandedFunctionCards,
   changeXsltFilename,
 } from './state/DataMapDataLoader';
 import type { AppDispatch } from './state/Store';
@@ -51,6 +52,9 @@ export const WebViewMsgHandler = ({ children }: WebViewMsgHandlerProps) => {
         break;
       case 'setXsltFilename':
         dispatch(changeXsltFilename(msg.data));
+        break;
+      case 'getConfigurationSetting':
+        dispatch(changeUseExpandedFunctionCards(msg.data));
         break;
       default:
         console.warn(`Unexpected message received:`);
