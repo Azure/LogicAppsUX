@@ -1,8 +1,5 @@
-import { fullTranscriptMapDefinitionString } from '../../../../__mocks__/mapDefinitions/FullTranscriptMapDefinition';
-import { nestedLoopMapDefinition } from '../../../../__mocks__/mapDefinitions/NestedLoopMapDefinition';
-import { shortenedDemoScriptMapDefinition } from '../../../../__mocks__/mapDefinitions/ShortTranscriptMapDefinitions';
-import { customerOrderMapDefinition } from '../../../../__mocks__/mapDefinitions/SimpleCustomerOrder';
-import { dataMapDataLoaderSlice, loadDataMap, type ThemeType } from '../state/DataMapDataLoader';
+import { fullTranscriptMapDefinitionString, comprehensiveMapDefinition } from '../../../../__mocks__/mapDefinitions';
+import { dataMapDataLoaderSlice, loadDataMap, LoadingMethod, type ThemeType } from '../state/DataMapDataLoader';
 import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
 import type { IDropdownOption } from '@fluentui/react';
@@ -14,26 +11,28 @@ import { useDispatch, useSelector } from 'react-redux';
 const themeOptions = ['Light', 'Dark'];
 const themeDropdownOptions = themeOptions.map((theme) => ({ key: theme, text: theme }));
 
-export const mapDefinitionDropdownOptions: IDropdownOption<string>[] = [
-  { key: 'shortenedDemoScriptMapDefinition', text: 'Short Demo Script MD', data: shortenedDemoScriptMapDefinition },
-  { key: 'fullDemoScriptMapDefinition', text: 'Full Demo Script MD', data: fullTranscriptMapDefinitionString },
-  { key: 'customerOrderMapDefinition', text: 'Customer Orders MD', data: customerOrderMapDefinition },
-  { key: 'nestedLoopMapDefinition', text: 'Nested Loops MD', data: nestedLoopMapDefinition },
-];
-export const sourceSchemaFileOptions = [
-  'SourceSchema.json',
-  'SimpleInputOrderSchema.json',
-  'SimpleLoopSource.json',
-  'LayeredLoopSourceSchema.json',
-];
-export const targetSchemaFileOptions = [
-  'TargetSchema.json',
-  'SimpleOutputOrderSchema.json',
-  'SimpleLoopTarget.json',
-  'LayeredLoopTargetSchema.json',
+interface MapDefDropdownData {
+  mapDefinitionString: string;
+  associatedSchemaIdx: number;
+}
+export type MapDefDropdownOption = IDropdownOption<MapDefDropdownData>;
+
+const sourceSchemaFileOptions = ['PlaygroundSourceSchema.json', 'SourceSchema.json', 'ComprehensiveSourceSchema.json'];
+const targetSchemaFileOptions = ['PlaygroundTargetSchema.json', 'TargetSchema.json', 'ComprehensiveTargetSchema.json'];
+const mapDefinitionDropdownOptions: MapDefDropdownOption[] = [
+  {
+    key: 'fullDemoScriptMapDefinition',
+    text: 'Transcript',
+    data: { mapDefinitionString: fullTranscriptMapDefinitionString, associatedSchemaIdx: 1 },
+  },
+  {
+    key: 'comprehensiveMapDefinition',
+    text: 'Comprehensive',
+    data: { mapDefinitionString: comprehensiveMapDefinition, associatedSchemaIdx: 2 },
+  },
 ];
 
-export const DevToolbox: React.FC = () => {
+export const DevToolbox = () => {
   const { theme, rawDefinition, armToken, loadingMethod, xsltFilename } = useSelector((state: RootState) => {
     const { theme, rawDefinition, armToken, loadingMethod, xsltFilename } = state.dataMapDataLoader;
 
@@ -50,7 +49,7 @@ export const DevToolbox: React.FC = () => {
 
   const changeResourcePathCB = useCallback(
     (_: unknown, _newValue?: string) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition({} as IDropdownOption<string>));
+      dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition({} as MapDefDropdownOption));
       dispatch(loadDataMap());
     },
     [dispatch]
@@ -58,7 +57,7 @@ export const DevToolbox: React.FC = () => {
 
   const resetToUseARM = useCallback(
     (_: unknown, _newValue?: string) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition({} as IDropdownOption<string>));
+      dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition({} as MapDefDropdownOption));
       dispatch(loadDataMap());
     },
     [dispatch]
@@ -72,24 +71,17 @@ export const DevToolbox: React.FC = () => {
   );
 
   const changeMapDefinitionResourcePathDropdownCB = useCallback(
-    (_: unknown, item: IDropdownOption<string> | undefined) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition(item ?? ({} as IDropdownOption<string>)));
-      let inputRscPath = '';
-      let outputRscPath = '';
-
-      if (item?.key === 'shortenedDemoScriptMapDefinition' || item?.key === 'fullDemoScriptMapDefinition') {
-        inputRscPath = sourceSchemaFileOptions[0];
-        outputRscPath = targetSchemaFileOptions[0];
-      } else if (item?.key === 'customerOrderMapDefinition') {
-        inputRscPath = sourceSchemaFileOptions[1];
-        outputRscPath = targetSchemaFileOptions[1];
-      } else if (item?.key === 'nestedLoopMapDefinition') {
-        inputRscPath = sourceSchemaFileOptions[3];
-        outputRscPath = targetSchemaFileOptions[3];
+    (_: unknown, item: MapDefDropdownOption | undefined) => {
+      if (!item?.data) {
+        return;
       }
 
-      dispatch(schemaDataLoaderSlice.actions.changeInputResourcePath(inputRscPath));
-      dispatch(schemaDataLoaderSlice.actions.changeOutputResourcePath(outputRscPath));
+      dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition(item));
+      const srcSchemaRscPath = sourceSchemaFileOptions[item.data.associatedSchemaIdx];
+      const tgtSchemaRscPath = targetSchemaFileOptions[item.data.associatedSchemaIdx];
+
+      dispatch(schemaDataLoaderSlice.actions.changeInputResourcePath(srcSchemaRscPath));
+      dispatch(schemaDataLoaderSlice.actions.changeOutputResourcePath(tgtSchemaRscPath));
       dispatch(loadSourceSchema());
       dispatch(loadTargetSchema());
 
@@ -127,8 +119,8 @@ export const DevToolbox: React.FC = () => {
 
   const changeLoadingMethodCB = useCallback(
     (_: unknown, checked?: boolean) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeLoadingMethod(checked ? 'arm' : 'file'));
-      dispatch(schemaDataLoaderSlice.actions.changeLoadingMethod(checked ? 'arm' : 'file'));
+      dispatch(dataMapDataLoaderSlice.actions.changeLoadingMethod(checked ? LoadingMethod.Arm : LoadingMethod.File));
+      dispatch(schemaDataLoaderSlice.actions.changeLoadingMethod(checked ? LoadingMethod.Arm : LoadingMethod.File));
       dispatch(loadDataMap());
       dispatch(loadSourceSchema());
       dispatch(loadTargetSchema());
@@ -149,12 +141,12 @@ export const DevToolbox: React.FC = () => {
     const sourceSchemaDropdownOptions = sourceSchemaFileOptions.map((fileName) => ({ key: fileName, text: fileName }));
     const targetSchemaDropdownOptions = targetSchemaFileOptions.map((fileName) => ({ key: fileName, text: fileName }));
 
-    if (loadingMethod === 'file') {
+    if (loadingMethod === LoadingMethod.File) {
       newToolboxItems.push(
         <StackItem key={'mapDefinitionDropDown'} style={{ width: '250px' }}>
           <Dropdown
             label="Map Definition"
-            selectedKey={rawDefinition.key}
+            selectedKey={rawDefinition?.key}
             onChange={changeMapDefinitionResourcePathDropdownCB}
             placeholder="Select a map definition"
             options={mapDefinitionDropdownOptions}
@@ -185,7 +177,7 @@ export const DevToolbox: React.FC = () => {
       );
       newToolboxItems.push(
         <StackItem key={'mapXsltFilenameTextField'} style={{ width: '250px' }}>
-          <TextField label="Map XSLT Filename" value={xsltFilename} onChange={(_e, newValue) => changeMapXsltFilenameCB(newValue)} />
+          <TextField label="XSLT Filename" value={xsltFilename} onChange={(_e, newValue) => changeMapXsltFilenameCB(newValue)} />
         </StackItem>
       );
     } else {
@@ -195,7 +187,7 @@ export const DevToolbox: React.FC = () => {
             label="Resource Uri"
             description="/subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Web/sites/{LogicAppResource}"
             onChange={changeResourcePathCB}
-            value={rawDefinition.data ?? ''}
+            value={rawDefinition?.data?.mapDefinitionString ?? ''}
           />
         </StackItem>
       );
@@ -203,7 +195,7 @@ export const DevToolbox: React.FC = () => {
         <StackItem key={'armTokenTextField'} style={{ width: '250px' }}>
           <TextField
             label="ARM Token"
-            description="auth token: include 'bearer' when pasting"
+            description="Auth token: include 'bearer' when pasting"
             onChange={changeArmTokenCB}
             value={armToken ?? ''}
           />
@@ -234,12 +226,12 @@ export const DevToolbox: React.FC = () => {
   ]);
 
   return (
-    <div style={{ width: '70vw', marginBottom: '20px', backgroundColor: tokens.colorNeutralBackground2, padding: 4 }}>
+    <div style={{ marginBottom: '8px', backgroundColor: tokens.colorNeutralBackground2, padding: 4 }}>
       <Accordion defaultOpenItems={'1'} collapsible>
         <AccordionItem value="1">
           <AccordionHeader>Dev Toolbox</AccordionHeader>
           <AccordionPanel>
-            <Stack horizontal horizontalAlign="space-around" tokens={{ childrenGap: '8px' }} style={{ width: '100%' }}>
+            <Stack horizontal tokens={{ childrenGap: '12px' }} wrap>
               <StackItem key={'themeDropDown'} style={{ width: '250px' }}>
                 <Dropdown
                   label="Theme"
@@ -249,8 +241,9 @@ export const DevToolbox: React.FC = () => {
                   options={themeDropdownOptions}
                   style={{ marginBottom: '12px' }}
                 />
-                <Checkbox label="Load From Arm" checked={loadingMethod === 'arm'} onChange={changeLoadingMethodCB} disabled />
+                <Checkbox label="Load From Arm" checked={loadingMethod === LoadingMethod.Arm} onChange={changeLoadingMethodCB} disabled />
               </StackItem>
+
               {toolboxItems}
             </Stack>
           </AccordionPanel>
