@@ -86,7 +86,7 @@ export interface BaseConnectionServiceOptions {
   locale?: string;
   filterByLocation?: boolean;
   tenantId?: string;
-  workflowAppDetails: {
+  workflowAppDetails?: {
     appName: string;
     identity?: ManagedIdentity;
   };
@@ -137,10 +137,12 @@ type WriteConnectionFunc = (connectionData: ConnectionAndAppSetting<LocalConnect
 const serviceProviderLocation = 'serviceProviderConnections';
 const functionsLocation = 'functionConnections';
 
-export class BaseConnectionService implements IConnectionService {
+export abstract class BaseConnectionService implements IConnectionService {
   private _connections: Record<string, Connection> = {};
   private _subscriptionResourceGroupWebUrl = '';
   private _allConnectionsInitialized = false;
+
+  protected _vVersion: 'V1' | 'V2' = 'V1';
 
   constructor(public readonly options: BaseConnectionServiceOptions) {
     const { apiHubServiceDetails, apiVersion, baseUrl, readConnections } = options;
@@ -442,7 +444,7 @@ export class BaseConnectionService implements IConnectionService {
         ...(parameterValueSet ? { parameterValueSet } : { parameterValues }),
         displayName,
       },
-      kind: 'V2',
+      kind: this._vVersion,
       location,
     };
   }
@@ -466,7 +468,7 @@ export class BaseConnectionService implements IConnectionService {
         alternativeParameterValues,
         displayName: properties?.displayName,
       },
-      kind: 'V2',
+      kind: this._vVersion,
       location,
     };
   }
@@ -660,7 +662,7 @@ export class BaseConnectionService implements IConnectionService {
         uri: `${this._subscriptionResourceGroupWebUrl}/connections`,
         queryParameters: {
           'api-version': apiVersion,
-          $filter: `Location eq '${location}' and ManagedApiName eq '${connectorId.split('/').at(-1)}' and Kind eq 'V2'`,
+          $filter: `Location eq '${location}' and ManagedApiName eq '${connectorId.split('/').at(-1)}' and Kind eq '${this._vVersion}'`,
         },
       });
       return response.value;
@@ -700,7 +702,7 @@ export class BaseConnectionService implements IConnectionService {
 
     const queryParameters: QueryParameters = {
       'api-version': apiVersion,
-      $filter: `properties/integrationServiceEnvironmentResourceId eq null and Kind eq 'V2'`,
+      $filter: `properties/integrationServiceEnvironmentResourceId eq null and Kind eq '${this._vVersion}'`,
       $top: 400,
     };
 
