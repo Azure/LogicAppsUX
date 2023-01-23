@@ -1,5 +1,5 @@
+import type { MapDefDropdownOption } from '../components/DevToolbox';
 import type { RootState } from './Store';
-import type { IDropdownOption } from '@fluentui/react';
 import { functionMock } from '@microsoft/logic-apps-data-mapper';
 import type { MapDefinitionEntry, FunctionData } from '@microsoft/logic-apps-data-mapper';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -8,11 +8,16 @@ import * as yaml from 'js-yaml';
 
 export type ThemeType = 'Light' | 'Dark';
 
+export enum LoadingMethod {
+  File = 'file',
+  Arm = 'arm',
+}
+
 export interface DataMapLoadingState {
   theme: ThemeType;
   armToken?: string;
-  rawDefinition: IDropdownOption<string>;
-  loadingMethod: 'file' | 'arm';
+  rawDefinition?: MapDefDropdownOption;
+  loadingMethod: LoadingMethod;
   mapDefinition: MapDefinitionEntry;
   xsltFilename: string;
   fetchedFunctions?: FunctionData[];
@@ -20,8 +25,7 @@ export interface DataMapLoadingState {
 
 const initialState: DataMapLoadingState = {
   theme: 'Light',
-  loadingMethod: 'file',
-  rawDefinition: {} as IDropdownOption<string>,
+  loadingMethod: LoadingMethod.File,
   mapDefinition: {},
   xsltFilename: '',
   fetchedFunctions: [...functionMock],
@@ -31,11 +35,11 @@ export const loadDataMap = createAsyncThunk('loadDataMap', async (_: void, thunk
   const currentState: RootState = thunkAPI.getState() as RootState;
 
   // TODO ARM loading
-  if (currentState.dataMapDataLoader.loadingMethod === 'arm') {
+  if (currentState.dataMapDataLoader.loadingMethod === LoadingMethod.Arm) {
     return null;
   } else {
     try {
-      const mapDefinition = yaml.load(currentState.dataMapDataLoader.rawDefinition.data ?? '') as MapDefinitionEntry;
+      const mapDefinition = yaml.load(currentState.dataMapDataLoader.rawDefinition?.data?.mapDefinitionString ?? '') as MapDefinitionEntry;
       return mapDefinition;
     } catch {
       return null;
@@ -53,10 +57,10 @@ export const dataMapDataLoaderSlice = createSlice({
     changeArmToken: (state, action: PayloadAction<string>) => {
       state.armToken = action.payload;
     },
-    changeRawDefinition: (state, action: PayloadAction<IDropdownOption<string>>) => {
+    changeRawDefinition: (state, action: PayloadAction<MapDefDropdownOption>) => {
       state.rawDefinition = action.payload;
     },
-    changeLoadingMethod: (state, action: PayloadAction<'file' | 'arm'>) => {
+    changeLoadingMethod: (state, action: PayloadAction<LoadingMethod>) => {
       state.loadingMethod = action.payload;
     },
     changeXsltFilename: (state, action: PayloadAction<string>) => {

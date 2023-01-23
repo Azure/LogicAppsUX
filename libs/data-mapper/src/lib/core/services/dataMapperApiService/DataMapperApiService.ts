@@ -1,3 +1,4 @@
+import { dataMapperApiVersions } from '.';
 import type { GenerateXsltResponse, SchemaInfoProperties, TestMapResponse } from '.';
 import type { Schema } from '../../../models';
 import type { FunctionManifest } from '../../../models/Function';
@@ -56,15 +57,19 @@ export class DataMapperApiService {
   };
 
   private getFunctionsManifestUri = () => {
-    return `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/mapTransformations?api-version=2019-10-01-edge-preview`;
+    return `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/mapTransformations?api-version=${
+      dataMapperApiVersions.Oct2019Edge
+    }`;
   };
 
   private getGenerateXsltUri = () => {
-    return `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/generateXslt?api-version=2019-10-01-edge-preview`;
+    return `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/generateXslt?api-version=${dataMapperApiVersions.Oct2019Edge}`;
   };
 
   private getTestMapUri = (xsltFilename: string) => {
-    return `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/maps/${xsltFilename}/testMap?api-version=2019-10-01-edge-preview`;
+    return `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/maps/${xsltFilename}/testMap?api-version=${
+      dataMapperApiVersions.Oct2019Edge
+    }`;
   };
 
   async getFunctionsManifest(): Promise<FunctionManifest> {
