@@ -17,18 +17,18 @@ interface MapDefDropdownData {
 }
 export type MapDefDropdownOption = IDropdownOption<MapDefDropdownData>;
 
-const sourceSchemaFileOptions = ['SourceSchema.json', 'ComprehensiveSourceSchema.json'];
-const targetSchemaFileOptions = ['TargetSchema.json', 'ComprehensiveTargetSchema.json'];
+const sourceSchemaFileOptions = ['PlaygroundSourceSchema.json', 'SourceSchema.json', 'ComprehensiveSourceSchema.json'];
+const targetSchemaFileOptions = ['PlaygroundTargetSchema.json', 'TargetSchema.json', 'ComprehensiveTargetSchema.json'];
 const mapDefinitionDropdownOptions: MapDefDropdownOption[] = [
   {
     key: 'fullDemoScriptMapDefinition',
     text: 'Transcript',
-    data: { mapDefinitionString: fullTranscriptMapDefinitionString, associatedSchemaIdx: 0 },
+    data: { mapDefinitionString: fullTranscriptMapDefinitionString, associatedSchemaIdx: 1 },
   },
   {
     key: 'comprehensiveMapDefinition',
     text: 'Comprehensive',
-    data: { mapDefinitionString: comprehensiveMapDefinition, associatedSchemaIdx: 1 },
+    data: { mapDefinitionString: comprehensiveMapDefinition, associatedSchemaIdx: 2 },
   },
 ];
 

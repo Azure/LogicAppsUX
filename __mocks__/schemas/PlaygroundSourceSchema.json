@@ -1,0 +1,90 @@
+{
+  "name": "PlaygroundSourceSchema.xsd",
+  "type": "XML",
+  "targetNamespace": "http://tempuri.org/Source.xsd",
+  "namespaces": { "ns0": "http://tempuri.org/Source.xsd", "xs": "http://www.w3.org/2001/XMLSchema" },
+  "schemaTreeRoot": {
+    "key": "/ns0:PlaygroundRoot",
+    "name": "PlaygroundRoot",
+    "fullName": "ns0:PlaygroundRoot",
+    "namespacePrefix": "ns0",
+    "namespaceUri": "http://tempuri.org/Source.xsd",
+    "schemaNodeDataType": "None",
+    "normalizedDataType": "ComplexType",
+    "properties": "NotSpecified",
+    "children": [
+      {
+        "key": "/ns0:PlaygroundRoot/DrinksCoffee",
+        "name": "DrinksCoffee",
+        "schemaNodeDataType": "Boolean",
+        "normalizedDataType": "Bool",
+        "properties": "NotSpecified",
+        "fullName": "DrinksCoffee",
+        "parentKey": "/ns0:PlaygroundRoot"
+      },
+      {
+        "key": "/ns0:PlaygroundRoot/NumCoffees",
+        "name": "NumCoffees",
+        "schemaNodeDataType": "Integer",
+        "normalizedDataType": "Integer",
+        "properties": "NotSpecified",
+        "fullName": "NumCoffees",
+        "parentKey": "/ns0:PlaygroundRoot"
+      },
+      {
+        "key": "/ns0:PlaygroundRoot/NumCoffeesButAsADecimalOhAndAlsoThisNameWillBeReallyLongForTesting",
+        "name": "NumCoffeesButAsADecimalOhAndAlsoThisNameWillBeReallyLongForTesting",
+        "schemaNodeDataType": "Decimal",
+        "normalizedDataType": "Decimal",
+        "properties": "NotSpecified",
+        "fullName": "NumCoffeesButAsADecimalOhAndAlsoThisNameWillBeReallyLongForTesting",
+        "parentKey": "/ns0:PlaygroundRoot"
+      },
+      {
+        "key": "/ns0:PlaygroundRoot/UserID",
+        "name": "UserID",
+        "schemaNodeDataType": "String",
+        "normalizedDataType": "String",
+        "properties": "NotSpecified",
+        "fullName": "UserID",
+        "parentKey": "/ns0:PlaygroundRoot"
+      },
+      {
+        "key": "/ns0:PlaygroundRoot/LastName",
+        "name": "LastName",
+        "schemaNodeDataType": "String",
+        "normalizedDataType": "String",
+        "properties": "NotSpecified",
+        "fullName": "LastName",
+        "parentKey": "/ns0:PlaygroundRoot"
+      },
+      {
+        "key": "/ns0:PlaygroundRoot/FirstName",
+        "name": "FirstName",
+        "schemaNodeDataType": "String",
+        "normalizedDataType": "String",
+        "properties": "NotSpecified",
+        "fullName": "FirstName",
+        "parentKey": "/ns0:PlaygroundRoot"
+      },
+      {
+        "key": "/ns0:PlaygroundRoot/Initials",
+        "name": "Initials",
+        "schemaNodeDataType": "String",
+        "normalizedDataType": "String",
+        "properties": "NotSpecified",
+        "fullName": "Initial",
+        "parentKey": "/ns0:PlaygroundRoot"
+      },
+      {
+        "key": "/ns0:PlaygroundRoot/Birthday",
+        "name": "Birthday",
+        "schemaNodeDataType": "Date",
+        "normalizedDataType": "DateTime",
+        "properties": "NotSpecified",
+        "fullName": "Birthday",
+        "parentKey": "/ns0:PlaygroundRoot"
+      }
+    ]
+  }
+}
