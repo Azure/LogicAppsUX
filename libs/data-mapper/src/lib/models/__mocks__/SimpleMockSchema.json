@@ -2,27 +2,27 @@
   "name": "Source.xsd",
   "type": "XML",
   "targetNamespace": "http://tempuri.org/source.xsd",
-  "namespaces": { "ns0": "http://tempuri.org/source.xsd", "xs": "http://www.w3.org/2001/XMLSchema" },
+  "namespaces": {
+    "ns0": "http://tempuri.org/source.xsd",
+    "xs": "http://www.w3.org/2001/XMLSchema"
+  },
   "schemaTreeRoot": {
     "key": "/ns0:Root",
     "name": "Root",
     "namespacePrefix": "ns0",
     "namespaceUri": "http://tempuri.org/source.xsd",
-    "schemaNodeDataType": "None",
     "normalizedDataType": "ComplexType",
     "properties": "NotSpecified",
     "children": [
       {
         "key": "/ns0:Root/DirectTranslation",
         "name": "DirectTranslation",
-        "schemaNodeDataType": "None",
         "normalizedDataType": "ComplexType",
         "properties": "NotSpecified",
         "children": [
           {
             "key": "/ns0:Root/DirectTranslation/EmployeeID",
             "name": "EmployeeID",
-            "schemaNodeDataType": "Decimal",
             "normalizedDataType": "Decimal",
             "properties": "NotSpecified",
             "fullName": "EmployeeID",
@@ -31,7 +31,6 @@
           {
             "key": "/ns0:Root/DirectTranslation/EmployeeName",
             "name": "EmployeeName",
-            "schemaNodeDataType": "String",
             "normalizedDataType": "String",
             "properties": "NotSpecified",
             "fullName": "EmployeeName",
@@ -44,21 +43,18 @@
       {
         "key": "/ns0:Root/DataTranslation",
         "name": "DataTranslation",
-        "schemaNodeDataType": "None",
         "normalizedDataType": "ComplexType",
         "properties": "NotSpecified",
         "children": [
           {
             "key": "/ns0:Root/DataTranslation/Employee",
             "name": "Employee",
-            "schemaNodeDataType": "None",
             "normalizedDataType": "ComplexType",
             "properties": "NotSpecified",
             "children": [
               {
                 "key": "/ns0:Root/DataTranslation/Employee/FirstName",
                 "name": "FirstName",
-                "schemaNodeDataType": "String",
                 "normalizedDataType": "String",
                 "properties": "NotSpecified",
                 "fullName": "FirstName",
@@ -67,7 +63,6 @@
               {
                 "key": "/ns0:Root/DataTranslation/Employee/LastName",
                 "name": "LastName",
-                "schemaNodeDataType": "String",
                 "normalizedDataType": "String",
                 "properties": "NotSpecified",
                 "fullName": "LastName",
@@ -76,7 +71,6 @@
               {
                 "key": "/ns0:Root/DataTranslation/Employee/EmploymentStatus",
                 "name": "EmploymentStatus",
-                "schemaNodeDataType": "Boolean",
                 "normalizedDataType": "Bool",
                 "properties": "NotSpecified",
                 "fullName": "EmploymentStatus",

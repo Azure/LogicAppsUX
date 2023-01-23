@@ -14,7 +14,6 @@ export interface SchemaNode {
   namespacePrefix?: string;
   namespaceUri?: string;
   normalizedDataType: NormalizedDataType;
-  schemaNodeDataType: SchemaNodeDataType;
 
   /**
    * @deprecated Do not use, but do not remove. Is parsed on the extended node - nodeProperties
@@ -38,55 +37,6 @@ export enum SchemaNodeProperty {
   ComplexTypeSimpleContent = 'ComplexTypeSimpleContent',
   MaximumDepthLimit = 'MaximumDepthLimit',
   CyclicTypeReference = 'CyclicTypeReference',
-}
-
-export enum SchemaNodeDataType {
-  AnyAtomicType = 'AnyAtomicType',
-  AnyUri = 'AnyUri',
-  Attribute = 'Attribute',
-  Base64Binary = 'Base64Binary',
-  Boolean = 'Boolean',
-  Byte = 'Byte',
-  Date = 'Date',
-  DateTime = 'DateTime',
-  Decimal = 'Decimal',
-  Double = 'Double',
-  Duration = 'Duration',
-  Entity = 'Entity',
-  Float = 'Float',
-  GDay = 'GDay',
-  GMonth = 'GMonth',
-  GMonthDay = 'GMonthDay',
-  GYear = 'GYear',
-  GYearMonth = 'GYearMonth',
-  HexBinary = 'HexBinary',
-  Id = 'Id',
-  Idref = 'Idref',
-  Int = 'Int',
-  Integer = 'Integer',
-  Item = 'Item',
-  Language = 'Language',
-  Long = 'Long',
-  Name = 'Name',
-  NCName = 'NCName',
-  NegativeInteger = 'NegativeInteger',
-  NmToken = 'NmToken',
-  None = 'None',
-  NonNegativeInteger = 'NonNegativeInteger',
-  NonPositiveInteger = 'NonPositiveInteger',
-  NormalizedString = 'NormalizedString',
-  Notation = 'Notation',
-  PositiveInteger = 'PositiveInteger',
-  QName = 'QName',
-  Short = 'Short',
-  String = 'String',
-  Time = 'Time',
-  Token = 'Token',
-  UnsignedByte = 'UnsignedByte',
-  UnsignedInt = 'UnsignedInt',
-  UnsignedLong = 'UnsignedLong',
-  UnsignedShort = 'UnsignedShort',
-  UntypedAtomic = 'UntypedAtomic',
 }
 
 export enum NormalizedDataType {

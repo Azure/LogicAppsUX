@@ -1,4 +1,4 @@
-import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperty, SchemaType } from '../../models';
+import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '../../models';
 import type { SchemaCardProps } from './SchemaCard';
 import { SchemaCard } from './SchemaCard';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -26,7 +26,6 @@ Standard.args = {
       fullName: 'key',
       namespacePrefix: '',
       namespaceUri: '',
-      schemaNodeDataType: SchemaNodeDataType.String,
       normalizedDataType: NormalizedDataType.String,
       properties: SchemaNodeProperty.NotSpecified,
       nodeProperties: [SchemaNodeProperty.NotSpecified],

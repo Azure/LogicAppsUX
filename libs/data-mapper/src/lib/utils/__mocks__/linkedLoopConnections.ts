@@ -1,4 +1,4 @@
-import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperty } from '../../models';
+import { NormalizedDataType, SchemaNodeProperty } from '../../models';
 import type { Connection, ConnectionDictionary } from '../../models/Connection';
 
 export const manyToManyConnectionSourceName = 'source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate';
@@ -12,7 +12,6 @@ export const manyToManyConnectionFromSource: Connection = {
     node: {
       key: '/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate',
       name: 'SourceDate',
-      schemaNodeDataType: SchemaNodeDataType.String,
       normalizedDataType: NormalizedDataType.String,
       properties: 'NotSpecified',
       fullName: 'SourceDate',
@@ -66,7 +65,6 @@ export const manyToManyConnectionFromSource: Connection = {
         node: {
           key: '/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate',
           name: 'SourceDate',
-          schemaNodeDataType: SchemaNodeDataType.String,
           normalizedDataType: NormalizedDataType.String,
           properties: 'NotSpecified',
           fullName: 'SourceDate',
@@ -124,7 +122,6 @@ export const manyToManyConnectionFromTarget: Connection = {
     node: {
       key: '/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate',
       name: 'SourceDate',
-      schemaNodeDataType: SchemaNodeDataType.String,
       normalizedDataType: NormalizedDataType.String,
       properties: 'NotSpecified',
       fullName: 'SourceDate',
@@ -180,7 +177,6 @@ export const manyToManyConnectionFromTarget: Connection = {
       node: {
         key: '/ns0:Root/ManyToMany/Year/Month/Day/Date',
         name: 'Date',
-        schemaNodeDataType: SchemaNodeDataType.String,
         normalizedDataType: NormalizedDataType.String,
         properties: 'NotSpecified',
         fullName: 'Date',
@@ -236,7 +232,6 @@ export const manyToOneConnectionFromTarget: Connection = {
     node: {
       key: '/ns0:Root/ManyToOne/Date/DayName',
       name: 'DayName',
-      schemaNodeDataType: SchemaNodeDataType.String,
       normalizedDataType: NormalizedDataType.String,
       properties: 'NotSpecified',
       children: [],
@@ -278,7 +273,6 @@ export const manyToOneConnectionFromTarget: Connection = {
         node: {
           key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate',
           name: 'SourceDate',
-          schemaNodeDataType: SchemaNodeDataType.String,
           normalizedDataType: NormalizedDataType.String,
           properties: 'NotSpecified',
           fullName: 'SourceDate',
@@ -336,7 +330,6 @@ export const manyToOneConnectionFromSource: Connection = {
     node: {
       key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate',
       name: 'SourceDate',
-      schemaNodeDataType: SchemaNodeDataType.String,
       normalizedDataType: NormalizedDataType.String,
       properties: 'NotSpecified',
       fullName: 'SourceDate',
@@ -392,7 +385,6 @@ export const manyToOneConnectionFromSource: Connection = {
       node: {
         key: '/ns0:Root/ManyToOne/Date/DayName',
         name: 'DayName',
-        schemaNodeDataType: SchemaNodeDataType.String,
         normalizedDataType: NormalizedDataType.String,
         properties: 'NotSpecified',
         children: [],
@@ -438,7 +430,6 @@ export const fullMapForSimplifiedLoop: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/ManyToMany/Year/Month/Day/Date',
         name: 'Date',
-        schemaNodeDataType: 'String',
         normalizedDataType: 'String',
         properties: 'NotSpecified',
         fullName: 'Date',
@@ -462,7 +453,6 @@ export const fullMapForSimplifiedLoop: ConnectionDictionary = {
           node: {
             key: '/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate',
             name: 'Date',
-            schemaNodeDataType: 'String',
             normalizedDataType: 'String',
             properties: 'NotSpecified',
             fullName: 'Date',
@@ -489,7 +479,6 @@ export const fullMapForSimplifiedLoop: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate',
         name: 'SourceDate',
-        schemaNodeDataType: 'String',
         normalizedDataType: 'String',
         properties: 'NotSpecified',
         fullName: 'SourceDate',
@@ -518,7 +507,6 @@ export const fullMapForSimplifiedLoop: ConnectionDictionary = {
         node: {
           key: '/ns0:Root/ManyToMany/Year/Month/Day/Date',
           name: 'Date',
-          schemaNodeDataType: 'String',
           normalizedDataType: 'String',
           properties: 'NotSpecified',
           fullName: 'Date',
@@ -543,14 +531,12 @@ export const fullMapForSimplifiedLoop: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/ManyToMany/Year/Month/Day',
         name: 'Day',
-        schemaNodeDataType: 'None',
         normalizedDataType: 'ComplexType',
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:Root/ManyToMany/Year/Month/Day/Date',
             name: 'Date',
-            schemaNodeDataType: 'String',
             normalizedDataType: 'String',
             properties: 'NotSpecified',
             fullName: 'Date',
@@ -586,14 +572,12 @@ export const fullMapForSimplifiedLoop: ConnectionDictionary = {
           node: {
             key: '/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay',
             name: 'SourceDay',
-            schemaNodeDataType: 'None',
             normalizedDataType: 'ComplexType',
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate',
                 name: 'SourceDate',
-                schemaNodeDataType: 'String',
                 normalizedDataType: 'String',
                 properties: 'NotSpecified',
                 fullName: 'SourceDate',
@@ -642,14 +626,12 @@ export const fullMapForSimplifiedLoop: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay',
         name: 'SourceDay',
-        schemaNodeDataType: 'None',
         normalizedDataType: 'ComplexType',
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate',
             name: 'SourceDate',
-            schemaNodeDataType: 'String',
             normalizedDataType: 'String',
             properties: 'NotSpecified',
             fullName: 'SourceDate',
@@ -690,14 +672,12 @@ export const fullMapForSimplifiedLoop: ConnectionDictionary = {
         node: {
           key: '/ns0:Root/ManyToMany/Year/Month/Day',
           name: 'Day',
-          schemaNodeDataType: 'None',
           normalizedDataType: 'ComplexType',
           properties: 'Repeating',
           children: [
             {
               key: '/ns0:Root/ManyToMany/Year/Month/Day/Date',
               name: 'Date',
-              schemaNodeDataType: 'String',
               normalizedDataType: 'String',
               properties: 'NotSpecified',
               fullName: 'Date',
@@ -734,21 +714,18 @@ export const fullMapForSimplifiedLoop: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/ManyToMany/Year/Month',
         name: 'Month',
-        schemaNodeDataType: 'None',
         normalizedDataType: 'ComplexType',
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:Root/ManyToMany/Year/Month/Day',
             name: 'Day',
-            schemaNodeDataType: 'None',
             normalizedDataType: 'ComplexType',
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:Root/ManyToMany/Year/Month/Day/Date',
                 name: 'Date',
-                schemaNodeDataType: 'String',
                 normalizedDataType: 'String',
                 properties: 'NotSpecified',
                 fullName: 'Date',
@@ -795,21 +772,18 @@ export const fullMapForSimplifiedLoop: ConnectionDictionary = {
           node: {
             key: '/ns0:Root/ManyToMany/Year/Month',
             name: 'Month',
-            schemaNodeDataType: 'None',
             normalizedDataType: 'ComplexType',
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:Root/ManyToMany/Year/Month/Day',
                 name: 'Day',
-                schemaNodeDataType: 'None',
                 normalizedDataType: 'ComplexType',
                 properties: 'Repeating',
                 children: [
                   {
                     key: '/ns0:Root/ManyToMany/Year/Month/Day/Date',
                     name: 'Date',
-                    schemaNodeDataType: 'String',
                     normalizedDataType: 'String',
                     properties: 'NotSpecified',
                     fullName: 'Date',
@@ -859,21 +833,18 @@ export const fullMapForSimplifiedLoop: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/ManyToMany/SourceYear/SourceMonth',
         name: 'SourceMonth',
-        schemaNodeDataType: 'None',
         normalizedDataType: 'ComplexType',
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay',
             name: 'SourceDay',
-            schemaNodeDataType: 'None',
             normalizedDataType: 'ComplexType',
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate',
                 name: 'SourceDate',
-                schemaNodeDataType: 'String',
                 normalizedDataType: 'String',
                 properties: 'NotSpecified',
                 fullName: 'SourceDate',
@@ -930,21 +901,18 @@ export const fullMapForSimplifiedLoop: ConnectionDictionary = {
         node: {
           key: '/ns0:Root/ManyToMany/Year/Month',
           name: 'Month',
-          schemaNodeDataType: 'None',
           normalizedDataType: 'ComplexType',
           properties: 'Repeating',
           children: [
             {
               key: '/ns0:Root/ManyToMany/Year/Month/Day',
               name: 'Day',
-              schemaNodeDataType: 'None',
               normalizedDataType: 'ComplexType',
               properties: 'Repeating',
               children: [
                 {
                   key: '/ns0:Root/ManyToMany/Year/Month/Day/Date',
                   name: 'Date',
-                  schemaNodeDataType: 'String',
                   normalizedDataType: 'String',
                   properties: 'NotSpecified',
                   fullName: 'Date',
@@ -992,28 +960,24 @@ export const fullMapForSimplifiedLoop: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/ManyToMany/Year',
         name: 'Year',
-        schemaNodeDataType: 'None',
         normalizedDataType: 'ComplexType',
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:Root/ManyToMany/Year/Month',
             name: 'Month',
-            schemaNodeDataType: 'None',
             normalizedDataType: 'ComplexType',
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:Root/ManyToMany/Year/Month/Day',
                 name: 'Day',
-                schemaNodeDataType: 'None',
                 normalizedDataType: 'ComplexType',
                 properties: 'Repeating',
                 children: [
                   {
                     key: '/ns0:Root/ManyToMany/Year/Month/Day/Date',
                     name: 'Date',
-                    schemaNodeDataType: 'String',
                     normalizedDataType: 'String',
                     properties: 'NotSpecified',
                     fullName: 'Date',
@@ -1070,28 +1034,24 @@ export const fullMapForSimplifiedLoop: ConnectionDictionary = {
           node: {
             key: '/ns0:Root/ManyToMany/SourceYear',
             name: 'SourceYear',
-            schemaNodeDataType: 'None',
             normalizedDataType: 'ComplexType',
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:Root/ManyToMany/SourceYear/SourceMonth',
                 name: 'SourceMonth',
-                schemaNodeDataType: 'None',
                 normalizedDataType: 'ComplexType',
                 properties: 'Repeating',
                 children: [
                   {
                     key: '/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay',
                     name: 'SourceDay',
-                    schemaNodeDataType: 'None',
                     normalizedDataType: 'ComplexType',
                     properties: 'Repeating',
                     children: [
                       {
                         key: '/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate',
                         name: 'SourceDate',
-                        schemaNodeDataType: 'String',
                         normalizedDataType: 'String',
                         properties: 'NotSpecified',
                         fullName: 'SourceDate',
@@ -1171,28 +1131,24 @@ export const fullMapForSimplifiedLoop: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/ManyToMany/SourceYear',
         name: 'SourceYear',
-        schemaNodeDataType: 'None',
         normalizedDataType: 'ComplexType',
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:Root/ManyToMany/SourceYear/SourceMonth',
             name: 'SourceMonth',
-            schemaNodeDataType: 'None',
             normalizedDataType: 'ComplexType',
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay',
                 name: 'SourceDay',
-                schemaNodeDataType: 'None',
                 normalizedDataType: 'ComplexType',
                 properties: 'Repeating',
                 children: [
                   {
                     key: '/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate',
                     name: 'SourceDate',
-                    schemaNodeDataType: 'String',
                     normalizedDataType: 'String',
                     properties: 'NotSpecified',
                     fullName: 'SourceDate',
@@ -1264,28 +1220,24 @@ export const fullMapForSimplifiedLoop: ConnectionDictionary = {
         node: {
           key: '/ns0:Root/ManyToMany/Year',
           name: 'Year',
-          schemaNodeDataType: 'None',
           normalizedDataType: 'ComplexType',
           properties: 'Repeating',
           children: [
             {
               key: '/ns0:Root/ManyToMany/Year/Month',
               name: 'Month',
-              schemaNodeDataType: 'None',
               normalizedDataType: 'ComplexType',
               properties: 'Repeating',
               children: [
                 {
                   key: '/ns0:Root/ManyToMany/Year/Month/Day',
                   name: 'Day',
-                  schemaNodeDataType: 'None',
                   normalizedDataType: 'ComplexType',
                   properties: 'Repeating',
                   children: [
                     {
                       key: '/ns0:Root/ManyToMany/Year/Month/Day/Date',
                       name: 'Date',
-                      schemaNodeDataType: 'String',
                       normalizedDataType: 'String',
                       properties: 'NotSpecified',
                       fullName: 'Date',
@@ -1346,7 +1298,6 @@ export const fullConnectionDictionaryForOneToManyLoop: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/ManyToOne/Date/DayName',
         name: 'DayName',
-        schemaNodeDataType: 'String',
         normalizedDataType: 'String',
         properties: 'NotSpecified',
         children: [],
@@ -1388,7 +1339,6 @@ export const fullConnectionDictionaryForOneToManyLoop: ConnectionDictionary = {
           node: {
             key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate',
             name: 'SourceDate',
-            schemaNodeDataType: 'String',
             normalizedDataType: 'String',
             properties: 'NotSpecified',
             fullName: 'SourceDate',
@@ -1445,7 +1395,6 @@ export const fullConnectionDictionaryForOneToManyLoop: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate',
         name: 'SourceDate',
-        schemaNodeDataType: 'String',
         normalizedDataType: 'String',
         properties: 'NotSpecified',
         fullName: 'SourceDate',
@@ -1501,7 +1450,6 @@ export const fullConnectionDictionaryForOneToManyLoop: ConnectionDictionary = {
         node: {
           key: '/ns0:Root/ManyToOne/Date/DayName',
           name: 'DayName',
-          schemaNodeDataType: 'String',
           normalizedDataType: 'String',
           properties: 'NotSpecified',
           children: [],
@@ -1544,14 +1492,12 @@ export const fullConnectionDictionaryForOneToManyLoop: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/ManyToOne/Date',
         name: 'Date',
-        schemaNodeDataType: 'None',
         normalizedDataType: 'ComplexType',
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:Root/ManyToOne/Date/DayName',
             name: 'DayName',
-            schemaNodeDataType: 'String',
             normalizedDataType: 'String',
             properties: 'NotSpecified',
             children: [],
@@ -1618,14 +1564,12 @@ export const fullConnectionDictionaryForOneToManyLoop: ConnectionDictionary = {
           node: {
             key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay',
             name: 'SourceDay',
-            schemaNodeDataType: 'None',
             normalizedDataType: 'ComplexType',
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate',
                 name: 'SourceDate',
-                schemaNodeDataType: 'String',
                 normalizedDataType: 'String',
                 properties: 'NotSpecified',
                 fullName: 'SourceDate',
@@ -1714,21 +1658,18 @@ export const fullConnectionDictionaryForOneToManyLoop: ConnectionDictionary = {
           node: {
             key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth',
             name: 'SourceMonth',
-            schemaNodeDataType: 'None',
             normalizedDataType: 'ComplexType',
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay',
                 name: 'SourceDay',
-                schemaNodeDataType: 'None',
                 normalizedDataType: 'ComplexType',
                 properties: 'Repeating',
                 children: [
                   {
                     key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate',
                     name: 'SourceDate',
-                    schemaNodeDataType: 'String',
                     normalizedDataType: 'String',
                     properties: 'NotSpecified',
                     fullName: 'SourceDate',
@@ -1848,28 +1789,24 @@ export const fullConnectionDictionaryForOneToManyLoop: ConnectionDictionary = {
           node: {
             key: '/ns0:Root/ManyToOne/SourceYear',
             name: 'SourceYear',
-            schemaNodeDataType: 'None',
             normalizedDataType: 'ComplexType',
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth',
                 name: 'SourceMonth',
-                schemaNodeDataType: 'None',
                 normalizedDataType: 'ComplexType',
                 properties: 'Repeating',
                 children: [
                   {
                     key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay',
                     name: 'SourceDay',
-                    schemaNodeDataType: 'None',
                     normalizedDataType: 'ComplexType',
                     properties: 'Repeating',
                     children: [
                       {
                         key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate',
                         name: 'SourceDate',
-                        schemaNodeDataType: 'String',
                         normalizedDataType: 'String',
                         properties: 'NotSpecified',
                         fullName: 'SourceDate',
@@ -2019,14 +1956,12 @@ export const fullConnectionDictionaryForOneToManyLoop: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay',
         name: 'SourceDay',
-        schemaNodeDataType: 'None',
         normalizedDataType: 'ComplexType',
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate',
             name: 'SourceDate',
-            schemaNodeDataType: 'String',
             normalizedDataType: 'String',
             properties: 'NotSpecified',
             fullName: 'SourceDate',
@@ -2119,14 +2054,12 @@ export const fullConnectionDictionaryForOneToManyLoop: ConnectionDictionary = {
         node: {
           key: '/ns0:Root/ManyToOne/Date',
           name: 'Date',
-          schemaNodeDataType: 'None',
           normalizedDataType: 'ComplexType',
           properties: 'Repeating',
           children: [
             {
               key: '/ns0:Root/ManyToOne/Date/DayName',
               name: 'DayName',
-              schemaNodeDataType: 'String',
               normalizedDataType: 'String',
               properties: 'NotSpecified',
               children: [],
@@ -2194,21 +2127,18 @@ export const fullConnectionDictionaryForOneToManyLoop: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth',
         name: 'SourceMonth',
-        schemaNodeDataType: 'None',
         normalizedDataType: 'ComplexType',
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay',
             name: 'SourceDay',
-            schemaNodeDataType: 'None',
             normalizedDataType: 'ComplexType',
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceSourceDate',
                 name: 'SourceSourceDate',
-                schemaNodeDataType: 'String',
                 normalizedDataType: 'String',
                 properties: 'NotSpecified',
                 fullName: 'SourceSourceDate',
@@ -2332,14 +2262,12 @@ export const fullConnectionDictionaryForOneToManyLoop: ConnectionDictionary = {
         node: {
           key: '/ns0:Root/ManyToOne/Date',
           name: 'Date',
-          schemaNodeDataType: 'None',
           normalizedDataType: 'ComplexType',
           properties: 'Repeating',
           children: [
             {
               key: '/ns0:Root/ManyToOne/Date/DayName',
               name: 'DayName',
-              schemaNodeDataType: 'String',
               normalizedDataType: 'String',
               properties: 'NotSpecified',
               children: [],
@@ -2407,28 +2335,24 @@ export const fullConnectionDictionaryForOneToManyLoop: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/ManyToOne/SourceYear',
         name: 'SourceYear',
-        schemaNodeDataType: 'None',
         normalizedDataType: 'ComplexType',
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth',
             name: 'SourceMonth',
-            schemaNodeDataType: 'None',
             normalizedDataType: 'ComplexType',
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay',
                 name: 'SourceDay',
-                schemaNodeDataType: 'None',
                 normalizedDataType: 'ComplexType',
                 properties: 'Repeating',
                 children: [
                   {
                     key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate',
                     name: 'SourceDate',
-                    schemaNodeDataType: 'String',
                     normalizedDataType: 'String',
                     properties: 'NotSpecified',
                     fullName: 'SourceDate',
@@ -2577,14 +2501,12 @@ export const fullConnectionDictionaryForOneToManyLoop: ConnectionDictionary = {
         node: {
           key: '/ns0:Root/ManyToOne/Date',
           name: 'Date',
-          schemaNodeDataType: 'None',
           normalizedDataType: 'ComplexType',
           properties: 'Repeating',
           children: [
             {
               key: '/ns0:Root/ManyToOne/Date/DayName',
               name: 'DayName',
-              schemaNodeDataType: 'String',
               normalizedDataType: 'String',
               properties: 'NotSpecified',
               children: [],

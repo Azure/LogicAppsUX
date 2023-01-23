@@ -8,7 +8,6 @@
     "name": "Root",
     "namespacePrefix": "ns0",
     "namespaceUri": "http://tempuri.org/source.xsd",
-    "schemaNodeDataType": "None",
     "normalizedDataType": "ComplexType",
     "properties": "NotSpecified",
     "children": [],

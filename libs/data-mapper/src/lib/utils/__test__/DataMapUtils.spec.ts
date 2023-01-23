@@ -226,28 +226,24 @@ const indexed: ConnectionDictionary = {
           node: {
             key: '/ns0:Root/ManyToOne/SourceYear',
             name: 'SourceYear',
-            schemaNodeDataType: 'None',
             normalizedDataType: 'ComplexType',
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth',
                 name: 'SourceMonth',
-                schemaNodeDataType: 'None',
                 normalizedDataType: 'ComplexType',
                 properties: 'Repeating',
                 children: [
                   {
                     key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay',
                     name: 'SourceDay',
-                    schemaNodeDataType: 'None',
                     normalizedDataType: 'ComplexType',
                     properties: 'Repeating',
                     children: [
                       {
                         key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate',
                         name: 'SourceDate',
-                        schemaNodeDataType: 'String',
                         normalizedDataType: 'String',
                         properties: 'NotSpecified',
                         fullName: 'SourceDate',
@@ -395,14 +391,12 @@ const indexed: ConnectionDictionary = {
         node: {
           key: '/ns0:Root/ManyToOne/Date',
           name: 'Date',
-          schemaNodeDataType: 'None',
           normalizedDataType: 'ComplexType',
           properties: 'Repeating',
           children: [
             {
               key: '/ns0:Root/ManyToOne/Date/DayName',
               name: 'DayName',
-              schemaNodeDataType: 'String',
               normalizedDataType: 'String',
               properties: 'NotSpecified',
               children: [],
@@ -470,28 +464,24 @@ const indexed: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/ManyToOne/SourceYear',
         name: 'SourceYear',
-        schemaNodeDataType: 'None',
         normalizedDataType: 'ComplexType',
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth',
             name: 'SourceMonth',
-            schemaNodeDataType: 'None',
             normalizedDataType: 'ComplexType',
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay',
                 name: 'SourceDay',
-                schemaNodeDataType: 'None',
                 normalizedDataType: 'ComplexType',
                 properties: 'Repeating',
                 children: [
                   {
                     key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate',
                     name: 'SourceDate',
-                    schemaNodeDataType: 'String',
                     normalizedDataType: 'String',
                     properties: 'NotSpecified',
                     fullName: 'SourceDate',
@@ -666,14 +656,12 @@ const indexed: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/ManyToOne/Date',
         name: 'Date',
-        schemaNodeDataType: 'None',
         normalizedDataType: 'ComplexType',
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:Root/ManyToOne/Date/DayName',
             name: 'DayName',
-            schemaNodeDataType: 'String',
             normalizedDataType: 'String',
             properties: 'NotSpecified',
             children: [],

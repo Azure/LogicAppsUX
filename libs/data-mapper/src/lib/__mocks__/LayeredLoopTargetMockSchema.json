@@ -12,42 +12,36 @@
     "name": "Root",
     "namespacePrefix": "ns0",
     "namespaceUri": "http://tempuri.org/Target.xsd",
-    "schemaNodeDataType": "None",
     "normalizedDataType": "ComplexType",
     "properties": "NotSpecified",
     "children": [
       {
         "key": "/ns0:Root/ManyToMany",
         "name": "ManyToMany",
-        "schemaNodeDataType": "None",
         "normalizedDataType": "ComplexType",
         "properties": "NotSpecified",
         "children": [
           {
             "key": "/ns0:Root/ManyToMany/Year",
             "name": "Year",
-            "schemaNodeDataType": "None",
             "normalizedDataType": "ComplexType",
             "properties": "Repeating",
             "children": [
               {
                 "key": "/ns0:Root/ManyToMany/Year/Month",
                 "name": "Month",
-                "schemaNodeDataType": "None",
                 "normalizedDataType": "ComplexType",
                 "properties": "Repeating",
                 "children": [
                   {
                     "key": "/ns0:Root/ManyToMany/Year/Month/Day",
                     "name": "Day",
-                    "schemaNodeDataType": "None",
                     "normalizedDataType": "ComplexType",
                     "properties": "Repeating",
                     "children": [
                       {
                         "key": "/ns0:Root/ManyToMany/Year/Month/Day/Date",
                         "name": "Date",
-                        "schemaNodeDataType": "String",
                         "normalizedDataType": "String",
                         "properties": "NotSpecified",
                         "fullName": "Date",
@@ -72,21 +66,18 @@
       {
         "key": "/ns0:Root/ManyToOne",
         "name": "ManyToOne",
-        "schemaNodeDataType": "None",
         "normalizedDataType": "ComplexType",
         "properties": "NotSpecified",
         "children": [
           {
             "key": "/ns0:Root/ManyToOne/Date",
             "name": "Date",
-            "schemaNodeDataType": "None",
             "normalizedDataType": "ComplexType",
             "properties": "Repeating",
             "children": [
               {
                 "key": "/ns0:Root/ManyToOne/Date/DayName",
                 "name": "DayName",
-                "schemaNodeDataType": "String",
                 "normalizedDataType": "String",
                 "properties": "NotSpecified",
                 "children": [],

@@ -1,9 +1,9 @@
 import type { RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
-import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
+import { iconForNormalizedDataType } from '../../utils/Icon.Utils';
 import { Stack } from '@fluentui/react';
 import { makeStyles, mergeClasses, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
-import { CheckmarkCircle16Filled, Circle16Regular, AddCircle16Regular, Document20Regular } from '@fluentui/react-icons';
+import { AddCircle16Regular, CheckmarkCircle16Filled, Circle16Regular, Document20Regular } from '@fluentui/react-icons';
 import { useSelector } from 'react-redux';
 
 export const useSchemaTreeItemStyles = makeStyles({
@@ -55,7 +55,7 @@ interface SourceSchemaTreeItemProps {
 const SourceSchemaTreeItem = ({ node, isNodeAdded, isNodeHovered }: SourceSchemaTreeItemProps) => {
   const styles = useSchemaTreeItemStyles();
 
-  const BundledTypeIcon = iconForSchemaNodeDataType(node.schemaNodeDataType, 16, true, node.nodeProperties);
+  const BundledTypeIcon = iconForNormalizedDataType(node.normalizedDataType, 16, true, node.nodeProperties);
 
   return (
     <Stack horizontal verticalAlign="center" style={{ width: '100%', minWidth: 0 }}>

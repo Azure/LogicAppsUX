@@ -2,7 +2,7 @@ import type { RootState } from '../../../core/state/Store';
 import type { SchemaNodeExtended } from '../../../models';
 import type { Connection } from '../../../models/Connection';
 import { isCustomValue } from '../../../utils/Connection.Utils';
-import { iconForSchemaNodeDataType } from '../../../utils/Icon.Utils';
+import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { addTargetReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 import { InputDropdown } from '../../inputDropdown/InputDropdown';
 import { Stack } from '@fluentui/react';
@@ -96,7 +96,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     [currentNode, targetSchemaDictionary]
   );
 
-  const DataTypeIcon = iconForSchemaNodeDataType(currentNode.schemaNodeDataType, 16, false, currentNode.nodeProperties);
+  const DataTypeIcon = iconForNormalizedDataType(currentNode.normalizedDataType, 16, false, currentNode.nodeProperties);
 
   const connection = useMemo<Connection | undefined>(
     () => connectionDictionary[addTargetReactFlowPrefix(currentNode.key)],
@@ -130,7 +130,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
         <Label style={{ gridColumn: gridColumnSpan1 }}>{dataTypeLoc}</Label>
         <Stack horizontal verticalAlign="center" style={{ gridColumn: gridColumnSpan2 }}>
           <DataTypeIcon style={{ marginRight: '5px', color: tokens.colorNeutralForeground1 }} />
-          <Text className={styles.bodyText}>{currentNode?.schemaNodeDataType}</Text>
+          <Text className={styles.bodyText}>{currentNode?.normalizedDataType}</Text>
         </Stack>
       </div>
 
