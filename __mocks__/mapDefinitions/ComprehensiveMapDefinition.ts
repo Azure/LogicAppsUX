@@ -27,4 +27,22 @@ ns0:SchemaRoot:
   CustomValues:
     SuperSecretKey: "password"
     MOTD: concat("Welcome! Today's date is ", string(current-date()))
+  Conditionals:
+    $if(is-null(/ns0:SchemaRoot/Conditionals/Object)):
+      Object:
+        $if(is-null(/ns0:SchemaRoot/Conditionals/Object/Property)):
+          Property: /ns0:SchemaRoot/Conditionals/Object/Property
+  Looping:
+    OneToOne:
+      $for(/ns0:SchemaRoot/Looping/OneToOne/Simple):
+        Simple:
+          Direct: Direct
+          FunctionChain: substring(lower-case(FunctionChain), 0, 5)
+      $for(/ns0:SchemaRoot/Looping/OneToOne/RelativePaths):
+        RelativePaths:
+          Object(DotAccess): .
+          Property: Property
+          $@Attribute: ./@Attribute
+    LoopReduce(Loop->Object):
+      BestItemName: /ns0:SchemaRoot/Looping/LoopReduce(Loop->Object)/ItemsList[3]/ItemName
 `;
