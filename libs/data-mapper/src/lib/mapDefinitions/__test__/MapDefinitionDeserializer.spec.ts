@@ -579,7 +579,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       );
     });
 
-    it('creates a direct index connection', () => {
+    it('creates a direct access connection', () => {
       simpleMap['ns0:Root'] = {
         LoopingWithIndex: {
           WeatherSummary: {

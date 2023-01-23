@@ -1,9 +1,9 @@
 {
   "name": "ComprehensiveTarget.xsd",
   "type": "XML",
-  "targetNamespace": "http://tempuri.org/Target.xsd",
+  "targetNamespace": "http://tempuri.org/ComprehensiveTarget.xsd",
   "namespaces": {
-    "ns0": "http://tempuri.org/Target.xsd",
+    "ns0": "http://tempuri.org/ComprehensiveTarget.xsd",
     "xs": "http://www.w3.org/2001/XMLSchema"
   },
   "schemaTreeRoot": {
@@ -11,7 +11,7 @@
     "name": "SchemaRoot",
     "fullName": "ns0:SchemaRoot",
     "namespacePrefix": "ns0",
-    "namespaceUri": "http://tempuri.org/Target.xsd",
+    "namespaceUri": "http://tempuri.org/ComprehensiveTarget.xsd",
     "schemaNodeDataType": "None",
     "normalizedDataType": "ComplexType",
     "properties": "NotSpecified",
@@ -448,19 +448,19 @@
             ]
           },
           {
-            "key": "/ns0:SchemaRoot/Looping/LoopReduce(Loop->Object)",
-            "name": "LoopReduce(Loop->Object)",
-            "fullName": "LoopReduce(Loop->Object)",
+            "key": "/ns0:SchemaRoot/Looping/LoopReduce",
+            "name": "LoopReduce",
+            "fullName": "LoopReduce",
             "parentKey": "/ns0:SchemaRoot/Looping",
             "schemaNodeDataType": "None",
             "normalizedDataType": "ComplexType",
             "properties": "NotSpecified",
             "children": [
               {
-                "key": "/ns0:SchemaRoot/Looping/LoopReduce(Loop->Object)/BestItemName",
+                "key": "/ns0:SchemaRoot/Looping/LoopReduce/BestItemName",
                 "name": "BestItemName",
                 "fullName": "BestItemName",
-                "parentKey": "/ns0:SchemaRoot/Looping/LoopReduce(Loop->Object)",
+                "parentKey": "/ns0:SchemaRoot/Looping/LoopReduce",
                 "schemaNodeDataType": "String",
                 "normalizedDataType": "String",
                 "properties": "NotSpecified",
@@ -469,9 +469,9 @@
             ]
           },
           {
-            "key": "/ns0:SchemaRoot/Looping/TODO:LoopMap(Object->Loop)",
-            "name": "TODO:LoopMap(Object->Loop)",
-            "fullName": "TODO:LoopMap(Object->Loop)",
+            "key": "/ns0:SchemaRoot/Looping/TODO-LoopMap",
+            "name": "TODO-LoopMap",
+            "fullName": "TODO-LoopMap",
             "parentKey": "/ns0:SchemaRoot/Looping",
             "schemaNodeDataType": "None",
             "normalizedDataType": "ComplexType",

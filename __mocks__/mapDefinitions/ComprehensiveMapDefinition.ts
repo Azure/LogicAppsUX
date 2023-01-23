@@ -1,14 +1,14 @@
-export const comprehensiveMapDefinition = `$version: 1
-$version: 1
+export const comprehensiveMapDefinition = `
+$version: 1.0
 $input: XML
 $output: XML
-$sourceSchema: Source.xsd
-$targetSchema: Target.xsd
+$sourceSchema: ComprehensiveSource.xsd
+$targetSchema: ComprehensiveTarget.xsd
 $sourceNamespaces:
-  ns0: http://tempuri.org/Source.xsd
+  ns0: http://tempuri.org/ComprehensiveSource.xsd
   xs: http://www.w3.org/2001/XMLSchema
 $targetNamespaces:
-  ns0: http://tempuri.org/Target.xsd
+  ns0: http://tempuri.org/ComprehensiveTarget.xsd
   xs: http://www.w3.org/2001/XMLSchema
 ns0:SchemaRoot:
   DirectTranslation:
@@ -43,6 +43,6 @@ ns0:SchemaRoot:
           Object(DotAccess): .
           Property: Property
           $@Attribute: ./@Attribute
-    LoopReduce(Loop->Object):
-      BestItemName: /ns0:SchemaRoot/Looping/LoopReduce(Loop->Object)/ItemsList[3]/ItemName
+    LoopReduce:
+      BestItemName: /ns0:SchemaRoot/Looping/LoopReduce/ItemsList[3]/ItemName
 `;
