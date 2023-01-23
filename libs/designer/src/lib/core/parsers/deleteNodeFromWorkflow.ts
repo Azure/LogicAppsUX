@@ -24,7 +24,9 @@ export const deleteNodeFromWorkflow = (
   const isRoot = nodesMetadata[nodeId]?.isRoot;
   if (isRoot && !isTrigger) {
     const childIds = (workflowGraph.edges ?? []).filter((edge) => edge.source === nodeId).map((edge) => edge.target);
-    childIds.forEach((childId) => (nodesMetadata[childId].isRoot = true));
+    childIds.forEach((childId) => {
+      if (nodesMetadata[childId]) nodesMetadata[childId].isRoot = true;
+    });
   }
 
   // Nodes with multiple parents AND children are not allowed to be deleted

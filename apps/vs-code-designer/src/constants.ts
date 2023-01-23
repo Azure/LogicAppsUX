@@ -80,12 +80,19 @@ export enum extensionCommand {
   deleteLogicApp = 'logicAppsExtension.deleteLogicApp',
   refresh = 'logicAppsExtension.refresh',
   switchToDotnetProject = 'logicAppsExtension.switchToDotnetProject',
+  openInPortal = 'logicAppsExtension.openInPortal',
   azureFunctionsOpenFile = 'azureFunctions.openFile',
   azureFunctionsUninstallFuncCoreTools = 'azureFunctions.uninstallFuncCoreTools',
   azureFunctionsAppSettingsEncrypt = 'azureFunctions.appSettings.encrypt',
   azureFunctionsAppSettingsDecrypt = 'azureFunctions.appSettings.decrypt',
   azureSelectSubscriptions = 'azure-account.selectSubscriptions',
   openOverview = 'logicAppsExtension.openOverview',
+  exportLogicApp = 'logicAppsExtension.exportLogicApp',
+  browseWebsite = 'logicAppsExtension.browseWebsite',
+  viewProperties = 'logicAppsExtension.viewProperties',
+  createSlot = 'logicAppsExtension.createSlot',
+  deleteSlot = 'logicAppsExtension.deleteSlot',
+  viewDeploymentLogs = 'logicAppsExtension.viewDeploymentLogs',
 }
 
 // Context
