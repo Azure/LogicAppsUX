@@ -177,6 +177,11 @@
         "command": "logicAppsExtension.stopStreamingLogs",
         "title": "Stop Streaming Logs",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.reviewValidation",
+        "title": "Review Validation",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -412,6 +417,11 @@
           "command": "logicAppsExtension.switchToDotnetProject",
           "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@3"
+        },
+        {
+          "command": "logicAppsExtension.reviewValidation",
+          "when": "resourceDirname=~/.logs/export && resourceFilename=~/exportValidation.json/",
+          "group": "navigation@1"
         }
       ],
       "commandPalette": [
@@ -545,6 +555,7 @@
     "onCommand:logicAppsExtension.openOverview",
     "onCommand:logicAppsExtension.refresh",
     "onCommand:logicAppsExtension.exportLogicApp",
+    "onCommand:logicAppsExtension.reviewValidation",
     "onCommand:logicAppsExtension.switchToDotnetProject",
     "onCommand:logicAppsExtension.openInPortal",
     "onCommand:logicAppsExtension.redeploy",
