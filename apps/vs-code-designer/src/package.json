@@ -167,6 +167,21 @@
         "command": "logicAppsExtension.viewDeploymentLogs",
         "title": "View Deployment Logs",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.startStreamingLogs",
+        "title": "Start Streaming Logs",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.stopStreamingLogs",
+        "title": "Stop Streaming Logs",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.reviewValidation",
+        "title": "Review Validation",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -370,6 +385,16 @@
           "command": "logicAppsExtension.viewDeploymentLogs",
           "when": "view == newAzLogicApps && viewItem =~ /^deployment//",
           "group": "1@1"
+        },
+        {
+          "command": "logicAppsExtension.startStreamingLogs",
+          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "group": "4@1"
+        },
+        {
+          "command": "logicAppsExtension.stopStreamingLogs",
+          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "group": "4@2"
         }
       ],
       "explorer/context": [
@@ -392,6 +417,11 @@
           "command": "logicAppsExtension.switchToDotnetProject",
           "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@3"
+        },
+        {
+          "command": "logicAppsExtension.reviewValidation",
+          "when": "resourceDirname=~/.logs/export && resourceFilename=~/exportValidation.json/",
+          "group": "navigation@1"
         }
       ],
       "commandPalette": [
@@ -525,6 +555,7 @@
     "onCommand:logicAppsExtension.openOverview",
     "onCommand:logicAppsExtension.refresh",
     "onCommand:logicAppsExtension.exportLogicApp",
+    "onCommand:logicAppsExtension.reviewValidation",
     "onCommand:logicAppsExtension.switchToDotnetProject",
     "onCommand:logicAppsExtension.openInPortal",
     "onCommand:logicAppsExtension.redeploy",
@@ -532,6 +563,8 @@
     "onCommand:logicAppsExtension.viewProperties",
     "onCommand:logicAppsExtension.createSlot",
     "onCommand:logicAppsExtension.deleteSlot",
+    "onCommand:logicAppsExtension.startStreamingLogs",
+    "onCommand:logicAppsExtension.stopStreamingLogs",
     "onCommand:logicAppsExtension.viewDeploymentLogs",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",

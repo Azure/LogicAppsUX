@@ -16,6 +16,8 @@ import { deleteNode } from './deleteNode';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
 import { redeployDeployment } from './deployments/redeployDeployment';
 import { viewDeploymentLogs } from './deployments/viewDeploymentLogs';
+import { startStreamingLogs } from './logstream/startStreamingLogs';
+import { stopStreamingLogs } from './logstream/stopStreamingLogs';
 import { openFile } from './openFile';
 import { openInPortal } from './openInPortal';
 import { pickFuncProcess } from './pickFuncProcess';
@@ -27,6 +29,7 @@ import { exportLogicApp } from './workflows/exportLogicApp';
 import { getDebugSymbolDll } from './workflows/getDebugSymbolDll';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
 import { openOverview } from './workflows/openOverview';
+import { reviewValidation } from './workflows/reviewValidation';
 import { switchToDotnetProject } from './workflows/switchToDotnetProject';
 import { viewContent } from './workflows/viewContent';
 import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
@@ -68,6 +71,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.openOverview, openOverview);
   registerCommand(extensionCommand.refresh, async (context: IActionContext, node?: AzExtTreeItem) => await ext.tree.refresh(context, node));
   registerCommand(extensionCommand.exportLogicApp, exportLogicApp);
+  registerCommand(extensionCommand.reviewValidation, reviewValidation);
   registerCommand(extensionCommand.switchToDotnetProject, switchToDotnetProject);
   registerCommand(extensionCommand.openInPortal, openInPortal);
   registerCommand(extensionCommand.browseWebsite, browseWebsite);
@@ -77,5 +81,7 @@ export function registerCommands(): void {
     extensionCommand.deleteSlot,
     async (context: IActionContext, node?: AzExtTreeItem) => await deleteNode(context, SlotTreeItem.contextValue, node)
   );
+  registerCommand(extensionCommand.startStreamingLogs, startStreamingLogs);
+  registerCommand(extensionCommand.stopStreamingLogs, stopStreamingLogs);
   registerSiteCommand(extensionCommand.viewDeploymentLogs, viewDeploymentLogs);
 }
