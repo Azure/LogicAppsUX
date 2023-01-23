@@ -1,11 +1,11 @@
 import Architecture from '../../assets/architecture.png';
 import { Meta } from '@storybook/addon-docs';
 
-<Meta title="Docs/VS Code Designer Extension" />
+<Meta title="Docs/Visual Studio Code Designer Extension" />
 
-# VS Code Designer Extension
+# Visual Studio Code Designer Extension
 
-Azure Logic Apps extension allows to quickly create, debug, manage, and deploy Logic Apps directly from VS Code.
+The Azure Logic Apps extension lets you quickly create, debug, manage, and deploy logic apps directly from Visual Studio Code.
 
 ## Table of Contents
 
@@ -23,13 +23,15 @@ Azure Logic Apps extension allows to quickly create, debug, manage, and deploy L
 
 <h2 id="prerequisites">Prerequisites</h2>
 
-- `git clone` and run `npm install` in the logic_apps_designer repo
-- Install nx if you haven't already `npm install -g nx`
+- Run `git clone` and then `npm install` in the **logic_apps_designer** repo.
+- If you haven't already, install **nx**: `npm install -g nx`
 
-- Install [.NET 6.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
-- Install [Azure Functions Core Tools](https://github.com/Azure/azure-functions-core-tools) or `npm i -g azure-functions-core-tools --unsafe-perm true`
-- Install the following VS Code Extensions: [Azure Tools](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-node-azure-pack), [Azure Account](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account)
-  and [Azure Functions](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions)
+- Install [.NET 6.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0).
+- Install [Azure Functions Core Tools](https://github.com/Azure/azure-functions-core-tools) manually or run the following command: `npm i -g azure-functions-core-tools --unsafe-perm true`
+- Install the following Visual Studio Code extensions:
+  - [Azure Tools](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-node-azure-pack)
+  - [Azure Account](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account)
+  - [Azure Functions](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions)
 
 <h2 id="build">Build/Compile</h2>
 
@@ -41,17 +43,17 @@ npm run build:vscode-designer
 
 <h2 id="run">Run (Dev/Debug)</h2>
 
-To run the VS Code extension (in debug mode):
+To run the Visual Studio Code extension in debug mode, follow these steps:
 
-1.  Open the repo folder in VS Code.
-2.  Click the 'Run and Debug' icon in the Activity bar on the left side of VS Code. You can also use the shortcut: `Ctrl`+`Shift`+`D`.
-3.  Select 'Run Designer Extension In Dev Mode' in the dropdown at the top, then click the 'Start debugging' icon.
+1.  In Visual Studio Code, open the repo folder.
+2.  On the Activity bar to the left side, select **Run and Debug**. (Keyboard: Ctrl+Shift+D)
+3.  From the drop-down list near the top, select **Run Designer Extension In Dev Mode**, then select **Start debugging**.
 
-> As soon as a debugging session starts, a new VS Code workspace prompts with the running app, now you are able to add [breakpoints](https://code.visualstudio.com/docs/editor/debugging#_breakpoints) and debug it with the [debug actions.](https://code.visualstudio.com/docs/editor/debugging#_debug-actions)
+When the debugging session starts, a new Visual Studio Code workspace displays prompts for the running app. You can now add [breakpoints](https://code.visualstudio.com/docs/editor/debugging#_breakpoints) and debug the app using the [debug actions](https://code.visualstudio.com/docs/editor/debugging#_debug-actions).
 
-> If you want to debug the app with the common browser's debugging console (e.g. using `console.log()` or check the network calls), you can use the shortcut: `Ctrl`+`Shift`+`I` to reveal it.
+To debug the app using the common browser's debugging console, for example, using `console.log()` or check the network calls, open the console by using the following keyboard shortcut: Ctrl+Shift+I.
 
-> You can learn more about [debuggin VS Code extensions.](https://code.visualstudio.com/docs/editor/debugging)
+For more information, see [debugging Visual Studio Code extensions](https://code.visualstudio.com/docs/editor/debugging).
 
 <h2 id="architecture">App architecture</h2>
 
@@ -59,27 +61,27 @@ To run the VS Code extension (in debug mode):
 
 <h3 id="vs-code-designer">vs-code-designer</h3>
 
-Host all the code needed to run the vscode extension.
+Host all the code needed to run the Visual Studio Code extension.
 
-> You can learn more about [Extensions API](https://code.visualstudio.com/api) and [Extensions anatomy](https://code.visualstudio.com/api/get-started/extension-anatomy)
+For more information, see [Extensions API](https://code.visualstudio.com/api) and [Extensions anatomy](https://code.visualstudio.com/api/get-started/extension-anatomy).
 
 <h3 id="vs-code-designer-react">vs-code-designer-react</h3>
 
 Host React project exclusively for remote and local desginer webviews. Webview is triggered by the `openDesigner` command.
 
-> You can learn more about [VS Code webviews](https://code.visualstudio.com/api/extension-guides/webview)
+For more information, see [Visual Studio Code webviews](https://code.visualstudio.com/api/extension-guides/webview).
 
 <h3 id="vs-code-react">vs-code-react</h3>
 
-Host React project for the extension's webvies. Webviews are triggered by the `openOverview`, `exportLogicApp` and `reviewValidation` commands.
+Host React project for the extension's webviews. Webviews are triggered by the `openOverview`, `exportLogicApp` and `reviewValidation` commands.
 
-> You can learn more about [VS Code webviews](https://code.visualstudio.com/api/extension-guides/webview)
+For more information, see [Visual Studio Code webviews](https://code.visualstudio.com/api/extension-guides/webview).
 
 <h3 id="vscode-extension">vscode-extension</h3>
 
-Host a shared library with helpers and models that are used across all the projects related to the VS Code extension.
+Host a shared library with helpers and models that are used across all the projects related to the Visual Studio Code extension.
 
-> You can use the library by importing `@microsoft/vscode-extension`
+To use the library, import `@microsoft/vscode-extension`.
 
 <h2 id="insights">Key Insights</h2>
 
@@ -87,19 +89,19 @@ Host a shared library with helpers and models that are used across all the proje
   package.json <span>(apps/vs-code-designer/src/package.json)</span>{' '}
 </h3>
 
-The package.json file works as the project [manifest](https://code.visualstudio.com/api/references/extension-manifest). Therefore, there are properties you need to check out:
+The package.json file works as the project [manifest](https://code.visualstudio.com/api/references/extension-manifest). Therefore, review the following properties:
 
-1.  [Activation Events](https://code.visualstudio.com/api/references/activation-events): States when to activate the extension, make sure to set the command or any other event if needed.
-2.  [Contribution Points](https://code.visualstudio.com/api/references/contribution-points): These help us to implement the functionalities within Visual Studio Code.
-    - [Commands](https://code.visualstudio.com/api/references/contribution-points#contributes.commands): List of commands/functionalities in the extension. Consisting of a title, category, and enabled state. Enablement is expressed with [when clauses](https://code.visualstudio.com/api/references/when-clause-contexts).
-    - [Menus](https://code.visualstudio.com/api/references/contribution-points#contributes.menus): Contains the command that should be invoked when selected and the condition under which the item should show.
-    - [Configuration](https://code.visualstudio.com/api/references/contribution-points#contributes.configuration): Configuration options that are stated as user or workspace settings.
-    - [Views](https://code.visualstudio.com/api/references/contribution-points#contributes.views): States the extension view container in the Azure activity bar.
+- [Activation Events](https://code.visualstudio.com/api/references/activation-events): States when to activate the extension. Make sure to set the command or any other event, if necessary.
+- [Contribution Points](https://code.visualstudio.com/api/references/contribution-points): Helps implement the functionality in Visual Studio Code.
+  - [Commands](https://code.visualstudio.com/api/references/contribution-points#contributes.commands): List of commands/functionalities in the extension. Consisting of a title, category, and enabled state. Enablement is expressed with [when clauses](https://code.visualstudio.com/api/references/when-clause-contexts).
+  - [Menus](https://code.visualstudio.com/api/references/contribution-points#contributes.menus): Contains the command that should be invoked when selected and the condition under which the item should show.
+  - [Configuration](https://code.visualstudio.com/api/references/contribution-points#contributes.configuration): Configuration options that are stated as user or workspace settings.
+  - [Views](https://code.visualstudio.com/api/references/contribution-points#contributes.views): States the extension view container in the Azure activity bar.
 
-> You can learn more about [creating new commands.](https://code.visualstudio.com/api/extension-guides/command#creating-new-commands)
+For more information, see [creating new commands.](https://code.visualstudio.com/api/extension-guides/command#creating-new-commands).
 
 <h3 id="registerCommands.ts">
   registerCommands.ts <span>(apps/vs-code-designer/src/app/commands/registerCommands.ts)</span>{' '}
 </h3>
 
-This is the main function that help us bind a command ID to a handler function in our extension.
+The main function that helps bind a command ID to a handler function in the extension.
