@@ -182,6 +182,11 @@
         "command": "logicAppsExtension.reviewValidation",
         "title": "Review Validation",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.swapSlot",
+        "title": "Swap Slot...",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -395,6 +400,11 @@
           "command": "logicAppsExtension.stopStreamingLogs",
           "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "4@2"
+        },
+        {
+          "command": "logicAppsExtension.swapSlot",
+          "when": "view == newAzLogicApps && viewItem == azLogicAppsSlot",
+          "group": "2@4"
         }
       ],
       "explorer/context": [
@@ -566,6 +576,7 @@
     "onCommand:logicAppsExtension.startStreamingLogs",
     "onCommand:logicAppsExtension.stopStreamingLogs",
     "onCommand:logicAppsExtension.viewDeploymentLogs",
+    "onCommand:logicAppsExtension.swapSlot",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
