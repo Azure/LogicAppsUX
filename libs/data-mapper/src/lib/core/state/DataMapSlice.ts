@@ -23,7 +23,13 @@ import {
   nodeHasSpecificInputEventually,
   setConnectionInputValue,
 } from '../../utils/Connection.Utils';
-import { addParentConnectionForRepeatingElementsNested, getParentId } from '../../utils/DataMap.Utils';
+// eslint-disable-next-line import/namespace
+import {
+  addNodeToCanvasIfDoesNotExist,
+  addParentConnectionForRepeatingElementsNested,
+  bringInNestedNodes,
+  getParentId,
+} from '../../utils/DataMap.Utils';
 import { isFunctionData } from '../../utils/Function.Utils';
 import {
   addReactFlowPrefix,
@@ -210,35 +216,40 @@ export const dataMapSlice = createSlice({
     addSourceSchemaNodes: (state, action: PayloadAction<SchemaNodeExtended[]>) => {
       const nodes = [...state.curDataMapOperation.currentSourceSchemaNodes];
       action.payload.forEach((payloadNode) => {
-        const existingNode = state.curDataMapOperation.currentSourceSchemaNodes.find((currentNode) => currentNode.key === payloadNode.key);
-        if (!existingNode) {
-          nodes.push(payloadNode);
-        }
-
-        // if parent already exists on the canvas, add all interim ones
-        const grandparentNodesOnCanvas = state.curDataMapOperation.currentSourceSchemaNodes.filter(
-          (node) => existingNode?.key.includes(node.key) && existingNode.parentKey !== node.key
+        addNodeToCanvasIfDoesNotExist(payloadNode, state.curDataMapOperation.currentSourceSchemaNodes, nodes);
+        bringInNestedNodes(
+          payloadNode,
+          state.curDataMapOperation.currentSourceSchemaNodes,
+          state.curDataMapOperation.flattenedSourceSchema,
+          nodes
         );
-        if (grandparentNodesOnCanvas) {
-          // add all nodes between child and grandparent
-        }
 
-        // else do this
-        // Danielle add interim parents so that tree makes sense
-        const pathToRootWithoutCurrent = payloadNode.pathToRoot.filter((node) => node.key !== payloadNode.key);
-        const firstSourceNodeWithRepeatingPathItem = findLast(pathToRootWithoutCurrent, (pathItem) => pathItem.repeating);
-        const parentNodeToAdd =
-          firstSourceNodeWithRepeatingPathItem &&
-          firstSourceNodeWithRepeatingPathItem &&
-          state.curDataMapOperation.flattenedSourceSchema[addSourceReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key)];
-        if (parentNodeToAdd) {
-          const parentIfAdded = state.curDataMapOperation.currentSourceSchemaNodes.find(
-            (currentNode) => currentNode.key === payloadNode.key
-          );
-          if (!parentIfAdded) {
-            nodes.push(parentNodeToAdd);
-          }
-        }
+        // // if parent already exists on the canvas, add all interim ones
+        // const grandparentNodesOnCanvas = state.curDataMapOperation.currentSourceSchemaNodes.filter(
+        //   (node) => existingNode?.key.includes(node.key) && existingNode.parentKey !== node.key
+        // );
+        // if (grandparentNodesOnCanvas) {
+        //   // add all nodes between child and grandparent
+        // }
+
+        // // else do this
+        // // Danielle add interim parents so that tree makes sense
+        // const pathToRootWithoutCurrent = payloadNode.pathToRoot.filter((node) => node.key !== payloadNode.key);
+        // const firstSourceNodeWithRepeatingPathItem = findLast(pathToRootWithoutCurrent, (pathItem) => pathItem.repeating);
+        // const parentNodeToAdd =
+        //   firstSourceNodeWithRepeatingPathItem &&
+        //   firstSourceNodeWithRepeatingPathItem &&
+        //   state.curDataMapOperation.flattenedSourceSchema[addSourceReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key)];
+        // if (parentNodeToAdd) {
+        //   const parentIfAdded = state.curDataMapOperation.currentSourceSchemaNodes.find(
+        //     (currentNode) => currentNode.key === payloadNode.key
+        //   );
+        //   if (!parentIfAdded) {
+        //     nodes.push(parentNodeToAdd);
+        //   }
+        // }
+
+        // danielle then add anything in-between children on the canvas
       });
 
       const newState: DataMapOperationState = {

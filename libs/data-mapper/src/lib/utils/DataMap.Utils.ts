@@ -1,7 +1,7 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { MapDefinitionEntry, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
-import { SchemaType } from '../models';
+import type { MapDefinitionEntry, SchemaNodeDictionary, SchemaNodeExtended, SourceSchemaNodeExtended } from '../models';
+import { SchemaType, SchemaNodeProperty } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import { ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
@@ -14,7 +14,7 @@ import {
   setConnectionInputValue,
 } from './Connection.Utils';
 import { findFunctionForFunctionName, findFunctionForKey, getIndexValueForCurrentConnection, isFunctionData } from './Function.Utils';
-import { addReactFlowPrefix } from './ReactFlow.Util';
+import { addReactFlowPrefix, addSourceReactFlowPrefix } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid } from '@microsoft/utils-logic-apps';
 
@@ -286,9 +286,53 @@ export const addParentConnectionForRepeatingElementsNested = (
   }
 };
 
-// export const getRepeatingParent = () => {
+export const addNodeToCanvasIfDoesNotExist = (
+  node: SchemaNodeExtended,
+  currentCanvasNodes: SchemaNodeExtended[],
+  canvasNodesToAdd: SchemaNodeExtended[]
+) => {
+  const existingNode = currentCanvasNodes.find((currentNode) => currentNode.key === node.key);
+  if (!existingNode) {
+    canvasNodesToAdd.push(node);
+  }
+};
 
-// }
+export const bringInNestedNodes = (
+  payloadNode: SchemaNodeExtended,
+  currentSourceSchemaNodes: SourceSchemaNodeExtended[],
+  flattenedSourceSchema: SchemaNodeDictionary,
+  nodes: SourceSchemaNodeExtended[]
+) => {
+  // if parent already exists on the canvas, add all interim ones
+  const grandparentNodesOnCanvas = currentSourceSchemaNodes.filter(
+    (node) =>
+      payloadNode?.key.includes(node.key) &&
+      payloadNode.parentKey !== node.key &&
+      payloadNode.key !== node.key &&
+      node.nodeProperties.includes(SchemaNodeProperty.Repeating)
+  );
+
+  // find the highest grandparent repeating, then add all below!!!!
+  if (grandparentNodesOnCanvas) {
+    // now have to find the highest one???
+    // add all in-between nodes
+  }
+
+  //const highestParentOnCanvas =
+
+  // else do this
+  // Danielle add interim parents so that tree makes sense
+  const pathToRootWithoutCurrent = payloadNode.pathToRoot.filter((node) => node.key !== payloadNode.key);
+  const firstSourceNodeWithRepeatingPathItem = findLast(pathToRootWithoutCurrent, (pathItem) => pathItem.repeating);
+  const parentNodeToAdd =
+    firstSourceNodeWithRepeatingPathItem && flattenedSourceSchema[addSourceReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key)];
+  if (parentNodeToAdd) {
+    addNodeToCanvasIfDoesNotExist(parentNodeToAdd, currentSourceSchemaNodes, nodes);
+  }
+
+  // danielle then add anything in-between children on the canvas
+};
+
 export const flattenMapDefinitionValues = (node: MapDefinitionEntry): string[] => {
   return Object.values(node).flatMap((nodeValue) => {
     if (typeof nodeValue === 'string') {
