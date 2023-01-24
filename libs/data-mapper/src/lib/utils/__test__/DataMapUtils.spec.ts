@@ -1,7 +1,12 @@
 import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, simpleLoopSource, sourceMockSchema } from '../../__mocks__';
 import { SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
-import { addParentConnectionForRepeatingElementsNested, getSourceValueFromLoop, splitKeyIntoChildren } from '../DataMap.Utils';
+import {
+  addParentConnectionForRepeatingElementsNested,
+  getSourceValueFromLoop,
+  qualifyLoopRelativeSourceKeys,
+  splitKeyIntoChildren,
+} from '../DataMap.Utils';
 import { convertSchemaToSchemaExtended, flattenSchemaIntoDictionary } from '../Schema.Utils';
 import {
   manyToManyConnectionFromSource,
@@ -160,6 +165,34 @@ describe('utils/DataMap', () => {
       ]);
     });
   });
+
+  describe('qualifyLoopRelativeSourceKeys', () => {
+    it('Nested loops with relative source keys', () => {
+      expect(
+        qualifyLoopRelativeSourceKeys(
+          '/ns0:Root/ManyToOne/$for(/ns0:Root/ManyToOne/SourceYear, $a)/$for(SourceMonth)/$for(SourceDay, $c)/Date/DayName'
+        )
+      ).toBe(
+        '/ns0:Root/ManyToOne/$for(/ns0:Root/ManyToOne/SourceYear, $a)/$for(/ns0:Root/ManyToOne/SourceYear/SourceMonth)/$for(/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay, $c)/Date/DayName'
+      );
+    });
+
+    it('Nested loops with already-qualified/absolute source keys', () => {
+      expect(
+        qualifyLoopRelativeSourceKeys(
+          '/ns0:Root/ManyToOne/$for(/ns0:Root/ManyToOne/SourceYear, $a)/$for(/ns0:Root/ManyToOne/SourceYear/SourceMonth, $b)/$for(/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay, $c)/Date/DayName'
+        )
+      ).toBe(
+        '/ns0:Root/ManyToOne/$for(/ns0:Root/ManyToOne/SourceYear, $a)/$for(/ns0:Root/ManyToOne/SourceYear/SourceMonth, $b)/$for(/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay, $c)/Date/DayName'
+      );
+    });
+
+    it('Single loop (fully-qualified/absolute)', () => {
+      expect(qualifyLoopRelativeSourceKeys('/ns0:Root/ManyToOne/$for(/ns0:Root/ManyToOne/SourceYear, $a)/RandomKey')).toBe(
+        '/ns0:Root/ManyToOne/$for(/ns0:Root/ManyToOne/SourceYear, $a)/RandomKey'
+      );
+    });
+  });
 });
 
 const indexed: ConnectionDictionary = {
@@ -193,28 +226,24 @@ const indexed: ConnectionDictionary = {
           node: {
             key: '/ns0:Root/ManyToOne/SourceYear',
             name: 'SourceYear',
-            schemaNodeDataType: 'None',
             normalizedDataType: 'ComplexType',
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth',
                 name: 'SourceMonth',
-                schemaNodeDataType: 'None',
                 normalizedDataType: 'ComplexType',
                 properties: 'Repeating',
                 children: [
                   {
                     key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay',
                     name: 'SourceDay',
-                    schemaNodeDataType: 'None',
                     normalizedDataType: 'ComplexType',
                     properties: 'Repeating',
                     children: [
                       {
                         key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate',
                         name: 'SourceDate',
-                        schemaNodeDataType: 'String',
                         normalizedDataType: 'String',
                         properties: 'NotSpecified',
                         fullName: 'SourceDate',
@@ -362,14 +391,12 @@ const indexed: ConnectionDictionary = {
         node: {
           key: '/ns0:Root/ManyToOne/Date',
           name: 'Date',
-          schemaNodeDataType: 'None',
           normalizedDataType: 'ComplexType',
           properties: 'Repeating',
           children: [
             {
               key: '/ns0:Root/ManyToOne/Date/DayName',
               name: 'DayName',
-              schemaNodeDataType: 'String',
               normalizedDataType: 'String',
               properties: 'NotSpecified',
               children: [],
@@ -437,28 +464,24 @@ const indexed: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/ManyToOne/SourceYear',
         name: 'SourceYear',
-        schemaNodeDataType: 'None',
         normalizedDataType: 'ComplexType',
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth',
             name: 'SourceMonth',
-            schemaNodeDataType: 'None',
             normalizedDataType: 'ComplexType',
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay',
                 name: 'SourceDay',
-                schemaNodeDataType: 'None',
                 normalizedDataType: 'ComplexType',
                 properties: 'Repeating',
                 children: [
                   {
                     key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate',
                     name: 'SourceDate',
-                    schemaNodeDataType: 'String',
                     normalizedDataType: 'String',
                     properties: 'NotSpecified',
                     fullName: 'SourceDate',
@@ -633,14 +656,12 @@ const indexed: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/ManyToOne/Date',
         name: 'Date',
-        schemaNodeDataType: 'None',
         normalizedDataType: 'ComplexType',
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:Root/ManyToOne/Date/DayName',
             name: 'DayName',
-            schemaNodeDataType: 'String',
             normalizedDataType: 'String',
             properties: 'NotSpecified',
             children: [],

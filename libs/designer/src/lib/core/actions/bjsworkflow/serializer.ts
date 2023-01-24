@@ -3,7 +3,7 @@ import type { ConnectionReferences, Workflow, WorkflowParameter } from '../../..
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
-import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
+import type { NodeInputs, NodeOperation, ParameterGroup } from '../../state/operation/operationMetadataSlice';
 import { getOperationInputParameters } from '../../state/operation/operationSelector';
 import type { RootState } from '../../store';
 import { getNode, getTriggerNodeId, isRootNode, isRootNodeInGraph } from '../../utils/graph';
@@ -47,11 +47,24 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
   const operationsWithSettingsErrors = (Object.entries(rootState.settings.validationErrors) ?? []).filter(
     ([_id, errorArr]) => errorArr.length > 0
   );
-  if (operationsWithSettingsErrors.length > 0)
+  if (operationsWithSettingsErrors.length > 0) {
     throw new Error(
-      'Workflow has operation settings validation errors on the following operations: ' +
+      'Workflow has settings validation errors on the following operations: ' +
         operationsWithSettingsErrors.map(([id, _errorArr]) => id).join(', ')
     );
+  }
+
+  const operationsWithParameterErrors = (Object.entries(rootState.operations.inputParameters) ?? []).filter(
+    ([_id, nodeInputs]: [id: string, i: NodeInputs]) =>
+      Object.values(nodeInputs.parameterGroups).some((parameterGroup: ParameterGroup) =>
+        parameterGroup.parameters.some((parameter: ParameterInfo) => (parameter?.validationErrors?.length ?? 0) > 0)
+      )
+  );
+  if (operationsWithParameterErrors.length > 0) {
+    throw new Error(
+      'Workflow has parameter validation errors on the following operations: ' + operationsWithParameterErrors.map(([id]) => id).join(', ')
+    );
+  }
 
   const { connectionsMapping, connectionReferences: referencesObject } = rootState.connections;
   const workflowParameters = rootState.workflowParameters.definitions;

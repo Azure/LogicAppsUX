@@ -33,6 +33,7 @@ export const getInputValues = (currentConnection: Connection | undefined, connec
             return undefined;
           }
 
+          // Handle custom values, source schema node, and Function inputs for Function nodes
           if (isCustomValue(input)) {
             return input;
           } else if (isSchemaNodeExtended(input.node)) {
@@ -175,14 +176,35 @@ export const splitKeyIntoChildren = (sourceKey: string): string[] => {
   return results;
 };
 
-export const getSourceLoopKey = (targetKey: string): string => {
+export const getSourceKeyOfLastLoop = (targetKey: string): string => {
   const forArgs = targetKey.substring(targetKey.lastIndexOf(mapNodeParams.for) + mapNodeParams.for.length + 1, targetKey.lastIndexOf(')'));
   return forArgs.split(',')[0]; // Filter out index variable if any
 };
 
 export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sourceSchemaFlattened: SchemaNodeDictionary): string => {
   let constructedSourceKey = sourceKey;
-  const srcKeyWithinFor = getSourceLoopKey(targetKey);
+  const srcKeyWithinFor = getSourceKeyOfLastLoop(targetKey);
+
+  // Deserialize dot accessors as their parent loop's source node
+  if (constructedSourceKey === '.') {
+    return srcKeyWithinFor;
+  } else {
+    let idxOfDotAccess = constructedSourceKey.indexOf('.');
+    while (idxOfDotAccess > -1) {
+      const preChar = constructedSourceKey[idxOfDotAccess - 1];
+      const postChar = constructedSourceKey[idxOfDotAccess + 1];
+
+      // Make sure the input is just '.'
+      let newStartIdx = idxOfDotAccess + 1;
+      if ((preChar === '(' || preChar === ' ') && (postChar === ')' || postChar === ',')) {
+        constructedSourceKey =
+          constructedSourceKey.substring(0, idxOfDotAccess) + srcKeyWithinFor + constructedSourceKey.substring(idxOfDotAccess + 1);
+        newStartIdx += srcKeyWithinFor.length;
+      }
+
+      idxOfDotAccess = constructedSourceKey.indexOf('.', newStartIdx);
+    }
+  }
 
   const relativeSrcKeyArr = sourceKey
     .split(', ')
@@ -210,21 +232,50 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sou
   if (relativeSrcKeyArr.length > 0) {
     relativeSrcKeyArr.forEach((relativeKeyMatch) => {
       if (!relativeKeyMatch.includes(srcKeyWithinFor)) {
-        const fullyQualifiedSourceKey = `${srcKeyWithinFor}/${relativeKeyMatch}`;
-        constructedSourceKey = constructedSourceKey.replace(
-          relativeKeyMatch,
-          sourceSchemaFlattened[`${sourcePrefix}${fullyQualifiedSourceKey}`] ? fullyQualifiedSourceKey : relativeKeyMatch
-        );
+        // Replace './' to deal with relative attribute paths
+        const fullyQualifiedSourceKey = `${srcKeyWithinFor}/${relativeKeyMatch.replace('./', '')}`;
+        const isValidSrcNode = !!sourceSchemaFlattened[`${sourcePrefix}${fullyQualifiedSourceKey}`];
+
+        constructedSourceKey = isValidSrcNode
+          ? constructedSourceKey.replace(relativeKeyMatch, fullyQualifiedSourceKey)
+          : constructedSourceKey;
       }
     });
   } else {
     const fullyQualifiedSourceKey = `${srcKeyWithinFor}/${sourceKey}`;
     constructedSourceKey = sourceSchemaFlattened[`${sourcePrefix}${fullyQualifiedSourceKey}`] ? fullyQualifiedSourceKey : sourceKey;
   }
+
   return constructedSourceKey;
 };
 
-export const getTargetValueWithoutLoop = (targetKey: string): string => {
+export const qualifyLoopRelativeSourceKeys = (targetKey: string): string => {
+  let qualifiedTargetKey = targetKey;
+  const srcKeys: string[] = [];
+
+  const splitLoops = qualifiedTargetKey.split(')');
+  splitLoops.forEach((splitLoop) => {
+    if (splitLoop.includes(mapNodeParams.for)) {
+      srcKeys.push(getSourceKeyOfLastLoop(`${splitLoop})`));
+    }
+  });
+
+  let curSrcParentKey = srcKeys[0];
+  srcKeys.forEach((srcKey) => {
+    if (!srcKey.includes(curSrcParentKey)) {
+      const fullyQualifiedSrcKey = `${curSrcParentKey}/${srcKey}`;
+      qualifiedTargetKey = qualifiedTargetKey.replace(srcKey, fullyQualifiedSrcKey);
+
+      curSrcParentKey = fullyQualifiedSrcKey;
+    } else {
+      curSrcParentKey = srcKey;
+    }
+  });
+
+  return qualifiedTargetKey;
+};
+
+export const getTargetValueWithoutLastLoop = (targetKey: string): string => {
   const forMatchArr = targetKey.match(/\$for\(((?!\)).)+\)\//g);
   const forMatch = forMatchArr?.[forMatchArr.length - 1];
   return forMatch ? targetKey.replace(forMatch, '') : targetKey;

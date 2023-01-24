@@ -1,4 +1,10 @@
 {
+  "+0yxlR": [
+    {
+      "type": 0,
+      "value": "Function display"
+    }
+  ],
   "+20fdv": [
     {
       "type": 0,
@@ -15,6 +21,12 @@
     {
       "type": 0,
       "value": "Failed loading the schema. Please try again."
+    }
+  ],
+  "+JCU+Y": [
+    {
+      "type": 0,
+      "value": "Select this if you are configuring an on-prem connection"
     }
   ],
   "+W9fkq": [
@@ -51,12 +63,6 @@
     {
       "type": 0,
       "value": "페이지 매김"
-    }
-  ],
-  "/9r9ML": [
-    {
-      "type": 0,
-      "value": "Add target schema"
     }
   ],
   "/AtN16": [
@@ -964,12 +970,6 @@
     {
       "type": 0,
       "value": "(UTC+09:30) 애들레이드"
-    }
-  ],
-  "6grB5C": [
-    {
-      "type": 0,
-      "value": "Invalid node settings"
     }
   ],
   "6jiO7t": [
@@ -1946,6 +1946,12 @@
       "value": "Enter a valid Json."
     }
   ],
+  "GD3m4X": [
+    {
+      "type": 0,
+      "value": "Expanded"
+    }
+  ],
   "GDUGlm": [
     {
       "type": 0,
@@ -2010,6 +2016,12 @@
     {
       "type": 0,
       "value": "선택 취소"
+    }
+  ],
+  "GyUe4C": [
+    {
+      "type": 0,
+      "value": "Modify options regarding functions"
     }
   ],
   "GzQQqH": [
@@ -2266,6 +2278,12 @@
     {
       "type": 0,
       "value": "사전에 키가 포함되어 있거나, 배열에 값이 포함되어 있거나, 문자열에 부분 문자열이 포함되어 있는 경우 true를 반환합니다."
+    }
+  ],
+  "Jil/Wa": [
+    {
+      "type": 0,
+      "value": "Invalid settings"
     }
   ],
   "JjTfC7": [
@@ -3107,12 +3125,6 @@
       "value": "입력 전체 배열로 전환"
     }
   ],
-  "RZO5Ic": [
-    {
-      "type": 0,
-      "value": "Add or replace your schemas."
-    }
-  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -3306,6 +3318,12 @@
       "value": "새 연결을 만듦"
     }
   ],
+  "TY4HzZ": [
+    {
+      "type": 0,
+      "value": "Add or replace your schemas."
+    }
+  ],
   "TZv5JE": [
     {
       "type": 0,
@@ -3334,6 +3352,12 @@
     {
       "type": 0,
       "value": "사용자 지정"
+    }
+  ],
+  "Tmr/9e": [
+    {
+      "type": 0,
+      "value": "Invalid parameters"
     }
   ],
   "ToPmjE": [
@@ -4494,12 +4518,6 @@
       "value": "논리 함수"
     }
   ],
-  "fqNVDv": [
-    {
-      "type": 0,
-      "value": "Back"
-    }
-  ],
   "froV/0": [
     {
       "type": 0,
@@ -5151,6 +5169,12 @@
       "value": "A line for the parent element is added automatically."
     }
   ],
+  "lR7V87": [
+    {
+      "type": 0,
+      "value": "Functions"
+    }
+  ],
   "lV77P8": [
     {
       "type": 0,
@@ -5782,6 +5806,12 @@
       "value": "Int"
     }
   ],
+  "rAwCdh": [
+    {
+      "type": 0,
+      "value": "Connect via on-premises data gateway"
+    }
+  ],
   "rAyuzv": [
     {
       "type": 0,
@@ -5932,6 +5962,12 @@
       "value": "새 매개 변수"
     }
   ],
+  "sv+IcU": [
+    {
+      "type": 0,
+      "value": "Unable to generate data map definition"
+    }
+  ],
   "syiNc+": [
     {
       "type": 0,
@@ -5948,6 +5984,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 대상 표준 시간대의 표준 시간대 이름을 포함하는 문자열입니다. 자세한 내용은 https://msdn.microsoft.com/ko-kr/library/gg154758.aspx를 참조하세요."
+    }
+  ],
+  "tAeKNh": [
+    {
+      "type": 0,
+      "value": "Simple"
     }
   ],
   "tE7Zam": [
@@ -6380,12 +6422,6 @@
       "value": "콜백 URL:"
     }
   ],
-  "woq0x0": [
-    {
-      "type": 0,
-      "value": "Add source schema"
-    }
-  ],
   "wzEneQ": [
     {
       "type": 0,
@@ -6408,6 +6444,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "xC1zg3": [
+    {
+      "type": 0,
+      "value": "Schemas"
     }
   ],
   "xFQXAI": [

@@ -1,6 +1,6 @@
-import { showNotification, setConnectionInput } from '../../core/state/DataMapSlice';
+import { setConnectionInput, showNotification } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaNodeDataType, SchemaNodeExtended, SchemaNodeProperty, NormalizedDataType } from '../../models';
+import type { NormalizedDataType, SchemaNodeExtended, SchemaNodeProperty } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
 import { directAccessPseudoFunctionKey, indexPseudoFunctionKey } from '../../models/Function';
@@ -19,7 +19,7 @@ import {
   getFunctionOutputValue,
   isFunctionData,
 } from '../../utils/Function.Utils';
-import { iconForNormalizedDataType, iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
+import { iconForNormalizedDataType } from '../../utils/Icon.Utils';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { addSourceReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
@@ -39,7 +39,6 @@ const customValueDebounceDelay = 300;
 interface SharedOptionData {
   isFunction: boolean;
   nodeProperties?: SchemaNodeProperty[]; // Should just be source schema nodes
-  schemaNodeDataType?: SchemaNodeDataType; // Will be preferentially used over normalized type if present (should just be source schema nodes)
   normalizedDataType: NormalizedDataType;
 }
 
@@ -122,9 +121,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
       return null;
     }
 
-    const TypeIcon = items[0].data.schemaNodeDataType
-      ? iconForSchemaNodeDataType(items[0].data.schemaNodeDataType, 16, false, items[0].data.nodeProperties)
-      : iconForNormalizedDataType(items[0].data.normalizedDataType, 16, false);
+    const TypeIcon = iconForNormalizedDataType(items[0].data.normalizedDataType, 16, false, items[0].data.nodeProperties);
 
     return (
       <Stack horizontal verticalAlign="center">
@@ -146,9 +143,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
         return null;
       }
 
-      const TypeIcon = item.data.schemaNodeDataType
-        ? iconForSchemaNodeDataType(item.data.schemaNodeDataType, 16, false, item.data.nodeProperties)
-        : iconForNormalizedDataType(item.data.normalizedDataType, 16, false);
+      const TypeIcon = iconForNormalizedDataType(item.data.normalizedDataType, 16, false, item.data.nodeProperties);
 
       return (
         <Stack horizontal verticalAlign="center">
@@ -273,7 +268,6 @@ export const InputDropdown = (props: InputDropdownProps) => {
         data: {
           isFunction: false,
           nodeProperties: srcSchemaNode.nodeProperties,
-          schemaNodeDataType: srcSchemaNode.schemaNodeDataType,
           normalizedDataType: srcSchemaNode.normalizedDataType,
         },
       })

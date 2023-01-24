@@ -1,4 +1,11 @@
-import { simpleLoopSource, simpleLoopTarget, sourceMockSchema, targetMockSchema } from '../../__mocks__';
+import {
+  layeredLoopSourceMockSchema,
+  layeredLoopTargetMockSchema,
+  simpleLoopSource,
+  simpleLoopTarget,
+  sourceMockSchema,
+  targetMockSchema,
+} from '../../__mocks__';
 import type { MapDefinitionEntry } from '../../models';
 import { functionMock, ifPseudoFunctionKey, directAccessPseudoFunctionKey, indexPseudoFunctionKey } from '../../models';
 import type { ConnectionUnit } from '../../models/Connection';
@@ -572,7 +579,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       );
     });
 
-    it('creates a direct index connection', () => {
+    it('creates a custom value direct access connection', () => {
       simpleMap['ns0:Root'] = {
         LoopingWithIndex: {
           WeatherSummary: {
@@ -676,7 +683,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       );
     });
 
-    it.skip('creates a looping connection w/ index variable, conditional, and relative property path', () => {
+    it('creates a looping connection w/ index variable, conditional, and relative attribute path', () => {
       simpleMap['ns0:Root'] = {
         LoopingWithIndex: {
           WeatherSummary: {
@@ -693,14 +700,37 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       };
 
       const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
-      const resultEntries = Object.entries(result);
-      resultEntries.sort();
 
-      // TODO: Update expects
-      expect(resultEntries.length).toEqual(5);
+      expect(Object.entries(result).length).toEqual(9);
+
+      const indexFnRfKey = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day'].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(indexFnRfKey).toContain(indexPseudoFunctionKey);
+      expect((result[indexFnRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/LoopingWithIndex/WeatherReport');
+
+      const conditionalFnRfKey = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day'].inputs[0][1] as ConnectionUnit)
+        .reactFlowKey;
+      expect(conditionalFnRfKey).toContain(ifPseudoFunctionKey);
+      expect((result[conditionalFnRfKey].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/LoopingWithIndex/WeatherReport'
+      );
+      const greaterFnRfKey = (result[conditionalFnRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(greaterFnRfKey).toContain('IsGreater');
+      expect((result[greaterFnRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(indexFnRfKey);
+      expect(result[greaterFnRfKey].inputs[1][0] as string).toBe('2');
+
+      const concatFnRfKey = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day/Name'].inputs[0][0] as ConnectionUnit)
+        .reactFlowKey;
+      expect(concatFnRfKey).toContain('Concat');
+      expect(result[concatFnRfKey].inputs[0][0] as string).toBe('"Day "');
+      expect((result[concatFnRfKey].inputs[0][1] as ConnectionUnit).reactFlowKey).toBe(indexFnRfKey);
+
+      expect((result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day/Pressure'].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/LoopingWithIndex/WeatherReport/@Pressure'
+      );
     });
 
-    it('creates a nested loop connection', () => {
+    // TODO (#16831098): Support nested many-to-many loops
+    it.skip('creates a nested loop connection', () => {
       const extendedLoopSource = convertSchemaToSchemaExtended(simpleLoopSource);
       const extendedLoopTarget = convertSchemaToSchemaExtended(simpleLoopTarget);
       simpleMap['ns0:Root'] = {
@@ -721,19 +751,84 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
       expect(resultEntries.length).toEqual(4);
 
-      expect(resultEntries[0][0]).toEqual('source-/ns0:Root/Year/Month');
-      expect(resultEntries[0][1]).toBeTruthy();
-
-      expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Year/Month/Day');
-      expect(resultEntries[1][1]).toBeTruthy();
-
       expect(resultEntries[2][0]).toEqual('target-/ns0:Root/Ano/Mes');
-      expect(resultEntries[2][1]).toBeTruthy();
+      expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/Year');
 
       expect(resultEntries[3][0]).toEqual('target-/ns0:Root/Ano/Mes/Dia');
-      expect(resultEntries[3][1]).toBeTruthy();
+      expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/Year/Month');
     });
 
-    // TODO: Nested loops w/ index variables and directAccess's
+    it('creates a many-to-one loop connection with nested index variables', () => {
+      const extendedLayeredLoopSource = convertSchemaToSchemaExtended(layeredLoopSourceMockSchema);
+      const extendedLayeredLoopTarget = convertSchemaToSchemaExtended(layeredLoopTargetMockSchema);
+      simpleMap['ns0:Root'] = {
+        ManyToOne: {
+          '$for(/ns0:Root/ManyToOne/SourceYear, $a)': {
+            '$for(SourceMonth, $b)': {
+              '$for(SourceDay, $c)': {
+                Date: {
+                  DayName: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay[$b]/SourceDate',
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const result = convertFromMapDefinition(simpleMap, extendedLayeredLoopSource, extendedLayeredLoopTarget, functionMock);
+
+      expect(Object.entries(result).length).toEqual(10);
+
+      const indexRfKey1 = (result['target-/ns0:Root/ManyToOne/Date'].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(indexRfKey1).toContain(indexPseudoFunctionKey);
+      expect((result[indexRfKey1].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay'
+      );
+
+      const indexRfKey2 = (result['target-/ns0:Root/ManyToOne/Date'].inputs[0][1] as ConnectionUnit).reactFlowKey;
+      expect(indexRfKey2).toContain(indexPseudoFunctionKey);
+      expect((result[indexRfKey2].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/ManyToOne/SourceYear/SourceMonth');
+
+      const indexRfKey3 = (result['target-/ns0:Root/ManyToOne/Date'].inputs[0][2] as ConnectionUnit).reactFlowKey;
+      expect(indexRfKey3).toContain(indexPseudoFunctionKey);
+      expect((result[indexRfKey3].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/ManyToOne/SourceYear');
+
+      const directAccessRfKey = (result['target-/ns0:Root/ManyToOne/Date/DayName'].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      expect(directAccessRfKey).toContain(directAccessPseudoFunctionKey);
+      expect((result[directAccessRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(indexRfKey2);
+      expect((result[directAccessRfKey].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay'
+      );
+      expect((result[directAccessRfKey].inputs[2][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate'
+      );
+    });
+
+    it('creates a loop connection with dot access', () => {
+      const extendedLoopSource = convertSchemaToSchemaExtended(sourceMockSchema);
+      const extendedLoopTarget = convertSchemaToSchemaExtended(targetMockSchema);
+      simpleMap['ns0:Root'] = {
+        NameValueTransforms: {
+          PO_Status: {
+            '$for(/ns0:Root/NameValueTransforms/PurchaseOrderStatus/ns0:LineItem)': {
+              Product: {
+                ProductIdentifier: '.',
+              },
+            },
+          },
+        },
+      };
+
+      const result = convertFromMapDefinition(simpleMap, extendedLoopSource, extendedLoopTarget, []);
+
+      expect(Object.entries(result).length).toEqual(3);
+
+      expect((result['target-/ns0:Root/NameValueTransforms/PO_Status/Product'].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/NameValueTransforms/PurchaseOrderStatus/ns0:LineItem'
+      );
+      expect(
+        (result['target-/ns0:Root/NameValueTransforms/PO_Status/Product/ProductIdentifier'].inputs[0][0] as ConnectionUnit).reactFlowKey
+      ).toBe('source-/ns0:Root/NameValueTransforms/PurchaseOrderStatus/ns0:LineItem');
+    });
   });
 });

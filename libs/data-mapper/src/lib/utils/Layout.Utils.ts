@@ -71,13 +71,21 @@ export const convertDataMapNodesToElkGraph = (
     }
 
     // Categorize connections to function<->function and any others for elkTree creation below
-    Object.values(connection.inputs).forEach((inputValueArray) => {
-      inputValueArray.forEach((inputValue) => {
+    Object.values(connection.inputs).forEach((inputValueArray, inputIndex) => {
+      inputValueArray.forEach((inputValue, inputValueIndex) => {
         if (isConnectionUnit(inputValue)) {
-          const nextEdge = {
+          const target = connection.self.reactFlowKey;
+          const labels = isFunctionData(connection.self.node)
+            ? connection.self.node.maxNumberOfInputs > -1
+              ? [{ text: connection.self.node.inputs[inputIndex].name }]
+              : [{ text: `${connection.self.node.inputs[inputIndex].name}${inputValueIndex}` }]
+            : [];
+
+          const nextEdge: ElkExtendedEdge = {
             id: `e${nextEdgeIndex}`,
             sources: [inputValue.reactFlowKey],
-            targets: [connection.self.reactFlowKey],
+            targets: [target],
+            labels,
           };
 
           if (isFunctionData(inputValue.node) && isFunctionData(connection.self.node)) {

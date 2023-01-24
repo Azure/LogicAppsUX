@@ -1,4 +1,10 @@
 {
+  "+0yxlR": [
+    {
+      "type": 0,
+      "value": "Function display"
+    }
+  ],
   "+20fdv": [
     {
       "type": 0,
@@ -31,6 +37,12 @@
     {
       "type": 0,
       "value": "Failed loading the schema. Please try again."
+    }
+  ],
+  "+JCU+Y": [
+    {
+      "type": 0,
+      "value": "Select this if you are configuring an on-prem connection"
     }
   ],
   "+W9fkq": [
@@ -67,12 +79,6 @@
     {
       "type": 0,
       "value": "分页"
-    }
-  ],
-  "/9r9ML": [
-    {
-      "type": 0,
-      "value": "Add target schema"
     }
   ],
   "/AtN16": [
@@ -984,12 +990,6 @@
     {
       "type": 0,
       "value": "(UTC+09:30)阿德莱德"
-    }
-  ],
-  "6grB5C": [
-    {
-      "type": 0,
-      "value": "Invalid node settings"
     }
   ],
   "6jiO7t": [
@@ -1998,6 +1998,12 @@
       "value": "Enter a valid Json."
     }
   ],
+  "GD3m4X": [
+    {
+      "type": 0,
+      "value": "Expanded"
+    }
+  ],
   "GDUGlm": [
     {
       "type": 0,
@@ -2062,6 +2068,12 @@
     {
       "type": 0,
       "value": "取消所选内容"
+    }
+  ],
+  "GyUe4C": [
+    {
+      "type": 0,
+      "value": "Modify options regarding functions"
     }
   ],
   "GzQQqH": [
@@ -2326,6 +2338,12 @@
     {
       "type": 0,
       "value": "如果字典包含密钥、数组包含值或字符串包含子字符串，则返回 true"
+    }
+  ],
+  "Jil/Wa": [
+    {
+      "type": 0,
+      "value": "Invalid settings"
     }
   ],
   "JjTfC7": [
@@ -3203,12 +3221,6 @@
       "value": "切换到输入整个数组"
     }
   ],
-  "RZO5Ic": [
-    {
-      "type": 0,
-      "value": "Add or replace your schemas."
-    }
-  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -3402,6 +3414,12 @@
       "value": "创建新连接"
     }
   ],
+  "TY4HzZ": [
+    {
+      "type": 0,
+      "value": "Add or replace your schemas."
+    }
+  ],
   "TZv5JE": [
     {
       "type": 0,
@@ -3430,6 +3448,12 @@
     {
       "type": 0,
       "value": "自定义"
+    }
+  ],
+  "Tmr/9e": [
+    {
+      "type": 0,
+      "value": "Invalid parameters"
     }
   ],
   "ToPmjE": [
@@ -4618,12 +4642,6 @@
       "value": "逻辑函数"
     }
   ],
-  "fqNVDv": [
-    {
-      "type": 0,
-      "value": "Back"
-    }
-  ],
   "froV/0": [
     {
       "type": 0,
@@ -5307,6 +5325,12 @@
       "value": "A line for the parent element is added automatically."
     }
   ],
+  "lR7V87": [
+    {
+      "type": 0,
+      "value": "Functions"
+    }
+  ],
   "lV77P8": [
     {
       "type": 0,
@@ -5970,6 +5994,12 @@
       "value": "Int"
     }
   ],
+  "rAwCdh": [
+    {
+      "type": 0,
+      "value": "Connect via on-premises data gateway"
+    }
+  ],
   "rAyuzv": [
     {
       "type": 0,
@@ -6120,6 +6150,12 @@
       "value": "新建参数"
     }
   ],
+  "sv+IcU": [
+    {
+      "type": 0,
+      "value": "Unable to generate data map definition"
+    }
+  ],
   "syiNc+": [
     {
       "type": 0,
@@ -6136,6 +6172,12 @@
     {
       "type": 0,
       "value": "必需。一个字符串，它包含目标时区的时区名称。请访问 https://msdn.microsoft.com/en-us/library/gg154758.aspx 查看详细信息。"
+    }
+  ],
+  "tAeKNh": [
+    {
+      "type": 0,
+      "value": "Simple"
     }
   ],
   "tE7Zam": [
@@ -6572,12 +6614,6 @@
       "value": "回叫 URL:"
     }
   ],
-  "woq0x0": [
-    {
-      "type": 0,
-      "value": "Add source schema"
-    }
-  ],
   "wzEneQ": [
     {
       "type": 0,
@@ -6600,6 +6636,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "xC1zg3": [
+    {
+      "type": 0,
+      "value": "Schemas"
     }
   ],
   "xFQXAI": [

@@ -2,6 +2,7 @@ import constants from '../../common/constants';
 import type { AppDispatch, RootState } from '../../core';
 import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import {
   useIsDiscovery,
   useIsPanelCollapsed,
@@ -18,6 +19,7 @@ import {
   isolateTab,
   registerPanelTabs,
   selectPanelTab,
+  setTabError,
   setTabVisibility,
 } from '../../core/state/panel/panelSlice';
 import { useIconUri, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
@@ -114,6 +116,12 @@ export const PanelRoot = (): JSX.Element => {
       })
     );
   }, [dispatch, selectedNode, nodeMetaData, isMonitoringView]);
+
+  const parameterValidationErrors = useParameterValidationErrors(selectedNode);
+  useEffect(() => {
+    const hasErrors = parameterValidationErrors?.length > 0;
+    dispatch(setTabError({ tabName: 'parameters', hasErrors, nodeId: selectedNode }));
+  }, [dispatch, parameterValidationErrors?.length, selectedNode]);
 
   useEffect(() => {
     collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);

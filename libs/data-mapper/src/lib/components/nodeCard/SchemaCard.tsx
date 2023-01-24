@@ -7,7 +7,7 @@ import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { Connection } from '../../models/Connection';
 import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
 import { flattenInputs, isCustomValue, isValidConnectionByType, isValidCustomValueByType } from '../../utils/Connection.Utils';
-import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
+import { iconForNormalizedDataType } from '../../utils/Icon.Utils';
 import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import { ItemToggledState } from '../tree/TargetSchemaTreeItem';
 import HandleWrapper from './HandleWrapper';
@@ -263,7 +263,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
   const ChevronIcon = bundleIcon(ChevronRight16Filled, ChevronRight16Regular);
-  const BundledTypeIcon = iconForSchemaNodeDataType(schemaNode.schemaNodeDataType, 24, false, schemaNode.nodeProperties);
+  const BundledTypeIcon = iconForNormalizedDataType(schemaNode.normalizedDataType, 24, false, schemaNode.nodeProperties);
   const contextMenu = useCardContextMenu();
   const getRemoveMenuItem = (): MenuItemOption => {
     const deleteNode = intl.formatMessage({

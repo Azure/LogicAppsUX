@@ -16,6 +16,7 @@ export const settingsFileName = 'settings.json';
 export const extensionsFileName = 'extensions.json';
 export const vscodeFolderName = '.vscode';
 export const workflowFileName = 'workflow.json';
+export const funcIgnoreFileName = '.funcignore';
 
 // Functions
 export const func = 'func';
@@ -26,6 +27,7 @@ export const hostStartCommand = 'host start';
 export const hostStartTaskName = `${func}: ${hostStartCommand}`;
 export const funcPackageName = 'azure-functions-core-tools';
 export const defaultFuncPort = '7071';
+export const isolatedSdkName = 'Microsoft.Azure.Functions.Worker.Sdk';
 
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
@@ -68,6 +70,7 @@ export enum extensionCommand {
   createLogicAppAdvanced = 'logicAppsExtension.createLogicAppAdvanced',
   deploy = 'logicAppsExtension.deploy',
   deploySlot = 'logicAppsExtension.deploySlot',
+  redeploy = 'logicAppsExtension.redeploy',
   showOutputChannel = 'logicAppsExtension.showOutputChannel',
   startLogicApp = 'logicAppsExtension.startLogicApp',
   stopLogicApp = 'logicAppsExtension.stopLogicApp',
@@ -76,12 +79,34 @@ export enum extensionCommand {
   getDebugSymbolDll = 'logicAppsExtension.getDebugSymbolDll',
   deleteLogicApp = 'logicAppsExtension.deleteLogicApp',
   refresh = 'logicAppsExtension.refresh',
+  switchToDotnetProject = 'logicAppsExtension.switchToDotnetProject',
+  openInPortal = 'logicAppsExtension.openInPortal',
   azureFunctionsOpenFile = 'azureFunctions.openFile',
   azureFunctionsUninstallFuncCoreTools = 'azureFunctions.uninstallFuncCoreTools',
   azureFunctionsAppSettingsEncrypt = 'azureFunctions.appSettings.encrypt',
   azureFunctionsAppSettingsDecrypt = 'azureFunctions.appSettings.decrypt',
   azureSelectSubscriptions = 'azure-account.selectSubscriptions',
   openOverview = 'logicAppsExtension.openOverview',
+  exportLogicApp = 'logicAppsExtension.exportLogicApp',
+  reviewValidation = 'logicAppsExtension.reviewValidation',
+  browseWebsite = 'logicAppsExtension.browseWebsite',
+  viewProperties = 'logicAppsExtension.viewProperties',
+  createSlot = 'logicAppsExtension.createSlot',
+  deleteSlot = 'logicAppsExtension.deleteSlot',
+  swapSlot = 'logicAppsExtension.swapSlot',
+  startStreamingLogs = 'logicAppsExtension.startStreamingLogs',
+  stopStreamingLogs = 'logicAppsExtension.stopStreamingLogs',
+  viewDeploymentLogs = 'logicAppsExtension.viewDeploymentLogs',
+  appSettingsAdd = 'logicAppsExtension.appSettings.add',
+  appSettingsDelete = 'logicAppsExtension.appSettings.delete',
+  appSettingsDownload = 'logicAppsExtension.appSettings.download',
+  appSettingsEdit = 'logicAppsExtension.appSettings.edit',
+  appSettingsRename = 'logicAppsExtension.appSettings.rename',
+  appSettingsUpload = 'logicAppsExtension.appSettings.upload',
+  appSettingsToggleSlotSetting = 'logicAppsExtension.appSettings.toggleSlotSetting',
+  toggleAppSettingVisibility = 'logicAppsExtension.toggleAppSettingVisibility',
+  useSQLStorage = 'logicAppsExtension.useSQLStorage',
+  switchDebugMode = 'logicAppsExtension.switchDebugMode',
 }
 
 // Context
@@ -145,3 +170,5 @@ export const kubernetesKind = 'kubernetes';
 export const functionAppKind = 'functionapp';
 export const logicAppKind = 'workflowapp';
 export const logicAppKindAppSetting = 'workflowApp';
+
+export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';

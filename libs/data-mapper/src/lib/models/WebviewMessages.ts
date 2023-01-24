@@ -11,7 +11,8 @@ export type MessageToWebview =
   | { command: 'loadDataMap'; data: MapDefinitionData }
   | { command: 'showAvailableSchemas'; data: string[] }
   | { command: 'setXsltFilename'; data: string }
-  | { command: 'setRuntimePort'; data: string };
+  | { command: 'setRuntimePort'; data: string }
+  | { command: 'getConfigurationSetting'; data: boolean };
 
 export type MessageToVsix =
   | {
@@ -32,4 +33,7 @@ export type MessageToVsix =
   | {
       command: 'setIsMapStateDirty';
       data: boolean;
+    }
+  | {
+      command: 'getFunctionDisplayExpanded';
     };

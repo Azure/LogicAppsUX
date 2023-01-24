@@ -6,7 +6,6 @@ export const indexedConnections: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/Looping/Person/Name',
         name: 'Name',
-        schemaNodeDataType: 'String',
         normalizedDataType: 'String',
         properties: 'NotSpecified',
         fullName: 'Name',
@@ -48,7 +47,6 @@ export const indexedConnections: ConnectionDictionary = {
           node: {
             key: '/ns0:Root/Looping/Employee/TelephoneNumber',
             name: 'TelephoneNumber',
-            schemaNodeDataType: 'String',
             normalizedDataType: 'String',
             properties: 'NotSpecified',
             fullName: 'TelephoneNumber',
@@ -93,7 +91,6 @@ export const indexedConnections: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/Looping/Employee/TelephoneNumber',
         name: 'TelephoneNumber',
-        schemaNodeDataType: 'String',
         normalizedDataType: 'String',
         properties: 'NotSpecified',
         fullName: 'TelephoneNumber',
@@ -137,7 +134,6 @@ export const indexedConnections: ConnectionDictionary = {
         node: {
           key: '/ns0:Root/Looping/Person/Name',
           name: 'Name',
-          schemaNodeDataType: 'String',
           normalizedDataType: 'String',
           properties: 'NotSpecified',
           fullName: 'Name',
@@ -180,14 +176,12 @@ export const indexedConnections: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/Looping/Person',
         name: 'Person',
-        schemaNodeDataType: 'None',
         normalizedDataType: 'ComplexType',
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:Root/Looping/Person/Name',
             name: 'Name',
-            schemaNodeDataType: 'String',
             normalizedDataType: 'String',
             properties: 'NotSpecified',
             fullName: 'Name',
@@ -224,7 +218,6 @@ export const indexedConnections: ConnectionDictionary = {
           {
             key: '/ns0:Root/Looping/Person/Address',
             name: 'Address',
-            schemaNodeDataType: 'String',
             normalizedDataType: 'String',
             properties: 'NotSpecified',
             fullName: 'Address',
@@ -261,7 +254,6 @@ export const indexedConnections: ConnectionDictionary = {
           {
             key: '/ns0:Root/Looping/Person/Other',
             name: 'Other',
-            schemaNodeDataType: 'String',
             normalizedDataType: 'String',
             properties: 'Optional',
             fullName: 'Other',
@@ -356,14 +348,12 @@ export const indexedConnections: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/Looping/Employee',
         name: 'Employee',
-        schemaNodeDataType: 'None',
         normalizedDataType: 'ComplexType',
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:Root/Looping/Employee/TelephoneNumber',
             name: 'TelephoneNumber',
-            schemaNodeDataType: 'String',
             normalizedDataType: 'String',
             properties: 'NotSpecified',
             fullName: 'TelephoneNumber',
@@ -400,7 +390,6 @@ export const indexedConnections: ConnectionDictionary = {
           {
             key: '/ns0:Root/Looping/Employee/Name',
             name: 'Name',
-            schemaNodeDataType: 'String',
             normalizedDataType: 'String',
             properties: 'NotSpecified',
             fullName: 'Name',
@@ -437,7 +426,6 @@ export const indexedConnections: ConnectionDictionary = {
           {
             key: '/ns0:Root/Looping/Employee/Salary',
             name: 'Salary',
-            schemaNodeDataType: 'Decimal',
             normalizedDataType: 'Decimal',
             properties: 'NotSpecified',
             fullName: 'Salary',
@@ -474,7 +462,6 @@ export const indexedConnections: ConnectionDictionary = {
           {
             key: '/ns0:Root/Looping/Employee/Country',
             name: 'Country',
-            schemaNodeDataType: 'String',
             normalizedDataType: 'String',
             properties: 'NotSpecified',
             fullName: 'Country',
@@ -511,7 +498,6 @@ export const indexedConnections: ConnectionDictionary = {
           {
             key: '/ns0:Root/Looping/Employee/Dat_of_Birth',
             name: 'Dat_of_Birth',
-            schemaNodeDataType: 'Date',
             normalizedDataType: 'DateTime',
             properties: 'NotSpecified',
             fullName: 'Dat_of_Birth',
@@ -548,7 +534,6 @@ export const indexedConnections: ConnectionDictionary = {
           {
             key: '/ns0:Root/Looping/Employee/Address',
             name: 'Address',
-            schemaNodeDataType: 'String',
             normalizedDataType: 'String',
             properties: 'NotSpecified',
             fullName: 'Address',
@@ -643,7 +628,6 @@ export const indexedConnections: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/Looping/Person/Address',
         name: 'Address',
-        schemaNodeDataType: 'String',
         normalizedDataType: 'String',
         properties: 'NotSpecified',
         fullName: 'Address',
@@ -689,7 +673,6 @@ export const indexedConnections: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/Looping/Employee/Name',
         name: 'Name',
-        schemaNodeDataType: 'String',
         normalizedDataType: 'String',
         properties: 'NotSpecified',
         fullName: 'Name',
@@ -760,14 +743,12 @@ export const indexedConnections: ConnectionDictionary = {
           node: {
             key: '/ns0:Root/Looping/Employee',
             name: 'Employee',
-            schemaNodeDataType: 'None',
             normalizedDataType: 'ComplexType',
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:Root/Looping/Employee/TelephoneNumber',
                 name: 'TelephoneNumber',
-                schemaNodeDataType: 'String',
                 normalizedDataType: 'String',
                 properties: 'NotSpecified',
                 fullName: 'TelephoneNumber',
@@ -804,7 +785,6 @@ export const indexedConnections: ConnectionDictionary = {
               {
                 key: '/ns0:Root/Looping/Employee/Name',
                 name: 'Name',
-                schemaNodeDataType: 'String',
                 normalizedDataType: 'String',
                 properties: 'NotSpecified',
                 fullName: 'Name',
@@ -841,7 +821,6 @@ export const indexedConnections: ConnectionDictionary = {
               {
                 key: '/ns0:Root/Looping/Employee/Salary',
                 name: 'Salary',
-                schemaNodeDataType: 'Decimal',
                 normalizedDataType: 'Decimal',
                 properties: 'NotSpecified',
                 fullName: 'Salary',
@@ -878,7 +857,6 @@ export const indexedConnections: ConnectionDictionary = {
               {
                 key: '/ns0:Root/Looping/Employee/Country',
                 name: 'Country',
-                schemaNodeDataType: 'String',
                 normalizedDataType: 'String',
                 properties: 'NotSpecified',
                 fullName: 'Country',
@@ -915,7 +893,6 @@ export const indexedConnections: ConnectionDictionary = {
               {
                 key: '/ns0:Root/Looping/Employee/Dat_of_Birth',
                 name: 'Dat_of_Birth',
-                schemaNodeDataType: 'Date',
                 normalizedDataType: 'DateTime',
                 properties: 'NotSpecified',
                 fullName: 'Dat_of_Birth',
@@ -952,7 +929,6 @@ export const indexedConnections: ConnectionDictionary = {
               {
                 key: '/ns0:Root/Looping/Employee/Address',
                 name: 'Address',
-                schemaNodeDataType: 'String',
                 normalizedDataType: 'String',
                 properties: 'NotSpecified',
                 fullName: 'Address',
@@ -1020,14 +996,12 @@ export const indexedConnections: ConnectionDictionary = {
         node: {
           key: '/ns0:Root/Looping/Person',
           name: 'Person',
-          schemaNodeDataType: 'None',
           normalizedDataType: 'ComplexType',
           properties: 'Repeating',
           children: [
             {
               key: '/ns0:Root/Looping/Person/Name',
               name: 'Name',
-              schemaNodeDataType: 'String',
               normalizedDataType: 'String',
               properties: 'NotSpecified',
               fullName: 'Name',
@@ -1064,7 +1038,6 @@ export const indexedConnections: ConnectionDictionary = {
             {
               key: '/ns0:Root/Looping/Person/Address',
               name: 'Address',
-              schemaNodeDataType: 'String',
               normalizedDataType: 'String',
               properties: 'NotSpecified',
               fullName: 'Address',
@@ -1101,7 +1074,6 @@ export const indexedConnections: ConnectionDictionary = {
             {
               key: '/ns0:Root/Looping/Person/Other',
               name: 'Other',
-              schemaNodeDataType: 'String',
               normalizedDataType: 'String',
               properties: 'Optional',
               fullName: 'Other',

@@ -63,7 +63,10 @@ export const useOperationManifest = (operationInfo: NodeOperation) => {
   const operationId = operationInfo?.operationId?.toLowerCase();
   return useQuery(
     ['manifest', { connectorId }, { operationId }],
-    () => operationManifestService.getOperationManifest(connectorId, operationId),
+    () =>
+      operationManifestService.isSupported(operationInfo.type, operationInfo.kind)
+        ? operationManifestService.getOperationManifest(connectorId, operationId)
+        : undefined,
     {
       enabled: !!connectorId && !!operationId,
       placeholderData: undefined,
