@@ -80,7 +80,7 @@ const TokenField = ({
         <DropdownEditor
           readonly={readOnly}
           initialValue={value}
-          options={editorOptions.options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
+          options={(editorOptions?.options ?? []).map((option: any, index: number) => ({ key: index.toString(), ...option }))}
           multiSelect={!!editorOptions?.multiSelect}
           onChange={onValueChange}
         />
@@ -104,7 +104,7 @@ const TokenField = ({
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
-          options={editorOptions.options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
+          options={(editorOptions?.options ?? []).map((option: any, index: number) => ({ key: index.toString(), ...option }))}
           useOption={true}
           isTrigger={isTrigger}
           isLoading={isLoading}
