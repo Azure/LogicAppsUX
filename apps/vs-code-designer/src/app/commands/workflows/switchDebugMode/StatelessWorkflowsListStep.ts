@@ -26,7 +26,7 @@ export class StatelessWorkflowsListStep extends AzureWizardPromptStep<IDebugMode
     }
   }
 
-  public shouldPrompt(_context: IDebugModeContext): boolean {
+  public shouldPrompt(): boolean {
     return true;
   }
 
