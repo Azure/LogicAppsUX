@@ -241,6 +241,11 @@
         "command": "logicAppsExtension.useSQLStorage",
         "title": "Use SQL storage for your Logic App project",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.enableAzureConnectors",
+        "title": "Use Connectors from Azure",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -536,6 +541,11 @@
           "command": "logicAppsExtension.useSQLStorage",
           "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@3"
+        },
+        {
+          "command": "logicAppsExtension.enableAzureConnectors",
+          "when": "resourceFilename==workflow.json",
+          "group": "navigation@2"
         }
       ],
       "commandPalette": [
