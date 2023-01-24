@@ -33,7 +33,7 @@ import { openOverview } from './workflows/openOverview';
 import { reviewValidation } from './workflows/reviewValidation';
 import { switchToDotnetProject } from './workflows/switchToDotnetProject';
 import { viewContent } from './workflows/viewContent';
-import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
+import type { AppSettingTreeItem, FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
 import { registerSiteCommand } from '@microsoft/vscode-azext-azureappservice';
 import { registerCommand } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
@@ -86,4 +86,11 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.startStreamingLogs, startStreamingLogs);
   registerCommand(extensionCommand.stopStreamingLogs, stopStreamingLogs);
   registerSiteCommand(extensionCommand.viewDeploymentLogs, viewDeploymentLogs);
+  registerCommand(
+    extensionCommand.toggleAppSettingVisibility,
+    async (context: IActionContext, node: AppSettingTreeItem) => {
+      await node.toggleValueVisibility(context);
+    },
+    250
+  );
 }
