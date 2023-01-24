@@ -197,6 +197,11 @@
         "command": "logicAppsExtension.appSettings.delete",
         "title": "Delete Setting...",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.appSettings.download",
+        "title": "Download Remote Settings...",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -425,6 +430,11 @@
           "command": "logicAppsExtension.appSettings.delete",
           "when": "view == newAzLogicApps && viewItem == applicationSettingItem",
           "group": "1@3"
+        },
+        {
+          "command": "logicAppsExtension.appSettings.download",
+          "when": "view == newAzLogicApps && viewItem == applicationSettings",
+          "group": "1@2"
         }
       ],
       "explorer/context": [
@@ -599,6 +609,7 @@
     "onCommand:logicAppsExtension.swapSlot",
     "onCommand:logicAppsExtension.appSettings.add",
     "onCommand:logicAppsExtension.appSettings.delete",
+    "onCommand:logicAppsExtension.appSettings.download",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
