@@ -192,6 +192,11 @@
         "command": "logicAppsExtension.appSettings.add",
         "title": "Add New Setting...",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.appSettings.delete",
+        "title": "Delete Setting...",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -415,6 +420,11 @@
           "command": "logicAppsExtension.appSettings.add",
           "when": "view == newAzLogicApps && viewItem == applicationSettings",
           "group": "1@1"
+        },
+        {
+          "command": "logicAppsExtension.appSettings.delete",
+          "when": "view == newAzLogicApps && viewItem == applicationSettingItem",
+          "group": "1@3"
         }
       ],
       "explorer/context": [
@@ -588,6 +598,7 @@
     "onCommand:logicAppsExtension.viewDeploymentLogs",
     "onCommand:logicAppsExtension.swapSlot",
     "onCommand:logicAppsExtension.appSettings.add",
+    "onCommand:logicAppsExtension.appSettings.delete",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
