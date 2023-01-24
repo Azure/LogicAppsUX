@@ -31,6 +31,7 @@ import { getDebugSymbolDll } from './workflows/getDebugSymbolDll';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
 import { openOverview } from './workflows/openOverview';
 import { reviewValidation } from './workflows/reviewValidation';
+import { switchDebugMode } from './workflows/switchDebugMode/switchDebugMode';
 import { switchToDotnetProject } from './workflows/switchToDotnetProject';
 import { viewContent } from './workflows/viewContent';
 import type { AppSettingTreeItem, FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
@@ -86,6 +87,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.startStreamingLogs, startStreamingLogs);
   registerCommand(extensionCommand.stopStreamingLogs, stopStreamingLogs);
   registerSiteCommand(extensionCommand.viewDeploymentLogs, viewDeploymentLogs);
+  registerCommand(extensionCommand.switchDebugMode, switchDebugMode);
   registerCommand(
     extensionCommand.toggleAppSettingVisibility,
     async (context: IActionContext, node: AppSettingTreeItem) => {

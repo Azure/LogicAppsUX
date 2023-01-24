@@ -98,6 +98,7 @@ export enum extensionCommand {
   stopStreamingLogs = 'logicAppsExtension.stopStreamingLogs',
   viewDeploymentLogs = 'logicAppsExtension.viewDeploymentLogs',
   toggleAppSettingVisibility = 'logicAppsExtension.toggleAppSettingVisibility',
+  switchDebugMode = 'logicAppsExtension.switchDebugMode',
 }
 
 // Context
