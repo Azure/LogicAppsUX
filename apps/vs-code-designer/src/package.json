@@ -233,6 +233,11 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "logicAppsExtension.switchDebugMode",
+        "title": "Update debug mode for stateless workflow",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "logicAppsExtension.useSQLStorage",
         "title": "Use SQL storage for your Logic App project",
         "category": "Azure Logic Apps"
@@ -523,6 +528,11 @@
           "group": "navigation@1"
         },
         {
+          "command": "logicAppsExtension.switchDebugMode",
+          "when": "explorerResourceIsRoot == true",
+          "group": "zzz_LogicApptools@2"
+        },
+        {
           "command": "logicAppsExtension.useSQLStorage",
           "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@3"
@@ -675,6 +685,7 @@
     "onCommand:logicAppsExtension.stopStreamingLogs",
     "onCommand:logicAppsExtension.viewDeploymentLogs",
     "onCommand:logicAppsExtension.swapSlot",
+    "onCommand:logicAppsExtension.switchDebugMode",
     "onCommand:logicAppsExtension.appSettings.add",
     "onCommand:logicAppsExtension.appSettings.delete",
     "onCommand:logicAppsExtension.appSettings.download",
