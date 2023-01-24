@@ -187,6 +187,11 @@
         "command": "logicAppsExtension.swapSlot",
         "title": "Swap Slot...",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.appSettings.add",
+        "title": "Add New Setting...",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -405,6 +410,11 @@
           "command": "logicAppsExtension.swapSlot",
           "when": "view == newAzLogicApps && viewItem == azLogicAppsSlot",
           "group": "2@4"
+        },
+        {
+          "command": "logicAppsExtension.appSettings.add",
+          "when": "view == newAzLogicApps && viewItem == applicationSettings",
+          "group": "1@1"
         }
       ],
       "explorer/context": [
@@ -577,6 +587,7 @@
     "onCommand:logicAppsExtension.stopStreamingLogs",
     "onCommand:logicAppsExtension.viewDeploymentLogs",
     "onCommand:logicAppsExtension.swapSlot",
+    "onCommand:logicAppsExtension.appSettings.add",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",

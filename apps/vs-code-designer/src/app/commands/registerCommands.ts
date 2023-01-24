@@ -8,6 +8,7 @@ import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt'
 import { ProductionSlotTreeItem } from '../tree/slotsTree/ProductionSlotTreeItem';
 import { SlotTreeItem } from '../tree/slotsTree/SlotTreeItem';
 import { browseWebsite } from './browseWebsite';
+import { createChildNode } from './createChildNode';
 import { createCodeless } from './createCodeless/createCodeless';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
@@ -33,10 +34,10 @@ import { openOverview } from './workflows/openOverview';
 import { reviewValidation } from './workflows/reviewValidation';
 import { switchToDotnetProject } from './workflows/switchToDotnetProject';
 import { viewContent } from './workflows/viewContent';
+import { AppSettingsTreeItem, registerSiteCommand } from '@microsoft/vscode-azext-azureappservice';
 import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
-import { registerSiteCommand } from '@microsoft/vscode-azext-azureappservice';
 import { registerCommand } from '@microsoft/vscode-azext-utils';
-import type { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
+import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import { commands } from 'vscode';
 
 export function registerCommands(): void {
@@ -86,4 +87,8 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.startStreamingLogs, startStreamingLogs);
   registerCommand(extensionCommand.stopStreamingLogs, stopStreamingLogs);
   registerSiteCommand(extensionCommand.viewDeploymentLogs, viewDeploymentLogs);
+  registerCommand(
+    extensionCommand.appSettingsAdd,
+    async (context: IActionContext, node?: AzExtParentTreeItem) => await createChildNode(context, AppSettingsTreeItem.contextValue, node)
+  );
 }
