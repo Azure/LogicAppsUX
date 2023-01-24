@@ -108,6 +108,7 @@ export enum extensionCommand {
   useSQLStorage = 'logicAppsExtension.useSQLStorage',
   switchDebugMode = 'logicAppsExtension.switchDebugMode',
   connectToGitHub = 'logicAppsExtension.connectToGitHub',
+  disconnectRepo = 'logicAppsExtension.disconnectRepo',
 }
 
 // Context

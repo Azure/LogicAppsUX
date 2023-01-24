@@ -21,6 +21,7 @@ import { createSlot } from './createSlot';
 import { deleteNode } from './deleteNode';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
 import { connectToGitHub } from './deployments/connectToGitHub';
+import { disconnectRepo } from './deployments/disconnectRepo';
 import { redeployDeployment } from './deployments/redeployDeployment';
 import { viewDeploymentLogs } from './deployments/viewDeploymentLogs';
 import { startStreamingLogs } from './logstream/startStreamingLogs';
@@ -118,4 +119,5 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.appSettingsUpload, uploadAppSettings);
   registerCommand(extensionCommand.useSQLStorage, useSQLStorage);
   registerCommand(extensionCommand.connectToGitHub, connectToGitHub);
+  registerCommand(extensionCommand.disconnectRepo, disconnectRepo);
 }
