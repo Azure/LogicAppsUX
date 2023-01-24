@@ -241,6 +241,21 @@
         "command": "logicAppsExtension.useSQLStorage",
         "title": "Use SQL storage for your Logic App project",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.viewCommitInGitHub",
+        "title": "View Commit in GitHub",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.connectToGitHub",
+        "title": "Connect to GitHub Repository...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.disconnectRepo",
+        "title": "Disconnect from Repo...",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -499,6 +514,16 @@
           "command": "logicAppsExtension.appSettings.upload",
           "when": "view == newAzLogicApps && viewItem == applicationSettings",
           "group": "1@3"
+        },
+        {
+          "command": "logicAppsExtension.disconnectRepo",
+          "when": "view == newAzLogicApps && viewItem == deploymentsConnected",
+          "group": "1@2"
+        },
+        {
+          "command": "logicAppsExtension.viewCommitInGitHub",
+          "when": "view == newAzLogicApps && viewItem == deployment/github",
+          "group": "1@4"
         }
       ],
       "explorer/context": [
@@ -694,6 +719,9 @@
     "onCommand:logicAppsExtension.appSettings.toggleSlotSetting",
     "onCommand:logicAppsExtension.appSettings.upload",
     "onCommand:logicAppsExtension.useSQLStorage",
+    "onCommand:logicAppsExtension.viewCommitInGitHub",
+    "onCommand:logicAppsExtension.disconnectRepo",
+    "onCommand:logicAppsExtension.connectToGitHub",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
