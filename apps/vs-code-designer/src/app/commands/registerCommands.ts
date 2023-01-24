@@ -40,6 +40,7 @@ import { openOverview } from './workflows/openOverview';
 import { reviewValidation } from './workflows/reviewValidation';
 import { switchDebugMode } from './workflows/switchDebugMode/switchDebugMode';
 import { switchToDotnetProject } from './workflows/switchToDotnetProject';
+import { useSQLStorage } from './workflows/useSQLStorage';
 import { viewContent } from './workflows/viewContent';
 import { AppSettingsTreeItem, AppSettingTreeItem, registerSiteCommand } from '@microsoft/vscode-azext-azureappservice';
 import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
@@ -116,4 +117,5 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.appSettingsToggleSlotSetting, toggleSlotSetting);
   registerCommand(extensionCommand.appSettingsUpload, uploadAppSettings);
   registerCommand(extensionCommand.configureWebhookRedirectEndpoint, configureWebhookRedirectEndpoint);
+  registerCommand(extensionCommand.useSQLStorage, useSQLStorage);
 }
