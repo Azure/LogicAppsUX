@@ -1,4 +1,10 @@
 {
+  "+0yxlR": [
+    {
+      "type": 0,
+      "value": "Function display"
+    }
+  ],
   "+20fdv": [
     {
       "type": 0,
@@ -73,12 +79,6 @@
     {
       "type": 0,
       "value": "Paginacja"
-    }
-  ],
-  "/9r9ML": [
-    {
-      "type": 0,
-      "value": "Add target schema"
     }
   ],
   "/AtN16": [
@@ -2117,6 +2117,12 @@
       "value": "Enter a valid Json."
     }
   ],
+  "GD3m4X": [
+    {
+      "type": 0,
+      "value": "Expanded"
+    }
+  ],
   "GDUGlm": [
     {
       "type": 0,
@@ -2181,6 +2187,12 @@
     {
       "type": 0,
       "value": "Anuluj zaznaczenie"
+    }
+  ],
+  "GyUe4C": [
+    {
+      "type": 0,
+      "value": "Modify options regarding functions"
     }
   ],
   "GzQQqH": [
@@ -3365,12 +3377,6 @@
       "value": "Przełącz się na wprowadzanie całej tablicy"
     }
   ],
-  "RZO5Ic": [
-    {
-      "type": 0,
-      "value": "Add or replace your schemas."
-    }
-  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -3595,6 +3601,12 @@
     {
       "type": 0,
       "value": "Utwórz nowe połączenie"
+    }
+  ],
+  "TY4HzZ": [
+    {
+      "type": 0,
+      "value": "Add or replace your schemas."
     }
   ],
   "TZv5JE": [
@@ -4807,12 +4819,6 @@
       "value": "Funkcje logiczne"
     }
   ],
-  "fqNVDv": [
-    {
-      "type": 0,
-      "value": "Back"
-    }
-  ],
   "froV/0": [
     {
       "type": 0,
@@ -5531,6 +5537,12 @@
     {
       "type": 0,
       "value": "A line for the parent element is added automatically."
+    }
+  ],
+  "lR7V87": [
+    {
+      "type": 0,
+      "value": "Functions"
     }
   ],
   "lV77P8": [
@@ -6401,6 +6413,12 @@
       "value": "Wymagane. Ciąg zawierający nazwę docelowej strefy czasowej. Szczegółowe informacje można znaleźć na stronie https://msdn.microsoft.com/pl-pl/library/gg154758.aspx."
     }
   ],
+  "tAeKNh": [
+    {
+      "type": 0,
+      "value": "Simple"
+    }
+  ],
   "tE7Zam": [
     {
       "type": 0,
@@ -6835,12 +6853,6 @@
       "value": "Adres URL wywołania zwrotnego:"
     }
   ],
-  "woq0x0": [
-    {
-      "type": 0,
-      "value": "Add source schema"
-    }
-  ],
   "wzEneQ": [
     {
       "type": 0,
@@ -6863,6 +6875,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "xC1zg3": [
+    {
+      "type": 0,
+      "value": "Schemas"
     }
   ],
   "xFQXAI": [
