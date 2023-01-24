@@ -50,7 +50,7 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'row',
     height: `${schemaNodeCardHeight}px`,
-    width: `${schemaNodeCardWidth}px`, // danielle this is width
+    width: `${schemaNodeCardWidth}px`,
     opacity: 1,
     float: 'right',
     alignItems: 'center',
@@ -133,9 +133,6 @@ const useStyles = makeStyles({
   disabled: {
     opacity: 0.38,
   },
-  schemaChildCard: {
-    width: `${childTargetNodeCardWidth}px`,
-  },
 
   focusIndicator: createFocusOutlineStyle({
     style: {
@@ -206,19 +203,12 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const containerStyle = useMemo(() => {
     const newContStyles = [sharedStyles.root, classes.container, 'nopan'];
 
-    // Need to style both source and target schema child nodes on overview
-    // - doesn't seem to affect canvas source schema nodes
-    // danielle can remove
-    if (isChild) {
-      newContStyles.push(classes.schemaChildCard);
-    }
-
     if (disabled) {
       newContStyles.push(classes.disabled);
     }
 
     return mergeClasses(...newContStyles);
-  }, [isChild, disabled, classes, sharedStyles]);
+  }, [disabled, classes, sharedStyles]);
 
   const connectionStatusIcon = useMemo(() => {
     switch (connectionStatus) {

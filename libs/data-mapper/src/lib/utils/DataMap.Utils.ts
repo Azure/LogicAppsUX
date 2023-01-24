@@ -354,7 +354,7 @@ export const bringInNestedNodes = (
   flattenedSourceSchema: SchemaNodeDictionary,
   nodes: SourceSchemaNodeExtended[]
 ) => {
-  // if parent already exists on the canvas, add all interim ones
+  // if parent already exists on the canvas, and higher node like root is added, add all nodes in-between
   const grandparentNodesOnCanvas = currentSourceSchemaNodes.filter(
     (node) =>
       payloadNode?.key.includes(node.key) &&
