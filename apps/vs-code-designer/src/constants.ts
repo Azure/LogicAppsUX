@@ -97,6 +97,13 @@ export enum extensionCommand {
   startStreamingLogs = 'logicAppsExtension.startStreamingLogs',
   stopStreamingLogs = 'logicAppsExtension.stopStreamingLogs',
   viewDeploymentLogs = 'logicAppsExtension.viewDeploymentLogs',
+  appSettingsAdd = 'logicAppsExtension.appSettings.add',
+  appSettingsDelete = 'logicAppsExtension.appSettings.delete',
+  appSettingsDownload = 'logicAppsExtension.appSettings.download',
+  appSettingsEdit = 'logicAppsExtension.appSettings.edit',
+  appSettingsRename = 'logicAppsExtension.appSettings.rename',
+  appSettingsUpload = 'logicAppsExtension.appSettings.upload',
+  appSettingsToggleSlotSetting = 'logicAppsExtension.appSettings.toggleSlotSetting',
   toggleAppSettingVisibility = 'logicAppsExtension.toggleAppSettingVisibility',
   switchDebugMode = 'logicAppsExtension.switchDebugMode',
 }
