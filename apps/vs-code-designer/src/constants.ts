@@ -107,6 +107,7 @@ export enum extensionCommand {
   toggleAppSettingVisibility = 'logicAppsExtension.toggleAppSettingVisibility',
   useSQLStorage = 'logicAppsExtension.useSQLStorage',
   switchDebugMode = 'logicAppsExtension.switchDebugMode',
+  configureWebhookRedirectEndpoint = 'logicAppsExtension.configureWebhookRedirectEndpoint',
 }
 
 // Context
