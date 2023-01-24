@@ -187,6 +187,15 @@
         "command": "logicAppsExtension.swapSlot",
         "title": "Swap Slot...",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.toggleAppSettingVisibility",
+        "title": "Toggle App Setting Visibility.",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/visible.svg",
+          "dark": "assets/dark/visible.svg"
+        }
       }
     ],
     "viewsContainers": {
@@ -405,6 +414,11 @@
           "command": "logicAppsExtension.swapSlot",
           "when": "view == newAzLogicApps && viewItem == azLogicAppsSlot",
           "group": "2@4"
+        },
+        {
+          "command": "logicAppsExtension.toggleAppSettingVisibility",
+          "when": "view == newAzLogicApps && viewItem == applicationSettingItem",
+          "group": "inline"
         }
       ],
       "explorer/context": [
@@ -462,6 +476,10 @@
         {
           "command": "logicAppsExtension.openOverview",
           "when": "resourceFilename==workflow.json"
+        },
+        {
+          "command": "logicAppsExtension.toggleAppSettingVisibility",
+          "when": "never"
         }
       ]
     },
