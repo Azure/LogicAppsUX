@@ -32,6 +32,7 @@ import { startLogicApp } from './startLogicApp';
 import { stopLogicApp } from './stopLogicApp';
 import { swapSlot } from './swapSlot';
 import { viewProperties } from './viewProperties';
+import { enableAzureConnectors } from './workflows/enableAzureConnectors';
 import { exportLogicApp } from './workflows/exportLogicApp';
 import { getDebugSymbolDll } from './workflows/getDebugSymbolDll';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
@@ -116,4 +117,5 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.appSettingsToggleSlotSetting, toggleSlotSetting);
   registerCommand(extensionCommand.appSettingsUpload, uploadAppSettings);
   registerCommand(extensionCommand.useSQLStorage, useSQLStorage);
+  registerCommand(extensionCommand.enableAzureConnectors, enableAzureConnectors);
 }
