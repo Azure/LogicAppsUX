@@ -7,7 +7,13 @@ import { ext } from '../../extensionVariables';
 import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt';
 import { ProductionSlotTreeItem } from '../tree/slotsTree/ProductionSlotTreeItem';
 import { SlotTreeItem } from '../tree/slotsTree/SlotTreeItem';
+import { downloadAppSettings } from './appSettings/downloadAppSettings';
+import { editAppSetting } from './appSettings/editAppSetting';
+import { renameAppSetting } from './appSettings/renameAppSetting';
+import { toggleSlotSetting } from './appSettings/toggleSlotSetting';
+import { uploadAppSettings } from './appSettings/uploadAppSettings';
 import { browseWebsite } from './browseWebsite';
+import { createChildNode } from './createChildNode';
 import { createCodeless } from './createCodeless/createCodeless';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
@@ -31,12 +37,14 @@ import { getDebugSymbolDll } from './workflows/getDebugSymbolDll';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
 import { openOverview } from './workflows/openOverview';
 import { reviewValidation } from './workflows/reviewValidation';
+import { switchDebugMode } from './workflows/switchDebugMode/switchDebugMode';
 import { switchToDotnetProject } from './workflows/switchToDotnetProject';
+import { useSQLStorage } from './workflows/useSQLStorage';
 import { viewContent } from './workflows/viewContent';
+import { AppSettingsTreeItem, AppSettingTreeItem, registerSiteCommand } from '@microsoft/vscode-azext-azureappservice';
 import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
-import { registerSiteCommand } from '@microsoft/vscode-azext-azureappservice';
 import { registerCommand } from '@microsoft/vscode-azext-utils';
-import type { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
+import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import { commands } from 'vscode';
 
 export function registerCommands(): void {
@@ -86,4 +94,26 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.startStreamingLogs, startStreamingLogs);
   registerCommand(extensionCommand.stopStreamingLogs, stopStreamingLogs);
   registerSiteCommand(extensionCommand.viewDeploymentLogs, viewDeploymentLogs);
+  registerCommand(extensionCommand.switchDebugMode, switchDebugMode);
+  registerCommand(
+    extensionCommand.toggleAppSettingVisibility,
+    async (context: IActionContext, node: AppSettingTreeItem) => {
+      await node.toggleValueVisibility(context);
+    },
+    250
+  );
+  registerCommand(
+    extensionCommand.appSettingsAdd,
+    async (context: IActionContext, node?: AzExtParentTreeItem) => await createChildNode(context, AppSettingsTreeItem.contextValue, node)
+  );
+  registerCommand(
+    extensionCommand.appSettingsDelete,
+    async (context: IActionContext, node?: AzExtTreeItem) => await deleteNode(context, AppSettingTreeItem.contextValue, node)
+  );
+  registerCommand(extensionCommand.appSettingsDownload, downloadAppSettings);
+  registerCommand(extensionCommand.appSettingsEdit, editAppSetting);
+  registerCommand(extensionCommand.appSettingsRename, renameAppSetting);
+  registerCommand(extensionCommand.appSettingsToggleSlotSetting, toggleSlotSetting);
+  registerCommand(extensionCommand.appSettingsUpload, uploadAppSettings);
+  registerCommand(extensionCommand.useSQLStorage, useSQLStorage);
 }

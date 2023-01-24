@@ -97,6 +97,16 @@ export enum extensionCommand {
   startStreamingLogs = 'logicAppsExtension.startStreamingLogs',
   stopStreamingLogs = 'logicAppsExtension.stopStreamingLogs',
   viewDeploymentLogs = 'logicAppsExtension.viewDeploymentLogs',
+  appSettingsAdd = 'logicAppsExtension.appSettings.add',
+  appSettingsDelete = 'logicAppsExtension.appSettings.delete',
+  appSettingsDownload = 'logicAppsExtension.appSettings.download',
+  appSettingsEdit = 'logicAppsExtension.appSettings.edit',
+  appSettingsRename = 'logicAppsExtension.appSettings.rename',
+  appSettingsUpload = 'logicAppsExtension.appSettings.upload',
+  appSettingsToggleSlotSetting = 'logicAppsExtension.appSettings.toggleSlotSetting',
+  toggleAppSettingVisibility = 'logicAppsExtension.toggleAppSettingVisibility',
+  useSQLStorage = 'logicAppsExtension.useSQLStorage',
+  switchDebugMode = 'logicAppsExtension.switchDebugMode',
 }
 
 // Context
@@ -160,3 +170,5 @@ export const kubernetesKind = 'kubernetes';
 export const functionAppKind = 'functionapp';
 export const logicAppKind = 'workflowapp';
 export const logicAppKindAppSetting = 'workflowApp';
+
+export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';
