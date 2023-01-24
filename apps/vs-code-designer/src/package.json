@@ -241,6 +241,11 @@
         "command": "logicAppsExtension.useSQLStorage",
         "title": "Use SQL storage for your Logic App project",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.configureWebhookRedirectEndpoint",
+        "title": "Configure Webhook Redirect Endpoint",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -536,6 +541,11 @@
           "command": "logicAppsExtension.useSQLStorage",
           "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@3"
+        },
+        {
+          "command": "logicAppsExtension.configureWebhookRedirectEndpoint",
+          "when": "resourceFilename==local.settings.json",
+          "group": "zzz_appSettings@3"
         }
       ],
       "commandPalette": [
