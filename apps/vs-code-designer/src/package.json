@@ -214,6 +214,11 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "logicAppsExtension.appSettings.toggleSlotSetting",
+        "title": "Toggle as Slot Setting",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "logicAppsExtension.appSettings.upload",
         "title": "Upload Local Settings...",
         "category": "Azure Logic Apps"
@@ -462,6 +467,11 @@
           "group": "1@2"
         },
         {
+          "command": "logicAppsExtension.appSettings.toggleSlotSetting",
+          "when": "view == newAzLogicApps && viewItem == applicationSettingItem",
+          "group": "1@4"
+        },
+        {
           "command": "logicAppsExtension.appSettings.upload",
           "when": "view == newAzLogicApps && viewItem == applicationSettings",
           "group": "1@3"
@@ -642,6 +652,7 @@
     "onCommand:logicAppsExtension.appSettings.download",
     "onCommand:logicAppsExtension.appSettings.edit",
     "onCommand:logicAppsExtension.appSettings.rename",
+    "onCommand:logicAppsExtension.appSettings.toggleSlotSetting",
     "onCommand:logicAppsExtension.appSettings.upload",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",
