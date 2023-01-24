@@ -93,6 +93,13 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.stopStreamingLogs, stopStreamingLogs);
   registerSiteCommand(extensionCommand.viewDeploymentLogs, viewDeploymentLogs);
   registerCommand(
+    extensionCommand.toggleAppSettingVisibility,
+    async (context: IActionContext, node: AppSettingTreeItem) => {
+      await node.toggleValueVisibility(context);
+    },
+    250
+  );
+  registerCommand(
     extensionCommand.appSettingsAdd,
     async (context: IActionContext, node?: AzExtParentTreeItem) => await createChildNode(context, AppSettingsTreeItem.contextValue, node)
   );

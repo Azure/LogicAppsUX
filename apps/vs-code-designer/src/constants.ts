@@ -104,6 +104,7 @@ export enum extensionCommand {
   appSettingsRename = 'logicAppsExtension.appSettings.rename',
   appSettingsUpload = 'logicAppsExtension.appSettings.upload',
   appSettingsToggleSlotSetting = 'logicAppsExtension.appSettings.toggleSlotSetting',
+  toggleAppSettingVisibility = 'logicAppsExtension.toggleAppSettingVisibility',
 }
 
 // Context

@@ -189,6 +189,15 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "logicAppsExtension.toggleAppSettingVisibility",
+        "title": "Toggle App Setting Visibility.",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/visible.svg",
+          "dark": "assets/dark/visible.svg"
+        }
+      },
+      {
         "command": "logicAppsExtension.appSettings.add",
         "title": "Add New Setting...",
         "category": "Azure Logic Apps"
@@ -442,6 +451,11 @@
           "group": "2@4"
         },
         {
+          "command": "logicAppsExtension.toggleAppSettingVisibility",
+          "when": "view == newAzLogicApps && viewItem == applicationSettingItem",
+          "group": "inline"
+        },
+        {
           "command": "logicAppsExtension.appSettings.add",
           "when": "view == newAzLogicApps && viewItem == applicationSettings",
           "group": "1@1"
@@ -532,6 +546,10 @@
         {
           "command": "logicAppsExtension.openOverview",
           "when": "resourceFilename==workflow.json"
+        },
+        {
+          "command": "logicAppsExtension.toggleAppSettingVisibility",
+          "when": "never"
         }
       ]
     },
