@@ -85,6 +85,13 @@ export interface BaseConnectionServiceOptions {
   writeConnection?: WriteConnectionFunc;
   apiHubServiceDetails: IApiHubServiceDetails;
   httpClient: IHttpClient;
+  connectionCreationClients?: Record<string, ConnectionCreationClient>;
+}
+
+type CreateConnectionFunc = (connectionInfo: ConnectionCreationInfo, connectionName: string) => Promise<ConnectionCreationInfo>;
+
+interface ConnectionCreationClient {
+  connectionCreationFunc: CreateConnectionFunc;
 }
 
 export type getAccessTokenType = () => Promise<string>;
@@ -379,7 +386,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     connectionsData: ConnectionAndAppSetting<LocalConnectionModel>;
     connection: Connection;
   } {
-    const { connectionType } = parametersMetadata;
+    const connectionType = parametersMetadata?.connectionMetadata?.type;
     let connectionsData;
     let connection;
     switch (connectionType) {

@@ -83,17 +83,33 @@ export class StandardConnectionService extends BaseConnectionService {
     connectionInfo: ConnectionCreationInfo,
     parametersMetadata: ConnectionParametersMetadata
   ): Promise<Connection> {
+    const { writeConnection, connectionCreationClients } = this.options;
+    const connectionCreationClientName = parametersMetadata.connectionMetadata?.connectionCreationClient;
+    if (connectionCreationClientName) {
+      if (connectionCreationClients?.[connectionCreationClientName]) {
+        // eslint-disable-next-line no-param-reassign
+        connectionInfo = await connectionCreationClients[connectionCreationClientName].connectionCreationFunc(
+          connectionInfo,
+          connectionName
+        );
+      } else {
+        throw new AssertionException(
+          AssertionErrorCode.CONNECTION_CREATION_CLIENT_NOTREGISTERED,
+          `The connection creation client for ${connectionCreationClientName} is not registered`
+        );
+      }
+    }
+
+    if (!writeConnection) {
+      throw new AssertionException(AssertionErrorCode.CALLBACK_NOTREGISTERED, 'Callback for write connection is not passed in service.');
+    }
+
     const { connectionsData, connection } = this.getConnectionsConfiguration(
       connectionName,
       connectionInfo,
       connectorId,
       parametersMetadata
     );
-
-    const { writeConnection } = this.options;
-    if (!writeConnection) {
-      throw new AssertionException(AssertionErrorCode.CALLBACK_NOTREGISTERED, 'Callback for write connection is not passed in service.');
-    }
 
     await this.options.writeConnection?.(connectionsData);
     this._connections[connection.id] = connection;

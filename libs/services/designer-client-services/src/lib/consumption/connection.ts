@@ -5,7 +5,7 @@ import { LogEntryLevel } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
 import type { Connector, Connection } from '@microsoft/utils-logic-apps';
-import { isArmResourceId, AssertionException, AssertionErrorCode } from '@microsoft/utils-logic-apps';
+import { isArmResourceId } from '@microsoft/utils-logic-apps';
 
 export class ConsumptionConnectionService extends BaseConnectionService {
   constructor(options: any) {
@@ -17,7 +17,7 @@ export class ConsumptionConnectionService extends BaseConnectionService {
     connectionId: string,
     connector: Connector,
     connectionInfo: ConnectionCreationInfo,
-    parametersMetadata?: ConnectionParametersMetadata
+    _parametersMetadata?: ConnectionParametersMetadata
   ): Promise<Connection> {
     const connectionName = connectionId.split('/').at(-1) as string;
 
@@ -30,14 +30,9 @@ export class ConsumptionConnectionService extends BaseConnectionService {
 
       if (connector.properties.testConnectionUrl) await this.pretestServiceProviderConnection(connector, connectionInfo);
 
-      const connection = isArmResourceId(connector.id)
-        ? await this.createConnectionInApiHub(connectionName, connector.id, connectionInfo)
-        : await this.createConnectionInLocal(
-            connectionName,
-            connector.id,
-            connectionInfo,
-            parametersMetadata as ConnectionParametersMetadata
-          );
+      if (!isArmResourceId(connector.id)) throw 'Connector id is not a valid ARM resource id.';
+
+      const connection = await this.createConnectionInApiHub(connectionName, connector.id, connectionInfo);
       await this.testConnection(connection);
       LoggerService().endTrace(logId);
       return connection;
@@ -51,30 +46,6 @@ export class ConsumptionConnectionService extends BaseConnectionService {
       });
       return Promise.reject(errorMessage);
     }
-  }
-
-  protected async createConnectionInLocal(
-    connectionName: string,
-    connectorId: string,
-    connectionInfo: ConnectionCreationInfo,
-    parametersMetadata: ConnectionParametersMetadata
-  ): Promise<Connection> {
-    const { connectionsData, connection } = this.getConnectionsConfiguration(
-      connectionName,
-      connectionInfo,
-      connectorId,
-      parametersMetadata
-    );
-
-    const { writeConnection } = this.options;
-    if (!writeConnection) {
-      throw new AssertionException(AssertionErrorCode.CALLBACK_NOTREGISTERED, 'Callback for write connection is not passed in service.');
-    }
-
-    await this.options.writeConnection?.(connectionsData);
-    this._connections[connection.id] = connection;
-
-    return connection;
   }
 
   async createConnectionInApiHub(connectionName: string, connectorId: string, connectionInfo: ConnectionCreationInfo): Promise<Connection> {

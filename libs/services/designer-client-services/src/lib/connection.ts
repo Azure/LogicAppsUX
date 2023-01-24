@@ -5,7 +5,7 @@ import type {
   ConnectionParameter,
   ConnectionParameterSet as ParameterSet,
   ConnectionParameterSetValues,
-  ConnectionType,
+  ConnectionMetadata,
 } from '@microsoft/utils-logic-apps';
 
 export interface ConnectorWithSwagger {
@@ -25,7 +25,7 @@ export interface ConnectionCreationInfo {
 export interface ConnectionParametersMetadata {
   connectionParameters?: Record<string, ConnectionParameter>;
   connectionParameterSet?: ParameterSet;
-  connectionType: ConnectionType;
+  connectionMetadata?: ConnectionMetadata;
 }
 
 export interface CreateConnectionResult {

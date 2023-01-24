@@ -2,48 +2,45 @@
   "name": "Source.xsd",
   "type": "XML",
   "targetNamespace": "http://tempuri.org/source.xsd",
-  "namespaces": { "ns0": "http://tempuri.org/source.xsd", "xs": "http://www.w3.org/2001/XMLSchema" },
+  "namespaces": {
+    "ns0": "http://tempuri.org/source.xsd",
+    "xs": "http://www.w3.org/2001/XMLSchema"
+  },
   "schemaTreeRoot": {
     "key": "/ns0:Root",
     "name": "Root",
     "namespacePrefix": "ns0",
     "namespaceUri": "http://tempuri.org/source.xsd",
-    "schemaNodeDataType": "None",
     "normalizedDataType": "ComplexType",
     "properties": "NotSpecified",
     "children": [
       {
         "key": "/ns0:Root/ManyToMany",
         "name": "ManyToMany",
-        "schemaNodeDataType": "None",
         "normalizedDataType": "ComplexType",
         "properties": "NotSpecified",
         "children": [
           {
             "key": "/ns0:Root/ManyToMany/SourceYear",
             "name": "SourceYear",
-            "schemaNodeDataType": "None",
             "normalizedDataType": "ComplexType",
             "properties": "Repeating",
             "children": [
               {
                 "key": "/ns0:Root/ManyToMany/SourceYear/SourceMonth",
                 "name": "SourceMonth",
-                "schemaNodeDataType": "None",
                 "normalizedDataType": "ComplexType",
                 "properties": "Repeating",
                 "children": [
                   {
                     "key": "/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay",
                     "name": "SourceDay",
-                    "schemaNodeDataType": "None",
                     "normalizedDataType": "ComplexType",
                     "properties": "Repeating",
                     "children": [
                       {
                         "key": "/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate",
                         "name": "SourceDate",
-                        "schemaNodeDataType": "String",
                         "normalizedDataType": "String",
                         "properties": "NotSpecified",
                         "fullName": "SourceDate",
@@ -68,35 +65,30 @@
       {
         "key": "/ns0:Root/ManyToOne",
         "name": "ManyToOne",
-        "schemaNodeDataType": "None",
         "normalizedDataType": "ComplexType",
         "properties": "NotSpecified",
         "children": [
           {
             "key": "/ns0:Root/ManyToOne/SourceYear",
             "name": "SourceYear",
-            "schemaNodeDataType": "None",
             "normalizedDataType": "ComplexType",
             "properties": "Repeating",
             "children": [
               {
                 "key": "/ns0:Root/ManyToOne/SourceYear/SourceMonth",
                 "name": "SourceMonth",
-                "schemaNodeDataType": "None",
                 "normalizedDataType": "ComplexType",
                 "properties": "Repeating",
                 "children": [
                   {
                     "key": "/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay",
                     "name": "SourceDay",
-                    "schemaNodeDataType": "None",
                     "normalizedDataType": "ComplexType",
                     "properties": "Repeating",
                     "children": [
                       {
                         "key": "/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate",
                         "name": "SourceDate",
-                        "schemaNodeDataType": "String",
                         "normalizedDataType": "String",
                         "properties": "NotSpecified",
                         "fullName": "SourceDate",
