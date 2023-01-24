@@ -196,6 +196,11 @@
           "light": "assets/light/visible.svg",
           "dark": "assets/dark/visible.svg"
         }
+      },
+      {
+        "command": "logicAppsExtension.switchDebugMode",
+        "title": "Update debug mode for stateless workflow",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -446,6 +451,11 @@
           "command": "logicAppsExtension.reviewValidation",
           "when": "resourceDirname=~/.logs/export && resourceFilename=~/exportValidation.json/",
           "group": "navigation@1"
+        },
+        {
+          "command": "logicAppsExtension.switchDebugMode",
+          "when": "explorerResourceIsRoot == true",
+          "group": "zzz_LogicApptools@2"
         }
       ],
       "commandPalette": [
@@ -595,6 +605,7 @@
     "onCommand:logicAppsExtension.stopStreamingLogs",
     "onCommand:logicAppsExtension.viewDeploymentLogs",
     "onCommand:logicAppsExtension.swapSlot",
+    "onCommand:logicAppsExtension.switchDebugMode",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
