@@ -23,3 +23,9 @@ export interface IFunctionAppWizardContext extends IAppServiceWizardContext {
 export interface ICreateLogicAppContext extends ICreateChildImplContext {
   newResourceGroupName?: string;
 }
+
+export interface IDebugModeContext extends IActionContext {
+  projectPath: string;
+  workflowName: string;
+  enableDebugMode?: boolean;
+}

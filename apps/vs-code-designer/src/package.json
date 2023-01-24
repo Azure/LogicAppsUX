@@ -231,6 +231,11 @@
         "command": "logicAppsExtension.appSettings.upload",
         "title": "Upload Local Settings...",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.switchDebugMode",
+        "title": "Update debug mode for stateless workflow",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -516,6 +521,11 @@
           "command": "logicAppsExtension.reviewValidation",
           "when": "resourceDirname=~/.logs/export && resourceFilename=~/exportValidation.json/",
           "group": "navigation@1"
+        },
+        {
+          "command": "logicAppsExtension.switchDebugMode",
+          "when": "explorerResourceIsRoot == true",
+          "group": "zzz_LogicApptools@2"
         }
       ],
       "commandPalette": [
@@ -665,6 +675,7 @@
     "onCommand:logicAppsExtension.stopStreamingLogs",
     "onCommand:logicAppsExtension.viewDeploymentLogs",
     "onCommand:logicAppsExtension.swapSlot",
+    "onCommand:logicAppsExtension.switchDebugMode",
     "onCommand:logicAppsExtension.appSettings.add",
     "onCommand:logicAppsExtension.appSettings.delete",
     "onCommand:logicAppsExtension.appSettings.download",
