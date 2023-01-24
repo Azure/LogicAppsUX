@@ -23,6 +23,7 @@ import { deployProductionSlot, deploySlot } from './deploy/deploy';
 import { connectToGitHub } from './deployments/connectToGitHub';
 import { disconnectRepo } from './deployments/disconnectRepo';
 import { redeployDeployment } from './deployments/redeployDeployment';
+import { viewCommitInGitHub } from './deployments/viewCommitInGitHub';
 import { viewDeploymentLogs } from './deployments/viewDeploymentLogs';
 import { startStreamingLogs } from './logstream/startStreamingLogs';
 import { stopStreamingLogs } from './logstream/stopStreamingLogs';
@@ -120,4 +121,5 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.useSQLStorage, useSQLStorage);
   registerCommand(extensionCommand.connectToGitHub, connectToGitHub);
   registerCommand(extensionCommand.disconnectRepo, disconnectRepo);
+  registerCommand(extensionCommand.viewCommitInGitHub, viewCommitInGitHub);
 }

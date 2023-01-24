@@ -109,6 +109,7 @@ export enum extensionCommand {
   switchDebugMode = 'logicAppsExtension.switchDebugMode',
   connectToGitHub = 'logicAppsExtension.connectToGitHub',
   disconnectRepo = 'logicAppsExtension.disconnectRepo',
+  viewCommitInGitHub = 'logicAppsExtension.viewCommitInGitHub',
 }
 
 // Context
