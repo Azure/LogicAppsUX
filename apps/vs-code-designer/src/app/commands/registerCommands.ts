@@ -8,6 +8,7 @@ import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt'
 import { ProductionSlotTreeItem } from '../tree/slotsTree/ProductionSlotTreeItem';
 import { SlotTreeItem } from '../tree/slotsTree/SlotTreeItem';
 import { downloadAppSettings } from './appSettings/downloadAppSettings';
+import { editAppSetting } from './appSettings/editAppSetting';
 import { browseWebsite } from './browseWebsite';
 import { createChildNode } from './createChildNode';
 import { createCodeless } from './createCodeless/createCodeless';
@@ -97,4 +98,5 @@ export function registerCommands(): void {
     async (context: IActionContext, node?: AzExtTreeItem) => await deleteNode(context, AppSettingTreeItem.contextValue, node)
   );
   registerCommand(extensionCommand.appSettingsDownload, downloadAppSettings);
+  registerCommand(extensionCommand.appSettingsEdit, editAppSetting);
 }

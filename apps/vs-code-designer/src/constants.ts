@@ -100,6 +100,7 @@ export enum extensionCommand {
   appSettingsAdd = 'logicAppsExtension.appSettings.add',
   appSettingsDelete = 'logicAppsExtension.appSettings.delete',
   appSettingsDownload = 'logicAppsExtension.appSettings.download',
+  appSettingsEdit = 'logicAppsExtension.appSettings.edit',
 }
 
 // Context
