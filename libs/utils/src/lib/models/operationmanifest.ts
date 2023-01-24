@@ -120,6 +120,7 @@ export interface RecurrenceSetting {
 export interface ConnectionMetadata {
   required: boolean;
   type?: ConnectionType;
+  connectionCreationClient?: string;
 }
 
 export interface ConnectionReferenceKeyFormatMapping {
