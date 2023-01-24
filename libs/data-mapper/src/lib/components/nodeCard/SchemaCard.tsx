@@ -208,6 +208,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
     // Need to style both source and target schema child nodes on overview
     // - doesn't seem to affect canvas source schema nodes
+    // danielle can remove
     if (isChild) {
       newContStyles.push(classes.schemaChildCard);
     }
@@ -287,7 +288,8 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const selectedNodeStyles = isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId ? selectedCardStyles : undefined;
 
-  const cardWidth = isSourceSchemaNode && schemaNode.width ? schemaNode.width : schemaNodeCardWidth;
+  const targetCardWidth = isChild ? childTargetNodeCardWidth : schemaNodeCardWidth;
+  const cardWidth = isSourceSchemaNode && schemaNode.width ? schemaNode.width : targetCardWidth;
   const sourceCardMargin = isSourceSchemaNode ? maxWidth - cardWidth : 0;
 
   return (

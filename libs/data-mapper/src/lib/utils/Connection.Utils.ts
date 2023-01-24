@@ -421,7 +421,6 @@ export const getFunctionConnectionUnits = (
 };
 
 export const bringInParentSourceNodesForRepeating = (
-  // Danielle can we remove this
   parentTargetNode: WritableDraft<SchemaNodeExtended> | undefined,
   newState: DataMapOperationState
 ) => {
