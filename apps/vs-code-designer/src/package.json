@@ -212,6 +212,11 @@
         "command": "logicAppsExtension.appSettings.rename",
         "title": "Rename Setting...",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.appSettings.upload",
+        "title": "Upload Local Settings...",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -455,6 +460,11 @@
           "command": "logicAppsExtension.appSettings.rename",
           "when": "view == newAzLogicApps && viewItem == applicationSettingItem",
           "group": "1@2"
+        },
+        {
+          "command": "logicAppsExtension.appSettings.upload",
+          "when": "view == newAzLogicApps && viewItem == applicationSettings",
+          "group": "1@3"
         }
       ],
       "explorer/context": [
@@ -632,6 +642,7 @@
     "onCommand:logicAppsExtension.appSettings.download",
     "onCommand:logicAppsExtension.appSettings.edit",
     "onCommand:logicAppsExtension.appSettings.rename",
+    "onCommand:logicAppsExtension.appSettings.upload",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",

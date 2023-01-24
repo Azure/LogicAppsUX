@@ -102,6 +102,7 @@ export enum extensionCommand {
   appSettingsDownload = 'logicAppsExtension.appSettings.download',
   appSettingsEdit = 'logicAppsExtension.appSettings.edit',
   appSettingsRename = 'logicAppsExtension.appSettings.rename',
+  appSettingsUpload = 'logicAppsExtension.appSettings.upload',
 }
 
 // Context
