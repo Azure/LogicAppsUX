@@ -32,6 +32,7 @@ import { startLogicApp } from './startLogicApp';
 import { stopLogicApp } from './stopLogicApp';
 import { swapSlot } from './swapSlot';
 import { viewProperties } from './viewProperties';
+import { configureWebhookRedirectEndpoint } from './workflows/configureWebhookRedirectEndpoint/configureWebhookRedirectEndpoint';
 import { exportLogicApp } from './workflows/exportLogicApp';
 import { getDebugSymbolDll } from './workflows/getDebugSymbolDll';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
@@ -114,4 +115,5 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.appSettingsRename, renameAppSetting);
   registerCommand(extensionCommand.appSettingsToggleSlotSetting, toggleSlotSetting);
   registerCommand(extensionCommand.appSettingsUpload, uploadAppSettings);
+  registerCommand(extensionCommand.configureWebhookRedirectEndpoint, configureWebhookRedirectEndpoint);
 }

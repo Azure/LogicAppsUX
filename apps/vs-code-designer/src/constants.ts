@@ -106,6 +106,7 @@ export enum extensionCommand {
   appSettingsToggleSlotSetting = 'logicAppsExtension.appSettings.toggleSlotSetting',
   toggleAppSettingVisibility = 'logicAppsExtension.toggleAppSettingVisibility',
   switchDebugMode = 'logicAppsExtension.switchDebugMode',
+  configureWebhookRedirectEndpoint = 'logicAppsExtension.configureWebhookRedirectEndpoint',
 }
 
 // Context
