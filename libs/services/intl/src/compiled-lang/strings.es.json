@@ -1,4 +1,10 @@
 {
+  "+0yxlR": [
+    {
+      "type": 0,
+      "value": "Function display"
+    }
+  ],
   "+20fdv": [
     {
       "type": 0,
@@ -31,6 +37,12 @@
     {
       "type": 0,
       "value": "Failed loading the schema. Please try again."
+    }
+  ],
+  "+JCU+Y": [
+    {
+      "type": 0,
+      "value": "Select this if you are configuring an on-prem connection"
     }
   ],
   "+W9fkq": [
@@ -67,12 +79,6 @@
     {
       "type": 0,
       "value": "Paginación"
-    }
-  ],
-  "/9r9ML": [
-    {
-      "type": 0,
-      "value": "Add target schema"
     }
   ],
   "/AtN16": [
@@ -2054,6 +2060,12 @@
       "value": "Enter a valid Json."
     }
   ],
+  "GD3m4X": [
+    {
+      "type": 0,
+      "value": "Expanded"
+    }
+  ],
   "GDUGlm": [
     {
       "type": 0,
@@ -2118,6 +2130,12 @@
     {
       "type": 0,
       "value": "Cancelar la selección"
+    }
+  ],
+  "GyUe4C": [
+    {
+      "type": 0,
+      "value": "Modify options regarding functions"
     }
   ],
   "GzQQqH": [
@@ -3283,12 +3301,6 @@
       "value": "Permite cambiar a la matriz de entrada completa."
     }
   ],
-  "RZO5Ic": [
-    {
-      "type": 0,
-      "value": "Add or replace your schemas."
-    }
-  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -3502,6 +3514,12 @@
     {
       "type": 0,
       "value": "Crear una conexión nueva"
+    }
+  ],
+  "TY4HzZ": [
+    {
+      "type": 0,
+      "value": "Add or replace your schemas."
     }
   ],
   "TZv5JE": [
@@ -4710,12 +4728,6 @@
       "value": "Funciones lógicas"
     }
   ],
-  "fqNVDv": [
-    {
-      "type": 0,
-      "value": "Back"
-    }
-  ],
   "froV/0": [
     {
       "type": 0,
@@ -5417,6 +5429,12 @@
       "value": "A line for the parent element is added automatically."
     }
   ],
+  "lR7V87": [
+    {
+      "type": 0,
+      "value": "Functions"
+    }
+  ],
   "lV77P8": [
     {
       "type": 0,
@@ -6086,6 +6104,12 @@
       "value": "Int."
     }
   ],
+  "rAwCdh": [
+    {
+      "type": 0,
+      "value": "Connect via on-premises data gateway"
+    }
+  ],
   "rAyuzv": [
     {
       "type": 0,
@@ -6236,6 +6260,12 @@
       "value": "Parámetro nuevo"
     }
   ],
+  "sv+IcU": [
+    {
+      "type": 0,
+      "value": "Unable to generate data map definition"
+    }
+  ],
   "syiNc+": [
     {
       "type": 0,
@@ -6252,6 +6282,12 @@
     {
       "type": 0,
       "value": "Obligatorio. Cadena que contiene el nombre de la zona horaria de destino. Para obtener más detalles, consulte https://msdn.microsoft.com/en-us/library/gg154758.aspx."
+    }
+  ],
+  "tAeKNh": [
+    {
+      "type": 0,
+      "value": "Simple"
     }
   ],
   "tE7Zam": [
@@ -6688,12 +6724,6 @@
       "value": "URL de devolución de llamadas:"
     }
   ],
-  "woq0x0": [
-    {
-      "type": 0,
-      "value": "Add source schema"
-    }
-  ],
   "wzEneQ": [
     {
       "type": 0,
@@ -6716,6 +6746,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "xC1zg3": [
+    {
+      "type": 0,
+      "value": "Schemas"
     }
   ],
   "xFQXAI": [

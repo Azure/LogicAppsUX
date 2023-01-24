@@ -33,6 +33,7 @@ export const getInputValues = (currentConnection: Connection | undefined, connec
             return undefined;
           }
 
+          // Handle custom values, source schema node, and Function inputs for Function nodes
           if (isCustomValue(input)) {
             return input;
           } else if (isSchemaNodeExtended(input.node)) {
@@ -184,6 +185,27 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sou
   let constructedSourceKey = sourceKey;
   const srcKeyWithinFor = getSourceKeyOfLastLoop(targetKey);
 
+  // Deserialize dot accessors as their parent loop's source node
+  if (constructedSourceKey === '.') {
+    return srcKeyWithinFor;
+  } else {
+    let idxOfDotAccess = constructedSourceKey.indexOf('.');
+    while (idxOfDotAccess > -1) {
+      const preChar = constructedSourceKey[idxOfDotAccess - 1];
+      const postChar = constructedSourceKey[idxOfDotAccess + 1];
+
+      // Make sure the input is just '.'
+      let newStartIdx = idxOfDotAccess + 1;
+      if ((preChar === '(' || preChar === ' ') && (postChar === ')' || postChar === ',')) {
+        constructedSourceKey =
+          constructedSourceKey.substring(0, idxOfDotAccess) + srcKeyWithinFor + constructedSourceKey.substring(idxOfDotAccess + 1);
+        newStartIdx += srcKeyWithinFor.length;
+      }
+
+      idxOfDotAccess = constructedSourceKey.indexOf('.', newStartIdx);
+    }
+  }
+
   const relativeSrcKeyArr = sourceKey
     .split(', ')
     .map((keyChunk) => {
@@ -210,17 +232,20 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sou
   if (relativeSrcKeyArr.length > 0) {
     relativeSrcKeyArr.forEach((relativeKeyMatch) => {
       if (!relativeKeyMatch.includes(srcKeyWithinFor)) {
-        const fullyQualifiedSourceKey = `${srcKeyWithinFor}/${relativeKeyMatch}`;
-        constructedSourceKey = constructedSourceKey.replace(
-          relativeKeyMatch,
-          sourceSchemaFlattened[`${sourcePrefix}${fullyQualifiedSourceKey}`] ? fullyQualifiedSourceKey : relativeKeyMatch
-        );
+        // Replace './' to deal with relative attribute paths
+        const fullyQualifiedSourceKey = `${srcKeyWithinFor}/${relativeKeyMatch.replace('./', '')}`;
+        const isValidSrcNode = !!sourceSchemaFlattened[`${sourcePrefix}${fullyQualifiedSourceKey}`];
+
+        constructedSourceKey = isValidSrcNode
+          ? constructedSourceKey.replace(relativeKeyMatch, fullyQualifiedSourceKey)
+          : constructedSourceKey;
       }
     });
   } else {
     const fullyQualifiedSourceKey = `${srcKeyWithinFor}/${sourceKey}`;
     constructedSourceKey = sourceSchemaFlattened[`${sourcePrefix}${fullyQualifiedSourceKey}`] ? fullyQualifiedSourceKey : sourceKey;
   }
+
   return constructedSourceKey;
 };
 
@@ -250,7 +275,7 @@ export const qualifyLoopRelativeSourceKeys = (targetKey: string): string => {
   return qualifiedTargetKey;
 };
 
-export const getTargetValueWithoutLoop = (targetKey: string): string => {
+export const getTargetValueWithoutLastLoop = (targetKey: string): string => {
   const forMatchArr = targetKey.match(/\$for\(((?!\)).)+\)\//g);
   const forMatch = forMatchArr?.[forMatchArr.length - 1];
   return forMatch ? targetKey.replace(forMatch, '') : targetKey;

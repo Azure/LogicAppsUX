@@ -1,19 +1,18 @@
+import { getClientBuiltInConnectors, getClientBuiltInOperations, BaseSearchService } from '../base';
+import type { DiscoveryOpArray } from '../base/search';
 import type { QueryParameters } from '../httpClient';
 import * as ClientOperationsData from '../standard/operations';
-import type { DiscoveryOpArray } from '../standard/search';
-import { getClientBuiltInConnectors, getClientBuiltInOperations, StandardSearchService } from '../standard/search';
 import type { Connector } from '@microsoft/utils-logic-apps';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
 
-export class ConsumptionSearchService extends StandardSearchService {
+export class ConsumptionSearchService extends BaseSearchService {
   // Operations
 
-  public override async getAllOperations(): Promise<DiscoveryOpArray> {
-    const azureOperations = await this.getAllAzureOperations();
-    const customApiOperations = await this.getAllCustomApiOperations();
-    const clientBuiltInOperations = this.getConsumptionBuiltInOperations();
-    return [...azureOperations, ...customApiOperations, ...clientBuiltInOperations];
+  public async getAllOperations(): Promise<DiscoveryOpArray> {
+    return Promise.all([this.getAllAzureOperations(), this.getAllCustomApiOperations(), this.getConsumptionBuiltInOperations()]).then(
+      (values) => values.flat()
+    );
   }
 
   public async getAllCustomApiOperations(): Promise<DiscoveryOpArray> {
@@ -54,10 +53,9 @@ export class ConsumptionSearchService extends StandardSearchService {
   // Connectors
 
   public override async getAllConnectors(): Promise<Connector[]> {
-    const azureConnectors = await this.getAllAzureConnectors();
-    const customApiConnectors = await this.getAllCustomApiConnectors();
-    const clientBuiltInConnectors = this.getConsumptionBuiltInConnectors();
-    return [...azureConnectors, ...customApiConnectors, ...clientBuiltInConnectors];
+    return Promise.all([this.getAllAzureConnectors(), this.getAllCustomApiConnectors(), this.getConsumptionBuiltInConnectors()]).then(
+      (values) => values.flat()
+    );
   }
 
   public async getAllCustomApiConnectors(): Promise<Connector[]> {

@@ -1,5 +1,5 @@
 import type { SchemaExtended } from '../../models/Schema';
-import { NormalizedDataType, SchemaFileFormat, SchemaNodeDataType, SchemaNodeProperty } from '../../models/Schema';
+import { NormalizedDataType, SchemaFileFormat, SchemaNodeProperty } from '../../models/Schema';
 import { MapOverview } from './MapOverview';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
@@ -21,7 +21,6 @@ const schema: SchemaExtended = {
     pathToRoot: [],
     namespacePrefix: '',
     namespaceUri: '',
-    schemaNodeDataType: SchemaNodeDataType.None,
     normalizedDataType: NormalizedDataType.ComplexType,
     properties: SchemaNodeProperty.NotSpecified,
     nodeProperties: [SchemaNodeProperty.NotSpecified],
@@ -33,7 +32,6 @@ const schema: SchemaExtended = {
         pathToRoot: [],
         namespacePrefix: '',
         namespaceUri: '',
-        schemaNodeDataType: SchemaNodeDataType.String,
         normalizedDataType: NormalizedDataType.String,
         properties: SchemaNodeProperty.NotSpecified,
         nodeProperties: [SchemaNodeProperty.NotSpecified],
@@ -46,7 +44,6 @@ const schema: SchemaExtended = {
         pathToRoot: [],
         namespacePrefix: '',
         namespaceUri: '',
-        schemaNodeDataType: SchemaNodeDataType.Integer,
         normalizedDataType: NormalizedDataType.Integer,
         properties: SchemaNodeProperty.NotSpecified,
         nodeProperties: [SchemaNodeProperty.NotSpecified],
