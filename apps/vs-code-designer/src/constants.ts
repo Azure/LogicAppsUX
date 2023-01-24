@@ -105,6 +105,7 @@ export enum extensionCommand {
   appSettingsUpload = 'logicAppsExtension.appSettings.upload',
   appSettingsToggleSlotSetting = 'logicAppsExtension.appSettings.toggleSlotSetting',
   toggleAppSettingVisibility = 'logicAppsExtension.toggleAppSettingVisibility',
+  useSQLStorage = 'logicAppsExtension.useSQLStorage',
 }
 
 // Context
@@ -168,3 +169,5 @@ export const kubernetesKind = 'kubernetes';
 export const functionAppKind = 'functionapp';
 export const logicAppKind = 'workflowapp';
 export const logicAppKindAppSetting = 'workflowApp';
+
+export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';

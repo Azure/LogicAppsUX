@@ -38,6 +38,7 @@ import { openDesigner } from './workflows/openDesigner/openDesigner';
 import { openOverview } from './workflows/openOverview';
 import { reviewValidation } from './workflows/reviewValidation';
 import { switchToDotnetProject } from './workflows/switchToDotnetProject';
+import { useSQLStorage } from './workflows/useSQLStorage';
 import { viewContent } from './workflows/viewContent';
 import { AppSettingsTreeItem, AppSettingTreeItem, registerSiteCommand } from '@microsoft/vscode-azext-azureappservice';
 import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
@@ -112,4 +113,5 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.appSettingsRename, renameAppSetting);
   registerCommand(extensionCommand.appSettingsToggleSlotSetting, toggleSlotSetting);
   registerCommand(extensionCommand.appSettingsUpload, uploadAppSettings);
+  registerCommand(extensionCommand.useSQLStorage, useSQLStorage);
 }
