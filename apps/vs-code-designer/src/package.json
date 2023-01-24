@@ -207,6 +207,11 @@
         "command": "logicAppsExtension.appSettings.edit",
         "title": "Edit Setting...",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.appSettings.rename",
+        "title": "Rename Setting...",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -445,6 +450,11 @@
           "command": "logicAppsExtension.appSettings.edit",
           "when": "view == newAzLogicApps && viewItem == applicationSettingItem",
           "group": "1@1"
+        },
+        {
+          "command": "logicAppsExtension.appSettings.rename",
+          "when": "view == newAzLogicApps && viewItem == applicationSettingItem",
+          "group": "1@2"
         }
       ],
       "explorer/context": [
@@ -621,6 +631,7 @@
     "onCommand:logicAppsExtension.appSettings.delete",
     "onCommand:logicAppsExtension.appSettings.download",
     "onCommand:logicAppsExtension.appSettings.edit",
+    "onCommand:logicAppsExtension.appSettings.rename",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",

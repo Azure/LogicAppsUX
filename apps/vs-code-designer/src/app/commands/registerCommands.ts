@@ -9,6 +9,7 @@ import { ProductionSlotTreeItem } from '../tree/slotsTree/ProductionSlotTreeItem
 import { SlotTreeItem } from '../tree/slotsTree/SlotTreeItem';
 import { downloadAppSettings } from './appSettings/downloadAppSettings';
 import { editAppSetting } from './appSettings/editAppSetting';
+import { renameAppSetting } from './appSettings/renameAppSetting';
 import { browseWebsite } from './browseWebsite';
 import { createChildNode } from './createChildNode';
 import { createCodeless } from './createCodeless/createCodeless';
@@ -99,4 +100,5 @@ export function registerCommands(): void {
   );
   registerCommand(extensionCommand.appSettingsDownload, downloadAppSettings);
   registerCommand(extensionCommand.appSettingsEdit, editAppSetting);
+  registerCommand(extensionCommand.appSettingsRename, renameAppSetting);
 }
