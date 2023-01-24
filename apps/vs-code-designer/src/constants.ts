@@ -105,6 +105,7 @@ export enum extensionCommand {
   appSettingsUpload = 'logicAppsExtension.appSettings.upload',
   appSettingsToggleSlotSetting = 'logicAppsExtension.appSettings.toggleSlotSetting',
   toggleAppSettingVisibility = 'logicAppsExtension.toggleAppSettingVisibility',
+  switchDebugMode = 'logicAppsExtension.switchDebugMode',
 }
 
 // Context
