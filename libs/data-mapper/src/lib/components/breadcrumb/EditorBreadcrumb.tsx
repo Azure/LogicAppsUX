@@ -2,8 +2,8 @@ import { setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
 import { findNodeForKey } from '../../utils/Schema.Utils';
-import type { IBreadcrumbItem } from '@fluentui/react';
-import { Breadcrumb } from '@fluentui/react';
+import type { IBreadcrumbItem, IContextualMenuItem, IContextualMenuProps, IDividerAsProps } from '@fluentui/react';
+import { Breadcrumb, ContextualMenu, IconButton } from '@fluentui/react';
 import { Button, tokens, makeStyles, Text, typographyStyles } from '@fluentui/react-components';
 import { Code20Regular } from '@fluentui/react-icons';
 import { useCallback, useMemo } from 'react';
@@ -83,6 +83,55 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
     }
   }, []);
 
+  const getMenu = (props: IContextualMenuProps): JSX.Element => {
+    // Customize contextual menu with menuAs
+    return <ContextualMenu {...props} />;
+  };
+
+  const getMenuProps = (item: IBreadcrumbItem | undefined): IContextualMenuProps => {
+    let childItems: IContextualMenuItem[] = [];
+    if (item && targetSchema) {
+      const schemaKey = item.key;
+      const schemaNode = findNodeForKey(schemaKey, targetSchema.schemaTreeRoot);
+      if (schemaNode) {
+        childItems = schemaNode.children.map((childNode) => {
+          return {
+            key: childNode.key,
+            text: childNode.name,
+            onClick: (_event, item) => {
+              if (item) {
+                const newNode = findNodeForKey(item.key, schemaNode);
+                if (newNode) {
+                  dispatch(setCurrentTargetSchemaNode(newNode));
+                  return;
+                }
+              }
+
+              dispatch(setCurrentTargetSchemaNode(targetSchema.schemaTreeRoot));
+            },
+          };
+        });
+      }
+    }
+
+    return {
+      items: childItems,
+    };
+  };
+
+  const getCustomDivider = (dividerProps: IDividerAsProps): JSX.Element => {
+    const item = dividerProps.item;
+
+    return (
+      <IconButton
+        iconProps={{ iconName: dividerProps.iconName }}
+        menuProps={getMenuProps(item)}
+        menuAs={getMenu}
+        onRenderMenuIcon={() => null}
+      />
+    );
+  };
+
   return (
     <div style={baseBreadcrumbContainerStyles}>
       <Breadcrumb
@@ -94,6 +143,7 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
         onRenderItemContent={onRenderBreadcrumbContent}
         styles={{ item: { lineHeight: 0 } }}
         style={baseBreadcrumbStyles}
+        dividerAs={getCustomDivider}
       />
       <Button
         appearance="subtle"
