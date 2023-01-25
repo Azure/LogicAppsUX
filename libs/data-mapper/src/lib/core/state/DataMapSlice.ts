@@ -26,7 +26,7 @@ import {
 import {
   addNodeToCanvasIfDoesNotExist,
   addParentConnectionForRepeatingElementsNested,
-  bringInNestedNodes,
+  addAncestorNodesToCanvas,
   getParentId,
 } from '../../utils/DataMap.Utils';
 import { isFunctionData } from '../../utils/Function.Utils';
@@ -216,7 +216,7 @@ export const dataMapSlice = createSlice({
       const nodes = [...state.curDataMapOperation.currentSourceSchemaNodes];
       action.payload.forEach((payloadNode) => {
         addNodeToCanvasIfDoesNotExist(payloadNode, state.curDataMapOperation.currentSourceSchemaNodes, nodes);
-        bringInNestedNodes(
+        addAncestorNodesToCanvas(
           payloadNode,
           state.curDataMapOperation.currentSourceSchemaNodes,
           state.curDataMapOperation.flattenedSourceSchema,

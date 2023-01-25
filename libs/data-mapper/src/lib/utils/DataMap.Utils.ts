@@ -1,7 +1,7 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { MapDefinitionEntry, SchemaNodeDictionary, SchemaNodeExtended, SourceSchemaNodeExtended } from '../models';
-import { SchemaType, SchemaNodeProperty } from '../models';
+import { SchemaType } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import { ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
@@ -343,12 +343,12 @@ export const addNodeToCanvasIfDoesNotExist = (
   canvasNodesToAdd: SchemaNodeExtended[]
 ) => {
   const existingNode = currentCanvasNodes.find((currentNode) => currentNode.key === node.key);
-  if (!existingNode) {
+  if (existingNode === undefined) {
     canvasNodesToAdd.push(node);
   }
 };
 
-export const bringInNestedNodes = (
+export const addAncestorNodesToCanvas = (
   payloadNode: SchemaNodeExtended,
   currentSourceSchemaNodes: SourceSchemaNodeExtended[],
   flattenedSourceSchema: SchemaNodeDictionary,
@@ -356,32 +356,26 @@ export const bringInNestedNodes = (
 ) => {
   // if parent already exists on the canvas, and higher node like root is added, add all nodes in-between
   const grandparentNodesOnCanvas = currentSourceSchemaNodes.filter(
-    (node) =>
-      payloadNode?.key.includes(node.key) &&
-      payloadNode.parentKey !== node.key &&
-      payloadNode.key !== node.key &&
-      node.nodeProperties.includes(SchemaNodeProperty.Repeating)
+    (node) => payloadNode?.key.includes(node.key) && payloadNode.parentKey !== node.key && payloadNode.key !== node.key
   );
 
-  // find the highest grandparent repeating, then add all below!!!!
-  if (grandparentNodesOnCanvas) {
-    // now have to find the highest one???
-    // add all in-between nodes
+  if (grandparentNodesOnCanvas.length > 0) {
+    grandparentNodesOnCanvas.sort((a, b) => a.key.length - b.key.length); // danielle test
+    const highestAncestor = grandparentNodesOnCanvas[0];
+    payloadNode.pathToRoot.forEach((ancestorNode) => {
+      if (ancestorNode.key.length > highestAncestor.key.length && ancestorNode.key !== payloadNode.key) {
+        addNodeToCanvasIfDoesNotExist(flattenedSourceSchema[addSourceReactFlowPrefix(ancestorNode.key)], currentSourceSchemaNodes, nodes);
+      }
+    });
+  } else {
+    const pathToRootWithoutCurrent = payloadNode.pathToRoot.filter((node) => node.key !== payloadNode.key);
+    const firstSourceNodeWithRepeatingPathItem = findLast(pathToRootWithoutCurrent, (pathItem) => pathItem.repeating);
+    const parentNodeToAdd =
+      firstSourceNodeWithRepeatingPathItem && flattenedSourceSchema[addSourceReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key)];
+    if (parentNodeToAdd) {
+      addNodeToCanvasIfDoesNotExist(parentNodeToAdd, currentSourceSchemaNodes, nodes);
+    }
   }
-
-  //const highestParentOnCanvas =
-
-  // else do this
-  // Danielle add interim parents so that tree makes sense
-  const pathToRootWithoutCurrent = payloadNode.pathToRoot.filter((node) => node.key !== payloadNode.key);
-  const firstSourceNodeWithRepeatingPathItem = findLast(pathToRootWithoutCurrent, (pathItem) => pathItem.repeating);
-  const parentNodeToAdd =
-    firstSourceNodeWithRepeatingPathItem && flattenedSourceSchema[addSourceReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key)];
-  if (parentNodeToAdd) {
-    addNodeToCanvasIfDoesNotExist(parentNodeToAdd, currentSourceSchemaNodes, nodes);
-  }
-
-  // danielle then add anything in-between children on the canvas
 };
 
 export const flattenMapDefinitionValues = (node: MapDefinitionEntry): string[] => {
