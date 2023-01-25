@@ -3,11 +3,12 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../localize';
+import { DotnetInitVSCodeStep } from './DotnetInitVSCodeStep';
 import { WorkflowInitVSCodeStep } from './WorkflowInitVSCodeStep';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
-import { ProjectLanguage, WorkflowProjectType } from '@microsoft/vscode-extension';
+import { ProjectLanguage } from '@microsoft/vscode-extension';
 import type { QuickPickItem, QuickPickOptions } from 'vscode';
 
 export class InitVSCodeLanguageStep extends AzureWizardPromptStep<IProjectWizardContext> {
@@ -36,9 +37,12 @@ export async function addInitVSCodeSteps(
   context: IProjectWizardContext,
   executeSteps: AzureWizardExecuteStep<IProjectWizardContext>[]
 ): Promise<void> {
-  switch (context.workflowProjectType) {
-    case WorkflowProjectType.Bundle:
+  switch (context.language) {
+    case ProjectLanguage.JavaScript:
       executeSteps.push(new WorkflowInitVSCodeStep());
+      break;
+    case ProjectLanguage.CSharp:
+      executeSteps.push(new DotnetInitVSCodeStep());
       break;
   }
 }
