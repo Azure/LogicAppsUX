@@ -110,6 +110,7 @@ export enum extensionCommand {
   enableAzureConnectors = 'logicAppsExtension.enableAzureConnectors',
   configureWebhookRedirectEndpoint = 'logicAppsExtension.configureWebhookRedirectEndpoint',
   initProjectForVSCode = 'logicAppsExtension.initProjectForVSCode',
+  configureDeploymentSource = 'logicAppsExtension.configureDeploymentSource',
 }
 
 // Context

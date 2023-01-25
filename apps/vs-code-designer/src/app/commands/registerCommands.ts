@@ -13,6 +13,7 @@ import { renameAppSetting } from './appSettings/renameAppSetting';
 import { toggleSlotSetting } from './appSettings/toggleSlotSetting';
 import { uploadAppSettings } from './appSettings/uploadAppSettings';
 import { browseWebsite } from './browseWebsite';
+import { configureDeploymentSource } from './configureDeploymentSource';
 import { createChildNode } from './createChildNode';
 import { createCodeless } from './createCodeless/createCodeless';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
@@ -122,4 +123,5 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.useSQLStorage, useSQLStorage);
   registerCommand(extensionCommand.enableAzureConnectors, enableAzureConnectors);
   registerCommand(extensionCommand.initProjectForVSCode, initProjectForVSCode);
+  registerCommand(extensionCommand.configureDeploymentSource, configureDeploymentSource);
 }
