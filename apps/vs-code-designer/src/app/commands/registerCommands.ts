@@ -20,7 +20,10 @@ import { createNewProjectFromCommand } from './createNewProject/createNewProject
 import { createSlot } from './createSlot';
 import { deleteNode } from './deleteNode';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
+import { connectToGitHub } from './deployments/connectToGitHub';
+import { disconnectRepo } from './deployments/disconnectRepo';
 import { redeployDeployment } from './deployments/redeployDeployment';
+import { viewCommitInGitHub } from './deployments/viewCommitInGitHub';
 import { viewDeploymentLogs } from './deployments/viewDeploymentLogs';
 import { startStreamingLogs } from './logstream/startStreamingLogs';
 import { stopStreamingLogs } from './logstream/stopStreamingLogs';
@@ -119,5 +122,8 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.appSettingsUpload, uploadAppSettings);
   registerCommand(extensionCommand.configureWebhookRedirectEndpoint, configureWebhookRedirectEndpoint);
   registerCommand(extensionCommand.useSQLStorage, useSQLStorage);
+  registerCommand(extensionCommand.connectToGitHub, connectToGitHub);
+  registerCommand(extensionCommand.disconnectRepo, disconnectRepo);
+  registerCommand(extensionCommand.viewCommitInGitHub, viewCommitInGitHub);
   registerCommand(extensionCommand.enableAzureConnectors, enableAzureConnectors);
 }
