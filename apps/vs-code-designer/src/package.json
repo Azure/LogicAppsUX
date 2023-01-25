@@ -268,6 +268,11 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "logicAppsExtension.startRemoteDebug",
+        "title": "Start Remote Debugging",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "logicAppsExtension.initProjectForVSCode",
         "title": "Initialize Project for Use with VS Code...",
         "category": "Azure Logic Apps"
@@ -546,6 +551,11 @@
           "group": "1@4"
         },
         {
+          "command": "logicAppsExtension.startRemoteDebug",
+          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/ && config.logicAppsExtension.enableRemoteDebugging == true",
+          "group": "5@1"
+        },
+        {
           "command": "logicAppsExtension.configureDeploymentSource",
           "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "3@2"
@@ -630,6 +640,10 @@
         {
           "command": "logicAppsExtension.toggleAppSettingVisibility",
           "when": "never"
+        },
+        {
+          "command": "logicAppsExtension.startRemoteDebug",
+          "when": "config.logicAppsExtension.enableRemoteDebugging == true"
         }
       ]
     },
@@ -707,6 +721,11 @@
             "type": "number",
             "description": "The timeout (in seconds) to be used when making requests, for example getting the latest templates.",
             "default": 15
+          },
+          "logicAppsExtension.enableRemoteDebugging": {
+            "type": "boolean",
+            "description": "Enable remote debugging for Node.js Logic Apps running on Linux App Service plans. Consumption plans are not supported. (experimental)",
+            "default": false
           }
         }
       }
@@ -760,6 +779,7 @@
     "onCommand:logicAppsExtension.viewCommitInGitHub",
     "onCommand:logicAppsExtension.disconnectRepo",
     "onCommand:logicAppsExtension.connectToGitHub",
+    "onCommand:logicAppsExtension.startRemoteDebug",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",

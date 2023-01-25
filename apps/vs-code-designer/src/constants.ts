@@ -114,6 +114,7 @@ export enum extensionCommand {
   configureWebhookRedirectEndpoint = 'logicAppsExtension.configureWebhookRedirectEndpoint',
   initProjectForVSCode = 'logicAppsExtension.initProjectForVSCode',
   configureDeploymentSource = 'logicAppsExtension.configureDeploymentSource',
+  startRemoteDebug = 'logicAppsExtension.startRemoteDebug',
 }
 
 // Context

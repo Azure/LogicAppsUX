@@ -32,6 +32,7 @@ import { stopStreamingLogs } from './logstream/stopStreamingLogs';
 import { openFile } from './openFile';
 import { openInPortal } from './openInPortal';
 import { pickFuncProcess } from './pickFuncProcess';
+import { startRemoteDebug } from './remoteDebug/startRemoteDebug';
 import { restartLogicApp } from './restartLogicApp';
 import { startLogicApp } from './startLogicApp';
 import { stopLogicApp } from './stopLogicApp';
@@ -130,4 +131,5 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.enableAzureConnectors, enableAzureConnectors);
   registerCommand(extensionCommand.initProjectForVSCode, initProjectForVSCode);
   registerCommand(extensionCommand.configureDeploymentSource, configureDeploymentSource);
+  registerCommand(extensionCommand.startRemoteDebug, startRemoteDebug);
 }
