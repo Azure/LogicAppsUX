@@ -246,6 +246,11 @@
         "command": "logicAppsExtension.configureWebhookRedirectEndpoint",
         "title": "Configure Webhook Redirect Endpoint",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.enableAzureConnectors",
+        "title": "Use Connectors from Azure",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -546,6 +551,11 @@
           "command": "logicAppsExtension.configureWebhookRedirectEndpoint",
           "when": "resourceFilename==local.settings.json",
           "group": "zzz_appSettings@3"
+        },
+        {
+          "command": "logicAppsExtension.enableAzureConnectors",
+          "when": "resourceFilename==workflow.json",
+          "group": "navigation@2"
         }
       ],
       "commandPalette": [
