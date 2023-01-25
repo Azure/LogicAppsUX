@@ -251,6 +251,11 @@
         "command": "logicAppsExtension.enableAzureConnectors",
         "title": "Use Connectors from Azure",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.initProjectForVSCode",
+        "title": "Initialize Project for Use with VS Code...",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -714,6 +719,7 @@
     "onCommand:logicAppsExtension.appSettings.toggleSlotSetting",
     "onCommand:logicAppsExtension.appSettings.upload",
     "onCommand:logicAppsExtension.useSQLStorage",
+    "onCommand:logicAppsExtension.initProjectForVSCode",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
