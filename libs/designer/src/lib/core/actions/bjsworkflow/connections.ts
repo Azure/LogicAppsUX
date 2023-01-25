@@ -335,11 +335,19 @@ function getOpenApiConnectionReferenceKey(operationDefinition: LogicAppsV2.OpenA
 }
 
 export function getLegacyConnectionReferenceKey(operationDefinition: any): string | undefined {
-  let referenceKey: string;
-  if (typeof operationDefinition.inputs.host.connection === 'string') {
-    referenceKey = operationDefinition.inputs.host.connection;
+  let referenceKey = '';
+  const connObj = operationDefinition.inputs.host.connection;
+  if (typeof connObj === 'string') {
+    referenceKey = connObj;
   } else {
-    referenceKey = operationDefinition.inputs.host.connection.referenceName;
+    if (connObj?.referenceName)
+      // Standard
+      referenceKey = connObj.referenceName;
+    else if (connObj?.name) {
+      // Consumption
+      // Example format: "@parameters('$connections')['servicebus']['connectionId']"
+      referenceKey = connObj.name.split('[')[1].split(']')[0].replace(/'/g, '');
+    }
   }
   return referenceKey;
 }

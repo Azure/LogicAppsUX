@@ -82,8 +82,16 @@ const CreateConnectionTab = () => {
       setErrorMessage(undefined);
 
       let outputParameterValues = parameterValues;
+
       if (selectedParameterSet) {
-        outputParameterValues['Type'] = selectedParameterSet?.name;
+        const requiredParameters = Object.entries(selectedParameterSet?.parameters)?.filter(
+          ([, parameter]) => parameter?.uiDefinition.constraints?.required
+        );
+        requiredParameters?.forEach(([key, parameter]) => {
+          if (!outputParameterValues?.[key]) {
+            outputParameterValues[key] = parameter?.uiDefinition.constraints?.default;
+          }
+        });
       }
 
       try {

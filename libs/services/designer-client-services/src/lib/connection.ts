@@ -53,6 +53,7 @@ export interface IConnectionService {
     connectionInfo: ConnectionCreationInfo,
     parametersMetadata: ConnectionParametersMetadata
   ): Promise<CreateConnectionResult>;
+  setupConnectionIfNeeded(connection: Connection): Promise<void>;
   getUniqueConnectionName(connectorId: string, connectionNames: string[], connectorName: string): Promise<string>;
   fetchFunctionApps(): Promise<any>;
   fetchFunctionAppsFunctions(functionAppId: string): Promise<any>;
