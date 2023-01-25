@@ -108,6 +108,7 @@ export enum extensionCommand {
   useSQLStorage = 'logicAppsExtension.useSQLStorage',
   switchDebugMode = 'logicAppsExtension.switchDebugMode',
   enableAzureConnectors = 'logicAppsExtension.enableAzureConnectors',
+  configureWebhookRedirectEndpoint = 'logicAppsExtension.configureWebhookRedirectEndpoint',
 }
 
 // Context

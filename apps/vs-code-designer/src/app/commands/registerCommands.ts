@@ -32,6 +32,7 @@ import { startLogicApp } from './startLogicApp';
 import { stopLogicApp } from './stopLogicApp';
 import { swapSlot } from './swapSlot';
 import { viewProperties } from './viewProperties';
+import { configureWebhookRedirectEndpoint } from './workflows/configureWebhookRedirectEndpoint/configureWebhookRedirectEndpoint';
 import { enableAzureConnectors } from './workflows/enableAzureConnectors';
 import { exportLogicApp } from './workflows/exportLogicApp';
 import { getDebugSymbolDll } from './workflows/getDebugSymbolDll';
@@ -116,6 +117,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.appSettingsRename, renameAppSetting);
   registerCommand(extensionCommand.appSettingsToggleSlotSetting, toggleSlotSetting);
   registerCommand(extensionCommand.appSettingsUpload, uploadAppSettings);
+  registerCommand(extensionCommand.configureWebhookRedirectEndpoint, configureWebhookRedirectEndpoint);
   registerCommand(extensionCommand.useSQLStorage, useSQLStorage);
   registerCommand(extensionCommand.enableAzureConnectors, enableAzureConnectors);
 }

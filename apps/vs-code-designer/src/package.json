@@ -1,7 +1,7 @@
 {
   "name": "logic-apps-vscode-extension",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "0.2.52",
+  "version": "0.2.54",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/logic_apps_designer",
   "main": "main.js",
@@ -240,6 +240,11 @@
       {
         "command": "logicAppsExtension.useSQLStorage",
         "title": "Use SQL storage for your Logic App project",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.configureWebhookRedirectEndpoint",
+        "title": "Configure Webhook Redirect Endpoint",
         "category": "Azure Logic Apps"
       },
       {
@@ -541,6 +546,11 @@
           "command": "logicAppsExtension.useSQLStorage",
           "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@3"
+        },
+        {
+          "command": "logicAppsExtension.configureWebhookRedirectEndpoint",
+          "when": "resourceFilename==local.settings.json",
+          "group": "zzz_appSettings@3"
         },
         {
           "command": "logicAppsExtension.enableAzureConnectors",
