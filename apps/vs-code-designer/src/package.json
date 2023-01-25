@@ -256,6 +256,11 @@
         "command": "logicAppsExtension.initProjectForVSCode",
         "title": "Initialize Project for Use with VS Code...",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.configureDeploymentSource",
+        "title": "Configure Deployment Source...",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -514,6 +519,11 @@
           "command": "logicAppsExtension.appSettings.upload",
           "when": "view == newAzLogicApps && viewItem == applicationSettings",
           "group": "1@3"
+        },
+        {
+          "command": "logicAppsExtension.configureDeploymentSource",
+          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "group": "3@2"
         }
       ],
       "explorer/context": [
@@ -720,6 +730,7 @@
     "onCommand:logicAppsExtension.appSettings.upload",
     "onCommand:logicAppsExtension.useSQLStorage",
     "onCommand:logicAppsExtension.initProjectForVSCode",
+    "onCommand:logicAppsExtension.configureDeploymentSource",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
