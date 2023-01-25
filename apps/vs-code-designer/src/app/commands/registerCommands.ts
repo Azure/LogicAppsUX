@@ -22,6 +22,7 @@ import { deleteNode } from './deleteNode';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
 import { redeployDeployment } from './deployments/redeployDeployment';
 import { viewDeploymentLogs } from './deployments/viewDeploymentLogs';
+import { initProjectForVSCode } from './initProjectForVSCode/initProjectForVSCode';
 import { startStreamingLogs } from './logstream/startStreamingLogs';
 import { stopStreamingLogs } from './logstream/stopStreamingLogs';
 import { openFile } from './openFile';
@@ -120,4 +121,5 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.configureWebhookRedirectEndpoint, configureWebhookRedirectEndpoint);
   registerCommand(extensionCommand.useSQLStorage, useSQLStorage);
   registerCommand(extensionCommand.enableAzureConnectors, enableAzureConnectors);
+  registerCommand(extensionCommand.initProjectForVSCode, initProjectForVSCode);
 }
