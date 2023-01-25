@@ -17,6 +17,7 @@ import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import { getRandomHexString } from '../../utils/fs';
 import { delay } from '@azure/ms-rest-js';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
+import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { writeFileSync } from 'fs';
 import * as fse from 'fs-extra';
@@ -65,7 +66,7 @@ class ExportEngine {
       this.addStatus(localize('downloadPackage', 'Downloading package ...'));
       const flatFile = await requestP({
         json: false,
-        method: 'GET',
+        method: HTTP_METHODS.GET,
         encoding: null,
         uri: this.packageUrl,
       });
@@ -117,7 +118,7 @@ class ExportEngine {
   private async getResourceGroup(): Promise<void> {
     const uri = `https://management.azure.com/subscriptions/${this.subscriptionId}/resourcegroups/${this.resourceGroupName}?api-version=2021-04-01`;
     const options = {
-      method: 'GET',
+      method: HTTP_METHODS.GET,
       uri,
       headers: { authorization: this.getAccessToken() },
     };
@@ -135,7 +136,7 @@ class ExportEngine {
       location: this.location,
     };
     const options = {
-      method: 'PUT',
+      method: HTTP_METHODS.PUT,
       uri,
       headers: { authorization: this.getAccessToken() },
       body,
@@ -160,7 +161,7 @@ class ExportEngine {
       },
     };
     const options = {
-      method: 'PUT',
+      method: HTTP_METHODS.PUT,
       uri,
       headers: { authorization: this.getAccessToken() },
       body,
@@ -199,7 +200,7 @@ class ExportEngine {
 
   private async getDeployment(uri: string): Promise<Deployment> {
     const options = {
-      method: 'GET',
+      method: HTTP_METHODS.GET,
       uri,
       headers: { authorization: this.getAccessToken() },
       json: true,
@@ -221,7 +222,7 @@ class ExportEngine {
 
   private async getConnectionKey(connectionId: string): Promise<string> {
     const options = {
-      method: 'POST',
+      method: HTTP_METHODS.POST,
       uri: `https://management.azure.com${connectionId}/listConnectionKeys?api-version=2018-07-01-preview`,
       headers: { authorization: this.getAccessToken() },
       body: { validityTimeSpan: '7' },
@@ -252,7 +253,7 @@ class ExportEngine {
   private async getSubscription(): Promise<any> {
     const uri = `https://management.azure.com/subscriptions/${this.subscriptionId}/?api-version=2021-04-01`;
     const options = {
-      method: 'GET',
+      method: HTTP_METHODS.GET,
       uri,
       headers: { authorization: this.getAccessToken() },
       json: true,

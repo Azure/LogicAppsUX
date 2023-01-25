@@ -110,6 +110,8 @@ export enum extensionCommand {
   connectToGitHub = 'logicAppsExtension.connectToGitHub',
   disconnectRepo = 'logicAppsExtension.disconnectRepo',
   viewCommitInGitHub = 'logicAppsExtension.viewCommitInGitHub',
+  enableAzureConnectors = 'logicAppsExtension.enableAzureConnectors',
+  configureWebhookRedirectEndpoint = 'logicAppsExtension.configureWebhookRedirectEndpoint',
 }
 
 // Context
