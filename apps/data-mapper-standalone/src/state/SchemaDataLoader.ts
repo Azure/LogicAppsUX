@@ -1,3 +1,4 @@
+import { LoadingMethod } from './DataMapDataLoader';
 import type { RootState } from './Store';
 import type { Schema } from '@microsoft/logic-apps-data-mapper';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -8,14 +9,14 @@ export interface SchemaLoadingState {
   inputResourcePath?: string;
   outputResourcePath?: string;
   availableResourcesPaths?: string[];
-  loadingMethod: 'file' | 'arm';
+  loadingMethod: LoadingMethod;
   sourceSchema?: Schema;
   targetSchema?: Schema;
   availableSchemas?: Schema[];
 }
 
 const initialState: SchemaLoadingState = {
-  loadingMethod: 'file',
+  loadingMethod: LoadingMethod.File,
   inputResourcePath: '',
   outputResourcePath: '',
 };
@@ -25,7 +26,7 @@ export const loadSourceSchema = createAsyncThunk('schema/loadSourceSchema', asyn
   const inputResourcePath = currentState.schemaDataLoader.inputResourcePath;
 
   // TODO ARM loading
-  if (currentState.schemaDataLoader.loadingMethod === 'arm') {
+  if (currentState.schemaDataLoader.loadingMethod === LoadingMethod.Arm) {
     return undefined;
   } else {
     if (inputResourcePath) {
@@ -41,7 +42,7 @@ export const loadTargetSchema = createAsyncThunk('schema/loadTargetSchema', asyn
   const outputResourcePath = currentState.schemaDataLoader.outputResourcePath;
 
   // TODO ARM loading
-  if (currentState.schemaDataLoader.loadingMethod === 'arm') {
+  if (currentState.schemaDataLoader.loadingMethod === LoadingMethod.Arm) {
     return undefined;
   } else {
     if (outputResourcePath) {
@@ -68,7 +69,7 @@ export const schemaDataLoaderSlice = createSlice({
     changeAvailableResourcesPath: (state, action: PayloadAction<string[]>) => {
       state.availableResourcesPaths = action.payload;
     },
-    changeLoadingMethod: (state, action: PayloadAction<'file' | 'arm'>) => {
+    changeLoadingMethod: (state, action: PayloadAction<LoadingMethod>) => {
       state.loadingMethod = action.payload;
     },
   },

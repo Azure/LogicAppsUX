@@ -1,7 +1,7 @@
 {
   "name": "logic-apps-vscode-extension",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "0.2.52",
+  "version": "0.2.54",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/logic_apps_designer",
   "main": "main.js",
@@ -181,6 +181,75 @@
       {
         "command": "logicAppsExtension.reviewValidation",
         "title": "Review Validation",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.swapSlot",
+        "title": "Swap Slot...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.toggleAppSettingVisibility",
+        "title": "Toggle App Setting Visibility.",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/visible.svg",
+          "dark": "assets/dark/visible.svg"
+        }
+      },
+      {
+        "command": "logicAppsExtension.appSettings.add",
+        "title": "Add New Setting...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.appSettings.delete",
+        "title": "Delete Setting...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.appSettings.download",
+        "title": "Download Remote Settings...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.appSettings.edit",
+        "title": "Edit Setting...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.appSettings.rename",
+        "title": "Rename Setting...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.appSettings.toggleSlotSetting",
+        "title": "Toggle as Slot Setting",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.appSettings.upload",
+        "title": "Upload Local Settings...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.switchDebugMode",
+        "title": "Update debug mode for stateless workflow",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.useSQLStorage",
+        "title": "Use SQL storage for your Logic App project",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.configureWebhookRedirectEndpoint",
+        "title": "Configure Webhook Redirect Endpoint",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.enableAzureConnectors",
+        "title": "Use Connectors from Azure",
         "category": "Azure Logic Apps"
       }
     ],
@@ -395,6 +464,51 @@
           "command": "logicAppsExtension.stopStreamingLogs",
           "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "4@2"
+        },
+        {
+          "command": "logicAppsExtension.swapSlot",
+          "when": "view == newAzLogicApps && viewItem == azLogicAppsSlot",
+          "group": "2@4"
+        },
+        {
+          "command": "logicAppsExtension.toggleAppSettingVisibility",
+          "when": "view == newAzLogicApps && viewItem == applicationSettingItem",
+          "group": "inline"
+        },
+        {
+          "command": "logicAppsExtension.appSettings.add",
+          "when": "view == newAzLogicApps && viewItem == applicationSettings",
+          "group": "1@1"
+        },
+        {
+          "command": "logicAppsExtension.appSettings.delete",
+          "when": "view == newAzLogicApps && viewItem == applicationSettingItem",
+          "group": "1@3"
+        },
+        {
+          "command": "logicAppsExtension.appSettings.download",
+          "when": "view == newAzLogicApps && viewItem == applicationSettings",
+          "group": "1@2"
+        },
+        {
+          "command": "logicAppsExtension.appSettings.edit",
+          "when": "view == newAzLogicApps && viewItem == applicationSettingItem",
+          "group": "1@1"
+        },
+        {
+          "command": "logicAppsExtension.appSettings.rename",
+          "when": "view == newAzLogicApps && viewItem == applicationSettingItem",
+          "group": "1@2"
+        },
+        {
+          "command": "logicAppsExtension.appSettings.toggleSlotSetting",
+          "when": "view == newAzLogicApps && viewItem == applicationSettingItem",
+          "group": "1@4"
+        },
+        {
+          "command": "logicAppsExtension.appSettings.upload",
+          "when": "view == newAzLogicApps && viewItem == applicationSettings",
+          "group": "1@3"
         }
       ],
       "explorer/context": [
@@ -422,6 +536,26 @@
           "command": "logicAppsExtension.reviewValidation",
           "when": "resourceDirname=~/.logs/export && resourceFilename=~/exportValidation.json/",
           "group": "navigation@1"
+        },
+        {
+          "command": "logicAppsExtension.switchDebugMode",
+          "when": "explorerResourceIsRoot == true",
+          "group": "zzz_LogicApptools@2"
+        },
+        {
+          "command": "logicAppsExtension.useSQLStorage",
+          "when": "explorerResourceIsRoot == true",
+          "group": "zzz_LogicApptools@3"
+        },
+        {
+          "command": "logicAppsExtension.configureWebhookRedirectEndpoint",
+          "when": "resourceFilename==local.settings.json",
+          "group": "zzz_appSettings@3"
+        },
+        {
+          "command": "logicAppsExtension.enableAzureConnectors",
+          "when": "resourceFilename==workflow.json",
+          "group": "navigation@2"
         }
       ],
       "commandPalette": [
@@ -452,6 +586,10 @@
         {
           "command": "logicAppsExtension.openOverview",
           "when": "resourceFilename==workflow.json"
+        },
+        {
+          "command": "logicAppsExtension.toggleAppSettingVisibility",
+          "when": "never"
         }
       ]
     },
@@ -566,6 +704,16 @@
     "onCommand:logicAppsExtension.startStreamingLogs",
     "onCommand:logicAppsExtension.stopStreamingLogs",
     "onCommand:logicAppsExtension.viewDeploymentLogs",
+    "onCommand:logicAppsExtension.swapSlot",
+    "onCommand:logicAppsExtension.switchDebugMode",
+    "onCommand:logicAppsExtension.appSettings.add",
+    "onCommand:logicAppsExtension.appSettings.delete",
+    "onCommand:logicAppsExtension.appSettings.download",
+    "onCommand:logicAppsExtension.appSettings.edit",
+    "onCommand:logicAppsExtension.appSettings.rename",
+    "onCommand:logicAppsExtension.appSettings.toggleSlotSetting",
+    "onCommand:logicAppsExtension.appSettings.upload",
+    "onCommand:logicAppsExtension.useSQLStorage",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",

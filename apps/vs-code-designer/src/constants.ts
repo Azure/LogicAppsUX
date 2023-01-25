@@ -93,9 +93,22 @@ export enum extensionCommand {
   viewProperties = 'logicAppsExtension.viewProperties',
   createSlot = 'logicAppsExtension.createSlot',
   deleteSlot = 'logicAppsExtension.deleteSlot',
+  swapSlot = 'logicAppsExtension.swapSlot',
   startStreamingLogs = 'logicAppsExtension.startStreamingLogs',
   stopStreamingLogs = 'logicAppsExtension.stopStreamingLogs',
   viewDeploymentLogs = 'logicAppsExtension.viewDeploymentLogs',
+  appSettingsAdd = 'logicAppsExtension.appSettings.add',
+  appSettingsDelete = 'logicAppsExtension.appSettings.delete',
+  appSettingsDownload = 'logicAppsExtension.appSettings.download',
+  appSettingsEdit = 'logicAppsExtension.appSettings.edit',
+  appSettingsRename = 'logicAppsExtension.appSettings.rename',
+  appSettingsUpload = 'logicAppsExtension.appSettings.upload',
+  appSettingsToggleSlotSetting = 'logicAppsExtension.appSettings.toggleSlotSetting',
+  toggleAppSettingVisibility = 'logicAppsExtension.toggleAppSettingVisibility',
+  useSQLStorage = 'logicAppsExtension.useSQLStorage',
+  switchDebugMode = 'logicAppsExtension.switchDebugMode',
+  enableAzureConnectors = 'logicAppsExtension.enableAzureConnectors',
+  configureWebhookRedirectEndpoint = 'logicAppsExtension.configureWebhookRedirectEndpoint',
 }
 
 // Context
@@ -159,3 +172,5 @@ export const kubernetesKind = 'kubernetes';
 export const functionAppKind = 'functionapp';
 export const logicAppKind = 'workflowapp';
 export const logicAppKindAppSetting = 'workflowApp';
+
+export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';

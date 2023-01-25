@@ -94,6 +94,13 @@ interface StandardConnectionServiceArgs {
   writeConnection?: WriteConnectionFunc;
   apiHubServiceDetails: IApiHubServiceDetails;
   httpClient: IHttpClient;
+  connectionCreationClients?: Record<string, ConnectionCreationClient>;
+}
+
+type CreateConnectionFunc = (connectionInfo: ConnectionCreationInfo, connectionName: string) => Promise<ConnectionCreationInfo>;
+
+interface ConnectionCreationClient {
+  connectionCreationFunc: CreateConnectionFunc;
 }
 
 export type getAccessTokenType = () => Promise<string>;
@@ -484,7 +491,21 @@ export class StandardConnectionService implements IConnectionService {
       parametersMetadata
     );
 
-    const { writeConnection } = this.options;
+    const { writeConnection, connectionCreationClients } = this.options;
+    const connectionCreationClientName = parametersMetadata.connectionMetadata?.connectionCreationClient;
+    if (connectionCreationClientName) {
+      if (connectionCreationClients?.[connectionCreationClientName]) {
+        connectionInfo = await connectionCreationClients[connectionCreationClientName].connectionCreationFunc(
+          connectionInfo,
+          connectionName
+        );
+      } else {
+        throw new AssertionException(
+          AssertionErrorCode.CONNECTION_CREATION_CLIENT_NOTREGISTERED,
+          `The connection creation client for ${connectionCreationClientName} is not registered`
+        );
+      }
+    }
     if (!writeConnection) {
       throw new AssertionException(AssertionErrorCode.CALLBACK_NOTREGISTERED, 'Callback for write connection is not passed in service.');
     }
@@ -626,7 +647,7 @@ export class StandardConnectionService implements IConnectionService {
     connectionsData: ConnectionAndAppSetting<LocalConnectionModel>;
     connection: Connection;
   } {
-    const { connectionType } = parametersMetadata;
+    const connectionType = parametersMetadata?.connectionMetadata?.type;
     let connectionsData;
     let connection;
     switch (connectionType) {

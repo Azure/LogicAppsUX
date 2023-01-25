@@ -35,17 +35,15 @@ export const convertToMapDefinition = (
 
     generateMapDefinitionBody(mapDefinition, connections);
 
-    return yaml.dump(mapDefinition, { quotingType: '"', replacer: yamlReplacer }).replaceAll('\\"', '');
+    return yaml.dump(mapDefinition, { replacer: yamlReplacer });
   }
 
   return '';
 };
 
 const yamlReplacer = (key: string, value: any) => {
-  if (typeof value === 'string') {
-    if (key === reservedMapDefinitionKeys.version) {
-      return parseFloat(value);
-    }
+  if (typeof value === 'string' && key === reservedMapDefinitionKeys.version) {
+    return parseFloat(value);
   }
 
   return value;
@@ -122,7 +120,7 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
         // Still have objects to traverse down
         newPath.push({ key: pathItem.fullName.startsWith('@') ? `$${pathItem.fullName}` : pathItem.fullName });
       } else {
-        // Add the actual connection value now that we're at the correct spot
+        // Handle custom values, source schema nodes, or Functions applied to the current target schema node
         let value = '';
         if (input) {
           if (isCustomValue(input)) {
