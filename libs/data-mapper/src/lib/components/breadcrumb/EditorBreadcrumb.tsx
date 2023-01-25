@@ -88,11 +88,10 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
     return <ContextualMenu {...props} />;
   };
 
-  const getMenuProps = (item: IBreadcrumbItem): IContextualMenuProps => {
-    const schemaKey = item.key;
-
+  const getMenuProps = (item: IBreadcrumbItem | undefined): IContextualMenuProps => {
     let childItems: IContextualMenuItem[] = [];
-    if (targetSchema) {
+    if (item && targetSchema) {
+      const schemaKey = item.key;
       const schemaNode = findNodeForKey(schemaKey, targetSchema.schemaTreeRoot);
       if (schemaNode) {
         childItems = schemaNode.children.map((childNode) => {
@@ -122,10 +121,6 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
 
   const getCustomDivider = (dividerProps: IDividerAsProps): JSX.Element => {
     const item = dividerProps.item;
-
-    if (!item) {
-      return <IconButton iconProps={{ iconName: dividerProps.iconName }} />;
-    }
 
     return (
       <IconButton
