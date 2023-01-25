@@ -1,7 +1,7 @@
 {
   "name": "logic-apps-vscode-extension",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "0.2.54",
+  "version": "0.2.55",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/logic_apps_designer",
   "main": "main.js",
@@ -250,6 +250,21 @@
       {
         "command": "logicAppsExtension.enableAzureConnectors",
         "title": "Use Connectors from Azure",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.viewCommitInGitHub",
+        "title": "View Commit in GitHub",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.connectToGitHub",
+        "title": "Connect to GitHub Repository...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.disconnectRepo",
+        "title": "Disconnect from Repo...",
         "category": "Azure Logic Apps"
       },
       {
@@ -521,6 +536,16 @@
           "group": "1@3"
         },
         {
+          "command": "logicAppsExtension.disconnectRepo",
+          "when": "view == newAzLogicApps && viewItem == deploymentsConnected",
+          "group": "1@2"
+        },
+        {
+          "command": "logicAppsExtension.viewCommitInGitHub",
+          "when": "view == newAzLogicApps && viewItem == deployment/github",
+          "group": "1@4"
+        },
+        {
           "command": "logicAppsExtension.configureDeploymentSource",
           "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "3@2"
@@ -731,6 +756,9 @@
     "onCommand:logicAppsExtension.useSQLStorage",
     "onCommand:logicAppsExtension.initProjectForVSCode",
     "onCommand:logicAppsExtension.configureDeploymentSource",
+    "onCommand:logicAppsExtension.viewCommitInGitHub",
+    "onCommand:logicAppsExtension.disconnectRepo",
+    "onCommand:logicAppsExtension.connectToGitHub",
     "onView:newAzLogicApps",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
