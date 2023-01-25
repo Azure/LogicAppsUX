@@ -21,8 +21,15 @@ export async function connectToGitHub(context: IActionContext, target?: GenericT
 
   if (node && isSlotTreeItem(node)) {
     await editScmType(context, node.site, node.subscription, ScmType.GitHub);
-    await node.deploymentsNode.refresh(context);
   } else {
     throw Error('Internal error: Action not supported.');
+  }
+
+  if (node instanceof ProductionSlotTreeItem) {
+    if (node.deploymentsNode) {
+      await node.deploymentsNode.refresh(context);
+    }
+  } else {
+    await node.parent?.refresh(context);
   }
 }
