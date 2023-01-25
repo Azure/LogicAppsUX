@@ -8,7 +8,6 @@ import {
 } from '../../../core/actions/bjsworkflow/connections';
 import { getUniqueConnectionName } from '../../../core/queries/connections';
 import { useConnectorByNodeId, useGateways, useSubscriptions } from '../../../core/state/connection/connectionSelector';
-import { useIsConsumption } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useOperationInfo, useOperationManifest } from '../../../core/state/selectors/actionMetadataSelector';
@@ -70,8 +69,6 @@ const CreateConnectionTab = () => {
     setSelectedAzureFunction(appFunction);
   }, []);
 
-  const isConsumption = useIsConsumption();
-
   const createConnectionCallback = useCallback(
     async (
       displayName?: string,
@@ -85,8 +82,16 @@ const CreateConnectionTab = () => {
       setErrorMessage(undefined);
 
       let outputParameterValues = parameterValues;
-      if (selectedParameterSet && !isConsumption) {
-        outputParameterValues['Type'] = selectedParameterSet?.name;
+
+      if (selectedParameterSet) {
+        const requiredParameters = Object.entries(selectedParameterSet?.parameters)?.filter(
+          ([, parameter]) => parameter?.uiDefinition.constraints?.required
+        );
+        requiredParameters?.forEach(([key, parameter]) => {
+          if (!outputParameterValues?.[key]) {
+            outputParameterValues[key] = parameter?.uiDefinition.constraints?.default;
+          }
+        });
       }
 
       try {
@@ -158,7 +163,7 @@ const CreateConnectionTab = () => {
       }
       setIsLoading(false);
     },
-    [applyNewConnection, connectionMetadata, connector, dispatch, isConsumption, needsAzureFunction, selectedAzureFunction]
+    [applyNewConnection, connectionMetadata, connector, dispatch, needsAzureFunction, selectedAzureFunction]
   );
 
   const cancelCallback = useCallback(() => {
