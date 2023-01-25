@@ -15,7 +15,7 @@ export class InitVSCodeLanguageStep extends AzureWizardPromptStep<IProjectWizard
   public hideStepCount = true;
 
   public async prompt(context: IProjectWizardContext): Promise<void> {
-    const languagePicks: QuickPickItem[] = [{ label: ProjectLanguage.JavaScript }];
+    const languagePicks: QuickPickItem[] = [{ label: ProjectLanguage.JavaScript }, { label: ProjectLanguage.CSharp }];
 
     const options: QuickPickOptions = { placeHolder: localize('selectLanguage', "Select your project's language") };
     context.language = (await context.ui.showQuickPick(languagePicks, options)).label as ProjectLanguage;

@@ -659,7 +659,8 @@
             "scope": "resource",
             "type": "string",
             "enum": [
-              "JavaScript"
+              "JavaScript",
+              "C#"
             ],
             "readOnly": true,
             "description": "The default language to use when performing operations like \"Create New Workflow\".",
