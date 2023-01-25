@@ -67,7 +67,7 @@ jobs:
       - name: 'Set Designer Extension VSIX aiKey in package.json'
         run: echo "`jq '.aiKey="${{ env.AI_KEY }}"' apps/vs-code-designer/src/package.json`" > apps/vs-code-designer/src/package.json
 
-      - run: npx nx build:vscode-designer
+      - run: npm run build:vscode-designer
       - run: npm run vscode:designer:pack
 
       - name: 'Get Previous tag'
