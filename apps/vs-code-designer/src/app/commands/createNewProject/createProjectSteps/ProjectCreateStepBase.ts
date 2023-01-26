@@ -36,7 +36,7 @@ export abstract class ProjectCreateStepBase extends AzureWizardExecuteStep<IProj
     }
 
     // OpenFolderStep sometimes restarts the extension host. Adding a second event here to see if we're losing any telemetry
-    await callWithTelemetryAndErrorHandling('logicAppsExtension.createNewProjectStarted', (startedContext: IActionContext) => {
+    await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.createNewProjectStarted', (startedContext: IActionContext) => {
       Object.assign(startedContext, context);
     });
   }

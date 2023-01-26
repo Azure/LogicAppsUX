@@ -24,7 +24,7 @@ const perfStats = {
 export async function activate(context: vscode.ExtensionContext) {
   ext.context = context;
 
-  ext.outputChannel = createAzExtOutputChannel('New Azure Logic Apps (Standard)', ext.prefix);
+  ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
 
   registerUIExtensionVariables(ext);
   registerAppServiceExtensionVariables(ext);
