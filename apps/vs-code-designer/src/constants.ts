@@ -115,6 +115,7 @@ export enum extensionCommand {
   initProjectForVSCode = 'azureLogicAppsStandard.initProjectForVSCode',
   configureDeploymentSource = 'azureLogicAppsStandard.configureDeploymentSource',
   startRemoteDebug = 'azureLogicAppsStandard.startRemoteDebug',
+  validateLogicAppProjects = 'azureLogicAppsStandard.validateFunctionProjects',
 }
 
 // Context
@@ -142,6 +143,9 @@ export const showDeployConfirmationSetting = 'showDeployConfirmation';
 export const deploySubpathSetting = 'deploySubpath';
 export const preDeployTaskSetting = 'preDeployTask';
 export const pickProcessTimeoutSetting = 'pickProcessTimeout';
+export const show64BitWarningSetting = 'show64BitWarning';
+export const showProjectWarningSetting = 'showProjectWarning';
+export const showTargetFrameworkWarningSetting = 'showTargetFrameworkWarning';
 
 // Project
 export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';

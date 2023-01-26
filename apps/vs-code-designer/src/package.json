@@ -649,7 +649,7 @@
     },
     "configuration": [
       {
-        "title": "Azure New Logic Apps (Standard)",
+        "title": "Azure Logic Apps (Standard)",
         "properties": {
           "azureLogicAppsStandard.showExplorer": {
             "type": "boolean",
@@ -686,6 +686,11 @@
             "scope": "resource",
             "type": "string",
             "description": "The default subpath of a workspace folder to use when deploying. If set, you will not be prompted for the folder path when deploying."
+          },
+          "azureLogicAppsStandard.projectSubpath": {
+            "scope": "resource",
+            "type": "string",
+            "description": "The default subpath of a workspace folder to use for project operations. This is only necessary if you have multiple projects in one workspace. See https://aka.ms/AA4nmfy for more information."
           },
           "azureLogicAppsStandard.pickProcessTimeout": {
             "type": "integer",
@@ -726,6 +731,45 @@
             "type": "boolean",
             "description": "Enable remote debugging for Node.js Logic Apps running on Linux App Service plans. Consumption plans are not supported. (experimental)",
             "default": false
+          },
+          "azureLogicAppsStandard.enableOutputTimestamps": {
+            "type": "boolean",
+            "description": "Prepends each line displayed in the output channel with a timestamp.",
+            "default": true
+          },
+          "azureLogicAppsStandard.preDeployTask": {
+            "scope": "resource",
+            "type": "string",
+            "description": "The name of the task to run before zip deployments."
+          },
+          "azureLogicAppsStandard.projectOpenBehavior": {
+            "type": "string",
+            "enum": [
+              "AddToWorkspace",
+              "OpenInNewWindow",
+              "OpenInCurrentWindow"
+            ],
+            "description": "The behavior to use after creating a new project. The options are \"AddToWorkspace\", \"OpenInNewWindow\", or \"OpenInCurrentWindow\"."
+          },
+          "azureLogicAppsStandard.show64BitWarning": {
+            "type": "boolean",
+            "description": "Show a warning to install a 64-bit version of the Azure Functions Core Tools when you create a .NET Framework project.",
+            "default": true
+          },
+          "azureLogicAppsStandard.showDeploySubpathWarning": {
+            "type": "boolean",
+            "description": "Show a warning when the \"deploySubpath\" setting does not match the selected folder for deploying.",
+            "default": true
+          },
+          "azureLogicAppsStandard.showProjectWarning": {
+            "type": "boolean",
+            "description": "Show a warning when an Azure Logic App project was detected that has not been initialized for use in VS Code.",
+            "default": true
+          },
+          "azureLogicAppsStandard.showTargetFrameworkWarning": {
+            "type": "boolean",
+            "description": "Show a warning when an Azure Functions .NET project was detected that has mismatched target frameworks.",
+            "default": true
           }
         }
       }

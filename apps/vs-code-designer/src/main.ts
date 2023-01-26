@@ -4,6 +4,7 @@ import { registerCommands } from './app/commands/registerCommands';
 import { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
+import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
 import { extensionCommand } from './constants';
 import { ext } from './extensionVariables';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
@@ -11,6 +12,7 @@ import {
   AzExtTreeDataProvider,
   callWithTelemetryAndErrorHandling,
   createAzExtOutputChannel,
+  registerEvent,
   registerUIExtensionVariables,
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -42,6 +44,18 @@ export async function activate(context: vscode.ExtensionContext) {
       treeDataProvider: ext.tree,
       showCollapseAll: true,
     });
+
+    callWithTelemetryAndErrorHandling(extensionCommand.validateLogicAppProjects, async (actionContext: IActionContext) => {
+      await verifyVSCodeConfigOnActivate(actionContext, vscode.workspace.workspaceFolders);
+    });
+
+    registerEvent(
+      extensionCommand.validateLogicAppProjects,
+      vscode.workspace.onDidChangeWorkspaceFolders,
+      async (actionContext: IActionContext, event: vscode.WorkspaceFoldersChangeEvent) => {
+        await verifyVSCodeConfigOnActivate(actionContext, event.added);
+      }
+    );
 
     context.subscriptions.push(ext.outputChannel);
     context.subscriptions.push(ext.azureAccountTreeItem);
