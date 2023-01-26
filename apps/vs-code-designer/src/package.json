@@ -1,5 +1,5 @@
 {
-  "name": "logic-apps-vscode-extension",
+  "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
   "version": "0.2.56",
   "aiKey": "setInGitHubBuild",
@@ -16,7 +16,7 @@
     ],
     "commands": [
       {
-        "command": "logicAppsExtension.selectSubscriptions",
+        "command": "azureLogicAppsStandard.selectSubscriptions",
         "title": "Select Subscriptions...",
         "icon": {
           "light": "assets/light/filter.svg",
@@ -24,22 +24,22 @@
         }
       },
       {
-        "command": "logicAppsExtension.openDesigner",
-        "title": "Open New Designer",
+        "command": "azureLogicAppsStandard.openDesigner",
+        "title": "Open Designer",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.loadMore",
+        "command": "azureLogicAppsStandard.loadMore",
         "title": "Load More",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.viewContent",
+        "command": "azureLogicAppsStandard.viewContent",
         "title": "View Content",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.createNewProject",
+        "command": "azureLogicAppsStandard.createNewProject",
         "title": "Create New Project...",
         "category": "Azure Logic Apps",
         "icon": {
@@ -48,7 +48,7 @@
         }
       },
       {
-        "command": "logicAppsExtension.createCodeless",
+        "command": "azureLogicAppsStandard.createCodeless",
         "title": "Create Workflow...",
         "category": "Azure Logic Apps",
         "icon": {
@@ -57,7 +57,7 @@
         }
       },
       {
-        "command": "logicAppsExtension.deploy",
+        "command": "azureLogicAppsStandard.deploy",
         "title": "Deploy to Logic App...",
         "category": "Azure Logic Apps",
         "icon": {
@@ -66,47 +66,47 @@
         }
       },
       {
-        "command": "logicAppsExtension.deploySlot",
+        "command": "azureLogicAppsStandard.deploySlot",
         "title": "Deploy to Slot...",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.createLogicApp",
+        "command": "azureLogicAppsStandard.createLogicApp",
         "title": "Create Logic App in Azure...",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.createLogicAppAdvanced",
+        "command": "azureLogicAppsStandard.createLogicAppAdvanced",
         "title": "Create Logic App in Azure... (Advanced)",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.startLogicApp",
+        "command": "azureLogicAppsStandard.startLogicApp",
         "title": "Start",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.stopLogicApp",
+        "command": "azureLogicAppsStandard.stopLogicApp",
         "title": "Stop",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.restartLogicApp",
+        "command": "azureLogicAppsStandard.restartLogicApp",
         "title": "Restart",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.deleteLogicApp",
+        "command": "azureLogicAppsStandard.deleteLogicApp",
         "title": "Delete Logic App...",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.pickProcess",
+        "command": "azureLogicAppsStandard.pickProcess",
         "title": "Pick Process",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.refresh",
+        "command": "azureLogicAppsStandard.refresh",
         "title": "Refresh",
         "category": "Azure Logic Apps",
         "icon": {
@@ -115,7 +115,7 @@
         }
       },
       {
-        "command": "logicAppsExtension.openOverview",
+        "command": "azureLogicAppsStandard.openOverview",
         "title": "Overview",
         "category": "Azure Logic Apps"
       },
@@ -129,67 +129,67 @@
         }
       },
       {
-        "command": "logicAppsExtension.switchToDotnetProject",
+        "command": "azureLogicAppsStandard.switchToDotnetProject",
         "title": "Convert to NuGet-based Logic App project",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.redeploy",
+        "command": "azureLogicAppsStandard.redeploy",
         "title": "Redeploy",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.openInPortal",
+        "command": "azureLogicAppsStandard.openInPortal",
         "title": "Open in Portal",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.browseWebsite",
+        "command": "azureLogicAppsStandard.browseWebsite",
         "title": "Browse Website",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.viewProperties",
+        "command": "azureLogicAppsStandard.viewProperties",
         "title": "View Properties",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.createSlot",
+        "command": "azureLogicAppsStandard.createSlot",
         "title": "Create Slot...",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.deleteSlot",
+        "command": "azureLogicAppsStandard.deleteSlot",
         "title": "Delete Slot...",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.viewDeploymentLogs",
+        "command": "azureLogicAppsStandard.viewDeploymentLogs",
         "title": "View Deployment Logs",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.startStreamingLogs",
+        "command": "azureLogicAppsStandard.startStreamingLogs",
         "title": "Start Streaming Logs",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.stopStreamingLogs",
+        "command": "azureLogicAppsStandard.stopStreamingLogs",
         "title": "Stop Streaming Logs",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.reviewValidation",
+        "command": "azureLogicAppsStandard.reviewValidation",
         "title": "Review Validation",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.swapSlot",
+        "command": "azureLogicAppsStandard.swapSlot",
         "title": "Swap Slot...",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.toggleAppSettingVisibility",
+        "command": "azureLogicAppsStandard.toggleAppSettingVisibility",
         "title": "Toggle App Setting Visibility.",
         "category": "Azure Logic Apps",
         "icon": {
@@ -198,87 +198,87 @@
         }
       },
       {
-        "command": "logicAppsExtension.appSettings.add",
+        "command": "azureLogicAppsStandard.appSettings.add",
         "title": "Add New Setting...",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.appSettings.delete",
+        "command": "azureLogicAppsStandard.appSettings.delete",
         "title": "Delete Setting...",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.appSettings.download",
+        "command": "azureLogicAppsStandard.appSettings.download",
         "title": "Download Remote Settings...",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.appSettings.edit",
+        "command": "azureLogicAppsStandard.appSettings.edit",
         "title": "Edit Setting...",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.appSettings.rename",
+        "command": "azureLogicAppsStandard.appSettings.rename",
         "title": "Rename Setting...",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.appSettings.toggleSlotSetting",
+        "command": "azureLogicAppsStandard.appSettings.toggleSlotSetting",
         "title": "Toggle as Slot Setting",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.appSettings.upload",
+        "command": "azureLogicAppsStandard.appSettings.upload",
         "title": "Upload Local Settings...",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.switchDebugMode",
+        "command": "azureLogicAppsStandard.switchDebugMode",
         "title": "Update debug mode for stateless workflow",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.useSQLStorage",
+        "command": "azureLogicAppsStandard.useSQLStorage",
         "title": "Use SQL storage for your Logic App project",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.configureWebhookRedirectEndpoint",
+        "command": "azureLogicAppsStandard.configureWebhookRedirectEndpoint",
         "title": "Configure Webhook Redirect Endpoint",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.enableAzureConnectors",
+        "command": "azureLogicAppsStandard.enableAzureConnectors",
         "title": "Use Connectors from Azure",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.viewCommitInGitHub",
+        "command": "azureLogicAppsStandard.viewCommitInGitHub",
         "title": "View Commit in GitHub",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.connectToGitHub",
+        "command": "azureLogicAppsStandard.connectToGitHub",
         "title": "Connect to GitHub Repository...",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.disconnectRepo",
+        "command": "azureLogicAppsStandard.disconnectRepo",
         "title": "Disconnect from Repo...",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.startRemoteDebug",
+        "command": "azureLogicAppsStandard.startRemoteDebug",
         "title": "Start Remote Debugging",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.initProjectForVSCode",
+        "command": "azureLogicAppsStandard.initProjectForVSCode",
         "title": "Initialize Project for Use with VS Code...",
         "category": "Azure Logic Apps"
       },
       {
-        "command": "logicAppsExtension.configureDeploymentSource",
+        "command": "azureLogicAppsStandard.configureDeploymentSource",
         "title": "Configure Deployment Source...",
         "category": "Azure Logic Apps"
       }
@@ -295,368 +295,368 @@
     "views": {
       "azure": [
         {
-          "id": "newAzLogicApps",
-          "name": "New Logic Apps (Standard)",
-          "when": "config.logicAppsExtension.showExplorer == true"
+          "id": "azLogicApps",
+          "name": "Logic Apps (Standard)",
+          "when": "config.azureLogicAppsStandard.showExplorer == true"
         }
       ]
     },
     "menus": {
       "view/title": [
         {
-          "command": "logicAppsExtension.createNewProject",
-          "when": "view == newAzLogicApps",
+          "command": "azureLogicAppsStandard.createNewProject",
+          "when": "view == azLogicApps",
           "group": "navigation@1"
         },
         {
-          "command": "logicAppsExtension.createCodeless",
-          "when": "view == newAzLogicApps",
+          "command": "azureLogicAppsStandard.createCodeless",
+          "when": "view == azLogicApps",
           "group": "navigation@2"
         },
         {
-          "command": "logicAppsExtension.deploy",
-          "when": "view == newAzLogicApps",
+          "command": "azureLogicAppsStandard.deploy",
+          "when": "view == azLogicApps",
           "group": "navigation@3"
         },
         {
           "command": "azureLogicAppsStandard.exportLogicApp",
-          "when": "view == newAzLogicApps",
+          "when": "view == azLogicApps",
           "group": "navigation@4"
         },
         {
-          "command": "logicAppsExtension.refresh",
-          "when": "view == newAzLogicApps",
+          "command": "azureLogicAppsStandard.refresh",
+          "when": "view == azLogicApps",
           "group": "navigation@5"
         }
       ],
       "view/item/context": [
         {
-          "command": "logicAppsExtension.selectSubscriptions",
-          "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
+          "command": "azureLogicAppsStandard.selectSubscriptions",
+          "when": "view == azLogicApps && viewItem == azureextensionui.azureSubscription",
           "group": "inline"
         },
         {
-          "command": "logicAppsExtension.createLogicApp",
-          "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
+          "command": "azureLogicAppsStandard.createLogicApp",
+          "when": "view == azLogicApps && viewItem == azureextensionui.azureSubscription",
           "group": "1@1"
         },
         {
-          "command": "logicAppsExtension.createLogicAppAdvanced",
-          "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
+          "command": "azureLogicAppsStandard.createLogicAppAdvanced",
+          "when": "view == azLogicApps && viewItem == azureextensionui.azureSubscription",
           "group": "1@2"
         },
         {
-          "command": "logicAppsExtension.deleteLogicApp",
-          "when": "view == newAzLogicApps && viewItem == azLogicAppsProductionSlot",
+          "command": "azureLogicAppsStandard.deleteLogicApp",
+          "when": "view == azLogicApps && viewItem == azLogicAppsProductionSlot",
           "group": "2@5"
         },
         {
-          "command": "logicAppsExtension.openDesigner",
-          "when": "view == newAzLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
+          "command": "azureLogicAppsStandard.openDesigner",
+          "when": "view == azLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "1@2"
         },
         {
-          "command": "logicAppsExtension.viewContent",
-          "when": "view == newAzLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
+          "command": "azureLogicAppsStandard.viewContent",
+          "when": "view == azLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "2@1"
         },
         {
-          "command": "logicAppsExtension.deploy",
-          "when": "view == newAzLogicApps && viewItem == azLogicAppsProductionSlot",
+          "command": "azureLogicAppsStandard.deploy",
+          "when": "view == azLogicApps && viewItem == azLogicAppsProductionSlot",
           "group": "3@1"
         },
         {
-          "command": "logicAppsExtension.deploySlot",
-          "when": "view == newAzLogicApps && viewItem == azLogicAppsSlot",
+          "command": "azureLogicAppsStandard.deploySlot",
+          "when": "view == azLogicApps && viewItem == azLogicAppsSlot",
           "group": "3@2"
         },
         {
-          "command": "logicAppsExtension.startLogicApp",
-          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "command": "azureLogicAppsStandard.startLogicApp",
+          "when": "view == azLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "2@1"
         },
         {
-          "command": "logicAppsExtension.stopLogicApp",
-          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "command": "azureLogicAppsStandard.stopLogicApp",
+          "when": "view == azLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "2@2"
         },
         {
-          "command": "logicAppsExtension.restartLogicApp",
-          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "command": "azureLogicAppsStandard.restartLogicApp",
+          "when": "view == azLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "2@3"
         },
         {
-          "command": "logicAppsExtension.refresh",
-          "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
+          "command": "azureLogicAppsStandard.refresh",
+          "when": "view == azLogicApps && viewItem == azureextensionui.azureSubscription",
           "group": "3@1"
         },
         {
-          "command": "logicAppsExtension.refresh",
-          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "command": "azureLogicAppsStandard.refresh",
+          "when": "view == azLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "6@2"
         },
         {
-          "command": "logicAppsExtension.refresh",
-          "when": "view == newAzLogicApps && viewItem == azLogicAppsSlots",
+          "command": "azureLogicAppsStandard.refresh",
+          "when": "view == azLogicApps && viewItem == azLogicAppsSlots",
           "group": "2@1"
         },
         {
-          "command": "logicAppsExtension.refresh",
-          "when": "view == newAzLogicApps && viewItem =~ /Workflows;/i",
+          "command": "azureLogicAppsStandard.refresh",
+          "when": "view == azLogicApps && viewItem =~ /Workflows;/i",
           "group": "1@1"
         },
         {
-          "command": "logicAppsExtension.refresh",
-          "when": "view == newAzLogicApps && viewItem == applicationSettings",
+          "command": "azureLogicAppsStandard.refresh",
+          "when": "view == azLogicApps && viewItem == applicationSettings",
           "group": "2@1"
         },
         {
-          "command": "logicAppsExtension.refresh",
-          "when": "view == newAzLogicApps && viewItem == azFuncProxies",
+          "command": "azureLogicAppsStandard.refresh",
+          "when": "view == azLogicApps && viewItem == azFuncProxies",
           "group": "1@1"
         },
         {
-          "command": "logicAppsExtension.refresh",
-          "when": "view == newAzLogicApps && viewItem =~ /^deployments(C|Unc)onnected$/",
+          "command": "azureLogicAppsStandard.refresh",
+          "when": "view == azLogicApps && viewItem =~ /^deployments(C|Unc)onnected$/",
           "group": "2@1"
         },
         {
-          "command": "logicAppsExtension.refresh",
-          "when": "view == newAzLogicApps && viewItem == siteFiles",
+          "command": "azureLogicAppsStandard.refresh",
+          "when": "view == azLogicApps && viewItem == siteFiles",
           "group": "1@1"
         },
         {
-          "command": "logicAppsExtension.refresh",
-          "when": "view == newAzLogicApps && viewItem == logFiles",
+          "command": "azureLogicAppsStandard.refresh",
+          "when": "view == azLogicApps && viewItem == logFiles",
           "group": "1@1"
         },
         {
-          "command": "logicAppsExtension.refresh",
-          "when": "view == newAzLogicApps && viewItem == folder",
+          "command": "azureLogicAppsStandard.refresh",
+          "when": "view == azLogicApps && viewItem == folder",
           "group": "1@1"
         },
         {
-          "command": "logicAppsExtension.openOverview",
-          "when": "view == newAzLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
+          "command": "azureLogicAppsStandard.openOverview",
+          "when": "view == azLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "1@1"
         },
         {
-          "command": "logicAppsExtension.redeploy",
-          "when": "view == newAzLogicApps && viewItem =~ /^deployment//",
+          "command": "azureLogicAppsStandard.redeploy",
+          "when": "view == azLogicApps && viewItem =~ /^deployment//",
           "group": "1@2"
         },
         {
-          "command": "logicAppsExtension.openInPortal",
-          "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
+          "command": "azureLogicAppsStandard.openInPortal",
+          "when": "view == azLogicApps && viewItem == azureextensionui.azureSubscription",
           "group": "2@1"
         },
         {
-          "command": "logicAppsExtension.openInPortal",
-          "when": "view == newAzLogicApps && viewItem == azLogicAppsProductionSlot",
+          "command": "azureLogicAppsStandard.openInPortal",
+          "when": "view == azLogicApps && viewItem == azLogicAppsProductionSlot",
           "group": "1@1"
         },
         {
-          "command": "logicAppsExtension.openInPortal",
-          "when": "view == newAzLogicApps && viewItem =~ /^deployment//",
+          "command": "azureLogicAppsStandard.openInPortal",
+          "when": "view == azLogicApps && viewItem =~ /^deployment//",
           "group": "1@3"
         },
         {
-          "command": "logicAppsExtension.browseWebsite",
-          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "command": "azureLogicAppsStandard.browseWebsite",
+          "when": "view == azLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "1@2"
         },
         {
-          "command": "logicAppsExtension.viewProperties",
-          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "command": "azureLogicAppsStandard.viewProperties",
+          "when": "view == azLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "6@1"
         },
         {
-          "command": "logicAppsExtension.createSlot",
-          "when": "view == newAzLogicApps && viewItem == azLogicAppsSlots",
+          "command": "azureLogicAppsStandard.createSlot",
+          "when": "view == azLogicApps && viewItem == azLogicAppsSlots",
           "group": "1@1"
         },
         {
-          "command": "logicAppsExtension.deleteSlot",
-          "when": "view == newAzLogicApps && viewItem == azLogicAppsSlot",
+          "command": "azureLogicAppsStandard.deleteSlot",
+          "when": "view == azLogicApps && viewItem == azLogicAppsSlot",
           "group": "2@5"
         },
         {
-          "command": "logicAppsExtension.viewDeploymentLogs",
-          "when": "view == newAzLogicApps && viewItem =~ /^deployment//",
+          "command": "azureLogicAppsStandard.viewDeploymentLogs",
+          "when": "view == azLogicApps && viewItem =~ /^deployment//",
           "group": "1@1"
         },
         {
-          "command": "logicAppsExtension.startStreamingLogs",
-          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "command": "azureLogicAppsStandard.startStreamingLogs",
+          "when": "view == azLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "4@1"
         },
         {
-          "command": "logicAppsExtension.stopStreamingLogs",
-          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "command": "azureLogicAppsStandard.stopStreamingLogs",
+          "when": "view == azLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "4@2"
         },
         {
-          "command": "logicAppsExtension.swapSlot",
-          "when": "view == newAzLogicApps && viewItem == azLogicAppsSlot",
+          "command": "azureLogicAppsStandard.swapSlot",
+          "when": "view == azLogicApps && viewItem == azLogicAppsSlot",
           "group": "2@4"
         },
         {
-          "command": "logicAppsExtension.toggleAppSettingVisibility",
-          "when": "view == newAzLogicApps && viewItem == applicationSettingItem",
+          "command": "azureLogicAppsStandard.toggleAppSettingVisibility",
+          "when": "view == azLogicApps && viewItem == applicationSettingItem",
           "group": "inline"
         },
         {
-          "command": "logicAppsExtension.appSettings.add",
-          "when": "view == newAzLogicApps && viewItem == applicationSettings",
+          "command": "azureLogicAppsStandard.appSettings.add",
+          "when": "view == azLogicApps && viewItem == applicationSettings",
           "group": "1@1"
         },
         {
-          "command": "logicAppsExtension.appSettings.delete",
-          "when": "view == newAzLogicApps && viewItem == applicationSettingItem",
+          "command": "azureLogicAppsStandard.appSettings.delete",
+          "when": "view == azLogicApps && viewItem == applicationSettingItem",
           "group": "1@3"
         },
         {
-          "command": "logicAppsExtension.appSettings.download",
-          "when": "view == newAzLogicApps && viewItem == applicationSettings",
+          "command": "azureLogicAppsStandard.appSettings.download",
+          "when": "view == azLogicApps && viewItem == applicationSettings",
           "group": "1@2"
         },
         {
-          "command": "logicAppsExtension.appSettings.edit",
-          "when": "view == newAzLogicApps && viewItem == applicationSettingItem",
+          "command": "azureLogicAppsStandard.appSettings.edit",
+          "when": "view == azLogicApps && viewItem == applicationSettingItem",
           "group": "1@1"
         },
         {
-          "command": "logicAppsExtension.appSettings.rename",
-          "when": "view == newAzLogicApps && viewItem == applicationSettingItem",
+          "command": "azureLogicAppsStandard.appSettings.rename",
+          "when": "view == azLogicApps && viewItem == applicationSettingItem",
           "group": "1@2"
         },
         {
-          "command": "logicAppsExtension.appSettings.toggleSlotSetting",
-          "when": "view == newAzLogicApps && viewItem == applicationSettingItem",
+          "command": "azureLogicAppsStandard.appSettings.toggleSlotSetting",
+          "when": "view == azLogicApps && viewItem == applicationSettingItem",
           "group": "1@4"
         },
         {
-          "command": "logicAppsExtension.appSettings.upload",
-          "when": "view == newAzLogicApps && viewItem == applicationSettings",
+          "command": "azureLogicAppsStandard.appSettings.upload",
+          "when": "view == azLogicApps && viewItem == applicationSettings",
           "group": "1@3"
         },
         {
-          "command": "logicAppsExtension.disconnectRepo",
-          "when": "view == newAzLogicApps && viewItem == deploymentsConnected",
+          "command": "azureLogicAppsStandard.disconnectRepo",
+          "when": "view == azLogicApps && viewItem == deploymentsConnected",
           "group": "1@2"
         },
         {
-          "command": "logicAppsExtension.viewCommitInGitHub",
-          "when": "view == newAzLogicApps && viewItem == deployment/github",
+          "command": "azureLogicAppsStandard.viewCommitInGitHub",
+          "when": "view == azLogicApps && viewItem == deployment/github",
           "group": "1@4"
         },
         {
-          "command": "logicAppsExtension.startRemoteDebug",
-          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/ && config.logicAppsExtension.enableRemoteDebugging == true",
+          "command": "azureLogicAppsStandard.startRemoteDebug",
+          "when": "view == azLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/ && config.azureLogicAppsStandard.enableRemoteDebugging == true",
           "group": "5@1"
         },
         {
-          "command": "logicAppsExtension.configureDeploymentSource",
-          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "command": "azureLogicAppsStandard.configureDeploymentSource",
+          "when": "view == azLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "3@2"
         }
       ],
       "explorer/context": [
         {
-          "command": "logicAppsExtension.deploy",
+          "command": "azureLogicAppsStandard.deploy",
           "when": "explorerResourceIsFolder == true",
           "group": "zzz_LogicApptools@1"
         },
         {
-          "command": "logicAppsExtension.openOverview",
+          "command": "azureLogicAppsStandard.openOverview",
           "when": "resourceFilename==workflow.json",
           "group": "navigation@1"
         },
         {
-          "command": "logicAppsExtension.openDesigner",
+          "command": "azureLogicAppsStandard.openDesigner",
           "when": "resourceFilename==workflow.json",
           "group": "navigation@3"
         },
         {
-          "command": "logicAppsExtension.switchToDotnetProject",
+          "command": "azureLogicAppsStandard.switchToDotnetProject",
           "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@3"
         },
         {
-          "command": "logicAppsExtension.reviewValidation",
+          "command": "azureLogicAppsStandard.reviewValidation",
           "when": "resourceDirname=~/.logs/export && resourceFilename=~/exportValidation.json/",
           "group": "navigation@1"
         },
         {
-          "command": "logicAppsExtension.switchDebugMode",
+          "command": "azureLogicAppsStandard.switchDebugMode",
           "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@2"
         },
         {
-          "command": "logicAppsExtension.useSQLStorage",
+          "command": "azureLogicAppsStandard.useSQLStorage",
           "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@3"
         },
         {
-          "command": "logicAppsExtension.configureWebhookRedirectEndpoint",
+          "command": "azureLogicAppsStandard.configureWebhookRedirectEndpoint",
           "when": "resourceFilename==local.settings.json",
           "group": "zzz_appSettings@3"
         },
         {
-          "command": "logicAppsExtension.enableAzureConnectors",
+          "command": "azureLogicAppsStandard.enableAzureConnectors",
           "when": "resourceFilename==workflow.json",
           "group": "navigation@2"
         }
       ],
       "commandPalette": [
         {
-          "command": "logicAppsExtension.selectSubscriptions",
+          "command": "azureLogicAppsStandard.selectSubscriptions",
           "when": "never"
         },
         {
-          "command": "logicAppsExtension.openDesigner",
+          "command": "azureLogicAppsStandard.openDesigner",
           "when": "resourceFilename==workflow.json"
         },
         {
-          "command": "logicAppsExtension.loadMore",
+          "command": "azureLogicAppsStandard.loadMore",
           "when": "never"
         },
         {
-          "command": "logicAppsExtension.viewContent",
+          "command": "azureLogicAppsStandard.viewContent",
           "when": "never"
         },
         {
-          "command": "logicAppsExtension.pickProcess",
+          "command": "azureLogicAppsStandard.pickProcess",
           "when": "never"
         },
         {
-          "command": "logicAppsExtension.refresh",
+          "command": "azureLogicAppsStandard.refresh",
           "when": "never"
         },
         {
-          "command": "logicAppsExtension.openOverview",
+          "command": "azureLogicAppsStandard.openOverview",
           "when": "resourceFilename==workflow.json"
         },
         {
-          "command": "logicAppsExtension.toggleAppSettingVisibility",
+          "command": "azureLogicAppsStandard.toggleAppSettingVisibility",
           "when": "never"
         },
         {
-          "command": "logicAppsExtension.startRemoteDebug",
-          "when": "config.logicAppsExtension.enableRemoteDebugging == true"
+          "command": "azureLogicAppsStandard.startRemoteDebug",
+          "when": "config.azureLogicAppsStandard.enableRemoteDebugging == true"
         }
       ]
     },
     "configuration": [
       {
-        "title": "Azure New Logic Apps (Standard)",
+        "title": "Azure Logic Apps (Standard)",
         "properties": {
-          "logicAppsExtension.showExplorer": {
+          "azureLogicAppsStandard.showExplorer": {
             "type": "boolean",
             "default": true,
             "description": "Show or hide the Azure Functions Explorer"
           },
-          "logicAppsExtension.projectRuntime": {
+          "azureLogicAppsStandard.projectRuntime": {
             "scope": "resource",
             "type": "string",
             "enum": [
@@ -669,7 +669,7 @@
               "Azure Functions v3 (.NET Core)"
             ]
           },
-          "logicAppsExtension.projectLanguage": {
+          "azureLogicAppsStandard.projectLanguage": {
             "scope": "resource",
             "type": "string",
             "enum": [
@@ -682,50 +682,94 @@
               ""
             ]
           },
-          "logicAppsExtension.deploySubpath": {
+          "azureLogicAppsStandard.deploySubpath": {
             "scope": "resource",
             "type": "string",
             "description": "The default subpath of a workspace folder to use when deploying. If set, you will not be prompted for the folder path when deploying."
           },
-          "logicAppsExtension.pickProcessTimeout": {
+          "azureLogicAppsStandard.projectSubpath": {
+            "scope": "resource",
+            "type": "string",
+            "description": "The default subpath of a workspace folder to use for project operations. This is only necessary if you have multiple projects in one workspace. See https://aka.ms/AA4nmfy for more information."
+          },
+          "azureLogicAppsStandard.pickProcessTimeout": {
             "type": "integer",
             "description": "The timeout (in seconds) to be used when searching for the Azure Functions host process. Since a build is required every time you F5, you may need to adjust this based on how long your build takes.",
             "default": 60
           },
-          "logicAppsExtension.stopFuncTaskPostDebug": {
+          "azureLogicAppsStandard.stopFuncTaskPostDebug": {
             "type": "boolean",
             "description": "Automatically stop the task running the Azure Functions host when a debug sessions ends.",
             "default": true
           },
-          "logicAppsExtension.validateFuncCoreTools": {
+          "azureLogicAppsStandard.validateFuncCoreTools": {
             "type": "boolean",
             "description": "Validate the Azure Functions Core Tools is installed before debugging.",
             "default": true
           },
-          "logicAppsExtension.showDeployConfirmation": {
+          "azureLogicAppsStandard.showDeployConfirmation": {
             "type": "boolean",
             "description": "Ask for confirmation before deploying to a Function App in Azure (deploying will overwrite any previous deployment and cannot be undone).",
             "default": true
           },
-          "logicAppsExtension.showCoreToolsWarning": {
+          "azureLogicAppsStandard.showCoreToolsWarning": {
             "type": "boolean",
             "description": "Show a warning if your installed version of Azure Functions Core Tools is out-of-date.",
             "default": true
           },
-          "logicAppsExtension.showMultiCoreToolsWarning": {
+          "azureLogicAppsStandard.showMultiCoreToolsWarning": {
             "type": "boolean",
             "description": "Show a warning if multiple installs of Azure Functions Core Tools are detected.",
             "default": true
           },
-          "logicAppsExtension.requestTimeout": {
+          "azureLogicAppsStandard.requestTimeout": {
             "type": "number",
             "description": "The timeout (in seconds) to be used when making requests, for example getting the latest templates.",
             "default": 15
           },
-          "logicAppsExtension.enableRemoteDebugging": {
+          "azureLogicAppsStandard.enableRemoteDebugging": {
             "type": "boolean",
             "description": "Enable remote debugging for Node.js Logic Apps running on Linux App Service plans. Consumption plans are not supported. (experimental)",
             "default": false
+          },
+          "azureLogicAppsStandard.enableOutputTimestamps": {
+            "type": "boolean",
+            "description": "Prepends each line displayed in the output channel with a timestamp.",
+            "default": true
+          },
+          "azureLogicAppsStandard.preDeployTask": {
+            "scope": "resource",
+            "type": "string",
+            "description": "The name of the task to run before zip deployments."
+          },
+          "azureLogicAppsStandard.projectOpenBehavior": {
+            "type": "string",
+            "enum": [
+              "AddToWorkspace",
+              "OpenInNewWindow",
+              "OpenInCurrentWindow"
+            ],
+            "description": "The behavior to use after creating a new project. The options are \"AddToWorkspace\", \"OpenInNewWindow\", or \"OpenInCurrentWindow\"."
+          },
+          "azureLogicAppsStandard.show64BitWarning": {
+            "type": "boolean",
+            "description": "Show a warning to install a 64-bit version of the Azure Functions Core Tools when you create a .NET Framework project.",
+            "default": true
+          },
+          "azureLogicAppsStandard.showDeploySubpathWarning": {
+            "type": "boolean",
+            "description": "Show a warning when the \"deploySubpath\" setting does not match the selected folder for deploying.",
+            "default": true
+          },
+          "azureLogicAppsStandard.showProjectWarning": {
+            "type": "boolean",
+            "description": "Show a warning when an Azure Logic App project was detected that has not been initialized for use in VS Code.",
+            "default": true
+          },
+          "azureLogicAppsStandard.showTargetFrameworkWarning": {
+            "type": "boolean",
+            "description": "Show a warning when an Azure Functions .NET project was detected that has mismatched target frameworks.",
+            "default": true
           }
         }
       }
@@ -736,51 +780,51 @@
     "ms-azuretools.vscode-azurefunctions"
   ],
   "activationEvents": [
-    "onCommand:logicAppsExtension.openDesigner",
-    "onCommand:logicAppsExtension.loadMore",
-    "onCommand:logicAppsExtension.viewContent",
-    "onCommand:logicAppsExtension.createNewProject",
-    "onCommand:logicAppsExtension.createCodeless",
-    "onCommand:logicAppsExtension.deploy",
-    "onCommand:logicAppsExtension.deploySlot",
-    "onCommand:logicAppsExtension.createLogicApp",
-    "onCommand:logicAppsExtension.createLogicAppAdvanced",
-    "onCommand:logicAppsExtension.startLogicApp",
-    "onCommand:logicAppsExtension.stopLogicApp",
-    "onCommand:logicAppsExtension.restartLogicApp",
-    "onCommand:logicAppsExtension.pickProcess",
-    "onCommand:logicAppsExtension.deleteLogicApp",
-    "onCommand:logicAppsExtension.openOverview",
-    "onCommand:logicAppsExtension.refresh",
-    "onCommand:logicAppsExtension.exportLogicApp",
-    "onCommand:logicAppsExtension.reviewValidation",
-    "onCommand:logicAppsExtension.switchToDotnetProject",
-    "onCommand:logicAppsExtension.openInPortal",
-    "onCommand:logicAppsExtension.redeploy",
-    "onCommand:logicAppsExtension.browseWebsite",
-    "onCommand:logicAppsExtension.viewProperties",
-    "onCommand:logicAppsExtension.createSlot",
-    "onCommand:logicAppsExtension.deleteSlot",
-    "onCommand:logicAppsExtension.startStreamingLogs",
-    "onCommand:logicAppsExtension.stopStreamingLogs",
-    "onCommand:logicAppsExtension.viewDeploymentLogs",
-    "onCommand:logicAppsExtension.swapSlot",
-    "onCommand:logicAppsExtension.switchDebugMode",
-    "onCommand:logicAppsExtension.appSettings.add",
-    "onCommand:logicAppsExtension.appSettings.delete",
-    "onCommand:logicAppsExtension.appSettings.download",
-    "onCommand:logicAppsExtension.appSettings.edit",
-    "onCommand:logicAppsExtension.appSettings.rename",
-    "onCommand:logicAppsExtension.appSettings.toggleSlotSetting",
-    "onCommand:logicAppsExtension.appSettings.upload",
-    "onCommand:logicAppsExtension.useSQLStorage",
-    "onCommand:logicAppsExtension.initProjectForVSCode",
-    "onCommand:logicAppsExtension.configureDeploymentSource",
-    "onCommand:logicAppsExtension.viewCommitInGitHub",
-    "onCommand:logicAppsExtension.disconnectRepo",
-    "onCommand:logicAppsExtension.connectToGitHub",
-    "onCommand:logicAppsExtension.startRemoteDebug",
-    "onView:newAzLogicApps",
+    "onCommand:azureLogicAppsStandard.openDesigner",
+    "onCommand:azureLogicAppsStandard.loadMore",
+    "onCommand:azureLogicAppsStandard.viewContent",
+    "onCommand:azureLogicAppsStandard.createNewProject",
+    "onCommand:azureLogicAppsStandard.createCodeless",
+    "onCommand:azureLogicAppsStandard.deploy",
+    "onCommand:azureLogicAppsStandard.deploySlot",
+    "onCommand:azureLogicAppsStandard.createLogicApp",
+    "onCommand:azureLogicAppsStandard.createLogicAppAdvanced",
+    "onCommand:azureLogicAppsStandard.startLogicApp",
+    "onCommand:azureLogicAppsStandard.stopLogicApp",
+    "onCommand:azureLogicAppsStandard.restartLogicApp",
+    "onCommand:azureLogicAppsStandard.pickProcess",
+    "onCommand:azureLogicAppsStandard.deleteLogicApp",
+    "onCommand:azureLogicAppsStandard.openOverview",
+    "onCommand:azureLogicAppsStandard.refresh",
+    "onCommand:azureLogicAppsStandard.exportLogicApp",
+    "onCommand:azureLogicAppsStandard.reviewValidation",
+    "onCommand:azureLogicAppsStandard.switchToDotnetProject",
+    "onCommand:azureLogicAppsStandard.openInPortal",
+    "onCommand:azureLogicAppsStandard.redeploy",
+    "onCommand:azureLogicAppsStandard.browseWebsite",
+    "onCommand:azureLogicAppsStandard.viewProperties",
+    "onCommand:azureLogicAppsStandard.createSlot",
+    "onCommand:azureLogicAppsStandard.deleteSlot",
+    "onCommand:azureLogicAppsStandard.startStreamingLogs",
+    "onCommand:azureLogicAppsStandard.stopStreamingLogs",
+    "onCommand:azureLogicAppsStandard.viewDeploymentLogs",
+    "onCommand:azureLogicAppsStandard.swapSlot",
+    "onCommand:azureLogicAppsStandard.switchDebugMode",
+    "onCommand:azureLogicAppsStandard.appSettings.add",
+    "onCommand:azureLogicAppsStandard.appSettings.delete",
+    "onCommand:azureLogicAppsStandard.appSettings.download",
+    "onCommand:azureLogicAppsStandard.appSettings.edit",
+    "onCommand:azureLogicAppsStandard.appSettings.rename",
+    "onCommand:azureLogicAppsStandard.appSettings.toggleSlotSetting",
+    "onCommand:azureLogicAppsStandard.appSettings.upload",
+    "onCommand:azureLogicAppsStandard.useSQLStorage",
+    "onCommand:azureLogicAppsStandard.initProjectForVSCode",
+    "onCommand:azureLogicAppsStandard.configureDeploymentSource",
+    "onCommand:azureLogicAppsStandard.viewCommitInGitHub",
+    "onCommand:azureLogicAppsStandard.disconnectRepo",
+    "onCommand:azureLogicAppsStandard.connectToGitHub",
+    "onCommand:azureLogicAppsStandard.startRemoteDebug",
+    "onView:azLogicApps",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
     "onDebugInitialConfigurations"

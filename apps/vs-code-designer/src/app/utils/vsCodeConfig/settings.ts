@@ -25,7 +25,7 @@ export function getGlobalSetting<T>(key: string, prefix: string = ext.prefix): T
 
 /**
  * Searches through all open folders and gets the current workspace setting (as long as there are no conflicts)
- * Uses ext.prefix 'azureFunctions' unless otherwise specified
+ * Uses ext.prefix 'azureLogicAppsStandard' unless otherwise specified
  */
 export function getWorkspaceSettingFromAnyFolder(key: string, prefix: string = ext.prefix): string | undefined {
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
@@ -59,7 +59,7 @@ export function getFunctionsWorkerRuntime(language: string | undefined): WorkerR
 }
 
 /**
- * Uses ext.prefix 'azureFunctions' unless otherwise specified
+ * Uses ext.prefix 'azureLogicAppsStandard' unless otherwise specified
  */
 export async function updateWorkspaceSetting<T = string>(
   section: string,

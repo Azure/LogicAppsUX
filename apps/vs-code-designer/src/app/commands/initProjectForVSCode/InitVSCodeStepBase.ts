@@ -16,6 +16,7 @@ import {
   launchFileName,
   extensionsFileName,
   extensionCommand,
+  functionsExtensionId,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -308,7 +309,7 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
   private async writeExtensionsJson(context: IActionContext, vscodePath: string, language: ProjectLanguage): Promise<void> {
     const extensionsJsonPath: string = path.join(vscodePath, extensionsFileName);
     await confirmEditJsonFile(context, extensionsJsonPath, (data: IExtensionsJson): Record<string, any> => {
-      const recommendations: string[] = ['ms-azuretools.vscode-azurefunctions'];
+      const recommendations: string[] = [functionsExtensionId];
       if (this.getRecommendedExtensions) {
         recommendations.push(...this.getRecommendedExtensions(language));
       }

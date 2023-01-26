@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { dotnetPublishTaskLabel, func, funcWatchProblemMatcher, hostStartCommand } from '../../../constants';
+import { dotnetPublishTaskLabel, func, funcWatchProblemMatcher, hostStartCommand, show64BitWarningSetting } from '../../../constants';
 import { localize } from '../../../localize';
 import { getProjFiles, getTargetFramework, getDotnetDebugSubpath, tryGetFuncVersion } from '../../utils/dotnet/dotnet';
 import type { ProjectFile } from '../../utils/dotnet/dotnet';
@@ -64,9 +64,7 @@ export class DotnetInitVSCodeStep extends InitVSCodeStepBase {
     context.version = tryParseFuncVersion(versionInProjFile) || context.version;
 
     if (context.version === FuncVersion.v1) {
-      const settingKey = 'show64BitWarning';
-
-      if (getWorkspaceSetting<boolean>(settingKey)) {
+      if (getWorkspaceSetting<boolean>(show64BitWarningSetting)) {
         const message: string = localize(
           '64BitWarning',
           'In order to debug .NET Framework functions in VS Code, you must install a 64-bit version of the Azure Functions Core Tools.'
@@ -82,7 +80,7 @@ export class DotnetInitVSCodeStep extends InitVSCodeStepBase {
           if (result === DialogResponses.learnMore) {
             await openUrl('https://aka.ms/azFunc64bit');
           } else if (result === DialogResponses.dontWarnAgain) {
-            await updateGlobalSetting(settingKey, false);
+            await updateGlobalSetting(show64BitWarningSetting, false);
           }
         } catch (err) {
           // swallow cancellations (aka if they clicked the 'x' button to dismiss the warning) and proceed to create project

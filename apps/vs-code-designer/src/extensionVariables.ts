@@ -18,13 +18,13 @@ export namespace ext {
   export let workflowDesignChildProcess: cp.ChildProcess | undefined;
   export let outputChannel: IAzExtOutputChannel;
   export let workflowRuntimePort: number;
-  export const prefix = 'logicAppsExtension';
+  export const prefix = 'azureLogicAppsStandard';
 
   // Tree item view
   export let azureAccountTreeItem: AzureAccountTreeItemWithProjects;
   export let tree: AzExtTreeDataProvider;
   export let treeView: TreeView<AzExtTreeItem>;
-  export const treeViewName = 'newAzLogicApps';
+  export const treeViewName = 'azLogicApps';
   export let deploymentFolderPath: string;
 
   // Functions

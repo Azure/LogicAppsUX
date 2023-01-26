@@ -40,7 +40,7 @@ export async function getWorkspaceFolder(context: IActionContext): Promise<vscod
     const result: vscode.MessageItem = await context.ui.showWarningMessage(message, { modal: true }, newProject, openExistingProject);
 
     if (result === newProject) {
-      vscode.commands.executeCommand('logicAppsExtension.createNewProject');
+      vscode.commands.executeCommand('azureLogicAppsStandard.createNewProject');
       context.telemetry.properties.noWorkspaceResult = 'createNewProject';
     } else {
       const uri: vscode.Uri[] = await context.ui.showOpenDialog({

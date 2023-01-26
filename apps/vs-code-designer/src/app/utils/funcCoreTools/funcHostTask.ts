@@ -32,7 +32,7 @@ export function isFuncHostTask(task: vscode.Task): boolean {
 
 export function registerFuncHostTaskEvents(): void {
   registerEvent(
-    'logicAppsExtension.onDidStartTask',
+    'azureLogicAppsStandard.onDidStartTask',
     vscode.tasks.onDidStartTaskProcess,
     async (context: IActionContext, e: vscode.TaskProcessStartEvent) => {
       context.errorHandling.suppressDisplay = true;
@@ -44,7 +44,7 @@ export function registerFuncHostTaskEvents(): void {
   );
 
   registerEvent(
-    'logicAppsExtension.onDidEndTask',
+    'azureLogicAppsStandard.onDidEndTask',
     vscode.tasks.onDidEndTaskProcess,
     async (context: IActionContext, e: vscode.TaskProcessEndEvent) => {
       context.errorHandling.suppressDisplay = true;
@@ -55,7 +55,7 @@ export function registerFuncHostTaskEvents(): void {
     }
   );
 
-  registerEvent('logicAppsExtension.onDidTerminateDebugSession', vscode.debug.onDidTerminateDebugSession, stopFuncTaskIfRunning);
+  registerEvent('azureLogicAppsStandard.onDidTerminateDebugSession', vscode.debug.onDidTerminateDebugSession, stopFuncTaskIfRunning);
 }
 
 async function stopFuncTaskIfRunning(context: IActionContext, debugSession: vscode.DebugSession): Promise<void> {

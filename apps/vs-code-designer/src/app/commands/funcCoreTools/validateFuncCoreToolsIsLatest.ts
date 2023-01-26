@@ -21,7 +21,7 @@ import * as semver from 'semver';
 import type { MessageItem } from 'vscode';
 
 export async function validateFuncCoreToolsIsLatest(): Promise<void> {
-  await callWithTelemetryAndErrorHandling('logicAppsExtension.validateFuncCoreToolsIsLatest', async (context: IActionContext) => {
+  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async (context: IActionContext) => {
     context.errorHandling.suppressDisplay = true;
     context.telemetry.properties.isActivationEvent = 'true';
 
