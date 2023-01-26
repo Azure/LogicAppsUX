@@ -1,5 +1,5 @@
 {
-  "name": "logic-apps-vscode-extension",
+  "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
   "version": "0.2.56",
   "aiKey": "setInGitHubBuild",
