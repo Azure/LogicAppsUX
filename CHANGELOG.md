@@ -1,5 +1,11 @@
 # Logic Apps Designer
 
+### [0.2.56](https://github.com/Azure/LogicAppsUX/compare/v0.2.55...v0.2.56) (2023-01-26)
+
+### Logic Apps Designer Changes
+
+- Consumption Connection Service ([#1546](https://github.com/Azure/LogicAppsUX/issues/1546)) ([e7b2e58](https://github.com/Azure/LogicAppsUX/commit/e7b2e580072055676cd51e18e42a443b76ecb3fa))
+
 ### [0.2.55](https://github.com/Azure/LogicAppsUX/compare/v0.2.54...v0.2.55) (2023-01-25)
 
 ### [0.2.54](https://github.com/Azure/LogicAppsUX/compare/v0.2.53...v0.2.54) (2023-01-25)
