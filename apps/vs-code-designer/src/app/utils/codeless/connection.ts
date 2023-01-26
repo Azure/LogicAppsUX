@@ -7,7 +7,7 @@ import { tryGetFunctionProjectRoot } from '../verifyIsProject';
 import { getContainingWorkspace } from '../workspace';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import { getParametersJson } from './parameter';
-import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
+import { HTTP_METHODS, isString } from '@microsoft/utils-logic-apps';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
@@ -175,7 +175,7 @@ export function resolveSettingsInConnection(
         ...connectionInfo,
         parameterValues: Object.keys(connectionInfo.parameterValues).reduce((result: Record<string, string>, parameterKey: string) => {
           let value = connectionInfo.parameterValues[parameterKey];
-          if (value.startsWith("@appsetting('")) {
+          if (isString(value) && value.startsWith("@appsetting('")) {
             const settingKey = value.substring(13, value.lastIndexOf("')"));
             value = settings[settingKey];
           }
