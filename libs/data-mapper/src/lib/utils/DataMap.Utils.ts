@@ -354,13 +354,12 @@ export const addAncestorNodesToCanvas = (
   flattenedSourceSchema: SchemaNodeDictionary,
   nodes: SourceSchemaNodeExtended[]
 ) => {
-  // if parent already exists on the canvas, and higher node like root is added, add all nodes in-between
   const grandparentNodesOnCanvas = currentSourceSchemaNodes.filter(
     (node) => payloadNode?.key.includes(node.key) && payloadNode.parentKey !== node.key && payloadNode.key !== node.key
   );
 
   if (grandparentNodesOnCanvas.length > 0) {
-    grandparentNodesOnCanvas.sort((a, b) => a.key.length - b.key.length); // danielle test
+    grandparentNodesOnCanvas.sort((a, b) => a.key.length - b.key.length);
     const highestAncestor = grandparentNodesOnCanvas[0];
     payloadNode.pathToRoot.forEach((ancestorNode) => {
       if (ancestorNode.key.length > highestAncestor.key.length && ancestorNode.key !== payloadNode.key) {

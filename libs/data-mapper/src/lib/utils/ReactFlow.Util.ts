@@ -184,17 +184,17 @@ const convertSourceToReactFlowParentAndChildNodes = (
   sourceNodesCopy.forEach((node) => sourceKeySet.add(node.key));
   const widthDict: Map<string, number> = new Map<string, number>();
   let maxSize = 200;
+  const widthToIncrease = 24;
   combinedSourceSchemaNodes.forEach((srcNode) => {
-    // danielle for the node find all parents on with repeating
     let srcWidth = 0;
     sourceKeySet.forEach((possibleParent) => {
       if (srcNode.key.includes(possibleParent) && possibleParent !== srcNode.key) {
-        srcWidth = srcWidth + 24;
+        srcWidth = srcWidth + widthToIncrease;
       }
     });
     widthDict.set(srcNode.key, srcWidth);
     if (srcWidth > 72) {
-      maxSize += 24;
+      maxSize += widthToIncrease;
     }
   });
 
@@ -217,11 +217,15 @@ const convertSourceToReactFlowParentAndChildNodes = (
       return;
     }
 
+    const dictWidth = widthDict.get(srcNode.key);
+    const nodeWidth = dictWidth !== undefined ? dictWidth : 200;
+
     reactFlowNodes.push({
       id: nodeReactFlowId,
       zIndex: 101, // Just for schema nodes to render N-badge over edges
       data: {
-        schemaNode: { ...srcNode, width: maxSize - (widthDict.get(srcNode.key) || 200) },
+        schemaNode: { ...srcNode, width: maxSize - nodeWidth },
+        maxWidth: maxSize,
         schemaType: SchemaType.Source,
         displayHandle: true,
         displayChevron: true,

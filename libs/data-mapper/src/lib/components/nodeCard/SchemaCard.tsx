@@ -152,6 +152,7 @@ const useStyles = makeStyles({
 
 export interface SchemaCardProps extends CardProps {
   schemaNode: SchemaNodeExtended | SourceSchemaNodeExtended;
+  maxWidth?: number;
   schemaType: SchemaType;
   displayHandle: boolean;
   displayChevron: boolean;
@@ -162,9 +163,9 @@ export interface SchemaCardProps extends CardProps {
 }
 
 export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
-  const maxWidth = 200;
   const reactFlowId = props.id;
-  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, displayHandle, displayChevron, connectionStatus } = props.data;
+  const { schemaNode, maxWidth, schemaType, isLeaf, isChild, onClick, disabled, displayHandle, displayChevron, connectionStatus } =
+    props.data;
   const dispatch = useDispatch<AppDispatch>();
   const sharedStyles = getStylesForSharedState();
   const classes = useStyles();
@@ -280,7 +281,8 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const targetCardWidth = isChild ? childTargetNodeCardWidth : schemaNodeCardWidth;
   const cardWidth = isSourceSchemaNode && schemaNode.width ? schemaNode.width : targetCardWidth;
-  const sourceCardMargin = isSourceSchemaNode ? maxWidth - cardWidth : 0;
+  const maxWidthCalculated = maxWidth || 0;
+  const sourceCardMargin = isSourceSchemaNode ? maxWidthCalculated - cardWidth : 0;
 
   return (
     <div className={classes.badgeContainer} style={{ marginLeft: sourceCardMargin }}>
