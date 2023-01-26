@@ -1,3 +1,5 @@
+@import (reference) '../../variables.less';
+
 .msla-pill {
   background-color: #fff;
   border-radius: 14px;
@@ -42,4 +44,11 @@ body.dark {
     background-color: @ms-color-white;
     box-shadow: 0 0.6px 1.8px rgba(255, 255, 255, 0.25);
   }
+}
+
+.msla-pill-card() {
+  position: absolute;
+  right: 4px;
+  top: -20px;
+  color: @card-text-color;
 }
