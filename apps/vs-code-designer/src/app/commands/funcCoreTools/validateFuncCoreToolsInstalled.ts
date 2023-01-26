@@ -28,7 +28,7 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
   let installed = false;
   const install: MessageItem = { title: localize('install', 'Install') };
 
-  await callWithTelemetryAndErrorHandling('logicAppsExtension.validateFuncCoreToolsInstalled', async (innerContext: IActionContext) => {
+  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateFuncCoreToolsInstalled', async (innerContext: IActionContext) => {
     innerContext.errorHandling.suppressDisplay = true;
 
     if (!getWorkspaceSetting<boolean>(validateFuncCoreToolsSetting, fsPath)) {
