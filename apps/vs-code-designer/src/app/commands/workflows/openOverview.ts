@@ -109,11 +109,11 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     switch (message.command) {
       case ExtensionCommand.loadRun:
         if (workflowNode instanceof vscode.Uri) {
-          await callWithTelemetryAndErrorHandling('logicAppsExtension.openMonitoringView', async () => {
+          await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.openMonitoringView', async () => {
             //await openMonitoringView(message.item.id, workflowFilePath, context);
           });
         } else if (workflowNode instanceof RemoteWorkflowTreeItem) {
-          await callWithTelemetryAndErrorHandling('logicAppsExtension.openMonitoringViewForAzureResource', async () => {
+          await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.openMonitoringViewForAzureResource', async () => {
             /*await openMonitoringViewForAzureResource(
                     message.item.id,
                     workflowFilePath,
