@@ -13,6 +13,7 @@ import { renameAppSetting } from './appSettings/renameAppSetting';
 import { toggleSlotSetting } from './appSettings/toggleSlotSetting';
 import { uploadAppSettings } from './appSettings/uploadAppSettings';
 import { browseWebsite } from './browseWebsite';
+import { configureDeploymentSource } from './configureDeploymentSource';
 import { createChildNode } from './createChildNode';
 import { createCodeless } from './createCodeless/createCodeless';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
@@ -25,6 +26,7 @@ import { disconnectRepo } from './deployments/disconnectRepo';
 import { redeployDeployment } from './deployments/redeployDeployment';
 import { viewCommitInGitHub } from './deployments/viewCommitInGitHub';
 import { viewDeploymentLogs } from './deployments/viewDeploymentLogs';
+import { initProjectForVSCode } from './initProjectForVSCode/initProjectForVSCode';
 import { startStreamingLogs } from './logstream/startStreamingLogs';
 import { stopStreamingLogs } from './logstream/stopStreamingLogs';
 import { openFile } from './openFile';
@@ -127,5 +129,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.disconnectRepo, disconnectRepo);
   registerCommand(extensionCommand.viewCommitInGitHub, viewCommitInGitHub);
   registerCommand(extensionCommand.enableAzureConnectors, enableAzureConnectors);
+  registerCommand(extensionCommand.initProjectForVSCode, initProjectForVSCode);
+  registerCommand(extensionCommand.configureDeploymentSource, configureDeploymentSource);
   registerCommand(extensionCommand.startRemoteDebug, startRemoteDebug);
 }

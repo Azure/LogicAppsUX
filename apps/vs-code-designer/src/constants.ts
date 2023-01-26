@@ -112,6 +112,8 @@ export enum extensionCommand {
   viewCommitInGitHub = 'logicAppsExtension.viewCommitInGitHub',
   enableAzureConnectors = 'logicAppsExtension.enableAzureConnectors',
   configureWebhookRedirectEndpoint = 'logicAppsExtension.configureWebhookRedirectEndpoint',
+  initProjectForVSCode = 'logicAppsExtension.initProjectForVSCode',
+  configureDeploymentSource = 'logicAppsExtension.configureDeploymentSource',
   startRemoteDebug = 'logicAppsExtension.startRemoteDebug',
 }
 

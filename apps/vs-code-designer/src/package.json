@@ -271,6 +271,16 @@
         "command": "logicAppsExtension.startRemoteDebug",
         "title": "Start Remote Debugging",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.initProjectForVSCode",
+        "title": "Initialize Project for Use with VS Code...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.configureDeploymentSource",
+        "title": "Configure Deployment Source...",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {
@@ -544,6 +554,11 @@
           "command": "logicAppsExtension.startRemoteDebug",
           "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/ && config.logicAppsExtension.enableRemoteDebugging == true",
           "group": "5@1"
+        },
+        {
+          "command": "logicAppsExtension.configureDeploymentSource",
+          "when": "view == newAzLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "group": "3@2"
         }
       ],
       "explorer/context": [
@@ -658,7 +673,8 @@
             "scope": "resource",
             "type": "string",
             "enum": [
-              "JavaScript"
+              "JavaScript",
+              "C#"
             ],
             "readOnly": true,
             "description": "The default language to use when performing operations like \"Create New Workflow\".",
@@ -758,6 +774,8 @@
     "onCommand:logicAppsExtension.appSettings.toggleSlotSetting",
     "onCommand:logicAppsExtension.appSettings.upload",
     "onCommand:logicAppsExtension.useSQLStorage",
+    "onCommand:logicAppsExtension.initProjectForVSCode",
+    "onCommand:logicAppsExtension.configureDeploymentSource",
     "onCommand:logicAppsExtension.viewCommitInGitHub",
     "onCommand:logicAppsExtension.disconnectRepo",
     "onCommand:logicAppsExtension.connectToGitHub",
