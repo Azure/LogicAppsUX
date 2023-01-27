@@ -47,6 +47,34 @@ export const parsePropertiesIntoNodeProperties = (propertiesString: string): Sch
   return [];
 };
 
+export const setWidthForSourceNodes = (sourceNodes: SchemaNodeExtended[]) => {
+  const uniqueParents = new Set<string>();
+  sourceNodes.forEach((node) => node.parentKey && uniqueParents.add(node.parentKey));
+  uniqueParents.forEach((parentKey) => {
+    const childrenWithParentKey = sourceNodes.filter((node) => node.parentKey === parentKey);
+    getWidthRec(0, childrenWithParentKey, sourceNodes);
+  });
+};
+
+const getWidthRec = (depth: number, childNodes: SchemaNodeExtended[], allNodes: SchemaNodeExtended[]) => {
+  if (childNodes.length === 0) {
+    return;
+  }
+  childNodes.forEach((node) => {
+    if (!node.width) {
+      // eslint-disable-next-line no-param-reassign
+      node.width = 200 - depth * 24;
+    }
+    if (node.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
+      getWidthRec(
+        depth + 1,
+        allNodes.filter((childNode) => childNode.parentKey === node.key),
+        allNodes
+      );
+    }
+  });
+};
+
 export const flattenSchemaIntoDictionary = (schema: SchemaExtended, schemaType: SchemaType): SchemaNodeDictionary => {
   const result: SchemaNodeDictionary = {};
   const idPrefix = schemaType === SchemaType.Source ? sourcePrefix : targetPrefix;

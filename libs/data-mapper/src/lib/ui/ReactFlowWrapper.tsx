@@ -7,7 +7,7 @@ import { SimpleFunctionCard } from '../components/nodeCard/functionCard/SimpleFu
 import { Notification } from '../components/notification/Notification';
 import { SchemaNameBadge } from '../components/schemaSelection/SchemaNameBadge';
 import { SourceSchemaPlaceholder } from '../components/schemaSelection/SourceSchemaPlaceholder';
-import { schemaNodeCardHeight, schemaNodeCardWidth } from '../constants/NodeConstants';
+import { schemaNodeCardHeight, schemaNodeCardDefaultWidth } from '../constants/NodeConstants';
 import {
   checkerboardBackgroundImage,
   defaultCanvasZoom,
@@ -166,7 +166,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight, canvasBlockWidth, useExpan
 
   // Restrict canvas panning to certain bounds
   const translateExtent = useMemo<CanvasExtent>(() => {
-    const xOffset = schemaNodeCardWidth * 2;
+    const xOffset = schemaNodeCardDefaultWidth * 2;
     const yOffset = schemaNodeCardHeight * 2;
 
     const xPos = canvasBlockWidth / canvasZoom - xOffset;
