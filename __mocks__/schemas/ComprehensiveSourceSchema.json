@@ -24,27 +24,27 @@
         "properties": "NotSpecified",
         "children": [
           {
-            "key": "/ns0:SourceSchemaRoot/DirectTranslation/FullName",
-            "name": "FullName",
-            "fullName": "FullName",
+            "key": "/ns0:SourceSchemaRoot/DirectTranslation/SourceFullName",
+            "name": "SourceFullName",
+            "fullName": "SourceFullName",
             "parentKey": "/ns0:SourceSchemaRoot/DirectTranslation",
             "normalizedDataType": "String",
             "properties": "NotSpecified",
             "children": []
           },
           {
-            "key": "/ns0:SourceSchemaRoot/DirectTranslation/NumCorgis",
-            "name": "NumCorgis",
-            "fullName": "NumCorgis",
+            "key": "/ns0:SourceSchemaRoot/DirectTranslation/SourceNumCorgis",
+            "name": "SourceNumCorgis",
+            "fullName": "SourceNumCorgis",
             "parentKey": "/ns0:SourceSchemaRoot/DirectTranslation",
             "normalizedDataType": "Number",
             "properties": "NotSpecified",
             "children": []
           },
           {
-            "key": "/ns0:SourceSchemaRoot/DirectTranslation/@IsTheNewGuy",
-            "name": "IsTheNewGuy",
-            "fullName": "@IsTheNewGuy",
+            "key": "/ns0:SourceSchemaRoot/DirectTranslation/@SourceIsTheNewGuy",
+            "name": "SourceIsTheNewGuy",
+            "fullName": "@SourceIsTheNewGuy",
             "parentKey": "/ns0:SourceSchemaRoot/DirectTranslation",
             "normalizedDataType": "Boolean",
             "properties": "Attribute",
@@ -107,18 +107,18 @@
         "properties": "NotSpecified",
         "children": [
           {
-            "key": "/ns0:SourceSchemaRoot/Conditionals/Object",
-            "name": "Object",
-            "fullName": "Object",
+            "key": "/ns0:SourceSchemaRoot/Conditionals/SourceObject",
+            "name": "SourceObject",
+            "fullName": "SourceObject",
             "parentKey": "/ns0:SourceSchemaRoot/Conditionals",
             "normalizedDataType": "ComplexType",
             "properties": "NotSpecified",
             "children": [
               {
-                "key": "/ns0:SourceSchemaRoot/Conditionals/Object/Property",
-                "name": "Property",
-                "fullName": "Property",
-                "parentKey": "/ns0:SourceSchemaRoot/Conditionals/Object",
+                "key": "/ns0:SourceSchemaRoot/Conditionals/SourceObject/SourceProperty",
+                "name": "SourceProperty",
+                "fullName": "SourceProperty",
+                "parentKey": "/ns0:SourceSchemaRoot/Conditionals/SourceObject",
                 "normalizedDataType": "String",
                 "properties": "NotSpecified",
                 "children": []
@@ -152,18 +152,18 @@
                 "properties": "Repeating",
                 "children": [
                   {
-                    "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/Simple/Direct",
-                    "name": "Direct",
-                    "fullName": "Direct",
+                    "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/Simple/SourceDirect",
+                    "name": "SourceDirect",
+                    "fullName": "SourceDirect",
                     "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToOne/Simple",
                     "normalizedDataType": "String",
                     "properties": "NotSpecified",
                     "children": []
                   },
                   {
-                    "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/Simple/FunctionChain",
-                    "name": "FunctionChain",
-                    "fullName": "FunctionChain",
+                    "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/Simple/SourceFunctionChain",
+                    "name": "SourceFunctionChain",
+                    "fullName": "SourceFunctionChain",
                     "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToOne/Simple",
                     "normalizedDataType": "String",
                     "properties": "NotSpecified",
@@ -180,18 +180,18 @@
                 "properties": "Repeating",
                 "children": [
                   {
-                    "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/RelativePaths/Property",
-                    "name": "Property",
-                    "fullName": "Property",
+                    "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/RelativePaths/SourceProperty",
+                    "name": "SourceProperty",
+                    "fullName": "SourceProperty",
                     "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToOne/RelativePaths",
                     "normalizedDataType": "String",
                     "properties": "NotSpecified",
                     "children": []
                   },
                   {
-                    "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/RelativePaths/@Attribute",
-                    "name": "Attribute",
-                    "fullName": "@Attribute",
+                    "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/RelativePaths/@SourceAttribute",
+                    "name": "SourceAttribute",
+                    "fullName": "@SourceAttribute",
                     "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToOne/RelativePaths",
                     "normalizedDataType": "String",
                     "properties": "Attribute",
@@ -245,35 +245,35 @@
                 "properties": "Repeating",
                 "children": [
                   {
-                    "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SimpleChild",
-                    "name": "SimpleChild",
-                    "fullName": "SimpleChild",
+                    "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild",
+                    "name": "SourceSimpleChild",
+                    "fullName": "SourceSimpleChild",
                     "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple",
                     "normalizedDataType": "ComplexType",
                     "properties": "Repeating",
                     "children": [
                       {
-                        "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SimpleChild/SimpleChildChild",
-                        "name": "SimpleChildChild",
-                        "fullName": "SimpleChildChild",
-                        "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SimpleChild",
+                        "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild",
+                        "name": "SourceSimpleChildChild",
+                        "fullName": "SourceSimpleChildChild",
+                        "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild",
                         "normalizedDataType": "ComplexType",
                         "properties": "Repeating",
                         "children": [
                           {
-                            "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SimpleChild/SimpleChildChild/Direct",
-                            "name": "Direct",
-                            "fullName": "Direct",
-                            "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SimpleChild/SimpleChildChild",
+                            "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect",
+                            "name": "SourceDirect",
+                            "fullName": "SourceDirect",
+                            "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild",
                             "normalizedDataType": "String",
                             "properties": "NotSpecified",
                             "children": []
                           },
                           {
-                            "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SimpleChild/SimpleChildChild/FunctionChain",
-                            "name": "FunctionChain",
-                            "fullName": "FunctionChain",
-                            "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SimpleChild/SimpleChildChild",
+                            "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceFunctionChain",
+                            "name": "SourceFunctionChain",
+                            "fullName": "SourceFunctionChain",
+                            "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild",
                             "normalizedDataType": "String",
                             "properties": "NotSpecified",
                             "children": []
@@ -330,18 +330,18 @@
                 "properties": "Repeating",
                 "children": [
                   {
-                    "key": "/ns0:SourceSchemaRoot/Looping/OneToMany/Simple/Direct",
-                    "name": "Direct",
-                    "fullName": "Direct",
+                    "key": "/ns0:SourceSchemaRoot/Looping/OneToMany/Simple/SourceDirect",
+                    "name": "SourceDirect",
+                    "fullName": "SourceDirect",
                     "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToMany/Simple",
                     "normalizedDataType": "String",
                     "properties": "NotSpecified",
                     "children": []
                   },
                   {
-                    "key": "/ns0:SourceSchemaRoot/Looping/OneToMany/Simple/FunctionChain",
-                    "name": "FunctionChain",
-                    "fullName": "FunctionChain",
+                    "key": "/ns0:SourceSchemaRoot/Looping/OneToMany/Simple/SourceFunctionChain",
+                    "name": "SourceFunctionChain",
+                    "fullName": "SourceFunctionChain",
                     "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToMany/Simple",
                     "normalizedDataType": "String",
                     "properties": "NotSpecified",
@@ -395,35 +395,35 @@
                 "properties": "Repeating",
                 "children": [
                   {
-                    "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SimpleChild",
-                    "name": "SimpleChild",
-                    "fullName": "SimpleChild",
+                    "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild",
+                    "name": "SourceSimpleChild",
+                    "fullName": "SourceSimpleChild",
                     "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple",
                     "normalizedDataType": "ComplexType",
                     "properties": "Repeating",
                     "children": [
                       {
-                        "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild",
-                        "name": "SimpleChildChild",
-                        "fullName": "SimpleChildChild",
-                        "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SimpleChild",
+                        "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild",
+                        "name": "SourceSimpleChildChild",
+                        "fullName": "SourceSimpleChildChild",
+                        "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild",
                         "normalizedDataType": "ComplexType",
                         "properties": "Repeating",
                         "children": [
                           {
-                            "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild/Direct",
-                            "name": "Direct",
-                            "fullName": "Direct",
-                            "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild",
+                            "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect",
+                            "name": "SourceDirect",
+                            "fullName": "SourceDirect",
+                            "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild",
                             "normalizedDataType": "String",
                             "properties": "NotSpecified",
                             "children": []
                           },
                           {
-                            "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild/FunctionChain",
-                            "name": "FunctionChain",
-                            "fullName": "FunctionChain",
-                            "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild",
+                            "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceFunctionChain",
+                            "name": "SourceFunctionChain",
+                            "fullName": "SourceFunctionChain",
+                            "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild",
                             "normalizedDataType": "String",
                             "properties": "NotSpecified",
                             "children": []
