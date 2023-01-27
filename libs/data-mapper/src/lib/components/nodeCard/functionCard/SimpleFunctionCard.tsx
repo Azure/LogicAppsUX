@@ -7,7 +7,7 @@ import HandleWrapper from './../HandleWrapper';
 import { getStylesForSharedState, selectedCardStyles } from './../NodeCard';
 import type { FunctionCardProps } from './FunctionCard';
 import { inputsValid, shouldDisplaySourceHandle, shouldDisplayTargetHandle, useFunctionCardStyles } from './FunctionCard';
-import { Button, mergeClasses, PresenceBadge, Text, Tooltip } from '@fluentui/react-components';
+import { Button, mergeClasses, PresenceBadge, Text, tokens, Tooltip } from '@fluentui/react-components';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
 import { useMemo, useState } from 'react';
@@ -99,7 +99,12 @@ export const SimpleFunctionCard = (props: NodeProps<FunctionCardProps>) => {
           }
           disabled={!!disabled}
         >
-          {getIconForFunction(functionData.functionName, functionData.category, functionData.iconFileName, functionBranding)}
+          {getIconForFunction(
+            functionData.functionName,
+            functionData.category,
+            functionData.iconFileName,
+            tokens.colorNeutralForegroundInverted
+          )}
         </Button>
       </Tooltip>
 

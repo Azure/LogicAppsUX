@@ -1,4 +1,3 @@
-import type { FunctionGroupBranding } from '../constants/FunctionConstants';
 import {
   Any16Filled,
   Any16Regular,
@@ -138,12 +137,7 @@ export const iconUriForIconImageName = (iconImageName: string) => {
   return `${iconBaseUrl}${iconImageName}`;
 };
 
-export const getIconForFunction = (
-  name: string,
-  categoryName: FunctionCategory,
-  fileName: string | undefined,
-  _branding: FunctionGroupBranding
-) => {
+export const getIconForFunction = (name: string, categoryName: FunctionCategory, fileName: string | undefined, color?: string) => {
   const functionIcon = iconUriForIconImageName(fileName ?? '');
   const categoryIcon = iconForFunctionCategory(categoryName);
   let isError = false;
@@ -156,6 +150,8 @@ export const getIconForFunction = (
     }
   };
   return (
+    // TODO Color isn't hooked up to the SVGs properly.
+    // They will always return the default color
     <Image
       src={isError ? functionIcon : categoryIcon}
       shouldFadeIn={false}
@@ -163,6 +159,7 @@ export const getIconForFunction = (
       width={20}
       alt={name}
       onLoadingStateChange={loadBackupFunctionCategory}
+      style={{ color }}
     />
   );
 };
