@@ -12,7 +12,7 @@ import type { Edge, Node } from 'reactflow';
 
 export const layerSpacing = {
   default: '64',
-  readOnly: '32',
+  readOnly: '48',
   onlyEdge: '16',
 };
 
