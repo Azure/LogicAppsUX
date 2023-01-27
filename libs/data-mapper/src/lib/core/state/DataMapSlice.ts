@@ -23,7 +23,12 @@ import {
   nodeHasSpecificInputEventually,
   setConnectionInputValue,
 } from '../../utils/Connection.Utils';
-import { addParentConnectionForRepeatingElementsNested, getParentId } from '../../utils/DataMap.Utils';
+import {
+  addNodeToCanvasIfDoesNotExist,
+  addParentConnectionForRepeatingElementsNested,
+  addAncestorNodesToCanvas,
+  getParentId,
+} from '../../utils/DataMap.Utils';
 import { isFunctionData } from '../../utils/Function.Utils';
 import {
   addReactFlowPrefix,
@@ -210,10 +215,13 @@ export const dataMapSlice = createSlice({
     addSourceSchemaNodes: (state, action: PayloadAction<SchemaNodeExtended[]>) => {
       const nodes = [...state.curDataMapOperation.currentSourceSchemaNodes];
       action.payload.forEach((payloadNode) => {
-        const existingNode = state.curDataMapOperation.currentSourceSchemaNodes.find((currentNode) => currentNode.key === payloadNode.key);
-        if (!existingNode) {
-          nodes.push(payloadNode);
-        }
+        addNodeToCanvasIfDoesNotExist(payloadNode, state.curDataMapOperation.currentSourceSchemaNodes, nodes);
+        addAncestorNodesToCanvas(
+          payloadNode,
+          state.curDataMapOperation.currentSourceSchemaNodes,
+          state.curDataMapOperation.flattenedSourceSchema,
+          nodes
+        );
       });
 
       const newState: DataMapOperationState = {

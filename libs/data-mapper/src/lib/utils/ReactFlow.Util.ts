@@ -2,12 +2,17 @@ import type { CardProps } from '../components/nodeCard/NodeCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import type { FunctionCardProps } from '../components/nodeCard/functionCard/FunctionCard';
 import type { NodeToggledStateDictionary } from '../components/tree/TargetSchemaTreeItem';
-import { childTargetNodeCardIndent, schemaNodeCardHeight, schemaNodeCardWidth } from '../constants/NodeConstants';
+import {
+  childTargetNodeCardIndent,
+  schemaNodeCardHeight,
+  schemaNodeCardDefaultWidth,
+  schemaNodeCardWidthDifference,
+} from '../constants/NodeConstants';
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { SchemaNodeExtended } from '../models/Schema';
-import { SchemaType } from '../models/Schema';
+import { SchemaNodeProperty, SchemaType } from '../models/Schema';
 import { getFunctionBrandingForCategory } from './Function.Utils';
 import { applyElkLayout, convertDataMapNodesToElkGraph } from './Layout.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
@@ -38,7 +43,7 @@ const placeholderReactFlowNode: ReactFlowNode = {
   hidden: true,
   sourcePosition: Position.Right,
   data: null,
-  width: schemaNodeCardWidth,
+  width: schemaNodeCardDefaultWidth,
   height: 10,
   position: {
     x: 0,
@@ -178,6 +183,25 @@ const convertSourceToReactFlowParentAndChildNodes = (
     return reactFlowNodes;
   }
 
+  const sourceNodesCopy = [...combinedSourceSchemaNodes];
+  sourceNodesCopy.filter((node) => node.nodeProperties.includes(SchemaNodeProperty.Repeating));
+  const sourceKeySet: Set<string> = new Set();
+  sourceNodesCopy.forEach((node) => sourceKeySet.add(node.key));
+  const widthDict: Map<string, number> = new Map<string, number>();
+  let maxSize = schemaNodeCardDefaultWidth;
+  combinedSourceSchemaNodes.forEach((srcNode) => {
+    let srcWidth = 0;
+    sourceKeySet.forEach((possibleParent) => {
+      if (srcNode.key.includes(possibleParent) && possibleParent !== srcNode.key) {
+        srcWidth = srcWidth + schemaNodeCardWidthDifference;
+      }
+    });
+    widthDict.set(srcNode.key, srcWidth);
+    if (srcWidth > schemaNodeCardWidthDifference * 3) {
+      maxSize += schemaNodeCardWidthDifference;
+    }
+  });
+
   combinedSourceSchemaNodes.forEach((srcNode) => {
     const nodeReactFlowId = addSourceReactFlowPrefix(srcNode.key);
     const relatedConnections = getConnectionsForNode(connections, srcNode.key, SchemaType.Source);
@@ -197,11 +221,15 @@ const convertSourceToReactFlowParentAndChildNodes = (
       return;
     }
 
+    const dictWidth = widthDict.get(srcNode.key);
+    const nodeWidth = dictWidth !== undefined ? dictWidth : schemaNodeCardDefaultWidth;
+
     reactFlowNodes.push({
       id: nodeReactFlowId,
       zIndex: 101, // Just for schema nodes to render N-badge over edges
       data: {
-        schemaNode: srcNode,
+        schemaNode: { ...srcNode, width: maxSize - nodeWidth },
+        maxWidth: maxSize,
         schemaType: SchemaType.Source,
         displayHandle: true,
         displayChevron: true,

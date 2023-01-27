@@ -1,4 +1,4 @@
-import { childTargetNodeCardWidth, schemaNodeCardHeight, schemaNodeCardWidth } from '../../constants/NodeConstants';
+import { childTargetNodeCardWidth, schemaNodeCardHeight, schemaNodeCardDefaultWidth } from '../../constants/NodeConstants';
 import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import { removeSourceSchemaNodes, setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
@@ -41,7 +41,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { NodeProps } from 'reactflow';
 import { Position } from 'reactflow';
 
-const contentBtnWidth = schemaNodeCardWidth - 30;
+const contentBtnWidth = schemaNodeCardDefaultWidth - 30;
 
 const useStyles = makeStyles({
   container: {
@@ -50,7 +50,7 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'row',
     height: `${schemaNodeCardHeight}px`,
-    width: `${schemaNodeCardWidth}px`,
+    width: `${schemaNodeCardDefaultWidth}px`,
     opacity: 1,
     float: 'right',
     alignItems: 'center',
@@ -133,9 +133,6 @@ const useStyles = makeStyles({
   disabled: {
     opacity: 0.38,
   },
-  schemaChildCard: {
-    width: `${childTargetNodeCardWidth}px`,
-  },
 
   focusIndicator: createFocusOutlineStyle({
     style: {
@@ -155,6 +152,7 @@ const useStyles = makeStyles({
 
 export interface SchemaCardProps extends CardProps {
   schemaNode: SchemaNodeExtended;
+  maxWidth?: number;
   schemaType: SchemaType;
   displayHandle: boolean;
   displayChevron: boolean;
@@ -166,7 +164,8 @@ export interface SchemaCardProps extends CardProps {
 
 export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const reactFlowId = props.id;
-  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, displayHandle, displayChevron, connectionStatus } = props.data;
+  const { schemaNode, maxWidth, schemaType, isLeaf, isChild, onClick, disabled, displayHandle, displayChevron, connectionStatus } =
+    props.data;
   const dispatch = useDispatch<AppDispatch>();
   const sharedStyles = getStylesForSharedState();
   const classes = useStyles();
@@ -205,18 +204,12 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const containerStyle = useMemo(() => {
     const newContStyles = [sharedStyles.root, classes.container, 'nopan'];
 
-    // Need to style both source and target schema child nodes on overview
-    // - doesn't seem to affect canvas source schema nodes
-    if (isChild) {
-      newContStyles.push(classes.schemaChildCard);
-    }
-
     if (disabled) {
       newContStyles.push(classes.disabled);
     }
 
     return mergeClasses(...newContStyles);
-  }, [isChild, disabled, classes, sharedStyles]);
+  }, [disabled, classes, sharedStyles]);
 
   const connectionStatusIcon = useMemo(() => {
     switch (connectionStatus) {
@@ -284,14 +277,21 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     dispatch(removeSourceSchemaNodes([schemaNode]));
   };
 
+  const selectedNodeStyles = isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId ? selectedCardStyles : undefined;
+
+  const targetCardWidth = isChild ? childTargetNodeCardWidth : schemaNodeCardDefaultWidth;
+  const cardWidth = isSourceSchemaNode && schemaNode.width ? schemaNode.width : targetCardWidth;
+  const maxWidthCalculated = maxWidth || 0;
+  const sourceCardMargin = isSourceSchemaNode ? maxWidthCalculated - cardWidth : 0;
+
   return (
-    <div className={classes.badgeContainer}>
+    <div className={classes.badgeContainer} style={{ marginLeft: sourceCardMargin }}>
       {isNBadgeRequired && !isSourceSchemaNode && <NBadge isOutput />}
 
       <div
         onContextMenu={contextMenu.handle}
         className={containerStyle}
-        style={isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId ? selectedCardStyles : undefined}
+        style={{ ...selectedNodeStyles, width: cardWidth }}
         onMouseLeave={() => setIsCardHovered(false)}
         onMouseEnter={() => setIsCardHovered(true)}
       >
