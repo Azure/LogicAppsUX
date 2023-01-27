@@ -55,7 +55,6 @@ export interface SchemaExtended extends Schema {
   schemaTreeRoot: SchemaNodeExtended;
 }
 
-export type SourceSchemaNodeExtended = SchemaNodeExtended & { width?: number };
 export interface SchemaNodeExtended extends SchemaNode {
   children: SchemaNodeExtended[];
   nodeProperties: SchemaNodeProperty[];

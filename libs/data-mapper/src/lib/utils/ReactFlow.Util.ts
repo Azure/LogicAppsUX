@@ -2,11 +2,16 @@ import type { CardProps } from '../components/nodeCard/NodeCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import type { FunctionCardProps } from '../components/nodeCard/functionCard/FunctionCard';
 import type { NodeToggledStateDictionary } from '../components/tree/TargetSchemaTreeItem';
-import { childTargetNodeCardIndent, schemaNodeCardHeight, schemaNodeCardWidth } from '../constants/NodeConstants';
+import {
+  childTargetNodeCardIndent,
+  schemaNodeCardHeight,
+  schemaNodeCardDefaultWidth,
+  schemaNodeCardWidthDifference,
+} from '../constants/NodeConstants';
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
-import type { SchemaNodeExtended, SourceSchemaNodeExtended } from '../models/Schema';
+import type { SchemaNodeExtended } from '../models/Schema';
 import { SchemaNodeProperty, SchemaType } from '../models/Schema';
 import { getFunctionBrandingForCategory } from './Function.Utils';
 import { applyElkLayout, convertDataMapNodesToElkGraph } from './Layout.Utils';
@@ -38,7 +43,7 @@ const placeholderReactFlowNode: ReactFlowNode = {
   hidden: true,
   sourcePosition: Position.Right,
   data: null,
-  width: schemaNodeCardWidth,
+  width: schemaNodeCardDefaultWidth,
   height: 10,
   position: {
     x: 0,
@@ -47,7 +52,7 @@ const placeholderReactFlowNode: ReactFlowNode = {
 };
 
 export const useLayout = (
-  currentSourceSchemaNodes: SourceSchemaNodeExtended[],
+  currentSourceSchemaNodes: SchemaNodeExtended[],
   currentFunctionNodes: FunctionDictionary,
   currentTargetSchemaNode: SchemaNodeExtended | undefined,
   connections: ConnectionDictionary,
@@ -183,18 +188,17 @@ const convertSourceToReactFlowParentAndChildNodes = (
   const sourceKeySet: Set<string> = new Set();
   sourceNodesCopy.forEach((node) => sourceKeySet.add(node.key));
   const widthDict: Map<string, number> = new Map<string, number>();
-  let maxSize = 200;
-  const widthToIncrease = 24;
+  let maxSize = schemaNodeCardDefaultWidth;
   combinedSourceSchemaNodes.forEach((srcNode) => {
     let srcWidth = 0;
     sourceKeySet.forEach((possibleParent) => {
       if (srcNode.key.includes(possibleParent) && possibleParent !== srcNode.key) {
-        srcWidth = srcWidth + widthToIncrease;
+        srcWidth = srcWidth + schemaNodeCardWidthDifference;
       }
     });
     widthDict.set(srcNode.key, srcWidth);
-    if (srcWidth > 72) {
-      maxSize += widthToIncrease;
+    if (srcWidth > schemaNodeCardWidthDifference * 3) {
+      maxSize += schemaNodeCardWidthDifference;
     }
   });
 
@@ -218,7 +222,7 @@ const convertSourceToReactFlowParentAndChildNodes = (
     }
 
     const dictWidth = widthDict.get(srcNode.key);
-    const nodeWidth = dictWidth !== undefined ? dictWidth : 200;
+    const nodeWidth = dictWidth !== undefined ? dictWidth : schemaNodeCardDefaultWidth;
 
     reactFlowNodes.push({
       id: nodeReactFlowId,

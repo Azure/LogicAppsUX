@@ -1,6 +1,6 @@
-import type { SourceSchemaNodeExtended } from '../../models';
+import type { SchemaNodeExtended } from '../../models';
 
-export const sourceSchemaNodes: SourceSchemaNodeExtended[] = [
+export const sourceSchemaNodes: SchemaNodeExtended[] = [
   {
     key: '/ns0:Root/Looping/Employee',
     name: 'Employee',
@@ -292,4 +292,4 @@ export const sourceSchemaNodes: SourceSchemaNodeExtended[] = [
       },
     ],
   },
-] as SourceSchemaNodeExtended[];
+] as SchemaNodeExtended[];

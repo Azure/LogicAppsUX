@@ -1,15 +1,7 @@
 import type { ITreeNode } from '../components/tree/Tree';
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type {
-  PathItem,
-  Schema,
-  SchemaExtended,
-  SchemaNode,
-  SchemaNodeDictionary,
-  SchemaNodeExtended,
-  SourceSchemaNodeExtended,
-} from '../models';
+import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import { SchemaNodeProperty, SchemaType } from '../models';
 import type { FunctionData } from '../models/Function';
 
@@ -55,7 +47,7 @@ export const parsePropertiesIntoNodeProperties = (propertiesString: string): Sch
   return [];
 };
 
-export const setWidthForSourceNodes = (sourceNodes: SourceSchemaNodeExtended[]) => {
+export const setWidthForSourceNodes = (sourceNodes: SchemaNodeExtended[]) => {
   const uniqueParents = new Set<string>();
   sourceNodes.forEach((node) => node.parentKey && uniqueParents.add(node.parentKey));
   uniqueParents.forEach((parentKey) => {
@@ -64,12 +56,11 @@ export const setWidthForSourceNodes = (sourceNodes: SourceSchemaNodeExtended[]) 
   });
 };
 
-const getWidthRec = (depth: number, childNodes: SourceSchemaNodeExtended[], allNodes: SourceSchemaNodeExtended[]) => {
+const getWidthRec = (depth: number, childNodes: SchemaNodeExtended[], allNodes: SchemaNodeExtended[]) => {
   if (childNodes.length === 0) {
     return;
   }
   childNodes.forEach((node) => {
-    // what if only the grandparent is added? Danielle needs to code this so that all repeating parents are added automatically
     if (!node.width) {
       // eslint-disable-next-line no-param-reassign
       node.width = 200 - depth * 24;

@@ -1,6 +1,6 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { MapDefinitionEntry, SchemaNodeDictionary, SchemaNodeExtended, SourceSchemaNodeExtended } from '../models';
+import type { MapDefinitionEntry, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import { SchemaType } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
@@ -350,9 +350,9 @@ export const addNodeToCanvasIfDoesNotExist = (
 
 export const addAncestorNodesToCanvas = (
   payloadNode: SchemaNodeExtended,
-  currentSourceSchemaNodes: SourceSchemaNodeExtended[],
+  currentSourceSchemaNodes: SchemaNodeExtended[],
   flattenedSourceSchema: SchemaNodeDictionary,
-  nodes: SourceSchemaNodeExtended[]
+  nodes: SchemaNodeExtended[]
 ) => {
   const grandparentNodesOnCanvas = currentSourceSchemaNodes.filter(
     (node) => payloadNode?.key.includes(node.key) && payloadNode.parentKey !== node.key && payloadNode.key !== node.key

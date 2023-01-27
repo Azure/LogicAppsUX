@@ -1,4 +1,4 @@
-import { schemaNodeCardHeight, schemaNodeCardWidth, functionNodeCardSize } from '../constants/NodeConstants';
+import { schemaNodeCardHeight, schemaNodeCardDefaultWidth, functionNodeCardSize } from '../constants/NodeConstants';
 import type { SchemaNodeExtended } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { FunctionDictionary } from '../models/Function';
@@ -110,11 +110,11 @@ export const convertDataMapNodesToElkGraph = (
         children: [
           ...currentSourceSchemaNodes.map((srcNode) => ({
             id: addSourceReactFlowPrefix(srcNode.key),
-            width: schemaNodeCardWidth,
+            width: schemaNodeCardDefaultWidth,
             height: schemaNodeCardHeight,
           })),
           // NOTE: Dummy nodes allow proper layouting when no real nodes exist yet
-          { id: 'srcDummyNode', width: schemaNodeCardWidth, height: schemaNodeCardHeight },
+          { id: 'srcDummyNode', width: schemaNodeCardDefaultWidth, height: schemaNodeCardHeight },
         ],
       },
       {
@@ -135,10 +135,10 @@ export const convertDataMapNodesToElkGraph = (
         id: 'targetSchemaBlock',
         layoutOptions: targetSchemaLayoutOptions,
         children: [
-          { id: addTargetReactFlowPrefix(currentTargetSchemaNode.key), width: schemaNodeCardWidth, height: schemaNodeCardHeight },
+          { id: addTargetReactFlowPrefix(currentTargetSchemaNode.key), width: schemaNodeCardDefaultWidth, height: schemaNodeCardHeight },
           ...currentTargetSchemaNode.children.map((childNode) => ({
             id: addTargetReactFlowPrefix(childNode.key),
-            width: schemaNodeCardWidth,
+            width: schemaNodeCardDefaultWidth,
             height: schemaNodeCardHeight,
           })),
         ],

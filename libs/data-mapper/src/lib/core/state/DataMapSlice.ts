@@ -5,7 +5,7 @@ import {
   errorNotificationAutoHideDuration,
   NotificationTypes,
 } from '../../components/notification/Notification';
-import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended, SourceSchemaNodeExtended } from '../../models';
+import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
@@ -60,7 +60,7 @@ export interface DataMapOperationState {
   sourceSchemaOrdering: string[];
   targetSchema?: SchemaExtended;
   flattenedTargetSchema: SchemaNodeDictionary;
-  currentSourceSchemaNodes: SourceSchemaNodeExtended[];
+  currentSourceSchemaNodes: SchemaNodeExtended[];
   currentTargetSchemaNode?: SchemaNodeExtended;
   currentFunctionNodes: FunctionDictionary;
   selectedItemKey?: string;

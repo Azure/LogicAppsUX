@@ -1,5 +1,5 @@
 import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, simpleLoopSource, sourceMockSchema } from '../../__mocks__';
-import type { Schema, SchemaExtended, SourceSchemaNodeExtended } from '../../models';
+import type { Schema, SchemaExtended, SchemaNodeExtended } from '../../models';
 import { SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import {
@@ -27,10 +27,11 @@ describe('utils/DataMap', () => {
     const sourceSchema: Schema = layeredLoopSourceMockSchema;
     const extendedSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(sourceSchema);
     const flattenedSchema = flattenSchemaIntoDictionary(extendedSourceSchema, SchemaType.Source);
+
     it('includes direct parent', () => {
       const nodeToAddKey = addSourceReactFlowPrefix('/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate');
 
-      const nodesCurrentlyOnCanvas: SourceSchemaNodeExtended[] = [];
+      const nodesCurrentlyOnCanvas: SchemaNodeExtended[] = [];
       const nodeToAdd = flattenedSchema[nodeToAddKey];
       const newNodesOnCanvas = [...nodesCurrentlyOnCanvas, nodeToAdd];
       addAncestorNodesToCanvas(nodeToAdd, nodesCurrentlyOnCanvas, flattenedSchema, newNodesOnCanvas);
@@ -38,6 +39,7 @@ describe('utils/DataMap', () => {
       const parentOnCanvasKey = addSourceReactFlowPrefix('/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay');
       expect(newNodesOnCanvas).toContain(flattenedSchema[parentOnCanvasKey]);
     });
+
     it('includes all nodes under highest ancestor on the canvas', () => {
       const nodeToAddKey = addSourceReactFlowPrefix('/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate');
       const ancestorOnCanvasKey = addSourceReactFlowPrefix('/ns0:Root/ManyToMany/SourceYear');

@@ -1,8 +1,8 @@
-import { childTargetNodeCardWidth, schemaNodeCardHeight, schemaNodeCardWidth } from '../../constants/NodeConstants';
+import { childTargetNodeCardWidth, schemaNodeCardHeight, schemaNodeCardDefaultWidth } from '../../constants/NodeConstants';
 import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import { removeSourceSchemaNodes, setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaNodeExtended, SourceSchemaNodeExtended } from '../../models';
+import type { SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { Connection } from '../../models/Connection';
 import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
@@ -41,7 +41,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { NodeProps } from 'reactflow';
 import { Position } from 'reactflow';
 
-const contentBtnWidth = schemaNodeCardWidth - 30;
+const contentBtnWidth = schemaNodeCardDefaultWidth - 30;
 
 const useStyles = makeStyles({
   container: {
@@ -50,7 +50,7 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'row',
     height: `${schemaNodeCardHeight}px`,
-    width: `${schemaNodeCardWidth}px`,
+    width: `${schemaNodeCardDefaultWidth}px`,
     opacity: 1,
     float: 'right',
     alignItems: 'center',
@@ -151,7 +151,7 @@ const useStyles = makeStyles({
 });
 
 export interface SchemaCardProps extends CardProps {
-  schemaNode: SchemaNodeExtended | SourceSchemaNodeExtended;
+  schemaNode: SchemaNodeExtended;
   maxWidth?: number;
   schemaType: SchemaType;
   displayHandle: boolean;
@@ -279,7 +279,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const selectedNodeStyles = isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId ? selectedCardStyles : undefined;
 
-  const targetCardWidth = isChild ? childTargetNodeCardWidth : schemaNodeCardWidth;
+  const targetCardWidth = isChild ? childTargetNodeCardWidth : schemaNodeCardDefaultWidth;
   const cardWidth = isSourceSchemaNode && schemaNode.width ? schemaNode.width : targetCardWidth;
   const maxWidthCalculated = maxWidth || 0;
   const sourceCardMargin = isSourceSchemaNode ? maxWidthCalculated - cardWidth : 0;
