@@ -43,6 +43,22 @@ ns0:SchemaRoot:
           Object(DotAccess): .
           Property: Property
           $@Attribute: ./@Attribute
+    ManyToOne:
+      $for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple):
+        $for(SimpleChild):
+          $for(SimpleChildChild):
+            Simple:
+              Direct: Direct
+              FunctionChain: lower-case(FunctionChain)
+    ManyToMany:
+      $for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple):
+        Simple:
+          $for(SimpleChild):
+            SimpleChild:
+              $for(SimpleChildChild):
+                SimpleChildChild:
+                  Direct: Direct
+                  FunctionChain: lower-case(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/FunctionChain)
     LoopReduce:
       BestItemName: /ns0:SchemaRoot/Looping/LoopReduce/ItemsList[3]/ItemName
 `;
