@@ -3,7 +3,6 @@ import type { StatusPillProps } from './index';
 import { StatusPill } from './index';
 import './statuspill.story.less';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
-import React from 'react';
 
 export default {
   component: StatusPill,
@@ -30,6 +29,13 @@ export const Failed = Template.bind({});
 Failed.args = {
   hasRetries: false,
   status: Constants.STATUS.FAILED,
+  duration: '1m',
+};
+
+export const Aborted = Template.bind({});
+Aborted.args = {
+  hasRetries: false,
+  status: Constants.STATUS.ABORTED,
   duration: '1m',
 };
 
