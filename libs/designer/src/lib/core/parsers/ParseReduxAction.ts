@@ -9,40 +9,43 @@ import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-export const initializeGraphState = createAsyncThunk<DeserializedWorkflow, Workflow, { state: RootState }>(
-  'parser/deserialize',
-  async (workflowDefinition: Workflow, thunkAPI): Promise<DeserializedWorkflow> => {
-    const { workflow } = thunkAPI.getState() as RootState;
-    const spec = workflow.workflowSpec;
+export const initializeGraphState = createAsyncThunk<
+  DeserializedWorkflow,
+  { workflowDefinition: Workflow; runInstance: any },
+  { state: RootState }
+>('parser/deserialize', async (graphState: { workflowDefinition: Workflow; runInstance: any }, thunkAPI): Promise<DeserializedWorkflow> => {
+  const { workflowDefinition, runInstance } = graphState;
+  console.log(runInstance);
+  const { workflow } = thunkAPI.getState() as RootState;
+  const spec = workflow.workflowSpec;
 
-    if (spec === undefined) {
-      throw new Error('Trying to import workflow without specifying the workflow type');
-    }
-    if (spec === 'BJS') {
-      getConnectionsQuery();
-      const { definition, connectionReferences, parameters } = workflowDefinition;
-      const deserializedWorkflow = BJSDeserialize(definition);
-      thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
-      parseWorkflowParameters(parameters ?? {}, thunkAPI.dispatch);
-      const operationMetadataPromise = initializeOperationMetadata(
-        deserializedWorkflow,
-        connectionReferences,
-        parameters ?? {},
-        thunkAPI.dispatch
-      );
-      const actionsAndTriggers = deserializedWorkflow.actionData;
-      const connectionsPromise = getConnectionsApiAndMapping(
-        actionsAndTriggers,
-        thunkAPI.getState,
-        thunkAPI.dispatch,
-        operationMetadataPromise
-      );
-
-      updateDynamicDataInNodes(connectionsPromise, thunkAPI.getState, thunkAPI.dispatch);
-      return deserializedWorkflow;
-    } else if (spec === 'CNCF') {
-      throw new Error('Spec not implemented.');
-    }
-    throw new Error('Invalid Workflow Spec');
+  if (spec === undefined) {
+    throw new Error('Trying to import workflow without specifying the workflow type');
   }
-);
+  if (spec === 'BJS') {
+    getConnectionsQuery();
+    const { definition, connectionReferences, parameters } = workflowDefinition;
+    const deserializedWorkflow = BJSDeserialize(definition);
+    thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
+    parseWorkflowParameters(parameters ?? {}, thunkAPI.dispatch);
+    const operationMetadataPromise = initializeOperationMetadata(
+      deserializedWorkflow,
+      connectionReferences,
+      parameters ?? {},
+      thunkAPI.dispatch
+    );
+    const actionsAndTriggers = deserializedWorkflow.actionData;
+    const connectionsPromise = getConnectionsApiAndMapping(
+      actionsAndTriggers,
+      thunkAPI.getState,
+      thunkAPI.dispatch,
+      operationMetadataPromise
+    );
+
+    updateDynamicDataInNodes(connectionsPromise, thunkAPI.getState, thunkAPI.dispatch);
+    return deserializedWorkflow;
+  } else if (spec === 'CNCF') {
+    throw new Error('Spec not implemented.');
+  }
+  throw new Error('Invalid Workflow Spec');
+});

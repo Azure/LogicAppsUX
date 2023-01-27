@@ -68,7 +68,9 @@ const gatewayService = new StandardGatewayService({
 const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };
 
 export const DesignerWrapper = () => {
-  const { workflowDefinition, readOnly, monitoringView, darkMode, connections } = useSelector((state: RootState) => state.workflowLoader);
+  const { workflowDefinition, readOnly, monitoringView, darkMode, connections, runInstance } = useSelector(
+    (state: RootState) => state.workflowLoader
+  );
   const designerProviderProps = {
     services: { connectionService, operationManifestService, searchService, oAuthService, gatewayService, workflowService },
     readOnly,
@@ -89,6 +91,7 @@ export const DesignerWrapper = () => {
               definition: workflowDefinition,
               connectionReferences: connections,
             }}
+            runInstance={runInstance}
           >
             <Designer />
           </BJSWorkflowProvider>
