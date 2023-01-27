@@ -4,7 +4,7 @@ import type { MapDefinitionEntry, SchemaNodeDictionary, SchemaNodeExtended } fro
 import { SchemaType } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
-import { ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
+import { ifPseudoFunctionKey, indexPseudoFunctionKey, directAccessPseudoFunctionKey } from '../models/Function';
 import { findLast } from './Array.Utils';
 import {
   flattenInputs,
@@ -13,7 +13,13 @@ import {
   nodeHasSpecificInputEventually,
   setConnectionInputValue,
 } from './Connection.Utils';
-import { findFunctionForFunctionName, findFunctionForKey, getIndexValueForCurrentConnection, isFunctionData } from './Function.Utils';
+import {
+  findFunctionForFunctionName,
+  findFunctionForKey,
+  formatDirectAccess,
+  getIndexValueForCurrentConnection,
+  isFunctionData,
+} from './Function.Utils';
 import { addReactFlowPrefix, addSourceReactFlowPrefix } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid } from '@microsoft/utils-logic-apps';
@@ -41,6 +47,9 @@ export const getInputValues = (currentConnection: Connection | undefined, connec
           } else {
             if (input.node.key === indexPseudoFunctionKey) {
               return getIndexValueForCurrentConnection(connections[input.reactFlowKey]);
+            } else if (input.node.key.startsWith(directAccessPseudoFunctionKey)) {
+              const functionValues = getInputValues(connections[input.reactFlowKey], connections);
+              return formatDirectAccess(functionValues[0], functionValues[1], functionValues[2]);
             } else {
               return collectFunctionValue(input.node, connections[input.reactFlowKey], connections);
             }
