@@ -1,8 +1,8 @@
-import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperty } from '../../models';
 import type { SchemaNodeExtended } from '../../models';
+import { NormalizedDataType, SchemaNodeProperty } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
-import { FunctionCategory } from '../../models/Function';
 import type { FunctionData } from '../../models/Function';
+import { FunctionCategory } from '../../models/Function';
 import { isConnectionUnit, isCustomValue } from '../Connection.Utils';
 import { isFunctionData } from '../Function.Utils';
 import { isSchemaNodeExtended } from '../Schema.Utils';
@@ -12,7 +12,6 @@ describe('utils/type-checker-utils', () => {
     key: '',
     name: '',
     fullName: '',
-    schemaNodeDataType: SchemaNodeDataType.Integer,
     normalizedDataType: NormalizedDataType.Integer,
     properties: SchemaNodeProperty.NotSpecified,
     nodeProperties: [SchemaNodeProperty.NotSpecified],

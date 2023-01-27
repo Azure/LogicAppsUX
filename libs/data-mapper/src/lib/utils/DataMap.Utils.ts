@@ -14,7 +14,7 @@ import {
   setConnectionInputValue,
 } from './Connection.Utils';
 import { findFunctionForFunctionName, findFunctionForKey, getIndexValueForCurrentConnection, isFunctionData } from './Function.Utils';
-import { addReactFlowPrefix } from './ReactFlow.Util';
+import { addReactFlowPrefix, addSourceReactFlowPrefix } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid } from '@microsoft/utils-logic-apps';
 
@@ -33,6 +33,7 @@ export const getInputValues = (currentConnection: Connection | undefined, connec
             return undefined;
           }
 
+          // Handle custom values, source schema node, and Function inputs for Function nodes
           if (isCustomValue(input)) {
             return input;
           } else if (isSchemaNodeExtended(input.node)) {
@@ -332,6 +333,46 @@ export const addParentConnectionForRepeatingElementsNested = (
         flattenedTargetSchema,
         dataMapConnections
       );
+    }
+  }
+};
+
+export const addNodeToCanvasIfDoesNotExist = (
+  node: SchemaNodeExtended,
+  currentCanvasNodes: SchemaNodeExtended[],
+  canvasNodesToAdd: SchemaNodeExtended[]
+) => {
+  const existingNode = currentCanvasNodes.find((currentNode) => currentNode.key === node.key);
+  if (existingNode === undefined) {
+    canvasNodesToAdd.push(node);
+  }
+};
+
+export const addAncestorNodesToCanvas = (
+  payloadNode: SchemaNodeExtended,
+  currentSourceSchemaNodes: SchemaNodeExtended[],
+  flattenedSourceSchema: SchemaNodeDictionary,
+  nodes: SchemaNodeExtended[]
+) => {
+  const grandparentNodesOnCanvas = currentSourceSchemaNodes.filter(
+    (node) => payloadNode?.key.includes(node.key) && payloadNode.parentKey !== node.key && payloadNode.key !== node.key
+  );
+
+  if (grandparentNodesOnCanvas.length > 0) {
+    grandparentNodesOnCanvas.sort((a, b) => a.key.length - b.key.length);
+    const highestAncestor = grandparentNodesOnCanvas[0];
+    payloadNode.pathToRoot.forEach((ancestorNode) => {
+      if (ancestorNode.key.length > highestAncestor.key.length && ancestorNode.key !== payloadNode.key) {
+        addNodeToCanvasIfDoesNotExist(flattenedSourceSchema[addSourceReactFlowPrefix(ancestorNode.key)], currentSourceSchemaNodes, nodes);
+      }
+    });
+  } else {
+    const pathToRootWithoutCurrent = payloadNode.pathToRoot.filter((node) => node.key !== payloadNode.key);
+    const firstSourceNodeWithRepeatingPathItem = findLast(pathToRootWithoutCurrent, (pathItem) => pathItem.repeating);
+    const parentNodeToAdd =
+      firstSourceNodeWithRepeatingPathItem && flattenedSourceSchema[addSourceReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key)];
+    if (parentNodeToAdd) {
+      addNodeToCanvasIfDoesNotExist(parentNodeToAdd, currentSourceSchemaNodes, nodes);
     }
   }
 };

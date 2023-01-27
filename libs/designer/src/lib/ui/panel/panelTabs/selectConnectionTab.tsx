@@ -48,7 +48,7 @@ export const SelectConnectionTab = () => {
       dispatch(
         updateNodeConnection({ nodeId: selectedNodeId, connectionId: connection?.id as string, connectorId: connector?.id as string })
       );
-      ConnectionService().createConnectionAclIfNeeded(connection);
+      ConnectionService().setupConnectionIfNeeded(connection);
       hideConnectionTabs();
     },
     [dispatch, selectedNodeId, connector?.id, hideConnectionTabs]

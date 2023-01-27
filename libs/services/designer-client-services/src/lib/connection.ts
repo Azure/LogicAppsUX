@@ -5,7 +5,7 @@ import type {
   ConnectionParameter,
   ConnectionParameterSet as ParameterSet,
   ConnectionParameterSetValues,
-  ConnectionType,
+  ConnectionMetadata,
 } from '@microsoft/utils-logic-apps';
 
 export interface ConnectorWithSwagger {
@@ -25,7 +25,7 @@ export interface ConnectionCreationInfo {
 export interface ConnectionParametersMetadata {
   connectionParameters?: Record<string, ConnectionParameter>;
   connectionParameterSet?: ParameterSet;
-  connectionType: ConnectionType;
+  connectionMetadata?: ConnectionMetadata;
 }
 
 export interface CreateConnectionResult {
@@ -53,6 +53,7 @@ export interface IConnectionService {
     connectionInfo: ConnectionCreationInfo,
     parametersMetadata: ConnectionParametersMetadata
   ): Promise<CreateConnectionResult>;
+  setupConnectionIfNeeded(connection: Connection): Promise<void>;
   getUniqueConnectionName(connectorId: string, connectionNames: string[], connectorName: string): Promise<string>;
   fetchFunctionApps(): Promise<any>;
   fetchFunctionAppsFunctions(functionAppId: string): Promise<any>;

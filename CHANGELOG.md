@@ -1,4 +1,33 @@
 # Logic Apps Designer
+### [0.2.57](https://github.com/Azure/LogicAppsUX/compare/v0.2.56...v0.2.57) (2023-01-27)
+
+### [0.2.56](https://github.com/Azure/LogicAppsUX/compare/v0.2.55...v0.2.56) (2023-01-26)
+
+### Logic Apps Designer Changes
+
+- Consumption Connection Service ([#1546](https://github.com/Azure/LogicAppsUX/issues/1546)) ([e7b2e58](https://github.com/Azure/LogicAppsUX/commit/e7b2e580072055676cd51e18e42a443b76ecb3fa))
+
+### [0.2.55](https://github.com/Azure/LogicAppsUX/compare/v0.2.54...v0.2.55) (2023-01-25)
+
+### [0.2.54](https://github.com/Azure/LogicAppsUX/compare/v0.2.53...v0.2.54) (2023-01-25)
+
+### [0.2.53](https://github.com/Azure/LogicAppsUX/compare/v0.2.52...v0.2.53) (2023-01-24)
+
+### Logic Apps Designer Bug Fixes
+
+- Clear Editor before token insertion in Until Editor ([#1502](https://github.com/Azure/LogicAppsUX/issues/1502)) ([cfb2bd2](https://github.com/Azure/LogicAppsUX/commit/cfb2bd297045eecad179bcac5409492dda23f97a))
+- Do-Until graph fix + Parameter sort fix ([#1486](https://github.com/Azure/LogicAppsUX/issues/1486)) ([1627876](https://github.com/Azure/LogicAppsUX/commit/1627876dfa3d1e4379aa29dcce08aa40def040aa))
+- Fix issue where relative path parameters were inserted wrong ([#1430](https://github.com/Azure/LogicAppsUX/issues/1430)) ([02983fa](https://github.com/Azure/LogicAppsUX/commit/02983fab0670e4b244cc0ddef29fa408a383ab56))
+- Reverting an OperationManifest change ([#1513](https://github.com/Azure/LogicAppsUX/issues/1513)) ([d4064e8](https://github.com/Azure/LogicAppsUX/commit/d4064e8ae8c52d3f17e72c06bd774977ccb5a71a))
+
+### Logic Apps Designer Changes
+
+- Consumption Connector Service ([#1521](https://github.com/Azure/LogicAppsUX/issues/1521)) ([6a4aba6](https://github.com/Azure/LogicAppsUX/commit/6a4aba66af5a8804739cc70436dce0cfcfd3951b))
+- Consumption Search Service ([#1438](https://github.com/Azure/LogicAppsUX/issues/1438)) ([8a28b69](https://github.com/Azure/LogicAppsUX/commit/8a28b690f0b5fc1af15aae385246a6c95f51ae4b))
+- Finished parameter validation and Until count/timeout validation ([#1506](https://github.com/Azure/LogicAppsUX/issues/1506)) ([193319c](https://github.com/Azure/LogicAppsUX/commit/193319c0a3b61d2ea066013ecf08fee586a048d5))
+- OperationManifestService for Consumption Workflows ([#1448](https://github.com/Azure/LogicAppsUX/issues/1448)) ([679d8ab](https://github.com/Azure/LogicAppsUX/commit/679d8ab4ee13a895ce5c90e215408dd0ef1ec2e8))
+- Optional Gateway Parameters ([#1465](https://github.com/Azure/LogicAppsUX/issues/1465)) ([639f1b1](https://github.com/Azure/LogicAppsUX/commit/639f1b11619369d6763e4a1043cfb35cb4aa00ae))
+- Until Editor, Beginnings of Parameter Validation ([#1499](https://github.com/Azure/LogicAppsUX/issues/1499)) ([8f74b62](https://github.com/Azure/LogicAppsUX/commit/8f74b62a5a99113809468e198129cf64c54b6b15))
 
 ### [0.2.52](https://github.com/Azure/LogicAppsUX/compare/v0.2.51...v0.2.52) (2022-12-20)
 

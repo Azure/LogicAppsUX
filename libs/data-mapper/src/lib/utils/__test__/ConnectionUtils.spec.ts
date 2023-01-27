@@ -1,6 +1,6 @@
 import type { DataMapOperationState } from '../../core/state/DataMapSlice';
 import type { SchemaNodeExtended } from '../../models';
-import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperty } from '../../models';
+import { NormalizedDataType, SchemaNodeProperty } from '../../models';
 import type { Connection, ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import type { FunctionData, FunctionInput } from '../../models/Function';
 import { FunctionCategory, functionMock } from '../../models/Function';
@@ -48,7 +48,6 @@ describe('utils/Connections', () => {
         key: '',
         name: '',
         fullName: '',
-        schemaNodeDataType: SchemaNodeDataType.Integer,
         normalizedDataType: NormalizedDataType.Integer,
         properties: SchemaNodeProperty.NotSpecified,
         nodeProperties: [SchemaNodeProperty.NotSpecified],
@@ -86,7 +85,6 @@ describe('utils/Connections', () => {
         key: mockSourceReactFlowKey,
         name: 'Source',
         fullName: 'Source',
-        schemaNodeDataType: SchemaNodeDataType.Integer,
         normalizedDataType: NormalizedDataType.Integer,
         properties: SchemaNodeProperty.NotSpecified,
         nodeProperties: [SchemaNodeProperty.NotSpecified],
@@ -100,7 +98,6 @@ describe('utils/Connections', () => {
           key: mockSelfReactFlowKey,
           name: 'Self',
           fullName: 'Self',
-          schemaNodeDataType: SchemaNodeDataType.Integer,
           normalizedDataType: NormalizedDataType.Integer,
           properties: SchemaNodeProperty.NotSpecified,
           nodeProperties: [SchemaNodeProperty.NotSpecified],
@@ -373,14 +370,12 @@ describe('utils/Connections', () => {
 const parentManyToOneTargetNode: SchemaNodeExtended = {
   key: '/ns0:Root/ManyToOne/Date',
   name: 'Date',
-  schemaNodeDataType: SchemaNodeDataType.None,
   normalizedDataType: NormalizedDataType.ComplexType,
   properties: 'Repeating',
   children: [
     {
       key: '/ns0:Root/ManyToOne/Date/DayName',
       name: 'DayName',
-      schemaNodeDataType: SchemaNodeDataType.String,
       normalizedDataType: NormalizedDataType.String,
       properties: 'NotSpecified',
       children: [],
@@ -443,14 +438,12 @@ const parentManyToOneTargetNode: SchemaNodeExtended = {
 const parentTargetNode: SchemaNodeExtended = {
   key: '/ns0:Root/ManyToMany/Year/Month/Day',
   name: 'Day',
-  schemaNodeDataType: SchemaNodeDataType.None,
   normalizedDataType: NormalizedDataType.ComplexType,
   properties: 'Repeating',
   children: [
     {
       key: '/ns0:Root/ManyToMany/Year/Month/Day/Date',
       name: 'Date',
-      schemaNodeDataType: SchemaNodeDataType.String,
       normalizedDataType: NormalizedDataType.String,
       properties: 'NotSpecified',
       fullName: 'Date',

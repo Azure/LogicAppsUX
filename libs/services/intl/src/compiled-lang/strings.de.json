@@ -1,4 +1,10 @@
 {
+  "+0yxlR": [
+    {
+      "type": 0,
+      "value": "Function display"
+    }
+  ],
   "+20fdv": [
     {
       "type": 0,
@@ -73,12 +79,6 @@
     {
       "type": 0,
       "value": "Paginierung"
-    }
-  ],
-  "/9r9ML": [
-    {
-      "type": 0,
-      "value": "Add target schema"
     }
   ],
   "/AtN16": [
@@ -2035,6 +2035,12 @@
       "value": "Enter a valid Json."
     }
   ],
+  "GD3m4X": [
+    {
+      "type": 0,
+      "value": "Expanded"
+    }
+  ],
   "GDUGlm": [
     {
       "type": 0,
@@ -2099,6 +2105,12 @@
     {
       "type": 0,
       "value": "Auswahl abbrechen"
+    }
+  ],
+  "GyUe4C": [
+    {
+      "type": 0,
+      "value": "Modify options regarding functions"
     }
   ],
   "GzQQqH": [
@@ -3265,12 +3277,6 @@
       "value": "Hiermit wird zur Eingabe für das gesamte Array gewechselt."
     }
   ],
-  "RZO5Ic": [
-    {
-      "type": 0,
-      "value": "Add or replace your schemas."
-    }
-  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -3473,6 +3479,12 @@
     {
       "type": 0,
       "value": "Neue Verbindung erstellen"
+    }
+  ],
+  "TY4HzZ": [
+    {
+      "type": 0,
+      "value": "Add or replace your schemas."
     }
   ],
   "TZv5JE": [
@@ -4685,12 +4697,6 @@
       "value": "Logische Funktionen"
     }
   ],
-  "fqNVDv": [
-    {
-      "type": 0,
-      "value": "Back"
-    }
-  ],
   "froV/0": [
     {
       "type": 0,
@@ -5379,6 +5385,12 @@
     {
       "type": 0,
       "value": "A line for the parent element is added automatically."
+    }
+  ],
+  "lR7V87": [
+    {
+      "type": 0,
+      "value": "Functions"
     }
   ],
   "lV77P8": [
@@ -6211,6 +6223,12 @@
       "value": "Erforderlich. Hiermit wird eine Zeichenfolge angegeben, die den Namen der Zielzeitzone enthält. Weitere Informationen finden Sie unter https://msdn.microsoft.com/de-de/library/gg154758.aspx."
     }
   ],
+  "tAeKNh": [
+    {
+      "type": 0,
+      "value": "Simple"
+    }
+  ],
   "tE7Zam": [
     {
       "type": 0,
@@ -6645,12 +6663,6 @@
       "value": "Rückruf-URL:"
     }
   ],
-  "woq0x0": [
-    {
-      "type": 0,
-      "value": "Add source schema"
-    }
-  ],
   "wzEneQ": [
     {
       "type": 0,
@@ -6673,6 +6685,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "xC1zg3": [
+    {
+      "type": 0,
+      "value": "Schemas"
     }
   ],
   "xFQXAI": [
