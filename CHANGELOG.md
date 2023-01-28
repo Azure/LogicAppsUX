@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [0.2.58](https://github.com/Azure/LogicAppsUX/compare/v0.2.57...v0.2.58) (2023-01-28)
+
+
+### Logic Apps Designer Bug Fixes
+
+* Fix status pill stories and add aborted status ([#1565](https://github.com/Azure/LogicAppsUX/issues/1565)) ([02bb9c5](https://github.com/Azure/LogicAppsUX/commit/02bb9c5fcd7f890360448de7700012a9eb0f3670))
+* Fixed run-after-trigger bug ([#1575](https://github.com/Azure/LogicAppsUX/issues/1575)) ([15222b1](https://github.com/Azure/LogicAppsUX/commit/15222b18fc54665f15dcd40f4b6ff831387f64d1))
+
 ### [0.2.57](https://github.com/Azure/LogicAppsUX/compare/v0.2.56...v0.2.57) (2023-01-27)
 
 ### [0.2.56](https://github.com/Azure/LogicAppsUX/compare/v0.2.55...v0.2.56) (2023-01-26)
