@@ -1,0 +1,43 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Compose": {
+        "inputs": "hey",
+        "runAfter": {},
+        "type": "Compose"
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      },
+      "ParameterTwo": {
+        "defaultValue": 9.9,
+        "type": "Float"
+      },
+      "TestParam": {
+        "defaultValue": 8,
+        "type": "Int"
+      }
+    },
+    "triggers": {
+      "manual": {
+        "inputs": {},
+        "kind": "Http",
+        "type": "Request"
+      }
+    }
+  },
+  "parameters": {
+    "$connections": {
+      "value": {}
+    },
+    "TestParam": {
+      "value": 2
+    }
+  }
+}
