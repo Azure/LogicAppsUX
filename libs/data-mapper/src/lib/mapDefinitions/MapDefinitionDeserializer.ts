@@ -2,7 +2,7 @@
 import { mapNodeParams, reservedMapDefinitionKeysArray } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import { addParentConnectionForRepeatingElements } from '../core/state/DataMapSlice';
-import type { FunctionData, MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
+import type { FunctionData, MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary } from '../models';
 import {
   directAccessPseudoFunction,
   directAccessPseudoFunctionKey,
@@ -18,10 +18,11 @@ import {
   getDestinationNode,
   getSourceKeyOfLastLoop,
   getSourceValueFromLoop,
-  getTargetValueWithoutLastLoop,
+  getTargetValueWithoutLoops,
   qualifyLoopRelativeSourceKeys,
   splitKeyIntoChildren,
 } from '../utils/DataMap.Utils';
+import type { UnknownNode } from '../utils/DataMap.Utils';
 import { findFunctionForFunctionName, isFunctionData } from '../utils/Function.Utils';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
 import { createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
@@ -213,7 +214,7 @@ const callChildObjects = (
           );
         } else {
           // The only time this case should be valid is when making a object level conditional
-          const childTargetKeyWithoutLoop = getTargetValueWithoutLastLoop(childTargetKey);
+          const childTargetKeyWithoutLoop = getTargetValueWithoutLoops(childTargetKey);
           const flattenedChildValues = flattenMapDefinitionValues(childValue);
           const flattenedChildValueParents = flattenedChildValues
             .map((flattenedValue) => {
@@ -322,7 +323,7 @@ const createConnections = (
   }
 
   // Identify source schema node, or Function(Data) from source key
-  let sourceNode: SchemaNodeExtended | FunctionData | undefined = undefined;
+  let sourceNode: UnknownNode = undefined;
   if (amendedSourceKey.startsWith(indexPseudoFunctionKey)) {
     // Handle index variable usage
     sourceNode = indexPseudoFunction;
@@ -366,43 +367,47 @@ const createConnections = (
     destinationKey = `${targetPrefix}${destinationNode?.key}`;
   }
 
+  // Loop + index variable handling (create index() node, match up variables to respective nodes, etc)
   if (isLoop && sourceNode && destinationNode) {
-    let srcLoopNodeKey = amendedSourceKey;
     let indexFnRfKey: string | undefined = undefined;
 
-    // Loop index variable handling (create index() node, match up variables to respective nodes, etc)
-    let idxOfIdxVariable = amendedTargetKey.length;
-    while (idxOfIdxVariable > -1) {
-      // Back-track index variables in target key (if there's multiple)
-      const placeholderFor = `&${mapNodeParams.for.substring(1)}`;
-      idxOfIdxVariable = amendedTargetKey.replaceAll(mapNodeParams.for, placeholderFor).substring(0, idxOfIdxVariable).lastIndexOf('$');
+    let startIdxOfPrevLoop = amendedTargetKey.length;
+    let startIdxOfCurLoop = amendedTargetKey.substring(0, startIdxOfPrevLoop).lastIndexOf(mapNodeParams.for);
+    let idxOfIndexVariable = amendedTargetKey.substring(0, startIdxOfPrevLoop).indexOf('$', startIdxOfCurLoop + 1);
 
-      if (idxOfIdxVariable > -1) {
-        const startIdxOfChildrenPath = amendedTargetKey.indexOf('/', idxOfIdxVariable + 4);
-        const forTgtBasePath =
-          startIdxOfChildrenPath > -1 ? amendedTargetKey.substring(0, startIdxOfChildrenPath) : amendedTargetKey.substring(0);
-        const idxVariable = amendedTargetKey
-          .replaceAll(mapNodeParams.for, placeholderFor)
-          .substring(idxOfIdxVariable, idxOfIdxVariable + 2);
+    // Handle loops in targetKey by back-tracking
+    while (startIdxOfCurLoop > -1) {
+      const srcLoopNodeKey = getSourceKeyOfLastLoop(amendedTargetKey.substring(0, startIdxOfPrevLoop));
+      const srcLoopNode = findNodeForKey(srcLoopNodeKey, sourceSchema.schemaTreeRoot);
 
-        // Check if an index() node/id has already been created for this $for()'s index variable
-        if (createdNodes[forTgtBasePath]) {
-          indexFnRfKey = createdNodes[forTgtBasePath];
+      const tgtLoopNodeKey = getTargetValueWithoutLoops(amendedTargetKey);
+      const tgtLoopNode = findNodeForKey(tgtLoopNodeKey, targetSchema.schemaTreeRoot);
+      // TODO: Hard part
+      // OneToOne - single $for(), tgtKey is next keyChunk after
+      // ManyToOne (back-to-back $for()'s, tgtKey is next keyChunk after all of them for all of them)
+      // ManyToMany - $for()'s COULD be separate by a (single?) keyChunk, which would be that loop's targetNode
+
+      if (idxOfIndexVariable > -1) {
+        const idxVariable = amendedTargetKey[idxOfIndexVariable + 1];
+
+        // Check if an index() node/id has already been created for this loop's index variable
+        if (createdNodes[tgtLoopNodeKey]) {
+          indexFnRfKey = createdNodes[tgtLoopNodeKey];
         } else {
           indexFnRfKey = createReactFlowFunctionKey(indexPseudoFunction);
-          createdNodes[forTgtBasePath] = indexFnRfKey;
+          createdNodes[tgtLoopNodeKey] = indexFnRfKey;
         }
 
         amendedSourceKey = amendedSourceKey.replaceAll(idxVariable, indexFnRfKey);
-        mockDirectAccessFnKey = mockDirectAccessFnKey?.replaceAll(idxVariable, indexFnRfKey);
 
-        srcLoopNodeKey = getSourceKeyOfLastLoop(amendedTargetKey.substring(0, idxOfIdxVariable + 4));
+        if (mockDirectAccessFnKey) {
+          mockDirectAccessFnKey = mockDirectAccessFnKey.replaceAll(idxVariable, indexFnRfKey);
+        }
       }
 
-      const srcLoopNode = findNodeForKey(srcLoopNodeKey, sourceSchema.schemaTreeRoot);
-      if (srcLoopNode) {
+      if (srcLoopNode && tgtLoopNode) {
         addParentConnectionForRepeatingElements(
-          destinationNode,
+          tgtLoopNode,
           srcLoopNode,
           sourceSchemaFlattened,
           targetSchemaFlattened,
@@ -410,6 +415,10 @@ const createConnections = (
           indexFnRfKey
         );
       }
+
+      startIdxOfPrevLoop = startIdxOfCurLoop;
+      startIdxOfCurLoop = amendedTargetKey.substring(0, startIdxOfPrevLoop).lastIndexOf(mapNodeParams.for);
+      idxOfIndexVariable = amendedTargetKey.substring(0, startIdxOfPrevLoop).indexOf('$', startIdxOfCurLoop + 1);
     }
   }
 

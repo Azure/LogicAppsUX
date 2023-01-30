@@ -729,15 +729,14 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       );
     });
 
-    // TODO (#16831098): Support nested many-to-many loops
-    it.skip('creates a nested loop connection', () => {
+    it('creates a many-to-many loop connection', () => {
       const extendedLoopSource = convertSchemaToSchemaExtended(simpleLoopSource);
       const extendedLoopTarget = convertSchemaToSchemaExtended(simpleLoopTarget);
       simpleMap['ns0:Root'] = {
         Ano: {
           '$for(/ns0:Root/Year)': {
             Mes: {
-              '$for(/ns0:Root/Year/Month)': {
+              '$for(Month)': {
                 Dia: 'Day',
               },
             },

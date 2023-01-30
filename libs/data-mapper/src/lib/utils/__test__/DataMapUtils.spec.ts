@@ -6,6 +6,7 @@ import {
   addAncestorNodesToCanvas,
   addParentConnectionForRepeatingElementsNested,
   getSourceValueFromLoop,
+  getTargetValueWithoutLoops,
   qualifyLoopRelativeSourceKeys,
   splitKeyIntoChildren,
 } from '../DataMap.Utils';
@@ -225,6 +226,22 @@ describe('utils/DataMap', () => {
       expect(qualifyLoopRelativeSourceKeys('/ns0:Root/ManyToOne/$for(/ns0:Root/ManyToOne/SourceYear, $a)/RandomKey')).toBe(
         '/ns0:Root/ManyToOne/$for(/ns0:Root/ManyToOne/SourceYear, $a)/RandomKey'
       );
+    });
+  });
+
+  describe('getTargetValueWithoutLoops', () => {
+    it('Single loop', () => {
+      expect(getTargetValueWithoutLoops('/ns0:Root/ManyToOne/$for(/ns0:Root/ManyToOne/SourceYear, $a)/Date/DayName')).toBe(
+        '/ns0:Root/ManyToOne/Date/DayName'
+      );
+    });
+
+    it('Multiple loops', () => {
+      expect(
+        getTargetValueWithoutLoops(
+          '/ns0:Root/ManyToOne/$for(/ns0:Root/ManyToOne/SourceYear, $a)/RandomNode/$for(SourceMonth)/$for(SourceDay, $c)/Date/DayName'
+        )
+      ).toBe('/ns0:Root/ManyToOne/RandomNode/Date/DayName');
     });
   });
 });
