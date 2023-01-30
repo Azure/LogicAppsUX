@@ -39,6 +39,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const operationInfo = useOperationInfo(id);
   const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
 
+  const runData = { status: metadata?.status, duration: metadata?.duration };
+
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
       type: 'BOX',
@@ -185,6 +187,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           isDragging={isDragging}
           isLoading={isLoading}
           isMonitoringView={isMonitoringView}
+          runData={runData}
           readOnly={readOnly}
           onClick={nodeClick}
           selected={selected}

@@ -14,8 +14,7 @@ export const initializeGraphState = createAsyncThunk<
   { workflowDefinition: Workflow; runInstance: any },
   { state: RootState }
 >('parser/deserialize', async (graphState: { workflowDefinition: Workflow; runInstance: any }, thunkAPI): Promise<DeserializedWorkflow> => {
-  const { workflowDefinition, runInstance } = graphState;
-  console.log(runInstance);
+  const { workflowDefinition, runInstance = {} } = graphState;
   const { workflow } = thunkAPI.getState() as RootState;
   const spec = workflow.workflowSpec;
 
@@ -25,7 +24,7 @@ export const initializeGraphState = createAsyncThunk<
   if (spec === 'BJS') {
     getConnectionsQuery();
     const { definition, connectionReferences, parameters } = workflowDefinition;
-    const deserializedWorkflow = BJSDeserialize(definition);
+    const deserializedWorkflow = BJSDeserialize(definition, runInstance);
     thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
     parseWorkflowParameters(parameters ?? {}, thunkAPI.dispatch);
     const operationMetadataPromise = initializeOperationMetadata(

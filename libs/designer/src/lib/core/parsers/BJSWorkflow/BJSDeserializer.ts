@@ -3,6 +3,7 @@ import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/
 import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
+import { getDurationString, getDurationStringPanelMode } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { SubgraphType } from '@microsoft/utils-logic-apps';
 import {
@@ -13,7 +14,7 @@ import {
   isNullOrEmpty,
   isNullOrUndefined,
 } from '@microsoft/utils-logic-apps';
-import { title } from 'process';
+import { current } from 'immer';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
   return definition && definition.triggers ? Object.keys(definition.triggers).length > 1 : false;
@@ -25,7 +26,7 @@ export type DeserializedWorkflow = {
   nodesMetadata: NodesMetadata;
 };
 
-export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): DeserializedWorkflow => {
+export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition, runInstance: any): DeserializedWorkflow => {
   throwIfMultipleTriggers(definition);
 
   //process Trigger
@@ -58,6 +59,9 @@ export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): Deseria
     : [[], [], {}];
   allActions = { ...allActions, ...actions };
   nodesMetadata = { ...nodesMetadata, ...actionNodesMetadata };
+
+  nodesMetadata = addRunInstanceMetaData(nodesMetadata, runInstance);
+
   const graph: WorkflowNode = {
     id: 'root',
     children: [...children, ...remainingChildren],
@@ -322,4 +326,30 @@ const throwIfMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition) => 
       }
     );
   }
+};
+
+const addRunInstanceMetaData = (nodesMetadata: NodesMetadata, runInstance: any): NodesMetadata => {
+  if (!isNullOrEmpty(runInstance)) {
+    const { trigger: runInstanceTrigger = {}, actions: runInstanceActions = {} } = runInstance.properties;
+
+    const updatedNodesData = { ...nodesMetadata };
+
+    Object.entries(updatedNodesData).forEach(([key, node]) => {
+      let nodeRunData;
+      if (node.isRoot) {
+        nodeRunData = runInstanceTrigger;
+      } else {
+        nodeRunData = runInstanceActions[key];
+      }
+      updatedNodesData[key] = {
+        ...node,
+        status: nodeRunData.status,
+        duration: getDurationStringPanelMode(Date.parse(nodeRunData.endTime) - Date.parse(nodeRunData.startTime), /* abbreviated */ true),
+      };
+    });
+
+    return updatedNodesData;
+  }
+
+  return nodesMetadata;
 };

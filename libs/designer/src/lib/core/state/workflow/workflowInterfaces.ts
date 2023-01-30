@@ -10,6 +10,8 @@ export interface NodesMetadata {
     subgraphType?: SubgraphType;
     actionCount?: number;
     isRoot?: boolean;
+    status?: string;
+    duration?: string;
   };
 }
 export type Operations = Record<string, LogicAppsV2.OperationDefinition>;
