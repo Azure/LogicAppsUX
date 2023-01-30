@@ -163,6 +163,39 @@ describe('utils/Connections', () => {
           )
         ).toEqual(true);
       });
+
+      it('Test that a specific input is connected', () => {
+        const mockConnections: ConnectionDictionary = {};
+        const mockSelfNode: FunctionData = {
+          key: mockSelfReactFlowKey,
+          functionName: 'Self',
+          displayName: 'Self',
+          category: FunctionCategory.Math,
+          description: 'Self',
+          type: 'Function',
+          inputs: mockBoundedFunctionInputs,
+          maxNumberOfInputs: mockBoundedFunctionInputs.length,
+          outputValueType: NormalizedDataType.Integer,
+        };
+
+        setConnectionInputValue(mockConnections, {
+          targetNode: mockSelfNode,
+          targetNodeReactFlowKey: mockSelfReactFlowKey,
+          findInputSlot: false,
+          inputIndex: 1,
+          value: {
+            reactFlowKey: mockSourceReactFlowKey,
+            node: mockSourceNode,
+          },
+        });
+
+        expect(mockConnections[mockSourceReactFlowKey]).toBeDefined();
+        expect(mockConnections[mockSourceReactFlowKey].outputs[0].reactFlowKey).toEqual(mockSelfReactFlowKey);
+
+        expect(mockConnections[mockSelfReactFlowKey]).toBeDefined();
+        expect(mockConnections[mockSelfReactFlowKey].inputs[0].length).toEqual(0);
+        expect(mockConnections[mockSelfReactFlowKey].inputs[1].length).toEqual(1);
+      });
     });
 
     describe('Test InputDropdown-made connections', () => {
