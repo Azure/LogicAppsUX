@@ -1,12 +1,12 @@
-import { schemaNodeCardHeight, schemaNodeCardDefaultWidth, functionNodeCardSize } from '../constants/NodeConstants';
+import { functionNodeCardSize, schemaNodeCardDefaultWidth, schemaNodeCardHeight } from '../constants/NodeConstants';
 import type { SchemaNodeExtended } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { FunctionDictionary } from '../models/Function';
-import { isConnectionUnit } from './Connection.Utils';
+import { generateInputHandleId, isConnectionUnit } from './Connection.Utils';
 import { isFunctionData } from './Function.Utils';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix } from './ReactFlow.Util';
+import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
-import type { ElkNode, ElkExtendedEdge } from 'elkjs/lib/elk.bundled';
 
 const elk = new ELK();
 
@@ -78,7 +78,7 @@ export const convertDataMapNodesToElkGraph = (
           const labels = isFunctionData(connection.self.node)
             ? connection.self.node.maxNumberOfInputs > -1
               ? [{ text: connection.self.node.inputs[inputIndex].name }]
-              : [{ text: `${connection.self.node.inputs[inputIndex].name}${inputValueIndex}` }]
+              : [{ text: generateInputHandleId(connection.self.node.inputs[inputIndex].name, inputValueIndex) }]
             : [];
 
           const nextEdge: ElkExtendedEdge = {

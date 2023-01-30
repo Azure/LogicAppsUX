@@ -104,6 +104,7 @@ export interface ConnectionAction {
   destination: SchemaNodeExtended | FunctionData;
   reactFlowSource: string;
   reactFlowDestination: string;
+  specificInput?: number;
 }
 
 export interface SetConnectionInputAction {
@@ -558,7 +559,8 @@ const addConnection = (newConnections: ConnectionDictionary, nodes: ConnectionAc
   setConnectionInputValue(newConnections, {
     targetNode: nodes.destination,
     targetNodeReactFlowKey: nodes.reactFlowDestination,
-    findInputSlot: true,
+    findInputSlot: nodes.specificInput === undefined, // 0 should be counted as truthy
+    inputIndex: nodes.specificInput,
     value: {
       reactFlowKey: nodes.reactFlowSource,
       node: nodes.source,

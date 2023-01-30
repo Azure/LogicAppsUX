@@ -441,3 +441,17 @@ export const bringInParentSourceNodesForRepeating = (
     }
   }
 };
+
+export const generateInputHandleId = (inputName: string, inputNumber: number) => `${inputName}${inputNumber}`;
+export const inputFromHandleId = (inputHandleId: string, functionNode: FunctionData): number | undefined => {
+  if (functionNode.maxNumberOfInputs > -1) {
+    const input = functionNode.inputs.find((input) => inputHandleId === input.name);
+    if (input) {
+      return functionNode.inputs.indexOf(input);
+    } else {
+      return undefined;
+    }
+  } else {
+    return Number.parseInt(inputHandleId.split(functionNode.inputs[0].name)[1]);
+  }
+};
