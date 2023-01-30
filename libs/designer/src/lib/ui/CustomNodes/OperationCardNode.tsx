@@ -20,7 +20,7 @@ import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { Card, MenuItemType, DeleteNodeModal } from '@microsoft/designer-ui';
-import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
+import { isNullOrUndefined, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -38,6 +38,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
   const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
+
+  const { status: statusRun, duration: duratioRun, error: errorRun } = metadata?.runData ?? {};
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
@@ -156,8 +158,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     if (parameterValidationErrors?.length > 0)
       return { errorMessage: parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
 
-    if (isMonitoringView && metadata?.runData?.error) {
-      const { code, message } = metadata?.runData?.error || {};
+    if (isMonitoringView && !isNullOrUndefined(errorRun)) {
+      const { code, message } = errorRun;
       return { errorMessage: `${code}. ${message}`, errorLevel: MessageBarType.warning };
     }
     return { errorMessage: undefined, errorLevel: undefined };
@@ -169,7 +171,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     parameterValidationErrors?.length,
     parameterValidationErrorText,
     isMonitoringView,
-    metadata?.runData,
+    errorRun,
   ]);
 
   return (
@@ -192,7 +194,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           isDragging={isDragging}
           isLoading={isLoading}
           isMonitoringView={isMonitoringView}
-          runData={{ status: metadata?.runData?.status, duration: metadata?.runData?.duration }}
+          runData={{ status: statusRun, duration: duratioRun }}
           readOnly={readOnly}
           onClick={nodeClick}
           selected={selected}
