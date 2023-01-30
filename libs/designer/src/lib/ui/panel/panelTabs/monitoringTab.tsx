@@ -20,38 +20,79 @@ export const MonitoringPanel: React.FC<MonitoringPanelProps> = () => {
   const brandColor = useBrandColor(selectedNodeId);
   const runMetaData = nodeMetadata?.runData;
 
-  const inputsText = intl.formatMessage({
-    defaultMessage: 'Inputs',
-    description: 'Inputs text',
-  });
+  const intlText = {
+    inputs: intl.formatMessage({
+      defaultMessage: 'Inputs',
+      description: 'Inputs text',
+    }),
+    showInputs: intl.formatMessage({
+      defaultMessage: 'Show inputs',
+      description: 'Show inputs text',
+    }),
+    outputs: intl.formatMessage({
+      defaultMessage: 'Outputs',
+      description: 'Outputs text',
+    }),
+    showOutputs: intl.formatMessage({
+      defaultMessage: 'Show outputs',
+      description: 'Show outputs text',
+    }),
+    properties: intl.formatMessage({
+      defaultMessage: 'Properties',
+      description: 'Properties text',
+    }),
+    startTime: intl.formatMessage({
+      defaultMessage: 'Start time',
+      description: 'Start time text',
+    }),
+    endTime: intl.formatMessage({
+      defaultMessage: 'End time',
+      description: 'End time text',
+    }),
+    status: intl.formatMessage({
+      defaultMessage: 'Status',
+      description: 'Status text',
+    }),
+    clienTrackingId: intl.formatMessage({
+      defaultMessage: 'Client Tracking ID',
+      description: 'Client Tracking ID text',
+    }),
+    actionTrackingId: intl.formatMessage({
+      defaultMessage: 'Action Tracking ID',
+      description: 'Action Tracking ID text',
+    }),
+  };
 
-  const showInputsText = intl.formatMessage({
-    defaultMessage: 'Show inputs',
-    description: 'Show inputs text',
-  });
-
-  const outputsText = intl.formatMessage({
-    defaultMessage: 'Outputs',
-    description: 'Outputs text',
-  });
-
-  const showOutputsText = intl.formatMessage({
-    defaultMessage: 'Show outputs',
-    description: 'Show outputs text',
-  });
-
-  const propertiesText = intl.formatMessage({
-    defaultMessage: 'Properties',
-    description: 'Properties text',
-  });
+  const runProperties = {
+    startTime: {
+      displayName: intlText.startTime,
+      value: 'Fri, 28 Jan 2022 00:02:51 GMT',
+    },
+    endTime: {
+      displayName: intlText.endTime,
+      value: 'Fri, 28 Jan 2022 00:02:51 GMT',
+    },
+    status: {
+      displayName: intlText.status,
+      value: 'Fri, 28 Jan 2022 00:02:51 GMT',
+    },
+    clienTrackingId: {
+      displayName: intlText.clienTrackingId,
+      value: 'Fri, 28 Jan 2022 00:02:51 GMT',
+    },
+    actionTrackingId: {
+      displayName: intlText.actionTrackingId,
+      value: 'Fri, 28 Jan 2022 00:02:51 GMT',
+    },
+  };
 
   return (
     <div>
       {runMetaData?.inputsLink ? (
         <ValuesPanel
           brandColor={brandColor}
-          headerText={inputsText}
-          linkText={showInputsText}
+          headerText={intlText.inputs}
+          linkText={intlText.showInputs}
           showLink={true}
           values={{
             method: {
@@ -68,11 +109,11 @@ export const MonitoringPanel: React.FC<MonitoringPanelProps> = () => {
           showMore={false}
         />
       ) : null}
-      {runMetaData?.inputsLink ? (
+      {runMetaData?.outputsLink ? (
         <ValuesPanel
           brandColor={brandColor}
-          headerText={outputsText}
-          linkText={showOutputsText}
+          headerText={intlText.outputs}
+          linkText={intlText.showOutputs}
           showLink={true}
           values={{
             statusCode: {
@@ -104,13 +145,8 @@ export const MonitoringPanel: React.FC<MonitoringPanelProps> = () => {
       ) : null}
       <ValuesPanel
         brandColor={brandColor}
-        headerText={propertiesText}
-        values={{
-          startTime: {
-            displayName: 'Start time',
-            value: 'Fri, 28 Jan 2022 00:02:51 GMT',
-          },
-        }}
+        headerText={intlText.properties}
+        values={runProperties}
         labelledBy={''}
         noValuesText={'No properties'}
         showMore={false}
