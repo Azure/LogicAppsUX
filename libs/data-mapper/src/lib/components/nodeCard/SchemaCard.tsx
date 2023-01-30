@@ -281,7 +281,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const targetCardWidth = isChild ? childTargetNodeCardWidth : schemaNodeCardDefaultWidth;
   const cardWidth = isSourceSchemaNode && schemaNode.width ? schemaNode.width : targetCardWidth;
-  const maxWidthCalculated = maxWidth || 0;
+  const maxWidthCalculated = maxWidth || cardWidth;
   const sourceCardMargin = isSourceSchemaNode ? maxWidthCalculated - cardWidth : 0;
 
   return (
