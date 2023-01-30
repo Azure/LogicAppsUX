@@ -121,7 +121,7 @@ export const Card: React.FC<CardProps> = ({
         onKeyUp={keyboardInteraction.keyUp}
       >
         {isMonitoringView ? (
-          <StatusPill id={`${title}-status`} status={runData.status ?? 'Waiting'} duration={runData.duration ?? '10s'} />
+          <StatusPill id={`${title}-status`} status={runData.status ?? 'Waiting'} duration={runData.duration ?? '0s'} />
         ) : null}
         <div className={css('msla-selection-box', selected && 'selected')} />
         <div className="panel-card-main">
