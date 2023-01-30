@@ -343,8 +343,10 @@ const addRunInstanceMetaData = (nodesMetadata: NodesMetadata, runInstance: any):
       }
       updatedNodesData[key] = {
         ...node,
-        status: nodeRunData.status,
-        duration: getDurationStringPanelMode(Date.parse(nodeRunData.endTime) - Date.parse(nodeRunData.startTime), /* abbreviated */ true),
+        runData: {
+          ...nodeRunData,
+          duration: getDurationStringPanelMode(Date.parse(nodeRunData.endTime) - Date.parse(nodeRunData.startTime), /* abbreviated */ true),
+        },
       };
     });
 

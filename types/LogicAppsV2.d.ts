@@ -994,7 +994,7 @@ declare namespace LogicAppsV2 {
     };
     outputsLink: {
       uri: string;
-      contentSize: 34;
+      contentSize: number;
     };
     startTime: string;
     endTime: string;
@@ -1004,20 +1004,37 @@ declare namespace LogicAppsV2 {
     };
     status: string;
     code: string;
+    error: {
+      code: string;
+      message: string;
+    };
+    duration?: string;
+  }
+
+  interface WorkflowRunTrigger extends WorkflowRunAction {
+    name: string;
+  }
+
+  interface runInstanceProperties {
+    waitEndTime: string;
+    startTime: string;
+    endTime: string;
+    status: string;
+    correlation: {
+      clientTrackingId: string;
+    };
+    actions: Array<WorkflowRunAction>;
+    trigger: WorkflowRunTrigger;
+    workflow: {
+      id: string;
+      name: string;
+      type: string;
+    };
   }
 
   /* Run instance definition types */
   interface RunInstanceDefinition {
-    properties: {
-      waitEndTime: string;
-      startTime: string;
-      endTime: string;
-      status: string;
-      correlation: {
-        clientTrackingId: string;
-      };
-      actions: Array<WorkflowRunAction>;
-    };
+    properties: runInstanceProperties;
     id: string;
     name: string;
     type: string;

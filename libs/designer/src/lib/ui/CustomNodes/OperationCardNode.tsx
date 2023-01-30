@@ -39,8 +39,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const operationInfo = useOperationInfo(id);
   const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
 
-  const runData = { status: metadata?.status, duration: metadata?.duration };
-
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
       type: 'BOX',
@@ -157,6 +155,11 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     if (settingValidationErrors?.length > 0) return { errorMessage: settingValidationErrorText, errorLevel: MessageBarType.severeWarning };
     if (parameterValidationErrors?.length > 0)
       return { errorMessage: parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
+
+    if (isMonitoringView && metadata?.runData?.error) {
+      const { code, message } = metadata?.runData?.error || {};
+      return { errorMessage: `${code}. ${message}`, errorLevel: MessageBarType.warning };
+    }
     return { errorMessage: undefined, errorLevel: undefined };
   }, [
     opQuery?.isError,
@@ -165,6 +168,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     settingValidationErrorText,
     parameterValidationErrors?.length,
     parameterValidationErrorText,
+    isMonitoringView,
+    metadata?.runData,
   ]);
 
   return (
@@ -187,7 +192,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           isDragging={isDragging}
           isLoading={isLoading}
           isMonitoringView={isMonitoringView}
-          runData={runData}
+          runData={{ status: metadata?.runData?.status, duration: metadata?.runData?.duration }}
           readOnly={readOnly}
           onClick={nodeClick}
           selected={selected}
