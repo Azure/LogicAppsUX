@@ -46,7 +46,7 @@
             "name": "IsTheNewGuy",
             "fullName": "@IsTheNewGuy",
             "parentKey": "/ns0:TargetSchemaRoot/DirectTranslation",
-            "normalizedDataType": "Boolean",
+            "normalizedDataType": "Bool",
             "properties": "Attribute",
             "children": []
           }
