@@ -1,3 +1,4 @@
+import { concatFunction } from '../../__mocks__/FunctionMock';
 import type { DataMapOperationState } from '../../core/state/DataMapSlice';
 import type { SchemaNodeExtended } from '../../models';
 import { NormalizedDataType, SchemaNodeProperty } from '../../models';
@@ -9,10 +10,12 @@ import {
   createConnectionEntryIfNeeded,
   isCustomValue,
   isFunctionInputSlotAvailable,
+  isValidConnectionByType,
   newConnectionWillHaveCircularLogic,
   nodeHasSourceNodeEventually,
   setConnectionInputValue,
 } from '../Connection.Utils';
+import { isSchemaNodeExtended } from '../Schema.Utils';
 import { fullConnectionDictionaryForOneToManyLoop, fullMapForSimplifiedLoop } from '../__mocks__';
 
 // TODO: nodeHasSourceNodeEventually
@@ -346,23 +349,62 @@ describe('utils/Connections', () => {
   });
 
   describe('nodeHasSourceNodeEventually', () => {
-    const dummyNode = {} as SchemaNodeExtended;
-    const testNode2 = 'testNode2';
+    const dummyNode: SchemaNodeExtended = {
+      key: '',
+      name: '',
+      fullName: '',
+      normalizedDataType: NormalizedDataType.Integer,
+      properties: SchemaNodeProperty.NotSpecified,
+      nodeProperties: [SchemaNodeProperty.NotSpecified],
+      children: [],
+      pathToRoot: [],
+    };
+    const concatFunctionNode = 'concatFunctionMode';
+    const testTargetSchema = 'testTargetSchema';
     const mockConnections: ConnectionDictionary = {
-      testNode1: {
+      testSourceSchema: {
         self: { node: dummyNode, reactFlowKey: 'testNode1' },
         inputs: {},
         outputs: [{ node: dummyNode, reactFlowKey: 'testNode2' }],
       },
-      [testNode2]: {
-        self: { node: dummyNode, reactFlowKey: 'testNode2' },
+      [concatFunctionNode]: {
+        self: { node: concatFunction, reactFlowKey: 'concatFunctionNode' },
         inputs: { '0': [{ reactFlowKey: 'testNode1', node: dummyNode }] },
+        outputs: [],
+      },
+      [testTargetSchema]: {
+        self: { node: dummyNode, reactFlowKey: 'testTargetSchema' },
+        inputs: { '0': [{ reactFlowKey: 'concatFunctionNode', node: concatFunction }] },
         outputs: [],
       },
     };
 
-    it('basic test', () => {
-      expect(nodeHasSourceNodeEventually(mockConnections['testNode2'], mockConnections)).toEqual(true);
+    it('Test can find a source node from depth 1', () => {
+      expect(isSchemaNodeExtended(dummyNode)).toBeTruthy();
+      expect(nodeHasSourceNodeEventually(mockConnections[concatFunctionNode], mockConnections)).toEqual(true);
+    });
+
+    it('Test can recursively call from depth greater than 1', () => {
+      //
+      expect(nodeHasSourceNodeEventually(mockConnections[testTargetSchema], mockConnections)).toEqual(true);
+    });
+  });
+
+  describe('isValidConnectionByType', () => {
+    it('Truthy when both are the same non-Any datatypes', () => {
+      expect(isValidConnectionByType(NormalizedDataType.String, NormalizedDataType.String)).toBeTruthy();
+    });
+
+    it('Truthy when src is Any data type', () => {
+      expect(isValidConnectionByType(NormalizedDataType.Any, NormalizedDataType.Number)).toBeTruthy();
+    });
+
+    it('Truthy when tgt is Any data type', () => {
+      expect(isValidConnectionByType(NormalizedDataType.Boolean, NormalizedDataType.Any)).toBeTruthy();
+    });
+
+    it('Falsy when both are different non-Any datatypes', () => {
+      expect(isValidConnectionByType(NormalizedDataType.Integer, NormalizedDataType.String)).toBeFalsy();
     });
   });
 });
