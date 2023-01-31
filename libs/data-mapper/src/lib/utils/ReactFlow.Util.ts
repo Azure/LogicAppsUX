@@ -168,36 +168,44 @@ export const convertToReactFlowNodes = (
   ];
 };
 
+const isAncestorOf = (possibleChild: SchemaNodeExtended, possibleParent: SchemaNodeExtended): boolean => {
+  return possibleChild.key.includes(possibleParent.key);
+};
+
+const isSiblingOf = (node1: SchemaNodeExtended, node2: SchemaNodeExtended) => {
+  return node1.parentKey === node2.parentKey;
+};
+
 const getWidthForSourceNodes = (sortedSourceNodes: SchemaNodeExtended[]): Map<string, number> => {
   const widthDict: Map<string, number> = new Map<string, number>();
   let maxSizeAdd = 0;
 
   const tryRec = (widthDiff: number, remainingNodes: SchemaNodeExtended[]): SchemaNodeExtended[] => {
-    // [employee, emId]
     if (widthDiff > maxSizeAdd) {
       maxSizeAdd = widthDiff;
     }
     if (remainingNodes.length === 0) {
       return [];
     }
-    widthDict.set(remainingNodes[0].key, widthDiff);
+    const currentNode = remainingNodes[0];
+    widthDict.set(currentNode.key, widthDiff);
     if (remainingNodes.length === 1) {
       return [];
     }
+    const nextNode = remainingNodes[1];
     let nextSection: SchemaNodeExtended[] = [];
-    if (remainingNodes[1].key.includes(remainingNodes[0].key)) {
-      // next is a child of the current node
-      nextSection = tryRec(widthDiff + schemaNodeCardWidthDifference, remainingNodes.slice(1)); // what if we return the remaining array?
-    } else if (remainingNodes[0].parentKey === remainingNodes[1].parentKey) {
+    if (isAncestorOf(nextNode, currentNode)) {
+      nextSection = tryRec(widthDiff + schemaNodeCardWidthDifference, remainingNodes.slice(1));
+    } else if (isSiblingOf(currentNode, nextNode)) {
       nextSection = tryRec(widthDiff, remainingNodes.slice(1));
     } else {
       return remainingNodes.slice(1);
     }
-    if (nextSection[0] && nextSection[0].parentKey === remainingNodes[0].parentKey) {
+    if (nextSection[0] && isSiblingOf(nextSection[0], currentNode)) {
       return tryRec(widthDiff, nextSection);
     }
-    if (nextSection[0] && nextSection[0].key.includes(remainingNodes[0].key)) {
-      return tryRec(widthDiff + schemaNodeCardWidthDifference * 2, nextSection.slice(1));
+    if (nextSection[0] && isAncestorOf(nextSection[0], currentNode)) {
+      return tryRec(widthDiff + schemaNodeCardWidthDifference, nextSection);
     }
     return nextSection;
   };
