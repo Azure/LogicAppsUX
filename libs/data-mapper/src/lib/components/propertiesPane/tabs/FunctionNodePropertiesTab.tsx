@@ -229,7 +229,6 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
             }}
           >
             <div style={{ paddingTop: '4px', color: tokens.colorNeutralBackground1, display: 'flex', justifyContent: 'center' }}>
-              {/* theme.palette.neutralPrimary // resolved value for tokens.colorNeutralForeground1 */}
               <FunctionIcon
                 name={functionData.functionName}
                 categoryName={functionData.category}
