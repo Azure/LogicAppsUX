@@ -767,7 +767,6 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
   });
 };
 
-// TODO: May have to support targetNode already being the parent as well
 export const addParentConnectionForRepeatingElements = (
   targetNode: FunctionData | SchemaNodeExtended,
   sourceNode: FunctionData | SchemaNodeExtended,

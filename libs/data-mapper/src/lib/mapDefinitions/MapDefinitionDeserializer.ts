@@ -368,20 +368,20 @@ const createConnections = (
   }
 
   // Loop + index variable handling (create index() node, match up variables to respective nodes, etc)
-  if (isLoop && sourceNode && destinationNode) {
+  if (isLoop) {
     let startIdxOfPrevLoop = amendedTargetKey.length;
     let startIdxOfCurLoop = amendedTargetKey.substring(0, startIdxOfPrevLoop).lastIndexOf(mapNodeParams.for);
-    let idxOfIndexVariable = amendedTargetKey.substring(0, startIdxOfPrevLoop).indexOf('$', startIdxOfCurLoop + 1);
 
     let tgtLoopNodeKey: string | undefined = undefined;
     let tgtLoopNode: SchemaNodeExtended | undefined = undefined;
-
-    let indexFnRfKey: string | undefined = undefined;
 
     // Handle loops in targetKey by back-tracking
     while (startIdxOfCurLoop > -1) {
       const srcLoopNodeKey = getSourceKeyOfLastLoop(amendedTargetKey.substring(0, startIdxOfPrevLoop));
       const srcLoopNode = findNodeForKey(srcLoopNodeKey, sourceSchema.schemaTreeRoot);
+
+      const idxOfIndexVariable = amendedTargetKey.substring(0, startIdxOfPrevLoop).indexOf('$', startIdxOfCurLoop + 1);
+      let indexFnRfKey: string | undefined = undefined;
 
       const endOfFor = ')/';
       const endOfForIdx = amendedTargetKey.substring(0, startIdxOfPrevLoop).lastIndexOf(endOfFor);
@@ -391,26 +391,36 @@ const createConnections = (
       // it must go to the lower-level/previous target node
       if (!tgtLoopNodeKeyChunk.startsWith(mapNodeParams.for)) {
         // Gets tgtKey for current loop (which will be the single key chunk immediately following the loop path chunk)
-        tgtLoopNodeKey = getTargetValueWithoutLoops(amendedTargetKey.substring(0, amendedTargetKey.indexOf('/', endOfForIdx + 2)));
+        const startIdxOfNextPathChunk = amendedTargetKey.indexOf('/', endOfForIdx + 2);
+        tgtLoopNodeKey = getTargetValueWithoutLoops(
+          startIdxOfNextPathChunk > -1 ? amendedTargetKey.substring(0, startIdxOfNextPathChunk) : amendedTargetKey
+        );
         tgtLoopNode = findNodeForKey(tgtLoopNodeKey, targetSchema.schemaTreeRoot);
       }
 
       // Handle index variables
       if (idxOfIndexVariable > -1 && tgtLoopNodeKey) {
         const idxVariable = amendedTargetKey[idxOfIndexVariable + 1];
+        const idxVariableKey = `${idxVariable}-${tgtLoopNodeKey}`;
 
         // Check if an index() node/id has already been created for this loop's index variable
-        if (createdNodes[tgtLoopNodeKey]) {
-          indexFnRfKey = createdNodes[tgtLoopNodeKey];
+        if (createdNodes[idxVariableKey]) {
+          indexFnRfKey = createdNodes[idxVariableKey];
         } else {
           indexFnRfKey = createReactFlowFunctionKey(indexPseudoFunction);
-          createdNodes[tgtLoopNodeKey] = indexFnRfKey;
+          createdNodes[idxVariableKey] = indexFnRfKey;
         }
 
-        amendedSourceKey = amendedSourceKey.replaceAll(idxVariable, indexFnRfKey);
+        // Replace all instances of index variable w/ its key,
+        // accounting for `$i` matching in `$if`s
+        const placeholderIf = mapNodeParams.if.replace('$', '&');
+        amendedSourceKey = amendedSourceKey
+          .replaceAll(mapNodeParams.if, placeholderIf)
+          .replaceAll(`$${idxVariable}`, indexFnRfKey)
+          .replaceAll(placeholderIf, mapNodeParams.if);
 
         if (mockDirectAccessFnKey) {
-          mockDirectAccessFnKey = mockDirectAccessFnKey.replaceAll(idxVariable, indexFnRfKey);
+          mockDirectAccessFnKey = mockDirectAccessFnKey.replaceAll(`$${idxVariable}`, indexFnRfKey);
         }
       }
 
@@ -428,7 +438,6 @@ const createConnections = (
 
       startIdxOfPrevLoop = startIdxOfCurLoop;
       startIdxOfCurLoop = amendedTargetKey.substring(0, startIdxOfPrevLoop).lastIndexOf(mapNodeParams.for);
-      idxOfIndexVariable = amendedTargetKey.substring(0, startIdxOfPrevLoop).indexOf('$', startIdxOfCurLoop + 1);
     }
   }
 
