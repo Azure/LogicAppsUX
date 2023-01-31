@@ -24,7 +24,7 @@ import { addReactFlowPrefix, addSourceReactFlowPrefix } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid } from '@microsoft/utils-logic-apps';
 
-type UnknownNode = SchemaNodeExtended | FunctionData | undefined;
+export type UnknownNode = SchemaNodeExtended | FunctionData | undefined;
 
 export const getParentId = (id: string): string => {
   const last = id.lastIndexOf('/');
@@ -284,11 +284,7 @@ export const qualifyLoopRelativeSourceKeys = (targetKey: string): string => {
   return qualifiedTargetKey;
 };
 
-export const getTargetValueWithoutLastLoop = (targetKey: string): string => {
-  const forMatchArr = targetKey.match(/\$for\(((?!\)).)+\)\//g);
-  const forMatch = forMatchArr?.[forMatchArr.length - 1];
-  return forMatch ? targetKey.replace(forMatch, '') : targetKey;
-};
+export const getTargetValueWithoutLoops = (targetKey: string): string => targetKey.replaceAll(/\$for\(((?!\)).)+\)\//g, '');
 
 export const addParentConnectionForRepeatingElementsNested = (
   sourceNode: SchemaNodeExtended,

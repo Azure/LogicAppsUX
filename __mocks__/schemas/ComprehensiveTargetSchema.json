@@ -209,9 +209,9 @@
                 "properties": "Repeating",
                 "children": [
                   {
-                    "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/Object(DotAccess)",
-                    "name": "Object(DotAccess)",
-                    "fullName": "Object(DotAccess)",
+                    "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/DotAccess",
+                    "name": "DotAccess",
+                    "fullName": "DotAccess",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths",
                     "normalizedDataType": "ComplexType",
                     "properties": "NotSpecified",
