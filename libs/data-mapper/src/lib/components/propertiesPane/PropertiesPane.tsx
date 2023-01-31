@@ -1,7 +1,6 @@
 import { deleteCurrentlySelectedItem } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaNodeExtended } from '../../models';
-import type { FunctionData } from '../../models/Function';
+import type { UnknownNode } from '../../utils/DataMap.Utils';
 import { isFunctionData } from '../../utils/Function.Utils';
 import { CodeTab } from './tabs/CodeTab';
 import { FunctionNodePropertiesTab } from './tabs/FunctionNodePropertiesTab';
@@ -74,7 +73,7 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
   const functionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
-  const [currentNode, setCurrentNode] = useState<SchemaNodeExtended | FunctionData | undefined>(undefined);
+  const [currentNode, setCurrentNode] = useState<UnknownNode>(undefined);
   const [tabToDisplay, setTabToDisplay] = useState<PropertiesPaneTabs>(PropertiesPaneTabs.Properties);
   const [initialDragYPos, setInitialDragYPos] = useState<number | undefined>(undefined);
   const [initialDragHeight, setInitialDragHeight] = useState<number | undefined>(undefined);

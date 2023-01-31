@@ -40,7 +40,7 @@ ns0:TargetSchemaRoot:
           FunctionChain: substring(lower-case(SourceFunctionChain), 0, 5)
       $for(/ns0:SourceSchemaRoot/Looping/OneToOne/RelativePaths):
         RelativePaths:
-          Object(DotAccess): .
+          DotAccess: .
           Property: Property
           $@Attribute: ./@Attribute
     ManyToOne:
