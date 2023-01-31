@@ -177,7 +177,7 @@ const isSiblingOf = (node1: SchemaNodeExtended, node2: SchemaNodeExtended) => {
 };
 
 const getWidthForSourceNodes = (sortedSourceNodes: SchemaNodeExtended[]): Map<string, number> => {
-  const widthDict: Map<string, number> = new Map<string, number>();
+  const widthMap: Map<string, number> = new Map<string, number>();
   let maxSizeAdd = 0;
 
   const getWidthForSourceNodesRecursively = (widthDiff: number, remainingNodes: SchemaNodeExtended[]): SchemaNodeExtended[] => {
@@ -188,7 +188,7 @@ const getWidthForSourceNodes = (sortedSourceNodes: SchemaNodeExtended[]): Map<st
       return [];
     }
     const currentNode = remainingNodes[0];
-    widthDict.set(currentNode.key, widthDiff);
+    widthMap.set(currentNode.key, widthDiff);
     if (remainingNodes.length === 1) {
       return [];
     }
@@ -201,10 +201,11 @@ const getWidthForSourceNodes = (sortedSourceNodes: SchemaNodeExtended[]): Map<st
     } else {
       return remainingNodes.slice(1);
     }
-    if (nextSection[0] && isSiblingOf(nextSection[0], currentNode)) {
+    const nextSectionNode = nextSection[0];
+    if (nextSectionNode && isSiblingOf(nextSectionNode, currentNode)) {
       return getWidthForSourceNodesRecursively(widthDiff, nextSection);
     }
-    if (nextSection[0] && isAncestorOf(nextSection[0], currentNode)) {
+    if (nextSectionNode && isAncestorOf(nextSectionNode, currentNode)) {
       return getWidthForSourceNodesRecursively(widthDiff + schemaNodeCardWidthDifference, nextSection);
     }
     return nextSection;
@@ -216,9 +217,9 @@ const getWidthForSourceNodes = (sortedSourceNodes: SchemaNodeExtended[]): Map<st
     maxWidth += maxSizeAdd - schemaNodeCardWidthDifference * 3;
   }
 
-  widthDict.set('maxWidth', maxWidth);
+  widthMap.set('maxWidth', maxWidth);
 
-  return widthDict;
+  return widthMap;
 };
 
 const convertSourceToReactFlowParentAndChildNodes = (
@@ -240,21 +241,8 @@ const convertSourceToReactFlowParentAndChildNodes = (
   sourceNodesCopy.filter((node) => node.nodeProperties.includes(SchemaNodeProperty.Repeating));
   const sourceKeySet: Set<string> = new Set();
   sourceNodesCopy.forEach((node) => sourceKeySet.add(node.key));
-  // const widthDict: Map<string, number> = new Map<string, number>();
-  // combinedSourceSchemaNodes.forEach((srcNode) => {
-  //   let srcWidth = 0;
-  //   sourceKeySet.forEach((possibleParent) => {
-  //     if (srcNode.key.includes(possibleParent) && possibleParent !== srcNode.key) {
-  //       srcWidth = srcWidth + schemaNodeCardWidthDifference;
-  //     }
-  //   });
-  //   widthDict.set(srcNode.key, srcWidth);
-  //   if (srcWidth > schemaNodeCardWidthDifference * 3) {
-  //     maxSize += schemaNodeCardWidthDifference;
-  //   }
-  // });
 
-  const widthDict = getWidthForSourceNodes(sourceNodesCopy);
+  const widthMap = getWidthForSourceNodes(sourceNodesCopy);
 
   combinedSourceSchemaNodes.forEach((srcNode) => {
     const nodeReactFlowId = addSourceReactFlowPrefix(srcNode.key);
@@ -275,8 +263,8 @@ const convertSourceToReactFlowParentAndChildNodes = (
       return;
     }
 
-    const dictWidth = widthDict.get(srcNode.key);
-    const maxWidth = widthDict.get('maxWidth') as number;
+    const dictWidth = widthMap.get(srcNode.key);
+    const maxWidth = widthMap.get('maxWidth') as number;
     const nodeWidth = dictWidth !== undefined ? dictWidth : schemaNodeCardDefaultWidth;
 
     reactFlowNodes.push({
