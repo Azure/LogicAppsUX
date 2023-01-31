@@ -30,6 +30,8 @@ import {
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { SchemaType } from '../models';
+import { inputFromHandleId } from '../utils/Connection.Utils';
+import { isFunctionData } from '../utils/Function.Utils';
 import { useLayout } from '../utils/ReactFlow.Util';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -106,6 +108,8 @@ export const ReactFlowWrapper = ({ canvasBlockHeight, canvasBlockWidth, useExpan
           destination,
           reactFlowDestination: connection.target,
           reactFlowSource: connection.source,
+          specificInput:
+            connection.targetHandle && isFunctionData(destination) ? inputFromHandleId(connection.targetHandle, destination) : undefined,
         })
       );
     }

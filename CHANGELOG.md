@@ -1,4 +1,13 @@
 # Logic Apps Designer
+### [0.2.62](https://github.com/Azure/LogicAppsUX/compare/v0.2.61...v0.2.62) (2023-01-31)
+
+### [0.2.61](https://github.com/Azure/LogicAppsUX/compare/v0.2.60...v0.2.61) (2023-01-30)
+
+
+### Logic Apps Designer Bug Fixes
+
+* Fixed nightly release action ([#1580](https://github.com/Azure/LogicAppsUX/issues/1580)) ([9ff88c0](https://github.com/Azure/LogicAppsUX/commit/9ff88c06e88c7ee0061bf0c501600f169dd18b2b))
+
 ### [0.2.60](https://github.com/Azure/LogicAppsUX/compare/v0.2.59...v0.2.60) (2023-01-30)
 
 ### [0.2.59](https://github.com/Azure/LogicAppsUX/compare/v0.2.58...v0.2.59) (2023-01-29)
