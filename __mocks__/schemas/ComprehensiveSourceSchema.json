@@ -205,8 +205,27 @@
                 "fullName": "Index",
                 "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToOne",
                 "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
-                "children": []
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/Index/SourceDirect",
+                    "name": "SourceDirect",
+                    "fullName": "SourceDirect",
+                    "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToOne/Index",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "children": []
+                  },
+                  {
+                    "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/Index/SourceFunctionChain",
+                    "name": "SourceFunctionChain",
+                    "fullName": "SourceFunctionChain",
+                    "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToOne/Index",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "children": []
+                  }
+                ]
               },
               {
                 "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/Conditional",
@@ -214,8 +233,18 @@
                 "fullName": "Conditional",
                 "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToOne",
                 "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
-                "children": []
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/Conditional/SourceDirect",
+                    "name": "SourceDirect",
+                    "fullName": "SourceDirect",
+                    "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToOne/Conditional",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "children": []
+                  }
+                ]
               },
               {
                 "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest",
@@ -223,8 +252,27 @@
                 "fullName": "StressTest",
                 "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToOne",
                 "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
-                "children": []
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest/SourceDirect",
+                    "name": "SourceDirect",
+                    "fullName": "SourceDirect",
+                    "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "children": []
+                  },
+                  {
+                    "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest/@SourceFunctionChain",
+                    "name": "SourceFunctionChain",
+                    "fullName": "@SourceFunctionChain",
+                    "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest",
+                    "normalizedDataType": "String",
+                    "properties": "Attribute",
+                    "children": []
+                  }
+                ]
               }
             ]
           },

@@ -43,6 +43,19 @@ ns0:TargetSchemaRoot:
           DotAccess: .
           Property: Property
           $@Attribute: ./@Attribute
+      $for(/ns0:SourceSchemaRoot/Looping/OneToOne/Index, $a):
+        Index:
+          Direct: /ns0:SourceSchemaRoot/Looping/OneToOne/Index[$a]/SourceDirect
+          FunctionChain: concat(SourceFunctionChain, $a)
+      $for(/ns0:SourceSchemaRoot/Looping/OneToOne/Conditional):
+        Conditional:
+          $if(is-null(SourceDirect)):
+            Direct: SourceDirect
+      $for(/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest, $a):
+        StressTest:
+          $if(is-greater-than($a, 3)):
+            Direct: /ns0:SourceSchemaRoot/Looping/OneToOne/StressTest[$a]/SourceDirect
+          FunctionChain: concat(lower-case(string(current-date())), ./@SourceFunctionChain)
     ManyToOne:
       $for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple):
         $for(SourceSimpleChild):
