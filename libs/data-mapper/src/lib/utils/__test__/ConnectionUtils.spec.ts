@@ -13,6 +13,7 @@ import {
   isValidConnectionByType,
   newConnectionWillHaveCircularLogic,
   nodeHasSourceNodeEventually,
+  nodeHasSpecificInputEventually,
   setConnectionInputValue,
 } from '../Connection.Utils';
 import { isSchemaNodeExtended } from '../Schema.Utils';
@@ -428,7 +429,59 @@ describe('utils/Connections', () => {
     });
   });
 
-  // describe('nodeHasSpecificInputEventually')
+  describe('nodeHasSpecificInputEventually', () => {
+    const dummyNode: SchemaNodeExtended = {
+      key: '',
+      name: '',
+      fullName: '',
+      normalizedDataType: NormalizedDataType.Integer,
+      properties: SchemaNodeProperty.NotSpecified,
+      nodeProperties: [SchemaNodeProperty.NotSpecified],
+      children: [],
+      pathToRoot: [],
+    };
+    const mockConnections: ConnectionDictionary = {
+      testSourceSchema1: {
+        self: { node: dummyNode, reactFlowKey: 'testSourceSchema1' },
+        inputs: {},
+        outputs: [{ node: concatFunction, reactFlowKey: 'concatFunctionNode' }],
+      },
+      testSourceSchema2: {
+        self: { node: dummyNode, reactFlowKey: 'testSourceSchema2' },
+        inputs: {},
+        outputs: [{ node: concatFunction, reactFlowKey: 'concatFunctionNode' }],
+      },
+      concatFunctionNode: {
+        self: { node: concatFunction, reactFlowKey: 'concatFunctionNode' },
+        inputs: {
+          '0': [{ reactFlowKey: 'testSourceSchema1', node: dummyNode }],
+          '1': [{ reactFlowKey: 'testSourceSchema2', node: dummyNode }],
+        },
+        outputs: [{ node: dummyNode, reactFlowKey: 'testTargetScehema' }],
+      },
+      testTargetSchema: {
+        self: { node: dummyNode, reactFlowKey: 'testTargetSchema' },
+        inputs: { '0': [{ reactFlowKey: 'concatFunctionNode', node: concatFunction }] },
+        outputs: [],
+      },
+    };
+
+    it('Truthy when sourceKey in currentConnection with exact match', () => {
+      expect(nodeHasSpecificInputEventually('testSourceSchema1', mockConnections['testSourceSchema1'], mockConnections, true)).toBeTruthy();
+    });
+
+    it('Truthy when sourceKey can be found in currentConnection reactFlowKey', () => {
+      expect(nodeHasSpecificInputEventually('Source', mockConnections['testSourceSchema1'], mockConnections, false)).toBeTruthy();
+    });
+
+    it('Truthy when sourceKey can be found from depth > 1 (exactMatch = false)', () => {
+      expect(nodeHasSpecificInputEventually('Source', mockConnections['testTargetSchema'], mockConnections, false)).toBeTruthy();
+    });
+
+    it('Falsy when sourceKey unable to be found from depth > 1 (exactMatch = true)', () => {
+      expect(nodeHasSpecificInputEventually('testSourceSchema3', mockConnections['testTargetSchema'], mockConnections, true)).toBeFalsy();
+    });
+  });
 
   describe('isValidConnectionByType', () => {
     it('Truthy when both are the same non-Any datatypes', () => {
