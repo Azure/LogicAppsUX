@@ -91,6 +91,7 @@ export const DesignerWrapper = () => {
             workflow={{
               definition: workflowDefinition,
               connectionReferences: connections,
+              parameters: workflowDefinition.parameters,
             }}
           >
             <PseudoCommandBar />

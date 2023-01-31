@@ -1,7 +1,6 @@
 import Constants from '../constants';
 import type { EventHandler } from '../eventhandler';
 import type { WorkflowParameterDefinition } from './workflowparameter';
-import { ReadOnlyParameters } from './workflowparametersReadOnly';
 import type {
   IDropdownOption,
   IDropdownStyles,
@@ -19,7 +18,7 @@ import { useIntl } from 'react-intl';
 export const labelStyles: Partial<ILabelStyles> = {
   root: {
     display: 'inline-block',
-    minWidth: 100,
+    minWidth: '120px',
     verticalAlign: 'top',
     padding: '0px',
   },
@@ -245,13 +244,13 @@ export const WorkflowparameterField = ({
     );
   };
 
-  if (isEditable) {
-    return (
-      <>
-        <div className="msla-workflow-parameter-field">
-          <Label styles={labelStyles} required={true} htmlFor={parameterDetails.name}>
-            {nameTitle}
-          </Label>
+  return (
+    <>
+      <div className="msla-workflow-parameter-field">
+        <Label styles={labelStyles} required={true} htmlFor={parameterDetails.name}>
+          {nameTitle}
+        </Label>
+        {isEditable ? (
           <TextField
             data-testid={parameterDetails.name}
             styles={textFieldStyles}
@@ -263,11 +262,15 @@ export const WorkflowparameterField = ({
             onChange={onNameChange}
             disabled={isReadOnly}
           />
-        </div>
-        <div className="msla-workflow-parameter-field">
-          <Label styles={labelStyles} required={true} htmlFor={parameterDetails.type}>
-            {typeTitle}
-          </Label>
+        ) : (
+          <Text className="msla-workflow-parameter-read-only">{name}</Text>
+        )}
+      </div>
+      <div className="msla-workflow-parameter-field">
+        <Label styles={labelStyles} required={true} htmlFor={parameterDetails.type}>
+          {typeTitle}
+        </Label>
+        {isEditable ? (
           <Dropdown
             data-testid={parameterDetails.type}
             id={parameterDetails.type}
@@ -278,12 +281,16 @@ export const WorkflowparameterField = ({
             onChange={onTypeChange}
             disabled={isReadOnly}
           />
-        </div>
-        {!isConsumption ? (
-          <div className="msla-workflow-parameter-field">
-            <Label styles={labelStyles} required={true} htmlFor={parameterDetails.value}>
-              {valueTitle}
-            </Label>
+        ) : (
+          <Text className="msla-workflow-parameter-read-only">{type}</Text>
+        )}
+      </div>
+      {!isConsumption ? (
+        <div className="msla-workflow-parameter-field">
+          <Label styles={labelStyles} required={true} htmlFor={parameterDetails.value}>
+            {valueTitle}
+          </Label>
+          {isEditable ? (
             <TextField
               data-testid={parameterDetails.value}
               id={parameterDetails.value}
@@ -297,13 +304,17 @@ export const WorkflowparameterField = ({
               onRenderDescription={valueWarningMessage ? onRenderDescription : undefined}
               disabled={isReadOnly}
             />
-          </div>
-        ) : (
-          <>
-            <div className="msla-workflow-parameter-field">
-              <Label styles={labelStyles} required={true} htmlFor={parameterDetails.defaultValue}>
-                {defaultValueTitle}
-              </Label>
+          ) : (
+            <Text className="msla-workflow-parameter-read-only">{value}</Text>
+          )}
+        </div>
+      ) : (
+        <>
+          <div className="msla-workflow-parameter-field">
+            <Label styles={labelStyles} required={true} htmlFor={parameterDetails.defaultValue}>
+              {defaultValueTitle}
+            </Label>
+            {isEditable ? (
               <TextField
                 data-testid={parameterDetails.defaultValue}
                 id={parameterDetails.defaultValue}
@@ -317,11 +328,15 @@ export const WorkflowparameterField = ({
                 onRenderDescription={valueWarningMessage ? onRenderDescription : undefined}
                 disabled={isReadOnly}
               />
-            </div>
-            <div className="msla-workflow-parameter-field">
-              <Label styles={labelStyles} htmlFor={parameterDetails.value}>
-                {actualValueTitle}
-              </Label>
+            ) : (
+              <Text className="msla-workflow-parameter-read-only">{defaultValue}</Text>
+            )}
+          </div>
+          <div className="msla-workflow-parameter-field">
+            <Label styles={labelStyles} htmlFor={parameterDetails.value}>
+              {actualValueTitle}
+            </Label>
+            {isEditable ? (
               <TextField
                 data-testid={parameterDetails.value}
                 id={parameterDetails.value}
@@ -331,14 +346,14 @@ export const WorkflowparameterField = ({
                 styles={textFieldStyles}
                 disabled={true}
               />
-            </div>
-          </>
-        )}
-      </>
-    );
-  } else {
-    return <ReadOnlyParameters name={name} value={defaultValue} type={type} parameterDetails={parameterDetails} />;
-  }
+            ) : (
+              <Text className="msla-workflow-parameter-read-only">{value}</Text>
+            )}
+          </div>
+        </>
+      )}
+    </>
+  );
 };
 
 function isSecureParameter(type?: string): boolean {
