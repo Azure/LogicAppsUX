@@ -4,7 +4,7 @@ import type { MapDefinitionEntry, SchemaNodeDictionary, SchemaNodeExtended } fro
 import { SchemaType } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
-import { ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
+import { ifPseudoFunctionKey, indexPseudoFunctionKey, directAccessPseudoFunctionKey } from '../models/Function';
 import { findLast } from './Array.Utils';
 import {
   flattenInputs,
@@ -13,12 +13,18 @@ import {
   nodeHasSpecificInputEventually,
   setConnectionInputValue,
 } from './Connection.Utils';
-import { findFunctionForFunctionName, findFunctionForKey, getIndexValueForCurrentConnection, isFunctionData } from './Function.Utils';
-import { addReactFlowPrefix } from './ReactFlow.Util';
+import {
+  findFunctionForFunctionName,
+  findFunctionForKey,
+  formatDirectAccess,
+  getIndexValueForCurrentConnection,
+  isFunctionData,
+} from './Function.Utils';
+import { addReactFlowPrefix, addSourceReactFlowPrefix } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid } from '@microsoft/utils-logic-apps';
 
-type UnknownNode = SchemaNodeExtended | FunctionData | undefined;
+export type UnknownNode = SchemaNodeExtended | FunctionData | undefined;
 
 export const getParentId = (id: string): string => {
   const last = id.lastIndexOf('/');
@@ -33,6 +39,7 @@ export const getInputValues = (currentConnection: Connection | undefined, connec
             return undefined;
           }
 
+          // Handle custom values, source schema node, and Function inputs for Function nodes
           if (isCustomValue(input)) {
             return input;
           } else if (isSchemaNodeExtended(input.node)) {
@@ -40,6 +47,9 @@ export const getInputValues = (currentConnection: Connection | undefined, connec
           } else {
             if (input.node.key === indexPseudoFunctionKey) {
               return getIndexValueForCurrentConnection(connections[input.reactFlowKey]);
+            } else if (input.node.key.startsWith(directAccessPseudoFunctionKey)) {
+              const functionValues = getInputValues(connections[input.reactFlowKey], connections);
+              return formatDirectAccess(functionValues[0], functionValues[1], functionValues[2]);
             } else {
               return collectFunctionValue(input.node, connections[input.reactFlowKey], connections);
             }
@@ -274,11 +284,7 @@ export const qualifyLoopRelativeSourceKeys = (targetKey: string): string => {
   return qualifiedTargetKey;
 };
 
-export const getTargetValueWithoutLastLoop = (targetKey: string): string => {
-  const forMatchArr = targetKey.match(/\$for\(((?!\)).)+\)\//g);
-  const forMatch = forMatchArr?.[forMatchArr.length - 1];
-  return forMatch ? targetKey.replace(forMatch, '') : targetKey;
-};
+export const getTargetValueWithoutLoops = (targetKey: string): string => targetKey.replaceAll(/\$for\(((?!\)).)+\)\//g, '');
 
 export const addParentConnectionForRepeatingElementsNested = (
   sourceNode: SchemaNodeExtended,
@@ -332,6 +338,46 @@ export const addParentConnectionForRepeatingElementsNested = (
         flattenedTargetSchema,
         dataMapConnections
       );
+    }
+  }
+};
+
+export const addNodeToCanvasIfDoesNotExist = (
+  node: SchemaNodeExtended,
+  currentCanvasNodes: SchemaNodeExtended[],
+  canvasNodesToAdd: SchemaNodeExtended[]
+) => {
+  const existingNode = currentCanvasNodes.find((currentNode) => currentNode.key === node.key);
+  if (existingNode === undefined) {
+    canvasNodesToAdd.push(node);
+  }
+};
+
+export const addAncestorNodesToCanvas = (
+  payloadNode: SchemaNodeExtended,
+  currentSourceSchemaNodes: SchemaNodeExtended[],
+  flattenedSourceSchema: SchemaNodeDictionary,
+  nodes: SchemaNodeExtended[]
+) => {
+  const grandparentNodesOnCanvas = currentSourceSchemaNodes.filter(
+    (node) => payloadNode?.key.includes(node.key) && payloadNode.parentKey !== node.key && payloadNode.key !== node.key
+  );
+
+  if (grandparentNodesOnCanvas.length > 0) {
+    grandparentNodesOnCanvas.sort((a, b) => a.key.length - b.key.length);
+    const highestAncestor = grandparentNodesOnCanvas[0];
+    payloadNode.pathToRoot.forEach((ancestorNode) => {
+      if (ancestorNode.key.length > highestAncestor.key.length && ancestorNode.key !== payloadNode.key) {
+        addNodeToCanvasIfDoesNotExist(flattenedSourceSchema[addSourceReactFlowPrefix(ancestorNode.key)], currentSourceSchemaNodes, nodes);
+      }
+    });
+  } else {
+    const pathToRootWithoutCurrent = payloadNode.pathToRoot.filter((node) => node.key !== payloadNode.key);
+    const firstSourceNodeWithRepeatingPathItem = findLast(pathToRootWithoutCurrent, (pathItem) => pathItem.repeating);
+    const parentNodeToAdd =
+      firstSourceNodeWithRepeatingPathItem && flattenedSourceSchema[addSourceReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key)];
+    if (parentNodeToAdd) {
+      addNodeToCanvasIfDoesNotExist(parentNodeToAdd, currentSourceSchemaNodes, nodes);
     }
   }
 };

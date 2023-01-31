@@ -71,6 +71,8 @@ const TokenField = ({
   onComboboxMenuOpen,
   tokenPickerHandler,
 }: SettingTokenFieldProps) => {
+  const dropdownOptions = editorOptions?.options?.value ?? editorOptions?.options ?? [];
+
   switch (editor?.toLowerCase()) {
     case 'copyable':
       return <CopyInputControl placeholder={placeholder} text={value[0].value} />;
@@ -80,7 +82,7 @@ const TokenField = ({
         <DropdownEditor
           readonly={readOnly}
           initialValue={value}
-          options={editorOptions.options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
+          options={dropdownOptions.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
           multiSelect={!!editorOptions?.multiSelect}
           onChange={onValueChange}
         />
@@ -104,7 +106,7 @@ const TokenField = ({
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
-          options={editorOptions.options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
+          options={dropdownOptions.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
           useOption={true}
           isTrigger={isTrigger}
           isLoading={isLoading}

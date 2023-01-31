@@ -7,34 +7,52 @@ import { ext } from '../../extensionVariables';
 import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt';
 import { ProductionSlotTreeItem } from '../tree/slotsTree/ProductionSlotTreeItem';
 import { SlotTreeItem } from '../tree/slotsTree/SlotTreeItem';
+import { downloadAppSettings } from './appSettings/downloadAppSettings';
+import { editAppSetting } from './appSettings/editAppSetting';
+import { renameAppSetting } from './appSettings/renameAppSetting';
+import { toggleSlotSetting } from './appSettings/toggleSlotSetting';
+import { uploadAppSettings } from './appSettings/uploadAppSettings';
 import { browseWebsite } from './browseWebsite';
+import { configureDeploymentSource } from './configureDeploymentSource';
+import { createChildNode } from './createChildNode';
 import { createCodeless } from './createCodeless/createCodeless';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
 import { createSlot } from './createSlot';
 import { deleteNode } from './deleteNode';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
+import { connectToGitHub } from './deployments/connectToGitHub';
+import { disconnectRepo } from './deployments/disconnectRepo';
 import { redeployDeployment } from './deployments/redeployDeployment';
+import { viewCommitInGitHub } from './deployments/viewCommitInGitHub';
 import { viewDeploymentLogs } from './deployments/viewDeploymentLogs';
+import { initProjectForVSCode } from './initProjectForVSCode/initProjectForVSCode';
 import { startStreamingLogs } from './logstream/startStreamingLogs';
 import { stopStreamingLogs } from './logstream/stopStreamingLogs';
 import { openFile } from './openFile';
 import { openInPortal } from './openInPortal';
 import { pickFuncProcess } from './pickFuncProcess';
+import { startRemoteDebug } from './remoteDebug/startRemoteDebug';
 import { restartLogicApp } from './restartLogicApp';
 import { startLogicApp } from './startLogicApp';
 import { stopLogicApp } from './stopLogicApp';
+import { swapSlot } from './swapSlot';
 import { viewProperties } from './viewProperties';
+import { configureWebhookRedirectEndpoint } from './workflows/configureWebhookRedirectEndpoint/configureWebhookRedirectEndpoint';
+import { enableAzureConnectors } from './workflows/enableAzureConnectors';
 import { exportLogicApp } from './workflows/exportLogicApp';
 import { getDebugSymbolDll } from './workflows/getDebugSymbolDll';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
 import { openOverview } from './workflows/openOverview';
+import { reviewValidation } from './workflows/reviewValidation';
+import { switchDebugMode } from './workflows/switchDebugMode/switchDebugMode';
 import { switchToDotnetProject } from './workflows/switchToDotnetProject';
+import { useSQLStorage } from './workflows/useSQLStorage';
 import { viewContent } from './workflows/viewContent';
+import { AppSettingsTreeItem, AppSettingTreeItem, registerSiteCommand } from '@microsoft/vscode-azext-azureappservice';
 import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
-import { registerSiteCommand } from '@microsoft/vscode-azext-azureappservice';
 import { registerCommand } from '@microsoft/vscode-azext-utils';
-import type { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
+import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import { commands } from 'vscode';
 
 export function registerCommands(): void {
@@ -70,6 +88,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.openOverview, openOverview);
   registerCommand(extensionCommand.refresh, async (context: IActionContext, node?: AzExtTreeItem) => await ext.tree.refresh(context, node));
   registerCommand(extensionCommand.exportLogicApp, exportLogicApp);
+  registerCommand(extensionCommand.reviewValidation, reviewValidation);
   registerCommand(extensionCommand.switchToDotnetProject, switchToDotnetProject);
   registerCommand(extensionCommand.openInPortal, openInPortal);
   registerCommand(extensionCommand.browseWebsite, browseWebsite);
@@ -79,7 +98,38 @@ export function registerCommands(): void {
     extensionCommand.deleteSlot,
     async (context: IActionContext, node?: AzExtTreeItem) => await deleteNode(context, SlotTreeItem.contextValue, node)
   );
+  registerCommand(extensionCommand.swapSlot, swapSlot);
   registerCommand(extensionCommand.startStreamingLogs, startStreamingLogs);
   registerCommand(extensionCommand.stopStreamingLogs, stopStreamingLogs);
   registerSiteCommand(extensionCommand.viewDeploymentLogs, viewDeploymentLogs);
+  registerCommand(extensionCommand.switchDebugMode, switchDebugMode);
+  registerCommand(
+    extensionCommand.toggleAppSettingVisibility,
+    async (context: IActionContext, node: AppSettingTreeItem) => {
+      await node.toggleValueVisibility(context);
+    },
+    250
+  );
+  registerCommand(
+    extensionCommand.appSettingsAdd,
+    async (context: IActionContext, node?: AzExtParentTreeItem) => await createChildNode(context, AppSettingsTreeItem.contextValue, node)
+  );
+  registerCommand(
+    extensionCommand.appSettingsDelete,
+    async (context: IActionContext, node?: AzExtTreeItem) => await deleteNode(context, AppSettingTreeItem.contextValue, node)
+  );
+  registerCommand(extensionCommand.appSettingsDownload, downloadAppSettings);
+  registerCommand(extensionCommand.appSettingsEdit, editAppSetting);
+  registerCommand(extensionCommand.appSettingsRename, renameAppSetting);
+  registerCommand(extensionCommand.appSettingsToggleSlotSetting, toggleSlotSetting);
+  registerCommand(extensionCommand.appSettingsUpload, uploadAppSettings);
+  registerCommand(extensionCommand.configureWebhookRedirectEndpoint, configureWebhookRedirectEndpoint);
+  registerCommand(extensionCommand.useSQLStorage, useSQLStorage);
+  registerCommand(extensionCommand.connectToGitHub, connectToGitHub);
+  registerCommand(extensionCommand.disconnectRepo, disconnectRepo);
+  registerCommand(extensionCommand.viewCommitInGitHub, viewCommitInGitHub);
+  registerCommand(extensionCommand.enableAzureConnectors, enableAzureConnectors);
+  registerCommand(extensionCommand.initProjectForVSCode, initProjectForVSCode);
+  registerCommand(extensionCommand.configureDeploymentSource, configureDeploymentSource);
+  registerCommand(extensionCommand.startRemoteDebug, startRemoteDebug);
 }

@@ -106,9 +106,8 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
       targetY: (numRunAfters !== 0 ? targetY - runAfterHeight : targetY) - 2, // move up to allow space for run after indicator
       targetPosition,
       borderRadius: 8,
-      centerY: dynamicMidEdgeY,
     });
-  }, [dynamicMidEdgeY, numRunAfters, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
+  }, [numRunAfters, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
 
   return (
     <>

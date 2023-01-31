@@ -47,7 +47,12 @@ const FunctionListItem = ({ functionData }: FunctionListItemProps) => {
   const cardStyles = useCardStyles();
 
   const fnBranding = getFunctionBrandingForCategory(functionData.category);
-  const fnIcon = getIconForFunction(functionData.functionName, functionData.category, functionData.iconFileName, fnBranding);
+  const fnIcon = getIconForFunction(
+    functionData.functionName,
+    functionData.category,
+    functionData.iconFileName,
+    tokens.colorNeutralForegroundInverted
+  );
 
   return (
     <Button key={functionData.key} alt-text={functionData.displayName} className={cardStyles.button}>

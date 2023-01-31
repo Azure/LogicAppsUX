@@ -1,12 +1,16 @@
 import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, simpleLoopSource, sourceMockSchema } from '../../__mocks__';
+import type { Schema, SchemaExtended, SchemaNodeExtended } from '../../models';
 import { SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import {
+  addAncestorNodesToCanvas,
   addParentConnectionForRepeatingElementsNested,
   getSourceValueFromLoop,
+  getTargetValueWithoutLoops,
   qualifyLoopRelativeSourceKeys,
   splitKeyIntoChildren,
 } from '../DataMap.Utils';
+import { addSourceReactFlowPrefix } from '../ReactFlow.Util';
 import { convertSchemaToSchemaExtended, flattenSchemaIntoDictionary } from '../Schema.Utils';
 import {
   manyToManyConnectionFromSource,
@@ -20,6 +24,37 @@ import {
 } from '../__mocks__';
 
 describe('utils/DataMap', () => {
+  describe('addAncestorNodesToCanvas', () => {
+    const sourceSchema: Schema = layeredLoopSourceMockSchema;
+    const extendedSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(sourceSchema);
+    const flattenedSchema = flattenSchemaIntoDictionary(extendedSourceSchema, SchemaType.Source);
+
+    it('includes direct parent', () => {
+      const nodeToAddKey = addSourceReactFlowPrefix('/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate');
+
+      const nodesCurrentlyOnCanvas: SchemaNodeExtended[] = [];
+      const nodeToAdd = flattenedSchema[nodeToAddKey];
+      const newNodesOnCanvas = [...nodesCurrentlyOnCanvas, nodeToAdd];
+      addAncestorNodesToCanvas(nodeToAdd, nodesCurrentlyOnCanvas, flattenedSchema, newNodesOnCanvas);
+
+      const parentOnCanvasKey = addSourceReactFlowPrefix('/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay');
+      expect(newNodesOnCanvas).toContain(flattenedSchema[parentOnCanvasKey]);
+    });
+
+    it('includes all nodes under highest ancestor on the canvas', () => {
+      const nodeToAddKey = addSourceReactFlowPrefix('/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate');
+      const ancestorOnCanvasKey = addSourceReactFlowPrefix('/ns0:Root/ManyToMany/SourceYear');
+      const nodesCurrentlyOnCanvas = [flattenedSchema[ancestorOnCanvasKey]];
+      const nodeToAdd = flattenedSchema[nodeToAddKey];
+      const newNodesOnCanvas = [...nodesCurrentlyOnCanvas, nodeToAdd];
+
+      addAncestorNodesToCanvas(nodeToAdd, nodesCurrentlyOnCanvas, flattenedSchema, newNodesOnCanvas);
+      const interimAncestorKey1 = addSourceReactFlowPrefix('/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay');
+      const interimAncestorKey2 = addSourceReactFlowPrefix('/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate');
+      expect(newNodesOnCanvas).toContain(flattenedSchema[interimAncestorKey1]);
+      expect(newNodesOnCanvas).toContain(flattenedSchema[interimAncestorKey2]);
+    });
+  });
   describe('getSourceValueFromLoop', () => {
     it('gets the source key from a looped target string', () => {
       const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
@@ -193,6 +228,22 @@ describe('utils/DataMap', () => {
       );
     });
   });
+
+  describe('getTargetValueWithoutLoops', () => {
+    it('Single loop', () => {
+      expect(getTargetValueWithoutLoops('/ns0:Root/ManyToOne/$for(/ns0:Root/ManyToOne/SourceYear, $a)/Date/DayName')).toBe(
+        '/ns0:Root/ManyToOne/Date/DayName'
+      );
+    });
+
+    it('Multiple loops', () => {
+      expect(
+        getTargetValueWithoutLoops(
+          '/ns0:Root/ManyToOne/$for(/ns0:Root/ManyToOne/SourceYear, $a)/RandomNode/$for(SourceMonth)/$for(SourceDay, $c)/Date/DayName'
+        )
+      ).toBe('/ns0:Root/ManyToOne/RandomNode/Date/DayName');
+    });
+  });
 });
 
 const indexed: ConnectionDictionary = {
@@ -226,28 +277,24 @@ const indexed: ConnectionDictionary = {
           node: {
             key: '/ns0:Root/ManyToOne/SourceYear',
             name: 'SourceYear',
-            schemaNodeDataType: 'None',
             normalizedDataType: 'ComplexType',
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth',
                 name: 'SourceMonth',
-                schemaNodeDataType: 'None',
                 normalizedDataType: 'ComplexType',
                 properties: 'Repeating',
                 children: [
                   {
                     key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay',
                     name: 'SourceDay',
-                    schemaNodeDataType: 'None',
                     normalizedDataType: 'ComplexType',
                     properties: 'Repeating',
                     children: [
                       {
                         key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate',
                         name: 'SourceDate',
-                        schemaNodeDataType: 'String',
                         normalizedDataType: 'String',
                         properties: 'NotSpecified',
                         fullName: 'SourceDate',
@@ -395,14 +442,12 @@ const indexed: ConnectionDictionary = {
         node: {
           key: '/ns0:Root/ManyToOne/Date',
           name: 'Date',
-          schemaNodeDataType: 'None',
           normalizedDataType: 'ComplexType',
           properties: 'Repeating',
           children: [
             {
               key: '/ns0:Root/ManyToOne/Date/DayName',
               name: 'DayName',
-              schemaNodeDataType: 'String',
               normalizedDataType: 'String',
               properties: 'NotSpecified',
               children: [],
@@ -470,28 +515,24 @@ const indexed: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/ManyToOne/SourceYear',
         name: 'SourceYear',
-        schemaNodeDataType: 'None',
         normalizedDataType: 'ComplexType',
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth',
             name: 'SourceMonth',
-            schemaNodeDataType: 'None',
             normalizedDataType: 'ComplexType',
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay',
                 name: 'SourceDay',
-                schemaNodeDataType: 'None',
                 normalizedDataType: 'ComplexType',
                 properties: 'Repeating',
                 children: [
                   {
                     key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate',
                     name: 'SourceDate',
-                    schemaNodeDataType: 'String',
                     normalizedDataType: 'String',
                     properties: 'NotSpecified',
                     fullName: 'SourceDate',
@@ -666,14 +707,12 @@ const indexed: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/ManyToOne/Date',
         name: 'Date',
-        schemaNodeDataType: 'None',
         normalizedDataType: 'ComplexType',
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:Root/ManyToOne/Date/DayName',
             name: 'DayName',
-            schemaNodeDataType: 'String',
             normalizedDataType: 'String',
             properties: 'NotSpecified',
             children: [],

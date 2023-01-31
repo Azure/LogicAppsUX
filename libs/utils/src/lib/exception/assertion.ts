@@ -5,6 +5,7 @@ export const AssertionExceptionName = 'Core.AssertionException';
 export enum AssertionErrorCode {
   CALLBACK_NOTREGISTERED = 'CallbackNotRegistered',
   CONNECTION_OPERATION_EXPECTED = 'ConnectionOperationExpected',
+  CONNECTION_CREATION_CLIENT_NOTREGISTERED = 'ConnectionCreationClientNotRegistered',
   DUPLICATE_PARAMETER_IDS = 'DuplicateParameterIds',
   DYNAMIC_INVOKE_CLIENT_SIDE_ERROR = 'DynamicInvokeClientSideError',
   EXPRESSION_IDENTIFIER_CANNOT_DESERIALIZE = 'ExpressionIdentifierCannotDeserialize',
