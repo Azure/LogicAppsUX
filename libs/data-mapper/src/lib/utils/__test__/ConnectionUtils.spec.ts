@@ -392,36 +392,43 @@ describe('utils/Connections', () => {
       children: [],
       pathToRoot: [],
     };
-    const concatFunctionNode = 'concatFunctionMode';
-    const testTargetSchema = 'testTargetSchema';
     const mockConnections: ConnectionDictionary = {
-      testSourceSchema: {
-        self: { node: dummyNode, reactFlowKey: 'testNode1' },
+      testSourceSchema1: {
+        self: { node: dummyNode, reactFlowKey: 'testSourceSchema1' },
         inputs: {},
-        outputs: [{ node: dummyNode, reactFlowKey: 'testNode2' }],
+        outputs: [{ node: concatFunction, reactFlowKey: 'concatFunctionNode' }],
       },
-      [concatFunctionNode]: {
+      testSourceSchema2: {
+        self: { node: dummyNode, reactFlowKey: 'testSourceSchema2' },
+        inputs: {},
+        outputs: [{ node: concatFunction, reactFlowKey: 'concatFunctionNode' }],
+      },
+      concatFunctionNode: {
         self: { node: concatFunction, reactFlowKey: 'concatFunctionNode' },
-        inputs: { '0': [{ reactFlowKey: 'testNode1', node: dummyNode }] },
-        outputs: [],
+        inputs: {
+          '0': [{ reactFlowKey: 'testSourceSchema1', node: dummyNode }],
+          '1': [{ reactFlowKey: 'testSourceSchema2', node: dummyNode }],
+        },
+        outputs: [{ node: dummyNode, reactFlowKey: 'testTargetScehema' }],
       },
-      [testTargetSchema]: {
+      testTargetSchema: {
         self: { node: dummyNode, reactFlowKey: 'testTargetSchema' },
         inputs: { '0': [{ reactFlowKey: 'concatFunctionNode', node: concatFunction }] },
         outputs: [],
       },
     };
 
-    it('Test can find a source node from depth 1', () => {
+    it('Test can find a source node from depth == 1', () => {
       expect(isSchemaNodeExtended(dummyNode)).toBeTruthy();
-      expect(nodeHasSourceNodeEventually(mockConnections[concatFunctionNode], mockConnections)).toEqual(true);
+      expect(nodeHasSourceNodeEventually(mockConnections['concatFunctionNode'], mockConnections)).toEqual(true);
     });
 
-    it('Test can recursively call from depth greater than 1', () => {
-      // issues with mockConnections call. Recursive call of mockConnections[functionInput.reactFlowKey] returns undefined.
-      expect(nodeHasSourceNodeEventually(mockConnections[testTargetSchema], mockConnections)).toEqual(true);
+    it('Test can recursively call from depth > 1', () => {
+      expect(nodeHasSourceNodeEventually(mockConnections['testTargetSchema'], mockConnections)).toEqual(true);
     });
   });
+
+  // describe('nodeHasSpecificInputEventually')
 
   describe('isValidConnectionByType', () => {
     it('Truthy when both are the same non-Any datatypes', () => {
