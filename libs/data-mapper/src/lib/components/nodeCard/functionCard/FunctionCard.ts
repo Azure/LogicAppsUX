@@ -30,12 +30,6 @@ export const useFunctionCardStyles = makeStyles({
       color: `${tokens.colorNeutralBackground1} !important`,
     },
   },
-  errorBadge: {
-    position: 'absolute',
-    top: '1px',
-    right: '-2px',
-    zIndex: '1',
-  },
   container: {
     position: 'relative',
   },

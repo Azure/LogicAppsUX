@@ -2,7 +2,7 @@
   "header": "# Logic Apps Designer",
   "infile": "CHANGELOG.md",
   "types": [
-  {
+    {
       "type": "feat",
       "section": "Features"
     },
@@ -74,6 +74,10 @@
     },
     {
       "filename": "libs/services/designer-client-services/package.json",
+      "type": "json"
+    },
+    {
+      "filename": "libs/vscode-extension/package.json",
       "type": "json"
     }
   ]

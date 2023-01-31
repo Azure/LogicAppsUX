@@ -1,4 +1,4 @@
-import { childTargetNodeCardWidth, schemaNodeCardHeight, schemaNodeCardDefaultWidth } from '../../constants/NodeConstants';
+import { childTargetNodeCardWidth, schemaNodeCardDefaultWidth, schemaNodeCardHeight } from '../../constants/NodeConstants';
 import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import { removeSourceSchemaNodes, setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
@@ -11,8 +11,8 @@ import { iconForNormalizedDataType } from '../../utils/Icon.Utils';
 import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import { ItemToggledState } from '../tree/TargetSchemaTreeItem';
 import HandleWrapper from './HandleWrapper';
-import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
 import type { CardProps } from './NodeCard';
+import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
 import {
   Badge,
   Button,
@@ -26,15 +26,15 @@ import {
 } from '@fluentui/react-components';
 import {
   bundleIcon,
+  CheckmarkCircle12Filled,
   ChevronRight16Filled,
   ChevronRight16Regular,
-  Important12Filled,
-  CheckmarkCircle12Filled,
-  CircleHalfFill12Regular,
   Circle12Regular,
+  CircleHalfFill12Regular,
+  Important12Filled,
 } from '@fluentui/react-icons';
 import type { MenuItemOption } from '@microsoft/designer-ui';
-import { MenuItemType, useCardContextMenu, CardContextMenu } from '@microsoft/designer-ui';
+import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
 import { useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -281,7 +281,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const targetCardWidth = isChild ? childTargetNodeCardWidth : schemaNodeCardDefaultWidth;
   const cardWidth = isSourceSchemaNode && schemaNode.width ? schemaNode.width : targetCardWidth;
-  const maxWidthCalculated = maxWidth || 0;
+  const maxWidthCalculated = maxWidth || cardWidth;
   const sourceCardMargin = isSourceSchemaNode ? maxWidthCalculated - cardWidth : 0;
 
   return (

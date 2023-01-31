@@ -4,10 +4,10 @@ import { deleteCurrentlySelectedItem, setSelectedItem } from '../../../core/stat
 import type { RootState } from '../../../core/state/Store';
 import { getIconForFunction } from '../../../utils/Icon.Utils';
 import HandleWrapper from './../HandleWrapper';
-import { getStylesForSharedState, selectedCardStyles } from './../NodeCard';
+import { errorCardStyles, getStylesForSharedState, selectedCardStyles } from './../NodeCard';
 import type { FunctionCardProps } from './FunctionCard';
 import { inputsValid, shouldDisplaySourceHandle, shouldDisplayTargetHandle, useFunctionCardStyles } from './FunctionCard';
-import { Button, mergeClasses, PresenceBadge, Text, Tooltip } from '@fluentui/react-components';
+import { Button, mergeClasses, PresenceBadge, Text, tokens, Tooltip } from '@fluentui/react-components';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
 import { useMemo, useState } from 'react';
@@ -65,6 +65,13 @@ export const SimpleFunctionCard = (props: NodeProps<FunctionCardProps>) => {
     return inputsValid(reactFlowId, functionData, connections);
   }, [connections, reactFlowId, functionData]);
 
+  const cardStyle =
+    isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId
+      ? { ...selectedCardStyles, backgroundColor: customTokens[functionBranding.colorTokenName] }
+      : areCurrentInputsValid
+      ? { backgroundColor: customTokens[functionBranding.colorTokenName] }
+      : { ...errorCardStyles, backgroundColor: customTokens[functionBranding.colorTokenName] };
+
   return (
     <div
       onContextMenu={contextMenu.handle}
@@ -81,7 +88,18 @@ export const SimpleFunctionCard = (props: NodeProps<FunctionCardProps>) => {
         nodeReactFlowId={reactFlowId}
       />
 
-      {!areCurrentInputsValid && <PresenceBadge size="extra-small" status="busy" className={classes.errorBadge} />}
+      {!areCurrentInputsValid && (
+        <PresenceBadge
+          size="extra-small"
+          status="busy"
+          style={{
+            position: 'absolute',
+            top: '0px',
+            right: '0px',
+            zIndex: 1,
+          }}
+        />
+      )}
 
       <Tooltip
         content={{
@@ -89,17 +107,13 @@ export const SimpleFunctionCard = (props: NodeProps<FunctionCardProps>) => {
         }}
         relationship="label"
       >
-        <Button
-          onClick={onClick}
-          className={mergedClasses}
-          style={
-            isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId
-              ? { ...selectedCardStyles, backgroundColor: customTokens[functionBranding.colorTokenName] }
-              : { backgroundColor: customTokens[functionBranding.colorTokenName] }
-          }
-          disabled={!!disabled}
-        >
-          {getIconForFunction(functionData.functionName, functionData.category, functionData.iconFileName, functionBranding)}
+        <Button onClick={onClick} className={mergedClasses} style={cardStyle} disabled={!!disabled}>
+          {getIconForFunction(
+            functionData.functionName,
+            functionData.category,
+            functionData.iconFileName,
+            tokens.colorNeutralForegroundInverted
+          )}
         </Button>
       </Tooltip>
 
