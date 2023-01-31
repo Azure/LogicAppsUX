@@ -1,6 +1,7 @@
 import { SettingsBox } from '../../components/settings_box';
 import type { RootState } from '../../state/store';
 import { HttpClient } from './httpClient';
+import { PseudoCommandBar } from './pseudoCommandBar';
 import {
   StandardConnectionService,
   StandardOperationManifestService,
@@ -92,6 +93,7 @@ export const DesignerWrapper = () => {
               connectionReferences: connections,
             }}
           >
+            <PseudoCommandBar />
             <Designer />
           </BJSWorkflowProvider>
         ) : null}

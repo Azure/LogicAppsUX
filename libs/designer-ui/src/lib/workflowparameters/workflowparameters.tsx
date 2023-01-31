@@ -3,8 +3,8 @@ import Constants from '../constants';
 import { isHighContrastBlack } from '../utils/theme';
 import type { WorkflowParameterDefinition, WorkflowParameterDeleteHandler, WorkflowParameterUpdateHandler } from './workflowparameter';
 import { WorkflowParameter } from './workflowparameter';
+import { IconButton, CommandBarButton, Icon, Link, List, MessageBar, useTheme, Text } from '@fluentui/react';
 import type { IIconProps, IIconStyles, IMessageBarStyles } from '@fluentui/react';
-import { IconButton, CommandBarButton, Icon, Link, List, MessageBar, useTheme } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
 const navigateIconStyle: IIconStyles = {
@@ -58,6 +58,7 @@ type OnClickHandler = () => void;
 export interface WorkflowParametersProps {
   isEditable?: boolean;
   isReadOnly?: boolean;
+  isConsumption?: boolean;
   parameters: WorkflowParameterDefinition[];
   validationErrors?: Record<string, Record<string, string | undefined>>;
   onDismiss?: OnClickHandler;
@@ -75,6 +76,7 @@ export interface WorkflowParametersState {
 export function WorkflowParameters({
   parameters = [],
   isReadOnly,
+  isConsumption,
   onDismiss,
   onManageParameters,
   onAddParameter,
@@ -143,6 +145,7 @@ export function WorkflowParameters({
         key={item?.id}
         definition={item ?? { id: 'id', type: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY }}
         isReadOnly={isReadOnly}
+        isConsumption={isConsumption}
         isInverted={isInverted}
         onChange={onUpdateParameter}
         onDelete={onDeleteParameter}
@@ -156,27 +159,22 @@ export function WorkflowParameters({
     defaultMessage: 'Create parameter',
     description: 'Create Parameter Text',
   });
-  const createTitleText = intl.formatMessage({
+  const titleText = intl.formatMessage({
     defaultMessage: 'Parameters',
-    description: 'Create Title',
+    description: 'Workflow Parameters Title',
   });
   const onClose = () => onDismiss?.();
+
   return (
     <div className="msla-workflow-parameters">
-      <div className="msla-flex-row">
-        <h3 className="msla-workflow-parameters-create">{createTitleText}</h3>
-        <IconButton className="msla-workflow-parameters-close" onClick={onClose} iconProps={{ iconName: 'Cancel' }} />
+      <div className="msla-workflow-parameters-heading">
+        <Text variant="xLarge">{titleText}</Text>
+        <IconButton onClick={onClose} iconProps={{ iconName: 'Cancel' }} />
       </div>
 
-      {parameters.length ? <InfoBar isInverted={isInverted} /> : null}
+      <InfoBar isInverted={isInverted} />
       <div className="msla-workflow-parameters-add">
-        <CommandBarButton
-          className="msla-workflow-parameters-create-button"
-          disabled={isReadOnly}
-          text={createText}
-          iconProps={addIcon}
-          onClick={handleAddParameter}
-        />
+        <CommandBarButton disabled={isReadOnly} text={createText} iconProps={addIcon} onClick={handleAddParameter} />
       </div>
       {parameters.length ? null : renderTitleAndDescription()}
       {parameters.length ? <List items={parameters} onRenderCell={renderParameter} /> : null}

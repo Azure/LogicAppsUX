@@ -30,11 +30,13 @@ export interface WorkflowParameterDefinition {
   isEditable?: boolean;
   name?: string;
   type: string;
+  defaultValue?: string;
 }
 
 export interface WorkflowParameterProps {
   definition: WorkflowParameterDefinition;
   isReadOnly?: boolean;
+  isConsumption?: boolean;
   validationErrors?: Record<string, string | undefined>;
   isInverted?: boolean;
   onChange?: WorkflowParameterUpdateHandler;
@@ -42,7 +44,7 @@ export interface WorkflowParameterProps {
   onRegisterLanguageProvider?: RegisterLanguageHandler;
 }
 
-export function WorkflowParameter({ definition, isReadOnly, isInverted, ...props }: WorkflowParameterProps): JSX.Element {
+export function WorkflowParameter({ definition, isReadOnly, isConsumption, isInverted, ...props }: WorkflowParameterProps): JSX.Element {
   const [expanded, setExpanded] = useState(!!definition.isEditable);
   const [isEditable, setIsEditable] = useState(definition.isEditable);
   const [name, setName] = useState(definition.name);
@@ -70,7 +72,7 @@ export function WorkflowParameter({ definition, isReadOnly, isInverted, ...props
 
   return (
     <div className="msla-workflow-parameter">
-      <div className="msla-workflow-parameter-group">
+      <div>
         <div>
           <CommandBarButton
             data-testid={name + '-parameter-heading-button'}
@@ -83,13 +85,14 @@ export function WorkflowParameter({ definition, isReadOnly, isInverted, ...props
         </div>
         {expanded ? (
           <WorkflowparameterField
-            isEditable={isEditable}
             name={name}
             definition={definition}
-            isReadOnly={isReadOnly}
             validationErrors={props.validationErrors}
             setName={setName}
             onChange={props.onChange}
+            isEditable={isEditable}
+            isReadOnly={isReadOnly}
+            isConsumption={isConsumption}
           />
         ) : null}
       </div>
