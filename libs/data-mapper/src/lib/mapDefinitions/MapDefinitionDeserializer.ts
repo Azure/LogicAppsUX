@@ -2,7 +2,7 @@
 import { mapNodeParams, reservedMapDefinitionKeysArray } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import { addParentConnectionForRepeatingElements } from '../core/state/DataMapSlice';
-import type { FunctionData, MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary } from '../models';
+import type { FunctionData, MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import {
   directAccessPseudoFunction,
   directAccessPseudoFunctionKey,
@@ -369,25 +369,34 @@ const createConnections = (
 
   // Loop + index variable handling (create index() node, match up variables to respective nodes, etc)
   if (isLoop && sourceNode && destinationNode) {
-    let indexFnRfKey: string | undefined = undefined;
-
     let startIdxOfPrevLoop = amendedTargetKey.length;
     let startIdxOfCurLoop = amendedTargetKey.substring(0, startIdxOfPrevLoop).lastIndexOf(mapNodeParams.for);
     let idxOfIndexVariable = amendedTargetKey.substring(0, startIdxOfPrevLoop).indexOf('$', startIdxOfCurLoop + 1);
+
+    let tgtLoopNodeKey: string | undefined = undefined;
+    let tgtLoopNode: SchemaNodeExtended | undefined = undefined;
+
+    let indexFnRfKey: string | undefined = undefined;
 
     // Handle loops in targetKey by back-tracking
     while (startIdxOfCurLoop > -1) {
       const srcLoopNodeKey = getSourceKeyOfLastLoop(amendedTargetKey.substring(0, startIdxOfPrevLoop));
       const srcLoopNode = findNodeForKey(srcLoopNodeKey, sourceSchema.schemaTreeRoot);
 
-      const tgtLoopNodeKey = getTargetValueWithoutLoops(amendedTargetKey);
-      const tgtLoopNode = findNodeForKey(tgtLoopNodeKey, targetSchema.schemaTreeRoot);
-      // TODO: Hard part
-      // OneToOne - single $for(), tgtKey is next keyChunk after
-      // ManyToOne (back-to-back $for()'s, tgtKey is next keyChunk after all of them for all of them)
-      // ManyToMany - $for()'s COULD be separate by a (single?) keyChunk, which would be that loop's targetNode
+      const endOfFor = ')/';
+      const endOfForIdx = amendedTargetKey.substring(0, startIdxOfPrevLoop).lastIndexOf(endOfFor);
+      const tgtLoopNodeKeyChunk = amendedTargetKey.substring(endOfForIdx + 2);
 
-      if (idxOfIndexVariable > -1) {
+      // If there's no target loop node for this source loop node,
+      // it must go to the lower-level/previous target node
+      if (!tgtLoopNodeKeyChunk.startsWith(mapNodeParams.for)) {
+        // Gets tgtKey for current loop (which will be the single key chunk immediately following the loop path chunk)
+        tgtLoopNodeKey = getTargetValueWithoutLoops(amendedTargetKey.substring(0, amendedTargetKey.indexOf('/', endOfForIdx + 2)));
+        tgtLoopNode = findNodeForKey(tgtLoopNodeKey, targetSchema.schemaTreeRoot);
+      }
+
+      // Handle index variables
+      if (idxOfIndexVariable > -1 && tgtLoopNodeKey) {
         const idxVariable = amendedTargetKey[idxOfIndexVariable + 1];
 
         // Check if an index() node/id has already been created for this loop's index variable
@@ -405,6 +414,7 @@ const createConnections = (
         }
       }
 
+      // Make the connection between loop nodes
       if (srcLoopNode && tgtLoopNode) {
         addParentConnectionForRepeatingElements(
           tgtLoopNode,
