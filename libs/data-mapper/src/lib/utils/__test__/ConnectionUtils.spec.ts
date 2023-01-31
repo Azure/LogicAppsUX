@@ -385,7 +385,7 @@ describe('utils/Connections', () => {
     });
 
     it('Test can recursively call from depth greater than 1', () => {
-      //
+      // issues with mockConnections call. Recursive call of mockConnections[functionInput.reactFlowKey] returns undefined.
       expect(nodeHasSourceNodeEventually(mockConnections[testTargetSchema], mockConnections)).toEqual(true);
     });
   });
