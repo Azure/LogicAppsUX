@@ -180,7 +180,7 @@ const getWidthForSourceNodes = (sortedSourceNodes: SchemaNodeExtended[]): Map<st
   const widthDict: Map<string, number> = new Map<string, number>();
   let maxSizeAdd = 0;
 
-  const tryRec = (widthDiff: number, remainingNodes: SchemaNodeExtended[]): SchemaNodeExtended[] => {
+  const getWidthForSourceNodesRecursively = (widthDiff: number, remainingNodes: SchemaNodeExtended[]): SchemaNodeExtended[] => {
     if (widthDiff > maxSizeAdd) {
       maxSizeAdd = widthDiff;
     }
@@ -195,34 +195,22 @@ const getWidthForSourceNodes = (sortedSourceNodes: SchemaNodeExtended[]): Map<st
     const nextNode = remainingNodes[1];
     let nextSection: SchemaNodeExtended[] = [];
     if (isAncestorOf(nextNode, currentNode)) {
-      nextSection = tryRec(widthDiff + schemaNodeCardWidthDifference, remainingNodes.slice(1));
+      nextSection = getWidthForSourceNodesRecursively(widthDiff + schemaNodeCardWidthDifference, remainingNodes.slice(1));
     } else if (isSiblingOf(currentNode, nextNode)) {
-      nextSection = tryRec(widthDiff, remainingNodes.slice(1));
+      nextSection = getWidthForSourceNodesRecursively(widthDiff, remainingNodes.slice(1));
     } else {
       return remainingNodes.slice(1);
     }
     if (nextSection[0] && isSiblingOf(nextSection[0], currentNode)) {
-      return tryRec(widthDiff, nextSection);
+      return getWidthForSourceNodesRecursively(widthDiff, nextSection);
     }
     if (nextSection[0] && isAncestorOf(nextSection[0], currentNode)) {
-      return tryRec(widthDiff + schemaNodeCardWidthDifference, nextSection);
+      return getWidthForSourceNodesRecursively(widthDiff + schemaNodeCardWidthDifference, nextSection);
     }
     return nextSection;
   };
 
-  tryRec(0, sortedSourceNodes);
-  // sortedSourceNodes.forEach(node => {
-  //   if (node.key.includes(prevNodeKey)) {
-  //     widthDict.set(node.key, currentSize-schemaNodeCardWidthDifference);
-  //     currentSize = currentSize-schemaNodeCardWidthDifference;
-  //   }
-  //   if (currentSize < minCardSize) { // curr = 104; min = 128; max = 200
-  //     if (maxSize < (minCardSize-currentSize + maxSize)){
-  //       maxSize = minCardSize-currentSize + maxSize;
-  //     }
-  //   }
-  //   prevNodeKey = node.key
-  // })
+  getWidthForSourceNodesRecursively(0, sortedSourceNodes);
   let maxWidth = schemaNodeCardDefaultWidth;
   if (maxSizeAdd > schemaNodeCardWidthDifference * 3) {
     maxWidth += maxSizeAdd - schemaNodeCardWidthDifference * 3;
