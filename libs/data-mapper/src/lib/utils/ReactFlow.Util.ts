@@ -168,6 +168,63 @@ export const convertToReactFlowNodes = (
   ];
 };
 
+const getWidthForSourceNodes = (sortedSourceNodes: SchemaNodeExtended[]): Map<string, number> => {
+  const widthDict: Map<string, number> = new Map<string, number>();
+  let maxSizeAdd = 0;
+
+  const tryRec = (widthDiff: number, remainingNodes: SchemaNodeExtended[]): SchemaNodeExtended[] => {
+    // [employee, emId]
+    if (widthDiff > maxSizeAdd) {
+      maxSizeAdd = widthDiff;
+    }
+    if (remainingNodes.length === 0) {
+      return [];
+    }
+    widthDict.set(remainingNodes[0].key, widthDiff);
+    if (remainingNodes.length === 1) {
+      return [];
+    }
+    let nextSection: SchemaNodeExtended[] = [];
+    if (remainingNodes[1].key.includes(remainingNodes[0].key)) {
+      // next is a child of the current node
+      nextSection = tryRec(widthDiff + schemaNodeCardWidthDifference, remainingNodes.slice(1)); // what if we return the remaining array?
+    } else if (remainingNodes[0].parentKey === remainingNodes[1].parentKey) {
+      nextSection = tryRec(widthDiff, remainingNodes.slice(1));
+    } else {
+      return remainingNodes.slice(1);
+    }
+    if (nextSection[0] && nextSection[0].parentKey === remainingNodes[0].parentKey) {
+      return tryRec(widthDiff, nextSection);
+    }
+    if (nextSection[0] && nextSection[0].key.includes(remainingNodes[0].key)) {
+      return tryRec(widthDiff + schemaNodeCardWidthDifference * 2, nextSection.slice(1));
+    }
+    return nextSection;
+  };
+
+  tryRec(0, sortedSourceNodes);
+  // sortedSourceNodes.forEach(node => {
+  //   if (node.key.includes(prevNodeKey)) {
+  //     widthDict.set(node.key, currentSize-schemaNodeCardWidthDifference);
+  //     currentSize = currentSize-schemaNodeCardWidthDifference;
+  //   }
+  //   if (currentSize < minCardSize) { // curr = 104; min = 128; max = 200
+  //     if (maxSize < (minCardSize-currentSize + maxSize)){
+  //       maxSize = minCardSize-currentSize + maxSize;
+  //     }
+  //   }
+  //   prevNodeKey = node.key
+  // })
+  let maxWidth = schemaNodeCardDefaultWidth;
+  if (maxSizeAdd > schemaNodeCardWidthDifference * 3) {
+    maxWidth += maxSizeAdd - schemaNodeCardWidthDifference * 3;
+  }
+
+  widthDict.set('maxWidth', maxWidth);
+
+  return widthDict;
+};
+
 const convertSourceToReactFlowParentAndChildNodes = (
   sourceSchemaElkTree: ElkNode,
   combinedSourceSchemaNodes: SchemaNodeExtended[],
@@ -187,20 +244,21 @@ const convertSourceToReactFlowParentAndChildNodes = (
   sourceNodesCopy.filter((node) => node.nodeProperties.includes(SchemaNodeProperty.Repeating));
   const sourceKeySet: Set<string> = new Set();
   sourceNodesCopy.forEach((node) => sourceKeySet.add(node.key));
-  const widthDict: Map<string, number> = new Map<string, number>();
-  let maxSize = schemaNodeCardDefaultWidth;
-  combinedSourceSchemaNodes.forEach((srcNode) => {
-    let srcWidth = 0;
-    sourceKeySet.forEach((possibleParent) => {
-      if (srcNode.key.includes(possibleParent) && possibleParent !== srcNode.key) {
-        srcWidth = srcWidth + schemaNodeCardWidthDifference;
-      }
-    });
-    widthDict.set(srcNode.key, srcWidth);
-    if (srcWidth > schemaNodeCardWidthDifference * 3) {
-      maxSize += schemaNodeCardWidthDifference;
-    }
-  });
+  // const widthDict: Map<string, number> = new Map<string, number>();
+  // combinedSourceSchemaNodes.forEach((srcNode) => {
+  //   let srcWidth = 0;
+  //   sourceKeySet.forEach((possibleParent) => {
+  //     if (srcNode.key.includes(possibleParent) && possibleParent !== srcNode.key) {
+  //       srcWidth = srcWidth + schemaNodeCardWidthDifference;
+  //     }
+  //   });
+  //   widthDict.set(srcNode.key, srcWidth);
+  //   if (srcWidth > schemaNodeCardWidthDifference * 3) {
+  //     maxSize += schemaNodeCardWidthDifference;
+  //   }
+  // });
+
+  const widthDict = getWidthForSourceNodes(sourceNodesCopy);
 
   combinedSourceSchemaNodes.forEach((srcNode) => {
     const nodeReactFlowId = addSourceReactFlowPrefix(srcNode.key);
@@ -222,14 +280,15 @@ const convertSourceToReactFlowParentAndChildNodes = (
     }
 
     const dictWidth = widthDict.get(srcNode.key);
+    const maxWidth = widthDict.get('maxWidth') as number;
     const nodeWidth = dictWidth !== undefined ? dictWidth : schemaNodeCardDefaultWidth;
 
     reactFlowNodes.push({
       id: nodeReactFlowId,
       zIndex: 101, // Just for schema nodes to render N-badge over edges
       data: {
-        schemaNode: { ...srcNode, width: maxSize - nodeWidth },
-        maxWidth: maxSize,
+        schemaNode: { ...srcNode, width: maxWidth - nodeWidth },
+        maxWidth: maxWidth,
         schemaType: SchemaType.Source,
         displayHandle: true,
         displayChevron: true,
