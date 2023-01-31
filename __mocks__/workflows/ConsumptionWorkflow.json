@@ -51,16 +51,13 @@
     "contentVersion": "1.0.0.0",
     "outputs": {},
     "parameters": {
-      "$connections": {
-        "defaultValue": {},
-        "type": "Object"
-      },
-      "ParameterTwo": {
+      "ParameterOne": {
         "defaultValue": 9.9,
         "type": "Float"
       },
-      "TestParam": {
+      "ParameterTwo": {
         "defaultValue": 8,
+        "value": 2,
         "type": "Int"
       }
     },
@@ -70,14 +67,6 @@
         "kind": "Http",
         "type": "Request"
       }
-    }
-  },
-  "parameters": {
-    "$connections": {
-      "value": {}
-    },
-    "TestParam": {
-      "value": 2
     }
   }
 }
