@@ -1,7 +1,7 @@
 import { customTokens } from '../../core';
 import type { FunctionData } from '../../models/Function';
 import { getFunctionBrandingForCategory } from '../../utils/Function.Utils';
-import { getIconForFunction } from '../../utils/Icon.Utils';
+import { FunctionIcon } from '../functionIcon/FunctionIcon';
 import { DMTooltip } from '../tooltip/tooltip';
 import { Button, Caption1, makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
 
@@ -45,19 +45,17 @@ interface FunctionListItemProps {
 
 const FunctionListItem = ({ functionData }: FunctionListItemProps) => {
   const cardStyles = useCardStyles();
-
   const fnBranding = getFunctionBrandingForCategory(functionData.category);
-  const fnIcon = getIconForFunction(
-    functionData.functionName,
-    functionData.category,
-    functionData.iconFileName,
-    tokens.colorNeutralForegroundInverted
-  );
 
   return (
     <Button key={functionData.key} alt-text={functionData.displayName} className={cardStyles.button}>
       <div className={cardStyles.iconContainer} style={{ backgroundColor: customTokens[fnBranding.colorTokenName] }}>
-        {fnIcon}
+        <FunctionIcon
+          name={functionData.functionName}
+          categoryName={functionData.category}
+          fileName={functionData.iconFileName}
+          color={tokens.colorNeutralForeground1}
+        />
       </div>
 
       <Caption1 truncate block className={cardStyles.text}>
