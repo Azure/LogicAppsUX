@@ -12,7 +12,7 @@ describe('ui/workflowparameters/workflowparameterField', () => {
     minimal = {
       isEditable: true,
       name: 'test',
-      definition: { id: 'id', value: 'blue', name: 'test', type: 'Array' },
+      definition: { id: 'id', value: 'blue', name: 'test', type: 'String' },
       setName: jest.fn(),
     };
     renderer = ReactShallowRenderer.createRenderer();
@@ -72,7 +72,7 @@ describe('ui/workflowparameters/workflowparameterField', () => {
     expect(dropdown.props.id).toBe('id-type');
     expect(dropdown.props.ariaLabel).toBe(typeTitle);
     expect(dropdown.props.options).toHaveLength(6);
-    expect(dropdown.props.selectedKey).toBe('Array');
+    expect(dropdown.props.selectedKey).toBe('String');
 
     const defaultValueTitle = intl.formatMessage({
       defaultMessage: 'Value',

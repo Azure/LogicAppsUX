@@ -1,7 +1,7 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
 import { ConnectionService } from '@microsoft/designer-client-services-logic-apps';
 import { SwaggerParser } from '@microsoft/parsers-logic-apps';
-import { equals, getConnectionErrors } from '@microsoft/utils-logic-apps';
+import { equals } from '@microsoft/utils-logic-apps';
 import type { Connector } from '@microsoft/utils-logic-apps';
 import { useQuery } from 'react-query';
 
@@ -72,8 +72,7 @@ export const useConnectionsForConnector = (connectorId: string) => {
 export const getConnectionsForConnector = async (connectorId: string) => {
   const queryClient = getReactQueryClient();
   return queryClient.fetchQuery([connectionKey, connectorId?.toLowerCase()], async () => {
-    const connections = await ConnectionService().getConnections(connectorId);
-    return connections.filter((connection) => getConnectionErrors(connection).length === 0);
+    return await ConnectionService().getConnections(connectorId);
   });
 };
 

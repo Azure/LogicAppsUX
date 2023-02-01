@@ -181,7 +181,7 @@ export const isIdentityAssociatedWithLogicApp = (managedIdentity: ManagedIdentit
 };
 
 export function getConnectionErrors(connection: Connection): ConnectionStatus[] {
-  return (connection?.properties?.statuses ?? []).filter((status) => status.status === 'error');
+  return (connection?.properties?.statuses ?? []).filter((status) => status.status.toLowerCase() === 'error');
 }
 
 // NOTE: This method is specifically for Multi-Auth type connectors.

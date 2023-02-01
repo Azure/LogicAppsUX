@@ -50,10 +50,8 @@ describe('ui/workflowparameters/workflowparameters', () => {
       defaultMessage: 'Parameters',
       description: 'Create Title',
     });
-    expect(header.props.className).toBe('msla-flex-row');
-    const [headerTextSection, icon]: any[] = React.Children.toArray(header.props.children);
-    expect(headerTextSection.props.className).toBe('msla-workflow-parameters-create');
-    expect(icon.props.className).toBe('msla-workflow-parameters-close');
+    expect(header.props.className).toBe('msla-workflow-parameters-heading');
+    const [headerTextSection]: any[] = React.Children.toArray(header.props.children);
     const headerText = headerTextSection.props.children;
     expect(headerText).toBe(headerTitle);
 
@@ -66,7 +64,6 @@ describe('ui/workflowparameters/workflowparameters', () => {
     expect(add.props.className).toBe('msla-workflow-parameters-add');
     const addButton = add.props.children;
     expect(addButton.props.text).toBe(addMessage);
-    expect(addButton.props.className).toBe('msla-workflow-parameters-create-button');
 
     expect(parameterList.props.items).toHaveLength(2);
   });

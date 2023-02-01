@@ -1,6 +1,7 @@
 import { SettingsBox } from '../../components/settings_box';
 import type { RootState } from '../../state/store';
 import { HttpClient } from './httpClient';
+import { PseudoCommandBar } from './pseudoCommandBar';
 import {
   StandardConnectionService,
   StandardOperationManifestService,
@@ -68,13 +69,15 @@ const gatewayService = new StandardGatewayService({
 const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };
 
 export const DesignerWrapper = () => {
-  const { workflowDefinition, readOnly, monitoringView, darkMode, connections } = useSelector((state: RootState) => state.workflowLoader);
+  const { workflowDefinition, readOnly, monitoringView, darkMode, consumption, connections } = useSelector(
+    (state: RootState) => state.workflowLoader
+  );
   const designerProviderProps = {
     services: { connectionService, operationManifestService, searchService, oAuthService, gatewayService, workflowService },
     readOnly,
     isMonitoringView: monitoringView,
     isDarkMode: darkMode,
-    isConsumption: false,
+    isConsumption: consumption,
   };
 
   useEffect(() => document.body.classList.add('is-standalone'), []);
@@ -88,8 +91,10 @@ export const DesignerWrapper = () => {
             workflow={{
               definition: workflowDefinition,
               connectionReferences: connections,
+              parameters: workflowDefinition.parameters,
             }}
           >
+            <PseudoCommandBar />
             <Designer />
           </BJSWorkflowProvider>
         ) : null}

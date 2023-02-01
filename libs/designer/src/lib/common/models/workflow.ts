@@ -19,6 +19,7 @@ export interface WorkflowParameter {
   name?: string;
   type: string;
   value?: any;
+  defaultValue?: any;
   metadata?: any;
   description?: string;
   allowedValues?: any[];

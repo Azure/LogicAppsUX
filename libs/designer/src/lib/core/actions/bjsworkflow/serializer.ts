@@ -83,6 +83,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
     const parameter = workflowParameters[parameterId];
     const parameterDefinition: any = { ...parameter };
     const value = parameterDefinition.value;
+    const defaultValue = parameterDefinition.defaultValue;
 
     delete parameterDefinition['name'];
     delete parameterDefinition['isEditable'];
@@ -94,6 +95,14 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
       : typeof value !== 'string'
       ? value
       : JSON.parse(value);
+
+    parameterDefinition.defaultValue = equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING)
+      ? defaultValue
+      : defaultValue === ''
+      ? undefined
+      : typeof defaultValue !== 'string'
+      ? defaultValue
+      : JSON.parse(defaultValue);
 
     return { ...result, [parameter.name]: parameterDefinition };
   }, {});

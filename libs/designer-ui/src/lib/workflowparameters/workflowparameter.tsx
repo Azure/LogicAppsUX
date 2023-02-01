@@ -1,8 +1,10 @@
+import { TrafficLightDot } from '../card/images/dynamicsvgs/trafficlightsvgs';
 import type { EventHandler } from '../eventhandler';
 import { EditOrDeleteButton } from './workflowparametersButtons';
 import { WorkflowparameterField } from './workflowparametersField';
 import type { IButtonStyles, IIconProps } from '@fluentui/react';
 import { CommandBarButton, FontWeights } from '@fluentui/react';
+import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -14,6 +16,7 @@ const commandBarStyles: Partial<IButtonStyles> = {
 export interface WorkflowParameterUpdateEvent {
   id: string;
   newDefinition: WorkflowParameterDefinition;
+  isConsumption?: boolean;
 }
 
 export interface WorkflowParameterDeleteEvent {
@@ -30,11 +33,13 @@ export interface WorkflowParameterDefinition {
   isEditable?: boolean;
   name?: string;
   type: string;
+  defaultValue?: string;
 }
 
 export interface WorkflowParameterProps {
   definition: WorkflowParameterDefinition;
   isReadOnly?: boolean;
+  isConsumption?: boolean;
   validationErrors?: Record<string, string | undefined>;
   isInverted?: boolean;
   onChange?: WorkflowParameterUpdateHandler;
@@ -42,12 +47,13 @@ export interface WorkflowParameterProps {
   onRegisterLanguageProvider?: RegisterLanguageHandler;
 }
 
-export function WorkflowParameter({ definition, isReadOnly, isInverted, ...props }: WorkflowParameterProps): JSX.Element {
+export function WorkflowParameter({ definition, isReadOnly, isConsumption, isInverted, ...props }: WorkflowParameterProps): JSX.Element {
   const [expanded, setExpanded] = useState(!!definition.isEditable);
   const [isEditable, setIsEditable] = useState(definition.isEditable);
   const [name, setName] = useState(definition.name);
 
   const intl = useIntl();
+  const themeName = isInverted ? 'dark' : 'light';
 
   const iconProps: IIconProps = {
     iconName: expanded ? 'ChevronDownMed' : 'ChevronRightMed',
@@ -70,7 +76,7 @@ export function WorkflowParameter({ definition, isReadOnly, isInverted, ...props
 
   return (
     <div className="msla-workflow-parameter">
-      <div className="msla-workflow-parameter-group">
+      <div>
         <div>
           <CommandBarButton
             data-testid={name + '-parameter-heading-button'}
@@ -80,16 +86,22 @@ export function WorkflowParameter({ definition, isReadOnly, isInverted, ...props
             styles={commandBarStyles}
             text={name ? name : headingTitle}
           />
+          {Object.values(props.validationErrors ?? {}).filter((x) => !!x).length > 0 ? (
+            <span className="msla-workflow-parameter-error-dot">
+              <TrafficLightDot fill={RUN_AFTER_COLORS[themeName]['FAILED']} />
+            </span>
+          ) : null}
         </div>
         {expanded ? (
           <WorkflowparameterField
-            isEditable={isEditable}
             name={name}
             definition={definition}
-            isReadOnly={isReadOnly}
             validationErrors={props.validationErrors}
             setName={setName}
             onChange={props.onChange}
+            isEditable={isEditable}
+            isReadOnly={isReadOnly}
+            isConsumption={isConsumption}
           />
         ) : null}
       </div>

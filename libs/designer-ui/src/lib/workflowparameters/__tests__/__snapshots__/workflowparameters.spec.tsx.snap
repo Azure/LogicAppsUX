@@ -5,15 +5,14 @@ exports[`ui/workflowparameters/workflowparameters should construct. 1`] = `
   className="msla-workflow-parameters"
 >
   <div
-    className="msla-flex-row"
+    className="msla-workflow-parameters-heading"
   >
-    <h3
-      className="msla-workflow-parameters-create"
+    <Text
+      variant="xLarge"
     >
       Parameters
-    </h3>
+    </Text>
     <CustomizedIconButton
-      className="msla-workflow-parameters-close"
       iconProps={
         Object {
           "iconName": "Cancel",
@@ -29,7 +28,6 @@ exports[`ui/workflowparameters/workflowparameters should construct. 1`] = `
     className="msla-workflow-parameters-add"
   >
     <CustomizedCommandBarButton
-      className="msla-workflow-parameters-create-button"
       iconProps={
         Object {
           "iconName": "Add",
