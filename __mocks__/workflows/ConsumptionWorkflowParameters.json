@@ -51,14 +51,33 @@
     "contentVersion": "1.0.0.0",
     "outputs": {},
     "parameters": {
-      "ParameterOne": {
+      "Float Parameter": {
         "defaultValue": 9.9,
         "type": "Float"
       },
-      "ParameterTwo": {
+      "Int Parameter": {
         "defaultValue": 8,
         "value": 2,
         "type": "Int"
+      },
+      "Bool Parameter": {
+        "defaultValue": true,
+        "type": "Bool"
+      },
+      "String Parameter": {
+        "defaultValue": "Hello",
+        "type": "String"
+      },
+      "Object Parameter": {
+        "defaultValue": {
+          "a": 1,
+          "b": 2
+        },
+        "type": "Object"
+      },
+      "Array Parameter": {
+        "defaultValue": [1, 2, 3],
+        "type": "Array"
       }
     },
     "triggers": {

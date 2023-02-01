@@ -46,8 +46,8 @@ const fileOptions = [
 
   // Consumption Workflows
   { key: 'divider_4', text: '-', itemType: DropdownMenuItemType.Divider },
-  { key: 'ConsumptionWorkflowsHeader', text: 'Consumption Workflows', itemType: DropdownMenuItemType.Header },
-  { key: 'ConsumptionWorkflow.json', text: 'Consumption Workflow' },
+  { key: 'WorkflowParametersHeader', text: 'Workflow Parameters', itemType: DropdownMenuItemType.Header },
+  { key: 'ConsumptionWorkflowParameters.json', text: 'Consumption Workflow Parameters' },
 ];
 
 export const Login: React.FC = () => {

@@ -90,9 +90,9 @@ export const WorkflowparameterField = ({
   isConsumption,
 }: WorkflowparameterFieldProps): JSX.Element => {
   const [valueWarningMessage, setValueWarningMessage] = useState(getValueWarningMessage(definition.value, definition.type));
-  const [value, setValue] = useState(definition.value);
-  const [defaultValue, setDefaultValue] = useState(definition.defaultValue);
   const [type, setType] = useState(definition.type);
+  const [value, setValue] = useState<string | undefined>(stringifyValue(definition.value, definition.type));
+  const [defaultValue, setDefaultValue] = useState<string | undefined>(stringifyValue(definition.defaultValue, definition.type));
 
   const intl = useIntl();
 
@@ -356,4 +356,8 @@ function isSecureParameter(type?: string): boolean {
 
 function getValueWarningMessage(value?: string, type?: string): string | undefined {
   return isSecureParameter(type) && !!value ? format('Warning Message', type) : undefined;
+}
+
+function stringifyValue(value?: string, type?: string): string | undefined {
+  return type !== Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING ? JSON.stringify(value) : value;
 }
