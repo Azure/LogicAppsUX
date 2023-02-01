@@ -168,6 +168,62 @@ export const convertToReactFlowNodes = (
   ];
 };
 
+const isAncestorOf = (possibleChild: SchemaNodeExtended, possibleParent: SchemaNodeExtended): boolean => {
+  return possibleChild.key.includes(possibleParent.key);
+};
+
+const isSiblingOf = (node1: SchemaNodeExtended, node2: SchemaNodeExtended) => {
+  return node1.parentKey === node2.parentKey;
+};
+
+const getWidthForSourceNodes = (sortedSourceNodes: SchemaNodeExtended[]): Map<string, number> => {
+  const widthMap: Map<string, number> = new Map<string, number>();
+  let maxSizeAdd = 0;
+  const copiedSourceNodes = [...sortedSourceNodes];
+  const nodesLength = copiedSourceNodes.length;
+
+  const getWidthForSourceNodesRecursively = (widthDiff: number, currentNodeIndex: number): number => {
+    if (widthDiff > maxSizeAdd) {
+      maxSizeAdd = widthDiff;
+    }
+    if (currentNodeIndex === nodesLength) {
+      return currentNodeIndex;
+    }
+    const currentNode = copiedSourceNodes[currentNodeIndex];
+    widthMap.set(currentNode.key, widthDiff);
+    if (currentNodeIndex === nodesLength - 1) {
+      return currentNodeIndex + 1;
+    }
+    const nextNode = copiedSourceNodes[currentNodeIndex + 1];
+    let nextSectionIndex: number = nodesLength - 1;
+    if (isAncestorOf(nextNode, currentNode)) {
+      nextSectionIndex = getWidthForSourceNodesRecursively(widthDiff + schemaNodeCardWidthDifference, currentNodeIndex + 1);
+    } else if (isSiblingOf(currentNode, nextNode)) {
+      nextSectionIndex = getWidthForSourceNodesRecursively(widthDiff, currentNodeIndex + 1);
+    } else {
+      return currentNodeIndex + 1;
+    }
+
+    const nextSectionNode = copiedSourceNodes[nextSectionIndex];
+    if (nextSectionNode && (isAncestorOf(nextSectionNode, currentNode) || isSiblingOf(nextSectionNode, currentNode))) {
+      copiedSourceNodes[nextSectionIndex - 1] = currentNode;
+      nextSectionIndex = getWidthForSourceNodesRecursively(widthDiff, nextSectionIndex - 1);
+    }
+
+    return nextSectionIndex;
+  };
+
+  getWidthForSourceNodesRecursively(0, 0);
+  let maxWidth = schemaNodeCardDefaultWidth;
+  if (maxSizeAdd > schemaNodeCardWidthDifference * 3) {
+    maxWidth += maxSizeAdd - schemaNodeCardWidthDifference * 3;
+  }
+
+  widthMap.set('maxWidth', maxWidth);
+
+  return widthMap;
+};
+
 const convertSourceToReactFlowParentAndChildNodes = (
   sourceSchemaElkTree: ElkNode,
   combinedSourceSchemaNodes: SchemaNodeExtended[],
@@ -187,20 +243,8 @@ const convertSourceToReactFlowParentAndChildNodes = (
   sourceNodesCopy.filter((node) => node.nodeProperties.includes(SchemaNodeProperty.Repeating));
   const sourceKeySet: Set<string> = new Set();
   sourceNodesCopy.forEach((node) => sourceKeySet.add(node.key));
-  const widthDict: Map<string, number> = new Map<string, number>();
-  let maxSize = schemaNodeCardDefaultWidth;
-  combinedSourceSchemaNodes.forEach((srcNode) => {
-    let srcWidth = 0;
-    sourceKeySet.forEach((possibleParent) => {
-      if (srcNode.key.includes(possibleParent) && possibleParent !== srcNode.key) {
-        srcWidth = srcWidth + schemaNodeCardWidthDifference;
-      }
-    });
-    widthDict.set(srcNode.key, srcWidth);
-    if (srcWidth > schemaNodeCardWidthDifference * 3) {
-      maxSize += schemaNodeCardWidthDifference;
-    }
-  });
+
+  const widthMap = getWidthForSourceNodes(sourceNodesCopy);
 
   combinedSourceSchemaNodes.forEach((srcNode) => {
     const nodeReactFlowId = addSourceReactFlowPrefix(srcNode.key);
@@ -221,15 +265,16 @@ const convertSourceToReactFlowParentAndChildNodes = (
       return;
     }
 
-    const dictWidth = widthDict.get(srcNode.key);
+    const dictWidth = widthMap.get(srcNode.key);
+    const maxWidth = widthMap.get('maxWidth') as number;
     const nodeWidth = dictWidth !== undefined ? dictWidth : schemaNodeCardDefaultWidth;
 
     reactFlowNodes.push({
       id: nodeReactFlowId,
       zIndex: 101, // Just for schema nodes to render N-badge over edges
       data: {
-        schemaNode: { ...srcNode, width: maxSize - nodeWidth },
-        maxWidth: maxSize,
+        schemaNode: { ...srcNode, width: maxWidth - nodeWidth },
+        maxWidth: maxWidth,
         schemaType: SchemaType.Source,
         displayHandle: true,
         displayChevron: true,
