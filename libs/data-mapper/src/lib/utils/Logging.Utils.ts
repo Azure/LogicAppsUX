@@ -158,6 +158,10 @@ export enum LogCategory {
   ExtensionCommands = 'ExtensionCommands',
   MapDefinitionDeserializer = 'MapDefinitionDeserializer',
   DefaultConfigView = 'DefaultConfigView',
+  AddOrUpdateSchemaView = 'AddOrUpdateSchemaView',
   FunctionIcon = 'FunctionIcon',
   CodeView = 'CodeView',
+  TargetSchemaPane = 'TargetSchemaPane',
+  OverviewCanvas = 'OverviewCanvas',
+  EditingCanvas = 'EditingCanvas',
 }
