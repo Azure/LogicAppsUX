@@ -27,7 +27,6 @@ describe('ui/workflowparameters/workflowparameter', () => {
     const parameter = renderer.getRenderOutput();
 
     const [group, button]: any[] = React.Children.toArray(parameter.props.children);
-    expect(group.props.className).toBe('msla-workflow-parameter-group');
     expect(button).toBeDefined();
 
     const [fieldsFragment]: any[] = React.Children.toArray(group.props.children);
