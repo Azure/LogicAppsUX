@@ -108,19 +108,19 @@
         "properties": "NotSpecified",
         "children": [
           {
-            "key": "/ns0:TargetSchemaRoot/SuperSecretKey",
+            "key": "/ns0:TargetSchemaRoot/CustomValues/SuperSecretKey",
             "name": "SuperSecretKey",
             "fullName": "SuperSecretKey",
-            "parentKey": "/ns0:TargetSchemaRoot",
+            "parentKey": "/ns0:TargetSchemaRoot/CustomValues",
             "normalizedDataType": "String",
             "properties": "NotSpecified",
             "children": []
           },
           {
-            "key": "/ns0:TargetSchemaRoot/MOTD",
+            "key": "/ns0:TargetSchemaRoot/CustomValues/MOTD",
             "name": "MOTD",
             "fullName": "MOTD",
-            "parentKey": "/ns0:TargetSchemaRoot",
+            "parentKey": "/ns0:TargetSchemaRoot/CustomValues",
             "normalizedDataType": "String",
             "properties": "NotSpecified",
             "children": []
@@ -388,18 +388,18 @@
                 ]
               },
               {
-                "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Conditional",
-                "name": "Conditional",
-                "fullName": "Conditional",
+                "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne/TODOConditional",
+                "name": "TODOConditional",
+                "fullName": "TODOConditional",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToOne",
                 "normalizedDataType": "ComplexType",
                 "properties": "NotSpecified",
                 "children": []
               },
               {
-                "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne/StressTest",
-                "name": "StressTest",
-                "fullName": "StressTest",
+                "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne/TODOStressTest",
+                "name": "TODOStressTest",
+                "fullName": "TODOStressTest",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToOne",
                 "normalizedDataType": "ComplexType",
                 "properties": "NotSpecified",
@@ -597,18 +597,18 @@
                 ]
               },
               {
-                "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Conditional",
-                "name": "Conditional",
-                "fullName": "Conditional",
+                "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/TODOConditional",
+                "name": "TODOConditional",
+                "fullName": "TODOConditional",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany",
                 "normalizedDataType": "ComplexType",
                 "properties": "NotSpecified",
                 "children": []
               },
               {
-                "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/StressTest",
-                "name": "StressTest",
-                "fullName": "StressTest",
+                "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/TODOStressTest",
+                "name": "TODOStressTest",
+                "fullName": "TODOStressTest",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany",
                 "normalizedDataType": "ComplexType",
                 "properties": "NotSpecified",
@@ -641,7 +641,7 @@
             "fullName": "TODOLoopMap",
             "parentKey": "/ns0:TargetSchemaRoot/Looping",
             "normalizedDataType": "ComplexType",
-            "properties": "NotSpecified",
+            "properties": "Repeating",
             "children": []
           }
         ]
