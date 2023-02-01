@@ -42,7 +42,7 @@ const useStyles = makeStyles({
     marginTop: '12px',
     ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
     ...shorthands.borderRadius('3px'),
-    ...shorthands.padding('10px'),
+    ...shorthands.padding('6px'),
   },
   pivotItem: {
     marginTop: '12px',
@@ -96,11 +96,6 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
     description: 'Paste from sample',
   });
 
-  const discardLoc = intl.formatMessage({
-    defaultMessage: 'Discard',
-    description: 'Discard',
-  });
-
   const inputDataOptionsLabelLoc = intl.formatMessage({
     defaultMessage: 'Provide input data to test the map with',
     description: 'Label for input data option choice group',
@@ -128,6 +123,12 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
     testDataMap(dataMapXsltFilename, testMapInput)
       .then((response) => {
         setTestMapResponse(response);
+
+        LogService.log(LogCategory.TestMapPanel, 'testDataMap', {
+          message: 'Successfully tested data map',
+          statusCode: response.statusCode,
+          statusText: response.statusText,
+        });
       })
       .catch((error: Error) => {
         LogService.error(LogCategory.TestMapPanel, 'testDataMap', {
@@ -144,7 +145,7 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
         <PrimaryButton onClick={testMap} style={{ marginRight: 8 }} disabled={!testMapInput}>
           {testLoc}
         </PrimaryButton>
-        <DefaultButton onClick={onClose}>{discardLoc}</DefaultButton>
+        <DefaultButton onClick={onClose}>{closeLoc}</DefaultButton>
       </div>
     );
   };

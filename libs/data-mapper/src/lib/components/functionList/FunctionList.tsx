@@ -1,5 +1,4 @@
 import { sourcePrefix, targetPrefix } from '../../constants/ReactFlowConstants';
-import appInsights from '../../core/services/appInsights/AppInsights';
 import {
   addFunctionNode,
   deleteConnection,
@@ -10,6 +9,7 @@ import {
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { FunctionData } from '../../models/Function';
 import { FunctionCategory } from '../../models/Function';
+import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import Tree from '../tree/Tree';
 import { TreeHeader } from '../tree/TreeHeader';
@@ -139,10 +139,14 @@ export const FunctionList = () => {
       }
     } catch (error) {
       if (typeof error === 'string') {
-        appInsights.trackException({ exception: new Error(error) });
+        LogService.error(LogCategory.FunctionList, 'functionListError', {
+          message: error,
+        });
         throw new Error(`Function List Error: ${error}`);
       } else if (error instanceof Error) {
-        appInsights.trackException({ exception: error });
+        LogService.error(LogCategory.FunctionList, 'functionListError', {
+          message: error.message,
+        });
         throw new Error(`Function List Error: ${error.message}`);
       }
     }
