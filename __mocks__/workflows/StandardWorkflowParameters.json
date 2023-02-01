@@ -52,31 +52,30 @@
     "outputs": {},
     "parameters": {
       "Float Parameter": {
-        "defaultValue": 9.9,
+        "value": 9.9,
         "type": "Float"
       },
       "Int Parameter": {
-        "defaultValue": 8,
         "value": 2,
         "type": "Int"
       },
       "Bool Parameter": {
-        "defaultValue": true,
+        "value": true,
         "type": "Bool"
       },
       "String Parameter": {
-        "defaultValue": "Hello",
+        "value": "Hello",
         "type": "String"
       },
       "Object Parameter": {
-        "defaultValue": {
+        "value": {
           "a": 1,
           "b": 2
         },
         "type": "Object"
       },
       "Array Parameter": {
-        "defaultValue": ["blue", 1, 2, 3],
+        "value": ["blue", 1, 2, 3],
         "type": "Array"
       }
     },

@@ -47,6 +47,7 @@ const fileOptions = [
   // Consumption Workflows
   { key: 'divider_4', text: '-', itemType: DropdownMenuItemType.Divider },
   { key: 'WorkflowParametersHeader', text: 'Workflow Parameters', itemType: DropdownMenuItemType.Header },
+  { key: 'StandardWorkflowParameters.json', text: 'Standard Workflow Parameters' },
   { key: 'ConsumptionWorkflowParameters.json', text: 'Consumption Workflow Parameters' },
 ];
 

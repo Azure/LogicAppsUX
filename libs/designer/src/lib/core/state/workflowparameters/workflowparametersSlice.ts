@@ -177,10 +177,20 @@ export const workflowParametersSlice = createSlice({
       const validationErrors = {
         name: validateParameter(id, { name }, 'name', state.definitions),
         value: validateParameter(id, { name, type, value, defaultValue }, 'value', state.definitions, isConsumption ? false : true),
-        defaultValue: validateParameter(id, { name, type, value, defaultValue }, 'defaultValue', state.definitions),
+        ...(isConsumption
+          ? {
+              defaultValue: validateParameter(id, { name, type, value, defaultValue }, 'defaultValue', state.definitions),
+            }
+          : {}),
       };
 
-      state.definitions[id] = { ...state.definitions[id], type, value, name: name ?? '', defaultValue };
+      state.definitions[id] = {
+        ...state.definitions[id],
+        type,
+        value,
+        name: name ?? '',
+        ...(isConsumption ? { defaultValue } : {}),
+      };
       state.validationErrors[id] = {
         ...state.validationErrors[id],
         ...validationErrors,
