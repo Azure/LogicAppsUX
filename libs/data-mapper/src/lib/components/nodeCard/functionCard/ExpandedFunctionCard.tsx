@@ -1,8 +1,10 @@
 import { customTokens } from '../../../core';
 import { deleteCurrentlySelectedItem, setSelectedItem } from '../../../core/state/DataMapSlice';
 import type { RootState } from '../../../core/state/Store';
-import { getIconForFunction, iconForNormalizedDataType } from '../../../utils/Icon.Utils';
-import { selectedCardStyles } from '../NodeCard';
+import { generateInputHandleId } from '../../../utils/Connection.Utils';
+import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
+import { FunctionIcon } from '../../functionIcon/FunctionIcon';
+import { errorCardStyles, selectedCardStyles } from '../NodeCard';
 import type { FunctionCardProps } from './FunctionCard';
 import { inputsValid, useFunctionCardStyles } from './FunctionCard';
 import { Stack, StackItem } from '@fluentui/react';
@@ -19,6 +21,7 @@ import { Handle, Position } from 'reactflow';
 export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const { functionData, functionBranding, dataTestId } = props.data;
   const reactFlowId = props.id;
+
   const dispatch = useDispatch();
   const classes = useFunctionCardStyles();
 
@@ -61,6 +64,7 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const handlesForCollapsedHeader = functionData.inputs.map((input) => {
     return <Handle key={input.name} id={input.name} type="target" position={Position.Left} style={{ top: '20px', visibility: 'hidden' }} />;
   });
+
   const header = (
     <Button
       appearance="transparent"
@@ -74,12 +78,12 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
       }}
     >
       {isExpanded ? null : handlesForCollapsedHeader}
-      {getIconForFunction(
-        functionData.functionName,
-        functionData.category,
-        functionData.iconFileName,
-        tokens.colorNeutralForegroundInverted
-      )}
+      <FunctionIcon
+        name={functionData.functionName}
+        categoryName={functionData.category}
+        fileName={functionData.iconFileName}
+        color={tokens.colorNeutralForegroundInverted}
+      />
       <Text style={{ margin: '0px 12px', color: tokens.colorNeutralForegroundInverted }}>{functionData.displayName}</Text>
       <Divider vertical style={{ height: '100%' }} />
       <OutputIcon style={{ margin: '0px 6px 0px 10px', color: tokens.colorNeutralForegroundInverted }} />
@@ -98,13 +102,15 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
     borderRadius: tokens.borderRadiusMedium,
   };
   const inputTextStyles = { alignItems: 'center', height: '30px', display: 'flex' };
+  const handleIndexOffset = 34;
+  const handleBaseOffset = 58;
 
   const inputsForBody = [];
   if (connections[reactFlowId]) {
     if (functionData.maxNumberOfInputs > -1) {
       inputsForBody.push(
         functionData.inputs.map((input, index) => {
-          const handleTop = index * 34 + 58;
+          const handleTop = index * handleIndexOffset + handleBaseOffset;
           return (
             <StackItem key={input.name}>
               <div key={input.name} style={inputBodyStyles}>
@@ -125,8 +131,8 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
     } else {
       inputsForBody.push(
         connections[reactFlowId].inputs[0].map((input, index) => {
-          const handleTop = index * 34 + 58;
-          const id = `${functionData.inputs[0].name}${index}`;
+          const handleTop = index * handleIndexOffset + handleBaseOffset;
+          const id = generateInputHandleId(functionData.inputs[0].name, index);
           const name = `${functionData.inputs[0].name} ${index}`;
           return (
             <div key={id} style={inputBodyStyles}>
@@ -137,7 +143,7 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
                 style={{
                   top: `${handleTop}px`,
                   backgroundColor:
-                    typeof input === 'string' ? (input ? tokens.colorPaletteGreenBackground3 : tokens.colorPaletteRedBackground3) : '',
+                    typeof input === 'string' ? (input ? tokens.colorPaletteBlueBackground2 : tokens.colorPaletteRedBackground3) : '',
                 }}
               />
               <Tooltip
@@ -162,11 +168,24 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
 
   if (isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId) {
     divStyle = { ...selectedCardStyles, ...divStyle };
+  } else if (!areCurrentInputsValid) {
+    divStyle = { ...errorCardStyles, ...divStyle };
   }
 
   return (
     <div onContextMenu={contextMenu.handle} className={mergeClasses(classes.container, 'nopan')} data-testid={dataTestId}>
-      {!areCurrentInputsValid && <PresenceBadge size="extra-small" status="busy" className={classes.errorBadge} />}
+      {!areCurrentInputsValid && (
+        <PresenceBadge
+          size="extra-small"
+          status="busy"
+          style={{
+            position: 'absolute',
+            top: '-6px',
+            right: '-6px',
+            zIndex: 1,
+          }}
+        />
+      )}
       <Tooltip
         content={{
           children: <Text size={200}>{functionData.displayName}</Text>,
