@@ -179,37 +179,41 @@ const isSiblingOf = (node1: SchemaNodeExtended, node2: SchemaNodeExtended) => {
 const getWidthForSourceNodes = (sortedSourceNodes: SchemaNodeExtended[]): Map<string, number> => {
   const widthMap: Map<string, number> = new Map<string, number>();
   let maxSizeAdd = 0;
+  const copiedSourceNodes = [...sortedSourceNodes];
+  const nodesLength = copiedSourceNodes.length;
 
-  const getWidthForSourceNodesRecursively = (widthDiff: number, remainingNodes: SchemaNodeExtended[]): SchemaNodeExtended[] => {
+  const getWidthForSourceNodesRecursively = (widthDiff: number, currentNodeIndex: number): number => {
     if (widthDiff > maxSizeAdd) {
       maxSizeAdd = widthDiff;
     }
-    if (remainingNodes.length === 0) {
-      return [];
+    if (currentNodeIndex === nodesLength) {
+      return currentNodeIndex;
     }
-    const currentNode = remainingNodes[0];
+    const currentNode = copiedSourceNodes[currentNodeIndex];
     widthMap.set(currentNode.key, widthDiff);
-    if (remainingNodes.length === 1) {
-      return [];
+    if (currentNodeIndex === nodesLength - 1) {
+      return currentNodeIndex + 1;
     }
-    const nextNode = remainingNodes[1];
-    let nextSection: SchemaNodeExtended[] = [];
+    const nextNode = copiedSourceNodes[currentNodeIndex + 1];
+    let nextSectionIndex: number = nodesLength - 1;
     if (isAncestorOf(nextNode, currentNode)) {
-      nextSection = getWidthForSourceNodesRecursively(widthDiff + schemaNodeCardWidthDifference, remainingNodes.slice(1));
+      nextSectionIndex = getWidthForSourceNodesRecursively(widthDiff + schemaNodeCardWidthDifference, currentNodeIndex + 1);
     } else if (isSiblingOf(currentNode, nextNode)) {
-      nextSection = getWidthForSourceNodesRecursively(widthDiff, remainingNodes.slice(1));
+      nextSectionIndex = getWidthForSourceNodesRecursively(widthDiff, currentNodeIndex + 1);
     } else {
-      return remainingNodes.slice(1);
+      return currentNodeIndex + 1;
     }
 
-    const nextSectionNode = nextSection[0];
-    if (nextSectionNode && (isAncestorOf(nextSectionNode, currentNode) || isSiblingOf(nextSectionNode, currentNode)))
-      nextSection = getWidthForSourceNodesRecursively(widthDiff, [currentNode, ...nextSection]);
+    const nextSectionNode = copiedSourceNodes[nextSectionIndex];
+    if (nextSectionNode && (isAncestorOf(nextSectionNode, currentNode) || isSiblingOf(nextSectionNode, currentNode))) {
+      copiedSourceNodes[nextSectionIndex - 1] = currentNode;
+      nextSectionIndex = getWidthForSourceNodesRecursively(widthDiff, nextSectionIndex - 1);
+    }
 
-    return nextSection;
+    return nextSectionIndex;
   };
 
-  getWidthForSourceNodesRecursively(0, sortedSourceNodes);
+  getWidthForSourceNodesRecursively(0, 0);
   let maxWidth = schemaNodeCardDefaultWidth;
   if (maxSizeAdd > schemaNodeCardWidthDifference * 3) {
     maxWidth += maxSizeAdd - schemaNodeCardWidthDifference * 3;
