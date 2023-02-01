@@ -185,7 +185,8 @@ export const WorkflowparameterField = ({
     setName(newValue);
     onChange?.({
       id: definition.id,
-      newDefinition: { ...definition, name: newValue },
+      newDefinition: { ...definition, name: newValue, type, value, defaultValue },
+      isConsumption,
     });
   };
 
@@ -194,7 +195,8 @@ export const WorkflowparameterField = ({
 
     onChange?.({
       id: definition.id,
-      newDefinition: { ...definition, type: newType },
+      newDefinition: { ...definition, name, type: newType, value, defaultValue },
+      isConsumption,
     });
 
     setType(newType);
@@ -211,7 +213,8 @@ export const WorkflowparameterField = ({
 
     onChange?.({
       id: definition.id,
-      newDefinition: { ...definition, value },
+      newDefinition: { ...definition, name, type, value, defaultValue },
+      isConsumption,
     });
   };
 
@@ -225,7 +228,7 @@ export const WorkflowparameterField = ({
 
     onChange?.({
       id: definition.id,
-      newDefinition: { ...definition, defaultValue },
+      newDefinition: { ...definition, name, type, value, defaultValue },
       isConsumption,
     });
   };
