@@ -164,4 +164,5 @@ export enum LogCategory {
   TargetSchemaPane = 'TargetSchemaPane',
   OverviewCanvas = 'OverviewCanvas',
   EditingCanvas = 'EditingCanvas',
+  FunctionList = 'FunctionList',
 }
