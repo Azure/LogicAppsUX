@@ -30,8 +30,9 @@ ns0:TargetSchemaRoot:
   Conditionals:
     $if(is-null(/ns0:SourceSchemaRoot/Conditionals/SourceObject)):
       Object:
-        $if(is-null(/ns0:SourceSchemaRoot/Conditionals/SourceObject/SourceProperty)):
-          Property: /ns0:SourceSchemaRoot/Conditionals/SourceObject/SourceProperty
+        MiscProperty: /ns0:SourceSchemaRoot/Conditionals/SourceObject/SourceProperty
+    $if(is-null(/ns0:SourceSchemaRoot/Conditionals/SourceObject/SourceProperty)):
+      Property: /ns0:SourceSchemaRoot/Conditionals/SourceObject/SourceProperty
   Looping:
     OneToOne:
       $for(/ns0:SourceSchemaRoot/Looping/OneToOne/Simple):

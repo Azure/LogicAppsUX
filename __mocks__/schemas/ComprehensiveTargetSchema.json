@@ -144,15 +144,24 @@
             "properties": "NotSpecified",
             "children": [
               {
-                "key": "/ns0:TargetSchemaRoot/Conditionals/Object/Property",
-                "name": "Property",
-                "fullName": "Property",
+                "key": "/ns0:TargetSchemaRoot/Conditionals/Object/MiscProperty",
+                "name": "MiscProperty",
+                "fullName": "MiscProperty",
                 "parentKey": "/ns0:TargetSchemaRoot/Conditionals/Object",
                 "normalizedDataType": "String",
                 "properties": "NotSpecified",
                 "children": []
               }
             ]
+          },
+          {
+            "key": "/ns0:TargetSchemaRoot/Conditionals/Property",
+            "name": "Property",
+            "fullName": "Property",
+            "parentKey": "/ns0:TargetSchemaRoot/Conditionals",
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "children": []
           }
         ]
       },
