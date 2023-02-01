@@ -19,10 +19,6 @@ import {
 import { isSchemaNodeExtended } from '../Schema.Utils';
 import { fullConnectionDictionaryForOneToManyLoop, fullMapForSimplifiedLoop } from '../__mocks__';
 
-// TODO: nodeHasSourceNodeEventually
-// TODO: nodeHasSpecificInputEventually
-// TODO: collectNodesForConnectionChain ?
-
 const mockBoundedFunctionInputs: FunctionInput[] = [
   {
     name: 'Value',
