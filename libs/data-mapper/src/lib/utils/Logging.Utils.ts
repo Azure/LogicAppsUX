@@ -159,4 +159,5 @@ export enum LogCategory {
   MapDefinitionDeserializer = 'MapDefinitionDeserializer',
   DefaultConfigView = 'DefaultConfigView',
   FunctionIcon = 'FunctionIcon',
+  CodeView = 'CodeView',
 }
