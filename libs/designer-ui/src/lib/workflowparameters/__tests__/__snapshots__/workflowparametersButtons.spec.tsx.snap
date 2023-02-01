@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/workflowparameters/workflowparametersButtons should construct. 1`] = `
+<EditButton
+  onClick={[Function]}
+/>
+`;
