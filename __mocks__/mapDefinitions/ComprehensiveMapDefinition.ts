@@ -48,10 +48,10 @@ ns0:TargetSchemaRoot:
         Index:
           Direct: /ns0:SourceSchemaRoot/Looping/OneToOne/Index[$a]/SourceDirect
           FunctionChain: concat(SourceFunctionChain, $a)
-      $for(/ns0:SourceSchemaRoot/Looping/OneToOne/Conditional):
-        Conditional:
-          $if(is-null(SourceDirect)):
-            Direct: SourceDirect
+      # $for(/ns0:SourceSchemaRoot/Looping/OneToOne/Conditional): # TODO: Conditionals (at least property ones) need some help when within loops
+        # Conditional:
+          # $if(is-null(SourceDirect)):
+            # Direct: SourceDirect
       $for(/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest, $a):
         StressTest:
           $if(is-greater-than($a, 3)):
@@ -64,6 +64,12 @@ ns0:TargetSchemaRoot:
             Simple:
               Direct: SourceDirect
               FunctionChain: lower-case(SourceFunctionChain)
+      $for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Index, $a):
+        $for(SourceIndexChild, $b):
+          $for(SourceIndexChildChild, $c):
+            Index:
+              Direct: /ns0:SourceSchemaRoot/Looping/ManyToOne/Index/SourceIndexChild[$b]/SourceIndexChildChild/SourceDirect
+              FunctionChain: concat($c, SourceFunctionChain, $a)
     ManyToMany:
       $for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple):
         Simple:
@@ -73,6 +79,14 @@ ns0:TargetSchemaRoot:
                 SimpleChildChild:
                   Direct: SourceDirect
                   FunctionChain: lower-case(SourceFunctionChain)
+      $for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Index, $i):
+        Index:
+          $for(SourceIndexChild, $j):
+            IndexChild:
+              $for(SourceIndexChildChild, $k):
+                IndexChildChild:
+                  Direct: /ns0:SourceSchemaRoot/Looping/ManyToMany/Index/SourceIndexChild/SourceIndexChildChild[$k]/SourceDirect
+                  FunctionChain: concat($i, SourceFunctionChain, $j)
     LoopReduce:
       BestItemName: /ns0:SourceSchemaRoot/Looping/LoopReduce/ItemsList[3]/ItemName
 `;

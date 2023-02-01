@@ -365,8 +365,27 @@
                 "fullName": "Index",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToOne",
                 "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
-                "children": []
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Index/Direct",
+                    "name": "Direct",
+                    "fullName": "Direct",
+                    "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Index",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "children": []
+                  },
+                  {
+                    "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Index/FunctionChain",
+                    "name": "FunctionChain",
+                    "fullName": "FunctionChain",
+                    "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Index",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "children": []
+                  }
+                ]
               },
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Conditional",
@@ -535,8 +554,47 @@
                 "fullName": "Index",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany",
                 "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
-                "children": []
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Index/IndexChild",
+                    "name": "IndexChild",
+                    "fullName": "IndexChild",
+                    "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Index",
+                    "normalizedDataType": "ComplexType",
+                    "properties": "Repeating",
+                    "children": [
+                      {
+                        "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Index/IndexChild/IndexChildChild",
+                        "name": "IndexChildChild",
+                        "fullName": "IndexChildChild",
+                        "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Index/IndexChild",
+                        "normalizedDataType": "ComplexType",
+                        "properties": "Repeating",
+                        "children": [
+                          {
+                            "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Index/IndexChild/IndexChildChild/Direct",
+                            "name": "Direct",
+                            "fullName": "Direct",
+                            "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Index/IndexChild/IndexChildChild",
+                            "normalizedDataType": "String",
+                            "properties": "NotSpecified",
+                            "children": []
+                          },
+                          {
+                            "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Index/IndexChild/IndexChildChild/FunctionChain",
+                            "name": "FunctionChain",
+                            "fullName": "FunctionChain",
+                            "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Index/IndexChild/IndexChildChild",
+                            "normalizedDataType": "String",
+                            "properties": "NotSpecified",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Conditional",
