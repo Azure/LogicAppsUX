@@ -1,19 +1,13 @@
-import constants from '../../../common/constants';
-import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
-import { useBrandColor } from '../../../core/state/selectors/actionMetadataSelector';
-import { useNodeMetadata } from '../../../core/state/workflow/workflowSelectors';
+import constants from '../../../../common/constants';
+import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
+import { useBrandColor } from '../../../../core/state/selectors/actionMetadataSelector';
+import { useNodeMetadata } from '../../../../core/state/workflow/workflowSelectors';
+import { PropertiesPanel } from './propertiesPanel';
 import { ValuesPanel } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 
-// Dummy props for now, unsure of the data structure at the moment
-export interface MonitoringPanelProps {
-  inputData?: any;
-  outputData?: any;
-  propertiesData?: any;
-}
-
-export const MonitoringPanel: React.FC<MonitoringPanelProps> = () => {
+export const MonitoringPanel: React.FC = () => {
   const intl = useIntl();
   const selectedNodeId = useSelectedNodeId();
   const nodeMetadata = useNodeMetadata(selectedNodeId);
@@ -25,6 +19,10 @@ export const MonitoringPanel: React.FC<MonitoringPanelProps> = () => {
       defaultMessage: 'Inputs',
       description: 'Inputs text',
     }),
+    noInputs: intl.formatMessage({
+      defaultMessage: 'No inputs',
+      description: 'No inputs text',
+    }),
     showInputs: intl.formatMessage({
       defaultMessage: 'Show inputs',
       description: 'Show inputs text',
@@ -33,57 +31,14 @@ export const MonitoringPanel: React.FC<MonitoringPanelProps> = () => {
       defaultMessage: 'Outputs',
       description: 'Outputs text',
     }),
+    noOutputs: intl.formatMessage({
+      defaultMessage: 'No outputs',
+      description: 'No utputs text',
+    }),
     showOutputs: intl.formatMessage({
       defaultMessage: 'Show outputs',
       description: 'Show outputs text',
     }),
-    properties: intl.formatMessage({
-      defaultMessage: 'Properties',
-      description: 'Properties text',
-    }),
-    startTime: intl.formatMessage({
-      defaultMessage: 'Start time',
-      description: 'Start time text',
-    }),
-    endTime: intl.formatMessage({
-      defaultMessage: 'End time',
-      description: 'End time text',
-    }),
-    status: intl.formatMessage({
-      defaultMessage: 'Status',
-      description: 'Status text',
-    }),
-    clienTrackingId: intl.formatMessage({
-      defaultMessage: 'Client Tracking ID',
-      description: 'Client Tracking ID text',
-    }),
-    actionTrackingId: intl.formatMessage({
-      defaultMessage: 'Action Tracking ID',
-      description: 'Action Tracking ID text',
-    }),
-  };
-
-  const runProperties = {
-    startTime: {
-      displayName: intlText.startTime,
-      value: 'Fri, 28 Jan 2022 00:02:51 GMT',
-    },
-    endTime: {
-      displayName: intlText.endTime,
-      value: 'Fri, 28 Jan 2022 00:02:51 GMT',
-    },
-    status: {
-      displayName: intlText.status,
-      value: 'Fri, 28 Jan 2022 00:02:51 GMT',
-    },
-    clienTrackingId: {
-      displayName: intlText.clienTrackingId,
-      value: 'Fri, 28 Jan 2022 00:02:51 GMT',
-    },
-    actionTrackingId: {
-      displayName: intlText.actionTrackingId,
-      value: 'Fri, 28 Jan 2022 00:02:51 GMT',
-    },
   };
 
   return (
@@ -105,7 +60,7 @@ export const MonitoringPanel: React.FC<MonitoringPanelProps> = () => {
             },
           }}
           labelledBy={''}
-          noValuesText={'No inputs'}
+          noValuesText={intlText.noInputs}
           showMore={false}
         />
       ) : null}
@@ -139,18 +94,11 @@ export const MonitoringPanel: React.FC<MonitoringPanelProps> = () => {
             },
           }}
           labelledBy={''}
-          noValuesText={'No outputs'}
+          noValuesText={intlText.noOutputs}
           showMore={false}
         />
       ) : null}
-      <ValuesPanel
-        brandColor={brandColor}
-        headerText={intlText.properties}
-        values={runProperties}
-        labelledBy={''}
-        noValuesText={'No properties'}
-        showMore={false}
-      />
+      <PropertiesPanel properties={runMetaData} brandColor={brandColor} />
     </div>
   );
 };
