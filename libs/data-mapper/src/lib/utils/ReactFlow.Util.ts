@@ -202,7 +202,9 @@ const getWidthForSourceNodes = (sortedSourceNodes: SchemaNodeExtended[]): Map<st
       return remainingNodes.slice(1);
     }
 
-    nextSection = getWidthForSourceNodesRecursively(widthDiff, [currentNode, ...nextSection]);
+    const nextSectionNode = nextSection[0];
+    if (nextSectionNode && (isAncestorOf(nextSectionNode, currentNode) || isSiblingOf(nextSectionNode, currentNode)))
+      nextSection = getWidthForSourceNodesRecursively(widthDiff, [currentNode, ...nextSection]);
 
     return nextSection;
   };
