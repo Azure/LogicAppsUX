@@ -179,7 +179,7 @@ export const trySetDefaultConnectionForNode = async (
   dispatch: AppDispatch,
   isConnectionRequired: boolean
 ) => {
-  const connections = await getConnectionsForConnector(connectorId);
+  const connections = (await getConnectionsForConnector(connectorId)).filter((c) => c.properties.overallStatus !== 'Error');
   if (connections.length > 0) {
     await ConnectionService().setupConnectionIfNeeded(connections[0]);
     dispatch(updateNodeConnection({ nodeId, connectionId: connections[0].id, connectorId }));
