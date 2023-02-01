@@ -61,3 +61,7 @@ export interface TestMapResponse {
     '$content-type': string;
   };
 }
+
+export const dataMapperApiVersions = {
+  Oct2019Edge: '2019-10-01-edge-preview',
+};

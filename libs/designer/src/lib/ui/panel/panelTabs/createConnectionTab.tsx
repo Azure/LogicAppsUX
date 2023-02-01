@@ -1,25 +1,21 @@
 import constants from '../../../common/constants';
 import type { AppDispatch, RootState } from '../../../core';
-import {
-  getConnectionMetadata,
-  needsOAuth,
-  updateNodeConnection,
-} from '../../../core/actions/bjsworkflow/connections';
+import { getConnectionMetadata, needsOAuth, updateNodeConnection } from '../../../core/actions/bjsworkflow/connections';
 import { getUniqueConnectionName } from '../../../core/queries/connections';
 import { useConnectorByNodeId, useGateways, useSubscriptions } from '../../../core/state/connection/connectionSelector';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useOperationInfo, useOperationManifest } from '../../../core/state/selectors/actionMetadataSelector';
+import { getAssistedConnectionProps } from '../../../core/utils/connectors/connections';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/designer-client-services-logic-apps';
 import { LogEntryLevel, LoggerService, ConnectionService } from '@microsoft/designer-client-services-logic-apps';
 import { CreateConnection } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
-import type { Connection, ConnectionParameterSet, ConnectionParameterSetValues, ConnectionType } from '@microsoft/utils-logic-apps';
+import type { Connection, ConnectionParameterSet, ConnectionParameterSetValues } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAssistedConnectionProps } from '../../../core/utils/connectors/connections';
 
 const CreateConnectionTab = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -65,12 +61,13 @@ const CreateConnectionTab = () => {
 
   const resourceSelectorProps = assistedConnectionProps
     ? {
-      ...assistedConnectionProps,
-      selectedResourceId,
-      onResourceSelect: selectResourceCallback,
-      selectedSubResource,
-      onSubResourceSelect: selectSubResourceCallback
-    } : undefined;
+        ...assistedConnectionProps,
+        selectedResourceId,
+        onResourceSelect: selectResourceCallback,
+        selectedSubResource,
+        onSubResourceSelect: selectSubResourceCallback,
+      }
+    : undefined;
 
   const createConnectionCallback = useCallback(
     async (
@@ -85,8 +82,16 @@ const CreateConnectionTab = () => {
       setErrorMessage(undefined);
 
       let outputParameterValues = parameterValues;
+
       if (selectedParameterSet) {
-        outputParameterValues['Type'] = selectedParameterSet?.name;
+        const requiredParameters = Object.entries(selectedParameterSet?.parameters)?.filter(
+          ([, parameter]) => parameter?.uiDefinition.constraints?.required
+        );
+        requiredParameters?.forEach(([key, parameter]) => {
+          if (!outputParameterValues?.[key]) {
+            outputParameterValues[key] = parameter?.uiDefinition.constraints?.default;
+          }
+        });
       }
 
       try {
@@ -122,7 +127,7 @@ const CreateConnectionTab = () => {
         };
 
         const parametersMetadata: ConnectionParametersMetadata = {
-          connectionType: connectionMetadata?.type as ConnectionType,
+          connectionMetadata: connectionMetadata,
           connectionParameterSet: selectedParameterSet,
           connectionParameters: selectedParameterSet?.parameters ?? connector?.properties.connectionParameters,
         };
@@ -158,7 +163,15 @@ const CreateConnectionTab = () => {
       }
       setIsLoading(false);
     },
-    [applyNewConnection, assistedConnectionProps, connectionMetadata?.type, connector, dispatch, selectedSubResource?.id, selectedSubResource?.properties?.invoke_url_template]
+    [
+      applyNewConnection,
+      assistedConnectionProps,
+      connectionMetadata,
+      connector,
+      dispatch,
+      selectedSubResource?.id,
+      selectedSubResource?.properties?.invoke_url_template,
+    ]
   );
 
   const cancelCallback = useCallback(() => {

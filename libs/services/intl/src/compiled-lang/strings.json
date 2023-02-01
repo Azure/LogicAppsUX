@@ -1,4 +1,10 @@
 {
+  "+0yxlR": [
+    {
+      "type": 0,
+      "value": "Function display"
+    }
+  ],
   "+20fdv": [
     {
       "type": 0,
@@ -57,12 +63,6 @@
     {
       "type": 0,
       "value": "Pagination"
-    }
-  ],
-  "/9r9ML": [
-    {
-      "type": 0,
-      "value": "Add target schema"
     }
   ],
   "/AtN16": [
@@ -153,6 +153,12 @@
     {
       "type": 0,
       "value": "Returns the first Count elements from the array or string passed in"
+    }
+  ],
+  "/yYyOq": [
+    {
+      "type": 0,
+      "value": "Resource Group"
     }
   ],
   "00xlpa": [
@@ -1365,6 +1371,12 @@
       "value": "Authentication Type"
     }
   ],
+  "AGCm1p": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -1979,6 +1991,12 @@
       "value": "Enter a valid Json."
     }
   ],
+  "GD3m4X": [
+    {
+      "type": 0,
+      "value": "Expanded"
+    }
+  ],
   "GDUGlm": [
     {
       "type": 0,
@@ -2043,6 +2061,12 @@
     {
       "type": 0,
       "value": "Cancel the selection"
+    }
+  ],
+  "GyUe4C": [
+    {
+      "type": 0,
+      "value": "Modify options regarding functions"
     }
   ],
   "GzQQqH": [
@@ -3161,12 +3185,6 @@
       "value": "Switch to input entire array"
     }
   ],
-  "RZO5Ic": [
-    {
-      "type": 0,
-      "value": "Add or replace your schemas."
-    }
-  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -3369,6 +3387,12 @@
     {
       "type": 0,
       "value": "Create a new connection"
+    }
+  ],
+  "TY4HzZ": [
+    {
+      "type": 0,
+      "value": "Add or replace your schemas."
     }
   ],
   "TZv5JE": [
@@ -4089,6 +4113,12 @@
       "value": "Data Handling"
     }
   ],
+  "aSnCCB": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -4569,12 +4599,6 @@
       "value": "Logical functions"
     }
   ],
-  "fqNVDv": [
-    {
-      "type": 0,
-      "value": "Back"
-    }
-  ],
   "froV/0": [
     {
       "type": 0,
@@ -5043,6 +5067,12 @@
       "value": "Required. A base64 input string."
     }
   ],
+  "jZjgYZ": [
+    {
+      "type": 0,
+      "value": "No resources of this type found under this subscription."
+    }
+  ],
   "jcA3Ig": [
     {
       "type": 0,
@@ -5239,6 +5269,12 @@
     {
       "type": 0,
       "value": "A line for the parent element is added automatically."
+    }
+  ],
+  "lR7V87": [
+    {
+      "type": 0,
+      "value": "Functions"
     }
   ],
   "lV77P8": [
@@ -6063,6 +6099,12 @@
       "value": "Required. A string that contains the time zone name of the destination time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details."
     }
   ],
+  "tAeKNh": [
+    {
+      "type": 0,
+      "value": "Simple"
+    }
+  ],
   "tE7Zam": [
     {
       "type": 0,
@@ -6497,12 +6539,6 @@
       "value": "Callback URL:"
     }
   ],
-  "woq0x0": [
-    {
-      "type": 0,
-      "value": "Add source schema"
-    }
-  ],
   "wzEneQ": [
     {
       "type": 0,
@@ -6525,6 +6561,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "xC1zg3": [
+    {
+      "type": 0,
+      "value": "Schemas"
     }
   ],
   "xFQXAI": [

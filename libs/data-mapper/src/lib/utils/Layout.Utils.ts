@@ -1,12 +1,12 @@
-import { schemaNodeCardHeight, schemaNodeCardWidth, functionNodeCardSize } from '../constants/NodeConstants';
+import { functionNodeCardSize, schemaNodeCardDefaultWidth, schemaNodeCardHeight } from '../constants/NodeConstants';
 import type { SchemaNodeExtended } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { FunctionDictionary } from '../models/Function';
-import { isConnectionUnit } from './Connection.Utils';
+import { generateInputHandleId, isConnectionUnit } from './Connection.Utils';
 import { isFunctionData } from './Function.Utils';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix } from './ReactFlow.Util';
+import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
-import type { ElkNode, ElkExtendedEdge } from 'elkjs/lib/elk.bundled';
 
 const elk = new ELK();
 
@@ -71,13 +71,21 @@ export const convertDataMapNodesToElkGraph = (
     }
 
     // Categorize connections to function<->function and any others for elkTree creation below
-    Object.values(connection.inputs).forEach((inputValueArray) => {
-      inputValueArray.forEach((inputValue) => {
+    Object.values(connection.inputs).forEach((inputValueArray, inputIndex) => {
+      inputValueArray.forEach((inputValue, inputValueIndex) => {
         if (isConnectionUnit(inputValue)) {
-          const nextEdge = {
+          const target = connection.self.reactFlowKey;
+          const labels = isFunctionData(connection.self.node)
+            ? connection.self.node.maxNumberOfInputs > -1
+              ? [{ text: connection.self.node.inputs[inputIndex].name }]
+              : [{ text: generateInputHandleId(connection.self.node.inputs[inputIndex].name, inputValueIndex) }]
+            : [];
+
+          const nextEdge: ElkExtendedEdge = {
             id: `e${nextEdgeIndex}`,
             sources: [inputValue.reactFlowKey],
-            targets: [connection.self.reactFlowKey],
+            targets: [target],
+            labels,
           };
 
           if (isFunctionData(inputValue.node) && isFunctionData(connection.self.node)) {
@@ -102,11 +110,11 @@ export const convertDataMapNodesToElkGraph = (
         children: [
           ...currentSourceSchemaNodes.map((srcNode) => ({
             id: addSourceReactFlowPrefix(srcNode.key),
-            width: schemaNodeCardWidth,
+            width: schemaNodeCardDefaultWidth,
             height: schemaNodeCardHeight,
           })),
           // NOTE: Dummy nodes allow proper layouting when no real nodes exist yet
-          { id: 'srcDummyNode', width: schemaNodeCardWidth, height: schemaNodeCardHeight },
+          { id: 'srcDummyNode', width: schemaNodeCardDefaultWidth, height: schemaNodeCardHeight },
         ],
       },
       {
@@ -127,10 +135,10 @@ export const convertDataMapNodesToElkGraph = (
         id: 'targetSchemaBlock',
         layoutOptions: targetSchemaLayoutOptions,
         children: [
-          { id: addTargetReactFlowPrefix(currentTargetSchemaNode.key), width: schemaNodeCardWidth, height: schemaNodeCardHeight },
+          { id: addTargetReactFlowPrefix(currentTargetSchemaNode.key), width: schemaNodeCardDefaultWidth, height: schemaNodeCardHeight },
           ...currentTargetSchemaNode.children.map((childNode) => ({
             id: addTargetReactFlowPrefix(childNode.key),
-            width: schemaNodeCardWidth,
+            width: schemaNodeCardDefaultWidth,
             height: schemaNodeCardHeight,
           })),
         ],

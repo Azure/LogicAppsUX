@@ -75,6 +75,8 @@ const flatfiledecoding = 'flatfiledecoding';
 const flatfileencoding = 'flatfileencoding';
 const swiftdecode = 'swiftdecode';
 const swiftencode = 'swiftencode';
+const swiftmtdecode = 'swiftmtdecode';
+const swiftmtencode = 'swiftmtencode';
 const scope = 'scope';
 const foreach = 'foreach';
 const condition = 'if';
@@ -157,6 +159,8 @@ const supportedManifestTypes = [
   scope,
   swiftdecode,
   swiftencode,
+  swiftmtdecode,
+  swiftmtencode,
   terminate,
   until,
   wait,
@@ -165,6 +169,7 @@ const supportedManifestTypes = [
 export type getAccessTokenType = () => Promise<string>;
 
 export interface BaseOperationManifestServiceOptions {
+  [x: string]: any;
   apiVersion: string;
   baseUrl: string;
   httpClient: IHttpClient;
@@ -316,6 +321,8 @@ export function isBuiltInOperation(definition: any): boolean {
     case scope:
     case swiftdecode:
     case swiftencode:
+    case swiftmtdecode:
+    case swiftmtencode:
     case table:
     case terminate:
     case until:
@@ -561,6 +568,14 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [swiftencode]: {
     connectorId: 'connectionProviders/swiftOperations',
     operationId: 'swiftEncode',
+  },
+  [swiftmtdecode]: {
+    connectorId: 'connectionProviders/swiftOperations',
+    operationId: 'swiftMTDecode',
+  },
+  [swiftmtencode]: {
+    connectorId: 'connectionProviders/swiftOperations',
+    operationId: 'swiftMTEncode',
   },
   [terminate]: {
     connectorId: controlConnectorId,

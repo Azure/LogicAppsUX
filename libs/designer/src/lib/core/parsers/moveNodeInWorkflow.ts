@@ -45,8 +45,8 @@ export const moveNodeInWorkflow = (
   if (isOldRoot) {
     const childIds = (oldWorkflowGraph.edges ?? []).filter((edge) => edge.source === nodeId).map((edge) => edge.target);
     childIds.forEach((childId) => {
-      nodesMetadata[childId].isRoot = true;
-      delete (state.operations[childId] as any).runAfter;
+      if (nodesMetadata[childId]) nodesMetadata[childId].isRoot = true;
+      delete (state.operations[childId] as any)?.runAfter;
     });
   }
 
@@ -86,7 +86,9 @@ export const moveNodeInWorkflow = (
   nodesMetadata[nodeId] = { ...nodesMetadata[nodeId], graphId: newGraphId, parentNodeId, isRoot: isNewRoot };
   if (nodesMetadata[nodeId].isRoot === false) delete nodesMetadata[nodeId].isRoot;
 
-  const shouldAddRunAfters = parentId ? !isRootNodeInGraph(parentId, 'root', state.nodesMetadata) : true;
+  const isAfterTrigger = nodesMetadata[parentId ?? '']?.isRoot && newGraphId === 'root';
+  const shouldAddRunAfters = !isNewRoot && !isAfterTrigger;
+
   // X parents, 1 child
   if (childId) {
     reassignEdgeTargets(state, childId, nodeId, newWorkflowGraph);

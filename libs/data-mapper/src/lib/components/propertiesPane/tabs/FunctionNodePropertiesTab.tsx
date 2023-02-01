@@ -14,9 +14,10 @@ import {
   getFunctionOutputValue,
   isFunctionData,
 } from '../../../utils/Function.Utils';
-import { getIconForFunction, iconForNormalizedDataType } from '../../../utils/Icon.Utils';
+import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { LogCategory, LogService } from '../../../utils/Logging.Utils';
 import { isSchemaNodeExtended } from '../../../utils/Schema.Utils';
+import { FunctionIcon } from '../../functionIcon/FunctionIcon';
 import { InputDropdown } from '../../inputDropdown/InputDropdown';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, makeStyles, Text, tokens, Tooltip, typographyStyles } from '@fluentui/react-components';
@@ -228,7 +229,12 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
             }}
           >
             <div style={{ paddingTop: '4px', color: tokens.colorNeutralBackground1, display: 'flex', justifyContent: 'center' }}>
-              {getIconForFunction(functionData.functionName, functionData.category, functionData.iconFileName, functionBranding)}
+              <FunctionIcon
+                name={functionData.functionName}
+                categoryName={functionData.category}
+                fileName={functionData.iconFileName}
+                color={tokens.colorNeutralForeground1}
+              />
             </div>
           </span>
 

@@ -80,7 +80,7 @@ async function startDebugTask(debugTask: vscode.Task, workspaceFolder: vscode.Wo
       if (e.execution.task.scope === workspaceFolder && e.execution.task === debugTask) {
         if (e.exitCode !== 0) {
           vscode.window.showWarningMessage(
-            localize('logicAppsExtension.debugSymbols', 'Unable to debug the workflow app. Debug symbols could not be generated.')
+            localize('azureLogicAppsStandard.debugSymbols', 'Unable to debug the workflow app. Debug symbols could not be generated.')
           );
         }
         disposable.dispose();

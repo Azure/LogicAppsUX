@@ -18,13 +18,13 @@ export namespace ext {
   export let workflowDesignChildProcess: cp.ChildProcess | undefined;
   export let outputChannel: IAzExtOutputChannel;
   export let workflowRuntimePort: number;
-  export const prefix = 'logicAppsExtension';
+  export const prefix = 'azureLogicAppsStandard';
 
   // Tree item view
   export let azureAccountTreeItem: AzureAccountTreeItemWithProjects;
   export let tree: AzExtTreeDataProvider;
   export let treeView: TreeView<AzExtTreeItem>;
-  export const treeViewName = 'newAzLogicApps';
+  export const treeViewName = 'azLogicApps';
   export let deploymentFolderPath: string;
 
   // Functions
@@ -34,9 +34,26 @@ export namespace ext {
   export enum webViewKey {
     designerLocal = 'designerLocal',
     designerAzure = 'designerAzure',
+    export = 'export',
+    overview = 'overview',
   }
   export const openWebviewPanels: Record<string, Record<string, WebviewPanel>> = {
     [webViewKey.designerLocal]: {},
     [webViewKey.designerAzure]: {},
+    [webViewKey.export]: {},
+    [webViewKey.overview]: {},
   };
+}
+
+export enum ExtensionCommand {
+  select_folder = 'select-folder',
+  initialize = 'initialize',
+  loadRun = 'LoadRun',
+  dispose = 'dispose',
+  initialize_frame = 'initialize-frame',
+  update_access_token = 'update-access-token',
+  update_export_path = 'update-export-path',
+  export_package = 'export-package',
+  add_status = 'add-status',
+  set_final_status = 'set-final-status',
 }

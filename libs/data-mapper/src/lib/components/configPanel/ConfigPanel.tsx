@@ -9,25 +9,31 @@ import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import type { SchemaFile } from './AddOrUpdateSchemaView';
 import { AddOrUpdateSchemaView, UploadSchemaTypes } from './AddOrUpdateSchemaView';
 import { DefaultConfigView } from './DefaultConfigView';
-import { DefaultButton, IconButton, Panel, PrimaryButton, Text, Stack } from '@fluentui/react';
-import type { IDropdownOption, IPanelProps, IRenderFunction } from '@fluentui/react';
+import type { IDropdownOption } from '@fluentui/react';
+import { DefaultButton, Panel, PrimaryButton } from '@fluentui/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-const generalQuerySettings = {
-  staleTime: 1000 * 60 * 5,
-  cacheTime: 1000 * 60 * 5,
+const schemaFileQuerySettings = {
+  cacheTime: 0,
   retry: false, // Don't retry as it stops error from making its way through
 };
 
 export interface ConfigPanelProps {
   onSubmitSchemaFileSelection: (schemaFile: SchemaFile) => void;
   readCurrentSchemaOptions?: () => void;
+  setFunctionDisplayExpanded: (isFunctionDisplaySimple: boolean) => void;
+  useExpandedFunctionCards: boolean;
 }
 
-export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelection }: ConfigPanelProps) => {
+export const ConfigPanel = ({
+  readCurrentSchemaOptions,
+  onSubmitSchemaFileSelection,
+  setFunctionDisplayExpanded,
+  useExpandedFunctionCards,
+}: ConfigPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
 
@@ -46,7 +52,7 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
     [selectedSourceSchema?.text],
     async () => await getSelectedSchema(selectedSourceSchema?.text ?? ''),
     {
-      ...generalQuerySettings,
+      ...schemaFileQuerySettings,
       enabled: selectedSourceSchema !== undefined,
     }
   );
@@ -55,7 +61,7 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
     [selectedTargetSchema?.text],
     async () => await getSelectedSchema(selectedTargetSchema?.text ?? ''),
     {
-      ...generalQuerySettings,
+      ...schemaFileQuerySettings,
       enabled: selectedTargetSchema !== undefined,
     }
   );
@@ -80,11 +86,6 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
     description: 'Configure',
   });
 
-  const backLoc = intl.formatMessage({
-    defaultMessage: 'Back',
-    description: 'Back',
-  });
-
   const closeLoc = intl.formatMessage({
     defaultMessage: 'Close',
     description: 'Close',
@@ -93,16 +94,6 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
   const genericErrorMsg = intl.formatMessage({
     defaultMessage: 'Failed loading the schema. Please try again.',
     description: 'Load schema error message',
-  });
-
-  const addSourceSchemaHeaderMsg = intl.formatMessage({
-    defaultMessage: 'Add source schema',
-    description: 'Header to add source schema',
-  });
-
-  const addTargetSchemaHeaderMsg = intl.formatMessage({
-    defaultMessage: 'Add target schema',
-    description: 'Header to add target schema',
   });
 
   const goBackToDefaultConfigPanelView = useCallback(() => {
@@ -182,38 +173,6 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
     }
   }, [readCurrentSchemaOptions]);
 
-  const onRenderNavigationContent: IRenderFunction<IPanelProps> = useCallback(
-    (props, defaultRender) => (
-      <Stack className="custom-navigation" horizontal horizontalAlign="space-between">
-        {currentPanelView === ConfigPanelView.UpdateSchema && (
-          <div>
-            <Stack horizontal verticalAlign="center">
-              <IconButton iconProps={{ iconName: 'Back' }} title={backLoc} ariaLabel={backLoc} onClick={goBackToDefaultConfigPanelView} />
-              <Text className="back-header-text">{backLoc}</Text>
-            </Stack>
-          </div>
-        )}
-
-        {currentPanelView === ConfigPanelView.DefaultConfig && <Text className="header-text">{configureLoc}</Text>}
-
-        {currentPanelView === ConfigPanelView.AddSchema && (
-          <Text className="header-text">{schemaType === SchemaType.Source ? addSourceSchemaHeaderMsg : addTargetSchemaHeaderMsg}</Text>
-        )}
-
-        {(currentPanelView === ConfigPanelView.DefaultConfig || currentPanelView === ConfigPanelView.AddSchema) && defaultRender?.(props)}
-      </Stack>
-    ),
-    [
-      addSourceSchemaHeaderMsg,
-      addTargetSchemaHeaderMsg,
-      configureLoc,
-      currentPanelView,
-      goBackToDefaultConfigPanelView,
-      schemaType,
-      backLoc,
-    ]
-  );
-
   const onRenderFooterContent = useCallback(() => {
     if (currentPanelView === ConfigPanelView.DefaultConfig) {
       return null;
@@ -241,7 +200,7 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
           {currentPanelView === ConfigPanelView.AddSchema ? addLoc : saveLoc}
         </PrimaryButton>
 
-        <DefaultButton onClick={closeEntirePanel}>{cancelLoc}</DefaultButton>
+        <DefaultButton onClick={goBackToDefaultConfigPanelView}>{cancelLoc}</DefaultButton>
       </div>
     );
   }, [
@@ -251,7 +210,7 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
     selectedSourceSchema,
     selectedTargetSchema,
     saveLoc,
-    closeEntirePanel,
+    goBackToDefaultConfigPanelView,
     cancelLoc,
     addOrUpdateSchema,
     selectedSchemaFile,
@@ -262,17 +221,18 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
   return (
     <div>
       <Panel
-        className="config-panel"
+        headerText={configureLoc}
         isOpen={!!currentPanelView}
         onDismiss={closeEntirePanel}
-        onRenderNavigationContent={onRenderNavigationContent}
         closeButtonAriaLabel={closeLoc}
         onRenderFooterContent={onRenderFooterContent}
         isFooterAtBottom={true}
         overlayProps={{ isDarkThemed: currentTheme === 'dark' }}
         isLightDismiss
       >
-        {currentPanelView === ConfigPanelView.DefaultConfig && <DefaultConfigView />}
+        {currentPanelView === ConfigPanelView.DefaultConfig && (
+          <DefaultConfigView setFunctionDisplayExpanded={setFunctionDisplayExpanded} useExpandedFunctionCards={useExpandedFunctionCards} />
+        )}
 
         {(currentPanelView === ConfigPanelView.AddSchema || currentPanelView === ConfigPanelView.UpdateSchema) && (
           <AddOrUpdateSchemaView

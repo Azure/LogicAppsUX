@@ -35,6 +35,7 @@ export const getLegacyDynamicValues = async (
       )
   );
 };
+
 export const getListDynamicValues = async (
   connectionId: string | undefined,
   connectorId: string,

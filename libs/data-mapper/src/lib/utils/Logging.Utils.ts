@@ -157,4 +157,6 @@ export enum LogCategory {
   ReactFlowUtils = 'ReactFlowUtils',
   ExtensionCommands = 'ExtensionCommands',
   MapDefinitionDeserializer = 'MapDefinitionDeserializer',
+  DefaultConfigView = 'DefaultConfigView',
+  FunctionIcon = 'FunctionIcon',
 }

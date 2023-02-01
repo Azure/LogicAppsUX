@@ -1,13 +1,18 @@
-import type { FunctionCardProps } from '../components/nodeCard/FunctionCard';
 import type { CardProps } from '../components/nodeCard/NodeCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
+import type { FunctionCardProps } from '../components/nodeCard/functionCard/FunctionCard';
 import type { NodeToggledStateDictionary } from '../components/tree/TargetSchemaTreeItem';
-import { childTargetNodeCardIndent, schemaNodeCardHeight, schemaNodeCardWidth } from '../constants/NodeConstants';
+import {
+  childTargetNodeCardIndent,
+  schemaNodeCardHeight,
+  schemaNodeCardDefaultWidth,
+  schemaNodeCardWidthDifference,
+} from '../constants/NodeConstants';
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { SchemaNodeExtended } from '../models/Schema';
-import { SchemaType } from '../models/Schema';
+import { SchemaNodeProperty, SchemaType } from '../models/Schema';
 import { getFunctionBrandingForCategory } from './Function.Utils';
 import { applyElkLayout, convertDataMapNodesToElkGraph } from './Layout.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
@@ -23,6 +28,7 @@ export const overviewTgtSchemaX = 600;
 interface SimplifiedElkEdge {
   srcRfId: string;
   tgtRfId: string;
+  tgtPort?: string;
 }
 
 interface Size2D {
@@ -37,7 +43,7 @@ const placeholderReactFlowNode: ReactFlowNode = {
   hidden: true,
   sourcePosition: Position.Right,
   data: null,
-  width: schemaNodeCardWidth,
+  width: schemaNodeCardDefaultWidth,
   height: 10,
   position: {
     x: 0,
@@ -95,6 +101,7 @@ export const useLayout = (
                 return {
                   srcRfId: elkEdge.sources[0],
                   tgtRfId: elkEdge.targets[0],
+                  tgtPort: elkEdge.labels && elkEdge.labels.length > 0 ? elkEdge.labels[0].text : undefined,
                 };
               })
             );
@@ -106,6 +113,7 @@ export const useLayout = (
                 return {
                   srcRfId: elkEdge.sources[0],
                   tgtRfId: elkEdge.targets[0],
+                  tgtPort: elkEdge.labels && elkEdge.labels.length > 0 ? elkEdge.labels[0].text : undefined,
                 };
               })
             );
@@ -160,6 +168,62 @@ export const convertToReactFlowNodes = (
   ];
 };
 
+const isAncestorOf = (possibleChild: SchemaNodeExtended, possibleParent: SchemaNodeExtended): boolean => {
+  return possibleChild.key.includes(possibleParent.key);
+};
+
+const isSiblingOf = (node1: SchemaNodeExtended, node2: SchemaNodeExtended) => {
+  return node1.parentKey === node2.parentKey;
+};
+
+const getWidthForSourceNodes = (sortedSourceNodes: SchemaNodeExtended[]): Map<string, number> => {
+  const widthMap: Map<string, number> = new Map<string, number>();
+  let maxSizeAdd = 0;
+  const copiedSourceNodes = [...sortedSourceNodes];
+  const nodesLength = copiedSourceNodes.length;
+
+  const getWidthForSourceNodesRecursively = (widthDiff: number, currentNodeIndex: number): number => {
+    if (widthDiff > maxSizeAdd) {
+      maxSizeAdd = widthDiff;
+    }
+    if (currentNodeIndex === nodesLength) {
+      return currentNodeIndex;
+    }
+    const currentNode = copiedSourceNodes[currentNodeIndex];
+    widthMap.set(currentNode.key, widthDiff);
+    if (currentNodeIndex === nodesLength - 1) {
+      return currentNodeIndex + 1;
+    }
+    const nextNode = copiedSourceNodes[currentNodeIndex + 1];
+    let nextSectionIndex: number = nodesLength - 1;
+    if (isAncestorOf(nextNode, currentNode)) {
+      nextSectionIndex = getWidthForSourceNodesRecursively(widthDiff + schemaNodeCardWidthDifference, currentNodeIndex + 1);
+    } else if (isSiblingOf(currentNode, nextNode)) {
+      nextSectionIndex = getWidthForSourceNodesRecursively(widthDiff, currentNodeIndex + 1);
+    } else {
+      return currentNodeIndex + 1;
+    }
+
+    const nextSectionNode = copiedSourceNodes[nextSectionIndex];
+    if (nextSectionNode && (isAncestorOf(nextSectionNode, currentNode) || isSiblingOf(nextSectionNode, currentNode))) {
+      copiedSourceNodes[nextSectionIndex - 1] = currentNode;
+      nextSectionIndex = getWidthForSourceNodesRecursively(widthDiff, nextSectionIndex - 1);
+    }
+
+    return nextSectionIndex;
+  };
+
+  getWidthForSourceNodesRecursively(0, 0);
+  let maxWidth = schemaNodeCardDefaultWidth;
+  if (maxSizeAdd > schemaNodeCardWidthDifference * 3) {
+    maxWidth += maxSizeAdd - schemaNodeCardWidthDifference * 3;
+  }
+
+  widthMap.set('maxWidth', maxWidth);
+
+  return widthMap;
+};
+
 const convertSourceToReactFlowParentAndChildNodes = (
   sourceSchemaElkTree: ElkNode,
   combinedSourceSchemaNodes: SchemaNodeExtended[],
@@ -174,6 +238,13 @@ const convertSourceToReactFlowParentAndChildNodes = (
 
     return reactFlowNodes;
   }
+
+  const sourceNodesCopy = [...combinedSourceSchemaNodes];
+  sourceNodesCopy.filter((node) => node.nodeProperties.includes(SchemaNodeProperty.Repeating));
+  const sourceKeySet: Set<string> = new Set();
+  sourceNodesCopy.forEach((node) => sourceKeySet.add(node.key));
+
+  const widthMap = getWidthForSourceNodes(sourceNodesCopy);
 
   combinedSourceSchemaNodes.forEach((srcNode) => {
     const nodeReactFlowId = addSourceReactFlowPrefix(srcNode.key);
@@ -194,11 +265,16 @@ const convertSourceToReactFlowParentAndChildNodes = (
       return;
     }
 
+    const dictWidth = widthMap.get(srcNode.key);
+    const maxWidth = widthMap.get('maxWidth') as number;
+    const nodeWidth = dictWidth !== undefined ? dictWidth : schemaNodeCardDefaultWidth;
+
     reactFlowNodes.push({
       id: nodeReactFlowId,
       zIndex: 101, // Just for schema nodes to render N-badge over edges
       data: {
-        schemaNode: srcNode,
+        schemaNode: { ...srcNode, width: maxWidth - nodeWidth },
+        maxWidth: maxWidth,
         schemaType: SchemaType.Source,
         displayHandle: true,
         displayChevron: true,
@@ -366,13 +442,14 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
 export const convertToReactFlowEdges = (elkEdges: SimplifiedElkEdge[], selectedItemKey: string | undefined): ReactFlowEdge[] => {
   // NOTE: All validation (Ex: making sure edges given to ELK are actively on canvas) is handled pre-elk-layouting
   return elkEdges
-    .map((elkEdge) => {
+    .map<ReactFlowEdge>((elkEdge) => {
       // Sort the resulting edges so that the selected edge is rendered last and thus on top of all other edges
       const id = createReactFlowConnectionId(elkEdge.srcRfId, elkEdge.tgtRfId);
       return {
         id,
         source: elkEdge.srcRfId,
         target: elkEdge.tgtRfId,
+        targetHandle: elkEdge.tgtPort,
         type: ReactFlowEdgeType.ConnectionEdge,
         selected: selectedItemKey === id,
       };

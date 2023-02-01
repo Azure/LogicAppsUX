@@ -1,4 +1,5 @@
 import type { FunctionCategory } from '../../models/Function';
+import { getFunctionBrandingForCategory } from '../../utils/Function.Utils';
 import { makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 
 const useStyles = makeStyles({
@@ -19,7 +20,9 @@ interface FunctionListHeaderProps {
 const FunctionListHeader = ({ category }: FunctionListHeaderProps) => {
   const styles = useStyles();
 
-  return <Text className={styles.header}>{category}</Text>;
+  const categoryName = getFunctionBrandingForCategory(category).displayName;
+
+  return <Text className={styles.header}>{categoryName}</Text>;
 };
 
 export default FunctionListHeader;
