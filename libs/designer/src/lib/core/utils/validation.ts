@@ -98,7 +98,7 @@ export function validateType(type: string, parameterFormat: string, parameterVal
   if (!parameterValue) {
     return;
   }
-  const isExpression = isTemplateExpression(parameterValue);
+  const isExpression = isTemplateExpression(parameterValue.toString());
   const intl = getIntl();
 
   switch (type.toLowerCase()) {

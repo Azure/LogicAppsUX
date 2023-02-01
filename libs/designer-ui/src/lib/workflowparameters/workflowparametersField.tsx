@@ -1,6 +1,5 @@
 import Constants from '../constants';
-import type { EventHandler } from '../eventhandler';
-import type { WorkflowParameterDefinition } from './workflowparameter';
+import type { WorkflowParameterDefinition, WorkflowParameterUpdateHandler } from './workflowparameter';
 import type {
   IDropdownOption,
   IDropdownStyles,
@@ -60,13 +59,7 @@ const textStyles: Partial<ITextStyles> = {
 
 const NAME_KEY = 'name';
 const VALUE_KEY = 'value';
-
-export interface WorkflowParameterUpdateEvent {
-  id: string;
-  newDefinition: WorkflowParameterDefinition;
-}
-
-export type WorkflowParameterUpdateHandler = EventHandler<WorkflowParameterUpdateEvent>;
+const DEFAULT_VALUE_KEY = 'defaultValue';
 
 export interface ParameterFieldDetails {
   name: string;
@@ -233,6 +226,7 @@ export const WorkflowparameterField = ({
     onChange?.({
       id: definition.id,
       newDefinition: { ...definition, defaultValue },
+      isConsumption,
     });
   };
 
@@ -322,7 +316,7 @@ export const WorkflowparameterField = ({
                 placeholder={defaultValueDescription}
                 description={valueWarningMessage}
                 value={defaultValue}
-                errorMessage={errors[VALUE_KEY]}
+                errorMessage={errors[DEFAULT_VALUE_KEY]}
                 styles={valueWarningMessage ? textFieldWithWarningStyles : textFieldStyles}
                 onChange={onDefaultValueChange}
                 onRenderDescription={valueWarningMessage ? onRenderDescription : undefined}

@@ -141,7 +141,7 @@ const ParameterSection = ({
       if (viewModel !== undefined) {
         propertiesToUpdate.editorViewModel = viewModel;
       }
-      const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === id);
+      const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
       if (variables[nodeId]) {
         if (parameter?.parameterKey === 'inputs.$.name') {
           dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));

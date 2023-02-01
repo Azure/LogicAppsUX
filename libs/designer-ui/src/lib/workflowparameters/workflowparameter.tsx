@@ -1,8 +1,10 @@
+import { TrafficLightDot } from '../card/images/dynamicsvgs/trafficlightsvgs';
 import type { EventHandler } from '../eventhandler';
 import { EditOrDeleteButton } from './workflowparametersButtons';
 import { WorkflowparameterField } from './workflowparametersField';
 import type { IButtonStyles, IIconProps } from '@fluentui/react';
 import { CommandBarButton, FontWeights } from '@fluentui/react';
+import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -14,6 +16,7 @@ const commandBarStyles: Partial<IButtonStyles> = {
 export interface WorkflowParameterUpdateEvent {
   id: string;
   newDefinition: WorkflowParameterDefinition;
+  isConsumption?: boolean;
 }
 
 export interface WorkflowParameterDeleteEvent {
@@ -50,6 +53,7 @@ export function WorkflowParameter({ definition, isReadOnly, isConsumption, isInv
   const [name, setName] = useState(definition.name);
 
   const intl = useIntl();
+  const themeName = isInverted ? 'dark' : 'light';
 
   const iconProps: IIconProps = {
     iconName: expanded ? 'ChevronDownMed' : 'ChevronRightMed',
@@ -82,6 +86,11 @@ export function WorkflowParameter({ definition, isReadOnly, isConsumption, isInv
             styles={commandBarStyles}
             text={name ? name : headingTitle}
           />
+          {Object.values(props.validationErrors ?? {}).filter((x) => !!x).length > 0 ? (
+            <span className="msla-workflow-parameter-error-dot">
+              <TrafficLightDot fill={RUN_AFTER_COLORS[themeName]['FAILED']} />
+            </span>
+          ) : null}
         </div>
         {expanded ? (
           <WorkflowparameterField

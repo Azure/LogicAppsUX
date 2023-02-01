@@ -26,11 +26,13 @@ export const initialState: WorkflowParametersState = {
 
 export const validateParameter = (
   id: string,
-  data: { name?: string; type?: string; value?: string },
+  data: { name?: string; type?: string; value?: string; defaultValue?: string },
   keyToValidate: string,
-  allDefinitions: Record<string, WorkflowParameterDefinition>
+  allDefinitions: Record<string, WorkflowParameterDefinition>,
+  required = true
 ): string | undefined => {
   const intl = getIntl();
+
   if (equals(keyToValidate, 'name')) {
     const { name } = data;
     if (!name) {
@@ -53,6 +55,7 @@ export const validateParameter = (
   } else if (equals(keyToValidate, 'value')) {
     const { type, value } = data;
     if (value === '' || value === undefined) {
+      if (!required) return undefined;
       return intl.formatMessage({
         defaultMessage: 'Must provide value for parameter.',
         description: 'Error message when the workflow parameter value is empty.',
@@ -62,41 +65,86 @@ export const validateParameter = (
     const swaggerType = convertWorkflowParameterTypeToSwaggerType(type);
     let error = validateType(swaggerType, /* parameterFormat */ '', value);
 
-    if (!error) {
-      switch (swaggerType) {
-        case Constants.SWAGGER.TYPE.ARRAY:
-          // eslint-disable-next-line no-case-declarations
-          let isInvalid = false;
-          try {
-            isInvalid = value !== undefined && value !== '' ? !Array.isArray(JSON.parse(value)) : false;
-          } catch {
-            isInvalid = true;
-          }
+    if (error) return error;
 
-          error = isInvalid
-            ? intl.formatMessage({ defaultMessage: 'Enter a valid array.', description: 'Error validation message' })
-            : undefined;
-          break;
+    switch (swaggerType) {
+      case Constants.SWAGGER.TYPE.ARRAY:
+        console.log('### ARRAY');
+        // eslint-disable-next-line no-case-declarations
+        let isInvalid = false;
+        try {
+          isInvalid = !Array.isArray(JSON.parse(value));
+        } catch {
+          isInvalid = true;
+        }
 
-        case Constants.SWAGGER.TYPE.OBJECT:
-        case Constants.SWAGGER.TYPE.BOOLEAN:
-          try {
-            if (value !== undefined && value !== '') {
-              JSON.parse(value);
-            }
-          } catch {
-            error =
-              swaggerType === Constants.SWAGGER.TYPE.BOOLEAN
-                ? intl.formatMessage({ defaultMessage: 'Enter a valid boolean.', description: 'Error validation message' })
-                : intl.formatMessage({ defaultMessage: 'Enter a valid json.', description: 'Error validation message' });
-          }
-          break;
+        error = isInvalid
+          ? intl.formatMessage({ defaultMessage: 'Enter a valid array.', description: 'Error validation message' })
+          : undefined;
+        break;
 
-        default:
-          break;
-      }
+      case Constants.SWAGGER.TYPE.OBJECT:
+      case Constants.SWAGGER.TYPE.BOOLEAN:
+        try {
+          JSON.parse(value);
+        } catch {
+          error =
+            swaggerType === Constants.SWAGGER.TYPE.BOOLEAN
+              ? intl.formatMessage({ defaultMessage: 'Enter a valid boolean.', description: 'Error validation message' })
+              : intl.formatMessage({ defaultMessage: 'Enter a valid json.', description: 'Error validation message' });
+        }
+        break;
+
+      default:
+        break;
+    }
+    return error;
+  } else if (equals(keyToValidate, 'defaultValue')) {
+    const { type, defaultValue } = data;
+    if (defaultValue === '' || defaultValue === undefined) {
+      if (!required) return undefined;
+      return intl.formatMessage({
+        defaultMessage: 'Must provide default value for parameter.',
+        description: 'Error message when the workflow parameter value is empty.',
+      });
     }
 
+    const swaggerType = convertWorkflowParameterTypeToSwaggerType(type);
+    let error = validateType(swaggerType, /* parameterFormat */ '', defaultValue);
+
+    if (error) return error;
+
+    switch (swaggerType) {
+      case Constants.SWAGGER.TYPE.ARRAY:
+        console.log('### ARRAY');
+        // eslint-disable-next-line no-case-declarations
+        let isInvalid = false;
+        try {
+          isInvalid = !Array.isArray(JSON.parse(defaultValue));
+        } catch {
+          isInvalid = true;
+        }
+
+        error = isInvalid
+          ? intl.formatMessage({ defaultMessage: 'Enter a valid array.', description: 'Error validation message' })
+          : undefined;
+        break;
+
+      case Constants.SWAGGER.TYPE.OBJECT:
+      case Constants.SWAGGER.TYPE.BOOLEAN:
+        try {
+          JSON.parse(defaultValue);
+        } catch {
+          error =
+            swaggerType === Constants.SWAGGER.TYPE.BOOLEAN
+              ? intl.formatMessage({ defaultMessage: 'Enter a valid boolean.', description: 'Error validation message' })
+              : intl.formatMessage({ defaultMessage: 'Enter a valid json.', description: 'Error validation message' });
+        }
+        break;
+
+      default:
+        break;
+    }
     return error;
   }
 
@@ -123,14 +171,16 @@ export const workflowParametersSlice = createSlice({
     updateParameter: (state, action: PayloadAction<WorkflowParameterUpdateEvent>) => {
       const {
         id,
-        newDefinition: { name, type, value },
+        newDefinition: { name, type, value, defaultValue },
+        isConsumption = false,
       } = action.payload;
       const validationErrors = {
         name: validateParameter(id, { name }, 'name', state.definitions),
-        value: validateParameter(id, { name, type, value }, 'value', state.definitions),
+        value: validateParameter(id, { name, type, value, defaultValue }, 'value', state.definitions, isConsumption ? false : true),
+        defaultValue: validateParameter(id, { name, type, value, defaultValue }, 'defaultValue', state.definitions),
       };
 
-      state.definitions[id] = { ...state.definitions[id], type, value, name: name ?? '' };
+      state.definitions[id] = { ...state.definitions[id], type, value, name: name ?? '', defaultValue };
       state.validationErrors[id] = {
         ...state.validationErrors[id],
         ...validationErrors,
