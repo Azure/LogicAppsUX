@@ -196,18 +196,14 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
 const addConditionalToNewPathItems = (ifConnection: Connection, connections: ConnectionDictionary, newPath: OutputPathItem[]) => {
   const values = collectConditionalValues(ifConnection, connections);
 
-  let ifContents = values[0];
-  const latestLoopKey = findLast(newPath, (pathItem) => pathItem.key.startsWith(mapNodeParams.for))?.key;
-  if (latestLoopKey) {
-    // Need local variables for functions
-    const splitLoopKey = latestLoopKey.split(',');
-    const valueToTrim = splitLoopKey[0].substring(
-      mapNodeParams.for.length + 1,
-      splitLoopKey.length === 2 ? splitLoopKey[0].length : splitLoopKey[0].length - 1
-    );
-
-    ifContents = ifContents.replaceAll(`${valueToTrim}/`, '');
-  }
+  // Handle relative paths for (potentially nested) loops
+  let valueToTrim = '';
+  newPath.forEach((pathItem) => {
+    if (pathItem.key.startsWith(mapNodeParams.for)) {
+      valueToTrim += `${getSourceKeyOfLastLoop(pathItem.key)}/`;
+    }
+  });
+  const ifContents = values[0].replaceAll(valueToTrim, '');
 
   // If entry
   newPath.push({ key: `${mapNodeParams.if}(${ifContents})` });
