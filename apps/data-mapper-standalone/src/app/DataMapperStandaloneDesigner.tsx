@@ -6,6 +6,7 @@ import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark'
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
+import { PortalCompatProvider } from '@fluentui/react-portal-compat';
 import {
   DataMapDataProvider,
   DataMapperDesigner,
@@ -63,8 +64,12 @@ export const DataMapperStandaloneDesigner = () => {
       <div style={{ flex: '0 1 1px' }}>
         <FluentProvider theme={theme === 'Light' ? webLightTheme : webDarkTheme}>
           <ThemeProvider theme={theme === 'Light' ? AzureThemeLight : AzureThemeDark}>
-            <DevToolbox />
-            <DevApiTester />
+            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+            {/* @ts-ignore */}
+            <PortalCompatProvider>
+              <DevToolbox />
+              <DevApiTester />
+            </PortalCompatProvider>
           </ThemeProvider>
         </FluentProvider>
       </div>

@@ -39,6 +39,7 @@ export const DevToolbox = () => {
   const { inputResourcePath, outputResourcePath } = useSelector((state: RootState) => state.schemaDataLoader);
 
   const [isTooltipVisible, setIsTooltipVisible] = useState<boolean>(false);
+  // const [tooltipMountRef, setTooltipMountRef] = useState<HTMLElement | null>();
 
   const changeResourcePathCB = useCallback(
     (_: unknown, _newValue?: string) => {
@@ -222,6 +223,7 @@ export const DevToolbox = () => {
     <div style={{ marginBottom: '8px', backgroundColor: tokens.colorNeutralBackground2, padding: 4 }}>
       <Accordion defaultOpenItems={'1'} collapsible style={{ position: 'relative' }}>
         <Tooltip
+          // mountNode={tooltipMountRef}
           content="Example tooltip"
           relationship="label"
           positioning="below-start"
@@ -231,6 +233,7 @@ export const DevToolbox = () => {
           onVisibleChange={(_e, data) => setIsTooltipVisible(data.visible)}
         >
           <div
+            // ref={setTooltipMountRef}
             style={{
               position: 'absolute',
               top: 8,
