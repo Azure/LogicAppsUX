@@ -15,6 +15,7 @@ export interface WorkflowLoadingState {
   readOnly: boolean;
   monitoringView: boolean;
   darkMode: boolean;
+  consumption: boolean;
 }
 
 const initialState: WorkflowLoadingState = {
@@ -26,6 +27,7 @@ const initialState: WorkflowLoadingState = {
   readOnly: false,
   monitoringView: false,
   darkMode: false,
+  consumption: false,
 };
 
 type WorkflowPayload = {
@@ -147,6 +149,9 @@ export const workflowLoadingSlice = createSlice({
     setDarkMode: (state, action: PayloadAction<boolean>) => {
       state.darkMode = action.payload;
     },
+    setConsumption: (state, action: PayloadAction<boolean>) => {
+      state.consumption = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload | null>) => {
@@ -167,7 +172,7 @@ export const workflowLoadingSlice = createSlice({
   },
 });
 
-export const { changeArmToken, changeResourcePath, changeLoadingMethod, setReadOnly, setMonitoringView, setDarkMode } =
+export const { changeArmToken, changeResourcePath, changeLoadingMethod, setReadOnly, setMonitoringView, setDarkMode, setConsumption } =
   workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;

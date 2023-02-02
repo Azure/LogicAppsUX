@@ -1,6 +1,7 @@
 import { openAddSourceSchemaPanelView, openAddTargetSchemaPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { SchemaType } from '../../models';
+import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import CardOnHover from './card_onHover.svg';
 import CardOnHoverDark from './card_onHover_dark.svg';
 import CardOnRest from './card_onRest.svg';
@@ -79,6 +80,10 @@ export const SelectSchemaCard = ({ schemaType, style }: SelectSchemaCardProps) =
     } else {
       dispatch(openAddTargetSchemaPanelView());
     }
+
+    LogService.log(LogCategory.AddOrUpdateSchemaView, 'clickSchemaSelectionCard', {
+      message: `Clicked to add ${schemaType} schema`,
+    });
   };
 
   return (

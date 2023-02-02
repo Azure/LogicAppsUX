@@ -51,7 +51,8 @@ export const addNodeToWorkflow = (
   state.operations[newNodeId] = { ...state.operations[newNodeId], type: payload.operation.type };
   state.newlyAddedOperations[newNodeId] = newNodeId;
 
-  const shouldAddRunAfters = !isRoot;
+  const isAfterTrigger = nodesMetadata[parentId ?? '']?.isRoot && graphId === 'root';
+  const shouldAddRunAfters = !isRoot && !isAfterTrigger;
 
   // Parallel Branch creation, just add the singular node
   if (payload.isParallelBranch && parentId) {

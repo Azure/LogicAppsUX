@@ -1,16 +1,18 @@
+import { StringCategory20Regular } from '../../images/CategoryIcons';
 import { FunctionCategory } from '../../models/Function';
-import { iconBaseUrl, iconForFunctionCategory } from '../Icon.Utils';
+import { iconForFunctionCategory } from '../Icon.Utils';
+import { Wrench20Regular } from '@fluentui/react-icons';
 
 describe('icon utils', () => {
   describe('iconForFunctionCategory', () => {
-    it('returns correct icon url for given category', () => {
+    it('returns correct icon for given category', () => {
       const result = iconForFunctionCategory(FunctionCategory.String);
-      expect(result).toEqual(`${iconBaseUrl}dm_category_${FunctionCategory.String.toLowerCase()}.svg`);
+      expect(result).toEqual(StringCategory20Regular);
     });
 
-    it('returns correct icon url if category does not exist on frontend', () => {
+    it('returns default icon if category does not exist', () => {
       const result = iconForFunctionCategory('not real category' as FunctionCategory);
-      expect(result).toEqual(`${iconBaseUrl}dm_category_${FunctionCategory.Utility.toLowerCase()}.svg`);
+      expect(result).toEqual(Wrench20Regular);
     });
   });
 });

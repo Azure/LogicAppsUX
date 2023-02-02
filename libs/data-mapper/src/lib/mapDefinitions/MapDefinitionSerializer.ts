@@ -8,7 +8,13 @@ import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Sch
 import { NormalizedDataType, SchemaNodeProperty } from '../models/Schema';
 import { findLast } from '../utils/Array.Utils';
 import { collectTargetNodesForConnectionChain, flattenInputs, isConnectionUnit, isCustomValue } from '../utils/Connection.Utils';
-import { collectConditionalValues, collectFunctionValue, getInputValues, isValidToMakeMapDefinition } from '../utils/DataMap.Utils';
+import {
+  collectConditionalValues,
+  collectFunctionValue,
+  getInputValues,
+  getSourceKeyOfLastLoop,
+  isValidToMakeMapDefinition,
+} from '../utils/DataMap.Utils';
 import { formatDirectAccess, getIndexValueForCurrentConnection, isFunctionData } from '../utils/Function.Utils';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
 import { addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
@@ -145,15 +151,13 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
         const sourceNode = rootSourceNodes[0];
         if (sourceNode && isConnectionUnit(sourceNode)) {
           if (isFunctionData(sourceNode.node)) {
-            const latestLoopKey = findLast(newPath, (pathItem) => pathItem.key.startsWith(mapNodeParams.for))?.key;
-            if (latestLoopKey) {
-              // Need local variables for functions
-              const splitLoopKey = latestLoopKey.split(',');
-              const valueToTrim = splitLoopKey[0].substring(
-                mapNodeParams.for.length + 1,
-                splitLoopKey.length === 2 ? splitLoopKey[0].length : splitLoopKey[0].length - 1
-              );
+            const valueToTrim = newPath
+              .map((pathItem) => (pathItem.key.startsWith(mapNodeParams.for) ? getSourceKeyOfLastLoop(pathItem.key) : ''))
+              .filter((path) => path !== '')
+              .join('/');
 
+            if (valueToTrim) {
+              // Need local variables for functions
               if (value === valueToTrim) {
                 value = '';
               } else {
@@ -192,18 +196,14 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
 const addConditionalToNewPathItems = (ifConnection: Connection, connections: ConnectionDictionary, newPath: OutputPathItem[]) => {
   const values = collectConditionalValues(ifConnection, connections);
 
-  let ifContents = values[0];
-  const latestLoopKey = findLast(newPath, (pathItem) => pathItem.key.startsWith(mapNodeParams.for))?.key;
-  if (latestLoopKey) {
-    // Need local variables for functions
-    const splitLoopKey = latestLoopKey.split(',');
-    const valueToTrim = splitLoopKey[0].substring(
-      mapNodeParams.for.length + 1,
-      splitLoopKey.length === 2 ? splitLoopKey[0].length : splitLoopKey[0].length - 1
-    );
-
-    ifContents = ifContents.replaceAll(`${valueToTrim}/`, '');
-  }
+  // Handle relative paths for (potentially nested) loops
+  let valueToTrim = '';
+  newPath.forEach((pathItem) => {
+    if (pathItem.key.startsWith(mapNodeParams.for)) {
+      valueToTrim += `${getSourceKeyOfLastLoop(pathItem.key)}/`;
+    }
+  });
+  const ifContents = values[0].replaceAll(valueToTrim, '');
 
   // If entry
   newPath.push({ key: `${mapNodeParams.if}(${ifContents})` });

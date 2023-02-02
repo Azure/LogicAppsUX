@@ -1,7 +1,7 @@
 import { reactFlowFitViewOptions, ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import type { RootState } from '../../core/state/Store';
 import { SchemaType } from '../../models/';
-import { overviewTgtSchemaX, useOverviewLayout } from '../../utils/ReactFlow.Util';
+import { useOverviewLayout } from '../../utils/ReactFlow.Util';
 import { SchemaCard } from '../nodeCard/SchemaCard';
 import { SchemaNameBadge } from '../schemaSelection/SchemaNameBadge';
 import { SelectSchemaCard } from '../schemaSelection/SelectSchemaCard';
@@ -79,6 +79,21 @@ const OverviewReactFlowWrapper = () => {
 
   const schemaNodeTypes = useMemo(() => ({ [ReactFlowNodeType.SchemaNode]: SchemaCard }), []);
 
+  // Find first schema node (should be schemaTreeRoot) for source and target to use its xPos for schema name badge
+  const srcSchemaTreeRootXPos = useMemo(
+    () =>
+      reactFlowNodes.find((reactFlowNode) => reactFlowNode.data?.schemaType && reactFlowNode.data.schemaType === SchemaType.Source)
+        ?.position.x ?? 0,
+    [reactFlowNodes]
+  );
+
+  const tgtSchemaTreeRootXPos = useMemo(
+    () =>
+      reactFlowNodes.find((reactFlowNode) => reactFlowNode.data?.schemaType && reactFlowNode.data.schemaType === SchemaType.Target)
+        ?.position.x ?? 0,
+    [reactFlowNodes]
+  );
+
   return (
     <ReactFlow
       nodeTypes={schemaNodeTypes}
@@ -98,8 +113,8 @@ const OverviewReactFlowWrapper = () => {
         <SelectSchemaCard schemaType={SchemaType.Target} style={{ visibility: !targetSchema ? 'visible' : 'hidden' }} />
       </Stack>
 
-      {sourceSchema && <SchemaNameBadge schemaName={sourceSchema.name} />}
-      {targetSchema && <SchemaNameBadge schemaName={targetSchema.name} tgtSchemaTreeRootXPos={overviewTgtSchemaX} />}
+      {sourceSchema && <SchemaNameBadge schemaName={sourceSchema.name} schemaTreeRootXPos={srcSchemaTreeRootXPos} />}
+      {targetSchema && <SchemaNameBadge schemaName={targetSchema.name} schemaTreeRootXPos={tgtSchemaTreeRootXPos} />}
     </ReactFlow>
   );
 };

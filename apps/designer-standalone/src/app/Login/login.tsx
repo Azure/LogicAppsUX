@@ -43,6 +43,12 @@ const fileOptions = [
   { key: 'StressTest500Gross.json', text: '500 Nodes (Gross)' },
   { key: 'StressTest600.json', text: '600 Nodes' },
   { key: 'StressTest1000.json', text: '1000 Nodes' },
+
+  // Consumption Workflows
+  { key: 'divider_4', text: '-', itemType: DropdownMenuItemType.Divider },
+  { key: 'WorkflowParametersHeader', text: 'Workflow Parameters', itemType: DropdownMenuItemType.Header },
+  { key: 'StandardWorkflowParameters.json', text: 'Standard Workflow Parameters' },
+  { key: 'ConsumptionWorkflowParameters.json', text: 'Consumption Workflow Parameters' },
 ];
 
 export const Login: React.FC = () => {
