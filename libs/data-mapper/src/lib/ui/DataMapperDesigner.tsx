@@ -174,6 +174,10 @@ export const DataMapperDesigner = ({
             targetSchemaExtended: targetSchema,
           })
         );
+
+        LogService.log(LogCategory.DataMapperDesigner, 'onSaveClick', {
+          message: 'Successfully saved map definition and generated xslt',
+        });
       })
       .catch((error: Error) => {
         LogService.error(LogCategory.DataMapperDesigner, 'onSaveClick', {
@@ -212,8 +216,20 @@ export const DataMapperDesigner = ({
     dispatch(redoDataMapOperation());
   };
 
-  const onTestClick = () => {
-    setIsTestMapPanelOpen(true);
+  const setTestMapPanelOpen = (toOpen: boolean) => {
+    setIsTestMapPanelOpen(toOpen);
+
+    LogService.log(LogCategory.TestMapPanel, 'openOrCloseTestMapPanel', {
+      message: `${toOpen ? 'Opened' : 'Closed'} test map panel`,
+    });
+  };
+
+  const setCodeViewOpen = (toOpen: boolean) => {
+    setIsCodeViewOpen(toOpen);
+
+    LogService.log(LogCategory.CodeView, 'openOrCloseCodeView', {
+      message: `${toOpen ? 'Opened' : 'Closed'} code view`,
+    });
   };
 
   const getCanvasAreaAndPropPaneMargin = () => {
@@ -245,11 +261,16 @@ export const DataMapperDesigner = ({
   return (
     <DndProvider backend={HTML5Backend}>
       <div className={styles.dataMapperShell}>
-        <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} onTestClick={onTestClick} />
+        <EditorCommandBar
+          onSaveClick={onSaveClick}
+          onUndoClick={onUndoClick}
+          onRedoClick={onRedoClick}
+          onTestClick={() => setTestMapPanelOpen(true)}
+        />
 
         <div id="editorView" style={{ display: 'flex', flex: '1 1 1px' }}>
           <div id="centerViewWithBreadcrumb" style={{ display: 'flex', flexDirection: 'column', flex: '1 1 1px' }}>
-            <EditorBreadcrumb isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />
+            <EditorBreadcrumb isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setCodeViewOpen} />
 
             <div id={centerViewId} style={{ minHeight: 400, flex: '1 1 1px' }}>
               <div
@@ -285,7 +306,7 @@ export const DataMapperDesigner = ({
                   <CodeView
                     dataMapDefinition={dataMapDefinition}
                     isCodeViewOpen={isCodeViewOpen}
-                    setIsCodeViewOpen={setIsCodeViewOpen}
+                    setIsCodeViewOpen={setCodeViewOpen}
                     canvasAreaHeight={getCanvasAreaHeight()}
                   />
                 </Stack>
@@ -314,7 +335,7 @@ export const DataMapperDesigner = ({
           setFunctionDisplayExpanded={setFunctionDisplayExpanded}
           useExpandedFunctionCards={useExpandedFunctionCards}
         />
-        <TestMapPanel isOpen={isTestMapPanelOpen} onClose={() => setIsTestMapPanelOpen(false)} />
+        <TestMapPanel isOpen={isTestMapPanelOpen} onClose={() => setTestMapPanelOpen(false)} />
       </div>
     </DndProvider>
   );

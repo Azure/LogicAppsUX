@@ -2,6 +2,7 @@ import { setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
 import { NormalizedDataType } from '../../models';
+import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
 import { useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';
 import type { NodeToggledStateDictionary } from '../tree/TargetSchemaTreeItem';
@@ -64,6 +65,14 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
     defaultMessage: 'Expand/collapse target schema',
     description: 'Expand/collapse target schema',
   });
+
+  const setTargetSchemaPaneToExpanded = (toExpanded: boolean) => {
+    setIsExpanded(toExpanded);
+
+    LogService.log(LogCategory.TargetSchemaPane, 'expandOrCollapseTargetSchemaPane', {
+      message: `${toExpanded ? 'Opened' : 'Closed'} target schema pane`,
+    });
+  };
 
   const onTargetSchemaItemClick = (schemaNode: SchemaNodeExtended) => {
     // If click schema name, return to Overview
@@ -158,7 +167,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
           size="medium"
           appearance="transparent"
           style={{ color: !targetSchema ? tokens.colorNeutralForegroundDisabled : tokens.colorNeutralForeground2 }}
-          onClick={() => setIsExpanded(!isExpanded)}
+          onClick={() => setTargetSchemaPaneToExpanded(!isExpanded)}
           disabled={!targetSchema}
           aria-label={targetSchemaExpandCollapseLoc}
         />
