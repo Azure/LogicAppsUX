@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/parsers-logic-apps",
-  "version": "0.2.63",
+  "version": "0.2.64",
   "scripts": {
     "yalcpush": "yalc push ../../dist/libs/parsers"
   }
