@@ -41,8 +41,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { NodeProps } from 'reactflow';
 import { Position } from 'reactflow';
 
-const contentBtnWidth = schemaNodeCardDefaultWidth - 30;
-
 const useStyles = makeStyles({
   container: {
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
@@ -83,7 +81,6 @@ const useStyles = makeStyles({
   },
   contentButton: {
     height: '48px',
-    width: `${contentBtnWidth}px`,
     ...shorthands.border('0px'),
     ...shorthands.padding('0px'),
     marginRight: '0px',
@@ -304,7 +301,13 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
         />
         {!isInputValid && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge} />}
         {connectionStatusIcon && <span style={{ position: 'absolute', right: -16, top: 0 }}>{connectionStatusIcon}</span>}
-        <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
+        <Button
+          disabled={!!disabled}
+          onClick={onClick}
+          appearance={'transparent'}
+          className={classes.contentButton}
+          style={{ paddingRight: isSourceSchemaNode ? '10px' : '0px' }}
+        >
           <span className={classes.cardIcon}>
             <BundledTypeIcon />
           </span>
@@ -315,11 +318,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
             visible={shouldNameTooltipDisplay && isTooltipEnabled}
             onVisibleChange={(_ev, data) => setIsTooltipEnabled(data.visible)}
           >
-            <div
-              ref={schemaNameTextRef}
-              className={classes.cardText}
-              style={{ width: !isSourceSchemaNode ? `${contentBtnWidth}px` : '136px' }}
-            >
+            <div ref={schemaNameTextRef} className={classes.cardText} style={{ width: `${cardWidth - 30}px` }}>
               {schemaNode.name}
             </div>
           </Tooltip>
@@ -335,7 +334,6 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
           />
         )}
         {
-          // danielle maybe show blank menu for target node? Kinda odd that the regular right-click loads
           <CardContextMenu
             title={'remove'}
             contextMenuLocation={contextMenu.location}
