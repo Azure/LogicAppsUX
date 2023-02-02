@@ -73,7 +73,7 @@ export const loadRun = createAsyncThunk('runLoadingState/loadRun', async (_: voi
     const runInstance = await import(`../../../../__mocks__/runs/${currentState.workflowLoader.resourcePath}`);
     return { runInstance: runInstance as LogicAppsV2.RunInstanceDefinition } as RunPayload;
   } catch {
-    return null;
+    return thunkAPI.rejectWithValue(null);
   }
 });
 
