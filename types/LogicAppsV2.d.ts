@@ -1023,7 +1023,7 @@ declare namespace LogicAppsV2 {
     correlation: {
       clientTrackingId: string;
     };
-    actions: Array<WorkflowRunAction>;
+    actions: Record<string, WorkflowRunAction>;
     trigger: WorkflowRunTrigger;
     workflow: {
       id: string;

@@ -25,7 +25,10 @@ export type DeserializedWorkflow = {
   nodesMetadata: NodesMetadata;
 };
 
-export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition, runInstance: any): DeserializedWorkflow => {
+export const Deserialize = (
+  definition: LogicAppsV2.WorkflowDefinition,
+  runInstance: LogicAppsV2.RunInstanceDefinition | null
+): DeserializedWorkflow => {
   throwIfMultipleTriggers(definition);
 
   //process Trigger
@@ -331,9 +334,9 @@ const throwIfMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition) => 
   }
 };
 
-const addTriggerInstanceMetaData = (runInstance: any) => {
-  if (!isNullOrEmpty(runInstance)) {
-    const { trigger: runInstanceTrigger = {} } = runInstance.properties;
+const addTriggerInstanceMetaData = (runInstance: LogicAppsV2.RunInstanceDefinition | null) => {
+  if (!isNullOrUndefined(runInstance)) {
+    const { trigger: runInstanceTrigger } = runInstance.properties;
     return {
       runData: {
         ...runInstanceTrigger,
@@ -347,9 +350,9 @@ const addTriggerInstanceMetaData = (runInstance: any) => {
   return {};
 };
 
-const addActionsInstanceMetaData = (nodesMetadata: NodesMetadata, runInstance: any): NodesMetadata => {
-  if (!isNullOrEmpty(runInstance)) {
-    const { actions: runInstanceActions = {} } = runInstance.properties;
+const addActionsInstanceMetaData = (nodesMetadata: NodesMetadata, runInstance: LogicAppsV2.RunInstanceDefinition | null): NodesMetadata => {
+  if (!isNullOrUndefined(runInstance)) {
+    const { actions: runInstanceActions } = runInstance.properties;
     const updatedNodesData = { ...nodesMetadata };
 
     Object.entries(updatedNodesData).forEach(([key, node]) => {

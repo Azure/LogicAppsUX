@@ -11,10 +11,10 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const initializeGraphState = createAsyncThunk<
   DeserializedWorkflow,
-  { workflowDefinition: Workflow; runInstance: any },
+  { workflowDefinition: Workflow; runInstance: LogicAppsV2.RunInstanceDefinition | null },
   { state: RootState }
 >('parser/deserialize', async (graphState: { workflowDefinition: Workflow; runInstance: any }, thunkAPI): Promise<DeserializedWorkflow> => {
-  const { workflowDefinition, runInstance = {} } = graphState;
+  const { workflowDefinition, runInstance } = graphState;
   const { workflow } = thunkAPI.getState() as RootState;
   const spec = workflow.workflowSpec;
 
