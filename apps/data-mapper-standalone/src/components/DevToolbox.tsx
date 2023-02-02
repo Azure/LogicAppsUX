@@ -4,8 +4,8 @@ import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../st
 import type { AppDispatch, RootState } from '../state/Store';
 import type { IDropdownOption } from '@fluentui/react';
 import { Checkbox, Dropdown, Stack, StackItem, TextField } from '@fluentui/react';
-import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, tokens } from '@fluentui/react-components';
-import { useCallback, useMemo } from 'react';
+import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Tooltip, tokens } from '@fluentui/react-components';
+import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const themeOptions = ['Light', 'Dark'];
@@ -33,19 +33,12 @@ const mapDefinitionDropdownOptions: MapDefDropdownOption[] = [
 ];
 
 export const DevToolbox = () => {
-  const { theme, rawDefinition, armToken, loadingMethod, xsltFilename } = useSelector((state: RootState) => {
-    const { theme, rawDefinition, armToken, loadingMethod, xsltFilename } = state.dataMapDataLoader;
-
-    return { theme, rawDefinition, armToken, loadingMethod, xsltFilename };
-  });
-
-  const { inputResourcePath, outputResourcePath } = useSelector((state: RootState) => {
-    const { inputResourcePath, outputResourcePath } = state.schemaDataLoader;
-
-    return { inputResourcePath, outputResourcePath };
-  });
-
   const dispatch = useDispatch<AppDispatch>();
+
+  const { theme, rawDefinition, armToken, loadingMethod, xsltFilename } = useSelector((state: RootState) => state.dataMapDataLoader);
+  const { inputResourcePath, outputResourcePath } = useSelector((state: RootState) => state.schemaDataLoader);
+
+  const [isTooltipVisible, setIsTooltipVisible] = useState<boolean>(false);
 
   const changeResourcePathCB = useCallback(
     (_: unknown, _newValue?: string) => {
@@ -227,7 +220,35 @@ export const DevToolbox = () => {
 
   return (
     <div style={{ marginBottom: '8px', backgroundColor: tokens.colorNeutralBackground2, padding: 4 }}>
-      <Accordion defaultOpenItems={'1'} collapsible>
+      <Accordion defaultOpenItems={'1'} collapsible style={{ position: 'relative' }}>
+        <Tooltip
+          content="Example tooltip"
+          relationship="label"
+          positioning="below-start"
+          withArrow
+          showDelay={100}
+          hideDelay={500}
+          onVisibleChange={(_e, data) => setIsTooltipVisible(data.visible)}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              top: 8,
+              right: 12,
+              padding: 4,
+              backgroundColor: tokens.colorNeutralBackground4,
+              borderRadius: tokens.borderRadiusMedium,
+              zIndex: 10,
+              cursor: 'pointer',
+            }}
+          >
+            <span role="img" aria-label="Clippy!" style={{ fontSize: 20 }}>
+              📎
+            </span>{' '}
+            Tooltip tester! It&apos;s {isTooltipVisible ? 'visible' : 'hidden'}
+          </div>
+        </Tooltip>
+
         <AccordionItem value="1">
           <AccordionHeader>Dev Toolbox</AccordionHeader>
           <AccordionPanel>

@@ -2,6 +2,9 @@ import { DevApiTester } from '../components/DevApiTester';
 import { DevToolbox } from '../components/DevToolbox';
 import { dataMapDataLoaderSlice } from '../state/DataMapDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
+import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
+import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
+import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import {
   DataMapDataProvider,
@@ -59,8 +62,10 @@ export const DataMapperStandaloneDesigner = () => {
     <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
       <div style={{ flex: '0 1 1px' }}>
         <FluentProvider theme={theme === 'Light' ? webLightTheme : webDarkTheme}>
-          <DevToolbox />
-          <DevApiTester />
+          <ThemeProvider theme={theme === 'Light' ? AzureThemeLight : AzureThemeDark}>
+            <DevToolbox />
+            <DevApiTester />
+          </ThemeProvider>
         </FluentProvider>
       </div>
 
