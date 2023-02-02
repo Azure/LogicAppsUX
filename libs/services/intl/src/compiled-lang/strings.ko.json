@@ -3324,12 +3324,6 @@
       "value": "Add or replace your schemas."
     }
   ],
-  "TZv5JE": [
-    {
-      "type": 0,
-      "value": "이름"
-    }
-  ],
   "Tayrub": [
     {
       "type": 0,
@@ -3662,6 +3656,12 @@
     {
       "type": 0,
       "value": "테넌트"
+    }
+  ],
+  "X7X5ew": [
+    {
+      "type": 0,
+      "value": "Parameters"
     }
   ],
   "X8JjjT": [
@@ -4246,12 +4246,6 @@
     {
       "type": 0,
       "value": "ID를 선택하세요."
-    }
-  ],
-  "ci6ex1": [
-    {
-      "type": 0,
-      "value": "값"
     }
   ],
   "cj+kyo": [
@@ -5013,6 +5007,12 @@
       "value": "필수 사항으로, base64로 인코딩된 문자열입니다."
     }
   ],
+  "k1N9Si": [
+    {
+      "type": 0,
+      "value": "Must provide default value for parameter."
+    }
+  ],
   "k41+13": [
     {
       "type": 0,
@@ -5175,12 +5175,6 @@
       "value": "Functions"
     }
   ],
-  "lV77P8": [
-    {
-      "type": 0,
-      "value": "제목"
-    }
-  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -5241,6 +5235,12 @@
     {
       "type": 1,
       "value": "property"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "실제 값"
     }
   ],
   "m7Y6Qf": [
@@ -5429,6 +5429,12 @@
       "value": "19"
     }
   ],
+  "ny75Ly": [
+    {
+      "type": 0,
+      "value": "Enter default value for parameter."
+    }
+  ],
   "o/0SEj": [
     {
       "type": 0,
@@ -5573,12 +5579,6 @@
     {
       "type": 0,
       "value": "필수 사항으로, 배열로 결합할 값입니다."
-    }
-  ],
-  "pRUJff": [
-    {
-      "type": 0,
-      "value": "매개 변수"
     }
   ],
   "pUeUDw": [
@@ -6200,6 +6200,12 @@
     {
       "type": 0,
       "value": "4"
+    }
+  ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "기본값"
     }
   ],
   "uzsleE": [

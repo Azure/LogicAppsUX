@@ -3479,12 +3479,6 @@
       "value": "Add or replace your schemas."
     }
   ],
-  "TZv5JE": [
-    {
-      "type": 0,
-      "value": "Namn"
-    }
-  ],
   "Tayrub": [
     {
       "type": 0,
@@ -3817,6 +3811,12 @@
     {
       "type": 0,
       "value": "Klientorganisation"
+    }
+  ],
+  "X7X5ew": [
+    {
+      "type": 0,
+      "value": "Parameters"
     }
   ],
   "X8JjjT": [
@@ -4413,12 +4413,6 @@
     {
       "type": 0,
       "value": "Välj en identitet"
-    }
-  ],
-  "ci6ex1": [
-    {
-      "type": 0,
-      "value": "Värde"
     }
   ],
   "cj+kyo": [
@@ -5219,6 +5213,12 @@
       "value": "Krävs. Den base64-kodade strängen."
     }
   ],
+  "k1N9Si": [
+    {
+      "type": 0,
+      "value": "Must provide default value for parameter."
+    }
+  ],
   "k41+13": [
     {
       "type": 0,
@@ -5381,12 +5381,6 @@
       "value": "Functions"
     }
   ],
-  "lV77P8": [
-    {
-      "type": 0,
-      "value": "Rubrik"
-    }
-  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -5447,6 +5441,12 @@
     {
       "type": 1,
       "value": "property"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "Faktiskt värde"
     }
   ],
   "m7Y6Qf": [
@@ -5635,6 +5635,12 @@
       "value": "19"
     }
   ],
+  "ny75Ly": [
+    {
+      "type": 0,
+      "value": "Enter default value for parameter."
+    }
+  ],
   "o/0SEj": [
     {
       "type": 0,
@@ -5783,12 +5789,6 @@
     {
       "type": 0,
       "value": "Krävs. Värdena att kombinera till en matris."
-    }
-  ],
-  "pRUJff": [
-    {
-      "type": 0,
-      "value": "Parametrar"
     }
   ],
   "pUeUDw": [
@@ -6437,6 +6437,12 @@
     {
       "type": 0,
       "value": "4"
+    }
+  ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "Standardvärde"
     }
   ],
   "uzsleE": [
