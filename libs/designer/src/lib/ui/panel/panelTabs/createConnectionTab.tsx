@@ -6,7 +6,7 @@ import { useConnectorByNodeId, useGateways, useSubscriptions } from '../../../co
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useOperationInfo, useOperationManifest } from '../../../core/state/selectors/actionMetadataSelector';
-import { getAssistedConnectionProps } from '../../../core/utils/connectors/connections';
+import { getAssistedConnectionProps, getConnectionParametersForAzureConnection } from '../../../core/utils/connectors/connections';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/designer-client-services-logic-apps';
 import { LogEntryLevel, LoggerService, ConnectionService } from '@microsoft/designer-client-services-logic-apps';
@@ -45,7 +45,10 @@ const CreateConnectionTab = () => {
     [connector?.id, dispatch, nodeId]
   );
 
-  const assistedConnectionProps = useMemo(() => (connector ? getAssistedConnectionProps(connector) : undefined), [connector]);
+  const assistedConnectionProps = useMemo(
+    () => (connector ? getAssistedConnectionProps(connector, operationManifest) : undefined),
+    [connector, operationManifest]
+  );
 
   const [selectedResourceId, setSelectedResourceId] = useState<string>('');
   const [selectedSubResource, setSelectedSubResource] = useState<any | undefined>();
@@ -95,21 +98,13 @@ const CreateConnectionTab = () => {
       }
 
       try {
-        // Assign azure function as parameters
-        if (assistedConnectionProps && assistedConnectionProps?.resourceType === 'functionApps') {
-          const authCodeValue = await ConnectionService().fetchFunctionKey(selectedSubResource?.id);
-          const triggerUrl = selectedSubResource?.properties?.invoke_url_template;
-          const functionAsParameters = {
-            function: { id: selectedSubResource?.id },
-            triggerUrl,
-            authentication: {
-              type: 'QueryString',
-              name: 'Code',
-              value: authCodeValue,
-            },
-          };
-
-          outputParameterValues = { ...outputParameterValues, ...functionAsParameters };
+        // Assign connection parameters from resource selector experience
+        if (assistedConnectionProps) {
+          const assistedParams = await getConnectionParametersForAzureConnection(
+            operationManifest?.properties.connection?.type,
+            selectedSubResource
+          );
+          outputParameterValues = { ...outputParameterValues, ...assistedParams };
         }
 
         const connectionParameterSetValues: ConnectionParameterSetValues = {
@@ -169,8 +164,8 @@ const CreateConnectionTab = () => {
       connectionMetadata,
       connector,
       dispatch,
-      selectedSubResource?.id,
-      selectedSubResource?.properties?.invoke_url_template,
+      operationManifest?.properties.connection?.type,
+      selectedSubResource,
     ]
   );
 

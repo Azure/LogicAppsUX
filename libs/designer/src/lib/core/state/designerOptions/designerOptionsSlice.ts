@@ -10,6 +10,7 @@ import {
   InitSearchService,
   InitOAuthService,
   InitWorkflowService,
+  InitApiManagementService,
 } from '@microsoft/designer-client-services-logic-apps';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -33,6 +34,7 @@ export const initializeServices = createAsyncThunk(
     gatewayService,
     loggerService,
     workflowService,
+    apimService,
   }: ServiceOptions) => {
     const loggerServices: ILoggerService[] = [];
     if (loggerService) {
@@ -54,6 +56,10 @@ export const initializeServices = createAsyncThunk(
 
     if (gatewayService) {
       InitGatewayService(gatewayService);
+    }
+
+    if (apimService) {
+      InitApiManagementService(apimService);
     }
 
     return true;

@@ -11,6 +11,7 @@ export interface AssistedConnectionProps {
     getColumns: (resource: any) => string[];
     getResourcesCallback: getResourceCallback;
     resourcesLoadingText: string;
+    getSubResourceName?: (subResource: any) => string;
     fetchSubResourcesCallback?: getResourceCallback;
 }
 
@@ -23,7 +24,20 @@ export interface ResourceSelectorProps extends AssistedConnectionProps {
 }
 
 export const ResourceSelector = (props: ResourceSelectorProps) => {
-  const { resourceType, subResourceType, title, headers, getResourcesCallback, resourcesLoadingText, getColumns, selectedResourceId, onResourceSelect, onSubResourceSelect, fetchSubResourcesCallback } = props;
+  const {
+    resourceType,
+    subResourceType,
+    title,
+    headers,
+    getResourcesCallback,
+    resourcesLoadingText,
+    getColumns,
+    selectedResourceId,
+    onResourceSelect,
+    getSubResourceName,
+    onSubResourceSelect,
+    fetchSubResourcesCallback
+} = props;
 
   const itemsQuery = useQuery([resourceType], async () => getResourcesCallback() ?? [], {
     enabled: true,
@@ -59,6 +73,7 @@ export const ResourceSelector = (props: ResourceSelectorProps) => {
                             resource={resource}
                             getColumns={getColumns}
                             onResourceSelect={onResourceSelect}
+                            getSubResourceName={getSubResourceName}
                             onSubResourceSelect={onSubResourceSelect}
                             fetchSubResourcesCallback={fetchSubResourcesCallback}
                         />
@@ -80,19 +95,29 @@ interface ResourceEntryProps {
     getColumns: (resource: any) => string[];
     onResourceSelect: (resourceId: string) => void;
     subResourceType: string;
+    getSubResourceName?: (subResource: any) => string;
     onSubResourceSelect?: (subResource: any) => void;
     fetchSubResourcesCallback?: getResourceCallback;
     subResourceLoadingText?: string;
 }
 
 export const ResourceEntry = (props: ResourceEntryProps) => {
-const { subResourceType: id, resource, getColumns, onResourceSelect, onSubResourceSelect, fetchSubResourcesCallback, subResourceLoadingText } = props;
+const {
+    subResourceType: id,
+    resource,
+    getColumns,
+    onResourceSelect,
+    getSubResourceName,
+    onSubResourceSelect,
+    fetchSubResourcesCallback,
+    subResourceLoadingText
+} = props;
 
 const intl = useIntl();
 const hasSubResources = !!onSubResourceSelect || !!fetchSubResourcesCallback;
 
 const subResourcsQuery = useQuery([id, resource.id], async () => fetchSubResourcesCallback?.(resource.id) ?? [], {
-    enabled: hasSubResources,
+    enabled: resource.selected && hasSubResources,
     staleTime: 1000 * 60 * 60 * 24,
 });
 
@@ -122,9 +147,9 @@ return (
                 <Text style={{ margin: '16px', textAlign: 'center' }}>{noSubResourceText}</Text>
             ) : (
                 <ChoiceGroup
-                options={(subResourcsQuery?.data as any[]?? []).map((func) => ({ key: func?.id, text: func?.name.split('/')[1], data: func }))}
-                onChange={(_e: any, f: any) => onSubResourceSelect?.(f.data as any)}
-                selectedKey={selectedFunctionId}
+                    options={(subResourcsQuery?.data as any[]?? []).map((sub) => ({ key: sub?.id, text: getSubResourceName?.(sub) ?? '', data: sub }))}
+                    onChange={(_e: any, f: any) => onSubResourceSelect?.(f.data as any)}
+                    selectedKey={selectedFunctionId}
                 />
             )}
             </>
