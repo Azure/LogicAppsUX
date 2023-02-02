@@ -14,7 +14,6 @@ import {
   isNullOrEmpty,
   isNullOrUndefined,
 } from '@microsoft/utils-logic-apps';
-import { current } from 'immer';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
   return definition && definition.triggers ? Object.keys(definition.triggers).length > 1 : false;
@@ -37,7 +36,11 @@ export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition, runInsta
     const [[tID, trigger]] = Object.entries(definition.triggers);
     triggerNode = createWorkflowNode(tID);
     allActions[tID] = { ...trigger };
-    nodesMetadata[tID] = { graphId: 'root', isRoot: true };
+    nodesMetadata[tID] = {
+      graphId: 'root',
+      isRoot: true,
+      ...addTriggerInstanceMetaData(runInstance),
+    };
   }
 
   const children = [];
@@ -60,7 +63,7 @@ export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition, runInsta
   allActions = { ...allActions, ...actions };
   nodesMetadata = { ...nodesMetadata, ...actionNodesMetadata };
 
-  nodesMetadata = addRunInstanceMetaData(nodesMetadata, runInstance);
+  nodesMetadata = addActionsInstanceMetaData(nodesMetadata, runInstance);
 
   const graph: WorkflowNode = {
     id: 'root',
@@ -328,26 +331,41 @@ const throwIfMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition) => 
   }
 };
 
-const addRunInstanceMetaData = (nodesMetadata: NodesMetadata, runInstance: any): NodesMetadata => {
+const addTriggerInstanceMetaData = (runInstance: any) => {
   if (!isNullOrEmpty(runInstance)) {
-    const { trigger: runInstanceTrigger = {}, actions: runInstanceActions = {} } = runInstance.properties;
+    const { trigger: runInstanceTrigger = {} } = runInstance.properties;
+    return {
+      runData: {
+        ...runInstanceTrigger,
+        duration: getDurationStringPanelMode(
+          Date.parse(runInstanceTrigger.endTime) - Date.parse(runInstanceTrigger.startTime),
+          /* abbreviated */ true
+        ),
+      },
+    };
+  }
+  return {};
+};
 
+const addActionsInstanceMetaData = (nodesMetadata: NodesMetadata, runInstance: any): NodesMetadata => {
+  if (!isNullOrEmpty(runInstance)) {
+    const { actions: runInstanceActions = {} } = runInstance.properties;
     const updatedNodesData = { ...nodesMetadata };
 
     Object.entries(updatedNodesData).forEach(([key, node]) => {
-      let nodeRunData;
-      if (node.isRoot) {
-        nodeRunData = runInstanceTrigger;
-      } else {
-        nodeRunData = runInstanceActions[key];
+      const nodeRunData = runInstanceActions[key];
+      if (!isNullOrUndefined(nodeRunData)) {
+        updatedNodesData[key] = {
+          ...node,
+          runData: {
+            ...nodeRunData,
+            duration: getDurationStringPanelMode(
+              Date.parse(nodeRunData.endTime) - Date.parse(nodeRunData.startTime),
+              /* abbreviated */ true
+            ),
+          },
+        };
       }
-      updatedNodesData[key] = {
-        ...node,
-        runData: {
-          ...nodeRunData,
-          duration: getDurationStringPanelMode(Date.parse(nodeRunData.endTime) - Date.parse(nodeRunData.startTime), /* abbreviated */ true),
-        },
-      };
     });
 
     return updatedNodesData;
