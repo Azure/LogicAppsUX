@@ -3,7 +3,7 @@ import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useBrandColor } from '../../../../core/state/selectors/actionMetadataSelector';
 import { useNodeMetadata } from '../../../../core/state/workflow/workflowSelectors';
 import { PropertiesPanel } from './propertiesPanel';
-import { ValuesPanel } from '@microsoft/designer-ui';
+import { ErrorSection, ValuesPanel } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 
@@ -43,6 +43,7 @@ export const MonitoringPanel: React.FC = () => {
 
   return (
     <div>
+      <ErrorSection className="msla-request-history-panel-error" error={runMetaData?.error} />
       {runMetaData?.inputsLink ? (
         <ValuesPanel
           brandColor={brandColor}
