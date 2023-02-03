@@ -62,16 +62,16 @@ export const DataMapperStandaloneDesigner = () => {
   return (
     <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
       <div style={{ flex: '0 1 1px' }}>
-        <FluentProvider theme={theme === 'Light' ? webLightTheme : webDarkTheme}>
-          <ThemeProvider theme={theme === 'Light' ? AzureThemeLight : AzureThemeDark}>
+        <ThemeProvider theme={theme === 'Light' ? AzureThemeLight : AzureThemeDark}>
+          <FluentProvider theme={theme === 'Light' ? webLightTheme : webDarkTheme}>
             {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
             {/* @ts-ignore */}
             <PortalCompatProvider>
               <DevToolbox />
               <DevApiTester />
             </PortalCompatProvider>
-          </ThemeProvider>
-        </FluentProvider>
+          </FluentProvider>
+        </ThemeProvider>
       </div>
 
       <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
