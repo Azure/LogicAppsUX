@@ -1,16 +1,12 @@
 import constants from '../../../common/constants';
 import type { AppDispatch, RootState } from '../../../core';
-import {
-  getConnectionMetadata,
-  isAzureFunctionConnection,
-  needsOAuth,
-  updateNodeConnection,
-} from '../../../core/actions/bjsworkflow/connections';
+import { getConnectionMetadata, needsOAuth, updateNodeConnection } from '../../../core/actions/bjsworkflow/connections';
 import { getUniqueConnectionName } from '../../../core/queries/connections';
 import { useConnectorByNodeId, useGateways, useSubscriptions } from '../../../core/state/connection/connectionSelector';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useOperationInfo, useOperationManifest } from '../../../core/state/selectors/actionMetadataSelector';
+import { getAssistedConnectionProps, getConnectionParametersForAzureConnection } from '../../../core/utils/connectors/connections';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/designer-client-services-logic-apps';
 import { LogEntryLevel, LoggerService, ConnectionService } from '@microsoft/designer-client-services-logic-apps';
@@ -19,7 +15,6 @@ import type { PanelTab } from '@microsoft/designer-ui';
 import type { Connection, ConnectionParameterSet, ConnectionParameterSetValues } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 const CreateConnectionTab = () => {
@@ -50,24 +45,32 @@ const CreateConnectionTab = () => {
     [connector?.id, dispatch, nodeId]
   );
 
-  const needsAzureFunction = useMemo(() => (connector ? isAzureFunctionConnection(connector) : false), [connector]);
+  const assistedConnectionProps = useMemo(
+    () => (connector ? getAssistedConnectionProps(connector, operationManifest) : undefined),
+    [connector, operationManifest]
+  );
 
-  const functionAppsQuery = useQuery(['functionApps'], async () => ConnectionService().fetchFunctionApps() ?? [], {
-    enabled: needsAzureFunction,
-    staleTime: 1000 * 60 * 60 * 24,
-  });
+  const [selectedResourceId, setSelectedResourceId] = useState<string>('');
+  const [selectedSubResource, setSelectedSubResource] = useState<any | undefined>();
 
-  const [appId, setAppId] = useState<string | undefined>();
-  const [selectedAzureFunction, setSelectedAzureFunction] = useState<any | undefined>();
-
-  const selectAppCallback = useCallback((appId: string) => {
-    setAppId(appId);
-    setSelectedAzureFunction(undefined);
+  const selectResourceCallback = useCallback((resourceId: string) => {
+    setSelectedResourceId(resourceId);
+    setSelectedSubResource(undefined);
   }, []);
 
-  const selectFunctionCallback = useCallback((appFunction: any) => {
-    setSelectedAzureFunction(appFunction);
+  const selectSubResourceCallback = useCallback((subResource: any) => {
+    setSelectedSubResource(subResource);
   }, []);
+
+  const resourceSelectorProps = assistedConnectionProps
+    ? {
+        ...assistedConnectionProps,
+        selectedResourceId,
+        onResourceSelect: selectResourceCallback,
+        selectedSubResource,
+        onSubResourceSelect: selectSubResourceCallback,
+      }
+    : undefined;
 
   const createConnectionCallback = useCallback(
     async (
@@ -95,21 +98,13 @@ const CreateConnectionTab = () => {
       }
 
       try {
-        // Assign azure function as parameters
-        if (needsAzureFunction && selectedAzureFunction) {
-          const authCodeValue = await ConnectionService().fetchFunctionKey(selectedAzureFunction?.id);
-          const triggerUrl = selectedAzureFunction?.properties?.invoke_url_template;
-          const functionAsParameters = {
-            function: { id: selectedAzureFunction?.id },
-            triggerUrl,
-            authentication: {
-              type: 'QueryString',
-              name: 'Code',
-              value: authCodeValue,
-            },
-          };
-
-          outputParameterValues = { ...outputParameterValues, ...functionAsParameters };
+        // Assign connection parameters from resource selector experience
+        if (assistedConnectionProps) {
+          const assistedParams = await getConnectionParametersForAzureConnection(
+            operationManifest?.properties.connection?.type,
+            selectedSubResource
+          );
+          outputParameterValues = { ...outputParameterValues, ...assistedParams };
         }
 
         const connectionParameterSetValues: ConnectionParameterSetValues = {
@@ -163,7 +158,15 @@ const CreateConnectionTab = () => {
       }
       setIsLoading(false);
     },
-    [applyNewConnection, connectionMetadata, connector, dispatch, needsAzureFunction, selectedAzureFunction]
+    [
+      applyNewConnection,
+      assistedConnectionProps,
+      connectionMetadata,
+      connector,
+      dispatch,
+      operationManifest?.properties.connection?.type,
+      selectedSubResource,
+    ]
   );
 
   const cancelCallback = useCallback(() => {
@@ -199,13 +202,7 @@ const CreateConnectionTab = () => {
       availableSubscriptions={subscriptions}
       availableGateways={availableGateways}
       checkOAuthCallback={needsOAuth}
-      needsAzureFunction={needsAzureFunction}
-      functionAppsQuery={functionAppsQuery}
-      selectedAppId={appId ?? ''}
-      selectAppCallback={selectAppCallback}
-      selectedFunctionId={selectedAzureFunction?.id ?? ''}
-      fetchFunctionsCallback={(functionAppId: string) => ConnectionService().fetchFunctionAppsFunctions(functionAppId)}
-      selectFunctionCallback={selectFunctionCallback}
+      resourceSelectedProps={resourceSelectorProps}
     />
   );
 };
