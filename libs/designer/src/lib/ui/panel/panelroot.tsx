@@ -97,10 +97,10 @@ export const PanelRoot = (): JSX.Element => {
     dispatch(
       setTabVisibility({
         tabName: constants.PANEL_TAB_NAMES.MONITORING,
-        visible: operationInfo?.type.toLowerCase() !== constants.NODE.TYPE.SCOPE,
+        visible: operationInfo?.type.toLowerCase() !== constants.NODE.TYPE.SCOPE && isMonitoringView,
       })
     );
-  }, [dispatch, operationInfo]);
+  }, [dispatch, operationInfo, isMonitoringView]);
 
   useEffect(() => {
     if (!visibleTabs?.map((tab) => tab.name.toLowerCase())?.includes(selectedPanelTab ?? ''))

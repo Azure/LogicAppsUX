@@ -128,8 +128,6 @@ export const panelSlice = createSlice({
         defaultTabs.shift();
       }
 
-      console.log('char', defaultTabs);
-
       Object.values(state.registeredTabs as Record<string, PanelTab>).forEach((tab) => {
         if (state.registeredTabs[tab.name.toLowerCase()]) {
           state.registeredTabs[tab.name.toLowerCase()] = { ...tab, visible: defaultTabs.includes(tab.name) };

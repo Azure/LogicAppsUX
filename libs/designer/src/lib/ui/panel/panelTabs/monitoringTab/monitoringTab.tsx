@@ -26,7 +26,7 @@ export const MonitoringPanel: React.FC = () => {
 };
 
 export const monitoringTab: PanelTab = {
-  title: 'Monitoring',
+  title: 'Parameters',
   name: constants.PANEL_TAB_NAMES.MONITORING,
   description: 'Monitoring View Tab',
   visible: true,
