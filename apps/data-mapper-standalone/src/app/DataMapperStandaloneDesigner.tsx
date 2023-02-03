@@ -15,6 +15,7 @@ import {
   getFunctions,
   InitDataMapperApiService,
 } from '@microsoft/logic-apps-data-mapper';
+import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -59,11 +60,13 @@ export const DataMapperStandaloneDesigner = () => {
     fetchFunctionList();
   }, [dispatch, armToken]);
 
+  const isLightMode = theme === ThemeType.Light;
+
   return (
     <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
       <div style={{ flex: '0 1 1px' }}>
-        <ThemeProvider theme={theme === 'Light' ? AzureThemeLight : AzureThemeDark}>
-          <FluentProvider theme={theme === 'Light' ? webLightTheme : webDarkTheme}>
+        <ThemeProvider theme={isLightMode ? AzureThemeLight : AzureThemeDark}>
+          <FluentProvider theme={isLightMode ? webLightTheme : webDarkTheme}>
             {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
             {/* @ts-ignore */}
             <PortalCompatProvider>
@@ -75,7 +78,7 @@ export const DataMapperStandaloneDesigner = () => {
       </div>
 
       <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
-        <DataMapperDesignerProvider locale="en-US" theme={theme === 'Light' ? 'light' : 'dark'} options={{}}>
+        <DataMapperDesignerProvider locale="en-US" theme={theme} options={{}}>
           <DataMapDataProvider
             xsltFilename={xsltFilename}
             mapDefinition={mapDefinition}
@@ -83,7 +86,7 @@ export const DataMapperStandaloneDesigner = () => {
             targetSchema={targetSchema}
             availableSchemas={workflowSchemaFilenames}
             fetchedFunctions={fetchedFunctions}
-            theme={theme === 'Light' ? 'light' : 'dark'}
+            theme={theme}
           >
             <DataMapperDesigner
               saveStateCall={saveStateCall}

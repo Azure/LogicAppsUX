@@ -1,15 +1,16 @@
 import { fullTranscriptMapDefinitionString, comprehensiveMapDefinition } from '../../../../__mocks__/mapDefinitions';
-import { dataMapDataLoaderSlice, loadDataMap, LoadingMethod, type ThemeType } from '../state/DataMapDataLoader';
+import { dataMapDataLoaderSlice, loadDataMap, LoadingMethod } from '../state/DataMapDataLoader';
 import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
 import type { IDropdownOption } from '@fluentui/react';
 import { Checkbox, Dropdown, Stack, StackItem, TextField } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Tooltip, tokens } from '@fluentui/react-components';
+import type { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const themeOptions = ['Light', 'Dark'];
-const themeDropdownOptions = themeOptions.map((theme) => ({ key: theme, text: theme }));
+const themeDropdownOptions = themeOptions.map((theme) => ({ key: theme.toLowerCase() as ThemeType, text: theme }));
 
 interface MapDefDropdownData {
   mapDefinitionString: string;

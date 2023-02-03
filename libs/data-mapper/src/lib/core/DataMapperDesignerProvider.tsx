@@ -10,7 +10,7 @@ import { FluentProvider, themeToTokensObject, webDarkTheme, webLightTheme } from
 import { PortalCompatProvider } from '@fluentui/react-portal-compat';
 import { AppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { IntlProvider } from '@microsoft/intl-logic-apps';
-import { Theme as ThemeEnum } from '@microsoft/utils-logic-apps';
+import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 
@@ -42,8 +42,6 @@ const extendedWebDarkTheme: ExtendedTheme = {
 
 export const customTokens = themeToTokensObject(extendedWebLightTheme);
 
-export type ThemeType = 'light' | 'dark';
-
 export interface DataMapperDesignerProviderProps {
   theme?: ThemeType;
   locale?: string;
@@ -51,17 +49,22 @@ export interface DataMapperDesignerProviderProps {
   children: React.ReactNode;
 }
 
-export const DataMapperDesignerProvider = ({ theme = 'light', locale = 'en', options, children }: DataMapperDesignerProviderProps) => {
+export const DataMapperDesignerProvider = ({
+  theme = ThemeType.Light,
+  locale = 'en',
+  options,
+  children,
+}: DataMapperDesignerProviderProps) => {
   return (
     <AppInsightsContext.Provider value={reactPlugin}>
       <ReduxProvider store={store}>
         <DataMapperWrappedContext.Provider value={options}>
           <ThemeProvider
-            theme={theme === ThemeEnum.Light ? AzureThemeLight : AzureThemeDark}
+            theme={theme === ThemeType.Light ? AzureThemeLight : AzureThemeDark}
             style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}
           >
             <FluentProvider
-              theme={theme === ThemeEnum.Light ? extendedWebLightTheme : extendedWebDarkTheme}
+              theme={theme === ThemeType.Light ? extendedWebLightTheme : extendedWebDarkTheme}
               style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}
             >
               {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
