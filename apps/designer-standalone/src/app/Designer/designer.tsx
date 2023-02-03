@@ -8,6 +8,7 @@ import {
   StandardSearchService,
   StandardOAuthService,
   StandardGatewayService,
+  ConsumptionSearchService,
 } from '@microsoft/designer-client-services-logic-apps';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import { ResourceIdentityType } from '@microsoft/utils-logic-apps';
@@ -36,7 +37,19 @@ const operationManifestService = new StandardOperationManifestService({
   httpClient,
 });
 
-const searchService = new StandardSearchService({
+const searchServiceStandard = new StandardSearchService({
+  baseUrl: '/url',
+  apiVersion: '2018-11-01',
+  httpClient,
+  apiHubServiceDetails: {
+    apiVersion: '2018-07-01-preview',
+    subscriptionId: '',
+    location: '',
+  },
+  isDev: true,
+});
+
+const searchServiceConsumption = new ConsumptionSearchService({
   baseUrl: '/url',
   apiVersion: '2018-11-01',
   httpClient,
@@ -73,7 +86,14 @@ export const DesignerWrapper = () => {
     (state: RootState) => state.workflowLoader
   );
   const designerProviderProps = {
-    services: { connectionService, operationManifestService, searchService, oAuthService, gatewayService, workflowService },
+    services: {
+      connectionService,
+      operationManifestService,
+      searchService: !consumption ? searchServiceStandard : searchServiceConsumption,
+      oAuthService,
+      gatewayService,
+      workflowService,
+    },
     readOnly,
     isMonitoringView: monitoringView,
     isDarkMode: darkMode,

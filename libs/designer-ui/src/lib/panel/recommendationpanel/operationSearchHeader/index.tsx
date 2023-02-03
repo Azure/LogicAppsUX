@@ -143,7 +143,6 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
               multiSelect
               options={actionTypeFilters}
             />
-            <div /> {/* TODO: This will be the sort box eventually */}
           </div>
           {searchTerm ? (
             <div className="msla-flex-row">

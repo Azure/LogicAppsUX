@@ -16,6 +16,7 @@ const initialState: PanelState = {
   registeredTabs: {},
   selectedTabName: undefined,
   selectedOperationGroupId: '',
+  selectedOperationId: '',
   addingTrigger: false,
   tokenPickerVisibility: true,
 };
@@ -67,11 +68,15 @@ export const panelSlice = createSlice({
     selectOperationGroupId: (state, action: PayloadAction<string>) => {
       state.selectedOperationGroupId = action.payload;
     },
+    selectOperationId: (state, action: PayloadAction<string>) => {
+      state.selectedOperationId = action.payload;
+    },
     switchToOperationPanel: (state, action: PayloadAction<string>) => {
       state.selectedNode = action.payload;
       state.isDiscovery = false;
       state.isWorkflowParameters = false;
       state.selectedOperationGroupId = '';
+      state.selectedOperationId = action.payload;
     },
     switchToWorkflowParameters: (state) => {
       state.collapsed = false;
@@ -79,6 +84,7 @@ export const panelSlice = createSlice({
       state.isDiscovery = false;
       state.selectedNode = '';
       state.selectedOperationGroupId = '';
+      state.selectedOperationId = '';
     },
     registerPanelTabs: (state, action: PayloadAction<Array<PanelTab>>) => {
       action.payload.forEach((tab) => {
@@ -149,6 +155,7 @@ export const {
   changePanelNode,
   expandDiscoveryPanel,
   selectOperationGroupId,
+  selectOperationId,
   switchToOperationPanel,
   registerPanelTabs,
   unregisterPanelTab,

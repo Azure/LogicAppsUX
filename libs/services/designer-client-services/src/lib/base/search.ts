@@ -1,6 +1,5 @@
 import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
 import { azureOperationsResponse } from '../__test__/__mocks__/azureOperationResponse';
-import { almostAllBuiltInOperations } from '../__test__/__mocks__/builtInOperationResponse';
 import type { IHttpClient, QueryParameters } from '../httpClient';
 import { LoggerService } from '../logger';
 import type { ISearchService, SearchResult } from '../search';
@@ -66,22 +65,6 @@ export abstract class BaseSearchService implements ISearchService {
   };
 
   public abstract getAllOperations(): Promise<DiscoveryOpArray>;
-
-  // TODO - Need to add extra filtering for trigger/action
-  async getAllBuiltInOperations(): Promise<DiscoveryOpArray> {
-    if (this._isDev) {
-      return Promise.resolve([...almostAllBuiltInOperations, ...getClientBuiltInOperations(this.options.showStatefulOperations)]);
-    }
-    const { apiVersion, baseUrl, httpClient, showStatefulOperations } = this.options;
-    const uri = `${baseUrl}/operations`;
-    const queryParameters: QueryParameters = {
-      'api-version': apiVersion,
-      workflowKind: showStatefulOperations ? 'Stateful' : 'Stateless',
-    };
-    const response = await httpClient.get<AzureOperationsFetchResponse>({ uri, queryParameters });
-
-    return [...response.value, ...getClientBuiltInOperations(showStatefulOperations)];
-  }
 
   async getAzureResourceByPage(uri: string, queryParams?: any, pageNumber = 0): Promise<{ value: any[]; hasMore: boolean }> {
     if (this._isDev) return { value: [], hasMore: false };

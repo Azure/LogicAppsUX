@@ -11,6 +11,9 @@ export class ConsumptionSearchService extends BaseSearchService {
   // Operations
 
   public async getAllOperations(): Promise<DiscoveryOpArray> {
+    if (this._isDev) {
+      return Promise.resolve(this.getConsumptionBuiltInOperations());
+    }
     return Promise.all([this.getAllAzureOperations(), this.getAllCustomApiOperations(), this.getConsumptionBuiltInOperations()]).then(
       (values) => values.flat()
     );
@@ -61,6 +64,10 @@ export class ConsumptionSearchService extends BaseSearchService {
   // Connectors
 
   public override async getAllConnectors(): Promise<Connector[]> {
+    if (this._isDev) {
+      return Promise.resolve(this.getConsumptionBuiltInConnectors());
+    }
+
     return Promise.all([this.getAllAzureConnectors(), this.getAllCustomApiConnectors(), this.getConsumptionBuiltInConnectors()]).then(
       (values) => values.flat()
     );

@@ -16,8 +16,11 @@ export const useRelationshipIds = () => useSelector(createSelector(getPanelState
 
 export const useIsParallelBranch = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.isParallelBranch));
 
-export const useSelectedOperationGroupId = () =>
+export const useSelectedSearchOperationGroupId = () =>
   useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedOperationGroupId));
+
+export const useSelectedSearchOperationId = () =>
+  useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedOperationId));
 
 export const useSelectedNodeId = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedNode));
 
