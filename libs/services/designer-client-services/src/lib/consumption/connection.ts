@@ -13,6 +13,17 @@ export class ConsumptionConnectionService extends BaseConnectionService {
     this._vVersion = 'V1';
   }
 
+  override async getConnections(connectorId?: string): Promise<Connection[]> {
+    if (connectorId) {
+      return this.getConnectionsForConnector(connectorId);
+    }
+
+    const apiHubConnections = await this.getConnectionsInApiHub();
+
+    this._allConnectionsInitialized = true;
+    return apiHubConnections;
+  }
+
   async createConnection(
     connectionId: string,
     connector: Connector,

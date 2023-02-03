@@ -335,44 +335,42 @@ const throwIfMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition) => 
 };
 
 const addTriggerInstanceMetaData = (runInstance: LogicAppsV2.RunInstanceDefinition | null) => {
-  if (!isNullOrUndefined(runInstance)) {
-    const { trigger: runInstanceTrigger } = runInstance.properties;
-    return {
-      runData: {
-        ...runInstanceTrigger,
-        duration: getDurationStringPanelMode(
-          Date.parse(runInstanceTrigger.endTime) - Date.parse(runInstanceTrigger.startTime),
-          /* abbreviated */ true
-        ),
-      },
-    };
+  if (isNullOrUndefined(runInstance)) {
+    return {};
   }
-  return {};
+
+  const { trigger: runInstanceTrigger } = runInstance.properties;
+  return {
+    runData: {
+      ...runInstanceTrigger,
+      duration: getDurationStringPanelMode(
+        Date.parse(runInstanceTrigger.endTime) - Date.parse(runInstanceTrigger.startTime),
+        /* abbreviated */ true
+      ),
+    },
+  };
 };
 
 const addActionsInstanceMetaData = (nodesMetadata: NodesMetadata, runInstance: LogicAppsV2.RunInstanceDefinition | null): NodesMetadata => {
-  if (!isNullOrUndefined(runInstance)) {
-    const { actions: runInstanceActions } = runInstance.properties;
-    const updatedNodesData = { ...nodesMetadata };
-
-    Object.entries(updatedNodesData).forEach(([key, node]) => {
-      const nodeRunData = runInstanceActions[key];
-      if (!isNullOrUndefined(nodeRunData)) {
-        updatedNodesData[key] = {
-          ...node,
-          runData: {
-            ...nodeRunData,
-            duration: getDurationStringPanelMode(
-              Date.parse(nodeRunData.endTime) - Date.parse(nodeRunData.startTime),
-              /* abbreviated */ true
-            ),
-          },
-        };
-      }
-    });
-
-    return updatedNodesData;
+  if (isNullOrUndefined(runInstance)) {
+    return nodesMetadata;
   }
 
-  return nodesMetadata;
+  const { actions: runInstanceActions } = runInstance.properties;
+  const updatedNodesData = { ...nodesMetadata };
+
+  Object.entries(updatedNodesData).forEach(([key, node]) => {
+    const nodeRunData = runInstanceActions[key];
+    if (!isNullOrUndefined(nodeRunData)) {
+      updatedNodesData[key] = {
+        ...node,
+        runData: {
+          ...nodeRunData,
+          duration: getDurationStringPanelMode(Date.parse(nodeRunData.endTime) - Date.parse(nodeRunData.startTime), /* abbreviated */ true),
+        },
+      };
+    }
+  });
+
+  return updatedNodesData;
 };
