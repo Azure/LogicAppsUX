@@ -3,6 +3,7 @@ import { CodeView } from '../components/codeView/CodeView';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/AddOrUpdateSchemaView';
 import { ConfigPanel } from '../components/configPanel/ConfigPanel';
+import { MapCheckerPane } from '../components/mapChecker/MapCheckerPane';
 import { MapOverview } from '../components/mapOverview/MapOverview';
 import { errorNotificationAutoHideDuration, NotificationTypes } from '../components/notification/Notification';
 import {
@@ -23,6 +24,7 @@ import './ReactFlowStyleOverrides.css';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Stack } from '@fluentui/react';
 import { makeStaticStyles, makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import { useBoolean } from '@fluentui/react-hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -124,6 +126,7 @@ export const DataMapperDesigner = ({
   const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
   const [isTargetSchemaPaneExpanded, setIsTargetSchemaPaneExpanded] = useState(false);
+  const [isMapCheckerOpen, { setFalse: closeMapChecker, toggle: toggleMapChecker }] = useBoolean(false);
 
   const dataMapDefinition = useMemo<string>(() => {
     if (sourceSchema && targetSchema) {
@@ -266,6 +269,7 @@ export const DataMapperDesigner = ({
           onUndoClick={onUndoClick}
           onRedoClick={onRedoClick}
           onTestClick={() => setTestMapPanelOpen(true)}
+          onMapCheckerClick={toggleMapChecker}
         />
 
         <div id="editorView" style={{ display: 'flex', flex: '1 1 1px' }}>
@@ -326,6 +330,7 @@ export const DataMapperDesigner = ({
           </div>
 
           <TargetSchemaPane isExpanded={isTargetSchemaPaneExpanded} setIsExpanded={setIsTargetSchemaPaneExpanded} />
+          <MapCheckerPane isMapCheckerOpen={isMapCheckerOpen} closeMapChecker={closeMapChecker} />
         </div>
 
         <WarningModal />
