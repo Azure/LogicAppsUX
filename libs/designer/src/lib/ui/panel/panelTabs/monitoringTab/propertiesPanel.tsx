@@ -5,10 +5,11 @@ import { useIntl } from 'react-intl';
 
 export interface PropertiesPanelProps {
   properties?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
-  brandColor?: string;
+  brandColor: string;
+  nodeId: string;
 }
 
-export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ properties, brandColor }) => {
+export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ properties, brandColor, nodeId }) => {
   const intl = useIntl();
 
   const intlText = {
@@ -90,7 +91,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ properties, br
       brandColor={brandColor}
       headerText={intlText.properties}
       values={runProperties}
-      labelledBy={''}
+      labelledBy={`properties-${nodeId}`}
       noValuesText={intlText.noProperties}
       showMore={false}
     />

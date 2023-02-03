@@ -20,7 +20,7 @@ export const MonitoringPanel: React.FC = () => {
       <ErrorSection error={runMetaData.error} />
       <InputsPanel runMetaData={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} />
       <OutputsPanel runMetaData={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} />
-      <PropertiesPanel properties={runMetaData} brandColor={brandColor} />
+      <PropertiesPanel properties={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} />
     </div>
   );
 };
