@@ -110,17 +110,26 @@ export const panelSlice = createSlice({
         };
       }
     },
-    showDefaultTabs: (state, action: PayloadAction<{ isScopeNode?: boolean } | undefined>) => {
+    showDefaultTabs: (state, action: PayloadAction<{ isScopeNode?: boolean; isMonitoringView?: boolean } | undefined>) => {
+      const isMonitoringView = action.payload?.isMonitoringView;
+      const isScopeNode = action.payload?.isScopeNode;
       const defaultTabs = [
-        constants.PANEL_TAB_NAMES.PARAMETERS,
         constants.PANEL_TAB_NAMES.ABOUT,
         constants.PANEL_TAB_NAMES.CODE_VIEW,
         constants.PANEL_TAB_NAMES.SETTINGS,
         constants.PANEL_TAB_NAMES.SCRATCH,
       ];
-      if (action.payload?.isScopeNode) {
+
+      isMonitoringView
+        ? defaultTabs.unshift(constants.PANEL_TAB_NAMES.MONITORING)
+        : defaultTabs.unshift(constants.PANEL_TAB_NAMES.PARAMETERS);
+
+      if (isScopeNode && !isMonitoringView) {
         defaultTabs.shift();
       }
+
+      console.log('char', defaultTabs);
+
       Object.values(state.registeredTabs as Record<string, PanelTab>).forEach((tab) => {
         if (state.registeredTabs[tab.name.toLowerCase()]) {
           state.registeredTabs[tab.name.toLowerCase()] = { ...tab, visible: defaultTabs.includes(tab.name) };

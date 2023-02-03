@@ -85,6 +85,12 @@ export const PanelRoot = (): JSX.Element => {
         visible: isMonitoringView,
       })
     );
+    dispatch(
+      setTabVisibility({
+        tabName: constants.PANEL_TAB_NAMES.PARAMETERS,
+        visible: !isMonitoringView,
+      })
+    );
   }, [dispatch, isMonitoringView]);
 
   useEffect(() => {
