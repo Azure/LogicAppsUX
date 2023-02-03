@@ -44,7 +44,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const graphNode = useWorkflowNode(scopeId) as WorkflowNode;
   const metadata = useNodeMetadata(scopeId);
 
-  const { status: statusRun, duration: duratioRun, error: errorRun } = metadata?.runData ?? {};
+  const { status: statusRun, duration: durationRun, error: errorRun } = metadata?.runData ?? {};
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
@@ -215,7 +215,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             onClick={nodeClick}
             selected={selected}
             contextMenuOptions={contextMenuOptions}
-            runData={{ status: statusRun, duration: duratioRun }}
+            runData={{ status: statusRun, duration: durationRun }}
           />
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
