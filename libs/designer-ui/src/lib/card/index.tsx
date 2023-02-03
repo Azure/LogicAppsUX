@@ -36,6 +36,7 @@ export interface CardProps {
   staticResultsEnabled?: boolean;
   title: string;
   onClick?(): void;
+  runData: { status?: string; duration?: string };
 }
 
 export interface BadgeProps {
@@ -72,6 +73,7 @@ export const Card: React.FC<CardProps> = ({
   staticResultsEnabled,
   title,
   onClick,
+  runData,
 }) => {
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
     e.stopPropagation();
@@ -118,7 +120,9 @@ export const Card: React.FC<CardProps> = ({
         tabIndex={0}
         onKeyUp={keyboardInteraction.keyUp}
       >
-        {isMonitoringView ? <StatusPill id={`${title}-status`} status={'Succeeded'} duration={'0s'} /> : null}
+        {isMonitoringView ? (
+          <StatusPill id={`${title}-status`} status={runData.status ?? 'Waiting'} duration={runData.duration ?? '0s'} />
+        ) : null}
         <div className={css('msla-selection-box', selected && 'selected')} />
         <div className="panel-card-main">
           <div className="panel-card-header" role="button">
