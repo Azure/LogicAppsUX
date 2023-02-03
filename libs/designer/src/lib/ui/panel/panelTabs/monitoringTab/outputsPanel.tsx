@@ -1,13 +1,14 @@
+import { HostService, ContentType } from '@microsoft/designer-client-services-logic-apps';
 import { ValuesPanel } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 
 export interface OutputsPanelProps {
-  runMetaData: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined;
-  brandColor?: string;
-  onSeeRawOutputsClick?(): void;
+  runMetaData: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
+  brandColor: string;
+  nodeId: string;
 }
 
-export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandColor, onSeeRawOutputsClick }) => {
+export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandColor, nodeId }) => {
   const intl = useIntl();
 
   const intlText = {
@@ -25,9 +26,15 @@ export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandCo
     }),
   };
 
+  const { outputsLink } = runMetaData;
+
+  const onSeeRawOutputsClick = (): void => {
+    HostService().fetchAndDisplayContent(nodeId, outputsLink.uri, ContentType.Outputs);
+  };
+
   return (
     <>
-      {runMetaData?.outputsLink ? (
+      {outputsLink ? (
         <ValuesPanel
           brandColor={brandColor}
           headerText={intlText.outputs}

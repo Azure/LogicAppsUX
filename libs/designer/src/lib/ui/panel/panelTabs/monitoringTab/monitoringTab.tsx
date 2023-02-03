@@ -7,6 +7,7 @@ import { OutputsPanel } from './outputsPanel';
 import { PropertiesPanel } from './propertiesPanel';
 import { ErrorSection } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
+import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 
 export const MonitoringPanel: React.FC = () => {
   const selectedNodeId = useSelectedNodeId();
@@ -14,11 +15,11 @@ export const MonitoringPanel: React.FC = () => {
   const brandColor = useBrandColor(selectedNodeId);
   const runMetaData = nodeMetadata?.runData;
 
-  return (
+  return isNullOrUndefined(runMetaData) ? null : (
     <div>
-      <ErrorSection className="msla-request-history-panel-error" error={runMetaData?.error} />
-      <InputsPanel runMetaData={runMetaData} brandColor={brandColor} />
-      <OutputsPanel runMetaData={runMetaData} brandColor={brandColor} />
+      <ErrorSection error={runMetaData.error} />
+      <InputsPanel runMetaData={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} />
+      <OutputsPanel runMetaData={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} />
       <PropertiesPanel properties={runMetaData} brandColor={brandColor} />
     </div>
   );

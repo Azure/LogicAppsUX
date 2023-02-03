@@ -9,6 +9,7 @@ import {
   StandardOAuthService,
   StandardGatewayService,
 } from '@microsoft/designer-client-services-logic-apps';
+import type { ContentType } from '@microsoft/designer-client-services-logic-apps';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import { ResourceIdentityType } from '@microsoft/utils-logic-apps';
 import { useEffect } from 'react';
@@ -68,12 +69,14 @@ const gatewayService = new StandardGatewayService({
 
 const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };
 
+const hostService = { fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type) };
+
 export const DesignerWrapper = () => {
   const { workflowDefinition, readOnly, monitoringView, darkMode, consumption, connections, runInstance } = useSelector(
     (state: RootState) => state.workflowLoader
   );
   const designerProviderProps = {
-    services: { connectionService, operationManifestService, searchService, oAuthService, gatewayService, workflowService },
+    services: { connectionService, operationManifestService, searchService, oAuthService, gatewayService, workflowService, hostService },
     readOnly,
     isMonitoringView: monitoringView,
     isDarkMode: darkMode,
