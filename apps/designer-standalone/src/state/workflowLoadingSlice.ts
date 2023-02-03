@@ -10,6 +10,7 @@ export interface WorkflowLoadingState {
   resourcePath?: string;
   loadingMethod: 'file' | 'arm';
   workflowDefinition: LogicAppsV2.WorkflowDefinition | null;
+  runInstance: LogicAppsV2.RunInstanceDefinition | null;
   connections: ConnectionReferences;
   readOnly: boolean;
   monitoringView: boolean;
@@ -19,6 +20,7 @@ export interface WorkflowLoadingState {
 
 const initialState: WorkflowLoadingState = {
   workflowDefinition: null,
+  runInstance: null,
   connections: {},
   loadingMethod: 'file',
   resourcePath: 'simpleBigworkflow.json',
@@ -31,6 +33,10 @@ const initialState: WorkflowLoadingState = {
 type WorkflowPayload = {
   workflowDefinition: LogicAppsV2.WorkflowDefinition;
   connectionReferences: ConnectionReferences;
+};
+
+type RunPayload = {
+  runInstance: LogicAppsV2.RunInstanceDefinition;
 };
 
 export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow', async (_: void, thunkAPI) => {
@@ -60,6 +66,16 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
     } catch {
       return null;
     }
+  }
+});
+
+export const loadRun = createAsyncThunk('runLoadingState/loadRun', async (_: void, thunkAPI) => {
+  const currentState: RootState = thunkAPI.getState() as RootState;
+  try {
+    const runInstance = await import(`../../../../__mocks__/runs/${currentState.workflowLoader.resourcePath}`);
+    return { runInstance: runInstance as LogicAppsV2.RunInstanceDefinition } as RunPayload;
+  } catch {
+    return thunkAPI.rejectWithValue(null);
   }
 });
 
@@ -145,6 +161,13 @@ export const workflowLoadingSlice = createSlice({
     });
     builder.addCase(loadWorkflow.rejected, (state) => {
       state.workflowDefinition = null;
+    });
+    builder.addCase(loadRun.fulfilled, (state, action: PayloadAction<RunPayload | null>) => {
+      if (!action.payload) return;
+      state.runInstance = action.payload?.runInstance;
+    });
+    builder.addCase(loadRun.rejected, (state) => {
+      state.runInstance = null;
     });
   },
 });

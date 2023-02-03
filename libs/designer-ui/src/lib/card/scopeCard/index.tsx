@@ -31,6 +31,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   handleCollapse,
   selected,
   contextMenuOptions = [],
+  runData,
 }) => {
   const contextMenu = useCardContextMenu();
 
@@ -65,7 +66,9 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
           onKeyDown={keyboardInteraction.keyDown}
           onKeyUp={keyboardInteraction.keyUp}
         >
-          {isMonitoringView ? <StatusPill id={`${title}-status`} status={'Succeeded'} duration={'0s'} /> : null}
+          {isMonitoringView ? (
+            <StatusPill id={`${title}-status`} status={runData.status ?? 'Waiting'} duration={runData.duration ?? '0s'} />
+          ) : null}
           <div className="msla-scope-card-content">
             <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} />
             <button className="msla-scope-card-title-button" onClick={handleClick}>

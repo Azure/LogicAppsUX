@@ -1,5 +1,5 @@
 import type { AppDispatch, RootState } from '../../state/store';
-import { changeArmToken, changeResourcePath, changeLoadingMethod, loadWorkflow } from '../../state/workflowLoadingSlice';
+import { changeArmToken, changeResourcePath, changeLoadingMethod, loadWorkflow, loadRun } from '../../state/workflowLoadingSlice';
 import type { IDropdownOption } from '@fluentui/react';
 import { Checkbox, Dropdown, TextField, DropdownMenuItemType } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -52,9 +52,9 @@ const fileOptions = [
 ];
 
 export const Login: React.FC = () => {
-  const { resourcePath, armToken, loadingMethod } = useSelector((state: RootState) => {
-    const { resourcePath, armToken, loadingMethod } = state.workflowLoader;
-    return { resourcePath, armToken, loadingMethod };
+  const { resourcePath, armToken, loadingMethod, monitoringView } = useSelector((state: RootState) => {
+    const { resourcePath, armToken, loadingMethod, monitoringView } = state.workflowLoader;
+    return { resourcePath, armToken, loadingMethod, monitoringView };
   });
   const dispatch = useDispatch<AppDispatch>();
   const changeResourcePathCB = useCallback(
@@ -68,6 +68,9 @@ export const Login: React.FC = () => {
   const changeResourcePathDropdownCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
       dispatch(changeResourcePath((item?.key as string) ?? ''));
+      if (monitoringView) {
+        dispatch(loadRun());
+      }
       dispatch(loadWorkflow());
     },
     [dispatch]

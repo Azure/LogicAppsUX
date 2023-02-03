@@ -1,12 +1,14 @@
 # Logic Apps Designer
+
 ### [0.2.65](https://github.com/Azure/LogicAppsUX/compare/v0.2.64...v0.2.65) (2023-02-03)
 
 ### [0.2.64](https://github.com/Azure/LogicAppsUX/compare/v0.2.63...v0.2.64) (2023-02-02)
 
+### [0.2.64](https://github.com/Azure/LogicAppsUX/compare/v0.2.63...v0.2.64) (2023-02-02)
 
 ### Logic Apps Designer Changes
 
-* Consumption Workflow Parameter adjustments ([#1590](https://github.com/Azure/LogicAppsUX/issues/1590)) ([f3edc15](https://github.com/Azure/LogicAppsUX/commit/f3edc155ab0346249d8435a33749a6bbb6fa3753))
+- Consumption Workflow Parameter adjustments ([#1590](https://github.com/Azure/LogicAppsUX/issues/1590)) ([f3edc15](https://github.com/Azure/LogicAppsUX/commit/f3edc155ab0346249d8435a33749a6bbb6fa3753))
 
 ### [0.2.63](https://github.com/Azure/LogicAppsUX/compare/v0.2.62...v0.2.63) (2023-02-01)
 
