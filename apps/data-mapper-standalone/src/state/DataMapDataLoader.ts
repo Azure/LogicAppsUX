@@ -2,11 +2,10 @@ import type { MapDefDropdownOption } from '../components/DevToolbox';
 import type { RootState } from './Store';
 import { functionMock } from '@microsoft/logic-apps-data-mapper';
 import type { MapDefinitionEntry, FunctionData } from '@microsoft/logic-apps-data-mapper';
+import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import * as yaml from 'js-yaml';
-
-export type ThemeType = 'Light' | 'Dark';
 
 export enum LoadingMethod {
   File = 'file',
@@ -24,7 +23,7 @@ export interface DataMapLoadingState {
 }
 
 const initialState: DataMapLoadingState = {
-  theme: 'Light',
+  theme: ThemeType.Light,
   loadingMethod: LoadingMethod.File,
   mapDefinition: {},
   xsltFilename: '',

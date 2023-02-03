@@ -7,8 +7,10 @@ import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLigh
 import { ThemeProvider } from '@fluentui/react';
 import type { Theme } from '@fluentui/react-components';
 import { FluentProvider, themeToTokensObject, webDarkTheme, webLightTheme } from '@fluentui/react-components';
+import { PortalCompatProvider } from '@fluentui/react-portal-compat';
 import { AppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { IntlProvider } from '@microsoft/intl-logic-apps';
+import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 
@@ -40,8 +42,6 @@ const extendedWebDarkTheme: ExtendedTheme = {
 
 export const customTokens = themeToTokensObject(extendedWebLightTheme);
 
-export type ThemeType = 'light' | 'dark';
-
 export interface DataMapperDesignerProviderProps {
   theme?: ThemeType;
   locale?: string;
@@ -49,34 +49,42 @@ export interface DataMapperDesignerProviderProps {
   children: React.ReactNode;
 }
 
-// NOTE: Leaving ThemeProvider here as we still use Fluent V8 components
-export const DataMapperDesignerProvider = ({ theme = 'light', locale = 'en', options, children }: DataMapperDesignerProviderProps) => {
+export const DataMapperDesignerProvider = ({
+  theme = ThemeType.Light,
+  locale = 'en',
+  options,
+  children,
+}: DataMapperDesignerProviderProps) => {
   return (
     <AppInsightsContext.Provider value={reactPlugin}>
       <ReduxProvider store={store}>
         <DataMapperWrappedContext.Provider value={options}>
-          <FluentProvider
-            theme={theme === 'light' ? extendedWebLightTheme : extendedWebDarkTheme}
+          <ThemeProvider
+            theme={theme === ThemeType.Light ? AzureThemeLight : AzureThemeDark}
             style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}
           >
-            <ThemeProvider
-              theme={theme === 'light' ? AzureThemeLight : AzureThemeDark}
+            <FluentProvider
+              theme={theme === ThemeType.Light ? extendedWebLightTheme : extendedWebDarkTheme}
               style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}
             >
-              <IntlProvider
-                locale={locale}
-                defaultLocale={locale}
-                onError={(err) => {
-                  if (err.code === 'MISSING_TRANSLATION') {
-                    return;
-                  }
-                  throw err;
-                }}
-              >
-                {children}
-              </IntlProvider>
-            </ThemeProvider>
-          </FluentProvider>
+              {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+              {/* @ts-ignore */}
+              <PortalCompatProvider>
+                <IntlProvider
+                  locale={locale}
+                  defaultLocale={locale}
+                  onError={(err) => {
+                    if (err.code === 'MISSING_TRANSLATION') {
+                      return;
+                    }
+                    throw err;
+                  }}
+                >
+                  {children}
+                </IntlProvider>
+              </PortalCompatProvider>
+            </FluentProvider>
+          </ThemeProvider>
         </DataMapperWrappedContext.Provider>
       </ReduxProvider>
     </AppInsightsContext.Provider>

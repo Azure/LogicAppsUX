@@ -11,6 +11,7 @@ import {
   getSelectedSchema,
   InitDataMapperApiService,
 } from '@microsoft/logic-apps-data-mapper';
+import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -190,7 +191,11 @@ export const App = () => {
   }, [dispatch, runtimePort, sourceSchemaFilename, targetSchemaFilename, handleRscLoadError]);
 
   return (
-    <DataMapperDesignerProvider locale="en-US" theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? 'light' : 'dark'} options={{}}>
+    <DataMapperDesignerProvider
+      locale="en-US"
+      theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? ThemeType.Light : ThemeType.Dark}
+      options={{}}
+    >
       <DataMapDataProvider
         xsltFilename={xsltFilename}
         mapDefinition={mapDefinition}
@@ -199,7 +204,7 @@ export const App = () => {
         availableSchemas={schemaFileList}
         fetchedFunctions={fetchedFunctions}
         // Passed in here too so it can be managed in the Redux store so components can track the current theme
-        theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? 'light' : 'dark'}
+        theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? ThemeType.Light : ThemeType.Dark}
       >
         <DataMapperDesigner
           saveStateCall={saveStateCall}
