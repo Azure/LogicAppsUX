@@ -10,6 +10,7 @@ import { FluentProvider, themeToTokensObject, webDarkTheme, webLightTheme } from
 import { PortalCompatProvider } from '@fluentui/react-portal-compat';
 import { AppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { IntlProvider } from '@microsoft/intl-logic-apps';
+import { Theme as ThemeEnum } from '@microsoft/utils-logic-apps';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 
@@ -56,11 +57,11 @@ export const DataMapperDesignerProvider = ({ theme = 'light', locale = 'en', opt
       <ReduxProvider store={store}>
         <DataMapperWrappedContext.Provider value={options}>
           <ThemeProvider
-            theme={theme === 'light' ? AzureThemeLight : AzureThemeDark}
+            theme={theme === ThemeEnum.Light ? AzureThemeLight : AzureThemeDark}
             style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}
           >
             <FluentProvider
-              theme={theme === 'light' ? extendedWebLightTheme : extendedWebDarkTheme}
+              theme={theme === ThemeEnum.Light ? extendedWebLightTheme : extendedWebDarkTheme}
               style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}
             >
               {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
