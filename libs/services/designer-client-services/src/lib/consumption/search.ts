@@ -2,6 +2,7 @@ import { getClientBuiltInConnectors, getClientBuiltInOperations, BaseSearchServi
 import type { DiscoveryOpArray } from '../base/search';
 import type { QueryParameters } from '../httpClient';
 import * as ClientOperationsData from '../standard/operations';
+import * as AzureResourceOperationsData from './operations';
 import type { Connector } from '@microsoft/utils-logic-apps';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
@@ -46,6 +47,13 @@ export class ConsumptionSearchService extends BaseSearchService {
       ClientOperationsData.liquidXmlToTextOperation,
       ClientOperationsData.xmlTransformOperation,
       ClientOperationsData.xmlValidationOperation,
+      AzureResourceOperationsData.selectApiManagementActionOperation,
+      AzureResourceOperationsData.selectApiManagementTriggerOperation,
+      AzureResourceOperationsData.selectAppServiceActionOperation,
+      AzureResourceOperationsData.selectAppServiceTriggerOperation,
+      AzureResourceOperationsData.selectFunctionOperation,
+      AzureResourceOperationsData.selectManualWorkflowOperation,
+      AzureResourceOperationsData.selectBatchWorkflowOperation,
     ];
     return [...clientBuiltInOperations, ...consumptionBuiltIn];
   }
@@ -84,6 +92,11 @@ export class ConsumptionSearchService extends BaseSearchService {
       ClientOperationsData.integrationAccountGroup,
       ClientOperationsData.liquidGroup,
       ClientOperationsData.xmlGroup,
+      AzureResourceOperationsData.selectApiManagementGroup,
+      AzureResourceOperationsData.selectAppServiceGroup,
+      AzureResourceOperationsData.selectFunctionGroup,
+      AzureResourceOperationsData.selectManualWorkflowGroup,
+      AzureResourceOperationsData.selectBatchWorkflowGroup,
     ];
     return [...clientBuiltInConnectors, ...consumptionBuiltIn];
   }

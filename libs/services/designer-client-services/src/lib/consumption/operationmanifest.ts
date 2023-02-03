@@ -41,6 +41,15 @@ const inlinecode = 'javascriptcode';
 const flatfiledecoding = 'flatfiledecoding';
 const flatfileencoding = 'flatfileencoding';
 
+// Azure Resource Connectors
+// const selectApiManagementAction = 'selectapimanagementaction';
+// const selectApiManagementTrigger = 'selectapimanagementtrigger';
+// const selectAppServiceAction = 'selectappserviceaction';
+// const selectAppServiceTrigger = 'selectappservicetrigger';
+// const selectFunctionAction = 'selectfunction';
+// const selectBatchWorkflowAction = 'selectbatchworkflow';
+// const selectManualWorkflowAction = 'selectmanualworkflow';
+
 const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   ...supportedBaseManifestObjects,
   [composenew, composeManifest],
@@ -54,4 +63,11 @@ const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   [inlinecode, inlineCodeManifest],
   [flatfiledecoding, flatFileDecodingManifest],
   [flatfileencoding, flatFileEncodingManifest],
+  // [selectApiManagementAction, {}],
+  // [selectApiManagementTrigger, {}],
+  // [selectAppServiceAction, {}],
+  // [selectAppServiceTrigger, {}],
+  // [selectFunctionAction, {}],
+  // [selectBatchWorkflowAction, {}],
+  // [selectManualWorkflowAction, {}],
 ]);
