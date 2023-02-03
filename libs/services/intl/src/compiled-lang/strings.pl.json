@@ -81,6 +81,12 @@
       "value": "Paginacja"
     }
   ],
+  "//nQG4": [
+    {
+      "type": 0,
+      "value": "Select an api from apim instance"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -169,6 +175,12 @@
     {
       "type": 0,
       "value": "Zwraca liczbę Count pierwszych elementów z przekazanej tablicy lub ciągu"
+    }
+  ],
+  "/yYyOq": [
+    {
+      "type": 0,
+      "value": "Resource Group"
     }
   ],
   "00xlpa": [
@@ -341,12 +353,6 @@
     {
       "type": 0,
       "value": "Komentarz"
-    }
-  ],
-  "1ANUHk": [
-    {
-      "type": 0,
-      "value": "Loading functions..."
     }
   ],
   "1D047X": [
@@ -1433,6 +1439,12 @@
     {
       "type": 0,
       "value": "Typ uwierzytelniania"
+    }
+  ],
+  "AGCm1p": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "AHB418": [
@@ -2659,6 +2671,12 @@
     {
       "type": 0,
       "value": "Zwraca schemat z identyfikatora URI"
+    }
+  ],
+  "LV/BTE": [
+    {
+      "type": 0,
+      "value": "Loading Api Management service instances..."
     }
   ],
   "LZm3ze": [
@@ -4343,6 +4361,12 @@
       "value": "Obsługa danych"
     }
   ],
+  "aSnCCB": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -5243,12 +5267,6 @@
       "value": "Elements and mappings not connected to a target element are removed."
     }
   ],
-  "ittN0l": [
-    {
-      "type": 0,
-      "value": "No resources of this type found under this subscription."
-    }
-  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -5325,6 +5343,12 @@
     {
       "type": 0,
       "value": "Wymagane. Ciąg wejściowy w formacie base64."
+    }
+  ],
+  "jZjgYZ": [
+    {
+      "type": 0,
+      "value": "No resources of this type found under this subscription."
     }
   ],
   "jcA3Ig": [
