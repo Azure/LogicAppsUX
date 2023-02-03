@@ -5,12 +5,12 @@ import type { Schema } from '../models/Schema';
 import { SchemaType } from '../models/Schema';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
-import type { ThemeType } from './DataMapperDesignerProvider';
 import { changeTheme } from './state/AppSlice';
 import { setInitialDataMap, setInitialSchema, setXsltFilename } from './state/DataMapSlice';
 import { loadFunctions } from './state/FunctionSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
 import type { AppDispatch } from './state/Store';
+import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import React, { useContext, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -32,7 +32,7 @@ const DataProviderInner = ({
   targetSchema,
   availableSchemas,
   fetchedFunctions,
-  theme = 'light',
+  theme = ThemeType.Light,
   children,
 }: DataMapDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
