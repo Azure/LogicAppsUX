@@ -12,3 +12,4 @@ export type { BaseConnectorServiceOptions } from './connector';
 export { BaseConnectionService } from './connection';
 export type { BaseConnectionServiceOptions } from './connection';
 export { IApiHubServiceDetails } from './connection';
+export { ApiManagementInstanceService } from './apimanagement';

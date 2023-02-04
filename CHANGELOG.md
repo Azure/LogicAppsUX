@@ -1,10 +1,14 @@
 # Logic Apps Designer
+
+### [0.2.65](https://github.com/Azure/LogicAppsUX/compare/v0.2.64...v0.2.65) (2023-02-03)
+
 ### [0.2.64](https://github.com/Azure/LogicAppsUX/compare/v0.2.63...v0.2.64) (2023-02-02)
 
+### [0.2.64](https://github.com/Azure/LogicAppsUX/compare/v0.2.63...v0.2.64) (2023-02-02)
 
 ### Logic Apps Designer Changes
 
-* Consumption Workflow Parameter adjustments ([#1590](https://github.com/Azure/LogicAppsUX/issues/1590)) ([f3edc15](https://github.com/Azure/LogicAppsUX/commit/f3edc155ab0346249d8435a33749a6bbb6fa3753))
+- Consumption Workflow Parameter adjustments ([#1590](https://github.com/Azure/LogicAppsUX/issues/1590)) ([f3edc15](https://github.com/Azure/LogicAppsUX/commit/f3edc155ab0346249d8435a33749a6bbb6fa3753))
 
 ### [0.2.63](https://github.com/Azure/LogicAppsUX/compare/v0.2.62...v0.2.63) (2023-02-01)
 
@@ -12,10 +16,9 @@
 
 ### [0.2.61](https://github.com/Azure/LogicAppsUX/compare/v0.2.60...v0.2.61) (2023-01-30)
 
-
 ### Logic Apps Designer Bug Fixes
 
-* Fixed nightly release action ([#1580](https://github.com/Azure/LogicAppsUX/issues/1580)) ([9ff88c0](https://github.com/Azure/LogicAppsUX/commit/9ff88c06e88c7ee0061bf0c501600f169dd18b2b))
+- Fixed nightly release action ([#1580](https://github.com/Azure/LogicAppsUX/issues/1580)) ([9ff88c0](https://github.com/Azure/LogicAppsUX/commit/9ff88c06e88c7ee0061bf0c501600f169dd18b2b))
 
 ### [0.2.60](https://github.com/Azure/LogicAppsUX/compare/v0.2.59...v0.2.60) (2023-01-30)
 
@@ -23,11 +26,10 @@
 
 ### [0.2.58](https://github.com/Azure/LogicAppsUX/compare/v0.2.57...v0.2.58) (2023-01-28)
 
-
 ### Logic Apps Designer Bug Fixes
 
-* Fix status pill stories and add aborted status ([#1565](https://github.com/Azure/LogicAppsUX/issues/1565)) ([02bb9c5](https://github.com/Azure/LogicAppsUX/commit/02bb9c5fcd7f890360448de7700012a9eb0f3670))
-* Fixed run-after-trigger bug ([#1575](https://github.com/Azure/LogicAppsUX/issues/1575)) ([15222b1](https://github.com/Azure/LogicAppsUX/commit/15222b18fc54665f15dcd40f4b6ff831387f64d1))
+- Fix status pill stories and add aborted status ([#1565](https://github.com/Azure/LogicAppsUX/issues/1565)) ([02bb9c5](https://github.com/Azure/LogicAppsUX/commit/02bb9c5fcd7f890360448de7700012a9eb0f3670))
+- Fixed run-after-trigger bug ([#1575](https://github.com/Azure/LogicAppsUX/issues/1575)) ([15222b1](https://github.com/Azure/LogicAppsUX/commit/15222b18fc54665f15dcd40f4b6ff831387f64d1))
 
 ### [0.2.57](https://github.com/Azure/LogicAppsUX/compare/v0.2.56...v0.2.57) (2023-01-27)
 

@@ -65,6 +65,12 @@
       "value": "Sayfalandırma"
     }
   ],
+  "//nQG4": [
+    {
+      "type": 0,
+      "value": "Select an api from apim instance"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -153,6 +159,12 @@
     {
       "type": 0,
       "value": "Geçirilen dizi veya dizeden ilk Count öğelerini döndürür"
+    }
+  ],
+  "/yYyOq": [
+    {
+      "type": 0,
+      "value": "Resource Group"
     }
   ],
   "00xlpa": [
@@ -325,12 +337,6 @@
     {
       "type": 0,
       "value": "Yorum"
-    }
-  ],
-  "1ANUHk": [
-    {
-      "type": 0,
-      "value": "Loading functions..."
     }
   ],
   "1D047X": [
@@ -1363,6 +1369,12 @@
     {
       "type": 0,
       "value": "Kimlik Doğrulama Türü"
+    }
+  ],
+  "AGCm1p": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "AHB418": [
@@ -2479,6 +2491,12 @@
     {
       "type": 0,
       "value": "Bir URI'den düzeni döndürür"
+    }
+  ],
+  "LV/BTE": [
+    {
+      "type": 0,
+      "value": "Loading Api Management service instances..."
     }
   ],
   "LZm3ze": [
@@ -4093,6 +4111,12 @@
       "value": "Veri İşleme"
     }
   ],
+  "aSnCCB": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -4943,12 +4967,6 @@
       "value": "Elements and mappings not connected to a target element are removed."
     }
   ],
-  "ittN0l": [
-    {
-      "type": 0,
-      "value": "No resources of this type found under this subscription."
-    }
-  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -5025,6 +5043,12 @@
     {
       "type": 0,
       "value": "Gerekli. Base64 giriş dizesi."
+    }
+  ],
+  "jZjgYZ": [
+    {
+      "type": 0,
+      "value": "No resources of this type found under this subscription."
     }
   ],
   "jcA3Ig": [
