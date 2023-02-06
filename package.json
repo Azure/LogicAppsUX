@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logicappsux",
-  "version": "0.2.64",
+  "version": "0.2.68",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -45,10 +45,11 @@
     "@fluentui/azure-themes": "8.4.22",
     "@fluentui/font-icons-mdl2": "8.4.8",
     "@fluentui/foundation-legacy": "8.2.15",
-    "@fluentui/react": "8.90.1",
-    "@fluentui/react-components": "^9.6.1",
+    "@fluentui/react": "^8.105.3",
+    "@fluentui/react-components": "^9.13.0",
     "@fluentui/react-focus": "8.8.0",
     "@fluentui/react-hooks": "8.6.7",
+    "@fluentui/react-portal-compat": "^9.0.31",
     "@fluentui/style-utilities": "8.7.7",
     "@fluentui/theme": "2.6.12",
     "@fluentui/web-components": "^2.5.4",

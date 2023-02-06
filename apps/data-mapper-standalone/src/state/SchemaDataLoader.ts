@@ -98,7 +98,8 @@ const loadSchemaFromMock = async (resourcePath: string): Promise<Schema | undefi
   try {
     const schema: Schema = await import(`../../../../__mocks__/schemas/${resourcePath}`);
     return schema;
-  } catch {
+  } catch (ex) {
+    console.error(ex);
     return undefined;
   }
 };

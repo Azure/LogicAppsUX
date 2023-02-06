@@ -65,6 +65,12 @@
       "value": "페이지 매김"
     }
   ],
+  "//nQG4": [
+    {
+      "type": 0,
+      "value": "Select an api from apim instance"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -125,6 +131,12 @@
       "value": "입력을 배열로 변환합니다."
     }
   ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -153,6 +165,12 @@
     {
       "type": 0,
       "value": "전달된 배열 또는 문자열의 첫 번째 Count 요소를 반환합니다."
+    }
+  ],
+  "/yYyOq": [
+    {
+      "type": 0,
+      "value": "Resource Group"
     }
   ],
   "00xlpa": [
@@ -263,6 +281,12 @@
       "value": "(UTC-05:00) 보고타, 리마, 키토, 리오 브랑코"
     }
   ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
+    }
+  ],
   "0p+pJq": [
     {
       "type": 0,
@@ -325,12 +349,6 @@
     {
       "type": 0,
       "value": "메모"
-    }
-  ],
-  "1ANUHk": [
-    {
-      "type": 0,
-      "value": "Loading functions..."
     }
   ],
   "1D047X": [
@@ -776,6 +794,12 @@
       "value": "필수 사항으로, 반환할 수 있는 최하 정수입니다."
     }
   ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "4BrA0z": [
     {
       "type": 0,
@@ -1014,10 +1038,22 @@
       "value": "필수 사항으로, 피승수 2를 곱할 숫자입니다."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -1352,6 +1388,12 @@
     {
       "type": 0,
       "value": "인증 유형"
+    }
+  ],
+  "AGCm1p": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "AHB418": [
@@ -1964,6 +2006,12 @@
       "value": "필수 항목으로, Within 컬렉션 내에서 찾을 개체입니다."
     }
   ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2206,6 +2254,12 @@
       "value": "전달된 인수에서 Null이 아닌 첫 번째 개체를 반환합니다."
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2248,6 +2302,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 시간을 포함하는 문자열입니다."
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2439,6 +2499,12 @@
     {
       "type": 0,
       "value": "URI에서 체계 반환"
+    }
+  ],
+  "LV/BTE": [
+    {
+      "type": 0,
+      "value": "Loading Api Management service instances..."
     }
   ],
   "LZm3ze": [
@@ -2895,6 +2961,12 @@
       "value": "(UTC-03:00) 아라구아이나"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -2905,6 +2977,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 피가수 1에 추가할 숫자입니다."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3408,6 +3486,12 @@
       "value": "(UTC-06:00) 이스터 섬"
     }
   ],
+  "UAwAAS": [
+    {
+      "type": 0,
+      "value": "Show inputs"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3602,6 +3686,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 새 속성의 이름입니다."
+    }
+  ],
+  "WCrlES": [
+    {
+      "type": 0,
+      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -3934,6 +4024,12 @@
       "value": ")"
     }
   ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "ZCFMoe": [
     {
       "type": 0,
@@ -4042,6 +4138,12 @@
       "value": "데이터 처리"
     }
   ],
+  "aSnCCB": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -4110,6 +4212,12 @@
     {
       "type": 0,
       "value": "기본적으로 논리 앱 인스턴스는 동시에 또는 병렬로 실행됩니다. 이 컨트롤은 새 실행이 큐에 대기되는 방식을 변경하며, 사용하도록 설정한 후에는 변경할 수 없습니다. 가능한 한 많은 병렬 인스턴스를 실행하려면 이 컨트롤을 끄십시오. 병렬 실행 수를 제한하려면 이 컨트롤을 켜고 제한을 선택합니다. 순차적으로 실행하려면 제한을 1으로 선택합니다."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4372,6 +4480,12 @@
       "value": "구분 기호를 사용하여 문자열을 분할합니다."
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4388,6 +4502,12 @@
     {
       "type": 0,
       "value": "지정되지 않음"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -4881,12 +5001,6 @@
       "value": "Elements and mappings not connected to a target element are removed."
     }
   ],
-  "ittN0l": [
-    {
-      "type": 0,
-      "value": "No resources of this type found under this subscription."
-    }
-  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -4929,6 +5043,12 @@
       "value": "지정된 범위(시작 지점만 포함)에서 임의의 정수를 반환합니다."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -4963,6 +5083,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, base64 입력 문자열입니다."
+    }
+  ],
+  "jZjgYZ": [
+    {
+      "type": 0,
+      "value": "No resources of this type found under this subscription."
     }
   ],
   "jcA3Ig": [
@@ -5113,6 +5239,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 이 값은 반환할 수 있는 가장 큰 정수 다음의 정수입니다."
+    }
+  ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "kuFK3E": [
@@ -5391,6 +5523,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 미래의 원하는 시간에 대한 시간 단위 수입니다."
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
     }
   ],
   "nSan4V": [
@@ -6402,6 +6540,12 @@
     {
       "type": 0,
       "value": "식의 결과가 true인지, 아니면 false인지 여부에 따라 지정된 값을 반환합니다."
+    }
+  ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
     }
   ],
   "wl7X0l": [
