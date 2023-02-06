@@ -28,6 +28,6 @@ export interface ServiceOptions {
   loggerService?: ILoggerService;
   oAuthService: IOAuthService;
   workflowService: IWorkflowService;
-  hostService: IHostService;
+  hostService?: IHostService;
   apimService?: IApiManagementService;
 }

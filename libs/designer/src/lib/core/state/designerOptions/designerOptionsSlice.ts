@@ -51,7 +51,6 @@ export const initializeServices = createAsyncThunk(
     InitSearchService(searchService);
     InitOAuthService(oAuthService);
     InitWorkflowService(workflowService);
-    InitHostService(hostService);
 
     if (connectorService) {
       InitConnectorService(connectorService);
@@ -63,6 +62,10 @@ export const initializeServices = createAsyncThunk(
 
     if (apimService) {
       InitApiManagementService(apimService);
+    }
+
+    if (hostService) {
+      InitHostService(hostService);
     }
 
     return true;
