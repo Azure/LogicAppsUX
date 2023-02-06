@@ -29,5 +29,5 @@ export interface ServiceOptions {
   oAuthService: IOAuthService;
   workflowService: IWorkflowService;
   apimService?: IApiManagementService;
-  runService: IRunService;
+  runService?: IRunService;
 }

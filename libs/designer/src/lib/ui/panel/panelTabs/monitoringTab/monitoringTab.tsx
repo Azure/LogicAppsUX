@@ -6,7 +6,7 @@ import { PropertiesPanel } from './propertiesPanel';
 import { RunService } from '@microsoft/designer-client-services-logic-apps';
 import { ValuesPanel } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export const MonitoringPanel: React.FC = () => {
@@ -15,10 +15,17 @@ export const MonitoringPanel: React.FC = () => {
   const nodeMetadata = useNodeMetadata(selectedNodeId);
   const brandColor = useBrandColor(selectedNodeId);
   const runMetaData = nodeMetadata?.runData;
+  const [inputOutputs, setInputsOutputs] = useState({ inputs: null, outputs: null });
 
   useEffect(() => {
-    RunService().getInputsOutputs(runMetaData);
-  }, []);
+    async function getActionInputsOutputs() {
+      const actionsInputsOutputs = await RunService().getInputsOutputs(runMetaData);
+      setInputsOutputs(actionsInputsOutputs);
+    }
+    getActionInputsOutputs();
+  }, [runMetaData]);
+
+  console.log(inputOutputs);
 
   const intlText = {
     inputs: intl.formatMessage({
@@ -55,16 +62,7 @@ export const MonitoringPanel: React.FC = () => {
           headerText={intlText.inputs}
           linkText={intlText.showInputs}
           showLink={true}
-          values={{
-            method: {
-              displayName: 'Method',
-              value: 'POST',
-            },
-            uri: {
-              displayName: 'URL',
-              value: 'https://httpbin.org/post/',
-            },
-          }}
+          values={inputOutputs.inputs ?? {}}
           labelledBy={''}
           noValuesText={intlText.noInputs}
           showMore={false}

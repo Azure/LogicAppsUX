@@ -105,25 +105,25 @@ export class StandardRunService implements IRunService {
 
   /**
    * Gets the inputs for an action from a workflow run
-   * @arg {RunAction} action - An object with an action record from a workflow run
+   * @arg {ContentLink} inputsLink - Inputs content link
    * @return {Promise<any>}
    */
-  async getActionInputs(action: any): Promise<any> {
-    return this.getContent(action);
+  async getActionInputs(inputsLink: any): Promise<any> {
+    return this.getContent(inputsLink);
   }
 
   /**
    * Gets the outputs for an action from a workflow run
-   * @arg {RunAction} action - An object with an action record from a workflow run
+   * @arg {ContentLink} outputsLink - Outputs content link
    * @return {Promise<any>}
    */
-  async getActionOutputs(action: any): Promise<any> {
-    return this.getContent(action);
+  async getActionOutputs(outputsLink: ContentLink): Promise<any> {
+    return this.getContent(outputsLink);
   }
 
   /**
    * Gets the inputs and outputs for an action repetition from a workflow run
-   * @arg {RunRepetition} repetition - An object with a repetition record from a workflow run
+   * @arg {any} action - An object with a repetition record from a workflow run
    * @return {Promise<RunRepetition>}
    */
   async getInputsOutputs(action: any): Promise<any> {
@@ -131,14 +131,34 @@ export class StandardRunService implements IRunService {
 
     const promises: Promise<any | null>[] = [];
 
+    const test: any = {
+      uri: 'https://monitoringviewtest.azurewebsites.net:443/runtime/webhooks/workflow/scaleUnits/prod-00/workflows/bb553259c3d44d0b858f44bd02ab1b40/runs/08585262402390848598937015539CU00/actions/Initialize_variable/contents/ActionInputs?api-version=2018-11-01&code=xOUA-I7M8HlfJplWLvjQNDP5XxCdO1eYwCnjfm8BI_n5AzFuXsiWbA%3d%3d&se=2023-02-07T02%3A00%3A00.0000000Z&sp=%2Fruns%2F08585262402390848598937015539CU00%2Factions%2FInitialize_variable%2Fcontents%2FActionInputs%2Fread&sv=1.0&sig=sm9LSlRzwxCDeVQ_cg_m3SX1XJRJUphfUrGVeDpS3mk',
+    };
+
     if (outputsLink) {
-      promises.push(this.getActionOutputs(outputsLink));
+      promises.push(this.getActionOutputs(test));
     }
     if (inputsLink) {
-      promises.push(this.getActionInputs(inputsLink));
+      promises.push(this.getActionInputs(test));
     }
     const [inputs, outputs] = await Promise.all(promises);
 
-    return { inputs, outputs };
+    return this.parseActionsInputsOutputs({ inputs, outputs });
+  }
+
+  parseInputsLinks(test: Record<string, any>) {
+    const test1 = Object.keys(test);
+    return test1.reduce((prev, current) => {
+      return { ...prev, [current]: { displayName: current, value: test[current] } };
+    }, {});
+  }
+
+  parseActionsInputsOutputs({ inputs, outputs }: any) {
+    let testInputs = {};
+    if (inputs) {
+      testInputs = this.parseInputsLinks(inputs.variables[0]);
+    }
+
+    return { inputs: testInputs, outputs };
   }
 }
