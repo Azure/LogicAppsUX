@@ -147,6 +147,12 @@
       "value": "De invoer naar een matrix converteren"
     }
   ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -289,6 +295,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
+    }
+  ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
     }
   ],
   "0p+pJq": [
@@ -809,6 +821,12 @@
       "value": "Vereist. Het laagste gehele getal dat kan worden geretourneerd."
     }
   ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "4BrA0z": [
     {
       "type": 0,
@@ -1047,10 +1065,22 @@
       "value": "Vereist. Het getal waarmee vermenigvuldigtal 2 moet worden vermenigvuldigd."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -2065,6 +2095,12 @@
       "value": "Vereist. Het object dat in de verzameling Binnen moet worden gevonden."
     }
   ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2315,6 +2351,12 @@
       "value": "Het eerste object dat niet null is in de ingevoerde argumenten wordt geretourneerd"
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2357,6 +2399,12 @@
     {
       "type": 0,
       "value": "Vereist. Een tekenreeks die de tijd bevat."
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -3053,6 +3101,12 @@
       "value": "(UTC-03:00) Araguaina"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -3063,6 +3117,12 @@
     {
       "type": 0,
       "value": "Vereist. Het getal dat moet worden opgeteld bij opteltal 1."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3581,6 +3641,12 @@
       "value": "(UTC-06:00) Paaseiland"
     }
   ],
+  "UAwAAS": [
+    {
+      "type": 0,
+      "value": "Show inputs"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3775,6 +3841,12 @@
     {
       "type": 0,
       "value": "Vereist. De naam van de nieuwe eigenschap."
+    }
+  ],
+  "WCrlES": [
+    {
+      "type": 0,
+      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -4115,6 +4187,12 @@
       "value": ")"
     }
   ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "ZCFMoe": [
     {
       "type": 0,
@@ -4297,6 +4375,12 @@
     {
       "type": 0,
       "value": "Logic App-exemplaren worden standaard tegelijkertijd of parallel uitgevoerd. Met dit besturingselement wordt gewijzigd hoe nieuwe uitvoeringen in de wachtrij worden opgeslagen. Dit kan na inschakelen niet worden gewijzigd. Als u zoveel mogelijk parallelle exemplaren wilt uitvoeren, laat u dit besturingselement uitgeschakeld. Als u het aantal parallelle uitvoeringen wilt beperken, schakelt u dit besturingselement in en selecteert u een limiet. Als u opeenvolgend wilt uitvoeren, selecteert u 1 als limiet."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4563,6 +4647,12 @@
       "value": "De tekenreeks wordt met een scheidingsteken gesplitst"
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4579,6 +4669,12 @@
     {
       "type": 0,
       "value": "Niet opgegeven"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -5149,6 +5245,12 @@
       "value": "Hiermee wordt een willekeurig geheel getal geretourneerd uit een opgegeven bereik dat alleen aan het begin van de reeks is inbegrepen."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5339,6 +5441,12 @@
     {
       "type": 0,
       "value": "Vereist. Deze waarde is het volgende gehele getal na het hoogste gehele getal dat kan worden geretourneerd."
+    }
+  ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "kuFK3E": [
@@ -5617,6 +5725,12 @@
     {
       "type": 0,
       "value": "Vereist. Het aantal tijdseenheden waarmee de gewenste tijd in de toekomst wordt opgegeven."
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
     }
   ],
   "nSan4V": [
@@ -6667,6 +6781,12 @@
     {
       "type": 0,
       "value": "Afhankelijk of de expressie resulteert in Waar of Onwaar wordt een opgegeven waarde geretourneerd"
+    }
+  ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
     }
   ],
   "wl7X0l": [
