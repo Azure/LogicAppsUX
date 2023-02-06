@@ -118,7 +118,7 @@ export const Notification = (props: NotificationProps) => {
       ),
       [NotificationTypes.RepeatingConnectionCannotDelete]: intl.formatMessage(
         {
-          defaultMessage: 'Remove all mappings within source element `{nodeName}‘ first.',
+          defaultMessage: 'Remove all mappings within source element `{nodeName}` first.',
           description: 'Message informing that mapping to child elements need to be deleted prior to selected one.',
         },
         { nodeName: msgParam ?? '' }

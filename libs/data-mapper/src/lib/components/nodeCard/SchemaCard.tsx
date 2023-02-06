@@ -6,9 +6,9 @@ import type { SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { Connection } from '../../models/Connection';
 import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
-import { flattenInputs, isCustomValue, isValidConnectionByType, isValidCustomValueByType } from '../../utils/Connection.Utils';
+import { flattenInputs } from '../../utils/Connection.Utils';
 import { iconForNormalizedDataType } from '../../utils/Icon.Utils';
-import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
+import { areInputsValidForSchemaNode } from '../../utils/MapChecker.Utils';
 import { ItemToggledState } from '../tree/TargetSchemaTreeItem';
 import HandleWrapper from './HandleWrapper';
 import type { CardProps } from './NodeCard';
@@ -229,21 +229,8 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
       return true;
     }
 
-    const curInput = flattenInputs(curConn.inputs)[0];
-    if (curInput === undefined) {
-      return true;
-    }
-
-    if (isCustomValue(curInput)) {
-      return isValidCustomValueByType(curInput, schemaNode.normalizedDataType);
-    } else {
-      if (isSchemaNodeExtended(curInput.node)) {
-        return isValidConnectionByType(schemaNode.normalizedDataType, curInput.node.normalizedDataType);
-      } else {
-        return isValidConnectionByType(schemaNode.normalizedDataType, curInput.node.outputValueType);
-      }
-    }
-  }, [isSourceSchemaNode, connections, reactFlowId, isNodeConnected, schemaNode.normalizedDataType]);
+    return areInputsValidForSchemaNode(schemaNode, curConn);
+  }, [connections, reactFlowId, isSourceSchemaNode, isNodeConnected, schemaNode]);
 
   const outputChevronOnClick = (e: React.MouseEvent) => {
     e.stopPropagation();
