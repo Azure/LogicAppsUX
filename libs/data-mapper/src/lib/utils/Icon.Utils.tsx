@@ -171,20 +171,22 @@ export const iconUriForIconImageName = (iconImageName: string) => {
   return `${iconBaseUrl}${iconImageName}`;
 };
 
+const mapCheckerIconStyle = { minHeight: '20px', minWidth: '20px' };
+
 export const iconForMapCheckerSeverity = (severity: MapCheckerItemSeverity) => {
   switch (severity) {
     case MapCheckerItemSeverity.Error: {
-      return <DismissCircleFilled primaryFill={tokens.colorPaletteRedBackground3} />;
+      return <DismissCircleFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteRedBackground3} />;
     }
     case MapCheckerItemSeverity.Warning: {
-      return <WarningFilled primaryFill={tokens.colorPaletteGoldBorderActive} />;
+      return <WarningFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteGoldBorderActive} />;
     }
     case MapCheckerItemSeverity.Info: {
-      return <InfoFilled primaryFill={tokens.colorPaletteBlueBorderActive} />;
+      return <InfoFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteBlueBorderActive} />;
     }
     case MapCheckerItemSeverity.Unknown:
     default: {
-      return <QuestionCircleFilled primaryFill={tokens.colorPaletteBeigeBorderActive} />;
+      return <QuestionCircleFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteBeigeBorderActive} />;
     }
   }
 };
