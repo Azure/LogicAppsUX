@@ -1,3 +1,5 @@
+import type { AzureResourcePickerProps } from '../azureResourcePicker';
+import { AzureResourcePicker } from '../azureResourcePicker';
 import { filterRecord } from '../utils';
 import { UniversalConnectionParameter } from './universalConnectionParameter';
 import {
@@ -24,9 +26,6 @@ import { Capabilities, ConnectionParameterTypes } from '@microsoft/utils-logic-a
 import type { FormEvent } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import type { ResourceSelectorProps } from './resourcepicker';
-import { ResourceSelector } from './resourcepicker';
-export type { AssistedConnectionProps } from './resourcepicker';
 
 export interface CreateConnectionProps {
   connectorDisplayName: string;
@@ -49,7 +48,7 @@ export interface CreateConnectionProps {
   availableSubscriptions?: Subscription[];
   availableGateways?: Gateway[];
   checkOAuthCallback: (parameters: Record<string, ConnectionParameter>) => boolean;
-  resourceSelectedProps?: ResourceSelectorProps;
+  resourceSelectedProps?: AzureResourcePickerProps;
 }
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
@@ -184,7 +183,12 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
   const validParams = useMemo(() => {
     if (showNameInput && !connectionDisplayName) return false;
-    if (resourceSelectedProps && ((resourceSelectedProps?.fetchSubResourcesCallback && !resourceSelectedProps?.selectedSubResource) || !resourceSelectedProps?.selectedResourceId)) return false;
+    if (
+      resourceSelectedProps &&
+      ((resourceSelectedProps?.fetchSubResourcesCallback && !resourceSelectedProps?.selectedSubResource) ||
+        !resourceSelectedProps?.selectedResourceId)
+    )
+      return false;
     if (Object.keys(capabilityEnabledParameters ?? {}).length === 0) return true;
     return Object.entries(capabilityEnabledParameters).every(
       ([key, parameter]) => parameter?.uiDefinition?.constraints?.required !== 'true' || !!parameterValues[key]
@@ -431,7 +435,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
         )}
 
         {/* Resource Selector UI */}
-        {resourceSelectedProps && (<ResourceSelector {...resourceSelectedProps } />)}
+        {resourceSelectedProps && <AzureResourcePicker {...resourceSelectedProps} />}
       </div>
 
       {/* Descriptor text for simple and oauth */}
