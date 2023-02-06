@@ -147,6 +147,12 @@
       "value": "Konwertuj dane wejściowe na tablicę"
     }
   ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -289,6 +295,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
+    }
+  ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
     }
   ],
   "0p+pJq": [
@@ -847,6 +859,12 @@
       "value": "Wymagane. Najmniejsza liczba całkowita, która może zostać zwrócona."
     }
   ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "4BrA0z": [
     {
       "type": 0,
@@ -1085,10 +1103,22 @@
       "value": "Wymagane. Liczba, przez którą mnożona jest mnożna 2."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -2147,6 +2177,12 @@
       "value": "Parametr wymagany. Obiekt do wyszukiwania wewnątrz kolekcji typu W zakresie."
     }
   ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2397,6 +2433,12 @@
       "value": "Zwraca pierwszy obiekt o wartości innej niż null w przekazanych argumentach"
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2439,6 +2481,12 @@
     {
       "type": 0,
       "value": "Wymagane. Ciąg zawierający godzinę."
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -3165,6 +3213,12 @@
       "value": "(UTC-03:00) Araguaina"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -3175,6 +3229,12 @@
     {
       "type": 0,
       "value": "Wymagane. Liczba dodawana do składnika 1."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3711,6 +3771,12 @@
       "value": "(UTC-06:00) Wyspa Wielkanocna"
     }
   ],
+  "UAwAAS": [
+    {
+      "type": 0,
+      "value": "Show inputs"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3905,6 +3971,12 @@
     {
       "type": 0,
       "value": "Wymagane. Nazwa nowej właściwości."
+    }
+  ],
+  "WCrlES": [
+    {
+      "type": 0,
+      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -4245,6 +4317,12 @@
       "value": ")"
     }
   ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "ZCFMoe": [
     {
       "type": 0,
@@ -4435,6 +4513,12 @@
     {
       "type": 0,
       "value": "Domyślnie wystąpienia aplikacji logiki są uruchamiane w tym samym czasie (równolegle). Ta kontrolka zmienia sposób kolejkowania nowych uruchomień. Po włączeniu nie można jej zmienić. Aby uruchomić równolegle możliwie największą liczbę wystąpień, pozostaw tę kontrolkę wyłączoną. Aby ograniczyć liczbę równoległych uruchomień, włącz tę kontrolkę i wybierz limit. Aby uruchomić wystąpienia sekwencyjnie, wybierz 1 jako limit."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4701,6 +4785,12 @@
       "value": "Dzieli ciąg, używając separatora"
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4717,6 +4807,12 @@
     {
       "type": 0,
       "value": "Nie określono"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -5309,6 +5405,12 @@
       "value": "Zwraca losową liczbę całkowitą z określonego zakresu, który jest lewostronnie domknięty."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5507,6 +5609,12 @@
     {
       "type": 0,
       "value": "Wymagane. Ta wartość jest następną liczbą całkowitą po największej liczbie całkowitej możliwej do zwrócenia."
+    }
+  ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "kuFK3E": [
@@ -5785,6 +5893,12 @@
     {
       "type": 0,
       "value": "Wymagane. Liczba jednostek czasu określająca żądany czas w przyszłości."
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
     }
   ],
   "nSan4V": [
@@ -6857,6 +6971,12 @@
     {
       "type": 0,
       "value": "Zwraca określoną wartość zależnie od tego, czy wynikiem wyrażenia jest wartość true lub false"
+    }
+  ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
     }
   ],
   "wl7X0l": [

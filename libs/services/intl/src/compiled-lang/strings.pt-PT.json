@@ -147,6 +147,12 @@
       "value": "Converter a entrada em uma matriz"
     }
   ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -289,6 +295,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Bogotá, Lima, Quito, Rio Branco"
+    }
+  ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
     }
   ],
   "0p+pJq": [
@@ -820,6 +832,12 @@
       "value": "Obrigatório. O menor número inteiro que pode ser devolvido."
     }
   ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "4BrA0z": [
     {
       "type": 0,
@@ -1058,10 +1076,22 @@
       "value": "Obrigatório. O número com o qual se multiplica o Multiplicando 2."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -2098,6 +2128,12 @@
       "value": "Obrigatório. O objeto a encontrar na coleção Dentro."
     }
   ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2348,6 +2384,12 @@
       "value": "Devolve o primeiro objeto não nulo nos argumentos transmitidos"
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2390,6 +2432,12 @@
     {
       "type": 0,
       "value": "Obrigatório. Uma cadeia que contém a hora."
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -3105,6 +3153,12 @@
       "value": "(UTC-03:00) Araguaina"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -3115,6 +3169,12 @@
     {
       "type": 0,
       "value": "Obrigatório. O número a adicionar à Parcela 1."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3640,6 +3700,12 @@
       "value": "(UTC-06:00) Ilha da Páscoa"
     }
   ],
+  "UAwAAS": [
+    {
+      "type": 0,
+      "value": "Show inputs"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3834,6 +3900,12 @@
     {
       "type": 0,
       "value": "Necessário. O nome da nova propriedade."
+    }
+  ],
+  "WCrlES": [
+    {
+      "type": 0,
+      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -4174,6 +4246,12 @@
       "value": ")"
     }
   ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "ZCFMoe": [
     {
       "type": 0,
@@ -4364,6 +4442,12 @@
     {
       "type": 0,
       "value": "Por predefinição, as instâncias da Aplicação Lógica são executadas ao mesmo tempo ou em paralelo. Este controlo altera a forma como as novas execuções são colocadas em fila e não pode ser alterado após a ativação. Para executar o máximo de instâncias paralelas possível, deixe este controlo desativado. Para limitar o número de execuções paralelas, ative este controlo e selecione um limite. Para executar sequencialmente, selecione 1 como limite."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4630,6 +4714,12 @@
       "value": "Divide a cadeia com um separador"
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4646,6 +4736,12 @@
     {
       "type": 0,
       "value": "Não especificado"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -5231,6 +5327,12 @@
       "value": "Devolve um número inteiro aleatório de um intervalo especificado que é inclusivo apenas no início."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5429,6 +5531,12 @@
     {
       "type": 0,
       "value": "Obrigatório. Este valor é o número inteiro seguinte depois do maior número inteiro que foi possível devolver."
+    }
+  ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "kuFK3E": [
@@ -5707,6 +5815,12 @@
     {
       "type": 0,
       "value": "Obrigatório. O número de unidades de tempo que o tempo pretendido é no futuro."
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
     }
   ],
   "nSan4V": [
@@ -6768,6 +6882,12 @@
     {
       "type": 0,
       "value": "Devolve um valor especificado baseado se o resultado da expressão for verdadeiro ou falso"
+    }
+  ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
     }
   ],
   "wl7X0l": [

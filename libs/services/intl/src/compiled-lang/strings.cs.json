@@ -143,6 +143,12 @@
       "value": "Převede vstup na pole."
     }
   ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -285,6 +291,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
+    }
+  ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
     }
   ],
   "0p+pJq": [
@@ -839,6 +851,12 @@
       "value": "Povinný parametr. Nejnižší celé číslo, které se může vrátit."
     }
   ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "4BrA0z": [
     {
       "type": 0,
@@ -1077,10 +1095,22 @@
       "value": "Povinný parametr. Číslo, kterým se má vynásobit násobenec 2."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -2135,6 +2165,12 @@
       "value": "Vyžadováno. Objekt, který se má najít v kolekci Within."
     }
   ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2385,6 +2421,12 @@
       "value": "Vrátí první objekt v předaných argumentech, který není null."
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2423,6 +2465,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Řetězec, který obsahuje časový údaj."
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -3157,6 +3205,12 @@
       "value": "(UTC-03:00) Araguaina"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -3167,6 +3221,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Číslo, které se má přičíst ke sčítanci 1."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3703,6 +3763,12 @@
       "value": "(UTC-06:00) Velikonoční ostrov"
     }
   ],
+  "UAwAAS": [
+    {
+      "type": 0,
+      "value": "Show inputs"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3897,6 +3963,12 @@
     {
       "type": 0,
       "value": "Povinné. Název nové vlastnosti"
+    }
+  ],
+  "WCrlES": [
+    {
+      "type": 0,
+      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -4237,6 +4309,12 @@
       "value": ")"
     }
   ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "ZCFMoe": [
     {
       "type": 0,
@@ -4427,6 +4505,12 @@
     {
       "type": 0,
       "value": "Ve výchozím nastavení se instance aplikace logiky spouštějí současně nebo paralelně. Tento ovládací prvek změní způsob zařazení nových spuštění do fronty a po povolení se nedá změnit. Pokud chcete spustit co nejvíce paralelních instancí, nechte tento ovládací prvek vypnutý. Pokud chcete omezit počet paralelních spuštění, zapněte tento ovládací prvek a vyberte limit. Pokud chcete spouštět sekvenčně, vyberte jako limit 1."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4693,6 +4777,12 @@
       "value": "Rozdělí řetězec pomocí oddělovače."
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4709,6 +4799,12 @@
     {
       "type": 0,
       "value": "Neuvedeno"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -5297,6 +5393,12 @@
       "value": "Vrátí náhodné celé číslo ze zadaného rozsahu, do kterého patří jeho první, ale ne poslední hodnota."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5491,6 +5593,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Tato hodnota představuje další celé číslo po nejvyšším celém číslu, které se mohlo vrátit."
+    }
+  ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "kuFK3E": [
@@ -5769,6 +5877,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Počet časových jednotek, o který je požadovaný čas v budoucnosti"
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
     }
   ],
   "nSan4V": [
@@ -6837,6 +6951,12 @@
     {
       "type": 0,
       "value": "Vrátí zadanou hodnotu podle toho, jestli se daný výraz vyhodnotil jako true, nebo false."
+    }
+  ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
     }
   ],
   "wl7X0l": [

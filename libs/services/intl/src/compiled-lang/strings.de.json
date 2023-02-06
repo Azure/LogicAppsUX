@@ -147,6 +147,12 @@
       "value": "Eingabe in Array konvertieren"
     }
   ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -289,6 +295,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
+    }
+  ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
     }
   ],
   "0p+pJq": [
@@ -809,6 +821,12 @@
       "value": "Erforderlich. Die niedrigste ganze Zahl, die zurückgegeben werden kann."
     }
   ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "4BrA0z": [
     {
       "type": 0,
@@ -1047,10 +1065,22 @@
       "value": "Erforderlich. Die Zahl, mit der Multiplikand 2 multipliziert werden soll."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -2065,6 +2095,12 @@
       "value": "Erforderlich. Das Objekt, das in der Within-Sammlung gesucht werden soll."
     }
   ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2315,6 +2351,12 @@
       "value": "Gibt das erste Objekt in den übergebenen Argumenten zurück, das nicht NULL lautet."
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2357,6 +2399,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Eine Zeichenfolge, die die Zeit enthält."
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -3061,6 +3109,12 @@
       "value": "(UTC-03:00) Araguaina"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -3071,6 +3125,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Zahl, die mit Summand 1 addiert werden soll."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3589,6 +3649,12 @@
       "value": "(UTC-06:00) Osterinsel"
     }
   ],
+  "UAwAAS": [
+    {
+      "type": 0,
+      "value": "Show inputs"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3783,6 +3849,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Name der neuen Eigenschaft."
+    }
+  ],
+  "WCrlES": [
+    {
+      "type": 0,
+      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -4123,6 +4195,12 @@
       "value": ")"
     }
   ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "ZCFMoe": [
     {
       "type": 0,
@@ -4305,6 +4383,12 @@
     {
       "type": 0,
       "value": "Standardmäßig werden Logik-App-Instanzen gleichzeitig oder parallel ausgeführt. Dieses Steuerelement ändert, wie neue Ausführungen in die Warteschlange eingereiht werden, und kann nach der Aktivierung nicht mehr geändert werden. Lassen Sie dieses Steuerelement deaktiviert, um so viele parallele Instanzen wie möglich auszuführen. Um die Anzahl paralleler Ausführungen einzuschränken, aktivieren Sie dieses Steuerelement, und wählen Sie einen Grenzwert aus. Wählen Sie 1 als Grenzwert für eine sequenzielle Ausführung aus."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4575,6 +4659,12 @@
       "value": "Unterteilt die Zeichenfolge durch ein Trennzeichen."
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4591,6 +4681,12 @@
     {
       "type": 0,
       "value": "Nicht angegeben"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -5157,6 +5253,12 @@
       "value": "Hiermit wird eine zufällige ganze Zahl aus einem angegebenen Bereich zurückgegeben. Nur die Untergrenze des Bereichs wird eingeschlossen."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5355,6 +5457,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Dieser Wert ist die nächste ganze Zahl nach der höchsten ganzen Zahl, die zurückgegeben werden konnte."
+    }
+  ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "kuFK3E": [
@@ -5633,6 +5741,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Hiermit wird angegeben, um wie viele Zeiteinheiten die gewünschte Uhrzeit in der Zukunft liegt."
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
     }
   ],
   "nSan4V": [
@@ -6667,6 +6781,12 @@
     {
       "type": 0,
       "value": "Gibt einen angegebenen Wert basierend darauf zurück, ob der Ausdruck in TRUE oder FALSE ausgewertet wurde."
+    }
+  ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
     }
   ],
   "wl7X0l": [
