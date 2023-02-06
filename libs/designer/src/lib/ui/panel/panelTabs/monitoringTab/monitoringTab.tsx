@@ -19,7 +19,7 @@ export const MonitoringPanel: React.FC = () => {
 
   useEffect(() => {
     async function getActionInputsOutputs() {
-      const actionsInputsOutputs = await RunService().getInputsOutputs(runMetaData);
+      const actionsInputsOutputs = await RunService().getActionLink(runMetaData);
       setInputsOutputs(actionsInputsOutputs);
     }
     getActionInputsOutputs();
