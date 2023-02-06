@@ -210,9 +210,5 @@
     "webpack-cli": "4.10.0",
     "worker-loader": "3.0.8",
     "yalc": "1.0.0-pre.53"
-  },
-  "peerDependencies": {
-    "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
-    "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
   }
 }
