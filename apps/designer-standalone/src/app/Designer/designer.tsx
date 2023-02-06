@@ -8,6 +8,7 @@ import {
   StandardSearchService,
   StandardOAuthService,
   StandardGatewayService,
+  StandardRunService,
 } from '@microsoft/designer-client-services-logic-apps';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import { ResourceIdentityType } from '@microsoft/utils-logic-apps';
@@ -66,6 +67,12 @@ const gatewayService = new StandardGatewayService({
   },
 });
 
+const runService = new StandardRunService({
+  apiVersion: '2018-11-01',
+  baseUrl: '/url',
+  workflowName: 'app',
+});
+
 const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };
 
 export const DesignerWrapper = () => {
@@ -73,7 +80,7 @@ export const DesignerWrapper = () => {
     (state: RootState) => state.workflowLoader
   );
   const designerProviderProps = {
-    services: { connectionService, operationManifestService, searchService, oAuthService, gatewayService, workflowService },
+    services: { connectionService, operationManifestService, searchService, oAuthService, gatewayService, workflowService, runService },
     readOnly,
     isMonitoringView: monitoringView,
     isDarkMode: darkMode,

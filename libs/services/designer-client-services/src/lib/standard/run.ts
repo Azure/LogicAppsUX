@@ -1,16 +1,9 @@
+import type { IRunService } from '../run';
 import type { CallbackInfo } from '../workflow';
 import type { Runs, Run, RunError, ContentLink } from '@microsoft/designer-ui';
 import { isCallbackInfoWithRelativePath, getCallbackUrl } from '@microsoft/designer-ui';
 import type { ArmResources } from '@microsoft/utils-logic-apps';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
-
-export interface IRunService {
-  getContent(contentLink: ContentLink): Promise<any>;
-  getMoreRuns(continuationToken: string): Promise<Runs>;
-  getRun(runId: string): Promise<Run | RunError>;
-  getRuns(workflowId: string): Promise<Runs>;
-  runTrigger(callbackInfo: CallbackInfo): Promise<any>;
-}
 
 export interface RunServiceOptions {
   apiVersion: string;
@@ -19,7 +12,7 @@ export interface RunServiceOptions {
   workflowName: string;
 }
 
-export class RunService implements IRunService {
+export class StandardRunService implements IRunService {
   constructor(private options: RunServiceOptions) {}
 
   async getContent(contentLink: ContentLink): Promise<any> {
@@ -108,5 +101,44 @@ export class RunService implements IRunService {
     if (!response.ok && response.status !== 0) {
       throw new Error(`${response.status} ${response.statusText}`);
     }
+  }
+
+  /**
+   * Gets the inputs for an action from a workflow run
+   * @arg {RunAction} action - An object with an action record from a workflow run
+   * @return {Promise<any>}
+   */
+  async getActionInputs(action: any): Promise<any> {
+    return this.getContent(action);
+  }
+
+  /**
+   * Gets the outputs for an action from a workflow run
+   * @arg {RunAction} action - An object with an action record from a workflow run
+   * @return {Promise<any>}
+   */
+  async getActionOutputs(action: any): Promise<any> {
+    return this.getContent(action);
+  }
+
+  /**
+   * Gets the inputs and outputs for an action repetition from a workflow run
+   * @arg {RunRepetition} repetition - An object with a repetition record from a workflow run
+   * @return {Promise<RunRepetition>}
+   */
+  async getInputsOutputs(action: any): Promise<any> {
+    const { inputsLink, outputsLink } = action;
+
+    const promises: Promise<any | null>[] = [];
+
+    if (outputsLink) {
+      promises.push(this.getActionOutputs(outputsLink));
+    }
+    if (inputsLink) {
+      promises.push(this.getActionInputs(inputsLink));
+    }
+    const [inputs, outputs] = await Promise.all(promises);
+
+    return { inputs, outputs };
   }
 }

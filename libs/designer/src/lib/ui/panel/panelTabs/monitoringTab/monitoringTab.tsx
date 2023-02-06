@@ -3,8 +3,10 @@ import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useBrandColor } from '../../../../core/state/selectors/actionMetadataSelector';
 import { useNodeMetadata } from '../../../../core/state/workflow/workflowSelectors';
 import { PropertiesPanel } from './propertiesPanel';
+import { RunService } from '@microsoft/designer-client-services-logic-apps';
 import { ValuesPanel } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
+import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
 export const MonitoringPanel: React.FC = () => {
@@ -13,6 +15,10 @@ export const MonitoringPanel: React.FC = () => {
   const nodeMetadata = useNodeMetadata(selectedNodeId);
   const brandColor = useBrandColor(selectedNodeId);
   const runMetaData = nodeMetadata?.runData;
+
+  useEffect(() => {
+    RunService().getInputsOutputs(runMetaData);
+  }, []);
 
   const intlText = {
     inputs: intl.formatMessage({

@@ -8,6 +8,7 @@ import type {
   IOAuthService,
   IWorkflowService,
   IApiManagementService,
+  IRunService,
 } from '@microsoft/designer-client-services-logic-apps';
 
 export interface DesignerOptionsState {
@@ -28,4 +29,5 @@ export interface ServiceOptions {
   oAuthService: IOAuthService;
   workflowService: IWorkflowService;
   apimService?: IApiManagementService;
+  runService: IRunService;
 }
