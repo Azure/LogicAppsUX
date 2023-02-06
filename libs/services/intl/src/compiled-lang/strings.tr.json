@@ -131,6 +131,12 @@
       "value": "Bir diziye yönelik girişi dönüştürür"
     }
   ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -273,6 +279,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
+    }
+  ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
     }
   ],
   "0p+pJq": [
@@ -793,6 +805,12 @@
       "value": "Gerekli. Döndürülebilecek en düşük tamsayı."
     }
   ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "4BrA0z": [
     {
       "type": 0,
@@ -1031,10 +1049,22 @@
       "value": "Gerekli. Çarpan 2'nin çarpılacağı sayı."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -2005,6 +2035,12 @@
       "value": "Gerekli. Koleksiyon içinde bulunacak nesne."
     }
   ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2247,6 +2283,12 @@
       "value": "Geçirilen bağımsız değişkenlerdeki null olmayan ilk nesneyi döndürür"
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2289,6 +2331,12 @@
     {
       "type": 0,
       "value": "Gerekli. Zamanı içeren bir dize."
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2953,6 +3001,12 @@
       "value": "(UTC-03:00) Araguaina"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -2963,6 +3017,12 @@
     {
       "type": 0,
       "value": "Gerekli. Toplanan 1'e eklenecek sayı."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3477,6 +3537,12 @@
       "value": "(UTC-06:00) Paskalya Adası"
     }
   ],
+  "UAwAAS": [
+    {
+      "type": 0,
+      "value": "Show inputs"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3671,6 +3737,12 @@
     {
       "type": 0,
       "value": "Gerekli. Yeni özelliğin adı."
+    }
+  ],
+  "WCrlES": [
+    {
+      "type": 0,
+      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -4003,6 +4075,12 @@
       "value": ")"
     }
   ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "ZCFMoe": [
     {
       "type": 0,
@@ -4185,6 +4263,12 @@
     {
       "type": 0,
       "value": "Varsayılan olarak, Mantıksal Uygulama örnekleri aynı anda veya paralel olarak çalışır. Bu denetim, yeni çalıştırmaların sıraya alınma şeklini değiştirir ve etkinleştirildikten sonra değiştirilemez. Mümkün olduğunca çok sayıda paralel örnek çalıştırmak için bu denetimi devre dışı bırakın. Paralel çalıştırma sayısını sınırlamak için bu denetimi etkinleştirin ve bir sınır seçin. Sırayla çalıştırmak için sınır olarak 1 değerini seçin."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4447,6 +4531,12 @@
       "value": "Ayırıcı kullanarak dizeyi böler"
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4463,6 +4553,12 @@
     {
       "type": 0,
       "value": "Belirtilmedi"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -5009,6 +5105,12 @@
       "value": "Yalnızca başlangıç ucunda kapsayıcı olan belirtilen aralıktan rastgele bir tamsayı döndürür."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5199,6 +5301,12 @@
     {
       "type": 0,
       "value": "Gerekli. Bu değer, döndürülebilecek en yüksek tamsayıdan bir sonraki tamsayıdır."
+    }
+  ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "kuFK3E": [
@@ -5477,6 +5585,12 @@
     {
       "type": 0,
       "value": "Zorunlu. İstenen saatin gelecekteki zaman birimlerinin sayısı."
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
     }
   ],
   "nSan4V": [
@@ -6499,6 +6613,12 @@
     {
       "type": 0,
       "value": "İfadenin true veya false ile sonuçlanmasına bağlı olarak belirli bir değer döndürür"
+    }
+  ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
     }
   ],
   "wl7X0l": [

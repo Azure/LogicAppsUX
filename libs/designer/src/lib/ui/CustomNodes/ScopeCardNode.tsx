@@ -22,7 +22,7 @@ import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { DeleteNodeModal, MenuItemType, ScopeCard } from '@microsoft/designer-ui';
-import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
+import { isNullOrUndefined, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -43,6 +43,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const graphNode = useWorkflowNode(scopeId) as WorkflowNode;
   const metadata = useNodeMetadata(scopeId);
+
+  const { status: statusRun, duration: durationRun, error: errorRun } = metadata?.runData ?? {};
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
@@ -122,6 +124,12 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     if (settingValidationErrors?.length > 0) return { errorMessage: settingValidationErrorText, errorLevel: MessageBarType.severeWarning };
     if (parameterValidationErrors?.length > 0)
       return { errorMessage: parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
+
+    if (isMonitoringView && !isNullOrUndefined(errorRun)) {
+      const { code, message } = errorRun;
+      return { errorMessage: `${code}. ${message}`, errorLevel: MessageBarType.warning };
+    }
+
     return { errorMessage: undefined, errorLevel: undefined };
   }, [
     opQuery?.isError,
@@ -130,6 +138,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     settingValidationErrorText,
     parameterValidationErrors?.length,
     parameterValidationErrorText,
+    errorRun,
+    isMonitoringView,
   ]);
 
   if (!node) {
@@ -205,6 +215,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             onClick={nodeClick}
             selected={selected}
             contextMenuOptions={contextMenuOptions}
+            runData={{ status: statusRun, duration: durationRun }}
           />
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
