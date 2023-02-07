@@ -1,11 +1,11 @@
 import { inputsResponse, outputsResponse } from '../__test__/__mocks__/monitoringInputsOutputsResponse';
-import type { IHttpClient } from '../httpClient';
+import type { HttpRequestOptions, IHttpClient } from '../httpClient';
 import type { IRunService } from '../run';
 import type { CallbackInfo } from '../workflow';
 import type { Runs, Run, RunError, ContentLink, BoundParameters } from '@microsoft/designer-ui';
 import { isCallbackInfoWithRelativePath, getCallbackUrl } from '@microsoft/designer-ui';
 import type { ArmResources } from '@microsoft/utils-logic-apps';
-import { ArgumentException, HTTP_METHODS } from '@microsoft/utils-logic-apps';
+import { ArgumentException, HTTP_METHODS, UnsupportedException } from '@microsoft/utils-logic-apps';
 
 export interface RunServiceOptions {
   apiVersion: string;
@@ -71,7 +71,11 @@ export class StandardRunService implements IRunService {
 
   async getMoreRuns(continuationToken: string): Promise<Runs> {
     const headers = this.getAccessTokenHeaders();
-    const response = await fetch(continuationToken, { headers });
+    const { httpClient } = this.options;
+    const response = await httpClient.get<any>({
+      uri: continuationToken,
+      headers: headers as Record<string, any>,
+    });
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
     }
@@ -81,11 +85,15 @@ export class StandardRunService implements IRunService {
   }
 
   async getRun(runId: string): Promise<Run | RunError> {
-    const { apiVersion, baseUrl, workflowName } = this.options;
+    const { apiVersion, baseUrl, workflowName, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 
     const uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?api-version=${apiVersion}`;
-    const response = await fetch(uri, { headers });
+    const response = await httpClient.get<any>({
+      uri,
+      headers: headers as Record<string, any>,
+    });
+
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
     }
@@ -94,11 +102,15 @@ export class StandardRunService implements IRunService {
   }
 
   async getRuns(): Promise<Runs> {
-    const { apiVersion, baseUrl, workflowName } = this.options;
+    const { apiVersion, baseUrl, workflowName, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 
     const uri = `${baseUrl}/workflows/${workflowName}/runs?api-version=${apiVersion}`;
-    const response = await fetch(uri, { headers });
+    const response = await httpClient.get<any>({
+      uri,
+      headers: headers as Record<string, any>,
+    });
+
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
     }
@@ -109,13 +121,15 @@ export class StandardRunService implements IRunService {
   }
 
   async runTrigger(callbackInfo: CallbackInfo): Promise<void> {
+    const { httpClient } = this.options;
     const method = isCallbackInfoWithRelativePath(callbackInfo) ? callbackInfo.method : HTTP_METHODS.POST;
     const uri = getCallbackUrl(callbackInfo);
     if (!uri) {
       throw new Error();
     }
 
-    const response = await fetch(uri, { method, mode: 'no-cors' });
+    const response = await this.getHttpRequestByMethod(httpClient, method, { uri, queryParameters: { mode: 'no-cors' } });
+
     if (!response.ok && response.status !== 0) {
       throw new Error(`${response.status} ${response.statusText}`);
     }
@@ -161,5 +175,25 @@ export class StandardRunService implements IRunService {
     return Object.keys(response).reduce((prev, current) => {
       return { ...prev, [current]: { displayName: current, value: response[current] } };
     }, {});
+  }
+
+  /**
+   * Gets http request acording to method.
+   * @param {IHttpClient} httpClient - HTTP Client.
+   * @param {string} method - HTTP method.
+   * @param {HttpRequestOptions<unknown>} options - Request options.
+   * @returns {Promise<any>}
+   */
+  getHttpRequestByMethod(httpClient: IHttpClient, method: string, options: HttpRequestOptions<unknown>): Promise<any> {
+    switch (method.toLowerCase()) {
+      case 'get':
+        return httpClient.get(options);
+      case 'post':
+        return httpClient.post(options);
+      case 'put':
+        return httpClient.put(options);
+      default:
+        throw new UnsupportedException(`Unsupported call connector method - '${method}'`);
+    }
   }
 }
