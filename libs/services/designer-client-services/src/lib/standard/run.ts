@@ -1,3 +1,4 @@
+import type { IHttpClient } from '../httpClient';
 import type { IRunService } from '../run';
 import type { CallbackInfo } from '../workflow';
 import type { Runs, Run, RunError, ContentLink } from '@microsoft/designer-ui';
@@ -8,6 +9,7 @@ import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 export interface RunServiceOptions {
   apiVersion: string;
   baseUrl: string;
+  httpClient: IHttpClient;
   accessToken?: string;
   workflowName: string;
 }
@@ -17,11 +19,15 @@ export class StandardRunService implements IRunService {
 
   async getContent(contentLink: ContentLink): Promise<any> {
     const { uri } = contentLink;
+    const { httpClient } = this.options;
+
     if (!uri) {
       throw new Error();
     }
+    const response = await httpClient.get<any>({
+      uri,
+    });
 
-    const response = await fetch(uri);
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
     }
@@ -104,15 +110,6 @@ export class StandardRunService implements IRunService {
   }
 
   /**
-   * Gets the inputs/outputs for an action from a workflow run
-   * @arg {ContentLink} actionLink - Outputs content link
-   * @return {Promise<any>}
-   */
-  async getActionLink(actionLink: ContentLink): Promise<any> {
-    return this.getContent(actionLink);
-  }
-
-  /**
    * Gets the inputs and outputs for an action repetition from a workflow run
    * @arg {any} action - An object with a repetition record from a workflow run
    * @return {Promise<RunRepetition>}
@@ -122,10 +119,10 @@ export class StandardRunService implements IRunService {
     const promises: Promise<any | null>[] = [];
 
     if (outputsLink) {
-      promises.push(this.getActionLink(inputsLink));
+      promises.push(this.getContent(outputsLink));
     }
     if (inputsLink) {
-      promises.push(this.getActionLink(outputsLink));
+      promises.push(this.getContent(inputsLink));
     }
     const [inputs, outputs] = await Promise.all(promises);
 
@@ -138,8 +135,10 @@ export class StandardRunService implements IRunService {
     }
 
     const test1 = Object.keys(test);
-    return test1.reduce((prev, current) => {
+    const hello = test1.reduce((prev, current) => {
       return { ...prev, [current]: { displayName: current, value: test[current] } };
     }, {});
+
+    return hello;
   }
 }

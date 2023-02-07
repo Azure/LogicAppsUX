@@ -72,6 +72,7 @@ const runService = new StandardRunService({
   apiVersion: '2018-11-01',
   baseUrl: '/url',
   workflowName: 'app',
+  httpClient,
 });
 
 const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };

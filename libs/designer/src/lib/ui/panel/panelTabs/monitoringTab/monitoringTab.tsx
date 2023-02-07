@@ -16,11 +16,11 @@ export const MonitoringPanel: React.FC = () => {
   const nodeMetadata = useNodeMetadata(selectedNodeId);
   const brandColor = useBrandColor(selectedNodeId);
   const runMetaData = nodeMetadata?.runData;
-  const [inputOutputs, setInputsOutputs] = useState({ inputs: null, outputs: null });
+  const [inputOutputs, setInputsOutputs] = useState({ inputs: {}, outputs: {} });
 
   useEffect(() => {
     async function getActionInputsOutputs() {
-      const actionsInputsOutputs = await RunService().getActionLink(runMetaData);
+      const actionsInputsOutputs = await RunService().getActionLinks(runMetaData);
       setInputsOutputs(actionsInputsOutputs);
     }
     getActionInputsOutputs();
@@ -31,7 +31,7 @@ export const MonitoringPanel: React.FC = () => {
   return isNullOrUndefined(runMetaData) ? null : (
     <div>
       <ErrorSection error={runMetaData.error} />
-      <InputsPanel runMetaData={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} />
+      <InputsPanel runMetaData={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} valuesInputs={inputOutputs.inputs} />
       <OutputsPanel runMetaData={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} />
       <PropertiesPanel properties={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} />
     </div>

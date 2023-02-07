@@ -9,7 +9,6 @@ export interface IRunService {
   getRuns(workflowId: string): Promise<Runs>;
   runTrigger(callbackInfo: CallbackInfo): Promise<any>;
   getActionLinks(action: any): Promise<any>;
-  getActionLink(action: any): Promise<any>;
 }
 
 let service: IRunService;
