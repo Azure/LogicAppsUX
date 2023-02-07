@@ -2,7 +2,7 @@ import { inputsResponse, outputsResponse } from '../__test__/__mocks__/monitorin
 import type { IHttpClient } from '../httpClient';
 import type { IRunService } from '../run';
 import type { CallbackInfo } from '../workflow';
-import type { Runs, Run, RunError, ContentLink } from '@microsoft/designer-ui';
+import type { Runs, Run, RunError, ContentLink, BoundParameters } from '@microsoft/designer-ui';
 import { isCallbackInfoWithRelativePath, getCallbackUrl } from '@microsoft/designer-ui';
 import type { ArmResources } from '@microsoft/utils-logic-apps';
 import { ArgumentException, HTTP_METHODS } from '@microsoft/utils-logic-apps';
@@ -123,11 +123,12 @@ export class StandardRunService implements IRunService {
 
   /**
    * Gets the inputs and outputs for an action repetition from a workflow run
-   * @arg {any} action - An object with a repetition record from a workflow run
-   * @return {Promise<RunRepetition>}
+   * @param {{inputsLink: ContentLink, outputsLink: ContentLink}} actionMetadata - Workflow file path.
+   * @param {string} nodeId - Action ID.
+   * @returns {Promise<any>} Action inputs and outputs.
    */
-  async getActionLinks(action: any, nodeId: string): Promise<any> {
-    const { inputsLink, outputsLink } = action;
+  async getActionLinks(actionMetadata: { inputsLink?: ContentLink; outputsLink?: ContentLink }, nodeId: string): Promise<any> {
+    const { inputsLink, outputsLink } = actionMetadata;
     const promises: Promise<any | null>[] = [];
 
     if (this._isDev) {
@@ -147,16 +148,18 @@ export class StandardRunService implements IRunService {
     return { inputs: this.parseActionLink(inputs), outputs: this.parseActionLink(outputs) };
   }
 
-  parseActionLink(test: Record<string, any>) {
-    if (!test) {
-      return test;
+  /**
+   * Parse inputs and outputs into dictionary.
+   * @param {Record<string, any>} inputs - Workflow file path.
+   * @returns {BoundParameters} List of parametes.
+   */
+  parseActionLink(response: Record<string, any>): BoundParameters {
+    if (!response) {
+      return response;
     }
 
-    const test1 = Object.keys(test);
-    const hello = test1.reduce((prev, current) => {
-      return { ...prev, [current]: { displayName: current, value: test[current] } };
+    return Object.keys(response).reduce((prev, current) => {
+      return { ...prev, [current]: { displayName: current, value: response[current] } };
     }, {});
-
-    return hello;
   }
 }
