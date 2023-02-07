@@ -164,7 +164,8 @@ export const ReactFlowWrapper = ({
     currentTargetSchemaNode,
     connections,
     selectedItemKey,
-    sourceSchemaOrdering
+    sourceSchemaOrdering,
+    useExpandedFunctionCards
   );
 
   // Find first schema node (should be schemaTreeRoot) for source and target to use its xPos for schema name badge

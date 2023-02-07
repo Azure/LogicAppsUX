@@ -57,7 +57,8 @@ export const useLayout = (
   currentTargetSchemaNode: SchemaNodeExtended | undefined,
   connections: ConnectionDictionary,
   selectedItemKey: string | undefined,
-  sourceSchemaOrdering: string[]
+  sourceSchemaOrdering: string[],
+  useExpandedFunctionCards: boolean
 ): [ReactFlowNode[], ReactFlowEdge[], Size2D] => {
   const [reactFlowNodes, setReactFlowNodes] = useState<ReactFlowNode[]>([]);
   const [reactFlowEdges, setReactFlowEdges] = useState<ReactFlowEdge[]>([]);
@@ -75,7 +76,8 @@ export const useLayout = (
         sortedSourceSchemaNodes,
         currentFunctionNodes,
         currentTargetSchemaNode,
-        connections
+        connections,
+        useExpandedFunctionCards
       );
 
       // Apply ELK layout
@@ -137,7 +139,15 @@ export const useLayout = (
       setReactFlowEdges([]);
       setDiagramSize({ width: 0, height: 0 });
     }
-  }, [currentTargetSchemaNode, currentSourceSchemaNodes, currentFunctionNodes, connections, sourceSchemaOrdering, selectedItemKey]);
+  }, [
+    currentTargetSchemaNode,
+    currentSourceSchemaNodes,
+    currentFunctionNodes,
+    connections,
+    sourceSchemaOrdering,
+    selectedItemKey,
+    useExpandedFunctionCards,
+  ]);
 
   return [reactFlowNodes, reactFlowEdges, diagramSize];
 };
