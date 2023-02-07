@@ -10,6 +10,7 @@ import {
   InitSearchService,
   InitOAuthService,
   InitWorkflowService,
+  InitHostService,
   InitApiManagementService,
   InitRunService,
 } from '@microsoft/designer-client-services-logic-apps';
@@ -35,6 +36,7 @@ export const initializeServices = createAsyncThunk(
     gatewayService,
     loggerService,
     workflowService,
+    hostService,
     apimService,
     runService,
   }: ServiceOptions) => {
@@ -62,6 +64,10 @@ export const initializeServices = createAsyncThunk(
 
     if (apimService) {
       InitApiManagementService(apimService);
+    }
+
+    if (hostService) {
+      InitHostService(hostService);
     }
 
     if (runService) {

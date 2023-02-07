@@ -131,6 +131,12 @@
       "value": "入力をアレイに変換します"
     }
   ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -273,6 +279,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) ボゴタ、リマ、キト、リオ ブランコ"
+    }
+  ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
     }
   ],
   "0p+pJq": [
@@ -632,6 +644,20 @@
       "value": "トリガー"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -780,6 +806,12 @@
     {
       "type": 0,
       "value": "必須。返される可能性のある最も小さい整数。"
+    }
+  ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
     }
   ],
   "4BrA0z": [
@@ -1020,10 +1052,22 @@
       "value": "必須。Multiplicand 2 と乗算する数値。"
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -1976,6 +2020,12 @@
       "value": "必須。Within collection 内で検索するオブジェクト。"
     }
   ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2218,6 +2268,12 @@
       "value": "渡された引数のうち null 以外の最初のオブジェクトを返します"
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2260,6 +2316,12 @@
     {
       "type": 0,
       "value": "必須。時刻を含む文字列。"
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2913,6 +2975,12 @@
       "value": "(UTC-03:00) アラグァイナ"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -2923,6 +2991,12 @@
     {
       "type": 0,
       "value": "必須。Summand 1 に加算する数値。"
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3426,6 +3500,12 @@
       "value": "(UTC-06:00) イースター島"
     }
   ],
+  "UAwAAS": [
+    {
+      "type": 0,
+      "value": "Show inputs"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3620,6 +3700,12 @@
     {
       "type": 0,
       "value": "必須。新しいプロパティの名前。"
+    }
+  ],
+  "WCrlES": [
+    {
+      "type": 0,
+      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -3952,6 +4038,12 @@
       "value": ")"
     }
   ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "ZCFMoe": [
     {
       "type": 0,
@@ -4134,6 +4226,12 @@
     {
       "type": 0,
       "value": "既定では、ロジック アプリ インスタンスは同時に、つまり並列で実行されます。このコントロールでは、新たな実行がキューに登録される方法が変わるため、有効にした後で変更することはできません。可能な限り多くの並列インスタンスを実行するには、このコントロールをオフのままにします。並列実行の数を制限するには、このコントロールを有効にして制限数を選択します。順に実行するには、制限数として 1 を選択します。"
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4396,6 +4494,12 @@
       "value": "区切り記号を使用して文字列を分割します"
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4412,6 +4516,12 @@
     {
       "type": 0,
       "value": "指定なし"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -4947,6 +5057,12 @@
       "value": "指定された範囲からランダムな整数値を返します。これは、最初の値のみ含みます。"
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5137,6 +5253,12 @@
     {
       "type": 0,
       "value": "必須。この値は、返される可能性のある最も大きい整数の次の整数です。"
+    }
+  ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "kuFK3E": [
@@ -5415,6 +5537,12 @@
     {
       "type": 0,
       "value": "必須。時間単位数は希望する将来の時間です。"
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
     }
   ],
   "nSan4V": [
@@ -5784,20 +5912,6 @@
     {
       "type": 0,
       "value": "非同期応答により、ロジック アプリは、処理要求が受理されたことを示す 202 (受理されました) で応答することができます。場所ヘッダーは、最終状態を取得するために提供されます。"
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
     }
   ],
   "r1FQhf": [
@@ -6426,6 +6540,12 @@
     {
       "type": 0,
       "value": "式の結果が true と false のどちらになったかに基づいて、指定された値を返します"
+    }
+  ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
     }
   ],
   "wl7X0l": [

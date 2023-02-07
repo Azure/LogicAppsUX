@@ -131,6 +131,12 @@
       "value": "Converte l'input in una matrice"
     }
   ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -273,6 +279,12 @@
     {
       "type": 0,
       "value": "(UTC-05.00) Bogota, Lima, Quito, Rio Branco"
+    }
+  ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
     }
   ],
   "0p+pJq": [
@@ -654,6 +666,20 @@
       "value": "Trigger"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -802,6 +828,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Integer più basso che può essere restituito."
+    }
+  ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
     }
   ],
   "4BrA0z": [
@@ -1042,10 +1074,22 @@
       "value": "Obbligatorio. Numero in base a cui moltiplicare il moltiplicando 2."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -2042,6 +2086,12 @@
       "value": "Obbligatorio. Oggetto da trovare all'interno della raccolta."
     }
   ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2284,6 +2334,12 @@
       "value": "Restituisce il primo oggetto non Null negli argomenti passati"
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2326,6 +2382,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Stringa contenente l'ora."
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -3009,6 +3071,12 @@
       "value": "(UTC-03:00) Araguaina"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -3019,6 +3087,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Numero da aggiungere all'addendo 1."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3544,6 +3618,12 @@
       "value": "(UTC - 06.00) Isola di Pasqua"
     }
   ],
+  "UAwAAS": [
+    {
+      "type": 0,
+      "value": "Show inputs"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3738,6 +3818,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Nome della nuova proprietà."
+    }
+  ],
+  "WCrlES": [
+    {
+      "type": 0,
+      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -4070,6 +4156,12 @@
       "value": ")"
     }
   ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "ZCFMoe": [
     {
       "type": 0,
@@ -4252,6 +4344,12 @@
     {
       "type": 0,
       "value": "Per impostazione predefinita, le istanze dell'app per la logica vengono eseguite contemporaneamente o in parallelo. Questo controllo cambia la modalità di accodamento delle nuove esecuzioni e non può essere modificato dopo l'abilitazione. Per eseguire il numero massimo possibile di istanze parallele, lasciare disattivato questo controllo. Per limitare il numero di esecuzioni parallele, attivare questo controllo e selezionare un limite. Per l'esecuzione sequenziale, impostare 1 come limite."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4518,6 +4616,12 @@
       "value": "Divide la stringa usando un separatore"
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4534,6 +4638,12 @@
     {
       "type": 0,
       "value": "Non specificato"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -5095,6 +5205,12 @@
       "value": "Restituisce un numero intero casuale da un intervallo specificato, che include solo l'estremità iniziale."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5285,6 +5401,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Valore corrispondente all'integer successivo dopo il numero integer più elevato che è stato restituito."
+    }
+  ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "kuFK3E": [
@@ -5563,6 +5685,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Numero di unità di tempo dell'ora desiderata nel futuro."
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
     }
   ],
   "nSan4V": [
@@ -5954,20 +6082,6 @@
     {
       "type": 0,
       "value": "La risposta asincrona consente a un'app per la logica di rispondere con un codice 202 (Accettata) per indicare che la richiesta è stata accettata per l'elaborazione. Verrà fornita un'intestazione Location per recuperare lo stato finale."
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
     }
   ],
   "r1FQhf": [
@@ -6600,6 +6714,12 @@
     {
       "type": 0,
       "value": "Restituisce un valore specificato a seconda del fatto che l'espressione abbia restituito true o false"
+    }
+  ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
     }
   ],
   "wl7X0l": [

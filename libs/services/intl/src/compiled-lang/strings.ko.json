@@ -131,6 +131,12 @@
       "value": "입력을 배열로 변환합니다."
     }
   ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -273,6 +279,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) 보고타, 리마, 키토, 리오 브랑코"
+    }
+  ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
     }
   ],
   "0p+pJq": [
@@ -632,6 +644,20 @@
       "value": "트리거"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -780,6 +806,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 반환할 수 있는 최하 정수입니다."
+    }
+  ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
     }
   ],
   "4BrA0z": [
@@ -1020,10 +1052,22 @@
       "value": "필수 사항으로, 피승수 2를 곱할 숫자입니다."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -1976,6 +2020,12 @@
       "value": "필수 항목으로, Within 컬렉션 내에서 찾을 개체입니다."
     }
   ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2218,6 +2268,12 @@
       "value": "전달된 인수에서 Null이 아닌 첫 번째 개체를 반환합니다."
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2260,6 +2316,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 시간을 포함하는 문자열입니다."
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2913,6 +2975,12 @@
       "value": "(UTC-03:00) 아라구아이나"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -2923,6 +2991,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 피가수 1에 추가할 숫자입니다."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3426,6 +3500,12 @@
       "value": "(UTC-06:00) 이스터 섬"
     }
   ],
+  "UAwAAS": [
+    {
+      "type": 0,
+      "value": "Show inputs"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3620,6 +3700,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 새 속성의 이름입니다."
+    }
+  ],
+  "WCrlES": [
+    {
+      "type": 0,
+      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -3952,6 +4038,12 @@
       "value": ")"
     }
   ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "ZCFMoe": [
     {
       "type": 0,
@@ -4134,6 +4226,12 @@
     {
       "type": 0,
       "value": "기본적으로 논리 앱 인스턴스는 동시에 또는 병렬로 실행됩니다. 이 컨트롤은 새 실행이 큐에 대기되는 방식을 변경하며, 사용하도록 설정한 후에는 변경할 수 없습니다. 가능한 한 많은 병렬 인스턴스를 실행하려면 이 컨트롤을 끄십시오. 병렬 실행 수를 제한하려면 이 컨트롤을 켜고 제한을 선택합니다. 순차적으로 실행하려면 제한을 1으로 선택합니다."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4396,6 +4494,12 @@
       "value": "구분 기호를 사용하여 문자열을 분할합니다."
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4412,6 +4516,12 @@
     {
       "type": 0,
       "value": "지정되지 않음"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -4947,6 +5057,12 @@
       "value": "지정된 범위(시작 지점만 포함)에서 임의의 정수를 반환합니다."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5137,6 +5253,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 이 값은 반환할 수 있는 가장 큰 정수 다음의 정수입니다."
+    }
+  ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "kuFK3E": [
@@ -5415,6 +5537,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 미래의 원하는 시간에 대한 시간 단위 수입니다."
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
     }
   ],
   "nSan4V": [
@@ -5784,20 +5912,6 @@
     {
       "type": 0,
       "value": "비동기 응답을 통해 논리 앱은 202(승인됨)로 응답하여 요청이 처리를 위해 승인되었음을 나타낼 수 있습니다. 최종 상태를 검색할 수 있는 위치 헤더가 제공됩니다."
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
     }
   ],
   "r1FQhf": [
@@ -6426,6 +6540,12 @@
     {
       "type": 0,
       "value": "식의 결과가 true인지, 아니면 false인지 여부에 따라 지정된 값을 반환합니다."
+    }
+  ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
     }
   ],
   "wl7X0l": [

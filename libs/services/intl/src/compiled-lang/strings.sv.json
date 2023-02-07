@@ -147,6 +147,12 @@
       "value": "Konverterar indata till en matris"
     }
   ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -289,6 +295,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
+    }
+  ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
     }
   ],
   "0p+pJq": [
@@ -659,6 +671,20 @@
       "value": "Utlösare"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -807,6 +833,12 @@
     {
       "type": 0,
       "value": "Krävs. Det lägsta heltalet som kunde returneras."
+    }
+  ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
     }
   ],
   "4BrA0z": [
@@ -1047,10 +1079,22 @@
       "value": "Krävs. Talet att multiplicera Multiplikand 2 med."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -2065,6 +2109,12 @@
       "value": "Obligatoriskt. Det objekt det ska sökas efter i Within-samlingen."
     }
   ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2315,6 +2365,12 @@
       "value": "Returnerar det första icke-null-objektet i det argument som har skickats in"
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2357,6 +2413,12 @@
     {
       "type": 0,
       "value": "Krävs. En sträng som innehåller tiden."
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -3053,6 +3115,12 @@
       "value": "(UTC-03:00) Araguaina"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -3063,6 +3131,12 @@
     {
       "type": 0,
       "value": "Krävs. Talet som ska läggas till i Summand 1."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3581,6 +3655,12 @@
       "value": "(UTC-06:00) Påskön"
     }
   ],
+  "UAwAAS": [
+    {
+      "type": 0,
+      "value": "Show inputs"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3775,6 +3855,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Den nya egenskapens namn."
+    }
+  ],
+  "WCrlES": [
+    {
+      "type": 0,
+      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -4111,6 +4197,12 @@
       "value": ")"
     }
   ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "ZCFMoe": [
     {
       "type": 0,
@@ -4301,6 +4393,12 @@
     {
       "type": 0,
       "value": "Logikappinstanser körs som standard samtidigt eller parallellt. Med den här kontrollen ändrar du hur nya körningar köas, och detta kan inte ändras efter aktivering. Lämna den här kontrollen inaktiverad om du vill köra så många parallella instanser som möjligt. Aktivera den här kontrollen om du vill begränsa antalet parallella körningar, och välj en gräns. Välj 1 som gräns om du vill köra sekventiellt."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4567,6 +4665,12 @@
       "value": "Delar strängen med hjälp av en avgränsare"
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4583,6 +4687,12 @@
     {
       "type": 0,
       "value": "Inte angivet"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -5149,6 +5259,12 @@
       "value": "Returnerar ett slumpmässigt heltal från ett angivet intervall, vilket endast är inkluderande i startänden."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5343,6 +5459,12 @@
     {
       "type": 0,
       "value": "Krävs. Det här värdet är nästa heltal efter det högsta heltalet som kunde returneras."
+    }
+  ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "kuFK3E": [
@@ -5621,6 +5743,12 @@
     {
       "type": 0,
       "value": "Krävs. Antalet tidsenheter som den önskade tiden är i framtiden."
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
     }
   ],
   "nSan4V": [
@@ -6021,20 +6149,6 @@
     {
       "type": 0,
       "value": "Det asynkrona svaret tillåter en logikapp att svara med 202 (godkänd) för att indikera att förfrågan har godkänts för bearbetning. En platsrubrik kommer att tillhandahållas för att hämta den slutliga statusen."
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
     }
   ],
   "r1FQhf": [
@@ -6667,6 +6781,12 @@
     {
       "type": 0,
       "value": "Returnerar ett specificerat värde baserat på huruvida uttrycket har resulterat i sant eller falskt"
+    }
+  ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
     }
   ],
   "wl7X0l": [

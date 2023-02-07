@@ -131,6 +131,12 @@
       "value": "Converter a entrada em uma matriz"
     }
   ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -273,6 +279,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Bogotá, Lima, Quito, Rio Branco"
+    }
+  ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
     }
   ],
   "0p+pJq": [
@@ -654,6 +666,20 @@
       "value": "Gatilhos"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -802,6 +828,12 @@
     {
       "type": 0,
       "value": "Necessário. O menor inteiro que pode ser retornado."
+    }
+  ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
     }
   ],
   "4BrA0z": [
@@ -1042,10 +1074,22 @@
       "value": "Necessário. O número pelo qual multiplicar o Multiplicando 2."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -2038,6 +2082,12 @@
       "value": "Necessário. O objeto a ser localizado na coleção Within."
     }
   ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2280,6 +2330,12 @@
       "value": "Retorna o primeiro objeto não nulo nos argumentos passados"
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2322,6 +2378,12 @@
     {
       "type": 0,
       "value": "Necessário. Uma cadeia de caracteres que contém o tempo."
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2997,6 +3059,12 @@
       "value": "(UTC-03:00) Araguaína"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -3007,6 +3075,12 @@
     {
       "type": 0,
       "value": "Necessário. O número a ser adicionado à Parcela 1."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3532,6 +3606,12 @@
       "value": "(UTC-06:00) Ilha de Páscoa"
     }
   ],
+  "UAwAAS": [
+    {
+      "type": 0,
+      "value": "Show inputs"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3726,6 +3806,12 @@
     {
       "type": 0,
       "value": "Necessário. O nome da nova propriedade."
+    }
+  ],
+  "WCrlES": [
+    {
+      "type": 0,
+      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -4058,6 +4144,12 @@
       "value": ")"
     }
   ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "ZCFMoe": [
     {
       "type": 0,
@@ -4240,6 +4332,12 @@
     {
       "type": 0,
       "value": "Por padrão, as instâncias do Aplicativo Lógico são executadas ao mesmo tempo ou em paralelo. Este controle altera como as novas execuções são enfileiradas e não pode ser alteradas após a habilitação. Para executar o máximo de instâncias paralelas possível, deixe este controle desativado. Para limitar o número de execuções paralelas, ative este controle e selecione um limite. Para executar sequencialmente, selecione 1 como o limite."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4506,6 +4604,12 @@
       "value": "Divide a cadeia de caracteres usando um separador"
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4522,6 +4626,12 @@
     {
       "type": 0,
       "value": "Não especificado"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -5083,6 +5193,12 @@
       "value": "Retorna um inteiro aleatório de um intervalo especificado, inclusivo somente na extremidade inicial."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5273,6 +5389,12 @@
     {
       "type": 0,
       "value": "Necessário. Este valor é o próximo inteiro após o número inteiro mais alto que poderia ser retornado."
+    }
+  ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "kuFK3E": [
@@ -5551,6 +5673,12 @@
     {
       "type": 0,
       "value": "Necessário. O número de unidades de tempo que o horário desejado tem no futuro."
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
     }
   ],
   "nSan4V": [
@@ -5942,20 +6070,6 @@
     {
       "type": 0,
       "value": "A resposta assíncrona permite que um Aplicativo Lógico responda com um 202 (Aceito) para indicar que a solicitação foi aceita para processamento. Um cabeçalho de localização será fornecido para recuperar o estado final."
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
     }
   ],
   "r1FQhf": [
@@ -6588,6 +6702,12 @@
     {
       "type": 0,
       "value": "Retorna um valor especificado considerando se a expressão resultou em true ou false"
+    }
+  ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
     }
   ],
   "wl7X0l": [

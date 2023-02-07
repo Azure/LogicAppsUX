@@ -131,6 +131,12 @@
       "value": "將輸入轉換為陣列"
     }
   ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -273,6 +279,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) 波哥大，利馬，基多，里約布蘭科"
+    }
+  ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
     }
   ],
   "0p+pJq": [
@@ -632,6 +644,20 @@
       "value": "觸發程序"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -780,6 +806,12 @@
     {
       "type": 0,
       "value": "必要。可傳回的最低整數。"
+    }
+  ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
     }
   ],
   "4BrA0z": [
@@ -1020,10 +1052,22 @@
       "value": "必要。要乘以被乘數 2 的數字。"
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -1976,6 +2020,12 @@
       "value": "必要。要在 Within 集合中尋找的物件。"
     }
   ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2218,6 +2268,12 @@
       "value": "傳回傳入引數內第一個非 Null 物件"
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2260,6 +2316,12 @@
     {
       "type": 0,
       "value": "必要。包含時間的字串。"
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2913,6 +2975,12 @@
       "value": "(UTC-03:00) 阿拉瓜伊納"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -2923,6 +2991,12 @@
     {
       "type": 0,
       "value": "必要。要加到被加數 1 的數字。"
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3426,6 +3500,12 @@
       "value": "(UTC-06:00) 伊斯特島"
     }
   ],
+  "UAwAAS": [
+    {
+      "type": 0,
+      "value": "Show inputs"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3620,6 +3700,12 @@
     {
       "type": 0,
       "value": "必要。新屬性的名稱。"
+    }
+  ],
+  "WCrlES": [
+    {
+      "type": 0,
+      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -3952,6 +4038,12 @@
       "value": ")"
     }
   ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "ZCFMoe": [
     {
       "type": 0,
@@ -4134,6 +4226,12 @@
     {
       "type": 0,
       "value": "根據預設，Logic App 執行個體會同時執行或平行執行。此控制項會變更新執行排入佇列的方式，且啟用後無法變更。若要盡可能執行多個平行執行個體，請維持此控制項關閉。若要限制平行執行次數，請開啟此控制項，然後選取限制。若要連續執行，請選取 1 做為限制。"
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4404,6 +4502,12 @@
       "value": "使用分隔符號分割字串"
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4420,6 +4524,12 @@
     {
       "type": 0,
       "value": "未指定"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -4959,6 +5069,12 @@
       "value": "傳回指定範圍內的隨機整數，且只有開頭包含在內。"
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5149,6 +5265,12 @@
     {
       "type": 0,
       "value": "必要。此值是接續在可傳回之最高整數後的整數。"
+    }
+  ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "kuFK3E": [
@@ -5427,6 +5549,12 @@
     {
       "type": 0,
       "value": "必要。未來所需時間的時間單位數字。"
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
     }
   ],
   "nSan4V": [
@@ -5796,20 +5924,6 @@
     {
       "type": 0,
       "value": "非同步回應可讓邏輯應用程式回應 202 (已接受)，來表示已接受該要求進行處理。將會提供位置標頭來擷取最終狀態。"
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
     }
   ],
   "r1FQhf": [
@@ -6442,6 +6556,12 @@
     {
       "type": 0,
       "value": "根據運算式的結果為 True 或 False，傳回指定的值"
+    }
+  ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
     }
   ],
   "wl7X0l": [

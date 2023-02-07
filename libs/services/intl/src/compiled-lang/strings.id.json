@@ -131,6 +131,12 @@
       "value": "Konversikan input menjadi array"
     }
   ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -273,6 +279,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
+    }
+  ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
     }
   ],
   "0p+pJq": [
@@ -632,6 +644,20 @@
       "value": "Pemicu"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -780,6 +806,12 @@
     {
       "type": 0,
       "value": "Wajib. Bilangan bulat terendah yang dapat ditampilkan."
+    }
+  ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
     }
   ],
   "4BrA0z": [
@@ -1020,10 +1052,22 @@
       "value": "Wajib. Nomor untuk mengalikan Multiplicand 2."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -1976,6 +2020,12 @@
       "value": "Harus diisi. Objek untuk dicari Di dalam koleksi."
     }
   ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2218,6 +2268,12 @@
       "value": "Menampilkan objek non-null pertama pada argumen yang diberikan"
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2260,6 +2316,12 @@
     {
       "type": 0,
       "value": "Wajib. String yang berisi waktu."
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2913,6 +2975,12 @@
       "value": "(UTC-03.00) Araguaina"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -2923,6 +2991,12 @@
     {
       "type": 0,
       "value": "Wajib. Nomor yang akan ditambahkan ke Summand 1."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3426,6 +3500,12 @@
       "value": "(UTC-06:00) Pulau Paskah"
     }
   ],
+  "UAwAAS": [
+    {
+      "type": 0,
+      "value": "Show inputs"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3620,6 +3700,12 @@
     {
       "type": 0,
       "value": "Diperlukan. Nama properti baru."
+    }
+  ],
+  "WCrlES": [
+    {
+      "type": 0,
+      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -3952,6 +4038,12 @@
       "value": ")"
     }
   ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "ZCFMoe": [
     {
       "type": 0,
@@ -4134,6 +4226,12 @@
     {
       "type": 0,
       "value": "Secara default, instans Aplikasi Logika berjalan secara bersamaan, atau secara paralel. Kontrol ini mengubah bagaimana eksekusi baru diantrekan dan tidak dapat diubah setelah diaktifkan. Untuk menjalankan instans paralel sebanyak mungkin, biarkan kontrol ini dinonaktifkan. Untuk membatasi jumlah eksekusi paralel, aktifkan kontrol ini, lalu pilih batas. Untuk menjalankannya secara berurutan, pilih 1 sebagai batas."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4400,6 +4498,12 @@
       "value": "Membagi string menggunakan pemisah"
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4416,6 +4520,12 @@
     {
       "type": 0,
       "value": "Tidak ditentukan"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -4955,6 +5065,12 @@
       "value": "Menghasilkan bilangan bulat acak dari rentang yang ditentukan, yang inklusif hanya pada akhir awal."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5145,6 +5261,12 @@
     {
       "type": 0,
       "value": "Wajib. Nilai ini adalah bilangan bulat berikutnya setelah bilangan bulat tertinggi yang dapat ditampilkan."
+    }
+  ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "kuFK3E": [
@@ -5423,6 +5545,12 @@
     {
       "type": 0,
       "value": "Wajib. Jumlah unit waktu yang diinginkan adalah di masa depan."
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
     }
   ],
   "nSan4V": [
@@ -5792,20 +5920,6 @@
     {
       "type": 0,
       "value": "Respons asinkron memungkinkan Aplikasi Logika merespons dengan 202 (Diterima) untuk menunjukkan bahwa permintaan telah diterima untuk diproses. Header lokasi akan disediakan untuk menerima keadaan akhir."
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
     }
   ],
   "r1FQhf": [
@@ -6438,6 +6552,12 @@
     {
       "type": 0,
       "value": "Menampilkan nilai yang ditentukan berdasarkan apakah ekspresi menghasilkan true atau false"
+    }
+  ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
     }
   ],
   "wl7X0l": [

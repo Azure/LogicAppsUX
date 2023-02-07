@@ -1,5 +1,18 @@
 # Logic Apps Designer
 
+### [0.2.69](https://github.com/Azure/LogicAppsUX/compare/v0.2.68...v0.2.69) (2023-02-07)
+
+### [0.2.68](https://github.com/Azure/LogicAppsUX/compare/v0.2.67...v0.2.68) (2023-02-06)
+
+### [0.2.67](https://github.com/Azure/LogicAppsUX/compare/v0.2.66...v0.2.67) (2023-02-05)
+
+### [0.2.66](https://github.com/Azure/LogicAppsUX/compare/v0.2.65...v0.2.66) (2023-02-04)
+
+### Logic Apps Designer Changes
+
+- Adding connection creation experience for Api Management ([#1596](https://github.com/Azure/LogicAppsUX/issues/1596)) ([949e535](https://github.com/Azure/LogicAppsUX/commit/949e5351ddca5cc4d9aa97280338a15b71780a0a))
+- Load dynamic run instance data to monitoring view mode ([#1598](https://github.com/Azure/LogicAppsUX/issues/1598)) ([3ee9c2c](https://github.com/Azure/LogicAppsUX/commit/3ee9c2c76c46afc15b3bc781d6eb0ecb2ee00999))
+
 ### [0.2.65](https://github.com/Azure/LogicAppsUX/compare/v0.2.64...v0.2.65) (2023-02-03)
 
 ### [0.2.64](https://github.com/Azure/LogicAppsUX/compare/v0.2.63...v0.2.64) (2023-02-02)
