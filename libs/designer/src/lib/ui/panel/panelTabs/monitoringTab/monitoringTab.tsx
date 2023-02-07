@@ -20,19 +20,17 @@ export const MonitoringPanel: React.FC = () => {
 
   useEffect(() => {
     async function getActionInputsOutputs() {
-      const actionsInputsOutputs = await RunService().getActionLinks(runMetaData);
+      const actionsInputsOutputs = await RunService().getActionLinks(runMetaData, selectedNodeId);
       setInputsOutputs(actionsInputsOutputs);
     }
     getActionInputsOutputs();
   }, [runMetaData]);
 
-  console.log(inputOutputs);
-
   return isNullOrUndefined(runMetaData) ? null : (
     <div>
       <ErrorSection error={runMetaData.error} />
-      <InputsPanel runMetaData={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} valuesInputs={inputOutputs.inputs} />
-      <OutputsPanel runMetaData={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} />
+      <InputsPanel runMetaData={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} values={inputOutputs.inputs} />
+      <OutputsPanel runMetaData={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} values={inputOutputs.outputs} />
       <PropertiesPanel properties={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} />
     </div>
   );

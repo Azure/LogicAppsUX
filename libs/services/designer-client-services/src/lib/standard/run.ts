@@ -1,10 +1,11 @@
+import { inputsResponse, outputsResponse } from '../__test__/__mocks__/monitoringInputsOutputsResponse';
 import type { IHttpClient } from '../httpClient';
 import type { IRunService } from '../run';
 import type { CallbackInfo } from '../workflow';
 import type { Runs, Run, RunError, ContentLink } from '@microsoft/designer-ui';
 import { isCallbackInfoWithRelativePath, getCallbackUrl } from '@microsoft/designer-ui';
 import type { ArmResources } from '@microsoft/utils-logic-apps';
-import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
+import { ArgumentException, HTTP_METHODS } from '@microsoft/utils-logic-apps';
 
 export interface RunServiceOptions {
   apiVersion: string;
@@ -12,10 +13,21 @@ export interface RunServiceOptions {
   httpClient: IHttpClient;
   accessToken?: string;
   workflowName: string;
+  isDev?: boolean;
 }
 
 export class StandardRunService implements IRunService {
-  constructor(private options: RunServiceOptions) {}
+  _isDev = false;
+
+  constructor(public readonly options: RunServiceOptions) {
+    const { apiVersion, baseUrl, isDev } = options;
+    if (!baseUrl) {
+      throw new ArgumentException('baseUrl required');
+    } else if (!apiVersion) {
+      throw new ArgumentException('apiVersion required');
+    }
+    this._isDev = isDev || false;
+  }
 
   async getContent(contentLink: ContentLink): Promise<any> {
     const { uri } = contentLink;
@@ -114,9 +126,15 @@ export class StandardRunService implements IRunService {
    * @arg {any} action - An object with a repetition record from a workflow run
    * @return {Promise<RunRepetition>}
    */
-  async getActionLinks(action: any): Promise<any> {
+  async getActionLinks(action: any, nodeId: string): Promise<any> {
     const { inputsLink, outputsLink } = action;
     const promises: Promise<any | null>[] = [];
+
+    if (this._isDev) {
+      const inputs = inputsResponse[nodeId] ?? {};
+      const outputs = outputsResponse[nodeId] ?? {};
+      return Promise.resolve({ inputs: this.parseActionLink(inputs), outputs: this.parseActionLink(outputs) });
+    }
 
     if (outputsLink) {
       promises.push(this.getContent(outputsLink));

@@ -6,10 +6,10 @@ export interface InputsPanelProps {
   runMetaData: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
   brandColor: string;
   nodeId: string;
-  valuesInputs: Record<string, any>;
+  values: Record<string, any>;
 }
 
-export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColor, nodeId, valuesInputs }) => {
+export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColor, nodeId, values }) => {
   const intl = useIntl();
 
   const intlText = {
@@ -41,7 +41,7 @@ export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColo
           headerText={intlText.inputs}
           linkText={intlText.showInputs}
           showLink={true}
-          values={valuesInputs}
+          values={values}
           labelledBy={''}
           noValuesText={intlText.noInputs}
           showMore={false}
