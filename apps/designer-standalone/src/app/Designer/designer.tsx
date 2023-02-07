@@ -9,6 +9,8 @@ import {
   StandardOAuthService,
   StandardGatewayService,
   ConsumptionSearchService,
+  BaseFunctionService,
+  BaseAppServiceService,
 } from '@microsoft/designer-client-services-logic-apps';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import { ResourceIdentityType } from '@microsoft/utils-logic-apps';
@@ -79,6 +81,20 @@ const gatewayService = new StandardGatewayService({
   },
 });
 
+const functionService = new BaseFunctionService({
+  baseUrl: '/url',
+  apiVersion: '2018-11-01',
+  httpClient,
+  subscriptionId: '',
+});
+
+const appServiceService = new BaseAppServiceService({
+  baseUrl: '/url',
+  apiVersion: '2018-11-01',
+  httpClient,
+  subscriptionId: '',
+});
+
 const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };
 
 export const DesignerWrapper = () => {
@@ -92,6 +108,8 @@ export const DesignerWrapper = () => {
       searchService: !consumption ? searchServiceStandard : searchServiceConsumption,
       oAuthService,
       gatewayService,
+      functionService,
+      appServiceService,
       workflowService,
     },
     readOnly,

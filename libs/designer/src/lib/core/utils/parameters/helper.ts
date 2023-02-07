@@ -2586,8 +2586,6 @@ export function validateUntilAction(
   parameters: ParameterInfo[],
   changedParameter: Partial<ParameterInfo>
 ) {
-  console.log('### Changed', changedParameter);
-
   const errorMessage = 'Either limit count or timout must be specified.';
 
   const countParameter = parameters.find((parameter) => parameter.parameterName === 'limit.count');

@@ -14,3 +14,5 @@ export * from './lib/base';
 export * from './lib/standard';
 export * from './lib/consumption';
 export * from './lib/apimanagement';
+export * from './lib/function';
+export * from './lib/appService';

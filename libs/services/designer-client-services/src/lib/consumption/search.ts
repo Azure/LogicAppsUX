@@ -107,19 +107,4 @@ export class ConsumptionSearchService extends BaseSearchService {
     ];
     return [...clientBuiltInConnectors, ...consumptionBuiltIn];
   }
-
-  // Get 'Batch' Connector Data - Not implemented yet
-
-  public async getBatchWorkflows(): Promise<any[]> {
-    const {
-      apiHubServiceDetails: { apiVersion, subscriptionId },
-    } = this.options;
-    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Logic/workflows`;
-    const queryParameters: QueryParameters = {
-      'api-version': apiVersion,
-      $filter: `contains(Trigger, 'Batch') and (${ISE_RESOURCE_ID} eq null)`,
-    };
-    const response = await this.getAzureResourceRecursive(uri, queryParameters);
-    return response;
-  }
 }

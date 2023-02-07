@@ -10,12 +10,12 @@ export interface AssistedConnectionProps {
   loadingText: string;
   headers: string[];
   getColumns: (resource: any) => string[];
-  getResourcesCallback: getResourceCallback;
+  getResourcesCallback: GetResourceCallback;
   getSubResourceName?: (subResource: any) => string;
-  fetchSubResourcesCallback?: getResourceCallback;
+  fetchSubResourcesCallback?: GetResourceCallback;
 }
 
-export type getResourceCallback = (id?: string) => Promise<any>;
+export type GetResourceCallback = (id?: string) => Promise<any>;
 export interface AzureResourcePickerProps extends AssistedConnectionProps {
   selectedResourceId: string | undefined;
   onResourceSelect: (resourceId: string) => void;
@@ -39,12 +39,14 @@ export const AzureResourcePicker = (props: AzureResourcePickerProps) => {
     fetchSubResourcesCallback,
   } = props;
 
-  const itemsQuery = useQuery([resourceType], async () => getResourcesCallback() ?? [], {
+  const itemsQuery = useQuery([resourceType], async () => getResourcesCallback?.() ?? [], {
     enabled: true,
     staleTime: 1000 * 60 * 60 * 24,
   });
 
   const resources = useMemo(() => ((itemsQuery?.data ?? []) as any[]).sort((a, b) => a.name.localeCompare(b.name)), [itemsQuery.data]);
+
+  const gridTemplateColumns = useMemo(() => '2fr '.repeat(headers.length - 1) + '1fr', [headers.length]);
 
   return (
     <div>
@@ -52,7 +54,7 @@ export const AzureResourcePicker = (props: AzureResourcePickerProps) => {
         {titleText}
       </Label>
       <div className="msla-azure-resources-container">
-        <div className="msla-azure-resource-list-header">
+        <div className="msla-azure-resource-list-header" style={{ gridTemplateColumns }}>
           {headers.map((header) => (
             <Text key={header}>{header}</Text>
           ))}
@@ -60,7 +62,7 @@ export const AzureResourcePicker = (props: AzureResourcePickerProps) => {
         {itemsQuery?.isLoading ? (
           <Spinner label={loadingText} style={{ margin: '16px' }} />
         ) : itemsQuery?.isSuccess ? (
-          <div className="msla-azure-resources-list-container" data-is-scrollable>
+          <div className="msla-azure-resources-list-container" style={{ gridTemplateColumns }} data-is-scrollable>
             <List
               items={resources.map((resource) => ({
                 ...resource,
@@ -81,7 +83,7 @@ export const AzureResourcePicker = (props: AzureResourcePickerProps) => {
           </div>
         ) : itemsQuery?.isError ? (
           <MessageBar messageBarType={MessageBarType.error} style={{ margin: '16px' }}>
-            {itemsQuery?.error as string}
+            {JSON.stringify(itemsQuery?.error as string)}
           </MessageBar>
         ) : null}
       </div>
@@ -96,7 +98,7 @@ interface ResourceEntryProps {
   subResourceType: string;
   getSubResourceName?: (subResource: any) => string;
   onSubResourceSelect?: (subResource: any) => void;
-  fetchSubResourcesCallback?: getResourceCallback;
+  fetchSubResourcesCallback?: GetResourceCallback;
   subResourceLoadingText?: string;
 }
 
@@ -128,14 +130,19 @@ export const ResourceEntry = (props: ResourceEntryProps) => {
     description: 'Message to show when no resources are found',
   });
 
+  const columns = useMemo(() => getColumns(resource), [resource, getColumns]);
+
+  const gridTemplateColumns = useMemo(() => '2fr '.repeat(columns.length - 1) + '1fr', [columns.length]);
+
   return (
     <div className="msla-azure-resource-entry">
       <button
         className={css('msla-azure-resource-entry-heading', expanded && 'expanded')}
         onClick={() => onResourceSelect(expanded ? '' : resource.id)}
+        style={{ gridTemplateColumns }}
       >
-        {getColumns(resource).map((value) => (
-          <Text key={value}>{value}</Text>
+        {columns.map((index, value) => (
+          <Text key={`${value}-${index}`}>{value ?? ' '}</Text>
         ))}
       </button>
       {expanded && hasSubResources && (
@@ -159,7 +166,7 @@ export const ResourceEntry = (props: ResourceEntryProps) => {
               )}
             </>
           ) : subResourcesQuery?.isError ? (
-            <MessageBar messageBarType={MessageBarType.error}>{(subResourcesQuery?.error as any)?.toString()}</MessageBar>
+            <MessageBar messageBarType={MessageBarType.error}>{JSON.stringify(subResourcesQuery?.error as any)}</MessageBar>
           ) : null}
         </div>
       )}

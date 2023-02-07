@@ -15,9 +15,7 @@ interface OperationSearchHeaderProps {
   searchTerm?: string;
   filters?: Record<string, string>;
   setFilters?: (filters: Record<string, string>) => void;
-  selectedGroupId?: string;
   onDismiss: () => void;
-  navigateBack: () => void;
   isTriggerNode: boolean;
   isConsumption?: boolean;
 }
@@ -30,9 +28,7 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
     searchTerm,
     filters,
     setFilters,
-    selectedGroupId,
     onDismiss,
-    navigateBack,
     isTriggerNode,
     isConsumption,
   } = props;
@@ -112,51 +108,37 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
     }
   };
 
-  const returnToSearchText = intl.formatMessage({
-    defaultMessage: 'Return to search',
-    description: 'Text for the Details page navigation heading',
-  });
-
   return (
     <div className="msla-search-heading-container">
       <Header />
-      {!selectedGroupId ? (
-        <>
-          <DesignerSearchBox searchCallback={searchCallback} searchTerm={searchTerm} />
-          <div style={{ display: 'grid', grid: 'auto-flow / 1fr 1fr', gridColumnGap: '8px' }}>
-            <Dropdown
-              label={intl.formatMessage({ defaultMessage: 'Runtime', description: 'Filter by label' })}
-              placeholder={intl.formatMessage({ defaultMessage: 'Select a runtime', description: 'Select a runtime placeholder' })}
-              selectedKeys={Object.entries(props.filters ?? {}).map(([k, v]) => `${k}-${v}`)}
-              onChange={onChange}
-              multiSelect
-              options={runtimeFilters}
-            />
-            <Dropdown
-              label={intl.formatMessage({ defaultMessage: 'Action Type', description: 'Filter by label' })}
-              placeholder={intl.formatMessage({
-                defaultMessage: 'Select an action type',
-                description: 'Select an action type placeholder',
-              })}
-              selectedKeys={Object.entries(props.filters ?? {}).map(([k, v]) => `${k}-${v}`)}
-              onChange={onChange}
-              multiSelect
-              options={actionTypeFilters}
-            />
-          </div>
-          {searchTerm ? (
-            <div className="msla-flex-row">
-              {/* <span className="msla-search-heading-text">{searchResultsText}</span> */}
-              <Checkbox label={groupByConnectorLabelText} onChange={onGroupToggleChange} checked={isGrouped} />
-            </div>
-          ) : null}
-        </>
-      ) : (
-        <Link onClick={navigateBack} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Icon iconName="Back" />
-          {returnToSearchText}
-        </Link>
-      )}
+      <DesignerSearchBox searchCallback={searchCallback} searchTerm={searchTerm} />
+      <div style={{ display: 'grid', grid: 'auto-flow / 1fr 1fr', gridColumnGap: '8px' }}>
+        <Dropdown
+          label={intl.formatMessage({ defaultMessage: 'Runtime', description: 'Filter by label' })}
+          placeholder={intl.formatMessage({ defaultMessage: 'Select a runtime', description: 'Select a runtime placeholder' })}
+          selectedKeys={Object.entries(props.filters ?? {}).map(([k, v]) => `${k}-${v}`)}
+          onChange={onChange}
+          multiSelect
+          options={runtimeFilters}
+        />
+        <Dropdown
+          label={intl.formatMessage({ defaultMessage: 'Action Type', description: 'Filter by label' })}
+          placeholder={intl.formatMessage({
+            defaultMessage: 'Select an action type',
+            description: 'Select an action type placeholder',
+          })}
+          selectedKeys={Object.entries(props.filters ?? {}).map(([k, v]) => `${k}-${v}`)}
+          onChange={onChange}
+          multiSelect
+          options={actionTypeFilters}
+        />
+      </div>
+      {searchTerm ? (
+        <div className="msla-flex-row">
+          {/* <span className="msla-search-heading-text">{searchResultsText}</span> */}
+          <Checkbox label={groupByConnectorLabelText} onChange={onGroupToggleChange} checked={isGrouped} />
+        </div>
+      ) : null}
     </div>
   );
 };

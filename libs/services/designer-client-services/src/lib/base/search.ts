@@ -37,6 +37,8 @@ export interface BaseSearchServiceOptions {
   isDev?: boolean;
 }
 
+const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
+
 export abstract class BaseSearchService implements ISearchService {
   _isDev = false; // TODO: Find a better way to do this, can't use process.env.NODE_ENV here
 
@@ -181,6 +183,27 @@ export abstract class BaseSearchService implements ISearchService {
       }
     });
     return connectors;
+  }
+
+  private async getWorkflows($filter: string): Promise<any[]> {
+    const {
+      apiHubServiceDetails: { apiVersion, subscriptionId, location },
+    } = this.options;
+    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Logic/workflows`;
+    const queryParameters: QueryParameters = {
+      'api-version': apiVersion,
+      ...($filter ? { $filter } : {}),
+    };
+    const response = await this.getAzureResourceRecursive(uri, queryParameters);
+    return response.filter((workflow: any) => workflow.location === location);
+  }
+
+  public async getRequestWorkflows(): Promise<any[]> {
+    return this.getWorkflows(`contains(Trigger, 'Request') and (${ISE_RESOURCE_ID} eq null)`);
+  }
+
+  public async getBatchWorkflows(): Promise<any[]> {
+    return this.getWorkflows(`contains(Trigger, 'Batch') and (${ISE_RESOURCE_ID} eq null)`);
   }
 }
 

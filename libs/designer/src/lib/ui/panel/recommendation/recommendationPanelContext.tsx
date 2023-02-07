@@ -14,11 +14,13 @@ import { AzureResourceSelection } from './azureResourceSelection';
 import { BrowseView } from './browseView';
 import { OperationGroupDetailView } from './operationGroupDetailView';
 import { SearchView } from './searchView';
+import { Link, Icon } from '@fluentui/react';
 import { RecommendationPanel, OperationSearchHeader } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
 import { guid, areApiIdsEqual } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
@@ -76,7 +78,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     (id: string) => {
       const operation = (allOperations.data ?? []).find((o: any) => o.id === id);
       if (!operation) return;
-      console.log('onOperationClick', operation);
       dispatch(selectOperationId(operation.id));
       if (isAzureResourceActionId(operation.id)) {
         setIsSelectingAzureResource(true);
@@ -88,36 +89,52 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     [allOperations.data, dispatch, isAzureResourceActionId, isParallelBranch, isTrigger, relationshipIds]
   );
 
+  const intl = useIntl();
+  const returnToSearchText = intl.formatMessage({
+    defaultMessage: 'Return to search',
+    description: 'Text for the Details page navigation heading',
+  });
+
   return (
     <RecommendationPanel placeholder={''} {...props}>
-      <OperationSearchHeader
-        searchCallback={setSearchTerm}
-        onGroupToggleChange={() => setIsGrouped(!isGrouped)}
-        isGrouped={isGrouped}
-        searchTerm={searchTerm}
-        selectedGroupId={selectedOperationGroupId}
-        onDismiss={onDismiss}
-        navigateBack={navigateBack}
-        filters={filters}
-        setFilters={setFilters}
-        isTriggerNode={isTrigger}
-        isConsumption={isConsumption}
-      />
+      {isSelectingAzureResource || selectedOperationGroupId ? (
+        <div className={'msla-search-heading-container'}>
+          <Link onClick={navigateBack} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Icon iconName="Back" />
+            {returnToSearchText}
+          </Link>
+        </div>
+      ) : null}
       {isSelectingAzureResource && selectedOperation ? (
         <AzureResourceSelection operation={selectedOperation} />
       ) : selectedOperationGroupId ? (
         <OperationGroupDetailView groupOperations={allOperationsForGroup} filters={filters} onOperationClick={onOperationClick} />
-      ) : searchTerm ? (
-        <SearchView
-          searchTerm={searchTerm}
-          allOperations={allOperations.data ?? []}
-          groupByConnector={isGrouped}
-          isLoading={allOperations.isLoading}
-          filters={filters}
-          onOperationClick={onOperationClick}
-        />
       ) : (
-        <BrowseView filters={filters} />
+        <>
+          <OperationSearchHeader
+            searchCallback={setSearchTerm}
+            onGroupToggleChange={() => setIsGrouped(!isGrouped)}
+            isGrouped={isGrouped}
+            searchTerm={searchTerm}
+            onDismiss={onDismiss}
+            filters={filters}
+            setFilters={setFilters}
+            isTriggerNode={isTrigger}
+            isConsumption={isConsumption}
+          />
+          {searchTerm ? (
+            <SearchView
+              searchTerm={searchTerm}
+              allOperations={allOperations.data ?? []}
+              groupByConnector={isGrouped}
+              isLoading={allOperations.isLoading}
+              filters={filters}
+              onOperationClick={onOperationClick}
+            />
+          ) : (
+            <BrowseView filters={filters} />
+          )}
+        </>
       )}
     </RecommendationPanel>
   );

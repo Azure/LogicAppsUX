@@ -1,8 +1,8 @@
 import type { DesignerOptionsState, ServiceOptions } from './designerOptionsInterfaces';
 import type { ILoggerService } from '@microsoft/designer-client-services-logic-apps';
 import {
-  InitLoggerService,
   DevLogger,
+  InitLoggerService,
   InitConnectionService,
   InitConnectorService,
   InitGatewayService,
@@ -11,6 +11,8 @@ import {
   InitOAuthService,
   InitWorkflowService,
   InitApiManagementService,
+  InitFunctionService,
+  InitAppServiceService,
 } from '@microsoft/designer-client-services-logic-apps';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -33,6 +35,8 @@ export const initializeServices = createAsyncThunk(
     oAuthService,
     gatewayService,
     loggerService,
+    functionService,
+    appServiceService,
     workflowService,
     apimService,
   }: ServiceOptions) => {
@@ -50,17 +54,11 @@ export const initializeServices = createAsyncThunk(
     InitOAuthService(oAuthService);
     InitWorkflowService(workflowService);
 
-    if (connectorService) {
-      InitConnectorService(connectorService);
-    }
-
-    if (gatewayService) {
-      InitGatewayService(gatewayService);
-    }
-
-    if (apimService) {
-      InitApiManagementService(apimService);
-    }
+    if (connectorService) InitConnectorService(connectorService);
+    if (gatewayService) InitGatewayService(gatewayService);
+    if (apimService) InitApiManagementService(apimService);
+    if (functionService) InitFunctionService(functionService);
+    if (appServiceService) InitAppServiceService(appServiceService);
 
     return true;
   }

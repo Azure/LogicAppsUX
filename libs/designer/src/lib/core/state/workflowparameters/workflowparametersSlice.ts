@@ -69,7 +69,6 @@ export const validateParameter = (
 
     switch (swaggerType) {
       case Constants.SWAGGER.TYPE.ARRAY:
-        console.log('### ARRAY');
         // eslint-disable-next-line no-case-declarations
         let isInvalid = false;
         try {
@@ -116,7 +115,6 @@ export const validateParameter = (
 
     switch (swaggerType) {
       case Constants.SWAGGER.TYPE.ARRAY:
-        console.log('### ARRAY');
         // eslint-disable-next-line no-case-declarations
         let isInvalid = false;
         try {
