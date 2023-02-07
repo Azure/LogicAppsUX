@@ -644,6 +644,20 @@
       "value": "Pemicu"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -5906,20 +5920,6 @@
     {
       "type": 0,
       "value": "Respons asinkron memungkinkan Aplikasi Logika merespons dengan 202 (Diterima) untuk menunjukkan bahwa permintaan telah diterima untuk diproses. Header lokasi akan disediakan untuk menerima keadaan akhir."
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
     }
   ],
   "r1FQhf": [

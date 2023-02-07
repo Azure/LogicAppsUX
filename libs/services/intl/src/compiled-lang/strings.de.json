@@ -671,6 +671,20 @@
       "value": "Trigger"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -6135,20 +6149,6 @@
     {
       "type": 0,
       "value": "\"Asynchrone Antwort\" ermöglicht es einer Logik-App, durch die Antwort \"202 (Zulässig)\" darauf hinzuweisen, dass die Anforderung zur Verarbeitung akzeptiert wurde. Es wird ein Adressheader bereitgestellt, um den Endzustand abzurufen. "
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
     }
   ],
   "r1FQhf": [

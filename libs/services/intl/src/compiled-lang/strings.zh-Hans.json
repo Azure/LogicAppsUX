@@ -664,6 +664,20 @@
       "value": "触发器"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -6086,20 +6100,6 @@
     {
       "type": 0,
       "value": "异步响应允许逻辑应用使用 202 (已接受)进行响应，指示已接受请求进行处理。将提供位置标头，用于检索最终状态。"
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
     }
   ],
   "r1FQhf": [

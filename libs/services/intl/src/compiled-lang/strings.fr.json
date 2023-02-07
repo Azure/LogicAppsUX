@@ -682,6 +682,20 @@
       "value": "Déclencheurs"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -6180,20 +6194,6 @@
     {
       "type": 0,
       "value": "Une réponse asynchrone permet à une application logique de répondre avec un état 202 (accepté) qui indique que le traitement de la demande a été accepté. Un en-tête d'emplacement est fourni pour récupérer l'état final."
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
     }
   ],
   "r1FQhf": [

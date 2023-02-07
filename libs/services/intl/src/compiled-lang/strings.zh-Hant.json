@@ -644,6 +644,20 @@
       "value": "觸發程序"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -5910,20 +5924,6 @@
     {
       "type": 0,
       "value": "非同步回應可讓邏輯應用程式回應 202 (已接受)，來表示已接受該要求進行處理。將會提供位置標頭來擷取最終狀態。"
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
     }
   ],
   "r1FQhf": [

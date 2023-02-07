@@ -671,6 +671,20 @@
       "value": "Triggerek"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -6163,20 +6177,6 @@
     {
       "type": 0,
       "value": "Az aszinkron válasz lehetővé teszi, hogy egy logikai alkalmazás „202 – Elfogadva” választ adjon, jelezve, hogy elfogadta és feldolgozza a kérést. A válasz tartalmaz egy helyfejlécet is, amely a végállapot beolvasására szolgál."
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
     }
   ],
   "r1FQhf": [

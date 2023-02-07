@@ -701,6 +701,20 @@
       "value": "Aktivační události"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -6305,20 +6319,6 @@
     {
       "type": 0,
       "value": "Asynchronní odpověď umožní aplikaci Logic Apps odpovědět kódem 202 (Přijato) a dát tak vědět, že se požadavek přijal ke zpracování. Pomocí poskytnuté hlavičky umístění půjde načíst koncový stav."
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
     }
   ],
   "r1FQhf": [
