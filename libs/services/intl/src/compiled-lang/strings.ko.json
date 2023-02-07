@@ -644,6 +644,20 @@
       "value": "트리거"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -5898,20 +5912,6 @@
     {
       "type": 0,
       "value": "비동기 응답을 통해 논리 앱은 202(승인됨)로 응답하여 요청이 처리를 위해 승인되었음을 나타낼 수 있습니다. 최종 상태를 검색할 수 있는 위치 헤더가 제공됩니다."
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
     }
   ],
   "r1FQhf": [

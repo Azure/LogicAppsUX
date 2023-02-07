@@ -693,6 +693,20 @@
       "value": "Триггеры"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -6313,20 +6327,6 @@
     {
       "type": 0,
       "value": "При использовании асинхронного отклика приложение логики может отправлять ответ 202 (Принято), чтобы показать, что запрос принят к обработке. Для получения окончательного состояния будет предоставлен заголовок расположения."
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
     }
   ],
   "r1FQhf": [
