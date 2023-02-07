@@ -23,7 +23,12 @@ import {
   nodeHasSpecificInputEventually,
   setConnectionInputValue,
 } from '../../utils/Connection.Utils';
-import { addParentConnectionForRepeatingElementsNested, getParentId } from '../../utils/DataMap.Utils';
+import {
+  addNodeToCanvasIfDoesNotExist,
+  addParentConnectionForRepeatingElementsNested,
+  addAncestorNodesToCanvas,
+  getParentId,
+} from '../../utils/DataMap.Utils';
 import { isFunctionData } from '../../utils/Function.Utils';
 import {
   addReactFlowPrefix,
@@ -99,6 +104,7 @@ export interface ConnectionAction {
   destination: SchemaNodeExtended | FunctionData;
   reactFlowSource: string;
   reactFlowDestination: string;
+  specificInput?: number;
 }
 
 export interface SetConnectionInputAction {
@@ -210,10 +216,13 @@ export const dataMapSlice = createSlice({
     addSourceSchemaNodes: (state, action: PayloadAction<SchemaNodeExtended[]>) => {
       const nodes = [...state.curDataMapOperation.currentSourceSchemaNodes];
       action.payload.forEach((payloadNode) => {
-        const existingNode = state.curDataMapOperation.currentSourceSchemaNodes.find((currentNode) => currentNode.key === payloadNode.key);
-        if (!existingNode) {
-          nodes.push(payloadNode);
-        }
+        addNodeToCanvasIfDoesNotExist(payloadNode, state.curDataMapOperation.currentSourceSchemaNodes, nodes);
+        addAncestorNodesToCanvas(
+          payloadNode,
+          state.curDataMapOperation.currentSourceSchemaNodes,
+          state.curDataMapOperation.flattenedSourceSchema,
+          nodes
+        );
       });
 
       const newState: DataMapOperationState = {
@@ -550,7 +559,8 @@ const addConnection = (newConnections: ConnectionDictionary, nodes: ConnectionAc
   setConnectionInputValue(newConnections, {
     targetNode: nodes.destination,
     targetNodeReactFlowKey: nodes.reactFlowDestination,
-    findInputSlot: true,
+    findInputSlot: nodes.specificInput === undefined, // 0 should be counted as truthy
+    inputIndex: nodes.specificInput,
     value: {
       reactFlowKey: nodes.reactFlowSource,
       node: nodes.source,
@@ -774,10 +784,13 @@ export const addParentConnectionForRepeatingElements = (
       const parentSourceNode = flattenedSourceSchema[addReactFlowPrefix(sourceNode.parentKey, SchemaType.Source)];
       const firstSourceNodeWithRepeatingPathItem = findLast(parentSourceNode.pathToRoot, (pathItem) => pathItem.repeating);
 
-      if ((firstSourceNodeWithRepeatingPathItem || indexFnRfKey) && firstTargetNodeWithRepeatingPathItem) {
+      if (
+        (firstSourceNodeWithRepeatingPathItem || indexFnRfKey || sourceNode.nodeProperties.includes(SchemaNodeProperty.Repeating)) &&
+        firstTargetNodeWithRepeatingPathItem
+      ) {
         // If adding an index() too, our sourceNode will already be the parent we want
         const parentSourceNode =
-          indexFnRfKey || !firstSourceNodeWithRepeatingPathItem
+          indexFnRfKey || sourceNode.nodeProperties.includes(SchemaNodeProperty.Repeating) || !firstSourceNodeWithRepeatingPathItem
             ? sourceNode
             : flattenedSourceSchema[addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source)];
         const parentPrefixedSourceKey = addReactFlowPrefix(parentSourceNode.key, SchemaType.Source);

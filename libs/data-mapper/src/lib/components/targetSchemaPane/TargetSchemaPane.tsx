@@ -1,13 +1,14 @@
 import { setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { NormalizedDataType, SchemaNodeDataType } from '../../models';
 import type { SchemaNodeExtended } from '../../models';
+import { NormalizedDataType } from '../../models';
+import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
 import { useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';
-import TargetSchemaTreeItem, { ItemToggledState, TargetSchemaTreeHeader } from '../tree/TargetSchemaTreeItem';
 import type { NodeToggledStateDictionary } from '../tree/TargetSchemaTreeItem';
-import Tree from '../tree/Tree';
+import TargetSchemaTreeItem, { ItemToggledState, TargetSchemaTreeHeader } from '../tree/TargetSchemaTreeItem';
 import type { ITreeNode } from '../tree/Tree';
+import Tree from '../tree/Tree';
 import { TreeHeader } from '../tree/TreeHeader';
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, mergeClasses, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
@@ -64,6 +65,14 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
     defaultMessage: 'Expand/collapse target schema',
     description: 'Expand/collapse target schema',
   });
+
+  const setTargetSchemaPaneToExpanded = (toExpanded: boolean) => {
+    setIsExpanded(toExpanded);
+
+    LogService.log(LogCategory.TargetSchemaPane, 'expandOrCollapseTargetSchemaPane', {
+      message: `${toExpanded ? 'Opened' : 'Closed'} target schema pane`,
+    });
+  };
 
   const onTargetSchemaItemClick = (schemaNode: SchemaNodeExtended) => {
     // If click schema name, return to Overview
@@ -158,7 +167,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
           size="medium"
           appearance="transparent"
           style={{ color: !targetSchema ? tokens.colorNeutralForegroundDisabled : tokens.colorNeutralForeground2 }}
-          onClick={() => setIsExpanded(!isExpanded)}
+          onClick={() => setTargetSchemaPaneToExpanded(!isExpanded)}
           disabled={!targetSchema}
           aria-label={targetSchemaExpandCollapseLoc}
         />
@@ -263,10 +272,7 @@ export const checkNodeStatuses = (
     numChildrenToggled += checkNodeStatuses(child, stateDict, targetNodesWithConnections);
   });
 
-  if (
-    (schemaNode.schemaNodeDataType === SchemaNodeDataType.None || schemaNode.normalizedDataType === NormalizedDataType.ComplexType) &&
-    schemaNode.children.length > 0
-  ) {
+  if (schemaNode.normalizedDataType === NormalizedDataType.ComplexType && schemaNode.children.length > 0) {
     // Object/parent/array-elements (if they don't have children, treat them as leaf nodes (below))
     return handleObjectParentToggledState(stateDict, schemaNode.key, numChildrenToggled, schemaNode.children.length);
   } else {

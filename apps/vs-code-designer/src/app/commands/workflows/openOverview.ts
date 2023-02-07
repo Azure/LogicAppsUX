@@ -42,6 +42,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   let localSettings: Record<string, string> = {};
   let credentials: ServiceClientCredentials;
   const workflowNode = getWorkflowNode(node);
+  const panelGroupKey = ext.webViewKey.overview;
 
   if (workflowNode instanceof vscode.Uri) {
     workflowFilePath = workflowNode.fsPath;
@@ -71,7 +72,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     corsNotice = localize('CorsNotice', 'To view runs, set "*" to allowed origins in the CORS setting.');
   }
 
-  const existingPanel: vscode.WebviewPanel | undefined = tryGetWebviewPanel('overview', panelName);
+  const existingPanel: vscode.WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
 
   if (existingPanel) {
     if (!existingPanel.active) {
@@ -144,13 +145,13 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
 
   panel.onDidDispose(
     () => {
-      removeWebviewPanelFromCache('overview', panelName);
+      removeWebviewPanelFromCache(panelGroupKey, panelName);
       clearInterval(interval);
     },
     null,
     ext.context.subscriptions
   );
-  cacheWebviewPanel('overview', panelName, panel);
+  cacheWebviewPanel(panelGroupKey, panelName, panel);
 }
 
 function getRequestTriggerName(definition: any): string | undefined {

@@ -1,5 +1,5 @@
 import { VSCodeContext } from '../WebViewMsgHandler';
-import { changeFetchedFunctions, changeSourceSchema, changeTargetSchema } from '../state/DataMapDataLoader';
+import { changeFetchedFunctions, changeSourceSchema, changeTargetSchema, changeUseExpandedFunctionCards } from '../state/DataMapDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
 import type { MessageToVsix, SchemaType } from '@microsoft/logic-apps-data-mapper';
 import {
@@ -11,6 +11,7 @@ import {
   getSelectedSchema,
   InitDataMapperApiService,
 } from '@microsoft/logic-apps-data-mapper';
+import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -40,6 +41,7 @@ export const App = () => {
   const targetSchema = useSelector((state: RootState) => state.dataMapDataLoader.targetSchema);
   const schemaFileList = useSelector((state: RootState) => state.dataMapDataLoader.schemaFileList);
   const fetchedFunctions = useSelector((state: RootState) => state.dataMapDataLoader.fetchedFunctions);
+  const useExpandedFunctionCards = useSelector((state: RootState) => state.dataMapDataLoader.useExpandedFunctionCards);
 
   const runtimePort = useSelector((state: RootState) => state.dataMapDataLoader.runtimePort);
 
@@ -97,6 +99,10 @@ export const App = () => {
     });
   };
 
+  const setFunctionDisplayExpanded = (isFunctionDisplaySimple: boolean) => {
+    dispatch(changeUseExpandedFunctionCards(isFunctionDisplaySimple));
+  };
+
   const handleRscLoadError = useCallback(
     (error: unknown) => {
       let errorMsg: string;
@@ -116,6 +122,12 @@ export const App = () => {
     },
     [sendMsgToVsix]
   );
+
+  useEffect(() => {
+    sendMsgToVsix({
+      command: 'getFunctionDisplayExpanded',
+    });
+  }, [sendMsgToVsix]);
 
   // Notify VS Code that webview is loaded
   useEffect(() => {
@@ -179,7 +191,11 @@ export const App = () => {
   }, [dispatch, runtimePort, sourceSchemaFilename, targetSchemaFilename, handleRscLoadError]);
 
   return (
-    <DataMapperDesignerProvider locale="en-US" theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? 'light' : 'dark'} options={{}}>
+    <DataMapperDesignerProvider
+      locale="en-US"
+      theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? ThemeType.Light : ThemeType.Dark}
+      options={{}}
+    >
       <DataMapDataProvider
         xsltFilename={xsltFilename}
         mapDefinition={mapDefinition}
@@ -188,7 +204,7 @@ export const App = () => {
         availableSchemas={schemaFileList}
         fetchedFunctions={fetchedFunctions}
         // Passed in here too so it can be managed in the Redux store so components can track the current theme
-        theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? 'light' : 'dark'}
+        theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? ThemeType.Light : ThemeType.Dark}
       >
         <DataMapperDesigner
           saveStateCall={saveStateCall}
@@ -196,6 +212,8 @@ export const App = () => {
           addSchemaFromFile={addSchemaFromFile}
           readCurrentSchemaOptions={readLocalFileOptions}
           setIsMapStateDirty={setIsMapStateDirty}
+          setFunctionDisplayExpanded={setFunctionDisplayExpanded}
+          useExpandedFunctionCards={useExpandedFunctionCards}
         />
       </DataMapDataProvider>
     </DataMapperDesignerProvider>

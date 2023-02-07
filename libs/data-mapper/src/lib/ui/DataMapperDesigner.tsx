@@ -3,6 +3,7 @@ import { CodeView } from '../components/codeView/CodeView';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/AddOrUpdateSchemaView';
 import { ConfigPanel } from '../components/configPanel/ConfigPanel';
+import { MapCheckerPane } from '../components/mapChecker/MapCheckerPane';
 import { MapOverview } from '../components/mapOverview/MapOverview';
 import { errorNotificationAutoHideDuration, NotificationTypes } from '../components/notification/Notification';
 import {
@@ -19,10 +20,12 @@ import { redoDataMapOperation, saveDataMap, showNotification, undoDataMapOperati
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { convertToMapDefinition } from '../mapDefinitions';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
+import { collectErrorsForMapChecker } from '../utils/MapChecker.Utils';
 import './ReactFlowStyleOverrides.css';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Stack } from '@fluentui/react';
 import { makeStaticStyles, makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import { useBoolean } from '@fluentui/react-hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -94,6 +97,8 @@ export interface DataMapperDesignerProps {
   addSchemaFromFile?: (selectedSchemaFile: SchemaFile) => void;
   readCurrentSchemaOptions?: () => void;
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
+  setFunctionDisplayExpanded: (isFunctionDisplaySimple: boolean) => void;
+  useExpandedFunctionCards: boolean;
 }
 
 export const DataMapperDesigner = ({
@@ -102,6 +107,8 @@ export const DataMapperDesigner = ({
   addSchemaFromFile,
   readCurrentSchemaOptions,
   setIsMapStateDirty,
+  setFunctionDisplayExpanded,
+  useExpandedFunctionCards,
 }: DataMapperDesignerProps) => {
   const dispatch = useDispatch<AppDispatch>();
   useStaticStyles();
@@ -110,6 +117,7 @@ export const DataMapperDesigner = ({
   const isMapStateDirty = useSelector((state: RootState) => state.dataMap.isDirty);
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
+  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
   const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
@@ -120,6 +128,7 @@ export const DataMapperDesigner = ({
   const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
   const [isTargetSchemaPaneExpanded, setIsTargetSchemaPaneExpanded] = useState(false);
+  const [isMapCheckerOpen, { setFalse: closeMapChecker, toggle: toggleMapChecker }] = useBoolean(false);
 
   const dataMapDefinition = useMemo<string>(() => {
     if (sourceSchema && targetSchema) {
@@ -160,6 +169,18 @@ export const DataMapperDesigner = ({
   };
 
   const onSaveClick = useCallback(() => {
+    const errors = collectErrorsForMapChecker(currentConnections, flattenedTargetSchema);
+
+    if (errors.length > 0) {
+      dispatch(
+        showNotification({
+          type: NotificationTypes.MapHasErrorsAtSave,
+          msgParam: errors.length,
+          autoHideDurationMs: -1,
+        })
+      );
+    }
+
     generateDataMapXslt(dataMapDefinition)
       .then((xsltStr) => {
         saveStateCall(dataMapDefinition, xsltStr);
@@ -170,6 +191,10 @@ export const DataMapperDesigner = ({
             targetSchemaExtended: targetSchema,
           })
         );
+
+        LogService.log(LogCategory.DataMapperDesigner, 'onSaveClick', {
+          message: 'Successfully saved map definition and generated xslt',
+        });
       })
       .catch((error: Error) => {
         LogService.error(LogCategory.DataMapperDesigner, 'onSaveClick', {
@@ -184,7 +209,7 @@ export const DataMapperDesigner = ({
           })
         );
       });
-  }, [dispatch, dataMapDefinition, saveStateCall, sourceSchema, targetSchema]);
+  }, [currentConnections, flattenedTargetSchema, dataMapDefinition, saveStateCall, dispatch, sourceSchema, targetSchema]);
 
   // NOTE: Putting this useEffect here for vis next to onSave
   useEffect(() => {
@@ -208,8 +233,20 @@ export const DataMapperDesigner = ({
     dispatch(redoDataMapOperation());
   };
 
-  const onTestClick = () => {
-    setIsTestMapPanelOpen(true);
+  const setTestMapPanelOpen = (toOpen: boolean) => {
+    setIsTestMapPanelOpen(toOpen);
+
+    LogService.log(LogCategory.TestMapPanel, 'openOrCloseTestMapPanel', {
+      message: `${toOpen ? 'Opened' : 'Closed'} test map panel`,
+    });
+  };
+
+  const setCodeViewOpen = (toOpen: boolean) => {
+    setIsCodeViewOpen(toOpen);
+
+    LogService.log(LogCategory.CodeView, 'openOrCloseCodeView', {
+      message: `${toOpen ? 'Opened' : 'Closed'} code view`,
+    });
   };
 
   const getCanvasAreaAndPropPaneMargin = () => {
@@ -241,11 +278,17 @@ export const DataMapperDesigner = ({
   return (
     <DndProvider backend={HTML5Backend}>
       <div className={styles.dataMapperShell}>
-        <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} onTestClick={onTestClick} />
+        <EditorCommandBar
+          onSaveClick={onSaveClick}
+          onUndoClick={onUndoClick}
+          onRedoClick={onRedoClick}
+          onTestClick={() => setTestMapPanelOpen(true)}
+          onMapCheckerClick={toggleMapChecker}
+        />
 
         <div id="editorView" style={{ display: 'flex', flex: '1 1 1px' }}>
           <div id="centerViewWithBreadcrumb" style={{ display: 'flex', flexDirection: 'column', flex: '1 1 1px' }}>
-            <EditorBreadcrumb isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />
+            <EditorBreadcrumb isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setCodeViewOpen} />
 
             <div id={centerViewId} style={{ minHeight: 400, flex: '1 1 1px' }}>
               <div
@@ -269,7 +312,12 @@ export const DataMapperDesigner = ({
                     ) : (
                       <ReactFlowProvider>
                         {/* TODO: Update width calculations once Code View becomes resizable */}
-                        <ReactFlowWrapper canvasBlockHeight={getCanvasAreaHeight()} canvasBlockWidth={centerViewWidth} />
+                        <ReactFlowWrapper
+                          canvasBlockHeight={getCanvasAreaHeight()}
+                          canvasBlockWidth={centerViewWidth}
+                          useExpandedFunctionCards={useExpandedFunctionCards}
+                          toggleMapChecker={toggleMapChecker}
+                        />
                       </ReactFlowProvider>
                     )}
                   </div>
@@ -277,7 +325,7 @@ export const DataMapperDesigner = ({
                   <CodeView
                     dataMapDefinition={dataMapDefinition}
                     isCodeViewOpen={isCodeViewOpen}
-                    setIsCodeViewOpen={setIsCodeViewOpen}
+                    setIsCodeViewOpen={setCodeViewOpen}
                     canvasAreaHeight={getCanvasAreaHeight()}
                   />
                 </Stack>
@@ -297,11 +345,17 @@ export const DataMapperDesigner = ({
           </div>
 
           <TargetSchemaPane isExpanded={isTargetSchemaPaneExpanded} setIsExpanded={setIsTargetSchemaPaneExpanded} />
+          <MapCheckerPane isMapCheckerOpen={isMapCheckerOpen} closeMapChecker={closeMapChecker} />
         </div>
 
         <WarningModal />
-        <ConfigPanel onSubmitSchemaFileSelection={onSubmitSchemaFileSelection} readCurrentSchemaOptions={readCurrentSchemaOptions} />
-        <TestMapPanel isOpen={isTestMapPanelOpen} onClose={() => setIsTestMapPanelOpen(false)} />
+        <ConfigPanel
+          onSubmitSchemaFileSelection={onSubmitSchemaFileSelection}
+          readCurrentSchemaOptions={readCurrentSchemaOptions}
+          setFunctionDisplayExpanded={setFunctionDisplayExpanded}
+          useExpandedFunctionCards={useExpandedFunctionCards}
+        />
+        <TestMapPanel isOpen={isTestMapPanelOpen} onClose={() => setTestMapPanelOpen(false)} />
       </div>
     </DndProvider>
   );

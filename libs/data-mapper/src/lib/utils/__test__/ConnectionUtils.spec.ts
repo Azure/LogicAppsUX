@@ -1,6 +1,7 @@
+import { concatFunction } from '../../__mocks__/FunctionMock';
 import type { DataMapOperationState } from '../../core/state/DataMapSlice';
 import type { SchemaNodeExtended } from '../../models';
-import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperty } from '../../models';
+import { NormalizedDataType, SchemaNodeProperty } from '../../models';
 import type { Connection, ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import type { FunctionData, FunctionInput } from '../../models/Function';
 import { FunctionCategory, functionMock } from '../../models/Function';
@@ -9,9 +10,13 @@ import {
   createConnectionEntryIfNeeded,
   isCustomValue,
   isFunctionInputSlotAvailable,
+  isValidConnectionByType,
   newConnectionWillHaveCircularLogic,
+  nodeHasSourceNodeEventually,
+  nodeHasSpecificInputEventually,
   setConnectionInputValue,
 } from '../Connection.Utils';
+import { isSchemaNodeExtended } from '../Schema.Utils';
 import { fullConnectionDictionaryForOneToManyLoop, fullMapForSimplifiedLoop } from '../__mocks__';
 
 // TODO: nodeHasSourceNodeEventually
@@ -47,7 +52,6 @@ describe('utils/Connections', () => {
         key: '',
         name: '',
         fullName: '',
-        schemaNodeDataType: SchemaNodeDataType.Integer,
         normalizedDataType: NormalizedDataType.Integer,
         properties: SchemaNodeProperty.NotSpecified,
         nodeProperties: [SchemaNodeProperty.NotSpecified],
@@ -85,7 +89,6 @@ describe('utils/Connections', () => {
         key: mockSourceReactFlowKey,
         name: 'Source',
         fullName: 'Source',
-        schemaNodeDataType: SchemaNodeDataType.Integer,
         normalizedDataType: NormalizedDataType.Integer,
         properties: SchemaNodeProperty.NotSpecified,
         nodeProperties: [SchemaNodeProperty.NotSpecified],
@@ -99,7 +102,6 @@ describe('utils/Connections', () => {
           key: mockSelfReactFlowKey,
           name: 'Self',
           fullName: 'Self',
-          schemaNodeDataType: SchemaNodeDataType.Integer,
           normalizedDataType: NormalizedDataType.Integer,
           properties: SchemaNodeProperty.NotSpecified,
           nodeProperties: [SchemaNodeProperty.NotSpecified],
@@ -165,6 +167,39 @@ describe('utils/Connections', () => {
             inputValueArray.some((input) => input && !isCustomValue(input) && input.reactFlowKey === mockSourceReactFlowKey)
           )
         ).toEqual(true);
+      });
+
+      it('Test that a specific input is connected', () => {
+        const mockConnections: ConnectionDictionary = {};
+        const mockSelfNode: FunctionData = {
+          key: mockSelfReactFlowKey,
+          functionName: 'Self',
+          displayName: 'Self',
+          category: FunctionCategory.Math,
+          description: 'Self',
+          type: 'Function',
+          inputs: mockBoundedFunctionInputs,
+          maxNumberOfInputs: mockBoundedFunctionInputs.length,
+          outputValueType: NormalizedDataType.Integer,
+        };
+
+        setConnectionInputValue(mockConnections, {
+          targetNode: mockSelfNode,
+          targetNodeReactFlowKey: mockSelfReactFlowKey,
+          findInputSlot: false,
+          inputIndex: 1,
+          value: {
+            reactFlowKey: mockSourceReactFlowKey,
+            node: mockSourceNode,
+          },
+        });
+
+        expect(mockConnections[mockSourceReactFlowKey]).toBeDefined();
+        expect(mockConnections[mockSourceReactFlowKey].outputs[0].reactFlowKey).toEqual(mockSelfReactFlowKey);
+
+        expect(mockConnections[mockSelfReactFlowKey]).toBeDefined();
+        expect(mockConnections[mockSelfReactFlowKey].inputs[0].length).toEqual(0);
+        expect(mockConnections[mockSelfReactFlowKey].inputs[1].length).toEqual(1);
       });
     });
 
@@ -346,19 +381,136 @@ describe('utils/Connections', () => {
       expect(dmState.currentSourceSchemaNodes?.length).toEqual(3);
     });
   });
+
+  describe('nodeHasSourceNodeEventually', () => {
+    const dummyNode: SchemaNodeExtended = {
+      key: '',
+      name: '',
+      fullName: '',
+      normalizedDataType: NormalizedDataType.Integer,
+      properties: SchemaNodeProperty.NotSpecified,
+      nodeProperties: [SchemaNodeProperty.NotSpecified],
+      children: [],
+      pathToRoot: [],
+    };
+    const mockConnections: ConnectionDictionary = {
+      testSourceSchema1: {
+        self: { node: dummyNode, reactFlowKey: 'testSourceSchema1' },
+        inputs: {},
+        outputs: [{ node: concatFunction, reactFlowKey: 'concatFunctionNode' }],
+      },
+      testSourceSchema2: {
+        self: { node: dummyNode, reactFlowKey: 'testSourceSchema2' },
+        inputs: {},
+        outputs: [{ node: concatFunction, reactFlowKey: 'concatFunctionNode' }],
+      },
+      concatFunctionNode: {
+        self: { node: concatFunction, reactFlowKey: 'concatFunctionNode' },
+        inputs: {
+          '0': [{ reactFlowKey: 'testSourceSchema1', node: dummyNode }],
+          '1': [{ reactFlowKey: 'testSourceSchema2', node: dummyNode }],
+        },
+        outputs: [{ node: dummyNode, reactFlowKey: 'testTargetScehema' }],
+      },
+      testTargetSchema: {
+        self: { node: dummyNode, reactFlowKey: 'testTargetSchema' },
+        inputs: { '0': [{ reactFlowKey: 'concatFunctionNode', node: concatFunction }] },
+        outputs: [],
+      },
+    };
+
+    it('Test can find a source node from depth == 1', () => {
+      expect(isSchemaNodeExtended(dummyNode)).toBeTruthy();
+      expect(nodeHasSourceNodeEventually(mockConnections['concatFunctionNode'], mockConnections)).toEqual(true);
+    });
+
+    it('Test can recursively call from depth > 1', () => {
+      expect(nodeHasSourceNodeEventually(mockConnections['testTargetSchema'], mockConnections)).toEqual(true);
+    });
+  });
+
+  describe('nodeHasSpecificInputEventually', () => {
+    const dummyNode: SchemaNodeExtended = {
+      key: '',
+      name: '',
+      fullName: '',
+      normalizedDataType: NormalizedDataType.Integer,
+      properties: SchemaNodeProperty.NotSpecified,
+      nodeProperties: [SchemaNodeProperty.NotSpecified],
+      children: [],
+      pathToRoot: [],
+    };
+    const mockConnections: ConnectionDictionary = {
+      testSourceSchema1: {
+        self: { node: dummyNode, reactFlowKey: 'testSourceSchema1' },
+        inputs: {},
+        outputs: [{ node: concatFunction, reactFlowKey: 'concatFunctionNode' }],
+      },
+      testSourceSchema2: {
+        self: { node: dummyNode, reactFlowKey: 'testSourceSchema2' },
+        inputs: {},
+        outputs: [{ node: concatFunction, reactFlowKey: 'concatFunctionNode' }],
+      },
+      concatFunctionNode: {
+        self: { node: concatFunction, reactFlowKey: 'concatFunctionNode' },
+        inputs: {
+          '0': [{ reactFlowKey: 'testSourceSchema1', node: dummyNode }],
+          '1': [{ reactFlowKey: 'testSourceSchema2', node: dummyNode }],
+        },
+        outputs: [{ node: dummyNode, reactFlowKey: 'testTargetScehema' }],
+      },
+      testTargetSchema: {
+        self: { node: dummyNode, reactFlowKey: 'testTargetSchema' },
+        inputs: { '0': [{ reactFlowKey: 'concatFunctionNode', node: concatFunction }] },
+        outputs: [],
+      },
+    };
+
+    it('Truthy when sourceKey in currentConnection with exact match', () => {
+      expect(nodeHasSpecificInputEventually('testSourceSchema1', mockConnections['testSourceSchema1'], mockConnections, true)).toBeTruthy();
+    });
+
+    it('Truthy when sourceKey can be found in currentConnection reactFlowKey', () => {
+      expect(nodeHasSpecificInputEventually('Source', mockConnections['testSourceSchema1'], mockConnections, false)).toBeTruthy();
+    });
+
+    it('Truthy when sourceKey can be found from depth > 1 (exactMatch = false)', () => {
+      expect(nodeHasSpecificInputEventually('Source', mockConnections['testTargetSchema'], mockConnections, false)).toBeTruthy();
+    });
+
+    it('Falsy when sourceKey unable to be found from depth > 1 (exactMatch = true)', () => {
+      expect(nodeHasSpecificInputEventually('testSourceSchema3', mockConnections['testTargetSchema'], mockConnections, true)).toBeFalsy();
+    });
+  });
+
+  describe('isValidConnectionByType', () => {
+    it('Truthy when both are the same non-Any datatypes', () => {
+      expect(isValidConnectionByType(NormalizedDataType.String, NormalizedDataType.String)).toBeTruthy();
+    });
+
+    it('Truthy when src is Any data type', () => {
+      expect(isValidConnectionByType(NormalizedDataType.Any, NormalizedDataType.Number)).toBeTruthy();
+    });
+
+    it('Truthy when tgt is Any data type', () => {
+      expect(isValidConnectionByType(NormalizedDataType.Boolean, NormalizedDataType.Any)).toBeTruthy();
+    });
+
+    it('Falsy when both are different non-Any datatypes', () => {
+      expect(isValidConnectionByType(NormalizedDataType.Integer, NormalizedDataType.String)).toBeFalsy();
+    });
+  });
 });
 
 const parentManyToOneTargetNode: SchemaNodeExtended = {
   key: '/ns0:Root/ManyToOne/Date',
   name: 'Date',
-  schemaNodeDataType: SchemaNodeDataType.None,
   normalizedDataType: NormalizedDataType.ComplexType,
   properties: 'Repeating',
   children: [
     {
       key: '/ns0:Root/ManyToOne/Date/DayName',
       name: 'DayName',
-      schemaNodeDataType: SchemaNodeDataType.String,
       normalizedDataType: NormalizedDataType.String,
       properties: 'NotSpecified',
       children: [],
@@ -421,14 +573,12 @@ const parentManyToOneTargetNode: SchemaNodeExtended = {
 const parentTargetNode: SchemaNodeExtended = {
   key: '/ns0:Root/ManyToMany/Year/Month/Day',
   name: 'Day',
-  schemaNodeDataType: SchemaNodeDataType.None,
   normalizedDataType: NormalizedDataType.ComplexType,
   properties: 'Repeating',
   children: [
     {
       key: '/ns0:Root/ManyToMany/Year/Month/Day/Date',
       name: 'Date',
-      schemaNodeDataType: SchemaNodeDataType.String,
       normalizedDataType: NormalizedDataType.String,
       properties: 'NotSpecified',
       fullName: 'Date',

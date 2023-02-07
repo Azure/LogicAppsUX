@@ -3,6 +3,7 @@ import type { AppDispatch } from '../../../core';
 import { updateNodeConnection } from '../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
+import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, selectPanelTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useNodeConnectionId } from '../../../core/state/selectors/actionMetadataSelector';
@@ -21,11 +22,12 @@ export const SelectConnectionTab = () => {
   const intl = useIntl();
   const selectedNodeId = useSelectedNodeId();
   const currentConnectionId = useNodeConnectionId(selectedNodeId);
+  const isMonitoringView = useMonitoringView();
 
   const hideConnectionTabs = useCallback(() => {
-    dispatch(showDefaultTabs());
+    dispatch(showDefaultTabs({ isMonitoringView }));
     dispatch(selectPanelTab(constants.PANEL_TAB_NAMES.PARAMETERS));
-  }, [dispatch]);
+  }, [dispatch, isMonitoringView]);
 
   const createConnectionCallback = useCallback(() => {
     // This is getting called and showing create tab after adding a new operation under certain circumstances
@@ -48,7 +50,7 @@ export const SelectConnectionTab = () => {
       dispatch(
         updateNodeConnection({ nodeId: selectedNodeId, connectionId: connection?.id as string, connectorId: connector?.id as string })
       );
-      ConnectionService().createConnectionAclIfNeeded(connection);
+      ConnectionService().setupConnectionIfNeeded(connection);
       hideConnectionTabs();
     },
     [dispatch, selectedNodeId, connector?.id, hideConnectionTabs]

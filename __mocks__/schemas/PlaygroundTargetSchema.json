@@ -1,0 +1,97 @@
+{
+  "name": "PlaygroundTargetSchema.xsd",
+  "type": "XML",
+  "targetNamespace": "http://tempuri.org/Target.xsd",
+  "namespaces": { "ns0": "http://tempuri.org/Target.xsd", "xs": "http://www.w3.org/2001/XMLSchema" },
+  "schemaTreeRoot": {
+    "key": "/ns0:TargetPlaygroundRoot",
+    "name": "TargetPlaygroundRoot",
+    "fullName": "ns0:TargetPlaygroundRoot",
+    "namespacePrefix": "ns0",
+    "namespaceUri": "http://tempuri.org/Target.xsd",
+    "normalizedDataType": "ComplexType",
+    "properties": "NotSpecified",
+    "children": [
+      {
+        "key": "/ns0:TargetPlaygroundRoot/UserID",
+        "name": "UserID",
+        "fullName": "UserID",
+        "normalizedDataType": "String",
+        "properties": "NotSpecified",
+        "parentKey": "/ns0:TargetPlaygroundRoot"
+      },
+      {
+        "key": "/ns0:TargetPlaygroundRoot/@UserAttribute",
+        "name": "UserAttribute",
+        "fullName": "@UserAttribute",
+        "normalizedDataType": "String",
+        "properties": "Attribute",
+        "parentKey": "/ns0:TargetPlaygroundRoot"
+      },
+      {
+        "key": "/ns0:TargetPlaygroundRoot/Metadata",
+        "name": "Metadata",
+        "fullName": "Metadata",
+        "normalizedDataType": "Any",
+        "properties": "NotSpecified",
+        "parentKey": "/ns0:TargetPlaygroundRoot"
+      },
+      {
+        "key": "/ns0:TargetPlaygroundRoot/DrinksCoffee",
+        "name": "DrinksCoffee",
+        "fullName": "DrinksCoffee",
+        "normalizedDataType": "Bool",
+        "properties": "NotSpecified",
+        "parentKey": "/ns0:TargetPlaygroundRoot"
+      },
+      {
+        "key": "/ns0:TargetPlaygroundRoot/NumCoffees",
+        "name": "NumCoffees",
+        "fullName": "NumCoffees",
+        "normalizedDataType": "Number",
+        "properties": "NotSpecified",
+        "parentKey": "/ns0:TargetPlaygroundRoot"
+      },
+      {
+        "key": "/ns0:TargetPlaygroundRoot/IntNumCoffees",
+        "name": "IntNumCoffees",
+        "fullName": "IntNumCoffees",
+        "normalizedDataType": "Integer",
+        "properties": "NotSpecified",
+        "parentKey": "/ns0:TargetPlaygroundRoot"
+      },
+      {
+        "key": "/ns0:TargetPlaygroundRoot/DecimalNumCoffeesOhAndAlsoThisNameWillBeReallyLongForTesting",
+        "name": "DecimalNumCoffeesOhAndAlsoThisNameWillBeReallyLongForTesting",
+        "fullName": "DecimalNumCoffeesOhAndAlsoThisNameWillBeReallyLongForTesting",
+        "normalizedDataType": "Decimal",
+        "properties": "NotSpecified",
+        "parentKey": "/ns0:TargetPlaygroundRoot"
+      },
+      {
+        "key": "/ns0:TargetPlaygroundRoot/RobotSpeak",
+        "name": "RobotSpeak",
+        "fullName": "RobotSpeak",
+        "normalizedDataType": "Binary",
+        "properties": "NotSpecified",
+        "parentKey": "/ns0:TargetPlaygroundRoot"
+      },
+      {
+        "key": "/ns0:TargetPlaygroundRoot/Birthday",
+        "name": "Birthday",
+        "fullName": "Birthday",
+        "normalizedDataType": "DateTime",
+        "properties": "Optional",
+        "parentKey": "/ns0:TargetPlaygroundRoot"
+      },
+      {
+        "key": "/ns0:TargetPlaygroundRoot/ItsComplicated",
+        "name": "ItsComplicated",
+        "fullName": "ItsComplicated",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "parentKey": "/ns0:TargetPlaygroundRoot"
+      }
+    ]
+  }
+}

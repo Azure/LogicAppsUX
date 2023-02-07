@@ -1,11 +1,4 @@
-import {
-  layeredLoopSourceMockSchema,
-  layeredLoopTargetMockSchema,
-  simpleLoopSource,
-  simpleLoopTarget,
-  sourceMockSchema,
-  targetMockSchema,
-} from '../../__mocks__';
+import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, sourceMockSchema, targetMockSchema } from '../../__mocks__';
 import type { MapDefinitionEntry } from '../../models';
 import { functionMock, ifPseudoFunctionKey, directAccessPseudoFunctionKey, indexPseudoFunctionKey } from '../../models';
 import type { ConnectionUnit } from '../../models/Connection';
@@ -579,7 +572,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       );
     });
 
-    it('creates a direct index connection', () => {
+    it('creates a custom value direct access connection', () => {
       simpleMap['ns0:Root'] = {
         LoopingWithIndex: {
           WeatherSummary: {
@@ -729,15 +722,21 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       );
     });
 
-    it('creates a nested loop connection', () => {
-      const extendedLoopSource = convertSchemaToSchemaExtended(simpleLoopSource);
-      const extendedLoopTarget = convertSchemaToSchemaExtended(simpleLoopTarget);
+    it('creates a many-to-many loop connection', () => {
+      const extendedLoopSource = convertSchemaToSchemaExtended(layeredLoopSourceMockSchema);
+      const extendedLoopTarget = convertSchemaToSchemaExtended(layeredLoopTargetMockSchema);
       simpleMap['ns0:Root'] = {
-        Ano: {
-          '$for(/ns0:Root/Year)': {
-            Mes: {
-              '$for(/ns0:Root/Year/Month)': {
-                Dia: 'Day',
+        ManyToMany: {
+          '$for(/ns0:Root/ManyToMany/SourceYear)': {
+            Year: {
+              '$for(SourceMonth)': {
+                Month: {
+                  '$for(SourceDay)': {
+                    Day: {
+                      Date: 'SourceDate',
+                    },
+                  },
+                },
               },
             },
           },
@@ -745,22 +744,21 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       };
 
       const result = convertFromMapDefinition(simpleMap, extendedLoopSource, extendedLoopTarget, []);
-      const resultEntries = Object.entries(result);
-      resultEntries.sort();
+      expect(Object.entries(result).length).toEqual(8);
 
-      expect(resultEntries.length).toEqual(4);
+      expect((result['target-/ns0:Root/ManyToMany/Year'].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/ManyToMany/SourceYear'
+      );
+      expect((result['target-/ns0:Root/ManyToMany/Year/Month'].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/ManyToMany/SourceYear/SourceMonth'
+      );
+      expect((result['target-/ns0:Root/ManyToMany/Year/Month/Day'].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay'
+      );
 
-      expect(resultEntries[0][0]).toEqual('source-/ns0:Root/Year/Month');
-      expect(resultEntries[0][1]).toBeTruthy();
-
-      expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Year/Month/Day');
-      expect(resultEntries[1][1]).toBeTruthy();
-
-      expect(resultEntries[2][0]).toEqual('target-/ns0:Root/Ano/Mes');
-      expect(resultEntries[2][1]).toBeTruthy();
-
-      expect(resultEntries[3][0]).toEqual('target-/ns0:Root/Ano/Mes/Dia');
-      expect(resultEntries[3][1]).toBeTruthy();
+      expect((result['target-/ns0:Root/ManyToMany/Year/Month/Day/Date'].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate'
+      );
     });
 
     it('creates a many-to-one loop connection with nested index variables', () => {
@@ -807,6 +805,33 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect((result[directAccessRfKey].inputs[2][0] as ConnectionUnit).reactFlowKey).toBe(
         'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate'
       );
+    });
+
+    it('creates a loop connection with dot access', () => {
+      const extendedLoopSource = convertSchemaToSchemaExtended(sourceMockSchema);
+      const extendedLoopTarget = convertSchemaToSchemaExtended(targetMockSchema);
+      simpleMap['ns0:Root'] = {
+        NameValueTransforms: {
+          PO_Status: {
+            '$for(/ns0:Root/NameValueTransforms/PurchaseOrderStatus/ns0:LineItem)': {
+              Product: {
+                ProductIdentifier: '.',
+              },
+            },
+          },
+        },
+      };
+
+      const result = convertFromMapDefinition(simpleMap, extendedLoopSource, extendedLoopTarget, []);
+
+      expect(Object.entries(result).length).toEqual(3);
+
+      expect((result['target-/ns0:Root/NameValueTransforms/PO_Status/Product'].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:Root/NameValueTransforms/PurchaseOrderStatus/ns0:LineItem'
+      );
+      expect(
+        (result['target-/ns0:Root/NameValueTransforms/PO_Status/Product/ProductIdentifier'].inputs[0][0] as ConnectionUnit).reactFlowKey
+      ).toBe('source-/ns0:Root/NameValueTransforms/PurchaseOrderStatus/ns0:LineItem');
     });
   });
 });

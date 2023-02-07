@@ -1,5 +1,5 @@
 import type { AppDispatch, RootState } from '../../state/store';
-import { changeArmToken, changeResourcePath, changeLoadingMethod, loadWorkflow } from '../../state/workflowLoadingSlice';
+import { changeArmToken, changeResourcePath, changeLoadingMethod, loadWorkflow, loadRun } from '../../state/workflowLoadingSlice';
 import type { IDropdownOption } from '@fluentui/react';
 import { Checkbox, Dropdown, TextField, DropdownMenuItemType } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -43,12 +43,18 @@ const fileOptions = [
   { key: 'StressTest500Gross.json', text: '500 Nodes (Gross)' },
   { key: 'StressTest600.json', text: '600 Nodes' },
   { key: 'StressTest1000.json', text: '1000 Nodes' },
+
+  // Consumption Workflows
+  { key: 'divider_4', text: '-', itemType: DropdownMenuItemType.Divider },
+  { key: 'WorkflowParametersHeader', text: 'Workflow Parameters', itemType: DropdownMenuItemType.Header },
+  { key: 'StandardWorkflowParameters.json', text: 'Standard Workflow Parameters' },
+  { key: 'ConsumptionWorkflowParameters.json', text: 'Consumption Workflow Parameters' },
 ];
 
 export const Login: React.FC = () => {
-  const { resourcePath, armToken, loadingMethod } = useSelector((state: RootState) => {
-    const { resourcePath, armToken, loadingMethod } = state.workflowLoader;
-    return { resourcePath, armToken, loadingMethod };
+  const { resourcePath, armToken, loadingMethod, monitoringView } = useSelector((state: RootState) => {
+    const { resourcePath, armToken, loadingMethod, monitoringView } = state.workflowLoader;
+    return { resourcePath, armToken, loadingMethod, monitoringView };
   });
   const dispatch = useDispatch<AppDispatch>();
   const changeResourcePathCB = useCallback(
@@ -62,9 +68,12 @@ export const Login: React.FC = () => {
   const changeResourcePathDropdownCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
       dispatch(changeResourcePath((item?.key as string) ?? ''));
+      if (monitoringView) {
+        dispatch(loadRun());
+      }
       dispatch(loadWorkflow());
     },
-    [dispatch]
+    [dispatch, monitoringView]
   );
 
   const changeArmTokenCB = useCallback(

@@ -1,10 +1,11 @@
 name: Nightly Release
 
 on:
+  workflow_dispatch:
   repository_dispatch:
     types: [release]
-#   schedule:
-#     - cron: '0 7 * * *' # run at 7 AM UTC
+  schedule:
+    - cron: '0 0 * * *'
 
 env:
   AI_KEY: 3cf0d6ae-3327-414a-b7c1-12f31ef45eff
@@ -64,6 +65,12 @@ jobs:
       - run: npx nx build vs-code-data-mapper-react
       - run: npm run vscode:data-mapper:pack
 
+      - name: 'Set Designer Extension VSIX aiKey in package.json'
+        run: echo "`jq '.aiKey="${{ env.AI_KEY }}"' apps/vs-code-designer/src/package.json`" > apps/vs-code-designer/src/package.json
+
+      - run: npm run build:vscode-designer
+      - run: npm run vscode:designer:pack
+
       - name: 'Get Previous tag'
         id: previoustag
         uses: 'WyriHaximus/github-action-get-previous-tag@v1'
@@ -75,10 +82,11 @@ jobs:
         with:
           path: |
             dist/apps/vs-code-data-mapper/*.vsix
+            dist/apps/vs-code-designer/*.vsix
 
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: 'LICENSE.md,dist/apps/vs-code-data-mapper/*.vsix'
+          artifacts: 'LICENSE.md,dist/apps/vs-code-data-mapper/*.vsix,dist/apps/vs-code-designer/*.vsix'
           generateReleaseNotes: true
           tag: '${{ steps.previoustag.outputs.tag }}'
           token: ${{ secrets.AUTOMATION_PAT }}
@@ -97,6 +105,7 @@ jobs:
             { dist: './dist/libs/services/designer-client-services', package: 'services-designer-client-services' },
             { dist: './dist/libs/parsers', package: 'parsers' },
             { dist: './dist/libs/services/intl', package: 'services-intl' },
+            { dist: './dist/libs/vscode-extension', package: 'vscode-extension' },
           ]
     steps:
       - name: 'Checkout Github Action'

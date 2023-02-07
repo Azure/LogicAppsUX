@@ -1,4 +1,10 @@
 {
+  "+0yxlR": [
+    {
+      "type": 0,
+      "value": "Function display"
+    }
+  ],
   "+20fdv": [
     {
       "type": 0,
@@ -75,10 +81,10 @@
       "value": "Paginação"
     }
   ],
-  "/9r9ML": [
+  "//nQG4": [
     {
       "type": 0,
-      "value": "Add target schema"
+      "value": "Select an api from apim instance"
     }
   ],
   "/AtN16": [
@@ -141,6 +147,12 @@
       "value": "Converter a entrada em uma matriz"
     }
   ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -169,6 +181,12 @@
     {
       "type": 0,
       "value": "Devolve os primeiros elementos de Contagem da matriz ou da cadeia transmitida"
+    }
+  ],
+  "/yYyOq": [
+    {
+      "type": 0,
+      "value": "Resource Group"
     }
   ],
   "00xlpa": [
@@ -279,6 +297,12 @@
       "value": "(UTC-05:00) Bogotá, Lima, Quito, Rio Branco"
     }
   ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
+    }
+  ],
   "0p+pJq": [
     {
       "type": 0,
@@ -341,12 +365,6 @@
     {
       "type": 0,
       "value": "Comentário"
-    }
-  ],
-  "1ANUHk": [
-    {
-      "type": 0,
-      "value": "Loading functions..."
     }
   ],
   "1D047X": [
@@ -664,6 +682,20 @@
       "value": "Acionadores"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -812,6 +844,12 @@
     {
       "type": 0,
       "value": "Obrigatório. O menor número inteiro que pode ser devolvido."
+    }
+  ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
     }
   ],
   "4BrA0z": [
@@ -1052,10 +1090,22 @@
       "value": "Obrigatório. O número com o qual se multiplica o Multiplicando 2."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -1406,6 +1456,12 @@
     {
       "type": 0,
       "value": "Tipo de Autenticação"
+    }
+  ],
+  "AGCm1p": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "AHB418": [
@@ -2068,6 +2124,12 @@
       "value": "Enter a valid Json."
     }
   ],
+  "GD3m4X": [
+    {
+      "type": 0,
+      "value": "Expanded"
+    }
+  ],
   "GDUGlm": [
     {
       "type": 0,
@@ -2078,6 +2140,12 @@
     {
       "type": 0,
       "value": "Obrigatório. O objeto a encontrar na coleção Dentro."
+    }
+  ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
     }
   ],
   "GXXLuT": [
@@ -2132,6 +2200,12 @@
     {
       "type": 0,
       "value": "Cancelar a seleção"
+    }
+  ],
+  "GyUe4C": [
+    {
+      "type": 0,
+      "value": "Modify options regarding functions"
     }
   ],
   "GzQQqH": [
@@ -2324,6 +2398,12 @@
       "value": "Devolve o primeiro objeto não nulo nos argumentos transmitidos"
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2366,6 +2446,12 @@
     {
       "type": 0,
       "value": "Obrigatório. Uma cadeia que contém a hora."
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2587,6 +2673,12 @@
     {
       "type": 0,
       "value": "Devolve o esquema de um URI"
+    }
+  ],
+  "LV/BTE": [
+    {
+      "type": 0,
+      "value": "Loading Api Management service instances..."
     }
   ],
   "LZm3ze": [
@@ -3075,6 +3167,12 @@
       "value": "(UTC-03:00) Araguaina"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -3085,6 +3183,12 @@
     {
       "type": 0,
       "value": "Obrigatório. O número a adicionar à Parcela 1."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3305,12 +3409,6 @@
       "value": "Mudar para entrada da matriz completa"
     }
   ],
-  "RZO5Ic": [
-    {
-      "type": 0,
-      "value": "Add or replace your schemas."
-    }
-  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -3526,10 +3624,10 @@
       "value": "Criar uma nova ligação"
     }
   ],
-  "TZv5JE": [
+  "TY4HzZ": [
     {
       "type": 0,
-      "value": "Nome"
+      "value": "Add or replace your schemas."
     }
   ],
   "Tayrub": [
@@ -3614,6 +3712,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Ilha da Páscoa"
+    }
+  ],
+  "UAwAAS": [
+    {
+      "type": 0,
+      "value": "Show inputs"
     }
   ],
   "UCNM4L": [
@@ -3812,6 +3916,12 @@
       "value": "Necessário. O nome da nova propriedade."
     }
   ],
+  "WCrlES": [
+    {
+      "type": 0,
+      "value": "Show outputs"
+    }
+  ],
   "WGwH45": [
     {
       "type": 0,
@@ -3864,6 +3974,12 @@
     {
       "type": 0,
       "value": "Inquilino"
+    }
+  ],
+  "X7X5ew": [
+    {
+      "type": 0,
+      "value": "Parameters"
     }
   ],
   "X8JjjT": [
@@ -4144,6 +4260,12 @@
       "value": ")"
     }
   ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "ZCFMoe": [
     {
       "type": 0,
@@ -4260,6 +4382,12 @@
       "value": "Processamento de Dados"
     }
   ],
+  "aSnCCB": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -4328,6 +4456,12 @@
     {
       "type": 0,
       "value": "Por predefinição, as instâncias da Aplicação Lógica são executadas ao mesmo tempo ou em paralelo. Este controlo altera a forma como as novas execuções são colocadas em fila e não pode ser alterado após a ativação. Para executar o máximo de instâncias paralelas possível, deixe este controlo desativado. Para limitar o número de execuções paralelas, ative este controlo e selecione um limite. Para executar sequencialmente, selecione 1 como limite."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4466,12 +4600,6 @@
       "value": "Selecione uma identidade"
     }
   ],
-  "ci6ex1": [
-    {
-      "type": 0,
-      "value": "Valor"
-    }
-  ],
   "cj+kyo": [
     {
       "type": 0,
@@ -4600,6 +4728,12 @@
       "value": "Divide a cadeia com um separador"
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4616,6 +4750,12 @@
     {
       "type": 0,
       "value": "Não especificado"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -4738,12 +4878,6 @@
     {
       "type": 0,
       "value": "Funções lógicas"
-    }
-  ],
-  "fqNVDv": [
-    {
-      "type": 0,
-      "value": "Back"
     }
   ],
   "froV/0": [
@@ -5165,12 +5299,6 @@
       "value": "Elements and mappings not connected to a target element are removed."
     }
   ],
-  "ittN0l": [
-    {
-      "type": 0,
-      "value": "No resources of this type found under this subscription."
-    }
-  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -5213,6 +5341,12 @@
       "value": "Devolve um número inteiro aleatório de um intervalo especificado que é inclusivo apenas no início."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5247,6 +5381,12 @@
     {
       "type": 0,
       "value": "Obrigatório. Uma cadeia de entrada base64."
+    }
+  ],
+  "jZjgYZ": [
+    {
+      "type": 0,
+      "value": "No resources of this type found under this subscription."
     }
   ],
   "jcA3Ig": [
@@ -5297,6 +5437,12 @@
     {
       "type": 0,
       "value": "Obrigatório. A cadeia codificada em base64."
+    }
+  ],
+  "k1N9Si": [
+    {
+      "type": 0,
+      "value": "Must provide default value for parameter."
     }
   ],
   "k41+13": [
@@ -5401,6 +5547,12 @@
       "value": "Obrigatório. Este valor é o número inteiro seguinte depois do maior número inteiro que foi possível devolver."
     }
   ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
+    }
+  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5455,10 +5607,10 @@
       "value": "A line for the parent element is added automatically."
     }
   ],
-  "lV77P8": [
+  "lR7V87": [
     {
       "type": 0,
-      "value": "Título"
+      "value": "Functions"
     }
   ],
   "lZT0JI": [
@@ -5521,6 +5673,12 @@
     {
       "type": 1,
       "value": "property"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "Valor Real"
     }
   ],
   "m7Y6Qf": [
@@ -5673,6 +5831,12 @@
       "value": "Obrigatório. O número de unidades de tempo que o tempo pretendido é no futuro."
     }
   ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -5707,6 +5871,12 @@
     {
       "type": 0,
       "value": "19"
+    }
+  ],
+  "ny75Ly": [
+    {
+      "type": 0,
+      "value": "Enter default value for parameter."
     }
   ],
   "o/0SEj": [
@@ -5861,12 +6031,6 @@
     {
       "type": 0,
       "value": "Obrigatório. Os valores a combinar numa matriz."
-    }
-  ],
-  "pRUJff": [
-    {
-      "type": 0,
-      "value": "Parâmetros"
     }
   ],
   "pUeUDw": [
@@ -6088,20 +6252,6 @@
       "value": "A resposta assíncrona permite que uma Aplicação Lógica responda com um 202 (Aceite) para indicar que o pedido foi aceite para processamento. Será fornecido um cabeçalho de localização para obter o estado final."
     }
   ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
-    }
-  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -6310,6 +6460,12 @@
     {
       "type": 0,
       "value": "Obrigatório. Uma cadeia que contém o nome do fuso horário de destino. Veja https://msdn.microsoft.com/en-us/library/gg154758.aspx para obter detalhes."
+    }
+  ],
+  "tAeKNh": [
+    {
+      "type": 0,
+      "value": "Simple"
     }
   ],
   "tE7Zam": [
@@ -6522,6 +6678,12 @@
       "value": "4"
     }
   ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "Valor Predefinido"
+    }
+  ],
   "uzsleE": [
     {
       "type": 0,
@@ -6722,6 +6884,12 @@
       "value": "Devolve um valor especificado baseado se o resultado da expressão for verdadeiro ou falso"
     }
   ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
+    }
+  ],
   "wl7X0l": [
     {
       "type": 0,
@@ -6746,12 +6914,6 @@
       "value": "URL de retorno:"
     }
   ],
-  "woq0x0": [
-    {
-      "type": 0,
-      "value": "Add source schema"
-    }
-  ],
   "wzEneQ": [
     {
       "type": 0,
@@ -6774,6 +6936,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "xC1zg3": [
+    {
+      "type": 0,
+      "value": "Schemas"
     }
   ],
   "xFQXAI": [
