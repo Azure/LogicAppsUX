@@ -118,6 +118,7 @@ export const General = ({
     id: 'general',
     title: generalTitle,
     sectionName: constants.SETTINGSECTIONS.GENERAL,
+    isReadOnly: readOnly,
     expanded,
     onHeaderClick,
     settings: [

@@ -108,12 +108,14 @@ export const RunAfter = ({ runAfter, readOnly = false, expanded, onHeaderClick, 
     title: runAfterTitle,
     sectionName: constants.SETTINGSECTIONS.RUNAFTER,
     expanded,
+    isReadOnly: readOnly,
     onHeaderClick,
     settings: [
       {
         settingType: 'RunAfter',
         settingProp: {
           items: GetRunAfterProps(),
+          readOnly,
           onEdgeAddition: (parentNode: string) => {
             dispatch(
               addEdgeFromRunAfter({

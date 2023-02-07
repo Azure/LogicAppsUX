@@ -3,7 +3,7 @@ import type { AppDispatch } from '../../core';
 import { initializeSwitchCaseFromManifest } from '../../core/actions/bjsworkflow/add';
 import { deleteGraphNode } from '../../core/actions/bjsworkflow/delete';
 import { getOperationManifest } from '../../core/queries/operation';
-import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
 import { useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
@@ -41,6 +41,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const graphNode = useWorkflowNode(graphId);
   const subgraphNode = useWorkflowNode(subgraphId);
   const operationInfo = useOperationInfo(graphId);
+  const isMonitoringView = useMonitoringView();
 
   const label = useNodeDisplayName(subgraphId);
 
@@ -57,14 +58,14 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
         const subGraphManifest = { properties: { ...caseManifestData, iconUri: '', brandColor: '' } };
         initializeSwitchCaseFromManifest(newCaseId, subGraphManifest, dispatch);
         dispatch(changePanelNode(newCaseId));
-        dispatch(showDefaultTabs());
+        dispatch(showDefaultTabs({ isMonitoringView }));
         dispatch(setFocusNode(newCaseId));
       } else {
         dispatch(changePanelNode(_id));
-        dispatch(showDefaultTabs());
+        dispatch(showDefaultTabs({ isMonitoringView }));
       }
     },
-    [dispatch, isAddCase, newCaseId, graphNode, operationInfo, subgraphId]
+    [dispatch, isAddCase, newCaseId, graphNode, operationInfo, subgraphId, isMonitoringView]
   );
 
   const graphCollapsed = useIsGraphCollapsed(subgraphId);

@@ -55,6 +55,7 @@ export const Security = ({
     id: 'security',
     title: securityTitle,
     sectionName: constants.SETTINGSECTIONS.SECURITY,
+    isReadOnly: readOnly,
     expanded,
     onHeaderClick,
     settings: [

@@ -82,8 +82,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const nodeClick = useCallback(() => {
     dispatch(changePanelNode(id));
-    dispatch(showDefaultTabs());
-  }, [dispatch, id]);
+    dispatch(showDefaultTabs({ isMonitoringView }));
+  }, [dispatch, id, isMonitoringView]);
 
   const brandColor = useBrandColor(id);
   const iconUri = useIconUri(id);

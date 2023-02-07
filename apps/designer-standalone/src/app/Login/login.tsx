@@ -73,7 +73,7 @@ export const Login: React.FC = () => {
       }
       dispatch(loadWorkflow());
     },
-    [dispatch]
+    [dispatch, monitoringView]
   );
 
   const changeArmTokenCB = useCallback(

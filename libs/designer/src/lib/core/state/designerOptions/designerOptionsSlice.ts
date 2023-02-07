@@ -10,6 +10,7 @@ import {
   InitSearchService,
   InitOAuthService,
   InitWorkflowService,
+  InitHostService,
   InitApiManagementService,
 } from '@microsoft/designer-client-services-logic-apps';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -34,6 +35,7 @@ export const initializeServices = createAsyncThunk(
     gatewayService,
     loggerService,
     workflowService,
+    hostService,
     apimService,
   }: ServiceOptions) => {
     const loggerServices: ILoggerService[] = [];
@@ -60,6 +62,10 @@ export const initializeServices = createAsyncThunk(
 
     if (apimService) {
       InitApiManagementService(apimService);
+    }
+
+    if (hostService) {
+      InitHostService(hostService);
     }
 
     return true;

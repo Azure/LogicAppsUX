@@ -69,6 +69,7 @@ export const Tracking = ({
     title: trackingTitle,
     sectionName: constants.SETTINGSECTIONS.TRACKING,
     expanded,
+    isReadOnly: readOnly,
     onHeaderClick,
     settings: [
       {

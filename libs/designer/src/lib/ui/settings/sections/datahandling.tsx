@@ -48,6 +48,7 @@ export const DataHandling = ({
     id: 'dataHandling',
     title: dataHandlingTitle,
     expanded,
+    isReadOnly: readOnly,
     sectionName: constants.SETTINGSECTIONS.DATAHANDLING,
     onHeaderClick,
     settings: [
