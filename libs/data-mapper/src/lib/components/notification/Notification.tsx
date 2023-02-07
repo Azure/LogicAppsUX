@@ -1,14 +1,15 @@
 import { undoDataMapOperation } from '../../core/state/DataMapSlice';
 import type { AppDispatch } from '../../core/state/Store';
-import { Stack } from '@fluentui/react';
+import { Stack, StackItem } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
-import { Delete20Regular, DismissCircle20Filled, Dismiss20Regular, Info20Filled } from '@fluentui/react-icons';
+import { Delete20Regular, Dismiss20Regular, DismissCircle20Filled, Info20Filled } from '@fluentui/react-icons';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
 export enum NotificationTypes {
   SaveFailed = 'saveFailed',
+  MapHasErrorsAtSave = 'mapHasErrorsAtSave',
   SourceNodeRemoved = 'sourceNodeRemoved',
   SourceNodeRemoveFailed = 'sourceNodeRemoveFailed',
   TargetNodeCannotDelete = 'targetNodeCannotDelete',
@@ -24,6 +25,7 @@ export interface NotificationData {
   type: NotificationTypes;
   msgParam?: any;
   msgBody?: string;
+  // -1 to disable auto hide
   autoHideDurationMs?: number;
 }
 
@@ -52,20 +54,22 @@ const useStyles = makeStyles({
     ...typographyStyles.body1,
     color: tokens.colorNeutralForeground1,
   },
-  undoBtn: {
-    ...shorthands.padding('2px'),
+  actionButton: {
     display: 'block',
     minWidth: '60px',
+    color: tokens.colorBrandForeground1,
+    ...shorthands.padding('0px'),
   },
 });
 
 export interface NotificationProps extends NotificationData {
   autoHideDuration?: number; // ms
+  toggleMapChecker: () => void;
   onClose: () => void;
 }
 
 export const Notification = (props: NotificationProps) => {
-  const { type, msgParam, msgBody, autoHideDuration = defaultNotificationAutoHideDuration, onClose } = props;
+  const { type, msgParam, msgBody, autoHideDuration = defaultNotificationAutoHideDuration, toggleMapChecker, onClose } = props;
   const dispatch = useDispatch<AppDispatch>();
   const styles = useStyles();
   const intl = useIntl();
@@ -74,6 +78,7 @@ export const Notification = (props: NotificationProps) => {
     switch (type) {
       // Error icon
       case NotificationTypes.SaveFailed:
+      case NotificationTypes.MapHasErrorsAtSave:
       case NotificationTypes.RepeatingConnectionCannotDelete:
       case NotificationTypes.SourceNodeRemoveFailed:
       case NotificationTypes.CircularLogicError:
@@ -97,12 +102,37 @@ export const Notification = (props: NotificationProps) => {
     description: 'Undo',
   });
 
+  const showMeLoc = intl.formatMessage({
+    defaultMessage: 'Show me',
+    description: 'Button to open map checker',
+  });
+
+  const issueLoc = intl.formatMessage({
+    defaultMessage: 'issue',
+    description: 'Issue, singular',
+  });
+
+  const issuesLoc = intl.formatMessage({
+    defaultMessage: 'issues',
+    description: 'Issues, plural',
+  });
+
   const LocResources = useMemo<{ [key: string]: string }>(
     () => ({
       [NotificationTypes.SaveFailed]: intl.formatMessage({
         defaultMessage: 'Failed to save.',
         description: 'Message on failed save',
       }),
+      [NotificationTypes.MapHasErrorsAtSave]: intl.formatMessage(
+        {
+          defaultMessage: 'The current map contains {numOfIssues} {issue}.',
+          description: 'Message when failing to save due to errors',
+        },
+        {
+          numOfIssues: msgParam ?? '',
+          issue: msgParam === 1 ? issueLoc : issuesLoc,
+        }
+      ),
       [NotificationTypes.SourceNodeRemoved]: intl.formatMessage({
         defaultMessage: 'Source element removed from view.',
         description: 'Message on removing source node',
@@ -148,42 +178,64 @@ export const Notification = (props: NotificationProps) => {
         description: 'Message on switching levels with nodes/mappings not connected to a target schema node',
       }),
     }),
-    [intl, msgParam]
+    [intl, issueLoc, issuesLoc, msgParam]
   );
 
-  const handleDataMapUndo = () => {
-    dispatch(undoDataMapOperation());
-  };
-
   useEffect(() => {
-    const timer = setTimeout(onClose, autoHideDuration);
-
-    return () => clearTimeout(timer);
+    if (autoHideDuration >= 0) {
+      const timer = setTimeout(onClose, autoHideDuration);
+      return () => clearTimeout(timer);
+    }
+    return;
   }, [autoHideDuration, onClose]);
+
+  const callToAction = useMemo(() => {
+    switch (type) {
+      // Open map checker
+      case NotificationTypes.MapHasErrorsAtSave:
+        return (
+          <StackItem>
+            <Button className={styles.actionButton} appearance="transparent" onClick={toggleMapChecker}>
+              {showMeLoc}
+            </Button>
+          </StackItem>
+        );
+
+      // Undo
+      case NotificationTypes.ElementsAndMappingsRemoved:
+        return (
+          <StackItem>
+            <Button className={styles.actionButton} appearance="transparent" onClick={() => dispatch(undoDataMapOperation())}>
+              {undoLoc}
+            </Button>
+          </StackItem>
+        );
+
+      // Default - Dismiss notification
+      default:
+        return (
+          <StackItem>
+            <Dismiss20Regular style={{ cursor: 'pointer' }} onClick={onClose} />
+          </StackItem>
+        );
+    }
+  }, [dispatch, onClose, showMeLoc, styles.actionButton, toggleMapChecker, type, undoLoc]);
 
   return (
     <div className={styles.toast}>
       <Stack horizontal>
-        {notificationIcon}
-
-        <Stack style={{ marginRight: 12 }}>
-          <Text className={styles.msgTitle}>{LocResources[type]}</Text>
-          {msgBody && (
-            <Text className={styles.msgBody} style={{ marginTop: 4 }}>
-              {msgBody}
-            </Text>
-          )}
-        </Stack>
-
-        <div style={{ marginLeft: 'auto' }}>
-          {type === NotificationTypes.ElementsAndMappingsRemoved ? (
-            <Button className={styles.undoBtn} appearance="transparent" onClick={handleDataMapUndo}>
-              {undoLoc}
-            </Button>
-          ) : (
-            <Dismiss20Regular style={{ cursor: 'pointer' }} onClick={onClose} />
-          )}
-        </div>
+        <StackItem>{notificationIcon}</StackItem>
+        <StackItem>
+          <Stack style={{ marginRight: 12 }}>
+            <Text className={styles.msgTitle}>{LocResources[type]}</Text>
+            {msgBody && (
+              <Text className={styles.msgBody} style={{ marginTop: 4 }}>
+                {msgBody}
+              </Text>
+            )}
+          </Stack>
+        </StackItem>
+        {callToAction}
       </Stack>
     </div>
   );
