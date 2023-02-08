@@ -48,10 +48,10 @@ ns0:TargetSchemaRoot:
         Index:
           Direct: /ns0:SourceSchemaRoot/Looping/OneToOne/Index[$a]/SourceDirect
           FunctionChain: concat(SourceFunctionChain, $a)
-      # $for(/ns0:SourceSchemaRoot/Looping/OneToOne/Conditional): # TODO: Conditionals (at least property ones) need some help when within loops
-        # Conditional:
-          # $if(is-null(SourceDirect)):
-            # Direct: SourceDirect
+      $for(/ns0:SourceSchemaRoot/Looping/OneToOne/Conditional):
+        Conditional:
+          $if(is-null(SourceDirect)):
+            Direct: SourceDirect
       $for(/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest, $a):
         StressTest:
           $if(is-greater-than($a, 3)):

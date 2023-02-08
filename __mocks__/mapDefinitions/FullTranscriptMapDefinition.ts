@@ -88,20 +88,20 @@ ns0:Root:
             WindSpeed: ./@WindSpeed
             Temperature: ./@Temperature
   NameValueTransforms:
-    # FlatterCatalog: # TODO: Conditionals (at least property ones) need some help when within loops
-      # $for(/ns0:Root/NameValueTransforms/Catalog/Product):
-        # $for(Field):
-          # Price:
-            # $if(is-equal(Name, "Pen")):
-              # Pen: Value
-            # $if(is-equal(Name, "Pencil")):
-              # Pencil: Value
-            # $if(is-equal(Name, "Notebook")):
-              # NoteBook: Value
-            # $if(is-equal(Name, "Bag")):
-              # Bag: Value
-            # $if(is-equal(Name, "Others")):
-              # Others: Value
+    FlatterCatalog:
+      $for(/ns0:Root/NameValueTransforms/Catalog/Product):
+        $for(Field):
+          Price:
+            $if(is-equal(Name, "Pen")):
+              Pen: Value
+            $if(is-equal(Name, "Pencil")):
+              Pencil: Value
+            $if(is-equal(Name, "Notebook")):
+              NoteBook: Value
+            $if(is-equal(Name, "Bag")):
+              Bag: Value
+            $if(is-equal(Name, "Others")):
+              Others: Value
     PO_Status:
       ShipDate: /ns0:Root/NameValueTransforms/PurchaseOrderStatus/DateShipped
       ShippedVia: '"Air"'
