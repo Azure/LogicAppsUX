@@ -155,7 +155,9 @@ const callChildObjects = (
       const ifRfKey = createReactFlowFunctionKey(ifPseudoFunction);
 
       const ifContents = childKey.substring(mapNodeParams.if.length + 1, childKey.length - 1);
-      parseDefinitionToConnection(
+      const childSubKey = Object.keys(childValue)[0];
+
+      createConnections(
         isInLoop ? getSourceValueFromLoop(ifContents, targetKey, sourceSchemaFlattened) : ifContents,
         ifRfKey,
         connections,
@@ -164,13 +166,15 @@ const callChildObjects = (
         sourceSchemaFlattened,
         targetSchema,
         targetSchemaFlattened,
-        functions
+        functions,
+        isInLoop ? `${targetKey}/${childSubKey}` : undefined
       );
 
       Object.entries(childValue).forEach(([childSubKey, childSubValue]) => {
         if (typeof childSubValue === 'string') {
-          parseDefinitionToConnection(
-            isInLoop ? `${getSourceKeyOfLastLoop(targetKey)}/${childSubValue}` : childSubValue,
+          const srcValueKey = `${getSourceKeyOfLastLoop(qualifyLoopRelativeSourceKeys(targetKey))}/${childSubValue}`;
+          createConnections(
+            isInLoop && !(childSubValue.includes('[') && childSubValue.includes(']')) ? srcValueKey : childSubValue,
             ifRfKey,
             connections,
             createdNodes,
@@ -199,7 +203,6 @@ const callChildObjects = (
         }
       });
 
-      const childSubKey = Object.keys(childValue)[0];
       parseDefinitionToConditionalConnection(
         sourceNodeObject[childKey],
         ifRfKey,
@@ -295,7 +298,8 @@ const createConnections = (
   sourceSchemaFlattened: SchemaNodeDictionary,
   targetSchema: SchemaExtended,
   targetSchemaFlattened: SchemaNodeDictionary,
-  functions: FunctionData[]
+  functions: FunctionData[],
+  conditionalLoopKey?: string
 ) => {
   const isLoop: boolean = targetKey.includes(mapNodeParams.for);
   const isConditional: boolean = targetKey.startsWith(mapNodeParams.if);
@@ -388,39 +392,39 @@ const createConnections = (
   }
 
   // Loop + index variable handling (create index() node, match up variables to respective nodes, etc)
-  if (isLoop) {
-    let startIdxOfPrevLoop = amendedTargetKey.length;
-    let startIdxOfCurLoop = amendedTargetKey.substring(0, startIdxOfPrevLoop).lastIndexOf(mapNodeParams.for);
+  if (isLoop || conditionalLoopKey) {
+    const loopKey = conditionalLoopKey ? qualifyLoopRelativeSourceKeys(conditionalLoopKey) : amendedTargetKey;
+
+    let startIdxOfPrevLoop = loopKey.length;
+    let startIdxOfCurLoop = loopKey.substring(0, startIdxOfPrevLoop).lastIndexOf(mapNodeParams.for);
 
     let tgtLoopNodeKey: string | undefined = undefined;
     let tgtLoopNode: SchemaNodeExtended | undefined = undefined;
 
     // Handle loops in targetKey by back-tracking
     while (startIdxOfCurLoop > -1) {
-      const srcLoopNodeKey = getSourceKeyOfLastLoop(amendedTargetKey.substring(0, startIdxOfPrevLoop));
+      const srcLoopNodeKey = getSourceKeyOfLastLoop(loopKey.substring(0, startIdxOfPrevLoop));
       const srcLoopNode = findNodeForKey(srcLoopNodeKey, sourceSchema.schemaTreeRoot);
 
-      const idxOfIndexVariable = amendedTargetKey.substring(0, startIdxOfPrevLoop).indexOf('$', startIdxOfCurLoop + 1);
+      const idxOfIndexVariable = loopKey.substring(0, startIdxOfPrevLoop).indexOf('$', startIdxOfCurLoop + 1);
       let indexFnRfKey: string | undefined = undefined;
 
       const endOfFor = ')/';
-      const endOfForIdx = amendedTargetKey.substring(0, startIdxOfPrevLoop).lastIndexOf(endOfFor);
-      const tgtLoopNodeKeyChunk = amendedTargetKey.substring(endOfForIdx + 2);
+      const endOfForIdx = loopKey.substring(0, startIdxOfPrevLoop).lastIndexOf(endOfFor);
+      const tgtLoopNodeKeyChunk = loopKey.substring(endOfForIdx + 2);
 
       // If there's no target loop node for this source loop node,
       // it must go to the lower-level/previous target node
       if (!tgtLoopNodeKeyChunk.startsWith(mapNodeParams.for)) {
         // Gets tgtKey for current loop (which will be the single key chunk immediately following the loop path chunk)
-        const startIdxOfNextPathChunk = amendedTargetKey.indexOf('/', endOfForIdx + 2);
-        tgtLoopNodeKey = getTargetValueWithoutLoops(
-          startIdxOfNextPathChunk > -1 ? amendedTargetKey.substring(0, startIdxOfNextPathChunk) : amendedTargetKey
-        );
+        const startIdxOfNextPathChunk = loopKey.indexOf('/', endOfForIdx + 2);
+        tgtLoopNodeKey = getTargetValueWithoutLoops(startIdxOfNextPathChunk > -1 ? loopKey.substring(0, startIdxOfNextPathChunk) : loopKey);
         tgtLoopNode = findNodeForKey(tgtLoopNodeKey, targetSchema.schemaTreeRoot);
       }
 
       // Handle index variables
       if (idxOfIndexVariable > -1 && tgtLoopNodeKey) {
-        const idxVariable = amendedTargetKey[idxOfIndexVariable + 1];
+        const idxVariable = loopKey[idxOfIndexVariable + 1];
         const idxVariableKey = `${idxVariable}-${tgtLoopNodeKey}`;
 
         // Check if an index() node/id has already been created for this loop's index variable
@@ -445,7 +449,7 @@ const createConnections = (
       }
 
       // Make the connection between loop nodes
-      if (srcLoopNode && tgtLoopNode) {
+      if (srcLoopNode && tgtLoopNode && !conditionalLoopKey) {
         addParentConnectionForRepeatingElements(
           tgtLoopNode,
           srcLoopNode,
@@ -457,7 +461,7 @@ const createConnections = (
       }
 
       startIdxOfPrevLoop = startIdxOfCurLoop;
-      startIdxOfCurLoop = amendedTargetKey.substring(0, startIdxOfPrevLoop).lastIndexOf(mapNodeParams.for);
+      startIdxOfCurLoop = loopKey.substring(0, startIdxOfPrevLoop).lastIndexOf(mapNodeParams.for);
     }
   }
 
