@@ -154,21 +154,21 @@ const callChildObjects = (
       const isInLoop = targetKey.includes(mapNodeParams.for);
       const ifRfKey = createReactFlowFunctionKey(ifPseudoFunction);
 
+      const ifContents = childKey.substring(mapNodeParams.if.length + 1, childKey.length - 1);
+      parseDefinitionToConnection(
+        isInLoop ? getSourceValueFromLoop(ifContents, targetKey, sourceSchemaFlattened) : ifContents,
+        ifRfKey,
+        connections,
+        createdNodes,
+        sourceSchema,
+        sourceSchemaFlattened,
+        targetSchema,
+        targetSchemaFlattened,
+        functions
+      );
+
       Object.entries(childValue).forEach(([childSubKey, childSubValue]) => {
         if (typeof childSubValue === 'string') {
-          const ifContents = childKey.substring(mapNodeParams.if.length + 1, childKey.length - 1);
-          parseDefinitionToConnection(
-            isInLoop ? getSourceValueFromLoop(ifContents, targetKey, sourceSchemaFlattened) : ifContents,
-            ifRfKey,
-            connections,
-            createdNodes,
-            sourceSchema,
-            sourceSchemaFlattened,
-            targetSchema,
-            targetSchemaFlattened,
-            functions
-          );
-
           parseDefinitionToConnection(
             isInLoop ? `${getSourceKeyOfLastLoop(targetKey)}/${childSubValue}` : childSubValue,
             ifRfKey,
