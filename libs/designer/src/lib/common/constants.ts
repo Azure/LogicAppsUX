@@ -872,7 +872,7 @@ export default {
     SELECT_APPSERVICE_TRIGGER: 'selectappservicetrigger',
     SELECT_FUNCTION_ACTION: 'azureFunction',
     SELECT_BATCH_WORKFLOW_ACTION: 'sendtobatch',
-    SELECT_MANUAL_WORKFLOW_ACTION: 'selectmanualworkflow',
+    SELECT_MANUAL_WORKFLOW_ACTION: 'invokeworkflow',
   },
   UNTIL_CURRENT_ITERATION_INDEX_KEY: 'builtin.$.currentIterationIndexes',
   VALUE_UPDATE_INTERVAL_IN_MS: 750, // Throttling limit for capturing parameter value update in milliseconds
@@ -908,6 +908,6 @@ export default {
     SELECT_APPSERVICE_TRIGGER: 'selectappservicetrigger',
     SELECT_FUNCTION_ACTION: 'azureFunction',
     SELECT_BATCH_WORKFLOW_ACTION: 'sendtobatch',
-    SELECT_MANUAL_WORKFLOW_ACTION: 'selectmanualworkflow',
+    SELECT_MANUAL_WORKFLOW_ACTION: 'invokeworkflow',
   },
 };

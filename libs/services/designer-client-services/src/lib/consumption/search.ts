@@ -55,7 +55,7 @@ export class ConsumptionSearchService extends BaseSearchService {
       AzureResourceOperationsData.selectAppServiceActionOperation,
       AzureResourceOperationsData.selectAppServiceTriggerOperation,
       AzureResourceOperationsData.selectFunctionOperation,
-      AzureResourceOperationsData.selectManualWorkflowOperation,
+      AzureResourceOperationsData.invokeWorkflowOperation,
       AzureResourceOperationsData.selectBatchWorkflowOperation,
     ];
     return [...clientBuiltInOperations, ...consumptionBuiltIn];
@@ -102,7 +102,7 @@ export class ConsumptionSearchService extends BaseSearchService {
       AzureResourceOperationsData.selectApiManagementGroup,
       AzureResourceOperationsData.selectAppServiceGroup,
       AzureResourceOperationsData.selectFunctionGroup,
-      AzureResourceOperationsData.selectManualWorkflowGroup,
+      AzureResourceOperationsData.invokeWorkflowGroup,
       AzureResourceOperationsData.selectBatchWorkflowGroup,
     ];
     return [...clientBuiltInConnectors, ...consumptionBuiltIn];

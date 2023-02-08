@@ -146,6 +146,19 @@
   justify-content: space-between;
 }
 
+.msla-azure-resource-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+
+  *.ms-Button {
+    border: none;
+    height: 32px;
+    font-size: 14px;
+  }
+}
+
 body.dark {
   .react-flow__controls-button {
     background: @ms-color-primaryBackground;

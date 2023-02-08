@@ -129,6 +129,7 @@ const variableConnectorId = 'connectionProviders/variable';
 const apimanagement = 'apimanagement';
 const azurefunction = 'azureFunction';
 const appservice = 'appservice';
+const invokeworkflow = 'invokeworkflow';
 const sendtobatch = 'sendtobatch';
 
 export const supportedBaseManifestTypes = [
@@ -331,6 +332,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case apimanagement:
     case azurefunction:
     case sendtobatch:
+    case invokeworkflow:
       return true;
 
     default:
@@ -486,6 +488,12 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
       return {
         connectorId: workflowConnectorId,
         operationId: workflow,
+      };
+
+    case invokeworkflow:
+      return {
+        connectorId: workflowConnectorId,
+        operationId: invokeworkflow,
       };
 
     default:

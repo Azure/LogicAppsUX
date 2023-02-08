@@ -77,6 +77,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         setTitleText(manualWorkflowTitleText);
         setResourceTypes(['manualWorkflow', 'trigger']);
         setGetResourcesCallback(() => () => SearchService().getRequestWorkflows());
+        setGetSubResourcesCallback(() => (manualWorkflowId?: string) => SearchService().getWorkflowTriggers(manualWorkflowId ?? ''));
         break;
 
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_BATCH_WORKFLOW_ACTION:
@@ -109,14 +110,14 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div className={'msla-azure-resource-selection'}>
       <div className="msla-flex-row" style={{ justifyContent: 'flex-start' }}>
         <img
           src={operation.properties.api.iconUri}
           alt={operation.properties.api.name}
           style={{ width: '32px', height: '32px', borderRadius: '2px', overflow: 'hidden' }}
         />
-        <Text variant="large">{operation.properties.summary}</Text>
+        <Text style={{ font: '13px/20px @semibold-font-family' }}>{operation.properties.summary}</Text>
       </div>
       <AzureResourcePicker
         titleText={titleText}

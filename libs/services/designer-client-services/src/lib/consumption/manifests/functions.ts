@@ -32,7 +32,7 @@ export const selectFunctionManifest = {
       required: [],
       properties: {
         body: {
-          title: 'string',
+          title: 'Request Body',
           type: 'object',
           'x-ms-summary': 'Request Body',
           'x-ms-visibility': 'important',

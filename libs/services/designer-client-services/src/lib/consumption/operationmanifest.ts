@@ -13,8 +13,8 @@ import { flatFileDecodingManifest, flatFileEncodingManifest } from './manifests/
 import { selectFunctionManifest } from './manifests/functions';
 import { inlineCodeManifest } from './manifests/inlinecode';
 import { integrationAccountArtifactLookupManifest } from './manifests/integrationaccountartifactlookup';
+import { invokeWorkflowManifest } from './manifests/invokeWorkflow';
 import { liquidJsonToJsonManifest, liquidJsonToTextManifest, liquidXmlToJsonManifest, liquidXmlToTextManifest } from './manifests/liquid';
-import { selectManualWorkflowManifest } from './manifests/manualWorkflow';
 import { xmlTransformManifest, xmlValidationManifest } from './manifests/xml';
 import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 
@@ -62,10 +62,17 @@ const flatfileencoding = 'flatfileencoding';
 const apimanagement = 'apimanagement';
 const azurefunction = 'function';
 const appservice = 'appservice';
-const workflow = 'workflow';
+const invokeworkflow = 'invokeworkflow';
 const sendtobatch = 'sendtobatch';
 
-const supportedConsumptionManifestTypes = [...supportedBaseManifestTypes, apimanagement, azurefunction, appservice, workflow, sendtobatch];
+const supportedConsumptionManifestTypes = [
+  ...supportedBaseManifestTypes,
+  apimanagement,
+  azurefunction,
+  appservice,
+  invokeworkflow,
+  sendtobatch,
+];
 
 const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   ...supportedBaseManifestObjects,
@@ -85,6 +92,6 @@ const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   [appservice, selectAppServiceActionManifest],
   // [selectAppServiceTrigger, selectAppServiceTriggerManifest],
   ['azurefunction', selectFunctionManifest],
-  ['invokeworkflow', selectManualWorkflowManifest],
+  [invokeworkflow, invokeWorkflowManifest],
   [sendtobatch, selectBatchWorkflowManifest],
 ]);

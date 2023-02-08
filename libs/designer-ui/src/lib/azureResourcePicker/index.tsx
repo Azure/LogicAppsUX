@@ -49,7 +49,7 @@ export const AzureResourcePicker = (props: AzureResourcePickerProps) => {
   const gridTemplateColumns = useMemo(() => '2fr '.repeat(headers.length - 1) + '1fr', [headers.length]);
 
   return (
-    <div>
+    <div style={{ width: '100%' }}>
       <Label className="label" required>
         {titleText}
       </Label>
