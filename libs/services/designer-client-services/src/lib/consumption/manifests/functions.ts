@@ -27,10 +27,104 @@ export const selectFunctionManifest = {
 
     environmentBadge: coreBadge,
 
-    inputs: {},
+    inputs: {
+      type: 'object',
+      required: [],
+      properties: {
+        body: {
+          title: 'string',
+          type: 'object',
+          'x-ms-summary': 'Request Body',
+          'x-ms-visibility': 'important',
+          description: 'Context object to be passed to function: { .. }',
+        },
+        method: {
+          type: 'string',
+          title: 'Method',
+          'x-ms-editor': 'combobox',
+          'x-ms-visibility': 'advanced',
+          'x-ms-editor-options': {
+            options: [
+              {
+                displayName: 'GET',
+                value: 'GET',
+              },
+              {
+                displayName: 'PUT',
+                value: 'PUT',
+              },
+              {
+                displayName: 'POST',
+                value: 'POST',
+              },
+              {
+                displayName: 'PATCH',
+                value: 'PATCH',
+              },
+              {
+                displayName: 'DELETE',
+                value: 'DELETE',
+              },
+            ],
+          },
+        },
+        headers: {
+          type: 'object',
+          title: 'Headers',
+          description: 'Enter JSON object of response headers',
+          'x-ms-visibility': 'advanced',
+          'x-ms-editor': 'dictionary',
+          'x-ms-editor-options': {
+            valueType: 'string',
+          },
+        },
+        queries: {
+          type: 'object',
+          title: 'Queries',
+          // description: 'Enter JSON object of query parameters',
+          'x-ms-visibility': 'advanced',
+        },
+        authentication: {
+          type: 'object',
+          title: 'Authentication',
+          description: 'Enter JSON object of authentication parameter',
+          'x-ms-visibility': 'advanced',
+          'x-ms-editor': 'authentication',
+          'x-ms-editor-options': {
+            supportedAuthTypes: ['None', 'ActiveDirectoryOAuth', 'Raw', 'ManagedServiceIdentity'],
+          },
+        },
+        function: {
+          type: 'object',
+          'x-ms-visibility': 'hideInUI',
+          properties: {
+            id: {
+              type: 'string',
+              'x-ms-visibility': 'hideInUI',
+            },
+          },
+        },
+      },
+    },
     isInputsOptional: false,
 
-    outputs: {},
+    outputs: {
+      type: 'object',
+      properties: {
+        body: {
+          type: 'any',
+          title: 'Body',
+        },
+        headers: {
+          type: 'object',
+          title: 'Headers',
+        },
+        statusCode: {
+          type: 'integer',
+          title: 'Status Code',
+        },
+      },
+    },
     isOutputsOptional: false,
     includeRootOutputs: true,
 

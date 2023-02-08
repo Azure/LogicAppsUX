@@ -95,6 +95,16 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     description: 'Text for the Details page navigation heading',
   });
 
+  // TODO: Riley - this needs to accept the selected resource somehow
+  const selectAzureResourceCallback = useCallback(
+    (resource: string) => {
+      console.log('selected resource', resource);
+      const newNodeId = (selectedOperation?.properties?.summary ?? selectedOperation?.name ?? guid()).replaceAll(' ', '_');
+      dispatch(addOperation({ operation: selectedOperation, relationshipIds, nodeId: newNodeId, isParallelBranch, isTrigger }));
+    },
+    [dispatch, isParallelBranch, isTrigger, relationshipIds, selectedOperation]
+  );
+
   return (
     <RecommendationPanel placeholder={''} {...props}>
       {isSelectingAzureResource || selectedOperationGroupId ? (
@@ -106,7 +116,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         </div>
       ) : null}
       {isSelectingAzureResource && selectedOperation ? (
-        <AzureResourceSelection operation={selectedOperation} />
+        <AzureResourceSelection operation={selectedOperation} onSubmit={selectAzureResourceCallback} />
       ) : selectedOperationGroupId ? (
         <OperationGroupDetailView groupOperations={allOperationsForGroup} filters={filters} onOperationClick={onOperationClick} />
       ) : (

@@ -1,5 +1,5 @@
 import Constants from '../../../common/constants';
-import { Text } from '@fluentui/react';
+import { PrimaryButton, Text } from '@fluentui/react';
 import { ApiManagementService, FunctionService, SearchService, AppServiceService } from '@microsoft/designer-client-services-logic-apps';
 import { AzureResourcePicker } from '@microsoft/designer-ui';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
@@ -9,10 +9,11 @@ import { useIntl } from 'react-intl';
 
 type AzureResourceSelectionProps = {
   operation: DiscoveryOperation<DiscoveryResultTypes>;
+  onSubmit: (resource: any) => void;
 };
 
 export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
-  const { operation } = props;
+  const { operation, onSubmit } = props;
 
   // const resourceApiId = useMemo(() => operation.properties.api.id, [operation]);
 
@@ -41,6 +42,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   const [titleText, setTitleText] = useState('');
 
   const [selectedResourceId, setSelectedResourceId] = useState<string | undefined>(undefined);
+  const [selectedSubResource, setSelectedSubResource] = useState<string | undefined>(undefined);
 
   const [resourceTypes, setResourceTypes] = useState<string[]>([]);
 
@@ -81,6 +83,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         setTitleText(batchWorkflowTitleText);
         setResourceTypes(['batchWorkflow', 'trigger']);
         setGetResourcesCallback(() => () => SearchService().getBatchWorkflows());
+        setGetSubResourcesCallback(() => (batchWorkflowId?: string) => SearchService().getWorkflowTriggers(batchWorkflowId ?? ''));
         break;
 
       default:
@@ -91,7 +94,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   const headers = [
     intl.formatMessage({ defaultMessage: 'Name', description: 'Header for resource name' }),
     intl.formatMessage({ defaultMessage: 'Resource Group', description: 'Header for resource group name' }),
-    intl.formatMessage({ defaultMessage: 'Location', description: 'Header for resource lcoation' }),
+    intl.formatMessage({ defaultMessage: 'Location', description: 'Header for resource location' }),
   ];
 
   const loadingText = intl.formatMessage({
@@ -106,7 +109,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   ];
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       <div className="msla-flex-row" style={{ justifyContent: 'flex-start' }}>
         <img
           src={operation.properties.api.iconUri}
@@ -127,8 +130,17 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         subResourceType={resourceTypes[1]}
         getSubResourceName={(subResource: any) => subResource?.properties?.name ?? subResource?.name ?? subResource?.id}
         fetchSubResourcesCallback={getSubResourcesCallback}
-        onSubResourceSelect={(subResourceId: string) => console.log(subResourceId)}
+        onSubResourceSelect={(subResource: any) => setSelectedSubResource(subResource)}
       />
-    </>
+      <PrimaryButton
+        disabled={!selectedSubResource}
+        onClick={() => {
+          if (!selectedResourceId || !selectedSubResource) return;
+          onSubmit(selectedSubResource);
+        }}
+      >
+        {intl.formatMessage({ defaultMessage: 'Select', description: 'Select button text' })}
+      </PrimaryButton>
+    </div>
   );
 };

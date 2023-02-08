@@ -16,9 +16,9 @@ export const selectFunctionGroup = {
 };
 
 export const selectFunctionOperation = {
-  id: 'selectfunction',
-  name: 'selectfunction',
-  type: 'selectfunction',
+  id: 'azureFunction',
+  name: 'azureFunction',
+  type: 'azureFunction',
   properties: {
     api: {
       id: 'connectionProviders/function',

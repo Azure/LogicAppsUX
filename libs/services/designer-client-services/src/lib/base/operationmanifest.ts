@@ -127,7 +127,7 @@ const httpConnectorId = 'connectionProviders/http';
 const variableConnectorId = 'connectionProviders/variable';
 
 const apimanagement = 'apimanagement';
-const azurefunction = 'function';
+const azurefunction = 'azureFunction';
 const appservice = 'appservice';
 const sendtobatch = 'sendtobatch';
 

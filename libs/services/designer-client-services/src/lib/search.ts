@@ -8,6 +8,7 @@ export interface ISearchService {
   getAllOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
   getRequestWorkflows(): Promise<any>;
   getBatchWorkflows(): Promise<any>;
+  getWorkflowTriggers(workflowId: string): Promise<any[]>;
 }
 
 let service: ISearchService;

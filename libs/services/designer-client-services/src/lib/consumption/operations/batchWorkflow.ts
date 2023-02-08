@@ -16,9 +16,9 @@ export const selectBatchWorkflowGroup = {
 };
 
 export const selectBatchWorkflowOperation = {
-  id: 'selectbatchworkflow',
-  name: 'selectbatchworkflow',
-  type: 'selectbatchworkflow',
+  id: 'sendtobatch',
+  name: 'sendtobatch',
+  type: 'sendtobatch',
   properties: {
     api: {
       id: 'connectionProviders/batch',

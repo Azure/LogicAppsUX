@@ -205,6 +205,17 @@ export abstract class BaseSearchService implements ISearchService {
   public async getBatchWorkflows(): Promise<any[]> {
     return this.getWorkflows(`contains(Trigger, 'Batch') and (${ISE_RESOURCE_ID} eq null)`);
   }
+
+  public async getWorkflowTriggers(workflowId: string): Promise<any[]> {
+    const {
+      httpClient,
+      apiHubServiceDetails: { apiVersion },
+    } = this.options;
+    const uri = `${workflowId}/triggers`;
+    const queryParameters: QueryParameters = { 'api-version': apiVersion };
+    const response = await httpClient.get<any>({ uri, queryParameters });
+    return response?.value ?? [];
+  }
 }
 
 export function getClientBuiltInOperations(showStatefulOperations = false): DiscoveryOperation<BuiltInOperation>[] {

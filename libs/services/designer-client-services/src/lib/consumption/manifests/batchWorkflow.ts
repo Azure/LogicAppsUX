@@ -24,10 +24,93 @@ export const selectBatchWorkflowManifest = {
 
     environmentBadge: coreBadge,
 
-    inputs: {},
+    inputs: {
+      type: 'object',
+      required: ['batchName', 'content', 'host'],
+      properties: {
+        batchName: {
+          title: 'Batch Name',
+          required: true,
+          type: 'string',
+          'x-ms-summary': 'Batch Name',
+          description: 'Name of the batch to send message.',
+        },
+        content: {
+          title: 'Message Content',
+          required: true,
+          'x-ms-summary': 'Message Content',
+          description: 'The message to send to batch.',
+        },
+        partitionName: {
+          title: 'Partition Name',
+          required: false,
+          type: 'string',
+          'x-ms-summary': 'Partition Name',
+          description: 'Name of the partition to send message.',
+        },
+        messageId: {
+          title: 'Message Id',
+          required: false,
+          type: 'string',
+          'x-ms-summary': 'Message Id',
+          description: 'The message identifier.',
+        },
+        host: {
+          type: 'object',
+          required: ['triggerName', 'workflow'],
+          properties: {
+            triggerName: {
+              title: 'Trigger Name',
+              required: true,
+              type: 'string',
+              'x-ms-summary': 'Trigger Name',
+            },
+            workflow: {
+              type: 'object',
+              required: ['id'],
+              properties: {
+                id: {
+                  title: 'Workflow',
+                  required: true,
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
     isInputsOptional: false,
 
-    outputs: {},
+    outputs: {
+      type: 'object',
+      properties: {
+        body: {
+          type: 'any',
+          title: 'Body',
+        },
+        headers: {
+          type: 'object',
+          title: 'Headers',
+        },
+        statusCode: {
+          type: 'integer',
+          title: 'Status Code',
+        },
+        batchName: {
+          type: 'string',
+          title: 'Batch Name',
+        },
+        paritionName: {
+          type: 'string',
+          title: 'Partition Name',
+        },
+        messageId: {
+          type: 'string',
+          title: 'Message Id',
+        },
+      },
+    },
     isOutputsOptional: false,
     includeRootOutputs: true,
 
