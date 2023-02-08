@@ -79,18 +79,18 @@ export const Deserialize = (
 };
 
 const isScopeAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.ScopeAction => {
-  return ['scope', 'foreach', 'until', 'if', 'switch'].includes(action.type.toLowerCase());
+  return ['scope', 'foreach', 'until', 'if', 'switch'].includes(action?.type?.toLowerCase());
 };
 
 const isIfAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.IfAction => {
-  return equals(action.type, 'if');
+  return equals(action?.type, 'if');
 };
 
 const isSwitchAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.SwitchAction => {
-  return equals(action.type, 'switch');
+  return equals(action?.type, 'switch');
 };
 
-const isUntilAction = (action: LogicAppsV2.ActionDefinition) => action.type.toLowerCase() === 'until';
+const isUntilAction = (action: LogicAppsV2.ActionDefinition) => action?.type?.toLowerCase() === 'until';
 
 const buildGraphFromActions = (
   actions: Record<string, LogicAppsV2.ActionDefinition>,

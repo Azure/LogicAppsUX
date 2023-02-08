@@ -141,7 +141,7 @@ export const ResourceEntry = (props: ResourceEntryProps) => {
         onClick={() => onResourceSelect(expanded ? '' : resource.id)}
         style={{ gridTemplateColumns }}
       >
-        {columns.map((index, value) => (
+        {columns.map((value, index) => (
           <Text key={`${value}-${index}`}>{value ?? ' '}</Text>
         ))}
       </button>

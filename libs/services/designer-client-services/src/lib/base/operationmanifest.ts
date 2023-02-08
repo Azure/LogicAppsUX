@@ -113,8 +113,12 @@ const decrementvariable = 'decrementvariable';
 const appendtoarrayvariable = 'appendtoarrayvariable';
 const appendtostringvariable = 'appendtostringvariable';
 
-export const apiManagementConnectorId = '/connectionProviders/azureApimOperation';
-export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
+export const apiManagementConnectorId = 'connectionProviders/apiManagement';
+export const azureFunctionConnectorId = 'connectionProviders/function';
+export const appServiceConnectorId = 'connectionProviders/appService';
+export const sendToBatchConnectorId = 'connectionProviders/batch';
+export const workflowConnectorId = 'connectionProviders/workflow';
+
 const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
 const controlConnectorId = 'connectionProviders/control';
 const dateTimeConnectorId = 'connectionProviders/datetime';
@@ -122,7 +126,12 @@ const scheduleConnectorId = 'connectionProviders/schedule';
 const httpConnectorId = 'connectionProviders/http';
 const variableConnectorId = 'connectionProviders/variable';
 
-const supportedManifestTypes = [
+const apimanagement = 'apimanagement';
+const azurefunction = 'function';
+const appservice = 'appservice';
+const sendtobatch = 'sendtobatch';
+
+export const supportedBaseManifestTypes = [
   appendtoarrayvariable,
   appendtostringvariable,
   as2Encode,
@@ -194,7 +203,7 @@ export abstract class BaseOperationManifestService implements IOperationManifest
     const normalizedOperationType = operationType.toLowerCase();
     return supportedTypes
       ? supportedTypes.indexOf(normalizedOperationType) > -1
-      : supportedManifestTypes.indexOf(normalizedOperationType) > -1;
+      : supportedBaseManifestTypes.indexOf(normalizedOperationType) > -1;
   }
 
   abstract getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo>;
@@ -266,22 +275,10 @@ export abstract class BaseOperationManifestService implements IOperationManifest
 }
 
 function isSupportedSplitOnExpression(expression: Expression): boolean {
-  if (!isFunction(expression)) {
-    return false;
-  }
-
-  if (!equals(expression.name, 'triggerBody') && !equals(expression.name, 'triggerOutputs')) {
-    return false;
-  }
-
-  if (expression.arguments.length > 0) {
-    return false;
-  }
-
-  if (expression.dereferences.some((dereference) => !isStringLiteral(dereference.expression))) {
-    return false;
-  }
-
+  if (!isFunction(expression)) return false;
+  if (!equals(expression.name, 'triggerBody') && !equals(expression.name, 'triggerOutputs')) return false;
+  if (expression.arguments.length > 0) return false;
+  if (expression.dereferences.some((dereference) => !isStringLiteral(dereference.expression))) return false;
   return true;
 }
 
@@ -330,6 +327,12 @@ export function isBuiltInOperation(definition: any): boolean {
     case wait:
       return true;
 
+    case appservice:
+    case apimanagement:
+    case azurefunction:
+    case sendtobatch:
+      return true;
+
     default:
       return false;
   }
@@ -366,17 +369,24 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
       }
 
     case http:
-      return {
-        connectorId: httpConnectorId,
-        operationId:
-          definition.inputs?.metadata?.apiDefinitionUrl && equals(definition.inputs?.metadata?.swaggerSource, 'custom')
-            ? isTrigger
-              ? httpswaggertrigger
-              : httpswaggeraction
-            : isTrigger
-            ? httptrigger
-            : httpaction,
-      };
+      if (equals(definition?.metadata?.swaggerSource, 'website')) {
+        return {
+          connectorId: appServiceConnectorId,
+          operationId: appservice,
+        };
+      } else {
+        return {
+          connectorId: httpConnectorId,
+          operationId:
+            definition.inputs?.metadata?.apiDefinitionUrl && equals(definition.inputs?.metadata?.swaggerSource, 'custom')
+              ? isTrigger
+                ? httpswaggertrigger
+                : httpswaggeraction
+              : isTrigger
+              ? httptrigger
+              : httpaction,
+        };
+      }
     case httpwebhook:
       return { connectorId: httpConnectorId, operationId: isTrigger ? httpwebhooktrigger : httpwebhookaction };
     case liquid:
@@ -446,6 +456,36 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
       return {
         connectorId: scheduleConnectorId,
         operationId: definition.inputs?.until ? delayuntil : delay,
+      };
+
+    case apimanagement:
+      return {
+        connectorId: apiManagementConnectorId,
+        operationId: apimanagement,
+      };
+
+    case sendtobatch:
+      return {
+        connectorId: sendToBatchConnectorId,
+        operationId: sendtobatch,
+      };
+
+    case appservice:
+      return {
+        connectorId: appServiceConnectorId,
+        operationId: appservice,
+      };
+
+    case azurefunction:
+      return {
+        connectorId: azureFunctionConnectorId,
+        operationId: azurefunction,
+      };
+
+    case workflow:
+      return {
+        connectorId: workflowConnectorId,
+        operationId: workflow,
       };
 
     default:
