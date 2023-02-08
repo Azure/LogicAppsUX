@@ -6,6 +6,7 @@ import type { FunctionData, MapDefinitionEntry, SchemaExtended, SchemaNodeDictio
 import {
   directAccessPseudoFunction,
   directAccessPseudoFunctionKey,
+  ifPseudoFunction,
   ifPseudoFunctionKey,
   indexPseudoFunction,
   indexPseudoFunctionKey,
@@ -150,11 +151,27 @@ const callChildObjects = (
   const childEntries = Object.entries<MapDefinitionEntry>(sourceNodeObject);
   childEntries.forEach(([childKey, childValue]) => {
     if (childKey.startsWith(mapNodeParams.if)) {
+      const isInLoop = targetKey.includes(mapNodeParams.for);
+      const ifRfKey = createReactFlowFunctionKey(ifPseudoFunction);
+
       Object.entries(childValue).forEach(([childSubKey, childSubValue]) => {
         if (typeof childSubValue === 'string') {
+          const ifContents = childKey.substring(mapNodeParams.if.length + 1, childKey.length - 1);
           parseDefinitionToConnection(
-            childSubValue,
-            childKey,
+            isInLoop ? getSourceValueFromLoop(ifContents, targetKey, sourceSchemaFlattened) : ifContents,
+            ifRfKey,
+            connections,
+            createdNodes,
+            sourceSchema,
+            sourceSchemaFlattened,
+            targetSchema,
+            targetSchemaFlattened,
+            functions
+          );
+
+          parseDefinitionToConnection(
+            isInLoop ? `${getSourceKeyOfLastLoop(targetKey)}/${childSubValue}` : childSubValue,
+            ifRfKey,
             connections,
             createdNodes,
             sourceSchema,
@@ -185,7 +202,7 @@ const callChildObjects = (
       const childSubKey = Object.keys(childValue)[0];
       parseDefinitionToConditionalConnection(
         sourceNodeObject[childKey],
-        childKey,
+        ifRfKey,
         `${targetKey}/${childSubKey}`,
         connections,
         createdNodes,
@@ -330,6 +347,9 @@ const createConnections = (
     createdNodes[amendedSourceKey] = amendedSourceKey; // Bypass below block since we already have rfKey here
   } else if (amendedSourceKey.startsWith(directAccessPseudoFunctionKey)) {
     sourceNode = directAccessPseudoFunction;
+  } else if (amendedSourceKey.startsWith(ifPseudoFunctionKey)) {
+    sourceNode = ifPseudoFunction;
+    createdNodes[amendedSourceKey] = amendedSourceKey;
   } else if (sourceEndOfFunctionName > -1) {
     // We found a Function in source key -> let's find its data
     sourceNode = findFunctionForFunctionName(amendedSourceKey.substring(0, sourceEndOfFunctionName), functions);
@@ -441,24 +461,7 @@ const createConnections = (
     }
   }
 
-  if (destinationNode) {
-    if (isConditional) {
-      // Create connections for conditional's contents as well
-      const trimmedTargetKey = amendedTargetKey.substring(mapNodeParams.if.length + 1, amendedTargetKey.length - 1);
-
-      createConnections(
-        trimmedTargetKey,
-        destinationKey,
-        connections,
-        createdNodes,
-        sourceSchema,
-        sourceSchemaFlattened,
-        targetSchema,
-        targetSchemaFlattened,
-        functions
-      );
-    }
-
+  if (destinationNode && !isConditional) {
     setConnectionInputValue(connections, {
       targetNode: destinationNode,
       targetNodeReactFlowKey: destinationKey,
