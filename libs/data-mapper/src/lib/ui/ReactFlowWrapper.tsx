@@ -48,14 +48,14 @@ interface ReactFlowWrapperProps {
   canvasBlockHeight: number;
   canvasBlockWidth: number;
   useExpandedFunctionCards: boolean;
-  toggleMapChecker: () => void;
+  openMapChecker: () => void;
 }
 
 export const ReactFlowWrapper = ({
   canvasBlockHeight,
   canvasBlockWidth,
   useExpandedFunctionCards,
-  toggleMapChecker,
+  openMapChecker,
 }: ReactFlowWrapperProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const reactFlowRef = useRef<HTMLDivElement>(null);
@@ -238,7 +238,7 @@ export const ReactFlowWrapper = ({
           msgParam={notificationData.msgParam}
           msgBody={notificationData.msgBody}
           autoHideDuration={notificationData.autoHideDurationMs}
-          toggleMapChecker={toggleMapChecker}
+          openMapChecker={openMapChecker}
           onClose={() => dispatch(hideNotification())}
         />
       )}

@@ -64,12 +64,12 @@ const useStyles = makeStyles({
 
 export interface NotificationProps extends NotificationData {
   autoHideDuration?: number; // ms
-  toggleMapChecker: () => void;
+  openMapChecker: () => void;
   onClose: () => void;
 }
 
 export const Notification = (props: NotificationProps) => {
-  const { type, msgParam, msgBody, autoHideDuration = defaultNotificationAutoHideDuration, toggleMapChecker, onClose } = props;
+  const { type, msgParam, msgBody, autoHideDuration = defaultNotificationAutoHideDuration, openMapChecker, onClose } = props;
   const dispatch = useDispatch<AppDispatch>();
   const styles = useStyles();
   const intl = useIntl();
@@ -195,7 +195,7 @@ export const Notification = (props: NotificationProps) => {
       case NotificationTypes.MapHasErrorsAtSave:
         return (
           <StackItem>
-            <Button className={styles.actionButton} appearance="transparent" onClick={toggleMapChecker}>
+            <Button className={styles.actionButton} appearance="transparent" onClick={openMapChecker}>
               {showMeLoc}
             </Button>
           </StackItem>
@@ -219,7 +219,7 @@ export const Notification = (props: NotificationProps) => {
           </StackItem>
         );
     }
-  }, [dispatch, onClose, showMeLoc, styles.actionButton, toggleMapChecker, type, undoLoc]);
+  }, [dispatch, onClose, showMeLoc, styles.actionButton, openMapChecker, type, undoLoc]);
 
   return (
     <div className={styles.toast}>
