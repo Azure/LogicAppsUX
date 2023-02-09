@@ -376,7 +376,7 @@ function getManifestBasedInputParameters(
   operationDefinition: any
 ): InputParameter[] {
   let result: InputParameter[] = [];
-  const stepInputs = getInputsValueFromDefinitionForManifest(manifest.properties.inputsLocation ?? ['inputs'], operationDefinition);
+  const stepInputs = getInputsValueFromDefinitionForManifest(manifest.properties.inputsLocation ?? ['inputs'], manifest, operationDefinition);
   const stepInputsAreNonEmptyObject = !isNullOrEmpty(stepInputs) && isObject(stepInputs);
 
   // Mark all of the known inputs as seen.

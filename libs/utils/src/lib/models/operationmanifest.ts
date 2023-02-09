@@ -53,6 +53,7 @@ export enum ConnectionType {
 }
 
 export enum ConnectionReferenceKeyFormat {
+  ApiManagement = 'apimanagement',
   Function = 'function',
   OpenApi = 'openapi',
   ServiceProvider = 'serviceprovider',
@@ -146,6 +147,11 @@ export interface InputsDependency {
 
 type SwaggerSchema = any;
 
+export interface LocationSwapMap {
+  source: string[];
+  target: string[];
+}
+
 export interface OperationManifest {
   properties: OperationManifestProperties;
 }
@@ -176,6 +182,7 @@ export interface OperationManifestProperties {
 
   inputs?: SwaggerSchema;
   inputsLocation?: string[]; // Note: If not specified, default value is [ 'inputs' ]
+  inputsLocationSwapMap?: LocationSwapMap[];
   isInputsOptional?: boolean;
 
   outputs?: SwaggerSchema;
