@@ -41,9 +41,14 @@ ns0:TargetSchemaRoot:
           FunctionChain: substring(lower-case(SourceFunctionChain), 0, 5)
       $for(/ns0:SourceSchemaRoot/Looping/OneToOne/RelativePaths):
         RelativePaths:
-          DotAccess: .
-          Property: Property
-          $@Attribute: ./@Attribute
+          DirectRelativePaths:
+            DotAccess: .
+            Property: Property
+            $@Attribute: ./@Attribute
+          InFunctionRelativePaths:
+            DotAccess: string(.)
+            Property: string(Property)
+            $@Attribute: string(./@Attribute)
       $for(/ns0:SourceSchemaRoot/Looping/OneToOne/Index, $a):
         Index:
           Direct: /ns0:SourceSchemaRoot/Looping/OneToOne/Index[$a]/SourceDirect
