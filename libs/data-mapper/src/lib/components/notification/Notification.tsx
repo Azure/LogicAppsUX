@@ -225,7 +225,7 @@ export const Notification = (props: NotificationProps) => {
     <div className={styles.toast}>
       <Stack horizontal>
         <StackItem>{notificationIcon}</StackItem>
-        <StackItem>
+        <StackItem grow>
           <Stack style={{ marginRight: 12 }}>
             <Text className={styles.msgTitle}>{LocResources[type]}</Text>
             {msgBody && (
