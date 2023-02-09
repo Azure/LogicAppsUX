@@ -128,7 +128,7 @@ export const DataMapperDesigner = ({
   const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
   const [isTargetSchemaPaneExpanded, setIsTargetSchemaPaneExpanded] = useState(false);
-  const [isMapCheckerOpen, { setFalse: closeMapChecker, toggle: toggleMapChecker }] = useBoolean(false);
+  const [isMapCheckerOpen, { setTrue: openMapChecker, setFalse: closeMapChecker, toggle: toggleMapChecker }] = useBoolean(false);
 
   const dataMapDefinition = useMemo<string>(() => {
     if (sourceSchema && targetSchema) {
@@ -176,7 +176,7 @@ export const DataMapperDesigner = ({
         showNotification({
           type: NotificationTypes.MapHasErrorsAtSave,
           msgParam: errors.length,
-          autoHideDurationMs: -1,
+          autoHideDurationMs: errorNotificationAutoHideDuration,
         })
       );
     }
@@ -316,7 +316,7 @@ export const DataMapperDesigner = ({
                           canvasBlockHeight={getCanvasAreaHeight()}
                           canvasBlockWidth={centerViewWidth}
                           useExpandedFunctionCards={useExpandedFunctionCards}
-                          toggleMapChecker={toggleMapChecker}
+                          openMapChecker={openMapChecker}
                         />
                       </ReactFlowProvider>
                     )}
