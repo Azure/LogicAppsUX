@@ -1,10 +1,10 @@
+import { simpleMockSchema, noChildrenMockSchema } from '../../__mocks__';
 import type { InitialSchemaAction } from '../../core/state/DataMapSlice';
 import { setInitialSchema } from '../../core/state/DataMapSlice';
 import { setAvailableSchemas } from '../../core/state/SchemaSlice';
 import { store } from '../../core/state/Store';
 import type { Schema, SchemaExtended } from '../../models/Schema';
 import { SchemaType } from '../../models/Schema';
-import { noChildrenMockSchema, simpleMockSchema } from '../../models/__mocks__';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { ConfigPanel } from './ConfigPanel';
 import type { ConfigPanelProps } from './ConfigPanel';
