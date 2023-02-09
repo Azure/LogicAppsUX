@@ -1,4 +1,3 @@
-import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, sourceMockSchema, targetMockSchema } from '../../__mocks__';
 import { concatFunction, greaterThanFunction } from '../../__mocks__/FunctionMock';
 import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '../../models';
 import { directAccessPseudoFunction, ifPseudoFunction, indexPseudoFunction, SchemaType } from '../../models';
@@ -7,6 +6,7 @@ import { setConnectionInputValue } from '../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { generateMapDefinitionBody, generateMapDefinitionHeader } from '../MapDefinitionSerializer';
+import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, sourceMockSchema, targetMockSchema } from '__mocks__/schemas';
 
 describe('mapDefinitions/MapDefinitionSerializer', () => {
   describe('generateMapDefinitionHeader', () => {
