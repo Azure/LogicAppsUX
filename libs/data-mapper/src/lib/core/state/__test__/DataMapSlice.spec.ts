@@ -1,3 +1,4 @@
+import { concatFunction } from '../../../__mocks__/FunctionMock';
 import type { Schema, SchemaExtended } from '../../../models';
 import { SchemaType } from '../../../models';
 import type { ConnectionDictionary } from '../../../models/Connection';
@@ -17,7 +18,6 @@ import {
   deleteParentRepeatingConnections,
 } from '../DataMapSlice';
 import { simpleMockSchema } from '../__mocks__';
-import { concatFunction } from '../__mocks__/FunctionMock';
 import { sourceMockSchema } from '__mocks__/schemas';
 
 // NOTE: Functions with an unbounded input (like our concatFunction mock) will have two empty (undefined) values/fields by default
