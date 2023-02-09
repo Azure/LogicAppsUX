@@ -1,9 +1,9 @@
-import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, sourceMockSchema, targetMockSchema } from '../../__mocks__';
 import type { MapDefinitionEntry } from '../../models';
 import { functionMock, ifPseudoFunctionKey, directAccessPseudoFunctionKey, indexPseudoFunctionKey } from '../../models';
 import type { ConnectionUnit } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { convertFromMapDefinition } from '../MapDefinitionDeserializer';
+import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, sourceMockSchema, targetMockSchema } from '__mocks__/schemas';
 
 describe('mapDefinitions/MapDefinitionDeserializer', () => {
   const simpleMap: MapDefinitionEntry = {

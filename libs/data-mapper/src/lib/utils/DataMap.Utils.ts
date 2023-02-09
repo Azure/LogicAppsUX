@@ -31,7 +31,11 @@ export const getParentId = (id: string): string => {
   return id.substring(0, last);
 };
 
-export const getInputValues = (currentConnection: Connection | undefined, connections: ConnectionDictionary): string[] => {
+export const getInputValues = (
+  currentConnection: Connection | undefined,
+  connections: ConnectionDictionary,
+  shouldLocalizePaths = true
+): string[] => {
   return currentConnection
     ? (flattenInputs(currentConnection.inputs)
         .flatMap((input) => {
@@ -43,12 +47,12 @@ export const getInputValues = (currentConnection: Connection | undefined, connec
           if (isCustomValue(input)) {
             return input;
           } else if (isSchemaNodeExtended(input.node)) {
-            return input.node.key.startsWith('@') ? `$${input.node.key}` : input.node.key;
+            return shouldLocalizePaths && input.node.fullName.startsWith('@') ? `./${input.node.key}` : input.node.key;
           } else {
             if (input.node.key === indexPseudoFunctionKey) {
               return getIndexValueForCurrentConnection(connections[input.reactFlowKey]);
             } else if (input.node.key.startsWith(directAccessPseudoFunctionKey)) {
-              const functionValues = getInputValues(connections[input.reactFlowKey], connections);
+              const functionValues = getInputValues(connections[input.reactFlowKey], connections, false);
               return formatDirectAccess(functionValues[0], functionValues[1], functionValues[2]);
             } else {
               return collectFunctionValue(input.node, connections[input.reactFlowKey], connections);
