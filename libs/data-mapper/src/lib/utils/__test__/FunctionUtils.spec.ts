@@ -1,9 +1,9 @@
+import { heavyRepeatingMockSchema } from '../../__mocks__';
 import type { Schema, SchemaExtended } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
 import { calculateIndexValue, functionInputHasInputs, getFunctionOutputValue } from '../Function.Utils';
 import { convertSchemaToSchemaExtended } from '../Schema.Utils';
-import { heavyRepeatingMockSchema } from '../__mocks__';
 
 describe('utils/Functions', () => {
   describe('getFunctionOutputValue', () => {
