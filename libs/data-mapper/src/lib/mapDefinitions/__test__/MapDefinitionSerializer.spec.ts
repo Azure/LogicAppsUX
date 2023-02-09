@@ -1673,7 +1673,6 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
       });
 
       generateMapDefinitionBody(mapDefinition, connections);
-      console.dir(Object.entries(mapDefinition), { depth: null });
 
       expect(Object.keys(mapDefinition).length).toEqual(1);
       const rootChildren = Object.entries(mapDefinition['ns0:Root']);
