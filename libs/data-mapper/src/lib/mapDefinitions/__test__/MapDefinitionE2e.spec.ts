@@ -1,18 +1,17 @@
-import { fullTranscriptMapDefinitionString } from '../../../../../../__mocks__/mapDefinitions/FullTranscriptMapDefinition';
-import { sourceMockSchema, targetMockSchema } from '../../__mocks__';
 import { functionMock } from '../../models';
 import type { MapDefinitionEntry, SchemaExtended } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { convertFromMapDefinition } from '../MapDefinitionDeserializer';
 import { convertToMapDefinition } from '../MapDefinitionSerializer';
+import { comprehensiveMapDefinition } from '__mocks__/mapDefinitions';
+import { comprehensiveSourceSchema, comprehensiveTargetSchema } from '__mocks__/schemas';
 import * as yaml from 'js-yaml';
 
-// TODO: Un-skip once all deserialization scenarios are supported/working
-describe.skip('mapDefinitions/MapDefinitionE2e', () => {
-  const mockSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(sourceMockSchema);
-  const mockTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(targetMockSchema);
-  const mockTranscriptMapDefinition: MapDefinitionEntry = yaml.load(fullTranscriptMapDefinitionString) as MapDefinitionEntry;
+describe('mapDefinitions/MapDefinitionE2e', () => {
+  const mockSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
+  const mockTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
+  const mockTranscriptMapDefinition: MapDefinitionEntry = yaml.load(comprehensiveMapDefinition) as MapDefinitionEntry;
 
   const deserializedConnectionDictionary: ConnectionDictionary = convertFromMapDefinition(
     mockTranscriptMapDefinition,
