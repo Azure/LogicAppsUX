@@ -100,6 +100,11 @@ export const MapCheckerPane = ({ isMapCheckerOpen, closeMapChecker }: TargetSche
     description: 'Other section title',
   });
 
+  const noItemsLoc = intl.formatMessage({
+    defaultMessage: 'Your map is in perfect condition',
+    description: 'Message displayed when map checker has no errors or warnings',
+  });
+
   const onMapCheckerItemClick = (reactFlowId: string, connections: ConnectionDictionary, targetSchemaDictionary: SchemaNodeDictionary) => {
     let destinationTargetNode: SchemaNodeExtended | undefined = undefined;
     if (reactFlowId.startsWith(targetPrefix)) {
@@ -234,7 +239,13 @@ export const MapCheckerPane = ({ isMapCheckerOpen, closeMapChecker }: TargetSche
             )}
           </Accordion>
         ) : (
-          <Text>Map is in perfect condition</Text>
+          <Stack horizontalAlign="center" verticalAlign="center" style={{ height: '100%' }}>
+            <span role="img" aria-label="Clippy!" style={{ fontSize: 48, marginBottom: 24 }}>
+              📎
+            </span>
+
+            <Text>{noItemsLoc}</Text>
+          </Stack>
         )}
       </div>
     </div>
