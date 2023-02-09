@@ -79,14 +79,14 @@ ns0:TargetSchemaRoot:
                 SimpleChildChild:
                   Direct: SourceDirect
                   FunctionChain: lower-case(SourceFunctionChain)
-      $for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Index, $i):
+      $for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Index, $a): # NOTE: Can test '$i/j/k' to confirm it's the variable itself being deserialized too
         Index:
-          $for(SourceIndexChild, $j):
+          $for(SourceIndexChild, $b):
             IndexChild:
-              $for(SourceIndexChildChild, $k):
+              $for(SourceIndexChildChild, $c):
                 IndexChildChild:
-                  Direct: /ns0:SourceSchemaRoot/Looping/ManyToMany/Index/SourceIndexChild/SourceIndexChildChild[$k]/SourceDirect
-                  FunctionChain: concat($i, SourceFunctionChain, $j)
+                  Direct: /ns0:SourceSchemaRoot/Looping/ManyToMany/Index/SourceIndexChild/SourceIndexChildChild[$c]/SourceDirect
+                  FunctionChain: concat($a, SourceFunctionChain, $b)
     LoopReduce:
       BestItemName: /ns0:SourceSchemaRoot/Looping/LoopReduce/ItemsList[3]/ItemName
 `;
