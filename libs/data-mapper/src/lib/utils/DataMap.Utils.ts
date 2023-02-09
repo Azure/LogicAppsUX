@@ -43,7 +43,7 @@ export const getInputValues = (currentConnection: Connection | undefined, connec
           if (isCustomValue(input)) {
             return input;
           } else if (isSchemaNodeExtended(input.node)) {
-            return input.node.key.startsWith('@') ? `$${input.node.key}` : input.node.key;
+            return input.node.fullName.startsWith('@') ? `./${input.node.key}` : input.node.key;
           } else {
             if (input.node.key === indexPseudoFunctionKey) {
               return getIndexValueForCurrentConnection(connections[input.reactFlowKey]);
