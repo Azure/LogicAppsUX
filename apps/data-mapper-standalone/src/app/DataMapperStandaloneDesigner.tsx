@@ -1,4 +1,3 @@
-import { DevApiTester } from '../components/DevApiTester';
 import { DevToolbox } from '../components/DevToolbox';
 import { dataMapDataLoaderSlice } from '../state/DataMapDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
@@ -71,7 +70,6 @@ export const DataMapperStandaloneDesigner = () => {
             {/* @ts-ignore */}
             <PortalCompatProvider>
               <DevToolbox />
-              <DevApiTester />
             </PortalCompatProvider>
           </FluentProvider>
         </ThemeProvider>

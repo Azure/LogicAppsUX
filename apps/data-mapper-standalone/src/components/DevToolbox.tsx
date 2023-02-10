@@ -2,6 +2,8 @@ import { fullTranscriptMapDefinitionString, comprehensiveMapDefinition } from '.
 import { dataMapDataLoaderSlice, loadDataMap, LoadingMethod } from '../state/DataMapDataLoader';
 import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
+import { DevApiTester } from './DevApiTester';
+import { DevSerializationTester } from './DevSerializationTester';
 import type { IDropdownOption } from '@fluentui/react';
 import { Checkbox, Dropdown, Stack, StackItem, TextField } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Tooltip, tokens } from '@fluentui/react-components';
@@ -223,7 +225,7 @@ export const DevToolbox = () => {
     <div style={{ marginBottom: '8px', backgroundColor: tokens.colorNeutralBackground2, padding: 4 }}>
       <Accordion defaultOpenItems={'1'} collapsible style={{ position: 'relative' }}>
         <Tooltip
-          content="Example tooltip"
+          content="Clippy says hello!"
           relationship="label"
           positioning="below-start"
           withArrow
@@ -268,6 +270,9 @@ export const DevToolbox = () => {
 
               {toolboxItems}
             </Stack>
+
+            <DevApiTester />
+            <DevSerializationTester />
           </AccordionPanel>
         </AccordionItem>
       </Accordion>
