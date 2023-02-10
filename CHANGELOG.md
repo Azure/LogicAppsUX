@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [0.2.73](https://github.com/Azure/LogicAppsUX/compare/v0.2.72...v0.2.73) (2023-02-10)
+
+
+### Logic Apps Designer Changes
+
+* Adding API Management action inputs/outputs support for dynamic parameters ([#1616](https://github.com/Azure/LogicAppsUX/issues/1616)) ([3bc920e](https://github.com/Azure/LogicAppsUX/commit/3bc920e45deb5f0c3494261c727b3411c4517508))
+
 ### [0.2.72](https://github.com/Azure/LogicAppsUX/compare/v0.2.71...v0.2.72) (2023-02-10)
 
 ### [0.2.71](https://github.com/Azure/LogicAppsUX/compare/v0.2.70...v0.2.71) (2023-02-09)
