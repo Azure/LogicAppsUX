@@ -30,7 +30,7 @@ import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
 import { createConnectionTab } from './panelTabs/createConnectionTab';
 import { loadingTab } from './panelTabs/loadingTab';
-import { monitoringTab } from './panelTabs/monitoringTab';
+import { monitoringTab } from './panelTabs/monitoringTab/monitoringTab';
 import { parametersTab } from './panelTabs/parametersTab';
 import { scratchTab } from './panelTabs/scratchTab';
 import { selectConnectionTab } from './panelTabs/selectConnectionTab';
@@ -85,16 +85,22 @@ export const PanelRoot = (): JSX.Element => {
         visible: isMonitoringView,
       })
     );
+    dispatch(
+      setTabVisibility({
+        tabName: constants.PANEL_TAB_NAMES.PARAMETERS,
+        visible: !isMonitoringView,
+      })
+    );
   }, [dispatch, isMonitoringView]);
 
   useEffect(() => {
     dispatch(
       setTabVisibility({
         tabName: constants.PANEL_TAB_NAMES.MONITORING,
-        visible: operationInfo?.type.toLowerCase() !== constants.NODE.TYPE.SCOPE,
+        visible: operationInfo?.type.toLowerCase() !== constants.NODE.TYPE.SCOPE && isMonitoringView,
       })
     );
-  }, [dispatch, operationInfo]);
+  }, [dispatch, operationInfo, isMonitoringView]);
 
   useEffect(() => {
     if (!visibleTabs?.map((tab) => tab.name.toLowerCase())?.includes(selectedPanelTab ?? ''))

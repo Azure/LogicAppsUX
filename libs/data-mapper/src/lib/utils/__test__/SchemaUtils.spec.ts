@@ -1,6 +1,6 @@
-import { targetMockSchema } from '../../__mocks__';
 import { SchemaNodeProperty } from '../../models';
 import { convertSchemaToSchemaExtended, findNodeForKey, parsePropertiesIntoNodeProperties } from '../Schema.Utils';
+import { targetMockSchema } from '__mocks__/schemas';
 
 describe('utils/Schema', () => {
   describe('parsePropertiesIntoNodeProperties', () => {

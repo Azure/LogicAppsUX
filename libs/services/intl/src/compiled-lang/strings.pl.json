@@ -81,6 +81,12 @@
       "value": "Paginacja"
     }
   ],
+  "//nQG4": [
+    {
+      "type": 0,
+      "value": "Select an api from apim instance"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -141,6 +147,18 @@
       "value": "Konwertuj dane wejściowe na tablicę"
     }
   ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Show raw outputs"
+    }
+  ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -169,6 +187,12 @@
     {
       "type": 0,
       "value": "Zwraca liczbę Count pierwszych elementów z przekazanej tablicy lub ciągu"
+    }
+  ],
+  "/yYyOq": [
+    {
+      "type": 0,
+      "value": "Resource Group"
     }
   ],
   "00xlpa": [
@@ -279,6 +303,12 @@
       "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
     }
   ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
+    }
+  ],
   "0p+pJq": [
     {
       "type": 0,
@@ -341,12 +371,6 @@
     {
       "type": 0,
       "value": "Komentarz"
-    }
-  ],
-  "1ANUHk": [
-    {
-      "type": 0,
-      "value": "Loading functions..."
     }
   ],
   "1D047X": [
@@ -691,6 +715,20 @@
       "value": "Wyzwalacze"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -839,6 +877,12 @@
     {
       "type": 0,
       "value": "Wymagane. Najmniejsza liczba całkowita, która może zostać zwrócona."
+    }
+  ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
     }
   ],
   "4BrA0z": [
@@ -1079,10 +1123,22 @@
       "value": "Wymagane. Liczba, przez którą mnożona jest mnożna 2."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -1433,6 +1489,12 @@
     {
       "type": 0,
       "value": "Typ uwierzytelniania"
+    }
+  ],
+  "AGCm1p": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "AHB418": [
@@ -2135,6 +2197,12 @@
       "value": "Parametr wymagany. Obiekt do wyszukiwania wewnątrz kolekcji typu W zakresie."
     }
   ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2385,6 +2453,12 @@
       "value": "Zwraca pierwszy obiekt o wartości innej niż null w przekazanych argumentach"
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2417,6 +2491,28 @@
       "value": "Parameters"
     }
   ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "The current map contains "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "JErLDT": [
     {
       "type": 0,
@@ -2427,6 +2523,12 @@
     {
       "type": 0,
       "value": "Wymagane. Ciąg zawierający godzinę."
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2659,6 +2761,12 @@
     {
       "type": 0,
       "value": "Zwraca schemat z identyfikatora URI"
+    }
+  ],
+  "LV/BTE": [
+    {
+      "type": 0,
+      "value": "Loading Api Management service instances..."
     }
   ],
   "LZm3ze": [
@@ -3147,6 +3255,12 @@
       "value": "(UTC-03:00) Araguaina"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -3157,6 +3271,12 @@
     {
       "type": 0,
       "value": "Wymagane. Liczba dodawana do składnika 1."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3437,6 +3557,12 @@
       "value": "6"
     }
   ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "issue"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3459,6 +3585,12 @@
     {
       "type": 0,
       "value": "Wprowadź słownik"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "issues"
     }
   ],
   "SKXopi": [
@@ -4227,6 +4359,12 @@
       "value": ")"
     }
   ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "ZCFMoe": [
     {
       "type": 0,
@@ -4343,6 +4481,12 @@
       "value": "Obsługa danych"
     }
   ],
+  "aSnCCB": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -4411,6 +4555,12 @@
     {
       "type": 0,
       "value": "Domyślnie wystąpienia aplikacji logiki są uruchamiane w tym samym czasie (równolegle). Ta kontrolka zmienia sposób kolejkowania nowych uruchomień. Po włączeniu nie można jej zmienić. Aby uruchomić równolegle możliwie największą liczbę wystąpień, pozostaw tę kontrolkę wyłączoną. Aby ograniczyć liczbę równoległych uruchomień, włącz tę kontrolkę i wybierz limit. Aby uruchomić wystąpienia sekwencyjnie, wybierz 1 jako limit."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4677,6 +4827,12 @@
       "value": "Dzieli ciąg, używając separatora"
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4693,6 +4849,12 @@
     {
       "type": 0,
       "value": "Nie określono"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -5243,12 +5405,6 @@
       "value": "Elements and mappings not connected to a target element are removed."
     }
   ],
-  "ittN0l": [
-    {
-      "type": 0,
-      "value": "No resources of this type found under this subscription."
-    }
-  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -5291,6 +5447,12 @@
       "value": "Zwraca losową liczbę całkowitą z określonego zakresu, który jest lewostronnie domknięty."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5325,6 +5487,12 @@
     {
       "type": 0,
       "value": "Wymagane. Ciąg wejściowy w formacie base64."
+    }
+  ],
+  "jZjgYZ": [
+    {
+      "type": 0,
+      "value": "No resources of this type found under this subscription."
     }
   ],
   "jcA3Ig": [
@@ -5483,6 +5651,12 @@
     {
       "type": 0,
       "value": "Wymagane. Ta wartość jest następną liczbą całkowitą po największej liczbie całkowitej możliwej do zwrócenia."
+    }
+  ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "kuFK3E": [
@@ -5761,6 +5935,12 @@
     {
       "type": 0,
       "value": "Wymagane. Liczba jednostek czasu określająca żądany czas w przyszłości."
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
     }
   ],
   "nSan4V": [
@@ -6189,20 +6369,6 @@
       "value": "Odpowiedź asynchroniczna pozwala aplikacji logiki odpowiedzieć wartością 202 (Zaakceptowano) w celu wskazania, że żądanie zostało zaakceptowane do przetwarzania. Nagłówek lokalizacji zostanie dostarczony w celu pobrania ostatecznego stanu."
     }
   ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
-    }
-  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -6575,6 +6741,12 @@
       "value": "Dodaje liczbę całkowitą godzin do przekazanej sygnatury czasowej ciągu"
     }
   ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Show me"
+    }
+  ],
   "uXJdAh": [
     {
       "type": 0,
@@ -6835,6 +7007,12 @@
       "value": "Zwraca określoną wartość zależnie od tego, czy wynikiem wyrażenia jest wartość true lub false"
     }
   ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
+    }
+  ],
   "wl7X0l": [
     {
       "type": 0,
@@ -6923,6 +7101,12 @@
     {
       "type": 0,
       "value": "Próg"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Show raw inputs"
     }
   ],
   "xV/oyK": [

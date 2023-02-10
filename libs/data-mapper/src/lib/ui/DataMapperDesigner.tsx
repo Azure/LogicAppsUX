@@ -3,6 +3,7 @@ import { CodeView } from '../components/codeView/CodeView';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/AddOrUpdateSchemaView';
 import { ConfigPanel } from '../components/configPanel/ConfigPanel';
+import { MapCheckerPane } from '../components/mapChecker/MapCheckerPane';
 import { MapOverview } from '../components/mapOverview/MapOverview';
 import { errorNotificationAutoHideDuration, NotificationTypes } from '../components/notification/Notification';
 import {
@@ -19,10 +20,12 @@ import { redoDataMapOperation, saveDataMap, showNotification, undoDataMapOperati
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { convertToMapDefinition } from '../mapDefinitions';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
+import { collectErrorsForMapChecker } from '../utils/MapChecker.Utils';
 import './ReactFlowStyleOverrides.css';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Stack } from '@fluentui/react';
 import { makeStaticStyles, makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import { useBoolean } from '@fluentui/react-hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -114,6 +117,7 @@ export const DataMapperDesigner = ({
   const isMapStateDirty = useSelector((state: RootState) => state.dataMap.isDirty);
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
+  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
   const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
@@ -124,6 +128,7 @@ export const DataMapperDesigner = ({
   const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
   const [isTargetSchemaPaneExpanded, setIsTargetSchemaPaneExpanded] = useState(false);
+  const [isMapCheckerOpen, { setTrue: openMapChecker, setFalse: closeMapChecker, toggle: toggleMapChecker }] = useBoolean(false);
 
   const dataMapDefinition = useMemo<string>(() => {
     if (sourceSchema && targetSchema) {
@@ -164,6 +169,18 @@ export const DataMapperDesigner = ({
   };
 
   const onSaveClick = useCallback(() => {
+    const errors = collectErrorsForMapChecker(currentConnections, flattenedTargetSchema);
+
+    if (errors.length > 0) {
+      dispatch(
+        showNotification({
+          type: NotificationTypes.MapHasErrorsAtSave,
+          msgParam: errors.length,
+          autoHideDurationMs: errorNotificationAutoHideDuration,
+        })
+      );
+    }
+
     generateDataMapXslt(dataMapDefinition)
       .then((xsltStr) => {
         saveStateCall(dataMapDefinition, xsltStr);
@@ -192,7 +209,7 @@ export const DataMapperDesigner = ({
           })
         );
       });
-  }, [dispatch, dataMapDefinition, saveStateCall, sourceSchema, targetSchema]);
+  }, [currentConnections, flattenedTargetSchema, dataMapDefinition, saveStateCall, dispatch, sourceSchema, targetSchema]);
 
   // NOTE: Putting this useEffect here for vis next to onSave
   useEffect(() => {
@@ -266,6 +283,7 @@ export const DataMapperDesigner = ({
           onUndoClick={onUndoClick}
           onRedoClick={onRedoClick}
           onTestClick={() => setTestMapPanelOpen(true)}
+          onMapCheckerClick={toggleMapChecker}
         />
 
         <div id="editorView" style={{ display: 'flex', flex: '1 1 1px' }}>
@@ -298,6 +316,7 @@ export const DataMapperDesigner = ({
                           canvasBlockHeight={getCanvasAreaHeight()}
                           canvasBlockWidth={centerViewWidth}
                           useExpandedFunctionCards={useExpandedFunctionCards}
+                          openMapChecker={openMapChecker}
                         />
                       </ReactFlowProvider>
                     )}
@@ -326,6 +345,7 @@ export const DataMapperDesigner = ({
           </div>
 
           <TargetSchemaPane isExpanded={isTargetSchemaPaneExpanded} setIsExpanded={setIsTargetSchemaPaneExpanded} />
+          <MapCheckerPane isMapCheckerOpen={isMapCheckerOpen} closeMapChecker={closeMapChecker} />
         </div>
 
         <WarningModal />

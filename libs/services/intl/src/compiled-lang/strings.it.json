@@ -65,6 +65,12 @@
       "value": "Impaginazione"
     }
   ],
+  "//nQG4": [
+    {
+      "type": 0,
+      "value": "Select an api from apim instance"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -125,6 +131,18 @@
       "value": "Converte l'input in una matrice"
     }
   ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Show raw outputs"
+    }
+  ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -153,6 +171,12 @@
     {
       "type": 0,
       "value": "Restituisce i primi elementi Count dalla matrice o dalla stringa passata"
+    }
+  ],
+  "/yYyOq": [
+    {
+      "type": 0,
+      "value": "Resource Group"
     }
   ],
   "00xlpa": [
@@ -263,6 +287,12 @@
       "value": "(UTC-05.00) Bogota, Lima, Quito, Rio Branco"
     }
   ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
+    }
+  ],
   "0p+pJq": [
     {
       "type": 0,
@@ -325,12 +355,6 @@
     {
       "type": 0,
       "value": "Commento"
-    }
-  ],
-  "1ANUHk": [
-    {
-      "type": 0,
-      "value": "Loading functions..."
     }
   ],
   "1D047X": [
@@ -648,6 +672,20 @@
       "value": "Trigger"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -796,6 +834,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Integer più basso che può essere restituito."
+    }
+  ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
     }
   ],
   "4BrA0z": [
@@ -1036,10 +1080,22 @@
       "value": "Obbligatorio. Numero in base a cui moltiplicare il moltiplicando 2."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -1374,6 +1430,12 @@
     {
       "type": 0,
       "value": "Tipo di autenticazione"
+    }
+  ],
+  "AGCm1p": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "AHB418": [
@@ -2030,6 +2092,12 @@
       "value": "Obbligatorio. Oggetto da trovare all'interno della raccolta."
     }
   ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2272,6 +2340,12 @@
       "value": "Restituisce il primo oggetto non Null negli argomenti passati"
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2304,6 +2378,28 @@
       "value": "Parameters"
     }
   ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "The current map contains "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "JErLDT": [
     {
       "type": 0,
@@ -2314,6 +2410,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Stringa contenente l'ora."
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2527,6 +2629,12 @@
     {
       "type": 0,
       "value": "Restituisce lo schema da un URI"
+    }
+  ],
+  "LV/BTE": [
+    {
+      "type": 0,
+      "value": "Loading Api Management service instances..."
     }
   ],
   "LZm3ze": [
@@ -2991,6 +3099,12 @@
       "value": "(UTC-03:00) Araguaina"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -3001,6 +3115,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Numero da aggiungere all'addendo 1."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3270,6 +3390,12 @@
       "value": "6"
     }
   ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "issue"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3292,6 +3418,12 @@
     {
       "type": 0,
       "value": "Immettere un dizionario"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "issues"
     }
   ],
   "SKXopi": [
@@ -4052,6 +4184,12 @@
       "value": ")"
     }
   ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "ZCFMoe": [
     {
       "type": 0,
@@ -4160,6 +4298,12 @@
       "value": "Gestione dei dati"
     }
   ],
+  "aSnCCB": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -4228,6 +4372,12 @@
     {
       "type": 0,
       "value": "Per impostazione predefinita, le istanze dell'app per la logica vengono eseguite contemporaneamente o in parallelo. Questo controllo cambia la modalità di accodamento delle nuove esecuzioni e non può essere modificato dopo l'abilitazione. Per eseguire il numero massimo possibile di istanze parallele, lasciare disattivato questo controllo. Per limitare il numero di esecuzioni parallele, attivare questo controllo e selezionare un limite. Per l'esecuzione sequenziale, impostare 1 come limite."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4494,6 +4644,12 @@
       "value": "Divide la stringa usando un separatore"
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4510,6 +4666,12 @@
     {
       "type": 0,
       "value": "Non specificato"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -5029,12 +5191,6 @@
       "value": "Elements and mappings not connected to a target element are removed."
     }
   ],
-  "ittN0l": [
-    {
-      "type": 0,
-      "value": "No resources of this type found under this subscription."
-    }
-  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -5077,6 +5233,12 @@
       "value": "Restituisce un numero intero casuale da un intervallo specificato, che include solo l'estremità iniziale."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5111,6 +5273,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Stringa di input Base64."
+    }
+  ],
+  "jZjgYZ": [
+    {
+      "type": 0,
+      "value": "No resources of this type found under this subscription."
     }
   ],
   "jcA3Ig": [
@@ -5261,6 +5429,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Valore corrispondente all'integer successivo dopo il numero integer più elevato che è stato restituito."
+    }
+  ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "kuFK3E": [
@@ -5539,6 +5713,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Numero di unità di tempo dell'ora desiderata nel futuro."
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
     }
   ],
   "nSan4V": [
@@ -5932,20 +6112,6 @@
       "value": "La risposta asincrona consente a un'app per la logica di rispondere con un codice 202 (Accettata) per indicare che la richiesta è stata accettata per l'elaborazione. Verrà fornita un'intestazione Location per recuperare lo stato finale."
     }
   ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
-    }
-  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -6318,6 +6484,12 @@
       "value": "Aggiunge un numero intero di ore al timestamp in formato stringa passato"
     }
   ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Show me"
+    }
+  ],
   "uXJdAh": [
     {
       "type": 0,
@@ -6578,6 +6750,12 @@
       "value": "Restituisce un valore specificato a seconda del fatto che l'espressione abbia restituito true o false"
     }
   ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
+    }
+  ],
   "wl7X0l": [
     {
       "type": 0,
@@ -6666,6 +6844,12 @@
     {
       "type": 0,
       "value": "Soglia"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Show raw inputs"
     }
   ],
   "xV/oyK": [

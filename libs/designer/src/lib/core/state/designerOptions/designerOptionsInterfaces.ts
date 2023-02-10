@@ -7,6 +7,7 @@ import type {
   ISearchService,
   IOAuthService,
   IWorkflowService,
+  IHostService,
   IApiManagementService,
 } from '@microsoft/designer-client-services-logic-apps';
 
@@ -27,5 +28,6 @@ export interface ServiceOptions {
   loggerService?: ILoggerService;
   oAuthService: IOAuthService;
   workflowService: IWorkflowService;
+  hostService?: IHostService;
   apimService?: IApiManagementService;
 }

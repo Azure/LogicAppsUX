@@ -81,6 +81,12 @@
       "value": "Paginierung"
     }
   ],
+  "//nQG4": [
+    {
+      "type": 0,
+      "value": "Select an api from apim instance"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -141,6 +147,18 @@
       "value": "Eingabe in Array konvertieren"
     }
   ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Show raw outputs"
+    }
+  ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -169,6 +187,12 @@
     {
       "type": 0,
       "value": "Gibt die ersten Count Elemente aus dem übergebenen Array oder aus der übergebenen Zeichenfolge zurück."
+    }
+  ],
+  "/yYyOq": [
+    {
+      "type": 0,
+      "value": "Resource Group"
     }
   ],
   "00xlpa": [
@@ -279,6 +303,12 @@
       "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
     }
   ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
+    }
+  ],
   "0p+pJq": [
     {
       "type": 0,
@@ -341,12 +371,6 @@
     {
       "type": 0,
       "value": "Kommentar"
-    }
-  ],
-  "1ANUHk": [
-    {
-      "type": 0,
-      "value": "Loading functions..."
     }
   ],
   "1D047X": [
@@ -653,6 +677,20 @@
       "value": "Trigger"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -801,6 +839,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die niedrigste ganze Zahl, die zurückgegeben werden kann."
+    }
+  ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
     }
   ],
   "4BrA0z": [
@@ -1041,10 +1085,22 @@
       "value": "Erforderlich. Die Zahl, mit der Multiplikand 2 multipliziert werden soll."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -1395,6 +1451,12 @@
     {
       "type": 0,
       "value": "Authentifizierungstyp"
+    }
+  ],
+  "AGCm1p": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "AHB418": [
@@ -2053,6 +2115,12 @@
       "value": "Erforderlich. Das Objekt, das in der Within-Sammlung gesucht werden soll."
     }
   ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2303,6 +2371,12 @@
       "value": "Gibt das erste Objekt in den übergebenen Argumenten zurück, das nicht NULL lautet."
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2335,6 +2409,28 @@
       "value": "Parameters"
     }
   ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "The current map contains "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "JErLDT": [
     {
       "type": 0,
@@ -2345,6 +2441,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Eine Zeichenfolge, die die Zeit enthält."
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2555,6 +2657,12 @@
     {
       "type": 0,
       "value": "Gibt das Schema aus einem URI zurück."
+    }
+  ],
+  "LV/BTE": [
+    {
+      "type": 0,
+      "value": "Loading Api Management service instances..."
     }
   ],
   "LZm3ze": [
@@ -3043,6 +3151,12 @@
       "value": "(UTC-03:00) Araguaina"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -3053,6 +3167,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Zahl, die mit Summand 1 addiert werden soll."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3315,6 +3435,12 @@
       "value": "6"
     }
   ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "issue"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3337,6 +3463,12 @@
     {
       "type": 0,
       "value": "Wörterbuch eingeben"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "issues"
     }
   ],
   "SKXopi": [
@@ -4105,6 +4237,12 @@
       "value": ")"
     }
   ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "ZCFMoe": [
     {
       "type": 0,
@@ -4213,6 +4351,12 @@
       "value": "Datenverarbeitung"
     }
   ],
+  "aSnCCB": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -4281,6 +4425,12 @@
     {
       "type": 0,
       "value": "Standardmäßig werden Logik-App-Instanzen gleichzeitig oder parallel ausgeführt. Dieses Steuerelement ändert, wie neue Ausführungen in die Warteschlange eingereiht werden, und kann nach der Aktivierung nicht mehr geändert werden. Lassen Sie dieses Steuerelement deaktiviert, um so viele parallele Instanzen wie möglich auszuführen. Um die Anzahl paralleler Ausführungen einzuschränken, aktivieren Sie dieses Steuerelement, und wählen Sie einen Grenzwert aus. Wählen Sie 1 als Grenzwert für eine sequenzielle Ausführung aus."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4551,6 +4701,12 @@
       "value": "Unterteilt die Zeichenfolge durch ein Trennzeichen."
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4567,6 +4723,12 @@
     {
       "type": 0,
       "value": "Nicht angegeben"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -5091,12 +5253,6 @@
       "value": "Elements and mappings not connected to a target element are removed."
     }
   ],
-  "ittN0l": [
-    {
-      "type": 0,
-      "value": "No resources of this type found under this subscription."
-    }
-  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -5139,6 +5295,12 @@
       "value": "Hiermit wird eine zufällige ganze Zahl aus einem angegebenen Bereich zurückgegeben. Nur die Untergrenze des Bereichs wird eingeschlossen."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5173,6 +5335,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Eine Base64-Eingabezeichenfolge."
+    }
+  ],
+  "jZjgYZ": [
+    {
+      "type": 0,
+      "value": "No resources of this type found under this subscription."
     }
   ],
   "jcA3Ig": [
@@ -5331,6 +5499,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Dieser Wert ist die nächste ganze Zahl nach der höchsten ganzen Zahl, die zurückgegeben werden konnte."
+    }
+  ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "kuFK3E": [
@@ -5609,6 +5783,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Hiermit wird angegeben, um wie viele Zeiteinheiten die gewünschte Uhrzeit in der Zukunft liegt."
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
     }
   ],
   "nSan4V": [
@@ -5999,20 +6179,6 @@
       "value": "\"Asynchrone Antwort\" ermöglicht es einer Logik-App, durch die Antwort \"202 (Zulässig)\" darauf hinzuweisen, dass die Anforderung zur Verarbeitung akzeptiert wurde. Es wird ein Adressheader bereitgestellt, um den Endzustand abzurufen. "
     }
   ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
-    }
-  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -6385,6 +6551,12 @@
       "value": "Fügt einem übergebenen Zeichenfolgen-Zeitstempel eine ganze Zahl von Stunden hinzu."
     }
   ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Show me"
+    }
+  ],
   "uXJdAh": [
     {
       "type": 0,
@@ -6645,6 +6817,12 @@
       "value": "Gibt einen angegebenen Wert basierend darauf zurück, ob der Ausdruck in TRUE oder FALSE ausgewertet wurde."
     }
   ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
+    }
+  ],
   "wl7X0l": [
     {
       "type": 0,
@@ -6733,6 +6911,12 @@
     {
       "type": 0,
       "value": "Schwellenwert"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Show raw inputs"
     }
   ],
   "xV/oyK": [

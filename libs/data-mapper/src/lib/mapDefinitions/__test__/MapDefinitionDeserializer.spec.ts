@@ -1,9 +1,9 @@
-import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, sourceMockSchema, targetMockSchema } from '../../__mocks__';
 import type { MapDefinitionEntry } from '../../models';
 import { functionMock, ifPseudoFunctionKey, directAccessPseudoFunctionKey, indexPseudoFunctionKey } from '../../models';
 import type { ConnectionUnit } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { convertFromMapDefinition } from '../MapDefinitionDeserializer';
+import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, sourceMockSchema, targetMockSchema } from '__mocks__/schemas';
 
 describe('mapDefinitions/MapDefinitionDeserializer', () => {
   const simpleMap: MapDefinitionEntry = {
@@ -445,8 +445,8 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
       expect(resultEntries[5][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
       expect(resultEntries[5][1]).toBeTruthy();
-      expect(resultEntries[5][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping/ItemPrice');
-      expect(resultEntries[5][1].outputs[1].reactFlowKey).toContain('Multiply');
+      expect(resultEntries[5][1].outputs[0].reactFlowKey).toContain('Multiply');
+      expect(resultEntries[5][1].outputs[1].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping/ItemPrice');
       expect(resultEntries[5][1].outputs[2].reactFlowKey).toContain('Multiply');
 
       expect(resultEntries[6][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');

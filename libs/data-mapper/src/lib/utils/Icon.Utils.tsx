@@ -1,3 +1,4 @@
+import { MapCheckerItemSeverity } from '../components/mapChecker/MapCheckerItem';
 import { Collection20Regular, StringCategory20Regular } from '../images/CategoryIcons';
 import {
   Any16Filled,
@@ -30,6 +31,7 @@ import {
 import { NormalizedDataType, SchemaNodeProperty } from '../models';
 import { FunctionCategory } from '../models/Function';
 import { LogCategory, LogService } from './Logging.Utils';
+import { tokens } from '@fluentui/react-components';
 import {
   AddSubtractCircle16Filled,
   AddSubtractCircle16Regular,
@@ -54,7 +56,11 @@ import {
   NumberSymbol16Regular,
   NumberSymbol24Filled,
   NumberSymbol24Regular,
+  WarningFilled,
   Wrench20Regular,
+  DismissCircleFilled,
+  InfoFilled,
+  QuestionCircleFilled,
 } from '@fluentui/react-icons';
 
 // Using Fluent v8 as it has option for fallback icon
@@ -163,4 +169,24 @@ export const iconForFunctionCategory = (functionCategory: FunctionCategory) => {
 
 export const iconUriForIconImageName = (iconImageName: string) => {
   return `${iconBaseUrl}${iconImageName}`;
+};
+
+const mapCheckerIconStyle = { minHeight: '20px', minWidth: '20px' };
+
+export const iconForMapCheckerSeverity = (severity: MapCheckerItemSeverity) => {
+  switch (severity) {
+    case MapCheckerItemSeverity.Error: {
+      return <DismissCircleFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteRedBackground3} />;
+    }
+    case MapCheckerItemSeverity.Warning: {
+      return <WarningFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteGoldBorderActive} />;
+    }
+    case MapCheckerItemSeverity.Info: {
+      return <InfoFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteBlueBorderActive} />;
+    }
+    case MapCheckerItemSeverity.Unknown:
+    default: {
+      return <QuestionCircleFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteBeigeBorderActive} />;
+    }
+  }
 };

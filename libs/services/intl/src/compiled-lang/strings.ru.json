@@ -81,6 +81,12 @@
       "value": "Разбивка на страницы"
     }
   ],
+  "//nQG4": [
+    {
+      "type": 0,
+      "value": "Select an api from apim instance"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -141,6 +147,18 @@
       "value": "Преобразует входные данные в массив"
     }
   ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Show raw outputs"
+    }
+  ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -169,6 +187,12 @@
     {
       "type": 0,
       "value": "Возвращает первый элемент счетчика из переданного в функцию массива или строки"
+    }
+  ],
+  "/yYyOq": [
+    {
+      "type": 0,
+      "value": "Resource Group"
     }
   ],
   "00xlpa": [
@@ -279,6 +303,12 @@
       "value": "(UTC-05:00) Богота, Кито, Лима, Рио-Бранко"
     }
   ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
+    }
+  ],
   "0p+pJq": [
     {
       "type": 0,
@@ -341,12 +371,6 @@
     {
       "type": 0,
       "value": "Комментарий"
-    }
-  ],
-  "1ANUHk": [
-    {
-      "type": 0,
-      "value": "Loading functions..."
     }
   ],
   "1D047X": [
@@ -675,6 +699,20 @@
       "value": "Триггеры"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -823,6 +861,12 @@
     {
       "type": 0,
       "value": "Требуется. Наименьшее целое число, которое можно вернуть."
+    }
+  ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
     }
   ],
   "4BrA0z": [
@@ -1063,10 +1107,22 @@
       "value": "Требуется. Число, на которое умножается множитель 2."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -1417,6 +1473,12 @@
     {
       "type": 0,
       "value": "Тип проверки подлинности"
+    }
+  ],
+  "AGCm1p": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "AHB418": [
@@ -2119,6 +2181,12 @@
       "value": "Обязательное поле. Объект, который необходимо найти в коллекции."
     }
   ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2369,6 +2437,12 @@
       "value": "Возвращает первый ненулевой объект в переданных в функцию аргументах"
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2401,6 +2475,28 @@
       "value": "Parameters"
     }
   ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "The current map contains "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "JErLDT": [
     {
       "type": 0,
@@ -2411,6 +2507,12 @@
     {
       "type": 0,
       "value": "Требуется. Строка, которая содержит время."
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2643,6 +2745,12 @@
     {
       "type": 0,
       "value": "Возвращает схему из URI"
+    }
+  ],
+  "LV/BTE": [
+    {
+      "type": 0,
+      "value": "Loading Api Management service instances..."
     }
   ],
   "LZm3ze": [
@@ -3131,6 +3239,12 @@
       "value": "(UTC-03:00) Арагуаяна"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -3141,6 +3255,12 @@
     {
       "type": 0,
       "value": "Требуется. Число, которое прибавляется к слагаемому 1."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3421,6 +3541,12 @@
       "value": "6"
     }
   ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "issue"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3443,6 +3569,12 @@
     {
       "type": 0,
       "value": "Введите словарь"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "issues"
     }
   ],
   "SKXopi": [
@@ -4211,6 +4343,12 @@
       "value": ")"
     }
   ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "ZCFMoe": [
     {
       "type": 0,
@@ -4327,6 +4465,12 @@
       "value": "Обработка данных"
     }
   ],
+  "aSnCCB": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -4395,6 +4539,12 @@
     {
       "type": 0,
       "value": "По умолчанию экземпляры приложения логики запускаются одновременно (параллельно). Данный элемент управления изменяет принцип очередности новых запусков, и после включения изменить его невозможно. Чтобы запускать максимум параллельных экземпляров, не включайте этот элемент. Чтобы ограничить их число, включите его и задайте лимит. При лимите \"1\" запуски будут выполняться последовательно."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4661,6 +4811,12 @@
       "value": "Разбивает строку с помощью разделителя"
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4677,6 +4833,12 @@
     {
       "type": 0,
       "value": "Не указано"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -5231,12 +5393,6 @@
       "value": "Elements and mappings not connected to a target element are removed."
     }
   ],
-  "ittN0l": [
-    {
-      "type": 0,
-      "value": "No resources of this type found under this subscription."
-    }
-  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -5279,6 +5435,12 @@
       "value": "Возвращает случайное целое числа из указанного диапазона. Диапазон закрытый слева и открытый справа."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5313,6 +5475,12 @@
     {
       "type": 0,
       "value": "Требуется. Входная строка base64."
+    }
+  ],
+  "jZjgYZ": [
+    {
+      "type": 0,
+      "value": "No resources of this type found under this subscription."
     }
   ],
   "jcA3Ig": [
@@ -5471,6 +5639,12 @@
     {
       "type": 0,
       "value": "Требуется. Это значение — следующее целое число после наибольшего целого числа, которое можно вернуть."
+    }
+  ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "kuFK3E": [
@@ -5749,6 +5923,12 @@
     {
       "type": 0,
       "value": "Обязательно. Количество единиц измерения времени, на которое желаемая дата находится в будущем по отношению к текущему времени."
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
     }
   ],
   "nSan4V": [
@@ -6177,20 +6357,6 @@
       "value": "При использовании асинхронного отклика приложение логики может отправлять ответ 202 (Принято), чтобы показать, что запрос принят к обработке. Для получения окончательного состояния будет предоставлен заголовок расположения."
     }
   ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
-    }
-  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -6563,6 +6729,12 @@
       "value": "Добавляет целое число часов в метку времени строки, переданной в функцию"
     }
   ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Show me"
+    }
+  ],
   "uXJdAh": [
     {
       "type": 0,
@@ -6823,6 +6995,12 @@
       "value": "Возвращает указанное значение в зависимости от результата выражения: true или false"
     }
   ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
+    }
+  ],
   "wl7X0l": [
     {
       "type": 0,
@@ -6911,6 +7089,12 @@
     {
       "type": 0,
       "value": "Пороговое значение"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Show raw inputs"
     }
   ],
   "xV/oyK": [
