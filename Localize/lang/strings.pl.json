@@ -620,6 +620,7 @@
   "YaFjJQ": "Zwraca pojedynczą tablicę lub obiekt ze wszystkimi elementami z dowolnej tablicy lub obiektu przekazanego do tej funkcji. Parametry funkcji mogą być zestawem obiektów lub zestawem tablic (nie ich kombinacją). Jeśli w końcowych danych wyjściowych istnieją dwa obiekty o tej samej nazwie, ostatni obiekt o danej nazwie jest wyświetlany w obiekcie końcowym.",
   "YfwZJO": "Porady dotyczące wyszukiwania",
   "Yh5OVd": "Custom value does not match one of the allowed types for this input",
+  "YlesUQ": "Your map is in perfect condition",
   "YoQara": "Brak",
   "Yuu5CD": "Pomniejsz",
   "Z9PWl/": "Retry Policy count is invalid (Must be from {min} to {max})",

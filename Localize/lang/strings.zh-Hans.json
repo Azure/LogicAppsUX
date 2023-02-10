@@ -620,6 +620,7 @@
   "YaFjJQ": "返回一个数组或对象，它的所有元素均位于传入此函数的数组或对象中。此函数的参数可以是一组对象或一组数据(不可两者混合)。如果两个对象在最终输出中的名称相同，则最终对象中将显示后一个对象的名称。",
   "YfwZJO": "搜索提示",
   "Yh5OVd": "Custom value does not match one of the allowed types for this input",
+  "YlesUQ": "Your map is in perfect condition",
   "YoQara": "无",
   "Yuu5CD": "缩小",
   "Z9PWl/": "Retry Policy count is invalid (Must be from {min} to {max})",

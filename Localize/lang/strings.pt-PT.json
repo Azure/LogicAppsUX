@@ -620,6 +620,7 @@
   "YaFjJQ": "Devolve uma matriz ou um objeto únicos com todos os elementos que existem na matriz ou no objeto transmitidos a esta função. Os parâmetros da função podem ser um conjunto de objetos ou um conjunto de matrizes (não uma mistura de ambos). Se existirem dois objetos com o mesmo nome no resultado final, o último objeto com esse nome aparece no objeto final.",
   "YfwZJO": "Sugestões de Pesquisa",
   "Yh5OVd": "Custom value does not match one of the allowed types for this input",
+  "YlesUQ": "Your map is in perfect condition",
   "YoQara": "Nenhuma",
   "Yuu5CD": "Reduzir",
   "Z9PWl/": "Retry Policy count is invalid (Must be from {min} to {max})",
