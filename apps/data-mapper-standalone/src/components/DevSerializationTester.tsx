@@ -1,0 +1,180 @@
+import type { RootState } from '../state/Store';
+import { Stack } from '@fluentui/react';
+import {
+  Accordion,
+  AccordionHeader,
+  AccordionItem,
+  AccordionPanel,
+  Button,
+  makeStyles,
+  shorthands,
+  Tab,
+  TabList,
+  Text,
+  tokens,
+} from '@fluentui/react-components';
+import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
+import type { MonacoProps } from '@microsoft/designer-ui';
+import { convertFromMapDefinition, convertToMapDefinition, convertSchemaToSchemaExtended } from '@microsoft/logic-apps-data-mapper';
+import type { MapDefinitionEntry } from '@microsoft/logic-apps-data-mapper';
+import * as yaml from 'js-yaml';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
+
+enum SerializationTab {
+  Deserialization = 'Deserialization',
+  Serialization = 'Serialization',
+}
+
+const commonCodeEditorProps: Partial<MonacoProps> = {
+  lineNumbers: 'on',
+  scrollbar: { horizontal: 'auto', vertical: 'auto' },
+  wordWrap: 'on',
+  wrappingIndent: 'same',
+  width: '600px',
+};
+
+const useStyles = makeStyles({
+  editorStyle: {
+    ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
+    ...shorthands.borderRadius(tokens.borderRadiusMedium),
+    ...shorthands.padding('2px'),
+  },
+});
+
+export const DevSerializationTester = () => {
+  const styles = useStyles();
+
+  const [selectedTab, setSelectedTab] = useState<SerializationTab>(SerializationTab.Deserialization);
+  const [inputMapDefinition, setInputMapDefinition] = useState<string>('');
+  const [outputConnections, setOutputConnections] = useState<string>('');
+  const [inputConnections, setInputConnections] = useState<string>('');
+  const [outputMapDefinition, setOutputMapDefinition] = useState<string>('');
+
+  const { fetchedFunctions } = useSelector((state: RootState) => state.dataMapDataLoader);
+  const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.schemaDataLoader);
+
+  const deserializeMapDefinitionIntoConnections = () => {
+    if (!sourceSchema || !targetSchema) {
+      window.alert('You must select your source and target schemas in the dropdowns above!');
+      return;
+    }
+
+    if (!fetchedFunctions) {
+      window.alert('No function data was found.');
+      return;
+    }
+
+    const deserializedConnections = convertFromMapDefinition(
+      yaml.load(inputMapDefinition ?? '') as MapDefinitionEntry,
+      convertSchemaToSchemaExtended(sourceSchema),
+      convertSchemaToSchemaExtended(targetSchema),
+      fetchedFunctions
+    );
+
+    setOutputConnections(JSON.stringify(deserializedConnections, null, 2));
+  };
+
+  const serializeConnectionsIntoMapDefinition = () => {
+    if (!sourceSchema || !targetSchema) {
+      window.alert('You must select your source and target schemas in the dropdowns above!');
+      return;
+    }
+
+    const serializedMapDefinition = convertToMapDefinition(
+      JSON.parse(inputConnections),
+      convertSchemaToSchemaExtended(sourceSchema),
+      convertSchemaToSchemaExtended(targetSchema)
+    );
+
+    setOutputMapDefinition(serializedMapDefinition);
+  };
+
+  return (
+    <div style={{ marginBottom: '20px', backgroundColor: tokens.colorNeutralBackground2, padding: 4 }}>
+      <Accordion collapsible>
+        <AccordionItem value="1">
+          <AccordionHeader>Serialization Tester</AccordionHeader>
+          <AccordionPanel>
+            <Text>NOTE: This uses the source and target schemas you&apos;ve selected above!</Text>
+
+            <TabList
+              selectedValue={selectedTab}
+              onTabSelect={(_e, data) => setSelectedTab(data.value as SerializationTab)}
+              style={{ marginBottom: 16 }}
+            >
+              <Tab id="Deserialization" value={SerializationTab.Deserialization}>
+                Deserialization
+              </Tab>
+              <Tab id="Serialization" value={SerializationTab.Serialization}>
+                Serialization
+              </Tab>
+            </TabList>
+
+            <Stack horizontal horizontalAlign="space-around" tokens={{ childrenGap: '8px' }} wrap>
+              {selectedTab === SerializationTab.Deserialization && (
+                <>
+                  <Stack tokens={{ childrenGap: '8px' }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: '22px', display: 'block', marginBottom: '12px' }}>Map definition</Text>
+                    <MonacoEditor
+                      {...commonCodeEditorProps}
+                      language={EditorLanguage.yaml}
+                      value={inputMapDefinition}
+                      onContentChanged={(e) => setInputMapDefinition(e.value ?? '')}
+                      className={styles.editorStyle}
+                      height="400px"
+                    />
+
+                    <Button onClick={deserializeMapDefinitionIntoConnections}>Deserialize map definition</Button>
+                  </Stack>
+
+                  <Stack tokens={{ childrenGap: '8px' }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: '22px', display: 'block', marginBottom: '12px' }}>Connections</Text>
+                    <MonacoEditor
+                      {...commonCodeEditorProps}
+                      language={EditorLanguage.json}
+                      value={outputConnections}
+                      className={styles.editorStyle}
+                      height="400px"
+                      readOnly
+                    />
+                  </Stack>
+                </>
+              )}
+
+              {selectedTab === SerializationTab.Serialization && (
+                <>
+                  <Stack tokens={{ childrenGap: '8px' }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: '22px', display: 'block', marginBottom: '12px' }}>Connections</Text>
+                    <MonacoEditor
+                      {...commonCodeEditorProps}
+                      language={EditorLanguage.json}
+                      value={inputConnections}
+                      onContentChanged={(e) => setInputConnections(e.value ?? '')}
+                      className={styles.editorStyle}
+                      height="400px"
+                    />
+
+                    <Button onClick={serializeConnectionsIntoMapDefinition}>Serialize connections</Button>
+                  </Stack>
+
+                  <Stack tokens={{ childrenGap: '8px' }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: '22px', display: 'block', marginBottom: '12px' }}>Map definition</Text>
+                    <MonacoEditor
+                      {...commonCodeEditorProps}
+                      language={EditorLanguage.json}
+                      value={outputMapDefinition}
+                      className={styles.editorStyle}
+                      height="400px"
+                      readOnly
+                    />
+                  </Stack>
+                </>
+              )}
+            </Stack>
+          </AccordionPanel>
+        </AccordionItem>
+      </Accordion>
+    </div>
+  );
+};
