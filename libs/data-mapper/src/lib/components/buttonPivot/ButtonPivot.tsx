@@ -20,14 +20,7 @@ export interface ButtonPivotButtonProps {
   onClick?: () => void;
 }
 
-export const ButtonPivot: React.FC<ButtonPivotProps> = ({
-  buttons,
-  horizontal,
-  xPos,
-  yPos,
-  selectedValue,
-  onTabSelect,
-}: ButtonPivotProps) => {
+export const ButtonPivot = ({ buttons, horizontal, xPos, yPos, selectedValue, onTabSelect }: ButtonPivotProps) => {
   const stackItems = buttons.map((buttonProps, index) => {
     const BundledIcon = bundleIcon(buttonProps.filledIcon, buttonProps.regularIcon);
 

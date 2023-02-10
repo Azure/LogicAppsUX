@@ -9,7 +9,9 @@ export default {
 } as ComponentMeta<typeof CodeView>;
 
 export const Standard: ComponentStory<typeof CodeView> = (args: CodeViewProps) => <CodeView {...args} />;
+
 Standard.args = {
   dataMapDefinition: 'Placeholder: YAML',
   isCodeViewOpen: true,
+  canvasAreaHeight: 500,
 };
