@@ -13,5 +13,5 @@ const Template: ComponentStory<typeof DMTooltip> = (args: DMTooltipProps) => <DM
 export const Standard = Template.bind({});
 
 Standard.args = {
-  text: 'This is a description',
+  text: '"We love tooltips...when they actually work!" -Data Mapper devs',
 };
