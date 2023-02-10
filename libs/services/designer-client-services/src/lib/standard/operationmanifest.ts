@@ -1,5 +1,5 @@
 import { BaseOperationManifestService } from '../base';
-import { getBuiltInOperationInfo, isBuiltInOperation, supportedBaseManifestObjects } from '../base/operationmanifest';
+import { azureFunctionConnectorId, getBuiltInOperationInfo, isBuiltInOperation, supportedBaseManifestObjects } from '../base/operationmanifest';
 import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 import { equals, ConnectionType } from '@microsoft/utils-logic-apps';
 
@@ -26,6 +26,10 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
     const supportedManifest = supportedBaseManifestObjects.get(operationId);
 
     if (supportedManifest) return supportedManifest;
+
+    if (equals(connectorId, azureFunctionConnectorId)) {
+      return apimManifest;
+    }
 
     const { apiVersion, baseUrl, httpClient } = this.options;
     const connectorName = connectorId.split('/').slice(-1)[0];
@@ -66,3 +70,132 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
 function isServiceProviderOperation(definition: any): boolean {
   return equals(definition.type, 'ServiceProvider');
 }
+
+const apimManifest = {
+  properties: {
+    "brandColor": "#68217a",
+    "iconUri": "https://logicappsv2resources.blob.core.windows.net/icons/apimanagement.svg",
+    "description": "Call an Azure API Management API.",
+    "inputs": {
+        "type": "object",
+        "properties": {
+            "apiManagement": {
+              "type": "object",
+              "properties": {
+                "operationId":{
+                    "type": "string",
+                    "title": "Operation Id",
+                    "description": "Operation Id",
+                    "x-ms-dynamic-list": {
+                        "dynamicState": {
+                            "operationId": "getApimOperations",
+                            "parameters": {}
+                        },
+                        "parameters": {}
+                    }
+                }
+              },
+              "required": [ "operationId" ]
+            },
+            "operationDetails":{
+                "title": "Operation Parameters",
+                "description": "Operation parameters for the above operation",
+                "x-ms-dynamic-properties": {
+                    "dynamicState": {
+                        "extension": {
+                            "operationId": "getApimOperationSchema",
+                        },
+                        "isInput": true
+                    },
+                    "parameters": {
+                        "operationId": {
+                            "parameterReference": "apiManagement.operationId",
+                            "required": true
+                        }
+                    }
+                },
+            }
+        },
+        "required": [
+            "apiManagement"
+        ]
+    },
+    "inputsLocation": [
+        "inputs"
+    ],
+    "inputsLocationSwapMap": [{ "source": [ "operationDetails" ], "target": [] }],
+    "isInputsOptional": false,
+    "outputs": {
+      "x-ms-dynamic-properties": {
+        "dynamicState": {
+            "extension": {
+                "operationId": "getApimOperationSchema",
+            },
+        },
+        "parameters": {
+            "operationId": {
+                "parameterReference": "apiManagement.operationId",
+                "required": true
+            }
+        }
+      },
+    },
+    "isOutputsOptional": false,
+    "settings": {
+        "secureData": {},
+        "trackedProperties": {
+            "scopes": [
+                "Action"
+            ]
+        },
+        "retryPolicy": {
+            "scopes": [
+                "Action"
+            ]
+        },
+        "operationOptions": {
+            "options": [
+                "DisableAsyncPattern"
+            ],
+            "scopes": [
+                "Action"
+            ]
+        }
+    },
+    "includeRootOutputs": true,
+    "connectionReference": {
+        "referenceKeyFormat": "apimanagement"
+    },
+    "connector": {
+        "name": "apiManagementOperation",
+        "id": "/connectionProviders/apiManagementOperation",
+        "properties": {
+            "displayName": "API Management operations",
+            "iconUri": "https://logicappsv2resources.blob.core.windows.net/icons/apimanagement.svg",
+            "brandColor": "#68217a",
+            "description": "API Management operations",
+            "capabilities": [
+                "azureConnection"
+            ],
+            "connectionParameters": {
+                "apiId": {
+                    "type": "string"
+                },
+                "baseUrl": {
+                    "type": "string"
+                },
+                "subscriptionKey": {
+                    "type": "string"
+                },
+                "authentication": {
+                    "type": "object"
+                }
+            }
+        }
+    },
+    "connection": {
+        "type": "apimanagement",
+        "required": true
+    }
+  }
+} as any;
