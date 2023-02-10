@@ -1,9 +1,10 @@
 import Constants from '../../../common/constants';
-import type { RootState, AppDispatch } from '../../../core';
+import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useAllOperations } from '../../../core/queries/browse';
 import { useIsConsumption } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
+  useIsAddingTrigger,
   useIsParallelBranch,
   useRelationshipIds,
   useSelectedSearchOperationGroupId,
@@ -21,11 +22,11 @@ import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-
 import { guid, areApiIdsEqual } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const isTrigger = useSelector((state: RootState) => state.panel.addingTrigger);
+  const isTrigger = useIsAddingTrigger();
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<Record<string, string>>({
     actionType: isTrigger ? 'triggers' : 'actions',
@@ -95,16 +96,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     description: 'Text for the Details page navigation heading',
   });
 
-  // TODO: Riley - this needs to accept the selected resource somehow
-  const selectAzureResourceCallback = useCallback(
-    (resource: string) => {
-      console.log('selected resource', resource);
-      const newNodeId = (selectedOperation?.properties?.summary ?? selectedOperation?.name ?? guid()).replaceAll(' ', '_');
-      dispatch(addOperation({ operation: selectedOperation, relationshipIds, nodeId: newNodeId, isParallelBranch, isTrigger }));
-    },
-    [dispatch, isParallelBranch, isTrigger, relationshipIds, selectedOperation]
-  );
-
   return (
     <RecommendationPanel placeholder={''} {...props}>
       {isSelectingAzureResource || selectedOperationGroupId ? (
@@ -116,7 +107,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         </div>
       ) : null}
       {isSelectingAzureResource && selectedOperation ? (
-        <AzureResourceSelection operation={selectedOperation} onSubmit={selectAzureResourceCallback} />
+        <AzureResourceSelection operation={selectedOperation} />
       ) : selectedOperationGroupId ? (
         <OperationGroupDetailView groupOperations={allOperationsForGroup} filters={filters} onOperationClick={onOperationClick} />
       ) : (

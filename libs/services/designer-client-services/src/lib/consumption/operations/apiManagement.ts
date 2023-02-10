@@ -4,17 +4,17 @@ const iconUri =
 const brandColor = '#68217A';
 
 const api = {
-  id: 'connectionProviders/apimanagement',
-  name: 'connectionProviders/apimanagement',
+  id: 'connectionProviders/apiManagement',
+  name: 'connectionProviders/apiManagement',
   displayName: 'Azure API Management',
   description: 'Azure API Management',
   iconUri,
   brandColor,
 };
 
-export const selectApiManagementGroup = {
-  id: 'connectionProviders/apimanagement',
-  name: 'connectionProviders/apimanagement',
+export const apiManagementGroup = {
+  id: 'connectionProviders/apiManagement',
+  name: 'connectionProviders/apiManagement',
   properties: {
     displayName: 'Azure API Management',
     description: 'Azure API Management',
@@ -24,10 +24,10 @@ export const selectApiManagementGroup = {
   },
 };
 
-export const selectApiManagementActionOperation = {
-  id: 'selectapimanagementaction',
-  name: 'selectapimanagementaction',
-  type: 'selectapimanagementaction',
+export const apiManagementActionOperation = {
+  id: 'apimanagement',
+  name: 'apimanagement',
+  type: 'apimanagement',
   properties: {
     api,
     summary: 'Choose an Azure API Management action',
@@ -39,7 +39,7 @@ export const selectApiManagementActionOperation = {
   },
 };
 
-export const selectApiManagementTriggerOperation = {
+export const apiManagementTriggerOperation = {
   id: 'selectapimanagementtrigger',
   name: 'selectapimanagementtrigger',
   type: 'selectapimanagementtrigger',

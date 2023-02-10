@@ -18,7 +18,7 @@ export interface AssistedConnectionProps {
 export type GetResourceCallback = (id?: string) => Promise<any>;
 export interface AzureResourcePickerProps extends AssistedConnectionProps {
   selectedResourceId: string | undefined;
-  onResourceSelect: (resourceId: string) => void;
+  onResourceSelect: (resource: string) => void;
   onSubResourceSelect?: (subResource: any) => void;
   selectedSubResource?: any;
 }
@@ -94,7 +94,7 @@ export const AzureResourcePicker = (props: AzureResourcePickerProps) => {
 interface ResourceEntryProps {
   resource: any;
   getColumns: (resource: any) => string[];
-  onResourceSelect: (resourceId: string) => void;
+  onResourceSelect: (resource: string) => void;
   subResourceType: string;
   getSubResourceName?: (subResource: any) => string;
   onSubResourceSelect?: (subResource: any) => void;
@@ -104,7 +104,7 @@ interface ResourceEntryProps {
 
 export const ResourceEntry = (props: ResourceEntryProps) => {
   const {
-    subResourceType: id,
+    subResourceType,
     resource,
     getColumns,
     onResourceSelect,
@@ -117,7 +117,7 @@ export const ResourceEntry = (props: ResourceEntryProps) => {
   const intl = useIntl();
   const hasSubResources = !!onSubResourceSelect || !!fetchSubResourcesCallback;
 
-  const subResourcesQuery = useQuery([id, resource.id], async () => fetchSubResourcesCallback?.(resource.id) ?? [], {
+  const subResourcesQuery = useQuery([subResourceType, resource.id], async () => fetchSubResourcesCallback?.(resource) ?? [], {
     enabled: resource.selected && hasSubResources,
     staleTime: 1000 * 60 * 60 * 24,
   });
@@ -138,7 +138,7 @@ export const ResourceEntry = (props: ResourceEntryProps) => {
     <div className="msla-azure-resource-entry">
       <button
         className={css('msla-azure-resource-entry-heading', expanded && 'expanded')}
-        onClick={() => onResourceSelect(expanded ? '' : resource.id)}
+        onClick={() => onResourceSelect(expanded ? undefined : resource)}
         style={{ gridTemplateColumns }}
       >
         {columns.map((value, index) => (

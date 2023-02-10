@@ -3,7 +3,7 @@ const iconUri =
 
 const brandColor = '#3999C6';
 
-export const selectFunctionGroup = {
+export const functionGroup = {
   id: 'connectionProviders/function',
   name: 'connectionProviders/function',
   properties: {
@@ -15,7 +15,7 @@ export const selectFunctionGroup = {
   },
 };
 
-export const selectFunctionOperation = {
+export const functionOperation = {
   id: 'azureFunction',
   name: 'azureFunction',
   type: 'azureFunction',

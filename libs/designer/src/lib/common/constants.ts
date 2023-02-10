@@ -866,9 +866,9 @@ export default {
     STRING: 'string',
   },
   UIOPERATION_TYPES: {
-    SELECT_APIMANAGEMENT_ACTION: 'selectapimanagementaction',
+    SELECT_APIMANAGEMENT_ACTION: 'apimanagement',
     SELECT_APIMANAGEMENT_TRIGGER: 'selectapimanagementtrigger',
-    SELECT_APPSERVICE_ACTION: 'selectappserviceaction',
+    SELECT_APPSERVICE_ACTION: 'appservice',
     SELECT_APPSERVICE_TRIGGER: 'selectappservicetrigger',
     SELECT_FUNCTION_ACTION: 'azureFunction',
     SELECT_BATCH_WORKFLOW_ACTION: 'sendtobatch',
@@ -902,9 +902,9 @@ export default {
     CHEVRON_ROOT_COLOR_LIGHT: '#514f4e',
   },
   AZURE_RESOURCE_ACTION_TYPES: {
-    SELECT_APIMANAGEMENT_ACTION: 'selectapimanagementaction',
+    SELECT_APIMANAGEMENT_ACTION: 'apimanagement',
     SELECT_APIMANAGEMENT_TRIGGER: 'selectapimanagementtrigger',
-    SELECT_APPSERVICE_ACTION: 'selectappserviceaction',
+    SELECT_APPSERVICE_ACTION: 'appservice',
     SELECT_APPSERVICE_TRIGGER: 'selectappservicetrigger',
     SELECT_FUNCTION_ACTION: 'azureFunction',
     SELECT_BATCH_WORKFLOW_ACTION: 'sendtobatch',

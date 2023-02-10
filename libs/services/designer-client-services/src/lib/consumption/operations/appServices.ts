@@ -12,7 +12,7 @@ const api = {
   brandColor,
 };
 
-export const selectAppServiceGroup = {
+export const appServiceGroup = {
   id: 'connectionProviders/appservice',
   name: 'connectionProviders/appservice',
   properties: {
@@ -24,10 +24,10 @@ export const selectAppServiceGroup = {
   },
 };
 
-export const selectAppServiceActionOperation = {
-  id: 'selectappserviceaction',
-  name: 'selectappserviceaction',
-  type: 'selectappserviceaction',
+export const appServiceActionOperation = {
+  id: 'appservice',
+  name: 'appservice',
+  type: 'appservice',
   properties: {
     api,
     summary: 'Choose an Azure App Services action',
@@ -39,7 +39,7 @@ export const selectAppServiceActionOperation = {
   },
 };
 
-export const selectAppServiceTriggerOperation = {
+export const appServiceTriggerOperation = {
   id: 'selectappservicetrigger',
   name: 'selectappservicetrigger',
   type: 'selectappservicetrigger',

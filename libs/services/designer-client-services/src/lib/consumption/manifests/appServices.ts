@@ -15,7 +15,7 @@ const connector = {
   },
 };
 
-export const selectAppServiceActionManifest = {
+export const appServiceActionManifest = {
   properties: {
     iconUri,
     brandColor,
@@ -37,7 +37,7 @@ export const selectAppServiceActionManifest = {
   },
 } as OperationManifest;
 
-export const selectAppServiceTriggerManifest = {
+export const appServiceTriggerManifest = {
   properties: {
     iconUri,
     brandColor,

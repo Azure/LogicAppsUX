@@ -7,15 +7,15 @@ const iconUri =
 const brandColor = '#68217A';
 
 const connector = {
-  id: 'connectionProviders/apimanagement',
-  name: 'connectionProviders/apimanagement',
+  id: 'connectionProviders/apiManagement',
+  name: 'connectionProviders/apiManagement',
   properties: {
     displayName: 'Azure API Management',
     description: 'Azure API Management',
   },
 };
 
-export const selectApiManagementActionManifest = {
+export const apiManagementActionManifest = {
   properties: {
     iconUri,
     brandColor,
@@ -37,7 +37,7 @@ export const selectApiManagementActionManifest = {
   },
 } as OperationManifest;
 
-export const selectApiManagementTriggerManifest = {
+export const apiManagementTriggerManifest = {
   properties: {
     iconUri,
     brandColor,

@@ -40,10 +40,11 @@ type AddOperationPayload = {
   nodeId: string;
   isParallelBranch?: boolean;
   isTrigger?: boolean;
+  swagger?: OpenAPIV2.Document;
 };
 
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
-  const { operation, nodeId: actionId } = payload;
+  const { operation, nodeId: actionId, swagger } = payload;
   if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
   let count = 1;
   let nodeId = actionId;
@@ -64,7 +65,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
   };
 
   dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
-  initializeOperationDetails(nodeId, nodeOperationInfo, getState as () => RootState, dispatch);
+  initializeOperationDetails(nodeId, nodeOperationInfo, getState as () => RootState, dispatch, swagger);
 
   // Update settings for children and parents
 
@@ -76,7 +77,8 @@ const initializeOperationDetails = async (
   nodeId: string,
   operationInfo: NodeOperation,
   getState: () => RootState,
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  _swagger?: OpenAPIV2.Document
 ): Promise<void> => {
   const state = getState();
   const isTrigger = isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata);
@@ -97,6 +99,17 @@ const initializeOperationDetails = async (
     const { iconUri, brandColor } = manifest.properties;
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs);
+
+    // If this is an apim operation, we need to pull inputs and outputs from the provided swagger
+    if (_swagger) {
+      console.log('### swagger: ', _swagger);
+
+      // nodeInputs = {...nodeInputs, ...swaggerInputs};
+      // inputDependencies = {...inputDependencies, ...swaggerInputDependencies};
+      // nodeOutputs = {...nodeOutputs, ...swaggerOutputs};
+      // outputDependencies = {...outputDependencies, ...swaggerOutputDependencies};
+    }
+
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
     const settings = getOperationSettings(isTrigger, operationInfo, nodeOutputs, manifest, /* swagger */ undefined);
     initData = { id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata: { iconUri, brandColor } };

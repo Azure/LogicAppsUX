@@ -32,7 +32,7 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
   ];
   if (manifest?.properties.connection?.type === ConnectionType.Function) {
     const functionAppsCallback = () => FunctionService().fetchFunctionApps();
-    const functionsCallback = (functionAppId?: string) => FunctionService().fetchFunctionAppsFunctions(functionAppId ?? '');
+    const functionsCallback = (functionApp?: any) => FunctionService().fetchFunctionAppsFunctions(functionApp.id ?? '');
     const functionAppsLoadingText = intl.formatMessage({
       defaultMessage: 'Loading Function Apps...',
       description: 'Text for loading function apps',
@@ -58,7 +58,7 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
     };
   } else if (manifest?.properties.connection?.type === ConnectionType.ApiManagement) {
     const apiInstancesCallback = () => ApiManagementService().fetchApiManagementInstances();
-    const apisCallback = (apimId?: string) => ApiManagementService().fetchApisInApiM(apimId ?? '');
+    const apisCallback = (apim?: any) => ApiManagementService().fetchApisInApiM(apim.id ?? '');
     const apimInstancesLoadingText = intl.formatMessage({
       defaultMessage: 'Loading Api Management service instances...',
       description: 'Text for loading apim service instances',

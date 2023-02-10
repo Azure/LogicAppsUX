@@ -5,8 +5,8 @@ import {
   supportedBaseManifestObjects,
   supportedBaseManifestTypes,
 } from '../base/operationmanifest';
-import { selectApiManagementActionManifest } from './manifests/apiManagement';
-import { selectAppServiceActionManifest } from './manifests/appServices';
+import { apiManagementActionManifest } from './manifests/apiManagement';
+import { appServiceActionManifest } from './manifests/appServices';
 import { selectBatchWorkflowManifest } from './manifests/batchWorkflow';
 import { composeManifest } from './manifests/compose';
 import { flatFileDecodingManifest, flatFileEncodingManifest } from './manifests/flatfile';
@@ -87,10 +87,10 @@ const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   [inlinecode, inlineCodeManifest],
   [flatfiledecoding, flatFileDecodingManifest],
   [flatfileencoding, flatFileEncodingManifest],
-  [apimanagement, selectApiManagementActionManifest],
-  // [selectApiManagementTrigger, selectApiManagementTriggerManifest],
-  [appservice, selectAppServiceActionManifest],
-  // [selectAppServiceTrigger, selectAppServiceTriggerManifest],
+  [apimanagement, apiManagementActionManifest],
+  // [apiManagementTrigger, apiManagementTriggerManifest],
+  [appservice, appServiceActionManifest],
+  // [selectAppServiceTrigger, appServiceTriggerManifest],
   ['azurefunction', selectFunctionManifest],
   [invokeworkflow, invokeWorkflowManifest],
   [sendtobatch, selectBatchWorkflowManifest],

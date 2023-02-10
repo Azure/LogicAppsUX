@@ -1,21 +1,24 @@
 import Constants from '../../../common/constants';
-import { PrimaryButton, Text } from '@fluentui/react';
+import type { AppDispatch } from '../../../core';
+import { addOperation } from '../../../core/actions/bjsworkflow/add';
+import { useRelationshipIds, useIsParallelBranch, useIsAddingTrigger } from '../../../core/state/panel/panelSelectors';
+import { ChoiceGroup, PrimaryButton, Text } from '@fluentui/react';
 import { ApiManagementService, FunctionService, SearchService, AppServiceService } from '@microsoft/designer-client-services-logic-apps';
 import { AzureResourcePicker } from '@microsoft/designer-ui';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
 import { getResourceGroupFromWorkflowId } from '@microsoft/utils-logic-apps';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useDispatch } from 'react-redux';
 
 type AzureResourceSelectionProps = {
   operation: DiscoveryOperation<DiscoveryResultTypes>;
-  onSubmit: (resource: any) => void;
 };
 
 export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
-  const { operation, onSubmit } = props;
+  const { operation } = props;
 
-  // const resourceApiId = useMemo(() => operation.properties.api.id, [operation]);
+  const dispatch = useDispatch<AppDispatch>();
 
   const intl = useIntl();
   const apimTitleText = intl.formatMessage({
@@ -41,13 +44,43 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
 
   const [titleText, setTitleText] = useState('');
 
-  const [selectedResourceId, setSelectedResourceId] = useState<string | undefined>(undefined);
-  const [selectedSubResource, setSelectedSubResource] = useState<string | undefined>(undefined);
+  const [selectedResources, setSelectedResources] = useState<any[]>([]);
+  const setResourceAtDepth = useCallback((resource: any, depth: number) => {
+    setSelectedResources((prev) => {
+      const newResources = [...prev];
+      newResources[depth] = resource;
+      newResources.splice(depth + 1);
+      return newResources;
+    });
+  }, []);
 
   const [resourceTypes, setResourceTypes] = useState<string[]>([]);
 
-  const [getResourcesCallback, setGetResourcesCallback] = useState<(any?: any) => Promise<any>>(() => () => Promise.resolve([]));
-  const [getSubResourcesCallback, setGetSubResourcesCallback] = useState<(any?: any) => Promise<any>>(() => () => Promise.resolve([]));
+  const [getResourcesCallbacks, setGetResourcesCallbacks] = useState<((any?: any) => any)[]>(() => []);
+
+  const isTrigger = useIsAddingTrigger();
+  const relationshipIds = useRelationshipIds();
+  const isParallelBranch = useIsParallelBranch();
+
+  const addResourceOperation = useCallback(
+    (name: string, swagger?: OpenAPIV2.Document) => {
+      console.log('addResourceOperation', name, swagger);
+      console.log('selected resources', selectedResources);
+      const newNodeId = name.replaceAll(' ', '_');
+      dispatch(addOperation({ operation, relationshipIds, nodeId: newNodeId, isParallelBranch, isTrigger, swagger }));
+    },
+    [dispatch, isParallelBranch, isTrigger, relationshipIds, operation, selectedResources]
+  );
+
+  // Parses the swagger object to get the paths and methods in an array
+  const getOptionsFromPaths = useCallback((paths?: any): any[] => {
+    const methodsArray = Object.entries(paths).map(([id, pathObj]: [string, any]) =>
+      Object.entries(pathObj).map(([method, methodObj]: [string, any]) => ({ ...methodObj, method, uri: id, id: `${method} ${id}` }))
+    );
+    return methodsArray.flat();
+  }, []);
+
+  const [submitCallback, setSubmitCallback] = useState<(any?: any) => any>(() => () => Promise.resolve([]));
 
   useEffect(() => {
     switch (operation.id) {
@@ -55,42 +88,91 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_TRIGGER:
         setTitleText(apimTitleText);
         setResourceTypes(['apiManagement', 'action', 'operation']);
-        setGetResourcesCallback(() => () => ApiManagementService().fetchApiManagementInstances());
-        setGetSubResourcesCallback(() => (apiManagementId?: string) => ApiManagementService().fetchApisInApiM(apiManagementId ?? ''));
+        setGetResourcesCallbacks(() => [
+          () => ApiManagementService().fetchApiManagementInstances(),
+          (apiManagement?: any) => ApiManagementService().fetchApisInApiM(apiManagement.id ?? ''),
+        ]);
+        setSubmitCallback(() => () => {
+          const newActionName = getResourceName(selectedResources[1]);
+          addResourceOperation(newActionName, selectedResources[1]);
+          // TODO: Add parameters from selected resources
+        });
         break;
 
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APPSERVICE_ACTION:
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APPSERVICE_TRIGGER:
         setTitleText(appServiceTitleText);
         setResourceTypes(['appService', 'service']);
-        setGetResourcesCallback(() => () => AppServiceService().fetchAppServices());
+        setGetResourcesCallbacks(() => [
+          () => AppServiceService().fetchAppServices(),
+          (service?: any) =>
+            AppServiceService()
+              .fetchAppServiceApiSwagger(service)
+              .then((swagger) => getOptionsFromPaths(swagger?.paths)),
+        ]);
+        setSubmitCallback(() => () => {
+          const newActionName = selectedResources[1]?.id;
+          addResourceOperation(newActionName);
+          // TODO: Add parameters from selected resources
+        });
         break;
 
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_FUNCTION_ACTION:
         setTitleText(functionAppTitleText);
         setResourceTypes(['functionApp', 'function']);
-        setGetResourcesCallback(() => () => FunctionService().fetchFunctionApps());
-        setGetSubResourcesCallback(() => (functionAppId?: string) => FunctionService().fetchFunctionAppsFunctions(functionAppId ?? ''));
+        setGetResourcesCallbacks(() => [
+          () => FunctionService().fetchFunctionApps(),
+          (functionApp?: any) => FunctionService().fetchFunctionAppsFunctions(functionApp.id ?? ''),
+        ]);
+        setSubmitCallback(() => () => {
+          const newActionName = getResourceName(selectedResources[1]);
+          addResourceOperation(newActionName);
+          // TODO: Add parameters from selected resources
+        });
         break;
 
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_MANUAL_WORKFLOW_ACTION:
         setTitleText(manualWorkflowTitleText);
         setResourceTypes(['manualWorkflow', 'trigger']);
-        setGetResourcesCallback(() => () => SearchService().getRequestWorkflows());
-        setGetSubResourcesCallback(() => (manualWorkflowId?: string) => SearchService().getWorkflowTriggers(manualWorkflowId ?? ''));
+        setGetResourcesCallbacks(() => [
+          () => SearchService().getRequestWorkflows(),
+          (manualWorkflow?: any) => SearchService().getWorkflowTriggers(manualWorkflow.id ?? ''),
+        ]);
+        setSubmitCallback(() => () => {
+          const newActionName = getResourceName(selectedResources[0]);
+          addResourceOperation(newActionName);
+          // TODO: Add parameters from selected resources
+        });
         break;
 
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_BATCH_WORKFLOW_ACTION:
         setTitleText(batchWorkflowTitleText);
         setResourceTypes(['batchWorkflow', 'trigger']);
-        setGetResourcesCallback(() => () => SearchService().getBatchWorkflows());
-        setGetSubResourcesCallback(() => (batchWorkflowId?: string) => SearchService().getWorkflowTriggers(batchWorkflowId ?? ''));
+        setGetResourcesCallbacks(() => [
+          () => SearchService().getBatchWorkflows(),
+          (batchWorkflow?: any) => SearchService().getWorkflowTriggers(batchWorkflow.id ?? ''),
+        ]);
+        setSubmitCallback(() => () => {
+          const newActionName = getResourceName(selectedResources[0]);
+          addResourceOperation(newActionName);
+          // TODO: Add parameters from selected resources
+        });
         break;
 
       default:
         throw new Error(`Unexpected API category type '${operation.id}'`);
     }
-  }, [apimTitleText, appServiceTitleText, batchWorkflowTitleText, functionAppTitleText, manualWorkflowTitleText, operation.id]);
+  }, [
+    addResourceOperation,
+    apimTitleText,
+    appServiceTitleText,
+    batchWorkflowTitleText,
+    functionAppTitleText,
+    getOptionsFromPaths,
+    manualWorkflowTitleText,
+    operation.id,
+    selectedResources,
+  ]);
 
   const headers = [
     intl.formatMessage({ defaultMessage: 'Name', description: 'Header for resource name' }),
@@ -103,11 +185,31 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
     description: 'Text for loading Azure Resources',
   });
 
+  const getResourceName = (resource: any) => resource?.properties?.name ?? resource?.name ?? resource?.id;
+
   const getColumns = (resource: any) => [
-    resource?.properties?.name ?? resource?.name ?? resource?.id,
+    getResourceName(resource),
     resource?.properties?.resourceGroup ?? resource?.resourceGroup ?? getResourceGroupFromWorkflowId(resource?.id),
     resource?.properties?.location ?? resource?.location,
   ];
+
+  const [apimApiSwaggerResources, setApimApiSwaggerResources] = useState<any>(null);
+  useEffect(() => {
+    const subResource = selectedResources?.[1];
+    if (!subResource) return;
+    if (
+      operation.id !== Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_ACTION &&
+      operation.id !== Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_TRIGGER
+    )
+      return;
+    console.log('getting api swagger for:', subResource);
+    ApiManagementService()
+      .fetchApiMSwagger(subResource?.id)
+      .then((s) => setApimApiSwaggerResources(s));
+  }, [selectedResources, operation?.id]);
+
+  // Make sure we have valid resources for all of the required resource types
+  const readyToSubmit = useMemo(() => selectedResources.length === resourceTypes.length, [selectedResources, resourceTypes]);
 
   return (
     <div className={'msla-azure-resource-selection'}>
@@ -125,22 +227,36 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         headers={headers}
         getColumns={getColumns}
         resourceType={resourceTypes[0]}
-        getResourcesCallback={getResourcesCallback}
-        selectedResourceId={selectedResourceId}
-        onResourceSelect={(resourceId: string) => setSelectedResourceId(resourceId)}
+        getResourcesCallback={getResourcesCallbacks?.[0]}
+        selectedResourceId={selectedResources?.[0]?.id}
+        onResourceSelect={(resource: any) => setResourceAtDepth(resource, 0)}
         subResourceType={resourceTypes[1]}
-        getSubResourceName={(subResource: any) => subResource?.properties?.name ?? subResource?.name ?? subResource?.id}
-        fetchSubResourcesCallback={getSubResourcesCallback}
-        onSubResourceSelect={(subResource: any) => setSelectedSubResource(subResource)}
+        getSubResourceName={(subResource: any) => getResourceName(subResource)}
+        fetchSubResourcesCallback={getResourcesCallbacks?.[1]}
+        onSubResourceSelect={(subResource: any) => setResourceAtDepth(subResource, 1)}
       />
+      {apimApiSwaggerResources ? (
+        <ChoiceGroup
+          options={Object.entries(apimApiSwaggerResources?.paths ?? {}).map(([id, path]: [id: string, path: any]) => ({
+            key: id,
+            text: (Object.values(path)[0] as any)?.summary ?? id,
+            data: path,
+          }))}
+          onChange={(_e: any, option: any) => {
+            console.log('selected path:', option.data);
+            setResourceAtDepth?.(option.data, 2);
+          }}
+          selectedKey={Object.keys(selectedResources?.[2] ?? {})?.[0]}
+        />
+      ) : null}
       <PrimaryButton
-        disabled={!selectedSubResource}
+        disabled={!readyToSubmit}
         onClick={() => {
-          if (!selectedResourceId || !selectedSubResource) return;
-          onSubmit(selectedSubResource);
+          if (!readyToSubmit) return;
+          submitCallback();
         }}
       >
-        {intl.formatMessage({ defaultMessage: 'Select', description: 'Select button text' })}
+        {intl.formatMessage({ defaultMessage: 'Add Action', description: 'Add action button text' })}
       </PrimaryButton>
     </div>
   );
