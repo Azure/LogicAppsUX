@@ -620,6 +620,7 @@
   "YaFjJQ": "이 함수에 전달되는 배열 또는 개체에 포함된 모든 요소를 사용해서 단일 배열 또는 개체를 반환합니다. 이 함수에 대한 매개 변수는 개체 집합 또는 배열 집합(둘 중 하나만 포함)일 수 있습니다. 이름이 같은 두 개체가 최종 출력에 있는 경우 해당 이름의 마지막 개체가 최종 개체로 나타납니다.",
   "YfwZJO": "검색 팁",
   "Yh5OVd": "Custom value does not match one of the allowed types for this input",
+  "YlesUQ": "Your map is in perfect condition",
   "YoQara": "없음",
   "Yuu5CD": "축소",
   "Z9PWl/": "Retry Policy count is invalid (Must be from {min} to {max})",

@@ -620,6 +620,7 @@
   "YaFjJQ": "Vrátí jedno pole nebo objekt, kde všechny prvky jsou buď v poli, nebo objektu předávaném této funkci. Parametry pro tuto funkci můžou být buď sada objektů, nebo sada polí (ne kombinace obou). Pokud jsou v konečném výstupu dva objekty se stejným názvem, zahrne se do konečného objektu poslední objekt s tímto názvem.",
   "YfwZJO": "Tipy pro vyhledávání",
   "Yh5OVd": "Custom value does not match one of the allowed types for this input",
+  "YlesUQ": "Your map is in perfect condition",
   "YoQara": "Žádné",
   "Yuu5CD": "Oddálit",
   "Z9PWl/": "Retry Policy count is invalid (Must be from {min} to {max})",

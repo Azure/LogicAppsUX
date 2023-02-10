@@ -620,6 +620,7 @@
   "YaFjJQ": "Returnerar en enskild matris eller ett objekt med alla de element som finns i den matris eller det objekt som har skickats till den här funktionen. Funktionens parametrar kan antingen vara en uppsättning objekt eller en uppsättning matriser (inte en blandning av båda). Om det finns två objekt med samma namn i utdata, så visas det sista objektet med det namnet i det slutliga objektet.",
   "YfwZJO": "Söktips",
   "Yh5OVd": "Custom value does not match one of the allowed types for this input",
+  "YlesUQ": "Your map is in perfect condition",
   "YoQara": "Inget",
   "Yuu5CD": "Zooma ut",
   "Z9PWl/": "Retry Policy count is invalid (Must be from {min} to {max})",

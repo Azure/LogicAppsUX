@@ -620,6 +620,7 @@
   "YaFjJQ": "Retourne un unique tableau ou objet avec tous les éléments qui sont dans l'objet ou tableau transmis à cette fonction. Les paramètres de la fonction peuvent être un ensemble d'objets ou de tableaux (et non un mélange des deux). Si deux objets portent le même nom dans la sortie finale, le dernier objet avec ce nom s'affiche dans l'objet final.",
   "YfwZJO": "Astuces pour la recherche",
   "Yh5OVd": "Custom value does not match one of the allowed types for this input",
+  "YlesUQ": "Your map is in perfect condition",
   "YoQara": "Aucun",
   "Yuu5CD": "Zoom arrière",
   "Z9PWl/": "Retry Policy count is invalid (Must be from {min} to {max})",

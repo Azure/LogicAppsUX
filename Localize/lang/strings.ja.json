@@ -620,6 +620,7 @@
   "YaFjJQ": "この関数に渡されるアレイまたはオブジェクト内にあるすべての要素を含む単一のアレイまたはオブジェクトを返します。この関数のパラメーターには、一連のオブジェクトまたは一連のアレイを指定できます (混在させることはできません)。最終的な出力に同じ名前のオブジェクトが 2 つある場合は、その名前の付いた最後のオブジェクトが最終的なオブジェクトに表示されます。",
   "YfwZJO": "検索のヒント:",
   "Yh5OVd": "Custom value does not match one of the allowed types for this input",
+  "YlesUQ": "Your map is in perfect condition",
   "YoQara": "なし",
   "Yuu5CD": "縮小",
   "Z9PWl/": "Retry Policy count is invalid (Must be from {min} to {max})",
