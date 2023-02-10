@@ -11,9 +11,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
-type AzureResourceSelectionProps = {
+interface AzureResourceSelectionProps {
   operation: DiscoveryOperation<DiscoveryResultTypes>;
-};
+}
+
+interface AddResourceOperationParameters {
+  name: string;
+  swaggerParameters?: OpenAPIV2.Document;
+  presetParameterValues?: Record<string, any>;
+}
 
 export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   const { operation } = props;
@@ -63,13 +69,22 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   const isParallelBranch = useIsParallelBranch();
 
   const addResourceOperation = useCallback(
-    (name: string, swagger?: OpenAPIV2.Document) => {
-      console.log('addResourceOperation', name, swagger);
-      console.log('selected resources', selectedResources);
+    (props: AddResourceOperationParameters) => {
+      const { name, swaggerParameters, presetParameterValues } = props;
       const newNodeId = name.replaceAll(' ', '_');
-      dispatch(addOperation({ operation, relationshipIds, nodeId: newNodeId, isParallelBranch, isTrigger, swagger }));
+      dispatch(
+        addOperation({
+          operation,
+          relationshipIds,
+          nodeId: newNodeId,
+          isParallelBranch,
+          isTrigger,
+          swaggerParameters,
+          presetParameterValues,
+        })
+      );
     },
-    [dispatch, isParallelBranch, isTrigger, relationshipIds, operation, selectedResources]
+    [dispatch, isParallelBranch, isTrigger, relationshipIds, operation]
   );
 
   // Parses the swagger object to get the paths and methods in an array
@@ -93,9 +108,11 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           (apiManagement?: any) => ApiManagementService().fetchApisInApiM(apiManagement.id ?? ''),
         ]);
         setSubmitCallback(() => () => {
-          const newActionName = getResourceName(selectedResources[1]);
-          addResourceOperation(newActionName, selectedResources[1]);
-          // TODO: Add parameters from selected resources
+          addResourceOperation({
+            name: getResourceName(selectedResources[1]),
+            swaggerParameters: selectedResources[1],
+            // TODO: Add parameters from selected resources
+          });
         });
         break;
 
@@ -111,9 +128,10 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
               .then((swagger) => getOptionsFromPaths(swagger?.paths)),
         ]);
         setSubmitCallback(() => () => {
-          const newActionName = selectedResources[1]?.id;
-          addResourceOperation(newActionName);
-          // TODO: Add parameters from selected resources
+          addResourceOperation({
+            name: selectedResources[1]?.id,
+            // TODO: Add parameters from selected resources
+          });
         });
         break;
 
@@ -125,9 +143,12 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           (functionApp?: any) => FunctionService().fetchFunctionAppsFunctions(functionApp.id ?? ''),
         ]);
         setSubmitCallback(() => () => {
-          const newActionName = getResourceName(selectedResources[1]);
-          addResourceOperation(newActionName);
-          // TODO: Add parameters from selected resources
+          addResourceOperation({
+            name: getResourceName(selectedResources[1]),
+            presetParameterValues: {
+              'function.id': selectedResources[1].id,
+            },
+          });
         });
         break;
 
@@ -139,9 +160,13 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           (manualWorkflow?: any) => SearchService().getWorkflowTriggers(manualWorkflow.id ?? ''),
         ]);
         setSubmitCallback(() => () => {
-          const newActionName = getResourceName(selectedResources[0]);
-          addResourceOperation(newActionName);
-          // TODO: Add parameters from selected resources
+          addResourceOperation({
+            name: getResourceName(selectedResources[0]),
+            presetParameterValues: {
+              'host.triggerName': getResourceName(selectedResources[1]),
+              'host.workflow.id': selectedResources[0].id,
+            },
+          });
         });
         break;
 
@@ -153,9 +178,13 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           (batchWorkflow?: any) => SearchService().getWorkflowTriggers(batchWorkflow.id ?? ''),
         ]);
         setSubmitCallback(() => () => {
-          const newActionName = getResourceName(selectedResources[0]);
-          addResourceOperation(newActionName);
-          // TODO: Add parameters from selected resources
+          addResourceOperation({
+            name: getResourceName(selectedResources[0]),
+            presetParameterValues: {
+              'host.triggerName': getResourceName(selectedResources[1]),
+              'host.workflow.id': selectedResources[0].id,
+            },
+          });
         });
         break;
 

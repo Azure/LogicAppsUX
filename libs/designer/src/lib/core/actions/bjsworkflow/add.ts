@@ -13,7 +13,8 @@ import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
 import { isRootNodeInGraph } from '../../utils/graph';
-import { updateDynamicDataInNode } from '../../utils/parameters/helper';
+import { getParameterFromName, updateDynamicDataInNode } from '../../utils/parameters/helper';
+import { createLiteralValueSegment } from '../../utils/parameters/segment';
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
 import { setVariableMetadata, getVariableDeclarations, getAllVariables } from '../../utils/variables';
@@ -40,11 +41,12 @@ type AddOperationPayload = {
   nodeId: string;
   isParallelBranch?: boolean;
   isTrigger?: boolean;
-  swagger?: OpenAPIV2.Document;
+  swaggerParameters?: any;
+  presetParameterValues?: Record<string, any>;
 };
 
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
-  const { operation, nodeId: actionId, swagger } = payload;
+  const { operation, nodeId: actionId, swaggerParameters, presetParameterValues } = payload;
   if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
   let count = 1;
   let nodeId = actionId;
@@ -65,7 +67,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
   };
 
   dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
-  initializeOperationDetails(nodeId, nodeOperationInfo, getState as () => RootState, dispatch, swagger);
+  initializeOperationDetails(nodeId, nodeOperationInfo, getState as () => RootState, dispatch, swaggerParameters, presetParameterValues);
 
   // Update settings for children and parents
 
@@ -78,7 +80,8 @@ const initializeOperationDetails = async (
   operationInfo: NodeOperation,
   getState: () => RootState,
   dispatch: Dispatch,
-  _swagger?: OpenAPIV2.Document
+  swaggerParameters?: any,
+  parameterValues?: Record<string, any>
 ): Promise<void> => {
   const state = getState();
   const isTrigger = isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata);
@@ -101,13 +104,20 @@ const initializeOperationDetails = async (
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs);
 
     // If this is an apim operation, we need to pull inputs and outputs from the provided swagger
-    if (_swagger) {
-      console.log('### swagger: ', _swagger);
+    if (swaggerParameters) {
+      console.log('### swagger parameters:', swaggerParameters);
+    }
 
-      // nodeInputs = {...nodeInputs, ...swaggerInputs};
-      // inputDependencies = {...inputDependencies, ...swaggerInputDependencies};
-      // nodeOutputs = {...nodeOutputs, ...swaggerOutputs};
-      // outputDependencies = {...outputDependencies, ...swaggerOutputDependencies};
+    if (parameterValues) {
+      // For actions with selected Azure Resources
+      Object.entries(parameterValues).forEach(([parameterName, parameterValue]) => {
+        const value = [createLiteralValueSegment(parameterValue)];
+        const parameter = getParameterFromName(nodeInputs, parameterName);
+        if (parameter) {
+          parameter.value = value;
+          parameter.preservedValue = parameterValue;
+        }
+      });
     }
 
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
