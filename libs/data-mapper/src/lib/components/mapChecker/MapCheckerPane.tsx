@@ -1,8 +1,9 @@
 import { targetPrefix } from '../../constants/ReactFlowConstants';
 import { setCurrentTargetSchemaNode, setSelectedItem } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaNodeDictionary } from '../../models';
+import type { SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
+import { getConnectedTargetSchemaNodes } from '../../utils/Connection.Utils';
 import { iconForMapCheckerSeverity } from '../../utils/Icon.Utils';
 import {
   collectErrorsForMapChecker,
@@ -99,28 +100,33 @@ export const MapCheckerPane = ({ isMapCheckerOpen, closeMapChecker }: TargetSche
     description: 'Other section title',
   });
 
-  const onMapCheckerItemClick = (reactFlowId: string, _connections: ConnectionDictionary, targetSchemaDictionary: SchemaNodeDictionary) => {
+  const noItemsLoc = intl.formatMessage({
+    defaultMessage: 'Your map is in perfect condition',
+    description: 'Message displayed when map checker has no errors or warnings',
+  });
+
+  const onMapCheckerItemClick = (reactFlowId: string, connections: ConnectionDictionary, targetSchemaDictionary: SchemaNodeDictionary) => {
+    let destinationTargetNode: SchemaNodeExtended | undefined = undefined;
     if (reactFlowId.startsWith(targetPrefix)) {
-      const currentNode = targetSchemaDictionary[reactFlowId];
+      destinationTargetNode = targetSchemaDictionary[reactFlowId];
+    } else {
+      const targetNodes = getConnectedTargetSchemaNodes([connections[reactFlowId]], connections);
+      if (targetNodes.length > 0) {
+        // We could have a input end up at more than one target, so just pick the first to navigate to
+        destinationTargetNode = targetNodes[0];
+      }
+    }
+
+    if (destinationTargetNode) {
       // This is a leaf node, use the parent
-      if (currentNode.children.length === 0 && currentNode.parentKey) {
-        dispatch(setCurrentTargetSchemaNode(targetSchemaDictionary[`${targetPrefix}${currentNode.parentKey}`]));
+      if (destinationTargetNode.children.length === 0 && destinationTargetNode.parentKey) {
+        dispatch(setCurrentTargetSchemaNode(targetSchemaDictionary[`${targetPrefix}${destinationTargetNode.parentKey}`]));
       } else {
-        dispatch(setCurrentTargetSchemaNode(currentNode));
+        dispatch(setCurrentTargetSchemaNode(destinationTargetNode));
       }
     }
 
     dispatch(setSelectedItem(reactFlowId));
-
-    // TODO Indeterminate when the same function goes to multiple targets
-    /* TODO Function and Source schema errors
-    const connection = connections[reactFlowId];
-    if (connection) {
-      const connectionNode = connection.self.node;
-      if (isSchemaNodeExtended(connectionNode)) {
-
-      }
-    }*/
   };
 
   const mapErrorContentToElements = (elements: MapCheckerEntry[], severity: MapCheckerItemSeverity) => {
@@ -233,7 +239,13 @@ export const MapCheckerPane = ({ isMapCheckerOpen, closeMapChecker }: TargetSche
             )}
           </Accordion>
         ) : (
-          <Text>Map is in perfect condition</Text>
+          <Stack horizontalAlign="center" verticalAlign="center" style={{ height: '100%' }}>
+            <span role="img" aria-label="Clippy!" style={{ fontSize: 48, marginBottom: 24 }}>
+              📎
+            </span>
+
+            <Text>{noItemsLoc}</Text>
+          </Stack>
         )}
       </div>
     </div>

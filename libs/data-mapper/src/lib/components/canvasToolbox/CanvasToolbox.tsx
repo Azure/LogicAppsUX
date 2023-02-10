@@ -33,7 +33,7 @@ const generalToolboxPanelProps = {
   minHeight: '240px',
 } as FloatingPanelProps;
 
-interface CanvasToolboxProps {
+export interface CanvasToolboxProps {
   canvasBlockHeight: number;
 }
 
@@ -44,6 +44,7 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
 
   const toolboxTabToDisplay = useSelector((state: RootState) => state.dataMap.canvasToolboxTabToDisplay);
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
+  const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const currentSourceSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceSchemaNodes);
 
   const [sourceSchemaSearchTerm, setSourceSchemaSearchTerm] = useState<string>('');
@@ -124,6 +125,7 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
     // Search tree (maintain parent tree structure for matched nodes - returns whole tree if no/too-small search term)
     const newSourceSchemaTreeRoot: ITreeNode<SchemaNodeExtended> = searchSchemaTreeFromRoot(
       sourceSchema.schemaTreeRoot,
+      flattenedSourceSchema,
       sourceSchemaSearchTerm
     );
     newSourceSchemaTreeRoot.isExpanded = true;
@@ -135,7 +137,7 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
     schemaNameRoot.children = [newSourceSchemaTreeRoot];
 
     return schemaNameRoot;
-  }, [sourceSchema, sourceSchemaSearchTerm]);
+  }, [sourceSchema, flattenedSourceSchema, sourceSchemaSearchTerm]);
 
   const toolboxButtonPivotProps: ButtonPivotProps = useMemo(
     () => ({

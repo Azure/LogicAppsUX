@@ -147,6 +147,12 @@
       "value": "A bemenet átalakítása tömbbé."
     }
   ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Show raw outputs"
+    }
+  ],
   "/n13VL": [
     {
       "type": 0,
@@ -669,6 +675,20 @@
     {
       "type": 0,
       "value": "Triggerek"
+    }
+  ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
     }
   ],
   "3NhwIJ": [
@@ -2389,6 +2409,28 @@
       "value": "Parameters"
     }
   ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "The current map contains "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "JErLDT": [
     {
       "type": 0,
@@ -3393,6 +3435,12 @@
       "value": "6"
     }
   ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "issue"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3415,6 +3463,12 @@
     {
       "type": 0,
       "value": "Adjon meg egy tulajdonságtárat"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "issues"
     }
   ],
   "SKXopi": [
@@ -3649,12 +3703,6 @@
       "value": "(UTC-06:00) Húsvét-sziget"
     }
   ],
-  "UAwAAS": [
-    {
-      "type": 0,
-      "value": "Show inputs"
-    }
-  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3849,12 +3897,6 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az új tulajdonság neve."
-    }
-  ],
-  "WCrlES": [
-    {
-      "type": 0,
-      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -4159,6 +4201,12 @@
     {
       "type": 0,
       "value": "Custom value does not match one of the allowed types for this input"
+    }
+  ],
+  "YlesUQ": [
+    {
+      "type": 0,
+      "value": "Your map is in perfect condition"
     }
   ],
   "YoQara": [
@@ -6165,20 +6213,6 @@
       "value": "Az aszinkron válasz lehetővé teszi, hogy egy logikai alkalmazás „202 – Elfogadva” választ adjon, jelezve, hogy elfogadta és feldolgozza a kérést. A válasz tartalmaz egy helyfejlécet is, amely a végállapot beolvasására szolgál."
     }
   ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
-    }
-  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -6551,6 +6585,12 @@
       "value": "Egy egész számmal megadott óraszám hozzáadása az átadott sztring típusú időbélyeghez."
     }
   ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Show me"
+    }
+  ],
   "uXJdAh": [
     {
       "type": 0,
@@ -6905,6 +6945,12 @@
     {
       "type": 0,
       "value": "Küszöbérték"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Show raw inputs"
     }
   ],
   "xV/oyK": [

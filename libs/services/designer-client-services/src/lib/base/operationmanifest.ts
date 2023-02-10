@@ -113,7 +113,7 @@ const decrementvariable = 'decrementvariable';
 const appendtoarrayvariable = 'appendtoarrayvariable';
 const appendtostringvariable = 'appendtostringvariable';
 
-export const apiManagementConnectorId = 'connectionProviders/apiManagement';
+export const apiManagementConnectorId = 'connectionProviders/apiManagementOperation';
 export const azureFunctionConnectorId = 'connectionProviders/function';
 export const appServiceConnectorId = 'connectionProviders/appService';
 export const sendToBatchConnectorId = 'connectionProviders/batch';

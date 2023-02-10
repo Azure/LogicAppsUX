@@ -7,8 +7,8 @@ const iconUri =
 const brandColor = '#68217A';
 
 const connector = {
-  id: 'connectionProviders/apiManagement',
-  name: 'connectionProviders/apiManagement',
+  id: 'connectionProviders/apiManagementOperation',
+  name: 'connectionProviders/apiManagementOperation',
   properties: {
     displayName: 'Azure API Management',
     description: 'Azure API Management',

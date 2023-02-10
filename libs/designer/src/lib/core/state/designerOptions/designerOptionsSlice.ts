@@ -10,6 +10,7 @@ import {
   InitSearchService,
   InitOAuthService,
   InitWorkflowService,
+  InitHostService,
   InitApiManagementService,
   InitFunctionService,
   InitAppServiceService,
@@ -38,6 +39,7 @@ export const initializeServices = createAsyncThunk(
     functionService,
     appServiceService,
     workflowService,
+    hostService,
     apimService,
   }: ServiceOptions) => {
     const loggerServices: ILoggerService[] = [];
@@ -59,6 +61,10 @@ export const initializeServices = createAsyncThunk(
     if (apimService) InitApiManagementService(apimService);
     if (functionService) InitFunctionService(functionService);
     if (appServiceService) InitAppServiceService(appServiceService);
+
+    if (hostService) {
+      InitHostService(hostService);
+    }
 
     return true;
   }

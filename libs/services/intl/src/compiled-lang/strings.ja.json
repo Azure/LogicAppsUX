@@ -131,6 +131,12 @@
       "value": "入力をアレイに変換します"
     }
   ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Show raw outputs"
+    }
+  ],
   "/n13VL": [
     {
       "type": 0,
@@ -642,6 +648,20 @@
     {
       "type": 0,
       "value": "トリガー"
+    }
+  ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
     }
   ],
   "3NhwIJ": [
@@ -2292,6 +2312,28 @@
       "value": "Parameters"
     }
   ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "The current map contains "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "JErLDT": [
     {
       "type": 0,
@@ -3230,6 +3272,12 @@
       "value": "6"
     }
   ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "issue"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3252,6 +3300,12 @@
     {
       "type": 0,
       "value": "辞書を入力してください"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "issues"
     }
   ],
   "SKXopi": [
@@ -3486,12 +3540,6 @@
       "value": "(UTC-06:00) イースター島"
     }
   ],
-  "UAwAAS": [
-    {
-      "type": 0,
-      "value": "Show inputs"
-    }
-  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3686,12 +3734,6 @@
     {
       "type": 0,
       "value": "必須。新しいプロパティの名前。"
-    }
-  ],
-  "WCrlES": [
-    {
-      "type": 0,
-      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -3988,6 +4030,12 @@
     {
       "type": 0,
       "value": "Custom value does not match one of the allowed types for this input"
+    }
+  ],
+  "YlesUQ": [
+    {
+      "type": 0,
+      "value": "Your map is in perfect condition"
     }
   ],
   "YoQara": [
@@ -5900,20 +5948,6 @@
       "value": "非同期応答により、ロジック アプリは、処理要求が受理されたことを示す 202 (受理されました) で応答することができます。場所ヘッダーは、最終状態を取得するために提供されます。"
     }
   ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
-    }
-  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -6286,6 +6320,12 @@
       "value": "渡された文字列のタイムスタンプに時間数を表す整数を加算します"
     }
   ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Show me"
+    }
+  ],
   "uXJdAh": [
     {
       "type": 0,
@@ -6636,6 +6676,12 @@
     {
       "type": 0,
       "value": "しきい値"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Show raw inputs"
     }
   ],
   "xV/oyK": [

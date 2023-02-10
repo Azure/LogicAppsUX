@@ -104,6 +104,10 @@ import {
 } from '@microsoft/parsers-logic-apps';
 import type { Exception, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import {
+  deleteObjectProperties,
+  deleteObjectProperty,
+  getObjectPropertyValue,
+  safeSetObjectPropertyValue,
   isUndefinedOrEmptyString,
   aggregate,
   clone,
@@ -1816,7 +1820,7 @@ export function getGroupAndParameterFromParameterKey(
   return undefined;
 }
 
-export function getInputsValueFromDefinitionForManifest(inputsLocation: string[], stepDefinition: any): any {
+export function getInputsValueFromDefinitionForManifest(inputsLocation: string[], manifest: OperationManifest, stepDefinition: any): any {
   let inputsValue = stepDefinition;
 
   for (const property of inputsLocation) {
@@ -1825,7 +1829,38 @@ export function getInputsValueFromDefinitionForManifest(inputsLocation: string[]
     inputsValue = property === '[*]' ? inputsValue[0] : getPropertyValue(inputsValue, property);
   }
 
-  return inputsValue;
+  return swapInputsValueIfNeeded(inputsValue, manifest);
+}
+
+function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) {
+  const swapMap = manifest.properties.inputsLocationSwapMap;
+  if (!swapMap?.length) {
+    return inputsValue;
+  }
+
+  let finalValue = clone(inputsValue);
+  let propertiesToRetain: string[] = [];
+  for (const { source, target } of swapMap) {
+    const value = clone(getObjectPropertyValue(finalValue, target));
+    if (!target.length) {
+      propertiesToRetain = Object.keys(manifest.properties.inputs);
+      deleteObjectProperties(
+        value,
+        propertiesToRetain.map((key: string) => [key])
+      );
+
+      for (const key of Object.keys(finalValue)) {
+        if (!propertiesToRetain.includes(key)) {
+          deleteObjectProperty(finalValue, [key]);
+        }
+      }
+    }
+
+    deleteObjectProperty(finalValue, target);
+    finalValue = !source.length ? { ...finalValue, ...value } : safeSetObjectPropertyValue(finalValue, source, value);
+  }
+
+  return finalValue;
 }
 
 export function escapeSchemaProperties(schemaProperties: Record<string, any>): Record<string, any> {

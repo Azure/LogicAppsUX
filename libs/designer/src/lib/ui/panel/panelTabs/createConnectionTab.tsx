@@ -3,6 +3,7 @@ import type { AppDispatch, RootState } from '../../../core';
 import { getConnectionMetadata, needsOAuth, updateNodeConnection } from '../../../core/actions/bjsworkflow/connections';
 import { getUniqueConnectionName } from '../../../core/queries/connections';
 import { useConnectorByNodeId, useGateways, useSubscriptions } from '../../../core/state/connection/connectionSelector';
+import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useOperationInfo, useOperationManifest } from '../../../core/state/selectors/actionMetadataSelector';
@@ -27,6 +28,7 @@ const CreateConnectionTab = () => {
   const { data: operationManifest } = useOperationManifest(operationInfo);
   const connectionMetadata = getConnectionMetadata(operationManifest);
   const hasExistingConnection = useSelector((state: RootState) => !!state.connections.connectionsMapping[nodeId]);
+  const isMonitoringView = useMonitoringView();
 
   const subscriptionsQuery = useSubscriptions();
   const subscriptions = useMemo(() => subscriptionsQuery.data, [subscriptionsQuery.data]);
@@ -147,7 +149,7 @@ const CreateConnectionTab = () => {
 
         if (connection) {
           applyNewConnection(connection, newName);
-          dispatch(showDefaultTabs());
+          dispatch(showDefaultTabs({ isMonitoringView }));
         } else if (err) {
           setErrorMessage(err);
         }
@@ -166,6 +168,7 @@ const CreateConnectionTab = () => {
       dispatch,
       operationManifest?.properties.connection?.type,
       selectedSubResource,
+      isMonitoringView,
     ]
   );
 

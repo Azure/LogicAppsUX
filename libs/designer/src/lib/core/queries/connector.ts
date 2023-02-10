@@ -108,6 +108,7 @@ export const getDynamicSchemaProperties = async (
       connectorId.toLowerCase(),
       operationId.toLowerCase(),
       getParametersKey(parameters),
+      `isInput:${!!dynamicState?.isInput}`,
     ],
     () => service.getDynamicSchema(connectionId, connectorId, operationId, parameterAlias, parameters, dynamicState)
   );

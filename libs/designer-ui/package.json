@@ -1,7 +1,11 @@
 {
   "name": "@microsoft/designer-ui",
-  "version": "0.2.68",
+  "version": "0.2.73",
   "scripts": {
     "yalcpush": "yalc push ../../dist/libs/designer-ui"
+  },
+  "peerDependencies": {
+    "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
   }
 }

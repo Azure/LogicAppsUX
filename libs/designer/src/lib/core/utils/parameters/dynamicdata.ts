@@ -241,7 +241,12 @@ export function getDynamicOutputsFromSchema(schema: OpenAPIV2.SchemaObject, dyna
   const schemaProperties = new SchemaProcessor(processorOptions).getSchemaProperties(schema);
   const parameterLocation = equals(source, OutputSource.Outputs) ? OutputSource.Outputs : ParameterLocations.Body;
 
-  const outputParameters = schemaProperties.map((item) => ({ ...item, source, key: `${parameterLocation}.${item.key}` }));
+  let outputParameters = schemaProperties.map((item) => ({ ...item, source, key: `${parameterLocation}.${item.key}` }));
+
+  if (outputParameters.length > 1) {
+    outputParameters = outputParameters.filter((parameter) => parameter.key !== 'outputs.$');
+  }
+
   const outputs = map(outputParameters, OutputMapKey);
 
   return Object.keys(outputs).reduce(
@@ -371,7 +376,11 @@ function getManifestBasedInputParameters(
   operationDefinition: any
 ): InputParameter[] {
   let result: InputParameter[] = [];
-  const stepInputs = getInputsValueFromDefinitionForManifest(manifest.properties.inputsLocation ?? ['inputs'], operationDefinition);
+  const stepInputs = getInputsValueFromDefinitionForManifest(
+    manifest.properties.inputsLocation ?? ['inputs'],
+    manifest,
+    operationDefinition
+  );
   const stepInputsAreNonEmptyObject = !isNullOrEmpty(stepInputs) && isObject(stepInputs);
 
   // Mark all of the known inputs as seen.

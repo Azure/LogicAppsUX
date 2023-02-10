@@ -147,6 +147,12 @@
       "value": "Convertir l'entrée en tableau"
     }
   ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Show raw outputs"
+    }
+  ],
   "/n13VL": [
     {
       "type": 0,
@@ -680,6 +686,20 @@
     {
       "type": 0,
       "value": "Déclencheurs"
+    }
+  ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
     }
   ],
   "3NhwIJ": [
@@ -2414,6 +2434,28 @@
       "value": "Parameters"
     }
   ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "The current map contains "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "JErLDT": [
     {
       "type": 0,
@@ -3428,6 +3470,12 @@
       "value": "6"
     }
   ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "issue"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3450,6 +3498,12 @@
     {
       "type": 0,
       "value": "Entrer un dictionnaire"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "issues"
     }
   ],
   "SKXopi": [
@@ -3684,12 +3738,6 @@
       "value": "(UTC-06:00) Île de Pâques"
     }
   ],
-  "UAwAAS": [
-    {
-      "type": 0,
-      "value": "Show inputs"
-    }
-  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3884,12 +3932,6 @@
     {
       "type": 0,
       "value": "Obligatoire. Nom de la nouvelle propriété."
-    }
-  ],
-  "WCrlES": [
-    {
-      "type": 0,
-      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -4186,6 +4228,12 @@
     {
       "type": 0,
       "value": "Custom value does not match one of the allowed types for this input"
+    }
+  ],
+  "YlesUQ": [
+    {
+      "type": 0,
+      "value": "Your map is in perfect condition"
     }
   ],
   "YoQara": [
@@ -6182,20 +6230,6 @@
       "value": "Une réponse asynchrone permet à une application logique de répondre avec un état 202 (accepté) qui indique que le traitement de la demande a été accepté. Un en-tête d'emplacement est fourni pour récupérer l'état final."
     }
   ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
-    }
-  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -6568,6 +6602,12 @@
       "value": "Ajoute un nombre entier d'heures à un horodateur de chaîne transmis"
     }
   ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Show me"
+    }
+  ],
   "uXJdAh": [
     {
       "type": 0,
@@ -6922,6 +6962,12 @@
     {
       "type": 0,
       "value": "Seuil"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Show raw inputs"
     }
   ],
   "xV/oyK": [

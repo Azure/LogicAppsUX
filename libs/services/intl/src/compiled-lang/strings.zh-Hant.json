@@ -131,6 +131,12 @@
       "value": "將輸入轉換為陣列"
     }
   ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Show raw outputs"
+    }
+  ],
   "/n13VL": [
     {
       "type": 0,
@@ -642,6 +648,20 @@
     {
       "type": 0,
       "value": "觸發程序"
+    }
+  ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
     }
   ],
   "3NhwIJ": [
@@ -2292,6 +2312,28 @@
       "value": "Parameters"
     }
   ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "The current map contains "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "JErLDT": [
     {
       "type": 0,
@@ -3230,6 +3272,12 @@
       "value": "6"
     }
   ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "issue"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3252,6 +3300,12 @@
     {
       "type": 0,
       "value": "輸入字典"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "issues"
     }
   ],
   "SKXopi": [
@@ -3486,12 +3540,6 @@
       "value": "(UTC-06:00) 伊斯特島"
     }
   ],
-  "UAwAAS": [
-    {
-      "type": 0,
-      "value": "Show inputs"
-    }
-  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3686,12 +3734,6 @@
     {
       "type": 0,
       "value": "必要。新屬性的名稱。"
-    }
-  ],
-  "WCrlES": [
-    {
-      "type": 0,
-      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -3988,6 +4030,12 @@
     {
       "type": 0,
       "value": "Custom value does not match one of the allowed types for this input"
+    }
+  ],
+  "YlesUQ": [
+    {
+      "type": 0,
+      "value": "Your map is in perfect condition"
     }
   ],
   "YoQara": [
@@ -5912,20 +5960,6 @@
       "value": "非同步回應可讓邏輯應用程式回應 202 (已接受)，來表示已接受該要求進行處理。將會提供位置標頭來擷取最終狀態。"
     }
   ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
-    }
-  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -6298,6 +6332,12 @@
       "value": "將整數時數新增至傳入的字串時間戳記中"
     }
   ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Show me"
+    }
+  ],
   "uXJdAh": [
     {
       "type": 0,
@@ -6652,6 +6692,12 @@
     {
       "type": 0,
       "value": "閾值"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Show raw inputs"
     }
   ],
   "xV/oyK": [
