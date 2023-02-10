@@ -4,6 +4,7 @@ import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import { SchemaNodeProperty, SchemaType } from '../models';
 import type { FunctionData } from '../models/Function';
+import Fuse from 'fuse.js';
 
 export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {
   const extendedSchema: SchemaExtended = {
@@ -101,18 +102,38 @@ export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended):
 // Returns nodes that include the search key in their node.key (while maintaining the tree/schema's structure)
 export const searchSchemaTreeFromRoot = (
   schemaTreeRoot: ITreeNode<SchemaNodeExtended>,
+  flattenedSchema: SchemaNodeDictionary,
   nodeKeySearchTerm?: string,
   minSearchCharacters = 2
 ): ITreeNode<SchemaNodeExtended> => {
+  // Verify minimum conditions to perform a search in the first place
   if (!nodeKeySearchTerm || nodeKeySearchTerm.length < minSearchCharacters) {
     return { ...schemaTreeRoot };
   }
 
+  const fuseSchemaTreeSearchOptions = {
+    includeScore: true,
+    minMatchCharLength: minSearchCharacters,
+    includeMatches: true,
+    threshold: 0.4,
+    keys: ['fullName'],
+  };
+
+  // Fuzzy search against flattened schema tree to build a dictionary of matches
+  const fuse = new Fuse(Object.values(flattenedSchema), fuseSchemaTreeSearchOptions);
+  const matchedSchemaNodesDict: { [key: string]: true } = {};
+
+  fuse.search(nodeKeySearchTerm).forEach((result) => {
+    matchedSchemaNodesDict[result.item.key] = true;
+  });
+
+  // Recurse through schema tree, adding children that match the criteria
   const searchChildren = (result: ITreeNode<SchemaNodeExtended>[], node: ITreeNode<SchemaNodeExtended>) => {
-    if (node.key.toString().toLowerCase().includes(nodeKeySearchTerm.toLowerCase())) {
+    if (matchedSchemaNodesDict[node.key]) {
       result.push({ ...node });
     } else if (node.children && node.children.length > 0) {
       const childNodes = node.children.reduce(searchChildren, []);
+
       if (childNodes.length) {
         result.push({ ...node, isExpanded: true, children: childNodes } as ITreeNode<SchemaNodeExtended>);
       }
