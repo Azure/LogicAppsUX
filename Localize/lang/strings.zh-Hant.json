@@ -620,6 +620,7 @@
   "YaFjJQ": "傳回單一陣列或物件，其於陣列或物件中的所有元素均會傳入此函式。函式的參數可以是一組物件，也可以是一組陣列 (但不可兩者混合)。若兩個物件具有相同的名稱，則在最終物件中會出現該名稱的最後一個物件。",
   "YfwZJO": "搜尋秘訣",
   "Yh5OVd": "Custom value does not match one of the allowed types for this input",
+  "YlesUQ": "Your map is in perfect condition",
   "YoQara": "無",
   "Yuu5CD": "縮小",
   "Z9PWl/": "Retry Policy count is invalid (Must be from {min} to {max})",

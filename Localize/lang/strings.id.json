@@ -620,6 +620,7 @@
   "YaFjJQ": "Mengembalikan array tunggal atau objek tunggal dengan semua elemen yang ada dalam array atau objek yang dilewati. Parameter untuk fungsi dapat berupa sekumpulan objek atau sekumpulan susunan (bukan gabungan keduanya). Jika ada dua objek dengan nama yang sama, objek terakhir dengan nama tersebut muncul di objek akhir.",
   "YfwZJO": "Tips Pencarian",
   "Yh5OVd": "Custom value does not match one of the allowed types for this input",
+  "YlesUQ": "Your map is in perfect condition",
   "YoQara": "Tidak ada",
   "Yuu5CD": "Perkecil tampilan",
   "Z9PWl/": "Retry Policy count is invalid (Must be from {min} to {max})",

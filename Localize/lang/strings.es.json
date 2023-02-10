@@ -620,6 +620,7 @@
   "YaFjJQ": "Devuelve una matriz o un objeto simple con todos los elementos que hay en dicha matriz u objeto pasados a esta función. Los parámetros de la función pueden ser un conjunto de objetos o un conjunto de matrices (y no una combinación de ellos). Si hay dos objetos con el mismo nombre en la salida final, el último objeto con ese nombre es el que aparecerá en el objeto final.",
   "YfwZJO": "Sugerencias de búsqueda",
   "Yh5OVd": "Custom value does not match one of the allowed types for this input",
+  "YlesUQ": "Your map is in perfect condition",
   "YoQara": "Ninguno",
   "Yuu5CD": "Alejar",
   "Z9PWl/": "Retry Policy count is invalid (Must be from {min} to {max})",

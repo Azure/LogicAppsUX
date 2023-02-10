@@ -620,6 +620,7 @@
   "YaFjJQ": "Restituisce un singolo oggetto o matrice con tutti gli elementi inclusi nella matrice o nell'oggetto passato a questa funzione. I parametri per la funzione possono essere costituiti da un set di oggetti o un set di matrici, ma non da una combinazione di entrambi. Se nell'output finale sono presenti due oggetti con lo stesso nome, nell'oggetto finale sarà visualizzato l'ultimo oggetto con tale nome.",
   "YfwZJO": "Suggerimenti per la ricerca",
   "Yh5OVd": "Custom value does not match one of the allowed types for this input",
+  "YlesUQ": "Your map is in perfect condition",
   "YoQara": "Nessuno",
   "Yuu5CD": "Zoom indietro",
   "Z9PWl/": "Retry Policy count is invalid (Must be from {min} to {max})",
