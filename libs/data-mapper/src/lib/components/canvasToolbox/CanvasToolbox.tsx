@@ -33,7 +33,7 @@ const generalToolboxPanelProps = {
   minHeight: '240px',
 } as FloatingPanelProps;
 
-interface CanvasToolboxProps {
+export interface CanvasToolboxProps {
   canvasBlockHeight: number;
 }
 
