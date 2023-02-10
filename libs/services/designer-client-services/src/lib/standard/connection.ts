@@ -605,22 +605,19 @@ function convertToApimConnectionsData(
   connectionInfo: ConnectionCreationInfo
 ): ConnectionAndAppSetting<APIManagementConnectionModel> {
   const { displayName, connectionParameters } = connectionInfo;
-  const subscriptionKey = connectionParameters?.['subscripitonKey'];
-  const functionAppKey = subscriptionKey.value;
+  const subscriptionKey = connectionParameters?.['subscriptionKey'];
   const appSettingName = `${escapeSpecialChars(connectionKey)}_SubscriptionKey`;
-
-  subscriptionKey.value = `@appsetting('${appSettingName}')`;
 
   return {
     connectionKey,
     connectionData: {
       apiId: connectionParameters?.['apiId'],
       baseUrl: connectionParameters?.['baseUrl'],
-      subscriptionKey,
+      subscriptionKey: `@appsetting('${appSettingName}')`,
       authentication: connectionParameters?.['authentication'],
       displayName,
     },
-    settings: { [appSettingName]: functionAppKey },
+    settings: { [appSettingName]: subscriptionKey },
     pathLocation: [apimLocation],
   };
 }
