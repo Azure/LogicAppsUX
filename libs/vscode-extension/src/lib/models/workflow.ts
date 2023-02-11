@@ -10,7 +10,7 @@ export interface ILocalSettingsJson {
 
 export interface IDesignerPanelMetadata {
   appSettingNames?: string[];
-  codelessApp: CodelessApp;
+  standardApp: StandardApp;
   scriptPath: string;
   connectionsData: string;
   parametersData: Record<string, Parameter>;
@@ -23,7 +23,7 @@ export interface IDesignerPanelMetadata {
   accessToken?: string;
 }
 
-export interface CodelessApp {
+export interface StandardApp {
   statelessRunMode?: string;
   definition: LogicAppsV2.WorkflowDefinition;
   name?: string;

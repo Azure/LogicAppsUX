@@ -1,4 +1,5 @@
 import { HttpClient } from './httpClient';
+import { resolveConnectionsReferences } from './utilities/workflow';
 import {
   StandardConnectionService,
   StandardConnectorService,
@@ -9,6 +10,7 @@ import {
 } from '@microsoft/designer-client-services-logic-apps';
 import type { IApiHubServiceDetails } from '@microsoft/designer-client-services-logic-apps';
 import { ResourceIdentityType, HTTP_METHODS } from '@microsoft/utils-logic-apps';
+import type { ConnectionsData } from '@microsoft/vscode-extension';
 
 const httpClient = new HttpClient();
 
@@ -16,17 +18,29 @@ export const getDesignerServices = (
   baseUrl: string,
   apiVersion: string,
   apiHubServiceDetails: IApiHubServiceDetails,
-  isLocal: boolean
+  tenantId: string | undefined,
+  isLocal: boolean,
+  connectionData: ConnectionsData,
+  appSettings: Record<string, string>,
+  vscode: any
 ): any => {
+  console.log(vscode);
   const connectionService = new StandardConnectionService({
     baseUrl,
     apiVersion,
     httpClient,
     apiHubServiceDetails,
+    tenantId,
     workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
-    readConnections: () => Promise.resolve({}),
+    readConnections: () => Promise.resolve(connectionData),
+    // writeConnections: (connectionAndSetting: ConnectionAndAppSetting) => {
+    //   return vscode.postMessage({
+    //     command: 'AddConnection',
+    //     connectionData,
+    //   });
+    // },
   });
-
+  console.log(connectionService);
   const connectorService = new StandardConnectorService({
     apiVersion,
     baseUrl,
@@ -78,7 +92,25 @@ export const getDesignerServices = (
         operationId: 'SwiftEncode',
       },
     ],
-    getConfiguration: () => Promise.resolve({}),
+    getConfiguration: async (connectionId: string): Promise<any> => {
+      if (!connectionId) {
+        return Promise.resolve();
+      }
+
+      const connectionName = connectionId.split('/').splice(-1)[0];
+      const connectionInfo = connectionData?.serviceProviderConnections?.[connectionName];
+
+      if (connectionInfo) {
+        const resolvedConnectionInfo = resolveConnectionsReferences(JSON.stringify(connectionInfo), {}, appSettings);
+        delete resolvedConnectionInfo.displayName;
+
+        return {
+          connection: resolvedConnectionInfo,
+        };
+      }
+
+      return undefined;
+    },
     schemaClient: {
       getWorkflowSwagger: () => Promise.resolve({}),
     },

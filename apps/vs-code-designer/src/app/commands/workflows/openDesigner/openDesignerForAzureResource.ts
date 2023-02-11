@@ -5,7 +5,7 @@ import type { RemoteWorkflowTreeItem } from '../../../tree/remoteWorkflowsTree/R
 import {
   removeWebviewPanelFromCache,
   cacheWebviewPanel,
-  getCodelessAppData,
+  getStandardAppData,
   getWorkflowManagementBaseURI,
 } from '../../../utils/codeless/common';
 import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationToken';
@@ -77,7 +77,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
           command: ExtensionCommand.initialize_frame,
           data: {
             panelMetadata: this.panelMetadata,
-            connectionReferences: this.connectionReferences,
+            connectionData: this.connectionData,
             baseUrl: this.baseUrl,
             apiVersion: this.apiVersion,
             apiHubServiceDetails: this.apiHubServiceDetails,
@@ -109,10 +109,11 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
         subscriptionId: this.node.subscription.subscriptionId,
         location: this.normalizeLocation(this.node?.parent?.parent?.site.location),
         workflowManagementBaseUrl: this.node?.parent?.subscription?.environment?.resourceManagerEndpointUrl,
+        tenantId: this.node?.parent?.subscription?.tenantId,
       },
       workflowDetails: await this.node.getChildWorkflows(this.context),
       artifacts: await this.node.getArtifacts(),
-      codelessApp: getCodelessAppData(this.workflowName, this.workflow, parameters),
+      standardApp: getStandardAppData(this.workflowName, this.workflow, parameters),
     };
   }
 

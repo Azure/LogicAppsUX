@@ -1,4 +1,6 @@
 import { connectionsFileName } from '../../../constants';
+// import { localize } from '../../../localize';
+// import { isCSharpProject } from '../../commands/initProjectForVSCode/detectProjectLanguage';
 import type { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
 import { addOrUpdateLocalAppSettings } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
@@ -22,6 +24,8 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as requestP from 'request-promise';
 
+// import * as vscode from 'vscode';
+
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
   const projectRoot: string = await getFunctionProjectRoot(context, workflowFilePath);
   return getConnectionsJson(projectRoot);
@@ -44,6 +48,20 @@ export async function getConnectionsJson(projectRoot: string): Promise<string> {
   return '';
 }
 
+// export async function addConnectionData(
+//   context: IActionContext,
+//   filePath: string,
+//   connectionAndSetting: ConnectionAndSettings
+// ): Promise<void> {
+//   const projectPath = await getFunctionProjectRoot(context, filePath);
+
+//   await addConnectionDataInJson(context, projectPath!, connectionAndSetting);
+
+//   const { settings } = connectionAndSetting;
+//   await addOrUpdateLocalAppSettings(context, projectPath!, settings);
+//   await vscode.window.showInformationMessage(localize('azureFunctions.addConnection', 'Connection added.'));
+// }
+
 export async function getFunctionProjectRoot(context: IActionContext, workflowFilePath: string): Promise<string> {
   const workspaceFolder = nonNullValue(getContainingWorkspace(workflowFilePath), 'workspaceFolder');
   const workspacePath: string = workspaceFolder.uri.fsPath;
@@ -56,6 +74,43 @@ export async function getFunctionProjectRoot(context: IActionContext, workflowFi
 
   return projectRoot;
 }
+
+// async function addConnectionDataInJson(
+//   context: IActionContext,
+//   functionAppPath: string,
+//   connectionAndSetting: ConnectionAndSettings
+// ): Promise<void> {
+//   const connectionsFilePath = path.join(functionAppPath, connectionsFileName);
+//   const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);
+
+//   const connectionsJsonString = await getConnectionsJson(functionAppPath);
+//   const connectionsJson = connectionsJsonString === '' ? {} : JSON.parse(connectionsJsonString);
+
+//   const { connectionData, connectionKey, pathLocation } = connectionAndSetting;
+
+//   let pathToSetConnectionsData = connectionsJson;
+
+//   for (const path of pathLocation) {
+//     if (!pathToSetConnectionsData[path]) {
+//       pathToSetConnectionsData[path] = {};
+//     }
+
+//     pathToSetConnectionsData = pathToSetConnectionsData[path];
+//   }
+
+//   if (pathToSetConnectionsData && pathToSetConnectionsData[connectionKey]) {
+//     const message: string = localize('ConnectionKeyAlreadyExist', "Connection key '{0}' already exists.", connectionKey);
+//     await vscode.window.showErrorMessage(message, localize('OK', 'OK'));
+//     return;
+//   }
+
+//   pathToSetConnectionsData[connectionKey] = connectionData;
+//   await writeFormattedJson(connectionsFilePath, connectionsJson);
+
+//   if (!connectionsFileExists && (await isCSharpProject(context, functionAppPath))) {
+//     await addNewFileInCSharpProject(context, connectionsFileName, functionAppPath);
+//   }
+// }
 
 async function getConnectionReference(
   referenceKey: string,

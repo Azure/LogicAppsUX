@@ -39,6 +39,13 @@ export interface ServiceProviderConnectionModel {
   displayName?: string;
 }
 
+export interface ConnectionAndAppSetting {
+  connectionKey: string;
+  connectionData: ServiceProviderConnectionModel | FunctionConnectionModel;
+  settings: Record<string, string>;
+  pathLocation: string[];
+}
+
 export interface ConnectionsData {
   functionConnections?: Record<string, FunctionConnectionModel>;
   managedApiConnections?: Record<string, ConnectionReferenceModel>;

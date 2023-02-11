@@ -1,25 +1,25 @@
 import type { IApiHubServiceDetails } from '@microsoft/designer-client-services-logic-apps';
-import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
-import type { ICallbackUrlResponse, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
+import type { ConnectionsData, ICallbackUrlResponse, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface designerState {
   panelMetaData: IDesignerPanelMetadata | null;
-  connectionReferences: ConnectionReferences;
+  connectionData: ConnectionsData;
   baseUrl: string;
   apiVersion: string;
   apiHubServiceDetails: IApiHubServiceDetails;
   readOnly: boolean;
   isLocal: boolean;
   callbackInfo: ICallbackUrlResponse;
+  tenantId: string;
 }
 
 const initialState: designerState = {
   panelMetaData: null,
   baseUrl: '/url',
   apiVersion: '2018-11-01',
-  connectionReferences: {},
+  connectionData: {},
   apiHubServiceDetails: {
     apiVersion: '2018-07-01-preview',
     baseUrl: '/url',
@@ -27,12 +27,13 @@ const initialState: designerState = {
     resourceGroup: '',
     location: '',
   },
-  readOnly: true,
+  readOnly: false,
   isLocal: true,
   callbackInfo: {
     value: '',
     method: '',
   },
+  tenantId: '',
 };
 
 export const designerSlice = createSlice({
@@ -40,19 +41,18 @@ export const designerSlice = createSlice({
   initialState,
   reducers: {
     initializeDesigner: (state, action: PayloadAction<any>) => {
-      const { panelMetadata, connectionReferences, baseUrl, apiVersion, apiHubServiceDetails, readOnly, isLocal } = action.payload;
-
+      const { panelMetadata, connectionData, baseUrl, apiVersion, apiHubServiceDetails, readOnly, isLocal } = action.payload;
       state.panelMetaData = panelMetadata;
-      state.connectionReferences = connectionReferences;
+      state.connectionData = connectionData;
       state.baseUrl = baseUrl;
       state.apiVersion = apiVersion;
       state.apiHubServiceDetails = apiHubServiceDetails;
       state.readOnly = readOnly;
       state.isLocal = isLocal;
+      state.tenantId = apiHubServiceDetails?.tenantId;
     },
     updateCallbackUrl: (state, action: PayloadAction<any>) => {
       const { callbackInfo } = action.payload;
-
       state.callbackInfo = callbackInfo;
     },
   },

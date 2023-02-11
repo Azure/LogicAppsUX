@@ -6,7 +6,7 @@ import {
   cacheWebviewPanel,
   getArtifactsInLocalProject,
   getAzureConnectorDetailsForLocalProject,
-  getCodelessAppData,
+  getStandardAppData,
   removeWebviewPanelFromCache,
 } from '../../../utils/codeless/common';
 import {
@@ -108,7 +108,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           command: ExtensionCommand.initialize_frame,
           data: {
             panelMetadata: this.panelMetadata,
-            connectionReferences: this.connectionReferences,
+            connectionData: this.connectionData,
             baseUrl: this.baseUrl,
             apiVersion: this.apiVersion,
             apiHubServiceDetails: this.apiHubServiceDetails,
@@ -324,7 +324,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     return {
       appSettingNames: Object.keys(localSettings),
-      codelessApp: getCodelessAppData(this.workflowName, workflowContent, parametersData),
+      standardApp: getStandardAppData(this.workflowName, workflowContent, parametersData),
       scriptPath: this.panel.webview.asWebviewUri(Uri.file(path.join(ext.context.extensionPath, 'dist', 'designer'))).toString(),
       connectionsData,
       parametersData,

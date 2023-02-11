@@ -20,7 +20,7 @@ import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import type {
   IWorkflowFileContent,
   Parameter,
-  CodelessApp,
+  StandardApp,
   WorkflowParameter,
   Artifacts,
   AzureConnectorDetails,
@@ -52,11 +52,11 @@ export function removeWebviewPanelFromCache(category: string, name: string): voi
   }
 }
 
-export function getCodelessAppData(
+export function getStandardAppData(
   workflowName: string,
   workflow: IWorkflowFileContent,
   parameters: Record<string, Parameter>
-): CodelessApp {
+): StandardApp {
   const { definition, kind, runtimeConfiguration } = workflow;
   const statelessRunMode = runtimeConfiguration && runtimeConfiguration.statelessRunMode ? runtimeConfiguration.statelessRunMode : '';
   const operationOptions = runtimeConfiguration && runtimeConfiguration.operationOptions ? runtimeConfiguration.operationOptions : '';
