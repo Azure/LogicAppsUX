@@ -10,6 +10,7 @@ export enum ExtensionCommand {
   add_status = 'add-status',
   set_final_status = 'set-final-status',
   save = 'Save',
+  addConnection = 'add-connection',
   getCallbackUrl = 'GetCallbackUrl',
   receiveCallback = 'ReceiveCallback',
 }

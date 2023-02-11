@@ -10,6 +10,7 @@ import {
   removeWebviewPanelFromCache,
 } from '../../../utils/codeless/common';
 import {
+  addConnectionData,
   containsApiHubConnectionReference,
   getConnectionsAndSettingsToUpdate,
   getConnectionsFromFile,
@@ -127,6 +128,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           this.panelMetadata.azureDetails?.workflowManagementBaseUrl
         );
         await this.validateWorkflow(this.panelMetadata.workflowContent);
+        break;
+      }
+      case ExtensionCommand.addConnection: {
+        await addConnectionData(this.context, this.workflowFilePath, msg.connectionData);
         break;
       }
       default:

@@ -10,7 +10,8 @@ import {
 } from '@microsoft/designer-client-services-logic-apps';
 import type { IApiHubServiceDetails } from '@microsoft/designer-client-services-logic-apps';
 import { ResourceIdentityType, HTTP_METHODS } from '@microsoft/utils-logic-apps';
-import type { ConnectionsData } from '@microsoft/vscode-extension';
+import type { ConnectionAndAppSetting, ConnectionsData } from '@microsoft/vscode-extension';
+import { ExtensionCommand } from '@microsoft/vscode-extension';
 
 const httpClient = new HttpClient();
 
@@ -24,7 +25,6 @@ export const getDesignerServices = (
   appSettings: Record<string, string>,
   vscode: any
 ): any => {
-  console.log(vscode);
   const connectionService = new StandardConnectionService({
     baseUrl,
     apiVersion,
@@ -33,12 +33,12 @@ export const getDesignerServices = (
     tenantId,
     workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
     readConnections: () => Promise.resolve(connectionData),
-    // writeConnections: (connectionAndSetting: ConnectionAndAppSetting) => {
-    //   return vscode.postMessage({
-    //     command: 'AddConnection',
-    //     connectionData,
-    //   });
-    // },
+    writeConnections: (connectionAndSetting: ConnectionAndAppSetting) => {
+      return vscode.postMessage({
+        command: ExtensionCommand.addConnection,
+        connectionAndSetting,
+      });
+    },
   });
   console.log(connectionService);
   const connectorService = new StandardConnectorService({
