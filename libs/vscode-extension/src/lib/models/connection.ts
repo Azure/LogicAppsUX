@@ -90,3 +90,12 @@ export interface ConnectionStrings {
   azureWebJobsDashboardValue: string;
   websiteContentAzureFileValue: string;
 }
+
+export interface FileSystemConnectionInfo {
+  connectionParametersSet?: any;
+  connectionParameters?: Record<string, any>;
+  internalAlternativeParameterValues?: Record<string, any>;
+  externalAlternativeParameterValues?: Record<string, any>;
+  displayName?: string;
+  parameterName?: string;
+}

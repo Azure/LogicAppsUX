@@ -24,8 +24,9 @@ import { sendRequest } from '../../../utils/requestUtils';
 import { OpenDesignerBase } from './openDesignerBase';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { AzureConnectorDetails, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension';
+import type { AzureConnectorDetails, FileSystemConnectionInfo, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
+import { exec } from 'child_process';
 import { writeFileSync, readFileSync } from 'fs';
 import * as path from 'path';
 import * as requestP from 'request-promise';
@@ -48,6 +49,26 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     this.workflowFilePath = node.fsPath;
   }
+
+  private createFileSystemConnection = (connectionInfo: FileSystemConnectionInfo): Promise<any> => {
+    const rootFolder = connectionInfo.connectionParameters?.['rootFolder'];
+    const username = connectionInfo.connectionParameters?.['username'];
+    const password = connectionInfo.connectionParameters?.['password'];
+
+    return new Promise((resolve, _) => {
+      exec(`net use ${rootFolder} ${password} /user:${username}`, (error) => {
+        if (error) {
+          resolve({ errorMessage: JSON.stringify(error.message) });
+        }
+        resolve({
+          connection: {
+            ...connectionInfo,
+            connectionParameters: { mountPath: rootFolder },
+          },
+        });
+      });
+    });
+  };
 
   public async createPanel(): Promise<void> {
     const existingPanel: WebviewPanel | undefined = this.getExistingPanel();
@@ -134,6 +155,21 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         await addConnectionData(this.context, this.workflowFilePath, msg.connectionData);
         break;
       }
+      case ExtensionCommand.createFileSystemConnection:
+        {
+          const connectionName = msg.connectionName;
+          const { connection, errorMessage } = await this.createFileSystemConnection(msg.connectionInfo);
+          this.sendMsgToWebview({
+            command: ExtensionCommand.completeFileSystemConnection,
+            data: {
+              connectionName,
+              connection,
+              errorMessage,
+            },
+          });
+        }
+        break;
+
       default:
         break;
     }

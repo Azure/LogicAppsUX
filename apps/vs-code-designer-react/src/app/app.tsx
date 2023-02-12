@@ -1,4 +1,5 @@
-import type { RootState } from '../state/Store';
+import { createFileSystemConnection } from '../state/DesignerSlice';
+import type { AppDispatch, RootState } from '../state/Store';
 import { VSCodeContext } from '../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import { getDesignerServices } from './servicesHelper';
@@ -6,11 +7,14 @@ import { convertConnectionsDataToReferences } from './utilities/workflow';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
 import { Theme } from '@microsoft/utils-logic-apps';
+import type { FileSystemConnectionInfo } from '@microsoft/vscode-extension';
+import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { useContext, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const App = () => {
   const vscode = useContext(VSCodeContext);
+  const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.designer);
   const { panelMetaData, connectionData, baseUrl, apiHubServiceDetails, readOnly, isLocal, apiVersion, tenantId } = vscodeState;
 
@@ -26,8 +30,28 @@ export const App = () => {
   });
 
   const services = useMemo(() => {
-    return getDesignerServices(baseUrl, apiVersion, apiHubServiceDetails, tenantId, isLocal, connectionData, appSettings, vscode);
-  }, [baseUrl, apiVersion, apiHubServiceDetails, tenantId, isLocal, connectionData, vscode, appSettings]);
+    const fileSystemConnectionCreate = async (connectionInfo: FileSystemConnectionInfo, connectionName: string) => {
+      vscode.postMessage({
+        command: ExtensionCommand.createFileSystemConnection,
+        connectionInfo,
+        connectionName,
+      });
+      return new Promise((resolve, reject) => {
+        dispatch(createFileSystemConnection({ connectionName, resolve, reject }));
+      });
+    };
+    return getDesignerServices(
+      baseUrl,
+      apiVersion,
+      apiHubServiceDetails,
+      tenantId,
+      isLocal,
+      connectionData,
+      appSettings,
+      fileSystemConnectionCreate,
+      vscode
+    );
+  }, [baseUrl, apiVersion, apiHubServiceDetails, tenantId, isLocal, connectionData, appSettings, vscode, dispatch]);
 
   const connectionReferences: ConnectionReferences = useMemo(() => {
     return convertConnectionsDataToReferences(connectionData);

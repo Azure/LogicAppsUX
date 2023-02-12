@@ -10,7 +10,7 @@ import {
 } from '@microsoft/designer-client-services-logic-apps';
 import type { IApiHubServiceDetails } from '@microsoft/designer-client-services-logic-apps';
 import { ResourceIdentityType, HTTP_METHODS } from '@microsoft/utils-logic-apps';
-import type { ConnectionAndAppSetting, ConnectionsData } from '@microsoft/vscode-extension';
+import type { ConnectionAndAppSetting, ConnectionsData, FileSystemConnectionInfo } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 
 const httpClient = new HttpClient();
@@ -23,6 +23,7 @@ export const getDesignerServices = (
   isLocal: boolean,
   connectionData: ConnectionsData,
   appSettings: Record<string, string>,
+  createFileSystemConnection: (connectionInfo: FileSystemConnectionInfo, connectionName: string) => void,
   vscode: any
 ): any => {
   const connectionService = new StandardConnectionService({
@@ -39,8 +40,13 @@ export const getDesignerServices = (
         connectionAndSetting,
       });
     },
+    connectionCreationClients: {
+      FileSystem: {
+        connectionCreationFunc: createFileSystemConnection,
+      },
+    },
   });
-  console.log(connectionService);
+
   const connectorService = new StandardConnectorService({
     apiVersion,
     baseUrl,

@@ -13,6 +13,7 @@ export interface designerState {
   isLocal: boolean;
   callbackInfo: ICallbackUrlResponse;
   tenantId: string;
+  fileSystemConnections: Record<string, any>;
 }
 
 const initialState: designerState = {
@@ -34,6 +35,7 @@ const initialState: designerState = {
     method: '',
   },
   tenantId: '',
+  fileSystemConnections: {},
 };
 
 export const designerSlice = createSlice({
@@ -55,7 +57,21 @@ export const designerSlice = createSlice({
       const { callbackInfo } = action.payload;
       state.callbackInfo = callbackInfo;
     },
+    createFileSystemConnection: (state, action: PayloadAction<any>) => {
+      const { connectionName, resolve, reject } = action.payload;
+      state.fileSystemConnections[connectionName] = { resolveConnection: resolve, rejectConnection: reject };
+    },
+    updateFileSystemConnection: (state, action: PayloadAction<{ connectionName: string; connection: any; error: string }>) => {
+      const { connectionName, connection, error } = action.payload;
+      if (connection && state.fileSystemConnections[connectionName]) {
+        state.fileSystemConnections[connectionName].resolveConnection(connection);
+      }
+      if (error && state.fileSystemConnections[connectionName]) {
+        state.fileSystemConnections[connectionName].rejectConnection(error);
+      }
+      delete state.fileSystemConnections[connectionName];
+    },
   },
 });
 
-export const { initializeDesigner, updateCallbackUrl } = designerSlice.actions;
+export const { initializeDesigner, updateCallbackUrl, createFileSystemConnection, updateFileSystemConnection } = designerSlice.actions;

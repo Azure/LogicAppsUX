@@ -104,42 +104,6 @@ export abstract class OpenDesignerBase {
     return await getWebViewHTML('webview', this.panel);
   }
 
-  // private getConnectionReferences(connectionsData): ConnectionsData {
-  //   const references: ConnectionsData = {};
-  //   const connectionReferences: Record<string, ConnectionReferenceModel> = connectionsData?.managedApiConnections || {};
-  //   const functionConnections: Record<string, FunctionConnectionModel> = connectionsData?.functionConnections || {};
-  //   const serviceProviderConnections: Record<string, ServiceProviderConnectionModel> = connectionsData?.serviceProviderConnections || {};
-
-  //   for (const connectionReferenceKey of Object.keys(connectionReferences)) {
-  //     const { connection, api } = connectionReferences[connectionReferenceKey];
-  //     references[connectionReferenceKey] = {
-  //       connectionId: connection ? connection.id : '',
-  //       connectionName: connection && connection.id ? connection.id.split('/').slice(-1)[0] : '',
-  //       id: api ? api.id : '',
-  //     } as ConnectionReferenceModel;
-  //   }
-
-  //   for (const connectionKey of Object.keys(functionConnections)) {
-  //     references[connectionKey] = {
-  //       connectionId: '/' + connectionKey,
-  //       connectionName: connectionKey,
-  //       id: '/connectionProviders/azureFunctionOperation',
-  //     };
-  //   }
-
-  //   for (const connectionKey of Object.keys(serviceProviderConnections)) {
-  //     references[connectionKey] = {
-  //       connectionId: '/' + connectionKey,
-  //       connectionName: connectionKey,
-  //       id: serviceProviderConnections[connectionKey].serviceProvider.id,
-  //     };
-  //   }
-
-  //   console.log('references', references);
-
-  //   return references;
-  // }
-
   private addCurlyBraces(root: string) {
     let interpolationString = root;
     let stringLength = interpolationString.length;
