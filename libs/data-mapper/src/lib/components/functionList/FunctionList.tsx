@@ -12,11 +12,13 @@ import { FunctionCategory } from '../../models/Function';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import Tree from '../tree/Tree';
-import { TreeHeader } from '../tree/TreeHeader';
 import FunctionListHeader from './FunctionListHeader';
 import FunctionListItem from './FunctionListItem';
+import { Button, Input, Tooltip } from '@fluentui/react-components';
+import { Dismiss20Regular } from '@fluentui/react-icons';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
+import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 const fuseFunctionSearchOptions: Fuse.IFuseOptions<FunctionData> = {
@@ -35,6 +37,7 @@ interface FunctionDataTreeItem extends FunctionData {
 }
 
 export const FunctionList = () => {
+  const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
   const functionData = useSelector((state: RootState) => state.function.availableFunctions);
@@ -154,9 +157,40 @@ export const FunctionList = () => {
     return newFunctionListTree;
   }, [functionData, searchTerm, inlineFunctionInputOutputKeys]);
 
+  const searchLoc = intl.formatMessage({
+    defaultMessage: 'Search',
+    description: 'Search',
+  });
+
+  const clearLoc = intl.formatMessage({
+    defaultMessage: 'Clear',
+    description: 'Clear',
+  });
+
   return (
     <>
-      <TreeHeader onSearch={setSearchTerm} onClear={() => setSearchTerm('')} />
+      <span style={{ position: 'sticky', top: 0, zIndex: 2 }}>
+        <Input
+          value={searchTerm}
+          onChange={(_e, data) => setSearchTerm(data.value ?? '')}
+          placeholder={searchLoc}
+          size="small"
+          style={{ width: '100%', marginBottom: '6px' }}
+          contentAfter={
+            searchTerm ? (
+              <Tooltip content={clearLoc} relationship="description">
+                <Button
+                  icon={<Dismiss20Regular />}
+                  appearance="subtle"
+                  onClick={() => setSearchTerm('')}
+                  aria-label={clearLoc}
+                  size="small"
+                />
+              </Tooltip>
+            ) : undefined
+          }
+        />
+      </span>
 
       <Tree<FunctionDataTreeItem>
         treeRoot={functionListTree}

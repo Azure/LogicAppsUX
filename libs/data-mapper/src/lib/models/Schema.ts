@@ -40,15 +40,15 @@ export enum SchemaNodeProperty {
 }
 
 export enum NormalizedDataType {
-  ComplexType = 'ComplexType',
-  Integer = 'Integer',
-  Decimal = 'Decimal',
-  Number = 'Number',
+  Any = 'Any',
   Binary = 'Binary',
   Boolean = 'Bool',
-  String = 'String',
+  ComplexType = 'ComplexType',
   DateTime = 'DateTime',
-  Any = 'Any',
+  Decimal = 'Decimal',
+  Integer = 'Integer',
+  Number = 'Number',
+  String = 'String',
 }
 
 export interface SchemaExtended extends Schema {
