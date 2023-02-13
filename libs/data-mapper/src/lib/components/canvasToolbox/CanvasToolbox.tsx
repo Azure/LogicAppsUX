@@ -1,7 +1,7 @@
 import { addSourceSchemaNodes, removeSourceSchemaNodes, setCanvasToolboxTabToDisplay } from '../../core/state/DataMapSlice';
 import { openAddSourceSchemaPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { NormalizedDataType, SchemaNodeExtended } from '../../models';
+import type { SchemaNodeExtended } from '../../models';
 import { searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
 import type { ButtonPivotProps } from '../buttonPivot/ButtonPivot';
 import { ButtonPivot } from '../buttonPivot/ButtonPivot';
@@ -9,10 +9,11 @@ import { FloatingPanel } from '../floatingPanel/FloatingPanel';
 import type { FloatingPanelProps } from '../floatingPanel/FloatingPanel';
 import { FunctionList } from '../functionList/FunctionList';
 import { schemaRootKey } from '../targetSchemaPane/TargetSchemaPane';
+import { getDefaultFilteredDataTypesDict, SchemaTreeSearchbar } from '../tree/SchemaTreeSearchbar';
+import type { FilteredDataTypesDict } from '../tree/SchemaTreeSearchbar';
 import SourceSchemaTreeItem, { SourceSchemaTreeHeader, useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';
 import Tree from '../tree/Tree';
 import type { ITreeNode } from '../tree/Tree';
-import { TreeHeader } from '../tree/TreeHeader';
 import { Stack } from '@fluentui/react';
 import { Button, mergeClasses, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
@@ -48,7 +49,7 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
   const currentSourceSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceSchemaNodes);
 
   const [sourceSchemaSearchTerm, setSourceSchemaSearchTerm] = useState<string>('');
-  const [sourceSchemaDataTypeFilters, setSourceSchemaDataTypeFilters] = useState<NormalizedDataType[]>([]);
+  const [sourceSchemaDataTypeFilters, setSourceSchemaDataTypeFilters] = useState<FilteredDataTypesDict>(getDefaultFilteredDataTypesDict());
 
   const showSourceSchemaLoc = intl.formatMessage({
     defaultMessage: 'Show source schema',
@@ -182,7 +183,12 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
       >
         {sourceSchema && searchedSourceSchemaTreeRoot ? (
           <>
-            <TreeHeader onSearch={setSourceSchemaSearchTerm} onClear={() => setSourceSchemaSearchTerm('')} />
+            <SchemaTreeSearchbar
+              onSearch={setSourceSchemaSearchTerm}
+              onClear={() => setSourceSchemaSearchTerm('')}
+              filteredDataTypes={sourceSchemaDataTypeFilters}
+              setFilteredDataTypes={setSourceSchemaDataTypeFilters}
+            />
 
             <SourceSchemaTreeHeader />
 

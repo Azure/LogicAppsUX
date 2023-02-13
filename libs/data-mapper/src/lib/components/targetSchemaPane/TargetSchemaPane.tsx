@@ -4,12 +4,13 @@ import type { SchemaNodeExtended } from '../../models';
 import { NormalizedDataType } from '../../models';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
+import { getDefaultFilteredDataTypesDict, SchemaTreeSearchbar } from '../tree/SchemaTreeSearchbar';
+import type { FilteredDataTypesDict } from '../tree/SchemaTreeSearchbar';
 import { useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';
 import type { NodeToggledStateDictionary } from '../tree/TargetSchemaTreeItem';
 import TargetSchemaTreeItem, { ItemToggledState, TargetSchemaTreeHeader } from '../tree/TargetSchemaTreeItem';
 import type { ITreeNode } from '../tree/Tree';
 import Tree from '../tree/Tree';
-import { TreeHeader } from '../tree/TreeHeader';
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, mergeClasses, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleLeft20Regular, ChevronDoubleRight20Regular } from '@fluentui/react-icons';
@@ -55,7 +56,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
 
   const [toggledStatesDictionary, setToggledStatesDictionary] = useState<NodeToggledStateDictionary | undefined>({});
   const [targetSchemaSearchTerm, setTargetSchemaSearchTerm] = useState<string>('');
-  const [targetSchemaDataTypeFilters, setTargetSchemaDataTypeFilters] = useState<NormalizedDataType[]>([]);
+  const [targetSchemaDataTypeFilters, setTargetSchemaDataTypeFilters] = useState<FilteredDataTypesDict>(getDefaultFilteredDataTypesDict());
 
   const targetSchemaLoc = intl.formatMessage({
     defaultMessage: 'Target schema',
@@ -201,7 +202,12 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
           position: 'relative',
         }}
       >
-        <TreeHeader onSearch={setTargetSchemaSearchTerm} onClear={() => setTargetSchemaSearchTerm('')} />
+        <SchemaTreeSearchbar
+          onSearch={setTargetSchemaSearchTerm}
+          onClear={() => setTargetSchemaSearchTerm('')}
+          filteredDataTypes={targetSchemaDataTypeFilters}
+          setFilteredDataTypes={setTargetSchemaDataTypeFilters}
+        />
 
         <TargetSchemaTreeHeader
           status={toggledStatesDictionary && targetSchema ? toggledStatesDictionary[targetSchema.schemaTreeRoot.key] : undefined}
