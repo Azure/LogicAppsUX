@@ -19,14 +19,35 @@ export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _t
 
   // Valid input types
   Object.entries(connections).forEach(([_connectionKey, connectionValue]) => {
-    if (!areInputsValid(connectionValue)) {
-      const node = connectionValue.self.node;
-      errors.push({
-        title: 'Input type mismatch',
-        description: `${isFunctionData(node) ? node.displayName : node.name} has an input with a mismatched type`,
-        severity: MapCheckerItemSeverity.Error,
-        reactFlowId: connectionValue.self.reactFlowKey,
-      });
+    const node = connectionValue.self.node;
+
+    if (isFunctionData(node)) {
+      if (!areInputTypesValidForFunction(node, connectionValue)) {
+        errors.push({
+          title: { message: mapCheckerResources.inputTypeMismatchTitle },
+          description: { message: mapCheckerResources.inputTypeMismatchBody, value: { nodeName: node.displayName } },
+          severity: MapCheckerItemSeverity.Error,
+          reactFlowId: connectionValue.self.reactFlowKey,
+        });
+      }
+
+      if (!functionHasRequiredInputs(node, connectionValue)) {
+        errors.push({
+          title: { message: mapCheckerResources.functionMissingInputsTitle },
+          description: { message: mapCheckerResources.functionMissingInputsBody, value: { functionName: node.displayName } },
+          severity: MapCheckerItemSeverity.Error,
+          reactFlowId: connectionValue.self.reactFlowKey,
+        });
+      }
+    } else {
+      if (!connectionValue.self.reactFlowKey.startsWith(sourcePrefix) && !areInputTypesValidForSchemaNode(node, connectionValue)) {
+        errors.push({
+          title: { message: mapCheckerResources.inputTypeMismatchTitle },
+          description: { message: mapCheckerResources.inputTypeMismatchBody /*, value: { nodeName: node.name }*/ },
+          severity: MapCheckerItemSeverity.Error,
+          reactFlowId: connectionValue.self.reactFlowKey,
+        });
+      }
     }
   });
 
@@ -36,7 +57,7 @@ export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _t
 export const collectWarningsForMapChecker = (connections: ConnectionDictionary, targetSchema: SchemaNodeDictionary): MapCheckerEntry[] => {
   const warnings: MapCheckerEntry[] = [];
 
-  // Required fields
+  // Required target schema fields
   Object.entries(targetSchema).forEach(([reactFlowId, schemaValue]) => {
     if (
       schemaValue.normalizedDataType !== NormalizedDataType.ComplexType &&
@@ -45,8 +66,8 @@ export const collectWarningsForMapChecker = (connections: ConnectionDictionary, 
       const connection = connections[reactFlowId];
       if (!nodeHasSourceNodeEventually(connection, connections)) {
         warnings.push({
-          title: 'Required field missing',
-          description: `${schemaValue.name} has an non-terminating connection chain`,
+          title: { message: mapCheckerResources.functionMissingInputsTitle },
+          description: { message: mapCheckerResources.functionMissingInputsBody, value: { functionName: schemaValue.name } },
           severity: MapCheckerItemSeverity.Warning,
           reactFlowId,
         });
@@ -69,17 +90,7 @@ export const collectOtherForMapChecker = (_connections: ConnectionDictionary, _t
   return other;
 };
 
-export const areInputsValid = (connection: Connection): boolean => {
-  if (connection.self.reactFlowKey.startsWith(sourcePrefix)) {
-    return true;
-  } else if (isSchemaNodeExtended(connection.self.node)) {
-    return areInputsValidForSchemaNode(connection.self.node, connection);
-  } else {
-    return areInputsValidForFunction(connection.self.node, connection);
-  }
-};
-
-export const areInputsValidForSchemaNode = (selfNode: SchemaNodeExtended, connection: Connection): boolean => {
+export const areInputTypesValidForSchemaNode = (selfNode: SchemaNodeExtended, connection: Connection): boolean => {
   const input = flattenInputs(connection.inputs)[0];
   if (input === undefined) {
     return true;
@@ -96,7 +107,7 @@ export const areInputsValidForSchemaNode = (selfNode: SchemaNodeExtended, connec
   }
 };
 
-export const areInputsValidForFunction = (functionData: FunctionData, connection: Connection): boolean => {
+export const areInputTypesValidForFunction = (functionData: FunctionData, connection: Connection): boolean => {
   let isEveryInputValid = true;
 
   Object.values(connection.inputs).forEach((inputArr, inputIdx) => {
@@ -128,4 +139,43 @@ export const areInputsValidForFunction = (functionData: FunctionData, connection
   });
 
   return isEveryInputValid;
+};
+
+export const functionHasRequiredInputs = (functionData: FunctionData, connection: Connection): boolean => {
+  let isEveryInputValid = true;
+
+  Object.values(connection.inputs).forEach((inputArr, inputIdx) => {
+    if (!functionData.inputs[inputIdx].isOptional && inputArr.length < 1) {
+      isEveryInputValid = false;
+    }
+  });
+
+  return isEveryInputValid;
+};
+
+const mapCheckerResources = {
+  inputTypeMismatchTitle: {
+    defaultMessage: 'Input type mismatch',
+    description: 'Title for the input type mismatch card',
+  },
+  inputTypeMismatchBody: {
+    defaultMessage: '{nodeName} has an input with a mismatched type',
+    description: 'Body text for the input type mismatch card',
+  },
+  functionMissingInputsTitle: {
+    defaultMessage: 'Function is missing required inputs',
+    description: 'Title for a function missing a required input card',
+  },
+  functionMissingInputsBody: {
+    defaultMessage: '{functionName} has an non-terminating connection chain',
+    description: 'Body text for a function missing a required input card',
+  },
+  RequiredSchemaNodeTitle: {
+    defaultMessage: 'Function is missing required inputs',
+    description: 'Title for a function missing a required input card',
+  },
+  RequiredSchemaNodeBody: {
+    defaultMessage: '{functionName} has an non-terminating connection chain',
+    description: 'Body text for a function missing a required input card',
+  },
 };
