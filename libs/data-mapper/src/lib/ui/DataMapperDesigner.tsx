@@ -253,7 +253,7 @@ export const DataMapperDesigner = ({
     return isPropPaneExpanded && propPaneExpandedHeight === centerViewHeight - propPaneTopBarHeight ? 0 : canvasAreaAndPropPaneMargin;
   };
 
-  // NOTE: The below two methods include the margin between the canvas area and proppane
+  // NOTE: The below two methods include the margin between the canvas area and PropPane
   const getCollapsedPropPaneTotalHeight = () => {
     return propPaneTopBarHeight + getCanvasAreaAndPropPaneMargin();
   };

@@ -4109,6 +4109,12 @@
       "value": "Zoom out"
     }
   ],
+  "Z657PF": [
+    {
+      "type": 0,
+      "value": "Function is missing required inputs"
+    }
+  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -4711,6 +4717,16 @@
       "value": "Paging count exceeds maximum value"
     }
   ],
+  "fWsZhJ": [
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": " has an non-terminating connection chain"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5239,6 +5255,16 @@
     {
       "type": 0,
       "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+    }
+  ],
+  "jlc/pM": [
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " has an input with a mismatched type"
     }
   ],
   "juR40n": [
@@ -6679,6 +6705,12 @@
     {
       "type": 0,
       "value": "Client Tracking ID"
+    }
+  ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "Input type mismatch"
     }
   ],
   "wl7X0l": [
