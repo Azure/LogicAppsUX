@@ -128,6 +128,14 @@ const buildGraphFromActions = (
       }
     }
 
+    // Assign preexisting metadata
+    if (action?.metadata) {
+      nodesMetadata[actionName] = {
+        ...nodesMetadata[actionName],
+        actionMetadata: action?.metadata,
+      };
+    }
+
     nodes.push(node);
   }
   return [nodes, edges, allActions, nodesMetadata];

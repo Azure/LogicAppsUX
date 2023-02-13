@@ -194,6 +194,15 @@ export const serializeOperation = async (
     }
   }
 
+  // TODO: Riley - add app service metadata
+  const actionMetadata = rootState.operations.actionMetadata[operationId];
+  if (actionMetadata) {
+    serializedOperation = {
+      ...serializedOperation,
+      metadata: actionMetadata,
+    };
+  }
+
   // TODO - We might have to just serialize bare minimum data for partially loaded node.
   // TODO - Serialize metadata for each operation.
   return serializedOperation;

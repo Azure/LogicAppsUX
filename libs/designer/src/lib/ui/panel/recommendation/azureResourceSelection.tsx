@@ -19,6 +19,7 @@ interface AddResourceOperationParameters {
   name: string;
   swaggerParameters?: OpenAPIV2.Document;
   presetParameterValues?: Record<string, any>;
+  actionMetadata?: Record<string, any>;
 }
 
 export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
@@ -70,7 +71,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
 
   const addResourceOperation = useCallback(
     (props: AddResourceOperationParameters) => {
-      const { name, swaggerParameters, presetParameterValues } = props;
+      const { name, swaggerParameters, presetParameterValues, actionMetadata } = props;
       const newNodeId = name.replaceAll(' ', '_');
       dispatch(
         addOperation({
@@ -81,6 +82,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           isTrigger,
           swaggerParameters,
           presetParameterValues,
+          actionMetadata,
         })
       );
     },
@@ -130,7 +132,14 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         setSubmitCallback(() => () => {
           addResourceOperation({
             name: selectedResources[1]?.id,
-            // TODO: Add parameters from selected resources
+            presetParameterValues: {
+              method: selectedResources[1]?.method,
+              uri: `http://localhost:54335${selectedResources[1]?.uri}`,
+            },
+            actionMetadata: {
+              apiDefinitionUrl: selectedResources[0]?.properties?.siteConfig?.apiDefinition?.url,
+              swaggerSource: 'website',
+            },
           });
         });
         break;

@@ -43,10 +43,11 @@ type AddOperationPayload = {
   isTrigger?: boolean;
   swaggerParameters?: any;
   presetParameterValues?: Record<string, any>;
+  actionMetadata?: Record<string, any>;
 };
 
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
-  const { operation, nodeId: actionId, swaggerParameters, presetParameterValues } = payload;
+  const { operation, nodeId: actionId, swaggerParameters, presetParameterValues, actionMetadata } = payload;
   if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
   let count = 1;
   let nodeId = actionId;
@@ -67,7 +68,15 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
   };
 
   dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
-  initializeOperationDetails(nodeId, nodeOperationInfo, getState as () => RootState, dispatch, swaggerParameters, presetParameterValues);
+  initializeOperationDetails(
+    nodeId,
+    nodeOperationInfo,
+    getState as () => RootState,
+    dispatch,
+    swaggerParameters,
+    presetParameterValues,
+    actionMetadata
+  );
 
   // Update settings for children and parents
 
@@ -81,7 +90,8 @@ const initializeOperationDetails = async (
   getState: () => RootState,
   dispatch: Dispatch,
   swaggerParameters?: any,
-  parameterValues?: Record<string, any>
+  parameterValues?: Record<string, any>,
+  actionMetadata?: Record<string, any>
 ): Promise<void> => {
   const state = getState();
   const isTrigger = isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata);
@@ -105,6 +115,7 @@ const initializeOperationDetails = async (
 
     // If this is an apim operation, we need to pull inputs and outputs from the provided swagger
     if (swaggerParameters) {
+      // TODO: Bring in the swagger parameters and intitialize them here
       console.log('### swagger parameters:', swaggerParameters);
     }
 
@@ -122,7 +133,15 @@ const initializeOperationDetails = async (
 
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
     const settings = getOperationSettings(isTrigger, operationInfo, nodeOutputs, manifest, /* swagger */ undefined);
-    initData = { id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata: { iconUri, brandColor } };
+    initData = {
+      id: nodeId,
+      nodeInputs,
+      nodeOutputs,
+      nodeDependencies,
+      settings,
+      operationMetadata: { iconUri, brandColor },
+      actionMetadata,
+    };
     dispatch(initializeNodes([initData]));
     addTokensAndVariables(nodeId, type, { ...initData, manifest }, state, dispatch);
   } else {

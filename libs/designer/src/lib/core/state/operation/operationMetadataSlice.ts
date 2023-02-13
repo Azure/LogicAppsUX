@@ -76,9 +76,10 @@ export interface OperationMetadataState {
   operationInfo: Record<string, NodeOperation>;
   inputParameters: Record<string, NodeInputs>;
   outputParameters: Record<string, NodeOutputs>;
-  settings: Record<string, Settings>;
   dependencies: Record<string, NodeDependencies>;
   operationMetadata: Record<string, OperationMetadata>;
+  settings: Record<string, Settings>;
+  actionMetadata: Record<string, any>;
 }
 
 const initialState: OperationMetadataState = {
@@ -88,6 +89,7 @@ const initialState: OperationMetadataState = {
   dependencies: {},
   settings: {},
   operationMetadata: {},
+  actionMetadata: {},
 };
 
 export interface AddNodeOperationPayload extends NodeOperation {
@@ -104,8 +106,9 @@ export interface NodeData {
   nodeInputs: NodeInputs;
   nodeOutputs: NodeOutputs;
   nodeDependencies: NodeDependencies;
-  settings?: Settings;
   operationMetadata: OperationMetadata;
+  settings?: Settings;
+  actionMetadata?: Record<string, any>;
 }
 
 interface AddSettingsPayload {
@@ -145,19 +148,16 @@ export const operationMetadataSlice = createSlice({
     },
     initializeNodes: (state, action: PayloadAction<(NodeData | undefined)[]>) => {
       for (const nodeData of action.payload) {
-        if (!nodeData) {
-          return;
-        }
+        if (!nodeData) return;
 
-        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata } = nodeData;
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, actionMetadata } = nodeData;
         state.inputParameters[id] = nodeInputs;
         state.outputParameters[id] = nodeOutputs;
         state.dependencies[id] = nodeDependencies;
         state.operationMetadata[id] = operationMetadata;
 
-        if (settings) {
-          state.settings[id] = settings;
-        }
+        if (actionMetadata) state.actionMetadata[id] = actionMetadata;
+        if (settings) state.settings[id] = settings;
       }
     },
     addDynamicInputs: (state, action: PayloadAction<AddDynamicInputsPayload>) => {
@@ -287,6 +287,13 @@ export const operationMetadataSlice = createSlice({
       const { id, nodeOutputs } = action.payload;
       if (state.outputParameters[id]) state.outputParameters[id] = nodeOutputs;
     },
+    updateActionMetadata: (state, action: PayloadAction<{ id: string; actionMetadata: Record<string, any> }>) => {
+      const { id, actionMetadata } = action.payload;
+      state.actionMetadata[id] = {
+        ...state.actionMetadata[id],
+        ...actionMetadata,
+      };
+    },
     deinitializeOperationInfo: (state, action: PayloadAction<{ id: string }>) => {
       const { id } = action.payload;
       delete state.operationInfo[id];
@@ -296,8 +303,9 @@ export const operationMetadataSlice = createSlice({
         delete state.inputParameters[id];
         delete state.outputParameters[id];
         delete state.dependencies[id];
-        delete state.settings[id];
         delete state.operationMetadata[id];
+        delete state.settings[id];
+        delete state.actionMetadata[id];
       }
     },
   },
@@ -317,6 +325,7 @@ export const {
   updateParameterValidation,
   removeParameterValidationError,
   updateOutputs,
+  updateActionMetadata,
   deinitializeOperationInfo,
   deinitializeNodes,
 } = operationMetadataSlice.actions;
