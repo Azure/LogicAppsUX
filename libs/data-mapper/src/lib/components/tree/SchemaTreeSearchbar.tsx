@@ -129,31 +129,17 @@ export const SchemaTreeSearchbar = ({ onSearch, onClear, filteredDataTypes, setF
             </MenuItem>
 
             {Object.entries(NormalizedDataType).flatMap(([dataTypeKey, dataTypeValue]) => {
-              const DataTypeIcon = iconForNormalizedDataType(dataTypeValue, 24, true);
-              const menuItems = [
-                <MenuItem key={dataTypeKey} onClick={() => onClickDataType(dataTypeValue, !filteredDataTypes[dataTypeValue])}>
-                  <Stack horizontal verticalAlign="center">
-                    <Checkmark20Filled style={{ visibility: filteredDataTypes[dataTypeValue] ? 'visible' : 'hidden' }} />
-                    <DataTypeIcon
-                      style={{
-                        marginRight: 4,
-                        height: 20,
-                        color: filteredDataTypes[dataTypeValue] ? tokens.colorCompoundBrandForeground1 : undefined,
-                      }}
-                      filled={filteredDataTypes[dataTypeValue]}
-                    />
-                    <Text>{dataTypeKey}</Text>
-                  </Stack>
-                </MenuItem>,
-              ];
+              const getMenuItemForDataType = (dataTypeKey: string, dataTypeValue: DataTypeFilterKeys) => {
+                const DataTypeIcon =
+                  dataTypeValue === arrayType
+                    ? iconForNormalizedDataType(NormalizedDataType.ComplexType, 24, true, [SchemaNodeProperty.Repeating])
+                    : iconForNormalizedDataType(dataTypeValue, 24, true);
 
-              if (dataTypeValue === NormalizedDataType.Any) {
-                const ArrayTypeIcon = iconForNormalizedDataType(NormalizedDataType.ComplexType, 24, true, [SchemaNodeProperty.Repeating]);
-                menuItems.push(
-                  <MenuItem key={arrayType} onClick={() => onClickDataType(arrayType, !filteredDataTypes[arrayType])}>
+                return (
+                  <MenuItem key={dataTypeKey} onClick={() => onClickDataType(dataTypeValue, !filteredDataTypes[dataTypeValue])}>
                     <Stack horizontal verticalAlign="center">
-                      <Checkmark20Filled style={{ visibility: filteredDataTypes[arrayType] ? 'visible' : 'hidden' }} />
-                      <ArrayTypeIcon
+                      <Checkmark20Filled style={{ visibility: filteredDataTypes[dataTypeValue] ? 'visible' : 'hidden' }} />
+                      <DataTypeIcon
                         style={{
                           marginRight: 4,
                           height: 20,
@@ -161,10 +147,16 @@ export const SchemaTreeSearchbar = ({ onSearch, onClear, filteredDataTypes, setF
                         }}
                         filled={filteredDataTypes[dataTypeValue]}
                       />
-                      <Text>{arrayType}</Text>
+                      <Text>{dataTypeKey}</Text>
                     </Stack>
                   </MenuItem>
                 );
+              };
+
+              const menuItems = [getMenuItemForDataType(dataTypeKey, dataTypeValue)];
+
+              if (dataTypeValue === NormalizedDataType.Any) {
+                menuItems.push(getMenuItemForDataType(arrayType, arrayType));
               }
 
               return menuItems;
