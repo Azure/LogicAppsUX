@@ -1,8 +1,20 @@
 import { NormalizedDataType, SchemaNodeProperty } from '../../models';
 import { iconForNormalizedDataType } from '../../utils/Icon.Utils';
 import { Stack } from '@fluentui/react';
-import { Button, Input, makeStyles, Menu, MenuItem, MenuList, MenuPopover, MenuTrigger, Text, Tooltip } from '@fluentui/react-components';
-import { Dismiss20Regular, Filter20Regular, Checkmark20Regular } from '@fluentui/react-icons';
+import {
+  Button,
+  Input,
+  makeStyles,
+  Menu,
+  MenuItem,
+  MenuList,
+  MenuPopover,
+  MenuTrigger,
+  Text,
+  tokens,
+  Tooltip,
+} from '@fluentui/react-components';
+import { Dismiss20Regular, Filter20Regular, Checkmark20Filled } from '@fluentui/react-icons';
 import { useDebouncedCallback } from '@react-hookz/web';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -106,10 +118,13 @@ export const SchemaTreeSearchbar = ({ onSearch, onClear, filteredDataTypes, setF
           <MenuList>
             <MenuItem onClick={() => onClickDataType(selectAll, !Object.values(filteredDataTypes).every((isFiltered) => !!isFiltered))}>
               <Stack horizontal verticalAlign="center">
-                <Checkmark20Regular
-                  style={{ visibility: Object.values(filteredDataTypes).some((isFiltered) => !isFiltered) ? 'hidden' : 'visible' }}
+                <Checkmark20Filled
+                  style={{
+                    visibility: Object.values(filteredDataTypes).some((isFiltered) => !isFiltered) ? 'hidden' : 'visible',
+                    marginRight: 2,
+                  }}
                 />
-                <Text>Select all</Text>
+                <Text style={{ color: tokens.colorBrandForegroundLink }}>Select all</Text>
               </Stack>
             </MenuItem>
 
@@ -118,8 +133,15 @@ export const SchemaTreeSearchbar = ({ onSearch, onClear, filteredDataTypes, setF
               const menuItems = [
                 <MenuItem key={dataTypeKey} onClick={() => onClickDataType(dataTypeValue, !filteredDataTypes[dataTypeValue])}>
                   <Stack horizontal verticalAlign="center">
-                    <Checkmark20Regular style={{ visibility: filteredDataTypes[dataTypeValue] ? 'visible' : 'hidden' }} />
-                    <DataTypeIcon style={{ marginRight: 4, height: 20 }} />
+                    <Checkmark20Filled style={{ visibility: filteredDataTypes[dataTypeValue] ? 'visible' : 'hidden' }} />
+                    <DataTypeIcon
+                      style={{
+                        marginRight: 4,
+                        height: 20,
+                        color: filteredDataTypes[dataTypeValue] ? tokens.colorCompoundBrandForeground1 : undefined,
+                      }}
+                      filled={filteredDataTypes[dataTypeValue]}
+                    />
                     <Text>{dataTypeKey}</Text>
                   </Stack>
                 </MenuItem>,
@@ -130,8 +152,15 @@ export const SchemaTreeSearchbar = ({ onSearch, onClear, filteredDataTypes, setF
                 menuItems.push(
                   <MenuItem key={arrayType} onClick={() => onClickDataType(arrayType, !filteredDataTypes[arrayType])}>
                     <Stack horizontal verticalAlign="center">
-                      <Checkmark20Regular style={{ visibility: filteredDataTypes[arrayType] ? 'visible' : 'hidden' }} />
-                      <ArrayTypeIcon style={{ marginRight: 4, height: 20 }} />
+                      <Checkmark20Filled style={{ visibility: filteredDataTypes[arrayType] ? 'visible' : 'hidden' }} />
+                      <ArrayTypeIcon
+                        style={{
+                          marginRight: 4,
+                          height: 20,
+                          color: filteredDataTypes[dataTypeValue] ? tokens.colorCompoundBrandForeground1 : undefined,
+                        }}
+                        filled={filteredDataTypes[dataTypeValue]}
+                      />
                       <Text>{arrayType}</Text>
                     </Stack>
                   </MenuItem>
