@@ -300,7 +300,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
           <Tooltip
             relationship="label"
-            content={schemaNode.name}
+            content={<span style={{ overflowWrap: 'break-word' }}>{schemaNode.name}</span>}
             visible={shouldNameTooltipDisplay && isTooltipEnabled}
             onVisibleChange={(_ev, data) => setIsTooltipEnabled(data.visible)}
           >
