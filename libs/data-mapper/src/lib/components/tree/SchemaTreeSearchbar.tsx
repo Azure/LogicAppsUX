@@ -21,7 +21,7 @@ import { useIntl } from 'react-intl';
 
 const searchDebounceDelay = 300;
 
-const arrayType = 'Array';
+export const arrayType = 'Array';
 const selectAll = 'selectAll';
 type DataTypeFilterKeys = NormalizedDataType | typeof arrayType;
 export type FilteredDataTypesDict = { [key in DataTypeFilterKeys]: boolean };
@@ -30,10 +30,10 @@ export const getDefaultFilteredDataTypesDict = (): FilteredDataTypesDict => {
   const defaultFilteredDataTypesDict = {} as FilteredDataTypesDict;
 
   Object.values(NormalizedDataType).forEach((dataTypeValue) => {
-    defaultFilteredDataTypesDict[dataTypeValue] = false;
+    defaultFilteredDataTypesDict[dataTypeValue] = true;
   });
 
-  defaultFilteredDataTypesDict[arrayType] = false;
+  defaultFilteredDataTypesDict[arrayType] = true;
 
   return defaultFilteredDataTypesDict;
 };

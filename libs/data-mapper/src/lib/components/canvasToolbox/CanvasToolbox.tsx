@@ -128,7 +128,8 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
     const newSourceSchemaTreeRoot: ITreeNode<SchemaNodeExtended> = searchSchemaTreeFromRoot(
       sourceSchema.schemaTreeRoot,
       flattenedSourceSchema,
-      sourceSchemaSearchTerm
+      sourceSchemaSearchTerm,
+      sourceSchemaDataTypeFilters
     );
     newSourceSchemaTreeRoot.isExpanded = true;
 
@@ -139,7 +140,7 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
     schemaNameRoot.children = [newSourceSchemaTreeRoot];
 
     return schemaNameRoot;
-  }, [sourceSchema, flattenedSourceSchema, sourceSchemaSearchTerm]);
+  }, [sourceSchema, flattenedSourceSchema, sourceSchemaSearchTerm, sourceSchemaDataTypeFilters]);
 
   const toolboxButtonPivotProps: ButtonPivotProps = useMemo(
     () => ({

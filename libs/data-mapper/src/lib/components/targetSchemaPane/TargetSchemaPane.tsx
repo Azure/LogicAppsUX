@@ -106,7 +106,8 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
     let newTargetSchemaTreeRoot: ITreeNode<SchemaNodeExtended> = searchSchemaTreeFromRoot(
       targetSchema.schemaTreeRoot,
       targetSchemaDictionary,
-      targetSchemaSearchTerm
+      targetSchemaSearchTerm,
+      targetSchemaDataTypeFilters
     );
 
     // Search searched-tree for currentNode, and expand path to that node if present
@@ -143,7 +144,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
     schemaNameRoot.children = [newTargetSchemaTreeRoot];
 
     return schemaNameRoot;
-  }, [targetSchema, targetSchemaDictionary, targetSchemaSearchTerm, currentTargetSchemaNode]);
+  }, [targetSchema, targetSchemaDictionary, targetSchemaSearchTerm, currentTargetSchemaNode, targetSchemaDataTypeFilters]);
 
   useEffect(() => {
     if (!targetSchema || !connectionDictionary) {
