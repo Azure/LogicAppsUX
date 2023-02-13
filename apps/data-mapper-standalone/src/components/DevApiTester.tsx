@@ -79,7 +79,7 @@ export const DevApiTester = () => {
   };
 
   return (
-    <div style={{ marginBottom: '20px', backgroundColor: tokens.colorNeutralBackground2, padding: 4 }}>
+    <div style={{ backgroundColor: tokens.colorNeutralBackground2 }}>
       <Accordion collapsible>
         <AccordionItem value="1">
           <AccordionHeader>API Tester</AccordionHeader>
