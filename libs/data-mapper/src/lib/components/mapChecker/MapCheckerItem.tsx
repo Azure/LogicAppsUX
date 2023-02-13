@@ -1,10 +1,12 @@
 import type { RootState } from '../../core/state/Store';
 import { iconForMapCheckerSeverity } from '../../utils/Icon.Utils';
+import type { IntlMessage } from '../../utils/Intl.Utils';
 import { selectedCardStyles } from '../nodeCard/NodeCard';
 import { Stack } from '@fluentui/react';
 import { Button, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import type { CSSProperties } from 'react';
 import { useMemo } from 'react';
+import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
 export enum MapCheckerItemSeverity {
@@ -15,8 +17,8 @@ export enum MapCheckerItemSeverity {
 }
 
 export interface MapCheckerEntry {
-  title: string;
-  description: string;
+  title: IntlMessage;
+  description: IntlMessage;
   severity: MapCheckerItemSeverity;
   reactFlowId: string;
 }
@@ -26,6 +28,7 @@ export interface MapCheckerItemProps extends MapCheckerEntry {
 }
 
 export const MapCheckerItem = ({ title, description, severity, reactFlowId, onClick }: MapCheckerItemProps) => {
+  const intl = useIntl();
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
 
   const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
@@ -54,8 +57,8 @@ export const MapCheckerItem = ({ title, description, severity, reactFlowId, onCl
             childrenGap: '4px',
           }}
         >
-          <Text style={{ ...typographyStyles.body1Strong }}>{title}</Text>
-          <Text style={{ ...typographyStyles.body1 }}>{description}</Text>
+          <Text style={{ ...typographyStyles.body1Strong }}>{intl.formatMessage(title.message, title.value)}</Text>
+          <Text style={{ ...typographyStyles.body1 }}>{intl.formatMessage(description.message, description.value)}</Text>
         </Stack>
       </Stack>
     </Button>

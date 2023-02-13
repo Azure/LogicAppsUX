@@ -26,7 +26,7 @@ import {
   tokens,
   typographyStyles,
 } from '@fluentui/react-components';
-import { Dismiss20Regular } from '@fluentui/react-icons';
+import { CheckmarkCircle20Filled, Dismiss20Regular } from '@fluentui/react-icons';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -129,7 +129,7 @@ export const MapCheckerPane = ({ isMapCheckerOpen, closeMapChecker }: TargetSche
     dispatch(setSelectedItem(reactFlowId));
   };
 
-  const mapErrorContentToElements = (elements: MapCheckerEntry[], severity: MapCheckerItemSeverity) => {
+  const mapMapCheckerContentToElements = (elements: MapCheckerEntry[], severity: MapCheckerItemSeverity) => {
     return elements.map((item, index) => {
       return (
         <MapCheckerItem
@@ -156,6 +156,12 @@ export const MapCheckerPane = ({ isMapCheckerOpen, closeMapChecker }: TargetSche
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectionDictionary]);
 
+  const errorItems = useMemo(() => {
+    return mapMapCheckerContentToElements(errorContent, MapCheckerItemSeverity.Error);
+    //Intentional, only want to update when we update the content array
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [errorContent]);
+
   const warningContent = useMemo(() => {
     if (sourceSchema && targetSchema) {
       return collectWarningsForMapChecker(connectionDictionary, targetSchemaDictionary);
@@ -165,6 +171,12 @@ export const MapCheckerPane = ({ isMapCheckerOpen, closeMapChecker }: TargetSche
     //Intentional, only want to update when we update connections
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectionDictionary]);
+
+  const warningItems = useMemo(() => {
+    return mapMapCheckerContentToElements(warningContent, MapCheckerItemSeverity.Warning);
+    //Intentional, only want to update when we update the content array
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [errorContent]);
 
   const infoContent = useMemo(() => {
     if (sourceSchema && targetSchema) {
@@ -176,6 +188,12 @@ export const MapCheckerPane = ({ isMapCheckerOpen, closeMapChecker }: TargetSche
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectionDictionary]);
 
+  const infoItems = useMemo(() => {
+    return mapMapCheckerContentToElements(infoContent, MapCheckerItemSeverity.Info);
+    //Intentional, only want to update when we update the content array
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [errorContent]);
+
   const otherContent = useMemo(() => {
     if (sourceSchema && targetSchema) {
       return collectOtherForMapChecker(connectionDictionary, targetSchemaDictionary);
@@ -186,10 +204,12 @@ export const MapCheckerPane = ({ isMapCheckerOpen, closeMapChecker }: TargetSche
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectionDictionary]);
 
-  const errorItems = mapErrorContentToElements(errorContent, MapCheckerItemSeverity.Error);
-  const warningItems = mapErrorContentToElements(warningContent, MapCheckerItemSeverity.Warning);
-  const infoItems = mapErrorContentToElements(infoContent, MapCheckerItemSeverity.Info);
-  const otherItems = mapErrorContentToElements(otherContent, MapCheckerItemSeverity.Unknown);
+  const otherItems = useMemo(() => {
+    return mapMapCheckerContentToElements(otherContent, MapCheckerItemSeverity.Unknown);
+    //Intentional, only want to update when we update the content array
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [errorContent]);
+
   const totalItems = errorItems.length + warningItems.length + infoItems.length + otherItems.length;
 
   return (
@@ -239,11 +259,8 @@ export const MapCheckerPane = ({ isMapCheckerOpen, closeMapChecker }: TargetSche
             )}
           </Accordion>
         ) : (
-          <Stack horizontalAlign="center" verticalAlign="center" style={{ height: '100%' }}>
-            <span role="img" aria-label="Clippy!" style={{ fontSize: 48, marginBottom: 24 }}>
-              📎
-            </span>
-
+          <Stack horizontal>
+            <CheckmarkCircle20Filled height={20} width={20} primaryFill={tokens.colorPaletteGreenBackground3} />
             <Text>{noItemsLoc}</Text>
           </Stack>
         )}
