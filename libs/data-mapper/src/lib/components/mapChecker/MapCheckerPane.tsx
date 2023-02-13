@@ -13,7 +13,7 @@ import {
 } from '../../utils/MapChecker.Utils';
 import type { MapCheckerEntry } from './MapCheckerItem';
 import { MapCheckerItem, MapCheckerItemSeverity } from './MapCheckerItem';
-import { Icon, Stack } from '@fluentui/react';
+import { Stack } from '@fluentui/react';
 import {
   Accordion,
   AccordionHeader,
@@ -26,7 +26,7 @@ import {
   tokens,
   typographyStyles,
 } from '@fluentui/react-components';
-import { Dismiss20Regular } from '@fluentui/react-icons';
+import { CheckmarkCircle20Filled, Dismiss20Regular } from '@fluentui/react-icons';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -259,10 +259,10 @@ export const MapCheckerPane = ({ isMapCheckerOpen, closeMapChecker }: TargetSche
             )}
           </Accordion>
         ) : (
-          <>
-            <Icon iconName="CheckmarkCircle20Filled" />
+          <Stack horizontal>
+            <CheckmarkCircle20Filled height={20} width={20} primaryFill={tokens.colorPaletteGreenBackground3} />
             <Text>{noItemsLoc}</Text>
-          </>
+          </Stack>
         )}
       </div>
     </div>

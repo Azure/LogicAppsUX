@@ -13,6 +13,7 @@ import {
 } from './Connection.Utils';
 import { isFunctionData } from './Function.Utils';
 import { isSchemaNodeExtended } from './Schema.Utils';
+import { defineMessages } from 'react-intl';
 
 export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _targetSchema: SchemaNodeDictionary): MapCheckerEntry[] => {
   const errors: MapCheckerEntry[] = [];
@@ -43,7 +44,7 @@ export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _t
       if (!connectionValue.self.reactFlowKey.startsWith(sourcePrefix) && !areInputTypesValidForSchemaNode(node, connectionValue)) {
         errors.push({
           title: { message: mapCheckerResources.inputTypeMismatchTitle },
-          description: { message: mapCheckerResources.inputTypeMismatchBody /*, value: { nodeName: node.name }*/ },
+          description: { message: mapCheckerResources.inputTypeMismatchBody, value: { nodeName: node.name } },
           severity: MapCheckerItemSeverity.Error,
           reactFlowId: connectionValue.self.reactFlowKey,
         });
@@ -66,8 +67,8 @@ export const collectWarningsForMapChecker = (connections: ConnectionDictionary, 
       const connection = connections[reactFlowId];
       if (!nodeHasSourceNodeEventually(connection, connections)) {
         warnings.push({
-          title: { message: mapCheckerResources.functionMissingInputsTitle },
-          description: { message: mapCheckerResources.functionMissingInputsBody, value: { functionName: schemaValue.name } },
+          title: { message: mapCheckerResources.requiredSchemaNodeTitle },
+          description: { message: mapCheckerResources.requiredSchemaNodeBody, value: { functionName: schemaValue.name } },
           severity: MapCheckerItemSeverity.Warning,
           reactFlowId,
         });
@@ -153,7 +154,7 @@ export const functionHasRequiredInputs = (functionData: FunctionData, connection
   return isEveryInputValid;
 };
 
-const mapCheckerResources = {
+const mapCheckerResources = defineMessages({
   inputTypeMismatchTitle: {
     defaultMessage: 'Input type mismatch',
     description: 'Title for the input type mismatch card',
@@ -170,12 +171,12 @@ const mapCheckerResources = {
     defaultMessage: '{functionName} has an non-terminating connection chain',
     description: 'Body text for a function missing a required input card',
   },
-  RequiredSchemaNodeTitle: {
+  requiredSchemaNodeTitle: {
     defaultMessage: 'Function is missing required inputs',
     description: 'Title for a function missing a required input card',
   },
-  RequiredSchemaNodeBody: {
+  requiredSchemaNodeBody: {
     defaultMessage: '{functionName} has an non-terminating connection chain',
     description: 'Body text for a function missing a required input card',
   },
-};
+});
