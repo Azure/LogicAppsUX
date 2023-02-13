@@ -138,7 +138,7 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
               const values = collectConditionalValues(connections[input.reactFlowKey], connections);
               value = values[1];
             } else if (input.node.key.startsWith(directAccessPseudoFunctionKey)) {
-              const functionValues = getInputValues(connections[input.reactFlowKey], connections);
+              const functionValues = getInputValues(connections[input.reactFlowKey], connections, false);
               value = formatDirectAccess(functionValues[0], functionValues[1], functionValues[2]);
             } else {
               value = collectFunctionValue(input.node, connections[input.reactFlowKey], connections);
@@ -162,12 +162,20 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
                 value = '';
               } else {
                 value = value.replaceAll(`${valueToTrim}/`, '');
+
+                // Handle dot access
+                if (!value.includes('[') && !value.includes(']')) {
+                  value = value.replaceAll(`${valueToTrim}`, '.');
+                }
               }
             }
           } else {
             // Need local variables for non-functions
             const valueToTrim = findLast(sourceNode.node.pathToRoot, (pathItem) => pathItem.repeating && pathItem.key !== value)?.key;
-            if (valueToTrim) {
+
+            if (value === sourceNode.node.key && sourceNode.node.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
+              value = '.';
+            } else if (valueToTrim) {
               value = value.replace(`${valueToTrim}/`, '');
             }
 
@@ -182,7 +190,7 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
         } else {
           // Standard property to value
           newPath.push({
-            key: isObjectValue ? mapNodeParams.value : pathItem.fullName.startsWith('@') ? `$${pathItem.fullName}` : pathItem.fullName,
+            key: pathItem.fullName.startsWith('@') ? `$${pathItem.fullName}` : pathItem.fullName,
             value: value && targetNode.normalizedDataType !== NormalizedDataType.ComplexType ? value : undefined,
           });
         }
@@ -196,18 +204,14 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
 const addConditionalToNewPathItems = (ifConnection: Connection, connections: ConnectionDictionary, newPath: OutputPathItem[]) => {
   const values = collectConditionalValues(ifConnection, connections);
 
-  let ifContents = values[0];
-  const latestLoopKey = findLast(newPath, (pathItem) => pathItem.key.startsWith(mapNodeParams.for))?.key;
-  if (latestLoopKey) {
-    // Need local variables for functions
-    const splitLoopKey = latestLoopKey.split(',');
-    const valueToTrim = splitLoopKey[0].substring(
-      mapNodeParams.for.length + 1,
-      splitLoopKey.length === 2 ? splitLoopKey[0].length : splitLoopKey[0].length - 1
-    );
-
-    ifContents = ifContents.replaceAll(`${valueToTrim}/`, '');
-  }
+  // Handle relative paths for (potentially nested) loops
+  let valueToTrim = '';
+  newPath.forEach((pathItem) => {
+    if (pathItem.key.startsWith(mapNodeParams.for)) {
+      valueToTrim += `${getSourceKeyOfLastLoop(pathItem.key)}/`;
+    }
+  });
+  const ifContents = values[0].replaceAll(valueToTrim, '');
 
   // If entry
   newPath.push({ key: `${mapNodeParams.if}(${ifContents})` });

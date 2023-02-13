@@ -25,13 +25,14 @@ ns0:TargetSchemaRoot:
       multiply(/ns0:SourceSchemaRoot/Transformations/AssignedTasks,
       /ns0:SourceSchemaRoot/Transformations/SleepDeprivationLevel)
   CustomValues:
-    SuperSecretKey: "password"
+    SuperSecretKey: '"password"'
     MOTD: concat("Welcome! Today's date is ", string(current-date()))
   Conditionals:
     $if(is-null(/ns0:SourceSchemaRoot/Conditionals/SourceObject)):
       Object:
-        $if(is-null(/ns0:SourceSchemaRoot/Conditionals/SourceObject/SourceProperty)):
-          Property: /ns0:SourceSchemaRoot/Conditionals/SourceObject/SourceProperty
+        MiscProperty: /ns0:SourceSchemaRoot/Conditionals/SourceObject/SourceProperty
+    $if(is-null(/ns0:SourceSchemaRoot/Conditionals/SourceObject/SourceProperty)):
+      Property: /ns0:SourceSchemaRoot/Conditionals/SourceObject/SourceProperty
   Looping:
     OneToOne:
       $for(/ns0:SourceSchemaRoot/Looping/OneToOne/Simple):
@@ -40,9 +41,27 @@ ns0:TargetSchemaRoot:
           FunctionChain: substring(lower-case(SourceFunctionChain), 0, 5)
       $for(/ns0:SourceSchemaRoot/Looping/OneToOne/RelativePaths):
         RelativePaths:
-          DotAccess: .
-          Property: Property
-          $@Attribute: ./@Attribute
+          DirectRelativePaths:
+            DotAccess: .
+            Property: Property
+            $@Attribute: ./@Attribute
+          InFunctionRelativePaths:
+            DotAccess: string(.)
+            Property: string(Property)
+            $@Attribute: string(./@Attribute)
+      $for(/ns0:SourceSchemaRoot/Looping/OneToOne/Index, $a):
+        Index:
+          Direct: /ns0:SourceSchemaRoot/Looping/OneToOne/Index[$a]/SourceDirect
+          FunctionChain: concat(SourceFunctionChain, $a)
+      $for(/ns0:SourceSchemaRoot/Looping/OneToOne/Conditional):
+        Conditional:
+          $if(is-null(SourceDirect)):
+            Direct: SourceDirect
+      $for(/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest, $a):
+        StressTest:
+          $if(is-greater-than($a, 3)):
+            Direct: /ns0:SourceSchemaRoot/Looping/OneToOne/StressTest[$a]/SourceDirect
+          FunctionChain: concat(lower-case(string(current-date())), ./@SourceFunctionChain)
     ManyToOne:
       $for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple):
         $for(SourceSimpleChild):
@@ -50,6 +69,12 @@ ns0:TargetSchemaRoot:
             Simple:
               Direct: SourceDirect
               FunctionChain: lower-case(SourceFunctionChain)
+      $for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Index, $a):
+        $for(SourceIndexChild, $b):
+          $for(SourceIndexChildChild, $c):
+            Index:
+              Direct: /ns0:SourceSchemaRoot/Looping/ManyToOne/Index/SourceIndexChild[$b]/SourceIndexChildChild/SourceDirect
+              FunctionChain: concat($c, SourceFunctionChain, $a)
     ManyToMany:
       $for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple):
         Simple:
@@ -59,6 +84,14 @@ ns0:TargetSchemaRoot:
                 SimpleChildChild:
                   Direct: SourceDirect
                   FunctionChain: lower-case(SourceFunctionChain)
+      $for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Index, $a): # NOTE: Can test '$i/j/k' to confirm it's the variable itself being deserialized too
+        Index:
+          $for(SourceIndexChild, $b):
+            IndexChild:
+              $for(SourceIndexChildChild, $c):
+                IndexChildChild:
+                  Direct: /ns0:SourceSchemaRoot/Looping/ManyToMany/Index/SourceIndexChild/SourceIndexChildChild[$c]/SourceDirect
+                  FunctionChain: concat($a, SourceFunctionChain, $b)
     LoopReduce:
       BestItemName: /ns0:SourceSchemaRoot/Looping/LoopReduce/ItemsList[3]/ItemName
 `;

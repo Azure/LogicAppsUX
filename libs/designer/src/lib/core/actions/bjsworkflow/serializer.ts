@@ -22,8 +22,11 @@ import { UIConstants } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { Segment } from '@microsoft/parsers-logic-apps';
 import { create, removeConnectionPrefix, cleanIndexedValue, isAncestorKey, parseEx, SegmentType } from '@microsoft/parsers-logic-apps';
-import type { OperationManifest, SubGraphDetail } from '@microsoft/utils-logic-apps';
+import type { LocationSwapMap, OperationManifest, SubGraphDetail } from '@microsoft/utils-logic-apps';
 import {
+  clone,
+  deleteObjectProperty,
+  getObjectPropertyValue,
   equals,
   isNullOrUndefined,
   safeSetObjectPropertyValue,
@@ -83,6 +86,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
     const parameter = workflowParameters[parameterId];
     const parameterDefinition: any = { ...parameter };
     const value = parameterDefinition.value;
+    const defaultValue = parameterDefinition.defaultValue;
 
     delete parameterDefinition['name'];
     delete parameterDefinition['isEditable'];
@@ -94,6 +98,14 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
       : typeof value !== 'string'
       ? value
       : JSON.parse(value);
+
+    parameterDefinition.defaultValue = equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING)
+      ? defaultValue
+      : defaultValue === ''
+      ? undefined
+      : typeof defaultValue !== 'string'
+      ? defaultValue
+      : JSON.parse(defaultValue);
 
     return { ...result, [parameter.name]: parameterDefinition };
   }, {});
@@ -196,7 +208,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const nodeSettings = rootState.operations.settings[operationId] ?? {};
   const inputPathValue = serializeOperationParameters(inputsToSerialize, manifest);
   const hostInfo = serializeHost(operationId, manifest, rootState);
-  const inputs = hostInfo !== undefined ? { ...inputPathValue, ...hostInfo } : inputPathValue;
+  const inputs = hostInfo !== undefined ? mergeHostWithInputs(hostInfo, inputPathValue) : inputPathValue;
   const operationFromWorkflow = rootState.workflow.operations[operationId];
   const runAfter = isRootNode(operationId, rootState.workflow.nodesMetadata)
     ? undefined
@@ -290,7 +302,7 @@ const serializeOperationParameters = (inputs: SerializedParameter[], manifest: O
     parametersValue = property === '[*]' ? [parametersValue] : { [property]: parametersValue };
   }
 
-  return parametersValue;
+  return swapInputsLocationIfNeeded(parametersValue, manifest.properties.inputsLocationSwapMap);
 };
 
 export const constructInputValues = (key: string, inputs: SerializedParameter[], encodePathComponents: boolean): any => {
@@ -395,9 +407,30 @@ const serializeParametersFromSwagger = async (
   return parameterInputs;
 };
 
+const swapInputsLocationIfNeeded = (parametersValue: any, swapMap: LocationSwapMap[] | undefined): any => {
+  if (!swapMap?.length) {
+    return parametersValue;
+  }
+
+  let finalValue = clone(parametersValue);
+  for (const { source, target } of swapMap) {
+    const value = getObjectPropertyValue(parametersValue, source);
+    deleteObjectProperty(finalValue, source);
+    finalValue = !target.length ? { ...finalValue, ...value } : safeSetObjectPropertyValue(finalValue, target, value);
+  }
+
+  return finalValue;
+}
+
 //#endregion
 
 //#region Host Serialization
+interface ApiManagementConnectionInfo {
+  apiManagement: {
+    connection: string;
+  };
+}
+
 interface FunctionConnectionInfo {
   function: {
     connectionName: string;
@@ -416,7 +449,7 @@ const serializeHost = (
   nodeId: string,
   manifest: OperationManifest,
   rootState: RootState
-): FunctionConnectionInfo | ServiceProviderConnectionConfigInfo | undefined => {
+): FunctionConnectionInfo | ApiManagementConnectionInfo | ServiceProviderConnectionConfigInfo | undefined => {
   if (!manifest.properties.connectionReference) {
     return undefined;
   }
@@ -431,6 +464,12 @@ const serializeHost = (
       return {
         function: {
           connectionName: referenceKey,
+        },
+      };
+    case ConnectionReferenceKeyFormat.ApiManagement:
+      return {
+        apiManagement: {
+          connection: referenceKey
         },
       };
     case ConnectionReferenceKeyFormat.ServiceProvider:
@@ -457,6 +496,20 @@ const serializeHost = (
       );
   }
 };
+
+const mergeHostWithInputs = (hostInfo: Record<string, any>, inputs: any): any => {
+  for (const [key, value] of Object.entries(hostInfo)) {
+    if (inputs[key]) {
+      // eslint-disable-next-line no-param-reassign
+      inputs[key] = { ...inputs[key], ...value };
+    } else {
+      // eslint-disable-next-line no-param-reassign
+      inputs[key] = value
+    }
+  }
+
+  return inputs;
+}
 
 //#endregion
 

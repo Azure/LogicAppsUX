@@ -2,7 +2,6 @@ import { Login } from '../app/Login/login';
 import type { RootState } from '../state/store';
 import ContextSettings from './contextSettings';
 import styles from './settings_box.module.less';
-import TestFunctions from './testFunctions';
 import { darkTheme } from './themes';
 import { ThemeProvider } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -38,7 +37,6 @@ export const SettingsBox = () => {
         <div className={styles.contentWrapper}>
           <SettingsSection title="Workflow Load Settings" content={<Login />} />
           <SettingsSection title="Context Settings" content={<ContextSettings />} />
-          <SettingsSection title="Test Functions" content={<TestFunctions />} />
         </div>
       </div>
     </ThemeProvider>

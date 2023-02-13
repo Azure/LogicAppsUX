@@ -2,7 +2,8 @@ import { customTokens } from '../../../core';
 import { deleteCurrentlySelectedItem, setSelectedItem } from '../../../core/state/DataMapSlice';
 import type { RootState } from '../../../core/state/Store';
 import { generateInputHandleId } from '../../../utils/Connection.Utils';
-import { getIconForFunction, iconForNormalizedDataType } from '../../../utils/Icon.Utils';
+import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
+import { FunctionIcon } from '../../functionIcon/FunctionIcon';
 import { errorCardStyles, selectedCardStyles } from '../NodeCard';
 import type { FunctionCardProps } from './FunctionCard';
 import { inputsValid, useFunctionCardStyles } from './FunctionCard';
@@ -20,6 +21,7 @@ import { Handle, Position } from 'reactflow';
 export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const { functionData, functionBranding, dataTestId } = props.data;
   const reactFlowId = props.id;
+
   const dispatch = useDispatch();
   const classes = useFunctionCardStyles();
 
@@ -62,6 +64,7 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const handlesForCollapsedHeader = functionData.inputs.map((input) => {
     return <Handle key={input.name} id={input.name} type="target" position={Position.Left} style={{ top: '20px', visibility: 'hidden' }} />;
   });
+
   const header = (
     <Button
       appearance="transparent"
@@ -75,12 +78,12 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
       }}
     >
       {isExpanded ? null : handlesForCollapsedHeader}
-      {getIconForFunction(
-        functionData.functionName,
-        functionData.category,
-        functionData.iconFileName,
-        tokens.colorNeutralForegroundInverted
-      )}
+      <FunctionIcon
+        name={functionData.functionName}
+        categoryName={functionData.category}
+        fileName={functionData.iconFileName}
+        color={tokens.colorNeutralForegroundInverted}
+      />
       <Text style={{ margin: '0px 12px', color: tokens.colorNeutralForegroundInverted }}>{functionData.displayName}</Text>
       <Divider vertical style={{ height: '100%' }} />
       <OutputIcon style={{ margin: '0px 6px 0px 10px', color: tokens.colorNeutralForegroundInverted }} />

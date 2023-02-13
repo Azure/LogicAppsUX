@@ -81,6 +81,12 @@
       "value": "Paginering"
     }
   ],
+  "//nQG4": [
+    {
+      "type": 0,
+      "value": "Select an api from apim instance"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -141,6 +147,18 @@
       "value": "De invoer naar een matrix converteren"
     }
   ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Show raw outputs"
+    }
+  ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -169,6 +187,12 @@
     {
       "type": 0,
       "value": "De eerste Count-elementen van de ingevoerde matrix of tekenreeks worden geretourneerd"
+    }
+  ],
+  "/yYyOq": [
+    {
+      "type": 0,
+      "value": "Resource Group"
     }
   ],
   "00xlpa": [
@@ -279,6 +303,12 @@
       "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
     }
   ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
+    }
+  ],
   "0p+pJq": [
     {
       "type": 0,
@@ -341,12 +371,6 @@
     {
       "type": 0,
       "value": "Opmerking"
-    }
-  ],
-  "1ANUHk": [
-    {
-      "type": 0,
-      "value": "Loading functions..."
     }
   ],
   "1D047X": [
@@ -653,6 +677,20 @@
       "value": "Triggers"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -801,6 +839,12 @@
     {
       "type": 0,
       "value": "Vereist. Het laagste gehele getal dat kan worden geretourneerd."
+    }
+  ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
     }
   ],
   "4BrA0z": [
@@ -1041,10 +1085,22 @@
       "value": "Vereist. Het getal waarmee vermenigvuldigtal 2 moet worden vermenigvuldigd."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -1395,6 +1451,12 @@
     {
       "type": 0,
       "value": "Verificatietype"
+    }
+  ],
+  "AGCm1p": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "AHB418": [
@@ -2053,6 +2115,12 @@
       "value": "Vereist. Het object dat in de verzameling Binnen moet worden gevonden."
     }
   ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2303,6 +2371,12 @@
       "value": "Het eerste object dat niet null is in de ingevoerde argumenten wordt geretourneerd"
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2335,6 +2409,28 @@
       "value": "Parameters"
     }
   ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "The current map contains "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "JErLDT": [
     {
       "type": 0,
@@ -2345,6 +2441,12 @@
     {
       "type": 0,
       "value": "Vereist. Een tekenreeks die de tijd bevat."
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2555,6 +2657,12 @@
     {
       "type": 0,
       "value": "Hiermee wordt het schema van een URI geretourneerd"
+    }
+  ],
+  "LV/BTE": [
+    {
+      "type": 0,
+      "value": "Loading Api Management service instances..."
     }
   ],
   "LZm3ze": [
@@ -3035,6 +3143,12 @@
       "value": "(UTC-03:00) Araguaina"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -3045,6 +3159,12 @@
     {
       "type": 0,
       "value": "Vereist. Het getal dat moet worden opgeteld bij opteltal 1."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3307,6 +3427,12 @@
       "value": "6"
     }
   ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "issue"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3329,6 +3455,12 @@
     {
       "type": 0,
       "value": "Een woordenlijst invoeren"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "issues"
     }
   ],
   "SKXopi": [
@@ -3477,12 +3609,6 @@
     {
       "type": 0,
       "value": "Add or replace your schemas."
-    }
-  ],
-  "TZv5JE": [
-    {
-      "type": 0,
-      "value": "Naam"
     }
   ],
   "Tayrub": [
@@ -3819,6 +3945,12 @@
       "value": "Tenant"
     }
   ],
+  "X7X5ew": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -4063,6 +4195,12 @@
       "value": "Custom value does not match one of the allowed types for this input"
     }
   ],
+  "YlesUQ": [
+    {
+      "type": 0,
+      "value": "Your map is in perfect condition"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -4095,6 +4233,12 @@
     {
       "type": 0,
       "value": ")"
+    }
+  ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
     }
   ],
   "ZCFMoe": [
@@ -4205,6 +4349,12 @@
       "value": "Gegevensverwerking"
     }
   ],
+  "aSnCCB": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -4273,6 +4423,12 @@
     {
       "type": 0,
       "value": "Logic App-exemplaren worden standaard tegelijkertijd of parallel uitgevoerd. Met dit besturingselement wordt gewijzigd hoe nieuwe uitvoeringen in de wachtrij worden opgeslagen. Dit kan na inschakelen niet worden gewijzigd. Als u zoveel mogelijk parallelle exemplaren wilt uitvoeren, laat u dit besturingselement uitgeschakeld. Als u het aantal parallelle uitvoeringen wilt beperken, schakelt u dit besturingselement in en selecteert u een limiet. Als u opeenvolgend wilt uitvoeren, selecteert u 1 als limiet."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4411,12 +4567,6 @@
       "value": "Selecteer een identiteit"
     }
   ],
-  "ci6ex1": [
-    {
-      "type": 0,
-      "value": "Waarde"
-    }
-  ],
   "cj+kyo": [
     {
       "type": 0,
@@ -4545,6 +4695,12 @@
       "value": "De tekenreeks wordt met een scheidingsteken gesplitst"
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4561,6 +4717,12 @@
     {
       "type": 0,
       "value": "Niet opgegeven"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -5089,12 +5251,6 @@
       "value": "Elements and mappings not connected to a target element are removed."
     }
   ],
-  "ittN0l": [
-    {
-      "type": 0,
-      "value": "No resources of this type found under this subscription."
-    }
-  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -5137,6 +5293,12 @@
       "value": "Hiermee wordt een willekeurig geheel getal geretourneerd uit een opgegeven bereik dat alleen aan het begin van de reeks is inbegrepen."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5171,6 +5333,12 @@
     {
       "type": 0,
       "value": "Vereist. Een invoertekenreeks met Base 64-codering."
+    }
+  ],
+  "jZjgYZ": [
+    {
+      "type": 0,
+      "value": "No resources of this type found under this subscription."
     }
   ],
   "jcA3Ig": [
@@ -5213,6 +5381,12 @@
     {
       "type": 0,
       "value": "Vereist. De tekenreeks met Base 64-codering."
+    }
+  ],
+  "k1N9Si": [
+    {
+      "type": 0,
+      "value": "Must provide default value for parameter."
     }
   ],
   "k41+13": [
@@ -5317,6 +5491,12 @@
       "value": "Vereist. Deze waarde is het volgende gehele getal na het hoogste gehele getal dat kan worden geretourneerd."
     }
   ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
+    }
+  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5375,12 +5555,6 @@
     {
       "type": 0,
       "value": "Functions"
-    }
-  ],
-  "lV77P8": [
-    {
-      "type": 0,
-      "value": "Titel"
     }
   ],
   "lZT0JI": [
@@ -5443,6 +5617,12 @@
     {
       "type": 1,
       "value": "property"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "Werkelijke waarde"
     }
   ],
   "m7Y6Qf": [
@@ -5595,6 +5775,12 @@
       "value": "Vereist. Het aantal tijdseenheden waarmee de gewenste tijd in de toekomst wordt opgegeven."
     }
   ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -5629,6 +5815,12 @@
     {
       "type": 0,
       "value": "19"
+    }
+  ],
+  "ny75Ly": [
+    {
+      "type": 0,
+      "value": "Enter default value for parameter."
     }
   ],
   "o/0SEj": [
@@ -5783,12 +5975,6 @@
     {
       "type": 0,
       "value": "Vereist. De waarden die moeten worden gecombineerd tot een matrix."
-    }
-  ],
-  "pRUJff": [
-    {
-      "type": 0,
-      "value": "Parameters"
     }
   ],
   "pUeUDw": [
@@ -5997,20 +6183,6 @@
     {
       "type": 0,
       "value": "Met een asynchroon antwoord kan de logische app antwoorden met een 202-melding (Geaccepteerd) om aan te geven dat het verzoek wordt verwerkt. Er wordt een locatieheader verstrekt om de eindstatus op te halen."
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
     }
   ],
   "r1FQhf": [
@@ -6385,6 +6557,12 @@
       "value": "Er wordt een geheel getal in uren aan een ingevoerd tijdstempel als tekenreeks toegevoegd"
     }
   ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Show me"
+    }
+  ],
   "uXJdAh": [
     {
       "type": 0,
@@ -6437,6 +6615,12 @@
     {
       "type": 0,
       "value": "4"
+    }
+  ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "Standaardwaarde"
     }
   ],
   "uzsleE": [
@@ -6639,6 +6823,12 @@
       "value": "Afhankelijk of de expressie resulteert in Waar of Onwaar wordt een opgegeven waarde geretourneerd"
     }
   ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
+    }
+  ],
   "wl7X0l": [
     {
       "type": 0,
@@ -6727,6 +6917,12 @@
     {
       "type": 0,
       "value": "Drempelwaarde"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Show raw inputs"
     }
   ],
   "xV/oyK": [

@@ -6,9 +6,9 @@ import type { SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { Connection } from '../../models/Connection';
 import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
-import { flattenInputs, isCustomValue, isValidConnectionByType, isValidCustomValueByType } from '../../utils/Connection.Utils';
+import { flattenInputs } from '../../utils/Connection.Utils';
 import { iconForNormalizedDataType } from '../../utils/Icon.Utils';
-import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
+import { areInputsValidForSchemaNode } from '../../utils/MapChecker.Utils';
 import { ItemToggledState } from '../tree/TargetSchemaTreeItem';
 import HandleWrapper from './HandleWrapper';
 import type { CardProps } from './NodeCard';
@@ -40,8 +40,6 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { NodeProps } from 'reactflow';
 import { Position } from 'reactflow';
-
-const contentBtnWidth = schemaNodeCardDefaultWidth - 30;
 
 const useStyles = makeStyles({
   container: {
@@ -83,7 +81,6 @@ const useStyles = makeStyles({
   },
   contentButton: {
     height: '48px',
-    width: `${contentBtnWidth}px`,
     ...shorthands.border('0px'),
     ...shorthands.padding('0px'),
     marginRight: '0px',
@@ -232,21 +229,8 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
       return true;
     }
 
-    const curInput = flattenInputs(curConn.inputs)[0];
-    if (curInput === undefined) {
-      return true;
-    }
-
-    if (isCustomValue(curInput)) {
-      return isValidCustomValueByType(curInput, schemaNode.normalizedDataType);
-    } else {
-      if (isSchemaNodeExtended(curInput.node)) {
-        return isValidConnectionByType(schemaNode.normalizedDataType, curInput.node.normalizedDataType);
-      } else {
-        return isValidConnectionByType(schemaNode.normalizedDataType, curInput.node.outputValueType);
-      }
-    }
-  }, [isSourceSchemaNode, connections, reactFlowId, isNodeConnected, schemaNode.normalizedDataType]);
+    return areInputsValidForSchemaNode(schemaNode, curConn);
+  }, [connections, reactFlowId, isSourceSchemaNode, isNodeConnected, schemaNode]);
 
   const outputChevronOnClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -304,7 +288,13 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
         />
         {!isInputValid && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge} />}
         {connectionStatusIcon && <span style={{ position: 'absolute', right: -16, top: 0 }}>{connectionStatusIcon}</span>}
-        <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
+        <Button
+          disabled={!!disabled}
+          onClick={onClick}
+          appearance={'transparent'}
+          className={classes.contentButton}
+          style={{ paddingRight: isSourceSchemaNode ? '10px' : '0px' }}
+        >
           <span className={classes.cardIcon}>
             <BundledTypeIcon />
           </span>
@@ -315,11 +305,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
             visible={shouldNameTooltipDisplay && isTooltipEnabled}
             onVisibleChange={(_ev, data) => setIsTooltipEnabled(data.visible)}
           >
-            <div
-              ref={schemaNameTextRef}
-              className={classes.cardText}
-              style={{ width: !isSourceSchemaNode ? `${contentBtnWidth}px` : '136px' }}
-            >
+            <div ref={schemaNameTextRef} className={classes.cardText} style={{ width: `${cardWidth - 30}px` }}>
               {schemaNode.name}
             </div>
           </Tooltip>
@@ -335,7 +321,6 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
           />
         )}
         {
-          // danielle maybe show blank menu for target node? Kinda odd that the regular right-click loads
           <CardContextMenu
             title={'remove'}
             contextMenuLocation={contextMenu.location}

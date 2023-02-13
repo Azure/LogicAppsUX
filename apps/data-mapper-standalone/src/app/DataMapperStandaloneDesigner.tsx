@@ -1,8 +1,11 @@
-import { DevApiTester } from '../components/DevApiTester';
 import { DevToolbox } from '../components/DevToolbox';
 import { dataMapDataLoaderSlice } from '../state/DataMapDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
+import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
+import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
+import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
+import { PortalCompatProvider } from '@fluentui/react-portal-compat';
 import {
   DataMapDataProvider,
   DataMapperDesigner,
@@ -11,6 +14,7 @@ import {
   getFunctions,
   InitDataMapperApiService,
 } from '@microsoft/logic-apps-data-mapper';
+import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -55,17 +59,24 @@ export const DataMapperStandaloneDesigner = () => {
     fetchFunctionList();
   }, [dispatch, armToken]);
 
+  const isLightMode = theme === ThemeType.Light;
+
   return (
     <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
       <div style={{ flex: '0 1 1px' }}>
-        <FluentProvider theme={theme === 'Light' ? webLightTheme : webDarkTheme}>
-          <DevToolbox />
-          <DevApiTester />
-        </FluentProvider>
+        <ThemeProvider theme={isLightMode ? AzureThemeLight : AzureThemeDark}>
+          <FluentProvider theme={isLightMode ? webLightTheme : webDarkTheme}>
+            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+            {/* @ts-ignore */}
+            <PortalCompatProvider>
+              <DevToolbox />
+            </PortalCompatProvider>
+          </FluentProvider>
+        </ThemeProvider>
       </div>
 
       <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
-        <DataMapperDesignerProvider locale="en-US" theme={theme === 'Light' ? 'light' : 'dark'} options={{}}>
+        <DataMapperDesignerProvider locale="en-US" theme={theme} options={{}}>
           <DataMapDataProvider
             xsltFilename={xsltFilename}
             mapDefinition={mapDefinition}
@@ -73,7 +84,7 @@ export const DataMapperStandaloneDesigner = () => {
             targetSchema={targetSchema}
             availableSchemas={workflowSchemaFilenames}
             fetchedFunctions={fetchedFunctions}
-            theme={theme === 'Light' ? 'light' : 'dark'}
+            theme={theme}
           >
             <DataMapperDesigner
               saveStateCall={saveStateCall}

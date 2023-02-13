@@ -10,6 +10,9 @@ import ELK from 'elkjs/lib/elk.bundled';
 
 const elk = new ELK();
 
+const defaultNodeGroupSpacing = '120.0';
+const expandedNodeGroupSpacing = '160.0';
+
 const defaultTreeLayoutOptions: Record<string, string> = {
   // General layout settings
   direction: 'RIGHT',
@@ -18,7 +21,7 @@ const defaultTreeLayoutOptions: Record<string, string> = {
   hierarchyHandling: 'INCLUDE_CHILDREN',
   'partitioning.activate': 'true', // Allows blocks/node-groups to be forced into specific "slots"
   'edge.thickness': '8.0',
-  'spacing.nodeNodeBetweenLayers': '120.0', // Spacing between node groups (Source schema/Functions/Target schema)
+  'spacing.nodeNodeBetweenLayers': defaultNodeGroupSpacing, // Spacing between node groups (Source schema/Functions/Target schema)
   // Settings related to node ordering (when attempting to minimize edge crossing)
   'crossingMinimization.semiInteractive': 'true',
   'considerModelOrder.strategy': 'NODES_AND_EDGES',
@@ -51,7 +54,8 @@ export const convertDataMapNodesToElkGraph = (
   currentSourceSchemaNodes: SchemaNodeExtended[],
   currentFunctionNodes: FunctionDictionary,
   currentTargetSchemaNode: SchemaNodeExtended,
-  connections: ConnectionDictionary
+  connections: ConnectionDictionary,
+  useExpandedFunctionCards: boolean
 ): ElkNode => {
   // NOTE: Sub-block edges[] only contain edges between nodes *within that block*
   // - the root edges[] will contain all multi-block edges (thus, src/tgt schemas should never have edges)
@@ -102,7 +106,10 @@ export const convertDataMapNodesToElkGraph = (
 
   const elkTree: ElkNode = {
     id: 'root',
-    layoutOptions: defaultTreeLayoutOptions,
+    layoutOptions: {
+      ...defaultTreeLayoutOptions,
+      'spacing.nodeNodeBetweenLayers': useExpandedFunctionCards ? expandedNodeGroupSpacing : defaultNodeGroupSpacing,
+    },
     children: [
       {
         id: 'sourceSchemaBlock',

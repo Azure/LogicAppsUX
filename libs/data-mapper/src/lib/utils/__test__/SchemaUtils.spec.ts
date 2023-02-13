@@ -1,7 +1,6 @@
-import { targetMockSchema } from '../../__mocks__';
 import { SchemaNodeProperty } from '../../models';
-import { convertSchemaToSchemaExtended, findNodeForKey, parsePropertiesIntoNodeProperties, setWidthForSourceNodes } from '../Schema.Utils';
-import { sourceSchemaNodes } from '../__mocks__';
+import { convertSchemaToSchemaExtended, findNodeForKey, parsePropertiesIntoNodeProperties } from '../Schema.Utils';
+import { targetMockSchema } from '__mocks__/schemas';
 
 describe('utils/Schema', () => {
   describe('parsePropertiesIntoNodeProperties', () => {
@@ -21,15 +20,6 @@ describe('utils/Schema', () => {
       expect(nodeProperties.length).toEqual(2);
       expect(nodeProperties[0]).toEqual(SchemaNodeProperty.Optional);
       expect(nodeProperties[1]).toEqual(SchemaNodeProperty.Repeating);
-    });
-  });
-
-  describe('setWidthForSourceNodes', () => {
-    it('creates a simple indentation for one repeating node', () => {
-      const sortedSourceNodes = sourceSchemaNodes;
-      setWidthForSourceNodes(sortedSourceNodes);
-      expect(sortedSourceNodes[0].width).toEqual(200);
-      expect(sortedSourceNodes[1].width).toEqual(176);
     });
   });
 

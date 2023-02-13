@@ -2,6 +2,7 @@ import constants from '../../common/constants';
 import { updateOutputsAndTokens } from '../../core/actions/bjsworkflow/initialize';
 import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import type { WorkflowEdge } from '../../core/parsers/models/workflowNode';
+import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateNodeSettings } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { setTabError } from '../../core/state/panel/panelSlice';
@@ -53,6 +54,7 @@ export const SettingsPanel = (): JSX.Element => {
 
 function GeneralSettings(): JSX.Element | null {
   const dispatch = useDispatch();
+  const readOnly = useReadOnly();
   const nodeId = useSelectedNodeId();
   const { validate: triggerValidation, validationErrors } = useValidate(nodeId);
   const { expandedSections, isTrigger, nodeInputs, operationInfo, settings, operations } = useSelector((state: RootState) => {
@@ -193,7 +195,7 @@ function GeneralSettings(): JSX.Element | null {
     concurrency,
     conditionExpressions,
     splitOnConfiguration,
-    readOnly: false,
+    readOnly,
     nodeId,
     onConcurrencyToggle,
     onConcurrencyValueChange,
@@ -220,6 +222,7 @@ function GeneralSettings(): JSX.Element | null {
 
 function TrackingSettings(): JSX.Element | null {
   const dispatch = useDispatch();
+  const readOnly = useReadOnly();
   const expandedSections = useSelector((state: RootState) => {
       return state.settings.expandedSections;
     }),
@@ -296,7 +299,7 @@ function TrackingSettings(): JSX.Element | null {
   const trackingProps: TrackingSectionProps = {
     trackedProperties,
     correlation,
-    readOnly: false,
+    readOnly,
     expanded: expandedSections.includes(constants.SETTINGSECTIONS.TRACKING),
     onHeaderClick: (sectionName) => dispatch(setExpandedSections(sectionName)),
     nodeId,
@@ -312,6 +315,7 @@ function TrackingSettings(): JSX.Element | null {
 
 function DataHandlingSettings(): JSX.Element | null {
   const dispatch = useDispatch();
+  const readOnly = useReadOnly();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
     nodeId = useSelectedNodeId(),
     { disableAutomaticDecompression, requestSchemaValidation } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
@@ -346,7 +350,7 @@ function DataHandlingSettings(): JSX.Element | null {
   const dataHandlingProps: DataHandlingSectionProps = {
     requestSchemaValidation,
     disableAutomaticDecompression,
-    readOnly: false,
+    readOnly,
     expanded: expandedSections.includes(constants.SETTINGSECTIONS.DATAHANDLING),
     onHeaderClick: (sectionName) => dispatch(setExpandedSections(sectionName)),
     nodeId,
@@ -360,6 +364,7 @@ function DataHandlingSettings(): JSX.Element | null {
 
 function NetworkingSettings(): JSX.Element | null {
   const nodeId = useSelectedNodeId();
+  const readOnly = useReadOnly();
   const { validate: triggerValidation, validationErrors } = useValidate(nodeId);
   const dispatch = useDispatch();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections);
@@ -544,7 +549,7 @@ function NetworkingSettings(): JSX.Element | null {
     suppressWorkflowHeadersOnResponse,
     paging,
     asynchronous,
-    readOnly: false,
+    readOnly,
     expanded: expandedSections.includes(constants.SETTINGSECTIONS.NETWORKING),
     onHeaderClick: (sectionName) => dispatch(setExpandedSections(sectionName)),
     requestOptions,
@@ -590,6 +595,7 @@ function NetworkingSettings(): JSX.Element | null {
 
 function RunAfterSettings(): JSX.Element | null {
   const nodeId = useSelectedNodeId();
+  const readOnly = useReadOnly();
   const { validate: triggerValidation, validationErrors } = useValidate(nodeId);
   const dispatch = useDispatch();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections);
@@ -604,7 +610,7 @@ function RunAfterSettings(): JSX.Element | null {
   // TODO: 14714481 We need to support all incoming edges (currently using all edges) and runAfterConfigMenu
   const allEdges: WorkflowEdge[] = useEdgesBySource();
   const runAfterProps: SectionProps = {
-    readOnly: false,
+    readOnly,
     nodeId,
     runAfter,
     expanded: expandedSections.includes(constants.SETTINGSECTIONS.RUNAFTER),
@@ -617,6 +623,7 @@ function RunAfterSettings(): JSX.Element | null {
 
 function SecuritySettings(): JSX.Element | null {
   const dispatch = useDispatch();
+  const readOnly = useReadOnly();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections);
   const nodeId = useSelectedNodeId();
   const {
@@ -656,7 +663,7 @@ function SecuritySettings(): JSX.Element | null {
   const securitySectionProps: SecuritySectionProps = {
     secureInputs,
     secureOutputs,
-    readOnly: false,
+    readOnly,
     nodeId,
     onSecureInputsChange,
     onSecureOutputsChange,
