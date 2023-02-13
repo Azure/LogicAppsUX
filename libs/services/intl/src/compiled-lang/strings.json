@@ -2053,6 +2053,12 @@
       "value": "Enter authority"
     }
   ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "Filter by data type"
+    }
+  ],
   "GLd3MU": [
     {
       "type": 0,
@@ -4619,6 +4625,12 @@
     {
       "type": 0,
       "value": "Not specified"
+    }
+  ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "Clear"
     }
   ],
   "eFet4K": [
