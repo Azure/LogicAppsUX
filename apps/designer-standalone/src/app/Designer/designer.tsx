@@ -86,14 +86,14 @@ const functionService = new BaseFunctionService({
   baseUrl: '/url',
   apiVersion: '2018-11-01',
   httpClient,
-  subscriptionId: '',
+  subscriptionId: 'test',
 });
 
 const appServiceService = new BaseAppServiceService({
   baseUrl: '/url',
   apiVersion: '2018-11-01',
   httpClient,
-  subscriptionId: '',
+  subscriptionId: 'test',
 });
 
 const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };

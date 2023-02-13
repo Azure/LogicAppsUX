@@ -5,7 +5,7 @@ import { test, expect } from '@playwright/test';
 test('Should be able to drag and drop operations', async ({ page }) => {
   await page.goto(baseUrl);
 
-  await page.locator('[aria-label="Close React Query Devtools"]').click();
+  // await page.locator('[aria-label="Close React Query Devtools"]').click();
   await page.locator('div[role="button"]:has-text("🧰")').click();
   await page.locator('text=Simple Big Workflow').click();
 
