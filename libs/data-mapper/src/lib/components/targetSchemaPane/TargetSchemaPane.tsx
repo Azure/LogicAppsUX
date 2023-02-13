@@ -55,6 +55,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
 
   const [toggledStatesDictionary, setToggledStatesDictionary] = useState<NodeToggledStateDictionary | undefined>({});
   const [targetSchemaSearchTerm, setTargetSchemaSearchTerm] = useState<string>('');
+  const [targetSchemaDataTypeFilters, setTargetSchemaDataTypeFilters] = useState<NormalizedDataType[]>([]);
 
   const targetSchemaLoc = intl.formatMessage({
     defaultMessage: 'Target schema',

@@ -1,7 +1,7 @@
 import { addSourceSchemaNodes, removeSourceSchemaNodes, setCanvasToolboxTabToDisplay } from '../../core/state/DataMapSlice';
 import { openAddSourceSchemaPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaNodeExtended } from '../../models';
+import type { NormalizedDataType, SchemaNodeExtended } from '../../models';
 import { searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
 import type { ButtonPivotProps } from '../buttonPivot/ButtonPivot';
 import { ButtonPivot } from '../buttonPivot/ButtonPivot';
@@ -48,6 +48,7 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
   const currentSourceSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceSchemaNodes);
 
   const [sourceSchemaSearchTerm, setSourceSchemaSearchTerm] = useState<string>('');
+  const [sourceSchemaDataTypeFilters, setSourceSchemaDataTypeFilters] = useState<NormalizedDataType[]>([]);
 
   const showSourceSchemaLoc = intl.formatMessage({
     defaultMessage: 'Show source schema',
