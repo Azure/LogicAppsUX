@@ -53,7 +53,6 @@ const useStyles = makeStyles({
     float: 'right',
     alignItems: 'center',
     justifyContent: 'left',
-    ...shorthands.gap('8px'),
     ...shorthands.margin('2px'),
     isolation: 'isolate',
     '&:hover': {
@@ -293,7 +292,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
           onClick={onClick}
           appearance={'transparent'}
           className={classes.contentButton}
-          style={{ paddingRight: isSourceSchemaNode ? '10px' : '0px' }}
+          style={{ paddingRight: !showOutputChevron ? '10px' : '0px' }}
         >
           <span className={classes.cardIcon}>
             <BundledTypeIcon />
@@ -301,7 +300,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
           <Tooltip
             relationship="label"
-            content={schemaNode.name}
+            content={<span style={{ overflowWrap: 'break-word' }}>{schemaNode.name}</span>}
             visible={shouldNameTooltipDisplay && isTooltipEnabled}
             onVisibleChange={(_ev, data) => setIsTooltipEnabled(data.visible)}
           >
