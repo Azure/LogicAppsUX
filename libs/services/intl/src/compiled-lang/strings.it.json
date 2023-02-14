@@ -2086,6 +2086,12 @@
       "value": "Immetti autorità"
     }
   ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "Filter by data type"
+    }
+  ],
   "GLd3MU": [
     {
       "type": 0,
@@ -4168,6 +4174,12 @@
       "value": "Zoom indietro"
     }
   ],
+  "Z657PF": [
+    {
+      "type": 0,
+      "value": "Function is missing required inputs"
+    }
+  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -4674,6 +4686,12 @@
       "value": "Non specificato"
     }
   ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -4768,6 +4786,16 @@
     {
       "type": 0,
       "value": "Il numero di paging supera il valore massimo"
+    }
+  ],
+  "fWsZhJ": [
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": " has an non-terminating connection chain"
     }
   ],
   "faSDuD": [
@@ -5309,6 +5337,16 @@
     {
       "type": 0,
       "value": "Formato riferimento della connessione del manifesto non supportato: {referenceKeyFormat}"
+    }
+  ],
+  "jlc/pM": [
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " has an input with a mismatched type"
     }
   ],
   "juR40n": [
@@ -6760,6 +6798,12 @@
     {
       "type": 0,
       "value": "Client Tracking ID"
+    }
+  ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "Input type mismatch"
     }
   ],
   "wl7X0l": [

@@ -2049,6 +2049,12 @@
       "value": "Yetki girin"
     }
   ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "Filter by data type"
+    }
+  ],
   "GLd3MU": [
     {
       "type": 0,
@@ -4101,6 +4107,12 @@
       "value": "Uzaklaştır"
     }
   ],
+  "Z657PF": [
+    {
+      "type": 0,
+      "value": "Function is missing required inputs"
+    }
+  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -4603,6 +4615,12 @@
       "value": "Belirtilmedi"
     }
   ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -4697,6 +4715,16 @@
     {
       "type": 0,
       "value": "Disk belleği sayısı maksimum değeri aşıyor"
+    }
+  ],
+  "fWsZhJ": [
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": " has an non-terminating connection chain"
     }
   ],
   "faSDuD": [
@@ -5223,6 +5251,16 @@
     {
       "type": 0,
       "value": "Desteklenmeyen bildirim bağlantısı başvuru biçimi: {referenceKeyFormat}"
+    }
+  ],
+  "jlc/pM": [
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " has an input with a mismatched type"
     }
   ],
   "juR40n": [
@@ -6659,6 +6697,12 @@
     {
       "type": 0,
       "value": "Client Tracking ID"
+    }
+  ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "Input type mismatch"
     }
   ],
   "wl7X0l": [
