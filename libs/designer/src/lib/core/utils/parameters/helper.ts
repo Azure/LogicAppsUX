@@ -898,6 +898,10 @@ export function loadParameterValuesFromDefault(inputParameters: Record<string, I
   }
 }
 
+export function loadParameterValuesArrayFromDefault(inputParameters: InputParameter[]): void {
+  for (const inputParameter of inputParameters) if (inputParameter.default !== undefined) inputParameter.value = inputParameter.default;
+}
+
 export function updateParameterWithValues(
   parameterKey: string,
   parameterValue: any,

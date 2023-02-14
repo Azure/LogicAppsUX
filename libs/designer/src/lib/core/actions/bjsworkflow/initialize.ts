@@ -21,7 +21,7 @@ import {
   getInputsValueFromDefinitionForManifest,
   getParameterFromName,
   getParametersSortedByVisibility,
-  loadParameterValuesFromDefault,
+  loadParameterValuesArrayFromDefault,
   ParameterGroupKeys,
   toParameterInfoMap,
   updateParameterWithValues,
@@ -80,7 +80,8 @@ export const parseWorkflowParameters = (parameters: Record<string, WorkflowParam
 export const getInputParametersFromManifest = (
   nodeId: string,
   manifest: OperationManifest,
-  stepDefinition?: any
+  stepDefinition?: any,
+  additionalInputParameters?: InputParameter[]
 ): NodeInputsWithDependencies => {
   const primaryInputParameters = new ManifestParser(manifest).getInputParameters(
     false /* includeParentObject */,
@@ -93,6 +94,10 @@ export const getInputParametersFromManifest = (
     )
   );
   let primaryInputParametersInArray = unmap(primaryInputParameters);
+
+  if (additionalInputParameters) {
+    primaryInputParametersInArray = primaryInputParametersInArray.concat(additionalInputParameters);
+  }
 
   if (stepDefinition) {
     const { inputsLocation } = manifest.properties;
@@ -127,7 +132,7 @@ export const getInputParametersFromManifest = (
       false /* useDefault */
     );
   } else {
-    loadParameterValuesFromDefault(primaryInputParameters);
+    loadParameterValuesArrayFromDefault(primaryInputParametersInArray);
   }
 
   const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition);

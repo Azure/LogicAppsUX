@@ -5,6 +5,7 @@ import { useRelationshipIds, useIsParallelBranch, useIsAddingTrigger } from '../
 import { ChoiceGroup, PrimaryButton, Text } from '@fluentui/react';
 import { ApiManagementService, FunctionService, SearchService, AppServiceService } from '@microsoft/designer-client-services-logic-apps';
 import { AzureResourcePicker } from '@microsoft/designer-ui';
+import type { InputParameter } from '@microsoft/parsers-logic-apps';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
 import { getResourceGroupFromWorkflowId } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -17,7 +18,7 @@ interface AzureResourceSelectionProps {
 
 interface AddResourceOperationParameters {
   name: string;
-  swaggerParameters?: OpenAPIV2.Document;
+  additionalInputParameters?: InputParameter[];
   presetParameterValues?: Record<string, any>;
   actionMetadata?: Record<string, any>;
 }
@@ -71,8 +72,9 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
 
   const addResourceOperation = useCallback(
     (props: AddResourceOperationParameters) => {
-      const { name, swaggerParameters, presetParameterValues, actionMetadata } = props;
+      const { name, additionalInputParameters, presetParameterValues, actionMetadata } = props;
       const newNodeId = name.replaceAll(' ', '_');
+      // console.log('### ADDING SELECTED RESOURCES', selectedResources);
       dispatch(
         addOperation({
           operation,
@@ -80,13 +82,13 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           nodeId: newNodeId,
           isParallelBranch,
           isTrigger,
-          swaggerParameters,
+          additionalInputParameters,
           presetParameterValues,
           actionMetadata,
         })
       );
     },
-    [dispatch, isParallelBranch, isTrigger, relationshipIds, operation]
+    [dispatch, operation, relationshipIds, isParallelBranch, isTrigger]
   );
 
   // Parses the swagger object to get the paths and methods in an array
@@ -110,10 +112,14 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           (apiManagement?: any) => ApiManagementService().fetchApisInApiM(apiManagement.id ?? ''),
         ]);
         setSubmitCallback(() => () => {
+          const [method, resource]: [string, any] = Object.entries(selectedResources[2])?.[0] ?? [];
           addResourceOperation({
-            name: getResourceName(selectedResources[1]),
-            swaggerParameters: selectedResources[1],
-            // TODO: Add parameters from selected resources
+            name: resource.summary,
+            additionalInputParameters: resource?.parameters,
+            presetParameterValues: {
+              'api.id': selectedResources[1]?.id,
+              method: method,
+            },
           });
         });
         break;
@@ -132,6 +138,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         setSubmitCallback(() => () => {
           addResourceOperation({
             name: selectedResources[1]?.id,
+            additionalInputParameters: selectedResources[1]?.parameters,
             presetParameterValues: {
               method: selectedResources[1]?.method,
               uri: `http://localhost:54335${selectedResources[1]?.uri}`,

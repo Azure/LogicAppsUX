@@ -24,7 +24,7 @@ import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings } from './settings';
 import { ConnectionService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
+import type { InputParameter, SwaggerParser } from '@microsoft/parsers-logic-apps';
 import type {
   DiscoveryOperation,
   DiscoveryResultTypes,
@@ -41,13 +41,13 @@ type AddOperationPayload = {
   nodeId: string;
   isParallelBranch?: boolean;
   isTrigger?: boolean;
-  swaggerParameters?: any;
+  additionalInputParameters?: InputParameter[];
   presetParameterValues?: Record<string, any>;
   actionMetadata?: Record<string, any>;
 };
 
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
-  const { operation, nodeId: actionId, swaggerParameters, presetParameterValues, actionMetadata } = payload;
+  const { operation, nodeId: actionId, additionalInputParameters, presetParameterValues, actionMetadata } = payload;
   if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
   let count = 1;
   let nodeId = actionId;
@@ -73,7 +73,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     nodeOperationInfo,
     getState as () => RootState,
     dispatch,
-    swaggerParameters,
+    additionalInputParameters,
     presetParameterValues,
     actionMetadata
   );
@@ -89,7 +89,7 @@ const initializeOperationDetails = async (
   operationInfo: NodeOperation,
   getState: () => RootState,
   dispatch: Dispatch,
-  swaggerParameters?: any,
+  additionalInputParameters?: InputParameter[],
   parameterValues?: Record<string, any>,
   actionMetadata?: Record<string, any>
 ): Promise<void> => {
@@ -110,14 +110,13 @@ const initializeOperationDetails = async (
     isConnectionRequired = isConnectionRequiredForOperation(manifest);
 
     const { iconUri, brandColor } = manifest.properties;
-    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
+    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
+      nodeId,
+      manifest,
+      undefined,
+      additionalInputParameters
+    );
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs);
-
-    // If this is an apim operation, we need to pull inputs and outputs from the provided swagger
-    if (swaggerParameters) {
-      // TODO: Bring in the swagger parameters and intitialize them here
-      console.log('### swagger parameters:', swaggerParameters);
-    }
 
     if (parameterValues) {
       // For actions with selected Azure Resources

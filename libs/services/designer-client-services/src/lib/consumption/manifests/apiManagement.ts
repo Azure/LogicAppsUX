@@ -24,7 +24,42 @@ export const apiManagementActionManifest = {
 
     environmentBadge: coreBadge,
 
-    inputs: {},
+    inputs: {
+      type: 'object',
+      required: [],
+      properties: {
+        authentication: {
+          type: 'object',
+          title: 'Authentication',
+          description: 'Enter JSON object of authentication parameter',
+          'x-ms-visibility': 'advanced',
+          'x-ms-editor': 'authentication',
+          'x-ms-editor-options': {
+            supportedAuthTypes: ['None', 'Basic', 'ClientCertificate', 'ActiveDirectoryOAuth', 'Raw', 'ManagedServiceIdentity'],
+          },
+        },
+        subscriptionKey: {
+          type: 'string',
+          title: 'Subscription key',
+          description: 'Enter subscription key',
+        },
+        api: {
+          type: 'object',
+          title: 'API',
+          'x-ms-visibility': 'hideInUI',
+          properties: {
+            id: {
+              type: 'string',
+              'x-ms-visibility': 'hideInUI',
+            },
+          },
+        },
+        method: {
+          type: 'string',
+          'x-ms-visibility': 'hideInUI',
+        },
+      },
+    },
     isInputsOptional: false,
 
     outputs: {},

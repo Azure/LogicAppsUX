@@ -24,7 +24,30 @@ export const appServiceActionManifest = {
 
     environmentBadge: coreBadge,
 
-    inputs: {},
+    inputs: {
+      type: 'object',
+      required: [],
+      properties: {
+        authentication: {
+          type: 'object',
+          title: 'Authentication',
+          description: 'Enter JSON object of authentication parameter',
+          'x-ms-visibility': 'advanced',
+          'x-ms-editor': 'authentication',
+          'x-ms-editor-options': {
+            supportedAuthTypes: ['None', 'Basic', 'ClientCertificate', 'ActiveDirectoryOAuth', 'Raw', 'ManagedServiceIdentity'],
+          },
+        },
+        uri: {
+          type: 'string',
+          'x-ms-visibility': 'hideInUI',
+        },
+        method: {
+          type: 'string',
+          'x-ms-visibility': 'hideInUI',
+        },
+      },
+    },
     isInputsOptional: false,
 
     outputs: {},
