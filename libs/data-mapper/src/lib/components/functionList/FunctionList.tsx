@@ -26,7 +26,7 @@ const fuseFunctionSearchOptions: Fuse.IFuseOptions<FunctionData> = {
   minMatchCharLength: 2,
   includeMatches: true,
   threshold: 0.4,
-  keys: ['key', 'functionName', 'displayName'],
+  keys: ['key', 'functionName', 'displayName', 'category'],
 };
 
 export const functionCategoryItemKeyPrefix = 'category&';
