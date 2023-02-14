@@ -30,7 +30,7 @@ ns0:Root:
       $for(/ns0:Root/CumulativeExpression/Population/State):
         State:
           Name: Name
-          SexRatio: divide(count(County/Person/Sex/Male), count(County/Person/Sex/Female))
+          SexRatio: string(divide(count(County/Person/Sex/Male), count(County/Person/Sex/Female)))
   ConditionalMapping:
     ItemPrice: /ns0:Root/ConditionalMapping/ItemPrice
     ItemQuantity: /ns0:Root/ConditionalMapping/ItemQuantity
@@ -49,10 +49,10 @@ ns0:Root:
           Distance: Distance
           Duration: Duration
   ConditionalLooping:
-    CategorizedCatalog:
-      # Following loop with 3 $if can be coded alternatively by including complex expressions inside selector in $for statements for-example: Product[is-equal(substring(SKU, 1, 2), "11")].
-      # This version is simplified to what Data Mapper front end will generate. Map code can be manually authored with complex selector expressions for optimization or ease of read.
-      $for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product):
+    # Following loop with 3 $if can be coded alternatively by including complex expressions inside selector in $for statements for-example: Product[is-equal(substring(SKU, 1, 2), "11")].
+    # This version is simplified to what Data Mapper front end will generate. Map code can be manually authored with complex selector expressions for optimization or ease of read.
+    $for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product):
+      CategorizedCatalog:
         $if(is-equal(substring(SKU, 1, 2), "11")):
           PetProduct:
             Name: Name

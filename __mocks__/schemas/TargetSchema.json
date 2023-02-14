@@ -248,7 +248,7 @@
                   {
                     "key": "/ns0:Root/Looping/Trips/Trip/Distance",
                     "name": "Distance",
-                    "normalizedDataType": "String",
+                    "normalizedDataType": "Decimal",
                     "properties": "NotSpecified",
                     "fullName": "Distance",
                     "parentKey": "/ns0:Root/Looping/Trips/Trip"
@@ -256,7 +256,7 @@
                   {
                     "key": "/ns0:Root/Looping/Trips/Trip/Duration",
                     "name": "Duration",
-                    "normalizedDataType": "String",
+                    "normalizedDataType": "Decimal",
                     "properties": "NotSpecified",
                     "fullName": "Duration",
                     "parentKey": "/ns0:Root/Looping/Trips/Trip"
