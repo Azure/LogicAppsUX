@@ -8,7 +8,7 @@ import type { Connection } from '../../models/Connection';
 import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
 import { flattenInputs } from '../../utils/Connection.Utils';
 import { iconForNormalizedDataType } from '../../utils/Icon.Utils';
-import { areInputsValidForSchemaNode } from '../../utils/MapChecker.Utils';
+import { areInputTypesValidForSchemaNode } from '../../utils/MapChecker.Utils';
 import { ItemToggledState } from '../tree/TargetSchemaTreeItem';
 import HandleWrapper from './HandleWrapper';
 import type { CardProps } from './NodeCard';
@@ -229,7 +229,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
       return true;
     }
 
-    return areInputsValidForSchemaNode(schemaNode, curConn);
+    return areInputTypesValidForSchemaNode(schemaNode, curConn);
   }, [connections, reactFlowId, isSourceSchemaNode, isNodeConnected, schemaNode]);
 
   const outputChevronOnClick = (e: React.MouseEvent) => {

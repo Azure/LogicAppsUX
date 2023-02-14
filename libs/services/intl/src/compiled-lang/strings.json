@@ -131,6 +131,12 @@
       "value": "Convert the input to an array"
     }
   ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Show raw outputs"
+    }
+  ],
   "/n13VL": [
     {
       "type": 0,
@@ -2047,6 +2053,12 @@
       "value": "Enter authority"
     }
   ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "Filter by data type"
+    }
+  ],
   "GLd3MU": [
     {
       "type": 0,
@@ -2337,6 +2349,28 @@
     {
       "type": 0,
       "value": "Parameters"
+    }
+  ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "The current map contains "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "JErLDT": [
@@ -3303,6 +3337,12 @@
       "value": "6"
     }
   ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "issue"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3325,6 +3365,12 @@
     {
       "type": 0,
       "value": "Enter a Dictionary"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "issues"
     }
   ],
   "SKXopi": [
@@ -3559,12 +3605,6 @@
       "value": "(UTC-06:00) Easter Island"
     }
   ],
-  "UAwAAS": [
-    {
-      "type": 0,
-      "value": "Show inputs"
-    }
-  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3759,12 +3799,6 @@
     {
       "type": 0,
       "value": "Required. The name of the new property."
-    }
-  ],
-  "WCrlES": [
-    {
-      "type": 0,
-      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -4063,6 +4097,12 @@
       "value": "Custom value does not match one of the allowed types for this input"
     }
   ],
+  "YlesUQ": [
+    {
+      "type": 0,
+      "value": "Your map is in perfect condition"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -4073,6 +4113,12 @@
     {
       "type": 0,
       "value": "Zoom out"
+    }
+  ],
+  "Z657PF": [
+    {
+      "type": 0,
+      "value": "Function is missing required inputs"
     }
   ],
   "Z9PWl/": [
@@ -4581,6 +4627,12 @@
       "value": "Not specified"
     }
   ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -4675,6 +4727,16 @@
     {
       "type": 0,
       "value": "Paging count exceeds maximum value"
+    }
+  ],
+  "fWsZhJ": [
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": " has an non-terminating connection chain"
     }
   ],
   "faSDuD": [
@@ -5205,6 +5267,16 @@
     {
       "type": 0,
       "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+    }
+  ],
+  "jlc/pM": [
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " has an input with a mismatched type"
     }
   ],
   "juR40n": [
@@ -6375,6 +6447,12 @@
       "value": "Adds an integer number of hours to a string timestamp passed in"
     }
   ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Show me"
+    }
+  ],
   "uXJdAh": [
     {
       "type": 0,
@@ -6641,6 +6719,12 @@
       "value": "Client Tracking ID"
     }
   ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "Input type mismatch"
+    }
+  ],
   "wl7X0l": [
     {
       "type": 0,
@@ -6729,6 +6813,12 @@
     {
       "type": 0,
       "value": "Threshold"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Show raw inputs"
     }
   ],
   "xV/oyK": [

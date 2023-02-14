@@ -147,6 +147,12 @@
       "value": "Konverterar indata till en matris"
     }
   ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Show raw outputs"
+    }
+  ],
   "/n13VL": [
     {
       "type": 0,
@@ -669,6 +675,20 @@
     {
       "type": 0,
       "value": "Utlösare"
+    }
+  ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
     }
   ],
   "3NhwIJ": [
@@ -2089,6 +2109,12 @@
       "value": "Ange utfärdare"
     }
   ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "Filter by data type"
+    }
+  ],
   "GLd3MU": [
     {
       "type": 0,
@@ -2387,6 +2413,28 @@
     {
       "type": 0,
       "value": "Parameters"
+    }
+  ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "The current map contains "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "JErLDT": [
@@ -3385,6 +3433,12 @@
       "value": "6"
     }
   ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "issue"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3407,6 +3461,12 @@
     {
       "type": 0,
       "value": "Ange en ordlista"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "issues"
     }
   ],
   "SKXopi": [
@@ -3641,12 +3701,6 @@
       "value": "(UTC-06:00) Påskön"
     }
   ],
-  "UAwAAS": [
-    {
-      "type": 0,
-      "value": "Show inputs"
-    }
-  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3841,12 +3895,6 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Den nya egenskapens namn."
-    }
-  ],
-  "WCrlES": [
-    {
-      "type": 0,
-      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -4149,6 +4197,12 @@
       "value": "Custom value does not match one of the allowed types for this input"
     }
   ],
+  "YlesUQ": [
+    {
+      "type": 0,
+      "value": "Your map is in perfect condition"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -4159,6 +4213,12 @@
     {
       "type": 0,
       "value": "Zooma ut"
+    }
+  ],
+  "Z657PF": [
+    {
+      "type": 0,
+      "value": "Function is missing required inputs"
     }
   ],
   "Z9PWl/": [
@@ -4675,6 +4735,12 @@
       "value": "Inte angivet"
     }
   ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -4769,6 +4835,16 @@
     {
       "type": 0,
       "value": "Växlingsantalet överskrider maxvärdet"
+    }
+  ],
+  "fWsZhJ": [
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": " has an non-terminating connection chain"
     }
   ],
   "faSDuD": [
@@ -5319,6 +5395,16 @@
     {
       "type": 1,
       "value": "referenceKeyFormat"
+    }
+  ],
+  "jlc/pM": [
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " has an input with a mismatched type"
     }
   ],
   "juR40n": [
@@ -6137,20 +6223,6 @@
       "value": "Det asynkrona svaret tillåter en logikapp att svara med 202 (godkänd) för att indikera att förfrågan har godkänts för bearbetning. En platsrubrik kommer att tillhandahållas för att hämta den slutliga statusen."
     }
   ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
-    }
-  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -6523,6 +6595,12 @@
       "value": "Lägger till ett heltalsvärde för det antal timmar för vilka en strängtidsstämpel skickas in"
     }
   ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Show me"
+    }
+  ],
   "uXJdAh": [
     {
       "type": 0,
@@ -6789,6 +6867,12 @@
       "value": "Client Tracking ID"
     }
   ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "Input type mismatch"
+    }
+  ],
   "wl7X0l": [
     {
       "type": 0,
@@ -6877,6 +6961,12 @@
     {
       "type": 0,
       "value": "Tröskelvärde"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Show raw inputs"
     }
   ],
   "xV/oyK": [

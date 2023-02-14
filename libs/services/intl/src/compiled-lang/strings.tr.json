@@ -131,6 +131,12 @@
       "value": "Bir diziye yönelik girişi dönüştürür"
     }
   ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Show raw outputs"
+    }
+  ],
   "/n13VL": [
     {
       "type": 0,
@@ -653,6 +659,20 @@
     {
       "type": 0,
       "value": "Tetikleyiciler"
+    }
+  ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
     }
   ],
   "3NhwIJ": [
@@ -2029,6 +2049,12 @@
       "value": "Yetki girin"
     }
   ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "Filter by data type"
+    }
+  ],
   "GLd3MU": [
     {
       "type": 0,
@@ -2319,6 +2345,28 @@
     {
       "type": 0,
       "value": "Parameters"
+    }
+  ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "The current map contains "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "JErLDT": [
@@ -3281,6 +3329,12 @@
       "value": "6"
     }
   ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "issue"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3303,6 +3357,12 @@
     {
       "type": 0,
       "value": "Sözlük Girin"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "issues"
     }
   ],
   "SKXopi": [
@@ -3537,12 +3597,6 @@
       "value": "(UTC-06:00) Paskalya Adası"
     }
   ],
-  "UAwAAS": [
-    {
-      "type": 0,
-      "value": "Show inputs"
-    }
-  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3737,12 +3791,6 @@
     {
       "type": 0,
       "value": "Gerekli. Yeni özelliğin adı."
-    }
-  ],
-  "WCrlES": [
-    {
-      "type": 0,
-      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -4041,6 +4089,12 @@
       "value": "Custom value does not match one of the allowed types for this input"
     }
   ],
+  "YlesUQ": [
+    {
+      "type": 0,
+      "value": "Your map is in perfect condition"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -4051,6 +4105,12 @@
     {
       "type": 0,
       "value": "Uzaklaştır"
+    }
+  ],
+  "Z657PF": [
+    {
+      "type": 0,
+      "value": "Function is missing required inputs"
     }
   ],
   "Z9PWl/": [
@@ -4555,6 +4615,12 @@
       "value": "Belirtilmedi"
     }
   ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -4649,6 +4715,16 @@
     {
       "type": 0,
       "value": "Disk belleği sayısı maksimum değeri aşıyor"
+    }
+  ],
+  "fWsZhJ": [
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": " has an non-terminating connection chain"
     }
   ],
   "faSDuD": [
@@ -5175,6 +5251,16 @@
     {
       "type": 0,
       "value": "Desteklenmeyen bildirim bağlantısı başvuru biçimi: {referenceKeyFormat}"
+    }
+  ],
+  "jlc/pM": [
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " has an input with a mismatched type"
     }
   ],
   "juR40n": [
@@ -5973,20 +6059,6 @@
       "value": "Zaman uyumsuz yanıt, bir mantıksal uygulamanın, isteğin işlenmek üzere kabul edildiğini göstermek için 202 (Kabul Edildi) yanıtı göndermesine olanak sağlar. Son durumun alınması için bir konum üst bilgisi sağlanır."
     }
   ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
-    }
-  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -6359,6 +6431,12 @@
       "value": "Geçirilen dize zaman damgasına tamsayı cinsinden bir saat sayısı ekler"
     }
   ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Show me"
+    }
+  ],
   "uXJdAh": [
     {
       "type": 0,
@@ -6621,6 +6699,12 @@
       "value": "Client Tracking ID"
     }
   ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "Input type mismatch"
+    }
+  ],
   "wl7X0l": [
     {
       "type": 0,
@@ -6709,6 +6793,12 @@
     {
       "type": 0,
       "value": "Eşik"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Show raw inputs"
     }
   ],
   "xV/oyK": [

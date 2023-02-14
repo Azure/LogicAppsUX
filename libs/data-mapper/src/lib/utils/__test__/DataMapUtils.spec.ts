@@ -1,4 +1,3 @@
-import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, simpleLoopSource, sourceMockSchema } from '../../__mocks__';
 import type { Schema, SchemaExtended, SchemaNodeExtended } from '../../models';
 import { SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
@@ -22,6 +21,7 @@ import {
   manyToOneConnectionSourceName,
   manyToOneConnectionTargetName,
 } from '../__mocks__';
+import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, simpleLoopSource, sourceMockSchema } from '__mocks__/schemas';
 
 describe('utils/DataMap', () => {
   describe('addAncestorNodesToCanvas', () => {

@@ -147,6 +147,12 @@
       "value": "A bemenet átalakítása tömbbé."
     }
   ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Show raw outputs"
+    }
+  ],
   "/n13VL": [
     {
       "type": 0,
@@ -669,6 +675,20 @@
     {
       "type": 0,
       "value": "Triggerek"
+    }
+  ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
     }
   ],
   "3NhwIJ": [
@@ -2089,6 +2109,12 @@
       "value": "Adja meg a hitelesítésszolgáltatót"
     }
   ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "Filter by data type"
+    }
+  ],
   "GLd3MU": [
     {
       "type": 0,
@@ -2387,6 +2413,28 @@
     {
       "type": 0,
       "value": "Parameters"
+    }
+  ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "The current map contains "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "JErLDT": [
@@ -3393,6 +3441,12 @@
       "value": "6"
     }
   ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "issue"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3415,6 +3469,12 @@
     {
       "type": 0,
       "value": "Adjon meg egy tulajdonságtárat"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "issues"
     }
   ],
   "SKXopi": [
@@ -3649,12 +3709,6 @@
       "value": "(UTC-06:00) Húsvét-sziget"
     }
   ],
-  "UAwAAS": [
-    {
-      "type": 0,
-      "value": "Show inputs"
-    }
-  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3849,12 +3903,6 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az új tulajdonság neve."
-    }
-  ],
-  "WCrlES": [
-    {
-      "type": 0,
-      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -4161,6 +4209,12 @@
       "value": "Custom value does not match one of the allowed types for this input"
     }
   ],
+  "YlesUQ": [
+    {
+      "type": 0,
+      "value": "Your map is in perfect condition"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -4171,6 +4225,12 @@
     {
       "type": 0,
       "value": "Kicsinyítés"
+    }
+  ],
+  "Z657PF": [
+    {
+      "type": 0,
+      "value": "Function is missing required inputs"
     }
   ],
   "Z9PWl/": [
@@ -4691,6 +4751,12 @@
       "value": "Nincs megadva"
     }
   ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -4785,6 +4851,16 @@
     {
       "type": 0,
       "value": "A lapozások száma meghaladja a maximális értéket"
+    }
+  ],
+  "fWsZhJ": [
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": " has an non-terminating connection chain"
     }
   ],
   "faSDuD": [
@@ -5343,6 +5419,16 @@
     {
       "type": 1,
       "value": "referenceKeyFormat"
+    }
+  ],
+  "jlc/pM": [
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " has an input with a mismatched type"
     }
   ],
   "juR40n": [
@@ -6165,20 +6251,6 @@
       "value": "Az aszinkron válasz lehetővé teszi, hogy egy logikai alkalmazás „202 – Elfogadva” választ adjon, jelezve, hogy elfogadta és feldolgozza a kérést. A válasz tartalmaz egy helyfejlécet is, amely a végállapot beolvasására szolgál."
     }
   ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
-    }
-  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -6551,6 +6623,12 @@
       "value": "Egy egész számmal megadott óraszám hozzáadása az átadott sztring típusú időbélyeghez."
     }
   ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Show me"
+    }
+  ],
   "uXJdAh": [
     {
       "type": 0,
@@ -6817,6 +6895,12 @@
       "value": "Client Tracking ID"
     }
   ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "Input type mismatch"
+    }
+  ],
   "wl7X0l": [
     {
       "type": 0,
@@ -6905,6 +6989,12 @@
     {
       "type": 0,
       "value": "Küszöbérték"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Show raw inputs"
     }
   ],
   "xV/oyK": [

@@ -218,31 +218,78 @@
                 "properties": "Repeating",
                 "children": [
                   {
-                    "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/DotAccess",
-                    "name": "DotAccess",
-                    "fullName": "DotAccess",
+                    "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/DirectRelativePaths",
+                    "name": "DirectRelativePaths",
+                    "fullName": "DirectRelativePaths",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths",
                     "normalizedDataType": "ComplexType",
                     "properties": "NotSpecified",
-                    "children": []
+                    "children": [
+                      {
+                        "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/DirectRelativePaths/DotAccess",
+                        "name": "DotAccess",
+                        "fullName": "DotAccess",
+                        "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/DirectRelativePaths",
+                        "normalizedDataType": "Any",
+                        "properties": "NotSpecified",
+                        "children": []
+                      },
+                      {
+                        "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/DirectRelativePaths/Property",
+                        "name": "Property",
+                        "fullName": "Property",
+                        "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/DirectRelativePaths",
+                        "normalizedDataType": "String",
+                        "properties": "NotSpecified",
+                        "children": []
+                      },
+                      {
+                        "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/DirectRelativePaths/@Attribute",
+                        "name": "Attribute",
+                        "fullName": "@Attribute",
+                        "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/DirectRelativePaths",
+                        "normalizedDataType": "String",
+                        "properties": "Attribute",
+                        "children": []
+                      }
+                    ]
                   },
                   {
-                    "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/Property",
-                    "name": "Property",
-                    "fullName": "Property",
+                    "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/InFunctionRelativePaths",
+                    "name": "InFunctionRelativePaths",
+                    "fullName": "InFunctionRelativePaths",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths",
-                    "normalizedDataType": "String",
+                    "normalizedDataType": "ComplexType",
                     "properties": "NotSpecified",
-                    "children": []
-                  },
-                  {
-                    "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/@Attribute",
-                    "name": "Attribute",
-                    "fullName": "@Attribute",
-                    "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths",
-                    "normalizedDataType": "String",
-                    "properties": "Attribute",
-                    "children": []
+                    "children": [
+                      {
+                        "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/InFunctionRelativePaths/DotAccess",
+                        "name": "DotAccess",
+                        "fullName": "DotAccess",
+                        "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/InFunctionRelativePaths",
+                        "normalizedDataType": "Any",
+                        "properties": "NotSpecified",
+                        "children": []
+                      },
+                      {
+                        "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/InFunctionRelativePaths/Property",
+                        "name": "Property",
+                        "fullName": "Property",
+                        "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/InFunctionRelativePaths",
+                        "normalizedDataType": "String",
+                        "properties": "NotSpecified",
+                        "children": []
+                      },
+                      {
+                        "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/InFunctionRelativePaths/@Attribute",
+                        "name": "Attribute",
+                        "fullName": "@Attribute",
+                        "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/InFunctionRelativePaths",
+                        "normalizedDataType": "String",
+                        "properties": "Attribute",
+                        "children": []
+                      }
+                    ]
                   }
                 ]
               },

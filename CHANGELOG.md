@@ -1,4 +1,32 @@
 # Logic Apps Designer
+### [0.2.77](https://github.com/Azure/LogicAppsUX/compare/v0.2.76...v0.2.77) (2023-02-14)
+
+### [0.2.76](https://github.com/Azure/LogicAppsUX/compare/v0.2.75...v0.2.76) (2023-02-13)
+
+### [0.2.75](https://github.com/Azure/LogicAppsUX/compare/v0.2.74...v0.2.75) (2023-02-12)
+
+### [0.2.74](https://github.com/Azure/LogicAppsUX/compare/v0.2.73...v0.2.74) (2023-02-11)
+
+### [0.2.73](https://github.com/Azure/LogicAppsUX/compare/v0.2.72...v0.2.73) (2023-02-10)
+
+
+### Logic Apps Designer Changes
+
+* Adding API Management action inputs/outputs support for dynamic parameters ([#1616](https://github.com/Azure/LogicAppsUX/issues/1616)) ([3bc920e](https://github.com/Azure/LogicAppsUX/commit/3bc920e45deb5f0c3494261c727b3411c4517508))
+
+### [0.2.72](https://github.com/Azure/LogicAppsUX/compare/v0.2.71...v0.2.72) (2023-02-10)
+
+### [0.2.71](https://github.com/Azure/LogicAppsUX/compare/v0.2.70...v0.2.71) (2023-02-09)
+
+### [0.2.70](https://github.com/Azure/LogicAppsUX/compare/v0.2.69...v0.2.70) (2023-02-08)
+
+
+### Logic Apps Designer Changes
+
+* Monitoring tab ([#1602](https://github.com/Azure/LogicAppsUX/issues/1602)) ([c6070de](https://github.com/Azure/LogicAppsUX/commit/c6070dea2c0bec5b31e41ee8db8002c068732911))
+
+### [0.2.69](https://github.com/Azure/LogicAppsUX/compare/v0.2.68...v0.2.69) (2023-02-07)
+
 ### [0.2.68](https://github.com/Azure/LogicAppsUX/compare/v0.2.67...v0.2.68) (2023-02-06)
 
 ### [0.2.67](https://github.com/Azure/LogicAppsUX/compare/v0.2.66...v0.2.67) (2023-02-05)

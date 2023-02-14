@@ -131,6 +131,12 @@
       "value": "Converter a entrada em uma matriz"
     }
   ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Show raw outputs"
+    }
+  ],
   "/n13VL": [
     {
       "type": 0,
@@ -664,6 +670,20 @@
     {
       "type": 0,
       "value": "Gatilhos"
+    }
+  ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
     }
   ],
   "3NhwIJ": [
@@ -2062,6 +2082,12 @@
       "value": "Inserir autoridade"
     }
   ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "Filter by data type"
+    }
+  ],
   "GLd3MU": [
     {
       "type": 0,
@@ -2352,6 +2378,28 @@
     {
       "type": 0,
       "value": "Parameters"
+    }
+  ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "The current map contains "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "JErLDT": [
@@ -3336,6 +3384,12 @@
       "value": "6"
     }
   ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "issue"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3358,6 +3412,12 @@
     {
       "type": 0,
       "value": "Inserir um Dicionário"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "issues"
     }
   ],
   "SKXopi": [
@@ -3592,12 +3652,6 @@
       "value": "(UTC-06:00) Ilha de Páscoa"
     }
   ],
-  "UAwAAS": [
-    {
-      "type": 0,
-      "value": "Show inputs"
-    }
-  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3792,12 +3846,6 @@
     {
       "type": 0,
       "value": "Necessário. O nome da nova propriedade."
-    }
-  ],
-  "WCrlES": [
-    {
-      "type": 0,
-      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -4096,6 +4144,12 @@
       "value": "Custom value does not match one of the allowed types for this input"
     }
   ],
+  "YlesUQ": [
+    {
+      "type": 0,
+      "value": "Your map is in perfect condition"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -4106,6 +4160,12 @@
     {
       "type": 0,
       "value": "Reduzir"
+    }
+  ],
+  "Z657PF": [
+    {
+      "type": 0,
+      "value": "Function is missing required inputs"
     }
   ],
   "Z9PWl/": [
@@ -4614,6 +4674,12 @@
       "value": "Não especificado"
     }
   ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -4708,6 +4774,16 @@
     {
       "type": 0,
       "value": "A contagem de paginação excede o valor máximo"
+    }
+  ],
+  "fWsZhJ": [
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": " has an non-terminating connection chain"
     }
   ],
   "faSDuD": [
@@ -5249,6 +5325,16 @@
     {
       "type": 0,
       "value": "Formato de referência de conexão de manifesto sem suporte: {referenceKeyFormat}"
+    }
+  ],
+  "jlc/pM": [
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " has an input with a mismatched type"
     }
   ],
   "juR40n": [
@@ -6058,20 +6144,6 @@
       "value": "A resposta assíncrona permite que um Aplicativo Lógico responda com um 202 (Aceito) para indicar que a solicitação foi aceita para processamento. Um cabeçalho de localização será fornecido para recuperar o estado final."
     }
   ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
-    }
-  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -6444,6 +6516,12 @@
       "value": "Adiciona um número inteiro de horas em um carimbo de data/hora de cadeia de caracteres passado"
     }
   ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Show me"
+    }
+  ],
   "uXJdAh": [
     {
       "type": 0,
@@ -6710,6 +6788,12 @@
       "value": "Client Tracking ID"
     }
   ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "Input type mismatch"
+    }
+  ],
   "wl7X0l": [
     {
       "type": 0,
@@ -6798,6 +6882,12 @@
     {
       "type": 0,
       "value": "Limite"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Show raw inputs"
     }
   ],
   "xV/oyK": [
