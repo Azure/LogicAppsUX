@@ -733,40 +733,44 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
   }
 
   // Item to be deleted is a connection
-  const sourceId = getSourceIdFromReactFlowConnectionId(reactFlowKey);
-  const sourceSchema = curDataMapState.curDataMapOperation.flattenedSourceSchema;
-  const canDelete = canDeleteConnection(sourceId, sourceSchema);
   const connections = { ...curDataMapState.curDataMapOperation.dataMapConnections };
 
-  if (canDelete) {
-    deleteConnectionFromConnections(
-      connections,
-      getSourceIdFromReactFlowConnectionId(reactFlowKey),
-      getDestinationIdFromReactFlowConnectionId(reactFlowKey)
-    );
-    const tempConn = connections[getSourceIdFromReactFlowConnectionId(reactFlowKey)];
-    const ids = getConnectedSourceSchemaNodes([tempConn], connections);
-    if (ids.length > 0) {
-      deleteParentRepeatingConnections(connections, addSourceReactFlowPrefix(ids[0].key));
+  /*
+    const sourceId = getSourceIdFromReactFlowConnectionId(reactFlowKey);
+    const sourceSchema = curDataMapState.curDataMapOperation.flattenedSourceSchema;
+    const canDelete = canDeleteConnection(sourceId, sourceSchema);
+
+    if (!canDelete) {
+      const sourceNode = sourceSchema[sourceId];
+      curDataMapState.notificationData = {
+        type: NotificationTypes.RepeatingConnectionCannotDelete,
+        msgParam: sourceNode.name,
+        autoHideDurationMs: errorNotificationAutoHideDuration,
+      };
     }
 
-    curDataMapState.notificationData = {
-      type: NotificationTypes.ConnectionDeleted,
-      autoHideDurationMs: deletedNotificationAutoHideDuration,
-    };
-  } else {
-    const sourceNode = sourceSchema[sourceId];
-    curDataMapState.notificationData = {
-      type: NotificationTypes.RepeatingConnectionCannotDelete,
-      msgParam: sourceNode.name,
-      autoHideDurationMs: errorNotificationAutoHideDuration,
-    };
+  */
+
+  deleteConnectionFromConnections(
+    connections,
+    getSourceIdFromReactFlowConnectionId(reactFlowKey),
+    getDestinationIdFromReactFlowConnectionId(reactFlowKey)
+  );
+  const tempConn = connections[getSourceIdFromReactFlowConnectionId(reactFlowKey)];
+  const ids = getConnectedSourceSchemaNodes([tempConn], connections);
+  if (ids.length > 0) {
+    deleteParentRepeatingConnections(connections, addSourceReactFlowPrefix(ids[0].key));
   }
 
   doDataMapOperation(curDataMapState, {
     ...curDataMapState.curDataMapOperation,
     dataMapConnections: { ...connections },
   });
+
+  curDataMapState.notificationData = {
+    type: NotificationTypes.ConnectionDeleted,
+    autoHideDurationMs: deletedNotificationAutoHideDuration,
+  };
 };
 
 export const addParentConnectionForRepeatingElements = (
