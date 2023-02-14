@@ -2020,6 +2020,12 @@
       "value": "권한 입력"
     }
   ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "Filter by data type"
+    }
+  ],
   "GLd3MU": [
     {
       "type": 0,
@@ -4050,6 +4056,12 @@
       "value": "축소"
     }
   ],
+  "Z657PF": [
+    {
+      "type": 0,
+      "value": "Function is missing required inputs"
+    }
+  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -4552,6 +4564,12 @@
       "value": "지정되지 않음"
     }
   ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -4646,6 +4664,16 @@
     {
       "type": 0,
       "value": "페이징 수가 최대값을 초과합니다."
+    }
+  ],
+  "fWsZhJ": [
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": " has an non-terminating connection chain"
     }
   ],
   "faSDuD": [
@@ -5161,6 +5189,16 @@
     {
       "type": 0,
       "value": "지원되지 않는 매니페스트 연결 참조 형식: {referenceKeyFormat}"
+    }
+  ],
+  "jlc/pM": [
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " has an input with a mismatched type"
     }
   ],
   "juR40n": [
@@ -6586,6 +6624,12 @@
     {
       "type": 0,
       "value": "Client Tracking ID"
+    }
+  ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "Input type mismatch"
     }
   ],
   "wl7X0l": [
