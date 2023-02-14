@@ -367,7 +367,6 @@ export const dataMapSlice = createSlice({
       };
 
       addConnection(newState.dataMapConnections, action.payload);
-      const afterConnectionMade = { ...newState.dataMapConnections };
 
       // Add any repeating parent nodes as well
       // Get all the source nodes in case we have sources from multiple source chains
@@ -398,7 +397,7 @@ export const dataMapSlice = createSlice({
 
       actualSources.forEach((sourceNode) => {
         if (actualTarget.length > 0) {
-          addParentConnectionForRepeatingElementsNested(
+          const wasNewArrayConnectionAdded = addParentConnectionForRepeatingElementsNested(
             sourceNode,
             actualTarget[0],
             newState.flattenedSourceSchema,
@@ -406,8 +405,7 @@ export const dataMapSlice = createSlice({
             newState.dataMapConnections
           );
 
-          // If new parent connection has been made
-          if (JSON.stringify(newState.dataMapConnections) !== JSON.stringify(afterConnectionMade)) {
+          if (wasNewArrayConnectionAdded) {
             state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
           }
 
