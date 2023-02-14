@@ -1,5 +1,5 @@
 import type { Schema, SchemaExtended, SchemaNodeExtended } from '../../models';
-import { SchemaType } from '../../models';
+import { SchemaType, FunctionType, FunctionCategory } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import {
   addAncestorNodesToCanvas,
@@ -252,7 +252,7 @@ const indexed: ConnectionDictionary = {
       node: {
         key: 'index',
         maxNumberOfInputs: 1,
-        type: 'PseudoFunction',
+        type: FunctionType.PseudoFunction,
         functionName: '',
         outputValueType: 'Any',
         inputs: [
@@ -265,7 +265,7 @@ const indexed: ConnectionDictionary = {
           },
         ],
         displayName: 'Index',
-        category: 'Collection',
+        category: FunctionCategory.Collection,
         description: 'Adds an index value to the loop',
         children: [],
       },
@@ -681,7 +681,7 @@ const indexed: ConnectionDictionary = {
         node: {
           key: 'index',
           maxNumberOfInputs: 1,
-          type: 'PseudoFunction',
+          type: FunctionType.PseudoFunction,
           functionName: '',
           outputValueType: 'Any',
           inputs: [
@@ -694,7 +694,7 @@ const indexed: ConnectionDictionary = {
             },
           ],
           displayName: 'Index',
-          category: 'Collection',
+          category: FunctionCategory.Collection,
           description: 'Adds an index value to the loop',
           children: [],
         },
@@ -779,7 +779,7 @@ const indexed: ConnectionDictionary = {
           node: {
             key: 'index',
             maxNumberOfInputs: 1,
-            type: 'PseudoFunction',
+            type: FunctionType.PseudoFunction,
             functionName: '',
             outputValueType: 'Any',
             inputs: [
@@ -792,7 +792,7 @@ const indexed: ConnectionDictionary = {
               },
             ],
             displayName: 'Index',
-            category: 'Collection',
+            category: FunctionCategory.Collection,
             description: 'Adds an index value to the loop',
             children: [],
           },
