@@ -4,7 +4,7 @@ import type { SchemaNodeExtended } from '../../models';
 import { NormalizedDataType, SchemaNodeProperty } from '../../models';
 import type { Connection, ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import type { FunctionData, FunctionInput } from '../../models/Function';
-import { FunctionCategory, functionMock } from '../../models/Function';
+import { FunctionCategory, functionMock, FunctionType } from '../../models/Function';
 import {
   bringInParentSourceNodesForRepeating,
   createConnectionEntryIfNeeded,
@@ -140,7 +140,7 @@ describe('utils/Connections', () => {
           displayName: 'Self',
           category: FunctionCategory.Math,
           description: 'Self',
-          type: 'Function',
+          type: FunctionType.TransformationFunction,
           inputs: mockBoundedFunctionInputs,
           maxNumberOfInputs: mockBoundedFunctionInputs.length,
           outputValueType: NormalizedDataType.Integer,
@@ -177,7 +177,7 @@ describe('utils/Connections', () => {
           displayName: 'Self',
           category: FunctionCategory.Math,
           description: 'Self',
-          type: 'Function',
+          type: FunctionType.TransformationFunction,
           inputs: mockBoundedFunctionInputs,
           maxNumberOfInputs: mockBoundedFunctionInputs.length,
           outputValueType: NormalizedDataType.Integer,
@@ -211,7 +211,7 @@ describe('utils/Connections', () => {
         displayName: 'Self',
         category: FunctionCategory.Math,
         description: 'Self',
-        type: 'Function',
+        type: FunctionType.TransformationFunction,
         inputs: mockBoundedFunctionInputs,
         maxNumberOfInputs: mockBoundedFunctionInputs.length,
         outputValueType: NormalizedDataType.Integer,
