@@ -296,7 +296,7 @@ export const addParentConnectionForRepeatingElementsNested = (
   flattenedSourceSchema: SchemaNodeDictionary,
   flattenedTargetSchema: SchemaNodeDictionary,
   dataMapConnections: ConnectionDictionary
-) => {
+): boolean => {
   if (sourceNode.parentKey) {
     const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
     const firstSourceNodeWithRepeatingPathItem = findLast(sourceNode.pathToRoot, (pathItem) => pathItem.repeating);
@@ -305,7 +305,7 @@ export const addParentConnectionForRepeatingElementsNested = (
       const prefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
       const firstRepeatingSourceNode = flattenedSourceSchema[prefixedSourceKey];
       if (!firstRepeatingSourceNode) {
-        return;
+        return false;
       }
 
       const prefixedTargetKey = addReactFlowPrefix(firstTargetNodeWithRepeatingPathItem.key, SchemaType.Target);
@@ -335,15 +335,19 @@ export const addParentConnectionForRepeatingElementsNested = (
         nextTargetNode = firstRepeatingTargetNode;
       }
 
-      addParentConnectionForRepeatingElementsNested(
+      const wasNewArrayConnectionAdded = addParentConnectionForRepeatingElementsNested(
         flattenedSourceSchema[addReactFlowPrefix(firstRepeatingSourceNode.parentKey ?? '', SchemaType.Source)],
         nextTargetNode,
         flattenedSourceSchema,
         flattenedTargetSchema,
         dataMapConnections
       );
+
+      return !parentsAlreadyConnected ? true : wasNewArrayConnectionAdded;
     }
   }
+
+  return false;
 };
 
 export const addNodeToCanvasIfDoesNotExist = (
