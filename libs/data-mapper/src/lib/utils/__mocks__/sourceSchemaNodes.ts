@@ -4,14 +4,12 @@ export const sourceSchemaNodes: SchemaNodeExtended[] = [
   {
     key: '/ns0:Root/Looping/Employee',
     name: 'Employee',
-    schemaNodeDataType: 'None',
     normalizedDataType: 'ComplexType',
     properties: 'Repeating',
     children: [
       {
         key: '/ns0:Root/Looping/Employee/TelephoneNumber',
         name: 'TelephoneNumber',
-        schemaNodeDataType: 'String',
         normalizedDataType: 'String',
         properties: 'NotSpecified',
         fullName: 'TelephoneNumber',
@@ -48,7 +46,6 @@ export const sourceSchemaNodes: SchemaNodeExtended[] = [
       {
         key: '/ns0:Root/Looping/Employee/Name',
         name: 'Name',
-        schemaNodeDataType: 'String',
         normalizedDataType: 'String',
         properties: 'NotSpecified',
         fullName: 'Name',
@@ -85,7 +82,6 @@ export const sourceSchemaNodes: SchemaNodeExtended[] = [
       {
         key: '/ns0:Root/Looping/Employee/Salary',
         name: 'Salary',
-        schemaNodeDataType: 'Decimal',
         normalizedDataType: 'Decimal',
         properties: 'NotSpecified',
         fullName: 'Salary',
@@ -122,7 +118,6 @@ export const sourceSchemaNodes: SchemaNodeExtended[] = [
       {
         key: '/ns0:Root/Looping/Employee/Country',
         name: 'Country',
-        schemaNodeDataType: 'String',
         normalizedDataType: 'String',
         properties: 'NotSpecified',
         fullName: 'Country',
@@ -159,7 +154,6 @@ export const sourceSchemaNodes: SchemaNodeExtended[] = [
       {
         key: '/ns0:Root/Looping/Employee/Dat_of_Birth',
         name: 'Dat_of_Birth',
-        schemaNodeDataType: 'Date',
         normalizedDataType: 'DateTime',
         properties: 'NotSpecified',
         fullName: 'Dat_of_Birth',
@@ -196,7 +190,6 @@ export const sourceSchemaNodes: SchemaNodeExtended[] = [
       {
         key: '/ns0:Root/Looping/Employee/Address',
         name: 'Address',
-        schemaNodeDataType: 'String',
         normalizedDataType: 'String',
         properties: 'NotSpecified',
         fullName: 'Address',
@@ -258,7 +251,6 @@ export const sourceSchemaNodes: SchemaNodeExtended[] = [
   {
     key: '/ns0:Root/Looping/Employee/TelephoneNumber',
     name: 'TelephoneNumber',
-    schemaNodeDataType: 'String',
     normalizedDataType: 'String',
     properties: 'NotSpecified',
     fullName: 'TelephoneNumber',

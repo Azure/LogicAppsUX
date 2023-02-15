@@ -1,4 +1,8 @@
-import { fullTranscriptMapDefinitionString, comprehensiveMapDefinition } from '../../../../__mocks__/mapDefinitions';
+import {
+  fullTranscriptMapDefinitionString,
+  comprehensiveMapDefinition,
+  transcriptJsonMapDefinitionString,
+} from '../../../../__mocks__/mapDefinitions';
 import { dataMapDataLoaderSlice, loadDataMap, LoadingMethod } from '../state/DataMapDataLoader';
 import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
@@ -7,21 +11,21 @@ import { DevSerializationTester } from './DevSerializationTester';
 import type { IDropdownOption } from '@fluentui/react';
 import { Checkbox, Dropdown, Stack, StackItem, TextField } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Tooltip, tokens } from '@fluentui/react-components';
-import type { Theme as ThemeType } from '@microsoft/utils-logic-apps';
+import { SchemaFileFormat } from '@microsoft/logic-apps-data-mapper';
+import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-const themeOptions = ['Light', 'Dark'];
-const themeDropdownOptions = themeOptions.map((theme) => ({ key: theme.toLowerCase() as ThemeType, text: theme }));
+const themeDropdownOptions = [
+  { key: ThemeType.Light, text: 'Light' },
+  { key: ThemeType.Dark, text: 'Dark' },
+];
 
 interface MapDefDropdownData {
   mapDefinitionString: string;
   associatedSchemaIdx: number;
 }
 export type MapDefDropdownOption = IDropdownOption<MapDefDropdownData>;
-
-const sourceSchemaFileOptions = ['PlaygroundSourceSchema.json', 'SourceSchema.json', 'ComprehensiveSourceSchema.json'];
-const targetSchemaFileOptions = ['PlaygroundTargetSchema.json', 'TargetSchema.json', 'ComprehensiveTargetSchema.json'];
 const mapDefinitionDropdownOptions: MapDefDropdownOption[] = [
   {
     key: 'fullDemoScriptMapDefinition',
@@ -33,7 +37,36 @@ const mapDefinitionDropdownOptions: MapDefDropdownOption[] = [
     text: 'Comprehensive',
     data: { mapDefinitionString: comprehensiveMapDefinition, associatedSchemaIdx: 2 },
   },
+  {
+    key: 'jsonTranscriptMapDefinition',
+    text: 'JSON Transcript',
+    data: { mapDefinitionString: transcriptJsonMapDefinitionString, associatedSchemaIdx: 3 },
+  },
 ];
+
+interface SchemaFileData {
+  filename: string;
+  schemaFormat: SchemaFileFormat;
+}
+const sourceSchemaFileOptions: SchemaFileData[] = [
+  { filename: 'PlaygroundSourceSchema.json', schemaFormat: SchemaFileFormat.XML },
+  { filename: 'SourceSchema.json', schemaFormat: SchemaFileFormat.XML },
+  { filename: 'ComprehensiveSourceSchema.json', schemaFormat: SchemaFileFormat.XML },
+  { filename: 'SourceSchemaJson.json', schemaFormat: SchemaFileFormat.JSON },
+];
+const targetSchemaFileOptions: SchemaFileData[] = [
+  { filename: 'PlaygroundTargetSchema.json', schemaFormat: SchemaFileFormat.XML },
+  { filename: 'TargetSchema.json', schemaFormat: SchemaFileFormat.XML },
+  { filename: 'ComprehensiveTargetSchema.json', schemaFormat: SchemaFileFormat.XML },
+  { filename: 'TargetSchemaJson.json', schemaFormat: SchemaFileFormat.JSON },
+];
+const mapSchemaFileOptionsToDropdownOptions = (schemaFileData: SchemaFileData[]) =>
+  schemaFileData.map<IDropdownOption>((schemaOpt) => ({
+    key: schemaOpt.filename,
+    text: `[${schemaOpt.schemaFormat}] ${schemaOpt.filename.split('.')[0]}`,
+  }));
+const sourceSchemaDropdownOptions = mapSchemaFileOptionsToDropdownOptions(sourceSchemaFileOptions);
+const targetSchemaDropdownOptions = mapSchemaFileOptionsToDropdownOptions(targetSchemaFileOptions);
 
 export const DevToolbox = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -73,8 +106,8 @@ export const DevToolbox = () => {
       }
 
       dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition(item));
-      const srcSchemaRscPath = sourceSchemaFileOptions[item.data.associatedSchemaIdx];
-      const tgtSchemaRscPath = targetSchemaFileOptions[item.data.associatedSchemaIdx];
+      const srcSchemaRscPath = sourceSchemaFileOptions[item.data.associatedSchemaIdx].filename;
+      const tgtSchemaRscPath = targetSchemaFileOptions[item.data.associatedSchemaIdx].filename;
 
       dispatch(schemaDataLoaderSlice.actions.changeInputResourcePath(srcSchemaRscPath));
       dispatch(schemaDataLoaderSlice.actions.changeOutputResourcePath(tgtSchemaRscPath));
@@ -133,9 +166,6 @@ export const DevToolbox = () => {
 
   const toolboxItems = useMemo(() => {
     const newToolboxItems = [];
-
-    const sourceSchemaDropdownOptions = sourceSchemaFileOptions.map((fileName) => ({ key: fileName, text: fileName }));
-    const targetSchemaDropdownOptions = targetSchemaFileOptions.map((fileName) => ({ key: fileName, text: fileName }));
 
     if (loadingMethod === LoadingMethod.File) {
       newToolboxItems.push(
