@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 
 export default {
   component: MapOverview,
-  title: 'Data Mapper Components/Map Overview',
+  title: 'Data Mapper Components/Map Overview/Overview',
   decorators: [
     (Story) => (
       <Provider store={store}>
