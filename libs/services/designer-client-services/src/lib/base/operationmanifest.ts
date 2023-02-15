@@ -56,6 +56,10 @@ type SchemaObject = OpenAPIV2.SchemaObject;
 
 const as2Encode = 'as2encode';
 const as2Decode = 'as2decode';
+const integrationaccountartifactlookup = 'integrationaccountartifactlookup';
+const rosettanetencode = 'rosettanetencode';
+const rosettanetdecode = 'rosettanetdecode';
+const rosettanetwaitforresponse = 'rosettanetwaitforresponse';
 const invokefunction = 'invokefunction';
 const javascriptcode = 'javascriptcode';
 const compose = 'compose';
@@ -121,6 +125,7 @@ const dateTimeConnectorId = 'connectionProviders/datetime';
 const scheduleConnectorId = 'connectionProviders/schedule';
 const httpConnectorId = 'connectionProviders/http';
 const variableConnectorId = 'connectionProviders/variable';
+const rosettanetConnectorId = 'connectionProviders/rosettaNetOperations';
 
 const supportedManifestTypes = [
   appendtoarrayvariable,
@@ -137,6 +142,7 @@ const supportedManifestTypes = [
   httpwebhook,
   initializevariable,
   incrementvariable,
+  integrationaccountartifactlookup,
   invokefunction,
   javascriptcode,
   join,
@@ -146,6 +152,9 @@ const supportedManifestTypes = [
   recurrence,
   request,
   response,
+  rosettanetdecode,
+  rosettanetencode,
+  rosettanetwaitforresponse,
   select,
   setvariable,
   slidingwindow,
@@ -289,6 +298,10 @@ export function isBuiltInOperation(definition: any): boolean {
   switch (definition?.type?.toLowerCase()) {
     case as2Decode:
     case as2Encode:
+    case integrationaccountartifactlookup:
+    case rosettanetencode:
+    case rosettanetdecode:
+    case rosettanetwaitforresponse:
     case appendtoarrayvariable:
     case appendtostringvariable:
     case compose:
@@ -585,6 +598,22 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [until]: {
     connectorId: controlConnectorId,
     operationId: until,
+  },
+  [integrationaccountartifactlookup]: {
+    connectorId: 'connectionProviders/integrationAccountOperations',
+    operationId: 'integrationAccountArtifactLookup',
+  },
+  [rosettanetencode]: {
+    connectorId: rosettanetConnectorId,
+    operationId: 'rosettaNetEncode',
+  },
+  [rosettanetdecode]: {
+    connectorId: rosettanetConnectorId,
+    operationId: 'rosettaNetDecode',
+  },
+  [rosettanetwaitforresponse]: {
+    connectorId: rosettanetConnectorId,
+    operationId: 'rosettaNetWaitForResponse',
   },
 };
 
