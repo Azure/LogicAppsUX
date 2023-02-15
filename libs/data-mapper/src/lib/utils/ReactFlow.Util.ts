@@ -331,7 +331,7 @@ export const useOverviewLayout = (
 
     // Source schema nodes
     if (srcSchemaTreeRoot) {
-      addChildNodes(srcSchemaTreeRoot, 0, 1, sourceReactFlowNodes, true, !!srcSchemaTreeRoot, 1);
+      addChildNodesForOverview(srcSchemaTreeRoot, 0, 1, sourceReactFlowNodes, true, !!srcSchemaTreeRoot, 1);
     }
 
     // Dummy target schema node
@@ -343,7 +343,7 @@ export const useOverviewLayout = (
 
     // Target schema nodes
     if (tgtSchemaTreeRoot) {
-      addChildNodes(tgtSchemaTreeRoot, 0, 1, targetReactFlowNodes, false, !!srcSchemaTreeRoot, 1);
+      addChildNodesForOverview(tgtSchemaTreeRoot, 0, 1, targetReactFlowNodes, false, !!srcSchemaTreeRoot, 1);
     }
 
     setReactFlowNodes([...sourceReactFlowNodes, ...targetReactFlowNodes]);
@@ -369,7 +369,7 @@ export const useWholeViewLayout = (
     // Source schema nodes
     if (srcSchemaTreeRoot) {
       const sourceDepth = nodeTreeDepth(srcSchemaTreeRoot);
-      addChildNodes(srcSchemaTreeRoot, 0, sourceDepth, sourceReactFlowNodes, !!srcSchemaTreeRoot, true);
+      addChildNodesForOverview(srcSchemaTreeRoot, 0, sourceDepth, sourceReactFlowNodes, true, !!srcSchemaTreeRoot);
     }
 
     // Dummy target schema node
@@ -382,7 +382,7 @@ export const useWholeViewLayout = (
     // Target schema nodes
     if (tgtSchemaTreeRoot) {
       const targetDepth = nodeTreeDepth(tgtSchemaTreeRoot);
-      addChildNodes(tgtSchemaTreeRoot, 0, targetDepth, targetReactFlowNodes, !!srcSchemaTreeRoot, false);
+      addChildNodesForOverview(tgtSchemaTreeRoot, 0, targetDepth, targetReactFlowNodes, false, !!srcSchemaTreeRoot);
     }
 
     setReactFlowNodes([...sourceReactFlowNodes, ...targetReactFlowNodes]);
@@ -406,7 +406,7 @@ const nodeArrayDepth = (nodes: SchemaNodeExtended[]): number[] => {
   return Array.from(depth);
 };
 
-const addChildNodes = (
+const addChildNodesForOverview = (
   curNode: SchemaNodeExtended,
   curDepth: number,
   maxDepth: number,
@@ -416,22 +416,18 @@ const addChildNodes = (
   generateToDepth?: number
 ): void => {
   const baseSchemaNodeData = {
+    schemaType: isSourceSchema ? SchemaType.Source : SchemaType.Target,
+    displayChevron: !isSourceSchema && sourceSchemaSpecified,
     displayHandle: false,
     disabled: false,
     error: false,
     relatedConnections: [],
   };
 
-  const baseSrcSchemaNodeData = {
-    ...baseSchemaNodeData,
-    schemaType: isSourceSchema ? SchemaType.Source : SchemaType.Target,
-    displayChevron: !isSourceSchema && sourceSchemaSpecified && curDepth !== 0,
-  };
-
   resultArray.push({
     id: isSourceSchema ? addSourceReactFlowPrefix(curNode.key) : addTargetReactFlowPrefix(curNode.key),
     data: {
-      ...baseSrcSchemaNodeData,
+      ...baseSchemaNodeData,
       schemaNode: curNode,
       width: calculateWidth(curDepth, maxDepth),
       isLeaf: isLeafNode(curNode),
@@ -445,15 +441,15 @@ const addChildNodes = (
 
   if (generateToDepth === undefined || curDepth < generateToDepth) {
     curNode.children.forEach((childNode) => {
-      addChildNodes(childNode, curDepth + 1, maxDepth, resultArray, isSourceSchema, sourceSchemaSpecified, generateToDepth);
+      addChildNodesForOverview(childNode, curDepth + 1, maxDepth, resultArray, isSourceSchema, sourceSchemaSpecified, generateToDepth);
     });
   }
 };
 
 const calculateWidth = (curDepth: number, maxDepth: number): number => {
-  const breakEvenDepth = 3;
+  const breakEvenDepth = 4;
 
-  if (maxDepth <= breakEvenDepth) {
+  if (maxDepth < breakEvenDepth) {
     return schemaNodeCardDefaultWidth - curDepth * schemaNodeCardWidthDifference;
   }
 
