@@ -4,9 +4,6 @@ import { SchemaType } from '../../models/';
 import { useWholeViewLayout } from '../../utils/ReactFlow.Util';
 import { SchemaCard } from '../nodeCard/SchemaCard';
 import { SchemaNameBadge } from '../schemaSelection/SchemaNameBadge';
-import type { TargetNodesWithConnectionsDictionary } from '../targetSchemaPane/TargetSchemaPane';
-import { checkNodeStatuses } from '../targetSchemaPane/TargetSchemaPane';
-import type { NodeToggledStateDictionary } from '../tree/TargetSchemaTreeItem';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -45,30 +42,10 @@ const WholeOverviewReactFlowWrapper = () => {
 
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
-  const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
-  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
+  // TODO will be used - const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+  // const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
-  const tgtSchemaToggledStatesDictionary = useMemo<NodeToggledStateDictionary | undefined>(() => {
-    if (!targetSchema) {
-      return undefined;
-    }
-
-    // Find target schema nodes with connections
-    const tgtSchemaNodesWithConnections: TargetNodesWithConnectionsDictionary = {};
-    Object.values(connectionDictionary).forEach((connection) => {
-      if (connection.self.reactFlowKey in targetSchemaDictionary && connection.inputs[0] && connection.inputs[0].length > 0) {
-        tgtSchemaNodesWithConnections[connection.self.node.key] = true;
-      }
-    });
-
-    // Recursively traverse the schema tree to calculate connected statuses from the leaf nodes up
-    const newToggledStatesDictionary: NodeToggledStateDictionary = {};
-    checkNodeStatuses(targetSchema.schemaTreeRoot, newToggledStatesDictionary, tgtSchemaNodesWithConnections);
-
-    return newToggledStatesDictionary;
-  }, [targetSchema, connectionDictionary, targetSchemaDictionary]);
-
-  const reactFlowNodes = useWholeViewLayout(sourceSchema?.schemaTreeRoot, targetSchema?.schemaTreeRoot, tgtSchemaToggledStatesDictionary);
+  const reactFlowNodes = useWholeViewLayout(sourceSchema?.schemaTreeRoot, targetSchema?.schemaTreeRoot);
 
   // Fit the canvas view any time a schema changes
   useEffect(() => {

@@ -47,7 +47,6 @@ Standard.args = {
     isLeaf: false,
     width: 200,
     displayChevron: true,
-    relatedConnections: [],
     onClick: () => console.log('Schema card clicked'),
     disabled: false,
     error: false,

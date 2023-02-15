@@ -50,9 +50,9 @@ const OverviewReactFlowWrapper = () => {
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
-  const tgtSchemaToggledStatesDictionary = useMemo<NodeToggledStateDictionary | undefined>(() => {
+  const targetSchemaStates = useMemo<NodeToggledStateDictionary>(() => {
     if (!targetSchema) {
-      return undefined;
+      return {};
     }
 
     // Find target schema nodes with connections
@@ -70,7 +70,7 @@ const OverviewReactFlowWrapper = () => {
     return newToggledStatesDictionary;
   }, [targetSchema, connectionDictionary, targetSchemaDictionary]);
 
-  const reactFlowNodes = useOverviewLayout(sourceSchema?.schemaTreeRoot, targetSchema?.schemaTreeRoot, tgtSchemaToggledStatesDictionary);
+  const reactFlowNodes = useOverviewLayout(sourceSchema?.schemaTreeRoot, targetSchema?.schemaTreeRoot, targetSchemaStates);
 
   // Fit the canvas view any time a schema changes
   useEffect(() => {

@@ -9,7 +9,7 @@ import {
   schemaNodeCardWidthDifference,
 } from '../constants/NodeConstants';
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { Connection, ConnectionDictionary } from '../models/Connection';
+import type { ConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { SchemaNodeExtended } from '../models/Schema';
 import { SchemaType } from '../models/Schema';
@@ -86,13 +86,7 @@ export const useLayout = (
           // Convert newly-calculated ELK node data to React Flow nodes + edges
           setReactFlowNodes([
             placeholderReactFlowNode,
-            ...convertToReactFlowNodes(
-              computedElkTree,
-              sortedSourceSchemaNodes,
-              currentFunctionNodes,
-              currentTargetSchemaNode,
-              connections
-            ),
+            ...convertToReactFlowNodes(computedElkTree, sortedSourceSchemaNodes, currentFunctionNodes, currentTargetSchemaNode),
           ]);
 
           const simpleElkEdgeResults: SimplifiedElkEdge[] = [];
@@ -156,8 +150,7 @@ export const convertToReactFlowNodes = (
   elkTree: ElkNode,
   currentSourceSchemaNodes: SchemaNodeExtended[],
   currentFunctionNodes: FunctionDictionary,
-  targetSchemaNode: SchemaNodeExtended,
-  connections: ConnectionDictionary
+  targetSchemaNode: SchemaNodeExtended
 ): ReactFlowNode<CardProps>[] => {
   if (!elkTree.children || elkTree.children.length !== 3) {
     LogService.error(LogCategory.ReactFlowUtils, 'convertToReactFlowNodes', {
@@ -168,38 +161,30 @@ export const convertToReactFlowNodes = (
   }
 
   return [
-    ...convertSourceSchemaToReactFlowNodes(elkTree.children[0], currentSourceSchemaNodes, connections),
+    ...convertSourceSchemaToReactFlowNodes(elkTree.children[0], currentSourceSchemaNodes),
     ...convertFunctionsToReactFlowParentAndChildNodes(elkTree.children[1], currentFunctionNodes),
-    ...convertTargetSchemaToReactFlowNodes(elkTree.children[2], targetSchemaNode, connections),
+    ...convertTargetSchemaToReactFlowNodes(elkTree.children[2], targetSchemaNode),
   ];
 };
 
 const convertSourceSchemaToReactFlowNodes = (
   sourceSchemaElkTree: ElkNode,
-  combinedSourceSchemaNodes: SchemaNodeExtended[],
-  connections: ConnectionDictionary
+  combinedSourceSchemaNodes: SchemaNodeExtended[]
 ): ReactFlowNode<SchemaCardProps>[] => {
-  return convertSchemaToReactFlowNodes(sourceSchemaElkTree, combinedSourceSchemaNodes, SchemaType.Source, connections);
+  return convertSchemaToReactFlowNodes(sourceSchemaElkTree, combinedSourceSchemaNodes, SchemaType.Source);
 };
 
 const convertTargetSchemaToReactFlowNodes = (
   targetSchemaElkTree: ElkNode,
-  targetSchemaNode: SchemaNodeExtended,
-  connections: ConnectionDictionary
+  targetSchemaNode: SchemaNodeExtended
 ): ReactFlowNode<SchemaCardProps>[] => {
-  return convertSchemaToReactFlowNodes(
-    targetSchemaElkTree,
-    [targetSchemaNode, ...targetSchemaNode.children],
-    SchemaType.Target,
-    connections
-  );
+  return convertSchemaToReactFlowNodes(targetSchemaElkTree, [targetSchemaNode, ...targetSchemaNode.children], SchemaType.Target);
 };
 
 export const convertSchemaToReactFlowNodes = (
   elkTree: ElkNode,
   schemaNodes: SchemaNodeExtended[],
-  schemaType: SchemaType,
-  connections: ConnectionDictionary
+  schemaType: SchemaType
 ): ReactFlowNode<SchemaCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
   const isSourceSchema = schemaType === SchemaType.Source;
@@ -207,7 +192,6 @@ export const convertSchemaToReactFlowNodes = (
   const maxLocalDepth = depthArray.length;
 
   schemaNodes.forEach((schemaNode, index) => {
-    const relatedConnections = getConnectionsForNode(connections, schemaNode.key, schemaType);
     const reactFlowId = addReactFlowPrefix(schemaNode.key, schemaType);
     const curDepth = depthArray.indexOf(schemaNode.pathToRoot.length);
 
@@ -239,7 +223,6 @@ export const convertSchemaToReactFlowNodes = (
         width: calculateWidth(curDepth, maxLocalDepth),
         disabled: false,
         error: false,
-        relatedConnections: relatedConnections,
       },
       type: ReactFlowNodeType.SchemaNode,
       targetPosition: isSourceSchema ? Position.Right : Position.Left,
@@ -316,9 +299,9 @@ export const convertToReactFlowEdges = (elkEdges: SimplifiedElkEdge[], selectedI
 };
 
 export const useOverviewLayout = (
-  srcSchemaTreeRoot?: SchemaNodeExtended,
-  tgtSchemaTreeRoot?: SchemaNodeExtended,
-  tgtSchemaToggledStatesDictionary?: NodeToggledStateDictionary
+  srcSchemaTreeRoot: SchemaNodeExtended | undefined,
+  tgtSchemaTreeRoot: SchemaNodeExtended | undefined,
+  targetSchemaStates: NodeToggledStateDictionary
 ): ReactFlowNode<SchemaCardProps>[] => {
   const [reactFlowNodes, setReactFlowNodes] = useState<ReactFlowNode<SchemaCardProps>[]>([]);
 
@@ -331,7 +314,7 @@ export const useOverviewLayout = (
 
     // Source schema nodes
     if (srcSchemaTreeRoot) {
-      addChildNodesForOverview(srcSchemaTreeRoot, 0, 1, sourceReactFlowNodes, true, !!srcSchemaTreeRoot, 1);
+      addChildNodesForOverview(srcSchemaTreeRoot, 0, 1, sourceReactFlowNodes, true, !!srcSchemaTreeRoot, undefined, 1);
     }
 
     // Dummy target schema node
@@ -343,19 +326,18 @@ export const useOverviewLayout = (
 
     // Target schema nodes
     if (tgtSchemaTreeRoot) {
-      addChildNodesForOverview(tgtSchemaTreeRoot, 0, 1, targetReactFlowNodes, false, !!srcSchemaTreeRoot, 1);
+      addChildNodesForOverview(tgtSchemaTreeRoot, 0, 1, targetReactFlowNodes, false, !!srcSchemaTreeRoot, targetSchemaStates, 1);
     }
 
     setReactFlowNodes([...sourceReactFlowNodes, ...targetReactFlowNodes]);
-  }, [srcSchemaTreeRoot, tgtSchemaTreeRoot, tgtSchemaToggledStatesDictionary]);
+  }, [srcSchemaTreeRoot, tgtSchemaTreeRoot, targetSchemaStates]);
 
   return reactFlowNodes;
 };
 
 export const useWholeViewLayout = (
   srcSchemaTreeRoot: SchemaNodeExtended | undefined,
-  tgtSchemaTreeRoot: SchemaNodeExtended | undefined,
-  tgtSchemaToggledStatesDictionary?: NodeToggledStateDictionary
+  tgtSchemaTreeRoot: SchemaNodeExtended | undefined
 ): ReactFlowNode<SchemaCardProps>[] => {
   const [reactFlowNodes, setReactFlowNodes] = useState<ReactFlowNode<SchemaCardProps>[]>([]);
 
@@ -369,7 +351,7 @@ export const useWholeViewLayout = (
     // Source schema nodes
     if (srcSchemaTreeRoot) {
       const sourceDepth = nodeTreeDepth(srcSchemaTreeRoot);
-      addChildNodesForOverview(srcSchemaTreeRoot, 0, sourceDepth, sourceReactFlowNodes, true, !!srcSchemaTreeRoot);
+      addChildNodesForOverview(srcSchemaTreeRoot, 0, sourceDepth, sourceReactFlowNodes, true, !!srcSchemaTreeRoot, undefined);
     }
 
     // Dummy target schema node
@@ -382,11 +364,11 @@ export const useWholeViewLayout = (
     // Target schema nodes
     if (tgtSchemaTreeRoot) {
       const targetDepth = nodeTreeDepth(tgtSchemaTreeRoot);
-      addChildNodesForOverview(tgtSchemaTreeRoot, 0, targetDepth, targetReactFlowNodes, false, !!srcSchemaTreeRoot);
+      addChildNodesForOverview(tgtSchemaTreeRoot, 0, targetDepth, targetReactFlowNodes, false, !!srcSchemaTreeRoot, undefined);
     }
 
     setReactFlowNodes([...sourceReactFlowNodes, ...targetReactFlowNodes]);
-  }, [srcSchemaTreeRoot, tgtSchemaTreeRoot, tgtSchemaToggledStatesDictionary]);
+  }, [srcSchemaTreeRoot, tgtSchemaTreeRoot]);
 
   return reactFlowNodes;
 };
@@ -413,6 +395,7 @@ const addChildNodesForOverview = (
   resultArray: ReactFlowNode<SchemaCardProps>[],
   isSourceSchema: boolean,
   sourceSchemaSpecified: boolean,
+  targetSchemaStates: NodeToggledStateDictionary | undefined,
   generateToDepth?: number
 ): void => {
   const baseSchemaNodeData = {
@@ -421,7 +404,7 @@ const addChildNodesForOverview = (
     displayHandle: false,
     disabled: false,
     error: false,
-    relatedConnections: [],
+    connectionStatus: !isSourceSchema && targetSchemaStates ? targetSchemaStates[curNode.key] : undefined,
   };
 
   resultArray.push({
@@ -441,7 +424,16 @@ const addChildNodesForOverview = (
 
   if (generateToDepth === undefined || curDepth < generateToDepth) {
     curNode.children.forEach((childNode) => {
-      addChildNodesForOverview(childNode, curDepth + 1, maxDepth, resultArray, isSourceSchema, sourceSchemaSpecified, generateToDepth);
+      addChildNodesForOverview(
+        childNode,
+        curDepth + 1,
+        maxDepth,
+        resultArray,
+        isSourceSchema,
+        sourceSchemaSpecified,
+        targetSchemaStates,
+        generateToDepth
+      );
     });
   }
 };
@@ -455,16 +447,6 @@ const calculateWidth = (curDepth: number, maxDepth: number): number => {
 
   const curDepthDiff = maxDepth - curDepth;
   return schemaNodeCardDefaultWidth + (curDepthDiff - breakEvenDepth) * schemaNodeCardWidthDifference;
-};
-
-const getConnectionsForNode = (connections: ConnectionDictionary, nodeKey: string, nodeType: SchemaType): Connection[] => {
-  const relatedConnections: Connection[] = [];
-  Object.keys(connections).forEach((key) => {
-    if ((nodeType === SchemaType.Source && key.startsWith(nodeKey)) || (nodeType === SchemaType.Target && key.endsWith(nodeKey))) {
-      relatedConnections.push(connections[key]);
-    }
-  });
-  return relatedConnections;
 };
 
 export const createReactFlowFunctionKey = (functionData: FunctionData): string => `${functionData.key}-${guid()}`;

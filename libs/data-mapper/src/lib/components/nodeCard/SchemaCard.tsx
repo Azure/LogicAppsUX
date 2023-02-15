@@ -4,7 +4,6 @@ import { removeSourceSchemaNodes, setCurrentTargetSchemaNode } from '../../core/
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
-import type { Connection } from '../../models/Connection';
 import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
 import { flattenInputs } from '../../utils/Connection.Utils';
 import { iconForNormalizedDataType } from '../../utils/Icon.Utils';
@@ -153,7 +152,6 @@ export interface SchemaCardProps extends CardProps {
   displayChevron: boolean;
   isLeaf: boolean;
   width: number;
-  relatedConnections: Connection[];
   connectionStatus?: ItemToggledState;
 }
 
