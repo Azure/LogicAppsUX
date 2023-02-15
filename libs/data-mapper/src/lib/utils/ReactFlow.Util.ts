@@ -179,7 +179,7 @@ const convertSourceSchemaToReactFlowNodes = (
   combinedSourceSchemaNodes: SchemaNodeExtended[],
   connections: ConnectionDictionary
 ): ReactFlowNode<SchemaCardProps>[] => {
-  return convertSchemaToReactFlowNodes(sourceSchemaElkTree, combinedSourceSchemaNodes, SchemaType.Source, false, connections);
+  return convertSchemaToReactFlowNodes(sourceSchemaElkTree, combinedSourceSchemaNodes, SchemaType.Source, connections);
 };
 
 const convertTargetSchemaToReactFlowNodes = (
@@ -191,7 +191,6 @@ const convertTargetSchemaToReactFlowNodes = (
     targetSchemaElkTree,
     [targetSchemaNode, ...targetSchemaNode.children],
     SchemaType.Target,
-    true,
     connections
   );
 };
@@ -200,7 +199,6 @@ export const convertSchemaToReactFlowNodes = (
   elkTree: ElkNode,
   schemaNodes: SchemaNodeExtended[],
   schemaType: SchemaType,
-  displayTargets: boolean,
   connections: ConnectionDictionary
 ): ReactFlowNode<SchemaCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
@@ -235,7 +233,7 @@ export const convertSchemaToReactFlowNodes = (
       data: {
         schemaNode,
         schemaType,
-        displayHandle: !!displayTargets,
+        displayHandle: true,
         displayChevron: !isSourceSchema && index !== 0, // The first target node is the parent
         isLeaf: isLeafNode(schemaNode),
         width: calculateWidth(curDepth, maxLocalDepth),
@@ -244,7 +242,7 @@ export const convertSchemaToReactFlowNodes = (
         relatedConnections: relatedConnections,
       },
       type: ReactFlowNodeType.SchemaNode,
-      targetPosition: !displayTargets ? undefined : isSourceSchema ? Position.Right : Position.Left,
+      targetPosition: isSourceSchema ? Position.Right : Position.Left,
       position: {
         x: elkTree.x + elkNode.x + curDepth * childTargetNodeCardIndent,
         y: elkNode.y,
