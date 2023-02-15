@@ -1,4 +1,4 @@
-const transcriptJsonMapDefinitionString = `
+export const transcriptJsonMapDefinitionString = `
 $version: "1.0"
 $input: "json"
 $output: "json"
