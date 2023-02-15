@@ -45,7 +45,7 @@ Standard.args = {
     schemaType: SchemaType.Source,
     displayHandle: true,
     isLeaf: false,
-    isChild: false,
+    width: 200,
     displayChevron: true,
     relatedConnections: [],
     onClick: () => console.log('Schema card clicked'),

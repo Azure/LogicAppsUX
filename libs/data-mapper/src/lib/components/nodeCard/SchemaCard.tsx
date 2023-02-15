@@ -1,4 +1,4 @@
-import { childTargetNodeCardWidth, schemaNodeCardDefaultWidth, schemaNodeCardHeight } from '../../constants/NodeConstants';
+import { schemaNodeCardDefaultWidth, schemaNodeCardHeight } from '../../constants/NodeConstants';
 import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import { removeSourceSchemaNodes, setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
@@ -148,20 +148,18 @@ const useStyles = makeStyles({
 
 export interface SchemaCardProps extends CardProps {
   schemaNode: SchemaNodeExtended;
-  maxWidth?: number;
   schemaType: SchemaType;
   displayHandle: boolean;
   displayChevron: boolean;
   isLeaf: boolean;
-  isChild: boolean;
+  width: number;
   relatedConnections: Connection[];
   connectionStatus?: ItemToggledState;
 }
 
 export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const reactFlowId = props.id;
-  const { schemaNode, maxWidth, schemaType, isLeaf, isChild, onClick, disabled, displayHandle, displayChevron, connectionStatus } =
-    props.data;
+  const { schemaNode, schemaType, isLeaf, onClick, disabled, displayHandle, displayChevron, connectionStatus, width } = props.data;
   const dispatch = useDispatch<AppDispatch>();
   const sharedStyles = getStylesForSharedState();
   const classes = useStyles();
@@ -262,19 +260,14 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const selectedNodeStyles = isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId ? selectedCardStyles : undefined;
 
-  const targetCardWidth = isChild ? childTargetNodeCardWidth : schemaNodeCardDefaultWidth;
-  const cardWidth = isSourceSchemaNode && schemaNode.width ? schemaNode.width : targetCardWidth;
-  const maxWidthCalculated = maxWidth || cardWidth;
-  const sourceCardMargin = isSourceSchemaNode ? maxWidthCalculated - cardWidth : 0;
-
   return (
-    <div className={classes.badgeContainer} style={{ marginLeft: sourceCardMargin }}>
+    <div className={classes.badgeContainer}>
       {isNBadgeRequired && !isSourceSchemaNode && <NBadge isOutput />}
 
       <div
         onContextMenu={contextMenu.handle}
         className={containerStyle}
-        style={{ ...selectedNodeStyles, width: cardWidth }}
+        style={{ ...selectedNodeStyles, width }}
         onMouseLeave={() => setIsCardHovered(false)}
         onMouseEnter={() => setIsCardHovered(true)}
       >
@@ -304,7 +297,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
             visible={shouldNameTooltipDisplay && isTooltipEnabled}
             onVisibleChange={(_ev, data) => setIsTooltipEnabled(data.visible)}
           >
-            <div ref={schemaNameTextRef} className={classes.cardText} style={{ width: `${cardWidth - 30}px` }}>
+            <div ref={schemaNameTextRef} className={classes.cardText} style={{ width: `${width - 30}px` }}>
               {schemaNode.name}
             </div>
           </Tooltip>
