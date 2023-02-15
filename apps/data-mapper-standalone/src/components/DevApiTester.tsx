@@ -84,6 +84,10 @@ export const DevApiTester = () => {
         <AccordionItem value="1">
           <AccordionHeader>API Tester</AccordionHeader>
           <AccordionPanel>
+            <Text>
+              <Text weight="bold">NOTE:</Text> You must run `func host start` in workflow_folder/workflow-designtime
+            </Text>
+
             <Stack horizontal horizontalAlign="space-around" tokens={{ childrenGap: '8px' }} wrap>
               <StackItem style={{ width: '500px' }}>
                 <TabList
