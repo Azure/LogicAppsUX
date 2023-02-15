@@ -55,8 +55,6 @@ export const useLayout = (
   currentSourceSchemaNodes: SchemaNodeExtended[],
   currentFunctionNodes: FunctionDictionary,
   currentTargetSchemaNode: SchemaNodeExtended | undefined,
-  rootSourceNode: SchemaNodeExtended | undefined,
-  rootTargetNode: SchemaNodeExtended | undefined,
   connections: ConnectionDictionary,
   selectedItemKey: string | undefined,
   sourceSchemaOrdering: string[],
@@ -67,7 +65,7 @@ export const useLayout = (
   const [diagramSize, setDiagramSize] = useState<Size2D>({ width: 0, height: 0 });
 
   useEffect(() => {
-    if (currentTargetSchemaNode && rootTargetNode && rootSourceNode) {
+    if (currentTargetSchemaNode) {
       // Sort source schema nodes according to their order in the schema
       const sortedSourceSchemaNodes = [...currentSourceSchemaNodes].sort(
         (nodeA, nodeB) => sourceSchemaOrdering.indexOf(nodeA.key) - sourceSchemaOrdering.indexOf(nodeB.key)
@@ -149,8 +147,6 @@ export const useLayout = (
     sourceSchemaOrdering,
     selectedItemKey,
     useExpandedFunctionCards,
-    rootTargetNode,
-    rootSourceNode,
   ]);
 
   return [reactFlowNodes, reactFlowEdges, diagramSize];

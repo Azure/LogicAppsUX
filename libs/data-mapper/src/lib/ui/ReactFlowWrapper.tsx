@@ -162,8 +162,6 @@ export const ReactFlowWrapper = ({
     currentSourceSchemaNodes,
     currentFunctionNodes,
     currentTargetSchemaNode,
-    sourceSchema?.schemaTreeRoot,
-    targetSchema?.schemaTreeRoot,
     connections,
     selectedItemKey,
     sourceSchemaOrdering,
