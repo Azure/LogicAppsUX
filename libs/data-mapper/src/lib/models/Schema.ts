@@ -37,6 +37,9 @@ export enum SchemaNodeProperty {
   ComplexTypeSimpleContent = 'ComplexTypeSimpleContent',
   MaximumDepthLimit = 'MaximumDepthLimit',
   CyclicTypeReference = 'CyclicTypeReference',
+  JsonArray = 'JsonArray',
+  ArrayItem = 'ArrayItem',
+  AnyOf = 'AnyOf',
 }
 
 export enum NormalizedDataType {
