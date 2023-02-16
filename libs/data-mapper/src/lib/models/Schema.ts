@@ -63,7 +63,6 @@ export interface SchemaNodeExtended extends SchemaNode {
   nodeProperties: SchemaNodeProperty[];
   // Inclusive of the current node
   pathToRoot: PathItem[];
-  width?: number;
 }
 
 export interface PathItem {
