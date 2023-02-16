@@ -1,12 +1,12 @@
 import { store } from '../../core/state/Store';
-import { MapOverview } from './MapOverview';
+import { WholeMapOverview } from './WholeView';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 
 export default {
-  component: MapOverview,
-  title: 'Data Mapper Components/Map Overview/Overview',
+  component: WholeMapOverview,
+  title: 'Data Mapper Components/Map Overview/Whole Overview',
   decorators: [
     (Story) => (
       <Provider store={store}>
@@ -14,6 +14,6 @@ export default {
       </Provider>
     ),
   ],
-} as ComponentMeta<typeof MapOverview>;
+} as ComponentMeta<typeof WholeMapOverview>;
 
-export const Standard: ComponentStory<typeof MapOverview> = () => <MapOverview />;
+export const Standard: ComponentStory<typeof WholeMapOverview> = () => <WholeMapOverview />;
