@@ -122,7 +122,7 @@ export class DataMapperApiService {
       headers,
       body: JSON.stringify({
         InputInstanceMessage: {
-          '$content-type': 'application/xml',
+          '$content-type': 'application/xml', // This doesn't actually appear to get used in the BPM repo, and still functions correctly when empty - the property itself just has to exist
           $content: base64EncodedSchemaInputValue,
         },
       }),
