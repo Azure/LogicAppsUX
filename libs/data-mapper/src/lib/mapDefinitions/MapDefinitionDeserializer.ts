@@ -112,6 +112,7 @@ const parseDefinitionToConditionalConnection = (
   targetSchemaFlattened: SchemaNodeDictionary,
   functions: FunctionData[]
 ) => {
+  // Hooks $if up to target
   createConnections(
     sourceNodeObjectAsString,
     targetKey,
@@ -148,8 +149,8 @@ const callChildObjects = (
   targetSchemaFlattened: SchemaNodeDictionary,
   functions: FunctionData[]
 ) => {
-  const childEntries = Object.entries<MapDefinitionEntry>(sourceNodeObject);
-  childEntries.forEach(([childKey, childValue]: [string, string | MapDefinitionEntry]) => {
+  const childEntries = Object.entries<MapDefinitionEntry | string>(sourceNodeObject);
+  childEntries.forEach(([childKey, childValue]) => {
     if (childKey.startsWith(mapNodeParams.if)) {
       const isInLoop = targetKey.includes(mapNodeParams.for);
       const ifRfKey = createReactFlowFunctionKey(ifPseudoFunction);
@@ -157,6 +158,7 @@ const callChildObjects = (
       const ifContents = childKey.substring(mapNodeParams.if.length + 1, childKey.length - 1);
       const childSubKey = Object.keys(childValue)[0];
 
+      // Create connections for $if's contents (condition)
       createConnections(
         isInLoop ? getSourceValueFromLoop(ifContents, targetKey, sourceSchemaFlattened) : ifContents,
         ifRfKey,
@@ -170,6 +172,7 @@ const callChildObjects = (
         isInLoop ? `${targetKey}/${childSubKey}` : undefined
       );
 
+      // Handle $if's values
       Object.entries(childValue).forEach(([childSubKey, childSubValue]) => {
         if (typeof childSubValue === 'string') {
           const srcValueKey = `${getSourceKeyOfLastLoop(qualifyLoopRelativeSourceKeys(targetKey))}/${childSubValue}`;
@@ -233,9 +236,9 @@ const callChildObjects = (
             functions
           );
         } else {
-          // The only time this case should be valid is when making a object level conditional
+          // Object level conditional handling (flattenedChildValues will be [] if property conditional)
           const childTargetKeyWithoutLoop = getTargetValueWithoutLoops(childTargetKey);
-          const flattenedChildValues = typeof childValue === 'string' ? [childValue] : flattenMapDefinitionValues(childValue);
+          const flattenedChildValues = typeof childValue === 'string' ? [] : flattenMapDefinitionValues(childValue);
           const flattenedChildValueParents = flattenedChildValues
             .map((flattenedValue) => {
               const fqChild = getSourceValueFromLoop(flattenedValue, childTargetKey, sourceSchemaFlattened);
