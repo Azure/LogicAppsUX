@@ -386,8 +386,38 @@
                 "fullName": "Conditional",
                 "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToOne",
                 "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
-                "children": []
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Conditional/SourceConditionalChild",
+                    "name": "SourceConditionalChild",
+                    "fullName": "SourceConditionalChild",
+                    "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Conditional",
+                    "normalizedDataType": "ComplexType",
+                    "properties": "Repeating",
+                    "children": [
+                      {
+                        "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Conditional/SourceConditionalChild/SourceConditionalChildChild",
+                        "name": "SourceConditionalChildChild",
+                        "fullName": "SourceConditionalChildChild",
+                        "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Conditional/SourceConditionalChild",
+                        "normalizedDataType": "ComplexType",
+                        "properties": "Repeating",
+                        "children": [
+                          {
+                            "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Conditional/SourceConditionalChild/SourceConditionalChildChild/SourceDirect",
+                            "name": "SourceDirect",
+                            "fullName": "SourceDirect",
+                            "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Conditional/SourceConditionalChild/SourceConditionalChildChild",
+                            "normalizedDataType": "String",
+                            "properties": "NotSpecified",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/StressTest",
@@ -575,8 +605,38 @@
                 "fullName": "Conditional",
                 "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToMany",
                 "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
-                "children": []
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Conditional/SourceConditionalChild",
+                    "name": "SourceConditionalChild",
+                    "fullName": "SourceConditionalChild",
+                    "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Conditional",
+                    "normalizedDataType": "ComplexType",
+                    "properties": "Repeating",
+                    "children": [
+                      {
+                        "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Conditional/SourceConditionalChild/SourceConditionalChildChild",
+                        "name": "SourceConditionalChildChild",
+                        "fullName": "SourceConditionalChildChild",
+                        "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Conditional/SourceConditionalChild",
+                        "normalizedDataType": "ComplexType",
+                        "properties": "Repeating",
+                        "children": [
+                          {
+                            "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Conditional/SourceConditionalChild/SourceConditionalChildChild/SourceDirect",
+                            "name": "SourceDirect",
+                            "fullName": "SourceDirect",
+                            "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Conditional/SourceConditionalChild/SourceConditionalChildChild",
+                            "normalizedDataType": "String",
+                            "properties": "NotSpecified",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/StressTest",
