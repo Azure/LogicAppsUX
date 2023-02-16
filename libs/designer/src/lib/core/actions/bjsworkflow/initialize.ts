@@ -81,12 +81,18 @@ export const getInputParametersFromManifest = (
   nodeId: string,
   manifest: OperationManifest,
   stepDefinition?: any,
-  additionalInputParameters?: InputParameter[]
+  additionalParameters?: any
 ): NodeInputsWithDependencies => {
+  // console.log('### additionalParameters', additionalParameters);
+
   const primaryInputParameters = new ManifestParser(manifest).getInputParameters(
     false /* includeParentObject */,
-    0 /* expandArrayPropertiesDepth */
+    0 /* expandArrayPropertiesDepth */,
+    undefined,
+    undefined,
+    additionalParameters?.swagger
   );
+  // console.log('### primaryInputParameters', primaryInputParameters);
   const allInputParameters = unmap(
     new ManifestParser(manifest).getInputParameters(
       true /* includeParentObject */,
@@ -95,8 +101,8 @@ export const getInputParametersFromManifest = (
   );
   let primaryInputParametersInArray = unmap(primaryInputParameters);
 
-  if (additionalInputParameters) {
-    primaryInputParametersInArray = primaryInputParametersInArray.concat(additionalInputParameters);
+  if (additionalParameters?.inputs) {
+    primaryInputParametersInArray = primaryInputParametersInArray.concat(additionalParameters.inputs);
   }
 
   if (stepDefinition) {

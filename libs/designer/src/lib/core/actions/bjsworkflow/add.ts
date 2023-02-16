@@ -24,7 +24,7 @@ import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings } from './settings';
 import { ConnectionService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import type { InputParameter, SwaggerParser } from '@microsoft/parsers-logic-apps';
+import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
 import type {
   DiscoveryOperation,
   DiscoveryResultTypes,
@@ -41,13 +41,13 @@ type AddOperationPayload = {
   nodeId: string;
   isParallelBranch?: boolean;
   isTrigger?: boolean;
-  additionalInputParameters?: InputParameter[];
+  additionalParameters?: any;
   presetParameterValues?: Record<string, any>;
   actionMetadata?: Record<string, any>;
 };
 
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
-  const { operation, nodeId: actionId, additionalInputParameters, presetParameterValues, actionMetadata } = payload;
+  const { operation, nodeId: actionId, additionalParameters, presetParameterValues, actionMetadata } = payload;
   if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
   let count = 1;
   let nodeId = actionId;
@@ -73,7 +73,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     nodeOperationInfo,
     getState as () => RootState,
     dispatch,
-    additionalInputParameters,
+    additionalParameters,
     presetParameterValues,
     actionMetadata
   );
@@ -89,7 +89,7 @@ const initializeOperationDetails = async (
   operationInfo: NodeOperation,
   getState: () => RootState,
   dispatch: Dispatch,
-  additionalInputParameters?: InputParameter[],
+  additionalParameters?: any,
   parameterValues?: Record<string, any>,
   actionMetadata?: Record<string, any>
 ): Promise<void> => {
@@ -114,7 +114,7 @@ const initializeOperationDetails = async (
       nodeId,
       manifest,
       undefined,
-      additionalInputParameters
+      additionalParameters
     );
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs);
 

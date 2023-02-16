@@ -5,7 +5,6 @@ import { useRelationshipIds, useIsParallelBranch, useIsAddingTrigger } from '../
 import { ChoiceGroup, PrimaryButton, Text } from '@fluentui/react';
 import { ApiManagementService, FunctionService, SearchService, AppServiceService } from '@microsoft/designer-client-services-logic-apps';
 import { AzureResourcePicker } from '@microsoft/designer-ui';
-import type { InputParameter } from '@microsoft/parsers-logic-apps';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
 import { getResourceGroupFromWorkflowId } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -18,7 +17,7 @@ interface AzureResourceSelectionProps {
 
 interface AddResourceOperationParameters {
   name: string;
-  additionalInputParameters?: InputParameter[];
+  additionalParameters?: any;
   presetParameterValues?: Record<string, any>;
   actionMetadata?: Record<string, any>;
 }
@@ -72,9 +71,10 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
 
   const addResourceOperation = useCallback(
     (props: AddResourceOperationParameters) => {
-      const { name, additionalInputParameters, presetParameterValues, actionMetadata } = props;
+      const { name, additionalParameters, presetParameterValues, actionMetadata } = props;
       const newNodeId = name.replaceAll(' ', '_');
       // console.log('### ADDING SELECTED RESOURCES', selectedResources);
+      // console.log('### ADDITIONAL PARAMETERS', additionalParameters);
       dispatch(
         addOperation({
           operation,
@@ -82,13 +82,13 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           nodeId: newNodeId,
           isParallelBranch,
           isTrigger,
-          additionalInputParameters,
+          additionalParameters,
           presetParameterValues,
           actionMetadata,
         })
       );
     },
-    [dispatch, operation, relationshipIds, isParallelBranch, isTrigger]
+    [selectedResources, dispatch, operation, relationshipIds, isParallelBranch, isTrigger]
   );
 
   // Parses the swagger object to get the paths and methods in an array
@@ -101,6 +101,20 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
 
   const [submitCallback, setSubmitCallback] = useState<(any?: any) => any>(() => () => Promise.resolve([]));
 
+  const [apimApiSwaggerResources, setApimApiSwaggerResources] = useState<any>(null);
+  useEffect(() => {
+    const subResource = selectedResources?.[1];
+    if (!subResource) return;
+    if (
+      operation.id !== Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_ACTION &&
+      operation.id !== Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_TRIGGER
+    )
+      return;
+    ApiManagementService()
+      .fetchApiMSwagger(subResource?.id)
+      .then((s) => setApimApiSwaggerResources(s));
+  }, [selectedResources, operation?.id]);
+
   useEffect(() => {
     switch (operation.id) {
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_ACTION:
@@ -112,13 +126,39 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           (apiManagement?: any) => ApiManagementService().fetchApisInApiM(apiManagement.id ?? ''),
         ]);
         setSubmitCallback(() => () => {
-          const [method, resource]: [string, any] = Object.entries(selectedResources[2])?.[0] ?? [];
+          const resource: any = selectedResources?.[2];
+
+          const additionalInputParameters: Record<any, any> = {};
+          if (resource?.parameters) {
+            resource.parameters.forEach((param: any) => {
+              const ref = (param as any)?.schema?.['$ref'];
+              // Need to bring in the schema definition from the swagger object
+              if (!additionalInputParameters?.[(param as any)?.in]) {
+                additionalInputParameters[(param as any)?.in] = {
+                  type: 'object',
+                  properties: {},
+                };
+              }
+              additionalInputParameters[(param as any)?.in].properties = {
+                ...additionalInputParameters[(param as any)?.in].properties,
+                [param.name]: {
+                  ...param,
+                  ...(ref ? apimApiSwaggerResources.definitions[ref.split('/').pop()]?.[param.name]?.properties : {}),
+                },
+              };
+            });
+          }
+
           addResourceOperation({
             name: resource.summary,
-            additionalInputParameters: resource?.parameters,
+            additionalParameters: {
+              swagger: additionalInputParameters,
+            },
             presetParameterValues: {
               'api.id': selectedResources[1]?.id,
-              method: method,
+              'pathTemplate.template': `${apimApiSwaggerResources?.basePath}/${resource?.uri}`,
+              'pathTemplate.parameters': {}, // TODO: Riley - we need to pass path parameters into this object when serializing
+              method: resource.method,
             },
           });
         });
@@ -138,7 +178,9 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         setSubmitCallback(() => () => {
           addResourceOperation({
             name: selectedResources[1]?.id,
-            additionalInputParameters: selectedResources[1]?.parameters,
+            additionalParameters: {
+              inputs: selectedResources[1]?.parameters,
+            },
             presetParameterValues: {
               method: selectedResources[1]?.method,
               uri: `http://localhost:54335${selectedResources[1]?.uri}`,
@@ -209,6 +251,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
     }
   }, [
     addResourceOperation,
+    apimApiSwaggerResources,
     apimTitleText,
     appServiceTitleText,
     batchWorkflowTitleText,
@@ -238,21 +281,6 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
     resource?.properties?.location ?? resource?.location,
   ];
 
-  const [apimApiSwaggerResources, setApimApiSwaggerResources] = useState<any>(null);
-  useEffect(() => {
-    const subResource = selectedResources?.[1];
-    if (!subResource) return;
-    if (
-      operation.id !== Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_ACTION &&
-      operation.id !== Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_TRIGGER
-    )
-      return;
-    console.log('getting api swagger for:', subResource);
-    ApiManagementService()
-      .fetchApiMSwagger(subResource?.id)
-      .then((s) => setApimApiSwaggerResources(s));
-  }, [selectedResources, operation?.id]);
-
   // Make sure we have valid resources for all of the required resource types
   const readyToSubmit = useMemo(() => selectedResources.length === resourceTypes.length, [selectedResources, resourceTypes]);
 
@@ -280,18 +308,23 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         fetchSubResourcesCallback={getResourcesCallbacks?.[1]}
         onSubResourceSelect={(subResource: any) => setResourceAtDepth(subResource, 1)}
       />
+      {/* 
+        TODO: Riley - 
+        This is temporary, preferably the resource picker is modified to accept any number of pages.
+        Currently it only accepts two, so we are just including this extra step for APIM actions here.
+      */}
       {apimApiSwaggerResources ? (
         <ChoiceGroup
-          options={Object.entries(apimApiSwaggerResources?.paths ?? {}).map(([id, path]: [id: string, path: any]) => ({
-            key: id,
-            text: (Object.values(path)[0] as any)?.summary ?? id,
-            data: path,
+          options={getOptionsFromPaths(apimApiSwaggerResources?.paths ?? {}).map((data: any) => ({
+            key: data.id,
+            text: data?.summary ?? data.id,
+            data,
           }))}
           onChange={(_e: any, option: any) => {
             console.log('selected path:', option.data);
             setResourceAtDepth?.(option.data, 2);
           }}
-          selectedKey={Object.keys(selectedResources?.[2] ?? {})?.[0]}
+          selectedKey={selectedResources?.[2]?.id}
         />
       ) : null}
       <PrimaryButton

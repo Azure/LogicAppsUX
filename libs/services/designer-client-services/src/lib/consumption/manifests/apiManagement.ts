@@ -58,6 +58,20 @@ export const apiManagementActionManifest = {
           type: 'string',
           'x-ms-visibility': 'hideInUI',
         },
+        pathTemplate: {
+          type: 'object',
+          'x-ms-visibility': 'hideInUI',
+          properties: {
+            template: {
+              type: 'string',
+              'x-ms-visibility': 'hideInUI',
+            },
+            parameters: {
+              type: 'object',
+              'x-ms-visibility': 'hideInUI',
+            },
+          },
+        },
       },
     },
     isInputsOptional: false,
