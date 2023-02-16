@@ -1,5 +1,5 @@
 import { dataMapperApiVersions } from '.';
-import type { GenerateXsltResponse, SchemaInfoProperties, TestMapResponse } from '.';
+import type { GenerateXsltResponse, TestMapResponse } from '.';
 import type { Schema } from '../../../models';
 import type { FunctionManifest } from '../../../models/Function';
 
@@ -22,7 +22,7 @@ export class DataMapperApiService {
     this.options.accessToken = accessToken;
   };
 
-  private getAccessTokenHeaders = () => {
+  /* private getAccessTokenHeaders = () => {
     const { accessToken } = this.options;
     if (!accessToken) {
       return undefined;
@@ -32,49 +32,42 @@ export class DataMapperApiService {
       Authorization: accessToken,
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      'api-version': '2019-10-01-edge-preview',
+      'api-version': dataMapperApiVersions.Oct2019Edge,
     });
-  };
+  }; */
 
   private getHeaders = () => {
     return new Headers({
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      'api-version': '2019-10-01-edge-preview',
+      'api-version': dataMapperApiVersions.Oct2019Edge,
     });
   };
 
-  private getBaseUri = () => {
-    return `${this.options.baseUrl}:${this.options.port}`;
-  };
+  /********* URIs *********/
 
-  private getSchemasUri = () => {
-    return `${this.getBaseUri()}/hostruntime/admin/vfs/Artifacts/Schemas?api-version=2018-11-01&relativepath=1`;
-  };
+  private getBaseUri = () => `${this.options.baseUrl}:${this.options.port}`;
 
-  private getSchemaFileUri = (xmlName: string) => {
-    return `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/schemas/${xmlName}/contents/schemaTree`;
-  };
+  private getSchemaFileUri = (schemaFilename: string) =>
+    `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/schemas/${schemaFilename}/contents/schemaTree`;
 
-  private getFunctionsManifestUri = () => {
-    return `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/mapTransformations?api-version=${
+  private getFunctionsManifestUri = () =>
+    `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/mapTransformations?api-version=${dataMapperApiVersions.Oct2019Edge}`;
+
+  private getGenerateXsltUri = () =>
+    `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/generateXslt?api-version=${dataMapperApiVersions.Oct2019Edge}`;
+
+  private getTestMapUri = (xsltFilename: string) =>
+    `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/maps/${xsltFilename}/testMap?api-version=${
       dataMapperApiVersions.Oct2019Edge
     }`;
-  };
 
-  private getGenerateXsltUri = () => {
-    return `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/generateXslt?api-version=${dataMapperApiVersions.Oct2019Edge}`;
-  };
-
-  private getTestMapUri = (xsltFilename: string) => {
-    return `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/maps/${xsltFilename}/testMap?api-version=${
-      dataMapperApiVersions.Oct2019Edge
-    }`;
-  };
+  /********* Full Requests *********/
 
   async getFunctionsManifest(): Promise<FunctionManifest> {
+    const headers = this.getHeaders();
     const uri = this.getFunctionsManifestUri();
-    const response = await fetch(uri, { method: 'GET' });
+    const response = await fetch(uri, { headers, method: 'GET' });
 
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
@@ -84,23 +77,11 @@ export class DataMapperApiService {
     return functions;
   }
 
-  async getSchemas(): Promise<SchemaInfoProperties[]> {
+  // NOTE: From BPM repo, looks like two schema files with the same name will prefer the JSON one
+  async getSchemaFile(schemaFilename: string): Promise<Schema> {
     const headers = this.getHeaders();
-    const schemaInfosUri = this.getSchemasUri();
-    const response = await fetch(schemaInfosUri, { headers, method: 'GET' });
-
-    if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
-    }
-
-    const schemaInfosResponse: Array<SchemaInfoProperties> = await response.json();
-
-    return schemaInfosResponse;
-  }
-
-  async getSchemaFile(xmlName: string): Promise<Schema> {
-    const schemaFileUri = this.getSchemaFileUri(xmlName.split('.')[0]);
-    const response = await fetch(schemaFileUri, { method: 'GET' });
+    const schemaFileUri = this.getSchemaFileUri(schemaFilename.split('.')[0]);
+    const response = await fetch(schemaFileUri, { headers, method: 'GET' });
 
     if (!response.ok) {
       const errorResponse: DmErrorResponse = (await response.json()).error;
@@ -113,11 +94,10 @@ export class DataMapperApiService {
   }
 
   async generateDataMapXslt(dataMapDefinition: string): Promise<string> {
+    const headers = this.getHeaders();
     const response = await fetch(this.getGenerateXsltUri(), {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify({
         MapContent: dataMapDefinition,
       }),
@@ -134,16 +114,15 @@ export class DataMapperApiService {
   }
 
   async testDataMap(dataMapXsltFilename: string, schemaInputValue: string): Promise<TestMapResponse> {
+    const headers = this.getHeaders();
     const base64EncodedSchemaInputValue = Buffer.from(schemaInputValue).toString('base64');
 
     const response = await fetch(this.getTestMapUri(dataMapXsltFilename), {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify({
         InputInstanceMessage: {
-          '$content-type': 'application/xml',
+          '$content-type': 'application/xml', // This doesn't actually appear to get used in the BPM repo, and still functions correctly when empty - the property itself just has to exist
           $content: base64EncodedSchemaInputValue,
         },
       }),

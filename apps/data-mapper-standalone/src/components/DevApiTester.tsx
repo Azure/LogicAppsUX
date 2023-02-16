@@ -43,7 +43,7 @@ const useStyles = makeStyles({
 export const DevApiTester = () => {
   const styles = useStyles();
 
-  const [selectedTab, setSelectedTab] = useState<RequestTab>(RequestTab.SchemaTree);
+  const [selectedTab, setSelectedTab] = useState<RequestTab>(Object.values(RequestTab)[0]);
   const [schemaFilename, setSchemaFilename] = useState<string>('');
   const [testMapInput, setTestMapInput] = useState<string>('');
   const [xsltFilename, setXsltFilename] = useState<string>('');
@@ -114,7 +114,7 @@ export const DevApiTester = () => {
                     <Stack tokens={{ childrenGap: '8px' }}>
                       <TextField
                         label="Schema filename"
-                        placeholder="Schema filename (w/o .xsd)"
+                        placeholder="Schema filename (w/o extension)"
                         value={schemaFilename ?? ''}
                         onChange={(_e, newValue) => setSchemaFilename(newValue ?? '')}
                       />
