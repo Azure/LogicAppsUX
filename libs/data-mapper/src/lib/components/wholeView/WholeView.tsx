@@ -3,6 +3,7 @@ import type { RootState } from '../../core/state/Store';
 import { SchemaType } from '../../models/';
 import { useWholeViewLayout } from '../../utils/ReactFlow.Util';
 import { SchemaCard } from '../nodeCard/SchemaCard';
+import { SimpleFunctionCard } from '../nodeCard/functionCard/SimpleFunctionCard';
 import { SchemaNameBadge } from '../schemaSelection/SchemaNameBadge';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { useEffect, useMemo } from 'react';
@@ -42,17 +43,25 @@ const WholeOverviewReactFlowWrapper = () => {
 
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
-  // TODO will be used - const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
-  // const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
+  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
-  const reactFlowNodes = useWholeViewLayout(sourceSchema?.schemaTreeRoot, targetSchema?.schemaTreeRoot);
+  const [reactFlowNodes, reactFlowEdges] = useWholeViewLayout(sourceSchemaDictionary, targetSchemaDictionary, connectionDictionary);
 
   // Fit the canvas view any time a schema changes
   useEffect(() => {
     fitView(reactFlowFitViewOptions);
   }, [fitView, sourceSchema?.schemaTreeRoot.key, targetSchema?.schemaTreeRoot.key]);
 
-  const schemaNodeTypes = useMemo(() => ({ [ReactFlowNodeType.SchemaNode]: SchemaCard }), []);
+  const nodeTypes = useMemo(
+    () => ({
+      [ReactFlowNodeType.SchemaNode]: SchemaCard,
+      [ReactFlowNodeType.FunctionNode]: SimpleFunctionCard,
+    }),
+    []
+  );
+  //const edgeTypes = useMemo(() => ({ [ReactFlowEdgeType.ConnectionEdge]: ConnectionEdge }), []);
 
   // Find first schema node (should be schemaTreeRoot) for source and target to use its xPos for schema name badge
   const srcSchemaTreeRootXPos = useMemo(
@@ -71,8 +80,10 @@ const WholeOverviewReactFlowWrapper = () => {
 
   return (
     <ReactFlow
-      nodeTypes={schemaNodeTypes}
+      nodeTypes={nodeTypes}
+      //edgeTypes={edgeTypes}
       nodes={reactFlowNodes}
+      edges={reactFlowEdges}
       nodesDraggable={false}
       proOptions={{
         account: 'paid-sponsor',
