@@ -772,7 +772,7 @@
         <Str Cat="Text">
           <Val><![CDATA[On]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ein]]></Val>
+            <Val><![CDATA[Bezug]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
