@@ -149,7 +149,7 @@ const callChildObjects = (
   functions: FunctionData[]
 ) => {
   const childEntries = Object.entries<MapDefinitionEntry>(sourceNodeObject);
-  childEntries.forEach(([childKey, childValue]) => {
+  childEntries.forEach(([childKey, childValue]: [string, string | MapDefinitionEntry]) => {
     if (childKey.startsWith(mapNodeParams.if)) {
       const isInLoop = targetKey.includes(mapNodeParams.for);
       const ifRfKey = createReactFlowFunctionKey(ifPseudoFunction);
@@ -235,7 +235,7 @@ const callChildObjects = (
         } else {
           // The only time this case should be valid is when making a object level conditional
           const childTargetKeyWithoutLoop = getTargetValueWithoutLoops(childTargetKey);
-          const flattenedChildValues = flattenMapDefinitionValues(childValue);
+          const flattenedChildValues = typeof childValue === 'string' ? [childValue] : flattenMapDefinitionValues(childValue);
           const flattenedChildValueParents = flattenedChildValues
             .map((flattenedValue) => {
               const fqChild = getSourceValueFromLoop(flattenedValue, childTargetKey, sourceSchemaFlattened);
