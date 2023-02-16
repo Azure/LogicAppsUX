@@ -435,13 +435,23 @@
                 ]
               },
               {
-                "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne/TODOConditional",
-                "name": "TODOConditional",
-                "fullName": "TODOConditional",
+                "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Conditional",
+                "name": "Conditional",
+                "fullName": "Conditional",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToOne",
                 "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
-                "children": []
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Conditional/Direct",
+                    "name": "Direct",
+                    "fullName": "Direct",
+                    "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Conditional",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "children": []
+                  }
+                ]
               },
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne/TODOStressTest",
@@ -644,13 +654,43 @@
                 ]
               },
               {
-                "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/TODOConditional",
-                "name": "TODOConditional",
-                "fullName": "TODOConditional",
+                "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Conditional",
+                "name": "Conditional",
+                "fullName": "Conditional",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany",
                 "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
-                "children": []
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Conditional/ConditionalChild",
+                    "name": "ConditionalChild",
+                    "fullName": "ConditionalChild",
+                    "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Conditional",
+                    "normalizedDataType": "ComplexType",
+                    "properties": "Repeating",
+                    "children": [
+                      {
+                        "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Conditional/ConditionalChild/ConditionalChildChild",
+                        "name": "ConditionalChildChild",
+                        "fullName": "ConditionalChildChild",
+                        "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Conditional/ConditionalChild",
+                        "normalizedDataType": "ComplexType",
+                        "properties": "Repeating",
+                        "children": [
+                          {
+                            "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Conditional/ConditionalChild/ConditionalChildChild/Direct",
+                            "name": "Direct",
+                            "fullName": "Direct",
+                            "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Conditional/ConditionalChild/ConditionalChildChild",
+                            "normalizedDataType": "String",
+                            "properties": "NotSpecified",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/TODOStressTest",

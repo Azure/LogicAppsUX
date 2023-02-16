@@ -97,7 +97,7 @@ describe('utils/DataMap', () => {
 
       const result = getSourceValueFromLoop(
         'SourceDirect',
-        '/ns0:TargetSchemaRoot/Looping/ManyToMany/$for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple)/Simple/$for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild)/SimpleChild/$for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild)/SimpleChildChild',
+        '/ns0:TargetSchemaRoot/Looping/ManyToMany/$for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple)/Simple/$for(SourceSimpleChild)/SimpleChild/$for(SourceSimpleChildChild)/SimpleChildChild',
         flattenedSchema
       );
       expect(result).toEqual('/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect');

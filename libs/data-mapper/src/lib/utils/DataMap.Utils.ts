@@ -196,7 +196,7 @@ export const getSourceKeyOfLastLoop = (targetKey: string): string => {
 
 export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sourceSchemaFlattened: SchemaNodeDictionary): string => {
   let constructedSourceKey = sourceKey;
-  const srcKeyWithinFor = getSourceKeyOfLastLoop(targetKey);
+  const srcKeyWithinFor = getSourceKeyOfLastLoop(qualifyLoopRelativeSourceKeys(targetKey));
 
   // Deserialize dot accessors as their parent loop's source node
   if (constructedSourceKey === '.') {
