@@ -11,13 +11,17 @@ import Fuse from 'fuse.js';
 export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {
   const extendedSchema: SchemaExtended = {
     ...schema,
-    schemaTreeRoot: convertSchemaNodeToSchemaNodeExtended(schema.schemaTreeRoot, []),
+    schemaTreeRoot: convertSchemaNodeToSchemaNodeExtended(schema.schemaTreeRoot, undefined, []),
   };
 
   return extendedSchema;
 };
 
-const convertSchemaNodeToSchemaNodeExtended = (schemaNode: SchemaNode, parentPath: PathItem[]): SchemaNodeExtended => {
+const convertSchemaNodeToSchemaNodeExtended = (
+  schemaNode: SchemaNode,
+  parentKey: string | undefined,
+  parentPath: PathItem[]
+): SchemaNodeExtended => {
   const nodeProperties = parsePropertiesIntoNodeProperties(schemaNode.properties);
   const pathToRoot: PathItem[] = [
     ...parentPath,
@@ -32,8 +36,11 @@ const convertSchemaNodeToSchemaNodeExtended = (schemaNode: SchemaNode, parentPat
   const extendedSchemaNode: SchemaNodeExtended = {
     ...schemaNode,
     nodeProperties,
-    children: schemaNode.children ? schemaNode.children.map((child) => convertSchemaNodeToSchemaNodeExtended(child, pathToRoot)) : [],
+    children: schemaNode.children
+      ? schemaNode.children.map((child) => convertSchemaNodeToSchemaNodeExtended(child, schemaNode.key, pathToRoot))
+      : [],
     pathToRoot: pathToRoot,
+    parentKey,
   };
 
   return extendedSchemaNode;

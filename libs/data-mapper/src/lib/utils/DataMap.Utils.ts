@@ -297,7 +297,8 @@ export const addParentConnectionForRepeatingElementsNested = (
   flattenedTargetSchema: SchemaNodeDictionary,
   dataMapConnections: ConnectionDictionary
 ): boolean => {
-  if (sourceNode.parentKey) {
+  if (sourceNode.pathToRoot.length > 1) {
+    // XXX
     const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
     const firstSourceNodeWithRepeatingPathItem = findLast(sourceNode.pathToRoot, (pathItem) => pathItem.repeating);
 
