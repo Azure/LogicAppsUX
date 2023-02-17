@@ -260,6 +260,25 @@ const sendBatchManifest = {
     "inputs": {
         "type": "object",
         "properties": {
+            "batchName":{
+              "type": 'string',
+              "title": "Batch Name",
+              "description": "Name of the batch to send message.",
+            },
+            "content": {
+              "title": "Message Content",
+              "description": "The message to send to batch.",
+            },
+            "partitionName": {
+              "type": 'string',
+              "title": "Partition Name",
+              "description": "Name of the partition to send message.",
+            },
+            "messageId": {
+              "type": 'string',
+              "title": "Message Id",
+              "description": "The message identifier.",
+            },
             "host": {
               "type": "object",
               "properties": {
@@ -281,25 +300,6 @@ const sendBatchManifest = {
                 }
               },
               "required": [ "triggerName", "workflow" ]
-            },
-            "batchName":{
-              "type": 'string',
-              "title": "Batch Name",
-              "description": "Name of the batch to send message.",
-            },
-            "content": {
-              "title": "Message Content",
-              "description": "The message to send to batch.",
-            },
-            "messageId": {
-              "type": 'string',
-              "title": "Message Id",
-              "description": "The message identifier.",
-            },
-            "partitionName": {
-              "type": 'string',
-              "title": "Partition Name",
-              "description": "Name of the partition to send message.",
             }
         },
         "required": [ "host", "batchName", "content" ]
