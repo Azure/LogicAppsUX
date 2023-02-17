@@ -108,4 +108,11 @@ ns0:TargetSchemaRoot:
                     Direct: SourceDirect
     LoopReduce:
       BestItemName: /ns0:SourceSchemaRoot/Looping/LoopReduce/ItemsList[3]/ItemName
+    OneToMany:
+      Simple:
+        SimpleChild:
+          $for(/ns0:SourceSchemaRoot/Looping/OneToMany/Simple):
+            SimpleChildChild:
+              Direct: SourceDirect
+              FunctionChain: SourceFunctionChain
 `;

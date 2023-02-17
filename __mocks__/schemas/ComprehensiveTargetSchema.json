@@ -465,51 +465,51 @@
             ]
           },
           {
-            "key": "/ns0:TargetSchemaRoot/Looping/TODOOneToMany",
-            "name": "TODOOneToMany",
-            "fullName": "TODOOneToMany",
+            "key": "/ns0:TargetSchemaRoot/Looping/OneToMany",
+            "name": "OneToMany",
+            "fullName": "OneToMany",
             "parentKey": "/ns0:TargetSchemaRoot/Looping",
             "normalizedDataType": "ComplexType",
             "properties": "NotSpecified",
             "children": [
               {
-                "key": "/ns0:TargetSchemaRoot/Looping/TODOOneToMany/Simple",
+                "key": "/ns0:TargetSchemaRoot/Looping/OneToMany/Simple",
                 "name": "Simple",
                 "fullName": "Simple",
-                "parentKey": "/ns0:TargetSchemaRoot/Looping/TODOOneToMany",
+                "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToMany",
                 "normalizedDataType": "ComplexType",
                 "properties": "Repeating",
                 "children": [
                   {
-                    "key": "/ns0:TargetSchemaRoot/Looping/TODOOneToMany/Simple/SimpleChild",
+                    "key": "/ns0:TargetSchemaRoot/Looping/OneToMany/Simple/SimpleChild",
                     "name": "SimpleChild",
                     "fullName": "SimpleChild",
-                    "parentKey": "/ns0:TargetSchemaRoot/Looping/TODOOneToMany/Simple",
+                    "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToMany/Simple",
                     "normalizedDataType": "ComplexType",
                     "properties": "Repeating",
                     "children": [
                       {
-                        "key": "/ns0:TargetSchemaRoot/Looping/TODOOneToMany/Simple/SimpleChild/SimpleChildChild",
+                        "key": "/ns0:TargetSchemaRoot/Looping/OneToMany/Simple/SimpleChild/SimpleChildChild",
                         "name": "SimpleChildChild",
                         "fullName": "SimpleChildChild",
-                        "parentKey": "/ns0:TargetSchemaRoot/Looping/TODOOneToMany/Simple/SimpleChild",
+                        "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToMany/Simple/SimpleChild",
                         "normalizedDataType": "ComplexType",
                         "properties": "Repeating",
                         "children": [
                           {
-                            "key": "/ns0:TargetSchemaRoot/Looping/TODOOneToMany/Simple/SimpleChild/SimpleChildChild/Direct",
+                            "key": "/ns0:TargetSchemaRoot/Looping/OneToMany/Simple/SimpleChild/SimpleChildChild/Direct",
                             "name": "Direct",
                             "fullName": "Direct",
-                            "parentKey": "/ns0:TargetSchemaRoot/Looping/TODOOneToMany/Simple/SimpleChild/SimpleChildChild",
+                            "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToMany/Simple/SimpleChild/SimpleChildChild",
                             "normalizedDataType": "String",
                             "properties": "NotSpecified",
                             "children": []
                           },
                           {
-                            "key": "/ns0:TargetSchemaRoot/Looping/TODOOneToMany/Simple/SimpleChild/SimpleChildChild/FunctionChain",
+                            "key": "/ns0:TargetSchemaRoot/Looping/OneToMany/Simple/SimpleChild/SimpleChildChild/FunctionChain",
                             "name": "FunctionChain",
                             "fullName": "FunctionChain",
-                            "parentKey": "/ns0:TargetSchemaRoot/Looping/TODOOneToMany/Simple/SimpleChild/SimpleChildChild",
+                            "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToMany/Simple/SimpleChild/SimpleChildChild",
                             "normalizedDataType": "String",
                             "properties": "NotSpecified",
                             "children": []
@@ -521,28 +521,28 @@
                 ]
               },
               {
-                "key": "/ns0:TargetSchemaRoot/Looping/TODOOneToMany/Index",
+                "key": "/ns0:TargetSchemaRoot/Looping/OneToMany/Index",
                 "name": "Index",
                 "fullName": "Index",
-                "parentKey": "/ns0:TargetSchemaRoot/Looping/TODOOneToMany",
+                "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToMany",
                 "normalizedDataType": "ComplexType",
                 "properties": "NotSpecified",
                 "children": []
               },
               {
-                "key": "/ns0:TargetSchemaRoot/Looping/TODOOneToMany/Conditional",
+                "key": "/ns0:TargetSchemaRoot/Looping/OneToMany/Conditional",
                 "name": "Conditional",
                 "fullName": "Conditional",
-                "parentKey": "/ns0:TargetSchemaRoot/Looping/TODOOneToMany",
+                "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToMany",
                 "normalizedDataType": "ComplexType",
                 "properties": "NotSpecified",
                 "children": []
               },
               {
-                "key": "/ns0:TargetSchemaRoot/Looping/TODOOneToMany/StressTest",
+                "key": "/ns0:TargetSchemaRoot/Looping/OneToMany/StressTest",
                 "name": "StressTest",
                 "fullName": "StressTest",
-                "parentKey": "/ns0:TargetSchemaRoot/Looping/TODOOneToMany",
+                "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToMany",
                 "normalizedDataType": "ComplexType",
                 "properties": "NotSpecified",
                 "children": []
