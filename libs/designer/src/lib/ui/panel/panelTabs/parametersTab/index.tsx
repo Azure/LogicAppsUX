@@ -15,7 +15,7 @@ import type { AppDispatch, RootState } from '../../../../core/store';
 import { getConnectionReference } from '../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../core/utils/graph';
 import { addForeachToNode } from '../../../../core/utils/loops';
-import { loadDynamicValuesForParameter, updateParameterAndDependencies } from '../../../../core/utils/parameters/helper';
+import { loadDynamicValuesForParameter, shouldUseParameterInGroup, updateParameterAndDependencies } from '../../../../core/utils/parameters/helper';
 import type { TokenGroup } from '../../../../core/utils/tokens';
 import { createValueSegmentFromToken, getExpressionTokenSections, getOutputTokenSections } from '../../../../core/utils/tokens';
 import { getAllVariables, getAvailableVariables } from '../../../../core/utils/variables';
@@ -252,7 +252,7 @@ const ParameterSection = ({
   };
 
   const settings: Settings[] = group?.parameters
-    .filter((x) => !x.hideInUI)
+    .filter((x) => !x.hideInUI && shouldUseParameterInGroup(x, group.parameters))
     .map((param) => {
       const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
         param;

@@ -120,7 +120,7 @@ export const getInputParametersFromManifest = (
 
     primaryInputParametersInArray = updateParameterWithValues(
       'inputs.$',
-      getInputsValueFromDefinitionForManifest(inputsLocation ?? ['inputs'], manifest, operationData),
+      getInputsValueFromDefinitionForManifest(inputsLocation ?? ['inputs'], manifest, operationData, primaryInputParametersInArray),
       '',
       primaryInputParametersInArray,
       !inputsLocation || !!inputsLocation.length /* createInvisibleParameter */,

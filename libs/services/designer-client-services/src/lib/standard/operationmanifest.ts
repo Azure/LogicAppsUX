@@ -1,5 +1,5 @@
 import { BaseOperationManifestService } from '../base';
-import { getBuiltInOperationInfo, isBuiltInOperation, supportedBaseManifestObjects } from '../base/operationmanifest';
+import { batchConnectorId, getBuiltInOperationInfo, isBuiltInOperation, supportedBaseManifestObjects } from '../base/operationmanifest';
 import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 import { equals, ConnectionType } from '@microsoft/utils-logic-apps';
 
@@ -23,6 +23,12 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
   }
 
   override async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
+    if (equals(connectorId, 'connectionProviders/request')) {
+      return batchTriggerManifest;
+    } else if (equals(connectorId, 'connectionProviders/datetime')) {
+      return sendBatchManifest;
+    }
+
     const supportedManifest = supportedBaseManifestObjects.get(operationId);
 
     if (supportedManifest) return supportedManifest;
@@ -66,3 +72,292 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
 function isServiceProviderOperation(definition: any): boolean {
   return equals(definition.type, 'ServiceProvider');
 }
+
+const batchTriggerManifest = {
+  properties: {
+    "brandColor": '#2280CC',
+    "iconUri": "https://logicappsv2resources.blob.core.windows.net/icons/apimanagement.svg",
+    "description": "Batch Trigger",
+    "inputs": {
+        "type": "object",
+        "properties": {
+            "mode": {
+              "type": "string",
+              "default": "Inline",
+              "x-ms-visibility": "hideInUI"
+            },
+            "configurations": {
+              "type": "object",
+              "properties": {
+                "$$batchName$$": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "title": "Batch Name",
+                      "description": "Name of the batch.",
+                      "x-ms-serialization": {
+                        "property": {
+                          "type": "parentobject",
+                          "name": "$$batchName$$",
+                          "parameterReference": "configurations.$$batchName$$"
+                        }
+                      }
+                    },
+                    "releaseCriteria": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "array",
+                          "title": "Release Criteria",
+                          "description": "Release criteria of the batch.",
+                          'x-ms-editor': 'dropdown',
+                          'x-ms-editor-options': {
+                            multiSelect: true,
+                            serialization: { valueType: 'array' },
+                            titleSeparator: ',',
+                            options: [
+                              { value: '0', displayName: 'Message count based' },
+                              { value: '1', displayName: 'Size based' },
+                              { value: '2', displayName: 'Schedule based' },
+                            ]
+                          },
+                          "x-ms-serialization": {
+                            skip: true
+                          }
+                        },
+                        "messageCount": {
+                          "type": "integer",
+                          "title": "Message Count",
+                          "description": "Number of messages to be batched and released.",
+                          "x-ms-visibility": "important",
+                          'x-ms-input-dependencies': {
+                            type: 'visibility',
+                            parameters: [
+                              {
+                                name: 'configurations.$$batchName$$.releaseCriteria.type',
+                                values: ['0'],
+                              },
+                            ],
+                          },
+                        },
+                        "batchSize": {
+                          "type": "integer",
+                          "title": "Batch Size",
+                          "description": "Total size of all messages in batch, in bytes, to be released.",
+                          "x-ms-visibility": "important",
+                          'x-ms-input-dependencies': {
+                            type: 'visibility',
+                            parameters: [
+                              {
+                                name: 'configurations.$$batchName$$.releaseCriteria.type',
+                                values: ['1'],
+                              },
+                            ],
+                          },
+                        },
+                        "recurrence": {
+                          "type": "object",
+                          "title": "Recurrence",
+                          "description": "Enter the recurrence details.",
+                          "x-ms-visibility": "important",
+                          "x-ms-editor": "recurrence",
+                          "x-ms-editor-options": {
+                            "recurrenceType": "advanced"
+                          },
+                          "x-ms-input-dependencies": {
+                            "type": "visibility",
+                            "parameters": [
+                              {
+                                name: 'configurations.$$batchName$$.releaseCriteria.type',
+                                values: ['2'],
+                              },
+                            ],
+                          },
+                        }
+                      },
+                      "required": ["type"]
+                    }
+                  },
+                  "required": ["name", "releaseCriteria"]
+                }
+              },
+              "required": ["$$batchName$$"]
+            }
+        },
+        "required": [ "mode", "configurations" ]
+    },
+    "inputsLocation": [
+        "inputs"
+    ],
+    "isInputsOptional": false,
+    "outputs": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "object",
+          "title": "Body",
+          "properties": {
+            "batchName": {
+              "type": "string",
+              "title": "Batch Name"
+            },
+            "partitionName": {
+              "type": "string",
+              "title": "Partition Name"
+            },
+            "items": {
+              "type": "array",
+              "title": "Batched Items",
+              "items": {
+                "type": "object",
+                "title": "Message",
+                "properties": {
+                  "content": {
+                    "title": "Content"
+                  },
+                  "messageId": {
+                    "type": "string",
+                    "title": "Id"
+                  }
+                },
+                "required": ["content", "messageId"]
+              }
+            }
+          },
+          "required": ["batchName", "partitionName", "items"]
+        }
+      },
+      "required": ["body"]
+    },
+    "isOutputsOptional": false,
+    "settings": {
+        "secureData": {},
+    },
+    "includeRootOutputs": false,
+    "connector": {
+        "name": "batch",
+        "id": batchConnectorId,
+        "properties": {
+            "displayName": "Batch",
+            "iconUri": "https://logicappsv2resources.blob.core.windows.net/icons/apimanagement.svg",
+            "brandColor": '#2280CC',
+            "description": "Batch operations"
+        }
+    },
+  }
+} as any;
+
+const sendBatchManifest = {
+  properties: {
+    "brandColor": '#2280CC',
+    "iconUri": "https://logicappsv2resources.blob.core.windows.net/icons/apimanagement.svg",
+    "description": "Send to Batch",
+    "inputs": {
+        "type": "object",
+        "properties": {
+            "host": {
+              "type": "object",
+              "properties": {
+                "triggerName":{
+                    "type": "string",
+                    "title": "Trigger Name",
+                    "description": "Name of the trigger",
+                },
+                "workflow": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "title": "Workflow",
+                      "description": "Workflow name"
+                    }
+                  },
+                  "required": [ "id" ]
+                }
+              },
+              "required": [ "triggerName", "workflow" ]
+            },
+            "batchName":{
+              "type": 'string',
+              "title": "Batch Name",
+              "description": "Name of the batch to send message.",
+            },
+            "content": {
+              "title": "Message Content",
+              "description": "The message to send to batch.",
+            },
+            "messageId": {
+              "type": 'string',
+              "title": "Message Id",
+              "description": "The message identifier.",
+            },
+            "partitionName": {
+              "type": 'string',
+              "title": "Partition Name",
+              "description": "Name of the partition to send message.",
+            }
+        },
+        "required": [ "host", "batchName", "content" ]
+    },
+    "inputsLocation": [
+        "inputs"
+    ],
+    "isInputsOptional": false,
+    "outputs": {
+      type: 'object',
+      required: [],
+      properties: {
+        body: {
+          title: 'Body',
+          type: 'object',
+          properties: {
+            "batchName":{
+              "type": 'string',
+              "title": "Batch Name",
+              "description": "Name of the batch to send message.",
+            },
+            "messageId": {
+              "type": 'string',
+              "title": "Message Id",
+              "description": "The message identifier.",
+            },
+            "partitionName": {
+              "type": 'string',
+              "title": "Partition Name",
+              "description": "Name of the partition to send message.",
+            }
+          }
+        },
+        headers: {
+          type: 'object',
+          title: 'Headers',
+        },
+        statusCode: {
+          type: 'integer',
+          title: 'Status code',
+        },
+      },
+    },
+    "isOutputsOptional": false,
+    "settings": {
+        "secureData": {},
+        "trackedProperties": {
+            "scopes": [
+                "Action"
+            ]
+        },
+    },
+    "includeRootOutputs": false,
+    "connector": {
+        "name": "batch",
+        "id": batchConnectorId,
+        "properties": {
+            "displayName": "Batch",
+            "iconUri": "https://logicappsv2resources.blob.core.windows.net/icons/apimanagement.svg",
+            "brandColor": '#2280CC',
+            "description": "Batch operations"
+        }
+    },
+  }
+} as any;

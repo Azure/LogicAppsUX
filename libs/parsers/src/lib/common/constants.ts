@@ -22,6 +22,7 @@ export const ExtensionProperties = {
   Format: 'x-ms-format',
   GroupName: 'x-ms-group-name',
   Headers: 'x-ms-headers',
+  InputDependencies: 'x-ms-input-dependencies',
   Method: 'x-ms-method',
   Notification: 'x-ms-notification',
   NotificationContent: 'x-ms-notification-content',

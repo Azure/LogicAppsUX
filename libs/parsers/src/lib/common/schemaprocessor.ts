@@ -507,6 +507,7 @@ export class SchemaProcessor {
       dynamicallyAdded,
       dynamicSchema: getParameterDynamicSchema(schema),
       dynamicValues: getParameterDynamicValues(schema),
+      dependencies: schema[SwaggerConstants.ExtensionProperties.InputDependencies],
       editor,
       editorOptions,
       encode,

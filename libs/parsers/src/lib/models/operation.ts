@@ -152,9 +152,27 @@ export interface DynamicProperties {
 
 export type ParameterDynamicSchema = LegacyDynamicSchema | DynamicProperties;
 
+export enum PropertySerializationType {
+  ParentObject = 'parentobject'
+}
+
 export interface ParameterSerializationOptions {
   skip?: boolean;
   location?: string[];
+  property?: {
+    type: string;
+    name: string;
+    parameterReference: string;
+  };
+}
+
+export interface DependentParameterInfo {
+  name: string;
+  values: any[];
+}
+export interface InputDependencies {
+  type: string;
+  parameters: DependentParameterInfo[];
 }
 
 export interface ParameterBase {
@@ -162,6 +180,7 @@ export interface ParameterBase {
   name: string;
   type: string;
   default?: any;
+  dependencies?: InputDependencies;
   description?: string;
   dynamicSchema?: ParameterDynamicSchema;
   dynamicValues?: ParameterDynamicValues;
@@ -234,6 +253,7 @@ export function toInputParameter(schemaProperty: SchemaProperty, suppressCasting
   const {
     alias,
     default: $default,
+    dependencies,
     description,
     dynamicSchema,
     dynamicValues,
@@ -263,6 +283,7 @@ export function toInputParameter(schemaProperty: SchemaProperty, suppressCasting
   return {
     alias,
     default: $default,
+    dependencies,
     description,
     dynamicSchema,
     dynamicValues,
