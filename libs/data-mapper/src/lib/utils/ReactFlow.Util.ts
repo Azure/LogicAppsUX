@@ -4,17 +4,17 @@ import type { FunctionCardProps } from '../components/nodeCard/functionCard/Func
 import type { NodeToggledStateDictionary } from '../components/tree/TargetSchemaTreeItem';
 import {
   childTargetNodeCardIndent,
-  schemaNodeCardHeight,
   schemaNodeCardDefaultWidth,
+  schemaNodeCardHeight,
   schemaNodeCardWidthDifference,
 } from '../constants/NodeConstants';
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { Connection, ConnectionDictionary } from '../models/Connection';
+import type { ConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
-import type { SchemaNodeExtended } from '../models/Schema';
-import { SchemaNodeProperty, SchemaType } from '../models/Schema';
-import { getFunctionBrandingForCategory } from './Function.Utils';
-import { applyElkLayout, convertDataMapNodesToElkGraph } from './Layout.Utils';
+import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
+import { SchemaType } from '../models/Schema';
+import { getFunctionBrandingForCategory, isFunctionData } from './Function.Utils';
+import { applyElkLayout, convertDataMapNodesToElkGraph, convertWholeDataMapToElkGraph } from './Layout.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 import { isLeafNode } from './Schema.Utils';
 import { guid } from '@microsoft/utils-logic-apps';
@@ -82,24 +82,21 @@ export const useLayout = (
 
       // Apply ELK layout
       applyElkLayout(elkTreeFromCanvasNodes)
-        .then((layoutedElkTree) => {
+        .then((computedElkTree) => {
           // Convert newly-calculated ELK node data to React Flow nodes + edges
           setReactFlowNodes([
             placeholderReactFlowNode,
-            ...convertToReactFlowNodes(
-              layoutedElkTree,
-              sortedSourceSchemaNodes,
-              currentFunctionNodes,
+            ...convertToReactFlowNodes(computedElkTree, sortedSourceSchemaNodes, currentFunctionNodes, [
               currentTargetSchemaNode,
-              connections
-            ),
+              ...currentTargetSchemaNode.children,
+            ]),
           ]);
 
           const simpleElkEdgeResults: SimplifiedElkEdge[] = [];
 
-          if (layoutedElkTree.edges) {
+          if (computedElkTree.edges) {
             simpleElkEdgeResults.push(
-              ...layoutedElkTree.edges.map((elkEdge) => {
+              ...computedElkTree.edges.map((elkEdge) => {
                 return {
                   srcRfId: elkEdge.sources[0],
                   tgtRfId: elkEdge.targets[0],
@@ -109,9 +106,9 @@ export const useLayout = (
             );
           }
 
-          if (layoutedElkTree.children && layoutedElkTree.children.length === 3 && layoutedElkTree.children[1].edges) {
+          if (computedElkTree.children && computedElkTree.children.length === 3 && computedElkTree.children[1].edges) {
             simpleElkEdgeResults.push(
-              ...layoutedElkTree.children[1].edges.map((elkEdge) => {
+              ...computedElkTree.children[1].edges.map((elkEdge) => {
                 return {
                   srcRfId: elkEdge.sources[0],
                   tgtRfId: elkEdge.targets[0],
@@ -125,8 +122,8 @@ export const useLayout = (
 
           // Calculate diagram size
           setDiagramSize({
-            width: layoutedElkTree.width ?? 0,
-            height: layoutedElkTree.height ?? 0,
+            width: computedElkTree.width ?? 0,
+            height: computedElkTree.height ?? 0,
           });
         })
         .catch((error) => {
@@ -156,8 +153,7 @@ export const convertToReactFlowNodes = (
   elkTree: ElkNode,
   currentSourceSchemaNodes: SchemaNodeExtended[],
   currentFunctionNodes: FunctionDictionary,
-  targetSchemaNode: SchemaNodeExtended,
-  connections: ConnectionDictionary
+  currentTargetSchemaNodes: SchemaNodeExtended[]
 ): ReactFlowNode<CardProps>[] => {
   if (!elkTree.children || elkTree.children.length !== 3) {
     LogService.error(LogCategory.ReactFlowUtils, 'convertToReactFlowNodes', {
@@ -168,209 +164,48 @@ export const convertToReactFlowNodes = (
   }
 
   return [
-    ...convertSourceToReactFlowParentAndChildNodes(
-      elkTree.children[0], // sourceSchemaBlock
-      currentSourceSchemaNodes,
-      connections
-    ),
+    ...convertSourceSchemaToReactFlowNodes(elkTree.children[0], currentSourceSchemaNodes),
     ...convertFunctionsToReactFlowParentAndChildNodes(elkTree.children[1], currentFunctionNodes),
-    ...convertTargetToReactFlowParentAndChildNodes(elkTree.children[2], targetSchemaNode, connections),
+    ...convertTargetSchemaToReactFlowNodes(elkTree.children[2], currentTargetSchemaNodes),
   ];
 };
 
-const isAncestorOf = (possibleChild: SchemaNodeExtended, possibleParent: SchemaNodeExtended): boolean => {
-  return possibleChild.key.includes(possibleParent.key);
-};
-
-const isSiblingOf = (node1: SchemaNodeExtended, node2: SchemaNodeExtended) => {
-  return node1.parentKey === node2.parentKey;
-};
-
-const getWidthForSourceNodes = (sortedSourceNodes: SchemaNodeExtended[]): Map<string, number> => {
-  const widthMap: Map<string, number> = new Map<string, number>();
-  let maxSizeAdd = 0;
-  const copiedSourceNodes = [...sortedSourceNodes];
-  const nodesLength = copiedSourceNodes.length;
-
-  const getWidthForSourceNodesRecursively = (widthDiff: number, currentNodeIndex: number): number => {
-    if (widthDiff > maxSizeAdd) {
-      maxSizeAdd = widthDiff;
-    }
-    if (currentNodeIndex === nodesLength) {
-      return currentNodeIndex;
-    }
-    const currentNode = copiedSourceNodes[currentNodeIndex];
-    widthMap.set(currentNode.key, widthDiff);
-    if (currentNodeIndex === nodesLength - 1) {
-      return currentNodeIndex + 1;
-    }
-    const nextNode = copiedSourceNodes[currentNodeIndex + 1];
-    let nextSectionIndex: number = nodesLength - 1;
-    if (isAncestorOf(nextNode, currentNode)) {
-      nextSectionIndex = getWidthForSourceNodesRecursively(widthDiff + schemaNodeCardWidthDifference, currentNodeIndex + 1);
-    } else if (isSiblingOf(currentNode, nextNode)) {
-      nextSectionIndex = getWidthForSourceNodesRecursively(widthDiff, currentNodeIndex + 1);
-    } else {
-      return currentNodeIndex + 1;
-    }
-
-    const nextSectionNode = copiedSourceNodes[nextSectionIndex];
-    if (nextSectionNode && (isAncestorOf(nextSectionNode, currentNode) || isSiblingOf(nextSectionNode, currentNode))) {
-      copiedSourceNodes[nextSectionIndex - 1] = currentNode;
-      nextSectionIndex = getWidthForSourceNodesRecursively(widthDiff, nextSectionIndex - 1);
-    }
-
-    return nextSectionIndex;
-  };
-
-  getWidthForSourceNodesRecursively(0, 0);
-  let maxWidth = schemaNodeCardDefaultWidth;
-  if (maxSizeAdd > schemaNodeCardWidthDifference * 3) {
-    maxWidth += maxSizeAdd - schemaNodeCardWidthDifference * 3;
-  }
-
-  widthMap.set('maxWidth', maxWidth);
-
-  return widthMap;
-};
-
-const convertSourceToReactFlowParentAndChildNodes = (
+const convertSourceSchemaToReactFlowNodes = (
   sourceSchemaElkTree: ElkNode,
-  combinedSourceSchemaNodes: SchemaNodeExtended[],
-  connections: ConnectionDictionary
+  combinedSourceSchemaNodes: SchemaNodeExtended[]
+): ReactFlowNode<SchemaCardProps>[] => {
+  return convertSchemaToReactFlowNodes(sourceSchemaElkTree, combinedSourceSchemaNodes, SchemaType.Source);
+};
+
+const convertTargetSchemaToReactFlowNodes = (
+  targetSchemaElkTree: ElkNode,
+  targetSchemaNodes: SchemaNodeExtended[]
+): ReactFlowNode<SchemaCardProps>[] => {
+  return convertSchemaToReactFlowNodes(targetSchemaElkTree, targetSchemaNodes, SchemaType.Target);
+};
+
+export const convertSchemaToReactFlowNodes = (
+  elkTree: ElkNode,
+  schemaNodes: SchemaNodeExtended[],
+  schemaType: SchemaType
 ): ReactFlowNode<SchemaCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
+  const isSourceSchema = schemaType === SchemaType.Source;
+  const depthArray = nodeArrayDepth(schemaNodes);
+  const maxLocalDepth = depthArray.length;
 
-  if (!sourceSchemaElkTree.children) {
-    LogService.error(LogCategory.ReactFlowUtils, 'convertSourceToReactFlowParentAndChildNodes', {
-      message: 'Layout error: sourceSchemaElkTree missing children',
-    });
+  schemaNodes.forEach((schemaNode, index) => {
+    const reactFlowId = addReactFlowPrefix(schemaNode.key, schemaType);
+    const curDepth = depthArray.indexOf(schemaNode.pathToRoot.length);
 
-    return reactFlowNodes;
-  }
-
-  const sourceNodesCopy = [...combinedSourceSchemaNodes];
-  sourceNodesCopy.filter((node) => node.nodeProperties.includes(SchemaNodeProperty.Repeating));
-  const sourceKeySet: Set<string> = new Set();
-  sourceNodesCopy.forEach((node) => sourceKeySet.add(node.key));
-
-  const widthMap = getWidthForSourceNodes(sourceNodesCopy);
-
-  combinedSourceSchemaNodes.forEach((srcNode) => {
-    const nodeReactFlowId = addSourceReactFlowPrefix(srcNode.key);
-    const relatedConnections = getConnectionsForNode(connections, srcNode.key, SchemaType.Source);
-
-    const elkNode = sourceSchemaElkTree.children?.find((node) => node.id === nodeReactFlowId);
-    if (!elkNode || !elkNode.x || !elkNode.y || !sourceSchemaElkTree.x || !sourceSchemaElkTree.y) {
-      LogService.error(LogCategory.ReactFlowUtils, 'convertSourceToReactFlowParentAndChildNodes', {
-        message: 'Layout error: sourceSchema ElkNode not found, or missing x/y',
+    const elkNode = elkTree.children?.find((node) => node.id === reactFlowId);
+    if (!elkNode || !elkNode.x || !elkNode.y || !elkTree.x || !elkTree.y) {
+      LogService.error(LogCategory.ReactFlowUtils, 'convertToReactFlowNodes', {
+        message: 'Layout error: ElkNode not found, or missing x/y',
+        schemaType,
         elkData: {
           elkNodeX: elkNode?.x,
           elkNodeY: elkNode?.y,
-          sourceSchemaElkTreeX: sourceSchemaElkTree?.x,
-          sourceSchemaElkTreeY: sourceSchemaElkTree?.y,
-        },
-      });
-
-      return;
-    }
-
-    const dictWidth = widthMap.get(srcNode.key);
-    const maxWidth = widthMap.get('maxWidth') as number;
-    const nodeWidth = dictWidth !== undefined ? dictWidth : schemaNodeCardDefaultWidth;
-
-    reactFlowNodes.push({
-      id: nodeReactFlowId,
-      zIndex: 101, // Just for schema nodes to render N-badge over edges
-      data: {
-        schemaNode: { ...srcNode, width: maxWidth - nodeWidth },
-        maxWidth: maxWidth,
-        schemaType: SchemaType.Source,
-        displayHandle: true,
-        displayChevron: true,
-        isLeaf: true,
-        isChild: false,
-        disabled: false,
-        error: false,
-        relatedConnections: relatedConnections,
-      },
-      type: ReactFlowNodeType.SchemaNode,
-      sourcePosition: Position.Right,
-      position: {
-        x: 0,
-        y: elkNode.y,
-      },
-    });
-  });
-
-  return reactFlowNodes;
-};
-
-const convertTargetToReactFlowParentAndChildNodes = (
-  targetSchemaElkTree: ElkNode,
-  targetSchemaNode: SchemaNodeExtended,
-  connections: ConnectionDictionary
-): ReactFlowNode<SchemaCardProps>[] => {
-  return convertToReactFlowParentAndChildNodes(targetSchemaElkTree, targetSchemaNode, SchemaType.Target, true, connections);
-};
-
-export const convertToReactFlowParentAndChildNodes = (
-  elkTree: ElkNode,
-  parentSchemaNode: SchemaNodeExtended,
-  schemaType: SchemaType,
-  displayTargets: boolean,
-  connections: ConnectionDictionary
-): ReactFlowNode<SchemaCardProps>[] => {
-  const reactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
-  const relatedConnections = getConnectionsForNode(connections, parentSchemaNode.key, schemaType);
-
-  const parentNodeReactFlowId = addReactFlowPrefix(parentSchemaNode.key, schemaType);
-  const parentElkNode = elkTree.children?.find((node) => node.id === parentNodeReactFlowId);
-  if (!parentElkNode || !parentElkNode.x || !parentElkNode.y || !elkTree.x || !elkTree.y) {
-    LogService.error(LogCategory.ReactFlowUtils, 'convertToReactFlowParentAndChildNodes', {
-      message: 'Layout error: Schema parent ElkNode not found, or missing x/y',
-      elkData: {
-        parentElkNodeX: parentElkNode?.x,
-        parentElkNodeY: parentElkNode?.y,
-        elkTreeX: elkTree?.x,
-        elkTreeY: elkTree?.y,
-      },
-    });
-
-    return reactFlowNodes;
-  }
-
-  reactFlowNodes.push({
-    id: parentNodeReactFlowId,
-    zIndex: 101, // Just for schema nodes to render N-badge over edges
-    data: {
-      schemaNode: parentSchemaNode,
-      schemaType,
-      displayHandle: !!displayTargets,
-      displayChevron: false,
-      isLeaf: false,
-      isChild: false,
-      disabled: false,
-      error: false,
-      relatedConnections: relatedConnections,
-    },
-    type: ReactFlowNodeType.SchemaNode,
-    targetPosition: !displayTargets ? undefined : schemaType === SchemaType.Source ? Position.Right : Position.Left,
-    position: {
-      x: elkTree.x + parentElkNode.x,
-      y: parentElkNode.y,
-    },
-  });
-
-  parentSchemaNode.children?.forEach((childNode) => {
-    const childNodeReactFlowId = addReactFlowPrefix(childNode.key, schemaType);
-    const childElkNode = elkTree.children?.find((node) => node.id === childNodeReactFlowId);
-    if (!childElkNode || !childElkNode.x || !childElkNode.y || !elkTree.x || !elkTree.y) {
-      LogService.error(LogCategory.ReactFlowUtils, 'convertToReactFlowParentAndChildNodes', {
-        message: 'Layout error: Schema child ElkNode not found, or missing x/y',
-        elkData: {
-          childElkNodeX: childElkNode?.x,
-          childElkNodeY: childElkNode?.y,
           elkTreeX: elkTree?.x,
           elkTreeY: elkTree?.y,
         },
@@ -380,24 +215,23 @@ export const convertToReactFlowParentAndChildNodes = (
     }
 
     reactFlowNodes.push({
-      id: childNodeReactFlowId,
+      id: reactFlowId,
       zIndex: 101, // Just for schema nodes to render N-badge over edges
       data: {
-        schemaNode: childNode,
+        schemaNode,
         schemaType,
-        displayHandle: !!displayTargets,
-        displayChevron: true,
-        isLeaf: isLeafNode(childNode),
-        isChild: true,
+        displayHandle: true,
+        displayChevron: !isSourceSchema && index !== 0, // The first target node is the parent
+        isLeaf: isLeafNode(schemaNode),
+        width: calculateWidth(curDepth, maxLocalDepth),
         disabled: false,
         error: false,
-        relatedConnections: [],
       },
       type: ReactFlowNodeType.SchemaNode,
-      targetPosition: !displayTargets ? undefined : schemaType === SchemaType.Source ? Position.Right : Position.Left,
+      targetPosition: isSourceSchema ? Position.Right : Position.Left,
       position: {
-        x: elkTree.x + childElkNode.x + childTargetNodeCardIndent,
-        y: childElkNode.y,
+        x: elkTree.x + elkNode.x + curDepth * childTargetNodeCardIndent,
+        y: elkNode.y,
       },
     });
   });
@@ -468,126 +302,205 @@ export const convertToReactFlowEdges = (elkEdges: SimplifiedElkEdge[], selectedI
 };
 
 export const useOverviewLayout = (
-  srcSchemaTreeRoot?: SchemaNodeExtended,
-  tgtSchemaTreeRoot?: SchemaNodeExtended,
-  tgtSchemaToggledStatesDictionary?: NodeToggledStateDictionary
+  srcSchemaTreeRoot: SchemaNodeExtended | undefined,
+  tgtSchemaTreeRoot: SchemaNodeExtended | undefined,
+  targetSchemaStates: NodeToggledStateDictionary
 ): ReactFlowNode<SchemaCardProps>[] => {
   const [reactFlowNodes, setReactFlowNodes] = useState<ReactFlowNode<SchemaCardProps>[]>([]);
 
   useEffect(() => {
-    const newReactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
-
-    const baseSchemaNodeData = {
-      displayHandle: false,
-      disabled: false,
-      error: false,
-      relatedConnections: [],
-    };
+    const sourceReactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
+    const targetReactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
 
     // Dummy source schema node
-    newReactFlowNodes.push({ ...placeholderReactFlowNode });
+    sourceReactFlowNodes.push({ ...placeholderReactFlowNode });
 
     // Source schema nodes
     if (srcSchemaTreeRoot) {
-      const baseSrcSchemaNodeData = {
-        ...baseSchemaNodeData,
-        schemaType: SchemaType.Source,
-        displayChevron: false,
-      };
-
-      newReactFlowNodes.push({
-        id: addSourceReactFlowPrefix(srcSchemaTreeRoot.key),
-        data: {
-          ...baseSrcSchemaNodeData,
-          schemaNode: srcSchemaTreeRoot,
-          isLeaf: false,
-          isChild: false,
-        },
-        type: ReactFlowNodeType.SchemaNode,
-        position: {
-          x: 0,
-          y: 0,
-        },
-      });
-
-      srcSchemaTreeRoot.children?.forEach((childNode, idx) => {
-        newReactFlowNodes.push({
-          id: addSourceReactFlowPrefix(childNode.key),
-          data: {
-            ...baseSrcSchemaNodeData,
-            schemaNode: childNode,
-            isLeaf: isLeafNode(childNode),
-            isChild: true,
-          },
-          type: ReactFlowNodeType.SchemaNode,
-          position: {
-            x: childTargetNodeCardIndent,
-            y: (idx + 1) * (schemaNodeCardHeight + 10),
-          },
-        });
-      });
+      addChildNodesForOverview(srcSchemaTreeRoot, 0, 1, sourceReactFlowNodes, true, !!srcSchemaTreeRoot, undefined, 1);
     }
 
     // Dummy target schema node
-    newReactFlowNodes.push({ ...placeholderReactFlowNode, position: { x: overviewTgtSchemaX, y: 0 }, id: 'layouting-&-Placeholder-Tgt' });
+    targetReactFlowNodes.push({
+      ...placeholderReactFlowNode,
+      position: { x: overviewTgtSchemaX, y: 0 },
+      id: 'layouting-&-Placeholder-Tgt',
+    });
 
     // Target schema nodes
     if (tgtSchemaTreeRoot) {
-      const baseTgtSchemaNodeData = {
-        ...baseSchemaNodeData,
-        schemaType: SchemaType.Target,
-        displayChevron: true,
-      };
-
-      newReactFlowNodes.push({
-        id: addTargetReactFlowPrefix(tgtSchemaTreeRoot.key),
-        data: {
-          ...baseTgtSchemaNodeData,
-          schemaNode: tgtSchemaTreeRoot,
-          isLeaf: false,
-          isChild: false,
-          connectionStatus: tgtSchemaToggledStatesDictionary ? tgtSchemaToggledStatesDictionary[tgtSchemaTreeRoot.key] : undefined,
-        },
-        type: ReactFlowNodeType.SchemaNode,
-        position: {
-          x: overviewTgtSchemaX,
-          y: 0,
-        },
-      });
-
-      tgtSchemaTreeRoot.children?.forEach((childNode, idx) => {
-        newReactFlowNodes.push({
-          id: addTargetReactFlowPrefix(childNode.key),
-          data: {
-            ...baseTgtSchemaNodeData,
-            schemaNode: childNode,
-            isLeaf: isLeafNode(childNode),
-            isChild: true,
-            connectionStatus: tgtSchemaToggledStatesDictionary ? tgtSchemaToggledStatesDictionary[childNode.key] : undefined,
-          },
-          type: ReactFlowNodeType.SchemaNode,
-          position: {
-            x: overviewTgtSchemaX + childTargetNodeCardIndent,
-            y: (idx + 1) * (schemaNodeCardHeight + 10),
-          },
-        });
-      });
+      addChildNodesForOverview(tgtSchemaTreeRoot, 0, 1, targetReactFlowNodes, false, !!srcSchemaTreeRoot, targetSchemaStates, 1);
     }
 
-    setReactFlowNodes(newReactFlowNodes);
-  }, [srcSchemaTreeRoot, tgtSchemaTreeRoot, tgtSchemaToggledStatesDictionary]);
+    setReactFlowNodes([...sourceReactFlowNodes, ...targetReactFlowNodes]);
+  }, [srcSchemaTreeRoot, tgtSchemaTreeRoot, targetSchemaStates]);
 
   return reactFlowNodes;
 };
 
-const getConnectionsForNode = (connections: ConnectionDictionary, nodeKey: string, nodeType: SchemaType): Connection[] => {
-  const relatedConnections: Connection[] = [];
-  Object.keys(connections).forEach((key) => {
-    if ((nodeType === SchemaType.Source && key.startsWith(nodeKey)) || (nodeType === SchemaType.Target && key.endsWith(nodeKey))) {
-      relatedConnections.push(connections[key]);
-    }
+export const useWholeViewLayout = (
+  flattenedSourceSchema: SchemaNodeDictionary,
+  flattenedTargetSchema: SchemaNodeDictionary,
+  connections: ConnectionDictionary
+): [ReactFlowNode[], ReactFlowEdge[]] => {
+  const [reactFlowNodes, setReactFlowNodes] = useState<ReactFlowNode<CardProps>[]>([]);
+  const [reactFlowEdges, setReactFlowEdges] = useState<ReactFlowEdge[]>([]);
+  //const [diagramSize, setDiagramSize] = useState<Size2D>({ width: 0, height: 0 });
+
+  useEffect(() => {
+    const functionDictionary: FunctionDictionary = {};
+    Object.entries(connections).forEach(([connectionKey, connectionValue]) => {
+      const connectionNode = connectionValue.self.node;
+      if (isFunctionData(connectionNode)) {
+        functionDictionary[connectionKey] = connectionNode;
+      }
+    });
+
+    // Build ELK node/edges data
+    const elkTreeFromCanvasNodes = convertWholeDataMapToElkGraph(
+      flattenedSourceSchema,
+      flattenedTargetSchema,
+      functionDictionary,
+      connections,
+      false
+    );
+
+    // Apply ELK layout
+    applyElkLayout(elkTreeFromCanvasNodes)
+      .then((computedElkTree) => {
+        // Convert newly-calculated ELK node data to React Flow nodes + edges
+        setReactFlowNodes([
+          placeholderReactFlowNode,
+          ...convertToReactFlowNodes(
+            computedElkTree,
+            Object.values(flattenedSourceSchema),
+            functionDictionary,
+            Object.values(flattenedTargetSchema)
+          ),
+        ]);
+
+        const simpleElkEdgeResults: SimplifiedElkEdge[] = [];
+
+        if (computedElkTree.edges) {
+          simpleElkEdgeResults.push(
+            ...computedElkTree.edges.map((elkEdge) => {
+              return {
+                srcRfId: elkEdge.sources[0],
+                tgtRfId: elkEdge.targets[0],
+                tgtPort: elkEdge.labels && elkEdge.labels.length > 0 ? elkEdge.labels[0].text : undefined,
+              };
+            })
+          );
+        }
+
+        if (computedElkTree.children && computedElkTree.children.length === 3 && computedElkTree.children[1].edges) {
+          simpleElkEdgeResults.push(
+            ...computedElkTree.children[1].edges.map((elkEdge) => {
+              return {
+                srcRfId: elkEdge.sources[0],
+                tgtRfId: elkEdge.targets[0],
+                tgtPort: elkEdge.labels && elkEdge.labels.length > 0 ? elkEdge.labels[0].text : undefined,
+              };
+            })
+          );
+        }
+
+        setReactFlowEdges(convertToReactFlowEdges(simpleElkEdgeResults, undefined));
+
+        // Calculate diagram size
+        /*
+      setDiagramSize({
+        width: computedElkTree.width ?? 0,
+        height: computedElkTree.height ?? 0,
+      });
+      */
+      })
+      .catch((error) => {
+        LogService.error(LogCategory.ReactFlowUtils, 'useEffect', {
+          message: `Elk Layout Error: ${error}`,
+        });
+      });
+  }, [connections, flattenedSourceSchema, flattenedTargetSchema]);
+
+  return [reactFlowNodes, reactFlowEdges];
+};
+
+// May be used someday
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const nodeTreeDepth = (node: SchemaNodeExtended): number => 1 + childrenDepth(node);
+const childrenDepth = (node: SchemaNodeExtended): number => {
+  return 1 + Math.max(-1, ...node.children.map(childrenDepth));
+};
+
+const nodeArrayDepth = (nodes: SchemaNodeExtended[]): number[] => {
+  const depth: Set<number> = new Set();
+
+  nodes.forEach((node) => {
+    depth.add(node.pathToRoot.length);
   });
-  return relatedConnections;
+
+  return Array.from(depth);
+};
+
+const addChildNodesForOverview = (
+  curNode: SchemaNodeExtended,
+  curDepth: number,
+  maxDepth: number,
+  resultArray: ReactFlowNode<SchemaCardProps>[],
+  isSourceSchema: boolean,
+  sourceSchemaSpecified: boolean,
+  targetSchemaStates: NodeToggledStateDictionary | undefined,
+  generateToDepth?: number
+): void => {
+  const baseSchemaNodeData = {
+    schemaType: isSourceSchema ? SchemaType.Source : SchemaType.Target,
+    displayChevron: !isSourceSchema && sourceSchemaSpecified,
+    displayHandle: false,
+    disabled: false,
+    error: false,
+    connectionStatus: !isSourceSchema && targetSchemaStates ? targetSchemaStates[curNode.key] : undefined,
+  };
+
+  resultArray.push({
+    id: isSourceSchema ? addSourceReactFlowPrefix(curNode.key) : addTargetReactFlowPrefix(curNode.key),
+    data: {
+      ...baseSchemaNodeData,
+      schemaNode: curNode,
+      width: calculateWidth(curDepth, maxDepth),
+      isLeaf: isLeafNode(curNode),
+    },
+    type: ReactFlowNodeType.SchemaNode,
+    position: {
+      x: (isSourceSchema ? 0 : overviewTgtSchemaX) + curDepth * schemaNodeCardWidthDifference,
+      y: (resultArray.length - 1) * (schemaNodeCardHeight + 10),
+    },
+  });
+
+  if (generateToDepth === undefined || curDepth < generateToDepth) {
+    curNode.children.forEach((childNode) => {
+      addChildNodesForOverview(
+        childNode,
+        curDepth + 1,
+        maxDepth,
+        resultArray,
+        isSourceSchema,
+        sourceSchemaSpecified,
+        targetSchemaStates,
+        generateToDepth
+      );
+    });
+  }
+};
+
+const calculateWidth = (curDepth: number, maxDepth: number): number => {
+  const breakEvenDepth = 4;
+
+  if (maxDepth < breakEvenDepth) {
+    return schemaNodeCardDefaultWidth - curDepth * schemaNodeCardWidthDifference;
+  }
+
+  const curDepthDiff = maxDepth - curDepth;
+  return schemaNodeCardDefaultWidth + (curDepthDiff - breakEvenDepth) * schemaNodeCardWidthDifference;
 };
 
 export const createReactFlowFunctionKey = (functionData: FunctionData): string => `${functionData.key}-${guid()}`;

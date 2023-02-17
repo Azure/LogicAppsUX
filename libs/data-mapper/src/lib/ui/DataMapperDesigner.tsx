@@ -308,7 +308,7 @@ export const DataMapperDesigner = ({
                     }}
                   >
                     {showMapOverview ? (
-                      <MapOverview />
+                      <MapOverview /> /* <WholeMapOverview /> */
                     ) : (
                       <ReactFlowProvider>
                         {/* TODO: Update width calculations once Code View becomes resizable */}

@@ -96,7 +96,9 @@ export const DevSerializationTester = () => {
         <AccordionItem value="1">
           <AccordionHeader>Serialization Tester</AccordionHeader>
           <AccordionPanel>
-            <Text>NOTE: This uses the source and target schemas you&apos;ve selected above!</Text>
+            <Text>
+              <Text weight="bold">NOTE:</Text> This uses the source and target schemas you&apos;ve selected above!
+            </Text>
 
             <TabList
               selectedValue={selectedTab}
