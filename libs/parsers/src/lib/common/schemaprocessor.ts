@@ -527,6 +527,7 @@ export class SchemaProcessor {
       required,
       schema,
       serialization: schema[SwaggerConstants.ExtensionProperties.Serialization],
+      deserialization: schema[SwaggerConstants.ExtensionProperties.Deserialization],
       summary,
       title,
       type,

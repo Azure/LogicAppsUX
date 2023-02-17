@@ -84,6 +84,7 @@ import type {
   Segment,
   SwaggerParser} from '@microsoft/parsers-logic-apps';
 import {
+  DeserializationLocation,
   PropertySerializationType,
   getKnownTitles,
   isLegacyDynamicValuesExtension,
@@ -1866,7 +1867,7 @@ export function getInputsValueFromDefinitionForManifest(inputsLocation: string[]
 
   inputsValue = swapInputsValueIfNeeded(inputsValue, manifest);
 
-  return updateInputsValueIfPropertyNameInputsExists(inputsValue, allInputs);
+  return updateInputsValueForSpecialCases(inputsValue, allInputs);
 }
 
 function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) {
@@ -1897,14 +1898,15 @@ function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) 
   return finalValue;
 }
 
-function updateInputsValueIfPropertyNameInputsExists(inputsValue: any, allInputs: InputParameter[]) {
+/**
+ * This method updates the inputs value when there are special cases for serialization like propertyName
+ * serialization or special cases for deserialiation like reading values from inputs for non serializable parameter.
+ * Example: Batch trigger 
+ */
+function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputParameter[]) {
   const propertyNameParameters = allInputs.filter(input => !!input.serialization?.property);
-
-  if (!propertyNameParameters.length) {
-    return inputsValue;
-  }
-
   const finalValue = clone(inputsValue);
+
   for (const propertyParameter of propertyNameParameters) {
     const { name, serialization } = propertyParameter;
     if (serialization?.property?.type === PropertySerializationType.ParentObject) {
@@ -1931,6 +1933,19 @@ function updateInputsValueIfPropertyNameInputsExists(inputsValue: any, allInputs
           }
         }
       );
+    }
+  }
+
+  const parametersWithDeserialization = allInputs.filter(input => !!input.deserialization);
+  for (const parameter of parametersWithDeserialization) {
+    const { name, deserialization } = parameter;
+    if (deserialization?.type === DeserializationLocation.ParentObjectProperties) {
+      const parentPropertySegments = deserialization.parameterReference.split('.')
+      const objectValue = getObjectPropertyValue(finalValue, parentPropertySegments);
+      const value = Object.keys(objectValue ?? {});
+
+      objectValue[name.split('.').at(-1) as string] = value;
+      safeSetObjectPropertyValue(finalValue, parentPropertySegments, objectValue);
     }
   }
 

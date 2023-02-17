@@ -152,6 +152,15 @@ export interface DynamicProperties {
 
 export type ParameterDynamicSchema = LegacyDynamicSchema | DynamicProperties;
 
+export enum DeserializationLocation {
+  ParentObjectProperties = 'parentobjectproperties'
+}
+
+export interface ParameterDeserializationOptions {
+  type: DeserializationLocation;
+  parameterReference: string;
+}
+
 export enum PropertySerializationType {
   ParentObject = 'parentobject'
 }
@@ -199,6 +208,7 @@ export interface ParameterBase {
   recommended?: any;
   required?: boolean;
   serialization?: ParameterSerializationOptions;
+  deserialization?: ParameterDeserializationOptions;
   summary?: string;
   title?: string;
   visibility?: string;
@@ -274,6 +284,7 @@ export function toInputParameter(schemaProperty: SchemaProperty, suppressCasting
     required,
     schema,
     serialization,
+    deserialization,
     summary,
     title,
     type,
@@ -304,6 +315,7 @@ export function toInputParameter(schemaProperty: SchemaProperty, suppressCasting
     required,
     schema,
     serialization,
+    deserialization,
     summary,
     suppressCasting,
     title,

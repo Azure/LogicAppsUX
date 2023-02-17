@@ -117,13 +117,17 @@ const batchTriggerManifest = {
                             serialization: { valueType: 'array' },
                             titleSeparator: ',',
                             options: [
-                              { value: '0', displayName: 'Message count based' },
-                              { value: '1', displayName: 'Size based' },
-                              { value: '2', displayName: 'Schedule based' },
+                              { value: 'messageCount', displayName: 'Message count based' },
+                              { value: 'batchSize', displayName: 'Size based' },
+                              { value: 'recurrence', displayName: 'Schedule based' },
                             ]
                           },
                           "x-ms-serialization": {
                             skip: true
+                          },
+                          "x-ms-deserialization": {
+                            type: 'parentobjectproperties',
+                            parameterReference: 'configurations.$$batchName$$.releaseCriteria'
                           }
                         },
                         "messageCount": {
@@ -136,7 +140,7 @@ const batchTriggerManifest = {
                             parameters: [
                               {
                                 name: 'configurations.$$batchName$$.releaseCriteria.type',
-                                values: ['0'],
+                                values: ['messageCount'],
                               },
                             ],
                           },
@@ -151,7 +155,7 @@ const batchTriggerManifest = {
                             parameters: [
                               {
                                 name: 'configurations.$$batchName$$.releaseCriteria.type',
-                                values: ['1'],
+                                values: ['batchSize'],
                               },
                             ],
                           },
@@ -170,7 +174,7 @@ const batchTriggerManifest = {
                             "parameters": [
                               {
                                 name: 'configurations.$$batchName$$.releaseCriteria.type',
-                                values: ['2'],
+                                values: ['recurrence'],
                               },
                             ],
                           },

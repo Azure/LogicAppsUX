@@ -35,6 +35,7 @@ export const ExtensionProperties = {
   SchedulerRecommendation: 'x-ms-scheduler-recommendation',
   SchedulerTrigger: 'x-ms-scheduler-trigger',
   Serialization: 'x-ms-serialization',
+  Deserialization: 'x-ms-deserialization',
   Summary: 'x-ms-summary',
   SupportsPaging: 'x-ms-pageable',
   Trigger: 'x-ms-trigger',

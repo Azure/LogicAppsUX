@@ -46,6 +46,7 @@ import {
 } from '@microsoft/utils-logic-apps';
 import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 
+const apimanagement = 'apimanagement';
 const as2Encode = 'as2encode';
 const as2Decode = 'as2decode';
 const integrationaccountartifactlookup = 'integrationaccountartifactlookup';
@@ -123,6 +124,7 @@ const variableConnectorId = 'connectionProviders/variable';
 const rosettanetConnectorId = 'connectionProviders/rosettaNetOperations';
 
 const supportedManifestTypes = [
+  apimanagement,
   appendtoarrayvariable,
   appendtostringvariable,
   as2Encode,
@@ -209,6 +211,7 @@ export abstract class BaseOperationManifestService implements IOperationManifest
 
 export function isBuiltInOperation(definition: any): boolean {
   switch (definition?.type?.toLowerCase()) {
+    case apimanagement:
     case as2Decode:
     case as2Encode:
     case batch:
@@ -382,6 +385,10 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
 }
 
 const builtInOperationsMetadata: Record<string, OperationInfo> = {
+  [apimanagement]: {
+    connectorId: apiManagementConnectorId,
+    operationId: 'apiManagement'
+  },
   [appendtoarrayvariable]: {
     connectorId: variableConnectorId,
     operationId: appendtoarrayvariable,
