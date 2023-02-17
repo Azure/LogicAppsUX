@@ -9,8 +9,6 @@
   "schemaTreeRoot": {
     "key": "/ns0:Root",
     "name": "Root",
-    "namespacePrefix": "ns0",
-    "namespaceUri": "http://tempuri.org/source.xsd",
     "normalizedDataType": "ComplexType",
     "properties": "NotSpecified",
     "children": [
@@ -25,20 +23,17 @@
             "name": "EmployeeID",
             "normalizedDataType": "Decimal",
             "properties": "NotSpecified",
-            "fullName": "EmployeeID",
-            "parentKey": "/ns0:Root/DirectTranslation"
+            "fullName": "EmployeeID"
           },
           {
             "key": "/ns0:Root/DirectTranslation/EmployeeName",
             "name": "EmployeeName",
             "normalizedDataType": "String",
             "properties": "NotSpecified",
-            "fullName": "EmployeeName",
-            "parentKey": "/ns0:Root/DirectTranslation"
+            "fullName": "EmployeeName"
           }
         ],
-        "fullName": "DirectTranslation",
-        "parentKey": "/ns0:Root"
+        "fullName": "DirectTranslation"
       },
       {
         "key": "/ns0:Root/DataTranslation",
@@ -57,32 +52,27 @@
                 "name": "FirstName",
                 "normalizedDataType": "String",
                 "properties": "NotSpecified",
-                "fullName": "FirstName",
-                "parentKey": "/ns0:Root/DataTranslation/Employee"
+                "fullName": "FirstName"
               },
               {
                 "key": "/ns0:Root/DataTranslation/Employee/LastName",
                 "name": "LastName",
                 "normalizedDataType": "String",
                 "properties": "NotSpecified",
-                "fullName": "LastName",
-                "parentKey": "/ns0:Root/DataTranslation/Employee"
+                "fullName": "LastName"
               },
               {
                 "key": "/ns0:Root/DataTranslation/Employee/EmploymentStatus",
                 "name": "EmploymentStatus",
                 "normalizedDataType": "Bool",
                 "properties": "NotSpecified",
-                "fullName": "EmploymentStatus",
-                "parentKey": "/ns0:Root/DataTranslation/Employee"
+                "fullName": "EmploymentStatus"
               }
             ],
-            "fullName": "Employee",
-            "parentKey": "/ns0:Root/DataTranslation"
+            "fullName": "Employee"
           }
         ],
-        "fullName": "DataTranslation",
-        "parentKey": "/ns0:Root"
+        "fullName": "DataTranslation"
       }
     ],
     "fullName": "ns0:Root"

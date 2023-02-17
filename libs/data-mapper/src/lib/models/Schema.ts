@@ -10,9 +10,6 @@ export interface SchemaNode {
   key: string;
   name: string;
   fullName: string;
-  parentKey?: string;
-  namespacePrefix?: string;
-  namespaceUri?: string;
   normalizedDataType: NormalizedDataType;
 
   /**
@@ -63,6 +60,7 @@ export interface SchemaNodeExtended extends SchemaNode {
   nodeProperties: SchemaNodeProperty[];
   // Inclusive of the current node
   pathToRoot: PathItem[];
+  parentKey: string | undefined;
 }
 
 export interface PathItem {

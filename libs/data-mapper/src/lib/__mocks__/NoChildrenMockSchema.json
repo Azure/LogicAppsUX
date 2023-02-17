@@ -6,11 +6,8 @@
   "schemaTreeRoot": {
     "key": "/ns0:Root",
     "name": "Root",
-    "namespacePrefix": "ns0",
-    "namespaceUri": "http://tempuri.org/source.xsd",
     "normalizedDataType": "ComplexType",
     "properties": "NotSpecified",
-    "children": [],
-    "fullName": "ns0:Root"
+    "children": []
   }
 }
