@@ -10,9 +10,6 @@ export interface SchemaNode {
   key: string;
   name: string;
   fullName: string;
-  parentKey?: string;
-  namespacePrefix?: string;
-  namespaceUri?: string;
   normalizedDataType: NormalizedDataType;
 
   /**
@@ -37,6 +34,9 @@ export enum SchemaNodeProperty {
   ComplexTypeSimpleContent = 'ComplexTypeSimpleContent',
   MaximumDepthLimit = 'MaximumDepthLimit',
   CyclicTypeReference = 'CyclicTypeReference',
+  JsonArray = 'JsonArray',
+  ArrayItem = 'ArrayItem',
+  AnyOf = 'AnyOf',
 }
 
 export enum NormalizedDataType {
@@ -60,7 +60,7 @@ export interface SchemaNodeExtended extends SchemaNode {
   nodeProperties: SchemaNodeProperty[];
   // Inclusive of the current node
   pathToRoot: PathItem[];
-  width?: number;
+  parentKey: string | undefined;
 }
 
 export interface PathItem {

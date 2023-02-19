@@ -75,6 +75,12 @@ ns0:TargetSchemaRoot:
             Index:
               Direct: /ns0:SourceSchemaRoot/Looping/ManyToOne/Index/SourceIndexChild[$b]/SourceIndexChildChild/SourceDirect
               FunctionChain: concat($c, SourceFunctionChain, $a)
+      $for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Conditional):
+        $for(SourceConditionalChild):
+          $for(SourceConditionalChildChild):
+            Conditional:
+              $if(is-null(SourceDirect)):
+                Direct: SourceDirect
     ManyToMany:
       $for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple):
         Simple:
@@ -92,6 +98,21 @@ ns0:TargetSchemaRoot:
                 IndexChildChild:
                   Direct: /ns0:SourceSchemaRoot/Looping/ManyToMany/Index/SourceIndexChild/SourceIndexChildChild[$c]/SourceDirect
                   FunctionChain: concat($a, SourceFunctionChain, $b)
+      $for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Conditional):
+        Conditional:
+          $for(SourceConditionalChild):
+            ConditionalChild:
+              $for(SourceConditionalChildChild):
+                ConditionalChildChild:
+                  $if(is-null(SourceDirect)):
+                    Direct: SourceDirect
     LoopReduce:
       BestItemName: /ns0:SourceSchemaRoot/Looping/LoopReduce/ItemsList[3]/ItemName
+    OneToMany:
+      Simple:
+        SimpleChild:
+          $for(/ns0:SourceSchemaRoot/Looping/OneToMany/Simple):
+            SimpleChildChild:
+              Direct: SourceDirect
+              FunctionChain: SourceFunctionChain
 `;

@@ -18,7 +18,7 @@ import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-const workflowSchemaFilenames = ['Source.xsd', 'Target.xsd'];
+const workflowSchemaFilenames = ['Source.xsd', 'Target.xsd', 'SourceJson.json', 'TargetJson.json'];
 
 export const DataMapperStandaloneDesigner = () => {
   const dispatch = useDispatch<AppDispatch>();
