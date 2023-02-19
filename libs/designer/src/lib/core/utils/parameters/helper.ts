@@ -1904,6 +1904,10 @@ function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) 
  * Example: Batch trigger 
  */
 function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputParameter[]) {
+  if (!inputsValue || typeof inputsValue !== 'object') {
+    return inputsValue;
+  }
+
   const propertyNameParameters = allInputs.filter(input => !!input.serialization?.property);
   const finalValue = clone(inputsValue);
 
