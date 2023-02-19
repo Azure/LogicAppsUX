@@ -311,6 +311,9 @@ export function isConfigConnectionParameter(connectionParameter: ConnectionParam
 
 function getConnectionReferenceKeyForManifest(referenceFormat: string, operationDefinition: LogicAppsV2.OperationDefinition): string {
   switch (referenceFormat) {
+    case ConnectionReferenceKeyFormat.ApiManagement:
+      return (operationDefinition as any).inputs.apiManagement.connection;
+
     case ConnectionReferenceKeyFormat.Function:
       return (operationDefinition as LogicAppsV2.FunctionAction).inputs.function.connectionName;
 

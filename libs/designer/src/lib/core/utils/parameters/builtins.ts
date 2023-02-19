@@ -595,6 +595,7 @@ const advancedRecurrenceSchema = {
           'x-ms-editor-options': {
             multiSelect: true,
             titleSeparator: ',',
+            serialization: { valueType: 'array' },
             options: [
               { value: '0', displayName: intl.formatMessage({ defaultMessage: '0', description: 'Hour of the day' }) },
               { value: '1', displayName: intl.formatMessage({ defaultMessage: '1', description: 'Hour of the day' }) },
@@ -658,6 +659,7 @@ const advancedRecurrenceSchema = {
           'x-ms-editor-options': {
             multiSelect: true,
             titleSeparator: ',',
+            serialization: { valueType: 'array' },
             options: [
               { value: 'Monday', displayName: intl.formatMessage({ defaultMessage: 'Monday', description: 'Day of the week' }) },
               { value: 'Tuesday', displayName: intl.formatMessage({ defaultMessage: 'Tuesday', description: 'Day of the week' }) },

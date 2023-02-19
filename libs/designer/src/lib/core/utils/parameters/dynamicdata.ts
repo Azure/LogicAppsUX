@@ -376,7 +376,7 @@ function getManifestBasedInputParameters(
   operationDefinition: any
 ): InputParameter[] {
   let result: InputParameter[] = [];
-  const stepInputs = getInputsValueFromDefinitionForManifest(manifest.properties.inputsLocation ?? ['inputs'], manifest, operationDefinition);
+  const stepInputs = getInputsValueFromDefinitionForManifest(manifest.properties.inputsLocation ?? ['inputs'], manifest, operationDefinition, dynamicInputs);
   const stepInputsAreNonEmptyObject = !isNullOrEmpty(stepInputs) && isObject(stepInputs);
 
   // Mark all of the known inputs as seen.
@@ -399,7 +399,7 @@ function getManifestBasedInputParameters(
     knownKeys.add(clonedInputParameter.key);
   }
 
-  if (stepInputs !== undefined) {
+  if (stepInputs !== undefined && !manifest.properties.inputsLocationSwapMap) {
     // load unknown inputs not in the schema by key.
     const resultParameters = map(result, 'key');
     loadUnknownManifestBasedParameters(keyPrefix, '', stepInputs, resultParameters, new Set<string>(), knownKeys);
@@ -537,7 +537,7 @@ function getObjectValue(key: string, currentObject: any): any {
 
   for (const keyPath of keyPaths) {
     const currentKey = tryConvertStringToExpression(decodePropertySegment(keyPath));
-    value = getPropertyValue(currentObject, currentKey);
+    value = getPropertyValue(currentValue, currentKey);
 
     if (value !== undefined) {
       currentValue = value;

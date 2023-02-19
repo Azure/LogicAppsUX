@@ -7,10 +7,16 @@ import { guid } from '@microsoft/utils-logic-apps';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 
+interface SerializationOptions {
+  valueType: string;
+  separator?: string;
+}
+
 interface DropdownEditorProps {
-  multiSelect?: boolean;
   initialValue: ValueSegment[];
   options: DropdownItem[];
+  multiSelect?: boolean;
+  serialization?: SerializationOptions;
   readonly?: boolean;
   height?: number;
   fontSize?: number;
@@ -28,6 +34,7 @@ export interface DropdownItem {
 export const DropdownEditor = ({
   multiSelect = false,
   initialValue,
+  serialization,
   readonly,
   options,
   height,
@@ -35,7 +42,7 @@ export const DropdownEditor = ({
   onChange,
 }: DropdownEditorProps): JSX.Element => {
   const [selectedKey, setSelectedKey] = useState<string | undefined>(multiSelect ? undefined : getSelectedKey(options, initialValue));
-  const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(multiSelect ? getSelectedKeys(options, initialValue) : undefined);
+  const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(multiSelect ? getSelectedKeys(options, initialValue, serialization) : undefined);
   const [dropdownOptions] = useState<IDropdownOption[]>(getOptions(options));
 
   const dropdownStyles: Partial<IDropdownStyles> = {
@@ -67,10 +74,16 @@ export const DropdownEditor = ({
     if (option && selectedKeys) {
       const newKeys = option.selected ? [...selectedKeys, option.key as string] : selectedKeys.filter((key: string) => key !== option.key);
       setSelectedKeys(newKeys);
+
+      const selectedValues = newKeys.map(key => getSelectedValue(options, key));
       onChange?.({
-        value: newKeys.map((key) => {
-          return { id: guid(), value: getSelectedValue(options, key as string), type: ValueSegmentType.LITERAL };
-        }),
+        value: [{
+          id: guid(),
+          value: serialization?.valueType === 'array'
+            ? JSON.stringify(selectedValues)
+            : selectedValues.join(serialization?.separator),
+          type: ValueSegmentType.LITERAL
+        }],
       });
     }
   };
@@ -117,17 +130,24 @@ const getSelectedKey = (options: DropdownItem[], initialValue?: ValueSegment[]):
   return '';
 };
 
-const getSelectedKeys = (options: DropdownItem[], initialValue?: ValueSegment[]): string[] => {
+const getSelectedKeys = (options: DropdownItem[], initialValue?: ValueSegment[], serialization?: SerializationOptions): string[] => {
   const returnVal: string[] = [];
-  initialValue?.forEach((segment) => {
-    if (segment.type === ValueSegmentType.LITERAL) {
-      returnVal.push(
-        options.find((option) => {
-          return option.value === segment.value;
-        })?.key ?? ''
-      );
+  if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
+    const value = initialValue[0].value;
+    const selectedValues = serialization?.valueType === 'array'
+      ? Array.isArray(value) ? value : JSON.parse(value || '[]')
+      : value.split(serialization?.separator || ',');
+
+    for (const selectedValue of selectedValues) {
+      const option = options.find((option) => {
+        return option.value === selectedValue;
+      });
+
+      if (option) {
+        returnVal.push(option.key);
+      }
     }
-  });
+  }
   return returnVal;
 };
 

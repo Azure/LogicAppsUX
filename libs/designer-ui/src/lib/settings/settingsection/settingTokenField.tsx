@@ -84,6 +84,7 @@ const TokenField = ({
           initialValue={value}
           options={dropdownOptions.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
           multiSelect={!!editorOptions?.multiSelect}
+          serialization={editorOptions.serialization}
           onChange={onValueChange}
         />
       );
