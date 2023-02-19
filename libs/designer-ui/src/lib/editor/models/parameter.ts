@@ -1,4 +1,4 @@
-import type { Expression, ParameterSerializationOptions } from '@microsoft/parsers-logic-apps';
+import type { Expression, InputDependencies, ParameterSerializationOptions } from '@microsoft/parsers-logic-apps';
 import type { Exception } from '@microsoft/utils-logic-apps';
 
 export interface ParameterInfo {
@@ -34,6 +34,7 @@ export interface ParameterInfo {
 export interface ParameterDetails {
   alias?: string;
   arrayItemInputParameterKey?: string; // Note: the associated array item's input parameter key, which could be used as key in reference dynamic parameter
+  dependencies?: InputDependencies;
   encode?: string;
   format?: string;
   in?: string;
