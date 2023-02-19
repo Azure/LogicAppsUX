@@ -123,7 +123,7 @@ export const getInputParametersFromManifest = (
       getInputsValueFromDefinitionForManifest(inputsLocation ?? ['inputs'], manifest, operationData, primaryInputParametersInArray),
       '',
       primaryInputParametersInArray,
-      !inputsLocation || !!inputsLocation.length /* createInvisibleParameter */,
+      (!inputsLocation || !!inputsLocation.length) && !manifest.properties.inputsLocationSwapMap /* createInvisibleParameter */,
       false /* useDefault */
     );
   } else {

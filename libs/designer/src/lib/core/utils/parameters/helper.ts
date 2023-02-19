@@ -1881,7 +1881,7 @@ function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) 
   for (const { source, target } of swapMap) {
     const value = clone(getObjectPropertyValue(finalValue, target));
     if (!target.length) {
-      propertiesToRetain = Object.keys(manifest.properties.inputs);
+      propertiesToRetain = Object.keys(manifest.properties.inputs.properties);
       deleteObjectProperties(value, propertiesToRetain.map((key: string) => [key]));
 
       for (const key of Object.keys(finalValue)) { 
