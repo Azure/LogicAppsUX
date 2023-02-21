@@ -1,6 +1,5 @@
 import type { RootState } from '../../../core';
 import { useAllOperations } from '../../../core/queries/browse';
-import { useIsConsumption } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useSelectedOperationGroupId } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { BrowseView } from './browseView';
@@ -27,8 +26,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const selectedOperationGroupId: string = useSelectedOperationGroupId();
 
   const allOperations = useAllOperations();
-
-  const isConsumption = useIsConsumption();
 
   useEffect(() => {
     if (allOperations.data && selectedOperationGroupId) {
@@ -64,7 +61,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         filters={filters}
         setFilters={setFilters}
         isTriggerNode={isNodeTrigger}
-        isConsumption={isConsumption}
       />
       {selectedOperationGroupId ? (
         <OperationGroupDetailView groupOperations={allOperationsForGroup} filters={filters} />

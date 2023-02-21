@@ -19,7 +19,6 @@ interface OperationSearchHeaderProps {
   onDismiss: () => void;
   navigateBack: () => void;
   isTriggerNode: boolean;
-  isConsumption?: boolean;
 }
 
 export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
@@ -34,7 +33,6 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
     onDismiss,
     navigateBack,
     isTriggerNode,
-    isConsumption,
   } = props;
 
   const intl = useIntl();
@@ -56,14 +54,11 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
       key: 'runtime-shared',
       text: intl.formatMessage({ defaultMessage: 'Shared', description: 'Filter by Shared category of connectors' }),
     },
-  ];
-
-  if (isConsumption) {
-    runtimeFilters.push({
+    {
       key: 'runtime-custom',
       text: intl.formatMessage({ defaultMessage: 'Custom', description: 'Filter by Custom category of connectors' }),
-    });
-  }
+    },
+  ];
 
   const actionFilters = isTriggerNode
     ? []

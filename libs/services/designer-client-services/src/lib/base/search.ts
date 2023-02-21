@@ -38,6 +38,8 @@ export interface BaseSearchServiceOptions {
   isDev?: boolean;
 }
 
+const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
+
 export abstract class BaseSearchService implements ISearchService {
   _isDev = false; // TODO: Find a better way to do this, can't use process.env.NODE_ENV here
 
@@ -185,6 +187,40 @@ export abstract class BaseSearchService implements ISearchService {
       const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
       const responseArray = await this.batchAzureResourceRequests(uri);
       return this.moveGeneralInformation(responseArray);
+    }
+  }
+
+  async getAllCustomApiOperations(): Promise<DiscoveryOpArray> {
+    try {
+      const {
+        apiHubServiceDetails: { apiVersion, subscriptionId, location },
+      } = this.options;
+      const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
+      const queryParameters: QueryParameters = {
+        'api-version': apiVersion,
+        $filter: `properties/trigger eq null and type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
+      };
+      return await this.batchAzureResourceRequests(uri, queryParameters);
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  async getAllCustomApiConnectors(): Promise<Connector[]> {
+    try {
+      const {
+        apiHubServiceDetails: { apiVersion, subscriptionId },
+      } = this.options;
+      const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/customApis`;
+      const queryParameters: QueryParameters = {
+        'api-version': apiVersion,
+        $filter: `${ISE_RESOURCE_ID} eq null`,
+      };
+      return await this.getAzureResourceRecursive(uri, queryParameters);
+    } catch (error) {
+      console.error(error);
+      return [];
     }
   }
 
