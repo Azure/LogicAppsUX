@@ -2,8 +2,7 @@ import type { FunctionGroupBranding } from '../../../constants/FunctionConstants
 import { functionNodeCardSize } from '../../../constants/NodeConstants';
 import type { ConnectionDictionary } from '../../../models/Connection';
 import type { FunctionData } from '../../../models/Function';
-import { isCustomValue, isValidConnectionByType, isValidCustomValueByType } from '../../../utils/Connection.Utils';
-import { isSchemaNodeExtended } from '../../../utils/Schema.Utils';
+import { areInputTypesValidForFunction } from '../../../utils/MapChecker.Utils';
 import type { CardProps } from '../NodeCard';
 import { createFocusOutlineStyle, makeStyles, shorthands, tokens } from '@fluentui/react-components';
 
@@ -29,12 +28,6 @@ export const useFunctionCardStyles = makeStyles({
       // Not sure what was overwriting the base color, but the important overwrites the overwrite
       color: `${tokens.colorNeutralBackground1} !important`,
     },
-  },
-  errorBadge: {
-    position: 'absolute',
-    top: '1px',
-    right: '-2px',
-    zIndex: '1',
   },
   container: {
     position: 'relative',
@@ -78,38 +71,11 @@ export const shouldDisplaySourceHandle = (
 ) => displayHandle && shouldDisplayHandles(sourceNodeConnectionBeingDrawnFromId, isCardHovered, isCurrentNodeSelected);
 
 export const inputsValid = (reactFlowId: string, functionData: FunctionData, connections: ConnectionDictionary) => {
-  let isEveryInputValid = true;
-  const curConn = connections[reactFlowId];
+  const connection = connections[reactFlowId];
 
-  if (curConn) {
-    Object.values(curConn.inputs).forEach((inputArr, inputIdx) => {
-      inputArr.forEach((inputVal) => {
-        let inputValMatchedOneOfAllowedTypes = false;
-
-        functionData.inputs[inputIdx].allowedTypes.forEach((allowedInputType) => {
-          if (inputVal !== undefined) {
-            if (isCustomValue(inputVal)) {
-              if (isValidCustomValueByType(inputVal, allowedInputType)) {
-                inputValMatchedOneOfAllowedTypes = true;
-              }
-            } else {
-              if (isSchemaNodeExtended(inputVal.node)) {
-                if (isValidConnectionByType(allowedInputType, inputVal.node.normalizedDataType)) {
-                  inputValMatchedOneOfAllowedTypes = true;
-                }
-              } else if (isValidConnectionByType(allowedInputType, inputVal.node.outputValueType)) {
-                inputValMatchedOneOfAllowedTypes = true;
-              }
-            }
-          }
-        });
-
-        if (!inputValMatchedOneOfAllowedTypes) {
-          isEveryInputValid = false;
-        }
-      });
-    });
+  if (connection) {
+    return areInputTypesValidForFunction(functionData, connection);
+  } else {
+    return true;
   }
-
-  return isEveryInputValid;
 };

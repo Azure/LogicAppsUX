@@ -81,6 +81,12 @@
       "value": "Sidnumrering"
     }
   ],
+  "//nQG4": [
+    {
+      "type": 0,
+      "value": "Select an api from apim instance"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -141,6 +147,18 @@
       "value": "Konverterar indata till en matris"
     }
   ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Show raw outputs"
+    }
+  ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -169,6 +187,12 @@
     {
       "type": 0,
       "value": "Returnerar de första Count-elementen i den matris eller sträng som har skickats in"
+    }
+  ],
+  "/yYyOq": [
+    {
+      "type": 0,
+      "value": "Resource Group"
     }
   ],
   "00xlpa": [
@@ -279,6 +303,12 @@
       "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
     }
   ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
+    }
+  ],
   "0p+pJq": [
     {
       "type": 0,
@@ -341,12 +371,6 @@
     {
       "type": 0,
       "value": "Kommentar"
-    }
-  ],
-  "1ANUHk": [
-    {
-      "type": 0,
-      "value": "Loading functions..."
     }
   ],
   "1D047X": [
@@ -653,6 +677,20 @@
       "value": "Utlösare"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -801,6 +839,12 @@
     {
       "type": 0,
       "value": "Krävs. Det lägsta heltalet som kunde returneras."
+    }
+  ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
     }
   ],
   "4BrA0z": [
@@ -1041,10 +1085,22 @@
       "value": "Krävs. Talet att multiplicera Multiplikand 2 med."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -1395,6 +1451,12 @@
     {
       "type": 0,
       "value": "Autentiseringstyp"
+    }
+  ],
+  "AGCm1p": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "AHB418": [
@@ -2047,10 +2109,22 @@
       "value": "Ange utfärdare"
     }
   ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "Filter by data type"
+    }
+  ],
   "GLd3MU": [
     {
       "type": 0,
       "value": "Obligatoriskt. Det objekt det ska sökas efter i Within-samlingen."
+    }
+  ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
     }
   ],
   "GXXLuT": [
@@ -2303,6 +2377,12 @@
       "value": "Returnerar det första icke-null-objektet i det argument som har skickats in"
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2335,6 +2415,28 @@
       "value": "Parameters"
     }
   ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "The current map contains "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "JErLDT": [
     {
       "type": 0,
@@ -2345,6 +2447,12 @@
     {
       "type": 0,
       "value": "Krävs. En sträng som innehåller tiden."
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2555,6 +2663,12 @@
     {
       "type": 0,
       "value": "Returnerar schemat från en URI"
+    }
+  ],
+  "LV/BTE": [
+    {
+      "type": 0,
+      "value": "Loading Api Management service instances..."
     }
   ],
   "LZm3ze": [
@@ -3035,6 +3149,12 @@
       "value": "(UTC-03:00) Araguaina"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -3045,6 +3165,12 @@
     {
       "type": 0,
       "value": "Krävs. Talet som ska läggas till i Summand 1."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3307,6 +3433,12 @@
       "value": "6"
     }
   ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "issue"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3329,6 +3461,12 @@
     {
       "type": 0,
       "value": "Ange en ordlista"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "issues"
     }
   ],
   "SKXopi": [
@@ -3477,12 +3615,6 @@
     {
       "type": 0,
       "value": "Add or replace your schemas."
-    }
-  ],
-  "TZv5JE": [
-    {
-      "type": 0,
-      "value": "Namn"
     }
   ],
   "Tayrub": [
@@ -3819,6 +3951,12 @@
       "value": "Klientorganisation"
     }
   ],
+  "X7X5ew": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -4059,6 +4197,12 @@
       "value": "Custom value does not match one of the allowed types for this input"
     }
   ],
+  "YlesUQ": [
+    {
+      "type": 0,
+      "value": "Your map is in perfect condition"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -4069,6 +4213,12 @@
     {
       "type": 0,
       "value": "Zooma ut"
+    }
+  ],
+  "Z657PF": [
+    {
+      "type": 0,
+      "value": "Function is missing required inputs"
     }
   ],
   "Z9PWl/": [
@@ -4091,6 +4241,12 @@
     {
       "type": 0,
       "value": ")"
+    }
+  ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
     }
   ],
   "ZCFMoe": [
@@ -4209,6 +4365,12 @@
       "value": "Datahantering"
     }
   ],
+  "aSnCCB": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -4277,6 +4439,12 @@
     {
       "type": 0,
       "value": "Logikappinstanser körs som standard samtidigt eller parallellt. Med den här kontrollen ändrar du hur nya körningar köas, och detta kan inte ändras efter aktivering. Lämna den här kontrollen inaktiverad om du vill köra så många parallella instanser som möjligt. Aktivera den här kontrollen om du vill begränsa antalet parallella körningar, och välj en gräns. Välj 1 som gräns om du vill köra sekventiellt."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4415,12 +4583,6 @@
       "value": "Välj en identitet"
     }
   ],
-  "ci6ex1": [
-    {
-      "type": 0,
-      "value": "Värde"
-    }
-  ],
   "cj+kyo": [
     {
       "type": 0,
@@ -4549,6 +4711,12 @@
       "value": "Delar strängen med hjälp av en avgränsare"
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4565,6 +4733,18 @@
     {
       "type": 0,
       "value": "Inte angivet"
+    }
+  ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -4655,6 +4835,16 @@
     {
       "type": 0,
       "value": "Växlingsantalet överskrider maxvärdet"
+    }
+  ],
+  "fWsZhJ": [
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": " has an non-terminating connection chain"
     }
   ],
   "faSDuD": [
@@ -5089,12 +5279,6 @@
       "value": "Elements and mappings not connected to a target element are removed."
     }
   ],
-  "ittN0l": [
-    {
-      "type": 0,
-      "value": "No resources of this type found under this subscription."
-    }
-  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -5137,6 +5321,12 @@
       "value": "Returnerar ett slumpmässigt heltal från ett angivet intervall, vilket endast är inkluderande i startänden."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5173,6 +5363,12 @@
       "value": "Krävs. En base64-indatasträng."
     }
   ],
+  "jZjgYZ": [
+    {
+      "type": 0,
+      "value": "No resources of this type found under this subscription."
+    }
+  ],
   "jcA3Ig": [
     {
       "type": 0,
@@ -5201,6 +5397,16 @@
       "value": "referenceKeyFormat"
     }
   ],
+  "jlc/pM": [
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " has an input with a mismatched type"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -5217,6 +5423,12 @@
     {
       "type": 0,
       "value": "Krävs. Den base64-kodade strängen."
+    }
+  ],
+  "k1N9Si": [
+    {
+      "type": 0,
+      "value": "Must provide default value for parameter."
     }
   ],
   "k41+13": [
@@ -5321,6 +5533,12 @@
       "value": "Krävs. Det här värdet är nästa heltal efter det högsta heltalet som kunde returneras."
     }
   ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
+    }
+  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5379,12 +5597,6 @@
     {
       "type": 0,
       "value": "Functions"
-    }
-  ],
-  "lV77P8": [
-    {
-      "type": 0,
-      "value": "Rubrik"
     }
   ],
   "lZT0JI": [
@@ -5447,6 +5659,12 @@
     {
       "type": 1,
       "value": "property"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "Faktiskt värde"
     }
   ],
   "m7Y6Qf": [
@@ -5599,6 +5817,12 @@
       "value": "Krävs. Antalet tidsenheter som den önskade tiden är i framtiden."
     }
   ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -5633,6 +5857,12 @@
     {
       "type": 0,
       "value": "19"
+    }
+  ],
+  "ny75Ly": [
+    {
+      "type": 0,
+      "value": "Enter default value for parameter."
     }
   ],
   "o/0SEj": [
@@ -5783,12 +6013,6 @@
     {
       "type": 0,
       "value": "Krävs. Värdena att kombinera till en matris."
-    }
-  ],
-  "pRUJff": [
-    {
-      "type": 0,
-      "value": "Parametrar"
     }
   ],
   "pUeUDw": [
@@ -5997,20 +6221,6 @@
     {
       "type": 0,
       "value": "Det asynkrona svaret tillåter en logikapp att svara med 202 (godkänd) för att indikera att förfrågan har godkänts för bearbetning. En platsrubrik kommer att tillhandahållas för att hämta den slutliga statusen."
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
     }
   ],
   "r1FQhf": [
@@ -6385,6 +6595,12 @@
       "value": "Lägger till ett heltalsvärde för det antal timmar för vilka en strängtidsstämpel skickas in"
     }
   ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Show me"
+    }
+  ],
   "uXJdAh": [
     {
       "type": 0,
@@ -6437,6 +6653,12 @@
     {
       "type": 0,
       "value": "4"
+    }
+  ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "Standardvärde"
     }
   ],
   "uzsleE": [
@@ -6639,6 +6861,18 @@
       "value": "Returnerar ett specificerat värde baserat på huruvida uttrycket har resulterat i sant eller falskt"
     }
   ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
+    }
+  ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "Input type mismatch"
+    }
+  ],
   "wl7X0l": [
     {
       "type": 0,
@@ -6727,6 +6961,12 @@
     {
       "type": 0,
       "value": "Tröskelvärde"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Show raw inputs"
     }
   ],
   "xV/oyK": [

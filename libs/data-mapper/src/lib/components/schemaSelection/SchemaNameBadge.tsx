@@ -13,10 +13,10 @@ const useStyles = makeStyles({
 
 interface SchemaNameBadgeProps {
   schemaName: string;
-  tgtSchemaTreeRootXPos?: number;
+  schemaTreeRootXPos?: number;
 }
 
-export const SchemaNameBadge = ({ schemaName, tgtSchemaTreeRootXPos }: SchemaNameBadgeProps) => {
+export const SchemaNameBadge = ({ schemaName, schemaTreeRootXPos }: SchemaNameBadgeProps) => {
   const styles = useStyles();
   const reactFlowViewport = useViewport();
 
@@ -27,8 +27,8 @@ export const SchemaNameBadge = ({ schemaName, tgtSchemaTreeRootXPos }: SchemaNam
     y: reactFlowViewport.y - scaledBadgeDistanceAboveNodes,
   };
 
-  if (tgtSchemaTreeRootXPos) {
-    schemaNameBadgeCoords.x += reactFlowViewport.zoom * tgtSchemaTreeRootXPos;
+  if (schemaTreeRootXPos) {
+    schemaNameBadgeCoords.x += reactFlowViewport.zoom * schemaTreeRootXPos;
   }
 
   return (

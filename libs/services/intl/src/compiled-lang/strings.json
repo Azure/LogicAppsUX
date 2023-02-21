@@ -65,6 +65,12 @@
       "value": "Pagination"
     }
   ],
+  "//nQG4": [
+    {
+      "type": 0,
+      "value": "Select an api from apim instance"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -125,6 +131,18 @@
       "value": "Convert the input to an array"
     }
   ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Show raw outputs"
+    }
+  ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -153,6 +171,12 @@
     {
       "type": 0,
       "value": "Returns the first Count elements from the array or string passed in"
+    }
+  ],
+  "/yYyOq": [
+    {
+      "type": 0,
+      "value": "Resource Group"
     }
   ],
   "00xlpa": [
@@ -263,6 +287,12 @@
       "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
     }
   ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
+    }
+  ],
   "0p+pJq": [
     {
       "type": 0,
@@ -325,12 +355,6 @@
     {
       "type": 0,
       "value": "Comment"
-    }
-  ],
-  "1ANUHk": [
-    {
-      "type": 0,
-      "value": "Loading functions..."
     }
   ],
   "1D047X": [
@@ -637,6 +661,20 @@
       "value": "Triggers"
     }
   ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -785,6 +823,12 @@
     {
       "type": 0,
       "value": "Required. The lowest integer that can be returned."
+    }
+  ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
     }
   ],
   "4BrA0z": [
@@ -1025,10 +1069,22 @@
       "value": "Required. The number to multiply Multiplicand 2 with."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -1363,6 +1419,12 @@
     {
       "type": 0,
       "value": "Authentication Type"
+    }
+  ],
+  "AGCm1p": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "AHB418": [
@@ -1991,10 +2053,22 @@
       "value": "Enter authority"
     }
   ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "Filter by data type"
+    }
+  ],
   "GLd3MU": [
     {
       "type": 0,
       "value": "Required. The object to find inside the Within collection."
+    }
+  ],
+  "GUdmgm": [
+    {
+      "type": 0,
+      "value": "Close the map checker"
     }
   ],
   "GXXLuT": [
@@ -2239,6 +2313,12 @@
       "value": "Returns the first non-null object in the arguments passed in"
     }
   ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -2271,6 +2351,28 @@
       "value": "Parameters"
     }
   ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "The current map contains "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "JErLDT": [
     {
       "type": 0,
@@ -2281,6 +2383,12 @@
     {
       "type": 0,
       "value": "Required. A string that contains the time."
+    }
+  ],
+  "JOs7It": [
+    {
+      "type": 0,
+      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2483,6 +2591,12 @@
     {
       "type": 0,
       "value": "Returns the scheme from a URI"
+    }
+  ],
+  "LV/BTE": [
+    {
+      "type": 0,
+      "value": "Loading Api Management service instances..."
     }
   ],
   "LZm3ze": [
@@ -2939,6 +3053,12 @@
       "value": "(UTC-03:00) Araguaina"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -2949,6 +3069,12 @@
     {
       "type": 0,
       "value": "Required. The number to add to Summand 1."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3211,6 +3337,12 @@
       "value": "6"
     }
   ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "issue"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3233,6 +3365,12 @@
     {
       "type": 0,
       "value": "Enter a Dictionary"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "issues"
     }
   ],
   "SKXopi": [
@@ -3381,12 +3519,6 @@
     {
       "type": 0,
       "value": "Add or replace your schemas."
-    }
-  ],
-  "TZv5JE": [
-    {
-      "type": 0,
-      "value": "Name"
     }
   ],
   "Tayrub": [
@@ -3723,6 +3855,12 @@
       "value": "Tenant"
     }
   ],
+  "X7X5ew": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -3959,6 +4097,12 @@
       "value": "Custom value does not match one of the allowed types for this input"
     }
   ],
+  "YlesUQ": [
+    {
+      "type": 0,
+      "value": "Your map is in perfect condition"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -3969,6 +4113,12 @@
     {
       "type": 0,
       "value": "Zoom out"
+    }
+  ],
+  "Z657PF": [
+    {
+      "type": 0,
+      "value": "Function is missing required inputs"
     }
   ],
   "Z9PWl/": [
@@ -3991,6 +4141,12 @@
     {
       "type": 0,
       "value": ")"
+    }
+  ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
     }
   ],
   "ZCFMoe": [
@@ -4101,6 +4257,12 @@
       "value": "Data Handling"
     }
   ],
+  "aSnCCB": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -4169,6 +4331,12 @@
     {
       "type": 0,
       "value": "By default, Logic App instances run at the same time, or in parallel. This control changes how new runs are queued and can't be changed after enabling. To run as many parallel instances as possible, leave this control turned off. To limit the number of parallel runs, turn on this control, and select a limit. To run sequentially, select 1 as the limit."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4307,12 +4475,6 @@
       "value": "Please select an identity"
     }
   ],
-  "ci6ex1": [
-    {
-      "type": 0,
-      "value": "Value"
-    }
-  ],
   "cj+kyo": [
     {
       "type": 0,
@@ -4441,6 +4603,12 @@
       "value": "Splits the string using a separator"
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4457,6 +4625,18 @@
     {
       "type": 0,
       "value": "Not specified"
+    }
+  ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -4547,6 +4727,16 @@
     {
       "type": 0,
       "value": "Paging count exceeds maximum value"
+    }
+  ],
+  "fWsZhJ": [
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": " has an non-terminating connection chain"
     }
   ],
   "faSDuD": [
@@ -4965,12 +5155,6 @@
       "value": "Elements and mappings not connected to a target element are removed."
     }
   ],
-  "ittN0l": [
-    {
-      "type": 0,
-      "value": "No resources of this type found under this subscription."
-    }
-  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -5013,6 +5197,12 @@
       "value": "Returns a random integer from a specified range, which is inclusive only at the starting end."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5049,6 +5239,12 @@
       "value": "Required. A base64 input string."
     }
   ],
+  "jZjgYZ": [
+    {
+      "type": 0,
+      "value": "No resources of this type found under this subscription."
+    }
+  ],
   "jcA3Ig": [
     {
       "type": 0,
@@ -5073,6 +5269,16 @@
       "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
     }
   ],
+  "jlc/pM": [
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " has an input with a mismatched type"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -5089,6 +5295,12 @@
     {
       "type": 0,
       "value": "Required. The base64 encoded string."
+    }
+  ],
+  "k1N9Si": [
+    {
+      "type": 0,
+      "value": "Must provide default value for parameter."
     }
   ],
   "k41+13": [
@@ -5193,6 +5405,12 @@
       "value": "Required. This value is the next integer after the highest integer that could be returned."
     }
   ],
+  "kramI/": [
+    {
+      "type": 0,
+      "value": "Map checker"
+    }
+  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5251,12 +5469,6 @@
     {
       "type": 0,
       "value": "Functions"
-    }
-  ],
-  "lV77P8": [
-    {
-      "type": 0,
-      "value": "Title"
     }
   ],
   "lZT0JI": [
@@ -5319,6 +5531,12 @@
     {
       "type": 1,
       "value": "property"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "Actual Value"
     }
   ],
   "m7Y6Qf": [
@@ -5471,6 +5689,12 @@
       "value": "Required. The number of time units the desired time is in the future."
     }
   ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -5505,6 +5729,12 @@
     {
       "type": 0,
       "value": "19"
+    }
+  ],
+  "ny75Ly": [
+    {
+      "type": 0,
+      "value": "Enter default value for parameter."
     }
   ],
   "o/0SEj": [
@@ -5651,12 +5881,6 @@
     {
       "type": 0,
       "value": "Required. The values to combine into an array."
-    }
-  ],
-  "pRUJff": [
-    {
-      "type": 0,
-      "value": "Parameters"
     }
   ],
   "pUeUDw": [
@@ -5849,20 +6073,6 @@
     {
       "type": 0,
       "value": "Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state."
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": "‘ first."
     }
   ],
   "r1FQhf": [
@@ -6237,6 +6447,12 @@
       "value": "Adds an integer number of hours to a string timestamp passed in"
     }
   ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Show me"
+    }
+  ],
   "uXJdAh": [
     {
       "type": 0,
@@ -6289,6 +6505,12 @@
     {
       "type": 0,
       "value": "4"
+    }
+  ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "Default Value"
     }
   ],
   "uzsleE": [
@@ -6491,6 +6713,18 @@
       "value": "Returns a specified value based on whether the expression resulted in true or false"
     }
   ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
+    }
+  ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "Input type mismatch"
+    }
+  ],
   "wl7X0l": [
     {
       "type": 0,
@@ -6579,6 +6813,12 @@
     {
       "type": 0,
       "value": "Threshold"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Show raw inputs"
     }
   ],
   "xV/oyK": [

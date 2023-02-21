@@ -11,15 +11,16 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export interface BJSWorkflowProviderProps {
   workflow: Workflow;
+  runInstance?: LogicAppsV2.RunInstanceDefinition | null;
   children?: React.ReactNode;
 }
 
-const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, children }) => {
+const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, children, runInstance }) => {
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     dispatch(initWorkflowSpec('BJS'));
-    dispatch(initializeGraphState(workflow));
-  }, [dispatch, workflow]);
+    dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance }));
+  }, [dispatch, workflow, runInstance]);
 
   return <>{children}</>;
 };

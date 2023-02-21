@@ -1,3 +1,4 @@
+import { FunctionCategory, FunctionType } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
 
 export const indexedConnections: ConnectionDictionary = {
@@ -320,7 +321,7 @@ export const indexedConnections: ConnectionDictionary = {
           node: {
             key: 'index',
             maxNumberOfInputs: 1,
-            type: 'PseudoFunction',
+            type: FunctionType.PseudoFunction,
             functionName: '',
             outputValueType: 'Any',
             inputs: [
@@ -333,7 +334,7 @@ export const indexedConnections: ConnectionDictionary = {
               },
             ],
             displayName: 'Index',
-            category: 'Collection',
+            category: FunctionCategory.Collection,
             description: 'Adds an index value to the loop',
             children: [],
           },
@@ -602,7 +603,7 @@ export const indexedConnections: ConnectionDictionary = {
         node: {
           key: 'index',
           maxNumberOfInputs: 1,
-          type: 'PseudoFunction',
+          type: FunctionType.PseudoFunction,
           functionName: '',
           outputValueType: 'Any',
           inputs: [
@@ -615,7 +616,7 @@ export const indexedConnections: ConnectionDictionary = {
             },
           ],
           displayName: 'Index',
-          category: 'Collection',
+          category: FunctionCategory.Collection,
           description: 'Adds an index value to the loop',
           children: [],
         },
@@ -718,7 +719,7 @@ export const indexedConnections: ConnectionDictionary = {
       node: {
         key: 'index',
         maxNumberOfInputs: 1,
-        type: 'PseudoFunction',
+        type: FunctionType.PseudoFunction,
         functionName: '',
         outputValueType: 'Any',
         inputs: [
@@ -731,7 +732,7 @@ export const indexedConnections: ConnectionDictionary = {
           },
         ],
         displayName: 'Index',
-        category: 'Collection',
+        category: FunctionCategory.Collection,
         description: 'Adds an index value to the loop',
         children: [],
       },

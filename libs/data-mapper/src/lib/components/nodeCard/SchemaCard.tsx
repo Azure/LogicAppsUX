@@ -1,18 +1,17 @@
-import { childTargetNodeCardWidth, schemaNodeCardHeight, schemaNodeCardDefaultWidth } from '../../constants/NodeConstants';
+import { schemaNodeCardDefaultWidth, schemaNodeCardHeight } from '../../constants/NodeConstants';
 import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import { removeSourceSchemaNodes, setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
-import type { Connection } from '../../models/Connection';
 import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
-import { flattenInputs, isCustomValue, isValidConnectionByType, isValidCustomValueByType } from '../../utils/Connection.Utils';
+import { flattenInputs } from '../../utils/Connection.Utils';
 import { iconForNormalizedDataType } from '../../utils/Icon.Utils';
-import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
+import { areInputTypesValidForSchemaNode } from '../../utils/MapChecker.Utils';
 import { ItemToggledState } from '../tree/TargetSchemaTreeItem';
 import HandleWrapper from './HandleWrapper';
-import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
 import type { CardProps } from './NodeCard';
+import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
 import {
   Badge,
   Button,
@@ -26,22 +25,20 @@ import {
 } from '@fluentui/react-components';
 import {
   bundleIcon,
+  CheckmarkCircle12Filled,
   ChevronRight16Filled,
   ChevronRight16Regular,
-  Important12Filled,
-  CheckmarkCircle12Filled,
-  CircleHalfFill12Regular,
   Circle12Regular,
+  CircleHalfFill12Regular,
+  Important12Filled,
 } from '@fluentui/react-icons';
 import type { MenuItemOption } from '@microsoft/designer-ui';
-import { MenuItemType, useCardContextMenu, CardContextMenu } from '@microsoft/designer-ui';
+import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
 import { useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { NodeProps } from 'reactflow';
 import { Position } from 'reactflow';
-
-const contentBtnWidth = schemaNodeCardDefaultWidth - 30;
 
 const useStyles = makeStyles({
   container: {
@@ -55,7 +52,6 @@ const useStyles = makeStyles({
     float: 'right',
     alignItems: 'center',
     justifyContent: 'left',
-    ...shorthands.gap('8px'),
     ...shorthands.margin('2px'),
     isolation: 'isolate',
     '&:hover': {
@@ -83,7 +79,6 @@ const useStyles = makeStyles({
   },
   contentButton: {
     height: '48px',
-    width: `${contentBtnWidth}px`,
     ...shorthands.border('0px'),
     ...shorthands.padding('0px'),
     marginRight: '0px',
@@ -152,20 +147,17 @@ const useStyles = makeStyles({
 
 export interface SchemaCardProps extends CardProps {
   schemaNode: SchemaNodeExtended;
-  maxWidth?: number;
   schemaType: SchemaType;
   displayHandle: boolean;
   displayChevron: boolean;
   isLeaf: boolean;
-  isChild: boolean;
-  relatedConnections: Connection[];
+  width: number;
   connectionStatus?: ItemToggledState;
 }
 
 export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const reactFlowId = props.id;
-  const { schemaNode, maxWidth, schemaType, isLeaf, isChild, onClick, disabled, displayHandle, displayChevron, connectionStatus } =
-    props.data;
+  const { schemaNode, schemaType, isLeaf, onClick, disabled, displayHandle, displayChevron, connectionStatus, width } = props.data;
   const dispatch = useDispatch<AppDispatch>();
   const sharedStyles = getStylesForSharedState();
   const classes = useStyles();
@@ -232,21 +224,8 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
       return true;
     }
 
-    const curInput = flattenInputs(curConn.inputs)[0];
-    if (curInput === undefined) {
-      return true;
-    }
-
-    if (isCustomValue(curInput)) {
-      return isValidCustomValueByType(curInput, schemaNode.normalizedDataType);
-    } else {
-      if (isSchemaNodeExtended(curInput.node)) {
-        return isValidConnectionByType(schemaNode.normalizedDataType, curInput.node.normalizedDataType);
-      } else {
-        return isValidConnectionByType(schemaNode.normalizedDataType, curInput.node.outputValueType);
-      }
-    }
-  }, [isSourceSchemaNode, connections, reactFlowId, isNodeConnected, schemaNode.normalizedDataType]);
+    return areInputTypesValidForSchemaNode(schemaNode, curConn);
+  }, [connections, reactFlowId, isSourceSchemaNode, isNodeConnected, schemaNode]);
 
   const outputChevronOnClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -279,19 +258,14 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const selectedNodeStyles = isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId ? selectedCardStyles : undefined;
 
-  const targetCardWidth = isChild ? childTargetNodeCardWidth : schemaNodeCardDefaultWidth;
-  const cardWidth = isSourceSchemaNode && schemaNode.width ? schemaNode.width : targetCardWidth;
-  const maxWidthCalculated = maxWidth || 0;
-  const sourceCardMargin = isSourceSchemaNode ? maxWidthCalculated - cardWidth : 0;
-
   return (
-    <div className={classes.badgeContainer} style={{ marginLeft: sourceCardMargin }}>
+    <div className={classes.badgeContainer}>
       {isNBadgeRequired && !isSourceSchemaNode && <NBadge isOutput />}
 
       <div
         onContextMenu={contextMenu.handle}
         className={containerStyle}
-        style={{ ...selectedNodeStyles, width: cardWidth }}
+        style={{ ...selectedNodeStyles, width }}
         onMouseLeave={() => setIsCardHovered(false)}
         onMouseEnter={() => setIsCardHovered(true)}
       >
@@ -304,22 +278,24 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
         />
         {!isInputValid && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge} />}
         {connectionStatusIcon && <span style={{ position: 'absolute', right: -16, top: 0 }}>{connectionStatusIcon}</span>}
-        <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
+        <Button
+          disabled={!!disabled}
+          onClick={onClick}
+          appearance={'transparent'}
+          className={classes.contentButton}
+          style={{ paddingRight: !showOutputChevron ? '10px' : '0px' }}
+        >
           <span className={classes.cardIcon}>
             <BundledTypeIcon />
           </span>
 
           <Tooltip
             relationship="label"
-            content={schemaNode.name}
+            content={<span style={{ overflowWrap: 'break-word' }}>{schemaNode.name}</span>}
             visible={shouldNameTooltipDisplay && isTooltipEnabled}
             onVisibleChange={(_ev, data) => setIsTooltipEnabled(data.visible)}
           >
-            <div
-              ref={schemaNameTextRef}
-              className={classes.cardText}
-              style={{ width: !isSourceSchemaNode ? `${contentBtnWidth}px` : '136px' }}
-            >
+            <div ref={schemaNameTextRef} className={classes.cardText} style={{ width: `${width - 30}px` }}>
               {schemaNode.name}
             </div>
           </Tooltip>
@@ -335,7 +311,6 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
           />
         )}
         {
-          // danielle maybe show blank menu for target node? Kinda odd that the regular right-click loads
           <CardContextMenu
             title={'remove'}
             contextMenuLocation={contextMenu.location}

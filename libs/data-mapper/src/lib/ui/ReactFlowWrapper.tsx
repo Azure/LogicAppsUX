@@ -7,7 +7,7 @@ import { SimpleFunctionCard } from '../components/nodeCard/functionCard/SimpleFu
 import { Notification } from '../components/notification/Notification';
 import { SchemaNameBadge } from '../components/schemaSelection/SchemaNameBadge';
 import { SourceSchemaPlaceholder } from '../components/schemaSelection/SourceSchemaPlaceholder';
-import { schemaNodeCardHeight, schemaNodeCardDefaultWidth } from '../constants/NodeConstants';
+import { schemaNodeCardDefaultWidth, schemaNodeCardHeight } from '../constants/NodeConstants';
 import {
   checkerboardBackgroundImage,
   defaultCanvasZoom,
@@ -30,6 +30,8 @@ import {
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { SchemaType } from '../models';
+import { inputFromHandleId } from '../utils/Connection.Utils';
+import { isFunctionData } from '../utils/Function.Utils';
 import { useLayout } from '../utils/ReactFlow.Util';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -46,9 +48,15 @@ interface ReactFlowWrapperProps {
   canvasBlockHeight: number;
   canvasBlockWidth: number;
   useExpandedFunctionCards: boolean;
+  openMapChecker: () => void;
 }
 
-export const ReactFlowWrapper = ({ canvasBlockHeight, canvasBlockWidth, useExpandedFunctionCards }: ReactFlowWrapperProps) => {
+export const ReactFlowWrapper = ({
+  canvasBlockHeight,
+  canvasBlockWidth,
+  useExpandedFunctionCards,
+  openMapChecker,
+}: ReactFlowWrapperProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const reactFlowRef = useRef<HTMLDivElement>(null);
 
@@ -106,6 +114,8 @@ export const ReactFlowWrapper = ({ canvasBlockHeight, canvasBlockWidth, useExpan
           destination,
           reactFlowDestination: connection.target,
           reactFlowSource: connection.source,
+          specificInput:
+            connection.targetHandle && isFunctionData(destination) ? inputFromHandleId(connection.targetHandle, destination) : undefined,
         })
       );
     }
@@ -154,10 +164,17 @@ export const ReactFlowWrapper = ({ canvasBlockHeight, canvasBlockWidth, useExpan
     currentTargetSchemaNode,
     connections,
     selectedItemKey,
-    sourceSchemaOrdering
+    sourceSchemaOrdering,
+    useExpandedFunctionCards
   );
 
-  // Find first target schema node (should be schemaTreeRoot) to use its xPos for schema name badge
+  // Find first schema node (should be schemaTreeRoot) for source and target to use its xPos for schema name badge
+  const srcSchemaTreeRootXPos = useMemo(
+    () =>
+      nodes.find((reactFlowNode) => reactFlowNode.data?.schemaType && reactFlowNode.data.schemaType === SchemaType.Source)?.position.x ?? 0,
+    [nodes]
+  );
+
   const tgtSchemaTreeRootXPos = useMemo(
     () =>
       nodes.find((reactFlowNode) => reactFlowNode.data?.schemaType && reactFlowNode.data.schemaType === SchemaType.Target)?.position.x ?? 0,
@@ -221,6 +238,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight, canvasBlockWidth, useExpan
           msgParam={notificationData.msgParam}
           msgBody={notificationData.msgBody}
           autoHideDuration={notificationData.autoHideDurationMs}
+          openMapChecker={openMapChecker}
           onClose={() => dispatch(hideNotification())}
         />
       )}
@@ -229,8 +247,8 @@ export const ReactFlowWrapper = ({ canvasBlockHeight, canvasBlockWidth, useExpan
         <SourceSchemaPlaceholder onClickSelectElement={() => dispatch(setCanvasToolboxTabToDisplay(ToolboxPanelTabs.sourceSchemaTree))} />
       )}
 
-      {sourceSchema && <SchemaNameBadge schemaName={sourceSchema.name} />}
-      {targetSchema && <SchemaNameBadge schemaName={targetSchema.name} tgtSchemaTreeRootXPos={tgtSchemaTreeRootXPos} />}
+      {sourceSchema && <SchemaNameBadge schemaName={sourceSchema.name} schemaTreeRootXPos={srcSchemaTreeRootXPos} />}
+      {targetSchema && <SchemaNameBadge schemaName={targetSchema.name} schemaTreeRootXPos={tgtSchemaTreeRootXPos} />}
     </ReactFlow>
   );
 };

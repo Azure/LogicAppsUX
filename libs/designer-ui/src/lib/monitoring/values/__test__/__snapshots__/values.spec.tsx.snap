@@ -137,7 +137,6 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
         <div
           aria-colcount={2}
           aria-label="Headers"
-          aria-readonly="true"
           aria-rowcount={4}
           role="grid"
         >
@@ -312,13 +311,12 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                           }
                         >
                           <div
-                            className="ms-DetailsRow-fields fields-150"
+                            className="ms-DetailsRow-fields fields-149"
                             data-automationid="DetailsRowFields"
                             role="presentation"
                           >
                             <div
-                              aria-readonly={true}
-                              className="ms-DetailsRow-cell isMultiline-152 ms-DetailsRow-cell cell-146 cellUnpadded-144"
+                              className="ms-DetailsRow-cell isMultiline-151 ms-DetailsRow-cell cell-146 cellUnpadded-144"
                               data-automation-key="$key"
                               data-automationid="DetailsRowCell"
                               role="gridcell"
@@ -331,8 +329,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                               Access-Control-Allow-Credentials
                             </div>
                             <div
-                              aria-readonly={true}
-                              className="ms-DetailsRow-cell isMultiline-152 ms-DetailsRow-cell cell-146 cellUnpadded-144"
+                              className="ms-DetailsRow-cell isMultiline-151 ms-DetailsRow-cell cell-146 cellUnpadded-144"
                               data-automation-key="$value"
                               data-automationid="DetailsRowCell"
                               role="gridcell"
@@ -345,12 +342,6 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                               true
                             </div>
                           </div>
-                          <span
-                            aria-checked={false}
-                            className="checkCover-149"
-                            data-selection-toggle={true}
-                            role="checkbox"
-                          />
                         </div>
                       </div>
                       <div
@@ -380,13 +371,12 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                           }
                         >
                           <div
-                            className="ms-DetailsRow-fields fields-150"
+                            className="ms-DetailsRow-fields fields-149"
                             data-automationid="DetailsRowFields"
                             role="presentation"
                           >
                             <div
-                              aria-readonly={true}
-                              className="ms-DetailsRow-cell isMultiline-152 ms-DetailsRow-cell cell-146 cellUnpadded-144"
+                              className="ms-DetailsRow-cell isMultiline-151 ms-DetailsRow-cell cell-146 cellUnpadded-144"
                               data-automation-key="$key"
                               data-automationid="DetailsRowCell"
                               role="gridcell"
@@ -399,8 +389,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                               Access-Control-Allow-Origin
                             </div>
                             <div
-                              aria-readonly={true}
-                              className="ms-DetailsRow-cell isMultiline-152 ms-DetailsRow-cell cell-146 cellUnpadded-144"
+                              className="ms-DetailsRow-cell isMultiline-151 ms-DetailsRow-cell cell-146 cellUnpadded-144"
                               data-automation-key="$value"
                               data-automationid="DetailsRowCell"
                               role="gridcell"
@@ -413,12 +402,6 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                               *
                             </div>
                           </div>
-                          <span
-                            aria-checked={false}
-                            className="checkCover-149"
-                            data-selection-toggle={true}
-                            role="checkbox"
-                          />
                         </div>
                       </div>
                       <div
@@ -448,13 +431,12 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                           }
                         >
                           <div
-                            className="ms-DetailsRow-fields fields-150"
+                            className="ms-DetailsRow-fields fields-149"
                             data-automationid="DetailsRowFields"
                             role="presentation"
                           >
                             <div
-                              aria-readonly={true}
-                              className="ms-DetailsRow-cell isMultiline-152 ms-DetailsRow-cell cell-146 cellUnpadded-144"
+                              className="ms-DetailsRow-cell isMultiline-151 ms-DetailsRow-cell cell-146 cellUnpadded-144"
                               data-automation-key="$key"
                               data-automationid="DetailsRowCell"
                               role="gridcell"
@@ -467,8 +449,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                               Referrer-Policy
                             </div>
                             <div
-                              aria-readonly={true}
-                              className="ms-DetailsRow-cell isMultiline-152 ms-DetailsRow-cell cell-146 cellUnpadded-144"
+                              className="ms-DetailsRow-cell isMultiline-151 ms-DetailsRow-cell cell-146 cellUnpadded-144"
                               data-automation-key="$value"
                               data-automationid="DetailsRowCell"
                               role="gridcell"
@@ -481,12 +462,6 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                               no-referred-when-downgrade
                             </div>
                           </div>
-                          <span
-                            aria-checked={false}
-                            className="checkCover-149"
-                            data-selection-toggle={true}
-                            role="checkbox"
-                          />
                         </div>
                       </div>
                     </div>

@@ -1,6 +1,7 @@
 import type { TestMapResponse } from '../../core';
 import { testDataMap } from '../../core/queries/datamap';
 import type { RootState } from '../../core/state/Store';
+import { SchemaFileFormat } from '../../models';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { ChoiceGroup, DefaultButton, Panel, PanelType, Pivot, PivotItem, PrimaryButton, Text } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
@@ -10,11 +11,13 @@ import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
-const defaultStartingXmlInputValue = `<?xml version="1.0" encoding="utf-8"?>`;
-
 enum PanelPivotItems {
   Input = 'input',
   Output = 'output',
+}
+
+enum InputDataOptions {
+  PasteSample = 'pasteSample',
 }
 
 export const commonCodeEditorProps: Partial<MonacoProps> = {
@@ -42,7 +45,7 @@ const useStyles = makeStyles({
     marginTop: '12px',
     ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
     ...shorthands.borderRadius('3px'),
-    ...shorthands.padding('10px'),
+    ...shorthands.padding('6px'),
   },
   pivotItem: {
     marginTop: '12px',
@@ -58,12 +61,14 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
   const intl = useIntl();
   const styles = useStyles();
 
-  const dataMapXsltFilename = useSelector((state: RootState) => state.dataMap.curDataMapOperation.xsltFilename);
   const currentTheme = useSelector((state: RootState) => state.app.theme);
+  const dataMapXsltFilename = useSelector((state: RootState) => state.dataMap.curDataMapOperation.xsltFilename);
+  const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
 
-  const [selectedInputOption, setSelectedInputOption] = useState<string | undefined>('pasteSample');
+  const [selectedInputOption, setSelectedInputOption] = useState<InputDataOptions>(InputDataOptions.PasteSample);
   const [selectedPivotItem, setSelectedPivotItem] = useState<PanelPivotItems>(PanelPivotItems.Input);
-  const [testMapInput, setTestMapInput] = useState<string | undefined>(defaultStartingXmlInputValue);
+  const [testMapInput, setTestMapInput] = useState<string>('');
   const [testMapResponse, setTestMapResponse] = useState<TestMapResponse | undefined>(undefined);
 
   const testMapLoc = intl.formatMessage({
@@ -96,11 +101,6 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
     description: 'Paste from sample',
   });
 
-  const discardLoc = intl.formatMessage({
-    defaultMessage: 'Discard',
-    description: 'Discard',
-  });
-
   const inputDataOptionsLabelLoc = intl.formatMessage({
     defaultMessage: 'Provide input data to test the map with',
     description: 'Label for input data option choice group',
@@ -128,6 +128,12 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
     testDataMap(dataMapXsltFilename, testMapInput)
       .then((response) => {
         setTestMapResponse(response);
+
+        LogService.log(LogCategory.TestMapPanel, 'testDataMap', {
+          message: 'Successfully tested data map',
+          statusCode: response.statusCode,
+          statusText: response.statusText,
+        });
       })
       .catch((error: Error) => {
         LogService.error(LogCategory.TestMapPanel, 'testDataMap', {
@@ -144,7 +150,7 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
         <PrimaryButton onClick={testMap} style={{ marginRight: 8 }} disabled={!testMapInput}>
           {testLoc}
         </PrimaryButton>
-        <DefaultButton onClick={onClose}>{discardLoc}</DefaultButton>
+        <DefaultButton onClick={onClose}>{closeLoc}</DefaultButton>
       </div>
     );
   };
@@ -171,13 +177,13 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
             label={inputDataOptionsLabelLoc}
             selectedKey={selectedInputOption}
             options={inputDataOptions}
-            onChange={(_, option) => setSelectedInputOption(option?.key)}
+            onChange={(_, option) => setSelectedInputOption(option?.key as InputDataOptions)}
           />
 
           <MonacoEditor
-            language={EditorLanguage.xml}
+            language={sourceSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml}
             value={testMapInput}
-            onContentChanged={(e) => setTestMapInput(e.value)}
+            onContentChanged={(e) => setTestMapInput(e.value ?? '')}
             className={styles.editorStyle}
             {...commonCodeEditorProps}
           />
@@ -189,7 +195,7 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
 
           <Text style={{ ...headerTextStyle, marginTop: 20 }}>{responseBodyLoc}</Text>
           <MonacoEditor
-            language={EditorLanguage.xml}
+            language={targetSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml}
             value={testMapResponse?.outputInstance?.$content ?? ''}
             className={styles.editorStyle}
             {...commonCodeEditorProps}

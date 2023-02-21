@@ -1,7 +1,7 @@
 import { reactFlowFitViewOptions, ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import type { RootState } from '../../core/state/Store';
 import { SchemaType } from '../../models/';
-import { overviewTgtSchemaX, useOverviewLayout } from '../../utils/ReactFlow.Util';
+import { useOverviewLayout } from '../../utils/ReactFlow.Util';
 import { SchemaCard } from '../nodeCard/SchemaCard';
 import { SchemaNameBadge } from '../schemaSelection/SchemaNameBadge';
 import { SelectSchemaCard } from '../schemaSelection/SelectSchemaCard';
@@ -50,9 +50,9 @@ const OverviewReactFlowWrapper = () => {
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
-  const tgtSchemaToggledStatesDictionary = useMemo<NodeToggledStateDictionary | undefined>(() => {
+  const targetSchemaStates = useMemo<NodeToggledStateDictionary>(() => {
     if (!targetSchema) {
-      return undefined;
+      return {};
     }
 
     // Find target schema nodes with connections
@@ -70,7 +70,7 @@ const OverviewReactFlowWrapper = () => {
     return newToggledStatesDictionary;
   }, [targetSchema, connectionDictionary, targetSchemaDictionary]);
 
-  const reactFlowNodes = useOverviewLayout(sourceSchema?.schemaTreeRoot, targetSchema?.schemaTreeRoot, tgtSchemaToggledStatesDictionary);
+  const reactFlowNodes = useOverviewLayout(sourceSchema?.schemaTreeRoot, targetSchema?.schemaTreeRoot, targetSchemaStates);
 
   // Fit the canvas view any time a schema changes
   useEffect(() => {
@@ -78,6 +78,21 @@ const OverviewReactFlowWrapper = () => {
   }, [fitView, sourceSchema?.schemaTreeRoot.key, targetSchema?.schemaTreeRoot.key]);
 
   const schemaNodeTypes = useMemo(() => ({ [ReactFlowNodeType.SchemaNode]: SchemaCard }), []);
+
+  // Find first schema node (should be schemaTreeRoot) for source and target to use its xPos for schema name badge
+  const srcSchemaTreeRootXPos = useMemo(
+    () =>
+      reactFlowNodes.find((reactFlowNode) => reactFlowNode.data?.schemaType && reactFlowNode.data.schemaType === SchemaType.Source)
+        ?.position.x ?? 0,
+    [reactFlowNodes]
+  );
+
+  const tgtSchemaTreeRootXPos = useMemo(
+    () =>
+      reactFlowNodes.find((reactFlowNode) => reactFlowNode.data?.schemaType && reactFlowNode.data.schemaType === SchemaType.Target)
+        ?.position.x ?? 0,
+    [reactFlowNodes]
+  );
 
   return (
     <ReactFlow
@@ -98,8 +113,8 @@ const OverviewReactFlowWrapper = () => {
         <SelectSchemaCard schemaType={SchemaType.Target} style={{ visibility: !targetSchema ? 'visible' : 'hidden' }} />
       </Stack>
 
-      {sourceSchema && <SchemaNameBadge schemaName={sourceSchema.name} />}
-      {targetSchema && <SchemaNameBadge schemaName={targetSchema.name} tgtSchemaTreeRootXPos={overviewTgtSchemaX} />}
+      {sourceSchema && <SchemaNameBadge schemaName={sourceSchema.name} schemaTreeRootXPos={srcSchemaTreeRootXPos} />}
+      {targetSchema && <SchemaNameBadge schemaName={targetSchema.name} schemaTreeRootXPos={tgtSchemaTreeRootXPos} />}
     </ReactFlow>
   );
 };

@@ -4,7 +4,7 @@ import type { MapDefinitionEntry, SchemaNodeDictionary, SchemaNodeExtended } fro
 import { SchemaType } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
-import { ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
+import { ifPseudoFunctionKey, indexPseudoFunctionKey, directAccessPseudoFunctionKey } from '../models/Function';
 import { findLast } from './Array.Utils';
 import {
   flattenInputs,
@@ -13,19 +13,29 @@ import {
   nodeHasSpecificInputEventually,
   setConnectionInputValue,
 } from './Connection.Utils';
-import { findFunctionForFunctionName, findFunctionForKey, getIndexValueForCurrentConnection, isFunctionData } from './Function.Utils';
+import {
+  findFunctionForFunctionName,
+  findFunctionForKey,
+  formatDirectAccess,
+  getIndexValueForCurrentConnection,
+  isFunctionData,
+} from './Function.Utils';
 import { addReactFlowPrefix, addSourceReactFlowPrefix } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid } from '@microsoft/utils-logic-apps';
 
-type UnknownNode = SchemaNodeExtended | FunctionData | undefined;
+export type UnknownNode = SchemaNodeExtended | FunctionData | undefined;
 
 export const getParentId = (id: string): string => {
   const last = id.lastIndexOf('/');
   return id.substring(0, last);
 };
 
-export const getInputValues = (currentConnection: Connection | undefined, connections: ConnectionDictionary): string[] => {
+export const getInputValues = (
+  currentConnection: Connection | undefined,
+  connections: ConnectionDictionary,
+  shouldLocalizePaths = true
+): string[] => {
   return currentConnection
     ? (flattenInputs(currentConnection.inputs)
         .flatMap((input) => {
@@ -37,10 +47,13 @@ export const getInputValues = (currentConnection: Connection | undefined, connec
           if (isCustomValue(input)) {
             return input;
           } else if (isSchemaNodeExtended(input.node)) {
-            return input.node.key.startsWith('@') ? `$${input.node.key}` : input.node.key;
+            return shouldLocalizePaths && input.node.fullName.startsWith('@') ? `./${input.node.key}` : input.node.key;
           } else {
             if (input.node.key === indexPseudoFunctionKey) {
               return getIndexValueForCurrentConnection(connections[input.reactFlowKey]);
+            } else if (input.node.key.startsWith(directAccessPseudoFunctionKey)) {
+              const functionValues = getInputValues(connections[input.reactFlowKey], connections, false);
+              return formatDirectAccess(functionValues[0], functionValues[1], functionValues[2]);
             } else {
               return collectFunctionValue(input.node, connections[input.reactFlowKey], connections);
             }
@@ -183,7 +196,7 @@ export const getSourceKeyOfLastLoop = (targetKey: string): string => {
 
 export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sourceSchemaFlattened: SchemaNodeDictionary): string => {
   let constructedSourceKey = sourceKey;
-  const srcKeyWithinFor = getSourceKeyOfLastLoop(targetKey);
+  const srcKeyWithinFor = getSourceKeyOfLastLoop(qualifyLoopRelativeSourceKeys(targetKey));
 
   // Deserialize dot accessors as their parent loop's source node
   if (constructedSourceKey === '.') {
@@ -275,11 +288,7 @@ export const qualifyLoopRelativeSourceKeys = (targetKey: string): string => {
   return qualifiedTargetKey;
 };
 
-export const getTargetValueWithoutLastLoop = (targetKey: string): string => {
-  const forMatchArr = targetKey.match(/\$for\(((?!\)).)+\)\//g);
-  const forMatch = forMatchArr?.[forMatchArr.length - 1];
-  return forMatch ? targetKey.replace(forMatch, '') : targetKey;
-};
+export const getTargetValueWithoutLoops = (targetKey: string): string => targetKey.replaceAll(/\$for\(((?!\)).)+\)\//g, '');
 
 export const addParentConnectionForRepeatingElementsNested = (
   sourceNode: SchemaNodeExtended,
@@ -287,7 +296,7 @@ export const addParentConnectionForRepeatingElementsNested = (
   flattenedSourceSchema: SchemaNodeDictionary,
   flattenedTargetSchema: SchemaNodeDictionary,
   dataMapConnections: ConnectionDictionary
-) => {
+): boolean => {
   if (sourceNode.parentKey) {
     const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
     const firstSourceNodeWithRepeatingPathItem = findLast(sourceNode.pathToRoot, (pathItem) => pathItem.repeating);
@@ -296,7 +305,7 @@ export const addParentConnectionForRepeatingElementsNested = (
       const prefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
       const firstRepeatingSourceNode = flattenedSourceSchema[prefixedSourceKey];
       if (!firstRepeatingSourceNode) {
-        return;
+        return false;
       }
 
       const prefixedTargetKey = addReactFlowPrefix(firstTargetNodeWithRepeatingPathItem.key, SchemaType.Target);
@@ -326,15 +335,19 @@ export const addParentConnectionForRepeatingElementsNested = (
         nextTargetNode = firstRepeatingTargetNode;
       }
 
-      addParentConnectionForRepeatingElementsNested(
+      const wasNewArrayConnectionAdded = addParentConnectionForRepeatingElementsNested(
         flattenedSourceSchema[addReactFlowPrefix(firstRepeatingSourceNode.parentKey ?? '', SchemaType.Source)],
         nextTargetNode,
         flattenedSourceSchema,
         flattenedTargetSchema,
         dataMapConnections
       );
+
+      return !parentsAlreadyConnected ? true : wasNewArrayConnectionAdded;
     }
   }
+
+  return false;
 };
 
 export const addNodeToCanvasIfDoesNotExist = (

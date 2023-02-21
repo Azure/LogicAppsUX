@@ -39,23 +39,16 @@ import {
   initializeManifest,
   setManifest,
 } from './manifests/variables';
-import { ExpressionParser, isFunction, isStringLiteral, isTemplateExpression } from '@microsoft/parsers-logic-apps';
-import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/parsers-logic-apps';
-import {
-  ArgumentException,
-  AssertionErrorCode,
-  AssertionException,
-  clone,
-  equals,
-  format,
-  UnsupportedException,
-} from '@microsoft/utils-logic-apps';
-import type { OperationInfo, OperationManifest, SplitOn } from '@microsoft/utils-logic-apps';
+import { ArgumentException, equals, UnsupportedException } from '@microsoft/utils-logic-apps';
+import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 
-type SchemaObject = OpenAPIV2.SchemaObject;
-
+const apimanagement = 'apimanagement';
 const as2Encode = 'as2encode';
 const as2Decode = 'as2decode';
+const integrationaccountartifactlookup = 'integrationaccountartifactlookup';
+const rosettanetencode = 'rosettanetencode';
+const rosettanetdecode = 'rosettanetdecode';
+const rosettanetwaitforresponse = 'rosettanetwaitforresponse';
 const invokefunction = 'invokefunction';
 const javascriptcode = 'javascriptcode';
 const compose = 'compose';
@@ -75,6 +68,8 @@ const flatfiledecoding = 'flatfiledecoding';
 const flatfileencoding = 'flatfileencoding';
 const swiftdecode = 'swiftdecode';
 const swiftencode = 'swiftencode';
+const swiftmtdecode = 'swiftmtdecode';
+const swiftmtencode = 'swiftmtencode';
 const scope = 'scope';
 const foreach = 'foreach';
 const condition = 'if';
@@ -110,20 +105,27 @@ const incrementvariable = 'incrementvariable';
 const decrementvariable = 'decrementvariable';
 const appendtoarrayvariable = 'appendtoarrayvariable';
 const appendtostringvariable = 'appendtostringvariable';
+const batch = 'batch';
+const sendtobatch = 'sendtobatch';
 
+export const apiManagementConnectorId = '/connectionProviders/apiManagementOperation';
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
+export const batchConnectorId = '/connectionProviders/batch';
 const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
 const controlConnectorId = 'connectionProviders/control';
 const dateTimeConnectorId = 'connectionProviders/datetime';
 const scheduleConnectorId = 'connectionProviders/schedule';
 const httpConnectorId = 'connectionProviders/http';
 const variableConnectorId = 'connectionProviders/variable';
+const rosettanetConnectorId = 'connectionProviders/rosettaNetOperations';
 
 const supportedManifestTypes = [
+  apimanagement,
   appendtoarrayvariable,
   appendtostringvariable,
   as2Encode,
   as2Decode,
+  batch,
   compose,
   condition,
   decrementvariable,
@@ -134,6 +136,7 @@ const supportedManifestTypes = [
   httpwebhook,
   initializevariable,
   incrementvariable,
+  integrationaccountartifactlookup,
   invokefunction,
   javascriptcode,
   join,
@@ -143,6 +146,9 @@ const supportedManifestTypes = [
   recurrence,
   request,
   response,
+  rosettanetdecode,
+  rosettanetencode,
+  rosettanetwaitforresponse,
   select,
   setvariable,
   slidingwindow,
@@ -157,6 +163,8 @@ const supportedManifestTypes = [
   scope,
   swiftdecode,
   swiftencode,
+  swiftmtdecode,
+  swiftmtencode,
   terminate,
   until,
   wait,
@@ -195,95 +203,18 @@ export abstract class BaseOperationManifestService implements IOperationManifest
   abstract getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo>;
 
   abstract getOperationManifest(_connectorId: string, _operationId: string): Promise<OperationManifest>;
-
-  getSplitOnOutputs(manifest: OperationManifest, splitOn: SplitOn): SchemaObject {
-    if (splitOn === undefined) {
-      return manifest.properties.outputs;
-    } else if (typeof splitOn === 'string') {
-      return this._convertOutputsForSplitOn(manifest.properties.outputs, splitOn);
-    }
-
-    throw new AssertionException(AssertionErrorCode.INVALID_SPLITON, format("Invalid split on format in '{0}'.", splitOn));
-  }
-
-  /**
-   * Gets the outputs from manifest outputs after applying split on.
-   * @arg {Swagger.Schema} originalOutputs - The original outputs in manifest outputs definition.
-   * @arg {string} splitOn - The splitOn value for the batch trigger.
-   * @return {Swagger.Schema}
-   */
-  private _convertOutputsForSplitOn(originalOutputs: SchemaObject, splitOnValue: string): SchemaObject {
-    if (!isTemplateExpression(splitOnValue)) {
-      throw new AssertionException(AssertionErrorCode.INVALID_SPLITON, format("Invalid split on format in '{0}'.", splitOnValue));
-    }
-
-    const parsedValue = ExpressionParser.parseExpression(splitOnValue);
-    const properties: string[] = [];
-    let manifestSection = originalOutputs;
-    if (isSupportedSplitOnExpression(parsedValue)) {
-      const { dereferences, name } = parsedValue as ExpressionFunction;
-      if (equals(name, 'triggerBody')) {
-        properties.push('body');
-      }
-
-      if (dereferences.length) {
-        properties.push(...dereferences.map((dereference) => (dereference.expression as ExpressionLiteral).value));
-      }
-    } else {
-      throw new AssertionException(AssertionErrorCode.INVALID_SPLITON, format("Invalid split on format in '{0}'.", splitOnValue));
-    }
-
-    for (const property of properties) {
-      if (!manifestSection.properties) {
-        throw new AssertionException(
-          AssertionErrorCode.INVALID_SPLITON,
-          format("Invalid split on value '{0}', cannot find in outputs.", splitOnValue)
-        );
-      }
-
-      manifestSection = manifestSection.properties[property];
-    }
-
-    if (manifestSection.type !== 'array') {
-      throw new AssertionException(
-        AssertionErrorCode.INVALID_SPLITON,
-        format("Invalid type on split on value '{0}', split on not in array.", splitOnValue)
-      );
-    }
-
-    return {
-      properties: {
-        body: clone(manifestSection.items) as SchemaObject,
-      },
-      type: 'object',
-    };
-  }
-}
-
-function isSupportedSplitOnExpression(expression: Expression): boolean {
-  if (!isFunction(expression)) {
-    return false;
-  }
-
-  if (!equals(expression.name, 'triggerBody') && !equals(expression.name, 'triggerOutputs')) {
-    return false;
-  }
-
-  if (expression.arguments.length > 0) {
-    return false;
-  }
-
-  if (expression.dereferences.some((dereference) => !isStringLiteral(dereference.expression))) {
-    return false;
-  }
-
-  return true;
 }
 
 export function isBuiltInOperation(definition: any): boolean {
   switch (definition?.type?.toLowerCase()) {
+    case apimanagement:
     case as2Decode:
     case as2Encode:
+    case batch:
+    case integrationaccountartifactlookup:
+    case rosettanetencode:
+    case rosettanetdecode:
+    case rosettanetwaitforresponse:
     case appendtoarrayvariable:
     case appendtostringvariable:
     case compose:
@@ -306,6 +237,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case request:
     case response:
     case select:
+    case sendtobatch:
     case setvariable:
     case slidingwindow:
     case switchType:
@@ -317,6 +249,8 @@ export function isBuiltInOperation(definition: any): boolean {
     case scope:
     case swiftdecode:
     case swiftencode:
+    case swiftmtdecode:
+    case swiftmtencode:
     case table:
     case terminate:
     case until:
@@ -447,6 +381,10 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
 }
 
 const builtInOperationsMetadata: Record<string, OperationInfo> = {
+  [apimanagement]: {
+    connectorId: apiManagementConnectorId,
+    operationId: 'apiManagement',
+  },
   [appendtoarrayvariable]: {
     connectorId: variableConnectorId,
     operationId: appendtoarrayvariable,
@@ -462,6 +400,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [as2Decode]: {
     connectorId: 'connectionProviders/as2Operations',
     operationId: as2Decode,
+  },
+  [batch]: {
+    connectorId: batchConnectorId,
+    operationId: batch,
   },
   [compose]: {
     connectorId: dataOperationConnectorId,
@@ -519,6 +461,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: dataOperationConnectorId,
     operationId: select,
   },
+  [sendtobatch]: {
+    connectorId: batchConnectorId,
+    operationId: sendtobatch,
+  },
   [setvariable]: {
     connectorId: variableConnectorId,
     operationId: setvariable,
@@ -563,6 +509,14 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: 'connectionProviders/swiftOperations',
     operationId: 'swiftEncode',
   },
+  [swiftmtdecode]: {
+    connectorId: 'connectionProviders/swiftOperations',
+    operationId: 'swiftMTDecode',
+  },
+  [swiftmtencode]: {
+    connectorId: 'connectionProviders/swiftOperations',
+    operationId: 'swiftMTEncode',
+  },
   [terminate]: {
     connectorId: controlConnectorId,
     operationId: terminate,
@@ -570,6 +524,22 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [until]: {
     connectorId: controlConnectorId,
     operationId: until,
+  },
+  [integrationaccountartifactlookup]: {
+    connectorId: 'connectionProviders/integrationAccountOperations',
+    operationId: 'integrationAccountArtifactLookup',
+  },
+  [rosettanetencode]: {
+    connectorId: rosettanetConnectorId,
+    operationId: 'rosettaNetEncode',
+  },
+  [rosettanetdecode]: {
+    connectorId: rosettanetConnectorId,
+    operationId: 'rosettaNetDecode',
+  },
+  [rosettanetwaitforresponse]: {
+    connectorId: rosettanetConnectorId,
+    operationId: 'rosettaNetWaitForResponse',
   },
 };
 

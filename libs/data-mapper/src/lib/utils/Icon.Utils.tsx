@@ -1,4 +1,5 @@
-import type { FunctionGroupBranding } from '../constants/FunctionConstants';
+import { MapCheckerItemSeverity } from '../components/mapChecker/MapCheckerItem';
+import { Collection20Regular, StringCategory20Regular } from '../images/CategoryIcons';
 import {
   Any16Filled,
   Any16Regular,
@@ -28,17 +29,20 @@ import {
   String24Regular,
 } from '../images/DataType24Icons';
 import { NormalizedDataType, SchemaNodeProperty } from '../models';
-import { FunctionCategory, FunctionCategoryIconPrefix } from '../models/Function';
+import { FunctionCategory } from '../models/Function';
 import { LogCategory, LogService } from './Logging.Utils';
-import { Image, ImageLoadState } from '@fluentui/react';
+import { tokens } from '@fluentui/react-components';
 import {
   AddSubtractCircle16Filled,
   AddSubtractCircle16Regular,
+  AddSubtractCircle20Filled,
   AddSubtractCircle24Filled,
   AddSubtractCircle24Regular,
+  ArrowSwap20Regular,
   bundleIcon,
   CalendarClock16Filled,
   CalendarClock16Regular,
+  CalendarClock20Regular,
   CalendarClock24Filled,
   CalendarClock24Regular,
   CircleOff16Filled,
@@ -47,10 +51,16 @@ import {
   Cube16Regular,
   Cube24Filled,
   Cube24Regular,
+  DismissCircleFilled,
+  InfoFilled,
+  MathSymbols20Regular,
   NumberSymbol16Filled,
   NumberSymbol16Regular,
   NumberSymbol24Filled,
   NumberSymbol24Regular,
+  QuestionCircleFilled,
+  WarningFilled,
+  Wrench20Regular,
 } from '@fluentui/react-icons';
 
 // Using Fluent v8 as it has option for fallback icon
@@ -125,12 +135,35 @@ export const iconForNormalizedDataType = (
 export const iconBaseUrl = 'https://logicappsv2resources.blob.core.windows.net/icons/datamapper/';
 
 export const iconForFunctionCategory = (functionCategory: FunctionCategory) => {
-  const functionCategories = Object.values(FunctionCategory);
-  const functionIconUrlPrefix = `${iconBaseUrl}${FunctionCategoryIconPrefix}`;
-  if (functionCategories.indexOf(functionCategory) >= 0) {
-    return `${functionIconUrlPrefix}${functionCategory.toLowerCase().replace(' ', '')}.svg`;
-  } else {
-    return `${functionIconUrlPrefix}${FunctionCategory.Utility.toLowerCase()}.svg`;
+  switch (functionCategory) {
+    case FunctionCategory.Collection: {
+      return Collection20Regular;
+    }
+    case FunctionCategory.Conversion: {
+      return ArrowSwap20Regular;
+    }
+    case FunctionCategory.DateTime: {
+      return CalendarClock20Regular;
+    }
+    case FunctionCategory.Logical: {
+      return AddSubtractCircle20Filled;
+    }
+    case FunctionCategory.Math: {
+      return MathSymbols20Regular;
+    }
+    case FunctionCategory.String: {
+      return StringCategory20Regular;
+    }
+    case FunctionCategory.Utility: {
+      return Wrench20Regular;
+    }
+    default: {
+      LogService.error(LogCategory.IconUtils, 'iconForFunctionCategory', {
+        message: `Invalid category type: ${functionCategory}`,
+      });
+
+      return Wrench20Regular;
+    }
   }
 };
 
@@ -138,31 +171,22 @@ export const iconUriForIconImageName = (iconImageName: string) => {
   return `${iconBaseUrl}${iconImageName}`;
 };
 
-export const getIconForFunction = (
-  name: string,
-  categoryName: FunctionCategory,
-  fileName: string | undefined,
-  _branding: FunctionGroupBranding
-) => {
-  const functionIcon = iconUriForIconImageName(fileName ?? '');
-  const categoryIcon = iconForFunctionCategory(categoryName);
-  let isError = false;
+const mapCheckerIconStyle = { minHeight: '20px', minWidth: '20px' };
 
-  const loadBackupFunctionCategory = (loadState: ImageLoadState) => {
-    if (loadState === ImageLoadState.error) {
-      isError = true;
-    } else {
-      isError = false;
+export const iconForMapCheckerSeverity = (severity: MapCheckerItemSeverity) => {
+  switch (severity) {
+    case MapCheckerItemSeverity.Error: {
+      return <DismissCircleFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteRedBackground3} />;
     }
-  };
-  return (
-    <Image
-      src={isError ? functionIcon : categoryIcon}
-      shouldFadeIn={false}
-      height={20}
-      width={20}
-      alt={name}
-      onLoadingStateChange={loadBackupFunctionCategory}
-    />
-  );
+    case MapCheckerItemSeverity.Warning: {
+      return <WarningFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteGoldBorderActive} />;
+    }
+    case MapCheckerItemSeverity.Info: {
+      return <InfoFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteBlueBorderActive} />;
+    }
+    case MapCheckerItemSeverity.Unknown:
+    default: {
+      return <QuestionCircleFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteBeigeBorderActive} />;
+    }
+  }
 };
