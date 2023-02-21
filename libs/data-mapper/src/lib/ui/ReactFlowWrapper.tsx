@@ -190,6 +190,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight, canvasBlockWidth, useExpan
 
   return (
     <ReactFlow
+      nodesFocusable={false} // we handle keyboard focus from within the node
       ref={reactFlowRef}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
