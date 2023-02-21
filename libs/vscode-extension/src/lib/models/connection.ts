@@ -39,9 +39,21 @@ export interface ServiceProviderConnectionModel {
   displayName?: string;
 }
 
+interface APIManagementConnectionModel {
+  apiId: string;
+  baseUrl: string;
+  subscriptionKey: string;
+  authentication?: {
+    type: string;
+    name: string;
+    value: string;
+  };
+  displayName?: string;
+}
+
 export interface ConnectionAndAppSetting {
   connectionKey: string;
-  connectionData: ServiceProviderConnectionModel | FunctionConnectionModel;
+  connectionData: ServiceProviderConnectionModel | FunctionConnectionModel | APIManagementConnectionModel;
   settings: Record<string, string>;
   pathLocation: string[];
 }

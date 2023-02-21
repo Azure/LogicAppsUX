@@ -9,9 +9,9 @@ import {
   StandardOAuthService,
   StandardGatewayService,
 } from '@microsoft/designer-client-services-logic-apps';
-import type { IApiHubServiceDetails } from '@microsoft/designer-client-services-logic-apps';
+import type { IApiHubServiceDetails, ConnectionCreationInfo } from '@microsoft/designer-client-services-logic-apps';
 import { ResourceIdentityType, HTTP_METHODS } from '@microsoft/utils-logic-apps';
-import type { ConnectionAndAppSetting, ConnectionsData, FileSystemConnectionInfo } from '@microsoft/vscode-extension';
+import type { ConnectionAndAppSetting, ConnectionsData } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 
 export const getDesignerServices = (
@@ -24,7 +24,7 @@ export const getDesignerServices = (
   appSettings: Record<string, string>,
   workflowDetails: Record<string, any>,
   authToken: string,
-  createFileSystemConnection: (connectionInfo: FileSystemConnectionInfo, connectionName: string) => void,
+  createFileSystemConnection: (connectionInfo: ConnectionCreationInfo, connectionName: string) => Promise<ConnectionCreationInfo>,
   vscode: any
 ): any => {
   const httpClient = new HttpClient({ accessToken: authToken, baseUrl: apiHubServiceDetails.baseUrl });
@@ -36,7 +36,7 @@ export const getDesignerServices = (
     tenantId,
     workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
     readConnections: () => Promise.resolve(connectionData),
-    writeConnections: (connectionAndSetting: ConnectionAndAppSetting) => {
+    writeConnection: (connectionAndSetting: ConnectionAndAppSetting) => {
       return vscode.postMessage({
         command: ExtensionCommand.addConnection,
         connectionAndSetting,
