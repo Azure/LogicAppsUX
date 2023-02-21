@@ -1,4 +1,4 @@
-import type { IApiHubServiceDetails } from '@microsoft/designer-client-services-logic-apps';
+import type { IApiHubServiceDetails, ListDynamicValue } from '@microsoft/designer-client-services-logic-apps';
 import type { ConnectionsData, ICallbackUrlResponse, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -14,6 +14,7 @@ export interface designerState {
   callbackInfo: ICallbackUrlResponse;
   tenantId: string;
   fileSystemConnections: Record<string, any>;
+  iaMapArtifacts: ListDynamicValue[];
 }
 
 const initialState: designerState = {
@@ -36,6 +37,7 @@ const initialState: designerState = {
   },
   tenantId: '',
   fileSystemConnections: {},
+  iaMapArtifacts: [],
 };
 
 export const designerSlice = createSlice({

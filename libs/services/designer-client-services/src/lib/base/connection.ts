@@ -178,6 +178,7 @@ export abstract class BaseConnectionService implements IConnectionService {
         httpClient,
       } = this.options;
       const response = await httpClient.get<Connector>({ uri: connectorId, queryParameters: { 'api-version': apiVersion } });
+      console.log('response', response);
       return {
         ...response,
         properties: {

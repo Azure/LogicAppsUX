@@ -17,6 +17,7 @@ export interface IDesingerOptions {
   localSettings: { [key: string]: string };
   artifacts: Artifacts;
   azureDetails: AzureConnectorDetails;
+  workflowDetails: Record<string, any>;
 }
 
 export abstract class OpenDesignerBase {
@@ -32,6 +33,7 @@ export abstract class OpenDesignerBase {
   protected readOnly: boolean;
   protected isLocal: boolean;
   protected appSettings: Record<string, string>;
+  protected workflowDetails: Record<string, any>;
 
   protected constructor(
     context: IActionContext | IAzureConnectorsContext,
@@ -157,7 +159,7 @@ export abstract class OpenDesignerBase {
     return isApiHubEnabled
       ? {
           apiVersion: '2018-07-01-preview',
-          baseUrl: this.baseUrl,
+          baseUrl: 'https://management.azure.com',
           subscriptionId: azureDetails.subscriptionId,
           location: azureDetails.location,
           resourceGroup: azureDetails.resourceGroupName,

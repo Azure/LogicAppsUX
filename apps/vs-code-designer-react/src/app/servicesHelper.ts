@@ -1,3 +1,4 @@
+import { clientSupportedOperations } from './constants';
 import { HttpClient } from './httpClient';
 import { resolveConnectionsReferences } from './utilities/workflow';
 import {
@@ -13,8 +14,6 @@ import { ResourceIdentityType, HTTP_METHODS } from '@microsoft/utils-logic-apps'
 import type { ConnectionAndAppSetting, ConnectionsData, FileSystemConnectionInfo } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 
-const httpClient = new HttpClient();
-
 export const getDesignerServices = (
   baseUrl: string,
   apiVersion: string,
@@ -23,9 +22,12 @@ export const getDesignerServices = (
   isLocal: boolean,
   connectionData: ConnectionsData,
   appSettings: Record<string, string>,
+  workflowDetails: Record<string, any>,
+  authToken: string,
   createFileSystemConnection: (connectionInfo: FileSystemConnectionInfo, connectionName: string) => void,
   vscode: any
 ): any => {
+  const httpClient = new HttpClient({ accessToken: authToken, baseUrl: apiHubServiceDetails.baseUrl });
   const connectionService = new StandardConnectionService({
     baseUrl,
     apiVersion,
@@ -47,57 +49,13 @@ export const getDesignerServices = (
     },
   });
 
+  const manualWorkflows = Object.keys(workflowDetails).map((name) => ({ value: name, displayName: name }));
+
   const connectorService = new StandardConnectorService({
     apiVersion,
     baseUrl,
     httpClient,
-    apiHubServiceDetails,
-    clientSupportedOperations: [
-      {
-        connectorId: 'connectionProviders/localWorkflowOperation',
-        operationId: 'invokeWorkflow',
-      },
-      {
-        connectorId: 'connectionProviders/xmlOperations',
-        operationId: 'xmlValidation',
-      },
-      {
-        connectorId: 'connectionProviders/xmlOperations',
-        operationId: 'xmlTransform',
-      },
-      {
-        connectorId: 'connectionProviders/liquidOperations',
-        operationId: 'liquidJsonToJson',
-      },
-      {
-        connectorId: 'connectionProviders/liquidOperations',
-        operationId: 'liquidJsonToText',
-      },
-      {
-        connectorId: 'connectionProviders/liquidOperations',
-        operationId: 'liquidXmlToJson',
-      },
-      {
-        connectorId: 'connectionProviders/liquidOperations',
-        operationId: 'liquidXmlToText',
-      },
-      {
-        connectorId: 'connectionProviders/flatFileOperations',
-        operationId: 'flatFileDecoding',
-      },
-      {
-        connectorId: 'connectionProviders/flatFileOperations',
-        operationId: 'flatFileEncoding',
-      },
-      {
-        connectorId: 'connectionProviders/swiftOperations',
-        operationId: 'SwiftDecode',
-      },
-      {
-        connectorId: 'connectionProviders/swiftOperations',
-        operationId: 'SwiftEncode',
-      },
-    ],
+    clientSupportedOperations: clientSupportedOperations,
     getConfiguration: async (connectionId: string): Promise<any> => {
       if (!connectionId) {
         return Promise.resolve();
@@ -118,13 +76,55 @@ export const getDesignerServices = (
       return undefined;
     },
     schemaClient: {
-      getWorkflowSwagger: () => Promise.resolve({}),
+      getWorkflowSwagger: (args) => {
+        const workflowName = args.parameters.name;
+        const workflowSchemas = JSON.stringify(workflowDetails);
+        return Promise.resolve(workflowSchemas[workflowName] || {});
+      },
     },
     valuesClient: {
-      getWorkflows: () => Promise.resolve([]),
+      getWorkflows: () => Promise.resolve(manualWorkflows),
       getMapArtifacts: () => Promise.resolve([]),
+      // getMapArtifacts: (args) => {
+      //   if (args.mapSource === integrationAccount) {
+      //     // if (!iaMapArtifacts) {
+      //     //   const settings = JSON.stringify(localSettings);
+      //     //   vscode.postMessage({
+      //     //     command: 'GetMapArtifacts',
+      //     //     callbackUrl: settings && settings['WORKFLOW_INTEGRATION_ACCOUNT_CALLBACK_URL'],
+      //     //   });
+      //     // }
+
+      //     // const promise = new Promise((resolve, reject) => {
+      //     //   resolveMapArtifacts = () => {
+      //     //     if (iaMapArtifacts) {
+      //     //       resolve(iaMapArtifacts[args.mapType.toLowerCase()] || []);
+      //     //     } else {
+      //     //       resolve([]);
+      //     //     }
+      //     //   };
+      //     //   rejectMapArtifacts = (errorMessage) => {
+      //     //     reject({ message: errorMessage });
+      //     //   };
+      //     // });
+
+      //     // if (iaMapArtifacts) {
+      //     //   resolveMapArtifacts();
+      //     //   resolveMapArtifacts = null;
+      //     //   rejectMapArtifacts = null;
+      //     // }
+
+      //     // return promise;
+      //     return []
+      //   } else {
+      //     const extensionName = args.mapType;
+      //     const allMaps = JSON.stringify(mapArtifacts);
+      //     return Promise.resolve(allMaps[extensionName] || []);
+      //   }
+      // },
       getSchemaArtifacts: () => Promise.resolve([]),
     },
+    apiHubServiceDetails,
     workflowReferenceId: '',
   });
 

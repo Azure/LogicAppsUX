@@ -54,6 +54,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
       localSettings: this.panelMetadata.localSettings,
       artifacts: this.panelMetadata.artifacts,
       azureDetails: this.panelMetadata.azureDetails,
+      workflowDetails: this.panelMetadata.workflowDetails,
     });
 
     this.panel.webview.onDidReceiveMessage(async (message) => await this._handleWebviewMsg(message), ext.context.subscriptions);
@@ -83,6 +84,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
             apiHubServiceDetails: this.apiHubServiceDetails,
             readOnly: this.readOnly,
             isLocal: this.isLocal,
+            workflowDetails: this.workflowDetails,
           },
         });
         break;

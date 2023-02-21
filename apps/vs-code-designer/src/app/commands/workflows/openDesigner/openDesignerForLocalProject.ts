@@ -6,6 +6,7 @@ import {
   cacheWebviewPanel,
   getArtifactsInLocalProject,
   getAzureConnectorDetailsForLocalProject,
+  getManualWorkflowsInLocalProject,
   getStandardAppData,
   removeWebviewPanelFromCache,
 } from '../../../utils/codeless/common';
@@ -107,6 +108,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       localSettings: this.panelMetadata.localSettings,
       artifacts: this.panelMetadata.artifacts,
       azureDetails: this.panelMetadata.azureDetails,
+      workflowDetails: this.panelMetadata.workflowDetails,
     });
 
     this.panel.webview.onDidReceiveMessage(async (message) => await this._handleWebviewMsg(message), ext.context.subscriptions);
@@ -126,6 +128,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private async _handleWebviewMsg(msg: any) {
     switch (msg.command) {
       case ExtensionCommand.initialize: {
+        console.log('panelMetadata: ', this.panelMetadata);
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
           data: {
@@ -136,6 +139,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             apiHubServiceDetails: this.apiHubServiceDetails,
             readOnly: this.readOnly,
             isLocal: this.isLocal,
+            workflowDetails: this.workflowDetails,
           },
         });
         break;
@@ -371,7 +375,9 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       parametersData,
       localSettings,
       azureDetails,
+      accessToken: azureDetails.accessToken,
       workflowContent,
+      workflowDetails: await getManualWorkflowsInLocalProject(projectPath, this.workflowName),
       artifacts: await getArtifactsInLocalProject(projectPath),
     };
   }

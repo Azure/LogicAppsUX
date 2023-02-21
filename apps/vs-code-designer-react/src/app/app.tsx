@@ -23,6 +23,14 @@ export const App = () => {
     return panelMetaData?.localSettings ?? {};
   }, [panelMetaData?.localSettings]);
 
+  const workflowDetails = useMemo(() => {
+    return panelMetaData?.workflowDetails ?? {};
+  }, [panelMetaData?.workflowDetails]);
+
+  const authToken = useMemo(() => {
+    return panelMetaData?.azureDetails.accessToken ?? '';
+  }, [panelMetaData?.azureDetails.accessToken]);
+
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
 
   useThemeObserver(document.body, theme, setTheme, {
@@ -48,10 +56,24 @@ export const App = () => {
       isLocal,
       connectionData,
       appSettings,
+      workflowDetails,
+      authToken,
       fileSystemConnectionCreate,
       vscode
     );
-  }, [baseUrl, apiVersion, apiHubServiceDetails, tenantId, isLocal, connectionData, appSettings, vscode, dispatch]);
+  }, [
+    baseUrl,
+    apiVersion,
+    apiHubServiceDetails,
+    tenantId,
+    isLocal,
+    connectionData,
+    appSettings,
+    workflowDetails,
+    authToken,
+    vscode,
+    dispatch,
+  ]);
 
   const connectionReferences: ConnectionReferences = useMemo(() => {
     return convertConnectionsDataToReferences(connectionData);
