@@ -1,5 +1,5 @@
 import { functionNodeCardSize, schemaNodeCardDefaultWidth, schemaNodeCardHeight } from '../constants/NodeConstants';
-import type { SchemaNodeExtended } from '../models';
+import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { FunctionDictionary } from '../models/Function';
 import { generateInputHandleId, isConnectionUnit } from './Connection.Utils';
@@ -10,6 +10,9 @@ import ELK from 'elkjs/lib/elk.bundled';
 
 const elk = new ELK();
 
+const defaultNodeGroupSpacing = '120.0';
+const expandedNodeGroupSpacing = '160.0';
+
 const defaultTreeLayoutOptions: Record<string, string> = {
   // General layout settings
   direction: 'RIGHT',
@@ -18,7 +21,7 @@ const defaultTreeLayoutOptions: Record<string, string> = {
   hierarchyHandling: 'INCLUDE_CHILDREN',
   'partitioning.activate': 'true', // Allows blocks/node-groups to be forced into specific "slots"
   'edge.thickness': '8.0',
-  'spacing.nodeNodeBetweenLayers': '120.0', // Spacing between node groups (Source schema/Functions/Target schema)
+  'spacing.nodeNodeBetweenLayers': defaultNodeGroupSpacing, // Spacing between node groups (Source schema/Functions/Target schema)
   // Settings related to node ordering (when attempting to minimize edge crossing)
   'crossingMinimization.semiInteractive': 'true',
   'considerModelOrder.strategy': 'NODES_AND_EDGES',
@@ -51,7 +54,8 @@ export const convertDataMapNodesToElkGraph = (
   currentSourceSchemaNodes: SchemaNodeExtended[],
   currentFunctionNodes: FunctionDictionary,
   currentTargetSchemaNode: SchemaNodeExtended,
-  connections: ConnectionDictionary
+  connections: ConnectionDictionary,
+  useExpandedFunctionCards: boolean
 ): ElkNode => {
   // NOTE: Sub-block edges[] only contain edges between nodes *within that block*
   // - the root edges[] will contain all multi-block edges (thus, src/tgt schemas should never have edges)
@@ -102,7 +106,10 @@ export const convertDataMapNodesToElkGraph = (
 
   const elkTree: ElkNode = {
     id: 'root',
-    layoutOptions: defaultTreeLayoutOptions,
+    layoutOptions: {
+      ...defaultTreeLayoutOptions,
+      'spacing.nodeNodeBetweenLayers': useExpandedFunctionCards ? expandedNodeGroupSpacing : defaultNodeGroupSpacing,
+    },
     children: [
       {
         id: 'sourceSchemaBlock',
@@ -141,6 +148,104 @@ export const convertDataMapNodesToElkGraph = (
             width: schemaNodeCardDefaultWidth,
             height: schemaNodeCardHeight,
           })),
+        ],
+      },
+    ],
+    edges: interBlockEdges,
+  };
+
+  return elkTree;
+};
+
+export const convertWholeDataMapToElkGraph = (
+  flattenedSourceSchema: SchemaNodeDictionary,
+  flattenedTargetSchema: SchemaNodeDictionary,
+  functionNodes: FunctionDictionary,
+  connections: ConnectionDictionary,
+  useExpandedFunctionCards: boolean
+): ElkNode => {
+  // NOTE: Sub-block edges[] only contain edges between nodes *within that block*
+  // - the root edges[] will contain all multi-block edges (thus, src/tgt schemas should never have edges)
+  let nextEdgeIndex = 0;
+  const interFunctionEdges: ElkExtendedEdge[] = [];
+  const interBlockEdges: ElkExtendedEdge[] = [];
+
+  Object.values(connections).forEach((connection) => {
+    // Categorize connections to function<->function and any others for elkTree creation below
+    Object.values(connection.inputs).forEach((inputValueArray, inputIndex) => {
+      inputValueArray.forEach((inputValue, inputValueIndex) => {
+        if (isConnectionUnit(inputValue)) {
+          const target = connection.self.reactFlowKey;
+          const labels = isFunctionData(connection.self.node)
+            ? connection.self.node.maxNumberOfInputs > -1
+              ? [{ text: connection.self.node.inputs[inputIndex].name }]
+              : [{ text: generateInputHandleId(connection.self.node.inputs[inputIndex].name, inputValueIndex) }]
+            : [];
+
+          const nextEdge: ElkExtendedEdge = {
+            id: `e${nextEdgeIndex}`,
+            sources: [inputValue.reactFlowKey],
+            targets: [target],
+            labels,
+          };
+
+          if (isFunctionData(inputValue.node) && isFunctionData(connection.self.node)) {
+            interFunctionEdges.push(nextEdge);
+          } else {
+            interBlockEdges.push(nextEdge);
+          }
+
+          nextEdgeIndex += 1;
+        }
+      });
+    });
+  });
+
+  const elkTree: ElkNode = {
+    id: 'root',
+    layoutOptions: {
+      ...defaultTreeLayoutOptions,
+      'spacing.nodeNodeBetweenLayers': useExpandedFunctionCards ? expandedNodeGroupSpacing : defaultNodeGroupSpacing,
+    },
+    children: [
+      {
+        id: 'sourceSchemaBlock',
+        layoutOptions: sourceSchemaLayoutOptions,
+        children: [
+          ...Object.values(flattenedSourceSchema).map((srcNode) => ({
+            id: addSourceReactFlowPrefix(srcNode.key),
+            width: schemaNodeCardDefaultWidth,
+            height: schemaNodeCardHeight,
+          })),
+          // NOTE: Dummy nodes allow proper layouting when no real nodes exist yet
+          { id: 'srcDummyNode', width: schemaNodeCardDefaultWidth, height: schemaNodeCardHeight },
+        ],
+      },
+      {
+        id: 'functionsBlock',
+        layoutOptions: functionsLayoutOptions,
+        children: [
+          ...Object.keys(functionNodes).map((fnNodeKey) => ({
+            id: fnNodeKey,
+            width: functionNodeCardSize,
+            height: functionNodeCardSize,
+          })),
+          { id: 'fnDummyNode', width: functionNodeCardSize, height: functionNodeCardSize },
+        ],
+        // Only function<->function edges
+        edges: interFunctionEdges,
+      },
+      {
+        id: 'targetSchemaBlock',
+        layoutOptions: targetSchemaLayoutOptions,
+        children: [
+          ...Object.values(flattenedTargetSchema).map((childNode) => ({
+            id: addTargetReactFlowPrefix(childNode.key),
+            width: schemaNodeCardDefaultWidth,
+            height: schemaNodeCardHeight,
+          })),
+          // NOTE: Dummy nodes allow proper layouting when no real nodes exist yet
+          { id: 'tgtDummyNode', width: schemaNodeCardDefaultWidth, height: schemaNodeCardHeight },
         ],
       },
     ],

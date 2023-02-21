@@ -985,4 +985,58 @@ declare namespace LogicAppsV2 {
       integrationAccount: IntegrationAccountMapInformation;
     }
   }
+
+  /* Run action definition types */
+  interface WorkflowRunAction {
+    inputsLink: {
+      uri: string;
+      contentSize: number;
+    };
+    outputsLink: {
+      uri: string;
+      contentSize: number;
+    };
+    startTime: string;
+    endTime: string;
+    correlation: {
+      actionTrackingId: string;
+      clientTrackingId: string;
+    };
+    status: string;
+    code: string;
+    error: {
+      code: string;
+      message: string;
+    };
+    duration?: string;
+  }
+
+  interface WorkflowRunTrigger extends WorkflowRunAction {
+    name: string;
+  }
+
+  interface runInstanceProperties {
+    waitEndTime: string;
+    startTime: string;
+    endTime: string;
+    status: string;
+    correlation: {
+      clientTrackingId: string;
+    };
+    actions: Record<string, WorkflowRunAction>;
+    trigger: WorkflowRunTrigger;
+    workflow: {
+      id: string;
+      name: string;
+      type: string;
+    };
+  }
+
+  /* Run instance definition types */
+  interface RunInstanceDefinition {
+    properties: runInstanceProperties;
+    id: string;
+    name: string;
+    type: string;
+  }
 }

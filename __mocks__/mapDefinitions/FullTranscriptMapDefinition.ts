@@ -30,7 +30,7 @@ ns0:Root:
       $for(/ns0:Root/CumulativeExpression/Population/State):
         State:
           Name: Name
-          SexRatio: divide(count(County/Person/Sex/Male), count(County/Person/Sex/Female))
+          SexRatio: string(divide(count(County/Person/Sex/Male), count(County/Person/Sex/Female)))
   ConditionalMapping:
     ItemPrice: /ns0:Root/ConditionalMapping/ItemPrice
     ItemQuantity: /ns0:Root/ConditionalMapping/ItemQuantity
@@ -49,10 +49,10 @@ ns0:Root:
           Distance: Distance
           Duration: Duration
   ConditionalLooping:
-    CategorizedCatalog:
-      # Following loop with 3 $if can be coded alternatively by including complex expressions inside selector in $for statements for-example: Product[is-equal(substring(SKU, 1, 2), "11")].
-      # This version is simplified to what Data Mapper front end will generate. Map code can be manually authored with complex selector expressions for optimization or ease of read.
-      $for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product):
+    # Following loop with 3 $if can be coded alternatively by including complex expressions inside selector in $for statements for-example: Product[is-equal(substring(SKU, 1, 2), "11")].
+    # This version is simplified to what Data Mapper front end will generate. Map code can be manually authored with complex selector expressions for optimization or ease of read.
+    $for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product):
+      CategorizedCatalog:
         $if(is-equal(substring(SKU, 1, 2), "11")):
           PetProduct:
             Name: Name
@@ -71,12 +71,12 @@ ns0:Root:
   LoopingWithIndex:
     WeatherSummary:
       Day1:
-        Name: "Day 1"
+        Name: '"Day 1"'
         Pressure: /ns0:Root/LoopingWithIndex/WeatherReport[1]/@Pressure
         WindSpeed: /ns0:Root/LoopingWithIndex/WeatherReport[1]/@WindSpeed
         Temperature: /ns0:Root/LoopingWithIndex/WeatherReport[1]/@Temperature
       Day2:
-        Name: "Day 2"
+        Name: '"Day 2"'
         Pressure: /ns0:Root/LoopingWithIndex/WeatherReport[2]/@Pressure
         WindSpeed: /ns0:Root/LoopingWithIndex/WeatherReport[2]/@WindSpeed
         Temperature: /ns0:Root/LoopingWithIndex/WeatherReport[2]/@Temperature
@@ -89,55 +89,56 @@ ns0:Root:
             Temperature: ./@Temperature
   NameValueTransforms:
     FlatterCatalog:
-      Price:
-        $for(/ns0:Root/NameValueTransforms/Catalog/Product/Field):
-          $if(is-equal(Name, "Pen")):
-            Pen: Value
-          $if(is-equal(Name, "Pencil")):
-            Pencil: Value
-          $if(is-equal(Name, "Notebook")):
-            NoteBook: Value
-          $if(is-equal(Name, "Bag")):
-            Bag: Value
-          $if(is-equal(Name, "Others")):
-            Others: Value
+      $for(/ns0:Root/NameValueTransforms/Catalog/Product):
+        $for(Field):
+          Price:
+            $if(is-equal(Name, "Pen")):
+              Pen: Value
+            $if(is-equal(Name, "Pencil")):
+              Pencil: Value
+            $if(is-equal(Name, "Notebook")):
+              NoteBook: Value
+            $if(is-equal(Name, "Bag")):
+              Bag: Value
+            $if(is-equal(Name, "Others")):
+              Others: Value
     PO_Status:
       ShipDate: /ns0:Root/NameValueTransforms/PurchaseOrderStatus/DateShipped
-      ShippedVia: "Air"
+      ShippedVia: '"Air"'
       $for(/ns0:Root/NameValueTransforms/PurchaseOrderStatus/ns0:LineItem):
         Product:
           ProductIdentifier: ItemNumber
           $for(QuantityOrdered):
             OrderStatusQuantity:
-              GlobalOrderQuantityTypeCode: "Ordered"
+              GlobalOrderQuantityTypeCode: '"Ordered"'
               ProductQuantity: . # . can be used to access the value of current node for eg: here ProductQuantity is mapped to text value of QuantityOrdered.
           $for(QuantityShipped):
             OrderStatusQuantity:
-              GlobalOrderQuantityTypeCode: "Shipped"
+              GlobalOrderQuantityTypeCode: '"Shipped"'
               ProductQuantity: .
           $for(QuantityBackordered):
             OrderStatusQuantity:
-              GlobalOrderQuantityTypeCode: "Backordered"
+              GlobalOrderQuantityTypeCode: '"Backordered"'
               ProductQuantity: .
           $for(QuantityCancelled):
             OrderStatusQuantity:
-              GlobalOrderQuantityTypeCode: "Cancelled"
+              GlobalOrderQuantityTypeCode: '"Cancelled"'
               ProductQuantity: .
-        #alternative map for OrderQuantity
+        # Alternative map for OrderQuantity
         #$if(and(exists(QuantityOrdered), not(is-nil(QuantityOrdered)))):
         #  OrderStatusQuantity:
-        #    GlobalOrderQuantityTypeCode: "Ordered"
+        #    GlobalOrderQuantityTypeCode: '"Ordered"'
         #    ProductQuantity: QuantityOrdered
         #$if(and(exists(QuantityShipped), not(is-nil(QuantityShipped)))):
         #  OrderStatusQuantity:
-        #    GlobalOrderQuantityTypeCode: "Shipped"
+        #    GlobalOrderQuantityTypeCode: '"Shipped"'
         #    ProductQuantity: QuantityShipped
         #$if(and(exists(QuantityBackordered), not(is-nil(QuantityBackordered)))):
         #  OrderStatusQuantity:
-        #    GlobalOrderQuantityTypeCode: "Backordered"
+        #    GlobalOrderQuantityTypeCode: '"Backordered"'
         #    ProductQuantity: QuantityBackordered
         #$if(and(exists(QuantityCancelled), not(is-nil(QuantityCancelled)))):
         #  OrderStatusQuantity:
-        #    GlobalOrderQuantityTypeCode: "Cancelled"
+        #    GlobalOrderQuantityTypeCode: '"Cancelled"'
         #    ProductQuantity: QuantityCancelled
 `;

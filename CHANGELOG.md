@@ -1,12 +1,79 @@
 # Logic Apps Designer
+
+### [0.2.84](https://github.com/Azure/LogicAppsUX/compare/v0.2.83...v0.2.84) (2023-02-21)
+
+### [0.2.83](https://github.com/Azure/LogicAppsUX/compare/v0.2.82...v0.2.83) (2023-02-20)
+
+### Logic Apps Designer Changes
+
+- Adding support for batch operations ([#1660](https://github.com/Azure/LogicAppsUX/issues/1660)) ([cb140b8](https://github.com/Azure/LogicAppsUX/commit/cb140b8707bdd5778c10035af749d4fb6cbceef2))
+
+### [0.2.82](https://github.com/Azure/LogicAppsUX/compare/v0.2.81...v0.2.82) (2023-02-19)
+
+### [0.2.81](https://github.com/Azure/LogicAppsUX/compare/v0.2.80...v0.2.81) (2023-02-18)
+
+### [0.2.80](https://github.com/Azure/LogicAppsUX/compare/v0.2.79...v0.2.80) (2023-02-17)
+
+### [0.2.79](https://github.com/Azure/LogicAppsUX/compare/v0.2.78...v0.2.79) (2023-02-16)
+
+### [0.2.78](https://github.com/Azure/LogicAppsUX/compare/v0.2.77...v0.2.78) (2023-02-15)
+
+### [0.2.77](https://github.com/Azure/LogicAppsUX/compare/v0.2.76...v0.2.77) (2023-02-14)
+
+### [0.2.76](https://github.com/Azure/LogicAppsUX/compare/v0.2.75...v0.2.76) (2023-02-13)
+
+### [0.2.75](https://github.com/Azure/LogicAppsUX/compare/v0.2.74...v0.2.75) (2023-02-12)
+
+### [0.2.74](https://github.com/Azure/LogicAppsUX/compare/v0.2.73...v0.2.74) (2023-02-11)
+
+### [0.2.73](https://github.com/Azure/LogicAppsUX/compare/v0.2.72...v0.2.73) (2023-02-10)
+
+### Logic Apps Designer Changes
+
+- Adding API Management action inputs/outputs support for dynamic parameters ([#1616](https://github.com/Azure/LogicAppsUX/issues/1616)) ([3bc920e](https://github.com/Azure/LogicAppsUX/commit/3bc920e45deb5f0c3494261c727b3411c4517508))
+
+### [0.2.72](https://github.com/Azure/LogicAppsUX/compare/v0.2.71...v0.2.72) (2023-02-10)
+
+### [0.2.71](https://github.com/Azure/LogicAppsUX/compare/v0.2.70...v0.2.71) (2023-02-09)
+
+### [0.2.70](https://github.com/Azure/LogicAppsUX/compare/v0.2.69...v0.2.70) (2023-02-08)
+
+### Logic Apps Designer Changes
+
+- Monitoring tab ([#1602](https://github.com/Azure/LogicAppsUX/issues/1602)) ([c6070de](https://github.com/Azure/LogicAppsUX/commit/c6070dea2c0bec5b31e41ee8db8002c068732911))
+
+### [0.2.69](https://github.com/Azure/LogicAppsUX/compare/v0.2.68...v0.2.69) (2023-02-07)
+
+### [0.2.68](https://github.com/Azure/LogicAppsUX/compare/v0.2.67...v0.2.68) (2023-02-06)
+
+### [0.2.67](https://github.com/Azure/LogicAppsUX/compare/v0.2.66...v0.2.67) (2023-02-05)
+
+### [0.2.66](https://github.com/Azure/LogicAppsUX/compare/v0.2.65...v0.2.66) (2023-02-04)
+
+### Logic Apps Designer Changes
+
+- Adding connection creation experience for Api Management ([#1596](https://github.com/Azure/LogicAppsUX/issues/1596)) ([949e535](https://github.com/Azure/LogicAppsUX/commit/949e5351ddca5cc4d9aa97280338a15b71780a0a))
+- Load dynamic run instance data to monitoring view mode ([#1598](https://github.com/Azure/LogicAppsUX/issues/1598)) ([3ee9c2c](https://github.com/Azure/LogicAppsUX/commit/3ee9c2c76c46afc15b3bc781d6eb0ecb2ee00999))
+
+### [0.2.65](https://github.com/Azure/LogicAppsUX/compare/v0.2.64...v0.2.65) (2023-02-03)
+
+### [0.2.64](https://github.com/Azure/LogicAppsUX/compare/v0.2.63...v0.2.64) (2023-02-02)
+
+### [0.2.64](https://github.com/Azure/LogicAppsUX/compare/v0.2.63...v0.2.64) (2023-02-02)
+
+### Logic Apps Designer Changes
+
+- Consumption Workflow Parameter adjustments ([#1590](https://github.com/Azure/LogicAppsUX/issues/1590)) ([f3edc15](https://github.com/Azure/LogicAppsUX/commit/f3edc155ab0346249d8435a33749a6bbb6fa3753))
+
+### [0.2.63](https://github.com/Azure/LogicAppsUX/compare/v0.2.62...v0.2.63) (2023-02-01)
+
 ### [0.2.62](https://github.com/Azure/LogicAppsUX/compare/v0.2.61...v0.2.62) (2023-01-31)
 
 ### [0.2.61](https://github.com/Azure/LogicAppsUX/compare/v0.2.60...v0.2.61) (2023-01-30)
 
-
 ### Logic Apps Designer Bug Fixes
 
-* Fixed nightly release action ([#1580](https://github.com/Azure/LogicAppsUX/issues/1580)) ([9ff88c0](https://github.com/Azure/LogicAppsUX/commit/9ff88c06e88c7ee0061bf0c501600f169dd18b2b))
+- Fixed nightly release action ([#1580](https://github.com/Azure/LogicAppsUX/issues/1580)) ([9ff88c0](https://github.com/Azure/LogicAppsUX/commit/9ff88c06e88c7ee0061bf0c501600f169dd18b2b))
 
 ### [0.2.60](https://github.com/Azure/LogicAppsUX/compare/v0.2.59...v0.2.60) (2023-01-30)
 
@@ -14,11 +81,10 @@
 
 ### [0.2.58](https://github.com/Azure/LogicAppsUX/compare/v0.2.57...v0.2.58) (2023-01-28)
 
-
 ### Logic Apps Designer Bug Fixes
 
-* Fix status pill stories and add aborted status ([#1565](https://github.com/Azure/LogicAppsUX/issues/1565)) ([02bb9c5](https://github.com/Azure/LogicAppsUX/commit/02bb9c5fcd7f890360448de7700012a9eb0f3670))
-* Fixed run-after-trigger bug ([#1575](https://github.com/Azure/LogicAppsUX/issues/1575)) ([15222b1](https://github.com/Azure/LogicAppsUX/commit/15222b18fc54665f15dcd40f4b6ff831387f64d1))
+- Fix status pill stories and add aborted status ([#1565](https://github.com/Azure/LogicAppsUX/issues/1565)) ([02bb9c5](https://github.com/Azure/LogicAppsUX/commit/02bb9c5fcd7f890360448de7700012a9eb0f3670))
+- Fixed run-after-trigger bug ([#1575](https://github.com/Azure/LogicAppsUX/issues/1575)) ([15222b1](https://github.com/Azure/LogicAppsUX/commit/15222b18fc54665f15dcd40f4b6ff831387f64d1))
 
 ### [0.2.57](https://github.com/Azure/LogicAppsUX/compare/v0.2.56...v0.2.57) (2023-01-27)
 

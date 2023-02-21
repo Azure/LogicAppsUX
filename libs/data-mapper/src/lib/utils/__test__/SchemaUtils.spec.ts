@@ -1,6 +1,6 @@
-import { targetMockSchema } from '../../__mocks__';
 import { SchemaNodeProperty } from '../../models';
 import { convertSchemaToSchemaExtended, findNodeForKey, parsePropertiesIntoNodeProperties } from '../Schema.Utils';
+import { targetMockSchema } from '__mocks__/schemas';
 
 describe('utils/Schema', () => {
   describe('parsePropertiesIntoNodeProperties', () => {
@@ -34,6 +34,21 @@ describe('utils/Schema', () => {
     it('finds node for key', () => {
       const node = findNodeForKey('/ns0:Root/Looping/Person/Name', extendedTarget.schemaTreeRoot);
       expect(node?.key).toEqual('/ns0:Root/Looping/Person/Name');
+    });
+  });
+
+  describe('convertSchemaToSchemaExtended', () => {
+    it('creates generated fields', () => {
+      const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema);
+
+      expect(extendedTarget.schemaTreeRoot.pathToRoot.length).toEqual(1);
+      expect(extendedTarget.schemaTreeRoot.parentKey).toBeUndefined();
+
+      expect(extendedTarget.schemaTreeRoot.children[0].pathToRoot.length).toEqual(2);
+      expect(extendedTarget.schemaTreeRoot.children[0].parentKey).toEqual(extendedTarget.schemaTreeRoot.key);
+
+      expect(extendedTarget.schemaTreeRoot.children[0].children[0].pathToRoot.length).toEqual(3);
+      expect(extendedTarget.schemaTreeRoot.children[0].children[0].parentKey).toEqual(extendedTarget.schemaTreeRoot.children[0].key);
     });
   });
 });

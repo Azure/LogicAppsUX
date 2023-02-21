@@ -205,8 +205,27 @@
                 "fullName": "Index",
                 "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToOne",
                 "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
-                "children": []
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/Index/SourceDirect",
+                    "name": "SourceDirect",
+                    "fullName": "SourceDirect",
+                    "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToOne/Index",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "children": []
+                  },
+                  {
+                    "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/Index/SourceFunctionChain",
+                    "name": "SourceFunctionChain",
+                    "fullName": "SourceFunctionChain",
+                    "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToOne/Index",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "children": []
+                  }
+                ]
               },
               {
                 "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/Conditional",
@@ -214,8 +233,18 @@
                 "fullName": "Conditional",
                 "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToOne",
                 "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
-                "children": []
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/Conditional/SourceDirect",
+                    "name": "SourceDirect",
+                    "fullName": "SourceDirect",
+                    "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToOne/Conditional",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "children": []
+                  }
+                ]
               },
               {
                 "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest",
@@ -223,8 +252,27 @@
                 "fullName": "StressTest",
                 "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToOne",
                 "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
-                "children": []
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest/SourceDirect",
+                    "name": "SourceDirect",
+                    "fullName": "SourceDirect",
+                    "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "children": []
+                  },
+                  {
+                    "key": "/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest/@SourceFunctionChain",
+                    "name": "SourceFunctionChain",
+                    "fullName": "@SourceFunctionChain",
+                    "parentKey": "/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest",
+                    "normalizedDataType": "String",
+                    "properties": "Attribute",
+                    "children": []
+                  }
+                ]
               }
             ]
           },
@@ -290,8 +338,47 @@
                 "fullName": "Index",
                 "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToOne",
                 "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
-                "children": []
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Index/SourceIndexChild",
+                    "name": "SourceIndexChild",
+                    "fullName": "SourceIndexChild",
+                    "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Index",
+                    "normalizedDataType": "ComplexType",
+                    "properties": "Repeating",
+                    "children": [
+                      {
+                        "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Index/SourceIndexChild/SourceIndexChildChild",
+                        "name": "SourceIndexChildChild",
+                        "fullName": "SourceIndexChildChild",
+                        "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Index/SourceIndexChild",
+                        "normalizedDataType": "ComplexType",
+                        "properties": "Repeating",
+                        "children": [
+                          {
+                            "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Index/SourceIndexChild/SourceIndexChildChild/SourceDirect",
+                            "name": "SourceDirect",
+                            "fullName": "SourceDirect",
+                            "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Index/SourceIndexChild/SourceIndexChildChild",
+                            "normalizedDataType": "String",
+                            "properties": "NotSpecified",
+                            "children": []
+                          },
+                          {
+                            "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Index/SourceIndexChild/SourceIndexChildChild/SourceFunctionChain",
+                            "name": "SourceFunctionChain",
+                            "fullName": "SourceFunctionChain",
+                            "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Index/SourceIndexChild/SourceIndexChildChild",
+                            "normalizedDataType": "String",
+                            "properties": "NotSpecified",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Conditional",
@@ -299,8 +386,38 @@
                 "fullName": "Conditional",
                 "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToOne",
                 "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
-                "children": []
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Conditional/SourceConditionalChild",
+                    "name": "SourceConditionalChild",
+                    "fullName": "SourceConditionalChild",
+                    "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Conditional",
+                    "normalizedDataType": "ComplexType",
+                    "properties": "Repeating",
+                    "children": [
+                      {
+                        "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Conditional/SourceConditionalChild/SourceConditionalChildChild",
+                        "name": "SourceConditionalChildChild",
+                        "fullName": "SourceConditionalChildChild",
+                        "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Conditional/SourceConditionalChild",
+                        "normalizedDataType": "ComplexType",
+                        "properties": "Repeating",
+                        "children": [
+                          {
+                            "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Conditional/SourceConditionalChild/SourceConditionalChildChild/SourceDirect",
+                            "name": "SourceDirect",
+                            "fullName": "SourceDirect",
+                            "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToOne/Conditional/SourceConditionalChild/SourceConditionalChildChild",
+                            "normalizedDataType": "String",
+                            "properties": "NotSpecified",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "key": "/ns0:SourceSchemaRoot/Looping/ManyToOne/StressTest",
@@ -440,8 +557,47 @@
                 "fullName": "Index",
                 "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToMany",
                 "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
-                "children": []
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Index/SourceIndexChild",
+                    "name": "SourceIndexChild",
+                    "fullName": "SourceIndexChild",
+                    "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Index",
+                    "normalizedDataType": "ComplexType",
+                    "properties": "Repeating",
+                    "children": [
+                      {
+                        "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Index/SourceIndexChild/SourceIndexChildChild",
+                        "name": "SourceIndexChildChild",
+                        "fullName": "SourceIndexChildChild",
+                        "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Index/SourceIndexChild",
+                        "normalizedDataType": "ComplexType",
+                        "properties": "Repeating",
+                        "children": [
+                          {
+                            "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Index/SourceIndexChild/SourceIndexChildChild/SourceDirect",
+                            "name": "SourceDirect",
+                            "fullName": "SourceDirect",
+                            "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Index/SourceIndexChild/SourceIndexChildChild",
+                            "normalizedDataType": "String",
+                            "properties": "NotSpecified",
+                            "children": []
+                          },
+                          {
+                            "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Index/SourceIndexChild/SourceIndexChildChild/SourceFunctionChain",
+                            "name": "SourceFunctionChain",
+                            "fullName": "SourceFunctionChain",
+                            "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Index/SourceIndexChild/SourceIndexChildChild",
+                            "normalizedDataType": "String",
+                            "properties": "NotSpecified",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Conditional",
@@ -449,8 +605,38 @@
                 "fullName": "Conditional",
                 "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToMany",
                 "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
-                "children": []
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Conditional/SourceConditionalChild",
+                    "name": "SourceConditionalChild",
+                    "fullName": "SourceConditionalChild",
+                    "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Conditional",
+                    "normalizedDataType": "ComplexType",
+                    "properties": "Repeating",
+                    "children": [
+                      {
+                        "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Conditional/SourceConditionalChild/SourceConditionalChildChild",
+                        "name": "SourceConditionalChildChild",
+                        "fullName": "SourceConditionalChildChild",
+                        "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Conditional/SourceConditionalChild",
+                        "normalizedDataType": "ComplexType",
+                        "properties": "Repeating",
+                        "children": [
+                          {
+                            "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Conditional/SourceConditionalChild/SourceConditionalChildChild/SourceDirect",
+                            "name": "SourceDirect",
+                            "fullName": "SourceDirect",
+                            "parentKey": "/ns0:SourceSchemaRoot/Looping/ManyToMany/Conditional/SourceConditionalChild/SourceConditionalChildChild",
+                            "normalizedDataType": "String",
+                            "properties": "NotSpecified",
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "key": "/ns0:SourceSchemaRoot/Looping/ManyToMany/StressTest",

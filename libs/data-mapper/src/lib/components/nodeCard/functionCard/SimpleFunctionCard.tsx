@@ -2,7 +2,7 @@ import { ReactFlowNodeType } from '../../../constants/ReactFlowConstants';
 import { customTokens } from '../../../core';
 import { deleteCurrentlySelectedItem, setSelectedItem } from '../../../core/state/DataMapSlice';
 import type { RootState } from '../../../core/state/Store';
-import { getIconForFunction } from '../../../utils/Icon.Utils';
+import { FunctionIcon } from '../../functionIcon/FunctionIcon';
 import HandleWrapper from './../HandleWrapper';
 import { errorCardStyles, getStylesForSharedState, selectedCardStyles } from './../NodeCard';
 import type { FunctionCardProps } from './FunctionCard';
@@ -19,6 +19,7 @@ import { Position } from 'reactflow';
 export const SimpleFunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const { functionData, disabled, functionBranding, displayHandle, onClick, dataTestId } = props.data;
   const reactFlowId = props.id;
+
   const dispatch = useDispatch();
   const classes = useFunctionCardStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
@@ -108,12 +109,12 @@ export const SimpleFunctionCard = (props: NodeProps<FunctionCardProps>) => {
         relationship="label"
       >
         <Button onClick={onClick} className={mergedClasses} style={cardStyle} disabled={!!disabled}>
-          {getIconForFunction(
-            functionData.functionName,
-            functionData.category,
-            functionData.iconFileName,
-            tokens.colorNeutralForegroundInverted
-          )}
+          <FunctionIcon
+            name={functionData.functionName}
+            categoryName={functionData.category}
+            fileName={functionData.iconFileName}
+            color={tokens.colorNeutralForegroundInverted}
+          />
         </Button>
       </Tooltip>
 

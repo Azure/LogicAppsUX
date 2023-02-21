@@ -13,7 +13,6 @@ export const defaultDataMapperApiServiceOptions = {
 
 export interface IDataMapperApiService {
   getFunctionsManifest(): Promise<FunctionManifest>;
-  getSchemas(): Promise<SchemaInfoProperties[]>;
   getSchemaFile(schemaName: string): Promise<any>;
   generateDataMapXslt(dataMapDefinition: string): Promise<string>;
   testDataMap(dataMapXsltFilename: string, schemaInputValue: string): Promise<TestMapResponse>;
@@ -34,20 +33,6 @@ export const DataMapperApiServiceInstance = (): IDataMapperApiService => {
 
   return service;
 };
-
-export interface SchemaInfoProperties {
-  name: string;
-  size: number;
-  mtime: string;
-  crtime: string;
-  mime: string;
-  href: string;
-  path: string;
-}
-
-export enum ResourceType {
-  schemaList = 'schemaList',
-}
 
 export interface GenerateXsltResponse {
   xsltContent: string;

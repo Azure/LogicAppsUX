@@ -1,9 +1,9 @@
-import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, sourceMockSchema, targetMockSchema } from '../../__mocks__';
 import type { MapDefinitionEntry } from '../../models';
 import { functionMock, ifPseudoFunctionKey, directAccessPseudoFunctionKey, indexPseudoFunctionKey } from '../../models';
 import type { ConnectionUnit } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { convertFromMapDefinition } from '../MapDefinitionDeserializer';
+import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockSchema, targetMockSchema } from '__mocks__/schemas';
 
 describe('mapDefinitions/MapDefinitionDeserializer', () => {
   const simpleMap: MapDefinitionEntry = {
@@ -445,8 +445,8 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
       expect(resultEntries[5][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
       expect(resultEntries[5][1]).toBeTruthy();
-      expect(resultEntries[5][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping/ItemPrice');
-      expect(resultEntries[5][1].outputs[1].reactFlowKey).toContain('Multiply');
+      expect(resultEntries[5][1].outputs[0].reactFlowKey).toContain('Multiply');
+      expect(resultEntries[5][1].outputs[1].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping/ItemPrice');
       expect(resultEntries[5][1].outputs[2].reactFlowKey).toContain('Multiply');
 
       expect(resultEntries[6][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
@@ -723,17 +723,20 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
     });
 
     it('creates a many-to-many loop connection', () => {
-      const extendedLoopSource = convertSchemaToSchemaExtended(layeredLoopSourceMockSchema);
-      const extendedLoopTarget = convertSchemaToSchemaExtended(layeredLoopTargetMockSchema);
-      simpleMap['ns0:Root'] = {
-        ManyToMany: {
-          '$for(/ns0:Root/ManyToMany/SourceYear)': {
-            Year: {
-              '$for(SourceMonth)': {
-                Month: {
-                  '$for(SourceDay)': {
-                    Day: {
-                      Date: 'SourceDate',
+      const extendedLoopSource = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
+      const extendedLoopTarget = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
+      delete simpleMap['ns0:Root'];
+      simpleMap['ns0:TargetSchemaRoot'] = {
+        Looping: {
+          ManyToMany: {
+            '$for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple)': {
+              Simple: {
+                '$for(SourceSimpleChild)': {
+                  SimpleChild: {
+                    '$for(SourceSimpleChildChild)': {
+                      SimpleChildChild: {
+                        Direct: 'SourceDirect',
+                      },
                     },
                   },
                 },
@@ -746,31 +749,38 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       const result = convertFromMapDefinition(simpleMap, extendedLoopSource, extendedLoopTarget, []);
       expect(Object.entries(result).length).toEqual(8);
 
-      expect((result['target-/ns0:Root/ManyToMany/Year'].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
-        'source-/ns0:Root/ManyToMany/SourceYear'
+      expect((result['target-/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple'].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        'source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple'
       );
-      expect((result['target-/ns0:Root/ManyToMany/Year/Month'].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
-        'source-/ns0:Root/ManyToMany/SourceYear/SourceMonth'
-      );
-      expect((result['target-/ns0:Root/ManyToMany/Year/Month/Day'].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
-        'source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay'
-      );
+      expect(
+        (result['target-/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild'].inputs[0][0] as ConnectionUnit).reactFlowKey
+      ).toEqual('source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild');
+      expect(
+        (result['target-/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild'].inputs[0][0] as ConnectionUnit)
+          .reactFlowKey
+      ).toEqual('source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild');
 
-      expect((result['target-/ns0:Root/ManyToMany/Year/Month/Day/Date'].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
-        'source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate'
-      );
+      expect(
+        (
+          result['target-/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild/Direct']
+            .inputs[0][0] as ConnectionUnit
+        ).reactFlowKey
+      ).toEqual('source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect');
     });
 
     it('creates a many-to-one loop connection with nested index variables', () => {
-      const extendedLayeredLoopSource = convertSchemaToSchemaExtended(layeredLoopSourceMockSchema);
-      const extendedLayeredLoopTarget = convertSchemaToSchemaExtended(layeredLoopTargetMockSchema);
-      simpleMap['ns0:Root'] = {
-        ManyToOne: {
-          '$for(/ns0:Root/ManyToOne/SourceYear, $a)': {
-            '$for(SourceMonth, $b)': {
-              '$for(SourceDay, $c)': {
-                Date: {
-                  DayName: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay[$b]/SourceDate',
+      const extendedComprehensiveSourceSchema = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
+      const extendedComprehensiveTargetSchema = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
+      delete simpleMap['ns0:Root'];
+      simpleMap['ns0:TargetSchemaRoot'] = {
+        Looping: {
+          ManyToOne: {
+            '$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple, $a)': {
+              '$for(SourceSimpleChild, $b)': {
+                '$for(SourceSimpleChildChild, $c)': {
+                  Simple: {
+                    Direct: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild[$b]/SourceDirect',
+                  },
                 },
               },
             },
@@ -778,38 +788,49 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         },
       };
 
-      const result = convertFromMapDefinition(simpleMap, extendedLayeredLoopSource, extendedLayeredLoopTarget, functionMock);
+      const result = convertFromMapDefinition(
+        simpleMap,
+        extendedComprehensiveSourceSchema,
+        extendedComprehensiveTargetSchema,
+        functionMock
+      );
 
       expect(Object.entries(result).length).toEqual(10);
 
-      const indexRfKey1 = (result['target-/ns0:Root/ManyToOne/Date'].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      const indexRfKey1 = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'].inputs[0][0] as ConnectionUnit).reactFlowKey;
       expect(indexRfKey1).toContain(indexPseudoFunctionKey);
       expect((result[indexRfKey1].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
-        'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay'
+        'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild'
       );
 
-      const indexRfKey2 = (result['target-/ns0:Root/ManyToOne/Date'].inputs[0][1] as ConnectionUnit).reactFlowKey;
+      const indexRfKey2 = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'].inputs[0][1] as ConnectionUnit).reactFlowKey;
       expect(indexRfKey2).toContain(indexPseudoFunctionKey);
-      expect((result[indexRfKey2].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/ManyToOne/SourceYear/SourceMonth');
+      expect((result[indexRfKey2].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild'
+      );
 
-      const indexRfKey3 = (result['target-/ns0:Root/ManyToOne/Date'].inputs[0][2] as ConnectionUnit).reactFlowKey;
+      const indexRfKey3 = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'].inputs[0][2] as ConnectionUnit).reactFlowKey;
       expect(indexRfKey3).toContain(indexPseudoFunctionKey);
-      expect((result[indexRfKey3].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe('source-/ns0:Root/ManyToOne/SourceYear');
+      expect((result[indexRfKey3].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
+        'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple'
+      );
 
-      const directAccessRfKey = (result['target-/ns0:Root/ManyToOne/Date/DayName'].inputs[0][0] as ConnectionUnit).reactFlowKey;
+      const directAccessRfKey = (result['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple/Direct'].inputs[0][0] as ConnectionUnit)
+        .reactFlowKey;
       expect(directAccessRfKey).toContain(directAccessPseudoFunctionKey);
       expect((result[directAccessRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(indexRfKey2);
       expect((result[directAccessRfKey].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
-        'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay'
+        'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild'
       );
       expect((result[directAccessRfKey].inputs[2][0] as ConnectionUnit).reactFlowKey).toBe(
-        'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate'
+        'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect'
       );
     });
 
     it('creates a loop connection with dot access', () => {
-      const extendedLoopSource = convertSchemaToSchemaExtended(sourceMockSchema);
-      const extendedLoopTarget = convertSchemaToSchemaExtended(targetMockSchema);
+      const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
+      const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema);
+      delete simpleMap['ns0:TargetSchemaRoot'];
       simpleMap['ns0:Root'] = {
         NameValueTransforms: {
           PO_Status: {
@@ -822,7 +843,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         },
       };
 
-      const result = convertFromMapDefinition(simpleMap, extendedLoopSource, extendedLoopTarget, []);
+      const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, []);
 
       expect(Object.entries(result).length).toEqual(3);
 

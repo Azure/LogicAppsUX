@@ -1,4 +1,4 @@
-import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useIsConsumption, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { addParameter, deleteParameter, updateParameter } from '../../core/state/workflowparameters/workflowparametersSlice';
 import {
   useWorkflowParameters,
@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux';
 export const WorkflowParametersPanel = (props: CommonPanelProps) => {
   const dispatch = useDispatch();
   const readOnly = useReadOnly();
+  const isConsumption = useIsConsumption();
   const { isInverted } = useTheme();
   const workflowParameters = useWorkflowParameters();
   const workflowParametersValidationErrors = useWorkflowParameterValidationErrors();
@@ -33,6 +34,7 @@ export const WorkflowParametersPanel = (props: CommonPanelProps) => {
       <WorkflowParameters
         parameters={Object.entries(workflowParameters).map(([key, value]) => ({ id: key, ...value }))}
         isReadOnly={readOnly}
+        isConsumption={isConsumption}
         onDismiss={props.toggleCollapse}
         validationErrors={workflowParametersValidationErrors}
         onAddParameter={onWorkflowParameterAdd}

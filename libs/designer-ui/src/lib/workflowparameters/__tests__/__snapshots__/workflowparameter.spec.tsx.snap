@@ -4,9 +4,7 @@ exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
 <div
   className="msla-workflow-parameter"
 >
-  <div
-    className="msla-workflow-parameter-group"
-  >
+  <div>
     <div>
       <CustomizedCommandBarButton
         className="msla-workflow-parameter-heading-button"

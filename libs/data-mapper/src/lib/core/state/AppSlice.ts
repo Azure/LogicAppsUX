@@ -1,4 +1,4 @@
-import type { ThemeType } from '../DataMapperDesignerProvider';
+import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -7,7 +7,7 @@ export interface AppState {
 }
 
 const initialState: AppState = {
-  theme: 'light',
+  theme: ThemeType.Light,
 };
 
 export const appSlice = createSlice({

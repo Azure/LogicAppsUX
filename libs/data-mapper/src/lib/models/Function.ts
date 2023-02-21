@@ -6,6 +6,11 @@ export interface FunctionManifest {
   transformFunctions: FunctionData[];
 }
 
+export enum FunctionType {
+  PseudoFunction = 'PseudoFunction',
+  TransformationFunction = 'TransformationFunction',
+}
+
 export interface FunctionData {
   key: string;
   functionName: string;
@@ -45,13 +50,11 @@ export enum FunctionCategory {
 
 export type FunctionDictionary = { [key: string]: FunctionData };
 
-export const FunctionCategoryIconPrefix = 'dm_category_';
-
 export const indexPseudoFunctionKey = 'index';
 export const indexPseudoFunction: FunctionData = {
   key: indexPseudoFunctionKey,
   maxNumberOfInputs: 1,
-  type: 'PseudoFunction',
+  type: FunctionType.PseudoFunction,
   functionName: '',
   outputValueType: NormalizedDataType.Any,
   inputs: [
@@ -72,7 +75,7 @@ export const ifPseudoFunctionKey = 'if';
 export const ifPseudoFunction: FunctionData = {
   key: ifPseudoFunctionKey,
   maxNumberOfInputs: 2,
-  type: 'PseudoFunction',
+  type: FunctionType.PseudoFunction,
   functionName: mapNodeParams.if,
   outputValueType: NormalizedDataType.Any,
   inputs: [
@@ -100,7 +103,7 @@ export const directAccessPseudoFunctionKey = 'directAccess';
 export const directAccessPseudoFunction: FunctionData = {
   key: directAccessPseudoFunctionKey,
   maxNumberOfInputs: 3,
-  type: 'PseudoFunction',
+  type: FunctionType.PseudoFunction,
   functionName: '',
   outputValueType: NormalizedDataType.Any,
   inputs: [
@@ -138,7 +141,7 @@ export const functionMock: FunctionData[] = [
   {
     key: 'Maximum',
     maxNumberOfInputs: 2,
-    type: 'TransformationFunction',
+    type: FunctionType.TransformationFunction,
     functionName: 'max',
     outputValueType: NormalizedDataType.Number,
     inputs: [
@@ -167,7 +170,7 @@ export const functionMock: FunctionData[] = [
   {
     key: 'Minimum',
     maxNumberOfInputs: 2,
-    type: 'TransformationFunction',
+    type: FunctionType.TransformationFunction,
     functionName: 'min',
     outputValueType: NormalizedDataType.Number,
     inputs: [
@@ -197,7 +200,7 @@ export const functionMock: FunctionData[] = [
   {
     key: 'Average',
     maxNumberOfInputs: 2,
-    type: 'TransformationFunction',
+    type: FunctionType.TransformationFunction,
     functionName: 'avg',
     outputValueType: NormalizedDataType.Number,
     inputs: [
@@ -226,7 +229,7 @@ export const functionMock: FunctionData[] = [
   {
     key: 'CurrentDate',
     maxNumberOfInputs: 0,
-    type: 'TransformationFunction',
+    type: FunctionType.TransformationFunction,
     functionName: 'current-date',
     outputValueType: NormalizedDataType.DateTime,
     inputs: [],
@@ -238,7 +241,7 @@ export const functionMock: FunctionData[] = [
   {
     key: 'ToLower',
     maxNumberOfInputs: 1,
-    type: 'TransformationFunction',
+    type: FunctionType.TransformationFunction,
     functionName: 'lower-case',
     outputValueType: NormalizedDataType.String,
     inputs: [
@@ -259,7 +262,7 @@ export const functionMock: FunctionData[] = [
   {
     key: 'Concat',
     maxNumberOfInputs: -1,
-    type: 'TransformationFunction',
+    type: FunctionType.TransformationFunction,
     functionName: 'concat',
     outputValueType: NormalizedDataType.String,
     inputs: [
@@ -280,7 +283,7 @@ export const functionMock: FunctionData[] = [
   {
     key: 'ToString',
     maxNumberOfInputs: 1,
-    type: 'TransformationFunction',
+    type: FunctionType.TransformationFunction,
     functionName: 'string',
     outputValueType: NormalizedDataType.String,
     inputs: [
@@ -301,7 +304,7 @@ export const functionMock: FunctionData[] = [
   {
     key: 'IsNull',
     maxNumberOfInputs: 1,
-    type: 'TransformationFunction',
+    type: FunctionType.TransformationFunction,
     functionName: 'is-null',
     outputValueType: NormalizedDataType.Boolean,
     inputs: [
@@ -321,7 +324,7 @@ export const functionMock: FunctionData[] = [
   {
     key: 'IsGreater',
     maxNumberOfInputs: 2,
-    type: 'TransformationFunction',
+    type: FunctionType.TransformationFunction,
     functionName: 'is-greater-than',
     outputValueType: NormalizedDataType.Boolean,
     inputs: [
@@ -348,7 +351,7 @@ export const functionMock: FunctionData[] = [
   {
     key: 'Multiply',
     maxNumberOfInputs: -1,
-    type: 'TransformationFunction',
+    type: FunctionType.TransformationFunction,
     functionName: 'multiply',
     outputValueType: NormalizedDataType.Number,
     inputs: [
@@ -368,7 +371,7 @@ export const functionMock: FunctionData[] = [
   {
     key: 'IsEqual',
     maxNumberOfInputs: 2,
-    type: 'TransformationFunction',
+    type: FunctionType.TransformationFunction,
     functionName: 'is-equal',
     outputValueType: NormalizedDataType.Boolean,
     inputs: [
@@ -395,7 +398,7 @@ export const functionMock: FunctionData[] = [
   {
     key: 'SubString',
     maxNumberOfInputs: 3,
-    type: 'TransformationFunction',
+    type: FunctionType.TransformationFunction,
     functionName: 'substring',
     outputValueType: NormalizedDataType.String,
     inputs: [
@@ -429,7 +432,7 @@ export const functionMock: FunctionData[] = [
   {
     key: 'Count',
     maxNumberOfInputs: 1,
-    type: 'TransformationFunction',
+    type: FunctionType.TransformationFunction,
     functionName: 'count',
     outputValueType: NormalizedDataType.Integer,
     inputs: [
@@ -449,7 +452,7 @@ export const functionMock: FunctionData[] = [
   {
     key: 'Divide',
     maxNumberOfInputs: 2,
-    type: 'TransformationFunction',
+    type: FunctionType.TransformationFunction,
     functionName: 'divide',
     outputValueType: NormalizedDataType.Number,
     inputs: [
