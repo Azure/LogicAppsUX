@@ -1,7 +1,7 @@
-import type { RootState } from '../../core/state/Store';
-import { iconForMapCheckerSeverity } from '../../utils/Icon.Utils';
-import type { IntlMessage } from '../../utils/Intl.Utils';
-import { selectedCardStyles } from '../nodeCard/NodeCard';
+import type { RootState } from '../../../../core/state/Store';
+import { iconForMapCheckerSeverity } from '../../../../utils/Icon.Utils';
+import type { IntlMessage } from '../../../../utils/Intl.Utils';
+import { selectedCardStyles } from '../../../nodeCard/NodeCard';
 import { Stack } from '@fluentui/react';
 import { Button, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import type { CSSProperties } from 'react';

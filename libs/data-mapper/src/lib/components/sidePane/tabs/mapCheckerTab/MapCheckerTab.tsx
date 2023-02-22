@@ -1,84 +1,33 @@
-import { targetPrefix } from '../../constants/ReactFlowConstants';
-import { setCurrentTargetSchemaNode, setSelectedItem } from '../../core/state/DataMapSlice';
-import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
-import type { ConnectionDictionary } from '../../models/Connection';
-import { getConnectedTargetSchemaNodes } from '../../utils/Connection.Utils';
-import { iconForMapCheckerSeverity } from '../../utils/Icon.Utils';
+import { targetPrefix } from '../../../../constants/ReactFlowConstants';
+import { setCurrentTargetSchemaNode, setSelectedItem } from '../../../../core/state/DataMapSlice';
+import type { AppDispatch, RootState } from '../../../../core/state/Store';
+import type { SchemaNodeDictionary, SchemaNodeExtended } from '../../../../models';
+import type { ConnectionDictionary } from '../../../../models/Connection';
+import { getConnectedTargetSchemaNodes } from '../../../../utils/Connection.Utils';
+import { iconForMapCheckerSeverity } from '../../../../utils/Icon.Utils';
 import {
   collectErrorsForMapChecker,
   collectInfoForMapChecker,
   collectOtherForMapChecker,
   collectWarningsForMapChecker,
-} from '../../utils/MapChecker.Utils';
+} from '../../../../utils/MapChecker.Utils';
 import type { MapCheckerEntry } from './MapCheckerItem';
 import { MapCheckerItem, MapCheckerItemSeverity } from './MapCheckerItem';
 import { Stack } from '@fluentui/react';
-import {
-  Accordion,
-  AccordionHeader,
-  AccordionItem,
-  AccordionPanel,
-  Button,
-  makeStyles,
-  shorthands,
-  Text,
-  tokens,
-  typographyStyles,
-} from '@fluentui/react-components';
-import { CheckmarkCircle20Filled, Dismiss20Regular } from '@fluentui/react-icons';
+import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Text, tokens } from '@fluentui/react-components';
+import { CheckmarkCircle20Filled } from '@fluentui/react-icons';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-export const schemaRootKey = 'schemaRoot';
-
-const useStyles = makeStyles({
-  containerStyle: {
-    height: '100%',
-    ...shorthands.overflow('hidden'),
-    minWidth: '320px',
-    width: '25%',
-    ...shorthands.padding('12px'),
-    boxSizing: 'border-box',
-    backgroundColor: tokens.colorNeutralBackground1,
-    ...shorthands.borderRadius(tokens.borderRadiusMedium),
-    flexDirection: 'column',
-  },
-  titleTextStyle: {
-    ...typographyStyles.body1Strong,
-  },
-  editorStyle: {
-    ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
-    ...shorthands.borderRadius(tokens.borderRadiusMedium),
-    ...shorthands.padding('10px'),
-  },
-});
-
-export interface TargetSchemaPaneProps {
-  isMapCheckerOpen: boolean;
-  closeMapChecker: () => void;
-}
-
-export const MapCheckerPane = ({ isMapCheckerOpen, closeMapChecker }: TargetSchemaPaneProps) => {
+export const MapCheckerTab = () => {
   const intl = useIntl();
-  const styles = useStyles();
   const dispatch = useDispatch<AppDispatch>();
 
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
-
-  const mapCheckerLoc = intl.formatMessage({
-    defaultMessage: 'Map checker',
-    description: 'Map checker title',
-  });
-
-  const closeMapCheckerLoc = intl.formatMessage({
-    defaultMessage: 'Close the map checker',
-    description: 'Map checker close button',
-  });
 
   const errorTitleLoc = intl.formatMessage({
     defaultMessage: 'Errors',
@@ -213,58 +162,48 @@ export const MapCheckerPane = ({ isMapCheckerOpen, closeMapChecker }: TargetSche
   const totalItems = errorItems.length + warningItems.length + infoItems.length + otherItems.length;
 
   return (
-    <div className={styles.containerStyle} style={{ display: isMapCheckerOpen ? 'flex' : 'none', width: '40px' }}>
-      <Stack horizontal verticalAlign="center" style={{ justifyContent: 'space-between', marginBottom: '12px', marginTop: '4px' }}>
-        <Stack horizontal verticalAlign="center">
-          <Text className={styles.titleTextStyle} style={{ marginLeft: '8px' }}>
-            {mapCheckerLoc}
-          </Text>
+    <div style={{ overflowY: 'scroll', width: '100%', flex: '1 1 1px' }}>
+      {totalItems > 0 ? (
+        <Accordion multiple collapsible defaultOpenItems={[MapCheckerItemSeverity.Error, MapCheckerItemSeverity.Warning]}>
+          {errorItems.length > 0 && (
+            <AccordionItem value={MapCheckerItemSeverity.Error}>
+              <AccordionHeader icon={iconForMapCheckerSeverity(MapCheckerItemSeverity.Error)} size="large">
+                {errorTitleLoc}
+              </AccordionHeader>
+              <AccordionPanel>{errorItems}</AccordionPanel>
+            </AccordionItem>
+          )}
+          {warningItems.length > 0 && (
+            <AccordionItem value={MapCheckerItemSeverity.Warning}>
+              <AccordionHeader icon={iconForMapCheckerSeverity(MapCheckerItemSeverity.Warning)} size="large">
+                {warningTitleLoc}
+              </AccordionHeader>
+              <AccordionPanel>{warningItems}</AccordionPanel>
+            </AccordionItem>
+          )}
+          {infoItems.length > 0 && (
+            <AccordionItem value={MapCheckerItemSeverity.Info}>
+              <AccordionHeader icon={iconForMapCheckerSeverity(MapCheckerItemSeverity.Info)} size="large">
+                {infoTitleLoc}
+              </AccordionHeader>
+              <AccordionPanel>{infoItems}</AccordionPanel>
+            </AccordionItem>
+          )}
+          {otherItems.length > 0 && (
+            <AccordionItem value={MapCheckerItemSeverity.Unknown}>
+              <AccordionHeader icon={iconForMapCheckerSeverity(MapCheckerItemSeverity.Unknown)} size="large">
+                {otherTitleLoc}
+              </AccordionHeader>
+              <AccordionPanel>{otherItems}</AccordionPanel>
+            </AccordionItem>
+          )}
+        </Accordion>
+      ) : (
+        <Stack horizontal>
+          <CheckmarkCircle20Filled height={20} width={20} primaryFill={tokens.colorPaletteGreenBackground3} />
+          <Text>{noItemsLoc}</Text>
         </Stack>
-        <Button icon={<Dismiss20Regular />} appearance="subtle" onClick={closeMapChecker} aria-label={closeMapCheckerLoc} />
-      </Stack>
-      <div style={{ overflowY: 'scroll', flex: '1 1 1px' }}>
-        {totalItems > 0 ? (
-          <Accordion multiple collapsible defaultOpenItems={[MapCheckerItemSeverity.Error, MapCheckerItemSeverity.Warning]}>
-            {errorItems.length > 0 && (
-              <AccordionItem value={MapCheckerItemSeverity.Error}>
-                <AccordionHeader icon={iconForMapCheckerSeverity(MapCheckerItemSeverity.Error)} size="large">
-                  {errorTitleLoc}
-                </AccordionHeader>
-                <AccordionPanel>{errorItems}</AccordionPanel>
-              </AccordionItem>
-            )}
-            {warningItems.length > 0 && (
-              <AccordionItem value={MapCheckerItemSeverity.Warning}>
-                <AccordionHeader icon={iconForMapCheckerSeverity(MapCheckerItemSeverity.Warning)} size="large">
-                  {warningTitleLoc}
-                </AccordionHeader>
-                <AccordionPanel>{warningItems}</AccordionPanel>
-              </AccordionItem>
-            )}
-            {infoItems.length > 0 && (
-              <AccordionItem value={MapCheckerItemSeverity.Info}>
-                <AccordionHeader icon={iconForMapCheckerSeverity(MapCheckerItemSeverity.Info)} size="large">
-                  {infoTitleLoc}
-                </AccordionHeader>
-                <AccordionPanel>{infoItems}</AccordionPanel>
-              </AccordionItem>
-            )}
-            {otherItems.length > 0 && (
-              <AccordionItem value={MapCheckerItemSeverity.Unknown}>
-                <AccordionHeader icon={iconForMapCheckerSeverity(MapCheckerItemSeverity.Unknown)} size="large">
-                  {otherTitleLoc}
-                </AccordionHeader>
-                <AccordionPanel>{otherItems}</AccordionPanel>
-              </AccordionItem>
-            )}
-          </Accordion>
-        ) : (
-          <Stack horizontal>
-            <CheckmarkCircle20Filled height={20} width={20} primaryFill={tokens.colorPaletteGreenBackground3} />
-            <Text>{noItemsLoc}</Text>
-          </Stack>
-        )}
-      </div>
+      )}
     </div>
   );
 };
