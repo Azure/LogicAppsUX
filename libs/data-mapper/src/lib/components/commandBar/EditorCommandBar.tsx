@@ -71,11 +71,10 @@ export interface EditorCommandBarProps {
   onUndoClick: () => void;
   onRedoClick: () => void;
   onTestClick: () => void;
-  onMapCheckerClick: () => void;
 }
 
 export const EditorCommandBar = (props: EditorCommandBarProps) => {
-  const { onSaveClick, onUndoClick, onRedoClick, onTestClick, onMapCheckerClick } = props;
+  const { onSaveClick, onUndoClick, onRedoClick, onTestClick } = props;
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -130,10 +129,6 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       RUN_TEST: intl.formatMessage({
         defaultMessage: 'Test',
         description: 'Button text for running test',
-      }),
-      MAP_CHECKER: intl.formatMessage({
-        defaultMessage: 'Map Checker',
-        description: 'Button text for open the map checker',
       }),
       CONFIGURATION: intl.formatMessage({
         defaultMessage: 'Configure',
@@ -223,16 +218,6 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         ...cmdBarItemBgStyles,
       },
       {
-        key: 'map-checker',
-        text: Resources.MAP_CHECKER,
-        ariaLabel: Resources.MAP_CHECKER,
-        iconProps: { iconName: 'Medical' },
-        onClick: onMapCheckerClick,
-        disabled: !bothSchemasDefined,
-        buttonStyles: cmdBarButtonStyles,
-        ...cmdBarItemBgStyles,
-      },
-      {
         ...divider,
         key: 'test-config-divider',
         ariaLabel: Resources.DIVIDER,
@@ -260,7 +245,6 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       Resources.DISCARD,
       Resources.DIVIDER,
       Resources.RUN_TEST,
-      Resources.MAP_CHECKER,
       Resources.CONFIGURATION,
       onSaveClick,
       bothSchemasDefined,
@@ -272,7 +256,6 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       triggerDiscardWarningModal,
       onTestClick,
       xsltFilename,
-      onMapCheckerClick,
       dispatch,
     ]
   );

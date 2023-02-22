@@ -1,4 +1,4 @@
-import { MapCheckerItemSeverity } from '../components/mapChecker/MapCheckerItem';
+import { MapCheckerItemSeverity } from '../components/sidePane/tabs/mapCheckerTab/MapCheckerItem';
 import { Collection20Regular, StringCategory20Regular } from '../images/CategoryIcons';
 import {
   Any16Filled,
