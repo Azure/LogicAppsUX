@@ -8,7 +8,7 @@ import { ButtonPivot } from '../buttonPivot/ButtonPivot';
 import { FloatingPanel } from '../floatingPanel/FloatingPanel';
 import type { FloatingPanelProps } from '../floatingPanel/FloatingPanel';
 import { FunctionList } from '../functionList/FunctionList';
-import { schemaRootKey } from '../targetSchemaPane/TargetSchemaPane';
+import { schemaRootKey } from '../sidePane/tabs/targetSchemaTab/TargetSchemaTab';
 import { getDefaultFilteredDataTypesDict, SchemaTreeSearchbar } from '../tree/SchemaTreeSearchbar';
 import type { FilteredDataTypesDict } from '../tree/SchemaTreeSearchbar';
 import SourceSchemaTreeItem, { SourceSchemaTreeHeader, useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';

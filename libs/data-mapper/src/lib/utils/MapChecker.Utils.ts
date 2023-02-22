@@ -1,5 +1,5 @@
-import type { MapCheckerEntry } from '../components/mapChecker/MapCheckerItem';
-import { MapCheckerItemSeverity } from '../components/mapChecker/MapCheckerItem';
+import type { MapCheckerEntry } from '../components/sidePane/tabs/mapCheckerTab/MapCheckerItem';
+import { MapCheckerItemSeverity } from '../components/sidePane/tabs/mapCheckerTab/MapCheckerItem';
 import { sourcePrefix } from '../constants/ReactFlowConstants';
 import type { FunctionData, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import { NormalizedDataType, SchemaNodeProperty } from '../models';
