@@ -153,7 +153,7 @@ export const SidePane = ({ isExpanded, setIsExpanded, sidePaneTab, setSidePaneTa
           style={
             !isExpanded
               ? { display: 'none' }
-              : { display: 'flex', flexDirection: 'column', marginLeft: '40px', width: '290px', height: '100%' }
+              : { display: 'flex', flexDirection: 'column', marginLeft: '40px', marginTop: '8px', width: '290px', height: '100%' }
           }
           horizontal={false}
           verticalFill={true}
