@@ -261,21 +261,14 @@ export const convertWholeDataMapToElkGraph = (
 // REASON: Lots of optional properties in ElkNodes, and TS didn't persist undefined checks within sub-blocks (ex: forEach)
 const applyCustomLayout = async (graph: ElkNode, useExpandedFunctionCards?: boolean): Promise<ElkNode> => {
   const schemaNodeCardVGap = 8;
-  const xInterval = functionNodeCardSize * (useExpandedFunctionCards ? 6 : 4);
+  const xInterval = functionNodeCardSize * (useExpandedFunctionCards ? 3 : 1.5);
+  const yInterval = functionNodeCardSize * (useExpandedFunctionCards ? 2 : 1);
   const maxFunctionsPerToolbarRow = 4;
   const functionToolbarStartY = -64;
 
   const getSchemaNodeYPos = (nodeIdx: number) => nodeIdx * (schemaNodeCardHeight + (nodeIdx === 0 ? 0 : schemaNodeCardVGap));
 
-  if (
-    graph.children &&
-    graph.children[0] &&
-    graph.children[0].children &&
-    graph.children[1] &&
-    graph.children[1].children &&
-    graph.children[2] &&
-    graph.children[2].children
-  ) {
+  if (graph.children && graph.children[0]?.children && graph.children[1]?.children && graph.children[2]?.children) {
     // Assign placeholder values to node blocks as they aren't used w/ this custom layouting
     graph.children[0].x = 0;
     graph.children[0].y = 0;
@@ -344,12 +337,12 @@ const applyCustomLayout = async (graph: ElkNode, useExpandedFunctionCards?: bool
       if (compiledInputPositions.length === 0) {
         if (numOutputs === 0) {
           // Completely unconnected nodes -> place in next toolbar slot
-          fnNodeXPos = fnStartX + functionNodeCardSize * nextAvailableToolbarSpot[0] * (useExpandedFunctionCards ? 2 : 1);
-          fnNodeYPos = functionToolbarStartY - functionNodeCardSize * nextAvailableToolbarSpot[1] * (useExpandedFunctionCards ? 2 : 1);
+          fnNodeXPos = fnStartX + nextAvailableToolbarSpot[0] * xInterval;
+          fnNodeYPos = functionToolbarStartY - nextAvailableToolbarSpot[1] * yInterval;
 
-          nextAvailableToolbarSpot[1] =
-            nextAvailableToolbarSpot[0] === maxFunctionsPerToolbarRow ? nextAvailableToolbarSpot[1] + 1 : nextAvailableToolbarSpot[1];
-          nextAvailableToolbarSpot[0] = nextAvailableToolbarSpot[0] === maxFunctionsPerToolbarRow ? 0 : nextAvailableToolbarSpot[0] + 1;
+          const hasReachedRowMax = nextAvailableToolbarSpot[0] === maxFunctionsPerToolbarRow - 1;
+          nextAvailableToolbarSpot[1] = hasReachedRowMax ? nextAvailableToolbarSpot[1] + 1 : nextAvailableToolbarSpot[1];
+          nextAvailableToolbarSpot[0] = hasReachedRowMax ? 0 : nextAvailableToolbarSpot[0] + 1;
         } else if (fnNodeOnlyOutputsToTargetSchema) {
           fnNodeIdsThatOnlyOutputToTargetSchema.push(fnNode.id);
         }
@@ -391,7 +384,7 @@ const applyCustomLayout = async (graph: ElkNode, useExpandedFunctionCards?: bool
     });
 
     // Target schema node positioning
-    const tgtSchemaStartX = farthestRightFnNodeXPos + functionNodeCardSize * (useExpandedFunctionCards ? 2 : 1) + xInterval;
+    const tgtSchemaStartX = farthestRightFnNodeXPos + xInterval + schemaNodeCardDefaultWidth;
     graph.children[2].children.forEach((tgtSchemaNode, idx) => {
       tgtSchemaNode.x = tgtSchemaStartX;
       tgtSchemaNode.y = getSchemaNodeYPos(idx);
@@ -413,6 +406,10 @@ const applyCustomLayout = async (graph: ElkNode, useExpandedFunctionCards?: bool
         fnNode.y = tgtSchemaOutputYPositions.reduce((curYTotal, curYPos) => curYTotal + curYPos, 0) / tgtSchemaOutputYPositions.length;
       }
     });
+
+    // Declare diagram size
+    graph.width = tgtSchemaStartX + schemaNodeCardDefaultWidth;
+    graph.height = graph.children[2].children[graph.children[2].children.length - 1].y;
   }
 
   return Promise.resolve(graph);
