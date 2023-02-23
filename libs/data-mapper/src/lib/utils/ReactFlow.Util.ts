@@ -80,8 +80,10 @@ export const useLayout = (
         useExpandedFunctionCards
       );
 
-      // Apply ELK layout
-      applyElkLayout(elkTreeFromCanvasNodes)
+      const useCustomLayouting = true;
+
+      // Compute ELK or custom layout
+      applyElkLayout(elkTreeFromCanvasNodes, useCustomLayouting)
         .then((computedElkTree) => {
           // Convert newly-calculated ELK node data to React Flow nodes + edges
           setReactFlowNodes([
@@ -199,7 +201,7 @@ export const convertSchemaToReactFlowNodes = (
     const curDepth = depthArray.indexOf(schemaNode.pathToRoot.length);
 
     const elkNode = elkTree.children?.find((node) => node.id === reactFlowId);
-    if (!elkNode || !elkNode.x || !elkNode.y || !elkTree.x || !elkTree.y) {
+    if (!elkNode || elkNode.x === undefined || elkNode.y === undefined || elkTree.x === undefined || elkTree.y === undefined) {
       LogService.error(LogCategory.ReactFlowUtils, 'convertToReactFlowNodes', {
         message: 'Layout error: ElkNode not found, or missing x/y',
         schemaType,
@@ -247,7 +249,13 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
 
   Object.entries(currentFunctionNodes).forEach(([functionKey, fnNode], idx) => {
     const elkNode = functionsElkTree.children?.find((node) => node.id === functionKey);
-    if (!elkNode || !elkNode.x || !elkNode.y || !functionsElkTree.x || !functionsElkTree.y) {
+    if (
+      !elkNode ||
+      elkNode.x === undefined ||
+      elkNode.y === undefined ||
+      functionsElkTree.x === undefined ||
+      functionsElkTree.y === undefined
+    ) {
       LogService.error(LogCategory.ReactFlowUtils, 'convertToReactFlowParentAndChildNodes', {
         message: 'Layout error: Function ElkNode not found, or missing x/y',
         elkData: {
@@ -409,11 +417,11 @@ export const useWholeViewLayout = (
 
         // Calculate diagram size
         /*
-      setDiagramSize({
-        width: computedElkTree.width ?? 0,
-        height: computedElkTree.height ?? 0,
-      });
-      */
+        setDiagramSize({
+          width: computedElkTree.width ?? 0,
+          height: computedElkTree.height ?? 0,
+        });
+        */
       })
       .catch((error) => {
         LogService.error(LogCategory.ReactFlowUtils, 'useEffect', {
