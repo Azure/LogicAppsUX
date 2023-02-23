@@ -6,8 +6,9 @@ import {
   StandardSearchService,
   StandardOAuthService,
   StandardGatewayService,
+  StandardRunService,
 } from '@microsoft/designer-client-services-logic-apps';
-import type { IApiHubServiceDetails } from '@microsoft/designer-client-services-logic-apps';
+import type { IApiHubServiceDetails, ContentType, IHostService, IWorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import { ResourceIdentityType, HTTP_METHODS } from '@microsoft/utils-logic-apps';
 
 const httpClient = new HttpClient();
@@ -17,7 +18,17 @@ export const getDesignerServices = (
   apiVersion: string,
   apiHubServiceDetails: IApiHubServiceDetails,
   isLocal: boolean
-): any => {
+): {
+  connectionService: StandardConnectionService;
+  connectorService: StandardConnectorService;
+  operationManifestService: StandardOperationManifestService;
+  searchService: StandardSearchService;
+  oAuthService: StandardOAuthService;
+  gatewayService: StandardGatewayService;
+  workflowService: IWorkflowService;
+  hostService: IHostService;
+  runService: StandardRunService;
+} => {
   const connectionService = new StandardConnectionService({
     baseUrl,
     apiVersion,
@@ -135,6 +146,16 @@ export const getDesignerServices = (
     },
   };
 
+  const hostService = { fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type) };
+
+  const runService = new StandardRunService({
+    apiVersion,
+    baseUrl,
+    workflowName: 'app',
+    httpClient,
+    isDev: true,
+  });
+
   return {
     connectionService,
     connectorService,
@@ -143,5 +164,7 @@ export const getDesignerServices = (
     oAuthService,
     gatewayService,
     workflowService,
+    hostService,
+    runService,
   };
 };

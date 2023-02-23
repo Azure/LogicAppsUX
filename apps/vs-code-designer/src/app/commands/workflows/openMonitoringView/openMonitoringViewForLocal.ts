@@ -103,6 +103,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
             readOnly: this.readOnly,
             isLocal: this.isLocal,
             isMonitoringView: this.isMonitoringView,
+            runId: this.runId,
           },
         });
         break;
