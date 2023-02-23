@@ -7,7 +7,7 @@ import { Theme } from '@microsoft/utils-logic-apps';
 import { useContext, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-export const App = async () => {
+export const App = () => {
   const vscodeState = useSelector((state: RootState) => state.designer);
   const { panelMetaData, connectionReferences, baseUrl, apiHubServiceDetails, readOnly, isLocal, apiVersion, isMonitoringView, runId } =
     vscodeState;
@@ -24,7 +24,7 @@ export const App = async () => {
   }, [baseUrl, apiVersion, apiHubServiceDetails, isLocal]);
 
   if (isMonitoringView && runId) {
-    const runInstance = await services.runService.getRun(runId);
+    const runInstance = services.runService.getRun(runId);
     console.log(runInstance);
   }
 
@@ -40,7 +40,7 @@ export const App = async () => {
     >
       {codelessApp ? (
         <BJSWorkflowProvider workflow={{ definition: codelessApp.definition, connectionReferences }}>
-          {readOnly ? null : <DesignerCommandBar />}
+          {readOnly ? null : <DesignerCommandBar isMonitoringView />}
           <Designer />
         </BJSWorkflowProvider>
       ) : null}
