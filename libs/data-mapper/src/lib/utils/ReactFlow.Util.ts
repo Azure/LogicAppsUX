@@ -83,7 +83,7 @@ export const useLayout = (
       const useCustomLayouting = true;
 
       // Compute ELK or custom layout
-      applyElkLayout(elkTreeFromCanvasNodes, useCustomLayouting)
+      applyElkLayout(elkTreeFromCanvasNodes, useCustomLayouting, useExpandedFunctionCards)
         .then((computedElkTree) => {
           // Convert newly-calculated ELK node data to React Flow nodes + edges
           setReactFlowNodes([

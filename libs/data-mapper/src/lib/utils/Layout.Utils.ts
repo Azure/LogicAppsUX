@@ -1,4 +1,5 @@
 import { functionNodeCardSize, schemaNodeCardDefaultWidth, schemaNodeCardHeight } from '../constants/NodeConstants';
+import { targetPrefix } from '../constants/ReactFlowConstants';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { FunctionDictionary } from '../models/Function';
@@ -256,11 +257,13 @@ export const convertWholeDataMapToElkGraph = (
 };
 
 /* eslint-disable no-param-reassign */
-const applyCustomLayout = async (graph: ElkNode): Promise<ElkNode> => {
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+// REASON: Lots of optional properties in ElkNodes, and TS didn't persist undefined checks within sub-blocks (ex: forEach)
+const applyCustomLayout = async (graph: ElkNode, useExpandedFunctionCards?: boolean): Promise<ElkNode> => {
   const schemaNodeCardVGap = 8;
-  const schemaToFunctionsHGap = 24;
-  const xInterval = 32;
-  // const yInterval = 32;
+  const xInterval = functionNodeCardSize * (useExpandedFunctionCards ? 6 : 4);
+  const maxFunctionsPerToolbarRow = 4;
+  const functionToolbarStartY = -64;
 
   const getSchemaNodeYPos = (nodeIdx: number) => nodeIdx * (schemaNodeCardHeight + (nodeIdx === 0 ? 0 : schemaNodeCardVGap));
 
@@ -273,7 +276,7 @@ const applyCustomLayout = async (graph: ElkNode): Promise<ElkNode> => {
     graph.children[2] &&
     graph.children[2].children
   ) {
-    // Misc setup
+    // Assign placeholder values to node blocks as they aren't used w/ this custom layouting
     graph.children[0].x = 0;
     graph.children[0].y = 0;
     graph.children[1].x = 0;
@@ -290,98 +293,48 @@ const applyCustomLayout = async (graph: ElkNode): Promise<ElkNode> => {
 
     // Function node positioning
     // - Find farthest right function node to position target schema from
-    const fnStartX = srcSchemaStartX + schemaNodeCardDefaultWidth + schemaToFunctionsHGap;
+    const fnStartX = srcSchemaStartX + schemaNodeCardDefaultWidth + xInterval;
     let farthestRightFnNodeXPos = fnStartX;
     const nextAvailableToolbarSpot = [0, 0]; // Grid representation (one node slot == 1x1)
 
-    const calculateFnNodePosition = (fnNode: ElkNode) => {
-      // Duplicate check above because TypeScript!
-      if (
-        !(
-          graph.children &&
-          graph.children[0] &&
-          graph.children[0].children &&
-          graph.children[1] &&
-          graph.children[1].children &&
-          graph.children[2] &&
-          graph.children[2].children
-        )
-      ) {
-        return;
-      }
+    const compiledInputPositions: number[][] = [];
+    let numOutputs = 0;
+    let fnNodeOnlyOutputsToTargetSchema = true;
+    const fnNodeIdsThatOnlyOutputToTargetSchema: string[] = [];
 
+    const compileInputPositionsAndOutputDetails = (edgeArray: ElkExtendedEdge[], fnNodeId: string): void => {
+      edgeArray.forEach((edge) => {
+        if (edge.sources.includes(fnNodeId)) {
+          numOutputs += 1;
+
+          if (!edge.targets[0].includes(targetPrefix)) {
+            fnNodeOnlyOutputsToTargetSchema = false;
+          }
+        } else if (edge.targets.includes(fnNodeId)) {
+          // Find input node, and get or calculate its position
+          const inputNode = [...graph.children![0].children!, ...graph.children![1].children!].find(
+            (srcSchemaOrFnNode) => srcSchemaOrFnNode.id === edge.sources[0]
+          );
+
+          if (inputNode) {
+            if (inputNode.x === undefined || inputNode.y === undefined) {
+              // Should recursively make sure all input chains are or get calculated
+              calculateFnNodePosition(inputNode);
+            }
+
+            compiledInputPositions.push([inputNode.x as number, inputNode.y as number]);
+          }
+        }
+      });
+    };
+
+    const calculateFnNodePosition = (fnNode: ElkNode): void => {
       // Compile positions of any inputs and number of outputs
-      const compiledInputPositions: number[][] = [];
-      let numOutputs = 0;
       if (graph.edges) {
-        // TODO: Combine the two if statement functionalities below into a single function
-        graph.edges.forEach((edge) => {
-          if (edge.sources.includes(fnNode.id)) {
-            numOutputs += 1;
-          } else if (edge.targets.includes(fnNode.id)) {
-            // Duplicate check above because TypeScript!
-            if (
-              !(
-                graph.children &&
-                graph.children[0] &&
-                graph.children[0].children &&
-                graph.children[1] &&
-                graph.children[1].children &&
-                graph.children[2] &&
-                graph.children[2].children
-              )
-            ) {
-              return;
-            }
-            // Find input node, and get or calculate its position
-            const inputNode = [...graph.children[0].children, ...graph.children[1].children].find(
-              (srcSchemaOrFnNode) => srcSchemaOrFnNode.id === edge.sources[0]
-            );
-
-            if (inputNode) {
-              if (!inputNode.x || !inputNode.y) {
-                // Should recursively make sure all input chains are or get calculated
-                calculateFnNodePosition(inputNode);
-              }
-
-              compiledInputPositions.push([inputNode.x as number, inputNode.y as number]);
-            }
-          }
-        });
+        compileInputPositionsAndOutputDetails(graph.edges, fnNode.id);
       }
-
-      if (graph.children[1].edges) {
-        graph.children[1].edges.forEach((edge) => {
-          if (edge.sources.includes(fnNode.id)) {
-            numOutputs += 1;
-          } else if (edge.targets.includes(fnNode.id)) {
-            // Duplicate check above because TypeScript!
-            if (
-              !(
-                graph.children &&
-                graph.children[0] &&
-                graph.children[0].children &&
-                graph.children[1] &&
-                graph.children[1].children &&
-                graph.children[2] &&
-                graph.children[2].children
-              )
-            ) {
-              return;
-            }
-            // Find input node, and get or calculate its position
-            const inputNode = graph.children[1].children.find((inputFnNode) => inputFnNode.id === edge.sources[0]);
-
-            if (inputNode) {
-              if (!inputNode.x || !inputNode.y) {
-                // Should recursively make sure all input chains are or get calculated
-                calculateFnNodePosition(inputNode);
-              }
-
-              compiledInputPositions.push([inputNode.x as number, inputNode.y as number]);
-            }
-          }
-        });
+      if (graph.children![1].edges) {
+        compileInputPositionsAndOutputDetails(graph.children![1].edges, fnNode.id);
       }
 
       // Initial calculation
@@ -391,16 +344,17 @@ const applyCustomLayout = async (graph: ElkNode): Promise<ElkNode> => {
       if (compiledInputPositions.length === 0) {
         if (numOutputs === 0) {
           // Completely unconnected nodes -> place in next toolbar slot
-          fnNodeXPos = nextAvailableToolbarSpot[0] * functionNodeCardSize;
-          fnNodeYPos = nextAvailableToolbarSpot[1] * functionNodeCardSize;
+          fnNodeXPos = fnStartX + functionNodeCardSize * nextAvailableToolbarSpot[0] * (useExpandedFunctionCards ? 2 : 1);
+          fnNodeYPos = functionToolbarStartY - functionNodeCardSize * nextAvailableToolbarSpot[1] * (useExpandedFunctionCards ? 2 : 1);
 
-          nextAvailableToolbarSpot[1] = nextAvailableToolbarSpot[0] === 8 ? nextAvailableToolbarSpot[1] + 1 : nextAvailableToolbarSpot[1];
-          nextAvailableToolbarSpot[0] = nextAvailableToolbarSpot[0] === 8 ? 0 : nextAvailableToolbarSpot[0] + 1;
-        } else {
-          // xPos == xInterval left of its (closest?) output
-          // yPos == same as output (or middle of multiple outputs)
-          // Don't do anything here? Once we come across its output node, that should come back and place this
+          nextAvailableToolbarSpot[1] =
+            nextAvailableToolbarSpot[0] === maxFunctionsPerToolbarRow ? nextAvailableToolbarSpot[1] + 1 : nextAvailableToolbarSpot[1];
+          nextAvailableToolbarSpot[0] = nextAvailableToolbarSpot[0] === maxFunctionsPerToolbarRow ? 0 : nextAvailableToolbarSpot[0] + 1;
+        } else if (fnNodeOnlyOutputsToTargetSchema) {
+          fnNodeIdsThatOnlyOutputToTargetSchema.push(fnNode.id);
         }
+
+        // Else -> Don't do anything if it outputs to one or more function nodes as they'll trigger this node's positioning
       } else if (compiledInputPositions.length === 1) {
         // xPos == xInterval right of input
         // yPos == same as input
@@ -427,8 +381,7 @@ const applyCustomLayout = async (graph: ElkNode): Promise<ElkNode> => {
       fnNode.x = fnNodeXPos;
       fnNode.y = fnNodeYPos;
 
-      // TODO: Adjust for expanded vs simple node card sizing (for consistent precision instead of guessing)
-      if (fnNode.x && fnNode.x > farthestRightFnNodeXPos) {
+      if (fnNode.x !== undefined && fnNode.x > farthestRightFnNodeXPos) {
         farthestRightFnNodeXPos = fnNode.x;
       }
     };
@@ -438,20 +391,41 @@ const applyCustomLayout = async (graph: ElkNode): Promise<ElkNode> => {
     });
 
     // Target schema node positioning
-    const tgtSchemaStartX = farthestRightFnNodeXPos + functionNodeCardSize + schemaToFunctionsHGap;
+    const tgtSchemaStartX = farthestRightFnNodeXPos + functionNodeCardSize * (useExpandedFunctionCards ? 2 : 1) + xInterval;
     graph.children[2].children.forEach((tgtSchemaNode, idx) => {
       tgtSchemaNode.x = tgtSchemaStartX;
       tgtSchemaNode.y = getSchemaNodeYPos(idx);
+    });
+
+    // Finally, position remaining function nodes that only output to the target schema
+    // (and thus must wait until after its layout is computed)
+    fnNodeIdsThatOnlyOutputToTargetSchema.forEach((fnNodeId) => {
+      const fnNode = graph.children![1].children?.find((elkFnNode) => elkFnNode.id === fnNodeId);
+      const tgtSchemaOutputYPositions =
+        graph.edges
+          ?.filter((edge) => edge.sources.includes(fnNodeId))
+          .map((edge) => {
+            return graph.children![2].children?.find((tgtSchemaNode) => tgtSchemaNode.id === edge.targets[0])?.y ?? 0;
+          }) ?? [];
+
+      if (fnNode) {
+        fnNode.x = tgtSchemaStartX - xInterval;
+        fnNode.y = tgtSchemaOutputYPositions.reduce((curYTotal, curYPos) => curYTotal + curYPos, 0) / tgtSchemaOutputYPositions.length;
+      }
     });
   }
 
   return Promise.resolve(graph);
 };
 
-export const applyElkLayout = async (graph: ElkNode, useCustomLayouting?: boolean): Promise<ElkNode> => {
+export const applyElkLayout = async (
+  graph: ElkNode,
+  useCustomLayouting?: boolean,
+  useExpandedFunctionCards?: boolean
+): Promise<ElkNode> => {
   if (!useCustomLayouting) {
     return elk.layout(graph);
   } else {
-    return applyCustomLayout(graph);
+    return applyCustomLayout(graph, useExpandedFunctionCards);
   }
 };
