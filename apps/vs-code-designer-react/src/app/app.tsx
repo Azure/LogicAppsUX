@@ -4,7 +4,7 @@ import { DesignerCommandBar } from './DesignerCommandBar';
 import { getDesignerServices } from './servicesHelper';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
 import { Theme } from '@microsoft/utils-logic-apps';
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 export const App = () => {
@@ -14,6 +14,7 @@ export const App = () => {
   const codelessApp = panelMetaData?.codelessApp;
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const vscode = useContext(VSCodeContext);
+  const [runInstance, setRunInstance] = useState({});
 
   useThemeObserver(document.body, theme, setTheme, {
     attributes: true,
@@ -23,10 +24,16 @@ export const App = () => {
     return getDesignerServices(baseUrl, apiVersion, apiHubServiceDetails, isLocal, vscode);
   }, [baseUrl, apiVersion, apiHubServiceDetails, isLocal]);
 
-  if (isMonitoringView && runId) {
-    const runInstance = services.runService.getRun(runId);
-    console.log(runInstance);
-  }
+  useEffect(() => {
+    async function getRunInstance() {
+      if (isMonitoringView && runId) {
+        setRunInstance(await services.runService.getRun(runId));
+      }
+    }
+    getRunInstance();
+  }, [isMonitoringView, runId, services]);
+
+  console.log(runInstance);
 
   return (
     <DesignerProvider
