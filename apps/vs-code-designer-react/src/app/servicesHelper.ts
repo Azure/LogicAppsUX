@@ -10,6 +10,8 @@ import {
 } from '@microsoft/designer-client-services-logic-apps';
 import type { IApiHubServiceDetails, ContentType, IHostService, IWorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import { ResourceIdentityType, HTTP_METHODS } from '@microsoft/utils-logic-apps';
+import { ExtensionCommand } from '@microsoft/vscode-extension';
+import type { WebviewApi } from 'vscode-webview';
 
 const httpClient = new HttpClient();
 
@@ -17,7 +19,8 @@ export const getDesignerServices = (
   baseUrl: string,
   apiVersion: string,
   apiHubServiceDetails: IApiHubServiceDetails,
-  isLocal: boolean
+  isLocal: boolean,
+  vscode: WebviewApi<unknown>
 ): {
   connectionService: StandardConnectionService;
   connectorService: StandardConnectorService;
@@ -146,7 +149,19 @@ export const getDesignerServices = (
     },
   };
 
-  const hostService = { fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type) };
+  const hostService = {
+    fetchAndDisplayContent: async (title: string, url: string, type: ContentType) => {
+      const response = (await httpClient.get({ uri: url })) as any;
+      const content = await response.json();
+      return vscode.postMessage({
+        command: ExtensionCommand.showContent,
+        content: JSON.stringify(content, null, 4),
+        header: type,
+        id: title,
+        title,
+      });
+    },
+  };
 
   const runService = new StandardRunService({
     apiVersion,
