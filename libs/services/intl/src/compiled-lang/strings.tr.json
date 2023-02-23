@@ -2061,12 +2061,6 @@
       "value": "Gerekli. Koleksiyon içinde bulunacak nesne."
     }
   ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2381,12 +2375,6 @@
       "value": "Gerekli. Zamanı içeren bir dize."
     }
   ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -2545,6 +2533,12 @@
     {
       "type": 0,
       "value": "Aramanız için sonuç yok"
+    }
+  ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "LBbhCu": [
@@ -5389,12 +5383,6 @@
       "value": "Gerekli. Bu değer, döndürülebilecek en yüksek tamsayıdan bir sonraki tamsayıdır."
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5521,6 +5509,12 @@
     {
       "type": 0,
       "value": "Gerçek Değer"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6335,12 +6329,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6631,6 +6619,12 @@
     {
       "type": 0,
       "value": "Pazar"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [

@@ -2032,12 +2032,6 @@
       "value": "Harus diisi. Objek untuk dicari Di dalam koleksi."
     }
   ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2352,12 +2346,6 @@
       "value": "Wajib. String yang berisi waktu."
     }
   ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -2505,6 +2493,12 @@
     {
       "type": 0,
       "value": "Tidak ada hasil untuk pencarian Anda"
+    }
+  ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "LBbhCu": [
@@ -5335,12 +5329,6 @@
       "value": "Wajib. Nilai ini adalah bilangan bulat berikutnya setelah bilangan bulat tertinggi yang dapat ditampilkan."
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5467,6 +5455,12 @@
     {
       "type": 0,
       "value": "Nilai Aktual"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6270,12 +6264,6 @@
       "value": "(UTC+06.00) Novosibirsk"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6570,6 +6558,12 @@
     {
       "type": 0,
       "value": "Minggu"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [

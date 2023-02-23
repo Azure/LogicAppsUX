@@ -2191,12 +2191,6 @@
       "value": "Vyžadováno. Objekt, který se má najít v kolekci Within."
     }
   ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2515,12 +2509,6 @@
       "value": "Povinný parametr. Řetězec, který obsahuje časový údaj."
     }
   ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -2701,6 +2689,12 @@
     {
       "type": 0,
       "value": "Vaše hledání nemá žádné výsledky."
+    }
+  ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "LBbhCu": [
@@ -5681,12 +5675,6 @@
       "value": "Povinný parametr. Tato hodnota představuje další celé číslo po nejvyšším celém číslu, které se mohlo vrátit."
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5813,6 +5801,12 @@
     {
       "type": 0,
       "value": "Skutečná hodnota"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6669,12 +6663,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6969,6 +6957,12 @@
     {
       "type": 0,
       "value": "Neděle"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [

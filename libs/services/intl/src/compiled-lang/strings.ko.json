@@ -2032,12 +2032,6 @@
       "value": "필수 항목으로, Within 컬렉션 내에서 찾을 개체입니다."
     }
   ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2352,12 +2346,6 @@
       "value": "필수 사항으로, 시간을 포함하는 문자열입니다."
     }
   ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -2505,6 +2493,12 @@
     {
       "type": 0,
       "value": "검색 결과가 없음"
+    }
+  ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "LBbhCu": [
@@ -5327,12 +5321,6 @@
       "value": "필수 사항으로, 이 값은 반환할 수 있는 가장 큰 정수 다음의 정수입니다."
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5459,6 +5447,12 @@
     {
       "type": 0,
       "value": "실제 값"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6262,12 +6256,6 @@
       "value": "(UTC+06:00) 노보시비르스크"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6558,6 +6546,12 @@
     {
       "type": 0,
       "value": "일요일"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [

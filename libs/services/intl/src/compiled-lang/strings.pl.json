@@ -2203,12 +2203,6 @@
       "value": "Parametr wymagany. Obiekt do wyszukiwania wewnątrz kolekcji typu W zakresie."
     }
   ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2531,12 +2525,6 @@
       "value": "Wymagane. Ciąg zawierający godzinę."
     }
   ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -2717,6 +2705,12 @@
     {
       "type": 0,
       "value": "Nie ma wyników dla Twojego wyszukiwania"
+    }
+  ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "LBbhCu": [
@@ -5697,12 +5691,6 @@
       "value": "Wymagane. Ta wartość jest następną liczbą całkowitą po największej liczbie całkowitej możliwej do zwrócenia."
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5829,6 +5817,12 @@
     {
       "type": 0,
       "value": "Wartość rzeczywista"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6689,12 +6683,6 @@
       "value": "(UTC+06:00) Nowosybirsk"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6989,6 +6977,12 @@
     {
       "type": 0,
       "value": "Niedziela"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [

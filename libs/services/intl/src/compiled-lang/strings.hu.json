@@ -2121,12 +2121,6 @@
       "value": "Kötelező megadni. A tartalmazó gyűjteményben keresendő objektum."
     }
   ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2449,12 +2443,6 @@
       "value": "Kötelező megadni. Az időt tartalmazó sztring."
     }
   ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -2613,6 +2601,12 @@
     {
       "type": 0,
       "value": "A keresés nem adott eredményeket"
+    }
+  ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "LBbhCu": [
@@ -5557,12 +5551,6 @@
       "value": "Kötelező megadni. Az érték a legnagyobb visszaadható egész szám utáni egész szám."
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5689,6 +5677,12 @@
     {
       "type": 0,
       "value": "Tényleges érték"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6527,12 +6521,6 @@
       "value": "(UTC+06:00) Novoszibirszk"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6827,6 +6815,12 @@
     {
       "type": 0,
       "value": "Vasárnap"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [

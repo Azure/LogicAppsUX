@@ -2121,12 +2121,6 @@
       "value": "Obligatoriskt. Det objekt det ska sökas efter i Within-samlingen."
     }
   ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2449,12 +2443,6 @@
       "value": "Krävs. En sträng som innehåller tiden."
     }
   ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -2613,6 +2601,12 @@
     {
       "type": 0,
       "value": " Det finns inte något resultat för din sökning"
+    }
+  ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "LBbhCu": [
@@ -5533,12 +5527,6 @@
       "value": "Krävs. Det här värdet är nästa heltal efter det högsta heltalet som kunde returneras."
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5665,6 +5653,12 @@
     {
       "type": 0,
       "value": "Faktiskt värde"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6499,12 +6493,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6799,6 +6787,12 @@
     {
       "type": 0,
       "value": "Söndag"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [

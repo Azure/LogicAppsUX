@@ -2121,12 +2121,6 @@
       "value": "Vereist. Het object dat in de verzameling Binnen moet worden gevonden."
     }
   ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2449,12 +2443,6 @@
       "value": "Vereist. Een tekenreeks die de tijd bevat."
     }
   ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -2613,6 +2601,12 @@
     {
       "type": 0,
       "value": "Er zijn geen resultaten voor uw zoekactie"
+    }
+  ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "LBbhCu": [
@@ -5529,12 +5523,6 @@
       "value": "Vereist. Deze waarde is het volgende gehele getal na het hoogste gehele getal dat kan worden geretourneerd."
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5661,6 +5649,12 @@
     {
       "type": 0,
       "value": "Werkelijke waarde"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6499,12 +6493,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6799,6 +6787,12 @@
     {
       "type": 0,
       "value": "Zondag"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [

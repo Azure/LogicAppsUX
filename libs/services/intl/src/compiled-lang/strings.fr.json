@@ -2146,12 +2146,6 @@
       "value": "Obligatoire. Objet à trouver dans la collection Within."
     }
   ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2474,12 +2468,6 @@
       "value": "Obligatoire. Chaîne contenant l'heure."
     }
   ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -2649,6 +2637,12 @@
     {
       "type": 0,
       "value": "Il n’y a aucun résultat de recherche."
+    }
+  ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "LBbhCu": [
@@ -5571,12 +5565,6 @@
       "value": "Obligatoire. Cette valeur est l'entier suivant après l'entier le plus grand qui peut être retourné."
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5703,6 +5691,12 @@
     {
       "type": 0,
       "value": "Valeur réelle"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6544,12 +6538,6 @@
       "value": "(UTC+06:00) Novossibirsk"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6844,6 +6832,12 @@
     {
       "type": 0,
       "value": "Dimanche"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [
