@@ -2032,12 +2032,6 @@
       "value": "必須。Within collection 内で検索するオブジェクト。"
     }
   ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2352,12 +2346,6 @@
       "value": "必須。時刻を含む文字列。"
     }
   ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -2505,6 +2493,12 @@
     {
       "type": 0,
       "value": "検索の結果がありません"
+    }
+  ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "LBbhCu": [
@@ -5327,12 +5321,6 @@
       "value": "必須。この値は、返される可能性のある最も大きい整数の次の整数です。"
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5459,6 +5447,12 @@
     {
       "type": 0,
       "value": "実績値"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6262,12 +6256,6 @@
       "value": "(UTC+06:00) ノボシビルスク"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6558,6 +6546,12 @@
     {
       "type": 0,
       "value": "日曜日"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [

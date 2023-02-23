@@ -2084,12 +2084,6 @@
       "value": "必需。要在“包含”集合中查找的对象。"
     }
   ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2412,12 +2406,6 @@
       "value": "必需。包含时间的一个字符串。"
     }
   ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -2565,6 +2553,12 @@
     {
       "type": 0,
       "value": "没有搜索到结果"
+    }
+  ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "LBbhCu": [
@@ -5483,12 +5477,6 @@
       "value": "必需。此值为可返回的最大整数之后的下一个整数。"
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5615,6 +5603,12 @@
     {
       "type": 0,
       "value": "实际值"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6450,12 +6444,6 @@
       "value": "(UTC+06:00) 新西伯利亚"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6750,6 +6738,12 @@
     {
       "type": 0,
       "value": "星期日"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [
