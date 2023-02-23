@@ -20,26 +20,20 @@ export const BrowseView = ({ filters }: { filters: Record<string, string> }) => 
 
   const filterItems = useCallback(
     (connector: Connector): boolean => {
-      let ret = true;
       if (filters['runtime']) {
-        if (filters['runtime'] === 'inapp') {
-          ret = isBuiltInConnector(connector.id);
-        } else if (filters['runtime'] === 'custom') {
-          ret = isCustomConnector(connector.id);
-        } else if (filters['runtime'] === 'shared') {
-          ret = !isBuiltInConnector(connector.id) && !isCustomConnector(connector.id);
-        }
+        if (filters['runtime'] === 'inapp' && !isBuiltInConnector(connector.id)) return false;
+        else if (filters['runtime'] === 'custom' && !isCustomConnector(connector.id)) return false;
+        else if (filters['runtime'] === 'shared') if (isBuiltInConnector(connector.id) || isCustomConnector(connector.id)) return false;
       }
+
       if (filters['actionType']) {
-        let hasAMatchingActionType = false;
-        if (filters['actionType'].toLowerCase() === 'triggers') {
-          hasAMatchingActionType = triggerCapabilities?.[connector.id.toLowerCase()]?.trigger ?? false;
-        } else if (filters['actionType'].toLowerCase() === 'actions') {
-          hasAMatchingActionType = triggerCapabilities?.[connector.id.toLowerCase()]?.action ?? false;
-        }
-        ret = ret && hasAMatchingActionType;
+        const { action, trigger } = triggerCapabilities?.[connector.id.toLowerCase()] ?? {};
+        if (!action && !trigger) return true; // some connectors don't have any capabilities set, we'll just show those regardless
+        if (filters['actionType'].toLowerCase() === 'triggers' && !trigger) return false;
+        else if (filters['actionType'].toLowerCase() === 'actions' && !action) return false;
       }
-      return ret;
+
+      return true;
     },
     [filters, triggerCapabilities]
   );

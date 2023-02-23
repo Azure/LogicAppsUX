@@ -39,11 +39,7 @@ import {
   initializeManifest,
   setManifest,
 } from './manifests/variables';
-import {
-  ArgumentException,
-  equals,
-  UnsupportedException,
-} from '@microsoft/utils-logic-apps';
+import { ArgumentException, ConnectionType, equals, UnsupportedException } from '@microsoft/utils-logic-apps';
 import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 
 const apimanagement = 'apimanagement';
@@ -207,6 +203,44 @@ export abstract class BaseOperationManifestService implements IOperationManifest
   abstract getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo>;
 
   abstract getOperationManifest(_connectorId: string, _operationId: string): Promise<OperationManifest>;
+
+  protected async getCustomOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const operationName = operationId.split('/').pop();
+    const queryParameters = {
+      'api-version': apiVersion,
+      $expand: 'properties/manifest',
+    };
+
+    try {
+      const response = await httpClient.get<any>({
+        uri: `${baseUrl}/${connectorId}/operations/${operationName}`,
+        queryParameters,
+      });
+
+      // find matching operation by id
+      const operationResponse = response.value.find((operation: any) => equals(operation.id.split('/').pop(), operationId));
+
+      const {
+        properties: { brandColor, description, iconUri, manifest, operationType },
+      } = operationResponse;
+
+      const operationManifest = {
+        properties: {
+          brandColor,
+          description,
+          iconUri,
+          connection: equals(operationType, 'serviceprovider') ? { required: true, type: ConnectionType.ServiceProvider } : undefined,
+          ...manifest,
+        },
+      };
+
+      return operationManifest;
+    } catch (error) {
+      console.error('Error getting custom operation manifest', error);
+      return { properties: {} } as any;
+    }
+  }
 }
 
 export function isBuiltInOperation(definition: any): boolean {
@@ -387,7 +421,7 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
 const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [apimanagement]: {
     connectorId: apiManagementConnectorId,
-    operationId: 'apiManagement'
+    operationId: 'apiManagement',
   },
   [appendtoarrayvariable]: {
     connectorId: variableConnectorId,

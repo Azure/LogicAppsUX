@@ -23,7 +23,10 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
     //throw new UnsupportedException(`Operation type: ${definition.type} does not support manifest.`);
   }
 
-  override async getOperationManifest(_connectorId: string, operationId: string): Promise<OperationManifest> {
+  override async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
+    const isCustomApi = connectorId.split('/').slice(-2)[0] === 'customApis';
+    if (isCustomApi) return await this.getCustomOperationManifest(connectorId, operationId);
+
     const supportedManifest = supportedConsumptionManifestObjects.get(operationId);
     return supportedManifest ?? ({ properties: {} } as any);
   }

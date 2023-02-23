@@ -12,7 +12,7 @@ import type {
   DiscoveryResultTypes,
   SomeKindOfAzureOperationDiscovery,
 } from '@microsoft/utils-logic-apps';
-import { ArgumentException, MockSearchOperations } from '@microsoft/utils-logic-apps';
+import { equals, ArgumentException, MockSearchOperations } from '@microsoft/utils-logic-apps';
 
 interface ContinuationTokenResponse<T> {
   // danielle to move
@@ -102,7 +102,7 @@ export abstract class BaseSearchService implements ISearchService {
     };
 
     try {
-      const { nextLink, value } = await httpClient.get<ContinuationTokenResponse<Connector[]>>({ uri, queryParameters });
+      const { nextLink, value } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, queryParameters });
       return { value, hasMore: !!nextLink };
     } catch (error) {
       return { value: [], hasMore: false };
@@ -138,9 +138,9 @@ export abstract class BaseSearchService implements ISearchService {
 
     const requestPage = async (uri: string, value: any[], queryParameters?: any): Promise<any> => {
       try {
-        const { nextLink, value: newValue } = await httpClient.get<ContinuationTokenResponse<Connector[]>>({ uri, queryParameters });
+        const { nextLink, value: newValue } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, queryParameters });
         value.push(...newValue);
-        if (nextLink) return await requestPage(nextLink, value);
+        if (nextLink && newValue.length !== 0) return await requestPage(nextLink, value);
         return value;
       } catch (error) {
         return value;
@@ -200,7 +200,8 @@ export abstract class BaseSearchService implements ISearchService {
         'api-version': apiVersion,
         $filter: `properties/trigger eq null and type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
       };
-      return await this.batchAzureResourceRequests(uri, queryParameters);
+      const response = await this.getAzureResourceRecursive(uri, queryParameters);
+      return response;
     } catch (error) {
       console.error(error);
       return [];
@@ -210,14 +211,16 @@ export abstract class BaseSearchService implements ISearchService {
   async getAllCustomApiConnectors(): Promise<Connector[]> {
     try {
       const {
-        apiHubServiceDetails: { apiVersion, subscriptionId },
+        apiHubServiceDetails: { apiVersion, subscriptionId, location },
       } = this.options;
       const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/customApis`;
       const queryParameters: QueryParameters = {
         'api-version': apiVersion,
         $filter: `${ISE_RESOURCE_ID} eq null`,
       };
-      return await this.getAzureResourceRecursive(uri, queryParameters);
+      const response = await this.getAzureResourceRecursive(uri, queryParameters);
+      const output = response.filter((connector: any) => equals(connector.location, location));
+      return output.length > 0 ? output : response;
     } catch (error) {
       console.error(error);
       return [];

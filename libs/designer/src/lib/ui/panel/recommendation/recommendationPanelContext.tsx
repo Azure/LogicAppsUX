@@ -63,7 +63,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         isTriggerNode={isNodeTrigger}
       />
       {selectedOperationGroupId ? (
-        <OperationGroupDetailView groupOperations={allOperationsForGroup} filters={filters} />
+        <OperationGroupDetailView connectorId={selectedOperationGroupId} groupOperations={allOperationsForGroup} filters={filters} />
       ) : searchTerm ? (
         <SearchView
           searchTerm={searchTerm}

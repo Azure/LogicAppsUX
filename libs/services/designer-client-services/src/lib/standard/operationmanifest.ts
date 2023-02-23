@@ -24,8 +24,10 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
 
   override async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
     const supportedManifest = supportedBaseManifestObjects.get(operationId);
-
     if (supportedManifest) return supportedManifest;
+
+    const isCustomApi = connectorId.split('/').slice(-2)[0] === 'customApis';
+    if (isCustomApi) return await this.getCustomOperationManifest(connectorId, operationId);
 
     const { apiVersion, baseUrl, httpClient } = this.options;
     const connectorName = connectorId.split('/').slice(-1)[0];
