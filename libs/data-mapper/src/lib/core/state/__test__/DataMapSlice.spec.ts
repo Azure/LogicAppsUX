@@ -1,4 +1,5 @@
-import { sourceMockSchema } from '../../../__mocks__';
+import { simpleMockSchema } from '../../../__mocks__';
+import { concatFunction } from '../../../__mocks__/FunctionMock';
 import type { Schema, SchemaExtended } from '../../../models';
 import { SchemaType } from '../../../models';
 import type { ConnectionDictionary } from '../../../models/Connection';
@@ -17,8 +18,7 @@ import {
   deleteNodeFromConnections,
   deleteParentRepeatingConnections,
 } from '../DataMapSlice';
-import { simpleMockSchema } from '../__mocks__';
-import { concatFunction } from '../__mocks__/FunctionMock';
+import { sourceMockSchema } from '__mocks__/schemas';
 
 // NOTE: Functions with an unbounded input (like our concatFunction mock) will have two empty (undefined) values/fields by default
 
@@ -312,19 +312,24 @@ describe('DataMapSlice', () => {
     it('deletes all parent connections when selected deleted connection is only one', () => {
       const connections1 = JSON.parse(JSON.stringify(fullMapForSimplifiedLoop));
       // removing the connection that is 'deleted
-      connections1['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate'].outputs = [];
+      connections1['source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect'].outputs =
+        [];
       deleteParentRepeatingConnections(connections1, manyToManyConnectionSourceName);
-      expect(connections1['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay'].outputs).toHaveLength(0);
-      expect(connections1['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth'].outputs).toHaveLength(0);
-      expect(connections1['source-/ns0:Root/ManyToMany/SourceYear'].outputs).toHaveLength(0);
+      expect(
+        connections1['source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild'].outputs
+      ).toHaveLength(0);
+      expect(connections1['source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild'].outputs).toHaveLength(0);
+      expect(connections1['source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple'].outputs).toHaveLength(0);
     });
 
     it('doesnt delete any other parent connections if another child is connected', () => {
       const connections = { ...fullMapForSimplifiedLoop };
       deleteParentRepeatingConnections(connections, manyToManyConnectionSourceName);
-      expect(connections['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay'].outputs).toHaveLength(1);
-      expect(connections['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth'].outputs).toHaveLength(1);
-      expect(connections['source-/ns0:Root/ManyToMany/SourceYear'].outputs).toHaveLength(1);
+      expect(
+        connections['source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild'].outputs
+      ).toHaveLength(1);
+      expect(connections['source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild'].outputs).toHaveLength(1);
+      expect(connections['source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple'].outputs).toHaveLength(1);
     });
 
     it('doesnt delete parent connection if index is being used', () => {
@@ -337,11 +342,17 @@ describe('DataMapSlice', () => {
 
     it('deletes all connections for many-to-one', () => {
       const connections = fullConnectionDictionaryForOneToManyLoop;
-      connections['source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate'].outputs = [];
-      deleteParentRepeatingConnections(connections, 'source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate');
-      expect(connections['source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay'].outputs).toHaveLength(0);
-      expect(connections['source-/ns0:Root/ManyToOne/SourceYear/SourceMonth'].outputs).toHaveLength(0);
-      expect(connections['source-/ns0:Root/ManyToOne/SourceYear'].outputs).toHaveLength(0);
+      connections['source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect'].outputs =
+        [];
+      deleteParentRepeatingConnections(
+        connections,
+        'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect'
+      );
+      expect(
+        connections['source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild'].outputs
+      ).toHaveLength(0);
+      expect(connections['source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild'].outputs).toHaveLength(0);
+      expect(connections['source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple'].outputs).toHaveLength(0);
     });
   });
 });

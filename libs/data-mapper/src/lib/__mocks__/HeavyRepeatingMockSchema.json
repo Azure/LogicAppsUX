@@ -9,8 +9,6 @@
   "schemaTreeRoot": {
     "key": "/ns0:Root",
     "name": "Root",
-    "namespacePrefix": "ns0",
-    "namespaceUri": "http://tempuri.org/source.xsd",
     "normalizedDataType": "ComplexType",
     "properties": "Repeating",
     "children": [
@@ -182,8 +180,7 @@
                                                                                                                     "normalizedDataType": "ComplexType",
                                                                                                                     "properties": "Repeating",
                                                                                                                     "children": [],
-                                                                                                                    "fullName": "Loop28a",
-                                                                                                                    "parentKey": "/ns0:Root"
+                                                                                                                    "fullName": "Loop28a"
                                                                                                                   },
                                                                                                                   {
                                                                                                                     "key": "/ns0:Root/Loop28b",
@@ -191,116 +188,88 @@
                                                                                                                     "normalizedDataType": "ComplexType",
                                                                                                                     "properties": "Repeating",
                                                                                                                     "children": [],
-                                                                                                                    "fullName": "Loop28b",
-                                                                                                                    "parentKey": "/ns0:Root"
+                                                                                                                    "fullName": "Loop28b"
                                                                                                                   }
                                                                                                                 ],
-                                                                                                                "fullName": "Loo27",
-                                                                                                                "parentKey": "/ns0:Root"
+                                                                                                                "fullName": "Loo27"
                                                                                                               }
                                                                                                             ],
-                                                                                                            "fullName": "Loop26",
-                                                                                                            "parentKey": "/ns0:Root"
+                                                                                                            "fullName": "Loop26"
                                                                                                           }
                                                                                                         ],
-                                                                                                        "fullName": "Loop25",
-                                                                                                        "parentKey": "/ns0:Root"
+                                                                                                        "fullName": "Loop25"
                                                                                                       }
                                                                                                     ],
-                                                                                                    "fullName": "Loop24",
-                                                                                                    "parentKey": "/ns0:Root"
+                                                                                                    "fullName": "Loop24"
                                                                                                   }
                                                                                                 ],
-                                                                                                "fullName": "Loop23",
-                                                                                                "parentKey": "/ns0:Root"
+                                                                                                "fullName": "Loop23"
                                                                                               }
                                                                                             ],
-                                                                                            "fullName": "Loop22",
-                                                                                            "parentKey": "/ns0:Root"
+                                                                                            "fullName": "Loop22"
                                                                                           }
                                                                                         ],
-                                                                                        "fullName": "Loop21",
-                                                                                        "parentKey": "/ns0:Root"
+                                                                                        "fullName": "Loop21"
                                                                                       }
                                                                                     ],
-                                                                                    "fullName": "Loop20",
-                                                                                    "parentKey": "/ns0:Root"
+                                                                                    "fullName": "Loop20"
                                                                                   }
                                                                                 ],
-                                                                                "fullName": "Loop19",
-                                                                                "parentKey": "/ns0:Root"
+                                                                                "fullName": "Loop19"
                                                                               }
                                                                             ],
-                                                                            "fullName": "Loop18",
-                                                                            "parentKey": "/ns0:Root"
+                                                                            "fullName": "Loop18"
                                                                           }
                                                                         ],
-                                                                        "fullName": "Loop17",
-                                                                        "parentKey": "/ns0:Root"
+                                                                        "fullName": "Loop17"
                                                                       }
                                                                     ],
-                                                                    "fullName": "Loop16",
-                                                                    "parentKey": "/ns0:Root"
+                                                                    "fullName": "Loop16"
                                                                   }
                                                                 ],
-                                                                "fullName": "Loop15",
-                                                                "parentKey": "/ns0:Root"
+                                                                "fullName": "Loop15"
                                                               }
                                                             ],
-                                                            "fullName": "Loop14",
-                                                            "parentKey": "/ns0:Root"
+                                                            "fullName": "Loop14"
                                                           }
                                                         ],
-                                                        "fullName": "Loop13",
-                                                        "parentKey": "/ns0:Root"
+                                                        "fullName": "Loop13"
                                                       }
                                                     ],
-                                                    "fullName": "Loop12",
-                                                    "parentKey": "/ns0:Root"
+                                                    "fullName": "Loop12"
                                                   }
                                                 ],
-                                                "fullName": "Loop11",
-                                                "parentKey": "/ns0:Root"
+                                                "fullName": "Loop11"
                                               }
                                             ],
-                                            "fullName": "Loop10",
-                                            "parentKey": "/ns0:Root"
+                                            "fullName": "Loop10"
                                           }
                                         ],
-                                        "fullName": "Loop9",
-                                        "parentKey": "/ns0:Root"
+                                        "fullName": "Loop9"
                                       }
                                     ],
-                                    "fullName": "Loop9",
-                                    "parentKey": "/ns0:Root"
+                                    "fullName": "Loop9"
                                   }
                                 ],
-                                "fullName": "Loop8",
-                                "parentKey": "/ns0:Root"
+                                "fullName": "Loop8"
                               }
                             ],
-                            "fullName": "Loop7",
-                            "parentKey": "/ns0:Root"
+                            "fullName": "Loop7"
                           }
                         ],
-                        "fullName": "Loop6",
-                        "parentKey": "/ns0:Root"
+                        "fullName": "Loop6"
                       }
                     ],
-                    "fullName": "Loop5",
-                    "parentKey": "/ns0:Root"
+                    "fullName": "Loop5"
                   }
                 ],
-                "fullName": "Loop4",
-                "parentKey": "/ns0:Root"
+                "fullName": "Loop4"
               }
             ],
-            "fullName": "Loop3",
-            "parentKey": "/ns0:Root"
+            "fullName": "Loop3"
           }
         ],
-        "fullName": "Loop2",
-        "parentKey": "/ns0:Root"
+        "fullName": "Loop2"
       }
     ],
     "fullName": "ns0:Root"

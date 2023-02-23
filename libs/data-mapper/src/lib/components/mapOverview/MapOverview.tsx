@@ -5,8 +5,8 @@ import { useOverviewLayout } from '../../utils/ReactFlow.Util';
 import { SchemaCard } from '../nodeCard/SchemaCard';
 import { SchemaNameBadge } from '../schemaSelection/SchemaNameBadge';
 import { SelectSchemaCard } from '../schemaSelection/SelectSchemaCard';
-import type { TargetNodesWithConnectionsDictionary } from '../targetSchemaPane/TargetSchemaPane';
-import { checkNodeStatuses } from '../targetSchemaPane/TargetSchemaPane';
+import type { TargetNodesWithConnectionsDictionary } from '../sidePane/tabs/targetSchemaTab/TargetSchemaTab';
+import { checkNodeStatuses } from '../sidePane/tabs/targetSchemaTab/TargetSchemaTab';
 import type { NodeToggledStateDictionary } from '../tree/TargetSchemaTreeItem';
 import { Stack } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
@@ -50,9 +50,9 @@ const OverviewReactFlowWrapper = () => {
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
-  const tgtSchemaToggledStatesDictionary = useMemo<NodeToggledStateDictionary | undefined>(() => {
+  const targetSchemaStates = useMemo<NodeToggledStateDictionary>(() => {
     if (!targetSchema) {
-      return undefined;
+      return {};
     }
 
     // Find target schema nodes with connections
@@ -70,7 +70,7 @@ const OverviewReactFlowWrapper = () => {
     return newToggledStatesDictionary;
   }, [targetSchema, connectionDictionary, targetSchemaDictionary]);
 
-  const reactFlowNodes = useOverviewLayout(sourceSchema?.schemaTreeRoot, targetSchema?.schemaTreeRoot, tgtSchemaToggledStatesDictionary);
+  const reactFlowNodes = useOverviewLayout(sourceSchema?.schemaTreeRoot, targetSchema?.schemaTreeRoot, targetSchemaStates);
 
   // Fit the canvas view any time a schema changes
   useEffect(() => {

@@ -1,5 +1,51 @@
 # Logic Apps Designer
 
+### [0.2.86](https://github.com/Azure/LogicAppsUX/compare/v0.2.85...v0.2.86) (2023-02-23)
+
+### [0.2.85](https://github.com/Azure/LogicAppsUX/compare/v0.2.84...v0.2.85) (2023-02-22)
+
+### [0.2.84](https://github.com/Azure/LogicAppsUX/compare/v0.2.83...v0.2.84) (2023-02-21)
+
+### [0.2.83](https://github.com/Azure/LogicAppsUX/compare/v0.2.82...v0.2.83) (2023-02-20)
+
+### Logic Apps Designer Changes
+
+- Adding support for batch operations ([#1660](https://github.com/Azure/LogicAppsUX/issues/1660)) ([cb140b8](https://github.com/Azure/LogicAppsUX/commit/cb140b8707bdd5778c10035af749d4fb6cbceef2))
+
+### [0.2.82](https://github.com/Azure/LogicAppsUX/compare/v0.2.81...v0.2.82) (2023-02-19)
+
+### [0.2.81](https://github.com/Azure/LogicAppsUX/compare/v0.2.80...v0.2.81) (2023-02-18)
+
+### [0.2.80](https://github.com/Azure/LogicAppsUX/compare/v0.2.79...v0.2.80) (2023-02-17)
+
+### [0.2.79](https://github.com/Azure/LogicAppsUX/compare/v0.2.78...v0.2.79) (2023-02-16)
+
+### [0.2.78](https://github.com/Azure/LogicAppsUX/compare/v0.2.77...v0.2.78) (2023-02-15)
+
+### [0.2.77](https://github.com/Azure/LogicAppsUX/compare/v0.2.76...v0.2.77) (2023-02-14)
+
+### [0.2.76](https://github.com/Azure/LogicAppsUX/compare/v0.2.75...v0.2.76) (2023-02-13)
+
+### [0.2.75](https://github.com/Azure/LogicAppsUX/compare/v0.2.74...v0.2.75) (2023-02-12)
+
+### [0.2.74](https://github.com/Azure/LogicAppsUX/compare/v0.2.73...v0.2.74) (2023-02-11)
+
+### [0.2.73](https://github.com/Azure/LogicAppsUX/compare/v0.2.72...v0.2.73) (2023-02-10)
+
+### Logic Apps Designer Changes
+
+- Adding API Management action inputs/outputs support for dynamic parameters ([#1616](https://github.com/Azure/LogicAppsUX/issues/1616)) ([3bc920e](https://github.com/Azure/LogicAppsUX/commit/3bc920e45deb5f0c3494261c727b3411c4517508))
+
+### [0.2.72](https://github.com/Azure/LogicAppsUX/compare/v0.2.71...v0.2.72) (2023-02-10)
+
+### [0.2.71](https://github.com/Azure/LogicAppsUX/compare/v0.2.70...v0.2.71) (2023-02-09)
+
+### [0.2.70](https://github.com/Azure/LogicAppsUX/compare/v0.2.69...v0.2.70) (2023-02-08)
+
+### Logic Apps Designer Changes
+
+- Monitoring tab ([#1602](https://github.com/Azure/LogicAppsUX/issues/1602)) ([c6070de](https://github.com/Azure/LogicAppsUX/commit/c6070dea2c0bec5b31e41ee8db8002c068732911))
+
 ### [0.2.69](https://github.com/Azure/LogicAppsUX/compare/v0.2.68...v0.2.69) (2023-02-07)
 
 ### [0.2.68](https://github.com/Azure/LogicAppsUX/compare/v0.2.67...v0.2.68) (2023-02-06)

@@ -1,4 +1,3 @@
-import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, sourceMockSchema, targetMockSchema } from '../../__mocks__';
 import { concatFunction, greaterThanFunction } from '../../__mocks__/FunctionMock';
 import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '../../models';
 import { directAccessPseudoFunction, ifPseudoFunction, indexPseudoFunction, SchemaType } from '../../models';
@@ -7,6 +6,7 @@ import { setConnectionInputValue } from '../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { generateMapDefinitionBody, generateMapDefinitionHeader } from '../MapDefinitionSerializer';
+import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockSchema, targetMockSchema } from '__mocks__/schemas';
 
 describe('mapDefinitions/MapDefinitionSerializer', () => {
   describe('generateMapDefinitionHeader', () => {
@@ -545,18 +545,18 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
     });
 
     it('Generates body with many to many nested loops', async () => {
-      const loopSourceSchema: Schema = layeredLoopSourceMockSchema;
-      const extendedLoopSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(loopSourceSchema);
+      const mockComprehensiveSourceSchema: Schema = comprehensiveSourceSchema;
+      const extendedComprehensiveSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveSourceSchema);
 
-      const loopTargetSchema: Schema = layeredLoopTargetMockSchema;
-      const extendedLoopTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(loopTargetSchema);
+      const mockComprehensiveTargetSchema: Schema = comprehensiveTargetSchema;
+      const extendedComprehensiveTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveTargetSchema);
 
-      const sourceNode = extendedLoopSourceSchema.schemaTreeRoot.children[0];
-      const targetNode = extendedLoopTargetSchema.schemaTreeRoot.children[0];
+      const sourceNode = extendedComprehensiveSourceSchema.schemaTreeRoot.children[3].children[3]; // ManyToMany
+      const targetNode = extendedComprehensiveTargetSchema.schemaTreeRoot.children[5].children[3];
       const mapDefinition: MapDefinitionEntry = {};
       const connections: ConnectionDictionary = {};
 
-      const sourceChildNode = sourceNode.children[0];
+      const sourceChildNode = sourceNode.children[0]; // Simple
       const targetChildNode = targetNode.children[0];
 
       setConnectionInputValue(connections, {
@@ -599,67 +599,73 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
       generateMapDefinitionBody(mapDefinition, connections);
 
       expect(Object.keys(mapDefinition).length).toEqual(1);
-      const rootChildren = Object.entries(mapDefinition['ns0:Root']);
+      const rootChildren = Object.entries(mapDefinition['ns0:TargetSchemaRoot']);
       expect(rootChildren.length).toEqual(1);
-      expect(rootChildren[0][0]).toEqual('ManyToMany');
+      expect(rootChildren[0][0]).toEqual('Looping');
       expect(rootChildren[0][1]).not.toBe('string');
 
-      const manyToManyObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['ManyToMany'] as MapDefinitionEntry;
+      const loopingObject = (mapDefinition['ns0:TargetSchemaRoot'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
+      const loopingEntries = Object.entries(loopingObject);
+      expect(loopingEntries.length).toEqual(1);
+      expect(loopingEntries[0][0]).toEqual('ManyToMany');
+      expect(loopingEntries[0][1]).not.toBe('string');
+
+      const manyToManyObject = loopingObject['ManyToMany'] as MapDefinitionEntry;
       const manyToManyEntries = Object.entries(manyToManyObject);
       expect(manyToManyEntries.length).toEqual(1);
-      expect(manyToManyEntries[0][0]).toEqual('$for(/ns0:Root/ManyToMany/SourceYear)');
+      expect(manyToManyEntries[0][0]).toEqual('$for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple)');
       expect(manyToManyEntries[0][1]).not.toBe('string');
 
-      const yearForObject = manyToManyObject['$for(/ns0:Root/ManyToMany/SourceYear)'] as MapDefinitionEntry;
+      const yearForObject = manyToManyObject['$for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple)'] as MapDefinitionEntry;
       const yearForLoopEntries = Object.entries(yearForObject);
       expect(yearForLoopEntries.length).toEqual(1);
-      expect(yearForLoopEntries[0][0]).toEqual('Year');
+      expect(yearForLoopEntries[0][0]).toEqual('Simple');
       expect(yearForLoopEntries[0][1]).not.toBe('string');
 
-      const yearObject = yearForObject['Year'] as MapDefinitionEntry;
-      const yearEntries = Object.entries(yearObject);
+      const simpleObject = yearForObject['Simple'] as MapDefinitionEntry;
+      const yearEntries = Object.entries(simpleObject);
       expect(yearEntries.length).toEqual(1);
-      expect(yearEntries[0][0]).toEqual('$for(SourceMonth)');
+      expect(yearEntries[0][0]).toEqual('$for(SourceSimpleChild)');
       expect(yearEntries[0][1]).not.toBe('string');
 
-      const monthForObject = yearObject['$for(SourceMonth)'] as MapDefinitionEntry;
+      const monthForObject = simpleObject['$for(SourceSimpleChild)'] as MapDefinitionEntry;
       const monthForLoopEntries = Object.entries(monthForObject);
       expect(monthForLoopEntries.length).toEqual(1);
-      expect(monthForLoopEntries[0][0]).toEqual('Month');
+      expect(monthForLoopEntries[0][0]).toEqual('SimpleChild');
       expect(monthForLoopEntries[0][1]).not.toBe('string');
 
-      const monthObject = monthForObject['Month'] as MapDefinitionEntry;
-      const monthEntries = Object.entries(monthObject);
+      const simpleChildObject = monthForObject['SimpleChild'] as MapDefinitionEntry;
+      const monthEntries = Object.entries(simpleChildObject);
       expect(monthEntries.length).toEqual(1);
-      expect(monthEntries[0][0]).toEqual('$for(SourceDay)');
+      expect(monthEntries[0][0]).toEqual('$for(SourceSimpleChildChild)');
       expect(monthEntries[0][1]).not.toBe('string');
 
-      const dayForObject = monthObject['$for(SourceDay)'] as MapDefinitionEntry;
+      const dayForObject = simpleChildObject['$for(SourceSimpleChildChild)'] as MapDefinitionEntry;
       const dayForLoopEntries = Object.entries(dayForObject);
       expect(dayForLoopEntries.length).toEqual(1);
-      expect(dayForLoopEntries[0][0]).toEqual('Day');
+      expect(dayForLoopEntries[0][0]).toEqual('SimpleChildChild');
       expect(dayForLoopEntries[0][1]).not.toBe('string');
 
-      const dayObject = dayForObject['Day'] as MapDefinitionEntry;
-      const dayEntries = Object.entries(dayObject);
-      expect(dayEntries.length).toEqual(1);
-      expect(dayEntries[0][0]).toEqual('Date');
-      expect(dayEntries[0][1]).toEqual('SourceDate');
+      const simpleChildChildObject = dayForObject['SimpleChildChild'] as MapDefinitionEntry;
+      const simpleChildChildEntries = Object.entries(simpleChildChildObject);
+      expect(simpleChildChildEntries.length).toEqual(1);
+      expect(simpleChildChildEntries[0][0]).toEqual('Direct');
+      expect(simpleChildChildEntries[0][1]).toEqual('SourceDirect');
     });
 
     it('Generates body with many to one nested loops', async () => {
-      const loopSourceSchema: Schema = layeredLoopSourceMockSchema;
-      const extendedLoopSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(loopSourceSchema);
+      const mockComprehensiveSourceSchema: Schema = comprehensiveSourceSchema;
+      const extendedComprehensiveSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveSourceSchema);
 
-      const loopTargetSchema: Schema = layeredLoopTargetMockSchema;
-      const extendedLoopTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(loopTargetSchema);
+      const mockComprehensiveTargetSchema: Schema = comprehensiveTargetSchema;
+      const extendedComprehensiveTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveTargetSchema);
 
-      const sourceNode = extendedLoopSourceSchema.schemaTreeRoot.children[1];
-      const targetNode = extendedLoopTargetSchema.schemaTreeRoot.children[1];
+      const sourceNode = extendedComprehensiveSourceSchema.schemaTreeRoot.children[3].children[1]; // ManyToOne
+      const targetNode = extendedComprehensiveTargetSchema.schemaTreeRoot.children[5].children[1];
       const mapDefinition: MapDefinitionEntry = {};
       const connections: ConnectionDictionary = {};
 
-      const sourceChildNode = sourceNode.children[0];
+      const sourceChildNode = sourceNode.children[0]; // Simple
       const targetChildNode = targetNode.children[0];
 
       setConnectionInputValue(connections, {
@@ -702,40 +708,46 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
       generateMapDefinitionBody(mapDefinition, connections);
 
       expect(Object.keys(mapDefinition).length).toEqual(1);
-      const rootChildren = Object.entries(mapDefinition['ns0:Root']);
+      const rootChildren = Object.entries(mapDefinition['ns0:TargetSchemaRoot']);
       expect(rootChildren.length).toEqual(1);
-      expect(rootChildren[0][0]).toEqual('ManyToOne');
+      expect(rootChildren[0][0]).toEqual('Looping');
       expect(rootChildren[0][1]).not.toBe('string');
 
-      const ManyToOneObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['ManyToOne'] as MapDefinitionEntry;
-      const ManyToOneEntries = Object.entries(ManyToOneObject);
-      expect(ManyToOneEntries.length).toEqual(1);
-      expect(ManyToOneEntries[0][0]).toEqual('$for(/ns0:Root/ManyToOne/SourceYear)');
-      expect(ManyToOneEntries[0][1]).not.toBe('string');
+      const loopingObject = (mapDefinition['ns0:TargetSchemaRoot'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
+      const loopingEntries = Object.entries(loopingObject);
+      expect(loopingEntries.length).toEqual(1);
+      expect(loopingEntries[0][0]).toEqual('ManyToOne');
+      expect(loopingEntries[0][1]).not.toBe('string');
 
-      const yearForObject = ManyToOneObject['$for(/ns0:Root/ManyToOne/SourceYear)'] as MapDefinitionEntry;
+      const manyToOneObject = loopingObject['ManyToOne'] as MapDefinitionEntry;
+      const manyToOneEntries = Object.entries(manyToOneObject);
+      expect(manyToOneEntries.length).toEqual(1);
+      expect(manyToOneEntries[0][0]).toEqual('$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple)');
+      expect(manyToOneEntries[0][1]).not.toBe('string');
+
+      const yearForObject = manyToOneObject['$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple)'] as MapDefinitionEntry;
       const yearForLoopEntries = Object.entries(yearForObject);
       expect(yearForLoopEntries.length).toEqual(1);
-      expect(yearForLoopEntries[0][0]).toEqual('$for(SourceMonth)');
+      expect(yearForLoopEntries[0][0]).toEqual('$for(SourceSimpleChild)');
       expect(yearForLoopEntries[0][1]).not.toBe('string');
 
-      const monthForObject = yearForObject['$for(SourceMonth)'] as MapDefinitionEntry;
+      const monthForObject = yearForObject['$for(SourceSimpleChild)'] as MapDefinitionEntry;
       const monthForLoopEntries = Object.entries(monthForObject);
       expect(monthForLoopEntries.length).toEqual(1);
-      expect(monthForLoopEntries[0][0]).toEqual('$for(SourceDay)');
+      expect(monthForLoopEntries[0][0]).toEqual('$for(SourceSimpleChildChild)');
       expect(monthForLoopEntries[0][1]).not.toBe('string');
 
-      const dayForObject = monthForObject['$for(SourceDay)'] as MapDefinitionEntry;
+      const dayForObject = monthForObject['$for(SourceSimpleChildChild)'] as MapDefinitionEntry;
       const dayForLoopEntries = Object.entries(dayForObject);
       expect(dayForLoopEntries.length).toEqual(1);
-      expect(dayForLoopEntries[0][0]).toEqual('Date');
+      expect(dayForLoopEntries[0][0]).toEqual('Simple');
       expect(dayForLoopEntries[0][1]).not.toBe('string');
 
-      const dayObject = dayForObject['Date'] as MapDefinitionEntry;
-      const dayEntries = Object.entries(dayObject);
-      expect(dayEntries.length).toEqual(1);
-      expect(dayEntries[0][0]).toEqual('DayName');
-      expect(dayEntries[0][1]).toEqual('SourceDate');
+      const simpleChildChildObject = dayForObject['Simple'] as MapDefinitionEntry;
+      const simpleChildChildEntries = Object.entries(simpleChildChildObject);
+      expect(simpleChildChildEntries.length).toEqual(1);
+      expect(simpleChildChildEntries[0][0]).toEqual('Direct');
+      expect(simpleChildChildEntries[0][1]).toEqual('SourceDirect');
     });
 
     it('Generates body with function loop', async () => {
@@ -1085,25 +1097,24 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
     });
 
     it('Generates body with many to one nested index loops', async () => {
-      const loopSourceSchema: Schema = layeredLoopSourceMockSchema;
-      const extendedLoopSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(loopSourceSchema);
+      const mockComprehensiveSourceSchema: Schema = comprehensiveSourceSchema;
+      const extendedComprehensiveSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveSourceSchema);
 
-      const loopTargetSchema: Schema = layeredLoopTargetMockSchema;
-      const extendedLoopTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(loopTargetSchema);
+      const mockComprehensiveTargetSchema: Schema = comprehensiveTargetSchema;
+      const extendedComprehensiveTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveTargetSchema);
 
-      const sourceNode = extendedLoopSourceSchema.schemaTreeRoot.children[1];
-      const targetNode = extendedLoopTargetSchema.schemaTreeRoot.children[1];
+      const sourceNode = extendedComprehensiveSourceSchema.schemaTreeRoot.children[3].children[1]; // ManyToOne
+      const targetNode = extendedComprehensiveTargetSchema.schemaTreeRoot.children[5].children[1];
       const mapDefinition: MapDefinitionEntry = {};
       const connections: ConnectionDictionary = {};
 
-      const sourceChildNode = sourceNode.children[0];
-      const targetChildNode = targetNode.children[0];
+      const sourceChildNode = sourceNode.children[1]; // Index
+      const targetChildNode = targetNode.children[1];
 
       const yearIndex = createReactFlowFunctionKey(indexPseudoFunction);
       const monthIndex = createReactFlowFunctionKey(indexPseudoFunction);
       const dayIndex = createReactFlowFunctionKey(indexPseudoFunction);
 
-      // Year
       setConnectionInputValue(connections, {
         targetNode: indexPseudoFunction,
         targetNodeReactFlowKey: yearIndex,
@@ -1123,7 +1134,6 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         },
       });
 
-      // Month
       setConnectionInputValue(connections, {
         targetNode: indexPseudoFunction,
         targetNodeReactFlowKey: monthIndex,
@@ -1143,7 +1153,6 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         },
       });
 
-      // Day
       setConnectionInputValue(connections, {
         targetNode: indexPseudoFunction,
         targetNodeReactFlowKey: dayIndex,
@@ -1176,40 +1185,46 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
       generateMapDefinitionBody(mapDefinition, connections);
 
       expect(Object.keys(mapDefinition).length).toEqual(1);
-      const rootChildren = Object.entries(mapDefinition['ns0:Root']);
+      const rootChildren = Object.entries(mapDefinition['ns0:TargetSchemaRoot']);
       expect(rootChildren.length).toEqual(1);
-      expect(rootChildren[0][0]).toEqual('ManyToOne');
+      expect(rootChildren[0][0]).toEqual('Looping');
       expect(rootChildren[0][1]).not.toBe('string');
 
-      const ManyToOneObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['ManyToOne'] as MapDefinitionEntry;
-      const ManyToOneEntries = Object.entries(ManyToOneObject);
-      expect(ManyToOneEntries.length).toEqual(1);
-      expect(ManyToOneEntries[0][0]).toEqual('$for(/ns0:Root/ManyToOne/SourceYear, $a)');
-      expect(ManyToOneEntries[0][1]).not.toBe('string');
+      const loopingObject = (mapDefinition['ns0:TargetSchemaRoot'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
+      const loopingEntries = Object.entries(loopingObject);
+      expect(loopingEntries.length).toEqual(1);
+      expect(loopingEntries[0][0]).toEqual('ManyToOne');
+      expect(loopingEntries[0][1]).not.toBe('string');
 
-      const yearForObject = ManyToOneObject['$for(/ns0:Root/ManyToOne/SourceYear, $a)'] as MapDefinitionEntry;
+      const manyToOneObject = loopingObject['ManyToOne'] as MapDefinitionEntry;
+      const manyToOneEntries = Object.entries(manyToOneObject);
+      expect(manyToOneEntries.length).toEqual(1);
+      expect(manyToOneEntries[0][0]).toEqual('$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Index, $a)');
+      expect(manyToOneEntries[0][1]).not.toBe('string');
+
+      const yearForObject = manyToOneObject['$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Index, $a)'] as MapDefinitionEntry;
       const yearForLoopEntries = Object.entries(yearForObject);
       expect(yearForLoopEntries.length).toEqual(1);
-      expect(yearForLoopEntries[0][0]).toEqual('$for(SourceMonth, $b)');
+      expect(yearForLoopEntries[0][0]).toEqual('$for(SourceIndexChild, $b)');
       expect(yearForLoopEntries[0][1]).not.toBe('string');
 
-      const monthForObject = yearForObject['$for(SourceMonth, $b)'] as MapDefinitionEntry;
+      const monthForObject = yearForObject['$for(SourceIndexChild, $b)'] as MapDefinitionEntry;
       const monthForLoopEntries = Object.entries(monthForObject);
       expect(monthForLoopEntries.length).toEqual(1);
-      expect(monthForLoopEntries[0][0]).toEqual('$for(SourceDay, $c)');
+      expect(monthForLoopEntries[0][0]).toEqual('$for(SourceIndexChildChild, $c)');
       expect(monthForLoopEntries[0][1]).not.toBe('string');
 
-      const dayForObject = monthForObject['$for(SourceDay, $c)'] as MapDefinitionEntry;
+      const dayForObject = monthForObject['$for(SourceIndexChildChild, $c)'] as MapDefinitionEntry;
       const dayForLoopEntries = Object.entries(dayForObject);
       expect(dayForLoopEntries.length).toEqual(1);
-      expect(dayForLoopEntries[0][0]).toEqual('Date');
+      expect(dayForLoopEntries[0][0]).toEqual('Index');
       expect(dayForLoopEntries[0][1]).not.toBe('string');
 
-      const dayObject = dayForObject['Date'] as MapDefinitionEntry;
-      const dayEntries = Object.entries(dayObject);
-      expect(dayEntries.length).toEqual(1);
-      expect(dayEntries[0][0]).toEqual('DayName');
-      expect(dayEntries[0][1]).toEqual('SourceDate');
+      const simpleChildChildObject = dayForObject['Index'] as MapDefinitionEntry;
+      const simpleChildChildEntries = Object.entries(simpleChildChildObject);
+      expect(simpleChildChildEntries.length).toEqual(1);
+      expect(simpleChildChildEntries[0][0]).toEqual('Direct');
+      expect(simpleChildChildEntries[0][1]).toEqual('SourceDirect');
     });
 
     it('Generates body with conditional looping', async () => {
@@ -1673,7 +1688,6 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
       });
 
       generateMapDefinitionBody(mapDefinition, connections);
-      console.dir(Object.entries(mapDefinition), { depth: null });
 
       expect(Object.keys(mapDefinition).length).toEqual(1);
       const rootChildren = Object.entries(mapDefinition['ns0:Root']);

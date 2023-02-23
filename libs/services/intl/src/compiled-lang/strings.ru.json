@@ -147,6 +147,12 @@
       "value": "Преобразует входные данные в массив"
     }
   ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Show raw outputs"
+    }
+  ],
   "/n13VL": [
     {
       "type": 0,
@@ -2169,16 +2175,16 @@
       "value": "Введите центр"
     }
   ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "Filter by data type"
+    }
+  ],
   "GLd3MU": [
     {
       "type": 0,
       "value": "Обязательное поле. Объект, который необходимо найти в коллекции."
-    }
-  ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
     }
   ],
   "GXXLuT": [
@@ -2469,6 +2475,28 @@
       "value": "Parameters"
     }
   ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "The current map contains "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "JErLDT": [
     {
       "type": 0,
@@ -2479,12 +2507,6 @@
     {
       "type": 0,
       "value": "Требуется. Строка, которая содержит время."
-    }
-  ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2667,6 +2689,12 @@
     {
       "type": 0,
       "value": "Нет результатов поиска"
+    }
+  ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "LBbhCu": [
@@ -3513,6 +3541,12 @@
       "value": "6"
     }
   ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "issue"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3535,6 +3569,12 @@
     {
       "type": 0,
       "value": "Введите словарь"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "issues"
     }
   ],
   "SKXopi": [
@@ -3769,12 +3809,6 @@
       "value": "(UTC –06:00) Остров Пасхи"
     }
   ],
-  "UAwAAS": [
-    {
-      "type": 0,
-      "value": "Show inputs"
-    }
-  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3969,12 +4003,6 @@
     {
       "type": 0,
       "value": "Требуется. Имя нового свойства."
-    }
-  ],
-  "WCrlES": [
-    {
-      "type": 0,
-      "value": "Show outputs"
     }
   ],
   "WGwH45": [
@@ -4281,6 +4309,12 @@
       "value": "Custom value does not match one of the allowed types for this input"
     }
   ],
+  "YlesUQ": [
+    {
+      "type": 0,
+      "value": "Your map is in perfect condition"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -4291,6 +4325,12 @@
     {
       "type": 0,
       "value": "Уменьшить"
+    }
+  ],
+  "Z657PF": [
+    {
+      "type": 0,
+      "value": "Function is missing required inputs"
     }
   ],
   "Z9PWl/": [
@@ -4807,6 +4847,12 @@
       "value": "Не указано"
     }
   ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -4901,6 +4947,16 @@
     {
       "type": 0,
       "value": "Число подкачки превышает максимальное значение"
+    }
+  ],
+  "fWsZhJ": [
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": " has an non-terminating connection chain"
     }
   ],
   "faSDuD": [
@@ -5487,6 +5543,16 @@
       "value": "\""
     }
   ],
+  "jlc/pM": [
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " has an input with a mismatched type"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -5611,12 +5677,6 @@
     {
       "type": 0,
       "value": "Требуется. Это значение — следующее целое число после наибольшего целого числа, которое можно вернуть."
-    }
-  ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
     }
   ],
   "kuFK3E": [
@@ -5745,6 +5805,12 @@
     {
       "type": 0,
       "value": "Фактическое значение"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6605,12 +6671,6 @@
       "value": "(UTC+06:00) Новосибирск"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6699,6 +6759,12 @@
     {
       "type": 0,
       "value": "Добавляет целое число часов в метку времени строки, переданной в функцию"
+    }
+  ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Show me"
     }
   ],
   "uXJdAh": [
@@ -6901,6 +6967,12 @@
       "value": "Воскресенье"
     }
   ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "wEaGWn": [
     {
       "type": 0,
@@ -6965,6 +7037,12 @@
     {
       "type": 0,
       "value": "Client Tracking ID"
+    }
+  ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "Input type mismatch"
     }
   ],
   "wl7X0l": [
@@ -7055,6 +7133,12 @@
     {
       "type": 0,
       "value": "Пороговое значение"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Show raw inputs"
     }
   ],
   "xV/oyK": [

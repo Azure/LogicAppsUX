@@ -115,7 +115,6 @@ export const xmlTransformManifest = {
           'x-ms-editor': 'dropdown',
           'x-ms-editor-options': {
             multiselect: true,
-            valueSeparator: ',',
             titleSeparator: ',',
             items: [
               {

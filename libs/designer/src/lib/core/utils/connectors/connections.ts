@@ -1,4 +1,5 @@
 import type { ConnectionReference } from '../../../common/models/workflow';
+import { getApiManagementSwagger } from '../../queries/connections';
 import type { ConnectionsStoreState } from '../../state/connection/connectionSlice';
 import { ApiManagementService, ConnectionService } from '@microsoft/designer-client-services-logic-apps';
 import type { AssistedConnectionProps } from '@microsoft/designer-ui';
@@ -104,9 +105,9 @@ export async function getConnectionParametersForAzureConnection(connectionType?:
   } else if (connectionType === ConnectionType.ApiManagement) {
     // TODO - Need to find apps which have authentication set, check with Alex.
     const apimApiId = selectedSubResource?.id;
-    const apiSwagger = await ApiManagementService().fetchApiMSwagger(apimApiId);
-    const baseUrl = apiSwagger.host ?? 'NotFound';
-    const subscriptionKey = apiSwagger.securityDefinitions?.apiKeyHeader?.name ?? 'NotFound';
+    const apiSwagger = await getApiManagementSwagger(apimApiId);
+    const baseUrl = apiSwagger.api.host ?? 'NotFound';
+    const subscriptionKey = (apiSwagger.api.securityDefinitions?.apiKeyHeader as any)?.name ?? 'NotFound';
 
     return {
       apiId: apimApiId,
