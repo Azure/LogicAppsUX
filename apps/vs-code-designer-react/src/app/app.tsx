@@ -6,9 +6,9 @@ import { Theme } from '@microsoft/utils-logic-apps';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-export const App = () => {
+export const App = async () => {
   const vscodeState = useSelector((state: RootState) => state.designer);
-  const { panelMetaData, connectionReferences, baseUrl, apiHubServiceDetails, readOnly, isLocal, apiVersion, isMonitoringView } =
+  const { panelMetaData, connectionReferences, baseUrl, apiHubServiceDetails, readOnly, isLocal, apiVersion, isMonitoringView, runId } =
     vscodeState;
   const codelessApp = panelMetaData?.codelessApp;
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
@@ -20,6 +20,11 @@ export const App = () => {
   const services = useMemo(() => {
     return getDesignerServices(baseUrl, apiVersion, apiHubServiceDetails, isLocal);
   }, [baseUrl, apiVersion, apiHubServiceDetails, isLocal]);
+
+  if (isMonitoringView && runId) {
+    const runInstance = await services.runService.getRun(runId);
+    console.log(runInstance);
+  }
 
   return (
     <DesignerProvider
