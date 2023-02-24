@@ -6,63 +6,37 @@ import type { FunctionDictionary } from '../models/Function';
 import { generateInputHandleId, isConnectionUnit } from './Connection.Utils';
 import { isFunctionData } from './Function.Utils';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix } from './ReactFlow.Util';
-import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
-import ELK from 'elkjs/lib/elk.bundled';
 
-const elk = new ELK();
+export interface LayoutEdge {
+  id: string;
+  sourceId: string;
+  targetId: string;
+  labels: string[];
+}
 
-const defaultNodeGroupSpacing = '120.0';
-const expandedNodeGroupSpacing = '160.0';
+export interface LayoutNode {
+  id: string;
+  x?: number;
+  y?: number;
+  children?: LayoutNode[];
+}
 
-const defaultTreeLayoutOptions: Record<string, string> = {
-  // General layout settings
-  direction: 'RIGHT',
-  algorithm: 'layered',
-  'layering.strategy': 'INTERACTIVE',
-  hierarchyHandling: 'INCLUDE_CHILDREN',
-  'partitioning.activate': 'true', // Allows blocks/node-groups to be forced into specific "slots"
-  'edge.thickness': '8.0',
-  'spacing.nodeNodeBetweenLayers': defaultNodeGroupSpacing, // Spacing between node groups (Source schema/Functions/Target schema)
-  // Settings related to node ordering (when attempting to minimize edge crossing)
-  'crossingMinimization.semiInteractive': 'true',
-  'considerModelOrder.strategy': 'NODES_AND_EDGES',
-};
-
-const sourceSchemaLayoutOptions: Record<string, string> = {
-  'crossingMinimization.forceNodeModelOrder': 'true', // Ensures that node order is maintained
-  'partitioning.partition': '0',
-  'spacing.nodeNode': '12.0', // Vertical spacing between nodes
-  'spacing.nodeNodeBetweenLayers': '0.0', // Horizontal spacing between nodes
-  // The below settings stop some weird extra horizontal spacing when a connection/edge is present
-  'spacing.edgeEdge': '0.0',
-  'spacing.edgeNodeBetweenLayers': '0.0',
-  'spacing.edgeEdgeBetweenLayers': '0.0',
-};
-
-const functionsLayoutOptions: Record<string, string> = {
-  ...sourceSchemaLayoutOptions,
-  'partitioning.partition': '1',
-  'spacing.nodeNodeBetweenLayers': '80.0', // Horizontal spacing between nodes
-  'spacing.nodeNode': '24.0', // Vertical spacing between nodes
-};
-
-const targetSchemaLayoutOptions: Record<string, string> = {
-  ...sourceSchemaLayoutOptions,
-  'partitioning.partition': '2',
-};
+export interface RootLayoutNode {
+  id: string;
+  children: LayoutNode[];
+  edges: LayoutEdge[];
+  width?: number;
+  height?: number;
+}
 
 export const convertDataMapNodesToElkGraph = (
   currentSourceSchemaNodes: SchemaNodeExtended[],
   currentFunctionNodes: FunctionDictionary,
   currentTargetSchemaNode: SchemaNodeExtended,
-  connections: ConnectionDictionary,
-  useExpandedFunctionCards: boolean
-): ElkNode => {
-  // NOTE: Sub-block edges[] only contain edges between nodes *within that block*
-  // - the root edges[] will contain all multi-block edges (thus, src/tgt schemas should never have edges)
+  connections: ConnectionDictionary
+): RootLayoutNode => {
   let nextEdgeIndex = 0;
-  const interFunctionEdges: ElkExtendedEdge[] = [];
-  const interBlockEdges: ElkExtendedEdge[] = [];
+  const layoutEdges: LayoutEdge[] = [];
 
   Object.values(connections).forEach((connection) => {
     // Make sure that each connection and its nodes are actively on the canvas
@@ -75,191 +49,145 @@ export const convertDataMapNodesToElkGraph = (
       return;
     }
 
-    // Categorize connections to function<->function and any others for elkTree creation below
     Object.values(connection.inputs).forEach((inputValueArray, inputIndex) => {
       inputValueArray.forEach((inputValue, inputValueIndex) => {
         if (isConnectionUnit(inputValue)) {
           const target = connection.self.reactFlowKey;
           const labels = isFunctionData(connection.self.node)
             ? connection.self.node.maxNumberOfInputs > -1
-              ? [{ text: connection.self.node.inputs[inputIndex].name }]
-              : [{ text: generateInputHandleId(connection.self.node.inputs[inputIndex].name, inputValueIndex) }]
+              ? [connection.self.node.inputs[inputIndex].name]
+              : [generateInputHandleId(connection.self.node.inputs[inputIndex].name, inputValueIndex)]
             : [];
 
-          const nextEdge: ElkExtendedEdge = {
+          const nextEdge: LayoutEdge = {
             id: `e${nextEdgeIndex}`,
-            sources: [inputValue.reactFlowKey],
-            targets: [target],
+            sourceId: inputValue.reactFlowKey,
+            targetId: target,
             labels,
           };
 
-          if (isFunctionData(inputValue.node) && isFunctionData(connection.self.node)) {
-            interFunctionEdges.push(nextEdge);
-          } else {
-            interBlockEdges.push(nextEdge);
-          }
-
+          layoutEdges.push(nextEdge);
           nextEdgeIndex += 1;
         }
       });
     });
   });
 
-  const elkTree: ElkNode = {
+  // NOTE: Dummy nodes allow proper layouting when no real nodes exist yet
+  const layoutTree: RootLayoutNode = {
     id: 'root',
-    layoutOptions: {
-      ...defaultTreeLayoutOptions,
-      'spacing.nodeNodeBetweenLayers': useExpandedFunctionCards ? expandedNodeGroupSpacing : defaultNodeGroupSpacing,
-    },
     children: [
       {
         id: 'sourceSchemaBlock',
-        layoutOptions: sourceSchemaLayoutOptions,
         children: [
           ...currentSourceSchemaNodes.map((srcNode) => ({
             id: addSourceReactFlowPrefix(srcNode.key),
-            width: schemaNodeCardDefaultWidth,
-            height: schemaNodeCardHeight,
           })),
-          // NOTE: Dummy nodes allow proper layouting when no real nodes exist yet
-          { id: 'srcDummyNode', width: schemaNodeCardDefaultWidth, height: schemaNodeCardHeight },
+          { id: 'srcDummyNode' },
         ],
       },
       {
         id: 'functionsBlock',
-        layoutOptions: functionsLayoutOptions,
         children: [
           ...Object.keys(currentFunctionNodes).map((fnNodeKey) => ({
             id: fnNodeKey,
-            width: functionNodeCardSize,
-            height: functionNodeCardSize,
           })),
-          { id: 'fnDummyNode', width: functionNodeCardSize, height: functionNodeCardSize },
+          { id: 'fnDummyNode' },
         ],
-        // Only function<->function edges
-        edges: interFunctionEdges,
       },
       {
         id: 'targetSchemaBlock',
-        layoutOptions: targetSchemaLayoutOptions,
         children: [
-          { id: addTargetReactFlowPrefix(currentTargetSchemaNode.key), width: schemaNodeCardDefaultWidth, height: schemaNodeCardHeight },
+          { id: addTargetReactFlowPrefix(currentTargetSchemaNode.key) },
           ...currentTargetSchemaNode.children.map((childNode) => ({
             id: addTargetReactFlowPrefix(childNode.key),
-            width: schemaNodeCardDefaultWidth,
-            height: schemaNodeCardHeight,
           })),
         ],
       },
     ],
-    edges: interBlockEdges,
+    edges: layoutEdges,
   };
 
-  return elkTree;
+  return layoutTree;
 };
 
 export const convertWholeDataMapToElkGraph = (
   flattenedSourceSchema: SchemaNodeDictionary,
   flattenedTargetSchema: SchemaNodeDictionary,
   functionNodes: FunctionDictionary,
-  connections: ConnectionDictionary,
-  useExpandedFunctionCards: boolean
-): ElkNode => {
-  // NOTE: Sub-block edges[] only contain edges between nodes *within that block*
-  // - the root edges[] will contain all multi-block edges (thus, src/tgt schemas should never have edges)
+  connections: ConnectionDictionary
+): RootLayoutNode => {
   let nextEdgeIndex = 0;
-  const interFunctionEdges: ElkExtendedEdge[] = [];
-  const interBlockEdges: ElkExtendedEdge[] = [];
+  const layoutEdges: LayoutEdge[] = [];
 
   Object.values(connections).forEach((connection) => {
-    // Categorize connections to function<->function and any others for elkTree creation below
     Object.values(connection.inputs).forEach((inputValueArray, inputIndex) => {
       inputValueArray.forEach((inputValue, inputValueIndex) => {
         if (isConnectionUnit(inputValue)) {
           const target = connection.self.reactFlowKey;
           const labels = isFunctionData(connection.self.node)
             ? connection.self.node.maxNumberOfInputs > -1
-              ? [{ text: connection.self.node.inputs[inputIndex].name }]
-              : [{ text: generateInputHandleId(connection.self.node.inputs[inputIndex].name, inputValueIndex) }]
+              ? [connection.self.node.inputs[inputIndex].name]
+              : [generateInputHandleId(connection.self.node.inputs[inputIndex].name, inputValueIndex)]
             : [];
 
-          const nextEdge: ElkExtendedEdge = {
+          const nextEdge: LayoutEdge = {
             id: `e${nextEdgeIndex}`,
-            sources: [inputValue.reactFlowKey],
-            targets: [target],
+            sourceId: inputValue.reactFlowKey,
+            targetId: target,
             labels,
           };
 
-          if (isFunctionData(inputValue.node) && isFunctionData(connection.self.node)) {
-            interFunctionEdges.push(nextEdge);
-          } else {
-            interBlockEdges.push(nextEdge);
-          }
-
+          layoutEdges.push(nextEdge);
           nextEdgeIndex += 1;
         }
       });
     });
   });
 
-  const elkTree: ElkNode = {
+  // NOTE: Dummy nodes allow proper layouting when no real nodes exist yet
+  const layoutTree: RootLayoutNode = {
     id: 'root',
-    layoutOptions: {
-      ...defaultTreeLayoutOptions,
-      'spacing.nodeNodeBetweenLayers': useExpandedFunctionCards ? expandedNodeGroupSpacing : defaultNodeGroupSpacing,
-    },
     children: [
       {
         id: 'sourceSchemaBlock',
-        layoutOptions: sourceSchemaLayoutOptions,
         children: [
           ...Object.values(flattenedSourceSchema).map((srcNode) => ({
             id: addSourceReactFlowPrefix(srcNode.key),
-            width: schemaNodeCardDefaultWidth,
-            height: schemaNodeCardHeight,
           })),
-          // NOTE: Dummy nodes allow proper layouting when no real nodes exist yet
-          { id: 'srcDummyNode', width: schemaNodeCardDefaultWidth, height: schemaNodeCardHeight },
+          { id: 'srcDummyNode' },
         ],
       },
       {
         id: 'functionsBlock',
-        layoutOptions: functionsLayoutOptions,
         children: [
           ...Object.keys(functionNodes).map((fnNodeKey) => ({
             id: fnNodeKey,
             width: functionNodeCardSize,
             height: functionNodeCardSize,
           })),
-          { id: 'fnDummyNode', width: functionNodeCardSize, height: functionNodeCardSize },
+          { id: 'fnDummyNode' },
         ],
-        // Only function<->function edges
-        edges: interFunctionEdges,
       },
       {
         id: 'targetSchemaBlock',
-        layoutOptions: targetSchemaLayoutOptions,
         children: [
           ...Object.values(flattenedTargetSchema).map((childNode) => ({
             id: addTargetReactFlowPrefix(childNode.key),
-            width: schemaNodeCardDefaultWidth,
-            height: schemaNodeCardHeight,
           })),
-          // NOTE: Dummy nodes allow proper layouting when no real nodes exist yet
-          { id: 'tgtDummyNode', width: schemaNodeCardDefaultWidth, height: schemaNodeCardHeight },
+          { id: 'tgtDummyNode' },
         ],
       },
     ],
-    edges: interBlockEdges,
+    edges: layoutEdges,
   };
 
-  return elkTree;
+  return layoutTree;
 };
 
 /* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-// REASON: Lots of optional properties in ElkNodes, and TS didn't persist undefined checks within sub-blocks (ex: forEach)
-const applyCustomLayout = async (graph: ElkNode, useExpandedFunctionCards?: boolean): Promise<ElkNode> => {
+export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFunctionCards?: boolean): Promise<RootLayoutNode> => {
   const schemaNodeCardVGap = 8;
   const xInterval = functionNodeCardSize * (useExpandedFunctionCards ? 3 : 1.5);
   const yInterval = functionNodeCardSize * (useExpandedFunctionCards ? 2 : 1);
@@ -268,7 +196,7 @@ const applyCustomLayout = async (graph: ElkNode, useExpandedFunctionCards?: bool
 
   const getSchemaNodeYPos = (nodeIdx: number) => nodeIdx * (schemaNodeCardHeight + (nodeIdx === 0 ? 0 : schemaNodeCardVGap));
 
-  if (graph.children && graph.children[0]?.children && graph.children[1]?.children && graph.children[2]?.children) {
+  if (graph.children[0]?.children && graph.children[1]?.children && graph.children[2]?.children) {
     // Assign placeholder values to node blocks as they aren't used w/ this custom layouting
     graph.children[0].x = 0;
     graph.children[0].y = 0;
@@ -291,22 +219,22 @@ const applyCustomLayout = async (graph: ElkNode, useExpandedFunctionCards?: bool
     const nextAvailableToolbarSpot = [0, 0]; // Grid representation (one node slot == 1x1)
     const fnNodeIdsThatOnlyOutputToTargetSchema: string[] = [];
 
-    const compileInputPositionsAndOutputDetails = (edgeArray: ElkExtendedEdge[], fnNodeId: string): [number[][], number, boolean] => {
+    const compileInputPositionsAndOutputDetails = (edgeArray: LayoutEdge[], fnNodeId: string): [number[][], number, boolean] => {
       const compiledInputPositions: number[][] = [];
       let numOutputs = 0;
       let fnNodeOnlyOutputsToTargetSchema = true;
 
       edgeArray.forEach((edge) => {
-        if (edge.sources.includes(fnNodeId)) {
+        if (edge.sourceId === fnNodeId) {
           numOutputs += 1;
 
-          if (!edge.targets[0].includes(targetPrefix)) {
+          if (!edge.targetId.includes(targetPrefix)) {
             fnNodeOnlyOutputsToTargetSchema = false;
           }
-        } else if (edge.targets.includes(fnNodeId)) {
+        } else if (edge.targetId === fnNodeId) {
           // Find input node, and get or calculate its position
-          const inputNode = [...graph.children![0].children!, ...graph.children![1].children!].find(
-            (srcSchemaOrFnNode) => srcSchemaOrFnNode.id === edge.sources[0]
+          const inputNode = [...graph.children[0].children!, ...graph.children[1].children!].find(
+            (srcSchemaOrFnNode) => srcSchemaOrFnNode.id === edge.sourceId
           );
 
           if (inputNode) {
@@ -323,31 +251,12 @@ const applyCustomLayout = async (graph: ElkNode, useExpandedFunctionCards?: bool
       return [compiledInputPositions, numOutputs, fnNodeOnlyOutputsToTargetSchema];
     };
 
-    const calculateFnNodePosition = (fnNode: ElkNode): void => {
+    const calculateFnNodePosition = (fnNode: LayoutNode): void => {
       // Compile positions of any inputs and number of outputs
-      let numOutputs = 0;
-      let fnNodeOnlyOutputsToTargetSchema = true;
-      let compiledInputPositions: number[][] = [];
-      if (graph.edges) {
-        const [compiledInputPositions1, numOutputs1, fnNodeOnlyOutputsToTargetSchema1] = compileInputPositionsAndOutputDetails(
-          graph.edges,
-          fnNode.id
-        );
-        numOutputs += numOutputs1;
-        fnNodeOnlyOutputsToTargetSchema = fnNodeOnlyOutputsToTargetSchema1;
-        compiledInputPositions = [...compiledInputPositions1];
-      }
-      if (graph.children![1].edges) {
-        const [compiledInputPositions2, numOutputs2, fnNodeOnlyOutputsToTargetSchema2] = compileInputPositionsAndOutputDetails(
-          graph.children![1].edges,
-          fnNode.id
-        );
-        numOutputs += numOutputs2;
-        if (fnNodeOnlyOutputsToTargetSchema) {
-          fnNodeOnlyOutputsToTargetSchema = fnNodeOnlyOutputsToTargetSchema2;
-        }
-        compiledInputPositions = [...compiledInputPositions, ...compiledInputPositions2];
-      }
+      const [compiledInputPositions, numOutputs, fnNodeOnlyOutputsToTargetSchema] = compileInputPositionsAndOutputDetails(
+        graph.edges,
+        fnNode.id
+      );
 
       // Initial calculation
       let fnNodeXPos: number | undefined = undefined;
@@ -412,12 +321,12 @@ const applyCustomLayout = async (graph: ElkNode, useExpandedFunctionCards?: bool
     // Finally, position remaining function nodes that only output to the target schema
     // (and thus must wait until after its layout is computed)
     fnNodeIdsThatOnlyOutputToTargetSchema.forEach((fnNodeId) => {
-      const fnNode = graph.children![1].children?.find((elkFnNode) => elkFnNode.id === fnNodeId);
+      const fnNode = graph.children[1].children?.find((layoutFnNode) => layoutFnNode.id === fnNodeId);
       const tgtSchemaOutputYPositions =
         graph.edges
-          ?.filter((edge) => edge.sources.includes(fnNodeId))
+          ?.filter((edge) => edge.sourceId === fnNodeId)
           .map((edge) => {
-            return graph.children![2].children?.find((tgtSchemaNode) => tgtSchemaNode.id === edge.targets[0])?.y ?? 0;
+            return graph.children[2].children?.find((tgtSchemaNode) => tgtSchemaNode.id === edge.targetId)?.y ?? 0;
           }) ?? [];
 
       if (fnNode) {
@@ -432,16 +341,4 @@ const applyCustomLayout = async (graph: ElkNode, useExpandedFunctionCards?: bool
   }
 
   return Promise.resolve(graph);
-};
-
-export const applyElkLayout = async (
-  graph: ElkNode,
-  useCustomLayouting?: boolean,
-  useExpandedFunctionCards?: boolean
-): Promise<ElkNode> => {
-  if (!useCustomLayouting) {
-    return elk.layout(graph);
-  } else {
-    return applyCustomLayout(graph, useExpandedFunctionCards);
-  }
 };
