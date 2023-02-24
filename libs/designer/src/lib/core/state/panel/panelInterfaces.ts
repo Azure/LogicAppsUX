@@ -10,6 +10,7 @@ export interface PanelState {
   registeredTabs: Record<string, PanelTab>;
   selectedTabName: string | undefined;
   selectedOperationGroupId: string;
+  selectedOperationId: string;
   addingTrigger: boolean;
   tokenPickerVisibility: boolean;
 }

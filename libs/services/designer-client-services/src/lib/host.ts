@@ -17,7 +17,7 @@ export const InitHostService = (hostService: IHostService): void => {
 
 export const HostService = (): IHostService => {
   if (!service) {
-    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'Host Service need to be initialized before using');
+    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'Host Service needs to be initialized before using');
   }
 
   return service;

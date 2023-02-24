@@ -22,7 +22,7 @@ export const ReactQueryProvider = (props: ProviderProps) => {
     <QueryClientProvider client={reactQueryClient}>
       {props.children}
       <ReactQueryDevtools
-        initialIsOpen={true}
+        initialIsOpen={false}
         position={'bottom-right'}
         panelProps={{ style: { zIndex: 9999999 } }}
         toggleButtonProps={{ style: { zIndex: 9999999 } }}

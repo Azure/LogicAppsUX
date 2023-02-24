@@ -4,7 +4,6 @@ import { test, expect } from '@playwright/test';
 test('Should serialize the workflow after deserializing it and match', async ({ page }) => {
   await page.goto(baseUrl);
 
-  await page.locator('[aria-label="Close React Query Devtools"]').click();
   await page.locator('div[role="button"]:has-text("🧰")').click();
   await page.locator('text=Simple Big Workflow').click();
 
@@ -29,7 +28,6 @@ test('Should serialize the workflow after deserializing it and match', async ({ 
 test('Should serialize the workflow after deserializing it and match with a switch statement', async ({ page }) => {
   await page.goto(baseUrl);
 
-  await page.locator('[aria-label="Close React Query Devtools"]').click();
   await page.locator('div[role="button"]:has-text("🧰")').click();
   await page.locator('text=Simple Big Workflow').click();
 
@@ -56,7 +54,6 @@ test('Should serialize the workflow after deserializing it and match with some s
 }) => {
   await page.goto(baseUrl);
 
-  await page.locator('[aria-label="Close React Query Devtools"]').click();
   await page.locator('div[role="button"]:has-text("🧰")').click();
   await page.locator('text=Simple Big Workflow').click();
 

@@ -26,7 +26,7 @@ export const InitWorkflowService = (workflowService: IWorkflowService): void => 
 
 export const WorkflowService = (): IWorkflowService => {
   if (!service) {
-    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'Workflow Service need to be initialized before using');
+    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'Workflow Service needs to be initialized before using');
   }
 
   return service;

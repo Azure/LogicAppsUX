@@ -68,7 +68,7 @@ export const InitConnectionService = (connectionService: IConnectionService): vo
 
 export const ConnectionService = (): IConnectionService => {
   if (!service) {
-    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'ConnectionService need to be initialized before using');
+    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'ConnectionService needs to be initialized before using');
   }
 
   return service;

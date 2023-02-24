@@ -3,6 +3,7 @@ export * from './actionbuttonv2';
 export * from './announcedmatches';
 export * from './arrayeditor';
 export * from './authentication';
+export * from './azureResourcePicker';
 export * from './card';
 export * from './card/scopeCard';
 export * from './card/subgraphCard';

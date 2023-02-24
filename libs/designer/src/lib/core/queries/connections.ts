@@ -95,4 +95,4 @@ export const getApiManagementSwagger = async (apimApiId: string): Promise<Swagge
   });
 
   return new SwaggerParser(swagger);
-}
+};

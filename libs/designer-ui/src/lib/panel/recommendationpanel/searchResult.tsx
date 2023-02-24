@@ -1,3 +1,4 @@
+import NoResultsSvg from '../../../assets/search/noResults.svg';
 import { getConnectorCategoryString } from '../../utils';
 import type { OperationActionData } from './interfaces';
 import { OperationSearchCard } from './operationSearchCard';
@@ -67,7 +68,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
 
   const noResultsText = intl.formatMessage(
     {
-      defaultMessage: 'No results found for: {searchTerm}',
+      defaultMessage: 'No results found for {searchTerm}',
       description: 'Text to show when there are no search results',
     },
     {
@@ -90,6 +91,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
   if (operationSearchResults.length === 0)
     return (
       <div className="msla-no-results-container">
+        <img src={NoResultsSvg} alt={noResultsText?.toString()} />
         <Text>{noResultsText}</Text>
       </div>
     );
