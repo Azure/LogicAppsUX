@@ -171,7 +171,6 @@ export const convertWholeDataMapToLayoutTree = (
 
 /* eslint-disable no-param-reassign */
 export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFunctionCards?: boolean): Promise<RootLayoutNode> => {
-  console.log('--------------------------CUSTOM LAYOUTING START--------------------------'); // REMOVE
   const schemaNodeCardVGap = 8;
   const xInterval = functionNodeCardSize * (useExpandedFunctionCards ? 3 : 1.5);
   const yInterval = functionNodeCardSize * (useExpandedFunctionCards ? 2 : 1);
@@ -188,9 +187,8 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
   });
 
   // Function node positioning
-  // - Find farthest right function node to position target schema from
   const fnStartX = srcSchemaStartX + schemaNodeCardDefaultWidth + xInterval;
-  let farthestRightFnNodeXPos = fnStartX;
+  let farthestRightFnNodeXPos = fnStartX; // Find farthest right function node to position target schema from
   const nextAvailableToolbarSpot = [0, 0]; // Grid representation (one node slot == 1x1)
   const fnNodeIdsThatOnlyOutputToTargetSchema: string[] = [];
 
@@ -219,7 +217,7 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
           }
 
           // Confirm that recursive call above actually calculated the inputNode's position
-          if (inputNode.x && inputNode.y) {
+          if (inputNode.x !== undefined && inputNode.y !== undefined) {
             compiledInputPositions.push([inputNode.x, inputNode.y]);
           } else {
             LogService.error(LogCategory.ReactFlowUtils, 'Layouting', {
@@ -276,8 +274,6 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
       fnNodeXPos = fnNodeXPos + xInterval;
       fnNodeYPos = compiledInputPositions.reduce((curYTotal, coords) => curYTotal + coords[1], 0) / compiledInputPositions.length;
     }
-
-    console.log(fnNodeXPos, fnNodeYPos, fnNode, compiledInputPositions, numOutputs, fnNodeOnlyOutputsToTargetSchema); // REMOVE
 
     // Collision checking & handling (only adjusts yPos)
     // TODO: while xPos/yPos === same as some other current fnNode, check availability of next top then bottom yInterval spots
