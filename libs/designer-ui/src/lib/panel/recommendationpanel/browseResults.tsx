@@ -16,7 +16,7 @@ export const BrowseGrid = (props: BrowseGridProps) => {
 
   const intl = useIntl();
   const ref = useRef(null);
-  const [forceSingleCol, setForceSingleCol] = useState(true);
+  const [forceSingleCol, setForceSingleCol] = useState(false);
 
   const checkCol = useCallback(() => {
     setForceSingleCol((ref.current as any)?.clientWidth < 560);
