@@ -1,7 +1,7 @@
 import { BaseOperationManifestService } from '../base';
 import { getBuiltInOperationInfo, isBuiltInOperation, supportedBaseManifestObjects } from '../base/operationmanifest';
 import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
-import { equals, ConnectionType } from '@microsoft/utils-logic-apps';
+import { isCustomConnector, equals, ConnectionType } from '@microsoft/utils-logic-apps';
 
 export class StandardOperationManifestService extends BaseOperationManifestService {
   override async getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo> {
@@ -26,8 +26,7 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
     const supportedManifest = supportedBaseManifestObjects.get(operationId);
     if (supportedManifest) return supportedManifest;
 
-    const isCustomApi = connectorId.split('/').slice(-2)[0] === 'customApis';
-    if (isCustomApi) return await this.getCustomOperationManifest(connectorId, operationId);
+    if (isCustomConnector(connectorId)) return await this.getCustomOperationManifest(connectorId, operationId);
 
     const { apiVersion, baseUrl, httpClient } = this.options;
     const connectorName = connectorId.split('/').slice(-1)[0];

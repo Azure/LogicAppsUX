@@ -11,7 +11,6 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 type OperationGroupDetailViewProps = {
-  connectorId: string;
   groupOperations: DiscoveryOperation<DiscoveryResultTypes>[];
   filters: Record<string, string>;
 };

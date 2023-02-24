@@ -8,6 +8,7 @@ import { integrationAccountArtifactLookupManifest } from './manifests/integratio
 import { liquidJsonToJsonManifest, liquidJsonToTextManifest, liquidXmlToJsonManifest, liquidXmlToTextManifest } from './manifests/liquid';
 import { xmlTransformManifest, xmlValidationManifest } from './manifests/xml';
 import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
+import { isCustomConnector } from '@microsoft/utils-logic-apps';
 
 export class ConsumptionOperationManifestService extends BaseOperationManifestService {
   override async getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo> {
@@ -24,8 +25,7 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
   }
 
   override async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
-    const isCustomApi = connectorId.split('/').slice(-2)[0] === 'customApis';
-    if (isCustomApi) return await this.getCustomOperationManifest(connectorId, operationId);
+    if (isCustomConnector(connectorId)) return await this.getCustomOperationManifest(connectorId, operationId);
 
     const supportedManifest = supportedConsumptionManifestObjects.get(operationId);
     return supportedManifest ?? ({ properties: {} } as any);

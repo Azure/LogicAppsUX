@@ -285,7 +285,7 @@ export abstract class BaseConnectionService implements IConnectionService {
   }
 
   protected async getConnectionsForConnector(connectorId: string): Promise<Connection[]> {
-    // Right now the `managedApiName` filter property does not work on custom connections, so we need to filter them manually
+    // Right now there isn't a name $filter for custom connections, so we need to filter them manually
     if (equals(connectorId.split('/').at(-2), 'customApis')) {
       const {
         apiHubServiceDetails: { location, apiVersion },
