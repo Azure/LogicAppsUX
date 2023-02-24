@@ -20,7 +20,7 @@ export const getTriggerNode = (state: WorkflowState): WorkflowNode => {
 };
 
 export const getTriggerNodeId = (state: WorkflowState): string => {
-  return getTriggerNode(state).id;
+  return getTriggerNode(state)?.id;
 };
 
 export const isLeafNodeFromEdges = (edges: WorkflowEdge[]) => {
