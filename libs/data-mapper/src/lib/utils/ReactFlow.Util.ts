@@ -135,14 +135,6 @@ export const convertToReactFlowNodes = (
   currentFunctionNodes: FunctionDictionary,
   currentTargetSchemaNodes: SchemaNodeExtended[]
 ): ReactFlowNode<CardProps>[] => {
-  if (layoutTree.children.length !== 3) {
-    LogService.error(LogCategory.ReactFlowUtils, 'convertToReactFlowNodes', {
-      message: 'Layout error: computed layout does not have necessary children',
-    });
-
-    return [];
-  }
-
   return [
     ...convertSourceSchemaToReactFlowNodes(layoutTree.children[0], currentSourceSchemaNodes),
     ...convertFunctionsToReactFlowParentAndChildNodes(layoutTree.children[1], currentFunctionNodes),

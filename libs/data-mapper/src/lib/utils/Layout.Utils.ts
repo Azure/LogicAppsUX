@@ -304,7 +304,10 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
     const fnNode = graph.children[1].children.find((layoutFnNode) => layoutFnNode.id === fnNodeId);
     const tgtSchemaOutputYPositions = graph.edges
       .filter((edge) => edge.sourceId === fnNodeId)
-      .map((edge) => graph.children[2].children.find((tgtSchemaNode) => tgtSchemaNode.id === edge.targetId)?.y ?? 0);
+      .map((edge) => {
+        const tgtSchemaNode = graph.children[2].children.find((tgtSchemaNode) => tgtSchemaNode.id === edge.targetId);
+        return tgtSchemaNode?.y !== undefined ? tgtSchemaNode.y : 0;
+      });
 
     if (fnNode) {
       fnNode.x = tgtSchemaStartX - xInterval;
@@ -313,8 +316,10 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
   });
 
   // Declare diagram size
+  const lastTargetSchemaNode =
+    graph.children[2].children.length > 0 ? graph.children[2].children[graph.children[2].children.length - 1] : undefined;
   graph.width = tgtSchemaStartX + schemaNodeCardDefaultWidth;
-  graph.height = graph.children[2].children[graph.children[2].children.length - 1].y;
+  graph.height = lastTargetSchemaNode?.y !== undefined ? lastTargetSchemaNode.y : 0;
 
   return Promise.resolve(graph);
 };
