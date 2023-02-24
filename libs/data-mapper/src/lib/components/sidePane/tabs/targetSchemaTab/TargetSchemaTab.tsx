@@ -1,51 +1,24 @@
-import { setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
-import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaNodeExtended } from '../../models';
-import { NormalizedDataType } from '../../models';
-import { LogCategory, LogService } from '../../utils/Logging.Utils';
-import { searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
-import { getDefaultFilteredDataTypesDict, SchemaTreeSearchbar } from '../tree/SchemaTreeSearchbar';
-import type { FilteredDataTypesDict } from '../tree/SchemaTreeSearchbar';
-import { useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';
-import type { NodeToggledStateDictionary } from '../tree/TargetSchemaTreeItem';
-import TargetSchemaTreeItem, { ItemToggledState, TargetSchemaTreeHeader } from '../tree/TargetSchemaTreeItem';
-import type { ITreeNode } from '../tree/Tree';
-import Tree from '../tree/Tree';
-import { Stack } from '@fluentui/react';
-import { Button, makeStyles, mergeClasses, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
-import { ChevronDoubleLeft20Regular, ChevronDoubleRight20Regular } from '@fluentui/react-icons';
+import { setCurrentTargetSchemaNode } from '../../../../core/state/DataMapSlice';
+import type { AppDispatch, RootState } from '../../../../core/state/Store';
+import type { SchemaNodeExtended } from '../../../../models';
+import { NormalizedDataType } from '../../../../models';
+import { searchSchemaTreeFromRoot } from '../../../../utils/Schema.Utils';
+import type { FilteredDataTypesDict } from '../../../tree/SchemaTreeSearchbar';
+import { getDefaultFilteredDataTypesDict, SchemaTreeSearchbar } from '../../../tree/SchemaTreeSearchbar';
+import { useSchemaTreeItemStyles } from '../../../tree/SourceSchemaTreeItem';
+import type { NodeToggledStateDictionary } from '../../../tree/TargetSchemaTreeItem';
+import TargetSchemaTreeItem, { ItemToggledState, TargetSchemaTreeHeader } from '../../../tree/TargetSchemaTreeItem';
+import type { ITreeNode } from '../../../tree/Tree';
+import Tree from '../../../tree/Tree';
+import { mergeClasses, tokens } from '@fluentui/react-components';
 import { useEffect, useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const schemaRootKey = 'schemaRoot';
 
-const useStyles = makeStyles({
-  outputPane: {
-    backgroundColor: tokens.colorNeutralBackground4,
-    ...shorthands.borderRadius(tokens.borderRadiusMedium),
-    height: '100%',
-  },
-  title: {
-    ...typographyStyles.body1Strong,
-    color: tokens.colorNeutralForeground1,
-  },
-  subtitle: {
-    ...typographyStyles.body1,
-    color: tokens.colorNeutralForeground2,
-  },
-});
-
 export type TargetNodesWithConnectionsDictionary = { [key: string]: true };
 
-export type TargetSchemaPaneProps = {
-  isExpanded: boolean;
-  setIsExpanded: (isExpanded: boolean) => void;
-};
-
-export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPaneProps) => {
-  const intl = useIntl();
-  const styles = useStyles();
+export const TargetSchemaTab = () => {
   const schemaNodeItemStyles = useSchemaTreeItemStyles();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -57,24 +30,6 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
   const [toggledStatesDictionary, setToggledStatesDictionary] = useState<NodeToggledStateDictionary | undefined>({});
   const [targetSchemaSearchTerm, setTargetSchemaSearchTerm] = useState<string>('');
   const [targetSchemaDataTypeFilters, setTargetSchemaDataTypeFilters] = useState<FilteredDataTypesDict>(getDefaultFilteredDataTypesDict());
-
-  const targetSchemaLoc = intl.formatMessage({
-    defaultMessage: 'Target schema',
-    description: 'Target schema',
-  });
-
-  const targetSchemaExpandCollapseLoc = intl.formatMessage({
-    defaultMessage: 'Expand/collapse target schema',
-    description: 'Expand/collapse target schema',
-  });
-
-  const setTargetSchemaPaneToExpanded = (toExpanded: boolean) => {
-    setIsExpanded(toExpanded);
-
-    LogService.log(LogCategory.TargetSchemaPane, 'expandOrCollapseTargetSchemaPane', {
-      message: `${toExpanded ? 'Opened' : 'Closed'} target schema pane`,
-    });
-  };
 
   const onTargetSchemaItemClick = (schemaNode: SchemaNodeExtended) => {
     // If click schema name, return to Overview
@@ -156,60 +111,30 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
     }
   }, [connectionDictionary, targetSchema, targetNodesWithConnections]);
 
-  const shouldDisplayTree = !!(isExpanded && targetSchema && toggledStatesDictionary && searchedTargetSchemaTreeRoot);
+  const shouldDisplayTree = !!(targetSchema && toggledStatesDictionary && searchedTargetSchemaTreeRoot);
 
   return (
-    <div className={styles.outputPane} style={{ display: 'flex', flexDirection: 'column', flex: '0 1 1px' }}>
-      <Stack
-        horizontal={isExpanded}
-        verticalAlign={isExpanded ? 'center' : undefined}
-        horizontalAlign={!isExpanded ? 'center' : undefined}
-        style={!isExpanded ? { width: 40, margin: '4px 4px 4px 4px' } : { padding: '4px 4px 0 4px' }}
-      >
-        <Button
-          icon={isExpanded ? <ChevronDoubleRight20Regular /> : <ChevronDoubleLeft20Regular />}
-          size="medium"
-          appearance="transparent"
-          style={{ color: !targetSchema ? tokens.colorNeutralForegroundDisabled : tokens.colorNeutralForeground2 }}
-          onClick={() => setTargetSchemaPaneToExpanded(!isExpanded)}
-          disabled={!targetSchema}
-          aria-label={targetSchemaExpandCollapseLoc}
-        />
-
-        <Text
-          className={styles.title}
-          style={
-            !isExpanded
-              ? {
-                  writingMode: 'vertical-lr',
-                  marginTop: tokens.spacingVerticalS,
-                  color: !targetSchema ? tokens.colorNeutralForegroundDisabled : undefined,
-                }
-              : undefined
-          }
-        >
-          {targetSchemaLoc}
-        </Text>
-      </Stack>
+    <div
+      style={{
+        display: 'contents',
+        marginTop: 8,
+      }}
+    >
+      <SchemaTreeSearchbar
+        onSearch={setTargetSchemaSearchTerm}
+        onClear={() => setTargetSchemaSearchTerm('')}
+        filteredDataTypes={targetSchemaDataTypeFilters}
+        setFilteredDataTypes={setTargetSchemaDataTypeFilters}
+      />
 
       <div
         style={{
           display: !shouldDisplayTree ? 'none' : undefined,
-          margin: 8,
-          marginLeft: 40,
-          width: 290,
+          overflowY: 'scroll',
+          width: '100%',
           flex: '1 1 1px',
-          overflowY: 'auto',
-          position: 'relative',
         }}
       >
-        <SchemaTreeSearchbar
-          onSearch={setTargetSchemaSearchTerm}
-          onClear={() => setTargetSchemaSearchTerm('')}
-          filteredDataTypes={targetSchemaDataTypeFilters}
-          setFilteredDataTypes={setTargetSchemaDataTypeFilters}
-        />
-
         <TargetSchemaTreeHeader
           status={toggledStatesDictionary && targetSchema ? toggledStatesDictionary[targetSchema.schemaTreeRoot.key] : undefined}
         />

@@ -2032,12 +2032,6 @@
       "value": "必要。要在 Within 集合中尋找的物件。"
     }
   ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2352,12 +2346,6 @@
       "value": "必要。包含時間的字串。"
     }
   ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
-    }
-  ],
   "JSfWJ0": [
     {
       "type": 0,
@@ -2505,6 +2493,12 @@
     {
       "type": 0,
       "value": "您的搜尋沒有相符的結果"
+    }
+  ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "LBbhCu": [
@@ -5339,12 +5333,6 @@
       "value": "必要。此值是接續在可傳回之最高整數後的整數。"
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5471,6 +5459,12 @@
     {
       "type": 0,
       "value": "實際值"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6274,12 +6268,6 @@
       "value": "(UTC+06:00) 新西伯利亞"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6574,6 +6562,12 @@
     {
       "type": 0,
       "value": "星期日"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [
