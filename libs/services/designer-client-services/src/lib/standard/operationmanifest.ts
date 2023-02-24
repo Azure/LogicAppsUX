@@ -62,6 +62,44 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
       return { properties: {} } as any;
     }
   }
+
+  private async getCustomOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const operationName = operationId.split('/').pop();
+    const queryParameters = {
+      'api-version': apiVersion,
+      $expand: 'properties/manifest',
+    };
+
+    try {
+      const response = await httpClient.get<any>({
+        uri: `${baseUrl}/${connectorId}/operations/${operationName}`,
+        queryParameters,
+      });
+
+      // find matching operation by id
+      const operationResponse = response.value.find((operation: any) => equals(operation.id.split('/').pop(), operationId));
+
+      const {
+        properties: { brandColor, description, iconUri, manifest, operationType },
+      } = operationResponse;
+
+      const operationManifest = {
+        properties: {
+          brandColor,
+          description,
+          iconUri,
+          connection: equals(operationType, 'serviceprovider') ? { required: true, type: ConnectionType.ServiceProvider } : undefined,
+          ...manifest,
+        },
+      };
+
+      return operationManifest;
+    } catch (error) {
+      console.error('Error getting custom operation manifest', error);
+      return { properties: {} } as any;
+    }
+  }
 }
 
 function isServiceProviderOperation(definition: any): boolean {

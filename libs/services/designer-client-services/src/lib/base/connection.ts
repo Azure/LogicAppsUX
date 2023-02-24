@@ -10,6 +10,7 @@ import type {
 import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
 import type { Connection, Connector } from '@microsoft/utils-logic-apps';
 import {
+  isCustomConnector,
   getUniqueName,
   HTTP_METHODS,
   UserErrorCode,
@@ -286,7 +287,7 @@ export abstract class BaseConnectionService implements IConnectionService {
 
   protected async getConnectionsForConnector(connectorId: string): Promise<Connection[]> {
     // Right now there isn't a name $filter for custom connections, so we need to filter them manually
-    if (equals(connectorId.split('/').at(-2), 'customApis')) {
+    if (isCustomConnector(connectorId)) {
       const {
         apiHubServiceDetails: { location, apiVersion },
         httpClient,
