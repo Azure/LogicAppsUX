@@ -172,11 +172,11 @@ export const convertWholeDataMapToLayoutTree = (
 /* eslint-disable no-param-reassign */
 export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFunctionCards?: boolean): Promise<RootLayoutNode> => {
   const schemaNodeCardVGap = 8;
-  const xInterval = functionNodeCardSize * (useExpandedFunctionCards ? 3 : 1);
-  const yInterval = functionNodeCardSize;
+  const xInterval = functionNodeCardSize * (useExpandedFunctionCards ? 5 : 2);
+  const yInterval = functionNodeCardSize * 1.5;
   const maxFunctionsPerToolbarRow = 4;
   const functionToolbarStartY = -64;
-  const nodeCollisionThreshold = functionNodeCardSize * 0.6;
+  const nodeCollisionThreshold = functionNodeCardSize * (useExpandedFunctionCards ? 1.2 : 0.75);
 
   const getSchemaNodeYPos = (nodeIdx: number) => nodeIdx * (schemaNodeCardHeight + (nodeIdx === 0 ? 0 : schemaNodeCardVGap));
 
@@ -188,9 +188,9 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
   });
 
   // Function node positioning
-  const fnStartX = srcSchemaStartX + schemaNodeCardDefaultWidth * 2 + xInterval;
+  const fnStartX = srcSchemaStartX + schemaNodeCardDefaultWidth * 1.5 + xInterval;
   let farthestRightFnNodeXPos = fnStartX; // Find farthest right function node to position target schema from
-  const nextAvailableToolbarSpot = [0, 0]; // Grid representation (one node slot == 1x1)
+  const nextAvailableToolbarSpot: [number, number] = [0, 0]; // Grid representation (one node slot == 1x1)
   const fnNodeIdsThatOnlyOutputToTargetSchema: string[] = [];
 
   const compileInputPositionsAndOutputDetails = (edgeArray: LayoutEdge[], fnNodeId: string): [[number, number][], number, boolean] => {
@@ -221,12 +221,17 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
 
           // Confirm that recursive call above actually calculated the inputNode's position
           if (inputNode.x !== undefined && inputNode.y !== undefined) {
-            compiledInputPositions.push([inputNode.x, inputNode.y]);
+            // Subtract fnStartX for functions so as to not compound fnStartX
+            compiledInputPositions.push([inputNode.x === srcSchemaStartX ? srcSchemaStartX : inputNode.x - fnStartX, inputNode.y]);
           } else {
             LogService.error(LogCategory.ReactFlowUtils, 'Layouting', {
               message: `Failed to recursively calculate inputNode's position`,
             });
           }
+        } else {
+          LogService.error(LogCategory.ReactFlowUtils, 'Layouting', {
+            message: `Failed to find input node from an edge's sourceId`,
+          });
         }
       }
     });
@@ -281,21 +286,24 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
     }
 
     // Collision checking & handling
-    // - Check availability of next top then bottom yInterval spots
     if (!isGoingOnToolbar && fnNodeYPos !== undefined) {
       let nextYSpot = 1;
       let noCollisionFnNodeYPos = fnNodeYPos;
 
+      // NOTE: Add functionNodeCardSize to yPos to ensure equal measurement from ~middle of node
       const checkIfNodeHasCollision = () =>
         graph.children[1].children.some(
           (potentiallyCollidingFnNode) =>
             potentiallyCollidingFnNode.y !== undefined &&
-            Math.abs(potentiallyCollidingFnNode.y - noCollisionFnNodeYPos) < nodeCollisionThreshold
+            Math.abs(potentiallyCollidingFnNode.y + functionNodeCardSize / 2 - (noCollisionFnNodeYPos + functionNodeCardSize / 2)) <
+              nodeCollisionThreshold
         );
 
       while (checkIfNodeHasCollision()) {
-        noCollisionFnNodeYPos = fnNodeYPos + nextYSpot * yInterval;
-        nextYSpot = (nextYSpot + (nextYSpot < 0 ? -1 : 1)) * -1;
+        noCollisionFnNodeYPos = Math.max(fnNodeYPos + nextYSpot * yInterval, 0); // Cap collision handling placement at very top (y=0)
+
+        // Check availability of next top then bottom yInterval spots
+        nextYSpot = nextYSpot < 0 ? nextYSpot * -1 + 1 : nextYSpot * -1;
       }
 
       fnNodeYPos = noCollisionFnNodeYPos;
@@ -315,7 +323,7 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
   });
 
   // Target schema node positioning
-  const tgtSchemaStartX = farthestRightFnNodeXPos + xInterval + schemaNodeCardDefaultWidth;
+  const tgtSchemaStartX = farthestRightFnNodeXPos + xInterval + schemaNodeCardDefaultWidth * 0.5;
   graph.children[2].children.forEach((tgtSchemaNode, idx) => {
     tgtSchemaNode.x = tgtSchemaStartX;
     tgtSchemaNode.y = getSchemaNodeYPos(idx);
@@ -333,7 +341,7 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
       });
 
     if (fnNode) {
-      fnNode.x = tgtSchemaStartX - xInterval * 2;
+      fnNode.x = farthestRightFnNodeXPos;
       fnNode.y = tgtSchemaOutputYPositions.reduce((curYTotal, curYPos) => curYTotal + curYPos, 0) / tgtSchemaOutputYPositions.length;
     }
   });
