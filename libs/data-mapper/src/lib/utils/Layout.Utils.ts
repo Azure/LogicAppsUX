@@ -5,7 +5,15 @@ import type { ConnectionDictionary } from '../models/Connection';
 import type { FunctionDictionary } from '../models/Function';
 import { generateInputHandleId, isConnectionUnit } from './Connection.Utils';
 import { isFunctionData } from './Function.Utils';
+import { LogCategory, LogService } from './Logging.Utils';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix } from './ReactFlow.Util';
+
+const rootLayoutNodeId = 'root';
+enum LayoutContainer {
+  SourceSchema = 'sourceSchemaBlock',
+  Functions = 'functionsBlock',
+  TargetSchema = 'targetSchemaBlock',
+}
 
 export interface LayoutEdge {
   id: string;
@@ -21,9 +29,14 @@ export interface LayoutNode {
   children?: LayoutNode[];
 }
 
-export interface RootLayoutNode {
-  id: string;
+export interface ContainerLayoutNode {
+  id: LayoutContainer;
   children: LayoutNode[];
+}
+
+export interface RootLayoutNode {
+  id: typeof rootLayoutNodeId;
+  children: ContainerLayoutNode[];
   edges: LayoutEdge[];
   width?: number;
   height?: number;
@@ -73,30 +86,19 @@ export const convertDataMapNodesToLayoutTree = (
     });
   });
 
-  // NOTE: Dummy nodes allow proper layouting when no real nodes exist yet
   const layoutTree: RootLayoutNode = {
     id: 'root',
     children: [
       {
-        id: 'sourceSchemaBlock',
-        children: [
-          ...currentSourceSchemaNodes.map((srcNode) => ({
-            id: addSourceReactFlowPrefix(srcNode.key),
-          })),
-          { id: 'srcDummyNode' },
-        ],
+        id: LayoutContainer.SourceSchema,
+        children: currentSourceSchemaNodes.map((srcNode) => ({ id: addSourceReactFlowPrefix(srcNode.key) })),
       },
       {
-        id: 'functionsBlock',
-        children: [
-          ...Object.keys(currentFunctionNodes).map((fnNodeKey) => ({
-            id: fnNodeKey,
-          })),
-          { id: 'fnDummyNode' },
-        ],
+        id: LayoutContainer.Functions,
+        children: Object.keys(currentFunctionNodes).map((fnNodeKey) => ({ id: fnNodeKey })),
       },
       {
-        id: 'targetSchemaBlock',
+        id: LayoutContainer.TargetSchema,
         children: [
           { id: addTargetReactFlowPrefix(currentTargetSchemaNode.key) },
           ...currentTargetSchemaNode.children.map((childNode) => ({
@@ -145,38 +147,20 @@ export const convertWholeDataMapToLayoutTree = (
     });
   });
 
-  // NOTE: Dummy nodes allow proper layouting when no real nodes exist yet
   const layoutTree: RootLayoutNode = {
-    id: 'root',
+    id: rootLayoutNodeId,
     children: [
       {
-        id: 'sourceSchemaBlock',
-        children: [
-          ...Object.values(flattenedSourceSchema).map((srcNode) => ({
-            id: addSourceReactFlowPrefix(srcNode.key),
-          })),
-          { id: 'srcDummyNode' },
-        ],
+        id: LayoutContainer.SourceSchema,
+        children: Object.values(flattenedSourceSchema).map((srcNode) => ({ id: addSourceReactFlowPrefix(srcNode.key) })),
       },
       {
-        id: 'functionsBlock',
-        children: [
-          ...Object.keys(functionNodes).map((fnNodeKey) => ({
-            id: fnNodeKey,
-            width: functionNodeCardSize,
-            height: functionNodeCardSize,
-          })),
-          { id: 'fnDummyNode' },
-        ],
+        id: LayoutContainer.Functions,
+        children: Object.keys(functionNodes).map((fnNodeKey) => ({ id: fnNodeKey })),
       },
       {
-        id: 'targetSchemaBlock',
-        children: [
-          ...Object.values(flattenedTargetSchema).map((childNode) => ({
-            id: addTargetReactFlowPrefix(childNode.key),
-          })),
-          { id: 'tgtDummyNode' },
-        ],
+        id: LayoutContainer.TargetSchema,
+        children: Object.values(flattenedTargetSchema).map((childNode) => ({ id: addTargetReactFlowPrefix(childNode.key) })),
       },
     ],
     edges: layoutEdges,
@@ -186,8 +170,8 @@ export const convertWholeDataMapToLayoutTree = (
 };
 
 /* eslint-disable no-param-reassign */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFunctionCards?: boolean): Promise<RootLayoutNode> => {
+  console.log('--------------------------CUSTOM LAYOUTING START--------------------------');
   const schemaNodeCardVGap = 8;
   const xInterval = functionNodeCardSize * (useExpandedFunctionCards ? 3 : 1.5);
   const yInterval = functionNodeCardSize * (useExpandedFunctionCards ? 2 : 1);
@@ -197,14 +181,6 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
   const getSchemaNodeYPos = (nodeIdx: number) => nodeIdx * (schemaNodeCardHeight + (nodeIdx === 0 ? 0 : schemaNodeCardVGap));
 
   if (graph.children[0]?.children && graph.children[1]?.children && graph.children[2]?.children) {
-    // Assign placeholder values to node blocks as they aren't used w/ this custom layouting
-    graph.children[0].x = 0;
-    graph.children[0].y = 0;
-    graph.children[1].x = 0;
-    graph.children[1].y = 0;
-    graph.children[2].x = 0;
-    graph.children[2].y = 0;
-
     // Source schema node positioning
     const srcSchemaStartX = 0;
     graph.children[0].children.forEach((srcSchemaNode, idx) => {
@@ -233,7 +209,7 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
           }
         } else if (edge.targetId === fnNodeId) {
           // Find input node, and get or calculate its position
-          const inputNode = [...graph.children[0].children!, ...graph.children[1].children!].find(
+          const inputNode = [...graph.children[0].children, ...graph.children[1].children].find(
             (srcSchemaOrFnNode) => srcSchemaOrFnNode.id === edge.sourceId
           );
 
@@ -243,7 +219,14 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
               calculateFnNodePosition(inputNode);
             }
 
-            compiledInputPositions.push([inputNode.x as number, inputNode.y as number]);
+            // Confirm that recursive call above actually calculated the inputNode's position
+            if (inputNode.x && inputNode.y) {
+              compiledInputPositions.push([inputNode.x, inputNode.y]);
+            } else {
+              LogService.error(LogCategory.ReactFlowUtils, 'Layouting', {
+                message: `Failed to recursively calculate inputNode's position`,
+              });
+            }
           }
         }
       });
@@ -294,6 +277,8 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
         fnNodeXPos = fnNodeXPos + xInterval;
         fnNodeYPos = compiledInputPositions.reduce((curYTotal, coords) => curYTotal + coords[1], 0) / compiledInputPositions.length;
       }
+
+      console.log(fnNodeXPos, fnNodeYPos, fnNode, compiledInputPositions, numOutputs, fnNodeOnlyOutputsToTargetSchema);
 
       // Collision checking & handling (only adjusts yPos)
       // TODO: while xPos/yPos === same as some other current fnNode, check availability of next top then bottom yInterval spots
