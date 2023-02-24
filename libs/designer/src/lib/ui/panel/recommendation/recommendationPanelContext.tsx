@@ -1,7 +1,6 @@
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useAllOperations } from '../../../core/queries/browse';
-import { useIsConsumption } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useIsAddingTrigger,
   useIsParallelBranch,
@@ -37,8 +36,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const selectedOperationGroupId = useSelectedSearchOperationGroupId();
 
   const allOperations = useAllOperations();
-
-  const isConsumption = useIsConsumption();
 
   useEffect(() => {
     if (allOperations.data && selectedOperationGroupId) {
@@ -85,7 +82,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   return (
     <RecommendationPanel placeholder={''} {...props}>
       {isSelectingAzureResource || selectedOperationGroupId ? (
-        <div className={'msla-search-heading-container'}>
+        <div className={'msla-sub-heading-container'}>
           <Link onClick={navigateBack} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Icon iconName="Back" />
             {returnToSearchText}
@@ -105,7 +102,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
             filters={filters}
             setFilters={setFilters}
             isTriggerNode={isTrigger}
-            isConsumption={isConsumption}
           />
           {searchTerm ? (
             <SearchView

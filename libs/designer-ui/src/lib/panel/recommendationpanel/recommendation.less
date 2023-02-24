@@ -5,6 +5,26 @@
 
 @import (reference) '../../variables.less';
 
+.msla-app-action-header {
+  margin: 0px -24px;
+  padding: 24px 24px 12px;
+  z-index: 1;
+  position: sticky;
+  top: 0px;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+}
+
+body.dark {
+  .msla-app-action-header {
+    background-color: @ms-color-secondaryBackground;
+  }
+}
+
 .msla-filter-container {
   margin-top: 7px;
   padding: 5px;

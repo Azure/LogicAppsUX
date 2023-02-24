@@ -17,21 +17,10 @@ interface OperationSearchHeaderProps {
   setFilters?: (filters: Record<string, string>) => void;
   onDismiss: () => void;
   isTriggerNode: boolean;
-  isConsumption?: boolean;
 }
 
 export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
-  const {
-    searchCallback,
-    onGroupToggleChange,
-    isGrouped = false,
-    searchTerm,
-    filters,
-    setFilters,
-    onDismiss,
-    isTriggerNode,
-    isConsumption,
-  } = props;
+  const { searchCallback, onGroupToggleChange, isGrouped = false, searchTerm, filters, setFilters, onDismiss, isTriggerNode } = props;
 
   const intl = useIntl();
 
@@ -68,20 +57,6 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
     description: 'Label for the checkbox to group results by connector',
   });
 
-  const headingText = intl.formatMessage({
-    defaultMessage: 'Add an action',
-    description: 'Text for the "Add Action" page header',
-  });
-
-  const Header = useCallback(() => {
-    return (
-      <div className="msla-flex-row" style={{ marginBottom: '8px' }}>
-        <Text variant="xLarge">{headingText}</Text>
-        <IconButton onClick={onDismiss} iconProps={{ iconName: 'Cancel' }} />
-      </div>
-    );
-  }, [headingText, onDismiss]);
-
   const onChange = (_event: React.FormEvent<HTMLDivElement>, item?: IDropdownOption): void => {
     if (item) {
       const [k, v] = (item.key as string).split('-');
@@ -96,8 +71,7 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
   };
 
   return (
-    <div className="msla-search-heading-container">
-      <Header />
+    <div className="msla-sub-heading-container">
       <DesignerSearchBox searchCallback={searchCallback} searchTerm={searchTerm} />
       <div style={{ display: 'grid', grid: 'auto-flow / 1fr 1fr', gridColumnGap: '8px' }}>
         <Dropdown
