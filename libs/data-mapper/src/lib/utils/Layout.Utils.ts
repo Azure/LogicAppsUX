@@ -29,7 +29,7 @@ export interface RootLayoutNode {
   height?: number;
 }
 
-export const convertDataMapNodesToElkGraph = (
+export const convertDataMapNodesToLayoutTree = (
   currentSourceSchemaNodes: SchemaNodeExtended[],
   currentFunctionNodes: FunctionDictionary,
   currentTargetSchemaNode: SchemaNodeExtended,
@@ -111,7 +111,7 @@ export const convertDataMapNodesToElkGraph = (
   return layoutTree;
 };
 
-export const convertWholeDataMapToElkGraph = (
+export const convertWholeDataMapToLayoutTree = (
   flattenedSourceSchema: SchemaNodeDictionary,
   flattenedTargetSchema: SchemaNodeDictionary,
   functionNodes: FunctionDictionary,

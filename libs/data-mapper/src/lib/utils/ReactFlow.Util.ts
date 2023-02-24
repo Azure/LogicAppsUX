@@ -14,7 +14,7 @@ import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
 import { SchemaType } from '../models/Schema';
 import { getFunctionBrandingForCategory, isFunctionData } from './Function.Utils';
-import { applyCustomLayout, convertDataMapNodesToElkGraph, convertWholeDataMapToElkGraph } from './Layout.Utils';
+import { applyCustomLayout, convertDataMapNodesToLayoutTree, convertWholeDataMapToLayoutTree } from './Layout.Utils';
 import type { LayoutNode, RootLayoutNode } from './Layout.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 import { isLeafNode } from './Schema.Utils';
@@ -72,7 +72,7 @@ export const useLayout = (
       );
 
       // Build a nicely formatted tree for easier layouting
-      const elkTreeFromCanvasNodes = convertDataMapNodesToElkGraph(
+      const layoutTreeFromCanvasNodes = convertDataMapNodesToLayoutTree(
         sortedSourceSchemaNodes,
         currentFunctionNodes,
         currentTargetSchemaNode,
@@ -80,7 +80,7 @@ export const useLayout = (
       );
 
       // Compute layout
-      applyCustomLayout(elkTreeFromCanvasNodes, useExpandedFunctionCards)
+      applyCustomLayout(layoutTreeFromCanvasNodes, useExpandedFunctionCards)
         .then((computedLayout) => {
           // Convert the calculated layout to ReactFlow nodes + edges
           setReactFlowNodes([
@@ -337,7 +337,7 @@ export const useWholeViewLayout = (
     });
 
     // Build a nicely formatted tree for easier layouting
-    const elkTreeFromCanvasNodes = convertWholeDataMapToElkGraph(
+    const layoutTreeFromCanvasNodes = convertWholeDataMapToLayoutTree(
       flattenedSourceSchema,
       flattenedTargetSchema,
       functionDictionary,
@@ -345,7 +345,7 @@ export const useWholeViewLayout = (
     );
 
     // Compute layout
-    applyCustomLayout(elkTreeFromCanvasNodes, false)
+    applyCustomLayout(layoutTreeFromCanvasNodes, false)
       .then((computedLayoutTree) => {
         // Convert the calculated layout to ReactFlow nodes + edges
         setReactFlowNodes([
