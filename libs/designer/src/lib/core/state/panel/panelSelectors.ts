@@ -12,12 +12,17 @@ export const useIsDiscovery = () => useSelector(createSelector(getPanelState, (s
 export const useIsWorkflowParametersMode = () =>
   useSelector(createSelector(getPanelState, (state: PanelState) => state.isWorkflowParameters));
 
+export const useIsAddingTrigger = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.addingTrigger));
+
 export const useRelationshipIds = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.relationshipIds));
 
 export const useIsParallelBranch = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.isParallelBranch));
 
-export const useSelectedOperationGroupId = () =>
+export const useSelectedSearchOperationGroupId = () =>
   useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedOperationGroupId));
+
+export const useSelectedSearchOperationId = () =>
+  useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedOperationId));
 
 export const useSelectedNodeId = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedNode));
 

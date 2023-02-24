@@ -17,7 +17,7 @@ export const InitSearchService = (searchService: ISearchService): void => {
 export const SearchService = (): ISearchService => {
   // Danielle: we need this for every service, how do we extract?
   if (!service) {
-    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'SearchService need to be initialized before using');
+    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'SearchService needs to be initialized before using');
   }
 
   return service;

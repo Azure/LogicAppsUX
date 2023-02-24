@@ -22,7 +22,7 @@ export const InitGatewayService = (gatewayService: IGatewayService): void => {
 
 export const GatewayService = (): IGatewayService => {
   if (!service) {
-    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'Gateway Service need to be initialized before using');
+    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'Gateway Service needs to be initialized before using');
   }
 
   return service;
