@@ -92,6 +92,7 @@ const WholeOverviewReactFlowWrapper = () => {
       style={reactFlowStyle}
       fitViewOptions={reactFlowFitViewOptions}
       fitView
+      minZoom={0.05}
     >
       {sourceSchema && <SchemaNameBadge schemaName={sourceSchema.name} schemaTreeRootXPos={srcSchemaTreeRootXPos} />}
       {targetSchema && <SchemaNameBadge schemaName={targetSchema.name} schemaTreeRootXPos={tgtSchemaTreeRootXPos} />}

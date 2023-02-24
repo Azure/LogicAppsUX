@@ -289,13 +289,13 @@ const applyCustomLayout = async (graph: ElkNode, useExpandedFunctionCards?: bool
     const fnStartX = srcSchemaStartX + schemaNodeCardDefaultWidth + xInterval;
     let farthestRightFnNodeXPos = fnStartX;
     const nextAvailableToolbarSpot = [0, 0]; // Grid representation (one node slot == 1x1)
-
-    const compiledInputPositions: number[][] = [];
-    let numOutputs = 0;
-    let fnNodeOnlyOutputsToTargetSchema = true;
     const fnNodeIdsThatOnlyOutputToTargetSchema: string[] = [];
 
-    const compileInputPositionsAndOutputDetails = (edgeArray: ElkExtendedEdge[], fnNodeId: string): void => {
+    const compileInputPositionsAndOutputDetails = (edgeArray: ElkExtendedEdge[], fnNodeId: string): [number[][], number, boolean] => {
+      const compiledInputPositions: number[][] = [];
+      let numOutputs = 0;
+      let fnNodeOnlyOutputsToTargetSchema = true;
+
       edgeArray.forEach((edge) => {
         if (edge.sources.includes(fnNodeId)) {
           numOutputs += 1;
@@ -319,15 +319,34 @@ const applyCustomLayout = async (graph: ElkNode, useExpandedFunctionCards?: bool
           }
         }
       });
+
+      return [compiledInputPositions, numOutputs, fnNodeOnlyOutputsToTargetSchema];
     };
 
     const calculateFnNodePosition = (fnNode: ElkNode): void => {
       // Compile positions of any inputs and number of outputs
+      let numOutputs = 0;
+      let fnNodeOnlyOutputsToTargetSchema = true;
+      let compiledInputPositions: number[][] = [];
       if (graph.edges) {
-        compileInputPositionsAndOutputDetails(graph.edges, fnNode.id);
+        const [compiledInputPositions1, numOutputs1, fnNodeOnlyOutputsToTargetSchema1] = compileInputPositionsAndOutputDetails(
+          graph.edges,
+          fnNode.id
+        );
+        numOutputs += numOutputs1;
+        fnNodeOnlyOutputsToTargetSchema = fnNodeOnlyOutputsToTargetSchema1;
+        compiledInputPositions = [...compiledInputPositions1];
       }
       if (graph.children![1].edges) {
-        compileInputPositionsAndOutputDetails(graph.children![1].edges, fnNode.id);
+        const [compiledInputPositions2, numOutputs2, fnNodeOnlyOutputsToTargetSchema2] = compileInputPositionsAndOutputDetails(
+          graph.children![1].edges,
+          fnNode.id
+        );
+        numOutputs += numOutputs2;
+        if (fnNodeOnlyOutputsToTargetSchema) {
+          fnNodeOnlyOutputsToTargetSchema = fnNodeOnlyOutputsToTargetSchema2;
+        }
+        compiledInputPositions = [...compiledInputPositions, ...compiledInputPositions2];
       }
 
       // Initial calculation
@@ -371,7 +390,7 @@ const applyCustomLayout = async (graph: ElkNode, useExpandedFunctionCards?: bool
       // TODO: while xPos/yPos === same as some other current fnNode, check availability of next top then bottom yInterval spots
 
       // Final assignment
-      fnNode.x = fnNodeXPos;
+      fnNode.x = fnNodeXPos === undefined ? fnNodeXPos : fnNodeXPos + fnStartX;
       fnNode.y = fnNodeYPos;
 
       if (fnNode.x !== undefined && fnNode.x > farthestRightFnNodeXPos) {

@@ -159,7 +159,7 @@ export const convertToReactFlowNodes = (
 ): ReactFlowNode<CardProps>[] => {
   if (!elkTree.children || elkTree.children.length !== 3) {
     LogService.error(LogCategory.ReactFlowUtils, 'convertToReactFlowNodes', {
-      message: 'Layout error: outputted root elkTree does not have necessary children',
+      message: 'Layout error: computed ElkTree root does not have necessary children',
     });
 
     return [];
@@ -374,7 +374,7 @@ export const useWholeViewLayout = (
     );
 
     // Apply ELK layout
-    applyElkLayout(elkTreeFromCanvasNodes)
+    applyElkLayout(elkTreeFromCanvasNodes, true, false)
       .then((computedElkTree) => {
         // Convert newly-calculated ELK node data to React Flow nodes + edges
         setReactFlowNodes([
