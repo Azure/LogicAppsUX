@@ -1,4 +1,4 @@
-import { MapCheckerItemSeverity } from '../components/mapChecker/MapCheckerItem';
+import { MapCheckerItemSeverity } from '../components/sidePane/tabs/mapCheckerTab/MapCheckerItem';
 import { Collection20Regular, StringCategory20Regular } from '../images/CategoryIcons';
 import {
   Any16Filled,
@@ -51,16 +51,16 @@ import {
   Cube16Regular,
   Cube24Filled,
   Cube24Regular,
+  DismissCircleFilled,
+  InfoFilled,
   MathSymbols20Regular,
   NumberSymbol16Filled,
   NumberSymbol16Regular,
   NumberSymbol24Filled,
   NumberSymbol24Regular,
+  QuestionCircleFilled,
   WarningFilled,
   Wrench20Regular,
-  DismissCircleFilled,
-  InfoFilled,
-  QuestionCircleFilled,
 } from '@fluentui/react-icons';
 
 // Using Fluent v8 as it has option for fallback icon

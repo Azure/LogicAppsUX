@@ -3,7 +3,6 @@ import { CodeView } from '../components/codeView/CodeView';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/AddOrUpdateSchemaView';
 import { ConfigPanel } from '../components/configPanel/ConfigPanel';
-import { MapCheckerPane } from '../components/mapChecker/MapCheckerPane';
 import { MapOverview } from '../components/mapOverview/MapOverview';
 import { errorNotificationAutoHideDuration, NotificationTypes } from '../components/notification/Notification';
 import {
@@ -12,7 +11,7 @@ import {
   PropertiesPane,
   propPaneTopBarHeight,
 } from '../components/propertiesPane/PropertiesPane';
-import { TargetSchemaPane } from '../components/targetSchemaPane/TargetSchemaPane';
+import { SidePane, SidePanelTabValue } from '../components/sidePane/SidePane';
 import { TestMapPanel } from '../components/testMapPanel/TestMapPanel';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import { generateDataMapXslt } from '../core/queries/datamap';
@@ -25,7 +24,6 @@ import './ReactFlowStyleOverrides.css';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Stack } from '@fluentui/react';
 import { makeStaticStyles, makeStyles, shorthands, tokens } from '@fluentui/react-components';
-import { useBoolean } from '@fluentui/react-hooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -127,8 +125,8 @@ export const DataMapperDesigner = ({
   const [propPaneExpandedHeight, setPropPaneExpandedHeight] = useState(basePropPaneContentHeight);
   const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
-  const [isTargetSchemaPaneExpanded, setIsTargetSchemaPaneExpanded] = useState(false);
-  const [isMapCheckerOpen, { setTrue: openMapChecker, setFalse: closeMapChecker, toggle: toggleMapChecker }] = useBoolean(false);
+  const [isSidePaneExpanded, setIsSidePaneExpanded] = useState(false);
+  const [sidePaneTab, setSidePaneTab] = useState(SidePanelTabValue.OutputTree);
 
   const dataMapDefinition = useMemo<string>(() => {
     if (sourceSchema && targetSchema) {
@@ -253,7 +251,7 @@ export const DataMapperDesigner = ({
     return isPropPaneExpanded && propPaneExpandedHeight === centerViewHeight - propPaneTopBarHeight ? 0 : canvasAreaAndPropPaneMargin;
   };
 
-  // NOTE: The below two methods include the margin between the canvas area and proppane
+  // NOTE: The below two methods include the margin between the canvas area and PropPane
   const getCollapsedPropPaneTotalHeight = () => {
     return propPaneTopBarHeight + getCanvasAreaAndPropPaneMargin();
   };
@@ -275,6 +273,11 @@ export const DataMapperDesigner = ({
     }
   };
 
+  const openMapChecker = () => {
+    setSidePaneTab(SidePanelTabValue.MapChecker);
+    setIsSidePaneExpanded(true);
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className={styles.dataMapperShell}>
@@ -283,7 +286,6 @@ export const DataMapperDesigner = ({
           onUndoClick={onUndoClick}
           onRedoClick={onRedoClick}
           onTestClick={() => setTestMapPanelOpen(true)}
-          onMapCheckerClick={toggleMapChecker}
         />
 
         <div id="editorView" style={{ display: 'flex', flex: '1 1 1px' }}>
@@ -308,7 +310,7 @@ export const DataMapperDesigner = ({
                     }}
                   >
                     {showMapOverview ? (
-                      <MapOverview />
+                      <MapOverview /> /* <WholeMapOverview /> */
                     ) : (
                       <ReactFlowProvider>
                         {/* TODO: Update width calculations once Code View becomes resizable */}
@@ -344,8 +346,12 @@ export const DataMapperDesigner = ({
             </div>
           </div>
 
-          <TargetSchemaPane isExpanded={isTargetSchemaPaneExpanded} setIsExpanded={setIsTargetSchemaPaneExpanded} />
-          <MapCheckerPane isMapCheckerOpen={isMapCheckerOpen} closeMapChecker={closeMapChecker} />
+          <SidePane
+            isExpanded={isSidePaneExpanded}
+            setIsExpanded={setIsSidePaneExpanded}
+            sidePaneTab={sidePaneTab}
+            setSidePaneTab={setSidePaneTab}
+          />
         </div>
 
         <WarningModal />

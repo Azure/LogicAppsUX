@@ -15,23 +15,11 @@ interface OperationSearchHeaderProps {
   searchTerm?: string;
   filters?: Record<string, string>;
   setFilters?: (filters: Record<string, string>) => void;
-  onDismiss: () => void;
   isTriggerNode: boolean;
-  isConsumption?: boolean;
 }
 
 export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
-  const {
-    searchCallback,
-    onGroupToggleChange,
-    isGrouped = false,
-    searchTerm,
-    filters,
-    setFilters,
-    onDismiss,
-    isTriggerNode,
-    isConsumption,
-  } = props;
+  const { searchCallback, onGroupToggleChange, isGrouped = false, searchTerm, filters, setFilters, isTriggerNode } = props;
 
   const intl = useIntl();
 
@@ -44,14 +32,11 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
       key: 'runtime-shared',
       text: intl.formatMessage({ defaultMessage: 'Shared', description: 'Filter by Shared category of connectors' }),
     },
-  ];
-
-  if (isConsumption) {
-    runtimeFilters.push({
+    {
       key: 'runtime-custom',
       text: intl.formatMessage({ defaultMessage: 'Custom', description: 'Filter by Custom category of connectors' }),
-    });
-  }
+    },
+  ];
 
   const actionTypeFilters = isTriggerNode
     ? []
@@ -66,34 +51,10 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
         },
       ];
 
-  const searchResultsText = intl.formatMessage(
-    {
-      defaultMessage: 'Search results for: {searchTerm}',
-      description: 'Text to show the current search term',
-    },
-    {
-      searchTerm: <strong>{`"${searchTerm}"`}</strong>,
-    }
-  );
-
   const groupByConnectorLabelText = intl.formatMessage({
     defaultMessage: 'Group by Connector',
     description: 'Label for the checkbox to group results by connector',
   });
-
-  const headingText = intl.formatMessage({
-    defaultMessage: 'Add an action',
-    description: 'Text for the "Add Action" page header',
-  });
-
-  const Header = useCallback(() => {
-    return (
-      <div className="msla-flex-row" style={{ marginBottom: '8px' }}>
-        <Text variant="xLarge">{headingText}</Text>
-        <IconButton onClick={onDismiss} iconProps={{ iconName: 'Cancel' }} />
-      </div>
-    );
-  }, [headingText, onDismiss]);
 
   const onChange = (_event: React.FormEvent<HTMLDivElement>, item?: IDropdownOption): void => {
     if (item) {
@@ -109,8 +70,7 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
   };
 
   return (
-    <div className="msla-search-heading-container">
-      <Header />
+    <div className="msla-sub-heading-container">
       <DesignerSearchBox searchCallback={searchCallback} searchTerm={searchTerm} />
       <div style={{ display: 'grid', grid: 'auto-flow / 1fr 1fr', gridColumnGap: '8px' }}>
         <Dropdown

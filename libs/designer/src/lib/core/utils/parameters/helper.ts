@@ -71,6 +71,7 @@ import {
 } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type {
+  DependentParameterInfo,
   DynamicParameters,
   Expression,
   ExpressionFunction,
@@ -84,6 +85,8 @@ import type {
   SwaggerParser,
 } from '@microsoft/parsers-logic-apps';
 import {
+  DeserializationLocation,
+  PropertySerializationType,
   getKnownTitles,
   isLegacyDynamicValuesExtension,
   ParameterLocations,
@@ -264,8 +267,17 @@ export function createParameterInfo(
 ): ParameterInfo {
   const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, shouldIgnoreDefaultValue);
   const value = loadParameterValue(parameter);
-  const { alias, encode, format, isDynamic, isUnknown, serialization } = parameter;
-  const info = { alias, encode, format, in: parameter.in, isDynamic: !!isDynamic, isUnknown, serialization };
+  const { alias, dependencies, encode, format, isDynamic, isUnknown, serialization } = parameter;
+  const info = {
+    alias,
+    dependencies,
+    encode,
+    format,
+    in: parameter.in,
+    isDynamic: !!isDynamic,
+    isUnknown,
+    serialization,
+  };
 
   const parameterInfo: ParameterInfo = {
     alternativeKey: parameter.alternativeKey,
@@ -326,7 +338,7 @@ export function getParameterEditorProps(parameter: InputParameter, shouldIgnoreD
     editor = constants.EDITOR.COMBOBOX;
     schema = { ...schema, ...{ 'x-ms-editor': constants.EDITOR.COMBOBOX } };
     editorOptions = { ...editorOptions, options: schema.enum.map((val: ComboboxItem) => ({ key: val, value: val, displayName: val })) };
-  } else if (type === constants.SWAGGER.TYPE.ARRAY) {
+  } else if (!editor && type === constants.SWAGGER.TYPE.ARRAY && !equals(visibility, Visibility.Internal)) {
     editorViewModel = toArrayViewModel(schema);
     editor = constants.EDITOR.ARRAY;
   } else if (editor === constants.EDITOR.DICTIONARY) {
@@ -660,6 +672,35 @@ export function convertToValueSegments(
 export function getAllInputParameters(nodeInputs: NodeInputs): ParameterInfo[] {
   const { parameterGroups } = nodeInputs;
   return aggregate(Object.keys(parameterGroups).map((groupKey) => parameterGroups[groupKey].parameters));
+}
+
+interface Dependency extends DependentParameterInfo {
+  actualValue: any;
+}
+
+export function shouldUseParameterInGroup(parameter: ParameterInfo, allParameters: ParameterInfo[]): boolean {
+  const {
+    info: { dependencies },
+  } = parameter;
+
+  if (dependencies && equals(dependencies.type, 'visibility')) {
+    const dependentParameters = dependencies.parameters.reduce((result: Dependency[], dependentParameter: DependentParameterInfo) => {
+      const parameterInfo = allParameters.find((param) => param.parameterName === dependentParameter.name);
+      if (parameterInfo) {
+        return [...result, { ...dependentParameter, actualValue: parameterValueWithoutCasting(parameterInfo) }];
+      }
+
+      return result;
+    }, []);
+
+    return dependentParameters.every((dependentParameter) => {
+      const { actualValue, values } = dependentParameter;
+      const isArray = Array.isArray(actualValue);
+      return values.some((value) => (isArray ? actualValue.includes(value) : actualValue === value));
+    });
+  }
+
+  return true;
 }
 
 export function ensureExpressionValue(valueSegment: ValueSegment): void {
@@ -1824,7 +1865,12 @@ export function getGroupAndParameterFromParameterKey(
   return undefined;
 }
 
-export function getInputsValueFromDefinitionForManifest(inputsLocation: string[], manifest: OperationManifest, stepDefinition: any): any {
+export function getInputsValueFromDefinitionForManifest(
+  inputsLocation: string[],
+  manifest: OperationManifest,
+  stepDefinition: any,
+  allInputs: InputParameter[]
+): any {
   let inputsValue = stepDefinition;
 
   for (const property of inputsLocation) {
@@ -1833,7 +1879,9 @@ export function getInputsValueFromDefinitionForManifest(inputsLocation: string[]
     inputsValue = property === '[*]' ? inputsValue[0] : getPropertyValue(inputsValue, property);
   }
 
-  return swapInputsValueIfNeeded(inputsValue, manifest);
+  inputsValue = swapInputsValueIfNeeded(inputsValue, manifest);
+
+  return updateInputsValueForSpecialCases(inputsValue, allInputs);
 }
 
 function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) {
@@ -1847,7 +1895,7 @@ function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) 
   for (const { source, target } of swapMap) {
     const value = clone(getObjectPropertyValue(finalValue, target));
     if (!target.length) {
-      propertiesToRetain = Object.keys(manifest.properties.inputs);
+      propertiesToRetain = Object.keys(manifest.properties.inputs.properties);
       deleteObjectProperties(
         value,
         propertiesToRetain.map((key: string) => [key])
@@ -1862,6 +1910,60 @@ function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) 
 
     deleteObjectProperty(finalValue, target);
     finalValue = !source.length ? { ...finalValue, ...value } : safeSetObjectPropertyValue(finalValue, source, value);
+  }
+
+  return finalValue;
+}
+
+/**
+ * This method updates the inputs value when there are special cases for serialization like propertyName
+ * serialization or special cases for deserialiation like reading values from inputs for non serializable parameter.
+ * Example: Batch trigger
+ */
+function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputParameter[]) {
+  if (!inputsValue || typeof inputsValue !== 'object') {
+    return inputsValue;
+  }
+
+  const propertyNameParameters = allInputs.filter((input) => !!input.serialization?.property);
+  const finalValue = clone(inputsValue);
+
+  for (const propertyParameter of propertyNameParameters) {
+    const { name, serialization } = propertyParameter;
+    if (serialization?.property?.type === PropertySerializationType.ParentObject) {
+      const parameterReference = serialization.property.parameterReference;
+      const parentPropertyName = parameterReference.substring(0, parameterReference.lastIndexOf('.'));
+      const parentPropertySegments = parentPropertyName.split('.');
+      const objectValue = getObjectPropertyValue(finalValue, parentPropertySegments);
+
+      // NOTE: Currently this only handles only one variable property name in the object
+      const keys = Object.keys(objectValue);
+      if (keys.length !== 1) {
+        return inputsValue;
+      }
+
+      const propertyName = keys[0];
+
+      safeSetObjectPropertyValue(finalValue, parentPropertySegments, {
+        [serialization.property.name]: {
+          ...objectValue[propertyName],
+          [name.substring(name.lastIndexOf('.') + 1)]: propertyName,
+        },
+      });
+    }
+  }
+
+  const parametersWithDeserialization = allInputs.filter((input) => !!input.deserialization);
+  for (const parameter of parametersWithDeserialization) {
+    const { name, deserialization } = parameter;
+    if (deserialization?.type === DeserializationLocation.ParentObjectProperties) {
+      const parentPropertySegments = deserialization.parameterReference.split('.');
+      const objectValue = getObjectPropertyValue(finalValue, parentPropertySegments);
+      const value = Object.keys(objectValue ?? {});
+
+      objectValue[name.split('.').at(-1) as string] = value;
+      safeSetObjectPropertyValue(finalValue, parentPropertySegments, objectValue);
+    }
   }
 
   return finalValue;
@@ -2391,6 +2493,11 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
   } catch {
     return updatedParameterValue.length === 1 && isTokenValueSegment(updatedParameterValue[0]) ? parameterValueString : rawStringFormat;
   }
+}
+
+export function parameterValueWithoutCasting(parameter: ParameterInfo): any {
+  const stringifiedValue = parameterValueToStringWithoutCasting(parameter.value);
+  return getJSONValueFromString(stringifiedValue, parameter.type);
 }
 
 export function getJSONValueFromString(value: any, type: string): any {

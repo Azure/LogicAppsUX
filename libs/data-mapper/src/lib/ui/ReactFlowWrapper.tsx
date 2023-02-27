@@ -203,6 +203,7 @@ export const ReactFlowWrapper = ({
       nodes={nodes}
       edges={edges}
       onPaneClick={onPaneClick}
+      nodesFocusable={false} // we handle keyboard focus from within the node
       // Not ideal, but it's this or useViewport that re-renders 3000 (due to x/y changes)
       onMove={(_e, viewport) => setCanvasZoom(viewport.zoom)}
       onKeyDown={keyDownHandler}

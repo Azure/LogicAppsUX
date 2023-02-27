@@ -2,7 +2,7 @@ import type { FunctionGroupBranding } from '../../../constants/FunctionConstants
 import { functionNodeCardSize } from '../../../constants/NodeConstants';
 import type { ConnectionDictionary } from '../../../models/Connection';
 import type { FunctionData } from '../../../models/Function';
-import { areInputsValidForFunction } from '../../../utils/MapChecker.Utils';
+import { areInputTypesValidForFunction } from '../../../utils/MapChecker.Utils';
 import type { CardProps } from '../NodeCard';
 import { createFocusOutlineStyle, makeStyles, shorthands, tokens } from '@fluentui/react-components';
 
@@ -74,7 +74,7 @@ export const inputsValid = (reactFlowId: string, functionData: FunctionData, con
   const connection = connections[reactFlowId];
 
   if (connection) {
-    return areInputsValidForFunction(functionData, connection);
+    return areInputTypesValidForFunction(functionData, connection);
   } else {
     return true;
   }

@@ -4,7 +4,7 @@ import type { SchemaNodeExtended } from '../../models';
 import { NormalizedDataType, SchemaNodeProperty } from '../../models';
 import type { Connection, ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import type { FunctionData, FunctionInput } from '../../models/Function';
-import { FunctionCategory, functionMock } from '../../models/Function';
+import { FunctionCategory, functionMock, FunctionType } from '../../models/Function';
 import {
   bringInParentSourceNodesForRepeating,
   createConnectionEntryIfNeeded,
@@ -14,14 +14,11 @@ import {
   newConnectionWillHaveCircularLogic,
   nodeHasSourceNodeEventually,
   nodeHasSpecificInputEventually,
+  nodeHasSpecificOutputEventually,
   setConnectionInputValue,
 } from '../Connection.Utils';
 import { isSchemaNodeExtended } from '../Schema.Utils';
 import { fullConnectionDictionaryForOneToManyLoop, fullMapForSimplifiedLoop } from '../__mocks__';
-
-// TODO: nodeHasSourceNodeEventually
-// TODO: nodeHasSpecificInputEventually
-// TODO: collectNodesForConnectionChain ?
 
 const mockBoundedFunctionInputs: FunctionInput[] = [
   {
@@ -140,7 +137,7 @@ describe('utils/Connections', () => {
           displayName: 'Self',
           category: FunctionCategory.Math,
           description: 'Self',
-          type: 'Function',
+          type: FunctionType.TransformationFunction,
           inputs: mockBoundedFunctionInputs,
           maxNumberOfInputs: mockBoundedFunctionInputs.length,
           outputValueType: NormalizedDataType.Integer,
@@ -177,7 +174,7 @@ describe('utils/Connections', () => {
           displayName: 'Self',
           category: FunctionCategory.Math,
           description: 'Self',
-          type: 'Function',
+          type: FunctionType.TransformationFunction,
           inputs: mockBoundedFunctionInputs,
           maxNumberOfInputs: mockBoundedFunctionInputs.length,
           outputValueType: NormalizedDataType.Integer,
@@ -211,7 +208,7 @@ describe('utils/Connections', () => {
         displayName: 'Self',
         category: FunctionCategory.Math,
         description: 'Self',
-        type: 'Function',
+        type: FunctionType.TransformationFunction,
         inputs: mockBoundedFunctionInputs,
         maxNumberOfInputs: mockBoundedFunctionInputs.length,
         outputValueType: NormalizedDataType.Integer,
@@ -421,11 +418,11 @@ describe('utils/Connections', () => {
 
     it('Test can find a source node from depth == 1', () => {
       expect(isSchemaNodeExtended(dummyNode)).toBeTruthy();
-      expect(nodeHasSourceNodeEventually(mockConnections['concatFunctionNode'], mockConnections)).toEqual(true);
+      expect(nodeHasSourceNodeEventually(mockConnections['concatFunctionNode'], mockConnections)).toBeTruthy();
     });
 
     it('Test can recursively call from depth > 1', () => {
-      expect(nodeHasSourceNodeEventually(mockConnections['testTargetSchema'], mockConnections)).toEqual(true);
+      expect(nodeHasSourceNodeEventually(mockConnections['testTargetSchema'], mockConnections)).toBeTruthy();
     });
   });
 
@@ -457,7 +454,7 @@ describe('utils/Connections', () => {
           '0': [{ reactFlowKey: 'testSourceSchema1', node: dummyNode }],
           '1': [{ reactFlowKey: 'testSourceSchema2', node: dummyNode }],
         },
-        outputs: [{ node: dummyNode, reactFlowKey: 'testTargetScehema' }],
+        outputs: [{ node: dummyNode, reactFlowKey: 'testTargetSchema' }],
       },
       testTargetSchema: {
         self: { node: dummyNode, reactFlowKey: 'testTargetSchema' },
@@ -483,6 +480,62 @@ describe('utils/Connections', () => {
     });
   });
 
+  describe('nodeHasSpecificOutputEventually', () => {
+    const dummyNode: SchemaNodeExtended = {
+      key: '',
+      name: '',
+      fullName: '',
+      normalizedDataType: NormalizedDataType.Integer,
+      properties: SchemaNodeProperty.NotSpecified,
+      nodeProperties: [SchemaNodeProperty.NotSpecified],
+      children: [],
+      pathToRoot: [],
+    };
+    const mockConnections: ConnectionDictionary = {
+      testSourceSchema1: {
+        self: { node: dummyNode, reactFlowKey: 'testSourceSchema1' },
+        inputs: {},
+        outputs: [{ node: concatFunction, reactFlowKey: 'concatFunctionNode' }],
+      },
+      testSourceSchema2: {
+        self: { node: dummyNode, reactFlowKey: 'testSourceSchema2' },
+        inputs: {},
+        outputs: [{ node: concatFunction, reactFlowKey: 'concatFunctionNode' }],
+      },
+      concatFunctionNode: {
+        self: { node: concatFunction, reactFlowKey: 'concatFunctionNode' },
+        inputs: {
+          '0': [{ reactFlowKey: 'testSourceSchema1', node: dummyNode }],
+          '1': [{ reactFlowKey: 'testSourceSchema2', node: dummyNode }],
+        },
+        outputs: [{ node: dummyNode, reactFlowKey: 'testTargetSchema' }],
+      },
+      testTargetSchema: {
+        self: { node: dummyNode, reactFlowKey: 'testTargetSchema' },
+        inputs: { '0': [{ reactFlowKey: 'concatFunctionNode', node: concatFunction }] },
+        outputs: [],
+      },
+    };
+
+    it('Truthy when sourceKey in currentConnection with exact match', () => {
+      expect(
+        nodeHasSpecificOutputEventually('testSourceSchema1', mockConnections['testSourceSchema1'], mockConnections, true)
+      ).toBeTruthy();
+    });
+
+    it('Truthy when sourceKey can be found in currentConnection reactFlowKey', () => {
+      expect(nodeHasSpecificOutputEventually('Source', mockConnections['testSourceSchema1'], mockConnections, false)).toBeTruthy();
+    });
+
+    it('Truthy when sourceKey can be found recursively (exactMatch = false)', () => {
+      expect(nodeHasSpecificOutputEventually('Target', mockConnections['testSourceSchema1'], mockConnections, false)).toBeTruthy();
+    });
+
+    it('Falsy when sourceKey unable to be found recursively (exactMatch = true)', () => {
+      expect(nodeHasSpecificOutputEventually('testTargetSchema1', mockConnections['testSourceSchema1'], mockConnections, true)).toBeFalsy();
+    });
+  });
+
   describe('isValidConnectionByType', () => {
     it('Truthy when both are the same non-Any datatypes', () => {
       expect(isValidConnectionByType(NormalizedDataType.String, NormalizedDataType.String)).toBeTruthy();
@@ -503,160 +556,184 @@ describe('utils/Connections', () => {
 });
 
 const parentManyToOneTargetNode: SchemaNodeExtended = {
-  key: '/ns0:Root/ManyToOne/Date',
-  name: 'Date',
+  key: '/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple',
+  name: 'Simple',
   normalizedDataType: NormalizedDataType.ComplexType,
   properties: 'Repeating',
   children: [
     {
-      key: '/ns0:Root/ManyToOne/Date/DayName',
-      name: 'DayName',
+      key: '/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple/Direct',
+      name: 'Direct',
       normalizedDataType: NormalizedDataType.String,
       properties: 'NotSpecified',
       children: [],
-      fullName: 'DayName',
-      parentKey: '/ns0:Root/ManyToOne/Date',
+      fullName: 'Direct',
+      parentKey: '/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple',
       nodeProperties: [SchemaNodeProperty.Repeating],
       pathToRoot: [
         {
-          key: '/ns0:Root',
-          name: 'Root',
-          fullName: 'ns0:Root',
+          key: '/ns0:TargetSchemaRoot',
+          name: 'TargetSchemaRoot',
+          fullName: 'ns0:TargetSchemaRoot',
           repeating: false,
         },
         {
-          key: '/ns0:Root/ManyToOne',
+          key: '/ns0:TargetSchemaRoot/Looping',
+          name: 'Looping',
+          fullName: 'Looping',
+          repeating: false,
+        },
+        {
+          key: '/ns0:TargetSchemaRoot/Looping/ManyToOne',
           name: 'ManyToOne',
           fullName: 'ManyToOne',
           repeating: false,
         },
         {
-          key: '/ns0:Root/ManyToOne/Date',
-          name: 'Date',
-          fullName: 'Date',
+          key: '/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple',
+          name: 'Simple',
+          fullName: 'Simple',
           repeating: true,
         },
         {
-          key: '/ns0:Root/ManyToOne/Date/DayName',
-          name: 'DayName',
-          fullName: 'DayName',
+          key: '/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple/Direct',
+          name: 'Direct',
+          fullName: 'Direct',
           repeating: false,
         },
       ],
     },
   ],
-  fullName: 'Date',
-  parentKey: '/ns0:Root/ManyToOne',
+  fullName: 'Simple',
+  parentKey: '/ns0:TargetSchemaRoot/Looping/ManyToOne',
   nodeProperties: [SchemaNodeProperty.Repeating],
   pathToRoot: [
     {
-      key: '/ns0:Root',
-      name: 'Root',
-      fullName: 'ns0:Root',
+      key: '/ns0:TargetSchemaRoot',
+      name: 'TargetSchemaRoot',
+      fullName: 'ns0:TargetSchemaRoot',
       repeating: false,
     },
     {
-      key: '/ns0:Root/ManyToOne',
+      key: '/ns0:TargetSchemaRoot/Looping',
+      name: 'Looping',
+      fullName: 'Looping',
+      repeating: false,
+    },
+    {
+      key: '/ns0:TargetSchemaRoot/Looping/ManyToOne',
       name: 'ManyToOne',
       fullName: 'ManyToOne',
       repeating: false,
     },
     {
-      key: '/ns0:Root/ManyToOne/Date',
-      name: 'Date',
-      fullName: 'Date',
+      key: '/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple',
+      name: 'Simple',
+      fullName: 'Simple',
       repeating: true,
     },
   ],
 };
 
 const parentTargetNode: SchemaNodeExtended = {
-  key: '/ns0:Root/ManyToMany/Year/Month/Day',
-  name: 'Day',
+  key: '/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild',
+  name: 'SimpleChildChild',
   normalizedDataType: NormalizedDataType.ComplexType,
   properties: 'Repeating',
   children: [
     {
-      key: '/ns0:Root/ManyToMany/Year/Month/Day/Date',
-      name: 'Date',
+      key: '/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild/Direct',
+      name: 'Direct',
       normalizedDataType: NormalizedDataType.String,
       properties: 'NotSpecified',
-      fullName: 'Date',
-      parentKey: '/ns0:Root/ManyToMany/Year/Month/Day',
+      fullName: 'Direct',
+      parentKey: '/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild',
       nodeProperties: [SchemaNodeProperty.NotSpecified],
       children: [],
       pathToRoot: [
         {
-          key: '/ns0:Root',
-          name: 'Root',
-          fullName: 'ns0:Root',
+          key: '/ns0:TargetSchemaRoot',
+          name: 'TargetSchemaRoot',
+          fullName: 'ns0:TargetSchemaRoot',
           repeating: false,
         },
         {
-          key: '/ns0:Root/ManyToMany',
+          key: '/ns0:TargetSchemaRoot/Looping',
+          name: 'Looping',
+          fullName: 'Looping',
+          repeating: false,
+        },
+        {
+          key: '/ns0:TargetSchemaRoot/Looping/ManyToMany',
           name: 'ManyToMany',
           fullName: 'ManyToMany',
           repeating: false,
         },
         {
-          key: '/ns0:Root/ManyToMany/Year',
-          name: 'Year',
-          fullName: 'Year',
+          key: '/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple',
+          name: 'Simple',
+          fullName: 'Simple',
           repeating: true,
         },
         {
-          key: '/ns0:Root/ManyToMany/Year/Month',
-          name: 'Month',
-          fullName: 'Month',
+          key: '/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild',
+          name: 'SimpleChild',
+          fullName: 'SimpleChild',
           repeating: true,
         },
         {
-          key: '/ns0:Root/ManyToMany/Year/Month/Day',
-          name: 'Day',
-          fullName: 'Day',
+          key: '/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild',
+          name: 'SimpleChildChild',
+          fullName: 'SimpleChildChild',
           repeating: true,
         },
         {
-          key: '/ns0:Root/ManyToMany/Year/Month/Day/Date',
-          name: 'Date',
-          fullName: 'Date',
+          key: '/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild/Direct',
+          name: 'Direct',
+          fullName: 'Direct',
           repeating: false,
         },
       ],
     },
   ],
-  fullName: 'Day',
-  parentKey: '/ns0:Root/ManyToMany/Year/Month',
+  fullName: 'SimpleChildChild',
+  parentKey: '/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild',
   nodeProperties: [SchemaNodeProperty.Repeating],
   pathToRoot: [
     {
-      key: '/ns0:Root',
-      name: 'Root',
-      fullName: 'ns0:Root',
+      key: '/ns0:TargetSchemaRoot',
+      name: 'TargetSchemaRoot',
+      fullName: 'ns0:TargetSchemaRoot',
       repeating: false,
     },
     {
-      key: '/ns0:Root/ManyToMany',
+      key: '/ns0:TargetSchemaRoot/Looping',
+      name: 'Looping',
+      fullName: 'Looping',
+      repeating: false,
+    },
+    {
+      key: '/ns0:TargetSchemaRoot/Looping/ManyToMany',
       name: 'ManyToMany',
       fullName: 'ManyToMany',
       repeating: false,
     },
     {
-      key: '/ns0:Root/ManyToMany/Year',
-      name: 'Year',
-      fullName: 'Year',
+      key: '/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple',
+      name: 'Simple',
+      fullName: 'Simple',
       repeating: true,
     },
     {
-      key: '/ns0:Root/ManyToMany/Year/Month',
-      name: 'Month',
-      fullName: 'Month',
+      key: '/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild',
+      name: 'SimpleChild',
+      fullName: 'SimpleChild',
       repeating: true,
     },
     {
-      key: '/ns0:Root/ManyToMany/Year/Month/Day',
-      name: 'Day',
-      fullName: 'Day',
+      key: '/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild',
+      name: 'SimpleChildChild',
+      fullName: 'SimpleChildChild',
       repeating: true,
     },
   ],

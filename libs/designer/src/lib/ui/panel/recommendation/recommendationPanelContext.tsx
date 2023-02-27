@@ -1,8 +1,6 @@
-import Constants from '../../../common/constants';
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useAllOperations } from '../../../core/queries/browse';
-import { useIsConsumption } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useIsAddingTrigger,
   useIsParallelBranch,
@@ -43,8 +41,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const allOperations = useAllOperations();
   const selectedOperation = allOperations.data?.find((o) => o.id === selectedOperationId);
 
-  const isConsumption = useIsConsumption();
-
   useEffect(() => {
     if (allOperations.data && selectedOperationGroupId) {
       const filteredOps = allOperations.data.filter((operation) => {
@@ -55,12 +51,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     }
   }, [selectedOperationGroupId, allOperations.data]);
 
-  const onDismiss = useCallback(() => {
-    dispatch(selectOperationGroupId(''));
-    setSearchTerm('');
-    props.toggleCollapse();
-  }, [dispatch, props]);
-
   const navigateBack = useCallback(() => {
     dispatch(selectOperationGroupId(''));
     dispatch(selectOperationId(''));
@@ -70,24 +60,15 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const relationshipIds = useRelationshipIds();
   const isParallelBranch = useIsParallelBranch();
 
-  const isAzureResourceActionId = useCallback((id: string) => {
-    const azureResourceOperationIds = Object.values(Constants.AZURE_RESOURCE_ACTION_TYPES);
-    return azureResourceOperationIds.some((_id) => areApiIdsEqual(id, _id));
-  }, []);
-
   const onOperationClick = useCallback(
     (id: string) => {
       const operation = (allOperations.data ?? []).find((o: any) => o.id === id);
       if (!operation) return;
       dispatch(selectOperationId(operation.id));
-      if (isAzureResourceActionId(operation.id)) {
-        setIsSelectingAzureResource(true);
-        return;
-      }
       const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
       dispatch(addOperation({ operation, relationshipIds, nodeId: newNodeId, isParallelBranch, isTrigger }));
     },
-    [allOperations.data, dispatch, isAzureResourceActionId, isParallelBranch, isTrigger, relationshipIds]
+    [allOperations.data, dispatch, isParallelBranch, isTrigger, relationshipIds]
   );
 
   const intl = useIntl();
@@ -99,7 +80,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   return (
     <RecommendationPanel placeholder={''} {...props}>
       {isSelectingAzureResource || selectedOperationGroupId ? (
-        <div className={'msla-search-heading-container'}>
+        <div className={'msla-sub-heading-container'}>
           <Link onClick={navigateBack} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Icon iconName="Back" />
             {returnToSearchText}
@@ -117,11 +98,9 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
             onGroupToggleChange={() => setIsGrouped(!isGrouped)}
             isGrouped={isGrouped}
             searchTerm={searchTerm}
-            onDismiss={onDismiss}
             filters={filters}
             setFilters={setFilters}
             isTriggerNode={isTrigger}
-            isConsumption={isConsumption}
           />
           {searchTerm ? (
             <SearchView

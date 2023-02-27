@@ -73,8 +73,6 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
     (props: AddResourceOperationParameters) => {
       const { name, additionalParameters, presetParameterValues, actionMetadata } = props;
       const newNodeId = name.replaceAll(' ', '_');
-      // console.log('### ADDING SELECTED RESOURCES', selectedResources);
-      // console.log('### ADDITIONAL PARAMETERS', additionalParameters);
       dispatch(
         addOperation({
           operation,
@@ -88,7 +86,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         })
       );
     },
-    [selectedResources, dispatch, operation, relationshipIds, isParallelBranch, isTrigger]
+    [dispatch, operation, relationshipIds, isParallelBranch, isTrigger]
   );
 
   // Parses the swagger object to get the paths and methods in an array

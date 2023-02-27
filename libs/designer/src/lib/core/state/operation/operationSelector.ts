@@ -1,4 +1,5 @@
 import type { RootState } from '../../store';
+import { shouldUseParameterInGroup } from '../../utils/parameters/helper';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
 
@@ -12,7 +13,9 @@ export const getOperationInputParameters = (rootState: RootState, nodeId: string
       for (const parameterGroupId of Object.keys(parameterGroups)) {
         const { parameters } = parameterGroups[parameterGroupId];
 
-        allParameters.push(...parameters.filter((parameter) => !parameter.info.serialization?.skip));
+        allParameters.push(
+          ...parameters.filter((parameter) => shouldUseParameterInGroup(parameter, parameters) && !parameter.info.serialization?.skip)
+        );
       }
     }
   }

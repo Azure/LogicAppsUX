@@ -1,4 +1,3 @@
-import { DevApiTester } from '../components/DevApiTester';
 import { DevToolbox } from '../components/DevToolbox';
 import { dataMapDataLoaderSlice } from '../state/DataMapDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
@@ -19,7 +18,7 @@ import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-const workflowSchemaFilenames = ['Source.xsd', 'Target.xsd'];
+const workflowSchemaFilenames = ['Source.xsd', 'Target.xsd', 'SourceJson.json', 'TargetJson.json'];
 
 export const DataMapperStandaloneDesigner = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -71,7 +70,6 @@ export const DataMapperStandaloneDesigner = () => {
             {/* @ts-ignore */}
             <PortalCompatProvider>
               <DevToolbox />
-              <DevApiTester />
             </PortalCompatProvider>
           </FluentProvider>
         </ThemeProvider>

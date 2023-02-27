@@ -273,12 +273,6 @@
       "value": "Zwiń"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "Wybierz filtr"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -977,12 +971,6 @@
     {
       "type": 0,
       "value": "14"
-    }
-  ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "Typ akcji"
     }
   ],
   "5+MuPz": [
@@ -1917,6 +1905,12 @@
       "value": "Utwórz grupę"
     }
   ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
@@ -2191,16 +2185,16 @@
       "value": "Wprowadź urząd"
     }
   ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "Filter by data type"
+    }
+  ],
   "GLd3MU": [
     {
       "type": 0,
       "value": "Parametr wymagany. Obiekt do wyszukiwania wewnątrz kolekcji typu W zakresie."
-    }
-  ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
     }
   ],
   "GXXLuT": [
@@ -2429,12 +2423,6 @@
       "value": "(UTC+07:00) Barnauł, Gornoałtajsk"
     }
   ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "Powrót do przeglądania"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -2523,12 +2511,6 @@
     {
       "type": 0,
       "value": "Wymagane. Ciąg zawierający godzinę."
-    }
-  ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2713,6 +2695,12 @@
       "value": "Nie ma wyników dla Twojego wyszukiwania"
     }
   ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "LBbhCu": [
     {
       "type": 0,
@@ -2873,16 +2861,6 @@
     {
       "type": 0,
       "value": "Opcjonalnie. Nazwa akcji o określonym zakresie, w którym mają być umieszczane dane wejściowe i wyjściowe akcji najwyższego poziomu."
-    }
-  ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "Nie znaleziono wyników dla: "
-    },
-    {
-      "type": 1,
-      "value": "searchText"
     }
   ],
   "M9mzP6": [
@@ -3053,12 +3031,6 @@
       "value": "Wtorek"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "Środowisko uruchomieniowe"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -3211,12 +3183,6 @@
     {
       "type": 0,
       "value": "Certyfikat PFX"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "Filtruj"
     }
   ],
   "P2A5dB": [
@@ -3723,6 +3689,12 @@
       "value": "Nieprawidłowa liczba stronicowania"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3919,10 +3891,14 @@
       "value": "Rozwiń"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -4341,6 +4317,12 @@
     {
       "type": 0,
       "value": "Pomniejsz"
+    }
+  ],
+  "Z657PF": [
+    {
+      "type": 0,
+      "value": "Function is missing required inputs"
     }
   ],
   "Z9PWl/": [
@@ -4857,6 +4839,12 @@
       "value": "Nie określono"
     }
   ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -4953,6 +4941,16 @@
       "value": "Liczba stronicowania przekracza wartość maksymalną"
     }
   ],
+  "fWsZhJ": [
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": " has an non-terminating connection chain"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5009,6 +5007,12 @@
     {
       "type": 0,
       "value": "Publikuj"
+    }
+  ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
     }
   ],
   "g5mMuM": [
@@ -5081,16 +5085,6 @@
     {
       "type": 0,
       "value": "Warunki wyzwalacza"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 0,
-      "value": "Wyniki wyszukiwania dla terminu: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -5533,6 +5527,16 @@
       "value": "”"
     }
   ],
+  "jlc/pM": [
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " has an input with a mismatched type"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -5659,12 +5663,6 @@
       "value": "Wymagane. Ta wartość jest następną liczbą całkowitą po największej liczbie całkowitej możliwej do zwrócenia."
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5769,6 +5767,12 @@
       "value": "Skrót dla actions('actionName').outputs.body"
     }
   ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -5791,6 +5795,12 @@
     {
       "type": 0,
       "value": "Wartość rzeczywista"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6651,12 +6661,6 @@
       "value": "(UTC+06:00) Nowosybirsk"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6769,6 +6773,12 @@
     {
       "type": 0,
       "value": "Wymagane. Liczba jednostek czasu określająca żądany czasu w przeszłości."
+    }
+  ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
     }
   ],
   "uczA5c": [
@@ -6941,6 +6951,12 @@
       "value": "Właściwości przepływu pracy"
     }
   ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
+    }
+  ],
   "w16qh+": [
     {
       "type": 0,
@@ -6951,6 +6967,12 @@
     {
       "type": 0,
       "value": "Niedziela"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [
@@ -7017,6 +7039,12 @@
     {
       "type": 0,
       "value": "Client Tracking ID"
+    }
+  ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "Input type mismatch"
     }
   ],
   "wl7X0l": [

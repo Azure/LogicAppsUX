@@ -273,12 +273,6 @@
       "value": "Contraer"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "Seleccionar un filtro"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -950,12 +944,6 @@
     {
       "type": 0,
       "value": "14"
-    }
-  ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "Tipo de acción"
     }
   ],
   "5+MuPz": [
@@ -1879,6 +1867,12 @@
       "value": "Crear grupo"
     }
   ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
@@ -2134,16 +2128,16 @@
       "value": "Especificar autoridad"
     }
   ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "Filter by data type"
+    }
+  ],
   "GLd3MU": [
     {
       "type": 0,
       "value": "Obligatorio. El objeto que se buscará dentro de la colección."
-    }
-  ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
     }
   ],
   "GXXLuT": [
@@ -2372,12 +2366,6 @@
       "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
     }
   ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "Volver para examinar"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -2466,12 +2454,6 @@
     {
       "type": 0,
       "value": "Obligatorio. Una cadena que contiene la hora."
-    }
-  ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2645,6 +2627,12 @@
       "value": "No hay ningún resultado para su búsqueda."
     }
   ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "LBbhCu": [
     {
       "type": 0,
@@ -2797,16 +2785,6 @@
     {
       "type": 0,
       "value": "Opcional. Nombre de la acción con ámbito donde desea que se muestren las entradas y salidas de las acciones de nivel superior dentro de ese ámbito."
-    }
-  ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "No se encontraron resultados para: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "M9mzP6": [
@@ -2977,12 +2955,6 @@
       "value": "Martes"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "Runtime"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -3135,12 +3107,6 @@
     {
       "type": 0,
       "value": "Archivo PFX"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "Filtrar"
     }
   ],
   "P2A5dB": [
@@ -3636,6 +3602,12 @@
       "value": "Recuento de paginación no válido"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3832,10 +3804,14 @@
       "value": "Expandir"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -4246,6 +4222,12 @@
     {
       "type": 0,
       "value": "Alejar"
+    }
+  ],
+  "Z657PF": [
+    {
+      "type": 0,
+      "value": "Function is missing required inputs"
     }
   ],
   "Z9PWl/": [
@@ -4762,6 +4744,12 @@
       "value": "Sin especificar"
     }
   ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -4858,6 +4846,16 @@
       "value": "El recuento de paginación supera el valor máximo"
     }
   ],
+  "fWsZhJ": [
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": " has an non-terminating connection chain"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -4918,6 +4916,12 @@
     {
       "type": 0,
       "value": "Publicar"
+    }
+  ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
     }
   ],
   "g5mMuM": [
@@ -4990,16 +4994,6 @@
     {
       "type": 0,
       "value": "Condiciones del desencadenador"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 0,
-      "value": "Resultados de la búsqueda para: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -5423,6 +5417,16 @@
       "value": "\""
     }
   ],
+  "jlc/pM": [
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " has an input with a mismatched type"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -5549,12 +5553,6 @@
       "value": "Obligatorio. Este valor es el entero siguiente al entero más alto que se pudo devolver."
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5659,6 +5657,12 @@
       "value": "Forma abreviada de actions('actionName').outputs.body"
     }
   ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -5681,6 +5685,12 @@
     {
       "type": 0,
       "value": "Valor real"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6522,12 +6532,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6585,7 +6589,7 @@
   "u9tr3k": [
     {
       "type": 0,
-      "value": "Select an element to start configuring"
+      "value": "Seleccione un elemento para iniciar la configuración"
     }
   ],
   "uM1i27": [
@@ -6640,6 +6644,12 @@
     {
       "type": 0,
       "value": "Obligatorio. Número de unidades de tiempo cuya hora deseada es pasada."
+    }
+  ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
     }
   ],
   "uczA5c": [
@@ -6812,6 +6822,12 @@
       "value": "Propiedades del flujo de trabajo"
     }
   ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
+    }
+  ],
   "w16qh+": [
     {
       "type": 0,
@@ -6822,6 +6838,12 @@
     {
       "type": 0,
       "value": "Domingo"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [
@@ -6888,6 +6910,12 @@
     {
       "type": 0,
       "value": "Client Tracking ID"
+    }
+  ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "Input type mismatch"
     }
   ],
   "wl7X0l": [

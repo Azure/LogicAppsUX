@@ -273,12 +273,6 @@
       "value": "Összecsukás"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "Válasszon szűrőt"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -939,12 +933,6 @@
     {
       "type": 0,
       "value": "14"
-    }
-  ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "Művelet típusa"
     }
   ],
   "5+MuPz": [
@@ -1857,6 +1845,12 @@
       "value": "Csoport létrehozása"
     }
   ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
@@ -2109,16 +2103,16 @@
       "value": "Adja meg a hitelesítésszolgáltatót"
     }
   ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "Filter by data type"
+    }
+  ],
   "GLd3MU": [
     {
       "type": 0,
       "value": "Kötelező megadni. A tartalmazó gyűjteményben keresendő objektum."
-    }
-  ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
     }
   ],
   "GXXLuT": [
@@ -2347,12 +2341,6 @@
       "value": "(UTC+07:00) Barnaul, Gorno-Altajszk"
     }
   ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "Visszatérés a tallózáshoz"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -2441,12 +2429,6 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az időt tartalmazó sztring."
-    }
-  ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2609,6 +2591,12 @@
       "value": "A keresés nem adott eredményeket"
     }
   ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "LBbhCu": [
     {
       "type": 0,
@@ -2769,16 +2757,6 @@
     {
       "type": 0,
       "value": "Nem kötelező. Annak a hatóköri műveletnek a neve, ahol az adott hatókör legfelső szintű műveleteinek bemeneteit és kimeneteit szeretné használni."
-    }
-  ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "Nincs találat a következőre: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "M9mzP6": [
@@ -2949,12 +2927,6 @@
       "value": "Kedd"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "Futtatókörnyezet"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -3107,12 +3079,6 @@
     {
       "type": 0,
       "value": "Pfx"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "Szűrés"
     }
   ],
   "P2A5dB": [
@@ -3601,6 +3567,12 @@
       "value": "A lapozások száma érvénytelen"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3797,10 +3769,14 @@
       "value": "Kibontás"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -4219,6 +4195,12 @@
     {
       "type": 0,
       "value": "Kicsinyítés"
+    }
+  ],
+  "Z657PF": [
+    {
+      "type": 0,
+      "value": "Function is missing required inputs"
     }
   ],
   "Z9PWl/": [
@@ -4739,6 +4721,12 @@
       "value": "Nincs megadva"
     }
   ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -4835,6 +4823,16 @@
       "value": "A lapozások száma meghaladja a maximális értéket"
     }
   ],
+  "fWsZhJ": [
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": " has an non-terminating connection chain"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -4895,6 +4893,12 @@
     {
       "type": 0,
       "value": "Közzététel"
+    }
+  ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
     }
   ],
   "g5mMuM": [
@@ -4967,16 +4971,6 @@
     {
       "type": 0,
       "value": "Aktiválási feltételek"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 0,
-      "value": "Keresési eredmények a következőhöz: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -5393,6 +5387,16 @@
       "value": "referenceKeyFormat"
     }
   ],
+  "jlc/pM": [
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " has an input with a mismatched type"
+    }
+  ],
   "juR40n": [
     {
       "type": 0,
@@ -5519,12 +5523,6 @@
       "value": "Kötelező megadni. Az érték a legnagyobb visszaadható egész szám utáni egész szám."
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5629,6 +5627,12 @@
       "value": "Az actions('actionName').outputs.body rövid függvényneve."
     }
   ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -5651,6 +5655,12 @@
     {
       "type": 0,
       "value": "Tényleges érték"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6489,12 +6499,6 @@
       "value": "(UTC+06:00) Novoszibirszk"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6607,6 +6611,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az időegységek azon mennyisége, amellyel a kívánt időpont a múltban van."
+    }
+  ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
     }
   ],
   "uczA5c": [
@@ -6779,6 +6789,12 @@
       "value": "Munkafolyamat tulajdonságai"
     }
   ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
+    }
+  ],
   "w16qh+": [
     {
       "type": 0,
@@ -6789,6 +6805,12 @@
     {
       "type": 0,
       "value": "Vasárnap"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [
@@ -6855,6 +6877,12 @@
     {
       "type": 0,
       "value": "Client Tracking ID"
+    }
+  ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "Input type mismatch"
     }
   ],
   "wl7X0l": [

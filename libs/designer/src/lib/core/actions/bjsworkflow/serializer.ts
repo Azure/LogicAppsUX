@@ -293,12 +293,10 @@ export interface SerializedParameter extends ParameterInfo {
 
 const getOperationInputsToSerialize = (rootState: RootState, operationId: string): SerializedParameter[] => {
   const idReplacements = rootState.workflow.idReplacements;
-  return getOperationInputParameters(rootState, operationId)
-    .filter((input) => !input.info.serialization?.skip)
-    .map((input) => ({
-      ...input,
-      value: parameterValueToString(input, true /* isDefinitionValue */, idReplacements),
-    }));
+  return getOperationInputParameters(rootState, operationId).map((input) => ({
+    ...input,
+    value: parameterValueToString(input, true /* isDefinitionValue */, idReplacements),
+  }));
 };
 
 const serializeOperationParameters = (inputs: SerializedParameter[], manifest: OperationManifest): Record<string, any> => {
@@ -326,14 +324,34 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
     }
     return result !== undefined ? result : rootParameter.required ? null : undefined;
   } else {
-    const descendantParameters = inputs.filter((item) => isAncestorKey(item.parameterKey, key));
-    for (const serializedParameter of descendantParameters) {
-      let parameterValue = getJSONValueFromString(serializedParameter.value, serializedParameter.type);
-      if (encodePathComponents) {
-        const encodeCount = getEncodeValue(serializedParameter.info.encode ?? '');
-        parameterValue = encodePathValue(parameterValue, encodeCount);
+    const propertyNameParameters: SerializedParameter[] = [];
+    const serializedParameters = inputs
+      .filter((item) => isAncestorKey(item.parameterKey, key))
+      .map((descendantParameter) => {
+        let parameterValue = getJSONValueFromString(descendantParameter.value, descendantParameter.type);
+        if (encodePathComponents) {
+          const encodeCount = getEncodeValue(descendantParameter.info.encode ?? '');
+          parameterValue = encodePathValue(parameterValue, encodeCount);
+        }
+
+        const serializedParameter = { ...descendantParameter, value: parameterValue };
+        if (descendantParameter.info.serialization?.property) {
+          propertyNameParameters.push(serializedParameter);
+        }
+
+        return serializedParameter;
+      });
+
+    for (const serializedParameter of serializedParameters) {
+      if (!propertyNameParameters.find((param) => param.parameterKey === serializedParameter.parameterKey)) {
+        let parameterKey = serializedParameter.parameterKey;
+        for (const propertyNameParameter of propertyNameParameters) {
+          const propertyName = propertyNameParameter.info.serialization?.property?.name as string;
+          parameterKey = parameterKey.replace(propertyName, propertyNameParameter.value);
+        }
+
+        result = serializeParameterWithPath(result, serializedParameter.value, key, { ...serializedParameter, parameterKey });
       }
-      result = serializeParameterWithPath(result, parameterValue, key, serializedParameter);
     }
   }
 

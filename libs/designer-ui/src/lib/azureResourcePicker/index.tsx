@@ -117,13 +117,13 @@ export const ResourceEntry = (props: ResourceEntryProps) => {
   const intl = useIntl();
   const hasSubResources = !!onSubResourceSelect || !!fetchSubResourcesCallback;
 
-  const subResourcesQuery = useQuery([subResourceType, resource.id], async () => fetchSubResourcesCallback?.(resource) ?? [], {
+  const subResourcesQuery = useQuery([subResourceType, resource.id], async () => fetchSubResourcesCallback?.(resource.id) ?? [], {
     enabled: resource.selected && hasSubResources,
     staleTime: 1000 * 60 * 60 * 24,
   });
 
   const expanded = useMemo(() => resource.selected, [resource.selected]);
-  const selectedFunctionId = useMemo(() => resource.selectedSubresource, [resource.selectedSubresource]);
+  const selectedSubResourceId = useMemo(() => resource.selectedSubresource, [resource.selectedSubresource]);
 
   const noSubResourceText = intl.formatMessage({
     defaultMessage: 'No resources of this type found under this subscription.',
@@ -138,7 +138,7 @@ export const ResourceEntry = (props: ResourceEntryProps) => {
     <div className="msla-azure-resource-entry">
       <button
         className={css('msla-azure-resource-entry-heading', expanded && 'expanded')}
-        onClick={() => onResourceSelect(expanded ? undefined : resource)}
+        onClick={() => onResourceSelect(expanded ? undefined : resource.id)}
         style={{ gridTemplateColumns }}
       >
         {columns.map((value, index) => (
@@ -161,7 +161,7 @@ export const ResourceEntry = (props: ResourceEntryProps) => {
                     data: sub,
                   }))}
                   onChange={(_e: any, f: any) => onSubResourceSelect?.(f.data as any)}
-                  selectedKey={selectedFunctionId}
+                  selectedKey={selectedSubResourceId}
                 />
               )}
             </>
