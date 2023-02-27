@@ -273,12 +273,6 @@
       "value": "Contraer"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "Seleccionar un filtro"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -950,12 +944,6 @@
     {
       "type": 0,
       "value": "14"
-    }
-  ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "Tipo de acción"
     }
   ],
   "5+MuPz": [
@@ -1879,6 +1867,12 @@
       "value": "Crear grupo"
     }
   ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
@@ -2372,12 +2366,6 @@
       "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
     }
   ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "Volver para examinar"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -2799,16 +2787,6 @@
       "value": "Opcional. Nombre de la acción con ámbito donde desea que se muestren las entradas y salidas de las acciones de nivel superior dentro de ese ámbito."
     }
   ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "No se encontraron resultados para: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
-    }
-  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -2977,12 +2955,6 @@
       "value": "Martes"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "Runtime"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -3135,12 +3107,6 @@
     {
       "type": 0,
       "value": "Archivo PFX"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "Filtrar"
     }
   ],
   "P2A5dB": [
@@ -3636,6 +3602,12 @@
       "value": "Recuento de paginación no válido"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3832,10 +3804,14 @@
       "value": "Expandir"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -4942,6 +4918,12 @@
       "value": "Publicar"
     }
   ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
   "g5mMuM": [
     {
       "type": 0,
@@ -5012,16 +4994,6 @@
     {
       "type": 0,
       "value": "Condiciones del desencadenador"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 0,
-      "value": "Resultados de la búsqueda para: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -5683,6 +5655,12 @@
     {
       "type": 0,
       "value": "Forma abreviada de actions('actionName').outputs.body"
+    }
+  ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
     }
   ],
   "lzBHHT": [
@@ -6668,6 +6646,12 @@
       "value": "Obligatorio. Número de unidades de tiempo cuya hora deseada es pasada."
     }
   ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
+    }
+  ],
   "uczA5c": [
     {
       "type": 0,
@@ -6836,6 +6820,12 @@
     {
       "type": 0,
       "value": "Propiedades del flujo de trabajo"
+    }
+  ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
     }
   ],
   "w16qh+": [

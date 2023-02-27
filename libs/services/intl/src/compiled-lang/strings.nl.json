@@ -273,12 +273,6 @@
       "value": "Samenvouwen"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "Een filter selecteren"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -939,12 +933,6 @@
     {
       "type": 0,
       "value": "14"
-    }
-  ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "Actietype"
     }
   ],
   "5+MuPz": [
@@ -1857,6 +1845,12 @@
       "value": "Groep maken"
     }
   ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
@@ -2347,12 +2341,6 @@
       "value": "(UTC+07:00) Barnaoel, Gorno-Altajsk"
     }
   ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "Terug naar bladeren"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -2767,16 +2755,6 @@
       "value": "Optioneel. De naam van de actie met bereik waarvoor u de invoer en uitvoer van de acties op het hoogste niveau binnen dat bereik wilt."
     }
   ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "Geen resultaten gevonden voor: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
-    }
-  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -2945,12 +2923,6 @@
       "value": "Dinsdag"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "Runtime"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -3099,12 +3071,6 @@
     {
       "type": 0,
       "value": "Pfx"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "Filter"
     }
   ],
   "P2A5dB": [
@@ -3593,6 +3559,12 @@
       "value": "Ongeldig aantal pagineringen"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3789,10 +3761,14 @@
       "value": "Uitvouwen"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -4895,6 +4871,12 @@
       "value": "Publiceren"
     }
   ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
   "g5mMuM": [
     {
       "type": 0,
@@ -4965,16 +4947,6 @@
     {
       "type": 0,
       "value": "Triggervoorwaarden"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 0,
-      "value": "Zoekresultaten voor: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -5625,6 +5597,12 @@
     {
       "type": 0,
       "value": "Verkorte versie van acties('actionName').outputs.body"
+    }
+  ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
     }
   ],
   "lzBHHT": [
@@ -6607,6 +6585,12 @@
       "value": "Vereist. Het aantal tijdseenheden waarmee de gewenste tijd in het verleden is opgegeven."
     }
   ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
+    }
+  ],
   "uczA5c": [
     {
       "type": 0,
@@ -6775,6 +6759,12 @@
     {
       "type": 0,
       "value": "Werkstroomeigenschappen"
+    }
+  ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
     }
   ],
   "w16qh+": [

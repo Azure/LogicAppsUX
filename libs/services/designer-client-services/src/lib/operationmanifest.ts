@@ -40,7 +40,7 @@ export const OperationManifestService = (): IOperationManifestService => {
   if (!service) {
     throw new AssertionException(
       AssertionErrorCode.SERVICE_NOT_INITIALIZED,
-      'OperationManifestService need to be initialized before using'
+      'OperationManifestService needs to be initialized before using'
     );
   }
 

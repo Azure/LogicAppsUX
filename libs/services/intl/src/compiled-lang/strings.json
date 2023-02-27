@@ -257,12 +257,6 @@
       "value": "Collapse"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "Select a filter"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -923,12 +917,6 @@
     {
       "type": 0,
       "value": "14"
-    }
-  ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "Action Type"
     }
   ],
   "5+MuPz": [
@@ -1809,6 +1797,12 @@
       "value": "Make Group"
     }
   ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
@@ -2283,12 +2277,6 @@
       "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
     }
   ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "Return to browse"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -2683,16 +2671,6 @@
       "value": "Optional. The name of the scoped action where you want the inputs and outputs from the top-level actions inside that scope."
     }
   ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "No results found for: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
-    }
-  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -2861,12 +2839,6 @@
       "value": "Tuesday"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "Runtime"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -3003,12 +2975,6 @@
     {
       "type": 0,
       "value": "Pfx"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "Filter"
     }
   ],
   "P2A5dB": [
@@ -3497,6 +3463,12 @@
       "value": "Paging count invalid"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3693,10 +3665,14 @@
       "value": "Expand"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -4795,6 +4771,12 @@
       "value": "Publish"
     }
   ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
   "g5mMuM": [
     {
       "type": 0,
@@ -4865,16 +4847,6 @@
     {
       "type": 0,
       "value": "Trigger Conditions"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 0,
-      "value": "Search results for: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -5501,6 +5473,12 @@
     {
       "type": 0,
       "value": "Shorthand for actions('actionName').outputs.body"
+    }
+  ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
     }
   ],
   "lzBHHT": [
@@ -6459,6 +6437,12 @@
       "value": "Required. The number of time units the desired time is in the past."
     }
   ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
+    }
+  ],
   "uczA5c": [
     {
       "type": 0,
@@ -6627,6 +6611,12 @@
     {
       "type": 0,
       "value": "Workflow Properties"
+    }
+  ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
     }
   ],
   "w16qh+": [
