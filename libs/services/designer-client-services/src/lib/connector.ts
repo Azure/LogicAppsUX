@@ -108,7 +108,7 @@ export const InitConnectorService = (connectorService: IConnectorService): void 
 
 export const ConnectorService = (): IConnectorService => {
   if (!service) {
-    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'ConnectorService need to be initialized before using');
+    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'ConnectorService needs to be initialized before using');
   }
 
   return service;

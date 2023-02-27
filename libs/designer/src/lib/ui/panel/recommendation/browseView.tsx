@@ -58,5 +58,5 @@ export const BrowseView = ({ filters }: { filters: Record<string, string> }) => 
     dispatch(selectOperationGroupId(id));
   };
 
-  return <BrowseGrid onConnectorSelected={onConnectorCardSelected} connectorBrowse={connectors} />;
+  return <BrowseGrid onConnectorSelected={onConnectorCardSelected} connectors={connectors} />;
 };

@@ -1,11 +1,11 @@
 import type { ConnectionReference } from '../../../common/models/workflow';
+import { getApiManagementSwagger } from '../../queries/connections';
 import type { ConnectionsStoreState } from '../../state/connection/connectionSlice';
 import { ApiManagementService, ConnectionService } from '@microsoft/designer-client-services-logic-apps';
 import type { AssistedConnectionProps } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { Connector, OperationManifest } from '@microsoft/utils-logic-apps';
 import { ConnectionType } from '@microsoft/utils-logic-apps';
-import { getApiManagementSwagger } from '../../queries/connections';
 
 export function getConnectionId(state: ConnectionsStoreState, nodeId: string): string {
   const { connectionsMapping, connectionReferences } = state;
@@ -49,11 +49,11 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
     return {
       resourceType: 'functionApps',
       subResourceType: 'functionAppFunctions',
-      title: functionAppsLabel,
+      titleText: functionAppsLabel,
       headers,
       getColumns,
       getResourcesCallback: functionAppsCallback,
-      resourcesLoadingText: functionAppsLoadingText,
+      loadingText: functionAppsLoadingText,
       getSubResourceName: (azureFunction: any) => azureFunction.name.split('/')[1],
       fetchSubResourcesCallback: functionsCallback,
     };
@@ -75,11 +75,11 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
     return {
       resourceType: 'apimInstances',
       subResourceType: 'apimApis',
-      title: apisLabel,
+      titleText: apisLabel,
       headers,
       getColumns,
       getResourcesCallback: apiInstancesCallback,
-      resourcesLoadingText: apimInstancesLoadingText,
+      loadingText: apimInstancesLoadingText,
       getSubResourceName: (api: any) => api.name,
       fetchSubResourcesCallback: apisCallback,
     };

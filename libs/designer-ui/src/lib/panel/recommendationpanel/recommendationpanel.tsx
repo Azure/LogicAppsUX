@@ -1,7 +1,8 @@
 import type { CommonPanelProps } from '../panelUtil';
-import { Panel, PanelType, useTheme } from '@fluentui/react';
+import { IconButton, Panel, PanelType, useTheme, Text } from '@fluentui/react';
 import type { PropsWithChildren } from 'react';
 import React from 'react';
+import { useIntl } from 'react-intl';
 
 export * from './interfaces';
 
@@ -13,6 +14,12 @@ export type RecommendationPanelProps = {
 export const RecommendationPanel: React.FC<PropsWithChildren<RecommendationPanelProps>> = (props) => {
   const { isInverted } = useTheme();
 
+  const intl = useIntl();
+  const headingText = intl.formatMessage({
+    defaultMessage: 'Add an action',
+    description: 'Text for the "Add Action" page header',
+  });
+
   return (
     <Panel
       isLightDismiss
@@ -23,6 +30,10 @@ export const RecommendationPanel: React.FC<PropsWithChildren<RecommendationPanel
       overlayProps={{ isDarkThemed: isInverted }}
       layerProps={{ styles: { root: { zIndex: 999998 } } }}
     >
+      <div className="msla-app-action-header">
+        <Text variant="xLarge">{headingText}</Text>
+        <IconButton onClick={props.toggleCollapse} iconProps={{ iconName: 'Cancel' }} />
+      </div>
       {props.children}
     </Panel>
   );

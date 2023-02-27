@@ -1,6 +1,6 @@
+import type { AzureResourcePickerProps } from '../azureResourcePicker';
+import { AzureResourcePicker } from '../azureResourcePicker';
 import { filterRecord } from '../utils';
-import type { ResourceSelectorProps } from './resourcepicker';
-import { ResourceSelector } from './resourcepicker';
 import { UniversalConnectionParameter } from './universalConnectionParameter';
 import {
   MessageBarType,
@@ -27,8 +27,6 @@ import type { FormEvent } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export type { AssistedConnectionProps } from './resourcepicker';
-
 export interface CreateConnectionProps {
   connectorDisplayName: string;
   connectorCapabilities?: string[];
@@ -50,7 +48,7 @@ export interface CreateConnectionProps {
   availableSubscriptions?: Subscription[];
   availableGateways?: Gateway[];
   checkOAuthCallback: (parameters: Record<string, ConnectionParameter>) => boolean;
-  resourceSelectedProps?: ResourceSelectorProps;
+  resourceSelectedProps?: AzureResourcePickerProps;
 }
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
@@ -437,7 +435,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
         )}
 
         {/* Resource Selector UI */}
-        {resourceSelectedProps && <ResourceSelector {...resourceSelectedProps} />}
+        {resourceSelectedProps && <AzureResourcePicker {...resourceSelectedProps} />}
       </div>
 
       {/* Descriptor text for simple and oauth */}
