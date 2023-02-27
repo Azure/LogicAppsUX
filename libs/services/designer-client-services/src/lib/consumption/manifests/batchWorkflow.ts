@@ -1,17 +1,17 @@
 import { coreBadge } from '../../badges';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
 
-const iconUri =
-  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDUwIDUwIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCiA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMjI4MGNjIi8+DQogPGcgdHJhbnNmb3JtPSJtYXRyaXgoLjQxMDI2IDAgMCAuNDEwMjYgNS41Mzg1IDEzLjEyOCkiIGZpbGw9IiNmZmYiPg0KICA8cGF0aCBkPSJtMzYgMTh2NmgtMTZ2LThoLTV2OWMwIDEuNjU3IDEuMzQzIDMgMyAzaDE5YzEuNjU3IDAgMy0xLjM0MyAzLTN2LTEwaC00eiIvPg0KICA8cG9seWdvbiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwLC0xOCkiIHBvaW50cz0iMzMuNSAzMyA0Mi41IDMzIDM4IDI3Ii8+DQogIDxyZWN0IHg9IjYiIHk9Ii0xNCIgd2lkdGg9IjIyIiBoZWlnaHQ9IjIiLz4NCiAgPHJlY3QgeD0iNiIgeT0iMTIiIHdpZHRoPSIyMiIgaGVpZ2h0PSIyIi8+DQogIDxyZWN0IHg9IjYiIHk9Ii0xNCIgd2lkdGg9IjIiIGhlaWdodD0iMjgiLz4NCiAgPHJlY3QgeD0iMjYiIHk9Ii0xNCIgd2lkdGg9IjIiIGhlaWdodD0iMjgiLz4NCiAgPHJlY3QgeD0iMTAiIHk9Ii04IiB3aWR0aD0iMTQiIGhlaWdodD0iMiIvPg0KICA8cmVjdCB4PSIxMCIgeT0iLTIiIHdpZHRoPSIxNCIgaGVpZ2h0PSIyIi8+DQogIDxyZWN0IHg9IjEwIiB5PSI0IiB3aWR0aD0iMTQiIGhlaWdodD0iMiIvPg0KICA8cmVjdCB4PSIzMSIgeT0iNCIgd2lkdGg9IjE0IiBoZWlnaHQ9IjIiLz4NCiAgPHJlY3QgeD0iMzEiIHk9Ii0yIiB3aWR0aD0iMTQiIGhlaWdodD0iMiIvPg0KICA8cmVjdCB4PSIzMSIgeT0iLTgiIHdpZHRoPSIxNCIgaGVpZ2h0PSIyIi8+DQogPC9nPg0KPC9zdmc+DQo=';
-
+const iconUri = ' https://logicappsv2resources.blob.core.windows.net/icons/apimanagement.svg';
 const brandColor = '#2280CC';
 
 const connector = {
   id: 'connectionProviders/batch',
   name: 'connectionProviders/batch',
   properties: {
-    displayName: 'Send messages to batch',
-    description: 'Send messages to batch',
+    displayName: 'Batch',
+    iconUri,
+    brandColor,
+    description: 'Batch operations',
   },
 };
 
@@ -26,68 +26,77 @@ export const selectBatchWorkflowManifest = {
 
     inputs: {
       type: 'object',
-      required: ['batchName', 'content', 'host'],
       properties: {
         batchName: {
-          title: 'Batch Name',
-          required: true,
           type: 'string',
-          'x-ms-summary': 'Batch Name',
+          title: 'Batch Name',
           description: 'Name of the batch to send message.',
         },
         content: {
           title: 'Message Content',
-          required: true,
-          'x-ms-summary': 'Message Content',
           description: 'The message to send to batch.',
         },
         partitionName: {
-          title: 'Partition Name',
-          required: false,
           type: 'string',
-          'x-ms-summary': 'Partition Name',
+          title: 'Partition Name',
           description: 'Name of the partition to send message.',
         },
         messageId: {
-          title: 'Message Id',
-          required: false,
           type: 'string',
-          'x-ms-summary': 'Message Id',
+          title: 'Message Id',
           description: 'The message identifier.',
         },
         host: {
           type: 'object',
-          required: ['triggerName', 'workflow'],
           properties: {
             triggerName: {
-              title: 'Trigger Name',
-              required: true,
               type: 'string',
-              'x-ms-summary': 'Trigger Name',
+              title: 'Trigger Name',
+              description: 'Name of the trigger',
             },
             workflow: {
               type: 'object',
-              required: ['id'],
               properties: {
                 id: {
-                  title: 'Workflow',
-                  required: true,
                   type: 'string',
+                  title: 'Workflow',
+                  description: 'Workflow name',
                 },
               },
+              required: ['id'],
             },
           },
+          required: ['triggerName', 'workflow'],
         },
       },
+      required: ['host', 'batchName', 'content'],
     },
+    inputsLocation: ['inputs'],
     isInputsOptional: false,
-
     outputs: {
       type: 'object',
+      required: [],
       properties: {
         body: {
-          type: 'any',
           title: 'Body',
+          type: 'object',
+          properties: {
+            batchName: {
+              type: 'string',
+              title: 'Batch Name',
+              description: 'Name of the batch to send message.',
+            },
+            messageId: {
+              type: 'string',
+              title: 'Message Id',
+              description: 'The message identifier.',
+            },
+            partitionName: {
+              type: 'string',
+              title: 'Partition Name',
+              description: 'Name of the partition to send message.',
+            },
+          },
         },
         headers: {
           type: 'object',
@@ -95,27 +104,18 @@ export const selectBatchWorkflowManifest = {
         },
         statusCode: {
           type: 'integer',
-          title: 'Status Code',
-        },
-        batchName: {
-          type: 'string',
-          title: 'Batch Name',
-        },
-        paritionName: {
-          type: 'string',
-          title: 'Partition Name',
-        },
-        messageId: {
-          type: 'string',
-          title: 'Message Id',
+          title: 'Status code',
         },
       },
     },
     isOutputsOptional: false,
-    includeRootOutputs: true,
-
+    settings: {
+      secureData: {},
+      trackedProperties: {
+        scopes: ['action'],
+      },
+    },
+    includeRootOutputs: false,
     connector,
-
-    settings: {},
   },
 } as OperationManifest;
