@@ -176,7 +176,8 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
   const yInterval = functionNodeCardSize * 1.5;
   const maxFunctionsPerToolbarRow = 4;
   const functionToolbarStartY = -64;
-  const nodeCollisionThreshold = functionNodeCardSize * (useExpandedFunctionCards ? 1.2 : 0.75);
+  const nodeCollisionXThreshold = functionNodeCardSize * (useExpandedFunctionCards ? 3 : 1.5);
+  const nodeCollisionYThreshold = functionNodeCardSize * 1.2;
 
   const getSchemaNodeYPos = (nodeIdx: number) => nodeIdx * (schemaNodeCardHeight + (nodeIdx === 0 ? 0 : schemaNodeCardVGap));
 
@@ -285,18 +286,24 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
       fnNodeYPos = compiledInputPositions.reduce((curYTotal, coords) => curYTotal + coords[1], 0) / compiledInputPositions.length;
     }
 
+    // Add fnStartX in
+    fnNodeXPos = fnNodeXPos === undefined ? undefined : fnNodeXPos + fnStartX;
+
     // Collision checking & handling
-    if (!isGoingOnToolbar && fnNodeYPos !== undefined) {
+    if (!isGoingOnToolbar && fnNodeXPos !== undefined && fnNodeYPos !== undefined) {
       let nextYSpot = 1;
       let noCollisionFnNodeYPos = fnNodeYPos;
 
-      // NOTE: Add functionNodeCardSize to yPos to ensure equal measurement from ~middle of node
+      // TODO: If needed, adjust node origins from top-left (? - needs verification)
+      // to middle of node for extra collision detection accuracy
       const checkIfNodeHasCollision = () =>
         graph.children[1].children.some(
           (potentiallyCollidingFnNode) =>
+            potentiallyCollidingFnNode.id !== fnNode.id &&
             potentiallyCollidingFnNode.y !== undefined &&
-            Math.abs(potentiallyCollidingFnNode.y + functionNodeCardSize / 2 - (noCollisionFnNodeYPos + functionNodeCardSize / 2)) <
-              nodeCollisionThreshold
+            potentiallyCollidingFnNode.x !== undefined &&
+            Math.abs(potentiallyCollidingFnNode.y - noCollisionFnNodeYPos) < nodeCollisionYThreshold &&
+            Math.abs(potentiallyCollidingFnNode.x - (fnNodeXPos as number)) < nodeCollisionXThreshold
         );
 
       while (checkIfNodeHasCollision()) {
@@ -310,7 +317,7 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
     }
 
     // Final assignment
-    fnNode.x = fnNodeXPos === undefined ? fnNodeXPos : fnNodeXPos + fnStartX;
+    fnNode.x = fnNodeXPos;
     fnNode.y = fnNodeYPos;
 
     if (fnNode.x !== undefined && fnNode.x > farthestRightFnNodeXPos) {
