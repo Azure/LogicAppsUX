@@ -273,12 +273,6 @@
       "value": "Dölj"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "Välj ett filter"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -939,12 +933,6 @@
     {
       "type": 0,
       "value": "14"
-    }
-  ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "Åtgärdstyp"
     }
   ],
   "5+MuPz": [
@@ -1857,6 +1845,12 @@
       "value": "Skapa grupp"
     }
   ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
@@ -2347,12 +2341,6 @@
       "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
     }
   ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "Gå tillbaka för att bläddra"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -2767,16 +2755,6 @@
       "value": "Valfritt. Namnet på den omfångsdefinierade åtgärd där du vill ha indata och utdata från åtgärderna på toppnivå i det omfånget."
     }
   ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "Inga resultat hittades för: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
-    }
-  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -2945,12 +2923,6 @@
       "value": "Tisdag"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "Körning"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -3099,12 +3071,6 @@
     {
       "type": 0,
       "value": "Pfx"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "Filter"
     }
   ],
   "P2A5dB": [
@@ -3593,6 +3559,12 @@
       "value": "Växlingsantalet är ogiltigt"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3789,10 +3761,14 @@
       "value": "Expandera"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -4899,6 +4875,12 @@
       "value": "Publicera"
     }
   ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
   "g5mMuM": [
     {
       "type": 0,
@@ -4969,16 +4951,6 @@
     {
       "type": 0,
       "value": "Utlösarvillkor"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 0,
-      "value": "Sökresultat för: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -5629,6 +5601,12 @@
     {
       "type": 0,
       "value": "Kortkommando för åtgärder(actionName).outputs.body"
+    }
+  ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
     }
   ],
   "lzBHHT": [
@@ -6607,6 +6585,12 @@
       "value": "Krävs. Antalet tidsenheter som den önskade tiden är i det förflutna."
     }
   ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
+    }
+  ],
   "uczA5c": [
     {
       "type": 0,
@@ -6775,6 +6759,12 @@
     {
       "type": 0,
       "value": "Arbetsflödesegenskaper"
+    }
+  ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
     }
   ],
   "w16qh+": [

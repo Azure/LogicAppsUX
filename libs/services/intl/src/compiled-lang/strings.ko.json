@@ -257,12 +257,6 @@
       "value": "축소"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "필터 선택"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -912,12 +906,6 @@
     {
       "type": 0,
       "value": "14"
-    }
-  ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "동작 유형"
     }
   ],
   "5+MuPz": [
@@ -1787,6 +1775,12 @@
       "value": "그룹 만들기"
     }
   ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
@@ -2250,12 +2244,6 @@
       "value": "(UTC+07:00) 바르나울, 고르노알타이스크"
     }
   ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "찾아보기로 돌아가기"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -2639,16 +2627,6 @@
       "value": "선택 사항. 해당 범위 내 최상위 작업의 입력 및 출력을 원하는 범위 작업의 이름입니다."
     }
   ],
-  "M9Zj10": [
-    {
-      "type": 1,
-      "value": "searchTerm"
-    },
-    {
-      "type": 0,
-      "value": "에 대해 찾은 결과가 없음"
-    }
-  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -2817,12 +2795,6 @@
       "value": "화요일"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "런타임"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -2959,12 +2931,6 @@
     {
       "type": 0,
       "value": "PFX"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "필터"
     }
   ],
   "P2A5dB": [
@@ -3438,6 +3404,12 @@
       "value": "페이징 수가 잘못되었습니다."
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3634,10 +3606,14 @@
       "value": "확장"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -4732,6 +4708,12 @@
       "value": "게시"
     }
   ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
   "g5mMuM": [
     {
       "type": 0,
@@ -4802,16 +4784,6 @@
     {
       "type": 0,
       "value": "트리거 조건"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 1,
-      "value": "searchTerm"
-    },
-    {
-      "type": 0,
-      "value": "에 대한 검색 결과"
     }
   ],
   "gg0j4S": [
@@ -5423,6 +5395,12 @@
     {
       "type": 0,
       "value": "actions('actionName').outputs.body의 축약형"
+    }
+  ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
     }
   ],
   "lzBHHT": [
@@ -6370,6 +6348,12 @@
       "value": "필수 사항으로, 과거의 원하는 시간에 대한 시간 단위 수입니다."
     }
   ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
+    }
+  ],
   "uczA5c": [
     {
       "type": 0,
@@ -6534,6 +6518,12 @@
     {
       "type": 0,
       "value": "워크플로 속성"
+    }
+  ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
     }
   ],
   "w16qh+": [
