@@ -15,6 +15,8 @@ enum LayoutContainer {
   TargetSchema = 'targetSchemaBlock',
 }
 
+type GraphCoord = [number, number]; // [x, y]
+
 export interface LayoutEdge {
   id: string;
   sourceId: string;
@@ -195,11 +197,11 @@ export const applyCustomLayout = async (
   // Function node positioning
   const fnStartX = srcSchemaStartX + schemaNodeCardDefaultWidth * 1.5 + (isOverview ? xInterval : 0);
   let farthestRightFnNodeXPos = fnStartX; // Find farthest right function node to position target schema from
-  const nextAvailableToolbarSpot: [number, number] = [0, 0]; // Grid representation (one node slot == 1x1)
+  const nextAvailableToolbarSpot: GraphCoord = [0, 0]; // Grid representation (one node slot == 1x1)
   const fnNodeIdsThatOnlyOutputToTargetSchema: string[] = [];
 
-  const compileInputPositionsAndOutputDetails = (edgeArray: LayoutEdge[], fnNodeId: string): [[number, number][], number, boolean] => {
-    const compiledInputPositions: [number, number][] = [];
+  const compileInputPositionsAndOutputDetails = (edgeArray: LayoutEdge[], fnNodeId: string): [GraphCoord[], number, boolean] => {
+    const compiledInputPositions: GraphCoord[] = [];
     let numOutputs = 0;
     let fnNodeOnlyOutputsToTargetSchema = true;
 

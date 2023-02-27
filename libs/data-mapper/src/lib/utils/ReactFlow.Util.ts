@@ -98,7 +98,7 @@ export const useLayout = (
               tgtPort: layoutEdge.labels.length > 0 ? layoutEdge.labels[0] : undefined,
             })),
           ];
-          setReactFlowEdges(convertToReactFlowEdges(simpleLayoutEdgeResults, selectedItemKey));
+          setReactFlowEdges(convertToReactFlowEdges(simpleLayoutEdgeResults, selectedItemKey, true));
 
           // Calculate diagram size
           setDiagramSize({
@@ -254,7 +254,7 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
 export const convertToReactFlowEdges = (
   simplifiedLayoutEdges: SimplifiedLayoutEdge[],
   selectedItemKey?: string,
-  dontSetEdgeType?: boolean
+  setEdgeType?: boolean
 ): ReactFlowEdge[] => {
   // NOTE: All validation (Ex: making sure edges given to the layouter are actively on canvas) is handled pre-layouting
   return simplifiedLayoutEdges
@@ -266,7 +266,7 @@ export const convertToReactFlowEdges = (
         source: simplifiedLayoutEdge.srcRfId,
         target: simplifiedLayoutEdge.tgtRfId,
         targetHandle: simplifiedLayoutEdge.tgtPort,
-        type: dontSetEdgeType ? undefined : ReactFlowEdgeType.ConnectionEdge,
+        type: setEdgeType ? ReactFlowEdgeType.ConnectionEdge : undefined,
         selected: selectedItemKey === id,
       };
     })
@@ -358,7 +358,7 @@ export const useGlobalViewLayout = (
           })),
         ];
 
-        setReactFlowEdges(convertToReactFlowEdges(simpleLayoutEdgeResults, undefined, true));
+        setReactFlowEdges(convertToReactFlowEdges(simpleLayoutEdgeResults, undefined, false));
 
         // Calculate diagram size
         /*
