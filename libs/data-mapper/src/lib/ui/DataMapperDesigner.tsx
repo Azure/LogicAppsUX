@@ -3,6 +3,7 @@ import { CodeView } from '../components/codeView/CodeView';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/AddOrUpdateSchemaView';
 import { ConfigPanel } from '../components/configPanel/ConfigPanel';
+import { GlobalView } from '../components/globalView/GlobalView';
 import { MapOverview } from '../components/mapOverview/MapOverview';
 import { errorNotificationAutoHideDuration, NotificationTypes } from '../components/notification/Notification';
 import {
@@ -127,6 +128,7 @@ export const DataMapperDesigner = ({
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
   const [isSidePaneExpanded, setIsSidePaneExpanded] = useState(false);
   const [sidePaneTab, setSidePaneTab] = useState(SidePanelTabValue.OutputTree);
+  const [showGlobalView, setShowGlobalView] = useState(false);
 
   const dataMapDefinition = useMemo<string>(() => {
     if (sourceSchema && targetSchema) {
@@ -286,6 +288,9 @@ export const DataMapperDesigner = ({
           onUndoClick={onUndoClick}
           onRedoClick={onRedoClick}
           onTestClick={() => setTestMapPanelOpen(true)}
+          showMapOverview={showMapOverview}
+          showGlobalView={showGlobalView}
+          setShowGlobalView={setShowGlobalView}
         />
 
         <div id="editorView" style={{ display: 'flex', flex: '1 1 1px' }}>
@@ -310,7 +315,11 @@ export const DataMapperDesigner = ({
                     }}
                   >
                     {showMapOverview ? (
-                      <MapOverview /> /* <WholeMapOverview /> */
+                      showGlobalView ? (
+                        <GlobalView />
+                      ) : (
+                        <MapOverview />
+                      )
                     ) : (
                       <ReactFlowProvider>
                         {/* TODO: Update width calculations once Code View becomes resizable */}

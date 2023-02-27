@@ -1225,6 +1225,12 @@
       "value": "Please enable managed identity for the logic app."
     }
   ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -2233,6 +2239,12 @@
     {
       "type": 0,
       "value": "Dynamic content not supported as properties in authentication."
+    }
+  ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
     }
   ],
   "IA+Ogm": [
