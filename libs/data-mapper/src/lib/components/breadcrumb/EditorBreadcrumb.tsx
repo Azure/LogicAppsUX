@@ -131,6 +131,8 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
   const getCustomDivider = (dividerProps: IDividerAsProps): JSX.Element => {
     const item = dividerProps.item;
 
+    // danielle maybe disable the button if no other items? Fix or make work item
+
     return (
       <IconButton
         iconProps={{ iconName: dividerProps.iconName }}
