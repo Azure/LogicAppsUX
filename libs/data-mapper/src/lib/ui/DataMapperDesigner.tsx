@@ -14,6 +14,7 @@ import {
 import { SidePane, SidePanelTabValue } from '../components/sidePane/SidePane';
 import { TestMapPanel } from '../components/testMapPanel/TestMapPanel';
 import { WarningModal } from '../components/warningModal/WarningModal';
+import { WholeMapOverview } from '../components/wholeView/WholeView';
 import { generateDataMapXslt } from '../core/queries/datamap';
 import { redoDataMapOperation, saveDataMap, showNotification, undoDataMapOperation } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
@@ -127,6 +128,7 @@ export const DataMapperDesigner = ({
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
   const [isSidePaneExpanded, setIsSidePaneExpanded] = useState(false);
   const [sidePaneTab, setSidePaneTab] = useState(SidePanelTabValue.OutputTree);
+  const [showWholeView, setShowWholeView] = useState(false);
 
   const dataMapDefinition = useMemo<string>(() => {
     if (sourceSchema && targetSchema) {
@@ -286,6 +288,9 @@ export const DataMapperDesigner = ({
           onUndoClick={onUndoClick}
           onRedoClick={onRedoClick}
           onTestClick={() => setTestMapPanelOpen(true)}
+          showMapOverview={showMapOverview}
+          showWholeView={showWholeView}
+          setShowWholeView={setShowWholeView}
         />
 
         <div id="editorView" style={{ display: 'flex', flex: '1 1 1px' }}>
@@ -310,7 +315,11 @@ export const DataMapperDesigner = ({
                     }}
                   >
                     {showMapOverview ? (
-                      <MapOverview /> /* <WholeMapOverview /> */
+                      showWholeView ? (
+                        <WholeMapOverview />
+                      ) : (
+                        <MapOverview />
+                      )
                     ) : (
                       <ReactFlowProvider>
                         {/* TODO: Update width calculations once Code View becomes resizable */}

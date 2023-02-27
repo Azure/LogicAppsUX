@@ -1225,6 +1225,12 @@
       "value": "Please enable managed identity for the logic app."
     }
   ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -3473,6 +3479,12 @@
     {
       "type": 0,
       "value": "Enter a value"
+    }
+  ],
+  "TVrS/G": [
+    {
+      "type": 0,
+      "value": "Whole view"
     }
   ],
   "TX4Kdr": [
