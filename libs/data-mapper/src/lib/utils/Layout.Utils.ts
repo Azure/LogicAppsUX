@@ -170,7 +170,11 @@ export const convertWholeDataMapToLayoutTree = (
 };
 
 /* eslint-disable no-param-reassign */
-export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFunctionCards?: boolean): Promise<RootLayoutNode> => {
+export const applyCustomLayout = async (
+  graph: RootLayoutNode,
+  useExpandedFunctionCards?: boolean,
+  isOverview?: boolean
+): Promise<RootLayoutNode> => {
   const schemaNodeCardVGap = 8;
   const xInterval = functionNodeCardSize * (useExpandedFunctionCards ? 5 : 2);
   const yInterval = functionNodeCardSize * 1.5;
@@ -189,7 +193,7 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
   });
 
   // Function node positioning
-  const fnStartX = srcSchemaStartX + schemaNodeCardDefaultWidth * 1.5 + xInterval;
+  const fnStartX = srcSchemaStartX + schemaNodeCardDefaultWidth * 1.5 + (isOverview ? xInterval : 0);
   let farthestRightFnNodeXPos = fnStartX; // Find farthest right function node to position target schema from
   const nextAvailableToolbarSpot: [number, number] = [0, 0]; // Grid representation (one node slot == 1x1)
   const fnNodeIdsThatOnlyOutputToTargetSchema: string[] = [];
@@ -355,7 +359,7 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
   });
 
   // Target schema node positioning
-  const tgtSchemaStartX = farthestRightFnNodeXPos + xInterval + schemaNodeCardDefaultWidth * 0.5;
+  const tgtSchemaStartX = farthestRightFnNodeXPos + schemaNodeCardDefaultWidth * 1.5;
   graph.children[2].children.forEach((tgtSchemaNode, idx) => {
     tgtSchemaNode.x = tgtSchemaStartX;
     tgtSchemaNode.y = getSchemaNodeYPos(idx);

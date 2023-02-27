@@ -80,7 +80,7 @@ export const useLayout = (
       );
 
       // Compute layout
-      applyCustomLayout(layoutTreeFromCanvasNodes, useExpandedFunctionCards)
+      applyCustomLayout(layoutTreeFromCanvasNodes, useExpandedFunctionCards, false)
         .then((computedLayout) => {
           // Convert the calculated layout to ReactFlow nodes + edges
           setReactFlowNodes([
@@ -337,7 +337,7 @@ export const useWholeViewLayout = (
     );
 
     // Compute layout
-    applyCustomLayout(layoutTreeFromCanvasNodes, false)
+    applyCustomLayout(layoutTreeFromCanvasNodes, false, true)
       .then((computedLayoutTree) => {
         // Convert the calculated layout to ReactFlow nodes + edges
         setReactFlowNodes([
