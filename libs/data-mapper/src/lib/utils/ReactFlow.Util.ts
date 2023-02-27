@@ -14,18 +14,18 @@ import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
 import { SchemaType } from '../models/Schema';
 import { getFunctionBrandingForCategory, isFunctionData } from './Function.Utils';
-import { applyElkLayout, convertDataMapNodesToElkGraph, convertWholeDataMapToElkGraph } from './Layout.Utils';
+import { applyCustomLayout, convertDataMapNodesToLayoutTree, convertWholeDataMapToLayoutTree } from './Layout.Utils';
+import type { LayoutNode, RootLayoutNode } from './Layout.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 import { isLeafNode } from './Schema.Utils';
 import { guid } from '@microsoft/utils-logic-apps';
-import type { ElkNode } from 'elkjs';
 import { useEffect, useState } from 'react';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
 import { Position } from 'reactflow';
 
 export const overviewTgtSchemaX = 600;
 
-interface SimplifiedElkEdge {
+interface SimplifiedLayoutEdge {
   srcRfId: string;
   tgtRfId: string;
   tgtPort?: string;
@@ -71,64 +71,44 @@ export const useLayout = (
         (nodeA, nodeB) => sourceSchemaOrdering.indexOf(nodeA.key) - sourceSchemaOrdering.indexOf(nodeB.key)
       );
 
-      // Build ELK node/edges data
-      const elkTreeFromCanvasNodes = convertDataMapNodesToElkGraph(
+      // Build a nicely formatted tree for easier layouting
+      const layoutTreeFromCanvasNodes = convertDataMapNodesToLayoutTree(
         sortedSourceSchemaNodes,
         currentFunctionNodes,
         currentTargetSchemaNode,
-        connections,
-        useExpandedFunctionCards
+        connections
       );
 
-      // Apply ELK layout
-      applyElkLayout(elkTreeFromCanvasNodes)
-        .then((computedElkTree) => {
-          // Convert newly-calculated ELK node data to React Flow nodes + edges
+      // Compute layout
+      applyCustomLayout(layoutTreeFromCanvasNodes, useExpandedFunctionCards, false)
+        .then((computedLayout) => {
+          // Convert the calculated layout to ReactFlow nodes + edges
           setReactFlowNodes([
             placeholderReactFlowNode,
-            ...convertToReactFlowNodes(computedElkTree, sortedSourceSchemaNodes, currentFunctionNodes, [
+            ...convertToReactFlowNodes(computedLayout, sortedSourceSchemaNodes, currentFunctionNodes, [
               currentTargetSchemaNode,
               ...currentTargetSchemaNode.children,
             ]),
           ]);
 
-          const simpleElkEdgeResults: SimplifiedElkEdge[] = [];
-
-          if (computedElkTree.edges) {
-            simpleElkEdgeResults.push(
-              ...computedElkTree.edges.map((elkEdge) => {
-                return {
-                  srcRfId: elkEdge.sources[0],
-                  tgtRfId: elkEdge.targets[0],
-                  tgtPort: elkEdge.labels && elkEdge.labels.length > 0 ? elkEdge.labels[0].text : undefined,
-                };
-              })
-            );
-          }
-
-          if (computedElkTree.children && computedElkTree.children.length === 3 && computedElkTree.children[1].edges) {
-            simpleElkEdgeResults.push(
-              ...computedElkTree.children[1].edges.map((elkEdge) => {
-                return {
-                  srcRfId: elkEdge.sources[0],
-                  tgtRfId: elkEdge.targets[0],
-                  tgtPort: elkEdge.labels && elkEdge.labels.length > 0 ? elkEdge.labels[0].text : undefined,
-                };
-              })
-            );
-          }
-
-          setReactFlowEdges(convertToReactFlowEdges(simpleElkEdgeResults, selectedItemKey));
+          const simpleLayoutEdgeResults: SimplifiedLayoutEdge[] = [
+            ...computedLayout.edges.map((layoutEdge) => ({
+              srcRfId: layoutEdge.sourceId,
+              tgtRfId: layoutEdge.targetId,
+              tgtPort: layoutEdge.labels.length > 0 ? layoutEdge.labels[0] : undefined,
+            })),
+          ];
+          setReactFlowEdges(convertToReactFlowEdges(simpleLayoutEdgeResults, selectedItemKey, true));
 
           // Calculate diagram size
           setDiagramSize({
-            width: computedElkTree.width ?? 0,
-            height: computedElkTree.height ?? 0,
+            width: computedLayout.width ?? 0,
+            height: computedLayout.height ?? 0,
           });
         })
         .catch((error) => {
-          LogService.error(LogCategory.ReactFlowUtils, 'useEffect', {
-            message: `Elk Layout Error: ${error}`,
+          LogService.error(LogCategory.ReactFlowUtils, 'Layouting', {
+            message: `${error}`,
           });
         });
     } else {
@@ -150,42 +130,34 @@ export const useLayout = (
 };
 
 export const convertToReactFlowNodes = (
-  elkTree: ElkNode,
+  layoutTree: RootLayoutNode,
   currentSourceSchemaNodes: SchemaNodeExtended[],
   currentFunctionNodes: FunctionDictionary,
   currentTargetSchemaNodes: SchemaNodeExtended[]
 ): ReactFlowNode<CardProps>[] => {
-  if (!elkTree.children || elkTree.children.length !== 3) {
-    LogService.error(LogCategory.ReactFlowUtils, 'convertToReactFlowNodes', {
-      message: 'Layout error: outputted root elkTree does not have necessary children',
-    });
-
-    return [];
-  }
-
   return [
-    ...convertSourceSchemaToReactFlowNodes(elkTree.children[0], currentSourceSchemaNodes),
-    ...convertFunctionsToReactFlowParentAndChildNodes(elkTree.children[1], currentFunctionNodes),
-    ...convertTargetSchemaToReactFlowNodes(elkTree.children[2], currentTargetSchemaNodes),
+    ...convertSourceSchemaToReactFlowNodes(layoutTree.children[0], currentSourceSchemaNodes),
+    ...convertFunctionsToReactFlowParentAndChildNodes(layoutTree.children[1], currentFunctionNodes),
+    ...convertTargetSchemaToReactFlowNodes(layoutTree.children[2], currentTargetSchemaNodes),
   ];
 };
 
 const convertSourceSchemaToReactFlowNodes = (
-  sourceSchemaElkTree: ElkNode,
+  sourceSchemaLayoutTree: LayoutNode,
   combinedSourceSchemaNodes: SchemaNodeExtended[]
 ): ReactFlowNode<SchemaCardProps>[] => {
-  return convertSchemaToReactFlowNodes(sourceSchemaElkTree, combinedSourceSchemaNodes, SchemaType.Source);
+  return convertSchemaToReactFlowNodes(sourceSchemaLayoutTree, combinedSourceSchemaNodes, SchemaType.Source);
 };
 
 const convertTargetSchemaToReactFlowNodes = (
-  targetSchemaElkTree: ElkNode,
+  targetSchemaLayoutTree: LayoutNode,
   targetSchemaNodes: SchemaNodeExtended[]
 ): ReactFlowNode<SchemaCardProps>[] => {
-  return convertSchemaToReactFlowNodes(targetSchemaElkTree, targetSchemaNodes, SchemaType.Target);
+  return convertSchemaToReactFlowNodes(targetSchemaLayoutTree, targetSchemaNodes, SchemaType.Target);
 };
 
 export const convertSchemaToReactFlowNodes = (
-  elkTree: ElkNode,
+  layoutTree: LayoutNode,
   schemaNodes: SchemaNodeExtended[],
   schemaType: SchemaType
 ): ReactFlowNode<SchemaCardProps>[] => {
@@ -198,16 +170,14 @@ export const convertSchemaToReactFlowNodes = (
     const reactFlowId = addReactFlowPrefix(schemaNode.key, schemaType);
     const curDepth = depthArray.indexOf(schemaNode.pathToRoot.length);
 
-    const elkNode = elkTree.children?.find((node) => node.id === reactFlowId);
-    if (!elkNode || !elkNode.x || !elkNode.y || !elkTree.x || !elkTree.y) {
-      LogService.error(LogCategory.ReactFlowUtils, 'convertToReactFlowNodes', {
-        message: 'Layout error: ElkNode not found, or missing x/y',
+    const layoutNode = layoutTree.children?.find((node) => node.id === reactFlowId);
+    if (!layoutNode || layoutNode.x === undefined || layoutNode.y === undefined) {
+      LogService.error(LogCategory.ReactFlowUtils, 'convertSchemaToReactFlowNodes', {
+        message: 'Layout error: LayoutNode not found, or missing x/y',
         schemaType,
-        elkData: {
-          elkNodeX: elkNode?.x,
-          elkNodeY: elkNode?.y,
-          elkTreeX: elkTree?.x,
-          elkTreeY: elkTree?.y,
+        layoutData: {
+          layoutNodeX: layoutNode?.x,
+          layoutNodeY: layoutNode?.y,
         },
       });
 
@@ -230,8 +200,8 @@ export const convertSchemaToReactFlowNodes = (
       type: ReactFlowNodeType.SchemaNode,
       targetPosition: isSourceSchema ? Position.Right : Position.Left,
       position: {
-        x: elkTree.x + elkNode.x + curDepth * childTargetNodeCardIndent,
-        y: elkNode.y,
+        x: layoutNode.x + curDepth * childTargetNodeCardIndent,
+        y: layoutNode.y,
       },
     });
   });
@@ -240,21 +210,19 @@ export const convertSchemaToReactFlowNodes = (
 };
 
 const convertFunctionsToReactFlowParentAndChildNodes = (
-  functionsElkTree: ElkNode,
+  functionsLayoutTree: LayoutNode,
   currentFunctionNodes: FunctionDictionary
 ): ReactFlowNode<FunctionCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<FunctionCardProps>[] = [];
 
   Object.entries(currentFunctionNodes).forEach(([functionKey, fnNode], idx) => {
-    const elkNode = functionsElkTree.children?.find((node) => node.id === functionKey);
-    if (!elkNode || !elkNode.x || !elkNode.y || !functionsElkTree.x || !functionsElkTree.y) {
-      LogService.error(LogCategory.ReactFlowUtils, 'convertToReactFlowParentAndChildNodes', {
-        message: 'Layout error: Function ElkNode not found, or missing x/y',
-        elkData: {
-          elkNodeX: elkNode?.x,
-          elkNodeY: elkNode?.y,
-          functionsElkTreeX: functionsElkTree?.x,
-          functionsElkTreeY: functionsElkTree?.y,
+    const layoutNode = functionsLayoutTree.children?.find((node) => node.id === functionKey);
+    if (!layoutNode || layoutNode.x === undefined || layoutNode.y === undefined) {
+      LogService.error(LogCategory.ReactFlowUtils, 'convertFunctionsToReactFlowParentAndChildNodes', {
+        message: 'Layout error: LayoutNode not found, or missing x/y',
+        layoutData: {
+          layoutNodeX: layoutNode?.x,
+          layoutNodeY: layoutNode?.y,
         },
       });
 
@@ -274,8 +242,8 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
       type: ReactFlowNodeType.FunctionNode,
       sourcePosition: Position.Right,
       position: {
-        x: functionsElkTree.x + elkNode.x,
-        y: elkNode.y,
+        x: layoutNode.x,
+        y: layoutNode.y,
       },
     });
   });
@@ -283,18 +251,22 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
   return reactFlowNodes;
 };
 
-export const convertToReactFlowEdges = (elkEdges: SimplifiedElkEdge[], selectedItemKey: string | undefined): ReactFlowEdge[] => {
-  // NOTE: All validation (Ex: making sure edges given to ELK are actively on canvas) is handled pre-elk-layouting
-  return elkEdges
-    .map<ReactFlowEdge>((elkEdge) => {
+export const convertToReactFlowEdges = (
+  simplifiedLayoutEdges: SimplifiedLayoutEdge[],
+  selectedItemKey?: string,
+  setEdgeType?: boolean
+): ReactFlowEdge[] => {
+  // NOTE: All validation (Ex: making sure edges given to the layouter are actively on canvas) is handled pre-layouting
+  return simplifiedLayoutEdges
+    .map<ReactFlowEdge>((simplifiedLayoutEdge) => {
       // Sort the resulting edges so that the selected edge is rendered last and thus on top of all other edges
-      const id = createReactFlowConnectionId(elkEdge.srcRfId, elkEdge.tgtRfId);
+      const id = createReactFlowConnectionId(simplifiedLayoutEdge.srcRfId, simplifiedLayoutEdge.tgtRfId);
       return {
         id,
-        source: elkEdge.srcRfId,
-        target: elkEdge.tgtRfId,
-        targetHandle: elkEdge.tgtPort,
-        type: ReactFlowEdgeType.ConnectionEdge,
+        source: simplifiedLayoutEdge.srcRfId,
+        target: simplifiedLayoutEdge.tgtRfId,
+        targetHandle: simplifiedLayoutEdge.tgtPort,
+        type: setEdgeType ? ReactFlowEdgeType.ConnectionEdge : undefined,
         selected: selectedItemKey === id,
       };
     })
@@ -356,68 +328,49 @@ export const useGlobalViewLayout = (
       }
     });
 
-    // Build ELK node/edges data
-    const elkTreeFromCanvasNodes = convertWholeDataMapToElkGraph(
+    // Build a nicely formatted tree for easier layouting
+    const layoutTreeFromCanvasNodes = convertWholeDataMapToLayoutTree(
       flattenedSourceSchema,
       flattenedTargetSchema,
       functionDictionary,
-      connections,
-      false
+      connections
     );
 
-    // Apply ELK layout
-    applyElkLayout(elkTreeFromCanvasNodes)
-      .then((computedElkTree) => {
-        // Convert newly-calculated ELK node data to React Flow nodes + edges
+    // Compute layout
+    applyCustomLayout(layoutTreeFromCanvasNodes, false, true)
+      .then((computedLayoutTree) => {
+        // Convert the calculated layout to ReactFlow nodes + edges
         setReactFlowNodes([
           placeholderReactFlowNode,
           ...convertToReactFlowNodes(
-            computedElkTree,
+            computedLayoutTree,
             Object.values(flattenedSourceSchema),
             functionDictionary,
             Object.values(flattenedTargetSchema)
           ),
         ]);
 
-        const simpleElkEdgeResults: SimplifiedElkEdge[] = [];
+        const simpleLayoutEdgeResults: SimplifiedLayoutEdge[] = [
+          ...computedLayoutTree.edges.map((layoutEdge) => ({
+            srcRfId: layoutEdge.sourceId,
+            tgtRfId: layoutEdge.targetId,
+            tgtPort: layoutEdge.labels.length > 0 ? layoutEdge.labels[0] : undefined,
+          })),
+        ];
 
-        if (computedElkTree.edges) {
-          simpleElkEdgeResults.push(
-            ...computedElkTree.edges.map((elkEdge) => {
-              return {
-                srcRfId: elkEdge.sources[0],
-                tgtRfId: elkEdge.targets[0],
-                tgtPort: elkEdge.labels && elkEdge.labels.length > 0 ? elkEdge.labels[0].text : undefined,
-              };
-            })
-          );
-        }
-
-        if (computedElkTree.children && computedElkTree.children.length === 3 && computedElkTree.children[1].edges) {
-          simpleElkEdgeResults.push(
-            ...computedElkTree.children[1].edges.map((elkEdge) => {
-              return {
-                srcRfId: elkEdge.sources[0],
-                tgtRfId: elkEdge.targets[0],
-                tgtPort: elkEdge.labels && elkEdge.labels.length > 0 ? elkEdge.labels[0].text : undefined,
-              };
-            })
-          );
-        }
-
-        setReactFlowEdges(convertToReactFlowEdges(simpleElkEdgeResults, undefined));
+        setReactFlowEdges(convertToReactFlowEdges(simpleLayoutEdgeResults, undefined, false));
 
         // Calculate diagram size
         /*
-      setDiagramSize({
-        width: computedElkTree.width ?? 0,
-        height: computedElkTree.height ?? 0,
-      });
-      */
+        setDiagramSize({
+          width: computedLayoutTree.width ?? 0,
+          height: computedLayoutTree.height ?? 0,
+        });
+        */
       })
       .catch((error) => {
-        LogService.error(LogCategory.ReactFlowUtils, 'useEffect', {
-          message: `Elk Layout Error: ${error}`,
+        LogService.error(LogCategory.ReactFlowUtils, 'Layouting', {
+          message: `${error}`,
         });
       });
   }, [connections, flattenedSourceSchema, flattenedTargetSchema]);

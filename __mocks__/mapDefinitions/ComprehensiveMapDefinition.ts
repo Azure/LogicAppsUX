@@ -43,12 +43,12 @@ ns0:TargetSchemaRoot:
         RelativePaths:
           DirectRelativePaths:
             DotAccess: .
-            Property: Property
-            $@Attribute: ./@Attribute
+            Property: SourceProperty
+            $@Attribute: ./@SourceAttribute
           InFunctionRelativePaths:
             DotAccess: string(.)
-            Property: string(Property)
-            $@Attribute: string(./@Attribute)
+            Property: string(SourceProperty)
+            $@Attribute: string(./@SourceAttribute)
       $for(/ns0:SourceSchemaRoot/Looping/OneToOne/Index, $a):
         Index:
           Direct: /ns0:SourceSchemaRoot/Looping/OneToOne/Index[$a]/SourceDirect

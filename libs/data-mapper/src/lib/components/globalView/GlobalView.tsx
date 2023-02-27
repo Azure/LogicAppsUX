@@ -61,7 +61,6 @@ const GlobalViewReactFlowWrapper = () => {
     }),
     []
   );
-  //const edgeTypes = useMemo(() => ({ [ReactFlowEdgeType.ConnectionEdge]: ConnectionEdge }), []);
 
   // Find first schema node (should be schemaTreeRoot) for source and target to use its xPos for schema name badge
   const srcSchemaTreeRootXPos = useMemo(
@@ -81,7 +80,6 @@ const GlobalViewReactFlowWrapper = () => {
   return (
     <ReactFlow
       nodeTypes={nodeTypes}
-      //edgeTypes={edgeTypes}
       nodes={reactFlowNodes}
       edges={reactFlowEdges}
       nodesDraggable={false}
@@ -92,6 +90,7 @@ const GlobalViewReactFlowWrapper = () => {
       style={reactFlowStyle}
       fitViewOptions={reactFlowFitViewOptions}
       fitView
+      minZoom={0.05}
     >
       {sourceSchema && <SchemaNameBadge schemaName={sourceSchema.name} schemaTreeRootXPos={srcSchemaTreeRootXPos} />}
       {targetSchema && <SchemaNameBadge schemaName={targetSchema.name} schemaTreeRootXPos={tgtSchemaTreeRootXPos} />}
