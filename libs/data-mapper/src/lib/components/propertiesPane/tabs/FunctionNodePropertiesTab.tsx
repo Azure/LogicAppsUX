@@ -200,7 +200,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
           ? calculateIndexValue(indexFunctionSourceNode)
           : getFunctionOutputValue(newInputNameArrays, functionData.functionName);
       } else if (functionData.key === directAccessPseudoFunctionKey) {
-        const functionValues = getInputValues(connection, connectionDictionary);
+        const functionValues = getInputValues(connection, connectionDictionary, false);
         newOutputValue =
           functionValues.length === 3
             ? formatDirectAccess(functionValues[0], functionValues[1], functionValues[2])
