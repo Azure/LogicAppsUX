@@ -77,7 +77,11 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
     if (!item) return null;
 
     if (item.key === placeholderItemKey) {
-      return <Text style={{ ...typographyStyles.body1, color: tokens.colorNeutralStroke1 }}>{item.text}</Text>;
+      return (
+        <Text aria-disabled={true} style={{ ...typographyStyles.body1, color: tokens.colorNeutralStroke1 }}>
+          {item.text}
+        </Text>
+      );
     } else {
       return <Text>{item.text}</Text>;
     }
