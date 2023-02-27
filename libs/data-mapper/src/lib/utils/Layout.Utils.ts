@@ -175,7 +175,7 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
   const xInterval = functionNodeCardSize * (useExpandedFunctionCards ? 5 : 2);
   const yInterval = functionNodeCardSize * 1.5;
   const maxFunctionsPerToolbarRow = 4;
-  const functionToolbarStartY = -64;
+  const functionToolbarStartY = -1 * functionNodeCardSize * 2;
   const nodeCollisionXThreshold = functionNodeCardSize * (useExpandedFunctionCards ? 3 : 1.5);
   const nodeCollisionYThreshold = functionNodeCardSize * 1.2;
 
@@ -227,11 +227,25 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
           } else {
             LogService.error(LogCategory.ReactFlowUtils, 'Layouting', {
               message: `Failed to recursively calculate inputNode's position`,
+              nodeData:
+                process.env.NODE_ENV === 'development'
+                  ? {
+                      inputNodeId: inputNode.id, // Same as edgeSourceId
+                      edgeTargetId: edge.targetId,
+                    }
+                  : undefined,
             });
           }
         } else {
           LogService.error(LogCategory.ReactFlowUtils, 'Layouting', {
             message: `Failed to find input node from an edge's sourceId`,
+            nodeData:
+              process.env.NODE_ENV === 'development'
+                ? {
+                    edgeSourceId: edge.sourceId,
+                    edgeTargetId: edge.targetId,
+                  }
+                : undefined,
           });
         }
       }
@@ -264,6 +278,17 @@ export const applyCustomLayout = async (graph: RootLayoutNode, useExpandedFuncti
         nextAvailableToolbarSpot[0] = hasReachedRowMax ? 0 : nextAvailableToolbarSpot[0] + 1;
       } else if (fnNodeOnlyOutputsToTargetSchema) {
         fnNodeIdsThatOnlyOutputToTargetSchema.push(fnNode.id);
+      } else {
+        // No-inputs function that outputs to another function
+        // - semi-rare case, so let's do something reasonably simple
+        fnNodeXPos = fnStartX;
+        // NOTE: Function nodes that fit this case (Ex: current-date()) are often heavily reused,
+        // so we can mostly safely set their yPos to the ~center of the source schema nodes
+        const centralYPos =
+          graph.children[0].children.length > 2
+            ? graph.children[0].children[Math.floor(graph.children[0].children.length / 2)].y
+            : yInterval * 2;
+        fnNodeYPos = centralYPos;
       }
 
       // Else -> Don't do anything if it outputs to one or more function nodes as they'll trigger this node's positioning
