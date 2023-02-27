@@ -269,12 +269,6 @@
       "value": "Sbalit"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "Vyberte filtr."
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -969,12 +963,6 @@
     {
       "type": 0,
       "value": "14"
-    }
-  ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "Typ akce"
     }
   ],
   "5+MuPz": [
@@ -1905,6 +1893,12 @@
       "value": "Vytvořit skupinu"
     }
   ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
@@ -2417,12 +2411,6 @@
       "value": "(UTC+07:00) Barnaul, Gorno-Altajsk"
     }
   ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "Zpět k procházení"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -2859,20 +2847,6 @@
       "value": "Nepovinné. Název akce s určeným rozsahem, u níž požadujete vstupy a výstupy z akcí na nejvyšší úrovni v rámci daného rozsahu."
     }
   ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "Nenašly se žádné výsledky pro: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -3045,12 +3019,6 @@
       "value": "Úterý"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "Modul runtime"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -3203,12 +3171,6 @@
     {
       "type": 0,
       "value": "Pfx"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "Filtr"
     }
   ],
   "P2A5dB": [
@@ -3715,6 +3677,12 @@
       "value": "Neplatný počet stránkování"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3911,10 +3879,14 @@
       "value": "Rozbalit"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -5025,6 +4997,12 @@
       "value": "Publikovat"
     }
   ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
   "g5mMuM": [
     {
       "type": 0,
@@ -5095,16 +5073,6 @@
     {
       "type": 0,
       "value": "Podmínky aktivační události"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 0,
-      "value": "Výsledky hledání pro: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -5777,6 +5745,12 @@
     {
       "type": 0,
       "value": "Zkratka pro actions('actionName').outputs.body"
+    }
+  ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
     }
   ],
   "lzBHHT": [
@@ -6777,6 +6751,12 @@
       "value": "Povinný parametr. Počet časových jednotek, o který je požadovaný čas v minulosti"
     }
   ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
+    }
+  ],
   "uczA5c": [
     {
       "type": 0,
@@ -6945,6 +6925,12 @@
     {
       "type": 0,
       "value": "Vlastnosti pracovního postupu"
+    }
+  ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
     }
   ],
   "w16qh+": [

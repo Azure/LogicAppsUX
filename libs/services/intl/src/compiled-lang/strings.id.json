@@ -257,12 +257,6 @@
       "value": "Ciutkan"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "Pilih filter"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -912,12 +906,6 @@
     {
       "type": 0,
       "value": "14"
-    }
-  ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "Tipe Tindakan"
     }
   ],
   "5+MuPz": [
@@ -1787,6 +1775,12 @@
       "value": "Buat Grup"
     }
   ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
@@ -2250,12 +2244,6 @@
       "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
     }
   ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "Kembali ke penelusuran"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -2639,16 +2627,6 @@
       "value": "Opsional. Nama tindakan tercakup tempat Anda menginginkan input dan output dari tindakan tingkat atas dalam cakupan tersebut."
     }
   ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "Tidak ada hasil yang ditemukan untuk: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
-    }
-  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -2817,12 +2795,6 @@
       "value": "Selasa"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "Runtime"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -2959,12 +2931,6 @@
     {
       "type": 0,
       "value": "Pfx"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "Filter"
     }
   ],
   "P2A5dB": [
@@ -3438,6 +3404,12 @@
       "value": "Jumlah halaman tidak valid"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3634,10 +3606,14 @@
       "value": "Luaskan"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -4736,6 +4712,12 @@
       "value": "Terbitkan"
     }
   ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
   "g5mMuM": [
     {
       "type": 0,
@@ -4806,16 +4788,6 @@
     {
       "type": 0,
       "value": "Kondisi Pemicu"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 0,
-      "value": "Hasil pencarian untuk: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -5431,6 +5403,12 @@
     {
       "type": 0,
       "value": "Pintasan untuk tindakan('actionName').outputs.body"
+    }
+  ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
     }
   ],
   "lzBHHT": [
@@ -6378,6 +6356,12 @@
       "value": "Wajib. Jumlah unit waktu yang diinginkan adalah di masa lalu."
     }
   ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
+    }
+  ],
   "uczA5c": [
     {
       "type": 0,
@@ -6546,6 +6530,12 @@
     {
       "type": 0,
       "value": "Properti Alur Kerja"
+    }
+  ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
     }
   ],
   "w16qh+": [

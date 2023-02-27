@@ -273,12 +273,6 @@
       "value": "折叠"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "选择筛选器"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -932,12 +926,6 @@
     {
       "type": 0,
       "value": "14 "
-    }
-  ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "操作类型"
     }
   ],
   "5+MuPz": [
@@ -1839,6 +1827,12 @@
       "value": "创建组"
     }
   ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
@@ -2310,12 +2304,6 @@
       "value": "(UTC+07:00) 巴尔瑙尔，戈尔诺-阿尔泰斯克"
     }
   ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "返回以浏览"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -2715,20 +2703,6 @@
       "value": "可选。范围内操作的名称，其输入和输出来自范围内的顶级操作。"
     }
   ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "找不到 "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
-    },
-    {
-      "type": 0,
-      "value": " 的结果"
-    }
-  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -2897,12 +2871,6 @@
       "value": "星期二"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "运行时"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -3055,12 +3023,6 @@
     {
       "type": 0,
       "value": "Pfx"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "筛选"
     }
   ],
   "P2A5dB": [
@@ -3534,6 +3496,12 @@
       "value": "分页计数无效"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3730,10 +3698,14 @@
       "value": "展开"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -4856,6 +4828,12 @@
       "value": "发布"
     }
   ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
   "g5mMuM": [
     {
       "type": 0,
@@ -4926,20 +4904,6 @@
     {
       "type": 0,
       "value": "触发器条件"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 0,
-      "value": "搜索 "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
-    },
-    {
-      "type": 0,
-      "value": " 的结果"
     }
   ],
   "gg0j4S": [
@@ -5579,6 +5543,12 @@
     {
       "type": 0,
       "value": "actions('actionName').outputs.body 的速记"
+    }
+  ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
     }
   ],
   "lzBHHT": [
@@ -6558,6 +6528,12 @@
       "value": "必需。表示所需过去时间与当前时间相差的时间单位数。"
     }
   ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
+    }
+  ],
   "uczA5c": [
     {
       "type": 0,
@@ -6726,6 +6702,12 @@
     {
       "type": 0,
       "value": "工作流属性"
+    }
+  ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
     }
   ],
   "w16qh+": [

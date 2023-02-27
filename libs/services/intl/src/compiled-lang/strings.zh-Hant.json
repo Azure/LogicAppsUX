@@ -257,12 +257,6 @@
       "value": "摺疊"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "選取篩選條件"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -912,12 +906,6 @@
     {
       "type": 0,
       "value": "14"
-    }
-  ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "動作類型"
     }
   ],
   "5+MuPz": [
@@ -1787,6 +1775,12 @@
       "value": "製作群組"
     }
   ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
@@ -2250,12 +2244,6 @@
       "value": "(UTC+07:00) 巴爾瑙爾，戈爾諾-阿爾泰斯克"
     }
   ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "返回以瀏覽"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -2639,16 +2627,6 @@
       "value": "選擇性。您希望從此範圍內之最上層動作輸入及輸出的範圍動作名稱。"
     }
   ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "找不到結果: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
-    }
-  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -2817,12 +2795,6 @@
       "value": "星期二"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "執行階段"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -2959,12 +2931,6 @@
     {
       "type": 0,
       "value": "Pfx"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "篩選"
     }
   ],
   "P2A5dB": [
@@ -3438,6 +3404,12 @@
       "value": "分頁計數無效"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3634,10 +3606,14 @@
       "value": "展開"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -4740,6 +4716,12 @@
       "value": "發佈"
     }
   ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
   "g5mMuM": [
     {
       "type": 0,
@@ -4810,16 +4792,6 @@
     {
       "type": 0,
       "value": "觸發條件"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 1,
-      "value": "searchTerm"
-    },
-    {
-      "type": 0,
-      "value": " 的搜尋結果"
     }
   ],
   "gg0j4S": [
@@ -5435,6 +5407,12 @@
     {
       "type": 0,
       "value": "actions('actionName').outputs.body 的速記"
+    }
+  ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
     }
   ],
   "lzBHHT": [
@@ -6382,6 +6360,12 @@
       "value": "必要。過去所需時間的時間單位數字。"
     }
   ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
+    }
+  ],
   "uczA5c": [
     {
       "type": 0,
@@ -6550,6 +6534,12 @@
     {
       "type": 0,
       "value": "工作流程屬性"
+    }
+  ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
     }
   ],
   "w16qh+": [
