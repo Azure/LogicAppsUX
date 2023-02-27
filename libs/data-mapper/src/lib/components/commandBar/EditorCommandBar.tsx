@@ -72,12 +72,12 @@ export interface EditorCommandBarProps {
   onRedoClick: () => void;
   onTestClick: () => void;
   showMapOverview: boolean;
-  showWholeView: boolean;
-  setShowWholeView: (showWholeView: boolean) => void;
+  showGlobalView: boolean;
+  setShowGlobalView: (showGlobalView: boolean) => void;
 }
 
 export const EditorCommandBar = (props: EditorCommandBarProps) => {
-  const { onSaveClick, onUndoClick, onRedoClick, onTestClick, showMapOverview, showWholeView, setShowWholeView } = props;
+  const { onSaveClick, onUndoClick, onRedoClick, onTestClick, showMapOverview, showGlobalView, setShowGlobalView } = props;
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -157,8 +157,8 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         defaultMessage: 'Overview',
         description: 'Button text for overview',
       }),
-      WHOLE_VIEW: intl.formatMessage({
-        defaultMessage: 'Whole view',
+      GLOBAL_VIEW: intl.formatMessage({
+        defaultMessage: 'Global view',
         description: 'Button text for whole overview',
       }),
       DIVIDER: intl.formatMessage({
@@ -230,10 +230,10 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       },
       {
         key: 'overview',
-        text: showWholeView ? Resources.MAP_OVERVIEW : Resources.WHOLE_VIEW,
-        ariaLabel: showWholeView ? Resources.MAP_OVERVIEW : Resources.WHOLE_VIEW,
+        text: showGlobalView ? Resources.MAP_OVERVIEW : Resources.GLOBAL_VIEW,
+        ariaLabel: showGlobalView ? Resources.MAP_OVERVIEW : Resources.GLOBAL_VIEW,
         iconProps: { iconName: 'Relationship' },
-        onClick: () => setShowWholeView(!showWholeView),
+        onClick: () => setShowGlobalView(!showGlobalView),
         disabled: !showMapOverview || !bothSchemasDefined,
         buttonStyles: cmdBarButtonStyles,
         ...cmdBarItemBgStyles,
@@ -268,7 +268,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       Resources.RUN_TEST,
       Resources.CONFIGURATION,
       Resources.MAP_OVERVIEW,
-      Resources.WHOLE_VIEW,
+      Resources.GLOBAL_VIEW,
       onSaveClick,
       bothSchemasDefined,
       isStateDirty,
@@ -280,8 +280,8 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       onTestClick,
       xsltFilename,
       showMapOverview,
-      showWholeView,
-      setShowWholeView,
+      showGlobalView,
+      setShowGlobalView,
       dispatch,
     ]
   );

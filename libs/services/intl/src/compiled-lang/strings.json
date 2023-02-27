@@ -2241,6 +2241,12 @@
       "value": "Dynamic content not supported as properties in authentication."
     }
   ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -3479,12 +3485,6 @@
     {
       "type": 0,
       "value": "Enter a value"
-    }
-  ],
-  "TVrS/G": [
-    {
-      "type": 0,
-      "value": "Whole view"
     }
   ],
   "TX4Kdr": [
