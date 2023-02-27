@@ -68,7 +68,7 @@ export const collectWarningsForMapChecker = (connections: ConnectionDictionary, 
       if (!nodeHasSourceNodeEventually(connection, connections)) {
         warnings.push({
           title: { message: mapCheckerResources.requiredSchemaNodeTitle },
-          description: { message: mapCheckerResources.requiredSchemaNodeBody, value: { functionName: schemaValue.name } },
+          description: { message: mapCheckerResources.requiredSchemaNodeBody, value: { nodeName: schemaValue.name } },
           severity: MapCheckerItemSeverity.Warning,
           reactFlowId,
         });
@@ -172,11 +172,11 @@ const mapCheckerResources = defineMessages({
     description: 'Body text for a function missing a required input card',
   },
   requiredSchemaNodeTitle: {
-    defaultMessage: 'Function is missing required inputs',
-    description: 'Title for a function missing a required input card',
+    defaultMessage: 'Schema is missing required inputs',
+    description: 'Title for an unconnected required schema card',
   },
   requiredSchemaNodeBody: {
-    defaultMessage: '{functionName} has an non-terminating connection chain',
-    description: 'Body text for a function missing a required input card',
+    defaultMessage: '{nodeName} has an non-terminating connection chain',
+    description: 'Body text for an unconnected required schema card',
   },
 });

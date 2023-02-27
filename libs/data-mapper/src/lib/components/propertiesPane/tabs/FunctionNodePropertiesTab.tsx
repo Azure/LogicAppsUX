@@ -226,16 +226,17 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
               height: fnIconContainerSize,
               width: fnIconContainerSize,
               borderRadius: '50%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
           >
-            <div style={{ paddingTop: '4px', color: tokens.colorNeutralBackground1, display: 'flex', justifyContent: 'center' }}>
-              <FunctionIcon
-                name={functionData.functionName}
-                categoryName={functionData.category}
-                fileName={functionData.iconFileName}
-                color={tokens.colorNeutralForeground1}
-              />
-            </div>
+            <FunctionIcon
+              functionKey={functionData.key}
+              functionName={functionData.functionName}
+              categoryName={functionData.category}
+              color={tokens.colorNeutralForeground1}
+            />
           </span>
 
           <Text className={styles.functionNameTitle} style={{ marginLeft: '8px' }}>

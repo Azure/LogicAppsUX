@@ -79,10 +79,10 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
     >
       {isExpanded ? null : handlesForCollapsedHeader}
       <FunctionIcon
-        name={functionData.functionName}
+        functionKey={functionData.key}
+        functionName={functionData.functionName}
         categoryName={functionData.category}
-        fileName={functionData.iconFileName}
-        color={tokens.colorNeutralForegroundInverted}
+        color={tokens.colorNeutralForeground1}
       />
       <Text style={{ margin: '0px 12px', color: tokens.colorNeutralForegroundInverted }}>{functionData.displayName}</Text>
       <Divider vertical style={{ height: '100%' }} />

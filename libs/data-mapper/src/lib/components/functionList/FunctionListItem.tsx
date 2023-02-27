@@ -51,9 +51,9 @@ const FunctionListItem = ({ functionData }: FunctionListItemProps) => {
     <Button key={functionData.key} alt-text={functionData.displayName} className={cardStyles.button}>
       <div className={cardStyles.iconContainer} style={{ backgroundColor: customTokens[fnBranding.colorTokenName] }}>
         <FunctionIcon
-          name={functionData.functionName}
+          functionKey={functionData.key}
+          functionName={functionData.functionName}
           categoryName={functionData.category}
-          fileName={functionData.iconFileName}
           color={tokens.colorNeutralForeground1}
         />
       </div>
