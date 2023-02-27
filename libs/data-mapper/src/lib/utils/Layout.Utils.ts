@@ -1,4 +1,9 @@
-import { functionNodeCardSize, schemaNodeCardDefaultWidth, schemaNodeCardHeight } from '../constants/NodeConstants';
+import {
+  simpleFunctionCardDiameter,
+  schemaNodeCardDefaultWidth,
+  schemaNodeCardHeight,
+  expandedFunctionCardMaxWidth,
+} from '../constants/NodeConstants';
 import { targetPrefix } from '../constants/ReactFlowConstants';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
@@ -178,12 +183,12 @@ export const applyCustomLayout = async (
   isOverview?: boolean
 ): Promise<RootLayoutNode> => {
   const schemaNodeCardVGap = 8;
-  const xInterval = functionNodeCardSize * (useExpandedFunctionCards ? 5 : 2);
-  const yInterval = functionNodeCardSize * 1.5;
+  const xInterval = (useExpandedFunctionCards ? expandedFunctionCardMaxWidth : simpleFunctionCardDiameter) * 1.5;
+  const yInterval = simpleFunctionCardDiameter * 1.5;
   const maxFunctionsPerToolbarRow = 4;
-  const functionToolbarStartY = -1 * functionNodeCardSize * 2;
-  const nodeCollisionXThreshold = functionNodeCardSize * (useExpandedFunctionCards ? 3 : 1.5);
-  const nodeCollisionYThreshold = functionNodeCardSize * 1.2;
+  const functionToolbarStartY = -1 * simpleFunctionCardDiameter * 2;
+  const nodeCollisionXThreshold = (useExpandedFunctionCards ? expandedFunctionCardMaxWidth : simpleFunctionCardDiameter) * 1.25;
+  const nodeCollisionYThreshold = simpleFunctionCardDiameter * 1.2;
 
   const getSchemaNodeYPos = (nodeIdx: number) => nodeIdx * (schemaNodeCardHeight + (nodeIdx === 0 ? 0 : schemaNodeCardVGap));
 

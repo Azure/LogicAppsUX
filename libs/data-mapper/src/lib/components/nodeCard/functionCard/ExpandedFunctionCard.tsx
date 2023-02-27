@@ -1,3 +1,4 @@
+import { expandedFunctionCardMaxWidth } from '../../../constants/NodeConstants';
 import { customTokens } from '../../../core';
 import { deleteCurrentlySelectedItem, setSelectedItem } from '../../../core/state/DataMapSlice';
 import type { RootState } from '../../../core/state/Store';
@@ -84,7 +85,17 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
         fileName={functionData.iconFileName}
         color={tokens.colorNeutralForegroundInverted}
       />
-      <Text style={{ margin: '0px 12px', color: tokens.colorNeutralForegroundInverted }}>{functionData.displayName}</Text>
+      <Text
+        style={{
+          margin: '0px 12px',
+          color: tokens.colorNeutralForegroundInverted,
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+        }}
+      >
+        {functionData.displayName}
+      </Text>
       <Divider vertical style={{ height: '100%' }} />
       <OutputIcon style={{ margin: '0px 6px 0px 10px', color: tokens.colorNeutralForegroundInverted }} />
       <Handle
@@ -96,12 +107,19 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
     </Button>
   );
 
-  const inputBodyStyles = {
+  const inputBodyStyles: React.CSSProperties = {
     padding: '0px 10px',
     backgroundColor: tokens.colorNeutralBackground1,
     borderRadius: tokens.borderRadiusMedium,
   };
-  const inputTextStyles = { alignItems: 'center', height: '30px', display: 'flex' };
+  const inputTextStyles: React.CSSProperties = {
+    alignItems: 'center',
+    height: '30px',
+    display: 'flex',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+  };
   const handleIndexOffset = 34;
   const handleBaseOffset = 58;
 
@@ -161,7 +179,8 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
     }
   }
 
-  let divStyle = {
+  let divStyle: React.CSSProperties = {
+    maxWidth: expandedFunctionCardMaxWidth,
     borderRadius: tokens.borderRadiusMedium,
     backgroundColor: customTokens[functionBranding.colorTokenName],
   };
