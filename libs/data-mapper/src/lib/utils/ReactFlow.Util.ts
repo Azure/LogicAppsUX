@@ -310,7 +310,7 @@ export const useOverviewLayout = (
   return reactFlowNodes;
 };
 
-export const useWholeViewLayout = (
+export const useGlobalViewLayout = (
   flattenedSourceSchema: SchemaNodeDictionary,
   flattenedTargetSchema: SchemaNodeDictionary,
   connections: ConnectionDictionary
