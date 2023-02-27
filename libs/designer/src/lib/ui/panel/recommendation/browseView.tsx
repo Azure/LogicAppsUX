@@ -28,7 +28,6 @@ export const BrowseView = ({ filters }: { filters: Record<string, string> }) => 
 
       if (filters['actionType']) {
         const { action, trigger } = triggerCapabilities?.[connector.id.toLowerCase()] ?? {};
-        if (!action && !trigger) return true; // some connectors don't have any capabilities set, we'll just show those regardless
         if (filters['actionType'].toLowerCase() === 'triggers' && !trigger) return false;
         else if (filters['actionType'].toLowerCase() === 'actions' && !action) return false;
       }
