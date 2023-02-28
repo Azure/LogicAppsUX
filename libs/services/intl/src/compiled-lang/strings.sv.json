@@ -1257,6 +1257,12 @@
       "value": "Aktivera hanterad identitet för logikappen."
     }
   ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -2297,6 +2303,12 @@
     {
       "type": 0,
       "value": "Dynamiskt innehåll stöds inte som egenskaper i autentisering."
+    }
+  ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
     }
   ],
   "IA+Ogm": [

@@ -1232,6 +1232,12 @@
       "value": "Habilite a identidade gerenciada para o aplicativo lógico."
     }
   ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -2262,6 +2268,12 @@
     {
       "type": 0,
       "value": "Não há suporte para conteúdo dinâmico como propriedades na autenticação."
+    }
+  ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
     }
   ],
   "IA+Ogm": [

@@ -1268,6 +1268,12 @@
       "value": "Habilite la identidad administrada para la aplicación lógica."
     }
   ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -2322,6 +2328,12 @@
     {
       "type": 0,
       "value": "El contenido dinámico no se admite como propiedades en la autenticación."
+    }
+  ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
     }
   ],
   "IA+Ogm": [

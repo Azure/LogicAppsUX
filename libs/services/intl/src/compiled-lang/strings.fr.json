@@ -1268,6 +1268,12 @@
       "value": "Activez l'identité managée pour l'application logique."
     }
   ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -2322,6 +2328,12 @@
     {
       "type": 0,
       "value": "Contenu dynamique non pris en charge comme propriétés dans l'authentification."
+    }
+  ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
     }
   ],
   "IA+Ogm": [

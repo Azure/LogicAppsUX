@@ -1214,6 +1214,12 @@
       "value": "請為邏輯應用程式啟用受控識別。"
     }
   ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -2200,6 +2206,12 @@
     {
       "type": 0,
       "value": "不支援在驗證中的屬性使用動態內容。"
+    }
+  ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
     }
   ],
   "IA+Ogm": [
