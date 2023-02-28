@@ -40,6 +40,15 @@ export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _t
           reactFlowId: connectionValue.self.reactFlowKey,
         });
       }
+
+      if (functionConnectionHasTooManyInputs(node, connectionValue)) {
+        errors.push({
+          title: { message: mapCheckerResources.functionExceedsMaxInputsTitle },
+          description: { message: mapCheckerResources.functionExceedsMaxInputsBody, value: { functionName: node.displayName } },
+          severity: MapCheckerItemSeverity.Error,
+          reactFlowId: connectionValue.self.reactFlowKey,
+        });
+      }
     } else {
       if (!connectionValue.self.reactFlowKey.startsWith(sourcePrefix) && !areInputTypesValidForSchemaNode(node, connectionValue)) {
         errors.push({
@@ -154,6 +163,21 @@ export const functionHasRequiredInputs = (functionData: FunctionData, connection
   return isEveryInputValid;
 };
 
+export const functionConnectionHasTooManyInputs = (functionData: FunctionData, connection: Connection) => {
+  if (functionData.maxNumberOfInputs === -1) {
+    return false;
+  }
+
+  let anyInvalidInput = false;
+  Object.values(connection.inputs).forEach((inputArr) => {
+    if (inputArr.length > 1) {
+      anyInvalidInput = true;
+    }
+  });
+
+  return anyInvalidInput;
+};
+
 const mapCheckerResources = defineMessages({
   inputTypeMismatchTitle: {
     defaultMessage: 'Input type mismatch',
@@ -178,5 +202,13 @@ const mapCheckerResources = defineMessages({
   requiredSchemaNodeBody: {
     defaultMessage: '{nodeName} has an non-terminating connection chain',
     description: 'Body text for an unconnected required schema card',
+  },
+  functionExceedsMaxInputsTitle: {
+    defaultMessage: 'Function has too many inputs assigned',
+    description: 'Title for a too many inputs card',
+  },
+  functionExceedsMaxInputsBody: {
+    defaultMessage: '{functionName} has too many inputs assigned to it',
+    description: 'Body text for a too many inputs card',
   },
 });
