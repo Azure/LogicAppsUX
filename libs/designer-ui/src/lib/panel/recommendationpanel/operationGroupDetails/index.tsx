@@ -14,8 +14,8 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
   const { operationApi, operationActionsData, onOperationClick } = props;
   const { id, displayName, description, iconUri, externalDocs } = operationApi;
 
-  const firstCategory = operationActionsData[0].category;
-  const isHybrid = operationActionsData.findIndex((action) => action.category !== firstCategory) !== -1;
+  const { category } = operationActionsData?.[0] ?? {};
+  const isHybrid = operationActionsData.findIndex((action) => action.category !== category) !== -1;
 
   return (
     <div className="msla-op-group-detail-page">

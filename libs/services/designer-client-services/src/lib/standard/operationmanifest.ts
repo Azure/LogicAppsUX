@@ -1,7 +1,7 @@
 import { BaseOperationManifestService } from '../base';
 import { getBuiltInOperationInfo, isBuiltInOperation, supportedBaseManifestObjects } from '../base/operationmanifest';
 import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
-import { equals, ConnectionType } from '@microsoft/utils-logic-apps';
+import { isCustomConnector, equals, ConnectionType } from '@microsoft/utils-logic-apps';
 
 export class StandardOperationManifestService extends BaseOperationManifestService {
   override async getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo> {
@@ -24,8 +24,9 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
 
   override async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
     const supportedManifest = supportedBaseManifestObjects.get(operationId);
-
     if (supportedManifest) return supportedManifest;
+
+    if (isCustomConnector(connectorId)) return this.getCustomOperationManifest(connectorId, operationId);
 
     const { apiVersion, baseUrl, httpClient } = this.options;
     const connectorName = connectorId.split('/').slice(-1)[0];
@@ -52,6 +53,39 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
           description,
           iconUri,
           connection: equals(operationType, 'serviceprovider') ? { required: true, type: ConnectionType.ServiceProvider } : undefined,
+          ...manifest,
+        },
+      };
+
+      return operationManifest;
+    } catch (error) {
+      return { properties: {} } as any;
+    }
+  }
+
+  private async getCustomOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const operationName = operationId.split('/').pop();
+    const queryParameters = {
+      'api-version': apiVersion,
+      $expand: 'properties/manifest',
+    };
+
+    try {
+      const response = await httpClient.get<any>({
+        uri: `${baseUrl}/${connectorId}/operations/${operationName}`,
+        queryParameters,
+      });
+
+      const {
+        properties: { brandColor, description, iconUri, manifest },
+      } = response.value;
+
+      const operationManifest = {
+        properties: {
+          brandColor,
+          description,
+          iconUri,
           ...manifest,
         },
       };
