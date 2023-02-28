@@ -6,8 +6,8 @@ import {
   StandardConnectionService,
   StandardOperationManifestService,
   StandardSearchService,
-  StandardOAuthService,
-  StandardGatewayService,
+  BaseOAuthService,
+  BaseGatewayService,
   ConsumptionSearchService,
   BaseFunctionService,
   BaseAppServiceService,
@@ -64,7 +64,7 @@ const searchServiceConsumption = new ConsumptionSearchService({
   isDev: true,
 });
 
-const oAuthService = new StandardOAuthService({
+const oAuthService = new BaseOAuthService({
   apiVersion: '2018-11-01',
   baseUrl: '/url',
   httpClient,
@@ -73,7 +73,7 @@ const oAuthService = new StandardOAuthService({
   location: '',
 });
 
-const gatewayService = new StandardGatewayService({
+const gatewayService = new BaseGatewayService({
   baseUrl: '/url',
   httpClient,
   apiVersions: {

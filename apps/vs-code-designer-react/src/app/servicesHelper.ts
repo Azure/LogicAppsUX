@@ -4,8 +4,8 @@ import {
   StandardConnectorService,
   StandardOperationManifestService,
   StandardSearchService,
-  StandardOAuthService,
-  StandardGatewayService,
+  BaseOAuthService,
+  BaseGatewayService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { IApiHubServiceDetails } from '@microsoft/designer-client-services-logic-apps';
 import { ResourceIdentityType, HTTP_METHODS } from '@microsoft/utils-logic-apps';
@@ -104,7 +104,7 @@ export const getDesignerServices = (
     isDev: true,
   });
 
-  const oAuthService = new StandardOAuthService({
+  const oAuthService = new BaseOAuthService({
     baseUrl,
     apiVersion,
     httpClient,
@@ -113,7 +113,7 @@ export const getDesignerServices = (
     location: '',
   });
 
-  const gatewayService = new StandardGatewayService({
+  const gatewayService = new BaseGatewayService({
     baseUrl,
     httpClient,
     apiVersions: {
