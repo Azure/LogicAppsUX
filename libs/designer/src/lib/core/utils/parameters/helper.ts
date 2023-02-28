@@ -82,7 +82,8 @@ import type {
   SchemaProcessorOptions,
   SchemaProperty,
   Segment,
-  SwaggerParser} from '@microsoft/parsers-logic-apps';
+  SwaggerParser,
+} from '@microsoft/parsers-logic-apps';
 import {
   DeserializationLocation,
   PropertySerializationType,
@@ -104,7 +105,7 @@ import {
   SegmentType,
   Visibility,
 } from '@microsoft/parsers-logic-apps';
-import type { Exception, OperationManifest, RecurrenceSetting} from '@microsoft/utils-logic-apps';
+import type { Exception, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import {
   deleteObjectProperties,
   deleteObjectProperty,
@@ -275,7 +276,7 @@ export function createParameterInfo(
     in: parameter.in,
     isDynamic: !!isDynamic,
     isUnknown,
-    serialization
+    serialization,
   };
 
   const parameterInfo: ParameterInfo = {
@@ -673,25 +674,29 @@ export function getAllInputParameters(nodeInputs: NodeInputs): ParameterInfo[] {
   return aggregate(Object.keys(parameterGroups).map((groupKey) => parameterGroups[groupKey].parameters));
 }
 
-interface Dependency extends DependentParameterInfo { actualValue: any; };
+interface Dependency extends DependentParameterInfo {
+  actualValue: any;
+}
 
 export function shouldUseParameterInGroup(parameter: ParameterInfo, allParameters: ParameterInfo[]): boolean {
-  const { info: { dependencies } } = parameter;
+  const {
+    info: { dependencies },
+  } = parameter;
 
   if (dependencies && equals(dependencies.type, 'visibility')) {
     const dependentParameters = dependencies.parameters.reduce((result: Dependency[], dependentParameter: DependentParameterInfo) => {
-      const parameterInfo = allParameters.find(param => param.parameterName === dependentParameter.name);
+      const parameterInfo = allParameters.find((param) => param.parameterName === dependentParameter.name);
       if (parameterInfo) {
-        return [ ...result, { ...dependentParameter, actualValue: parameterValueWithoutCasting(parameterInfo) }];
+        return [...result, { ...dependentParameter, actualValue: parameterValueWithoutCasting(parameterInfo) }];
       }
 
       return result;
     }, []);
 
-    return dependentParameters.every(dependentParameter => {
+    return dependentParameters.every((dependentParameter) => {
       const { actualValue, values } = dependentParameter;
       const isArray = Array.isArray(actualValue);
-      return values.some(value => isArray ? actualValue.includes(value) : actualValue === value);
+      return values.some((value) => (isArray ? actualValue.includes(value) : actualValue === value));
     });
   }
 
@@ -1856,7 +1861,12 @@ export function getGroupAndParameterFromParameterKey(
   return undefined;
 }
 
-export function getInputsValueFromDefinitionForManifest(inputsLocation: string[], manifest: OperationManifest, stepDefinition: any, allInputs: InputParameter[]): any {
+export function getInputsValueFromDefinitionForManifest(
+  inputsLocation: string[],
+  manifest: OperationManifest,
+  stepDefinition: any,
+  allInputs: InputParameter[]
+): any {
   let inputsValue = stepDefinition;
 
   for (const property of inputsLocation) {
@@ -1882,9 +1892,12 @@ function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) 
     const value = clone(getObjectPropertyValue(finalValue, target));
     if (!target.length) {
       propertiesToRetain = Object.keys(manifest.properties.inputs.properties);
-      deleteObjectProperties(value, propertiesToRetain.map((key: string) => [key]));
+      deleteObjectProperties(
+        value,
+        propertiesToRetain.map((key: string) => [key])
+      );
 
-      for (const key of Object.keys(finalValue)) { 
+      for (const key of Object.keys(finalValue)) {
         if (!propertiesToRetain.includes(key)) {
           deleteObjectProperty(finalValue, [key]);
         }
@@ -1901,14 +1914,14 @@ function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) 
 /**
  * This method updates the inputs value when there are special cases for serialization like propertyName
  * serialization or special cases for deserialiation like reading values from inputs for non serializable parameter.
- * Example: Batch trigger 
+ * Example: Batch trigger
  */
 function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputParameter[]) {
   if (!inputsValue || typeof inputsValue !== 'object') {
     return inputsValue;
   }
 
-  const propertyNameParameters = allInputs.filter(input => !!input.serialization?.property);
+  const propertyNameParameters = allInputs.filter((input) => !!input.serialization?.property);
   const finalValue = clone(inputsValue);
 
   for (const propertyParameter of propertyNameParameters) {
@@ -1927,24 +1940,20 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
 
       const propertyName = keys[0];
 
-      safeSetObjectPropertyValue(
-        finalValue,
-        parentPropertySegments,
-        {
-          [serialization.property.name]: {
-            ...objectValue[propertyName],
-            [name.substring(name.lastIndexOf('.') + 1)]: propertyName
-          }
-        }
-      );
+      safeSetObjectPropertyValue(finalValue, parentPropertySegments, {
+        [serialization.property.name]: {
+          ...objectValue[propertyName],
+          [name.substring(name.lastIndexOf('.') + 1)]: propertyName,
+        },
+      });
     }
   }
 
-  const parametersWithDeserialization = allInputs.filter(input => !!input.deserialization);
+  const parametersWithDeserialization = allInputs.filter((input) => !!input.deserialization);
   for (const parameter of parametersWithDeserialization) {
     const { name, deserialization } = parameter;
     if (deserialization?.type === DeserializationLocation.ParentObjectProperties) {
-      const parentPropertySegments = deserialization.parameterReference.split('.')
+      const parentPropertySegments = deserialization.parameterReference.split('.');
       const objectValue = getObjectPropertyValue(finalValue, parentPropertySegments);
       const value = Object.keys(objectValue ?? {});
 
@@ -2719,8 +2728,6 @@ export function validateUntilAction(
   parameters: ParameterInfo[],
   changedParameter: Partial<ParameterInfo>
 ) {
-  console.log('### Changed', changedParameter);
-
   const errorMessage = 'Either limit count or timout must be specified.';
 
   const countParameter = parameters.find((parameter) => parameter.parameterName === 'limit.count');

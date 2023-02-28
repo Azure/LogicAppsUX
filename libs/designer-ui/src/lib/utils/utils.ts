@@ -1,6 +1,6 @@
 import Constants from '../constants';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import { isBuiltInConnector } from '@microsoft/utils-logic-apps';
+import { isBuiltInConnector, isCustomConnector } from '@microsoft/utils-logic-apps';
 
 /**
  * Returns a string with a duration, possibly abbreviated, e.g., 15s or 15 second(s)
@@ -346,6 +346,10 @@ export const getConnectorCategoryString = (connectorId: string): string => {
     defaultMessage: 'Shared',
     description: 'Shared category name text',
   });
+  const customText = intl.formatMessage({
+    defaultMessage: 'Custom',
+    description: 'Custom category name text',
+  });
 
-  return isBuiltInConnector(connectorId) ? builtInText : azureText;
+  return isBuiltInConnector(connectorId) ? builtInText : isCustomConnector(connectorId) ? customText : azureText;
 };

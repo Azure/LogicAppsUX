@@ -7,7 +7,7 @@ import { useMonitoringView } from '../../../core/state/designerOptions/designerO
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, selectPanelTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useNodeConnectionId } from '../../../core/state/selectors/actionMetadataSelector';
-import { Spinner, SpinnerSize } from '@fluentui/react';
+import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import { ConnectionService } from '@microsoft/designer-client-services-logic-apps';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { SelectConnection } from '@microsoft/designer-ui';
@@ -39,8 +39,8 @@ export const SelectConnectionTab = () => {
   const connections = useMemo(() => connectionQuery.data ?? [], [connectionQuery]);
 
   useEffect(() => {
-    if (!connectionQuery.isLoading && connections.length === 0) createConnectionCallback();
-  }, [connectionQuery.isLoading, connections, createConnectionCallback]);
+    if (!connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) createConnectionCallback();
+  }, [connectionQuery.isError, connectionQuery.isLoading, connections, createConnectionCallback]);
 
   // TODO: RILEY - WI# 15680356 - RACE CONDITION HERE, if you are on select connection and you click another node, this fires off, and sets the old node's connection to the same as the new node's connection
   // We really just need to make our own selection component here, using the 'DetailsList' component here is just really hacky and not the way it was intended to be used
@@ -71,6 +71,9 @@ export const SelectConnectionTab = () => {
         <Spinner size={SpinnerSize.large} label={loadingText} />
       </div>
     );
+
+  if (connectionQuery.isError)
+    return <MessageBar messageBarType={MessageBarType.error}>{JSON.stringify(connectionQuery.error)}</MessageBar>;
 
   return (
     <SelectConnection

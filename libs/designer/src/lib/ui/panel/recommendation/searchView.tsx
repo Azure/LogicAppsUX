@@ -33,25 +33,21 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
 
   const filterItems = useCallback(
     (searchResult: SearchResult): boolean => {
-      let ret = true;
       if (filters['runtime']) {
-        if (filters['runtime'] === 'inapp') {
-          ret = isBuiltInConnector(searchResult.item.properties.api.id);
-        } else if (filters['runtime'] === 'custom') {
-          ret = isCustomConnector(searchResult.item.properties.api.id);
-        } else if (filters['runtime'] === 'shared') {
-          ret = !isBuiltInConnector(searchResult.item.properties.api.id) && !isCustomConnector(searchResult.item.properties.api.id);
-        }
-      }
-      if (filters['actionType']) {
-        if (filters['actionType'] === 'actions') {
-          ret = ret ? !searchResult.item.properties.trigger : false;
-        } else if (filters['actionType'] === 'triggers') {
-          ret = ret ? !!searchResult.item.properties.trigger : false;
-        }
+        if (filters['runtime'] === 'inapp' && !isBuiltInConnector(searchResult.item.properties.api.id)) return false;
+        else if (filters['runtime'] === 'custom' && !isCustomConnector(searchResult.item.properties.api.id)) return false;
+        else if (filters['runtime'] === 'shared')
+          if (isBuiltInConnector(searchResult.item.properties.api.id) || isCustomConnector(searchResult.item.properties.api.id))
+            return false;
       }
 
-      return ret;
+      if (filters['actionType']) {
+        const isTrigger = searchResult.item.properties?.trigger !== undefined;
+        if (filters['actionType'].toLowerCase() === 'actions' && isTrigger) return false;
+        else if (filters['actionType'].toLowerCase() === 'triggers' && !isTrigger) return false;
+      }
+
+      return true;
     },
     [filters]
   );

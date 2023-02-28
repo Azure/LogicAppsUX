@@ -1,4 +1,5 @@
 import { css, Icon, Image, ImageFit, Link } from '@fluentui/react';
+import { fallbackConnectorUrl } from '@microsoft/utils-logic-apps';
 import { useMeasure } from '@react-hookz/web';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -50,9 +51,11 @@ export const OperationGroupHeader = (props: OperationGroupHeaderProps) => {
     return (descriptionMeasurements?.height ?? 0) / 20 > 2;
   }, [descriptionMeasurements]);
 
+  const imgSrc = useMemo(() => fallbackConnectorUrl(iconUrl), [iconUrl]);
+
   return (
     <div id={id} className="msla-op-group-header">
-      <Image className="msla-op-group-image" alt={title} src={iconUrl} imageFit={ImageFit.contain} />
+      <Image className="msla-op-group-image" alt={title} src={imgSrc} imageFit={ImageFit.contain} />
       <div className={css(`msla-op-group-info`, !descriptionExpanded && 'limited')}>
         <div className="msla-op-group-title-row">
           <span className="msla-op-group-title">{title}</span>
