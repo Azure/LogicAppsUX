@@ -83,7 +83,7 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
         functionKey={functionData.key}
         functionName={functionData.functionName}
         categoryName={functionData.category}
-        color={tokens.colorNeutralForeground1}
+        color={tokens.colorNeutralForegroundInverted}
       />
       <Text
         style={{
