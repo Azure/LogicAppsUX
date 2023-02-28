@@ -1,4 +1,10 @@
 # Logic Apps Designer
+### [0.2.92](https://github.com/Azure/LogicAppsUX/compare/v0.2.91...v0.2.92) (2023-02-28)
+
+
+### Logic Apps Designer Changes
+
+* Custom Connectors (standard) ([#1671](https://github.com/Azure/LogicAppsUX/issues/1671)) ([892c094](https://github.com/Azure/LogicAppsUX/commit/892c0942ec818baecc41bb2d3e01913382719773))
 
 ### [0.2.91](https://github.com/Azure/LogicAppsUX/compare/v0.2.90...v0.2.91) (2023-02-28)
 
