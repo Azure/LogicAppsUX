@@ -1214,6 +1214,12 @@
       "value": "논리 앱의 관리 ID를 사용하도록 설정하세요."
     }
   ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -2200,6 +2206,12 @@
     {
       "type": 0,
       "value": "동적 콘텐츠는 인증의 속성으로 지원되지 않습니다."
+    }
+  ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
     }
   ],
   "IA+Ogm": [

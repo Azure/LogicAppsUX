@@ -1268,6 +1268,12 @@
       "value": "Ative a identidade gerida para a aplicação lógica."
     }
   ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -2330,6 +2336,12 @@
     {
       "type": 0,
       "value": "O conteúdo dinâmico não é suportado como propriedades na autenticação."
+    }
+  ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
     }
   ],
   "IA+Ogm": [

@@ -1295,6 +1295,12 @@
       "value": "Włącz tożsamość zarządzaną dla aplikacji logiki."
     }
   ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -2379,6 +2385,12 @@
     {
       "type": 0,
       "value": "Zawartość dynamiczna nie jest obsługiwana jako właściwości w uwierzytelnianiu."
+    }
+  ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
     }
   ],
   "IA+Ogm": [
