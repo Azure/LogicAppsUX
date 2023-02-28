@@ -175,6 +175,7 @@ export class StandardConnectionService extends BaseConnectionService {
             connectionInfo,
             parametersMetadata as ConnectionParametersMetadata
           );
+      console.log('connectionCreated', connection);
       await this.testConnection(connection);
       LoggerService().endTrace(logId);
       return connection;
@@ -299,6 +300,7 @@ export class StandardConnectionService extends BaseConnectionService {
     const connectionAcls = (await this._getConnectionAcls(connection.id)) || [];
     const { identity, appName } = workflowAppDetails;
     const identityDetailsForApiHubAuth = this._getIdentityDetailsForApiHubAuth(identity as ManagedIdentity, tenantId as string);
+    console.log('identityDetailsForApiHubAuth', identityDetailsForApiHubAuth);
 
     try {
       if (
@@ -389,9 +391,11 @@ export class StandardConnectionService extends BaseConnectionService {
 
     try {
       const consentUrl = await oAuthService.fetchConsentUrlForConnection(connectionId);
+      console.log('consentUrl', consentUrl);
       oAuthPopupInstance = oAuthService.openLoginPopup({ consentUrl });
 
       const loginResponse = await oAuthPopupInstance.loginPromise;
+      console.log('loginResponse', loginResponse);
       if (loginResponse.error) {
         throw new Error(atob(loginResponse.error));
       } else if (loginResponse.code) {

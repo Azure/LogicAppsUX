@@ -27,8 +27,6 @@ import * as path from 'path';
 import * as requestP from 'request-promise';
 import * as vscode from 'vscode';
 
-// import * as vscode from 'vscode';
-
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
   const projectRoot: string = await getFunctionProjectRoot(context, workflowFilePath);
   return getConnectionsJson(projectRoot);
@@ -198,9 +196,13 @@ export async function saveConectionReferences(
   const projectPath = await getFunctionProjectRoot(context, workflowFilePath);
   const { connections, settings } = connectionAndSettingsToUpdate;
   const connectionsFilePath = path.join(projectPath, connectionsFileName);
+  const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);
 
   if (connections && Object.keys(connections).length) {
     await writeFormattedJson(connectionsFilePath, connections);
+    if (!connectionsFileExists && (await isCSharpProject(context, projectPath))) {
+      await addNewFileInCSharpProject(context, connectionsFileName, projectPath);
+    }
   }
 
   if (Object.keys(settings).length) {

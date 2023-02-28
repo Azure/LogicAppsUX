@@ -1,17 +1,17 @@
 import { clientSupportedOperations } from './constants';
-import { HttpClient } from './httpClient';
+import { HttpClient } from './services/httpClient';
+import { StandardOAuthService } from './services/oAuth';
 import { resolveConnectionsReferences } from './utilities/workflow';
 import {
   StandardConnectionService,
   StandardConnectorService,
   StandardOperationManifestService,
   StandardSearchService,
-  StandardOAuthService,
   StandardGatewayService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { IApiHubServiceDetails, ConnectionCreationInfo } from '@microsoft/designer-client-services-logic-apps';
-import { ResourceIdentityType, HTTP_METHODS } from '@microsoft/utils-logic-apps';
-import type { ConnectionAndAppSetting, ConnectionsData } from '@microsoft/vscode-extension';
+import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
+import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 
 export const getDesignerServices = (
@@ -21,12 +21,30 @@ export const getDesignerServices = (
   tenantId: string | undefined,
   isLocal: boolean,
   connectionData: ConnectionsData,
-  appSettings: Record<string, string>,
-  workflowDetails: Record<string, any>,
-  authToken: string,
+  panelMetadata: IDesignerPanelMetadata | null,
   createFileSystemConnection: (connectionInfo: ConnectionCreationInfo, connectionName: string) => Promise<ConnectionCreationInfo>,
-  vscode: any
+  vscode: any,
+  oauthRedirectUrl: string
 ): any => {
+  let authToken = '',
+    panelId = '',
+    workflowDetails: Record<string, any> = {},
+    appSettings = {};
+
+  if (panelMetadata) {
+    authToken = panelMetadata.accessToken ?? '';
+    panelId = panelMetadata.panelId;
+    workflowDetails = panelMetadata.workflowDetails;
+    appSettings = panelMetadata.localSettings;
+  }
+
+  const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
+    return vscode.postMessage({
+      command: ExtensionCommand.addConnection,
+      connectionAndSetting,
+    });
+  };
+
   const httpClient = new HttpClient({ accessToken: authToken, baseUrl: apiHubServiceDetails.baseUrl });
   const connectionService = new StandardConnectionService({
     baseUrl,
@@ -34,13 +52,10 @@ export const getDesignerServices = (
     httpClient,
     apiHubServiceDetails,
     tenantId,
-    workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
     readConnections: () => Promise.resolve(connectionData),
     writeConnection: (connectionAndSetting: ConnectionAndAppSetting) => {
-      return vscode.postMessage({
-        command: ExtensionCommand.addConnection,
-        connectionAndSetting,
-      });
+      console.log('we be writing');
+      return addConnectionData(connectionAndSetting);
     },
     connectionCreationClients: {
       FileSystem: {
@@ -139,20 +154,26 @@ export const getDesignerServices = (
     apiVersion,
     httpClient,
     apiHubServiceDetails,
-    isDev: true,
+    isDev: false,
   });
 
+  const { subscriptionId, resourceGroup, location } = apiHubServiceDetails;
+
   const oAuthService = new StandardOAuthService({
-    baseUrl,
-    apiVersion,
+    vscode,
+    panelId,
+    authToken,
+    oauthRedirectUrl,
+    baseUrl: apiHubServiceDetails.baseUrl,
+    apiVersion: '2018-07-01-preview',
     httpClient,
-    subscriptionId: '',
-    resourceGroup: '',
-    location: '',
+    subscriptionId,
+    resourceGroup,
+    location,
   });
 
   const gatewayService = new StandardGatewayService({
-    baseUrl,
+    baseUrl: apiHubServiceDetails.baseUrl,
     httpClient,
     apiVersions: {
       subscription: '2018-11-01',

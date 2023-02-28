@@ -15,6 +15,8 @@ export enum ExtensionCommand {
   completeFileSystemConnection = 'complete-file-system-connection',
   getCallbackUrl = 'GetCallbackUrl',
   receiveCallback = 'ReceiveCallback',
+  openOauthLoginPopup = 'OpenLoginPopup',
+  completeOauthLogin = 'CompleteOauthLogin',
 }
 
 export interface IExtensionsJson {

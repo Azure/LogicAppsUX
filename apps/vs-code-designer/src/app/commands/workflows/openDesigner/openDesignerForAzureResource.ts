@@ -100,6 +100,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
     const accessToken: string = await getAuthorizationToken(credentials);
 
     return {
+      panelId: this.panelName,
       connectionsData: await this.node.getConnectionsData(),
       parametersData: await this.node.getParametersData(),
       localSettings: await this.node.getAppSettings(),
@@ -114,6 +115,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
         tenantId: this.node?.parent?.subscription?.tenantId,
       },
       workflowDetails: await this.node.getChildWorkflows(this.context),
+      workflowName: this.workflowName,
       artifacts: await this.node.getArtifacts(),
       standardApp: getStandardAppData(this.workflowName, this.workflow, parameters),
     };

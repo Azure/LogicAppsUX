@@ -9,6 +9,7 @@ export interface ILocalSettingsJson {
 }
 
 export interface IDesignerPanelMetadata {
+  panelId: string;
   appSettingNames?: string[];
   standardApp: StandardApp;
   scriptPath: string;
@@ -17,6 +18,7 @@ export interface IDesignerPanelMetadata {
   localSettings: Record<string, string>;
   azureDetails: AzureConnectorDetails;
   workflowDetails: Record<string, any>;
+  workflowName: string;
   artifacts: Artifacts;
   workflowContent?: any;
   configuredWebhookEndpoint?: string;

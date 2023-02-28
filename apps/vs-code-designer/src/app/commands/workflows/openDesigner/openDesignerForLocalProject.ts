@@ -31,7 +31,7 @@ import { exec } from 'child_process';
 import { writeFileSync, readFileSync } from 'fs';
 import * as path from 'path';
 import * as requestP from 'request-promise';
-import { ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscode';
+import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ProgressOptions } from 'vscode';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
@@ -101,6 +101,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     this.migrationOptions = await this._getMigrationOptions(this.baseUrl);
     this.panelMetadata = await this._getDesignerPanelMetadata(this.migrationOptions);
+    const callbackUri: Uri = await (env as any).asExternalUri(
+      Uri.parse(`${env.uriScheme}://ms-azuretools.vscode-azurelogicapps/authcomplete`)
+    );
+    this.oauthRedirectUrl = callbackUri.toString(true);
 
     this.panel.webview.html = await this.getWebviewContent({
       connectionsData: this.panelMetadata.connectionsData,
@@ -128,7 +132,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private async _handleWebviewMsg(msg: any) {
     switch (msg.command) {
       case ExtensionCommand.initialize: {
-        console.log('panelMetadata: ', this.panelMetadata);
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
           data: {
@@ -140,6 +143,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             readOnly: this.readOnly,
             isLocal: this.isLocal,
             workflowDetails: this.workflowDetails,
+            oauthRedirectUrl: this.oauthRedirectUrl,
           },
         });
         break;
@@ -159,6 +163,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         await addConnectionData(this.context, this.workflowFilePath, msg.connectionData);
         break;
       }
+      case ExtensionCommand.openOauthLoginPopup:
+        await env.openExternal(msg.url);
+        break;
+
       case ExtensionCommand.createFileSystemConnection:
         {
           const connectionName = msg.connectionName;
@@ -368,6 +376,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     }
 
     return {
+      panelId: this.panelName,
       appSettingNames: Object.keys(localSettings),
       standardApp: getStandardAppData(this.workflowName, workflowContent, parametersData),
       scriptPath: this.panel.webview.asWebviewUri(Uri.file(path.join(ext.context.extensionPath, 'dist', 'designer'))).toString(),
@@ -378,6 +387,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       accessToken: azureDetails.accessToken,
       workflowContent,
       workflowDetails: await getManualWorkflowsInLocalProject(projectPath, this.workflowName),
+      workflowName: this.workflowName,
       artifacts: await getArtifactsInLocalProject(projectPath),
     };
   }

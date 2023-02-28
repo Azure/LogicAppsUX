@@ -34,6 +34,7 @@ export abstract class OpenDesignerBase {
   protected isLocal: boolean;
   protected appSettings: Record<string, string>;
   protected workflowDetails: Record<string, any>;
+  protected oauthRedirectUrl?: string;
 
   protected constructor(
     context: IActionContext | IAzureConnectorsContext,

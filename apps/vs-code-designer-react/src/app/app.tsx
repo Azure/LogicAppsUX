@@ -4,6 +4,7 @@ import { VSCodeContext } from '../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import { getDesignerServices } from './servicesHelper';
 import { convertConnectionsDataToReferences } from './utilities/workflow';
+import type { ConnectionCreationInfo } from '@microsoft/designer-client-services-logic-apps';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
 import { Theme } from '@microsoft/utils-logic-apps';
@@ -16,21 +17,9 @@ export const App = () => {
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.designer);
-  const { panelMetaData, connectionData, baseUrl, apiHubServiceDetails, readOnly, isLocal, apiVersion, tenantId } = vscodeState;
-
+  const { panelMetaData, connectionData, baseUrl, apiHubServiceDetails, readOnly, isLocal, apiVersion, tenantId, oauthRedirectUrl } =
+    vscodeState;
   const standardApp = panelMetaData?.standardApp;
-  const appSettings = useMemo(() => {
-    return panelMetaData?.localSettings ?? {};
-  }, [panelMetaData?.localSettings]);
-
-  const workflowDetails = useMemo(() => {
-    return panelMetaData?.workflowDetails ?? {};
-  }, [panelMetaData?.workflowDetails]);
-
-  const authToken = useMemo(() => {
-    return panelMetaData?.azureDetails.accessToken ?? '';
-  }, [panelMetaData?.azureDetails.accessToken]);
-
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
 
   useThemeObserver(document.body, theme, setTheme, {
@@ -38,7 +27,10 @@ export const App = () => {
   });
 
   const services = useMemo(() => {
-    const fileSystemConnectionCreate = async (connectionInfo: FileSystemConnectionInfo, connectionName: string) => {
+    const fileSystemConnectionCreate = async (
+      connectionInfo: FileSystemConnectionInfo,
+      connectionName: string
+    ): Promise<ConnectionCreationInfo> => {
       vscode.postMessage({
         command: ExtensionCommand.createFileSystemConnection,
         connectionInfo,
@@ -55,25 +47,12 @@ export const App = () => {
       tenantId,
       isLocal,
       connectionData,
-      appSettings,
-      workflowDetails,
-      authToken,
+      panelMetaData,
       fileSystemConnectionCreate,
-      vscode
+      vscode,
+      oauthRedirectUrl
     );
-  }, [
-    baseUrl,
-    apiVersion,
-    apiHubServiceDetails,
-    tenantId,
-    isLocal,
-    connectionData,
-    appSettings,
-    workflowDetails,
-    authToken,
-    vscode,
-    dispatch,
-  ]);
+  }, [baseUrl, apiVersion, apiHubServiceDetails, tenantId, isLocal, connectionData, panelMetaData, vscode, oauthRedirectUrl, dispatch]);
 
   const connectionReferences: ConnectionReferences = useMemo(() => {
     return convertConnectionsDataToReferences(connectionData);
