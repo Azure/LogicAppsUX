@@ -96,46 +96,10 @@ export const getDesignerServices = (
         return Promise.resolve(workflowSchemas[workflowName] || {});
       },
     },
+    // TODO ValuesClient needs to be implemented
     valuesClient: {
       getWorkflows: () => Promise.resolve(manualWorkflows),
       getMapArtifacts: () => Promise.resolve([]),
-      // getMapArtifacts: (args) => {
-      //   if (args.mapSource === integrationAccount) {
-      //     // if (!iaMapArtifacts) {
-      //     //   const settings = JSON.stringify(localSettings);
-      //     //   vscode.postMessage({
-      //     //     command: 'GetMapArtifacts',
-      //     //     callbackUrl: settings && settings['WORKFLOW_INTEGRATION_ACCOUNT_CALLBACK_URL'],
-      //     //   });
-      //     // }
-
-      //     // const promise = new Promise((resolve, reject) => {
-      //     //   resolveMapArtifacts = () => {
-      //     //     if (iaMapArtifacts) {
-      //     //       resolve(iaMapArtifacts[args.mapType.toLowerCase()] || []);
-      //     //     } else {
-      //     //       resolve([]);
-      //     //     }
-      //     //   };
-      //     //   rejectMapArtifacts = (errorMessage) => {
-      //     //     reject({ message: errorMessage });
-      //     //   };
-      //     // });
-
-      //     // if (iaMapArtifacts) {
-      //     //   resolveMapArtifacts();
-      //     //   resolveMapArtifacts = null;
-      //     //   rejectMapArtifacts = null;
-      //     // }
-
-      //     // return promise;
-      //     return []
-      //   } else {
-      //     const extensionName = args.mapType;
-      //     const allMaps = JSON.stringify(mapArtifacts);
-      //     return Promise.resolve(allMaps[extensionName] || []);
-      //   }
-      // },
       getSchemaArtifacts: () => Promise.resolve([]),
     },
     apiHubServiceDetails,
