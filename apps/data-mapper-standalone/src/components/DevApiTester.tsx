@@ -12,9 +12,9 @@ import {
   Text,
   tokens,
 } from '@fluentui/react-components';
-import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
 import type { MonacoProps } from '@microsoft/designer-ui';
-import { getFunctions, getSelectedSchema, testDataMap, generateDataMapXslt } from '@microsoft/logic-apps-data-mapper';
+import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
+import { generateDataMapXslt, getFunctions, getSelectedSchema, testDataMap } from '@microsoft/logic-apps-data-mapper';
 import { useState } from 'react';
 
 enum RequestTab {
@@ -52,6 +52,7 @@ export const DevApiTester = () => {
 
   const getSchemaTree = async () => {
     try {
+      setApiResponse('Getting schema');
       const schemaTree = await getSelectedSchema(schemaFilename);
       setApiResponse(JSON.stringify(schemaTree, null, 2));
     } catch (error: unknown) {
@@ -60,17 +61,20 @@ export const DevApiTester = () => {
   };
 
   const getFunctionManifest = async () => {
+    setApiResponse('Fetching manifest');
     const fnManifest = await getFunctions();
     setApiResponse(JSON.stringify(fnManifest, null, 2));
   };
 
   const testMap = async () => {
+    setApiResponse('Testing map');
     const testMapResponse = await testDataMap(xsltFilename, testMapInput);
     setApiResponse(JSON.stringify(testMapResponse, null, 2));
   };
 
   const generateXslt = async () => {
     try {
+      setApiResponse('Generating XSLT');
       const generateXsltResponse = await generateDataMapXslt(generateXsltInput);
       setApiResponse(JSON.stringify(generateXsltResponse, null, 2));
     } catch (error: unknown) {
