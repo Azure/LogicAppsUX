@@ -235,7 +235,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
               functionKey={functionData.key}
               functionName={functionData.functionName}
               categoryName={functionData.category}
-              color={tokens.colorNeutralForeground1}
+              color={tokens.colorNeutralForegroundInverted}
             />
           </span>
 
