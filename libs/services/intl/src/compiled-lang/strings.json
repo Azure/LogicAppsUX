@@ -1063,6 +1063,16 @@
       "value": "Start time"
     }
   ],
+  "6zjUTO": [
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": " has too many inputs assigned to it"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
@@ -5507,6 +5517,12 @@
     {
       "type": 0,
       "value": "Shorthand for actions('actionName').outputs.body"
+    }
+  ],
+  "lqziTm": [
+    {
+      "type": 0,
+      "value": "Function has too many inputs assigned"
     }
   ],
   "lsKVU6": [
