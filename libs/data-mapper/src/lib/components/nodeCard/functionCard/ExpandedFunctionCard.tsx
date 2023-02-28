@@ -80,10 +80,10 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
     >
       {isExpanded ? null : handlesForCollapsedHeader}
       <FunctionIcon
-        name={functionData.functionName}
+        functionKey={functionData.key}
+        functionName={functionData.functionName}
         categoryName={functionData.category}
-        fileName={functionData.iconFileName}
-        color={tokens.colorNeutralForegroundInverted}
+        color={tokens.colorNeutralForeground1}
       />
       <Text
         style={{
