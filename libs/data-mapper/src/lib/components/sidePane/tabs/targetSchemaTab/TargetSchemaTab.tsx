@@ -162,7 +162,7 @@ export const TargetSchemaTab = () => {
   );
 };
 
-/*eslint no-param-reassign: ["error", { "props": false }]*/
+/* eslint-disable no-param-reassign */
 const handleObjectParentToggledState = (
   stateDict: NodeToggledStateDictionary,
   nodeKey: string,

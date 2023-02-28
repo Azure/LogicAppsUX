@@ -1250,6 +1250,12 @@
       "value": "请为逻辑应用启用托管标识。"
     }
   ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -2260,6 +2266,12 @@
     {
       "type": 0,
       "value": "不支持将动态内容作为身份验证中的属性。"
+    }
+  ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
     }
   ],
   "IA+Ogm": [

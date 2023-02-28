@@ -1236,6 +1236,12 @@
       "value": "Abilitare l'identità gestita per l'app per la logica."
     }
   ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -2266,6 +2272,12 @@
     {
       "type": 0,
       "value": "Il contenuto dinamico non è supportato come proprietà nell'autenticazione."
+    }
+  ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
     }
   ],
   "IA+Ogm": [

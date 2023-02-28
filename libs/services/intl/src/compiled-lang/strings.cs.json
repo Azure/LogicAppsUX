@@ -1283,6 +1283,12 @@
       "value": "Povolte prosím pro aplikaci logiky spravovanou identitu."
     }
   ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -2367,6 +2373,12 @@
     {
       "type": 0,
       "value": "Při ověřování se využití dynamického obsahu jako vlastností nepodporuje."
+    }
+  ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
     }
   ],
   "IA+Ogm": [
