@@ -56,6 +56,13 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
     dispatch(deleteCurrentlySelectedItem());
   };
 
+  const handleHeaderOnClick = () => {
+    // Require a function to already be selected to be able to collapse
+    if (!isExpanded || isCurrentNodeSelected) {
+      toggleIsExpanded();
+    }
+  };
+
   const areCurrentInputsValid = useMemo(() => {
     return inputsValid(reactFlowId, functionData, connections);
   }, [connections, reactFlowId, functionData]);
@@ -69,7 +76,7 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const header = (
     <Button
       appearance="transparent"
-      onClick={toggleIsExpanded}
+      onClick={handleHeaderOnClick}
       style={{
         padding: '5px',
         minHeight: '20px',
@@ -112,14 +119,6 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
     backgroundColor: tokens.colorNeutralBackground1,
     borderRadius: tokens.borderRadiusMedium,
   };
-  const inputTextStyles: React.CSSProperties = {
-    alignItems: 'center',
-    height: '30px',
-    display: 'flex',
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-  };
   const handleIndexOffset = 34;
   const handleBaseOffset = 58;
 
@@ -132,15 +131,17 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
           return (
             <StackItem key={input.name}>
               <div key={input.name} style={inputBodyStyles}>
-                <Handle id={input.name} type="target" position={Position.Left} style={{ top: `${handleTop}px` }} />
-                <Tooltip
-                  content={{
-                    children: <Text size={200}>{input.tooltip}</Text>,
+                <Handle
+                  id={input.name}
+                  type="target"
+                  position={Position.Left}
+                  style={{
+                    top: `${handleTop}px`,
+                    backgroundColor:
+                      typeof input === 'string' ? (input ? tokens.colorPaletteBlueBackground2 : tokens.colorPaletteRedBackground3) : '',
                   }}
-                  relationship="label"
-                >
-                  <Text style={inputTextStyles}>{`${input.name}${input.isOptional ? '' : '*'}`}</Text>
-                </Tooltip>
+                />
+                {generateInputName(input.name, input.isOptional, input.tooltip)}
               </div>
             </StackItem>
           );
@@ -164,14 +165,7 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
                     typeof input === 'string' ? (input ? tokens.colorPaletteBlueBackground2 : tokens.colorPaletteRedBackground3) : '',
                 }}
               />
-              <Tooltip
-                content={{
-                  children: <Text size={200}>{functionData.inputs[0].tooltip}</Text>,
-                }}
-                relationship="label"
-              >
-                <Text style={inputTextStyles}>{`${name}${functionData.inputs[0].isOptional ? '' : '*'}`}</Text>
-              </Tooltip>
+              {generateInputName(name, functionData.inputs[0].isOptional, functionData.inputs[0].tooltip)}
             </div>
           );
         })
@@ -205,26 +199,28 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
           }}
         />
       )}
-      <Tooltip
-        content={{
-          children: <Text size={200}>{functionData.displayName}</Text>,
-        }}
-        relationship="label"
-      >
-        <div style={divStyle}>
+
+      <div style={divStyle}>
+        <Tooltip
+          content={{
+            children: <Text size={200}>{functionData.displayName}</Text>,
+          }}
+          relationship="label"
+        >
           {header}
-          {isExpanded ? (
-            <Stack
-              tokens={{
-                childrenGap: '4px',
-                padding: '6px 4px',
-              }}
-            >
-              {inputsForBody}
-            </Stack>
-          ) : null}
-        </div>
-      </Tooltip>
+        </Tooltip>
+        {isExpanded ? (
+          <Stack
+            tokens={{
+              childrenGap: '4px',
+              padding: '6px 4px',
+            }}
+          >
+            {inputsForBody}
+          </Stack>
+        ) : null}
+      </div>
+
       <CardContextMenu
         title={'Delete'}
         contextMenuLocation={contextMenu.location}
@@ -233,5 +229,31 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
         onSetShowContextMenu={contextMenu.setIsShowing}
       />
     </div>
+  );
+};
+
+const generateInputName = (inputName: string, required: boolean, tooltip?: string) => {
+  const inputTextStyles: React.CSSProperties = {
+    alignItems: 'center',
+    height: '30px',
+    display: 'flex',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+  };
+
+  const formattedText = `${inputName}${required ? '' : '*'}`;
+
+  return tooltip ? (
+    <Tooltip
+      content={{
+        children: <Text size={200}>{tooltip}</Text>,
+      }}
+      relationship="label"
+    >
+      <Text style={inputTextStyles}>{formattedText}</Text>
+    </Tooltip>
+  ) : (
+    <Text style={inputTextStyles}>{formattedText}</Text>
   );
 };
