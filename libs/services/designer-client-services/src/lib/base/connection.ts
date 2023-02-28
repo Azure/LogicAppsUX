@@ -286,26 +286,26 @@ export abstract class BaseConnectionService implements IConnectionService {
   }
 
   protected async getConnectionsForConnector(connectorId: string): Promise<Connection[]> {
-    // Right now there isn't a name $filter for custom connections, so we need to filter them manually
-    if (isCustomConnector(connectorId)) {
-      const {
-        apiHubServiceDetails: { location, apiVersion },
-        httpClient,
-      } = this.options;
-      const response = await httpClient.get<ConnectionsResponse>({
-        uri: `${this._subscriptionResourceGroupWebUrl}/connections`,
-        queryParameters: {
-          'api-version': apiVersion,
-          $filter: `Location eq '${location}' and Kind eq '${this._vVersion}'`,
-        },
-      });
-      const filteredConnections = response.value.filter((connection) => {
-        return equals(connection.properties.api.id, connectorId);
-      });
-      return filteredConnections;
-    }
-
     if (isArmResourceId(connectorId)) {
+      // Right now there isn't a name $filter for custom connections, so we need to filter them manually
+      if (isCustomConnector(connectorId)) {
+        const {
+          apiHubServiceDetails: { location, apiVersion },
+          httpClient,
+        } = this.options;
+        const response = await httpClient.get<ConnectionsResponse>({
+          uri: `${this._subscriptionResourceGroupWebUrl}/connections`,
+          queryParameters: {
+            'api-version': apiVersion,
+            $filter: `Location eq '${location}' and Kind eq '${this._vVersion}'`,
+          },
+        });
+        const filteredConnections = response.value.filter((connection) => {
+          return equals(connection.properties.api.id, connectorId);
+        });
+        return filteredConnections;
+      }
+
       const {
         apiHubServiceDetails: { location, apiVersion },
         httpClient,

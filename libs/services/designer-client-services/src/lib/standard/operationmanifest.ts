@@ -26,7 +26,7 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
     const supportedManifest = supportedBaseManifestObjects.get(operationId);
     if (supportedManifest) return supportedManifest;
 
-    if (isCustomConnector(connectorId)) return await this.getCustomOperationManifest(connectorId, operationId);
+    if (isCustomConnector(connectorId)) return this.getCustomOperationManifest(connectorId, operationId);
 
     const { apiVersion, baseUrl, httpClient } = this.options;
     const connectorName = connectorId.split('/').slice(-1)[0];
@@ -77,26 +77,21 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
         queryParameters,
       });
 
-      // find matching operation by id
-      const operationResponse = response.value.find((operation: any) => equals(operation.id.split('/').pop(), operationId));
-
       const {
-        properties: { brandColor, description, iconUri, manifest, operationType },
-      } = operationResponse;
+        properties: { brandColor, description, iconUri, manifest },
+      } = response.value;
 
       const operationManifest = {
         properties: {
           brandColor,
           description,
           iconUri,
-          connection: equals(operationType, 'serviceprovider') ? { required: true, type: ConnectionType.ServiceProvider } : undefined,
           ...manifest,
         },
       };
 
       return operationManifest;
     } catch (error) {
-      console.error('Error getting custom operation manifest', error);
       return { properties: {} } as any;
     }
   }

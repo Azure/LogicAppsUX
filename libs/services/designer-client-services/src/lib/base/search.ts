@@ -203,7 +203,6 @@ export abstract class BaseSearchService implements ISearchService {
       const response = await this.getAzureResourceRecursive(uri, queryParameters);
       return response;
     } catch (error) {
-      console.error(error);
       return [];
     }
   }
@@ -222,7 +221,6 @@ export abstract class BaseSearchService implements ISearchService {
       const output = response.filter((connector: any) => equals(connector.location, location));
       return output.length > 0 ? output : response;
     } catch (error) {
-      console.error(error);
       return [];
     }
   }
