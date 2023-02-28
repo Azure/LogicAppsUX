@@ -58,6 +58,7 @@ export * from './panel/panelcontainer';
 export * from './panel/panelUtil';
 export * from './panel/panelheader/panelheader';
 export * from './panel/recommendationpanel';
+export * from './recurrence';
 export * from './scratch';
 // export * from './picker';
 // export * from './rulescontrol';
