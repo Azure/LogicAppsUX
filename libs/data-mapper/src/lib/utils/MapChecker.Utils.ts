@@ -26,7 +26,10 @@ export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _t
       if (!areInputTypesValidForFunction(node, connectionValue)) {
         errors.push({
           title: { message: mapCheckerResources.inputTypeMismatchTitle },
-          description: { message: mapCheckerResources.inputTypeMismatchBody, value: { nodeName: node.displayName } },
+          description: {
+            message: mapCheckerResources.functionInputTypeMismatchBody,
+            value: { nodeName: node.displayName },
+          },
           severity: MapCheckerItemSeverity.Error,
           reactFlowId: connectionValue.self.reactFlowKey,
         });
@@ -53,7 +56,10 @@ export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _t
       if (!connectionValue.self.reactFlowKey.startsWith(sourcePrefix) && !areInputTypesValidForSchemaNode(node, connectionValue)) {
         errors.push({
           title: { message: mapCheckerResources.inputTypeMismatchTitle },
-          description: { message: mapCheckerResources.inputTypeMismatchBody, value: { nodeName: node.name } },
+          description: {
+            message: mapCheckerResources.schemaInputTypeMismatchBody,
+            value: { nodeName: node.name },
+          },
           severity: MapCheckerItemSeverity.Error,
           reactFlowId: connectionValue.self.reactFlowKey,
         });
@@ -183,16 +189,20 @@ const mapCheckerResources = defineMessages({
     defaultMessage: 'Input type mismatch',
     description: 'Title for the input type mismatch card',
   },
-  inputTypeMismatchBody: {
-    defaultMessage: '{nodeName} has an input with a mismatched type',
+  functionInputTypeMismatchBody: {
+    defaultMessage: `Function ''{nodeName}'' has an input with a mismatched type`,
+    description: 'Body text for the input type mismatch card',
+  },
+  schemaInputTypeMismatchBody: {
+    defaultMessage: `Schema node ''{nodeName}'' has an input with a mismatched type`,
     description: 'Body text for the input type mismatch card',
   },
   functionMissingInputsTitle: {
-    defaultMessage: 'Function is missing required inputs',
+    defaultMessage: 'Missing required inputs',
     description: 'Title for a function missing a required input card',
   },
   functionMissingInputsBody: {
-    defaultMessage: '{functionName} has an non-terminating connection chain',
+    defaultMessage: `Function ''{functionName}'' has an non-terminating connection chain`,
     description: 'Body text for a function missing a required input card',
   },
   requiredSchemaNodeTitle: {
@@ -200,15 +210,15 @@ const mapCheckerResources = defineMessages({
     description: 'Title for an unconnected required schema card',
   },
   requiredSchemaNodeBody: {
-    defaultMessage: '{nodeName} has an non-terminating connection chain',
+    defaultMessage: `Schema node ''{nodeName}'' has an non-terminating connection chain`,
     description: 'Body text for an unconnected required schema card',
   },
   functionExceedsMaxInputsTitle: {
-    defaultMessage: 'Function has too many inputs assigned',
+    defaultMessage: 'Too many inputs assigned',
     description: 'Title for a too many inputs card',
   },
   functionExceedsMaxInputsBody: {
-    defaultMessage: '{functionName} has too many inputs assigned to it',
+    defaultMessage: `Function ''{functionName}'' has too many inputs assigned to it`,
     description: 'Body text for a too many inputs card',
   },
 });
