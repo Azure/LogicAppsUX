@@ -165,6 +165,7 @@ export abstract class OpenDesignerBase {
           location: azureDetails.location,
           resourceGroup: azureDetails.resourceGroupName,
           tenantId: azureDetails.tenantId,
+          resourceGroupName: azureDetails.resourceGroupName,
           getAccessToken: () => Promise.resolve(azureDetails.accessToken),
         }
       : undefined;
