@@ -257,12 +257,6 @@
       "value": "Recolher"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "Selecione um filtro"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -936,12 +930,6 @@
       "value": "14"
     }
   ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "Tipo de Ação"
-    }
-  ],
   "5+MuPz": [
     {
       "type": 0,
@@ -1242,6 +1230,12 @@
     {
       "type": 0,
       "value": "Habilite a identidade gerenciada para o aplicativo lógico."
+    }
+  ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
     }
   ],
   "8U0KPg": [
@@ -1827,6 +1821,12 @@
       "value": "Fazer Grupo"
     }
   ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
@@ -2094,12 +2094,6 @@
       "value": "Necessário. O objeto a ser localizado na coleção Within."
     }
   ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2276,6 +2270,12 @@
       "value": "Não há suporte para conteúdo dinâmico como propriedades na autenticação."
     }
   ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -2316,12 +2316,6 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
-    }
-  ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "Retornar para navegar"
     }
   ],
   "IooQu1": [
@@ -2412,12 +2406,6 @@
     {
       "type": 0,
       "value": "Necessário. Uma cadeia de caracteres que contém o tempo."
-    }
-  ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2591,6 +2579,12 @@
       "value": "Sua pesquisa não retornou resultados"
     }
   ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "LBbhCu": [
     {
       "type": 0,
@@ -2727,16 +2721,6 @@
     {
       "type": 0,
       "value": "Opcional. O nome da ação com escopo em cujo escopo você deseja que estejam as entradas e saídas das ações de nível superior."
-    }
-  ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "Nenhum resultado encontrado para: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "M9mzP6": [
@@ -2907,12 +2891,6 @@
       "value": "Terça-feira"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "Runtime"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -3049,12 +3027,6 @@
     {
       "type": 0,
       "value": "Pfx"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "Filtrar"
     }
   ],
   "P2A5dB": [
@@ -3550,6 +3522,12 @@
       "value": "Contagem de paginação inválida"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3746,10 +3724,14 @@
       "value": "Expandir"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -4848,6 +4830,12 @@
       "value": "Publicar"
     }
   ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
   "g5mMuM": [
     {
       "type": 0,
@@ -4918,16 +4906,6 @@
     {
       "type": 0,
       "value": "Condições do Gatilho"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 0,
-      "value": "Resultados da pesquisa para: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -5463,12 +5441,6 @@
       "value": "Necessário. Este valor é o próximo inteiro após o número inteiro mais alto que poderia ser retornado."
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5573,6 +5545,12 @@
       "value": "Abreviação de actions('actionName').outputs.body"
     }
   ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -5595,6 +5573,12 @@
     {
       "type": 0,
       "value": "Valor Real"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6420,12 +6404,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6538,6 +6516,12 @@
     {
       "type": 0,
       "value": "Necessário. O número de unidades de tempo que o horário desejado tem no passado."
+    }
+  ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
     }
   ],
   "uczA5c": [
@@ -6710,6 +6694,12 @@
       "value": "Propriedades do Fluxo de Trabalho"
     }
   ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
+    }
+  ],
   "w16qh+": [
     {
       "type": 0,
@@ -6720,6 +6710,12 @@
     {
       "type": 0,
       "value": "Domingo"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [

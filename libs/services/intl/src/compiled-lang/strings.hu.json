@@ -273,12 +273,6 @@
       "value": "Összecsukás"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "Válasszon szűrőt"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -941,12 +935,6 @@
       "value": "14"
     }
   ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "Művelet típusa"
-    }
-  ],
   "5+MuPz": [
     {
       "type": 0,
@@ -1267,6 +1255,12 @@
     {
       "type": 0,
       "value": "Engedélyezze a felügyelt identitás használatát a logikai alkalmazásban."
+    }
+  ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
     }
   ],
   "8U0KPg": [
@@ -1857,6 +1851,12 @@
       "value": "Csoport létrehozása"
     }
   ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
@@ -2121,12 +2121,6 @@
       "value": "Kötelező megadni. A tartalmazó gyűjteményben keresendő objektum."
     }
   ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2311,6 +2305,12 @@
       "value": "A dinamikus tartalom hitelesítési tulajdonságokként való használata nem támogatott."
     }
   ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -2351,12 +2351,6 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Barnaul, Gorno-Altajszk"
-    }
-  ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "Visszatérés a tallózáshoz"
     }
   ],
   "IooQu1": [
@@ -2447,12 +2441,6 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az időt tartalmazó sztring."
-    }
-  ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2615,6 +2603,12 @@
       "value": "A keresés nem adott eredményeket"
     }
   ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "LBbhCu": [
     {
       "type": 0,
@@ -2775,16 +2769,6 @@
     {
       "type": 0,
       "value": "Nem kötelező. Annak a hatóköri műveletnek a neve, ahol az adott hatókör legfelső szintű műveleteinek bemeneteit és kimeneteit szeretné használni."
-    }
-  ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "Nincs találat a következőre: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "M9mzP6": [
@@ -2955,12 +2939,6 @@
       "value": "Kedd"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "Futtatókörnyezet"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -3113,12 +3091,6 @@
     {
       "type": 0,
       "value": "Pfx"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "Szűrés"
     }
   ],
   "P2A5dB": [
@@ -3607,6 +3579,12 @@
       "value": "A lapozások száma érvénytelen"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3803,10 +3781,14 @@
       "value": "Kibontás"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -4925,6 +4907,12 @@
       "value": "Közzététel"
     }
   ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
   "g5mMuM": [
     {
       "type": 0,
@@ -4995,16 +4983,6 @@
     {
       "type": 0,
       "value": "Aktiválási feltételek"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 0,
-      "value": "Keresési eredmények a következőhöz: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -5557,12 +5535,6 @@
       "value": "Kötelező megadni. Az érték a legnagyobb visszaadható egész szám utáni egész szám."
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5667,6 +5639,12 @@
       "value": "Az actions('actionName').outputs.body rövid függvényneve."
     }
   ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -5689,6 +5667,12 @@
     {
       "type": 0,
       "value": "Tényleges érték"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6527,12 +6511,6 @@
       "value": "(UTC+06:00) Novoszibirszk"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6645,6 +6623,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az időegységek azon mennyisége, amellyel a kívánt időpont a múltban van."
+    }
+  ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
     }
   ],
   "uczA5c": [
@@ -6817,6 +6801,12 @@
       "value": "Munkafolyamat tulajdonságai"
     }
   ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
+    }
+  ],
   "w16qh+": [
     {
       "type": 0,
@@ -6827,6 +6817,12 @@
     {
       "type": 0,
       "value": "Vasárnap"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [

@@ -1,21 +1,21 @@
 import type { FunctionGroupBranding } from '../../../constants/FunctionConstants';
-import { functionNodeCardSize } from '../../../constants/NodeConstants';
+import { simpleFunctionCardDiameter } from '../../../constants/NodeConstants';
 import type { ConnectionDictionary } from '../../../models/Connection';
 import type { FunctionData } from '../../../models/Function';
 import { areInputTypesValidForFunction } from '../../../utils/MapChecker.Utils';
 import type { CardProps } from '../NodeCard';
 import { createFocusOutlineStyle, makeStyles, shorthands, tokens } from '@fluentui/react-components';
 
-const sharedHalfCardSize = functionNodeCardSize / 2;
+const simpleFunctionCardRadius = simpleFunctionCardDiameter / 2;
 
 export const useFunctionCardStyles = makeStyles({
   root: {
     ...shorthands.borderRadius(tokens.borderRadiusCircular),
     color: tokens.colorNeutralBackground1,
     fontSize: '20px',
-    height: `${sharedHalfCardSize}px`,
-    width: `${sharedHalfCardSize}px`,
-    minWidth: `${sharedHalfCardSize}px`,
+    height: `${simpleFunctionCardRadius}px`,
+    width: `${simpleFunctionCardRadius}px`,
+    minWidth: `${simpleFunctionCardRadius}px`,
     textAlign: 'center',
     position: 'relative',
     justifyContent: 'center',

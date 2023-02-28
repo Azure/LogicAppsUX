@@ -273,12 +273,6 @@
       "value": "Dölj"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "Välj ett filter"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -941,12 +935,6 @@
       "value": "14"
     }
   ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "Åtgärdstyp"
-    }
-  ],
   "5+MuPz": [
     {
       "type": 0,
@@ -1267,6 +1255,12 @@
     {
       "type": 0,
       "value": "Aktivera hanterad identitet för logikappen."
+    }
+  ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
     }
   ],
   "8U0KPg": [
@@ -1857,6 +1851,12 @@
       "value": "Skapa grupp"
     }
   ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
@@ -2121,12 +2121,6 @@
       "value": "Obligatoriskt. Det objekt det ska sökas efter i Within-samlingen."
     }
   ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2311,6 +2305,12 @@
       "value": "Dynamiskt innehåll stöds inte som egenskaper i autentisering."
     }
   ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -2351,12 +2351,6 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
-    }
-  ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "Gå tillbaka för att bläddra"
     }
   ],
   "IooQu1": [
@@ -2447,12 +2441,6 @@
     {
       "type": 0,
       "value": "Krävs. En sträng som innehåller tiden."
-    }
-  ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2615,6 +2603,12 @@
       "value": " Det finns inte något resultat för din sökning"
     }
   ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "LBbhCu": [
     {
       "type": 0,
@@ -2771,16 +2765,6 @@
     {
       "type": 0,
       "value": "Valfritt. Namnet på den omfångsdefinierade åtgärd där du vill ha indata och utdata från åtgärderna på toppnivå i det omfånget."
-    }
-  ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "Inga resultat hittades för: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "M9mzP6": [
@@ -2951,12 +2935,6 @@
       "value": "Tisdag"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "Körning"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -3105,12 +3083,6 @@
     {
       "type": 0,
       "value": "Pfx"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "Filter"
     }
   ],
   "P2A5dB": [
@@ -3599,6 +3571,12 @@
       "value": "Växlingsantalet är ogiltigt"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3795,10 +3773,14 @@
       "value": "Expandera"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -4905,6 +4887,12 @@
       "value": "Publicera"
     }
   ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
   "g5mMuM": [
     {
       "type": 0,
@@ -4975,16 +4963,6 @@
     {
       "type": 0,
       "value": "Utlösarvillkor"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 0,
-      "value": "Sökresultat för: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -5533,12 +5511,6 @@
       "value": "Krävs. Det här värdet är nästa heltal efter det högsta heltalet som kunde returneras."
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5643,6 +5615,12 @@
       "value": "Kortkommando för åtgärder(actionName).outputs.body"
     }
   ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -5665,6 +5643,12 @@
     {
       "type": 0,
       "value": "Faktiskt värde"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6499,12 +6483,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6617,6 +6595,12 @@
     {
       "type": 0,
       "value": "Krävs. Antalet tidsenheter som den önskade tiden är i det förflutna."
+    }
+  ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
     }
   ],
   "uczA5c": [
@@ -6789,6 +6773,12 @@
       "value": "Arbetsflödesegenskaper"
     }
   ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
+    }
+  ],
   "w16qh+": [
     {
       "type": 0,
@@ -6799,6 +6789,12 @@
     {
       "type": 0,
       "value": "Söndag"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [

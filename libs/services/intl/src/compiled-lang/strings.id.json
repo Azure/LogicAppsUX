@@ -257,12 +257,6 @@
       "value": "Ciutkan"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "Pilih filter"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -914,12 +908,6 @@
       "value": "14"
     }
   ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "Tipe Tindakan"
-    }
-  ],
   "5+MuPz": [
     {
       "type": 0,
@@ -1224,6 +1212,12 @@
     {
       "type": 0,
       "value": "Harap aktifkan identitas yang dikelola untuk aplikasi logika."
+    }
+  ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
     }
   ],
   "8U0KPg": [
@@ -1787,6 +1781,12 @@
       "value": "Buat Grup"
     }
   ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
@@ -2032,12 +2032,6 @@
       "value": "Harus diisi. Objek untuk dicari Di dalam koleksi."
     }
   ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2214,6 +2208,12 @@
       "value": "Konten dinamis tidak didukung sebagai properti dalam autentikasi."
     }
   ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -2254,12 +2254,6 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
-    }
-  ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "Kembali ke penelusuran"
     }
   ],
   "IooQu1": [
@@ -2350,12 +2344,6 @@
     {
       "type": 0,
       "value": "Wajib. String yang berisi waktu."
-    }
-  ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2507,6 +2495,12 @@
       "value": "Tidak ada hasil untuk pencarian Anda"
     }
   ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "LBbhCu": [
     {
       "type": 0,
@@ -2643,16 +2637,6 @@
     {
       "type": 0,
       "value": "Opsional. Nama tindakan tercakup tempat Anda menginginkan input dan output dari tindakan tingkat atas dalam cakupan tersebut."
-    }
-  ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "Tidak ada hasil yang ditemukan untuk: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "M9mzP6": [
@@ -2823,12 +2807,6 @@
       "value": "Selasa"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "Runtime"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -2965,12 +2943,6 @@
     {
       "type": 0,
       "value": "Pfx"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "Filter"
     }
   ],
   "P2A5dB": [
@@ -3444,6 +3416,12 @@
       "value": "Jumlah halaman tidak valid"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3640,10 +3618,14 @@
       "value": "Luaskan"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -4742,6 +4724,12 @@
       "value": "Terbitkan"
     }
   ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
   "g5mMuM": [
     {
       "type": 0,
@@ -4812,16 +4800,6 @@
     {
       "type": 0,
       "value": "Kondisi Pemicu"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 0,
-      "value": "Hasil pencarian untuk: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -5335,12 +5313,6 @@
       "value": "Wajib. Nilai ini adalah bilangan bulat berikutnya setelah bilangan bulat tertinggi yang dapat ditampilkan."
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5445,6 +5417,12 @@
       "value": "Pintasan untuk tindakan('actionName').outputs.body"
     }
   ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -5467,6 +5445,12 @@
     {
       "type": 0,
       "value": "Nilai Aktual"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6270,12 +6254,6 @@
       "value": "(UTC+06.00) Novosibirsk"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6388,6 +6366,12 @@
     {
       "type": 0,
       "value": "Wajib. Jumlah unit waktu yang diinginkan adalah di masa lalu."
+    }
+  ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
     }
   ],
   "uczA5c": [
@@ -6560,6 +6544,12 @@
       "value": "Properti Alur Kerja"
     }
   ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
+    }
+  ],
   "w16qh+": [
     {
       "type": 0,
@@ -6570,6 +6560,12 @@
     {
       "type": 0,
       "value": "Minggu"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [

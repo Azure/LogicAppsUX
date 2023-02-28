@@ -257,12 +257,6 @@
       "value": "Daralt"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "Filtre seçin"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -925,12 +919,6 @@
       "value": "14"
     }
   ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "Eylem Türü"
-    }
-  ],
   "5+MuPz": [
     {
       "type": 0,
@@ -1235,6 +1223,12 @@
     {
       "type": 0,
       "value": "Lütfen mantıksal uygulama için yönetilen kimliği etkinleştirin."
+    }
+  ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
     }
   ],
   "8U0KPg": [
@@ -1809,6 +1803,12 @@
       "value": "Grup Oluştur"
     }
   ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
@@ -2061,12 +2061,6 @@
       "value": "Gerekli. Koleksiyon içinde bulunacak nesne."
     }
   ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2243,6 +2237,12 @@
       "value": "Dinamik içerik, kimlik doğrulamasında özellik olarak desteklenmiyor."
     }
   ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -2283,12 +2283,6 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
-    }
-  ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "Göz atmaya dön"
     }
   ],
   "IooQu1": [
@@ -2379,12 +2373,6 @@
     {
       "type": 0,
       "value": "Gerekli. Zamanı içeren bir dize."
-    }
-  ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2547,6 +2535,12 @@
       "value": "Aramanız için sonuç yok"
     }
   ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "LBbhCu": [
     {
       "type": 0,
@@ -2683,16 +2677,6 @@
     {
       "type": 0,
       "value": "İsteğe bağlı. Bu kapsamdaki en üst düzey eylemlerden giriş ve çıkışları istediğiniz kapsamlı eylemin adı."
-    }
-  ],
-  "M9Zj10": [
-    {
-      "type": 1,
-      "value": "searchText"
-    },
-    {
-      "type": 0,
-      "value": " için sonuç bulunamadı"
     }
   ],
   "M9mzP6": [
@@ -2863,12 +2847,6 @@
       "value": "Salı"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "Çalışma zamanı"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -3005,12 +2983,6 @@
     {
       "type": 0,
       "value": "Pfx"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "Filtre"
     }
   ],
   "P2A5dB": [
@@ -3495,6 +3467,12 @@
       "value": "Disk belleği sayısı geçersiz"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3691,10 +3669,14 @@
       "value": "Genişlet"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -4789,6 +4771,12 @@
       "value": "Yayımla"
     }
   ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
   "g5mMuM": [
     {
       "type": 0,
@@ -4859,16 +4847,6 @@
     {
       "type": 0,
       "value": "Tetikleyici Koşulları"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 1,
-      "value": "searchTerm"
-    },
-    {
-      "type": 0,
-      "value": " için arama sonuçları"
     }
   ],
   "gg0j4S": [
@@ -5389,12 +5367,6 @@
       "value": "Gerekli. Bu değer, döndürülebilecek en yüksek tamsayıdan bir sonraki tamsayıdır."
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5499,6 +5471,12 @@
       "value": "actions('eylemAdı').outputs.body için kısayol"
     }
   ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -5521,6 +5499,12 @@
     {
       "type": 0,
       "value": "Gerçek Değer"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6335,12 +6319,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6453,6 +6431,12 @@
     {
       "type": 0,
       "value": "Zorunlu. İstenen saatin geçmişteki zaman birimlerinin sayısı."
+    }
+  ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
     }
   ],
   "uczA5c": [
@@ -6621,6 +6605,12 @@
       "value": "İş Akışı Özellikleri"
     }
   ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
+    }
+  ],
   "w16qh+": [
     {
       "type": 0,
@@ -6631,6 +6621,12 @@
     {
       "type": 0,
       "value": "Pazar"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [

@@ -257,12 +257,6 @@
       "value": "折りたたむ"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "フィルターの選択"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -914,12 +908,6 @@
       "value": "14"
     }
   ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "アクションの種類"
-    }
-  ],
   "5+MuPz": [
     {
       "type": 0,
@@ -1224,6 +1212,12 @@
     {
       "type": 0,
       "value": "ロジック アプリのマネージド ID を有効にしてください。"
+    }
+  ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
     }
   ],
   "8U0KPg": [
@@ -1787,6 +1781,12 @@
       "value": "グループの作成"
     }
   ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
@@ -2032,12 +2032,6 @@
       "value": "必須。Within collection 内で検索するオブジェクト。"
     }
   ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2214,6 +2208,12 @@
       "value": "動的コンテンツは認証のプロパティとしてサポートされていません。"
     }
   ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -2254,12 +2254,6 @@
     {
       "type": 0,
       "value": "(UTC+07:00) バルナウル、ゴルノ・アルタイスク"
-    }
-  ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "参照に戻る"
     }
   ],
   "IooQu1": [
@@ -2350,12 +2344,6 @@
     {
       "type": 0,
       "value": "必須。時刻を含む文字列。"
-    }
-  ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2507,6 +2495,12 @@
       "value": "検索の結果がありません"
     }
   ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "LBbhCu": [
     {
       "type": 0,
@@ -2643,16 +2637,6 @@
     {
       "type": 0,
       "value": "省略可能。スコープ アクションの名前です。トップレベルのアクションからの入力と出力がこのスコープに含まれます。"
-    }
-  ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "結果が見つかりませんでした: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "M9mzP6": [
@@ -2823,12 +2807,6 @@
       "value": "火曜日"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "ランタイム"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -2965,12 +2943,6 @@
     {
       "type": 0,
       "value": "PFX"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "フィルター"
     }
   ],
   "P2A5dB": [
@@ -3444,6 +3416,12 @@
       "value": "ページング数が無効です"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3640,10 +3618,14 @@
       "value": "展開"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -4738,6 +4720,12 @@
       "value": "公開"
     }
   ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
   "g5mMuM": [
     {
       "type": 0,
@@ -4808,16 +4796,6 @@
     {
       "type": 0,
       "value": "トリガー条件"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 1,
-      "value": "searchTerm"
-    },
-    {
-      "type": 0,
-      "value": " の検索結果"
     }
   ],
   "gg0j4S": [
@@ -5327,12 +5305,6 @@
       "value": "必須。この値は、返される可能性のある最も大きい整数の次の整数です。"
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5437,6 +5409,12 @@
       "value": "actions('actionName').outputs.body の短縮形"
     }
   ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -5459,6 +5437,12 @@
     {
       "type": 0,
       "value": "実績値"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6262,12 +6246,6 @@
       "value": "(UTC+06:00) ノボシビルスク"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6380,6 +6358,12 @@
     {
       "type": 0,
       "value": "必須。時間単位数は希望する過去の時間です。"
+    }
+  ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
     }
   ],
   "uczA5c": [
@@ -6548,6 +6532,12 @@
       "value": "ワークフローのプロパティ"
     }
   ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
+    }
+  ],
   "w16qh+": [
     {
       "type": 0,
@@ -6558,6 +6548,12 @@
     {
       "type": 0,
       "value": "日曜日"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [

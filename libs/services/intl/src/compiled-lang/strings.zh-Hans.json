@@ -273,12 +273,6 @@
       "value": "折叠"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "选择筛选器"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -934,12 +928,6 @@
       "value": "14 "
     }
   ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "操作类型"
-    }
-  ],
   "5+MuPz": [
     {
       "type": 0,
@@ -1260,6 +1248,12 @@
     {
       "type": 0,
       "value": "请为逻辑应用启用托管标识。"
+    }
+  ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
     }
   ],
   "8U0KPg": [
@@ -1839,6 +1833,12 @@
       "value": "创建组"
     }
   ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
@@ -2084,12 +2084,6 @@
       "value": "必需。要在“包含”集合中查找的对象。"
     }
   ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2274,6 +2268,12 @@
       "value": "不支持将动态内容作为身份验证中的属性。"
     }
   ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -2314,12 +2314,6 @@
     {
       "type": 0,
       "value": "(UTC+07:00) 巴尔瑙尔，戈尔诺-阿尔泰斯克"
-    }
-  ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "返回以浏览"
     }
   ],
   "IooQu1": [
@@ -2410,12 +2404,6 @@
     {
       "type": 0,
       "value": "必需。包含时间的一个字符串。"
-    }
-  ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2565,6 +2553,12 @@
     {
       "type": 0,
       "value": "没有搜索到结果"
+    }
+  ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "LBbhCu": [
@@ -2719,20 +2713,6 @@
     {
       "type": 0,
       "value": "可选。范围内操作的名称，其输入和输出来自范围内的顶级操作。"
-    }
-  ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "找不到 "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
-    },
-    {
-      "type": 0,
-      "value": " 的结果"
     }
   ],
   "M9mzP6": [
@@ -2903,12 +2883,6 @@
       "value": "星期二"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "运行时"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -3061,12 +3035,6 @@
     {
       "type": 0,
       "value": "Pfx"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "筛选"
     }
   ],
   "P2A5dB": [
@@ -3540,6 +3508,12 @@
       "value": "分页计数无效"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3736,10 +3710,14 @@
       "value": "展开"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -4862,6 +4840,12 @@
       "value": "发布"
     }
   ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
   "g5mMuM": [
     {
       "type": 0,
@@ -4932,20 +4916,6 @@
     {
       "type": 0,
       "value": "触发器条件"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 0,
-      "value": "搜索 "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
-    },
-    {
-      "type": 0,
-      "value": " 的结果"
     }
   ],
   "gg0j4S": [
@@ -5483,12 +5453,6 @@
       "value": "必需。此值为可返回的最大整数之后的下一个整数。"
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5593,6 +5557,12 @@
       "value": "actions('actionName').outputs.body 的速记"
     }
   ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -5615,6 +5585,12 @@
     {
       "type": 0,
       "value": "实际值"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6450,12 +6426,6 @@
       "value": "(UTC+06:00) 新西伯利亚"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6568,6 +6538,12 @@
     {
       "type": 0,
       "value": "必需。表示所需过去时间与当前时间相差的时间单位数。"
+    }
+  ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
     }
   ],
   "uczA5c": [
@@ -6740,6 +6716,12 @@
       "value": "工作流属性"
     }
   ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
+    }
+  ],
   "w16qh+": [
     {
       "type": 0,
@@ -6750,6 +6732,12 @@
     {
       "type": 0,
       "value": "星期日"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [
