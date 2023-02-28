@@ -15,12 +15,12 @@ import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
   ServiceProviderConnectionModel,
-  Parameter,
   ConnectionAndSettings,
   ConnectionReferenceModel,
   IIdentityWizardContext,
   ConnectionAcl,
   ConnectionAndAppSetting,
+  Parameter,
 } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -120,7 +120,11 @@ async function getConnectionReference(
   workflowBaseManagementUri: string,
   settingsToAdd: Record<string, string>
 ): Promise<ConnectionReferenceModel> {
-  const { connectionId, id } = reference;
+  const {
+    api: { id: apiId },
+    connection: { id: connectionId },
+    connectionProperties,
+  } = reference;
   const options = {
     json: true,
     headers: { authorization: accessToken },
@@ -135,7 +139,7 @@ async function getConnectionReference(
       settingsToAdd[appSettingKey] = response.connectionKey;
 
       return {
-        api: { id },
+        api: { id: apiId },
         connection: { id: connectionId },
         connectionRuntimeUrl: response.runtimeUrls.length ? response.runtimeUrls[0] : '',
         authentication: {
@@ -143,6 +147,7 @@ async function getConnectionReference(
           scheme: 'Key',
           parameter: `@appsetting('${appSettingKey}')`,
         },
+        connectionProperties,
       };
     })
     .catch((error) => {
@@ -153,7 +158,7 @@ async function getConnectionReference(
 export async function getConnectionsAndSettingsToUpdate(
   context: IActionContext,
   workflowFilePath: string,
-  references: any,
+  connectionReferences: any,
   azureTenantId: string,
   workflowBaseManagementUri: string
 ): Promise<ConnectionAndSettings> {
@@ -165,10 +170,10 @@ export async function getConnectionsAndSettingsToUpdate(
   const settingsToAdd: Record<string, string> = {};
   let accessToken: string | undefined;
 
-  for (const referenceKey of Object.keys(references)) {
-    const reference = references[referenceKey];
+  for (const referenceKey of Object.keys(connectionReferences)) {
+    const reference = connectionReferences[referenceKey];
 
-    if (isApiHubConnectionId(reference.connectionId) && !referencesToAdd[referenceKey]) {
+    if (isApiHubConnectionId(reference.connection.id) && !referencesToAdd[referenceKey]) {
       accessToken = !accessToken ? await getAuthorizationToken(/* credentials */ undefined, azureTenantId) : accessToken;
       referencesToAdd[referenceKey] = await getConnectionReference(
         referenceKey,
@@ -188,7 +193,7 @@ export async function getConnectionsAndSettingsToUpdate(
   };
 }
 
-export async function saveConectionReferences(
+export async function saveConnectionReferences(
   context: IActionContext,
   workflowFilePath: string,
   connectionAndSettingsToUpdate: ConnectionAndSettings
@@ -210,11 +215,11 @@ export async function saveConectionReferences(
   }
 }
 
-export function containsApiHubConnectionReference(references: any): boolean {
+export function containsApiHubConnectionReference(references: ConnectionReferenceModel): boolean {
   for (const referenceKey of Object.keys(references)) {
     const reference = references[referenceKey];
 
-    if (isApiHubConnectionId(reference.connectionId)) {
+    if (isApiHubConnectionId(reference.connection.id)) {
       return true;
     }
   }

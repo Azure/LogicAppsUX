@@ -17,7 +17,7 @@ import {
   getConnectionsFromFile,
   getFunctionProjectRoot,
   getParametersFromFile,
-  saveConectionReferences,
+  saveConnectionReferences,
 } from '../../../utils/codeless/connection';
 import { saveParameters } from '../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
@@ -42,7 +42,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
   constructor(context: IActionContext, node: Uri) {
     const workflowName = path.basename(path.dirname(node.fsPath));
-    const apiVersion = '2019-10-01-edge-preview';
+    const apiVersion = '2018-11-01';
     const panelName = `${workspace.name}-${workflowName}`;
     const panelGroupKey = ext.webViewKey.designerLocal;
 
@@ -160,7 +160,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         break;
       }
       case ExtensionCommand.addConnection: {
-        await addConnectionData(this.context, this.workflowFilePath, msg.connectionData);
+        await addConnectionData(this.context, this.workflowFilePath, msg.connectionAndSetting);
         break;
       }
       case ExtensionCommand.openOauthLoginPopup:
@@ -201,7 +201,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     await window.withProgress(options, async () => {
       try {
-        const { definition, parameters } = workflowToSave;
+        const { definition, connectionReferences } = workflowToSave;
 
         const definitionToSave: any = definition;
         const parametersFromDefinition = definitionToSave.parameters;
@@ -218,17 +218,18 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
         workflow.definition = definitionToSave;
 
-        if (parameters?.$connections?.value) {
+        if (connectionReferences) {
           const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
             this.context,
             filePath,
-            parameters.$connections.value,
+            connectionReferences,
             azureTenantId,
             workflowBaseManagementUri
           );
-          await saveConectionReferences(this.context, filePath, connectionsAndSettingsToUpdate);
 
-          if (containsApiHubConnectionReference(parameters.$connections.value)) {
+          await saveConnectionReferences(this.context, filePath, connectionsAndSettingsToUpdate);
+
+          if (containsApiHubConnectionReference(connectionReferences)) {
             window.showInformationMessage(localize('keyValidity', 'The connection will be valid for 7 days only.'), 'OK');
           }
         }

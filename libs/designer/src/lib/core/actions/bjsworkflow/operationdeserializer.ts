@@ -122,10 +122,8 @@ export const initializeOperationDetailsForManifest = async (
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   try {
     const operationInfo = await getOperationInfo(nodeId, operation, isTrigger);
-    console.log('here buddy', nodeId, operation);
 
     if (operationInfo) {
-      console.log(operationInfo);
       const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
       const manifest = await getOperationManifest(operationInfo);
       const { iconUri, brandColor } = manifest.properties;

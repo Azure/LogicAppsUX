@@ -100,7 +100,6 @@ class OAuthPopup {
     if (this.closed || !data || typeof data !== 'object' || !data.value || this.options.panelId !== data.value.pid) {
       return;
     }
-    console.log('msgdata', data);
 
     switch (data.command) {
       // When the extension receives the result from redirect url it will post a 'CompleteOauthLogin' message with data.

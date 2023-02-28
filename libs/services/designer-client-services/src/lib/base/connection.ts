@@ -107,7 +107,6 @@ export abstract class BaseConnectionService implements IConnectionService {
       } = this.options;
       const response = await httpClient.get<Connector>({ uri: connectorId, queryParameters: { 'api-version': apiVersion } });
 
-      console.log(`getConnector ${connectorId}`, response);
       return {
         ...response,
         properties: {
@@ -412,8 +411,6 @@ export abstract class BaseConnectionService implements IConnectionService {
   }
 
   async fetchFunctionApps(): Promise<any> {
-    console.log('functionAppsResponse', this.getFunctionAppsRequestPath());
-
     const functionAppsResponse = await this.options.httpClient.get<any>({
       uri: this.getFunctionAppsRequestPath(),
       queryParameters: { 'api-version': this.options.apiVersion },

@@ -5,15 +5,18 @@ import axios from 'axios';
 
 export interface HttpOptions {
   baseUrl?: string;
+  apiHubBaseUrl?: string;
   accessToken?: string;
 }
 
 export class HttpClient implements IHttpClient {
   private _baseUrl: string | undefined;
   private _accessToken: string | undefined;
+  private _apihubBaseUrl: string | undefined;
   constructor(options: HttpOptions) {
     this._baseUrl = options.baseUrl;
     this._accessToken = options.accessToken;
+    this._apihubBaseUrl = options.apiHubBaseUrl;
   }
 
   dispose(): void {}
@@ -32,9 +35,6 @@ export class HttpClient implements IHttpClient {
       method: HTTP_METHODS.GET,
       ...request,
     });
-    if (!isSuccessResponse(responseData.status)) {
-      console.log('invalid get request', request);
-    }
     return responseData?.data;
   }
 
@@ -51,13 +51,13 @@ export class HttpClient implements IHttpClient {
       data: options.content,
       commandName: 'Designer.httpClient.post',
     };
-    console.log('post request', request);
     const responseData = await axios({
       method: HTTP_METHODS.POST,
       ...request,
+    }).catch((error) => {
+      return { status: error.response.status, data: error.response.data };
     });
     if (!isSuccessResponse(responseData.status)) {
-      console.log('invalid put request', responseData);
       return Promise.reject(responseData);
     }
 
@@ -80,22 +80,17 @@ export class HttpClient implements IHttpClient {
       data: options.content,
       commandName: 'Designer.httpClient.put',
     };
-    console.log('put request', request);
     const responseData = await axios({
       ...request,
       method: HTTP_METHODS.PUT,
     }).catch((error) => {
-      console.log('put error', error);
       return { status: error.response.status, data: error.response.data };
     });
     if (!isSuccessResponse(responseData.status)) {
-      console.log('invalid put request', responseData);
       return Promise.reject(responseData);
     }
 
-    console.log('responseData', responseData);
     try {
-      console.log('parsedResponseData', JSON.parse(responseData.data));
       return JSON.parse(responseData.data);
     } catch {
       return responseData.data as any;
@@ -109,12 +104,10 @@ export class HttpClient implements IHttpClient {
         Authorization: `${this._accessToken} `,
       },
     };
-    console.log('delete request', request);
     const responseData = await axios({
       method: HTTP_METHODS.DELETE,
       ...request,
     });
-    console.log(responseData);
     return responseData.data;
   }
 
@@ -128,8 +121,12 @@ export class HttpClient implements IHttpClient {
       }
       queryString = queryString.substring(0, queryString.length - 1);
     }
-    const updatedUri = isUri(uri) ? uri : `${this._baseUrl}${uri}`;
-    return queryString ? `${updatedUri}?${queryString}` : updatedUri;
+    const updatedUri = queryString ? `${uri}?${queryString}` : uri;
+    return isUrl(updatedUri)
+      ? updatedUri
+      : isArmResourceId(updatedUri)
+      ? `${this._apihubBaseUrl}${updatedUri}`
+      : `${this._baseUrl}${updatedUri}`;
   }
 }
 
@@ -137,7 +134,7 @@ export function isArmResourceId(resourceId: string): boolean {
   return resourceId ? resourceId.indexOf('/subscriptions/') !== -1 : false;
 }
 
-function isUri(uri: string): boolean {
+function isUrl(uri: string): boolean {
   return uri.startsWith('http://') || uri.startsWith('https://');
 }
 

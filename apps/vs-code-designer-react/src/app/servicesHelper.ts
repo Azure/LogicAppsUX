@@ -45,7 +45,7 @@ export const getDesignerServices = (
     });
   };
 
-  const httpClient = new HttpClient({ accessToken: authToken, baseUrl: apiHubServiceDetails.baseUrl });
+  const httpClient = new HttpClient({ accessToken: authToken, baseUrl, apiHubBaseUrl: apiHubServiceDetails.baseUrl });
   const connectionService = new StandardConnectionService({
     baseUrl,
     apiVersion,
@@ -54,7 +54,6 @@ export const getDesignerServices = (
     tenantId,
     readConnections: () => Promise.resolve(connectionData),
     writeConnection: (connectionAndSetting: ConnectionAndAppSetting) => {
-      console.log('we be writing');
       return addConnectionData(connectionAndSetting);
     },
     connectionCreationClients: {
@@ -173,10 +172,10 @@ export const getDesignerServices = (
   });
 
   const gatewayService = new StandardGatewayService({
-    baseUrl: apiHubServiceDetails.baseUrl,
+    baseUrl,
     httpClient,
     apiVersions: {
-      subscription: '2018-11-01',
+      subscription: apiVersion,
       gateway: '2016-06-01',
     },
   });

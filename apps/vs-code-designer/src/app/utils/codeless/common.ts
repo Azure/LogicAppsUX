@@ -21,10 +21,10 @@ import type {
   IWorkflowFileContent,
   Parameter,
   StandardApp,
-  WorkflowParameter,
   Artifacts,
   AzureConnectorDetails,
   ILocalSettingsJson,
+  WorkflowParameter,
 } from '@microsoft/vscode-extension';
 import { readFileSync } from 'fs';
 import * as fse from 'fs-extra';

@@ -16,6 +16,7 @@ export interface ConnectionReferenceModel {
     scheme?: string;
     parameter?: string;
   };
+  connectionProperties?: Record<string, unknown>;
 }
 
 export interface FunctionConnectionModel {
