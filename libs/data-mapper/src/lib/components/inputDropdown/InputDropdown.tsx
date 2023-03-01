@@ -446,6 +446,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
           selectedKey={inputValue ?? null}
           onChange={(_e, option) => onSelectOption(option)}
           label={label}
+          ariaLabel={label}
           placeholder={placeholder}
           className={styles.inputStyles}
           styles={{
