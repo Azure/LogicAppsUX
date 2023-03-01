@@ -75,7 +75,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
     toggleIsCalloutVisible();
   };
 
-  const buttonId = `msla-edge-button-${parentId}-${childId}`;
+  const buttonId = `msla-edge-button-${parentId}-${childId}`.replace(/\W/g, '-');
 
   return (
     <div
