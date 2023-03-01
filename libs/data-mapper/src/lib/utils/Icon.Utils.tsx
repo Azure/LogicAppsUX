@@ -144,12 +144,17 @@ export const iconForNormalizedDataType = (
       icons = size === 16 ? [CalendarClock16Regular, CalendarClock16Filled] : [CalendarClock24Regular, CalendarClock24Filled];
       break;
     }
-    case NormalizedDataType.ComplexType: {
+    case NormalizedDataType.ComplexType:
+    case NormalizedDataType.Object: {
       if (nodeProperties && nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1) {
         icons = size === 16 ? [Array16Regular, Array16Filled] : [Array24Regular, Array24Filled];
       } else {
         icons = size === 16 ? [Cube16Regular, Cube16Filled] : [Cube24Regular, Cube24Filled];
       }
+      break;
+    }
+    case NormalizedDataType.Array: {
+      icons = size === 16 ? [Array16Regular, Array16Filled] : [Array24Regular, Array24Filled];
       break;
     }
     case NormalizedDataType.Any: {
