@@ -17,6 +17,7 @@ import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
 import React from 'react';
+import { ScheduleEditor } from '../../recurrence';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -192,6 +193,16 @@ const TokenField = ({
           groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
           onChange={onValueChange}
           tokenPickerHandler={tokenPickerHandler}
+        />
+      );
+
+    case 'recurrence':
+      return (
+        <ScheduleEditor
+          readOnly={readOnly}
+          type={editorOptions.recurrenceType}
+          initialValue={value}
+          onChange={onValueChange}
         />
       );
 
