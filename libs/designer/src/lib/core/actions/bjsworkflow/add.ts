@@ -169,7 +169,13 @@ export const initializeSwitchCaseFromManifest = async (id: string, manifest: Ope
     undefined
   );
   const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
-  const initData = { id, nodeInputs, nodeOutputs, nodeDependencies, operationMetadata: { iconUri: '', brandColor: '' } };
+  const initData = {
+    id,
+    nodeInputs,
+    nodeOutputs,
+    nodeDependencies,
+    operationMetadata: { iconUri: manifest.properties.iconUri ?? '', brandColor: '' },
+  };
   dispatch(initializeNodes([initData]));
 };
 

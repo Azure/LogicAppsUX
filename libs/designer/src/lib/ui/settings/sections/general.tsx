@@ -126,7 +126,7 @@ export const General = ({
         settingType: 'SettingToggle',
         settingProp: {
           readOnly,
-          checked: splitOn?.value?.enabled,
+          checked: splitOn?.value?.enabled ?? true,
           onToggleInputChange: (_, checked) => onSplitOnToggle(!!checked),
           customLabel: () => splitOnLabel,
           onText,

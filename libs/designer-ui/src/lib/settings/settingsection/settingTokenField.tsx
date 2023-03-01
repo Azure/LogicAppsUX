@@ -41,9 +41,10 @@ export interface SettingTokenFieldProps extends SettingProps {
   onComboboxMenuOpen?: CallbackHandler;
   tokenPickerHandler: TokenPickerHandler;
   validationErrors?: string[];
+  hideValidationErrors?: ChangeHandler;
 }
 
-export const SettingTokenField: React.FC<SettingTokenFieldProps> = (props) => {
+export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   return (
     <>
       <div className="msla-input-parameter-label">
@@ -70,6 +71,7 @@ const TokenField = ({
   label,
   onValueChange,
   onComboboxMenuOpen,
+  hideValidationErrors,
   tokenPickerHandler,
 }: SettingTokenFieldProps) => {
   const dropdownOptions = editorOptions?.options?.value ?? editorOptions?.options ?? [];
@@ -217,6 +219,7 @@ const TokenField = ({
           initialValue={value}
           editorBlur={onValueChange}
           tokenPickerHandler={tokenPickerHandler}
+          onChange={hideValidationErrors}
         />
       );
   }

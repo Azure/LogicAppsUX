@@ -209,8 +209,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       ) : null}
       <DeleteNodeModal
         nodeId={id}
-        // nodeIcon={iconUriResult.result}
-        // brandColor={brandColor}
         nodeType={WORKFLOW_NODE_TYPES.OPERATION_NODE}
         isOpen={showDeleteModal}
         onDismiss={() => setShowDeleteModal(false)}
