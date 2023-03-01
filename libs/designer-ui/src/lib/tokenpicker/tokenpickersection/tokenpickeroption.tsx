@@ -1,6 +1,7 @@
 import type { OutputToken } from '..';
 import type { ValueSegment } from '../../editor';
 import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
+import { SINGLE_VALUE_SEGMENT } from '../../editor/base/plugins/SingleValueSegment';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
 import type { TokenGroup } from '../models/token';
 import { TokenPickerMode } from '../tokenpickerpivot';
@@ -9,7 +10,6 @@ import { useBoolean } from '@fluentui/react-hooks';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import Fuse from 'fuse.js';
 import type { LexicalEditor } from 'lexical';
-import { CLEAR_EDITOR_COMMAND } from 'lexical';
 import type { editor } from 'monaco-editor';
 import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
@@ -139,7 +139,7 @@ export const TokenPickerOptions = ({
     if (tokenClickedCallback) {
       tokenClickedCallback(segment);
     } else {
-      editor?.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
+      editor?.dispatchCommand(SINGLE_VALUE_SEGMENT, true);
       editor?.dispatchCommand(INSERT_TOKEN_NODE, {
         brandColor,
         description,
