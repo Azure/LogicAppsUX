@@ -10,6 +10,7 @@ import InsertTokenNode from './plugins/InsertTokenNode';
 import OnBlur from './plugins/OnBlur';
 import OnFocus from './plugins/OnFocus';
 import { ReadOnly } from './plugins/ReadOnly';
+import SingleValueSegment from './plugins/SingleValueSegment';
 import type { TokenPickerButtonProps } from './plugins/TokenPickerButton';
 import TokenPickerButton from './plugins/TokenPickerButton';
 import { TreeView } from './plugins/TreeView';
@@ -82,6 +83,7 @@ export interface BasePlugins {
   treeView?: boolean;
   toolBar?: boolean;
   tabbable?: boolean;
+  singleValueSegment?: boolean;
 }
 
 const onError = (error: Error) => {
@@ -122,7 +124,7 @@ export const BaseEditor = ({
       }),
   };
 
-  const { autoFocus, autoLink, clearEditor, history = true, tokens, treeView, toolBar, tabbable } = BasePlugins;
+  const { autoFocus, autoLink, clearEditor, history = true, tokens, treeView, toolBar, tabbable, singleValueSegment } = BasePlugins;
 
   const editorInputLabel = intl.formatMessage({
     defaultMessage: 'Editor Input',
@@ -171,6 +173,7 @@ export const BaseEditor = ({
         {history ? <History /> : null}
         {autoLink ? <AutoLink /> : null}
         {clearEditor ? <ClearEditor showButton={false} /> : null}
+        {singleValueSegment ? <SingleValueSegment /> : null}
 
         {!isTrigger && ((tokens && showTokenPickerButton) || getInTokenPicker()) ? (
           <TokenPickerButton
