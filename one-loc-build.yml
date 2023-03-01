@@ -25,8 +25,8 @@ steps:
   #       outputfile: $(Build.SourcesDirectory)/NOTICE.txt
   #       outputformat: text
 
-  - publish: NOTICE.txt
-    artifact: NOTICE
+  # - publish: NOTICE.txt
+  #   artifact: NOTICE
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifact: loc'

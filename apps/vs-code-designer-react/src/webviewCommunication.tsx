@@ -1,4 +1,4 @@
-import { initializeDesigner, updateCallbackUrl } from './state/DesignerSlice';
+import { initializeDesigner, updateCallbackUrl, updateFileSystemConnection } from './state/DesignerSlice';
 import type { AppDispatch } from './state/Store';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import useEventListener from '@use-it/event-listener';
@@ -22,6 +22,9 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
         break;
       case ExtensionCommand.receiveCallback:
         dispatch(updateCallbackUrl(message.data));
+        break;
+      case ExtensionCommand.completeFileSystemConnection:
+        dispatch(updateFileSystemConnection(message.data));
         break;
       default:
         break;

@@ -284,11 +284,10 @@ export interface SerializedParameter extends ParameterInfo {
 
 const getOperationInputsToSerialize = (rootState: RootState, operationId: string): SerializedParameter[] => {
   const idReplacements = rootState.workflow.idReplacements;
-  return getOperationInputParameters(rootState, operationId)
-    .map((input) => ({
-      ...input,
-      value: parameterValueToString(input, true /* isDefinitionValue */, idReplacements),
-    }));
+  return getOperationInputParameters(rootState, operationId).map((input) => ({
+    ...input,
+    value: parameterValueToString(input, true /* isDefinitionValue */, idReplacements),
+  }));
 };
 
 const serializeOperationParameters = (inputs: SerializedParameter[], manifest: OperationManifest): Record<string, any> => {
@@ -319,7 +318,7 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
     const propertyNameParameters: SerializedParameter[] = [];
     const serializedParameters = inputs
       .filter((item) => isAncestorKey(item.parameterKey, key))
-      .map(descendantParameter => {
+      .map((descendantParameter) => {
         let parameterValue = getJSONValueFromString(descendantParameter.value, descendantParameter.type);
         if (encodePathComponents) {
           const encodeCount = getEncodeValue(descendantParameter.info.encode ?? '');
@@ -335,19 +334,14 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
       });
 
     for (const serializedParameter of serializedParameters) {
-      if (!propertyNameParameters.find(param => param.parameterKey === serializedParameter.parameterKey)) {
+      if (!propertyNameParameters.find((param) => param.parameterKey === serializedParameter.parameterKey)) {
         let parameterKey = serializedParameter.parameterKey;
         for (const propertyNameParameter of propertyNameParameters) {
           const propertyName = propertyNameParameter.info.serialization?.property?.name as string;
           parameterKey = parameterKey.replace(propertyName, propertyNameParameter.value);
         }
 
-        result = serializeParameterWithPath(
-          result,
-          serializedParameter.value,
-          key,
-          { ...serializedParameter, parameterKey }
-        );
+        result = serializeParameterWithPath(result, serializedParameter.value, key, { ...serializedParameter, parameterKey });
       }
     }
   }
@@ -444,7 +438,7 @@ const swapInputsLocationIfNeeded = (parametersValue: any, swapMap: LocationSwapM
   }
 
   return finalValue;
-}
+};
 
 //#endregion
 
@@ -493,7 +487,7 @@ const serializeHost = (
     case ConnectionReferenceKeyFormat.ApiManagement:
       return {
         apiManagement: {
-          connection: referenceKey
+          connection: referenceKey,
         },
       };
     case ConnectionReferenceKeyFormat.ServiceProvider:
@@ -528,12 +522,12 @@ const mergeHostWithInputs = (hostInfo: Record<string, any>, inputs: any): any =>
       inputs[key] = { ...inputs[key], ...value };
     } else {
       // eslint-disable-next-line no-param-reassign
-      inputs[key] = value
+      inputs[key] = value;
     }
   }
 
   return inputs;
-}
+};
 
 //#endregion
 

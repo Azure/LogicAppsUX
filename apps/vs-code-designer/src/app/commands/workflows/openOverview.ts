@@ -9,7 +9,7 @@ import { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWor
 import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import {
   cacheWebviewPanel,
-  getCodelessAppData,
+  getStandardAppData,
   getWorkflowManagementBaseURI,
   removeWebviewPanelFromCache,
   tryGetWebviewPanel,
@@ -86,7 +86,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     enableScripts: true,
     retainContextWhenHidden: true,
   };
-  const { name, kind, operationOptions, statelessRunMode } = getCodelessAppData(workflowName, workflowContent, /* parameters*/ {});
+  const { name, kind, operationOptions, statelessRunMode } = getStandardAppData(workflowName, workflowContent, /* parameters*/ {});
   const workflowProps = {
     name,
     stateType: getWorkflowStateType(name, kind, localSettings),

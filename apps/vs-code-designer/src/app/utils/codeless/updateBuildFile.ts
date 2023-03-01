@@ -12,6 +12,26 @@ import * as path from 'path';
 import { Uri } from 'vscode';
 import * as xml2js from 'xml2js';
 
+export async function addNewFileInCSharpProject(context: IActionContext, filePathToAdd: string, projectPath: string): Promise<void> {
+  return addPathInCSharpProject(context, projectPath, filePathToAdd);
+}
+
+async function addPathInCSharpProject(context: IActionContext, projectPath: string, pathToAdd: string): Promise<void> {
+  let xmlBuildFile: any = await getDotnetBuildFile(context, projectPath);
+  xmlBuildFile = JSON.parse(xmlBuildFile);
+  const itemGroupToAdd: Record<string, any> = {
+    None: {
+      $: {
+        Update: pathToAdd,
+      },
+      CopyToOutputDirectory: 'PreserveNewest',
+    },
+  };
+  // tslint:disable-next-line: no-string-literal
+  xmlBuildFile['Project']['ItemGroup'].push(itemGroupToAdd);
+  await writeBuildFileToDisk(context, xmlBuildFile, projectPath);
+}
+
 export async function getDotnetBuildFile(context: IActionContext, projectPath: string): Promise<string> {
   const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, projectPath);
   const projFileName: string | undefined = projectFiles.length === 1 ? projectFiles[0].name : undefined;

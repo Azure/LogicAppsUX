@@ -366,7 +366,7 @@ export const serializeAuthentication = (
     try {
       jsonEditor = JSON.parse(editorString);
     } catch (e) {
-      console.log(e);
+      throw new Error(`Invalid Authentication value. ${e}`);
     }
     const returnItems: AuthProps = {};
     setOption(jsonEditor.type);

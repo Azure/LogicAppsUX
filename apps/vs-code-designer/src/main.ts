@@ -3,6 +3,7 @@ import { validateFuncCoreToolsIsLatest } from './app/commands/funcCoreTools/vali
 import { registerCommands } from './app/commands/registerCommands';
 import { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
+import { UriHandler } from './app/utils/codeless/urihandler';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
 import { extensionCommand } from './constants';
@@ -63,6 +64,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
     registerCommands();
     registerFuncHostTaskEvents();
+
+    vscode.window.registerUriHandler(new UriHandler());
   });
 }
 

@@ -16,6 +16,7 @@ export interface ConnectionReferenceModel {
     scheme?: string;
     parameter?: string;
   };
+  connectionProperties?: Record<string, unknown>;
 }
 
 export interface FunctionConnectionModel {
@@ -37,6 +38,25 @@ export interface ServiceProviderConnectionModel {
     id: string;
   };
   displayName?: string;
+}
+
+interface APIManagementConnectionModel {
+  apiId: string;
+  baseUrl: string;
+  subscriptionKey: string;
+  authentication?: {
+    type: string;
+    name: string;
+    value: string;
+  };
+  displayName?: string;
+}
+
+export interface ConnectionAndAppSetting {
+  connectionKey: string;
+  connectionData: ServiceProviderConnectionModel | FunctionConnectionModel | APIManagementConnectionModel;
+  settings: Record<string, string>;
+  pathLocation: string[];
 }
 
 export interface ConnectionsData {
@@ -82,4 +102,13 @@ export interface ConnectionStrings {
   azureWebJobsStorageKeyValue: string;
   azureWebJobsDashboardValue: string;
   websiteContentAzureFileValue: string;
+}
+
+export interface FileSystemConnectionInfo {
+  connectionParametersSet?: any;
+  connectionParameters?: Record<string, any>;
+  internalAlternativeParameterValues?: Record<string, any>;
+  externalAlternativeParameterValues?: Record<string, any>;
+  displayName?: string;
+  parameterName?: string;
 }

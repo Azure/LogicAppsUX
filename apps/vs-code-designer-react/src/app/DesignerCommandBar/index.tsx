@@ -12,7 +12,7 @@ export const DesignerCommandBar: React.FC = () => {
 
   const onSave = async () => {
     const designerState = DesignerStore.getState();
-    const { definition, parameters } = await serializeBJSWorkflow(designerState, {
+    const { definition, parameters, connectionReferences } = await serializeBJSWorkflow(designerState, {
       skipValidation: true,
       ignoreNonCriticalErrors: true,
     });
@@ -20,6 +20,7 @@ export const DesignerCommandBar: React.FC = () => {
       command: ExtensionCommand.save,
       definition,
       parameters,
+      connectionReferences,
     });
   };
 

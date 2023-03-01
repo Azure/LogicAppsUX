@@ -247,7 +247,7 @@ export class ParametersProcessor {
       summary,
       type,
       visibility,
-      isNotificationUrl
+      isNotificationUrl,
     };
   }
 

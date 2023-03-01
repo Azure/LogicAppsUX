@@ -153,7 +153,7 @@ export interface DynamicProperties {
 export type ParameterDynamicSchema = LegacyDynamicSchema | DynamicProperties;
 
 export enum DeserializationLocation {
-  ParentObjectProperties = 'parentobjectproperties'
+  ParentObjectProperties = 'parentobjectproperties',
 }
 
 export interface ParameterDeserializationOptions {
@@ -162,7 +162,7 @@ export interface ParameterDeserializationOptions {
 }
 
 export enum PropertySerializationType {
-  ParentObject = 'parentobject'
+  ParentObject = 'parentobject',
 }
 
 export interface ParameterSerializationOptions {

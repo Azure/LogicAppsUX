@@ -205,8 +205,7 @@ export const Group = ({
 
   const handleMoveChild = (childIndex: number, moveOption: MoveOption) => {
     if (childIndex <= 0 && moveOption === MoveOption.UP) {
-      const newItems = { ...groupProps };
-      console.log(newItems);
+      // const newItems = { ...groupProps };
     } else if (childIndex >= groupProps.items.length - 1 && moveOption === MoveOption.DOWN) {
       // come back
     } else {

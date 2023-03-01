@@ -1,7 +1,7 @@
 import type { RootState } from '../../store';
+import { shouldUseParameterInGroup } from '../../utils/parameters/helper';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
-import { shouldUseParameterInGroup } from '../../utils/parameters/helper';
 
 export const getOperationInputParameters = (rootState: RootState, nodeId: string): ParameterInfo[] => {
   const nodeInputs = rootState.operations.inputParameters[nodeId];
