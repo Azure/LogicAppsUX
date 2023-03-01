@@ -39,11 +39,16 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   const keyboardInteraction = useCardKeyboardInteraction(() => onClick?.(data.id), contextMenuOptions);
   const contextMenu = useCardContextMenu();
 
+  const addCaseLabel = intl.formatMessage({
+    defaultMessage: 'Add Case',
+    description: 'add a case to switch statement',
+  });
+
   if (subgraphType === SUBGRAPH_TYPES['SWITCH_ADD_CASE']) {
     if (readOnly) return null;
     return (
       <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}>
-        <ActionButtonV2 title={'Add Case'} onClick={() => onClick?.()} />
+        <ActionButtonV2 title={addCaseLabel} onClick={() => onClick?.()} />
       </div>
     );
   }

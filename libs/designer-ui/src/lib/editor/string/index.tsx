@@ -23,10 +23,11 @@ export const StringEditor = ({
 
   const onValueChange = (newValue: ValueSegment[]): void => {
     setValue(newValue);
-    onChange?.({ value: newValue });
+    onChange?.({ value: newValue, viewModel: { hideErrorMessage: true } });
   };
   const handleBlur = () => {
     editorBlur?.({ value: value });
+    onChange?.({ value: value, viewModel: { hideErrorMessage: false } });
   };
 
   return (
