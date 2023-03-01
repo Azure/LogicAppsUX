@@ -57,6 +57,8 @@ export interface InputDropdownProps {
   inputValue?: string; // undefined, Node ID, or custom value (string)
   inputIndex: number;
   inputStyles?: IRawStyle & React.CSSProperties;
+  id?: string;
+  labelId?: string;
   label?: string;
   placeholder?: string;
   inputAllowsCustomValues?: boolean;
@@ -64,7 +66,18 @@ export interface InputDropdownProps {
 }
 
 export const InputDropdown = (props: InputDropdownProps) => {
-  const { currentNode, inputValue, inputIndex, inputStyles, label, placeholder, inputAllowsCustomValues = true, isUnboundedInput } = props;
+  const {
+    currentNode,
+    inputValue,
+    inputIndex,
+    inputStyles,
+    label,
+    labelId,
+    id,
+    placeholder,
+    inputAllowsCustomValues = true,
+    isUnboundedInput,
+  } = props;
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useStyles();
@@ -427,6 +440,8 @@ export const InputDropdown = (props: InputDropdownProps) => {
     <>
       {!inputIsCustomValue ? (
         <Dropdown
+          id={id}
+          aria-labelledby={labelId}
           options={modifiedDropdownOptions}
           selectedKey={inputValue ?? null}
           onChange={(_e, option) => onSelectOption(option)}
