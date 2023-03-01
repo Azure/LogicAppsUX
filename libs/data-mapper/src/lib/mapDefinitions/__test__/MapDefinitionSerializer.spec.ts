@@ -1919,8 +1919,8 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(mapDefinition[reservedMapDefinitionKeys.version]).toEqual('1.0');
         expect(mapDefinition[reservedMapDefinitionKeys.sourceFormat]).toEqual(SchemaFileFormat.JSON);
         expect(mapDefinition[reservedMapDefinitionKeys.targetFormat]).toEqual(SchemaFileFormat.JSON);
-        expect(mapDefinition[reservedMapDefinitionKeys.sourceSchemaName]).toEqual('Source');
-        expect(mapDefinition[reservedMapDefinitionKeys.targetSchemaName]).toEqual('Target');
+        expect(mapDefinition[reservedMapDefinitionKeys.sourceSchemaName]).toEqual('SourceSchemaJson.json');
+        expect(mapDefinition[reservedMapDefinitionKeys.targetSchemaName]).toEqual('TargetSchemaJson.json');
       });
     });
 
