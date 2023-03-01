@@ -173,6 +173,12 @@
       "value": "Returns the first Count elements from the array or string passed in"
     }
   ],
+  "/vWMKW": [
+    {
+      "type": 0,
+      "value": "Missing required inputs"
+    }
+  ],
   "/yYyOq": [
     {
       "type": 0,
@@ -319,6 +325,12 @@
     {
       "type": 0,
       "value": "Returns a binary representation of an input data URI string"
+    }
+  ],
+  "0upuCv": [
+    {
+      "type": 0,
+      "value": "Hour"
     }
   ],
   "0y5eia": [
@@ -599,6 +611,12 @@
     {
       "type": 0,
       "value": "Required. The name of the action with a form-data or form-encoded response."
+    }
+  ],
+  "2kWLLc": [
+    {
+      "type": 0,
+      "value": "Start Time"
     }
   ],
   "2ri1Kf": [
@@ -961,6 +979,12 @@
       "value": "Required. The name of the loop whose item you want."
     }
   ],
+  "5dCAjy": [
+    {
+      "type": 0,
+      "value": "Day"
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1019,6 +1043,20 @@
     {
       "type": 0,
       "value": "(UTC+09:30) Adelaide"
+    }
+  ],
+  "6gZ4I3": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' has too many inputs assigned to it"
     }
   ],
   "6jiO7t": [
@@ -1173,6 +1211,12 @@
       "value": "Parameter name already exists."
     }
   ],
+  "83G5rr": [
+    {
+      "type": 0,
+      "value": "Specify the interval."
+    }
+  ],
   "84D91Y": [
     {
       "type": 0,
@@ -1229,6 +1273,12 @@
     {
       "type": 0,
       "value": "Please enable managed identity for the logic app."
+    }
+  ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
     }
   ],
   "8U0KPg": [
@@ -1469,6 +1519,12 @@
       "value": "Type of {0} is {1}."
     }
   ],
+  "AheXMN": [
+    {
+      "type": 0,
+      "value": "Select frequency."
+    }
+  ],
   "Amz9+m": [
     {
       "type": 0,
@@ -1615,6 +1671,12 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Perth"
+    }
+  ],
+  "BSgavq": [
+    {
+      "type": 0,
+      "value": "Example: Monday, Friday"
     }
   ],
   "BUutcC": [
@@ -1785,6 +1847,26 @@
       "value": "Signing in..."
     }
   ],
+  "E+iim4": [
+    {
+      "type": 0,
+      "value": "Select timezone."
+    }
+  ],
+  "E3+TAA": [
+    {
+      "type": 0,
+      "value": "Schema node '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an input with a mismatched type"
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1807,6 +1889,12 @@
     {
       "type": 0,
       "value": "Make Group"
+    }
+  ],
+  "ESZXfC": [
+    {
+      "type": 0,
+      "value": "At these minutes"
     }
   ],
   "EUQDM6": [
@@ -2107,6 +2195,12 @@
       "value": "Source schema element"
     }
   ],
+  "Gl5khw": [
+    {
+      "type": 0,
+      "value": "At these hours"
+    }
+  ],
   "Gmya+V": [
     {
       "type": 0,
@@ -2149,6 +2243,12 @@
       "value": "Required. The string to slice."
     }
   ],
+  "H2WdiZ": [
+    {
+      "type": 0,
+      "value": "Enter the valid minute values (from 0 to 59) separated by comma, e.g., 15,30"
+    }
+  ],
   "H5VikC": [
     {
       "type": 0,
@@ -2165,6 +2265,12 @@
     {
       "type": 0,
       "value": "Required. The key name of the form data value to return."
+    }
+  ],
+  "HH970i": [
+    {
+      "type": 0,
+      "value": "Month"
     }
   ],
   "HJIZrG": [
@@ -2245,6 +2351,12 @@
     {
       "type": 0,
       "value": "Dynamic content not supported as properties in authentication."
+    }
+  ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
     }
   ],
   "IA+Ogm": [
@@ -2905,6 +3017,12 @@
       "value": "10"
     }
   ],
+  "OIOexo": [
+    {
+      "type": 0,
+      "value": "On these days"
+    }
+  ],
   "OKszbi": [
     {
       "type": 0,
@@ -3391,6 +3509,12 @@
       "value": "Custom Tracking Id"
     }
   ],
+  "Sr8PcK": [
+    {
+      "type": 0,
+      "value": "No operations found"
+    }
+  ],
   "SvQyvs": [
     {
       "type": 0,
@@ -3623,6 +3747,20 @@
       "value": " (file name)"
     }
   ],
+  "Ufv5m9": [
+    {
+      "type": 0,
+      "value": "Schema node '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an non-terminating connection chain"
+    }
+  ],
   "UnrrzF": [
     {
       "type": 0,
@@ -3657,6 +3795,12 @@
     {
       "type": 0,
       "value": "Enter a valid JSON."
+    }
+  ],
+  "V5f3ha": [
+    {
+      "type": 0,
+      "value": "Week"
     }
   ],
   "VA7M1u": [
@@ -3831,6 +3975,12 @@
       "value": "A managed identity is not configured on the logic app."
     }
   ],
+  "X/7je+": [
+    {
+      "type": 0,
+      "value": "Minute"
+    }
+  ],
   "X4gDhV": [
     {
       "type": 0,
@@ -3913,6 +4063,20 @@
       "value": "Insert a new step"
     }
   ],
+  "XRK+gt": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' has an non-terminating connection chain"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -3935,6 +4099,12 @@
     {
       "type": 0,
       "value": " seconds"
+    }
+  ],
+  "XVTQT6": [
+    {
+      "type": 0,
+      "value": "Interval"
     }
   ],
   "XX1ioe": [
@@ -4097,12 +4267,6 @@
       "value": "Zoom out"
     }
   ],
-  "Z657PF": [
-    {
-      "type": 0,
-      "value": "Function is missing required inputs"
-    }
-  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -4243,6 +4407,12 @@
     {
       "type": 0,
       "value": "Location"
+    }
+  ],
+  "aV/nLS": [
+    {
+      "type": 0,
+      "value": "Second"
     }
   ],
   "ahsVI/": [
@@ -4505,6 +4675,12 @@
       "value": "(UTC+02:00) Harare, Pretoria"
     }
   ],
+  "dBWIjR": [
+    {
+      "type": 0,
+      "value": "Schema is missing required inputs"
+    }
+  ],
   "dDYCuU": [
     {
       "type": 0,
@@ -4515,6 +4691,12 @@
     {
       "type": 0,
       "value": "Update"
+    }
+  ],
+  "dQmi91": [
+    {
+      "type": 0,
+      "value": "Frequency"
     }
   ],
   "dSTRb/": [
@@ -4711,16 +4893,6 @@
       "value": "Paging count exceeds maximum value"
     }
   ],
-  "fWsZhJ": [
-    {
-      "type": 1,
-      "value": "functionName"
-    },
-    {
-      "type": 0,
-      "value": " has an non-terminating connection chain"
-    }
-  ],
   "faSDuD": [
     {
       "type": 0,
@@ -4853,6 +5025,12 @@
     {
       "type": 0,
       "value": "Conversion functions"
+    }
+  ],
+  "gTXyUo": [
+    {
+      "type": 0,
+      "value": "Time Zone"
     }
   ],
   "gWRF8m": [
@@ -5105,6 +5283,12 @@
       "value": "Cancel"
     }
   ],
+  "iVMVAt": [
+    {
+      "type": 0,
+      "value": "Example: 0, 10"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -5245,16 +5429,6 @@
     {
       "type": 0,
       "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
-    }
-  ],
-  "jlc/pM": [
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": " has an input with a mismatched type"
     }
   ],
   "juR40n": [
@@ -5679,6 +5853,12 @@
       "value": "End time"
     }
   ],
+  "nRpM02": [
+    {
+      "type": 0,
+      "value": "Custom"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -6053,6 +6233,20 @@
       "value": "(UTC+09:00) Yakutsk"
     }
   ],
+  "qr1lLG": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an input with a mismatched type"
+    }
+  ],
   "qrxi0L": [
     {
       "type": 0,
@@ -6185,6 +6379,12 @@
       "value": "Cancel creating a connection"
     }
   ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "Add Case"
+    }
+  ],
   "sW47JR": [
     {
       "type": 0,
@@ -6269,6 +6469,12 @@
       "value": "Required. A string that contains the time zone name of the destination time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details."
     }
   ],
+  "tAbbH8": [
+    {
+      "type": 0,
+      "value": "Too many inputs assigned"
+    }
+  ],
   "tAeKNh": [
     {
       "type": 0,
@@ -6333,6 +6539,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Novosibirsk"
+    }
+  ],
+  "tUYXRA": [
+    {
+      "type": 0,
+      "value": "Example: 2017-03-24T15:00:00Z"
     }
   ],
   "tUlRzr": [

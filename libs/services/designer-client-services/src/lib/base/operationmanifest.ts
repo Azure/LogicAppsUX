@@ -39,11 +39,7 @@ import {
   initializeManifest,
   setManifest,
 } from './manifests/variables';
-import {
-  ArgumentException,
-  equals,
-  UnsupportedException,
-} from '@microsoft/utils-logic-apps';
+import { ArgumentException, equals, UnsupportedException } from '@microsoft/utils-logic-apps';
 import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 
 const apimanagement = 'apimanagement';
@@ -387,7 +383,7 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
 const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [apimanagement]: {
     connectorId: apiManagementConnectorId,
-    operationId: 'apiManagement'
+    operationId: 'apiManagement',
   },
   [appendtoarrayvariable]: {
     connectorId: variableConnectorId,

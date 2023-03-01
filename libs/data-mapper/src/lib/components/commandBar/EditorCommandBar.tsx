@@ -71,10 +71,13 @@ export interface EditorCommandBarProps {
   onUndoClick: () => void;
   onRedoClick: () => void;
   onTestClick: () => void;
+  showMapOverview: boolean;
+  showGlobalView: boolean;
+  setShowGlobalView: (showGlobalView: boolean) => void;
 }
 
 export const EditorCommandBar = (props: EditorCommandBarProps) => {
-  const { onSaveClick, onUndoClick, onRedoClick, onTestClick } = props;
+  const { onSaveClick, onUndoClick, onRedoClick, onTestClick, showMapOverview, showGlobalView, setShowGlobalView } = props;
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -150,6 +153,14 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         defaultMessage: 'Publish',
         description: 'Button text for publish',
       }),
+      MAP_OVERVIEW: intl.formatMessage({
+        defaultMessage: 'Overview',
+        description: 'Button text for overview',
+      }),
+      GLOBAL_VIEW: intl.formatMessage({
+        defaultMessage: 'Global view',
+        description: 'Button text for whole overview',
+      }),
       DIVIDER: intl.formatMessage({
         defaultMessage: 'Divider',
         description: 'Aria label for divider',
@@ -218,6 +229,16 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         ...cmdBarItemBgStyles,
       },
       {
+        key: 'overview',
+        text: showGlobalView ? Resources.MAP_OVERVIEW : Resources.GLOBAL_VIEW,
+        ariaLabel: showGlobalView ? Resources.MAP_OVERVIEW : Resources.GLOBAL_VIEW,
+        iconProps: { iconName: 'Relationship' },
+        onClick: () => setShowGlobalView(!showGlobalView),
+        disabled: !showMapOverview || !bothSchemasDefined,
+        buttonStyles: cmdBarButtonStyles,
+        ...cmdBarItemBgStyles,
+      },
+      {
         ...divider,
         key: 'test-config-divider',
         ariaLabel: Resources.DIVIDER,
@@ -246,6 +267,8 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       Resources.DIVIDER,
       Resources.RUN_TEST,
       Resources.CONFIGURATION,
+      Resources.MAP_OVERVIEW,
+      Resources.GLOBAL_VIEW,
       onSaveClick,
       bothSchemasDefined,
       isStateDirty,
@@ -256,6 +279,9 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       triggerDiscardWarningModal,
       onTestClick,
       xsltFilename,
+      showMapOverview,
+      showGlobalView,
+      setShowGlobalView,
       dispatch,
     ]
   );

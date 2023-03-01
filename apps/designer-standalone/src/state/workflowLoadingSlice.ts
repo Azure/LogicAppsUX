@@ -87,7 +87,6 @@ function convertToConnectionReferences(connectionData: ConnectionsJSON | undefin
   convertToConnectionReferenceRefactor(connectionData.functionConnections, connectionReferences);
   convertToConnectionReferenceRefactor(connectionData.serviceProviderConnections, connectionReferences);
 
-  console.log(connectionReferences);
   return connectionReferences;
 }
 

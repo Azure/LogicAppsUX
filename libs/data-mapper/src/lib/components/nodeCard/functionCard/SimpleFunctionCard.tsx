@@ -110,9 +110,9 @@ export const SimpleFunctionCard = (props: NodeProps<FunctionCardProps>) => {
       >
         <Button onClick={onClick} className={mergedClasses} style={cardStyle} disabled={!!disabled}>
           <FunctionIcon
-            name={functionData.functionName}
+            functionKey={functionData.key}
+            functionName={functionData.functionName}
             categoryName={functionData.category}
-            fileName={functionData.iconFileName}
             color={tokens.colorNeutralForegroundInverted}
           />
         </Button>

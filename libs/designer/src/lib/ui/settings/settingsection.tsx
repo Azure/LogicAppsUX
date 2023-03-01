@@ -36,6 +36,7 @@ import type {
   SettingToggleProps,
   SettingDictionaryProps,
   SettingDropdownProps,
+  ChangeState,
 } from '@microsoft/designer-ui';
 import { guid } from '@microsoft/utils-logic-apps';
 import type { FC } from 'react';
@@ -202,6 +203,11 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
   const intl = useIntl();
   const dispatch = useDispatch();
   const nodeId = useSelectedNodeId();
+  const [hideErrorMessage, setHideErrorMessage] = useState<boolean[]>(new Array(settings.length).fill(false));
+
+  const updateHideErrorMessage = (index: number, b: boolean) => {
+    setHideErrorMessage([...hideErrorMessage.slice(0, index), b, ...hideErrorMessage.slice(index + 1)]);
+  };
 
   const conditionallyInvisibleSettings = useMemo(
     () => settings.filter((setting) => (setting.settingProp as any).conditionalVisibility === false),
@@ -252,7 +258,16 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
             case 'SettingDictionary':
               return <SettingDictionary {...settingProp} />;
             case 'SettingTokenField':
-              return <SettingTokenField {...settingProp} />;
+              return (
+                <SettingTokenField
+                  {...{
+                    hideValidationErrors: (newState: ChangeState) => {
+                      updateHideErrorMessage(i, newState.viewModel.hideErrorMessage);
+                    },
+                    ...settingProp,
+                  }}
+                />
+              );
             case 'RunAfter':
               return <RunAfter {...settingProp} />;
             case 'SettingDropdown':
@@ -288,7 +303,7 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
           <div key={i} style={{ display: 'flex', gap: '4px' }}>
             <div className={getClassName()} style={{ flex: '1 1 auto' }}>
               {renderSetting()}
-              {errorMessage && <div className="msla-input-parameter-error">{errorMessage}</div>}
+              {errorMessage && !hideErrorMessage[i] && <div className="msla-input-parameter-error">{errorMessage}</div>}
             </div>
             <RemoveConditionalParameter />
           </div>
@@ -296,31 +311,33 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
       })}
 
       {conditionallyInvisibleSettings.length > 0 ? (
-        <Dropdown
-          placeholder={addNewParamText}
-          multiSelect
-          options={conditionallyInvisibleSettings.map((setting) => ({
-            key: (setting.settingProp as any).id,
-            text: (setting.settingProp as any).label,
-          }))}
-          style={{ marginTop: '24px' }}
-          selectedKeys={conditionalVisibilityTempArray}
-          onChange={(_e: any, item: any) => {
-            if (item?.key) {
-              setConditionalVisibilityTempArray(
-                conditionalVisibilityTempArray.includes(item.key)
-                  ? conditionalVisibilityTempArray.filter((key) => key !== item.key)
-                  : [...conditionalVisibilityTempArray, item.key]
-              );
-            }
-          }}
-          onDismiss={() => {
-            conditionalVisibilityTempArray.forEach((parameterId) => {
-              dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value: true }));
-            });
-            setConditionalVisibilityTempArray([]);
-          }}
-        />
+        <div style={{ paddingTop: '5px' }}>
+          <Dropdown
+            placeholder={addNewParamText}
+            multiSelect
+            options={conditionallyInvisibleSettings.map((setting) => ({
+              key: (setting.settingProp as any).id,
+              text: (setting.settingProp as any).label,
+            }))}
+            style={{ width: '80%', margin: '24px auto 0 auto' }}
+            selectedKeys={conditionalVisibilityTempArray}
+            onChange={(_e: any, item: any) => {
+              if (item?.key) {
+                setConditionalVisibilityTempArray(
+                  conditionalVisibilityTempArray.includes(item.key)
+                    ? conditionalVisibilityTempArray.filter((key) => key !== item.key)
+                    : [...conditionalVisibilityTempArray, item.key]
+                );
+              }
+            }}
+            onDismiss={() => {
+              conditionalVisibilityTempArray.forEach((parameterId) => {
+                dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value: true }));
+              });
+              setConditionalVisibilityTempArray([]);
+            }}
+          />
+        </div>
       ) : null}
     </div>
   );

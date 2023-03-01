@@ -9,21 +9,23 @@ export interface ILocalSettingsJson {
 }
 
 export interface IDesignerPanelMetadata {
+  panelId: string;
   appSettingNames?: string[];
-  codelessApp: CodelessApp;
+  standardApp: StandardApp;
   scriptPath: string;
   connectionsData: string;
   parametersData: Record<string, Parameter>;
   localSettings: Record<string, string>;
   azureDetails: AzureConnectorDetails;
   workflowDetails: Record<string, any>;
+  workflowName: string;
   artifacts: Artifacts;
   workflowContent?: any;
   configuredWebhookEndpoint?: string;
   accessToken?: string;
 }
 
-export interface CodelessApp {
+export interface StandardApp {
   statelessRunMode?: string;
   definition: LogicAppsV2.WorkflowDefinition;
   name?: string;
