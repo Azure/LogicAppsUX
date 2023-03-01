@@ -49,11 +49,11 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
     return {
       resourceType: 'functionApps',
       subResourceType: 'functionAppFunctions',
-      title: functionAppsLabel,
+      titleText: functionAppsLabel,
       headers,
       getColumns,
       getResourcesCallback: functionAppsCallback,
-      resourcesLoadingText: functionAppsLoadingText,
+      loadingText: functionAppsLoadingText,
       getSubResourceName: (azureFunction: any) => azureFunction.name.split('/')[1],
       fetchSubResourcesCallback: functionsCallback,
     };
@@ -75,11 +75,11 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
     return {
       resourceType: 'apimInstances',
       subResourceType: 'apimApis',
-      title: apisLabel,
+      titleText: apisLabel,
       headers,
       getColumns,
       getResourcesCallback: apiInstancesCallback,
-      resourcesLoadingText: apimInstancesLoadingText,
+      loadingText: apimInstancesLoadingText,
       getSubResourceName: (api: any) => api.name,
       fetchSubResourcesCallback: apisCallback,
     };

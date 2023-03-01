@@ -1,16 +1,14 @@
-import type { AppDispatch, RootState } from '../../../core';
-import { addOperation } from '../../../core/actions/bjsworkflow/add';
-import { useRelationshipIds, useIsParallelBranch } from '../../../core/state/panel/panelSelectors';
+import type { AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
-import { isCustomConnector, isBuiltInConnector, guid } from '@microsoft/utils-logic-apps';
+import { isCustomConnector, isBuiltInConnector } from '@microsoft/utils-logic-apps';
 import { useDebouncedEffect } from '@react-hookz/web';
 import Fuse from 'fuse.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 type SearchViewProps = {
   searchTerm: string;
@@ -18,44 +16,38 @@ type SearchViewProps = {
   groupByConnector: boolean;
   isLoading: boolean;
   filters: Record<string, string>;
+  onOperationClick: (id: string) => void;
 };
+
 type SearchResult = Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>;
 type SearchResults = SearchResult[];
 
 export const SearchView: React.FC<SearchViewProps> = (props) => {
-  const { searchTerm, allOperations, groupByConnector, isLoading, filters } = props;
+  const { searchTerm, allOperations, groupByConnector, isLoading, filters, onOperationClick } = props;
   const intl = useIntl();
 
   const dispatch = useDispatch<AppDispatch>();
-
-  const relationshipIds = useRelationshipIds();
-  const isParallelBranch = useIsParallelBranch();
-  const isTrigger = useSelector((state: RootState) => state.panel.addingTrigger);
 
   const [searchResults, setSearchResults] = useState<SearchResults>([]);
   const [isLoadingSearchResults, setIsLoadingSearchResults] = useState<boolean>(false);
 
   const filterItems = useCallback(
     (searchResult: SearchResult): boolean => {
-      let ret = true;
       if (filters['runtime']) {
-        if (filters['runtime'] === 'inapp') {
-          ret = isBuiltInConnector(searchResult.item.properties.api.id);
-        } else if (filters['runtime'] === 'custom') {
-          ret = isCustomConnector(searchResult.item.properties.api.id);
-        } else if (filters['runtime'] === 'shared') {
-          ret = !isBuiltInConnector(searchResult.item.properties.api.id) && !isCustomConnector(searchResult.item.properties.api.id);
-        }
-      }
-      if (filters['actionType']) {
-        if (filters['actionType'] === 'actions') {
-          ret = ret ? !searchResult.item.properties.trigger : false;
-        } else if (filters['actionType'] === 'triggers') {
-          ret = ret ? !!searchResult.item.properties.trigger : false;
-        }
+        if (filters['runtime'] === 'inapp' && !isBuiltInConnector(searchResult.item.properties.api.id)) return false;
+        else if (filters['runtime'] === 'custom' && !isCustomConnector(searchResult.item.properties.api.id)) return false;
+        else if (filters['runtime'] === 'shared')
+          if (isBuiltInConnector(searchResult.item.properties.api.id) || isCustomConnector(searchResult.item.properties.api.id))
+            return false;
       }
 
-      return ret;
+      if (filters['actionType']) {
+        const isTrigger = searchResult.item.properties?.trigger !== undefined;
+        if (filters['actionType'].toLowerCase() === 'actions' && isTrigger) return false;
+        else if (filters['actionType'].toLowerCase() === 'triggers' && !isTrigger) return false;
+      }
+
+      return true;
     },
     [filters]
   );
@@ -105,12 +97,6 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
 
   const onConnectorClick = (connectorId: string) => {
     dispatch(selectOperationGroupId(connectorId));
-  };
-
-  const onOperationClick = (id: string) => {
-    const operation = searchResults.map((result) => result.item).find((o: any) => o.id === id);
-    const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
-    dispatch(addOperation({ operation, relationshipIds, nodeId: newNodeId, isParallelBranch, isTrigger }));
   };
 
   const loadingText = intl.formatMessage({

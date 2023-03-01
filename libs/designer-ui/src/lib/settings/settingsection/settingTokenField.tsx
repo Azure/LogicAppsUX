@@ -11,6 +11,7 @@ import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { QueryBuilderEditor } from '../../querybuilder';
 import { UntilEditor } from '../../querybuilder/Until';
+import { ScheduleEditor } from '../../recurrence';
 import { SchemaEditor } from '../../schemaeditor';
 import { TableEditor } from '../../table';
 import type { TokenGroup } from '../../tokenpicker/models/token';
@@ -194,6 +195,9 @@ const TokenField = ({
           tokenPickerHandler={tokenPickerHandler}
         />
       );
+
+    case 'recurrence':
+      return <ScheduleEditor readOnly={readOnly} type={editorOptions.recurrenceType} initialValue={value} onChange={onValueChange} />;
 
     default:
       return (

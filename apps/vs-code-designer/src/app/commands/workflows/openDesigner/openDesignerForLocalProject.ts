@@ -6,16 +6,18 @@ import {
   cacheWebviewPanel,
   getArtifactsInLocalProject,
   getAzureConnectorDetailsForLocalProject,
-  getCodelessAppData,
+  getManualWorkflowsInLocalProject,
+  getStandardAppData,
   removeWebviewPanelFromCache,
 } from '../../../utils/codeless/common';
 import {
+  addConnectionData,
   containsApiHubConnectionReference,
   getConnectionsAndSettingsToUpdate,
   getConnectionsFromFile,
   getFunctionProjectRoot,
   getParametersFromFile,
-  saveConectionReferences,
+  saveConnectionReferences,
 } from '../../../utils/codeless/connection';
 import { saveParameters } from '../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
@@ -23,12 +25,13 @@ import { sendRequest } from '../../../utils/requestUtils';
 import { OpenDesignerBase } from './openDesignerBase';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { AzureConnectorDetails, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension';
+import type { AzureConnectorDetails, FileSystemConnectionInfo, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
+import { exec } from 'child_process';
 import { writeFileSync, readFileSync } from 'fs';
 import * as path from 'path';
 import * as requestP from 'request-promise';
-import { ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscode';
+import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ProgressOptions } from 'vscode';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
@@ -39,7 +42,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
   constructor(context: IActionContext, node: Uri) {
     const workflowName = path.basename(path.dirname(node.fsPath));
-    const apiVersion = '2019-10-01-edge-preview';
+    const apiVersion = '2018-11-01';
     const panelName = `${workspace.name}-${workflowName}`;
     const panelGroupKey = ext.webViewKey.designerLocal;
 
@@ -47,6 +50,26 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     this.workflowFilePath = node.fsPath;
   }
+
+  private createFileSystemConnection = (connectionInfo: FileSystemConnectionInfo): Promise<any> => {
+    const rootFolder = connectionInfo.connectionParameters?.['rootFolder'];
+    const username = connectionInfo.connectionParameters?.['username'];
+    const password = connectionInfo.connectionParameters?.['password'];
+
+    return new Promise((resolve, _) => {
+      exec(`net use ${rootFolder} ${password} /user:${username}`, (error) => {
+        if (error) {
+          resolve({ errorMessage: JSON.stringify(error.message) });
+        }
+        resolve({
+          connection: {
+            ...connectionInfo,
+            connectionParameters: { mountPath: rootFolder },
+          },
+        });
+      });
+    });
+  };
 
   public async createPanel(): Promise<void> {
     const existingPanel: WebviewPanel | undefined = this.getExistingPanel();
@@ -78,6 +101,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     this.migrationOptions = await this._getMigrationOptions(this.baseUrl);
     this.panelMetadata = await this._getDesignerPanelMetadata(this.migrationOptions);
+    const callbackUri: Uri = await (env as any).asExternalUri(
+      Uri.parse(`${env.uriScheme}://ms-azuretools.vscode-azurelogicapps/authcomplete`)
+    );
+    this.oauthRedirectUrl = callbackUri.toString(true);
 
     this.panel.webview.html = await this.getWebviewContent({
       connectionsData: this.panelMetadata.connectionsData,
@@ -85,6 +112,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       localSettings: this.panelMetadata.localSettings,
       artifacts: this.panelMetadata.artifacts,
       azureDetails: this.panelMetadata.azureDetails,
+      workflowDetails: this.panelMetadata.workflowDetails,
     });
 
     this.panel.webview.onDidReceiveMessage(async (message) => await this._handleWebviewMsg(message), ext.context.subscriptions);
@@ -108,13 +136,15 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           command: ExtensionCommand.initialize_frame,
           data: {
             panelMetadata: this.panelMetadata,
-            connectionReferences: this.connectionReferences,
+            connectionData: this.connectionData,
             baseUrl: this.baseUrl,
             apiVersion: this.apiVersion,
             apiHubServiceDetails: this.apiHubServiceDetails,
             readOnly: this.readOnly,
             isLocal: this.isLocal,
             isMonitoringView: this.isMonitoringView,
+            workflowDetails: this.workflowDetails,
+            oauthRedirectUrl: this.oauthRedirectUrl,
           },
         });
         break;
@@ -130,6 +160,29 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         await this.validateWorkflow(this.panelMetadata.workflowContent);
         break;
       }
+      case ExtensionCommand.addConnection: {
+        await addConnectionData(this.context, this.workflowFilePath, msg.connectionAndSetting);
+        break;
+      }
+      case ExtensionCommand.openOauthLoginPopup:
+        await env.openExternal(msg.url);
+        break;
+
+      case ExtensionCommand.createFileSystemConnection:
+        {
+          const connectionName = msg.connectionName;
+          const { connection, errorMessage } = await this.createFileSystemConnection(msg.connectionInfo);
+          this.sendMsgToWebview({
+            command: ExtensionCommand.completeFileSystemConnection,
+            data: {
+              connectionName,
+              connection,
+              errorMessage,
+            },
+          });
+        }
+        break;
+
       default:
         break;
     }
@@ -149,7 +202,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     await window.withProgress(options, async () => {
       try {
-        const { definition, parameters } = workflowToSave;
+        const { definition, connectionReferences } = workflowToSave;
 
         const definitionToSave: any = definition;
         const parametersFromDefinition = definitionToSave.parameters;
@@ -166,17 +219,18 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
         workflow.definition = definitionToSave;
 
-        if (parameters?.$connections?.value) {
+        if (connectionReferences) {
           const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
             this.context,
             filePath,
-            parameters.$connections.value,
+            connectionReferences,
             azureTenantId,
             workflowBaseManagementUri
           );
-          await saveConectionReferences(this.context, filePath, connectionsAndSettingsToUpdate);
 
-          if (containsApiHubConnectionReference(parameters.$connections.value)) {
+          await saveConnectionReferences(this.context, filePath, connectionsAndSettingsToUpdate);
+
+          if (containsApiHubConnectionReference(connectionReferences)) {
             window.showInformationMessage(localize('keyValidity', 'The connection will be valid for 7 days only.'), 'OK');
           }
         }
@@ -324,14 +378,18 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     }
 
     return {
+      panelId: this.panelName,
       appSettingNames: Object.keys(localSettings),
-      codelessApp: getCodelessAppData(this.workflowName, workflowContent, parametersData),
+      standardApp: getStandardAppData(this.workflowName, workflowContent, parametersData),
       scriptPath: this.panel.webview.asWebviewUri(Uri.file(path.join(ext.context.extensionPath, 'dist', 'designer'))).toString(),
       connectionsData,
       parametersData,
       localSettings,
       azureDetails,
+      accessToken: azureDetails.accessToken,
       workflowContent,
+      workflowDetails: await getManualWorkflowsInLocalProject(projectPath, this.workflowName),
+      workflowName: this.workflowName,
       artifacts: await getArtifactsInLocalProject(projectPath),
     };
   }

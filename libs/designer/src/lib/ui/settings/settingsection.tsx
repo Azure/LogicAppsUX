@@ -296,31 +296,33 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
       })}
 
       {conditionallyInvisibleSettings.length > 0 ? (
-        <Dropdown
-          placeholder={addNewParamText}
-          multiSelect
-          options={conditionallyInvisibleSettings.map((setting) => ({
-            key: (setting.settingProp as any).id,
-            text: (setting.settingProp as any).label,
-          }))}
-          style={{ marginTop: '24px' }}
-          selectedKeys={conditionalVisibilityTempArray}
-          onChange={(_e: any, item: any) => {
-            if (item?.key) {
-              setConditionalVisibilityTempArray(
-                conditionalVisibilityTempArray.includes(item.key)
-                  ? conditionalVisibilityTempArray.filter((key) => key !== item.key)
-                  : [...conditionalVisibilityTempArray, item.key]
-              );
-            }
-          }}
-          onDismiss={() => {
-            conditionalVisibilityTempArray.forEach((parameterId) => {
-              dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value: true }));
-            });
-            setConditionalVisibilityTempArray([]);
-          }}
-        />
+        <div style={{ paddingTop: '5px' }}>
+          <Dropdown
+            placeholder={addNewParamText}
+            multiSelect
+            options={conditionallyInvisibleSettings.map((setting) => ({
+              key: (setting.settingProp as any).id,
+              text: (setting.settingProp as any).label,
+            }))}
+            style={{ width: '80%', margin: '24px auto 0 auto' }}
+            selectedKeys={conditionalVisibilityTempArray}
+            onChange={(_e: any, item: any) => {
+              if (item?.key) {
+                setConditionalVisibilityTempArray(
+                  conditionalVisibilityTempArray.includes(item.key)
+                    ? conditionalVisibilityTempArray.filter((key) => key !== item.key)
+                    : [...conditionalVisibilityTempArray, item.key]
+                );
+              }
+            }}
+            onDismiss={() => {
+              conditionalVisibilityTempArray.forEach((parameterId) => {
+                dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value: true }));
+              });
+              setConditionalVisibilityTempArray([]);
+            }}
+          />
+        </div>
       ) : null}
     </div>
   );

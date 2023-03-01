@@ -5,7 +5,9 @@ export enum ProjectLanguage {
   FSharpScript = 'F#Script',
   JavaScript = 'JavaScript',
   TypeScript = 'TypeScript',
+  Java = 'Java',
   Custom = 'Custom',
+  PowerShell = 'PowerShell',
 }
 
 export enum LanguageScript {

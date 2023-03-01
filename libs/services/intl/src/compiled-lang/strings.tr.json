@@ -173,6 +173,12 @@
       "value": "Geçirilen dizi veya dizeden ilk Count öğelerini döndürür"
     }
   ],
+  "/vWMKW": [
+    {
+      "type": 0,
+      "value": "Missing required inputs"
+    }
+  ],
   "/yYyOq": [
     {
       "type": 0,
@@ -257,12 +263,6 @@
       "value": "Daralt"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "Filtre seçin"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -319,6 +319,12 @@
     {
       "type": 0,
       "value": "Bir giriş verisi URI dizesinin ikili gösterimini döndürür"
+    }
+  ],
+  "0upuCv": [
+    {
+      "type": 0,
+      "value": "Hour"
     }
   ],
   "0y5eia": [
@@ -599,6 +605,12 @@
     {
       "type": 0,
       "value": "Gerekli. Form-data veya form-encoded yanıtı içeren eylemin adı."
+    }
+  ],
+  "2kWLLc": [
+    {
+      "type": 0,
+      "value": "Start Time"
     }
   ],
   "2ri1Kf": [
@@ -925,12 +937,6 @@
       "value": "14"
     }
   ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "Eylem Türü"
-    }
-  ],
   "5+MuPz": [
     {
       "type": 0,
@@ -965,6 +971,12 @@
     {
       "type": 0,
       "value": "Gerekli. Öğesini istediğiniz döngünün adı."
+    }
+  ],
+  "5dCAjy": [
+    {
+      "type": 0,
+      "value": "Day"
     }
   ],
   "5hWg4V": [
@@ -1025,6 +1037,20 @@
     {
       "type": 0,
       "value": "(UTC+09:30) Adelaide"
+    }
+  ],
+  "6gZ4I3": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' has too many inputs assigned to it"
     }
   ],
   "6jiO7t": [
@@ -1179,6 +1205,12 @@
       "value": "Parameter name already exists."
     }
   ],
+  "83G5rr": [
+    {
+      "type": 0,
+      "value": "Specify the interval."
+    }
+  ],
   "84D91Y": [
     {
       "type": 0,
@@ -1235,6 +1267,12 @@
     {
       "type": 0,
       "value": "Lütfen mantıksal uygulama için yönetilen kimliği etkinleştirin."
+    }
+  ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
     }
   ],
   "8U0KPg": [
@@ -1475,6 +1513,12 @@
       "value": "{0} türü {1}."
     }
   ],
+  "AheXMN": [
+    {
+      "type": 0,
+      "value": "Select frequency."
+    }
+  ],
   "Amz9+m": [
     {
       "type": 0,
@@ -1621,6 +1665,12 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Pert"
+    }
+  ],
+  "BSgavq": [
+    {
+      "type": 0,
+      "value": "Example: Monday, Friday"
     }
   ],
   "BVOUxP": [
@@ -1785,6 +1835,26 @@
       "value": "Oturum açılıyor..."
     }
   ],
+  "E+iim4": [
+    {
+      "type": 0,
+      "value": "Select timezone."
+    }
+  ],
+  "E3+TAA": [
+    {
+      "type": 0,
+      "value": "Schema node '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an input with a mismatched type"
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1807,6 +1877,18 @@
     {
       "type": 0,
       "value": "Grup Oluştur"
+    }
+  ],
+  "ESZXfC": [
+    {
+      "type": 0,
+      "value": "At these minutes"
+    }
+  ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "EV9iRu": [
@@ -2097,6 +2179,12 @@
       "value": "Source schema element"
     }
   ],
+  "Gl5khw": [
+    {
+      "type": 0,
+      "value": "At these hours"
+    }
+  ],
   "Gmya+V": [
     {
       "type": 0,
@@ -2139,6 +2227,12 @@
       "value": "Gerekli. Dilim dizesi."
     }
   ],
+  "H2WdiZ": [
+    {
+      "type": 0,
+      "value": "Enter the valid minute values (from 0 to 59) separated by comma, e.g., 15,30"
+    }
+  ],
   "H5VikC": [
     {
       "type": 0,
@@ -2155,6 +2249,12 @@
     {
       "type": 0,
       "value": "Gerekli. Döndürülecek form verileri değerinin anahtar adı."
+    }
+  ],
+  "HH970i": [
+    {
+      "type": 0,
+      "value": "Month"
     }
   ],
   "HJIZrG": [
@@ -2237,6 +2337,12 @@
       "value": "Dinamik içerik, kimlik doğrulamasında özellik olarak desteklenmiyor."
     }
   ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -2277,12 +2383,6 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
-    }
-  ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "Göz atmaya dön"
     }
   ],
   "IooQu1": [
@@ -2679,16 +2779,6 @@
       "value": "İsteğe bağlı. Bu kapsamdaki en üst düzey eylemlerden giriş ve çıkışları istediğiniz kapsamlı eylemin adı."
     }
   ],
-  "M9Zj10": [
-    {
-      "type": 1,
-      "value": "searchText"
-    },
-    {
-      "type": 0,
-      "value": " için sonuç bulunamadı"
-    }
-  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -2857,12 +2947,6 @@
       "value": "Salı"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "Çalışma zamanı"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -2915,6 +2999,12 @@
     {
       "type": 0,
       "value": "10"
+    }
+  ],
+  "OIOexo": [
+    {
+      "type": 0,
+      "value": "On these days"
     }
   ],
   "OKszbi": [
@@ -2999,12 +3089,6 @@
     {
       "type": 0,
       "value": "Pfx"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "Filtre"
     }
   ],
   "P2A5dB": [
@@ -3405,6 +3489,12 @@
       "value": "Özel İzleme Kimliği"
     }
   ],
+  "Sr8PcK": [
+    {
+      "type": 0,
+      "value": "No operations found"
+    }
+  ],
   "SvQyvs": [
     {
       "type": 0,
@@ -3487,6 +3577,12 @@
     {
       "type": 0,
       "value": "Disk belleği sayısı geçersiz"
+    }
+  ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
     }
   ],
   "TUaunO": [
@@ -3631,6 +3727,20 @@
       "value": " (dosya adı)"
     }
   ],
+  "Ufv5m9": [
+    {
+      "type": 0,
+      "value": "Schema node '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an non-terminating connection chain"
+    }
+  ],
   "UnrrzF": [
     {
       "type": 0,
@@ -3667,6 +3777,12 @@
       "value": "Geçerli bir JSON girin."
     }
   ],
+  "V5f3ha": [
+    {
+      "type": 0,
+      "value": "Week"
+    }
+  ],
   "VA7M1u": [
     {
       "type": 0,
@@ -3685,10 +3801,14 @@
       "value": "Genişlet"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -3835,6 +3955,12 @@
       "value": "Mantıksal uygulamada yapılandırılmış bir yönetilen kimlik yok."
     }
   ],
+  "X/7je+": [
+    {
+      "type": 0,
+      "value": "Minute"
+    }
+  ],
   "X4gDhV": [
     {
       "type": 0,
@@ -3917,6 +4043,20 @@
       "value": "Yeni bir adım ekleyin"
     }
   ],
+  "XRK+gt": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' has an non-terminating connection chain"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -3939,6 +4079,12 @@
     {
       "type": 0,
       "value": " saniye"
+    }
+  ],
+  "XVTQT6": [
+    {
+      "type": 0,
+      "value": "Interval"
     }
   ],
   "XX1ioe": [
@@ -4101,12 +4247,6 @@
       "value": "Uzaklaştır"
     }
   ],
-  "Z657PF": [
-    {
-      "type": 0,
-      "value": "Function is missing required inputs"
-    }
-  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -4247,6 +4387,12 @@
     {
       "type": 0,
       "value": "Location"
+    }
+  ],
+  "aV/nLS": [
+    {
+      "type": 0,
+      "value": "Second"
     }
   ],
   "ahsVI/": [
@@ -4509,6 +4655,12 @@
       "value": "(UTC+02:00) Harare, Pretoria"
     }
   ],
+  "dBWIjR": [
+    {
+      "type": 0,
+      "value": "Schema is missing required inputs"
+    }
+  ],
   "dDYCuU": [
     {
       "type": 0,
@@ -4519,6 +4671,12 @@
     {
       "type": 0,
       "value": "Güncelleştir"
+    }
+  ],
+  "dQmi91": [
+    {
+      "type": 0,
+      "value": "Frequency"
     }
   ],
   "dSTRb/": [
@@ -4711,16 +4869,6 @@
       "value": "Disk belleği sayısı maksimum değeri aşıyor"
     }
   ],
-  "fWsZhJ": [
-    {
-      "type": 1,
-      "value": "functionName"
-    },
-    {
-      "type": 0,
-      "value": " has an non-terminating connection chain"
-    }
-  ],
   "faSDuD": [
     {
       "type": 0,
@@ -4781,6 +4929,12 @@
     {
       "type": 0,
       "value": "Yayımla"
+    }
+  ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
     }
   ],
   "g5mMuM": [
@@ -4849,20 +5003,16 @@
       "value": "Dönüşüm işlevleri"
     }
   ],
+  "gTXyUo": [
+    {
+      "type": 0,
+      "value": "Time Zone"
+    }
+  ],
   "gWRF8m": [
     {
       "type": 0,
       "value": "Tetikleyici Koşulları"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 1,
-      "value": "searchTerm"
-    },
-    {
-      "type": 0,
-      "value": " için arama sonuçları"
     }
   ],
   "gg0j4S": [
@@ -5105,6 +5255,12 @@
       "value": "İptal"
     }
   ],
+  "iVMVAt": [
+    {
+      "type": 0,
+      "value": "Example: 0, 10"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -5245,16 +5401,6 @@
     {
       "type": 0,
       "value": "Desteklenmeyen bildirim bağlantısı başvuru biçimi: {referenceKeyFormat}"
-    }
-  ],
-  "jlc/pM": [
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": " has an input with a mismatched type"
     }
   ],
   "juR40n": [
@@ -5487,6 +5633,12 @@
       "value": "actions('eylemAdı').outputs.body için kısayol"
     }
   ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -5671,6 +5823,12 @@
     {
       "type": 0,
       "value": "End time"
+    }
+  ],
+  "nRpM02": [
+    {
+      "type": 0,
+      "value": "Custom"
     }
   ],
   "nSan4V": [
@@ -6047,6 +6205,20 @@
       "value": "(UTC+09:00) Yakutsk"
     }
   ],
+  "qr1lLG": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an input with a mismatched type"
+    }
+  ],
   "qrxi0L": [
     {
       "type": 0,
@@ -6263,6 +6435,12 @@
       "value": "Zorunlu. Hedef saat diliminin saat dilimi adını içeren bir dize. Ayrıntılar için bkz. https://msdn.microsoft.com/en-us/library/gg154758.aspx."
     }
   ],
+  "tAbbH8": [
+    {
+      "type": 0,
+      "value": "Too many inputs assigned"
+    }
+  ],
   "tAeKNh": [
     {
       "type": 0,
@@ -6327,6 +6505,18 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Novosibirsk"
+    }
+  ],
+  "tRgTTN": [
+    {
+      "type": 0,
+      "value": "Expand/collapse target schema"
+    }
+  ],
+  "tUYXRA": [
+    {
+      "type": 0,
+      "value": "Example: 2017-03-24T15:00:00Z"
     }
   ],
   "tUlRzr": [
@@ -6441,6 +6631,12 @@
     {
       "type": 0,
       "value": "Zorunlu. İstenen saatin geçmişteki zaman birimlerinin sayısı."
+    }
+  ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
     }
   ],
   "uczA5c": [
@@ -6607,6 +6803,12 @@
     {
       "type": 0,
       "value": "İş Akışı Özellikleri"
+    }
+  ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
     }
   ],
   "w16qh+": [

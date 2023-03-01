@@ -189,6 +189,12 @@
       "value": "Zwraca liczbę Count pierwszych elementów z przekazanej tablicy lub ciągu"
     }
   ],
+  "/vWMKW": [
+    {
+      "type": 0,
+      "value": "Missing required inputs"
+    }
+  ],
   "/yYyOq": [
     {
       "type": 0,
@@ -273,12 +279,6 @@
       "value": "Zwiń"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "Wybierz filtr"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -335,6 +335,12 @@
     {
       "type": 0,
       "value": "Zwraca binarną reprezentację ciągu identyfikatora URI danych wejściowych"
+    }
+  ],
+  "0upuCv": [
+    {
+      "type": 0,
+      "value": "Hour"
     }
   ],
   "0y5eia": [
@@ -653,6 +659,12 @@
     {
       "type": 0,
       "value": "Wymagane. Nazwa akcji z odpowiedzią w postaci danych formularza lub odpowiedzią zakodowaną w formularzu."
+    }
+  ],
+  "2kWLLc": [
+    {
+      "type": 0,
+      "value": "Start Time"
     }
   ],
   "2ri1Kf": [
@@ -979,12 +991,6 @@
       "value": "14"
     }
   ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "Typ akcji"
-    }
-  ],
   "5+MuPz": [
     {
       "type": 0,
@@ -1019,6 +1025,12 @@
     {
       "type": 0,
       "value": "Wymagane. Nazwa pętli z żądanymi elementami."
+    }
+  ],
+  "5dCAjy": [
+    {
+      "type": 0,
+      "value": "Day"
     }
   ],
   "5hWg4V": [
@@ -1079,6 +1091,20 @@
     {
       "type": 0,
       "value": "(UTC+09:30) Adelajda"
+    }
+  ],
+  "6gZ4I3": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' has too many inputs assigned to it"
     }
   ],
   "6jiO7t": [
@@ -1233,6 +1259,12 @@
       "value": "Parameter name already exists."
     }
   ],
+  "83G5rr": [
+    {
+      "type": 0,
+      "value": "Specify the interval."
+    }
+  ],
   "84D91Y": [
     {
       "type": 0,
@@ -1305,6 +1337,12 @@
     {
       "type": 0,
       "value": "Włącz tożsamość zarządzaną dla aplikacji logiki."
+    }
+  ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
     }
   ],
   "8U0KPg": [
@@ -1561,6 +1599,12 @@
       "value": "”."
     }
   ],
+  "AheXMN": [
+    {
+      "type": 0,
+      "value": "Select frequency."
+    }
+  ],
   "Amz9+m": [
     {
       "type": 0,
@@ -1731,6 +1775,12 @@
       "value": "(UTC+08:00) Perth"
     }
   ],
+  "BSgavq": [
+    {
+      "type": 0,
+      "value": "Example: Monday, Friday"
+    }
+  ],
   "BVOUxP": [
     {
       "type": 0,
@@ -1893,6 +1943,26 @@
       "value": "Trwa logowanie..."
     }
   ],
+  "E+iim4": [
+    {
+      "type": 0,
+      "value": "Select timezone."
+    }
+  ],
+  "E3+TAA": [
+    {
+      "type": 0,
+      "value": "Schema node '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an input with a mismatched type"
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1915,6 +1985,18 @@
     {
       "type": 0,
       "value": "Utwórz grupę"
+    }
+  ],
+  "ESZXfC": [
+    {
+      "type": 0,
+      "value": "At these minutes"
+    }
+  ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "EV9iRu": [
@@ -2239,6 +2321,12 @@
       "value": "Source schema element"
     }
   ],
+  "Gl5khw": [
+    {
+      "type": 0,
+      "value": "At these hours"
+    }
+  ],
   "Gmya+V": [
     {
       "type": 0,
@@ -2281,6 +2369,12 @@
       "value": "Wymagane. Ciąg do wycięcia."
     }
   ],
+  "H2WdiZ": [
+    {
+      "type": 0,
+      "value": "Enter the valid minute values (from 0 to 59) separated by comma, e.g., 15,30"
+    }
+  ],
   "H5VikC": [
     {
       "type": 0,
@@ -2297,6 +2391,12 @@
     {
       "type": 0,
       "value": "Wymagane. Nazwa klucza zwracanej wartości danych formularza."
+    }
+  ],
+  "HH970i": [
+    {
+      "type": 0,
+      "value": "Month"
     }
   ],
   "HJIZrG": [
@@ -2387,6 +2487,12 @@
       "value": "Zawartość dynamiczna nie jest obsługiwana jako właściwości w uwierzytelnianiu."
     }
   ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -2427,12 +2533,6 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Barnauł, Gornoałtajsk"
-    }
-  ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "Powrót do przeglądania"
     }
   ],
   "IooQu1": [
@@ -2875,16 +2975,6 @@
       "value": "Opcjonalnie. Nazwa akcji o określonym zakresie, w którym mają być umieszczane dane wejściowe i wyjściowe akcji najwyższego poziomu."
     }
   ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "Nie znaleziono wyników dla: "
-    },
-    {
-      "type": 1,
-      "value": "searchText"
-    }
-  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -3053,12 +3143,6 @@
       "value": "Wtorek"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "Środowisko uruchomieniowe"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -3127,6 +3211,12 @@
     {
       "type": 0,
       "value": "10"
+    }
+  ],
+  "OIOexo": [
+    {
+      "type": 0,
+      "value": "On these days"
     }
   ],
   "OKszbi": [
@@ -3211,12 +3301,6 @@
     {
       "type": 0,
       "value": "Certyfikat PFX"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "Filtruj"
     }
   ],
   "P2A5dB": [
@@ -3639,6 +3723,12 @@
       "value": "Niestandardowy identyfikator śledzenia"
     }
   ],
+  "Sr8PcK": [
+    {
+      "type": 0,
+      "value": "No operations found"
+    }
+  ],
   "SvQyvs": [
     {
       "type": 0,
@@ -3721,6 +3811,12 @@
     {
       "type": 0,
       "value": "Nieprawidłowa liczba stronicowania"
+    }
+  ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
     }
   ],
   "TUaunO": [
@@ -3865,6 +3961,20 @@
       "value": " (nazwa pliku)"
     }
   ],
+  "Ufv5m9": [
+    {
+      "type": 0,
+      "value": "Schema node '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an non-terminating connection chain"
+    }
+  ],
   "UnrrzF": [
     {
       "type": 0,
@@ -3901,6 +4011,12 @@
       "value": "Wprowadź prawidłowy kod JSON."
     }
   ],
+  "V5f3ha": [
+    {
+      "type": 0,
+      "value": "Week"
+    }
+  ],
   "VA7M1u": [
     {
       "type": 0,
@@ -3919,10 +4035,14 @@
       "value": "Rozwiń"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -4069,6 +4189,12 @@
       "value": "Tożsamość zarządzana nie jest skonfigurowana w aplikacji logiki."
     }
   ],
+  "X/7je+": [
+    {
+      "type": 0,
+      "value": "Minute"
+    }
+  ],
   "X4gDhV": [
     {
       "type": 0,
@@ -4151,6 +4277,20 @@
       "value": "Wstaw nowy krok"
     }
   ],
+  "XRK+gt": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' has an non-terminating connection chain"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -4173,6 +4313,12 @@
     {
       "type": 0,
       "value": " s"
+    }
+  ],
+  "XVTQT6": [
+    {
+      "type": 0,
+      "value": "Interval"
     }
   ],
   "XX1ioe": [
@@ -4343,12 +4489,6 @@
       "value": "Pomniejsz"
     }
   ],
-  "Z657PF": [
-    {
-      "type": 0,
-      "value": "Function is missing required inputs"
-    }
-  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -4497,6 +4637,12 @@
     {
       "type": 0,
       "value": "Location"
+    }
+  ],
+  "aV/nLS": [
+    {
+      "type": 0,
+      "value": "Second"
     }
   ],
   "ahsVI/": [
@@ -4759,6 +4905,12 @@
       "value": "(UTC+02:00) Harare, Pretoria"
     }
   ],
+  "dBWIjR": [
+    {
+      "type": 0,
+      "value": "Schema is missing required inputs"
+    }
+  ],
   "dDYCuU": [
     {
       "type": 0,
@@ -4769,6 +4921,12 @@
     {
       "type": 0,
       "value": "Aktualizuj"
+    }
+  ],
+  "dQmi91": [
+    {
+      "type": 0,
+      "value": "Frequency"
     }
   ],
   "dSTRb/": [
@@ -4965,16 +5123,6 @@
       "value": "Liczba stronicowania przekracza wartość maksymalną"
     }
   ],
-  "fWsZhJ": [
-    {
-      "type": 1,
-      "value": "functionName"
-    },
-    {
-      "type": 0,
-      "value": " has an non-terminating connection chain"
-    }
-  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5031,6 +5179,12 @@
     {
       "type": 0,
       "value": "Publikuj"
+    }
+  ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
     }
   ],
   "g5mMuM": [
@@ -5099,20 +5253,16 @@
       "value": "Funkcje konwersji"
     }
   ],
+  "gTXyUo": [
+    {
+      "type": 0,
+      "value": "Time Zone"
+    }
+  ],
   "gWRF8m": [
     {
       "type": 0,
       "value": "Warunki wyzwalacza"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 0,
-      "value": "Wyniki wyszukiwania dla terminu: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -5405,6 +5555,12 @@
       "value": "Anuluj"
     }
   ],
+  "iVMVAt": [
+    {
+      "type": 0,
+      "value": "Example: 0, 10"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -5553,16 +5709,6 @@
     {
       "type": 0,
       "value": "”"
-    }
-  ],
-  "jlc/pM": [
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": " has an input with a mismatched type"
     }
   ],
   "juR40n": [
@@ -5795,6 +5941,12 @@
       "value": "Skrót dla actions('actionName').outputs.body"
     }
   ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -5979,6 +6131,12 @@
     {
       "type": 0,
       "value": "End time"
+    }
+  ],
+  "nRpM02": [
+    {
+      "type": 0,
+      "value": "Custom"
     }
   ],
   "nSan4V": [
@@ -6401,6 +6559,20 @@
       "value": "(UTC+09:00) Jakuck"
     }
   ],
+  "qr1lLG": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an input with a mismatched type"
+    }
+  ],
   "qrxi0L": [
     {
       "type": 0,
@@ -6617,6 +6789,12 @@
       "value": "Wymagane. Ciąg zawierający nazwę docelowej strefy czasowej. Szczegółowe informacje można znaleźć na stronie https://msdn.microsoft.com/pl-pl/library/gg154758.aspx."
     }
   ],
+  "tAbbH8": [
+    {
+      "type": 0,
+      "value": "Too many inputs assigned"
+    }
+  ],
   "tAeKNh": [
     {
       "type": 0,
@@ -6681,6 +6859,18 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Nowosybirsk"
+    }
+  ],
+  "tRgTTN": [
+    {
+      "type": 0,
+      "value": "Expand/collapse target schema"
+    }
+  ],
+  "tUYXRA": [
+    {
+      "type": 0,
+      "value": "Example: 2017-03-24T15:00:00Z"
     }
   ],
   "tUlRzr": [
@@ -6795,6 +6985,12 @@
     {
       "type": 0,
       "value": "Wymagane. Liczba jednostek czasu określająca żądany czasu w przeszłości."
+    }
+  ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
     }
   ],
   "uczA5c": [
@@ -6965,6 +7161,12 @@
     {
       "type": 0,
       "value": "Właściwości przepływu pracy"
+    }
+  ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
     }
   ],
   "w16qh+": [

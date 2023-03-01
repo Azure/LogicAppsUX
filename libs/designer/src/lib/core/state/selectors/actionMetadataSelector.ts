@@ -80,7 +80,9 @@ export const useOperationManifest = (operationInfo: NodeOperation) => {
 
 export const useOperationQuery = (nodeId: string) => {
   const operationInfo = useOperationInfo(nodeId);
+
   const manifestQuery = useOperationManifest(operationInfo);
+
   const connectorQuery = useConnector(operationInfo?.connectorId);
 
   const operationManifestService = OperationManifestService();

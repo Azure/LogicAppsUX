@@ -63,6 +63,12 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
   const BundledChevronDownIcon = bundleIcon(ChevronDown12Filled, ChevronDown12Regular);
   const BundledChevronRightIcon = bundleIcon(ChevronRight12Filled, ChevronRight12Regular);
 
+  const selectionAreaKeydown = (e: React.KeyboardEvent<HTMLSpanElement>) => {
+    if (e.code === 'Enter') {
+      handleItemClick();
+    }
+  };
+
   return (
     <>
       <Stack
@@ -101,7 +107,13 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
           onMouseLeave={setChevronNotHovered}
         />
 
-        {nodeContent(node, isHovered)}
+        <span
+          style={{ width: '100%', height: '100%', paddingTop: '4px', paddingBottom: '4px' }}
+          tabIndex={0}
+          onKeyDown={selectionAreaKeydown}
+        >
+          {nodeContent(node, isHovered)}
+        </span>
       </Stack>
 
       {hasChildren &&

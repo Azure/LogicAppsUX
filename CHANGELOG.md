@@ -1,5 +1,31 @@
 # Logic Apps Designer
 
+### [0.2.93](https://github.com/Azure/LogicAppsUX/compare/v0.2.92...v0.2.93) (2023-03-01)
+
+### [0.2.92](https://github.com/Azure/LogicAppsUX/compare/v0.2.91...v0.2.92) (2023-02-28)
+
+### [0.2.92](https://github.com/Azure/LogicAppsUX/compare/v0.2.91...v0.2.92) (2023-02-28)
+
+### Logic Apps Designer Changes
+
+- Custom Connectors (standard) ([#1671](https://github.com/Azure/LogicAppsUX/issues/1671)) ([892c094](https://github.com/Azure/LogicAppsUX/commit/892c0942ec818baecc41bb2d3e01913382719773))
+
+### [0.2.91](https://github.com/Azure/LogicAppsUX/compare/v0.2.90...v0.2.91) (2023-02-28)
+
+### [0.2.90](https://github.com/Azure/LogicAppsUX/compare/v0.2.89...v0.2.90) (2023-02-27)
+
+### [0.2.89](https://github.com/Azure/LogicAppsUX/compare/v0.2.88...v0.2.89) (2023-02-26)
+
+### [0.2.88](https://github.com/Azure/LogicAppsUX/compare/v0.2.87...v0.2.88) (2023-02-25)
+
+### Logic Apps Designer Bug Fixes
+
+- Allow parallel node addition on all valid edge buttons ([#1674](https://github.com/Azure/LogicAppsUX/issues/1674)) ([bb7a900](https://github.com/Azure/LogicAppsUX/commit/bb7a9006a321e1cce451ae1cf217586713bb0d8e))
+- Fix for code view breaking on empty workflows ([#1673](https://github.com/Azure/LogicAppsUX/issues/1673)) ([f5513cf](https://github.com/Azure/LogicAppsUX/commit/f5513cf2924190d82ab15e35068426b898cee2ad))
+- Search+Browse pages UI tweaks ([#1672](https://github.com/Azure/LogicAppsUX/issues/1672)) ([d4b805a](https://github.com/Azure/LogicAppsUX/commit/d4b805a819885c4c51e0ddd4fb7cd88959dcc8ac))
+
+### [0.2.87](https://github.com/Azure/LogicAppsUX/compare/v0.2.86...v0.2.87) (2023-02-24)
+
 ### [0.2.86](https://github.com/Azure/LogicAppsUX/compare/v0.2.85...v0.2.86) (2023-02-23)
 
 ### [0.2.85](https://github.com/Azure/LogicAppsUX/compare/v0.2.84...v0.2.85) (2023-02-22)

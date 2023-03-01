@@ -10,6 +10,7 @@ import type {
 import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
 import type { Connection, Connector } from '@microsoft/utils-logic-apps';
 import {
+  isCustomConnector,
   getUniqueName,
   HTTP_METHODS,
   UserErrorCode,
@@ -106,6 +107,7 @@ export abstract class BaseConnectionService implements IConnectionService {
         httpClient,
       } = this.options;
       const response = await httpClient.get<Connector>({ uri: connectorId, queryParameters: { 'api-version': apiVersion } });
+
       return {
         ...response,
         properties: {
@@ -286,6 +288,25 @@ export abstract class BaseConnectionService implements IConnectionService {
 
   protected async getConnectionsForConnector(connectorId: string): Promise<Connection[]> {
     if (isArmResourceId(connectorId)) {
+      // Right now there isn't a name $filter for custom connections, so we need to filter them manually
+      if (isCustomConnector(connectorId)) {
+        const {
+          apiHubServiceDetails: { location, apiVersion },
+          httpClient,
+        } = this.options;
+        const response = await httpClient.get<ConnectionsResponse>({
+          uri: `${this._subscriptionResourceGroupWebUrl}/connections`,
+          queryParameters: {
+            'api-version': apiVersion,
+            $filter: `Location eq '${location}' and Kind eq '${this._vVersion}'`,
+          },
+        });
+        const filteredConnections = response.value.filter((connection) => {
+          return equals(connection.properties.api.id, connectorId);
+        });
+        return filteredConnections;
+      }
+
       const {
         apiHubServiceDetails: { location, apiVersion },
         httpClient,
@@ -410,8 +431,6 @@ export abstract class BaseConnectionService implements IConnectionService {
   }
 
   async fetchFunctionApps(): Promise<any> {
-    console.log('functionAppsResponse', this.getFunctionAppsRequestPath());
-
     const functionAppsResponse = await this.options.httpClient.get<any>({
       uri: this.getFunctionAppsRequestPath(),
       queryParameters: { 'api-version': this.options.apiVersion },
