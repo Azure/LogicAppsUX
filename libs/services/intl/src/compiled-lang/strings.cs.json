@@ -185,6 +185,12 @@
       "value": "Vrátí prvních Count prvků z předaného pole nebo řetězce."
     }
   ],
+  "/vWMKW": [
+    {
+      "type": 0,
+      "value": "Missing required inputs"
+    }
+  ],
   "/yYyOq": [
     {
       "type": 0,
@@ -325,6 +331,12 @@
     {
       "type": 0,
       "value": "Vrátí binární reprezentaci vstupního řetězce identifikátoru URI dat."
+    }
+  ],
+  "0upuCv": [
+    {
+      "type": 0,
+      "value": "Hour"
     }
   ],
   "0y5eia": [
@@ -639,6 +651,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Název akce s odpovědí form-data nebo form-encoded."
+    }
+  ],
+  "2kWLLc": [
+    {
+      "type": 0,
+      "value": "Start Time"
     }
   ],
   "2ri1Kf": [
@@ -1001,6 +1019,12 @@
       "value": "Povinný parametr. Název smyčky, jejíž položku chcete získat."
     }
   ],
+  "5dCAjy": [
+    {
+      "type": 0,
+      "value": "Day"
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1059,6 +1083,20 @@
     {
       "type": 0,
       "value": "(UTC+09:30) Adelaide"
+    }
+  ],
+  "6gZ4I3": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' has too many inputs assigned to it"
     }
   ],
   "6jiO7t": [
@@ -1211,6 +1249,12 @@
     {
       "type": 0,
       "value": "Parameter name already exists."
+    }
+  ],
+  "83G5rr": [
+    {
+      "type": 0,
+      "value": "Specify the interval."
     }
   ],
   "84D91Y": [
@@ -1543,6 +1587,12 @@
       "value": "."
     }
   ],
+  "AheXMN": [
+    {
+      "type": 0,
+      "value": "Select frequency."
+    }
+  ],
   "Amz9+m": [
     {
       "type": 0,
@@ -1713,6 +1763,12 @@
       "value": "(UTC+08:00) Perth"
     }
   ],
+  "BSgavq": [
+    {
+      "type": 0,
+      "value": "Example: Monday, Friday"
+    }
+  ],
   "BVOUxP": [
     {
       "type": 0,
@@ -1875,6 +1931,26 @@
       "value": "Přihlašování…"
     }
   ],
+  "E+iim4": [
+    {
+      "type": 0,
+      "value": "Select timezone."
+    }
+  ],
+  "E3+TAA": [
+    {
+      "type": 0,
+      "value": "Schema node '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an input with a mismatched type"
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1897,6 +1973,12 @@
     {
       "type": 0,
       "value": "Vytvořit skupinu"
+    }
+  ],
+  "ESZXfC": [
+    {
+      "type": 0,
+      "value": "At these minutes"
     }
   ],
   "EUQDM6": [
@@ -2227,6 +2309,12 @@
       "value": "Source schema element"
     }
   ],
+  "Gl5khw": [
+    {
+      "type": 0,
+      "value": "At these hours"
+    }
+  ],
   "Gmya+V": [
     {
       "type": 0,
@@ -2269,6 +2357,12 @@
       "value": "Povinné. Řetězec, který se má rozdělit"
     }
   ],
+  "H2WdiZ": [
+    {
+      "type": 0,
+      "value": "Enter the valid minute values (from 0 to 59) separated by comma, e.g., 15,30"
+    }
+  ],
   "H5VikC": [
     {
       "type": 0,
@@ -2285,6 +2379,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Název klíče datové hodnoty ve formuláři, která se má vrátit."
+    }
+  ],
+  "HH970i": [
+    {
+      "type": 0,
+      "value": "Month"
     }
   ],
   "HJIZrG": [
@@ -3101,6 +3201,12 @@
       "value": "10"
     }
   ],
+  "OIOexo": [
+    {
+      "type": 0,
+      "value": "On these days"
+    }
+  ],
   "OKszbi": [
     {
       "type": 0,
@@ -3605,6 +3711,12 @@
       "value": "Vlastní ID sledování"
     }
   ],
+  "Sr8PcK": [
+    {
+      "type": 0,
+      "value": "No operations found"
+    }
+  ],
   "SvQyvs": [
     {
       "type": 0,
@@ -3837,6 +3949,20 @@
       "value": " (název souboru)"
     }
   ],
+  "Ufv5m9": [
+    {
+      "type": 0,
+      "value": "Schema node '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an non-terminating connection chain"
+    }
+  ],
   "UnrrzF": [
     {
       "type": 0,
@@ -3871,6 +3997,12 @@
     {
       "type": 0,
       "value": "Zadejte platný kód JSON."
+    }
+  ],
+  "V5f3ha": [
+    {
+      "type": 0,
+      "value": "Week"
     }
   ],
   "VA7M1u": [
@@ -4045,6 +4177,12 @@
       "value": "Spravovaná identita není v aplikaci logiky nakonfigurovaná."
     }
   ],
+  "X/7je+": [
+    {
+      "type": 0,
+      "value": "Minute"
+    }
+  ],
   "X4gDhV": [
     {
       "type": 0,
@@ -4127,6 +4265,20 @@
       "value": "Vloží nový krok."
     }
   ],
+  "XRK+gt": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' has an non-terminating connection chain"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -4149,6 +4301,12 @@
     {
       "type": 0,
       "value": " s"
+    }
+  ],
+  "XVTQT6": [
+    {
+      "type": 0,
+      "value": "Interval"
     }
   ],
   "XX1ioe": [
@@ -4319,12 +4477,6 @@
       "value": "Oddálit"
     }
   ],
-  "Z657PF": [
-    {
-      "type": 0,
-      "value": "Function is missing required inputs"
-    }
-  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -4473,6 +4625,12 @@
     {
       "type": 0,
       "value": "Location"
+    }
+  ],
+  "aV/nLS": [
+    {
+      "type": 0,
+      "value": "Second"
     }
   ],
   "ahsVI/": [
@@ -4735,6 +4893,12 @@
       "value": "(UTC+02:00) Harare, Pretoria"
     }
   ],
+  "dBWIjR": [
+    {
+      "type": 0,
+      "value": "Schema is missing required inputs"
+    }
+  ],
   "dDYCuU": [
     {
       "type": 0,
@@ -4745,6 +4909,12 @@
     {
       "type": 0,
       "value": "Aktualizovat"
+    }
+  ],
+  "dQmi91": [
+    {
+      "type": 0,
+      "value": "Frequency"
     }
   ],
   "dSTRb/": [
@@ -4941,16 +5111,6 @@
       "value": "Počet stránkování překračuje maximální hodnotu."
     }
   ],
-  "fWsZhJ": [
-    {
-      "type": 1,
-      "value": "functionName"
-    },
-    {
-      "type": 0,
-      "value": " has an non-terminating connection chain"
-    }
-  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5079,6 +5239,12 @@
     {
       "type": 0,
       "value": "Převodní funkce"
+    }
+  ],
+  "gTXyUo": [
+    {
+      "type": 0,
+      "value": "Time Zone"
     }
   ],
   "gWRF8m": [
@@ -5373,6 +5539,12 @@
       "value": "Zrušit"
     }
   ],
+  "iVMVAt": [
+    {
+      "type": 0,
+      "value": "Example: 0, 10"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -5517,16 +5689,6 @@
     {
       "type": 1,
       "value": "referenceKeyFormat"
-    }
-  ],
-  "jlc/pM": [
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": " has an input with a mismatched type"
     }
   ],
   "juR40n": [
@@ -5951,6 +6113,12 @@
       "value": "End time"
     }
   ],
+  "nRpM02": [
+    {
+      "type": 0,
+      "value": "Custom"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -6367,6 +6535,20 @@
       "value": "(UTC+09:00) Jakutsk"
     }
   ],
+  "qr1lLG": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an input with a mismatched type"
+    }
+  ],
   "qrxi0L": [
     {
       "type": 0,
@@ -6583,6 +6765,12 @@
       "value": "Povinný parametr. Řetězec, který obsahuje název cílového časového pásma. Podrobnosti najdete tady: https://msdn.microsoft.com/en-us/library/gg154758.aspx"
     }
   ],
+  "tAbbH8": [
+    {
+      "type": 0,
+      "value": "Too many inputs assigned"
+    }
+  ],
   "tAeKNh": [
     {
       "type": 0,
@@ -6647,6 +6835,18 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Novosibirsk"
+    }
+  ],
+  "tRgTTN": [
+    {
+      "type": 0,
+      "value": "Expand/collapse target schema"
+    }
+  ],
+  "tUYXRA": [
+    {
+      "type": 0,
+      "value": "Example: 2017-03-24T15:00:00Z"
     }
   ],
   "tUlRzr": [
