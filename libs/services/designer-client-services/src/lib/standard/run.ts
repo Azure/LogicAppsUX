@@ -39,8 +39,9 @@ export class StandardRunService implements IRunService {
     const response = await httpClient.get<any>({
       uri,
     });
+    return response;
 
-    const contentType = response.headers.get('Content-Type');
+    /*const contentType = response.headers.get('Content-Type');
     if (contentType?.startsWith('application/json')) {
       return response.json();
     } else if (contentType?.startsWith('text/')) {
@@ -51,7 +52,7 @@ export class StandardRunService implements IRunService {
       return response.formData();
     } else {
       return response.arrayBuffer();
-    }
+    }*/
   }
 
   private getAccessTokenHeaders = () => {
@@ -132,22 +133,21 @@ export class StandardRunService implements IRunService {
    */
   async getActionLinks(actionMetadata: { inputsLink?: ContentLink; outputsLink?: ContentLink }, nodeId: string): Promise<any> {
     const { inputsLink, outputsLink } = actionMetadata;
-    const promises: Promise<any | null>[] = [];
+    let inputs: Record<string, any> = {};
+    let outputs: Record<string, any> = {};
 
     if (this._isDev) {
-      const inputs = inputsResponse[nodeId] ?? {};
-      const outputs = outputsResponse[nodeId] ?? {};
+      inputs = inputsResponse[nodeId] ?? {};
+      outputs = outputsResponse[nodeId] ?? {};
       return Promise.resolve({ inputs: this.parseActionLink(inputs), outputs: this.parseActionLink(outputs) });
     }
 
     if (outputsLink) {
-      promises.push(this.getContent(outputsLink));
+      outputs = await this.getContent(outputsLink);
     }
     if (inputsLink) {
-      promises.push(this.getContent(inputsLink));
+      inputs = await this.getContent(inputsLink);
     }
-    const [inputs, outputs] = await Promise.all(promises);
-
     return { inputs: this.parseActionLink(inputs), outputs: this.parseActionLink(outputs) };
   }
 

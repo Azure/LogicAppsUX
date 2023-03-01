@@ -85,6 +85,10 @@ export const App = () => {
     getRunInstance();
   }, [isMonitoringView, runId, services]);
 
+  useEffect(() => {
+    setStandardApp(panelMetaData?.standardApp);
+  }, [panelMetaData]);
+
   return (
     <DesignerProvider
       locale="en-US"
