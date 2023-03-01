@@ -7,7 +7,7 @@ import { getWebViewHTML } from '../../../utils/codeless/getWebViewHTML';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { ResolutionService } from '@microsoft/parsers-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { Artifacts, AzureConnectorDetails, Parameter } from '@microsoft/vscode-extension';
+import type { Artifacts, AzureConnectorDetails, ConnectionsData, Parameter } from '@microsoft/vscode-extension';
 import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';
 
 export interface IDesingerOptions {
@@ -17,6 +17,7 @@ export interface IDesingerOptions {
   localSettings: { [key: string]: string };
   artifacts: Artifacts;
   azureDetails: AzureConnectorDetails;
+  workflowDetails: Record<string, any>;
 }
 
 export abstract class OpenDesignerBase {
@@ -25,12 +26,15 @@ export abstract class OpenDesignerBase {
   protected apiVersion: string;
   protected panelGroupKey: string;
   protected baseUrl: string;
-  protected connectionReferences: any;
+  protected connectionData: ConnectionsData;
   protected panel: WebviewPanel;
   protected apiHubServiceDetails: Record<string, any>;
   protected readonly context: IActionContext | IAzureConnectorsContext;
   protected readOnly: boolean;
   protected isLocal: boolean;
+  protected appSettings: Record<string, string>;
+  protected workflowDetails: Record<string, any>;
+  protected oauthRedirectUrl?: string;
 
   protected constructor(
     context: IActionContext | IAzureConnectorsContext,
@@ -89,46 +93,18 @@ export abstract class OpenDesignerBase {
     }
 
     const parametersResolutionService = new ResolutionService(parameters, localSettings);
-    const resolvedConnections = parametersResolutionService.resolve(connectionsData);
 
-    this.connectionReferences = this.getConnectionReferences(resolvedConnections);
+    const resolvedConnections = parametersResolutionService.resolve(connectionsData);
+    let parsedConnections: ConnectionsData = {};
+    try {
+      parsedConnections = JSON.parse(resolvedConnections);
+    } catch (e) {
+      console.log(e);
+    }
+    this.connectionData = parsedConnections;
     this.apiHubServiceDetails = this.getApiHubServiceDetails(azureDetails);
 
     return await getWebViewHTML('webview', this.panel);
-  }
-
-  private getConnectionReferences(connectionsData) {
-    const references = {};
-    const connectionReferences = connectionsData?.managedApiConnections || {};
-    const functionConnections = connectionsData?.functionConnections || {};
-    const serviceProviderConnections = connectionsData?.serviceProviderConnections || {};
-
-    for (const connectionReferenceKey of Object.keys(connectionReferences)) {
-      const { connection, api } = connectionReferences[connectionReferenceKey];
-      references[connectionReferenceKey] = {
-        connectionId: connection ? connection.id : '',
-        connectionName: connection && connection.id ? connection.id.split('/').slice(-1)[0] : '',
-        id: api ? api.id : '',
-      };
-    }
-
-    for (const connectionKey of Object.keys(functionConnections)) {
-      references[connectionKey] = {
-        connectionId: '/' + connectionKey,
-        connectionName: connectionKey,
-        id: '/connectionProviders/azureFunctionOperation',
-      };
-    }
-
-    for (const connectionKey of Object.keys(serviceProviderConnections)) {
-      references[connectionKey] = {
-        connectionId: '/' + connectionKey,
-        connectionName: connectionKey,
-        id: serviceProviderConnections[connectionKey].serviceProvider.id,
-      };
-    }
-
-    return references;
   }
 
   private addCurlyBraces(root: string) {
@@ -184,11 +160,12 @@ export abstract class OpenDesignerBase {
     return isApiHubEnabled
       ? {
           apiVersion: '2018-07-01-preview',
-          baseUrl: this.baseUrl,
+          baseUrl: 'https://management.azure.com',
           subscriptionId: azureDetails.subscriptionId,
           location: azureDetails.location,
           resourceGroup: azureDetails.resourceGroupName,
           tenantId: azureDetails.tenantId,
+          resourceGroupName: azureDetails.resourceGroupName,
           getAccessToken: () => Promise.resolve(azureDetails.accessToken),
         }
       : undefined;

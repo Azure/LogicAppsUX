@@ -10,8 +10,13 @@ export enum ExtensionCommand {
   add_status = 'add-status',
   set_final_status = 'set-final-status',
   save = 'Save',
+  addConnection = 'add-connection',
+  createFileSystemConnection = 'create-file-system-connection',
+  completeFileSystemConnection = 'complete-file-system-connection',
   getCallbackUrl = 'GetCallbackUrl',
   receiveCallback = 'ReceiveCallback',
+  openOauthLoginPopup = 'OpenLoginPopup',
+  completeOauthLogin = 'CompleteOauthLogin',
 }
 
 export interface IExtensionsJson {

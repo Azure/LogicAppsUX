@@ -1,4 +1,6 @@
 import { connectionsFileName } from '../../../constants';
+import { localize } from '../../../localize';
+import { isCSharpProject } from '../../commands/initProjectForVSCode/detectProjectLanguage';
 import type { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
 import { addOrUpdateLocalAppSettings } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
@@ -7,20 +9,23 @@ import { tryGetFunctionProjectRoot } from '../verifyIsProject';
 import { getContainingWorkspace } from '../workspace';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import { getParametersJson } from './parameter';
+import { addNewFileInCSharpProject } from './updateBuildFile';
 import { HTTP_METHODS, isString } from '@microsoft/utils-logic-apps';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
   ServiceProviderConnectionModel,
-  Parameter,
   ConnectionAndSettings,
   ConnectionReferenceModel,
   IIdentityWizardContext,
   ConnectionAcl,
+  ConnectionAndAppSetting,
+  Parameter,
 } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as requestP from 'request-promise';
+import * as vscode from 'vscode';
 
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
   const projectRoot: string = await getFunctionProjectRoot(context, workflowFilePath);
@@ -44,6 +49,20 @@ export async function getConnectionsJson(projectRoot: string): Promise<string> {
   return '';
 }
 
+export async function addConnectionData(
+  context: IActionContext,
+  filePath: string,
+  ConnectionAndAppSetting: ConnectionAndAppSetting
+): Promise<void> {
+  const projectPath = await getFunctionProjectRoot(context, filePath);
+
+  await addConnectionDataInJson(context, projectPath ?? '', ConnectionAndAppSetting);
+
+  const { settings } = ConnectionAndAppSetting;
+  await addOrUpdateLocalAppSettings(context, projectPath ?? '', settings);
+  await vscode.window.showInformationMessage(localize('azureFunctions.addConnection', 'Connection added.'));
+}
+
 export async function getFunctionProjectRoot(context: IActionContext, workflowFilePath: string): Promise<string> {
   const workspaceFolder = nonNullValue(getContainingWorkspace(workflowFilePath), 'workspaceFolder');
   const workspacePath: string = workspaceFolder.uri.fsPath;
@@ -57,6 +76,43 @@ export async function getFunctionProjectRoot(context: IActionContext, workflowFi
   return projectRoot;
 }
 
+async function addConnectionDataInJson(
+  context: IActionContext,
+  functionAppPath: string,
+  ConnectionAndAppSetting: ConnectionAndAppSetting
+): Promise<void> {
+  const connectionsFilePath = path.join(functionAppPath, connectionsFileName);
+  const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);
+
+  const connectionsJsonString = await getConnectionsJson(functionAppPath);
+  const connectionsJson = connectionsJsonString === '' ? {} : JSON.parse(connectionsJsonString);
+
+  const { connectionData, connectionKey, pathLocation } = ConnectionAndAppSetting;
+
+  let pathToSetConnectionsData = connectionsJson;
+
+  for (const path of pathLocation) {
+    if (!pathToSetConnectionsData[path]) {
+      pathToSetConnectionsData[path] = {};
+    }
+
+    pathToSetConnectionsData = pathToSetConnectionsData[path];
+  }
+
+  if (pathToSetConnectionsData && pathToSetConnectionsData[connectionKey]) {
+    const message: string = localize('ConnectionKeyAlreadyExist', "Connection key '{0}' already exists.", connectionKey);
+    await vscode.window.showErrorMessage(message, localize('OK', 'OK'));
+    return;
+  }
+
+  pathToSetConnectionsData[connectionKey] = connectionData;
+  await writeFormattedJson(connectionsFilePath, connectionsJson);
+
+  if (!connectionsFileExists && (await isCSharpProject(context, functionAppPath))) {
+    await addNewFileInCSharpProject(context, connectionsFileName, functionAppPath);
+  }
+}
+
 async function getConnectionReference(
   referenceKey: string,
   reference: any,
@@ -64,7 +120,11 @@ async function getConnectionReference(
   workflowBaseManagementUri: string,
   settingsToAdd: Record<string, string>
 ): Promise<ConnectionReferenceModel> {
-  const { connectionId, id } = reference;
+  const {
+    api: { id: apiId },
+    connection: { id: connectionId },
+    connectionProperties,
+  } = reference;
   const options = {
     json: true,
     headers: { authorization: accessToken },
@@ -79,7 +139,7 @@ async function getConnectionReference(
       settingsToAdd[appSettingKey] = response.connectionKey;
 
       return {
-        api: { id },
+        api: { id: apiId },
         connection: { id: connectionId },
         connectionRuntimeUrl: response.runtimeUrls.length ? response.runtimeUrls[0] : '',
         authentication: {
@@ -87,6 +147,7 @@ async function getConnectionReference(
           scheme: 'Key',
           parameter: `@appsetting('${appSettingKey}')`,
         },
+        connectionProperties,
       };
     })
     .catch((error) => {
@@ -97,7 +158,7 @@ async function getConnectionReference(
 export async function getConnectionsAndSettingsToUpdate(
   context: IActionContext,
   workflowFilePath: string,
-  references: any,
+  connectionReferences: any,
   azureTenantId: string,
   workflowBaseManagementUri: string
 ): Promise<ConnectionAndSettings> {
@@ -109,10 +170,10 @@ export async function getConnectionsAndSettingsToUpdate(
   const settingsToAdd: Record<string, string> = {};
   let accessToken: string | undefined;
 
-  for (const referenceKey of Object.keys(references)) {
-    const reference = references[referenceKey];
+  for (const referenceKey of Object.keys(connectionReferences)) {
+    const reference = connectionReferences[referenceKey];
 
-    if (isApiHubConnectionId(reference.connectionId) && !referencesToAdd[referenceKey]) {
+    if (isApiHubConnectionId(reference.connection.id) && !referencesToAdd[referenceKey]) {
       accessToken = !accessToken ? await getAuthorizationToken(/* credentials */ undefined, azureTenantId) : accessToken;
       referencesToAdd[referenceKey] = await getConnectionReference(
         referenceKey,
@@ -132,7 +193,7 @@ export async function getConnectionsAndSettingsToUpdate(
   };
 }
 
-export async function saveConectionReferences(
+export async function saveConnectionReferences(
   context: IActionContext,
   workflowFilePath: string,
   connectionAndSettingsToUpdate: ConnectionAndSettings
@@ -140,9 +201,13 @@ export async function saveConectionReferences(
   const projectPath = await getFunctionProjectRoot(context, workflowFilePath);
   const { connections, settings } = connectionAndSettingsToUpdate;
   const connectionsFilePath = path.join(projectPath, connectionsFileName);
+  const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);
 
   if (connections && Object.keys(connections).length) {
     await writeFormattedJson(connectionsFilePath, connections);
+    if (!connectionsFileExists && (await isCSharpProject(context, projectPath))) {
+      await addNewFileInCSharpProject(context, connectionsFileName, projectPath);
+    }
   }
 
   if (Object.keys(settings).length) {
@@ -150,11 +215,11 @@ export async function saveConectionReferences(
   }
 }
 
-export function containsApiHubConnectionReference(references: any): boolean {
+export function containsApiHubConnectionReference(references: ConnectionReferenceModel): boolean {
   for (const referenceKey of Object.keys(references)) {
     const reference = references[referenceKey];
 
-    if (isApiHubConnectionId(reference.connectionId)) {
+    if (isApiHubConnectionId(reference.connection.id)) {
       return true;
     }
   }
