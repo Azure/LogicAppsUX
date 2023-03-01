@@ -42,7 +42,9 @@ export const DropdownEditor = ({
   onChange,
 }: DropdownEditorProps): JSX.Element => {
   const [selectedKey, setSelectedKey] = useState<string | undefined>(multiSelect ? undefined : getSelectedKey(options, initialValue));
-  const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(multiSelect ? getSelectedKeys(options, initialValue, serialization) : undefined);
+  const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(
+    multiSelect ? getSelectedKeys(options, initialValue, serialization) : undefined
+  );
   const [dropdownOptions] = useState<IDropdownOption[]>(getOptions(options));
 
   const dropdownStyles: Partial<IDropdownStyles> = {
@@ -75,15 +77,15 @@ export const DropdownEditor = ({
       const newKeys = option.selected ? [...selectedKeys, option.key as string] : selectedKeys.filter((key: string) => key !== option.key);
       setSelectedKeys(newKeys);
 
-      const selectedValues = newKeys.map(key => getSelectedValue(options, key));
+      const selectedValues = newKeys.map((key) => getSelectedValue(options, key));
       onChange?.({
-        value: [{
-          id: guid(),
-          value: serialization?.valueType === 'array'
-            ? JSON.stringify(selectedValues)
-            : selectedValues.join(serialization?.separator),
-          type: ValueSegmentType.LITERAL
-        }],
+        value: [
+          {
+            id: guid(),
+            value: serialization?.valueType === 'array' ? JSON.stringify(selectedValues) : selectedValues.join(serialization?.separator),
+            type: ValueSegmentType.LITERAL,
+          },
+        ],
       });
     }
   };
@@ -134,9 +136,12 @@ const getSelectedKeys = (options: DropdownItem[], initialValue?: ValueSegment[],
   const returnVal: string[] = [];
   if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
     const value = initialValue[0].value;
-    const selectedValues = serialization?.valueType === 'array'
-      ? Array.isArray(value) ? value : JSON.parse(value || '[]')
-      : value.split(serialization?.separator || ',');
+    const selectedValues =
+      serialization?.valueType === 'array'
+        ? Array.isArray(value)
+          ? value
+          : JSON.parse(value || '[]')
+        : value.split(serialization?.separator || ',');
 
     for (const selectedValue of selectedValues) {
       const option = options.find((option) => {
