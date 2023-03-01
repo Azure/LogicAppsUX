@@ -16,15 +16,19 @@ import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationT
 import { sendAzureRequest } from '../../../utils/requestUtils';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
+import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
+import * as path from 'path';
 import * as vscode from 'vscode';
 import type { WebviewPanel } from 'vscode';
 import { ViewColumn } from 'vscode';
 
 export default class openMonitoringViewForAzureResource extends OpenMonitoringViewBase {
   private node: RemoteWorkflowTreeItem;
+  private panelMetadata: IDesignerPanelMetadata;
 
   constructor(context: IAzureConnectorsContext | IActionContext, runId: string, workflowFilePath: string, node: RemoteWorkflowTreeItem) {
     super(context, runId, workflowFilePath, false, workflowAppApiVersion);
@@ -56,6 +60,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
     const connectionsData: string = await this.node.getConnectionsData();
     const parametersData = await this.node.getParametersData();
 
+    this.panelMetadata = await this.getDesignerPanelMetadata();
     this.panel.webview.html = await this.getWebviewContent({
       connectionsData: connectionsData,
       parametersData: parametersData,
@@ -95,6 +100,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
           data: {
+            panelMetadata: this.panelMetadata,
             connectionData: this.connectionData,
             workflowDetails: this.workflowDetails,
             oauthRedirectUrl: this.oauthRedirectUrl,
@@ -139,5 +145,30 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
         await vscode.window.showErrorMessage(errorMessage, localize('OK', 'OK'));
       }
     });
+  }
+
+  private async getDesignerPanelMetadata(): Promise<any> {
+    const credentials: ServiceClientCredentials = this.node.credentials;
+    const accessToken: string = await getAuthorizationToken(credentials);
+
+    return {
+      panelId: this.panelName,
+      connectionsData: await this.node.getConnectionsData(),
+      parametersData: await this.node.getParametersData(),
+      localSettings: await this.node.getAppSettings(),
+      accessToken,
+      scriptPath: this.panel.webview.asWebviewUri(vscode.Uri.file(path.join(ext.context.extensionPath, 'dist', 'designer'))).toString(),
+      azureDetails: {
+        enabled: true,
+        accessToken,
+        subscriptionId: this.node.subscription.subscriptionId,
+        location: this.normalizeLocation(this.node?.parent?.parent?.site.location),
+        workflowManagementBaseUrl: this.node?.parent?.subscription?.environment?.resourceManagerEndpointUrl,
+        tenantId: this.node?.parent?.subscription?.tenantId,
+      },
+      workflowDetails: await this.node.getChildWorkflows(this.context),
+      workflowName: this.workflowName,
+      artifacts: await this.node.getArtifacts(),
+    };
   }
 }
