@@ -71,11 +71,13 @@ export interface EditorCommandBarProps {
   onUndoClick: () => void;
   onRedoClick: () => void;
   onTestClick: () => void;
-  onMapCheckerClick: () => void;
+  showMapOverview: boolean;
+  showGlobalView: boolean;
+  setShowGlobalView: (showGlobalView: boolean) => void;
 }
 
 export const EditorCommandBar = (props: EditorCommandBarProps) => {
-  const { onSaveClick, onUndoClick, onRedoClick, onTestClick, onMapCheckerClick } = props;
+  const { onSaveClick, onUndoClick, onRedoClick, onTestClick, showMapOverview, showGlobalView, setShowGlobalView } = props;
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -131,10 +133,6 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         defaultMessage: 'Test',
         description: 'Button text for running test',
       }),
-      MAP_CHECKER: intl.formatMessage({
-        defaultMessage: 'Map Checker',
-        description: 'Button text for open the map checker',
-      }),
       CONFIGURATION: intl.formatMessage({
         defaultMessage: 'Configure',
         description: 'Button text for opening the configuration',
@@ -154,6 +152,14 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       PUBLISH: intl.formatMessage({
         defaultMessage: 'Publish',
         description: 'Button text for publish',
+      }),
+      MAP_OVERVIEW: intl.formatMessage({
+        defaultMessage: 'Overview',
+        description: 'Button text for overview',
+      }),
+      GLOBAL_VIEW: intl.formatMessage({
+        defaultMessage: 'Global view',
+        description: 'Button text for whole overview',
       }),
       DIVIDER: intl.formatMessage({
         defaultMessage: 'Divider',
@@ -223,12 +229,12 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         ...cmdBarItemBgStyles,
       },
       {
-        key: 'map-checker',
-        text: Resources.MAP_CHECKER,
-        ariaLabel: Resources.MAP_CHECKER,
-        iconProps: { iconName: 'Medical' },
-        onClick: onMapCheckerClick,
-        disabled: !bothSchemasDefined,
+        key: 'overview',
+        text: showGlobalView ? Resources.MAP_OVERVIEW : Resources.GLOBAL_VIEW,
+        ariaLabel: showGlobalView ? Resources.MAP_OVERVIEW : Resources.GLOBAL_VIEW,
+        iconProps: { iconName: 'Relationship' },
+        onClick: () => setShowGlobalView(!showGlobalView),
+        disabled: !showMapOverview || !bothSchemasDefined,
         buttonStyles: cmdBarButtonStyles,
         ...cmdBarItemBgStyles,
       },
@@ -260,8 +266,9 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       Resources.DISCARD,
       Resources.DIVIDER,
       Resources.RUN_TEST,
-      Resources.MAP_CHECKER,
       Resources.CONFIGURATION,
+      Resources.MAP_OVERVIEW,
+      Resources.GLOBAL_VIEW,
       onSaveClick,
       bothSchemasDefined,
       isStateDirty,
@@ -272,7 +279,9 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       triggerDiscardWarningModal,
       onTestClick,
       xsltFilename,
-      onMapCheckerClick,
+      showMapOverview,
+      showGlobalView,
+      setShowGlobalView,
       dispatch,
     ]
   );

@@ -273,12 +273,6 @@
       "value": "Reduzieren"
     }
   ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "Filter auswählen"
-    }
-  ],
   "0ZlNtf": [
     {
       "type": 0,
@@ -941,12 +935,6 @@
       "value": "14"
     }
   ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "Aktionstyp"
-    }
-  ],
   "5+MuPz": [
     {
       "type": 0,
@@ -1267,6 +1255,12 @@
     {
       "type": 0,
       "value": "Aktivieren Sie die verwaltete Identität für die Logik-App."
+    }
+  ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
     }
   ],
   "8U0KPg": [
@@ -1857,6 +1851,12 @@
       "value": "Gruppe erstellen"
     }
   ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
@@ -2121,12 +2121,6 @@
       "value": "Erforderlich. Das Objekt, das in der Within-Sammlung gesucht werden soll."
     }
   ],
-  "GUdmgm": [
-    {
-      "type": 0,
-      "value": "Close the map checker"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -2311,6 +2305,12 @@
       "value": "Dynamische Inhalte werden als Eigenschaften in der Authentifizierung nicht unterstützt."
     }
   ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -2351,12 +2351,6 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Barnaul, Gorno-Altaisk"
-    }
-  ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "Zurück zum Browsen"
     }
   ],
   "IooQu1": [
@@ -2447,12 +2441,6 @@
     {
       "type": 0,
       "value": "Erforderlich. Eine Zeichenfolge, die die Zeit enthält."
-    }
-  ],
-  "JOs7It": [
-    {
-      "type": 0,
-      "value": "Map Checker"
     }
   ],
   "JSfWJ0": [
@@ -2615,6 +2603,12 @@
       "value": "Es gibt keine Ergebnisse für Ihre Suche."
     }
   ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "LBbhCu": [
     {
       "type": 0,
@@ -2775,16 +2769,6 @@
     {
       "type": 0,
       "value": "(Optional) Der Name der bereichsbezogenen Aktion, in der die Eingaben und Ausgaben der Aktionen der obersten Ebene in diesem Bereich verwendet werden sollen."
-    }
-  ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "Keine Ergebnisse gefunden für "
-    },
-    {
-      "type": 1,
-      "value": "searchText"
     }
   ],
   "M9mzP6": [
@@ -2955,12 +2939,6 @@
       "value": "Dienstag"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "Runtime"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -3113,12 +3091,6 @@
     {
       "type": 0,
       "value": "PFX"
-    }
-  ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "Filtern"
     }
   ],
   "P2A5dB": [
@@ -3607,6 +3579,12 @@
       "value": "Auslagerungsanzahl ist ungültig"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3803,10 +3781,14 @@
       "value": "Erweitern"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -4917,6 +4899,12 @@
       "value": "Veröffentlichen"
     }
   ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
   "g5mMuM": [
     {
       "type": 0,
@@ -4987,16 +4975,6 @@
     {
       "type": 0,
       "value": "Triggerbedingungen"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 0,
-      "value": "Suchergebnisse für: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -5545,12 +5523,6 @@
       "value": "Erforderlich. Dieser Wert ist die nächste ganze Zahl nach der höchsten ganzen Zahl, die zurückgegeben werden konnte."
     }
   ],
-  "kramI/": [
-    {
-      "type": 0,
-      "value": "Map checker"
-    }
-  ],
   "kuFK3E": [
     {
       "type": 0,
@@ -5655,6 +5627,12 @@
       "value": "Kompakteigenschaft für actions(\"Aktionsname\").outputs.body"
     }
   ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -5677,6 +5655,12 @@
     {
       "type": 0,
       "value": "Istwert"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -6499,12 +6483,6 @@
       "value": "(UTC+06:00) Nowosibirsk"
     }
   ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
-    }
-  ],
   "tUlRzr": [
     {
       "type": 0,
@@ -6617,6 +6595,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Hiermit wird angegeben, um wie viele Zeiteinheiten die gewünschte Uhrzeit in der Vergangenheit liegt."
+    }
+  ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
     }
   ],
   "uczA5c": [
@@ -6789,6 +6773,12 @@
       "value": "Workfloweigenschaften"
     }
   ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
+    }
+  ],
   "w16qh+": [
     {
       "type": 0,
@@ -6799,6 +6789,12 @@
     {
       "type": 0,
       "value": "Sonntag"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [

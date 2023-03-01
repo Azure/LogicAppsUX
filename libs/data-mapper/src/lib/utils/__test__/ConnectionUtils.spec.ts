@@ -14,14 +14,11 @@ import {
   newConnectionWillHaveCircularLogic,
   nodeHasSourceNodeEventually,
   nodeHasSpecificInputEventually,
+  nodeHasSpecificOutputEventually,
   setConnectionInputValue,
 } from '../Connection.Utils';
 import { isSchemaNodeExtended } from '../Schema.Utils';
 import { fullConnectionDictionaryForOneToManyLoop, fullMapForSimplifiedLoop } from '../__mocks__';
-
-// TODO: nodeHasSourceNodeEventually
-// TODO: nodeHasSpecificInputEventually
-// TODO: collectNodesForConnectionChain
 
 const mockBoundedFunctionInputs: FunctionInput[] = [
   {
@@ -421,11 +418,11 @@ describe('utils/Connections', () => {
 
     it('Test can find a source node from depth == 1', () => {
       expect(isSchemaNodeExtended(dummyNode)).toBeTruthy();
-      expect(nodeHasSourceNodeEventually(mockConnections['concatFunctionNode'], mockConnections)).toEqual(true);
+      expect(nodeHasSourceNodeEventually(mockConnections['concatFunctionNode'], mockConnections)).toBeTruthy();
     });
 
     it('Test can recursively call from depth > 1', () => {
-      expect(nodeHasSourceNodeEventually(mockConnections['testTargetSchema'], mockConnections)).toEqual(true);
+      expect(nodeHasSourceNodeEventually(mockConnections['testTargetSchema'], mockConnections)).toBeTruthy();
     });
   });
 
@@ -457,7 +454,7 @@ describe('utils/Connections', () => {
           '0': [{ reactFlowKey: 'testSourceSchema1', node: dummyNode }],
           '1': [{ reactFlowKey: 'testSourceSchema2', node: dummyNode }],
         },
-        outputs: [{ node: dummyNode, reactFlowKey: 'testTargetScehema' }],
+        outputs: [{ node: dummyNode, reactFlowKey: 'testTargetSchema' }],
       },
       testTargetSchema: {
         self: { node: dummyNode, reactFlowKey: 'testTargetSchema' },
@@ -480,6 +477,62 @@ describe('utils/Connections', () => {
 
     it('Falsy when sourceKey unable to be found from depth > 1 (exactMatch = true)', () => {
       expect(nodeHasSpecificInputEventually('testSourceSchema3', mockConnections['testTargetSchema'], mockConnections, true)).toBeFalsy();
+    });
+  });
+
+  describe('nodeHasSpecificOutputEventually', () => {
+    const dummyNode: SchemaNodeExtended = {
+      key: '',
+      name: '',
+      fullName: '',
+      normalizedDataType: NormalizedDataType.Integer,
+      properties: SchemaNodeProperty.NotSpecified,
+      nodeProperties: [SchemaNodeProperty.NotSpecified],
+      children: [],
+      pathToRoot: [],
+    };
+    const mockConnections: ConnectionDictionary = {
+      testSourceSchema1: {
+        self: { node: dummyNode, reactFlowKey: 'testSourceSchema1' },
+        inputs: {},
+        outputs: [{ node: concatFunction, reactFlowKey: 'concatFunctionNode' }],
+      },
+      testSourceSchema2: {
+        self: { node: dummyNode, reactFlowKey: 'testSourceSchema2' },
+        inputs: {},
+        outputs: [{ node: concatFunction, reactFlowKey: 'concatFunctionNode' }],
+      },
+      concatFunctionNode: {
+        self: { node: concatFunction, reactFlowKey: 'concatFunctionNode' },
+        inputs: {
+          '0': [{ reactFlowKey: 'testSourceSchema1', node: dummyNode }],
+          '1': [{ reactFlowKey: 'testSourceSchema2', node: dummyNode }],
+        },
+        outputs: [{ node: dummyNode, reactFlowKey: 'testTargetSchema' }],
+      },
+      testTargetSchema: {
+        self: { node: dummyNode, reactFlowKey: 'testTargetSchema' },
+        inputs: { '0': [{ reactFlowKey: 'concatFunctionNode', node: concatFunction }] },
+        outputs: [],
+      },
+    };
+
+    it('Truthy when sourceKey in currentConnection with exact match', () => {
+      expect(
+        nodeHasSpecificOutputEventually('testSourceSchema1', mockConnections['testSourceSchema1'], mockConnections, true)
+      ).toBeTruthy();
+    });
+
+    it('Truthy when sourceKey can be found in currentConnection reactFlowKey', () => {
+      expect(nodeHasSpecificOutputEventually('Source', mockConnections['testSourceSchema1'], mockConnections, false)).toBeTruthy();
+    });
+
+    it('Truthy when sourceKey can be found recursively (exactMatch = false)', () => {
+      expect(nodeHasSpecificOutputEventually('Target', mockConnections['testSourceSchema1'], mockConnections, false)).toBeTruthy();
+    });
+
+    it('Falsy when sourceKey unable to be found recursively (exactMatch = true)', () => {
+      expect(nodeHasSpecificOutputEventually('testTargetSchema1', mockConnections['testSourceSchema1'], mockConnections, true)).toBeFalsy();
     });
   });
 

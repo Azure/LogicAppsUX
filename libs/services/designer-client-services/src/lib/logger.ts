@@ -48,7 +48,7 @@ export const InitLoggerService = (loggerServices: ILoggerService[]): void => {
 
 export const LoggerService = (): ILoggerService => {
   if (!service) {
-    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'Logger Service need to be initialized before using');
+    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'Logger Service needs to be initialized before using');
   }
 
   return service;
