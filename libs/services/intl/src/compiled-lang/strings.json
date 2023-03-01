@@ -321,6 +321,12 @@
       "value": "Returns a binary representation of an input data URI string"
     }
   ],
+  "0upuCv": [
+    {
+      "type": 0,
+      "value": "Hour"
+    }
+  ],
   "0y5eia": [
     {
       "type": 0,
@@ -599,6 +605,12 @@
     {
       "type": 0,
       "value": "Required. The name of the action with a form-data or form-encoded response."
+    }
+  ],
+  "2kWLLc": [
+    {
+      "type": 0,
+      "value": "Start Time"
     }
   ],
   "2ri1Kf": [
@@ -967,6 +979,12 @@
       "value": "Required. The name of the loop whose item you want."
     }
   ],
+  "5dCAjy": [
+    {
+      "type": 0,
+      "value": "Day"
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1177,6 +1195,12 @@
     {
       "type": 0,
       "value": "Parameter name already exists."
+    }
+  ],
+  "83G5rr": [
+    {
+      "type": 0,
+      "value": "Specify the interval."
     }
   ],
   "84D91Y": [
@@ -1475,6 +1499,12 @@
       "value": "Type of {0} is {1}."
     }
   ],
+  "AheXMN": [
+    {
+      "type": 0,
+      "value": "Select frequency."
+    }
+  ],
   "Amz9+m": [
     {
       "type": 0,
@@ -1621,6 +1651,12 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Perth"
+    }
+  ],
+  "BSgavq": [
+    {
+      "type": 0,
+      "value": "Example: Monday, Friday"
     }
   ],
   "BVOUxP": [
@@ -1785,6 +1821,12 @@
       "value": "Signing in..."
     }
   ],
+  "E+iim4": [
+    {
+      "type": 0,
+      "value": "Select timezone."
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1807,6 +1849,12 @@
     {
       "type": 0,
       "value": "Make Group"
+    }
+  ],
+  "ESZXfC": [
+    {
+      "type": 0,
+      "value": "At these minutes"
     }
   ],
   "EV9iRu": [
@@ -2107,6 +2155,12 @@
       "value": "Source schema element"
     }
   ],
+  "Gl5khw": [
+    {
+      "type": 0,
+      "value": "At these hours"
+    }
+  ],
   "Gmya+V": [
     {
       "type": 0,
@@ -2149,6 +2203,12 @@
       "value": "Required. The string to slice."
     }
   ],
+  "H2WdiZ": [
+    {
+      "type": 0,
+      "value": "Enter the valid minute values (from 0 to 59) separated by comma, e.g., 15,30"
+    }
+  ],
   "H5VikC": [
     {
       "type": 0,
@@ -2165,6 +2225,12 @@
     {
       "type": 0,
       "value": "Required. The key name of the form data value to return."
+    }
+  ],
+  "HH970i": [
+    {
+      "type": 0,
+      "value": "Month"
     }
   ],
   "HJIZrG": [
@@ -2927,6 +2993,12 @@
       "value": "10"
     }
   ],
+  "OIOexo": [
+    {
+      "type": 0,
+      "value": "On these days"
+    }
+  ],
   "OKszbi": [
     {
       "type": 0,
@@ -3681,6 +3753,12 @@
       "value": "Enter a valid JSON."
     }
   ],
+  "V5f3ha": [
+    {
+      "type": 0,
+      "value": "Week"
+    }
+  ],
   "VA7M1u": [
     {
       "type": 0,
@@ -3849,6 +3927,12 @@
       "value": "A managed identity is not configured on the logic app."
     }
   ],
+  "X/7je+": [
+    {
+      "type": 0,
+      "value": "Minute"
+    }
+  ],
   "X4gDhV": [
     {
       "type": 0,
@@ -3953,6 +4037,12 @@
     {
       "type": 0,
       "value": " seconds"
+    }
+  ],
+  "XVTQT6": [
+    {
+      "type": 0,
+      "value": "Interval"
     }
   ],
   "XX1ioe": [
@@ -4263,6 +4353,12 @@
       "value": "Location"
     }
   ],
+  "aV/nLS": [
+    {
+      "type": 0,
+      "value": "Second"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -4533,6 +4629,12 @@
     {
       "type": 0,
       "value": "Update"
+    }
+  ],
+  "dQmi91": [
+    {
+      "type": 0,
+      "value": "Frequency"
     }
   ],
   "dSTRb/": [
@@ -4867,6 +4969,12 @@
       "value": "Conversion functions"
     }
   ],
+  "gTXyUo": [
+    {
+      "type": 0,
+      "value": "Time Zone"
+    }
+  ],
   "gWRF8m": [
     {
       "type": 0,
@@ -5125,6 +5233,12 @@
     {
       "type": 0,
       "value": "Cancel"
+    }
+  ],
+  "iVMVAt": [
+    {
+      "type": 0,
+      "value": "Example: 0, 10"
     }
   ],
   "idQjOP": [
@@ -6355,6 +6469,12 @@
     {
       "type": 0,
       "value": "Expand/collapse target schema"
+    }
+  ],
+  "tUYXRA": [
+    {
+      "type": 0,
+      "value": "Example: 2017-03-24T15:00:00Z"
     }
   ],
   "tUlRzr": [
