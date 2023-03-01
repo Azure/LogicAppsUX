@@ -17,7 +17,7 @@ export interface IDesingerOptions {
   localSettings: { [key: string]: string };
   artifacts: Artifacts;
   azureDetails: AzureConnectorDetails;
-  workflowDetails: Record<string, any>;
+  workflowDetails?: Record<string, any>;
 }
 
 export abstract class OpenDesignerBase {

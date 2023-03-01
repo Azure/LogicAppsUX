@@ -40,10 +40,6 @@ export class StandardRunService implements IRunService {
       uri,
     });
 
-    if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
-    }
-
     const contentType = response.headers.get('Content-Type');
     if (contentType?.startsWith('application/json')) {
       return response.json();
@@ -84,21 +80,14 @@ export class StandardRunService implements IRunService {
     return { nextLink, runs };
   }
 
-  async getRun(runId: string): Promise<Run | RunError> {
-    const { apiVersion, baseUrl, workflowName, httpClient } = this.options;
-    const headers = this.getAccessTokenHeaders();
+  async getRun(runId: string): Promise<LogicAppsV2.RunInstanceDefinition | RunError> {
+    const { apiVersion, baseUrl, httpClient, workflowName } = this.options;
 
-    const uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?api-version=${apiVersion}`;
+    const uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
     const response = await httpClient.get<any>({
       uri,
-      headers: headers as Record<string, any>,
     });
-
-    if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
-    }
-
-    return response.json();
+    return response;
   }
 
   async getRuns(): Promise<Runs> {

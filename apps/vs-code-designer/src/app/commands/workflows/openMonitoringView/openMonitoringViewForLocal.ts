@@ -18,6 +18,7 @@ import { sendRequest } from '../../../utils/requestUtils';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { AzureConnectorDetails, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { promises } from 'fs';
 import * as path from 'path';
@@ -27,6 +28,7 @@ import { ViewColumn } from 'vscode';
 
 export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
   private projectPath: string | undefined;
+  private panelMetadata: IDesignerPanelMetadata;
 
   constructor(context: IActionContext, runId: string, workflowFilePath: string) {
     const apiVersion = '2019-10-01-edge-preview';
@@ -64,6 +66,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
     }
 
+    this.panelMetadata = await this._getDesignerPanelMetadata();
     this.panel.webview.html = await this.getWebviewContent({
       connectionsData: connectionsData,
       parametersData: parametersData,
@@ -96,14 +99,17 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
           data: {
-            connectionReferences: this.connectionReferences,
+            panelMetadata: this.panelMetadata,
+            connectionData: this.connectionData,
+            workflowDetails: this.workflowDetails,
+            oauthRedirectUrl: this.oauthRedirectUrl,
             baseUrl: this.baseUrl,
             apiVersion: this.apiVersion,
             apiHubServiceDetails: this.apiHubServiceDetails,
             readOnly: this.readOnly,
             isLocal: this.isLocal,
             isMonitoringView: this.isMonitoringView,
-            runId: this.runId,
+            runId: this.runName,
           },
         });
         break;
@@ -140,5 +146,32 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
         await vscode.window.showErrorMessage(errorMessage, localize('OK', 'OK'));
       }
     });
+  }
+
+  private async _getDesignerPanelMetadata(): Promise<any> {
+    const connectionsData: string = await getConnectionsFromFile(this.context, this.workflowFilePath);
+    const projectPath: string | undefined = await getFunctionProjectRoot(this.context, this.workflowFilePath);
+    let localSettings: Record<string, string>;
+    let azureDetails: AzureConnectorDetails;
+
+    if (projectPath) {
+      azureDetails = await getAzureConnectorDetailsForLocalProject(this.context, projectPath);
+      localSettings = (await getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName))).Values;
+    } else {
+      throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
+    }
+
+    return {
+      panelId: this.panelName,
+      appSettingNames: Object.keys(localSettings),
+      scriptPath: this.panel.webview.asWebviewUri(vscode.Uri.file(path.join(ext.context.extensionPath, 'dist', 'designer'))).toString(),
+      connectionsData,
+      localSettings,
+      azureDetails,
+      accessToken: azureDetails.accessToken,
+      workflowName: this.workflowName,
+      workflowDetails: {},
+      artifacts: await getArtifactsInLocalProject(projectPath),
+    };
   }
 }

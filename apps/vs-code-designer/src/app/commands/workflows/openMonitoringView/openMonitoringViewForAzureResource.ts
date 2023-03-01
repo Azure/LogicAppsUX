@@ -95,13 +95,16 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
           data: {
-            connectionReferences: this.connectionReferences,
+            connectionData: this.connectionData,
+            workflowDetails: this.workflowDetails,
+            oauthRedirectUrl: this.oauthRedirectUrl,
             baseUrl: this.baseUrl,
             apiVersion: this.apiVersion,
             apiHubServiceDetails: this.apiHubServiceDetails,
             readOnly: this.readOnly,
             isLocal: this.isLocal,
             isMonitoringView: this.isMonitoringView,
+            runId: this.runName,
           },
         });
         break;

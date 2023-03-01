@@ -7,7 +7,7 @@ import { convertConnectionsDataToReferences } from './utilities/workflow';
 import type { ConnectionCreationInfo } from '@microsoft/designer-client-services-logic-apps';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
-import { Theme } from '@microsoft/utils-logic-apps';
+import { isEmptyString, Theme } from '@microsoft/utils-logic-apps';
 import type { FileSystemConnectionInfo } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { useContext, useMemo, useState, useEffect } from 'react';
@@ -30,9 +30,9 @@ export const App = () => {
     isMonitoringView,
     runId,
   } = vscodeState;
-  const standardApp = panelMetaData?.standardApp;
+  const [standardApp, setStandardApp] = useState(panelMetaData?.standardApp);
+  const [runInstance, setRunInstance] = useState<LogicAppsV2.RunInstanceDefinition | null>(null);
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
-  const [runInstance, setRunInstance] = useState({});
 
   useThemeObserver(document.body, theme, setTheme, {
     attributes: true,
@@ -72,14 +72,18 @@ export const App = () => {
 
   useEffect(() => {
     async function getRunInstance() {
-      if (isMonitoringView && runId) {
-        setRunInstance(await services.runService.getRun(runId));
+      if (isMonitoringView && !isEmptyString(runId)) {
+        const runServiceInstance = (await services.runService.getRun(runId)) as any;
+        const standardAppInstance = {
+          definition: runServiceInstance.properties.workflow.properties.definition,
+          kind: '',
+        };
+        setRunInstance(runServiceInstance);
+        setStandardApp(standardAppInstance);
       }
     }
     getRunInstance();
   }, [isMonitoringView, runId, services]);
-
-  console.log(runInstance);
 
   return (
     <DesignerProvider
@@ -92,8 +96,8 @@ export const App = () => {
       }}
     >
       {standardApp ? (
-        <BJSWorkflowProvider workflow={{ definition: standardApp.definition, connectionReferences }}>
-          {readOnly ? null : <DesignerCommandBar isMonitoringView />}
+        <BJSWorkflowProvider workflow={{ definition: standardApp.definition, connectionReferences }} runInstance={runInstance}>
+          {readOnly && !isMonitoringView ? null : <DesignerCommandBar isMonitoringView={isMonitoringView} />}
           <Designer />
         </BJSWorkflowProvider>
       ) : null}

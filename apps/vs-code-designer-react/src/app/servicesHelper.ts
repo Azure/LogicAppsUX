@@ -10,7 +10,13 @@ import {
   StandardGatewayService,
   StandardRunService,
 } from '@microsoft/designer-client-services-logic-apps';
-import type { IApiHubServiceDetails, ConnectionCreationInfo, ContentType } from '@microsoft/designer-client-services-logic-apps';
+import type {
+  IApiHubServiceDetails,
+  ConnectionCreationInfo,
+  ContentType,
+  IHostService,
+  IWorkflowService,
+} from '@microsoft/designer-client-services-logic-apps';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
@@ -27,7 +33,17 @@ export const getDesignerServices = (
   createFileSystemConnection: (connectionInfo: ConnectionCreationInfo, connectionName: string) => Promise<ConnectionCreationInfo>,
   vscode: WebviewApi<unknown>,
   oauthRedirectUrl: string
-): any => {
+): {
+  connectionService: StandardConnectionService;
+  connectorService: StandardConnectorService;
+  operationManifestService: StandardOperationManifestService;
+  searchService: StandardSearchService;
+  oAuthService: StandardOAuthService;
+  gatewayService: StandardGatewayService;
+  workflowService: IWorkflowService;
+  hostService: IHostService;
+  runService: StandardRunService;
+} => {
   let authToken = '',
     panelId = '',
     workflowDetails: Record<string, any> = {},
@@ -147,7 +163,7 @@ export const getDesignerServices = (
   });
 
   // Workflow service needs to be implemented to get the callback url for azure resources
-  const workflowService = {
+  const workflowService: IWorkflowService = {
     getCallbackUrl: async () => {
       if (isLocal) {
         return Promise.resolve({
@@ -160,10 +176,9 @@ export const getDesignerServices = (
     },
   };
 
-  const hostService = {
+  const hostService: IHostService = {
     fetchAndDisplayContent: async (title: string, url: string, type: ContentType) => {
-      const response = (await httpClient.get({ uri: url })) as any;
-      const content = await response.json();
+      const content = await httpClient.get({ uri: url });
       return vscode.postMessage({
         command: ExtensionCommand.showContent,
         content: JSON.stringify(content, null, 4),
@@ -177,9 +192,8 @@ export const getDesignerServices = (
   const runService = new StandardRunService({
     apiVersion,
     baseUrl,
-    workflowName: 'app',
+    workflowName: panelMetadata?.workflowName ?? '',
     httpClient,
-    isDev: true,
   });
 
   return {

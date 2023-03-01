@@ -1,11 +1,11 @@
 import type { CallbackInfo } from './workflow';
-import type { ContentLink, Runs, Run, RunError } from '@microsoft/designer-ui';
+import type { ContentLink, Runs, RunError } from '@microsoft/designer-ui';
 import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface IRunService {
   getContent(contentLink: ContentLink): Promise<any>;
   getMoreRuns(continuationToken: string): Promise<Runs>;
-  getRun(runId: string): Promise<Run | RunError>;
+  getRun(runId: string): Promise<LogicAppsV2.RunInstanceDefinition | RunError>;
   getRuns(workflowId: string): Promise<Runs>;
   runTrigger(callbackInfo: CallbackInfo): Promise<any>;
   getActionLinks(action: any, nodeId: string): Promise<any>;
