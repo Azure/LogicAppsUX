@@ -18,26 +18,15 @@ export interface InputTokenProps {
   required?: boolean;
   title: string;
   nodeKey?: NodeKey;
-  showTokenPickerSwitch?: (show?: boolean) => void;
 }
 
 export const DELETE = '\u00D7';
-export const InputToken: React.FC<InputTokenProps> = ({
-  value,
-  brandColor,
-  icon,
-  isSecure,
-  readOnly,
-  title,
-  nodeKey,
-  showTokenPickerSwitch,
-}) => {
+export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon, isSecure, readOnly, title, nodeKey }) => {
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
 
   const handleTokenClicked = () => {
     if (nodeKey) {
-      showTokenPickerSwitch?.(true);
       setTimeout(() => {
         editor.dispatchCommand(CHANGE_TOKENPICKER_EXPRESSION, nodeKey);
       }, 50);

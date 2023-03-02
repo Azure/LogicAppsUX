@@ -49,7 +49,6 @@ interface TokenPickerSearchProps {
   setSearchQuery: (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, text?: string) => void;
   expressionEditorBlur: (e: ExpressionEditorEvent) => void;
   resetTokenPicker: () => void;
-  showTokenPickerSwitch?: (show?: boolean) => void;
 }
 
 export const TokenPickerSearch = ({
@@ -63,7 +62,6 @@ export const TokenPickerSearch = ({
   setSearchQuery,
   expressionEditorBlur,
   resetTokenPicker,
-  showTokenPickerSwitch,
 }: TokenPickerSearchProps): JSX.Element => {
   const intl = useIntl();
   const { isInverted } = useTheme();
@@ -121,7 +119,6 @@ export const TokenPickerSearch = ({
         title: token.title,
         icon: token.icon ?? FxIcon,
         value: token.value,
-        showTokenPickerSwitch: showTokenPickerSwitch,
         data: {
           id: guid(),
           type: ValueSegmentType.TOKEN,

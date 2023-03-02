@@ -25,7 +25,6 @@ interface TokenPickerPivotProps {
   selectedKey: string;
   hideExpressions: boolean;
   selectKey: () => void;
-  tokenPickerHide?: () => void;
 }
 export const TokenPickerPivot = ({ selectedKey, hideExpressions, selectKey }: TokenPickerPivotProps): JSX.Element => {
   const intl = useIntl();

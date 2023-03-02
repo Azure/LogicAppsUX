@@ -37,8 +37,6 @@ export interface TokenPickerProps {
   tokenPickerFocused?: (b: boolean) => void;
   onSearchTextChanged?: SearchTextChangedEventHandler;
   tokenClickedCallback?: (token: ValueSegment) => void;
-  tokenPickerHide?: () => void;
-  showTokenPickerSwitch?: (show?: boolean) => void;
 }
 export function TokenPicker({
   editorId,
@@ -50,8 +48,6 @@ export function TokenPicker({
   onSearchTextChanged,
   getValueSegmentFromToken,
   tokenClickedCallback,
-  tokenPickerHide,
-  showTokenPickerSwitch,
 }: TokenPickerProps): JSX.Element {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedKey, setSelectedKey] = useState<TokenPickerMode>(initialMode ?? TokenPickerMode.TOKEN);
@@ -124,7 +120,6 @@ export function TokenPicker({
         ariaLabelledBy={labelId}
         gapSpace={gapSpace}
         target={`#${editorId}`}
-        isBeakVisible={tokenPickerHide ? false : true}
         beakWidth={beakWidth}
         directionalHint={directionalHint}
         onMouseDown={() => {
@@ -140,12 +135,7 @@ export function TokenPicker({
       >
         <div className="msla-token-picker-container">
           <div className="msla-token-picker">
-            <TokenPickerPivot
-              selectedKey={selectedKey}
-              selectKey={handleSelectKey}
-              hideExpressions={!!tokenClickedCallback}
-              tokenPickerHide={tokenPickerHide}
-            />
+            <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} hideExpressions={!!tokenClickedCallback} />
             <TokenPickerSearch
               selectedKey={selectedKey}
               searchQuery={searchQuery}
@@ -157,7 +147,6 @@ export function TokenPicker({
               isEditing={isEditing}
               resetTokenPicker={resetTokenPicker}
               isDynamicContentAvailable={isDynamicContentAvailable(tokenGroup ?? [])}
-              showTokenPickerSwitch={showTokenPickerSwitch}
             />
 
             <TokenPickerSection

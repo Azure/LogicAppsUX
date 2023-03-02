@@ -6,18 +6,18 @@ import { CopyInputControl } from '../../copyinputcontrol';
 import { DictionaryEditor } from '../../dictionary';
 import { DropdownEditor } from '../../dropdown';
 import type { ValueSegment } from '../../editor';
-import type { CallbackHandler, ChangeHandler, TokenPickerHandler } from '../../editor/base';
+import type { CallbackHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { QueryBuilderEditor } from '../../querybuilder';
 import { UntilEditor } from '../../querybuilder/Until';
+import { ScheduleEditor } from '../../recurrence';
 import { SchemaEditor } from '../../schemaeditor';
 import { TableEditor } from '../../table';
 import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
 import React from 'react';
-import { ScheduleEditor } from '../../recurrence';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -39,7 +39,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   isTrigger?: boolean;
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
-  tokenPickerHandler: TokenPickerHandler;
+  getTokenPicker: GetTokenPickerHandler;
   validationErrors?: string[];
   hideValidationErrors?: ChangeHandler;
 }
@@ -72,7 +72,7 @@ const TokenField = ({
   onValueChange,
   onComboboxMenuOpen,
   hideValidationErrors,
-  tokenPickerHandler,
+  getTokenPicker,
 }: SettingTokenFieldProps) => {
   const dropdownOptions = editorOptions?.options?.value ?? editorOptions?.options ?? [];
 
@@ -96,7 +96,7 @@ const TokenField = ({
       return (
         <CodeEditor
           initialValue={value}
-          tokenPickerHandler={tokenPickerHandler}
+          getTokenPicker={getTokenPicker}
           language={EditorLanguage.javascript}
           onChange={onValueChange}
           isTrigger={isTrigger}
@@ -115,7 +115,7 @@ const TokenField = ({
           isTrigger={isTrigger}
           isLoading={isLoading}
           errorDetails={errorDetails}
-          tokenPickerHandler={tokenPickerHandler}
+          getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           onMenuOpen={onComboboxMenuOpen}
         />
@@ -132,7 +132,7 @@ const TokenField = ({
           initialValue={value}
           initialItems={editorViewModel.items}
           isTrigger={isTrigger}
-          tokenPickerHandler={tokenPickerHandler}
+          getTokenPicker={getTokenPicker}
           onChange={onValueChange}
         />
       );
@@ -148,7 +148,7 @@ const TokenField = ({
           titles={editorOptions.columns.titles}
           keys={editorOptions.columns.keys}
           isTrigger={isTrigger}
-          tokenPickerHandler={tokenPickerHandler}
+          getTokenPicker={getTokenPicker}
           onChange={onValueChange}
         />
       );
@@ -162,7 +162,7 @@ const TokenField = ({
           readonly={readOnly}
           initialValue={value}
           isTrigger={isTrigger}
-          tokenPickerHandler={tokenPickerHandler}
+          getTokenPicker={getTokenPicker}
           itemSchema={editorViewModel?.schema}
           onChange={onValueChange}
         />
@@ -175,7 +175,7 @@ const TokenField = ({
           options={editorOptions}
           type={editorViewModel.type}
           authenticationValue={editorViewModel.authenticationValue}
-          tokenPickerHandler={tokenPickerHandler}
+          getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           BasePlugins={{ tokens: showTokens }}
         />
@@ -186,7 +186,7 @@ const TokenField = ({
         <UntilEditor
           readonly={readOnly}
           items={JSON.parse(JSON.stringify(editorViewModel.items))}
-          tokenPickerHandler={tokenPickerHandler}
+          getTokenPicker={getTokenPicker}
           onChange={onValueChange}
         />
       ) : (
@@ -194,19 +194,12 @@ const TokenField = ({
           readonly={readOnly}
           groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
           onChange={onValueChange}
-          tokenPickerHandler={tokenPickerHandler}
+          getTokenPicker={getTokenPicker}
         />
       );
 
     case 'recurrence':
-      return (
-        <ScheduleEditor
-          readOnly={readOnly}
-          type={editorOptions.recurrenceType}
-          initialValue={value}
-          onChange={onValueChange}
-        />
-      );
+      return <ScheduleEditor readOnly={readOnly} type={editorOptions.recurrenceType} initialValue={value} onChange={onValueChange} />;
 
     default:
       return (
@@ -218,7 +211,7 @@ const TokenField = ({
           isTrigger={isTrigger}
           initialValue={value}
           editorBlur={onValueChange}
-          tokenPickerHandler={tokenPickerHandler}
+          getTokenPicker={getTokenPicker}
           onChange={hideValidationErrors}
         />
       );
