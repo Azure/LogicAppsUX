@@ -9,7 +9,7 @@ import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '.
 import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
-import { indexPseudoFunction, directAccessPseudoFunctionKey } from '../../models/Function';
+import { directAccessPseudoFunctionKey, indexPseudoFunction } from '../../models/Function';
 import { findLast } from '../../utils/Array.Utils';
 import {
   bringInParentSourceNodesForRepeating,
@@ -24,9 +24,9 @@ import {
   setConnectionInputValue,
 } from '../../utils/Connection.Utils';
 import {
+  addAncestorNodesToCanvas,
   addNodeToCanvasIfDoesNotExist,
   addParentConnectionForRepeatingElementsNested,
-  addAncestorNodesToCanvas,
   getParentId,
 } from '../../utils/DataMap.Utils';
 import { isFunctionData } from '../../utils/Function.Utils';
@@ -597,12 +597,23 @@ export const deleteNodeFromConnections = (connections: ConnectionDictionary, key
 export const deleteConnectionFromConnections = (connections: ConnectionDictionary, inputKey: string, outputKey: string) => {
   connections[inputKey].outputs = connections[inputKey].outputs.filter((output) => output.reactFlowKey !== outputKey);
 
-  Object.entries(connections[outputKey].inputs).forEach(
-    ([key, input]) =>
-      (connections[outputKey].inputs[key] = input.filter((inputEntry) =>
-        isConnectionUnit(inputEntry) ? inputEntry.reactFlowKey !== inputKey : true
-      ))
-  );
+  const outputNode = connections[outputKey].self.node;
+  if (isFunctionData(outputNode) && outputNode.maxNumberOfInputs === -1) {
+    Object.values(connections[outputKey].inputs).forEach((input, inputIndex) =>
+      input.forEach((inputValue, inputValueIndex) => {
+        if (isConnectionUnit(inputValue) && inputValue.reactFlowKey === inputKey) {
+          connections[outputKey].inputs[inputIndex][inputValueIndex] = undefined;
+        }
+      })
+    );
+  } else {
+    Object.entries(connections[outputKey].inputs).forEach(
+      ([key, input]) =>
+        (connections[outputKey].inputs[key] = input.filter((inputEntry) =>
+          isConnectionUnit(inputEntry) ? inputEntry.reactFlowKey !== inputKey : true
+        ))
+    );
+  }
 };
 
 export const deleteParentRepeatingConnections = (connections: ConnectionDictionary, inputKey: string /* contains prefix */) => {
@@ -701,9 +712,8 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
       (node) => node.key !== sourceNode.key
     );
 
-    // NOTE: Do NOT delete source schema node from connections - at this stage, it's guaranteed that
+    // NOTE: Do NOT delete source schema node from connections - at this stage, it's not guaranteed that
     // there are no connections to it, and we don't want to accidentally delete connections on other layers
-
     curDataMapState.curDataMapOperation.selectedItemKey = undefined;
     doDataMapOperation(curDataMapState, {
       ...curDataMapState.curDataMapOperation,
@@ -726,31 +736,17 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
 
     curDataMapState.curDataMapOperation.selectedItemKey = undefined;
     doDataMapOperation(curDataMapState, { ...curDataMapState.curDataMapOperation, currentFunctionNodes: newFunctionsState });
+
     curDataMapState.notificationData = {
       type: NotificationTypes.FunctionNodeDeleted,
       autoHideDurationMs: deletedNotificationAutoHideDuration,
     };
+
     return;
   }
 
   // Item to be deleted is a connection
   const connections = { ...curDataMapState.curDataMapOperation.dataMapConnections };
-
-  /*
-    const sourceId = getSourceIdFromReactFlowConnectionId(reactFlowKey);
-    const sourceSchema = curDataMapState.curDataMapOperation.flattenedSourceSchema;
-    const canDelete = canDeleteConnection(sourceId, sourceSchema);
-
-    if (!canDelete) {
-      const sourceNode = sourceSchema[sourceId];
-      curDataMapState.notificationData = {
-        type: NotificationTypes.RepeatingConnectionCannotDelete,
-        msgParam: sourceNode.name,
-        autoHideDurationMs: errorNotificationAutoHideDuration,
-      };
-    }
-
-  */
 
   deleteConnectionFromConnections(
     connections,
