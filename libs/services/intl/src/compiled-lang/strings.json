@@ -2735,6 +2735,12 @@
       "value": "Required. The expressions that may be true."
     }
   ],
+  "LvLksz": [
+    {
+      "type": 0,
+      "value": "Loading outputs"
+    }
+  ],
   "LvpxiA": [
     {
       "type": 0,
@@ -7051,6 +7057,12 @@
     {
       "type": 0,
       "value": "Parameters are shared across workflows in a Logic App."
+    }
+  ],
+  "xwD1VZ": [
+    {
+      "type": 0,
+      "value": "Loading inputs"
     }
   ],
   "xwEX2/": [

@@ -7,9 +7,10 @@ export interface InputsPanelProps {
   brandColor: string;
   nodeId: string;
   values: Record<string, any>;
+  isLoading: boolean;
 }
 
-export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColor, nodeId, values }) => {
+export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColor, nodeId, values, isLoading }) => {
   const intl = useIntl();
 
   const intlText = {
@@ -24,6 +25,10 @@ export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColo
     showInputs: intl.formatMessage({
       defaultMessage: 'Show raw inputs',
       description: 'Show inputs text',
+    }),
+    inputsLoading: intl.formatMessage({
+      defaultMessage: 'Loading inputs',
+      description: 'Loading inputs text',
     }),
   };
 
@@ -43,7 +48,7 @@ export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColo
           showLink={true}
           values={values}
           labelledBy={''}
-          noValuesText={intlText.noInputs}
+          noValuesText={isLoading ? intlText.inputsLoading : intlText.noInputs}
           showMore={false}
           onLinkClick={onSeeRawInputsClick}
         />

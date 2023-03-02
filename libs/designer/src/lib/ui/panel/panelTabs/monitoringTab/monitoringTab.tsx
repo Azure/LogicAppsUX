@@ -9,28 +9,49 @@ import { RunService } from '@microsoft/designer-client-services-logic-apps';
 import { ErrorSection } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useQuery } from 'react-query';
 
 export const MonitoringPanel: React.FC = () => {
   const selectedNodeId = useSelectedNodeId();
   const nodeMetadata = useNodeMetadata(selectedNodeId);
   const brandColor = useBrandColor(selectedNodeId);
   const runMetaData = nodeMetadata?.runData;
-  const [inputOutputs, setInputsOutputs] = useState({ inputs: {}, outputs: {} });
+
+  const getActionInputsOutputs = () => {
+    return RunService().getActionLinks(runMetaData, selectedNodeId);
+  };
+
+  const {
+    data: inputOutputs,
+    isLoading: isInputOutputsLoading,
+    refetch,
+  } = useQuery<any>(['actionInputsOutputs'], getActionInputsOutputs, {
+    refetchOnWindowFocus: false,
+    initialData: { inputs: {}, outputs: {} },
+  });
 
   useEffect(() => {
-    async function getActionInputsOutputs() {
-      const actionsInputsOutputs = await RunService().getActionLinks(runMetaData, selectedNodeId);
-      setInputsOutputs(actionsInputsOutputs);
-    }
-    getActionInputsOutputs();
+    refetch();
   }, [runMetaData]);
 
   return isNullOrUndefined(runMetaData) ? null : (
     <div>
       <ErrorSection error={runMetaData.error} />
-      <InputsPanel runMetaData={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} values={inputOutputs.inputs} />
-      <OutputsPanel runMetaData={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} values={inputOutputs.outputs} />
+      <InputsPanel
+        runMetaData={runMetaData}
+        brandColor={brandColor}
+        isLoading={isInputOutputsLoading}
+        nodeId={selectedNodeId}
+        values={inputOutputs.inputs}
+      />
+      <OutputsPanel
+        runMetaData={runMetaData}
+        brandColor={brandColor}
+        isLoading={isInputOutputsLoading}
+        nodeId={selectedNodeId}
+        values={inputOutputs.outputs}
+      />
       <PropertiesPanel properties={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} />
     </div>
   );
