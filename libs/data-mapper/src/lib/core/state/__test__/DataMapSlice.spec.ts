@@ -3,25 +3,18 @@ import { concatFunction } from '../../../__mocks__/FunctionMock';
 import type { Schema, SchemaExtended } from '../../../models';
 import { SchemaType } from '../../../models';
 import type { ConnectionDictionary } from '../../../models/Connection';
-import { setConnectionInputValue, flattenInputs } from '../../../utils/Connection.Utils';
+import { flattenInputs, setConnectionInputValue } from '../../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../../utils/ReactFlow.Util';
-import { convertSchemaToSchemaExtended, flattenSchemaIntoDictionary } from '../../../utils/Schema.Utils';
+import { convertSchemaToSchemaExtended } from '../../../utils/Schema.Utils';
 import {
   fullConnectionDictionaryForOneToManyLoop,
   fullMapForSimplifiedLoop,
   indexedConnections,
   manyToManyConnectionSourceName,
 } from '../../../utils/__mocks__';
-import {
-  canDeleteConnection,
-  deleteConnectionFromConnections,
-  deleteNodeFromConnections,
-  deleteParentRepeatingConnections,
-} from '../DataMapSlice';
-import { sourceMockSchema } from '__mocks__/schemas';
+import { deleteConnectionFromConnections, deleteNodeFromConnections, deleteParentRepeatingConnections } from '../DataMapSlice';
 
 // NOTE: Functions with an unbounded input (like our concatFunction mock) will have two empty (undefined) values/fields by default
-
 describe('DataMapSlice', () => {
   const schema: Schema = simpleMockSchema;
   const extendedSchema: SchemaExtended = convertSchemaToSchemaExtended(schema);
@@ -288,23 +281,6 @@ describe('DataMapSlice', () => {
       expect(connections[destinationId].self).toBeDefined();
       expect(connections[destinationId].outputs.length).toEqual(0);
       expect(flattenInputs(connections[destinationId].inputs).length).toEqual(0);
-    });
-  });
-
-  describe('canDeleteConnection', () => {
-    const extendedSchema: SchemaExtended = convertSchemaToSchemaExtended(sourceMockSchema as Schema);
-    const flattenedSrcSchema = flattenSchemaIntoDictionary(extendedSchema, SchemaType.Source);
-    const repeatingNodeId = 'source-/ns0:Root/Looping/VehicleTrips/Trips';
-    const nonRepeatingNodeId = 'source-/ns0:Root/DirectTranslation/EmployeeID';
-
-    it('returns true with non-repeating connection', () => {
-      const canBeDeleted = canDeleteConnection(nonRepeatingNodeId, flattenedSrcSchema);
-      expect(canBeDeleted).toBe(true);
-    });
-
-    it('returns false with repeating connection', () => {
-      const canBeDeleted = canDeleteConnection(repeatingNodeId, flattenedSrcSchema);
-      expect(canBeDeleted).toBe(false);
     });
   });
 
