@@ -24,7 +24,9 @@ export const MonitoringPanel: React.FC = () => {
 
   const {
     data: inputOutputs,
-    isLoading: isInputOutputsLoading,
+    isError,
+    isFetching,
+    isLoading,
     refetch,
   } = useQuery<any>(['actionInputsOutputs'], getActionInputsOutputs, {
     refetchOnWindowFocus: false,
@@ -33,7 +35,7 @@ export const MonitoringPanel: React.FC = () => {
 
   useEffect(() => {
     refetch();
-  }, [runMetaData]);
+  }, [runMetaData, refetch]);
 
   return isNullOrUndefined(runMetaData) ? null : (
     <div>
@@ -41,14 +43,16 @@ export const MonitoringPanel: React.FC = () => {
       <InputsPanel
         runMetaData={runMetaData}
         brandColor={brandColor}
-        isLoading={isInputOutputsLoading}
+        isLoading={isFetching || isLoading}
+        isError={isError}
         nodeId={selectedNodeId}
         values={inputOutputs.inputs}
       />
       <OutputsPanel
         runMetaData={runMetaData}
         brandColor={brandColor}
-        isLoading={isInputOutputsLoading}
+        isLoading={isFetching || isLoading}
+        isError={isError}
         nodeId={selectedNodeId}
         values={inputOutputs.outputs}
       />

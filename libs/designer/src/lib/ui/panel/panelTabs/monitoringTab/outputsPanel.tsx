@@ -8,9 +8,10 @@ export interface OutputsPanelProps {
   nodeId: string;
   values: Record<string, any>;
   isLoading: boolean;
+  isError: boolean;
 }
 
-export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandColor, nodeId, values, isLoading }) => {
+export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandColor, nodeId, values, isLoading, isError }) => {
   const intl = useIntl();
 
   const intlText = {
@@ -30,6 +31,10 @@ export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandCo
       defaultMessage: 'Loading outputs',
       description: 'Loading outputs text',
     }),
+    outputsError: intl.formatMessage({
+      defaultMessage: 'Error loading outputs',
+      description: 'Error loading outputs text',
+    }),
   };
 
   const { outputsLink } = runMetaData;
@@ -47,8 +52,8 @@ export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandCo
           linkText={intlText.showOutputs}
           showLink={true}
           values={values}
-          labelledBy={''}
-          noValuesText={isLoading ? intlText.outputsLoading : intlText.noOutputs}
+          labelledBy={`outputs-${nodeId}`}
+          noValuesText={isError ? intlText.outputsError : isLoading ? intlText.outputsLoading : intlText.noOutputs}
           showMore={false}
           onLinkClick={onSeeRawOutputsClick}
         />
