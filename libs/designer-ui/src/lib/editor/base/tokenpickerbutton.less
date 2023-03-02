@@ -1,0 +1,51 @@
+@import (reference) '../../variables.less';
+.msla-tokenpicker-button {
+  position: absolute;
+  right: -7px;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  background-color: inherit;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5px;
+  white-space: nowrap;
+  .msla-tokenpicker-button-text {
+    color: @brandColor;
+    padding-right: 3px;
+    margin: 0px;
+  }
+}
+.msla-tokenpicker-beak {
+  position: absolute;
+  background-color: rgb(255, 255, 255);
+  box-shadow: inherit;
+  border: 0px solid rgb(0, 120, 212);
+  box-sizing: border-box;
+  transform: rotate(45deg);
+  height: 20px;
+  width: 20px;
+  top: 10px;
+  right: -9px;
+  z-index: -1;
+}
+.msla-combobox-editor-tokenpicker {
+  right: -37px;
+}
+.msla-editor-tokenpicker-button {
+  right: -7px;
+}
+
+body.dark {
+  .msla-tokenpicker-button-text {
+    color: @brandColorLight;
+  }
+}
+
+.msla-token-picker-entrypoint-button-expression-icon {
+  position: relative;
+  right: 0px;
+  height: 32px;
+  width: 32px;
+}

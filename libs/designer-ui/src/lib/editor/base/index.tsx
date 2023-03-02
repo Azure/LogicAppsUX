@@ -12,7 +12,7 @@ import OnFocus from './plugins/OnFocus';
 import { ReadOnly } from './plugins/ReadOnly';
 import SingleValueSegment from './plugins/SingleValueSegment';
 import type { TokenPickerButtonProps } from './plugins/TokenPickerButton';
-import TokenPickerButton from './plugins/TokenPickerButton';
+// import TokenPickerButton from './plugins/TokenPickerButton';
 import { TreeView } from './plugins/TreeView';
 import { TokenPickerButtonNew } from './plugins/tokenpickerbuttonnew';
 import EditorTheme from './themes/editorTheme';
@@ -191,7 +191,7 @@ export const BaseEditor = ({
           {clearEditor ? <ClearEditor showButton={false} /> : null}
           {singleValueSegment ? <SingleValueSegment /> : null}
 
-          {!isTrigger && ((tokens && showTokenPickerButton) || getInTokenPicker()) ? (
+          {/* {!isTrigger && ((tokens && showTokenPickerButton) || getInTokenPicker()) ? (
             <TokenPickerButton
               customButton={customButton}
               labelId={labelId}
@@ -200,7 +200,7 @@ export const BaseEditor = ({
               buttonOffset={tokenPickerButtonProps?.buttonOffset}
               setShowTokenPicker={handleShowTokenPicker}
             />
-          ) : null}
+          ) : null} */}
           {!isTrigger && ((showTokenPickerButton && tokenPickerVisibility) || getInTokenPicker())
             ? getTokenPicker(editorId, labelId, onClickTokenPicker, undefined, customButton ? handleShowTokenPicker : undefined)
             : null}

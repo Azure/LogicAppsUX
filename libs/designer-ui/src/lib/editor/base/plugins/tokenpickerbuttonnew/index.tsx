@@ -1,14 +1,24 @@
+import constants from '../../../../constants';
+import { FxIcon } from './assets/fxIcon';
 import type { IButtonStyles, IIconProps } from '@fluentui/react';
 import { TooltipHost, IconButton } from '@fluentui/react';
+import { Button } from '@fluentui/react-components';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { NodeKey } from 'lexical';
 import { $getSelection } from 'lexical';
+import type { CSSProperties } from 'react';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const dynamicContentIconProps: IIconProps = {
   iconName: 'LightningBolt',
+};
+
+const expressionButtonStyles: CSSProperties = {
+  minWidth: '32px',
+  position: 'relative',
+  left: '4px',
 };
 
 const buttonStyles: IButtonStyles = {
@@ -20,9 +30,11 @@ const buttonStyles: IButtonStyles = {
   },
   rootHovered: {
     backgroundColor: 'transparent',
+    color: constants.BRAND_COLOR,
   },
   rootPressed: {
     backgroundColor: 'transparent',
+    color: constants.BRAND_COLOR_LIGHT,
   },
 };
 
@@ -34,6 +46,8 @@ export const TokenPickerButtonNew = ({ onAddComment }: TokenPickerButtonProps): 
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
   const [anchorKey, setAnchorKey] = useState<NodeKey | null>(null);
+  const [showHoveredExpressionButton, setShowHoveredExpressionButton] = useState(false);
+  const [showPressedExpressionButton, setShowPressedExpressionButton] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
 
   const updateAnchorPoint = useCallback(() => {
@@ -98,17 +112,33 @@ export const TokenPickerButtonNew = ({ onAddComment }: TokenPickerButtonProps): 
             <IconButton
               iconProps={dynamicContentIconProps}
               styles={buttonStyles}
-              className="msla-setting-section-row-info-icon"
+              className="msla-token-picker-entrypoint-button-dynamic-content"
               onClick={onAddComment}
             />
           </TooltipHost>
           <TooltipHost content={expressionButtonText}>
-            <IconButton
-              iconProps={dynamicContentIconProps}
-              styles={buttonStyles}
-              className="msla-setting-section-row-info-icon"
-              onClick={onAddComment}
-            />
+            <Button
+              onMouseEnter={() => setShowHoveredExpressionButton(true)}
+              onMouseLeave={() => setShowHoveredExpressionButton(false)}
+              onMouseDown={() => setShowPressedExpressionButton(true)}
+              onMouseUp={() => {
+                setShowPressedExpressionButton(false);
+                onAddComment();
+              }}
+              style={expressionButtonStyles}
+            >
+              <span className="msla-token-picker-entrypoint-button-expression-icon">
+                <FxIcon
+                  fill={
+                    showHoveredExpressionButton
+                      ? showPressedExpressionButton
+                        ? constants.BRAND_COLOR_LIGHT
+                        : constants.BRAND_COLOR
+                      : '#FFF'
+                  }
+                />
+              </span>
+            </Button>
           </TooltipHost>
         </div>
       ) : null}
