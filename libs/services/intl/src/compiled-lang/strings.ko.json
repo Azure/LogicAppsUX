@@ -6278,6 +6278,12 @@
       "value": "연결 만들기 취소"
     }
   ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "Add Case"
+    }
+  ],
   "sW47JR": [
     {
       "type": 0,
@@ -6432,12 +6438,6 @@
     {
       "type": 0,
       "value": "(UTC+06:00) 노보시비르스크"
-    }
-  ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
     }
   ],
   "tUYXRA": [

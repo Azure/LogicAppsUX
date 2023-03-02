@@ -6436,6 +6436,12 @@
       "value": "Cancelar a criação de uma conexão"
     }
   ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "Add Case"
+    }
+  ],
   "sW47JR": [
     {
       "type": 0,
@@ -6590,12 +6596,6 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Novosibirsk"
-    }
-  ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
     }
   ],
   "tUYXRA": [

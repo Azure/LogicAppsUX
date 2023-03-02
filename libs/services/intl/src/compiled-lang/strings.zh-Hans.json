@@ -6458,6 +6458,12 @@
       "value": "取消创建连接"
     }
   ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "Add Case"
+    }
+  ],
   "sW47JR": [
     {
       "type": 0,
@@ -6612,12 +6618,6 @@
     {
       "type": 0,
       "value": "(UTC+06:00) 新西伯利亚"
-    }
-  ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
     }
   ],
   "tUYXRA": [
