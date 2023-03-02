@@ -6278,6 +6278,12 @@
       "value": "接続の作成を取り消します"
     }
   ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "Add Case"
+    }
+  ],
   "sW47JR": [
     {
       "type": 0,
@@ -6432,12 +6438,6 @@
     {
       "type": 0,
       "value": "(UTC+06:00) ノボシビルスク"
-    }
-  ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
     }
   ],
   "tUYXRA": [
