@@ -1,7 +1,7 @@
 import { coreBadge } from '../../badges';
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
-import { getFrequencyValues , RecurrenceType, SettingScope } from '@microsoft/utils-logic-apps';
 import { getIntl } from '@microsoft/intl-logic-apps';
+import type { OperationManifest } from '@microsoft/utils-logic-apps';
+import { getFrequencyValues, RecurrenceType, SettingScope } from '@microsoft/utils-logic-apps';
 
 export const frequencyValues = getFrequencyValues(getIntl());
 

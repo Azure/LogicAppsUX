@@ -6,9 +6,12 @@ export interface OutputsPanelProps {
   runMetaData: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
   brandColor: string;
   nodeId: string;
+  values: Record<string, any>;
+  isLoading: boolean;
+  isError: boolean;
 }
 
-export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandColor, nodeId }) => {
+export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandColor, nodeId, values, isLoading, isError }) => {
   const intl = useIntl();
 
   const intlText = {
@@ -23,6 +26,14 @@ export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandCo
     showOutputs: intl.formatMessage({
       defaultMessage: 'Show raw outputs',
       description: 'Show outputs text',
+    }),
+    outputsLoading: intl.formatMessage({
+      defaultMessage: 'Loading outputs',
+      description: 'Loading outputs text',
+    }),
+    outputsError: intl.formatMessage({
+      defaultMessage: 'Error loading outputs',
+      description: 'Error loading outputs text',
     }),
   };
 
@@ -40,31 +51,9 @@ export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandCo
           headerText={intlText.outputs}
           linkText={intlText.showOutputs}
           showLink={true}
-          values={{
-            statusCode: {
-              displayName: 'Status code',
-              value: 200,
-            },
-            headers: {
-              displayName: 'Headers',
-              format: 'key-value-pairs',
-              value: {
-                Date: 'Fri, 28 Jan 2022 00:02:51 GMT',
-                Expires: '-1',
-                Pragma: 'no-cache',
-                Vary: 'Accept-Encoding',
-              },
-            },
-            body: {
-              displayName: 'Body',
-              value: {
-                nextLink: '[REDACTED]',
-                value: [],
-              },
-            },
-          }}
-          labelledBy={''}
-          noValuesText={intlText.noOutputs}
+          values={values}
+          labelledBy={`outputs-${nodeId}`}
+          noValuesText={isError ? intlText.outputsError : isLoading ? intlText.outputsLoading : intlText.noOutputs}
           showMore={false}
           onLinkClick={onSeeRawOutputsClick}
         />

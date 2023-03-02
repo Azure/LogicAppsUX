@@ -5,7 +5,7 @@ import { HtmlValue } from './html';
 import { KeyValuePairs } from './keyvaluepairs';
 import { NumberValue } from './number';
 import { RawValue } from './raw';
-import type { ValueProps } from './types';
+import type { ContentLink, ValueProps } from './types';
 import { isContentLink, isXml } from './utils';
 import { XmlValue } from './xml';
 
@@ -32,3 +32,5 @@ export const Value: React.FC<ValueProps> = (props) => {
     return <RawValue {...props} />;
   }
 };
+
+export { ContentLink };

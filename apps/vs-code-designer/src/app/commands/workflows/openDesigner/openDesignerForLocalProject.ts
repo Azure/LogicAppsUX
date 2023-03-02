@@ -46,7 +46,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     const panelName = `${workspace.name}-${workflowName}`;
     const panelGroupKey = ext.webViewKey.designerLocal;
 
-    super(context, workflowName, panelName, apiVersion, panelGroupKey, false, true);
+    super(context, workflowName, panelName, apiVersion, panelGroupKey, false, true, false);
 
     this.workflowFilePath = node.fsPath;
   }
@@ -142,6 +142,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             apiHubServiceDetails: this.apiHubServiceDetails,
             readOnly: this.readOnly,
             isLocal: this.isLocal,
+            isMonitoringView: this.isMonitoringView,
             workflowDetails: this.workflowDetails,
             oauthRedirectUrl: this.oauthRedirectUrl,
           },

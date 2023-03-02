@@ -8,11 +8,19 @@ import {
   StandardOperationManifestService,
   StandardSearchService,
   StandardGatewayService,
+  StandardRunService,
 } from '@microsoft/designer-client-services-logic-apps';
-import type { IApiHubServiceDetails, ConnectionCreationInfo } from '@microsoft/designer-client-services-logic-apps';
+import type {
+  IApiHubServiceDetails,
+  ConnectionCreationInfo,
+  ContentType,
+  IHostService,
+  IWorkflowService,
+} from '@microsoft/designer-client-services-logic-apps';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
+import type { WebviewApi } from 'vscode-webview';
 
 export const getDesignerServices = (
   baseUrl: string,
@@ -23,9 +31,19 @@ export const getDesignerServices = (
   connectionData: ConnectionsData,
   panelMetadata: IDesignerPanelMetadata | null,
   createFileSystemConnection: (connectionInfo: ConnectionCreationInfo, connectionName: string) => Promise<ConnectionCreationInfo>,
-  vscode: any,
+  vscode: WebviewApi<unknown>,
   oauthRedirectUrl: string
-): any => {
+): {
+  connectionService: StandardConnectionService;
+  connectorService: StandardConnectorService;
+  operationManifestService: StandardOperationManifestService;
+  searchService: StandardSearchService;
+  oAuthService: StandardOAuthService;
+  gatewayService: StandardGatewayService;
+  workflowService: IWorkflowService;
+  hostService: IHostService;
+  runService: StandardRunService;
+} => {
   let authToken = '',
     panelId = '',
     workflowDetails: Record<string, any> = {},
@@ -145,7 +163,7 @@ export const getDesignerServices = (
   });
 
   // Workflow service needs to be implemented to get the callback url for azure resources
-  const workflowService = {
+  const workflowService: IWorkflowService = {
     getCallbackUrl: async () => {
       if (isLocal) {
         return Promise.resolve({
@@ -158,6 +176,26 @@ export const getDesignerServices = (
     },
   };
 
+  const hostService: IHostService = {
+    fetchAndDisplayContent: async (title: string, url: string, type: ContentType) => {
+      const content = await httpClient.get({ uri: url });
+      return vscode.postMessage({
+        command: ExtensionCommand.showContent,
+        content: JSON.stringify(content, null, 4),
+        header: type,
+        id: title,
+        title,
+      });
+    },
+  };
+
+  const runService = new StandardRunService({
+    apiVersion,
+    baseUrl,
+    workflowName: panelMetadata?.workflowName ?? '',
+    httpClient,
+  });
+
   return {
     connectionService,
     connectorService,
@@ -166,5 +204,7 @@ export const getDesignerServices = (
     oAuthService,
     gatewayService,
     workflowService,
+    hostService,
+    runService,
   };
 };

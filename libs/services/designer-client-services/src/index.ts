@@ -15,3 +15,4 @@ export * from './lib/standard';
 export * from './lib/consumption';
 export * from './lib/host';
 export * from './lib/apimanagement';
+export * from './lib/run';
