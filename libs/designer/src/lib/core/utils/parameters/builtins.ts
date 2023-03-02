@@ -4,7 +4,14 @@ import type { ParameterInfo } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import { OutputMapKey, parseEx, SchemaProcessor, toInputParameter } from '@microsoft/parsers-logic-apps';
 import type { RecurrenceSetting } from '@microsoft/utils-logic-apps';
-import { getScheduleDayValues, getScheduleHourValues, getTimezoneValues, getObjectPropertyValue, map, RecurrenceType } from '@microsoft/utils-logic-apps';
+import {
+  getScheduleDayValues,
+  getScheduleHourValues,
+  getTimezoneValues,
+  getObjectPropertyValue,
+  map,
+  RecurrenceType,
+} from '@microsoft/utils-logic-apps';
 
 const intl = getIntl();
 const timeZoneValues = getTimezoneValues(intl);
