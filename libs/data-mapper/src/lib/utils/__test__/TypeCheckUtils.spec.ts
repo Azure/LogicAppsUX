@@ -17,6 +17,7 @@ describe('utils/type-checker-utils', () => {
     nodeProperties: [SchemaNodeProperty.NotSpecified],
     children: [],
     pathToRoot: [],
+    parentKey: undefined,
   };
 
   const mockFunctionData: FunctionData = {

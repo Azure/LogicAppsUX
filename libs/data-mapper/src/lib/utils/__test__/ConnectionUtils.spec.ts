@@ -54,6 +54,7 @@ describe('utils/Connections', () => {
         nodeProperties: [SchemaNodeProperty.NotSpecified],
         children: [],
         pathToRoot: [],
+        parentKey: undefined,
       };
 
       createConnectionEntryIfNeeded(connections, schemaNode, schemaNodeKey);
@@ -91,6 +92,7 @@ describe('utils/Connections', () => {
         nodeProperties: [SchemaNodeProperty.NotSpecified],
         children: [],
         pathToRoot: [],
+        parentKey: undefined,
       };
 
       it('Test doubly-linked-connection to schema node is made', () => {
@@ -104,6 +106,7 @@ describe('utils/Connections', () => {
           nodeProperties: [SchemaNodeProperty.NotSpecified],
           children: [],
           pathToRoot: [],
+          parentKey: undefined,
         };
 
         setConnectionInputValue(mockConnections, {
@@ -389,6 +392,7 @@ describe('utils/Connections', () => {
       nodeProperties: [SchemaNodeProperty.NotSpecified],
       children: [],
       pathToRoot: [],
+      parentKey: undefined,
     };
     const mockConnections: ConnectionDictionary = {
       testSourceSchema1: {
@@ -436,6 +440,7 @@ describe('utils/Connections', () => {
       nodeProperties: [SchemaNodeProperty.NotSpecified],
       children: [],
       pathToRoot: [],
+      parentKey: undefined,
     };
     const mockConnections: ConnectionDictionary = {
       testSourceSchema1: {
@@ -490,6 +495,7 @@ describe('utils/Connections', () => {
       nodeProperties: [SchemaNodeProperty.NotSpecified],
       children: [],
       pathToRoot: [],
+      parentKey: undefined,
     };
     const mockConnections: ConnectionDictionary = {
       testSourceSchema1: {
