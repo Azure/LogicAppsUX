@@ -28,6 +28,12 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonito
     });
   };
 
+  const onResubmit = async () => {
+    vscode.postMessage({
+      command: ExtensionCommand.resubmitRun,
+    });
+  };
+
   const Resources = {
     DESIGNER_SAVE: intl.formatMessage({
       defaultMessage: 'Save',
@@ -84,7 +90,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonito
       key: 'Rerun',
       name: Resources.MONITORING_VIEW_RESUBMIT,
       onClick: () => {
-        return true;
+        onResubmit();
       },
     },
   ];
