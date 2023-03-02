@@ -652,15 +652,6 @@ export const deleteParentRepeatingConnections = (connections: ConnectionDictiona
   }
 };
 
-export const canDeleteConnection = (sourceNodeId: string, sourceSchema: SchemaNodeDictionary) => {
-  const sourceNode = sourceSchema[sourceNodeId];
-  if (!sourceNode || (sourceNode && !sourceNode.nodeProperties.includes(SchemaNodeProperty.Repeating))) {
-    return true;
-  }
-
-  return false;
-};
-
 export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: string) => {
   const targetNode = curDataMapState.curDataMapOperation.flattenedTargetSchema[reactFlowKey];
   if (targetNode) {
