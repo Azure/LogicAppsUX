@@ -14,6 +14,7 @@ import SingleValueSegment from './plugins/SingleValueSegment';
 import type { TokenPickerButtonProps } from './plugins/TokenPickerButton';
 import TokenPickerButton from './plugins/TokenPickerButton';
 import { TreeView } from './plugins/TreeView';
+import { TokenPickerButtonNew } from './plugins/tokenpickerbuttonnew';
 import EditorTheme from './themes/editorTheme';
 import { parseSegments } from './utils/parsesegments';
 import type { ICalloutProps } from '@fluentui/react';
@@ -26,6 +27,7 @@ import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { useFunctionalState } from '@react-hookz/web';
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
 
 export { testTokenSegment, outputToken, outputToken2 } from '../shared/testtokensegment';
@@ -210,6 +212,12 @@ export const BaseEditor = ({
           {tokens ? <DeleteTokenNode /> : null}
           {children}
         </div>
+
+        {!isTrigger && ((tokens && showTokenPickerButton) || getInTokenPicker()) ? (
+          createPortal(<TokenPickerButtonNew onAddComment={handleShowTokenPicker} />, document.body)
+        ) : (
+          <div />
+        )}
       </LexicalComposer>
     </TooltipHost>
   );

@@ -71,6 +71,12 @@
       "value": "Select an api from apim instance"
     }
   ],
+  "/2+p0Z": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -623,12 +629,6 @@
     {
       "type": 0,
       "value": "On"
-    }
-  ],
-  "2wJZkB": [
-    {
-      "type": 0,
-      "value": "Empty add dynamic content button"
     }
   ],
   "2xhbE1": [
@@ -2277,6 +2277,12 @@
     {
       "type": 0,
       "value": "Key"
+    }
+  ],
+  "Hbqlzk": [
+    {
+      "type": 0,
+      "value": "Insert Expression"
     }
   ],
   "HfrUId": [
@@ -4861,6 +4867,12 @@
     {
       "type": 0,
       "value": "Optional. The index of where to stop extracting the substring."
+    }
+  ],
+  "f81ClO": [
+    {
+      "type": 0,
+      "value": "Empty dynamic content icon"
     }
   ],
   "fBQBw/": [
