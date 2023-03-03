@@ -34,6 +34,7 @@ import type {
 import { equals } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { batch } from 'react-redux';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
@@ -41,47 +42,39 @@ type AddOperationPayload = {
   nodeId: string;
   isParallelBranch?: boolean;
   isTrigger?: boolean;
-  additionalParameters?: any;
   presetParameterValues?: Record<string, any>;
   actionMetadata?: Record<string, any>;
 };
 
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
-  const { operation, nodeId: actionId, additionalParameters, presetParameterValues, actionMetadata } = payload;
-  if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
-  let count = 1;
-  let nodeId = actionId;
-  while ((getState() as RootState).workflow.operations[nodeId]) {
-    nodeId = `${actionId}_${count}`;
-    count++;
-  }
+  batch(() => {
+    const { operation, nodeId: actionId, presetParameterValues, actionMetadata } = payload;
+    if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
+    let count = 1;
+    let nodeId = actionId;
+    while ((getState() as RootState).workflow.operations[nodeId]) {
+      nodeId = `${actionId}_${count}`;
+      count++;
+    }
 
-  const newPayload = { ...payload, nodeId };
+    const newPayload = { ...payload, nodeId };
 
-  dispatch(addNode(newPayload as any));
+    dispatch(addNode(newPayload as any));
 
-  const nodeOperationInfo = {
-    connectorId: operation.properties.api.id, // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
-    operationId: operation.name,
-    type: getOperationType(operation),
-    kind: operation.properties.operationKind,
-  };
+    const nodeOperationInfo = {
+      connectorId: operation.properties.api.id, // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
+      operationId: operation.name,
+      type: getOperationType(operation),
+      kind: operation.properties.operationKind,
+    };
 
-  dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
-  initializeOperationDetails(
-    nodeId,
-    nodeOperationInfo,
-    getState as () => RootState,
-    dispatch,
-    additionalParameters,
-    presetParameterValues,
-    actionMetadata
-  );
+    dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
+    initializeOperationDetails(nodeId, nodeOperationInfo, getState as () => RootState, dispatch, presetParameterValues, actionMetadata);
 
-  // Update settings for children and parents
+    // Update settings for children and parents
 
-  dispatch(setFocusNode(nodeId));
-  return;
+    dispatch(setFocusNode(nodeId));
+  });
 });
 
 const initializeOperationDetails = async (
@@ -89,7 +82,6 @@ const initializeOperationDetails = async (
   operationInfo: NodeOperation,
   getState: () => RootState,
   dispatch: Dispatch,
-  additionalParameters?: any,
   parameterValues?: Record<string, any>,
   actionMetadata?: Record<string, any>
 ): Promise<void> => {
@@ -110,12 +102,7 @@ const initializeOperationDetails = async (
     isConnectionRequired = isConnectionRequiredForOperation(manifest);
 
     const { iconUri, brandColor } = manifest.properties;
-    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
-      nodeId,
-      manifest,
-      undefined,
-      additionalParameters
-    );
+    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, undefined);
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs);
 
     if (parameterValues) {

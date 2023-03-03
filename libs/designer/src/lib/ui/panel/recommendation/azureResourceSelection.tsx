@@ -17,7 +17,6 @@ interface AzureResourceSelectionProps {
 
 interface AddResourceOperationParameters {
   name: string;
-  additionalParameters?: any;
   presetParameterValues?: Record<string, any>;
   actionMetadata?: Record<string, any>;
 }
@@ -71,7 +70,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
 
   const addResourceOperation = useCallback(
     (props: AddResourceOperationParameters) => {
-      const { name, additionalParameters, presetParameterValues, actionMetadata } = props;
+      const { name, presetParameterValues, actionMetadata } = props;
       const newNodeId = name.replaceAll(' ', '_');
       dispatch(
         addOperation({
@@ -80,7 +79,6 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           nodeId: newNodeId,
           isParallelBranch,
           isTrigger,
-          additionalParameters,
           presetParameterValues,
           actionMetadata,
         })
@@ -149,9 +147,6 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
 
           addResourceOperation({
             name: resource.summary,
-            additionalParameters: {
-              swagger: additionalInputParameters,
-            },
             presetParameterValues: {
               'api.id': selectedResources[1]?.id,
               'pathTemplate.template': `${apimApiSwaggerResources?.basePath}/${resource?.uri}`,
@@ -176,9 +171,6 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         setSubmitCallback(() => () => {
           addResourceOperation({
             name: selectedResources[1]?.id,
-            additionalParameters: {
-              inputs: selectedResources[1]?.parameters,
-            },
             presetParameterValues: {
               method: selectedResources[1]?.method,
               uri: `http://localhost:54335${selectedResources[1]?.uri}`,

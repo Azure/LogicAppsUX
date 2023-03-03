@@ -3,7 +3,6 @@ import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-a
 export interface IAppServiceService {
   [x: string]: any;
   fetchAppServices(): Promise<any>;
-  fetchAppServiceApiSwagger(appService: any): Promise<any>;
 }
 
 let service: IAppServiceService;

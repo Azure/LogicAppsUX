@@ -37,17 +37,6 @@ export class BaseAppServiceService implements IAppServiceService {
     const apps = functionAppsResponse.value.filter(connectorIsAppService);
     return apps;
   }
-
-  async fetchAppServiceApiSwagger(appService: any): Promise<any> {
-    const uri = appService?.properties?.siteConfig?.apiDefinition?.url;
-    const response = await this.options.httpClient.get<any>({
-      uri,
-      headers: {
-        'Access-Control-Allow-Origin': appService?.properties?.siteConfig?.cors?.allowedOrigins,
-      },
-    });
-    return response;
-  }
 }
 
 // tslint:disable-next-line: no-any

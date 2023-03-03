@@ -80,17 +80,13 @@ export const parseWorkflowParameters = (parameters: Record<string, WorkflowParam
 export const getInputParametersFromManifest = (
   nodeId: string,
   manifest: OperationManifest,
-  stepDefinition?: any,
-  additionalParameters?: any
+  stepDefinition?: any
 ): NodeInputsWithDependencies => {
-  // console.log('### additionalParameters', additionalParameters);
-
   const primaryInputParameters = new ManifestParser(manifest).getInputParameters(
     false /* includeParentObject */,
     0 /* expandArrayPropertiesDepth */,
     undefined,
-    undefined,
-    additionalParameters?.swagger
+    undefined
   );
   // console.log('### primaryInputParameters', primaryInputParameters);
   const allInputParameters = unmap(
@@ -100,10 +96,6 @@ export const getInputParametersFromManifest = (
     )
   );
   let primaryInputParametersInArray = unmap(primaryInputParameters);
-
-  if (additionalParameters?.inputs) {
-    primaryInputParametersInArray = primaryInputParametersInArray.concat(additionalParameters.inputs);
-  }
 
   if (stepDefinition) {
     const { inputsLocation } = manifest.properties;
