@@ -1,14 +1,13 @@
-import { childTargetNodeCardWidth, schemaNodeCardDefaultWidth, schemaNodeCardHeight } from '../../constants/NodeConstants';
+import { schemaNodeCardDefaultWidth, schemaNodeCardHeight } from '../../constants/NodeConstants';
 import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import { removeSourceSchemaNodes, setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
-import type { Connection } from '../../models/Connection';
 import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
-import { flattenInputs, isCustomValue, isValidConnectionByType, isValidCustomValueByType } from '../../utils/Connection.Utils';
+import { flattenInputs } from '../../utils/Connection.Utils';
 import { iconForNormalizedDataType } from '../../utils/Icon.Utils';
-import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
+import { areInputTypesValidForSchemaNode } from '../../utils/MapChecker.Utils';
 import { ItemToggledState } from '../tree/TargetSchemaTreeItem';
 import HandleWrapper from './HandleWrapper';
 import type { CardProps } from './NodeCard';
@@ -53,7 +52,6 @@ const useStyles = makeStyles({
     float: 'right',
     alignItems: 'center',
     justifyContent: 'left',
-    ...shorthands.gap('8px'),
     ...shorthands.margin('2px'),
     isolation: 'isolate',
     '&:hover': {
@@ -149,20 +147,17 @@ const useStyles = makeStyles({
 
 export interface SchemaCardProps extends CardProps {
   schemaNode: SchemaNodeExtended;
-  maxWidth?: number;
   schemaType: SchemaType;
   displayHandle: boolean;
   displayChevron: boolean;
   isLeaf: boolean;
-  isChild: boolean;
-  relatedConnections: Connection[];
+  width: number;
   connectionStatus?: ItemToggledState;
 }
 
 export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const reactFlowId = props.id;
-  const { schemaNode, maxWidth, schemaType, isLeaf, isChild, onClick, disabled, displayHandle, displayChevron, connectionStatus } =
-    props.data;
+  const { schemaNode, schemaType, isLeaf, onClick, disabled, displayHandle, displayChevron, connectionStatus, width } = props.data;
   const dispatch = useDispatch<AppDispatch>();
   const sharedStyles = getStylesForSharedState();
   const classes = useStyles();
@@ -229,21 +224,8 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
       return true;
     }
 
-    const curInput = flattenInputs(curConn.inputs)[0];
-    if (curInput === undefined) {
-      return true;
-    }
-
-    if (isCustomValue(curInput)) {
-      return isValidCustomValueByType(curInput, schemaNode.normalizedDataType);
-    } else {
-      if (isSchemaNodeExtended(curInput.node)) {
-        return isValidConnectionByType(schemaNode.normalizedDataType, curInput.node.normalizedDataType);
-      } else {
-        return isValidConnectionByType(schemaNode.normalizedDataType, curInput.node.outputValueType);
-      }
-    }
-  }, [isSourceSchemaNode, connections, reactFlowId, isNodeConnected, schemaNode.normalizedDataType]);
+    return areInputTypesValidForSchemaNode(schemaNode, curConn);
+  }, [connections, reactFlowId, isSourceSchemaNode, isNodeConnected, schemaNode]);
 
   const outputChevronOnClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -254,6 +236,10 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const ChevronIcon = bundleIcon(ChevronRight16Filled, ChevronRight16Regular);
   const BundledTypeIcon = iconForNormalizedDataType(schemaNode.normalizedDataType, 24, false, schemaNode.nodeProperties);
   const contextMenu = useCardContextMenu();
+  const ariaDescribeChevron = intl.formatMessage({
+    defaultMessage: 'Navigate to element and view children',
+    description: "Change context of the canvas to view that element's children",
+  });
   const getRemoveMenuItem = (): MenuItemOption => {
     const deleteNode = intl.formatMessage({
       defaultMessage: 'Remove',
@@ -276,19 +262,14 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const selectedNodeStyles = isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId ? selectedCardStyles : undefined;
 
-  const targetCardWidth = isChild ? childTargetNodeCardWidth : schemaNodeCardDefaultWidth;
-  const cardWidth = isSourceSchemaNode && schemaNode.width ? schemaNode.width : targetCardWidth;
-  const maxWidthCalculated = maxWidth || cardWidth;
-  const sourceCardMargin = isSourceSchemaNode ? maxWidthCalculated - cardWidth : 0;
-
   return (
-    <div className={classes.badgeContainer} style={{ marginLeft: sourceCardMargin }}>
+    <div className={classes.badgeContainer}>
       {isNBadgeRequired && !isSourceSchemaNode && <NBadge isOutput />}
 
       <div
         onContextMenu={contextMenu.handle}
         className={containerStyle}
-        style={{ ...selectedNodeStyles, width: cardWidth }}
+        style={{ ...selectedNodeStyles, width }}
         onMouseLeave={() => setIsCardHovered(false)}
         onMouseEnter={() => setIsCardHovered(true)}
       >
@@ -306,7 +287,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
           onClick={onClick}
           appearance={'transparent'}
           className={classes.contentButton}
-          style={{ paddingRight: isSourceSchemaNode ? '10px' : '0px' }}
+          style={{ paddingRight: !showOutputChevron ? '10px' : '0px' }}
         >
           <span className={classes.cardIcon}>
             <BundledTypeIcon />
@@ -314,17 +295,18 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
           <Tooltip
             relationship="label"
-            content={schemaNode.name}
+            content={<span style={{ overflowWrap: 'break-word' }}>{schemaNode.name}</span>}
             visible={shouldNameTooltipDisplay && isTooltipEnabled}
             onVisibleChange={(_ev, data) => setIsTooltipEnabled(data.visible)}
           >
-            <div ref={schemaNameTextRef} className={classes.cardText} style={{ width: `${cardWidth - 30}px` }}>
+            <div ref={schemaNameTextRef} className={classes.cardText} style={{ width: `${width - 30}px` }}>
               {schemaNode.name}
             </div>
           </Tooltip>
         </Button>
         {showOutputChevron && (
           <Button
+            aria-label={ariaDescribeChevron}
             className={classes.cardChevron}
             onClick={outputChevronOnClick}
             icon={<ChevronIcon filled={isChevronHovered ? true : undefined} />}

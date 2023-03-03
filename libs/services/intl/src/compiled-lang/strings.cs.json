@@ -77,6 +77,12 @@
       "value": "Stránkování"
     }
   ],
+  "//nQG4": [
+    {
+      "type": 0,
+      "value": "Select an api from apim instance"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -137,6 +143,18 @@
       "value": "Převede vstup na pole."
     }
   ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Show raw outputs"
+    }
+  ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -165,6 +183,18 @@
     {
       "type": 0,
       "value": "Vrátí prvních Count prvků z předaného pole nebo řetězce."
+    }
+  ],
+  "/vWMKW": [
+    {
+      "type": 0,
+      "value": "Missing required inputs"
+    }
+  ],
+  "/yYyOq": [
+    {
+      "type": 0,
+      "value": "Resource Group"
     }
   ],
   "00xlpa": [
@@ -239,16 +269,16 @@
       "value": "Vrátí binární reprezentaci řetězce zakódovaného jako identifikátor URI."
     }
   ],
+  "0SSwxD": [
+    {
+      "type": 0,
+      "value": "Close panel"
+    }
+  ],
   "0Vzp0l": [
     {
       "type": 0,
       "value": "Sbalit"
-    }
-  ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "Vyberte filtr."
     }
   ],
   "0ZlNtf": [
@@ -273,6 +303,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
+    }
+  ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
     }
   ],
   "0p+pJq": [
@@ -301,6 +337,12 @@
     {
       "type": 0,
       "value": "Vrátí binární reprezentaci vstupního řetězce identifikátoru URI dat."
+    }
+  ],
+  "0upuCv": [
+    {
+      "type": 0,
+      "value": "Hour"
     }
   ],
   "0y5eia": [
@@ -337,12 +379,6 @@
     {
       "type": 0,
       "value": "Komentář"
-    }
-  ],
-  "1ANUHk": [
-    {
-      "type": 0,
-      "value": "Loading functions..."
     }
   ],
   "1D047X": [
@@ -623,6 +659,12 @@
       "value": "Povinný parametr. Název akce s odpovědí form-data nebo form-encoded."
     }
   ],
+  "2kWLLc": [
+    {
+      "type": 0,
+      "value": "Start Time"
+    }
+  ],
   "2ri1Kf": [
     {
       "type": 0,
@@ -681,6 +723,20 @@
     {
       "type": 0,
       "value": "Aktivační události"
+    }
+  ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
     }
   ],
   "3NhwIJ": [
@@ -833,6 +889,12 @@
       "value": "Povinný parametr. Nejnižší celé číslo, které se může vrátit."
     }
   ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "4BrA0z": [
     {
       "type": 0,
@@ -927,12 +989,6 @@
       "value": "14"
     }
   ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "Typ akce"
-    }
-  ],
   "5+MuPz": [
     {
       "type": 0,
@@ -967,6 +1023,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Název smyčky, jejíž položku chcete získat."
+    }
+  ],
+  "5dCAjy": [
+    {
+      "type": 0,
+      "value": "Day"
     }
   ],
   "5hWg4V": [
@@ -1029,6 +1091,20 @@
       "value": "(UTC+09:30) Adelaide"
     }
   ],
+  "6gZ4I3": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' has too many inputs assigned to it"
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
@@ -1071,10 +1147,22 @@
       "value": "Povinný parametr. Číslo, kterým se má vynásobit násobenec 2."
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -1169,6 +1257,12 @@
       "value": "Parameter name already exists."
     }
   ],
+  "83G5rr": [
+    {
+      "type": 0,
+      "value": "Specify the interval."
+    }
+  ],
   "84D91Y": [
     {
       "type": 0,
@@ -1237,6 +1331,12 @@
     {
       "type": 0,
       "value": "Povolte prosím pro aplikaci logiky spravovanou identitu."
+    }
+  ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
     }
   ],
   "8U0KPg": [
@@ -1423,6 +1523,12 @@
       "value": "Typ ověřování"
     }
   ],
+  "AGCm1p": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -1485,6 +1591,12 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "AheXMN": [
+    {
+      "type": 0,
+      "value": "Select frequency."
     }
   ],
   "Amz9+m": [
@@ -1657,6 +1769,18 @@
       "value": "(UTC+08:00) Perth"
     }
   ],
+  "BSgavq": [
+    {
+      "type": 0,
+      "value": "Example: Monday, Friday"
+    }
+  ],
+  "BUutcC": [
+    {
+      "type": 0,
+      "value": "Expant list of sibling elements"
+    }
+  ],
   "BVOUxP": [
     {
       "type": 0,
@@ -1819,6 +1943,26 @@
       "value": "Přihlašování…"
     }
   ],
+  "E+iim4": [
+    {
+      "type": 0,
+      "value": "Select timezone."
+    }
+  ],
+  "E3+TAA": [
+    {
+      "type": 0,
+      "value": "Schema node '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an input with a mismatched type"
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1841,6 +1985,18 @@
     {
       "type": 0,
       "value": "Vytvořit skupinu"
+    }
+  ],
+  "ESZXfC": [
+    {
+      "type": 0,
+      "value": "At these minutes"
+    }
+  ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "EV9iRu": [
@@ -2117,6 +2273,12 @@
       "value": "Zadejte autoritu."
     }
   ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "Filter by data type"
+    }
+  ],
   "GLd3MU": [
     {
       "type": 0,
@@ -2157,6 +2319,12 @@
     {
       "type": 0,
       "value": "Source schema element"
+    }
+  ],
+  "Gl5khw": [
+    {
+      "type": 0,
+      "value": "At these hours"
     }
   ],
   "Gmya+V": [
@@ -2201,6 +2369,12 @@
       "value": "Povinné. Řetězec, který se má rozdělit"
     }
   ],
+  "H2WdiZ": [
+    {
+      "type": 0,
+      "value": "Enter the valid minute values (from 0 to 59) separated by comma, e.g., 15,30"
+    }
+  ],
   "H5VikC": [
     {
       "type": 0,
@@ -2217,6 +2391,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Název klíče datové hodnoty ve formuláři, která se má vrátit."
+    }
+  ],
+  "HH970i": [
+    {
+      "type": 0,
+      "value": "Month"
     }
   ],
   "HJIZrG": [
@@ -2307,6 +2487,12 @@
       "value": "Při ověřování se využití dynamického obsahu jako vlastností nepodporuje."
     }
   ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -2349,12 +2535,6 @@
       "value": "(UTC+07:00) Barnaul, Gorno-Altajsk"
     }
   ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "Zpět k procházení"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -2371,6 +2551,12 @@
     {
       "type": 0,
       "value": "Vrátí první objekt v předaných argumentech, který není null."
+    }
+  ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
     }
   ],
   "J/Kz1j": [
@@ -2399,6 +2585,28 @@
     {
       "type": 0,
       "value": "Parameters"
+    }
+  ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "The current map contains "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "JErLDT": [
@@ -2595,6 +2803,12 @@
       "value": "Vaše hledání nemá žádné výsledky."
     }
   ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "LBbhCu": [
     {
       "type": 0,
@@ -2643,6 +2857,12 @@
     {
       "type": 0,
       "value": "Vrátí schéma z identifikátoru URI."
+    }
+  ],
+  "LV/BTE": [
+    {
+      "type": 0,
+      "value": "Loading Api Management service instances..."
     }
   ],
   "LZm3ze": [
@@ -2703,6 +2923,12 @@
       "value": "Požadované. Výrazy, které mohou být pravdivé."
     }
   ],
+  "LvLksz": [
+    {
+      "type": 0,
+      "value": "Loading outputs"
+    }
+  ],
   "LvpxiA": [
     {
       "type": 0,
@@ -2749,20 +2975,6 @@
     {
       "type": 0,
       "value": "Nepovinné. Název akce s určeným rozsahem, u níž požadujete vstupy a výstupy z akcí na nejvyšší úrovni v rámci daného rozsahu."
-    }
-  ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "Nenašly se žádné výsledky pro: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
-    },
-    {
-      "type": 0,
-      "value": "."
     }
   ],
   "M9mzP6": [
@@ -2937,12 +3149,6 @@
       "value": "Úterý"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "Modul runtime"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -3011,6 +3217,12 @@
     {
       "type": 0,
       "value": "10"
+    }
+  ],
+  "OIOexo": [
+    {
+      "type": 0,
+      "value": "On these days"
     }
   ],
   "OKszbi": [
@@ -3097,12 +3309,6 @@
       "value": "Pfx"
     }
   ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "Filtr"
-    }
-  ],
   "P2A5dB": [
     {
       "type": 0,
@@ -3139,6 +3345,12 @@
       "value": "(UTC-03:00) Araguaina"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -3149,6 +3361,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Číslo, které se má přičíst ke sčítanci 1."
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3429,6 +3647,12 @@
       "value": "6"
     }
   ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "issue"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3451,6 +3675,12 @@
     {
       "type": 0,
       "value": "Zadejte slovník."
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "issues"
     }
   ],
   "SKXopi": [
@@ -3497,6 +3727,12 @@
     {
       "type": 0,
       "value": "Vlastní ID sledování"
+    }
+  ],
+  "Sr8PcK": [
+    {
+      "type": 0,
+      "value": "No operations found"
     }
   ],
   "SvQyvs": [
@@ -3559,6 +3795,12 @@
       "value": "Vrátí řetězec s jednotlivými položkami pole spojenými oddělovači."
     }
   ],
+  "TLHUMf": [
+    {
+      "type": 0,
+      "value": "Error loading inputs"
+    }
+  ],
   "TNEttQ": [
     {
       "type": 0,
@@ -3583,6 +3825,12 @@
       "value": "Neplatný počet stránkování"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3599,12 +3847,6 @@
     {
       "type": 0,
       "value": "Add or replace your schemas."
-    }
-  ],
-  "TZv5JE": [
-    {
-      "type": 0,
-      "value": "Název"
     }
   ],
   "Tayrub": [
@@ -3731,6 +3973,20 @@
       "value": " (název souboru)"
     }
   ],
+  "Ufv5m9": [
+    {
+      "type": 0,
+      "value": "Schema node '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an non-terminating connection chain"
+    }
+  ],
   "UnrrzF": [
     {
       "type": 0,
@@ -3767,6 +4023,12 @@
       "value": "Zadejte platný kód JSON."
     }
   ],
+  "V5f3ha": [
+    {
+      "type": 0,
+      "value": "Week"
+    }
+  ],
   "VA7M1u": [
     {
       "type": 0,
@@ -3785,10 +4047,14 @@
       "value": "Rozbalit"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -3935,10 +4201,22 @@
       "value": "Spravovaná identita není v aplikaci logiky nakonfigurovaná."
     }
   ],
+  "X/7je+": [
+    {
+      "type": 0,
+      "value": "Minute"
+    }
+  ],
   "X4gDhV": [
     {
       "type": 0,
       "value": "Tenant"
+    }
+  ],
+  "X7X5ew": [
+    {
+      "type": 0,
+      "value": "Parameters"
     }
   ],
   "X8JjjT": [
@@ -4011,6 +4289,20 @@
       "value": "Vloží nový krok."
     }
   ],
+  "XRK+gt": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' has an non-terminating connection chain"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -4033,6 +4325,12 @@
     {
       "type": 0,
       "value": " s"
+    }
+  ],
+  "XVTQT6": [
+    {
+      "type": 0,
+      "value": "Interval"
     }
   ],
   "XX1ioe": [
@@ -4185,6 +4483,12 @@
       "value": "Custom value does not match one of the allowed types for this input"
     }
   ],
+  "YlesUQ": [
+    {
+      "type": 0,
+      "value": "Your map is in perfect condition"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -4217,6 +4521,12 @@
     {
       "type": 0,
       "value": ")"
+    }
+  ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
     }
   ],
   "ZCFMoe": [
@@ -4335,6 +4645,18 @@
       "value": "Zpracování dat"
     }
   ],
+  "aSnCCB": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
+  "aV/nLS": [
+    {
+      "type": 0,
+      "value": "Second"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -4403,6 +4725,12 @@
     {
       "type": 0,
       "value": "Ve výchozím nastavení se instance aplikace logiky spouštějí současně nebo paralelně. Tento ovládací prvek změní způsob zařazení nových spuštění do fronty a po povolení se nedá změnit. Pokud chcete spustit co nejvíce paralelních instancí, nechte tento ovládací prvek vypnutý. Pokud chcete omezit počet paralelních spuštění, zapněte tento ovládací prvek a vyberte limit. Pokud chcete spouštět sekvenčně, vyberte jako limit 1."
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4541,12 +4869,6 @@
       "value": "Vyberte prosím identitu."
     }
   ],
-  "ci6ex1": [
-    {
-      "type": 0,
-      "value": "Hodnota"
-    }
-  ],
   "cj+kyo": [
     {
       "type": 0,
@@ -4595,6 +4917,12 @@
       "value": "(UTC+02:00) Harare, Pretoria"
     }
   ],
+  "dBWIjR": [
+    {
+      "type": 0,
+      "value": "Schema is missing required inputs"
+    }
+  ],
   "dDYCuU": [
     {
       "type": 0,
@@ -4605,6 +4933,12 @@
     {
       "type": 0,
       "value": "Aktualizovat"
+    }
+  ],
+  "dQmi91": [
+    {
+      "type": 0,
+      "value": "Frequency"
     }
   ],
   "dSTRb/": [
@@ -4675,6 +5009,12 @@
       "value": "Rozdělí řetězec pomocí oddělovače."
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4691,6 +5031,18 @@
     {
       "type": 0,
       "value": "Neuvedeno"
+    }
+  ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -4841,6 +5193,12 @@
       "value": "Publikovat"
     }
   ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
   "g5mMuM": [
     {
       "type": 0,
@@ -4907,20 +5265,16 @@
       "value": "Převodní funkce"
     }
   ],
+  "gTXyUo": [
+    {
+      "type": 0,
+      "value": "Time Zone"
+    }
+  ],
   "gWRF8m": [
     {
       "type": 0,
       "value": "Podmínky aktivační události"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 0,
-      "value": "Výsledky hledání pro: "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -5209,6 +5563,12 @@
       "value": "Zrušit"
     }
   ],
+  "iVMVAt": [
+    {
+      "type": 0,
+      "value": "Example: 0, 10"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -5235,12 +5595,6 @@
     {
       "type": 0,
       "value": "Elements and mappings not connected to a target element are removed."
-    }
-  ],
-  "ittN0l": [
-    {
-      "type": 0,
-      "value": "No resources of this type found under this subscription."
     }
   ],
   "iy8rNf": [
@@ -5285,6 +5639,12 @@
       "value": "Vrátí náhodné celé číslo ze zadaného rozsahu, do kterého patří jeho první, ale ne poslední hodnota."
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5319,6 +5679,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Vstupní řetězec ve formátu base64."
+    }
+  ],
+  "jZjgYZ": [
+    {
+      "type": 0,
+      "value": "No resources of this type found under this subscription."
     }
   ],
   "jcA3Ig": [
@@ -5365,6 +5731,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Řetězec kódovaný ve formátu base64."
+    }
+  ],
+  "k1N9Si": [
+    {
+      "type": 0,
+      "value": "Must provide default value for parameter."
     }
   ],
   "k41+13": [
@@ -5529,12 +5901,6 @@
       "value": "Functions"
     }
   ],
-  "lV77P8": [
-    {
-      "type": 0,
-      "value": "Název"
-    }
-  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -5579,6 +5945,12 @@
       "value": "Zkratka pro actions('actionName').outputs.body"
     }
   ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -5595,6 +5967,18 @@
     {
       "type": 1,
       "value": "property"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "Skutečná hodnota"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -5747,6 +6131,18 @@
       "value": "Povinný parametr. Počet časových jednotek, o který je požadovaný čas v budoucnosti"
     }
   ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
+    }
+  ],
+  "nRpM02": [
+    {
+      "type": 0,
+      "value": "Custom"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -5781,6 +6177,12 @@
     {
       "type": 0,
       "value": "19"
+    }
+  ],
+  "ny75Ly": [
+    {
+      "type": 0,
+      "value": "Enter default value for parameter."
     }
   ],
   "o/0SEj": [
@@ -5937,12 +6339,6 @@
       "value": "Povinný parametr. Hodnoty, které se mají sloučit do pole."
     }
   ],
-  "pRUJff": [
-    {
-      "type": 0,
-      "value": "Parametry"
-    }
-  ],
   "pUeUDw": [
     {
       "type": 0,
@@ -5959,6 +6355,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Číslo, kterým se má dělit dělenec. Po dělení se zbytek odebere."
+    }
+  ],
+  "pcGqoB": [
+    {
+      "type": 0,
+      "value": "Error loading outputs"
     }
   ],
   "pcuZKB": [
@@ -6163,16 +6565,10 @@
       "value": "(UTC+09:00) Jakutsk"
     }
   ],
-  "qrxi0L": [
+  "qr1lLG": [
     {
       "type": 0,
-      "value": "Asynchronní odpověď umožní aplikaci Logic Apps odpovědět kódem 202 (Přijato) a dát tak vědět, že se požadavek přijal ke zpracování. Pomocí poskytnuté hlavičky umístění půjde načíst koncový stav."
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
+      "value": "Function '"
     },
     {
       "type": 1,
@@ -6180,7 +6576,13 @@
     },
     {
       "type": 0,
-      "value": "‘ first."
+      "value": "' has an input with a mismatched type"
+    }
+  ],
+  "qrxi0L": [
+    {
+      "type": 0,
+      "value": "Asynchronní odpověď umožní aplikaci Logic Apps odpovědět kódem 202 (Přijato) a dát tak vědět, že se požadavek přijal ke zpracování. Pomocí poskytnuté hlavičky umístění půjde načíst koncový stav."
     }
   ],
   "r1FQhf": [
@@ -6309,6 +6711,12 @@
       "value": "Zrušit vytváření připojení"
     }
   ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "Add Case"
+    }
+  ],
   "sW47JR": [
     {
       "type": 0,
@@ -6393,6 +6801,12 @@
       "value": "Povinný parametr. Řetězec, který obsahuje název cílového časového pásma. Podrobnosti najdete tady: https://msdn.microsoft.com/en-us/library/gg154758.aspx"
     }
   ],
+  "tAbbH8": [
+    {
+      "type": 0,
+      "value": "Too many inputs assigned"
+    }
+  ],
   "tAeKNh": [
     {
       "type": 0,
@@ -6459,10 +6873,10 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tRgTTN": [
+  "tUYXRA": [
     {
       "type": 0,
-      "value": "Expand/collapse target schema"
+      "value": "Example: 2017-03-24T15:00:00Z"
     }
   ],
   "tUlRzr": [
@@ -6555,6 +6969,12 @@
       "value": "Přidá celočíselný počet hodin do předaného řetězcového časového razítka."
     }
   ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Show me"
+    }
+  ],
   "uXJdAh": [
     {
       "type": 0,
@@ -6571,6 +6991,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Počet časových jednotek, o který je požadovaný čas v minulosti"
+    }
+  ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
     }
   ],
   "uczA5c": [
@@ -6607,6 +7033,12 @@
     {
       "type": 0,
       "value": "4"
+    }
+  ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "Výchozí hodnota"
     }
   ],
   "uzsleE": [
@@ -6725,6 +7157,12 @@
       "value": "Zadat vlastní hodnotu"
     }
   ],
+  "vvSHR8": [
+    {
+      "type": 0,
+      "value": "Navigate to element and view children"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -6737,6 +7175,12 @@
       "value": "Vlastnosti pracovního postupu"
     }
   ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
+    }
+  ],
   "w16qh+": [
     {
       "type": 0,
@@ -6747,6 +7191,12 @@
     {
       "type": 0,
       "value": "Neděle"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [
@@ -6807,6 +7257,18 @@
     {
       "type": 0,
       "value": "Vrátí zadanou hodnotu podle toho, jestli se daný výraz vyhodnotil jako true, nebo false."
+    }
+  ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
+    }
+  ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "Input type mismatch"
     }
   ],
   "wl7X0l": [
@@ -6899,6 +7361,12 @@
       "value": "Mezní hodnota"
     }
   ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Show raw inputs"
+    }
+  ],
   "xV/oyK": [
     {
       "type": 0,
@@ -6933,6 +7401,12 @@
     {
       "type": 0,
       "value": "Parametry se sdílejí mezi pracovními postupy v aplikaci logiky."
+    }
+  ],
+  "xwD1VZ": [
+    {
+      "type": 0,
+      "value": "Loading inputs"
     }
   ],
   "xwEX2/": [

@@ -7,11 +7,15 @@ import { connectorsSearchResultsMock } from '@microsoft/utils-logic-apps';
 
 export class StandardSearchService extends BaseSearchService {
   public async getAllOperations(): Promise<DiscoveryOpArray> {
-    return Promise.all([this.getAllAzureOperations(), this.getAllBuiltInOperations()]).then((values) => values.flat());
+    return Promise.all([this.getAllAzureOperations(), this.getAllCustomApiOperations(), this.getAllBuiltInOperations()]).then((values) =>
+      values.flat()
+    );
   }
 
   async getAllConnectors(): Promise<Connector[]> {
-    return Promise.all([this.getAllAzureConnectors(), this.getAllBuiltInConnectors()]).then((values) => values.flat());
+    return Promise.all([this.getAllAzureConnectors(), this.getAllCustomApiConnectors(), this.getAllBuiltInConnectors()]).then((values) =>
+      values.flat()
+    );
   }
 
   // TODO - Need to add extra filtering for trigger/action

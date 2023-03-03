@@ -41,17 +41,22 @@ ns0:TargetSchemaRoot:
           FunctionChain: substring(lower-case(SourceFunctionChain), 0, 5)
       $for(/ns0:SourceSchemaRoot/Looping/OneToOne/RelativePaths):
         RelativePaths:
-          DotAccess: .
-          Property: Property
-          $@Attribute: ./@Attribute
+          DirectRelativePaths:
+            DotAccess: .
+            Property: SourceProperty
+            $@Attribute: ./@SourceAttribute
+          InFunctionRelativePaths:
+            DotAccess: string(.)
+            Property: string(SourceProperty)
+            $@Attribute: string(./@SourceAttribute)
       $for(/ns0:SourceSchemaRoot/Looping/OneToOne/Index, $a):
         Index:
           Direct: /ns0:SourceSchemaRoot/Looping/OneToOne/Index[$a]/SourceDirect
           FunctionChain: concat(SourceFunctionChain, $a)
-      # $for(/ns0:SourceSchemaRoot/Looping/OneToOne/Conditional): # TODO: Conditionals (at least property ones) need some help when within loops
-        # Conditional:
-          # $if(is-null(SourceDirect)):
-            # Direct: SourceDirect
+      $for(/ns0:SourceSchemaRoot/Looping/OneToOne/Conditional):
+        Conditional:
+          $if(is-null(SourceDirect)):
+            Direct: SourceDirect
       $for(/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest, $a):
         StressTest:
           $if(is-greater-than($a, 3)):
@@ -70,6 +75,12 @@ ns0:TargetSchemaRoot:
             Index:
               Direct: /ns0:SourceSchemaRoot/Looping/ManyToOne/Index/SourceIndexChild[$b]/SourceIndexChildChild/SourceDirect
               FunctionChain: concat($c, SourceFunctionChain, $a)
+      $for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Conditional):
+        $for(SourceConditionalChild):
+          $for(SourceConditionalChildChild):
+            Conditional:
+              $if(is-null(SourceDirect)):
+                Direct: SourceDirect
     ManyToMany:
       $for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple):
         Simple:
@@ -79,14 +90,29 @@ ns0:TargetSchemaRoot:
                 SimpleChildChild:
                   Direct: SourceDirect
                   FunctionChain: lower-case(SourceFunctionChain)
-      $for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Index, $i):
+      $for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Index, $a): # NOTE: Can test '$i/j/k' to confirm it's the variable itself being deserialized too
         Index:
-          $for(SourceIndexChild, $j):
+          $for(SourceIndexChild, $b):
             IndexChild:
-              $for(SourceIndexChildChild, $k):
+              $for(SourceIndexChildChild, $c):
                 IndexChildChild:
-                  Direct: /ns0:SourceSchemaRoot/Looping/ManyToMany/Index/SourceIndexChild/SourceIndexChildChild[$k]/SourceDirect
-                  FunctionChain: concat($i, SourceFunctionChain, $j)
+                  Direct: /ns0:SourceSchemaRoot/Looping/ManyToMany/Index/SourceIndexChild/SourceIndexChildChild[$c]/SourceDirect
+                  FunctionChain: concat($a, SourceFunctionChain, $b)
+      $for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Conditional):
+        Conditional:
+          $for(SourceConditionalChild):
+            ConditionalChild:
+              $for(SourceConditionalChildChild):
+                ConditionalChildChild:
+                  $if(is-null(SourceDirect)):
+                    Direct: SourceDirect
     LoopReduce:
       BestItemName: /ns0:SourceSchemaRoot/Looping/LoopReduce/ItemsList[3]/ItemName
+    OneToMany:
+      Simple:
+        SimpleChild:
+          $for(/ns0:SourceSchemaRoot/Looping/OneToMany/Simple):
+            SimpleChildChild:
+              Direct: SourceDirect
+              FunctionChain: SourceFunctionChain
 `;

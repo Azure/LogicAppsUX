@@ -1,13 +1,16 @@
 import { SettingsBox } from '../../components/settings_box';
 import type { RootState } from '../../state/store';
 import { HttpClient } from './httpClient';
+import { PseudoCommandBar } from './pseudoCommandBar';
 import {
   StandardConnectionService,
   StandardOperationManifestService,
   StandardSearchService,
   StandardOAuthService,
   StandardGatewayService,
+  StandardRunService,
 } from '@microsoft/designer-client-services-logic-apps';
+import type { ContentType } from '@microsoft/designer-client-services-logic-apps';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import { ResourceIdentityType } from '@microsoft/utils-logic-apps';
 import { useEffect } from 'react';
@@ -65,16 +68,37 @@ const gatewayService = new StandardGatewayService({
   },
 });
 
+const runService = new StandardRunService({
+  apiVersion: '2018-11-01',
+  baseUrl: '/url',
+  workflowName: 'app',
+  httpClient,
+  isDev: true,
+});
+
 const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };
 
+const hostService = { fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type) };
+
 export const DesignerWrapper = () => {
-  const { workflowDefinition, readOnly, monitoringView, darkMode, connections } = useSelector((state: RootState) => state.workflowLoader);
+  const { workflowDefinition, readOnly, monitoringView, darkMode, consumption, connections, runInstance } = useSelector(
+    (state: RootState) => state.workflowLoader
+  );
   const designerProviderProps = {
-    services: { connectionService, operationManifestService, searchService, oAuthService, gatewayService, workflowService },
+    services: {
+      connectionService,
+      operationManifestService,
+      searchService,
+      oAuthService,
+      gatewayService,
+      workflowService,
+      hostService,
+      runService,
+    },
     readOnly,
     isMonitoringView: monitoringView,
     isDarkMode: darkMode,
-    isConsumption: false,
+    isConsumption: consumption,
   };
 
   useEffect(() => document.body.classList.add('is-standalone'), []);
@@ -88,8 +112,11 @@ export const DesignerWrapper = () => {
             workflow={{
               definition: workflowDefinition,
               connectionReferences: connections,
+              parameters: workflowDefinition.parameters,
             }}
+            runInstance={runInstance}
           >
+            <PseudoCommandBar />
             <Designer />
           </BJSWorkflowProvider>
         ) : null}

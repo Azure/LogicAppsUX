@@ -6,13 +6,17 @@ import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { useContext } from 'react';
 import { useIntl } from 'react-intl';
 
-export const DesignerCommandBar: React.FC = () => {
+export interface DesignerCommandBarProps {
+  isMonitoringView: boolean;
+}
+
+export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonitoringView }) => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
 
   const onSave = async () => {
     const designerState = DesignerStore.getState();
-    const { definition, parameters } = await serializeBJSWorkflow(designerState, {
+    const { definition, parameters, connectionReferences } = await serializeBJSWorkflow(designerState, {
       skipValidation: true,
       ignoreNonCriticalErrors: true,
     });
@@ -20,6 +24,7 @@ export const DesignerCommandBar: React.FC = () => {
       command: ExtensionCommand.save,
       definition,
       parameters,
+      connectionReferences,
     });
   };
 
@@ -32,9 +37,17 @@ export const DesignerCommandBar: React.FC = () => {
       defaultMessage: 'Parameters',
       description: 'Button text for parameters',
     }),
+    MONITORING_VIEW_REFRESH: intl.formatMessage({
+      defaultMessage: 'Refresh',
+      description: 'Button text for refresh',
+    }),
+    MONITORING_VIEW_RESUBMIT: intl.formatMessage({
+      defaultMessage: 'Resubmit',
+      description: 'Button text for resubmit',
+    }),
   };
 
-  const items: ICommandBarItemProps[] = [
+  const desingerItems: ICommandBarItemProps[] = [
     {
       ariaLabel: Resources.DESIGNER_SAVE,
       iconProps: { iconName: 'Save' },
@@ -55,5 +68,26 @@ export const DesignerCommandBar: React.FC = () => {
     },
   ];
 
-  return <CommandBar items={items} />;
+  const monitoringViewItems: ICommandBarItemProps[] = [
+    {
+      ariaLabel: Resources.MONITORING_VIEW_REFRESH,
+      iconProps: { iconName: 'Refresh' },
+      key: 'Refresh',
+      name: Resources.MONITORING_VIEW_REFRESH,
+      onClick: () => {
+        return true;
+      },
+    },
+    {
+      ariaLabel: Resources.MONITORING_VIEW_RESUBMIT,
+      iconProps: { iconName: 'Rerun' },
+      key: 'Rerun',
+      name: Resources.MONITORING_VIEW_RESUBMIT,
+      onClick: () => {
+        return true;
+      },
+    },
+  ];
+
+  return <CommandBar items={isMonitoringView ? monitoringViewItems : desingerItems} />;
 };

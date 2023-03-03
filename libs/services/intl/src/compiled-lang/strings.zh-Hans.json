@@ -81,6 +81,12 @@
       "value": "分页"
     }
   ],
+  "//nQG4": [
+    {
+      "type": 0,
+      "value": "Select an api from apim instance"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -141,6 +147,18 @@
       "value": "将输入转换成数组"
     }
   ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Show raw outputs"
+    }
+  ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "/qchXQ": [
     {
       "type": 0,
@@ -169,6 +187,18 @@
     {
       "type": 0,
       "value": "返回数组或字符串中传入的第一个计数元素"
+    }
+  ],
+  "/vWMKW": [
+    {
+      "type": 0,
+      "value": "Missing required inputs"
+    }
+  ],
+  "/yYyOq": [
+    {
+      "type": 0,
+      "value": "Resource Group"
     }
   ],
   "00xlpa": [
@@ -243,16 +273,16 @@
       "value": "返回 URI 编码字符串的二进制表示形式"
     }
   ],
+  "0SSwxD": [
+    {
+      "type": 0,
+      "value": "Close panel"
+    }
+  ],
   "0Vzp0l": [
     {
       "type": 0,
       "value": "折叠"
-    }
-  ],
-  "0Wr7qp": [
-    {
-      "type": 0,
-      "value": "选择筛选器"
     }
   ],
   "0ZlNtf": [
@@ -277,6 +307,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00)波哥大，利马，基多，里约布兰科"
+    }
+  ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Outputs"
     }
   ],
   "0p+pJq": [
@@ -305,6 +341,12 @@
     {
       "type": 0,
       "value": "返回输入数据 URI 字符串的二进制表示形式"
+    }
+  ],
+  "0upuCv": [
+    {
+      "type": 0,
+      "value": "Hour"
     }
   ],
   "0y5eia": [
@@ -341,12 +383,6 @@
     {
       "type": 0,
       "value": "评论"
-    }
-  ],
-  "1ANUHk": [
-    {
-      "type": 0,
-      "value": "Loading functions..."
     }
   ],
   "1D047X": [
@@ -586,6 +622,12 @@
       "value": "必需。包含表单数据或表单编码响应的操作的名称。"
     }
   ],
+  "2kWLLc": [
+    {
+      "type": 0,
+      "value": "Start Time"
+    }
+  ],
   "2ri1Kf": [
     {
       "type": 0,
@@ -644,6 +686,20 @@
     {
       "type": 0,
       "value": "触发器"
+    }
+  ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` first."
     }
   ],
   "3NhwIJ": [
@@ -796,6 +852,12 @@
       "value": "必需。可返回的最小整数。"
     }
   ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "4BrA0z": [
     {
       "type": 0,
@@ -890,12 +952,6 @@
       "value": "14 "
     }
   ],
-  "4yC+4g": [
-    {
-      "type": 0,
-      "value": "操作类型"
-    }
-  ],
   "5+MuPz": [
     {
       "type": 0,
@@ -930,6 +986,12 @@
     {
       "type": 0,
       "value": "必需。需要获取其项的循环的名称。"
+    }
+  ],
+  "5dCAjy": [
+    {
+      "type": 0,
+      "value": "Day"
     }
   ],
   "5hWg4V": [
@@ -992,6 +1054,20 @@
       "value": "(UTC+09:30)阿德莱德"
     }
   ],
+  "6gZ4I3": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' has too many inputs assigned to it"
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
@@ -1034,10 +1110,22 @@
       "value": "必需。要与被乘数 2 相乘的数字。"
     }
   ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
       "value": "Update source schema"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "No inputs"
     }
   ],
   "7GSk99": [
@@ -1132,6 +1220,12 @@
       "value": "Parameter name already exists."
     }
   ],
+  "83G5rr": [
+    {
+      "type": 0,
+      "value": "Specify the interval."
+    }
+  ],
   "84D91Y": [
     {
       "type": 0,
@@ -1204,6 +1298,12 @@
     {
       "type": 0,
       "value": "请为逻辑应用启用托管标识。"
+    }
+  ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
     }
   ],
   "8U0KPg": [
@@ -1390,6 +1490,12 @@
       "value": "身份验证类型"
     }
   ],
+  "AGCm1p": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -1452,6 +1558,12 @@
     {
       "type": 0,
       "value": "”。"
+    }
+  ],
+  "AheXMN": [
+    {
+      "type": 0,
+      "value": "Select frequency."
     }
   ],
   "Amz9+m": [
@@ -1589,6 +1701,18 @@
     {
       "type": 0,
       "value": "(UTC+08:00)珀斯"
+    }
+  ],
+  "BSgavq": [
+    {
+      "type": 0,
+      "value": "Example: Monday, Friday"
+    }
+  ],
+  "BUutcC": [
+    {
+      "type": 0,
+      "value": "Expant list of sibling elements"
     }
   ],
   "BVOUxP": [
@@ -1753,6 +1877,26 @@
       "value": "正在登录..."
     }
   ],
+  "E+iim4": [
+    {
+      "type": 0,
+      "value": "Select timezone."
+    }
+  ],
+  "E3+TAA": [
+    {
+      "type": 0,
+      "value": "Schema node '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an input with a mismatched type"
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1775,6 +1919,18 @@
     {
       "type": 0,
       "value": "创建组"
+    }
+  ],
+  "ESZXfC": [
+    {
+      "type": 0,
+      "value": "At these minutes"
+    }
+  ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "EV9iRu": [
@@ -2010,6 +2166,12 @@
       "value": "输入机构"
     }
   ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "Filter by data type"
+    }
+  ],
   "GLd3MU": [
     {
       "type": 0,
@@ -2050,6 +2212,12 @@
     {
       "type": 0,
       "value": "Source schema element"
+    }
+  ],
+  "Gl5khw": [
+    {
+      "type": 0,
+      "value": "At these hours"
     }
   ],
   "Gmya+V": [
@@ -2094,6 +2262,12 @@
       "value": "必填。要切片的字符串。"
     }
   ],
+  "H2WdiZ": [
+    {
+      "type": 0,
+      "value": "Enter the valid minute values (from 0 to 59) separated by comma, e.g., 15,30"
+    }
+  ],
   "H5VikC": [
     {
       "type": 0,
@@ -2110,6 +2284,12 @@
     {
       "type": 0,
       "value": "必需。要返回的表单数据值的键名称。"
+    }
+  ],
+  "HH970i": [
+    {
+      "type": 0,
+      "value": "Month"
     }
   ],
   "HJIZrG": [
@@ -2200,6 +2380,12 @@
       "value": "不支持将动态内容作为身份验证中的属性。"
     }
   ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -2242,12 +2428,6 @@
       "value": "(UTC+07:00) 巴尔瑙尔，戈尔诺-阿尔泰斯克"
     }
   ],
-  "IlY1Lj": [
-    {
-      "type": 0,
-      "value": "返回以浏览"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -2264,6 +2444,12 @@
     {
       "type": 0,
       "value": "返回参数中传入的第一个非 NULL 对象"
+    }
+  ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "No properties"
     }
   ],
   "J/Kz1j": [
@@ -2296,6 +2482,28 @@
     {
       "type": 0,
       "value": "Parameters"
+    }
+  ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "The current map contains "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "JErLDT": [
@@ -2459,6 +2667,12 @@
       "value": "没有搜索到结果"
     }
   ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expand"
+    }
+  ],
   "LBbhCu": [
     {
       "type": 0,
@@ -2499,6 +2713,12 @@
     {
       "type": 0,
       "value": "返回 URI 的方案"
+    }
+  ],
+  "LV/BTE": [
+    {
+      "type": 0,
+      "value": "Loading Api Management service instances..."
     }
   ],
   "LZm3ze": [
@@ -2559,6 +2779,12 @@
       "value": "必填。可能为 true 的表达式。"
     }
   ],
+  "LvLksz": [
+    {
+      "type": 0,
+      "value": "Loading outputs"
+    }
+  ],
   "LvpxiA": [
     {
       "type": 0,
@@ -2605,20 +2831,6 @@
     {
       "type": 0,
       "value": "可选。范围内操作的名称，其输入和输出来自范围内的顶级操作。"
-    }
-  ],
-  "M9Zj10": [
-    {
-      "type": 0,
-      "value": "找不到 "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
-    },
-    {
-      "type": 0,
-      "value": " 的结果"
     }
   ],
   "M9mzP6": [
@@ -2789,12 +3001,6 @@
       "value": "星期二"
     }
   ],
-  "NvmZVi": [
-    {
-      "type": 0,
-      "value": "运行时"
-    }
-  ],
   "O+8vRv": [
     {
       "type": 0,
@@ -2863,6 +3069,12 @@
     {
       "type": 0,
       "value": "10"
+    }
+  ],
+  "OIOexo": [
+    {
+      "type": 0,
+      "value": "On these days"
     }
   ],
   "OKszbi": [
@@ -2949,12 +3161,6 @@
       "value": "Pfx"
     }
   ],
-  "P+na99": [
-    {
-      "type": 0,
-      "value": "筛选"
-    }
-  ],
   "P2A5dB": [
     {
       "type": 0,
@@ -2991,6 +3197,12 @@
       "value": "(UTC-03:00)阿拉瓜伊纳"
     }
   ],
+  "PE1tsI": [
+    {
+      "type": 0,
+      "value": "No outputs"
+    }
+  ],
   "PF87Ew": [
     {
       "type": 0,
@@ -3001,6 +3213,12 @@
     {
       "type": 0,
       "value": "必需。要与被加数 1 相加的数字。"
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Inputs"
     }
   ],
   "PP63jY": [
@@ -3248,6 +3466,12 @@
       "value": "6 "
     }
   ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "issue"
+    }
+  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -3270,6 +3494,12 @@
     {
       "type": 0,
       "value": "输入字典"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "issues"
     }
   ],
   "SKXopi": [
@@ -3316,6 +3546,12 @@
     {
       "type": 0,
       "value": "自定义跟踪 ID"
+    }
+  ],
+  "Sr8PcK": [
+    {
+      "type": 0,
+      "value": "No operations found"
     }
   ],
   "SvQyvs": [
@@ -3378,6 +3614,12 @@
       "value": "返回数组的每一项都由分隔符联接的字符串"
     }
   ],
+  "TLHUMf": [
+    {
+      "type": 0,
+      "value": "Error loading inputs"
+    }
+  ],
   "TNEttQ": [
     {
       "type": 0,
@@ -3402,6 +3644,12 @@
       "value": "分页计数无效"
     }
   ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Action Type"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3418,12 +3666,6 @@
     {
       "type": 0,
       "value": "Add or replace your schemas."
-    }
-  ],
-  "TZv5JE": [
-    {
-      "type": 0,
-      "value": "名称"
     }
   ],
   "Tayrub": [
@@ -3550,6 +3792,20 @@
       "value": " (文件名)"
     }
   ],
+  "Ufv5m9": [
+    {
+      "type": 0,
+      "value": "Schema node '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an non-terminating connection chain"
+    }
+  ],
   "UnrrzF": [
     {
       "type": 0,
@@ -3586,6 +3842,12 @@
       "value": "输入有效的 JSON。"
     }
   ],
+  "V5f3ha": [
+    {
+      "type": 0,
+      "value": "Week"
+    }
+  ],
   "VA7M1u": [
     {
       "type": 0,
@@ -3604,10 +3866,14 @@
       "value": "展开"
     }
   ],
-  "VJa7sh": [
+  "VI7EqG": [
     {
       "type": 0,
-      "value": "Browse operations"
+      "value": "No results found for "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "VKAk5g": [
@@ -3758,10 +4024,22 @@
       "value": "未在逻辑应用上配置托管标识。"
     }
   ],
+  "X/7je+": [
+    {
+      "type": 0,
+      "value": "Minute"
+    }
+  ],
   "X4gDhV": [
     {
       "type": 0,
       "value": "租户"
+    }
+  ],
+  "X7X5ew": [
+    {
+      "type": 0,
+      "value": "Parameters"
     }
   ],
   "X8JjjT": [
@@ -3834,6 +4112,20 @@
       "value": "插入新步骤"
     }
   ],
+  "XRK+gt": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' has an non-terminating connection chain"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -3856,6 +4148,12 @@
     {
       "type": 0,
       "value": " 秒"
+    }
+  ],
+  "XVTQT6": [
+    {
+      "type": 0,
+      "value": "Interval"
     }
   ],
   "XX1ioe": [
@@ -4008,6 +4306,12 @@
       "value": "Custom value does not match one of the allowed types for this input"
     }
   ],
+  "YlesUQ": [
+    {
+      "type": 0,
+      "value": "Your map is in perfect condition"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -4040,6 +4344,12 @@
     {
       "type": 0,
       "value": ")"
+    }
+  ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
     }
   ],
   "ZCFMoe": [
@@ -4158,6 +4468,18 @@
       "value": "数据处理"
     }
   ],
+  "aSnCCB": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
+  "aV/nLS": [
+    {
+      "type": 0,
+      "value": "Second"
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -4226,6 +4548,12 @@
     {
       "type": 0,
       "value": "默认情况下，逻辑应用实例同时运行或并行运行。此控件更改新运行的排队方式，并且在启用后无法更改。要运行尽可能多的并行实例，请禁用此控件。要限制并行运行的数量，请启用此控件，然后选择限制。如果要按顺序运行，请选择 1 作为限制。"
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "ba9yGJ": [
@@ -4368,12 +4696,6 @@
       "value": "请选择一个标识"
     }
   ],
-  "ci6ex1": [
-    {
-      "type": 0,
-      "value": "值"
-    }
-  ],
   "cj+kyo": [
     {
       "type": 0,
@@ -4422,6 +4744,12 @@
       "value": "(UTC+02:00)哈拉雷，比勒陀利亚"
     }
   ],
+  "dBWIjR": [
+    {
+      "type": 0,
+      "value": "Schema is missing required inputs"
+    }
+  ],
   "dDYCuU": [
     {
       "type": 0,
@@ -4432,6 +4760,12 @@
     {
       "type": 0,
       "value": "更新"
+    }
+  ],
+  "dQmi91": [
+    {
+      "type": 0,
+      "value": "Frequency"
     }
   ],
   "dSTRb/": [
@@ -4502,6 +4836,12 @@
       "value": "使用分隔符拆分字符串"
     }
   ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnings"
+    }
+  ],
   "dxh2CJ": [
     {
       "type": 0,
@@ -4518,6 +4858,18 @@
     {
       "type": 0,
       "value": "未指定"
+    }
+  ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "Clear"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Action Tracking ID"
     }
   ],
   "eGa1Wa": [
@@ -4672,6 +5024,12 @@
       "value": "发布"
     }
   ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
   "g5mMuM": [
     {
       "type": 0,
@@ -4738,24 +5096,16 @@
       "value": "转换函数"
     }
   ],
+  "gTXyUo": [
+    {
+      "type": 0,
+      "value": "Time Zone"
+    }
+  ],
   "gWRF8m": [
     {
       "type": 0,
       "value": "触发器条件"
-    }
-  ],
-  "gabXSS": [
-    {
-      "type": 0,
-      "value": "搜索 "
-    },
-    {
-      "type": 1,
-      "value": "searchTerm"
-    },
-    {
-      "type": 0,
-      "value": " 的结果"
     }
   ],
   "gg0j4S": [
@@ -5007,6 +5357,12 @@
       "value": "取消"
     }
   ],
+  "iVMVAt": [
+    {
+      "type": 0,
+      "value": "Example: 0, 10"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -5033,12 +5389,6 @@
     {
       "type": 0,
       "value": "Elements and mappings not connected to a target element are removed."
-    }
-  ],
-  "ittN0l": [
-    {
-      "type": 0,
-      "value": "No resources of this type found under this subscription."
     }
   ],
   "iy8rNf": [
@@ -5083,6 +5433,12 @@
       "value": "返回指定范围(只含起始界限值)内的随机整数"
     }
   ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Other"
+    }
+  ],
   "jKsMS6": [
     {
       "type": 0,
@@ -5117,6 +5473,12 @@
     {
       "type": 0,
       "value": "必需。一个 base64 输入字符串。"
+    }
+  ],
+  "jZjgYZ": [
+    {
+      "type": 0,
+      "value": "No resources of this type found under this subscription."
     }
   ],
   "jcA3Ig": [
@@ -5167,6 +5529,12 @@
     {
       "type": 0,
       "value": "必需。base64 编码字符串。"
+    }
+  ],
+  "k1N9Si": [
+    {
+      "type": 0,
+      "value": "Must provide default value for parameter."
     }
   ],
   "k41+13": [
@@ -5331,12 +5699,6 @@
       "value": "Functions"
     }
   ],
-  "lV77P8": [
-    {
-      "type": 0,
-      "value": "标题"
-    }
-  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -5381,6 +5743,12 @@
       "value": "actions('actionName').outputs.body 的速记"
     }
   ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Select an action type"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -5397,6 +5765,18 @@
     {
       "type": 1,
       "value": "property"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "实际值"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Map checker"
     }
   ],
   "m7Y6Qf": [
@@ -5549,6 +5929,18 @@
       "value": "必需。表示所需将来时间与当前时间相差的时间单位数。"
     }
   ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "End time"
+    }
+  ],
+  "nRpM02": [
+    {
+      "type": 0,
+      "value": "Custom"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -5583,6 +5975,12 @@
     {
       "type": 0,
       "value": "19"
+    }
+  ],
+  "ny75Ly": [
+    {
+      "type": 0,
+      "value": "Enter default value for parameter."
     }
   ],
   "o/0SEj": [
@@ -5747,12 +6145,6 @@
       "value": "必需。要合并成数组的值。"
     }
   ],
-  "pRUJff": [
-    {
-      "type": 0,
-      "value": "参数"
-    }
-  ],
   "pUeUDw": [
     {
       "type": 0,
@@ -5769,6 +6161,12 @@
     {
       "type": 0,
       "value": "必需。被除数要除以的数字。相除后，将取余数。"
+    }
+  ],
+  "pcGqoB": [
+    {
+      "type": 0,
+      "value": "Error loading outputs"
     }
   ],
   "pcuZKB": [
@@ -5944,16 +6342,10 @@
       "value": "(UTC+09:00)雅库茨克"
     }
   ],
-  "qrxi0L": [
+  "qr1lLG": [
     {
       "type": 0,
-      "value": "异步响应允许逻辑应用使用 202 (已接受)进行响应，指示已接受请求进行处理。将提供位置标头，用于检索最终状态。"
-    }
-  ],
-  "qwn2o/": [
-    {
-      "type": 0,
-      "value": "Remove all mappings within source element `"
+      "value": "Function '"
     },
     {
       "type": 1,
@@ -5961,7 +6353,13 @@
     },
     {
       "type": 0,
-      "value": "‘ first."
+      "value": "' has an input with a mismatched type"
+    }
+  ],
+  "qrxi0L": [
+    {
+      "type": 0,
+      "value": "异步响应允许逻辑应用使用 202 (已接受)进行响应，指示已接受请求进行处理。将提供位置标头，用于检索最终状态。"
     }
   ],
   "r1FQhf": [
@@ -6090,6 +6488,12 @@
       "value": "取消创建连接"
     }
   ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "Add Case"
+    }
+  ],
   "sW47JR": [
     {
       "type": 0,
@@ -6174,6 +6578,12 @@
       "value": "必需。一个字符串，它包含目标时区的时区名称。请访问 https://msdn.microsoft.com/en-us/library/gg154758.aspx 查看详细信息。"
     }
   ],
+  "tAbbH8": [
+    {
+      "type": 0,
+      "value": "Too many inputs assigned"
+    }
+  ],
   "tAeKNh": [
     {
       "type": 0,
@@ -6240,10 +6650,10 @@
       "value": "(UTC+06:00) 新西伯利亚"
     }
   ],
-  "tRgTTN": [
+  "tUYXRA": [
     {
       "type": 0,
-      "value": "Expand/collapse target schema"
+      "value": "Example: 2017-03-24T15:00:00Z"
     }
   ],
   "tUlRzr": [
@@ -6336,6 +6746,12 @@
       "value": "将小时数的整数值添加到传入的字符串时间戳"
     }
   ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Show me"
+    }
+  ],
   "uXJdAh": [
     {
       "type": 0,
@@ -6352,6 +6768,12 @@
     {
       "type": 0,
       "value": "必需。表示所需过去时间与当前时间相差的时间单位数。"
+    }
+  ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Select a runtime"
     }
   ],
   "uczA5c": [
@@ -6388,6 +6810,12 @@
     {
       "type": 0,
       "value": "4"
+    }
+  ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "默认值"
     }
   ],
   "uzsleE": [
@@ -6506,6 +6934,12 @@
       "value": "输入自定义值"
     }
   ],
+  "vvSHR8": [
+    {
+      "type": 0,
+      "value": "Navigate to element and view children"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -6518,6 +6952,12 @@
       "value": "工作流属性"
     }
   ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "No results found for the specified filters"
+    }
+  ],
   "w16qh+": [
     {
       "type": 0,
@@ -6528,6 +6968,12 @@
     {
       "type": 0,
       "value": "星期日"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "wEaGWn": [
@@ -6588,6 +7034,18 @@
     {
       "type": 0,
       "value": "根据表达式的 true 或 false 结果返回指定值"
+    }
+  ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Client Tracking ID"
+    }
+  ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "Input type mismatch"
     }
   ],
   "wl7X0l": [
@@ -6680,6 +7138,12 @@
       "value": "阈值"
     }
   ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Show raw inputs"
+    }
+  ],
   "xV/oyK": [
     {
       "type": 0,
@@ -6714,6 +7178,12 @@
     {
       "type": 0,
       "value": "在逻辑应用中的工作流之间共享参数。"
+    }
+  ],
+  "xwD1VZ": [
+    {
+      "type": 0,
+      "value": "Loading inputs"
     }
   ],
   "xwEX2/": [

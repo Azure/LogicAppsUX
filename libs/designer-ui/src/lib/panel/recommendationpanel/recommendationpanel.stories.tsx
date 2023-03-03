@@ -37,7 +37,7 @@ Search.args = { isCollapsed: false, width: '630px', groupByConnector: false } as
 export const Browse: ComponentStory<typeof RecommendationPanel> = (args: PropsWithChildren<RecommendationPanelProps>) => (
   <RecommendationPanel {...args}>
     <OperationSearchHeader onSearch={() => null} onGroupToggleChange={() => null} onDismiss={() => null} navigateBack={() => null} />
-    <BrowseGrid connectorBrowse={connectorsSearchResultsMock} onConnectorSelected={(id) => alert('Selected connector: ' + id)} />
+    <BrowseGrid connectors={connectorsSearchResultsMock} onConnectorSelected={(id) => alert('Selected connector: ' + id)} />
   </RecommendationPanel>
 );
 Browse.args = { isCollapsed: false, width: '630px' };

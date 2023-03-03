@@ -1,22 +1,21 @@
 import type { FunctionGroupBranding } from '../../../constants/FunctionConstants';
-import { functionNodeCardSize } from '../../../constants/NodeConstants';
+import { simpleFunctionCardDiameter } from '../../../constants/NodeConstants';
 import type { ConnectionDictionary } from '../../../models/Connection';
 import type { FunctionData } from '../../../models/Function';
-import { isCustomValue, isValidConnectionByType, isValidCustomValueByType } from '../../../utils/Connection.Utils';
-import { isSchemaNodeExtended } from '../../../utils/Schema.Utils';
+import { areInputTypesValidForFunction } from '../../../utils/MapChecker.Utils';
 import type { CardProps } from '../NodeCard';
 import { createFocusOutlineStyle, makeStyles, shorthands, tokens } from '@fluentui/react-components';
 
-const sharedHalfCardSize = functionNodeCardSize / 2;
+const simpleFunctionCardRadius = simpleFunctionCardDiameter / 2;
 
 export const useFunctionCardStyles = makeStyles({
   root: {
     ...shorthands.borderRadius(tokens.borderRadiusCircular),
     color: tokens.colorNeutralBackground1,
     fontSize: '20px',
-    height: `${sharedHalfCardSize}px`,
-    width: `${sharedHalfCardSize}px`,
-    minWidth: `${sharedHalfCardSize}px`,
+    height: `${simpleFunctionCardRadius}px`,
+    width: `${simpleFunctionCardRadius}px`,
+    minWidth: `${simpleFunctionCardRadius}px`,
     textAlign: 'center',
     position: 'relative',
     justifyContent: 'center',
@@ -72,38 +71,11 @@ export const shouldDisplaySourceHandle = (
 ) => displayHandle && shouldDisplayHandles(sourceNodeConnectionBeingDrawnFromId, isCardHovered, isCurrentNodeSelected);
 
 export const inputsValid = (reactFlowId: string, functionData: FunctionData, connections: ConnectionDictionary) => {
-  let isEveryInputValid = true;
-  const curConn = connections[reactFlowId];
+  const connection = connections[reactFlowId];
 
-  if (curConn) {
-    Object.values(curConn.inputs).forEach((inputArr, inputIdx) => {
-      inputArr.forEach((inputVal) => {
-        let inputValMatchedOneOfAllowedTypes = false;
-
-        functionData.inputs[inputIdx].allowedTypes.forEach((allowedInputType) => {
-          if (inputVal !== undefined) {
-            if (isCustomValue(inputVal)) {
-              if (isValidCustomValueByType(inputVal, allowedInputType)) {
-                inputValMatchedOneOfAllowedTypes = true;
-              }
-            } else {
-              if (isSchemaNodeExtended(inputVal.node)) {
-                if (isValidConnectionByType(allowedInputType, inputVal.node.normalizedDataType)) {
-                  inputValMatchedOneOfAllowedTypes = true;
-                }
-              } else if (isValidConnectionByType(allowedInputType, inputVal.node.outputValueType)) {
-                inputValMatchedOneOfAllowedTypes = true;
-              }
-            }
-          }
-        });
-
-        if (!inputValMatchedOneOfAllowedTypes) {
-          isEveryInputValid = false;
-        }
-      });
-    });
+  if (connection) {
+    return areInputTypesValidForFunction(functionData, connection);
+  } else {
+    return true;
   }
-
-  return isEveryInputValid;
 };

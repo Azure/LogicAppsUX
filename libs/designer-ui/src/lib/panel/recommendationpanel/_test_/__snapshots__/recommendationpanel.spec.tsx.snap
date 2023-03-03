@@ -21,5 +21,23 @@ exports[`recommendation panel matches snapshot 1`] = `
     }
   }
   type={3}
-/>
+>
+  <div
+    className="msla-app-action-header"
+  >
+    <Text
+      variant="xLarge"
+    >
+      Add an action
+    </Text>
+    <CustomizedIconButton
+      iconProps={
+        Object {
+          "iconName": "Cancel",
+        }
+      }
+      onClick={[MockFunction]}
+    />
+  </div>
+</StyledPanelBase>
 `;

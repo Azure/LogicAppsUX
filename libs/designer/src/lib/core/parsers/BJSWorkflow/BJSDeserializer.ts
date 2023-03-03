@@ -3,6 +3,7 @@ import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/
 import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
+import { getDurationString, getDurationStringPanelMode } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { SubgraphType } from '@microsoft/utils-logic-apps';
 import {
@@ -13,7 +14,6 @@ import {
   isNullOrEmpty,
   isNullOrUndefined,
 } from '@microsoft/utils-logic-apps';
-import { title } from 'process';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
   return definition && definition.triggers ? Object.keys(definition.triggers).length > 1 : false;
@@ -25,7 +25,10 @@ export type DeserializedWorkflow = {
   nodesMetadata: NodesMetadata;
 };
 
-export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): DeserializedWorkflow => {
+export const Deserialize = (
+  definition: LogicAppsV2.WorkflowDefinition,
+  runInstance: LogicAppsV2.RunInstanceDefinition | null
+): DeserializedWorkflow => {
   throwIfMultipleTriggers(definition);
 
   //process Trigger
@@ -36,7 +39,11 @@ export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): Deseria
     const [[tID, trigger]] = Object.entries(definition.triggers);
     triggerNode = createWorkflowNode(tID);
     allActions[tID] = { ...trigger };
-    nodesMetadata[tID] = { graphId: 'root', isRoot: true };
+    nodesMetadata[tID] = {
+      graphId: 'root',
+      isRoot: true,
+      ...addTriggerInstanceMetaData(runInstance),
+    };
   }
 
   const children = [];
@@ -58,6 +65,9 @@ export const Deserialize = (definition: LogicAppsV2.WorkflowDefinition): Deseria
     : [[], [], {}];
   allActions = { ...allActions, ...actions };
   nodesMetadata = { ...nodesMetadata, ...actionNodesMetadata };
+
+  nodesMetadata = addActionsInstanceMetaData(nodesMetadata, runInstance);
+
   const graph: WorkflowNode = {
     id: 'root',
     children: [...children, ...remainingChildren],
@@ -322,4 +332,45 @@ const throwIfMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition) => 
       }
     );
   }
+};
+
+const addTriggerInstanceMetaData = (runInstance: LogicAppsV2.RunInstanceDefinition | null) => {
+  if (isNullOrUndefined(runInstance)) {
+    return {};
+  }
+
+  const { trigger: runInstanceTrigger } = runInstance.properties;
+  return {
+    runData: {
+      ...runInstanceTrigger,
+      duration: getDurationStringPanelMode(
+        Date.parse(runInstanceTrigger.endTime) - Date.parse(runInstanceTrigger.startTime),
+        /* abbreviated */ true
+      ),
+    },
+  };
+};
+
+const addActionsInstanceMetaData = (nodesMetadata: NodesMetadata, runInstance: LogicAppsV2.RunInstanceDefinition | null): NodesMetadata => {
+  if (isNullOrUndefined(runInstance)) {
+    return nodesMetadata;
+  }
+
+  const { actions: runInstanceActions } = runInstance.properties;
+  const updatedNodesData = { ...nodesMetadata };
+
+  Object.entries(updatedNodesData).forEach(([key, node]) => {
+    const nodeRunData = runInstanceActions?.[key];
+    if (!isNullOrUndefined(nodeRunData)) {
+      updatedNodesData[key] = {
+        ...node,
+        runData: {
+          ...nodeRunData,
+          duration: getDurationStringPanelMode(Date.parse(nodeRunData.endTime) - Date.parse(nodeRunData.startTime), /* abbreviated */ true),
+        },
+      };
+    }
+  });
+
+  return updatedNodesData;
 };

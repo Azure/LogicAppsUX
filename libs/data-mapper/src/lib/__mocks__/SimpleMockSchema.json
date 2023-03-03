@@ -1,0 +1,80 @@
+{
+  "name": "Source.xsd",
+  "type": "XML",
+  "targetNamespace": "http://tempuri.org/source.xsd",
+  "namespaces": {
+    "ns0": "http://tempuri.org/source.xsd",
+    "xs": "http://www.w3.org/2001/XMLSchema"
+  },
+  "schemaTreeRoot": {
+    "key": "/ns0:Root",
+    "name": "Root",
+    "normalizedDataType": "ComplexType",
+    "properties": "NotSpecified",
+    "children": [
+      {
+        "key": "/ns0:Root/DirectTranslation",
+        "name": "DirectTranslation",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/DirectTranslation/EmployeeID",
+            "name": "EmployeeID",
+            "normalizedDataType": "Decimal",
+            "properties": "NotSpecified",
+            "fullName": "EmployeeID"
+          },
+          {
+            "key": "/ns0:Root/DirectTranslation/EmployeeName",
+            "name": "EmployeeName",
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "fullName": "EmployeeName"
+          }
+        ],
+        "fullName": "DirectTranslation"
+      },
+      {
+        "key": "/ns0:Root/DataTranslation",
+        "name": "DataTranslation",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/DataTranslation/Employee",
+            "name": "Employee",
+            "normalizedDataType": "ComplexType",
+            "properties": "NotSpecified",
+            "children": [
+              {
+                "key": "/ns0:Root/DataTranslation/Employee/FirstName",
+                "name": "FirstName",
+                "normalizedDataType": "String",
+                "properties": "NotSpecified",
+                "fullName": "FirstName"
+              },
+              {
+                "key": "/ns0:Root/DataTranslation/Employee/LastName",
+                "name": "LastName",
+                "normalizedDataType": "String",
+                "properties": "NotSpecified",
+                "fullName": "LastName"
+              },
+              {
+                "key": "/ns0:Root/DataTranslation/Employee/EmploymentStatus",
+                "name": "EmploymentStatus",
+                "normalizedDataType": "Bool",
+                "properties": "NotSpecified",
+                "fullName": "EmploymentStatus"
+              }
+            ],
+            "fullName": "Employee"
+          }
+        ],
+        "fullName": "DataTranslation"
+      }
+    ],
+    "fullName": "ns0:Root"
+  }
+}

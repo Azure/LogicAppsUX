@@ -1,63 +1,62 @@
-import { functionNodeCardSize, schemaNodeCardDefaultWidth, schemaNodeCardHeight } from '../constants/NodeConstants';
-import type { SchemaNodeExtended } from '../models';
+import {
+  simpleFunctionCardDiameter,
+  schemaNodeCardDefaultWidth,
+  schemaNodeCardHeight,
+  expandedFunctionCardMaxWidth,
+} from '../constants/NodeConstants';
+import { targetPrefix } from '../constants/ReactFlowConstants';
+import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { FunctionDictionary } from '../models/Function';
 import { generateInputHandleId, isConnectionUnit } from './Connection.Utils';
 import { isFunctionData } from './Function.Utils';
+import { LogCategory, LogService } from './Logging.Utils';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix } from './ReactFlow.Util';
-import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
-import ELK from 'elkjs/lib/elk.bundled';
 
-const elk = new ELK();
+const rootLayoutNodeId = 'root';
+enum LayoutContainer {
+  SourceSchema = 'sourceSchemaBlock',
+  Functions = 'functionsBlock',
+  TargetSchema = 'targetSchemaBlock',
+}
 
-const defaultTreeLayoutOptions: Record<string, string> = {
-  // General layout settings
-  direction: 'RIGHT',
-  algorithm: 'layered',
-  'layering.strategy': 'INTERACTIVE',
-  hierarchyHandling: 'INCLUDE_CHILDREN',
-  'partitioning.activate': 'true', // Allows blocks/node-groups to be forced into specific "slots"
-  'edge.thickness': '8.0',
-  'spacing.nodeNodeBetweenLayers': '120.0', // Spacing between node groups (Source schema/Functions/Target schema)
-  // Settings related to node ordering (when attempting to minimize edge crossing)
-  'crossingMinimization.semiInteractive': 'true',
-  'considerModelOrder.strategy': 'NODES_AND_EDGES',
-};
+type GraphCoord = [number, number]; // [x, y]
 
-const sourceSchemaLayoutOptions: Record<string, string> = {
-  'crossingMinimization.forceNodeModelOrder': 'true', // Ensures that node order is maintained
-  'partitioning.partition': '0',
-  'spacing.nodeNode': '12.0', // Vertical spacing between nodes
-  'spacing.nodeNodeBetweenLayers': '0.0', // Horizontal spacing between nodes
-  // The below settings stop some weird extra horizontal spacing when a connection/edge is present
-  'spacing.edgeEdge': '0.0',
-  'spacing.edgeNodeBetweenLayers': '0.0',
-  'spacing.edgeEdgeBetweenLayers': '0.0',
-};
+export interface LayoutEdge {
+  id: string;
+  sourceId: string;
+  targetId: string;
+  labels: string[];
+}
 
-const functionsLayoutOptions: Record<string, string> = {
-  ...sourceSchemaLayoutOptions,
-  'partitioning.partition': '1',
-  'spacing.nodeNodeBetweenLayers': '80.0', // Horizontal spacing between nodes
-  'spacing.nodeNode': '24.0', // Vertical spacing between nodes
-};
+export interface LayoutNode {
+  id: string;
+  x?: number;
+  y?: number;
+  children?: LayoutNode[];
+}
 
-const targetSchemaLayoutOptions: Record<string, string> = {
-  ...sourceSchemaLayoutOptions,
-  'partitioning.partition': '2',
-};
+export interface ContainerLayoutNode {
+  id: LayoutContainer;
+  children: LayoutNode[];
+}
 
-export const convertDataMapNodesToElkGraph = (
+export interface RootLayoutNode {
+  id: typeof rootLayoutNodeId;
+  children: ContainerLayoutNode[];
+  edges: LayoutEdge[];
+  width?: number;
+  height?: number;
+}
+
+export const convertDataMapNodesToLayoutTree = (
   currentSourceSchemaNodes: SchemaNodeExtended[],
   currentFunctionNodes: FunctionDictionary,
   currentTargetSchemaNode: SchemaNodeExtended,
   connections: ConnectionDictionary
-): ElkNode => {
-  // NOTE: Sub-block edges[] only contain edges between nodes *within that block*
-  // - the root edges[] will contain all multi-block edges (thus, src/tgt schemas should never have edges)
+): RootLayoutNode => {
   let nextEdgeIndex = 0;
-  const interFunctionEdges: ElkExtendedEdge[] = [];
-  const interBlockEdges: ElkExtendedEdge[] = [];
+  const layoutEdges: LayoutEdge[] = [];
 
   Object.values(connections).forEach((connection) => {
     // Make sure that each connection and its nodes are actively on the canvas
@@ -70,86 +69,331 @@ export const convertDataMapNodesToElkGraph = (
       return;
     }
 
-    // Categorize connections to function<->function and any others for elkTree creation below
     Object.values(connection.inputs).forEach((inputValueArray, inputIndex) => {
       inputValueArray.forEach((inputValue, inputValueIndex) => {
         if (isConnectionUnit(inputValue)) {
-          const target = connection.self.reactFlowKey;
+          const targetId = connection.self.reactFlowKey;
           const labels = isFunctionData(connection.self.node)
             ? connection.self.node.maxNumberOfInputs > -1
-              ? [{ text: connection.self.node.inputs[inputIndex].name }]
-              : [{ text: generateInputHandleId(connection.self.node.inputs[inputIndex].name, inputValueIndex) }]
+              ? [connection.self.node.inputs[inputIndex].name]
+              : [generateInputHandleId(connection.self.node.inputs[inputIndex].name, inputValueIndex)]
             : [];
 
-          const nextEdge: ElkExtendedEdge = {
+          const nextEdge: LayoutEdge = {
             id: `e${nextEdgeIndex}`,
-            sources: [inputValue.reactFlowKey],
-            targets: [target],
+            sourceId: inputValue.reactFlowKey,
+            targetId,
             labels,
           };
 
-          if (isFunctionData(inputValue.node) && isFunctionData(connection.self.node)) {
-            interFunctionEdges.push(nextEdge);
-          } else {
-            interBlockEdges.push(nextEdge);
-          }
-
+          layoutEdges.push(nextEdge);
           nextEdgeIndex += 1;
         }
       });
     });
   });
 
-  const elkTree: ElkNode = {
-    id: 'root',
-    layoutOptions: defaultTreeLayoutOptions,
+  const layoutTree: RootLayoutNode = {
+    id: rootLayoutNodeId,
     children: [
       {
-        id: 'sourceSchemaBlock',
-        layoutOptions: sourceSchemaLayoutOptions,
-        children: [
-          ...currentSourceSchemaNodes.map((srcNode) => ({
-            id: addSourceReactFlowPrefix(srcNode.key),
-            width: schemaNodeCardDefaultWidth,
-            height: schemaNodeCardHeight,
-          })),
-          // NOTE: Dummy nodes allow proper layouting when no real nodes exist yet
-          { id: 'srcDummyNode', width: schemaNodeCardDefaultWidth, height: schemaNodeCardHeight },
-        ],
+        id: LayoutContainer.SourceSchema,
+        children: currentSourceSchemaNodes.map((srcNode) => ({ id: addSourceReactFlowPrefix(srcNode.key) })),
       },
       {
-        id: 'functionsBlock',
-        layoutOptions: functionsLayoutOptions,
-        children: [
-          ...Object.keys(currentFunctionNodes).map((fnNodeKey) => ({
-            id: fnNodeKey,
-            width: functionNodeCardSize,
-            height: functionNodeCardSize,
-          })),
-          { id: 'fnDummyNode', width: functionNodeCardSize, height: functionNodeCardSize },
-        ],
-        // Only function<->function edges
-        edges: interFunctionEdges,
+        id: LayoutContainer.Functions,
+        children: Object.keys(currentFunctionNodes).map((fnNodeKey) => ({ id: fnNodeKey })),
       },
       {
-        id: 'targetSchemaBlock',
-        layoutOptions: targetSchemaLayoutOptions,
+        id: LayoutContainer.TargetSchema,
         children: [
-          { id: addTargetReactFlowPrefix(currentTargetSchemaNode.key), width: schemaNodeCardDefaultWidth, height: schemaNodeCardHeight },
-          ...currentTargetSchemaNode.children.map((childNode) => ({
-            id: addTargetReactFlowPrefix(childNode.key),
-            width: schemaNodeCardDefaultWidth,
-            height: schemaNodeCardHeight,
+          { id: addTargetReactFlowPrefix(currentTargetSchemaNode.key) },
+          ...currentTargetSchemaNode.children.map((childTgtNode) => ({
+            id: addTargetReactFlowPrefix(childTgtNode.key),
           })),
         ],
       },
     ],
-    edges: interBlockEdges,
+    edges: layoutEdges,
   };
 
-  return elkTree;
+  return layoutTree;
 };
 
-export const applyElkLayout = async (graph: ElkNode) => {
-  return elk.layout(graph);
+export const convertWholeDataMapToLayoutTree = (
+  flattenedSourceSchema: SchemaNodeDictionary,
+  flattenedTargetSchema: SchemaNodeDictionary,
+  functionNodes: FunctionDictionary,
+  connections: ConnectionDictionary
+): RootLayoutNode => {
+  let nextEdgeIndex = 0;
+  const layoutEdges: LayoutEdge[] = [];
+
+  Object.values(connections).forEach((connection) => {
+    Object.values(connection.inputs).forEach((inputValueArray, inputIndex) => {
+      inputValueArray.forEach((inputValue, inputValueIndex) => {
+        if (isConnectionUnit(inputValue)) {
+          const targetId = connection.self.reactFlowKey;
+          const labels = isFunctionData(connection.self.node)
+            ? connection.self.node.maxNumberOfInputs > -1
+              ? [connection.self.node.inputs[inputIndex].name]
+              : [generateInputHandleId(connection.self.node.inputs[inputIndex].name, inputValueIndex)]
+            : [];
+
+          const nextEdge: LayoutEdge = {
+            id: `e${nextEdgeIndex}`,
+            sourceId: inputValue.reactFlowKey,
+            targetId,
+            labels,
+          };
+
+          layoutEdges.push(nextEdge);
+          nextEdgeIndex += 1;
+        }
+      });
+    });
+  });
+
+  const layoutTree: RootLayoutNode = {
+    id: rootLayoutNodeId,
+    children: [
+      {
+        id: LayoutContainer.SourceSchema,
+        children: Object.values(flattenedSourceSchema).map((srcNode) => ({ id: addSourceReactFlowPrefix(srcNode.key) })),
+      },
+      {
+        id: LayoutContainer.Functions,
+        children: Object.keys(functionNodes).map((fnNodeKey) => ({ id: fnNodeKey })),
+      },
+      {
+        id: LayoutContainer.TargetSchema,
+        children: Object.values(flattenedTargetSchema).map((tgtNode) => ({ id: addTargetReactFlowPrefix(tgtNode.key) })),
+      },
+    ],
+    edges: layoutEdges,
+  };
+
+  return layoutTree;
+};
+
+/* eslint-disable no-param-reassign */
+export const applyCustomLayout = async (
+  graph: RootLayoutNode,
+  useExpandedFunctionCards?: boolean,
+  isOverview?: boolean
+): Promise<RootLayoutNode> => {
+  const schemaNodeCardVGap = 8;
+  const xInterval = (useExpandedFunctionCards ? expandedFunctionCardMaxWidth : simpleFunctionCardDiameter) * 1.5;
+  const yInterval = simpleFunctionCardDiameter * 1.5;
+  const maxFunctionsPerToolbarRow = 4;
+  const functionToolbarStartY = -1 * simpleFunctionCardDiameter * 2;
+  const nodeCollisionXThreshold = (useExpandedFunctionCards ? expandedFunctionCardMaxWidth : simpleFunctionCardDiameter) * 1.25;
+  const nodeCollisionYThreshold = simpleFunctionCardDiameter * 1.2;
+
+  const getSchemaNodeYPos = (nodeIdx: number) => nodeIdx * (schemaNodeCardHeight + (nodeIdx === 0 ? 0 : schemaNodeCardVGap));
+
+  // Source schema node positioning
+  const srcSchemaStartX = 0;
+  graph.children[0].children.forEach((srcSchemaNode, idx) => {
+    srcSchemaNode.x = srcSchemaStartX;
+    srcSchemaNode.y = getSchemaNodeYPos(idx);
+  });
+
+  // Function node positioning
+  const fnStartX = srcSchemaStartX + schemaNodeCardDefaultWidth * 1.5 + (isOverview ? xInterval : 0);
+  let farthestRightFnNodeXPos = fnStartX; // Find farthest right function node to position target schema from
+  const nextAvailableToolbarSpot: GraphCoord = [0, 0]; // Grid representation (one node slot == 1x1)
+  const fnNodeIdsThatOnlyOutputToTargetSchema: string[] = [];
+
+  const compileInputPositionsAndOutputDetails = (edgeArray: LayoutEdge[], fnNodeId: string): [GraphCoord[], number, boolean] => {
+    const compiledInputPositions: GraphCoord[] = [];
+    let numOutputs = 0;
+    let fnNodeOnlyOutputsToTargetSchema = true;
+
+    edgeArray.forEach((edge) => {
+      // Current function is the source
+      if (edge.sourceId === fnNodeId) {
+        numOutputs += 1;
+
+        if (!edge.targetId.includes(targetPrefix)) {
+          fnNodeOnlyOutputsToTargetSchema = false;
+        }
+      } else if (edge.targetId === fnNodeId) {
+        // Current function is the target
+        // Find input node, and get or calculate its position
+        const inputNode = [...graph.children[0].children, ...graph.children[1].children].find(
+          (srcSchemaOrFnNode) => srcSchemaOrFnNode.id === edge.sourceId
+        );
+
+        if (inputNode) {
+          if (inputNode.x === undefined || inputNode.y === undefined) {
+            // Should recursively make sure all input chains are or get calculated
+            calculateFnNodePosition(inputNode);
+          }
+
+          // Confirm that recursive call above actually calculated the inputNode's position
+          if (inputNode.x !== undefined && inputNode.y !== undefined) {
+            // Subtract fnStartX for functions so as to not compound fnStartX
+            compiledInputPositions.push([inputNode.x === srcSchemaStartX ? srcSchemaStartX : inputNode.x - fnStartX, inputNode.y]);
+          } else {
+            LogService.error(LogCategory.ReactFlowUtils, 'Layouting', {
+              message: `Failed to recursively calculate inputNode's position`,
+              nodeData:
+                process.env.NODE_ENV === 'development'
+                  ? {
+                      inputNodeId: inputNode.id, // Same as edgeSourceId
+                      edgeTargetId: edge.targetId,
+                    }
+                  : undefined,
+            });
+          }
+        } else {
+          LogService.error(LogCategory.ReactFlowUtils, 'Layouting', {
+            message: `Failed to find input node from an edge's sourceId`,
+            nodeData:
+              process.env.NODE_ENV === 'development'
+                ? {
+                    edgeSourceId: edge.sourceId,
+                    edgeTargetId: edge.targetId,
+                  }
+                : undefined,
+          });
+        }
+      }
+    });
+
+    return [compiledInputPositions, numOutputs, fnNodeOnlyOutputsToTargetSchema];
+  };
+
+  const calculateFnNodePosition = (fnNode: LayoutNode): void => {
+    // Compile positions of any inputs and number of outputs
+    const [compiledInputPositions, numOutputs, fnNodeOnlyOutputsToTargetSchema] = compileInputPositionsAndOutputDetails(
+      graph.edges,
+      fnNode.id
+    );
+
+    // Initial calculation
+    let fnNodeXPos: number | undefined = undefined;
+    let fnNodeYPos: number | undefined = undefined;
+    let isGoingOnToolbar = false;
+
+    if (compiledInputPositions.length === 0) {
+      if (numOutputs === 0) {
+        // Completely unconnected nodes -> place in next toolbar slot
+        fnNodeXPos = nextAvailableToolbarSpot[0] * xInterval;
+        fnNodeYPos = functionToolbarStartY - nextAvailableToolbarSpot[1] * yInterval;
+        isGoingOnToolbar = true;
+
+        const hasReachedRowMax = nextAvailableToolbarSpot[0] === maxFunctionsPerToolbarRow - 1;
+        nextAvailableToolbarSpot[1] = hasReachedRowMax ? nextAvailableToolbarSpot[1] + 1 : nextAvailableToolbarSpot[1];
+        nextAvailableToolbarSpot[0] = hasReachedRowMax ? 0 : nextAvailableToolbarSpot[0] + 1;
+      } else if (fnNodeOnlyOutputsToTargetSchema) {
+        fnNodeIdsThatOnlyOutputToTargetSchema.push(fnNode.id);
+      } else {
+        // No-inputs function that outputs to another function
+        // - semi-rare case, so let's do something reasonably simple
+        fnNodeXPos = fnStartX;
+        // NOTE: Function nodes that fit this case (Ex: current-date()) are often heavily reused,
+        // so we can mostly safely set their yPos to the ~center of the source schema nodes
+        const centralYPos =
+          graph.children[0].children.length > 2
+            ? graph.children[0].children[Math.floor(graph.children[0].children.length / 2)].y
+            : yInterval * 2;
+        fnNodeYPos = centralYPos;
+      }
+
+      // Else -> Don't do anything if it outputs to one or more function nodes as they'll trigger this node's positioning
+    } else if (compiledInputPositions.length === 1) {
+      // xPos == xInterval right of input
+      // yPos == same as input
+      fnNodeXPos = compiledInputPositions[0][0] + xInterval;
+      fnNodeYPos = compiledInputPositions[0][1];
+    } else {
+      // xPos == xInterval right of the closest (farthest right?) input
+      // yPos == middle of all inputs
+      let closestInputX = 0;
+      compiledInputPositions.forEach((inputCoords) => {
+        if (inputCoords[0] > closestInputX) {
+          closestInputX = inputCoords[0];
+        }
+      });
+
+      fnNodeXPos = closestInputX + xInterval;
+      fnNodeYPos = compiledInputPositions.reduce((curYTotal, coords) => curYTotal + coords[1], 0) / compiledInputPositions.length;
+    }
+
+    // Add fnStartX in
+    fnNodeXPos = fnNodeXPos === undefined ? undefined : fnNodeXPos + fnStartX;
+
+    // Collision checking & handling
+    if (!isGoingOnToolbar && fnNodeXPos !== undefined && fnNodeYPos !== undefined) {
+      let nextYSpot = 1;
+      let noCollisionFnNodeYPos = fnNodeYPos;
+
+      // TODO: If needed, adjust node origins from top-left (? - needs verification)
+      // to middle of node for extra collision detection accuracy
+      const checkIfNodeHasCollision = () =>
+        graph.children[1].children.some(
+          (potentiallyCollidingFnNode) =>
+            potentiallyCollidingFnNode.id !== fnNode.id &&
+            potentiallyCollidingFnNode.y !== undefined &&
+            potentiallyCollidingFnNode.x !== undefined &&
+            Math.abs(potentiallyCollidingFnNode.y - noCollisionFnNodeYPos) < nodeCollisionYThreshold &&
+            Math.abs(potentiallyCollidingFnNode.x - (fnNodeXPos as number)) < nodeCollisionXThreshold
+        );
+
+      while (checkIfNodeHasCollision()) {
+        noCollisionFnNodeYPos = Math.max(fnNodeYPos + nextYSpot * yInterval, 0); // Cap collision handling placement at very top (y=0)
+
+        // Check availability of next top then bottom yInterval spots
+        nextYSpot = nextYSpot < 0 ? nextYSpot * -1 + 1 : nextYSpot * -1;
+      }
+
+      fnNodeYPos = noCollisionFnNodeYPos;
+    }
+
+    // Final assignment
+    fnNode.x = fnNodeXPos;
+    fnNode.y = fnNodeYPos;
+
+    if (fnNode.x !== undefined && fnNode.x > farthestRightFnNodeXPos) {
+      farthestRightFnNodeXPos = fnNode.x;
+    }
+  };
+
+  graph.children[1].children.forEach((fnNode) => {
+    calculateFnNodePosition(fnNode);
+  });
+
+  // Target schema node positioning
+  const tgtSchemaStartX = farthestRightFnNodeXPos + schemaNodeCardDefaultWidth * 1.5;
+  graph.children[2].children.forEach((tgtSchemaNode, idx) => {
+    tgtSchemaNode.x = tgtSchemaStartX;
+    tgtSchemaNode.y = getSchemaNodeYPos(idx);
+  });
+
+  // Finally, position remaining function nodes that only output to the target schema
+  // (and thus must wait until after its layout is computed)
+  fnNodeIdsThatOnlyOutputToTargetSchema.forEach((fnNodeId) => {
+    const fnNode = graph.children[1].children.find((layoutFnNode) => layoutFnNode.id === fnNodeId);
+    const tgtSchemaOutputYPositions = graph.edges
+      .filter((edge) => edge.sourceId === fnNodeId)
+      .map((edge) => {
+        const tgtSchemaNode = graph.children[2].children.find((tgtSchemaNode) => tgtSchemaNode.id === edge.targetId);
+        return tgtSchemaNode?.y !== undefined ? tgtSchemaNode.y : 0;
+      });
+
+    if (fnNode) {
+      fnNode.x = farthestRightFnNodeXPos;
+      fnNode.y = tgtSchemaOutputYPositions.reduce((curYTotal, curYPos) => curYTotal + curYPos, 0) / tgtSchemaOutputYPositions.length;
+    }
+  });
+
+  // Declare diagram size
+  const lastTargetSchemaNode =
+    graph.children[2].children.length > 0 ? graph.children[2].children[graph.children[2].children.length - 1] : undefined;
+  graph.width = tgtSchemaStartX + schemaNodeCardDefaultWidth;
+  graph.height = lastTargetSchemaNode?.y !== undefined ? lastTargetSchemaNode.y : 0;
+
+  return Promise.resolve(graph);
 };

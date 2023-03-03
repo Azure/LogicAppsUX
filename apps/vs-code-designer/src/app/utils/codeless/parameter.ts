@@ -1,8 +1,10 @@
 import { parametersFileName } from '../../../constants';
 import { localize } from '../../../localize';
+import { isCSharpProject } from '../../commands/initProjectForVSCode/detectProjectLanguage';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
 import { getFunctionProjectRoot } from './connection';
+import { addNewFileInCSharpProject } from './updateBuildFile';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { parseError } from '@microsoft/vscode-azext-utils';
 import type { Parameter, WorkflowParameter } from '@microsoft/vscode-extension';
@@ -33,6 +35,9 @@ export async function saveParameters(context: IActionContext, workflowFilePath: 
 
   if (parameters && Object.keys(parameters).length) {
     await writeFormattedJson(parametersFilePath, parameters);
+    if (!parametersFileExists && (await isCSharpProject(context, projectPath))) {
+      await addNewFileInCSharpProject(context, parametersFileName, projectPath);
+    }
   } else if (parametersFileExists) {
     await writeFormattedJson(parametersFilePath, parameters);
   }

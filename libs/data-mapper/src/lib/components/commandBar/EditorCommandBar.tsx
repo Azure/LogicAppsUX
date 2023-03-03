@@ -1,7 +1,8 @@
 import { discardDataMap } from '../../core/state/DataMapSlice';
-import { closeModal, WarningModalState, openDiscardWarningModal } from '../../core/state/ModalSlice';
+import { closeModal, openDiscardWarningModal, WarningModalState } from '../../core/state/ModalSlice';
 import { openDefaultConfigPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
+import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import type { IButtonStyles, ICommandBarItemProps } from '@fluentui/react';
 import { CommandBar, ContextualMenuItemType } from '@fluentui/react';
 import { tokens } from '@fluentui/react-components';
@@ -70,10 +71,13 @@ export interface EditorCommandBarProps {
   onUndoClick: () => void;
   onRedoClick: () => void;
   onTestClick: () => void;
+  showMapOverview: boolean;
+  showGlobalView: boolean;
+  setShowGlobalView: (showGlobalView: boolean) => void;
 }
 
 export const EditorCommandBar = (props: EditorCommandBarProps) => {
-  const { onSaveClick, onUndoClick, onRedoClick, onTestClick } = props;
+  const { onSaveClick, onUndoClick, onRedoClick, onTestClick, showMapOverview, showGlobalView, setShowGlobalView } = props;
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -149,6 +153,14 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         defaultMessage: 'Publish',
         description: 'Button text for publish',
       }),
+      MAP_OVERVIEW: intl.formatMessage({
+        defaultMessage: 'Overview',
+        description: 'Button text for overview',
+      }),
+      GLOBAL_VIEW: intl.formatMessage({
+        defaultMessage: 'Global view',
+        description: 'Button text for whole overview',
+      }),
       DIVIDER: intl.formatMessage({
         defaultMessage: 'Divider',
         description: 'Aria label for divider',
@@ -156,6 +168,8 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
     }),
     [intl]
   );
+
+  const bothSchemasDefined = sourceSchema && targetSchema;
 
   const items: ICommandBarItemProps[] = useMemo(
     () => [
@@ -165,7 +179,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         ariaLabel: Resources.SAVE,
         iconProps: { iconName: 'Save' },
         onClick: onSaveClick,
-        disabled: !sourceSchema || !targetSchema ? true : !isStateDirty,
+        disabled: !bothSchemasDefined || !isStateDirty,
         buttonStyles: cmdBarButtonStyles,
         ...cmdBarItemBgStyles,
       },
@@ -215,6 +229,16 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         ...cmdBarItemBgStyles,
       },
       {
+        key: 'overview',
+        text: showGlobalView ? Resources.MAP_OVERVIEW : Resources.GLOBAL_VIEW,
+        ariaLabel: showGlobalView ? Resources.MAP_OVERVIEW : Resources.GLOBAL_VIEW,
+        iconProps: { iconName: 'Relationship' },
+        onClick: () => setShowGlobalView(!showGlobalView),
+        disabled: !showMapOverview || !bothSchemasDefined,
+        buttonStyles: cmdBarButtonStyles,
+        ...cmdBarItemBgStyles,
+      },
+      {
         ...divider,
         key: 'test-config-divider',
         ariaLabel: Resources.DIVIDER,
@@ -226,25 +250,39 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         iconProps: { iconName: 'Settings' },
         onClick: () => {
           dispatch(openDefaultConfigPanelView());
+
+          LogService.log(LogCategory.DefaultConfigView, 'openOrCloseConfigPanel', {
+            message: 'Opened configuration panel',
+          });
         },
         buttonStyles: cmdBarButtonStyles,
         ...cmdBarItemBgStyles,
       },
     ],
     [
-      Resources,
-      triggerDiscardWarningModal,
-      dispatch,
-      isStateDirty,
-      onRedoClick,
+      Resources.SAVE,
+      Resources.UNDO,
+      Resources.REDO,
+      Resources.DISCARD,
+      Resources.DIVIDER,
+      Resources.RUN_TEST,
+      Resources.CONFIGURATION,
+      Resources.MAP_OVERVIEW,
+      Resources.GLOBAL_VIEW,
       onSaveClick,
-      onTestClick,
+      bothSchemasDefined,
+      isStateDirty,
       onUndoClick,
-      redoStack,
-      undoStack,
-      sourceSchema,
-      targetSchema,
+      undoStack.length,
+      onRedoClick,
+      redoStack.length,
+      triggerDiscardWarningModal,
+      onTestClick,
       xsltFilename,
+      showMapOverview,
+      showGlobalView,
+      setShowGlobalView,
+      dispatch,
     ]
   );
 

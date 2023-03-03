@@ -10,25 +10,33 @@ export interface WorkflowLoadingState {
   resourcePath?: string;
   loadingMethod: 'file' | 'arm';
   workflowDefinition: LogicAppsV2.WorkflowDefinition | null;
+  runInstance: LogicAppsV2.RunInstanceDefinition | null;
   connections: ConnectionReferences;
   readOnly: boolean;
   monitoringView: boolean;
   darkMode: boolean;
+  consumption: boolean;
 }
 
 const initialState: WorkflowLoadingState = {
   workflowDefinition: null,
+  runInstance: null,
   connections: {},
   loadingMethod: 'file',
   resourcePath: 'simpleBigworkflow.json',
   readOnly: false,
   monitoringView: false,
   darkMode: false,
+  consumption: false,
 };
 
 type WorkflowPayload = {
   workflowDefinition: LogicAppsV2.WorkflowDefinition;
   connectionReferences: ConnectionReferences;
+};
+
+type RunPayload = {
+  runInstance: LogicAppsV2.RunInstanceDefinition;
 };
 
 export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow', async (_: void, thunkAPI) => {
@@ -61,6 +69,16 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
   }
 });
 
+export const loadRun = createAsyncThunk('runLoadingState/loadRun', async (_: void, thunkAPI) => {
+  const currentState: RootState = thunkAPI.getState() as RootState;
+  try {
+    const runInstance = await import(`../../../../__mocks__/runs/${currentState.workflowLoader.resourcePath}`);
+    return { runInstance: runInstance as LogicAppsV2.RunInstanceDefinition } as RunPayload;
+  } catch {
+    return thunkAPI.rejectWithValue(null);
+  }
+});
+
 function convertToConnectionReferences(connectionData: ConnectionsJSON | undefined): ConnectionReferences {
   if (!connectionData) {
     return {};
@@ -69,7 +87,6 @@ function convertToConnectionReferences(connectionData: ConnectionsJSON | undefin
   convertToConnectionReferenceRefactor(connectionData.functionConnections, connectionReferences);
   convertToConnectionReferenceRefactor(connectionData.serviceProviderConnections, connectionReferences);
 
-  console.log(connectionReferences);
   return connectionReferences;
 }
 
@@ -131,6 +148,9 @@ export const workflowLoadingSlice = createSlice({
     setDarkMode: (state, action: PayloadAction<boolean>) => {
       state.darkMode = action.payload;
     },
+    setConsumption: (state, action: PayloadAction<boolean>) => {
+      state.consumption = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload | null>) => {
@@ -141,10 +161,17 @@ export const workflowLoadingSlice = createSlice({
     builder.addCase(loadWorkflow.rejected, (state) => {
       state.workflowDefinition = null;
     });
+    builder.addCase(loadRun.fulfilled, (state, action: PayloadAction<RunPayload | null>) => {
+      if (!action.payload) return;
+      state.runInstance = action.payload?.runInstance;
+    });
+    builder.addCase(loadRun.rejected, (state) => {
+      state.runInstance = null;
+    });
   },
 });
 
-export const { changeArmToken, changeResourcePath, changeLoadingMethod, setReadOnly, setMonitoringView, setDarkMode } =
+export const { changeArmToken, changeResourcePath, changeLoadingMethod, setReadOnly, setMonitoringView, setDarkMode, setConsumption } =
   workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;

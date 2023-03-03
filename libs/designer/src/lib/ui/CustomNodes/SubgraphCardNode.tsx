@@ -3,10 +3,10 @@ import type { AppDispatch } from '../../core';
 import { initializeSwitchCaseFromManifest } from '../../core/actions/bjsworkflow/add';
 import { deleteGraphNode } from '../../core/actions/bjsworkflow/delete';
 import { getOperationManifest } from '../../core/queries/operation';
-import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
-import { useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
+import { useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import {
   useIsGraphCollapsed,
   useIsLeafNode,
@@ -41,10 +41,13 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const graphNode = useWorkflowNode(graphId);
   const subgraphNode = useWorkflowNode(subgraphId);
   const operationInfo = useOperationInfo(graphId);
+  const isMonitoringView = useMonitoringView();
 
   const label = useNodeDisplayName(subgraphId);
 
   const isAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
+
+  const iconUri = useIconUri(graphId);
 
   const newCaseId = useNewSwitchCaseId();
   const subgraphClick = useCallback(
@@ -54,17 +57,19 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
         const rootManifest = await getOperationManifest(operationInfo);
         if (!rootManifest?.properties?.subGraphDetails) return;
         const caseManifestData = Object.values(rootManifest.properties.subGraphDetails).find((data) => data.isAdditive);
-        const subGraphManifest = { properties: { ...caseManifestData, iconUri: '', brandColor: '' } };
+        const subGraphManifest = {
+          properties: { ...caseManifestData, iconUri: iconUri ?? '', brandColor: '' },
+        };
         initializeSwitchCaseFromManifest(newCaseId, subGraphManifest, dispatch);
         dispatch(changePanelNode(newCaseId));
-        dispatch(showDefaultTabs());
+        dispatch(showDefaultTabs({ isMonitoringView }));
         dispatch(setFocusNode(newCaseId));
       } else {
         dispatch(changePanelNode(_id));
-        dispatch(showDefaultTabs());
+        dispatch(showDefaultTabs({ isMonitoringView }));
       }
     },
-    [dispatch, isAddCase, newCaseId, graphNode, operationInfo, subgraphId]
+    [isAddCase, graphNode, dispatch, newCaseId, subgraphId, operationInfo, iconUri, isMonitoringView]
   );
 
   const graphCollapsed = useIsGraphCollapsed(subgraphId);
@@ -145,8 +150,6 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
       ) : null}
       <DeleteNodeModal
         nodeId={id}
-        // nodeIcon={iconUriResult.result}
-        // brandColor={brandColor}
         nodeType={WORKFLOW_NODE_TYPES.SUBGRAPH_NODE}
         isOpen={showDeleteModal}
         onDismiss={() => setShowDeleteModal(false)}

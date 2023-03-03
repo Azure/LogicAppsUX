@@ -118,6 +118,7 @@ export const General = ({
     id: 'general',
     title: generalTitle,
     sectionName: constants.SETTINGSECTIONS.GENERAL,
+    isReadOnly: readOnly,
     expanded,
     onHeaderClick,
     settings: [
@@ -125,7 +126,7 @@ export const General = ({
         settingType: 'SettingToggle',
         settingProp: {
           readOnly,
-          checked: splitOn?.value?.enabled,
+          checked: splitOn?.value?.enabled ?? true,
           onToggleInputChange: (_, checked) => onSplitOnToggle(!!checked),
           customLabel: () => splitOnLabel,
           onText,

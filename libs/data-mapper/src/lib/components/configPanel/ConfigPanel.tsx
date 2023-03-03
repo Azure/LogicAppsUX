@@ -1,10 +1,10 @@
 import { getSelectedSchema } from '../../core';
-import appInsights from '../../core/services/appInsights/AppInsights';
 import { setInitialSchema } from '../../core/state/DataMapSlice';
 import { closePanel, ConfigPanelView, openDefaultConfigPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
 import { SchemaType } from '../../models';
+import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import type { SchemaFile } from './AddOrUpdateSchemaView';
 import { AddOrUpdateSchemaView, UploadSchemaTypes } from './AddOrUpdateSchemaView';
@@ -122,15 +122,25 @@ export const ConfigPanel = ({
         return;
       }
 
+      LogService.log(LogCategory.AddOrUpdateSchemaView, 'addOrChangeSchema', {
+        message: `${isAddSchema ? 'Added' : 'Changed'} ${schemaType} schema from ${
+          uploadType === UploadSchemaTypes.SelectFrom ? 'existing schema files' : 'new file upload'
+        }`,
+      });
+
       // Catch specific errors from GET schemaTree or otherwise
       const schemaLoadError = schemaType === SchemaType.Source ? fetchedSourceSchema.error : fetchedTargetSchema.error;
       if (schemaLoadError) {
         if (typeof schemaLoadError === 'string') {
-          appInsights.trackException({ exception: new Error(schemaLoadError) });
           setErrorMessage(schemaLoadError);
+          LogService.error(LogCategory.AddOrUpdateSchemaView, 'schemaLoadError', {
+            message: schemaLoadError,
+          });
         } else if (schemaLoadError instanceof Error) {
-          appInsights.trackException({ exception: schemaLoadError });
           setErrorMessage(schemaLoadError.message);
+          LogService.error(LogCategory.AddOrUpdateSchemaView, 'schemaLoadError', {
+            message: schemaLoadError.message,
+          });
         }
 
         return;

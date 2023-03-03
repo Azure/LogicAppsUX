@@ -24,7 +24,6 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
 
   override async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
     const supportedManifest = supportedBaseManifestObjects.get(operationId);
-
     if (supportedManifest) return supportedManifest;
 
     const { apiVersion, baseUrl, httpClient } = this.options;

@@ -20,12 +20,13 @@ import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import type {
   IWorkflowFileContent,
   Parameter,
-  CodelessApp,
-  WorkflowParameter,
+  StandardApp,
   Artifacts,
   AzureConnectorDetails,
   ILocalSettingsJson,
+  WorkflowParameter,
 } from '@microsoft/vscode-extension';
+import { readFileSync } from 'fs';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
@@ -52,11 +53,11 @@ export function removeWebviewPanelFromCache(category: string, name: string): voi
   }
 }
 
-export function getCodelessAppData(
+export function getStandardAppData(
   workflowName: string,
   workflow: IWorkflowFileContent,
   parameters: Record<string, Parameter>
-): CodelessApp {
+): StandardApp {
   const { definition, kind, runtimeConfiguration } = workflow;
   const statelessRunMode = runtimeConfiguration && runtimeConfiguration.statelessRunMode ? runtimeConfiguration.statelessRunMode : '';
   const operationOptions = runtimeConfiguration && runtimeConfiguration.operationOptions ? runtimeConfiguration.operationOptions : '';
@@ -201,6 +202,38 @@ export async function getAzureConnectorDetailsForLocalProject(
   };
 }
 
+export async function getManualWorkflowsInLocalProject(projectPath: string, workflowToExclude: string): Promise<Record<string, any>> {
+  if (!(await fse.pathExists(projectPath))) {
+    return {};
+  }
+
+  const workflowDetails: Record<string, any> = {};
+  const subPaths: string[] = await fse.readdir(projectPath);
+  for (const subPath of subPaths) {
+    const fullPath: string = path.join(projectPath, subPath);
+    const fileStats = await fse.lstat(fullPath);
+
+    if (fileStats.isDirectory() && subPath !== workflowToExclude) {
+      try {
+        const workflowFilePath = path.join(fullPath, 'workflow.json');
+
+        if (await fse.pathExists(workflowFilePath)) {
+          const schema = getRequestTriggerSchema(JSON.parse(readFileSync(workflowFilePath, 'utf8')));
+
+          if (schema) {
+            workflowDetails[subPath] = schema;
+          }
+        }
+      } catch {
+        // If unable to load the workflow or read the definition we skip the workflow
+        // in child workflow list.
+      }
+    }
+  }
+
+  return workflowDetails;
+}
+
 export function getRequestTriggerSchema(workflowContent: IWorkflowFileContent): any {
   const {
     definition: { triggers },
@@ -247,4 +280,10 @@ export async function verifyDeploymentResourceGroup(
     const deployButton: MessageItem = { title: localize('deploy', 'Deploy') };
     await context.ui.showWarningMessage(warning, { modal: true }, deployButton, DialogResponses.cancel);
   }
+}
+
+export function getTriggerName(definition: any): string | undefined {
+  const { triggers } = definition;
+  const triggerNames = Object.keys(triggers);
+  return triggerNames.length === 1 ? triggerNames[0] : undefined;
 }

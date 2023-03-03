@@ -226,7 +226,8 @@ export class ParametersProcessor {
       summary = parameter[Constants.ExtensionProperties.Summary],
       schema = toSwaggerSchema(parameter),
       type = parameter.type,
-      visibility = parameter[Constants.ExtensionProperties.Visibility];
+      visibility = parameter[Constants.ExtensionProperties.Visibility],
+      isNotificationUrl = parameter[Constants.ExtensionProperties.NotificationUrl];
 
     return {
       key: key ?? (create([...this._getMergedKeySegments($in, keyProjectionOption), name]) as string),
@@ -246,6 +247,7 @@ export class ParametersProcessor {
       summary,
       type,
       visibility,
+      isNotificationUrl,
     };
   }
 

@@ -7,7 +7,7 @@ import { SimpleFunctionCard } from '../components/nodeCard/functionCard/SimpleFu
 import { Notification } from '../components/notification/Notification';
 import { SchemaNameBadge } from '../components/schemaSelection/SchemaNameBadge';
 import { SourceSchemaPlaceholder } from '../components/schemaSelection/SourceSchemaPlaceholder';
-import { schemaNodeCardHeight, schemaNodeCardDefaultWidth } from '../constants/NodeConstants';
+import { schemaNodeCardDefaultWidth, schemaNodeCardHeight } from '../constants/NodeConstants';
 import {
   checkerboardBackgroundImage,
   defaultCanvasZoom,
@@ -48,9 +48,15 @@ interface ReactFlowWrapperProps {
   canvasBlockHeight: number;
   canvasBlockWidth: number;
   useExpandedFunctionCards: boolean;
+  openMapChecker: () => void;
 }
 
-export const ReactFlowWrapper = ({ canvasBlockHeight, canvasBlockWidth, useExpandedFunctionCards }: ReactFlowWrapperProps) => {
+export const ReactFlowWrapper = ({
+  canvasBlockHeight,
+  canvasBlockWidth,
+  useExpandedFunctionCards,
+  openMapChecker,
+}: ReactFlowWrapperProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const reactFlowRef = useRef<HTMLDivElement>(null);
 
@@ -158,7 +164,8 @@ export const ReactFlowWrapper = ({ canvasBlockHeight, canvasBlockWidth, useExpan
     currentTargetSchemaNode,
     connections,
     selectedItemKey,
-    sourceSchemaOrdering
+    sourceSchemaOrdering,
+    useExpandedFunctionCards
   );
 
   // Find first schema node (should be schemaTreeRoot) for source and target to use its xPos for schema name badge
@@ -196,6 +203,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight, canvasBlockWidth, useExpan
       nodes={nodes}
       edges={edges}
       onPaneClick={onPaneClick}
+      nodesFocusable={false} // we handle keyboard focus from within the node
       // Not ideal, but it's this or useViewport that re-renders 3000 (due to x/y changes)
       onMove={(_e, viewport) => setCanvasZoom(viewport.zoom)}
       onKeyDown={keyDownHandler}
@@ -231,6 +239,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight, canvasBlockWidth, useExpan
           msgParam={notificationData.msgParam}
           msgBody={notificationData.msgBody}
           autoHideDuration={notificationData.autoHideDurationMs}
+          openMapChecker={openMapChecker}
           onClose={() => dispatch(hideNotification())}
         />
       )}

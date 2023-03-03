@@ -1223,7 +1223,6 @@ Array [
                 <div
                   aria-colcount={2}
                   aria-label="Headers"
-                  aria-readonly="true"
                   aria-rowcount={1}
                   role="grid"
                 >
@@ -2006,7 +2005,6 @@ Array [
                 <div
                   aria-colcount={2}
                   aria-label="Headers"
-                  aria-readonly="true"
                   aria-rowcount={1}
                   role="grid"
                 >

@@ -3,6 +3,7 @@ import { CodeView } from '../components/codeView/CodeView';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/AddOrUpdateSchemaView';
 import { ConfigPanel } from '../components/configPanel/ConfigPanel';
+import { GlobalView } from '../components/globalView/GlobalView';
 import { MapOverview } from '../components/mapOverview/MapOverview';
 import { errorNotificationAutoHideDuration, NotificationTypes } from '../components/notification/Notification';
 import {
@@ -11,7 +12,7 @@ import {
   PropertiesPane,
   propPaneTopBarHeight,
 } from '../components/propertiesPane/PropertiesPane';
-import { TargetSchemaPane } from '../components/targetSchemaPane/TargetSchemaPane';
+import { SidePane, SidePanelTabValue } from '../components/sidePane/SidePane';
 import { TestMapPanel } from '../components/testMapPanel/TestMapPanel';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import { generateDataMapXslt } from '../core/queries/datamap';
@@ -19,6 +20,7 @@ import { redoDataMapOperation, saveDataMap, showNotification, undoDataMapOperati
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { convertToMapDefinition } from '../mapDefinitions';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
+import { collectErrorsForMapChecker } from '../utils/MapChecker.Utils';
 import './ReactFlowStyleOverrides.css';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Stack } from '@fluentui/react';
@@ -114,6 +116,7 @@ export const DataMapperDesigner = ({
   const isMapStateDirty = useSelector((state: RootState) => state.dataMap.isDirty);
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
+  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
   const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
@@ -123,7 +126,9 @@ export const DataMapperDesigner = ({
   const [propPaneExpandedHeight, setPropPaneExpandedHeight] = useState(basePropPaneContentHeight);
   const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
-  const [isTargetSchemaPaneExpanded, setIsTargetSchemaPaneExpanded] = useState(false);
+  const [isSidePaneExpanded, setIsSidePaneExpanded] = useState(false);
+  const [sidePaneTab, setSidePaneTab] = useState(SidePanelTabValue.OutputTree);
+  const [showGlobalView, setShowGlobalView] = useState(false);
 
   const dataMapDefinition = useMemo<string>(() => {
     if (sourceSchema && targetSchema) {
@@ -164,6 +169,18 @@ export const DataMapperDesigner = ({
   };
 
   const onSaveClick = useCallback(() => {
+    const errors = collectErrorsForMapChecker(currentConnections, flattenedTargetSchema);
+
+    if (errors.length > 0) {
+      dispatch(
+        showNotification({
+          type: NotificationTypes.MapHasErrorsAtSave,
+          msgParam: errors.length,
+          autoHideDurationMs: errorNotificationAutoHideDuration,
+        })
+      );
+    }
+
     generateDataMapXslt(dataMapDefinition)
       .then((xsltStr) => {
         saveStateCall(dataMapDefinition, xsltStr);
@@ -174,6 +191,10 @@ export const DataMapperDesigner = ({
             targetSchemaExtended: targetSchema,
           })
         );
+
+        LogService.log(LogCategory.DataMapperDesigner, 'onSaveClick', {
+          message: 'Successfully saved map definition and generated xslt',
+        });
       })
       .catch((error: Error) => {
         LogService.error(LogCategory.DataMapperDesigner, 'onSaveClick', {
@@ -188,7 +209,7 @@ export const DataMapperDesigner = ({
           })
         );
       });
-  }, [dispatch, dataMapDefinition, saveStateCall, sourceSchema, targetSchema]);
+  }, [currentConnections, flattenedTargetSchema, dataMapDefinition, saveStateCall, dispatch, sourceSchema, targetSchema]);
 
   // NOTE: Putting this useEffect here for vis next to onSave
   useEffect(() => {
@@ -212,15 +233,27 @@ export const DataMapperDesigner = ({
     dispatch(redoDataMapOperation());
   };
 
-  const onTestClick = () => {
-    setIsTestMapPanelOpen(true);
+  const setTestMapPanelOpen = (toOpen: boolean) => {
+    setIsTestMapPanelOpen(toOpen);
+
+    LogService.log(LogCategory.TestMapPanel, 'openOrCloseTestMapPanel', {
+      message: `${toOpen ? 'Opened' : 'Closed'} test map panel`,
+    });
+  };
+
+  const setCodeViewOpen = (toOpen: boolean) => {
+    setIsCodeViewOpen(toOpen);
+
+    LogService.log(LogCategory.CodeView, 'openOrCloseCodeView', {
+      message: `${toOpen ? 'Opened' : 'Closed'} code view`,
+    });
   };
 
   const getCanvasAreaAndPropPaneMargin = () => {
     return isPropPaneExpanded && propPaneExpandedHeight === centerViewHeight - propPaneTopBarHeight ? 0 : canvasAreaAndPropPaneMargin;
   };
 
-  // NOTE: The below two methods include the margin between the canvas area and proppane
+  // NOTE: The below two methods include the margin between the canvas area and PropPane
   const getCollapsedPropPaneTotalHeight = () => {
     return propPaneTopBarHeight + getCanvasAreaAndPropPaneMargin();
   };
@@ -242,14 +275,27 @@ export const DataMapperDesigner = ({
     }
   };
 
+  const openMapChecker = () => {
+    setSidePaneTab(SidePanelTabValue.MapChecker);
+    setIsSidePaneExpanded(true);
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className={styles.dataMapperShell}>
-        <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} onTestClick={onTestClick} />
+        <EditorCommandBar
+          onSaveClick={onSaveClick}
+          onUndoClick={onUndoClick}
+          onRedoClick={onRedoClick}
+          onTestClick={() => setTestMapPanelOpen(true)}
+          showMapOverview={showMapOverview}
+          showGlobalView={showGlobalView}
+          setShowGlobalView={setShowGlobalView}
+        />
 
         <div id="editorView" style={{ display: 'flex', flex: '1 1 1px' }}>
           <div id="centerViewWithBreadcrumb" style={{ display: 'flex', flexDirection: 'column', flex: '1 1 1px' }}>
-            <EditorBreadcrumb isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />
+            <EditorBreadcrumb isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setCodeViewOpen} />
 
             <div id={centerViewId} style={{ minHeight: 400, flex: '1 1 1px' }}>
               <div
@@ -269,7 +315,11 @@ export const DataMapperDesigner = ({
                     }}
                   >
                     {showMapOverview ? (
-                      <MapOverview />
+                      showGlobalView ? (
+                        <GlobalView />
+                      ) : (
+                        <MapOverview />
+                      )
                     ) : (
                       <ReactFlowProvider>
                         {/* TODO: Update width calculations once Code View becomes resizable */}
@@ -277,6 +327,7 @@ export const DataMapperDesigner = ({
                           canvasBlockHeight={getCanvasAreaHeight()}
                           canvasBlockWidth={centerViewWidth}
                           useExpandedFunctionCards={useExpandedFunctionCards}
+                          openMapChecker={openMapChecker}
                         />
                       </ReactFlowProvider>
                     )}
@@ -285,7 +336,7 @@ export const DataMapperDesigner = ({
                   <CodeView
                     dataMapDefinition={dataMapDefinition}
                     isCodeViewOpen={isCodeViewOpen}
-                    setIsCodeViewOpen={setIsCodeViewOpen}
+                    setIsCodeViewOpen={setCodeViewOpen}
                     canvasAreaHeight={getCanvasAreaHeight()}
                   />
                 </Stack>
@@ -304,7 +355,12 @@ export const DataMapperDesigner = ({
             </div>
           </div>
 
-          <TargetSchemaPane isExpanded={isTargetSchemaPaneExpanded} setIsExpanded={setIsTargetSchemaPaneExpanded} />
+          <SidePane
+            isExpanded={isSidePaneExpanded}
+            setIsExpanded={setIsSidePaneExpanded}
+            sidePaneTab={sidePaneTab}
+            setSidePaneTab={setSidePaneTab}
+          />
         </div>
 
         <WarningModal />
@@ -314,7 +370,7 @@ export const DataMapperDesigner = ({
           setFunctionDisplayExpanded={setFunctionDisplayExpanded}
           useExpandedFunctionCards={useExpandedFunctionCards}
         />
-        <TestMapPanel isOpen={isTestMapPanelOpen} onClose={() => setIsTestMapPanelOpen(false)} />
+        <TestMapPanel isOpen={isTestMapPanelOpen} onClose={() => setTestMapPanelOpen(false)} />
       </div>
     </DndProvider>
   );

@@ -29,7 +29,7 @@ import { WorkflowCreateStepBase } from './WorkflowCreateStepBase';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses, nonNullProp, parseError } from '@microsoft/vscode-azext-utils';
 import { WorkflowProjectType, MismatchBehavior } from '@microsoft/vscode-extension';
-import type { IFunctionWizardContext, IWorkflowTemplate, IHostJsonV2, CodelessApp } from '@microsoft/vscode-extension';
+import type { IFunctionWizardContext, IWorkflowTemplate, IHostJsonV2, StandardApp } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
@@ -48,7 +48,7 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
     const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     const functionPath: string = path.join(context.projectPath, nonNullProp(context, 'functionName'));
 
-    const emptyStatefulDefinition: CodelessApp = {
+    const emptyStatefulDefinition: StandardApp = {
       definition: {
         $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
         actions: {},
@@ -59,7 +59,7 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
       kind: 'Stateful',
     };
 
-    const emptyStatelessDefinition: CodelessApp = {
+    const emptyStatelessDefinition: StandardApp = {
       definition: {
         $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
         actions: {},
@@ -70,7 +70,7 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
       kind: 'Stateless',
     };
 
-    const codelessDefinition: CodelessApp = template?.id === workflowType.stateful ? emptyStatefulDefinition : emptyStatelessDefinition;
+    const codelessDefinition: StandardApp = template?.id === workflowType.stateful ? emptyStatefulDefinition : emptyStatelessDefinition;
 
     const workflowJsonFullPath: string = path.join(functionPath, workflowFileName);
 
