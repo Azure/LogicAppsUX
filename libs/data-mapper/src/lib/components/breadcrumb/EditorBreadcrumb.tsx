@@ -63,6 +63,11 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
     description: 'Button to hide the code view',
   });
 
+  const chevronAriaDescription = intl.formatMessage({
+    defaultMessage: 'Expant list of sibling elements',
+    description: 'Button that toggles list of elements to view',
+  });
+
   const breadcrumbItems = useMemo<IBreadcrumbItem[]>(() => {
     if (targetSchema) {
       return convertToBreadcrumbItems(dispatch, targetSchema, startMappingLoc, currentTargetSchemaNode);
@@ -77,7 +82,11 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
     if (!item) return null;
 
     if (item.key === placeholderItemKey) {
-      return <Text style={{ ...typographyStyles.body1, color: tokens.colorNeutralStroke1 }}>{item.text}</Text>;
+      return (
+        <Text aria-disabled={true} style={{ ...typographyStyles.body1, color: tokens.colorNeutralStroke1 }}>
+          {item.text}
+        </Text>
+      );
     } else {
       return <Text>{item.text}</Text>;
     }
@@ -128,6 +137,7 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
         menuProps={getMenuProps(item)}
         menuAs={getMenu}
         onRenderMenuIcon={() => null}
+        ariaDescription={chevronAriaDescription}
       />
     );
   };

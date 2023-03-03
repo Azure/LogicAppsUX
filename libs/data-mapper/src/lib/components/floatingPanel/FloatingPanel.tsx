@@ -2,6 +2,7 @@ import { Stack } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { Dismiss20Regular } from '@fluentui/react-icons';
 import { useMemo } from 'react';
+import { useIntl } from 'react-intl';
 
 export const floatingPanelZIndex = 10;
 
@@ -39,6 +40,12 @@ export interface FloatingPanelProps {
 export const FloatingPanel = (props: FloatingPanelProps) => {
   const { title, subtitle, onClose, xPos, yPos, minHeight, height, contentHeight, width, panelOrdering, isOpen, children } = props;
   const styles = useStyles();
+  const intl = useIntl();
+
+  const xLabel = intl.formatMessage({
+    defaultMessage: 'Close panel',
+    description: 'Label on button that closes floating panel',
+  });
 
   const innerStyle: React.CSSProperties = useMemo(
     () => ({
@@ -64,7 +71,7 @@ export const FloatingPanel = (props: FloatingPanelProps) => {
         <Text className={styles.title}>{title}</Text>
         <Text className={styles.subtitle}>{subtitle}</Text>
 
-        <Button appearance="subtle" icon={<Dismiss20Regular />} onClick={onClose} style={{ marginLeft: 'auto' }} />
+        <Button appearance="subtle" icon={<Dismiss20Regular />} onClick={onClose} aria-label={xLabel} style={{ marginLeft: 'auto' }} />
       </Stack>
 
       <div style={{ maxHeight: contentHeight, overflowY: 'auto', position: 'relative' }}>{children}</div>

@@ -236,6 +236,10 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const ChevronIcon = bundleIcon(ChevronRight16Filled, ChevronRight16Regular);
   const BundledTypeIcon = iconForNormalizedDataType(schemaNode.normalizedDataType, 24, false, schemaNode.nodeProperties);
   const contextMenu = useCardContextMenu();
+  const ariaDescribeChevron = intl.formatMessage({
+    defaultMessage: 'Navigate to element and view children',
+    description: "Change context of the canvas to view that element's children",
+  });
   const getRemoveMenuItem = (): MenuItemOption => {
     const deleteNode = intl.formatMessage({
       defaultMessage: 'Remove',
@@ -302,6 +306,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
         </Button>
         {showOutputChevron && (
           <Button
+            aria-label={ariaDescribeChevron}
             className={classes.cardChevron}
             onClick={outputChevronOnClick}
             icon={<ChevronIcon filled={isChevronHovered ? true : undefined} />}
