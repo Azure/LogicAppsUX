@@ -1,5 +1,7 @@
 # Logic Apps Designer
 
+### [0.2.95](https://github.com/Azure/LogicAppsUX/compare/v0.2.94...v0.2.95) (2023-03-03)
+
 ### [0.2.94](https://github.com/Azure/LogicAppsUX/compare/v0.2.93...v0.2.94) (2023-03-02)
 
 ### Logic Apps Designer Changes

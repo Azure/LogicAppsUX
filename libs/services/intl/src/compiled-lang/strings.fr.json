@@ -273,6 +273,12 @@
       "value": "Retourne la représentation binaire d'une chaîne encodée sous forme d'URI"
     }
   ],
+  "0SSwxD": [
+    {
+      "type": 0,
+      "value": "Close panel"
+    }
+  ],
   "0Vzp0l": [
     {
       "type": 0,
@@ -1743,6 +1749,12 @@
       "value": "Example: Monday, Friday"
     }
   ],
+  "BUutcC": [
+    {
+      "type": 0,
+      "value": "Expant list of sibling elements"
+    }
+  ],
   "BVOUxP": [
     {
       "type": 0,
@@ -2851,6 +2863,12 @@
       "value": "Obligatoire. Expressions qui peuvent être vraies."
     }
   ],
+  "LvLksz": [
+    {
+      "type": 0,
+      "value": "Loading outputs"
+    }
+  ],
   "LvpxiA": [
     {
       "type": 0,
@@ -3700,6 +3718,12 @@
     {
       "type": 0,
       "value": "Retourne une chaîne avec chaque élément d'un tableau joint par un délimiteur"
+    }
+  ],
+  "TLHUMf": [
+    {
+      "type": 0,
+      "value": "Error loading inputs"
     }
   ],
   "TNEttQ": [
@@ -6219,6 +6243,12 @@
       "value": "Obligatoire. Nombre par lequel diviser le dividende. Après la division, le chiffre restant est accepté."
     }
   ],
+  "pcGqoB": [
+    {
+      "type": 0,
+      "value": "Error loading outputs"
+    }
+  ],
   "pcuZKB": [
     {
       "type": 0,
@@ -7006,6 +7036,12 @@
       "value": "Entrer une valeur personnalisée"
     }
   ],
+  "vvSHR8": [
+    {
+      "type": 0,
+      "value": "Navigate to element and view children"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -7244,6 +7280,12 @@
     {
       "type": 0,
       "value": "Les paramètres sont partagés entre les flux de travail d’une Application Logique."
+    }
+  ],
+  "xwD1VZ": [
+    {
+      "type": 0,
+      "value": "Loading inputs"
     }
   ],
   "xwEX2/": [
