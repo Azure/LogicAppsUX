@@ -8,7 +8,7 @@ import type { ConnectionCreationInfo } from '@microsoft/designer-client-services
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
 import { isEmptyString, Theme } from '@microsoft/utils-logic-apps';
-import type { FileSystemConnectionInfo } from '@microsoft/vscode-extension';
+import type { FileSystemConnectionInfo, StandardApp } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { useContext, useMemo, useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
@@ -31,7 +31,7 @@ export const App = () => {
     isMonitoringView,
     runId,
   } = vscodeState;
-  const [standardApp, setStandardApp] = useState(panelMetaData?.standardApp);
+  const [standardApp, setStandardApp] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [runInstance, setRunInstance] = useState<LogicAppsV2.RunInstanceDefinition | null>(null);
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
 
@@ -80,9 +80,9 @@ export const App = () => {
 
   const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
     const standardAppInstance = {
+      ...standardApp,
       definition: runDefinition.properties.workflow.properties.definition,
-      kind: '',
-    };
+    } as StandardApp;
     setRunInstance(runDefinition);
     setStandardApp(standardAppInstance);
   };

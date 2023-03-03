@@ -36,24 +36,14 @@ export class StandardRunService implements IRunService {
     if (!uri) {
       throw new Error();
     }
-    const response = await httpClient.get<any>(
-      {
-        uri,
-      },
-      true
-    );
 
-    const contentType = response.headers.get('Content-Type');
-    if (contentType?.startsWith('application/json')) {
-      return response.json();
-    } else if (contentType?.startsWith('text/')) {
-      return response.text();
-    } else if (contentType?.startsWith('application/octet-stream')) {
-      return response.blob();
-    } else if (contentType?.startsWith('multipart/form-data')) {
-      return response.formData();
-    } else {
-      return response.arrayBuffer();
+    try {
+      const response = await httpClient.get<any>({
+        uri,
+      });
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
     }
   }
 

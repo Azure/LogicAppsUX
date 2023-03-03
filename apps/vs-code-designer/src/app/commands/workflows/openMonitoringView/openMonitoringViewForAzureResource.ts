@@ -11,6 +11,7 @@ import {
   cacheWebviewPanel,
   getTriggerName,
   getWorkflowManagementBaseURI,
+  getStandardAppData,
 } from '../../../utils/codeless/common';
 import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationToken';
 import { sendAzureRequest } from '../../../utils/requestUtils';
@@ -19,7 +20,7 @@ import { OpenMonitoringViewBase } from './openMonitoringViewBase';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IDesignerPanelMetadata } from '@microsoft/vscode-extension';
+import type { IDesignerPanelMetadata, IWorkflowFileContent } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -29,11 +30,13 @@ import { ViewColumn } from 'vscode';
 export default class openMonitoringViewForAzureResource extends OpenMonitoringViewBase {
   private node: RemoteWorkflowTreeItem;
   private panelMetadata: IDesignerPanelMetadata;
+  private readonly workflow: IWorkflowFileContent;
 
   constructor(context: IAzureConnectorsContext | IActionContext, runId: string, workflowFilePath: string, node: RemoteWorkflowTreeItem) {
     super(context, runId, workflowFilePath, false, workflowAppApiVersion);
 
     this.node = node;
+    this.workflow = node.workflowFileContent;
   }
 
   public async createPanel(): Promise<void> {
@@ -150,6 +153,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
   private async getDesignerPanelMetadata(): Promise<any> {
     const credentials: ServiceClientCredentials = this.node.credentials;
     const accessToken: string = await getAuthorizationToken(credentials);
+    const parameters = await this.node.getParametersData();
 
     return {
       panelId: this.panelName,
@@ -169,6 +173,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
       workflowDetails: await this.node.getChildWorkflows(this.context),
       workflowName: this.workflowName,
       artifacts: await this.node.getArtifacts(),
+      standardApp: getStandardAppData(this.workflowName, { ...this.workflow, definition: {} }, parameters),
     };
   }
 }

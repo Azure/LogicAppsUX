@@ -21,7 +21,7 @@ export class HttpClient implements IHttpClient {
 
   dispose(): void {}
 
-  async get<ReturnType>(options: HttpRequestOptions<unknown>, isFullResponse?: boolean): Promise<ReturnType> {
+  async get<ReturnType>(options: HttpRequestOptions<unknown>): Promise<ReturnType> {
     const isArmId = isArmResourceId(options.uri);
     const request = {
       ...options,
@@ -36,7 +36,7 @@ export class HttpClient implements IHttpClient {
       ...request,
     });
 
-    return isFullResponse ? responseData : responseData?.data;
+    return responseData.data;
   }
 
   async post<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
