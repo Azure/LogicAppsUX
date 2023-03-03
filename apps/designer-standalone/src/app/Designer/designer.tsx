@@ -11,6 +11,7 @@ import {
   ConsumptionSearchService,
   BaseFunctionService,
   BaseAppServiceService,
+  StandardRunService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { ContentType } from '@microsoft/designer-client-services-logic-apps';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
@@ -96,6 +97,14 @@ const appServiceService = new BaseAppServiceService({
   subscriptionId: 'test',
 });
 
+const runService = new StandardRunService({
+  apiVersion: '2018-11-01',
+  baseUrl: '/url',
+  workflowName: 'app',
+  httpClient,
+  isDev: true,
+});
+
 const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };
 
 const hostService = { fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type) };
@@ -115,6 +124,7 @@ export const DesignerWrapper = () => {
       appServiceService,
       workflowService,
       hostService,
+      runService,
     },
     readOnly,
     isMonitoringView: monitoringView,

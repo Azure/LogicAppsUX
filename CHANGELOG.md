@@ -1,5 +1,32 @@
 # Logic Apps Designer
 
+### [0.2.95](https://github.com/Azure/LogicAppsUX/compare/v0.2.94...v0.2.95) (2023-03-03)
+
+### [0.2.94](https://github.com/Azure/LogicAppsUX/compare/v0.2.93...v0.2.94) (2023-03-02)
+
+### Logic Apps Designer Changes
+
+- Adding support for recurrence editor ([#1687](https://github.com/Azure/LogicAppsUX/issues/1687)) ([714e0b6](https://github.com/Azure/LogicAppsUX/commit/714e0b6e37541e8f4f11db520ee2fda6bf9726a1))
+
+### Logic Apps Designer Bug Fixes
+
+- Add placeholder callout to Parameters ([#1697](https://github.com/Azure/LogicAppsUX/issues/1697)) ([5714d65](https://github.com/Azure/LogicAppsUX/commit/5714d65a29bda24ecb67054f35d3beb5980a7e4d))
+- Custom Connectors - Removed unused/incorrect code ([#1694](https://github.com/Azure/LogicAppsUX/issues/1694)) ([b21d4dd](https://github.com/Azure/LogicAppsUX/commit/b21d4dd6838e7a9865dab235b604eceaceb7732a))
+- Fixing Some Designer Bugs ([#1691](https://github.com/Azure/LogicAppsUX/issues/1691)) ([ecbe02e](https://github.com/Azure/LogicAppsUX/commit/ecbe02ed0e9c774a5da8a38f2623062936f23741))
+- Trigger Deletion to Operation Selection bugfix ([#1695](https://github.com/Azure/LogicAppsUX/issues/1695)) ([397a393](https://github.com/Azure/LogicAppsUX/commit/397a393512c4f94068e20c8ace46a7a52ef87d5a))
+
+### [0.2.93](https://github.com/Azure/LogicAppsUX/compare/v0.2.92...v0.2.93) (2023-03-01)
+
+### [0.2.92](https://github.com/Azure/LogicAppsUX/compare/v0.2.91...v0.2.92) (2023-02-28)
+
+### [0.2.92](https://github.com/Azure/LogicAppsUX/compare/v0.2.91...v0.2.92) (2023-02-28)
+
+### Logic Apps Designer Changes
+
+- Custom Connectors (standard) ([#1671](https://github.com/Azure/LogicAppsUX/issues/1671)) ([892c094](https://github.com/Azure/LogicAppsUX/commit/892c0942ec818baecc41bb2d3e01913382719773))
+
+### [0.2.91](https://github.com/Azure/LogicAppsUX/compare/v0.2.90...v0.2.91) (2023-02-28)
+
 ### [0.2.90](https://github.com/Azure/LogicAppsUX/compare/v0.2.89...v0.2.90) (2023-02-27)
 
 ### [0.2.89](https://github.com/Azure/LogicAppsUX/compare/v0.2.88...v0.2.89) (2023-02-26)
@@ -43,8 +70,6 @@
 ### [0.2.75](https://github.com/Azure/LogicAppsUX/compare/v0.2.74...v0.2.75) (2023-02-12)
 
 ### [0.2.74](https://github.com/Azure/LogicAppsUX/compare/v0.2.73...v0.2.74) (2023-02-11)
-
-### [0.2.73](https://github.com/Azure/LogicAppsUX/compare/v0.2.72...v0.2.73) (2023-02-10)
 
 ### [0.2.73](https://github.com/Azure/LogicAppsUX/compare/v0.2.72...v0.2.73) (2023-02-10)
 

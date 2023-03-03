@@ -173,6 +173,12 @@
       "value": "從傳入的陣列或字串，傳回第一個 Count 元素"
     }
   ],
+  "/vWMKW": [
+    {
+      "type": 0,
+      "value": "Missing required inputs"
+    }
+  ],
   "/yYyOq": [
     {
       "type": 0,
@@ -251,6 +257,12 @@
       "value": "傳回 URI 編碼字串的二進位表示法"
     }
   ],
+  "0SSwxD": [
+    {
+      "type": 0,
+      "value": "Close panel"
+    }
+  ],
   "0Vzp0l": [
     {
       "type": 0,
@@ -313,6 +325,12 @@
     {
       "type": 0,
       "value": "傳回輸入資料 URI 字串的二進位表示法"
+    }
+  ],
+  "0upuCv": [
+    {
+      "type": 0,
+      "value": "Hour"
     }
   ],
   "0y5eia": [
@@ -582,6 +600,12 @@
     {
       "type": 0,
       "value": "必要。具有表單資料或表單編碼回應之行動的名稱。"
+    }
+  ],
+  "2kWLLc": [
+    {
+      "type": 0,
+      "value": "Start Time"
     }
   ],
   "2ri1Kf": [
@@ -944,6 +968,12 @@
       "value": "必要。您需要的項目所屬迴圈名稱。"
     }
   ],
+  "5dCAjy": [
+    {
+      "type": 0,
+      "value": "Day"
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1002,6 +1032,20 @@
     {
       "type": 0,
       "value": "(UTC+09:30) 阿得雷德"
+    }
+  ],
+  "6gZ4I3": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' has too many inputs assigned to it"
     }
   ],
   "6jiO7t": [
@@ -1156,6 +1200,12 @@
       "value": "Parameter name already exists."
     }
   ],
+  "83G5rr": [
+    {
+      "type": 0,
+      "value": "Specify the interval."
+    }
+  ],
   "84D91Y": [
     {
       "type": 0,
@@ -1212,6 +1262,12 @@
     {
       "type": 0,
       "value": "請為邏輯應用程式啟用受控識別。"
+    }
+  ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
     }
   ],
   "8U0KPg": [
@@ -1452,6 +1508,12 @@
       "value": "{0} 的類型為 {1}。"
     }
   ],
+  "AheXMN": [
+    {
+      "type": 0,
+      "value": "Select frequency."
+    }
+  ],
   "Amz9+m": [
     {
       "type": 0,
@@ -1587,6 +1649,18 @@
     {
       "type": 0,
       "value": "(UTC+08:00) 伯斯"
+    }
+  ],
+  "BSgavq": [
+    {
+      "type": 0,
+      "value": "Example: Monday, Friday"
+    }
+  ],
+  "BUutcC": [
+    {
+      "type": 0,
+      "value": "Expant list of sibling elements"
     }
   ],
   "BVOUxP": [
@@ -1751,6 +1825,26 @@
       "value": "正在登入..."
     }
   ],
+  "E+iim4": [
+    {
+      "type": 0,
+      "value": "Select timezone."
+    }
+  ],
+  "E3+TAA": [
+    {
+      "type": 0,
+      "value": "Schema node '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an input with a mismatched type"
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1773,6 +1867,12 @@
     {
       "type": 0,
       "value": "製作群組"
+    }
+  ],
+  "ESZXfC": [
+    {
+      "type": 0,
+      "value": "At these minutes"
     }
   ],
   "EUQDM6": [
@@ -2062,6 +2162,12 @@
       "value": "Source schema element"
     }
   ],
+  "Gl5khw": [
+    {
+      "type": 0,
+      "value": "At these hours"
+    }
+  ],
   "Gmya+V": [
     {
       "type": 0,
@@ -2104,6 +2210,12 @@
       "value": "必要項目。要配量的字串。"
     }
   ],
+  "H2WdiZ": [
+    {
+      "type": 0,
+      "value": "Enter the valid minute values (from 0 to 59) separated by comma, e.g., 15,30"
+    }
+  ],
   "H5VikC": [
     {
       "type": 0,
@@ -2120,6 +2232,12 @@
     {
       "type": 0,
       "value": "必要。要傳回之表單資料值的索引鍵名稱。"
+    }
+  ],
+  "HH970i": [
+    {
+      "type": 0,
+      "value": "Month"
     }
   ],
   "HJIZrG": [
@@ -2200,6 +2318,12 @@
     {
       "type": 0,
       "value": "不支援在驗證中的屬性使用動態內容。"
+    }
+  ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
     }
   ],
   "IA+Ogm": [
@@ -2579,6 +2703,12 @@
       "value": "必要。可為 true 的運算式。"
     }
   ],
+  "LvLksz": [
+    {
+      "type": 0,
+      "value": "Loading outputs"
+    }
+  ],
   "LvpxiA": [
     {
       "type": 0,
@@ -2847,6 +2977,12 @@
     {
       "type": 0,
       "value": "10"
+    }
+  ],
+  "OIOexo": [
+    {
+      "type": 0,
+      "value": "On these days"
     }
   ],
   "OKszbi": [
@@ -3320,6 +3456,12 @@
       "value": "自訂追蹤 ID"
     }
   ],
+  "Sr8PcK": [
+    {
+      "type": 0,
+      "value": "No operations found"
+    }
+  ],
   "SvQyvs": [
     {
       "type": 0,
@@ -3378,6 +3520,12 @@
     {
       "type": 0,
       "value": "傳回其每個陣列項目皆以分隔符號聯結的字串"
+    }
+  ],
+  "TLHUMf": [
+    {
+      "type": 0,
+      "value": "Error loading inputs"
     }
   ],
   "TNEttQ": [
@@ -3552,6 +3700,20 @@
       "value": " (檔案名稱)"
     }
   ],
+  "Ufv5m9": [
+    {
+      "type": 0,
+      "value": "Schema node '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an non-terminating connection chain"
+    }
+  ],
   "UnrrzF": [
     {
       "type": 0,
@@ -3586,6 +3748,12 @@
     {
       "type": 0,
       "value": "請輸入有效的 JSON。"
+    }
+  ],
+  "V5f3ha": [
+    {
+      "type": 0,
+      "value": "Week"
     }
   ],
   "VA7M1u": [
@@ -3760,6 +3928,12 @@
       "value": "邏輯應用程式上未設定受控識別。"
     }
   ],
+  "X/7je+": [
+    {
+      "type": 0,
+      "value": "Minute"
+    }
+  ],
   "X4gDhV": [
     {
       "type": 0,
@@ -3842,6 +4016,20 @@
       "value": "插入新的步驟"
     }
   ],
+  "XRK+gt": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' has an non-terminating connection chain"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -3864,6 +4052,12 @@
     {
       "type": 0,
       "value": " 秒"
+    }
+  ],
+  "XVTQT6": [
+    {
+      "type": 0,
+      "value": "Interval"
     }
   ],
   "XX1ioe": [
@@ -4026,12 +4220,6 @@
       "value": "縮小"
     }
   ],
-  "Z657PF": [
-    {
-      "type": 0,
-      "value": "Function is missing required inputs"
-    }
-  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -4172,6 +4360,12 @@
     {
       "type": 0,
       "value": "Location"
+    }
+  ],
+  "aV/nLS": [
+    {
+      "type": 0,
+      "value": "Second"
     }
   ],
   "ahsVI/": [
@@ -4438,6 +4632,12 @@
       "value": "(UTC+02:00) 哈拉雷，皮托里"
     }
   ],
+  "dBWIjR": [
+    {
+      "type": 0,
+      "value": "Schema is missing required inputs"
+    }
+  ],
   "dDYCuU": [
     {
       "type": 0,
@@ -4448,6 +4648,12 @@
     {
       "type": 0,
       "value": "更新"
+    }
+  ],
+  "dQmi91": [
+    {
+      "type": 0,
+      "value": "Frequency"
     }
   ],
   "dSTRb/": [
@@ -4644,16 +4850,6 @@
       "value": "分頁計數超過最大值"
     }
   ],
-  "fWsZhJ": [
-    {
-      "type": 1,
-      "value": "functionName"
-    },
-    {
-      "type": 0,
-      "value": " has an non-terminating connection chain"
-    }
-  ],
   "faSDuD": [
     {
       "type": 0,
@@ -4786,6 +4982,12 @@
     {
       "type": 0,
       "value": "轉換函數"
+    }
+  ],
+  "gTXyUo": [
+    {
+      "type": 0,
+      "value": "Time Zone"
     }
   ],
   "gWRF8m": [
@@ -5027,6 +5229,12 @@
       "value": "取消"
     }
   ],
+  "iVMVAt": [
+    {
+      "type": 0,
+      "value": "Example: 0, 10"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -5167,16 +5375,6 @@
     {
       "type": 0,
       "value": "不支援的資訊清單連線參考格式: {referenceKeyFormat}"
-    }
-  ],
-  "jlc/pM": [
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": " has an input with a mismatched type"
     }
   ],
   "juR40n": [
@@ -5601,6 +5799,12 @@
       "value": "End time"
     }
   ],
+  "nRpM02": [
+    {
+      "type": 0,
+      "value": "Custom"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -5807,6 +6011,12 @@
       "value": "必要。要除以被除數的數字。除完之後會捨去餘數。"
     }
   ],
+  "pcGqoB": [
+    {
+      "type": 0,
+      "value": "Error loading outputs"
+    }
+  ],
   "pcuZKB": [
     {
       "type": 0,
@@ -5964,6 +6174,20 @@
       "value": "(UTC+09:00) 雅庫茨克"
     }
   ],
+  "qr1lLG": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an input with a mismatched type"
+    }
+  ],
   "qrxi0L": [
     {
       "type": 0,
@@ -6096,6 +6320,12 @@
       "value": "取消建立連線"
     }
   ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "Add Case"
+    }
+  ],
   "sW47JR": [
     {
       "type": 0,
@@ -6180,6 +6410,12 @@
       "value": "必要。包含目的地時區之時區名稱的字串。如需詳細資料，請參閱 https://msdn.microsoft.com/en-us/library/gg154758.aspx。"
     }
   ],
+  "tAbbH8": [
+    {
+      "type": 0,
+      "value": "Too many inputs assigned"
+    }
+  ],
   "tAeKNh": [
     {
       "type": 0,
@@ -6244,6 +6480,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) 新西伯利亞"
+    }
+  ],
+  "tUYXRA": [
+    {
+      "type": 0,
+      "value": "Example: 2017-03-24T15:00:00Z"
     }
   ],
   "tUlRzr": [
@@ -6524,6 +6766,12 @@
       "value": "輸入自訂值"
     }
   ],
+  "vvSHR8": [
+    {
+      "type": 0,
+      "value": "Navigate to element and view children"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -6762,6 +7010,12 @@
     {
       "type": 0,
       "value": "參數會在邏輯應用程式中跨工作流程共用。"
+    }
+  ],
+  "xwD1VZ": [
+    {
+      "type": 0,
+      "value": "Loading inputs"
     }
   ],
   "xwEX2/": [

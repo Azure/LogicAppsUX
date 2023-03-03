@@ -1424,7 +1424,7 @@ export async function updateParameterAndDependencies(
 
   dispatch(updateNodeParameters(payload));
 
-  if (operationInfo.type.toLowerCase() === 'until') {
+  if (operationInfo?.type?.toLowerCase() === 'until') {
     validateUntilAction(dispatch, nodeId, groupId, parameterId, nodeInputs.parameterGroups[groupId].parameters, properties);
   }
 

@@ -26,8 +26,6 @@ export class BaseFunctionService implements IFunctionService {
   }
 
   async fetchFunctionApps(): Promise<any> {
-    console.log('functionAppsResponse', this.getFunctionAppsRequestPath());
-
     const functionAppsResponse = await this.options.httpClient.get<any>({
       uri: this.getFunctionAppsRequestPath(),
       queryParameters: { 'api-version': this.options.apiVersion },

@@ -11,6 +11,7 @@ import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { QueryBuilderEditor } from '../../querybuilder';
 import { UntilEditor } from '../../querybuilder/Until';
+import { ScheduleEditor } from '../../recurrence';
 import { SchemaEditor } from '../../schemaeditor';
 import { TableEditor } from '../../table';
 import type { TokenGroup } from '../../tokenpicker/models/token';
@@ -40,9 +41,10 @@ export interface SettingTokenFieldProps extends SettingProps {
   onComboboxMenuOpen?: CallbackHandler;
   tokenPickerHandler: TokenPickerHandler;
   validationErrors?: string[];
+  hideValidationErrors?: ChangeHandler;
 }
 
-export const SettingTokenField: React.FC<SettingTokenFieldProps> = (props) => {
+export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   return (
     <>
       <div className="msla-input-parameter-label">
@@ -69,6 +71,7 @@ const TokenField = ({
   label,
   onValueChange,
   onComboboxMenuOpen,
+  hideValidationErrors,
   tokenPickerHandler,
 }: SettingTokenFieldProps) => {
   const dropdownOptions = editorOptions?.options?.value ?? editorOptions?.options ?? [];
@@ -195,6 +198,9 @@ const TokenField = ({
         />
       );
 
+    case 'recurrence':
+      return <ScheduleEditor readOnly={readOnly} type={editorOptions.recurrenceType} initialValue={value} onChange={onValueChange} />;
+
     default:
       return (
         <StringEditor
@@ -206,6 +212,7 @@ const TokenField = ({
           initialValue={value}
           editorBlur={onValueChange}
           tokenPickerHandler={tokenPickerHandler}
+          onChange={hideValidationErrors}
         />
       );
   }

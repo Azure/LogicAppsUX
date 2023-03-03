@@ -11,6 +11,7 @@ import type {
   IApiManagementService,
   IFunctionService,
   IAppServiceService,
+  IRunService,
 } from '@microsoft/designer-client-services-logic-apps';
 
 export interface DesignerOptionsState {
@@ -34,4 +35,5 @@ export interface ServiceOptions {
   apimService?: IApiManagementService;
   functionService?: IFunctionService;
   appServiceService?: IAppServiceService;
+  runService?: IRunService;
 }

@@ -1,8 +1,7 @@
 import { setCurrentTargetSchemaNode } from '../../../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../../../core/state/Store';
 import type { SchemaNodeExtended } from '../../../../models';
-import { NormalizedDataType } from '../../../../models';
-import { searchSchemaTreeFromRoot } from '../../../../utils/Schema.Utils';
+import { isObjectType, searchSchemaTreeFromRoot } from '../../../../utils/Schema.Utils';
 import type { FilteredDataTypesDict } from '../../../tree/SchemaTreeSearchbar';
 import { getDefaultFilteredDataTypesDict, SchemaTreeSearchbar } from '../../../tree/SchemaTreeSearchbar';
 import { useSchemaTreeItemStyles } from '../../../tree/SourceSchemaTreeItem';
@@ -162,7 +161,7 @@ export const TargetSchemaTab = () => {
   );
 };
 
-/*eslint no-param-reassign: ["error", { "props": false }]*/
+/* eslint-disable no-param-reassign */
 const handleObjectParentToggledState = (
   stateDict: NodeToggledStateDictionary,
   nodeKey: string,
@@ -206,7 +205,7 @@ export const checkNodeStatuses = (
     numChildrenToggled += checkNodeStatuses(child, stateDict, targetNodesWithConnections);
   });
 
-  if (schemaNode.normalizedDataType === NormalizedDataType.ComplexType && schemaNode.children.length > 0) {
+  if (isObjectType(schemaNode.normalizedDataType) && schemaNode.children.length > 0) {
     // Object/parent/array-elements (if they don't have children, treat them as leaf nodes (below))
     return handleObjectParentToggledState(stateDict, schemaNode.key, numChildrenToggled, schemaNode.children.length);
   } else {

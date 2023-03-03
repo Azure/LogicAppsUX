@@ -368,7 +368,7 @@ const addActionsInstanceMetaData = (nodesMetadata: NodesMetadata, runInstance: L
   const updatedNodesData = { ...nodesMetadata };
 
   Object.entries(updatedNodesData).forEach(([key, node]) => {
-    const nodeRunData = runInstanceActions[key];
+    const nodeRunData = runInstanceActions?.[key];
     if (!isNullOrUndefined(nodeRunData)) {
       updatedNodesData[key] = {
         ...node,

@@ -5,7 +5,7 @@ import type { RemoteWorkflowTreeItem } from '../../../tree/remoteWorkflowsTree/R
 import {
   removeWebviewPanelFromCache,
   cacheWebviewPanel,
-  getCodelessAppData,
+  getStandardAppData,
   getWorkflowManagementBaseURI,
 } from '../../../utils/codeless/common';
 import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationToken';
@@ -27,7 +27,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
     const panelName = `${vscode.workspace.name}-${workflowName}`;
     const panelGroupKey = ext.webViewKey.designerAzure;
 
-    super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey, true, false);
+    super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey, true, false, false);
 
     this.node = node;
     this.workflow = node.workflowFileContent;
@@ -54,6 +54,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
       localSettings: this.panelMetadata.localSettings,
       artifacts: this.panelMetadata.artifacts,
       azureDetails: this.panelMetadata.azureDetails,
+      workflowDetails: this.panelMetadata.workflowDetails,
     });
 
     this.panel.webview.onDidReceiveMessage(async (message) => await this._handleWebviewMsg(message), ext.context.subscriptions);
@@ -77,12 +78,14 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
           command: ExtensionCommand.initialize_frame,
           data: {
             panelMetadata: this.panelMetadata,
-            connectionReferences: this.connectionReferences,
+            connectionData: this.connectionData,
             baseUrl: this.baseUrl,
             apiVersion: this.apiVersion,
             apiHubServiceDetails: this.apiHubServiceDetails,
             readOnly: this.readOnly,
             isLocal: this.isLocal,
+            isMonitoringView: this.isMonitoringView,
+            workflowDetails: this.workflowDetails,
           },
         });
         break;
@@ -98,6 +101,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
     const accessToken: string = await getAuthorizationToken(credentials);
 
     return {
+      panelId: this.panelName,
       connectionsData: await this.node.getConnectionsData(),
       parametersData: await this.node.getParametersData(),
       localSettings: await this.node.getAppSettings(),
@@ -109,17 +113,12 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
         subscriptionId: this.node.subscription.subscriptionId,
         location: this.normalizeLocation(this.node?.parent?.parent?.site.location),
         workflowManagementBaseUrl: this.node?.parent?.subscription?.environment?.resourceManagerEndpointUrl,
+        tenantId: this.node?.parent?.subscription?.tenantId,
       },
       workflowDetails: await this.node.getChildWorkflows(this.context),
+      workflowName: this.workflowName,
       artifacts: await this.node.getArtifacts(),
-      codelessApp: getCodelessAppData(this.workflowName, this.workflow, parameters),
+      standardApp: getStandardAppData(this.workflowName, this.workflow, parameters),
     };
-  }
-
-  private normalizeLocation(location: string): string {
-    if (!location) {
-      return '';
-    }
-    return location.toLowerCase().replace(/ /g, '');
   }
 }

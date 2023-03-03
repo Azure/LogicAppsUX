@@ -1,25 +1,30 @@
-import type { IApiHubServiceDetails } from '@microsoft/designer-client-services-logic-apps';
-import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
-import type { ICallbackUrlResponse, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
+import type { IApiHubServiceDetails, ListDynamicValue } from '@microsoft/designer-client-services-logic-apps';
+import type { ConnectionsData, ICallbackUrlResponse, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface designerState {
   panelMetaData: IDesignerPanelMetadata | null;
-  connectionReferences: ConnectionReferences;
+  connectionData: ConnectionsData;
   baseUrl: string;
   apiVersion: string;
   apiHubServiceDetails: IApiHubServiceDetails;
   readOnly: boolean;
   isLocal: boolean;
+  isMonitoringView: boolean;
   callbackInfo: ICallbackUrlResponse;
+  runId: string;
+  tenantId: string;
+  fileSystemConnections: Record<string, any>;
+  iaMapArtifacts: ListDynamicValue[];
+  oauthRedirectUrl: string;
 }
 
 const initialState: designerState = {
   panelMetaData: null,
   baseUrl: '/url',
   apiVersion: '2018-11-01',
-  connectionReferences: {},
+  connectionData: {},
   apiHubServiceDetails: {
     apiVersion: '2018-07-01-preview',
     baseUrl: '/url',
@@ -27,12 +32,18 @@ const initialState: designerState = {
     resourceGroup: '',
     location: '',
   },
-  readOnly: true,
+  readOnly: false,
   isLocal: true,
+  isMonitoringView: false,
   callbackInfo: {
     value: '',
     method: '',
   },
+  runId: '',
+  tenantId: '',
+  fileSystemConnections: {},
+  iaMapArtifacts: [],
+  oauthRedirectUrl: '',
 };
 
 export const designerSlice = createSlice({
@@ -40,22 +51,50 @@ export const designerSlice = createSlice({
   initialState,
   reducers: {
     initializeDesigner: (state, action: PayloadAction<any>) => {
-      const { panelMetadata, connectionReferences, baseUrl, apiVersion, apiHubServiceDetails, readOnly, isLocal } = action.payload;
+      const {
+        panelMetadata,
+        connectionData,
+        baseUrl,
+        apiVersion,
+        apiHubServiceDetails,
+        readOnly,
+        isLocal,
+        oauthRedirectUrl,
+        isMonitoringView,
+        runId,
+      } = action.payload;
 
       state.panelMetaData = panelMetadata;
-      state.connectionReferences = connectionReferences;
+      state.connectionData = connectionData;
       state.baseUrl = baseUrl;
       state.apiVersion = apiVersion;
       state.apiHubServiceDetails = apiHubServiceDetails;
       state.readOnly = readOnly;
       state.isLocal = isLocal;
+      state.isMonitoringView = isMonitoringView;
+      state.runId = runId;
+      state.tenantId = apiHubServiceDetails?.tenantId;
+      state.oauthRedirectUrl = oauthRedirectUrl;
     },
     updateCallbackUrl: (state, action: PayloadAction<any>) => {
       const { callbackInfo } = action.payload;
-
       state.callbackInfo = callbackInfo;
+    },
+    createFileSystemConnection: (state, action: PayloadAction<any>) => {
+      const { connectionName, resolve, reject } = action.payload;
+      state.fileSystemConnections[connectionName] = { resolveConnection: resolve, rejectConnection: reject };
+    },
+    updateFileSystemConnection: (state, action: PayloadAction<{ connectionName: string; connection: any; error: string }>) => {
+      const { connectionName, connection, error } = action.payload;
+      if (connection && state.fileSystemConnections[connectionName]) {
+        state.fileSystemConnections[connectionName].resolveConnection(connection);
+      }
+      if (error && state.fileSystemConnections[connectionName]) {
+        state.fileSystemConnections[connectionName].rejectConnection(error);
+      }
+      delete state.fileSystemConnections[connectionName];
     },
   },
 });
 
-export const { initializeDesigner, updateCallbackUrl } = designerSlice.actions;
+export const { initializeDesigner, updateCallbackUrl, createFileSystemConnection, updateFileSystemConnection } = designerSlice.actions;

@@ -173,6 +173,12 @@
       "value": "전달된 배열 또는 문자열의 첫 번째 Count 요소를 반환합니다."
     }
   ],
+  "/vWMKW": [
+    {
+      "type": 0,
+      "value": "Missing required inputs"
+    }
+  ],
   "/yYyOq": [
     {
       "type": 0,
@@ -251,6 +257,12 @@
       "value": "URI로 인코딩된 문자열의 이진 표현을 반환합니다."
     }
   ],
+  "0SSwxD": [
+    {
+      "type": 0,
+      "value": "Close panel"
+    }
+  ],
   "0Vzp0l": [
     {
       "type": 0,
@@ -313,6 +325,12 @@
     {
       "type": 0,
       "value": "입력 데이터 URI 문자열의 이진 표현을 반환합니다."
+    }
+  ],
+  "0upuCv": [
+    {
+      "type": 0,
+      "value": "Hour"
     }
   ],
   "0y5eia": [
@@ -582,6 +600,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 양식 데이터 또는 양식 인코딩 응답이 있는 작업의 이름입니다."
+    }
+  ],
+  "2kWLLc": [
+    {
+      "type": 0,
+      "value": "Start Time"
     }
   ],
   "2ri1Kf": [
@@ -944,6 +968,12 @@
       "value": "필수 사항으로, 원하는 항목의 루프 이름입니다."
     }
   ],
+  "5dCAjy": [
+    {
+      "type": 0,
+      "value": "Day"
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1002,6 +1032,20 @@
     {
       "type": 0,
       "value": "(UTC+09:30) 애들레이드"
+    }
+  ],
+  "6gZ4I3": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' has too many inputs assigned to it"
     }
   ],
   "6jiO7t": [
@@ -1156,6 +1200,12 @@
       "value": "Parameter name already exists."
     }
   ],
+  "83G5rr": [
+    {
+      "type": 0,
+      "value": "Specify the interval."
+    }
+  ],
   "84D91Y": [
     {
       "type": 0,
@@ -1212,6 +1262,12 @@
     {
       "type": 0,
       "value": "논리 앱의 관리 ID를 사용하도록 설정하세요."
+    }
+  ],
+  "8SxNQC": [
+    {
+      "type": 0,
+      "value": "Overview"
     }
   ],
   "8U0KPg": [
@@ -1452,6 +1508,12 @@
       "value": "{0}의 형식은 {1}입니다."
     }
   ],
+  "AheXMN": [
+    {
+      "type": 0,
+      "value": "Select frequency."
+    }
+  ],
   "Amz9+m": [
     {
       "type": 0,
@@ -1587,6 +1649,18 @@
     {
       "type": 0,
       "value": "(UTC+08:00) 퍼스"
+    }
+  ],
+  "BSgavq": [
+    {
+      "type": 0,
+      "value": "Example: Monday, Friday"
+    }
+  ],
+  "BUutcC": [
+    {
+      "type": 0,
+      "value": "Expant list of sibling elements"
     }
   ],
   "BVOUxP": [
@@ -1751,6 +1825,26 @@
       "value": "로그인 중..."
     }
   ],
+  "E+iim4": [
+    {
+      "type": 0,
+      "value": "Select timezone."
+    }
+  ],
+  "E3+TAA": [
+    {
+      "type": 0,
+      "value": "Schema node '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an input with a mismatched type"
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1773,6 +1867,12 @@
     {
       "type": 0,
       "value": "그룹 만들기"
+    }
+  ],
+  "ESZXfC": [
+    {
+      "type": 0,
+      "value": "At these minutes"
     }
   ],
   "EUQDM6": [
@@ -2062,6 +2162,12 @@
       "value": "Source schema element"
     }
   ],
+  "Gl5khw": [
+    {
+      "type": 0,
+      "value": "At these hours"
+    }
+  ],
   "Gmya+V": [
     {
       "type": 0,
@@ -2104,6 +2210,12 @@
       "value": "필수 항목. 슬라이스할 문자열입니다."
     }
   ],
+  "H2WdiZ": [
+    {
+      "type": 0,
+      "value": "Enter the valid minute values (from 0 to 59) separated by comma, e.g., 15,30"
+    }
+  ],
   "H5VikC": [
     {
       "type": 0,
@@ -2120,6 +2232,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 반환할 양식 데이터 값의 키 이름입니다."
+    }
+  ],
+  "HH970i": [
+    {
+      "type": 0,
+      "value": "Month"
     }
   ],
   "HJIZrG": [
@@ -2200,6 +2318,12 @@
     {
       "type": 0,
       "value": "동적 콘텐츠는 인증의 속성으로 지원되지 않습니다."
+    }
+  ],
+  "I7/+er": [
+    {
+      "type": 0,
+      "value": "Global view"
     }
   ],
   "IA+Ogm": [
@@ -2579,6 +2703,12 @@
       "value": "필수. true일 수 있는 식입니다."
     }
   ],
+  "LvLksz": [
+    {
+      "type": 0,
+      "value": "Loading outputs"
+    }
+  ],
   "LvpxiA": [
     {
       "type": 0,
@@ -2847,6 +2977,12 @@
     {
       "type": 0,
       "value": "10"
+    }
+  ],
+  "OIOexo": [
+    {
+      "type": 0,
+      "value": "On these days"
     }
   ],
   "OKszbi": [
@@ -3320,6 +3456,12 @@
       "value": "사용자 지정 추적 ID"
     }
   ],
+  "Sr8PcK": [
+    {
+      "type": 0,
+      "value": "No operations found"
+    }
+  ],
   "SvQyvs": [
     {
       "type": 0,
@@ -3378,6 +3520,12 @@
     {
       "type": 0,
       "value": "구분 기호로 결합된 배열의 각 항목이 포함된 문자열을 반환합니다."
+    }
+  ],
+  "TLHUMf": [
+    {
+      "type": 0,
+      "value": "Error loading inputs"
     }
   ],
   "TNEttQ": [
@@ -3552,6 +3700,20 @@
       "value": "(파일 이름)"
     }
   ],
+  "Ufv5m9": [
+    {
+      "type": 0,
+      "value": "Schema node '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an non-terminating connection chain"
+    }
+  ],
   "UnrrzF": [
     {
       "type": 0,
@@ -3586,6 +3748,12 @@
     {
       "type": 0,
       "value": "올바른 JSON을 입력하세요."
+    }
+  ],
+  "V5f3ha": [
+    {
+      "type": 0,
+      "value": "Week"
     }
   ],
   "VA7M1u": [
@@ -3760,6 +3928,12 @@
       "value": "논리 앱에 관리 ID가 구성되어 있지 않습니다."
     }
   ],
+  "X/7je+": [
+    {
+      "type": 0,
+      "value": "Minute"
+    }
+  ],
   "X4gDhV": [
     {
       "type": 0,
@@ -3842,6 +4016,20 @@
       "value": "새 단계 삽입"
     }
   ],
+  "XRK+gt": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' has an non-terminating connection chain"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
@@ -3864,6 +4052,12 @@
     {
       "type": 0,
       "value": " seconds"
+    }
+  ],
+  "XVTQT6": [
+    {
+      "type": 0,
+      "value": "Interval"
     }
   ],
   "XX1ioe": [
@@ -4026,12 +4220,6 @@
       "value": "축소"
     }
   ],
-  "Z657PF": [
-    {
-      "type": 0,
-      "value": "Function is missing required inputs"
-    }
-  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -4172,6 +4360,12 @@
     {
       "type": 0,
       "value": "Location"
+    }
+  ],
+  "aV/nLS": [
+    {
+      "type": 0,
+      "value": "Second"
     }
   ],
   "ahsVI/": [
@@ -4434,6 +4628,12 @@
       "value": "(UTC+02:00) 하라레, 프리토리아"
     }
   ],
+  "dBWIjR": [
+    {
+      "type": 0,
+      "value": "Schema is missing required inputs"
+    }
+  ],
   "dDYCuU": [
     {
       "type": 0,
@@ -4444,6 +4644,12 @@
     {
       "type": 0,
       "value": "업데이트"
+    }
+  ],
+  "dQmi91": [
+    {
+      "type": 0,
+      "value": "Frequency"
     }
   ],
   "dSTRb/": [
@@ -4636,16 +4842,6 @@
       "value": "페이징 수가 최대값을 초과합니다."
     }
   ],
-  "fWsZhJ": [
-    {
-      "type": 1,
-      "value": "functionName"
-    },
-    {
-      "type": 0,
-      "value": " has an non-terminating connection chain"
-    }
-  ],
   "faSDuD": [
     {
       "type": 0,
@@ -4778,6 +4974,12 @@
     {
       "type": 0,
       "value": "변환 함수"
+    }
+  ],
+  "gTXyUo": [
+    {
+      "type": 0,
+      "value": "Time Zone"
     }
   ],
   "gWRF8m": [
@@ -5015,6 +5217,12 @@
       "value": "취소"
     }
   ],
+  "iVMVAt": [
+    {
+      "type": 0,
+      "value": "Example: 0, 10"
+    }
+  ],
   "idQjOP": [
     {
       "type": 0,
@@ -5155,16 +5363,6 @@
     {
       "type": 0,
       "value": "지원되지 않는 매니페스트 연결 참조 형식: {referenceKeyFormat}"
-    }
-  ],
-  "jlc/pM": [
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": " has an input with a mismatched type"
     }
   ],
   "juR40n": [
@@ -5589,6 +5787,12 @@
       "value": "End time"
     }
   ],
+  "nRpM02": [
+    {
+      "type": 0,
+      "value": "Custom"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -5795,6 +5999,12 @@
       "value": "필수 사항으로, 피제수로 나눌 숫자입니다. 나눈 후에 나머지를 사용합니다."
     }
   ],
+  "pcGqoB": [
+    {
+      "type": 0,
+      "value": "Error loading outputs"
+    }
+  ],
   "pcuZKB": [
     {
       "type": 0,
@@ -5952,6 +6162,20 @@
       "value": "(UTC+09:00) 야쿠츠크"
     }
   ],
+  "qr1lLG": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' has an input with a mismatched type"
+    }
+  ],
   "qrxi0L": [
     {
       "type": 0,
@@ -6084,6 +6308,12 @@
       "value": "연결 만들기 취소"
     }
   ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "Add Case"
+    }
+  ],
   "sW47JR": [
     {
       "type": 0,
@@ -6168,6 +6398,12 @@
       "value": "필수 사항으로, 대상 표준 시간대의 표준 시간대 이름을 포함하는 문자열입니다. 자세한 내용은 https://msdn.microsoft.com/ko-kr/library/gg154758.aspx를 참조하세요."
     }
   ],
+  "tAbbH8": [
+    {
+      "type": 0,
+      "value": "Too many inputs assigned"
+    }
+  ],
   "tAeKNh": [
     {
       "type": 0,
@@ -6232,6 +6468,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) 노보시비르스크"
+    }
+  ],
+  "tUYXRA": [
+    {
+      "type": 0,
+      "value": "Example: 2017-03-24T15:00:00Z"
     }
   ],
   "tUlRzr": [
@@ -6508,6 +6750,12 @@
       "value": "사용자 지정 값 입력"
     }
   ],
+  "vvSHR8": [
+    {
+      "type": 0,
+      "value": "Navigate to element and view children"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -6746,6 +6994,12 @@
     {
       "type": 0,
       "value": "매개 변수는 논리 앱의 워크플로 간에 공유됩니다."
+    }
+  ],
+  "xwD1VZ": [
+    {
+      "type": 0,
+      "value": "Loading inputs"
     }
   ],
   "xwEX2/": [

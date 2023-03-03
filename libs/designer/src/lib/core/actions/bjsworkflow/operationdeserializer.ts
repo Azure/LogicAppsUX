@@ -204,7 +204,7 @@ const processChildGraphAndItsInputs = (
               nodeDependencies: { inputs: subNodeInputDependencies, outputs: {} },
               operationInfo: { type: '', kind: '', connectorId: '', operationId: '' },
               manifest: subManifest,
-              operationMetadata: { iconUri: '', brandColor: '' },
+              operationMetadata: { iconUri: manifest?.properties?.iconUri ?? '', brandColor: '' },
             });
           }
         }
@@ -227,7 +227,6 @@ const processChildGraphAndItsInputs = (
       }
     }
   }
-
   return nodesData;
 };
 

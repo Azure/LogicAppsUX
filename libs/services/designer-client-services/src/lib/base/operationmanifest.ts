@@ -156,6 +156,7 @@ export const supportedBaseManifestTypes = [
   rosettanetdecode,
   rosettanetencode,
   rosettanetwaitforresponse,
+  sendtobatch,
   select,
   setvariable,
   slidingwindow,

@@ -7,3 +7,4 @@ export * from './http';
 export * from './flow-utils';
 export * from './operations';
 export * from './logicapps';
+export * from './recurrence';

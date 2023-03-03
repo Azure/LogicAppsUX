@@ -23,10 +23,11 @@ export const StringEditor = ({
 
   const onValueChange = (newValue: ValueSegment[]): void => {
     setValue(newValue);
-    onChange?.({ value: newValue });
+    onChange?.({ value: newValue, viewModel: { hideErrorMessage: true } });
   };
   const handleBlur = () => {
     editorBlur?.({ value: value });
+    onChange?.({ value: value, viewModel: { hideErrorMessage: false } });
   };
 
   return (
@@ -34,7 +35,11 @@ export const StringEditor = ({
       placeholder={baseEditorProps.placeholder}
       className={baseEditorProps.className}
       initialValue={initialValue}
-      BasePlugins={{ tokens: baseEditorProps.BasePlugins?.tokens ?? true, clearEditor: clearEditorOnTokenInsertion }}
+      BasePlugins={{
+        tokens: baseEditorProps.BasePlugins?.tokens ?? true,
+        clearEditor: clearEditorOnTokenInsertion,
+        singleValueSegment: clearEditorOnTokenInsertion,
+      }}
       readonly={baseEditorProps.readonly}
       isTrigger={baseEditorProps.isTrigger}
       tokenPickerHandler={baseEditorProps.tokenPickerHandler}
