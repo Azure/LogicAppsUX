@@ -20,9 +20,9 @@ import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import { sendRequest } from '../../utils/requestUtils';
 import { getWorkflowNode } from '../../utils/workspace';
 import type { IAzureConnectorsContext } from './azureConnectorWizard';
+import { openMonitoringView } from './openMonitoringView/openMonitoringView';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { ICallbackUrlResponse } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { readFileSync } from 'fs';
@@ -108,20 +108,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   panel.webview.onDidReceiveMessage(async (message) => {
     switch (message.command) {
       case ExtensionCommand.loadRun:
-        if (workflowNode instanceof vscode.Uri) {
-          await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.openMonitoringView', async () => {
-            //await openMonitoringView(message.item.id, workflowFilePath, context);
-          });
-        } else if (workflowNode instanceof RemoteWorkflowTreeItem) {
-          await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.openMonitoringViewForAzureResource', async () => {
-            /*await openMonitoringViewForAzureResource(
-                    message.item.id,
-                    workflowFilePath,
-                    context,
-                    workflowNode as RemoteWorkflowTreeItem
-                  );*/
-          });
-        }
+        openMonitoringView(context, workflowNode, message.item.id, workflowFilePath);
         break;
       case ExtensionCommand.initialize:
         panel.webview.postMessage({

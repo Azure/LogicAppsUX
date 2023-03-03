@@ -6705,6 +6705,12 @@
       "value": "Anulowanie tworzenia połączenia"
     }
   ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "Add Case"
+    }
+  ],
   "sW47JR": [
     {
       "type": 0,
@@ -6859,12 +6865,6 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Nowosybirsk"
-    }
-  ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
     }
   ],
   "tUYXRA": [

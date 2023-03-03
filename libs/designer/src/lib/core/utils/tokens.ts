@@ -192,7 +192,7 @@ export const getOutputTokenSections = (
     });
 
     const outputTokenGroups = nodeTokens.upstreamNodeIds.map((upstreamNodeId) => {
-      let tokens = outputTokens[upstreamNodeId].tokens;
+      let tokens = outputTokens[upstreamNodeId]?.tokens ?? [];
       tokens = tokens.map((token) => {
         return {
           ...token,

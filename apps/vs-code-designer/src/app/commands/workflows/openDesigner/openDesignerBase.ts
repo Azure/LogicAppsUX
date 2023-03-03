@@ -17,7 +17,7 @@ export interface IDesingerOptions {
   localSettings: { [key: string]: string };
   artifacts: Artifacts;
   azureDetails: AzureConnectorDetails;
-  workflowDetails: Record<string, any>;
+  workflowDetails?: Record<string, any>;
 }
 
 export abstract class OpenDesignerBase {
@@ -32,6 +32,7 @@ export abstract class OpenDesignerBase {
   protected readonly context: IActionContext | IAzureConnectorsContext;
   protected readOnly: boolean;
   protected isLocal: boolean;
+  protected isMonitoringView: boolean;
   protected appSettings: Record<string, string>;
   protected workflowDetails: Record<string, any>;
   protected oauthRedirectUrl?: string;
@@ -43,7 +44,8 @@ export abstract class OpenDesignerBase {
     apiVersion: string,
     panelGroupKey: string,
     readOnly: boolean,
-    isLocal: boolean
+    isLocal: boolean,
+    isMonitoringView: boolean
   ) {
     this.context = context;
     this.workflowName = workflowName;
@@ -52,6 +54,7 @@ export abstract class OpenDesignerBase {
     this.panelGroupKey = panelGroupKey;
     this.readOnly = readOnly;
     this.isLocal = isLocal;
+    this.isMonitoringView = isMonitoringView;
   }
 
   protected abstract createPanel(): Promise<void>;
@@ -169,5 +172,12 @@ export abstract class OpenDesignerBase {
           getAccessToken: () => Promise.resolve(azureDetails.accessToken),
         }
       : undefined;
+  }
+
+  protected normalizeLocation(location: string): string {
+    if (!location) {
+      return '';
+    }
+    return location.toLowerCase().replace(/ /g, '');
   }
 }

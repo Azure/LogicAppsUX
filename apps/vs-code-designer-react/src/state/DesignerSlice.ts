@@ -11,7 +11,9 @@ export interface designerState {
   apiHubServiceDetails: IApiHubServiceDetails;
   readOnly: boolean;
   isLocal: boolean;
+  isMonitoringView: boolean;
   callbackInfo: ICallbackUrlResponse;
+  runId: string;
   tenantId: string;
   fileSystemConnections: Record<string, any>;
   iaMapArtifacts: ListDynamicValue[];
@@ -32,10 +34,12 @@ const initialState: designerState = {
   },
   readOnly: false,
   isLocal: true,
+  isMonitoringView: false,
   callbackInfo: {
     value: '',
     method: '',
   },
+  runId: '',
   tenantId: '',
   fileSystemConnections: {},
   iaMapArtifacts: [],
@@ -47,8 +51,19 @@ export const designerSlice = createSlice({
   initialState,
   reducers: {
     initializeDesigner: (state, action: PayloadAction<any>) => {
-      const { panelMetadata, connectionData, baseUrl, apiVersion, apiHubServiceDetails, readOnly, isLocal, oauthRedirectUrl } =
-        action.payload;
+      const {
+        panelMetadata,
+        connectionData,
+        baseUrl,
+        apiVersion,
+        apiHubServiceDetails,
+        readOnly,
+        isLocal,
+        oauthRedirectUrl,
+        isMonitoringView,
+        runId,
+      } = action.payload;
+
       state.panelMetaData = panelMetadata;
       state.connectionData = connectionData;
       state.baseUrl = baseUrl;
@@ -56,6 +71,8 @@ export const designerSlice = createSlice({
       state.apiHubServiceDetails = apiHubServiceDetails;
       state.readOnly = readOnly;
       state.isLocal = isLocal;
+      state.isMonitoringView = isMonitoringView;
+      state.runId = runId;
       state.tenantId = apiHubServiceDetails?.tenantId;
       state.oauthRedirectUrl = oauthRedirectUrl;
     },
