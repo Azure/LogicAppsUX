@@ -168,7 +168,7 @@ export const BaseEditor = ({
           {tokens ? <InsertTokenNode /> : null}
           {tokens ? <DeleteTokenNode /> : null}
           {children}
-          {!isTrigger && tokens && getInTokenPicker() ? getTokenPicker(editorId, labelId, tokenPickerClicked, undefined) : null}
+          {!isTrigger && tokens && getInTokenPicker() ? getTokenPicker(editorId, labelId, tokenPickerClicked) : null}
         </div>
 
         {!isTrigger && tokens && isEditorFocused && !getInTokenPicker() ? (

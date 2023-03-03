@@ -275,12 +275,8 @@ const ParameterSection = ({
           validationErrors,
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
-          getTokenPicker: (
-            editorId: string,
-            labelId: string,
-            tokenPickerClicked?: (b: boolean) => void,
-            tokenClicked?: (token: ValueSegment) => void
-          ) => getTokenPicker(id, editorId, labelId, tokenPickerClicked, tokenClicked),
+          getTokenPicker: (editorId: string, labelId: string, tokenPickerClicked?: (b: boolean) => void) =>
+            getTokenPicker(id, editorId, labelId, tokenPickerClicked),
         },
       };
     });
