@@ -2,8 +2,10 @@ import { createFileSystemConnection } from '../state/DesignerSlice';
 import type { AppDispatch, RootState } from '../state/Store';
 import { VSCodeContext } from '../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar';
+import './app.less';
 import { getDesignerServices } from './servicesHelper';
 import { convertConnectionsDataToReferences } from './utilities/workflow';
+import { Spinner, SpinnerSize, Text } from '@fluentui/react';
 import type { ConnectionCreationInfo } from '@microsoft/designer-client-services-logic-apps';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
@@ -11,6 +13,7 @@ import { isEmptyString, Theme } from '@microsoft/utils-logic-apps';
 import type { FileSystemConnectionInfo, StandardApp } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { useContext, useMemo, useState, useEffect } from 'react';
+import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -34,6 +37,18 @@ export const App = () => {
   const [standardApp, setStandardApp] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [runInstance, setRunInstance] = useState<LogicAppsV2.RunInstanceDefinition | null>(null);
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
+  const intl = useIntl();
+
+  const intlText = {
+    ERROR_APP: intl.formatMessage({
+      defaultMessage: 'Something went wrong',
+      description: 'Something went wrong text',
+    }),
+    LOADING_APP: intl.formatMessage({
+      defaultMessage: 'Loading designer',
+      description: 'Loading designer text',
+    }),
+  };
 
   useThemeObserver(document.body, theme, setTheme, {
     attributes: true,
@@ -92,7 +107,7 @@ export const App = () => {
     setStandardApp(undefined);
   };
 
-  const { refetch } = useQuery<any>(['runInstance'], getRunInstance, {
+  const { refetch, isError, isFetching, isLoading } = useQuery<any>(['runInstance'], getRunInstance, {
     refetchOnWindowFocus: false,
     initialData: null,
     onSuccess: onRunInstanceSuccess,
@@ -107,6 +122,23 @@ export const App = () => {
     setStandardApp(panelMetaData?.standardApp);
   }, [panelMetaData]);
 
+  const errorApp = (
+    <Text className="designer--error" variant="xLarge" block>
+      {intlText.ERROR_APP}{' '}
+    </Text>
+  );
+
+  const loadingApp = <Spinner className="designer--loading" size={SpinnerSize.large} label={intlText.LOADING_APP} />;
+
+  const designerApp = standardApp ? (
+    <BJSWorkflowProvider workflow={{ definition: standardApp.definition, connectionReferences }} runInstance={runInstance}>
+      {readOnly && !isMonitoringView ? null : <DesignerCommandBar isMonitoringView={isMonitoringView} />}
+      <Designer />
+    </BJSWorkflowProvider>
+  ) : (
+    errorApp
+  );
+
   return (
     <DesignerProvider
       locale="en-US"
@@ -117,12 +149,7 @@ export const App = () => {
         services: services,
       }}
     >
-      {standardApp ? (
-        <BJSWorkflowProvider workflow={{ definition: standardApp.definition, connectionReferences }} runInstance={runInstance}>
-          {readOnly && !isMonitoringView ? null : <DesignerCommandBar isMonitoringView={isMonitoringView} />}
-          <Designer />
-        </BJSWorkflowProvider>
-      ) : null}
+      {isError ? errorApp : isFetching || isLoading ? loadingApp : designerApp}
     </DesignerProvider>
   );
 };

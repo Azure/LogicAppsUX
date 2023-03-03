@@ -4,6 +4,7 @@ import { WebViewCommunication } from './webviewCommunication';
 import { initializeIcons } from '@fluentui/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { IntlProvider } from 'react-intl';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 
@@ -17,11 +18,22 @@ const root = createRoot(container);
 root.render(
   <StrictMode>
     <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <WebViewCommunication>
-          <App />
-        </WebViewCommunication>
-      </QueryClientProvider>
+      <IntlProvider
+        defaultLocale="en"
+        locale="en-US"
+        onError={(err) => {
+          if (err.code === 'MISSING_TRANSLATION') {
+            return;
+          }
+          throw err;
+        }}
+      >
+        <QueryClientProvider client={queryClient}>
+          <WebViewCommunication>
+            <App />
+          </WebViewCommunication>
+        </QueryClientProvider>
+      </IntlProvider>
     </Provider>
   </StrictMode>
 );
