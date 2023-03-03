@@ -257,6 +257,12 @@
       "value": "Returns a binary representation of a URI encoded string"
     }
   ],
+  "0SSwxD": [
+    {
+      "type": 0,
+      "value": "Close panel"
+    }
+  ],
   "0Vzp0l": [
     {
       "type": 0,
@@ -1671,6 +1677,12 @@
     {
       "type": 0,
       "value": "Example: Monday, Friday"
+    }
+  ],
+  "BUutcC": [
+    {
+      "type": 0,
+      "value": "Expant list of sibling elements"
     }
   ],
   "BVOUxP": [
@@ -6829,6 +6841,12 @@
     {
       "type": 0,
       "value": "Enter custom value"
+    }
+  ],
+  "vvSHR8": [
+    {
+      "type": 0,
+      "value": "Navigate to element and view children"
     }
   ],
   "vwH/XV": [
