@@ -36,7 +36,7 @@ export class HttpClient implements IHttpClient {
       ...request,
     });
 
-    return responseData.data;
+    return responseData?.data;
   }
 
   async post<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
@@ -109,7 +109,7 @@ export class HttpClient implements IHttpClient {
       method: HTTP_METHODS.DELETE,
       ...request,
     });
-    return responseData?.data;
+    return responseData.data;
   }
 
   private getRequestUrl(options: HttpRequestOptions<unknown>): string {
