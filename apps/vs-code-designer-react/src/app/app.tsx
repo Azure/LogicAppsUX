@@ -11,6 +11,7 @@ import { isEmptyString, Theme } from '@microsoft/utils-logic-apps';
 import type { FileSystemConnectionInfo } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { useContext, useMemo, useState, useEffect } from 'react';
+import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const App = () => {
@@ -70,20 +71,37 @@ export const App = () => {
     return convertConnectionsDataToReferences(connectionData);
   }, [connectionData]);
 
-  useEffect(() => {
-    async function getRunInstance() {
-      if (isMonitoringView && !isEmptyString(runId)) {
-        const runServiceInstance = (await services.runService.getRun(runId)) as any;
-        const standardAppInstance = {
-          definition: runServiceInstance.properties.workflow.properties.definition,
-          kind: '',
-        };
-        setRunInstance(runServiceInstance);
-        setStandardApp(standardAppInstance);
-      }
+  const getRunInstance = () => {
+    if (isMonitoringView && !isEmptyString(runId) && panelMetaData !== null) {
+      return services.runService.getRun(runId);
     }
-    getRunInstance();
-  }, [isMonitoringView, runId, services]);
+    return;
+  };
+
+  const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
+    const standardAppInstance = {
+      definition: runDefinition.properties.workflow.properties.definition,
+      kind: '',
+    };
+    setRunInstance(runDefinition);
+    setStandardApp(standardAppInstance);
+  };
+
+  const onRunInstanceError = async () => {
+    setRunInstance(null);
+    setStandardApp(undefined);
+  };
+
+  const { refetch } = useQuery<any>(['runInstance'], getRunInstance, {
+    refetchOnWindowFocus: false,
+    initialData: null,
+    onSuccess: onRunInstanceSuccess,
+    onError: onRunInstanceError,
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [isMonitoringView, runId, services, refetch]);
 
   useEffect(() => {
     setStandardApp(panelMetaData?.standardApp);

@@ -1015,6 +1015,16 @@ declare namespace LogicAppsV2 {
     name: string;
   }
 
+  interface WorkflowRunProperties {
+    createdTime: string;
+    changedTime: string;
+    version: string;
+    definition: WorkflowDefinition;
+    parameters: Record<string, any>;
+    endpointsConfiguration: Record<string, any>;
+    runtimeConfiguration: Record<string, any>;
+  }
+
   interface runInstanceProperties {
     waitEndTime: string;
     startTime: string;
@@ -1026,6 +1036,7 @@ declare namespace LogicAppsV2 {
     actions: Record<string, WorkflowRunAction>;
     trigger: WorkflowRunTrigger;
     workflow: {
+      properties: WorkflowRunProperties;
       id: string;
       name: string;
       type: string;
