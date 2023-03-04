@@ -60,7 +60,6 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonito
     {
       ariaLabel: Resources.DESIGNER_SAVE,
       iconProps: { iconName: 'Save' },
-      disabled: isDisabled,
       key: 'Save',
       name: Resources.DESIGNER_SAVE,
       onClick: () => {
@@ -71,7 +70,6 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonito
       ariaLabel: Resources.DESIGNER_PARAMETERS,
       iconProps: { iconName: 'Parameter' },
       key: 'Parameter',
-      disabled: isDisabled,
       name: Resources.DESIGNER_PARAMETERS,
       onClick: () => {
         return true;
