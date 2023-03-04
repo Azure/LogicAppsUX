@@ -2,28 +2,74 @@ import { BaseConnectorService } from '../base';
 import type { ListDynamicValue } from '../connector';
 
 export class ConsumptionConnectorService extends BaseConnectorService {
-  // We only use legacy for consumption
   async getListDynamicValues(
-    _connectionId: string | undefined,
-    _connectorId: string,
-    _operationId: string,
+    connectionId: string | undefined,
+    connectorId: string,
+    operationId: string,
     _parameterAlias: string | undefined,
-    _parameters: Record<string, any>,
-    _dynamicState: any
+    parameters: Record<string, any>,
+    dynamicState: any,
+    nodeInputs: any
   ): Promise<ListDynamicValue[]> {
-    console.error('TRYING TO GET LIST DYNAMIC VALUES FOR CONSUMPTION');
-    return [];
+    const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
+    const { operationId: dynamicOperation } = dynamicState;
+
+    console.log('### getListDynamicValues', {
+      connectionId,
+      connectorId,
+      operationId,
+      _parameterAlias,
+      parameters,
+      dynamicState,
+      nodeInputs,
+    });
+
+    const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
+    const configuration = await getConfiguration(connectionId ?? '');
+
+    if (this._isClientSupportedOperation(connectorId, operationId)) {
+      return this.options.valuesClient[dynamicOperation]({ operationId, parameters: invokeParameters, configuration, nodeInputs });
+    }
+
+    const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`;
+    const response = await httpClient.post({
+      uri,
+      queryParameters: { 'api-version': apiVersion },
+      content: { parameters: invokeParameters, configuration },
+    });
+    return this._getResponseFromDynamicApi(response, uri);
   }
 
   async getDynamicSchema(
-    _connectionId: string | undefined,
-    _connectorId: string,
-    _operationId: string,
+    connectionId: string | undefined,
+    connectorId: string,
+    operationId: string,
     _parameterAlias: string | undefined,
-    _parameters: Record<string, any>,
-    _dynamicState: any
+    parameters: Record<string, any>,
+    dynamicState: any,
+    nodeInputs: any
   ): Promise<OpenAPIV2.SchemaObject> {
-    console.error('TRYING TO GET DYNAMIC SCHEMA FOR CONSUMPTION');
-    return {};
+    const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
+    const {
+      extension: { operationId: dynamicOperation },
+      isInput,
+    } = dynamicState;
+
+    console.log('### getDynamicSchema', { connectionId, connectorId, operationId, _parameterAlias, parameters, dynamicState, nodeInputs });
+
+    const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
+    const configuration = await getConfiguration(connectionId ?? '');
+
+    if (this._isClientSupportedOperation(connectorId, operationId)) {
+      return this.options.schemaClient[dynamicOperation]({ operationId, parameters: invokeParameters, configuration, isInput, nodeInputs });
+    }
+
+    const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`;
+    const response = await httpClient.post({
+      uri,
+      queryParameters: { 'api-version': apiVersion },
+      content: { parameters: invokeParameters, configuration },
+    });
+    return this._getResponseFromDynamicApi(response, uri);
   }
 }

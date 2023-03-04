@@ -88,7 +88,8 @@ export async function getDynamicValues(
       operationInfo.operationId,
       parameter?.alias,
       operationParameters,
-      dynamicState
+      dynamicState,
+      nodeInputs
     );
   } else if (isLegacyDynamicValuesExtension(definition)) {
     const { connectorId } = operationInfo;
@@ -168,7 +169,8 @@ export async function getDynamicSchema(
             operationInfo.operationId,
             parameter?.alias,
             operationParameters,
-            dynamicState
+            dynamicState,
+            nodeInputs
           );
           break;
       }

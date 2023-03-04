@@ -14,20 +14,6 @@ const connector = {
     description: 'API Management operations',
     iconUri,
     brandColor,
-    connectionParameters: {
-      apiId: {
-        type: 'string',
-      },
-      baseUrl: {
-        type: 'string',
-      },
-      subscriptionKey: {
-        type: 'string',
-      },
-      authentication: {
-        type: 'object',
-      },
-    },
   },
 };
 

@@ -2,7 +2,7 @@ import Constants from '../../../common/constants';
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useRelationshipIds, useIsParallelBranch, useIsAddingTrigger } from '../../../core/state/panel/panelSelectors';
-import { ChoiceGroup, PrimaryButton, Text } from '@fluentui/react';
+import { PrimaryButton, Text } from '@fluentui/react';
 import { ApiManagementService, FunctionService, SearchService, AppServiceService } from '@microsoft/designer-client-services-logic-apps';
 import { AzureResourcePicker } from '@microsoft/designer-ui';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
@@ -97,61 +97,26 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
 
   const [submitCallback, setSubmitCallback] = useState<(any?: any) => any>(() => () => Promise.resolve([]));
 
-  const [apimApiSwaggerResources, setApimApiSwaggerResources] = useState<any>(null);
-  useEffect(() => {
-    const subResource = selectedResources?.[1];
-    if (!subResource) return;
-    if (
-      operation.id !== Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_ACTION &&
-      operation.id !== Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_TRIGGER
-    )
-      return;
-    ApiManagementService()
-      .fetchApiMSwagger(subResource?.id)
-      .then((s) => setApimApiSwaggerResources(s));
-  }, [selectedResources, operation?.id]);
-
   useEffect(() => {
     switch (operation.id) {
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_ACTION:
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_TRIGGER:
         setTitleText(apimTitleText);
-        setResourceTypes(['apiManagement', 'action', 'operation']);
+        setResourceTypes(['apiManagement', 'action']);
         setGetResourcesCallbacks(() => [
           () => ApiManagementService().fetchApiManagementInstances(),
           (apiManagement?: any) => ApiManagementService().fetchApisInApiM(apiManagement.id ?? ''),
         ]);
         setSubmitCallback(() => () => {
-          const resource: any = selectedResources?.[2];
-
-          const additionalInputParameters: Record<any, any> = {};
-          if (resource?.parameters) {
-            resource.parameters.forEach((param: any) => {
-              const ref = (param as any)?.schema?.['$ref'];
-              // Need to bring in the schema definition from the swagger object
-              if (!additionalInputParameters?.[(param as any)?.in]) {
-                additionalInputParameters[(param as any)?.in] = {
-                  type: 'object',
-                  properties: {},
-                };
-              }
-              additionalInputParameters[(param as any)?.in].properties = {
-                ...additionalInputParameters[(param as any)?.in].properties,
-                [param.name]: {
-                  ...param,
-                  ...(ref ? apimApiSwaggerResources.definitions[ref.split('/').pop()]?.[param.name]?.properties : {}),
-                },
-              };
-            });
-          }
+          const resource: any = selectedResources?.[1];
 
           addResourceOperation({
-            name: resource.summary,
+            name: getResourceName(resource),
             presetParameterValues: {
-              'api.id': selectedResources[1]?.id,
-              'pathTemplate.template': `${apimApiSwaggerResources?.basePath}/${resource?.uri}`,
-              'pathTemplate.parameters': {}, // TODO: Riley - we need to pass path parameters into this object when serializing
-              method: resource.method,
+              'api.id': resource?.id,
+              // 'pathTemplate.template': `${apimApiSwaggerResources?.basePath}/${resource?.uri}`,
+              // 'pathTemplate.parameters': {}, // TODO: Riley - we need to pass path parameters into this object when serializing
+              // method: resource.method,
             },
           });
         });
@@ -160,24 +125,19 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APPSERVICE_ACTION:
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APPSERVICE_TRIGGER:
         setTitleText(appServiceTitleText);
-        setResourceTypes(['appService', 'service']);
-        setGetResourcesCallbacks(() => [
-          () => AppServiceService().fetchAppServices(),
-          (service?: any) =>
-            AppServiceService()
-              .fetchAppServiceApiSwagger(service)
-              .then((swagger) => getOptionsFromPaths(swagger?.paths)),
-        ]);
+        setResourceTypes(['appService']);
+        setGetResourcesCallbacks(() => [() => AppServiceService().fetchAppServices()]);
         setSubmitCallback(() => () => {
+          const resource = selectedResources[0];
           addResourceOperation({
-            name: selectedResources[1]?.id,
+            name: getResourceName(resource),
+            // presetParameterValues: {
+            //   method: selectedResources[1]?.method,
+            //   uri: `http://localhost:54335${selectedResources[1]?.uri}`,
+            // },
             presetParameterValues: {
-              method: selectedResources[1]?.method,
-              uri: `http://localhost:54335${selectedResources[1]?.uri}`,
-            },
-            actionMetadata: {
-              apiDefinitionUrl: selectedResources[0]?.properties?.siteConfig?.apiDefinition?.url,
-              swaggerSource: 'website',
+              'metadata.apiDefinitionUrl': resource?.properties?.siteConfig?.apiDefinition?.url,
+              'metadata.swaggerSource': 'website',
             },
           });
         });
@@ -241,7 +201,6 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
     }
   }, [
     addResourceOperation,
-    apimApiSwaggerResources,
     apimTitleText,
     appServiceTitleText,
     batchWorkflowTitleText,
@@ -298,25 +257,6 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         fetchSubResourcesCallback={getResourcesCallbacks?.[1]}
         onSubResourceSelect={(subResource: any) => setResourceAtDepth(subResource, 1)}
       />
-      {/* 
-        TODO: Riley - 
-        This is temporary, preferably the resource picker is modified to accept any number of pages.
-        Currently it only accepts two, so we are just including this extra step for APIM actions here.
-      */}
-      {apimApiSwaggerResources ? (
-        <ChoiceGroup
-          options={getOptionsFromPaths(apimApiSwaggerResources?.paths ?? {}).map((data: any) => ({
-            key: data.id,
-            text: data?.summary ?? data.id,
-            data,
-          }))}
-          onChange={(_e: any, option: any) => {
-            console.log('selected path:', option.data);
-            setResourceAtDepth?.(option.data, 2);
-          }}
-          selectedKey={selectedResources?.[2]?.id}
-        />
-      ) : null}
       <PrimaryButton
         disabled={!readyToSubmit}
         onClick={() => {

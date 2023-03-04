@@ -9,9 +9,12 @@ const brandColor = '#59B2D9';
 const connector = {
   id: 'connectionProviders/appService',
   name: 'connectionProviders/appService',
+  type: 'appservice',
   properties: {
     displayName: 'Azure App Services',
     description: 'Azure App Services',
+    iconUri,
+    brandColor,
   },
 };
 
@@ -24,39 +27,124 @@ export const appServiceActionManifest = {
 
     environmentBadge: coreBadge,
 
+    inputsLocation: [],
     inputs: {
       type: 'object',
-      required: [],
       properties: {
-        authentication: {
+        metadata: {
           type: 'object',
-          title: 'Authentication',
-          description: 'Enter JSON object of authentication parameter',
-          'x-ms-visibility': 'advanced',
-          'x-ms-editor': 'authentication',
-          'x-ms-editor-options': {
-            supportedAuthTypes: ['None', 'Basic', 'ClientCertificate', 'ActiveDirectoryOAuth', 'Raw', 'ManagedServiceIdentity'],
+          required: [],
+          properties: {
+            apiDefinitionUrl: {
+              type: 'string',
+              'x-ms-visibility': 'hideInUI',
+            },
+            swaggerSource: {
+              type: 'string',
+              'x-ms-visibility': 'hideInUI',
+            },
           },
         },
-        uri: {
-          type: 'string',
-          'x-ms-visibility': 'hideInUI',
-        },
-        method: {
-          type: 'string',
-          'x-ms-visibility': 'hideInUI',
+        inputs: {
+          type: 'object',
+          required: [],
+          properties: {
+            authentication: {
+              type: 'object',
+              title: 'Authentication',
+              description: 'Enter JSON object of authentication parameter',
+              'x-ms-visibility': 'advanced',
+              'x-ms-editor': 'authentication',
+              'x-ms-editor-options': {
+                supportedAuthTypes: ['None', 'Basic', 'ClientCertificate', 'ActiveDirectoryOAuth', 'Raw', 'ManagedServiceIdentity'],
+              },
+            },
+            uri: {
+              type: 'string',
+              'x-ms-visibility': 'hideInUI',
+            },
+            method: {
+              type: 'string',
+              'x-ms-visibility': 'hideInUI',
+            },
+            // Dynamic params
+            appService: {
+              type: 'object',
+              properties: {
+                operationId: {
+                  required: true,
+                  type: 'string',
+                  title: 'Operation Id',
+                  description: 'Operation Id',
+                  'x-ms-dynamic-list': {
+                    dynamicState: {
+                      operationId: 'getAppServiceOperations',
+                      parameters: {},
+                    },
+                    parameters: {},
+                  },
+                },
+              },
+              required: ['operationId'],
+            },
+            operationDetails: {
+              title: 'Operation Parameters',
+              description: 'Operation parameters for the above operation',
+              'x-ms-dynamic-properties': {
+                dynamicState: {
+                  extension: {
+                    operationId: 'getAppServiceOperationSchema',
+                  },
+                  isInput: true,
+                },
+                parameters: {
+                  type: 'object',
+                  operationId: {
+                    parameterReference: 'appService.operationId',
+                    required: true,
+                  },
+                },
+              },
+            },
+          },
         },
       },
     },
+    inputsLocationSwapMap: [{ source: ['operationDetails'], target: [] }],
     isInputsOptional: false,
 
-    outputs: {},
+    outputs: {
+      'x-ms-dynamic-properties': {
+        dynamicState: {
+          extension: {
+            operationId: 'getAppServiceOperationSchema',
+          },
+        },
+        parameters: {
+          type: 'object',
+          operationId: {
+            parameterReference: 'appService.operationId',
+            required: true,
+          },
+        },
+      },
+    },
     isOutputsOptional: false,
+    settings: {
+      secureData: {},
+      trackedProperties: {
+        scopes: ['action'],
+      },
+      retryPolicy: {
+        scopes: ['action'],
+      },
+      operationOptions: {
+        options: ['DisableAsyncPattern'],
+        scopes: ['action'],
+      },
+    },
     includeRootOutputs: true,
-
     connector,
-
-    settings: {},
   },
 } as OperationManifest;
 

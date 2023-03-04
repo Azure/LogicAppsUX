@@ -1975,7 +1975,7 @@ export const almostAllBuiltInOperations: DiscoveryOperation<DiscoveryResultTypes
     type: 'function',
     properties: {
       api: {
-        id: '/connectionProviders/azureFunctionOperation',
+        id: 'connectionProviders/azureFunctionOperation',
         name: 'azureFunctionOperation',
         displayName: 'Azure Function operations',
         iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/invokefunction.svg',
@@ -1997,7 +1997,7 @@ export const almostAllBuiltInOperations: DiscoveryOperation<DiscoveryResultTypes
     type: 'apiManagement',
     properties: {
       api: {
-        id: '/connectionProviders/apiManagementOperation',
+        id: 'connectionProviders/apiManagementOperation',
         name: 'apiManagementOperation',
         displayName: 'API Management operations',
         iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/apimanagement.svg',
