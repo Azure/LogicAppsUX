@@ -9,10 +9,11 @@ import { useIntl } from 'react-intl';
 export interface DesignerCommandBarProps {
   isMonitoringView: boolean;
   isRefreshing: boolean;
+  isDisabled: boolean;
   onRefresh(): void;
 }
 
-export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonitoringView, isRefreshing, onRefresh }) => {
+export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonitoringView, isRefreshing, isDisabled, onRefresh }) => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
 
@@ -59,6 +60,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonito
     {
       ariaLabel: Resources.DESIGNER_SAVE,
       iconProps: { iconName: 'Save' },
+      disabled: isDisabled,
       key: 'Save',
       name: Resources.DESIGNER_SAVE,
       onClick: () => {
@@ -69,6 +71,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonito
       ariaLabel: Resources.DESIGNER_PARAMETERS,
       iconProps: { iconName: 'Parameter' },
       key: 'Parameter',
+      disabled: isDisabled,
       name: Resources.DESIGNER_PARAMETERS,
       onClick: () => {
         return true;
@@ -81,7 +84,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonito
       ariaLabel: Resources.MONITORING_VIEW_REFRESH,
       iconProps: { iconName: 'Refresh' },
       key: 'Refresh',
-      disabled: isRefreshing,
+      disabled: isDisabled ? isDisabled : isRefreshing,
       name: Resources.MONITORING_VIEW_REFRESH,
       onClick: onRefresh,
     },
@@ -89,6 +92,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonito
       ariaLabel: Resources.MONITORING_VIEW_RESUBMIT,
       iconProps: { iconName: 'Rerun' },
       key: 'Rerun',
+      disabled: isDisabled,
       name: Resources.MONITORING_VIEW_RESUBMIT,
       onClick: () => {
         onResubmit();

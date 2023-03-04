@@ -107,7 +107,7 @@ export const App = () => {
     setStandardApp(undefined);
   };
 
-  const { refetch, isError, isFetching, isLoading } = useQuery<any>(['runInstance'], getRunInstance, {
+  const { refetch, isError, isFetching, isLoading, isRefetching } = useQuery<any>(['runInstance'], getRunInstance, {
     refetchOnWindowFocus: false,
     initialData: null,
     onSuccess: onRunInstanceSuccess,
@@ -130,11 +130,18 @@ export const App = () => {
 
   const loadingApp = <Spinner className="designer--loading" size={SpinnerSize.large} label={intlText.LOADING_APP} />;
 
+  const designerCommandBar =
+    readOnly && !isMonitoringView ? null : (
+      <DesignerCommandBar
+        isMonitoringView={isMonitoringView}
+        isDisabled={isError || isFetching || isLoading}
+        isRefreshing={isRefetching}
+        onRefresh={refetch}
+      />
+    );
+
   const designerApp = standardApp ? (
     <BJSWorkflowProvider workflow={{ definition: standardApp.definition, connectionReferences }} runInstance={runInstance}>
-      {readOnly && !isMonitoringView ? null : (
-        <DesignerCommandBar isMonitoringView={isMonitoringView} isRefreshing={isFetching} onRefresh={refetch} />
-      )}
       <Designer />
     </BJSWorkflowProvider>
   ) : (
@@ -151,6 +158,7 @@ export const App = () => {
         services: services,
       }}
     >
+      {designerCommandBar}
       {isError ? errorApp : isFetching || isLoading ? loadingApp : designerApp}
     </DesignerProvider>
   );
