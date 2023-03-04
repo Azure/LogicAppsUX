@@ -27,7 +27,7 @@ import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import { DynamicCallStatus, TokenPicker, ValueSegmentType } from '@microsoft/designer-ui';
-import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
+import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode } from '@microsoft/designer-ui';
 import { equals } from '@microsoft/utils-logic-apps';
 import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -212,6 +212,8 @@ const ParameterSection = ({
     parameterId: string,
     editorId: string,
     labelId: string,
+    tokenPickerMode?: TokenPickerMode,
+    closeTokenPicker?: () => void,
     tokenPickerClicked?: (b: boolean) => void,
     tokenClicked?: (token: ValueSegment) => void
   ): JSX.Element => {
@@ -223,10 +225,12 @@ const ParameterSection = ({
         tokenGroup={tokenGroup}
         expressionGroup={expressionGroup}
         tokenPickerFocused={tokenPickerClicked}
+        initialMode={tokenPickerMode}
         getValueSegmentFromToken={(token: OutputToken, addImplicitForeach: boolean) =>
           getValueSegmentFromToken(parameterId, token, addImplicitForeach)
         }
         tokenClickedCallback={tokenClicked}
+        closeTokenPicker={closeTokenPicker}
       />
     );
   };
@@ -275,8 +279,13 @@ const ParameterSection = ({
           validationErrors,
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
-          getTokenPicker: (editorId: string, labelId: string, tokenPickerClicked?: (b: boolean) => void) =>
-            getTokenPicker(id, editorId, labelId, tokenPickerClicked),
+          getTokenPicker: (
+            editorId: string,
+            labelId: string,
+            tokenPickerMode?: TokenPickerMode,
+            closeTokenPicker?: () => void,
+            tokenPickerClicked?: (b: boolean) => void
+          ) => getTokenPicker(id, editorId, labelId, tokenPickerMode, closeTokenPicker, tokenPickerClicked),
         },
       };
     });

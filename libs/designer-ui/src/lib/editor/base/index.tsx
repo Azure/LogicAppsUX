@@ -1,4 +1,5 @@
 import { Toolbar } from '../../html/plugins/toolbar';
+import type { TokenPickerMode } from '../../tokenpicker';
 import type { ValueSegment } from '../models/parameter';
 import { TokenNode } from './nodes/tokenNode';
 import { AutoFocus } from './plugins/AutoFocus';
@@ -9,6 +10,7 @@ import IgnoreTab from './plugins/IgnoreTab';
 import InsertTokenNode from './plugins/InsertTokenNode';
 import OnBlur from './plugins/OnBlur';
 import OnFocus from './plugins/OnFocus';
+import OpenTokenPicker from './plugins/OpenTokenPicker';
 import { ReadOnly } from './plugins/ReadOnly';
 import SingleValueSegment from './plugins/SingleValueSegment';
 import { TreeView } from './plugins/TreeView';
@@ -38,7 +40,9 @@ export interface ChangeState {
 export type GetTokenPickerHandler = (
   editorId: string,
   labelId: string,
-  onTokenPicker?: (b: boolean) => void,
+  tokenPickerMode?: TokenPickerMode,
+  closeTokenPicker?: () => void,
+  tokenPickerClicked?: (b: boolean) => void,
   tokenClicked?: (token: ValueSegment) => void
 ) => JSX.Element;
 
@@ -97,6 +101,7 @@ export const BaseEditor = ({
 
   const [isEditorFocused, setIsEditorFocused] = useState(false);
   const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
+  const [tokenPickerMode, setTokenPickerMode] = useState<TokenPickerMode | undefined>();
   const initialConfig = {
     theme: EditorTheme,
     editable: !readonly,
@@ -126,12 +131,14 @@ export const BaseEditor = ({
   const handleBlur = () => {
     setIsEditorFocused(false);
     if (!getInTokenPicker()) {
+      setTokenPickerMode(undefined);
       setInTokenPicker(false);
       onBlur?.();
     }
   };
 
-  const openTokenPicker = () => {
+  const openTokenPicker = (mode: TokenPickerMode) => {
+    setTokenPickerMode(mode);
     setInTokenPicker(true);
   };
 
@@ -167,12 +174,15 @@ export const BaseEditor = ({
           {tabbable ? null : <IgnoreTab />}
           {tokens ? <InsertTokenNode /> : null}
           {tokens ? <DeleteTokenNode /> : null}
+          {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
           {children}
-          {!isTrigger && tokens && getInTokenPicker() ? getTokenPicker(editorId, labelId, tokenPickerClicked) : null}
+          {!isTrigger && tokens && getInTokenPicker()
+            ? getTokenPicker(editorId, labelId, tokenPickerMode, handleFocus, tokenPickerClicked)
+            : null}
         </div>
 
         {!isTrigger && tokens && isEditorFocused && !getInTokenPicker() ? (
-          createPortal(<TokenPickerButtonNew onAddComment={openTokenPicker} />, document.body)
+          createPortal(<TokenPickerButtonNew openTokenPicker={openTokenPicker} />, document.body)
         ) : (
           <div />
         )}

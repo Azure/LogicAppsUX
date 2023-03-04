@@ -1,4 +1,5 @@
 import constants from '../../../../constants';
+import { TokenPickerMode } from '../../../../tokenpicker';
 import { FxIcon } from './assets/fxIcon';
 import type { IButtonStyles, IIconProps } from '@fluentui/react';
 import { TooltipHost, IconButton } from '@fluentui/react';
@@ -39,10 +40,10 @@ const buttonStyles: IButtonStyles = {
 };
 
 interface TokenPickerButtonProps {
-  onAddComment: () => void;
+  openTokenPicker: (mode: TokenPickerMode) => void;
 }
 
-export const TokenPickerButtonNew = ({ onAddComment }: TokenPickerButtonProps): JSX.Element => {
+export const TokenPickerButtonNew = ({ openTokenPicker }: TokenPickerButtonProps): JSX.Element => {
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
   const [anchorKey, setAnchorKey] = useState<NodeKey | null>(null);
@@ -113,7 +114,7 @@ export const TokenPickerButtonNew = ({ onAddComment }: TokenPickerButtonProps): 
               iconProps={dynamicContentIconProps}
               styles={buttonStyles}
               className="msla-token-picker-entrypoint-button-dynamic-content"
-              onClick={onAddComment}
+              onClick={() => openTokenPicker(TokenPickerMode.TOKEN)}
             />
           </TooltipHost>
           <TooltipHost content={expressionButtonText}>
@@ -123,7 +124,7 @@ export const TokenPickerButtonNew = ({ onAddComment }: TokenPickerButtonProps): 
               onMouseDown={() => setShowPressedExpressionButton(true)}
               onMouseUp={() => {
                 setShowPressedExpressionButton(false);
-                onAddComment();
+                openTokenPicker(TokenPickerMode.EXPRESSION);
               }}
               style={expressionButtonStyles}
             >

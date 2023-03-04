@@ -2,7 +2,6 @@ import { MonacoEditor as Editor, EditorLanguage } from '../editor/monaco';
 import type { EventHandler } from '../eventhandler';
 import type { editor } from 'monaco-editor';
 import type { MutableRefObject } from 'react';
-import { useState } from 'react';
 
 export interface ExpressionEditorEvent {
   value: string;
@@ -17,10 +16,7 @@ export interface ExpressionEditorProps {
 }
 
 export function ExpressionEditor({ initialValue, editorRef, onBlur }: ExpressionEditorProps): JSX.Element {
-  const [focused, setFocused] = useState(false);
-
   const handleBlur = (): void => {
-    setFocused(false);
     if (onBlur && editorRef?.current) {
       const currentSelection = editorRef.current.getSelection();
       const currentCursorPosition = editorRef.current.getPosition()?.column ?? 1 - 1;
@@ -32,10 +28,6 @@ export function ExpressionEditor({ initialValue, editorRef, onBlur }: Expression
         onBlur({ value: editorRef.current.getValue(), selectionStart, selectionEnd });
       }
     }
-  };
-
-  const handleFocus = (): void => {
-    setFocused(true);
   };
 
   const handleChangeEvent = (e: editor.IModelContentChangedEvent): void => {
@@ -69,12 +61,10 @@ export function ExpressionEditor({ initialValue, editorRef, onBlur }: Expression
   };
 
   return (
-    <div className={focused ? 'msla-expression-editor-container msla-focused' : 'msla-expression-editor-container'}>
+    <div className="msla-expression-editor-updated-container">
       <Editor
         ref={editorRef}
-        className={'msla-expression-editor-main'}
         language={EditorLanguage.templateExpressionLanguage}
-        folding={false}
         lineNumbers="off"
         value={initialValue}
         scrollbar={{ horizontal: 'hidden', vertical: 'hidden' }}
@@ -82,11 +72,16 @@ export function ExpressionEditor({ initialValue, editorRef, onBlur }: Expression
         overviewRulerLanes={0}
         overviewRulerBorder={false}
         contextMenu={false}
-        onFocus={handleFocus}
         onBlur={handleBlur}
         onContentChanged={handleChangeEvent}
-        width={'340px'}
+        width={'100%'}
+        wordWrap="bounded"
+        wordWrapColumn={200}
+        automaticLayout={true}
       />
+      <div className="msla-expression-editor-expand">
+        <div className="msla-expression-editor-expand-icon" /> <div className="msla-expression-editor-expand-icon-2" />
+      </div>
     </div>
   );
 }

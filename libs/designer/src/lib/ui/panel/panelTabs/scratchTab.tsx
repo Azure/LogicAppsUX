@@ -1,7 +1,7 @@
 import constants from '../../../common/constants';
 import type { TokenGroup } from '../../../core/utils/tokens';
 import { getExpressionTokenSections } from '../../../core/utils/tokens';
-import type { OutputToken, PanelTab, ValueSegment } from '@microsoft/designer-ui';
+import type { OutputToken, PanelTab, TokenPickerMode, ValueSegment } from '@microsoft/designer-ui';
 import {
   RowDropdownOptions,
   GroupType,
@@ -66,6 +66,8 @@ export const ScratchTab = () => {
   const GetTokenPicker = (
     editorId: string,
     labelId: string,
+    tokenPickerMode?: TokenPickerMode,
+    closeTokenPicker?: () => void,
     onClick?: (b: boolean) => void,
     tokenClicked?: (token: ValueSegment) => void
   ): JSX.Element => {
@@ -75,6 +77,8 @@ export const ScratchTab = () => {
         labelId={labelId}
         tokenGroup={testTokenGroup}
         expressionGroup={expressionGroup}
+        initialMode={tokenPickerMode}
+        closeTokenPicker={closeTokenPicker}
         tokenPickerFocused={onClick}
         getValueSegmentFromToken={getValueSegmentFromToken}
         tokenClickedCallback={tokenClicked}

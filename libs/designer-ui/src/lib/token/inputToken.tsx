@@ -1,6 +1,6 @@
 import { getBrandColorRgbA } from '../card/utils';
 import { DELETE_TOKEN_NODE } from '../editor/base/plugins/DeleteTokenNode';
-import { CHANGE_TOKENPICKER_EXPRESSION } from '../tokenpicker/plugins/TokenPickerHandler';
+import { OPEN_TOKEN_PICKER } from '../editor/base/plugins/OpenTokenPicker';
 import iconSvg from './icon/icon.svg';
 import { Icon } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -27,9 +27,7 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
 
   const handleTokenClicked = () => {
     if (nodeKey) {
-      setTimeout(() => {
-        editor.dispatchCommand(CHANGE_TOKENPICKER_EXPRESSION, nodeKey);
-      }, 50);
+      editor.dispatchCommand(OPEN_TOKEN_PICKER, nodeKey);
     }
   };
 

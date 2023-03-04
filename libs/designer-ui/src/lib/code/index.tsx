@@ -91,7 +91,7 @@ export function CodeEditor({ readonly = false, initialValue, language, onChange,
         <TokenPickerButton labelId={labelId} showTokenPicker={showTokenPicker} setShowTokenPicker={handleShowTokenPicker} />
       ) : null}
       {(showTokenPickerButton && showTokenPicker) || getInTokenPicker()
-        ? getTokenPicker?.(editorId, labelId, onClickTokenPicker, tokenClicked)
+        ? getTokenPicker?.(editorId, labelId, undefined, undefined, onClickTokenPicker, tokenClicked)
         : null}
     </div>
   );

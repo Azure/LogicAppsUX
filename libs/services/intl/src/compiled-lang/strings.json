@@ -1417,6 +1417,12 @@
       "value": "12"
     }
   ],
+  "9atGYe": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -3319,6 +3325,12 @@
       "value": "Data type"
     }
   ],
+  "QiVbKW": [
+    {
+      "type": 0,
+      "value": "Exit Full Screen"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -4337,6 +4349,12 @@
       "value": "This operation has already been deleted."
     }
   ],
+  "Zg3IjD": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -4407,6 +4425,12 @@
     {
       "type": 0,
       "value": "Second"
+    }
+  ],
+  "ae7W0a": [
+    {
+      "type": 0,
+      "value": "Full Screen"
     }
   ],
   "ahsVI/": [
@@ -4925,6 +4949,12 @@
       "value": "Logical functions"
     }
   ],
+  "fmm7Ik": [
+    {
+      "type": 0,
+      "value": "Function"
+    }
+  ],
   "froV/0": [
     {
       "type": 0,
@@ -5025,6 +5055,12 @@
     {
       "type": 0,
       "value": "Conversion functions"
+    }
+  ],
+  "gRUmiA": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "gTXyUo": [
@@ -6329,12 +6365,6 @@
     {
       "type": 0,
       "value": "Returns a URI encoded representation of a value"
-    }
-  ],
-  "rjyBPU": [
-    {
-      "type": 0,
-      "value": "Expression"
     }
   ],
   "rsdJcV": [

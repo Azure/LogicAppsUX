@@ -1,17 +1,26 @@
 import type { ValueSegment } from '../editor';
 import type { ExpressionEditorEvent } from '../expressioneditor';
+import { ExpressionEditor } from '../expressioneditor';
+import { PanelSize } from '../panel/panelUtil';
 import type { TokenGroup } from './models/token';
 import TokenPickerHandler from './plugins/TokenPickerHandler';
 import UpdateTokenNode from './plugins/UpdateTokenNode';
-import { TokenPickerMode, TokenPickerPivot } from './tokenpickerpivot';
-import { TokenPickerSearch } from './tokenpickersearch/tokenpickersearch';
+import { TokenPickerFooter } from './tokenpickerfooter';
+import { TokenPickerHeader } from './tokenpickerheader';
+import { TokenPickerPivot } from './tokenpickerpivot';
+// import { TokenPickerSearch } from './tokenpickersearch/tokenpickersearch';
 import type { GetValueSegmentHandler } from './tokenpickersection/tokenpickeroption';
 import { TokenPickerSection } from './tokenpickersection/tokenpickersection';
 import type { ICalloutContentStyles, PivotItem } from '@fluentui/react';
 import { Callout, DirectionalHint } from '@fluentui/react';
 import type { NodeKey } from 'lexical';
 import type { editor } from 'monaco-editor';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
+export enum TokenPickerMode {
+  TOKEN = 'token',
+  EXPRESSION = 'expression',
+}
 
 export type { Token as OutputToken } from './models/token';
 
@@ -37,6 +46,7 @@ export interface TokenPickerProps {
   tokenPickerFocused?: (b: boolean) => void;
   onSearchTextChanged?: SearchTextChangedEventHandler;
   tokenClickedCallback?: (token: ValueSegment) => void;
+  closeTokenPicker?: () => void;
 }
 export function TokenPicker({
   editorId,
@@ -45,22 +55,42 @@ export function TokenPicker({
   expressionGroup,
   initialMode,
   tokenPickerFocused,
-  onSearchTextChanged,
+  // onSearchTextChanged,
   getValueSegmentFromToken,
   tokenClickedCallback,
+  closeTokenPicker,
 }: TokenPickerProps): JSX.Element {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedKey, setSelectedKey] = useState<TokenPickerMode>(initialMode ?? TokenPickerMode.TOKEN);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [updatingExpression, setUpdatingExpression] = useState<NodeKey | null>(null);
+  const [expressionToBeUpdated, setExpressionToBeUpdated] = useState<NodeKey | null>(null);
   const [expression, setExpression] = useState<ExpressionEditorEvent>({ value: '', selectionStart: 0, selectionEnd: 0 });
+  const [fullScreen, setFullScreen] = useState(false);
   const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (expressionEditorRef) {
+      setTimeout(() => {
+        expressionEditorRef.current?.focus();
+      }, 300);
+    }
+  }, [expressionEditorRef]);
+
   const handleUpdateExpressionToken = (s: string, n: NodeKey) => {
     setExpression({ value: s, selectionStart: 0, selectionEnd: 0 });
     setSelectedKey(TokenPickerMode.EXPRESSION);
     tokenPickerFocused?.(true);
-    setUpdatingExpression(n);
-    setIsEditing(true);
+    setExpressionToBeUpdated(n);
 
     setTimeout(() => {
       expressionEditorRef.current?.setSelection({
@@ -77,31 +107,18 @@ export function TokenPicker({
     if (item?.props?.itemKey) {
       setSearchQuery('');
       setSelectedKey(item.props.itemKey as TokenPickerMode);
-      if (expression.value) {
-        setIsEditing(true);
-      } else {
-        setIsEditing(false);
-      }
     }
   };
 
-  const handleUpdateSearch = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, text?: string) => {
-    if (text != null) {
-      setSearchQuery(text);
-      onSearchTextChanged?.(text);
-    }
-  };
+  // const handleUpdateSearch = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, text?: string) => {
+  //   if (text != null) {
+  //     setSearchQuery(text);
+  //     onSearchTextChanged?.(text);
+  //   }
+  // };
 
   const onExpressionEditorBlur = (e: ExpressionEditorEvent): void => {
     setExpression(e);
-  };
-
-  const resetTokenPicker = () => {
-    setSearchQuery('');
-    setSelectedKey(TokenPickerMode.TOKEN);
-    setIsEditing(false);
-    setUpdatingExpression(null);
-    setExpression({ value: '', selectionStart: 0, selectionEnd: 0 });
   };
 
   const isDynamicContentAvailable = (tokenGroup: TokenGroup[]): boolean => {
@@ -133,10 +150,26 @@ export function TokenPicker({
         }}
         styles={calloutStyles}
       >
-        <div className="msla-token-picker-container">
+        <div
+          className="msla-token-picker-container"
+          style={
+            fullScreen
+              ? { height: windowDimensions.height - 100, width: windowDimensions.width - (parseInt(PanelSize.Medium, 10) + 40) }
+              : { maxHeight: '550px', width: '400px' }
+          }
+        >
           <div className="msla-token-picker">
-            <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} hideExpressions={!!tokenClickedCallback} />
-            <TokenPickerSearch
+            {initialMode ? (
+              <TokenPickerHeader fullScreen={fullScreen} closeTokenPicker={closeTokenPicker} setFullScreen={setFullScreen} />
+            ) : null}
+
+            {initialMode === TokenPickerMode.EXPRESSION ? (
+              <>
+                <ExpressionEditor initialValue={expression.value} editorRef={expressionEditorRef} onBlur={onExpressionEditorBlur} />
+                <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} hideExpressions={!!tokenClickedCallback} />
+              </>
+            ) : null}
+            {/* <TokenPickerSearch
               selectedKey={selectedKey}
               searchQuery={searchQuery}
               setSearchQuery={handleUpdateSearch}
@@ -147,7 +180,7 @@ export function TokenPicker({
               isEditing={isEditing}
               resetTokenPicker={resetTokenPicker}
               isDynamicContentAvailable={isDynamicContentAvailable(tokenGroup ?? [])}
-            />
+            /> */}
 
             <TokenPickerSection
               expressionEditorRef={expressionEditorRef}
@@ -156,12 +189,16 @@ export function TokenPicker({
               expressionGroup={expressionGroup ?? []}
               searchQuery={searchQuery}
               expression={expression}
-              editMode={updatingExpression !== null || isEditing || selectedKey === TokenPickerMode.EXPRESSION}
+              editMode={expressionToBeUpdated !== null || selectedKey === TokenPickerMode.EXPRESSION}
+              fullScreen={fullScreen}
               setExpression={setExpression}
               isDynamicContentAvailable={isDynamicContentAvailable(tokenGroup ?? [])}
               getValueSegmentFromToken={getValueSegmentFromToken}
               tokenClickedCallback={tokenClickedCallback}
             />
+            {initialMode === TokenPickerMode.EXPRESSION ? (
+              <TokenPickerFooter expression={expression} expressionToBeUpdated={expressionToBeUpdated} />
+            ) : null}
           </div>
         </div>
       </Callout>
@@ -169,4 +206,12 @@ export function TokenPicker({
       {tokenClickedCallback ? null : <UpdateTokenNode />}
     </>
   );
+}
+
+export function getWindowDimensions() {
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    width,
+    height,
+  };
 }

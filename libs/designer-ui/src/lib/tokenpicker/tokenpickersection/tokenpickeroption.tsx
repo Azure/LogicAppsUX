@@ -1,10 +1,10 @@
 import type { OutputToken } from '..';
+import { TokenPickerMode } from '../';
 import type { ValueSegment } from '../../editor';
 import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
 import { SINGLE_VALUE_SEGMENT } from '../../editor/base/plugins/SingleValueSegment';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
 import type { TokenGroup } from '../models/token';
-import { TokenPickerMode } from '../tokenpickerpivot';
 import { Icon } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';

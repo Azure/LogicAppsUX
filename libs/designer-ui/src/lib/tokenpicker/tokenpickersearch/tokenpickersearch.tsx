@@ -1,13 +1,12 @@
+import { TokenPickerMode } from '../';
 import constants from '../../constants';
 import type { Token } from '../../editor';
 import { TokenType, ValueSegmentType } from '../../editor';
 import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
-import { ExpressionEditor } from '../../expressioneditor';
 import FxTextBoxIconBlack from '../images/fx.svg';
 import FxTextBoxIcon from '../images/fx.white.svg';
 import { UPDATE_TOKEN_NODE } from '../plugins/UpdateTokenNode';
-import { TokenPickerMode } from '../tokenpickerpivot';
 import { getExpressionTokenTitle } from '../util';
 import type { IIconStyles, ITextField, ITextFieldStyles } from '@fluentui/react';
 import { PrimaryButton, FontSizes, Icon, TextField, useTheme } from '@fluentui/react';
@@ -54,13 +53,13 @@ interface TokenPickerSearchProps {
 export const TokenPickerSearch = ({
   selectedKey,
   searchQuery,
-  expressionEditorRef,
+  // expressionEditorRef,
   expression,
   updatingExpression,
   isEditing,
   isDynamicContentAvailable,
   setSearchQuery,
-  expressionEditorBlur,
+  // expressionEditorBlur,
   resetTokenPicker,
 }: TokenPickerSearchProps): JSX.Element => {
   const intl = useIntl();
@@ -165,7 +164,7 @@ export const TokenPickerSearch = ({
         <div className="msla-token-picker-expression">
           <img src={isInverted ? FxTextBoxIconBlack : FxTextBoxIcon} role="presentation" alt="" height={32} width={32} />
           <div className="msla-expression-editor">
-            <ExpressionEditor initialValue={expression.value} editorRef={expressionEditorRef} onBlur={expressionEditorBlur} />
+            {/* <ExpressionEditor initialValue={expression.value} editorRef={expressionEditorRef} onBlur={expressionEditorBlur} /> */}
           </div>
           <div className="msla-token-picker-action-bar">
             <PrimaryButton
