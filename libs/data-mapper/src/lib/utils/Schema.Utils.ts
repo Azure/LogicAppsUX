@@ -41,6 +41,7 @@ const convertSchemaNodeToSchemaNodeExtended = (
       : [],
     pathToRoot: pathToRoot,
     parentKey,
+    arrayItemIndex: nodeProperties.find((prop) => prop === SchemaNodeProperty.ArrayItem) ? 0 : undefined,
   };
 
   return extendedSchemaNode;
