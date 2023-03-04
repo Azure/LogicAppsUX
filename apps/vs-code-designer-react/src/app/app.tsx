@@ -132,7 +132,9 @@ export const App = () => {
 
   const designerApp = standardApp ? (
     <BJSWorkflowProvider workflow={{ definition: standardApp.definition, connectionReferences }} runInstance={runInstance}>
-      {readOnly && !isMonitoringView ? null : <DesignerCommandBar isMonitoringView={isMonitoringView} />}
+      {readOnly && !isMonitoringView ? null : (
+        <DesignerCommandBar isMonitoringView={isMonitoringView} isRefreshing={isFetching} onRefresh={refetch} />
+      )}
       <Designer />
     </BJSWorkflowProvider>
   ) : (

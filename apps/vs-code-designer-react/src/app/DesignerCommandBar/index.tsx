@@ -8,9 +8,11 @@ import { useIntl } from 'react-intl';
 
 export interface DesignerCommandBarProps {
   isMonitoringView: boolean;
+  isRefreshing: boolean;
+  onRefresh(): void;
 }
 
-export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonitoringView }) => {
+export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonitoringView, isRefreshing, onRefresh }) => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
 
@@ -79,10 +81,9 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonito
       ariaLabel: Resources.MONITORING_VIEW_REFRESH,
       iconProps: { iconName: 'Refresh' },
       key: 'Refresh',
+      disabled: isRefreshing,
       name: Resources.MONITORING_VIEW_REFRESH,
-      onClick: () => {
-        return true;
-      },
+      onClick: onRefresh,
     },
     {
       ariaLabel: Resources.MONITORING_VIEW_RESUBMIT,
