@@ -2,7 +2,7 @@ import { getWindowDimensions, TokenPickerMode } from '..';
 import type { ValueSegment } from '../../editor';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
 import type { TokenGroup } from '../models/token';
-import { TokenPickerNoDynamicContent } from './tokenpickernodynamiccontent';
+// import { TokenPickerNoDynamicContent } from './tokenpickernodynamiccontent';
 import { TokenPickerNoMatches } from './tokenpickernomatches';
 import type { GetValueSegmentHandler } from './tokenpickeroption';
 import { TokenPickerOptions } from './tokenpickeroption';
@@ -17,8 +17,6 @@ interface TokenPickerSectionProps {
   searchQuery: string;
   expressionEditorRef: MutableRefObject<editor.IStandaloneCodeEditor | null>;
   expression: ExpressionEditorEvent;
-  editMode: boolean;
-  isDynamicContentAvailable: boolean;
   fullScreen: boolean;
   setExpression: Dispatch<SetStateAction<ExpressionEditorEvent>>;
   getValueSegmentFromToken: GetValueSegmentHandler;
@@ -31,15 +29,22 @@ export const TokenPickerSection = ({
   searchQuery,
   expressionEditorRef,
   expression,
-  editMode,
-  isDynamicContentAvailable,
   fullScreen,
   setExpression,
   getValueSegmentFromToken,
   tokenClickedCallback,
 }: TokenPickerSectionProps): JSX.Element => {
-  const [tokenLength, setTokenLength] = useState(new Array<number>(tokenGroup.length));
+  const [dynamicTokenLength, setDynamicTokenLength] = useState(new Array<number>(tokenGroup.length));
+  const [expressionTokenLength, setExpressionTokenLength] = useState(new Array<number>(expressionGroup.length));
   const [noItems, setNoItems] = useState(false);
+
+  useEffect(() => {
+    if (selectedKey === TokenPickerMode.TOKEN_EXPRESSION || selectedKey === TokenPickerMode.TOKEN) {
+      setNoItems(dynamicTokenLength.reduce((sum, a) => sum + a, 0) === 0);
+    } else {
+      setNoItems(expressionTokenLength.reduce((sum, a) => sum + a, 0) === 0);
+    }
+  }, [dynamicTokenLength, expressionTokenLength, searchQuery, selectedKey]);
 
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 
@@ -52,40 +57,31 @@ export const TokenPickerSection = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  useEffect(() => {
-    setNoItems(tokenLength.reduce((sum, a) => sum + a, 0) === 0);
-  }, [searchQuery, tokenLength]);
-
   return (
-    <div className="msla-token-picker-sections" style={{ maxHeight: fullScreen ? windowDimensions.height - 340 : 550 }}>
-      {isDynamicContentAvailable || selectedKey === TokenPickerMode.EXPRESSION ? (
-        <>
-          {searchQuery ? <TokenPickerNoMatches noItems={noItems} /> : null}
-          {(selectedKey === TokenPickerMode.TOKEN ? tokenGroup : expressionGroup).map((section, i) => {
-            if (section.tokens.length > 0) {
-              return (
-                <div key={`token-picker-section-${i}`} className={'msla-token-picker-section'}>
-                  <TokenPickerOptions
-                    selectedKey={selectedKey}
-                    section={section}
-                    searchQuery={searchQuery}
-                    index={i}
-                    setTokenLength={setTokenLength}
-                    editMode={editMode}
-                    expressionEditorRef={expressionEditorRef}
-                    expression={expression}
-                    setExpression={setExpression}
-                    getValueSegmentFromToken={getValueSegmentFromToken}
-                    tokenClickedCallback={tokenClickedCallback}
-                  />
-                </div>
-              );
-            }
-            return null;
-          })}
-        </>
-      ) : (
-        <TokenPickerNoDynamicContent />
+    <div className="msla-token-picker-sections" style={{ maxHeight: fullScreen ? windowDimensions.height - 386 : 550 }}>
+      {searchQuery && noItems ? <TokenPickerNoMatches /> : null}
+      {(selectedKey === TokenPickerMode.TOKEN_EXPRESSION || selectedKey === TokenPickerMode.TOKEN ? tokenGroup : expressionGroup).map(
+        (section, i) => {
+          if (section.tokens.length > 0) {
+            return (
+              <div key={`token-picker-section-${i}`} className={'msla-token-picker-section'}>
+                <TokenPickerOptions
+                  selectedKey={selectedKey}
+                  section={section}
+                  searchQuery={searchQuery}
+                  index={i}
+                  setTokenLength={selectedKey === TokenPickerMode.EXPRESSION ? setExpressionTokenLength : setDynamicTokenLength}
+                  expressionEditorRef={expressionEditorRef}
+                  expression={expression}
+                  setExpression={setExpression}
+                  getValueSegmentFromToken={getValueSegmentFromToken}
+                  tokenClickedCallback={tokenClickedCallback}
+                />
+              </div>
+            );
+          }
+          return null;
+        }
       )}
     </div>
   );

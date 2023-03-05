@@ -1,46 +1,12 @@
 @import (reference) '../variables.less';
 
 .msla-expression-editor-container {
-  height: 100%;
-  background-color: #fff;
-
-  & > div {
-    height: 19px;
-
-    .monaco-editor {
-      top: 6px;
-
-      .decorationsOverviewRuler {
-        display: none;
-      }
-
-      .view-overlays .current-line {
-        border: none;
-      }
-
-      /* Undo after https://github.com/Microsoft/monaco-editor/issues/810 is fixed */
-      .wrapper {
-        overflow: hidden;
-      }
-    }
-  }
-}
-
-body.dark {
-  .msla-expression-editor-container {
-    background-color: rgb(30, 30, 30); /* monaco-editor vs-dark */
-  }
-}
-
-.msla-expression-editor-updated-container {
-  height: 100%;
   background-color: #fafafa;
   position: relative;
+  padding: 10px 20px;
 
   & > div {
-    height: 100px;
-    padding: 10px 20px;
-    resize: vert;
+    height: 100%;
 
     .monaco-editor {
       border: 1px solid @defaultBorderColor;
@@ -65,10 +31,10 @@ body.dark {
   .msla-expression-editor-expand {
     position: absolute;
     cursor: s-resize;
-    width: 15px;
+    width: 16px;
     height: 15px;
-    right: 18px;
-    bottom: 8px;
+    right: 17px;
+    bottom: 9px;
     padding: 0px;
 
     .msla-expression-editor-expand-icon {
@@ -90,5 +56,11 @@ body.dark {
       top: 8px;
       left: 13px;
     }
+  }
+}
+
+body.dark {
+  .msla-expression-editor-container {
+    background-color: rgb(30, 30, 30); /* monaco-editor vs-dark */
   }
 }

@@ -41,7 +41,7 @@ export const TokenPickerPivot = ({ selectedKey, hideExpressions, selectKey }: To
         {hideExpressions ? null : (
           <PivotItem key={TokenPickerMode.TOKEN} itemKey={TokenPickerMode.EXPRESSION} headerText={expressionMode} />
         )}
-        <PivotItem key={TokenPickerMode.TOKEN} itemKey={TokenPickerMode.TOKEN} headerText={tokenMode} />
+        <PivotItem key={TokenPickerMode.TOKEN_EXPRESSION} itemKey={TokenPickerMode.TOKEN_EXPRESSION} headerText={tokenMode} />
       </Pivot>
     </div>
   );

@@ -2,6 +2,7 @@ import { MonacoEditor as Editor, EditorLanguage } from '../editor/monaco';
 import type { EventHandler } from '../eventhandler';
 import type { editor } from 'monaco-editor';
 import type { MutableRefObject } from 'react';
+import { useState, useEffect } from 'react';
 
 export interface ExpressionEditorEvent {
   value: string;
@@ -12,10 +13,28 @@ export interface ExpressionEditorEvent {
 export interface ExpressionEditorProps {
   initialValue: string;
   editorRef?: MutableRefObject<editor.IStandaloneCodeEditor | null>;
+  isDragging: boolean;
+  dragDistance?: number;
   onBlur?: EventHandler<ExpressionEditorEvent>;
+  setIsDragging: (isDragging: boolean) => void;
 }
 
-export function ExpressionEditor({ initialValue, editorRef, onBlur }: ExpressionEditorProps): JSX.Element {
+export function ExpressionEditor({
+  initialValue,
+  editorRef,
+  onBlur,
+  isDragging,
+  dragDistance,
+  setIsDragging,
+}: ExpressionEditorProps): JSX.Element {
+  const [mouseDownLocation, setMouseDownLocation] = useState(0);
+  const [currentHeight, setCurrentHeight] = useState(100);
+  useEffect(() => {
+    if (isDragging && dragDistance) {
+      setCurrentHeight(Math.min(Math.max(100, 100 + dragDistance - mouseDownLocation), 200));
+    }
+  }, [isDragging, dragDistance, mouseDownLocation, currentHeight]);
+
   const handleBlur = (): void => {
     if (onBlur && editorRef?.current) {
       const currentSelection = editorRef.current.getSelection();
@@ -61,7 +80,7 @@ export function ExpressionEditor({ initialValue, editorRef, onBlur }: Expression
   };
 
   return (
-    <div className="msla-expression-editor-updated-container">
+    <div className="msla-expression-editor-container" style={{ height: currentHeight }}>
       <Editor
         ref={editorRef}
         language={EditorLanguage.templateExpressionLanguage}
@@ -79,7 +98,13 @@ export function ExpressionEditor({ initialValue, editorRef, onBlur }: Expression
         wordWrapColumn={200}
         automaticLayout={true}
       />
-      <div className="msla-expression-editor-expand">
+      <div
+        className="msla-expression-editor-expand"
+        onMouseDown={(e) => {
+          setMouseDownLocation(e.clientY);
+          setIsDragging(true);
+        }}
+      >
         <div className="msla-expression-editor-expand-icon" /> <div className="msla-expression-editor-expand-icon-2" />
       </div>
     </div>
