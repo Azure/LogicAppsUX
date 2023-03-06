@@ -1,1 +1,1 @@
-export type MapDefinitionEntry = { [key: string]: MapDefinitionEntry | string };
+export type MapDefinitionEntry = { [key: string]: MapDefinitionEntry | string | MapDefinitionEntry[] };

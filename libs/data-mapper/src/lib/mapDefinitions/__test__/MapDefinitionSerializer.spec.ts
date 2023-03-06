@@ -2217,46 +2217,48 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
       });
 
       it.skip('Generates body with loop', async () => {
-        const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
-        const targetNode = extendedTargetSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
+        const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
+        const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const mapDefinition: MapDefinitionEntry = {};
         const connections: ConnectionDictionary = {};
 
-        // Just confirm the mock hasn't changed
-        expect(sourceNode).toBeDefined();
-        expect(targetNode).toBeDefined();
+        const sourceLoopNode = rootSourceNode.children[16].children[0];
+        const sourceLoopChildNode = sourceLoopNode.children[0];
 
-        const sourceChildNode = sourceNode.children[0];
-        const targetChildNode = targetNode.children[0];
+        const targetLoopNode = rootTargetNode.children[13].children[0];
+        const targetLoopChildNode = targetLoopNode.children[0];
+
+        const sourceNode1 = rootSourceNode.children[0].children[0];
+        const targetNode1 = rootTargetNode.children[0];
 
         setConnectionInputValue(connections, {
-          targetNode: targetChildNode.children[1],
-          targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[1].key, SchemaType.Target),
+          targetNode: targetNode1,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
           value: {
-            reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].key, SchemaType.Source),
-            node: sourceChildNode.children[0],
+            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
+            node: sourceNode1,
           },
         });
 
         //Add parents
         setConnectionInputValue(connections, {
-          targetNode: targetChildNode,
-          targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
+          targetNode: targetLoopNode,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetLoopNode.key, SchemaType.Target),
           findInputSlot: true,
           value: {
-            reactFlowKey: addReactFlowPrefix(sourceChildNode.key, SchemaType.Source),
-            node: sourceChildNode,
+            reactFlowKey: addReactFlowPrefix(sourceLoopNode.key, SchemaType.Source),
+            node: sourceLoopNode,
           },
         });
 
         setConnectionInputValue(connections, {
-          targetNode: targetChildNode.children[0],
-          targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].key, SchemaType.Target),
+          targetNode: targetLoopChildNode,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetLoopChildNode.key, SchemaType.Target),
           findInputSlot: true,
           value: {
-            reactFlowKey: addReactFlowPrefix(sourceChildNode.children[1].key, SchemaType.Source),
-            node: sourceChildNode.children[1],
+            reactFlowKey: addReactFlowPrefix(sourceLoopChildNode.key, SchemaType.Source),
+            node: sourceLoopChildNode,
           },
         });
 
@@ -2289,75 +2291,82 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(employeeObjectEntries[1][1]).toEqual('Name');
       });
 
-      it.skip('Generates body with child objects loop', async () => {
-        const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find(
-          (child) => child.name === 'LoopingWithIndex'
-        ) as SchemaNodeExtended;
-        const targetNode = extendedTargetSchema.schemaTreeRoot.children.find(
-          (child) => child.name === 'LoopingWithIndex'
-        ) as SchemaNodeExtended;
+      it('Generates body with child objects loop', async () => {
+        const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
+        const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const mapDefinition: MapDefinitionEntry = {};
         const connections: ConnectionDictionary = {};
 
-        // Just confirm the mock hasn't changed
-        expect(sourceNode).toBeDefined();
-        expect(targetNode).toBeDefined();
+        const sourceLoopNode = rootSourceNode.children[16].children[0];
+        const sourceLoopChildObjectNode = sourceLoopNode.children[0];
+        const sourceLoopChildObjectPropNode = sourceLoopChildObjectNode.children[0].children[1];
 
-        const sourceChildNode = sourceNode.children[0];
-        const targetChildNode = targetNode.children[0].children[2];
+        const targetLoopNode = rootTargetNode.children[13].children[0];
+        const targetLoopChildObjectNode = targetLoopNode.children[0];
+        const targetLoopChildObjectPropNode = targetLoopChildObjectNode.children[0];
+
+        // Add unrelated node
+        const sourceNode1 = rootSourceNode.children[0].children[0];
+        const targetNode1 = rootTargetNode.children[0];
 
         setConnectionInputValue(connections, {
-          targetNode: targetChildNode.children[1],
-          targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[1].key, SchemaType.Target),
+          targetNode: targetNode1,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
           value: {
-            reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].key, SchemaType.Source),
-            node: sourceChildNode.children[0],
+            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
+            node: sourceNode1,
           },
         });
 
         //Add parents
         setConnectionInputValue(connections, {
-          targetNode: targetChildNode,
-          targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
+          targetNode: targetLoopNode,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetLoopNode.key, SchemaType.Target),
           findInputSlot: true,
           value: {
-            reactFlowKey: addReactFlowPrefix(sourceChildNode.key, SchemaType.Source),
-            node: sourceChildNode,
+            reactFlowKey: addReactFlowPrefix(sourceLoopNode.key, SchemaType.Source),
+            node: sourceLoopNode,
+          },
+        });
+
+        setConnectionInputValue(connections, {
+          targetNode: targetLoopChildObjectNode,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetLoopChildObjectNode.key, SchemaType.Target),
+          findInputSlot: true,
+          value: {
+            reactFlowKey: addReactFlowPrefix(sourceLoopChildObjectNode.key, SchemaType.Source),
+            node: sourceLoopChildObjectNode,
+          },
+        });
+
+        setConnectionInputValue(connections, {
+          targetNode: targetLoopChildObjectPropNode,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetLoopChildObjectPropNode.key, SchemaType.Target),
+          findInputSlot: true,
+          value: {
+            reactFlowKey: addReactFlowPrefix(sourceLoopChildObjectPropNode.key, SchemaType.Source),
+            node: sourceLoopChildObjectPropNode,
           },
         });
 
         generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
-        const rootChildren = Object.entries(mapDefinition['ns0:Root']);
-        expect(rootChildren.length).toEqual(1);
-        expect(rootChildren[0][0]).toEqual('LoopingWithIndex');
-        expect(rootChildren[0][1]).not.toBe('string');
+        const rootObject = mapDefinition['root'] as MapDefinitionEntry;
+        const rootKeys = Object.keys(rootObject);
+        expect(rootKeys.length).toEqual(2);
 
-        const loopingObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['LoopingWithIndex'] as MapDefinitionEntry;
-        const loopingEntries = Object.entries(loopingObject);
-        expect(loopingEntries.length).toEqual(1);
-        expect(loopingEntries[0][0]).toEqual('WeatherSummary');
-        expect(loopingEntries[0][1]).not.toBe('string');
+        expect(rootObject[targetNode1.name]).toEqual(sourceNode1.key);
 
-        const weatherSummaryObject = loopingObject['WeatherSummary'] as MapDefinitionEntry;
-        const weatherSummaryEntries = Object.entries(weatherSummaryObject);
-        expect(weatherSummaryEntries.length).toEqual(1);
-        expect(weatherSummaryEntries[0][0]).toEqual('$for(/ns0:Root/LoopingWithIndex/WeatherReport)');
-        expect(weatherSummaryEntries[0][1]).not.toBe('string');
+        const forLoopObject = rootObject['ForLoop'] as MapDefinitionEntry;
+        const actualForLoopObject = forLoopObject['$for(/root/generalData/address)'] as MapDefinitionEntry;
+        expect(actualForLoopObject.length).toEqual(1);
 
-        const dayForObject = weatherSummaryObject['$for(/ns0:Root/LoopingWithIndex/WeatherReport)'] as MapDefinitionEntry;
-        const dayForObjectLoopEntries = Object.entries(dayForObject);
-        expect(dayForObjectLoopEntries.length).toEqual(1);
-        expect(dayForObjectLoopEntries[0][0]).toEqual('Day');
-        expect(dayForObjectLoopEntries[0][1]).not.toBe('string');
-
-        const dayObject = dayForObject['Day'] as MapDefinitionEntry;
-        const dayEntries = Object.entries(dayObject);
-        expect(dayEntries.length).toEqual(1);
-        expect(dayEntries[0][0]).toEqual('Pressure');
-        expect(dayEntries[0][1]).toEqual('./@Pressure');
+        const arrayElement = actualForLoopObject[0] as MapDefinitionEntry;
+        const prop1Object = arrayElement[targetLoopChildObjectNode.name] as MapDefinitionEntry;
+        const telNumberObject = prop1Object[targetLoopChildObjectPropNode.name] as MapDefinitionEntry;
+        expect(telNumberObject).toEqual(sourceLoopChildObjectPropNode.fullName);
       });
 
       it.skip('Generates body with many to many nested loops', async () => {
