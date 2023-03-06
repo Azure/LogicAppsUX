@@ -28,7 +28,7 @@ export const RecommendationPanel: React.FC<PropsWithChildren<RecommendationPanel
       onDismiss={props.toggleCollapse}
       hasCloseButton={false}
       overlayProps={{ isDarkThemed: isInverted }}
-      layerProps={{ ...props.layerProps }}
+      layerProps={props.layerProps}
     >
       <div className="msla-app-action-header">
         <Text variant="xLarge">{headingText}</Text>

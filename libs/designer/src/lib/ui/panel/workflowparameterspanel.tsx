@@ -29,7 +29,7 @@ export const WorkflowParametersPanel = (props: CommonPanelProps) => {
       onDismiss={props.toggleCollapse}
       hasCloseButton={false}
       overlayProps={{ isDarkThemed: isInverted }}
-      layerProps={{ ...props.layerProps }}
+      layerProps={props.layerProps}
     >
       <WorkflowParameters
         parameters={Object.entries(workflowParameters).map(([key, value]) => ({ id: key, ...value }))}
