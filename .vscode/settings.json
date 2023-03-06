@@ -1,14 +1,5 @@
 {
   "typescript.tsdk": "node_modules\\typescript\\lib",
   "cSpell.words": ["fluentui", "reactflow"],
-  "eslint.validate": ["json"],
-  "workbench.colorCustomizations": {
-    "titleBar.activeBackground": "#2255dd",
-    "titleBar.inactiveBackground": "#112299",
-    "titleBar.activeForeground": "#FFFFFF",
-    "titleBar.inactiveForeground": "#FFFFFF",
-    "activityBar.activeBackground": "#112299",
-    "activityBar.activeBorder": "#112299",
-    "activityBar.foreground": "#ffffff"
-  }
+  "eslint.validate": ["json"]
 }
