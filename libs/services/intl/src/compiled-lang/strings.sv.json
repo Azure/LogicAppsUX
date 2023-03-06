@@ -273,6 +273,12 @@
       "value": "Returnerar en binär representation av en URI-kodad sträng"
     }
   ],
+  "0SSwxD": [
+    {
+      "type": 0,
+      "value": "Close panel"
+    }
+  ],
   "0Vzp0l": [
     {
       "type": 0,
@@ -1721,6 +1727,12 @@
       "value": "Example: Monday, Friday"
     }
   ],
+  "BUutcC": [
+    {
+      "type": 0,
+      "value": "Expant list of sibling elements"
+    }
+  ],
   "BVOUxP": [
     {
       "type": 0,
@@ -2819,6 +2831,12 @@
       "value": "Obligatoriskt. De uttryck som kan ha värdet sant."
     }
   ],
+  "LvLksz": [
+    {
+      "type": 0,
+      "value": "Loading outputs"
+    }
+  ],
   "LvpxiA": [
     {
       "type": 0,
@@ -3657,6 +3675,12 @@
     {
       "type": 0,
       "value": "Returnerar en sträng med varje objekt i en matris som har kopplats med en avgränsare"
+    }
+  ],
+  "TLHUMf": [
+    {
+      "type": 0,
+      "value": "Error loading inputs"
     }
   ],
   "TNEttQ": [
@@ -6185,6 +6209,12 @@
       "value": "Krävs. Talet att dela nämnaren med. Efter divisionen tas resten."
     }
   ],
+  "pcGqoB": [
+    {
+      "type": 0,
+      "value": "Error loading outputs"
+    }
+  ],
   "pcuZKB": [
     {
       "type": 0,
@@ -6961,6 +6991,12 @@
       "value": "Ange ett anpassat värde"
     }
   ],
+  "vvSHR8": [
+    {
+      "type": 0,
+      "value": "Navigate to element and view children"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -7199,6 +7235,12 @@
     {
       "type": 0,
       "value": "Parametrar delas mellan arbetsflöden i en Logic-app."
+    }
+  ],
+  "xwD1VZ": [
+    {
+      "type": 0,
+      "value": "Loading inputs"
     }
   ],
   "xwEX2/": [

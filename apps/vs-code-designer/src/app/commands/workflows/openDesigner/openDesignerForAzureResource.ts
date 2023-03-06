@@ -27,7 +27,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
     const panelName = `${vscode.workspace.name}-${workflowName}`;
     const panelGroupKey = ext.webViewKey.designerAzure;
 
-    super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey, true, false);
+    super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey, true, false, false);
 
     this.node = node;
     this.workflow = node.workflowFileContent;
@@ -84,6 +84,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
             apiHubServiceDetails: this.apiHubServiceDetails,
             readOnly: this.readOnly,
             isLocal: this.isLocal,
+            isMonitoringView: this.isMonitoringView,
             workflowDetails: this.workflowDetails,
           },
         });
@@ -119,12 +120,5 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
       artifacts: await this.node.getArtifacts(),
       standardApp: getStandardAppData(this.workflowName, this.workflow, parameters),
     };
-  }
-
-  private normalizeLocation(location: string): string {
-    if (!location) {
-      return '';
-    }
-    return location.toLowerCase().replace(/ /g, '');
   }
 }

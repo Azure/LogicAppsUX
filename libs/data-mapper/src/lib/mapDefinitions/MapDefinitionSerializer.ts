@@ -5,7 +5,7 @@ import type { Connection, ConnectionDictionary, InputConnection } from '../model
 import { directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
-import { NormalizedDataType, SchemaNodeProperty } from '../models/Schema';
+import { SchemaNodeProperty } from '../models/Schema';
 import { findLast } from '../utils/Array.Utils';
 import { collectTargetNodesForConnectionChain, flattenInputs, isConnectionUnit, isCustomValue } from '../utils/Connection.Utils';
 import {
@@ -18,12 +18,13 @@ import {
 import { formatDirectAccess, getIndexValueForCurrentConnection, isFunctionData } from '../utils/Function.Utils';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
 import { addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
-import { isSchemaNodeExtended } from '../utils/Schema.Utils';
+import { isObjectType, isSchemaNodeExtended } from '../utils/Schema.Utils';
 import yaml from 'js-yaml';
 
 interface OutputPathItem {
   key: string;
   value?: string;
+  arrayIndex?: number;
 }
 
 export const convertToMapDefinition = (
@@ -191,7 +192,7 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
           // Standard property to value
           newPath.push({
             key: pathItem.fullName.startsWith('@') ? `$${pathItem.fullName}` : pathItem.fullName,
-            value: value && targetNode.normalizedDataType !== NormalizedDataType.ComplexType ? value : undefined,
+            value: value && !isObjectType(targetNode.normalizedDataType) ? value : undefined,
           });
         }
       }
@@ -328,20 +329,48 @@ const addLoopingToNewPathItems = (
     }
   });
 
+  const selfNode = rootTargetConnection.self.node;
+
   // Object within the loop
-  newPath.push({ key: pathItem.fullName.startsWith('@') ? `$${pathItem.fullName}` : pathItem.fullName });
+  newPath.push({
+    key: pathItem.fullName.startsWith('@') ? `$${pathItem.fullName}` : pathItem.fullName,
+    arrayIndex: isSchemaNodeExtended(selfNode) ? selfNode.arrayItemIndex : undefined,
+  });
 };
 
 const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathItem[]) => {
-  path.forEach((pathItem) => {
-    if (!mapDefinition[pathItem.key]) {
-      mapDefinition[pathItem.key] = {};
+  path.every((pathItem, pathIndex) => {
+    if (pathItem.arrayIndex !== undefined) {
+      // When dealing with the map definition we need to access the previous path item, instead of the current
+      const curPathItem = path[pathIndex - 1];
+      const curItem = mapDefinition[curPathItem.key];
+      let newArray = curItem && Array.isArray(curItem) ? curItem : Array(pathItem.arrayIndex + 1);
+      newArray = newArray.fill(undefined, newArray.length, pathItem.arrayIndex + 1);
+
+      const arrayItem: MapDefinitionEntry = {};
+      applyValueAtPath(arrayItem, path.slice(pathIndex + 1));
+
+      newArray[pathItem.arrayIndex] = arrayItem;
+      mapDefinition[curPathItem.key] = newArray;
+
+      // Return false to break loop
+      return false;
+    } else {
+      if (!mapDefinition[pathItem.key]) {
+        mapDefinition[pathItem.key] = {};
+      }
+
+      if (pathItem.value) {
+        mapDefinition[pathItem.key] = pathItem.value;
+      }
+
+      // Look ahead to see if we need to stay in our current location
+      const nextPathItem = path[pathIndex + 1];
+      if (!nextPathItem || nextPathItem.arrayIndex === undefined) {
+        mapDefinition = mapDefinition[pathItem.key] as MapDefinitionEntry;
+      }
     }
 
-    if (pathItem.value) {
-      mapDefinition[pathItem.key] = pathItem.value;
-    }
-
-    mapDefinition = mapDefinition[pathItem.key] as MapDefinitionEntry;
+    return true;
   });
 };

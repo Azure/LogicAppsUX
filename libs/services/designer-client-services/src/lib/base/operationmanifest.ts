@@ -152,6 +152,7 @@ const supportedManifestTypes = [
   rosettanetdecode,
   rosettanetencode,
   rosettanetwaitforresponse,
+  sendtobatch,
   select,
   setvariable,
   slidingwindow,

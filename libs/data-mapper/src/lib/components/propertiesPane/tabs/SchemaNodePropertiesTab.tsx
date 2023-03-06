@@ -137,8 +137,17 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
       {isTargetSchemaNode && (
         <div>
           <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
-            <Label style={{ gridColumn: gridColumnSpan1 }}>{inputLoc}</Label>
-            <InputDropdown currentNode={currentNode} inputValue={inputValue} inputStyles={{ gridColumn: gridColumnSpan2 }} inputIndex={0} />
+            <Label id="label-for-target-node-input-dropdown" htmlFor="dropdown" style={{ gridColumn: gridColumnSpan1 }}>
+              {inputLoc}
+            </Label>
+            <InputDropdown
+              id="target-node-input-dropdown"
+              labelId="label-for-target-node-input-dropdown"
+              currentNode={currentNode}
+              inputValue={inputValue}
+              inputStyles={{ gridColumn: gridColumnSpan2 }}
+              inputIndex={0}
+            />
           </div>
 
           {false && ( // Hiding advanced options until implemented

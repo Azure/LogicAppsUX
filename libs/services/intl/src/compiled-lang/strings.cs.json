@@ -269,6 +269,12 @@
       "value": "Vrátí binární reprezentaci řetězce zakódovaného jako identifikátor URI."
     }
   ],
+  "0SSwxD": [
+    {
+      "type": 0,
+      "value": "Close panel"
+    }
+  ],
   "0Vzp0l": [
     {
       "type": 0,
@@ -1769,6 +1775,12 @@
       "value": "Example: Monday, Friday"
     }
   ],
+  "BUutcC": [
+    {
+      "type": 0,
+      "value": "Expant list of sibling elements"
+    }
+  ],
   "BVOUxP": [
     {
       "type": 0,
@@ -2911,6 +2923,12 @@
       "value": "Požadované. Výrazy, které mohou být pravdivé."
     }
   ],
+  "LvLksz": [
+    {
+      "type": 0,
+      "value": "Loading outputs"
+    }
+  ],
   "LvpxiA": [
     {
       "type": 0,
@@ -3775,6 +3793,12 @@
     {
       "type": 0,
       "value": "Vrátí řetězec s jednotlivými položkami pole spojenými oddělovači."
+    }
+  ],
+  "TLHUMf": [
+    {
+      "type": 0,
+      "value": "Error loading inputs"
     }
   ],
   "TNEttQ": [
@@ -6333,6 +6357,12 @@
       "value": "Povinný parametr. Číslo, kterým se má dělit dělenec. Po dělení se zbytek odebere."
     }
   ],
+  "pcGqoB": [
+    {
+      "type": 0,
+      "value": "Error loading outputs"
+    }
+  ],
   "pcuZKB": [
     {
       "type": 0,
@@ -7127,6 +7157,12 @@
       "value": "Zadat vlastní hodnotu"
     }
   ],
+  "vvSHR8": [
+    {
+      "type": 0,
+      "value": "Navigate to element and view children"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -7365,6 +7401,12 @@
     {
       "type": 0,
       "value": "Parametry se sdílejí mezi pracovními postupy v aplikaci logiky."
+    }
+  ],
+  "xwD1VZ": [
+    {
+      "type": 0,
+      "value": "Loading inputs"
     }
   ],
   "xwEX2/": [

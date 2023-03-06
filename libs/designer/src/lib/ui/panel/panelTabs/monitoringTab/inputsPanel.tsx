@@ -6,9 +6,12 @@ export interface InputsPanelProps {
   runMetaData: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
   brandColor: string;
   nodeId: string;
+  values: Record<string, any>;
+  isLoading: boolean;
+  isError: boolean;
 }
 
-export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColor, nodeId }) => {
+export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColor, nodeId, values, isLoading, isError }) => {
   const intl = useIntl();
 
   const intlText = {
@@ -23,6 +26,14 @@ export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColo
     showInputs: intl.formatMessage({
       defaultMessage: 'Show raw inputs',
       description: 'Show inputs text',
+    }),
+    inputsLoading: intl.formatMessage({
+      defaultMessage: 'Loading inputs',
+      description: 'Loading inputs text',
+    }),
+    inputsError: intl.formatMessage({
+      defaultMessage: 'Error loading inputs',
+      description: 'Error loading inputs text',
     }),
   };
 
@@ -40,18 +51,9 @@ export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColo
           headerText={intlText.inputs}
           linkText={intlText.showInputs}
           showLink={true}
-          values={{
-            method: {
-              displayName: 'Method',
-              value: 'POST',
-            },
-            uri: {
-              displayName: 'URL',
-              value: 'https://httpbin.org/post/',
-            },
-          }}
-          labelledBy={''}
-          noValuesText={intlText.noInputs}
+          values={values}
+          labelledBy={`inputs-${nodeId}`}
+          noValuesText={isError ? intlText.inputsError : isLoading ? intlText.inputsLoading : intlText.noInputs}
           showMore={false}
           onLinkClick={onSeeRawInputsClick}
         />

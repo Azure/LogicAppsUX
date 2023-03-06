@@ -46,3 +46,5 @@ export const ValuesPanel: React.FC<ValuesPanelProps> = ({
     </section>
   );
 };
+
+export { BoundParameters };
