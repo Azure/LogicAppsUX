@@ -70,6 +70,7 @@ export function TokenPicker({
   const [isDraggingExpressionEditor, setIsDraggingExpressionEditor] = useState(false);
   const [expressionEditorDragDistance, setExpressionEditorDragDistance] = useState(0);
   const [expressionEditorCurrentHeight, setExpressionEditorCurrentHeight] = useState(100);
+  const [expressionEditorError, setExpressionEditorError] = useState<string>('');
   const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
@@ -188,7 +189,9 @@ export function TokenPicker({
                   setIsDragging={setIsDraggingExpressionEditor}
                   currentHeight={expressionEditorCurrentHeight}
                   setCurrentHeight={setExpressionEditorCurrentHeight}
+                  setExpressionEditorError={setExpressionEditorError}
                 />
+                <div className="msla-token-picker-expression-editor-error">{expressionEditorError}</div>
                 <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} hideExpressions={!!tokenClickedCallback} />
               </>
             ) : null}
@@ -217,7 +220,11 @@ export function TokenPicker({
               expressionEditorCurrentHeight={expressionEditorCurrentHeight}
             />
             {initialMode === TokenPickerMode.EXPRESSION ? (
-              <TokenPickerFooter expression={expression} expressionToBeUpdated={expressionToBeUpdated} />
+              <TokenPickerFooter
+                expression={expression}
+                expressionToBeUpdated={expressionToBeUpdated}
+                setExpressionEditorError={setExpressionEditorError}
+              />
             ) : null}
           </div>
         </div>

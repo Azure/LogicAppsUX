@@ -19,6 +19,7 @@ export interface ExpressionEditorProps {
   setCurrentHeight: (height: number) => void;
   onBlur?: EventHandler<ExpressionEditorEvent>;
   setIsDragging: (isDragging: boolean) => void;
+  setExpressionEditorError: (error: string) => void;
 }
 
 export function ExpressionEditor({
@@ -30,6 +31,7 @@ export function ExpressionEditor({
   currentHeight,
   setCurrentHeight,
   setIsDragging,
+  setExpressionEditorError,
 }: ExpressionEditorProps): JSX.Element {
   const [mouseDownLocation, setMouseDownLocation] = useState(0);
   useEffect(() => {
@@ -53,6 +55,7 @@ export function ExpressionEditor({
   };
 
   const handleChangeEvent = (e: editor.IModelContentChangedEvent): void => {
+    setExpressionEditorError('');
     const changedText = e.changes.length ? e.changes[0].text : '';
     if (changedText === '\r\n' && editorRef?.current) {
       const oldPosition = editorRef.current.getPosition();

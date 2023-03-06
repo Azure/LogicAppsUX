@@ -19,9 +19,10 @@ const FxIcon =
 interface TokenPickerFooterProps {
   expression: ExpressionEditorEvent;
   expressionToBeUpdated: NodeKey | null;
+  setExpressionEditorError: (error: string) => void;
 }
 
-export function TokenPickerFooter({ expression, expressionToBeUpdated }: TokenPickerFooterProps) {
+export function TokenPickerFooter({ expression, expressionToBeUpdated, setExpressionEditorError }: TokenPickerFooterProps) {
   const [editor] = useLexicalComposerContext();
   const intl = useIntl();
 
@@ -43,8 +44,7 @@ export function TokenPickerFooter({ expression, expressionToBeUpdated }: TokenPi
     try {
       currExpression = ExpressionParser.parseExpression(expression.value);
     } catch (ex) {
-      // TODO 15238735: handle invalid tokens in a better way
-      alert(invalidExpression);
+      setExpressionEditorError(invalidExpression);
       return;
     }
     const token: Token = {
