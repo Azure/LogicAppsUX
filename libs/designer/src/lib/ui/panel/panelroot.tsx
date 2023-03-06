@@ -231,10 +231,21 @@ export const PanelRoot = (): JSX.Element => {
     return opQuery.isLoading;
   }, [nodeMetaData?.subgraphType, opQuery.isLoading]);
 
+  const layerProps = {
+    hostId: 'msla-designer-canvas',
+    styles: { root: { zIndex: 999998 } },
+  };
+
   return isWorkflowParameters ? (
-    <WorkflowParametersPanel isCollapsed={collapsed} toggleCollapse={dismissPanel} width={width} />
+    <WorkflowParametersPanel isCollapsed={collapsed} toggleCollapse={dismissPanel} width={width} layerProps={layerProps} />
   ) : isDiscovery ? (
-    <RecommendationPanelContext isCollapsed={collapsed} toggleCollapse={dismissPanel} width={width} key={selectedNode} />
+    <RecommendationPanelContext
+      isCollapsed={collapsed}
+      toggleCollapse={dismissPanel}
+      width={width}
+      key={selectedNode}
+      layerProps={layerProps}
+    />
   ) : (
     <PanelContainer
       cardIcon={iconUri}
@@ -262,7 +273,7 @@ export const PanelRoot = (): JSX.Element => {
       }}
       title={selectedNodeDisplayName}
       onTitleChange={onTitleChange}
-      layerProps={{ styles: { root: { zIndex: 999998 } } }}
+      layerProps={layerProps}
     />
   );
 };

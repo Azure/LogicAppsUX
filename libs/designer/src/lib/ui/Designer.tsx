@@ -155,10 +155,10 @@ export const Designer = () => {
     ];
   }, [flowSize, windowDimensions, zoom]);
 
-  useEffect(() => setLayerHostSelector('.msla-designer-canvas'), []);
+  useEffect(() => setLayerHostSelector('#msla-designer-canvas'), []);
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="msla-designer-canvas msla-panel-mode">
+      <div id="msla-designer-canvas" className="msla-designer-canvas msla-panel-mode">
         <ReactFlowProvider>
           <ReactFlow
             nodeTypes={nodeTypes}
