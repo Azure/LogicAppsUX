@@ -3,6 +3,7 @@ import type { TokenGroup } from '../../../core/utils/tokens';
 import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import type { OutputToken, PanelTab, TokenPickerMode, ValueSegment } from '@microsoft/designer-ui';
 import {
+  AuthenticationType,
   Combobox,
   RowDropdownOptions,
   GroupType,
@@ -20,8 +21,8 @@ import {
   // DictionaryEditor,
   testTokenSegment, // SchemaEditor, // Combobox,
   // ArrayEditor,
-  Scratch, // StringEditor, // AuthenticationEditor,
-  // DropdownEditor,
+  Scratch, // StringEditor,
+  AuthenticationEditor, // DropdownEditor,
   outputToken,
   outputToken2, // RowDropdownOptions,
 } from '@microsoft/designer-ui';
@@ -155,7 +156,22 @@ getTokenPicker={GetTokenPicker}
             { displayName: 'DELETE', value: 'DELETE', key: 'DELETE', disabled: false },
           ]}
         /> */}
-        {/* <AuthenticationEditor initialValue={[]} getTokenPicker={GetTokenPicker}} AuthenticationEditorOptions={{}} authProps={{}} /> */}
+        <AuthenticationEditor
+          initialValue={[]}
+          getTokenPicker={GetTokenPicker}
+          options={{
+            supportedAuthTypes: [
+              AuthenticationType.BASIC,
+              AuthenticationType.NONE,
+              AuthenticationType.CERTIFICATE,
+              AuthenticationType.MSI,
+              AuthenticationType.OAUTH,
+              AuthenticationType.RAW,
+            ],
+          }}
+          type={AuthenticationType.BASIC}
+          authenticationValue={{}}
+        />
         <ArrayEditor
           type={ArrayType.SIMPLE}
           labelProps={{ text: 'Input Array', isRequiredField: true }}

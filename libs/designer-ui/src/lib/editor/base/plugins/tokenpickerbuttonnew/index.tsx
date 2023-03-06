@@ -62,7 +62,7 @@ export const TokenPickerButtonNew = ({ showOnLeft, openTokenPicker }: TokenPicke
       if (boxElem && rootElement && anchorElement) {
         const { right, left } = rootElement.getBoundingClientRect();
         const { top } = anchorElement.getBoundingClientRect();
-        if (anchorElement?.childNodes[0].nodeName === 'BR') {
+        if (anchorElement?.childNodes[0]?.nodeName === 'BR') {
           boxElem.style.top = `${top - 15}px`;
         } else {
           boxElem.style.top = `${top - 20}px`;

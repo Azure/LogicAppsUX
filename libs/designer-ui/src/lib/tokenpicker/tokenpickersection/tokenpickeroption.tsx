@@ -140,15 +140,15 @@ export const TokenPickerOptions = ({
   };
 
   const getSectionIcon = (): string | undefined => {
-    return section.tokens[0].icon;
+    return section?.tokens[0]?.icon;
   };
 
   const getSectionSecurity = (): boolean => {
-    return section.tokens[0].outputInfo.isSecure ?? false;
+    return section?.tokens[0]?.outputInfo.isSecure ?? false;
   };
 
   const getSectionBrandColor = (): string => {
-    return section.tokens[0].brandColor ?? '#e8eae7';
+    return section?.tokens[0]?.brandColor ?? '#e8eae7';
   };
 
   return (
