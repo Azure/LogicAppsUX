@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`recommendation panel matches snapshot 1`] = `
+<StyledPanelBase
+  hasCloseButton={false}
+  isLightDismiss={true}
+  isOpen={true}
+  onDismiss={[MockFunction]}
+  overlayProps={
+    Object {
+      "isDarkThemed": false,
+    }
+  }
+  type={3}
+>
+  <div
+    className="msla-app-action-header"
+  >
+    <Text
+      variant="xLarge"
+    >
+      Add an action
+    </Text>
+    <CustomizedIconButton
+      iconProps={
+        Object {
+          "iconName": "Cancel",
+        }
+      }
+      onClick={[MockFunction]}
+    />
+  </div>
+</StyledPanelBase>
+`;
