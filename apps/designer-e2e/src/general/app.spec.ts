@@ -12,7 +12,7 @@ test('Sanity Check', async ({ page }) => {
   await page.locator('div[role="button"]:has-text("🧰")').click();
   await page.locator('[data-testid="card-Increment variable"] div[role="button"]:has-text("Increment variable")').click();
   await page.locator('p:has-text("1")').click();
-  await page.locator('button:has-text("Body")').click();
+  await page.getByRole('textbox', { name: 'Editor Input' }).press('Escape');
   await page.locator('button[role="tab"]:has-text("About")').click();
   await page.locator('button[role="tab"]:has-text("Code View")').click();
   await page.locator('button[role="tab"]:has-text("Settings")').click();
