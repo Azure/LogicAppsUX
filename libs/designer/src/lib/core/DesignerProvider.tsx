@@ -8,7 +8,7 @@ import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLigh
 import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { IntlProvider } from '@microsoft/intl-logic-apps';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Provider as ReduxProvider, useDispatch } from 'react-redux';
 
 export interface DesignerProviderProps {
@@ -37,11 +37,7 @@ export const DesignerProvider = ({ locale = 'en', options, children }: DesignerP
   const { isDarkMode } = options;
   const azTheme = isDarkMode ? AzureThemeDark : AzureThemeLight;
   const webTheme = !isDarkMode ? webLightTheme : webDarkTheme;
-  useEffect(() => {
-    document.body.classList.add(!isDarkMode ? 'light' : 'dark');
-    document.body.classList.remove(!isDarkMode ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-color-scheme', !isDarkMode ? 'light' : 'dark');
-  }, [isDarkMode]);
+  const themeName = useMemo(() => (isDarkMode ? 'dark' : 'light'), [isDarkMode]);
 
   return (
     <ReduxProvider store={store}>
@@ -49,7 +45,7 @@ export const DesignerProvider = ({ locale = 'en', options, children }: DesignerP
         <ProviderWrappedContext.Provider value={options.services}>
           <ThemeProvider theme={azTheme}>
             <FluentProvider theme={webTheme}>
-              <div style={{ height: '100vh', overflow: 'hidden' }}>
+              <div data-color-scheme={themeName} className={`msla-theme-${themeName}`} style={{ height: '100vh', overflow: 'hidden' }}>
                 <ReactQueryProvider>
                   <IntlProvider
                     locale={locale}
