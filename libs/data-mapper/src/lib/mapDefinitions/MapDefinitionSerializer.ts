@@ -350,7 +350,7 @@ const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathIte
       const arrayItem: MapDefinitionEntry = {};
       applyValueAtPath(arrayItem, path.slice(pathIndex + 1));
 
-      newArray[pathItem.arrayIndex] = arrayItem;
+      newArray[pathItem.arrayIndex] = { ...newArray[pathItem.arrayIndex], ...arrayItem };
       mapDefinition[curPathItem.key] = newArray;
 
       // Return false to break loop
