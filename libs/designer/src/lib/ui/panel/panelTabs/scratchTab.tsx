@@ -3,6 +3,7 @@ import type { TokenGroup } from '../../../core/utils/tokens';
 import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import type { OutputToken, PanelTab, TokenPickerMode, ValueSegment } from '@microsoft/designer-ui';
 import {
+  Combobox,
   RowDropdownOptions,
   GroupType,
   ArrayEditor,
@@ -191,7 +192,7 @@ getTokenPicker={GetTokenPicker}
           getTokenPicker={GetTokenPicker}
         />
 
-        {/* <Combobox
+        <Combobox
           options={[
             { displayName: 'GET', value: 'GET', key: 'GET', disabled: false },
             { displayName: 'PUT', value: 'PUT', key: 'PUT', disabled: false },
@@ -203,7 +204,7 @@ getTokenPicker={GetTokenPicker}
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: 'PUT' }]}
           getTokenPicker={GetTokenPicker}
           // readonly={true}
-        /> */}
+        />
 
         {/* <SchemaEditor
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: '{\n"type": "object",\n"properties" : {}\n}' }]}

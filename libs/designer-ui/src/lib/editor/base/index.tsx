@@ -14,6 +14,7 @@ import OpenTokenPicker from './plugins/OpenTokenPicker';
 import { ReadOnly } from './plugins/ReadOnly';
 import SingleValueSegment from './plugins/SingleValueSegment';
 import { TreeView } from './plugins/TreeView';
+import type { TokenPickerButtonEditorProps } from './plugins/tokenpickerbuttonnew';
 import { TokenPickerButtonNew } from './plugins/tokenpickerbuttonnew';
 import EditorTheme from './themes/editorTheme';
 import { parseSegments } from './utils/parsesegments';
@@ -61,6 +62,7 @@ export interface BaseEditorProps {
   initialValue: ValueSegment[];
   children?: React.ReactNode;
   isTrigger?: boolean;
+  tokenPickerButtonEditorProps?: TokenPickerButtonEditorProps;
   onChange?: ChangeHandler;
   onBlur?: () => void;
   onFocus?: () => void;
@@ -91,6 +93,7 @@ export const BaseEditor = ({
   initialValue,
   children,
   isTrigger,
+  tokenPickerButtonEditorProps,
   onFocus,
   onBlur,
   getTokenPicker,
@@ -154,7 +157,7 @@ export const BaseEditor = ({
   };
 
   return (
-    <TooltipHost content={placeholder} calloutProps={calloutProps}>
+    <TooltipHost content={placeholder} calloutProps={calloutProps} styles={{ root: { width: '100%' } }}>
       <LexicalComposer initialConfig={initialConfig}>
         <div className={className ?? 'msla-editor-container'} id={editorId}>
           {toolBar ? <Toolbar /> : null}
@@ -182,7 +185,10 @@ export const BaseEditor = ({
         </div>
 
         {!isTrigger && tokens && isEditorFocused && !getInTokenPicker() ? (
-          createPortal(<TokenPickerButtonNew openTokenPicker={openTokenPicker} />, document.body)
+          createPortal(
+            <TokenPickerButtonNew openTokenPicker={openTokenPicker} showOnLeft={tokenPickerButtonEditorProps?.showOnLeft} />,
+            document.body
+          )
         ) : (
           <div />
         )}

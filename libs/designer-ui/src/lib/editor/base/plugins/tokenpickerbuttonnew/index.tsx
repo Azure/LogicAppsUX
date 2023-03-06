@@ -22,11 +22,15 @@ const expressionButtonStyles: CSSProperties = {
   left: '4px',
 };
 
-interface TokenPickerButtonProps {
+export interface TokenPickerButtonEditorProps {
+  showOnLeft?: boolean;
+}
+
+interface TokenPickerButtonProps extends TokenPickerButtonEditorProps {
   openTokenPicker: (mode: TokenPickerMode) => void;
 }
 
-export const TokenPickerButtonNew = ({ openTokenPicker }: TokenPickerButtonProps): JSX.Element => {
+export const TokenPickerButtonNew = ({ showOnLeft, openTokenPicker }: TokenPickerButtonProps): JSX.Element => {
   const intl = useIntl();
   const { isInverted } = useTheme();
   const [editor] = useLexicalComposerContext();
@@ -56,17 +60,21 @@ export const TokenPickerButtonNew = ({ openTokenPicker }: TokenPickerButtonProps
       const anchorElement = editor.getElementByKey(anchorKey);
 
       if (boxElem && rootElement && anchorElement) {
-        const { right } = rootElement.getBoundingClientRect();
+        const { right, left } = rootElement.getBoundingClientRect();
         const { top } = anchorElement.getBoundingClientRect();
         if (anchorElement?.childNodes[0].nodeName === 'BR') {
           boxElem.style.top = `${top - 15}px`;
         } else {
           boxElem.style.top = `${top - 20}px`;
         }
-        boxElem.style.left = `${right - 20}px`;
+        if (showOnLeft) {
+          boxElem.style.left = `${left - 40}px`;
+        } else {
+          boxElem.style.left = `${right - 20}px`;
+        }
       }
     }
-  }, [anchorKey, editor]);
+  }, [anchorKey, editor, showOnLeft]);
 
   useEffect(() => {
     window.addEventListener('resize', updatePosition);
