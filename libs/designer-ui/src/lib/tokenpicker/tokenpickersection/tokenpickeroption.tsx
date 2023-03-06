@@ -139,11 +139,29 @@ export const TokenPickerOptions = ({
     }
   };
 
+  const getSectionIcon = (): string | undefined => {
+    return section.tokens[0].icon;
+  };
+
+  const getSectionSecurity = (): boolean => {
+    return section.tokens[0].outputInfo.isSecure ?? false;
+  };
+
+  const getSectionBrandColor = (): string => {
+    return section.tokens[0].brandColor ?? '#e8eae7';
+  };
+
   return (
     <>
       {(searchQuery && filteredTokens.length > 0) || !searchQuery ? (
         <>
-          <div className="msla-token-picker-section-header">
+          <div className="msla-token-picker-section-header" style={{ backgroundColor: setOpacity(getSectionBrandColor(), 0.1) }}>
+            <img src={getSectionIcon()} alt="token icon" />
+            {getSectionSecurity() ? (
+              <div className="msla-token-picker-secure-token">
+                <Icon iconName="LockSolid" />
+              </div>
+            ) : null}
             <span> {section.label}</span>
             {searchQuery || !hasAdvanced(section.tokens) ? null : (
               <button className="msla-token-picker-section-header-button" onClick={handleMoreLess}>
@@ -160,12 +178,6 @@ export const TokenPickerOptions = ({
                     key={`token-picker-option-${j}`}
                     onClick={() => handleTokenClicked(token)}
                   >
-                    <img src={token.icon} alt="token icon" />
-                    {token.outputInfo.isSecure ? (
-                      <div className="msla-token-picker-secure-token">
-                        <Icon iconName="LockSolid" />
-                      </div>
-                    ) : null}
                     <div className="msla-token-picker-section-option-text">
                       <div className="msla-token-picker-option-inner">
                         <div className="msla-token-picker-option-title">{token.title}</div>
@@ -186,3 +198,8 @@ export const TokenPickerOptions = ({
 function hasAdvanced(tokens: OutputToken[]): boolean {
   return tokens.some((token) => token.isAdvanced);
 }
+
+const setOpacity = (hex: string, alpha: number) =>
+  `${hex}${Math.floor(alpha * 255)
+    .toString(16)
+    .padStart(2, '0')}`;

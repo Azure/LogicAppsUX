@@ -71,10 +71,17 @@
 }
 
 .msla-token-picker-section-header {
-  background-color: #e8eae7;
   display: flex;
   padding: 0 8px;
   align-items: center;
+  position: relative;
+  img {
+    box-sizing: content-box;
+    display: inline-block;
+    margin: 3px 10px 0 10px;
+    width: 26px;
+    height: 26px;
+  }
   span {
     color: #7a7574;
     display: block;
@@ -87,7 +94,7 @@
     text-overflow: ellipsis;
   }
   .msla-token-picker-section-header-button {
-    background-color: #e8eae7;
+    background-color: transparent;
     border: none;
     cursor: pointer;
     flex: 0 0 auto;
@@ -114,7 +121,7 @@
     display: inline-block;
     font-family: wf_segoe-ui_normal, 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
     font-size: 13px;
-    padding: 5px 0;
+    padding: 0px;
     position: relative;
     text-align: left;
     width: 100%;
@@ -123,13 +130,6 @@
     }
     &:hover {
       background-color: #f0f8ff;
-    }
-    img {
-      box-sizing: content-box;
-      display: inline-block;
-      margin: 5px 8px 0 0;
-      width: 24px;
-      height: 24px;
     }
     .msla-token-picker-section-option-text {
       display: inline-block;
@@ -141,6 +141,7 @@
         flex-direction: column;
         justify-content: center;
         height: 34px;
+        padding: 5px 10px;
         .msla-token-picker-option-title {
           font-family: wf_segoe-ui_normal, 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
           font-size: 12px;
@@ -221,11 +222,17 @@
 
 .msla-token-picker-secure-token {
   position: absolute;
-  left: 17px;
-  bottom: 5px;
+  left: 37px;
+  bottom: 0px;
 }
 
 body.dark {
+  .msla-token-picker-header {
+    border-bottom: 1px solid @ms-color-secondaryBackground;
+  }
+  .msla-token-picker-footer {
+    border-top: 1px solid @ms-color-secondaryBackground;
+  }
   .msla-token-picker {
     background: @ms-color-secondaryBackground;
   }
@@ -244,7 +251,7 @@ body.dark {
     }
   }
   .msla-token-picker-section-header-button {
-    background-color: @ms-color-primaryBackground;
+    background-color: transparent;
     span {
       color: rgba(255, 255, 255, 0.5);
     }

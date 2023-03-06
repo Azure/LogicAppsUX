@@ -69,6 +69,7 @@ export function TokenPicker({
   const [fullScreen, setFullScreen] = useState(false);
   const [isDraggingExpressionEditor, setIsDraggingExpressionEditor] = useState(false);
   const [expressionEditorDragDistance, setExpressionEditorDragDistance] = useState(0);
+  const [expressionEditorCurrentHeight, setExpressionEditorCurrentHeight] = useState(100);
   const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
@@ -123,14 +124,14 @@ export function TokenPicker({
     }
   };
 
-  // const isDynamicContentAvailable = (tokenGroup: TokenGroup[]): boolean => {
-  //   for (const tg of tokenGroup) {
-  //     if (tg.tokens.length > 0) {
-  //       return true;
-  //     }
-  //   }
-  //   return false;
-  // };
+  const isDynamicContentAvailable = (tokenGroup: TokenGroup[]): boolean => {
+    for (const tg of tokenGroup) {
+      if (tg.tokens.length > 0) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   const tokenPickerPlaceHolderText = intl.formatMessage({
     defaultMessage: 'Search',
@@ -185,6 +186,8 @@ export function TokenPicker({
                   isDragging={isDraggingExpressionEditor}
                   dragDistance={expressionEditorDragDistance}
                   setIsDragging={setIsDraggingExpressionEditor}
+                  currentHeight={expressionEditorCurrentHeight}
+                  setCurrentHeight={setExpressionEditorCurrentHeight}
                 />
                 <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} hideExpressions={!!tokenClickedCallback} />
               </>
@@ -210,6 +213,8 @@ export function TokenPicker({
               setExpression={setExpression}
               getValueSegmentFromToken={getValueSegmentFromToken}
               tokenClickedCallback={tokenClickedCallback}
+              noDynamicContent={!isDynamicContentAvailable(tokenGroup ?? [])}
+              expressionEditorCurrentHeight={expressionEditorCurrentHeight}
             />
             {initialMode === TokenPickerMode.EXPRESSION ? (
               <TokenPickerFooter expression={expression} expressionToBeUpdated={expressionToBeUpdated} />

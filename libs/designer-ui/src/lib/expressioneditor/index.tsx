@@ -15,6 +15,8 @@ export interface ExpressionEditorProps {
   editorRef?: MutableRefObject<editor.IStandaloneCodeEditor | null>;
   isDragging: boolean;
   dragDistance?: number;
+  currentHeight: number;
+  setCurrentHeight: (height: number) => void;
   onBlur?: EventHandler<ExpressionEditorEvent>;
   setIsDragging: (isDragging: boolean) => void;
 }
@@ -25,15 +27,16 @@ export function ExpressionEditor({
   onBlur,
   isDragging,
   dragDistance,
+  currentHeight,
+  setCurrentHeight,
   setIsDragging,
 }: ExpressionEditorProps): JSX.Element {
   const [mouseDownLocation, setMouseDownLocation] = useState(0);
-  const [currentHeight, setCurrentHeight] = useState(100);
   useEffect(() => {
     if (isDragging && dragDistance) {
       setCurrentHeight(Math.min(Math.max(100, 100 + dragDistance - mouseDownLocation), 200));
     }
-  }, [isDragging, dragDistance, mouseDownLocation, currentHeight]);
+  }, [isDragging, dragDistance, mouseDownLocation, currentHeight, setCurrentHeight]);
 
   const handleBlur = (): void => {
     if (onBlur && editorRef?.current) {

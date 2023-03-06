@@ -11,7 +11,6 @@ import type { Expression } from '@microsoft/parsers-logic-apps';
 import { ExpressionParser } from '@microsoft/parsers-logic-apps';
 import { guid } from '@microsoft/utils-logic-apps';
 import type { NodeKey } from 'lexical';
-import { CLEAR_EDITOR_COMMAND } from 'lexical';
 import { useIntl } from 'react-intl';
 
 const FxIcon =
@@ -72,7 +71,6 @@ export function TokenPickerFooter({ expression, expressionToBeUpdated }: TokenPi
         nodeKey: expressionToBeUpdated,
       });
     } else {
-      editor?.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
       editor?.dispatchCommand(INSERT_TOKEN_NODE, {
         brandColor: token.brandColor,
         description: token.description,
