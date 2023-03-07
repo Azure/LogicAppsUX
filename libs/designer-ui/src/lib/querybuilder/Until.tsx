@@ -2,7 +2,7 @@ import type { GroupItems, RowItemProps } from '.';
 import { GroupType } from '.';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
-import type { ChangeHandler, ChangeState, TokenPickerHandler } from '../editor/base';
+import type { ChangeHandler, ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { StringEditor } from '../editor/string';
 import { Row } from './Row';
 import type { IButtonStyles, IStyle } from '@fluentui/react';
@@ -16,7 +16,7 @@ import { useIntl } from 'react-intl';
 export interface UntilProps {
   readonly?: boolean;
   items: RowItemProps;
-  tokenPickerHandler: TokenPickerHandler;
+  getTokenPicker: GetTokenPickerHandler;
   onChange?: ChangeHandler;
 }
 
@@ -36,7 +36,7 @@ const buttonStyles: IButtonStyles = {
 
 const emptyValue = [{ id: guid(), type: ValueSegmentType.LITERAL, value: 'null' }];
 
-export const UntilEditor = ({ tokenPickerHandler, items, readonly, onChange }: UntilProps) => {
+export const UntilEditor = ({ getTokenPicker, items, readonly, onChange }: UntilProps) => {
   const intl = useIntl();
 
   const [getRootProp, setRootProp] = useFunctionalState<GroupItems>(items);
@@ -77,7 +77,7 @@ export const UntilEditor = ({ tokenPickerHandler, items, readonly, onChange }: U
         <StringEditor
           className={'msla-until-editor-container'}
           initialValue={[{ id: guid(), type: ValueSegmentType.LITERAL, value: currValue }]}
-          tokenPickerHandler={tokenPickerHandler}
+          getTokenPicker={getTokenPicker}
           BasePlugins={{ tokens: false }}
           editorBlur={handleUpdateRootProps}
         />
@@ -89,7 +89,7 @@ export const UntilEditor = ({ tokenPickerHandler, items, readonly, onChange }: U
           operand1={items.operand1}
           operand2={items.operand2}
           operator={items.operator}
-          tokenPickerHandler={tokenPickerHandler}
+          getTokenPicker={getTokenPicker}
           handleUpdateParent={handleUpdateParent}
           forceSingleCondition={true}
           groupedItems={[]}

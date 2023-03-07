@@ -42,7 +42,7 @@ export const StringEditor = ({
       }}
       readonly={baseEditorProps.readonly}
       isTrigger={baseEditorProps.isTrigger}
-      tokenPickerHandler={baseEditorProps.tokenPickerHandler}
+      getTokenPicker={baseEditorProps.getTokenPicker}
       onBlur={handleBlur}
       onFocus={baseEditorProps.onFocus}
     >

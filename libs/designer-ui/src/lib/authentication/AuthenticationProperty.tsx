@@ -1,5 +1,5 @@
 import type { ValueSegment } from '../editor';
-import type { ChangeHandler, TokenPickerHandler } from '../editor/base';
+import type { ChangeHandler, GetTokenPickerHandler } from '../editor/base';
 import { StringEditor } from '../editor/string';
 import type { AuthProperty } from './util';
 import { Label } from '@fluentui/react';
@@ -7,14 +7,14 @@ import { Label } from '@fluentui/react';
 interface AuthenticationPropertyProps {
   AuthProperty: AuthProperty;
   initialValue?: ValueSegment[];
-  tokenPickerHandler: TokenPickerHandler;
+  getTokenPicker: GetTokenPickerHandler;
   onBlur?: ChangeHandler;
 }
 
 export const AuthenticationProperty = ({
   initialValue = [],
   AuthProperty,
-  tokenPickerHandler,
+  getTokenPicker,
   onBlur,
 }: AuthenticationPropertyProps): JSX.Element => {
   return (
@@ -31,7 +31,7 @@ export const AuthenticationProperty = ({
           placeholder={AuthProperty.placeHolder}
           BasePlugins={{ tokens: true }}
           singleLine={true}
-          tokenPickerHandler={{ ...tokenPickerHandler, tokenPickerButtonProps: { buttonClassName: 'msla-editor-tokenpicker-button' } }}
+          getTokenPicker={getTokenPicker}
           onChange={onBlur}
         />
       </div>

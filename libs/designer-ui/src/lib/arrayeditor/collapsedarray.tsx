@@ -1,6 +1,6 @@
 import type { SimpleArrayItem, ComplexArrayItems } from '.';
 import type { ValueSegment } from '../editor';
-import type { TokenPickerHandler } from '../editor/base';
+import type { GetTokenPickerHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
 import { Label } from '../label';
 import type { LabelProps } from '../label';
@@ -19,7 +19,7 @@ export interface CollapsedArrayProps {
   setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItems[]) => void);
   setIsValid: (b: boolean) => void;
   onBlur?: () => void;
-  tokenPickerHandler: TokenPickerHandler;
+  getTokenPicker: GetTokenPickerHandler;
 }
 
 export const CollapsedArray = ({
@@ -29,7 +29,7 @@ export const CollapsedArray = ({
   readOnly,
   isTrigger,
   itemSchema,
-  tokenPickerHandler,
+  getTokenPicker,
   setItems,
   setIsValid,
   onBlur,
@@ -72,7 +72,7 @@ export const CollapsedArray = ({
           placeholder={editorPlaceHolder}
           initialValue={collapsedValue?.length > 0 ? collapsedValue : ([] as ValueSegment[])}
           onBlur={onBlur}
-          tokenPickerHandler={{ ...tokenPickerHandler, tokenPickerButtonProps: { buttonClassName: `msla-editor-tokenpicker-button` } }}
+          getTokenPicker={getTokenPicker}
         >
           <CollapsedArrayValidation
             defaultErrorMessage={defaultErrorMessage}

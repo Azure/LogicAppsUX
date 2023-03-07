@@ -3,7 +3,7 @@ import { GroupType } from '.';
 import { Checkbox } from '../checkbox';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
-import type { ChangeState, TokenPickerHandler } from '../editor/base';
+import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { notEqual } from '../editor/base/utils/helper';
 import { StringEditor } from '../editor/string';
 import type { MoveOption } from './Group';
@@ -38,7 +38,7 @@ type RowProps = {
   groupedItems: GroupedItems[];
   isTop: boolean;
   isBottom: boolean;
-  tokenPickerHandler: TokenPickerHandler;
+  getTokenPicker: GetTokenPickerHandler;
   readonly?: boolean;
   handleMove?: (childIndex: number, moveOption: MoveOption) => void;
   handleDeleteChild?: (indexToDelete: number | number[]) => void;
@@ -56,7 +56,7 @@ export const Row = ({
   showDisabledDelete,
   isGroupable,
   groupedItems,
-  tokenPickerHandler,
+  getTokenPicker,
   // isTop,
   // isBottom,
   // handleMove,
@@ -256,7 +256,7 @@ export const Row = ({
           initialValue={operand1}
           placeholder={rowValueInputPlaceholder}
           singleLine={true}
-          tokenPickerHandler={{ ...tokenPickerHandler, tokenPickerButtonProps: { customButton: true } }}
+          getTokenPicker={getTokenPicker}
           clearEditorOnTokenInsertion={clearEditorOnTokenInsertion}
           onChange={handleKeyChange}
           editorBlur={handleKeySave}
@@ -268,7 +268,7 @@ export const Row = ({
           initialValue={operand2}
           placeholder={rowValueInputPlaceholder}
           singleLine={true}
-          tokenPickerHandler={{ ...tokenPickerHandler, tokenPickerButtonProps: { customButton: true } }}
+          getTokenPicker={getTokenPicker}
           editorBlur={handleValueSave}
           clearEditorOnTokenInsertion={clearEditorOnTokenInsertion}
         />

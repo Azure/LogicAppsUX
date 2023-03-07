@@ -31,7 +31,7 @@ export const TokenPickerNoDynamicContent = () => {
       description: 'Text for dynamic content link',
     }),
     TOKEN_PICKER_EMPTY_DYNAMIC_CONTENT_ICON_ALT_TEXT: intl.formatMessage({
-      defaultMessage: 'Empty add dynamic content button',
+      defaultMessage: 'Empty dynamic content icon',
       description: 'Alt text for empty dynamic content icon',
     }),
   };

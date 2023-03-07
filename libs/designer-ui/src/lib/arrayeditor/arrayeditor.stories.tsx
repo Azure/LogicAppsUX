@@ -15,7 +15,7 @@ const Template: ComponentStory<typeof ArrayEditor> = (args: ArrayEditorProps) =>
 export const Standard = Template.bind({});
 Standard.args = {
   labelProps: { text: 'Input Array', isRequiredField: true },
-  initialItems: [
+  itemSchema: [
     {
       key: 'test',
       value: [

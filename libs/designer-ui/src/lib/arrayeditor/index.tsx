@@ -30,7 +30,7 @@ export interface SimpleArrayItem {
   value: ValueSegment[];
 }
 
-interface ArrayEditorProps extends BaseEditorProps {
+export interface ArrayEditorProps extends BaseEditorProps {
   canDeleteLastItem?: boolean;
   disableToggle?: boolean;
   labelProps: LabelProps;
@@ -45,7 +45,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   type,
   labelProps,
   itemSchema,
-  tokenPickerHandler,
+  getTokenPicker,
   onChange,
   ...baseEditorProps
 }): JSX.Element => {
@@ -107,7 +107,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           dimensionalSchema={dimensionalSchema}
           setItems={type === ArrayType.SIMPLE ? updateSimpleItems : updateComplexItems}
           setIsValid={setIsValid}
-          tokenPickerHandler={tokenPickerHandler}
+          getTokenPicker={getTokenPicker}
           onBlur={handleBlur}
           setCollapsedValue={setCollapsedValue}
         />
@@ -119,7 +119,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           isTrigger={baseEditorProps.isTrigger}
           canDeleteLastItem={canDeleteLastItem}
           setItems={updateSimpleItems}
-          tokenPickerHandler={tokenPickerHandler}
+          getTokenPicker={getTokenPicker}
         />
       ) : (
         <ExpandedComplexArray
@@ -128,7 +128,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           readOnly={baseEditorProps.readonly}
           canDeleteLastItem={canDeleteLastItem}
           setItems={updateComplexItems}
-          tokenPickerHandler={tokenPickerHandler}
+          getTokenPicker={getTokenPicker}
         />
       )}
       <div className="msla-array-commands">

@@ -26,6 +26,7 @@ export interface MonacoProps extends MonacoOptions {
   editorRef?: editor.IStandaloneCodeEditor;
   height?: string;
   width?: string;
+  monacoContainerStyle?: React.CSSProperties;
 
   onBlur?(): void;
   onBlurText?(): void;
@@ -58,11 +59,13 @@ export interface MonacoOptions {
   minimapEnabled?: boolean;
   scrollBeyondLastLine?: boolean;
   wordWrap?: 'off' | 'on' | 'wordWrapColumn' | 'bounded';
+  wordWrapColumn?: number;
   contextMenu?: boolean;
   scrollbar?: editor.IEditorScrollbarOptions;
   overviewRulerLanes?: number;
   overviewRulerBorder?: boolean;
   wrappingIndent?: 'none' | 'same' | 'indent' | 'deepIndent';
+  automaticLayout?: boolean;
 }
 
 export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps>(
@@ -233,7 +236,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     };
 
     return (
-      <div className="msla-monaco-container">
+      <div className="msla-monaco-container" style={options.monacoContainerStyle}>
         {canRender ? (
           <Editor
             keepCurrentModel={true}

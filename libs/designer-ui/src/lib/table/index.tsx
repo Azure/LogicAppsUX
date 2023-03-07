@@ -47,7 +47,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({
   readonly,
   placeholder,
   isTrigger,
-  tokenPickerHandler,
+  getTokenPicker,
   onChange,
 }): JSX.Element => {
   const intl = getIntl();
@@ -90,7 +90,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({
             initialValue={initialValue}
             initialItems={items}
             isTrigger={isTrigger}
-            tokenPickerHandler={tokenPickerHandler}
+            getTokenPicker={getTokenPicker}
             onChange={onItemsChange}
           />
         </div>
