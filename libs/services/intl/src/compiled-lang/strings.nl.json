@@ -87,6 +87,12 @@
       "value": "Select an api from apim instance"
     }
   ],
+  "/2+p0Z": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -645,12 +651,6 @@
     {
       "type": 0,
       "value": "Aan"
-    }
-  ],
-  "2wJZkB": [
-    {
-      "type": 0,
-      "value": "Knop 'Dynamische inhoud toevoegen' leegmaken"
     }
   ],
   "2xhbE1": [
@@ -1453,6 +1453,12 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9atGYe": [
+    {
+      "type": 0,
+      "value": "Add"
     }
   ],
   "9djnqI": [
@@ -2355,6 +2361,12 @@
       "value": "Sleutel"
     }
   ],
+  "Hbqlzk": [
+    {
+      "type": 0,
+      "value": "Insert Expression"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -2945,6 +2957,12 @@
       "value": "Volgende mislukt"
     }
   ],
+  "Mc6ITJ": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "MfAdfx": [
     {
       "type": 0,
@@ -3425,6 +3443,12 @@
     {
       "type": 0,
       "value": "Gegevenstype"
+    }
+  ],
+  "QiVbKW": [
+    {
+      "type": 0,
+      "value": "Exit Full Screen"
     }
   ],
   "QknZQ1": [
@@ -4459,6 +4483,12 @@
       "value": "Deze bewerking is al verwijderd."
     }
   ],
+  "Zg3IjD": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -4529,6 +4559,12 @@
     {
       "type": 0,
       "value": "Second"
+    }
+  ],
+  "ae7W0a": [
+    {
+      "type": 0,
+      "value": "Full Screen"
     }
   ],
   "ahsVI/": [
@@ -4991,6 +5027,12 @@
       "value": "Optioneel. De index van waar de subtekenreeks niet meer moet worden geëxtraheerd."
     }
   ],
+  "f81ClO": [
+    {
+      "type": 0,
+      "value": "Empty dynamic content icon"
+    }
+  ],
   "fBQBw/": [
     {
       "type": 0,
@@ -5035,6 +5077,12 @@
     {
       "type": 0,
       "value": "Logische functies"
+    }
+  ],
+  "fmm7Ik": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "froV/0": [
@@ -5137,6 +5185,12 @@
     {
       "type": 0,
       "value": "Conversiefuncties"
+    }
+  ],
+  "gRUmiA": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "gTXyUo": [
@@ -5917,12 +5971,6 @@
       "value": "Een beperking voor Logic Apps instellen om te voorkomen dat de uitgaande aanvraag headers met metagegevens van de werkstroom bevat."
     }
   ],
-  "mmF/SW": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
   "mvrlkP": [
     {
       "type": 0,
@@ -6497,12 +6545,6 @@
       "value": "Er wordt een weergave met URI-codering van een waarde geretourneerd"
     }
   ],
-  "rjyBPU": [
-    {
-      "type": 0,
-      "value": "Expressie"
-    }
-  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -6807,12 +6849,6 @@
     {
       "type": 0,
       "value": "Show me"
-    }
-  ],
-  "uXJdAh": [
-    {
-      "type": 0,
-      "value": "Dynamische inhoud zoeken"
     }
   ],
   "uZH8Qs": [

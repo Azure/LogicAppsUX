@@ -71,6 +71,12 @@
       "value": "Select an api from apim instance"
     }
   ],
+  "/2+p0Z": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -640,12 +646,6 @@
     {
       "type": 0,
       "value": "Ativado"
-    }
-  ],
-  "2wJZkB": [
-    {
-      "type": 0,
-      "value": "Botão Adicionar conteúdo dinâmico vazio"
     }
   ],
   "2xhbE1": [
@@ -1428,6 +1428,12 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9atGYe": [
+    {
+      "type": 0,
+      "value": "Add"
     }
   ],
   "9djnqI": [
@@ -2320,6 +2326,12 @@
       "value": "Chave"
     }
   ],
+  "Hbqlzk": [
+    {
+      "type": 0,
+      "value": "Insert Expression"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -2901,6 +2913,12 @@
       "value": "Próxima falha"
     }
   ],
+  "Mc6ITJ": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "MfAdfx": [
     {
       "type": 0,
@@ -3365,6 +3383,12 @@
     {
       "type": 0,
       "value": "Tipo de dados"
+    }
+  ],
+  "QiVbKW": [
+    {
+      "type": 0,
+      "value": "Exit Full Screen"
     }
   ],
   "QknZQ1": [
@@ -4402,6 +4426,12 @@
       "value": "Esta operação já foi excluída."
     }
   ],
+  "Zg3IjD": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -4472,6 +4502,12 @@
     {
       "type": 0,
       "value": "Second"
+    }
+  ],
+  "ae7W0a": [
+    {
+      "type": 0,
+      "value": "Full Screen"
     }
   ],
   "ahsVI/": [
@@ -4934,6 +4970,12 @@
       "value": "Opcional. O índice de onde interromper a extração da substring."
     }
   ],
+  "f81ClO": [
+    {
+      "type": 0,
+      "value": "Empty dynamic content icon"
+    }
+  ],
   "fBQBw/": [
     {
       "type": 0,
@@ -4982,6 +5024,12 @@
     {
       "type": 0,
       "value": "Funções lógicas"
+    }
+  ],
+  "fmm7Ik": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "froV/0": [
@@ -5084,6 +5132,12 @@
     {
       "type": 0,
       "value": "Funções de conversão"
+    }
+  ],
+  "gRUmiA": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "gTXyUo": [
@@ -5851,12 +5905,6 @@
       "value": "Limite os Aplicativos Lógicos para não incluir cabeçalhos de metadados de fluxo de trabalho na solicitação de saída."
     }
   ],
-  "mmF/SW": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
   "mvrlkP": [
     {
       "type": 0,
@@ -6418,12 +6466,6 @@
       "value": "Retorna uma representação codificada no URI de um valor"
     }
   ],
-  "rjyBPU": [
-    {
-      "type": 0,
-      "value": "Expressão"
-    }
-  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -6728,12 +6770,6 @@
     {
       "type": 0,
       "value": "Show me"
-    }
-  ],
-  "uXJdAh": [
-    {
-      "type": 0,
-      "value": "Pesquisar conteúdo dinâmico"
     }
   ],
   "uZH8Qs": [
