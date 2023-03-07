@@ -1,28 +1,38 @@
+@import (reference) '../variables.less';
 .msla-token-picker-container {
-  max-height: 550px;
-  width: 400px;
+  background-color: #fafafa;
 }
 
 .msla-token-picker {
-  background-color: #fff;
-  box-shadow: 2px 2px 10px rgb(0 0 0 / 10%);
+  box-shadow: 2px 2px 10px rgba(246, 243, 243, 0.1);
   box-sizing: border-box;
   padding: 1px;
   display: flex;
   flex-direction: column;
   max-height: inherit;
 }
-.msla-token-picker-search {
-  background-color: #c8cac7;
-  border: none;
-  box-sizing: border-box;
-  padding: 12px;
+
+.msla-token-picker-header {
+  display: flex;
+  flex-direction: row-reverse;
+  padding: 5px 5px 0px 5px;
+  border-bottom: 1px solid #f6f6f6;
+}
+
+.msla-token-picker-footer {
+  padding: 5px;
+  border-top: 1px solid #f6f6f6;
   position: relative;
-  .msla-token-picker-search-icon {
-    left: 21px;
-    position: absolute;
-    top: 17px;
-    z-index: 1;
+  bottom: 0px;
+}
+.msla-token-picker-search-container {
+  padding: 10px;
+  .msla-token-picker-search {
+    border: 1px solid @defaultBorderColor;
+    box-sizing: border-box;
+    height: 26px;
+    width: 90%;
+    margin: auto;
   }
 }
 
@@ -55,17 +65,28 @@
   }
 }
 
+.msla-token-picker-expression-editor-error {
+  color: rgb(224, 2, 2);
+  padding-left: 20px;
+}
+
 .msla-token-picker-sections {
   box-sizing: border-box;
-  max-height: 550px;
   overflow-y: auto;
 }
 
 .msla-token-picker-section-header {
-  background-color: #e8eae7;
   display: flex;
   padding: 0 8px;
   align-items: center;
+  position: relative;
+  img {
+    box-sizing: content-box;
+    display: inline-block;
+    margin: 3px 10px 0 10px;
+    width: 26px;
+    height: 26px;
+  }
   span {
     color: #7a7574;
     display: block;
@@ -78,7 +99,7 @@
     text-overflow: ellipsis;
   }
   .msla-token-picker-section-header-button {
-    background-color: #e8eae7;
+    background-color: transparent;
     border: none;
     cursor: pointer;
     flex: 0 0 auto;
@@ -105,7 +126,7 @@
     display: inline-block;
     font-family: wf_segoe-ui_normal, 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
     font-size: 13px;
-    padding: 5px 0;
+    padding: 0px;
     position: relative;
     text-align: left;
     width: 100%;
@@ -114,13 +135,6 @@
     }
     &:hover {
       background-color: #f0f8ff;
-    }
-    img {
-      box-sizing: content-box;
-      display: inline-block;
-      margin: 5px 8px 0 0;
-      width: 24px;
-      height: 24px;
     }
     .msla-token-picker-section-option-text {
       display: inline-block;
@@ -132,6 +146,7 @@
         flex-direction: column;
         justify-content: center;
         height: 34px;
+        padding: 5px 10px;
         .msla-token-picker-option-title {
           font-family: wf_segoe-ui_normal, 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
           font-size: 12px;
@@ -212,11 +227,17 @@
 
 .msla-token-picker-secure-token {
   position: absolute;
-  left: 17px;
-  bottom: 5px;
+  left: 37px;
+  bottom: 0px;
 }
 
-.msla-theme-dark {
+body.dark {
+  .msla-token-picker-header {
+    border-bottom: 1px solid @ms-color-secondaryBackground;
+  }
+  .msla-token-picker-footer {
+    border-top: 1px solid @ms-color-secondaryBackground;
+  }
   .msla-token-picker {
     background: @ms-color-secondaryBackground;
   }
@@ -235,7 +256,7 @@
     }
   }
   .msla-token-picker-section-header-button {
-    background-color: @ms-color-primaryBackground;
+    background-color: transparent;
     span {
       color: rgba(255, 255, 255, 0.5);
     }

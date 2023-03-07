@@ -1,6 +1,6 @@
 import type { ComplexArrayItems, ValueSegment } from '..';
 import { StringEditor } from '..';
-import type { ChangeState, TokenPickerHandler } from '../editor/base';
+import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { notEqual } from '../editor/base/utils/helper';
 import { ItemMenuButton, renderLabel } from './expandedsimplearray';
 import type { IIconProps } from '@fluentui/react';
@@ -17,7 +17,7 @@ export interface ExpandedComplexArrayProps {
   allItems: ComplexArrayItems[];
   canDeleteLastItem: boolean;
   readOnly?: boolean;
-  tokenPickerHandler: TokenPickerHandler;
+  getTokenPicker: GetTokenPickerHandler;
   setItems: (newItems: ComplexArrayItems[]) => void;
 }
 
@@ -26,7 +26,7 @@ export const ExpandedComplexArray = ({
   allItems,
   canDeleteLastItem,
   readOnly,
-  tokenPickerHandler,
+  getTokenPicker,
   setItems,
 }: ExpandedComplexArrayProps): JSX.Element => {
   const intl = useIntl();
@@ -72,10 +72,7 @@ export const ExpandedComplexArray = ({
                   <StringEditor
                     className="msla-array-editor-container-expanded"
                     initialValue={complexItems.value ?? []}
-                    tokenPickerHandler={{
-                      ...tokenPickerHandler,
-                      tokenPickerButtonProps: { buttonClassName: `msla-editor-tokenpicker-button` },
-                    }}
+                    getTokenPicker={getTokenPicker}
                     editorBlur={(newState) => handleArrayElementSaved(complexItems.value, newState, index, i)}
                   />
                 </div>

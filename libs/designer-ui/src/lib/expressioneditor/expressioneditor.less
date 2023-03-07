@@ -1,13 +1,18 @@
+@import (reference) '../variables.less';
+
 .msla-expression-editor-container {
-  height: 100%;
-  background-color: #fff;
+  background-color: #fafafa;
+  position: relative;
+  padding: 10px 20px;
 
   & > div {
-    height: 19px;
+    height: 100%;
 
     .monaco-editor {
-      top: 6px;
-
+      border: 1px solid @defaultBorderColor;
+      .monaco-scrollable-element {
+        left: 10px;
+      }
       .decorationsOverviewRuler {
         display: none;
       }
@@ -20,6 +25,36 @@
       .wrapper {
         overflow: hidden;
       }
+    }
+  }
+
+  .msla-expression-editor-expand {
+    position: absolute;
+    cursor: s-resize;
+    width: 16px;
+    height: 15px;
+    right: 17px;
+    bottom: 9px;
+    padding: 0px;
+
+    .msla-expression-editor-expand-icon {
+      position: relative;
+      width: calc(8px * 1.41);
+      border-bottom: 0.2px solid @defaultBorderColor;
+      transform: rotate(135deg);
+      transform-origin: left;
+      left: 13px;
+      top: 5px;
+    }
+    .msla-expression-editor-expand-icon-2 {
+      position: relative;
+      width: calc(4px * 1.41);
+      border-bottom: 0.2px solid @defaultBorderColor;
+      transform: rotate(135deg);
+      transform-origin: left;
+      position: relative;
+      top: 8px;
+      left: 13px;
     }
   }
 }
