@@ -60,7 +60,7 @@ export const indexPseudoFunction: FunctionData = {
   inputs: [
     {
       name: 'Loop',
-      allowedTypes: [NormalizedDataType.ComplexType],
+      allowedTypes: [NormalizedDataType.ComplexType, NormalizedDataType.Object],
       isOptional: false,
       allowCustomInput: false,
       placeHolder: 'The source loop.',
@@ -116,7 +116,7 @@ export const directAccessPseudoFunction: FunctionData = {
     },
     {
       name: 'Scope',
-      allowedTypes: [NormalizedDataType.ComplexType],
+      allowedTypes: [NormalizedDataType.ComplexType, NormalizedDataType.Object],
       isOptional: false,
       allowCustomInput: false,
       placeHolder: 'Where to apply the index',
