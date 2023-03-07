@@ -2359,210 +2359,166 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(telNumberObject).toEqual(sourceLoopChildObjectPropNode.fullName);
       });
 
-      it.skip('Generates body with many to many nested loops', async () => {
-        const mockComprehensiveSourceSchema: Schema = comprehensiveSourceSchema;
-        const extendedComprehensiveSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveSourceSchema);
-
-        const mockComprehensiveTargetSchema: Schema = comprehensiveTargetSchema;
-        const extendedComprehensiveTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveTargetSchema);
-
-        const sourceNode = extendedComprehensiveSourceSchema.schemaTreeRoot.children[3].children[3]; // ManyToMany
-        const targetNode = extendedComprehensiveTargetSchema.schemaTreeRoot.children[5].children[3];
+      it('Generates body with many to many nested loops', async () => {
+        const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
+        const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const mapDefinition: MapDefinitionEntry = {};
         const connections: ConnectionDictionary = {};
 
-        const sourceChildNode = sourceNode.children[0]; // Simple
-        const targetChildNode = targetNode.children[0];
+        const sourceLoopNode = rootSourceNode.children[22].children[0];
+        const sourceOuterArrayItemNode = sourceLoopNode.children[0];
+        const sourceInnerArrayItemNode = sourceOuterArrayItemNode.children[0];
+        const sourceInnerArrayItemPropNode = sourceInnerArrayItemNode.children[0];
+
+        const targetLoopNode = rootTargetNode.children[14].children[0];
+        const targetOuterArrayItemNode = targetLoopNode.children[0];
+        const targetInnerArrayItemNode = targetOuterArrayItemNode.children[0];
+        const targetInnerArrayItemPropNode = targetInnerArrayItemNode.children[0];
+
+        const sourceNode1 = rootSourceNode.children[0].children[0];
+        const targetNode1 = rootTargetNode.children[0];
 
         setConnectionInputValue(connections, {
-          targetNode: targetChildNode,
-          targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
+          targetNode: targetNode1,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
           value: {
-            reactFlowKey: addReactFlowPrefix(sourceChildNode.key, SchemaType.Source),
-            node: sourceChildNode,
+            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
+            node: sourceNode1,
           },
         });
+
+        //Add parents
         setConnectionInputValue(connections, {
-          targetNode: targetChildNode.children[0],
-          targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].key, SchemaType.Target),
+          targetNode: targetOuterArrayItemNode,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetOuterArrayItemNode.key, SchemaType.Target),
           findInputSlot: true,
           value: {
-            reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].key, SchemaType.Source),
-            node: sourceChildNode.children[0],
+            reactFlowKey: addReactFlowPrefix(sourceOuterArrayItemNode.key, SchemaType.Source),
+            node: sourceOuterArrayItemNode,
           },
         });
+
         setConnectionInputValue(connections, {
-          targetNode: targetChildNode.children[0].children[0],
-          targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].children[0].key, SchemaType.Target),
+          targetNode: targetInnerArrayItemNode,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetInnerArrayItemNode.key, SchemaType.Target),
           findInputSlot: true,
           value: {
-            reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].children[0].key, SchemaType.Source),
-            node: sourceChildNode.children[0].children[0],
+            reactFlowKey: addReactFlowPrefix(sourceInnerArrayItemNode.key, SchemaType.Source),
+            node: sourceInnerArrayItemNode,
           },
         });
+
         setConnectionInputValue(connections, {
-          targetNode: targetChildNode.children[0].children[0].children[0],
-          targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].children[0].children[0].key, SchemaType.Target),
+          targetNode: targetInnerArrayItemPropNode,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetInnerArrayItemPropNode.key, SchemaType.Target),
           findInputSlot: true,
           value: {
-            reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].children[0].children[0].key, SchemaType.Source),
-            node: sourceChildNode.children[0].children[0].children[0],
+            reactFlowKey: addReactFlowPrefix(sourceInnerArrayItemPropNode.key, SchemaType.Source),
+            node: sourceInnerArrayItemPropNode,
           },
         });
 
         generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
-        const rootChildren = Object.entries(mapDefinition['ns0:TargetSchemaRoot']);
-        expect(rootChildren.length).toEqual(1);
-        expect(rootChildren[0][0]).toEqual('Looping');
-        expect(rootChildren[0][1]).not.toBe('string');
+        const rootObject = mapDefinition['root'] as MapDefinitionEntry;
+        const rootKeys = Object.keys(rootObject);
+        expect(rootKeys.length).toEqual(2);
 
-        const loopingObject = (mapDefinition['ns0:TargetSchemaRoot'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
-        const loopingEntries = Object.entries(loopingObject);
-        expect(loopingEntries.length).toEqual(1);
-        expect(loopingEntries[0][0]).toEqual('ManyToMany');
-        expect(loopingEntries[0][1]).not.toBe('string');
+        expect(rootObject[targetNode1.name]).toEqual(sourceNode1.key);
 
-        const manyToManyObject = loopingObject['ManyToMany'] as MapDefinitionEntry;
-        const manyToManyEntries = Object.entries(manyToManyObject);
-        expect(manyToManyEntries.length).toEqual(1);
-        expect(manyToManyEntries[0][0]).toEqual('$for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple)');
-        expect(manyToManyEntries[0][1]).not.toBe('string');
+        const madeUpObject = rootObject['TargetMadeUp'] as MapDefinitionEntry;
+        const complexArrayObject = madeUpObject[targetLoopNode.fullName] as MapDefinitionEntry;
+        const outerArrayObject = complexArrayObject[`$for(${sourceOuterArrayItemNode.key})`] as MapDefinitionEntry;
+        expect(outerArrayObject.length).toEqual(1);
 
-        const yearForObject = manyToManyObject['$for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple)'] as MapDefinitionEntry;
-        const yearForLoopEntries = Object.entries(yearForObject);
-        expect(yearForLoopEntries.length).toEqual(1);
-        expect(yearForLoopEntries[0][0]).toEqual('Simple');
-        expect(yearForLoopEntries[0][1]).not.toBe('string');
+        const outerArrayElement = outerArrayObject[0] as MapDefinitionEntry;
+        const innerArray = `$for(${sourceInnerArrayItemNode.key.replace(`${sourceOuterArrayItemNode.key}/`, '')})`;
+        const innerArrayObject = outerArrayElement[innerArray] as MapDefinitionEntry;
+        expect(innerArrayObject.length).toEqual(1);
+        const innerArrayElement = innerArrayObject[0] as MapDefinitionEntry;
 
-        const simpleObject = yearForObject['Simple'] as MapDefinitionEntry;
-        const yearEntries = Object.entries(simpleObject);
-        expect(yearEntries.length).toEqual(1);
-        expect(yearEntries[0][0]).toEqual('$for(SourceSimpleChild)');
-        expect(yearEntries[0][1]).not.toBe('string');
-
-        const monthForObject = simpleObject['$for(SourceSimpleChild)'] as MapDefinitionEntry;
-        const monthForLoopEntries = Object.entries(monthForObject);
-        expect(monthForLoopEntries.length).toEqual(1);
-        expect(monthForLoopEntries[0][0]).toEqual('SimpleChild');
-        expect(monthForLoopEntries[0][1]).not.toBe('string');
-
-        const simpleChildObject = monthForObject['SimpleChild'] as MapDefinitionEntry;
-        const monthEntries = Object.entries(simpleChildObject);
-        expect(monthEntries.length).toEqual(1);
-        expect(monthEntries[0][0]).toEqual('$for(SourceSimpleChildChild)');
-        expect(monthEntries[0][1]).not.toBe('string');
-
-        const dayForObject = simpleChildObject['$for(SourceSimpleChildChild)'] as MapDefinitionEntry;
-        const dayForLoopEntries = Object.entries(dayForObject);
-        expect(dayForLoopEntries.length).toEqual(1);
-        expect(dayForLoopEntries[0][0]).toEqual('SimpleChildChild');
-        expect(dayForLoopEntries[0][1]).not.toBe('string');
-
-        const simpleChildChildObject = dayForObject['SimpleChildChild'] as MapDefinitionEntry;
-        const simpleChildChildEntries = Object.entries(simpleChildChildObject);
-        expect(simpleChildChildEntries.length).toEqual(1);
-        expect(simpleChildChildEntries[0][0]).toEqual('Direct');
-        expect(simpleChildChildEntries[0][1]).toEqual('SourceDirect');
+        expect(innerArrayElement[targetInnerArrayItemPropNode.fullName]).toEqual(sourceInnerArrayItemPropNode.name);
       });
 
-      it.skip('Generates body with many to one nested loops', async () => {
-        const mockComprehensiveSourceSchema: Schema = comprehensiveSourceSchema;
-        const extendedComprehensiveSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveSourceSchema);
-
-        const mockComprehensiveTargetSchema: Schema = comprehensiveTargetSchema;
-        const extendedComprehensiveTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveTargetSchema);
-
-        const sourceNode = extendedComprehensiveSourceSchema.schemaTreeRoot.children[3].children[1]; // ManyToOne
-        const targetNode = extendedComprehensiveTargetSchema.schemaTreeRoot.children[5].children[1];
+      it('Generates body with many to one nested loops', async () => {
+        const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
+        const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const mapDefinition: MapDefinitionEntry = {};
         const connections: ConnectionDictionary = {};
 
-        const sourceChildNode = sourceNode.children[0]; // Simple
-        const targetChildNode = targetNode.children[0];
+        const sourceLoopNode = rootSourceNode.children[22].children[0];
+        const sourceOuterArrayItemNode = sourceLoopNode.children[0];
+        const sourceInnerArrayItemNode = sourceOuterArrayItemNode.children[0];
+        const sourceInnerArrayItemPropNode = sourceInnerArrayItemNode.children[0];
+
+        const targetLoopNode = rootTargetNode.children[3];
+        const targetArrayItemNode = targetLoopNode.children[0];
+        const targetArrayItemPropNode = targetArrayItemNode.children[0];
+
+        const sourceNode1 = rootSourceNode.children[0].children[0];
+        const targetNode1 = rootTargetNode.children[0];
 
         setConnectionInputValue(connections, {
-          targetNode: targetChildNode,
-          targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
+          targetNode: targetNode1,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
           value: {
-            reactFlowKey: addReactFlowPrefix(sourceChildNode.key, SchemaType.Source),
-            node: sourceChildNode,
+            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
+            node: sourceNode1,
           },
         });
+
+        //Add parents
         setConnectionInputValue(connections, {
-          targetNode: targetChildNode,
-          targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
+          targetNode: targetArrayItemNode,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemNode.key, SchemaType.Target),
           findInputSlot: true,
           value: {
-            reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].key, SchemaType.Source),
-            node: sourceChildNode.children[0],
+            reactFlowKey: addReactFlowPrefix(sourceOuterArrayItemNode.key, SchemaType.Source),
+            node: sourceOuterArrayItemNode,
           },
         });
+
         setConnectionInputValue(connections, {
-          targetNode: targetChildNode,
-          targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
+          targetNode: targetArrayItemNode,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemNode.key, SchemaType.Target),
           findInputSlot: true,
           value: {
-            reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].children[0].key, SchemaType.Source),
-            node: sourceChildNode.children[0].children[0],
+            reactFlowKey: addReactFlowPrefix(sourceInnerArrayItemNode.key, SchemaType.Source),
+            node: sourceInnerArrayItemNode,
           },
         });
+
         setConnectionInputValue(connections, {
-          targetNode: targetChildNode.children[0],
-          targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].key, SchemaType.Target),
+          targetNode: targetArrayItemPropNode,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemPropNode.key, SchemaType.Target),
           findInputSlot: true,
           value: {
-            reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].children[0].children[0].key, SchemaType.Source),
-            node: sourceChildNode.children[0].children[0].children[0],
+            reactFlowKey: addReactFlowPrefix(sourceInnerArrayItemPropNode.key, SchemaType.Source),
+            node: sourceInnerArrayItemPropNode,
           },
         });
 
         generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
-        const rootChildren = Object.entries(mapDefinition['ns0:TargetSchemaRoot']);
-        expect(rootChildren.length).toEqual(1);
-        expect(rootChildren[0][0]).toEqual('Looping');
-        expect(rootChildren[0][1]).not.toBe('string');
+        const rootObject = mapDefinition['root'] as MapDefinitionEntry;
+        const rootKeys = Object.keys(rootObject);
+        expect(rootKeys.length).toEqual(2);
 
-        const loopingObject = (mapDefinition['ns0:TargetSchemaRoot'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
-        const loopingEntries = Object.entries(loopingObject);
-        expect(loopingEntries.length).toEqual(1);
-        expect(loopingEntries[0][0]).toEqual('ManyToOne');
-        expect(loopingEntries[0][1]).not.toBe('string');
+        expect(rootObject[targetNode1.name]).toEqual(sourceNode1.key);
 
-        const manyToOneObject = loopingObject['ManyToOne'] as MapDefinitionEntry;
-        const manyToOneEntries = Object.entries(manyToOneObject);
-        expect(manyToOneEntries.length).toEqual(1);
-        expect(manyToOneEntries[0][0]).toEqual('$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple)');
-        expect(manyToOneEntries[0][1]).not.toBe('string');
+        const complexArrayObject = rootObject[targetLoopNode.fullName] as MapDefinitionEntry;
+        const outerArrayObject = complexArrayObject[`$for(${sourceOuterArrayItemNode.key})`] as MapDefinitionEntry;
 
-        const yearForObject = manyToOneObject['$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple)'] as MapDefinitionEntry;
-        const yearForLoopEntries = Object.entries(yearForObject);
-        expect(yearForLoopEntries.length).toEqual(1);
-        expect(yearForLoopEntries[0][0]).toEqual('$for(SourceSimpleChild)');
-        expect(yearForLoopEntries[0][1]).not.toBe('string');
+        const innerArray = `$for(${sourceInnerArrayItemNode.key.replace(`${sourceOuterArrayItemNode.key}/`, '')})`;
+        const innerArrayObject = outerArrayObject[innerArray] as MapDefinitionEntry;
+        expect(innerArrayObject.length).toEqual(1);
+        const innerArrayElement = innerArrayObject[0] as MapDefinitionEntry;
 
-        const monthForObject = yearForObject['$for(SourceSimpleChild)'] as MapDefinitionEntry;
-        const monthForLoopEntries = Object.entries(monthForObject);
-        expect(monthForLoopEntries.length).toEqual(1);
-        expect(monthForLoopEntries[0][0]).toEqual('$for(SourceSimpleChildChild)');
-        expect(monthForLoopEntries[0][1]).not.toBe('string');
-
-        const dayForObject = monthForObject['$for(SourceSimpleChildChild)'] as MapDefinitionEntry;
-        const dayForLoopEntries = Object.entries(dayForObject);
-        expect(dayForLoopEntries.length).toEqual(1);
-        expect(dayForLoopEntries[0][0]).toEqual('Simple');
-        expect(dayForLoopEntries[0][1]).not.toBe('string');
-
-        const simpleChildChildObject = dayForObject['Simple'] as MapDefinitionEntry;
-        const simpleChildChildEntries = Object.entries(simpleChildChildObject);
-        expect(simpleChildChildEntries.length).toEqual(1);
-        expect(simpleChildChildEntries[0][0]).toEqual('Direct');
-        expect(simpleChildChildEntries[0][1]).toEqual('SourceDirect');
+        expect(innerArrayElement[targetArrayItemPropNode.fullName]).toEqual(sourceInnerArrayItemPropNode.name);
       });
 
       it('Generates body with function loop', async () => {

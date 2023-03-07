@@ -344,6 +344,54 @@
         ],
         "fullName": "ForLoop",
         "parentKey": "/root"
+      },
+      {
+        "key": "/root/TargetMadeUp",
+        "name": "TargetMadeUp",
+        "normalizedDataType": "Array",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/root/TargetMadeUp/ManyManyArray",
+            "name": "ManyManyArray",
+            "normalizedDataType": "Array",
+            "properties": "NotSpecified",
+            "children": [
+              {
+                "key": "/root/TargetMadeUp/ManyManyArray/*",
+                "name": "<ArrayItem>",
+                "normalizedDataType": "Array",
+                "properties": "Repeating, ArrayItem",
+                "children": [
+                  {
+                    "key": "/root/TargetMadeUp/ManyManyArray/*/*",
+                    "name": "<ArrayItem>",
+                    "normalizedDataType": "Array",
+                    "properties": "Repeating, ArrayItem",
+                    "children": [
+                      {
+                        "key": "/root/TargetMadeUp/ManyManyArray/*/*/TargetMadeUp_NeedAProp",
+                        "name": "TargetMadeUp_NeedAProp",
+                        "normalizedDataType": "Integer",
+                        "properties": "NotSpecified",
+                        "fullName": "TargetMadeUp_NeedAProp",
+                        "parentKey": "/root/TargetMadeUp/ManyManyArray/*/*"
+                      }
+                    ],
+                    "fullName": "<ArrayItem>",
+                    "parentKey": "/root/TargetMadeUp/ManyManyArray/*"
+                  }
+                ],
+                "fullName": "<ArrayItem>",
+                "parentKey": "/root/TargetMadeUp/ManyManyArray"
+              }
+            ],
+            "fullName": "ManyManyArray",
+            "parentKey": "/root/TargetMadeUp"
+          }
+        ],
+        "fullName": "TargetMadeUp",
+        "parentKey": "/root"
       }
     ],
     "fullName": "root"

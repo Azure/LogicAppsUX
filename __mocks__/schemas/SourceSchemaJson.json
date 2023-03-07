@@ -650,6 +650,54 @@
         ],
         "fullName": "companyCode",
         "parentKey": "/root"
+      },
+      {
+        "key": "/root/SourceMadeUp",
+        "name": "SourceMadeUp",
+        "normalizedDataType": "Array",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/root/SourceMadeUp/ManyManyArray",
+            "name": "ManyManyArray",
+            "normalizedDataType": "Array",
+            "properties": "NotSpecified",
+            "children": [
+              {
+                "key": "/root/SourceMadeUp/ManyManyArray/*",
+                "name": "<ArrayItem>",
+                "normalizedDataType": "Array",
+                "properties": "Repeating, ArrayItem",
+                "children": [
+                  {
+                    "key": "/root/SourceMadeUp/ManyManyArray/*/*",
+                    "name": "<ArrayItem>",
+                    "normalizedDataType": "Array",
+                    "properties": "Repeating, ArrayItem",
+                    "children": [
+                      {
+                        "key": "/root/SourceMadeUp/ManyManyArray/*/*/SourceMadeUp_NeedAProp",
+                        "name": "SourceMadeUp_NeedAProp",
+                        "normalizedDataType": "Integer",
+                        "properties": "NotSpecified",
+                        "fullName": "SourceMadeUp_NeedAProp",
+                        "parentKey": "/root/SourceMadeUp/ManyManyArray/*/*"
+                      }
+                    ],
+                    "fullName": "<ArrayItem>",
+                    "parentKey": "/root/SourceMadeUp/ManyManyArray/*"
+                  }
+                ],
+                "fullName": "<ArrayItem>",
+                "parentKey": "/root/SourceMadeUp/ManyManyArray"
+              }
+            ],
+            "fullName": "ManyManyArray",
+            "parentKey": "/root/SourceMadeUp"
+          }
+        ],
+        "fullName": "SourceMadeUp",
+        "parentKey": "/root"
       }
     ],
     "fullName": "root"
