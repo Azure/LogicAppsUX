@@ -71,6 +71,12 @@
       "value": "Select an api from apim instance"
     }
   ],
+  "/2+p0Z": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -618,12 +624,6 @@
     {
       "type": 0,
       "value": "Aktif"
-    }
-  ],
-  "2wJZkB": [
-    {
-      "type": 0,
-      "value": "Tombol tambahkan konten dinamis kosong"
     }
   ],
   "2xhbE1": [
@@ -1410,6 +1410,12 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9atGYe": [
+    {
+      "type": 0,
+      "value": "Add"
     }
   ],
   "9djnqI": [
@@ -2258,6 +2264,12 @@
       "value": "Kunci"
     }
   ],
+  "Hbqlzk": [
+    {
+      "type": 0,
+      "value": "Insert Expression"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -2817,6 +2829,12 @@
       "value": "Selanjutnya gagal"
     }
   ],
+  "Mc6ITJ": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "MfAdfx": [
     {
       "type": 0,
@@ -3281,6 +3299,12 @@
     {
       "type": 0,
       "value": "Jenis data"
+    }
+  ],
+  "QiVbKW": [
+    {
+      "type": 0,
+      "value": "Exit Full Screen"
     }
   ],
   "QknZQ1": [
@@ -4296,6 +4320,12 @@
       "value": "Operasi ini sudah dihapus."
     }
   ],
+  "Zg3IjD": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -4366,6 +4396,12 @@
     {
       "type": 0,
       "value": "Second"
+    }
+  ],
+  "ae7W0a": [
+    {
+      "type": 0,
+      "value": "Full Screen"
     }
   ],
   "ahsVI/": [
@@ -4828,6 +4864,12 @@
       "value": "Opsional. Indeks tempat untuk berhenti mengekstrak substring."
     }
   ],
+  "f81ClO": [
+    {
+      "type": 0,
+      "value": "Empty dynamic content icon"
+    }
+  ],
   "fBQBw/": [
     {
       "type": 0,
@@ -4876,6 +4918,12 @@
     {
       "type": 0,
       "value": "Fungsi logis"
+    }
+  ],
+  "fmm7Ik": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "froV/0": [
@@ -4978,6 +5026,12 @@
     {
       "type": 0,
       "value": "Fungsi konversi"
+    }
+  ],
+  "gRUmiA": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "gTXyUo": [
@@ -5723,12 +5777,6 @@
       "value": "Batasi Logic Apps agar tidak menyertakan header metadata alur kerja dalam permintaan keluar."
     }
   ],
-  "mmF/SW": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
   "mvrlkP": [
     {
       "type": 0,
@@ -6268,12 +6316,6 @@
       "value": "Menampilkan representasi dengan pengodean URI dari nilai"
     }
   ],
-  "rjyBPU": [
-    {
-      "type": 0,
-      "value": "Ekspresi"
-    }
-  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -6578,12 +6620,6 @@
     {
       "type": 0,
       "value": "Show me"
-    }
-  ],
-  "uXJdAh": [
-    {
-      "type": 0,
-      "value": "Cari konten dinamis"
     }
   ],
   "uZH8Qs": [

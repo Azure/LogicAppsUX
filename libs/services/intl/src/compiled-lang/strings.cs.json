@@ -83,6 +83,12 @@
       "value": "Select an api from apim instance"
     }
   ],
+  "/2+p0Z": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -675,12 +681,6 @@
     {
       "type": 0,
       "value": "Zapnuto"
-    }
-  ],
-  "2wJZkB": [
-    {
-      "type": 0,
-      "value": "Prázdné tlačítko Přidat dynamický obsah"
     }
   ],
   "2xhbE1": [
@@ -1479,6 +1479,12 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9atGYe": [
+    {
+      "type": 0,
+      "value": "Add"
     }
   ],
   "9djnqI": [
@@ -2425,6 +2431,12 @@
       "value": "Klíč"
     }
   ],
+  "Hbqlzk": [
+    {
+      "type": 0,
+      "value": "Insert Expression"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -3037,6 +3049,12 @@
       "value": "Další neúspěšné"
     }
   ],
+  "Mc6ITJ": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "MfAdfx": [
     {
       "type": 0,
@@ -3521,6 +3539,12 @@
     {
       "type": 0,
       "value": "Datový typ"
+    }
+  ],
+  "QiVbKW": [
+    {
+      "type": 0,
+      "value": "Exit Full Screen"
     }
   ],
   "QknZQ1": [
@@ -4577,6 +4601,12 @@
       "value": "Tato operace už byla odstraněna."
     }
   ],
+  "Zg3IjD": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -4655,6 +4685,12 @@
     {
       "type": 0,
       "value": "Second"
+    }
+  ],
+  "ae7W0a": [
+    {
+      "type": 0,
+      "value": "Full Screen"
     }
   ],
   "ahsVI/": [
@@ -5117,6 +5153,12 @@
       "value": "Nepovinné. Index, kde se má podřetězec přestat extrahovat"
     }
   ],
+  "f81ClO": [
+    {
+      "type": 0,
+      "value": "Empty dynamic content icon"
+    }
+  ],
   "fBQBw/": [
     {
       "type": 0,
@@ -5161,6 +5203,12 @@
     {
       "type": 0,
       "value": "Logické funkce"
+    }
+  ],
+  "fmm7Ik": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "froV/0": [
@@ -5263,6 +5311,12 @@
     {
       "type": 0,
       "value": "Převodní funkce"
+    }
+  ],
+  "gRUmiA": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "gTXyUo": [
@@ -6065,12 +6119,6 @@
       "value": "Omezí aplikace Logic Apps tak, aby do odchozích požadavků nezahrnovaly hlavičky metadat pracovních postupů."
     }
   ],
-  "mmF/SW": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
   "mvrlkP": [
     {
       "type": 0,
@@ -6663,12 +6711,6 @@
       "value": "Vrátí reprezentaci určité hodnoty zakódovanou jako identifikátor URI."
     }
   ],
-  "rjyBPU": [
-    {
-      "type": 0,
-      "value": "Výraz"
-    }
-  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -6973,12 +7015,6 @@
     {
       "type": 0,
       "value": "Show me"
-    }
-  ],
-  "uXJdAh": [
-    {
-      "type": 0,
-      "value": "Hledat v dynamickém obsahu"
     }
   ],
   "uZH8Qs": [
