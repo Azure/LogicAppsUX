@@ -257,6 +257,12 @@
       "value": "Restituisce una rappresentazione binaria di una stringa con codifica URI"
     }
   ],
+  "0SSwxD": [
+    {
+      "type": 0,
+      "value": "Close panel"
+    }
+  ],
   "0Vzp0l": [
     {
       "type": 0,
@@ -1695,6 +1701,12 @@
       "value": "Example: Monday, Friday"
     }
   ],
+  "BUutcC": [
+    {
+      "type": 0,
+      "value": "Expant list of sibling elements"
+    }
+  ],
   "BVOUxP": [
     {
       "type": 0,
@@ -2779,6 +2791,12 @@
       "value": "Obbligatorio. Le espressioni che possono essere true."
     }
   ],
+  "LvLksz": [
+    {
+      "type": 0,
+      "value": "Loading outputs"
+    }
+  ],
   "LvpxiA": [
     {
       "type": 0,
@@ -3620,6 +3638,12 @@
     {
       "type": 0,
       "value": "Restituisce una stringa con ogni elemento di una matrice unito da un delimitatore"
+    }
+  ],
+  "TLHUMf": [
+    {
+      "type": 0,
+      "value": "Error loading inputs"
     }
   ],
   "TNEttQ": [
@@ -6123,6 +6147,12 @@
       "value": "Obbligatorio. Numero in base a cui dividere il dividendo. Dopo la divisione, viene preso il resto."
     }
   ],
+  "pcGqoB": [
+    {
+      "type": 0,
+      "value": "Error loading outputs"
+    }
+  ],
   "pcuZKB": [
     {
       "type": 0,
@@ -6448,6 +6478,12 @@
       "value": "Annulla la creazione di una connessione"
     }
   ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "Add Case"
+    }
+  ],
   "sW47JR": [
     {
       "type": 0,
@@ -6602,12 +6638,6 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Novosibirsk"
-    }
-  ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
     }
   ],
   "tUYXRA": [
@@ -6894,6 +6924,12 @@
       "value": "Immetti valore personalizzato"
     }
   ],
+  "vvSHR8": [
+    {
+      "type": 0,
+      "value": "Navigate to element and view children"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -7132,6 +7168,12 @@
     {
       "type": 0,
       "value": "I parametri vengono condivisi tra flussi di lavoro in un'app per la logica."
+    }
+  ],
+  "xwD1VZ": [
+    {
+      "type": 0,
+      "value": "Loading inputs"
     }
   ],
   "xwEX2/": [

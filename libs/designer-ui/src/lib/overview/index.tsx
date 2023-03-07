@@ -2,8 +2,9 @@ import { OverviewCommandBar } from './overviewcommandbar';
 import type { OverviewPropertiesProps } from './overviewproperties';
 import { OverviewProperties } from './overviewproperties';
 import { RunHistory } from './runhistory';
-import type { Run, RunDisplayItem, RunError } from './types';
-import { isRunError, mapToRunItem } from './utils';
+import { isCallbackInfoWithRelativePath } from './types';
+import type { Run, RunDisplayItem, RunError, Runs } from './types';
+import { getCallbackUrl, isRunError, mapToRunItem } from './utils';
 import type { IIconProps, ITextFieldStyles } from '@fluentui/react';
 import { IconButton, MessageBar, MessageBarType, Pivot, PivotItem, TextField } from '@fluentui/react';
 import { useState } from 'react';
@@ -162,5 +163,5 @@ export const Overview: React.FC<OverviewProps> = ({
   );
 };
 
-export { isRunError };
+export { isRunError, Runs, Run, RunError, isCallbackInfoWithRelativePath, getCallbackUrl };
 export type { OverviewPropertiesProps };

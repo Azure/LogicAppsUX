@@ -41,6 +41,7 @@ export enum SchemaNodeProperty {
 
 export enum NormalizedDataType {
   Any = 'Any',
+  Array = 'Array',
   Binary = 'Binary',
   Boolean = 'Bool',
   ComplexType = 'ComplexType',
@@ -48,6 +49,7 @@ export enum NormalizedDataType {
   Decimal = 'Decimal',
   Integer = 'Integer',
   Number = 'Number',
+  Object = 'Object',
   String = 'String',
 }
 
@@ -61,6 +63,8 @@ export interface SchemaNodeExtended extends SchemaNode {
   // Inclusive of the current node
   pathToRoot: PathItem[];
   parentKey: string | undefined;
+  // Used only in ArrayItem arrays, not regular arrays
+  arrayItemIndex: number | undefined;
 }
 
 export interface PathItem {

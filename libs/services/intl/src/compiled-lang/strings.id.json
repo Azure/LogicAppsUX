@@ -257,6 +257,12 @@
       "value": "Menampilkan representasi biner dari string dengan pengodean URI"
     }
   ],
+  "0SSwxD": [
+    {
+      "type": 0,
+      "value": "Close panel"
+    }
+  ],
   "0Vzp0l": [
     {
       "type": 0,
@@ -1651,6 +1657,12 @@
       "value": "Example: Monday, Friday"
     }
   ],
+  "BUutcC": [
+    {
+      "type": 0,
+      "value": "Expant list of sibling elements"
+    }
+  ],
   "BVOUxP": [
     {
       "type": 0,
@@ -2691,6 +2703,12 @@
       "value": "Diperlukan. Ekspresi pertama yang mungkin true."
     }
   ],
+  "LvLksz": [
+    {
+      "type": 0,
+      "value": "Loading outputs"
+    }
+  ],
   "LvpxiA": [
     {
       "type": 0,
@@ -3502,6 +3520,12 @@
     {
       "type": 0,
       "value": "Menampilkan string dengan setiap item dari array yang bergabung dengan pemisah"
+    }
+  ],
+  "TLHUMf": [
+    {
+      "type": 0,
+      "value": "Error loading inputs"
     }
   ],
   "TNEttQ": [
@@ -5983,6 +6007,12 @@
       "value": "Wajib. Nomor untuk membagi Dividen. Setelah dibagi, sisanya diambil."
     }
   ],
+  "pcGqoB": [
+    {
+      "type": 0,
+      "value": "Error loading outputs"
+    }
+  ],
   "pcuZKB": [
     {
       "type": 0,
@@ -6286,6 +6316,12 @@
       "value": "Batalkan pembuatan koneksi"
     }
   ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "Add Case"
+    }
+  ],
   "sW47JR": [
     {
       "type": 0,
@@ -6440,12 +6476,6 @@
     {
       "type": 0,
       "value": "(UTC+06.00) Novosibirsk"
-    }
-  ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
     }
   ],
   "tUYXRA": [
@@ -6732,6 +6762,12 @@
       "value": "Masukkan nama kustom"
     }
   ],
+  "vvSHR8": [
+    {
+      "type": 0,
+      "value": "Navigate to element and view children"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -6970,6 +7006,12 @@
     {
       "type": 0,
       "value": "Parameter dibagikan di seluruh alur kerja dalam Aplikasi Logika."
+    }
+  ],
+  "xwD1VZ": [
+    {
+      "type": 0,
+      "value": "Loading inputs"
     }
   ],
   "xwEX2/": [

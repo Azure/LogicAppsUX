@@ -273,6 +273,12 @@
       "value": "Egy URI-ként kódolt sztring bináris megfelelőjét adja vissza."
     }
   ],
+  "0SSwxD": [
+    {
+      "type": 0,
+      "value": "Close panel"
+    }
+  ],
   "0Vzp0l": [
     {
       "type": 0,
@@ -1721,6 +1727,12 @@
       "value": "Example: Monday, Friday"
     }
   ],
+  "BUutcC": [
+    {
+      "type": 0,
+      "value": "Expant list of sibling elements"
+    }
+  ],
   "BVOUxP": [
     {
       "type": 0,
@@ -2823,6 +2835,12 @@
       "value": "Kötelező megadni. A második kifejezés, amely igaz lehet."
     }
   ],
+  "LvLksz": [
+    {
+      "type": 0,
+      "value": "Loading outputs"
+    }
+  ],
   "LvpxiA": [
     {
       "type": 0,
@@ -3665,6 +3683,12 @@
     {
       "type": 0,
       "value": "Egy tömb összes elemét tartalmazó, az elemeket határolóval összekötő sztringet ad vissza."
+    }
+  ],
+  "TLHUMf": [
+    {
+      "type": 0,
+      "value": "Error loading inputs"
     }
   ],
   "TNEttQ": [
@@ -6213,6 +6237,12 @@
       "value": "Kötelező megadni. A szám, mellyel el kell osztani az osztandót. Az osztás után a függvény a maradékot használja fel."
     }
   ],
+  "pcGqoB": [
+    {
+      "type": 0,
+      "value": "Error loading outputs"
+    }
+  ],
   "pcuZKB": [
     {
       "type": 0,
@@ -6543,6 +6573,12 @@
       "value": "Kapcsolat létrehozásának megszakítása"
     }
   ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "Add Case"
+    }
+  ],
   "sW47JR": [
     {
       "type": 0,
@@ -6697,12 +6733,6 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Novoszibirszk"
-    }
-  ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
     }
   ],
   "tUYXRA": [
@@ -6989,6 +7019,12 @@
       "value": "Adjon meg egy egyéni értéket"
     }
   ],
+  "vvSHR8": [
+    {
+      "type": 0,
+      "value": "Navigate to element and view children"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -7227,6 +7263,12 @@
     {
       "type": 0,
       "value": "Egy logikai alkalmazásban a paraméterek meg vannak osztva a munkafolyamatok között."
+    }
+  ],
+  "xwD1VZ": [
+    {
+      "type": 0,
+      "value": "Loading inputs"
     }
   ],
   "xwEX2/": [

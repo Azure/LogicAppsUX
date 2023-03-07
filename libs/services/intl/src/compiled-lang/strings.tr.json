@@ -257,6 +257,12 @@
       "value": "URI ile kodlanmış bir dizenin ikili gösterimini döndürür"
     }
   ],
+  "0SSwxD": [
+    {
+      "type": 0,
+      "value": "Close panel"
+    }
+  ],
   "0Vzp0l": [
     {
       "type": 0,
@@ -1673,6 +1679,12 @@
       "value": "Example: Monday, Friday"
     }
   ],
+  "BUutcC": [
+    {
+      "type": 0,
+      "value": "Expant list of sibling elements"
+    }
+  ],
   "BVOUxP": [
     {
       "type": 0,
@@ -2731,6 +2743,12 @@
       "value": "Gerekli. Doğru olabilecek ifadeler."
     }
   ],
+  "LvLksz": [
+    {
+      "type": 0,
+      "value": "Loading outputs"
+    }
+  ],
   "LvpxiA": [
     {
       "type": 0,
@@ -3553,6 +3571,12 @@
     {
       "type": 0,
       "value": "Bir dizinin her öğesinin bir sınırlandırıcı ile birleştirildiği bir dize döndürür"
+    }
+  ],
+  "TLHUMf": [
+    {
+      "type": 0,
+      "value": "Error loading inputs"
     }
   ],
   "TNEttQ": [
@@ -6037,6 +6061,12 @@
       "value": "Gerekli. Bölünenin bölüneceği sayı. Bölme işleminden sonra kalan alınır."
     }
   ],
+  "pcGqoB": [
+    {
+      "type": 0,
+      "value": "Error loading outputs"
+    }
+  ],
   "pcuZKB": [
     {
       "type": 0,
@@ -6351,6 +6381,12 @@
       "value": "Bağlantı oluşturmayı iptal et"
     }
   ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "Add Case"
+    }
+  ],
   "sW47JR": [
     {
       "type": 0,
@@ -6505,12 +6541,6 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Novosibirsk"
-    }
-  ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
     }
   ],
   "tUYXRA": [
@@ -6793,6 +6823,12 @@
       "value": "Özel değer girin"
     }
   ],
+  "vvSHR8": [
+    {
+      "type": 0,
+      "value": "Navigate to element and view children"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -7031,6 +7067,12 @@
     {
       "type": 0,
       "value": "Parametreler bir Logic App’in iş akışları arasında paylaşılır."
+    }
+  ],
+  "xwD1VZ": [
+    {
+      "type": 0,
+      "value": "Loading inputs"
     }
   ],
   "xwEX2/": [

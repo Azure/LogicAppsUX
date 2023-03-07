@@ -2,7 +2,7 @@ import type { MapCheckerEntry } from '../components/sidePane/tabs/mapCheckerTab/
 import { MapCheckerItemSeverity } from '../components/sidePane/tabs/mapCheckerTab/MapCheckerItem';
 import { sourcePrefix } from '../constants/ReactFlowConstants';
 import type { FunctionData, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
-import { NormalizedDataType, SchemaNodeProperty } from '../models';
+import { SchemaNodeProperty } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import {
   flattenInputs,
@@ -12,7 +12,7 @@ import {
   nodeHasSourceNodeEventually,
 } from './Connection.Utils';
 import { isFunctionData } from './Function.Utils';
-import { isSchemaNodeExtended } from './Schema.Utils';
+import { isObjectType, isSchemaNodeExtended } from './Schema.Utils';
 import { defineMessages } from 'react-intl';
 
 export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _targetSchema: SchemaNodeDictionary): MapCheckerEntry[] => {
@@ -75,10 +75,7 @@ export const collectWarningsForMapChecker = (connections: ConnectionDictionary, 
 
   // Required target schema fields
   Object.entries(targetSchema).forEach(([reactFlowId, schemaValue]) => {
-    if (
-      schemaValue.normalizedDataType !== NormalizedDataType.ComplexType &&
-      schemaValue.nodeProperties.indexOf(SchemaNodeProperty.Optional) === -1
-    ) {
+    if (!isObjectType(schemaValue.normalizedDataType) && schemaValue.nodeProperties.indexOf(SchemaNodeProperty.Optional) === -1) {
       const connection = connections[reactFlowId];
       if (!nodeHasSourceNodeEventually(connection, connections)) {
         warnings.push({

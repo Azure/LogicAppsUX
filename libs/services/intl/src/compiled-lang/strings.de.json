@@ -273,6 +273,12 @@
       "value": "Gibt eine Binärdarstellung einer URI-codierten Zeichenfolge zurück."
     }
   ],
+  "0SSwxD": [
+    {
+      "type": 0,
+      "value": "Close panel"
+    }
+  ],
   "0Vzp0l": [
     {
       "type": 0,
@@ -1721,6 +1727,12 @@
       "value": "Example: Monday, Friday"
     }
   ],
+  "BUutcC": [
+    {
+      "type": 0,
+      "value": "Expant list of sibling elements"
+    }
+  ],
   "BVOUxP": [
     {
       "type": 0,
@@ -2823,6 +2835,12 @@
       "value": "Erforderlich. Die Ausdrücke, die TRUE sein können."
     }
   ],
+  "LvLksz": [
+    {
+      "type": 0,
+      "value": "Loading outputs"
+    }
+  ],
   "LvpxiA": [
     {
       "type": 0,
@@ -3665,6 +3683,12 @@
     {
       "type": 0,
       "value": "Gibt eine Zeichenfolge zurück, in der die einzelnen Elemente eines Arrays durch Trennzeichen verknüpft sind."
+    }
+  ],
+  "TLHUMf": [
+    {
+      "type": 0,
+      "value": "Error loading inputs"
     }
   ],
   "TNEttQ": [
@@ -6201,6 +6225,12 @@
       "value": "Erforderlich. Die Zahl, durch die der Dividend zu teilen ist. Nach der Division wird der Rest verwendet."
     }
   ],
+  "pcGqoB": [
+    {
+      "type": 0,
+      "value": "Error loading outputs"
+    }
+  ],
   "pcuZKB": [
     {
       "type": 0,
@@ -6515,6 +6545,12 @@
       "value": "Erstellen einer Verbindung abbrechen"
     }
   ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "Add Case"
+    }
+  ],
   "sW47JR": [
     {
       "type": 0,
@@ -6669,12 +6705,6 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Nowosibirsk"
-    }
-  ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
     }
   ],
   "tUYXRA": [
@@ -6961,6 +6991,12 @@
       "value": "Benutzerdefinierten Wert eingeben"
     }
   ],
+  "vvSHR8": [
+    {
+      "type": 0,
+      "value": "Navigate to element and view children"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -7199,6 +7235,12 @@
     {
       "type": 0,
       "value": "Parameter werden workflowübergreifend in einer Logik-App freigegeben."
+    }
+  ],
+  "xwD1VZ": [
+    {
+      "type": 0,
+      "value": "Loading inputs"
     }
   ],
   "xwEX2/": [

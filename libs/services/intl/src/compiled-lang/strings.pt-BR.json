@@ -257,6 +257,12 @@
       "value": "Retorna uma representação binária de uma cadeia de caracteres codificada no URI"
     }
   ],
+  "0SSwxD": [
+    {
+      "type": 0,
+      "value": "Close panel"
+    }
+  ],
   "0Vzp0l": [
     {
       "type": 0,
@@ -1691,6 +1697,12 @@
       "value": "Example: Monday, Friday"
     }
   ],
+  "BUutcC": [
+    {
+      "type": 0,
+      "value": "Expant list of sibling elements"
+    }
+  ],
   "BVOUxP": [
     {
       "type": 0,
@@ -2775,6 +2787,12 @@
       "value": "Necessário. A expressão que pode ser verdadeira."
     }
   ],
+  "LvLksz": [
+    {
+      "type": 0,
+      "value": "Loading outputs"
+    }
+  ],
   "LvpxiA": [
     {
       "type": 0,
@@ -3608,6 +3626,12 @@
     {
       "type": 0,
       "value": "Retorna uma cadeia de caracteres com cada item de uma matriz unida por um delimitador"
+    }
+  ],
+  "TLHUMf": [
+    {
+      "type": 0,
+      "value": "Error loading inputs"
     }
   ],
   "TNEttQ": [
@@ -6111,6 +6135,12 @@
       "value": "Necessário. O número pelo qual dividir o Dividendo. Após a divisão, o resto é obtido."
     }
   ],
+  "pcGqoB": [
+    {
+      "type": 0,
+      "value": "Error loading outputs"
+    }
+  ],
   "pcuZKB": [
     {
       "type": 0,
@@ -6436,6 +6466,12 @@
       "value": "Cancelar a criação de uma conexão"
     }
   ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "Add Case"
+    }
+  ],
   "sW47JR": [
     {
       "type": 0,
@@ -6590,12 +6626,6 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Novosibirsk"
-    }
-  ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
     }
   ],
   "tUYXRA": [
@@ -6882,6 +6912,12 @@
       "value": "Inserir valor personalizado"
     }
   ],
+  "vvSHR8": [
+    {
+      "type": 0,
+      "value": "Navigate to element and view children"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -7120,6 +7156,12 @@
     {
       "type": 0,
       "value": "Os parâmetros são compartilhados entre fluxos de trabalho em um Aplicativo Lógico."
+    }
+  ],
+  "xwD1VZ": [
+    {
+      "type": 0,
+      "value": "Loading inputs"
     }
   ],
   "xwEX2/": [

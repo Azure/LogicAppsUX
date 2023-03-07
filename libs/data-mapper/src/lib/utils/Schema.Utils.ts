@@ -1,10 +1,10 @@
-import { arrayType } from '../components/tree/SchemaTreeSearchbar';
 import type { FilteredDataTypesDict } from '../components/tree/SchemaTreeSearchbar';
+import { arrayType } from '../components/tree/SchemaTreeSearchbar';
 import type { ITreeNode } from '../components/tree/Tree';
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
-import { SchemaNodeProperty, SchemaType } from '../models';
+import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '../models';
 import type { FunctionData } from '../models/Function';
 import Fuse from 'fuse.js';
 
@@ -41,6 +41,7 @@ const convertSchemaNodeToSchemaNodeExtended = (
       : [],
     pathToRoot: pathToRoot,
     parentKey,
+    arrayItemIndex: nodeProperties.find((prop) => prop === SchemaNodeProperty.ArrayItem) ? 0 : undefined,
   };
 
   return extendedSchemaNode;
@@ -159,3 +160,6 @@ export const searchSchemaTreeFromRoot = (
 };
 
 export const isSchemaNodeExtended = (node: SchemaNodeExtended | FunctionData): node is SchemaNodeExtended => 'pathToRoot' in node;
+
+export const isObjectType = (nodeType: NormalizedDataType): boolean =>
+  nodeType === NormalizedDataType.ComplexType || nodeType === NormalizedDataType.Object;

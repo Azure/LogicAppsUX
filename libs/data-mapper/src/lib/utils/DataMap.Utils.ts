@@ -390,7 +390,8 @@ export const addAncestorNodesToCanvas = (
   }
 };
 
-export const flattenMapDefinitionValues = (node: MapDefinitionEntry): string[] => {
+// TODO JSON deserialization with the array type
+export const flattenMapDefinitionValues = (node: MapDefinitionEntry | MapDefinitionEntry[]): string[] => {
   return Object.values(node).flatMap((nodeValue) => {
     if (typeof nodeValue === 'string') {
       return [nodeValue];

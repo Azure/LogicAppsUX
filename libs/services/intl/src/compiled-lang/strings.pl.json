@@ -273,6 +273,12 @@
       "value": "Zwraca binarną reprezentację ciągu zakodowanego jako identyfikator URI"
     }
   ],
+  "0SSwxD": [
+    {
+      "type": 0,
+      "value": "Close panel"
+    }
+  ],
   "0Vzp0l": [
     {
       "type": 0,
@@ -1781,6 +1787,12 @@
       "value": "Example: Monday, Friday"
     }
   ],
+  "BUutcC": [
+    {
+      "type": 0,
+      "value": "Expant list of sibling elements"
+    }
+  ],
   "BVOUxP": [
     {
       "type": 0,
@@ -2927,6 +2939,12 @@
       "value": "Parametr wymagany. Wyrażenia, które mogą być prawdziwe."
     }
   ],
+  "LvLksz": [
+    {
+      "type": 0,
+      "value": "Loading outputs"
+    }
+  ],
   "LvpxiA": [
     {
       "type": 0,
@@ -3787,6 +3805,12 @@
     {
       "type": 0,
       "value": "Zwraca ciąg z wszystkimi elementami tablicy połączonymi ogranicznikami"
+    }
+  ],
+  "TLHUMf": [
+    {
+      "type": 0,
+      "value": "Error loading inputs"
     }
   ],
   "TNEttQ": [
@@ -6353,6 +6377,12 @@
       "value": "Wymagane. Liczba, przez którą dzielona jest dzielna. Po wykonaniu dzielenia reszta zostanie usunięta."
     }
   ],
+  "pcGqoB": [
+    {
+      "type": 0,
+      "value": "Error loading outputs"
+    }
+  ],
   "pcuZKB": [
     {
       "type": 0,
@@ -6705,6 +6735,12 @@
       "value": "Anulowanie tworzenia połączenia"
     }
   ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "Add Case"
+    }
+  ],
   "sW47JR": [
     {
       "type": 0,
@@ -6859,12 +6895,6 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Nowosybirsk"
-    }
-  ],
-  "tRgTTN": [
-    {
-      "type": 0,
-      "value": "Expand/collapse target schema"
     }
   ],
   "tUYXRA": [
@@ -7151,6 +7181,12 @@
       "value": "Wprowadź wartość niestandardową"
     }
   ],
+  "vvSHR8": [
+    {
+      "type": 0,
+      "value": "Navigate to element and view children"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -7389,6 +7425,12 @@
     {
       "type": 0,
       "value": "Parametry są współużytkowane w ramach przepływów pracy w aplikacji logiki."
+    }
+  ],
+  "xwD1VZ": [
+    {
+      "type": 0,
+      "value": "Loading inputs"
     }
   ],
   "xwEX2/": [
