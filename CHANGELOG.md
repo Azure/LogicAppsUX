@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [0.2.99](https://github.com/Azure/LogicAppsUX/compare/v0.2.98...v0.2.99) (2023-03-07)
+
+
+### Logic Apps Designer Bug Fixes
+
+* Removed all references to the document and body elements ([#1710](https://github.com/Azure/LogicAppsUX/issues/1710)) ([68b3f38](https://github.com/Azure/LogicAppsUX/commit/68b3f383f8f969b7f61f6c11d3c8abb873905ada))
+
 ### [0.2.98](https://github.com/Azure/LogicAppsUX/compare/v0.2.97...v0.2.98) (2023-03-06)
 
 ### [0.2.97](https://github.com/Azure/LogicAppsUX/compare/v0.2.96...v0.2.97) (2023-03-05)
