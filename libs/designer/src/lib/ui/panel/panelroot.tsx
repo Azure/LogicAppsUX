@@ -34,7 +34,8 @@ import { monitoringTab } from './panelTabs/monitoringTab/monitoringTab';
 import { parametersTab } from './panelTabs/parametersTab';
 import { scratchTab } from './panelTabs/scratchTab';
 import { selectConnectionTab } from './panelTabs/selectConnectionTab';
-import { SettingsTab } from './panelTabs/settingsTab';
+import { settingsTab } from './panelTabs/settingsTab';
+import { testingTab } from './panelTabs/testingTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { WorkflowParametersPanel } from './workflowparameterspanel';
 import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
@@ -71,7 +72,17 @@ export const PanelRoot = (): JSX.Element => {
   let showCommentBox = !isNullOrUndefined(comment);
 
   useEffect(() => {
-    const tabs = [monitoringTab, parametersTab, SettingsTab, codeViewTab, createConnectionTab, selectConnectionTab, aboutTab, loadingTab];
+    const tabs = [
+      monitoringTab,
+      parametersTab,
+      settingsTab,
+      codeViewTab,
+      testingTab,
+      createConnectionTab,
+      selectConnectionTab,
+      aboutTab,
+      loadingTab,
+    ];
     if (process.env.NODE_ENV !== 'production') {
       tabs.push(scratchTab);
     }
