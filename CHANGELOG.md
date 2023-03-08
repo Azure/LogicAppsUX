@@ -1,4 +1,10 @@
 # Logic Apps Designer
+### [0.2.100](https://github.com/Azure/LogicAppsUX/compare/v0.2.99...v0.2.100) (2023-03-08)
+
+
+### Logic Apps Designer Changes
+
+* TokenpickerV2 ([#1709](https://github.com/Azure/LogicAppsUX/issues/1709)) ([2f58d57](https://github.com/Azure/LogicAppsUX/commit/2f58d57698eca399df849e19b6a9b116f2260302))
 
 ### [0.2.99](https://github.com/Azure/LogicAppsUX/compare/v0.2.98...v0.2.99) (2023-03-07)
 
