@@ -1011,46 +1011,6 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
       });
 
-      it.skip('creates connections for nested functions within a loop', () => {
-        simpleMap['root'] = {
-          CumulativeExpression: {
-            PopulationSummary: {
-              '$for(/root/CumulativeExpression/Population/State)': {
-                State: {
-                  Name: 'Name',
-                  SexRatio: 'divide(count(County/Person/Sex/Male), count(County/Person/Sex/Female))',
-                },
-              },
-            },
-          },
-        };
-
-        const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
-
-        expect((result['target-/root/CumulativeExpression/PopulationSummary/State'].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
-          'source-/root/CumulativeExpression/Population/State'
-        );
-        expect(
-          (result['target-/root/CumulativeExpression/PopulationSummary/State/Name'].inputs[0][0] as ConnectionUnit).reactFlowKey
-        ).toEqual('source-/root/CumulativeExpression/Population/State/Name');
-
-        const divideRfKey = (result['target-/root/CumulativeExpression/PopulationSummary/State/SexRatio'].inputs[0][0] as ConnectionUnit)
-          .reactFlowKey;
-        expect(divideRfKey).toContain('Divide');
-
-        const count1RfKey = (result[divideRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey;
-        expect(count1RfKey).toContain('Count');
-        expect((result[count1RfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
-          'source-/root/CumulativeExpression/Population/State/County/Person/Sex/Male'
-        );
-
-        const count2RfKey = (result[divideRfKey].inputs[1][0] as ConnectionUnit).reactFlowKey;
-        expect(count2RfKey).toContain('Count');
-        expect((result[count2RfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
-          'source-/root/CumulativeExpression/Population/State/County/Person/Sex/Female'
-        );
-      });
-
       it.skip('creates a simple conditional property connection', () => {
         simpleMap['root'] = {
           ConditionalMapping: {
@@ -1268,34 +1228,72 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[9][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/ConditionalMapping/ItemPrice');
       });
 
-      it.skip('creates a loop connection', () => {
+      it('creates a loop connection', () => {
         simpleMap['root'] = {
-          Looping: {
-            '$for(/root/Looping/Employee)': {
-              Person: {
-                Name: 'TelephoneNumber',
+          ComplexArray1: {
+            '$for(/root/Nums/*)': [
+              {
+                F1: 'Num',
               },
-            },
+            ],
           },
         };
 
-        const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, []);
+        const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
         const resultEntries = Object.entries(result);
         resultEntries.sort();
 
-        expect(resultEntries.length).toEqual(4);
+        expect(resultEntries.length).toEqual(2);
 
-        expect(resultEntries[0][0]).toEqual('source-/root/Looping/Employee');
+        expect(resultEntries[0][0]).toEqual('source-/root/Nums/*/Num');
         expect(resultEntries[0][1]).toBeTruthy();
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*/F1');
 
-        expect(resultEntries[1][0]).toEqual('source-/root/Looping/Employee/TelephoneNumber');
+        expect(resultEntries[1][0]).toEqual('target-/root/ComplexArray1/*/F1');
         expect(resultEntries[1][1]).toBeTruthy();
+        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*/Num');
+      });
 
-        expect(resultEntries[2][0]).toEqual('target-/root/Looping/Person');
+      it('creates connections for nested functions within a loop', () => {
+        simpleMap['root'] = {
+          ComplexArray1: {
+            '$for(/root/Nums/*)': [
+              {
+                F1: 'multiply(count(Num), /root/Num)',
+              },
+            ],
+          },
+        };
+
+        const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries.length).toEqual(5);
+
+        const countId = resultEntries[0][0];
+        const multiplyId = resultEntries[1][0];
+
+        expect(resultEntries[0][0]).toEqual(countId);
+        expect(resultEntries[0][1]).toBeTruthy();
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual(multiplyId);
+
+        expect(resultEntries[1][0]).toEqual(multiplyId);
+        expect(resultEntries[1][1]).toBeTruthy();
+        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(countId);
+        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*/F1');
+
+        expect(resultEntries[2][0]).toEqual('source-/root/Num');
         expect(resultEntries[2][1]).toBeTruthy();
+        expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual(multiplyId);
 
-        expect(resultEntries[3][0]).toEqual('target-/root/Looping/Person/Name');
+        expect(resultEntries[3][0]).toEqual('source-/root/Nums/*/Num');
         expect(resultEntries[3][1]).toBeTruthy();
+        expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual(countId);
+
+        expect(resultEntries[4][0]).toEqual('target-/root/ComplexArray1/*/F1');
+        expect(resultEntries[4][1]).toBeTruthy();
+        expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(multiplyId);
       });
 
       // TODO: 16770037 - Once the BE fixes how loops are parsed in getSchemaTree we should restore this to match

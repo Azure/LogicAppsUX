@@ -14,6 +14,7 @@ import {
 } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import { setConnectionInputValue } from '../utils/Connection.Utils';
+import type { UnknownNode } from '../utils/DataMap.Utils';
 import {
   flattenMapDefinitionValues,
   getDestinationNode,
@@ -23,7 +24,6 @@ import {
   qualifyLoopRelativeSourceKeys,
   splitKeyIntoChildren,
 } from '../utils/DataMap.Utils';
-import type { UnknownNode } from '../utils/DataMap.Utils';
 import { findFunctionForFunctionName, isFunctionData } from '../utils/Function.Utils';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
 import { createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
@@ -57,6 +57,7 @@ export const convertFromMapDefinition = (
       functions
     );
   }
+
   return connections;
 };
 
@@ -71,7 +72,25 @@ const parseDefinitionToConnection = (
   targetSchemaFlattened: SchemaNodeDictionary,
   functions: FunctionData[]
 ) => {
-  if (typeof sourceNodeObject === 'string') {
+  if (Array.isArray(sourceNodeObject)) {
+    // TODO Support for multiple array entries
+    for (let index = 0; index < sourceNodeObject.length; index++) {
+      const element = sourceNodeObject[index];
+      parseDefinitionToConnection(
+        element,
+        targetKey,
+        connections,
+        createdNodes,
+        sourceSchema,
+        sourceSchemaFlattened,
+        targetSchema,
+        targetSchemaFlattened,
+        functions
+      );
+    }
+
+    return;
+  } else if (typeof sourceNodeObject === 'string') {
     createConnections(
       sourceNodeObject,
       targetKey,

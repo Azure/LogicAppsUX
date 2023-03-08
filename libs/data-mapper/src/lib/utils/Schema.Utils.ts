@@ -89,8 +89,11 @@ export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended):
   let tempKey = nodeKey;
   if (tempKey.includes(mapNodeParams.for)) {
     const forRegex = new RegExp(/\$for\([^)]+\)\//);
-    tempKey = nodeKey.replace(forRegex, '');
+    // ArrayItems will have an * instead of a key name
+    // And that * is stripped out during serialization
+    tempKey = nodeKey.replace(forRegex, nodeKey.indexOf('*') !== -1 ? '*/' : '');
   }
+
   if (schemaNode.key === tempKey) {
     return schemaNode;
   }
