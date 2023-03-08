@@ -96,7 +96,10 @@ export function arrayEqualsOrderInsensitive<T extends Primitive>(
  */
 export function equals(x: string | null | undefined, y: string | null | undefined, caseInsensitive = true) {
   if (caseInsensitive) {
-    return !isNullOrUndefined(x) && !isNullOrUndefined(y) && x.toLowerCase() === y.toLowerCase();
+    // NOTE: In some cases, the conversion of Latin or Greek characters to uppercase and then back to lowercase will result
+    // in a different evaluation, which means checking only 'toLowerCase' equivalence is insufficient. This should also return 'true'
+    // in the event that they share 'toUpperCase' equivalence. See work item One/#15505347 and incident 333040852 for details.
+    return !isNullOrUndefined(x) && !isNullOrUndefined(y) && (x.toLowerCase() === y.toLowerCase() || x.toUpperCase() === y.toUpperCase());
   } else {
     return !isNullOrUndefined(x) && !isNullOrUndefined(y) && x === y;
   }

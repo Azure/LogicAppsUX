@@ -94,7 +94,7 @@ const isApiConnectionType = (type: string): boolean => {
   );
 };
 
-const isOpenApiConnectionType = (type: string): boolean => {
+export const isOpenApiConnectionType = (type: string): boolean => {
   return (
     equals(type, Constants.NODE.TYPE.OPEN_API_CONNECTION) ||
     equals(type, Constants.NODE.TYPE.OPEN_API_CONNECTION_WEBHOOK) ||
