@@ -14,16 +14,6 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
     const { operationId: dynamicOperation } = dynamicState;
 
-    console.log('### getListDynamicValues', {
-      connectionId,
-      connectorId,
-      operationId,
-      _parameterAlias,
-      parameters,
-      dynamicState,
-      nodeInputs,
-    });
-
     const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
     const configuration = await getConfiguration(connectionId ?? '');
 
@@ -54,8 +44,6 @@ export class ConsumptionConnectorService extends BaseConnectorService {
       extension: { operationId: dynamicOperation },
       isInput,
     } = dynamicState;
-
-    console.log('### getDynamicSchema', { connectionId, connectorId, operationId, _parameterAlias, parameters, dynamicState, nodeInputs });
 
     const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
     const configuration = await getConfiguration(connectionId ?? '');

@@ -326,6 +326,7 @@ function getParametersForDynamicInvoke(
 
   for (const [parameterName, parameter] of Object.entries(referenceParameters ?? {})) {
     const referenceParameterName = (parameter?.parameterReference ?? parameter?.parameter ?? 'undefined') as string;
+    if (referenceParameterName === 'undefined') continue;
     const referencedParameter = getParameterFromName(nodeInputs, referenceParameterName);
 
     if (!referencedParameter) {

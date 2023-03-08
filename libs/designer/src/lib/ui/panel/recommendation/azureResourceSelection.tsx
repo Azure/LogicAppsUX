@@ -252,7 +252,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         getResourcesCallback={getResourcesCallbacks?.[0]}
         selectedResourceId={selectedResources?.[0]?.id}
         onResourceSelect={(resource: any) => setResourceAtDepth(resource, 0)}
-        subResourceType={resourceTypes[1]}
+        subResourceType={resourceTypes?.[1]}
         getSubResourceName={(subResource: any) => getResourceName(subResource)}
         fetchSubResourcesCallback={getResourcesCallbacks?.[1]}
         onSubResourceSelect={(subResource: any) => setResourceAtDepth(subResource, 1)}

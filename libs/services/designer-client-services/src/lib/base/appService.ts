@@ -1,7 +1,7 @@
 import type { IAppServiceService } from '../appService';
 import type { ListDynamicValue } from '../connector';
 import type { IHttpClient } from '../httpClient';
-import { ResponseCodes } from '@microsoft/parsers-logic-apps';
+import { ResponseCodes, SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { ArgumentException, equals, unmap } from '@microsoft/utils-logic-apps';
 
 export interface BaseAppServiceServiceOptions {
@@ -45,12 +45,22 @@ export class BaseAppServiceService implements IAppServiceService {
       uri: swaggerUrl,
       headers: { 'Access-Control-Allow-Origin': '*' },
     });
-    return response;
+    const swaggerDoc = await SwaggerParser.parse(response);
+    return new SwaggerParser(swaggerDoc);
   }
 
-  public async getOperationSchema(swaggerUrl: string, operationId: string, isInput: boolean): Promise<any> {
+  public async getOperationSchema(swaggerUrl: string, operationData: any, isInput: boolean): Promise<any> {
+    const { operationId, operationPath, operationMethod } = operationData;
     const swagger = await this.fetchAppServiceApiSwagger(swaggerUrl);
-    const operation = swagger.getOperationByOperationId(operationId);
+    console.log('$$$ getting schema for operation', operationData, swagger);
+
+    let operation;
+    if (operationId) operation = swagger.getOperationByOperationId(operationId);
+    else if (operationPath && operationMethod) operation = swagger.getOperationByPathAndMethod(operationPath, operationMethod);
+    if (!operation) throw new Error('Operation not found');
+
+    console.log('$$$ operation', operation);
+
     const paths = swagger.api.paths[operation.path];
     const rawOperation = paths[operation.method];
     const schema = { type: 'object', properties: {} as any, required: [] as string[] };
@@ -119,6 +129,8 @@ export class BaseAppServiceService implements IAppServiceService {
   public async getOperations(swaggerUrl: string): Promise<ListDynamicValue[]> {
     const swagger = await this.fetchAppServiceApiSwagger(swaggerUrl);
     const operations = swagger.getOperations();
+
+    console.log('%%% appservice > operations: ', operations);
 
     return unmap(operations).map((operation: any) => ({
       value: operation.operationId,

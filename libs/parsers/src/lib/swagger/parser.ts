@@ -286,6 +286,11 @@ export class SwaggerParser {
     return getPropertyValue(operations, operationId);
   }
 
+  getOperationByPathAndMethod(path: string, method: string): Operation | undefined {
+    const operations = this.getOperations({ unsorted: true, excludeInternalOperations: false });
+    return Object.values(operations).find((operation) => operation.path === path && operation.method === method);
+  }
+
   /**
    * @arg {string} operationId
    *    - A string with the operation name.

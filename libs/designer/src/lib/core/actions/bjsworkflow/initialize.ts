@@ -88,7 +88,6 @@ export const getInputParametersFromManifest = (
     undefined,
     undefined
   );
-  // console.log('### primaryInputParameters', primaryInputParameters);
   const allInputParameters = unmap(
     new ManifestParser(manifest).getInputParameters(
       true /* includeParentObject */,
