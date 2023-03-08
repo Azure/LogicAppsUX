@@ -107,7 +107,7 @@ const appendtoarrayvariable = 'appendtoarrayvariable';
 const appendtostringvariable = 'appendtostringvariable';
 const batch = 'batch';
 const sendtobatch = 'sendtobatch';
-const xslttransform = 'xsltTransform';
+const xslttransform = 'xslttransform';
 const datamapper = 'datamapper';
 
 export const apiManagementConnectorId = '/connectionProviders/apiManagementOperation';
@@ -121,6 +121,7 @@ const httpConnectorId = 'connectionProviders/http';
 const variableConnectorId = 'connectionProviders/variable';
 const rosettanetConnectorId = 'connectionProviders/rosettaNetOperations';
 const liquidConnectorId = 'connectionProviders/liquidOperations';
+const dataMapperConnectorId = 'connectionProviders/dataMapperOperations';
 
 const supportedManifestTypes = [
   apimanagement,
@@ -172,6 +173,7 @@ const supportedManifestTypes = [
   terminate,
   until,
   wait,
+  xslttransform,
 ];
 
 export type getAccessTokenType = () => Promise<string>;
@@ -379,12 +381,12 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
         operationId: definition.inputs?.until ? delayuntil : delay,
       };
 
-    case xslt:
+    case xslttransform:
       switch (kind) {
         case datamapper:
           return {
-            connectorId: liquidConnectorId,
-            operationId: 'liquidJsonToJson',
+            connectorId: dataMapperConnectorId,
+            operationId: xslttransform,
           };
         default:
           throw new UnsupportedException(`Unsupported operation kind ${kind}`);
