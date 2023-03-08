@@ -71,6 +71,12 @@
       "value": "Select an api from apim instance"
     }
   ],
+  "/2+p0Z": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -618,12 +624,6 @@
     {
       "type": 0,
       "value": "開啟"
-    }
-  ],
-  "2wJZkB": [
-    {
-      "type": 0,
-      "value": "空白的新增動態內容按鈕"
     }
   ],
   "2xhbE1": [
@@ -1410,6 +1410,12 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9atGYe": [
+    {
+      "type": 0,
+      "value": "Add"
     }
   ],
   "9djnqI": [
@@ -2258,6 +2264,12 @@
       "value": "索引鍵"
     }
   ],
+  "Hbqlzk": [
+    {
+      "type": 0,
+      "value": "Insert Expression"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -2817,6 +2829,12 @@
       "value": "下一個失敗"
     }
   ],
+  "Mc6ITJ": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "MfAdfx": [
     {
       "type": 0,
@@ -3281,6 +3299,12 @@
     {
       "type": 0,
       "value": "資料類型"
+    }
+  ],
+  "QiVbKW": [
+    {
+      "type": 0,
+      "value": "Exit Full Screen"
     }
   ],
   "QknZQ1": [
@@ -4296,6 +4320,12 @@
       "value": "已刪除這項作業。"
     }
   ],
+  "Zg3IjD": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -4366,6 +4396,12 @@
     {
       "type": 0,
       "value": "Second"
+    }
+  ],
+  "ae7W0a": [
+    {
+      "type": 0,
+      "value": "Full Screen"
     }
   ],
   "ahsVI/": [
@@ -4832,6 +4868,12 @@
       "value": "選用。停止擷取子字串之位置的索引。"
     }
   ],
+  "f81ClO": [
+    {
+      "type": 0,
+      "value": "Empty dynamic content icon"
+    }
+  ],
   "fBQBw/": [
     {
       "type": 0,
@@ -4880,6 +4922,12 @@
     {
       "type": 0,
       "value": "邏輯函數"
+    }
+  ],
+  "fmm7Ik": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "froV/0": [
@@ -4982,6 +5030,12 @@
     {
       "type": 0,
       "value": "轉換函數"
+    }
+  ],
+  "gRUmiA": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "gTXyUo": [
@@ -5727,12 +5781,6 @@
       "value": "限制 Logic Apps 不要在傳出要求中包含工作流程中繼資料標頭。"
     }
   ],
-  "mmF/SW": [
-    {
-      "type": 0,
-      "value": "確定"
-    }
-  ],
   "mvrlkP": [
     {
       "type": 0,
@@ -6272,12 +6320,6 @@
       "value": "傳回值的 URI 編碼表示法"
     }
   ],
-  "rjyBPU": [
-    {
-      "type": 0,
-      "value": "運算式"
-    }
-  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -6582,12 +6624,6 @@
     {
       "type": 0,
       "value": "Show me"
-    }
-  ],
-  "uXJdAh": [
-    {
-      "type": 0,
-      "value": "搜尋動態內容"
     }
   ],
   "uZH8Qs": [

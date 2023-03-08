@@ -71,6 +71,12 @@
       "value": "Select an api from apim instance"
     }
   ],
+  "/2+p0Z": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -629,12 +635,6 @@
     {
       "type": 0,
       "value": "On"
-    }
-  ],
-  "2wJZkB": [
-    {
-      "type": 0,
-      "value": "Empty add dynamic content button"
     }
   ],
   "2xhbE1": [
@@ -1421,6 +1421,12 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9atGYe": [
+    {
+      "type": 0,
+      "value": "Add"
     }
   ],
   "9djnqI": [
@@ -2291,6 +2297,12 @@
       "value": "Key"
     }
   ],
+  "Hbqlzk": [
+    {
+      "type": 0,
+      "value": "Insert Expression"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -2861,6 +2873,12 @@
       "value": "Next failed"
     }
   ],
+  "Mc6ITJ": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "MfAdfx": [
     {
       "type": 0,
@@ -3329,6 +3347,12 @@
     {
       "type": 0,
       "value": "Data type"
+    }
+  ],
+  "QiVbKW": [
+    {
+      "type": 0,
+      "value": "Exit Full Screen"
     }
   ],
   "QknZQ1": [
@@ -4355,6 +4379,12 @@
       "value": "This operation has already been deleted."
     }
   ],
+  "Zg3IjD": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -4425,6 +4455,12 @@
     {
       "type": 0,
       "value": "Second"
+    }
+  ],
+  "ae7W0a": [
+    {
+      "type": 0,
+      "value": "Full Screen"
     }
   ],
   "ahsVI/": [
@@ -4887,6 +4923,12 @@
       "value": "Optional. The index of where to stop extracting the substring."
     }
   ],
+  "f81ClO": [
+    {
+      "type": 0,
+      "value": "Empty dynamic content icon"
+    }
+  ],
   "fBQBw/": [
     {
       "type": 0,
@@ -4935,6 +4977,12 @@
     {
       "type": 0,
       "value": "Logical functions"
+    }
+  ],
+  "fmm7Ik": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "froV/0": [
@@ -5037,6 +5085,12 @@
     {
       "type": 0,
       "value": "Conversion functions"
+    }
+  ],
+  "gRUmiA": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "gTXyUo": [
@@ -5793,12 +5847,6 @@
       "value": "Limit Logic Apps to not include workflow metadata headers in the outgoing request."
     }
   ],
-  "mmF/SW": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
   "mvrlkP": [
     {
       "type": 0,
@@ -6349,12 +6397,6 @@
       "value": "Returns a URI encoded representation of a value"
     }
   ],
-  "rjyBPU": [
-    {
-      "type": 0,
-      "value": "Expression"
-    }
-  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -6659,12 +6701,6 @@
     {
       "type": 0,
       "value": "Show me"
-    }
-  ],
-  "uXJdAh": [
-    {
-      "type": 0,
-      "value": "Search dynamic content"
     }
   ],
   "uZH8Qs": [

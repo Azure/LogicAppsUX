@@ -2,7 +2,6 @@ import constants from '../../../../common/constants';
 import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
-import { showTokenPicker, hideTokenPicker } from '../../../../core/state/panel/panelSlice';
 import {
   useAllowUserToChangeConnection,
   useNodeConnectionName,
@@ -28,7 +27,7 @@ import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import { DynamicCallStatus, TokenPicker, ValueSegmentType } from '@microsoft/designer-ui';
-import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
+import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode } from '@microsoft/designer-ui';
 import { equals } from '@microsoft/utils-logic-apps';
 import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -106,7 +105,6 @@ const ParameterSection = ({
     upstreamNodeIds,
     operationDefinition,
     connectionReference,
-    tokenPickerVisibility,
     idReplacements,
   } = useSelector((state: RootState) => {
     return {
@@ -119,23 +117,10 @@ const ParameterSection = ({
       variables: state.tokens.variables,
       operationDefinition: state.workflow.newlyAddedOperations[nodeId] ? undefined : state.workflow.operations[nodeId],
       connectionReference: getConnectionReference(state.connections, nodeId),
-      tokenPickerVisibility: state.panel.tokenPickerVisibility,
       idReplacements: state.workflow.idReplacements,
     };
   });
   const rootState = useSelector((state: RootState) => state);
-
-  const showTokenPickerSwitch = (show?: boolean) => {
-    if (show) {
-      dispatch(showTokenPicker());
-    } else {
-      if (tokenPickerVisibility) {
-        dispatch(hideTokenPicker());
-      } else {
-        dispatch(showTokenPicker());
-      }
-    }
-  };
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState) => {
@@ -227,9 +212,10 @@ const ParameterSection = ({
     parameterId: string,
     editorId: string,
     labelId: string,
-    tokenPickerFocused?: (b: boolean) => void,
-    tokenClicked?: (token: ValueSegment) => void,
-    tokenPickerHide?: () => void
+    tokenPickerMode?: TokenPickerMode,
+    closeTokenPicker?: () => void,
+    tokenPickerClicked?: (b: boolean) => void,
+    tokenClicked?: (token: ValueSegment) => void
   ): JSX.Element => {
     // check to see if there's a custom Token Picker
     return (
@@ -238,13 +224,13 @@ const ParameterSection = ({
         labelId={labelId}
         tokenGroup={tokenGroup}
         expressionGroup={expressionGroup}
-        tokenPickerFocused={tokenPickerFocused}
+        tokenPickerFocused={tokenPickerClicked}
+        initialMode={tokenPickerMode}
         getValueSegmentFromToken={(token: OutputToken, addImplicitForeach: boolean) =>
           getValueSegmentFromToken(parameterId, token, addImplicitForeach)
         }
         tokenClickedCallback={tokenClicked}
-        tokenPickerHide={tokenPickerHide}
-        showTokenPickerSwitch={showTokenPickerSwitch}
+        closeTokenPicker={closeTokenPicker}
       />
     );
   };
@@ -293,15 +279,13 @@ const ParameterSection = ({
           validationErrors,
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
-          tokenPickerHandler: {
-            getTokenPicker: (
-              editorId: string,
-              labelId: string,
-              tokenPickerFocused?: (b: boolean) => void,
-              tokenClicked?: (token: ValueSegment) => void
-            ) => getTokenPicker(id, editorId, labelId, tokenPickerFocused, tokenClicked),
-            tokenPickerProps: { tokenPickerVisibility, showTokenPickerSwitch },
-          },
+          getTokenPicker: (
+            editorId: string,
+            labelId: string,
+            tokenPickerMode?: TokenPickerMode,
+            closeTokenPicker?: () => void,
+            tokenPickerClicked?: (b: boolean) => void
+          ) => getTokenPicker(id, editorId, labelId, tokenPickerMode, closeTokenPicker, tokenPickerClicked),
         },
       };
     });

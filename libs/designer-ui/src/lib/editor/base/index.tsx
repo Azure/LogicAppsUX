@@ -1,4 +1,5 @@
 import { Toolbar } from '../../html/plugins/toolbar';
+import type { TokenPickerMode } from '../../tokenpicker';
 import type { ValueSegment } from '../models/parameter';
 import { TokenNode } from './nodes/tokenNode';
 import { AutoFocus } from './plugins/AutoFocus';
@@ -9,11 +10,12 @@ import IgnoreTab from './plugins/IgnoreTab';
 import InsertTokenNode from './plugins/InsertTokenNode';
 import OnBlur from './plugins/OnBlur';
 import OnFocus from './plugins/OnFocus';
+import OpenTokenPicker from './plugins/OpenTokenPicker';
 import { ReadOnly } from './plugins/ReadOnly';
 import SingleValueSegment from './plugins/SingleValueSegment';
-import type { TokenPickerButtonProps } from './plugins/TokenPickerButton';
-import TokenPickerButton from './plugins/TokenPickerButton';
 import { TreeView } from './plugins/TreeView';
+import type { TokenPickerButtonEditorProps } from './plugins/tokenpickerbuttonnew';
+import { TokenPickerButtonNew } from './plugins/tokenpickerbuttonnew';
 import EditorTheme from './themes/editorTheme';
 import { parseSegments } from './utils/parsesegments';
 import type { ICalloutProps } from '@fluentui/react';
@@ -26,6 +28,7 @@ import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { useFunctionalState } from '@react-hookz/web';
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
 
 export { testTokenSegment, outputToken, outputToken2 } from '../shared/testtokensegment';
@@ -38,21 +41,11 @@ export interface ChangeState {
 export type GetTokenPickerHandler = (
   editorId: string,
   labelId: string,
-  onClick?: (b: boolean) => void,
-  tokenClicked?: (token: ValueSegment) => void,
-  hideTokenPicker?: () => void
+  tokenPickerMode?: TokenPickerMode,
+  closeTokenPicker?: () => void,
+  tokenPickerClicked?: (b: boolean) => void,
+  tokenClicked?: (token: ValueSegment) => void
 ) => JSX.Element;
-
-export interface tokenPickerVisibilityHandler {
-  tokenPickerVisibility?: boolean;
-  showTokenPickerSwitch?: (show?: boolean) => void;
-}
-
-export interface TokenPickerHandler {
-  getTokenPicker: GetTokenPickerHandler;
-  tokenPickerProps: tokenPickerVisibilityHandler;
-  tokenPickerButtonProps?: TokenPickerButtonProps;
-}
 
 export type ChangeHandler = (newState: ChangeState) => void;
 export type CallbackHandler = () => void;
@@ -69,10 +62,11 @@ export interface BaseEditorProps {
   initialValue: ValueSegment[];
   children?: React.ReactNode;
   isTrigger?: boolean;
+  tokenPickerButtonEditorProps?: TokenPickerButtonEditorProps;
   onChange?: ChangeHandler;
   onBlur?: () => void;
   onFocus?: () => void;
-  tokenPickerHandler: TokenPickerHandler;
+  getTokenPicker: GetTokenPickerHandler;
 }
 
 export interface BasePlugins {
@@ -99,22 +93,18 @@ export const BaseEditor = ({
   initialValue,
   children,
   isTrigger,
+  tokenPickerButtonEditorProps,
   onFocus,
   onBlur,
-  tokenPickerHandler,
+  getTokenPicker,
 }: BaseEditorProps) => {
   const intl = useIntl();
   const editorId = useId('msla-tokenpicker-callout-location');
   const labelId = useId('msla-tokenpicker-callout-label');
 
-  const [hideTooltip, setHideTooltip] = useState(false);
-  const [showTokenPickerButton, setShowTokenPickerButton] = useState(false);
+  const [isEditorFocused, setIsEditorFocused] = useState(false);
   const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
-
-  const { getTokenPicker, tokenPickerProps, tokenPickerButtonProps } = tokenPickerHandler || {};
-  const { customButton = false } = tokenPickerButtonProps || {};
-  const { tokenPickerVisibility, showTokenPickerSwitch } = tokenPickerProps || {};
-
+  const [tokenPickerMode, setTokenPickerMode] = useState<TokenPickerMode | undefined>();
   const initialConfig = {
     theme: EditorTheme,
     editable: !readonly,
@@ -136,45 +126,38 @@ export const BaseEditor = ({
   });
 
   const handleFocus = () => {
-    setHideTooltip(true);
-    if (tokens) {
-      setShowTokenPickerButton(true);
-    }
+    setIsEditorFocused(true);
     setInTokenPicker(false);
     onFocus?.();
   };
 
   const handleBlur = () => {
-    setHideTooltip(false);
+    setIsEditorFocused(false);
     if (!getInTokenPicker()) {
-      if (tokens) {
-        setInTokenPicker(false);
-      }
+      setTokenPickerMode(undefined);
+      setInTokenPicker(false);
       onBlur?.();
     }
-    setShowTokenPickerButton(false);
   };
 
-  const handleShowTokenPicker = () => {
-    if (tokenPickerVisibility) {
-      setInTokenPicker(false);
-    }
-    showTokenPickerSwitch?.();
+  const openTokenPicker = (mode: TokenPickerMode) => {
+    setTokenPickerMode(mode);
+    setInTokenPicker(true);
   };
 
-  const onClickTokenPicker = (b: boolean) => {
+  const tokenPickerClicked = (b: boolean) => {
     setInTokenPicker(b);
   };
 
   const calloutProps: Partial<ICalloutProps> = {
     gapSpace: 1,
     isBeakVisible: false,
-    hidden: hideTooltip,
+    hidden: isEditorFocused,
     directionalHint: DirectionalHint.bottomRightEdge,
   };
 
   return (
-    <TooltipHost content={placeholder} calloutProps={calloutProps}>
+    <TooltipHost content={placeholder} calloutProps={calloutProps} styles={{ root: { width: '100%' } }}>
       <LexicalComposer initialConfig={initialConfig}>
         <div className={className ?? 'msla-editor-container'} id={editorId}>
           {toolBar ? <Toolbar /> : null}
@@ -188,28 +171,27 @@ export const BaseEditor = ({
           {autoLink ? <AutoLink /> : null}
           {clearEditor ? <ClearEditor showButton={false} /> : null}
           {singleValueSegment ? <SingleValueSegment /> : null}
-
-          {!isTrigger && ((tokens && showTokenPickerButton) || getInTokenPicker()) ? (
-            <TokenPickerButton
-              customButton={customButton}
-              labelId={labelId}
-              showTokenPicker={!!tokenPickerVisibility}
-              buttonClassName={tokenPickerButtonProps?.buttonClassName}
-              buttonOffset={tokenPickerButtonProps?.buttonOffset}
-              setShowTokenPicker={handleShowTokenPicker}
-            />
-          ) : null}
-          {!isTrigger && ((showTokenPickerButton && tokenPickerVisibility) || getInTokenPicker())
-            ? getTokenPicker(editorId, labelId, onClickTokenPicker, undefined, customButton ? handleShowTokenPicker : undefined)
-            : null}
           <OnBlur command={handleBlur} />
           <OnFocus command={handleFocus} />
           <ReadOnly readonly={readonly} />
           {tabbable ? null : <IgnoreTab />}
           {tokens ? <InsertTokenNode /> : null}
           {tokens ? <DeleteTokenNode /> : null}
+          {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
           {children}
+          {!isTrigger && tokens && getInTokenPicker()
+            ? getTokenPicker(editorId, labelId, tokenPickerMode, handleFocus, tokenPickerClicked)
+            : null}
         </div>
+
+        {!isTrigger && tokens && isEditorFocused && !getInTokenPicker() ? (
+          createPortal(
+            <TokenPickerButtonNew openTokenPicker={openTokenPicker} showOnLeft={tokenPickerButtonEditorProps?.showOnLeft} />,
+            document.body
+          )
+        ) : (
+          <div />
+        )}
       </LexicalComposer>
     </TooltipHost>
   );

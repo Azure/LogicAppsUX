@@ -1,13 +1,10 @@
 import type { DictionaryEditorItemProps } from '.';
-import constants from '../constants';
-import type { TokenPickerHandler } from '../editor/base';
+import type { GetTokenPickerHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
-import type { ButtonOffSet } from '../editor/base/plugins/TokenPickerButton';
 import { DictionaryDeleteButton } from './expandeddictionarydelete';
 import { SerializeExpandedDictionary } from './plugins/SerializeExpandedDictionary';
 import { isEmpty } from './util/helper';
-import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
-import { useCallback, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useIntl } from 'react-intl';
 
 export enum ExpandedDictionaryEditorType {
@@ -21,7 +18,7 @@ export interface ExpandedDictionaryProps {
   keyTitle?: string;
   valueTitle?: string;
   setItems: (items: DictionaryEditorItemProps[]) => void;
-  tokenPickerHandler: TokenPickerHandler;
+  getTokenPicker: GetTokenPickerHandler;
 }
 
 export const ExpandedDictionary = ({
@@ -30,20 +27,12 @@ export const ExpandedDictionary = ({
   readonly,
   keyTitle,
   valueTitle,
-  tokenPickerHandler,
+  getTokenPicker,
   setItems,
 }: ExpandedDictionaryProps): JSX.Element => {
   const intl = useIntl();
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<(HTMLDivElement | null)[]>([]);
-
-  const [pickerOffset, setPickerOffset] = useState<ButtonOffSet>();
-  const [currIndex, setCurrIndex] = useState<number>(0);
-  const [currType, setCurrType] = useState<ExpandedDictionaryEditorType>(ExpandedDictionaryEditorType.KEY);
-
-  const onChange = useCallback(() => {
-    updateHeight(currIndex, currType);
-  }, [currIndex, currType]);
 
   const keyPlaceholder = intl.formatMessage({
     defaultMessage: 'Enter key',
@@ -54,27 +43,7 @@ export const ExpandedDictionary = ({
     description: 'Placeholder text for Value',
   });
 
-  const updateHeight = (index: number, type: ExpandedDictionaryEditorType) => {
-    if (containerRef.current && editorRef.current[index]) {
-      const containerBottomLoc = window.scrollY + containerRef.current.getBoundingClientRect().top + containerRef.current.offsetHeight;
-      let itemHeight = window.scrollY;
-      itemHeight += editorRef.current[index]?.getBoundingClientRect().top ?? 0;
-      const itemWidth =
-        type === ExpandedDictionaryEditorType.KEY
-          ? editorRef.current[index]?.getBoundingClientRect().width ?? constants.EXPANDED_DICTIONARY_WIDTH_OFFSET.KEY_OFFSET
-          : 0;
-
-      setPickerOffset({
-        heightOffset: containerBottomLoc - itemHeight,
-        widthOffset: constants.EXPANDED_DICTIONARY_WIDTH_OFFSET.VALUE_OFFSET - itemWidth,
-      });
-    }
-  };
-
-  const addItem = (index: number, type: ExpandedDictionaryEditorType) => {
-    setCurrIndex(index);
-    setCurrType(type);
-    updateHeight(index, type);
+  const addItem = (index: number) => {
     if (index === items.length - 1 && !isEmpty(items[index])) {
       setItems([...items, { key: [], value: [] }]);
     }
@@ -99,10 +68,9 @@ export const ExpandedDictionary = ({
                 isTrigger={isTrigger}
                 readonly={readonly}
                 BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
-                tokenPickerHandler={{ ...tokenPickerHandler, tokenPickerButtonProps: { buttonOffset: pickerOffset } }}
-                onFocus={() => addItem(index, ExpandedDictionaryEditorType.KEY)}
+                getTokenPicker={getTokenPicker}
+                onFocus={() => addItem(index)}
               >
-                <OnChangePlugin onChange={onChange} />
                 <SerializeExpandedDictionary
                   items={items}
                   initialItem={item.key}
@@ -120,10 +88,9 @@ export const ExpandedDictionary = ({
                 isTrigger={isTrigger}
                 readonly={readonly}
                 BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
-                tokenPickerHandler={{ ...tokenPickerHandler, tokenPickerButtonProps: { buttonOffset: pickerOffset } }}
-                onFocus={() => addItem(index, ExpandedDictionaryEditorType.VALUE)}
+                getTokenPicker={getTokenPicker}
+                onFocus={() => addItem(index)}
               >
-                <OnChangePlugin onChange={onChange} />
                 <SerializeExpandedDictionary
                   items={items}
                   initialItem={item.value}

@@ -1,10 +1,10 @@
 import type { OutputToken } from '..';
+import { TokenPickerMode } from '../';
 import type { ValueSegment } from '../../editor';
 import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
 import { SINGLE_VALUE_SEGMENT } from '../../editor/base/plugins/SingleValueSegment';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
-import type { TokenGroup } from '../models/token';
-import { TokenPickerMode } from '../tokenpickerpivot';
+import type { Token, TokenGroup } from '../models/token';
 import { Icon } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -21,7 +21,6 @@ interface TokenPickerOptionsProps {
   section: TokenGroup;
   searchQuery: string;
   index: number;
-  editMode: boolean;
   expressionEditorRef: MutableRefObject<editor.IStandaloneCodeEditor | null>;
   expression: ExpressionEditorEvent;
   setTokenLength: Dispatch<SetStateAction<number[]>>;
@@ -34,7 +33,6 @@ export const TokenPickerOptions = ({
   section,
   searchQuery,
   index,
-  editMode,
   expressionEditorRef,
   expression,
   setExpression,
@@ -53,28 +51,19 @@ export const TokenPickerOptions = ({
   const [filteredTokens, setFilteredTokens] = useState(section.tokens);
 
   useEffect(() => {
+    let tokens: Token[];
     if (searchQuery) {
       const query = searchQuery.trim();
       const fuse = new Fuse(section.tokens, { keys: ['description', 'title'], threshold: 0.2 });
-      const tokens = fuse.search(query).map((token) => token.item);
+      tokens = fuse.search(query).map((token) => token.item);
       setFilteredTokens(tokens);
-      if (selectedKey === TokenPickerMode.TOKEN) {
-        setTokenLength((prevTokens) => {
-          const newTokens = prevTokens;
-          newTokens[index] = tokens.length;
-          return newTokens;
-        });
-      }
-    } else {
-      if (selectedKey === TokenPickerMode.TOKEN) {
-        setTokenLength((prevTokens) => {
-          const newTokens = prevTokens;
-          newTokens[index] = section.tokens.length;
-          return newTokens;
-        });
-      }
     }
-  }, [index, searchQuery, section.tokens, selectedKey, setTokenLength]);
+    setTokenLength((prevTokens) => {
+      const newTokens = prevTokens;
+      newTokens[index] = tokens?.length ?? section.tokens.length;
+      return newTokens;
+    });
+  }, [index, searchQuery, section.tokens, setTokenLength]);
 
   const buttonTextMore = intl.formatMessage({
     defaultMessage: 'See More',
@@ -91,22 +80,21 @@ export const TokenPickerOptions = ({
   };
 
   const handleTokenClicked = (token: OutputToken) => {
-    if (editMode) {
-      if (selectedKey === TokenPickerMode.TOKEN) {
-        handleExpressionTokenMode(token);
-      } else if (selectedKey === TokenPickerMode.EXPRESSION) {
-        handleExpressionTokenModeToken(token);
-      }
-    } else {
+    if (selectedKey === TokenPickerMode.TOKEN) {
       handleCreateToken(token);
+    } else if (selectedKey === TokenPickerMode.EXPRESSION) {
+      handleExpressionClicked(token);
+    } else if (selectedKey === TokenPickerMode.TOKEN_EXPRESSION) {
+      handleTokenExpressionClicked(token);
     }
   };
 
-  const handleExpressionTokenMode = (token: OutputToken) => {
+  const handleTokenExpressionClicked = (token: OutputToken) => {
     const expression = token.value ?? '';
     insertExpressionText(expression, 0);
   };
-  const handleExpressionTokenModeToken = (token: OutputToken) => {
+
+  const handleExpressionClicked = (token: OutputToken) => {
     const expression = token.key;
     insertExpressionText(`${expression}()`, -1);
   };
@@ -151,11 +139,29 @@ export const TokenPickerOptions = ({
     }
   };
 
+  const getSectionIcon = (): string | undefined => {
+    return section?.tokens[0]?.icon;
+  };
+
+  const getSectionSecurity = (): boolean => {
+    return section?.tokens[0]?.outputInfo.isSecure ?? false;
+  };
+
+  const getSectionBrandColor = (): string => {
+    return section?.tokens[0]?.brandColor ?? '#e8eae7';
+  };
+
   return (
     <>
       {(searchQuery && filteredTokens.length > 0) || !searchQuery ? (
         <>
-          <div className="msla-token-picker-section-header">
+          <div className="msla-token-picker-section-header" style={{ backgroundColor: setOpacity(getSectionBrandColor(), 0.1) }}>
+            <img src={getSectionIcon()} alt="token icon" />
+            {getSectionSecurity() ? (
+              <div className="msla-token-picker-secure-token">
+                <Icon iconName="LockSolid" />
+              </div>
+            ) : null}
             <span> {section.label}</span>
             {searchQuery || !hasAdvanced(section.tokens) ? null : (
               <button className="msla-token-picker-section-header-button" onClick={handleMoreLess}>
@@ -165,19 +171,13 @@ export const TokenPickerOptions = ({
           </div>
           <div className="msla-token-picker-section-options">
             {(!searchQuery ? section.tokens : filteredTokens).map((token, j) => {
-              if (!token.isAdvanced || !moreOptions) {
+              if (!token.isAdvanced || !moreOptions || searchQuery) {
                 return (
                   <button
                     className="msla-token-picker-section-option"
                     key={`token-picker-option-${j}`}
                     onClick={() => handleTokenClicked(token)}
                   >
-                    <img src={token.icon} alt="token icon" />
-                    {token.outputInfo.isSecure ? (
-                      <div className="msla-token-picker-secure-token">
-                        <Icon iconName="LockSolid" />
-                      </div>
-                    ) : null}
                     <div className="msla-token-picker-section-option-text">
                       <div className="msla-token-picker-option-inner">
                         <div className="msla-token-picker-option-title">{token.title}</div>
@@ -198,3 +198,8 @@ export const TokenPickerOptions = ({
 function hasAdvanced(tokens: OutputToken[]): boolean {
   return tokens.some((token) => token.isAdvanced);
 }
+
+const setOpacity = (hex: string, alpha: number) =>
+  `${hex}${Math.floor(alpha * 255)
+    .toString(16)
+    .padStart(2, '0')}`;

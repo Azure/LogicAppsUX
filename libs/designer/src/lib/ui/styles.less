@@ -138,7 +138,7 @@
   margin: 32px 0;
 }
 
-body.dark {
+.msla-theme-dark {
   .react-flow__controls-button {
     background: @ms-color-primaryBackground;
     border-bottom: 1px solid @ms-color-primaryBackgroundHover;
@@ -173,17 +173,4 @@ body.dark {
 
 [data-color-scheme='light'] {
   color-scheme: light;
-}
-
-// Fixes some styling around the command bar in portal
-body > #root {
-  padding: 10px 0px 20px;
-  overflow-y: hidden;
-}
-
-body:not(.is-standalone) {
-  .ms-Layer {
-    top: 47px;
-    overflow: hidden;
-  }
 }

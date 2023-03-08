@@ -1,3 +1,4 @@
+import { TokenPickerMode } from '.';
 import constants from '../constants';
 import type { IPivotStyles } from '@fluentui/react';
 import { PivotItem, Pivot } from '@fluentui/react';
@@ -12,20 +13,14 @@ const pivotStyles: Partial<IPivotStyles> = {
     padding: '10px',
   },
   root: {
-    padding: '5px',
+    padding: '0 5px 5px 5px',
   },
 };
-
-export enum TokenPickerMode {
-  TOKEN = 'token',
-  EXPRESSION = 'expression',
-}
 
 interface TokenPickerPivotProps {
   selectedKey: string;
   hideExpressions: boolean;
   selectKey: () => void;
-  tokenPickerHide?: () => void;
 }
 export const TokenPickerPivot = ({ selectedKey, hideExpressions, selectKey }: TokenPickerPivotProps): JSX.Element => {
   const intl = useIntl();
@@ -36,17 +31,17 @@ export const TokenPickerPivot = ({ selectedKey, hideExpressions, selectKey }: To
   });
 
   const expressionMode = intl.formatMessage({
-    defaultMessage: 'Expression',
+    defaultMessage: 'Function',
     description: 'Token picker mode to insert expressions',
   });
 
   return (
     <div style={{ display: 'inherit' }}>
       <Pivot styles={pivotStyles} selectedKey={selectedKey} className="msla-panel-menu" onLinkClick={selectKey} linkSize="large">
-        <PivotItem key={TokenPickerMode.TOKEN} itemKey={TokenPickerMode.TOKEN} headerText={tokenMode} />
         {hideExpressions ? null : (
           <PivotItem key={TokenPickerMode.TOKEN} itemKey={TokenPickerMode.EXPRESSION} headerText={expressionMode} />
         )}
+        <PivotItem key={TokenPickerMode.TOKEN_EXPRESSION} itemKey={TokenPickerMode.TOKEN_EXPRESSION} headerText={tokenMode} />
       </Pivot>
     </div>
   );
