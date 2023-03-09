@@ -330,17 +330,30 @@ export function getParameterEditorProps(parameter: InputParameter, shouldIgnoreD
   const { dynamicValues, type, itemSchema, visibility, value } = parameter;
   let { editor, editorOptions, schema } = parameter;
   let editorViewModel;
-  if (!editor && type === constants.SWAGGER.TYPE.ARRAY && !!itemSchema && !equals(visibility, Visibility.Internal)) {
-    editor = constants.EDITOR.ARRAY;
-    editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
-    schema = { ...schema, ...{ 'x-ms-editor': constants.EDITOR.ARRAY } };
-  } else if (!editor && schema?.enum && !equals(visibility, Visibility.Internal)) {
-    editor = constants.EDITOR.COMBOBOX;
-    schema = { ...schema, ...{ 'x-ms-editor': constants.EDITOR.COMBOBOX } };
-    editorOptions = { ...editorOptions, options: schema.enum.map((val: ComboboxItem) => ({ key: val, value: val, displayName: val })) };
-  } else if (!editor && type === constants.SWAGGER.TYPE.ARRAY && !equals(visibility, Visibility.Internal)) {
-    editorViewModel = toArrayViewModel(schema);
-    editor = constants.EDITOR.ARRAY;
+  if (!editor) {
+    if (type === constants.SWAGGER.TYPE.ARRAY && !!itemSchema && !equals(visibility, Visibility.Internal)) {
+      editor = constants.EDITOR.ARRAY;
+      editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
+      schema = { ...schema, ...{ 'x-ms-editor': constants.EDITOR.ARRAY } };
+    } else if (schema?.enum && !equals(visibility, Visibility.Internal)) {
+      editor = constants.EDITOR.COMBOBOX;
+      schema = { ...schema, ...{ 'x-ms-editor': constants.EDITOR.COMBOBOX } };
+      editorOptions = {
+        ...editorOptions,
+        options: schema.enum.map(
+          (val: string): ComboboxItem => ({
+            displayName: val,
+            key: val,
+            value: val,
+          })
+        ),
+      };
+    } else if (type === constants.SWAGGER.TYPE.ARRAY && !equals(visibility, Visibility.Internal)) {
+      editorViewModel = toArrayViewModel(schema);
+      editor = constants.EDITOR.ARRAY;
+    } else {
+      editorOptions = undefined;
+    }
   } else if (editor === constants.EDITOR.DICTIONARY) {
     editorViewModel = toDictionaryViewModel(value);
   } else if (editor === constants.EDITOR.TABLE) {
@@ -353,8 +366,6 @@ export function getParameterEditorProps(parameter: InputParameter, shouldIgnoreD
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     editor = undefined;
   }
-
-  if (!editor) editorOptions = undefined;
 
   return { editor, editorOptions, editorViewModel, schema };
 }
