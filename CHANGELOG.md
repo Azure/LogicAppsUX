@@ -1,4 +1,13 @@
 # Logic Apps Designer
+### [0.2.102](https://github.com/Azure/LogicAppsUX/compare/v0.2.101...v0.2.102) (2023-03-09)
+
+### [0.2.101](https://github.com/Azure/LogicAppsUX/compare/v0.2.100...v0.2.101) (2023-03-08)
+
+
+### Logic Apps Designer Changes
+
+* Added some extra setup for a new DataMapper action ([#1713](https://github.com/Azure/LogicAppsUX/issues/1713)) ([890b9ac](https://github.com/Azure/LogicAppsUX/commit/890b9ac834d97524430f74a7553131240f1e96f1))
+
 ### [0.2.100](https://github.com/Azure/LogicAppsUX/compare/v0.2.99...v0.2.100) (2023-03-08)
 
 
