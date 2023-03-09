@@ -22,8 +22,9 @@ import { setLayerHostSelector } from '@fluentui/react';
 import type { WorkflowNodeType } from '@microsoft/utils-logic-apps';
 import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { DndProvider } from 'react-dnd';
+import KeyboardBackend, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { DndProvider, createTransition, MouseTransition } from 'react-dnd-multi-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReactFlow, ReactFlowProvider, useNodes, useReactFlow, useStore, BezierEdge } from 'reactflow';
 import type { NodeChange } from 'reactflow';
@@ -156,8 +157,30 @@ export const Designer = () => {
   }, [flowSize, windowDimensions, zoom]);
 
   useEffect(() => setLayerHostSelector('#msla-designer-canvas'), []);
+  const KeyboardTransition = createTransition('keydown', (event) => {
+    if (!isKeyboardDragTrigger(event as KeyboardEvent)) return false;
+    event.preventDefault();
+    return true;
+  });
+
+  const DND_OPTIONS: any = {
+    backends: [
+      {
+        id: 'html5',
+        backend: HTML5Backend,
+        transition: MouseTransition,
+      },
+      {
+        id: 'keyboard',
+        backend: KeyboardBackend,
+        context: { window, document },
+        preview: true,
+        transition: KeyboardTransition,
+      },
+    ],
+  };
   return (
-    <DndProvider backend={HTML5Backend}>
+    <DndProvider options={DND_OPTIONS}>
       <div id="msla-designer-canvas" className="msla-designer-canvas msla-panel-mode">
         <ReactFlowProvider>
           <ReactFlow
@@ -166,6 +189,8 @@ export const Designer = () => {
             edges={edges}
             onNodesChange={onNodesChange}
             nodesDraggable={false}
+            nodesFocusable={false}
+            edgesFocusable={false}
             edgeTypes={edgeTypes}
             panOnScroll={true}
             deleteKeyCode={['Backspace', 'Delete']}

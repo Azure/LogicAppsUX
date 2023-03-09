@@ -27,6 +27,7 @@ export const RecommendationPanel: React.FC<PropsWithChildren<RecommendationPanel
       isOpen={!props.isCollapsed}
       onDismiss={props.toggleCollapse}
       hasCloseButton={false}
+      focusTrapZoneProps={{ disabled: props.isCollapsed }}
       overlayProps={{ isDarkThemed: isInverted }}
       layerProps={props.layerProps}
     >
