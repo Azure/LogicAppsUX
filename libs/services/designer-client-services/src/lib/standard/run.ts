@@ -2,7 +2,7 @@ import { inputsResponse, outputsResponse } from '../__test__/__mocks__/monitorin
 import type { HttpRequestOptions, IHttpClient } from '../httpClient';
 import type { IRunService } from '../run';
 import type { CallbackInfo } from '../workflow';
-import type { Runs, Run, RunError, ContentLink, BoundParameters } from '@microsoft/designer-ui';
+import type { Runs, Run, ContentLink, BoundParameters } from '@microsoft/designer-ui';
 import { isCallbackInfoWithRelativePath, getCallbackUrl } from '@microsoft/designer-ui';
 import type { ArmResources } from '@microsoft/utils-logic-apps';
 import { ArgumentException, HTTP_METHODS, UnsupportedException } from '@microsoft/utils-logic-apps';
@@ -36,23 +36,15 @@ export class StandardRunService implements IRunService {
     if (!uri) {
       throw new Error();
     }
-    const response = await httpClient.get<any>({
-      uri,
-    });
-    return response;
 
-    /*const contentType = response.headers.get('Content-Type');
-    if (contentType?.startsWith('application/json')) {
-      return response.json();
-    } else if (contentType?.startsWith('text/')) {
-      return response.text();
-    } else if (contentType?.startsWith('application/octet-stream')) {
-      return response.blob();
-    } else if (contentType?.startsWith('multipart/form-data')) {
-      return response.formData();
-    } else {
-      return response.arrayBuffer();
-    }*/
+    try {
+      const response = await httpClient.get<any>({
+        uri,
+      });
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
   }
 
   private getAccessTokenHeaders = () => {
@@ -81,14 +73,19 @@ export class StandardRunService implements IRunService {
     return { nextLink, runs };
   }
 
-  async getRun(runId: string): Promise<LogicAppsV2.RunInstanceDefinition | RunError> {
+  async getRun(runId: string): Promise<LogicAppsV2.RunInstanceDefinition> {
     const { apiVersion, baseUrl, httpClient, workflowName } = this.options;
 
     const uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
-    const response = await httpClient.get<any>({
-      uri,
-    });
-    return response;
+
+    try {
+      const response = await httpClient.get<any>({
+        uri,
+      });
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
   }
 
   async getRuns(): Promise<Runs> {

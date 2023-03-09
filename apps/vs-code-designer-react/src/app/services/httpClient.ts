@@ -35,6 +35,7 @@ export class HttpClient implements IHttpClient {
       method: HTTP_METHODS.GET,
       ...request,
     });
+
     return responseData?.data;
   }
 

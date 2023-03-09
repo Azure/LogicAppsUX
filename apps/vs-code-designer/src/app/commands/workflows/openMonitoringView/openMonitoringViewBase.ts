@@ -31,7 +31,8 @@ export abstract class OpenMonitoringViewBase extends OpenDesignerBase {
     const runWorflowId = runId.endsWith('/') ? runId.substring(0, runId.length - 1) : runId;
     const runName = runId.split('/').slice(-1)[0];
     const workflowName = runId.split('/').slice(-3)[0];
-    const panelName = `${vscode.workspace.name}-${workflowName}-${runName}`;
+    const panelNamePrefix = isLocal ? `${vscode.workspace.name}-` : '';
+    const panelName = `${panelNamePrefix}${workflowName}-${runName}`;
     const panelGroupKey = ext.webViewKey.monitoring;
 
     super(context, workflowName, panelName, apiVersion, panelGroupKey, true, isLocal, true);
