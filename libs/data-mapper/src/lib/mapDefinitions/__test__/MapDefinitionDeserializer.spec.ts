@@ -1011,13 +1011,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
       });
 
-      it.skip('creates a simple conditional property connection', () => {
+      it('creates a simple conditional property connection', () => {
         simpleMap['root'] = {
-          ConditionalMapping: {
-            ItemPrice: '/root/ConditionalMapping/ItemPrice',
-            '$if(is-greater-than(/root/ConditionalMapping/ItemQuantity, 200))': {
-              ItemDiscount: '/root/ConditionalMapping/ItemPrice',
-            },
+          String1: '/root/OrderNo',
+          '$if(is-greater-than(/root/Num, 10))': {
+            T2: '/root/Num',
           },
         };
 
@@ -1027,41 +1025,44 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries.length).toEqual(6);
 
-        expect(resultEntries[0][0]).toContain('IsGreater');
+        const isGreaterId = resultEntries[0][0];
+        const ifId = resultEntries[1][0];
+
+        expect(resultEntries[0][0]).toEqual(isGreaterId);
         expect(resultEntries[0][1]).toBeTruthy();
-        expect(resultEntries[0][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
-        expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/ConditionalMapping/ItemQuantity');
-        expect(resultEntries[0][1].inputs[1][0]).toEqual('200');
+        expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Num');
+        expect(resultEntries[0][1].inputs[1][0]).toEqual('10');
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual(ifId);
 
-        expect(resultEntries[1][0]).toContain(ifPseudoFunctionKey);
+        expect(resultEntries[1][0]).toEqual(ifId);
         expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/ConditionalMapping/ItemDiscount');
-        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
-        expect((resultEntries[1][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/ConditionalMapping/ItemPrice');
+        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(isGreaterId);
+        expect((resultEntries[1][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Num');
+        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/T2');
 
-        expect(resultEntries[2][0]).toEqual('source-/root/ConditionalMapping/ItemPrice');
+        expect(resultEntries[2][0]).toEqual('source-/root/Num');
         expect(resultEntries[2][1]).toBeTruthy();
-        expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual('target-/root/ConditionalMapping/ItemPrice');
+        expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual(isGreaterId);
 
-        expect(resultEntries[3][0]).toEqual('source-/root/ConditionalMapping/ItemQuantity');
+        expect(resultEntries[3][0]).toEqual('source-/root/OrderNo');
         expect(resultEntries[3][1]).toBeTruthy();
-        expect(resultEntries[3][1].outputs[0].reactFlowKey).toContain('IsGreater');
+        expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/root/String1');
 
-        expect(resultEntries[4][0]).toEqual('target-/root/ConditionalMapping/ItemDiscount');
+        expect(resultEntries[4][0]).toEqual('target-/root/String1');
         expect(resultEntries[4][1]).toBeTruthy();
-        expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain(ifPseudoFunctionKey);
+        expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/OrderNo');
 
-        expect(resultEntries[5][0]).toEqual('target-/root/ConditionalMapping/ItemPrice');
+        expect(resultEntries[5][0]).toEqual('target-/root/T2');
         expect(resultEntries[5][1]).toBeTruthy();
-        expect((resultEntries[5][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/ConditionalMapping/ItemPrice');
+        expect((resultEntries[5][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(ifId);
       });
 
-      it.skip('creates a conditional property connection', () => {
+      it('creates a simple conditional object connection', () => {
         simpleMap['root'] = {
-          ConditionalMapping: {
-            ItemPrice: '/root/ConditionalMapping/ItemPrice',
-            '$if(is-greater-than(multiply(/root/ConditionalMapping/ItemPrice, /root/ConditionalMapping/ItemQuantity), 200))': {
-              ItemDiscount: 'multiply(/root/ConditionalMapping/ItemPrice, /root/ConditionalMapping/ItemQuantity, 0.05)',
+          '$if(is-greater-than(/root/Num, 10))': {
+            Object1: {
+              String1: '/root/OrderNo',
+              Num1: '/root/Num',
             },
           },
         };
@@ -1072,160 +1073,44 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries.length).toEqual(8);
 
-        expect(resultEntries[0][0]).toContain('IsGreater');
+        const isGreaterId = resultEntries[0][0];
+        const ifId = resultEntries[1][0];
+
+        expect(resultEntries[0][0]).toEqual(isGreaterId);
         expect(resultEntries[0][1]).toBeTruthy();
-        expect(resultEntries[0][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
-        expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('Multiply');
-        expect(resultEntries[0][1].inputs[1][0]).toEqual('200');
+        expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Num');
+        expect(resultEntries[0][1].inputs[1][0]).toEqual('10');
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual(ifId);
 
-        // Non-deterministic about which Multiply will come first
-        expect(resultEntries[1][0]).toContain('Multiply');
+        expect(resultEntries[1][0]).toEqual(ifId);
         expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].inputs[0].length).toBeGreaterThan(1);
+        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(isGreaterId);
+        expect((resultEntries[1][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root');
+        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/Object1');
 
-        expect(resultEntries[2][0]).toContain('Multiply');
+        expect(resultEntries[2][0]).toEqual('source-/root');
         expect(resultEntries[2][1]).toBeTruthy();
-        expect(resultEntries[2][1].inputs[0].length).toBeGreaterThan(1);
+        expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual(ifId);
 
-        expect(resultEntries[3][0]).toContain(ifPseudoFunctionKey);
+        expect(resultEntries[3][0]).toEqual('source-/root/Num');
         expect(resultEntries[3][1]).toBeTruthy();
-        expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/root/ConditionalMapping/ItemDiscount');
-        expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
-        expect((resultEntries[3][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toContain('Multiply');
+        expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual(isGreaterId);
 
-        expect(resultEntries[4][0]).toEqual('source-/root/ConditionalMapping/ItemPrice');
+        expect(resultEntries[4][0]).toEqual('source-/root/OrderNo');
         expect(resultEntries[4][1]).toBeTruthy();
-        expect(resultEntries[4][1].outputs[0].reactFlowKey).toEqual('target-/root/ConditionalMapping/ItemPrice');
-        expect(resultEntries[4][1].outputs[1].reactFlowKey).toContain('Multiply');
-        expect(resultEntries[4][1].outputs[2].reactFlowKey).toContain('Multiply');
+        expect(resultEntries[4][1].outputs[0].reactFlowKey).toEqual('target-/root/Object1/String1');
 
-        expect(resultEntries[5][0]).toEqual('source-/root/ConditionalMapping/ItemQuantity');
+        expect(resultEntries[5][0]).toEqual('target-/root/Object1');
         expect(resultEntries[5][1]).toBeTruthy();
-        expect(resultEntries[5][1].outputs[0].reactFlowKey).toContain('Multiply');
-        expect(resultEntries[5][1].outputs[1].reactFlowKey).toContain('Multiply');
+        expect((resultEntries[5][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(ifId);
 
-        expect(resultEntries[6][0]).toEqual('target-/root/ConditionalMapping/ItemDiscount');
+        expect(resultEntries[6][0]).toEqual('target-/root/Object1/Num1');
         expect(resultEntries[6][1]).toBeTruthy();
-        expect((resultEntries[6][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain(ifPseudoFunctionKey);
+        expect((resultEntries[6][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Num');
 
-        expect(resultEntries[7][0]).toEqual('target-/root/ConditionalMapping/ItemPrice');
+        expect(resultEntries[7][0]).toEqual('target-/root/Object1/String1');
         expect(resultEntries[7][1]).toBeTruthy();
-        expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/ConditionalMapping/ItemPrice');
-      });
-
-      it.skip('creates a simple conditional object connection', () => {
-        simpleMap['root'] = {
-          '$if(is-greater-than(/root/ConditionalMapping/ItemQuantity, 200))': {
-            ConditionalMapping: {
-              ItemPrice: '/root/ConditionalMapping/ItemPrice',
-            },
-          },
-        };
-
-        const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
-        const resultEntries = Object.entries(result);
-        resultEntries.sort();
-
-        expect(resultEntries.length).toEqual(7);
-
-        expect(resultEntries[0][0]).toContain('IsGreater');
-        expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/ConditionalMapping/ItemQuantity');
-        expect(resultEntries[0][1].inputs[1][0]).toEqual('200');
-        expect(resultEntries[0][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
-
-        expect(resultEntries[1][0]).toContain(ifPseudoFunctionKey);
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
-        expect((resultEntries[1][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/ConditionalMapping');
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/ConditionalMapping');
-
-        expect(resultEntries[2][0]).toEqual('source-/root/ConditionalMapping');
-        expect(resultEntries[2][1]).toBeTruthy();
-        expect(resultEntries[2][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
-
-        expect(resultEntries[3][0]).toEqual('source-/root/ConditionalMapping/ItemPrice');
-        expect(resultEntries[3][1]).toBeTruthy();
-        expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/root/ConditionalMapping/ItemPrice');
-
-        expect(resultEntries[4][0]).toEqual('source-/root/ConditionalMapping/ItemQuantity');
-        expect(resultEntries[4][1]).toBeTruthy();
-        expect(resultEntries[4][1].outputs[0].reactFlowKey).toContain('IsGreater');
-
-        expect(resultEntries[5][0]).toEqual('target-/root/ConditionalMapping');
-        expect(resultEntries[5][1]).toBeTruthy();
-        expect((resultEntries[5][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain(ifPseudoFunctionKey);
-
-        expect(resultEntries[6][0]).toEqual('target-/root/ConditionalMapping/ItemPrice');
-        expect(resultEntries[6][1]).toBeTruthy();
-        expect((resultEntries[6][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/ConditionalMapping/ItemPrice');
-      });
-
-      it.skip('creates a conditional object connection', () => {
-        simpleMap['root'] = {
-          '$if(is-greater-than(multiply(/root/ConditionalMapping/ItemPrice, /root/ConditionalMapping/ItemQuantity), 200))': {
-            ConditionalMapping: {
-              ItemPrice: '/root/ConditionalMapping/ItemPrice',
-              ItemDiscount: 'multiply(/root/ConditionalMapping/ItemPrice, /root/ConditionalMapping/ItemQuantity, 0.05)',
-            },
-          },
-        };
-
-        const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
-        const resultEntries = Object.entries(result);
-        resultEntries.sort();
-
-        expect(resultEntries.length).toEqual(10);
-
-        expect(resultEntries[0][0]).toContain('IsGreater');
-        expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('Multiply');
-        expect(resultEntries[0][1].inputs[1][0]).toEqual('200');
-        expect(resultEntries[0][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
-
-        // Non-deterministic about which Multiply will come first
-        expect(resultEntries[1][0]).toContain('Multiply');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].inputs[0].length).toBeGreaterThan(1);
-        expect(resultEntries[1][1].outputs.length).toBeGreaterThan(0);
-
-        expect(resultEntries[2][0]).toContain('Multiply');
-        expect(resultEntries[2][1]).toBeTruthy();
-        expect(resultEntries[2][1].inputs[0].length).toBeGreaterThan(1);
-        expect(resultEntries[2][1].outputs.length).toBeGreaterThan(0);
-
-        expect(resultEntries[3][0]).toContain(ifPseudoFunctionKey);
-        expect(resultEntries[3][1]).toBeTruthy();
-        expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
-        expect((resultEntries[3][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/ConditionalMapping');
-        expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/root/ConditionalMapping');
-
-        expect(resultEntries[4][0]).toEqual('source-/root/ConditionalMapping');
-        expect(resultEntries[4][1]).toBeTruthy();
-        expect(resultEntries[4][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
-
-        expect(resultEntries[5][0]).toEqual('source-/root/ConditionalMapping/ItemPrice');
-        expect(resultEntries[5][1]).toBeTruthy();
-        expect(resultEntries[5][1].outputs[0].reactFlowKey).toContain('Multiply');
-        expect(resultEntries[5][1].outputs[1].reactFlowKey).toEqual('target-/root/ConditionalMapping/ItemPrice');
-        expect(resultEntries[5][1].outputs[2].reactFlowKey).toContain('Multiply');
-
-        expect(resultEntries[6][0]).toEqual('source-/root/ConditionalMapping/ItemQuantity');
-        expect(resultEntries[6][1]).toBeTruthy();
-        expect(resultEntries[6][1].outputs[0].reactFlowKey).toContain('Multiply');
-        expect(resultEntries[6][1].outputs[1].reactFlowKey).toContain('Multiply');
-
-        expect(resultEntries[7][0]).toEqual('target-/root/ConditionalMapping');
-        expect(resultEntries[7][1]).toBeTruthy();
-        expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain(ifPseudoFunctionKey);
-
-        expect(resultEntries[8][0]).toEqual('target-/root/ConditionalMapping/ItemDiscount');
-        expect(resultEntries[8][1]).toBeTruthy();
-        expect((resultEntries[8][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('Multiply');
-
-        expect(resultEntries[9][0]).toEqual('target-/root/ConditionalMapping/ItemPrice');
-        expect(resultEntries[9][1]).toBeTruthy();
-        expect((resultEntries[9][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/ConditionalMapping/ItemPrice');
+        expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/OrderNo');
       });
 
       it('creates a loop connection', () => {
@@ -1296,19 +1181,15 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(multiplyId);
       });
 
-      // TODO: 16770037 - Once the BE fixes how loops are parsed in getSchemaTree we should restore this to match
-      // the transcript yml file
       it.skip('creates a looping conditional connection', () => {
         simpleMap['root'] = {
-          ConditionalLooping: {
-            '$for(/root/ConditionalLooping/FlatterCatalog/ns0:Product)': {
-              CategorizedCatalog: {
-                '$if(is-equal(substring(SKU, 1, 2), "1"))': {
-                  PetProduct: {
-                    Name: 'Name',
-                  },
+          ComplexArray1: {
+            '$for(/root/Nums/*)': {
+              '$if(is-greater-than(10, 20))': [
+                {
+                  F1: 'Num',
                 },
-              },
+              ],
             },
           },
         };
