@@ -144,7 +144,6 @@ export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitO
     if (clonedManifestProperties) {
       for (const itemName of Object.keys(clonedManifestProperties)) {
         const splitOnItem = clonedManifestProperties[itemName];
-
         convertSchemaAliasesForSplitOn(splitOnItem);
       }
     }
