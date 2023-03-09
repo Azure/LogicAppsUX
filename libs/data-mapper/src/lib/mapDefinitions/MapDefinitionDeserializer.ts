@@ -192,11 +192,11 @@ const callChildObjects = (
       );
 
       // Handle $if's values
-      Object.entries(childValue).forEach(([childSubKey, childSubValue]) => {
-        if (typeof childSubValue === 'string') {
-          const srcValueKey = `${getSourceKeyOfLastLoop(qualifyLoopRelativeSourceKeys(targetKey))}/${childSubValue}`;
+      Object.entries(childValue).forEach(([childValueKey, childValueValue]) => {
+        if (typeof childValueValue === 'string') {
+          const srcValueKey = `${getSourceKeyOfLastLoop(qualifyLoopRelativeSourceKeys(targetKey))}/${childValueValue}`;
           createConnections(
-            isInLoop && !(childSubValue.includes('[') && childSubValue.includes(']')) ? srcValueKey : childSubValue,
+            isInLoop && !(childValueValue.includes('[') && childValueValue.includes(']')) ? srcValueKey : childValueValue,
             ifRfKey,
             connections,
             createdNodes,
@@ -207,8 +207,8 @@ const callChildObjects = (
             functions
           );
         } else {
-          Object.entries(childSubValue).forEach(([newDestinationKey, newSourceKey]) => {
-            const finalNewDestinationKey = `${targetKey}/${childSubKey}/${newDestinationKey}`;
+          Object.entries(childValueValue).forEach(([newDestinationKey, newSourceKey]) => {
+            const finalNewDestinationKey = `${targetKey}/${Array.isArray(childValue) ? '*' : childValueKey}/${newDestinationKey}`;
 
             parseDefinitionToConnection(
               newSourceKey,
