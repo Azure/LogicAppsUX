@@ -21,6 +21,7 @@ import {
   OutputKeys,
   OutputSource,
   ExpressionParser,
+  ExtensionProperties,
   isTemplateExpression,
   isFunction,
   isStringLiteral,
@@ -71,6 +72,7 @@ export const toOutputInfo = (output: OutputParameter): OutputInfo => {
     description,
   };
 };
+
 export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitOn: string | undefined): OperationManifest => {
   const intl = getIntl();
   const invalidSplitOn = intl.formatMessage(
@@ -135,9 +137,21 @@ export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitO
       );
     }
 
+    const manifestItems: OpenAPIV2.SchemaObject | undefined = manifestSection.items;
+    const clonedManifestItems = clone(manifestItems);
+    const clonedManifestProperties = clonedManifestItems?.properties;
+
+    if (clonedManifestProperties) {
+      for (const itemName of Object.keys(clonedManifestProperties)) {
+        const splitOnItem = clonedManifestProperties[itemName];
+
+        convertSchemaAliasesForSplitOn(splitOnItem);
+      }
+    }
+
     updatedManifest.properties.outputs = {
       properties: {
-        body: clone(manifestSection.items),
+        body: clonedManifestItems,
       },
       type: Constants.SWAGGER.TYPE.OBJECT,
     };
@@ -146,6 +160,22 @@ export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitO
   }
 
   throw new AssertionException(AssertionErrorCode.INVALID_SPLITON, invalidSplitOn);
+};
+
+const convertSchemaAliasesForSplitOn = (schema: OpenAPIV2.SchemaObject): void => {
+  // Copy to local scope since we intentionally want to modify it in-place.
+  const schemaLocal = schema;
+
+  const aliasExtension = ExtensionProperties.Alias;
+  const originalSchemaAlias = schemaLocal[aliasExtension];
+  schemaLocal[aliasExtension] = `body/${originalSchemaAlias}`;
+
+  const schemaProperties = schemaLocal.properties;
+  if (schemaProperties) {
+    for (const property of Object.values(schemaProperties)) {
+      convertSchemaAliasesForSplitOn(property);
+    }
+  }
 };
 
 export const isSupportedSplitOnExpression = (expression: Expression): boolean => {
