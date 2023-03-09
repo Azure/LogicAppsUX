@@ -1882,9 +1882,7 @@ describe('core/utils/parameters/helper', () => {
       });
 
       it('are accurate for "Create a new queue" -> "Queue name" (dynamic list)', () => {
-        const options = [
-          { displayName: 'My Queue', value: 'My Queue' },
-        ];
+        const options = [{ displayName: 'My Queue', value: 'My Queue' }];
         const dataType = 'string';
         const dynamicValuesExtension: DynamicListExtension = {
           dynamicState: {
@@ -1923,9 +1921,7 @@ describe('core/utils/parameters/helper', () => {
       });
 
       it('are accurate for "When a file is created" -> "Folder Id" (dynamic tree)', () => {
-        const options = [
-          { displayName: 'My Folder', value: 'My Folder' },
-        ];
+        const options = [{ displayName: 'My Folder', value: 'My Folder' }];
         const dataType = 'string';
         const dynamicValuesExtension: LegacyDynamicValuesExtension = {
           capability: 'file-picker',
@@ -2166,7 +2162,7 @@ describe('core/utils/parameters/helper', () => {
           { displayName: 'Related', value: 'Related' },
         ];
         const dataType = 'string';
-        const defaultValue = 'Hour';
+        const defaultValue = 'Related';
         const inputSchema = {
           default: defaultValue,
           enum: ['Dependency-forward', 'Related'], // Keys of `options`.
@@ -2188,6 +2184,45 @@ describe('core/utils/parameters/helper', () => {
           type: dataType,
           value: defaultValue,
           visibility: 'advanced',
+        };
+
+        const result = getParameterEditorProps(inputParameter);
+
+        expect(result).toMatchObject({
+          editor: 'combobox',
+          editorOptions: { options },
+          editorViewModel: undefined,
+          schema: {
+            ...inputSchema,
+            'x-ms-editor': 'combobox',
+          },
+        });
+      });
+
+      it('are accurate for OpenAPI "Get current weather" -> "Units"', () => {
+        const options = [
+          { displayName: 'Imperial', value: 'I' },
+          { displayName: 'Metric', value: 'C' },
+        ];
+        const dataType = 'string';
+        const inputSchema = {
+          default: 'I',
+          enum: ['I', 'C'], // Keys of `options`.
+          title: 'Units',
+          type: dataType,
+          'x-ms-enum-values': options,
+          'x-ms-property-name-alias': 'units',
+        };
+        const inputParameter: InputParameter = {
+          dynamicValues: undefined,
+          editor: undefined,
+          editorOptions: undefined,
+          key: '', // Not defined in OpenAPI.
+          name: '', // Not defined in OpenAPI.
+          schema: inputSchema,
+          type: dataType,
+          value: 'I',
+          visibility: '',
         };
 
         const result = getParameterEditorProps(inputParameter);

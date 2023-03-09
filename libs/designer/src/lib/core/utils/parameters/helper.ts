@@ -91,6 +91,7 @@ import {
   isLegacyDynamicValuesExtension,
   ParameterLocations,
   ExpressionType,
+  ExtensionProperties,
   createEx,
   convertToStringLiteral,
   decodePropertySegment,
@@ -334,19 +335,27 @@ export function getParameterEditorProps(parameter: InputParameter, shouldIgnoreD
     if (type === constants.SWAGGER.TYPE.ARRAY && !!itemSchema && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.ARRAY;
       editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
-      schema = { ...schema, ...{ 'x-ms-editor': constants.EDITOR.ARRAY } };
-    } else if (schema?.enum && !equals(visibility, Visibility.Internal)) {
+      schema = { ...schema, ...{ 'x-ms-editor': editor } };
+    } else if (schema && (schema.enum || schema[ExtensionProperties.CustomEnum]) && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.COMBOBOX;
-      schema = { ...schema, ...{ 'x-ms-editor': constants.EDITOR.COMBOBOX } };
-      editorOptions = {
-        ...editorOptions,
-        options: schema.enum.map(
+      schema = { ...schema, ...{ 'x-ms-editor': editor } };
+
+      let schemaEnumOptions: ComboboxItem[];
+      if (schema[ExtensionProperties.CustomEnum]) {
+        schemaEnumOptions = schema[ExtensionProperties.CustomEnum];
+      } else {
+        schemaEnumOptions = schema.enum.map(
           (val: string): ComboboxItem => ({
             displayName: val,
             key: val,
             value: val,
           })
-        ),
+        );
+      }
+
+      editorOptions = {
+        ...editorOptions,
+        options: schemaEnumOptions,
       };
     } else if (type === constants.SWAGGER.TYPE.ARRAY && !equals(visibility, Visibility.Internal)) {
       editorViewModel = toArrayViewModel(schema);
