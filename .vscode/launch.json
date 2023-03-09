@@ -9,7 +9,7 @@
       "args": ["--extensionDevelopmentPath=${workspaceFolder}/dist/apps/vs-code-designer"],
       "trace": false,
       "internalConsoleOptions": "openOnFirstSessionStart",
-      "outFiles": ["${workspaceFolder}/dist/apps/vs-code-designer"],
+      "outFiles": ["${workspaceFolder}/dist/apps/vs-code-designer/*.js"],
       "preLaunchTask": "npm: build:vscode-designer",
       "env": {
         "DEBUGTELEMETRY": "v"

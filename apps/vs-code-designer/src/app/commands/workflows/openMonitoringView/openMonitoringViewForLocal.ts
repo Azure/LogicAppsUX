@@ -12,15 +12,16 @@ import {
   getTriggerName,
   getAzureConnectorDetailsForLocalProject,
   getArtifactsInLocalProject,
+  getStandardAppData,
 } from '../../../utils/codeless/common';
 import { getConnectionsFromFile, getFunctionProjectRoot, getParametersFromFile } from '../../../utils/codeless/connection';
 import { sendRequest } from '../../../utils/requestUtils';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { AzureConnectorDetails, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
+import type { AzureConnectorDetails, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
-import { promises } from 'fs';
+import { promises, readFileSync } from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import type { WebviewPanel } from 'vscode';
@@ -151,6 +152,8 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
   private async _getDesignerPanelMetadata(): Promise<any> {
     const connectionsData: string = await getConnectionsFromFile(this.context, this.workflowFilePath);
     const projectPath: string | undefined = await getFunctionProjectRoot(this.context, this.workflowFilePath);
+    const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
+    const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;
 
@@ -172,6 +175,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       workflowName: this.workflowName,
       workflowDetails: {},
       artifacts: await getArtifactsInLocalProject(projectPath),
+      standardApp: getStandardAppData(this.workflowName, { ...workflowContent, definition: {} }, parametersData),
     };
   }
 }
