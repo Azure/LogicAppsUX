@@ -4,7 +4,7 @@ export interface IAppServiceService {
   [x: string]: any;
   fetchAppServices(): Promise<any>;
   fetchAppServiceApiSwagger(appService: any): Promise<any>;
-  getOperationSchema(swaggerUrl: string, operationData: any, isInput: boolean): Promise<any>;
+  getOperationSchema(swaggerUrl: string, operationId: string, isInput: boolean): Promise<any>;
   getOperations(swaggerUrl: string): Promise<any>;
 }
 

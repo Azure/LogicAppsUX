@@ -55,24 +55,6 @@ export const apiManagementActionManifest = {
             },
           },
         },
-        method: {
-          type: 'string',
-          'x-ms-visibility': 'hideInUI',
-        },
-        pathTemplate: {
-          type: 'object',
-          'x-ms-visibility': 'hideInUI',
-          properties: {
-            template: {
-              type: 'string',
-              'x-ms-visibility': 'hideInUI',
-            },
-            parameters: {
-              type: 'object',
-              'x-ms-visibility': 'hideInUI',
-            },
-          },
-        },
         // Dynamic params
         apiManagement: {
           type: 'object',
@@ -115,7 +97,6 @@ export const apiManagementActionManifest = {
       required: ['apiManagement'],
     },
 
-    inputsLocation: ['inputs'],
     inputsLocationSwapMap: [{ source: ['operationDetails'], target: [] }],
     isInputsOptional: false,
     outputs: {

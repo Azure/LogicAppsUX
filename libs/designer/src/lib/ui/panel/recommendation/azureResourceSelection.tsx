@@ -114,9 +114,6 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
             name: getResourceName(resource),
             presetParameterValues: {
               'api.id': resource?.id,
-              // 'pathTemplate.template': `${apimApiSwaggerResources?.basePath}/${resource?.uri}`,
-              // 'pathTemplate.parameters': {}, // TODO: Riley - we need to pass path parameters into this object when serializing
-              // method: resource.method,
             },
           });
         });
@@ -131,10 +128,6 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           const resource = selectedResources[0];
           addResourceOperation({
             name: getResourceName(resource),
-            // presetParameterValues: {
-            //   method: selectedResources[1]?.method,
-            //   uri: `http://localhost:54335${selectedResources[1]?.uri}`,
-            // },
             presetParameterValues: {
               'metadata.apiDefinitionUrl': resource?.properties?.siteConfig?.apiDefinition?.url,
               'metadata.swaggerSource': 'website',

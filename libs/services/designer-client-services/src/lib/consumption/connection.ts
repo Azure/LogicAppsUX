@@ -80,6 +80,7 @@ export class ConsumptionConnectionService extends BaseConnectionService {
   // Run when assigning a conneciton to an operation
   async setupConnectionIfNeeded(_connection: Connection): Promise<void> {
     // In standard this is where we set access policies if needed
+    // TODO: Add support for this in consumption
   }
 
   async createAndAuthorizeOAuthConnection(

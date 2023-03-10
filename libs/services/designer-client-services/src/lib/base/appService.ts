@@ -49,17 +49,11 @@ export class BaseAppServiceService implements IAppServiceService {
     return new SwaggerParser(swaggerDoc);
   }
 
-  public async getOperationSchema(swaggerUrl: string, operationData: any, isInput: boolean): Promise<any> {
-    const { operationId, operationPath, operationMethod } = operationData;
+  public async getOperationSchema(swaggerUrl: string, operationId: string, isInput: boolean): Promise<any> {
     const swagger = await this.fetchAppServiceApiSwagger(swaggerUrl);
-    console.log('$$$ getting schema for operation', operationData, swagger);
 
-    let operation;
-    if (operationId) operation = swagger.getOperationByOperationId(operationId);
-    else if (operationPath && operationMethod) operation = swagger.getOperationByPathAndMethod(operationPath, operationMethod);
+    const operation = swagger.getOperationByOperationId(operationId);
     if (!operation) throw new Error('Operation not found');
-
-    console.log('$$$ operation', operation);
 
     const paths = swagger.api.paths[operation.path];
     const rawOperation = paths[operation.method];
@@ -130,13 +124,25 @@ export class BaseAppServiceService implements IAppServiceService {
     const swagger = await this.fetchAppServiceApiSwagger(swaggerUrl);
     const operations = swagger.getOperations();
 
-    console.log('%%% appservice > operations: ', operations);
-
     return unmap(operations).map((operation: any) => ({
       value: operation.operationId,
       displayName: operation.summary ?? operation.operationId,
       description: operation.description,
     }));
+  }
+
+  public async getOperationFromPathAndMethod(swaggerUrl: string, path: string, method: string): Promise<any> {
+    const swagger = await this.fetchAppServiceApiSwagger(swaggerUrl);
+    const operations = swagger.getOperations();
+    return unmap(operations).find(
+      (operation: any) => cleanPathValue(operation.path) === cleanPathValue(path) && operation.method === method
+    );
+  }
+
+  public async getOperationFromId(swaggerUrl: string, operationId: string): Promise<any> {
+    const swagger = await this.fetchAppServiceApiSwagger(swaggerUrl);
+    const operations = swagger.getOperations();
+    return unmap(operations).find((operation: any) => operation.operationId === operationId);
   }
 }
 
@@ -156,4 +162,8 @@ export function isFunctionContainer(kind: any): boolean {
   return (
     kinds.some(($kind) => equals($kind, 'functionapp')) && !kinds.some(($kind) => equals($kind, 'botapp') || equals($kind, 'workflowapp'))
   );
+}
+
+function cleanPathValue(value: string): string {
+  return value.replace(/{.*?}/g, '').replace('@', '').toLowerCase();
 }

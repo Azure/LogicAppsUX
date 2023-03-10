@@ -27,7 +27,7 @@ export const appServiceActionManifest = {
 
     environmentBadge: coreBadge,
 
-    inputsLocation: [],
+    inputsLocation: ['inputs'],
     inputs: {
       type: 'object',
       properties: {
@@ -45,72 +45,69 @@ export const appServiceActionManifest = {
             },
           },
         },
-        inputs: {
+        authentication: {
           type: 'object',
-          required: [],
+          title: 'Authentication',
+          description: 'Enter JSON object of authentication parameter',
+          'x-ms-visibility': 'advanced',
+          'x-ms-editor': 'authentication',
+          'x-ms-editor-options': {
+            supportedAuthTypes: ['None', 'Basic', 'ClientCertificate', 'ActiveDirectoryOAuth', 'Raw', 'ManagedServiceIdentity'],
+          },
+        },
+        uri: {
+          type: 'string',
+          'x-ms-visibility': 'hideInUI',
+        },
+        method: {
+          type: 'string',
+          'x-ms-visibility': 'hideInUI',
+        },
+        // Dynamic params
+        appService: {
+          type: 'object',
           properties: {
-            authentication: {
-              type: 'object',
-              title: 'Authentication',
-              description: 'Enter JSON object of authentication parameter',
-              'x-ms-visibility': 'advanced',
-              'x-ms-editor': 'authentication',
-              'x-ms-editor-options': {
-                supportedAuthTypes: ['None', 'Basic', 'ClientCertificate', 'ActiveDirectoryOAuth', 'Raw', 'ManagedServiceIdentity'],
-              },
-            },
-            uri: {
+            operationId: {
+              required: true,
               type: 'string',
-              'x-ms-visibility': 'hideInUI',
-            },
-            method: {
-              type: 'string',
-              'x-ms-visibility': 'hideInUI',
-            },
-            // Dynamic params
-            appService: {
-              type: 'object',
-              properties: {
-                operationId: {
-                  required: true,
-                  type: 'string',
-                  title: 'Operation Id',
-                  description: 'Operation Id',
-                  'x-ms-dynamic-list': {
-                    dynamicState: {
-                      operationId: 'getAppServiceOperations',
-                      parameters: {},
-                    },
-                    parameters: {},
-                  },
-                },
-              },
-              required: ['operationId'],
-            },
-            operationDetails: {
-              title: 'Operation Parameters',
-              description: 'Operation parameters for the above operation',
-              'x-ms-dynamic-properties': {
+              title: 'Operation Id',
+              description: 'Operation Id',
+              'x-ms-dynamic-list': {
                 dynamicState: {
-                  extension: {
-                    operationId: 'getAppServiceOperationSchema',
-                  },
-                  isInput: true,
+                  operationId: 'getAppServiceOperations',
+                  parameters: {},
                 },
-                parameters: {
-                  type: 'object',
-                  operationId: {
-                    parameterReference: 'appService.operationId',
-                    required: true,
-                  },
-                },
+                parameters: {},
+              },
+            },
+          },
+          required: ['operationId'],
+        },
+        operationDetails: {
+          title: 'Operation Parameters',
+          description: 'Operation parameters for the above operation',
+          'x-ms-dynamic-properties': {
+            dynamicState: {
+              extension: {
+                operationId: 'getAppServiceOperationSchema',
+              },
+              isInput: true,
+            },
+            parameters: {
+              type: 'object',
+              operationId: {
+                parameterReference: 'appService.operationId',
+                required: true,
               },
             },
           },
         },
       },
     },
-    inputsLocationSwapMap: [{ source: ['operationDetails'], target: [] }],
+    inputsLocationSwapMap: [
+      { source: ['operationDetails'], target: [] },
+      { source: ['metadata'], target: [] },
+    ],
     isInputsOptional: false,
 
     outputs: {
