@@ -114,6 +114,15 @@ export const PanelRoot = (): JSX.Element => {
   }, [dispatch, operationInfo, isMonitoringView]);
 
   useEffect(() => {
+    dispatch(
+      setTabVisibility({
+        tabName: constants.PANEL_TAB_NAMES.TESTING,
+        visible: !isTriggerNode,
+      })
+    );
+  }, [dispatch, isTriggerNode]);
+
+  useEffect(() => {
     if (!visibleTabs?.map((tab) => tab.name.toLowerCase())?.includes(selectedPanelTab ?? ''))
       dispatch(selectPanelTab(visibleTabs[0]?.name.toLowerCase()));
   }, [dispatch, visibleTabs, selectedPanelTab]);

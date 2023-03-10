@@ -22,7 +22,7 @@ import { getInputParametersFromManifest, getOutputParametersFromManifest, update
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings } from './settings';
-import { ConnectionService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
 import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
 import type {
   DiscoveryOperation,
@@ -83,6 +83,9 @@ const initializeOperationDetails = async (
   const { type, connectorId } = operationInfo;
   let isConnectionRequired = true;
   const operationManifestService = OperationManifestService();
+  const staticResultService = StaticResultService();
+
+  console.log(staticResultService.getOperationResultSchema('b', 'c'));
 
   dispatch(changePanelNode(nodeId));
   dispatch(isolateTab(Constants.PANEL_TAB_NAMES.LOADING));

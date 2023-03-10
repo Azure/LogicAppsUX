@@ -21,7 +21,12 @@ import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../..
 import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
 import { getInputParametersFromManifest, getOutputParametersFromManifest, updateCallbackUrlInInputs } from './initialize';
 import { getOperationSettings } from './settings';
-import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import {
+  LogEntryLevel,
+  LoggerService,
+  OperationManifestService,
+  StaticResultService,
+} from '@microsoft/designer-client-services-logic-apps';
 import type { InputParameter, OutputParameter } from '@microsoft/parsers-logic-apps';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
 import { isArmResourceId, uniqueArray, getPropertyValue, map, aggregate, equals } from '@microsoft/utils-logic-apps';
@@ -60,6 +65,9 @@ export const initializeOperationMetadata = async (
   const promises: Promise<NodeDataWithOperationMetadata[] | undefined>[] = [];
   const { actionData: operations, graph, nodesMetadata } = deserializedWorkflow;
   const operationManifestService = OperationManifestService();
+  const staticResultService = StaticResultService();
+  console.log(staticResultService.getOperationResultSchema('a', 'b'));
+
   let triggerNodeId = '';
 
   for (const [operationId, operation] of Object.entries(operations)) {
@@ -94,6 +102,8 @@ export const initializeOperationMetadata = async (
       variables,
     })
   );
+
+  console.log(allNodeData);
 };
 
 const initializeConnectorsForReferences = async (references: ConnectionReferences): Promise<ConnectorWithParsedSwagger[]> => {

@@ -1,13 +1,9 @@
 import constants from '../../../../common/constants';
-import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
-import { useNodeMetadata } from '../../../../core/state/workflow/workflowSelectors';
 import type { PanelTab } from '@microsoft/designer-ui';
+import { StaticResult } from '@microsoft/designer-ui';
 
 export const TestingPanel: React.FC = () => {
-  const selectedNodeId = useSelectedNodeId();
-  const nodeMetadata = useNodeMetadata(selectedNodeId);
-
-  return <div>{nodeMetadata?.graphId}</div>;
+  return <StaticResult />;
 };
 
 export const testingTab: PanelTab = {

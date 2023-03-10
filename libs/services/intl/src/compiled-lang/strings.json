@@ -293,6 +293,12 @@
       "value": "Required. The string to convert to upper casing. If a character in the string does not have an uppercase equivalent, the character is included unchanged in the returned string."
     }
   ],
+  "0m2Y1/": [
+    {
+      "type": 0,
+      "value": "Value"
+    }
+  ],
   "0meqK1": [
     {
       "type": 0,
@@ -655,6 +661,12 @@
       "value": "System-assigned managed identity"
     }
   ],
+  "3AWwVl": [
+    {
+      "type": 0,
+      "value": "Code"
+    }
+  ],
   "3BZnxY": [
     {
       "type": 0,
@@ -953,6 +965,12 @@
     {
       "type": 0,
       "value": "Required. The XPath expression to evaluate."
+    }
+  ],
+  "5MWmiO": [
+    {
+      "type": 0,
+      "value": "Line Number"
     }
   ],
   "5SAQOb": [
@@ -1375,6 +1393,12 @@
       "value": "property"
     }
   ],
+  "93Gj/n": [
+    {
+      "type": 0,
+      "value": "Line Position"
+    }
+  ],
   "93svjx": [
     {
       "type": 0,
@@ -1601,6 +1625,12 @@
       "value": "actionCount"
     }
   ],
+  "B/gCWM": [
+    {
+      "type": 0,
+      "value": "Error"
+    }
+  ],
   "B2s0iG": [
     {
       "type": 0,
@@ -1719,6 +1749,12 @@
     {
       "type": 0,
       "value": "Required. The object to check if it is greater than comparing object."
+    }
+  ],
+  "C1cy54": [
+    {
+      "type": 0,
+      "value": "Body"
     }
   ],
   "C4NQ1J": [
@@ -2291,6 +2327,12 @@
       "value": "Button to add dynamic content if TokenPicker is shown"
     }
   ],
+  "HSJLCu": [
+    {
+      "type": 0,
+      "value": "Headers"
+    }
+  ],
   "HXLutF": [
     {
       "type": 0,
@@ -2405,6 +2447,12 @@
     {
       "type": 0,
       "value": "Add a target schema"
+    }
+  ],
+  "IbGIq3": [
+    {
+      "type": 0,
+      "value": "Error Code"
     }
   ],
   "IjZFjQ": [
@@ -2573,6 +2621,12 @@
     {
       "type": 0,
       "value": "Required. The object to add a new property to."
+    }
+  ],
+  "K7/DnZ": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "K90YEU": [
@@ -3089,6 +3143,12 @@
       "value": "Ungroup"
     }
   ],
+  "OdoUEu": [
+    {
+      "type": 0,
+      "value": "Enable Static Result"
+    }
+  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -3219,6 +3279,12 @@
     {
       "type": 0,
       "value": "False"
+    }
+  ],
+  "PZgHf/": [
+    {
+      "type": 0,
+      "value": "Schema Uri"
     }
   ],
   "PaPPLr": [
@@ -3417,6 +3483,12 @@
     {
       "type": 0,
       "value": "Switch to input entire array"
+    }
+  ],
+  "RbJNVk": [
+    {
+      "type": 0,
+      "value": "Schema"
     }
   ],
   "RhH4pF": [
@@ -3743,6 +3815,12 @@
       "value": "(UTC-06:00) Easter Island"
     }
   ],
+  "U7yRwM": [
+    {
+      "type": 0,
+      "value": "Validation Error"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3781,6 +3859,12 @@
     {
       "type": 0,
       "value": " (file name)"
+    }
+  ],
+  "UZiXVh": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "Ufv5m9": [
@@ -3925,6 +4009,12 @@
     {
       "type": 0,
       "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+    }
+  ],
+  "Vfce7b": [
+    {
+      "type": 0,
+      "value": "Error Type"
     }
   ],
   "VlvlX1": [
@@ -4303,6 +4393,12 @@
       "value": "Zoom out"
     }
   ],
+  "Yw7Nfl": [
+    {
+      "type": 0,
+      "value": "Disable Static Result"
+    }
+  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -4497,6 +4593,12 @@
       "value": "controls"
     }
   ],
+  "b9Rvl9": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "bG9rjv": [
     {
       "type": 0,
@@ -4667,6 +4769,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
+    }
+  ],
+  "ca/QIc": [
+    {
+      "type": 0,
+      "value": "Error Message"
     }
   ],
   "cgq/+y": [
@@ -5539,6 +5647,12 @@
       "value": "(UTC-03:00) Cayenne, Fortaleza"
     }
   ],
+  "kEI2xx": [
+    {
+      "type": 0,
+      "value": "Message"
+    }
+  ],
   "kHcCxH": [
     {
       "type": 1,
@@ -5895,6 +6009,12 @@
       "value": "Try less specific keywords."
     }
   ],
+  "nCa0KG": [
+    {
+      "type": 0,
+      "value": "Internal Errors"
+    }
+  ],
   "nGds/r": [
     {
       "type": 0,
@@ -5999,6 +6119,12 @@
       "value": "Zoom to fit"
     }
   ],
+  "o8ohVV": [
+    {
+      "type": 0,
+      "value": "Schema Id"
+    }
+  ],
   "oAFcW6": [
     {
       "type": 0,
@@ -6017,10 +6143,22 @@
       "value": "Content Transfer"
     }
   ],
+  "oQjIWf": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "oRvVIW": [
     {
       "type": 0,
       "value": "(UTC+07:00) Krasnoyarsk"
+    }
+  ],
+  "oTBkbU": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "oV0xQ9": [
@@ -6117,6 +6255,12 @@
     {
       "type": 0,
       "value": "Covert the input to an Xml type value"
+    }
+  ],
+  "pYNzbj": [
+    {
+      "type": 0,
+      "value": "Path"
     }
   ],
   "pYtSyE": [
@@ -6511,6 +6655,12 @@
       "value": "Unable to generate data map definition"
     }
   ],
+  "sw6EXK": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "syiNc+": [
     {
       "type": 0,
@@ -6665,6 +6815,12 @@
     {
       "type": 0,
       "value": "Select an element to start configuring"
+    }
+  ],
+  "uDI1Um": [
+    {
+      "type": 0,
+      "value": "Status Code"
     }
   ],
   "uM1i27": [
