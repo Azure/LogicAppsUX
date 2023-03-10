@@ -21,10 +21,7 @@ test('Connectors without a trigger are shown when filter is off', async ({ page 
   await page.locator('text=Simple Big Workflow').click();
   await page.locator('button[role="option"]:has-text("Simple Big Workflow")').click();
   await page.locator('div[role="button"]:has-text("🧰")').click();
-  await page
-    .getByTestId('rf__edge-Response-Initialize_variable')
-    .getByRole('button', { name: 'Insert a new step between Get_rows and Response' })
-    .click();
+  await page.getByRole('button', { name: 'Insert a new step between Get_rows and Response' }).click();
   await page.getByRole('button', { name: 'Add an action' }).click();
 
   await expect(page.locator('role=button[name="SFTP SFTP In App"]')).toHaveCount(1);
