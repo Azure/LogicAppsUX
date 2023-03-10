@@ -15,7 +15,7 @@ import { FontSizes } from '@fluentui/react/lib/Styling';
 import type { ITooltipHostStyles } from '@fluentui/react/lib/Tooltip';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import { css } from '@fluentui/react/lib/Utilities';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 export const handleOnEscapeDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
@@ -111,6 +111,10 @@ export const PanelHeader = ({
 
   const menuButtonRef = React.createRef<IButton>();
 
+  useEffect(() => {
+    menuButtonRef.current?.focus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCollapsed]);
   const panelCollapseTitle = intl.formatMessage({
     defaultMessage: 'Collapse/Expand',
     description: 'Text of Tooltip to collapse and expand',
