@@ -23,6 +23,7 @@ import {
   setTabVisibility,
 } from '../../core/state/panel/panelSlice';
 import { useIconUri, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
+import { useHasSchema } from '../../core/state/staticresultschema/staitcresultschemaselector';
 import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import { isRootNodeInGraph } from '../../core/utils/graph';
@@ -70,6 +71,7 @@ export const PanelRoot = (): JSX.Element => {
   const nodeMetaData = useNodeMetadata(selectedNode);
   const operationInfo = useOperationInfo(selectedNode);
   let showCommentBox = !isNullOrUndefined(comment);
+  const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
 
   useEffect(() => {
     const tabs = [
@@ -114,13 +116,14 @@ export const PanelRoot = (): JSX.Element => {
   }, [dispatch, operationInfo, isMonitoringView]);
 
   useEffect(() => {
+    console.log(hasSchema);
     dispatch(
       setTabVisibility({
         tabName: constants.PANEL_TAB_NAMES.TESTING,
-        visible: !isTriggerNode,
+        visible: !isTriggerNode && hasSchema,
       })
     );
-  }, [dispatch, isTriggerNode]);
+  }, [dispatch, hasSchema, isTriggerNode]);
 
   useEffect(() => {
     if (!visibleTabs?.map((tab) => tab.name.toLowerCase())?.includes(selectedPanelTab ?? ''))

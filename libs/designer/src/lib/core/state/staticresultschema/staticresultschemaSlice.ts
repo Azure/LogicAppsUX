@@ -3,23 +3,28 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface StaticResultSchemaState {
-  staticResultSchema?: Record<string, Schema>; // { [connectorid-operationid]: Schema }
+  schemas: Record<string, Schema>; // { [connectorid-operationid]: Schema }
+}
+
+interface StaticResultSchemaUpdateEvent {
+  id: string;
+  schema: Schema;
 }
 
 export const initialState: StaticResultSchemaState = {
-  staticResultSchema: {},
+  schemas: {},
 };
 
 export const staticResultSchemasSlice = createSlice({
   name: 'staticResultSchema',
   initialState,
   reducers: {
-    initializeSchema: (state, action: PayloadAction<Record<string, StaticResultSchemaState>>) => {
-      state.staticResultSchema = action.payload;
+    addSchema: (state, action: PayloadAction<StaticResultSchemaUpdateEvent>) => {
+      state.schemas[action.payload.id] = action.payload.schema;
     },
   },
 });
 
-export const { initializeSchema } = staticResultSchemasSlice.actions;
+export const { addSchema } = staticResultSchemasSlice.actions;
 
 export default staticResultSchemasSlice.reducer;

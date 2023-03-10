@@ -128,7 +128,7 @@ export const panelSlice = createSlice({
 
       isMonitoringView
         ? defaultTabs.unshift(constants.PANEL_TAB_NAMES.MONITORING)
-        : defaultTabs.unshift(constants.PANEL_TAB_NAMES.PARAMETERS, constants.PANEL_TAB_NAMES.TESTING);
+        : defaultTabs.unshift(constants.PANEL_TAB_NAMES.PARAMETERS);
 
       if (isScopeNode && !isMonitoringView) {
         defaultTabs.shift();
