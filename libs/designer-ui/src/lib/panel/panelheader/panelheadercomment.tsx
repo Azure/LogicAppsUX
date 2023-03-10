@@ -5,7 +5,7 @@ import { Icon } from '@fluentui/react/lib/Icon';
 import type { ITextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { TextField } from '@fluentui/react/lib/TextField';
 import { css } from '@fluentui/react/lib/Utilities';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface PanelHeaderCommentProps {
@@ -43,6 +43,11 @@ export const PanelHeaderComment = ({
     return <Icon className={'msla-comment-icon'} ariaLabel={commentLabel} iconName="Comment" />;
   };
 
+  useEffect(() => {
+    if (!isCollapsed && !readOnlyMode && !comment) {
+      commentTextFieldRef.current?.focus();
+    }
+  }, [comment, commentTextFieldRef, isCollapsed, readOnlyMode]);
   const getCommentEditor = (): JSX.Element => {
     const commentClassName = commentHasFocus ? 'msla-card-comment-focused' : 'msla-card-comment';
     const commentTitle = intl.formatMessage({

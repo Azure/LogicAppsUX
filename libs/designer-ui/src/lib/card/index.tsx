@@ -79,7 +79,6 @@ export const Card: React.FC<CardProps> = ({
     e.stopPropagation();
     onClick?.();
   };
-
   const keyboardInteraction = useCardKeyboardInteraction(onClick, contextMenuOptions);
   const contextMenu = useCardContextMenu();
 
@@ -104,7 +103,6 @@ export const Card: React.FC<CardProps> = ({
       <div
         ref={drag}
         aria-describedby={describedBy}
-        aria-label={title}
         className={css(
           'msla-panel-card-container',
           selected && 'msla-panel-card-container-selected',
@@ -117,7 +115,7 @@ export const Card: React.FC<CardProps> = ({
         onClick={handleClick}
         onContextMenu={contextMenu.handle}
         onKeyDown={keyboardInteraction.keyDown}
-        tabIndex={0}
+        tabIndex={1}
         onKeyUp={keyboardInteraction.keyUp}
       >
         {isMonitoringView ? (

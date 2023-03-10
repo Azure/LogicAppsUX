@@ -32,7 +32,7 @@ const ActionMenuItem = ({ id }: { id: string; value: LogicAppsV2.ActionDefinitio
   const iconUri = useIconUri(id);
   const actionName = useNodeDisplayName(id);
   return (
-    <MenuItemCheckbox name="actions" value={id} icon={<img style={{ height: '24px', width: '24px' }} src={iconUri} alt="" />}>
+    <MenuItemCheckbox name="actions" value={id} icon={<img style={{ height: '24px', width: '24px' }} src={iconUri} alt="" />} tabIndex={1}>
       <Label style={{ overflow: 'hidden' }}>{actionName}</Label>
     </MenuItemCheckbox>
   );
@@ -119,27 +119,28 @@ export const RunAfterActionSelector = () => {
           {RUN_AFTER_CONFIGURATION_SELECT_ACTIONS_TITLE}
         </MenuButton>
       </MenuTrigger>
-
       <MenuPopover>
-        <Input
-          className="msla-run-after-action-search-input"
-          contentBefore={<Search24Regular />}
-          contentAfter={
-            <Button
-              icon={<DismissRegular />}
-              appearance="transparent"
-              onClick={() => {
-                setSearchText('');
-              }}
-            />
-          }
-          placeholder={RUN_AFTER_CONFIGURATION_FILTER_ACTIONS}
-          value={searchText}
-          onChange={(_, data) => {
-            setSearchText(data.value);
-          }}
-        />
         <MenuList>
+          <Input
+            className="msla-run-after-action-search-input"
+            contentBefore={<Search24Regular />}
+            contentAfter={
+              <Button
+                icon={<DismissRegular />}
+                appearance="transparent"
+                onClick={() => {
+                  setSearchText('');
+                }}
+              />
+            }
+            autoFocus={true}
+            placeholder={RUN_AFTER_CONFIGURATION_FILTER_ACTIONS}
+            value={searchText}
+            onChange={(_, data) => {
+              setSearchText(data.value);
+            }}
+          />
+
           <div className="msla-run-after-action-menu-list">
             {(searchResults.length > 0 ? searchResults : actions).map((obj) => {
               return <ActionMenuItem id={obj.id} key={obj.id} value={obj} />;

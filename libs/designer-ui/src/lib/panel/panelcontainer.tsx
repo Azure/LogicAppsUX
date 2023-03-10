@@ -150,6 +150,7 @@ export const PanelContainer = ({
       headerText={title || panelLabel}
       isOpen
       onRenderHeader={renderHeader ?? defaultRenderHeader}
+      focusTrapZoneProps={{ disabled: isCollapsed }}
       isBlocking={false}
       hasCloseButton={false}
       type={panelLocation === PanelLocation.Right ? PanelType.custom : PanelType.customNear}
