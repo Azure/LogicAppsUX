@@ -1,6 +1,9 @@
 name: Deploy Storybook
 
 on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [release]
   push:
     branches:
       - main
