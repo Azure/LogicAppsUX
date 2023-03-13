@@ -1383,6 +1383,24 @@
       "value": "(UTC+07:00) Hovd"
     }
   ],
+  "90HY0L": [
+    {
+      "type": 0,
+      "value": "Insert a new step between "
+    },
+    {
+      "type": 1,
+      "value": "parent"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "child"
+    }
+  ],
   "90Q7Pw": [
     {
       "type": 0,
@@ -4197,12 +4215,6 @@
       "value": "Kapcsolat neve"
     }
   ],
-  "XQs+wW": [
-    {
-      "type": 0,
-      "value": "Új lépés beszúrása"
-    }
-  ],
   "XRK+gt": [
     {
       "type": 0,
@@ -6841,6 +6853,16 @@
     {
       "type": 0,
       "value": "Válasszon ki egy elemet a konfigurálás megkezdéséhez"
+    }
+  ],
+  "uIQrat": [
+    {
+      "type": 0,
+      "value": "Insert a new step after "
+    },
+    {
+      "type": 1,
+      "value": "parent"
     }
   ],
   "uM1i27": [

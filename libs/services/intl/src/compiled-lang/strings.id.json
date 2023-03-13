@@ -1340,6 +1340,24 @@
       "value": "(UTC+07.00) Hovd"
     }
   ],
+  "90HY0L": [
+    {
+      "type": 0,
+      "value": "Insert a new step between "
+    },
+    {
+      "type": 1,
+      "value": "parent"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "child"
+    }
+  ],
   "90Q7Pw": [
     {
       "type": 0,
@@ -4034,12 +4052,6 @@
       "value": "Nama koneksi"
     }
   ],
-  "XQs+wW": [
-    {
-      "type": 0,
-      "value": "Masukkan langkah baru"
-    }
-  ],
   "XRK+gt": [
     {
       "type": 0,
@@ -6584,6 +6596,16 @@
     {
       "type": 0,
       "value": "Pilih elemen untuk mulai mengonfigurasi"
+    }
+  ],
+  "uIQrat": [
+    {
+      "type": 0,
+      "value": "Insert a new step after "
+    },
+    {
+      "type": 1,
+      "value": "parent"
     }
   ],
   "uM1i27": [

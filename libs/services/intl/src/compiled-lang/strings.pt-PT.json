@@ -1394,6 +1394,24 @@
       "value": "(UTC+07:00) Hovd­"
     }
   ],
+  "90HY0L": [
+    {
+      "type": 0,
+      "value": "Insert a new step between "
+    },
+    {
+      "type": 1,
+      "value": "parent"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "child"
+    }
+  ],
   "90Q7Pw": [
     {
       "type": 0,
@@ -4248,12 +4266,6 @@
       "value": "Nome da ligação"
     }
   ],
-  "XQs+wW": [
-    {
-      "type": 0,
-      "value": "Inserir um novo passo"
-    }
-  ],
   "XRK+gt": [
     {
       "type": 0,
@@ -6914,6 +6926,16 @@
     {
       "type": 0,
       "value": "Selecione um elemento para começar a configurar"
+    }
+  ],
+  "uIQrat": [
+    {
+      "type": 0,
+      "value": "Insert a new step after "
+    },
+    {
+      "type": 1,
+      "value": "parent"
     }
   ],
   "uM1i27": [

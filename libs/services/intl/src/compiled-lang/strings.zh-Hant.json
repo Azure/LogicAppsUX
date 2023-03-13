@@ -1340,6 +1340,24 @@
       "value": "(UTC+07:00) 科布多城"
     }
   ],
+  "90HY0L": [
+    {
+      "type": 0,
+      "value": "Insert a new step between "
+    },
+    {
+      "type": 1,
+      "value": "parent"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "child"
+    }
+  ],
   "90Q7Pw": [
     {
       "type": 0,
@@ -4034,12 +4052,6 @@
       "value": "連線名稱"
     }
   ],
-  "XQs+wW": [
-    {
-      "type": 0,
-      "value": "插入新的步驟"
-    }
-  ],
   "XRK+gt": [
     {
       "type": 0,
@@ -6588,6 +6600,16 @@
     {
       "type": 0,
       "value": "選取要開始設定的元素"
+    }
+  ],
+  "uIQrat": [
+    {
+      "type": 0,
+      "value": "Insert a new step after "
+    },
+    {
+      "type": 1,
+      "value": "parent"
     }
   ],
   "uM1i27": [

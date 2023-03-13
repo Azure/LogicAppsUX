@@ -1421,6 +1421,24 @@
       "value": "(UTC+07:00) Ajmak kobdoski"
     }
   ],
+  "90HY0L": [
+    {
+      "type": 0,
+      "value": "Insert a new step between "
+    },
+    {
+      "type": 1,
+      "value": "parent"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "child"
+    }
+  ],
   "90Q7Pw": [
     {
       "type": 0,
@@ -4319,12 +4337,6 @@
       "value": "Nazwa połączenia"
     }
   ],
-  "XQs+wW": [
-    {
-      "type": 0,
-      "value": "Wstaw nowy krok"
-    }
-  ],
   "XRK+gt": [
     {
       "type": 0,
@@ -7003,6 +7015,16 @@
     {
       "type": 0,
       "value": "Wybierz element, aby rozpocząć konfigurowanie"
+    }
+  ],
+  "uIQrat": [
+    {
+      "type": 0,
+      "value": "Insert a new step after "
+    },
+    {
+      "type": 1,
+      "value": "parent"
     }
   ],
   "uM1i27": [
