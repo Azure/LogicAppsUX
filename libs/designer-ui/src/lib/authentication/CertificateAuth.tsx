@@ -1,5 +1,5 @@
 import type { AuthProps, ClientCertificateProps } from '.';
-import type { ChangeState, TokenPickerHandler } from '../editor/base';
+import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { AuthenticationProperty } from './AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES } from './util';
 import type { Dispatch, SetStateAction } from 'react';
@@ -7,14 +7,14 @@ import type { Dispatch, SetStateAction } from 'react';
 interface CertificateAuthenticationProps {
   clientCertificateProps: ClientCertificateProps;
   isOAuth?: boolean;
-  tokenPickerHandler: TokenPickerHandler;
+  getTokenPicker: GetTokenPickerHandler;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
 }
 
 export const CertificateAuthentication = ({
   clientCertificateProps,
   isOAuth = false,
-  tokenPickerHandler,
+  getTokenPicker,
   setCurrentProps,
 }: CertificateAuthenticationProps): JSX.Element => {
   const { clientCertificatePfx, clientCertificatePassword } = clientCertificateProps;
@@ -51,13 +51,13 @@ export const CertificateAuthentication = ({
       <AuthenticationProperty
         initialValue={clientCertificatePfx}
         AuthProperty={AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PFX}
-        tokenPickerHandler={tokenPickerHandler}
+        getTokenPicker={getTokenPicker}
         onBlur={isOAuth ? updateOAuthTypeCertificatePfx : updateClientCertificatePfx}
       />
       <AuthenticationProperty
         initialValue={clientCertificatePassword}
         AuthProperty={AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PASSWORD}
-        tokenPickerHandler={tokenPickerHandler}
+        getTokenPicker={getTokenPicker}
         onBlur={isOAuth ? updateOAuthTypeCertificatePassword : updateClientCertificatePassword}
       />
     </div>

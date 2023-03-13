@@ -8,6 +8,7 @@ export interface ActionButtonV2Props {
   className?: string;
   disabled?: boolean;
   title: string;
+  tabIndex?: number;
   onClick?(e: React.MouseEvent<HTMLElement>): void;
 }
 
@@ -15,7 +16,7 @@ const calloutProps: ICalloutProps = {
   directionalHint: DirectionalHint.topCenter,
 };
 
-export const ActionButtonV2: React.FC<ActionButtonV2Props> = ({ id, buttonRef, className, disabled = false, title, onClick }) => {
+export const ActionButtonV2: React.FC<ActionButtonV2Props> = ({ tabIndex, id, buttonRef, className, disabled = false, title, onClick }) => {
   return (
     <TooltipHost calloutProps={calloutProps} content={title}>
       <button
@@ -26,6 +27,7 @@ export const ActionButtonV2: React.FC<ActionButtonV2Props> = ({ id, buttonRef, c
         ref={buttonRef}
         onClick={onClick}
         onContextMenu={onClick}
+        tabIndex={tabIndex ?? 0}
       >
         <Plus />
       </button>

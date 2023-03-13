@@ -5,6 +5,11 @@ exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
   aria-label="panel"
   className="msla-panel-container"
   customWidth="630px"
+  focusTrapZoneProps={
+    Object {
+      "disabled": false,
+    }
+  }
   hasCloseButton={false}
   headerClassName="msla-panel-header"
   headerText="test title"

@@ -87,6 +87,12 @@
       "value": "Select an api from apim instance"
     }
   ],
+  "/2+p0Z": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -667,12 +673,6 @@
     {
       "type": 0,
       "value": "Вкл"
-    }
-  ],
-  "2wJZkB": [
-    {
-      "type": 0,
-      "value": "Пустая кнопка добавления динамического содержимого"
     }
   ],
   "2xhbE1": [
@@ -1405,6 +1405,24 @@
       "value": "(UTC+07:00) Ховд"
     }
   ],
+  "90HY0L": [
+    {
+      "type": 0,
+      "value": "Insert a new step between "
+    },
+    {
+      "type": 1,
+      "value": "parent"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "child"
+    }
+  ],
   "90Q7Pw": [
     {
       "type": 0,
@@ -1475,6 +1493,12 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9atGYe": [
+    {
+      "type": 0,
+      "value": "Add"
     }
   ],
   "9djnqI": [
@@ -2421,6 +2445,12 @@
       "value": "Ключ"
     }
   ],
+  "Hbqlzk": [
+    {
+      "type": 0,
+      "value": "Insert Expression"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -3037,6 +3067,12 @@
       "value": "Следующее со сбоем"
     }
   ],
+  "Mc6ITJ": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "MfAdfx": [
     {
       "type": 0,
@@ -3517,6 +3553,12 @@
     {
       "type": 0,
       "value": "Тип данных"
+    }
+  ],
+  "QiVbKW": [
+    {
+      "type": 0,
+      "value": "Exit Full Screen"
     }
   ],
   "QknZQ1": [
@@ -4279,12 +4321,6 @@
       "value": "Имя соединения"
     }
   ],
-  "XQs+wW": [
-    {
-      "type": 0,
-      "value": "Добавить шаг"
-    }
-  ],
   "XRK+gt": [
     {
       "type": 0,
@@ -4573,6 +4609,12 @@
       "value": "Эта операция уже удалена."
     }
   ],
+  "Zg3IjD": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -4651,6 +4693,12 @@
     {
       "type": 0,
       "value": "Second"
+    }
+  ],
+  "ae7W0a": [
+    {
+      "type": 0,
+      "value": "Full Screen"
     }
   ],
   "ahsVI/": [
@@ -5113,6 +5161,12 @@
       "value": "Необязательно. Индекс места остановки извлечения substring."
     }
   ],
+  "f81ClO": [
+    {
+      "type": 0,
+      "value": "Empty dynamic content icon"
+    }
+  ],
   "fBQBw/": [
     {
       "type": 0,
@@ -5157,6 +5211,12 @@
     {
       "type": 0,
       "value": "Логические функции"
+    }
+  ],
+  "fmm7Ik": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "froV/0": [
@@ -5259,6 +5319,12 @@
     {
       "type": 0,
       "value": "Функции преобразования"
+    }
+  ],
+  "gRUmiA": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "gTXyUo": [
@@ -6069,12 +6135,6 @@
       "value": "Запрет на включение в исходящий запрос заголовков метаданных по рабочим процессам в Logic Apps."
     }
   ],
-  "mmF/SW": [
-    {
-      "type": 0,
-      "value": "ОК"
-    }
-  ],
   "mvrlkP": [
     {
       "type": 0,
@@ -6671,12 +6731,6 @@
       "value": "Возвращает представление значения в кодировке URI"
     }
   ],
-  "rjyBPU": [
-    {
-      "type": 0,
-      "value": "Выражение"
-    }
-  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -6947,6 +7001,16 @@
       "value": "Выберите элемент для начала настройки"
     }
   ],
+  "uIQrat": [
+    {
+      "type": 0,
+      "value": "Insert a new step after "
+    },
+    {
+      "type": 1,
+      "value": "parent"
+    }
+  ],
   "uM1i27": [
     {
       "type": 0,
@@ -6981,12 +7045,6 @@
     {
       "type": 0,
       "value": "Show me"
-    }
-  ],
-  "uXJdAh": [
-    {
-      "type": 0,
-      "value": "Поиск по динамическому содержимому"
     }
   ],
   "uZH8Qs": [

@@ -16,7 +16,6 @@ import {
 import type { ContentType } from '@microsoft/designer-client-services-logic-apps';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import { ResourceIdentityType } from '@microsoft/utils-logic-apps';
-import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 const httpClient = new HttpClient();
@@ -131,8 +130,6 @@ export const DesignerWrapper = () => {
     isDarkMode: darkMode,
     isConsumption: consumption,
   };
-
-  useEffect(() => document.body.classList.add('is-standalone'), []);
 
   return (
     <>

@@ -87,6 +87,12 @@
       "value": "Select an api from apim instance"
     }
   ],
+  "/2+p0Z": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -645,12 +651,6 @@
     {
       "type": 0,
       "value": "På"
-    }
-  ],
-  "2wJZkB": [
-    {
-      "type": 0,
-      "value": "Knappen Lägg till dynamiskt innehåll är tom"
     }
   ],
   "2xhbE1": [
@@ -1383,6 +1383,24 @@
       "value": "(UTC+07:00) Hovd"
     }
   ],
+  "90HY0L": [
+    {
+      "type": 0,
+      "value": "Insert a new step between "
+    },
+    {
+      "type": 1,
+      "value": "parent"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "child"
+    }
+  ],
   "90Q7Pw": [
     {
       "type": 0,
@@ -1453,6 +1471,12 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9atGYe": [
+    {
+      "type": 0,
+      "value": "Add"
     }
   ],
   "9djnqI": [
@@ -2355,6 +2379,12 @@
       "value": "Nyckel"
     }
   ],
+  "Hbqlzk": [
+    {
+      "type": 0,
+      "value": "Insert Expression"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -2945,6 +2975,12 @@
       "value": "Nästa misslyckad"
     }
   ],
+  "Mc6ITJ": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "MfAdfx": [
     {
       "type": 0,
@@ -3425,6 +3461,12 @@
     {
       "type": 0,
       "value": "Datatyp"
+    }
+  ],
+  "QiVbKW": [
+    {
+      "type": 0,
+      "value": "Exit Full Screen"
     }
   ],
   "QknZQ1": [
@@ -4165,12 +4207,6 @@
       "value": "Anslutningens namn"
     }
   ],
-  "XQs+wW": [
-    {
-      "type": 0,
-      "value": "Infoga ett nytt steg"
-    }
-  ],
   "XRK+gt": [
     {
       "type": 0,
@@ -4455,6 +4491,12 @@
       "value": "Den här åtgärden har redan tagits bort."
     }
   ],
+  "Zg3IjD": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -4533,6 +4575,12 @@
     {
       "type": 0,
       "value": "Second"
+    }
+  ],
+  "ae7W0a": [
+    {
+      "type": 0,
+      "value": "Full Screen"
     }
   ],
   "ahsVI/": [
@@ -4995,6 +5043,12 @@
       "value": "Valfritt. Indexet för var understrängen ska sluta extraheras."
     }
   ],
+  "f81ClO": [
+    {
+      "type": 0,
+      "value": "Empty dynamic content icon"
+    }
+  ],
   "fBQBw/": [
     {
       "type": 0,
@@ -5039,6 +5093,12 @@
     {
       "type": 0,
       "value": "Logiska funktioner"
+    }
+  ],
+  "fmm7Ik": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "froV/0": [
@@ -5141,6 +5201,12 @@
     {
       "type": 0,
       "value": "Omvandlingsfunktioner"
+    }
+  ],
+  "gRUmiA": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "gTXyUo": [
@@ -5921,12 +5987,6 @@
       "value": "Begränsa Logic Apps så att rubriker för arbetsflödesmetadata inte inkluderas i utgående begäran."
     }
   ],
-  "mmF/SW": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
   "mvrlkP": [
     {
       "type": 0,
@@ -6497,12 +6557,6 @@
       "value": "Returnerar en URI-kodad representation av ett värde"
     }
   ],
-  "rjyBPU": [
-    {
-      "type": 0,
-      "value": "Uttryck"
-    }
-  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -6773,6 +6827,16 @@
       "value": "Välj ett element för att börja konfigurera"
     }
   ],
+  "uIQrat": [
+    {
+      "type": 0,
+      "value": "Insert a new step after "
+    },
+    {
+      "type": 1,
+      "value": "parent"
+    }
+  ],
   "uM1i27": [
     {
       "type": 0,
@@ -6807,12 +6871,6 @@
     {
       "type": 0,
       "value": "Show me"
-    }
-  ],
-  "uXJdAh": [
-    {
-      "type": 0,
-      "value": "Sök efter dynamiskt innehåll"
     }
   ],
   "uZH8Qs": [

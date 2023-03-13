@@ -2,6 +2,26 @@ import { NormalizedDataType } from '../models';
 import type { FunctionData } from '../models/Function';
 import { FunctionCategory, FunctionType } from '../models/Function';
 
+export const addFunction: FunctionData = {
+  key: 'Add',
+  maxNumberOfInputs: -1,
+  type: FunctionType.TransformationFunction,
+  functionName: 'add',
+  outputValueType: NormalizedDataType.Number,
+  inputs: [
+    {
+      name: 'Summand',
+      allowedTypes: [NormalizedDataType.Number, NormalizedDataType.Integer, NormalizedDataType.Decimal],
+      isOptional: false,
+      allowCustomInput: true,
+      placeHolder: 'The numbers to add',
+    },
+  ],
+  displayName: 'Add',
+  category: FunctionCategory.Math,
+  description: 'Returns the result from adding two or more numbers.',
+};
+
 export const concatFunction: FunctionData = {
   key: 'Concat',
   maxNumberOfInputs: -1,

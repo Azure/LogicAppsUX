@@ -87,6 +87,12 @@
       "value": "Select an api from apim instance"
     }
   ],
+  "/2+p0Z": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -645,12 +651,6 @@
     {
       "type": 0,
       "value": "Bezug"
-    }
-  ],
-  "2wJZkB": [
-    {
-      "type": 0,
-      "value": "Leere Schaltfläche „Dynamischen Inhalt hinzufügen“"
     }
   ],
   "2xhbE1": [
@@ -1383,6 +1383,24 @@
       "value": "(UTC+07:00) Hovd"
     }
   ],
+  "90HY0L": [
+    {
+      "type": 0,
+      "value": "Insert a new step between "
+    },
+    {
+      "type": 1,
+      "value": "parent"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "child"
+    }
+  ],
   "90Q7Pw": [
     {
       "type": 0,
@@ -1453,6 +1471,12 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9atGYe": [
+    {
+      "type": 0,
+      "value": "Add"
     }
   ],
   "9djnqI": [
@@ -2355,6 +2379,12 @@
       "value": "Schlüssel"
     }
   ],
+  "Hbqlzk": [
+    {
+      "type": 0,
+      "value": "Insert Expression"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -2949,6 +2979,12 @@
       "value": "Nächster Fehler"
     }
   ],
+  "Mc6ITJ": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "MfAdfx": [
     {
       "type": 0,
@@ -3433,6 +3469,12 @@
     {
       "type": 0,
       "value": "Datentyp"
+    }
+  ],
+  "QiVbKW": [
+    {
+      "type": 0,
+      "value": "Exit Full Screen"
     }
   ],
   "QknZQ1": [
@@ -4173,12 +4215,6 @@
       "value": "Verbindungsname"
     }
   ],
-  "XQs+wW": [
-    {
-      "type": 0,
-      "value": "Hiermit fügen Sie einen neuen Schritt ein."
-    }
-  ],
   "XRK+gt": [
     {
       "type": 0,
@@ -4467,6 +4503,12 @@
       "value": "Dieser Vorgang wurde bereits gelöscht."
     }
   ],
+  "Zg3IjD": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -4537,6 +4579,12 @@
     {
       "type": 0,
       "value": "Second"
+    }
+  ],
+  "ae7W0a": [
+    {
+      "type": 0,
+      "value": "Full Screen"
     }
   ],
   "ahsVI/": [
@@ -5003,6 +5051,12 @@
       "value": "Optional. Der Index, an dem das Extrahieren des Substrings beendet werden soll."
     }
   ],
+  "f81ClO": [
+    {
+      "type": 0,
+      "value": "Empty dynamic content icon"
+    }
+  ],
   "fBQBw/": [
     {
       "type": 0,
@@ -5051,6 +5105,12 @@
     {
       "type": 0,
       "value": "Logische Funktionen"
+    }
+  ],
+  "fmm7Ik": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "froV/0": [
@@ -5153,6 +5213,12 @@
     {
       "type": 0,
       "value": "Konvertierungsfunktionen"
+    }
+  ],
+  "gRUmiA": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "gTXyUo": [
@@ -5933,12 +5999,6 @@
       "value": "Durch diese Einstellung schließen Logik-Apps keine Workflow-Metadatenheader in ausgehenden Anforderungen ein."
     }
   ],
-  "mmF/SW": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
   "mvrlkP": [
     {
       "type": 0,
@@ -6497,12 +6557,6 @@
       "value": "Gibt eine URI-codierte Darstellung eines Werts zurück."
     }
   ],
-  "rjyBPU": [
-    {
-      "type": 0,
-      "value": "Ausdruck"
-    }
-  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -6773,6 +6827,16 @@
       "value": "Wählen Sie ein Element aus, um mit der Konfiguration zu beginnen."
     }
   ],
+  "uIQrat": [
+    {
+      "type": 0,
+      "value": "Insert a new step after "
+    },
+    {
+      "type": 1,
+      "value": "parent"
+    }
+  ],
   "uM1i27": [
     {
       "type": 0,
@@ -6807,12 +6871,6 @@
     {
       "type": 0,
       "value": "Show me"
-    }
-  ],
-  "uXJdAh": [
-    {
-      "type": 0,
-      "value": "Dynamischen Inhalt durchsuchen"
     }
   ],
   "uZH8Qs": [

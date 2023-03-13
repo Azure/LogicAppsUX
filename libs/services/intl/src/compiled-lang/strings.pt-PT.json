@@ -87,6 +87,12 @@
       "value": "Select an api from apim instance"
     }
   ],
+  "/2+p0Z": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -656,12 +662,6 @@
     {
       "type": 0,
       "value": "Ativado"
-    }
-  ],
-  "2wJZkB": [
-    {
-      "type": 0,
-      "value": "Botão vazio Adicionar conteúdo dinâmico"
     }
   ],
   "2xhbE1": [
@@ -1394,6 +1394,24 @@
       "value": "(UTC+07:00) Hovd­"
     }
   ],
+  "90HY0L": [
+    {
+      "type": 0,
+      "value": "Insert a new step between "
+    },
+    {
+      "type": 1,
+      "value": "parent"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "child"
+    }
+  ],
   "90Q7Pw": [
     {
       "type": 0,
@@ -1464,6 +1482,12 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9atGYe": [
+    {
+      "type": 0,
+      "value": "Add"
     }
   ],
   "9djnqI": [
@@ -2388,6 +2412,12 @@
       "value": "Chave"
     }
   ],
+  "Hbqlzk": [
+    {
+      "type": 0,
+      "value": "Insert Expression"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -2993,6 +3023,12 @@
       "value": "O seguinte falhou"
     }
   ],
+  "Mc6ITJ": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "MfAdfx": [
     {
       "type": 0,
@@ -3473,6 +3509,12 @@
     {
       "type": 0,
       "value": "Tipo de dados"
+    }
+  ],
+  "QiVbKW": [
+    {
+      "type": 0,
+      "value": "Exit Full Screen"
     }
   ],
   "QknZQ1": [
@@ -4224,12 +4266,6 @@
       "value": "Nome da ligação"
     }
   ],
-  "XQs+wW": [
-    {
-      "type": 0,
-      "value": "Inserir um novo passo"
-    }
-  ],
   "XRK+gt": [
     {
       "type": 0,
@@ -4518,6 +4554,12 @@
       "value": "Esta operação já foi eliminada."
     }
   ],
+  "Zg3IjD": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -4596,6 +4638,12 @@
     {
       "type": 0,
       "value": "Second"
+    }
+  ],
+  "ae7W0a": [
+    {
+      "type": 0,
+      "value": "Full Screen"
     }
   ],
   "ahsVI/": [
@@ -5058,6 +5106,12 @@
       "value": "Opcional. O índice de onde parar a extração da subcadeia."
     }
   ],
+  "f81ClO": [
+    {
+      "type": 0,
+      "value": "Empty dynamic content icon"
+    }
+  ],
   "fBQBw/": [
     {
       "type": 0,
@@ -5106,6 +5160,12 @@
     {
       "type": 0,
       "value": "Funções lógicas"
+    }
+  ],
+  "fmm7Ik": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "froV/0": [
@@ -5208,6 +5268,12 @@
     {
       "type": 0,
       "value": "Funções de conversão"
+    }
+  ],
+  "gRUmiA": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "gTXyUo": [
@@ -6007,12 +6073,6 @@
       "value": "Limite o Logic Apps para não incluir cabeçalhos de metadados do fluxo de trabalho no pedido efetuado."
     }
   ],
-  "mmF/SW": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
   "mvrlkP": [
     {
       "type": 0,
@@ -6598,12 +6658,6 @@
       "value": "Devolve uma representação codificada de URI de um valor"
     }
   ],
-  "rjyBPU": [
-    {
-      "type": 0,
-      "value": "Expressão"
-    }
-  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -6874,6 +6928,16 @@
       "value": "Selecione um elemento para começar a configurar"
     }
   ],
+  "uIQrat": [
+    {
+      "type": 0,
+      "value": "Insert a new step after "
+    },
+    {
+      "type": 1,
+      "value": "parent"
+    }
+  ],
   "uM1i27": [
     {
       "type": 0,
@@ -6908,12 +6972,6 @@
     {
       "type": 0,
       "value": "Show me"
-    }
-  ],
-  "uXJdAh": [
-    {
-      "type": 0,
-      "value": "Pesquisar conteúdo dinâmico"
     }
   ],
   "uZH8Qs": [

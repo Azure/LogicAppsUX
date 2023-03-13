@@ -9,7 +9,6 @@ exports[`lib/card should render 1`] = `
   }
 >
   <div
-    aria-label="title"
     className="msla-panel-card-container"
     data-testid="card-title"
     onClick={[Function]}
@@ -22,7 +21,7 @@ exports[`lib/card should render 1`] = `
         "borderRadius": "2px",
       }
     }
-    tabIndex={0}
+    tabIndex={1}
   >
     <div
       className="msla-selection-box"
@@ -83,7 +82,6 @@ exports[`lib/card should render as cloned 1`] = `
   }
 >
   <div
-    aria-label="title"
     className="msla-panel-card-container msla-card-ghost-image"
     data-testid="card-title"
     onClick={[Function]}
@@ -96,7 +94,7 @@ exports[`lib/card should render as cloned 1`] = `
         "borderRadius": "2px",
       }
     }
-    tabIndex={0}
+    tabIndex={1}
   >
     <div
       className="msla-selection-box"
@@ -157,7 +155,6 @@ exports[`lib/card should render as draggable 1`] = `
   }
 >
   <div
-    aria-label="title"
     className="msla-panel-card-container"
     data-testid="card-title"
     onClick={[Function]}
@@ -170,7 +167,7 @@ exports[`lib/card should render as draggable 1`] = `
         "borderRadius": "2px",
       }
     }
-    tabIndex={0}
+    tabIndex={1}
   >
     <div
       className="msla-selection-box"
@@ -244,7 +241,6 @@ exports[`lib/card should render as inactive 1`] = `
   }
 >
   <div
-    aria-label="title"
     className="msla-panel-card-container inactive"
     data-testid="card-title"
     onClick={[Function]}
@@ -257,7 +253,7 @@ exports[`lib/card should render as inactive 1`] = `
         "borderRadius": "2px",
       }
     }
-    tabIndex={0}
+    tabIndex={1}
   >
     <div
       className="msla-selection-box"
@@ -318,7 +314,6 @@ exports[`lib/card should render as selected 1`] = `
   }
 >
   <div
-    aria-label="title"
     className="msla-panel-card-container msla-panel-card-container-selected"
     data-testid="card-title"
     onClick={[Function]}
@@ -331,7 +326,7 @@ exports[`lib/card should render as selected 1`] = `
         "borderRadius": "2px",
       }
     }
-    tabIndex={0}
+    tabIndex={1}
   >
     <div
       className="msla-selection-box selected"
@@ -392,7 +387,6 @@ exports[`lib/card should render with a context menu 1`] = `
   }
 >
   <div
-    aria-label="title"
     className="msla-panel-card-container"
     data-testid="card-title"
     onClick={[Function]}
@@ -405,7 +399,7 @@ exports[`lib/card should render with a context menu 1`] = `
         "borderRadius": "2px",
       }
     }
-    tabIndex={0}
+    tabIndex={1}
   >
     <div
       className="msla-selection-box"
@@ -466,7 +460,6 @@ exports[`lib/card should render with an icon 1`] = `
   }
 >
   <div
-    aria-label="title"
     className="msla-panel-card-container"
     data-testid="card-title"
     onClick={[Function]}
@@ -479,7 +472,7 @@ exports[`lib/card should render with an icon 1`] = `
         "borderRadius": "2px",
       }
     }
-    tabIndex={0}
+    tabIndex={1}
   >
     <div
       className="msla-selection-box"

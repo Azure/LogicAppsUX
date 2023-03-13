@@ -87,6 +87,12 @@
       "value": "Select an api from apim instance"
     }
   ],
+  "/2+p0Z": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -683,12 +689,6 @@
     {
       "type": 0,
       "value": "Włączone"
-    }
-  ],
-  "2wJZkB": [
-    {
-      "type": 0,
-      "value": "Pusty przycisk Dodaj zawartość dynamiczną"
     }
   ],
   "2xhbE1": [
@@ -1421,6 +1421,24 @@
       "value": "(UTC+07:00) Ajmak kobdoski"
     }
   ],
+  "90HY0L": [
+    {
+      "type": 0,
+      "value": "Insert a new step between "
+    },
+    {
+      "type": 1,
+      "value": "parent"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "child"
+    }
+  ],
   "90Q7Pw": [
     {
       "type": 0,
@@ -1491,6 +1509,12 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9atGYe": [
+    {
+      "type": 0,
+      "value": "Add"
     }
   ],
   "9djnqI": [
@@ -2437,6 +2461,12 @@
       "value": "Klucz"
     }
   ],
+  "Hbqlzk": [
+    {
+      "type": 0,
+      "value": "Insert Expression"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -3053,6 +3083,12 @@
       "value": "Następna z niepowodzeniem"
     }
   ],
+  "Mc6ITJ": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "MfAdfx": [
     {
       "type": 0,
@@ -3533,6 +3569,12 @@
     {
       "type": 0,
       "value": "Typ danych"
+    }
+  ],
+  "QiVbKW": [
+    {
+      "type": 0,
+      "value": "Exit Full Screen"
     }
   ],
   "QknZQ1": [
@@ -4295,12 +4337,6 @@
       "value": "Nazwa połączenia"
     }
   ],
-  "XQs+wW": [
-    {
-      "type": 0,
-      "value": "Wstaw nowy krok"
-    }
-  ],
   "XRK+gt": [
     {
       "type": 0,
@@ -4589,6 +4625,12 @@
       "value": "Ta operacja została już usunięta."
     }
   ],
+  "Zg3IjD": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -4667,6 +4709,12 @@
     {
       "type": 0,
       "value": "Second"
+    }
+  ],
+  "ae7W0a": [
+    {
+      "type": 0,
+      "value": "Full Screen"
     }
   ],
   "ahsVI/": [
@@ -5129,6 +5177,12 @@
       "value": "Opcjonalne. Indeks miejsca, w którym należy zakończyć wyodrębnianie podciągu."
     }
   ],
+  "f81ClO": [
+    {
+      "type": 0,
+      "value": "Empty dynamic content icon"
+    }
+  ],
   "fBQBw/": [
     {
       "type": 0,
@@ -5173,6 +5227,12 @@
     {
       "type": 0,
       "value": "Funkcje logiczne"
+    }
+  ],
+  "fmm7Ik": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "froV/0": [
@@ -5275,6 +5335,12 @@
     {
       "type": 0,
       "value": "Funkcje konwersji"
+    }
+  ],
+  "gRUmiA": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "gTXyUo": [
@@ -6085,12 +6151,6 @@
       "value": "Ogranicz aplikacje usługi Logic Apps, aby nie dołączały nagłówków metadanych przepływu pracy do żądania wychodzącego."
     }
   ],
-  "mmF/SW": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
   "mvrlkP": [
     {
       "type": 0,
@@ -6687,12 +6747,6 @@
       "value": "Zwraca reprezentację wartości zakodowaną jako identyfikator URI"
     }
   ],
-  "rjyBPU": [
-    {
-      "type": 0,
-      "value": "Wyrażenie"
-    }
-  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -6963,6 +7017,16 @@
       "value": "Wybierz element, aby rozpocząć konfigurowanie"
     }
   ],
+  "uIQrat": [
+    {
+      "type": 0,
+      "value": "Insert a new step after "
+    },
+    {
+      "type": 1,
+      "value": "parent"
+    }
+  ],
   "uM1i27": [
     {
       "type": 0,
@@ -6997,12 +7061,6 @@
     {
       "type": 0,
       "value": "Show me"
-    }
-  ],
-  "uXJdAh": [
-    {
-      "type": 0,
-      "value": "Wyszukaj zawartość dynamiczną"
     }
   ],
   "uZH8Qs": [

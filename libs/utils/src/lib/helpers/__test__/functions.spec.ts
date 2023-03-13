@@ -62,11 +62,31 @@ describe('lib/helpers/functions', () => {
     expect(arrayEqualsOrderInsensitive(['a', 'b'], ['b', 'a'])).toBeTruthy();
   });
 
-  it('equals', () => {
-    expect(equals('a', 'b')).toBeFalsy();
-    expect(equals('a', 'A')).toBeTruthy();
-    expect(equals('a', 'a', false)).toBeTruthy();
-    expect(equals('a', 'A', false)).toBeFalsy();
+  describe('equals', () => {
+    it.each([
+      ['a', 'b', false],
+      ['a', 'A', true],
+      ['a', 'a', true],
+      ['123', '123', true],
+      ['foo', 'FOO', true],
+      ['ßß', 'SSSS', true],
+      ['ς', 'Σ', true],
+    ])('returns the correct result for %p=%p, case-insensitive true/default', (a, b, expected) => {
+      expect(equals(a, b)).toBe(expected);
+      expect(equals(a, b, true)).toBe(expected);
+    });
+
+    it.each([
+      ['a', 'b', false],
+      ['a', 'A', false],
+      ['a', 'a', true],
+      ['123', '123', true],
+      ['foo', 'FOO', false],
+      ['ßß', 'SSSS', false],
+      ['ς', 'Σ', false],
+    ])('returns the correct result for %p=%p, case-insensitive false', (a, b, expected) => {
+      expect(equals(a, b, false)).toBe(expected);
+    });
   });
 
   describe('addPrefix', () => {

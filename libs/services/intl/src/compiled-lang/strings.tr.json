@@ -71,6 +71,12 @@
       "value": "Select an api from apim instance"
     }
   ],
+  "/2+p0Z": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step"
+    }
+  ],
   "/AtN16": [
     {
       "type": 0,
@@ -629,12 +635,6 @@
     {
       "type": 0,
       "value": "Açık"
-    }
-  ],
-  "2wJZkB": [
-    {
-      "type": 0,
-      "value": "Dinamik içerik ekle düğmesi boş"
     }
   ],
   "2xhbE1": [
@@ -1351,6 +1351,24 @@
       "value": "(UTC+07:00) Hovd"
     }
   ],
+  "90HY0L": [
+    {
+      "type": 0,
+      "value": "Insert a new step between "
+    },
+    {
+      "type": 1,
+      "value": "parent"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "child"
+    }
+  ],
   "90Q7Pw": [
     {
       "type": 0,
@@ -1421,6 +1439,12 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9atGYe": [
+    {
+      "type": 0,
+      "value": "Add"
     }
   ],
   "9djnqI": [
@@ -2287,6 +2311,12 @@
       "value": "Anahtar"
     }
   ],
+  "Hbqlzk": [
+    {
+      "type": 0,
+      "value": "Insert Expression"
+    }
+  ],
   "HfrUId": [
     {
       "type": 0,
@@ -2857,6 +2887,12 @@
       "value": "Sonraki seçeneği başarısız oldu"
     }
   ],
+  "Mc6ITJ": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "MfAdfx": [
     {
       "type": 0,
@@ -3321,6 +3357,12 @@
     {
       "type": 0,
       "value": "Veri türü"
+    }
+  ],
+  "QiVbKW": [
+    {
+      "type": 0,
+      "value": "Exit Full Screen"
     }
   ],
   "QknZQ1": [
@@ -4061,12 +4103,6 @@
       "value": "Bağlantı adı"
     }
   ],
-  "XQs+wW": [
-    {
-      "type": 0,
-      "value": "Yeni bir adım ekleyin"
-    }
-  ],
   "XRK+gt": [
     {
       "type": 0,
@@ -4347,6 +4383,12 @@
       "value": "Bu işlem zaten silinmiş."
     }
   ],
+  "Zg3IjD": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "ZkjTbp": [
     {
       "type": 0,
@@ -4417,6 +4459,12 @@
     {
       "type": 0,
       "value": "Second"
+    }
+  ],
+  "ae7W0a": [
+    {
+      "type": 0,
+      "value": "Full Screen"
     }
   ],
   "ahsVI/": [
@@ -4875,6 +4923,12 @@
       "value": "İsteğe bağlı. Alt dizeyi ayıklama işleminin durdurulacağı yeri belirten dizin."
     }
   ],
+  "f81ClO": [
+    {
+      "type": 0,
+      "value": "Empty dynamic content icon"
+    }
+  ],
   "fBQBw/": [
     {
       "type": 0,
@@ -4923,6 +4977,12 @@
     {
       "type": 0,
       "value": "Mantıksal işlevler"
+    }
+  ],
+  "fmm7Ik": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "froV/0": [
@@ -5025,6 +5085,12 @@
     {
       "type": 0,
       "value": "Dönüşüm işlevleri"
+    }
+  ],
+  "gRUmiA": [
+    {
+      "type": 0,
+      "value": "Info"
     }
   ],
   "gTXyUo": [
@@ -5777,12 +5843,6 @@
       "value": "Logic Apps'i giden isteklerde iş akışı meta veri üst bilgileri eklememek için sınırlandırın."
     }
   ],
-  "mmF/SW": [
-    {
-      "type": 0,
-      "value": "Tamam"
-    }
-  ],
   "mvrlkP": [
     {
       "type": 0,
@@ -6333,12 +6393,6 @@
       "value": "Bir değerin URI ile kodlanmış gösterimini döndürür"
     }
   ],
-  "rjyBPU": [
-    {
-      "type": 0,
-      "value": "İfade"
-    }
-  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -6609,6 +6663,16 @@
       "value": "Yapılandırmaya başlamak için bir öğe seçin"
     }
   ],
+  "uIQrat": [
+    {
+      "type": 0,
+      "value": "Insert a new step after "
+    },
+    {
+      "type": 1,
+      "value": "parent"
+    }
+  ],
   "uM1i27": [
     {
       "type": 0,
@@ -6643,12 +6707,6 @@
     {
       "type": 0,
       "value": "Show me"
-    }
-  ],
-  "uXJdAh": [
-    {
-      "type": 0,
-      "value": "Dinamik içerik ara"
     }
   ],
   "uZH8Qs": [

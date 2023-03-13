@@ -4,7 +4,7 @@ import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
 import AddNodeIcon from './edgeContextMenuSvgs/addNodeIcon.svg';
-import { ActionButton, Callout, DirectionalHint } from '@fluentui/react';
+import { ActionButton, Callout, DirectionalHint, FocusTrapZone } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { css } from '@fluentui/utilities';
 import { ActionButtonV2 } from '@microsoft/designer-ui';
@@ -65,10 +65,26 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
     [graphId, parentId, childId]
   );
 
-  const tooltipText = intl.formatMessage({
-    defaultMessage: 'Insert a new step',
-    description: 'Tooltip for the button to add a new step (action or branch)',
-  });
+  const tooltipText = childId
+    ? intl.formatMessage(
+        {
+          defaultMessage: 'Insert a new step between {parent} and {child}',
+          description: 'Tooltip for the button to add a new step (action or branch)',
+        },
+        {
+          parent: parentId,
+          child: childId,
+        }
+      )
+    : intl.formatMessage(
+        {
+          defaultMessage: 'Insert a new step after {parent}',
+          description: 'Tooltip for the button to add a new step (action or branch)',
+        },
+        {
+          parent: parentId,
+        }
+      );
 
   const actionButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -100,16 +116,18 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
               onMouseLeave={toggleIsCalloutVisible}
               directionalHint={DirectionalHint.bottomCenter}
             >
-              <div className="msla-add-context-menu">
-                <ActionButton iconProps={{ imageProps: { src: AddNodeIcon } }} onClick={openAddNodePanel}>
-                  {newActionText}
-                </ActionButton>
-                {parentId ? (
-                  <ActionButton iconProps={{ imageProps: { src: AddBranchIcon } }} onClick={addParallelBranch}>
-                    {newBranchText}
+              <FocusTrapZone>
+                <div className="msla-add-context-menu">
+                  <ActionButton iconProps={{ imageProps: { src: AddNodeIcon } }} onClick={openAddNodePanel}>
+                    {newActionText}
                   </ActionButton>
-                ) : null}
-              </div>
+                  {parentId ? (
+                    <ActionButton iconProps={{ imageProps: { src: AddBranchIcon } }} onClick={addParallelBranch}>
+                      {newBranchText}
+                    </ActionButton>
+                  ) : null}
+                </div>
+              </FocusTrapZone>
             </Callout>
           )}
         </>
