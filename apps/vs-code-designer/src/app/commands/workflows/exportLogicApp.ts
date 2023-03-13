@@ -21,6 +21,7 @@ import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { writeFileSync } from 'fs';
 import * as fse from 'fs-extra';
+import * as path from 'path';
 import * as requestP from 'request-promise';
 import * as vscode from 'vscode';
 
@@ -325,6 +326,10 @@ export async function exportLogicApp(): Promise<void> {
   };
 
   const panel: vscode.WebviewPanel = vscode.window.createWebviewPanel('ExportLA', `${panelName}`, vscode.ViewColumn.Active, options);
+  panel.iconPath = {
+    light: vscode.Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'export.svg')),
+    dark: vscode.Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'export.svg')),
+  };
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 
   let interval;
