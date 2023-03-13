@@ -1340,6 +1340,24 @@
       "value": "(UTC+07:00) 호브드"
     }
   ],
+  "90HY0L": [
+    {
+      "type": 0,
+      "value": "Insert a new step between "
+    },
+    {
+      "type": 1,
+      "value": "parent"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "child"
+    }
+  ],
   "90Q7Pw": [
     {
       "type": 0,
@@ -4034,12 +4052,6 @@
       "value": "연결 이름"
     }
   ],
-  "XQs+wW": [
-    {
-      "type": 0,
-      "value": "새 단계 삽입"
-    }
-  ],
   "XRK+gt": [
     {
       "type": 0,
@@ -6576,6 +6588,16 @@
     {
       "type": 0,
       "value": "구성을 시작할 요소 선택"
+    }
+  ],
+  "uIQrat": [
+    {
+      "type": 0,
+      "value": "Insert a new step after "
+    },
+    {
+      "type": 1,
+      "value": "parent"
     }
   ],
   "uM1i27": [

@@ -1340,6 +1340,24 @@
       "value": "(UTC+07:00) ホブド"
     }
   ],
+  "90HY0L": [
+    {
+      "type": 0,
+      "value": "Insert a new step between "
+    },
+    {
+      "type": 1,
+      "value": "parent"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "child"
+    }
+  ],
   "90Q7Pw": [
     {
       "type": 0,
@@ -4034,12 +4052,6 @@
       "value": "接続名"
     }
   ],
-  "XQs+wW": [
-    {
-      "type": 0,
-      "value": "新しいステップを挿入します"
-    }
-  ],
   "XRK+gt": [
     {
       "type": 0,
@@ -6576,6 +6588,16 @@
     {
       "type": 0,
       "value": "構成を開始する要素の選択"
+    }
+  ],
+  "uIQrat": [
+    {
+      "type": 0,
+      "value": "Insert a new step after "
+    },
+    {
+      "type": 1,
+      "value": "parent"
     }
   ],
   "uM1i27": [
