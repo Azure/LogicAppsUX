@@ -112,7 +112,8 @@ export abstract class BaseConnectorService implements IConnectorService {
     parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any,
-    nodeInputs: any
+    nodeInputs: any,
+    nodeMetadata: any
   ): Promise<ListDynamicValue[]>;
 
   async getLegacyDynamicSchema(
@@ -151,7 +152,8 @@ export abstract class BaseConnectorService implements IConnectorService {
     parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any,
-    nodeInputs: any
+    nodeInputs: any,
+    nodeMetadata: any
   ): Promise<OpenAPIV2.SchemaObject>;
 
   protected _isClientSupportedOperation(connectorId: string, operationId: string): boolean {

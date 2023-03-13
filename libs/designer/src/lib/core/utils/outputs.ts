@@ -317,6 +317,7 @@ export const loadDynamicOutputsInNode = async (
   connectionReference: ConnectionReference | undefined,
   outputDependencies: Record<string, DependencyInfo>,
   nodeInputs: NodeInputs,
+  nodeMetadata: any,
   settings: Settings,
   dispatch: Dispatch
 ): Promise<void> => {
@@ -328,7 +329,7 @@ export const loadDynamicOutputsInNode = async (
       if (info.dependencyType === 'StaticSchema') {
         updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings, /* shouldProcessSettings */ true);
       } else {
-        const outputSchema = await getDynamicSchema(info, nodeInputs, operationInfo, connectionReference);
+        const outputSchema = await getDynamicSchema(info, nodeInputs, nodeMetadata, operationInfo, connectionReference);
         let schemaOutputs = outputSchema ? getDynamicOutputsFromSchema(outputSchema, info.parameter as OutputParameter) : {};
 
         if (settings.splitOn?.value?.enabled) {

@@ -73,6 +73,7 @@ import {
 export async function getDynamicValues(
   dependencyInfo: DependencyInfo,
   nodeInputs: NodeInputs,
+  nodeMetadata: any,
   operationInfo: OperationInfo,
   connectionReference: ConnectionReference | undefined,
   idReplacements: Record<string, string>
@@ -89,7 +90,8 @@ export async function getDynamicValues(
       parameter?.alias,
       operationParameters,
       dynamicState,
-      nodeInputs
+      nodeInputs,
+      nodeMetadata
     );
   } else if (isLegacyDynamicValuesExtension(definition)) {
     const { connectorId } = operationInfo;
@@ -136,6 +138,7 @@ export async function getDynamicValues(
 export async function getDynamicSchema(
   dependencyInfo: DependencyInfo,
   nodeInputs: NodeInputs,
+  nodeMetadata: any,
   operationInfo: OperationInfo,
   connectionReference: ConnectionReference | undefined,
   variables: VariableDeclaration[] = [],
@@ -170,7 +173,8 @@ export async function getDynamicSchema(
             parameter?.alias,
             operationParameters,
             dynamicState,
-            nodeInputs
+            nodeInputs,
+            nodeMetadata
           );
           break;
       }

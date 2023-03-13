@@ -151,7 +151,15 @@ const initializeOperationDetails = async (
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
     const settings = getOperationSettings(isTrigger, operationInfo, nodeOutputs, /* manifest */ undefined, parsedSwagger);
 
-    initData = { id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata: { iconUri, brandColor } };
+    initData = {
+      id: nodeId,
+      nodeInputs,
+      actionMetadata,
+      nodeOutputs,
+      nodeDependencies,
+      settings,
+      operationMetadata: { iconUri, brandColor },
+    };
     dispatch(initializeNodes([initData]));
     addTokensAndVariables(
       nodeId,
@@ -170,6 +178,7 @@ const initializeOperationDetails = async (
       undefined,
       initData.nodeDependencies,
       initData.nodeInputs,
+      initData.actionMetadata,
       initData.settings as Settings,
       getAllVariables(getState().tokens.variables),
       dispatch,

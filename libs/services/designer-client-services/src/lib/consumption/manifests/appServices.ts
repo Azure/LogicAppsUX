@@ -27,24 +27,9 @@ export const appServiceActionManifest = {
 
     environmentBadge: coreBadge,
 
-    inputsLocation: ['inputs'],
     inputs: {
       type: 'object',
       properties: {
-        metadata: {
-          type: 'object',
-          required: [],
-          properties: {
-            apiDefinitionUrl: {
-              type: 'string',
-              'x-ms-visibility': 'hideInUI',
-            },
-            swaggerSource: {
-              type: 'string',
-              'x-ms-visibility': 'hideInUI',
-            },
-          },
-        },
         authentication: {
           type: 'object',
           title: 'Authentication',
@@ -104,10 +89,7 @@ export const appServiceActionManifest = {
         },
       },
     },
-    inputsLocationSwapMap: [
-      { source: ['operationDetails'], target: [] },
-      { source: ['metadata'], target: [] },
-    ],
+    inputsLocationSwapMap: [{ source: ['operationDetails'], target: [] }],
     isInputsOptional: false,
 
     outputs: {

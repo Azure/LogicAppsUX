@@ -59,7 +59,8 @@ export interface IConnectorService {
     parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any,
-    nodeInputs: any
+    nodeInputs: any,
+    nodeMetadata: any
   ): Promise<ListDynamicValue[]>;
 
   /**
@@ -98,7 +99,8 @@ export interface IConnectorService {
     parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any,
-    nodeInputs: any
+    nodeInputs: any,
+    nodeMetadata: any
   ): Promise<OpenAPIV2.SchemaObject>;
 }
 
