@@ -42,7 +42,7 @@ const TargetSchemaTreeItem = ({ node, status }: TargetSchemaTreeItemProps) => {
     }
   }, [status]);
 
-  const BundledTypeIcon = iconForNormalizedDataType(node.normalizedDataType, 16, true, node.nodeProperties);
+  const BundledTypeIcon = iconForNormalizedDataType(node.type, 16, true, node.nodeProperties);
 
   return (
     <Stack horizontal verticalAlign="center">
