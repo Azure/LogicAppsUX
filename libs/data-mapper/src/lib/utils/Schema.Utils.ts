@@ -28,7 +28,7 @@ const convertSchemaNodeToSchemaNodeExtended = (
     {
       key: schemaNode.key,
       name: schemaNode.name,
-      fullName: schemaNode.fullName,
+      qName: schemaNode.qName,
       repeating: nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1,
     },
   ];
@@ -124,7 +124,7 @@ export const searchSchemaTreeFromRoot = (
     minMatchCharLength: 2,
     includeMatches: true,
     threshold: 0.4,
-    keys: ['fullName'],
+    keys: ['qName'],
   };
 
   // Fuzzy search against flattened schema tree to build a dictionary of matches
@@ -140,7 +140,7 @@ export const searchSchemaTreeFromRoot = (
     // NOTE: Type-cast (safely) node for second condition so Typescript sees all properties
     if (
       (nodeKeySearchTerm.length >= fuseSchemaTreeSearchOptions.minMatchCharLength ? matchedSchemaNodesDict[node.key] : true) &&
-      (filteredDataTypes[(node as SchemaNodeExtended).normalizedDataType] ||
+      (filteredDataTypes[(node as SchemaNodeExtended).type] ||
         ((node as SchemaNodeExtended).nodeProperties.includes(SchemaNodeProperty.Repeating) && filteredDataTypes[arrayType]))
     ) {
       result.push({ ...node });
@@ -165,4 +165,4 @@ export const searchSchemaTreeFromRoot = (
 export const isSchemaNodeExtended = (node: SchemaNodeExtended | FunctionData): node is SchemaNodeExtended => 'pathToRoot' in node;
 
 export const isObjectType = (nodeType: NormalizedDataType): boolean =>
-  nodeType === NormalizedDataType.ComplexType || nodeType === NormalizedDataType.Object;
+  nodeType === NormalizedDataType.Complex || nodeType === NormalizedDataType.Object;

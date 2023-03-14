@@ -1,11 +1,10 @@
 import { NormalizedDataType } from '../models';
 import type { FunctionData } from '../models/Function';
-import { FunctionCategory, FunctionType } from '../models/Function';
+import { FunctionCategory } from '../models/Function';
 
 export const addFunction: FunctionData = {
   key: 'Add',
   maxNumberOfInputs: -1,
-  type: FunctionType.TransformationFunction,
   functionName: 'add',
   outputValueType: NormalizedDataType.Number,
   inputs: [
@@ -25,7 +24,6 @@ export const addFunction: FunctionData = {
 export const concatFunction: FunctionData = {
   key: 'Concat',
   maxNumberOfInputs: -1,
-  type: FunctionType.TransformationFunction,
   functionName: 'concat',
   outputValueType: NormalizedDataType.String,
   inputs: [
@@ -47,7 +45,6 @@ export const concatFunction: FunctionData = {
 export const greaterThanFunction: FunctionData = {
   key: 'IsGreater',
   maxNumberOfInputs: 2,
-  type: FunctionType.TransformationFunction,
   functionName: 'is-greater-than',
   outputValueType: NormalizedDataType.Boolean,
   inputs: [
@@ -77,10 +74,8 @@ export const conditionalFunction: FunctionData = {
   key: 'Condition',
   maxNumberOfInputs: 1,
   outputValueType: NormalizedDataType.Any,
-  type: FunctionType.TransformationFunction,
   displayName: 'Condition',
   functionName: '$if',
-  iconFileName: 'dm_category_logical.svg',
   inputs: [
     {
       allowCustomInput: true,

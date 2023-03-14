@@ -234,7 +234,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
   const ChevronIcon = bundleIcon(ChevronRight16Filled, ChevronRight16Regular);
-  const BundledTypeIcon = iconForNormalizedDataType(schemaNode.normalizedDataType, 24, false, schemaNode.nodeProperties);
+  const BundledTypeIcon = iconForNormalizedDataType(schemaNode.type, 24, false, schemaNode.nodeProperties);
   const contextMenu = useCardContextMenu();
   const ariaDescribeChevron = intl.formatMessage({
     defaultMessage: 'Navigate to element and view children',

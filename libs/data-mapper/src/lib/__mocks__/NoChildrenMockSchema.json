@@ -6,8 +6,8 @@
   "schemaTreeRoot": {
     "key": "/ns0:Root",
     "name": "Root",
-    "normalizedDataType": "ComplexType",
-    "properties": "NotSpecified",
+    "type": "Complex",
+    "properties": "None",
     "children": []
   }
 }

@@ -3,7 +3,7 @@ export const outputChannelTitle = 'Data Mapper';
 export const outputChannelPrefix = 'azureLogicAppsDataMapper';
 
 export const supportedDataMapDefinitionFileExts = ['.yml'];
-export const supportedSchemaFileExts = ['.xsd'];
+export const supportedSchemaFileExts = ['.xsd', '.json'];
 
 const artifactsPath = '/Artifacts/';
 export const schemasPath = `${artifactsPath}/Schemas`;
@@ -11,7 +11,7 @@ export const dataMapsPath = `${artifactsPath}/Maps`;
 export const dataMapDefinitionsPath = `${artifactsPath}/MapDefinitions`;
 export const workflowDesignTimeDir = '/workflow-designtime';
 
-export const defaultDatamapFilename = 'default';
+export const defaultDataMapFilename = 'default';
 export const draftMapDefinitionSuffix = '.draft';
 export const mapDefinitionExtension = '.yml';
 export const mapXsltExtension = '.xslt';

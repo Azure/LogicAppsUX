@@ -205,7 +205,7 @@ export const checkNodeStatuses = (
     numChildrenToggled += checkNodeStatuses(child, stateDict, targetNodesWithConnections);
   });
 
-  if (isObjectType(schemaNode.normalizedDataType) && schemaNode.children.length > 0) {
+  if (isObjectType(schemaNode.type) && schemaNode.children.length > 0) {
     // Object/parent/array-elements (if they don't have children, treat them as leaf nodes (below))
     return handleObjectParentToggledState(stateDict, schemaNode.key, numChildrenToggled, schemaNode.children.length);
   } else {

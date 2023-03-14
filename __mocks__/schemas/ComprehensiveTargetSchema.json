@@ -9,44 +9,42 @@
   "schemaTreeRoot": {
     "key": "/ns0:TargetSchemaRoot",
     "name": "TargetSchemaRoot",
-    "fullName": "ns0:TargetSchemaRoot",
-    "namespacePrefix": "ns0",
-    "namespaceUri": "http://tempuri.org/ComprehensiveTarget.xsd",
-    "normalizedDataType": "ComplexType",
-    "properties": "NotSpecified",
+    "qName": "ns0:TargetSchemaRoot",
+    "type": "Complex",
+    "properties": "None",
     "children": [
       {
         "key": "/ns0:TargetSchemaRoot/DirectTranslation",
         "name": "DirectTranslation",
-        "fullName": "DirectTranslation",
+        "qName": "DirectTranslation",
         "parentKey": "/ns0:TargetSchemaRoot",
-        "normalizedDataType": "ComplexType",
-        "properties": "NotSpecified",
+        "type": "Complex",
+        "properties": "None",
         "children": [
           {
             "key": "/ns0:TargetSchemaRoot/DirectTranslation/FullName",
             "name": "FullName",
-            "fullName": "FullName",
+            "qName": "FullName",
             "parentKey": "/ns0:TargetSchemaRoot/DirectTranslation",
-            "normalizedDataType": "String",
-            "properties": "NotSpecified",
+            "type": "String",
+            "properties": "None",
             "children": []
           },
           {
             "key": "/ns0:TargetSchemaRoot/DirectTranslation/NumCorgis",
             "name": "NumCorgis",
-            "fullName": "NumCorgis",
+            "qName": "NumCorgis",
             "parentKey": "/ns0:TargetSchemaRoot/DirectTranslation",
-            "normalizedDataType": "Number",
-            "properties": "NotSpecified",
+            "type": "Number",
+            "properties": "None",
             "children": []
           },
           {
             "key": "/ns0:TargetSchemaRoot/DirectTranslation/@IsTheNewGuy",
             "name": "IsTheNewGuy",
-            "fullName": "@IsTheNewGuy",
+            "qName": "@IsTheNewGuy",
             "parentKey": "/ns0:TargetSchemaRoot/DirectTranslation",
-            "normalizedDataType": "Bool",
+            "type": "Bool",
             "properties": "Attribute",
             "children": []
           }
@@ -55,18 +53,18 @@
       {
         "key": "/ns0:TargetSchemaRoot/ContentEnrichment",
         "name": "ContentEnrichment",
-        "fullName": "ContentEnrichment",
+        "qName": "ContentEnrichment",
         "parentKey": "/ns0:TargetSchemaRoot",
-        "normalizedDataType": "ComplexType",
-        "properties": "NotSpecified",
+        "type": "Complex",
+        "properties": "None",
         "children": [
           {
             "key": "/ns0:TargetSchemaRoot/ContentEnrichment/Timestamp",
             "name": "Timestamp",
-            "fullName": "Timestamp",
+            "qName": "Timestamp",
             "parentKey": "/ns0:TargetSchemaRoot/ContentEnrichment",
-            "normalizedDataType": "DateTime",
-            "properties": "NotSpecified",
+            "type": "DateTime",
+            "properties": "None",
             "children": []
           }
         ]
@@ -74,27 +72,27 @@
       {
         "key": "/ns0:TargetSchemaRoot/Transformations",
         "name": "Transformations",
-        "fullName": "Transformations",
+        "qName": "Transformations",
         "parentKey": "/ns0:TargetSchemaRoot",
-        "normalizedDataType": "ComplexType",
-        "properties": "NotSpecified",
+        "type": "Complex",
+        "properties": "None",
         "children": [
           {
             "key": "/ns0:TargetSchemaRoot/Transformations/FullName",
             "name": "FullName",
-            "fullName": "FullName",
+            "qName": "FullName",
             "parentKey": "/ns0:TargetSchemaRoot/Transformations",
-            "normalizedDataType": "String",
-            "properties": "NotSpecified",
+            "type": "String",
+            "properties": "None",
             "children": []
           },
           {
             "key": "/ns0:TargetSchemaRoot/Transformations/NumCoffees",
             "name": "NumCoffees",
-            "fullName": "NumCoffees",
+            "qName": "NumCoffees",
             "parentKey": "/ns0:TargetSchemaRoot/Transformations",
-            "normalizedDataType": "Number",
-            "properties": "NotSpecified",
+            "type": "Number",
+            "properties": "None",
             "children": []
           }
         ]
@@ -102,27 +100,27 @@
       {
         "key": "/ns0:TargetSchemaRoot/CustomValues",
         "name": "CustomValues",
-        "fullName": "CustomValues",
+        "qName": "CustomValues",
         "parentKey": "/ns0:TargetSchemaRoot",
-        "normalizedDataType": "ComplexType",
-        "properties": "NotSpecified",
+        "type": "Complex",
+        "properties": "None",
         "children": [
           {
             "key": "/ns0:TargetSchemaRoot/CustomValues/SuperSecretKey",
             "name": "SuperSecretKey",
-            "fullName": "SuperSecretKey",
+            "qName": "SuperSecretKey",
             "parentKey": "/ns0:TargetSchemaRoot/CustomValues",
-            "normalizedDataType": "String",
-            "properties": "NotSpecified",
+            "type": "String",
+            "properties": "None",
             "children": []
           },
           {
             "key": "/ns0:TargetSchemaRoot/CustomValues/MOTD",
             "name": "MOTD",
-            "fullName": "MOTD",
+            "qName": "MOTD",
             "parentKey": "/ns0:TargetSchemaRoot/CustomValues",
-            "normalizedDataType": "String",
-            "properties": "NotSpecified",
+            "type": "String",
+            "properties": "None",
             "children": []
           }
         ]
@@ -130,26 +128,26 @@
       {
         "key": "/ns0:TargetSchemaRoot/Conditionals",
         "name": "Conditionals",
-        "fullName": "Conditionals",
+        "qName": "Conditionals",
         "parentKey": "/ns0:TargetSchemaRoot",
-        "normalizedDataType": "ComplexType",
-        "properties": "NotSpecified",
+        "type": "Complex",
+        "properties": "None",
         "children": [
           {
             "key": "/ns0:TargetSchemaRoot/Conditionals/Object",
             "name": "Object",
-            "fullName": "Object",
+            "qName": "Object",
             "parentKey": "/ns0:TargetSchemaRoot/Conditionals",
-            "normalizedDataType": "ComplexType",
-            "properties": "NotSpecified",
+            "type": "Complex",
+            "properties": "None",
             "children": [
               {
                 "key": "/ns0:TargetSchemaRoot/Conditionals/Object/MiscProperty",
                 "name": "MiscProperty",
-                "fullName": "MiscProperty",
+                "qName": "MiscProperty",
                 "parentKey": "/ns0:TargetSchemaRoot/Conditionals/Object",
-                "normalizedDataType": "String",
-                "properties": "NotSpecified",
+                "type": "String",
+                "properties": "None",
                 "children": []
               }
             ]
@@ -157,10 +155,10 @@
           {
             "key": "/ns0:TargetSchemaRoot/Conditionals/Property",
             "name": "Property",
-            "fullName": "Property",
+            "qName": "Property",
             "parentKey": "/ns0:TargetSchemaRoot/Conditionals",
-            "normalizedDataType": "String",
-            "properties": "NotSpecified",
+            "type": "String",
+            "properties": "None",
             "children": []
           }
         ]
@@ -168,43 +166,43 @@
       {
         "key": "/ns0:TargetSchemaRoot/Looping",
         "name": "Looping",
-        "fullName": "Looping",
+        "qName": "Looping",
         "parentKey": "/ns0:TargetSchemaRoot",
-        "normalizedDataType": "ComplexType",
-        "properties": "NotSpecified",
+        "type": "Complex",
+        "properties": "None",
         "children": [
           {
             "key": "/ns0:TargetSchemaRoot/Looping/OneToOne",
             "name": "OneToOne",
-            "fullName": "OneToOne",
+            "qName": "OneToOne",
             "parentKey": "/ns0:TargetSchemaRoot/Looping",
-            "normalizedDataType": "ComplexType",
-            "properties": "NotSpecified",
+            "type": "Complex",
+            "properties": "None",
             "children": [
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/Simple",
                 "name": "Simple",
-                "fullName": "Simple",
+                "qName": "Simple",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne",
-                "normalizedDataType": "ComplexType",
+                "type": "Complex",
                 "properties": "Repeating",
                 "children": [
                   {
                     "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/Simple/Direct",
                     "name": "Direct",
-                    "fullName": "Direct",
+                    "qName": "Direct",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/Simple",
-                    "normalizedDataType": "String",
-                    "properties": "NotSpecified",
+                    "type": "String",
+                    "properties": "None",
                     "children": []
                   },
                   {
                     "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/Simple/FunctionChain",
                     "name": "FunctionChain",
-                    "fullName": "FunctionChain",
+                    "qName": "FunctionChain",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/Simple",
-                    "normalizedDataType": "String",
-                    "properties": "NotSpecified",
+                    "type": "String",
+                    "properties": "None",
                     "children": []
                   }
                 ]
@@ -212,43 +210,43 @@
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths",
                 "name": "RelativePaths",
-                "fullName": "RelativePaths",
+                "qName": "RelativePaths",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne",
-                "normalizedDataType": "ComplexType",
+                "type": "Complex",
                 "properties": "Repeating",
                 "children": [
                   {
                     "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/DirectRelativePaths",
                     "name": "DirectRelativePaths",
-                    "fullName": "DirectRelativePaths",
+                    "qName": "DirectRelativePaths",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths",
-                    "normalizedDataType": "ComplexType",
-                    "properties": "NotSpecified",
+                    "type": "Complex",
+                    "properties": "None",
                     "children": [
                       {
                         "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/DirectRelativePaths/DotAccess",
                         "name": "DotAccess",
-                        "fullName": "DotAccess",
+                        "qName": "DotAccess",
                         "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/DirectRelativePaths",
-                        "normalizedDataType": "Any",
-                        "properties": "NotSpecified",
+                        "type": "Any",
+                        "properties": "None",
                         "children": []
                       },
                       {
                         "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/DirectRelativePaths/Property",
                         "name": "Property",
-                        "fullName": "Property",
+                        "qName": "Property",
                         "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/DirectRelativePaths",
-                        "normalizedDataType": "String",
-                        "properties": "NotSpecified",
+                        "type": "String",
+                        "properties": "None",
                         "children": []
                       },
                       {
                         "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/DirectRelativePaths/@Attribute",
                         "name": "Attribute",
-                        "fullName": "@Attribute",
+                        "qName": "@Attribute",
                         "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/DirectRelativePaths",
-                        "normalizedDataType": "String",
+                        "type": "String",
                         "properties": "Attribute",
                         "children": []
                       }
@@ -257,35 +255,35 @@
                   {
                     "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/InFunctionRelativePaths",
                     "name": "InFunctionRelativePaths",
-                    "fullName": "InFunctionRelativePaths",
+                    "qName": "InFunctionRelativePaths",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths",
-                    "normalizedDataType": "ComplexType",
-                    "properties": "NotSpecified",
+                    "type": "Complex",
+                    "properties": "None",
                     "children": [
                       {
                         "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/InFunctionRelativePaths/DotAccess",
                         "name": "DotAccess",
-                        "fullName": "DotAccess",
+                        "qName": "DotAccess",
                         "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/InFunctionRelativePaths",
-                        "normalizedDataType": "Any",
-                        "properties": "NotSpecified",
+                        "type": "Any",
+                        "properties": "None",
                         "children": []
                       },
                       {
                         "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/InFunctionRelativePaths/Property",
                         "name": "Property",
-                        "fullName": "Property",
+                        "qName": "Property",
                         "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/InFunctionRelativePaths",
-                        "normalizedDataType": "String",
-                        "properties": "NotSpecified",
+                        "type": "String",
+                        "properties": "None",
                         "children": []
                       },
                       {
                         "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/InFunctionRelativePaths/@Attribute",
                         "name": "Attribute",
-                        "fullName": "@Attribute",
+                        "qName": "@Attribute",
                         "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/RelativePaths/InFunctionRelativePaths",
-                        "normalizedDataType": "String",
+                        "type": "String",
                         "properties": "Attribute",
                         "children": []
                       }
@@ -296,27 +294,27 @@
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/Index",
                 "name": "Index",
-                "fullName": "Index",
+                "qName": "Index",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne",
-                "normalizedDataType": "ComplexType",
+                "type": "Complex",
                 "properties": "Repeating",
                 "children": [
                   {
                     "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/Index/Direct",
                     "name": "Direct",
-                    "fullName": "Direct",
+                    "qName": "Direct",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/Index",
-                    "normalizedDataType": "String",
-                    "properties": "NotSpecified",
+                    "type": "String",
+                    "properties": "None",
                     "children": []
                   },
                   {
                     "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/Index/FunctionChain",
                     "name": "FunctionChain",
-                    "fullName": "FunctionChain",
+                    "qName": "FunctionChain",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/Index",
-                    "normalizedDataType": "String",
-                    "properties": "NotSpecified",
+                    "type": "String",
+                    "properties": "None",
                     "children": []
                   }
                 ]
@@ -324,18 +322,18 @@
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/Conditional",
                 "name": "Conditional",
-                "fullName": "Conditional",
+                "qName": "Conditional",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne",
-                "normalizedDataType": "ComplexType",
+                "type": "Complex",
                 "properties": "Repeating",
                 "children": [
                   {
                     "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/Conditional/Direct",
                     "name": "Direct",
-                    "fullName": "Direct",
+                    "qName": "Direct",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/Conditional",
-                    "normalizedDataType": "String",
-                    "properties": "NotSpecified",
+                    "type": "String",
+                    "properties": "None",
                     "children": []
                   }
                 ]
@@ -343,27 +341,27 @@
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest",
                 "name": "StressTest",
-                "fullName": "StressTest",
+                "qName": "StressTest",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne",
-                "normalizedDataType": "ComplexType",
+                "type": "Complex",
                 "properties": "Repeating",
                 "children": [
                   {
                     "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest/Direct",
                     "name": "Direct",
-                    "fullName": "Direct",
+                    "qName": "Direct",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest",
-                    "normalizedDataType": "String",
-                    "properties": "NotSpecified",
+                    "type": "String",
+                    "properties": "None",
                     "children": []
                   },
                   {
                     "key": "/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest/FunctionChain",
                     "name": "FunctionChain",
-                    "fullName": "FunctionChain",
+                    "qName": "FunctionChain",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest",
-                    "normalizedDataType": "String",
-                    "properties": "NotSpecified",
+                    "type": "String",
+                    "properties": "None",
                     "children": []
                   }
                 ]
@@ -373,35 +371,35 @@
           {
             "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne",
             "name": "ManyToOne",
-            "fullName": "ManyToOne",
+            "qName": "ManyToOne",
             "parentKey": "/ns0:TargetSchemaRoot/Looping",
-            "normalizedDataType": "ComplexType",
-            "properties": "NotSpecified",
+            "type": "Complex",
+            "properties": "None",
             "children": [
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple",
                 "name": "Simple",
-                "fullName": "Simple",
+                "qName": "Simple",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToOne",
-                "normalizedDataType": "ComplexType",
+                "type": "Complex",
                 "properties": "Repeating",
                 "children": [
                   {
                     "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple/Direct",
                     "name": "Direct",
-                    "fullName": "Direct",
+                    "qName": "Direct",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple",
-                    "normalizedDataType": "String",
-                    "properties": "NotSpecified",
+                    "type": "String",
+                    "properties": "None",
                     "children": []
                   },
                   {
                     "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple/FunctionChain",
                     "name": "FunctionChain",
-                    "fullName": "FunctionChain",
+                    "qName": "FunctionChain",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple",
-                    "normalizedDataType": "String",
-                    "properties": "NotSpecified",
+                    "type": "String",
+                    "properties": "None",
                     "children": []
                   }
                 ]
@@ -409,27 +407,27 @@
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Index",
                 "name": "Index",
-                "fullName": "Index",
+                "qName": "Index",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToOne",
-                "normalizedDataType": "ComplexType",
+                "type": "Complex",
                 "properties": "Repeating",
                 "children": [
                   {
                     "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Index/Direct",
                     "name": "Direct",
-                    "fullName": "Direct",
+                    "qName": "Direct",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Index",
-                    "normalizedDataType": "String",
-                    "properties": "NotSpecified",
+                    "type": "String",
+                    "properties": "None",
                     "children": []
                   },
                   {
                     "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Index/FunctionChain",
                     "name": "FunctionChain",
-                    "fullName": "FunctionChain",
+                    "qName": "FunctionChain",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Index",
-                    "normalizedDataType": "String",
-                    "properties": "NotSpecified",
+                    "type": "String",
+                    "properties": "None",
                     "children": []
                   }
                 ]
@@ -437,18 +435,18 @@
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Conditional",
                 "name": "Conditional",
-                "fullName": "Conditional",
+                "qName": "Conditional",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToOne",
-                "normalizedDataType": "ComplexType",
+                "type": "Complex",
                 "properties": "Repeating",
                 "children": [
                   {
                     "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Conditional/Direct",
                     "name": "Direct",
-                    "fullName": "Direct",
+                    "qName": "Direct",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToOne/Conditional",
-                    "normalizedDataType": "String",
-                    "properties": "NotSpecified",
+                    "type": "String",
+                    "properties": "None",
                     "children": []
                   }
                 ]
@@ -456,10 +454,10 @@
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/ManyToOne/TODOStressTest",
                 "name": "TODOStressTest",
-                "fullName": "TODOStressTest",
+                "qName": "TODOStressTest",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToOne",
-                "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
+                "type": "Complex",
+                "properties": "None",
                 "children": []
               }
             ]
@@ -467,51 +465,51 @@
           {
             "key": "/ns0:TargetSchemaRoot/Looping/OneToMany",
             "name": "OneToMany",
-            "fullName": "OneToMany",
+            "qName": "OneToMany",
             "parentKey": "/ns0:TargetSchemaRoot/Looping",
-            "normalizedDataType": "ComplexType",
-            "properties": "NotSpecified",
+            "type": "Complex",
+            "properties": "None",
             "children": [
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/OneToMany/Simple",
                 "name": "Simple",
-                "fullName": "Simple",
+                "qName": "Simple",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToMany",
-                "normalizedDataType": "ComplexType",
+                "type": "Complex",
                 "properties": "Repeating",
                 "children": [
                   {
                     "key": "/ns0:TargetSchemaRoot/Looping/OneToMany/Simple/SimpleChild",
                     "name": "SimpleChild",
-                    "fullName": "SimpleChild",
+                    "qName": "SimpleChild",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToMany/Simple",
-                    "normalizedDataType": "ComplexType",
+                    "type": "Complex",
                     "properties": "Repeating",
                     "children": [
                       {
                         "key": "/ns0:TargetSchemaRoot/Looping/OneToMany/Simple/SimpleChild/SimpleChildChild",
                         "name": "SimpleChildChild",
-                        "fullName": "SimpleChildChild",
+                        "qName": "SimpleChildChild",
                         "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToMany/Simple/SimpleChild",
-                        "normalizedDataType": "ComplexType",
+                        "type": "Complex",
                         "properties": "Repeating",
                         "children": [
                           {
                             "key": "/ns0:TargetSchemaRoot/Looping/OneToMany/Simple/SimpleChild/SimpleChildChild/Direct",
                             "name": "Direct",
-                            "fullName": "Direct",
+                            "qName": "Direct",
                             "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToMany/Simple/SimpleChild/SimpleChildChild",
-                            "normalizedDataType": "String",
-                            "properties": "NotSpecified",
+                            "type": "String",
+                            "properties": "None",
                             "children": []
                           },
                           {
                             "key": "/ns0:TargetSchemaRoot/Looping/OneToMany/Simple/SimpleChild/SimpleChildChild/FunctionChain",
                             "name": "FunctionChain",
-                            "fullName": "FunctionChain",
+                            "qName": "FunctionChain",
                             "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToMany/Simple/SimpleChild/SimpleChildChild",
-                            "normalizedDataType": "String",
-                            "properties": "NotSpecified",
+                            "type": "String",
+                            "properties": "None",
                             "children": []
                           }
                         ]
@@ -523,28 +521,28 @@
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/OneToMany/Index",
                 "name": "Index",
-                "fullName": "Index",
+                "qName": "Index",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToMany",
-                "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
+                "type": "Complex",
+                "properties": "None",
                 "children": []
               },
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/OneToMany/Conditional",
                 "name": "Conditional",
-                "fullName": "Conditional",
+                "qName": "Conditional",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToMany",
-                "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
+                "type": "Complex",
+                "properties": "None",
                 "children": []
               },
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/OneToMany/StressTest",
                 "name": "StressTest",
-                "fullName": "StressTest",
+                "qName": "StressTest",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/OneToMany",
-                "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
+                "type": "Complex",
+                "properties": "None",
                 "children": []
               }
             ]
@@ -552,51 +550,51 @@
           {
             "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany",
             "name": "ManyToMany",
-            "fullName": "ManyToMany",
+            "qName": "ManyToMany",
             "parentKey": "/ns0:TargetSchemaRoot/Looping",
-            "normalizedDataType": "ComplexType",
-            "properties": "NotSpecified",
+            "type": "Complex",
+            "properties": "None",
             "children": [
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple",
                 "name": "Simple",
-                "fullName": "Simple",
+                "qName": "Simple",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany",
-                "normalizedDataType": "ComplexType",
+                "type": "Complex",
                 "properties": "Repeating",
                 "children": [
                   {
                     "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild",
                     "name": "SimpleChild",
-                    "fullName": "SimpleChild",
+                    "qName": "SimpleChild",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple",
-                    "normalizedDataType": "ComplexType",
+                    "type": "Complex",
                     "properties": "Repeating",
                     "children": [
                       {
                         "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild",
                         "name": "SimpleChildChild",
-                        "fullName": "SimpleChildChild",
+                        "qName": "SimpleChildChild",
                         "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild",
-                        "normalizedDataType": "ComplexType",
+                        "type": "Complex",
                         "properties": "Repeating",
                         "children": [
                           {
                             "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild/Direct",
                             "name": "Direct",
-                            "fullName": "Direct",
+                            "qName": "Direct",
                             "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild",
-                            "normalizedDataType": "String",
-                            "properties": "NotSpecified",
+                            "type": "String",
+                            "properties": "None",
                             "children": []
                           },
                           {
                             "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild/FunctionChain",
                             "name": "FunctionChain",
-                            "fullName": "FunctionChain",
+                            "qName": "FunctionChain",
                             "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild",
-                            "normalizedDataType": "String",
-                            "properties": "NotSpecified",
+                            "type": "String",
+                            "properties": "None",
                             "children": []
                           }
                         ]
@@ -608,43 +606,43 @@
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Index",
                 "name": "Index",
-                "fullName": "Index",
+                "qName": "Index",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany",
-                "normalizedDataType": "ComplexType",
+                "type": "Complex",
                 "properties": "Repeating",
                 "children": [
                   {
                     "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Index/IndexChild",
                     "name": "IndexChild",
-                    "fullName": "IndexChild",
+                    "qName": "IndexChild",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Index",
-                    "normalizedDataType": "ComplexType",
+                    "type": "Complex",
                     "properties": "Repeating",
                     "children": [
                       {
                         "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Index/IndexChild/IndexChildChild",
                         "name": "IndexChildChild",
-                        "fullName": "IndexChildChild",
+                        "qName": "IndexChildChild",
                         "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Index/IndexChild",
-                        "normalizedDataType": "ComplexType",
+                        "type": "Complex",
                         "properties": "Repeating",
                         "children": [
                           {
                             "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Index/IndexChild/IndexChildChild/Direct",
                             "name": "Direct",
-                            "fullName": "Direct",
+                            "qName": "Direct",
                             "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Index/IndexChild/IndexChildChild",
-                            "normalizedDataType": "String",
-                            "properties": "NotSpecified",
+                            "type": "String",
+                            "properties": "None",
                             "children": []
                           },
                           {
                             "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Index/IndexChild/IndexChildChild/FunctionChain",
                             "name": "FunctionChain",
-                            "fullName": "FunctionChain",
+                            "qName": "FunctionChain",
                             "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Index/IndexChild/IndexChildChild",
-                            "normalizedDataType": "String",
-                            "properties": "NotSpecified",
+                            "type": "String",
+                            "properties": "None",
                             "children": []
                           }
                         ]
@@ -656,34 +654,34 @@
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Conditional",
                 "name": "Conditional",
-                "fullName": "Conditional",
+                "qName": "Conditional",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany",
-                "normalizedDataType": "ComplexType",
+                "type": "Complex",
                 "properties": "Repeating",
                 "children": [
                   {
                     "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Conditional/ConditionalChild",
                     "name": "ConditionalChild",
-                    "fullName": "ConditionalChild",
+                    "qName": "ConditionalChild",
                     "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Conditional",
-                    "normalizedDataType": "ComplexType",
+                    "type": "Complex",
                     "properties": "Repeating",
                     "children": [
                       {
                         "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Conditional/ConditionalChild/ConditionalChildChild",
                         "name": "ConditionalChildChild",
-                        "fullName": "ConditionalChildChild",
+                        "qName": "ConditionalChildChild",
                         "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Conditional/ConditionalChild",
-                        "normalizedDataType": "ComplexType",
+                        "type": "Complex",
                         "properties": "Repeating",
                         "children": [
                           {
                             "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Conditional/ConditionalChild/ConditionalChildChild/Direct",
                             "name": "Direct",
-                            "fullName": "Direct",
+                            "qName": "Direct",
                             "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany/Conditional/ConditionalChild/ConditionalChildChild",
-                            "normalizedDataType": "String",
-                            "properties": "NotSpecified",
+                            "type": "String",
+                            "properties": "None",
                             "children": []
                           }
                         ]
@@ -695,10 +693,10 @@
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/ManyToMany/TODOStressTest",
                 "name": "TODOStressTest",
-                "fullName": "TODOStressTest",
+                "qName": "TODOStressTest",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/ManyToMany",
-                "normalizedDataType": "ComplexType",
-                "properties": "NotSpecified",
+                "type": "Complex",
+                "properties": "None",
                 "children": []
               }
             ]
@@ -706,18 +704,18 @@
           {
             "key": "/ns0:TargetSchemaRoot/Looping/LoopReduce",
             "name": "LoopReduce",
-            "fullName": "LoopReduce",
+            "qName": "LoopReduce",
             "parentKey": "/ns0:TargetSchemaRoot/Looping",
-            "normalizedDataType": "ComplexType",
-            "properties": "NotSpecified",
+            "type": "Complex",
+            "properties": "None",
             "children": [
               {
                 "key": "/ns0:TargetSchemaRoot/Looping/LoopReduce/BestItemName",
                 "name": "BestItemName",
-                "fullName": "BestItemName",
+                "qName": "BestItemName",
                 "parentKey": "/ns0:TargetSchemaRoot/Looping/LoopReduce",
-                "normalizedDataType": "String",
-                "properties": "NotSpecified",
+                "type": "String",
+                "properties": "None",
                 "children": []
               }
             ]
@@ -725,9 +723,9 @@
           {
             "key": "/ns0:TargetSchemaRoot/Looping/TODOLoopMap",
             "name": "TODOLoopMap",
-            "fullName": "TODOLoopMap",
+            "qName": "TODOLoopMap",
             "parentKey": "/ns0:TargetSchemaRoot/Looping",
-            "normalizedDataType": "ComplexType",
+            "type": "Complex",
             "properties": "Repeating",
             "children": []
           }

@@ -1,12 +1,6 @@
 /* eslint-disable no-param-reassign */
 import DataMapperExt from '../DataMapperExt';
-import {
-  dataMapDefinitionsPath,
-  draftMapDefinitionSuffix,
-  schemasPath,
-  supportedDataMapDefinitionFileExts,
-  supportedSchemaFileExts,
-} from '../extensionConfig';
+import { dataMapDefinitionsPath, draftMapDefinitionSuffix, schemasPath, supportedDataMapDefinitionFileExts } from '../extensionConfig';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling, registerCommand } from '@microsoft/vscode-azext-utils';
 import { existsSync as fileExistsSync, promises as fs } from 'fs';
@@ -106,7 +100,7 @@ const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
             canSelectMany: false,
             canSelectFiles: true,
             canSelectFolders: false,
-            filters: { 'XML Schema Definition': supportedSchemaFileExts.map((ext) => ext.replace('.', '')) },
+            filters: { 'XML Schema': ['xsd'], 'JSON Schema': ['json'] },
           });
 
           if (fileUris && fileUris.length > 0) {

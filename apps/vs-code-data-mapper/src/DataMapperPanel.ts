@@ -37,7 +37,7 @@ export default class DataMapperPanel {
     // Watch Schemas folder for changes to update available schemas list within Data Mapper
     const schemaFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath);
     const schemaFolderWatcher = workspace.createFileSystemWatcher(
-      new RelativePattern(schemaFolderPath, `**/*${supportedSchemaFileExts[0]}`)
+      new RelativePattern(schemaFolderPath, `**/*.{${supportedSchemaFileExts.join()}}`)
     );
     schemaFolderWatcher.onDidCreate(this.handleReadSchemaFileOptions);
     schemaFolderWatcher.onDidDelete(this.handleReadSchemaFileOptions);
@@ -158,7 +158,10 @@ export default class DataMapperPanel {
     fs.readdir(path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath)).then((result) => {
       this.sendMsgToWebview({
         command: 'showAvailableSchemas',
-        data: result.filter((file) => path.extname(file).toLowerCase() === '.xsd'),
+        data: result.filter((file) => {
+          const fileExt = path.extname(file).toLowerCase();
+          return fileExt === '.xsd' || fileExt === '.json';
+        }),
       });
     });
   }
