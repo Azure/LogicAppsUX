@@ -118,7 +118,7 @@ export default {
     FAILED: 'Failed',
     FAULTED: 'Faulted',
     IGNORED: 'Ignored',
-    NOT_SPECIFIED: 'NotSpecified',
+    NOT_SPECIFIED: 'None',
     PAUSED: 'Paused',
     RUNNING: 'Running',
     SKIPPED: 'Skipped',

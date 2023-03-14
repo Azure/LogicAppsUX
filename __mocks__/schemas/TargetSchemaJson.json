@@ -4,396 +4,396 @@
   "schemaTreeRoot": {
     "key": "/root",
     "name": "root",
-    "normalizedDataType": "Object",
-    "properties": "NotSpecified",
+    "type": "Object",
+    "properties": "None",
     "children": [
       {
         "key": "/root/String1",
         "name": "String1",
-        "normalizedDataType": "String",
-        "properties": "NotSpecified",
-        "fullName": "String1",
+        "type": "String",
+        "properties": "None",
+        "qName": "String1",
         "parentKey": "/root"
       },
       {
         "key": "/root/Object1",
         "name": "Object1",
-        "normalizedDataType": "Object",
-        "properties": "NotSpecified",
+        "type": "Object",
+        "properties": "None",
         "children": [
           {
             "key": "/root/Object1/String1",
             "name": "String1",
-            "normalizedDataType": "String",
-            "properties": "NotSpecified",
-            "fullName": "String1",
+            "type": "String",
+            "properties": "None",
+            "qName": "String1",
             "parentKey": "/root/Object1"
           },
           {
             "key": "/root/Object1/Num1",
             "name": "Num1",
-            "normalizedDataType": "Integer",
-            "properties": "NotSpecified",
-            "fullName": "Num1",
+            "type": "Integer",
+            "properties": "None",
+            "qName": "Num1",
             "parentKey": "/root/Object1"
           }
         ],
-        "fullName": "Object1",
+        "qName": "Object1",
         "parentKey": "/root"
       },
       {
         "key": "/root/Array1",
         "name": "Array1",
-        "normalizedDataType": "Array",
-        "properties": "NotSpecified",
+        "type": "Array",
+        "properties": "None",
         "children": [
           {
             "key": "/root/Array1/*",
             "name": "<ArrayItem>",
-            "normalizedDataType": "Integer",
+            "type": "Integer",
             "properties": "Repeating, ArrayItem",
-            "fullName": "<ArrayItem>",
+            "qName": "<ArrayItem>",
             "parentKey": "/root/Array1"
           }
         ],
-        "fullName": "Array1",
+        "qName": "Array1",
         "parentKey": "/root"
       },
       {
         "key": "/root/ComplexArray1",
         "name": "ComplexArray1",
-        "normalizedDataType": "Array",
-        "properties": "NotSpecified",
+        "type": "Array",
+        "properties": "None",
         "children": [
           {
             "key": "/root/ComplexArray1/*",
             "name": "<ArrayItem>",
-            "normalizedDataType": "Object",
+            "type": "Object",
             "properties": "Repeating, ArrayItem",
             "children": [
               {
                 "key": "/root/ComplexArray1/*/F1",
                 "name": "F1",
-                "normalizedDataType": "Integer",
-                "properties": "NotSpecified",
-                "fullName": "F1",
+                "type": "Integer",
+                "properties": "None",
+                "qName": "F1",
                 "parentKey": "/root/ComplexArray1/*"
               },
               {
                 "key": "/root/ComplexArray1/*/F2",
                 "name": "F2",
-                "normalizedDataType": "Integer",
-                "properties": "NotSpecified",
-                "fullName": "F2",
+                "type": "Integer",
+                "properties": "None",
+                "qName": "F2",
                 "parentKey": "/root/ComplexArray1/*"
               }
             ],
-            "fullName": "<ArrayItem>",
+            "qName": "<ArrayItem>",
             "parentKey": "/root/ComplexArray1"
           }
         ],
-        "fullName": "ComplexArray1",
+        "qName": "ComplexArray1",
         "parentKey": "/root"
       },
       {
         "key": "/root/ComplexArray2",
         "name": "ComplexArray2",
-        "normalizedDataType": "Array",
-        "properties": "NotSpecified",
+        "type": "Array",
+        "properties": "None",
         "children": [
           {
             "key": "/root/ComplexArray2/*",
             "name": "<ArrayItem>",
-            "normalizedDataType": "Array",
+            "type": "Array",
             "properties": "Repeating, ArrayItem",
             "children": [
               {
                 "key": "/root/ComplexArray2/*/*",
                 "name": "<ArrayItem>",
-                "normalizedDataType": "Integer",
+                "type": "Integer",
                 "properties": "Repeating, ArrayItem",
-                "fullName": "<ArrayItem>",
+                "qName": "<ArrayItem>",
                 "parentKey": "/root/ComplexArray2/*"
               }
             ],
-            "fullName": "<ArrayItem>",
+            "qName": "<ArrayItem>",
             "parentKey": "/root/ComplexArray2"
           }
         ],
-        "fullName": "ComplexArray2",
+        "qName": "ComplexArray2",
         "parentKey": "/root"
       },
       {
         "key": "/root/Constants",
         "name": "Constants",
-        "normalizedDataType": "Object",
-        "properties": "NotSpecified",
+        "type": "Object",
+        "properties": "None",
         "children": [
           {
             "key": "/root/Constants/String1",
             "name": "String1",
-            "normalizedDataType": "String",
-            "properties": "NotSpecified",
-            "fullName": "String1",
+            "type": "String",
+            "properties": "None",
+            "qName": "String1",
             "parentKey": "/root/Constants"
           },
           {
             "key": "/root/Constants/String2",
             "name": "String2",
-            "normalizedDataType": "String",
-            "properties": "NotSpecified",
-            "fullName": "String2",
+            "type": "String",
+            "properties": "None",
+            "qName": "String2",
             "parentKey": "/root/Constants"
           },
           {
             "key": "/root/Constants/Num",
             "name": "Num",
-            "normalizedDataType": "Integer",
-            "properties": "NotSpecified",
-            "fullName": "Num",
+            "type": "Integer",
+            "properties": "None",
+            "qName": "Num",
             "parentKey": "/root/Constants"
           },
           {
             "key": "/root/Constants/Decimal",
             "name": "Decimal",
-            "normalizedDataType": "Decimal",
-            "properties": "NotSpecified",
-            "fullName": "Decimal",
+            "type": "Decimal",
+            "properties": "None",
+            "qName": "Decimal",
             "parentKey": "/root/Constants"
           },
           {
             "key": "/root/Constants/Bool",
             "name": "Bool",
-            "normalizedDataType": "Bool",
-            "properties": "NotSpecified",
-            "fullName": "Bool",
+            "type": "Bool",
+            "properties": "None",
+            "qName": "Bool",
             "parentKey": "/root/Constants"
           },
           {
             "key": "/root/Constants/Null",
             "name": "Null",
-            "normalizedDataType": "String",
+            "type": "String",
             "properties": "Optional",
-            "fullName": "Null",
+            "qName": "Null",
             "parentKey": "/root/Constants"
           }
         ],
-        "fullName": "Constants",
+        "qName": "Constants",
         "parentKey": "/root"
       },
       {
         "key": "/root/ConstantArray",
         "name": "ConstantArray",
-        "normalizedDataType": "Array",
-        "properties": "NotSpecified",
+        "type": "Array",
+        "properties": "None",
         "children": [
           {
             "key": "/root/ConstantArray/*",
             "name": "<ArrayItem>",
-            "normalizedDataType": "Integer",
+            "type": "Integer",
             "properties": "Repeating, ArrayItem",
-            "fullName": "<ArrayItem>",
+            "qName": "<ArrayItem>",
             "parentKey": "/root/ConstantArray"
           }
         ],
-        "fullName": "ConstantArray",
+        "qName": "ConstantArray",
         "parentKey": "/root"
       },
       {
         "key": "/root/ExpWithSourceNodes1",
         "name": "ExpWithSourceNodes1",
-        "normalizedDataType": "String",
-        "properties": "NotSpecified",
-        "fullName": "ExpWithSourceNodes1",
+        "type": "String",
+        "properties": "None",
+        "qName": "ExpWithSourceNodes1",
         "parentKey": "/root"
       },
       {
         "key": "/root/NodeAttrWithStatement",
         "name": "NodeAttrWithStatement",
-        "normalizedDataType": "String",
-        "properties": "NotSpecified",
-        "fullName": "NodeAttrWithStatement",
+        "type": "String",
+        "properties": "None",
+        "qName": "NodeAttrWithStatement",
         "parentKey": "/root"
       },
       {
         "key": "/root/IfStatement-OK",
         "name": "IfStatement-OK",
-        "normalizedDataType": "String",
-        "properties": "NotSpecified",
-        "fullName": "IfStatement-OK",
+        "type": "String",
+        "properties": "None",
+        "qName": "IfStatement-OK",
         "parentKey": "/root"
       },
       {
         "key": "/root/IfStatement-Bad",
         "name": "IfStatement-Bad",
-        "normalizedDataType": "Object",
-        "properties": "NotSpecified",
+        "type": "Object",
+        "properties": "None",
         "children": [
           {
             "key": "/root/IfStatement-Bad/Bad",
             "name": "Bad",
-            "normalizedDataType": "String",
-            "properties": "NotSpecified",
-            "fullName": "Bad",
+            "type": "String",
+            "properties": "None",
+            "qName": "Bad",
             "parentKey": "/root/IfStatement-Bad"
           },
           {
             "key": "/root/IfStatement-Bad/Good",
             "name": "Good",
-            "normalizedDataType": "String",
+            "type": "String",
             "properties": "Optional",
-            "fullName": "Good",
+            "qName": "Good",
             "parentKey": "/root/IfStatement-Bad"
           },
           {
             "key": "/root/IfStatement-Bad/OK",
             "name": "OK",
-            "normalizedDataType": "String",
+            "type": "String",
             "properties": "Optional",
-            "fullName": "OK",
+            "qName": "OK",
             "parentKey": "/root/IfStatement-Bad"
           }
         ],
-        "fullName": "IfStatement-Bad",
+        "qName": "IfStatement-Bad",
         "parentKey": "/root"
       },
       {
         "key": "/root/T3",
         "name": "T3",
-        "normalizedDataType": "String",
-        "properties": "NotSpecified",
-        "fullName": "T3",
+        "type": "String",
+        "properties": "None",
+        "qName": "T3",
         "parentKey": "/root"
       },
       {
         "key": "/root/T2",
         "name": "T2",
-        "normalizedDataType": "Integer",
-        "properties": "NotSpecified",
-        "fullName": "T2",
+        "type": "Integer",
+        "properties": "None",
+        "qName": "T2",
         "parentKey": "/root"
       },
       {
         "key": "/root/ForLoop",
         "name": "ForLoop",
-        "normalizedDataType": "Array",
-        "properties": "NotSpecified",
+        "type": "Array",
+        "properties": "None",
         "children": [
           {
             "key": "/root/ForLoop/*",
             "name": "<ArrayItem>",
-            "normalizedDataType": "Object",
+            "type": "Object",
             "properties": "Repeating, ArrayItem",
             "children": [
               {
                 "key": "/root/ForLoop/*/prop1",
                 "name": "prop1",
-                "normalizedDataType": "Object",
-                "properties": "NotSpecified",
+                "type": "Object",
+                "properties": "None",
                 "children": [
                   {
                     "key": "/root/ForLoop/*/prop1/TEL_NUMBER",
                     "name": "TEL_NUMBER",
-                    "normalizedDataType": "String",
-                    "properties": "NotSpecified",
-                    "fullName": "TEL_NUMBER",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "TEL_NUMBER",
                     "parentKey": "/root/ForLoop/*/prop1"
                   },
                   {
                     "key": "/root/ForLoop/*/prop1/TEL_EXTENS",
                     "name": "TEL_EXTENS",
-                    "normalizedDataType": "String",
-                    "properties": "NotSpecified",
-                    "fullName": "TEL_EXTENS",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "TEL_EXTENS",
                     "parentKey": "/root/ForLoop/*/prop1"
                   },
                   {
                     "key": "/root/ForLoop/*/prop1/Index",
                     "name": "Index",
-                    "normalizedDataType": "Integer",
-                    "properties": "NotSpecified",
-                    "fullName": "Index",
+                    "type": "Integer",
+                    "properties": "None",
+                    "qName": "Index",
                     "parentKey": "/root/ForLoop/*/prop1"
                   }
                 ],
-                "fullName": "prop1",
+                "qName": "prop1",
                 "parentKey": "/root/ForLoop/*"
               },
               {
                 "key": "/root/ForLoop/*/prop2",
                 "name": "prop2",
-                "normalizedDataType": "Object",
-                "properties": "NotSpecified",
+                "type": "Object",
+                "properties": "None",
                 "children": [
                   {
                     "key": "/root/ForLoop/*/prop2/TEL_Country",
                     "name": "TEL_Country",
-                    "normalizedDataType": "String",
-                    "properties": "NotSpecified",
-                    "fullName": "TEL_Country",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "TEL_Country",
                     "parentKey": "/root/ForLoop/*/prop2"
                   }
                 ],
-                "fullName": "prop2",
+                "qName": "prop2",
                 "parentKey": "/root/ForLoop/*"
               }
             ],
-            "fullName": "<ArrayItem>",
+            "qName": "<ArrayItem>",
             "parentKey": "/root/ForLoop"
           }
         ],
-        "fullName": "ForLoop",
+        "qName": "ForLoop",
         "parentKey": "/root"
       },
       {
         "key": "/root/TargetMadeUp",
         "name": "TargetMadeUp",
-        "normalizedDataType": "Array",
-        "properties": "NotSpecified",
+        "type": "Array",
+        "properties": "None",
         "children": [
           {
             "key": "/root/TargetMadeUp/ManyManyArray",
             "name": "ManyManyArray",
-            "normalizedDataType": "Array",
-            "properties": "NotSpecified",
+            "type": "Array",
+            "properties": "None",
             "children": [
               {
                 "key": "/root/TargetMadeUp/ManyManyArray/*",
                 "name": "<ArrayItem>",
-                "normalizedDataType": "Array",
+                "type": "Array",
                 "properties": "Repeating, ArrayItem",
                 "children": [
                   {
                     "key": "/root/TargetMadeUp/ManyManyArray/*/*",
                     "name": "<ArrayItem>",
-                    "normalizedDataType": "Array",
+                    "type": "Array",
                     "properties": "Repeating, ArrayItem",
                     "children": [
                       {
                         "key": "/root/TargetMadeUp/ManyManyArray/*/*/TargetMadeUp_NeedAProp",
                         "name": "TargetMadeUp_NeedAProp",
-                        "normalizedDataType": "Integer",
-                        "properties": "NotSpecified",
-                        "fullName": "TargetMadeUp_NeedAProp",
+                        "type": "Integer",
+                        "properties": "None",
+                        "qName": "TargetMadeUp_NeedAProp",
                         "parentKey": "/root/TargetMadeUp/ManyManyArray/*/*"
                       }
                     ],
-                    "fullName": "<ArrayItem>",
+                    "qName": "<ArrayItem>",
                     "parentKey": "/root/TargetMadeUp/ManyManyArray/*"
                   }
                 ],
-                "fullName": "<ArrayItem>",
+                "qName": "<ArrayItem>",
                 "parentKey": "/root/TargetMadeUp/ManyManyArray"
               }
             ],
-            "fullName": "ManyManyArray",
+            "qName": "ManyManyArray",
             "parentKey": "/root/TargetMadeUp"
           }
         ],
-        "fullName": "TargetMadeUp",
+        "qName": "TargetMadeUp",
         "parentKey": "/root"
       }
     ],
-    "fullName": "root"
+    "qName": "root"
   }
 }

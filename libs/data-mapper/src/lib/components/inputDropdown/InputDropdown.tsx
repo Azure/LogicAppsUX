@@ -39,7 +39,7 @@ const customValueDebounceDelay = 300;
 interface SharedOptionData {
   isFunction: boolean;
   nodeProperties?: SchemaNodeProperty[]; // Should just be source schema nodes
-  normalizedDataType: NormalizedDataType;
+  type: NormalizedDataType;
 }
 
 const useStyles = makeStyles({
@@ -134,7 +134,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
       return null;
     }
 
-    const TypeIcon = iconForNormalizedDataType(items[0].data.normalizedDataType, 16, false, items[0].data.nodeProperties);
+    const TypeIcon = iconForNormalizedDataType(items[0].data.type, 16, false, items[0].data.nodeProperties);
 
     return (
       <Stack horizontal verticalAlign="center">
@@ -156,7 +156,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
         return null;
       }
 
-      const TypeIcon = iconForNormalizedDataType(item.data.normalizedDataType, 16, false, item.data.nodeProperties);
+      const TypeIcon = iconForNormalizedDataType(item.data.type, 16, false, item.data.nodeProperties);
 
       return (
         <Stack horizontal verticalAlign="center">
@@ -281,7 +281,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
         data: {
           isFunction: false,
           nodeProperties: srcSchemaNode.nodeProperties,
-          normalizedDataType: srcSchemaNode.normalizedDataType,
+          type: srcSchemaNode.type,
         },
       })
     );
@@ -347,7 +347,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
         text: nodeName,
         data: {
           isFunction: true,
-          normalizedDataType: node.outputValueType,
+          type: node.outputValueType,
         },
       });
     });
@@ -381,7 +381,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
       if (inputIsCustomValue) {
         // Schema node (single type)
         if (isSchemaNodeExtended(currentNode)) {
-          if (!isValidCustomValueByType(inputValue, currentNode.normalizedDataType)) {
+          if (!isValidCustomValueByType(inputValue, currentNode.type)) {
             return customValueSchemaNodeTypeMismatchLoc;
           }
         } else {
@@ -398,12 +398,12 @@ export const InputDropdown = (props: InputDropdownProps) => {
           }
         }
       } else {
-        const inputType = availableInputOptions.find((option) => option.key === inputValue)?.data?.normalizedDataType;
+        const inputType = availableInputOptions.find((option) => option.key === inputValue)?.data?.type;
 
         if (inputType) {
           // Node value validation
           if (isSchemaNodeExtended(currentNode)) {
-            if (!isValidConnectionByType(inputType, currentNode.normalizedDataType)) {
+            if (!isValidConnectionByType(inputType, currentNode.type)) {
               return nodeTypeSchemaNodeTypeMismatchLoc;
             }
           } else {

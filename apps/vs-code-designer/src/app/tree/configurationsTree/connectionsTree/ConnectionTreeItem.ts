@@ -20,7 +20,7 @@ export class ConnectionTreeItem extends AzExtTreeItem {
   public readonly parent: ConnectionsTreeItem;
   public readonly name: string;
   public readonly content: ConnectionReferenceModel | FunctionConnectionModel | ServiceProviderConnectionModel;
-  private _fullName: string;
+  private _qName: string;
   private _isManaged: boolean;
 
   private constructor(
@@ -33,7 +33,7 @@ export class ConnectionTreeItem extends AzExtTreeItem {
     this.name = name;
     this.content = content;
     this._isManaged = isManaged;
-    this._fullName =
+    this._qName =
       !this._isManaged && (content as FunctionConnectionModel | ServiceProviderConnectionModel).displayName
         ? `${name} - ${(content as FunctionConnectionModel | ServiceProviderConnectionModel).displayName}`
         : name;
@@ -41,11 +41,11 @@ export class ConnectionTreeItem extends AzExtTreeItem {
   }
 
   public get id(): string {
-    return this._fullName;
+    return this._qName;
   }
 
   public get label(): string {
-    return this._fullName;
+    return this._qName;
   }
 
   public get contextValue(): string {

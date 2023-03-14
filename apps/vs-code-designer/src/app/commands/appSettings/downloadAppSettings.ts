@@ -51,7 +51,7 @@ export async function downloadAppSettingsInternal(context: IActionContext, clien
 
     const remoteSettings: StringDictionary = await client.listApplicationSettings();
 
-    ext.outputChannel.appendLog(localize('downloadingSettings', 'Downloading settings...'), { resourceName: client.fullName });
+    ext.outputChannel.appendLog(localize('downloadingSettings', 'Downloading settings...'), { resourceName: client.qName });
     if (remoteSettings.properties) {
       await confirmOverwriteSettings(context, remoteSettings.properties, localSettings.Values, localSettingsFileName);
     }
@@ -64,12 +64,12 @@ export async function downloadAppSettingsInternal(context: IActionContext, clien
     }
   }
 
-  ext.outputChannel.appendLog(localize('downloadedSettings', 'Successfully downloaded settings.'), { resourceName: client.fullName });
+  ext.outputChannel.appendLog(localize('downloadedSettings', 'Successfully downloaded settings.'), { resourceName: client.qName });
   const openFile: string = localize('openFile', 'Open File');
 
   void vscode.window
     .showInformationMessage(
-      localize('downloadedSettingsFrom', 'Successfully downloaded settings from "{0}".', client.fullName),
+      localize('downloadedSettingsFrom', 'Successfully downloaded settings from "{0}".', client.qName),
       openFile,
       viewOutput
     )

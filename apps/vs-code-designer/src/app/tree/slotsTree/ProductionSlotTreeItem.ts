@@ -22,7 +22,7 @@ export class ProductionSlotTreeItem extends SlotTreeItemBase {
   }
 
   public get label(): string {
-    return this.site.fullName;
+    return this.site.qName;
   }
 
   public async loadMoreChildrenImpl(clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {

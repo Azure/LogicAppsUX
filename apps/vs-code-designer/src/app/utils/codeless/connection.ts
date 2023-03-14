@@ -311,7 +311,7 @@ async function createAccessPolicyInConnection(
   }
 
   const { principalId: objectId, tenantId } = identity;
-  const name = `${node.site.fullName}-${objectId}`;
+  const name = `${node.site.qName}-${objectId}`;
   const options = {
     json: true,
     headers: { authorization: accessToken },
