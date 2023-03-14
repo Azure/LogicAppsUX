@@ -87,11 +87,11 @@ export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IP
   }
 
   public get logStreamLabel(): string {
-    return this.site.qName;
+    return this.site.fullName;
   }
 
   public get logStreamPath(): string {
-    return `application/functions/function/${encodeURIComponent(this.site.qName)}`;
+    return `application/functions/function/${encodeURIComponent(this.site.fullName)}`;
   }
 
   public async getHostRequest(): Promise<FuncHostRequest> {
@@ -246,12 +246,12 @@ export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IP
   }
 
   public async deleteTreeItemImpl(context: IActionContext): Promise<void> {
-    const { isSlot, qName, isFunctionApp } = this.site;
+    const { isSlot, fullName, isFunctionApp } = this.site;
     const confirmationMessage: string = isSlot
-      ? localize('confirmDeleteSlot', 'Are you sure you want to delete slot "{0}"?', qName)
+      ? localize('confirmDeleteSlot', 'Are you sure you want to delete slot "{0}"?', fullName)
       : isFunctionApp
-      ? localize('confirmDeleteFunctionApp', 'Are you sure you want to delete function app "{0}"?', qName)
-      : localize('confirmDeleteWebApp', 'Are you sure you want to delete web app "{0}"?', qName);
+      ? localize('confirmDeleteFunctionApp', 'Are you sure you want to delete function app "{0}"?', fullName)
+      : localize('confirmDeleteWebApp', 'Are you sure you want to delete web app "{0}"?', fullName);
 
     const wizardContext = Object.assign(context, {
       site: this.site,

@@ -15,7 +15,7 @@ import { window } from 'vscode';
  * @param {SlotTreeItemBase} node - Logic app node structure.
  */
 export async function notifyCreateLogicAppComplete(node: SlotTreeItemBase): Promise<void> {
-  const deployComplete: string = localize('creationComplete', 'Creation of "{0}" completed.', node.site.qName);
+  const deployComplete: string = localize('creationComplete', 'Creation of "{0}" completed.', node.site.fullName);
   const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
 
   window.showInformationMessage(deployComplete, viewOutput).then(async (result) => {

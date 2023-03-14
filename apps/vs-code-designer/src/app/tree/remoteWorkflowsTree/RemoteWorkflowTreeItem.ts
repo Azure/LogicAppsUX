@@ -55,7 +55,7 @@ export class RemoteWorkflowTreeItem extends AzExtTreeItem {
   }
 
   public get logStreamLabel(): string {
-    return `${this.parent.parent.site.qName}/${this.name}`;
+    return `${this.parent.parent.site.fullName}/${this.name}`;
   }
 
   public get logStreamPath(): string {

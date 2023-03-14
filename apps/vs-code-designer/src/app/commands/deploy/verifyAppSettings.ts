@@ -34,7 +34,7 @@ export async function verifyAppSettings(
   const client = await node.site.createClient(context);
   const appSettings: StringDictionary = await client.listApplicationSettings();
   if (appSettings.properties) {
-    await verifyVersionAndLanguage(context, client.qName, version, language, appSettings.properties);
+    await verifyVersionAndLanguage(context, client.fullName, version, language, appSettings.properties);
 
     if (!isNewLogicApp) {
       await verifyConnectionResourceGroup(context, node, originalDeployFsPath);

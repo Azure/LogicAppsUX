@@ -39,7 +39,7 @@ export async function uploadAppSettings(
 
   await node.runWithTemporaryDescription(context, localize('uploading', 'Uploading...'), async () => {
     ext.outputChannel.show(true);
-    ext.outputChannel.appendLog(localize('uploadStart', 'Uploading settings to "{0}"...', client.qName));
+    ext.outputChannel.appendLog(localize('uploadStart', 'Uploading settings to "{0}"...', client.fullName));
     const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
 
     if (localSettings.Values) {
@@ -52,7 +52,7 @@ export async function uploadAppSettings(
         delete localSettings.Values[settingToDelete];
       }
 
-      await confirmOverwriteSettings(context, localSettings.Values, remoteSettings.properties, client.qName);
+      await confirmOverwriteSettings(context, localSettings.Values, remoteSettings.properties, client.fullName);
 
       await client.updateApplicationSettings(remoteSettings);
     } else {

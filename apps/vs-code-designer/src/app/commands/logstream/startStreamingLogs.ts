@@ -40,7 +40,11 @@ export async function startStreamingLogs(context: IActionContext, treeItem?: Slo
       const client = await site.createClient(context);
       const logsConfig: SiteLogsConfig = await client.getLogsConfig();
       if (!isApplicationLoggingEnabled(logsConfig)) {
-        const message: string = localize('enableApplicationLogging', 'Do you want to enable application logging for "{0}"?', client.qName);
+        const message: string = localize(
+          'enableApplicationLogging',
+          'Do you want to enable application logging for "{0}"?',
+          client.fullName
+        );
         await context.ui.showWarningMessage(message, { modal: true }, DialogResponses.yes, DialogResponses.cancel);
         await enableFileLogging(client, logsConfig);
       }
@@ -78,7 +82,7 @@ async function openLiveMetricsStream(context: IActionContext, site: ParsedSite, 
     } else {
       const componentId: string = encodeURIComponent(
         JSON.stringify({
-          Name: site.qName,
+          Name: site.fullName,
           SubscriptionId: node.subscription.subscriptionId,
           ResourceGroup: site.resourceGroup,
         })
