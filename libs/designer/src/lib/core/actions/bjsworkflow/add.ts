@@ -80,7 +80,7 @@ const initializeOperationDetails = async (
 ): Promise<void> => {
   const state = getState();
   const isTrigger = isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata);
-  const { type, connectorId } = operationInfo;
+  const { type, kind, connectorId } = operationInfo;
   let isConnectionRequired = true;
   const operationManifestService = OperationManifestService();
 
@@ -90,7 +90,7 @@ const initializeOperationDetails = async (
   let initData: NodeData;
   let manifest: OperationManifest | undefined = undefined;
   let swagger: SwaggerParser | undefined = undefined;
-  if (operationManifestService.isSupported(type)) {
+  if (operationManifestService.isSupported(type, kind)) {
     manifest = await getOperationManifest(operationInfo);
     isConnectionRequired = isConnectionRequiredForOperation(manifest);
 
