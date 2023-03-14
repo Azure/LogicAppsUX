@@ -21,7 +21,7 @@ import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export enum AuthenticationType {
-  NONE = 'NotSpecified',
+  NONE = 'None',
   BASIC = 'Basic',
   CERTIFICATE = 'ClientCertificate',
   OAUTH = 'ActiveDirectoryOAuth',

@@ -49,7 +49,7 @@ export interface DynamicParameter {
 }
 
 export enum DynamicValuesType {
-  None,
+  NotSpecified,
   LegacyDynamicValues,
   DynamicList,
   DynamicTree,
@@ -116,7 +116,7 @@ export interface DynamicTree {
 export type ParameterDynamicValues = LegacyDynamicValues | DynamicTree | DynamicList;
 
 export enum DynamicSchemaType {
-  None,
+  NotSpecified,
   LegacyDynamicSchema,
   DynamicProperties,
 }

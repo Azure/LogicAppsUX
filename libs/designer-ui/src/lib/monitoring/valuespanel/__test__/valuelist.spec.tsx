@@ -60,7 +60,7 @@ describe('lib/monitoring/valuespanel/valuelist', () => {
       authentication: {
         displayName: 'Authentication',
         value: {
-          type: 'NotSpecified',
+          type: 'None',
         },
         visibility: 'advanced',
       },
@@ -89,7 +89,7 @@ describe('lib/monitoring/valuespanel/valuelist', () => {
       authentication: {
         displayName: 'Authentication',
         value: {
-          type: 'NotSpecified',
+          type: 'None',
         },
         visibility: 'advanced',
       },
