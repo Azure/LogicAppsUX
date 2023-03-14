@@ -157,7 +157,7 @@ describe('Resolution Service tests', () => {
         value: false,
       },
       str: {
-        type: NormalizedDataType.String,
+        type: 'String',
         value: 'teststring',
       },
       obj: {

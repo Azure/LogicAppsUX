@@ -53,7 +53,7 @@ export const About = ({ connectorDisplayName, description, descriptionDocumentat
   });
 
   const noTags = intl.formatMessage({
-    defaultMessage: 'None',
+    defaultMessage: 'NotSpecified',
     description: 'Display text for when About Panel has no Tags',
   });
 

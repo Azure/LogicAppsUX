@@ -624,7 +624,7 @@ declare namespace LogicAppsV2 {
   interface RetryPolicy {
     count?: number;
     interval?: string /* TimeSpan, e.g., 1.02:03:04 */;
-    type?: string; // None, Exponential or Fixed
+    type?: string; // NotSpecified, Exponential or Fixed
     minimumInterval?: string;
     maximumInterval?: string;
   }

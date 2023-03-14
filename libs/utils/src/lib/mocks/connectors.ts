@@ -9,7 +9,7 @@ export const ConnectorsMock: Connector[] = [
       displayName: 'Dropbox',
       iconUri: 'https://tip1icons.azureedge.net/dropbox.png',
       environment: 'Shared',
-      purpose: 'None',
+      purpose: 'NotSpecified',
       connectionParameters: {
         token: {
           type: 'oauthSetting',
