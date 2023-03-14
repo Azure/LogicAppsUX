@@ -2,7 +2,7 @@ import type { SchemaNodeExtended } from '../../models';
 import { NormalizedDataType, SchemaNodeProperty } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
-import { FunctionCategory, FunctionType } from '../../models/Function';
+import { FunctionCategory } from '../../models/Function';
 import { isConnectionUnit, isCustomValue } from '../Connection.Utils';
 import { isFunctionData } from '../Function.Utils';
 import { isSchemaNodeExtended } from '../Schema.Utils';
@@ -17,6 +17,7 @@ describe('utils/type-checker-utils', () => {
     nodeProperties: [SchemaNodeProperty.None],
     children: [],
     pathToRoot: [],
+    arrayItemIndex: undefined,
     parentKey: undefined,
   };
 
@@ -26,7 +27,6 @@ describe('utils/type-checker-utils', () => {
     displayName: 'Self',
     category: FunctionCategory.Math,
     description: 'Self',
-    type: FunctionType.TransformationFunction,
     inputs: [],
     maxNumberOfInputs: 0,
     outputValueType: NormalizedDataType.Integer,

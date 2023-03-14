@@ -1,4 +1,4 @@
-import { FunctionCategory, FunctionType } from '../../models';
+import { FunctionCategory, NormalizedDataType, SchemaNodeProperty } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
 
 export const indexedConnections: ConnectionDictionary = {
@@ -7,11 +7,11 @@ export const indexedConnections: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/Looping/Person/Name',
         name: 'Name',
-        type: 'String',
+        type: NormalizedDataType.String,
         properties: 'None',
         qName: 'Name',
         parentKey: '/ns0:Root/Looping/Person',
-        nodeProperties: ['None'],
+        nodeProperties: [SchemaNodeProperty.None],
         children: [],
         pathToRoot: [
           {
@@ -39,6 +39,7 @@ export const indexedConnections: ConnectionDictionary = {
             repeating: false,
           },
         ],
+        arrayItemIndex: undefined,
       },
       reactFlowKey: 'target-/ns0:Root/Looping/Person/Name',
     },
@@ -48,11 +49,11 @@ export const indexedConnections: ConnectionDictionary = {
           node: {
             key: '/ns0:Root/Looping/Employee/TelephoneNumber',
             name: 'TelephoneNumber',
-            type: 'String',
+            type: NormalizedDataType.String,
             properties: 'None',
             qName: 'TelephoneNumber',
             parentKey: '/ns0:Root/Looping/Employee',
-            nodeProperties: ['None'],
+            nodeProperties: [SchemaNodeProperty.None],
             children: [],
             pathToRoot: [
               {
@@ -80,6 +81,7 @@ export const indexedConnections: ConnectionDictionary = {
                 repeating: false,
               },
             ],
+            arrayItemIndex: undefined,
           },
           reactFlowKey: 'source-/ns0:Root/Looping/Employee/TelephoneNumber',
         },
@@ -92,11 +94,11 @@ export const indexedConnections: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/Looping/Employee/TelephoneNumber',
         name: 'TelephoneNumber',
-        type: 'String',
+        type: NormalizedDataType.String,
         properties: 'None',
         qName: 'TelephoneNumber',
         parentKey: '/ns0:Root/Looping/Employee',
-        nodeProperties: ['None'],
+        nodeProperties: [SchemaNodeProperty.None],
         children: [],
         pathToRoot: [
           {
@@ -124,6 +126,7 @@ export const indexedConnections: ConnectionDictionary = {
             repeating: false,
           },
         ],
+        arrayItemIndex: undefined,
       },
       reactFlowKey: 'source-/ns0:Root/Looping/Employee/TelephoneNumber',
     },
@@ -135,11 +138,11 @@ export const indexedConnections: ConnectionDictionary = {
         node: {
           key: '/ns0:Root/Looping/Person/Name',
           name: 'Name',
-          type: 'String',
+          type: NormalizedDataType.String,
           properties: 'None',
           qName: 'Name',
           parentKey: '/ns0:Root/Looping/Person',
-          nodeProperties: ['None'],
+          nodeProperties: [SchemaNodeProperty.None],
           children: [],
           pathToRoot: [
             {
@@ -167,6 +170,7 @@ export const indexedConnections: ConnectionDictionary = {
               repeating: false,
             },
           ],
+          arrayItemIndex: undefined,
         },
         reactFlowKey: 'target-/ns0:Root/Looping/Person/Name',
       },
@@ -177,17 +181,17 @@ export const indexedConnections: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/Looping/Person',
         name: 'Person',
-        type: 'Complex',
+        type: NormalizedDataType.Complex,
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:Root/Looping/Person/Name',
             name: 'Name',
-            type: 'String',
+            type: NormalizedDataType.String,
             properties: 'None',
             qName: 'Name',
             parentKey: '/ns0:Root/Looping/Person',
-            nodeProperties: ['None'],
+            nodeProperties: [SchemaNodeProperty.None],
             children: [],
             pathToRoot: [
               {
@@ -215,15 +219,16 @@ export const indexedConnections: ConnectionDictionary = {
                 repeating: false,
               },
             ],
+            arrayItemIndex: undefined,
           },
           {
             key: '/ns0:Root/Looping/Person/Address',
             name: 'Address',
-            type: 'String',
+            type: NormalizedDataType.String,
             properties: 'None',
             qName: 'Address',
             parentKey: '/ns0:Root/Looping/Person',
-            nodeProperties: ['None'],
+            nodeProperties: [SchemaNodeProperty.None],
             children: [],
             pathToRoot: [
               {
@@ -251,15 +256,16 @@ export const indexedConnections: ConnectionDictionary = {
                 repeating: false,
               },
             ],
+            arrayItemIndex: undefined,
           },
           {
             key: '/ns0:Root/Looping/Person/Other',
             name: 'Other',
-            type: 'String',
+            type: NormalizedDataType.String,
             properties: 'Optional',
             qName: 'Other',
             parentKey: '/ns0:Root/Looping/Person',
-            nodeProperties: ['Optional'],
+            nodeProperties: [SchemaNodeProperty.Optional],
             children: [],
             pathToRoot: [
               {
@@ -287,11 +293,12 @@ export const indexedConnections: ConnectionDictionary = {
                 repeating: false,
               },
             ],
+            arrayItemIndex: undefined,
           },
         ],
         qName: 'Person',
         parentKey: '/ns0:Root/Looping',
-        nodeProperties: ['Repeating'],
+        nodeProperties: [SchemaNodeProperty.Repeating],
         pathToRoot: [
           {
             key: '/ns0:Root',
@@ -312,6 +319,7 @@ export const indexedConnections: ConnectionDictionary = {
             repeating: true,
           },
         ],
+        arrayItemIndex: undefined,
       },
       reactFlowKey: 'target-/ns0:Root/Looping/Person',
     },
@@ -321,13 +329,12 @@ export const indexedConnections: ConnectionDictionary = {
           node: {
             key: 'index',
             maxNumberOfInputs: 1,
-            type: FunctionType.PseudoFunction,
             functionName: '',
-            outputValueType: 'Any',
+            outputValueType: NormalizedDataType.Any,
             inputs: [
               {
                 name: 'Loop',
-                allowedTypes: ['Complex'],
+                allowedTypes: [NormalizedDataType.Complex],
                 isOptional: false,
                 allowCustomInput: false,
                 placeHolder: 'The source loop.',
@@ -349,17 +356,17 @@ export const indexedConnections: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/Looping/Employee',
         name: 'Employee',
-        type: 'Complex',
+        type: NormalizedDataType.Complex,
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:Root/Looping/Employee/TelephoneNumber',
             name: 'TelephoneNumber',
-            type: 'String',
+            type: NormalizedDataType.String,
             properties: 'None',
             qName: 'TelephoneNumber',
             parentKey: '/ns0:Root/Looping/Employee',
-            nodeProperties: ['None'],
+            nodeProperties: [SchemaNodeProperty.None],
             children: [],
             pathToRoot: [
               {
@@ -387,15 +394,16 @@ export const indexedConnections: ConnectionDictionary = {
                 repeating: false,
               },
             ],
+            arrayItemIndex: undefined,
           },
           {
             key: '/ns0:Root/Looping/Employee/Name',
             name: 'Name',
-            type: 'String',
+            type: NormalizedDataType.String,
             properties: 'None',
             qName: 'Name',
             parentKey: '/ns0:Root/Looping/Employee',
-            nodeProperties: ['None'],
+            nodeProperties: [SchemaNodeProperty.None],
             children: [],
             pathToRoot: [
               {
@@ -423,15 +431,16 @@ export const indexedConnections: ConnectionDictionary = {
                 repeating: false,
               },
             ],
+            arrayItemIndex: undefined,
           },
           {
             key: '/ns0:Root/Looping/Employee/Salary',
             name: 'Salary',
-            type: 'Decimal',
+            type: NormalizedDataType.Decimal,
             properties: 'None',
             qName: 'Salary',
             parentKey: '/ns0:Root/Looping/Employee',
-            nodeProperties: ['None'],
+            nodeProperties: [SchemaNodeProperty.None],
             children: [],
             pathToRoot: [
               {
@@ -459,15 +468,16 @@ export const indexedConnections: ConnectionDictionary = {
                 repeating: false,
               },
             ],
+            arrayItemIndex: undefined,
           },
           {
             key: '/ns0:Root/Looping/Employee/Country',
             name: 'Country',
-            type: 'String',
+            type: NormalizedDataType.String,
             properties: 'None',
             qName: 'Country',
             parentKey: '/ns0:Root/Looping/Employee',
-            nodeProperties: ['None'],
+            nodeProperties: [SchemaNodeProperty.None],
             children: [],
             pathToRoot: [
               {
@@ -495,15 +505,16 @@ export const indexedConnections: ConnectionDictionary = {
                 repeating: false,
               },
             ],
+            arrayItemIndex: undefined,
           },
           {
             key: '/ns0:Root/Looping/Employee/Dat_of_Birth',
             name: 'Dat_of_Birth',
-            type: 'DateTime',
+            type: NormalizedDataType.DateTime,
             properties: 'None',
             qName: 'Dat_of_Birth',
             parentKey: '/ns0:Root/Looping/Employee',
-            nodeProperties: ['None'],
+            nodeProperties: [SchemaNodeProperty.None],
             children: [],
             pathToRoot: [
               {
@@ -531,15 +542,16 @@ export const indexedConnections: ConnectionDictionary = {
                 repeating: false,
               },
             ],
+            arrayItemIndex: undefined,
           },
           {
             key: '/ns0:Root/Looping/Employee/Address',
             name: 'Address',
-            type: 'String',
+            type: NormalizedDataType.String,
             properties: 'None',
             qName: 'Address',
             parentKey: '/ns0:Root/Looping/Employee',
-            nodeProperties: ['None'],
+            nodeProperties: [SchemaNodeProperty.None],
             children: [],
             pathToRoot: [
               {
@@ -567,11 +579,12 @@ export const indexedConnections: ConnectionDictionary = {
                 repeating: false,
               },
             ],
+            arrayItemIndex: undefined,
           },
         ],
         qName: 'Employee',
         parentKey: '/ns0:Root/Looping',
-        nodeProperties: ['Repeating'],
+        nodeProperties: [SchemaNodeProperty.Repeating],
         pathToRoot: [
           {
             key: '/ns0:Root',
@@ -592,6 +605,7 @@ export const indexedConnections: ConnectionDictionary = {
             repeating: true,
           },
         ],
+        arrayItemIndex: undefined,
       },
       reactFlowKey: 'source-/ns0:Root/Looping/Employee',
     },
@@ -603,13 +617,12 @@ export const indexedConnections: ConnectionDictionary = {
         node: {
           key: 'index',
           maxNumberOfInputs: 1,
-          type: FunctionType.PseudoFunction,
           functionName: '',
-          outputValueType: 'Any',
+          outputValueType: NormalizedDataType.Any,
           inputs: [
             {
               name: 'Loop',
-              allowedTypes: ['Complex'],
+              allowedTypes: [NormalizedDataType.Complex],
               isOptional: false,
               allowCustomInput: false,
               placeHolder: 'The source loop.',
@@ -629,11 +642,11 @@ export const indexedConnections: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/Looping/Person/Address',
         name: 'Address',
-        type: 'String',
+        type: NormalizedDataType.String,
         properties: 'None',
         qName: 'Address',
         parentKey: '/ns0:Root/Looping/Person',
-        nodeProperties: ['None'],
+        nodeProperties: [SchemaNodeProperty.None],
         children: [],
         pathToRoot: [
           {
@@ -661,6 +674,7 @@ export const indexedConnections: ConnectionDictionary = {
             repeating: false,
           },
         ],
+        arrayItemIndex: undefined,
       },
       reactFlowKey: 'target-/ns0:Root/Looping/Person/Address',
     },
@@ -674,11 +688,11 @@ export const indexedConnections: ConnectionDictionary = {
       node: {
         key: '/ns0:Root/Looping/Employee/Name',
         name: 'Name',
-        type: 'String',
+        type: NormalizedDataType.String,
         properties: 'None',
         qName: 'Name',
         parentKey: '/ns0:Root/Looping/Employee',
-        nodeProperties: ['None'],
+        nodeProperties: [SchemaNodeProperty.None],
         children: [],
         pathToRoot: [
           {
@@ -706,6 +720,7 @@ export const indexedConnections: ConnectionDictionary = {
             repeating: false,
           },
         ],
+        arrayItemIndex: undefined,
       },
       reactFlowKey: 'source-/ns0:Root/Looping/Employee/Name',
     },
@@ -719,13 +734,12 @@ export const indexedConnections: ConnectionDictionary = {
       node: {
         key: 'index',
         maxNumberOfInputs: 1,
-        type: FunctionType.PseudoFunction,
         functionName: '',
-        outputValueType: 'Any',
+        outputValueType: NormalizedDataType.Any,
         inputs: [
           {
             name: 'Loop',
-            allowedTypes: ['Complex'],
+            allowedTypes: [NormalizedDataType.Complex],
             isOptional: false,
             allowCustomInput: false,
             placeHolder: 'The source loop.',
@@ -744,17 +758,17 @@ export const indexedConnections: ConnectionDictionary = {
           node: {
             key: '/ns0:Root/Looping/Employee',
             name: 'Employee',
-            type: 'Complex',
+            type: NormalizedDataType.Complex,
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:Root/Looping/Employee/TelephoneNumber',
                 name: 'TelephoneNumber',
-                type: 'String',
+                type: NormalizedDataType.String,
                 properties: 'None',
                 qName: 'TelephoneNumber',
                 parentKey: '/ns0:Root/Looping/Employee',
-                nodeProperties: ['None'],
+                nodeProperties: [SchemaNodeProperty.None],
                 children: [],
                 pathToRoot: [
                   {
@@ -782,15 +796,16 @@ export const indexedConnections: ConnectionDictionary = {
                     repeating: false,
                   },
                 ],
+                arrayItemIndex: undefined,
               },
               {
                 key: '/ns0:Root/Looping/Employee/Name',
                 name: 'Name',
-                type: 'String',
+                type: NormalizedDataType.String,
                 properties: 'None',
                 qName: 'Name',
                 parentKey: '/ns0:Root/Looping/Employee',
-                nodeProperties: ['None'],
+                nodeProperties: [SchemaNodeProperty.None],
                 children: [],
                 pathToRoot: [
                   {
@@ -818,15 +833,16 @@ export const indexedConnections: ConnectionDictionary = {
                     repeating: false,
                   },
                 ],
+                arrayItemIndex: undefined,
               },
               {
                 key: '/ns0:Root/Looping/Employee/Salary',
                 name: 'Salary',
-                type: 'Decimal',
+                type: NormalizedDataType.Decimal,
                 properties: 'None',
                 qName: 'Salary',
                 parentKey: '/ns0:Root/Looping/Employee',
-                nodeProperties: ['None'],
+                nodeProperties: [SchemaNodeProperty.None],
                 children: [],
                 pathToRoot: [
                   {
@@ -854,15 +870,16 @@ export const indexedConnections: ConnectionDictionary = {
                     repeating: false,
                   },
                 ],
+                arrayItemIndex: undefined,
               },
               {
                 key: '/ns0:Root/Looping/Employee/Country',
                 name: 'Country',
-                type: 'String',
+                type: NormalizedDataType.String,
                 properties: 'None',
                 qName: 'Country',
                 parentKey: '/ns0:Root/Looping/Employee',
-                nodeProperties: ['None'],
+                nodeProperties: [SchemaNodeProperty.None],
                 children: [],
                 pathToRoot: [
                   {
@@ -890,15 +907,16 @@ export const indexedConnections: ConnectionDictionary = {
                     repeating: false,
                   },
                 ],
+                arrayItemIndex: undefined,
               },
               {
                 key: '/ns0:Root/Looping/Employee/Dat_of_Birth',
                 name: 'Dat_of_Birth',
-                type: 'DateTime',
+                type: NormalizedDataType.DateTime,
                 properties: 'None',
                 qName: 'Dat_of_Birth',
                 parentKey: '/ns0:Root/Looping/Employee',
-                nodeProperties: ['None'],
+                nodeProperties: [SchemaNodeProperty.None],
                 children: [],
                 pathToRoot: [
                   {
@@ -926,15 +944,16 @@ export const indexedConnections: ConnectionDictionary = {
                     repeating: false,
                   },
                 ],
+                arrayItemIndex: undefined,
               },
               {
                 key: '/ns0:Root/Looping/Employee/Address',
                 name: 'Address',
-                type: 'String',
+                type: NormalizedDataType.String,
                 properties: 'None',
                 qName: 'Address',
                 parentKey: '/ns0:Root/Looping/Employee',
-                nodeProperties: ['None'],
+                nodeProperties: [SchemaNodeProperty.None],
                 children: [],
                 pathToRoot: [
                   {
@@ -962,11 +981,12 @@ export const indexedConnections: ConnectionDictionary = {
                     repeating: false,
                   },
                 ],
+                arrayItemIndex: undefined,
               },
             ],
             qName: 'Employee',
             parentKey: '/ns0:Root/Looping',
-            nodeProperties: ['Repeating'],
+            nodeProperties: [SchemaNodeProperty.Repeating],
             pathToRoot: [
               {
                 key: '/ns0:Root',
@@ -987,6 +1007,7 @@ export const indexedConnections: ConnectionDictionary = {
                 repeating: true,
               },
             ],
+            arrayItemIndex: undefined,
           },
           reactFlowKey: 'source-/ns0:Root/Looping/Employee',
         },
@@ -997,17 +1018,17 @@ export const indexedConnections: ConnectionDictionary = {
         node: {
           key: '/ns0:Root/Looping/Person',
           name: 'Person',
-          type: 'Complex',
+          type: NormalizedDataType.Complex,
           properties: 'Repeating',
           children: [
             {
               key: '/ns0:Root/Looping/Person/Name',
               name: 'Name',
-              type: 'String',
+              type: NormalizedDataType.String,
               properties: 'None',
               qName: 'Name',
               parentKey: '/ns0:Root/Looping/Person',
-              nodeProperties: ['None'],
+              nodeProperties: [SchemaNodeProperty.None],
               children: [],
               pathToRoot: [
                 {
@@ -1035,15 +1056,16 @@ export const indexedConnections: ConnectionDictionary = {
                   repeating: false,
                 },
               ],
+              arrayItemIndex: undefined,
             },
             {
               key: '/ns0:Root/Looping/Person/Address',
               name: 'Address',
-              type: 'String',
+              type: NormalizedDataType.String,
               properties: 'None',
               qName: 'Address',
               parentKey: '/ns0:Root/Looping/Person',
-              nodeProperties: ['None'],
+              nodeProperties: [SchemaNodeProperty.None],
               children: [],
               pathToRoot: [
                 {
@@ -1071,15 +1093,16 @@ export const indexedConnections: ConnectionDictionary = {
                   repeating: false,
                 },
               ],
+              arrayItemIndex: undefined,
             },
             {
               key: '/ns0:Root/Looping/Person/Other',
               name: 'Other',
-              type: 'String',
+              type: NormalizedDataType.String,
               properties: 'Optional',
               qName: 'Other',
               parentKey: '/ns0:Root/Looping/Person',
-              nodeProperties: ['Optional'],
+              nodeProperties: [SchemaNodeProperty.Optional],
               children: [],
               pathToRoot: [
                 {
@@ -1107,11 +1130,12 @@ export const indexedConnections: ConnectionDictionary = {
                   repeating: false,
                 },
               ],
+              arrayItemIndex: undefined,
             },
           ],
           qName: 'Person',
           parentKey: '/ns0:Root/Looping',
-          nodeProperties: ['Repeating'],
+          nodeProperties: [SchemaNodeProperty.Repeating],
           pathToRoot: [
             {
               key: '/ns0:Root',
@@ -1132,9 +1156,10 @@ export const indexedConnections: ConnectionDictionary = {
               repeating: true,
             },
           ],
+          arrayItemIndex: undefined,
         },
         reactFlowKey: 'target-/ns0:Root/Looping/Person',
       },
     ],
   },
-} as ConnectionDictionary;
+};

@@ -6,15 +6,9 @@ export interface FunctionManifest {
   transformFunctions: FunctionData[];
 }
 
-export enum FunctionType {
-  PseudoFunction = 'PseudoFunction',
-  TransformationFunction = 'TransformationFunction',
-}
-
 export interface FunctionData {
   key: string;
   functionName: string;
-  type: string;
 
   maxNumberOfInputs: number; // -1 for unlimited
   inputs: FunctionInput[];
@@ -22,7 +16,6 @@ export interface FunctionData {
 
   displayName: string;
   category: FunctionCategory;
-  iconFileName?: string;
   description: string;
   tooltip?: string;
 }
@@ -54,7 +47,6 @@ export const indexPseudoFunctionKey = 'index';
 export const indexPseudoFunction: FunctionData = {
   key: indexPseudoFunctionKey,
   maxNumberOfInputs: 1,
-  type: FunctionType.PseudoFunction,
   functionName: '',
   outputValueType: NormalizedDataType.Any,
   inputs: [
@@ -75,7 +67,6 @@ export const ifPseudoFunctionKey = 'if';
 export const ifPseudoFunction: FunctionData = {
   key: ifPseudoFunctionKey,
   maxNumberOfInputs: 2,
-  type: FunctionType.PseudoFunction,
   functionName: mapNodeParams.if,
   outputValueType: NormalizedDataType.Any,
   inputs: [
@@ -103,7 +94,6 @@ export const directAccessPseudoFunctionKey = 'directAccess';
 export const directAccessPseudoFunction: FunctionData = {
   key: directAccessPseudoFunctionKey,
   maxNumberOfInputs: 3,
-  type: FunctionType.PseudoFunction,
   functionName: '',
   outputValueType: NormalizedDataType.Any,
   inputs: [
@@ -141,7 +131,6 @@ export const functionMock: FunctionData[] = [
   {
     key: 'Maximum',
     maxNumberOfInputs: 2,
-    type: FunctionType.TransformationFunction,
     functionName: 'max',
     outputValueType: NormalizedDataType.Number,
     inputs: [
@@ -170,7 +159,6 @@ export const functionMock: FunctionData[] = [
   {
     key: 'Minimum',
     maxNumberOfInputs: 2,
-    type: FunctionType.TransformationFunction,
     functionName: 'min',
     outputValueType: NormalizedDataType.Number,
     inputs: [
@@ -193,14 +181,12 @@ export const functionMock: FunctionData[] = [
     ],
     displayName: 'Min',
     category: FunctionCategory.Math,
-    iconFileName: '',
     description: 'The min between 2 numbers',
     tooltip: 'The min',
   },
   {
     key: 'Average',
     maxNumberOfInputs: 2,
-    type: FunctionType.TransformationFunction,
     functionName: 'avg',
     outputValueType: NormalizedDataType.Number,
     inputs: [
@@ -229,7 +215,6 @@ export const functionMock: FunctionData[] = [
   {
     key: 'CurrentDate',
     maxNumberOfInputs: 0,
-    type: FunctionType.TransformationFunction,
     functionName: 'current-date',
     outputValueType: NormalizedDataType.DateTime,
     inputs: [],
@@ -241,7 +226,6 @@ export const functionMock: FunctionData[] = [
   {
     key: 'ToLower',
     maxNumberOfInputs: 1,
-    type: FunctionType.TransformationFunction,
     functionName: 'lower-case',
     outputValueType: NormalizedDataType.String,
     inputs: [
@@ -262,7 +246,6 @@ export const functionMock: FunctionData[] = [
   {
     key: 'Concat',
     maxNumberOfInputs: -1,
-    type: FunctionType.TransformationFunction,
     functionName: 'concat',
     outputValueType: NormalizedDataType.String,
     inputs: [
@@ -283,7 +266,6 @@ export const functionMock: FunctionData[] = [
   {
     key: 'ToString',
     maxNumberOfInputs: 1,
-    type: FunctionType.TransformationFunction,
     functionName: 'string',
     outputValueType: NormalizedDataType.String,
     inputs: [
@@ -304,7 +286,6 @@ export const functionMock: FunctionData[] = [
   {
     key: 'IsNull',
     maxNumberOfInputs: 1,
-    type: FunctionType.TransformationFunction,
     functionName: 'is-null',
     outputValueType: NormalizedDataType.Boolean,
     inputs: [
@@ -318,13 +299,11 @@ export const functionMock: FunctionData[] = [
     ],
     displayName: 'Is null',
     category: FunctionCategory.Logical,
-    iconFileName: 'dm_category_logical.svg',
     description: 'Checks whether the value is Null.',
   },
   {
     key: 'IsGreater',
     maxNumberOfInputs: 2,
-    type: FunctionType.TransformationFunction,
     functionName: 'is-greater-than',
     outputValueType: NormalizedDataType.Boolean,
     inputs: [
@@ -345,13 +324,11 @@ export const functionMock: FunctionData[] = [
     ],
     displayName: 'Greater',
     category: FunctionCategory.Logical,
-    iconFileName: 'dm_category_logical.svg',
     description: 'Checks whether the first value is greater than the second value.',
   },
   {
     key: 'Multiply',
     maxNumberOfInputs: -1,
-    type: FunctionType.TransformationFunction,
     functionName: 'multiply',
     outputValueType: NormalizedDataType.Number,
     inputs: [
@@ -365,13 +342,11 @@ export const functionMock: FunctionData[] = [
     ],
     displayName: 'Multiply',
     category: FunctionCategory.Math,
-    iconFileName: 'dm_category_math.svg',
     description: 'Returns the product from multiplying two or more numbers.',
   },
   {
     key: 'IsEqual',
     maxNumberOfInputs: 2,
-    type: FunctionType.TransformationFunction,
     functionName: 'is-equal',
     outputValueType: NormalizedDataType.Boolean,
     inputs: [
@@ -392,13 +367,11 @@ export const functionMock: FunctionData[] = [
     ],
     displayName: 'Is equal',
     category: FunctionCategory.Logical,
-    iconFileName: 'dm_category_logical.svg',
     description: 'Returns whether two objects are equal',
   },
   {
     key: 'SubString',
     maxNumberOfInputs: 3,
-    type: FunctionType.TransformationFunction,
     functionName: 'substring',
     outputValueType: NormalizedDataType.String,
     inputs: [
@@ -426,13 +399,11 @@ export const functionMock: FunctionData[] = [
     ],
     displayName: 'Substring',
     category: FunctionCategory.String,
-    iconFileName: 'dm_category_string.svg',
     description: 'Returns a substring of the current string',
   },
   {
     key: 'Count',
     maxNumberOfInputs: 1,
-    type: FunctionType.TransformationFunction,
     functionName: 'count',
     outputValueType: NormalizedDataType.Integer,
     inputs: [
@@ -446,13 +417,11 @@ export const functionMock: FunctionData[] = [
     ],
     displayName: 'Count',
     category: FunctionCategory.Collection,
-    iconFileName: 'dm_category_collection.svg',
     description: 'Returns the count of an item in a collection.',
   },
   {
     key: 'Divide',
     maxNumberOfInputs: 2,
-    type: FunctionType.TransformationFunction,
     functionName: 'divide',
     outputValueType: NormalizedDataType.Number,
     inputs: [
@@ -474,7 +443,6 @@ export const functionMock: FunctionData[] = [
     ],
     displayName: 'Divide',
     category: FunctionCategory.Math,
-    iconFileName: 'dm_category_math.svg',
     description: 'Returns the result from dividing two numbers.',
   },
   ...pseudoFunctions,

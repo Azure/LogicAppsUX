@@ -1,5 +1,5 @@
 import type { Schema, SchemaExtended, SchemaNodeExtended } from '../../models';
-import { SchemaType, FunctionType, FunctionCategory } from '../../models';
+import { FunctionCategory, NormalizedDataType, SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import {
   addAncestorNodesToCanvas,
@@ -267,13 +267,12 @@ const indexed: ConnectionDictionary = {
       node: {
         key: 'index',
         maxNumberOfInputs: 1,
-        type: FunctionType.PseudoFunction,
         functionName: '',
-        outputValueType: 'Any',
+        outputValueType: NormalizedDataType.Any,
         inputs: [
           {
             name: 'Loop',
-            allowedTypes: ['Complex'],
+            allowedTypes: [NormalizedDataType.Complex],
             isOptional: false,
             allowCustomInput: false,
             placeHolder: 'The source loop.',
@@ -292,29 +291,29 @@ const indexed: ConnectionDictionary = {
           node: {
             key: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple',
             name: 'Simple',
-            type: 'Complex',
+            type: NormalizedDataType.Complex,
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild',
                 name: 'SourceSimpleChild',
-                type: 'Complex',
+                type: NormalizedDataType.Complex,
                 properties: 'Repeating',
                 children: [
                   {
                     key: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild',
                     name: 'SourceSimpleChildChild',
-                    type: 'Complex',
+                    type: NormalizedDataType.Complex,
                     properties: 'Repeating',
                     children: [
                       {
                         key: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect',
                         name: 'SourceDirect',
-                        type: 'String',
+                        type: NormalizedDataType.String,
                         properties: 'None',
                         qName: 'SourceDirect',
                         parentKey: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild',
-                        nodeProperties: ['None'],
+                        nodeProperties: [SchemaNodeProperty.None],
                         children: [],
                         pathToRoot: [
                           {
@@ -354,11 +353,12 @@ const indexed: ConnectionDictionary = {
                             repeating: false,
                           },
                         ],
+                        arrayItemIndex: undefined,
                       },
                     ],
                     qName: 'SourceSimpleChildChild',
                     parentKey: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild',
-                    nodeProperties: ['Repeating'],
+                    nodeProperties: [SchemaNodeProperty.Repeating],
                     pathToRoot: [
                       {
                         key: '/ns0:SourceSchemaRoot',
@@ -391,11 +391,12 @@ const indexed: ConnectionDictionary = {
                         repeating: true,
                       },
                     ],
+                    arrayItemIndex: undefined,
                   },
                 ],
                 qName: 'SourceSimpleChild',
                 parentKey: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple',
-                nodeProperties: ['Repeating'],
+                nodeProperties: [SchemaNodeProperty.Repeating],
                 pathToRoot: [
                   {
                     key: '/ns0:SourceSchemaRoot',
@@ -422,11 +423,12 @@ const indexed: ConnectionDictionary = {
                     repeating: true,
                   },
                 ],
+                arrayItemIndex: undefined,
               },
             ],
             qName: 'Simple',
             parentKey: '/ns0:SourceSchemaRoot/Looping/ManyToOne',
-            nodeProperties: ['Repeating'],
+            nodeProperties: [SchemaNodeProperty.Repeating],
             pathToRoot: [
               {
                 key: '/ns0:SourceSchemaRoot',
@@ -447,6 +449,7 @@ const indexed: ConnectionDictionary = {
                 repeating: true,
               },
             ],
+            arrayItemIndex: undefined,
           },
           reactFlowKey: 'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple',
         },
@@ -457,18 +460,18 @@ const indexed: ConnectionDictionary = {
         node: {
           key: '/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple',
           name: 'Date',
-          type: 'Complex',
+          type: NormalizedDataType.Complex,
           properties: 'Repeating',
           children: [
             {
               key: '/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple/Direct',
               name: 'Direct',
-              type: 'String',
+              type: NormalizedDataType.String,
               properties: 'None',
               children: [],
               qName: 'Direct',
               parentKey: '/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple',
-              nodeProperties: ['None'],
+              nodeProperties: [SchemaNodeProperty.None],
               pathToRoot: [
                 {
                   key: '/ns0:TargetSchemaRoot',
@@ -495,11 +498,12 @@ const indexed: ConnectionDictionary = {
                   repeating: false,
                 },
               ],
+              arrayItemIndex: undefined,
             },
           ],
           qName: 'Simple',
           parentKey: '/ns0:TargetSchemaRoot/Looping/ManyToOne',
-          nodeProperties: ['Repeating'],
+          nodeProperties: [SchemaNodeProperty.Repeating],
           pathToRoot: [
             {
               key: '/ns0:TargetSchemaRoot',
@@ -520,6 +524,7 @@ const indexed: ConnectionDictionary = {
               repeating: true,
             },
           ],
+          arrayItemIndex: undefined,
         },
         reactFlowKey: 'target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple',
       },
@@ -530,29 +535,29 @@ const indexed: ConnectionDictionary = {
       node: {
         key: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple',
         name: 'Simple',
-        type: 'Complex',
+        type: NormalizedDataType.Complex,
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild',
             name: 'SourceSimpleChild',
-            type: 'Complex',
+            type: NormalizedDataType.Complex,
             properties: 'Repeating',
             children: [
               {
                 key: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild',
                 name: 'SourceSimpleChildChild',
-                type: 'Complex',
+                type: NormalizedDataType.Complex,
                 properties: 'Repeating',
                 children: [
                   {
                     key: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect',
                     name: 'SourceDirect',
-                    type: 'String',
+                    type: NormalizedDataType.String,
                     properties: 'None',
                     qName: 'SourceDirect',
                     parentKey: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild',
-                    nodeProperties: ['None'],
+                    nodeProperties: [SchemaNodeProperty.None],
                     children: [],
                     pathToRoot: [
                       {
@@ -592,11 +597,12 @@ const indexed: ConnectionDictionary = {
                         repeating: false,
                       },
                     ],
+                    arrayItemIndex: undefined,
                   },
                 ],
                 qName: 'SourceSimpleChildChild',
                 parentKey: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild',
-                nodeProperties: ['Repeating'],
+                nodeProperties: [SchemaNodeProperty.Repeating],
                 pathToRoot: [
                   {
                     key: '/ns0:SourceSchemaRoot',
@@ -629,11 +635,12 @@ const indexed: ConnectionDictionary = {
                     repeating: true,
                   },
                 ],
+                arrayItemIndex: undefined,
               },
             ],
             qName: 'SourceSimpleChild',
             parentKey: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple',
-            nodeProperties: ['Repeating'],
+            nodeProperties: [SchemaNodeProperty.Repeating],
             pathToRoot: [
               {
                 key: '/ns0:SourceSchemaRoot',
@@ -660,11 +667,12 @@ const indexed: ConnectionDictionary = {
                 repeating: true,
               },
             ],
+            arrayItemIndex: undefined,
           },
         ],
         qName: 'Simple',
         parentKey: '/ns0:SourceSchemaRoot/Looping/ManyToOne',
-        nodeProperties: ['Repeating'],
+        nodeProperties: [SchemaNodeProperty.Repeating],
         pathToRoot: [
           {
             key: '/ns0:SourceSchemaRoot',
@@ -685,6 +693,7 @@ const indexed: ConnectionDictionary = {
             repeating: true,
           },
         ],
+        arrayItemIndex: undefined,
       },
       reactFlowKey: 'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple',
     },
@@ -696,13 +705,12 @@ const indexed: ConnectionDictionary = {
         node: {
           key: 'index',
           maxNumberOfInputs: 1,
-          type: FunctionType.PseudoFunction,
           functionName: '',
-          outputValueType: 'Any',
+          outputValueType: NormalizedDataType.Any,
           inputs: [
             {
               name: 'Loop',
-              allowedTypes: ['Complex'],
+              allowedTypes: [NormalizedDataType.Complex],
               isOptional: false,
               allowCustomInput: false,
               placeHolder: 'The source loop.',
@@ -722,18 +730,18 @@ const indexed: ConnectionDictionary = {
       node: {
         key: '/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple',
         name: 'Date',
-        type: 'Complex',
+        type: NormalizedDataType.Complex,
         properties: 'Repeating',
         children: [
           {
             key: '/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple/Direct',
             name: 'Direct',
-            type: 'String',
+            type: NormalizedDataType.String,
             properties: 'None',
             children: [],
             qName: 'Direct',
             parentKey: '/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple',
-            nodeProperties: ['None'],
+            nodeProperties: [SchemaNodeProperty.None],
             pathToRoot: [
               {
                 key: '/ns0:TargetSchemaRoot',
@@ -760,11 +768,12 @@ const indexed: ConnectionDictionary = {
                 repeating: false,
               },
             ],
+            arrayItemIndex: undefined,
           },
         ],
         qName: 'Simple',
         parentKey: '/ns0:TargetSchemaRoot/Looping/ManyToOne',
-        nodeProperties: ['Repeating'],
+        nodeProperties: [SchemaNodeProperty.Repeating],
         pathToRoot: [
           {
             key: '/ns0:TargetSchemaRoot',
@@ -785,6 +794,7 @@ const indexed: ConnectionDictionary = {
             repeating: true,
           },
         ],
+        arrayItemIndex: undefined,
       },
       reactFlowKey: 'target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple',
     },
@@ -794,13 +804,12 @@ const indexed: ConnectionDictionary = {
           node: {
             key: 'index',
             maxNumberOfInputs: 1,
-            type: FunctionType.PseudoFunction,
             functionName: '',
-            outputValueType: 'Any',
+            outputValueType: NormalizedDataType.Any,
             inputs: [
               {
                 name: 'Loop',
-                allowedTypes: ['Complex'],
+                allowedTypes: [NormalizedDataType.Complex],
                 isOptional: false,
                 allowCustomInput: false,
                 placeHolder: 'The source loop.',
@@ -817,4 +826,4 @@ const indexed: ConnectionDictionary = {
     },
     outputs: [],
   },
-} as ConnectionDictionary;
+};
