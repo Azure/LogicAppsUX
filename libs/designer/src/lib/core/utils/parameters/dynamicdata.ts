@@ -277,6 +277,7 @@ export async function getDynamicInputsFromSchema(
       visibility: dynamicParameter.visibility,
     },
     required: dynamicParameter.required,
+    useAliasedIndexing: true,
   };
   const schemaProperties = new SchemaProcessor(processorOptions).getSchemaProperties(schema);
   let dynamicInputs: InputParameter[] = schemaProperties.map((schemaProperty) => ({
