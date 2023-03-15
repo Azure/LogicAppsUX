@@ -1,4 +1,5 @@
 import { MessageBar } from '@fluentui/react';
+import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 
 export interface ErrorSectionProps {
   className?: string;
@@ -6,11 +7,12 @@ export interface ErrorSectionProps {
 }
 
 export const ErrorSection: React.FC<ErrorSectionProps> = ({ className, error }) => {
-  if (!error) {
+  const { errorMessage, errorLevel } = error;
+
+  if (isNullOrUndefined(errorMessage)) {
     return null;
   }
 
-  const { errorMessage, errorLevel } = error;
   return (
     <MessageBar className={className} messageBarType={errorLevel}>
       <strong>{errorMessage}</strong>

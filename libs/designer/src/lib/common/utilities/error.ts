@@ -8,9 +8,9 @@ export interface ErrorProps {
 
 /**
  * Translates a monitoring view `errors` prop into designer error props.
- * @arg {BoundParameters} errorRun - A record of bound parameters which may contain an error message.
+ * @arg {{ code: string; message: string }} errorRun - Operation error run object.
  * @arg {string} statusRun - The operation status, e.g., Failed, Succeeded.
- * @arg {string} codeRun - The operation status, e.g., Failed, Succeeded.
+ * @arg {string} codeRun - The operation code.
  * @return {ErrorProps | undefined}
  */
 export function getMonitoringError(
