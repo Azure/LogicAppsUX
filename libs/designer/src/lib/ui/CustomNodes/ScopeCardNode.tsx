@@ -1,4 +1,5 @@
 import constants from '../../common/constants';
+import { getMonitoringError } from '../../common/utilities/error';
 import { deleteGraphNode } from '../../core/actions/bjsworkflow/delete';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import type { WorkflowNode } from '../../core/parsers/models/workflowNode';
@@ -22,7 +23,7 @@ import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { DeleteNodeModal, MenuItemType, ScopeCard } from '@microsoft/designer-ui';
-import { isNullOrUndefined, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
+import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -44,7 +45,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const graphNode = useWorkflowNode(scopeId) as WorkflowNode;
   const metadata = useNodeMetadata(scopeId);
 
-  const { status: statusRun, duration: durationRun, error: errorRun } = metadata?.runData ?? {};
+  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun } = metadata?.runData ?? {};
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
@@ -125,9 +126,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     if (parameterValidationErrors?.length > 0)
       return { errorMessage: parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
 
-    if (isMonitoringView && !isNullOrUndefined(errorRun)) {
-      const { code, message } = errorRun;
-      return { errorMessage: `${code}. ${message}`, errorLevel: MessageBarType.warning };
+    if (isMonitoringView) {
+      return getMonitoringError(errorRun, statusRun, codeRun);
     }
 
     return { errorMessage: undefined, errorLevel: undefined };

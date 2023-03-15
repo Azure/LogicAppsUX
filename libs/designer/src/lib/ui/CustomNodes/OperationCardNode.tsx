@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { getMonitoringError } from '../../common/utilities/error';
 import type { AppDispatch } from '../../core';
 import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
@@ -20,7 +21,7 @@ import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { Card, MenuItemType, DeleteNodeModal } from '@microsoft/designer-ui';
-import { isNullOrUndefined, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
+import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -39,7 +40,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const operationInfo = useOperationInfo(id);
   const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
 
-  const { status: statusRun, duration: durationRun, error: errorRun } = metadata?.runData ?? {};
+  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun } = metadata?.runData ?? {};
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
@@ -158,9 +159,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     if (parameterValidationErrors?.length > 0)
       return { errorMessage: parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
 
-    if (isMonitoringView && !isNullOrUndefined(errorRun)) {
-      const { code, message } = errorRun;
-      return { errorMessage: `${code}. ${message}`, errorLevel: MessageBarType.warning };
+    if (isMonitoringView) {
+      return getMonitoringError(errorRun, statusRun, codeRun);
     }
     return { errorMessage: undefined, errorLevel: undefined };
   }, [
