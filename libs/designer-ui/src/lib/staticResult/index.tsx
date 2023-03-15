@@ -1,5 +1,6 @@
-import { StaticResultProperty } from './staticResultProperty';
-import { Toggle } from '@fluentui/react';
+import constants from '../constants';
+import { StaticResultProperties } from './staticResultProperties';
+import { Icon, Toggle, useTheme } from '@fluentui/react';
 import type { Schema } from '@microsoft/parsers-logic-apps';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -20,7 +21,9 @@ export type StaticResultRootSchemaType = OpenAPIV2.SchemaObject & {
 
 export const StaticResult = ({ enabled, staticResultSchema }: StaticResultProps): JSX.Element => {
   const intl = useIntl();
+  const { isInverted } = useTheme();
   const [showStaticResults, setShowStaticResults] = useState<boolean>(enabled ?? false);
+  const [expanded, setExpanded] = useState(true);
 
   const toggleLabelOn = intl.formatMessage({
     defaultMessage: 'Disable Static Result',
@@ -32,8 +35,23 @@ export const StaticResult = ({ enabled, staticResultSchema }: StaticResultProps)
     description: 'Label for toggle to enable static result',
   });
 
+  const expandLabel = intl.formatMessage({
+    defaultMessage: 'Expand Static Result',
+    description: 'An accessible label for expand toggle icon',
+  });
+
+  const collapseLabel = intl.formatMessage({
+    defaultMessage: 'Collapse Static Result',
+    description: 'An accessible label for collapse toggle icon',
+  });
+
+  const testingTitle = intl.formatMessage({
+    defaultMessage: 'Testing',
+    description: 'Title for testing section',
+  });
+
   const getLabel = () => {
-    return enabled ? toggleLabelOn : toggleLabelOff;
+    return showStaticResults ? toggleLabelOff : toggleLabelOn;
   };
 
   const { properties, additionalProperties, required } = useMemo(() => {
@@ -50,13 +68,22 @@ export const StaticResult = ({ enabled, staticResultSchema }: StaticResultProps)
       />
       {showStaticResults ? (
         <div className="msla-static-result-container">
-          {
-            <StaticResultProperty
-              properties={properties as StaticResultRootSchemaType}
+          <button className="msla-static-result-container-header" onClick={() => setExpanded(!expanded)}>
+            <Icon
+              className="msla-static-result-container-header-icon"
+              ariaLabel={expanded ? `${expandLabel}` : `${collapseLabel}`}
+              iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
+              styles={{ root: { fontSize: 14, color: isInverted ? constants.STANDARD_TEXT_COLOR : constants.CHEVRON_ROOT_COLOR_LIGHT } }}
+            />
+            <div className="msla-static-result-container-header-text">{testingTitle}</div>
+          </button>
+          {expanded ? (
+            <StaticResultProperties
+              propertiesSchema={properties as StaticResultRootSchemaType}
               required={required}
               additionalProperties={!!additionalProperties}
             />
-          }
+          ) : null}
         </div>
       ) : null}
     </div>

@@ -1,4 +1,10 @@
 {
+  "++ZVe/": [
+    {
+      "type": 0,
+      "value": "Testing"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -1857,6 +1863,12 @@
     {
       "type": 0,
       "value": "Show mini-map"
+    }
+  ],
+  "DkF25I": [
+    {
+      "type": 0,
+      "value": "Expand Static Result"
     }
   ],
   "DsPDVB": [
@@ -4451,6 +4463,12 @@
       "value": "(UTC+10:00) Canberra, Melbourne, Sydney"
     }
   ],
+  "ZRdkFN": [
+    {
+      "type": 0,
+      "value": "Collapse Static Result"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -5639,6 +5657,12 @@
     {
       "type": 0,
       "value": "Yes"
+    }
+  ],
+  "kBOAkT": [
+    {
+      "type": 0,
+      "value": "Select Fields"
     }
   ],
   "kDsud+": [

@@ -1,59 +1,77 @@
-import type { ChangeState, DropdownItem, StaticResultRootSchemaType, ValueSegment } from '..';
-import { ValueSegmentType, DropdownEditor } from '..';
-import { guid } from '@microsoft/utils-logic-apps';
-import { useState } from 'react';
+import type { StaticResultRootSchemaType } from '..';
+import { Label } from '..';
+import constants from '../constants';
+import type { IDropdownOption, IDropdownStyles, ITextFieldStyles } from '@fluentui/react';
+import { Dropdown, TextField } from '@fluentui/react';
+import React, { useState } from 'react';
 
-interface StaticResultPropertyProps {
-  properties: StaticResultRootSchemaType;
-  required?: string[];
-  additionalProperties?: boolean;
+const dropdownStyles: Partial<IDropdownStyles> = {
+  root: {
+    minHeight: '30px',
+    fontSize: '14px',
+  },
+  dropdown: {
+    minHeight: '30px',
+  },
+  title: {
+    height: '30px',
+    fontSize: '14px',
+    lineHeight: '30px',
+  },
+  caretDownWrapper: {
+    paddingTop: '4px',
+  },
+};
+
+const textFieldStyles: Partial<ITextFieldStyles> = {
+  fieldGroup: { height: 30, width: '100%', fontSize: 14 },
+  wrapper: { display: 'inline-flex', width: '100%', maxHeight: 40, alignItems: 'center' },
+};
+
+interface StaticResultProperty {
+  schema: StaticResultRootSchemaType;
 }
 
-export const StaticResultProperty = ({ properties, required = [] }: StaticResultPropertyProps): JSX.Element => {
-  const [shownProperties, setShownProperties] = useState<Record<string, boolean>>(initializeShownProperties(required, properties));
+function WrappedStaticResultProperty({ schema }: StaticResultProperty): JSX.Element {
+  const [defaultValue, setDefaultValue] = useState(schema.default);
+  console.log(schema);
 
-  const updateShownProperties = (newState: ChangeState) => {
-    const updatedProperties: Record<string, boolean> = {};
-    const checkedValues = newState.value[0].value.split(',');
-    Object.keys(properties).forEach((propertyName) => {
-      updatedProperties[propertyName] = checkedValues.includes(propertyName);
+  const getEnumValues = (): IDropdownOption[] => {
+    if (!schema.enum) return [];
+    return schema.enum.map((value) => {
+      return {
+        key: value,
+        text: value,
+      };
     });
-    setShownProperties(updatedProperties);
   };
+
+  const selectDropdownKey = (_event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption) => {
+    if (option) {
+      setDefaultValue(option.key as string);
+    }
+  };
+
   return (
-    <div>
-      <DropdownEditor
-        initialValue={formatShownProperties(shownProperties)}
-        options={getOptions(properties, required)}
-        multiSelect={true}
-        onChange={updateShownProperties}
-      />
-      {Object.entries(shownProperties).map(([propertyName, showProperty], key) => {
-        return showProperty ? <div key={key}> {propertyName} </div> : null;
-      })}
+    <div className="msla-static-result-property-container">
+      <Label text={schema.title ?? ''} />
+      {schema.type === constants.SWAGGER.TYPE.STRING ? (
+        schema.enum ? (
+          <Dropdown
+            className="msla-static-result-property-dropdown"
+            styles={dropdownStyles}
+            options={getEnumValues()}
+            selectedKey={defaultValue}
+            onChange={selectDropdownKey}
+          />
+        ) : (
+          <TextField className="msla-static-result-property-textField" styles={textFieldStyles} />
+        )
+      ) : (
+        <div />
+      )}
     </div>
   );
-};
+}
 
-const initializeShownProperties = (required: string[], properties?: StaticResultRootSchemaType): Record<string, boolean> => {
-  const shownProperties: Record<string, boolean> = {};
-  if (properties) {
-    Object.keys(properties).forEach((propertyName) => {
-      shownProperties[propertyName] = required.indexOf(propertyName) > -1;
-    });
-  }
-  return shownProperties;
-};
-
-const formatShownProperties = (properties: Record<string, boolean>): ValueSegment[] => {
-  const filteredProperties: Record<string, boolean> = Object.fromEntries(Object.entries(properties).filter(([, value]) => value));
-  return [{ id: guid(), type: ValueSegmentType.LITERAL, value: Object.keys(filteredProperties).toString() }];
-};
-
-const getOptions = (properties: StaticResultRootSchemaType, required: string[]): DropdownItem[] => {
-  const options: DropdownItem[] = [];
-  Object.keys(properties).forEach((propertyName, i) => {
-    options.push({ key: i.toString(), displayName: propertyName, value: propertyName, disabled: required.includes(propertyName) });
-  });
-  return options;
-};
+export const StaticResultProperty = React.memo(WrappedStaticResultProperty);

@@ -116,7 +116,6 @@ export const PanelRoot = (): JSX.Element => {
   }, [dispatch, operationInfo, isMonitoringView]);
 
   useEffect(() => {
-    console.log(hasSchema);
     dispatch(
       setTabVisibility({
         tabName: constants.PANEL_TAB_NAMES.TESTING,
