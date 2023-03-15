@@ -1,5 +1,5 @@
 import constants from '../../../../common/constants';
-import { getMonitoringError } from '../../../../common/utilities/error';
+import { getMonitoringTabError } from '../../../../common/utilities/error';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useBrandColor } from '../../../../core/state/selectors/actionMetadataSelector';
 import { useNodeMetadata } from '../../../../core/state/workflow/workflowSelectors';
@@ -19,7 +19,7 @@ export const MonitoringPanel: React.FC = () => {
   const brandColor = useBrandColor(selectedNodeId);
   const runMetaData = nodeMetadata?.runData;
   const { status: statusRun, error: errorRun, code: codeRun } = runMetaData ?? {};
-  const error = getMonitoringError(errorRun, statusRun, codeRun);
+  const error = getMonitoringTabError(errorRun, statusRun, codeRun);
 
   const getActionInputsOutputs = () => {
     return RunService().getActionLinks(runMetaData, selectedNodeId);

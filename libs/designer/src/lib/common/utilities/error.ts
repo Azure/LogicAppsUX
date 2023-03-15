@@ -1,9 +1,12 @@
 import constants from '../constants';
 import { MessageBarType } from '@fluentui/react/lib/MessageBar';
+import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 
 export interface ErrorProps {
   errorLevel?: MessageBarType;
   errorMessage?: string;
+  code?: string;
+  message?: string;
 }
 
 /**
@@ -22,6 +25,8 @@ export function getMonitoringError(
     return {
       errorLevel: undefined,
       errorMessage: undefined,
+      code: undefined,
+      message: undefined,
     };
   }
 
@@ -46,5 +51,25 @@ export function getMonitoringError(
   return {
     errorLevel,
     errorMessage,
+    code,
+    message,
   };
 }
+
+export const getMonitoringTabError = (
+  errorRun: { code: string; message: string } | undefined,
+  statusRun: string | undefined,
+  codeRun: string | undefined
+) => {
+  const { errorLevel, code, message } = getMonitoringError(errorRun, statusRun, codeRun);
+
+  if (isNullOrUndefined(message)) {
+    return undefined;
+  }
+
+  return {
+    code: code as string,
+    message: message as string,
+    messageBarType: errorLevel,
+  };
+};
