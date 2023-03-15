@@ -6,90 +6,88 @@
   "schemaTreeRoot": {
     "key": "/ns0:TargetPlaygroundRoot",
     "name": "TargetPlaygroundRoot",
-    "fullName": "ns0:TargetPlaygroundRoot",
-    "namespacePrefix": "ns0",
-    "namespaceUri": "http://tempuri.org/Target.xsd",
-    "normalizedDataType": "ComplexType",
-    "properties": "NotSpecified",
+    "qName": "ns0:TargetPlaygroundRoot",
+    "type": "Complex",
+    "properties": "None",
     "children": [
       {
         "key": "/ns0:TargetPlaygroundRoot/UserID",
         "name": "UserID",
-        "fullName": "UserID",
-        "normalizedDataType": "String",
-        "properties": "NotSpecified",
+        "qName": "UserID",
+        "type": "String",
+        "properties": "None",
         "parentKey": "/ns0:TargetPlaygroundRoot"
       },
       {
         "key": "/ns0:TargetPlaygroundRoot/@UserAttribute",
         "name": "UserAttribute",
-        "fullName": "@UserAttribute",
-        "normalizedDataType": "String",
+        "qName": "@UserAttribute",
+        "type": "String",
         "properties": "Attribute",
         "parentKey": "/ns0:TargetPlaygroundRoot"
       },
       {
         "key": "/ns0:TargetPlaygroundRoot/Metadata",
         "name": "Metadata",
-        "fullName": "Metadata",
-        "normalizedDataType": "Any",
-        "properties": "NotSpecified",
+        "qName": "Metadata",
+        "type": "Any",
+        "properties": "None",
         "parentKey": "/ns0:TargetPlaygroundRoot"
       },
       {
         "key": "/ns0:TargetPlaygroundRoot/DrinksCoffee",
         "name": "DrinksCoffee",
-        "fullName": "DrinksCoffee",
-        "normalizedDataType": "Bool",
-        "properties": "NotSpecified",
+        "qName": "DrinksCoffee",
+        "type": "Bool",
+        "properties": "None",
         "parentKey": "/ns0:TargetPlaygroundRoot"
       },
       {
         "key": "/ns0:TargetPlaygroundRoot/NumCoffees",
         "name": "NumCoffees",
-        "fullName": "NumCoffees",
-        "normalizedDataType": "Number",
-        "properties": "NotSpecified",
+        "qName": "NumCoffees",
+        "type": "Number",
+        "properties": "None",
         "parentKey": "/ns0:TargetPlaygroundRoot"
       },
       {
         "key": "/ns0:TargetPlaygroundRoot/IntNumCoffees",
         "name": "IntNumCoffees",
-        "fullName": "IntNumCoffees",
-        "normalizedDataType": "Integer",
-        "properties": "NotSpecified",
+        "qName": "IntNumCoffees",
+        "type": "Integer",
+        "properties": "None",
         "parentKey": "/ns0:TargetPlaygroundRoot"
       },
       {
         "key": "/ns0:TargetPlaygroundRoot/DecimalNumCoffeesOhAndAlsoThisNameWillBeReallyLongForTesting",
         "name": "DecimalNumCoffeesOhAndAlsoThisNameWillBeReallyLongForTesting",
-        "fullName": "DecimalNumCoffeesOhAndAlsoThisNameWillBeReallyLongForTesting",
-        "normalizedDataType": "Decimal",
-        "properties": "NotSpecified",
+        "qName": "DecimalNumCoffeesOhAndAlsoThisNameWillBeReallyLongForTesting",
+        "type": "Decimal",
+        "properties": "None",
         "parentKey": "/ns0:TargetPlaygroundRoot"
       },
       {
         "key": "/ns0:TargetPlaygroundRoot/RobotSpeak",
         "name": "RobotSpeak",
-        "fullName": "RobotSpeak",
-        "normalizedDataType": "Binary",
-        "properties": "NotSpecified",
+        "qName": "RobotSpeak",
+        "type": "Binary",
+        "properties": "None",
         "parentKey": "/ns0:TargetPlaygroundRoot"
       },
       {
         "key": "/ns0:TargetPlaygroundRoot/Birthday",
         "name": "Birthday",
-        "fullName": "Birthday",
-        "normalizedDataType": "DateTime",
+        "qName": "Birthday",
+        "type": "DateTime",
         "properties": "Optional",
         "parentKey": "/ns0:TargetPlaygroundRoot"
       },
       {
         "key": "/ns0:TargetPlaygroundRoot/ItsComplicated",
         "name": "ItsComplicated",
-        "fullName": "ItsComplicated",
-        "normalizedDataType": "ComplexType",
-        "properties": "NotSpecified",
+        "qName": "ItsComplicated",
+        "type": "Complex",
+        "properties": "None",
         "parentKey": "/ns0:TargetPlaygroundRoot"
       }
     ]

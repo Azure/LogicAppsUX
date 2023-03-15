@@ -132,7 +132,7 @@ export const SchemaTreeSearchbar = ({ onSearch, onClear, filteredDataTypes, setF
               const getMenuItemForDataType = (dataTypeKey: string, dataTypeValue: DataTypeFilterKeys) => {
                 const DataTypeIcon =
                   dataTypeValue === arrayType
-                    ? iconForNormalizedDataType(NormalizedDataType.ComplexType, 24, true, [SchemaNodeProperty.Repeating])
+                    ? iconForNormalizedDataType(NormalizedDataType.Complex, 24, true, [SchemaNodeProperty.Repeating])
                     : iconForNormalizedDataType(dataTypeValue, 24, true);
 
                 return (

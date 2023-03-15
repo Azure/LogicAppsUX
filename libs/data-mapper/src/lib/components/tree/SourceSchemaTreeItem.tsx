@@ -55,7 +55,7 @@ interface SourceSchemaTreeItemProps {
 const SourceSchemaTreeItem = ({ node, isNodeAdded, isNodeHovered }: SourceSchemaTreeItemProps) => {
   const styles = useSchemaTreeItemStyles();
 
-  const BundledTypeIcon = iconForNormalizedDataType(node.normalizedDataType, 16, true, node.nodeProperties);
+  const BundledTypeIcon = iconForNormalizedDataType(node.type, 16, true, node.nodeProperties);
 
   return (
     <Stack horizontal verticalAlign="center" style={{ width: '100%', minWidth: 0 }}>
