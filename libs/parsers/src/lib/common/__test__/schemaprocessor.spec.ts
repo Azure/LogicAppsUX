@@ -1,3 +1,4 @@
+import type { SchemaProcessorOptions } from '../schemaprocessor';
 import { SchemaProcessor } from '../schemaprocessor';
 
 type SchemaObject = OpenAPIV2.SchemaObject;
@@ -952,6 +953,55 @@ describe('SchemaProcessor Tests', () => {
     expect(a2.type).toBe('boolean');
     expect(a2.parentArray).toBe('key-body-output');
     expect(a2.isInsideArray).toBeTruthy();
+  });
+
+  it('should populate output details correctly when processing complex, multi-nested object parameter.', () => {
+    const fieldAlias = 'body/body/recipient';
+    const fieldKey = `inputs.$.body.body/body.${fieldAlias}`;
+    const fieldSubPropertyName = 'to';
+    const fieldSubPropertyAlias = `${fieldAlias}/${fieldSubPropertyName}`;
+    const fieldSubPropertyKey = `${fieldKey}.${fieldSubPropertyAlias}`;
+
+    const schema: SchemaObject = {
+      'x-ms-property-name-alias': fieldAlias,
+      properties: {
+        to: {
+          type: 'string',
+          title: 'Recipient',
+          'x-ms-dynamic-list': {
+            builtInOperation: 'AadGraph.GetUsers',
+            parameters: {},
+            itemValuePath: 'mail',
+            itemTitlePath: 'displayName',
+          },
+          description: 'Enter a name or email address',
+          'x-ms-visibility': 'important',
+          'x-ms-property-name-alias': fieldSubPropertyAlias,
+        },
+      },
+      required: ['to'],
+      type: 'object',
+    };
+
+    const options: SchemaProcessorOptions = {
+      keyPrefix: fieldKey,
+      parentProperty: {
+        visibility: '',
+      },
+      prefix: fieldAlias,
+      required: true,
+      useAliasedIndexing: true,
+    };
+
+    const parameters = new SchemaProcessor(options).getSchemaProperties(schema);
+
+    expect(parameters.length).toBe(1);
+
+    const recipientTo = parameters[0];
+    expect(recipientTo.alias).toBe(fieldSubPropertyAlias);
+    expect(recipientTo.key).toBe(fieldSubPropertyKey);
+    expect(recipientTo.name).toBe(fieldSubPropertyAlias);
+    expect(recipientTo.title).toBe('Recipient');
   });
 
   it('should return name correctly for type array when not expanding array outputs.', () => {
