@@ -1,9 +1,16 @@
 import constants from '../../../../common/constants';
+import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
+import { useOperationInfo } from '../../../../core/state/selectors/actionMetadataSelector';
+import { useStaticResultSchema } from '../../../../core/state/staticresultschema/staitcresultschemaselector';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { StaticResult } from '@microsoft/designer-ui';
 
 export const TestingPanel: React.FC = () => {
-  return <StaticResult />;
+  const selectedNode = useSelectedNodeId();
+  const operationInfo = useOperationInfo(selectedNode);
+  const { connectorId, operationId } = operationInfo;
+  const staticResultSchema = useStaticResultSchema(connectorId, operationId);
+  return <StaticResult staticResultSchema={staticResultSchema} />;
 };
 
 export const testingTab: PanelTab = {

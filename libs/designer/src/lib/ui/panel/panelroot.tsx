@@ -123,7 +123,7 @@ export const PanelRoot = (): JSX.Element => {
         visible: !isTriggerNode && hasSchema,
       })
     );
-  }, [dispatch, hasSchema, isTriggerNode]);
+  }, [dispatch, hasSchema, isTriggerNode, selectedNode]);
 
   useEffect(() => {
     if (!visibleTabs?.map((tab) => tab.name.toLowerCase())?.includes(selectedPanelTab ?? ''))
