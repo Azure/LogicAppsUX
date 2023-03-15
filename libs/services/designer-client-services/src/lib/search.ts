@@ -4,8 +4,11 @@ import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-a
 export interface ISearchService {
   search(term: string): Promise<SearchResult>;
   preloadOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
+  preloadOperationsByPage(page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
   getAllConnectors(): Promise<Connector[]>;
+  getAllConnectorsByPage(page: number): Promise<Connector[]>;
   getAllOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
+  getAllOperationsByPage(page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
 }
 
 let service: ISearchService;

@@ -15,6 +15,14 @@ export class ConsumptionSearchService extends BaseSearchService {
     );
   }
 
+  public async getAllOperationsByPage(page: number): Promise<DiscoveryOpArray> {
+    return Promise.all([
+      this.getAllAzureOperationsByPage(page),
+      this.getAllCustomApiOperationsByPage(page),
+      page === 0 ? this.getConsumptionBuiltInOperations() : [],
+    ]).then((values) => values.flat());
+  }
+
   public getConsumptionBuiltInOperations(): DiscoveryOpArray {
     const clientBuiltInOperations = getClientBuiltInOperations(true);
     const consumptionBuiltIn: any[] = [
@@ -39,6 +47,14 @@ export class ConsumptionSearchService extends BaseSearchService {
     return Promise.all([this.getAllAzureConnectors(), this.getAllCustomApiConnectors(), this.getConsumptionBuiltInConnectors()]).then(
       (values) => values.flat()
     );
+  }
+
+  public override async getAllConnectorsByPage(page: number): Promise<Connector[]> {
+    return Promise.all([
+      this.getAllAzureConnectorsByPage(page),
+      this.getAllCustomApiConnectorsByPage(page),
+      page === 0 ? this.getConsumptionBuiltInConnectors() : [],
+    ]).then((values) => values.flat());
   }
 
   public getConsumptionBuiltInConnectors(): Connector[] {

@@ -1,22 +1,15 @@
-import { useAllConnectors, useAllOperations, useTriggerCapabilities } from '../../../core/queries/browse';
+import { useAllConnectors } from '../../../core/queries/browse';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
-import { Spinner, SpinnerSize } from '@fluentui/react';
 import { BrowseGrid } from '@microsoft/designer-ui';
 import type { Connector } from '@microsoft/utils-logic-apps';
 import { isCustomConnector, isBuiltInConnector } from '@microsoft/utils-logic-apps';
-import { useCallback } from 'react';
-import { useIntl } from 'react-intl';
+import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 export const BrowseView = ({ filters }: { filters: Record<string, string> }) => {
   const dispatch = useDispatch();
 
-  const intl = useIntl();
-
-  const { data: allOperations, isLoading: operationsLoading } = useAllOperations();
-  const allConnectors = useAllConnectors();
-
-  const { data: triggerCapabilities } = useTriggerCapabilities(allOperations);
+  const { data: allConnectors, isLoading } = useAllConnectors();
 
   const filterItems = useCallback(
     (connector: Connector): boolean => {
@@ -27,35 +20,30 @@ export const BrowseView = ({ filters }: { filters: Record<string, string> }) => 
       }
 
       if (filters['actionType']) {
-        const { action, trigger } = triggerCapabilities?.[connector.id.toLowerCase()] ?? {};
-        if (filters['actionType'].toLowerCase() === 'triggers' && !trigger) return false;
-        else if (filters['actionType'].toLowerCase() === 'actions' && !action) return false;
+        const capabilities = connector.properties?.capabilities ?? [];
+        if (capabilities.length === 0) return true;
+        const supportsActions = capabilities.includes('actions');
+        const supportsTriggers = capabilities.includes('triggers');
+        if (filters['actionType'].toLowerCase() === 'triggers' && !supportsTriggers) return false;
+        else if (filters['actionType'].toLowerCase() === 'actions' && !supportsActions) return false;
       }
 
       return true;
     },
-    [filters, triggerCapabilities]
+    [filters]
   );
 
-  const loadingText = intl.formatMessage({
-    defaultMessage: 'Loading connectors...',
-    description: 'Message to show under the loading icon when loading connectors',
-  });
+  const sortedConnectors = useMemo(() => {
+    const connectors = allConnectors?.filter(filterItems) ?? [];
+    return connectors.sort((a, b) => a.properties.displayName.localeCompare(b.properties.displayName));
+  }, [allConnectors, filterItems]);
 
-  if (allConnectors.isLoading || operationsLoading) {
-    return (
-      <div className="msla-loading-container">
-        <Spinner size={SpinnerSize.large} label={loadingText} />
-      </div>
-    );
-  }
+  const onConnectorCardSelected = useCallback(
+    (id: string): void => {
+      dispatch(selectOperationGroupId(id));
+    },
+    [dispatch]
+  );
 
-  const connectors = allConnectors.data?.filter(filterItems) ?? [];
-  connectors.sort((a, b) => a.properties.displayName.localeCompare(b.properties.displayName));
-
-  const onConnectorCardSelected = (id: string): void => {
-    dispatch(selectOperationGroupId(id));
-  };
-
-  return <BrowseGrid onConnectorSelected={onConnectorCardSelected} connectors={connectors} />;
+  return <BrowseGrid onConnectorSelected={onConnectorCardSelected} connectors={sortedConnectors} isLoading={isLoading} />;
 };

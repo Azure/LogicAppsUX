@@ -1,5 +1,5 @@
 import { useLayout } from '../core/graphlayout';
-import { useAllOperations, useAllConnectors } from '../core/queries/browse';
+import { usePreloadOperationsQuery } from '../core/queries/browse';
 import { useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
@@ -112,8 +112,7 @@ export const Designer = () => {
   const isReadOnly = useReadOnly();
   const dispatch = useDispatch();
 
-  useAllOperations();
-  useAllConnectors();
+  usePreloadOperationsQuery();
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {

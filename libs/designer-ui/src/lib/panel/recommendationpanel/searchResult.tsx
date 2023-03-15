@@ -11,7 +11,8 @@ import React, { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 export type SearchResultsGridProps = {
-  isLoading?: boolean;
+  isLoadingMore: boolean;
+  isLoadingSearch: boolean;
   searchTerm: string;
   operationSearchResults: DiscoveryOperation<DiscoveryResultTypes>[];
   onConnectorClick: (connectorId: string) => void;
@@ -20,7 +21,8 @@ export type SearchResultsGridProps = {
 };
 
 export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProps>> = (props) => {
-  const { isLoading = false, searchTerm, operationSearchResults, onConnectorClick, onOperationClick, groupByConnector } = props;
+  const { isLoadingMore, isLoadingSearch, searchTerm, operationSearchResults, onConnectorClick, onOperationClick, groupByConnector } =
+    props;
 
   const intl = useIntl();
 
@@ -77,18 +79,18 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
   );
 
   const loadingText = intl.formatMessage({
-    defaultMessage: 'Loading search results...',
-    description: 'Message to show under the loading icon when loading search results',
+    defaultMessage: 'Loading more results...',
+    description: 'Message to show when loading search results',
   });
 
-  if (isLoading)
+  if (isLoadingSearch)
     return (
       <div className="msla-loading-container">
         <Spinner size={SpinnerSize.large} label={loadingText} />
       </div>
     );
 
-  if (operationSearchResults.length === 0)
+  if (!isLoadingMore && !isLoadingSearch && operationSearchResults.length === 0)
     return (
       <div className="msla-no-results-container">
         <img src={NoResultsSvg} alt={noResultsText?.toString()} />
@@ -98,6 +100,11 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
 
   return (
     <div className="msla-result-list">
+      {isLoadingMore && (
+        <div style={{ marginBottom: '16px' }}>
+          <Spinner label={loadingText} ariaLive="assertive" labelPosition="right" />
+        </div>
+      )}
       {groupByConnector ? (
         <List items={apiIds} onRenderCell={onRenderOperationGroup} />
       ) : (
