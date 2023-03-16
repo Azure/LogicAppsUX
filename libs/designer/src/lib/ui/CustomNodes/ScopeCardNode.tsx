@@ -140,6 +140,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     parameterValidationErrorText,
     errorRun,
     isMonitoringView,
+    codeRun,
+    statusRun,
   ]);
 
   if (!node) {

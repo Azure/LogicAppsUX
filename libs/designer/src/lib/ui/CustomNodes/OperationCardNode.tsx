@@ -172,6 +172,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     parameterValidationErrorText,
     isMonitoringView,
     errorRun,
+    statusRun,
+    codeRun,
   ]);
 
   return (
