@@ -158,7 +158,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
     return {
       panelId: this.panelName,
       connectionsData: await this.node.getConnectionsData(),
-      parametersData: await this.node.getParametersData(),
+      parametersData: parameters,
       localSettings: await this.node.getAppSettings(),
       accessToken,
       scriptPath: this.panel.webview.asWebviewUri(vscode.Uri.file(path.join(ext.context.extensionPath, 'dist', 'designer'))).toString(),
