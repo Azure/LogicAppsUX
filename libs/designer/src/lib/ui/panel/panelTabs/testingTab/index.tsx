@@ -10,7 +10,7 @@ export const TestingPanel: React.FC = () => {
   const operationInfo = useOperationInfo(selectedNode);
   const { connectorId, operationId } = operationInfo;
   const staticResultSchema = useStaticResultSchema(connectorId, operationId);
-  return <StaticResult staticResultSchema={staticResultSchema} />;
+  return staticResultSchema ? <StaticResult staticResultSchema={staticResultSchema} /> : null;
 };
 
 export const testingTab: PanelTab = {
