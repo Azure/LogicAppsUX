@@ -10,7 +10,7 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import type { Expression } from '@microsoft/parsers-logic-apps';
 import { ExpressionParser } from '@microsoft/parsers-logic-apps';
 import { guid } from '@microsoft/utils-logic-apps';
-import type { NodeKey } from 'lexical';
+import type { LexicalEditor, NodeKey } from 'lexical';
 import { useIntl } from 'react-intl';
 
 const FxIcon =
@@ -23,7 +23,12 @@ interface TokenPickerFooterProps {
 }
 
 export function TokenPickerFooter({ expression, expressionToBeUpdated, setExpressionEditorError }: TokenPickerFooterProps) {
-  const [editor] = useLexicalComposerContext();
+  let editor: LexicalEditor | null;
+  try {
+    [editor] = useLexicalComposerContext();
+  } catch {
+    editor = null;
+  }
   const intl = useIntl();
 
   const tokenPickerAdd = intl.formatMessage({
