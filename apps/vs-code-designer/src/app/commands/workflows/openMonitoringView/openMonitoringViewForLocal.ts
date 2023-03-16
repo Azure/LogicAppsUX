@@ -170,6 +170,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       scriptPath: this.panel.webview.asWebviewUri(vscode.Uri.file(path.join(ext.context.extensionPath, 'dist', 'designer'))).toString(),
       connectionsData,
       localSettings,
+      parametersData,
       azureDetails,
       accessToken: azureDetails.accessToken,
       workflowName: this.workflowName,
