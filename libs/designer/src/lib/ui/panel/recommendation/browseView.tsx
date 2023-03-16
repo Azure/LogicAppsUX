@@ -21,7 +21,6 @@ export const BrowseView = ({ filters }: { filters: Record<string, string> }) => 
 
       if (filters['actionType']) {
         const capabilities = connector.properties?.capabilities ?? [];
-        if (capabilities.length === 0) return true;
         const supportsActions = capabilities.includes('actions');
         const supportsTriggers = capabilities.includes('triggers');
         if (filters['actionType'].toLowerCase() === 'triggers' && !supportsTriggers) return false;
