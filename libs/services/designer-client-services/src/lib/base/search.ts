@@ -1,6 +1,5 @@
 import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
 import { azureOperationsResponse } from '../__test__/__mocks__/azureOperationResponse';
-import { almostAllBuiltInOperations } from '../__test__/__mocks__/builtInOperationResponse';
 import type { IHttpClient, QueryParameters } from '../httpClient';
 import { LoggerService } from '../logger';
 import type { ISearchService, SearchResult } from '../search';
@@ -67,30 +66,11 @@ export abstract class BaseSearchService implements ISearchService {
 
   // Paginated Preload
 
-  public preloadConnectorsByPage = async (pageNumber: number): Promise<Connector[]> => {
-    return this.getAzureConnectorsByPage(pageNumber);
-  };
-
-  public abstract getAllOperationsByPage(pageNumber: number): Promise<DiscoveryOpArray>;
-
   public abstract getCustomConnectorsByNextlink(prevNextlink?: string): Promise<{ nextlink?: string; value: Connector[] }>;
   public abstract getBuiltInConnectors(): Promise<Connector[]>;
 
-  // TODO - Need to add extra filtering for trigger/action
-  async getAllBuiltInOperations(): Promise<DiscoveryOpArray> {
-    if (this._isDev) {
-      return Promise.resolve([...almostAllBuiltInOperations, ...getClientBuiltInOperations(this.options.showStatefulOperations)]);
-    }
-    const { apiVersion, baseUrl, httpClient, showStatefulOperations } = this.options;
-    const uri = `${baseUrl}/operations`;
-    const queryParameters: QueryParameters = {
-      'api-version': apiVersion,
-      workflowKind: showStatefulOperations ? 'Stateful' : 'Stateless',
-    };
-    const response = await httpClient.get<AzureOperationsFetchResponse>({ uri, queryParameters });
-
-    return [...response.value, ...getClientBuiltInOperations(showStatefulOperations)];
-  }
+  public abstract getCustomOperationsByPage(page: number): Promise<DiscoveryOpArray>;
+  public abstract getBuiltInOperations(): Promise<DiscoveryOpArray>;
 
   async getAzureResourceByPage(uri: string, queryParams?: any, pageNumber = 0): Promise<{ value: any[]; hasMore: boolean }> {
     if (this._isDev) return { value: [], hasMore: false };
@@ -192,7 +172,7 @@ export abstract class BaseSearchService implements ISearchService {
     return operations;
   }
 
-  async getAllAzureOperationsByPage(page: number): Promise<DiscoveryOpArray> {
+  async getAzureOperationsByPage(page: number): Promise<DiscoveryOpArray> {
     const {
       apiHubServiceDetails: { location, subscriptionId },
     } = this.options;
@@ -241,7 +221,7 @@ export abstract class BaseSearchService implements ISearchService {
       apiHubServiceDetails: { location, subscriptionId },
     } = this.options;
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
-    const responseArray = await this.pagedBatchAzureResourceRequests(page, uri, undefined, 20);
+    const responseArray = await this.pagedBatchAzureResourceRequests(page, uri, undefined, 5);
     return this.moveGeneralInformation(responseArray);
   }
 
@@ -256,25 +236,6 @@ export abstract class BaseSearchService implements ISearchService {
         $filter: `properties/trigger eq null and type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
       };
       const response = await this.batchAzureResourceRequests(uri, queryParameters);
-      return response;
-    } catch (error) {
-      return [];
-    }
-  }
-
-  async getAllCustomApiOperationsByPage(page: number): Promise<DiscoveryOpArray> {
-    try {
-      const {
-        apiHubServiceDetails: { apiVersion, subscriptionId, location },
-      } = this.options;
-      if (this._isDev) return Promise.resolve([]);
-
-      const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
-      const queryParameters: QueryParameters = {
-        'api-version': apiVersion,
-        $filter: `properties/trigger eq null and type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
-      };
-      const response = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters);
       return response;
     } catch (error) {
       return [];

@@ -16,7 +16,7 @@ export interface OperationGroupDetailsPageProps {
 export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps> = (props) => {
   const { connector, operationActionsData, onOperationClick, isLoading } = props;
   const { id, properties } = connector;
-  const { displayName, description, iconUri, externalDocs } = properties;
+  const { displayName, description, iconUri, externalDocs, generalInformation } = properties;
 
   const intl = useIntl();
 
@@ -35,7 +35,13 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
 
   return (
     <div className="msla-op-group-detail-page">
-      <OperationGroupHeader id={id} title={displayName} description={description} iconUrl={iconUri} docsUrl={externalDocs?.url} />
+      <OperationGroupHeader
+        id={id}
+        title={displayName}
+        description={description ?? generalInformation?.description}
+        iconUrl={iconUri}
+        docsUrl={externalDocs?.url}
+      />
       {isHybrid ? <HybridNotice /> : null}
       <div className="msla-op-group-item-container">
         {!isLoading && operationActionsData.length === 0 ? (

@@ -2,7 +2,7 @@ import { getClientBuiltInConnectors, getClientBuiltInOperations, BaseSearchServi
 import type { DiscoveryOpArray } from '../base/search';
 import type { QueryParameters } from '../httpClient';
 import * as ClientOperationsData from '../standard/operations';
-import type { Connector } from '@microsoft/utils-logic-apps';
+import type { Connector, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
 
@@ -10,20 +10,16 @@ export class ConsumptionSearchService extends BaseSearchService {
   // Operations
 
   public async getAllOperations(): Promise<DiscoveryOpArray> {
-    return Promise.all([this.getAllAzureOperations(), this.getAllCustomApiOperations(), this.getConsumptionBuiltInOperations()]).then(
-      (values) => values.flat()
+    return Promise.all([this.getAllAzureOperations(), this.getAllCustomApiOperations(), this.getBuiltInOperations()]).then((values) =>
+      values.flat()
     );
   }
 
-  public async getAllOperationsByPage(page: number): Promise<DiscoveryOpArray> {
-    return Promise.all([
-      this.getAllAzureOperationsByPage(page),
-      this.getAllCustomApiOperationsByPage(page),
-      page === 0 ? this.getConsumptionBuiltInOperations() : [],
-    ]).then((values) => values.flat());
+  public getCustomOperationsByPage(_page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> {
+    return Promise.resolve([]);
   }
 
-  public getConsumptionBuiltInOperations(): DiscoveryOpArray {
+  public getBuiltInOperations(): Promise<DiscoveryOpArray> {
     const clientBuiltInOperations = getClientBuiltInOperations(true);
     const consumptionBuiltIn: any[] = [
       ClientOperationsData.inlineCodeOperation,
@@ -38,7 +34,7 @@ export class ConsumptionSearchService extends BaseSearchService {
       ClientOperationsData.xmlTransformOperation,
       ClientOperationsData.xmlValidationOperation,
     ];
-    return [...clientBuiltInOperations, ...consumptionBuiltIn];
+    return Promise.resolve([...clientBuiltInOperations, ...consumptionBuiltIn]);
   }
 
   // Connectors

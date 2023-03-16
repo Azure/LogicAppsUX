@@ -8,7 +8,9 @@ export interface ISearchService {
   getCustomConnectorsByNextlink(nextlink?: string): Promise<{ nextlink?: string; value: Connector[] }>;
   getBuiltInConnectors(): Promise<Connector[]>;
   getAllOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
-  getAllOperationsByPage(page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
+  getAzureOperationsByPage(page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
+  getCustomOperationsByPage(page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
+  getBuiltInOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
 }
 
 let service: ISearchService;
