@@ -587,15 +587,15 @@ export const StaticResultRootSchema: StaticResultRootSchemaType = {
       title: STATIC_RESULT_OPERATION_ERROR_TITLE,
       type: 'object',
       properties: {
-        code: {
-          title: STATIC_RESULT_ERROR_OBJECT_CODE_TITLE,
-          type: 'string',
-          enum: ValidResponseCodes,
-        },
         message: {
           title: STATIC_RESULT_ERROR_OBJECT_MESSAGE_TITLE,
           type: 'string',
           default: 'Unknown error',
+        },
+        code: {
+          title: STATIC_RESULT_ERROR_OBJECT_CODE_TITLE,
+          type: 'string',
+          enum: ValidResponseCodes,
         },
       },
       required: ['message'],

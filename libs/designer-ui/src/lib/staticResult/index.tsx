@@ -6,8 +6,10 @@ import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface StaticResultProps {
+  title?: string;
   enabled?: boolean;
   staticResultSchema: OpenAPIV2.SchemaObject;
+  showEnableButton?: boolean;
 }
 
 export type StaticResultRootSchemaType = OpenAPIV2.SchemaObject & {
@@ -19,7 +21,7 @@ export type StaticResultRootSchemaType = OpenAPIV2.SchemaObject & {
   };
 };
 
-export const StaticResult = ({ enabled, staticResultSchema }: StaticResultProps): JSX.Element => {
+export const StaticResult = ({ title, enabled, staticResultSchema, showEnableButton = true }: StaticResultProps): JSX.Element => {
   const intl = useIntl();
   const { isInverted } = useTheme();
   const [showStaticResults, setShowStaticResults] = useState<boolean>(enabled ?? false);
@@ -55,17 +57,19 @@ export const StaticResult = ({ enabled, staticResultSchema }: StaticResultProps)
   };
 
   const { properties, additionalProperties, required } = useMemo(() => {
-    return parseStaticReultSchema(staticResultSchema);
+    return parseStaticResultSchema(staticResultSchema);
   }, [staticResultSchema]);
 
   return (
     <div className="msla-panel-testing-container">
-      <Toggle
-        label={getLabel()}
-        onChange={() => {
-          setShowStaticResults(!showStaticResults);
-        }}
-      />
+      {showEnableButton ? (
+        <Toggle
+          label={getLabel()}
+          onChange={() => {
+            setShowStaticResults(!showStaticResults);
+          }}
+        />
+      ) : null}
       {showStaticResults ? (
         <div className="msla-static-result-container">
           <button className="msla-static-result-container-header" onClick={() => setExpanded(!expanded)}>
@@ -75,7 +79,7 @@ export const StaticResult = ({ enabled, staticResultSchema }: StaticResultProps)
               iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
               styles={{ root: { fontSize: 14, color: isInverted ? constants.STANDARD_TEXT_COLOR : constants.CHEVRON_ROOT_COLOR_LIGHT } }}
             />
-            <div className="msla-static-result-container-header-text">{testingTitle}</div>
+            <div className="msla-static-result-container-header-text">{title ?? testingTitle}</div>
           </button>
           {expanded ? (
             <StaticResultProperties
@@ -90,7 +94,7 @@ export const StaticResult = ({ enabled, staticResultSchema }: StaticResultProps)
   );
 };
 
-const parseStaticReultSchema = (staticResultSchema: OpenAPIV2.SchemaObject) => {
+const parseStaticResultSchema = (staticResultSchema: OpenAPIV2.SchemaObject) => {
   const { additionalProperties, properties, required, type } = staticResultSchema;
   return {
     additionalProperties,

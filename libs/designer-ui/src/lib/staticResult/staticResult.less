@@ -38,3 +38,42 @@
     width: 50%;
   }
 }
+.msla-static-result-property-inner {
+  padding-top: 10px;
+  padding-left: 30px;
+}
+.msla-property-editor-container {
+  border: 1px solid #8a8886;
+  display: flex;
+  padding: 10px;
+  .msla-property-editors {
+    width: 95%;
+
+    .msla-property-editor-property {
+      .msla-property-editor-property-header {
+        display: flex;
+        justify-content: space-between;
+        .msla-property-editor-property-header-text {
+          width: 80%;
+        }
+        .msla-property-editor-property-header-icon {
+          width: 20%;
+        }
+      }
+    }
+    .msla-property-editor-new-property {
+      margin-top: 15px;
+      border-top: @border;
+      display: flex;
+      justify-content: space-between;
+      .msla-property-editor-add-new-property-button {
+        margin-top: 12px;
+      }
+    }
+  }
+  .msla-propery-editor-commands {
+    vertical-align: top;
+    display: inline-block;
+    align-self: flex-start;
+  }
+}

@@ -36,15 +36,16 @@ export const HttpStaticResultSchema = {
           default: 'OK',
           enum: getAllValidStatusCodes(true),
         },
-        body: {
-          title: STATIC_RESULT_HTTP_BODY_TITLE,
-        } as Schema,
         headers: {
           type: 'object',
           additionalProperties: {
             type: 'string',
           },
           title: STATIC_RESULT_HTTP_HEADERS_TITLE,
+        } as Schema,
+        body: {
+          type: 'string',
+          title: STATIC_RESULT_HTTP_BODY_TITLE,
         } as Schema,
       },
       type: 'object',

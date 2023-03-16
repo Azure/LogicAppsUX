@@ -44,7 +44,7 @@ export const StaticResultProperties = ({ propertiesSchema, required = [] }: Stat
       </div>
       {Object.entries(shownProperties).map(([propertyName, showProperty], key) => {
         return showProperty && propertiesSchema[propertyName] ? (
-          <StaticResultProperty schema={propertiesSchema[propertyName]} key={key} />
+          <StaticResultProperty schema={propertiesSchema[propertyName]} key={key} required={required.includes(propertyName)} />
         ) : null;
       })}
     </div>
@@ -62,19 +62,22 @@ const initializeShownProperties = (required: string[], propertiesSchema?: Static
 };
 
 const formatShownProperties = (propertiesSchema: Record<string, boolean>): ValueSegment[] => {
+  if (!propertiesSchema) return [];
   const filteredProperties: Record<string, boolean> = Object.fromEntries(Object.entries(propertiesSchema).filter(([, value]) => value));
   return [{ id: guid(), type: ValueSegmentType.LITERAL, value: Object.keys(filteredProperties).toString() }];
 };
 
 const getOptions = (propertiesSchema: StaticResultRootSchemaType, required: string[]): DropdownItem[] => {
   const options: DropdownItem[] = [];
-  Object.keys(propertiesSchema).forEach((propertyName, i) => {
-    options.push({
-      key: i.toString(),
-      displayName: `${capitalizeFirstLetter(propertyName)}${required.includes(propertyName) ? '*' : ''}`,
-      value: propertyName,
-      disabled: required.includes(propertyName),
+  if (propertiesSchema) {
+    Object.keys(propertiesSchema).forEach((propertyName, i) => {
+      options.push({
+        key: i.toString(),
+        displayName: `${capitalizeFirstLetter(propertyName)}`,
+        value: propertyName,
+        disabled: required.includes(propertyName),
+      });
     });
-  });
+  }
   return options;
 };

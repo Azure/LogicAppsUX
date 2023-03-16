@@ -1,0 +1,71 @@
+import type { IButtonStyles, IContextualMenuProps } from '@fluentui/react';
+import { DefaultButton, TooltipHost } from '@fluentui/react';
+import { useIntl } from 'react-intl';
+
+interface ItemMenuButtonProps {
+  disabled: boolean;
+  onDeleteClicked: () => void;
+  onRenameClicked: () => void;
+}
+
+const menuButtonStyles: IButtonStyles = {
+  root: {
+    height: '30px',
+    padding: 0,
+    border: 'none',
+    minWidth: '40px',
+    width: '40px',
+  },
+};
+
+const ContextMenuKeys = {
+  DELETE: 'delete',
+  RENAME: 'rename',
+};
+
+export const ItemMenuButton = ({ disabled, onDeleteClicked, onRenameClicked }: ItemMenuButtonProps): JSX.Element => {
+  const intl = useIntl();
+
+  const deleteButton = intl.formatMessage({
+    defaultMessage: 'Delete',
+    description: 'Delete label',
+  });
+
+  const renameButton = intl.formatMessage({
+    defaultMessage: 'Rename',
+    description: 'Rename label',
+  });
+
+  const menuLabel = intl.formatMessage({
+    defaultMessage: 'Menu',
+    description: 'Menu label',
+  });
+
+  const menuProps: IContextualMenuProps = {
+    items: [
+      {
+        key: ContextMenuKeys.DELETE,
+        name: deleteButton,
+        iconProps: { iconName: 'Delete' },
+      },
+      {
+        key: ContextMenuKeys.RENAME,
+        name: renameButton,
+        iconProps: { iconName: 'Rename' },
+      },
+    ],
+    onItemClick(_, menuItem) {
+      if (menuItem?.key === ContextMenuKeys.DELETE) {
+        onDeleteClicked();
+      } else if (menuItem?.key === ContextMenuKeys.RENAME) {
+        onRenameClicked();
+      }
+    },
+  };
+
+  return (
+    <TooltipHost content={menuLabel}>
+      <DefaultButton ariaLabel={menuLabel} disabled={disabled} styles={menuButtonStyles} menuProps={menuProps} />
+    </TooltipHost>
+  );
+};
