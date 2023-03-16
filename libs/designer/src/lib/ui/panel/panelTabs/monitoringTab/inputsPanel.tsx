@@ -1,5 +1,6 @@
 import { HostService, ContentType } from '@microsoft/designer-client-services-logic-apps';
 import { ValuesPanel } from '@microsoft/designer-ui';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface InputsPanelProps {
@@ -12,6 +13,7 @@ export interface InputsPanelProps {
 }
 
 export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColor, nodeId, values, isLoading, isError }) => {
+  const [showMore, setShowMore] = useState<boolean>(false);
   const intl = useIntl();
 
   const intlText = {
@@ -43,6 +45,10 @@ export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColo
     HostService().fetchAndDisplayContent(nodeId, inputsLink.uri, ContentType.Inputs);
   };
 
+  const onMoreClick = () => {
+    setShowMore((current) => !current);
+  };
+
   return (
     <>
       {inputsLink ? (
@@ -54,7 +60,8 @@ export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColo
           values={values}
           labelledBy={`inputs-${nodeId}`}
           noValuesText={isError ? intlText.inputsError : isLoading ? intlText.inputsLoading : intlText.noInputs}
-          showMore={false}
+          showMore={showMore}
+          onMoreClick={onMoreClick}
           onLinkClick={onSeeRawInputsClick}
         />
       ) : null}

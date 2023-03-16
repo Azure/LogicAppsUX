@@ -1,5 +1,6 @@
 import { HostService, ContentType } from '@microsoft/designer-client-services-logic-apps';
 import { ValuesPanel } from '@microsoft/designer-ui';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface OutputsPanelProps {
@@ -12,6 +13,7 @@ export interface OutputsPanelProps {
 }
 
 export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandColor, nodeId, values, isLoading, isError }) => {
+  const [showMore, setShowMore] = useState<boolean>(false);
   const intl = useIntl();
 
   const intlText = {
@@ -43,6 +45,10 @@ export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandCo
     HostService().fetchAndDisplayContent(nodeId, outputsLink.uri, ContentType.Outputs);
   };
 
+  const onMoreClick = () => {
+    setShowMore((current) => !current);
+  };
+
   return (
     <>
       {outputsLink ? (
@@ -54,7 +60,8 @@ export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandCo
           values={values}
           labelledBy={`outputs-${nodeId}`}
           noValuesText={isError ? intlText.outputsError : isLoading ? intlText.outputsLoading : intlText.noOutputs}
-          showMore={false}
+          showMore={showMore}
+          onMoreClick={onMoreClick}
           onLinkClick={onSeeRawOutputsClick}
         />
       ) : null}
