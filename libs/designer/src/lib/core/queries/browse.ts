@@ -3,37 +3,52 @@ import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-
 import { useEffect, useMemo } from 'react';
 import { useInfiniteQuery, useQuery } from 'react-query';
 
-//This allows preloading to start at designer load so operations are ready
-// or close to ready by the time they are needed. This call is very heavy.
-export const usePreloadOperationsQuery = () => {
-  const {
-    isLoading: opIsLoading,
-    fetchNextPage: fetchNextOpPage,
-    hasNextPage: hasNextOpPage,
-    isFetchingNextPage: isFetchingNextOpPage,
-  } = useAllOperationsLazyQuery();
+// This allows preloading to start at designer load so operations are ready
+//  or close to ready by the time they are needed
+
+export const usePreloadOperationsQuery = (): any => {
+  const { isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useAllOperationsLazyQuery();
 
   useEffect(() => {
-    if (opIsLoading || isFetchingNextOpPage) return;
-    if (!hasNextOpPage) return;
-    fetchNextOpPage();
-  }, [fetchNextOpPage, hasNextOpPage, isFetchingNextOpPage, opIsLoading]);
+    if (isLoading || isFetchingNextPage) return;
+    if (!hasNextPage) return;
+    fetchNextPage();
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, isLoading]);
 
+  return { isLoading };
+};
+
+export const usePreloadConnectorsQuery = (): any => {
   const {
-    isLoading: connIsLoading,
-    fetchNextPage: fetchNextConnPage,
-    hasNextPage: hasNextConnPage,
-    isFetchingNextPage: isFetchingNextConnPage,
-  } = useAllConnectorsLazyQuery();
+    isLoading: azureIsLoading,
+    fetchNextPage: fetchNextAzurePage,
+    hasNextPage: hasNextAzurePage,
+    isFetchingNextPage: isFetchingNextAzurePage,
+  } = useAzureConnectorsLazyQuery();
 
   useEffect(() => {
-    if (connIsLoading || isFetchingNextConnPage) return;
-    if (!hasNextConnPage) return;
-    fetchNextConnPage();
-  }, [fetchNextConnPage, hasNextConnPage, connIsLoading, isFetchingNextConnPage]);
+    if (azureIsLoading || isFetchingNextAzurePage) return;
+    if (!hasNextAzurePage) return;
+    fetchNextAzurePage();
+  }, [azureIsLoading, fetchNextAzurePage, hasNextAzurePage, isFetchingNextAzurePage]);
+
+  const {
+    isLoading: customIsLoading,
+    fetchNextPage: fetchNextCustomPage,
+    hasNextPage: hasNextCustomPage,
+    isFetchingNextPage: isFetchingNextCustomPage,
+  } = useCustomConnectorsLazyQuery();
+
+  useEffect(() => {
+    if (customIsLoading || isFetchingNextCustomPage) return;
+    if (!hasNextCustomPage) return;
+    fetchNextCustomPage();
+  }, [customIsLoading, fetchNextCustomPage, hasNextCustomPage, isFetchingNextCustomPage]);
+
+  const { isLoading: builtinIsLoading } = useBuiltInConnectorsQuery();
 
   return {
-    isLoading: opIsLoading || connIsLoading,
+    isLoading: azureIsLoading || customIsLoading || builtinIsLoading,
   };
 };
 
@@ -44,7 +59,7 @@ const queryOpts = {
   refetchOnReconnect: false,
 };
 
-export const useAllOperationsLazyQuery = () =>
+const useAllOperationsLazyQuery = () =>
   useInfiniteQuery(
     ['allOperationsLazy'],
     async ({ pageParam = 0 }: any) => {
@@ -68,11 +83,11 @@ export const useAllOperations = () => {
   );
 };
 
-export const useAllConnectorsLazyQuery = () =>
+const useAzureConnectorsLazyQuery = () =>
   useInfiniteQuery(
-    ['allConnectorsLazy'],
+    ['allConnectorsLazy', 'azure'],
     async ({ pageParam = 0 }: any) => {
-      const data = await SearchService().getAllConnectorsByPage(pageParam);
+      const data = await SearchService().getAzureConnectorsByPage(pageParam);
       return { data, pageParam };
     },
     {
@@ -81,15 +96,48 @@ export const useAllConnectorsLazyQuery = () =>
     }
   );
 
-export const useAllConnectors = () => {
-  const { data, isLoading, hasNextPage } = useAllConnectorsLazyQuery();
-  return useMemo(
-    () => ({
-      data: data?.pages.flatMap((page) => page.data) ?? [],
-      isLoading: (isLoading || hasNextPage) ?? false,
-    }),
-    [data, isLoading, hasNextPage]
+const useCustomConnectorsLazyQuery = () =>
+  useInfiniteQuery(
+    ['allConnectorsLazy', 'custom'],
+    async ({ pageParam }: any) => {
+      const { nextlink, value } = await SearchService().getCustomConnectorsByNextlink(pageParam);
+      return { data: value, pageParam: nextlink };
+    },
+    {
+      ...queryOpts,
+      getNextPageParam: (lastPage) => lastPage.pageParam,
+    }
   );
+
+const useBuiltInConnectorsQuery = () =>
+  useQuery(
+    ['allConnectorsLazy', 'builtin'],
+    async () => {
+      const data = await SearchService().getBuiltInConnectors();
+      return data;
+    },
+    queryOpts
+  );
+
+export const useAllConnectors = () => {
+  const { data: azureData, isLoading: azureLoading, hasNextPage: azureHasNextPage } = useAzureConnectorsLazyQuery();
+  const { data: customData, isLoading: customLoading, hasNextPage: customHasNextPage } = useCustomConnectorsLazyQuery();
+  const { data: builtinData, isLoading: builtinLoading } = useBuiltInConnectorsQuery();
+
+  const hasNextPage = useMemo(() => azureHasNextPage || customHasNextPage, [azureHasNextPage, customHasNextPage]);
+  const isLoading = useMemo(
+    () => hasNextPage || azureLoading || customLoading || builtinLoading,
+    [hasNextPage, azureLoading, customLoading, builtinLoading]
+  );
+
+  const data = useMemo(() => {
+    const azure = azureData?.pages.flatMap((page) => page.data) ?? [];
+    const custom = customData?.pages.flatMap((page) => page.data) ?? [];
+    const builtin = builtinData ?? [];
+    return [...azure, ...custom, ...builtin];
+  }, [azureData, customData, builtinData]);
+
+  return useMemo(() => ({ data, isLoading }), [data, isLoading]);
 };
 
 type TriggerCapabilitiesType = Record<string, { trigger?: boolean; action?: boolean }>;

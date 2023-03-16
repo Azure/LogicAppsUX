@@ -45,7 +45,7 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
           <OperationSearchCard key={op.id} operationActionData={op} onClick={onOperationClick} />
         ))}
         {isLoading ? (
-          <div style={{ margin: '16px' }}>
+          <div style={{ margin: '16px 0' }}>
             <Spinner label={loadingText} ariaLive="assertive" labelPosition="right" />
           </div>
         ) : null}

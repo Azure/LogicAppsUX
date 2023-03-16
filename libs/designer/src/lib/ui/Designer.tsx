@@ -1,5 +1,5 @@
 import { useLayout } from '../core/graphlayout';
-import { usePreloadOperationsQuery } from '../core/queries/browse';
+import { usePreloadConnectorsQuery, usePreloadOperationsQuery } from '../core/queries/browse';
 import { useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
@@ -113,6 +113,7 @@ export const Designer = () => {
   const dispatch = useDispatch();
 
   usePreloadOperationsQuery();
+  usePreloadConnectorsQuery();
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
@@ -178,6 +179,7 @@ export const Designer = () => {
       },
     ],
   };
+
   return (
     <DndProvider options={DND_OPTIONS}>
       <div id="msla-designer-canvas" className="msla-designer-canvas msla-panel-mode">

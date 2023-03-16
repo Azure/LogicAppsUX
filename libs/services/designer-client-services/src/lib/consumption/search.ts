@@ -44,20 +44,12 @@ export class ConsumptionSearchService extends BaseSearchService {
   // Connectors
 
   public override async getAllConnectors(): Promise<Connector[]> {
-    return Promise.all([this.getAllAzureConnectors(), this.getAllCustomApiConnectors(), this.getConsumptionBuiltInConnectors()]).then(
-      (values) => values.flat()
+    return Promise.all([this.getAllAzureConnectors(), this.getAllCustomApiConnectors(), this.getBuiltInConnectors()]).then((values) =>
+      values.flat()
     );
   }
 
-  public override async getAllConnectorsByPage(page: number): Promise<Connector[]> {
-    return Promise.all([
-      this.getAllAzureConnectorsByPage(page),
-      this.getAllCustomApiConnectorsByPage(page),
-      page === 0 ? this.getConsumptionBuiltInConnectors() : [],
-    ]).then((values) => values.flat());
-  }
-
-  public getConsumptionBuiltInConnectors(): Connector[] {
+  public getBuiltInConnectors(): Promise<Connector[]> {
     const clientBuiltInConnectors = getClientBuiltInConnectors(true);
     const consumptionBuiltIn: any[] = [
       ClientOperationsData.inlineCodeGroup,
@@ -67,7 +59,11 @@ export class ConsumptionSearchService extends BaseSearchService {
       ClientOperationsData.liquidGroup,
       ClientOperationsData.xmlGroup,
     ];
-    return [...clientBuiltInConnectors, ...consumptionBuiltIn];
+    return Promise.resolve([...clientBuiltInConnectors, ...consumptionBuiltIn]);
+  }
+
+  public getCustomConnectorsByNextlink(_nextlink?: string): Promise<any> {
+    return Promise.resolve([]);
   }
 
   // Get 'Batch' Connector Data - Not implemented yet

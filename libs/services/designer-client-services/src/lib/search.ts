@@ -3,10 +3,10 @@ import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-a
 
 export interface ISearchService {
   search(term: string): Promise<SearchResult>;
-  preloadOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
-  preloadOperationsByPage(page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
   getAllConnectors(): Promise<Connector[]>;
-  getAllConnectorsByPage(page: number): Promise<Connector[]>;
+  getAzureConnectorsByPage(page: number): Promise<Connector[]>;
+  getCustomConnectorsByNextlink(nextlink?: string): Promise<{ nextlink?: string; value: Connector[] }>;
+  getBuiltInConnectors(): Promise<Connector[]>;
   getAllOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
   getAllOperationsByPage(page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
 }

@@ -14,7 +14,7 @@ import type {
 } from '@microsoft/utils-logic-apps';
 import { equals, ArgumentException, MockSearchOperations } from '@microsoft/utils-logic-apps';
 
-interface ContinuationTokenResponse<T> {
+export interface ContinuationTokenResponse<T> {
   // danielle to move
   value: T;
   nextLink: string;
@@ -63,24 +63,18 @@ export abstract class BaseSearchService implements ISearchService {
     return Promise.resolve(result);
   };
 
-  public preloadOperations = async (): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> => {
-    return this.getAllOperations();
-  };
-
   public abstract getAllOperations(): Promise<DiscoveryOpArray>;
 
   // Paginated Preload
 
-  public preloadOperationsByPage = async (pageNumber: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> => {
-    return this.getAllOperationsByPage(pageNumber);
-  };
-
   public preloadConnectorsByPage = async (pageNumber: number): Promise<Connector[]> => {
-    return this.getAllConnectorsByPage(pageNumber);
+    return this.getAzureConnectorsByPage(pageNumber);
   };
 
   public abstract getAllOperationsByPage(pageNumber: number): Promise<DiscoveryOpArray>;
-  public abstract getAllConnectorsByPage(pageNumber: number): Promise<Connector[]>;
+
+  public abstract getCustomConnectorsByNextlink(prevNextlink?: string): Promise<{ nextlink?: string; value: Connector[] }>;
+  public abstract getBuiltInConnectors(): Promise<Connector[]>;
 
   // TODO - Need to add extra filtering for trigger/action
   async getAllBuiltInOperations(): Promise<DiscoveryOpArray> {
@@ -146,9 +140,7 @@ export abstract class BaseSearchService implements ISearchService {
     return output;
   }
 
-  async pagedBatchAzureResourceRequests(batchIteration: number, uri: string, queryParams?: any): Promise<any[]> {
-    const batchSize = 20; // Number of calls to make in parallel
-
+  async pagedBatchAzureResourceRequests(batchIteration: number, uri: string, queryParams?: any, batchSize = 50): Promise<any[]> {
     const output: any[] = [];
     await Promise.all(
       Array.from(Array(batchSize).keys()).map(async (index) => {
@@ -235,7 +227,7 @@ export abstract class BaseSearchService implements ISearchService {
     return this.moveGeneralInformation(responseArray);
   }
 
-  async getAllAzureConnectorsByPage(page: number): Promise<Connector[]> {
+  async getAzureConnectorsByPage(page: number): Promise<Connector[]> {
     if (this._isDev) {
       if (page === 0) {
         const connectors = AzureConnectorMock.value as Connector[];
@@ -249,7 +241,7 @@ export abstract class BaseSearchService implements ISearchService {
       apiHubServiceDetails: { location, subscriptionId },
     } = this.options;
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
-    const responseArray = await this.pagedBatchAzureResourceRequests(page, uri);
+    const responseArray = await this.pagedBatchAzureResourceRequests(page, uri, undefined, 20);
     return this.moveGeneralInformation(responseArray);
   }
 
@@ -300,24 +292,6 @@ export abstract class BaseSearchService implements ISearchService {
         $filter: `${ISE_RESOURCE_ID} eq null`,
       };
       const response = await this.batchAzureResourceRequests(uri, queryParameters);
-      const locationFilteredResponse = response.filter((connector: any) => equals(connector.location, location));
-      return locationFilteredResponse;
-    } catch (error) {
-      return [];
-    }
-  }
-
-  async getAllCustomApiConnectorsByPage(page: number): Promise<Connector[]> {
-    try {
-      const {
-        apiHubServiceDetails: { apiVersion, subscriptionId, location },
-      } = this.options;
-      const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/customApis`;
-      const queryParameters: QueryParameters = {
-        'api-version': apiVersion,
-        $filter: `${ISE_RESOURCE_ID} eq null`,
-      };
-      const response = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters);
       const locationFilteredResponse = response.filter((connector: any) => equals(connector.location, location));
       return locationFilteredResponse;
     } catch (error) {
