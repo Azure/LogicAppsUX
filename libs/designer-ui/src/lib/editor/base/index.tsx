@@ -44,7 +44,7 @@ export type GetTokenPickerHandler = (
   tokenPickerMode?: TokenPickerMode,
   closeTokenPicker?: () => void,
   tokenPickerClicked?: (b: boolean) => void,
-  tokenClicked?: (token: ValueSegment) => void
+  tokenClickedCallback?: (token: ValueSegment) => void
 ) => JSX.Element;
 
 export type ChangeHandler = (newState: ChangeState) => void;
