@@ -1,5 +1,5 @@
 import { HostService, ContentType } from '@microsoft/designer-client-services-logic-apps';
-import { ValuesPanel } from '@microsoft/designer-ui';
+import { ValuesPanel, SecureDataSection } from '@microsoft/designer-ui';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -40,6 +40,7 @@ export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandCo
   };
 
   const { outputsLink } = runMetaData;
+  const areOutputsSecured = true;
 
   const onSeeRawOutputsClick = (): void => {
     HostService().fetchAndDisplayContent(nodeId, outputsLink.uri, ContentType.Outputs);
@@ -51,7 +52,9 @@ export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandCo
 
   return (
     <>
-      {outputsLink ? (
+      {areOutputsSecured ? (
+        <SecureDataSection brandColor={brandColor} headerText={intlText.outputs} />
+      ) : values ? (
         <ValuesPanel
           brandColor={brandColor}
           headerText={intlText.outputs}
