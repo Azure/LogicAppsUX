@@ -141,7 +141,14 @@ export const App = () => {
     );
 
   const designerApp = standardApp ? (
-    <BJSWorkflowProvider workflow={{ definition: standardApp.definition, connectionReferences }} runInstance={runInstance}>
+    <BJSWorkflowProvider
+      workflow={{
+        definition: standardApp.definition,
+        connectionReferences,
+        parameters: panelMetaData?.parametersData,
+      }}
+      runInstance={runInstance}
+    >
       <Designer />
     </BJSWorkflowProvider>
   ) : (
