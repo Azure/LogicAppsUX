@@ -2,6 +2,7 @@ import constants from '../constants';
 import type { IButtonStyles } from '@fluentui/react';
 import { IconButton } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import type { LexicalEditor } from 'lexical';
 import { useIntl } from 'react-intl';
 
 const buttonStyles: IButtonStyles = {
@@ -24,7 +25,12 @@ interface TokenPickerHeaderProps {
 }
 
 export function TokenPickerHeader({ fullScreen, closeTokenPicker, setFullScreen }: TokenPickerHeaderProps) {
-  const [editor] = useLexicalComposerContext();
+  let editor: LexicalEditor | null;
+  try {
+    [editor] = useLexicalComposerContext();
+  } catch {
+    editor = null;
+  }
   const intl = useIntl();
 
   const closeMessage = intl.formatMessage({
@@ -47,7 +53,7 @@ export function TokenPickerHeader({ fullScreen, closeTokenPicker, setFullScreen 
   });
 
   const handleCloseTokenPicker = () => {
-    editor.focus();
+    editor?.focus();
     closeTokenPicker?.();
   };
   return (

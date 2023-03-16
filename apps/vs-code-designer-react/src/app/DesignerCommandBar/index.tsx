@@ -1,10 +1,15 @@
 import { VSCodeContext } from '../../webviewCommunication';
 import type { ICommandBarItemProps } from '@fluentui/react';
 import { CommandBar } from '@fluentui/react';
-import { serializeWorkflow as serializeBJSWorkflow, store as DesignerStore } from '@microsoft/logic-apps-designer';
+import {
+  serializeWorkflow as serializeBJSWorkflow,
+  store as DesignerStore,
+  switchToWorkflowParameters,
+} from '@microsoft/logic-apps-designer';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { useContext } from 'react';
 import { useIntl } from 'react-intl';
+import { useDispatch } from 'react-redux';
 
 export interface DesignerCommandBarProps {
   isMonitoringView: boolean;
@@ -16,6 +21,7 @@ export interface DesignerCommandBarProps {
 export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonitoringView, isRefreshing, isDisabled, onRefresh }) => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
+  const dispatch = useDispatch();
 
   const onSave = async () => {
     const designerState = DesignerStore.getState();
@@ -23,6 +29,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonito
       skipValidation: true,
       ignoreNonCriticalErrors: true,
     });
+    console.log(parameters);
     vscode.postMessage({
       command: ExtensionCommand.save,
       definition,
@@ -72,7 +79,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonito
       key: 'Parameter',
       name: Resources.DESIGNER_PARAMETERS,
       onClick: () => {
-        return true;
+        dispatch(switchToWorkflowParameters());
       },
     },
   ];

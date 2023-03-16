@@ -96,7 +96,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     [currentNode, targetSchemaDictionary]
   );
 
-  const DataTypeIcon = iconForNormalizedDataType(currentNode.normalizedDataType, 16, false, currentNode.nodeProperties);
+  const DataTypeIcon = iconForNormalizedDataType(currentNode.type, 16, false, currentNode.nodeProperties);
 
   const connection = useMemo<Connection | undefined>(
     () => connectionDictionary[addTargetReactFlowPrefix(currentNode.key)],
@@ -130,7 +130,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
         <Label style={{ gridColumn: gridColumnSpan1 }}>{dataTypeLoc}</Label>
         <Stack horizontal verticalAlign="center" style={{ gridColumn: gridColumnSpan2 }}>
           <DataTypeIcon style={{ marginRight: '5px', color: tokens.colorNeutralForeground1 }} />
-          <Text className={styles.bodyText}>{currentNode?.normalizedDataType}</Text>
+          <Text className={styles.bodyText}>{currentNode?.type}</Text>
         </Stack>
       </div>
 
