@@ -14,6 +14,7 @@ exports[`lib/actionbuttonv2 should render 1`] = `
     aria-label="title"
     className="msla-action-button-v2"
     disabled={false}
+    tabIndex={0}
   >
     <svg
       fill="none"
@@ -63,6 +64,7 @@ exports[`lib/actionbuttonv2 should render disabled 1`] = `
     aria-label="title"
     className="msla-action-button-v2"
     disabled={true}
+    tabIndex={0}
   >
     <svg
       fill="none"
@@ -112,6 +114,7 @@ exports[`lib/actionbuttonv2 should render with a CSS class 1`] = `
     aria-label="title"
     className="msla-action-button-v2 class-name"
     disabled={false}
+    tabIndex={0}
   >
     <svg
       fill="none"
@@ -161,6 +164,7 @@ exports[`lib/actionbuttonv2 should render with a ref 1`] = `
     aria-label="title"
     className="msla-action-button-v2"
     disabled={false}
+    tabIndex={0}
   >
     <svg
       fill="none"

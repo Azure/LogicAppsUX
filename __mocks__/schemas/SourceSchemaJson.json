@@ -4,654 +4,702 @@
   "schemaTreeRoot": {
     "key": "/root",
     "name": "root",
-    "normalizedDataType": "Object",
-    "properties": "NotSpecified",
+    "type": "Object",
+    "properties": "None",
     "children": [
       {
         "key": "/root/flowVars",
         "name": "flowVars",
-        "normalizedDataType": "Object",
-        "properties": "NotSpecified",
+        "type": "Object",
+        "properties": "None",
         "children": [
           {
             "key": "/root/flowVars/username",
             "name": "username",
-            "normalizedDataType": "String",
-            "properties": "NotSpecified",
-            "fullName": "username",
+            "type": "String",
+            "properties": "None",
+            "qName": "username",
             "parentKey": "/root/flowVars"
           }
         ],
-        "fullName": "flowVars",
+        "qName": "flowVars",
         "parentKey": "/root"
       },
       {
         "key": "/root/customerNumber",
         "name": "customerNumber",
-        "normalizedDataType": "String",
-        "properties": "NotSpecified",
-        "fullName": "customerNumber",
+        "type": "String",
+        "properties": "None",
+        "qName": "customerNumber",
         "parentKey": "/root"
       },
       {
         "key": "/root/Count",
         "name": "Count",
-        "normalizedDataType": "Integer",
-        "properties": "NotSpecified",
-        "fullName": "Count",
+        "type": "Integer",
+        "properties": "None",
+        "qName": "Count",
         "parentKey": "/root"
       },
       {
         "key": "/root/Count1",
         "name": "Count1",
-        "normalizedDataType": "Integer",
-        "properties": "NotSpecified",
-        "fullName": "Count1",
+        "type": "Integer",
+        "properties": "None",
+        "qName": "Count1",
         "parentKey": "/root"
       },
       {
         "key": "/root/OrderNo",
         "name": "OrderNo",
-        "normalizedDataType": "String",
-        "properties": "NotSpecified",
-        "fullName": "OrderNo",
+        "type": "String",
+        "properties": "None",
+        "qName": "OrderNo",
         "parentKey": "/root"
       },
       {
         "key": "/root/Num",
         "name": "Num",
-        "normalizedDataType": "Integer",
-        "properties": "NotSpecified",
-        "fullName": "Num",
+        "type": "Integer",
+        "properties": "None",
+        "qName": "Num",
         "parentKey": "/root"
       },
       {
         "key": "/root/Num1",
         "name": "Num1",
-        "normalizedDataType": "Integer",
-        "properties": "NotSpecified",
-        "fullName": "Num1",
+        "type": "Integer",
+        "properties": "None",
+        "qName": "Num1",
         "parentKey": "/root"
       },
       {
         "key": "/root/Num2",
         "name": "Num2",
-        "normalizedDataType": "Integer",
-        "properties": "NotSpecified",
-        "fullName": "Num2",
+        "type": "Integer",
+        "properties": "None",
+        "qName": "Num2",
         "parentKey": "/root"
       },
       {
         "key": "/root/Nums",
         "name": "Nums",
-        "normalizedDataType": "Array",
-        "properties": "NotSpecified",
+        "type": "Array",
+        "properties": "None",
         "children": [
           {
             "key": "/root/Nums/*",
             "name": "<ArrayItem>",
-            "normalizedDataType": "Object",
+            "type": "Object",
             "properties": "Repeating, ArrayItem",
             "children": [
               {
                 "key": "/root/Nums/*/Num",
                 "name": "Num",
-                "normalizedDataType": "Integer",
-                "properties": "NotSpecified",
-                "fullName": "Num",
+                "type": "Integer",
+                "properties": "None",
+                "qName": "Num",
                 "parentKey": "/root/Nums/*"
               }
             ],
-            "fullName": "<ArrayItem>",
+            "qName": "<ArrayItem>",
             "parentKey": "/root/Nums"
           }
         ],
-        "fullName": "Nums",
+        "qName": "Nums",
         "parentKey": "/root"
       },
       {
         "key": "/root/Strings",
         "name": "Strings",
-        "normalizedDataType": "Array",
-        "properties": "NotSpecified",
+        "type": "Array",
+        "properties": "None",
         "children": [
           {
             "key": "/root/Strings/*",
             "name": "<ArrayItem>",
-            "normalizedDataType": "Object",
+            "type": "Object",
             "properties": "Repeating, ArrayItem",
             "children": [
               {
                 "key": "/root/Strings/*/String",
                 "name": "String",
-                "normalizedDataType": "String",
-                "properties": "NotSpecified",
-                "fullName": "String",
+                "type": "String",
+                "properties": "None",
+                "qName": "String",
                 "parentKey": "/root/Strings/*"
               }
             ],
-            "fullName": "<ArrayItem>",
+            "qName": "<ArrayItem>",
             "parentKey": "/root/Strings"
           }
         ],
-        "fullName": "Strings",
+        "qName": "Strings",
         "parentKey": "/root"
       },
       {
         "key": "/root/ConditionalNode",
         "name": "ConditionalNode",
-        "normalizedDataType": "String",
-        "properties": "NotSpecified",
-        "fullName": "ConditionalNode",
+        "type": "String",
+        "properties": "None",
+        "qName": "ConditionalNode",
         "parentKey": "/root"
       },
       {
         "key": "/root/salesOrg",
         "name": "salesOrg",
-        "normalizedDataType": "String",
-        "properties": "NotSpecified",
-        "fullName": "salesOrg",
+        "type": "String",
+        "properties": "None",
+        "qName": "salesOrg",
         "parentKey": "/root"
       },
       {
         "key": "/root/shipDate",
         "name": "shipDate",
-        "normalizedDataType": "String",
-        "properties": "NotSpecified",
-        "fullName": "shipDate",
+        "type": "String",
+        "properties": "None",
+        "qName": "shipDate",
         "parentKey": "/root"
       },
       {
         "key": "/root/Num3",
         "name": "Num3",
-        "normalizedDataType": "Decimal",
-        "properties": "NotSpecified",
-        "fullName": "Num3",
+        "type": "Decimal",
+        "properties": "None",
+        "qName": "Num3",
         "parentKey": "/root"
       },
       {
         "key": "/root/Decimal",
         "name": "Decimal",
-        "normalizedDataType": "Decimal",
-        "properties": "NotSpecified",
-        "fullName": "Decimal",
+        "type": "Decimal",
+        "properties": "None",
+        "qName": "Decimal",
         "parentKey": "/root"
       },
       {
         "key": "/root/arrayOfArray",
         "name": "arrayOfArray",
-        "normalizedDataType": "Array",
-        "properties": "NotSpecified",
+        "type": "Array",
+        "properties": "None",
         "children": [
           {
             "key": "/root/arrayOfArray/*",
             "name": "<ArrayItem>",
-            "normalizedDataType": "Array",
+            "type": "Array",
             "properties": "Repeating, ArrayItem",
             "children": [
               {
                 "key": "/root/arrayOfArray/*/*",
                 "name": "<ArrayItem>",
-                "normalizedDataType": "Integer",
+                "type": "Integer",
                 "properties": "Repeating, ArrayItem",
-                "fullName": "<ArrayItem>",
+                "qName": "<ArrayItem>",
                 "parentKey": "/root/arrayOfArray/*"
               }
             ],
-            "fullName": "<ArrayItem>",
+            "qName": "<ArrayItem>",
             "parentKey": "/root/arrayOfArray"
           }
         ],
-        "fullName": "arrayOfArray",
+        "qName": "arrayOfArray",
         "parentKey": "/root"
       },
       {
         "key": "/root/generalData",
         "name": "generalData",
-        "normalizedDataType": "Object",
-        "properties": "NotSpecified",
+        "type": "Object",
+        "properties": "None",
         "children": [
           {
             "key": "/root/generalData/address",
             "name": "address",
-            "normalizedDataType": "Object",
-            "properties": "NotSpecified",
+            "type": "Object",
+            "properties": "None",
             "children": [
               {
                 "key": "/root/generalData/address/telephone",
                 "name": "telephone",
-                "normalizedDataType": "Array",
-                "properties": "NotSpecified",
+                "type": "Array",
+                "properties": "None",
                 "children": [
                   {
                     "key": "/root/generalData/address/telephone/*",
                     "name": "<ArrayItem>",
-                    "normalizedDataType": "Object",
+                    "type": "Object",
                     "properties": "Repeating, ArrayItem",
                     "children": [
                       {
                         "key": "/root/generalData/address/telephone/*/country",
                         "name": "country",
-                        "normalizedDataType": "String",
-                        "properties": "NotSpecified",
-                        "fullName": "country",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "country",
                         "parentKey": "/root/generalData/address/telephone/*"
                       },
                       {
                         "key": "/root/generalData/address/telephone/*/number",
                         "name": "number",
-                        "normalizedDataType": "String",
-                        "properties": "NotSpecified",
-                        "fullName": "number",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "number",
                         "parentKey": "/root/generalData/address/telephone/*"
                       },
                       {
                         "key": "/root/generalData/address/telephone/*/extension",
                         "name": "extension",
-                        "normalizedDataType": "String",
-                        "properties": "NotSpecified",
-                        "fullName": "extension",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "extension",
                         "parentKey": "/root/generalData/address/telephone/*"
                       },
                       {
                         "key": "/root/generalData/address/telephone/*/preferred",
                         "name": "preferred",
-                        "normalizedDataType": "String",
-                        "properties": "NotSpecified",
-                        "fullName": "preferred",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "preferred",
                         "parentKey": "/root/generalData/address/telephone/*"
                       },
                       {
                         "key": "/root/generalData/address/telephone/*/type",
                         "name": "type",
-                        "normalizedDataType": "String",
-                        "properties": "NotSpecified",
-                        "fullName": "type",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "type",
                         "parentKey": "/root/generalData/address/telephone/*"
                       },
                       {
                         "key": "/root/generalData/address/telephone/*/topzip",
                         "name": "topzip",
-                        "normalizedDataType": "String",
-                        "properties": "NotSpecified",
-                        "fullName": "topzip",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "topzip",
                         "parentKey": "/root/generalData/address/telephone/*"
                       },
                       {
                         "key": "/root/generalData/address/telephone/*/zips",
                         "name": "zips",
-                        "normalizedDataType": "Array",
-                        "properties": "NotSpecified",
+                        "type": "Array",
+                        "properties": "None",
                         "children": [
                           {
                             "key": "/root/generalData/address/telephone/*/zips/*",
                             "name": "<ArrayItem>",
-                            "normalizedDataType": "String",
+                            "type": "String",
                             "properties": "Repeating, ArrayItem",
-                            "fullName": "<ArrayItem>",
+                            "qName": "<ArrayItem>",
                             "parentKey": "/root/generalData/address/telephone/*/zips"
                           }
                         ],
-                        "fullName": "zips",
+                        "qName": "zips",
                         "parentKey": "/root/generalData/address/telephone/*"
                       }
                     ],
-                    "fullName": "<ArrayItem>",
+                    "qName": "<ArrayItem>",
                     "parentKey": "/root/generalData/address/telephone"
                   }
                 ],
-                "fullName": "telephone",
+                "qName": "telephone",
                 "parentKey": "/root/generalData/address"
               }
             ],
-            "fullName": "address",
+            "qName": "address",
             "parentKey": "/root/generalData"
           },
           {
             "key": "/root/generalData/contactPerson",
             "name": "contactPerson",
-            "normalizedDataType": "Array",
-            "properties": "NotSpecified",
+            "type": "Array",
+            "properties": "None",
             "children": [
               {
                 "key": "/root/generalData/contactPerson/*",
                 "name": "<ArrayItem>",
-                "normalizedDataType": "Object",
+                "type": "Object",
                 "properties": "Repeating, ArrayItem",
                 "children": [
                   {
                     "key": "/root/generalData/contactPerson/*/firstName",
                     "name": "firstName",
-                    "normalizedDataType": "String",
-                    "properties": "NotSpecified",
-                    "fullName": "firstName",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "firstName",
                     "parentKey": "/root/generalData/contactPerson/*"
                   },
                   {
                     "key": "/root/generalData/contactPerson/*/name1",
                     "name": "name1",
-                    "normalizedDataType": "String",
-                    "properties": "NotSpecified",
-                    "fullName": "name1",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "name1",
                     "parentKey": "/root/generalData/contactPerson/*"
                   },
                   {
                     "key": "/root/generalData/contactPerson/*/telephone",
                     "name": "telephone",
-                    "normalizedDataType": "Array",
-                    "properties": "NotSpecified",
+                    "type": "Array",
+                    "properties": "None",
                     "children": [
                       {
                         "key": "/root/generalData/contactPerson/*/telephone/*",
                         "name": "<ArrayItem>",
-                        "normalizedDataType": "Object",
+                        "type": "Object",
                         "properties": "Repeating, ArrayItem",
                         "children": [
                           {
                             "key": "/root/generalData/contactPerson/*/telephone/*/country",
                             "name": "country",
-                            "normalizedDataType": "String",
-                            "properties": "NotSpecified",
-                            "fullName": "country",
+                            "type": "String",
+                            "properties": "None",
+                            "qName": "country",
                             "parentKey": "/root/generalData/contactPerson/*/telephone/*"
                           },
                           {
                             "key": "/root/generalData/contactPerson/*/telephone/*/number",
                             "name": "number",
-                            "normalizedDataType": "String",
-                            "properties": "NotSpecified",
-                            "fullName": "number",
+                            "type": "String",
+                            "properties": "None",
+                            "qName": "number",
                             "parentKey": "/root/generalData/contactPerson/*/telephone/*"
                           }
                         ],
-                        "fullName": "<ArrayItem>",
+                        "qName": "<ArrayItem>",
                         "parentKey": "/root/generalData/contactPerson/*/telephone"
                       }
                     ],
-                    "fullName": "telephone",
+                    "qName": "telephone",
                     "parentKey": "/root/generalData/contactPerson/*"
                   },
                   {
                     "key": "/root/generalData/contactPerson/*/email",
                     "name": "email",
-                    "normalizedDataType": "Array",
-                    "properties": "NotSpecified",
+                    "type": "Array",
+                    "properties": "None",
                     "children": [
                       {
                         "key": "/root/generalData/contactPerson/*/email/*",
                         "name": "<ArrayItem>",
-                        "normalizedDataType": "Object",
+                        "type": "Object",
                         "properties": "Repeating, ArrayItem",
                         "children": [
                           {
                             "key": "/root/generalData/contactPerson/*/email/*/address",
                             "name": "address",
-                            "normalizedDataType": "String",
-                            "properties": "NotSpecified",
-                            "fullName": "address",
+                            "type": "String",
+                            "properties": "None",
+                            "qName": "address",
                             "parentKey": "/root/generalData/contactPerson/*/email/*"
                           },
                           {
                             "key": "/root/generalData/contactPerson/*/email/*/note",
                             "name": "note",
-                            "normalizedDataType": "String",
+                            "type": "String",
                             "properties": "Optional",
-                            "fullName": "note",
+                            "qName": "note",
                             "parentKey": "/root/generalData/contactPerson/*/email/*"
                           }
                         ],
-                        "fullName": "<ArrayItem>",
+                        "qName": "<ArrayItem>",
                         "parentKey": "/root/generalData/contactPerson/*/email"
                       }
                     ],
-                    "fullName": "email",
+                    "qName": "email",
                     "parentKey": "/root/generalData/contactPerson/*"
                   }
                 ],
-                "fullName": "<ArrayItem>",
+                "qName": "<ArrayItem>",
                 "parentKey": "/root/generalData/contactPerson"
               }
             ],
-            "fullName": "contactPerson",
+            "qName": "contactPerson",
             "parentKey": "/root/generalData"
           }
         ],
-        "fullName": "generalData",
+        "qName": "generalData",
         "parentKey": "/root"
       },
       {
         "key": "/root/text",
         "name": "text",
-        "normalizedDataType": "Array",
-        "properties": "NotSpecified",
+        "type": "Array",
+        "properties": "None",
         "children": [
           {
             "key": "/root/text/*",
             "name": "<ArrayItem>",
-            "normalizedDataType": "Object",
+            "type": "Object",
             "properties": "Repeating, ArrayItem",
             "children": [
               {
                 "key": "/root/text/*/itemNumber",
                 "name": "itemNumber",
-                "normalizedDataType": "String",
-                "properties": "NotSpecified",
-                "fullName": "itemNumber",
+                "type": "String",
+                "properties": "None",
+                "qName": "itemNumber",
                 "parentKey": "/root/text/*"
               },
               {
                 "key": "/root/text/*/textId",
                 "name": "textId",
-                "normalizedDataType": "String",
+                "type": "String",
                 "properties": "Optional",
-                "fullName": "textId",
+                "qName": "textId",
                 "parentKey": "/root/text/*"
               }
             ],
-            "fullName": "<ArrayItem>",
+            "qName": "<ArrayItem>",
             "parentKey": "/root/text"
           }
         ],
-        "fullName": "text",
+        "qName": "text",
         "parentKey": "/root"
       },
       {
         "key": "/root/leoData",
         "name": "leoData",
-        "normalizedDataType": "Object",
-        "properties": "NotSpecified",
+        "type": "Object",
+        "properties": "None",
         "children": [
           {
             "key": "/root/leoData/routeOptimization",
             "name": "routeOptimization",
-            "normalizedDataType": "Object",
-            "properties": "NotSpecified",
+            "type": "Object",
+            "properties": "None",
             "children": [
               {
                 "key": "/root/leoData/routeOptimization/driver",
                 "name": "driver",
-                "normalizedDataType": "String",
-                "properties": "NotSpecified",
-                "fullName": "driver",
+                "type": "String",
+                "properties": "None",
+                "qName": "driver",
                 "parentKey": "/root/leoData/routeOptimization"
               }
             ],
-            "fullName": "routeOptimization",
+            "qName": "routeOptimization",
             "parentKey": "/root/leoData"
           }
         ],
-        "fullName": "leoData",
+        "qName": "leoData",
         "parentKey": "/root"
       },
       {
         "key": "/root/_-SCL_-OTC_GET_CUST_AML.Response",
         "name": "_-SCL_-OTC_GET_CUST_AML.Response",
-        "normalizedDataType": "Object",
-        "properties": "NotSpecified",
+        "type": "Object",
+        "properties": "None",
         "children": [
           {
             "key": "/root/_-SCL_-OTC_GET_CUST_AML.Response/EX_I_AML",
             "name": "EX_I_AML",
-            "normalizedDataType": "Object",
-            "properties": "NotSpecified",
+            "type": "Object",
+            "properties": "None",
             "children": [
               {
                 "key": "/root/_-SCL_-OTC_GET_CUST_AML.Response/EX_I_AML/item",
                 "name": "item",
-                "normalizedDataType": "Array",
-                "properties": "NotSpecified",
+                "type": "Array",
+                "properties": "None",
                 "children": [
                   {
                     "key": "/root/_-SCL_-OTC_GET_CUST_AML.Response/EX_I_AML/item/*",
                     "name": "<ArrayItem>",
-                    "normalizedDataType": "Object",
+                    "type": "Object",
                     "properties": "Repeating, ArrayItem",
                     "children": [
                       {
                         "key": "/root/_-SCL_-OTC_GET_CUST_AML.Response/EX_I_AML/item/*/MAKTX",
                         "name": "MAKTX",
-                        "normalizedDataType": "String",
-                        "properties": "NotSpecified",
-                        "fullName": "MAKTX",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "MAKTX",
                         "parentKey": "/root/_-SCL_-OTC_GET_CUST_AML.Response/EX_I_AML/item/*"
                       },
                       {
                         "key": "/root/_-SCL_-OTC_GET_CUST_AML.Response/EX_I_AML/item/*/MATNR",
                         "name": "MATNR",
-                        "normalizedDataType": "String",
-                        "properties": "NotSpecified",
-                        "fullName": "MATNR",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "MATNR",
                         "parentKey": "/root/_-SCL_-OTC_GET_CUST_AML.Response/EX_I_AML/item/*"
                       },
                       {
                         "key": "/root/_-SCL_-OTC_GET_CUST_AML.Response/EX_I_AML/item/*/_-SCL_-BCAT",
                         "name": "_-SCL_-BCAT",
-                        "normalizedDataType": "String",
-                        "properties": "NotSpecified",
-                        "fullName": "_-SCL_-BCAT",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "_-SCL_-BCAT",
                         "parentKey": "/root/_-SCL_-OTC_GET_CUST_AML.Response/EX_I_AML/item/*"
                       }
                     ],
-                    "fullName": "<ArrayItem>",
+                    "qName": "<ArrayItem>",
                     "parentKey": "/root/_-SCL_-OTC_GET_CUST_AML.Response/EX_I_AML/item"
                   }
                 ],
-                "fullName": "item",
+                "qName": "item",
                 "parentKey": "/root/_-SCL_-OTC_GET_CUST_AML.Response/EX_I_AML"
               }
             ],
-            "fullName": "EX_I_AML",
+            "qName": "EX_I_AML",
             "parentKey": "/root/_-SCL_-OTC_GET_CUST_AML.Response"
           }
         ],
-        "fullName": "_-SCL_-OTC_GET_CUST_AML.Response",
+        "qName": "_-SCL_-OTC_GET_CUST_AML.Response",
         "parentKey": "/root"
       },
       {
         "key": "/root/items",
         "name": "items",
-        "normalizedDataType": "Array",
-        "properties": "NotSpecified",
+        "type": "Array",
+        "properties": "None",
         "children": [
           {
             "key": "/root/items/*",
             "name": "<ArrayItem>",
-            "normalizedDataType": "Object",
+            "type": "Object",
             "properties": "Repeating, ArrayItem",
             "children": [
               {
                 "key": "/root/items/*/targetQuantity",
                 "name": "targetQuantity",
-                "normalizedDataType": "Integer",
-                "properties": "NotSpecified",
-                "fullName": "targetQuantity",
+                "type": "Integer",
+                "properties": "None",
+                "qName": "targetQuantity",
                 "parentKey": "/root/items/*"
               },
               {
                 "key": "/root/items/*/conditionType",
                 "name": "conditionType",
-                "normalizedDataType": "String",
-                "properties": "NotSpecified",
-                "fullName": "conditionType",
+                "type": "String",
+                "properties": "None",
+                "qName": "conditionType",
                 "parentKey": "/root/items/*"
               },
               {
                 "key": "/root/items/*/pricingDate",
                 "name": "pricingDate",
-                "normalizedDataType": "String",
-                "properties": "NotSpecified",
-                "fullName": "pricingDate",
+                "type": "String",
+                "properties": "None",
+                "qName": "pricingDate",
                 "parentKey": "/root/items/*"
               },
               {
                 "key": "/root/items/*/rate",
                 "name": "rate",
-                "normalizedDataType": "Decimal",
-                "properties": "NotSpecified",
-                "fullName": "rate",
+                "type": "Decimal",
+                "properties": "None",
+                "qName": "rate",
                 "parentKey": "/root/items/*"
               },
               {
                 "key": "/root/items/*/uom",
                 "name": "uom",
-                "normalizedDataType": "String",
-                "properties": "NotSpecified",
-                "fullName": "uom",
+                "type": "String",
+                "properties": "None",
+                "qName": "uom",
                 "parentKey": "/root/items/*"
               },
               {
                 "key": "/root/items/*/value",
                 "name": "value",
-                "normalizedDataType": "Integer",
-                "properties": "NotSpecified",
-                "fullName": "value",
+                "type": "Integer",
+                "properties": "None",
+                "qName": "value",
                 "parentKey": "/root/items/*"
               },
               {
                 "key": "/root/items/*/currency",
                 "name": "currency",
-                "normalizedDataType": "String",
-                "properties": "NotSpecified",
-                "fullName": "currency",
+                "type": "String",
+                "properties": "None",
+                "qName": "currency",
                 "parentKey": "/root/items/*"
               }
             ],
-            "fullName": "<ArrayItem>",
+            "qName": "<ArrayItem>",
             "parentKey": "/root/items"
           }
         ],
-        "fullName": "items",
+        "qName": "items",
         "parentKey": "/root"
       },
       {
         "key": "/root/companyCode",
         "name": "companyCode",
-        "normalizedDataType": "Object",
-        "properties": "NotSpecified",
+        "type": "Object",
+        "properties": "None",
         "children": [
           {
             "key": "/root/companyCode/accountManagement",
             "name": "accountManagement",
-            "normalizedDataType": "Object",
-            "properties": "NotSpecified",
+            "type": "Object",
+            "properties": "None",
             "children": [
               {
                 "key": "/root/companyCode/accountManagement/reconAcc",
                 "name": "reconAcc",
-                "normalizedDataType": "String",
-                "properties": "NotSpecified",
-                "fullName": "reconAcc",
+                "type": "String",
+                "properties": "None",
+                "qName": "reconAcc",
                 "parentKey": "/root/companyCode/accountManagement"
               }
             ],
-            "fullName": "accountManagement",
+            "qName": "accountManagement",
             "parentKey": "/root/companyCode"
           }
         ],
-        "fullName": "companyCode",
+        "qName": "companyCode",
+        "parentKey": "/root"
+      },
+      {
+        "key": "/root/SourceMadeUp",
+        "name": "SourceMadeUp",
+        "type": "Array",
+        "properties": "None",
+        "children": [
+          {
+            "key": "/root/SourceMadeUp/ManyManyArray",
+            "name": "ManyManyArray",
+            "type": "Array",
+            "properties": "None",
+            "children": [
+              {
+                "key": "/root/SourceMadeUp/ManyManyArray/*",
+                "name": "<ArrayItem>",
+                "type": "Array",
+                "properties": "Repeating, ArrayItem",
+                "children": [
+                  {
+                    "key": "/root/SourceMadeUp/ManyManyArray/*/*",
+                    "name": "<ArrayItem>",
+                    "type": "Array",
+                    "properties": "Repeating, ArrayItem",
+                    "children": [
+                      {
+                        "key": "/root/SourceMadeUp/ManyManyArray/*/*/SourceMadeUp_NeedAProp",
+                        "name": "SourceMadeUp_NeedAProp",
+                        "type": "Integer",
+                        "properties": "None",
+                        "qName": "SourceMadeUp_NeedAProp",
+                        "parentKey": "/root/SourceMadeUp/ManyManyArray/*/*"
+                      }
+                    ],
+                    "qName": "<ArrayItem>",
+                    "parentKey": "/root/SourceMadeUp/ManyManyArray/*"
+                  }
+                ],
+                "qName": "<ArrayItem>",
+                "parentKey": "/root/SourceMadeUp/ManyManyArray"
+              }
+            ],
+            "qName": "ManyManyArray",
+            "parentKey": "/root/SourceMadeUp"
+          }
+        ],
+        "qName": "SourceMadeUp",
         "parentKey": "/root"
       }
     ],
-    "fullName": "root"
+    "qName": "root"
   }
 }

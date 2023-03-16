@@ -43,6 +43,10 @@ export const clientSupportedOperations = [
     connectorId: 'connectionProviders/swiftOperations',
     operationId: 'SwiftEncode',
   },
+  {
+    connectorId: 'connectionProviders/dataMapperOperations',
+    operationId: 'xsltTransform',
+  },
 ];
 
 export const integrationAccount = 'IntegrationAccount';

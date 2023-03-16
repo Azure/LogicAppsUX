@@ -107,6 +107,8 @@ const appendtoarrayvariable = 'appendtoarrayvariable';
 const appendtostringvariable = 'appendtostringvariable';
 const batch = 'batch';
 const sendtobatch = 'sendtobatch';
+const xslttransform = 'xslttransform';
+const datamapper = 'datamapper';
 
 export const apiManagementConnectorId = '/connectionProviders/apiManagementOperation';
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
@@ -119,6 +121,8 @@ export const httpConnectorId = 'connectionProviders/http';
 const variableConnectorId = 'connectionProviders/variable';
 const rosettanetConnectorId = 'connectionProviders/rosettaNetOperations';
 export const flatFileConnectorId = 'connectionProviders/flatFileOperations';
+const liquidConnectorId = 'connectionProviders/liquidOperations';
+const dataMapperConnectorId = 'connectionProviders/dataMapperOperations';
 
 const supportedManifestTypes = [
   apimanagement,
@@ -170,6 +174,7 @@ const supportedManifestTypes = [
   terminate,
   until,
   wait,
+  xslttransform,
 ];
 
 export type getAccessTokenType = () => Promise<string>;
@@ -257,6 +262,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case terminate:
     case until:
     case wait:
+    case xslttransform:
       return true;
 
     default:
@@ -265,8 +271,8 @@ export function isBuiltInOperation(definition: any): boolean {
 }
 
 export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): OperationInfo {
-  const normalizedOperationType = definition.type.toLowerCase();
-  const kind = definition.kind ? definition.kind.toLowerCase() : undefined;
+  const normalizedOperationType = definition.type?.toLowerCase();
+  const kind = definition.kind?.toLowerCase();
 
   if (kind === undefined) {
     const operationInfo = builtInOperationsMetadata[normalizedOperationType];
@@ -275,7 +281,6 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
     }
   }
 
-  const liquidConnectorId = 'connectionProviders/liquidOperations';
   switch (normalizedOperationType) {
     case expression:
       switch (definition.kind?.toLowerCase()) {
@@ -376,6 +381,17 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
         connectorId: scheduleConnectorId,
         operationId: definition.inputs?.until ? delayuntil : delay,
       };
+
+    case xslttransform:
+      switch (kind) {
+        case datamapper:
+          return {
+            connectorId: dataMapperConnectorId,
+            operationId: xslttransform,
+          };
+        default:
+          throw new UnsupportedException(`Unsupported operation kind ${kind}`);
+      }
 
     default:
       throw new UnsupportedException(`Unsupported built in operation type ${normalizedOperationType}`);
@@ -542,6 +558,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [rosettanetwaitforresponse]: {
     connectorId: rosettanetConnectorId,
     operationId: 'rosettaNetWaitForResponse',
+  },
+  [xslttransform]: {
+    connectorId: 'connectionProviders/dataMapperOperations',
+    operationId: 'xsltTransform',
   },
 };
 

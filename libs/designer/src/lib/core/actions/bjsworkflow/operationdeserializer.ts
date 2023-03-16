@@ -75,7 +75,7 @@ export const initializeOperationMetadata = async (
     if (isTrigger) {
       triggerNodeId = operationId;
     }
-    if (operationManifestService.isSupported(operation.type)) {
+    if (operationManifestService.isSupported(operation.type, operation.kind)) {
       promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, dispatch));
     } else {
       promises.push(initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, dispatch) as any);

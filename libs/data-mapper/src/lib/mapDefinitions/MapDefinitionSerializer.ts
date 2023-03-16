@@ -103,7 +103,7 @@ export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, con
 
 const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtended, connections: ConnectionDictionary) => {
   const newPath: OutputPathItem[] = [];
-  const isObjectValue = targetNode.nodeProperties.some((property) => property === SchemaNodeProperty.ComplexTypeSimpleContent);
+  const isObjectValue = targetNode.nodeProperties.some((property) => property === SchemaNodeProperty.Complex);
 
   targetNode.pathToRoot.forEach((pathItem, index, array) => {
     const rootTargetConnection = connections[addTargetReactFlowPrefix(pathItem.key)];
@@ -125,7 +125,7 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
 
       if (index + 1 < array.length) {
         // Still have objects to traverse down
-        newPath.push({ key: pathItem.fullName.startsWith('@') ? `$${pathItem.fullName}` : pathItem.fullName });
+        newPath.push({ key: pathItem.qName.startsWith('@') ? `$${pathItem.qName}` : pathItem.qName });
       } else {
         // Handle custom values, source schema nodes, or Functions applied to the current target schema node
         let value = '';
@@ -186,13 +186,13 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
 
         if (isObjectValue) {
           // $Value
-          newPath.push({ key: pathItem.fullName.startsWith('@') ? `$${pathItem.fullName}` : pathItem.fullName });
+          newPath.push({ key: pathItem.qName.startsWith('@') ? `$${pathItem.qName}` : pathItem.qName });
           newPath.push({ key: mapNodeParams.value, value });
         } else {
           // Standard property to value
           newPath.push({
-            key: pathItem.fullName.startsWith('@') ? `$${pathItem.fullName}` : pathItem.fullName,
-            value: value && !isObjectType(targetNode.normalizedDataType) ? value : undefined,
+            key: pathItem.qName.startsWith('@') ? `$${pathItem.qName}` : pathItem.qName,
+            value: value && !isObjectType(targetNode.type) ? value : undefined,
           });
         }
       }
@@ -333,7 +333,7 @@ const addLoopingToNewPathItems = (
 
   // Object within the loop
   newPath.push({
-    key: pathItem.fullName.startsWith('@') ? `$${pathItem.fullName}` : pathItem.fullName,
+    key: pathItem.qName.startsWith('@') ? `$${pathItem.qName}` : pathItem.qName,
     arrayIndex: isSchemaNodeExtended(selfNode) ? selfNode.arrayItemIndex : undefined,
   });
 };
