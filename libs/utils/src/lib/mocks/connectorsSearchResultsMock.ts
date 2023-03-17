@@ -82,7 +82,7 @@ export const connectorsSearchResultsMock: Connector[] = [
       iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1393/1.0.1393.2131/documentdb/icon.png',
       brandColor: '#804998',
       description: 'I am a test connector',
-      capabilities: ['triggers', 'actions'],
+      capabilities: ['actions'],
       connectionParameters: {
         connectionString: {
           type: 'securestring',

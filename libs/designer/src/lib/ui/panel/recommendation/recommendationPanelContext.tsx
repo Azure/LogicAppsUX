@@ -1,6 +1,6 @@
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
-import { useAllOperations } from '../../../core/queries/browse';
+import { useAllConnectors, useAllOperations } from '../../../core/queries/browse';
 import {
   useIsAddingTrigger,
   useIsParallelBranch,
@@ -35,17 +35,18 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const selectedOperationGroupId = useSelectedSearchOperationGroupId();
 
-  const allOperations = useAllOperations();
+  const { data: allOperations, isLoading } = useAllOperations();
+  const { data: allConnectors } = useAllConnectors();
+  const selectedConnector = allConnectors?.find((c) => c.id === selectedOperationGroupId);
 
   useEffect(() => {
-    if (allOperations.data && selectedOperationGroupId) {
-      const filteredOps = allOperations.data.filter((operation) => {
-        const apiId = operation.properties.api.id;
-        return areApiIdsEqual(apiId, selectedOperationGroupId);
-      });
-      setAllOperationsForGroup(filteredOps);
-    }
-  }, [selectedOperationGroupId, allOperations.data]);
+    if (!allOperations || !selectedOperationGroupId) return;
+    const filteredOps = allOperations.filter((operation) => {
+      const apiId = operation.properties.api.id;
+      return areApiIdsEqual(apiId, selectedOperationGroupId);
+    });
+    setAllOperationsForGroup(filteredOps);
+  }, [selectedOperationGroupId, allOperations]);
 
   const onDismiss = useCallback(() => {
     dispatch(selectOperationGroupId(''));
@@ -64,13 +65,13 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const onOperationClick = useCallback(
     (id: string) => {
-      const operation = (allOperations.data ?? []).find((o: any) => o.id === id);
+      const operation = (allOperations ?? []).find((o: any) => o.id === id);
       if (!operation) return;
       dispatch(selectOperationId(operation.id));
       const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
       dispatch(addOperation({ operation, relationshipIds, nodeId: newNodeId, isParallelBranch, isTrigger }));
     },
-    [allOperations.data, dispatch, isParallelBranch, isTrigger, relationshipIds]
+    [allOperations, dispatch, isParallelBranch, isTrigger, relationshipIds]
   );
 
   const intl = useIntl();
@@ -89,8 +90,14 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
           </Link>
         </div>
       ) : null}
-      {selectedOperationGroupId ? (
-        <OperationGroupDetailView groupOperations={allOperationsForGroup} filters={filters} onOperationClick={onOperationClick} />
+      {selectedOperationGroupId && selectedConnector ? (
+        <OperationGroupDetailView
+          connector={selectedConnector}
+          groupOperations={allOperationsForGroup}
+          filters={filters}
+          onOperationClick={onOperationClick}
+          isLoading={isLoading}
+        />
       ) : (
         <>
           <OperationSearchHeader
@@ -106,9 +113,9 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
           {searchTerm ? (
             <SearchView
               searchTerm={searchTerm}
-              allOperations={allOperations.data ?? []}
+              allOperations={allOperations ?? []}
               groupByConnector={isGrouped}
-              isLoading={allOperations.isLoading}
+              isLoading={isLoading}
               filters={filters}
               onOperationClick={onOperationClick}
             />

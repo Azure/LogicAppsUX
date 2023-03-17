@@ -1,13 +1,11 @@
 import type { AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
-import { Spinner, SpinnerSize } from '@fluentui/react';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
 import { isCustomConnector, isBuiltInConnector } from '@microsoft/utils-logic-apps';
 import { useDebouncedEffect } from '@react-hookz/web';
 import Fuse from 'fuse.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
 type SearchViewProps = {
@@ -24,7 +22,6 @@ type SearchResults = SearchResult[];
 
 export const SearchView: React.FC<SearchViewProps> = (props) => {
   const { searchTerm, allOperations, groupByConnector, isLoading, filters, onOperationClick } = props;
-  const intl = useIntl();
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -99,21 +96,10 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     dispatch(selectOperationGroupId(connectorId));
   };
 
-  const loadingText = intl.formatMessage({
-    defaultMessage: 'Loading operations...',
-    description: 'Message to show under the loading icon when loading operationst',
-  });
-
-  if (isLoading)
-    return (
-      <div className="msla-loading-container">
-        <Spinner size={SpinnerSize.large} label={loadingText} />
-      </div>
-    );
-
   return (
     <SearchResultsGrid
-      isLoading={isLoadingSearchResults}
+      isLoadingSearch={isLoadingSearchResults}
+      isLoadingMore={isLoading}
       searchTerm={searchTerm}
       onConnectorClick={onConnectorClick}
       onOperationClick={onOperationClick}

@@ -1,7 +1,7 @@
 import NoResultsSvg from '../../../assets/search/noResults.svg';
 import { ConnectorSummaryCard } from '../../connectorsummarycard';
 import { getConnectorCategoryString } from '../../utils';
-import { List, Text } from '@fluentui/react';
+import { List, Spinner, Text } from '@fluentui/react';
 import type { Connector } from '@microsoft/utils-logic-apps';
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -9,10 +9,11 @@ import { useIntl } from 'react-intl';
 export type BrowseGridProps = {
   onConnectorSelected: (connectorId: string) => void;
   connectors: Connector[];
+  isLoading: boolean;
 };
 
 export const BrowseGrid = (props: BrowseGridProps) => {
-  const { connectors, onConnectorSelected } = props;
+  const { connectors, onConnectorSelected, isLoading } = props;
 
   const intl = useIntl();
   const ref = useRef(null);
@@ -53,7 +54,12 @@ export const BrowseGrid = (props: BrowseGridProps) => {
     description: 'Text to show when there are no browse results with the given filters',
   });
 
-  if (connectors.length === 0)
+  const loadingText = intl.formatMessage({
+    defaultMessage: 'Loading all connectors...',
+    description: 'Message to show under the loading icon when loading connectors',
+  });
+
+  if (!isLoading && connectors.length === 0)
     return (
       <div className="msla-no-results-container">
         <img src={NoResultsSvg} alt={noResultsText?.toString()} />
@@ -63,6 +69,11 @@ export const BrowseGrid = (props: BrowseGridProps) => {
 
   return (
     <div ref={ref} className="msla-browse-list">
+      {isLoading && (
+        <div style={{ marginBottom: '16px' }}>
+          <Spinner label={loadingText} ariaLive="assertive" labelPosition="right" />
+        </div>
+      )}
       <List onRenderCell={onRenderCell} items={connectors} getPageHeight={() => (forceSingleCol ? 80 * 10 : 80 * 5)} />
     </div>
   );
