@@ -50,19 +50,20 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
       return;
     }
 
+    vscode.window.showInformationMessage(localize('logicApps.designer', 'Starting workflow designer. It might take a few seconds.'), 'OK');
     this.panel = vscode.window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel
       this.panelName, // Title display in the tab
       ViewColumn.Active, // Editor column to show the new webview panel in.
       this.getPanelOptions()
     );
+    this.panelMetadata = await this.getDesignerPanelMetadata();
 
     this.baseUrl = getWorkflowManagementBaseURI(this.node);
     const accessToken = await getAuthorizationToken(this.node.credentials);
     const connectionsData: string = await this.node.getConnectionsData();
     const parametersData = await this.node.getParametersData();
 
-    this.panelMetadata = await this.getDesignerPanelMetadata();
     this.panel.webview.html = await this.getWebviewContent({
       connectionsData: connectionsData,
       parametersData: parametersData,
