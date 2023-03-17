@@ -989,11 +989,13 @@ declare namespace LogicAppsV2 {
   /* Run action definition types */
   interface WorkflowRunAction {
     inputsLink: {
-      uri: string;
+      uri?: string;
+      secureData?: Record<string, any>;
       contentSize: number;
     };
     outputsLink: {
-      uri: string;
+      uri?: string;
+      secureData?: Record<string, any>;
       contentSize: number;
     };
     startTime: string;

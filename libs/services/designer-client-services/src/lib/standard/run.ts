@@ -139,10 +139,10 @@ export class StandardRunService implements IRunService {
       return Promise.resolve({ inputs: this.parseActionLink(inputs), outputs: this.parseActionLink(outputs) });
     }
 
-    if (outputsLink) {
+    if (outputsLink && outputsLink.uri) {
       outputs = await this.getContent(outputsLink);
     }
-    if (inputsLink) {
+    if (inputsLink && inputsLink.uri) {
       inputs = await this.getContent(inputsLink);
     }
     return { inputs: this.parseActionLink(inputs), outputs: this.parseActionLink(outputs) };
