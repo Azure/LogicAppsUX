@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
 import { changeArmToken, changeResourcePath, changeLoadingMethod, loadWorkflow, loadRun } from '../../state/workflowLoadingSlice';
 import type { IDropdownOption } from '@fluentui/react';
@@ -92,6 +93,7 @@ export const Login: React.FC = () => {
     [dispatch]
   );
 
+  console.log(environment.armToken);
   return (
     <div>
       <div style={{ paddingBottom: '10px' }}>
