@@ -80,4 +80,16 @@ describe('Parameter Key Utility Tests', () => {
       expect(ParameterKeyUtility.createEx(undefined)).toBeUndefined();
     });
   });
+
+  describe('expandAndEncodePropertySegment', () => {
+    it.each([
+      ['', ''],
+      ['body', 'body'],
+      ['body.foo', 'body~1foo'],
+      ['body/foo', 'body.body/foo'],
+      ['body/foo/Bar', 'body.body/foo.body/foo/Bar'],
+    ])('%p evaluates to %p', (input, expected) => {
+      expect(ParameterKeyUtility.expandAndEncodePropertySegment(input)).toBe(expected);
+    });
+  });
 });
