@@ -12,7 +12,6 @@ export interface IDesignerPanelMetadata {
   panelId: string;
   appSettingNames?: string[];
   standardApp: StandardApp;
-  scriptPath: string;
   connectionsData: string;
   parametersData: Record<string, Parameter>;
   localSettings: Record<string, string>;

@@ -360,7 +360,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     );
   }
 
-  private async _getDesignerPanelMetadata(migrationOptions: Record<string, any> = {}): Promise<any> {
+  private async _getDesignerPanelMetadata(migrationOptions: Record<string, any> = {}): Promise<IDesignerPanelMetadata> {
     const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
     this._migrate(workflowContent, migrationOptions);
     const connectionsData: string = await getConnectionsFromFile(this.context, this.workflowFilePath);
@@ -380,7 +380,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       panelId: this.panelName,
       appSettingNames: Object.keys(localSettings),
       standardApp: getStandardAppData(this.workflowName, workflowContent, parametersData),
-      scriptPath: this.panel.webview.asWebviewUri(Uri.file(path.join(ext.context.extensionPath, 'dist', 'designer'))).toString(),
       connectionsData,
       parametersData,
       localSettings,
