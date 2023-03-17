@@ -22,7 +22,6 @@ import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IDesignerPanelMetadata, IWorkflowFileContent } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
-import * as path from 'path';
 import * as vscode from 'vscode';
 import type { WebviewPanel } from 'vscode';
 import { ViewColumn } from 'vscode';
@@ -150,7 +149,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
     });
   }
 
-  private async getDesignerPanelMetadata(): Promise<any> {
+  private async getDesignerPanelMetadata(): Promise<IDesignerPanelMetadata> {
     const credentials: ServiceClientCredentials = this.node.credentials;
     const accessToken: string = await getAuthorizationToken(credentials);
     const parameters = await this.node.getParametersData();
@@ -158,10 +157,11 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
     return {
       panelId: this.panelName,
       connectionsData: await this.node.getConnectionsData(),
-      parametersData: parameters,
       localSettings: await this.node.getAppSettings(),
+      workflowDetails: await this.node.getChildWorkflows(this.context),
+      artifacts: await this.node.getArtifacts(),
+      parametersData: parameters,
       accessToken,
-      scriptPath: this.panel.webview.asWebviewUri(vscode.Uri.file(path.join(ext.context.extensionPath, 'dist', 'designer'))).toString(),
       azureDetails: {
         enabled: true,
         accessToken,
@@ -170,9 +170,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
         workflowManagementBaseUrl: this.node?.parent?.subscription?.environment?.resourceManagerEndpointUrl,
         tenantId: this.node?.parent?.subscription?.tenantId,
       },
-      workflowDetails: await this.node.getChildWorkflows(this.context),
       workflowName: this.workflowName,
-      artifacts: await this.node.getArtifacts(),
       standardApp: getStandardAppData(this.workflowName, { ...this.workflow, definition: {} }, parameters),
     };
   }
