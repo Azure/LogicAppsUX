@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/utils-logic-apps",
-  "version": "0.2.110",
+  "version": "0.2.113",
   "scripts": {
     "yalcpush": "yalc push ../../dist/libs/utils"
   }
