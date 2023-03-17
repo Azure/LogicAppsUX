@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl';
 
 interface ItemMenuButtonProps {
   disabled: boolean;
+  hideRename: boolean;
   onDeleteClicked: () => void;
   onRenameClicked: () => void;
 }
@@ -23,7 +24,7 @@ const ContextMenuKeys = {
   RENAME: 'rename',
 };
 
-export const ItemMenuButton = ({ disabled, onDeleteClicked, onRenameClicked }: ItemMenuButtonProps): JSX.Element => {
+export const ItemMenuButton = ({ disabled, hideRename, onDeleteClicked, onRenameClicked }: ItemMenuButtonProps): JSX.Element => {
   const intl = useIntl();
 
   const deleteButton = intl.formatMessage({
@@ -63,9 +64,29 @@ export const ItemMenuButton = ({ disabled, onDeleteClicked, onRenameClicked }: I
     },
   };
 
+  const noRenameMenuProps: IContextualMenuProps = {
+    items: [
+      {
+        key: ContextMenuKeys.DELETE,
+        name: deleteButton,
+        iconProps: { iconName: 'Delete' },
+      },
+    ],
+    onItemClick(_, menuItem) {
+      if (menuItem?.key === ContextMenuKeys.DELETE) {
+        onDeleteClicked();
+      }
+    },
+  };
+
   return (
     <TooltipHost content={menuLabel}>
-      <DefaultButton ariaLabel={menuLabel} disabled={disabled} styles={menuButtonStyles} menuProps={menuProps} />
+      <DefaultButton
+        ariaLabel={menuLabel}
+        disabled={disabled}
+        styles={menuButtonStyles}
+        menuProps={hideRename ? noRenameMenuProps : menuProps}
+      />
     </TooltipHost>
   );
 };

@@ -42,7 +42,6 @@ const onRenderLabel = (text: string, required?: boolean): JSX.Element => {
 function WrappedStaticResultProperty({ schema, required = false }: StaticResultProperty): JSX.Element {
   const intl = useIntl();
   const [defaultValue, setDefaultValue] = useState(schema.default);
-  console.log(schema);
 
   const getEnumValues = (): IDropdownOption[] => {
     if (!schema.enum) return [];
@@ -70,9 +69,11 @@ function WrappedStaticResultProperty({ schema, required = false }: StaticResultP
     description: 'Placeholder for text field',
   });
 
+  console.log(schema);
+
   return (
     <div className="msla-static-result-property-container">
-      {schema.type === constants.SWAGGER.TYPE.STRING ? (
+      {schema.type === constants.SWAGGER.TYPE.STRING || !schema.type ? (
         schema.enum ? (
           <Dropdown
             className="msla-static-result-property-dropdown"
@@ -93,6 +94,11 @@ function WrappedStaticResultProperty({ schema, required = false }: StaticResultP
             placeholder={textFieldPlaceHolder}
           />
         )
+      ) : schema.type === constants.SWAGGER.TYPE.ARRAY && schema.items ? (
+        <div>
+          <Label text={schema.title ?? ''} isRequiredField={required} requiredMarkerSide={RequiredMarkerSide.RIGHT} />
+          <PropertyEditorContainer schema={schema.items} />
+        </div>
       ) : (
         <>
           {schema.additionalProperties ? (
