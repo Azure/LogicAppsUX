@@ -168,14 +168,13 @@ const callChildObjects = (
   targetSchemaFlattened: SchemaNodeDictionary,
   functions: FunctionData[]
 ) => {
+  const isInLoop = targetKey.includes(mapNodeParams.for);
+  const ifRfKey = createReactFlowFunctionKey(ifPseudoFunction);
+
   const childEntries = Object.entries<MapDefinitionEntry | string>(sourceNodeObject);
   childEntries.forEach(([childKey, childValue]) => {
     if (childKey.startsWith(mapNodeParams.if)) {
-      const isInLoop = targetKey.includes(mapNodeParams.for);
-      const ifRfKey = createReactFlowFunctionKey(ifPseudoFunction);
-
       const ifContents = childKey.substring(mapNodeParams.if.length + 1, childKey.length - 1);
-      const childSubKey = Object.keys(childValue)[0];
 
       // Create connections for $if's contents (condition)
       createConnections(
@@ -188,7 +187,7 @@ const callChildObjects = (
         targetSchema,
         targetSchemaFlattened,
         functions,
-        isInLoop ? `${targetKey}/${childSubKey}` : undefined
+        isInLoop ? `${targetKey}/${Array.isArray(childValue) ? '*' : Object.keys(childValue)[0]}` : undefined
       );
 
       // Handle $if's values
@@ -208,7 +207,7 @@ const callChildObjects = (
           );
         } else {
           Object.entries(childValueValue).forEach(([newDestinationKey, newSourceKey]) => {
-            const finalNewDestinationKey = `${targetKey}/${Array.isArray(childValue) ? '*' : childValueKey}/${newDestinationKey}`;
+            const finalNewDestinationKey = `${targetKey}${Array.isArray(childValue) ? '' : `/${childValueKey}`}/${newDestinationKey}`;
 
             parseDefinitionToConnection(
               newSourceKey,
@@ -225,18 +224,36 @@ const callChildObjects = (
         }
       });
 
-      parseDefinitionToConditionalConnection(
-        sourceNodeObject[childKey],
-        ifRfKey,
-        `${targetKey}/${childSubKey}`,
-        connections,
-        createdNodes,
-        sourceSchema,
-        sourceSchemaFlattened,
-        targetSchema,
-        targetSchemaFlattened,
-        functions
-      );
+      const nextChildObject = sourceNodeObject[childKey];
+      if (Array.isArray(nextChildObject)) {
+        Object.entries(nextChildObject).forEach(([_nextKey, nextValue]) => {
+          parseDefinitionToConditionalConnection(
+            nextValue,
+            ifRfKey,
+            targetKey,
+            connections,
+            createdNodes,
+            sourceSchema,
+            sourceSchemaFlattened,
+            targetSchema,
+            targetSchemaFlattened,
+            functions
+          );
+        });
+      } else {
+        parseDefinitionToConditionalConnection(
+          nextChildObject,
+          ifRfKey,
+          `${targetKey}/${Object.keys(childValue)[0]}`,
+          connections,
+          createdNodes,
+          sourceSchema,
+          sourceSchemaFlattened,
+          targetSchema,
+          targetSchemaFlattened,
+          functions
+        );
+      }
     } else {
       let childTargetKey = targetKey;
       if (childKey !== mapNodeParams.value && !(childTargetKey.indexOf(mapNodeParams.if) > -1 && childTargetKey.endsWith(')'))) {
@@ -307,6 +324,22 @@ const callChildObjects = (
           functions
         );
       }
+    }
+
+    if (isInLoop && Array.isArray(childValue)) {
+      // dot accessor will get the parent source node
+      createConnections(
+        getSourceValueFromLoop('.', targetKey, sourceSchemaFlattened),
+        ifRfKey,
+        connections,
+        createdNodes,
+        sourceSchema,
+        sourceSchemaFlattened,
+        targetSchema,
+        targetSchemaFlattened,
+        functions,
+        `${targetKey}/*`
+      );
     }
   });
 };
