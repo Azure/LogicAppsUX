@@ -172,7 +172,7 @@ export const AzureConnectorMock: { value: any[] } = {
           displayName: 'Test Connector',
           description: 'This is a Test Connector',
         },
-        capabilities: ['actions', 'triggers'],
+        capabilities: ['actions'],
         isExportSupported: true,
       },
       id: '/subscriptions/4201f397-837b-48ea-8943-980767f294ac/providers/Microsoft.Web/locations/centralus/managedApis/testConnector',
