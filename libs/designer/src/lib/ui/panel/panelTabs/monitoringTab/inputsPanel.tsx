@@ -1,5 +1,6 @@
 import { HostService, ContentType } from '@microsoft/designer-client-services-logic-apps';
 import { SecureDataSection, ValuesPanel } from '@microsoft/designer-ui';
+import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -15,6 +16,9 @@ export interface InputsPanelProps {
 export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColor, nodeId, values, isLoading, isError }) => {
   const [showMore, setShowMore] = useState<boolean>(false);
   const intl = useIntl();
+  const { inputsLink } = runMetaData;
+  const { uri, secureData } = inputsLink ?? {};
+  const areInputsSecured = !isNullOrUndefined(secureData);
 
   const intlText = {
     inputs: intl.formatMessage({
@@ -39,11 +43,10 @@ export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColo
     }),
   };
 
-  const { inputsLink } = runMetaData;
-  const areInputsSecured = true;
-
   const onSeeRawInputsClick = (): void => {
-    HostService().fetchAndDisplayContent(nodeId, inputsLink.uri, ContentType.Inputs);
+    if (!isNullOrUndefined(uri)) {
+      HostService().fetchAndDisplayContent(nodeId, uri, ContentType.Inputs);
+    }
   };
 
   const onMoreClick = () => {
@@ -54,12 +57,12 @@ export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColo
     <>
       {areInputsSecured ? (
         <SecureDataSection brandColor={brandColor} headerText={intlText.inputs} />
-      ) : values ? (
+      ) : inputsLink ? (
         <ValuesPanel
           brandColor={brandColor}
           headerText={intlText.inputs}
           linkText={intlText.showInputs}
-          showLink={true}
+          showLink={!!uri}
           values={values}
           labelledBy={`inputs-${nodeId}`}
           noValuesText={isError ? intlText.inputsError : isLoading ? intlText.inputsLoading : intlText.noInputs}
