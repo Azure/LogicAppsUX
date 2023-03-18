@@ -1,4 +1,17 @@
 # Logic Apps Designer
+
+### [0.2.114](https://github.com/Azure/LogicAppsUX/compare/v0.2.113...v0.2.114) (2023-03-18)
+
+### [0.2.113](https://github.com/Azure/LogicAppsUX/compare/v0.2.112...v0.2.113) (2023-03-17)
+
+### Logic Apps Designer Changes
+
+- Search + Browse speed boost ([#1760](https://github.com/Azure/LogicAppsUX/issues/1760)) ([edbbdb8](https://github.com/Azure/LogicAppsUX/commit/edbbdb8d1da148eb1b880dd6f5c3aad585026215))
+
+### [0.2.112](https://github.com/Azure/LogicAppsUX/compare/v0.2.111...v0.2.112) (2023-03-17)
+
+### [0.2.111](https://github.com/Azure/LogicAppsUX/compare/v0.2.110...v0.2.111) (2023-03-16)
+
 ### [0.2.110](https://github.com/Azure/LogicAppsUX/compare/v0.2.109...v0.2.110) (2023-03-15)
 
 ### [0.2.109](https://github.com/Azure/LogicAppsUX/compare/v0.2.108...v0.2.109) (2023-03-14)
@@ -19,17 +32,15 @@
 
 ### [0.2.101](https://github.com/Azure/LogicAppsUX/compare/v0.2.100...v0.2.101) (2023-03-08)
 
-
 ### Logic Apps Designer Changes
 
-* Added some extra setup for a new DataMapper action ([#1713](https://github.com/Azure/LogicAppsUX/issues/1713)) ([890b9ac](https://github.com/Azure/LogicAppsUX/commit/890b9ac834d97524430f74a7553131240f1e96f1))
+- Added some extra setup for a new DataMapper action ([#1713](https://github.com/Azure/LogicAppsUX/issues/1713)) ([890b9ac](https://github.com/Azure/LogicAppsUX/commit/890b9ac834d97524430f74a7553131240f1e96f1))
 
 ### [0.2.100](https://github.com/Azure/LogicAppsUX/compare/v0.2.99...v0.2.100) (2023-03-08)
 
-
 ### Logic Apps Designer Changes
 
-* TokenpickerV2 ([#1709](https://github.com/Azure/LogicAppsUX/issues/1709)) ([2f58d57](https://github.com/Azure/LogicAppsUX/commit/2f58d57698eca399df849e19b6a9b116f2260302))
+- TokenpickerV2 ([#1709](https://github.com/Azure/LogicAppsUX/issues/1709)) ([2f58d57](https://github.com/Azure/LogicAppsUX/commit/2f58d57698eca399df849e19b6a9b116f2260302))
 
 ### [0.2.99](https://github.com/Azure/LogicAppsUX/compare/v0.2.98...v0.2.99) (2023-03-07)
 

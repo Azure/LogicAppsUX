@@ -149,7 +149,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
     });
   }
 
-  private async _getDesignerPanelMetadata(): Promise<any> {
+  private async _getDesignerPanelMetadata(): Promise<IDesignerPanelMetadata> {
     const connectionsData: string = await getConnectionsFromFile(this.context, this.workflowFilePath);
     const projectPath: string | undefined = await getFunctionProjectRoot(this.context, this.workflowFilePath);
     const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
@@ -167,9 +167,9 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
     return {
       panelId: this.panelName,
       appSettingNames: Object.keys(localSettings),
-      scriptPath: this.panel.webview.asWebviewUri(vscode.Uri.file(path.join(ext.context.extensionPath, 'dist', 'designer'))).toString(),
       connectionsData,
       localSettings,
+      parametersData,
       azureDetails,
       accessToken: azureDetails.accessToken,
       workflowName: this.workflowName,

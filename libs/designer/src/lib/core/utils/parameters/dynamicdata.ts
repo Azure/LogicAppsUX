@@ -37,7 +37,7 @@ import {
   isDynamicPropertiesExtension,
   isDynamicListExtension,
   decodePropertySegment,
-  encodePropertySegment,
+  expandAndEncodePropertySegment,
   toInputParameter,
   OutputMapKey,
   OutputSource,
@@ -449,7 +449,7 @@ function loadUnknownManifestBasedParameters(
     // If it is an object, recurse down and find the other unknown values.
     Object.keys(input).forEach((key) => {
       // encode the key to match the paths of the known parameters.
-      const encodedKey = encodePropertySegment(key);
+      const encodedKey = expandAndEncodePropertySegment(key);
       loadUnknownManifestBasedParameters(
         `${keyPrefix}.${encodedKey}`,
         isNullOrEmpty(previousKeyPath) ? encodedKey : `${previousKeyPath}.${encodedKey}`,

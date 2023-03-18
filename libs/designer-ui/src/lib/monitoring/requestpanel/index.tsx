@@ -101,3 +101,5 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({ requestHistory, visi
     </>
   );
 };
+
+export { SecureDataSection };
