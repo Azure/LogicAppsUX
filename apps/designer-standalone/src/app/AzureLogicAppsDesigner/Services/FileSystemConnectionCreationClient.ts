@@ -64,6 +64,7 @@ export class FileSystemConnectionCreationClient implements ConnectionCreationCli
     if (!password) {
       throw new Error('password required');
     }
+    // eslint-disable-next-line no-useless-escape
     if (!rootFolder.match(/\\\\[^\\:\|\[\]\/";<>+=,?* _]+\\[^\\:\/*?"<>\|]+/g)) {
       throw new Error('rootFolder is not in valid format');
     }
