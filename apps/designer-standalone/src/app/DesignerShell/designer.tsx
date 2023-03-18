@@ -16,7 +16,7 @@ const InnerDesigner = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <SettingsBox local={localOnly} />
-      {isLoading ? <div>Loading Today</div> : localOnly ? <LocalDesigner /> : resourcePath ? <LogicAppsDesigner /> : null}
+      {isLoading ? <div>Loading.....</div> : localOnly ? <LocalDesigner /> : resourcePath ? <LogicAppsDesigner /> : null}
     </QueryClientProvider>
   );
 };

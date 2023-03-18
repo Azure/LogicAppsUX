@@ -6,7 +6,7 @@ test('Should be able to drag and drop operations', async ({ page }) => {
   await page.goto(baseUrl);
 
   await page.locator('div[role="button"]:has-text("🧰")').click();
-  await page.locator('text=Simple Big Workflow').click();
+  await page.locator('text=Select an option').click();
 
   await page.locator('button[role="option"]:has-text("Simple Big Workflow")').click();
   await page.locator('div[role="button"]:has-text("🧰")').click();
