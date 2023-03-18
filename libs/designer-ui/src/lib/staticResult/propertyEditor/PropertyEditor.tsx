@@ -90,7 +90,6 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
   };
 
   const addNewProperty = () => {
-    console.log('here');
     if (!newPropertyName || currProperties[newPropertyName]) {
       setNewPropertyNameErrorMessage(emptyPropertyName);
       return;
