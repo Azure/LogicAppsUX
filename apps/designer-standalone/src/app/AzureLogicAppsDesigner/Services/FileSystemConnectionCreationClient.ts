@@ -64,14 +64,10 @@ export class FileSystemConnectionCreationClient implements ConnectionCreationCli
     if (!password) {
       throw new Error('password required');
     }
-
-    // (NOTE:anandgmenon): Verifying if rootFolder is in UNC Path format i.e \\<Machine-name>\<Share-name>.
-    // eslint-disable-next-line no-useless-escape
     if (!rootFolder.match(/\\\\[^\\:\|\[\]\/";<>+=,?* _]+\\[^\\:\/*?"<>\|]+/g)) {
       throw new Error('rootFolder is not in valid format');
     }
 
-    //NOTE(anandgmenon): splitting the endpoint and share name from the UNC path in the format \\<endpoint>\<shareName>.
     const endpointWithShareName = rootFolder.substring(2);
     const endpoint = endpointWithShareName.split('\\')[0];
     const shareName = endpointWithShareName.substring(endpoint.length + 1);
@@ -92,13 +88,10 @@ export class FileSystemConnectionCreationClient implements ConnectionCreationCli
     const configBaseUrl = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/config/azurestorageaccounts`;
     const configFetchUrl = `${configBaseUrl}/list`;
 
-    //NOTE(anandgmenon): Fetching current file shares from the config
     const response = await httpClient.post<any, ConfigMap>({
       uri: configFetchUrl,
       queryParameters: { 'api-version': apiVersion },
     });
-
-    //NOTE(anandgmenon): Updating config with new file share config
     response.properties[connectionName] = newFileShareConfig;
     await httpClient.put<ConfigMap, any>({
       uri: configBaseUrl,
@@ -107,8 +100,6 @@ export class FileSystemConnectionCreationClient implements ConnectionCreationCli
       queryParameters: { 'api-version': apiVersion },
     });
 
-    // TODO(anandgmenon): We need to check if there's a better way to get the mountPath.
-    // Right now this is only injected to site environment and portal cannot read that.
     const mountPath = `C:${newFileShareConfig.mountPath}`;
 
     return {
