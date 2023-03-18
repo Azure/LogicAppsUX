@@ -52,8 +52,6 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
   const [newPropertyName, setNewPropertyName] = useState('');
   const [newPropertyNameErrorMessage, setNewPropertyNameErrorMessage] = useState('');
 
-  console.log(schema);
-
   const duplicatePropertyName = intl.formatMessage({
     defaultMessage: 'Duplicate property name',
     description: 'Duplicate property name error message',
