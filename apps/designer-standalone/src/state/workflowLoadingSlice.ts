@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { environment } from '../environments/environment';
 import type { ConnectionsJSON, FunctionsConnection, ServiceProviderConnection } from './connectionReferences';
 import type { RootState } from './store';
 import type { ConnectionReference, ConnectionReferences } from '@microsoft/logic-apps-designer';
@@ -6,8 +7,8 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 export interface WorkflowLoadingState {
-  armToken?: string;
   resourcePath?: string;
+  appId?: string;
   loadingMethod: 'file' | 'arm';
   workflowDefinition: LogicAppsV2.WorkflowDefinition | null;
   runInstance: LogicAppsV2.RunInstanceDefinition | null;
@@ -23,7 +24,7 @@ const initialState: WorkflowLoadingState = {
   runInstance: null,
   connections: {},
   loadingMethod: 'file',
-  resourcePath: 'simpleBigworkflow.json',
+  resourcePath: '',
   readOnly: false,
   monitoringView: false,
   darkMode: false,
@@ -46,7 +47,7 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
       `https://management.azure.com/${currentState.workflowLoader.resourcePath}?api-version=2020-06-01&$expand=connections.json`,
       {
         headers: {
-          Authorization: `Bearer ${currentState.workflowLoader.armToken}`,
+          Authorization: `Bearer ${environment.armToken}`,
         },
       }
     );
@@ -127,9 +128,6 @@ export const workflowLoadingSlice = createSlice({
   name: 'workflowLoader',
   initialState,
   reducers: {
-    changeArmToken: (state, action: PayloadAction<string>) => {
-      state.armToken = action.payload;
-    },
     changeResourcePath: (state, action: PayloadAction<string>) => {
       state.resourcePath = action.payload;
     },
@@ -171,7 +169,7 @@ export const workflowLoadingSlice = createSlice({
   },
 });
 
-export const { changeArmToken, changeResourcePath, changeLoadingMethod, setReadOnly, setMonitoringView, setDarkMode, setConsumption } =
+export const { changeResourcePath, changeLoadingMethod, setReadOnly, setMonitoringView, setDarkMode, setConsumption } =
   workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;

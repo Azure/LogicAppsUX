@@ -1,5 +1,6 @@
 // This file can be replaced during build by using the `fileReplacements` array.
 // When building for production, this file is replaced with `environment.prod.ts`.
+import armTokenData from './armToken.json';
 
 export interface EnvironmentVars {
   production: boolean;
@@ -7,15 +8,5 @@ export interface EnvironmentVars {
 }
 export const environment: EnvironmentVars = {
   production: false,
+  armToken: armTokenData.accessToken,
 };
-
-const replaceArmToken = async () => {
-  try {
-    const armTokenData = await import('./.armToken.json');
-    environment.armToken = `${armTokenData.accessToken}`;
-  } catch {
-    console.log('ARM Token not accessable');
-  }
-};
-
-replaceArmToken();

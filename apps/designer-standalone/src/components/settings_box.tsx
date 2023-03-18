@@ -1,6 +1,7 @@
-import { Login } from '../app/Login/login';
+import { LogicAppSelector } from '../app/AzureLogicAppsDesigner/LogicAppSelectionSetting/sidePanel';
+import { Login } from '../app/LocalDesigner/Login/login';
+import LocalContextSettings from '../app/LocalDesigner/contextSettings';
 import type { RootState } from '../state/store';
-import ContextSettings from './contextSettings';
 import styles from './settings_box.module.less';
 import { darkTheme } from './themes';
 import { ThemeProvider } from '@fluentui/react';
@@ -8,7 +9,7 @@ import { useBoolean } from '@fluentui/react-hooks';
 import { css } from '@fluentui/utilities';
 import { useSelector } from 'react-redux';
 
-export const SettingsBox = () => {
+export const SettingsBox = ({ local }: { local: boolean }) => {
   const [active, toggleActive] = useBoolean(false);
   const isDark = useSelector((state: RootState) => state.workflowLoader.darkMode);
   const cs = css(styles.toybox, active && styles.active, isDark && styles.dark);
@@ -34,10 +35,17 @@ export const SettingsBox = () => {
             🧰
           </span>
         </div>
-        <div className={styles.contentWrapper}>
-          <SettingsSection title="Workflow Load Settings" content={<Login />} />
-          <SettingsSection title="Context Settings" content={<ContextSettings />} />
-        </div>
+        {local ? (
+          <div className={styles.contentWrapper}>
+            <SettingsSection title="Workflow Load Settings" content={<Login />} />
+            <SettingsSection title="Context Settings" content={<LocalContextSettings />} />
+          </div>
+        ) : (
+          <div className={styles.contentWrapper}>
+            <SettingsSection title="Workflow Load Settings" content={<LogicAppSelector />} />
+            <SettingsSection title="Context Settings" content={<div />} />
+          </div>
+        )}
       </div>
     </ThemeProvider>
   );
