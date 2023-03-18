@@ -1,16 +1,7 @@
-import { Label } from '../../label';
-import { textFieldStyles } from '../staticResultProperty';
-import { ItemMenuButton } from './ItemMenuButton';
-import type {
-  IButtonStyles,
-  IContextualMenuItem,
-  IContextualMenuProps,
-  IContextualMenuStyles,
-  IIconProps,
-  ITextFieldStyles,
-} from '@fluentui/react';
-import { IconButton, DefaultButton, PrimaryButton, Callout, DirectionalHint, TextField } from '@fluentui/react';
-import { useCallback, useMemo, useState } from 'react';
+import { PropertyEditorItem } from './PropertyEditorItem';
+import type { IButtonStyles, IIconProps, ITextFieldStyles } from '@fluentui/react';
+import { DefaultButton, PrimaryButton, Callout, DirectionalHint, TextField } from '@fluentui/react';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const directionalHint = DirectionalHint.leftCenter;
@@ -47,21 +38,6 @@ const cancelButtonStyles: Partial<IButtonStyles> = {
   },
 };
 
-const dropwdownButtonStyles: Partial<IButtonStyles> = {
-  root: {
-    height: '26px',
-    width: '26px',
-    marginLeft: '20px',
-  },
-};
-
-const dropdownMenuStyles: Partial<IContextualMenuStyles> = {
-  root: {
-    width: '150px',
-    minWidth: '150px',
-  },
-};
-
 interface PropertyEditorProps {
   properties: Record<string, string>;
   schema?: OpenAPIV2.SchemaObject;
@@ -75,7 +51,6 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
   const [renamedValue, setRenamedValue] = useState('');
   const [newPropertyName, setNewPropertyName] = useState('');
   const [newPropertyNameErrorMessage, setNewPropertyNameErrorMessage] = useState('');
-  const [checkedDropdownProperties, setCheckedDropdownProperties] = useState<Record<string, boolean>>({});
 
   const duplicatePropertyName = intl.formatMessage({
     defaultMessage: 'Duplicate property name',
@@ -86,26 +61,23 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
     description: 'Empty property name error message',
   });
 
-  const updateText = (propertyName: string, newValue?: string) => {
-    const updatedProperties = { ...currProperties };
-    updatedProperties[propertyName] = newValue ?? '';
-    setCurrProperties(updatedProperties);
-  };
-
-  const deleteItem = (propertyName: string) => {
-    const updatedProperties = { ...currProperties };
-    delete updatedProperties[propertyName];
-    setCurrProperties(updatedProperties);
-  };
-
   const clearRename = () => {
     setShowRenameCallout('');
     setRenamedValue('');
   };
 
+  const renameButtonClicked = (propertyName: string) => {
+    setShowRenameCallout(propertyName);
+    setRenamedValue(propertyName);
+  };
+
   const renameProperty = () => {
-    const updatedProperties = {};
-    delete Object.assign(updatedProperties, currProperties, { [renamedValue]: currProperties[showRenameCallout] })[showRenameCallout];
+    const updatedProperties: Record<string, string> = {};
+    // Have to iterate through object properties to maintain insertion order for string keys and can't use the following:
+    // delete Object.assign(updatedProperties, currProperties, { [renamedValue]: currProperties[showRenameCallout] })[showRenameCallout];
+    Object.keys(currProperties).forEach((key) => {
+      key !== showRenameCallout ? (updatedProperties[key] = currProperties[key]) : (updatedProperties[renamedValue] = currProperties[key]);
+    });
     setCurrProperties(updatedProperties);
   };
 
@@ -118,6 +90,7 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
   };
 
   const addNewProperty = () => {
+    console.log('here');
     if (!newPropertyName || currProperties[newPropertyName]) {
       setNewPropertyNameErrorMessage(emptyPropertyName);
       return;
@@ -129,50 +102,10 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
   const addNewPropertyWithSchema = () => {
     if (schema?.title) {
       setCurrProperties({ ...currProperties, [`${schema.title} - ${Object.keys(currProperties).length}`]: '' });
+    } else if (schema && Object.keys(schema).length === 0) {
+      setCurrProperties({ ...currProperties, [`childErrors - ${Object.keys(currProperties).length}`]: '' });
     }
   };
-
-  const onToggleSelect = useCallback(
-    (ev?: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>, item?: IContextualMenuItem): void => {
-      ev && ev.preventDefault();
-      if (item) {
-        setCheckedDropdownProperties({
-          ...checkedDropdownProperties,
-          [item.key]: checkedDropdownProperties[item.key] === undefined ? true : !checkedDropdownProperties[item.key],
-        });
-      }
-    },
-    [checkedDropdownProperties]
-  );
-
-  const convertSchemaPropertiestoMenuItems = useCallback(
-    (properties: Record<string, OpenAPIV2.SchemaObject> | undefined): IContextualMenuItem[] => {
-      const menuItems: IContextualMenuItem[] = [];
-      if (properties) {
-        Object.keys(properties).forEach((property) => {
-          menuItems.push({
-            key: property,
-            text: property,
-            data: properties[property],
-            canCheck: true,
-            isChecked: checkedDropdownProperties[property],
-            onClick: onToggleSelect,
-          });
-        });
-      }
-      return menuItems;
-    },
-    [checkedDropdownProperties, onToggleSelect]
-  );
-
-  const dropdownMenuProps: IContextualMenuProps = useMemo(
-    () => ({
-      shouldFocusOnMount: true,
-      items: convertSchemaPropertiestoMenuItems(schema?.properties),
-      styles: dropdownMenuStyles,
-    }),
-    [convertSchemaPropertiestoMenuItems, schema?.properties]
-  );
 
   const saveButtonLabel = intl.formatMessage({
     defaultMessage: 'Save',
@@ -198,36 +131,17 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
     <>
       {Object.entries(currProperties).map(([propertyName, propertyValue], i) => {
         return (
-          <div key={i} className="msla-property-editor-property" id={`property-${propertyName}`}>
-            <div className="msla-property-editor-property-header">
-              <div style={{ display: 'flex' }}>
-                <Label className="msla-property-editor-property-name" text={propertyName} />
-                {schema ? (
-                  <IconButton iconProps={{ iconName: 'Dropdown' }} styles={dropwdownButtonStyles} menuProps={dropdownMenuProps} />
-                ) : null}
-              </div>
-              <div className="msla-property-editor-property-options">
-                <ItemMenuButton
-                  disabled={false}
-                  hideRename={!!schema}
-                  onDeleteClicked={() => {
-                    clearRename();
-                    deleteItem(propertyName);
-                  }}
-                  onRenameClicked={() => {
-                    setShowRenameCallout(propertyName);
-                    setRenamedValue(propertyName);
-                  }}
-                />
-              </div>
-            </div>
-            <TextField
-              styles={textFieldStyles}
-              value={propertyValue}
-              onChange={(_e, newVal) => updateText(propertyName, newVal)}
-              onBlur={() => updateProperties(currProperties)}
-            />
-          </div>
+          <PropertyEditorItem
+            key={i}
+            propertyName={propertyName}
+            propertyValue={propertyValue}
+            schema={schema}
+            currProperties={currProperties}
+            renameButtonClicked={renameButtonClicked}
+            setCurrProperties={setCurrProperties}
+            updateProperties={updateProperties}
+            clearRename={clearRename}
+          />
         );
       })}
       <div className="msla-property-editor-new-property">

@@ -31,7 +31,7 @@ export const textFieldStyles: Partial<ITextFieldStyles> = {
 };
 
 interface StaticResultProperty {
-  schema: StaticResultRootSchemaType;
+  schema: StaticResultRootSchemaType | OpenAPIV2.SchemaObject;
   required?: boolean;
 }
 
@@ -42,6 +42,7 @@ const onRenderLabel = (text: string, required?: boolean): JSX.Element => {
 function WrappedStaticResultProperty({ schema, required = false }: StaticResultProperty): JSX.Element {
   const intl = useIntl();
   const [defaultValue, setDefaultValue] = useState(schema.default);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const getEnumValues = (): IDropdownOption[] => {
     if (!schema.enum) return [];
@@ -68,24 +69,87 @@ function WrappedStaticResultProperty({ schema, required = false }: StaticResultP
     defaultMessage: 'Enter a value',
     description: 'Placeholder for text field',
   });
+  const integerTextFieldPlaceHolder = intl.formatMessage({
+    defaultMessage: 'Enter an integer',
+    description: 'Placeholder for integer text field',
+  });
 
-  console.log(schema);
+  const validateInteger = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: any) => {
+    if (isNaN(newValue)) {
+      setDefaultValue(defaultValue ?? '');
+      setErrorMessage(
+        intl.formatMessage({ defaultMessage: 'Invalid integer value', description: 'Error message for invalid integer value' })
+      );
+    } else {
+      setDefaultValue(newValue);
+      setErrorMessage('');
+    }
+  };
 
-  return (
-    <div className="msla-static-result-property-container">
-      {schema.type === constants.SWAGGER.TYPE.STRING || !schema.type ? (
-        schema.enum ? (
-          <Dropdown
-            className="msla-static-result-property-dropdown"
-            styles={dropdownStyles}
-            options={getEnumValues()}
-            selectedKey={defaultValue}
-            onChange={selectDropdownKey}
-            label={schema.title}
-            required={required}
-            placeholder={dropdownPlaceHolder}
+  const renderItems = (): JSX.Element => {
+    switch (schema.type) {
+      case constants.SWAGGER.TYPE.STRING:
+        if (schema.enum) {
+          return (
+            <Dropdown
+              className="msla-static-result-property-dropdown"
+              styles={dropdownStyles}
+              options={getEnumValues()}
+              selectedKey={defaultValue}
+              onChange={selectDropdownKey}
+              label={schema.title}
+              required={required}
+              placeholder={dropdownPlaceHolder}
+            />
+          );
+        } else {
+          return (
+            <TextField
+              className="msla-static-result-property-textField"
+              styles={textFieldStyles}
+              onRenderLabel={() => onRenderLabel(schema.title ?? '', required)}
+              defaultValue={defaultValue}
+              placeholder={textFieldPlaceHolder}
+            />
+          );
+        }
+      case constants.SWAGGER.TYPE.INTEGER:
+        return (
+          <TextField
+            className="msla-static-result-property-textField"
+            styles={textFieldStyles}
+            onRenderLabel={() => onRenderLabel(schema.title ?? '', required)}
+            value={defaultValue}
+            placeholder={integerTextFieldPlaceHolder}
+            onChange={validateInteger}
+            errorMessage={errorMessage}
           />
-        ) : (
+        );
+      case constants.SWAGGER.TYPE.ARRAY:
+      case constants.SWAGGER.TYPE.OBJECT:
+        if (schema.items) {
+          return (
+            <>
+              <Label text={schema.title ?? ''} isRequiredField={required} requiredMarkerSide={RequiredMarkerSide.RIGHT} />
+              <PropertyEditorContainer schema={schema.items} />
+            </>
+          );
+        } else if (schema.additionalProperties) {
+          return (
+            <>
+              <Label text={schema.title ?? ''} isRequiredField={required} requiredMarkerSide={RequiredMarkerSide.RIGHT} />
+              <PropertyEditorContainer />
+            </>
+          );
+        } else {
+          return (
+            <div className="msla-static-result-property-inner">
+              <StaticResult staticResultSchema={schema} showEnableButton={false} enabled={true} title={schema.title} />
+            </div>
+          );
+        }
+      default:
+        return (
           <TextField
             className="msla-static-result-property-textField"
             styles={textFieldStyles}
@@ -93,28 +157,11 @@ function WrappedStaticResultProperty({ schema, required = false }: StaticResultP
             defaultValue={defaultValue}
             placeholder={textFieldPlaceHolder}
           />
-        )
-      ) : schema.type === constants.SWAGGER.TYPE.ARRAY && schema.items ? (
-        <div>
-          <Label text={schema.title ?? ''} isRequiredField={required} requiredMarkerSide={RequiredMarkerSide.RIGHT} />
-          <PropertyEditorContainer schema={schema.items} />
-        </div>
-      ) : (
-        <>
-          {schema.additionalProperties ? (
-            <div>
-              <Label text={schema.title ?? ''} isRequiredField={required} requiredMarkerSide={RequiredMarkerSide.RIGHT} />
-              <PropertyEditorContainer />
-            </div>
-          ) : (
-            <div className="msla-static-result-property-inner">
-              <StaticResult staticResultSchema={schema} showEnableButton={false} enabled={true} title={schema.title} />
-            </div>
-          )}
-        </>
-      )}
-    </div>
-  );
+        );
+    }
+  };
+
+  return <div className="msla-static-result-property-container">{renderItems()}</div>;
 }
 
 export const StaticResultProperty = React.memo(WrappedStaticResultProperty);

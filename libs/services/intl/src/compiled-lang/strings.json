@@ -5061,6 +5061,12 @@
       "value": "Required. The index of where the substring begins in parameter 1."
     }
   ],
+  "ehIBkh": [
+    {
+      "type": 0,
+      "value": "Enter an integer"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -6231,6 +6237,12 @@
     {
       "type": 0,
       "value": "Errors"
+    }
+  ],
+  "oR2x4N": [
+    {
+      "type": 0,
+      "value": "Invalid integer value"
     }
   ],
   "oRvVIW": [
