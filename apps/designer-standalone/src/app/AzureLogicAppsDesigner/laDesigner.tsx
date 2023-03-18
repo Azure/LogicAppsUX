@@ -41,15 +41,15 @@ const httpClient = new HttpClient();
 const DesignerEditor = () => {
   const {
     id: workflowId,
-    location,
     isReadOnly,
+    isDarkMode,
   } = useSelector((state: RootState) => ({
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     id: state.workflowLoader.resourcePath!,
-    location: 'westus',
     isReadOnly: state.workflowLoader.readOnly,
+    isDarkMode: state.workflowLoader.darkMode,
   }));
-  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(location);
+
   const workflowName = workflowId.split('/').splice(-1)[0];
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
   const { data, isLoading, isError, error } = useWorkflowAndArtifactsStandard(workflowId);
@@ -58,8 +58,6 @@ const DesignerEditor = () => {
   const { data: tenantId } = useCurrentTenantId();
 
   const [designerID, setDesignerID] = React.useState(guid());
-
-  const [isDarkMode, _] = React.useState<boolean>(false);
 
   const workflow = data?.properties.files[Artifact.WorkflowFile];
   const connectionsData = data?.properties.files[Artifact.ConnectionsFile] ?? {};
@@ -100,7 +98,7 @@ const DesignerEditor = () => {
   const discardAllChanges = () => {
     setDesignerID(guid());
   };
-
+  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
   const services = React.useMemo(
     () =>
       getDesignerServices(
@@ -114,7 +112,7 @@ const DesignerEditor = () => {
         canonicalLocation
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflowId, connectionsData, settingsData, workflowAppData, tenantId, location, designerID]
+    [workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID]
   );
 
   // Our iframe root element is given a strange padding (not in this repo), this removes it

@@ -1,13 +1,12 @@
 import { environment } from '../../../environments/environment';
-import type { AppDispatch } from '../../../state/store';
-import { changeLoadingMethod, changeResourcePath, loadWorkflow } from '../../../state/workflowLoadingSlice';
+import type { AppDispatch, RootState } from '../../../state/store';
+import { changeAppid, changeResourcePath, changeWorkflowName } from '../../../state/workflowLoadingSlice';
 import type { WorkflowList } from '../Models/WorkflowListTypes';
 import type { IDropdownOption, IStackProps } from '@fluentui/react';
 import { Dropdown, Stack, TextField } from '@fluentui/react';
 import axios from 'axios';
-import { useState } from 'react';
 import { useQuery } from 'react-query';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const columnProps: Partial<IStackProps> = {
   tokens: { childrenGap: 15 },
@@ -15,8 +14,7 @@ const columnProps: Partial<IStackProps> = {
 const resourceIdValidation =
   /^\/subscriptions\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/resourceGroups\/[a-zA-Z0-9](?:[a-zA-Z0-9-_]*[a-zA-Z0-9])?\/providers\/[a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_./]+$/;
 export const LogicAppSelector = () => {
-  const [appId, setAppId] = useState<string | null>(null);
-  //   const [selectedWorkflow, setSelectedWorkflow] = useState<string | null>(null);
+  const { appId, workflowName } = useSelector((state: RootState) => state.workflowLoader);
   const validApp = appId ? resourceIdValidation.test(appId) : false;
   const dispatch = useDispatch<AppDispatch>();
   const { data: workflows } = useQuery(['getListOfWorkflows', validApp], async () => {
@@ -42,16 +40,16 @@ export const LogicAppSelector = () => {
         label="Logic App ID"
         value={appId ?? ''}
         placeholder="/subscriptions/<sid>>/resourceGroups/<rg>/providers/Microsoft.Web/sites/<appName>"
-        onChange={(_, newValue) => setAppId(newValue ?? null)}
+        onChange={(_, newValue) => dispatch(changeAppid(newValue ?? ''))}
       />
       <Dropdown
         placeholder="Select a workflow"
         label="Workflow"
         options={options}
+        defaultValue={workflowName}
         onChange={(_, option) => {
           dispatch(changeResourcePath(`${appId}/workflows/${option?.key}`));
-          dispatch(changeLoadingMethod('arm'));
-          dispatch(loadWorkflow());
+          dispatch(changeWorkflowName(option?.key as string));
         }}
       />
     </Stack>

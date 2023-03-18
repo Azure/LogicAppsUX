@@ -1,4 +1,5 @@
 import { LogicAppSelector } from '../app/AzureLogicAppsDesigner/LogicAppSelectionSetting/sidePanel';
+import AzureContextSettings from '../app/AzureLogicAppsDesigner/azureContextSettings';
 import { Login } from '../app/LocalDesigner/Login/login';
 import LocalContextSettings from '../app/LocalDesigner/contextSettings';
 import type { RootState } from '../state/store';
@@ -43,7 +44,7 @@ export const SettingsBox = ({ local }: { local: boolean }) => {
         ) : (
           <div className={styles.contentWrapper}>
             <SettingsSection title="Workflow Load Settings" content={<LogicAppSelector />} />
-            <SettingsSection title="Context Settings" content={<div />} />
+            <SettingsSection title="Context Settings" content={<AzureContextSettings />} />
           </div>
         )}
       </div>
