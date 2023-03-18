@@ -97,6 +97,10 @@ const STATIC_RESULT_OPERATION_OUTPUT_TITLE = intl.formatMessage({
   defaultMessage: 'Output',
   description: 'The title of the output field in the static result parseJson action',
 });
+const STATIC_RESULT_PARSE_JSON_CHILD_ERRORS_TITLE = intl.formatMessage({
+  defaultMessage: 'ChildErrors',
+  description: 'The title of the child errors field in the static result parseJson action',
+});
 
 function getValidationErrorSchema(): Schema {
   const validationErrorSchema: Schema = {
@@ -144,7 +148,7 @@ function getValidationErrorSchema(): Schema {
       childErrors: {
         title: STATIC_RESULT_PARSE_JSON_CHILD_ERRORS,
         type: 'array',
-        items: {},
+        items: { title: STATIC_RESULT_PARSE_JSON_CHILD_ERRORS_TITLE },
       },
     },
   };

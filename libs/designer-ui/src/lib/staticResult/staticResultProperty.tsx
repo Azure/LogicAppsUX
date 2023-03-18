@@ -1,7 +1,7 @@
 import type { StaticResultRootSchemaType } from '..';
 import { RequiredMarkerSide, StaticResult, Label } from '..';
 import constants from '../constants';
-import { PropertyEditorContainer } from './propertyEditor';
+import { PropertyEditor } from './propertyEditor';
 import type { IDropdownOption, IDropdownStyles, ITextFieldStyles } from '@fluentui/react';
 import { Dropdown, TextField } from '@fluentui/react';
 import React, { useState } from 'react';
@@ -33,16 +33,18 @@ export const textFieldStyles: Partial<ITextFieldStyles> = {
 interface StaticResultProperty {
   schema: StaticResultRootSchemaType | OpenAPIV2.SchemaObject;
   required?: boolean;
+  properties?: Record<string, string>;
 }
 
 const onRenderLabel = (text: string, required?: boolean): JSX.Element => {
   return <Label text={text} isRequiredField={required} />;
 };
 
-function WrappedStaticResultProperty({ schema, required = false }: StaticResultProperty): JSX.Element {
+function WrappedStaticResultProperty({ schema, required = false, properties = {} }: StaticResultProperty): JSX.Element {
   const intl = useIntl();
   const [defaultValue, setDefaultValue] = useState(schema.default);
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [currProperties, setCurrProperties] = useState(properties);
 
   const getEnumValues = (): IDropdownOption[] => {
     if (!schema.enum) return [];
@@ -131,14 +133,14 @@ function WrappedStaticResultProperty({ schema, required = false }: StaticResultP
           return (
             <>
               <Label text={schema.title ?? ''} isRequiredField={required} requiredMarkerSide={RequiredMarkerSide.RIGHT} />
-              <PropertyEditorContainer schema={schema.items} />
+              <PropertyEditor schema={schema.items} properties={currProperties} updateProperties={setCurrProperties} />
             </>
           );
         } else if (schema.additionalProperties) {
           return (
             <>
               <Label text={schema.title ?? ''} isRequiredField={required} requiredMarkerSide={RequiredMarkerSide.RIGHT} />
-              <PropertyEditorContainer />
+              <PropertyEditor properties={currProperties} updateProperties={setCurrProperties} />
             </>
           );
         } else {
