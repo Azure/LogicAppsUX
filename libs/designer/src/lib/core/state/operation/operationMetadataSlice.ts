@@ -109,11 +109,17 @@ export interface NodeData {
   nodeDependencies: NodeDependencies;
   settings?: Settings;
   operationMetadata: OperationMetadata;
+  staticResults?: NodeStaticResults;
 }
 
 interface AddSettingsPayload {
   id: string;
   settings: Settings;
+}
+
+interface AddStaticResultsPayload {
+  id: string;
+  staticResults: NodeStaticResults;
 }
 
 interface AddDynamicOutputsPayload {
@@ -152,7 +158,7 @@ export const operationMetadataSlice = createSlice({
           return;
         }
 
-        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata } = nodeData;
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, staticResults } = nodeData;
         state.inputParameters[id] = nodeInputs;
         state.outputParameters[id] = nodeOutputs;
         state.dependencies[id] = nodeDependencies;
@@ -160,6 +166,9 @@ export const operationMetadataSlice = createSlice({
 
         if (settings) {
           state.settings[id] = settings;
+        }
+        if (staticResults) {
+          state.staticResults[id] = staticResults;
         }
       }
     },
@@ -222,6 +231,14 @@ export const operationMetadataSlice = createSlice({
       }
 
       state.settings[id] = { ...state.settings[id], ...settings };
+    },
+    updateStaticResults: (state, action: PayloadAction<AddStaticResultsPayload>) => {
+      const { id, staticResults } = action.payload;
+      if (!state.staticResults[id]) {
+        state.staticResults[id] = { name: '', staticResultOptions: false };
+      }
+
+      state.staticResults[id] = { ...state.staticResults[id], ...staticResults };
     },
     updateNodeParameters: (state, action: PayloadAction<UpdateParametersPayload>) => {
       const { nodeId, dependencies, parameters } = action.payload;
@@ -301,6 +318,7 @@ export const operationMetadataSlice = createSlice({
         delete state.dependencies[id];
         delete state.settings[id];
         delete state.operationMetadata[id];
+        delete state.staticResults[id];
       }
     },
   },
@@ -316,6 +334,7 @@ export const {
   clearDynamicInputs,
   clearDynamicOutputs,
   updateNodeSettings,
+  updateStaticResults,
   updateParameterConditionalVisibility,
   updateParameterValidation,
   removeParameterValidationError,

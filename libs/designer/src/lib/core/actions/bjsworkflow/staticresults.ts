@@ -1,3 +1,4 @@
 export interface NodeStaticResults {
-  test: string;
+  name: string;
+  staticResultOptions: boolean;
 }

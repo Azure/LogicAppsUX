@@ -8,7 +8,7 @@ import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeData, NodeInputs, NodeOperation, NodeOutputs } from '../../state/operation/operationMetadataSlice';
 import { initializeOperationInfo, initializeNodes } from '../../state/operation/operationMetadataSlice';
-import { addSchema } from '../../state/staticresultschema/staticresultschemaSlice';
+import { addResultSchema } from '../../state/staticresultschema/staticresultschemaSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import type { NodesMetadata, Operations } from '../../state/workflow/workflowInterfaces';
@@ -142,7 +142,7 @@ export const initializeOperationDetailsForManifest = async (
       const schema = staticResultService.getOperationResultSchema(connectorId, operationId);
       schema.then((schema) => {
         if (schema) {
-          dispatch(addSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
+          dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
         }
       });
 

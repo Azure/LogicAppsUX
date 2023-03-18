@@ -19,12 +19,12 @@ export const staticResultSchemasSlice = createSlice({
   name: 'staticResultSchema',
   initialState,
   reducers: {
-    addSchema: (state, action: PayloadAction<StaticResultSchemaUpdateEvent>) => {
+    addResultSchema: (state, action: PayloadAction<StaticResultSchemaUpdateEvent>) => {
       state.schemas[action.payload.id] = action.payload.schema;
     },
   },
 });
 
-export const { addSchema } = staticResultSchemasSlice.actions;
+export const { addResultSchema } = staticResultSchemasSlice.actions;
 
 export default staticResultSchemasSlice.reducer;

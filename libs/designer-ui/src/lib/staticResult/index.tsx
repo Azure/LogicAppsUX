@@ -1,9 +1,19 @@
 import constants from '../constants';
 import { StaticResultProperties } from './staticResultProperties';
-import { Icon, Toggle, useTheme } from '@fluentui/react';
+import type { IButtonStyles } from '@fluentui/react';
+import { DefaultButton, Icon, PrimaryButton, Toggle, useTheme } from '@fluentui/react';
 import type { Schema } from '@microsoft/parsers-logic-apps';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+
+const actionButtonStyles: IButtonStyles = {
+  root: {
+    width: '100px',
+    minWidth: '60px',
+    margin: '0px 20px',
+    fontSize: '16px',
+  },
+};
 
 export interface StaticResultProps {
   title?: string;
@@ -52,6 +62,24 @@ export const StaticResult = ({ title, enabled, staticResultSchema, showEnableBut
     description: 'Title for testing section',
   });
 
+  const saveButtonLabel = intl.formatMessage({
+    defaultMessage: 'Save',
+    description: 'Label for save button',
+  });
+
+  const cancelButtonLabel = intl.formatMessage({
+    defaultMessage: 'Cancel',
+    description: 'Label for cancel button',
+  });
+
+  const saveStaticResults = () => {
+    console.log('save');
+  };
+
+  const cancelStaticResults = () => {
+    console.log('cancel');
+  };
+
   const getLabel = () => {
     return showStaticResults ? toggleLabelOff : toggleLabelOn;
   };
@@ -90,6 +118,20 @@ export const StaticResult = ({ title, enabled, staticResultSchema, showEnableBut
           ) : null}
         </div>
       ) : null}
+      <div className="msla-static-result-actions">
+        <PrimaryButton
+          className={'msla-static-result-action-button'}
+          text={saveButtonLabel}
+          onClick={saveStaticResults}
+          styles={actionButtonStyles}
+        />
+        <DefaultButton
+          className={'msla-static-result-action-button'}
+          text={cancelButtonLabel}
+          onClick={cancelStaticResults}
+          styles={actionButtonStyles}
+        />
+      </div>
     </div>
   );
 };
