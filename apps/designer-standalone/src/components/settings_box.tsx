@@ -1,4 +1,4 @@
-import { LogicAppSelector } from '../app/AzureLogicAppsDesigner/LogicAppSelectionSetting/sidePanel';
+import { LogicAppSelector } from '../app/AzureLogicAppsDesigner/LogicAppSelectionSetting/LogicAppSelector';
 import AzureContextSettings from '../app/AzureLogicAppsDesigner/azureContextSettings';
 import { Login } from '../app/LocalDesigner/Login/login';
 import LocalContextSettings from '../app/LocalDesigner/contextSettings';

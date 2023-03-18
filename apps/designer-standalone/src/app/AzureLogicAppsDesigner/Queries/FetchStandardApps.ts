@@ -1,10 +1,10 @@
 import { environment } from '../../../environments/environment';
-import type { FetchLogicAppsReturnType } from '../Models/LogicAppAppTypes';
+import type { Data as FetchLogicAppsData } from '../Models/LogicAppAppTypes';
 import axios from 'axios';
 import { useQuery } from 'react-query';
 
 export const useFetchStandardApps = () => {
-  return useQuery<FetchLogicAppsReturnType>(
+  return useQuery<FetchLogicAppsData[]>(
     'listAllLogicApps',
     async () => {
       if (!environment.armToken) return undefined;
