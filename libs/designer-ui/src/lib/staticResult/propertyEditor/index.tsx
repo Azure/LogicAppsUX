@@ -82,7 +82,7 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
   };
 
   const validateNewProperty = (s?: string) => {
-    if (!s || !currProperties[s]) {
+    if (!s || (!currProperties[s] && typeof currProperties[s] !== 'string')) {
       setNewPropertyNameErrorMessage('');
     } else {
       setNewPropertyNameErrorMessage(duplicatePropertyName);
@@ -90,6 +90,9 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
   };
 
   const addNewProperty = () => {
+    if (newPropertyNameErrorMessage) {
+      return;
+    }
     if (!newPropertyName || currProperties[newPropertyName]) {
       setNewPropertyNameErrorMessage(emptyPropertyName);
       return;
@@ -99,6 +102,9 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
   };
 
   const addNewPropertyWithSchema = () => {
+    if (newPropertyNameErrorMessage) {
+      return;
+    }
     if (schema?.title) {
       setCurrProperties({ ...currProperties, [`${schema.title} - ${Object.keys(currProperties).length}`]: '' });
     }
