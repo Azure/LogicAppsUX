@@ -1,5 +1,13 @@
 # Logic Apps Designer
 
+### [0.2.113](https://github.com/Azure/LogicAppsUX/compare/v0.2.112...v0.2.113) (2023-03-17)
+
+### Logic Apps Designer Changes
+
+- Search + Browse speed boost ([#1760](https://github.com/Azure/LogicAppsUX/issues/1760)) ([edbbdb8](https://github.com/Azure/LogicAppsUX/commit/edbbdb8d1da148eb1b880dd6f5c3aad585026215))
+
+### [0.2.112](https://github.com/Azure/LogicAppsUX/compare/v0.2.111...v0.2.112) (2023-03-17)
+
 ### [0.2.111](https://github.com/Azure/LogicAppsUX/compare/v0.2.110...v0.2.111) (2023-03-16)
 
 ### [0.2.110](https://github.com/Azure/LogicAppsUX/compare/v0.2.109...v0.2.110) (2023-03-15)

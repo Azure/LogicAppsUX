@@ -382,7 +382,7 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
         operationId: definition.inputs?.until ? delayuntil : delay,
       };
 
-    case xslttransform:
+    case xslt:
       switch (kind) {
         case datamapper:
           return {

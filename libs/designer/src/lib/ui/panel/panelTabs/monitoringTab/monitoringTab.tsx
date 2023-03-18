@@ -31,7 +31,7 @@ export const MonitoringPanel: React.FC = () => {
     isFetching,
     isLoading,
     refetch,
-  } = useQuery<any>(['actionInputsOutputs'], getActionInputsOutputs, {
+  } = useQuery<any>(['actionInputsOutputs', { nodeId: selectedNodeId }], getActionInputsOutputs, {
     refetchOnWindowFocus: false,
     initialData: { inputs: {}, outputs: {} },
   });
