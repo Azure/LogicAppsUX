@@ -69,6 +69,11 @@ export const workflowLoadingSlice = createSlice({
     changeResourcePath: (state, action: PayloadAction<string>) => {
       state.resourcePath = action.payload;
     },
+    clearWorkflowDetails: (state) => {
+      state.appId = undefined;
+      state.workflowName = undefined;
+      state.resourcePath = '';
+    },
     setReadOnly: (state, action: PayloadAction<boolean>) => {
       state.readOnly = action.payload;
     },
@@ -111,6 +116,7 @@ export const {
   changeResourcePath,
   changeAppid,
   changeWorkflowName,
+  clearWorkflowDetails,
   setReadOnly,
   setMonitoringView,
   setDarkMode,

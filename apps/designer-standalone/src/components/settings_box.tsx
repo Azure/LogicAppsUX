@@ -1,6 +1,6 @@
 import { LogicAppSelector } from '../app/AzureLogicAppsDesigner/LogicAppSelectionSetting/LogicAppSelector';
 import AzureContextSettings from '../app/AzureLogicAppsDesigner/azureContextSettings';
-import { LocalLogicAppSelector } from '../app/LocalDesigner/LogicAppSelector';
+import { LocalLogicAppSelector } from '../app/LocalDesigner/LogicAppSelector/LogicAppSelector';
 import LocalContextSettings from '../app/LocalDesigner/contextSettings';
 import type { RootState } from '../state/store';
 import styles from './settings_box.module.less';

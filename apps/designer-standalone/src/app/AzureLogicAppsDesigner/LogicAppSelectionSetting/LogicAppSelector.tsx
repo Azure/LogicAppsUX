@@ -19,6 +19,7 @@ const resourceIdValidation =
   /^\/subscriptions\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/resourceGroups\/[a-zA-Z0-9](?:[a-zA-Z0-9-_]*[a-zA-Z0-9])?\/providers\/[a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_./]+$/;
 export const LogicAppSelector = () => {
   const { appId, workflowName } = useSelector((state: RootState) => state.workflowLoader);
+  console.log(appId);
   const { data: appList } = useFetchStandardApps();
   const validApp = appId ? resourceIdValidation.test(appId) : false;
   const dispatch = useDispatch<AppDispatch>();
@@ -61,10 +62,11 @@ export const LogicAppSelector = () => {
         styles={comboBoxStyles}
       />
       <Dropdown
-        placeholder="Select a workflow"
+        placeholder={appId ? (options.length > 0 ? 'Select a Workflow' : 'No Workflows to Select') : 'Select a Logic App First'}
         label="Workflow"
         options={options}
         selectedKey={workflowName}
+        disabled={options.length === 0 || !appId}
         defaultValue={workflowName}
         onChange={(_, option) => {
           dispatch(changeResourcePath(`${appId}/workflows/${option?.key}`));

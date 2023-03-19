@@ -1,12 +1,5 @@
 import type { RootState, AppDispatch } from '../../state/store';
-import {
-  changeAppid,
-  changeResourcePath,
-  changeWorkflowName,
-  setDarkMode,
-  setIsLocalSelected,
-  setReadOnly,
-} from '../../state/workflowLoadingSlice';
+import { clearWorkflowDetails, setDarkMode, setIsLocalSelected, setReadOnly } from '../../state/workflowLoadingSlice';
 import { Checkbox } from '@fluentui/react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -18,9 +11,7 @@ const AzureContextSettings = () => {
 
   const handleCheckLocalSetting = (checked?: boolean) => {
     if (!checked) {
-      dispatch(changeAppid(''));
-      dispatch(changeResourcePath(''));
-      dispatch(changeWorkflowName(''));
+      dispatch(clearWorkflowDetails());
     }
     dispatch(setIsLocalSelected(!!checked));
   };
