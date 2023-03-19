@@ -121,7 +121,7 @@ export const ReactFlowWrapper = ({
     }
   };
 
-  const onConnectStart = (_event: React.MouseEvent, { nodeId, handleType }: OnConnectStartParams) => {
+  const onConnectStart = (_event: React.MouseEvent | React.TouchEvent, { nodeId, handleType }: OnConnectStartParams) => {
     // handleType check prevents other nodes' handles being displayed when attempting to draw from right-to-left (currently not allowed)
     if (!nodeId || !handleType || handleType === SchemaType.Target) {
       return;
