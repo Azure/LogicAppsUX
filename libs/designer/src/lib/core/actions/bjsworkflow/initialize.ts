@@ -102,9 +102,10 @@ export const getInputParametersFromManifest = (
     if (nodeType && isOpenApiConnectionType(nodeType)) {
       const stepDefinitionInputs: OpenApiConnectionSerializedInputs | undefined = stepDefinition.inputs;
 
-      primaryInputParametersInArray =
-        new OpenApiOperationInputsBuilder()
-          .loadStaticInputValuesFromDefinition(stepDefinitionInputs, primaryInputParametersInArray);
+      primaryInputParametersInArray = new OpenApiOperationInputsBuilder().loadStaticInputValuesFromDefinition(
+        stepDefinitionInputs,
+        primaryInputParametersInArray
+      );
     } else {
       const { inputsLocation } = manifest.properties;
       const operationData = clone(stepDefinition);

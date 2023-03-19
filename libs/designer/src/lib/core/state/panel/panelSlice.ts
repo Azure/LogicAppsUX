@@ -116,9 +116,13 @@ export const panelSlice = createSlice({
         };
       }
     },
-    showDefaultTabs: (state, action: PayloadAction<{ isScopeNode?: boolean; isMonitoringView?: boolean } | undefined>) => {
+    showDefaultTabs: (
+      state,
+      action: PayloadAction<{ isScopeNode?: boolean; isMonitoringView?: boolean; hasSchema?: boolean } | undefined>
+    ) => {
       const isMonitoringView = action.payload?.isMonitoringView;
       const isScopeNode = action.payload?.isScopeNode;
+      const hasSchema = action.payload?.hasSchema;
       const defaultTabs = [
         constants.PANEL_TAB_NAMES.ABOUT,
         constants.PANEL_TAB_NAMES.CODE_VIEW,
@@ -130,6 +134,9 @@ export const panelSlice = createSlice({
         ? defaultTabs.unshift(constants.PANEL_TAB_NAMES.MONITORING)
         : defaultTabs.unshift(constants.PANEL_TAB_NAMES.PARAMETERS);
 
+      if (hasSchema && !isMonitoringView) {
+        defaultTabs.unshift(constants.PANEL_TAB_NAMES.TESTING);
+      }
       if (isScopeNode && !isMonitoringView) {
         defaultTabs.shift();
       }

@@ -69,6 +69,7 @@ export * from './searchbox';
 // export * from './selector2';
 export * from './selectConnection';
 export * from './settings/settingsection';
+export * from './staticResult';
 export * from './table';
 export * from './telemetry/models';
 // export * from './textbox';
