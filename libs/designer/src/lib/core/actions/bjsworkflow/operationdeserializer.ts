@@ -8,6 +8,7 @@ import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeData, NodeInputs, NodeOperation, NodeOutputs } from '../../state/operation/operationMetadataSlice';
 import { initializeOperationInfo, initializeNodes } from '../../state/operation/operationMetadataSlice';
+import { addSchema } from '../../state/staticresultschema/staticresultschemaSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import type { NodesMetadata, Operations } from '../../state/workflow/workflowInterfaces';
@@ -21,7 +22,12 @@ import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../..
 import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
 import { getInputParametersFromManifest, getOutputParametersFromManifest, updateCallbackUrlInInputs } from './initialize';
 import { getOperationSettings } from './settings';
-import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import {
+  LogEntryLevel,
+  LoggerService,
+  OperationManifestService,
+  StaticResultService,
+} from '@microsoft/designer-client-services-logic-apps';
 import type { InputParameter, OutputParameter } from '@microsoft/parsers-logic-apps';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
 import { isArmResourceId, uniqueArray, getPropertyValue, map, aggregate, equals } from '@microsoft/utils-logic-apps';
@@ -60,6 +66,7 @@ export const initializeOperationMetadata = async (
   const promises: Promise<NodeDataWithOperationMetadata[] | undefined>[] = [];
   const { actionData: operations, graph, nodesMetadata } = deserializedWorkflow;
   const operationManifestService = OperationManifestService();
+
   let triggerNodeId = '';
 
   for (const [operationId, operation] of Object.entries(operations)) {
@@ -121,6 +128,7 @@ export const initializeOperationDetailsForManifest = async (
   dispatch: Dispatch
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   try {
+    const staticResultService = StaticResultService();
     const operationInfo = await getOperationInfo(nodeId, operation, isTrigger);
 
     if (operationInfo) {
@@ -129,6 +137,14 @@ export const initializeOperationDetailsForManifest = async (
       const { iconUri, brandColor } = manifest.properties;
 
       dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
+
+      const { connectorId, operationId } = nodeOperationInfo;
+      const schema = staticResultService.getOperationResultSchema(connectorId, operationId);
+      schema.then((schema) => {
+        if (schema) {
+          dispatch(addSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
+        }
+      });
 
       const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, operation);
 

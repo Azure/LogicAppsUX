@@ -23,6 +23,7 @@ import {
   setTabVisibility,
 } from '../../core/state/panel/panelSlice';
 import { useIconUri, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
+import { useHasSchema } from '../../core/state/staticresultschema/staitcresultschemaselector';
 import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import { isRootNodeInGraph } from '../../core/utils/graph';
@@ -34,7 +35,8 @@ import { monitoringTab } from './panelTabs/monitoringTab/monitoringTab';
 import { parametersTab } from './panelTabs/parametersTab';
 import { scratchTab } from './panelTabs/scratchTab';
 import { selectConnectionTab } from './panelTabs/selectConnectionTab';
-import { SettingsTab } from './panelTabs/settingsTab';
+import { settingsTab } from './panelTabs/settingsTab';
+import { testingTab } from './panelTabs/testingTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { WorkflowParametersPanel } from './workflowparameterspanel';
 import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
@@ -69,9 +71,20 @@ export const PanelRoot = (): JSX.Element => {
   const nodeMetaData = useNodeMetadata(selectedNode);
   const operationInfo = useOperationInfo(selectedNode);
   let showCommentBox = !isNullOrUndefined(comment);
+  const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
 
   useEffect(() => {
-    const tabs = [monitoringTab, parametersTab, SettingsTab, codeViewTab, createConnectionTab, selectConnectionTab, aboutTab, loadingTab];
+    const tabs = [
+      monitoringTab,
+      parametersTab,
+      settingsTab,
+      codeViewTab,
+      testingTab,
+      createConnectionTab,
+      selectConnectionTab,
+      aboutTab,
+      loadingTab,
+    ];
     if (process.env.NODE_ENV !== 'production') {
       tabs.push(scratchTab);
     }
@@ -101,6 +114,15 @@ export const PanelRoot = (): JSX.Element => {
       })
     );
   }, [dispatch, operationInfo, isMonitoringView]);
+
+  useEffect(() => {
+    dispatch(
+      setTabVisibility({
+        tabName: constants.PANEL_TAB_NAMES.TESTING,
+        visible: !isTriggerNode && hasSchema,
+      })
+    );
+  }, [dispatch, hasSchema, isTriggerNode, selectedNode]);
 
   useEffect(() => {
     if (!visibleTabs?.map((tab) => tab.name.toLowerCase())?.includes(selectedPanelTab ?? ''))
