@@ -80,8 +80,18 @@ export const RunAfterActionDetails = ({
     description: 'An accessible label for collapse toggle icon',
   });
 
-  const collapsibleProps = collapsible
-    ? { 'aria-expanded': expanded, role: 'button', tabIndex: 0, onClick: setExpanded.toggle }
+  const collapsibleProps: React.HTMLAttributes<HTMLDivElement> | undefined = collapsible
+    ? {
+        'aria-expanded': expanded,
+        role: 'button',
+        tabIndex: 0,
+        onClick: setExpanded.toggle,
+        onKeyDown: (key) => {
+          if (key.code === 'Space' || key.code === 'Enter') {
+            setExpanded.toggle();
+          }
+        },
+      }
     : undefined;
 
   const handleRenderLabel = (status: string, label: string): JSX.Element => {
@@ -103,7 +113,7 @@ export const RunAfterActionDetails = ({
             <div className="msla-run-after-edge-header-contents">
               <Icon
                 className="msla-run-after-icon"
-                ariaLabel={format(expanded ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`, title)}
+                aria-label={format(expanded ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`, title)}
                 iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
                 styles={{ root: { color: isInverted ? 'white' : constants.Settings.CHEVRON_ROOT_COLOR_LIGHT } }}
               />
