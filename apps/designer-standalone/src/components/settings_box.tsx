@@ -1,6 +1,6 @@
 import { LogicAppSelector } from '../app/AzureLogicAppsDesigner/LogicAppSelectionSetting/LogicAppSelector';
 import AzureContextSettings from '../app/AzureLogicAppsDesigner/azureContextSettings';
-import { Login } from '../app/LocalDesigner/Login/login';
+import { LocalLogicAppSelector } from '../app/LocalDesigner/LogicAppSelector';
 import LocalContextSettings from '../app/LocalDesigner/contextSettings';
 import type { RootState } from '../state/store';
 import styles from './settings_box.module.less';
@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 export const SettingsBox = ({ local }: { local: boolean }) => {
   const [active, toggleActive] = useBoolean(false);
   const isDark = useSelector((state: RootState) => state.workflowLoader.darkMode);
+  const useLocalMode = useSelector((state: RootState) => state.workflowLoader.isLocalSelected);
   const cs = css(styles.toybox, active && styles.active, isDark && styles.dark);
 
   const SettingsSection = (props: any) => {
@@ -38,12 +39,12 @@ export const SettingsBox = ({ local }: { local: boolean }) => {
         </div>
         {local ? (
           <div className={styles.contentWrapper}>
-            <SettingsSection title="Workflow Load Settings" content={<Login />} />
+            <SettingsSection title="Workflow Load Settings" content={<LocalLogicAppSelector />} />
             <SettingsSection title="Context Settings" content={<LocalContextSettings />} />
           </div>
         ) : (
           <div className={styles.contentWrapper}>
-            <SettingsSection title="Workflow Load Settings" content={<LogicAppSelector />} />
+            <SettingsSection title="Workflow Load Settings" content={useLocalMode ? <LocalLogicAppSelector /> : <LogicAppSelector />} />
             <SettingsSection title="Context Settings" content={<AzureContextSettings />} />
           </div>
         )}

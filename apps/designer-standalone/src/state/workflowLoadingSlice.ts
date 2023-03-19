@@ -15,6 +15,7 @@ export interface WorkflowLoadingState {
   monitoringView: boolean;
   darkMode: boolean;
   consumption: boolean;
+  isLocalSelected: boolean;
 }
 
 const initialState: WorkflowLoadingState = {
@@ -26,6 +27,7 @@ const initialState: WorkflowLoadingState = {
   monitoringView: false,
   darkMode: false,
   consumption: false,
+  isLocalSelected: false,
 };
 
 type WorkflowPayload = {
@@ -82,6 +84,9 @@ export const workflowLoadingSlice = createSlice({
     setConsumption: (state, action: PayloadAction<boolean>) => {
       state.consumption = action.payload;
     },
+    setIsLocalSelected: (state, action: PayloadAction<boolean>) => {
+      state.isLocalSelected = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload | null>) => {
@@ -102,7 +107,15 @@ export const workflowLoadingSlice = createSlice({
   },
 });
 
-export const { changeResourcePath, changeAppid, changeWorkflowName, setReadOnly, setMonitoringView, setDarkMode, setConsumption } =
-  workflowLoadingSlice.actions;
+export const {
+  changeResourcePath,
+  changeAppid,
+  changeWorkflowName,
+  setReadOnly,
+  setMonitoringView,
+  setDarkMode,
+  setConsumption,
+  setIsLocalSelected,
+} = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;
