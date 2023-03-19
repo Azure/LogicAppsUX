@@ -81,7 +81,7 @@ const IntlProviderInner: React.FC<IntlProviderProps> = ({ locale, defaultLocale,
   });
 
   return (
-    <ReactIntlProvider locale={locale} defaultLocale={defaultLocale} messages={data} onError={onError}>
+    <ReactIntlProvider locale={locale} defaultLocale={defaultLocale} messages={data} onError={onError as any}>
       <IntlGlobalProvider>{children}</IntlGlobalProvider>
     </ReactIntlProvider>
   );

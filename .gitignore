@@ -50,3 +50,4 @@ __azurite_db_queue_extent__.json
 **/playwright-report
 **/playwright/.cache
 *.pem
+**/armToken.json

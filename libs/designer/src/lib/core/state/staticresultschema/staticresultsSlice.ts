@@ -6,7 +6,7 @@ export interface StaticResultsState {
   schemas: Record<string, Schema>; // { [connectorid-operationid]: Schema }
 }
 
-interface StaticResultSchemaUpdateEvent {
+interface StaticResultsSchemaUpdateEvent {
   id: string;
   schema: Schema;
 }
@@ -19,7 +19,7 @@ export const staticResultsSlice = createSlice({
   name: 'staticResults',
   initialState,
   reducers: {
-    addResultSchema: (state, action: PayloadAction<StaticResultSchemaUpdateEvent>) => {
+    addResultSchema: (state, action: PayloadAction<StaticResultsSchemaUpdateEvent>) => {
       state.schemas[action.payload.id] = action.payload.schema;
     },
   },
