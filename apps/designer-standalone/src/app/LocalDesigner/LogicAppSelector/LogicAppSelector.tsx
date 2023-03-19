@@ -51,7 +51,7 @@ const fileOptions = [
   { key: 'ConsumptionWorkflowParameters.json', text: 'Consumption Workflow Parameters' },
 ];
 
-export const Login: React.FC = () => {
+export const LocalLogicAppSelector: React.FC = () => {
   const { resourcePath, monitoringView } = useSelector((state: RootState) => {
     const { resourcePath, monitoringView } = state.workflowLoader;
     return { resourcePath, monitoringView };

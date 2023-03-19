@@ -788,6 +788,16 @@ export function mapsum<T>(values: T[], mapFn: (value: T) => number): number {
 }
 
 /**
+ * @arg {number} num - The number to clamp.
+ * @arg {number} min - The minimum value.
+ * @arg {number} max - The maximum value.
+ * @return {number} - The sum of the numbers in the array.
+ */
+export function clamp(num: number, min: number, max: number): number {
+  return Math.min(Math.max(num, min), max);
+}
+
+/**
  * Use cross-browser URLUtils to parse the pathname and query string from a URI.
  * @arg {string} uri - A string with a URI
  * @return {string} - A string with the pathname
