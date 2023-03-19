@@ -32,7 +32,8 @@
     "vscode:data-mapper:pack": "cd ./dist/apps/vs-code-data-mapper && npm install && vsce package",
     "fixLineEndings": "prettier --write \"**/*.json\"",
     "testgen": "playwright codegen https://localhost:4200",
-    "postinstall": "node init.js"
+    "postinstall": "node init.js",
+    "generateArmToken": "az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 > ./apps/designer-standalone/src/environments/armToken.json"
   },
   "engines": {
     "node": "16",
@@ -64,9 +65,10 @@
     "@reduxjs/toolkit": "1.8.5",
     "@storybook/core-server": "6.5.10",
     "@swc/helpers": "~0.3.3",
+    "@types/lodash.isequal": "^4.5.6",
     "@types/pathfinding": "^0.0.6",
     "@use-it/event-listener": "0.1.7",
-    "axios": "^0.27.2",
+    "axios": "^1.3.4",
     "azure-storage": "^2.10.3",
     "buffer": "^6.0.3",
     "consola": "2.15.3",
@@ -81,7 +83,9 @@
     "immer": "9.0.15",
     "jest-environment-jsdom": "^29.3.1",
     "js-yaml": "4.1.0",
+    "jwt-decode": "^3.1.2",
     "lexical": "^0.5.0",
+    "lodash.isequal": "^4.5.0",
     "lodash.merge": "^4.6.2",
     "monaco-editor": "0.36.1",
     "monaco-yaml": "^4.0.4",
