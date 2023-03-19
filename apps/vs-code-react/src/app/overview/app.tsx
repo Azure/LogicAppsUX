@@ -1,3 +1,4 @@
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import messages from '../../../../../libs/services/intl/src/compiled-lang/strings.json';
 import { mapToRunItem, RunService, QueryKeys } from '../../run-service';
 import type { RunDisplayItem, Runs } from '../../run-service';
@@ -28,7 +29,7 @@ export const App: React.FC<AppProps> = (props) => {
   }, []);
 
   return (
-    <IntlProvider defaultLocale="en" locale="en-US" messages={messages} onError={handleError}>
+    <IntlProvider defaultLocale="en" locale="en-US" messages={messages} onError={handleError as any}>
       <QueryClientProvider client={queryClient}>
         <OverviewApp {...props} />
       </QueryClientProvider>

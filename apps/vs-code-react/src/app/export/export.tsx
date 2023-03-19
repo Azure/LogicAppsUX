@@ -1,3 +1,4 @@
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import messages from '../../../../../libs/services/intl/src/compiled-lang/strings.json';
 import type { OutletContext } from '../../run-service';
 import type { RootState } from '../../state/store';
@@ -23,7 +24,7 @@ export const ExportApp: React.FC = () => {
   }, []);
 
   return vscodeState.initialized ? (
-    <IntlProvider defaultLocale="en" locale="en-US" messages={messages} onError={handleError}>
+    <IntlProvider defaultLocale="en" locale="en-US" messages={messages} onError={handleError as any}>
       <QueryClientProvider client={queryClient}>
         <div className="msla-export">
           <Text variant="xxLarge" className="msla-export-title" block>
