@@ -1,5 +1,6 @@
 import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import type { Settings } from '../../actions/bjsworkflow/settings';
+import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { InputParameter, OutputParameter } from '@microsoft/parsers-logic-apps';
 import type { OperationInfo } from '@microsoft/utils-logic-apps';
@@ -79,6 +80,7 @@ export interface OperationMetadataState {
   settings: Record<string, Settings>;
   dependencies: Record<string, NodeDependencies>;
   operationMetadata: Record<string, OperationMetadata>;
+  staticResults: Record<string, NodeStaticResults>;
 }
 
 const initialState: OperationMetadataState = {
@@ -88,6 +90,7 @@ const initialState: OperationMetadataState = {
   dependencies: {},
   settings: {},
   operationMetadata: {},
+  staticResults: {},
 };
 
 export interface AddNodeOperationPayload extends NodeOperation {

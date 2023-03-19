@@ -14,6 +14,7 @@ import { getOperationSettings } from '../../actions/bjsworkflow/settings';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import type { DependencyInfo, NodeInputs, NodeOperation, OutputInfo } from '../../state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
+import { addSchema } from '../../state/staticresultschema/staticresultschemaSlice';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../card';
 import { toOutputInfo, updateOutputsForBatchingTrigger } from '../outputs';
 import {
@@ -26,7 +27,7 @@ import {
   updateParameterWithValues,
 } from '../parameters/helper';
 import { loadInputValuesFromDefinition } from './inputsbuilder';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
 import type { Operation, OutputParameter, SwaggerParser } from '@microsoft/parsers-logic-apps';
 import {
   create,
@@ -56,9 +57,17 @@ export const initializeOperationDetailsForSwagger = async (
   dispatch: Dispatch
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   try {
+    const staticResultService = StaticResultService();
     const operationInfo = await getOperationInfo(nodeId, operation as LogicAppsV2.ApiConnectionAction, references);
 
     if (operationInfo) {
+      const { connectorId, operationId } = operationInfo;
+      const schema = staticResultService.getOperationResultSchema(connectorId, operationId);
+      schema.then((schema) => {
+        if (schema) {
+          dispatch(addSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
+        }
+      });
       const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
       dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
       const { connector, parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);

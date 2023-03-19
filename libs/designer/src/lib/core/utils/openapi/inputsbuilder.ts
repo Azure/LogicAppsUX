@@ -1,4 +1,4 @@
-import type { InputParameter } from "@microsoft/parsers-logic-apps";
+import type { InputParameter } from '@microsoft/parsers-logic-apps';
 
 export interface OpenApiConnectionSerializedInputs {
   parameters: Record<string, unknown>;
@@ -23,9 +23,7 @@ export class OpenApiOperationInputsBuilder {
     const result: InputParameter[] = [];
 
     for (const inputParameter of inputParameters) {
-      const inputParameterAlias =
-        inputParameter.alias ||
-        inputParameter.name;
+      const inputParameterAlias = inputParameter.alias || inputParameter.name;
 
       result.push({
         ...inputParameter,

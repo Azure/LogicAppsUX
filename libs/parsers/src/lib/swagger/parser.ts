@@ -2,7 +2,7 @@
 import { Capabilities, ExtensionProperties, PropertyName, Visibility } from '../common/constants';
 import { create } from '../common/helpers/keysutility';
 import { OutputsProcessor } from '../common/outputprocessor';
-import type { SchemaProcessorOptions } from '../common/schemaprocessor';
+import type { Schema, SchemaProcessorOptions } from '../common/schemaprocessor';
 import type {
   Annotation,
   InputParameter,
@@ -293,6 +293,18 @@ export class SwaggerParser {
    */
   getRelatedNotificationOperationId(operationId: string): string | undefined {
     return getPropertyValue(this._getResponses(), operationId)?.notification?.operationId;
+  }
+
+  /**
+   * Gets the output schema by operation Id.
+   * @arg {string} operationId
+   *    - The ID of the operation whose output schema is desired.
+   * @return {Schema}
+   *    - The output schema.
+   */
+  getOutputSchema(operationId: string): Schema {
+    const processor = this._getResponsesProcessor(operationId);
+    return processor.getOutputSchema();
   }
 
   getOutputMetadata(operationId: string): OutputMetadata {

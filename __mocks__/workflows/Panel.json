@@ -55,6 +55,26 @@
         },
         "type": "ParseJson"
       },
+      "HTTP": {
+        "type": "Http",
+        "inputs": {
+          "uri": "",
+          "method": ""
+        },
+        "runAfter": {
+          "Parse_JSON": ["SUCCEEDED"]
+        }
+      },
+      "HTTP2": {
+        "type": "Http",
+        "inputs": {
+          "uri": "",
+          "method": ""
+        },
+        "runAfter": {
+          "HTTP": ["SUCCEEDED"]
+        }
+      },
       "For_each": {
         "type": "Foreach",
         "foreach": "@body('Parse_JSON')",

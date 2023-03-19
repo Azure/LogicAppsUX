@@ -4,6 +4,7 @@ import designerViewReducer from './state/designerView/designerViewSlice';
 import operationMetadataReducer from './state/operation/operationMetadataSlice';
 import panelReducer from './state/panel/panelSlice';
 import settingsReducer from './state/setting/settingSlice';
+import staticResultSchemasReducer from './state/staticresultschema/staticresultschemaSlice';
 import tokens from './state/tokensSlice';
 import workflowReducer from './state/workflow/workflowSlice';
 import workflowParametersReducer from './state/workflowparameters/workflowparametersSlice';
@@ -20,6 +21,7 @@ export const store = configureStore({
     designerView: designerViewReducer,
     tokens: tokens,
     workflowParameters: workflowParametersReducer,
+    staticResultSchema: staticResultSchemasReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
