@@ -22,7 +22,7 @@ jobs:
       ) 
       && github.actor != 'csigs'
       &&  github.actor != 'azure-logic-apps-automation' 
-      && contains(github.event.pull_request.labels.*.name, 'Storybook')
+      && (contains(github.event.pull_request.labels.*.name, 'Storybook') || github.event_name == 'push')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
