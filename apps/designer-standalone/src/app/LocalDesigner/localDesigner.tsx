@@ -1,4 +1,3 @@
-import { SettingsBox } from '../../components/settings_box';
 import type { RootState } from '../../state/store';
 import { HttpClient } from './httpClient';
 import { PseudoCommandBar } from './pseudoCommandBar';
@@ -79,7 +78,7 @@ const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST'
 
 const hostService = { fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type) };
 
-export const DesignerWrapper = () => {
+export const LocalDesigner = () => {
   const { workflowDefinition, readOnly, monitoringView, darkMode, consumption, connections, runInstance } = useSelector(
     (state: RootState) => state.workflowLoader
   );
@@ -101,23 +100,20 @@ export const DesignerWrapper = () => {
   };
 
   return (
-    <>
-      <SettingsBox />
-      <DesignerProvider locale="en-US" options={{ ...designerProviderProps }}>
-        {workflowDefinition ? (
-          <BJSWorkflowProvider
-            workflow={{
-              definition: workflowDefinition,
-              connectionReferences: connections,
-              parameters: workflowDefinition.parameters,
-            }}
-            runInstance={runInstance}
-          >
-            <PseudoCommandBar />
-            <Designer />
-          </BJSWorkflowProvider>
-        ) : null}
-      </DesignerProvider>
-    </>
+    <DesignerProvider locale="en-US" options={{ ...designerProviderProps }}>
+      {workflowDefinition ? (
+        <BJSWorkflowProvider
+          workflow={{
+            definition: workflowDefinition,
+            connectionReferences: connections,
+            parameters: workflowDefinition.parameters,
+          }}
+          runInstance={runInstance}
+        >
+          <PseudoCommandBar />
+          <Designer />
+        </BJSWorkflowProvider>
+      ) : null}
+    </DesignerProvider>
   );
 };

@@ -1,5 +1,5 @@
-import type { RootState, AppDispatch } from '../state/store';
-import { setConsumption, setDarkMode, setMonitoringView, setReadOnly, loadRun, loadWorkflow } from '../state/workflowLoadingSlice';
+import type { RootState, AppDispatch } from '../../state/store';
+import { setConsumption, setDarkMode, setMonitoringView, setReadOnly, loadRun, loadWorkflow } from '../../state/workflowLoadingSlice';
 import { Checkbox } from '@fluentui/react';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

@@ -1,7 +1,7 @@
-import type { AppDispatch, RootState } from '../../state/store';
-import { changeArmToken, changeResourcePath, changeLoadingMethod, loadWorkflow, loadRun } from '../../state/workflowLoadingSlice';
+import type { AppDispatch, RootState } from '../../../state/store';
+import { changeResourcePath, loadWorkflow, loadRun } from '../../../state/workflowLoadingSlice';
 import type { IDropdownOption } from '@fluentui/react';
-import { Checkbox, Dropdown, TextField, DropdownMenuItemType } from '@fluentui/react';
+import { Dropdown, DropdownMenuItemType } from '@fluentui/react';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -52,18 +52,11 @@ const fileOptions = [
 ];
 
 export const Login: React.FC = () => {
-  const { resourcePath, armToken, loadingMethod, monitoringView } = useSelector((state: RootState) => {
-    const { resourcePath, armToken, loadingMethod, monitoringView } = state.workflowLoader;
-    return { resourcePath, armToken, loadingMethod, monitoringView };
+  const { resourcePath, monitoringView } = useSelector((state: RootState) => {
+    const { resourcePath, monitoringView } = state.workflowLoader;
+    return { resourcePath, monitoringView };
   });
   const dispatch = useDispatch<AppDispatch>();
-  const changeResourcePathCB = useCallback(
-    (_: unknown, newValue?: string) => {
-      dispatch(changeResourcePath(newValue ?? ''));
-      dispatch(loadWorkflow());
-    },
-    [dispatch]
-  );
 
   const changeResourcePathDropdownCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
@@ -76,49 +69,18 @@ export const Login: React.FC = () => {
     [dispatch, monitoringView]
   );
 
-  const changeArmTokenCB = useCallback(
-    (_: unknown, newValue?: string) => {
-      dispatch(changeArmToken(newValue ?? ''));
-      dispatch(loadWorkflow());
-    },
-    [dispatch]
-  );
-
-  const changeLoadingMethodCB = useCallback(
-    (_: unknown, checked?: boolean) => {
-      dispatch(changeLoadingMethod(checked ? 'arm' : 'file'));
-      dispatch(loadWorkflow());
-    },
-    [dispatch]
-  );
-
   return (
     <div>
-      <div style={{ paddingBottom: '10px' }}>
-        <Checkbox label="Load From Arm" checked={loadingMethod === 'arm'} onChange={changeLoadingMethodCB} />
+      <div>
+        <Dropdown
+          label="Workflow File To Load"
+          selectedKey={resourcePath}
+          onChange={changeResourcePathDropdownCB}
+          placeholder="Select an option"
+          options={fileOptions}
+          styles={{ callout: { maxHeight: 800 } }}
+        />
       </div>
-      {loadingMethod === 'arm' ? (
-        <>
-          <div>
-            <TextField label="Workflow Resource ID" onChange={changeResourcePathCB} value={resourcePath ?? ''} />
-          </div>
-          <div>
-            <TextField label="ARM Token" onChange={changeArmTokenCB} value={armToken ?? ''} />
-          </div>
-        </>
-      ) : null}
-      {loadingMethod === 'file' ? (
-        <div>
-          <Dropdown
-            label="Workflow File To Load"
-            selectedKey={resourcePath}
-            onChange={changeResourcePathDropdownCB}
-            placeholder="Select an option"
-            options={fileOptions}
-            styles={{ callout: { maxHeight: 800 } }}
-          />
-        </div>
-      ) : null}
     </div>
   );
 };
