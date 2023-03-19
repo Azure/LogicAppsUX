@@ -14,7 +14,7 @@ import { getOperationSettings } from '../../actions/bjsworkflow/settings';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import type { DependencyInfo, NodeInputs, NodeOperation, OutputInfo } from '../../state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
-import { addResultSchema } from '../../state/staticresultschema/staticresultschemaSlice';
+import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../card';
 import { toOutputInfo, updateOutputsForBatchingTrigger } from '../outputs';
 import {

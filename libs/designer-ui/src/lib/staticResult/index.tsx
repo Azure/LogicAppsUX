@@ -19,7 +19,7 @@ export interface StaticResultProps {
   title?: string;
   enabled?: boolean;
   staticResultSchema: OpenAPIV2.SchemaObject;
-  showEnableButton?: boolean;
+  isRoot?: boolean;
 }
 
 export type StaticResultRootSchemaType = OpenAPIV2.SchemaObject & {
@@ -31,7 +31,7 @@ export type StaticResultRootSchemaType = OpenAPIV2.SchemaObject & {
   };
 };
 
-export const StaticResult = ({ title, enabled, staticResultSchema, showEnableButton = true }: StaticResultProps): JSX.Element => {
+export const StaticResult = ({ title, enabled, staticResultSchema, isRoot = true }: StaticResultProps): JSX.Element => {
   const intl = useIntl();
   const { isInverted } = useTheme();
   const [showStaticResults, setShowStaticResults] = useState<boolean>(enabled ?? false);
@@ -90,7 +90,7 @@ export const StaticResult = ({ title, enabled, staticResultSchema, showEnableBut
 
   return (
     <div className="msla-panel-testing-container">
-      {showEnableButton ? (
+      {isRoot ? (
         <Toggle
           label={getLabel()}
           onChange={() => {
@@ -118,20 +118,22 @@ export const StaticResult = ({ title, enabled, staticResultSchema, showEnableBut
           ) : null}
         </div>
       ) : null}
-      <div className="msla-static-result-actions">
-        <PrimaryButton
-          className={'msla-static-result-action-button'}
-          text={saveButtonLabel}
-          onClick={saveStaticResults}
-          styles={actionButtonStyles}
-        />
-        <DefaultButton
-          className={'msla-static-result-action-button'}
-          text={cancelButtonLabel}
-          onClick={cancelStaticResults}
-          styles={actionButtonStyles}
-        />
-      </div>
+      {isRoot ? (
+        <div className="msla-static-result-actions">
+          <PrimaryButton
+            className={'msla-static-result-action-button'}
+            text={saveButtonLabel}
+            onClick={saveStaticResults}
+            styles={actionButtonStyles}
+          />
+          <DefaultButton
+            className={'msla-static-result-action-button'}
+            text={cancelButtonLabel}
+            onClick={cancelStaticResults}
+            styles={actionButtonStyles}
+          />
+        </div>
+      ) : null}
     </div>
   );
 };

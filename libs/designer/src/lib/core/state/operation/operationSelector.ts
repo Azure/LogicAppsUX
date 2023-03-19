@@ -1,3 +1,4 @@
+import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
 import type { RootState } from '../../store';
 import { shouldUseParameterInGroup } from '../../utils/parameters/helper';
 import type { ParameterInfo } from '@microsoft/designer-ui';
@@ -21,6 +22,12 @@ export const getOperationInputParameters = (rootState: RootState, nodeId: string
   }
 
   return allParameters;
+};
+
+export const useParameterStaticResult = (nodeId: string): NodeStaticResults => {
+  return useSelector((rootState: RootState) => {
+    return rootState.operations.staticResults[nodeId];
+  });
 };
 
 export const useParameterValidationErrors = (nodeId: string) => {

@@ -2,7 +2,7 @@ import type { Schema } from '@microsoft/parsers-logic-apps';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
-export interface StaticResultSchemaState {
+export interface StaticResultsState {
   schemas: Record<string, Schema>; // { [connectorid-operationid]: Schema }
 }
 
@@ -11,12 +11,12 @@ interface StaticResultSchemaUpdateEvent {
   schema: Schema;
 }
 
-export const initialState: StaticResultSchemaState = {
+export const initialState: StaticResultsState = {
   schemas: {},
 };
 
-export const staticResultSchemasSlice = createSlice({
-  name: 'staticResultSchema',
+export const staticResultsSlice = createSlice({
+  name: 'staticResults',
   initialState,
   reducers: {
     addResultSchema: (state, action: PayloadAction<StaticResultSchemaUpdateEvent>) => {
@@ -25,6 +25,6 @@ export const staticResultSchemasSlice = createSlice({
   },
 });
 
-export const { addResultSchema } = staticResultSchemasSlice.actions;
+export const { addResultSchema } = staticResultsSlice.actions;
 
-export default staticResultSchemasSlice.reducer;
+export default staticResultsSlice.reducer;

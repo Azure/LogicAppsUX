@@ -7,7 +7,7 @@ import type { NodeData, NodeOperation } from '../../state/operation/operationMet
 import { updateNodeSettings, initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { changePanelNode, isolateTab, showDefaultTabs } from '../../state/panel/panelSlice';
-import { addResultSchema } from '../../state/staticresultschema/staticresultschemaSlice';
+import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';

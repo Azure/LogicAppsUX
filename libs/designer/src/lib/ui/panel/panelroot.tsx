@@ -23,7 +23,7 @@ import {
   setTabVisibility,
 } from '../../core/state/panel/panelSlice';
 import { useIconUri, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
-import { useHasSchema } from '../../core/state/staticresultschema/staitcresultschemaselector';
+import { useHasSchema } from '../../core/state/staticresultschema/staitcresultsSelector';
 import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import { isRootNodeInGraph } from '../../core/utils/graph';
