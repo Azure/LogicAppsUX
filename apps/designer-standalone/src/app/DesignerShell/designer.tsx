@@ -12,11 +12,12 @@ const queryClient = new QueryClient();
 const InnerDesigner = () => {
   const { data, isLoading } = useFetchStandardApps();
   const resourcePath = useSelector((state: RootState) => state.workflowLoader.resourcePath);
+  const useLocal = useSelector((state: RootState) => state.workflowLoader.isLocalSelected);
   const localOnly = !data;
   return (
     <QueryClientProvider client={queryClient}>
       <SettingsBox local={localOnly} />
-      {isLoading ? <div>Loading.....</div> : localOnly ? <LocalDesigner /> : resourcePath ? <LogicAppsDesigner /> : null}
+      {isLoading ? <div>Loading.....</div> : localOnly || useLocal ? <LocalDesigner /> : resourcePath ? <LogicAppsDesigner /> : null}
     </QueryClientProvider>
   );
 };

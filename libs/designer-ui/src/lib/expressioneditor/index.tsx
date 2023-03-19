@@ -1,5 +1,6 @@
 import { MonacoEditor as Editor, EditorLanguage } from '../editor/monaco';
 import type { EventHandler } from '../eventhandler';
+import { clamp } from '@microsoft/utils-logic-apps';
 import type { editor } from 'monaco-editor';
 import type { MutableRefObject } from 'react';
 import { useState, useEffect } from 'react';
@@ -34,11 +35,12 @@ export function ExpressionEditor({
   setExpressionEditorError,
 }: ExpressionEditorProps): JSX.Element {
   const [mouseDownLocation, setMouseDownLocation] = useState(0);
+  const [heightOnMouseDown, setHeightOnMouseDown] = useState(0);
   useEffect(() => {
     if (isDragging && dragDistance) {
-      setCurrentHeight(Math.min(Math.max(100, 100 + dragDistance - mouseDownLocation), 200));
+      setCurrentHeight(clamp(heightOnMouseDown + dragDistance - mouseDownLocation, 100, 200));
     }
-  }, [isDragging, dragDistance, mouseDownLocation, currentHeight, setCurrentHeight]);
+  }, [isDragging, dragDistance, mouseDownLocation, currentHeight, setCurrentHeight, heightOnMouseDown]);
 
   const handleBlur = (): void => {
     if (onBlur && editorRef?.current) {
@@ -109,6 +111,7 @@ export function ExpressionEditor({
         onMouseDown={(e) => {
           setMouseDownLocation(e.clientY);
           setIsDragging(true);
+          setHeightOnMouseDown(currentHeight);
         }}
       >
         <div className="msla-expression-editor-expand-icon" /> <div className="msla-expression-editor-expand-icon-2" />

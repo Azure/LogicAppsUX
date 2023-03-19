@@ -24,6 +24,7 @@ import { useId } from '@fluentui/react-hooks';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
+import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { useFunctionalState } from '@react-hookz/web';
@@ -164,6 +165,7 @@ export const BaseEditor = ({
           <RichTextPlugin
             contentEditable={<ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabel={editorInputLabel} />}
             placeholder={<span className="editor-placeholder"> {placeholder} </span>}
+            ErrorBoundary={LexicalErrorBoundary}
           />
           {treeView ? <TreeView /> : null}
           {autoFocus ? <AutoFocus /> : null}

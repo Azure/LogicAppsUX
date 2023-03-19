@@ -115,8 +115,8 @@ export const validateAuthenticationString = (s: string): string => {
 
 export const getChildrenNodes = (node: ElementNode, nodeMap?: Map<string, ValueSegment>): string => {
   let text = '';
-  node.__children.forEach((child) => {
-    const childNode = $getNodeByKey(child);
+  node.getChildren().forEach((child) => {
+    const childNode = $getNodeByKey(child.getKey());
     if (childNode && $isElementNode(childNode)) {
       return (text += getChildrenNodes(childNode, nodeMap));
     }
@@ -133,8 +133,8 @@ export const getChildrenNodes = (node: ElementNode, nodeMap?: Map<string, ValueS
 
 export const findChildNode = (node: ElementNode, nodeKey: string, tokenType?: TokenType): ValueSegment | null => {
   let foundNode: ValueSegment | null = null;
-  node.__children.find((child) => {
-    const childNode = $getNodeByKey(child);
+  node.getChildren().find((child) => {
+    const childNode = $getNodeByKey(child.getKey());
     if (childNode && $isElementNode(childNode)) {
       const recurse = findChildNode(childNode, nodeKey, tokenType);
       if (recurse) {
