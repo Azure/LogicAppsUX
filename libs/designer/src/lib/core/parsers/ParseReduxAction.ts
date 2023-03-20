@@ -4,6 +4,7 @@ import { parseWorkflowParameters } from '../actions/bjsworkflow/initialize';
 import { initializeOperationMetadata, updateDynamicDataInNodes } from '../actions/bjsworkflow/operationdeserializer';
 import { getConnectionsQuery } from '../queries/connections';
 import { initializeConnectionReferences } from '../state/connection/connectionSlice';
+import { initializeStaticResultProperties } from '../state/staticresultschema/staticresultsSlice';
 import type { RootState } from '../store';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
@@ -26,6 +27,7 @@ export const initializeGraphState = createAsyncThunk<
     const { definition, connectionReferences, parameters } = workflowDefinition;
     const deserializedWorkflow = BJSDeserialize(definition, runInstance);
     thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
+    thunkAPI.dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults));
     parseWorkflowParameters(parameters ?? {}, thunkAPI.dispatch);
     const operationMetadataPromise = initializeOperationMetadata(
       deserializedWorkflow,

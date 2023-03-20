@@ -51,6 +51,10 @@
         "runtimeConfiguration": {
           "secureData": {
             "properties": ["inputs"]
+          },
+          "staticResults": {
+            "name": "Parse_JSON0",
+            "staticResultOptions": "Enabled"
           }
         },
         "type": "ParseJson"
@@ -63,6 +67,12 @@
         },
         "runAfter": {
           "Parse_JSON": ["SUCCEEDED"]
+        },
+        "runtimeConfiguration": {
+          "staticResults": {
+            "name": "HTTP0",
+            "staticResultOptions": "Enabled"
+          }
         }
       },
       "HTTP2": {
@@ -100,6 +110,21 @@
         },
         "runAfter": {},
         "type": "Until"
+      }
+    },
+    "staticResults": {
+      "Parse_JSON0": {
+        "outputs": {
+          "body": "hi"
+        },
+        "status": "Succeeded"
+      },
+      "HTTP0": {
+        "outputs": {
+          "headers": {},
+          "statusCode": "OK"
+        },
+        "status": "Succeeded"
       }
     },
     "contentVersion": "1.0.0.0",

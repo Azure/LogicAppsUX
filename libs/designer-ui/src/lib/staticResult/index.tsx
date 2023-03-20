@@ -15,11 +15,19 @@ const actionButtonStyles: IButtonStyles = {
   },
 };
 
+export enum StaticResultOption {
+  ENABLED = 'Enabled',
+  DISABLED = 'Disabled',
+}
+export type StaticResultChangeHandler = (newState: OpenAPIV2.SchemaObject, staticResultOption: StaticResultOption) => void;
+
 export interface StaticResultProps {
   title?: string;
   enabled?: boolean;
   staticResultSchema: OpenAPIV2.SchemaObject;
+  currProperties: OpenAPIV2.SchemaObject;
   isRoot?: boolean;
+  savePropertiesCallback?: StaticResultChangeHandler;
 }
 
 export type StaticResultRootSchemaType = OpenAPIV2.SchemaObject & {
@@ -31,10 +39,17 @@ export type StaticResultRootSchemaType = OpenAPIV2.SchemaObject & {
   };
 };
 
-export const StaticResult = ({ title, enabled, staticResultSchema, isRoot = true }: StaticResultProps): JSX.Element => {
+export const StaticResult = ({
+  title,
+  enabled = false,
+  staticResultSchema,
+  isRoot = true,
+  currProperties,
+  savePropertiesCallback,
+}: StaticResultProps): JSX.Element => {
   const intl = useIntl();
   const { isInverted } = useTheme();
-  const [showStaticResults, setShowStaticResults] = useState<boolean>(enabled ?? false);
+  const [showStaticResults, setShowStaticResults] = useState<boolean>(enabled);
   const [expanded, setExpanded] = useState(true);
 
   const toggleLabelOn = intl.formatMessage({
@@ -73,7 +88,7 @@ export const StaticResult = ({ title, enabled, staticResultSchema, isRoot = true
   });
 
   const saveStaticResults = () => {
-    console.log('save');
+    savePropertiesCallback?.(currProperties, showStaticResults ? StaticResultOption.ENABLED : StaticResultOption.DISABLED);
   };
 
   const cancelStaticResults = () => {
@@ -92,13 +107,14 @@ export const StaticResult = ({ title, enabled, staticResultSchema, isRoot = true
     <div className="msla-panel-testing-container">
       {isRoot ? (
         <Toggle
+          checked={showStaticResults}
           label={getLabel()}
           onChange={() => {
             setShowStaticResults(!showStaticResults);
           }}
         />
       ) : null}
-      {showStaticResults ? (
+      {showStaticResults || !isRoot ? (
         <div className="msla-static-result-container">
           <button className="msla-static-result-container-header" onClick={() => setExpanded(!expanded)}>
             <Icon

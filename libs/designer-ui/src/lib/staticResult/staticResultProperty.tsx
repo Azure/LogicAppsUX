@@ -146,7 +146,7 @@ function WrappedStaticResultProperty({ schema, required = false, properties = {}
         } else {
           return (
             <div className="msla-static-result-property-inner">
-              <StaticResult staticResultSchema={schema} isRoot={false} enabled={true} title={schema.title} />
+              <StaticResult staticResultSchema={schema} isRoot={false} enabled={true} title={schema.title} currProperties={{}} />
             </div>
           );
         }

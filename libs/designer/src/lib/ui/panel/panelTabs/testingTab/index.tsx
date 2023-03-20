@@ -1,22 +1,49 @@
 import constants from '../../../../common/constants';
+import type { AppDispatch } from '../../../../core';
+import { StaticResultOption } from '../../../../core/actions/bjsworkflow/staticresults';
+import { updateStaticResults } from '../../../../core/state/operation/operationMetadataSlice';
 import { useParameterStaticResult } from '../../../../core/state/operation/operationSelector';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
+import { selectPanelTab } from '../../../../core/state/panel/panelSlice';
 import { useOperationInfo } from '../../../../core/state/selectors/actionMetadataSelector';
-import { useStaticResultSchema } from '../../../../core/state/staticresultschema/staitcresultsSelector';
-import { getNextStaticResultName } from '../../../../core/utils/staticResults';
+import { useStaticResultProperties, useStaticResultSchema } from '../../../../core/state/staticresultschema/staitcresultsSelector';
+import { updateProperties } from '../../../../core/state/staticresultschema/staticresultsSlice';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { StaticResult } from '@microsoft/designer-ui';
+import { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 
 export const TestingPanel: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const selectedNode = useSelectedNodeId();
   const operationInfo = useOperationInfo(selectedNode);
   const { connectorId, operationId } = operationInfo;
   const staticResultSchema = useStaticResultSchema(connectorId, operationId);
   const parameterStaticResult = useParameterStaticResult(selectedNode) ?? {};
 
-  const { name = getNextStaticResultName(operationId), staticResultOptions = false } = parameterStaticResult;
-  console.log(name);
-  return staticResultSchema ? <StaticResult staticResultSchema={staticResultSchema} isRoot={true} enabled={!staticResultOptions} /> : null;
+  const { name = selectedNode + 0, staticResultOptions } = parameterStaticResult;
+  const properties = useStaticResultProperties(name);
+
+  const saveProperties = useCallback(
+    (properties: OpenAPIV2.SchemaObject, updatedStaticResultOptions: StaticResultOption) => {
+      dispatch(updateStaticResults({ id: selectedNode, staticResults: { name, staticResultOptions: updatedStaticResultOptions } }));
+      dispatch(updateProperties({ name, properties }));
+      dispatch(selectPanelTab(constants.PANEL_TAB_NAMES.PARAMETERS));
+    },
+    [dispatch, name, selectedNode]
+  );
+
+  return staticResultSchema ? (
+    <StaticResult
+      currProperties={properties as OpenAPIV2.SchemaObject}
+      staticResultSchema={staticResultSchema}
+      isRoot={true}
+      enabled={staticResultOptions === StaticResultOption.ENABLED ?? false}
+      savePropertiesCallback={(newPropertyState: OpenAPIV2.SchemaObject, staticResultOption: StaticResultOption) =>
+        saveProperties(newPropertyState, staticResultOption)
+      }
+    />
+  ) : null;
 };
 
 export const testingTab: PanelTab = {

@@ -23,6 +23,7 @@ export type DeserializedWorkflow = {
   graph: WorkflowNode;
   actionData: Operations;
   nodesMetadata: NodesMetadata;
+  staticResults: Record<string, any>;
 };
 
 export const Deserialize = (
@@ -75,7 +76,7 @@ export const Deserialize = (
     type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
   };
 
-  return { graph, actionData: allActions, nodesMetadata };
+  return { graph, actionData: allActions, nodesMetadata, staticResults: definition.staticResults ?? {} };
 };
 
 const isScopeAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.ScopeAction => {
