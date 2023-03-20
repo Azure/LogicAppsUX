@@ -7,6 +7,7 @@ import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark'
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
+import { PortalCompatProvider } from '@fluentui/react-portal-compat';
 import { IntlProvider } from '@microsoft/intl-logic-apps';
 import React, { useEffect, useMemo } from 'react';
 import { Provider as ReduxProvider, useDispatch } from 'react-redux';
@@ -35,9 +36,9 @@ const OptionsStateSet = ({ options, children }: any) => {
 
 export const DesignerProvider = ({ locale = 'en', options, children }: DesignerProviderProps) => {
   const { isDarkMode } = options;
-  const azTheme = isDarkMode ? AzureThemeDark : AzureThemeLight;
+  const azTheme = !isDarkMode ? AzureThemeLight : AzureThemeDark;
   const webTheme = !isDarkMode ? webLightTheme : webDarkTheme;
-  const themeName = useMemo(() => (isDarkMode ? 'dark' : 'light'), [isDarkMode]);
+  const themeName = useMemo(() => (!isDarkMode ? 'light' : 'dark'), [isDarkMode]);
 
   return (
     <ReduxProvider store={store}>
@@ -45,22 +46,26 @@ export const DesignerProvider = ({ locale = 'en', options, children }: DesignerP
         <ProviderWrappedContext.Provider value={options.services}>
           <ThemeProvider theme={azTheme}>
             <FluentProvider theme={webTheme}>
-              <div data-color-scheme={themeName} className={`msla-theme-${themeName}`} style={{ height: '100vh', overflow: 'hidden' }}>
-                <ReactQueryProvider>
-                  <IntlProvider
-                    locale={locale}
-                    defaultLocale={locale}
-                    onError={(err) => {
-                      if (err.code === 'MISSING_TRANSLATION') {
-                        return;
-                      }
-                      throw err;
-                    }}
-                  >
-                    {children}
-                  </IntlProvider>
-                </ReactQueryProvider>
-              </div>
+              {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+              {/* @ts-ignore */}
+              <PortalCompatProvider>
+                <div data-color-scheme={themeName} className={`msla-theme-${themeName}`} style={{ height: '100vh', overflow: 'hidden' }}>
+                  <ReactQueryProvider>
+                    <IntlProvider
+                      locale={locale}
+                      defaultLocale={locale}
+                      onError={(err) => {
+                        if (err.code === 'MISSING_TRANSLATION') {
+                          return;
+                        }
+                        throw err;
+                      }}
+                    >
+                      {children}
+                    </IntlProvider>
+                  </ReactQueryProvider>
+                </div>
+              </PortalCompatProvider>
             </FluentProvider>
           </ThemeProvider>
         </ProviderWrappedContext.Provider>

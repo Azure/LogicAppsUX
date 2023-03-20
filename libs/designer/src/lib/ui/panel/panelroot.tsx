@@ -232,7 +232,7 @@ export const PanelRoot = (): JSX.Element => {
   }, [nodeMetaData?.subgraphType, opQuery.isLoading]);
 
   const layerProps = {
-    hostId: 'msla-designer-canvas',
+    hostId: 'msla-layer-host',
     styles: { root: { zIndex: 999998 } },
   };
 

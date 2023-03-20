@@ -158,7 +158,7 @@ export const Designer = (props: DesignerProps) => {
     ];
   }, [flowSize, windowDimensions, zoom]);
 
-  useEffect(() => setLayerHostSelector('#msla-designer-canvas'), []);
+  useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const KeyboardTransition = createTransition('keydown', (event) => {
     if (!isKeyboardDragTrigger(event as KeyboardEvent)) return false;
     event.preventDefault();
@@ -184,7 +184,7 @@ export const Designer = (props: DesignerProps) => {
 
   return (
     <DndProvider options={DND_OPTIONS}>
-      <div id="msla-designer-canvas" className="msla-designer-canvas msla-panel-mode">
+      <div className="msla-designer-canvas msla-panel-mode">
         <ReactFlowProvider>
           <ReactFlow
             nodeTypes={nodeTypes}
@@ -214,6 +214,15 @@ export const Designer = (props: DesignerProps) => {
           </div>
           <CanvasFinder />
         </ReactFlowProvider>
+        <div
+          id={'msla-layer-host'}
+          style={{
+            position: 'absolute',
+            zIndex: 1000000,
+            inset: '0px',
+            visibility: 'hidden',
+          }}
+        />
       </div>
     </DndProvider>
   );
