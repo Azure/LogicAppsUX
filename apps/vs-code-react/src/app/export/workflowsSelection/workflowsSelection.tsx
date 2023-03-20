@@ -133,7 +133,7 @@ export const WorkflowsSelection: React.FC = () => {
       onSelectionChanged: onSelectionChanged,
       onItemsChanged: onItemsChange,
     });
-  }, [dispatch, selectedWorkflows]);
+  }, [dispatch]);
 
   const workflowsList = useMemo(() => {
     const emptyText = (
@@ -283,12 +283,7 @@ export const WorkflowsSelection: React.FC = () => {
           {workflowsList}
         </div>
         <Separator vertical className="msla-export-workflows-panel-divider" />
-        <SelectedList
-          isLoading={isWorkflowsLoading || renderWorkflows === null}
-          allWorkflows={allWorkflows.current}
-          renderWorkflows={renderWorkflows}
-          deselectWorkflow={deselectWorkflow}
-        />
+        <SelectedList isLoading={isWorkflowsLoading || renderWorkflows === null} deselectWorkflow={deselectWorkflow} />
       </div>
       <AdvancedOptions />
     </div>
