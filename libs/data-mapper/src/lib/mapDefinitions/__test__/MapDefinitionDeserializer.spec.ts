@@ -1181,7 +1181,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(multiplyId);
       });
 
-      it.skip('creates a looping conditional connection', () => {
+      it('creates a looping conditional connection', () => {
         simpleMap['root'] = {
           ComplexArray1: {
             '$for(/root/Nums/*)': {
@@ -1198,58 +1198,38 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         const resultEntries = Object.entries(result);
         resultEntries.sort();
 
-        expect(resultEntries.length).toEqual(9);
+        expect(resultEntries.length).toEqual(6);
 
-        expect(resultEntries[0][0]).toContain('IsEqual');
+        const isGreaterId = resultEntries[0][0];
+        const ifId = resultEntries[1][0];
+
+        expect(resultEntries[0][0]).toEqual(isGreaterId);
         expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('SubString');
-        expect(resultEntries[0][1].inputs[1][0]).toEqual('"1"');
-        expect(resultEntries[0][1].outputs[0].reactFlowKey).toContain(ifPseudoFunctionKey);
+        expect(resultEntries[0][1].inputs[0][0]).toEqual('10');
+        expect(resultEntries[0][1].inputs[1][0]).toEqual('20');
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual(ifId);
 
-        expect(resultEntries[1][0]).toContain('SubString');
+        expect(resultEntries[1][0]).toEqual(ifId);
         expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
-          'source-/root/ConditionalLooping/FlatterCatalog/ns0:Product/SKU'
-        );
-        expect(resultEntries[1][1].inputs[1][0]).toEqual('1');
-        expect(resultEntries[1][1].inputs[2][0]).toEqual('2');
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toContain('IsEqual');
+        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(isGreaterId);
+        expect((resultEntries[1][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*');
+        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*');
 
-        expect(resultEntries[2][0]).toContain(ifPseudoFunctionKey);
+        expect(resultEntries[2][0]).toEqual('source-/root/Nums/*');
         expect(resultEntries[2][1]).toBeTruthy();
-        expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IsEqual');
-        expect((resultEntries[2][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual(
-          'source-/root/ConditionalLooping/FlatterCatalog/ns0:Product'
-        );
-        expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual('target-/root/ConditionalLooping/CategorizedCatalog/PetProduct');
+        expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual(ifId);
 
-        expect(resultEntries[3][0]).toEqual('source-/root/ConditionalLooping/FlatterCatalog/ns0:Product');
+        expect(resultEntries[3][0]).toEqual('source-/root/Nums/*/Num');
         expect(resultEntries[3][1]).toBeTruthy();
-        expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/root/ConditionalLooping/CategorizedCatalog');
+        expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*/F1');
 
-        expect(resultEntries[4][0]).toEqual('source-/root/ConditionalLooping/FlatterCatalog/ns0:Product/Name');
+        expect(resultEntries[4][0]).toEqual('target-/root/ComplexArray1/*');
         expect(resultEntries[4][1]).toBeTruthy();
-        expect(resultEntries[4][1].outputs[0].reactFlowKey).toEqual('target-/root/ConditionalLooping/CategorizedCatalog/PetProduct/Name');
+        expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(ifId);
 
-        expect(resultEntries[5][0]).toEqual('source-/root/ConditionalLooping/FlatterCatalog/ns0:Product/SKU');
+        expect(resultEntries[5][0]).toEqual('target-/root/ComplexArray1/*/F1');
         expect(resultEntries[5][1]).toBeTruthy();
-        expect(resultEntries[5][1].outputs[0].reactFlowKey).toContain('SubString');
-
-        expect(resultEntries[6][0]).toEqual('target-/root/ConditionalLooping/CategorizedCatalog');
-        expect(resultEntries[6][1]).toBeTruthy();
-        expect((resultEntries[6][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
-          'source-/root/ConditionalLooping/FlatterCatalog/ns0:Product'
-        );
-
-        expect(resultEntries[7][0]).toEqual('target-/root/ConditionalLooping/CategorizedCatalog/PetProduct');
-        expect(resultEntries[7][1]).toBeTruthy();
-        expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain(ifPseudoFunctionKey);
-
-        expect(resultEntries[8][0]).toEqual('target-/root/ConditionalLooping/CategorizedCatalog/PetProduct/Name');
-        expect(resultEntries[8][1]).toBeTruthy();
-        expect((resultEntries[8][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
-          'source-/root/ConditionalLooping/FlatterCatalog/ns0:Product/Name'
-        );
+        expect((resultEntries[5][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*/Num');
       });
 
       it.skip('creates a custom value direct access connection', () => {

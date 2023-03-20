@@ -88,10 +88,10 @@ export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNod
 export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended): SchemaNodeExtended | undefined => {
   let tempKey = nodeKey;
   if (tempKey.includes(mapNodeParams.for)) {
-    const forRegex = new RegExp(/\$for\([^)]+\)\//);
+    const forRegex = new RegExp(/\$for\([^)]+\)/);
     // ArrayItems will have an * instead of a key name
     // And that * is stripped out during serialization
-    tempKey = nodeKey.replace(forRegex, nodeKey.indexOf('*') !== -1 ? '*/' : '');
+    tempKey = nodeKey.replace(forRegex, nodeKey.indexOf('*') !== -1 ? '*' : '').replaceAll('//', '/');
   }
 
   if (schemaNode.key === tempKey) {
