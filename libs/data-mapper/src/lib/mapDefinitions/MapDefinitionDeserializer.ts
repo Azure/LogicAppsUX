@@ -169,10 +169,11 @@ const callChildObjects = (
   functions: FunctionData[]
 ) => {
   const isInLoop = targetKey.includes(mapNodeParams.for);
-  const ifRfKey = createReactFlowFunctionKey(ifPseudoFunction);
 
   const childEntries = Object.entries<MapDefinitionEntry | string>(sourceNodeObject);
   childEntries.forEach(([childKey, childValue]) => {
+    const ifRfKey = createReactFlowFunctionKey(ifPseudoFunction);
+
     if (childKey.startsWith(mapNodeParams.if)) {
       const ifContents = childKey.substring(mapNodeParams.if.length + 1, childKey.length - 1);
 
