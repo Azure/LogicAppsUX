@@ -2,7 +2,7 @@ import { FontIcon, mergeStyles, mergeStyleSets } from '@fluentui/react';
 import type { ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 import { CommandBar } from '@fluentui/react/lib/CommandBar';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
-import type { Workflow } from '@microsoft/logic-apps-designer';
+import type { RootState, Workflow } from '@microsoft/logic-apps-designer';
 import {
   store as DesignerStore,
   serializeBJSWorkflow,
@@ -10,7 +10,7 @@ import {
   switchToWorkflowParameters,
 } from '@microsoft/logic-apps-designer';
 import { useMutation } from 'react-query';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const iconClass = mergeStyles({
   fontSize: 16,
@@ -46,11 +46,21 @@ export const DesignerCommandBar = ({
 
     updateCallbackUrl(designerState, DesignerStore.dispatch);
   });
+
+  const allOperationErrors = useSelector((state: RootState) => {
+    return (Object.entries(state.operations.inputParameters) ?? []).filter(([_id, nodeInputs]) =>
+      Object.values(nodeInputs.parameterGroups).some((parameterGroup) =>
+        parameterGroup.parameters.some((parameter) => (parameter?.validationErrors?.length ?? 0) > 0)
+      )
+    );
+  });
+
   const items: ICommandBarItemProps[] = [
     {
       key: 'save',
       text: 'Save',
-      disabled: isSaving,
+      secondaryText: 'Hello',
+      disabled: isSaving || allOperationErrors.length > 0,
       onRenderIcon: () => {
         return isSaving ? (
           <Spinner size={SpinnerSize.small} />

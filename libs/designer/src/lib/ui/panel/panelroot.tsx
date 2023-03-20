@@ -2,6 +2,7 @@ import constants from '../../common/constants';
 import type { AppDispatch, RootState } from '../../core';
 import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { updateParameterValidation } from '../../core/state/operation/operationMetadataSlice';
 import { useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import {
   useCurrentPanelModePanelMode,
@@ -26,6 +27,7 @@ import { useHasSchema } from '../../core/state/staticresultschema/staitcresultsc
 import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import { isRootNodeInGraph } from '../../core/utils/graph';
+import { validateParameter } from '../../core/utils/parameters/helper';
 import { NodeSearchPanel } from './nodeSearchPanel';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
@@ -64,7 +66,7 @@ export const PanelRoot = (): JSX.Element => {
   const registeredTabs = useRegisteredPanelTabs();
   const visibleTabs = useVisiblePanelTabs();
   const selectedPanelTab = useSelectedPanelTabName();
-
+  const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNode]);
   const comment = useNodeDescription(selectedNode);
   const iconUri = useIconUri(selectedNode);
   const nodeMetaData = useNodeMetadata(selectedNode);
@@ -289,7 +291,20 @@ export const PanelRoot = (): JSX.Element => {
       onDismissButtonClicked={handleDelete}
       readOnlyMode={readOnly}
       setSelectedTab={setSelectedTab}
-      toggleCollapse={togglePanel}
+      toggleCollapse={() => {
+        //only run validation when collapsing the panel
+        if (!collapsed) {
+          Object.keys(inputs?.parameterGroups ?? {}).forEach((parameterGroup) => {
+            inputs.parameterGroups[parameterGroup].parameters.forEach((parameter) => {
+              const validationErrors = validateParameter(parameter, parameter.value);
+              dispatch(
+                updateParameterValidation({ nodeId: selectedNode, groupId: parameterGroup, parameterId: parameter.id, validationErrors })
+              );
+            });
+          });
+        }
+        togglePanel();
+      }}
       trackEvent={handleTrackEvent}
       onCommentChange={(value) => {
         dispatch(setNodeDescription({ nodeId: selectedNode, description: value }));
