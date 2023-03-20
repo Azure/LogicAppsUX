@@ -89,6 +89,12 @@ export const WorkflowsSelection: React.FC = () => {
     allItemsSelected.current = workflows.map((workflow) => {
       return { ...workflow, selected: false, rendered: true };
     });
+    selectedWorkflows.forEach((workflow: WorkflowsList) => {
+      const selectedIndex = allItemsSelected.current.findIndex((selectedItem: SelectedWorkflowsList) => selectedItem.key === workflow.key);
+      if (selectedIndex !== -1) {
+        allItemsSelected.current[selectedIndex].selected = true;
+      }
+    });
   };
 
   const { isLoading: isWorkflowsLoading } = useQuery<any>([QueryKeys.workflowsData, { location, iseId: selectedIse }], loadWorkflows, {
@@ -105,11 +111,9 @@ export const WorkflowsSelection: React.FC = () => {
   const selection: Selection = useMemo(() => {
     const onItemsChange = () => {
       const selectedItems = [...allItemsSelected.current.filter((item) => item.selected)];
-      const currentSelection = !selectedItems.length && selectedWorkflows.length ? selectedWorkflows : selectedItems;
-      if (selection && selection.getItems().length > 0 && currentSelection.length > 0) {
-        selection.setAllSelected(false);
-        currentSelection.forEach((workflow: WorkflowsList) => {
-          selection.setKeySelected(workflow.key, true, true);
+      if (selection && selection.getItems().length > 0) {
+        selectedItems.forEach((workflow: WorkflowsList) => {
+          selection.setKeySelected(workflow.key, true, false);
         });
       }
     };
