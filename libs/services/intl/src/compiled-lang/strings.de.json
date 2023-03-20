@@ -1,4 +1,10 @@
 {
+  "++ZVe/": [
+    {
+      "type": 0,
+      "value": "Testing"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -249,6 +255,12 @@
       "value": "Erforderlich. Die Base64-codierte Zeichenfolge."
     }
   ],
+  "0GT0SI": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "0GqNGo": [
     {
       "type": 0,
@@ -307,6 +319,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Zeichenfolge, die in Großbuchstaben konvertiert werden soll. Wenn für ein Zeichen in der Zeichenfolge keine Entsprechung in Großbuchstaben vorhanden ist, wird das Zeichen unverändert in die zurückgegebene Zeichenfolge übernommen."
+    }
+  ],
+  "0m2Y1/": [
+    {
+      "type": 0,
+      "value": "Value"
     }
   ],
   "0meqK1": [
@@ -659,6 +677,12 @@
       "value": "(UTC+11:00) Magadan"
     }
   ],
+  "2y24a/": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -669,6 +693,12 @@
     {
       "type": 0,
       "value": "Systemseitig zugewiesene verwaltete Identität"
+    }
+  ],
+  "3AWwVl": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "3BZnxY": [
@@ -971,6 +1001,12 @@
       "value": "Erforderlich. Der XPath-Ausdruck, der ausgewertet werden soll."
     }
   ],
+  "5MWmiO": [
+    {
+      "type": 0,
+      "value": "Line Number"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1017,6 +1053,12 @@
     {
       "type": 0,
       "value": "Parameter löschen"
+    }
+  ],
+  "5ytHcK": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "6+RwRp": [
@@ -1341,6 +1383,12 @@
       "value": "expressions"
     }
   ],
+  "8eTWaf": [
+    {
+      "type": 0,
+      "value": "Rename"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
@@ -1425,6 +1473,12 @@
       "value": "property"
     }
   ],
+  "93Gj/n": [
+    {
+      "type": 0,
+      "value": "Line Position"
+    }
+  ],
   "93svjx": [
     {
       "type": 0,
@@ -1471,6 +1525,12 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9YGcT2": [
+    {
+      "type": 0,
+      "value": "ChildErrors"
     }
   ],
   "9atGYe": [
@@ -1609,6 +1669,12 @@
       "value": "Benutzername"
     }
   ],
+  "AoalgS": [
+    {
+      "type": 0,
+      "value": "Loading more results..."
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
@@ -1665,6 +1731,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "actionCount"
+    }
+  ],
+  "B/gCWM": [
+    {
+      "type": 0,
+      "value": "Error"
     }
   ],
   "B2s0iG": [
@@ -1787,6 +1859,12 @@
       "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es größer als das Vergleichsobjekt ist."
     }
   ],
+  "C1cy54": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "C4NQ1J": [
     {
       "type": 0,
@@ -1859,6 +1937,12 @@
       "value": "Beispielnutzdaten zum Generieren eines Schemas verwenden"
     }
   ],
+  "DJW8RE": [
+    {
+      "type": 0,
+      "value": "Select a value"
+    }
+  ],
   "DWsh56": [
     {
       "type": 0,
@@ -1887,6 +1971,12 @@
     {
       "type": 0,
       "value": "Show mini-map"
+    }
+  ],
+  "DkF25I": [
+    {
+      "type": 0,
+      "value": "Expand Static Result"
     }
   ],
   "DsPDVB": [
@@ -2373,6 +2463,12 @@
       "value": "Schaltfläche zum Hinzufügen von dynamischem Inhalt, wenn TokenPicker angezeigt ist"
     }
   ],
+  "HSJLCu": [
+    {
+      "type": 0,
+      "value": "Headers"
+    }
+  ],
   "HXLutF": [
     {
       "type": 0,
@@ -2487,6 +2583,12 @@
     {
       "type": 0,
       "value": "Add a target schema"
+    }
+  ],
+  "IbGIq3": [
+    {
+      "type": 0,
+      "value": "Error Code"
     }
   ],
   "IjZFjQ": [
@@ -2655,6 +2757,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Das Objekt, dem eine neue Eigenschaft hinzugefügt werden soll."
+    }
+  ],
+  "K7/DnZ": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "K90YEU": [
@@ -3039,6 +3147,12 @@
       "value": "Status"
     }
   ],
+  "NWxGWN": [
+    {
+      "type": 0,
+      "value": "Enter unique property name"
+    }
+  ],
   "NeyUAh": [
     {
       "type": 0,
@@ -3187,10 +3301,10 @@
       "value": "Diese Funktion erfordert keine Eingabe."
     }
   ],
-  "ORVfYZ": [
+  "OOUTdW": [
     {
       "type": 0,
-      "value": "Vorgänge werden geladen..."
+      "value": "Loading all connectors..."
     }
   ],
   "OSHNZ2": [
@@ -3209,6 +3323,12 @@
     {
       "type": 0,
       "value": "Gruppierung aufheben"
+    }
+  ],
+  "OdoUEu": [
+    {
+      "type": 0,
+      "value": "Enable Static Result"
     }
   ],
   "Oib1mL": [
@@ -3341,6 +3461,12 @@
     {
       "type": 0,
       "value": "FALSE"
+    }
+  ],
+  "PZgHf/": [
+    {
+      "type": 0,
+      "value": "Schema Uri"
     }
   ],
   "PaPPLr": [
@@ -3539,6 +3665,12 @@
     {
       "type": 0,
       "value": "Hiermit wird zur Eingabe für das gesamte Array gewechselt."
+    }
+  ],
+  "RbJNVk": [
+    {
+      "type": 0,
+      "value": "Schema"
     }
   ],
   "RhH4pF": [
@@ -3865,6 +3997,12 @@
       "value": "(UTC-06:00) Osterinsel"
     }
   ],
+  "U7yRwM": [
+    {
+      "type": 0,
+      "value": "Validation Error"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3903,6 +4041,12 @@
     {
       "type": 0,
       "value": " (Dateiname)"
+    }
+  ],
+  "UZiXVh": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "Ufv5m9": [
@@ -4047,6 +4191,12 @@
     {
       "type": 0,
       "value": "Trigger (Auslöser) teilen Ihrer App mit, wann sie gestartet werden soll. Jeder Workflow benötigt mindestens einen Trigger."
+    }
+  ],
+  "Vfce7b": [
+    {
+      "type": 0,
+      "value": "Error Type"
     }
   ],
   "VlvlX1": [
@@ -4427,6 +4577,12 @@
       "value": "Verkleinern"
     }
   ],
+  "Yw7Nfl": [
+    {
+      "type": 0,
+      "value": "Disable Static Result"
+    }
+  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -4479,6 +4635,12 @@
       "value": "(UTC+10:00) Canberra, Melbourne, Sydney"
     }
   ],
+  "ZRdkFN": [
+    {
+      "type": 0,
+      "value": "Collapse Static Result"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -4507,6 +4669,12 @@
     {
       "type": 0,
       "value": "Close"
+    }
+  ],
+  "Zi9gQK": [
+    {
+      "type": 0,
+      "value": "Add new item"
     }
   ],
   "ZkjTbp": [
@@ -4619,6 +4787,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "b9Rvl9": [
+    {
+      "type": 0,
+      "value": "Body"
     }
   ],
   "bG9rjv": [
@@ -4795,6 +4969,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripolis"
+    }
+  ],
+  "ca/QIc": [
+    {
+      "type": 0,
+      "value": "Error Message"
     }
   ],
   "cgq/+y": [
@@ -4991,12 +5171,6 @@
       "value": "Erforderlich. Der Name der Variable, deren Wert Sie abrufen möchten."
     }
   ],
-  "eRvGw3": [
-    {
-      "type": 0,
-      "value": "Connectors werden geladen..."
-    }
-  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -5013,6 +5187,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Index, bei dem die Teilzeichenfolge in Parameter 1 beginnt."
+    }
+  ],
+  "ehIBkh": [
+    {
+      "type": 0,
+      "value": "Enter an integer"
     }
   ],
   "epOMnV": [
@@ -5685,10 +5865,28 @@
       "value": "Ja"
     }
   ],
+  "kBOAkT": [
+    {
+      "type": 0,
+      "value": "Select Fields"
+    }
+  ],
+  "kBSLfu": [
+    {
+      "type": 0,
+      "value": "Duplicate property name"
+    }
+  ],
   "kDsud+": [
     {
       "type": 0,
       "value": "(UTC-03:00) Cayenne, Fortaleza"
+    }
+  ],
+  "kEI2xx": [
+    {
+      "type": 0,
+      "value": "Message"
     }
   ],
   "kHcCxH": [
@@ -5707,12 +5905,6 @@
     {
       "type": 0,
       "value": "s"
-    }
-  ],
-  "kJD/bW": [
-    {
-      "type": 0,
-      "value": "Loading search results..."
     }
   ],
   "kM+Mr0": [
@@ -5993,6 +6185,12 @@
       "value": "Beim Connector anmelden"
     }
   ],
+  "meVkB6": [
+    {
+      "type": 0,
+      "value": "Empty property name"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -6045,6 +6243,12 @@
     {
       "type": 0,
       "value": "Versuchen Sie es mit weniger spezifischen Schlüsselwörtern."
+    }
+  ],
+  "nCa0KG": [
+    {
+      "type": 0,
+      "value": "Internal Errors"
     }
   ],
   "nGds/r": [
@@ -6151,6 +6355,12 @@
       "value": "Zoom to fit"
     }
   ],
+  "o8ohVV": [
+    {
+      "type": 0,
+      "value": "Schema Id"
+    }
+  ],
   "oAFcW6": [
     {
       "type": 0,
@@ -6169,10 +6379,28 @@
       "value": "Inhaltsübertragung"
     }
   ],
+  "oQjIWf": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
+  "oR2x4N": [
+    {
+      "type": 0,
+      "value": "Invalid integer value"
+    }
+  ],
   "oRvVIW": [
     {
       "type": 0,
       "value": "(UTC+07:00) Krasnojarsk"
+    }
+  ],
+  "oTBkbU": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "oV0xQ9": [
@@ -6277,6 +6505,12 @@
     {
       "type": 0,
       "value": "Eingabe in einen XML-Wert konvertieren"
+    }
+  ],
+  "pYNzbj": [
+    {
+      "type": 0,
+      "value": "Path"
     }
   ],
   "pYtSyE": [
@@ -6479,6 +6713,12 @@
       "value": "\"Asynchrone Antwort\" ermöglicht es einer Logik-App, durch die Antwort \"202 (Zulässig)\" darauf hinzuweisen, dass die Anforderung zur Verarbeitung akzeptiert wurde. Es wird ein Adressheader bereitgestellt, um den Endzustand abzurufen. "
     }
   ],
+  "r/n6/9": [
+    {
+      "type": 0,
+      "value": "Enter a value"
+    }
+  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -6671,6 +6911,12 @@
       "value": "Unable to generate data map definition"
     }
   ],
+  "sw6EXK": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "syiNc+": [
     {
       "type": 0,
@@ -6825,6 +7071,12 @@
     {
       "type": 0,
       "value": "Wählen Sie ein Element aus, um mit der Konfiguration zu beginnen."
+    }
+  ],
+  "uDI1Um": [
+    {
+      "type": 0,
+      "value": "Status Code"
     }
   ],
   "uIQrat": [

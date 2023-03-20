@@ -1,4 +1,10 @@
 {
+  "++ZVe/": [
+    {
+      "type": 0,
+      "value": "Testing"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -249,6 +255,12 @@
       "value": "Kötelező megadni. A Base64 kódolású sztring."
     }
   ],
+  "0GT0SI": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "0GqNGo": [
     {
       "type": 0,
@@ -307,6 +319,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A nagybetűssé alakítandó sztring. A sztring azon karakterei, melyeknek nincs nagybetűs megfelelője, változatlanul fognak szerepelni a visszaadott sztringben."
+    }
+  ],
+  "0m2Y1/": [
+    {
+      "type": 0,
+      "value": "Value"
     }
   ],
   "0meqK1": [
@@ -659,6 +677,12 @@
       "value": "(UTC+11:00) Magadán"
     }
   ],
+  "2y24a/": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -669,6 +693,12 @@
     {
       "type": 0,
       "value": "Rendszer által hozzárendelt felügyelt identitás"
+    }
+  ],
+  "3AWwVl": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "3BZnxY": [
@@ -971,6 +1001,12 @@
       "value": "Kötelező megadni. A kiértékelendő XPath-kifejezés."
     }
   ],
+  "5MWmiO": [
+    {
+      "type": 0,
+      "value": "Line Number"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1017,6 +1053,12 @@
     {
       "type": 0,
       "value": "Paraméter törlése"
+    }
+  ],
+  "5ytHcK": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "6+RwRp": [
@@ -1341,6 +1383,12 @@
       "value": "expressions"
     }
   ],
+  "8eTWaf": [
+    {
+      "type": 0,
+      "value": "Rename"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
@@ -1425,6 +1473,12 @@
       "value": "property"
     }
   ],
+  "93Gj/n": [
+    {
+      "type": 0,
+      "value": "Line Position"
+    }
+  ],
   "93svjx": [
     {
       "type": 0,
@@ -1471,6 +1525,12 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9YGcT2": [
+    {
+      "type": 0,
+      "value": "ChildErrors"
     }
   ],
   "9atGYe": [
@@ -1609,6 +1669,12 @@
       "value": "Felhasználónév"
     }
   ],
+  "AoalgS": [
+    {
+      "type": 0,
+      "value": "Loading more results..."
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
@@ -1665,6 +1731,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "actionCount"
+    }
+  ],
+  "B/gCWM": [
+    {
+      "type": 0,
+      "value": "Error"
     }
   ],
   "B2s0iG": [
@@ -1787,6 +1859,12 @@
       "value": "Kötelező megadni. Az objektum, melyet ellenőrizni kell, hogy nagyobb-e a hasonlított objektumnál."
     }
   ],
+  "C1cy54": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "C4NQ1J": [
     {
       "type": 0,
@@ -1859,6 +1937,12 @@
       "value": "Hasznosadat-minta használata a séma generálásához"
     }
   ],
+  "DJW8RE": [
+    {
+      "type": 0,
+      "value": "Select a value"
+    }
+  ],
   "DWsh56": [
     {
       "type": 0,
@@ -1887,6 +1971,12 @@
     {
       "type": 0,
       "value": "Show mini-map"
+    }
+  ],
+  "DkF25I": [
+    {
+      "type": 0,
+      "value": "Expand Static Result"
     }
   ],
   "DsPDVB": [
@@ -2373,6 +2463,12 @@
       "value": "Dinamikus tartalom hozzáadására szolgáló gomb, ha a TokenPicker látható"
     }
   ],
+  "HSJLCu": [
+    {
+      "type": 0,
+      "value": "Headers"
+    }
+  ],
   "HXLutF": [
     {
       "type": 0,
@@ -2487,6 +2583,12 @@
     {
       "type": 0,
       "value": "Add a target schema"
+    }
+  ],
+  "IbGIq3": [
+    {
+      "type": 0,
+      "value": "Error Code"
     }
   ],
   "IjZFjQ": [
@@ -2655,6 +2757,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az objektum, melyhez hozzá kívánja adni az új tulajdonságot."
+    }
+  ],
+  "K7/DnZ": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "K90YEU": [
@@ -3039,6 +3147,12 @@
       "value": "Állapot"
     }
   ],
+  "NWxGWN": [
+    {
+      "type": 0,
+      "value": "Enter unique property name"
+    }
+  ],
   "NeyUAh": [
     {
       "type": 0,
@@ -3187,10 +3301,10 @@
       "value": "Ez a függvény nem igényel bemenetet."
     }
   ],
-  "ORVfYZ": [
+  "OOUTdW": [
     {
       "type": 0,
-      "value": "Műveletek betöltése..."
+      "value": "Loading all connectors..."
     }
   ],
   "OSHNZ2": [
@@ -3209,6 +3323,12 @@
     {
       "type": 0,
       "value": "Csoportosítás megszüntetése"
+    }
+  ],
+  "OdoUEu": [
+    {
+      "type": 0,
+      "value": "Enable Static Result"
     }
   ],
   "Oib1mL": [
@@ -3341,6 +3461,12 @@
     {
       "type": 0,
       "value": "Hamis"
+    }
+  ],
+  "PZgHf/": [
+    {
+      "type": 0,
+      "value": "Schema Uri"
     }
   ],
   "PaPPLr": [
@@ -3539,6 +3665,12 @@
     {
       "type": 0,
       "value": "Váltás a teljes tömb bevitelére"
+    }
+  ],
+  "RbJNVk": [
+    {
+      "type": 0,
+      "value": "Schema"
     }
   ],
   "RhH4pF": [
@@ -3865,6 +3997,12 @@
       "value": "(UTC-06:00) Húsvét-sziget"
     }
   ],
+  "U7yRwM": [
+    {
+      "type": 0,
+      "value": "Validation Error"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3903,6 +4041,12 @@
     {
       "type": 0,
       "value": " (fájlnév)"
+    }
+  ],
+  "UZiXVh": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "Ufv5m9": [
@@ -4047,6 +4191,12 @@
     {
       "type": 0,
       "value": "A triggerek jelzik az alkalmazásnak, hogy mikor induljon el. Minden munkafolyamathoz legalább egy trigger szükséges."
+    }
+  ],
+  "Vfce7b": [
+    {
+      "type": 0,
+      "value": "Error Type"
     }
   ],
   "VlvlX1": [
@@ -4427,6 +4577,12 @@
       "value": "Kicsinyítés"
     }
   ],
+  "Yw7Nfl": [
+    {
+      "type": 0,
+      "value": "Disable Static Result"
+    }
+  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -4479,6 +4635,12 @@
       "value": "(UTC+10:00) Canberra, Melbourne, Sydney"
     }
   ],
+  "ZRdkFN": [
+    {
+      "type": 0,
+      "value": "Collapse Static Result"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -4507,6 +4669,12 @@
     {
       "type": 0,
       "value": "Close"
+    }
+  ],
+  "Zi9gQK": [
+    {
+      "type": 0,
+      "value": "Add new item"
     }
   ],
   "ZkjTbp": [
@@ -4627,6 +4795,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "b9Rvl9": [
+    {
+      "type": 0,
+      "value": "Body"
     }
   ],
   "bG9rjv": [
@@ -4803,6 +4977,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
+    }
+  ],
+  "ca/QIc": [
+    {
+      "type": 0,
+      "value": "Error Message"
     }
   ],
   "cgq/+y": [
@@ -4999,12 +5179,6 @@
       "value": "Kötelező megadni. Azon változó neve, melynek az értéke szükséges."
     }
   ],
-  "eRvGw3": [
-    {
-      "type": 0,
-      "value": "Összekötők betöltése..."
-    }
-  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -5021,6 +5195,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A sztringrész kezdetének indexe az 1. paraméterben."
+    }
+  ],
+  "ehIBkh": [
+    {
+      "type": 0,
+      "value": "Enter an integer"
     }
   ],
   "epOMnV": [
@@ -5697,10 +5877,28 @@
       "value": "Igen"
     }
   ],
+  "kBOAkT": [
+    {
+      "type": 0,
+      "value": "Select Fields"
+    }
+  ],
+  "kBSLfu": [
+    {
+      "type": 0,
+      "value": "Duplicate property name"
+    }
+  ],
   "kDsud+": [
     {
       "type": 0,
       "value": "(UTC-03:00) Cayenne, Fortaleza"
+    }
+  ],
+  "kEI2xx": [
+    {
+      "type": 0,
+      "value": "Message"
     }
   ],
   "kHcCxH": [
@@ -5719,12 +5917,6 @@
     {
       "type": 0,
       "value": " másodperc"
-    }
-  ],
-  "kJD/bW": [
-    {
-      "type": 0,
-      "value": "Loading search results..."
     }
   ],
   "kM+Mr0": [
@@ -6005,6 +6197,12 @@
       "value": "Bejelentkezés az összekötőbe"
     }
   ],
+  "meVkB6": [
+    {
+      "type": 0,
+      "value": "Empty property name"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -6057,6 +6255,12 @@
     {
       "type": 0,
       "value": "Használjon kevésbé specifikus kulcsszavakat."
+    }
+  ],
+  "nCa0KG": [
+    {
+      "type": 0,
+      "value": "Internal Errors"
     }
   ],
   "nGds/r": [
@@ -6163,6 +6367,12 @@
       "value": "Zoom to fit"
     }
   ],
+  "o8ohVV": [
+    {
+      "type": 0,
+      "value": "Schema Id"
+    }
+  ],
   "oAFcW6": [
     {
       "type": 0,
@@ -6181,10 +6391,28 @@
       "value": "Tartalomátvitel"
     }
   ],
+  "oQjIWf": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
+  "oR2x4N": [
+    {
+      "type": 0,
+      "value": "Invalid integer value"
+    }
+  ],
   "oRvVIW": [
     {
       "type": 0,
       "value": "(UTC+07:00) Krasznojarszk"
+    }
+  ],
+  "oTBkbU": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "oV0xQ9": [
@@ -6289,6 +6517,12 @@
     {
       "type": 0,
       "value": "A bemenet átalakítása XML típusú értékké."
+    }
+  ],
+  "pYNzbj": [
+    {
+      "type": 0,
+      "value": "Path"
     }
   ],
   "pYtSyE": [
@@ -6507,6 +6741,12 @@
       "value": "Az aszinkron válasz lehetővé teszi, hogy egy logikai alkalmazás „202 – Elfogadva” választ adjon, jelezve, hogy elfogadta és feldolgozza a kérést. A válasz tartalmaz egy helyfejlécet is, amely a végállapot beolvasására szolgál."
     }
   ],
+  "r/n6/9": [
+    {
+      "type": 0,
+      "value": "Enter a value"
+    }
+  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -6699,6 +6939,12 @@
       "value": "Unable to generate data map definition"
     }
   ],
+  "sw6EXK": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "syiNc+": [
     {
       "type": 0,
@@ -6853,6 +7099,12 @@
     {
       "type": 0,
       "value": "Válasszon ki egy elemet a konfigurálás megkezdéséhez"
+    }
+  ],
+  "uDI1Um": [
+    {
+      "type": 0,
+      "value": "Status Code"
     }
   ],
   "uIQrat": [
