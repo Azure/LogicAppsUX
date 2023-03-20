@@ -10,9 +10,7 @@ const initialState: PanelState = {
   relationshipIds: {
     graphId: 'root',
   },
-  isDiscovery: false,
   isParallelBranch: false,
-  isWorkflowParameters: false,
   registeredTabs: {},
   selectedTabName: undefined,
   selectedOperationGroupId: '',
@@ -40,8 +38,7 @@ export const panelSlice = createSlice({
     },
     clearPanel: (state) => {
       state.collapsed = true;
-      state.isDiscovery = false;
-      state.isWorkflowParameters = false;
+      state.currentState = undefined;
       state.selectedNode = '';
       state.selectedOperationGroupId = '';
     },
@@ -49,8 +46,7 @@ export const panelSlice = createSlice({
       if (!action) return;
       if (state.collapsed) state.collapsed = false;
       state.selectedNode = action.payload;
-      state.isDiscovery = false;
-      state.isWorkflowParameters = false;
+      state.currentState = undefined;
       state.selectedOperationGroupId = '';
     },
     expandDiscoveryPanel: (
@@ -58,8 +54,7 @@ export const panelSlice = createSlice({
       action: PayloadAction<{ relationshipIds: RelationshipIds; nodeId: string; isParallelBranch?: boolean; addingTrigger?: boolean }>
     ) => {
       state.collapsed = false;
-      state.isDiscovery = true;
-      state.isWorkflowParameters = false;
+      state.currentState = 'Discovery';
       state.relationshipIds = action.payload.relationshipIds;
       state.selectedNode = action.payload.nodeId;
       state.isParallelBranch = action.payload?.isParallelBranch ?? false;
@@ -73,15 +68,20 @@ export const panelSlice = createSlice({
     },
     switchToOperationPanel: (state, action: PayloadAction<string>) => {
       state.selectedNode = action.payload;
-      state.isDiscovery = false;
-      state.isWorkflowParameters = false;
+      state.currentState = undefined;
       state.selectedOperationGroupId = '';
       state.selectedOperationId = action.payload;
     },
     switchToWorkflowParameters: (state) => {
       state.collapsed = false;
-      state.isWorkflowParameters = true;
-      state.isDiscovery = false;
+      state.currentState = 'WorkflowParameters';
+      state.selectedNode = '';
+      state.selectedOperationGroupId = '';
+      state.selectedOperationId = '';
+    },
+    switchToNodeSearchPanel: (state) => {
+      state.collapsed = false;
+      state.currentState = 'NodeSearch';
       state.selectedNode = '';
       state.selectedOperationGroupId = '';
       state.selectedOperationId = '';
@@ -178,6 +178,7 @@ export const {
   isolateTab,
   selectPanelTab,
   setTabError,
+  switchToNodeSearchPanel,
   switchToWorkflowParameters,
 } = panelSlice.actions;
 

@@ -7,10 +7,10 @@ const getPanelState = (state: RootState) => state.panel;
 
 export const useIsPanelCollapsed = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.collapsed));
 
-export const useIsDiscovery = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.isDiscovery));
+export const useCurrentPanelModePanelMode = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.currentState));
 
-export const useIsWorkflowParametersMode = () =>
-  useSelector(createSelector(getPanelState, (state: PanelState) => state.isWorkflowParameters));
+export const useIsNodeSearchMode = () =>
+  useSelector(createSelector(getPanelState, (state: PanelState) => state.currentState === 'NodeSearch'));
 
 export const useIsAddingTrigger = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.addingTrigger));
 
