@@ -8,7 +8,7 @@ import type { CommentBoxProps, MenuItemOption } from './types';
 import { getCardStyle } from './utils';
 import type { ISpinnerStyles, MessageBarType } from '@fluentui/react';
 import { Icon, Spinner, SpinnerSize, css } from '@fluentui/react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
 
 export interface CardProps {
@@ -37,6 +37,7 @@ export interface CardProps {
   title: string;
   onClick?(): void;
   runData: { status?: string; duration?: string };
+  setFocus?: boolean;
 }
 
 export interface BadgeProps {
@@ -74,13 +75,21 @@ export const Card: React.FC<CardProps> = ({
   title,
   onClick,
   runData,
+  setFocus,
 }) => {
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
     e.stopPropagation();
     onClick?.();
   };
+  const focusRef = useRef<HTMLElement | null>(null);
   const keyboardInteraction = useCardKeyboardInteraction(onClick, contextMenuOptions);
   const contextMenu = useCardContextMenu();
+
+  useEffect(() => {
+    if (setFocus) {
+      focusRef.current?.focus();
+    }
+  }, [setFocus]);
 
   const cardIcon = useMemo(
     () =>
@@ -101,7 +110,10 @@ export const Card: React.FC<CardProps> = ({
   return (
     <div ref={dragPreview} style={{ position: 'relative' }}>
       <div
-        ref={drag}
+        ref={(node) => {
+          focusRef.current = node;
+          drag(node);
+        }}
         aria-describedby={describedBy}
         className={css(
           'msla-panel-card-container',
