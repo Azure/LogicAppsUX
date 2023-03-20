@@ -16,6 +16,7 @@ import {
   useOperationQuery,
 } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
+import { useStaticResultSchema } from '../../core/state/staticresultschema/staitcresultsSelector';
 import { useIsLeafNode, useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
@@ -77,14 +78,15 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const nodeComment = useNodeDescription(id);
   const connectionResult = useNodeConnectionName(id);
   const isConnectionRequired = useIsConnectionRequired(operationInfo);
+  const hasSchema = useStaticResultSchema(operationInfo.connectorId, operationInfo.operationId);
   const isLeaf = useIsLeafNode(id);
 
   const showLeafComponents = useMemo(() => !readOnly && isLeaf, [readOnly, isLeaf]);
 
   const nodeClick = useCallback(() => {
     dispatch(changePanelNode(id));
-    dispatch(showDefaultTabs({ isMonitoringView }));
-  }, [dispatch, id, isMonitoringView]);
+    dispatch(showDefaultTabs({ isMonitoringView, hasSchema: !!hasSchema }));
+  }, [dispatch, hasSchema, id, isMonitoringView]);
 
   const brandColor = useBrandColor(id);
   const iconUri = useIconUri(id);
