@@ -293,7 +293,7 @@ export const PanelRoot = (): JSX.Element => {
       toggleCollapse={() => {
         //only run validation when collapsing the panel
         if (!collapsed) {
-          Object.keys(inputs.parameterGroups).forEach((parameterGroup) => {
+          Object.keys(inputs?.parameterGroups ?? {}).forEach((parameterGroup) => {
             inputs.parameterGroups[parameterGroup].parameters.forEach((parameter) => {
               const validationErrors = validateParameter(parameter, parameter.value);
               dispatch(
