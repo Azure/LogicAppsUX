@@ -1,4 +1,10 @@
 {
+  "++ZVe/": [
+    {
+      "type": 0,
+      "value": "Testing"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -233,6 +239,12 @@
       "value": "Obbligatorio. Stringa con codifica Base64."
     }
   ],
+  "0GT0SI": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "0GqNGo": [
     {
       "type": 0,
@@ -291,6 +303,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Stringa da convertire in lettere maiuscole. Se un carattere nella stringa non ha un equivalente in lettere maiuscole, il carattere verrà riportato invariato nella stringa restituita."
+    }
+  ],
+  "0m2Y1/": [
+    {
+      "type": 0,
+      "value": "Value"
     }
   ],
   "0meqK1": [
@@ -654,6 +672,12 @@
       "value": "(UTC+11:00) Magadan"
     }
   ],
+  "2y24a/": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -664,6 +688,12 @@
     {
       "type": 0,
       "value": "Identità gestita assegnata dal sistema"
+    }
+  ],
+  "3AWwVl": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "3BZnxY": [
@@ -966,6 +996,12 @@
       "value": "Obbligatorio. Espressione XPath da valutare."
     }
   ],
+  "5MWmiO": [
+    {
+      "type": 0,
+      "value": "Line Number"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1012,6 +1048,12 @@
     {
       "type": 0,
       "value": "Elimina parametro"
+    }
+  ],
+  "5ytHcK": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "6+RwRp": [
@@ -1320,6 +1362,12 @@
       "value": "expressions"
     }
   ],
+  "8eTWaf": [
+    {
+      "type": 0,
+      "value": "Rename"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
@@ -1404,6 +1452,12 @@
       "value": "property"
     }
   ],
+  "93Gj/n": [
+    {
+      "type": 0,
+      "value": "Line Position"
+    }
+  ],
   "93svjx": [
     {
       "type": 0,
@@ -1450,6 +1504,12 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9YGcT2": [
+    {
+      "type": 0,
+      "value": "ChildErrors"
     }
   ],
   "9atGYe": [
@@ -1572,6 +1632,12 @@
       "value": "Nome utente"
     }
   ],
+  "AoalgS": [
+    {
+      "type": 0,
+      "value": "Loading more results..."
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
@@ -1639,6 +1705,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "actionCount"
+    }
+  ],
+  "B/gCWM": [
+    {
+      "type": 0,
+      "value": "Error"
     }
   ],
   "B2s0iG": [
@@ -1761,6 +1833,12 @@
       "value": "Obbligatorio. Oggetto da controllare per verificare se è maggiore del valore con cui è confrontato."
     }
   ],
+  "C1cy54": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "C4NQ1J": [
     {
       "type": 0,
@@ -1833,6 +1911,12 @@
       "value": "Usare il payload di esempio per generare lo schema"
     }
   ],
+  "DJW8RE": [
+    {
+      "type": 0,
+      "value": "Select a value"
+    }
+  ],
   "DWsh56": [
     {
       "type": 0,
@@ -1861,6 +1945,12 @@
     {
       "type": 0,
       "value": "Show mini-map"
+    }
+  ],
+  "DkF25I": [
+    {
+      "type": 0,
+      "value": "Expand Static Result"
     }
   ],
   "DsPDVB": [
@@ -2342,6 +2432,12 @@
       "value": "Pulsante per aggiungere contenuto dinamico se TokenPicker è visualizzato"
     }
   ],
+  "HSJLCu": [
+    {
+      "type": 0,
+      "value": "Headers"
+    }
+  ],
   "HXLutF": [
     {
       "type": 0,
@@ -2456,6 +2552,12 @@
     {
       "type": 0,
       "value": "Add a target schema"
+    }
+  ],
+  "IbGIq3": [
+    {
+      "type": 0,
+      "value": "Error Code"
     }
   ],
   "IjZFjQ": [
@@ -2624,6 +2726,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Oggetto a cui aggiungere una nuova proprietà."
+    }
+  ],
+  "K7/DnZ": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "K90YEU": [
@@ -2995,6 +3103,12 @@
       "value": "Stato"
     }
   ],
+  "NWxGWN": [
+    {
+      "type": 0,
+      "value": "Enter unique property name"
+    }
+  ],
   "NeyUAh": [
     {
       "type": 0,
@@ -3127,10 +3241,10 @@
       "value": "Questa funzione non richiede alcun input."
     }
   ],
-  "ORVfYZ": [
+  "OOUTdW": [
     {
       "type": 0,
-      "value": "Caricamento delle operazioni in corso.."
+      "value": "Loading all connectors..."
     }
   ],
   "OSHNZ2": [
@@ -3149,6 +3263,12 @@
     {
       "type": 0,
       "value": "Separa"
+    }
+  ],
+  "OdoUEu": [
+    {
+      "type": 0,
+      "value": "Enable Static Result"
     }
   ],
   "Oib1mL": [
@@ -3289,6 +3409,12 @@
     {
       "type": 0,
       "value": "False"
+    }
+  ],
+  "PZgHf/": [
+    {
+      "type": 0,
+      "value": "Schema Uri"
     }
   ],
   "PaPPLr": [
@@ -3483,6 +3609,12 @@
     {
       "type": 0,
       "value": "Passa all'input dell'intera matrice"
+    }
+  ],
+  "RbJNVk": [
+    {
+      "type": 0,
+      "value": "Schema"
     }
   ],
   "RhH4pF": [
@@ -3820,6 +3952,12 @@
       "value": "(UTC - 06.00) Isola di Pasqua"
     }
   ],
+  "U7yRwM": [
+    {
+      "type": 0,
+      "value": "Validation Error"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3858,6 +3996,12 @@
     {
       "type": 0,
       "value": " (nome file)"
+    }
+  ],
+  "UZiXVh": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "Ufv5m9": [
@@ -4002,6 +4146,12 @@
     {
       "type": 0,
       "value": "I trigger indicano all'app quando avviare l'esecuzione. Ogni flusso di lavoro richiede almeno un trigger."
+    }
+  ],
+  "Vfce7b": [
+    {
+      "type": 0,
+      "value": "Error Type"
     }
   ],
   "VlvlX1": [
@@ -4374,6 +4524,12 @@
       "value": "Zoom indietro"
     }
   ],
+  "Yw7Nfl": [
+    {
+      "type": 0,
+      "value": "Disable Static Result"
+    }
+  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -4426,6 +4582,12 @@
       "value": "(UTC+10.00) Canberra, Melbourne, Sydney"
     }
   ],
+  "ZRdkFN": [
+    {
+      "type": 0,
+      "value": "Collapse Static Result"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -4454,6 +4616,12 @@
     {
       "type": 0,
       "value": "Close"
+    }
+  ],
+  "Zi9gQK": [
+    {
+      "type": 0,
+      "value": "Add new item"
     }
   ],
   "ZkjTbp": [
@@ -4566,6 +4734,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "b9Rvl9": [
+    {
+      "type": 0,
+      "value": "Body"
     }
   ],
   "bG9rjv": [
@@ -4738,6 +4912,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
+    }
+  ],
+  "ca/QIc": [
+    {
+      "type": 0,
+      "value": "Error Message"
     }
   ],
   "cgq/+y": [
@@ -4934,12 +5114,6 @@
       "value": "Obbligatorio. Nome della variabile di cui si desidera ottenere il valore."
     }
   ],
-  "eRvGw3": [
-    {
-      "type": 0,
-      "value": "Caricamento dei connettori in corso..."
-    }
-  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -4956,6 +5130,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Indice della posizione di inizio della sottostringa nel parametro 1."
+    }
+  ],
+  "ehIBkh": [
+    {
+      "type": 0,
+      "value": "Enter an integer"
     }
   ],
   "epOMnV": [
@@ -5615,10 +5795,28 @@
       "value": "Sì"
     }
   ],
+  "kBOAkT": [
+    {
+      "type": 0,
+      "value": "Select Fields"
+    }
+  ],
+  "kBSLfu": [
+    {
+      "type": 0,
+      "value": "Duplicate property name"
+    }
+  ],
   "kDsud+": [
     {
       "type": 0,
       "value": "(UTC - 3.00 h) Caienna, Fortaleza"
+    }
+  ],
+  "kEI2xx": [
+    {
+      "type": 0,
+      "value": "Message"
     }
   ],
   "kHcCxH": [
@@ -5637,12 +5835,6 @@
     {
       "type": 0,
       "value": "s"
-    }
-  ],
-  "kJD/bW": [
-    {
-      "type": 0,
-      "value": "Loading search results..."
     }
   ],
   "kM+Mr0": [
@@ -5923,6 +6115,12 @@
       "value": "Accedere al connettore"
     }
   ],
+  "meVkB6": [
+    {
+      "type": 0,
+      "value": "Empty property name"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -5975,6 +6173,12 @@
     {
       "type": 0,
       "value": "Provare a usare parole chiave meno specifiche."
+    }
+  ],
+  "nCa0KG": [
+    {
+      "type": 0,
+      "value": "Internal Errors"
     }
   ],
   "nGds/r": [
@@ -6081,6 +6285,12 @@
       "value": "Zoom to fit"
     }
   ],
+  "o8ohVV": [
+    {
+      "type": 0,
+      "value": "Schema Id"
+    }
+  ],
   "oAFcW6": [
     {
       "type": 0,
@@ -6099,10 +6309,28 @@
       "value": "Trasferimento di contenuto"
     }
   ],
+  "oQjIWf": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
+  "oR2x4N": [
+    {
+      "type": 0,
+      "value": "Invalid integer value"
+    }
+  ],
   "oRvVIW": [
     {
       "type": 0,
       "value": "(UTC+07:00) Krasnoyarsk"
+    }
+  ],
+  "oTBkbU": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "oV0xQ9": [
@@ -6199,6 +6427,12 @@
     {
       "type": 0,
       "value": "Converte l'input in un valore di tipo XML"
+    }
+  ],
+  "pYNzbj": [
+    {
+      "type": 0,
+      "value": "Path"
     }
   ],
   "pYtSyE": [
@@ -6412,6 +6646,12 @@
       "value": "La risposta asincrona consente a un'app per la logica di rispondere con un codice 202 (Accettata) per indicare che la richiesta è stata accettata per l'elaborazione. Verrà fornita un'intestazione Location per recuperare lo stato finale."
     }
   ],
+  "r/n6/9": [
+    {
+      "type": 0,
+      "value": "Enter a value"
+    }
+  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -6604,6 +6844,12 @@
       "value": "Unable to generate data map definition"
     }
   ],
+  "sw6EXK": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "syiNc+": [
     {
       "type": 0,
@@ -6758,6 +7004,12 @@
     {
       "type": 0,
       "value": "Selezionare un elemento per avviare la configurazione"
+    }
+  ],
+  "uDI1Um": [
+    {
+      "type": 0,
+      "value": "Status Code"
     }
   ],
   "uIQrat": [

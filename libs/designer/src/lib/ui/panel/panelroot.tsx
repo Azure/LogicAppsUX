@@ -5,9 +5,8 @@ import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions
 import { updateParameterValidation } from '../../core/state/operation/operationMetadataSlice';
 import { useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import {
-  useIsDiscovery,
+  useCurrentPanelModePanelMode,
   useIsPanelCollapsed,
-  useIsWorkflowParametersMode,
   useRegisteredPanelTabs,
   useSelectedNodeId,
   useSelectedPanelTabName,
@@ -29,6 +28,7 @@ import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../c
 import { replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import { isRootNodeInGraph } from '../../core/utils/graph';
 import { validateParameter } from '../../core/utils/parameters/helper';
+import { NodeSearchPanel } from './nodeSearchPanel';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
 import { createConnectionTab } from './panelTabs/createConnectionTab';
@@ -59,8 +59,7 @@ export const PanelRoot = (): JSX.Element => {
   const selectedNode = useSelectedNodeId();
   const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata));
   const selectedNodeDisplayName = useNodeDisplayName(selectedNode);
-  const isDiscovery = useIsDiscovery();
-  const isWorkflowParameters = useIsWorkflowParametersMode();
+  const currentPanelMode = useCurrentPanelModePanelMode();
 
   const [width, setWidth] = useState(PanelSize.Auto);
 
@@ -167,7 +166,7 @@ export const PanelRoot = (): JSX.Element => {
 
   const getPanelHeaderControlType = (): boolean => {
     // TODO: 13067650
-    return isDiscovery;
+    return currentPanelMode === 'Discovery';
   };
 
   const getPanelHeaderMenu = (): MenuItemOption[] => {
@@ -260,9 +259,9 @@ export const PanelRoot = (): JSX.Element => {
     styles: { root: { zIndex: 999998 } },
   };
 
-  return isWorkflowParameters ? (
+  return currentPanelMode === 'WorkflowParameters' ? (
     <WorkflowParametersPanel isCollapsed={collapsed} toggleCollapse={dismissPanel} width={width} layerProps={layerProps} />
-  ) : isDiscovery ? (
+  ) : currentPanelMode === 'Discovery' ? (
     <RecommendationPanelContext
       isCollapsed={collapsed}
       toggleCollapse={dismissPanel}
@@ -270,6 +269,8 @@ export const PanelRoot = (): JSX.Element => {
       key={selectedNode}
       layerProps={layerProps}
     />
+  ) : currentPanelMode === 'NodeSearch' ? (
+    <NodeSearchPanel isCollapsed={collapsed} toggleCollapse={dismissPanel} width={width} layerProps={layerProps} />
   ) : (
     <PanelContainer
       cardIcon={iconUri}

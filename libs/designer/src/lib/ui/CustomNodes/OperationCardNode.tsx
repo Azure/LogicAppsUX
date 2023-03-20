@@ -16,7 +16,13 @@ import {
   useOperationQuery,
 } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
-import { useIsLeafNode, useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
+import {
+  useIsLeafNode,
+  useNodeDescription,
+  useNodeDisplayName,
+  useNodeMetadata,
+  useShouldNodeFocus,
+} from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
 import type { MenuItemOption } from '@microsoft/designer-ui';
@@ -176,6 +182,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     codeRun,
   ]);
 
+  const shouldFocus = useShouldNodeFocus(id);
   return (
     <>
       <div className="nopan">
@@ -201,6 +208,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           onClick={nodeClick}
           selected={selected}
           contextMenuOptions={contextMenuOptions}
+          setFocus={shouldFocus}
         />
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
