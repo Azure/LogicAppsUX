@@ -6,6 +6,7 @@ import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '../models';
 import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection, InputConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import { isFunctionData } from './Function.Utils';
+import { LogCategory, LogService } from './Logging.Utils';
 import { addReactFlowPrefix, addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
 import type { WritableDraft } from 'immer/dist/internal';
@@ -169,6 +170,16 @@ export const setConnectionInputValue = (
         connection.inputs[confirmedInputIndex][0] = value;
       } else {
         connection.inputs[0].push(value);
+
+        const selfNode = connection.self.node;
+        if (isFunctionData(selfNode) && selfNode.maxNumberOfInputs !== -1 && connection.inputs[0].length > 1) {
+          LogService.log(LogCategory.ConnectionUtils, 'setConnectionInputValue', {
+            message: 'Too many inputs applied to connection',
+            data: {
+              reactFlowId: connection.self.reactFlowKey,
+            },
+          });
+        }
       }
     }
 
