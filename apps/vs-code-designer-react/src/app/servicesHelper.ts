@@ -1,6 +1,6 @@
 import { clientSupportedOperations } from './constants';
 import { HttpClient } from './services/httpClient';
-import { StandardOAuthService } from './services/oAuth';
+import { BaseOAuthService } from './services/oAuth';
 import { resolveConnectionsReferences } from './utilities/workflow';
 import {
   StandardConnectionService,
@@ -38,7 +38,7 @@ export const getDesignerServices = (
   connectorService: StandardConnectorService;
   operationManifestService: StandardOperationManifestService;
   searchService: StandardSearchService;
-  oAuthService: StandardOAuthService;
+  oAuthService: BaseOAuthService;
   gatewayService: BaseGatewayService;
   workflowService: IWorkflowService;
   hostService: IHostService;
@@ -140,7 +140,7 @@ export const getDesignerServices = (
 
   const { subscriptionId, resourceGroup, location } = apiHubServiceDetails;
 
-  const oAuthService = new StandardOAuthService({
+  const oAuthService = new BaseOAuthService({
     vscode,
     panelId,
     authToken,

@@ -36,11 +36,11 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const [isSelectingAzureResource, setIsSelectingAzureResource] = useState(false);
 
-  const selectedOperationGroupId = useSelectedSearchOperationGroupId();
+  const selectedOperationId = useSelectedSearchOperationId();
   const { data: allOperations, isLoading: isLoadingOperations } = useAllOperations();
   const selectedOperation = allOperations.find((o) => o.id === selectedOperationId);
 
-  const selectedOperationId = useSelectedSearchOperationId();
+  const selectedOperationGroupId = useSelectedSearchOperationGroupId();
   const { data: allConnectors } = useAllConnectors();
   const selectedConnector = allConnectors?.find((c) => c.id === selectedOperationGroupId);
 

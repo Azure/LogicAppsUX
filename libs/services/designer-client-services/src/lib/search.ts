@@ -2,7 +2,6 @@ import type { Connector, DiscoveryOperation, DiscoveryResultTypes } from '@micro
 import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface ISearchService {
-  search(term: string): Promise<SearchResult>;
   getAllConnectors(): Promise<Connector[]>;
   getAzureConnectorsByPage(page: number): Promise<Connector[]>;
   getCustomConnectorsByNextlink(nextlink?: string): Promise<{ nextlink?: string; value: Connector[] }>;
