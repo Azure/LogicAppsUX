@@ -35,9 +35,9 @@ const OptionsStateSet = ({ options, children }: any) => {
 
 export const DesignerProvider = ({ locale = 'en', options, children }: DesignerProviderProps) => {
   const { isDarkMode } = options;
-  const azTheme = isDarkMode ? AzureThemeDark : AzureThemeLight;
+  const azTheme = !isDarkMode ? AzureThemeLight : AzureThemeDark;
   const webTheme = !isDarkMode ? webLightTheme : webDarkTheme;
-  const themeName = useMemo(() => (isDarkMode ? 'dark' : 'light'), [isDarkMode]);
+  const themeName = useMemo(() => (!isDarkMode ? 'light' : 'dark'), [isDarkMode]);
 
   return (
     <ReduxProvider store={store}>
