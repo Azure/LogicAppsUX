@@ -200,7 +200,10 @@ export const getDesignerServices = (
           value: 'Url not available during authoring in local project. Check Overview page.',
         });
       } else {
-        return Promise.resolve({ method: HTTP_METHODS.POST, value: 'Dummy url' });
+        return Promise.resolve({
+          method: HTTP_METHODS.POST,
+          value: 'Url not available during authoring in local project. Check Overview page.',
+        });
       }
     },
   };
