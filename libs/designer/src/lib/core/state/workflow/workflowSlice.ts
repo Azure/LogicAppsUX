@@ -179,8 +179,8 @@ export const workflowSlice = createSlice({
         const change = dimensionChangesById[node?.id ?? ''];
         if (change && node && isWorkflowNode(node)) {
           const c = change as NodeDimensionChange;
-          node.height = c.dimensions.height;
-          node.width = c.dimensions.width;
+          node.height = c.dimensions?.height ?? 0;
+          node.width = c.dimensions?.width ?? 0;
         }
         !!node?.children?.length && stack.push(...node.children);
       }

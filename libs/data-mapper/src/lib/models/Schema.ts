@@ -9,8 +9,8 @@ export interface Schema {
 export interface SchemaNode {
   key: string;
   name: string;
-  fullName: string;
-  normalizedDataType: NormalizedDataType;
+  qName: string;
+  type: NormalizedDataType;
 
   /**
    * @deprecated Do not use, but do not remove. Is parsed on the extended node - nodeProperties
@@ -27,14 +27,14 @@ export enum SchemaFileFormat {
 }
 
 export enum SchemaNodeProperty {
-  NotSpecified = 'NotSpecified',
+  None = 'None',
   Optional = 'Optional',
   Repeating = 'Repeating',
   Attribute = 'Attribute',
-  ComplexTypeSimpleContent = 'ComplexTypeSimpleContent',
-  MaximumDepthLimit = 'MaximumDepthLimit',
-  CyclicTypeReference = 'CyclicTypeReference',
-  JsonArray = 'JsonArray',
+  Complex = 'Complex',
+  MaxDepth = 'MaxDepth',
+  Cyclic = 'Cyclic',
+  JArray = 'JArray',
   ArrayItem = 'ArrayItem',
   AnyOf = 'AnyOf',
 }
@@ -44,7 +44,7 @@ export enum NormalizedDataType {
   Array = 'Array',
   Binary = 'Binary',
   Boolean = 'Bool',
-  ComplexType = 'ComplexType',
+  Complex = 'Complex',
   DateTime = 'DateTime',
   Decimal = 'Decimal',
   Integer = 'Integer',
@@ -70,7 +70,7 @@ export interface SchemaNodeExtended extends SchemaNode {
 export interface PathItem {
   key: string;
   name: string;
-  fullName: string;
+  qName: string;
   repeating: boolean;
 }
 

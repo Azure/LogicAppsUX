@@ -14,8 +14,8 @@ export function serializeEditorState(editorState: EditorState, trimLiteral = fal
 }
 
 const getChildrenNodesToSegments = (node: ElementNode, segments: ValueSegment[], trimLiteral = false): void => {
-  node.__children.forEach((child, index) => {
-    const childNode = $getNodeByKey(child);
+  node.getChildren().forEach((child, index) => {
+    const childNode = $getNodeByKey(child.getKey());
     if (childNode && $isElementNode(childNode)) {
       if (!trimLiteral && /* ignore first paragraph node */ index > 0) {
         segments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '\n' });

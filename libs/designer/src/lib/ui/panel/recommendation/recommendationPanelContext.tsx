@@ -1,7 +1,7 @@
 import Constants from '../../../common/constants';
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
-import { useAllOperations } from '../../../core/queries/browse';
+import { useAllConnectors, useAllOperations } from '../../../core/queries/browse';
 import {
   useIsAddingTrigger,
   useIsParallelBranch,
@@ -37,20 +37,21 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const [isSelectingAzureResource, setIsSelectingAzureResource] = useState(false);
 
   const selectedOperationGroupId = useSelectedSearchOperationGroupId();
-  const selectedOperationId = useSelectedSearchOperationId();
+  const { data: allOperations, isLoading: isLoadingOperations } = useAllOperations();
+  const selectedOperation = allOperations.find((o) => o.id === selectedOperationId);
 
-  const allOperations = useAllOperations();
-  const selectedOperation = allOperations.data?.find((o) => o.id === selectedOperationId);
+  const selectedOperationId = useSelectedSearchOperationId();
+  const { data: allConnectors } = useAllConnectors();
+  const selectedConnector = allConnectors?.find((c) => c.id === selectedOperationGroupId);
 
   useEffect(() => {
-    if (allOperations.data && selectedOperationGroupId) {
-      const filteredOps = allOperations.data.filter((operation) => {
-        const apiId = operation.properties.api.id;
-        return areApiIdsEqual(apiId, selectedOperationGroupId);
-      });
-      setAllOperationsForGroup(filteredOps);
-    }
-  }, [selectedOperationGroupId, allOperations.data]);
+    if (!allOperations || !selectedOperationGroupId) return;
+    const filteredOps = allOperations.filter((operation) => {
+      const apiId = operation.properties.api.id;
+      return areApiIdsEqual(apiId, selectedOperationGroupId);
+    });
+    setAllOperationsForGroup(filteredOps);
+  }, [selectedOperationGroupId, allOperations]);
 
   const navigateBack = useCallback(() => {
     dispatch(selectOperationGroupId(''));
@@ -105,7 +106,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const onOperationClick = useCallback(
     (id: string) => {
-      const operation = (allOperations.data ?? []).find((o: any) => o.id === id);
+      const operation = (allOperations ?? []).find((o: any) => o.id === id);
       if (!operation) return;
       console.log('onOperationClick', operation);
       dispatch(selectOperationId(operation.id));
@@ -116,7 +117,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
       dispatch(addOperation({ operation, relationshipIds, nodeId: newNodeId, isParallelBranch, isTrigger }));
     },
-    [allOperations.data, dispatch, isAzureResourceActionId, isParallelBranch, isTrigger, relationshipIds, startAzureResourceSelection]
+    [allOperations, dispatch, isAzureResourceActionId, isParallelBranch, isTrigger, relationshipIds, startAzureResourceSelection]
   );
 
   const intl = useIntl();
@@ -137,8 +138,14 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       ) : null}
       {isSelectingAzureResource && selectedOperation ? (
         <AzureResourceSelection operation={selectedOperation} />
-      ) : selectedOperationGroupId ? (
-        <OperationGroupDetailView groupOperations={allOperationsForGroup} filters={filters} onOperationClick={onOperationClick} />
+      ) : selectedOperationGroupId && selectedConnector ? (
+        <OperationGroupDetailView
+          connector={selectedConnector}
+          groupOperations={allOperationsForGroup}
+          filters={filters}
+          onOperationClick={onOperationClick}
+          isLoading={isLoadingOperations}
+        />
       ) : (
         <>
           <OperationSearchHeader
@@ -153,9 +160,9 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
           {searchTerm ? (
             <SearchView
               searchTerm={searchTerm}
-              allOperations={allOperations.data ?? []}
+              allOperations={allOperations ?? []}
               groupByConnector={isGrouped}
-              isLoading={allOperations.isLoading}
+              isLoading={isLoadingOperations}
               filters={filters}
               onOperationClick={onOperationClick}
             />

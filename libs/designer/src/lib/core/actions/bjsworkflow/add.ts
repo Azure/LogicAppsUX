@@ -7,6 +7,7 @@ import type { NodeData, NodeOperation } from '../../state/operation/operationMet
 import { updateNodeSettings, initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { changePanelNode, isolateTab, showDefaultTabs } from '../../state/panel/panelSlice';
+import { addSchema } from '../../state/staticresultschema/staticresultschemaSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
@@ -23,7 +24,7 @@ import { getInputParametersFromManifest, getOutputParametersFromManifest, update
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings } from './settings';
-import { ConnectionService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
 import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
 import type {
   DiscoveryOperation,
@@ -87,9 +88,17 @@ const initializeOperationDetails = async (
 ): Promise<void> => {
   const state = getState();
   const isTrigger = isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata);
-  const { type, connectorId } = operationInfo;
+  const { type, kind, connectorId, operationId } = operationInfo;
   let isConnectionRequired = true;
   const operationManifestService = OperationManifestService();
+  const staticResultService = StaticResultService();
+
+  const schema = staticResultService.getOperationResultSchema(connectorId, operationId);
+  schema.then((schema) => {
+    if (schema) {
+      dispatch(addSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
+    }
+  });
 
   dispatch(changePanelNode(nodeId));
   dispatch(isolateTab(Constants.PANEL_TAB_NAMES.LOADING));
@@ -97,7 +106,7 @@ const initializeOperationDetails = async (
   let initData: NodeData;
   let manifest: OperationManifest | undefined = undefined;
   let swagger: SwaggerParser | undefined = undefined;
-  if (operationManifestService.isSupported(type)) {
+  if (operationManifestService.isSupported(type, kind)) {
     manifest = await getOperationManifest(operationInfo);
     isConnectionRequired = isConnectionRequiredForOperation(manifest);
 
@@ -194,7 +203,7 @@ const initializeOperationDetails = async (
   dispatch(updateNodeSettings({ id: nodeId, settings }));
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);
-  dispatch(showDefaultTabs({ isScopeNode: operationInfo?.type.toLowerCase() === Constants.NODE.TYPE.SCOPE }));
+  dispatch(showDefaultTabs({ isScopeNode: operationInfo?.type.toLowerCase() === Constants.NODE.TYPE.SCOPE, hasSchema: !!schema }));
 };
 
 export const initializeSwitchCaseFromManifest = async (id: string, manifest: OperationManifest, dispatch: Dispatch): Promise<void> => {

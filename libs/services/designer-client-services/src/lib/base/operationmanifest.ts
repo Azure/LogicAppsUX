@@ -55,17 +55,17 @@ const compose = 'compose';
 const csvtable = 'csvtable';
 const htmltable = 'htmltable';
 const join = 'join';
-const parsejson = 'parsejson';
-const query = 'query';
-const select = 'select';
+export const parsejson = 'parsejson';
+export const query = 'query';
+export const select = 'select';
 const function_ = 'function';
 const liquid = 'liquid';
 const serviceprovider = 'serviceprovider';
 const workflow = 'workflow';
 const xmlvalidation = 'xmlvalidation';
 const xslt = 'xslt';
-const flatfiledecoding = 'flatfiledecoding';
-const flatfileencoding = 'flatfileencoding';
+export const flatfiledecoding = 'flatfiledecoding';
+export const flatfileencoding = 'flatfileencoding';
 const swiftdecode = 'swiftdecode';
 const swiftencode = 'swiftencode';
 const swiftmtdecode = 'swiftmtdecode';
@@ -93,11 +93,11 @@ const delay = 'delay';
 const delayuntil = 'delayuntil';
 const http = 'http';
 const httpwebhook = 'httpwebhook';
-const httpaction = 'httpaction';
+export const httpaction = 'httpaction';
 const httptrigger = 'httptrigger';
-const httpswaggeraction = 'httpswaggeraction';
+export const httpswaggeraction = 'httpswaggeraction';
 const httpswaggertrigger = 'httpswaggertrigger';
-const httpwebhookaction = 'httpwebhookaction';
+export const httpwebhookaction = 'httpwebhookaction';
 const httpwebhooktrigger = 'httpwebhooktrigger';
 const initializevariable = 'initializevariable';
 const setvariable = 'setvariable';
@@ -115,14 +115,14 @@ export const azureFunctionConnectorId = 'connectionProviders/azureFunctionOperat
 export const appServiceConnectorId = 'connectionProviders/appService';
 export const batchConnectorId = 'connectionProviders/batch';
 export const workflowConnectorId = 'connectionProviders/workflow';
-
-const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
+export const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
 const controlConnectorId = 'connectionProviders/control';
 const dateTimeConnectorId = 'connectionProviders/datetime';
 const scheduleConnectorId = 'connectionProviders/schedule';
-const httpConnectorId = 'connectionProviders/http';
+export const httpConnectorId = 'connectionProviders/http';
 const variableConnectorId = 'connectionProviders/variable';
 const rosettanetConnectorId = 'connectionProviders/rosettaNetOperations';
+export const flatFileConnectorId = 'connectionProviders/flatFileOperations';
 const liquidConnectorId = 'connectionProviders/liquidOperations';
 const dataMapperConnectorId = 'connectionProviders/dataMapperOperations';
 
@@ -436,7 +436,7 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
         operationId: invokeworkflow,
       };
 
-    case xslttransform:
+    case xslt:
       switch (kind) {
         case datamapper:
           return {

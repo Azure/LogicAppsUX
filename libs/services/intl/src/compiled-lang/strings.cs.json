@@ -1,4 +1,10 @@
 {
+  "++ZVe/": [
+    {
+      "type": 0,
+      "value": "Testing"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -245,6 +251,12 @@
       "value": "Povinný parametr. Řetězec kódovaný ve formátu base64."
     }
   ],
+  "0GT0SI": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "0GqNGo": [
     {
       "type": 0,
@@ -303,6 +315,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Řetězec, který se má převést na velká písmena. Pokud některý znak v řetězci nemá odpovídající znak velké abecedy, zůstane ve vráceném řetězci beze změny."
+    }
+  ],
+  "0m2Y1/": [
+    {
+      "type": 0,
+      "value": "Value"
     }
   ],
   "0meqK1": [
@@ -689,6 +707,12 @@
       "value": "(UTC+11:00) Magadan"
     }
   ],
+  "2y24a/": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -699,6 +723,12 @@
     {
       "type": 0,
       "value": "Spravovaná identita přiřazená systémem"
+    }
+  ],
+  "3AWwVl": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "3BZnxY": [
@@ -1001,6 +1031,12 @@
       "value": "Vyžadováno. Výraz jazyka XPath, který se má vyhodnotit."
     }
   ],
+  "5MWmiO": [
+    {
+      "type": 0,
+      "value": "Line Number"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1047,6 +1083,12 @@
     {
       "type": 0,
       "value": "Odstranit parametr"
+    }
+  ],
+  "5ytHcK": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "6+RwRp": [
@@ -1367,6 +1409,12 @@
       "value": "expressions"
     }
   ],
+  "8eTWaf": [
+    {
+      "type": 0,
+      "value": "Rename"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
@@ -1451,6 +1499,12 @@
       "value": "property"
     }
   ],
+  "93Gj/n": [
+    {
+      "type": 0,
+      "value": "Line Position"
+    }
+  ],
   "93svjx": [
     {
       "type": 0,
@@ -1497,6 +1551,12 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9YGcT2": [
+    {
+      "type": 0,
+      "value": "ChildErrors"
     }
   ],
   "9atGYe": [
@@ -1635,6 +1695,12 @@
       "value": "Uživatelské jméno"
     }
   ],
+  "AoalgS": [
+    {
+      "type": 0,
+      "value": "Loading more results..."
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
@@ -1713,6 +1779,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "actionCount"
+    }
+  ],
+  "B/gCWM": [
+    {
+      "type": 0,
+      "value": "Error"
     }
   ],
   "B2s0iG": [
@@ -1835,6 +1907,12 @@
       "value": "Vyžadováno. Objekt, u kterého se má zkontrolovat, zda není větší než porovnávaný objekt."
     }
   ],
+  "C1cy54": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "C4NQ1J": [
     {
       "type": 0,
@@ -1907,6 +1985,12 @@
       "value": "K vygenerování schématu použijte ukázkovou datovou část."
     }
   ],
+  "DJW8RE": [
+    {
+      "type": 0,
+      "value": "Select a value"
+    }
+  ],
   "DWsh56": [
     {
       "type": 0,
@@ -1935,6 +2019,12 @@
     {
       "type": 0,
       "value": "Show mini-map"
+    }
+  ],
+  "DkF25I": [
+    {
+      "type": 0,
+      "value": "Expand Static Result"
     }
   ],
   "DsPDVB": [
@@ -2095,6 +2185,12 @@
     {
       "type": 0,
       "value": "Add"
+    }
+  ],
+  "FBNevf": [
+    {
+      "type": 0,
+      "value": "Go To Operation"
     }
   ],
   "FDF4Qb": [
@@ -2443,6 +2539,12 @@
       "value": "Tlačítko pro přidání dynamického obsahu, pokud je ovládací prvek TokenPicker zobrazený"
     }
   ],
+  "HSJLCu": [
+    {
+      "type": 0,
+      "value": "Headers"
+    }
+  ],
   "HXLutF": [
     {
       "type": 0,
@@ -2557,6 +2659,12 @@
     {
       "type": 0,
       "value": "Add a target schema"
+    }
+  ],
+  "IbGIq3": [
+    {
+      "type": 0,
+      "value": "Error Code"
     }
   ],
   "IjZFjQ": [
@@ -2721,6 +2829,12 @@
     {
       "type": 0,
       "value": "Povinné. Objekt, do kterého se přidá nová vlastnost"
+    }
+  ],
+  "K7/DnZ": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "K90YEU": [
@@ -3127,6 +3241,12 @@
       "value": "Stav"
     }
   ],
+  "NWxGWN": [
+    {
+      "type": 0,
+      "value": "Enter unique property name"
+    }
+  ],
   "NeyUAh": [
     {
       "type": 0,
@@ -3279,10 +3399,10 @@
       "value": "Tato funkce nevyžaduje žádný vstup."
     }
   ],
-  "ORVfYZ": [
+  "OOUTdW": [
     {
       "type": 0,
-      "value": "Načítají se operace…"
+      "value": "Loading all connectors..."
     }
   ],
   "OSHNZ2": [
@@ -3301,6 +3421,12 @@
     {
       "type": 0,
       "value": "Rozdělit skupinu"
+    }
+  ],
+  "OdoUEu": [
+    {
+      "type": 0,
+      "value": "Enable Static Result"
     }
   ],
   "Oib1mL": [
@@ -3433,6 +3559,12 @@
     {
       "type": 0,
       "value": "Nepravda"
+    }
+  ],
+  "PZgHf/": [
+    {
+      "type": 0,
+      "value": "Schema Uri"
     }
   ],
   "PaPPLr": [
@@ -3627,6 +3759,12 @@
     {
       "type": 0,
       "value": "Přepne na vstup celého pole."
+    }
+  ],
+  "RbJNVk": [
+    {
+      "type": 0,
+      "value": "Schema"
     }
   ],
   "RhH4pF": [
@@ -3975,6 +4113,12 @@
       "value": "(UTC-06:00) Velikonoční ostrov"
     }
   ],
+  "U7yRwM": [
+    {
+      "type": 0,
+      "value": "Validation Error"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -4013,6 +4157,12 @@
     {
       "type": 0,
       "value": " (název souboru)"
+    }
+  ],
+  "UZiXVh": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "Ufv5m9": [
@@ -4157,6 +4307,12 @@
     {
       "type": 0,
       "value": "Aktivační události sdělí aplikaci, kdy se má spustit. Každý pracovní postup vyžaduje alespoň jednu aktivační událost."
+    }
+  ],
+  "Vfce7b": [
+    {
+      "type": 0,
+      "value": "Error Type"
     }
   ],
   "VlvlX1": [
@@ -4537,6 +4693,12 @@
       "value": "Oddálit"
     }
   ],
+  "Yw7Nfl": [
+    {
+      "type": 0,
+      "value": "Disable Static Result"
+    }
+  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -4589,6 +4751,12 @@
       "value": "(UTC+10:00) Canberra, Melbourne, Sydney"
     }
   ],
+  "ZRdkFN": [
+    {
+      "type": 0,
+      "value": "Collapse Static Result"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -4617,6 +4785,12 @@
     {
       "type": 0,
       "value": "Close"
+    }
+  ],
+  "Zi9gQK": [
+    {
+      "type": 0,
+      "value": "Add new item"
     }
   ],
   "ZkjTbp": [
@@ -4737,6 +4911,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "b9Rvl9": [
+    {
+      "type": 0,
+      "value": "Body"
     }
   ],
   "bG9rjv": [
@@ -4909,6 +5089,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripolis"
+    }
+  ],
+  "ca/QIc": [
+    {
+      "type": 0,
+      "value": "Error Message"
     }
   ],
   "cgq/+y": [
@@ -5105,12 +5291,6 @@
       "value": "Povinný parametr. Název proměnné, jejíž hodnotu chcete získat."
     }
   ],
-  "eRvGw3": [
-    {
-      "type": 0,
-      "value": "Načítají se konektory…"
-    }
-  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -5127,6 +5307,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Index určující, kde začíná v parametru 1 podřetězec."
+    }
+  ],
+  "ehIBkh": [
+    {
+      "type": 0,
+      "value": "Enter an integer"
     }
   ],
   "epOMnV": [
@@ -5521,6 +5707,12 @@
       "value": "Asynchronní odpověď"
     }
   ],
+  "i0XjL5": [
+    {
+      "type": 0,
+      "value": "Search for operation"
+    }
+  ],
   "i1Tufp": [
     {
       "type": 0,
@@ -5817,10 +6009,28 @@
       "value": "Ano"
     }
   ],
+  "kBOAkT": [
+    {
+      "type": 0,
+      "value": "Select Fields"
+    }
+  ],
+  "kBSLfu": [
+    {
+      "type": 0,
+      "value": "Duplicate property name"
+    }
+  ],
   "kDsud+": [
     {
       "type": 0,
       "value": "(UTC-03:00) Cayenne, Fortaleza"
+    }
+  ],
+  "kEI2xx": [
+    {
+      "type": 0,
+      "value": "Message"
     }
   ],
   "kHcCxH": [
@@ -5839,12 +6049,6 @@
     {
       "type": 0,
       "value": " s"
-    }
-  ],
-  "kJD/bW": [
-    {
-      "type": 0,
-      "value": "Loading search results..."
     }
   ],
   "kM+Mr0": [
@@ -6125,6 +6329,12 @@
       "value": "Přihlásit se ke konektoru"
     }
   ],
+  "meVkB6": [
+    {
+      "type": 0,
+      "value": "Empty property name"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -6177,6 +6387,12 @@
     {
       "type": 0,
       "value": "Zkuste méně konkrétní klíčová slova."
+    }
+  ],
+  "nCa0KG": [
+    {
+      "type": 0,
+      "value": "Internal Errors"
     }
   ],
   "nGds/r": [
@@ -6283,6 +6499,12 @@
       "value": "Zoom to fit"
     }
   ],
+  "o8ohVV": [
+    {
+      "type": 0,
+      "value": "Schema Id"
+    }
+  ],
   "oAFcW6": [
     {
       "type": 0,
@@ -6301,10 +6523,28 @@
       "value": "Přenos obsahu"
     }
   ],
+  "oQjIWf": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
+  "oR2x4N": [
+    {
+      "type": 0,
+      "value": "Invalid integer value"
+    }
+  ],
   "oRvVIW": [
     {
       "type": 0,
       "value": "(UTC+07:00) Krasnojarsk"
+    }
+  ],
+  "oTBkbU": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "oV0xQ9": [
@@ -6409,6 +6649,12 @@
     {
       "type": 0,
       "value": "Převede vstup na hodnotu typu XML."
+    }
+  ],
+  "pYNzbj": [
+    {
+      "type": 0,
+      "value": "Path"
     }
   ],
   "pYtSyE": [
@@ -6645,6 +6891,12 @@
       "value": "Asynchronní odpověď umožní aplikaci Logic Apps odpovědět kódem 202 (Přijato) a dát tak vědět, že se požadavek přijal ke zpracování. Pomocí poskytnuté hlavičky umístění půjde načíst koncový stav."
     }
   ],
+  "r/n6/9": [
+    {
+      "type": 0,
+      "value": "Enter a value"
+    }
+  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -6837,6 +7089,12 @@
       "value": "Unable to generate data map definition"
     }
   ],
+  "sw6EXK": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "syiNc+": [
     {
       "type": 0,
@@ -6991,6 +7249,12 @@
     {
       "type": 0,
       "value": "Výběrem elementu spustíte konfiguraci"
+    }
+  ],
+  "uDI1Um": [
+    {
+      "type": 0,
+      "value": "Status Code"
     }
   ],
   "uIQrat": [

@@ -4,7 +4,7 @@ import type { MapDefinitionEntry, SchemaNodeDictionary, SchemaNodeExtended } fro
 import { SchemaType } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
-import { ifPseudoFunctionKey, indexPseudoFunctionKey, directAccessPseudoFunctionKey } from '../models/Function';
+import { directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import { findLast } from './Array.Utils';
 import {
   flattenInputs,
@@ -47,7 +47,7 @@ export const getInputValues = (
           if (isCustomValue(input)) {
             return input;
           } else if (isSchemaNodeExtended(input.node)) {
-            return shouldLocalizePaths && input.node.fullName.startsWith('@') ? `./${input.node.key}` : input.node.key;
+            return shouldLocalizePaths && input.node.qName.startsWith('@') ? `./${input.node.key}` : input.node.key;
           } else {
             if (input.node.key === indexPseudoFunctionKey) {
               return getIndexValueForCurrentConnection(connections[input.reactFlowKey]);

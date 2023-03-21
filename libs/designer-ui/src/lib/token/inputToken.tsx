@@ -1,9 +1,11 @@
 import { getBrandColorRgbA } from '../card/utils';
+import { TokenType } from '../editor';
 import { DELETE_TOKEN_NODE } from '../editor/base/plugins/DeleteTokenNode';
 import { OPEN_TOKEN_PICKER } from '../editor/base/plugins/OpenTokenPicker';
 import iconSvg from './icon/icon.svg';
 import { Icon } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { $getNodeByKey } from 'lexical';
 import type { NodeKey } from 'lexical';
 import { useIntl } from 'react-intl';
 
@@ -18,6 +20,7 @@ export interface InputTokenProps {
   required?: boolean;
   title: string;
   nodeKey?: NodeKey;
+  description?: string;
 }
 
 export const DELETE = '\u00D7';
@@ -27,7 +30,11 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
 
   const handleTokenClicked = () => {
     if (nodeKey) {
-      editor.dispatchCommand(OPEN_TOKEN_PICKER, nodeKey);
+      editor.getEditorState().read(() => {
+        if ($getNodeByKey(nodeKey)?.['__data']?.token?.tokenType === TokenType.FX) {
+          editor.dispatchCommand(OPEN_TOKEN_PICKER, nodeKey);
+        }
+      });
     }
   };
 

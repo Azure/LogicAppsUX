@@ -202,18 +202,17 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     await window.withProgress(options, async () => {
       try {
-        const { definition, connectionReferences } = workflowToSave;
-
+        const { definition, connectionReferences, parameters } = workflowToSave;
         const definitionToSave: any = definition;
-        const parametersFromDefinition = definitionToSave.parameters;
+        const parametersFromDefinition = parameters;
+
         if (parametersFromDefinition) {
           delete parametersFromDefinition.$connections;
           for (const parameterKey of Object.keys(parametersFromDefinition)) {
             const parameter = parametersFromDefinition[parameterKey];
-            parameter.value = parameter.defaultValue;
+            parameter.value = parameter.value ?? parameter.defaultValue;
             delete parameter.defaultValue;
           }
-          delete definitionToSave.parameters;
           await saveParameters(this.context, filePath, parametersFromDefinition);
         }
 
@@ -361,7 +360,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     );
   }
 
-  private async _getDesignerPanelMetadata(migrationOptions: Record<string, any> = {}): Promise<any> {
+  private async _getDesignerPanelMetadata(migrationOptions: Record<string, any> = {}): Promise<IDesignerPanelMetadata> {
     const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
     this._migrate(workflowContent, migrationOptions);
     const connectionsData: string = await getConnectionsFromFile(this.context, this.workflowFilePath);
@@ -381,7 +380,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       panelId: this.panelName,
       appSettingNames: Object.keys(localSettings),
       standardApp: getStandardAppData(this.workflowName, workflowContent, parametersData),
-      scriptPath: this.panel.webview.asWebviewUri(Uri.file(path.join(ext.context.extensionPath, 'dist', 'designer'))).toString(),
       connectionsData,
       parametersData,
       localSettings,

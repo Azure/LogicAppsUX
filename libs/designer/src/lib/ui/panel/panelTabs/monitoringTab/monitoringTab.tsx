@@ -1,4 +1,5 @@
 import constants from '../../../../common/constants';
+import { getMonitoringTabError } from '../../../../common/utilities/error';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useBrandColor } from '../../../../core/state/selectors/actionMetadataSelector';
 import { useNodeMetadata } from '../../../../core/state/workflow/workflowSelectors';
@@ -17,6 +18,8 @@ export const MonitoringPanel: React.FC = () => {
   const nodeMetadata = useNodeMetadata(selectedNodeId);
   const brandColor = useBrandColor(selectedNodeId);
   const runMetaData = nodeMetadata?.runData;
+  const { status: statusRun, error: errorRun, code: codeRun } = runMetaData ?? {};
+  const error = getMonitoringTabError(errorRun, statusRun, codeRun);
 
   const getActionInputsOutputs = () => {
     return RunService().getActionLinks(runMetaData, selectedNodeId);
@@ -28,7 +31,7 @@ export const MonitoringPanel: React.FC = () => {
     isFetching,
     isLoading,
     refetch,
-  } = useQuery<any>(['actionInputsOutputs'], getActionInputsOutputs, {
+  } = useQuery<any>(['actionInputsOutputs', { nodeId: selectedNodeId }], getActionInputsOutputs, {
     refetchOnWindowFocus: false,
     initialData: { inputs: {}, outputs: {} },
   });
@@ -39,7 +42,7 @@ export const MonitoringPanel: React.FC = () => {
 
   return isNullOrUndefined(runMetaData) ? null : (
     <div>
-      <ErrorSection error={runMetaData.error} />
+      <ErrorSection error={error} />
       <InputsPanel
         runMetaData={runMetaData}
         brandColor={brandColor}

@@ -1,8 +1,9 @@
 import { useLayout } from '../core/graphlayout';
-import { useAllOperations, useAllConnectors } from '../core/queries/browse';
+import { usePreloadConnectorsQuery, usePreloadOperationsQuery } from '../core/queries/browse';
 import { useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
+import { switchToNodeSearchPanel } from '../core/state/panel/panelSlice';
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
 import { buildEdgeIdsBySource, clearFocusNode, updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../core/store';
@@ -22,15 +23,16 @@ import { setLayerHostSelector } from '@fluentui/react';
 import type { WorkflowNodeType } from '@microsoft/utils-logic-apps';
 import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import KeyboardBackend, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
+import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider, createTransition, MouseTransition } from 'react-dnd-multi-backend';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { useDispatch, useSelector } from 'react-redux';
-import { ReactFlow, ReactFlowProvider, useNodes, useReactFlow, useStore, BezierEdge } from 'reactflow';
-import type { NodeChange } from 'reactflow';
+import { Background, ReactFlow, ReactFlowProvider, useNodes, useReactFlow, useStore, BezierEdge } from 'reactflow';
+import type { BackgroundProps, NodeChange } from 'reactflow';
 
 export interface DesignerProps {
-  graphId?: string;
+  backgroundProps?: BackgroundProps;
 }
 
 type NodeTypesObj = {
@@ -106,14 +108,16 @@ export const CanvasFinder = () => {
   return null;
 };
 
-export const Designer = () => {
+export const Designer = (props: DesignerProps) => {
+  const { backgroundProps } = props;
+
   const [nodes, edges, flowSize] = useLayout();
   const isEmpty = useIsGraphEmpty();
   const isReadOnly = useReadOnly();
   const dispatch = useDispatch();
 
-  useAllOperations();
-  useAllConnectors();
+  usePreloadOperationsQuery();
+  usePreloadConnectorsQuery();
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
@@ -143,7 +147,7 @@ export const Designer = () => {
 
   const [zoom, setZoom] = useState(1);
 
-  const tranlsateExtent = useMemo((): [[number, number], [number, number]] => {
+  const translateExtent = useMemo((): [[number, number], [number, number]] => {
     const padding = 64 + 24;
     const [flowWidth, flowHeight] = flowSize;
 
@@ -163,6 +167,10 @@ export const Designer = () => {
     return true;
   });
 
+  useHotkeys(['meta+shift+p'], (event) => {
+    event.preventDefault();
+    dispatch(switchToNodeSearchPanel());
+  });
   const DND_OPTIONS: any = {
     backends: [
       {
@@ -172,13 +180,14 @@ export const Designer = () => {
       },
       {
         id: 'keyboard',
-        backend: KeyboardBackend,
+        backend: KeyboardBackendFactory,
         context: { window, document },
         preview: true,
         transition: KeyboardTransition,
       },
     ],
   };
+
   return (
     <DndProvider options={DND_OPTIONS}>
       <div id="msla-designer-canvas" className="msla-designer-canvas msla-panel-mode">
@@ -195,7 +204,7 @@ export const Designer = () => {
             panOnScroll={true}
             deleteKeyCode={['Backspace', 'Delete']}
             zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
-            translateExtent={clampPan ? tranlsateExtent : undefined}
+            translateExtent={clampPan ? translateExtent : undefined}
             onMove={(_e, viewport) => setZoom(viewport.zoom)}
             proOptions={{
               account: 'paid-sponsor',
@@ -203,6 +212,7 @@ export const Designer = () => {
             }}
           >
             <PanelRoot />
+            {backgroundProps ? <Background {...backgroundProps} /> : null}
           </ReactFlow>
           <div className="msla-designer-tools">
             <Controls />

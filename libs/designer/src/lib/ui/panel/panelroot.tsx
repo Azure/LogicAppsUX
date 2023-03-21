@@ -2,11 +2,11 @@ import constants from '../../common/constants';
 import type { AppDispatch, RootState } from '../../core';
 import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { updateParameterValidation } from '../../core/state/operation/operationMetadataSlice';
 import { useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import {
-  useIsDiscovery,
+  useCurrentPanelModePanelMode,
   useIsPanelCollapsed,
-  useIsWorkflowParametersMode,
   useRegisteredPanelTabs,
   useSelectedNodeId,
   useSelectedPanelTabName,
@@ -23,9 +23,12 @@ import {
   setTabVisibility,
 } from '../../core/state/panel/panelSlice';
 import { useIconUri, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
+import { useHasSchema } from '../../core/state/staticresultschema/staitcresultschemaselector';
 import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import { isRootNodeInGraph } from '../../core/utils/graph';
+import { validateParameter } from '../../core/utils/parameters/helper';
+import { NodeSearchPanel } from './nodeSearchPanel';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
 import { createConnectionTab } from './panelTabs/createConnectionTab';
@@ -34,7 +37,8 @@ import { monitoringTab } from './panelTabs/monitoringTab/monitoringTab';
 import { parametersTab } from './panelTabs/parametersTab';
 import { scratchTab } from './panelTabs/scratchTab';
 import { selectConnectionTab } from './panelTabs/selectConnectionTab';
-import { SettingsTab } from './panelTabs/settingsTab';
+import { settingsTab } from './panelTabs/settingsTab';
+import { testingTab } from './panelTabs/testingTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { WorkflowParametersPanel } from './workflowparameterspanel';
 import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
@@ -55,23 +59,33 @@ export const PanelRoot = (): JSX.Element => {
   const selectedNode = useSelectedNodeId();
   const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata));
   const selectedNodeDisplayName = useNodeDisplayName(selectedNode);
-  const isDiscovery = useIsDiscovery();
-  const isWorkflowParameters = useIsWorkflowParametersMode();
+  const currentPanelMode = useCurrentPanelModePanelMode();
 
   const [width, setWidth] = useState(PanelSize.Auto);
 
   const registeredTabs = useRegisteredPanelTabs();
   const visibleTabs = useVisiblePanelTabs();
   const selectedPanelTab = useSelectedPanelTabName();
-
+  const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNode]);
   const comment = useNodeDescription(selectedNode);
   const iconUri = useIconUri(selectedNode);
   const nodeMetaData = useNodeMetadata(selectedNode);
   const operationInfo = useOperationInfo(selectedNode);
   let showCommentBox = !isNullOrUndefined(comment);
+  const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
 
   useEffect(() => {
-    const tabs = [monitoringTab, parametersTab, SettingsTab, codeViewTab, createConnectionTab, selectConnectionTab, aboutTab, loadingTab];
+    const tabs = [
+      monitoringTab,
+      parametersTab,
+      settingsTab,
+      codeViewTab,
+      testingTab,
+      createConnectionTab,
+      selectConnectionTab,
+      aboutTab,
+      loadingTab,
+    ];
     if (process.env.NODE_ENV !== 'production') {
       tabs.push(scratchTab);
     }
@@ -101,6 +115,15 @@ export const PanelRoot = (): JSX.Element => {
       })
     );
   }, [dispatch, operationInfo, isMonitoringView]);
+
+  useEffect(() => {
+    dispatch(
+      setTabVisibility({
+        tabName: constants.PANEL_TAB_NAMES.TESTING,
+        visible: !isTriggerNode && hasSchema,
+      })
+    );
+  }, [dispatch, hasSchema, isTriggerNode, selectedNode]);
 
   useEffect(() => {
     if (!visibleTabs?.map((tab) => tab.name.toLowerCase())?.includes(selectedPanelTab ?? ''))
@@ -143,7 +166,7 @@ export const PanelRoot = (): JSX.Element => {
 
   const getPanelHeaderControlType = (): boolean => {
     // TODO: 13067650
-    return isDiscovery;
+    return currentPanelMode === 'Discovery';
   };
 
   const getPanelHeaderMenu = (): MenuItemOption[] => {
@@ -236,9 +259,9 @@ export const PanelRoot = (): JSX.Element => {
     styles: { root: { zIndex: 999998 } },
   };
 
-  return isWorkflowParameters ? (
+  return currentPanelMode === 'WorkflowParameters' ? (
     <WorkflowParametersPanel isCollapsed={collapsed} toggleCollapse={dismissPanel} width={width} layerProps={layerProps} />
-  ) : isDiscovery ? (
+  ) : currentPanelMode === 'Discovery' ? (
     <RecommendationPanelContext
       isCollapsed={collapsed}
       toggleCollapse={dismissPanel}
@@ -246,6 +269,8 @@ export const PanelRoot = (): JSX.Element => {
       key={selectedNode}
       layerProps={layerProps}
     />
+  ) : currentPanelMode === 'NodeSearch' ? (
+    <NodeSearchPanel isCollapsed={collapsed} toggleCollapse={dismissPanel} width={width} layerProps={layerProps} />
   ) : (
     <PanelContainer
       cardIcon={iconUri}
@@ -266,7 +291,20 @@ export const PanelRoot = (): JSX.Element => {
       onDismissButtonClicked={handleDelete}
       readOnlyMode={readOnly}
       setSelectedTab={setSelectedTab}
-      toggleCollapse={togglePanel}
+      toggleCollapse={() => {
+        //only run validation when collapsing the panel
+        if (!collapsed) {
+          Object.keys(inputs?.parameterGroups ?? {}).forEach((parameterGroup) => {
+            inputs.parameterGroups[parameterGroup].parameters.forEach((parameter) => {
+              const validationErrors = validateParameter(parameter, parameter.value);
+              dispatch(
+                updateParameterValidation({ nodeId: selectedNode, groupId: parameterGroup, parameterId: parameter.id, validationErrors })
+              );
+            });
+          });
+        }
+        togglePanel();
+      }}
       trackEvent={handleTrackEvent}
       onCommentChange={(value) => {
         dispatch(setNodeDescription({ nodeId: selectedNode, description: value }));

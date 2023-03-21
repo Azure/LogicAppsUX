@@ -2,6 +2,7 @@
 import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 
 const _separator = '.';
+const _subSegmentSeparator = '/';
 
 const _escapeCharacter = '~';
 const _encodedEscapeCharacter = '~0';
@@ -74,6 +75,17 @@ export function encodePropertySegment(segment: string): string {
     segment = _replaceCharacter(segment, entry[0], entry[1]);
   });
   return segment;
+}
+
+export function expandAndEncodePropertySegment(segment: string): string {
+  const expandedSegments: string[] = [];
+  const subSegments = segment.split(_subSegmentSeparator);
+
+  for (let i = 0; i < subSegments.length; i++) {
+    expandedSegments.push(encodePropertySegment(subSegments.slice(0, i + 1).join(_subSegmentSeparator)));
+  }
+
+  return expandedSegments.join(_separator);
 }
 
 export function isAncestorKey(key: string, testAncestorKey: string | undefined): boolean {

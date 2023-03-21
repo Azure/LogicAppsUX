@@ -2,21 +2,24 @@ import { getClientBuiltInConnectors, getClientBuiltInOperations, BaseSearchServi
 import type { DiscoveryOpArray } from '../base/search';
 import * as ClientOperationsData from '../standard/operations';
 import * as AzureResourceOperationsData from './operations';
-import type { Connector } from '@microsoft/utils-logic-apps';
+import type { Connector, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
 
 export class ConsumptionSearchService extends BaseSearchService {
   // Operations
 
   public async getAllOperations(): Promise<DiscoveryOpArray> {
-    if (this._isDev) {
-      return Promise.resolve(this.getConsumptionBuiltInOperations());
-    }
-    return Promise.all([this.getAllAzureOperations(), this.getAllCustomApiOperations(), this.getConsumptionBuiltInOperations()]).then(
-      (values) => values.flat()
+    if (this._isDev) return Promise.resolve(this.getBuiltInOperations());
+
+    return Promise.all([this.getAllAzureOperations(), this.getAllCustomApiOperations(), this.getBuiltInOperations()]).then((values) =>
+      values.flat()
     );
   }
 
-  public getConsumptionBuiltInOperations(): DiscoveryOpArray {
+  public getCustomOperationsByPage(_page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> {
+    return Promise.resolve([]);
+  }
+
+  public getBuiltInOperations(): Promise<DiscoveryOpArray> {
     const clientBuiltInOperations = getClientBuiltInOperations(true);
     const consumptionBuiltIn: any[] = [
       ClientOperationsData.inlineCodeOperation,
@@ -38,22 +41,20 @@ export class ConsumptionSearchService extends BaseSearchService {
       AzureResourceOperationsData.invokeWorkflowOperation,
       AzureResourceOperationsData.selectBatchWorkflowOperation,
     ];
-    return [...clientBuiltInOperations, ...consumptionBuiltIn];
+    return Promise.resolve([...clientBuiltInOperations, ...consumptionBuiltIn]);
   }
 
   // Connectors
 
   public override async getAllConnectors(): Promise<Connector[]> {
-    if (this._isDev) {
-      return Promise.resolve(this.getConsumptionBuiltInConnectors());
-    }
+    if (this._isDev) return Promise.resolve(this.getBuiltInConnectors());
 
-    return Promise.all([this.getAllAzureConnectors(), this.getAllCustomApiConnectors(), this.getConsumptionBuiltInConnectors()]).then(
-      (values) => values.flat()
+    return Promise.all([this.getAllAzureConnectors(), this.getAllCustomApiConnectors(), this.getBuiltInConnectors()]).then((values) =>
+      values.flat()
     );
   }
 
-  public getConsumptionBuiltInConnectors(): Connector[] {
+  public getBuiltInConnectors(): Promise<Connector[]> {
     const clientBuiltInConnectors = getClientBuiltInConnectors(true);
     const consumptionBuiltIn: any[] = [
       ClientOperationsData.inlineCodeGroup,
@@ -68,6 +69,10 @@ export class ConsumptionSearchService extends BaseSearchService {
       AzureResourceOperationsData.invokeWorkflowGroup,
       AzureResourceOperationsData.selectBatchWorkflowGroup,
     ];
-    return [...clientBuiltInConnectors, ...consumptionBuiltIn];
+    return Promise.resolve([...clientBuiltInConnectors, ...consumptionBuiltIn]);
+  }
+
+  public getCustomConnectorsByNextlink(_nextlink?: string): Promise<any> {
+    return Promise.resolve([]);
   }
 }

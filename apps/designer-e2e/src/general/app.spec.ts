@@ -6,7 +6,7 @@ test('Sanity Check', async ({ page }) => {
 
   await page.locator('div[role="button"]:has-text("🧰")').click();
   //expect(false).toBeTruthy();
-  await page.locator('text=Simple Big Workflow').click();
+  await page.locator('text=Select an option').click();
 
   await page.locator('button[role="option"]:has-text("Simple Big Workflow")').click();
   await page.locator('div[role="button"]:has-text("🧰")').click();

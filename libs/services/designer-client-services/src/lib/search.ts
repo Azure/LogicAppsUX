@@ -3,12 +3,17 @@ import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-a
 
 export interface ISearchService {
   search(term: string): Promise<SearchResult>;
-  preloadOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
   getAllConnectors(): Promise<Connector[]>;
+  getAzureConnectorsByPage(page: number): Promise<Connector[]>;
+  getCustomConnectorsByNextlink(nextlink?: string): Promise<{ nextlink?: string; value: Connector[] }>;
+  getBuiltInConnectors(): Promise<Connector[]>;
   getAllOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
   getRequestWorkflows(): Promise<any>;
   getBatchWorkflows(): Promise<any>;
   getWorkflowTriggers(workflowId: string): Promise<any[]>;
+  getAzureOperationsByPage(page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
+  getCustomOperationsByPage(page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
+  getBuiltInOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
 }
 
 let service: ISearchService;

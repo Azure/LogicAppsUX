@@ -13,7 +13,7 @@ import type {
 } from '@microsoft/utils-logic-apps';
 import { equals, ArgumentException, MockSearchOperations } from '@microsoft/utils-logic-apps';
 
-interface ContinuationTokenResponse<T> {
+export interface ContinuationTokenResponse<T> {
   // danielle to move
   value: T;
   nextLink: string;
@@ -62,11 +62,15 @@ export abstract class BaseSearchService implements ISearchService {
     return Promise.resolve(result);
   };
 
-  public preloadOperations = async (): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> => {
-    return this.getAllOperations();
-  };
-
   public abstract getAllOperations(): Promise<DiscoveryOpArray>;
+
+  // Paginated Preload
+
+  public abstract getCustomConnectorsByNextlink(prevNextlink?: string): Promise<{ nextlink?: string; value: Connector[] }>;
+  public abstract getBuiltInConnectors(): Promise<Connector[]>;
+
+  public abstract getCustomOperationsByPage(page: number): Promise<DiscoveryOpArray>;
+  public abstract getBuiltInOperations(): Promise<DiscoveryOpArray>;
 
   async getAzureResourceByPage(uri: string, queryParams?: any, pageNumber = 0): Promise<{ value: any[]; hasMore: boolean }> {
     if (this._isDev) return { value: [], hasMore: false };
@@ -85,8 +89,8 @@ export abstract class BaseSearchService implements ISearchService {
     };
 
     try {
-      const { nextLink, value } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, queryParameters });
-      return { value, hasMore: !!nextLink };
+      const { nextLink, value = [] } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, queryParameters });
+      return { value, hasMore: !!nextLink || value.length !== 0 };
     } catch (error) {
       return { value: [], hasMore: false };
     }
@@ -113,6 +117,18 @@ export abstract class BaseSearchService implements ISearchService {
       batchIteration++;
     }
 
+    return output;
+  }
+
+  async pagedBatchAzureResourceRequests(batchIteration: number, uri: string, queryParams?: any, batchSize = 50): Promise<any[]> {
+    const output: any[] = [];
+    await Promise.all(
+      Array.from(Array(batchSize).keys()).map(async (index) => {
+        const pageNum = batchIteration * batchSize + index;
+        const { value } = await this.getAzureResourceByPage(uri, queryParams, pageNum);
+        output.push(...value);
+      })
+    );
     return output;
   }
 
@@ -156,6 +172,24 @@ export abstract class BaseSearchService implements ISearchService {
     return operations;
   }
 
+  async getAzureOperationsByPage(page: number): Promise<DiscoveryOpArray> {
+    const {
+      apiHubServiceDetails: { location, subscriptionId },
+    } = this.options;
+    if (this._isDev) {
+      if (page === 0) return Promise.resolve(azureOperationsResponse);
+      else return Promise.resolve([]);
+    }
+
+    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
+    const queryParameters: QueryParameters = {
+      $filter: "type eq 'Microsoft.Web/locations/managedApis/apiOperations' and properties/integrationServiceEnvironmentResourceId eq null",
+    };
+
+    const values = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters);
+    return values;
+  }
+
   abstract getAllConnectors(): Promise<Connector[]>;
 
   async getAllAzureConnectors(): Promise<Connector[]> {
@@ -163,14 +197,32 @@ export abstract class BaseSearchService implements ISearchService {
       const connectors = AzureConnectorMock.value as Connector[];
       const formattedConnectors = this.moveGeneralInformation(connectors);
       return Promise.resolve(formattedConnectors);
-    } else {
-      const {
-        apiHubServiceDetails: { location, subscriptionId },
-      } = this.options;
-      const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
-      const responseArray = await this.batchAzureResourceRequests(uri);
-      return this.moveGeneralInformation(responseArray);
     }
+
+    const {
+      apiHubServiceDetails: { location, subscriptionId },
+    } = this.options;
+    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
+    const responseArray = await this.batchAzureResourceRequests(uri);
+    return this.moveGeneralInformation(responseArray);
+  }
+
+  async getAzureConnectorsByPage(page: number): Promise<Connector[]> {
+    if (this._isDev) {
+      if (page === 0) {
+        const connectors = AzureConnectorMock.value as Connector[];
+        const formattedConnectors = this.moveGeneralInformation(connectors);
+        return Promise.resolve(formattedConnectors);
+      }
+      return Promise.resolve([]);
+    }
+
+    const {
+      apiHubServiceDetails: { location, subscriptionId },
+    } = this.options;
+    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
+    const responseArray = await this.pagedBatchAzureResourceRequests(page, uri, undefined, 5);
+    return this.moveGeneralInformation(responseArray);
   }
 
   async getAllCustomApiOperations(): Promise<DiscoveryOpArray> {
@@ -183,7 +235,7 @@ export abstract class BaseSearchService implements ISearchService {
         'api-version': apiVersion,
         $filter: `properties/trigger eq null and type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
       };
-      const response = await this.getAzureResourceRecursive(uri, queryParameters);
+      const response = await this.batchAzureResourceRequests(uri, queryParameters);
       return response;
     } catch (error) {
       return [];
@@ -200,9 +252,9 @@ export abstract class BaseSearchService implements ISearchService {
         'api-version': apiVersion,
         $filter: `${ISE_RESOURCE_ID} eq null`,
       };
-      const response = await this.getAzureResourceRecursive(uri, queryParameters);
-      const output = response.filter((connector: any) => equals(connector.location, location));
-      return output.length > 0 ? output : response;
+      const response = await this.batchAzureResourceRequests(uri, queryParameters);
+      const locationFilteredResponse = response.filter((connector: any) => equals(connector.location, location));
+      return locationFilteredResponse;
     } catch (error) {
       return [];
     }

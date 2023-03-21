@@ -1,5 +1,31 @@
 # Logic Apps Designer
 
+### [2.0.2](https://github.com/Azure/LogicAppsUX/compare/v2.0.1...v2.0.2) (2023-03-21)
+
+### [2.0.1](https://github.com/Azure/LogicAppsUX/compare/v0.2.117...v2.0.1) (2023-03-20)
+
+### [0.2.117](https://github.com/Azure/LogicAppsUX/compare/v0.2.116...v0.2.117) (2023-03-20)
+
+### [0.2.116](https://github.com/Azure/LogicAppsUX/compare/v0.2.115...v0.2.116) (2023-03-20)
+
+### [0.2.115](https://github.com/Azure/LogicAppsUX/compare/v0.2.114...v0.2.115) (2023-03-19)
+
+### [0.2.114](https://github.com/Azure/LogicAppsUX/compare/v0.2.113...v0.2.114) (2023-03-18)
+
+### [0.2.113](https://github.com/Azure/LogicAppsUX/compare/v0.2.112...v0.2.113) (2023-03-17)
+
+### Logic Apps Designer Changes
+
+- Search + Browse speed boost ([#1760](https://github.com/Azure/LogicAppsUX/issues/1760)) ([edbbdb8](https://github.com/Azure/LogicAppsUX/commit/edbbdb8d1da148eb1b880dd6f5c3aad585026215))
+
+### [0.2.112](https://github.com/Azure/LogicAppsUX/compare/v0.2.111...v0.2.112) (2023-03-17)
+
+### [0.2.111](https://github.com/Azure/LogicAppsUX/compare/v0.2.110...v0.2.111) (2023-03-16)
+
+### [0.2.110](https://github.com/Azure/LogicAppsUX/compare/v0.2.109...v0.2.110) (2023-03-15)
+
+### [0.2.109](https://github.com/Azure/LogicAppsUX/compare/v0.2.108...v0.2.109) (2023-03-14)
+
 ### [0.2.108](https://github.com/Azure/LogicAppsUX/compare/v0.2.107...v0.2.108) (2023-03-13)
 
 ### [0.2.107](https://github.com/Azure/LogicAppsUX/compare/v0.2.106...v0.2.107) (2023-03-12)

@@ -112,7 +112,7 @@ export const iconForNormalizedDataType = (
   bundled: boolean,
   nodeProperties?: SchemaNodeProperty[]
 ) => {
-  let icons: typeof Integer16Regular[] = [];
+  let icons: (typeof Integer16Regular)[] = [];
 
   switch (nodeType) {
     case NormalizedDataType.Number: {
@@ -144,7 +144,7 @@ export const iconForNormalizedDataType = (
       icons = size === 16 ? [CalendarClock16Regular, CalendarClock16Filled] : [CalendarClock24Regular, CalendarClock24Filled];
       break;
     }
-    case NormalizedDataType.ComplexType:
+    case NormalizedDataType.Complex:
     case NormalizedDataType.Object: {
       if (nodeProperties && nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1) {
         icons = size === 16 ? [Array16Regular, Array16Filled] : [Array24Regular, Array24Filled];

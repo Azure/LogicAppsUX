@@ -1,4 +1,10 @@
 {
+  "++ZVe/": [
+    {
+      "type": 0,
+      "value": "Testing"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -249,6 +255,12 @@
       "value": "Требуется. Строка в кодировке base64."
     }
   ],
+  "0GT0SI": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "0GqNGo": [
     {
       "type": 0,
@@ -307,6 +319,12 @@
     {
       "type": 0,
       "value": "Обязательное поле. Строка, которую необходимо преобразовать в верхний регистр. Если у символа в строке нет соответствующего символа в верхнем регистре, этот символ включается в результирующую строку без изменения."
+    }
+  ],
+  "0m2Y1/": [
+    {
+      "type": 0,
+      "value": "Value"
     }
   ],
   "0meqK1": [
@@ -681,6 +699,12 @@
       "value": "(UTC+11:00) Магадан"
     }
   ],
+  "2y24a/": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -691,6 +715,12 @@
     {
       "type": 0,
       "value": "Управляемое удостоверение, назначаемое системой"
+    }
+  ],
+  "3AWwVl": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "3BZnxY": [
@@ -993,6 +1023,12 @@
       "value": "Обязательное поле. Выражение XPath для вычисления."
     }
   ],
+  "5MWmiO": [
+    {
+      "type": 0,
+      "value": "Line Number"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1039,6 +1075,12 @@
     {
       "type": 0,
       "value": "Удалить параметр"
+    }
+  ],
+  "5ytHcK": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "6+RwRp": [
@@ -1363,6 +1405,12 @@
       "value": "expressions"
     }
   ],
+  "8eTWaf": [
+    {
+      "type": 0,
+      "value": "Rename"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
@@ -1447,6 +1495,12 @@
       "value": "property"
     }
   ],
+  "93Gj/n": [
+    {
+      "type": 0,
+      "value": "Line Position"
+    }
+  ],
   "93svjx": [
     {
       "type": 0,
@@ -1493,6 +1547,12 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9YGcT2": [
+    {
+      "type": 0,
+      "value": "ChildErrors"
     }
   ],
   "9atGYe": [
@@ -1631,6 +1691,12 @@
       "value": "Имя пользователя"
     }
   ],
+  "AoalgS": [
+    {
+      "type": 0,
+      "value": "Loading more results..."
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
@@ -1709,6 +1775,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "actionCount"
+    }
+  ],
+  "B/gCWM": [
+    {
+      "type": 0,
+      "value": "Error"
     }
   ],
   "B2s0iG": [
@@ -1831,6 +1903,12 @@
       "value": "Обязательное поле. Объект, который нужно сравнить с другим объектом на отношение \"больше\"."
     }
   ],
+  "C1cy54": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "C4NQ1J": [
     {
       "type": 0,
@@ -1903,6 +1981,12 @@
       "value": "Использовать пример полезной нагрузки, чтобы создать схему"
     }
   ],
+  "DJW8RE": [
+    {
+      "type": 0,
+      "value": "Select a value"
+    }
+  ],
   "DWsh56": [
     {
       "type": 0,
@@ -1931,6 +2015,12 @@
     {
       "type": 0,
       "value": "Show mini-map"
+    }
+  ],
+  "DkF25I": [
+    {
+      "type": 0,
+      "value": "Expand Static Result"
     }
   ],
   "DsPDVB": [
@@ -2091,6 +2181,12 @@
     {
       "type": 0,
       "value": "Add"
+    }
+  ],
+  "FBNevf": [
+    {
+      "type": 0,
+      "value": "Go To Operation"
     }
   ],
   "FDF4Qb": [
@@ -2439,6 +2535,12 @@
       "value": "Кнопка для добавления динамического содержимого, если параметр TokenPicker отображается"
     }
   ],
+  "HSJLCu": [
+    {
+      "type": 0,
+      "value": "Headers"
+    }
+  ],
   "HXLutF": [
     {
       "type": 0,
@@ -2553,6 +2655,12 @@
     {
       "type": 0,
       "value": "Add a target schema"
+    }
+  ],
+  "IbGIq3": [
+    {
+      "type": 0,
+      "value": "Error Code"
     }
   ],
   "IjZFjQ": [
@@ -2721,6 +2829,12 @@
     {
       "type": 0,
       "value": "Требуется. Объект, к которому добавляется новое свойство."
+    }
+  ],
+  "K7/DnZ": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "K90YEU": [
@@ -3127,6 +3241,12 @@
       "value": "Состояние"
     }
   ],
+  "NWxGWN": [
+    {
+      "type": 0,
+      "value": "Enter unique property name"
+    }
+  ],
   "NeyUAh": [
     {
       "type": 0,
@@ -3275,10 +3395,10 @@
       "value": "Для этой функции не требуются входные данные."
     }
   ],
-  "ORVfYZ": [
+  "OOUTdW": [
     {
       "type": 0,
-      "value": "Загрузка операций..."
+      "value": "Loading all connectors..."
     }
   ],
   "OSHNZ2": [
@@ -3297,6 +3417,12 @@
     {
       "type": 0,
       "value": "Разгруппировать"
+    }
+  ],
+  "OdoUEu": [
+    {
+      "type": 0,
+      "value": "Enable Static Result"
     }
   ],
   "Oib1mL": [
@@ -3429,6 +3555,12 @@
     {
       "type": 0,
       "value": "False"
+    }
+  ],
+  "PZgHf/": [
+    {
+      "type": 0,
+      "value": "Schema Uri"
     }
   ],
   "PaPPLr": [
@@ -3623,6 +3755,12 @@
     {
       "type": 0,
       "value": "Переключиться на ввод всего массива"
+    }
+  ],
+  "RbJNVk": [
+    {
+      "type": 0,
+      "value": "Schema"
     }
   ],
   "RhH4pF": [
@@ -3971,6 +4109,12 @@
       "value": "(UTC –06:00) Остров Пасхи"
     }
   ],
+  "U7yRwM": [
+    {
+      "type": 0,
+      "value": "Validation Error"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -4009,6 +4153,12 @@
     {
       "type": 0,
       "value": " (имя файла)"
+    }
+  ],
+  "UZiXVh": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "Ufv5m9": [
@@ -4153,6 +4303,12 @@
     {
       "type": 0,
       "value": "Триггеры уведомляют ваше приложение, когда нужно начать работу. Каждому рабочему процессу требуется по меньшей мере один триггер."
+    }
+  ],
+  "Vfce7b": [
+    {
+      "type": 0,
+      "value": "Error Type"
     }
   ],
   "VlvlX1": [
@@ -4533,6 +4689,12 @@
       "value": "Уменьшить"
     }
   ],
+  "Yw7Nfl": [
+    {
+      "type": 0,
+      "value": "Disable Static Result"
+    }
+  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -4585,6 +4747,12 @@
       "value": "(UTC+10:00) Канберра, Мельбурн, Сидней"
     }
   ],
+  "ZRdkFN": [
+    {
+      "type": 0,
+      "value": "Collapse Static Result"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -4613,6 +4781,12 @@
     {
       "type": 0,
       "value": "Close"
+    }
+  ],
+  "Zi9gQK": [
+    {
+      "type": 0,
+      "value": "Add new item"
     }
   ],
   "ZkjTbp": [
@@ -4733,6 +4907,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "b9Rvl9": [
+    {
+      "type": 0,
+      "value": "Body"
     }
   ],
   "bG9rjv": [
@@ -4905,6 +5085,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Триполи"
+    }
+  ],
+  "ca/QIc": [
+    {
+      "type": 0,
+      "value": "Error Message"
     }
   ],
   "cgq/+y": [
@@ -5101,12 +5287,6 @@
       "value": "Требуется. Имя переменной, значение которой нужно получить."
     }
   ],
-  "eRvGw3": [
-    {
-      "type": 0,
-      "value": "Загрузка соединителей..."
-    }
-  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -5123,6 +5303,12 @@
     {
       "type": 0,
       "value": "Обязательное поле. Индекс начала подстроки в параметре 1."
+    }
+  ],
+  "ehIBkh": [
+    {
+      "type": 0,
+      "value": "Enter an integer"
     }
   ],
   "epOMnV": [
@@ -5517,6 +5703,12 @@
       "value": "Асинхронный отклик"
     }
   ],
+  "i0XjL5": [
+    {
+      "type": 0,
+      "value": "Search for operation"
+    }
+  ],
   "i1Tufp": [
     {
       "type": 0,
@@ -5821,10 +6013,28 @@
       "value": "Да"
     }
   ],
+  "kBOAkT": [
+    {
+      "type": 0,
+      "value": "Select Fields"
+    }
+  ],
+  "kBSLfu": [
+    {
+      "type": 0,
+      "value": "Duplicate property name"
+    }
+  ],
   "kDsud+": [
     {
       "type": 0,
       "value": "(UTC-03:00) Кайенна, Форталеза"
+    }
+  ],
+  "kEI2xx": [
+    {
+      "type": 0,
+      "value": "Message"
     }
   ],
   "kHcCxH": [
@@ -5843,12 +6053,6 @@
     {
       "type": 0,
       "value": " с"
-    }
-  ],
-  "kJD/bW": [
-    {
-      "type": 0,
-      "value": "Loading search results..."
     }
   ],
   "kM+Mr0": [
@@ -6129,6 +6333,12 @@
       "value": "Войти в соединитель"
     }
   ],
+  "meVkB6": [
+    {
+      "type": 0,
+      "value": "Empty property name"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -6181,6 +6391,12 @@
     {
       "type": 0,
       "value": "Используйте более общие ключевые слова."
+    }
+  ],
+  "nCa0KG": [
+    {
+      "type": 0,
+      "value": "Internal Errors"
     }
   ],
   "nGds/r": [
@@ -6287,6 +6503,12 @@
       "value": "Zoom to fit"
     }
   ],
+  "o8ohVV": [
+    {
+      "type": 0,
+      "value": "Schema Id"
+    }
+  ],
   "oAFcW6": [
     {
       "type": 0,
@@ -6305,10 +6527,28 @@
       "value": "Передача содержимого"
     }
   ],
+  "oQjIWf": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
+  "oR2x4N": [
+    {
+      "type": 0,
+      "value": "Invalid integer value"
+    }
+  ],
   "oRvVIW": [
     {
       "type": 0,
       "value": "(UTC+07:00) Красноярск"
+    }
+  ],
+  "oTBkbU": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "oV0xQ9": [
@@ -6413,6 +6653,12 @@
     {
       "type": 0,
       "value": "Преобразует входные данные в значение типа XML"
+    }
+  ],
+  "pYNzbj": [
+    {
+      "type": 0,
+      "value": "Path"
     }
   ],
   "pYtSyE": [
@@ -6653,6 +6899,12 @@
       "value": "При использовании асинхронного отклика приложение логики может отправлять ответ 202 (Принято), чтобы показать, что запрос принят к обработке. Для получения окончательного состояния будет предоставлен заголовок расположения."
     }
   ],
+  "r/n6/9": [
+    {
+      "type": 0,
+      "value": "Enter a value"
+    }
+  ],
   "r1FQhf": [
     {
       "type": 0,
@@ -6845,6 +7097,12 @@
       "value": "Unable to generate data map definition"
     }
   ],
+  "sw6EXK": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "syiNc+": [
     {
       "type": 0,
@@ -6999,6 +7257,12 @@
     {
       "type": 0,
       "value": "Выберите элемент для начала настройки"
+    }
+  ],
+  "uDI1Um": [
+    {
+      "type": 0,
+      "value": "Status Code"
     }
   ],
   "uIQrat": [

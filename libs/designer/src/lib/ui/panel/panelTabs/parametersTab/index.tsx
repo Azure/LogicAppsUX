@@ -219,7 +219,7 @@ const ParameterSection = ({
     tokenPickerMode?: TokenPickerMode,
     closeTokenPicker?: () => void,
     tokenPickerClicked?: (b: boolean) => void,
-    tokenClicked?: (token: ValueSegment) => void
+    tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
     // check to see if there's a custom Token Picker
     return (
@@ -233,7 +233,7 @@ const ParameterSection = ({
         getValueSegmentFromToken={(token: OutputToken, addImplicitForeach: boolean) =>
           getValueSegmentFromToken(parameterId, token, addImplicitForeach)
         }
-        tokenClickedCallback={tokenClicked}
+        tokenClickedCallback={tokenClickedCallback}
         closeTokenPicker={closeTokenPicker}
       />
     );
@@ -288,8 +288,9 @@ const ParameterSection = ({
             labelId: string,
             tokenPickerMode?: TokenPickerMode,
             closeTokenPicker?: () => void,
-            tokenPickerClicked?: (b: boolean) => void
-          ) => getTokenPicker(id, editorId, labelId, tokenPickerMode, closeTokenPicker, tokenPickerClicked),
+            tokenPickerClicked?: (b: boolean) => void,
+            tokenClickedCallback?: (token: ValueSegment) => void
+          ) => getTokenPicker(id, editorId, labelId, tokenPickerMode, closeTokenPicker, tokenPickerClicked, tokenClickedCallback),
         },
       };
     });

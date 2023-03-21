@@ -2986,11 +2986,6 @@ exports[`lib/overview/runhistory renders with items 1`] = `
                       onKeyDown={[Function]}
                       onMouseDownCapture={[Function]}
                       role="row"
-                      style={
-                        Object {
-                          "minWidth": 560,
-                        }
-                      }
                     >
                       <div
                         className="ms-DetailsRow-fields fields-163"

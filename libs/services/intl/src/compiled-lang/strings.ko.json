@@ -1,4 +1,10 @@
 {
+  "++ZVe/": [
+    {
+      "type": 0,
+      "value": "Testing"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -233,6 +239,12 @@
       "value": "필수 사항으로, base64로 인코딩된 문자열입니다."
     }
   ],
+  "0GT0SI": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "0GqNGo": [
     {
       "type": 0,
@@ -291,6 +303,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 대문자로 변환할 문자열입니다. 문자열의 문자에 해당하는 대문자가 없는 경우 해당 문자는 변경되지 않은 상태로 반환된 문자열에 포함됩니다."
+    }
+  ],
+  "0m2Y1/": [
+    {
+      "type": 0,
+      "value": "Value"
     }
   ],
   "0meqK1": [
@@ -632,6 +650,12 @@
       "value": "(UTC+11:00) 마가단"
     }
   ],
+  "2y24a/": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -642,6 +666,12 @@
     {
       "type": 0,
       "value": "시스템이 할당한 관리 ID"
+    }
+  ],
+  "3AWwVl": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "3BZnxY": [
@@ -944,6 +974,12 @@
       "value": "필수 항목으로, 평가할 XPath 식입니다."
     }
   ],
+  "5MWmiO": [
+    {
+      "type": 0,
+      "value": "Line Number"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -990,6 +1026,12 @@
     {
       "type": 0,
       "value": "매개 변수 삭제"
+    }
+  ],
+  "5ytHcK": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "6+RwRp": [
@@ -1298,6 +1340,12 @@
       "value": "expressions"
     }
   ],
+  "8eTWaf": [
+    {
+      "type": 0,
+      "value": "Rename"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
@@ -1382,6 +1430,12 @@
       "value": "property"
     }
   ],
+  "93Gj/n": [
+    {
+      "type": 0,
+      "value": "Line Position"
+    }
+  ],
   "93svjx": [
     {
       "type": 0,
@@ -1428,6 +1482,12 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9YGcT2": [
+    {
+      "type": 0,
+      "value": "ChildErrors"
     }
   ],
   "9atGYe": [
@@ -1550,6 +1610,12 @@
       "value": "사용자 이름"
     }
   ],
+  "AoalgS": [
+    {
+      "type": 0,
+      "value": "Loading more results..."
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
@@ -1595,6 +1661,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "actionCount"
+    }
+  ],
+  "B/gCWM": [
+    {
+      "type": 0,
+      "value": "Error"
     }
   ],
   "B2s0iG": [
@@ -1717,6 +1789,12 @@
       "value": "필수 항목으로, 비교하는 개체보다 큰지 확인할 개체입니다."
     }
   ],
+  "C1cy54": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "C4NQ1J": [
     {
       "type": 0,
@@ -1789,6 +1867,12 @@
       "value": "샘플 페이로드를 사용하여 스키마 생성"
     }
   ],
+  "DJW8RE": [
+    {
+      "type": 0,
+      "value": "Select a value"
+    }
+  ],
   "DWsh56": [
     {
       "type": 0,
@@ -1817,6 +1901,12 @@
     {
       "type": 0,
       "value": "Show mini-map"
+    }
+  ],
+  "DkF25I": [
+    {
+      "type": 0,
+      "value": "Expand Static Result"
     }
   ],
   "DsPDVB": [
@@ -1977,6 +2067,12 @@
     {
       "type": 0,
       "value": "Add"
+    }
+  ],
+  "FBNevf": [
+    {
+      "type": 0,
+      "value": "Go To Operation"
     }
   ],
   "FDF4Qb": [
@@ -2276,6 +2372,12 @@
       "value": "TokenPicker가 표시되는 경우 동적 콘텐츠를 추가하는 버튼"
     }
   ],
+  "HSJLCu": [
+    {
+      "type": 0,
+      "value": "Headers"
+    }
+  ],
   "HXLutF": [
     {
       "type": 0,
@@ -2390,6 +2492,12 @@
     {
       "type": 0,
       "value": "Add a target schema"
+    }
+  ],
+  "IbGIq3": [
+    {
+      "type": 0,
+      "value": "Error Code"
     }
   ],
   "IjZFjQ": [
@@ -2558,6 +2666,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 새 속성을 추가할 개체입니다."
+    }
+  ],
+  "K7/DnZ": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "K90YEU": [
@@ -2907,6 +3021,12 @@
       "value": "상태"
     }
   ],
+  "NWxGWN": [
+    {
+      "type": 0,
+      "value": "Enter unique property name"
+    }
+  ],
   "NeyUAh": [
     {
       "type": 0,
@@ -3039,10 +3159,10 @@
       "value": "이 함수에는 입력이 필요하지 않습니다."
     }
   ],
-  "ORVfYZ": [
+  "OOUTdW": [
     {
       "type": 0,
-      "value": "작업을 로드하는 중..."
+      "value": "Loading all connectors..."
     }
   ],
   "OSHNZ2": [
@@ -3061,6 +3181,12 @@
     {
       "type": 0,
       "value": "그룹 해제"
+    }
+  ],
+  "OdoUEu": [
+    {
+      "type": 0,
+      "value": "Enable Static Result"
     }
   ],
   "Oib1mL": [
@@ -3193,6 +3319,12 @@
     {
       "type": 0,
       "value": "False"
+    }
+  ],
+  "PZgHf/": [
+    {
+      "type": 0,
+      "value": "Schema Uri"
     }
   ],
   "PaPPLr": [
@@ -3387,6 +3519,12 @@
     {
       "type": 0,
       "value": "입력 전체 배열로 전환"
+    }
+  ],
+  "RbJNVk": [
+    {
+      "type": 0,
+      "value": "Schema"
     }
   ],
   "RhH4pF": [
@@ -3702,6 +3840,12 @@
       "value": "(UTC-06:00) 이스터 섬"
     }
   ],
+  "U7yRwM": [
+    {
+      "type": 0,
+      "value": "Validation Error"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3740,6 +3884,12 @@
     {
       "type": 0,
       "value": "(파일 이름)"
+    }
+  ],
+  "UZiXVh": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "Ufv5m9": [
@@ -3884,6 +4034,12 @@
     {
       "type": 0,
       "value": "트리거는 실행을 시작할 시기를 앱에 알릴 수 있습니다. 각 워크플로에는 하나 이상의 트리거가 필요합니다."
+    }
+  ],
+  "Vfce7b": [
+    {
+      "type": 0,
+      "value": "Error Type"
     }
   ],
   "VlvlX1": [
@@ -4256,6 +4412,12 @@
       "value": "축소"
     }
   ],
+  "Yw7Nfl": [
+    {
+      "type": 0,
+      "value": "Disable Static Result"
+    }
+  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -4308,6 +4470,12 @@
       "value": "(UTC+10:00) 캔버라, 멜버른, 시드니"
     }
   ],
+  "ZRdkFN": [
+    {
+      "type": 0,
+      "value": "Collapse Static Result"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -4336,6 +4504,12 @@
     {
       "type": 0,
       "value": "Close"
+    }
+  ],
+  "Zi9gQK": [
+    {
+      "type": 0,
+      "value": "Add new item"
     }
   ],
   "ZkjTbp": [
@@ -4448,6 +4622,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "b9Rvl9": [
+    {
+      "type": 0,
+      "value": "Body"
     }
   ],
   "bG9rjv": [
@@ -4620,6 +4800,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) 트리폴리"
+    }
+  ],
+  "ca/QIc": [
+    {
+      "type": 0,
+      "value": "Error Message"
     }
   ],
   "cgq/+y": [
@@ -4812,12 +4998,6 @@
       "value": "필수 사항으로, 원하는 값의 변수 이름입니다."
     }
   ],
-  "eRvGw3": [
-    {
-      "type": 0,
-      "value": "커넥터 로드 중..."
-    }
-  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -4834,6 +5014,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 하위 문자열이 매개 변수 1에서 시작하는 인덱스입니다."
+    }
+  ],
+  "ehIBkh": [
+    {
+      "type": 0,
+      "value": "Enter an integer"
     }
   ],
   "epOMnV": [
@@ -5183,6 +5369,12 @@
       "value": "비동기 응답"
     }
   ],
+  "i0XjL5": [
+    {
+      "type": 0,
+      "value": "Search for operation"
+    }
+  ],
   "i1Tufp": [
     {
       "type": 0,
@@ -5467,10 +5659,28 @@
       "value": "예"
     }
   ],
+  "kBOAkT": [
+    {
+      "type": 0,
+      "value": "Select Fields"
+    }
+  ],
+  "kBSLfu": [
+    {
+      "type": 0,
+      "value": "Duplicate property name"
+    }
+  ],
   "kDsud+": [
     {
       "type": 0,
       "value": "(UTC-03:00) 카옌, 포르탈레자"
+    }
+  ],
+  "kEI2xx": [
+    {
+      "type": 0,
+      "value": "Message"
     }
   ],
   "kHcCxH": [
@@ -5489,12 +5699,6 @@
     {
       "type": 0,
       "value": "초"
-    }
-  ],
-  "kJD/bW": [
-    {
-      "type": 0,
-      "value": "Loading search results..."
     }
   ],
   "kM+Mr0": [
@@ -5775,6 +5979,12 @@
       "value": "커넥터에 로그인"
     }
   ],
+  "meVkB6": [
+    {
+      "type": 0,
+      "value": "Empty property name"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -5827,6 +6037,12 @@
     {
       "type": 0,
       "value": "덜 구체적인 키워드로 시도하세요."
+    }
+  ],
+  "nCa0KG": [
+    {
+      "type": 0,
+      "value": "Internal Errors"
     }
   ],
   "nGds/r": [
@@ -5933,6 +6149,12 @@
       "value": "Zoom to fit"
     }
   ],
+  "o8ohVV": [
+    {
+      "type": 0,
+      "value": "Schema Id"
+    }
+  ],
   "oAFcW6": [
     {
       "type": 0,
@@ -5951,10 +6173,28 @@
       "value": "콘텐츠 전송"
     }
   ],
+  "oQjIWf": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
+  "oR2x4N": [
+    {
+      "type": 0,
+      "value": "Invalid integer value"
+    }
+  ],
   "oRvVIW": [
     {
       "type": 0,
       "value": "(UTC+07:00) 크라스노야르스크"
+    }
+  ],
+  "oTBkbU": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "oV0xQ9": [
@@ -6051,6 +6291,12 @@
     {
       "type": 0,
       "value": "입력을 XML 형식 값으로 변환합니다."
+    }
+  ],
+  "pYNzbj": [
+    {
+      "type": 0,
+      "value": "Path"
     }
   ],
   "pYtSyE": [
@@ -6240,6 +6486,12 @@
     {
       "type": 0,
       "value": "비동기 응답을 통해 논리 앱은 202(승인됨)로 응답하여 요청이 처리를 위해 승인되었음을 나타낼 수 있습니다. 최종 상태를 검색할 수 있는 위치 헤더가 제공됩니다."
+    }
+  ],
+  "r/n6/9": [
+    {
+      "type": 0,
+      "value": "Enter a value"
     }
   ],
   "r1FQhf": [
@@ -6434,6 +6686,12 @@
       "value": "Unable to generate data map definition"
     }
   ],
+  "sw6EXK": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "syiNc+": [
     {
       "type": 0,
@@ -6588,6 +6846,12 @@
     {
       "type": 0,
       "value": "구성을 시작할 요소 선택"
+    }
+  ],
+  "uDI1Um": [
+    {
+      "type": 0,
+      "value": "Status Code"
     }
   ],
   "uIQrat": [

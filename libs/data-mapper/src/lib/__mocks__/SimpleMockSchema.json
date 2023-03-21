@@ -9,72 +9,72 @@
   "schemaTreeRoot": {
     "key": "/ns0:Root",
     "name": "Root",
-    "normalizedDataType": "ComplexType",
-    "properties": "NotSpecified",
+    "type": "Complex",
+    "properties": "None",
     "children": [
       {
         "key": "/ns0:Root/DirectTranslation",
         "name": "DirectTranslation",
-        "normalizedDataType": "ComplexType",
-        "properties": "NotSpecified",
+        "type": "Complex",
+        "properties": "None",
         "children": [
           {
             "key": "/ns0:Root/DirectTranslation/EmployeeID",
             "name": "EmployeeID",
-            "normalizedDataType": "Decimal",
-            "properties": "NotSpecified",
-            "fullName": "EmployeeID"
+            "type": "Decimal",
+            "properties": "None",
+            "qName": "EmployeeID"
           },
           {
             "key": "/ns0:Root/DirectTranslation/EmployeeName",
             "name": "EmployeeName",
-            "normalizedDataType": "String",
-            "properties": "NotSpecified",
-            "fullName": "EmployeeName"
+            "type": "String",
+            "properties": "None",
+            "qName": "EmployeeName"
           }
         ],
-        "fullName": "DirectTranslation"
+        "qName": "DirectTranslation"
       },
       {
         "key": "/ns0:Root/DataTranslation",
         "name": "DataTranslation",
-        "normalizedDataType": "ComplexType",
-        "properties": "NotSpecified",
+        "type": "Complex",
+        "properties": "None",
         "children": [
           {
             "key": "/ns0:Root/DataTranslation/Employee",
             "name": "Employee",
-            "normalizedDataType": "ComplexType",
-            "properties": "NotSpecified",
+            "type": "Complex",
+            "properties": "None",
             "children": [
               {
                 "key": "/ns0:Root/DataTranslation/Employee/FirstName",
                 "name": "FirstName",
-                "normalizedDataType": "String",
-                "properties": "NotSpecified",
-                "fullName": "FirstName"
+                "type": "String",
+                "properties": "None",
+                "qName": "FirstName"
               },
               {
                 "key": "/ns0:Root/DataTranslation/Employee/LastName",
                 "name": "LastName",
-                "normalizedDataType": "String",
-                "properties": "NotSpecified",
-                "fullName": "LastName"
+                "type": "String",
+                "properties": "None",
+                "qName": "LastName"
               },
               {
                 "key": "/ns0:Root/DataTranslation/Employee/EmploymentStatus",
                 "name": "EmploymentStatus",
-                "normalizedDataType": "Bool",
-                "properties": "NotSpecified",
-                "fullName": "EmploymentStatus"
+                "type": "Bool",
+                "properties": "None",
+                "qName": "EmploymentStatus"
               }
             ],
-            "fullName": "Employee"
+            "qName": "Employee"
           }
         ],
-        "fullName": "DataTranslation"
+        "qName": "DataTranslation"
       }
     ],
-    "fullName": "ns0:Root"
+    "qName": "ns0:Root"
   }
 }

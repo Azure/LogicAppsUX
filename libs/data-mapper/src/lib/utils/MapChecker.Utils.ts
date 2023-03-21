@@ -75,7 +75,7 @@ export const collectWarningsForMapChecker = (connections: ConnectionDictionary, 
 
   // Required target schema fields
   Object.entries(targetSchema).forEach(([reactFlowId, schemaValue]) => {
-    if (!isObjectType(schemaValue.normalizedDataType) && schemaValue.nodeProperties.indexOf(SchemaNodeProperty.Optional) === -1) {
+    if (!isObjectType(schemaValue.type) && schemaValue.nodeProperties.indexOf(SchemaNodeProperty.Optional) === -1) {
       const connection = connections[reactFlowId];
       if (!nodeHasSourceNodeEventually(connection, connections)) {
         warnings.push({
@@ -110,12 +110,12 @@ export const areInputTypesValidForSchemaNode = (selfNode: SchemaNodeExtended, co
   }
 
   if (isCustomValue(input)) {
-    return isValidCustomValueByType(input, selfNode.normalizedDataType);
+    return isValidCustomValueByType(input, selfNode.type);
   } else {
     if (isSchemaNodeExtended(input.node)) {
-      return isValidConnectionByType(selfNode.normalizedDataType, input.node.normalizedDataType);
+      return isValidConnectionByType(selfNode.type, input.node.type);
     } else {
-      return isValidConnectionByType(selfNode.normalizedDataType, input.node.outputValueType);
+      return isValidConnectionByType(selfNode.type, input.node.outputValueType);
     }
   }
 };
@@ -135,7 +135,7 @@ export const areInputTypesValidForFunction = (functionData: FunctionData, connec
             }
           } else {
             if (isSchemaNodeExtended(inputVal.node)) {
-              if (isValidConnectionByType(allowedInputType, inputVal.node.normalizedDataType)) {
+              if (isValidConnectionByType(allowedInputType, inputVal.node.type)) {
                 inputValMatchedOneOfAllowedTypes = true;
               }
             } else if (isValidConnectionByType(allowedInputType, inputVal.node.outputValueType)) {
