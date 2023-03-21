@@ -16,6 +16,7 @@ import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
 import { delay } from '@azure/ms-rest-js';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
+import { WorkerRuntime } from '@microsoft/vscode-extension';
 import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';
@@ -45,7 +46,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
     IsEncrypted: false,
     Values: {
       AzureWebJobsSecretStorageType: 'Files',
-      FUNCTIONS_WORKER_RUNTIME: 'node',
+      FUNCTIONS_WORKER_RUNTIME: WorkerRuntime.DotnetIsolated,
     },
   };
   if (!ext.workflowDesignTimePort) {
