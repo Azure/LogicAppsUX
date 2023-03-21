@@ -9,6 +9,8 @@ import {
   StandardSearchService,
   StandardGatewayService,
   StandardRunService,
+  StandardArtifactService,
+  ApiManagementInstanceService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type {
   IApiHubServiceDetails,
@@ -43,11 +45,14 @@ export const getDesignerServices = (
   workflowService: IWorkflowService;
   hostService: IHostService;
   runService: StandardRunService;
+  apimService: ApiManagementInstanceService;
 } => {
   let authToken = '',
     panelId = '',
     workflowDetails: Record<string, any> = {},
     appSettings = {};
+
+  const { subscriptionId, resourceGroup, location } = apiHubServiceDetails;
 
   if (panelMetadata) {
     authToken = panelMetadata.accessToken ?? '';
@@ -79,6 +84,20 @@ export const getDesignerServices = (
         connectionCreationFunc: createFileSystemConnection,
       },
     },
+  });
+  const apimService = new ApiManagementInstanceService({
+    apiVersion,
+    baseUrl,
+    subscriptionId,
+    httpClient,
+  });
+
+  const artifactService = new StandardArtifactService({
+    apiVersion,
+    baseUrl,
+    httpClient,
+    integrationAccountCallbackUrl: undefined,
+    apiHubServiceDetails,
   });
 
   const manualWorkflows = Object.keys(workflowDetails).map((name) => ({ value: name, displayName: name }));
@@ -117,8 +136,18 @@ export const getDesignerServices = (
     // TODO ValuesClient needs to be implemented
     valuesClient: {
       getWorkflows: () => Promise.resolve(manualWorkflows),
-      getMapArtifacts: () => Promise.resolve([]),
-      getSchemaArtifacts: () => Promise.resolve([]),
+      getMapArtifacts: (args: any) => {
+        const { mapType, mapSource } = args.parameters;
+        return artifactService.getMapArtifacts(mapType, mapSource);
+      },
+      getSchemaArtifacts: (args: any) => artifactService.getSchemaArtifacts(args.parameters.schemaSource),
+      getApimOperations: (args: any) => {
+        const { configuration } = args;
+        if (!configuration?.connection?.apiId) {
+          throw new Error('Missing api information to make dynamic call');
+        }
+        return apimService.getOperations(configuration?.connection?.apiId);
+      },
     },
     apiHubServiceDetails,
     workflowReferenceId: '',
@@ -137,8 +166,6 @@ export const getDesignerServices = (
     apiHubServiceDetails,
     isDev: false,
   });
-
-  const { subscriptionId, resourceGroup, location } = apiHubServiceDetails;
 
   const oAuthService = new StandardOAuthService({
     vscode,
@@ -206,5 +233,6 @@ export const getDesignerServices = (
     workflowService,
     hostService,
     runService,
+    apimService,
   };
 };
