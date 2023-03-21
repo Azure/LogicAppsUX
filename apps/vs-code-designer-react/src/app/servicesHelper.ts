@@ -133,7 +133,6 @@ export const getDesignerServices = (
         return Promise.resolve(workflowSchemas[workflowName] || {});
       },
     },
-    // TODO ValuesClient needs to be implemented
     valuesClient: {
       getWorkflows: () => Promise.resolve(manualWorkflows),
       getMapArtifacts: (args: any) => {

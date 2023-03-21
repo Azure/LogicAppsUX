@@ -7,7 +7,7 @@ import { getWebViewHTML } from '../../../utils/codeless/getWebViewHTML';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { ResolutionService } from '@microsoft/parsers-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { Artifacts, AzureConnectorDetails, ConnectionsData, Parameter } from '@microsoft/vscode-extension';
+import type { Artifacts, AzureConnectorDetails, ConnectionsData, FileDetails, Parameter } from '@microsoft/vscode-extension';
 import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';
 
 export interface IDesingerOptions {
@@ -36,6 +36,8 @@ export abstract class OpenDesignerBase {
   protected appSettings: Record<string, string>;
   protected workflowDetails: Record<string, any>;
   protected oauthRedirectUrl?: string;
+  protected schemaArtifacts?: FileDetails[] | undefined;
+  protected mapArtifacts?: Record<string, FileDetails[]> | undefined;
 
   protected constructor(
     context: IActionContext | IAzureConnectorsContext,
@@ -79,7 +81,6 @@ export abstract class OpenDesignerBase {
     let { connectionsData } = options;
 
     const mapArtifacts = {};
-
     const parameters = {};
     connectionsData = this.getInterpolateConnectionData(connectionsData);
 
@@ -89,10 +90,7 @@ export abstract class OpenDesignerBase {
 
     for (const extension of Object.keys(artifacts.maps)) {
       const extensionName = extension.substr(1);
-      mapArtifacts[extensionName] = artifacts.maps[extension].map((fileDetails) => ({
-        value: fileDetails.fileName,
-        displayName: fileDetails.name,
-      }));
+      mapArtifacts[extensionName] = artifacts.maps[extension];
     }
 
     const parametersResolutionService = new ResolutionService(parameters, localSettings);
@@ -106,6 +104,8 @@ export abstract class OpenDesignerBase {
     }
     this.connectionData = parsedConnections;
     this.apiHubServiceDetails = this.getApiHubServiceDetails(azureDetails);
+    this.mapArtifacts = mapArtifacts;
+    this.schemaArtifacts = artifacts.schemas;
 
     return await getWebViewHTML('webview', this.panel);
   }

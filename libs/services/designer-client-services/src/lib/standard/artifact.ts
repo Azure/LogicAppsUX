@@ -3,6 +3,8 @@ import type { ListDynamicValue } from '../connector';
 
 interface ArtifactServiceOptions extends BaseConnectionServiceOptions {
   integrationAccountCallbackUrl: string | undefined;
+  schemaArtifacts?: FileDetails[] | undefined;
+  mapArtifacts?: Record<string, FileDetails[]> | undefined;
 }
 
 interface FileDetails {
@@ -28,7 +30,7 @@ export class StandardArtifactService {
   private _iaSchemaArtifacts: SchemaArtifact[] | undefined;
 
   constructor(private readonly options: ArtifactServiceOptions) {
-    const { apiVersion, baseUrl, httpClient } = this.options;
+    const { apiVersion, baseUrl, httpClient, schemaArtifacts, mapArtifacts } = this.options;
 
     if (!apiVersion) {
       throw new Error('apiVersion required');
@@ -37,6 +39,8 @@ export class StandardArtifactService {
     } else if (!httpClient) {
       throw new Error('httpClient required');
     }
+    this._schemaArtifacts = schemaArtifacts;
+    this._mapArtifacts = mapArtifacts;
   }
 
   public getMapArtifacts(mapType: string, mapSource: string): Promise<ListDynamicValue[]> {
@@ -94,8 +98,12 @@ export class StandardArtifactService {
   }
 
   private async _getMapArtifactsFromLA(mapType: string): Promise<ListDynamicValue[]> {
+    if (this._mapArtifacts === undefined) {
+      this._mapArtifacts = {};
+    }
+
     const normalizedMapType = mapType.toLowerCase();
-    return this._mapArtifacts && this._mapArtifacts[normalizedMapType]
+    return this._mapArtifacts[normalizedMapType]
       ? this._mapArtifacts[normalizedMapType].map((artifact) => ({
           value: artifact.fileName,
           displayName: artifact.name,
