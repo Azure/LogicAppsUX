@@ -117,6 +117,8 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
       },
       workflowName: this.workflowName,
       standardApp: getStandardAppData(this.workflowName, this.workflow, parameters),
+      schemaArtifacts: this.schemaArtifacts,
+      mapArtifacts: this.mapArtifacts,
     };
   }
 }

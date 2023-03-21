@@ -8,9 +8,9 @@ interface ArtifactServiceOptions extends BaseConnectionServiceOptions {
 }
 
 interface FileDetails {
-  extensionName: string;
-  fileName: string;
   name: string;
+  fileName: string;
+  relativePath: string;
 }
 
 interface MapArtifact {

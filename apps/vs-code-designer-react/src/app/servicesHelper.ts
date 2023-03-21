@@ -98,6 +98,8 @@ export const getDesignerServices = (
     httpClient,
     integrationAccountCallbackUrl: undefined,
     apiHubServiceDetails,
+    schemaArtifacts: panelMetadata?.schemaArtifacts,
+    mapArtifacts: panelMetadata?.mapArtifacts,
   });
 
   const manualWorkflows = Object.keys(workflowDetails).map((name) => ({ value: name, displayName: name }));
