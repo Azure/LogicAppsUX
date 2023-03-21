@@ -20,6 +20,7 @@ export interface InputTokenProps {
   required?: boolean;
   title: string;
   nodeKey?: NodeKey;
+  description?: string;
 }
 
 export const DELETE = '\u00D7';

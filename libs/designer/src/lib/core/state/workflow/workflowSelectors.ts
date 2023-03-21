@@ -41,6 +41,9 @@ export const useActionMetadata = (id?: string) =>
 export const useNodeDescription = (id: string) =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => (id ? state.operations[id]?.description : undefined)));
 
+export const useShouldNodeFocus = (id: string) =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.focusedCanvasNodeId === id));
+
 export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (data) => {
   const rootNode = data.graph;
   const collapsedIds = data.collapsedGraphIds;
@@ -133,6 +136,13 @@ export const useIsGraphEmpty = () => {
 
 export const useIsLeafNode = (nodeId: string): boolean => useNodeEdgeTargets(nodeId).length === 0;
 
+export const useNodeIds = () => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      return Object.keys(state.nodesMetadata);
+    })
+  );
+};
 export const useNewSwitchCaseId = () =>
   useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {

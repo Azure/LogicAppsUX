@@ -37,7 +37,7 @@ import {
   isDynamicPropertiesExtension,
   isDynamicListExtension,
   decodePropertySegment,
-  encodePropertySegment,
+  expandAndEncodePropertySegment,
   toInputParameter,
   OutputMapKey,
   OutputSource,
@@ -277,6 +277,7 @@ export async function getDynamicInputsFromSchema(
       visibility: dynamicParameter.visibility,
     },
     required: dynamicParameter.required,
+    useAliasedIndexing: true,
   };
   const schemaProperties = new SchemaProcessor(processorOptions).getSchemaProperties(schema);
   let dynamicInputs: InputParameter[] = schemaProperties.map((schemaProperty) => ({
@@ -395,8 +396,11 @@ function getManifestBasedInputParameters(
       // Load the entire input if the key is the entire input.
       clonedInputParameter.value = stepInputs;
     } else {
-      // slice off the beginning of the key and directly search the input body.
-      const inputPath = inputParameter.key.replace(`${keyPrefix}.`, '');
+      // Compare the object value with the last segment of the key.
+      // If the key is something simple like 'inputs.$.foo', we take just 'foo'.
+      // If the key is something complex like 'inputs.$.foo.foo/bar.foo/bar/baz', we take 'foo/bar/baz'.
+      const parsedKey = parseEx(inputParameter.key.replace(`${keyPrefix}.`, ''));
+      const inputPath = `${parsedKey.pop()?.value}`;
       clonedInputParameter.value = stepInputsAreNonEmptyObject ? getObjectValue(inputPath, stepInputs) : undefined;
     }
     result.push(clonedInputParameter);
@@ -449,7 +453,7 @@ function loadUnknownManifestBasedParameters(
     // If it is an object, recurse down and find the other unknown values.
     Object.keys(input).forEach((key) => {
       // encode the key to match the paths of the known parameters.
-      const encodedKey = encodePropertySegment(key);
+      const encodedKey = expandAndEncodePropertySegment(key);
       loadUnknownManifestBasedParameters(
         `${keyPrefix}.${encodedKey}`,
         isNullOrEmpty(previousKeyPath) ? encodedKey : `${previousKeyPath}.${encodedKey}`,

@@ -14,7 +14,6 @@ import { OpenDesignerBase } from './openDesignerBase';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { IWorkflowFileContent, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
-import * as path from 'path';
 import * as vscode from 'vscode';
 
 export class OpenDesignerForAzureResource extends OpenDesignerBase {
@@ -103,10 +102,11 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
     return {
       panelId: this.panelName,
       connectionsData: await this.node.getConnectionsData(),
-      parametersData: await this.node.getParametersData(),
+      parametersData: parameters,
       localSettings: await this.node.getAppSettings(),
+      artifacts: await this.node.getArtifacts(),
+      workflowDetails: await this.node.getChildWorkflows(this.context),
       accessToken,
-      scriptPath: this.panel.webview.asWebviewUri(vscode.Uri.file(path.join(ext.context.extensionPath, 'dist', 'designer'))).toString(),
       azureDetails: {
         enabled: true,
         accessToken,
@@ -115,9 +115,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
         workflowManagementBaseUrl: this.node?.parent?.subscription?.environment?.resourceManagerEndpointUrl,
         tenantId: this.node?.parent?.subscription?.tenantId,
       },
-      workflowDetails: await this.node.getChildWorkflows(this.context),
       workflowName: this.workflowName,
-      artifacts: await this.node.getArtifacts(),
       standardApp: getStandardAppData(this.workflowName, this.workflow, parameters),
     };
   }

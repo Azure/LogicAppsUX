@@ -1,4 +1,10 @@
 {
+  "++ZVe/": [
+    {
+      "type": 0,
+      "value": "Testing"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -233,6 +239,12 @@
       "value": "Wajib. String dengtan pengodean base64."
     }
   ],
+  "0GT0SI": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "0GqNGo": [
     {
       "type": 0,
@@ -291,6 +303,12 @@
     {
       "type": 0,
       "value": "Harus diisi. String untuk dikonversi ke huruf besar. Jika karakter dalam string tidak memiliki huruf besar yang ekuivalen, karakter meliputi string yang tidak berubah dalam string yang belum dikembalikan."
+    }
+  ],
+  "0m2Y1/": [
+    {
+      "type": 0,
+      "value": "Value"
     }
   ],
   "0meqK1": [
@@ -632,6 +650,12 @@
       "value": "(UTC+11.00) Magadan"
     }
   ],
+  "2y24a/": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -642,6 +666,12 @@
     {
       "type": 0,
       "value": "Identitas terkelola yang ditetapkan sistem"
+    }
+  ],
+  "3AWwVl": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "3BZnxY": [
@@ -944,6 +974,12 @@
       "value": "Harus diisi. Ekspresi Xpath untuk dievaluasi."
     }
   ],
+  "5MWmiO": [
+    {
+      "type": 0,
+      "value": "Line Number"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -990,6 +1026,12 @@
     {
       "type": 0,
       "value": "Hapus Parameter"
+    }
+  ],
+  "5ytHcK": [
+    {
+      "type": 0,
+      "value": "Loading..."
     }
   ],
   "6+RwRp": [
@@ -1298,6 +1340,12 @@
       "value": "expressions"
     }
   ],
+  "8eTWaf": [
+    {
+      "type": 0,
+      "value": "Rename"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
@@ -1382,6 +1430,12 @@
       "value": "property"
     }
   ],
+  "93Gj/n": [
+    {
+      "type": 0,
+      "value": "Line Position"
+    }
+  ],
   "93svjx": [
     {
       "type": 0,
@@ -1428,6 +1482,12 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9YGcT2": [
+    {
+      "type": 0,
+      "value": "ChildErrors"
     }
   ],
   "9atGYe": [
@@ -1550,6 +1610,12 @@
       "value": "Nama pengguna"
     }
   ],
+  "AoalgS": [
+    {
+      "type": 0,
+      "value": "Loading more results..."
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
@@ -1595,6 +1661,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "actionCount"
+    }
+  ],
+  "B/gCWM": [
+    {
+      "type": 0,
+      "value": "Error"
     }
   ],
   "B2s0iG": [
@@ -1717,6 +1789,12 @@
       "value": "Harus diisi. Objek untuk diperiksa jika lebih besar dari objek yang dibandingkan."
     }
   ],
+  "C1cy54": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "C4NQ1J": [
     {
       "type": 0,
@@ -1789,6 +1867,12 @@
       "value": "Gunakan payload contoh untuk membuat skema"
     }
   ],
+  "DJW8RE": [
+    {
+      "type": 0,
+      "value": "Select a value"
+    }
+  ],
   "DWsh56": [
     {
       "type": 0,
@@ -1817,6 +1901,12 @@
     {
       "type": 0,
       "value": "Show mini-map"
+    }
+  ],
+  "DkF25I": [
+    {
+      "type": 0,
+      "value": "Expand Static Result"
     }
   ],
   "DsPDVB": [
@@ -1977,6 +2067,12 @@
     {
       "type": 0,
       "value": "Add"
+    }
+  ],
+  "FBNevf": [
+    {
+      "type": 0,
+      "value": "Go To Operation"
     }
   ],
   "FDF4Qb": [
@@ -2276,6 +2372,12 @@
       "value": "Tombol untuk menambahkan konten dinamis jika TokenPicker ditampilkan"
     }
   ],
+  "HSJLCu": [
+    {
+      "type": 0,
+      "value": "Headers"
+    }
+  ],
   "HXLutF": [
     {
       "type": 0,
@@ -2390,6 +2492,12 @@
     {
       "type": 0,
       "value": "Add a target schema"
+    }
+  ],
+  "IbGIq3": [
+    {
+      "type": 0,
+      "value": "Error Code"
     }
   ],
   "IjZFjQ": [
@@ -2558,6 +2666,12 @@
     {
       "type": 0,
       "value": "Diperlukan. Objek untuk ditambahi properti baru."
+    }
+  ],
+  "K7/DnZ": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "K90YEU": [
@@ -2907,6 +3021,12 @@
       "value": "Status"
     }
   ],
+  "NWxGWN": [
+    {
+      "type": 0,
+      "value": "Enter unique property name"
+    }
+  ],
   "NeyUAh": [
     {
       "type": 0,
@@ -3039,10 +3159,10 @@
       "value": "Fungsi ini tidak memerlukan input apa pun."
     }
   ],
-  "ORVfYZ": [
+  "OOUTdW": [
     {
       "type": 0,
-      "value": "Memuat operasi..."
+      "value": "Loading all connectors..."
     }
   ],
   "OSHNZ2": [
@@ -3061,6 +3181,12 @@
     {
       "type": 0,
       "value": "Pisahkan"
+    }
+  ],
+  "OdoUEu": [
+    {
+      "type": 0,
+      "value": "Enable Static Result"
     }
   ],
   "Oib1mL": [
@@ -3193,6 +3319,12 @@
     {
       "type": 0,
       "value": "False"
+    }
+  ],
+  "PZgHf/": [
+    {
+      "type": 0,
+      "value": "Schema Uri"
     }
   ],
   "PaPPLr": [
@@ -3387,6 +3519,12 @@
     {
       "type": 0,
       "value": "Beralih ke input seluruh array"
+    }
+  ],
+  "RbJNVk": [
+    {
+      "type": 0,
+      "value": "Schema"
     }
   ],
   "RhH4pF": [
@@ -3702,6 +3840,12 @@
       "value": "(UTC-06:00) Pulau Paskah"
     }
   ],
+  "U7yRwM": [
+    {
+      "type": 0,
+      "value": "Validation Error"
+    }
+  ],
   "UCNM4L": [
     {
       "type": 0,
@@ -3740,6 +3884,12 @@
     {
       "type": 0,
       "value": " (file name)"
+    }
+  ],
+  "UZiXVh": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "Ufv5m9": [
@@ -3884,6 +4034,12 @@
     {
       "type": 0,
       "value": "Pemicu memberi tahu aplikasi Anda kapan harus mulai berjalan. Setiap alur kerja memerlukan setidaknya satu pemicu."
+    }
+  ],
+  "Vfce7b": [
+    {
+      "type": 0,
+      "value": "Error Type"
     }
   ],
   "VlvlX1": [
@@ -4256,6 +4412,12 @@
       "value": "Perkecil tampilan"
     }
   ],
+  "Yw7Nfl": [
+    {
+      "type": 0,
+      "value": "Disable Static Result"
+    }
+  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -4308,6 +4470,12 @@
       "value": "(UTC+10:00) Canberra, Melbourne, Sydney"
     }
   ],
+  "ZRdkFN": [
+    {
+      "type": 0,
+      "value": "Collapse Static Result"
+    }
+  ],
   "ZUaz3Y": [
     {
       "type": 0,
@@ -4336,6 +4504,12 @@
     {
       "type": 0,
       "value": "Close"
+    }
+  ],
+  "Zi9gQK": [
+    {
+      "type": 0,
+      "value": "Add new item"
     }
   ],
   "ZkjTbp": [
@@ -4448,6 +4622,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "b9Rvl9": [
+    {
+      "type": 0,
+      "value": "Body"
     }
   ],
   "bG9rjv": [
@@ -4620,6 +4800,12 @@
     {
       "type": 0,
       "value": "(UTC+02.00) Tripoli"
+    }
+  ],
+  "ca/QIc": [
+    {
+      "type": 0,
+      "value": "Error Message"
     }
   ],
   "cgq/+y": [
@@ -4816,12 +5002,6 @@
       "value": "Diperlukan. Nama variabel yang nilainya Anda inginkan."
     }
   ],
-  "eRvGw3": [
-    {
-      "type": 0,
-      "value": "Memuat konektor..."
-    }
-  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -4838,6 +5018,12 @@
     {
       "type": 0,
       "value": "Harus diisi. Indeks substring awal dalam parameter 1."
+    }
+  ],
+  "ehIBkh": [
+    {
+      "type": 0,
+      "value": "Enter an integer"
     }
   ],
   "epOMnV": [
@@ -5187,6 +5373,12 @@
       "value": "Respons Asinkron"
     }
   ],
+  "i0XjL5": [
+    {
+      "type": 0,
+      "value": "Search for operation"
+    }
+  ],
   "i1Tufp": [
     {
       "type": 0,
@@ -5475,10 +5667,28 @@
       "value": "Ya"
     }
   ],
+  "kBOAkT": [
+    {
+      "type": 0,
+      "value": "Select Fields"
+    }
+  ],
+  "kBSLfu": [
+    {
+      "type": 0,
+      "value": "Duplicate property name"
+    }
+  ],
   "kDsud+": [
     {
       "type": 0,
       "value": "(UTC-03:00) Cayenne, Fortaleza"
+    }
+  ],
+  "kEI2xx": [
+    {
+      "type": 0,
+      "value": "Message"
     }
   ],
   "kHcCxH": [
@@ -5497,12 +5707,6 @@
     {
       "type": 0,
       "value": "d"
-    }
-  ],
-  "kJD/bW": [
-    {
-      "type": 0,
-      "value": "Loading search results..."
     }
   ],
   "kM+Mr0": [
@@ -5783,6 +5987,12 @@
       "value": "Masuk ke konektor"
     }
   ],
+  "meVkB6": [
+    {
+      "type": 0,
+      "value": "Empty property name"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -5835,6 +6045,12 @@
     {
       "type": 0,
       "value": "Coba kata kunci yang kurang spesifik."
+    }
+  ],
+  "nCa0KG": [
+    {
+      "type": 0,
+      "value": "Internal Errors"
     }
   ],
   "nGds/r": [
@@ -5941,6 +6157,12 @@
       "value": "Zoom to fit"
     }
   ],
+  "o8ohVV": [
+    {
+      "type": 0,
+      "value": "Schema Id"
+    }
+  ],
   "oAFcW6": [
     {
       "type": 0,
@@ -5959,10 +6181,28 @@
       "value": "Transfer Konten"
     }
   ],
+  "oQjIWf": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
+  "oR2x4N": [
+    {
+      "type": 0,
+      "value": "Invalid integer value"
+    }
+  ],
   "oRvVIW": [
     {
       "type": 0,
       "value": "(UTC+07.00) Krasnoyarsk"
+    }
+  ],
+  "oTBkbU": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "oV0xQ9": [
@@ -6059,6 +6299,12 @@
     {
       "type": 0,
       "value": "Konversikan input menjadi nilai jenis Xml"
+    }
+  ],
+  "pYNzbj": [
+    {
+      "type": 0,
+      "value": "Path"
     }
   ],
   "pYtSyE": [
@@ -6248,6 +6494,12 @@
     {
       "type": 0,
       "value": "Respons asinkron memungkinkan Aplikasi Logika merespons dengan 202 (Diterima) untuk menunjukkan bahwa permintaan telah diterima untuk diproses. Header lokasi akan disediakan untuk menerima keadaan akhir."
+    }
+  ],
+  "r/n6/9": [
+    {
+      "type": 0,
+      "value": "Enter a value"
     }
   ],
   "r1FQhf": [
@@ -6442,6 +6694,12 @@
       "value": "Unable to generate data map definition"
     }
   ],
+  "sw6EXK": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "syiNc+": [
     {
       "type": 0,
@@ -6596,6 +6854,12 @@
     {
       "type": 0,
       "value": "Pilih elemen untuk mulai mengonfigurasi"
+    }
+  ],
+  "uDI1Um": [
+    {
+      "type": 0,
+      "value": "Status Code"
     }
   ],
   "uIQrat": [

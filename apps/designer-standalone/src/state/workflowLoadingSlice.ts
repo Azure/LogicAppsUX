@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import type { ConnectionsJSON, FunctionsConnection, ServiceProviderConnection } from './connectionReferences';
 import type { RootState } from './store';
-import type { ConnectionReference, ConnectionReferences } from '@microsoft/logic-apps-designer';
+import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 export interface WorkflowLoadingState {
-  armToken?: string;
   resourcePath?: string;
-  loadingMethod: 'file' | 'arm';
+  appId?: string;
+  workflowName?: string;
   workflowDefinition: LogicAppsV2.WorkflowDefinition | null;
   runInstance: LogicAppsV2.RunInstanceDefinition | null;
   connections: ConnectionReferences;
@@ -16,18 +15,19 @@ export interface WorkflowLoadingState {
   monitoringView: boolean;
   darkMode: boolean;
   consumption: boolean;
+  isLocalSelected: boolean;
 }
 
 const initialState: WorkflowLoadingState = {
   workflowDefinition: null,
   runInstance: null,
   connections: {},
-  loadingMethod: 'file',
-  resourcePath: 'simpleBigworkflow.json',
+  resourcePath: '',
   readOnly: false,
   monitoringView: false,
   darkMode: false,
   consumption: false,
+  isLocalSelected: false,
 };
 
 type WorkflowPayload = {
@@ -41,32 +41,9 @@ type RunPayload = {
 
 export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow', async (_: void, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
-  if (currentState.workflowLoader.loadingMethod === 'arm') {
-    const results = await fetch(
-      `https://management.azure.com/${currentState.workflowLoader.resourcePath}?api-version=2020-06-01&$expand=connections.json`,
-      {
-        headers: {
-          Authorization: `Bearer ${currentState.workflowLoader.armToken}`,
-        },
-      }
-    );
-    if (results.status === 200) {
-      const wf = await results.json();
-      const workflowDefinition = wf.properties.files['workflow.json'].definition;
-      const connections = wf.properties.files['connections.json'] as ConnectionsJSON;
-      const connectionReferences: ConnectionReferences = convertToConnectionReferences(connections);
-      return { workflowDefinition, connectionReferences } as WorkflowPayload;
-    } else {
-      return null;
-    }
-  } else {
-    try {
-      const wf = await import(`../../../../__mocks__/workflows/${currentState.workflowLoader.resourcePath}`);
-      return { workflowDefinition: wf.definition as LogicAppsV2.WorkflowDefinition, connectionReferences: {} } as WorkflowPayload;
-    } catch {
-      return null;
-    }
-  }
+
+  const wf = await import(`../../../../__mocks__/workflows/${currentState.workflowLoader.resourcePath}`);
+  return { workflowDefinition: wf.definition as LogicAppsV2.WorkflowDefinition, connectionReferences: {} } as WorkflowPayload;
 });
 
 export const loadRun = createAsyncThunk('runLoadingState/loadRun', async (_: void, thunkAPI) => {
@@ -79,62 +56,23 @@ export const loadRun = createAsyncThunk('runLoadingState/loadRun', async (_: voi
   }
 });
 
-function convertToConnectionReferences(connectionData: ConnectionsJSON | undefined): ConnectionReferences {
-  if (!connectionData) {
-    return {};
-  }
-  const connectionReferences: ConnectionReferences = { ...connectionData.managedApiConnections };
-  convertToConnectionReferenceRefactor(connectionData.functionConnections, connectionReferences);
-  convertToConnectionReferenceRefactor(connectionData.serviceProviderConnections, connectionReferences);
-
-  return connectionReferences;
-}
-
-function convertToConnectionReferenceRefactor(
-  connections: Record<string, ServiceProviderConnection | FunctionsConnection> | undefined,
-  connectionReferences: ConnectionReferences
-) {
-  if (connections) {
-    for (const key of Object.keys(connections)) {
-      const connection = connections[key];
-      let mappedConnection: ConnectionReference;
-      if ('serviceProvider' in connection) {
-        mappedConnection = {
-          api: { id: connection.serviceProvider.id },
-          connectionName: connection.displayName,
-          connection: {
-            id: connection.serviceProvider.id,
-          },
-        };
-      } else {
-        mappedConnection = {
-          api: {
-            id: connection.function.id,
-          },
-          connection: {
-            id: connection.function.id,
-          },
-          connectionName: connection.displayName,
-        };
-      }
-      // eslint-disable-next-line no-param-reassign
-      connectionReferences[key] = mappedConnection;
-    }
-  }
-}
-
 export const workflowLoadingSlice = createSlice({
   name: 'workflowLoader',
   initialState,
   reducers: {
-    changeArmToken: (state, action: PayloadAction<string>) => {
-      state.armToken = action.payload;
+    changeAppid: (state, action: PayloadAction<string>) => {
+      state.appId = action.payload;
+    },
+    changeWorkflowName: (state, action: PayloadAction<string>) => {
+      state.workflowName = action.payload;
     },
     changeResourcePath: (state, action: PayloadAction<string>) => {
       state.resourcePath = action.payload;
     },
-    changeLoadingMethod: (state, action: PayloadAction<'file' | 'arm'>) => {
-      state.loadingMethod = action.payload;
+    clearWorkflowDetails: (state) => {
+      state.appId = undefined;
+      state.workflowName = undefined;
+      state.resourcePath = '';
     },
     setReadOnly: (state, action: PayloadAction<boolean>) => {
       state.readOnly = action.payload;
@@ -150,6 +88,9 @@ export const workflowLoadingSlice = createSlice({
     },
     setConsumption: (state, action: PayloadAction<boolean>) => {
       state.consumption = action.payload;
+    },
+    setIsLocalSelected: (state, action: PayloadAction<boolean>) => {
+      state.isLocalSelected = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -171,7 +112,16 @@ export const workflowLoadingSlice = createSlice({
   },
 });
 
-export const { changeArmToken, changeResourcePath, changeLoadingMethod, setReadOnly, setMonitoringView, setDarkMode, setConsumption } =
-  workflowLoadingSlice.actions;
+export const {
+  changeResourcePath,
+  changeAppid,
+  changeWorkflowName,
+  clearWorkflowDetails,
+  setReadOnly,
+  setMonitoringView,
+  setDarkMode,
+  setConsumption,
+  setIsLocalSelected,
+} = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;

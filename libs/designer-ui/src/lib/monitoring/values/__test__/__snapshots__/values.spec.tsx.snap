@@ -304,11 +304,6 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                           onKeyDown={[Function]}
                           onMouseDownCapture={[Function]}
                           role="row"
-                          style={
-                            Object {
-                              "minWidth": 200,
-                            }
-                          }
                         >
                           <div
                             className="ms-DetailsRow-fields fields-149"
@@ -364,11 +359,6 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                           onKeyDown={[Function]}
                           onMouseDownCapture={[Function]}
                           role="row"
-                          style={
-                            Object {
-                              "minWidth": 200,
-                            }
-                          }
                         >
                           <div
                             className="ms-DetailsRow-fields fields-149"
@@ -424,11 +414,6 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                           onKeyDown={[Function]}
                           onMouseDownCapture={[Function]}
                           role="row"
-                          style={
-                            Object {
-                              "minWidth": 200,
-                            }
-                          }
                         >
                           <div
                             className="ms-DetailsRow-fields fields-149"

@@ -20,6 +20,8 @@ const expressionButtonStyles: CSSProperties = {
   minWidth: '32px',
   position: 'relative',
   left: '4px',
+  border: 'none',
+  bottom: '5px',
 };
 
 export interface TokenPickerButtonEditorProps {
