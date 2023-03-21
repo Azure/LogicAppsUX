@@ -20,4 +20,5 @@ export enum LanguageScript {
 export enum WorkerRuntime {
   Node = 'node',
   Dotnet = 'dotnet',
+  DotnetIsolated = 'dotnet-isolated',
 }
