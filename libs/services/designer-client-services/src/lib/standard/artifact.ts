@@ -98,12 +98,8 @@ export class StandardArtifactService {
   }
 
   private async _getMapArtifactsFromLA(mapType: string): Promise<ListDynamicValue[]> {
-    if (this._mapArtifacts === undefined) {
-      this._mapArtifacts = {};
-    }
-
     const normalizedMapType = mapType.toLowerCase();
-    return this._mapArtifacts[normalizedMapType]
+    return this._mapArtifacts && this._mapArtifacts[normalizedMapType]
       ? this._mapArtifacts[normalizedMapType].map((artifact) => ({
           value: artifact.fileName,
           displayName: artifact.name,
@@ -160,13 +156,11 @@ export class StandardArtifactService {
   }
 
   private async _getSchemaArtifactsFromLA(): Promise<ListDynamicValue[]> {
-    if (this._schemaArtifacts === undefined) {
-      this._schemaArtifacts = [];
-    }
-
-    return this._schemaArtifacts.map((artifact) => ({
-      value: artifact.fileName,
-      displayName: artifact.name,
-    }));
+    return this._schemaArtifacts
+      ? this._schemaArtifacts.map((artifact) => ({
+          value: artifact.fileName,
+          displayName: artifact.name,
+        }))
+      : [];
   }
 }

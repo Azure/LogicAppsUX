@@ -96,7 +96,8 @@ export const getDesignerServices = (
     apiVersion,
     baseUrl,
     httpClient,
-    integrationAccountCallbackUrl: undefined,
+    integrationAccountCallbackUrl:
+      panelMetadata?.localSettings && panelMetadata?.localSettings['WORKFLOW_INTEGRATION_ACCOUNT_CALLBACK_URL'],
     apiHubServiceDetails,
     schemaArtifacts: panelMetadata?.schemaArtifacts,
     mapArtifacts: panelMetadata?.mapArtifacts,
