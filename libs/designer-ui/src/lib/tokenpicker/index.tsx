@@ -164,6 +164,9 @@ export function TokenPicker({
           return;
         }}
         styles={calloutStyles}
+        layerProps={{
+          hostId: 'msla-layer-host',
+        }}
       >
         <div
           className="msla-token-picker-container"
