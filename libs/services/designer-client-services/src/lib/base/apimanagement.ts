@@ -3,6 +3,7 @@ import type { ListDynamicValue } from '../connector';
 import type { IHttpClient } from '../httpClient';
 import { ResponseCodes, SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { ArgumentException, equals, unmap } from '@microsoft/utils-logic-apps';
+import { QueryClient } from 'react-query';
 
 export interface ApiManagementServiceOptions {
   apiVersion: string;
@@ -13,6 +14,7 @@ export interface ApiManagementServiceOptions {
 
 export class ApiManagementInstanceService implements IApiManagementService {
   private _swaggers: Record<string, SwaggerParser> = {};
+  private queryClient: QueryClient;
 
   constructor(public readonly options: ApiManagementServiceOptions) {
     const { apiVersion, baseUrl, subscriptionId, httpClient } = options;
@@ -25,6 +27,7 @@ export class ApiManagementInstanceService implements IApiManagementService {
     } else if (!httpClient) {
       throw new ArgumentException('httpClient required for workflow app');
     }
+    this.queryClient = new QueryClient();
   }
 
   async fetchApiManagementInstances(): Promise<any> {
@@ -122,8 +125,7 @@ export class ApiManagementInstanceService implements IApiManagementService {
       return this._swaggers[normalizedName];
     }
 
-    const queryClient = {} as any;
-    const swagger = await queryClient.fetchQuery(['apimSwagger', apimApiId?.toLowerCase()], async () => {
+    const swagger = await this.queryClient.fetchQuery(['apimSwagger', apimApiId?.toLowerCase()], async () => {
       const swagger = await this.fetchApiMSwagger(apimApiId);
       return SwaggerParser.parse(swagger);
     });
