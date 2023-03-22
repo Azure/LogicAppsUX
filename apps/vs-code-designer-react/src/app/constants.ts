@@ -47,6 +47,7 @@ export const clientSupportedOperations = [
     connectorId: 'connectionProviders/dataMapperOperations',
     operationId: 'xsltTransform',
   },
+  { connectorId: '/connectionProviders/apiManagementOperation', operationId: 'apiManagement' },
 ];
 
 export const integrationAccount = 'IntegrationAccount';

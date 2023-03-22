@@ -135,6 +135,14 @@ export const getDesignerServices = (
         const workflowSchemas = JSON.stringify(workflowDetails);
         return Promise.resolve(workflowSchemas[workflowName] || {});
       },
+      getApimOperationSchema: (args: any) => {
+        const { configuration, parameters, isInput } = args;
+        if (!configuration?.connection?.apiId) {
+          throw new Error('Missing api information to make dynamic call');
+        }
+
+        return apimService.getOperationSchema(configuration.connection.apiId, parameters.operationId, isInput);
+      },
     },
     valuesClient: {
       getWorkflows: () => Promise.resolve(manualWorkflows),
