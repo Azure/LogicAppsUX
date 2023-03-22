@@ -94,12 +94,14 @@ export const App = () => {
   };
 
   const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
-    const standardAppInstance = {
-      ...standardApp,
-      definition: runDefinition.properties.workflow.properties.definition,
-    } as StandardApp;
-    setRunInstance(runDefinition);
-    setStandardApp(standardAppInstance);
+    if (isMonitoringView) {
+      const standardAppInstance = {
+        ...standardApp,
+        definition: runDefinition.properties.workflow.properties.definition,
+      } as StandardApp;
+      setRunInstance(runDefinition);
+      setStandardApp(standardAppInstance);
+    }
   };
 
   const onRunInstanceError = async () => {
