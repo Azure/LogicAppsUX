@@ -2,9 +2,10 @@ import { isConnectionRequiredForOperation } from '../../actions/bjsworkflow/conn
 import { useConnectionById } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { getConnectionId } from '../../utils/connectors/connections';
-import { useConnector } from '../connection/connectionSelector';
+import { useConnector, useConnectorAndSwagger } from '../connection/connectionSelector';
 import type { NodeOperation } from '../operation/operationMetadataSlice';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import { SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { getObjectPropertyValue } from '@microsoft/utils-logic-apps';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -93,7 +94,6 @@ export const useOperationQuery = (nodeId: string) => {
 const useNodeAttribute = (operationInfo: NodeOperation, propertyInManifest: string[], propertyInConnector: string[]): QueryResult => {
   const { data: manifest, isLoading } = useOperationManifest(operationInfo);
   const { data: connector } = useConnector(operationInfo?.connectorId);
-
   return {
     isLoading,
     result: manifest
@@ -118,6 +118,31 @@ export const useIconUri = (nodeId: string) => {
 
 export const useConnectorName = (operationInfo: NodeOperation) => {
   return useNodeAttribute(operationInfo, ['connector', 'properties', 'displayName'], ['displayName']);
+};
+
+export const useOperationDescription = (operationInfo: NodeOperation) => {
+  const { data: connectorData } = useConnectorAndSwagger(operationInfo?.connectorId);
+  const { result, isLoading } = useNodeAttribute(operationInfo, ['description'], ['description']);
+
+  const { swagger } = connectorData ?? {};
+  if (swagger) {
+    const swaggerParsed = new SwaggerParser(swagger);
+    return { isLoading, result: swaggerParsed.getOperationByOperationId(operationInfo.operationId).description };
+  }
+
+  return { result, isLoading };
+};
+
+export const useOperationDocumentation = (operationInfo: NodeOperation) => {
+  const { data: connectorData } = useConnectorAndSwagger(operationInfo.connectorId);
+  const { result, isLoading } = useNodeAttribute(operationInfo, ['connector', 'properties', 'externalDocs'], ['externalDocs']);
+  const { swagger } = connectorData ?? {};
+  if (swagger) {
+    const swaggerparsed = new SwaggerParser(swagger);
+    console.log(swaggerparsed.getOperationByOperationId(operationInfo.operationId).summary);
+    return { isLoading, result: swaggerparsed.getOperationByOperationId(operationInfo.operationId).externalDocs };
+  }
+  return { result, isLoading };
 };
 
 export const useConnectorDescription = (operationInfo: NodeOperation) => {
