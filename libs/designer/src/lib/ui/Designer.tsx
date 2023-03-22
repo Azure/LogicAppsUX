@@ -3,6 +3,7 @@ import { usePreloadConnectorsQuery, usePreloadOperationsQuery } from '../core/qu
 import { useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
+import { switchToNodeSearchPanel } from '../core/state/panel/panelSlice';
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
 import { buildEdgeIdsBySource, clearFocusNode, updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../core/store';
@@ -25,6 +26,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider, createTransition, MouseTransition } from 'react-dnd-multi-backend';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { useDispatch, useSelector } from 'react-redux';
 import { Background, ReactFlow, ReactFlowProvider, useNodes, useReactFlow, useStore, BezierEdge } from 'reactflow';
 import type { BackgroundProps, NodeChange } from 'reactflow';
@@ -158,13 +160,17 @@ export const Designer = (props: DesignerProps) => {
     ];
   }, [flowSize, windowDimensions, zoom]);
 
-  useEffect(() => setLayerHostSelector('#msla-designer-canvas'), []);
+  useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const KeyboardTransition = createTransition('keydown', (event) => {
     if (!isKeyboardDragTrigger(event as KeyboardEvent)) return false;
     event.preventDefault();
     return true;
   });
 
+  useHotkeys(['meta+shift+p'], (event) => {
+    event.preventDefault();
+    dispatch(switchToNodeSearchPanel());
+  });
   const DND_OPTIONS: any = {
     backends: [
       {
@@ -184,7 +190,7 @@ export const Designer = (props: DesignerProps) => {
 
   return (
     <DndProvider options={DND_OPTIONS}>
-      <div id="msla-designer-canvas" className="msla-designer-canvas msla-panel-mode">
+      <div className="msla-designer-canvas msla-panel-mode">
         <ReactFlowProvider>
           <ReactFlow
             nodeTypes={nodeTypes}
@@ -214,6 +220,15 @@ export const Designer = (props: DesignerProps) => {
           </div>
           <CanvasFinder />
         </ReactFlowProvider>
+        <div
+          id={'msla-layer-host'}
+          style={{
+            position: 'absolute',
+            zIndex: 1000000,
+            inset: '0px',
+            visibility: 'hidden',
+          }}
+        />
       </div>
     </DndProvider>
   );

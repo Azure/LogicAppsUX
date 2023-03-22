@@ -65,7 +65,11 @@ export async function verifyVersionAndLanguage(
   context.telemetry.properties.remoteRuntime = azureWorkerRuntime;
   const localWorkerRuntime: WorkerRuntime | undefined = getFunctionsWorkerRuntime(localLanguage);
 
-  if (azureWorkerRuntime != WorkerRuntime.Node && azureWorkerRuntime != WorkerRuntime.Dotnet) {
+  if (
+    azureWorkerRuntime != WorkerRuntime.Node &&
+    azureWorkerRuntime != WorkerRuntime.Dotnet &&
+    azureWorkerRuntime != WorkerRuntime.DotnetIsolated
+  ) {
     throw new Error(
       localize(
         'incompatibleRuntime',

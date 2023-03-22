@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logicappsux",
-  "version": "0.2.116",
+  "version": "2.0.4",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -97,6 +97,7 @@
     "react-dnd-accessible-backend": "^1.0.1",
     "react-dnd-html5-backend": "16.0.1",
     "react-dnd-multi-backend": "^8.0.0",
+    "react-hotkeys-hook": "^4.3.8",
     "react-icons": "4.8.0",
     "react-infinite-scroll-component": "6.1.0",
     "react-intl": "6.3.0",

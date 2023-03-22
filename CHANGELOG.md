@@ -1,4 +1,20 @@
 # Logic Apps Designer
+
+### [2.0.4](https://github.com/Azure/LogicAppsUX/compare/v2.0.3...v2.0.4) (2023-03-22)
+
+### [2.0.3](https://github.com/Azure/LogicAppsUX/compare/v2.0.2...v2.0.3) (2023-03-21)
+
+### Logic Apps Designer Bug Fixes
+
+- Small dark mode changes ([#1789](https://github.com/Azure/LogicAppsUX/issues/1789)) ([9edfecb](https://github.com/Azure/LogicAppsUX/commit/9edfecb7748acda0e5fdb778ea38428487cc5894))
+- Small token-picker layer host fix ([#1791](https://github.com/Azure/LogicAppsUX/issues/1791)) ([f2c70e8](https://github.com/Azure/LogicAppsUX/commit/f2c70e8650db4aa25b733fe84b962b467d289922))
+
+### [2.0.2](https://github.com/Azure/LogicAppsUX/compare/v2.0.1...v2.0.2) (2023-03-21)
+
+### [2.0.1](https://github.com/Azure/LogicAppsUX/compare/v0.2.117...v2.0.1) (2023-03-20)
+
+### [0.2.117](https://github.com/Azure/LogicAppsUX/compare/v0.2.116...v0.2.117) (2023-03-20)
+
 ### [0.2.116](https://github.com/Azure/LogicAppsUX/compare/v0.2.115...v0.2.116) (2023-03-20)
 
 ### [0.2.115](https://github.com/Azure/LogicAppsUX/compare/v0.2.114...v0.2.115) (2023-03-19)

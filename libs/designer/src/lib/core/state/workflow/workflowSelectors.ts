@@ -2,6 +2,7 @@ import type { WorkflowEdge, WorkflowNode } from '../../parsers/models/workflowNo
 import type { RootState } from '../../store';
 import { createWorkflowEdge } from '../../utils/graph';
 import type { WorkflowState } from './workflowInterfaces';
+import { operationIsAction } from './workflowInterfaces';
 import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
@@ -40,6 +41,9 @@ export const useActionMetadata = (id?: string) =>
 
 export const useNodeDescription = (id: string) =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => (id ? state.operations[id]?.description : undefined)));
+
+export const useShouldNodeFocus = (id: string) =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.focusedCanvasNodeId === id));
 
 export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (data) => {
   const rootNode = data.graph;
@@ -133,6 +137,13 @@ export const useIsGraphEmpty = () => {
 
 export const useIsLeafNode = (nodeId: string): boolean => useNodeEdgeTargets(nodeId).length === 0;
 
+export const useNodeIds = () => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      return Object.keys(state.nodesMetadata);
+    })
+  );
+};
 export const useNewSwitchCaseId = () =>
   useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
@@ -153,6 +164,37 @@ export const useAllGraphParents = (graphId: string): string[] => {
     createSelector(getWorkflowState, (state: WorkflowState) => {
       if (state.graph) return getWorkflowGraphPath(state.graph, graphId);
       else return [];
+    })
+  );
+};
+
+export const useNodeGraphId = (nodeId: string): string => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      return state.nodesMetadata[nodeId]?.graphId;
+    })
+  );
+};
+
+export const useGetAllAncestors = (nodeId: string) => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      const ancestors = new Set();
+      const operationData = state.operations[nodeId];
+      if (operationData && operationIsAction(operationData)) {
+        let currentParent = Object.keys(operationData?.runAfter ?? {});
+        while (currentParent.length) {
+          const currentChild = currentParent.pop();
+          ancestors.add(currentChild);
+          const parentOperation = currentChild ? state.operations[currentChild] : null;
+          if (parentOperation && operationIsAction(parentOperation)) {
+            const newAncestors = Object.keys(parentOperation?.runAfter ?? {});
+            currentParent = [...currentParent, ...newAncestors];
+          }
+        }
+      }
+
+      return ancestors;
     })
   );
 };

@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "0.2.116",
+  "version": "2.0.4",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/logic_apps_designer",
   "main": "main.js",

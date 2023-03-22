@@ -4,7 +4,7 @@ import type { MapDefinitionEntry, SchemaNodeDictionary, SchemaNodeExtended } fro
 import { SchemaType } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
-import { ifPseudoFunctionKey, indexPseudoFunctionKey, directAccessPseudoFunctionKey } from '../models/Function';
+import { directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import { findLast } from './Array.Utils';
 import {
   flattenInputs,

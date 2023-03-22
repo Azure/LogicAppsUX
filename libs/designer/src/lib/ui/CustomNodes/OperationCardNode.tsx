@@ -4,7 +4,7 @@ import type { AppDispatch } from '../../core';
 import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useParameterValidationErrors } from '../../core/state/operation/operationSelector';
+import { useParameterValidationErrors, useTokenDependencies } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
 import {
@@ -17,7 +17,13 @@ import {
 } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import { useStaticResultSchema } from '../../core/state/staticresultschema/staitcresultsSelector';
-import { useIsLeafNode, useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
+import {
+  useIsLeafNode,
+  useNodeDescription,
+  useNodeDisplayName,
+  useNodeMetadata,
+  useShouldNodeFocus,
+} from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
 import type { MenuItemOption } from '@microsoft/designer-ui';
@@ -43,6 +49,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun } = metadata?.runData ?? {};
 
+  const dependencies = useTokenDependencies(id);
+
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
       type: 'BOX',
@@ -65,6 +73,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       },
       item: {
         id: id,
+        dependencies,
+        graphId: metadata?.graphId,
       },
       canDrag: !readOnly && !isTrigger,
       collect: (monitor) => ({
@@ -178,6 +188,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     codeRun,
   ]);
 
+  const shouldFocus = useShouldNodeFocus(id);
   return (
     <>
       <div className="nopan">
@@ -203,6 +214,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           onClick={nodeClick}
           selected={selected}
           contextMenuOptions={contextMenuOptions}
+          setFocus={shouldFocus}
         />
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>

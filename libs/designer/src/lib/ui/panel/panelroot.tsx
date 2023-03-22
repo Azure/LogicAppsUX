@@ -2,11 +2,11 @@ import constants from '../../common/constants';
 import type { AppDispatch, RootState } from '../../core';
 import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { updateParameterValidation } from '../../core/state/operation/operationMetadataSlice';
 import { useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import {
-  useIsDiscovery,
+  useCurrentPanelModePanelMode,
   useIsPanelCollapsed,
-  useIsWorkflowParametersMode,
   useRegisteredPanelTabs,
   useSelectedNodeId,
   useSelectedPanelTabName,
@@ -27,6 +27,8 @@ import { useHasSchema } from '../../core/state/staticresultschema/staitcresultsS
 import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import { isRootNodeInGraph } from '../../core/utils/graph';
+import { validateParameter } from '../../core/utils/parameters/helper';
+import { NodeSearchPanel } from './nodeSearchPanel';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
 import { createConnectionTab } from './panelTabs/createConnectionTab';
@@ -57,15 +59,14 @@ export const PanelRoot = (): JSX.Element => {
   const selectedNode = useSelectedNodeId();
   const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata));
   const selectedNodeDisplayName = useNodeDisplayName(selectedNode);
-  const isDiscovery = useIsDiscovery();
-  const isWorkflowParameters = useIsWorkflowParametersMode();
+  const currentPanelMode = useCurrentPanelModePanelMode();
 
   const [width, setWidth] = useState(PanelSize.Auto);
 
   const registeredTabs = useRegisteredPanelTabs();
   const visibleTabs = useVisiblePanelTabs();
   const selectedPanelTab = useSelectedPanelTabName();
-
+  const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNode]);
   const comment = useNodeDescription(selectedNode);
   const iconUri = useIconUri(selectedNode);
   const nodeMetaData = useNodeMetadata(selectedNode);
@@ -165,7 +166,7 @@ export const PanelRoot = (): JSX.Element => {
 
   const getPanelHeaderControlType = (): boolean => {
     // TODO: 13067650
-    return isDiscovery;
+    return currentPanelMode === 'Discovery';
   };
 
   const getPanelHeaderMenu = (): MenuItemOption[] => {
@@ -254,13 +255,13 @@ export const PanelRoot = (): JSX.Element => {
   }, [nodeMetaData?.subgraphType, opQuery.isLoading]);
 
   const layerProps = {
-    hostId: 'msla-designer-canvas',
+    hostId: 'msla-layer-host',
     styles: { root: { zIndex: 999998 } },
   };
 
-  return isWorkflowParameters ? (
+  return currentPanelMode === 'WorkflowParameters' ? (
     <WorkflowParametersPanel isCollapsed={collapsed} toggleCollapse={dismissPanel} width={width} layerProps={layerProps} />
-  ) : isDiscovery ? (
+  ) : currentPanelMode === 'Discovery' ? (
     <RecommendationPanelContext
       isCollapsed={collapsed}
       toggleCollapse={dismissPanel}
@@ -268,6 +269,8 @@ export const PanelRoot = (): JSX.Element => {
       key={selectedNode}
       layerProps={layerProps}
     />
+  ) : currentPanelMode === 'NodeSearch' ? (
+    <NodeSearchPanel isCollapsed={collapsed} toggleCollapse={dismissPanel} width={width} layerProps={layerProps} />
   ) : (
     <PanelContainer
       cardIcon={iconUri}
@@ -288,7 +291,20 @@ export const PanelRoot = (): JSX.Element => {
       onDismissButtonClicked={handleDelete}
       readOnlyMode={readOnly}
       setSelectedTab={setSelectedTab}
-      toggleCollapse={togglePanel}
+      toggleCollapse={() => {
+        //only run validation when collapsing the panel
+        if (!collapsed) {
+          Object.keys(inputs?.parameterGroups ?? {}).forEach((parameterGroup) => {
+            inputs.parameterGroups[parameterGroup].parameters.forEach((parameter) => {
+              const validationErrors = validateParameter(parameter, parameter.value);
+              dispatch(
+                updateParameterValidation({ nodeId: selectedNode, groupId: parameterGroup, parameterId: parameter.id, validationErrors })
+              );
+            });
+          });
+        }
+        togglePanel();
+      }}
       trackEvent={handleTrackEvent}
       onCommentChange={(value) => {
         dispatch(setNodeDescription({ nodeId: selectedNode, description: value }));

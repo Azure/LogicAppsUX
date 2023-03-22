@@ -14,58 +14,56 @@ describe('mapDefinitions/MapDefinitionE2e', () => {
     const mockTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
     const mockTranscriptMapDefinition: MapDefinitionEntry = yaml.load(comprehensiveMapDefinition) as MapDefinitionEntry;
 
-    const deserializedConnectionDictionary: ConnectionDictionary = convertFromMapDefinition(
-      mockTranscriptMapDefinition,
-      mockSourceSchema,
-      mockTargetSchema,
-      functionMock
-    );
+    it('Deserializing then re-serializing produces the same map definition', () => {
+      const deserializedConnectionDictionary: ConnectionDictionary = convertFromMapDefinition(
+        mockTranscriptMapDefinition,
+        mockSourceSchema,
+        mockTargetSchema,
+        functionMock
+      );
 
-    // Compare YAML as parsed objects to disregard any comments
-    const reserializedMapDefinitionString: string = convertToMapDefinition(
-      deserializedConnectionDictionary,
-      mockSourceSchema,
-      mockTargetSchema
-    );
-    const reserializedMapDefinition: MapDefinitionEntry = yaml.load(reserializedMapDefinitionString) as MapDefinitionEntry;
+      // Compare YAML as parsed objects to disregard any comments
+      const reserializedMapDefinitionString: string = convertToMapDefinition(
+        deserializedConnectionDictionary,
+        mockSourceSchema,
+        mockTargetSchema
+      );
 
-    it('Map definition data was able to be serialized', () => {
+      const reserializedMapDefinition: MapDefinitionEntry = yaml.load(reserializedMapDefinitionString) as MapDefinitionEntry;
+
       // NOTE: Will be undefined if string === '', which happens when there's an issue w/ serialization
       expect(reserializedMapDefinition).toBeDefined();
-    });
 
-    it('Deserializing then re-serializing produces the same map definition', () => {
       // NOTE: toEqual will log the specific properties/values that differ
       expect(reserializedMapDefinition).toEqual(mockTranscriptMapDefinition);
     });
   });
 
-  describe.skip('JSON to JSON', () => {
+  describe('JSON to JSON', () => {
     const mockSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(sourceMockJsonSchema);
     const mockTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(targetMockJsonSchema);
     const mockTranscriptMapDefinition: MapDefinitionEntry = yaml.load(transcriptJsonMapDefinitionString) as MapDefinitionEntry;
 
-    const deserializedConnectionDictionary: ConnectionDictionary = convertFromMapDefinition(
-      mockTranscriptMapDefinition,
-      mockSourceSchema,
-      mockTargetSchema,
-      functionMock
-    );
+    it.skip('Deserializing then re-serializing produces the same map definition', () => {
+      const deserializedConnectionDictionary: ConnectionDictionary = convertFromMapDefinition(
+        mockTranscriptMapDefinition,
+        mockSourceSchema,
+        mockTargetSchema,
+        functionMock
+      );
 
-    // Compare YAML as parsed objects to disregard any comments
-    const reserializedMapDefinitionString: string = convertToMapDefinition(
-      deserializedConnectionDictionary,
-      mockSourceSchema,
-      mockTargetSchema
-    );
-    const reserializedMapDefinition: MapDefinitionEntry = yaml.load(reserializedMapDefinitionString) as MapDefinitionEntry;
+      // Compare YAML as parsed objects to disregard any comments
+      const reserializedMapDefinitionString: string = convertToMapDefinition(
+        deserializedConnectionDictionary,
+        mockSourceSchema,
+        mockTargetSchema
+      );
 
-    it('Map definition data was able to be serialized', () => {
+      const reserializedMapDefinition: MapDefinitionEntry = yaml.load(reserializedMapDefinitionString) as MapDefinitionEntry;
+
       // NOTE: Will be undefined if string === '', which happens when there's an issue w/ serialization
       expect(reserializedMapDefinition).toBeDefined();
-    });
 
-    it('Deserializing then re-serializing produces the same map definition', () => {
       // NOTE: toEqual will log the specific properties/values that differ
       expect(reserializedMapDefinition).toEqual(mockTranscriptMapDefinition);
     });

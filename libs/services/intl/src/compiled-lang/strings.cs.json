@@ -2187,6 +2187,12 @@
       "value": "Add"
     }
   ],
+  "FBNevf": [
+    {
+      "type": 0,
+      "value": "Go To Operation"
+    }
+  ],
   "FDF4Qb": [
     {
       "type": 0,
@@ -5699,6 +5705,12 @@
     {
       "type": 0,
       "value": "Asynchronní odpověď"
+    }
+  ],
+  "i0XjL5": [
+    {
+      "type": 0,
+      "value": "Search for operation"
     }
   ],
   "i1Tufp": [
