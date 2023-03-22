@@ -6,4 +6,5 @@ export type { RootState, AppDispatch } from './store';
 export { store } from './store';
 export { discardAllChanges } from './state/workflow/workflowSlice';
 export { serializeWorkflow } from './actions/bjsworkflow/serializer';
-export { switchToWorkflowParameters } from './state/panel/panelSlice';
+export { clearPanel, switchToWorkflowParameters } from './state/panel/panelSlice';
+export { useSelectedNodeId } from './state/panel/panelSelectors';
