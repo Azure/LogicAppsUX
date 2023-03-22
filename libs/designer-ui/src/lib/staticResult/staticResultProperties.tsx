@@ -2,18 +2,31 @@ import type { ChangeState, DropdownItem, StaticResultRootSchemaType, ValueSegmen
 import { Label, ValueSegmentType, DropdownEditor } from '..';
 import { StaticResultProperty } from './staticResultProperty';
 import { capitalizeFirstLetter, guid } from '@microsoft/utils-logic-apps';
-import { useState } from 'react';
+import isEqual from 'lodash.isequal';
+import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 interface StaticResultPropertiesProps {
   propertiesSchema: StaticResultRootSchemaType;
-  required?: string[];
-  additionalProperties?: boolean;
+  required: string[];
+  additionalPropertiesSchema?: boolean;
+  propertyValues: OpenAPIV2.SchemaObject;
+  setPropertyValues: (newPropertyValue: OpenAPIV2.SchemaObject) => void;
 }
 
-export const StaticResultProperties = ({ propertiesSchema, required = [] }: StaticResultPropertiesProps): JSX.Element => {
+export const StaticResultProperties = ({
+  propertiesSchema,
+  required = [],
+  propertyValues,
+  setPropertyValues,
+}: StaticResultPropertiesProps): JSX.Element => {
+  useEffect(() => {
+    console.log(propertyValues);
+  }, [propertyValues]);
   const intl = useIntl();
-  const [shownProperties, setShownProperties] = useState<Record<string, boolean>>(initializeShownProperties(required, propertiesSchema));
+  const [shownProperties, setShownProperties] = useState<Record<string, boolean>>(
+    initializeShownProperties(required, propertiesSchema, propertyValues)
+  );
 
   const updateShownProperties = (newState: ChangeState) => {
     const updatedProperties: Record<string, boolean> = {};
@@ -22,6 +35,12 @@ export const StaticResultProperties = ({ propertiesSchema, required = [] }: Stat
       updatedProperties[propertyName] = checkedValues.includes(propertyName);
     });
     setShownProperties(updatedProperties);
+  };
+
+  const updatePropertyValues = (propertyName: string, newPropertyValue: any) => {
+    if (!isEqual(propertyValues[propertyName], newPropertyValue)) {
+      setPropertyValues({ ...propertyValues, [propertyName]: newPropertyValue });
+    }
   };
 
   const fieldLabels = intl.formatMessage({
@@ -44,18 +63,28 @@ export const StaticResultProperties = ({ propertiesSchema, required = [] }: Stat
       </div>
       {Object.entries(shownProperties).map(([propertyName, showProperty], key) => {
         return showProperty && propertiesSchema[propertyName] ? (
-          <StaticResultProperty schema={propertiesSchema[propertyName]} key={key} required={required.includes(propertyName)} />
+          <StaticResultProperty
+            schema={propertiesSchema[propertyName]}
+            key={key}
+            required={required.includes(propertyName)}
+            properties={propertyValues[propertyName]}
+            updateParentProperties={(newPropertyValue: any) => updatePropertyValues(propertyName, newPropertyValue)}
+          />
         ) : null;
       })}
     </div>
   );
 };
 
-const initializeShownProperties = (required: string[], propertiesSchema?: StaticResultRootSchemaType): Record<string, boolean> => {
+const initializeShownProperties = (
+  required: string[],
+  propertiesSchema: StaticResultRootSchemaType,
+  propertyValues: OpenAPIV2.SchemaObject
+): Record<string, boolean> => {
   const shownProperties: Record<string, boolean> = {};
   if (propertiesSchema) {
     Object.keys(propertiesSchema).forEach((propertyName) => {
-      shownProperties[propertyName] = required.indexOf(propertyName) > -1;
+      shownProperties[propertyName] = required.indexOf(propertyName) > -1 || propertyValues[propertyName];
     });
   }
   return shownProperties;

@@ -1,9 +1,9 @@
-import constants from '../constants';
-import { StaticResultProperties } from './staticResultProperties';
+import { StaticResult } from './StaticResult';
 import type { IButtonStyles } from '@fluentui/react';
-import { DefaultButton, Icon, PrimaryButton, Toggle, useTheme } from '@fluentui/react';
+import { DefaultButton, PrimaryButton, Toggle } from '@fluentui/react';
 import type { Schema } from '@microsoft/parsers-logic-apps';
-import { useMemo, useState } from 'react';
+import isEqual from 'lodash.isequal';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const actionButtonStyles: IButtonStyles = {
@@ -21,13 +21,13 @@ export enum StaticResultOption {
 }
 export type StaticResultChangeHandler = (newState: OpenAPIV2.SchemaObject, staticResultOption: StaticResultOption) => void;
 
-export interface StaticResultProps {
-  title?: string;
+export interface StaticResultContainerProps {
   enabled?: boolean;
   staticResultSchema: OpenAPIV2.SchemaObject;
-  currProperties: OpenAPIV2.SchemaObject;
-  isRoot?: boolean;
+  properties: OpenAPIV2.SchemaObject;
   savePropertiesCallback?: StaticResultChangeHandler;
+  // prop only passed to inner StaticResults
+  updateParentProperties?: (input: any) => void;
 }
 
 export type StaticResultRootSchemaType = OpenAPIV2.SchemaObject & {
@@ -39,18 +39,24 @@ export type StaticResultRootSchemaType = OpenAPIV2.SchemaObject & {
   };
 };
 
-export const StaticResult = ({
-  title,
+export const StaticResultContainer = ({
   enabled = false,
   staticResultSchema,
-  isRoot = true,
-  currProperties,
+  properties,
+  updateParentProperties,
   savePropertiesCallback,
-}: StaticResultProps): JSX.Element => {
+}: StaticResultContainerProps): JSX.Element => {
   const intl = useIntl();
-  const { isInverted } = useTheme();
+
   const [showStaticResults, setShowStaticResults] = useState<boolean>(enabled);
-  const [expanded, setExpanded] = useState(true);
+  const [propertyValues, setPropertyValues] = useState(properties);
+
+  useEffect(() => {
+    // we want to update parentProps whenever our inner properties change
+    if (!isEqual(propertyValues, properties)) {
+      updateParentProperties?.(propertyValues);
+    }
+  }, [properties, propertyValues, updateParentProperties]);
 
   const toggleLabelOn = intl.formatMessage({
     defaultMessage: 'Disable Static Result',
@@ -60,16 +66,6 @@ export const StaticResult = ({
   const toggleLabelOff = intl.formatMessage({
     defaultMessage: 'Enable Static Result',
     description: 'Label for toggle to enable static result',
-  });
-
-  const expandLabel = intl.formatMessage({
-    defaultMessage: 'Expand Static Result',
-    description: 'An accessible label for expand toggle icon',
-  });
-
-  const collapseLabel = intl.formatMessage({
-    defaultMessage: 'Collapse Static Result',
-    description: 'An accessible label for collapse toggle icon',
   });
 
   const testingTitle = intl.formatMessage({
@@ -88,7 +84,7 @@ export const StaticResult = ({
   });
 
   const saveStaticResults = () => {
-    savePropertiesCallback?.(currProperties, showStaticResults ? StaticResultOption.ENABLED : StaticResultOption.DISABLED);
+    savePropertiesCallback?.(propertyValues, showStaticResults ? StaticResultOption.ENABLED : StaticResultOption.DISABLED);
   };
 
   const cancelStaticResults = () => {
@@ -99,57 +95,47 @@ export const StaticResult = ({
     return showStaticResults ? toggleLabelOff : toggleLabelOn;
   };
 
-  const { properties, additionalProperties, required } = useMemo(() => {
+  const {
+    properties: propertiesSchema,
+    additionalProperties: additionalPropertiesSchema,
+    required,
+  } = useMemo(() => {
     return parseStaticResultSchema(staticResultSchema);
   }, [staticResultSchema]);
 
   return (
     <div className="msla-panel-testing-container">
-      {isRoot ? (
-        <Toggle
-          checked={showStaticResults}
-          label={getLabel()}
-          onChange={() => {
-            setShowStaticResults(!showStaticResults);
-          }}
+      <Toggle
+        checked={showStaticResults}
+        label={getLabel()}
+        onChange={() => {
+          setShowStaticResults(!showStaticResults);
+        }}
+      />
+      {showStaticResults ? (
+        <StaticResult
+          title={testingTitle}
+          required={required}
+          propertiesSchema={propertiesSchema}
+          additionalPropertiesSchema={additionalPropertiesSchema}
+          propertyValues={propertyValues}
+          setPropertyValues={setPropertyValues}
         />
       ) : null}
-      {showStaticResults || !isRoot ? (
-        <div className="msla-static-result-container">
-          <button className="msla-static-result-container-header" onClick={() => setExpanded(!expanded)}>
-            <Icon
-              className="msla-static-result-container-header-icon"
-              ariaLabel={expanded ? `${expandLabel}` : `${collapseLabel}`}
-              iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
-              styles={{ root: { fontSize: 14, color: isInverted ? constants.STANDARD_TEXT_COLOR : constants.CHEVRON_ROOT_COLOR_LIGHT } }}
-            />
-            <div className="msla-static-result-container-header-text">{title ?? testingTitle}</div>
-          </button>
-          {expanded ? (
-            <StaticResultProperties
-              propertiesSchema={properties as StaticResultRootSchemaType}
-              required={required}
-              additionalProperties={!!additionalProperties}
-            />
-          ) : null}
-        </div>
-      ) : null}
-      {isRoot ? (
-        <div className="msla-static-result-actions">
-          <PrimaryButton
-            className={'msla-static-result-action-button'}
-            text={saveButtonLabel}
-            onClick={saveStaticResults}
-            styles={actionButtonStyles}
-          />
-          <DefaultButton
-            className={'msla-static-result-action-button'}
-            text={cancelButtonLabel}
-            onClick={cancelStaticResults}
-            styles={actionButtonStyles}
-          />
-        </div>
-      ) : null}
+      <div className="msla-static-result-actions">
+        <PrimaryButton
+          className={'msla-static-result-action-button'}
+          text={saveButtonLabel}
+          onClick={saveStaticResults}
+          styles={actionButtonStyles}
+        />
+        <DefaultButton
+          className={'msla-static-result-action-button'}
+          text={cancelButtonLabel}
+          onClick={cancelStaticResults}
+          styles={actionButtonStyles}
+        />
+      </div>
     </div>
   );
 };

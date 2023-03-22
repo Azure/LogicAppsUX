@@ -117,7 +117,8 @@
         "outputs": {
           "body": "hi"
         },
-        "status": "Succeeded"
+        "code": "this is a test",
+        "status": "Failed"
       },
       "HTTP0": {
         "outputs": {

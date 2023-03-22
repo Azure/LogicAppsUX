@@ -9,7 +9,7 @@ import { useOperationInfo } from '../../../../core/state/selectors/actionMetadat
 import { useStaticResultProperties, useStaticResultSchema } from '../../../../core/state/staticresultschema/staitcresultsSelector';
 import { updateProperties } from '../../../../core/state/staticresultschema/staticresultsSlice';
 import type { PanelTab } from '@microsoft/designer-ui';
-import { StaticResult } from '@microsoft/designer-ui';
+import { StaticResultContainer } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -34,10 +34,9 @@ export const TestingPanel: React.FC = () => {
   );
 
   return staticResultSchema ? (
-    <StaticResult
-      currProperties={properties as OpenAPIV2.SchemaObject}
+    <StaticResultContainer
+      properties={properties as OpenAPIV2.SchemaObject}
       staticResultSchema={staticResultSchema}
-      isRoot={true}
       enabled={staticResultOptions === StaticResultOption.ENABLED ?? false}
       savePropertiesCallback={(newPropertyState: OpenAPIV2.SchemaObject, staticResultOption: StaticResultOption) =>
         saveProperties(newPropertyState, staticResultOption)
