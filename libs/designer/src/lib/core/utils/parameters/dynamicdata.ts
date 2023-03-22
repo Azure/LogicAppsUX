@@ -403,8 +403,7 @@ function getManifestBasedInputParameters(
           OpenApi:   inputs.$.foo.foo/bar.foo/bar/baz    => foo/bar/baz
       */
       let inputPath = inputParameter.key.replace(`${keyPrefix}.`, '');
-      const segments = splitEx(inputPath);
-      if (isOpenApiKeyPath(segments)) inputPath = segments?.at(-1) ?? '';
+      if (isOpenApiParameter(inputParameter)) inputPath = splitEx(inputPath)?.at(-1) ?? '';
       clonedInputParameter.value = stepInputsAreNonEmptyObject ? getObjectValue(inputPath, stepInputs) : undefined;
     }
     result.push(clonedInputParameter);
@@ -582,7 +581,6 @@ function getSwaggerTypeFromVariableType(variableType: string): string | undefine
   }
 }
 
-function isOpenApiKeyPath(arr: string[]): boolean {
-  for (let i = 0; i < arr.length - 1; i++) if (!arr[i + 1].startsWith(`${arr[i]}/`)) return false;
-  return true;
+function isOpenApiParameter(param: InputParameter): boolean {
+  return !!param?.alias;
 }
