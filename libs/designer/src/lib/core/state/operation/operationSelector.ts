@@ -23,6 +23,25 @@ export const getOperationInputParameters = (rootState: RootState, nodeId: string
   return allParameters;
 };
 
+export const useTokenDependencies = (nodeId: string) =>
+  useSelector((rootState: RootState) => {
+    const operationInputParameters = rootState.operations.inputParameters[nodeId];
+    if (!operationInputParameters) {
+      return new Set();
+    }
+    const dependencies = new Set();
+    for (const group of Object.values(operationInputParameters.parameterGroups)) {
+      for (const parameter of group.parameters) {
+        for (const value of parameter.value) {
+          if (value.token?.actionName) {
+            dependencies.add(value.token.actionName);
+          }
+        }
+      }
+    }
+    return dependencies;
+  });
+
 export const useParameterValidationErrors = (nodeId: string) => {
   return useSelector((rootState: RootState) => {
     const allParameters = getOperationInputParameters(rootState, nodeId);
