@@ -456,11 +456,7 @@ interface FunctionConnectionInfo {
 }
 
 interface OpenApiConnectionInfo {
-  host: {
-    apiId: string;
-    connectionName: string;
-    operationId: string;
-  };
+  host: LogicAppsV2.OpenApiConnectionHost;
 }
 
 interface ServiceProviderConnectionConfigInfo {
@@ -502,9 +498,9 @@ const serializeHost = (
       return {
         host: {
           apiId: connectorId,
-          connectionName: referenceKey,
+          connection: referenceKey,
           operationId,
-        }
+        },
       };
     case ConnectionReferenceKeyFormat.ServiceProvider:
       return {
