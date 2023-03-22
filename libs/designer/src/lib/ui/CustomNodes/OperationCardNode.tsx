@@ -4,7 +4,7 @@ import type { AppDispatch } from '../../core';
 import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useParameterValidationErrors } from '../../core/state/operation/operationSelector';
+import { useParameterValidationErrors, useTokenDependencies } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
 import {
@@ -48,6 +48,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun } = metadata?.runData ?? {};
 
+  const dependencies = useTokenDependencies(id);
+
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
       type: 'BOX',
@@ -70,6 +72,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       },
       item: {
         id: id,
+        dependencies,
+        graphId: metadata?.graphId,
       },
       canDrag: !readOnly && !isTrigger,
       collect: (monitor) => ({

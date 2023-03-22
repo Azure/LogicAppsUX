@@ -1,5 +1,5 @@
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
-import { useAllGraphParents } from '../../core/state/workflow/workflowSelectors';
+import { useAllGraphParents, useGetAllAncestors, useNodeGraphId } from '../../core/state/workflow/workflowSelectors';
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
@@ -48,12 +48,22 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
   }, [dispatch, graphId, parentId]);
 
   const graphParents = useAllGraphParents(graphId);
-
+  const allAncestors = useGetAllAncestors(childId ?? '');
+  const parentGID = useNodeGraphId(parentId ?? '');
+  const childGID = useNodeGraphId(childId ?? '');
   const [{ isOver, canDrop }, drop] = useDrop(
     () => ({
       accept: 'BOX',
       drop: () => ({ graphId, parentId, childId }),
-      canDrop: (item: any) => {
+      canDrop: (item: { id: string; dependencies?: string[]; graphId?: string }) => {
+        if (item.graphId !== parentGID && item.graphId !== childGID) {
+          return false;
+        }
+        for (const dec of item.dependencies ?? []) {
+          if (!allAncestors.has(dec)) {
+            return false;
+          }
+        }
         if (graphParents.includes(item.id)) return false;
         return item.id !== childId && item.id !== parentId;
       },
