@@ -455,6 +455,14 @@ interface FunctionConnectionInfo {
   };
 }
 
+interface OpenApiConnectionInfo {
+  host: {
+    apiId: string;
+    connectionName: string;
+    operationId: string;
+  };
+}
+
 interface ServiceProviderConnectionConfigInfo {
   serviceProviderConfiguration: {
     connectionName: string;
@@ -467,7 +475,7 @@ const serializeHost = (
   nodeId: string,
   manifest: OperationManifest,
   rootState: RootState
-): FunctionConnectionInfo | ApiManagementConnectionInfo | ServiceProviderConnectionConfigInfo | undefined => {
+): FunctionConnectionInfo | ApiManagementConnectionInfo | OpenApiConnectionInfo | ServiceProviderConnectionConfigInfo | undefined => {
   if (!manifest.properties.connectionReference) {
     return undefined;
   }
@@ -489,6 +497,14 @@ const serializeHost = (
         apiManagement: {
           connection: referenceKey,
         },
+      };
+    case ConnectionReferenceKeyFormat.OpenApi:
+      return {
+        host: {
+          apiId: connectorId,
+          connectionName: referenceKey,
+          operationId,
+        }
       };
     case ConnectionReferenceKeyFormat.ServiceProvider:
       return {
