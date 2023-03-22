@@ -7,11 +7,14 @@ import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
 export const useConnector = (connectorId: string) => {
+  const { data, ...rest } = useConnectorAndSwagger(connectorId);
+  return { data: data?.connector, ...rest };
+};
+export const useConnectorAndSwagger = (connectorId: string) => {
   return useQuery(
     ['apiWithSwaggers', { connectorId }],
     async () => {
-      const { connector } = await ConnectionService().getConnectorAndSwagger(connectorId);
-      return connector;
+      return await ConnectionService().getConnectorAndSwagger(connectorId);
     },
     {
       enabled: !!connectorId,
