@@ -11,10 +11,12 @@ export interface ApiServiceOptions {
 export class ApiService implements IApiService {
   private options: ApiServiceOptions;
   private graphApiUri: string;
+  private baseGraphApi: string;
 
   constructor(options: ApiServiceOptions) {
     this.options = options;
-    this.graphApiUri = `${this.getGraphApi()}providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01`;
+    this.baseGraphApi = this.getGraphApi();
+    this.graphApiUri = `${this.baseGraphApi}providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01`;
   }
 
   private getGraphApi = () => {
@@ -179,7 +181,7 @@ export class ApiService implements IApiService {
 
   async getAllRegionWithDisplayName(subscriptionId: string): Promise<any[]> {
     const headers = this.getAccessTokenHeaders();
-    const url = `https://management.azure.com/subscriptions/${subscriptionId}/locations?api-version=2022-05-01`;
+    const url = `${this.baseGraphApi}subscriptions/${subscriptionId}/locations?api-version=2022-05-01`;
     const response = await fetch(url, { headers, method: 'GET' });
 
     if (!response.ok) {
@@ -238,7 +240,7 @@ export class ApiService implements IApiService {
     selectedAdvanceOptions: AdvancedOptionsTypes[]
   ) {
     const headers = this.getAccessTokenHeaders();
-    const validationUri = getExportUri(selectedSubscription, selectedLocation, true);
+    const validationUri = getExportUri(selectedSubscription, selectedLocation, true, this.baseGraphApi);
     const workflowExportOptions = selectedAdvanceOptions.join(',');
     const validationPayload = getValidationPayload(selectedWorkflows, workflowExportOptions);
     const response = await fetch(validationUri, { headers, method: 'POST', body: JSON.stringify(validationPayload) });
@@ -265,7 +267,7 @@ export class ApiService implements IApiService {
     selectedAdvanceOptions: AdvancedOptionsTypes[]
   ) {
     const headers = this.getAccessTokenHeaders();
-    const exportUri = getExportUri(selectedSubscription, selectedLocation, false);
+    const exportUri = getExportUri(selectedSubscription, selectedLocation, false, this.baseGraphApi);
     const workflowExportOptions = selectedAdvanceOptions.join(',');
     const exportPayload = getValidationPayload(selectedWorkflows, workflowExportOptions);
     const response = await fetch(exportUri, { headers, method: 'POST', body: JSON.stringify(exportPayload) });

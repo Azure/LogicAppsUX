@@ -104,6 +104,7 @@ export const InstanceSelection: React.FC = () => {
   } = useQuery<any>([QueryKeys.regionData, { subscriptionId: selectedSubscription }], loadRegion, {
     refetchOnWindowFocus: false,
     enabled: selectedSubscription !== '',
+    retry: 4,
   });
 
   const {
@@ -113,6 +114,7 @@ export const InstanceSelection: React.FC = () => {
   } = useQuery<any>([QueryKeys.iseData, { subscriptionId: selectedSubscription }], loadIse, {
     refetchOnWindowFocus: false,
     enabled: selectedSubscription !== '',
+    retry: 4,
   });
 
   const onChangeSubscriptions = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {

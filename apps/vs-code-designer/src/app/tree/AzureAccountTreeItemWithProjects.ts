@@ -59,7 +59,7 @@ export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
     return new SubscriptionTreeItem(this, root);
   }
 
-  public async getAccountCredentials(tenantId?: string): Promise<ServiceClientCredentials | undefined> {
+  public async getAccountCredentials(tenantId?: string): Promise<any | undefined> {
     const extension = extensions.getExtension('ms-vscode.azure-account');
     if (extension) {
       if (!extension.isActive) {
