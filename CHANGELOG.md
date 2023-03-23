@@ -1,5 +1,11 @@
 # Logic Apps Designer
 
+### [2.0.5](https://github.com/Azure/LogicAppsUX/compare/v2.0.4...v2.0.5) (2023-03-23)
+
+### Logic Apps Designer Bug Fixes
+
+- Dynamic Data value initialization fix ([#1799](https://github.com/Azure/LogicAppsUX/issues/1799)) ([dd3750c](https://github.com/Azure/LogicAppsUX/commit/dd3750cdaad8d966c4e0117f4954854dd0e521e6))
+
 ### [2.0.4](https://github.com/Azure/LogicAppsUX/compare/v2.0.3...v2.0.4) (2023-03-22)
 
 ### [2.0.3](https://github.com/Azure/LogicAppsUX/compare/v2.0.2...v2.0.3) (2023-03-21)

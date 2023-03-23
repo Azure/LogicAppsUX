@@ -69,6 +69,14 @@ export function parseEx(key: string | null | undefined): Segment[] {
   return key.split(_separator).map(_decodeSegment);
 }
 
+export function splitEx(key: string | null | undefined): string[] {
+  if (isNullOrUndefined(key)) {
+    return [];
+  }
+
+  return key.split(_separator);
+}
+
 export function encodePropertySegment(segment: string): string {
   segment = _replaceCharacter(segment, _escapeCharacter, _encodedEscapeCharacter);
   _codeBook.forEach((entry) => {
