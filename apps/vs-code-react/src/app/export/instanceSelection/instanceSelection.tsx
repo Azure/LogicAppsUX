@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export const InstanceSelection: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
-  const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
+  const { baseUrl, accessToken, exportData, cloudHost } = vscodeState as InitializedVscodeState;
   const { selectedSubscription, selectedIse, location } = exportData;
 
   const intl = useIntl();
@@ -75,8 +75,9 @@ export const InstanceSelection: React.FC = () => {
     return new ApiService({
       baseUrl,
       accessToken,
+      cloudHost,
     });
-  }, [accessToken, baseUrl]);
+  }, [accessToken, baseUrl, cloudHost]);
 
   const loadSubscriptions = () => {
     return apiService.getSubscriptions();

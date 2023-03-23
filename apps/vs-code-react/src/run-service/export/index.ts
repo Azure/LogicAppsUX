@@ -5,16 +5,36 @@ import { getValidationPayload, getExportUri } from './helper';
 export interface ApiServiceOptions {
   baseUrl?: string;
   accessToken?: string;
+  cloudHost?: string;
 }
-
-const graphApiUri = 'https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01';
 
 export class ApiService implements IApiService {
   private options: ApiServiceOptions;
+  private graphApiUri: string;
 
   constructor(options: ApiServiceOptions) {
     this.options = options;
+    this.graphApiUri = `${this.getGraphApi()}providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01`;
   }
+
+  private getGraphApi = () => {
+    const { cloudHost } = this.options;
+    if (!cloudHost) {
+      return 'https://management.azure.com/';
+    } else if (cloudHost.endsWith('.usgovcloudapi.net')) {
+      return 'https://management.usgovcloudapi.net/';
+    } else if (cloudHost.endsWith('.windows.net')) {
+      return 'https://management.azure.com/';
+    } else if (cloudHost.endsWith('.chinacloudapi.cn')) {
+      return 'https://management.chinacloudapi.cn/';
+    } else if (cloudHost.endsWith('.eaglex.ic.gov')) {
+      return 'https://management.azure.eaglex.ic.gov/';
+    } else if (cloudHost.endsWith('.microsoft.scloud')) {
+      return 'https://management.azure.microsoft.scloud/';
+    } else {
+      return 'https://management.azure.com/';
+    }
+  };
 
   private getAccessTokenHeaders = () => {
     const { accessToken } = this.options;
@@ -92,7 +112,7 @@ export class ApiService implements IApiService {
         location,
         skipToken,
       });
-      const response = await fetch(graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+      const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
 
       if (!response.ok) {
         throw new Error(`${response.status} ${response.statusText}`);
@@ -130,7 +150,7 @@ export class ApiService implements IApiService {
   async getSubscriptions(): Promise<any> {
     const headers = this.getAccessTokenHeaders();
     const payload = this.getPayload(ResourceType.subscriptions);
-    const response = await fetch(graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+    const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
 
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
@@ -145,7 +165,7 @@ export class ApiService implements IApiService {
   async getIse(selectedSubscription: string): Promise<any> {
     const headers = this.getAccessTokenHeaders();
     const payload = this.getPayload(ResourceType.ise, { selectedSubscription: selectedSubscription });
-    const response = await fetch(graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+    const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
 
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
@@ -178,7 +198,7 @@ export class ApiService implements IApiService {
         $top: 1000,
       },
     };
-    const response = await fetch(graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+    const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
 
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
@@ -261,7 +281,7 @@ export class ApiService implements IApiService {
   async getResourceGroups(selectedSubscription: string): Promise<any> {
     const headers = this.getAccessTokenHeaders();
     const payload = this.getPayload(ResourceType.resourcegroups, { selectedSubscription: selectedSubscription });
-    const response = await fetch(graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+    const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
 
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
