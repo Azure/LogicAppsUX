@@ -31,6 +31,7 @@ import type {
 } from '@microsoft/parsers-logic-apps';
 import {
   parseEx,
+  splitEx,
   removeConnectionPrefix,
   isLegacyDynamicValuesExtension,
   ExtensionProperties,
@@ -403,11 +404,13 @@ function getManifestBasedInputParameters(
       // Load the entire input if the key is the entire input.
       clonedInputParameter.value = stepInputs;
     } else {
-      // Compare the object value with the last segment of the key.
-      // If the key is something simple like 'inputs.$.foo', we take just 'foo'.
-      // If the key is something complex like 'inputs.$.foo.foo/bar.foo/bar/baz', we take 'foo/bar/baz'.
-      const parsedKey = parseEx(inputParameter.key.replace(`${keyPrefix}.`, ''));
-      const inputPath = `${parsedKey.pop()?.value}`;
+      /*
+        We have two formats to support:
+          Default:   inputs.$.foo.bar.baz                => foo.bar.baz
+          OpenApi:   inputs.$.foo.foo/bar.foo/bar/baz    => foo/bar/baz
+      */
+      let inputPath = inputParameter.key.replace(`${keyPrefix}.`, '');
+      if (isOpenApiParameter(inputParameter)) inputPath = splitEx(inputPath)?.at(-1) ?? '';
       clonedInputParameter.value = stepInputsAreNonEmptyObject ? getObjectValue(inputPath, stepInputs) : undefined;
     }
     result.push(clonedInputParameter);
@@ -583,4 +586,8 @@ function getSwaggerTypeFromVariableType(variableType: string): string | undefine
     default:
       return undefined;
   }
+}
+
+function isOpenApiParameter(param: InputParameter): boolean {
+  return !!param?.alias;
 }

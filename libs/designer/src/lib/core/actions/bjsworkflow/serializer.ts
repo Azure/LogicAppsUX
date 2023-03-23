@@ -464,6 +464,10 @@ interface FunctionConnectionInfo {
   };
 }
 
+interface OpenApiConnectionInfo {
+  host: LogicAppsV2.OpenApiConnectionHost;
+}
+
 interface ServiceProviderConnectionConfigInfo {
   serviceProviderConfiguration: {
     connectionName: string;
@@ -476,7 +480,7 @@ const serializeHost = (
   nodeId: string,
   manifest: OperationManifest,
   rootState: RootState
-): FunctionConnectionInfo | ApiManagementConnectionInfo | ServiceProviderConnectionConfigInfo | undefined => {
+): FunctionConnectionInfo | ApiManagementConnectionInfo | OpenApiConnectionInfo | ServiceProviderConnectionConfigInfo | undefined => {
   if (!manifest.properties.connectionReference) {
     return undefined;
   }
@@ -497,6 +501,14 @@ const serializeHost = (
       return {
         apiManagement: {
           connection: referenceKey,
+        },
+      };
+    case ConnectionReferenceKeyFormat.OpenApi:
+      return {
+        host: {
+          apiId: connectorId,
+          connection: referenceKey,
+          operationId,
         },
       };
     case ConnectionReferenceKeyFormat.ServiceProvider:
