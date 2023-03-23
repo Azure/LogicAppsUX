@@ -1,8 +1,8 @@
 import type { WorkflowsList } from '../types';
 
-export const getExportUri = (selectedSubscription: string, location: string, isValidation: boolean) => {
+export const getExportUri = (selectedSubscription: string, location: string, isValidation: boolean, baseGraphApi: string) => {
   const exportStep = isValidation ? 'Validate' : '';
-  return `https://management.azure.com/subscriptions/${selectedSubscription}/providers/Microsoft.Logic/locations/${location}/${exportStep}WorkflowExport?api-version=2022-09-01-preview`;
+  return `${baseGraphApi}/subscriptions/${selectedSubscription}/providers/Microsoft.Logic/locations/${location}/${exportStep}WorkflowExport?api-version=2022-09-01-preview`;
 };
 
 export const getValidationPayload = (selectedWorkflows: Array<WorkflowsList>, workflowExportOptions: string) => {

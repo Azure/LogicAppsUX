@@ -1,19 +1,23 @@
 import { ResourceType } from '../types';
 import type { IApiService, WorkflowsList, ISummaryData, IRegion, GraphApiOptions, AdvancedOptionsTypes } from '../types';
 import { getValidationPayload, getExportUri } from './helper';
+import { getBaseGraphApi } from '@microsoft/vscode-extension';
 
 export interface ApiServiceOptions {
   baseUrl?: string;
   accessToken?: string;
+  cloudHost?: string;
 }
-
-const graphApiUri = 'https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01';
 
 export class ApiService implements IApiService {
   private options: ApiServiceOptions;
+  private graphApiUri: string;
+  private baseGraphApi: string;
 
   constructor(options: ApiServiceOptions) {
     this.options = options;
+    this.baseGraphApi = getBaseGraphApi(options.cloudHost);
+    this.graphApiUri = `${this.baseGraphApi}/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01`;
   }
 
   private getAccessTokenHeaders = () => {
@@ -92,7 +96,7 @@ export class ApiService implements IApiService {
         location,
         skipToken,
       });
-      const response = await fetch(graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+      const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
 
       if (!response.ok) {
         throw new Error(`${response.status} ${response.statusText}`);
@@ -130,7 +134,7 @@ export class ApiService implements IApiService {
   async getSubscriptions(): Promise<any> {
     const headers = this.getAccessTokenHeaders();
     const payload = this.getPayload(ResourceType.subscriptions);
-    const response = await fetch(graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+    const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
 
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
@@ -145,7 +149,7 @@ export class ApiService implements IApiService {
   async getIse(selectedSubscription: string): Promise<any> {
     const headers = this.getAccessTokenHeaders();
     const payload = this.getPayload(ResourceType.ise, { selectedSubscription: selectedSubscription });
-    const response = await fetch(graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+    const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
 
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
@@ -159,7 +163,7 @@ export class ApiService implements IApiService {
 
   async getAllRegionWithDisplayName(subscriptionId: string): Promise<any[]> {
     const headers = this.getAccessTokenHeaders();
-    const url = `https://management.azure.com/subscriptions/${subscriptionId}/locations?api-version=2022-05-01`;
+    const url = `${this.baseGraphApi}/subscriptions/${subscriptionId}/locations?api-version=2022-05-01`;
     const response = await fetch(url, { headers, method: 'GET' });
 
     if (!response.ok) {
@@ -178,7 +182,7 @@ export class ApiService implements IApiService {
         $top: 1000,
       },
     };
-    const response = await fetch(graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+    const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
 
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
@@ -218,7 +222,7 @@ export class ApiService implements IApiService {
     selectedAdvanceOptions: AdvancedOptionsTypes[]
   ) {
     const headers = this.getAccessTokenHeaders();
-    const validationUri = getExportUri(selectedSubscription, selectedLocation, true);
+    const validationUri = getExportUri(selectedSubscription, selectedLocation, true, this.baseGraphApi);
     const workflowExportOptions = selectedAdvanceOptions.join(',');
     const validationPayload = getValidationPayload(selectedWorkflows, workflowExportOptions);
     const response = await fetch(validationUri, { headers, method: 'POST', body: JSON.stringify(validationPayload) });
@@ -245,7 +249,7 @@ export class ApiService implements IApiService {
     selectedAdvanceOptions: AdvancedOptionsTypes[]
   ) {
     const headers = this.getAccessTokenHeaders();
-    const exportUri = getExportUri(selectedSubscription, selectedLocation, false);
+    const exportUri = getExportUri(selectedSubscription, selectedLocation, false, this.baseGraphApi);
     const workflowExportOptions = selectedAdvanceOptions.join(',');
     const exportPayload = getValidationPayload(selectedWorkflows, workflowExportOptions);
     const response = await fetch(exportUri, { headers, method: 'POST', body: JSON.stringify(exportPayload) });
@@ -261,7 +265,7 @@ export class ApiService implements IApiService {
   async getResourceGroups(selectedSubscription: string): Promise<any> {
     const headers = this.getAccessTokenHeaders();
     const payload = this.getPayload(ResourceType.resourcegroups, { selectedSubscription: selectedSubscription });
-    const response = await fetch(graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+    const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
 
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
