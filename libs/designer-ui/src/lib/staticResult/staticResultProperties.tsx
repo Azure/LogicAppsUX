@@ -10,7 +10,7 @@ interface StaticResultPropertiesProps {
   propertiesSchema: StaticResultRootSchemaType;
   required: string[];
   additionalPropertiesSchema?: boolean;
-  propertyValues: OpenAPIV2.SchemaObject;
+  propertyValues?: OpenAPIV2.SchemaObject;
   setPropertyValues: (newPropertyValue: OpenAPIV2.SchemaObject) => void;
 }
 
@@ -28,6 +28,10 @@ export const StaticResultProperties = ({
     initializeShownProperties(required, propertiesSchema, propertyValues)
   );
 
+  useEffect(() => {
+    initializeShownProperties(required, propertiesSchema, propertyValues);
+  }, [propertiesSchema, propertyValues, required]);
+
   const updateShownProperties = (newState: ChangeState) => {
     const updatedProperties: Record<string, boolean> = {};
     const checkedValues = newState.value[0].value.split(',');
@@ -38,7 +42,7 @@ export const StaticResultProperties = ({
   };
 
   const updatePropertyValues = (propertyName: string, newPropertyValue: any) => {
-    if (!isEqual(propertyValues[propertyName], newPropertyValue)) {
+    if (!isEqual(propertyValues?.[propertyName], newPropertyValue)) {
       setPropertyValues({ ...propertyValues, [propertyName]: newPropertyValue });
     }
   };
@@ -67,7 +71,7 @@ export const StaticResultProperties = ({
             schema={propertiesSchema[propertyName]}
             key={key}
             required={required.includes(propertyName)}
-            properties={propertyValues[propertyName]}
+            properties={propertyValues?.[propertyName]}
             updateParentProperties={(newPropertyValue: any) => updatePropertyValues(propertyName, newPropertyValue)}
           />
         ) : null;
@@ -79,14 +83,12 @@ export const StaticResultProperties = ({
 const initializeShownProperties = (
   required: string[],
   propertiesSchema: StaticResultRootSchemaType,
-  propertyValues: OpenAPIV2.SchemaObject
+  propertyValues?: OpenAPIV2.SchemaObject
 ): Record<string, boolean> => {
   const shownProperties: Record<string, boolean> = {};
-  if (propertiesSchema) {
-    Object.keys(propertiesSchema).forEach((propertyName) => {
-      shownProperties[propertyName] = required.indexOf(propertyName) > -1 || propertyValues[propertyName];
-    });
-  }
+  Object.keys(propertiesSchema).forEach((propertyName) => {
+    shownProperties[propertyName] = required.indexOf(propertyName) > -1 || propertyValues?.[propertyName];
+  });
   return shownProperties;
 };
 
