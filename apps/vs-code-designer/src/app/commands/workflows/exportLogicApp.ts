@@ -12,13 +12,13 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../utils/codeless/common';
-import { getAuthorizationToken } from '../../utils/codeless/getAuthorizationToken';
+import { getAuthorizationToken, getCloudHost } from '../../utils/codeless/getAuthorizationToken';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import { getRandomHexString } from '../../utils/fs';
 import { delay } from '@azure/ms-rest-js';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
-import { ExtensionCommand } from '@microsoft/vscode-extension';
+import { ExtensionCommand, getBaseGraphApi } from '@microsoft/vscode-extension';
 import { writeFileSync } from 'fs';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -58,7 +58,8 @@ class ExportEngine {
     private resourceGroupName: string,
     private location: string,
     private addStatus: (status: string) => void,
-    private setFinalStatus: (status: string) => void
+    private setFinalStatus: (status: string) => void,
+    private baseGraphUri: string
   ) {}
 
   public async export(): Promise<void> {
@@ -117,7 +118,7 @@ class ExportEngine {
   }
 
   private async getResourceGroup(): Promise<void> {
-    const uri = `https://management.azure.com/subscriptions/${this.subscriptionId}/resourcegroups/${this.resourceGroupName}?api-version=2021-04-01`;
+    const uri = `${this.baseGraphUri}/subscriptions/${this.subscriptionId}/resourcegroups/${this.resourceGroupName}?api-version=2021-04-01`;
     const options = {
       method: HTTP_METHODS.GET,
       uri,
@@ -132,7 +133,7 @@ class ExportEngine {
   }
 
   private async createResourceGroup(): Promise<void> {
-    const uri = `https://management.azure.com/subscriptions/${this.subscriptionId}/resourcegroups/${this.resourceGroupName}?api-version=2021-04-01`;
+    const uri = `${this.baseGraphUri}/subscriptions/${this.subscriptionId}/resourcegroups/${this.resourceGroupName}?api-version=2021-04-01`;
     const body = {
       location: this.location,
     };
@@ -152,7 +153,7 @@ class ExportEngine {
   }
 
   private async deployConnectionsTemplate(connectionsTemplate: any): Promise<ConnectionsDeploymentOutput> {
-    const uri = `https://management.azure.com/subscriptions/${this.subscriptionId}/resourcegroups/${
+    const uri = `${this.baseGraphUri}/subscriptions/${this.subscriptionId}/resourcegroups/${
       this.resourceGroupName
     }/providers/Microsoft.Resources/deployments/connections-${getRandomHexString(10)}?api-version=2021-04-01`;
     const body = {
@@ -224,7 +225,7 @@ class ExportEngine {
   private async getConnectionKey(connectionId: string): Promise<string> {
     const options = {
       method: HTTP_METHODS.POST,
-      uri: `https://management.azure.com${connectionId}/listConnectionKeys?api-version=2018-07-01-preview`,
+      uri: `${this.baseGraphUri}${connectionId}/listConnectionKeys?api-version=2018-07-01-preview`,
       headers: { authorization: this.getAccessToken() },
       body: { validityTimeSpan: '7' },
       json: true,
@@ -252,7 +253,7 @@ class ExportEngine {
   }
 
   private async getSubscription(): Promise<any> {
-    const uri = `https://management.azure.com/subscriptions/${this.subscriptionId}/?api-version=2021-04-01`;
+    const uri = `${this.baseGraphUri}/subscriptions/${this.subscriptionId}/?api-version=2021-04-01`;
     const options = {
       method: HTTP_METHODS.GET,
       uri,
@@ -286,7 +287,7 @@ class ExportEngine {
     localSettingsFile.Values[workflowSubscriptionIdKey] = this.subscriptionId;
     localSettingsFile.Values[workflowResourceGroupNameKey] = this.resourceGroupName;
     localSettingsFile.Values[workflowLocationKey] = this.location;
-    localSettingsFile.Values[workflowManagementBaseURIKey] = 'https://management.azure.com/';
+    localSettingsFile.Values[workflowManagementBaseURIKey] = `${this.baseGraphUri}/`;
 
     writeFileSync(`${this.targetDirectory}/parameters.json`, JSON.stringify(parametersFile, null, 4));
     writeFileSync(`${this.targetDirectory}/local.settings.json`, JSON.stringify(localSettingsFile, null, 4));
@@ -311,6 +312,7 @@ export async function exportLogicApp(): Promise<void> {
   const existingPanel: vscode.WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
 
   accessToken = await getAuthorizationToken(credentials);
+  const cloudHost = await getCloudHost(credentials);
 
   if (existingPanel) {
     if (!existingPanel.active) {
@@ -342,6 +344,7 @@ export async function exportLogicApp(): Promise<void> {
           data: {
             apiVersion,
             accessToken,
+            cloudHost,
             project: 'export',
           },
         });
@@ -377,6 +380,7 @@ export async function exportLogicApp(): Promise<void> {
       }
       case ExtensionCommand.export_package: {
         const { targetDirectory, packageUrl, selectedSubscription, resourceGroupName, location } = message;
+        const baseGraphUri = getBaseGraphApi(cloudHost);
         const engine = new ExportEngine(
           () => accessToken,
           packageUrl,
@@ -399,7 +403,8 @@ export async function exportLogicApp(): Promise<void> {
                 status,
               },
             });
-          }
+          },
+          baseGraphUri
         );
         engine.export();
         break;

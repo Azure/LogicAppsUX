@@ -59,7 +59,7 @@ export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
     return new SubscriptionTreeItem(this, root);
   }
 
-  public async getAccountCredentials(tenantId?: string): Promise<ServiceClientCredentials | undefined> {
+  public async getAccountCredentials(tenantId?: string): Promise<any | undefined> {
     const extension = extensions.getExtension('ms-vscode.azure-account');
     if (extension) {
       if (!extension.isActive) {
@@ -113,7 +113,7 @@ export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
       const tenantDetails = sessions.filter((session) => session.tenantId.toLowerCase() == tenantId);
       return tenantDetails.length ? tenantDetails[0].credentials2 : sessions[0].credentials2;
     } else {
-      return sessions[0].credentials;
+      return sessions[0].credentials2;
     }
   }
 }
