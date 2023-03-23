@@ -156,14 +156,17 @@ export const InstanceSelection: React.FC = () => {
   const ise: IDropdownOption[] = selectedSubscription !== '' && !isIseLoading && iseData ? parseIseData(iseData) : [];
   const regions: IDropdownOption[] = selectedSubscription !== '' && !isRegionLoading && regionData ? parseRegionData(regionData) : [];
 
-  const locations: IDropdownOption[] = [
-    { key: 'divider:ise', text: intlText.DIVIDER_ISE, itemType: DropdownMenuItemType.Divider },
-    { key: 'header:ise', text: intlText.DIVIDER_ISE, itemType: DropdownMenuItemType.Header },
-    ...ise,
-    { key: 'divider:regions', text: intlText.DIVIDER_REGIONS, itemType: DropdownMenuItemType.Divider },
-    { key: 'header:regions', text: intlText.DIVIDER_REGIONS, itemType: DropdownMenuItemType.Header },
-    ...regions,
-  ];
+  const locations: IDropdownOption[] =
+    ise.length || regions.length
+      ? [
+          { key: 'divider:ise', text: intlText.DIVIDER_ISE, itemType: DropdownMenuItemType.Divider },
+          { key: 'header:ise', text: intlText.DIVIDER_ISE, itemType: DropdownMenuItemType.Header },
+          ...ise,
+          { key: 'divider:regions', text: intlText.DIVIDER_REGIONS, itemType: DropdownMenuItemType.Divider },
+          { key: 'header:regions', text: intlText.DIVIDER_REGIONS, itemType: DropdownMenuItemType.Header },
+          ...regions,
+        ]
+      : [];
 
   const subscriptionLoading = accessToken === undefined ? true : isSubscriptionsLoading;
   const subscriptionPlaceholder = getDropdownPlaceholder(
@@ -174,7 +177,7 @@ export const InstanceSelection: React.FC = () => {
     intlText.LOADING
   );
 
-  const iseLoading = selectedSubscription === '' ? false : isIseLoading;
+  const iseLoading = selectedSubscription === '' ? false : isIseLoading || isRegionLoading;
   const isePlaceholder = getDropdownPlaceholder(
     iseLoading,
     locations.length,
