@@ -319,7 +319,7 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
               key: (setting.settingProp as any).id,
               text: (setting.settingProp as any).label,
             }))}
-            style={{ width: '80%', margin: '24px auto 0 auto' }}
+            style={{ margin: '24px auto 0 auto' }}
             selectedKeys={conditionalVisibilityTempArray}
             onChange={(_e: any, item: any) => {
               if (item?.key) {
