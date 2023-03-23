@@ -1,6 +1,7 @@
 import { ResourceType } from '../types';
 import type { IApiService, WorkflowsList, ISummaryData, IRegion, GraphApiOptions, AdvancedOptionsTypes } from '../types';
 import { getValidationPayload, getExportUri } from './helper';
+import { getBaseGraphApi } from '@microsoft/vscode-extension';
 
 export interface ApiServiceOptions {
   baseUrl?: string;
@@ -15,28 +16,9 @@ export class ApiService implements IApiService {
 
   constructor(options: ApiServiceOptions) {
     this.options = options;
-    this.baseGraphApi = this.getGraphApi();
-    this.graphApiUri = `${this.baseGraphApi}providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01`;
+    this.baseGraphApi = getBaseGraphApi(options.cloudHost);
+    this.graphApiUri = `${this.baseGraphApi}/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01`;
   }
-
-  private getGraphApi = () => {
-    const { cloudHost } = this.options;
-    if (!cloudHost) {
-      return 'https://management.azure.com/';
-    } else if (cloudHost.endsWith('.usgovcloudapi.net')) {
-      return 'https://management.usgovcloudapi.net/';
-    } else if (cloudHost.endsWith('.windows.net')) {
-      return 'https://management.azure.com/';
-    } else if (cloudHost.endsWith('.chinacloudapi.cn')) {
-      return 'https://management.chinacloudapi.cn/';
-    } else if (cloudHost.endsWith('.eaglex.ic.gov')) {
-      return 'https://management.azure.eaglex.ic.gov/';
-    } else if (cloudHost.endsWith('.microsoft.scloud')) {
-      return 'https://management.azure.microsoft.scloud/';
-    } else {
-      return 'https://management.azure.com/';
-    }
-  };
 
   private getAccessTokenHeaders = () => {
     const { accessToken } = this.options;
@@ -181,7 +163,7 @@ export class ApiService implements IApiService {
 
   async getAllRegionWithDisplayName(subscriptionId: string): Promise<any[]> {
     const headers = this.getAccessTokenHeaders();
-    const url = `${this.baseGraphApi}subscriptions/${subscriptionId}/locations?api-version=2022-05-01`;
+    const url = `${this.baseGraphApi}/subscriptions/${subscriptionId}/locations?api-version=2022-05-01`;
     const response = await fetch(url, { headers, method: 'GET' });
 
     if (!response.ok) {
