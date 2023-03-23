@@ -12,7 +12,7 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../utils/codeless/common';
-import { getAuthorizationToken } from '../../utils/codeless/getAuthorizationToken';
+import { getAuthorizationToken, getCloudHost } from '../../utils/codeless/getAuthorizationToken';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import { getRandomHexString } from '../../utils/fs';
 import { delay } from '@azure/ms-rest-js';
@@ -311,6 +311,7 @@ export async function exportLogicApp(): Promise<void> {
   const existingPanel: vscode.WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
 
   accessToken = await getAuthorizationToken(credentials);
+  const cloudHost = await getCloudHost(credentials);
 
   if (existingPanel) {
     if (!existingPanel.active) {
@@ -342,6 +343,7 @@ export async function exportLogicApp(): Promise<void> {
           data: {
             apiVersion,
             accessToken,
+            cloudHost,
             project: 'export',
           },
         });

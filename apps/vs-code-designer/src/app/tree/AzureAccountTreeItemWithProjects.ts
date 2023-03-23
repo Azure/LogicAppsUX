@@ -113,7 +113,7 @@ export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
       const tenantDetails = sessions.filter((session) => session.tenantId.toLowerCase() == tenantId);
       return tenantDetails.length ? tenantDetails[0].credentials2 : sessions[0].credentials2;
     } else {
-      return sessions[0].credentials;
+      return sessions[0].credentials2;
     }
   }
 }

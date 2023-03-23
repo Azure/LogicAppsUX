@@ -10,3 +10,9 @@ export async function getAuthorizationToken(credentials?: ServiceClientCredentia
 
   return webResource.headers.get('authorization') ?? webResource.headers['authorization'];
 }
+
+export async function getCloudHost(credentials?: ServiceClientCredentials, tenantId?: string): Promise<string> {
+  credentials = !credentials ? await ext.azureAccountTreeItem.getAccountCredentials(tenantId) : credentials;
+
+  return 'test';
+}
