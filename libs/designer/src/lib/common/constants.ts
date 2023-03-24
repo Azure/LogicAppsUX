@@ -867,13 +867,13 @@ export default {
     STRING: 'string',
   },
   UIOPERATION_TYPES: {
-    SELECT_APIMANAGEMENT_ACTION: 'apimanagement',
+    SELECT_APIMANAGEMENT_ACTION: 'selectapimanagementaction',
     SELECT_APIMANAGEMENT_TRIGGER: 'selectapimanagementtrigger',
-    SELECT_APPSERVICE_ACTION: 'appservice',
+    SELECT_APPSERVICE_ACTION: 'selectappserviceaction',
     SELECT_APPSERVICE_TRIGGER: 'selectappservicetrigger',
-    SELECT_FUNCTION_ACTION: 'azureFunction',
-    SELECT_BATCH_WORKFLOW_ACTION: 'sendtobatch',
-    SELECT_MANUAL_WORKFLOW_ACTION: 'invokeworkflow',
+    SELECT_FUNCTION_ACTION: 'selectfunction',
+    SELECT_BATCH_WORKFLOW_ACTION: 'selectbatchworkflow',
+    SELECT_MANUAL_WORKFLOW_ACTION: 'selectmanualworkflow',
   },
   UNTIL_CURRENT_ITERATION_INDEX_KEY: 'builtin.$.currentIterationIndexes',
   VALUE_UPDATE_INTERVAL_IN_MS: 750, // Throttling limit for capturing parameter value update in milliseconds
