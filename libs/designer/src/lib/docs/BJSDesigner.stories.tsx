@@ -7,8 +7,8 @@ import RunAfterWorkflow from './storybookWorkflows/runAfterWorkflow.json';
 import BigWorkflow from './storybookWorkflows/simpleBigworkflow.json';
 import SimpleWorkflow from './storybookWorkflows/simpleSmallWorkflow.json';
 import {
+  BaseOAuthService,
   StandardConnectionService,
-  StandardOAuthService,
   StandardOperationManifestService,
   StandardSearchService,
 } from '@microsoft/designer-client-services-logic-apps';
@@ -69,7 +69,7 @@ const RenderedComponent = (props: ComponentProps) => (
             },
             isDev: true,
           }),
-          oAuthService: new StandardOAuthService({
+          oAuthService: new BaseOAuthService({
             baseUrl: '/url',
             apiVersion: '2018-11-01',
             httpClient,

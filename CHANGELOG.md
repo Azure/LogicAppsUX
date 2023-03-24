@@ -1,22 +1,21 @@
 # Logic Apps Designer
+
 ### [2.0.6](https://github.com/Azure/LogicAppsUX/compare/v2.0.5...v2.0.6) (2023-03-24)
 
 ### [2.0.5](https://github.com/Azure/LogicAppsUX/compare/v2.0.4...v2.0.5) (2023-03-23)
 
-
 ### Logic Apps Designer Bug Fixes
 
-* Dynamic Data value initialization fix ([#1799](https://github.com/Azure/LogicAppsUX/issues/1799)) ([dd3750c](https://github.com/Azure/LogicAppsUX/commit/dd3750cdaad8d966c4e0117f4954854dd0e521e6))
+- Dynamic Data value initialization fix ([#1799](https://github.com/Azure/LogicAppsUX/issues/1799)) ([dd3750c](https://github.com/Azure/LogicAppsUX/commit/dd3750cdaad8d966c4e0117f4954854dd0e521e6))
 
 ### [2.0.4](https://github.com/Azure/LogicAppsUX/compare/v2.0.3...v2.0.4) (2023-03-22)
 
 ### [2.0.3](https://github.com/Azure/LogicAppsUX/compare/v2.0.2...v2.0.3) (2023-03-21)
 
-
 ### Logic Apps Designer Bug Fixes
 
-* Small dark mode changes ([#1789](https://github.com/Azure/LogicAppsUX/issues/1789)) ([9edfecb](https://github.com/Azure/LogicAppsUX/commit/9edfecb7748acda0e5fdb778ea38428487cc5894))
-* Small token-picker layer host fix ([#1791](https://github.com/Azure/LogicAppsUX/issues/1791)) ([f2c70e8](https://github.com/Azure/LogicAppsUX/commit/f2c70e8650db4aa25b733fe84b962b467d289922))
+- Small dark mode changes ([#1789](https://github.com/Azure/LogicAppsUX/issues/1789)) ([9edfecb](https://github.com/Azure/LogicAppsUX/commit/9edfecb7748acda0e5fdb778ea38428487cc5894))
+- Small token-picker layer host fix ([#1791](https://github.com/Azure/LogicAppsUX/issues/1791)) ([f2c70e8](https://github.com/Azure/LogicAppsUX/commit/f2c70e8650db4aa25b733fe84b962b467d289922))
 
 ### [2.0.2](https://github.com/Azure/LogicAppsUX/compare/v2.0.1...v2.0.2) (2023-03-21)
 

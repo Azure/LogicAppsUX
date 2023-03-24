@@ -16,7 +16,7 @@ test('Should serialize the workflow after deserializing it and match', async ({ 
         const state = (window as any).DesignerStore.getState();
         console.log(JSON.stringify(state, null, 2));
         resolve((window as any).DesignerModule.serializeBJSWorkflow(state));
-      }, 2000);
+      }, 5000);
     });
   });
 
@@ -40,7 +40,7 @@ test('Should serialize the workflow after deserializing it and match with a swit
         const state = (window as any).DesignerStore.getState();
         console.log(JSON.stringify(state, null, 2));
         resolve((window as any).DesignerModule.serializeBJSWorkflow(state));
-      }, 2000);
+      }, 5000);
     });
   });
 
@@ -66,7 +66,7 @@ test('Should serialize the workflow after deserializing it and match with some s
         const state = (window as any).DesignerStore.getState();
         console.log(JSON.stringify(state, null, 2));
         resolve((window as any).DesignerModule.serializeBJSWorkflow(state));
-      }, 2000);
+      }, 5000);
     });
   });
 

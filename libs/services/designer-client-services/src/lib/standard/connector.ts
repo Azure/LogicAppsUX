@@ -8,7 +8,9 @@ export class StandardConnectorService extends BaseConnectorService {
     operationId: string,
     _parameterAlias: string | undefined,
     parameters: Record<string, any>,
-    dynamicState: any
+    dynamicState: any,
+    nodeInputs: any,
+    nodeMetadata: any
   ): Promise<ListDynamicValue[]> {
     const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
     const { operationId: dynamicOperation } = dynamicState;
@@ -17,7 +19,13 @@ export class StandardConnectorService extends BaseConnectorService {
     const configuration = await getConfiguration(connectionId ?? '');
 
     if (this._isClientSupportedOperation(connectorId, operationId)) {
-      return this.options.valuesClient[dynamicOperation]({ parameters: invokeParameters, configuration });
+      return this.options.valuesClient[dynamicOperation]({
+        operationId,
+        parameters: invokeParameters,
+        configuration,
+        nodeInputs,
+        nodeMetadata,
+      });
     }
 
     const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`;
@@ -35,7 +43,9 @@ export class StandardConnectorService extends BaseConnectorService {
     operationId: string,
     _parameterAlias: string | undefined,
     parameters: Record<string, any>,
-    dynamicState: any
+    dynamicState: any,
+    nodeInputs: any,
+    nodeMetadata: any
   ): Promise<OpenAPIV2.SchemaObject> {
     const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
     const {
@@ -47,7 +57,14 @@ export class StandardConnectorService extends BaseConnectorService {
     const configuration = await getConfiguration(connectionId ?? '');
 
     if (this._isClientSupportedOperation(connectorId, operationId)) {
-      return this.options.schemaClient[dynamicOperation]({ parameters: invokeParameters, isInput, configuration });
+      return this.options.schemaClient[dynamicOperation]({
+        operationId,
+        parameters: invokeParameters,
+        isInput,
+        configuration,
+        nodeInputs,
+        nodeMetadata,
+      });
     }
 
     const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`;

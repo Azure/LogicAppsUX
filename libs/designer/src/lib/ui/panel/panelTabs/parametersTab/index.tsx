@@ -98,6 +98,7 @@ const ParameterSection = ({
   const {
     isTrigger,
     nodeInputs,
+    nodeMetadata,
     operationInfo,
     dependencies,
     settings: nodeSettings,
@@ -110,6 +111,7 @@ const ParameterSection = ({
     return {
       isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
       nodeInputs: state.operations.inputParameters[nodeId],
+      nodeMetadata: state.operations.actionMetadata[nodeId],
       operationInfo: state.operations.operationInfo[nodeId],
       dependencies: state.operations.dependencies[nodeId],
       settings: state.operations.settings[nodeId],
@@ -148,6 +150,7 @@ const ParameterSection = ({
         operationInfo,
         connectionReference,
         nodeInputs,
+        nodeMetadata,
         dependencies,
         getAllVariables(variables),
         nodeSettings,
@@ -181,6 +184,7 @@ const ParameterSection = ({
         operationInfo,
         connectionReference,
         nodeInputs,
+        nodeMetadata,
         dependencies,
         true /* showErrorWhenNotReady */,
         dispatch,
