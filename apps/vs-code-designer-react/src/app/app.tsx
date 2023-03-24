@@ -71,7 +71,7 @@ export const App = () => {
     return getDesignerServices(
       baseUrl,
       apiVersion,
-      apiHubServiceDetails,
+      apiHubServiceDetails ?? {},
       tenantId,
       isLocal,
       connectionData,
