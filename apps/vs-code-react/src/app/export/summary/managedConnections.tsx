@@ -18,7 +18,7 @@ export const ManagedConnections: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const [isConnectionsChecked, setConnectionsChecked] = useState(false);
   const vscodeState = useSelector((state: RootState) => state.vscode);
-  const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
+  const { baseUrl, accessToken, exportData, cloudHost } = vscodeState as InitializedVscodeState;
   const { selectedSubscription, managedConnections } = exportData;
   const { isManaged, resourceGroup: selectedResourceGroup, resourceGroupLocation } = managedConnections;
 
@@ -59,8 +59,9 @@ export const ManagedConnections: React.FC = () => {
     return new ApiService({
       baseUrl,
       accessToken,
+      cloudHost,
     });
-  }, [accessToken, baseUrl]);
+  }, [accessToken, baseUrl, cloudHost]);
 
   const loadResourceGroups = () => {
     return apiService.getResourceGroups(selectedSubscription);

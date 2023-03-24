@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export const InstanceSelection: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
-  const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
+  const { baseUrl, accessToken, exportData, cloudHost } = vscodeState as InitializedVscodeState;
   const { selectedSubscription, selectedIse, location } = exportData;
 
   const intl = useIntl();
@@ -75,8 +75,9 @@ export const InstanceSelection: React.FC = () => {
     return new ApiService({
       baseUrl,
       accessToken,
+      cloudHost,
     });
-  }, [accessToken, baseUrl]);
+  }, [accessToken, baseUrl, cloudHost]);
 
   const loadSubscriptions = () => {
     return apiService.getSubscriptions();
@@ -103,6 +104,7 @@ export const InstanceSelection: React.FC = () => {
   } = useQuery<any>([QueryKeys.regionData, { subscriptionId: selectedSubscription }], loadRegion, {
     refetchOnWindowFocus: false,
     enabled: selectedSubscription !== '',
+    retry: 4,
   });
 
   const {
@@ -112,6 +114,7 @@ export const InstanceSelection: React.FC = () => {
   } = useQuery<any>([QueryKeys.iseData, { subscriptionId: selectedSubscription }], loadIse, {
     refetchOnWindowFocus: false,
     enabled: selectedSubscription !== '',
+    retry: 4,
   });
 
   const onChangeSubscriptions = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
@@ -153,14 +156,17 @@ export const InstanceSelection: React.FC = () => {
   const ise: IDropdownOption[] = selectedSubscription !== '' && !isIseLoading && iseData ? parseIseData(iseData) : [];
   const regions: IDropdownOption[] = selectedSubscription !== '' && !isRegionLoading && regionData ? parseRegionData(regionData) : [];
 
-  const locations: IDropdownOption[] = [
-    { key: 'divider:ise', text: intlText.DIVIDER_ISE, itemType: DropdownMenuItemType.Divider },
-    { key: 'header:ise', text: intlText.DIVIDER_ISE, itemType: DropdownMenuItemType.Header },
-    ...ise,
-    { key: 'divider:regions', text: intlText.DIVIDER_REGIONS, itemType: DropdownMenuItemType.Divider },
-    { key: 'header:regions', text: intlText.DIVIDER_REGIONS, itemType: DropdownMenuItemType.Header },
-    ...regions,
-  ];
+  const locations: IDropdownOption[] =
+    ise.length || regions.length
+      ? [
+          { key: 'divider:ise', text: intlText.DIVIDER_ISE, itemType: DropdownMenuItemType.Divider },
+          { key: 'header:ise', text: intlText.DIVIDER_ISE, itemType: DropdownMenuItemType.Header },
+          ...ise,
+          { key: 'divider:regions', text: intlText.DIVIDER_REGIONS, itemType: DropdownMenuItemType.Divider },
+          { key: 'header:regions', text: intlText.DIVIDER_REGIONS, itemType: DropdownMenuItemType.Header },
+          ...regions,
+        ]
+      : [];
 
   const subscriptionLoading = accessToken === undefined ? true : isSubscriptionsLoading;
   const subscriptionPlaceholder = getDropdownPlaceholder(
@@ -171,7 +177,7 @@ export const InstanceSelection: React.FC = () => {
     intlText.LOADING
   );
 
-  const iseLoading = selectedSubscription === '' ? false : isIseLoading;
+  const iseLoading = selectedSubscription === '' ? false : isIseLoading || isRegionLoading;
   const isePlaceholder = getDropdownPlaceholder(
     iseLoading,
     locations.length,
