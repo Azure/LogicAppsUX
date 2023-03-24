@@ -1,8 +1,11 @@
 import { getClientBuiltInConnectors, getClientBuiltInOperations, BaseSearchService } from '../base';
-import type { DiscoveryOpArray } from '../base/search';
+import type { ContinuationTokenResponse, DiscoveryOpArray } from '../base/search';
+import type { QueryParameters } from '../httpClient';
 import * as ClientOperationsData from '../standard/operations';
 import * as AzureResourceOperationsData from './operations';
 import type { Connector, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
+
+const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
 
 export class ConsumptionSearchService extends BaseSearchService {
   // Operations
@@ -15,8 +18,25 @@ export class ConsumptionSearchService extends BaseSearchService {
     );
   }
 
-  public getCustomOperationsByPage(_page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> {
-    return Promise.resolve([]);
+  public async getCustomOperationsByPage(page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> {
+    if (this._isDev) return Promise.resolve([]);
+
+    try {
+      const {
+        apiHubServiceDetails: { apiVersion, subscriptionId, location },
+      } = this.options;
+      if (this._isDev) return Promise.resolve([]);
+
+      const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
+      const queryParameters: QueryParameters = {
+        'api-version': apiVersion,
+        $filter: `properties/trigger eq null and type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
+      };
+      const response = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters);
+      return response;
+    } catch (error) {
+      return [];
+    }
   }
 
   public getBuiltInOperations(): Promise<DiscoveryOpArray> {
@@ -72,7 +92,22 @@ export class ConsumptionSearchService extends BaseSearchService {
     return Promise.resolve([...clientBuiltInConnectors, ...consumptionBuiltIn]);
   }
 
-  public getCustomConnectorsByNextlink(_nextlink?: string): Promise<any> {
-    return Promise.resolve([]);
+  public async getCustomConnectorsByNextlink(prevNextlink?: string): Promise<any> {
+    if (this._isDev) return Promise.resolve({ value: [] });
+
+    try {
+      const {
+        httpClient,
+        apiHubServiceDetails: { apiVersion, subscriptionId },
+      } = this.options;
+      const filter = `$filter=${ISE_RESOURCE_ID} eq null`;
+      const startUri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/customApis?api-version=${apiVersion}`;
+      const uri = `${prevNextlink ?? startUri}&${filter}`;
+
+      const { nextLink, value } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri });
+      return { nextlink: nextLink, value: value.filter((connector) => connector.properties?.supportedConnectionKinds?.includes('V1')) };
+    } catch (error) {
+      return { value: [] };
+    }
   }
 }
