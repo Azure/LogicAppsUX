@@ -14,7 +14,7 @@ export class StandardConnectorService extends BaseConnectorService {
     const { operationId: dynamicOperation } = dynamicState;
 
     const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
-    const configuration = await getConfiguration(connectionId ?? '');
+    const configuration = await getConfiguration(connectionId ?? 'apiManagementOperation'); // here
 
     if (this._isClientSupportedOperation(connectorId, operationId)) {
       return this.options.valuesClient[dynamicOperation]({ parameters: invokeParameters, configuration });
@@ -44,7 +44,7 @@ export class StandardConnectorService extends BaseConnectorService {
     } = dynamicState;
 
     const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
-    const configuration = await getConfiguration(connectionId ?? '');
+    const configuration = await getConfiguration(connectionId ?? 'apiManagementOperation'); // here
 
     if (this._isClientSupportedOperation(connectorId, operationId)) {
       return this.options.schemaClient[dynamicOperation]({ parameters: invokeParameters, isInput, configuration });

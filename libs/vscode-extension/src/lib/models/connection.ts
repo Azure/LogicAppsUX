@@ -63,6 +63,7 @@ export interface ConnectionsData {
   functionConnections?: Record<string, FunctionConnectionModel>;
   managedApiConnections?: Record<string, ConnectionReferenceModel>;
   serviceProviderConnections?: Record<string, ServiceProviderConnectionModel>;
+  apiManagementConnections?: Record<string, APIManagementConnectionModel>;
 }
 
 export interface ConnectionAndSettings {

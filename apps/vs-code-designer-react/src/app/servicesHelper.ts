@@ -116,7 +116,8 @@ export const getDesignerServices = (
       }
 
       const connectionName = connectionId.split('/').splice(-1)[0];
-      const connectionInfo = connectionData?.serviceProviderConnections?.[connectionName];
+      const connnectionsInfo = { ...connectionData?.serviceProviderConnections, ...connectionData?.apiManagementConnections };
+      const connectionInfo = connnectionsInfo[connectionName];
 
       if (connectionInfo) {
         const resolvedConnectionInfo = resolveConnectionsReferences(JSON.stringify(connectionInfo), {}, appSettings);
