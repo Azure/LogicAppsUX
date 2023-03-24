@@ -157,8 +157,8 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         setTitleText(manualWorkflowTitleText);
         setResourceTypes(['manualWorkflow', 'trigger']);
         setGetResourcesCallbacks(() => [
-          () => SearchService().getRequestWorkflows(),
-          (manualWorkflow?: any) => SearchService().getWorkflowTriggers(manualWorkflow.id ?? ''),
+          () => SearchService().getRequestWorkflows?.(),
+          (manualWorkflow?: any) => SearchService().getWorkflowTriggers?.(manualWorkflow.id ?? ''),
         ]);
         setSubmitCallback(() => () => {
           addResourceOperation({
@@ -175,8 +175,8 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         setTitleText(batchWorkflowTitleText);
         setResourceTypes(['batchWorkflow', 'trigger']);
         setGetResourcesCallbacks(() => [
-          () => SearchService().getBatchWorkflows(),
-          (batchWorkflow?: any) => SearchService().getWorkflowTriggers(batchWorkflow.id ?? ''),
+          () => SearchService().getBatchWorkflows?.(),
+          (batchWorkflow?: any) => SearchService().getWorkflowTriggers?.(batchWorkflow.id ?? ''),
         ]);
         setSubmitCallback(() => () => {
           addResourceOperation({

@@ -5,10 +5,13 @@ import { LoggerService } from '../logger';
 import type { ISearchService } from '../search';
 import * as ClientOperationsData from '../standard/operations';
 import type {
+  ArmResource,
   BuiltInOperation,
   Connector,
   DiscoveryOperation,
   DiscoveryResultTypes,
+  DiscoveryWorkflow,
+  DiscoveryWorkflowTrigger,
   SomeKindOfAzureOperationDiscovery,
 } from '@microsoft/utils-logic-apps';
 import { equals, ArgumentException } from '@microsoft/utils-logic-apps';
@@ -277,15 +280,15 @@ export abstract class BaseSearchService implements ISearchService {
     return response.filter((workflow: any) => workflow.location === location);
   }
 
-  public async getRequestWorkflows(): Promise<any[]> {
+  public async getRequestWorkflows(): Promise<ArmResource<DiscoveryWorkflow>[]> {
     return this.getWorkflows(`contains(Trigger, 'Request') and (${ISE_RESOURCE_ID} eq null)`);
   }
 
-  public async getBatchWorkflows(): Promise<any[]> {
+  public async getBatchWorkflows(): Promise<ArmResource<DiscoveryWorkflow>[]> {
     return this.getWorkflows(`contains(Trigger, 'Batch') and (${ISE_RESOURCE_ID} eq null)`);
   }
 
-  public async getWorkflowTriggers(workflowId: string): Promise<any[]> {
+  public async getWorkflowTriggers(workflowId: string): Promise<ArmResource<DiscoveryWorkflowTrigger>[]> {
     const {
       httpClient,
       apiHubServiceDetails: { apiVersion },

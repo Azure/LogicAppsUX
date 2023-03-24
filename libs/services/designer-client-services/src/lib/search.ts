@@ -1,4 +1,11 @@
-import type { Connector, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
+import type {
+  ArmResource,
+  Connector,
+  DiscoveryOperation,
+  DiscoveryResultTypes,
+  DiscoveryWorkflow,
+  DiscoveryWorkflowTrigger,
+} from '@microsoft/utils-logic-apps';
 import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface ISearchService {
@@ -7,9 +14,9 @@ export interface ISearchService {
   getCustomConnectorsByNextlink(nextlink?: string): Promise<{ nextlink?: string; value: Connector[] }>;
   getBuiltInConnectors(): Promise<Connector[]>;
   getAllOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
-  getRequestWorkflows(): Promise<any>;
-  getBatchWorkflows(): Promise<any>;
-  getWorkflowTriggers(workflowId: string): Promise<any[]>;
+  getRequestWorkflows?(): Promise<ArmResource<DiscoveryWorkflow>[]>;
+  getBatchWorkflows?(): Promise<ArmResource<DiscoveryWorkflow>[]>;
+  getWorkflowTriggers?(workflowId: string): Promise<ArmResource<DiscoveryWorkflowTrigger>[]>;
   getAzureOperationsByPage(page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
   getCustomOperationsByPage(page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
   getBuiltInOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
