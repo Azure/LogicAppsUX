@@ -7,6 +7,7 @@ import {
   stringBranding,
   utilityBranding,
 } from '../constants/FunctionConstants';
+import { reservedMapNodeParamsArray } from '../constants/MapDefinitionConstants';
 import type { SchemaNodeExtended } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
@@ -113,3 +114,5 @@ export const calculateIndexValue = (currentNode: SchemaNodeExtended): string => 
 export const formatDirectAccess = (indexValue: string, scope: string, destination: string) => {
   return destination.replace(scope, `${scope}[${indexValue}]`);
 };
+
+export const isKeyAnIndexValue = (key: string): boolean => key.startsWith('$') && !reservedMapNodeParamsArray.includes(key);
