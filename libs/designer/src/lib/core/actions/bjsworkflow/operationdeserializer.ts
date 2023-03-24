@@ -89,7 +89,7 @@ export const initializeOperationMetadata = async (
     initializeNodes(
       allNodeData.map((data) => {
         const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata } = data;
-        const actionMetadata = nodesMetadata?.[id].actionMetadata;
+        const actionMetadata = nodesMetadata?.[id]?.actionMetadata;
         return { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, actionMetadata };
       })
     )
