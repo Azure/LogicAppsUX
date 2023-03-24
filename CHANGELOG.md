@@ -1,4 +1,10 @@
 # Logic Apps Designer
+### [2.0.7](https://github.com/Azure/LogicAppsUX/compare/v2.0.6...v2.0.7) (2023-03-24)
+
+
+### Logic Apps Designer Changes
+
+* Consumption - Added Azure resource-based operations ([#1632](https://github.com/Azure/LogicAppsUX/issues/1632)) ([4f9d58e](https://github.com/Azure/LogicAppsUX/commit/4f9d58ecc2011d0ff97aed8553cbe0fe2f18c4c1))
 
 ### [2.0.6](https://github.com/Azure/LogicAppsUX/compare/v2.0.5...v2.0.6) (2023-03-24)
 
