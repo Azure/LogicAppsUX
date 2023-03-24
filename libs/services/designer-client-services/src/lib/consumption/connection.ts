@@ -91,7 +91,7 @@ export class ConsumptionConnectionService extends BaseConnectionService {
   ): Promise<CreateConnectionResult> {
     try {
       const connector = await this.getConnector(connectorId);
-      const connection = await this.createConnection(connectionId, connector, connectionInfo, parametersMetadata, false);
+      const connection = await this.createConnection(connectionId, connector, connectionInfo, parametersMetadata);
       const oAuthService = OAuthService();
       const consentUrl = await oAuthService.fetchConsentUrlForConnection(connectionId);
       const oAuthPopupInstance: IOAuthPopup = oAuthService.openLoginPopup({ consentUrl });
