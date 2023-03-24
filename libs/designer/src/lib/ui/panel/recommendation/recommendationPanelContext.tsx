@@ -2,6 +2,7 @@ import Constants from '../../../common/constants';
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useAllConnectors, useAllOperations } from '../../../core/queries/browse';
+import { useIsConsumption } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useIsAddingTrigger,
   useIsParallelBranch,
@@ -25,6 +26,7 @@ import { useDispatch } from 'react-redux';
 
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
+  const isConsumption = useIsConsumption();
   const isTrigger = useIsAddingTrigger();
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<Record<string, string>>({
@@ -74,7 +76,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     const selectedService = operation.properties.api.id;
     let apiType: string;
 
-    switch (operation.id) {
+    switch (operation.id?.toLowerCase()) {
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_ACTION:
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_TRIGGER:
         apiType = Constants.API_CATEGORIES.API_MANAGEMENT;
@@ -106,18 +108,27 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const onOperationClick = useCallback(
     (id: string) => {
-      const operation = (allOperations ?? []).find((o: any) => o.id === id);
+      const operation = (allOperations ?? []).find((o: DiscoveryOperation<DiscoveryResultTypes>) => o.id === id);
       if (!operation) return;
       console.log('onOperationClick', operation);
       dispatch(selectOperationId(operation.id));
-      if (isAzureResourceActionId(operation.id)) {
+      if (isAzureResourceActionId(operation.id) && isConsumption) {
         startAzureResourceSelection(operation);
         return;
       }
       const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
       dispatch(addOperation({ operation, relationshipIds, nodeId: newNodeId, isParallelBranch, isTrigger }));
     },
-    [allOperations, dispatch, isAzureResourceActionId, isParallelBranch, isTrigger, relationshipIds, startAzureResourceSelection]
+    [
+      allOperations,
+      dispatch,
+      isAzureResourceActionId,
+      isConsumption,
+      isParallelBranch,
+      isTrigger,
+      relationshipIds,
+      startAzureResourceSelection,
+    ]
   );
 
   const intl = useIntl();

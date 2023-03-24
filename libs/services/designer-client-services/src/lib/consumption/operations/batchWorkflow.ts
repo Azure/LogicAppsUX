@@ -4,7 +4,7 @@ const iconUri =
 const brandColor = '#2280CC';
 
 export const selectBatchWorkflowGroup = {
-  id: 'connectionProviders/batch',
+  id: '/connectionProviders/batch',
   name: 'connectionProviders/batch',
   properties: {
     displayName: 'Send messages to batch',
@@ -21,7 +21,7 @@ export const selectBatchWorkflowOperation = {
   type: 'sendtobatch',
   properties: {
     api: {
-      id: 'connectionProviders/batch',
+      id: '/connectionProviders/batch',
       name: 'connectionProviders/batch',
       displayName: 'Send messages to batch',
       iconUri,

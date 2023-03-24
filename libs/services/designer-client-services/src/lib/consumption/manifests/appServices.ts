@@ -7,7 +7,7 @@ const iconUri =
 const brandColor = '#59B2D9';
 
 const connector = {
-  id: 'connectionProviders/appService',
+  id: '/connectionProviders/appService',
   name: 'connectionProviders/appService',
   type: 'appservice',
   properties: {

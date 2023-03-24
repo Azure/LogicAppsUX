@@ -6,7 +6,7 @@ const iconUri = 'https://logicappsv2resources.blob.core.windows.net/icons/apiman
 const brandColor = '#68217A';
 
 const connector = {
-  id: 'connectionProviders/apiManagementOperation',
+  id: '/connectionProviders/apiManagementOperation',
   name: 'apiManagementOperation',
   type: 'apimanagement',
   properties: {

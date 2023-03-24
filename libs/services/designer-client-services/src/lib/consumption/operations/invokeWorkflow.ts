@@ -4,7 +4,7 @@ const iconUri =
 const brandColor = '#59B2D9';
 
 export const invokeWorkflowGroup = {
-  id: 'connectionProviders/workflow',
+  id: '/connectionProviders/workflow',
   name: 'connectionProviders/workflow',
   properties: {
     displayName: 'Azure Logic Apps',
@@ -21,7 +21,7 @@ export const invokeWorkflowOperation = {
   type: 'invokeworkflow',
   properties: {
     api: {
-      id: 'connectionProviders/workflow',
+      id: '/connectionProviders/workflow',
       name: 'connectionProviders/workflow',
       displayName: 'Azure Logic Apps',
       iconUri,

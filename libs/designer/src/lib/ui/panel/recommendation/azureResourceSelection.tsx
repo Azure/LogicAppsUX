@@ -98,7 +98,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   const [submitCallback, setSubmitCallback] = useState<(any?: any) => any>(() => () => Promise.resolve([]));
 
   useEffect(() => {
-    switch (operation.id) {
+    switch (operation.id?.toLowerCase()) {
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_ACTION:
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_TRIGGER:
         setTitleText(apimTitleText);

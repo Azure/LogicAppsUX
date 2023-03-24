@@ -7,7 +7,7 @@ const iconUri =
 const brandColor = '#59B2D9';
 
 const connector = {
-  id: 'connectionProviders/workflow',
+  id: '/connectionProviders/workflow',
   name: 'connectionProviders/workflow',
   properties: {
     displayName: 'Azure Logic Apps',

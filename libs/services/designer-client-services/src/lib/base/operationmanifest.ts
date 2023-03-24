@@ -110,11 +110,11 @@ const sendtobatch = 'sendtobatch';
 const xslttransform = 'xslttransform';
 const datamapper = 'datamapper';
 
-export const apiManagementConnectorId = 'connectionProviders/apiManagementOperation';
-export const azureFunctionConnectorId = 'connectionProviders/azureFunctionOperation';
-export const appServiceConnectorId = 'connectionProviders/appService';
-export const batchConnectorId = 'connectionProviders/batch';
-export const workflowConnectorId = 'connectionProviders/workflow';
+export const apiManagementConnectorId = '/connectionProviders/apiManagementOperation';
+export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
+export const appServiceConnectorId = '/connectionProviders/appService';
+export const batchConnectorId = '/connectionProviders/batch';
+export const workflowConnectorId = '/connectionProviders/workflow';
 export const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
 const controlConnectorId = 'connectionProviders/control';
 const dateTimeConnectorId = 'connectionProviders/datetime';
@@ -126,7 +126,7 @@ export const flatFileConnectorId = 'connectionProviders/flatFileOperations';
 const liquidConnectorId = 'connectionProviders/liquidOperations';
 const dataMapperConnectorId = 'connectionProviders/dataMapperOperations';
 
-const azurefunction = 'azureFunction';
+const azurefunction = 'azurefunction';
 const appservice = 'appservice';
 const invokeworkflow = 'invokeworkflow';
 

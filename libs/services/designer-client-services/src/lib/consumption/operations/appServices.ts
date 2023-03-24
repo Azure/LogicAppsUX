@@ -4,7 +4,7 @@ const iconUri =
 const brandColor = '#59B2D9';
 
 const api = {
-  id: 'connectionProviders/appservice',
+  id: '/connectionProviders/appservice',
   name: 'connectionProviders/appservice',
   displayName: 'Azure App Services',
   description: 'Azure App Services',
@@ -13,7 +13,7 @@ const api = {
 };
 
 export const appServiceGroup = {
-  id: 'connectionProviders/appservice',
+  id: '/connectionProviders/appservice',
   name: 'connectionProviders/appservice',
   properties: {
     displayName: 'Azure App Services',

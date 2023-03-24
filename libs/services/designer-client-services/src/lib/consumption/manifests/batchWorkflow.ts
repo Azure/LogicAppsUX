@@ -6,7 +6,7 @@ const iconUri =
 const brandColor = '#2280CC';
 
 const connector = {
-  id: 'connectionProviders/batch',
+  id: '/connectionProviders/batch',
   name: 'connectionProviders/batch',
   properties: {
     displayName: 'Batch',

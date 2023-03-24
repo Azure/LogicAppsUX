@@ -907,7 +907,7 @@ export default {
     SELECT_APIMANAGEMENT_TRIGGER: 'selectapimanagementtrigger',
     SELECT_APPSERVICE_ACTION: 'appservice',
     SELECT_APPSERVICE_TRIGGER: 'selectappservicetrigger',
-    SELECT_FUNCTION_ACTION: 'azureFunction',
+    SELECT_FUNCTION_ACTION: 'azurefunction',
     SELECT_BATCH_WORKFLOW_ACTION: 'sendtobatch',
     SELECT_MANUAL_WORKFLOW_ACTION: 'invokeworkflow',
   },
