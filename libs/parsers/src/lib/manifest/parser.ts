@@ -52,7 +52,8 @@ export class ManifestParser {
     includeParentObject: boolean,
     expandArrayDepth: number,
     expandOneOf?: boolean,
-    input?: any
+    input?: any,
+    additionalInputParamters?: any
   ): Record<string, InputParameter> {
     if (!this._operationManifest.properties.inputs) {
       return {};
@@ -73,7 +74,15 @@ export class ManifestParser {
       useAliasedIndexing: true,
     };
 
-    const schemaProperties = new SchemaProcessor(schemaProcessorOptions).getSchemaProperties(this._operationManifest.properties.inputs);
+    const inputParams = {
+      ...this._operationManifest.properties.inputs,
+      properties: {
+        ...this._operationManifest.properties.inputs.properties,
+        ...additionalInputParamters,
+      },
+    };
+
+    const schemaProperties = new SchemaProcessor(schemaProcessorOptions).getSchemaProperties(inputParams);
     const inputParameters = schemaProperties.map((item) => toInputParameter(item, !this._operationManifest.properties.autoCast));
 
     return map(inputParameters, 'key');

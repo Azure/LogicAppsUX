@@ -1,7 +1,8 @@
 import { getClientBuiltInConnectors, getClientBuiltInOperations, BaseSearchService } from '../base';
-import type { DiscoveryOpArray } from '../base/search';
+import type { ContinuationTokenResponse, DiscoveryOpArray } from '../base/search';
 import type { QueryParameters } from '../httpClient';
 import * as ClientOperationsData from '../standard/operations';
+import * as AzureResourceOperationsData from './operations';
 import type { Connector, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
@@ -10,13 +11,32 @@ export class ConsumptionSearchService extends BaseSearchService {
   // Operations
 
   public async getAllOperations(): Promise<DiscoveryOpArray> {
+    if (this._isDev) return Promise.resolve(this.getBuiltInOperations());
+
     return Promise.all([this.getAllAzureOperations(), this.getAllCustomApiOperations(), this.getBuiltInOperations()]).then((values) =>
       values.flat()
     );
   }
 
-  public getCustomOperationsByPage(_page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> {
-    return Promise.resolve([]);
+  public async getCustomOperationsByPage(page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> {
+    if (this._isDev) return Promise.resolve([]);
+
+    try {
+      const {
+        apiHubServiceDetails: { apiVersion, subscriptionId, location },
+      } = this.options;
+      if (this._isDev) return Promise.resolve([]);
+
+      const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
+      const queryParameters: QueryParameters = {
+        'api-version': apiVersion,
+        $filter: `properties/trigger eq null and type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
+      };
+      const response = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters);
+      return response;
+    } catch (error) {
+      return [];
+    }
   }
 
   public getBuiltInOperations(): Promise<DiscoveryOpArray> {
@@ -33,6 +53,13 @@ export class ConsumptionSearchService extends BaseSearchService {
       ClientOperationsData.liquidXmlToTextOperation,
       ClientOperationsData.xmlTransformOperation,
       ClientOperationsData.xmlValidationOperation,
+      AzureResourceOperationsData.apiManagementActionOperation,
+      AzureResourceOperationsData.apiManagementTriggerOperation,
+      AzureResourceOperationsData.appServiceActionOperation,
+      AzureResourceOperationsData.appServiceTriggerOperation,
+      AzureResourceOperationsData.functionOperation,
+      AzureResourceOperationsData.invokeWorkflowOperation,
+      AzureResourceOperationsData.selectBatchWorkflowOperation,
     ];
     return Promise.resolve([...clientBuiltInOperations, ...consumptionBuiltIn]);
   }
@@ -40,6 +67,8 @@ export class ConsumptionSearchService extends BaseSearchService {
   // Connectors
 
   public override async getAllConnectors(): Promise<Connector[]> {
+    if (this._isDev) return Promise.resolve(this.getBuiltInConnectors());
+
     return Promise.all([this.getAllAzureConnectors(), this.getAllCustomApiConnectors(), this.getBuiltInConnectors()]).then((values) =>
       values.flat()
     );
@@ -54,26 +83,31 @@ export class ConsumptionSearchService extends BaseSearchService {
       ClientOperationsData.integrationAccountGroup,
       ClientOperationsData.liquidGroup,
       ClientOperationsData.xmlGroup,
+      AzureResourceOperationsData.apiManagementGroup,
+      AzureResourceOperationsData.appServiceGroup,
+      AzureResourceOperationsData.functionGroup,
+      AzureResourceOperationsData.invokeWorkflowGroup,
+      AzureResourceOperationsData.selectBatchWorkflowGroup,
     ];
     return Promise.resolve([...clientBuiltInConnectors, ...consumptionBuiltIn]);
   }
 
-  public getCustomConnectorsByNextlink(_nextlink?: string): Promise<any> {
-    return Promise.resolve([]);
-  }
+  public async getCustomConnectorsByNextlink(prevNextlink?: string): Promise<any> {
+    if (this._isDev) return Promise.resolve({ value: [] });
 
-  // Get 'Batch' Connector Data - Not implemented yet
+    try {
+      const {
+        httpClient,
+        apiHubServiceDetails: { apiVersion, subscriptionId },
+      } = this.options;
+      const filter = `$filter=${ISE_RESOURCE_ID} eq null`;
+      const startUri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/customApis?api-version=${apiVersion}`;
+      const uri = `${prevNextlink ?? startUri}&${filter}`;
 
-  public async getBatchWorkflows(): Promise<any[]> {
-    const {
-      apiHubServiceDetails: { apiVersion, subscriptionId },
-    } = this.options;
-    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Logic/workflows`;
-    const queryParameters: QueryParameters = {
-      'api-version': apiVersion,
-      $filter: `contains(Trigger, 'Batch') and (${ISE_RESOURCE_ID} eq null)`,
-    };
-    const response = await this.getAzureResourceRecursive(uri, queryParameters);
-    return response;
+      const { nextLink, value } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri });
+      return { nextlink: nextLink, value: value.filter((connector) => connector.properties?.supportedConnectionKinds?.includes('V1')) };
+    } catch (error) {
+      return { value: [] };
+    }
   }
 }

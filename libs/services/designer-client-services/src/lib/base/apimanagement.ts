@@ -46,12 +46,13 @@ export class ApiManagementInstanceService implements IApiManagementService {
   fetchApiMSwagger(apimApiId: string): Promise<any> {
     const { apiVersion, httpClient } = this.options;
 
-    return httpClient.get<any>({
+    const response = httpClient.get<any>({
       uri: apimApiId,
       queryParameters: { 'api-version': apiVersion },
       headers: {
-        Accept: 'application/vnd.swagger.doc+json',
+        accept: 'application/vnd.swagger.doc+json',
       },
     });
+    return response;
   }
 }

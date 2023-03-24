@@ -55,8 +55,8 @@ const CreateConnectionTab = () => {
   const [selectedResourceId, setSelectedResourceId] = useState<string>('');
   const [selectedSubResource, setSelectedSubResource] = useState<any | undefined>();
 
-  const selectResourceCallback = useCallback((resourceId: string) => {
-    setSelectedResourceId(resourceId);
+  const selectResourceCallback = useCallback((resource: any) => {
+    setSelectedResourceId(resource?.id);
     setSelectedSubResource(undefined);
   }, []);
 

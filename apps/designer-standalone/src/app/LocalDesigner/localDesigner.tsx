@@ -5,8 +5,11 @@ import {
   StandardConnectionService,
   StandardOperationManifestService,
   StandardSearchService,
-  StandardOAuthService,
-  StandardGatewayService,
+  BaseOAuthService,
+  BaseGatewayService,
+  ConsumptionSearchService,
+  BaseFunctionService,
+  BaseAppServiceService,
   StandardRunService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { ContentType } from '@microsoft/designer-client-services-logic-apps';
@@ -36,7 +39,7 @@ const operationManifestService = new StandardOperationManifestService({
   httpClient,
 });
 
-const searchService = new StandardSearchService({
+const searchServiceStandard = new StandardSearchService({
   baseUrl: '/url',
   apiVersion: '2018-11-01',
   httpClient,
@@ -48,7 +51,19 @@ const searchService = new StandardSearchService({
   isDev: true,
 });
 
-const oAuthService = new StandardOAuthService({
+const searchServiceConsumption = new ConsumptionSearchService({
+  baseUrl: '/url',
+  apiVersion: '2018-11-01',
+  httpClient,
+  apiHubServiceDetails: {
+    apiVersion: '2018-07-01-preview',
+    subscriptionId: '',
+    location: '',
+  },
+  isDev: true,
+});
+
+const oAuthService = new BaseOAuthService({
   apiVersion: '2018-11-01',
   baseUrl: '/url',
   httpClient,
@@ -57,13 +72,27 @@ const oAuthService = new StandardOAuthService({
   location: '',
 });
 
-const gatewayService = new StandardGatewayService({
+const gatewayService = new BaseGatewayService({
   baseUrl: '/url',
   httpClient,
   apiVersions: {
     subscription: '2018-11-01',
     gateway: '2016-06-01',
   },
+});
+
+const functionService = new BaseFunctionService({
+  baseUrl: '/url',
+  apiVersion: '2018-11-01',
+  httpClient,
+  subscriptionId: 'test',
+});
+
+const appServiceService = new BaseAppServiceService({
+  baseUrl: '/url',
+  apiVersion: '2018-11-01',
+  httpClient,
+  subscriptionId: 'test',
 });
 
 const runService = new StandardRunService({
@@ -86,9 +115,11 @@ export const LocalDesigner = () => {
     services: {
       connectionService,
       operationManifestService,
-      searchService,
+      searchService: !consumption ? searchServiceStandard : searchServiceConsumption,
       oAuthService,
       gatewayService,
+      functionService,
+      appServiceService,
       workflowService,
       hostService,
       runService,

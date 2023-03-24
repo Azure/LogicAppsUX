@@ -23,7 +23,7 @@ import {
   getInputsValueFromDefinitionForManifest,
   getParameterFromName,
   getParametersSortedByVisibility,
-  loadParameterValuesFromDefault,
+  loadParameterValuesArrayFromDefault,
   ParameterGroupKeys,
   toParameterInfoMap,
   updateParameterWithValues,
@@ -87,7 +87,9 @@ export const getInputParametersFromManifest = (
 ): NodeInputsWithDependencies => {
   const primaryInputParameters = new ManifestParser(manifest).getInputParameters(
     false /* includeParentObject */,
-    0 /* expandArrayPropertiesDepth */
+    0 /* expandArrayPropertiesDepth */,
+    undefined,
+    undefined
   );
   const allInputParameters = unmap(
     new ManifestParser(manifest).getInputParameters(
@@ -140,7 +142,7 @@ export const getInputParametersFromManifest = (
       );
     }
   } else {
-    loadParameterValuesFromDefault(primaryInputParameters);
+    loadParameterValuesArrayFromDefault(primaryInputParametersInArray);
   }
 
   const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition);

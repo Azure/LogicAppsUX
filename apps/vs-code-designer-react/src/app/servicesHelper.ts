@@ -1,13 +1,13 @@
 import { clientSupportedOperations } from './constants';
 import { HttpClient } from './services/httpClient';
-import { StandardOAuthService } from './services/oAuth';
+import { BaseOAuthService } from './services/oAuth';
 import { resolveConnectionsReferences } from './utilities/workflow';
 import {
   StandardConnectionService,
   StandardConnectorService,
   StandardOperationManifestService,
   StandardSearchService,
-  StandardGatewayService,
+  BaseGatewayService,
   StandardRunService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type {
@@ -38,8 +38,8 @@ export const getDesignerServices = (
   connectorService: StandardConnectorService;
   operationManifestService: StandardOperationManifestService;
   searchService: StandardSearchService;
-  oAuthService: StandardOAuthService;
-  gatewayService: StandardGatewayService;
+  oAuthService: BaseOAuthService;
+  gatewayService: BaseGatewayService;
   workflowService: IWorkflowService;
   hostService: IHostService;
   runService: StandardRunService;
@@ -140,7 +140,7 @@ export const getDesignerServices = (
 
   const { subscriptionId, resourceGroup, location } = apiHubServiceDetails;
 
-  const oAuthService = new StandardOAuthService({
+  const oAuthService = new BaseOAuthService({
     vscode,
     panelId,
     authToken,
@@ -153,7 +153,7 @@ export const getDesignerServices = (
     location,
   });
 
-  const gatewayService = new StandardGatewayService({
+  const gatewayService = new BaseGatewayService({
     baseUrl,
     httpClient,
     apiVersions: {

@@ -902,4 +902,13 @@ export default {
     SETTING_SEPARATOR_COLOR_LIGHT: '#eaeaea',
     CHEVRON_ROOT_COLOR_LIGHT: '#514f4e',
   },
+  AZURE_RESOURCE_ACTION_TYPES: {
+    SELECT_APIMANAGEMENT_ACTION: 'apimanagement',
+    SELECT_APIMANAGEMENT_TRIGGER: 'selectapimanagementtrigger',
+    SELECT_APPSERVICE_ACTION: 'appservice',
+    SELECT_APPSERVICE_TRIGGER: 'selectappservicetrigger',
+    SELECT_FUNCTION_ACTION: 'azurefunction',
+    SELECT_BATCH_WORKFLOW_ACTION: 'sendtobatch',
+    SELECT_MANUAL_WORKFLOW_ACTION: 'invokeworkflow',
+  },
 };

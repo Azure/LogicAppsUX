@@ -1,13 +1,17 @@
+import Constants from '../../../common/constants';
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useAllConnectors, useAllOperations } from '../../../core/queries/browse';
+import { useIsConsumption } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useIsAddingTrigger,
   useIsParallelBranch,
   useRelationshipIds,
   useSelectedSearchOperationGroupId,
+  useSelectedSearchOperationId,
 } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId, selectOperationId } from '../../../core/state/panel/panelSlice';
+import { AzureResourceSelection } from './azureResourceSelection';
 import { BrowseView } from './browseView';
 import { OperationGroupDetailView } from './operationGroupDetailView';
 import { SearchView } from './searchView';
@@ -22,6 +26,7 @@ import { useDispatch } from 'react-redux';
 
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
+  const isConsumption = useIsConsumption();
   const isTrigger = useIsAddingTrigger();
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<Record<string, string>>({
@@ -33,9 +38,11 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const [isSelectingAzureResource, setIsSelectingAzureResource] = useState(false);
 
-  const selectedOperationGroupId = useSelectedSearchOperationGroupId();
+  const selectedOperationId = useSelectedSearchOperationId();
+  const { data: allOperations, isLoading: isLoadingOperations } = useAllOperations();
+  const selectedOperation = allOperations.find((o) => o.id === selectedOperationId);
 
-  const { data: allOperations, isLoading } = useAllOperations();
+  const selectedOperationGroupId = useSelectedSearchOperationGroupId();
   const { data: allConnectors } = useAllConnectors();
   const selectedConnector = allConnectors?.find((c) => c.id === selectedOperationGroupId);
 
@@ -48,12 +55,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     setAllOperationsForGroup(filteredOps);
   }, [selectedOperationGroupId, allOperations]);
 
-  const onDismiss = useCallback(() => {
-    dispatch(selectOperationGroupId(''));
-    setSearchTerm('');
-    props.toggleCollapse();
-  }, [dispatch, props]);
-
   const navigateBack = useCallback(() => {
     dispatch(selectOperationGroupId(''));
     dispatch(selectOperationId(''));
@@ -63,15 +64,71 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const relationshipIds = useRelationshipIds();
   const isParallelBranch = useIsParallelBranch();
 
+  const isAzureResourceActionId = useCallback((id: string) => {
+    const azureResourceOperationIds = Object.values(Constants.AZURE_RESOURCE_ACTION_TYPES);
+    return azureResourceOperationIds.some((_id) => areApiIdsEqual(id, _id));
+  }, []);
+
+  const startAzureResourceSelection = useCallback((operation: DiscoveryOperation<DiscoveryResultTypes>) => {
+    console.log('startAzureResourceSelection', operation);
+    setIsSelectingAzureResource(true);
+
+    const selectedService = operation.properties.api.id;
+    let apiType: string;
+
+    switch (operation.id?.toLowerCase()) {
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_ACTION:
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_TRIGGER:
+        apiType = Constants.API_CATEGORIES.API_MANAGEMENT;
+        break;
+
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APPSERVICE_ACTION:
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APPSERVICE_TRIGGER:
+        apiType = Constants.API_CATEGORIES.APP_SERVICES;
+        break;
+
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_FUNCTION_ACTION:
+        apiType = Constants.API_CATEGORIES.AZURE_FUNCTIONS;
+        break;
+
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_MANUAL_WORKFLOW_ACTION:
+        apiType = Constants.API_CATEGORIES.WORKFLOWS;
+        break;
+
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_BATCH_WORKFLOW_ACTION:
+        apiType = Constants.API_CATEGORIES.WORKFLOWS;
+        break;
+
+      default:
+        throw new Error(`Unexpected API category type '${operation.id}'`);
+    }
+
+    console.log('startAzureResourceSelection', selectedService, apiType);
+  }, []);
+
   const onOperationClick = useCallback(
     (id: string) => {
-      const operation = (allOperations ?? []).find((o: any) => o.id === id);
+      const operation = (allOperations ?? []).find((o: DiscoveryOperation<DiscoveryResultTypes>) => o.id === id);
       if (!operation) return;
+      console.log('onOperationClick', operation);
       dispatch(selectOperationId(operation.id));
+      if (isAzureResourceActionId(operation.id) && isConsumption) {
+        startAzureResourceSelection(operation);
+        return;
+      }
       const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
       dispatch(addOperation({ operation, relationshipIds, nodeId: newNodeId, isParallelBranch, isTrigger }));
     },
-    [allOperations, dispatch, isParallelBranch, isTrigger, relationshipIds]
+    [
+      allOperations,
+      dispatch,
+      isAzureResourceActionId,
+      isConsumption,
+      isParallelBranch,
+      isTrigger,
+      relationshipIds,
+      startAzureResourceSelection,
+    ]
   );
 
   const intl = useIntl();
@@ -90,13 +147,15 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
           </Link>
         </div>
       ) : null}
-      {selectedOperationGroupId && selectedConnector ? (
+      {isSelectingAzureResource && selectedOperation ? (
+        <AzureResourceSelection operation={selectedOperation} />
+      ) : selectedOperationGroupId && selectedConnector ? (
         <OperationGroupDetailView
           connector={selectedConnector}
           groupOperations={allOperationsForGroup}
           filters={filters}
           onOperationClick={onOperationClick}
-          isLoading={isLoading}
+          isLoading={isLoadingOperations}
         />
       ) : (
         <>
@@ -105,7 +164,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
             onGroupToggleChange={() => setIsGrouped(!isGrouped)}
             isGrouped={isGrouped}
             searchTerm={searchTerm}
-            onDismiss={onDismiss}
             filters={filters}
             setFilters={setFilters}
             isTriggerNode={isTrigger}
@@ -115,7 +173,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
               searchTerm={searchTerm}
               allOperations={allOperations ?? []}
               groupByConnector={isGrouped}
-              isLoading={isLoading}
+              isLoading={isLoadingOperations}
               filters={filters}
               onOperationClick={onOperationClick}
             />

@@ -14,7 +14,8 @@ import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
 import { isRootNodeInGraph } from '../../utils/graph';
-import { updateDynamicDataInNode } from '../../utils/parameters/helper';
+import { getParameterFromName, updateDynamicDataInNode } from '../../utils/parameters/helper';
+import { createLiteralValueSegment } from '../../utils/parameters/segment';
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
 import { setVariableMetadata, getVariableDeclarations, getAllVariables } from '../../utils/variables';
@@ -34,6 +35,7 @@ import type {
 import { equals } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { batch } from 'react-redux';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
@@ -41,43 +43,48 @@ type AddOperationPayload = {
   nodeId: string;
   isParallelBranch?: boolean;
   isTrigger?: boolean;
+  presetParameterValues?: Record<string, any>;
+  actionMetadata?: Record<string, any>;
 };
 
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
-  const { operation, nodeId: actionId } = payload;
-  if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
-  let count = 1;
-  let nodeId = actionId;
-  while ((getState() as RootState).workflow.operations[nodeId]) {
-    nodeId = `${actionId}_${count}`;
-    count++;
-  }
+  batch(() => {
+    const { operation, nodeId: actionId, presetParameterValues, actionMetadata } = payload;
+    if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
+    let count = 1;
+    let nodeId = actionId;
+    while ((getState() as RootState).workflow.operations[nodeId]) {
+      nodeId = `${actionId}_${count}`;
+      count++;
+    }
 
-  const newPayload = { ...payload, nodeId };
+    const newPayload = { ...payload, nodeId };
 
-  dispatch(addNode(newPayload as any));
+    dispatch(addNode(newPayload as any));
 
-  const nodeOperationInfo = {
-    connectorId: operation.properties.api.id, // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
-    operationId: operation.name,
-    type: getOperationType(operation),
-    kind: operation.properties.operationKind,
-  };
+    const nodeOperationInfo = {
+      connectorId: operation.properties.api.id, // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
+      operationId: operation.name,
+      type: getOperationType(operation),
+      kind: operation.properties.operationKind,
+    };
 
-  dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
-  initializeOperationDetails(nodeId, nodeOperationInfo, getState as () => RootState, dispatch);
+    dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
+    initializeOperationDetails(nodeId, nodeOperationInfo, getState as () => RootState, dispatch, presetParameterValues, actionMetadata);
 
-  // Update settings for children and parents
+    // Update settings for children and parents
 
-  dispatch(setFocusNode(nodeId));
-  return;
+    dispatch(setFocusNode(nodeId));
+  });
 });
 
 const initializeOperationDetails = async (
   nodeId: string,
   operationInfo: NodeOperation,
   getState: () => RootState,
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  parameterValues?: Record<string, any>,
+  actionMetadata?: Record<string, any>
 ): Promise<void> => {
   const state = getState();
   const isTrigger = isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata);
@@ -104,11 +111,32 @@ const initializeOperationDetails = async (
     isConnectionRequired = isConnectionRequiredForOperation(manifest);
 
     const { iconUri, brandColor } = manifest.properties;
-    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
+    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, undefined);
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs);
+
+    if (parameterValues) {
+      // For actions with selected Azure Resources
+      Object.entries(parameterValues).forEach(([parameterName, parameterValue]) => {
+        const value = [createLiteralValueSegment(parameterValue)];
+        const parameter = getParameterFromName(nodeInputs, parameterName);
+        if (parameter) {
+          parameter.value = value;
+          parameter.preservedValue = parameterValue;
+        }
+      });
+    }
+
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
     const settings = getOperationSettings(isTrigger, operationInfo, nodeOutputs, manifest, /* swagger */ undefined);
-    initData = { id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata: { iconUri, brandColor } };
+    initData = {
+      id: nodeId,
+      nodeInputs,
+      nodeOutputs,
+      nodeDependencies,
+      settings,
+      operationMetadata: { iconUri, brandColor },
+      actionMetadata,
+    };
     dispatch(initializeNodes([initData]));
     addTokensAndVariables(nodeId, type, { ...initData, manifest }, state, dispatch);
   } else {
@@ -132,7 +160,15 @@ const initializeOperationDetails = async (
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
     const settings = getOperationSettings(isTrigger, operationInfo, nodeOutputs, /* manifest */ undefined, parsedSwagger);
 
-    initData = { id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata: { iconUri, brandColor } };
+    initData = {
+      id: nodeId,
+      nodeInputs,
+      actionMetadata,
+      nodeOutputs,
+      nodeDependencies,
+      settings,
+      operationMetadata: { iconUri, brandColor },
+    };
     dispatch(initializeNodes([initData]));
     addTokensAndVariables(
       nodeId,
@@ -151,6 +187,7 @@ const initializeOperationDetails = async (
       undefined,
       initData.nodeDependencies,
       initData.nodeInputs,
+      initData.actionMetadata,
       initData.settings as Settings,
       getAllVariables(getState().tokens.variables),
       dispatch,

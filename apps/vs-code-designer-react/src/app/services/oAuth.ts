@@ -114,7 +114,7 @@ class OAuthPopup {
   };
 }
 
-export class StandardOAuthService implements IOAuthService {
+export class BaseOAuthService implements IOAuthService {
   private _redirectUrl: string;
   constructor(private readonly options: IOAuthServiceOptions) {
     const { oauthRedirectUrl, panelId } = options;

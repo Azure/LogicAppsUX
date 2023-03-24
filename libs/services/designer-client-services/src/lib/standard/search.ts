@@ -75,7 +75,7 @@ export class StandardSearchService extends BaseSearchService {
       const uri = `${prevNextlink ?? startUri}&${filter}`;
 
       const { nextLink, value } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri });
-      return { nextlink: nextLink, value };
+      return { nextlink: nextLink, value: value.filter((connector) => connector.properties?.supportedConnectionKinds?.includes('V2')) };
     } catch (error) {
       return { value: [] };
     }

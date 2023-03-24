@@ -31,7 +31,7 @@ export const useAllOperations = () => {
     const azure = azureOperations?.pages.flatMap((page) => page.data) ?? [];
     const custom = customOperations?.pages.flatMap((page) => page.data) ?? [];
     const builtin = builtinOperations?.data ?? [];
-    return [...azure, ...custom, ...builtin];
+    return [...azure, ...custom, ...builtin].filter((op) => op !== undefined);
   }, [azureOperations, customOperations, builtinOperations]);
 
   const isLoading = useMemo(
@@ -133,7 +133,7 @@ export const useAllConnectors = () => {
     const azure = azureData?.pages.flatMap((page) => page.data) ?? [];
     const custom = customData?.pages.flatMap((page) => page.data) ?? [];
     const builtin = builtinData ?? [];
-    return [...azure, ...custom, ...builtin];
+    return [...azure, ...custom, ...builtin].filter((connector) => connector !== undefined);
   }, [azureData, customData, builtinData]);
 
   return useMemo(() => ({ data, isLoading }), [data, isLoading]);

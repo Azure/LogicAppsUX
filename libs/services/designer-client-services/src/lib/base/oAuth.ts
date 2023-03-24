@@ -43,7 +43,7 @@ export class OAuthPopup implements IOAuthPopup {
   }
 }
 
-export class StandardOAuthService implements IOAuthService {
+export class BaseOAuthService implements IOAuthService {
   constructor(private readonly options: IOAuthServiceOptions) {
     const { apiVersion, baseUrl, httpClient } = options;
     if (!apiVersion) {

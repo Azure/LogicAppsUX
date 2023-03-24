@@ -31,6 +31,20 @@
               "name": "TestVar",
               "value": 4
             }
+          },
+          "APP_SERVICE": {
+            "inputs": {
+              "method": "get",
+              "uri": "http://localhost:54335/api/Values"
+            },
+            "metadata": {
+              "apiDefinitionUrl": "https://rarayudutestswaggerwebapp.azurewebsites.net/apidefinition.swagger.json",
+              "swaggerSource": "website"
+            },
+            "runAfter": {
+              "Increment_variable": ["Succeeded"]
+            },
+            "type": "Http"
           }
         },
         "else": {

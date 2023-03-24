@@ -117,12 +117,13 @@ export const ResourceEntry = (props: ResourceEntryProps) => {
   const intl = useIntl();
   const hasSubResources = !!onSubResourceSelect || !!fetchSubResourcesCallback;
 
-  const subResourcesQuery = useQuery([subResourceType, resource.id], async () => fetchSubResourcesCallback?.(resource.id) ?? [], {
+  const subResourcesQuery = useQuery([subResourceType, resource.id], async () => fetchSubResourcesCallback?.(resource) ?? [], {
     enabled: resource.selected && hasSubResources,
     staleTime: 1000 * 60 * 60 * 24,
   });
 
-  const expanded = useMemo(() => resource.selected, [resource.selected]);
+  const selected = resource.selected;
+  const expanded = useMemo(() => selected && hasSubResources, [hasSubResources, selected]);
   const selectedSubResourceId = useMemo(() => resource.selectedSubresource, [resource.selectedSubresource]);
 
   const noSubResourceText = intl.formatMessage({
@@ -138,14 +139,14 @@ export const ResourceEntry = (props: ResourceEntryProps) => {
     <div className="msla-azure-resource-entry">
       <button
         className={css('msla-azure-resource-entry-heading', expanded && 'expanded')}
-        onClick={() => onResourceSelect(expanded ? undefined : resource.id)}
+        onClick={() => onResourceSelect(selected ? undefined : resource)}
         style={{ gridTemplateColumns }}
       >
         {columns.map((value, index) => (
           <Text key={`${value}-${index}`}>{value ?? ' '}</Text>
         ))}
       </button>
-      {expanded && hasSubResources && (
+      {expanded && (
         <div className="msla-azure-resource-entry-content">
           {subResourcesQuery?.isLoading ? (
             <Spinner label={subResourceLoadingText} style={{ margin: '8px' }} />

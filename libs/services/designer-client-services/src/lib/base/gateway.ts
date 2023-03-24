@@ -3,7 +3,7 @@ import type { HttpRequestOptions, IHttpClient } from '../httpClient';
 import type { Gateway, ArmResources, Subscription, SubscriptionsResponse } from '@microsoft/utils-logic-apps';
 import { ArgumentException } from '@microsoft/utils-logic-apps';
 
-interface StandardGatewayServiceArgs {
+export interface BaseGatewayServiceOptions {
   baseUrl: string;
   locale?: string;
   httpClient: IHttpClient;
@@ -13,8 +13,8 @@ interface StandardGatewayServiceArgs {
   };
 }
 
-export class StandardGatewayService implements IGatewayService {
-  constructor(public readonly options: StandardGatewayServiceArgs) {
+export class BaseGatewayService implements IGatewayService {
+  constructor(public readonly options: BaseGatewayServiceOptions) {
     const { baseUrl, apiVersions } = options;
     if (!baseUrl) {
       throw new ArgumentException('baseUrl required');

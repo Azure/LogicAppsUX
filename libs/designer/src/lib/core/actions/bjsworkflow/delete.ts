@@ -10,6 +10,7 @@ import { updateAllUpstreamNodes } from './initialize';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { batch } from 'react-redux';
 
 type DeleteOperationPayload = {
   nodeId: string;
@@ -24,15 +25,16 @@ export type DeleteGraphPayload = {
 export const deleteOperation = createAsyncThunk(
   'deleteOperation',
   async (deletePayload: DeleteOperationPayload, { getState, dispatch }) => {
-    const { nodeId } = deletePayload;
+    batch(() => {
+      const { nodeId } = deletePayload;
 
-    dispatch(clearFocusNode());
-    dispatch(clearPanel());
+      dispatch(clearFocusNode());
+      dispatch(clearPanel());
 
-    dispatch(deleteNode(deletePayload));
-    deleteOperationDetails(nodeId, dispatch);
-    updateAllUpstreamNodes(getState() as RootState, dispatch);
-    return;
+      dispatch(deleteNode(deletePayload));
+      deleteOperationDetails(nodeId, dispatch);
+      updateAllUpstreamNodes(getState() as RootState, dispatch);
+    });
   }
 );
 

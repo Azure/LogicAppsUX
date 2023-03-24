@@ -84,3 +84,26 @@ export type DiscoveryResultTypes = SomeKindOfAzureOperationDiscovery | BuiltInOp
 //     | FunctionProperties
 //     | WebsiteProperties
 //     | WorkflowProperties;
+
+export interface DiscoveryWorkflow {
+  [key: string]: any;
+  id: string;
+  definition: any;
+  parameters: any;
+  state: string;
+  createdTime: string;
+  changedTime?: string;
+  provisioningState?: string;
+  version?: string;
+  accessEndpoint?: string;
+  endpointConfiguration?: any;
+}
+
+export interface DiscoveryWorkflowTrigger {
+  [key: string]: any;
+  state: string;
+  createdTime: string;
+  changedTime?: string;
+  provisioningState?: string;
+  workflow?: any;
+}
