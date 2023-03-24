@@ -154,7 +154,7 @@ export const App = () => {
       <Designer />
     </BJSWorkflowProvider>
   ) : (
-    errorApp
+    loadingApp
   );
 
   return (

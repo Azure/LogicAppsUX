@@ -114,6 +114,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
         location: this.normalizeLocation(this.node?.parent?.parent?.site.location),
         workflowManagementBaseUrl: this.node?.parent?.subscription?.environment?.resourceManagerEndpointUrl,
         tenantId: this.node?.parent?.subscription?.tenantId,
+        resourceGroupName: this.node?.parent?.parent?.site.resourceGroup,
       },
       workflowName: this.workflowName,
       standardApp: getStandardAppData(this.workflowName, this.workflow, parameters),
