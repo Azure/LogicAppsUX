@@ -1,4 +1,5 @@
 import { StaticResult } from './StaticResult';
+import { deserializePropertyValues, parseStaticResultSchema, serializePropertyValues } from './util';
 import type { IButtonStyles } from '@fluentui/react';
 import { DefaultButton, PrimaryButton, Toggle } from '@fluentui/react';
 import type { Schema } from '@microsoft/parsers-logic-apps';
@@ -49,7 +50,7 @@ export const StaticResultContainer = ({
   const intl = useIntl();
 
   const [showStaticResults, setShowStaticResults] = useState<boolean>(enabled);
-  const [propertyValues, setPropertyValues] = useState(properties);
+  const [propertyValues, setPropertyValues] = useState(deserializePropertyValues(properties, staticResultSchema));
 
   useEffect(() => {
     // we want to update parentProps whenever our inner properties change
@@ -84,7 +85,11 @@ export const StaticResultContainer = ({
   });
 
   const saveStaticResults = () => {
-    savePropertiesCallback?.(propertyValues, showStaticResults ? StaticResultOption.ENABLED : StaticResultOption.DISABLED);
+    console.log(JSON.stringify(serializePropertyValues(propertyValues, staticResultSchema), null, 2));
+    savePropertiesCallback?.(
+      serializePropertyValues(propertyValues, staticResultSchema),
+      showStaticResults ? StaticResultOption.ENABLED : StaticResultOption.DISABLED
+    );
   };
 
   const cancelStaticResults = () => {
@@ -138,14 +143,4 @@ export const StaticResultContainer = ({
       </div>
     </div>
   );
-};
-
-const parseStaticResultSchema = (staticResultSchema: OpenAPIV2.SchemaObject) => {
-  const { additionalProperties, properties, required, type } = staticResultSchema;
-  return {
-    additionalProperties,
-    properties,
-    required,
-    type,
-  };
 };

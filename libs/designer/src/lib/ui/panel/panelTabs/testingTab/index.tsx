@@ -36,7 +36,7 @@ export const TestingPanel: React.FC = () => {
   return staticResultSchema ? (
     <StaticResultContainer
       key={`${name}`}
-      properties={properties as OpenAPIV2.SchemaObject}
+      properties={(properties ?? {}) as OpenAPIV2.SchemaObject}
       staticResultSchema={staticResultSchema}
       enabled={staticResultOptions === StaticResultOption.ENABLED ?? false}
       savePropertiesCallback={(newPropertyState: OpenAPIV2.SchemaObject, staticResultOption: StaticResultOption) =>

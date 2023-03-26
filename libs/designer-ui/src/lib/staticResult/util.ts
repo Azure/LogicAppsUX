@@ -1,0 +1,141 @@
+import type { StaticResultRootSchemaType } from '.';
+import constants from '../constants';
+import type { DropdownItem } from '../dropdown';
+import type { ValueSegment } from '../editor';
+import { ValueSegmentType } from '../editor';
+import { SchemaPropertyValueType } from './propertyEditor/PropertyEditorItem';
+import { capitalizeFirstLetter, guid } from '@microsoft/utils-logic-apps';
+
+export const parseStaticResultSchema = (staticResultSchema: OpenAPIV2.SchemaObject) => {
+  const { additionalProperties, properties, required, type } = staticResultSchema;
+  return {
+    additionalProperties,
+    properties,
+    required,
+    type,
+  };
+};
+
+export const serializePropertyValues = (
+  propertyValues: OpenAPIV2.SchemaObject,
+  staticResultSchema: OpenAPIV2.SchemaObject
+): OpenAPIV2.SchemaObject => {
+  const serializedProperty: OpenAPIV2.SchemaObject = {};
+  Object.entries(staticResultSchema.properties ?? {}).forEach(([schemaPropertyName, schemaPropertyValue]) => {
+    if (propertyValues[schemaPropertyName] && staticResultSchema.properties?.[schemaPropertyName]) {
+      if (schemaPropertyValue.type === constants.SWAGGER.TYPE.OBJECT) {
+        const serializedPropertyValue = serializePropertyValues(propertyValues[schemaPropertyName], schemaPropertyValue);
+        if (serializedPropertyValue && Object.keys(serializedPropertyValue).length > 0) {
+          serializedProperty[schemaPropertyName] = serializedPropertyValue;
+        }
+      } else if (schemaPropertyValue.type === constants.SWAGGER.TYPE.ARRAY) {
+        const serializedPropertyValue = serializePropertyValuesAsArray(propertyValues[schemaPropertyName], schemaPropertyValue);
+        if (serializedPropertyValue && serializedPropertyValue.length > 0) {
+          serializedProperty[schemaPropertyName] = serializedPropertyValue;
+        }
+      } else {
+        serializedProperty[schemaPropertyName] = propertyValues[schemaPropertyName];
+      }
+    }
+  });
+  if (!staticResultSchema.properties && propertyValues) {
+    return propertyValues;
+  }
+  return serializedProperty;
+};
+
+export const serializePropertyValuesAsArray = (
+  propertyValues: OpenAPIV2.SchemaObject,
+  staticResultSchema: OpenAPIV2.SchemaObject
+): OpenAPIV2.SchemaObject[] => {
+  const serializedProperty: OpenAPIV2.SchemaObject[] = [];
+  const schemaObject = Object.entries(staticResultSchema?.items?.properties ?? {});
+  // cycles through element in the array
+  Object.values(propertyValues).forEach((propertyValue) => {
+    const serializedPropertyValue: OpenAPIV2.SchemaObject = {};
+    schemaObject.forEach(([schemaPropertyName, schemaPropertyValue]) => {
+      if (propertyValue[schemaPropertyName]) {
+        // if is a nested array property value
+        if (schemaPropertyValue.type === constants.SWAGGER.TYPE.ARRAY && schemaPropertyValue.items && propertyValue[schemaPropertyName]) {
+          const serializedPropertyValueArray = serializePropertyValuesAsArray(propertyValue[schemaPropertyName], schemaPropertyValue);
+          if (serializedPropertyValueArray && serializedPropertyValueArray.length > 0) {
+            serializedPropertyValue[schemaPropertyName] = serializedPropertyValueArray;
+          }
+        } else {
+          serializedPropertyValue[schemaPropertyName] = propertyValue[schemaPropertyName];
+        }
+      }
+    });
+    if (Object.keys(serializedPropertyValue).length > 0) {
+      serializedProperty.push(serializedPropertyValue);
+    }
+  });
+
+  if (!staticResultSchema?.items?.properties && propertyValues) {
+    serializedProperty.push(...Object.values(propertyValues));
+  }
+  return serializedProperty;
+};
+
+export const deserializePropertyValues = (
+  propertyValues: OpenAPIV2.SchemaObject,
+  staticResultSchema: OpenAPIV2.SchemaObject
+): OpenAPIV2.SchemaObject => {
+  console.log(propertyValues);
+  console.log(staticResultSchema);
+  return propertyValues;
+};
+
+export const initializeShownProperties = (
+  required: string[],
+  propertiesSchema: StaticResultRootSchemaType,
+  propertyValues?: OpenAPIV2.SchemaObject
+): Record<string, boolean> => {
+  const shownProperties: Record<string, boolean> = {};
+  Object.keys(propertiesSchema).forEach((propertyName) => {
+    shownProperties[propertyName] = required.indexOf(propertyName) > -1 || propertyValues?.[propertyName];
+  });
+  return shownProperties;
+};
+
+export const formatShownProperties = (propertiesSchema: Record<string, boolean>): ValueSegment[] => {
+  if (!propertiesSchema) return [];
+  const filteredProperties: Record<string, boolean> = Object.fromEntries(Object.entries(propertiesSchema).filter(([, value]) => value));
+  return [{ id: guid(), type: ValueSegmentType.LITERAL, value: Object.keys(filteredProperties).toString() }];
+};
+
+export const getOptions = (propertiesSchema: StaticResultRootSchemaType, required: string[]): DropdownItem[] => {
+  const options: DropdownItem[] = [];
+  if (propertiesSchema) {
+    Object.keys(propertiesSchema).forEach((propertyName, i) => {
+      options.push({
+        key: i.toString(),
+        displayName: `${capitalizeFirstLetter(propertyName)}`,
+        value: propertyName,
+        disabled: required.includes(propertyName),
+      });
+    });
+  }
+  return options;
+};
+
+export const initializeCheckedDropdown = (
+  propertyValue: OpenAPIV2.SchemaObject | string,
+  propertyType: SchemaPropertyValueType
+): Record<string, boolean> => {
+  if (propertyType === SchemaPropertyValueType.STRING) return {};
+  const returnDropdown: Record<string, boolean> = {};
+
+  Object.keys(propertyValue).forEach((propertyValueKey) => {
+    returnDropdown[propertyValueKey] = true;
+  });
+  return returnDropdown;
+};
+
+export const initializePropertyValueText = (
+  propertyValue: OpenAPIV2.SchemaObject | string,
+  propertyType: SchemaPropertyValueType
+): string => {
+  if (propertyType === SchemaPropertyValueType.OBJECT) return '';
+  return propertyValue as string;
+};

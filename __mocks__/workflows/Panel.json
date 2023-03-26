@@ -114,11 +114,25 @@
     },
     "staticResults": {
       "Parse_JSON0": {
-        "outputs": {
-          "body": "hi"
-        },
+        "status": "Failed",
         "code": "this is a test",
-        "status": "Failed"
+        "outputs": {
+          "body": "hi",
+          "errors": [
+            {
+              "message": "test message"
+            },
+            {
+              "errorType": "Dependencies",
+              "childErrors": [
+                {
+                  "schema": "schemaHELLO",
+                  "childErrors": ["childerror1", "childerror2"]
+                }
+              ]
+            }
+          ]
+        }
       },
       "HTTP0": {
         "outputs": {

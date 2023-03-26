@@ -1,6 +1,7 @@
 import constants from '../../constants';
 import { Label } from '../../label';
 import { StaticResultProperty } from '../staticResultProperty';
+import { initializeCheckedDropdown, initializePropertyValueText } from '../util';
 import { ItemMenuButton } from './ItemMenuButton';
 import type { IButtonStyles, IContextualMenuItem, IContextualMenuProps, IContextualMenuStyles, ITextFieldStyles } from '@fluentui/react';
 import { IconButton, TextField } from '@fluentui/react';
@@ -212,22 +213,4 @@ export const PropertyEditorItem = ({
       )}
     </div>
   );
-};
-
-const initializeCheckedDropdown = (
-  propertyValue: OpenAPIV2.SchemaObject | string,
-  propertyType: SchemaPropertyValueType
-): Record<string, boolean> => {
-  if (propertyType === SchemaPropertyValueType.STRING) return {};
-  const returnDropdown: Record<string, boolean> = {};
-
-  Object.keys(propertyValue).forEach((propertyValueKey) => {
-    returnDropdown[propertyValueKey] = true;
-  });
-  return returnDropdown;
-};
-
-const initializePropertyValueText = (propertyValue: OpenAPIV2.SchemaObject | string, propertyType: SchemaPropertyValueType): string => {
-  if (propertyType === SchemaPropertyValueType.OBJECT) return '';
-  return propertyValue as string;
 };

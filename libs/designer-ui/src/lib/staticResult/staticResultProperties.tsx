@@ -1,7 +1,8 @@
-import type { ChangeState, DropdownItem, StaticResultRootSchemaType, ValueSegment } from '..';
-import { Label, ValueSegmentType, DropdownEditor } from '..';
+import type { ChangeState, StaticResultRootSchemaType } from '..';
+import { Label, DropdownEditor } from '..';
 import { StaticResultProperty } from './staticResultProperty';
-import { capitalizeFirstLetter, guid } from '@microsoft/utils-logic-apps';
+import { formatShownProperties, getOptions, initializeShownProperties } from './util';
+import { createCopy } from '@microsoft/utils-logic-apps';
 import isEqual from 'lodash.isequal';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -10,7 +11,7 @@ interface StaticResultPropertiesProps {
   propertiesSchema: StaticResultRootSchemaType;
   required: string[];
   additionalPropertiesSchema?: boolean;
-  propertyValues?: OpenAPIV2.SchemaObject;
+  propertyValues: OpenAPIV2.SchemaObject;
   setPropertyValues: (newPropertyValue: OpenAPIV2.SchemaObject) => void;
 }
 
@@ -20,25 +21,38 @@ export const StaticResultProperties = ({
   propertyValues,
   setPropertyValues,
 }: StaticResultPropertiesProps): JSX.Element => {
-  useEffect(() => {
-    console.log(propertyValues);
-  }, [propertyValues]);
   const intl = useIntl();
   const [shownProperties, setShownProperties] = useState<Record<string, boolean>>(
     initializeShownProperties(required, propertiesSchema, propertyValues)
   );
 
   useEffect(() => {
+    if (!isEqual(shownProperties, initializeShownProperties(required, propertiesSchema, propertyValues))) {
+      const newPropertyValues: Record<string, any> = createCopy(propertyValues);
+      Object.keys(shownProperties).forEach((propertyName) => {
+        if (!shownProperties[propertyName]) {
+          delete newPropertyValues[propertyName];
+        } else {
+          // todo: save previous values, so propertyEditor does not clear when removing item from dropdown
+          newPropertyValues[propertyName] = propertyValues?.[propertyName];
+        }
+      });
+      setPropertyValues(newPropertyValues);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shownProperties]);
+
+  useEffect(() => {
     initializeShownProperties(required, propertiesSchema, propertyValues);
   }, [propertiesSchema, propertyValues, required]);
 
   const updateShownProperties = (newState: ChangeState) => {
-    const updatedProperties: Record<string, boolean> = {};
+    const updatedShownProperties: Record<string, boolean> = {};
     const checkedValues = newState.value[0].value.split(',');
     Object.keys(propertiesSchema).forEach((propertyName) => {
-      updatedProperties[propertyName] = checkedValues.includes(propertyName);
+      updatedShownProperties[propertyName] = checkedValues.includes(propertyName);
     });
-    setShownProperties(updatedProperties);
+    setShownProperties(updatedShownProperties);
   };
 
   const updatePropertyValues = (propertyName: string, newPropertyValue: any) => {
@@ -78,37 +92,4 @@ export const StaticResultProperties = ({
       })}
     </div>
   );
-};
-
-const initializeShownProperties = (
-  required: string[],
-  propertiesSchema: StaticResultRootSchemaType,
-  propertyValues?: OpenAPIV2.SchemaObject
-): Record<string, boolean> => {
-  const shownProperties: Record<string, boolean> = {};
-  Object.keys(propertiesSchema).forEach((propertyName) => {
-    shownProperties[propertyName] = required.indexOf(propertyName) > -1 || propertyValues?.[propertyName];
-  });
-  return shownProperties;
-};
-
-const formatShownProperties = (propertiesSchema: Record<string, boolean>): ValueSegment[] => {
-  if (!propertiesSchema) return [];
-  const filteredProperties: Record<string, boolean> = Object.fromEntries(Object.entries(propertiesSchema).filter(([, value]) => value));
-  return [{ id: guid(), type: ValueSegmentType.LITERAL, value: Object.keys(filteredProperties).toString() }];
-};
-
-const getOptions = (propertiesSchema: StaticResultRootSchemaType, required: string[]): DropdownItem[] => {
-  const options: DropdownItem[] = [];
-  if (propertiesSchema) {
-    Object.keys(propertiesSchema).forEach((propertyName, i) => {
-      options.push({
-        key: i.toString(),
-        displayName: `${capitalizeFirstLetter(propertyName)}`,
-        value: propertyName,
-        disabled: required.includes(propertyName),
-      });
-    });
-  }
-  return options;
 };
