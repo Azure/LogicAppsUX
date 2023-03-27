@@ -3,7 +3,7 @@
   "displayName": "Azure Logic Apps (Standard)",
   "version": "2.0.10",
   "aiKey": "setInGitHubBuild",
-  "repository": "https://github.com/Azure/logic_apps_designer",
+  "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
   "engines": {
     "vscode": "^1.64.0"
@@ -834,7 +834,7 @@
     "theme": "dark"
   },
   "bugs": {
-    "url": "https://github.com/Azure/logicapps/issues"
+    "url": "https://github.com/Azure/LogicAppsUX/issues"
   },
   "homepage": "https://azure.microsoft.com/services/logic-apps/",
   "license": "SEE LICENSE IN LICENSE.md",
