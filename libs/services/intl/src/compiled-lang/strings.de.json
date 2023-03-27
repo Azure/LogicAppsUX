@@ -75,6 +75,12 @@
       "value": "Markieren, um diese Verbindung auszuwählen"
     }
   ],
+  "+jnjtp": [
+    {
+      "type": 0,
+      "value": "Select a Manual Workflow resource"
+    }
+  ],
   "+lpuMl": [
     {
       "type": 0,
@@ -669,6 +675,12 @@
     {
       "type": 0,
       "value": "Bezug"
+    }
+  ],
+  "2vnYre": [
+    {
+      "type": 0,
+      "value": "Add Action"
     }
   ],
   "2xhbE1": [
@@ -2841,6 +2853,12 @@
       "value": "(UTC+02:00) Istanbul"
     }
   ],
+  "KwGA+K": [
+    {
+      "type": 0,
+      "value": "Select a Function App resource"
+    }
+  ],
   "L+PY+j": [
     {
       "type": 0,
@@ -3627,6 +3645,12 @@
       "value": "Erforderlich. Die Zeichenfolge, mit der Elemente getrennt werden sollen."
     }
   ],
+  "QpX2+j": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "QrQDdp": [
     {
       "type": 0,
@@ -4121,6 +4145,12 @@
     {
       "type": 0,
       "value": "(UTC-07:00) Mountain Time (USA und Kanada)"
+    }
+  ],
+  "VHm1Sr": [
+    {
+      "type": 0,
+      "value": "Select an App Service resource"
     }
   ],
   "VI5Sa8": [
@@ -4773,6 +4803,12 @@
       "value": "Enter a valid float."
     }
   ],
+  "aoUT/3": [
+    {
+      "type": 0,
+      "value": "Loading resources..."
+    }
+  ],
   "auUI93": [
     {
       "type": 0,
@@ -5255,6 +5291,12 @@
       "value": "Fehler bei der ACL-Erstellung für die Verbindung. Die Verbindung wird gelöscht."
     }
   ],
+  "fElufw": [
+    {
+      "type": 0,
+      "value": "Select an API Management resource"
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
@@ -5443,6 +5485,12 @@
     {
       "type": 0,
       "value": "Bei Verwendung innerhalb einer until-Schleife gibt diese Funktion den aktuellen Iterationsindex der angegebenen Schleife zurück."
+    }
+  ],
+  "gvDMuq": [
+    {
+      "type": 0,
+      "value": "Select a Batch Workflow resource"
     }
   ],
   "h1lQDa": [
