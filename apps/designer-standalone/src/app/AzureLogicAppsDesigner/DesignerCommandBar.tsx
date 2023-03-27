@@ -103,7 +103,7 @@ export const DesignerCommandBar = ({
             {item.text}
             {allWorkflowParameterErrors ? (
               <div style={{ display: 'inline-block', marginLeft: 8 }}>
-                <TrafficLightDot fill={RUN_AFTER_COLORS['light']['FAILED']} />
+                <TrafficLightDot fill={RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED']} />
               </div>
             ) : null}
           </>
