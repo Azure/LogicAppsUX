@@ -559,17 +559,29 @@ const createConnections = (
     !isConditional &&
     (isLoopCase || !isKeyAnIndexValue(sourceNodeString) || (!isLoopCase && isKeyAnIndexValue(sourceNodeString)))
   ) {
-    setConnectionInputValue(connections, {
-      targetNode: destinationNode,
-      targetNodeReactFlowKey: destinationKey,
-      findInputSlot: true,
-      value: sourceNode
-        ? {
-            reactFlowKey: sourceKey,
-            node: sourceNode,
-          }
-        : amendedSourceKey,
-    });
+    if (!sourceNode && amendedSourceKey.startsWith(indexPseudoFunctionKey)) {
+      setConnectionInputValue(connections, {
+        targetNode: destinationNode,
+        targetNodeReactFlowKey: destinationKey,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: amendedSourceKey,
+          node: indexPseudoFunction,
+        },
+      });
+    } else {
+      setConnectionInputValue(connections, {
+        targetNode: destinationNode,
+        targetNodeReactFlowKey: destinationKey,
+        findInputSlot: true,
+        value: sourceNode
+          ? {
+              reactFlowKey: sourceKey,
+              node: sourceNode,
+            }
+          : amendedSourceKey,
+      });
+    }
   }
 
   // Extract and create connections for function inputs
