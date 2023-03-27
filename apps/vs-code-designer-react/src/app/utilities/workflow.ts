@@ -8,6 +8,7 @@ export const convertConnectionsDataToReferences = (connectionsData: ConnectionsD
     return references;
   }
 
+  const apiManagementConnections = connectionsData.apiManagementConnections || {};
   const functionConnections = connectionsData.functionConnections || {};
   const connectionReferences = connectionsData.managedApiConnections || {};
   const serviceProviderConnections = connectionsData.serviceProviderConnections || {};
@@ -19,6 +20,15 @@ export const convertConnectionsDataToReferences = (connectionsData: ConnectionsD
       connectionName: connection && connection.id ? connection.id.split('/').slice(-1)[0] : '',
       api: { id: api ? api.id : '' },
       authentication,
+    };
+  }
+
+  const apimConnectorId = '/connectionProviders/apiManagementOperation';
+  for (const connectionKey of Object.keys(apiManagementConnections)) {
+    references[connectionKey] = {
+      connection: { id: `${apimConnectorId}/connections/${connectionKey}` },
+      connectionName: connectionKey,
+      api: { id: apimConnectorId },
     };
   }
 
