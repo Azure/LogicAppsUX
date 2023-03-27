@@ -17,11 +17,13 @@ export class ApiManagementInstanceService implements IApiManagementService {
   private queryClient: QueryClient;
 
   constructor(public readonly options: ApiManagementServiceOptions) {
-    const { apiVersion, baseUrl, httpClient } = options;
+    const { apiVersion, baseUrl, subscriptionId, httpClient } = options;
     if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
     } else if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
+    } else if (!subscriptionId) {
+      throw new ArgumentException('subscriptionId required');
     } else if (!httpClient) {
       throw new ArgumentException('httpClient required for workflow app');
     }
