@@ -467,7 +467,8 @@ const createConnections = (
   }
 
   // Loop + index variable handling (create index() node, match up variables to respective nodes, etc)
-  if (isLoop || conditionalLoopKey) {
+  const isLoopCase = isLoop || !!conditionalLoopKey;
+  if (isLoopCase) {
     const loopKey = conditionalLoopKey ? qualifyLoopRelativeSourceKeys(conditionalLoopKey) : amendedTargetKey;
 
     let startIdxOfPrevLoop = loopKey.length;
@@ -553,7 +554,11 @@ const createConnections = (
     }
   }
 
-  if (destinationNode && !isConditional && !isKeyAnIndexValue(sourceNodeString)) {
+  if (
+    destinationNode &&
+    !isConditional &&
+    (isLoopCase || !isKeyAnIndexValue(sourceNodeString) || (!isLoopCase && isKeyAnIndexValue(sourceNodeString)))
+  ) {
     setConnectionInputValue(connections, {
       targetNode: destinationNode,
       targetNodeReactFlowKey: destinationKey,

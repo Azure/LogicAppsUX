@@ -918,6 +918,83 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
           (result['target-/ns0:Root/NameValueTransforms/PO_Status/Product/ProductIdentifier'].inputs[0][0] as ConnectionUnit).reactFlowKey
         ).toBe('source-/ns0:Root/NameValueTransforms/PurchaseOrderStatus/ns0:LineItem');
       });
+
+      it.skip('Everything test', () => {
+        const extendedSource = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
+        const extendedTarget = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
+        delete simpleMap['ns0:Root'];
+        simpleMap['ns0:TargetSchemaRoot'] = {
+          Looping: {
+            OneToOne: {
+              '$for(/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest, $a)': {
+                StressTest: {
+                  '$if(is-greater-than($a, 3))': {
+                    Direct: '/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest[$a]/SourceDirect',
+                  },
+                },
+              },
+            },
+          },
+        };
+
+        const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries.length).toEqual(8);
+
+        const isGreaterId = resultEntries[0][0];
+        const directAccessId = resultEntries[1][0];
+        const ifId = resultEntries[2][0];
+        const indexId = resultEntries[3][0];
+
+        expect(resultEntries[0][0]).toEqual(isGreaterId);
+        expect(resultEntries[0][1]).toBeTruthy();
+        expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
+        expect(resultEntries[0][1].inputs[1][0]).toEqual('3');
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual(ifId);
+
+        expect(resultEntries[1][0]).toEqual(directAccessId);
+        expect(resultEntries[1][1]).toBeTruthy();
+        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
+        expect((resultEntries[1][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual(
+          'source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest'
+        );
+        expect((resultEntries[1][1].inputs[2][0] as ConnectionUnit).reactFlowKey).toEqual(
+          'source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest/SourceDirect'
+        );
+        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual(ifId);
+
+        expect(resultEntries[2][0]).toEqual(ifId);
+        expect(resultEntries[2][1]).toBeTruthy();
+        expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(isGreaterId);
+        expect((resultEntries[2][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual(ifId);
+        expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest/Direct');
+
+        expect(resultEntries[3][0]).toEqual(indexId);
+        expect(resultEntries[3][1]).toBeTruthy();
+        expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+          'source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest'
+        );
+        expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest');
+        expect(resultEntries[3][1].outputs[1].reactFlowKey).toEqual(ifId);
+
+        expect(resultEntries[4][0]).toEqual('source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest');
+        expect(resultEntries[4][1]).toBeTruthy();
+        expect(resultEntries[4][1].outputs[0].reactFlowKey).toEqual(indexId);
+
+        expect(resultEntries[5][0]).toEqual('source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest/SourceDirect');
+        expect(resultEntries[5][1]).toBeTruthy();
+        expect(resultEntries[5][1].outputs[0].reactFlowKey).toEqual(directAccessId);
+
+        expect(resultEntries[6][0]).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest');
+        expect(resultEntries[6][1]).toBeTruthy();
+        expect((resultEntries[6][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
+
+        expect(resultEntries[7][0]).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest/Direct');
+        expect(resultEntries[7][1]).toBeTruthy();
+        expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(directAccessId);
+      });
     });
   });
 
