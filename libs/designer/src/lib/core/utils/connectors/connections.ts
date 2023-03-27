@@ -1,7 +1,7 @@
 import type { ConnectionReference } from '../../../common/models/workflow';
 import { getApiManagementSwagger } from '../../queries/connections';
 import type { ConnectionsStoreState } from '../../state/connection/connectionSlice';
-import { ApiManagementService, ConnectionService } from '@microsoft/designer-client-services-logic-apps';
+import { ApiManagementService, FunctionService } from '@microsoft/designer-client-services-logic-apps';
 import type { AssistedConnectionProps } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { Connector, OperationManifest } from '@microsoft/utils-logic-apps';
@@ -32,8 +32,8 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
     intl.formatMessage({ defaultMessage: 'Location', description: 'Header for resource lcoation' }),
   ];
   if (manifest?.properties.connection?.type === ConnectionType.Function) {
-    const functionAppsCallback = () => ConnectionService().fetchFunctionApps();
-    const functionsCallback = (functionAppId?: string) => ConnectionService().fetchFunctionAppsFunctions(functionAppId ?? '');
+    const functionAppsCallback = () => FunctionService().fetchFunctionApps();
+    const functionsCallback = (functionApp?: any) => FunctionService().fetchFunctionAppsFunctions(functionApp.id ?? '');
     const functionAppsLoadingText = intl.formatMessage({
       defaultMessage: 'Loading Function Apps...',
       description: 'Text for loading function apps',
@@ -59,7 +59,7 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
     };
   } else if (manifest?.properties.connection?.type === ConnectionType.ApiManagement) {
     const apiInstancesCallback = () => ApiManagementService().fetchApiManagementInstances();
-    const apisCallback = (apimId?: string) => ApiManagementService().fetchApisInApiM(apimId ?? '');
+    const apisCallback = (apim?: any) => ApiManagementService().fetchApisInApiM(apim.id ?? '');
     const apimInstancesLoadingText = intl.formatMessage({
       defaultMessage: 'Loading Api Management service instances...',
       description: 'Text for loading apim service instances',
@@ -91,7 +91,7 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
 export async function getConnectionParametersForAzureConnection(connectionType?: ConnectionType, selectedSubResource?: any): Promise<any> {
   if (connectionType === ConnectionType.Function) {
     const functionId = selectedSubResource?.id;
-    const authCodeValue = await ConnectionService().fetchFunctionKey(functionId);
+    const authCodeValue = await FunctionService().fetchFunctionKey(functionId);
     const triggerUrl = selectedSubResource?.properties?.invoke_url_template;
     return {
       function: { id: functionId },

@@ -53,7 +53,7 @@ export const validateParameter = (
         })
       : undefined;
   } else if (equals(keyToValidate, 'value')) {
-    const { type, value } = data;
+    const { type = 'object', value } = data;
     if (value === '' || value === undefined) {
       if (!required) return undefined;
       return intl.formatMessage({

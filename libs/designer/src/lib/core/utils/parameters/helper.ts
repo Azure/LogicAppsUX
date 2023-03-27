@@ -959,6 +959,10 @@ export function loadParameterValuesFromDefault(inputParameters: Record<string, I
   }
 }
 
+export function loadParameterValuesArrayFromDefault(inputParameters: InputParameter[]): void {
+  for (const inputParameter of inputParameters) if (inputParameter.default !== undefined) inputParameter.value = inputParameter.default;
+}
+
 export function updateParameterWithValues(
   parameterKey: string,
   parameterValue: any,
@@ -1392,6 +1396,7 @@ export async function updateParameterAndDependencies(
   operationInfo: NodeOperation,
   connectionReference: ConnectionReference,
   nodeInputs: NodeInputs,
+  nodeMetadata: any,
   dependencies: NodeDependencies,
   variables: VariableDeclaration[],
   settings: Settings,
@@ -1452,6 +1457,7 @@ export async function updateParameterAndDependencies(
       connectionReference,
       dependenciesToUpdate,
       updateNodeInputsWithParameter(nodeInputs, parameterId, groupId, properties),
+      nodeMetadata,
       settings,
       variables,
       dispatch,
@@ -1506,6 +1512,7 @@ export async function updateDynamicDataInNode(
   connectionReference: ConnectionReference | undefined,
   dependencies: NodeDependencies,
   nodeInputs: NodeInputs,
+  nodeMetadata: any,
   settings: Settings,
   variables: VariableDeclaration[],
   dispatch: Dispatch,
@@ -1519,6 +1526,7 @@ export async function updateDynamicDataInNode(
     connectionReference,
     dependencies,
     nodeInputs,
+    nodeMetadata,
     settings,
     variables,
     dispatch,
@@ -1538,6 +1546,7 @@ export async function updateDynamicDataInNode(
           operationInfo,
           connectionReference,
           nodeInputs,
+          nodeMetadata,
           dependencies,
           false /* showErrorWhenNotReady */,
           dispatch
@@ -1554,6 +1563,7 @@ async function loadDynamicData(
   connectionReference: ConnectionReference | undefined,
   dependencies: NodeDependencies,
   nodeInputs: NodeInputs,
+  nodeMetadata: any,
   settings: Settings,
   variables: VariableDeclaration[],
   dispatch: Dispatch,
@@ -1561,7 +1571,17 @@ async function loadDynamicData(
   operationDefinition?: any
 ): Promise<void> {
   if (Object.keys(dependencies.outputs).length) {
-    loadDynamicOutputsInNode(nodeId, isTrigger, operationInfo, connectionReference, dependencies.outputs, nodeInputs, settings, dispatch);
+    loadDynamicOutputsInNode(
+      nodeId,
+      isTrigger,
+      operationInfo,
+      connectionReference,
+      dependencies.outputs,
+      nodeInputs,
+      nodeMetadata,
+      settings,
+      dispatch
+    );
   }
 
   if (Object.keys(dependencies.inputs).length) {
@@ -1571,6 +1591,7 @@ async function loadDynamicData(
       operationInfo,
       connectionReference,
       nodeInputs,
+      nodeMetadata,
       variables,
       dispatch,
       rootState,
@@ -1585,6 +1606,7 @@ async function loadDynamicContentForInputsInNode(
   operationInfo: NodeOperation,
   connectionReference: ConnectionReference | undefined,
   allInputs: NodeInputs,
+  nodeMetadata: any,
   variables: VariableDeclaration[],
   dispatch: Dispatch,
   rootState: RootState,
@@ -1596,7 +1618,7 @@ async function loadDynamicContentForInputsInNode(
       dispatch(clearDynamicInputs(nodeId));
 
       if (isDynamicDataReadyToLoad(info)) {
-        const inputSchema = await getDynamicSchema(info, allInputs, operationInfo, connectionReference, variables);
+        const inputSchema = await getDynamicSchema(info, allInputs, nodeMetadata, operationInfo, connectionReference, variables);
         const allInputParameters = getAllInputParameters(allInputs);
         const allInputKeys = allInputParameters.map((param) => param.parameterKey);
         const schemaInputs = inputSchema
@@ -1627,6 +1649,7 @@ export async function loadDynamicValuesForParameter(
   operationInfo: NodeOperation,
   connectionReference: ConnectionReference | undefined,
   nodeInputs: NodeInputs,
+  nodeMetadata: any,
   dependencies: NodeDependencies,
   showErrorWhenNotReady: boolean,
   dispatch: Dispatch,
@@ -1655,7 +1678,14 @@ export async function loadDynamicValuesForParameter(
       );
 
       try {
-        const dynamicValues = await getDynamicValues(dependencyInfo, nodeInputs, operationInfo, connectionReference, idReplacements);
+        const dynamicValues = await getDynamicValues(
+          dependencyInfo,
+          nodeInputs,
+          nodeMetadata,
+          operationInfo,
+          connectionReference,
+          idReplacements
+        );
 
         dispatch(
           updateNodeParameters({
@@ -1927,7 +1957,6 @@ function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) 
     deleteObjectProperty(finalValue, target);
     finalValue = !source.length ? { ...finalValue, ...value } : safeSetObjectPropertyValue(finalValue, source, value);
   }
-
   return finalValue;
 }
 

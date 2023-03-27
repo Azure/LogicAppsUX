@@ -1,11 +1,11 @@
 import constants from '../../../common/constants';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import {
-  useConnectorDescription,
-  useConnectorDocumentation,
   useConnectorEnvironmentBadge,
   useConnectorName,
   useConnectorStatusBadge,
+  useOperationDescription,
+  useOperationDocumentation,
   useOperationInfo,
 } from '../../../core/state/selectors/actionMetadataSelector';
 import type { PanelTab } from '@microsoft/designer-ui';
@@ -15,8 +15,8 @@ export const AboutTab = () => {
   const nodeId = useSelectedNodeId();
   const operationInfo = useOperationInfo(nodeId);
   const displayNameResult = useConnectorName(operationInfo);
-  const { result: description } = useConnectorDescription(operationInfo);
-  const { result: documentation } = useConnectorDocumentation(operationInfo);
+  const { result: description } = useOperationDescription(operationInfo);
+  const { result: documentation } = useOperationDocumentation(operationInfo);
   const { result: environmentBadge } = useConnectorEnvironmentBadge(operationInfo);
   const { result: statusBadge } = useConnectorStatusBadge(operationInfo);
 

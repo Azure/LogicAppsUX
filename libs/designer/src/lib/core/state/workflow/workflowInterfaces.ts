@@ -11,9 +11,13 @@ export interface NodesMetadata {
     actionCount?: number;
     isRoot?: boolean;
     runData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
+    actionMetadata?: Record<string, any>;
   };
 }
 export type Operations = Record<string, LogicAppsV2.OperationDefinition>;
+export const operationIsAction = (operation: LogicAppsV2.OperationDefinition): operation is LogicAppsV2.ActionDefinition => {
+  return (operation as any).runAfter;
+};
 
 export interface WorkflowState {
   workflowSpec?: SpecTypes;

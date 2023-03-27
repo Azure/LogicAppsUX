@@ -75,6 +75,12 @@
       "value": "Jelölje be a kapcsolat kijelöléséhez"
     }
   ],
+  "+jnjtp": [
+    {
+      "type": 0,
+      "value": "Select a Manual Workflow resource"
+    }
+  ],
   "+lpuMl": [
     {
       "type": 0,
@@ -669,6 +675,12 @@
     {
       "type": 0,
       "value": "Bekapcsolva"
+    }
+  ],
+  "2vnYre": [
+    {
+      "type": 0,
+      "value": "Add Action"
     }
   ],
   "2xhbE1": [
@@ -2139,6 +2151,12 @@
       "value": "Add"
     }
   ],
+  "FBNevf": [
+    {
+      "type": 0,
+      "value": "Go To Operation"
+    }
+  ],
   "FDF4Qb": [
     {
       "type": 0,
@@ -2833,6 +2851,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Isztambul"
+    }
+  ],
+  "KwGA+K": [
+    {
+      "type": 0,
+      "value": "Select a Function App resource"
     }
   ],
   "L+PY+j": [
@@ -3621,6 +3645,12 @@
       "value": "Kötelező megadni. Az elemek elhatárolásához használandó sztring."
     }
   ],
+  "QpX2+j": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "QrQDdp": [
     {
       "type": 0,
@@ -4115,6 +4145,12 @@
     {
       "type": 0,
       "value": "(UTC-07:00) Hegyi idő (Amerikai Egyesült Államok és Kanada)"
+    }
+  ],
+  "VHm1Sr": [
+    {
+      "type": 0,
+      "value": "Select an App Service resource"
     }
   ],
   "VI5Sa8": [
@@ -4775,6 +4811,12 @@
       "value": "Enter a valid float."
     }
   ],
+  "aoUT/3": [
+    {
+      "type": 0,
+      "value": "Loading resources..."
+    }
+  ],
   "auUI93": [
     {
       "type": 0,
@@ -5257,6 +5299,12 @@
       "value": "Nem sikerült létrehozni az ACL-t a kapcsolathoz. Kapcsolat törlése."
     }
   ],
+  "fElufw": [
+    {
+      "type": 0,
+      "value": "Select an API Management resource"
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
@@ -5447,6 +5495,12 @@
       "value": "Until ciklusban való használat esetén ez a függvény a megadott ciklus aktuális iterációs indexét adja vissza."
     }
   ],
+  "gvDMuq": [
+    {
+      "type": 0,
+      "value": "Select a Batch Workflow resource"
+    }
+  ],
   "h1lQDa": [
     {
       "type": 0,
@@ -5575,6 +5629,12 @@
     {
       "type": 0,
       "value": "Aszinkron válasz"
+    }
+  ],
+  "i0XjL5": [
+    {
+      "type": 0,
+      "value": "Search for operation"
     }
   ],
   "i1Tufp": [

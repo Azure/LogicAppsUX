@@ -21,10 +21,10 @@ import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
 import {
   ApiManagementInstanceService,
+  BaseGatewayService,
+  BaseOAuthService,
   StandardConnectionService,
   StandardConnectorService,
-  StandardGatewayService,
-  StandardOAuthService,
   StandardOperationManifestService,
   StandardSearchService,
 } from '@microsoft/designer-client-services-logic-apps';
@@ -310,7 +310,7 @@ const getDesignerServices = (
     },
     workflowReferenceId: '',
   });
-  const gatewayService = new StandardGatewayService({
+  const gatewayService = new BaseGatewayService({
     baseUrl,
     httpClient,
     apiVersions: {
@@ -332,7 +332,7 @@ const getDesignerServices = (
     showStatefulOperations: isStateful,
   });
 
-  const oAuthService = new StandardOAuthService({
+  const oAuthService = new BaseOAuthService({
     apiVersion: '2018-07-01-preview',
     baseUrl,
     httpClient,

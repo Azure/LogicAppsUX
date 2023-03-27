@@ -1,5 +1,20 @@
 # Change Log
 
+## [1.0.49] - 2023-03-22
+
+### Changed
+
+- Update azure packages.
+- Add data mapper operations to client support operations.
+- Update designtime functions worker runtime to dotnet-isolated.
+- Made UX improvements in the designer.
+
+## [1.0.46] - 2023-02-17
+
+### Changed
+
+- Fixed Bug where VS Code was not correctly initialized when selecting language while deploying.
+
 ## [1.0.45] - 2022-12-13
 
 ### Changed

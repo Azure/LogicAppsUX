@@ -75,6 +75,12 @@
       "value": "Markera om du vill välja den här anslutningen"
     }
   ],
+  "+jnjtp": [
+    {
+      "type": 0,
+      "value": "Select a Manual Workflow resource"
+    }
+  ],
   "+lpuMl": [
     {
       "type": 0,
@@ -669,6 +675,12 @@
     {
       "type": 0,
       "value": "På"
+    }
+  ],
+  "2vnYre": [
+    {
+      "type": 0,
+      "value": "Add Action"
     }
   ],
   "2xhbE1": [
@@ -2139,6 +2151,12 @@
       "value": "Add"
     }
   ],
+  "FBNevf": [
+    {
+      "type": 0,
+      "value": "Go To Operation"
+    }
+  ],
   "FDF4Qb": [
     {
       "type": 0,
@@ -2833,6 +2851,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Istanbul"
+    }
+  ],
+  "KwGA+K": [
+    {
+      "type": 0,
+      "value": "Select a Function App resource"
     }
   ],
   "L+PY+j": [
@@ -3613,6 +3637,12 @@
       "value": "Obligatoriskt. Den sträng som objekt ska avgränsas med."
     }
   ],
+  "QpX2+j": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "QrQDdp": [
     {
       "type": 0,
@@ -4107,6 +4137,12 @@
     {
       "type": 0,
       "value": "(UTC-07:00) Mountain Time (USA och Kanada)"
+    }
+  ],
+  "VHm1Sr": [
+    {
+      "type": 0,
+      "value": "Select an App Service resource"
     }
   ],
   "VI5Sa8": [
@@ -4763,6 +4799,12 @@
       "value": "Enter a valid float."
     }
   ],
+  "aoUT/3": [
+    {
+      "type": 0,
+      "value": "Loading resources..."
+    }
+  ],
   "auUI93": [
     {
       "type": 0,
@@ -5241,6 +5283,12 @@
       "value": "Det gick inte att skapa ACL för anslutningen. Tar bort anslutningen."
     }
   ],
+  "fElufw": [
+    {
+      "type": 0,
+      "value": "Select an API Management resource"
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
@@ -5427,6 +5475,12 @@
       "value": "När den här funktionen används inuti fram till loopen returnerar den det aktuella iterationsindexet för den angivna loopen."
     }
   ],
+  "gvDMuq": [
+    {
+      "type": 0,
+      "value": "Select a Batch Workflow resource"
+    }
+  ],
   "h1lQDa": [
     {
       "type": 0,
@@ -5551,6 +5605,12 @@
     {
       "type": 0,
       "value": "Asynkront svar"
+    }
+  ],
+  "i0XjL5": [
+    {
+      "type": 0,
+      "value": "Search for operation"
     }
   ],
   "i1Tufp": [

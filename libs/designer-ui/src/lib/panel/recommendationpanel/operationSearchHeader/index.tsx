@@ -15,12 +15,11 @@ interface OperationSearchHeaderProps {
   searchTerm?: string;
   filters?: Record<string, string>;
   setFilters?: (filters: Record<string, string>) => void;
-  onDismiss: () => void;
   isTriggerNode: boolean;
 }
 
 export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
-  const { searchCallback, onGroupToggleChange, isGrouped = false, searchTerm, filters, setFilters, onDismiss, isTriggerNode } = props;
+  const { searchCallback, onGroupToggleChange, isGrouped = false, searchTerm, filters, setFilters, isTriggerNode } = props;
 
   const intl = useIntl();
 

@@ -112,7 +112,7 @@ export const iconForNormalizedDataType = (
   bundled: boolean,
   nodeProperties?: SchemaNodeProperty[]
 ) => {
-  let icons: typeof Integer16Regular[] = [];
+  let icons: (typeof Integer16Regular)[] = [];
 
   switch (nodeType) {
     case NormalizedDataType.Number: {

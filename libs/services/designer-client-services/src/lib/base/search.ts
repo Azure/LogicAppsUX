@@ -2,16 +2,19 @@ import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse
 import { azureOperationsResponse } from '../__test__/__mocks__/azureOperationResponse';
 import type { IHttpClient, QueryParameters } from '../httpClient';
 import { LoggerService } from '../logger';
-import type { ISearchService, SearchResult } from '../search';
+import type { ISearchService } from '../search';
 import * as ClientOperationsData from '../standard/operations';
 import type {
+  ArmResource,
   BuiltInOperation,
   Connector,
   DiscoveryOperation,
   DiscoveryResultTypes,
+  DiscoveryWorkflow,
+  DiscoveryWorkflowTrigger,
   SomeKindOfAzureOperationDiscovery,
 } from '@microsoft/utils-logic-apps';
-import { equals, ArgumentException, MockSearchOperations } from '@microsoft/utils-logic-apps';
+import { equals, ArgumentException } from '@microsoft/utils-logic-apps';
 
 export interface ContinuationTokenResponse<T> {
   // danielle to move
@@ -53,14 +56,6 @@ export abstract class BaseSearchService implements ISearchService {
     }
     this._isDev = isDev || false;
   }
-
-  search = (_term: string): Promise<SearchResult> => {
-    const result: SearchResult = {
-      searchOperations: MockSearchOperations,
-    };
-
-    return Promise.resolve(result);
-  };
 
   public abstract getAllOperations(): Promise<DiscoveryOpArray>;
 
@@ -270,6 +265,38 @@ export abstract class BaseSearchService implements ISearchService {
       }
     });
     return connectors;
+  }
+
+  private async getWorkflows($filter: string): Promise<any[]> {
+    const {
+      apiHubServiceDetails: { apiVersion, subscriptionId, location },
+    } = this.options;
+    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Logic/workflows`;
+    const queryParameters: QueryParameters = {
+      'api-version': apiVersion,
+      ...($filter ? { $filter } : {}),
+    };
+    const response = await this.getAzureResourceRecursive(uri, queryParameters);
+    return response.filter((workflow: any) => workflow.location === location);
+  }
+
+  public async getRequestWorkflows(): Promise<ArmResource<DiscoveryWorkflow>[]> {
+    return this.getWorkflows(`contains(Trigger, 'Request') and (${ISE_RESOURCE_ID} eq null)`);
+  }
+
+  public async getBatchWorkflows(): Promise<ArmResource<DiscoveryWorkflow>[]> {
+    return this.getWorkflows(`contains(Trigger, 'Batch') and (${ISE_RESOURCE_ID} eq null)`);
+  }
+
+  public async getWorkflowTriggers(workflowId: string): Promise<ArmResource<DiscoveryWorkflowTrigger>[]> {
+    const {
+      httpClient,
+      apiHubServiceDetails: { apiVersion },
+    } = this.options;
+    const uri = `${workflowId}/triggers`;
+    const queryParameters: QueryParameters = { 'api-version': apiVersion };
+    const response = await httpClient.get<any>({ uri, queryParameters });
+    return response?.value ?? [];
   }
 }
 

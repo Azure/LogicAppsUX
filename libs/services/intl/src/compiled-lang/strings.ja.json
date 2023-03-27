@@ -59,6 +59,12 @@
       "value": "この接続を選択する場合にチェックします"
     }
   ],
+  "+jnjtp": [
+    {
+      "type": 0,
+      "value": "Select a Manual Workflow resource"
+    }
+  ],
   "+lpuMl": [
     {
       "type": 0,
@@ -642,6 +648,12 @@
     {
       "type": 0,
       "value": "オン"
+    }
+  ],
+  "2vnYre": [
+    {
+      "type": 0,
+      "value": "Add Action"
     }
   ],
   "2xhbE1": [
@@ -2069,6 +2081,12 @@
       "value": "Add"
     }
   ],
+  "FBNevf": [
+    {
+      "type": 0,
+      "value": "Go To Operation"
+    }
+  ],
   "FDF4Qb": [
     {
       "type": 0,
@@ -2725,6 +2743,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) イスタンブール"
+    }
+  ],
+  "KwGA+K": [
+    {
+      "type": 0,
+      "value": "Select a Function App resource"
     }
   ],
   "L+PY+j": [
@@ -3469,6 +3493,12 @@
       "value": "必須。項目を区切るために使用する文字列。"
     }
   ],
+  "QpX2+j": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "QrQDdp": [
     {
       "type": 0,
@@ -3952,6 +3982,12 @@
     {
       "type": 0,
       "value": "(UTC-07:00) 山地標準時 (米国およびカナダ)"
+    }
+  ],
+  "VHm1Sr": [
+    {
+      "type": 0,
+      "value": "Select an App Service resource"
     }
   ],
   "VI5Sa8": [
@@ -4596,6 +4632,12 @@
       "value": "Enter a valid float."
     }
   ],
+  "aoUT/3": [
+    {
+      "type": 0,
+      "value": "Loading resources..."
+    }
+  ],
   "auUI93": [
     {
       "type": 0,
@@ -5070,6 +5112,12 @@
       "value": "接続用の ACL の作成に失敗しました。接続を削除しています。"
     }
   ],
+  "fElufw": [
+    {
+      "type": 0,
+      "value": "Select an API Management resource"
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
@@ -5252,6 +5300,12 @@
       "value": "until ループ内で使用すると、この関数は指定されたループの現在のイテレーション インデックスを返します。"
     }
   ],
+  "gvDMuq": [
+    {
+      "type": 0,
+      "value": "Select a Batch Workflow resource"
+    }
+  ],
   "h1lQDa": [
     {
       "type": 0,
@@ -5361,6 +5415,12 @@
     {
       "type": 0,
       "value": "非同期応答"
+    }
+  ],
+  "i0XjL5": [
+    {
+      "type": 0,
+      "value": "Search for operation"
     }
   ],
   "i1Tufp": [
