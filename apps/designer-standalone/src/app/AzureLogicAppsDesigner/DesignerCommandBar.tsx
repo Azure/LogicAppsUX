@@ -2,6 +2,7 @@ import { FontIcon, mergeStyles, mergeStyleSets } from '@fluentui/react';
 import type { ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 import { CommandBar } from '@fluentui/react/lib/CommandBar';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
+import { TrafficLightDot } from '@microsoft/designer-ui';
 import type { RootState, Workflow } from '@microsoft/logic-apps-designer';
 import {
   store as DesignerStore,
@@ -9,6 +10,7 @@ import {
   updateCallbackUrl,
   switchToWorkflowParameters,
 } from '@microsoft/logic-apps-designer';
+import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import { useMutation } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -55,12 +57,23 @@ export const DesignerCommandBar = ({
     );
   });
 
+  const allWorkflowParameterErrors = useSelector((state: RootState) => {
+    let validationErrorToShow = null;
+    for (const parameter of Object.entries(state.workflowParameters.validationErrors) ?? []) {
+      if (parameter?.[1]?.value) {
+        validationErrorToShow = {
+          name: state.workflowParameters.definitions[parameter[0]]?.name,
+          msg: parameter[1].value,
+        };
+      }
+    }
+    return validationErrorToShow;
+  });
   const items: ICommandBarItemProps[] = [
     {
       key: 'save',
       text: 'Save',
-      secondaryText: 'Hello',
-      disabled: isSaving || allOperationErrors.length > 0,
+      disabled: isSaving || allOperationErrors.length > 0 || !!allWorkflowParameterErrors,
       onRenderIcon: () => {
         return isSaving ? (
           <Spinner size={SpinnerSize.small} />
@@ -84,8 +97,20 @@ export const DesignerCommandBar = ({
     {
       key: 'parameters',
       text: 'Parameters',
+      onRenderText: (item: { text: string }) => {
+        return (
+          <>
+            {item.text}
+            {allWorkflowParameterErrors ? (
+              <div style={{ display: 'inline-block', marginLeft: 8 }}>
+                <TrafficLightDot fill={RUN_AFTER_COLORS['light']['FAILED']} />
+              </div>
+            ) : null}
+          </>
+        );
+      },
       iconProps: { iconName: 'Parameter' },
-      onClick: () => dispatch(switchToWorkflowParameters()),
+      onClick: () => !!dispatch(switchToWorkflowParameters()),
     },
     {
       key: 'fileABug',
