@@ -288,7 +288,9 @@ export const qualifyLoopRelativeSourceKeys = (targetKey: string): string => {
   return qualifiedTargetKey;
 };
 
-export const getTargetValueWithoutLoops = (targetKey: string): string => targetKey.replaceAll(/\$for\(((?!\)).)+\)\//g, '');
+export const getTargetValueWithoutLoops = (targetKey: string): string => {
+  return targetKey.replaceAll(/\$for\(((?!\)).)+\)\//g, targetKey.indexOf('/*,') !== -1 || targetKey.indexOf('/*)') !== -1 ? '*/' : '');
+};
 
 export const addParentConnectionForRepeatingElementsNested = (
   sourceNode: SchemaNodeExtended,

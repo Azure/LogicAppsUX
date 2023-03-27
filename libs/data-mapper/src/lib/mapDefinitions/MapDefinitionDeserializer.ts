@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { mapNodeParams, reservedMapDefinitionKeysArray } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import { addParentConnectionForRepeatingElements } from '../core/state/DataMapSlice';
+import { addParentConnectionForRepeatingElements, deleteConnectionFromConnections } from '../core/state/DataMapSlice';
 import type { FunctionData, MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import {
   directAccessPseudoFunction,
@@ -13,7 +13,7 @@ import {
   SchemaType,
 } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
-import { setConnectionInputValue } from '../utils/Connection.Utils';
+import { isConnectionUnit, setConnectionInputValue } from '../utils/Connection.Utils';
 import type { UnknownNode } from '../utils/DataMap.Utils';
 import {
   flattenMapDefinitionValues,
@@ -24,7 +24,7 @@ import {
   qualifyLoopRelativeSourceKeys,
   splitKeyIntoChildren,
 } from '../utils/DataMap.Utils';
-import { findFunctionForFunctionName, isFunctionData } from '../utils/Function.Utils';
+import { findFunctionForFunctionName, isFunctionData, isKeyAnIndexValue } from '../utils/Function.Utils';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
 import { createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
 import { findNodeForKey, flattenSchemaIntoDictionary } from '../utils/Schema.Utils';
@@ -58,7 +58,26 @@ export const convertFromMapDefinition = (
     );
   }
 
+  cleanupExtraneousConnections(connections);
+
   return connections;
+};
+
+const cleanupExtraneousConnections = (connections: ConnectionDictionary) => {
+  const connectionEntries = Object.entries(connections);
+
+  connectionEntries.forEach(([_connectionKey, connectionValue]) => {
+    // This cleans up situations where the parent connection is auto created, but we are manually making one as well
+    // Such as when we use an object level conditional
+    if (connectionValue.self.node.key === ifPseudoFunctionKey) {
+      const valueInput = connectionValue.inputs[1][0];
+      if (isConnectionUnit(valueInput)) {
+        connectionValue.outputs.forEach((output) => {
+          deleteConnectionFromConnections(connections, valueInput.reactFlowKey, output.reactFlowKey);
+        });
+      }
+    }
+  });
 };
 
 const parseDefinitionToConnection = (
@@ -362,10 +381,10 @@ const createConnections = (
   const sourceEndOfFunctionName = sourceNodeString.indexOf('(');
   const amendedTargetKey = isLoop ? qualifyLoopRelativeSourceKeys(targetKey) : targetKey;
   let amendedSourceKey = isLoop ? getSourceValueFromLoop(sourceNodeString, amendedTargetKey, sourceSchemaFlattened) : sourceNodeString;
-  let mockDirectAccessFnKey: string | undefined = undefined;
-  const [daOpenBracketIdx, daClosedBracketIdx] = [amendedSourceKey.indexOf('['), amendedSourceKey.lastIndexOf(']')];
 
   // Parse the outermost Direct Access (if present) into the typical Function format
+  let mockDirectAccessFnKey: string | undefined = undefined;
+  const [daOpenBracketIdx, daClosedBracketIdx] = [amendedSourceKey.indexOf('['), amendedSourceKey.lastIndexOf(']')];
   if (daOpenBracketIdx > -1 && daClosedBracketIdx > -1) {
     // Need to isolate the singular key the DA is apart of as it could be wrapped in a function, etc.
     let keyWithDaStartIdx = 0;
@@ -448,7 +467,8 @@ const createConnections = (
   }
 
   // Loop + index variable handling (create index() node, match up variables to respective nodes, etc)
-  if (isLoop || conditionalLoopKey) {
+  const isLoopCase = isLoop || !!conditionalLoopKey;
+  if (isLoopCase) {
     const loopKey = conditionalLoopKey ? qualifyLoopRelativeSourceKeys(conditionalLoopKey) : amendedTargetKey;
 
     let startIdxOfPrevLoop = loopKey.length;
@@ -516,23 +536,52 @@ const createConnections = (
         );
       }
 
+      // This should handle cases where the index is being directly applied to the target property
+      if (indexFnRfKey && destinationNode && isKeyAnIndexValue(sourceNodeString)) {
+        setConnectionInputValue(connections, {
+          targetNode: destinationNode,
+          targetNodeReactFlowKey: destinationKey,
+          findInputSlot: true,
+          value: {
+            reactFlowKey: indexFnRfKey,
+            node: indexPseudoFunction,
+          },
+        });
+      }
+
       startIdxOfPrevLoop = startIdxOfCurLoop;
       startIdxOfCurLoop = loopKey.substring(0, startIdxOfPrevLoop).lastIndexOf(mapNodeParams.for);
     }
   }
 
-  if (destinationNode && !isConditional) {
-    setConnectionInputValue(connections, {
-      targetNode: destinationNode,
-      targetNodeReactFlowKey: destinationKey,
-      findInputSlot: true,
-      value: sourceNode
-        ? {
-            reactFlowKey: sourceKey,
-            node: sourceNode,
-          }
-        : amendedSourceKey,
-    });
+  if (
+    destinationNode &&
+    !isConditional &&
+    (isLoopCase || !isKeyAnIndexValue(sourceNodeString) || (!isLoopCase && isKeyAnIndexValue(sourceNodeString)))
+  ) {
+    if (!sourceNode && amendedSourceKey.startsWith(indexPseudoFunctionKey)) {
+      setConnectionInputValue(connections, {
+        targetNode: destinationNode,
+        targetNodeReactFlowKey: destinationKey,
+        findInputSlot: true,
+        value: {
+          reactFlowKey: amendedSourceKey,
+          node: indexPseudoFunction,
+        },
+      });
+    } else {
+      setConnectionInputValue(connections, {
+        targetNode: destinationNode,
+        targetNodeReactFlowKey: destinationKey,
+        findInputSlot: true,
+        value: sourceNode
+          ? {
+              reactFlowKey: sourceKey,
+              node: sourceNode,
+            }
+          : amendedSourceKey,
+      });
+    }
   }
 
   // Extract and create connections for function inputs

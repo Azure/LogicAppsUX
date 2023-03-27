@@ -25,4 +25,6 @@ export const mapNodeParams = {
   value: '$value',
 };
 
+export const reservedMapNodeParamsArray: string[] = [mapNodeParams.for, mapNodeParams.if, mapNodeParams.value];
+
 export const mapDefinitionVersion = '1.0';
