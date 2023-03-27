@@ -59,6 +59,12 @@
       "value": "核取以選取此連線"
     }
   ],
+  "+jnjtp": [
+    {
+      "type": 0,
+      "value": "Select a Manual Workflow resource"
+    }
+  ],
   "+lpuMl": [
     {
       "type": 0,
@@ -642,6 +648,12 @@
     {
       "type": 0,
       "value": "開啟"
+    }
+  ],
+  "2vnYre": [
+    {
+      "type": 0,
+      "value": "Add Action"
     }
   ],
   "2xhbE1": [
@@ -2733,6 +2745,12 @@
       "value": "(UTC+02:00) 伊斯坦堡"
     }
   ],
+  "KwGA+K": [
+    {
+      "type": 0,
+      "value": "Select a Function App resource"
+    }
+  ],
   "L+PY+j": [
     {
       "type": 0,
@@ -3475,6 +3493,12 @@
       "value": "必要。用於分隔項目的字串。"
     }
   ],
+  "QpX2+j": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "QrQDdp": [
     {
       "type": 0,
@@ -3958,6 +3982,12 @@
     {
       "type": 0,
       "value": "(UTC-07:00) 山區時間 (美國及加拿大)"
+    }
+  ],
+  "VHm1Sr": [
+    {
+      "type": 0,
+      "value": "Select an App Service resource"
     }
   ],
   "VI5Sa8": [
@@ -4602,6 +4632,12 @@
       "value": "Enter a valid float."
     }
   ],
+  "aoUT/3": [
+    {
+      "type": 0,
+      "value": "Loading resources..."
+    }
+  ],
   "auUI93": [
     {
       "type": 0,
@@ -5084,6 +5120,12 @@
       "value": "連線的 Acl 建立失敗。正在刪除連線。"
     }
   ],
+  "fElufw": [
+    {
+      "type": 0,
+      "value": "Select an API Management resource"
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
@@ -5264,6 +5306,12 @@
     {
       "type": 0,
       "value": "若用於 until 迴圈中，此函式會傳回指定迴圈目前的反覆運算索引。"
+    }
+  ],
+  "gvDMuq": [
+    {
+      "type": 0,
+      "value": "Select a Batch Workflow resource"
     }
   ],
   "h1lQDa": [

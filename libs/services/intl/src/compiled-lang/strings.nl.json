@@ -75,6 +75,12 @@
       "value": "Controleren om deze verbinding te selecteren"
     }
   ],
+  "+jnjtp": [
+    {
+      "type": 0,
+      "value": "Select a Manual Workflow resource"
+    }
+  ],
   "+lpuMl": [
     {
       "type": 0,
@@ -669,6 +675,12 @@
     {
       "type": 0,
       "value": "Aan"
+    }
+  ],
+  "2vnYre": [
+    {
+      "type": 0,
+      "value": "Add Action"
     }
   ],
   "2xhbE1": [
@@ -2841,6 +2853,12 @@
       "value": "(UTC+02:00) Istanbul"
     }
   ],
+  "KwGA+K": [
+    {
+      "type": 0,
+      "value": "Select a Function App resource"
+    }
+  ],
   "L+PY+j": [
     {
       "type": 0,
@@ -3619,6 +3637,12 @@
       "value": "Vereist. De tekenreeks die moet worden gebruikt om items te scheiden."
     }
   ],
+  "QpX2+j": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "QrQDdp": [
     {
       "type": 0,
@@ -4113,6 +4137,12 @@
     {
       "type": 0,
       "value": "(UTC-07:00) Mountain Time (VS en Canada)"
+    }
+  ],
+  "VHm1Sr": [
+    {
+      "type": 0,
+      "value": "Select an App Service resource"
     }
   ],
   "VI5Sa8": [
@@ -4765,6 +4795,12 @@
       "value": "Enter a valid float."
     }
   ],
+  "aoUT/3": [
+    {
+      "type": 0,
+      "value": "Loading resources..."
+    }
+  ],
   "auUI93": [
     {
       "type": 0,
@@ -5243,6 +5279,12 @@
       "value": "Maken van ACL mislukt voor de verbinding. De verbinding wordt verwijderd."
     }
   ],
+  "fElufw": [
+    {
+      "type": 0,
+      "value": "Select an API Management resource"
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
@@ -5427,6 +5469,12 @@
     {
       "type": 0,
       "value": "Bij gebruik in de Until-lus retourneert deze functie de huidige iteratie-index van de opgegeven lus."
+    }
+  ],
+  "gvDMuq": [
+    {
+      "type": 0,
+      "value": "Select a Batch Workflow resource"
     }
   ],
   "h1lQDa": [
