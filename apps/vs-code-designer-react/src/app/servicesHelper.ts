@@ -86,7 +86,7 @@ export const getDesignerServices = (
     },
   });
   const apimService = new ApiManagementInstanceService({
-    apiVersion,
+    apiVersion: '2019-12-01',
     baseUrl,
     subscriptionId,
     httpClient,
