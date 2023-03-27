@@ -131,6 +131,7 @@ import {
   ValidationException,
 } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
+import { isOneOf } from '../openapi/schema';
 
 // import { debounce } from 'lodash';
 
@@ -2431,7 +2432,7 @@ export function parameterValueToString(
   if (
     parameterType === constants.SWAGGER.TYPE.OBJECT ||
     parameterType === constants.SWAGGER.TYPE.ARRAY ||
-    (parameter.schema && parameter.schema['oneOf'])
+    isOneOf(parameter.schema)
   ) {
     return parameterValueToJSONString(value, /* applyCasting */ !parameterSuppressesCasting);
   }

@@ -1,4 +1,5 @@
 import Constants from '../../common/constants';
+import { getTitleOrSummary } from './openapi/schema';
 import { isParameterRequired, parameterValueToJSONString, recurseSerializeCondition } from './parameters/helper';
 import { isTokenValueSegment } from './parameters/segment';
 import type { ParameterInfo, ValueSegment } from '@microsoft/designer-ui';
@@ -41,8 +42,9 @@ export function validateStaticParameterInfo(
 ): string[] {
   const intl = getIntl();
 
+  const parameterTitle = getTitleOrSummary(parameterMetadata.schema) || parameterMetadata.parameterName;
   const parameterFormat = parameterMetadata.info.format,
-    parameterName = formatParameterName(parameterMetadata.parameterName),
+    parameterName = formatParameterName(parameterTitle),
     pattern = parameterMetadata.pattern,
     type = parameterMetadata.type,
     required = isParameterRequired(parameterMetadata),
@@ -249,7 +251,8 @@ export function validateJSONParameter(parameterMetadata: ParameterInfo, paramete
     : parameterValueToJSONString(parameterValue, false, true);
 
   const errors: string[] = [];
-  const parameterName = formatParameterName(parameterMetadata.parameterName);
+  const parameterTitle = getTitleOrSummary(parameterMetadata.schema) || parameterMetadata.parameterName;
+  const parameterName = formatParameterName(parameterTitle);
   const required = isParameterRequired(parameterMetadata);
   if (required && !value) {
     return [
