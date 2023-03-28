@@ -71,7 +71,7 @@ export const App = () => {
     return getDesignerServices(
       baseUrl,
       apiVersion,
-      apiHubServiceDetails,
+      apiHubServiceDetails ?? {},
       tenantId,
       isLocal,
       connectionData,
@@ -94,12 +94,14 @@ export const App = () => {
   };
 
   const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
-    const standardAppInstance = {
-      ...standardApp,
-      definition: runDefinition.properties.workflow.properties.definition,
-    } as StandardApp;
-    setRunInstance(runDefinition);
-    setStandardApp(standardAppInstance);
+    if (isMonitoringView) {
+      const standardAppInstance = {
+        ...standardApp,
+        definition: runDefinition.properties.workflow.properties.definition,
+      } as StandardApp;
+      setRunInstance(runDefinition);
+      setStandardApp(standardAppInstance);
+    }
   };
 
   const onRunInstanceError = async () => {
@@ -152,7 +154,7 @@ export const App = () => {
       <Designer />
     </BJSWorkflowProvider>
   ) : (
-    errorApp
+    loadingApp
   );
 
   return (

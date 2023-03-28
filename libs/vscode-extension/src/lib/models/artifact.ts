@@ -8,7 +8,7 @@ export interface Artifacts {
   schemas: FileDetails[];
 }
 
-interface FileDetails {
+export interface FileDetails {
   name: string;
   fileName: string;
   relativePath: string;

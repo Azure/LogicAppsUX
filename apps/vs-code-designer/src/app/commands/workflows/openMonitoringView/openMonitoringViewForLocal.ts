@@ -176,6 +176,8 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       workflowDetails: {},
       artifacts: await getArtifactsInLocalProject(projectPath),
       standardApp: getStandardAppData(this.workflowName, { ...workflowContent, definition: {} }, parametersData),
+      schemaArtifacts: this.schemaArtifacts,
+      mapArtifacts: this.mapArtifacts,
     };
   }
 }
