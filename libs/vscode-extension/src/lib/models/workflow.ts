@@ -1,4 +1,4 @@
-import type { Artifacts } from './artifact';
+import type { Artifacts, FileDetails } from './artifact';
 import type { Parameter } from './parameter';
 
 export interface ILocalSettingsJson {
@@ -22,6 +22,8 @@ export interface IDesignerPanelMetadata {
   workflowContent?: any;
   configuredWebhookEndpoint?: string;
   accessToken?: string;
+  schemaArtifacts: FileDetails[];
+  mapArtifacts: Record<string, FileDetails[]>;
 }
 
 export interface StandardApp {

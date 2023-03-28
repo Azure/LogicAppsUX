@@ -389,6 +389,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       workflowDetails: await getManualWorkflowsInLocalProject(projectPath, this.workflowName),
       workflowName: this.workflowName,
       artifacts: await getArtifactsInLocalProject(projectPath),
+      schemaArtifacts: this.schemaArtifacts,
+      mapArtifacts: this.mapArtifacts,
     };
   }
 }

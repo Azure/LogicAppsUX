@@ -3,3 +3,4 @@ export { StandardConnectorService } from './connector';
 export { StandardOperationManifestService } from './operationmanifest';
 export { StandardSearchService } from './search';
 export { StandardRunService } from './run';
+export { StandardArtifactService } from './artifact';

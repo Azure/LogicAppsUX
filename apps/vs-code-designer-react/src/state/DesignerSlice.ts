@@ -28,7 +28,7 @@ const initialState: designerState = {
   apiHubServiceDetails: {
     apiVersion: '2018-07-01-preview',
     baseUrl: '/url',
-    subscriptionId: '',
+    subscriptionId: 'subscriptionId',
     resourceGroup: '',
     location: '',
   },
