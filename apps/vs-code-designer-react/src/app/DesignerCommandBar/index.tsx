@@ -1,42 +1,52 @@
 import { VSCodeContext } from '../../webviewCommunication';
+import { FontIcon, mergeStyles, mergeStyleSets, Spinner, SpinnerSize, CommandBar } from '@fluentui/react';
 import type { ICommandBarItemProps } from '@fluentui/react';
-import { CommandBar } from '@fluentui/react';
+import { TrafficLightDot } from '@microsoft/designer-ui';
 import {
   serializeWorkflow as serializeBJSWorkflow,
   store as DesignerStore,
   switchToWorkflowParameters,
 } from '@microsoft/logic-apps-designer';
+import type { RootState } from '@microsoft/logic-apps-designer';
+import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { useContext } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch } from 'react-redux';
+import { useMutation } from 'react-query';
+import { useDispatch, useSelector } from 'react-redux';
 
 export interface DesignerCommandBarProps {
   isMonitoringView: boolean;
   isRefreshing: boolean;
   isDisabled: boolean;
   onRefresh(): void;
+  isDarkMode: boolean;
 }
 
-export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonitoringView, isRefreshing, isDisabled, onRefresh }) => {
+export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
+  isMonitoringView,
+  isRefreshing,
+  isDisabled,
+  onRefresh,
+  isDarkMode,
+}) => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch = useDispatch();
 
-  const onSave = async () => {
+  const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
     const { definition, parameters, connectionReferences } = await serializeBJSWorkflow(designerState, {
       skipValidation: true,
       ignoreNonCriticalErrors: true,
     });
-    console.log(parameters);
-    vscode.postMessage({
+    await vscode.postMessage({
       command: ExtensionCommand.save,
       definition,
       parameters,
       connectionReferences,
     });
-  };
+  });
 
   const onResubmit = async () => {
     vscode.postMessage({
@@ -63,24 +73,78 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonito
     }),
   };
 
+  const iconClass = mergeStyles({
+    fontSize: 16,
+    height: 16,
+    width: 16,
+  });
+
+  const classNames = mergeStyleSets({
+    azureBlue: [{ color: 'rgb(0, 120, 212)' }, iconClass],
+    disableGrey: [{ color: 'rgb(121, 119, 117)' }, iconClass],
+  });
+
+  const allOperationErrors = useSelector((state: RootState) => {
+    return (Object.entries(state.operations.inputParameters) ?? []).filter(([_id, nodeInputs]) =>
+      Object.values(nodeInputs.parameterGroups).some((parameterGroup) =>
+        parameterGroup.parameters.some((parameter) => (parameter?.validationErrors?.length ?? 0) > 0)
+      )
+    );
+  });
+
+  const allWorkflowParameterErrors = useSelector((state: RootState) => {
+    let validationErrorToShow = null;
+    for (const parameter of Object.entries(state.workflowParameters.validationErrors) ?? []) {
+      if (parameter?.[1]?.value) {
+        validationErrorToShow = {
+          name: state.workflowParameters.definitions[parameter[0]]?.name,
+          msg: parameter[1].value,
+        };
+      }
+    }
+    return validationErrorToShow;
+  });
+
+  const isSaveDisabled = isSaving || allOperationErrors.length > 0 || !!allWorkflowParameterErrors;
+
   const desingerItems: ICommandBarItemProps[] = [
     {
-      ariaLabel: Resources.DESIGNER_SAVE,
-      iconProps: { iconName: 'Save' },
       key: 'Save',
-      name: Resources.DESIGNER_SAVE,
+      disabled: isSaveDisabled,
+      text: Resources.DESIGNER_SAVE,
+      onRenderIcon: () => {
+        return isSaving ? (
+          <Spinner size={SpinnerSize.small} />
+        ) : (
+          <FontIcon
+            aria-label={Resources.DESIGNER_SAVE}
+            iconName="Save"
+            className={isSaveDisabled ? classNames.disableGrey : classNames.azureBlue}
+          />
+        );
+      },
       onClick: () => {
-        onSave();
+        saveWorkflowMutate();
       },
     },
     {
       ariaLabel: Resources.DESIGNER_PARAMETERS,
       iconProps: { iconName: 'Parameter' },
       key: 'Parameter',
-      name: Resources.DESIGNER_PARAMETERS,
-      onClick: () => {
-        dispatch(switchToWorkflowParameters());
+      text: Resources.DESIGNER_PARAMETERS,
+      onRenderText: (item: { text: string }) => {
+        return (
+          <>
+            {item.text}
+            {allWorkflowParameterErrors ? (
+              <div style={{ display: 'inline-block', marginLeft: 8 }}>
+                <TrafficLightDot fill={RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED']} />
+              </div>
+            ) : null}
+          </>
+        );
       },
+      onClick: () => !!dispatch(switchToWorkflowParameters()),
     },
   ];
 
@@ -90,7 +154,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonito
       iconProps: { iconName: 'Refresh' },
       key: 'Refresh',
       disabled: isDisabled ? isDisabled : isRefreshing,
-      name: Resources.MONITORING_VIEW_REFRESH,
+      text: Resources.MONITORING_VIEW_REFRESH,
       onClick: onRefresh,
     },
     {
@@ -98,12 +162,20 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isMonito
       iconProps: { iconName: 'Rerun' },
       key: 'Rerun',
       disabled: isDisabled,
-      name: Resources.MONITORING_VIEW_RESUBMIT,
+      text: Resources.MONITORING_VIEW_RESUBMIT,
       onClick: () => {
         onResubmit();
       },
     },
   ];
 
-  return <CommandBar items={isMonitoringView ? monitoringViewItems : desingerItems} />;
+  return (
+    <CommandBar
+      items={isMonitoringView ? monitoringViewItems : desingerItems}
+      ariaLabel="Use left and right arrow keys to navigate between commands"
+      styles={{
+        root: { borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}` },
+      }}
+    />
+  );
 };

@@ -139,6 +139,7 @@ export const App = () => {
         isDisabled={isError || isFetching || isLoading}
         isRefreshing={isRefetching}
         onRefresh={refetch}
+        isDarkMode={theme === Theme.Dark}
       />
     );
 
