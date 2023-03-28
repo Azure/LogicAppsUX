@@ -14,7 +14,9 @@ import { OpenDesignerBase } from './openDesignerBase';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { IWorkflowFileContent, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
+import * as path from 'path';
 import * as vscode from 'vscode';
+import { Uri } from 'vscode';
 
 export class OpenDesignerForAzureResource extends OpenDesignerBase {
   private readonly node: RemoteWorkflowTreeItem;
@@ -45,6 +47,10 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
 
     vscode.window.showInformationMessage(localize('logicApps.designer', 'Starting workflow designer. It might take a few seconds.'), 'OK');
     this.panel = vscode.window.createWebviewPanel(this.panelGroupKey, this.workflowName, vscode.ViewColumn.Active, this.getPanelOptions());
+    this.panel.iconPath = {
+      light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'workflow.svg')),
+      dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'workflow.svg')),
+    };
     this.panelMetadata = await this.getDesignerPanelMetadata();
 
     this.panel.webview.html = await this.getWebviewContent({
