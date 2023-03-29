@@ -1,5 +1,25 @@
 # Logic Apps Designer
 
+### [2.0.13](https://github.com/Azure/LogicAppsUX/compare/v2.0.12...v2.0.13) (2023-03-29)
+
+### [2.0.12](https://github.com/Azure/LogicAppsUX/compare/v2.0.11...v2.0.12) (2023-03-28)
+
+### [2.0.11](https://github.com/Azure/LogicAppsUX/compare/v2.0.10...v2.0.11) (2023-03-28)
+
+### [2.0.10](https://github.com/Azure/LogicAppsUX/compare/v2.0.9...v2.0.10) (2023-03-27)
+
+### [2.0.9](https://github.com/Azure/LogicAppsUX/compare/v2.0.8...v2.0.9) (2023-03-26)
+
+### [2.0.8](https://github.com/Azure/LogicAppsUX/compare/v2.0.7...v2.0.8) (2023-03-25)
+
+### [2.0.7](https://github.com/Azure/LogicAppsUX/compare/v2.0.6...v2.0.7) (2023-03-24)
+
+### Logic Apps Designer Changes
+
+- Consumption - Added Azure resource-based operations ([#1632](https://github.com/Azure/LogicAppsUX/issues/1632)) ([4f9d58e](https://github.com/Azure/LogicAppsUX/commit/4f9d58ecc2011d0ff97aed8553cbe0fe2f18c4c1))
+
+### [2.0.6](https://github.com/Azure/LogicAppsUX/compare/v2.0.5...v2.0.6) (2023-03-24)
+
 ### [2.0.5](https://github.com/Azure/LogicAppsUX/compare/v2.0.4...v2.0.5) (2023-03-23)
 
 ### Logic Apps Designer Bug Fixes

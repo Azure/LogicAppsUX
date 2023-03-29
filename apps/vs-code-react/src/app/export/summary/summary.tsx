@@ -19,7 +19,7 @@ export const Summary: React.FC = () => {
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.vscode);
-  const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
+  const { baseUrl, accessToken, exportData, cloudHost } = vscodeState as InitializedVscodeState;
   const { selectedWorkflows, location, selectedSubscription, targetDirectory, packageUrl, selectedAdvanceOptions } = exportData;
 
   const intlText = {
@@ -62,8 +62,9 @@ export const Summary: React.FC = () => {
     return new ApiService({
       baseUrl,
       accessToken,
+      cloudHost,
     });
-  }, [accessToken, baseUrl]);
+  }, [accessToken, baseUrl, cloudHost]);
 
   const exportWorkflows = () => {
     return apiService.exportWorkflows(selectedWorkflows, selectedSubscription, location, selectedAdvanceOptions);

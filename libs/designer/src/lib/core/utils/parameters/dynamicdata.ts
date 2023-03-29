@@ -74,6 +74,7 @@ import {
 export async function getDynamicValues(
   dependencyInfo: DependencyInfo,
   nodeInputs: NodeInputs,
+  nodeMetadata: any,
   operationInfo: OperationInfo,
   connectionReference: ConnectionReference | undefined,
   idReplacements: Record<string, string>
@@ -89,7 +90,9 @@ export async function getDynamicValues(
       operationInfo.operationId,
       parameter?.alias,
       operationParameters,
-      dynamicState
+      dynamicState,
+      nodeInputs,
+      nodeMetadata
     );
   } else if (isLegacyDynamicValuesExtension(definition)) {
     const { connectorId } = operationInfo;
@@ -136,6 +139,7 @@ export async function getDynamicValues(
 export async function getDynamicSchema(
   dependencyInfo: DependencyInfo,
   nodeInputs: NodeInputs,
+  nodeMetadata: any,
   operationInfo: OperationInfo,
   connectionReference: ConnectionReference | undefined,
   variables: VariableDeclaration[] = [],
@@ -169,7 +173,9 @@ export async function getDynamicSchema(
             operationInfo.operationId,
             parameter?.alias,
             operationParameters,
-            dynamicState
+            dynamicState,
+            nodeInputs,
+            nodeMetadata
           );
           break;
       }
@@ -326,6 +332,7 @@ function getParametersForDynamicInvoke(
 
   for (const [parameterName, parameter] of Object.entries(referenceParameters ?? {})) {
     const referenceParameterName = (parameter?.parameterReference ?? parameter?.parameter ?? 'undefined') as string;
+    if (referenceParameterName === 'undefined') continue;
     const referencedParameter = getParameterFromName(nodeInputs, referenceParameterName);
 
     if (!referencedParameter) {

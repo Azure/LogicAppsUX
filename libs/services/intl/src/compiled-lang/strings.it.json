@@ -59,6 +59,12 @@
       "value": "Selezionare questa connessione"
     }
   ],
+  "+jnjtp": [
+    {
+      "type": 0,
+      "value": "Select a Manual Workflow resource"
+    }
+  ],
   "+lpuMl": [
     {
       "type": 0,
@@ -664,6 +670,12 @@
     {
       "type": 0,
       "value": "Sì"
+    }
+  ],
+  "2vnYre": [
+    {
+      "type": 0,
+      "value": "Add Action"
     }
   ],
   "2xhbE1": [
@@ -2821,6 +2833,12 @@
       "value": "(UTC+02:00) Istanbul"
     }
   ],
+  "KwGA+K": [
+    {
+      "type": 0,
+      "value": "Select a Function App resource"
+    }
+  ],
   "L+PY+j": [
     {
       "type": 0,
@@ -3571,6 +3589,12 @@
       "value": "Obbligatorio. Stringa con cui delimitare gli elementi."
     }
   ],
+  "QpX2+j": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "QrQDdp": [
     {
       "type": 0,
@@ -4076,6 +4100,12 @@
     {
       "type": 0,
       "value": "(UTC-7.00) Fuso occidentale (USA e Canada)"
+    }
+  ],
+  "VHm1Sr": [
+    {
+      "type": 0,
+      "value": "Select an App Service resource"
     }
   ],
   "VI5Sa8": [
@@ -4720,6 +4750,12 @@
       "value": "Enter a valid float."
     }
   ],
+  "aoUT/3": [
+    {
+      "type": 0,
+      "value": "Loading resources..."
+    }
+  ],
   "auUI93": [
     {
       "type": 0,
@@ -5198,6 +5234,12 @@
       "value": "Creazione ACL non riuscita per la connessione. Eliminazione della connessione."
     }
   ],
+  "fElufw": [
+    {
+      "type": 0,
+      "value": "Select an API Management resource"
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
@@ -5378,6 +5420,12 @@
     {
       "type": 0,
       "value": "Quando usata all'interno di un ciclo until, questa funzione restituisce l'indice dell'iterazione corrente del ciclo specificato."
+    }
+  ],
+  "gvDMuq": [
+    {
+      "type": 0,
+      "value": "Select a Batch Workflow resource"
     }
   ],
   "h1lQDa": [

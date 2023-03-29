@@ -89,7 +89,8 @@ export const initializeOperationMetadata = async (
     initializeNodes(
       allNodeData.map((data) => {
         const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, staticResults } = data;
-        return { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, staticResults };
+        const actionMetadata = nodesMetadata?.[id]?.actionMetadata;
+        return { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, actionMetadata, staticResults };
       })
     )
   );
@@ -376,7 +377,7 @@ export const updateDynamicDataInNodes = async (
   const rootState = getState();
   const {
     workflow: { nodesMetadata, operations },
-    operations: { inputParameters, settings, dependencies, operationInfo },
+    operations: { inputParameters, settings, dependencies, operationInfo, actionMetadata },
     tokens: { variables },
     connections,
   } = rootState;
@@ -384,6 +385,7 @@ export const updateDynamicDataInNodes = async (
   for (const [nodeId, operation] of Object.entries(operations)) {
     const nodeDependencies = dependencies[nodeId];
     const nodeInputs = inputParameters[nodeId];
+    const nodeMetadata = actionMetadata[nodeId];
     const nodeSettings = settings[nodeId];
     const isTrigger = isRootNodeInGraph(nodeId, 'root', nodesMetadata);
     const nodeOperationInfo = operationInfo[nodeId];
@@ -396,6 +398,7 @@ export const updateDynamicDataInNodes = async (
       connectionReference,
       nodeDependencies,
       nodeInputs,
+      nodeMetadata,
       nodeSettings,
       allVariables,
       dispatch,

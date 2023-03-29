@@ -80,6 +80,7 @@ export class ConsumptionConnectionService extends BaseConnectionService {
   // Run when assigning a conneciton to an operation
   async setupConnectionIfNeeded(_connection: Connection): Promise<void> {
     // In standard this is where we set access policies if needed
+    // TODO: Do we need to support anything here for consumption?
   }
 
   async createAndAuthorizeOAuthConnection(
@@ -88,14 +89,12 @@ export class ConsumptionConnectionService extends BaseConnectionService {
     connectionInfo: ConnectionCreationInfo,
     parametersMetadata?: ConnectionParametersMetadata
   ): Promise<CreateConnectionResult> {
-    const connector = await this.getConnector(connectorId);
-    const connection = await this.createConnection(connectionId, connector, connectionInfo, parametersMetadata);
-    const oAuthService = OAuthService();
-    let oAuthPopupInstance: IOAuthPopup | undefined;
-
     try {
+      const connector = await this.getConnector(connectorId);
+      const connection = await this.createConnection(connectionId, connector, connectionInfo, parametersMetadata);
+      const oAuthService = OAuthService();
       const consentUrl = await oAuthService.fetchConsentUrlForConnection(connectionId);
-      oAuthPopupInstance = oAuthService.openLoginPopup({ consentUrl });
+      const oAuthPopupInstance: IOAuthPopup = oAuthService.openLoginPopup({ consentUrl });
 
       const loginResponse = await oAuthPopupInstance.loginPromise;
       if (loginResponse.error) {
@@ -109,7 +108,11 @@ export class ConsumptionConnectionService extends BaseConnectionService {
       const fetchedConnection = await this.getConnection(connection.id);
       return { connection: fetchedConnection };
     } catch (error: any) {
-      this.deleteConnection(connectionId);
+      try {
+        this.deleteConnection(connectionId);
+      } catch (e) {
+        // Ignore error, there may or may not be a connection to delete
+      }
       const errorMessage = `Failed to create OAuth connection: ${this.tryParseErrorMessage(error)}`;
       LoggerService().log({
         level: LogEntryLevel.Error,

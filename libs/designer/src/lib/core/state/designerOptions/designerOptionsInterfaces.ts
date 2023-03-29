@@ -9,6 +9,8 @@ import type {
   IWorkflowService,
   IHostService,
   IApiManagementService,
+  IFunctionService,
+  IAppServiceService,
   IRunService,
 } from '@microsoft/designer-client-services-logic-apps';
 
@@ -31,5 +33,7 @@ export interface ServiceOptions {
   workflowService: IWorkflowService;
   hostService?: IHostService;
   apimService?: IApiManagementService;
+  functionService?: IFunctionService;
+  appServiceService?: IAppServiceService;
   runService?: IRunService;
 }

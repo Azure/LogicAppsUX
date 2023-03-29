@@ -75,6 +75,12 @@
       "value": "Zaznacz, aby wybrać to połączenie"
     }
   ],
+  "+jnjtp": [
+    {
+      "type": 0,
+      "value": "Select a Manual Workflow resource"
+    }
+  ],
   "+lpuMl": [
     {
       "type": 0,
@@ -707,6 +713,12 @@
     {
       "type": 0,
       "value": "Włączone"
+    }
+  ],
+  "2vnYre": [
+    {
+      "type": 0,
+      "value": "Add Action"
     }
   ],
   "2xhbE1": [
@@ -2945,6 +2957,12 @@
       "value": "(UTC+02:00) Stambuł"
     }
   ],
+  "KwGA+K": [
+    {
+      "type": 0,
+      "value": "Select a Function App resource"
+    }
+  ],
   "L+PY+j": [
     {
       "type": 0,
@@ -3727,6 +3745,12 @@
       "value": "Parametr wymagany. Ciąg do użycia w celu rozgraniczania elementów."
     }
   ],
+  "QpX2+j": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "QrQDdp": [
     {
       "type": 0,
@@ -4243,6 +4267,12 @@
     {
       "type": 0,
       "value": "(UTC-07:00) Stany Zjednoczone i Kanada (czas górski)"
+    }
+  ],
+  "VHm1Sr": [
+    {
+      "type": 0,
+      "value": "Select an App Service resource"
     }
   ],
   "VI5Sa8": [
@@ -4903,6 +4933,12 @@
       "value": "Enter a valid float."
     }
   ],
+  "aoUT/3": [
+    {
+      "type": 0,
+      "value": "Loading resources..."
+    }
+  ],
   "auUI93": [
     {
       "type": 0,
@@ -5381,6 +5417,12 @@
       "value": "Tworzenie listy ACL dla połączenia nie powiodło się. Usuwanie połączenia."
     }
   ],
+  "fElufw": [
+    {
+      "type": 0,
+      "value": "Select an API Management resource"
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
@@ -5565,6 +5607,12 @@
     {
       "type": 0,
       "value": "W przypadku użycia wewnątrz pętli until ta funkcja zwraca bieżący indeks iteracji określonej pętli."
+    }
+  ],
+  "gvDMuq": [
+    {
+      "type": 0,
+      "value": "Select a Batch Workflow resource"
     }
   ],
   "h1lQDa": [

@@ -59,6 +59,12 @@
       "value": "이 연결을 선택하려면 선택합니다."
     }
   ],
+  "+jnjtp": [
+    {
+      "type": 0,
+      "value": "Select a Manual Workflow resource"
+    }
+  ],
   "+lpuMl": [
     {
       "type": 0,
@@ -642,6 +648,12 @@
     {
       "type": 0,
       "value": "켜기"
+    }
+  ],
+  "2vnYre": [
+    {
+      "type": 0,
+      "value": "Add Action"
     }
   ],
   "2xhbE1": [
@@ -2733,6 +2745,12 @@
       "value": "(UTC+02:00) 이스탄불"
     }
   ],
+  "KwGA+K": [
+    {
+      "type": 0,
+      "value": "Select a Function App resource"
+    }
+  ],
   "L+PY+j": [
     {
       "type": 0,
@@ -3475,6 +3493,12 @@
       "value": "필수 항목으로, 항목을 구분할 문자열입니다."
     }
   ],
+  "QpX2+j": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "QrQDdp": [
     {
       "type": 0,
@@ -3958,6 +3982,12 @@
     {
       "type": 0,
       "value": "(UTC-07:00) 산지 표준시(미국과 캐나다)"
+    }
+  ],
+  "VHm1Sr": [
+    {
+      "type": 0,
+      "value": "Select an App Service resource"
     }
   ],
   "VI5Sa8": [
@@ -4602,6 +4632,12 @@
       "value": "Enter a valid float."
     }
   ],
+  "aoUT/3": [
+    {
+      "type": 0,
+      "value": "Loading resources..."
+    }
+  ],
   "auUI93": [
     {
       "type": 0,
@@ -5076,6 +5112,12 @@
       "value": "연결에 대한 ACL을 만들지 못했습니다. 연결을 삭제하는 중입니다."
     }
   ],
+  "fElufw": [
+    {
+      "type": 0,
+      "value": "Select an API Management resource"
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
@@ -5256,6 +5298,12 @@
     {
       "type": 0,
       "value": "Until 루트 내에서 사용되는 경우, 이 함수는 지정된 루프의 현재 반복 인덱스를 반환합니다."
+    }
+  ],
+  "gvDMuq": [
+    {
+      "type": 0,
+      "value": "Select a Batch Workflow resource"
     }
   ],
   "h1lQDa": [

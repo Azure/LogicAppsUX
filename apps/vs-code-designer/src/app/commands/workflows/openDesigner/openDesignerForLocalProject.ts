@@ -98,6 +98,11 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       ViewColumn.Active, // Editor column to show the new webview panel in.
       this.getPanelOptions()
     );
+    console.log('charlie', path.join(ext.context.extensionPath, 'assets', 'dark', 'workflow.svg'));
+    this.panel.iconPath = {
+      light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'workflow.svg')),
+      dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'workflow.svg')),
+    };
 
     this.migrationOptions = await this._getMigrationOptions(this.baseUrl);
     this.panelMetadata = await this._getDesignerPanelMetadata(this.migrationOptions);
@@ -389,6 +394,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       workflowDetails: await getManualWorkflowsInLocalProject(projectPath, this.workflowName),
       workflowName: this.workflowName,
       artifacts: await getArtifactsInLocalProject(projectPath),
+      schemaArtifacts: this.schemaArtifacts,
+      mapArtifacts: this.mapArtifacts,
     };
   }
 }

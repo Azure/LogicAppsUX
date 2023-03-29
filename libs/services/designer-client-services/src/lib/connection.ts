@@ -34,7 +34,6 @@ export interface CreateConnectionResult {
 }
 
 export interface IConnectionService {
-  [x: string]: any;
   dispose(): void;
   getConnector(connectorId: string): Promise<Connector>;
   getConnectorAndSwagger(connectorId: string): Promise<ConnectorWithSwagger>;
@@ -55,9 +54,6 @@ export interface IConnectionService {
   ): Promise<CreateConnectionResult>;
   setupConnectionIfNeeded(connection: Connection): Promise<void>;
   getUniqueConnectionName(connectorId: string, connectionNames: string[], connectorName: string): Promise<string>;
-  fetchFunctionApps(): Promise<any>;
-  fetchFunctionAppsFunctions(functionAppId: string): Promise<any>;
-  fetchFunctionKey(functionId: string): Promise<any>;
 }
 
 let service: IConnectionService;

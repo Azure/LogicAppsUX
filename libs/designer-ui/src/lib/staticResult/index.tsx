@@ -88,7 +88,7 @@ export const StaticResultContainer = ({
   });
 
   const saveStaticResults = () => {
-    console.log(JSON.stringify(serializePropertyValues(propertyValues, staticResultSchema), null, 2));
+    // console.log(JSON.stringify(serializePropertyValues(propertyValues, staticResultSchema), null, 2));
     savePropertiesCallback?.(
       serializePropertyValues(propertyValues, staticResultSchema),
       showStaticResults ? StaticResultOption.ENABLED : StaticResultOption.DISABLED

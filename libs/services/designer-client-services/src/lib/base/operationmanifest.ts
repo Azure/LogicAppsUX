@@ -112,7 +112,9 @@ const datamapper = 'datamapper';
 
 export const apiManagementConnectorId = '/connectionProviders/apiManagementOperation';
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
+export const appServiceConnectorId = '/connectionProviders/appService';
 export const batchConnectorId = '/connectionProviders/batch';
+export const workflowConnectorId = '/connectionProviders/workflow';
 export const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
 const controlConnectorId = 'connectionProviders/control';
 const dateTimeConnectorId = 'connectionProviders/datetime';
@@ -124,7 +126,11 @@ export const flatFileConnectorId = 'connectionProviders/flatFileOperations';
 const liquidConnectorId = 'connectionProviders/liquidOperations';
 const dataMapperConnectorId = 'connectionProviders/dataMapperOperations';
 
-const supportedManifestTypes = [
+const azurefunction = 'azurefunction';
+const appservice = 'appservice';
+const invokeworkflow = 'invokeworkflow';
+
+export const supportedBaseManifestTypes = [
   apimanagement,
   appendtoarrayvariable,
   appendtostringvariable,
@@ -204,7 +210,7 @@ export abstract class BaseOperationManifestService implements IOperationManifest
     const normalizedOperationType = operationType.toLowerCase();
     return supportedTypes
       ? supportedTypes.indexOf(normalizedOperationType) > -1
-      : supportedManifestTypes.indexOf(normalizedOperationType) > -1;
+      : supportedBaseManifestTypes.indexOf(normalizedOperationType) > -1;
   }
 
   abstract getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo>;
@@ -265,6 +271,11 @@ export function isBuiltInOperation(definition: any): boolean {
     case xslttransform:
       return true;
 
+    case appservice:
+    case azurefunction:
+    case invokeworkflow:
+      return true;
+
     default:
       return false;
   }
@@ -300,17 +311,24 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
       }
 
     case http:
-      return {
-        connectorId: httpConnectorId,
-        operationId:
-          definition.inputs?.metadata?.apiDefinitionUrl && equals(definition.inputs?.metadata?.swaggerSource, 'custom')
-            ? isTrigger
-              ? httpswaggertrigger
-              : httpswaggeraction
-            : isTrigger
-            ? httptrigger
-            : httpaction,
-      };
+      if (equals(definition?.metadata?.swaggerSource, 'website')) {
+        return {
+          connectorId: appServiceConnectorId,
+          operationId: appservice,
+        };
+      } else {
+        return {
+          connectorId: httpConnectorId,
+          operationId:
+            definition.inputs?.metadata?.apiDefinitionUrl && equals(definition.inputs?.metadata?.swaggerSource, 'custom')
+              ? isTrigger
+                ? httpswaggertrigger
+                : httpswaggeraction
+              : isTrigger
+              ? httptrigger
+              : httpaction,
+        };
+      }
     case httpwebhook:
       return { connectorId: httpConnectorId, operationId: isTrigger ? httpwebhooktrigger : httpwebhookaction };
     case liquid:
@@ -380,6 +398,42 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
       return {
         connectorId: scheduleConnectorId,
         operationId: definition.inputs?.until ? delayuntil : delay,
+      };
+
+    case apimanagement:
+      return {
+        connectorId: apiManagementConnectorId,
+        operationId: apimanagement,
+      };
+
+    case sendtobatch:
+      return {
+        connectorId: batchConnectorId,
+        operationId: sendtobatch,
+      };
+
+    case appservice:
+      return {
+        connectorId: appServiceConnectorId,
+        operationId: appservice,
+      };
+
+    case azurefunction:
+      return {
+        connectorId: azureFunctionConnectorId,
+        operationId: azurefunction,
+      };
+
+    case workflow:
+      return {
+        connectorId: workflowConnectorId,
+        operationId: workflow,
+      };
+
+    case invokeworkflow:
+      return {
+        connectorId: workflowConnectorId,
+        operationId: invokeworkflow,
       };
 
     case xslt:

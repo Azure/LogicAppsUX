@@ -59,6 +59,12 @@
       "value": "Marque para selecionar esta conexão"
     }
   ],
+  "+jnjtp": [
+    {
+      "type": 0,
+      "value": "Select a Manual Workflow resource"
+    }
+  ],
   "+lpuMl": [
     {
       "type": 0,
@@ -664,6 +670,12 @@
     {
       "type": 0,
       "value": "Ativado"
+    }
+  ],
+  "2vnYre": [
+    {
+      "type": 0,
+      "value": "Add Action"
     }
   ],
   "2xhbE1": [
@@ -2817,6 +2829,12 @@
       "value": "(UTC+02:00) Istambul"
     }
   ],
+  "KwGA+K": [
+    {
+      "type": 0,
+      "value": "Select a Function App resource"
+    }
+  ],
   "L+PY+j": [
     {
       "type": 0,
@@ -3559,6 +3577,12 @@
       "value": "Necessário. A cadeia de caracteres com a qual delimitar itens."
     }
   ],
+  "QpX2+j": [
+    {
+      "type": 0,
+      "value": "Location"
+    }
+  ],
   "QrQDdp": [
     {
       "type": 0,
@@ -4064,6 +4088,12 @@
     {
       "type": 0,
       "value": "(UTC-07:00) Hora das Montanhas (EUA e Canadá)"
+    }
+  ],
+  "VHm1Sr": [
+    {
+      "type": 0,
+      "value": "Select an App Service resource"
     }
   ],
   "VI5Sa8": [
@@ -4708,6 +4738,12 @@
       "value": "Enter a valid float."
     }
   ],
+  "aoUT/3": [
+    {
+      "type": 0,
+      "value": "Loading resources..."
+    }
+  ],
   "auUI93": [
     {
       "type": 0,
@@ -5186,6 +5222,12 @@
       "value": "Falha na criação da ACL para conexão. Excluindo a conexão."
     }
   ],
+  "fElufw": [
+    {
+      "type": 0,
+      "value": "Select an API Management resource"
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
@@ -5366,6 +5408,12 @@
     {
       "type": 0,
       "value": "Quando usada dentro do loop, esta função retorna o índice de iteração atual do loop especificado."
+    }
+  ],
+  "gvDMuq": [
+    {
+      "type": 0,
+      "value": "Select a Batch Workflow resource"
     }
   ],
   "h1lQDa": [

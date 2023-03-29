@@ -1,14 +1,16 @@
 import { clientSupportedOperations } from './constants';
 import { HttpClient } from './services/httpClient';
-import { StandardOAuthService } from './services/oAuth';
+import { BaseOAuthService } from './services/oAuth';
 import { resolveConnectionsReferences } from './utilities/workflow';
 import {
   StandardConnectionService,
   StandardConnectorService,
   StandardOperationManifestService,
   StandardSearchService,
-  StandardGatewayService,
+  BaseGatewayService,
   StandardRunService,
+  StandardArtifactService,
+  ApiManagementInstanceService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type {
   IApiHubServiceDetails,
@@ -38,16 +40,19 @@ export const getDesignerServices = (
   connectorService: StandardConnectorService;
   operationManifestService: StandardOperationManifestService;
   searchService: StandardSearchService;
-  oAuthService: StandardOAuthService;
-  gatewayService: StandardGatewayService;
+  oAuthService: BaseOAuthService;
+  gatewayService: BaseGatewayService;
   workflowService: IWorkflowService;
   hostService: IHostService;
   runService: StandardRunService;
+  apimService: ApiManagementInstanceService;
 } => {
   let authToken = '',
     panelId = '',
     workflowDetails: Record<string, any> = {},
     appSettings = {};
+
+  const { subscriptionId, resourceGroup, location } = apiHubServiceDetails;
 
   if (panelMetadata) {
     authToken = panelMetadata.accessToken ?? '';
@@ -80,6 +85,23 @@ export const getDesignerServices = (
       },
     },
   });
+  const apimService = new ApiManagementInstanceService({
+    apiVersion: '2019-12-01',
+    baseUrl,
+    subscriptionId,
+    httpClient,
+  });
+
+  const artifactService = new StandardArtifactService({
+    apiVersion,
+    baseUrl,
+    httpClient,
+    integrationAccountCallbackUrl:
+      panelMetadata?.localSettings && panelMetadata?.localSettings['WORKFLOW_INTEGRATION_ACCOUNT_CALLBACK_URL'],
+    apiHubServiceDetails,
+    schemaArtifacts: panelMetadata?.schemaArtifacts,
+    mapArtifacts: panelMetadata?.mapArtifacts,
+  });
 
   const manualWorkflows = Object.keys(workflowDetails).map((name) => ({ value: name, displayName: name }));
 
@@ -94,7 +116,8 @@ export const getDesignerServices = (
       }
 
       const connectionName = connectionId.split('/').splice(-1)[0];
-      const connectionInfo = connectionData?.serviceProviderConnections?.[connectionName];
+      const connnectionsInfo = { ...connectionData?.serviceProviderConnections, ...connectionData?.apiManagementConnections };
+      const connectionInfo = connnectionsInfo[connectionName];
 
       if (connectionInfo) {
         const resolvedConnectionInfo = resolveConnectionsReferences(JSON.stringify(connectionInfo), {}, appSettings);
@@ -113,12 +136,29 @@ export const getDesignerServices = (
         const workflowSchemas = JSON.stringify(workflowDetails);
         return Promise.resolve(workflowSchemas[workflowName] || {});
       },
+      getApimOperationSchema: (args: any) => {
+        const { configuration, parameters, isInput } = args;
+        if (!configuration?.connection?.apiId) {
+          throw new Error('Missing api information to make dynamic call');
+        }
+
+        return apimService.getOperationSchema(configuration.connection.apiId, parameters.operationId, isInput);
+      },
     },
-    // TODO ValuesClient needs to be implemented
     valuesClient: {
       getWorkflows: () => Promise.resolve(manualWorkflows),
-      getMapArtifacts: () => Promise.resolve([]),
-      getSchemaArtifacts: () => Promise.resolve([]),
+      getMapArtifacts: (args: any) => {
+        const { mapType, mapSource } = args.parameters;
+        return artifactService.getMapArtifacts(mapType, mapSource);
+      },
+      getSchemaArtifacts: (args: any) => artifactService.getSchemaArtifacts(args.parameters.schemaSource),
+      getApimOperations: (args: any) => {
+        const { configuration } = args;
+        if (!configuration?.connection?.apiId) {
+          throw new Error('Missing api information to make dynamic call');
+        }
+        return apimService.getOperations(configuration?.connection?.apiId);
+      },
     },
     apiHubServiceDetails,
     workflowReferenceId: '',
@@ -138,9 +178,7 @@ export const getDesignerServices = (
     isDev: false,
   });
 
-  const { subscriptionId, resourceGroup, location } = apiHubServiceDetails;
-
-  const oAuthService = new StandardOAuthService({
+  const oAuthService = new BaseOAuthService({
     vscode,
     panelId,
     authToken,
@@ -153,7 +191,7 @@ export const getDesignerServices = (
     location,
   });
 
-  const gatewayService = new StandardGatewayService({
+  const gatewayService = new BaseGatewayService({
     baseUrl,
     httpClient,
     apiVersions: {
@@ -171,7 +209,10 @@ export const getDesignerServices = (
           value: 'Url not available during authoring in local project. Check Overview page.',
         });
       } else {
-        return Promise.resolve({ method: HTTP_METHODS.POST, value: 'Dummy url' });
+        return Promise.resolve({
+          method: HTTP_METHODS.POST,
+          value: 'Url not available during authoring in local project. Check Overview page.',
+        });
       }
     },
   };
@@ -206,5 +247,6 @@ export const getDesignerServices = (
     workflowService,
     hostService,
     runService,
+    apimService,
   };
 };
