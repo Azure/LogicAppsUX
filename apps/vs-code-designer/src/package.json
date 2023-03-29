@@ -288,7 +288,7 @@
         {
           "id": "azure",
           "title": "Azure",
-          "icon": "resources/azure.svg"
+          "icon": "assets/azure.svg"
         }
       ]
     },
