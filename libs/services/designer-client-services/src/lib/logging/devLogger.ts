@@ -31,7 +31,7 @@ export class DevLogger implements ILoggerService {
     return id;
   };
 
-  public endTrace = (id: string, eventData?: Pick<TelemetryEvent, 'data'> | undefined) => {
+  public endTrace = (id: string, eventData?: Pick<TelemetryEvent, 'status' | 'data'> | undefined) => {
     const timestamp = Date.now();
     const trace = this.traceIds.get(id);
 
@@ -40,7 +40,9 @@ export class DevLogger implements ILoggerService {
     }
     BrowserReporter.log({
       level: LogEntryLevel.Trace,
-      message: `Trace Ended: [${timestamp - trace?.startTime}ms]  ${trace.data.name} - ${trace.data.action} - ${trace.data.actionModifier}`,
+      message: `Trace Ended [${eventData?.status}]: [${timestamp - trace?.startTime}ms]  ${trace.data.name} - ${trace.data.action} - ${
+        trace.data.actionModifier
+      }`,
       timestamp: timestamp,
       area: trace.data.source,
       args: [eventData?.data],
