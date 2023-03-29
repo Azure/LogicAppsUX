@@ -20,17 +20,10 @@ body:
   - type: textarea
     id: description
     attributes:
-      label: Describe the Bug
+      label: Describe the Bug with repro steps
       description: Provide a clear and concise description of the challenge you are running into.
-    validations:
-      required: true
-
-  - type: textarea
-    id: steps
-    attributes:
-      label: Steps to Reproduce the Bug or Issue
-      description: Describe the steps we have to take to reproduce the behavior.
       placeholder: |
+        Bug XYZ is happening because
         1. Go to '...'
         2. Click on '....'
         3. Scroll down to '....'
@@ -59,16 +52,6 @@ body:
       required: false
 
   - type: textarea
-    id: expected
-    attributes:
-      label: Expected behavior
-      description: Provide a clear and concise description of what you expected to happen.
-      placeholder: |
-        As a user, I expected ___ behavior but i am seeing ___
-    validations:
-      required: true
-
-  - type: textarea
     id: screenshots_or_videos
     attributes:
       label: Screenshots or Videos
@@ -80,13 +63,11 @@ body:
         You can drag your video or image files inside of this editor ↓
 
   - type: textarea
-    id: platform
+    id: browser
     attributes:
-      label: Platform And Browser
-      value: |
-        - OS: [e.g. macOS, Windows, Linux]
+      label: Browser
+      placeholder: |
         - Browser: [e.g. Chrome, Safari, Firefox]
-        - Version: [e.g. 91.1]
     validations:
       required: true
 
