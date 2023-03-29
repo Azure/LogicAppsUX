@@ -4,7 +4,7 @@ import type { AppDispatch } from '../../core';
 import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useParameterValidationErrors, useTokenDependencies } from '../../core/state/operation/operationSelector';
+import { useParameterStaticResult, useParameterValidationErrors, useTokenDependencies } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
 import {
@@ -189,6 +189,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   ]);
 
   const shouldFocus = useShouldNodeFocus(id);
+  const staticResults = useParameterStaticResult(id);
   return (
     <>
       <div className="nopan">
@@ -215,6 +216,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           selected={selected}
           contextMenuOptions={contextMenuOptions}
           setFocus={shouldFocus}
+          staticResultsEnabled={!!staticResults}
         />
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
