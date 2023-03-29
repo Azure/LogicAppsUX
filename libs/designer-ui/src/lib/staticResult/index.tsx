@@ -50,7 +50,7 @@ export const StaticResultContainer = ({
   const intl = useIntl();
 
   const [showStaticResults, setShowStaticResults] = useState<boolean>(enabled);
-  const [propertyValues, setPropertyValues] = useState(deserializePropertyValues(properties, staticResultSchema));
+  const [propertyValues, setPropertyValues] = useState<OpenAPIV2.SchemaObject>(deserializePropertyValues(properties, staticResultSchema));
 
   useEffect(() => {
     // we want to update parentProps whenever our inner properties change

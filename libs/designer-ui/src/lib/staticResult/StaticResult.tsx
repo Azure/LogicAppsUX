@@ -40,7 +40,7 @@ export const StaticResult = ({
       <button className="msla-static-result-container-header" onClick={() => setExpanded(!expanded)}>
         <Icon
           className="msla-static-result-container-header-icon"
-          ariaLabel={expanded ? `${expandLabel}` : `${collapseLabel}`}
+          aria-label={expanded ? `${expandLabel}` : `${collapseLabel}`}
           iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
           styles={{ root: { fontSize: 14, color: isInverted ? constants.STANDARD_TEXT_COLOR : constants.CHEVRON_ROOT_COLOR_LIGHT } }}
         />

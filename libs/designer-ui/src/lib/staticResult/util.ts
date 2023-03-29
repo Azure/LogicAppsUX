@@ -81,9 +81,36 @@ export const deserializePropertyValues = (
   propertyValues: OpenAPIV2.SchemaObject,
   staticResultSchema: OpenAPIV2.SchemaObject
 ): OpenAPIV2.SchemaObject => {
-  console.log(propertyValues);
-  console.log(staticResultSchema);
-  return propertyValues;
+  const deserializedProperty: OpenAPIV2.SchemaObject = {};
+  Object.entries(staticResultSchema.properties ?? {}).forEach(([schemaPropertyName, schemaPropertyValue]) => {
+    if (propertyValues[schemaPropertyName] && schemaPropertyValue) {
+      if (schemaPropertyValue.type === constants.SWAGGER.TYPE.OBJECT) {
+        const deserializedPropertyValue = deserializePropertyValues(propertyValues[schemaPropertyName], schemaPropertyValue);
+        if (deserializedPropertyValue && Object.keys(deserializedPropertyValue).length > 0) {
+          deserializedProperty[schemaPropertyName] = deserializedPropertyValue;
+        }
+      } else if (schemaPropertyValue.type === constants.SWAGGER.TYPE.ARRAY && schemaPropertyValue.items) {
+        const deserializedArrayProperty: OpenAPIV2.SchemaObject = {};
+        propertyValues[schemaPropertyName].forEach((propertyValue: OpenAPIV2.SchemaObject, i: number) => {
+          const deserializedPropertyValue = deserializePropertyValues(propertyValue, schemaPropertyValue.items as OpenAPIV2.SchemaObject);
+          if (schemaPropertyValue.items?.title) {
+            deserializedArrayProperty[`${schemaPropertyValue.items.title} - ${i}`] = deserializedPropertyValue;
+          } else {
+            deserializedArrayProperty[`Item - ${i + 1}`] = deserializedPropertyValue;
+          }
+        });
+        if (deserializedArrayProperty && Object.keys(deserializedArrayProperty).length > 0) {
+          deserializedProperty[schemaPropertyName] = deserializedArrayProperty;
+        }
+      } else {
+        deserializedProperty[schemaPropertyName] = propertyValues[schemaPropertyName];
+      }
+    }
+  });
+  if (!staticResultSchema.properties && propertyValues) {
+    return propertyValues;
+  }
+  return deserializedProperty;
 };
 
 export const initializeShownProperties = (
