@@ -69,10 +69,6 @@ export abstract class BaseConnectionService implements IConnectionService {
     this._subscriptionResourceGroupWebUrl = `/subscriptions/${apiHubServiceDetails.subscriptionId}/resourceGroups/${apiHubServiceDetails.resourceGroup}/providers/Microsoft.Web`;
   }
 
-  dispose(): void {
-    return;
-  }
-
   async getConnectorAndSwagger(connectorId: string): Promise<ConnectorWithSwagger> {
     if (!isArmResourceId(connectorId)) {
       return { connector: await this.getConnector(connectorId), swagger: null as any };
