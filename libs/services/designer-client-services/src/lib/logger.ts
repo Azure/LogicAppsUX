@@ -4,7 +4,7 @@ import { AssertionErrorCode, AssertionException, guid } from '@microsoft/utils-l
 export interface ILoggerService {
   log: (entry: Omit<LogEntry, 'timestamp'>) => void;
   startTrace: (eventData: Pick<TelemetryEvent, 'action' | 'actionModifier' | 'name' | 'source'>) => string;
-  endTrace: (id: string, eventData?: Pick<TelemetryEvent, 'status' | 'data'>) => void;
+  endTrace: (id: string, eventData: Pick<TelemetryEvent, 'status' | 'data'>) => void;
 }
 
 class Service implements ILoggerService {
@@ -31,7 +31,7 @@ class Service implements ILoggerService {
     return groupId;
   };
 
-  public endTrace = (id: string, eventData?: Pick<TelemetryEvent, 'status' | 'data'> | undefined) => {
+  public endTrace = (id: string, eventData: Pick<TelemetryEvent, 'status' | 'data'>) => {
     const group = this.traceIds.get(id);
     this.traceIds.delete(id);
     group?.forEach((tid) => {
