@@ -2,7 +2,7 @@ import type { WorkflowNode } from '../parsers/models/workflowNode';
 import { isWorkflowNode } from '../parsers/models/workflowNode';
 import { useReadOnly } from '../state/designerOptions/designerOptionsSelectors';
 import { getRootWorkflowGraphForLayout } from '../state/workflow/workflowSelectors';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService, Status } from '@microsoft/designer-client-services-logic-apps';
 import { useThrottledEffect, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
@@ -171,14 +171,17 @@ export const useLayout = (): [Node[], Edge[], number[]] => {
           setReactFlowNodes(n);
           setReactFlowEdges(e);
           setReactFlowSize(s);
-          LoggerService().endTrace(traceId);
+          LoggerService().endTrace(traceId, { status: Status.Success });
         })
         .catch((err) => {
           LoggerService().log({
             level: LogEntryLevel.Error,
             area: 'useLayout',
-            message: err,
+            error: err,
+            message: err.message,
+            traceId: traceId,
           });
+          LoggerService().endTrace(traceId, { status: Status.Failure });
         });
     },
     [readOnly, workflowGraph],

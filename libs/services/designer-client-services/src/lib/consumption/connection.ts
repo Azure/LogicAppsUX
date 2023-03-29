@@ -1,7 +1,7 @@
 import { BaseConnectionService } from '../base';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata, CreateConnectionResult } from '../connection';
 import { LoggerService } from '../logger';
-import { LogEntryLevel } from '../logging/logEntry';
+import { LogEntryLevel, Status } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
 import type { Connector, Connection } from '@microsoft/utils-logic-apps';
@@ -32,20 +32,20 @@ export class ConsumptionConnectionService extends BaseConnectionService {
   ): Promise<Connection> {
     const connectionName = connectionId.split('/').at(-1) as string;
 
-    try {
-      const logId = LoggerService().startTrace({
-        action: 'createConnection',
-        name: 'Creating Connection',
-        source: 'connection.ts',
-      });
+    const logId = LoggerService().startTrace({
+      action: 'createConnection',
+      name: 'Creating Connection',
+      source: 'connection.ts',
+    });
 
+    try {
       if (connector.properties.testConnectionUrl) await this.pretestServiceProviderConnection(connector, connectionInfo);
 
       if (!isArmResourceId(connector.id)) throw 'Connector id is not a valid ARM resource id.';
 
       const connection = await this.createConnectionInApiHub(connectionName, connector.id, connectionInfo);
       await this.testConnection(connection);
-      LoggerService().endTrace(logId);
+      LoggerService().endTrace(logId, { status: Status.Success });
       return connection;
     } catch (error) {
       this.deleteConnection(connectionId);
@@ -54,7 +54,10 @@ export class ConsumptionConnectionService extends BaseConnectionService {
         level: LogEntryLevel.Error,
         area: 'createConnection',
         message: errorMessage,
+        error: error instanceof Error ? error : undefined,
+        traceId: logId,
       });
+      LoggerService().endTrace(logId, { status: Status.Failure });
       return Promise.reject(errorMessage);
     }
   }
@@ -118,6 +121,7 @@ export class ConsumptionConnectionService extends BaseConnectionService {
         level: LogEntryLevel.Error,
         area: 'create oauth connection',
         message: errorMessage,
+        error: error instanceof Error ? error : undefined,
       });
       return { errorMessage: this.tryParseErrorMessage(error) };
     }

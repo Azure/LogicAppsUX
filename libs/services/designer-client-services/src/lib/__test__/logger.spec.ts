@@ -77,8 +77,8 @@ describe('lib/designer-client-services/logger', () => {
     };
 
     const g = LoggerService().startTrace(entry);
-    LoggerService().endTrace(g, { data: 'test' });
-    expect(mockLoggingService1.endTrace).toHaveBeenCalledWith(innerGuid, { data: 'test' });
+    LoggerService().endTrace(g, { data: 'test', status: 'someStatus' });
+    expect(mockLoggingService1.endTrace).toHaveBeenCalledWith(innerGuid, { data: 'test', status: 'someStatus' });
   });
 
   it('should start and end same multiple traces successfully if multipleLoggers', () => {
@@ -102,8 +102,8 @@ describe('lib/designer-client-services/logger', () => {
     };
 
     const g = LoggerService().startTrace(entry);
-    LoggerService().endTrace(g, { data: 'test' });
-    expect(mockLoggingService1.endTrace).toHaveBeenCalledWith(innerGuid1, { data: 'test' });
-    expect(mockLoggingService2.endTrace).toHaveBeenCalledWith(innerGuid2, { data: 'test' });
+    LoggerService().endTrace(g, { data: 'test', status: 'someStatus' });
+    expect(mockLoggingService1.endTrace).toHaveBeenCalledWith(innerGuid1, { data: 'test', status: 'someStatus' });
+    expect(mockLoggingService2.endTrace).toHaveBeenCalledWith(innerGuid2, { data: 'test', status: 'someStatus' });
   });
 });
