@@ -36,6 +36,8 @@ export const serializePropertyValues = (
       } else {
         serializedProperty[schemaPropertyName] = propertyValues[schemaPropertyName];
       }
+    } else if (!propertyValues[schemaPropertyName] && staticResultSchema.required?.includes(schemaPropertyName)) {
+      serializedProperty[schemaPropertyName] = staticResultSchema.properties?.[schemaPropertyName].default;
     }
   });
   if (!staticResultSchema.properties && propertyValues) {
