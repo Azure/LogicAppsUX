@@ -13,7 +13,6 @@ export default {
       type: 'object',
       properties: {
         from: {
-          type: 'array',
           title: 'From',
           required: true,
           description: 'Array to filter',

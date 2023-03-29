@@ -42,6 +42,7 @@ export const TestingPanel: React.FC = () => {
       savePropertiesCallback={(newPropertyState: OpenAPIV2.SchemaObject, staticResultOption: StaticResultOption) =>
         saveProperties(newPropertyState, staticResultOption)
       }
+      cancelPropertiesCallback={() => dispatch(selectPanelTab(constants.PANEL_TAB_NAMES.PARAMETERS))}
     />
   ) : null;
 };

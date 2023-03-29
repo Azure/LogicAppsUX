@@ -16,6 +16,7 @@ import {
 } from '../../utils/parameters/helper';
 import { buildOperationDetailsFromControls } from '../../utils/swagger/inputsbuilder';
 import type { Settings } from './settings';
+import type { NodeStaticResults } from './staticresults';
 import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
@@ -116,6 +117,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
       actions: await getActions(rootState, options),
       contentVersion: '1.0.0.0',
       outputs: {}, // TODO - Should get this from original definition
+      staticResults: rootState.staticResults.properties,
       triggers: await getTrigger(rootState, options),
     },
     connectionReferences,
@@ -206,6 +208,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const isTrigger = isRootNodeInGraph(operationId, 'root', rootState.workflow.nodesMetadata);
   const inputsToSerialize = getOperationInputsToSerialize(rootState, operationId);
   const nodeSettings = rootState.operations.settings[operationId] ?? {};
+  const nodeStaticResults = rootState.operations.staticResults[operationId] ?? {};
   const inputPathValue = serializeOperationParameters(inputsToSerialize, manifest);
   const hostInfo = serializeHost(operationId, manifest, rootState);
   const inputs = hostInfo !== undefined ? mergeHostWithInputs(hostInfo, inputPathValue) : inputPathValue;
@@ -237,7 +240,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
     ...childOperations,
     ...optional('runAfter', runAfter),
     ...optional('recurrence', recurrence),
-    ...serializeSettings(operationId, nodeSettings, isTrigger, rootState),
+    ...serializeSettings(operationId, nodeSettings, nodeStaticResults, isTrigger, rootState),
   };
 };
 
@@ -249,6 +252,7 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
   const isTrigger = isRootNode(operationId, rootState.workflow.nodesMetadata);
   const inputsToSerialize = getOperationInputsToSerialize(rootState, operationId);
   const nodeSettings = rootState.operations.settings[operationId] ?? {};
+  const nodeStaticResults = rootState.operations.staticResults[operationId] ?? {};
   const runAfter = isTrigger ? undefined : getRunAfter(operationFromWorkflow, idReplacements);
   const recurrence =
     isTrigger && equals(type, Constants.NODE.TYPE.API_CONNECTION)
@@ -273,7 +277,7 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
     ...optional('inputs', inputs),
     ...optional('runAfter', runAfter),
     ...optional('recurrence', recurrence),
-    ...serializeSettings(operationId, nodeSettings, isTrigger, rootState),
+    ...serializeSettings(operationId, nodeSettings, nodeStaticResults, isTrigger, rootState),
   };
 };
 
@@ -644,6 +648,7 @@ const isWorkflowOperationNode = (node: WorkflowNode) =>
 const serializeSettings = (
   operationId: string,
   settings: Settings,
+  nodeStaticResults: NodeStaticResults,
   isTrigger: boolean,
   rootState: RootState
 ): Partial<LogicAppsV2.Action | LogicAppsV2.Trigger> => {
@@ -659,7 +664,7 @@ const serializeSettings = (
     ...optional('conditions', conditions),
     ...optional('limit', timeout),
     ...optional('operationOptions', getSerializedOperationOptions(operationId, settings, rootState)),
-    ...optional('runtimeConfiguration', getSerializedRuntimeConfiguration(operationId, settings, rootState)),
+    ...optional('runtimeConfiguration', getSerializedRuntimeConfiguration(operationId, settings, nodeStaticResults, rootState)),
     ...optional('trackedProperties', trackedProperties),
     ...(getSplitOn(isTrigger, settings) ?? {}),
   };
@@ -668,6 +673,7 @@ const serializeSettings = (
 const getSerializedRuntimeConfiguration = (
   operationId: string,
   settings: Settings,
+  nodeStaticResults: NodeStaticResults,
   rootState: RootState
 ): LogicAppsV2.RuntimeConfiguration | undefined => {
   const runtimeConfiguration: LogicAppsV2.RuntimeConfiguration = {};
@@ -677,6 +683,14 @@ const getSerializedRuntimeConfiguration = (
   const uploadChunkSize = settings.uploadChunk?.value?.uploadChunkSize;
   const downloadChunkSize = settings.downloadChunkSize?.value;
   const pagingItemCount = settings.paging?.value?.enabled ? settings.paging.value.value : undefined;
+
+  if (Object.keys(nodeStaticResults).length > 0) {
+    safeSetObjectPropertyValue(
+      runtimeConfiguration,
+      [Constants.SETTINGS.PROPERTY_NAMES.STATIC_RESULT, Constants.SETTINGS.PROPERTY_NAMES.STATIC_RESULT],
+      nodeStaticResults
+    );
+  }
 
   if (transferMode) {
     safeSetObjectPropertyValue(

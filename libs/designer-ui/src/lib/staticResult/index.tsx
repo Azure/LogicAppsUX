@@ -27,6 +27,7 @@ export interface StaticResultContainerProps {
   staticResultSchema: OpenAPIV2.SchemaObject;
   properties: OpenAPIV2.SchemaObject;
   savePropertiesCallback?: StaticResultChangeHandler;
+  cancelPropertiesCallback?: () => void;
   // prop only passed to inner StaticResults
   updateParentProperties?: (input: any) => void;
 }
@@ -45,12 +46,14 @@ export const StaticResultContainer = ({
   staticResultSchema,
   properties,
   updateParentProperties,
+  cancelPropertiesCallback,
   savePropertiesCallback,
 }: StaticResultContainerProps): JSX.Element => {
   const intl = useIntl();
+  const initialPropertyValues = useMemo(() => deserializePropertyValues(properties, staticResultSchema), [properties, staticResultSchema]);
 
   const [showStaticResults, setShowStaticResults] = useState<boolean>(enabled);
-  const [propertyValues, setPropertyValues] = useState<OpenAPIV2.SchemaObject>(deserializePropertyValues(properties, staticResultSchema));
+  const [propertyValues, setPropertyValues] = useState<OpenAPIV2.SchemaObject>(initialPropertyValues);
 
   useEffect(() => {
     // we want to update parentProps whenever our inner properties change
@@ -93,11 +96,16 @@ export const StaticResultContainer = ({
   };
 
   const cancelStaticResults = () => {
-    console.log('cancel');
+    setPropertyValues(initialPropertyValues);
+    cancelPropertiesCallback?.();
   };
 
   const getLabel = () => {
     return showStaticResults ? toggleLabelOff : toggleLabelOn;
+  };
+
+  const isLabelDisabled = (): boolean => {
+    return JSON.stringify(propertyValues) === JSON.stringify(initialPropertyValues) && showStaticResults === enabled;
   };
 
   const {
@@ -133,6 +141,7 @@ export const StaticResultContainer = ({
           text={saveButtonLabel}
           onClick={saveStaticResults}
           styles={actionButtonStyles}
+          disabled={isLabelDisabled()}
         />
         <DefaultButton
           className={'msla-static-result-action-button'}
