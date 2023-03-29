@@ -2,6 +2,7 @@ import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse
 import { azureOperationsResponse } from '../__test__/__mocks__/azureOperationResponse';
 import type { IHttpClient, QueryParameters } from '../httpClient';
 import { LoggerService } from '../logger';
+import { Status } from '../logging/logEntry';
 import type { ISearchService } from '../search';
 import * as ClientOperationsData from '../standard/operations';
 import type {
@@ -163,7 +164,7 @@ export abstract class BaseSearchService implements ISearchService {
 
     const operations = await this.batchAzureResourceRequests(uri, queryParameters);
 
-    LoggerService().endTrace(traceId);
+    LoggerService().endTrace(traceId, { status: Status.Success });
     return operations;
   }
 

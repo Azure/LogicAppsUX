@@ -156,7 +156,12 @@ const CreateConnectionTab = () => {
       } catch (error: any) {
         setErrorMessage(error.responseText);
         const message = `Failed to create connection: ${error}`;
-        LoggerService().log({ level: LogEntryLevel.Error, area: 'create connection tab', message });
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          area: 'create connection tab',
+          message,
+          error: error instanceof Error ? error : undefined,
+        });
       }
       setIsLoading(false);
     },

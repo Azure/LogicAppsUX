@@ -15,14 +15,19 @@ export type LogEntry = {
   readonly area: string;
 
   /**
-   * The entry type.
-   */
-  readonly entryType?: string;
-
-  /**
    * The message to be logged.
    */
-  readonly message: LogMessage;
+  readonly message: string;
+
+  /**
+   * The trace Id correlated to the log entry
+   */
+  readonly traceId?: string;
+
+  /**
+   * Any error accompanying the log entry
+   */
+  readonly error?: Error;
 
   /**
    * Any code accompanying error and warning-style log entries.
@@ -34,8 +39,6 @@ export type LogEntry = {
    */
   readonly args?: ReadonlyArray<any>;
 };
-
-export type LogMessage = string | Error;
 
 export const LogEntryLevel = {
   /**
@@ -74,6 +77,11 @@ export type TelemetryEvent = {
   readonly timestamp: number;
 
   /**
+   * The status of the operation being traced.
+   */
+  readonly status: Status | string;
+
+  /**
    * The source of the telemetry data e.g. navigation, blade.
    */
   readonly source: string;
@@ -103,3 +111,10 @@ export type TelemetryEvent = {
    */
   readonly data?: any;
 };
+
+export enum Status {
+  Success = 'Success',
+  Failure = 'Failure',
+  Warning = 'Warning',
+  Completed = 'Complete',
+}

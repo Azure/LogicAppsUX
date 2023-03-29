@@ -108,6 +108,7 @@ export const initializeOperationDetailsForSwagger = async (
       level: LogEntryLevel.Error,
       area: 'operation deserializer',
       message: errorMessage,
+      error: error instanceof Error ? error : undefined,
     });
 
     return;
