@@ -86,8 +86,7 @@ export const moveNodeInWorkflow = (
   nodesMetadata[nodeId] = { ...nodesMetadata[nodeId], graphId: newGraphId, parentNodeId, isRoot: isNewRoot };
   if (nodesMetadata[nodeId].isRoot === false) delete nodesMetadata[nodeId].isRoot;
 
-  const isAfterTrigger = nodesMetadata[parentId ?? '']?.isRoot && newGraphId === 'root';
-  const shouldAddRunAfters = !isNewRoot && !isAfterTrigger;
+  const shouldAddRunAfters = !isNewRoot;
 
   // X parents, 1 child
   if (childId) {

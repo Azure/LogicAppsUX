@@ -4,14 +4,7 @@ import type { RelationshipIds } from '../state/panel/panelInterfaces';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../utils/graph';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
-import {
-  reassignEdgeSources,
-  reassignEdgeTargets,
-  addNewEdge,
-  applyIsRootNode,
-  removeEdge,
-  moveRunAfterTarget,
-} from './restructuringHelpers';
+import { reassignEdgeSources, reassignEdgeTargets, addNewEdge, applyIsRootNode, removeEdge } from './restructuringHelpers';
 import type { DiscoveryOperation, DiscoveryResultTypes, SubgraphType } from '@microsoft/utils-logic-apps';
 import { SUBGRAPH_TYPES, WORKFLOW_EDGE_TYPES, isScopeOperation, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 
@@ -51,8 +44,7 @@ export const addNodeToWorkflow = (
   state.operations[newNodeId] = { ...state.operations[newNodeId], type: payload.operation.type };
   state.newlyAddedOperations[newNodeId] = newNodeId;
 
-  const isAfterTrigger = nodesMetadata[parentId ?? '']?.isRoot && graphId === 'root';
-  const shouldAddRunAfters = !isRoot && !isAfterTrigger;
+  const shouldAddRunAfters = !isRoot;
 
   // Parallel Branch creation, just add the singular node
   if (payload.isParallelBranch && parentId) {
@@ -60,10 +52,11 @@ export const addNodeToWorkflow = (
   }
   // 1 parent, 1 child
   else if (parentId && childId) {
+    const childRunAfter = (state.operations?.[childId] as any)?.runAfter;
     addNewEdge(state, parentId, newNodeId, workflowGraph, shouldAddRunAfters);
     addNewEdge(state, newNodeId, childId, workflowGraph, shouldAddRunAfters);
-    moveRunAfterTarget(state, parentId, newNodeId);
     removeEdge(state, parentId, childId, workflowGraph);
+    if (childRunAfter) (state.operations?.[newNodeId] as any).runAfter[parentId] = childRunAfter[parentId];
   }
   // X parents, 1 child
   else if (childId) {
