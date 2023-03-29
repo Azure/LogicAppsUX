@@ -24,6 +24,8 @@ export const moveNodeInWorkflow = (
 
   if (!oldWorkflowGraph.id) throw new Error('Workflow graph is missing an id');
 
+  const { parentId, childId } = relationshipIds;
+
   const currentRunAfter = (state.operations[nodeId] as LogicAppsV2.ActionDefinition)?.runAfter;
   const multipleParents = Object.keys(currentRunAfter ?? {}).length > 1;
   const multipleChildren = (oldWorkflowGraph.edges ?? []).filter((edge) => edge.source === nodeId).length > 1;
@@ -53,8 +55,14 @@ export const moveNodeInWorkflow = (
   // Adjust edges
   if (multipleParents) {
     const childId = (oldWorkflowGraph.edges ?? []).find((edge) => edge.source === nodeId)?.target ?? '';
-    reassignEdgeTargets(state, nodeId, childId, oldWorkflowGraph);
-    removeEdge(state, nodeId, childId, oldWorkflowGraph);
+    if (childId) {
+      reassignEdgeTargets(state, nodeId, childId, oldWorkflowGraph);
+      removeEdge(state, nodeId, childId, oldWorkflowGraph);
+    } else {
+      Object.keys(currentRunAfter ?? {}).forEach((_parentId: string) => {
+        removeEdge(state, _parentId, nodeId, oldWorkflowGraph);
+      });
+    }
   } else {
     const parentId = (oldWorkflowGraph.edges ?? []).find((edge) => edge.target === nodeId)?.source ?? '';
     const isNewSourceTrigger = isRootNodeInGraph(parentId, 'root', state.nodesMetadata);
@@ -76,8 +84,6 @@ export const moveNodeInWorkflow = (
   // Add WorkflowNode copy
   newWorkflowGraph.children = [...(newWorkflowGraph?.children ?? []), workflowNode];
 
-  const { parentId, childId } = relationshipIds;
-
   // Update metadata
   const newGraphId = newWorkflowGraph.id;
   const isNewRoot = parentId?.includes('-#');
@@ -86,16 +92,25 @@ export const moveNodeInWorkflow = (
   nodesMetadata[nodeId] = { ...nodesMetadata[nodeId], graphId: newGraphId, parentNodeId, isRoot: isNewRoot };
   if (nodesMetadata[nodeId].isRoot === false) delete nodesMetadata[nodeId].isRoot;
 
-  const shouldAddRunAfters = !isNewRoot;
+  const isAfterTrigger = (nodesMetadata[parentId ?? '']?.isRoot && newGraphId === 'root') ?? false;
+  const shouldAddRunAfters = !isNewRoot && !isAfterTrigger;
 
+  // 1 parent, 1 child
+  if (parentId && childId) {
+    const childRunAfter = (state.operations?.[childId] as any)?.runAfter;
+    addNewEdge(state, parentId, nodeId, newWorkflowGraph, shouldAddRunAfters);
+    addNewEdge(state, nodeId, childId, newWorkflowGraph, true);
+    removeEdge(state, parentId, childId, newWorkflowGraph);
+    if (childRunAfter && shouldAddRunAfters) (state.operations?.[nodeId] as any).runAfter[parentId] = childRunAfter[parentId];
+  }
   // X parents, 1 child
-  if (childId) {
+  else if (childId) {
     reassignEdgeTargets(state, childId, nodeId, newWorkflowGraph);
     addNewEdge(state, nodeId, childId, newWorkflowGraph);
   }
   // 1 parent, X children
   else if (parentId) {
-    reassignEdgeSources(state, parentId, nodeId, newWorkflowGraph, !shouldAddRunAfters, /* isNewSourceTrigger */ false);
+    reassignEdgeSources(state, parentId, nodeId, newWorkflowGraph, isAfterTrigger, /* isNewSourceTrigger */ false);
     addNewEdge(state, parentId, nodeId, newWorkflowGraph, shouldAddRunAfters);
   }
 

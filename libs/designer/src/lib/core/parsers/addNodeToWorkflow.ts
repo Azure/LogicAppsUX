@@ -44,7 +44,8 @@ export const addNodeToWorkflow = (
   state.operations[newNodeId] = { ...state.operations[newNodeId], type: payload.operation.type };
   state.newlyAddedOperations[newNodeId] = newNodeId;
 
-  const shouldAddRunAfters = !isRoot;
+  const isAfterTrigger = nodesMetadata[parentId ?? '']?.isRoot && graphId === 'root';
+  const shouldAddRunAfters = !isRoot && !isAfterTrigger;
 
   // Parallel Branch creation, just add the singular node
   if (payload.isParallelBranch && parentId) {
@@ -54,9 +55,9 @@ export const addNodeToWorkflow = (
   else if (parentId && childId) {
     const childRunAfter = (state.operations?.[childId] as any)?.runAfter;
     addNewEdge(state, parentId, newNodeId, workflowGraph, shouldAddRunAfters);
-    addNewEdge(state, newNodeId, childId, workflowGraph, shouldAddRunAfters);
+    addNewEdge(state, newNodeId, childId, workflowGraph, true);
     removeEdge(state, parentId, childId, workflowGraph);
-    if (childRunAfter) (state.operations?.[newNodeId] as any).runAfter[parentId] = childRunAfter[parentId];
+    if (childRunAfter && shouldAddRunAfters) (state.operations?.[newNodeId] as any).runAfter[parentId] = childRunAfter[parentId];
   }
   // X parents, 1 child
   else if (childId) {
