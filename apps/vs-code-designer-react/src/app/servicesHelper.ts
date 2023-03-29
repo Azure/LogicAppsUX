@@ -11,6 +11,7 @@ import {
   StandardRunService,
   StandardArtifactService,
   ApiManagementInstanceService,
+  BaseFunctionService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type {
   IApiHubServiceDetails,
@@ -46,6 +47,7 @@ export const getDesignerServices = (
   hostService: IHostService;
   runService: StandardRunService;
   apimService: ApiManagementInstanceService;
+  functionService: BaseFunctionService;
 } => {
   let authToken = '',
     panelId = '',
@@ -191,6 +193,13 @@ export const getDesignerServices = (
     location,
   });
 
+  const functionService = new BaseFunctionService({
+    baseUrl,
+    apiVersion,
+    httpClient,
+    subscriptionId,
+  });
+
   const gatewayService = new BaseGatewayService({
     baseUrl,
     httpClient,
@@ -248,5 +257,6 @@ export const getDesignerServices = (
     hostService,
     runService,
     apimService,
+    functionService,
   };
 };
