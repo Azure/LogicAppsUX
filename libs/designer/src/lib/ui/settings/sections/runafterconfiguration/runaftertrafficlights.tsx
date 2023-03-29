@@ -7,7 +7,7 @@ export interface RunAfterTrafficLightsProps {
   statuses: string[];
 }
 
-export function RunAfterTrafficLights({ statuses }: RunAfterTrafficLightsProps): JSX.Element {
+export function RunAfterTrafficLights({ statuses = [] }: RunAfterTrafficLightsProps): JSX.Element {
   const { isInverted } = useTheme();
   const themeName = isInverted ? 'dark' : 'light';
   const normalizedStatuses = statuses.map((status) => status.toUpperCase());
