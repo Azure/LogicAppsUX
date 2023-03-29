@@ -18,8 +18,7 @@
       "Compose": {
         "inputs": "a",
         "runAfter": {
-          "Init_all": ["SUCCEEDED"],
-          "Http": ["SUCCEEDED"]
+          "Init_all": ["SUCCEEDED"]
         },
         "type": "Compose"
       },

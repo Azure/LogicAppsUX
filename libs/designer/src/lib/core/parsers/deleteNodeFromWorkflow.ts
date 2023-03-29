@@ -36,8 +36,14 @@ export const deleteNodeFromWorkflow = (
     workflowGraph.edges = (workflowGraph.edges ?? []).filter((edge) => edge.source !== nodeId);
   } else if (multipleParents) {
     const childId = (workflowGraph.edges ?? []).find((edge) => edge.source === nodeId)?.target ?? '';
-    reassignEdgeTargets(state, nodeId, childId, workflowGraph);
-    removeEdge(state, nodeId, childId, workflowGraph);
+    if (childId) {
+      reassignEdgeTargets(state, nodeId, childId, workflowGraph);
+      removeEdge(state, nodeId, childId, workflowGraph);
+    } else {
+      Object.keys(currentRunAfter ?? {}).forEach((_parentId: string) => {
+        removeEdge(state, _parentId, nodeId, workflowGraph);
+      });
+    }
   } else {
     const parentId = (workflowGraph.edges ?? []).find((edge) => edge.target === nodeId)?.source ?? '';
     const isNewSourceTrigger = isRootNodeInGraph(parentId, 'root', state.nodesMetadata);

@@ -1,26 +1,23 @@
 import type { SectionProps } from '../';
 import constants from '../../../common/constants';
 import type { AppDispatch, RootState } from '../../../core';
-import type { WorkflowEdge } from '../../../core/parsers/models/workflowNode';
 import { type ValidationError, ValidationWarningKeys } from '../../../core/state/setting/settingSlice';
 import { addEdgeFromRunAfter, removeEdgeFromRunAfter, updateRunAfter } from '../../../core/state/workflow/workflowSlice';
 import type { SettingsSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
 import type { RunAfterActionDetailsProps } from './runafterconfiguration';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-// TODO: 14714481 We need to support all incoming edges and runAfterConfigMenu
-
-interface RunAfterProps extends SectionProps {
-  allEdges: WorkflowEdge[];
-}
-
-export const RunAfter = ({ runAfter, readOnly = false, expanded, onHeaderClick, nodeId }: RunAfterProps): JSX.Element | null => {
+export const RunAfter = ({ readOnly = false, expanded, onHeaderClick, nodeId }: SectionProps): JSX.Element | null => {
   const nodeData = useSelector((state: RootState) => state.workflow.operations[nodeId] as LogicAppsV2.ActionDefinition);
   const dispatch = useDispatch<AppDispatch>();
   const [errors, setErrors] = useState<ValidationError[]>([]);
+
+  const showRunAfter = useMemo(() => {
+    return Object.keys(nodeData?.runAfter ?? {}).length > 0;
+  }, [nodeData?.runAfter]);
 
   const intl = useIntl();
   const runAfterTitle = intl.formatMessage({
@@ -125,7 +122,7 @@ export const RunAfter = ({ runAfter, readOnly = false, expanded, onHeaderClick, 
             );
           },
         },
-        visible: runAfter?.isSupported,
+        visible: showRunAfter,
       },
     ],
     validationErrors: errors,
