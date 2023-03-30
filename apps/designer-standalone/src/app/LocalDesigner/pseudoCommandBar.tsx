@@ -1,10 +1,17 @@
 import './pseudoCommandBar.less';
+import type { IModalStyles } from '@fluentui/react';
 import { ActionButton, Modal } from '@fluentui/react';
 import { MonacoEditor, EditorLanguage } from '@microsoft/designer-ui';
 import type { Workflow } from '@microsoft/logic-apps-designer';
 import { serializeWorkflow, switchToWorkflowParameters } from '@microsoft/logic-apps-designer';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
+const modalStyles: Partial<IModalStyles> = {
+  scrollableContent: {
+    maxHeight: '100%',
+  },
+};
 
 export const PseudoCommandBar = () => {
   const state = useSelector((state: any) => state);
@@ -27,7 +34,12 @@ export const PseudoCommandBar = () => {
       />
 
       {/* Code view modal */}
-      <Modal isOpen={showSerialization} onDismiss={() => setShowSeralization(false)} layerProps={{ eventBubblingEnabled: true }}>
+      <Modal
+        isOpen={showSerialization}
+        onDismiss={() => setShowSeralization(false)}
+        layerProps={{ eventBubblingEnabled: true }}
+        styles={modalStyles}
+      >
         <div style={{ padding: '24px' }}>
           <h1>Serialized Workflow</h1>
           <MonacoEditor

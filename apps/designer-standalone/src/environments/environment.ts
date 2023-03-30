@@ -5,6 +5,9 @@ const getAccessToken = (): string | undefined => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const armTokenData = require('./armToken.json');
+    if (new Date(armTokenData.expiresOn) <= new Date()) {
+      return undefined;
+    }
     return armTokenData.accessToken;
   } catch (e) {
     return undefined;

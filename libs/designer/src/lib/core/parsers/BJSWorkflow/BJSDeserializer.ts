@@ -23,6 +23,7 @@ export type DeserializedWorkflow = {
   graph: WorkflowNode;
   actionData: Operations;
   nodesMetadata: NodesMetadata;
+  staticResults?: Record<string, any>;
 };
 
 export const Deserialize = (
@@ -74,8 +75,12 @@ export const Deserialize = (
     edges: [...rootEdges, ...edges],
     type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
   };
-
-  return { graph, actionData: allActions, nodesMetadata };
+  return {
+    graph,
+    actionData: allActions,
+    nodesMetadata,
+    ...(Object.keys(definition.staticResults ?? {}).length > 0 ? { staticResults: definition.staticResults } : {}),
+  };
 };
 
 const isScopeAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.ScopeAction => {
@@ -110,7 +115,7 @@ const buildGraphFromActions = (
     allActions[actionName] = { ...action };
 
     const isRoot = Object.keys(action.runAfter ?? {}).length === 0 && parentNodeId;
-    nodesMetadata[actionName] = { graphId, parentNodeId };
+    nodesMetadata[actionName] = { graphId, ...(parentNodeId ? { parentNodeId: parentNodeId } : {}) };
 
     if (isScopeAction(action)) {
       const [scopeNodes, scopeEdges, scopeActions, scopeNodesMetadata] = processScopeActions(graphId, actionName, action);

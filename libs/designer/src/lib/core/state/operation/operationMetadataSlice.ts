@@ -1,6 +1,7 @@
 import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
+import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { InputParameter, OutputParameter } from '@microsoft/parsers-logic-apps';
 import type { OperationInfo } from '@microsoft/utils-logic-apps';
@@ -110,6 +111,7 @@ export interface NodeData {
   nodeOutputs: NodeOutputs;
   nodeDependencies: NodeDependencies;
   operationMetadata: OperationMetadata;
+  staticResults?: NodeStaticResults;
   settings?: Settings;
   actionMetadata?: Record<string, any>;
 }
@@ -117,6 +119,11 @@ export interface NodeData {
 interface AddSettingsPayload {
   id: string;
   settings: Settings;
+}
+
+interface AddStaticResultsPayload {
+  id: string;
+  staticResults: NodeStaticResults;
 }
 
 interface AddDynamicOutputsPayload {
@@ -153,12 +160,18 @@ export const operationMetadataSlice = createSlice({
       for (const nodeData of action.payload) {
         if (!nodeData) return;
 
-        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, actionMetadata } = nodeData;
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, actionMetadata, staticResults } = nodeData;
         state.inputParameters[id] = nodeInputs;
         state.outputParameters[id] = nodeOutputs;
         state.dependencies[id] = nodeDependencies;
         state.operationMetadata[id] = operationMetadata;
 
+        if (settings) {
+          state.settings[id] = settings;
+        }
+        if (staticResults) {
+          state.staticResults[id] = staticResults;
+        }
         if (actionMetadata) state.actionMetadata[id] = actionMetadata;
         if (settings) state.settings[id] = settings;
       }
@@ -222,6 +235,14 @@ export const operationMetadataSlice = createSlice({
       }
 
       state.settings[id] = { ...state.settings[id], ...settings };
+    },
+    updateStaticResults: (state, action: PayloadAction<AddStaticResultsPayload>) => {
+      const { id, staticResults } = action.payload;
+      if (!state.staticResults[id]) {
+        state.staticResults[id] = { name: '', staticResultOptions: StaticResultOption.DISABLED };
+      }
+
+      state.staticResults[id] = { ...state.staticResults[id], ...staticResults };
     },
     updateNodeParameters: (state, action: PayloadAction<UpdateParametersPayload>) => {
       const { nodeId, dependencies, parameters } = action.payload;
@@ -307,6 +328,7 @@ export const operationMetadataSlice = createSlice({
         delete state.outputParameters[id];
         delete state.dependencies[id];
         delete state.operationMetadata[id];
+        delete state.staticResults[id];
         delete state.settings[id];
         delete state.actionMetadata[id];
       }
@@ -324,6 +346,7 @@ export const {
   clearDynamicInputs,
   clearDynamicOutputs,
   updateNodeSettings,
+  updateStaticResults,
   updateParameterConditionalVisibility,
   updateParameterValidation,
   removeParameterValidationError,

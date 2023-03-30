@@ -1,5 +1,6 @@
 import type { ArmResources, CallbackInfo, ContentLink, IRunService, Run, RunError, Runs } from './types';
 import { getCallbackUrl, isCallbackInfoWithRelativePath } from './utils';
+import { ArgumentException } from '@microsoft/utils-logic-apps';
 
 export interface RunServiceOptions {
   apiVersion: string;
@@ -9,7 +10,16 @@ export interface RunServiceOptions {
 }
 
 export class RunService implements IRunService {
-  constructor(private options: RunServiceOptions) {}
+  constructor(private options: RunServiceOptions) {
+    const { apiVersion, baseUrl, workflowName } = options;
+    if (!baseUrl) {
+      throw new ArgumentException('baseUrl required');
+    } else if (!apiVersion) {
+      throw new ArgumentException('apiVersion required');
+    } else if (!workflowName) {
+      throw new ArgumentException('workflowName required for workflow app');
+    }
+  }
 
   async getContent(contentLink: ContentLink): Promise<any> {
     const { uri } = contentLink;
