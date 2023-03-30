@@ -739,6 +739,10 @@ declare namespace LogicAppsV2 {
     timestamp: string;
   }
 
+  interface StaticResults {
+    [staticResult: string]: any;
+  }
+
   /* Workflow definition types */
 
   interface WorkflowDefinition {
