@@ -1,5 +1,14 @@
 # Change Log
 
+## [2.0.16] - 2023-03-30
+
+### Changed
+
+- Made UX improvements in overview page.
+- Made UX improvements in the designer.
+- Add support for all azure clouds in export tool.
+- Fixed bug related to selecting and deselecting workflows in export tool.
+
 ## [1.0.49] - 2023-03-22
 
 ### Changed

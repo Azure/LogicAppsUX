@@ -1,4 +1,4 @@
-import { getTitleOrSummary, isOneOf } from "../schema";
+import { getTitleOrSummary, isOneOf } from '../schema';
 
 describe('OpenAPI schema utilities', () => {
   describe('getTitleOrSummary', () => {
@@ -8,12 +8,9 @@ describe('OpenAPI schema utilities', () => {
       [{ title: 'bar' }, 'bar'],
       [{ 'x-ms-summary': 'baz' }, 'baz'],
       [{ title: 'bar', 'x-ms-summary': 'baz' }, 'bar'],
-    ])(
-      'returns the correct value',
-      (schema, expected) => {
-        expect(getTitleOrSummary(schema)).toBe(expected);
-      },
-    )
+    ])('returns the correct value', (schema, expected) => {
+      expect(getTitleOrSummary(schema)).toBe(expected);
+    });
   });
 
   describe('isOneOf', () => {
@@ -22,11 +19,8 @@ describe('OpenAPI schema utilities', () => {
       [{ oneOf: undefined }, false],
       [{ oneOf: [] }, true],
       [{ oneOf: [{}, {}] }, true],
-    ])(
-      'returns the correct value',
-      (schema, expected) => {
-        expect(isOneOf(schema)).toBe(expected);
-      },
-    )
+    ])('returns the correct value', (schema, expected) => {
+      expect(isOneOf(schema)).toBe(expected);
+    });
   });
 });

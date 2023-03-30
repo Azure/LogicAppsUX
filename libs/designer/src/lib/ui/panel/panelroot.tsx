@@ -23,7 +23,7 @@ import {
   setTabVisibility,
 } from '../../core/state/panel/panelSlice';
 import { useIconUri, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
-import { useHasSchema } from '../../core/state/staticresultschema/staitcresultschemaselector';
+import { useHasSchema } from '../../core/state/staticresultschema/staitcresultsSelector';
 import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import { isRootNodeInGraph } from '../../core/utils/graph';
@@ -120,10 +120,10 @@ export const PanelRoot = (): JSX.Element => {
     dispatch(
       setTabVisibility({
         tabName: constants.PANEL_TAB_NAMES.TESTING,
-        visible: !isTriggerNode && hasSchema,
+        visible: !isTriggerNode && hasSchema && !isMonitoringView,
       })
     );
-  }, [dispatch, hasSchema, isTriggerNode, selectedNode]);
+  }, [dispatch, hasSchema, isMonitoringView, isTriggerNode, selectedNode]);
 
   useEffect(() => {
     if (!visibleTabs?.map((tab) => tab.name.toLowerCase())?.includes(selectedPanelTab ?? ''))

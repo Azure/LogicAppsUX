@@ -1,14 +1,12 @@
 import constants from '../../common/constants';
 import { updateOutputsAndTokens } from '../../core/actions/bjsworkflow/initialize';
 import type { Settings } from '../../core/actions/bjsworkflow/settings';
-import type { WorkflowEdge } from '../../core/parsers/models/workflowNode';
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateNodeSettings } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { setTabError } from '../../core/state/panel/panelSlice';
 import { setExpandedSections, ValidationErrorKeys, type ValidationError } from '../../core/state/setting/settingSlice';
 import { updateTokenSecureStatus } from '../../core/state/tokensSlice';
-import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
 import type { RootState } from '../../core/store';
 import { isRootNodeInGraph } from '../../core/utils/graph';
 import { isSecureOutputsLinkedToInputs } from '../../core/utils/setting';
@@ -21,7 +19,7 @@ import { Tracking, type TrackingSectionProps } from './sections/tracking';
 import { useValidate } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
 import { equals, isObject } from '@microsoft/utils-logic-apps';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export type ToggleHandler = (checked: boolean) => void;
@@ -40,22 +38,69 @@ export interface SectionProps extends Settings {
 export type HeaderClickHandler = (sectionName: string) => void;
 
 export const SettingsPanel = (): JSX.Element => {
+  const selectedNode = useSelectedNodeId();
+  const readOnly = useReadOnly();
   return (
-    <>
-      <DataHandlingSettings />
-      <GeneralSettings />
-      <NetworkingSettings />
-      <RunAfterSettings />
-      <SecuritySettings />
-      <TrackingSettings />
-    </>
+    <div key={`${selectedNode} settings`}>
+      <DataHandlingSettings nodeId={selectedNode} readOnly={readOnly} />
+      <GeneralSettings nodeId={selectedNode} readOnly={readOnly} />
+      <NetworkingSettings nodeId={selectedNode} readOnly={readOnly} />
+      <RunAfterSettings nodeId={selectedNode} readOnly={readOnly} />
+      <SecuritySettings nodeId={selectedNode} readOnly={readOnly} />
+      <TrackingSettings nodeId={selectedNode} readOnly={readOnly} />
+    </div>
   );
 };
 
-function GeneralSettings(): JSX.Element | null {
+function DataHandlingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: boolean }): JSX.Element | null {
   const dispatch = useDispatch();
-  const readOnly = useReadOnly();
-  const nodeId = useSelectedNodeId();
+  const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
+    { disableAutomaticDecompression, requestSchemaValidation } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
+
+  const onAutomaticDecompressionChange = (checked: boolean): void => {
+    dispatch(
+      updateNodeSettings({
+        id: nodeId,
+        settings: {
+          disableAutomaticDecompression: {
+            isSupported: !!disableAutomaticDecompression?.isSupported,
+            value: checked,
+          },
+        },
+      })
+    );
+  };
+  const onSchemaValidationChange = (checked: boolean): void => {
+    dispatch(
+      updateNodeSettings({
+        id: nodeId,
+        settings: {
+          requestSchemaValidation: {
+            isSupported: !!requestSchemaValidation?.isSupported,
+            value: checked,
+          },
+        },
+      })
+    );
+  };
+
+  const dataHandlingProps: DataHandlingSectionProps = {
+    requestSchemaValidation,
+    disableAutomaticDecompression,
+    readOnly,
+    expanded: expandedSections.includes(constants.SETTINGSECTIONS.DATAHANDLING),
+    onHeaderClick: (sectionName) => dispatch(setExpandedSections(sectionName)),
+    nodeId,
+    onAutomaticDecompressionChange,
+    onSchemaValidationChange,
+  };
+  if (requestSchemaValidation?.isSupported || disableAutomaticDecompression?.isSupported) {
+    return <DataHandling {...dataHandlingProps} />;
+  } else return null;
+}
+
+function GeneralSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: boolean }): JSX.Element | null {
+  const dispatch = useDispatch();
   const { validate: triggerValidation, validationErrors } = useValidate(nodeId);
   const { expandedSections, isTrigger, nodeInputs, operationInfo, settings, operations } = useSelector((state: RootState) => {
     return {
@@ -220,151 +265,7 @@ function GeneralSettings(): JSX.Element | null {
   } else return null;
 }
 
-function TrackingSettings(): JSX.Element | null {
-  const dispatch = useDispatch();
-  const readOnly = useReadOnly();
-  const expandedSections = useSelector((state: RootState) => {
-      return state.settings.expandedSections;
-    }),
-    nodeId = useSelectedNodeId(),
-    { trackedProperties, correlation } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
-
-  const onClientTrackingIdChange = (newValue: string): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          correlation: {
-            isSupported: !!correlation?.isSupported,
-            value: {
-              clientTrackingId: newValue,
-            },
-          },
-        },
-      })
-    );
-  };
-
-  const onTrackedPropertiesDictionaryValueChanged = (newValue: Record<string, string>): void => {
-    let trackedPropertiesInput: Record<string, any> = {}; // tslint:disable-line: no-any
-    if (isObject(newValue) && Object.keys(newValue).length > 0 && Object.keys(newValue).some((key) => newValue[key] !== undefined)) {
-      trackedPropertiesInput = {};
-      for (const key of Object.keys(newValue)) {
-        let propertyValue: any; // tslint:disable-line: no-any
-        try {
-          propertyValue = JSON.parse(newValue[key]);
-        } catch {
-          propertyValue = newValue[key];
-        }
-
-        trackedPropertiesInput[key] = propertyValue;
-      }
-    }
-
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          trackedProperties: {
-            isSupported: !!trackedProperties?.isSupported,
-            value: trackedPropertiesInput,
-          },
-        },
-      })
-    );
-  };
-
-  const onTrackedPropertiesStringValueChange = (newValue: string): void => {
-    let trackedPropertiesInput: any = ''; // tslint:disable-line: no-any
-    if (newValue) {
-      try {
-        trackedPropertiesInput = JSON.parse(newValue);
-      } catch {
-        trackedPropertiesInput = newValue;
-      }
-    }
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          trackedProperties: {
-            isSupported: !!trackedProperties?.isSupported,
-            value: trackedPropertiesInput,
-          },
-        },
-      })
-    );
-  };
-
-  const trackingProps: TrackingSectionProps = {
-    trackedProperties,
-    correlation,
-    readOnly,
-    expanded: expandedSections.includes(constants.SETTINGSECTIONS.TRACKING),
-    onHeaderClick: (sectionName) => dispatch(setExpandedSections(sectionName)),
-    nodeId,
-    onClientTrackingIdChange,
-    onTrackedPropertiesDictionaryValueChanged,
-    onTrackedPropertiesStringValueChange,
-  };
-
-  if (trackedProperties?.isSupported || correlation?.isSupported) {
-    return <Tracking {...trackingProps} />;
-  } else return null;
-}
-
-function DataHandlingSettings(): JSX.Element | null {
-  const dispatch = useDispatch();
-  const readOnly = useReadOnly();
-  const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
-    nodeId = useSelectedNodeId(),
-    { disableAutomaticDecompression, requestSchemaValidation } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
-
-  const onAutomaticDecompressionChange = (checked: boolean): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          disableAutomaticDecompression: {
-            isSupported: !!disableAutomaticDecompression?.isSupported,
-            value: checked,
-          },
-        },
-      })
-    );
-  };
-  const onSchemaValidationChange = (checked: boolean): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          requestSchemaValidation: {
-            isSupported: !!requestSchemaValidation?.isSupported,
-            value: checked,
-          },
-        },
-      })
-    );
-  };
-
-  const dataHandlingProps: DataHandlingSectionProps = {
-    requestSchemaValidation,
-    disableAutomaticDecompression,
-    readOnly,
-    expanded: expandedSections.includes(constants.SETTINGSECTIONS.DATAHANDLING),
-    onHeaderClick: (sectionName) => dispatch(setExpandedSections(sectionName)),
-    nodeId,
-    onAutomaticDecompressionChange,
-    onSchemaValidationChange,
-  };
-  if (requestSchemaValidation?.isSupported || disableAutomaticDecompression?.isSupported) {
-    return <DataHandling {...dataHandlingProps} />;
-  } else return null;
-}
-
-function NetworkingSettings(): JSX.Element | null {
-  const nodeId = useSelectedNodeId();
-  const readOnly = useReadOnly();
+function NetworkingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: boolean }): JSX.Element | null {
   const { validate: triggerValidation, validationErrors } = useValidate(nodeId);
   const dispatch = useDispatch();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections);
@@ -593,39 +494,33 @@ function NetworkingSettings(): JSX.Element | null {
   } else return null;
 }
 
-function RunAfterSettings(): JSX.Element | null {
-  const nodeId = useSelectedNodeId();
-  const readOnly = useReadOnly();
+function RunAfterSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: boolean }): JSX.Element | null {
   const { validate: triggerValidation, validationErrors } = useValidate(nodeId);
   const dispatch = useDispatch();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections);
   const operations = useSelector((state: RootState) => state.operations);
-  const { runAfter } = operations.settings?.[nodeId] ?? {};
+  const nodeData = useSelector((state: RootState) => state.workflow.operations[nodeId] as LogicAppsV2.ActionDefinition);
+  const showRunAfterSettings = useMemo(() => Object.keys(nodeData?.runAfter ?? {}).length > 0, [nodeData]);
 
   useEffect(() => {
     const hasErrors = !!triggerValidation('operations', operations, nodeId).length;
     dispatch(setTabError({ tabName: 'settings', hasErrors, nodeId }));
   }, [dispatch, nodeId, operations, triggerValidation]);
 
-  // TODO: 14714481 We need to support all incoming edges (currently using all edges) and runAfterConfigMenu
-  const allEdges: WorkflowEdge[] = useEdgesBySource();
   const runAfterProps: SectionProps = {
     readOnly,
     nodeId,
-    runAfter,
     expanded: expandedSections.includes(constants.SETTINGSECTIONS.RUNAFTER),
     onHeaderClick: (sectionName) => dispatch(setExpandedSections(sectionName)),
     validationErrors,
   };
 
-  return runAfter?.isSupported ? <RunAfter allEdges={allEdges} {...runAfterProps} /> : null;
+  return showRunAfterSettings ? <RunAfter {...runAfterProps} /> : null;
 }
 
-function SecuritySettings(): JSX.Element | null {
+function SecuritySettings({ nodeId, readOnly }: { nodeId: string; readOnly?: boolean }): JSX.Element | null {
   const dispatch = useDispatch();
-  const readOnly = useReadOnly();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections);
-  const nodeId = useSelectedNodeId();
   const {
     settings: { secureInputs, secureOutputs },
     operationInfo,
@@ -672,4 +567,95 @@ function SecuritySettings(): JSX.Element | null {
   };
 
   return secureInputs?.isSupported || secureOutputs?.isSupported ? <Security {...securitySectionProps} /> : null;
+}
+
+function TrackingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: boolean }): JSX.Element | null {
+  const dispatch = useDispatch();
+  const expandedSections = useSelector((state: RootState) => {
+      return state.settings.expandedSections;
+    }),
+    { trackedProperties, correlation } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
+
+  const onClientTrackingIdChange = (newValue: string): void => {
+    dispatch(
+      updateNodeSettings({
+        id: nodeId,
+        settings: {
+          correlation: {
+            isSupported: !!correlation?.isSupported,
+            value: {
+              clientTrackingId: newValue,
+            },
+          },
+        },
+      })
+    );
+  };
+
+  const onTrackedPropertiesDictionaryValueChanged = (newValue: Record<string, string>): void => {
+    let trackedPropertiesInput: Record<string, any> = {}; // tslint:disable-line: no-any
+    if (isObject(newValue) && Object.keys(newValue).length > 0 && Object.keys(newValue).some((key) => newValue[key] !== undefined)) {
+      trackedPropertiesInput = {};
+      for (const key of Object.keys(newValue)) {
+        let propertyValue: any; // tslint:disable-line: no-any
+        try {
+          propertyValue = JSON.parse(newValue[key]);
+        } catch {
+          propertyValue = newValue[key];
+        }
+
+        trackedPropertiesInput[key] = propertyValue;
+      }
+    }
+
+    dispatch(
+      updateNodeSettings({
+        id: nodeId,
+        settings: {
+          trackedProperties: {
+            isSupported: !!trackedProperties?.isSupported,
+            value: trackedPropertiesInput,
+          },
+        },
+      })
+    );
+  };
+
+  const onTrackedPropertiesStringValueChange = (newValue: string): void => {
+    let trackedPropertiesInput: any = ''; // tslint:disable-line: no-any
+    if (newValue) {
+      try {
+        trackedPropertiesInput = JSON.parse(newValue);
+      } catch {
+        trackedPropertiesInput = newValue;
+      }
+    }
+    dispatch(
+      updateNodeSettings({
+        id: nodeId,
+        settings: {
+          trackedProperties: {
+            isSupported: !!trackedProperties?.isSupported,
+            value: trackedPropertiesInput,
+          },
+        },
+      })
+    );
+  };
+
+  const trackingProps: TrackingSectionProps = {
+    trackedProperties,
+    correlation,
+    readOnly,
+    expanded: expandedSections.includes(constants.SETTINGSECTIONS.TRACKING),
+    onHeaderClick: (sectionName) => dispatch(setExpandedSections(sectionName)),
+    nodeId,
+    onClientTrackingIdChange,
+    onTrackedPropertiesDictionaryValueChanged,
+    onTrackedPropertiesStringValueChange,
+  };
+
+  if (trackedProperties?.isSupported || correlation?.isSupported) {
+    return <Tracking {...trackingProps} />;
+  } else return null;
 }

@@ -14,7 +14,7 @@ import { getOperationSettings } from '../../actions/bjsworkflow/settings';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import type { DependencyInfo, NodeInputs, NodeOperation, OutputInfo } from '../../state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
-import { addSchema } from '../../state/staticresultschema/staticresultschemaSlice';
+import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../card';
 import { toOutputInfo, updateOutputsForBatchingTrigger } from '../outputs';
 import {
@@ -65,7 +65,7 @@ export const initializeOperationDetailsForSwagger = async (
       const schema = staticResultService.getOperationResultSchema(connectorId, operationId);
       schema.then((schema) => {
         if (schema) {
-          dispatch(addSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
+          dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
         }
       });
       const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
@@ -97,6 +97,7 @@ export const initializeOperationDetailsForSwagger = async (
           nodeDependencies,
           operationMetadata: { brandColor: getBrandColorFromConnector(connector), iconUri: getIconUriFromConnector(connector) },
           settings,
+          staticResults: operation?.runtimeConfiguration?.staticResults,
         },
       ];
     }

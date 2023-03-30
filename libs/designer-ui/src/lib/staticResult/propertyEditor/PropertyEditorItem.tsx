@@ -1,10 +1,12 @@
 import constants from '../../constants';
 import { Label } from '../../label';
 import { StaticResultProperty } from '../staticResultProperty';
+import { initializeCheckedDropdown, initializePropertyValueText } from '../util';
 import { ItemMenuButton } from './ItemMenuButton';
 import type { IButtonStyles, IContextualMenuItem, IContextualMenuProps, IContextualMenuStyles, ITextFieldStyles } from '@fluentui/react';
 import { IconButton, TextField } from '@fluentui/react';
-import { useCallback, useMemo, useState } from 'react';
+import { clone } from '@microsoft/utils-logic-apps';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const dropwdownButtonStyles: Partial<IButtonStyles> = {
   root: {
@@ -26,66 +28,112 @@ const textFieldStyles: Partial<ITextFieldStyles> = {
   wrapper: { width: '100%', maxHeight: 40, alignItems: 'center' },
 };
 
-interface PropertyEditorItemProps {
+export enum SchemaPropertyValueType {
+  STRING = 'string',
+  OBJECT = 'schemaObject',
+}
+
+interface BasePropertyEditorItemProps {
   schema?: OpenAPIV2.SchemaObject;
   propertyName: string;
-  propertyValue: string;
   // current propertyEditor Properties
-  currProperties: Record<string, string>;
-  setCurrProperties: (newProperties: Record<string, string>) => void;
+  currProperties: OpenAPIV2.SchemaObject;
+  // update whole propertyEditor Properties
+  deleteCurrPropertiesChild: () => void;
+  // update only the child propertyEditor Properties
+  updateCurrPropertiesChild: (newPropertyValue: any) => void;
   renameButtonClicked: (propertyName: string) => void;
   clearRename: () => void;
-  // update main propertyEditor Properties
-  updateProperties: (newProperties: Record<string, string>) => void;
 }
+
+interface SchemaPropertyEditorValue {
+  propertyValueType: SchemaPropertyValueType.OBJECT;
+  propertyValue: OpenAPIV2.SchemaObject;
+}
+interface StringPropertyEditorValue {
+  propertyValueType: SchemaPropertyValueType.STRING;
+  propertyValue: string;
+}
+
+type PropertyEditorItemProps = BasePropertyEditorItemProps & (StringPropertyEditorValue | SchemaPropertyEditorValue);
 
 export const PropertyEditorItem = ({
   schema,
   propertyName,
   propertyValue,
+  propertyValueType,
   currProperties,
   renameButtonClicked,
-  setCurrProperties,
+  deleteCurrPropertiesChild,
+  updateCurrPropertiesChild,
   clearRename,
-  updateProperties,
 }: PropertyEditorItemProps): JSX.Element => {
-  const [checkedDropdownProperties, setCheckedDropdownProperties] = useState<Record<string, boolean>>({});
+  const [checkedDropdownProperties, setCheckedDropdownProperties] = useState<Record<string, boolean>>(
+    initializeCheckedDropdown(propertyValue, propertyValueType)
+  );
+  const [propertyValueText, setPropertyValueText] = useState<string>(initializePropertyValueText(propertyValue, propertyValueType));
 
-  const updateText = (propertyName: string, newValue?: string) => {
-    const updatedProperties = { ...currProperties };
-    updatedProperties[propertyName] = newValue ?? '';
-    setCurrProperties(updatedProperties);
+  useEffect(() => {
+    if (propertyValueType === SchemaPropertyValueType.OBJECT) {
+      setCheckedDropdownProperties(initializeCheckedDropdown(propertyValue, propertyValueType));
+    } else {
+      setPropertyValueText(initializePropertyValueText(propertyValue, propertyValueType));
+    }
+  }, [propertyValue, propertyValueType]);
+
+  const updateWithNewValue = () => {
+    updateCurrPropertiesChild(propertyValueText ?? '');
   };
 
-  const deleteItem = (propertyName: string) => {
-    const updatedProperties = { ...currProperties };
-    delete updatedProperties[propertyName];
-    setCurrProperties(updatedProperties);
-  };
+  // update the child propertyEditor Properties
+  const updateCurrProperties = useCallback(
+    (innerPropertyName: string, newPropertyValue: any) => {
+      const updatedProperties = clone(currProperties[propertyName]);
+      updatedProperties[innerPropertyName] = newPropertyValue;
+      updateCurrPropertiesChild(updatedProperties);
+    },
+    [currProperties, propertyName, updateCurrPropertiesChild]
+  );
+
+  // delete the child propertyEditor Properties
+  const deleteCurrPropertiesProperty = useCallback(
+    (innerPropertyName: string) => {
+      const updatedProperties = clone(currProperties[propertyName]);
+      delete updatedProperties[innerPropertyName];
+      updateCurrPropertiesChild(updatedProperties);
+    },
+    [currProperties, propertyName, updateCurrPropertiesChild]
+  );
 
   const onToggleSelect = useCallback(
     (ev?: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>, item?: IContextualMenuItem): void => {
       ev && ev.preventDefault();
       if (item) {
+        if (checkedDropdownProperties[item.key] === undefined || checkedDropdownProperties[item.key] === false) {
+          updateCurrProperties(item.key, {});
+        } else {
+          deleteCurrPropertiesProperty(item.key);
+        }
         setCheckedDropdownProperties({
           ...checkedDropdownProperties,
           [item.key]: checkedDropdownProperties[item.key] === undefined ? true : !checkedDropdownProperties[item.key],
         });
       }
     },
-    [checkedDropdownProperties]
+    [checkedDropdownProperties, deleteCurrPropertiesProperty, updateCurrProperties]
   );
+
   const convertSchemaPropertiestoMenuItems = useCallback(
     (properties: Record<string, OpenAPIV2.SchemaObject> | undefined): IContextualMenuItem[] => {
       const menuItems: IContextualMenuItem[] = [];
       if (properties) {
-        Object.keys(properties).forEach((property) => {
+        Object.entries(properties).forEach(([key, value]) => {
           menuItems.push({
-            key: property,
-            text: property,
-            data: properties[property],
+            key: key,
+            text: value.title ?? key,
+            data: value,
             canCheck: true,
-            isChecked: checkedDropdownProperties[property],
+            isChecked: checkedDropdownProperties[key],
             onClick: onToggleSelect,
           });
         });
@@ -107,7 +155,7 @@ export const PropertyEditorItem = ({
       <div className="msla-property-editor-property-header">
         <div style={{ display: 'flex' }}>
           <Label className="msla-property-editor-property-name" text={propertyName} />
-          {schema && schema.properties ? (
+          {schema?.properties && propertyValue ? (
             <IconButton
               iconProps={{ iconName: 'Dropdown' }}
               styles={dropwdownButtonStyles}
@@ -124,7 +172,7 @@ export const PropertyEditorItem = ({
             hideRename={!!schema}
             onDeleteClicked={() => {
               clearRename();
-              deleteItem(propertyName);
+              deleteCurrPropertiesChild();
             }}
             onRenameClicked={() => {
               renameButtonClicked(propertyName);
@@ -132,31 +180,35 @@ export const PropertyEditorItem = ({
           />
         </div>
       </div>
-      {schema && schema.properties ? (
+      {schema?.properties && propertyValue ? (
         <div style={{ marginLeft: '20px' }}>
-          {Object.entries(schema.properties).map(([propertyName, propertyValue], dropdownIndex) => {
-            if (checkedDropdownProperties[propertyName]) {
-              return (
-                <div key={dropdownIndex}>
+          {Object.entries(propertyValue).map(([key, value], i) => {
+            return (
+              <div key={i}>
+                {schema.properties ? (
                   <StaticResultProperty
+                    key={value.toString()}
+                    properties={value}
                     schema={
-                      propertyValue.type === constants.SWAGGER.TYPE.OBJECT
-                        ? { ...propertyValue, type: constants.SWAGGER.TYPE.STRING }
-                        : propertyValue
+                      schema.properties[key].type === constants.SWAGGER.TYPE.OBJECT
+                        ? { ...schema.properties[key], type: constants.SWAGGER.TYPE.STRING }
+                        : schema.properties[key]
                     }
+                    updateParentProperties={(newPropertyValue: any) => {
+                      updateCurrProperties(key, newPropertyValue);
+                    }}
                   />
-                </div>
-              );
-            }
-            return null;
+                ) : null}
+              </div>
+            );
           })}
         </div>
       ) : (
         <TextField
           styles={textFieldStyles}
-          value={propertyValue}
-          onChange={(_e, newVal) => updateText(propertyName, newVal)}
-          onBlur={() => updateProperties(currProperties)}
+          value={propertyValueText}
+          onChange={(_e, newVal) => setPropertyValueText(newVal ?? '')}
+          onBlur={() => updateWithNewValue()}
         />
       )}
     </div>

@@ -1,4 +1,21 @@
 # Logic Apps Designer
+### [2.0.16](https://github.com/Azure/LogicAppsUX/compare/v2.0.15...v2.0.16) (2023-03-30)
+
+
+### Logic Apps Designer Bug Fixes
+
+* Adding scheme to apim url in connections ([#1857](https://github.com/Azure/LogicAppsUX/issues/1857)) ([28de4fe](https://github.com/Azure/LogicAppsUX/commit/28de4fe00b6462d79a427705d4a137aecb4d8484))
+* defaultSplitOn And Display Array Editors without Schema ([#1862](https://github.com/Azure/LogicAppsUX/issues/1862)) ([14f807b](https://github.com/Azure/LogicAppsUX/commit/14f807b4db4c91f8b4a8dd7becab3c9231d25f57))
+
+### [2.0.15](https://github.com/Azure/LogicAppsUX/compare/v2.0.14...v2.0.15) (2023-03-30)
+
+### [2.0.14](https://github.com/Azure/LogicAppsUX/compare/v2.0.13...v2.0.14) (2023-03-30)
+
+### Logic Apps Designer Bug Fixes
+
+- Many RunAfter bug fixes ([#1855](https://github.com/Azure/LogicAppsUX/issues/1855)) ([d109df7](https://github.com/Azure/LogicAppsUX/commit/d109df7d76d3dd622fda8c0d81dcabf1bacd45f6))
+- Small service cleanup ([#1845](https://github.com/Azure/LogicAppsUX/issues/1845)) ([f941216](https://github.com/Azure/LogicAppsUX/commit/f941216b9f38a72aa38ded521670f050230f4c56))
+
 ### [2.0.13](https://github.com/Azure/LogicAppsUX/compare/v2.0.12...v2.0.13) (2023-03-29)
 
 ### [2.0.12](https://github.com/Azure/LogicAppsUX/compare/v2.0.11...v2.0.12) (2023-03-28)
