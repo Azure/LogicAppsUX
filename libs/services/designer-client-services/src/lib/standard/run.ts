@@ -73,7 +73,7 @@ export class StandardRunService implements IRunService {
     return { nextLink, runs };
   }
 
-  async getRun(runId: string): Promise<LogicAppsV2.RunInstanceDefinition> {
+  async getRun(runId: string): Promise<Run> {
     const { apiVersion, baseUrl, httpClient, workflowName } = this.options;
 
     const uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
