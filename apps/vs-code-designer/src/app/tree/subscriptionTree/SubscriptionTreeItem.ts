@@ -11,6 +11,7 @@ import { AzureStorageAccountStep } from '../../commands/deploy/storageAccountSte
 import { CustomLocationStorageAccountStep } from '../../commands/deploy/storageAccountSteps/CustomLocationStorageAccountStep';
 import { enableFileLogging } from '../../commands/logstream/enableFileLogging';
 import { verifyDeploymentResourceGroup } from '../../utils/codeless/common';
+import { getRandomHexString } from '../../utils/fs';
 import { getDefaultFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { isProjectCV, isRemoteProjectCV } from '../../utils/tree/projectContextValues';
 import { getFunctionsWorkerRuntime, getWorkspaceSettingFromAnyFolder } from '../../utils/vsCodeConfig/settings';
@@ -40,6 +41,7 @@ import {
   SubscriptionTreeItemBase,
   uiUtils,
   VerifyProvidersStep,
+  storageAccountNamingRules,
 } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtTreeItem, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, parseError, AzureWizard } from '@microsoft/vscode-azext-utils';
@@ -167,7 +169,8 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     context.telemetry.properties.runtime = wizardContext.newSiteRuntime;
 
     if (!context.advancedCreation) {
-      const newName: string | undefined = await wizardContext.relatedNameTask;
+      const baseName: string | undefined = await wizardContext.relatedNameTask;
+      const newName = await generateRelatedName(wizardContext, baseName);
       if (!newName) {
         throw new Error(
           localize('noUniqueName', 'Failed to generate unique name for resources. Use advanced creation to manually enter resource names.')
@@ -229,3 +232,56 @@ export function setSiteOS(context: IAppServiceWizardContext): void {
     context.newSiteOS = WebsiteOS.windows;
   }
 }
+
+const generateRelatedName = async (wizardContext: IFunctionAppWizardContext, name: string): Promise<string | undefined> => {
+  const namingRules = [storageAccountNamingRules];
+
+  let preferredName: string = namingRules.some((n: any) => !!n.lowercaseOnly) ? name.toLowerCase() : name;
+
+  for (let invalidCharsRegExp of namingRules.map((n: any) => n.invalidCharsRegExp)) {
+    // Ensure the regExp uses the 'g' flag to replace _all_ invalid characters
+    invalidCharsRegExp = new RegExp(invalidCharsRegExp, 'g');
+    preferredName = preferredName.replace(invalidCharsRegExp, '');
+  }
+
+  if (await isRelatedNameAvailable(wizardContext, preferredName)) {
+    return preferredName;
+  }
+
+  const minLength: number = Math.max(...namingRules.map((n: any) => n.minLength));
+  const maxLength: number = Math.min(...namingRules.map((n: any) => n.maxLength));
+
+  const maxTries = 5;
+  let count = 0;
+  let newName: string;
+  while (count < maxTries) {
+    newName = generateSuffixedName(preferredName, minLength, maxLength);
+    if (await isRelatedNameAvailable(wizardContext, newName)) {
+      return newName;
+    }
+    count += 1;
+  }
+
+  return undefined;
+};
+
+const isRelatedNameAvailable = async (wizardContext: IFunctionAppWizardContext, name: string): Promise<boolean> => {
+  return await ResourceGroupListStep.isNameAvailable(wizardContext, name);
+};
+
+const generateSuffixedName = (preferredName: string, minLength: number, maxLength: number): string => {
+  const suffix: string = getRandomHexString();
+  const minUnsuffixedLength: number = minLength - suffix.length;
+  const maxUnsuffixedLength: number = maxLength - suffix.length;
+
+  let unsuffixedName: string = preferredName;
+  if (unsuffixedName.length > maxUnsuffixedLength) {
+    unsuffixedName = preferredName.slice(0, maxUnsuffixedLength);
+  } else {
+    while (unsuffixedName.length < minUnsuffixedLength) {
+      unsuffixedName += preferredName;
+    }
+  }
+
+  return unsuffixedName + suffix;
+};
