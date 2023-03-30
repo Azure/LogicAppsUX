@@ -358,7 +358,7 @@ export function getParameterEditorProps(parameter: InputParameter, shouldIgnoreD
         ...editorOptions,
         options: schemaEnumOptions,
       };
-    } else if (type === constants.SWAGGER.TYPE.ARRAY && !equals(visibility, Visibility.Internal)) {
+    } else if (type === constants.SWAGGER.TYPE.ARRAY && !equals(visibility, Visibility.Internal) && schema?.itemSchema) {
       editorViewModel = toArrayViewModel(schema);
       editor = constants.EDITOR.ARRAY;
     } else {
