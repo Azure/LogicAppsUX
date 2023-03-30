@@ -348,13 +348,13 @@
       {
         "key": "/root/TargetMadeUp",
         "name": "TargetMadeUp",
-        "type": "Array",
+        "type": "Object",
         "properties": "None",
         "children": [
           {
             "key": "/root/TargetMadeUp/ManyManyArray",
             "name": "ManyManyArray",
-            "type": "Array",
+            "type": "Object",
             "properties": "None",
             "children": [
               {
@@ -387,6 +387,34 @@
               }
             ],
             "qName": "ManyManyArray",
+            "parentKey": "/root/TargetMadeUp"
+          },
+          {
+            "key": "/root/TargetMadeUp/ManySingleArray",
+            "name": "ManySingleArray",
+            "type": "Object",
+            "properties": "None",
+            "children": [
+              {
+                "key": "/root/TargetMadeUp/ManySingleArray/*",
+                "name": "<ArrayItem>",
+                "type": "Array",
+                "properties": "Repeating, ArrayItem",
+                "children": [
+                  {
+                    "key": "/root/TargetMadeUp/ManySingleArray/*/TargetMadeUp_NeedAProp",
+                    "name": "TargetMadeUp_NeedAProp",
+                    "type": "Integer",
+                    "properties": "None",
+                    "qName": "TargetMadeUp_NeedAProp",
+                    "parentKey": "/root/TargetMadeUp/ManySingleArray/*"
+                  }
+                ],
+                "qName": "<ArrayItem>",
+                "parentKey": "/root/TargetMadeUp/ManySingleArray"
+              }
+            ],
+            "qName": "ManySingleArray",
             "parentKey": "/root/TargetMadeUp"
           }
         ],
