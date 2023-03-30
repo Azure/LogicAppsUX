@@ -4,7 +4,7 @@ import type { AppDispatch } from '../../core';
 import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useParameterValidationErrors, useTokenDependencies } from '../../core/state/operation/operationSelector';
+import { useParameterStaticResult, useParameterValidationErrors, useTokenDependencies } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
 import {
@@ -16,6 +16,7 @@ import {
   useOperationQuery,
 } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
+import { useStaticResultSchema } from '../../core/state/staticresultschema/staitcresultsSelector';
 import {
   useIsLeafNode,
   useNodeDescription,
@@ -87,14 +88,15 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const nodeComment = useNodeDescription(id);
   const connectionResult = useNodeConnectionName(id);
   const isConnectionRequired = useIsConnectionRequired(operationInfo);
+  const hasSchema = useStaticResultSchema(operationInfo?.connectorId ?? '', operationInfo?.operationId ?? '');
   const isLeaf = useIsLeafNode(id);
 
   const showLeafComponents = useMemo(() => !readOnly && isLeaf, [readOnly, isLeaf]);
 
   const nodeClick = useCallback(() => {
     dispatch(changePanelNode(id));
-    dispatch(showDefaultTabs({ isMonitoringView }));
-  }, [dispatch, id, isMonitoringView]);
+    dispatch(showDefaultTabs({ isMonitoringView, hasSchema: !!hasSchema }));
+  }, [dispatch, hasSchema, id, isMonitoringView]);
 
   const brandColor = useBrandColor(id);
   const iconUri = useIconUri(id);
@@ -187,6 +189,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   ]);
 
   const shouldFocus = useShouldNodeFocus(id);
+  const staticResults = useParameterStaticResult(id);
   return (
     <>
       <div className="nopan">
@@ -213,6 +216,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           selected={selected}
           contextMenuOptions={contextMenuOptions}
           setFocus={shouldFocus}
+          staticResultsEnabled={!!staticResults}
         />
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>

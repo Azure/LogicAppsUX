@@ -21,8 +21,12 @@ type SchemaObject = OpenAPIV2.SchemaObject;
  * @return {Swagger.Schema}
  */
 export function generateSchemaFromJsonString(jsonString: string): SchemaObject {
-  const value = JSON.parse(jsonString ? jsonString : '{}');
-  return generateSchemaFromValue(value);
+  try {
+    const value = JSON.parse(jsonString ? jsonString : '{}');
+    return generateSchemaFromValue(value);
+  } catch {
+    return {};
+  }
 }
 
 export function generateSchemaFromValue(value: any): SchemaObject {
