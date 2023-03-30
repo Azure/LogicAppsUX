@@ -61,16 +61,18 @@ export class StandardRunService implements IRunService {
   async getMoreRuns(continuationToken: string): Promise<Runs> {
     const headers = this.getAccessTokenHeaders();
     const { httpClient } = this.options;
-    const response = await httpClient.get<any>({
-      uri: continuationToken,
-      headers: headers as Record<string, any>,
-    });
-    if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
-    }
 
-    const { nextLink, value: runs }: ArmResources<Run> = await response.json();
-    return { nextLink, runs };
+    try {
+      const response = await httpClient.get<any>({
+        uri: continuationToken,
+        headers: headers as Record<string, any>,
+      });
+
+      const { nextLink, value: runs }: ArmResources<Run> = response;
+      return { nextLink, runs };
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
   }
 
   /**
@@ -101,7 +103,7 @@ export class StandardRunService implements IRunService {
     const { apiVersion, baseUrl, workflowName, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 
-    const uri = `${baseUrl}/workflows/${workflowName}/runs?api-version=${apiVersion}`;
+    const uri = `${baseUrl}/workflows/${workflowName}/runs?api-version=${apiVersion}&$top=5`;
     try {
       const response = await httpClient.get<any>({
         uri,
