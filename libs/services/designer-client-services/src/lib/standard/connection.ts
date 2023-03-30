@@ -3,7 +3,7 @@ import { BaseConnectionService } from '../base';
 import { apiManagementConnectorId, azureFunctionConnectorId } from '../base/operationmanifest';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata, CreateConnectionResult } from '../connection';
 import { LoggerService } from '../logger';
-import { LogEntryLevel } from '../logging/logEntry';
+import { LogEntryLevel, Status } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
 import { getIntl } from '@microsoft/intl-logic-apps';
@@ -158,13 +158,13 @@ export class StandardConnectionService extends BaseConnectionService {
   ): Promise<Connection> {
     const connectionName = connectionId.split('/').at(-1) as string;
 
-    try {
-      const logId = LoggerService().startTrace({
-        action: 'createConnection',
-        name: 'Creating Connection',
-        source: 'connection.ts',
-      });
+    const logId = LoggerService().startTrace({
+      action: 'createConnection',
+      name: 'Creating Connection',
+      source: 'connection.ts',
+    });
 
+    try {
       if (connector.properties.testConnectionUrl) await this.pretestServiceProviderConnection(connector, connectionInfo);
 
       const connection = isArmResourceId(connector.id)
@@ -176,7 +176,7 @@ export class StandardConnectionService extends BaseConnectionService {
             parametersMetadata as ConnectionParametersMetadata
           );
       await this.testConnection(connection);
-      LoggerService().endTrace(logId);
+      LoggerService().endTrace(logId, { status: Status.Success });
       return connection;
     } catch (error) {
       this.deleteConnection(connectionId);
@@ -185,7 +185,10 @@ export class StandardConnectionService extends BaseConnectionService {
         level: LogEntryLevel.Error,
         area: 'createConnection',
         message: errorMessage,
+        error: error instanceof Error ? error : undefined,
+        traceId: logId,
       });
+      LoggerService().endTrace(logId, { status: Status.Failure });
       return Promise.reject(errorMessage);
     }
   }
@@ -411,6 +414,7 @@ export class StandardConnectionService extends BaseConnectionService {
         level: LogEntryLevel.Error,
         area: 'create oauth connection',
         message: errorMessage,
+        error: error instanceof Error ? error : undefined,
       });
       return { errorMessage: this.tryParseErrorMessage(error) };
     }
