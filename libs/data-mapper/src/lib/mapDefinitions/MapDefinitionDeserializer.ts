@@ -346,7 +346,7 @@ const callChildObjects = (
       }
     }
 
-    if (isInLoop && Array.isArray(childValue)) {
+    if (isInLoop && Array.isArray(childValue) && childKey.startsWith(ifPseudoFunction.functionName)) {
       // dot accessor will get the parent source node
       createConnections(
         getSourceValueFromLoop('.', targetKey, sourceSchemaFlattened),
