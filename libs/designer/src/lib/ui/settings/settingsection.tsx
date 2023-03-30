@@ -6,6 +6,7 @@ import { type ValidationError, ValidationWarningKeys } from '../../core/state/se
 import type { RunAfterProps } from './sections/runafterconfiguration';
 import { RunAfter } from './sections/runafterconfiguration';
 import { CustomizableMessageBar } from './validation/errorbar';
+import type { IButtonStyles } from '@fluentui/react';
 import { Separator, useTheme, Icon, IconButton, TooltipHost, Dropdown } from '@fluentui/react';
 import { MessageBarType } from '@fluentui/react/lib/MessageBar';
 import {
@@ -46,6 +47,16 @@ import { useDispatch } from 'react-redux';
 
 type SettingBase = {
   visible?: boolean;
+};
+
+const infoButtonStyles: IButtonStyles = {
+  root: { color: '#8d8686' },
+  rootHovered: {
+    backgroundColor: 'transparent',
+  },
+  rootPressed: {
+    backgroundColor: 'transparent',
+  },
 };
 
 export type Settings = SettingBase &
@@ -356,11 +367,7 @@ export function SettingLabel({ labelText, infoTooltipText, isChild }: SettingLab
       <div className={className}>
         <div className="msla-setting-section-row-text">{labelText}</div>
         <TooltipHost hostClassName="msla-setting-section-row-info" content={infoTooltipText}>
-          <IconButton
-            className="msla-setting-section-row-info-icon"
-            iconProps={{ iconName: 'Info' }}
-            styles={{ root: { color: '#8d8686' } }}
-          />
+          <IconButton className="msla-setting-section-row-info-icon" iconProps={{ iconName: 'Info' }} styles={infoButtonStyles} />
         </TooltipHost>
       </div>
     );

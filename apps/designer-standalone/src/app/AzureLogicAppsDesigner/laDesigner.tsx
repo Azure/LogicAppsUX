@@ -330,6 +330,7 @@ const getDesignerServices = (
     httpClient,
     apiHubServiceDetails: { apiVersion: '2018-07-01-preview', subscriptionId, location },
     showStatefulOperations: isStateful,
+    isDev: false,
   });
 
   const oAuthService = new BaseOAuthService({
