@@ -1,12 +1,12 @@
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import messages from '../../../../../libs/services/intl/src/compiled-lang/strings.json';
-import { mapToRunItem, QueryKeys } from '../../run-service';
+import { QueryKeys } from '../../run-service';
 import type { RunDisplayItem } from '../../run-service';
 import type { OnErrorFn } from '@formatjs/intl';
 import { StandardRunService } from '@microsoft/designer-client-services-logic-apps';
 import type { CallbackInfo } from '@microsoft/designer-client-services-logic-apps';
 import type { OverviewPropertiesProps, Runs } from '@microsoft/designer-ui';
-import { Overview, isRunError } from '@microsoft/designer-ui';
+import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
 import { HttpClient } from '@microsoft/vscode-extension';
 import { useCallback, useMemo } from 'react';
 import { IntlProvider } from 'react-intl';
