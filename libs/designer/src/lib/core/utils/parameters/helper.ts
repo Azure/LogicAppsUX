@@ -26,6 +26,7 @@ import type { RootState } from '../../store';
 import { initializeArrayViewModel } from '../editors/array';
 import { getAllParentsForNode, getFirstParentOfType, getTriggerNodeId } from '../graph';
 import { getParentArrayKey, isForeachActionNameForLoopsource } from '../loops';
+import { isOneOf } from '../openapi/schema';
 import { loadDynamicOutputsInNode } from '../outputs';
 import { hasSecureOutputs } from '../setting';
 import { convertWorkflowParameterTypeToSwaggerType } from '../tokens';
@@ -131,7 +132,6 @@ import {
   ValidationException,
 } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
-import { isOneOf } from '../openapi/schema';
 
 // import { debounce } from 'lodash';
 
@@ -2429,11 +2429,7 @@ export function parameterValueToString(
     return castParameterValueToString(value, parameterFormat, parameterType);
   }
 
-  if (
-    parameterType === constants.SWAGGER.TYPE.OBJECT ||
-    parameterType === constants.SWAGGER.TYPE.ARRAY ||
-    isOneOf(parameter.schema)
-  ) {
+  if (parameterType === constants.SWAGGER.TYPE.OBJECT || parameterType === constants.SWAGGER.TYPE.ARRAY || isOneOf(parameter.schema)) {
     return parameterValueToJSONString(value, /* applyCasting */ !parameterSuppressesCasting);
   }
 

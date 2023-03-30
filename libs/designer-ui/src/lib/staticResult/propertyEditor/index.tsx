@@ -1,7 +1,9 @@
-import { PropertyEditorItem } from './PropertyEditorItem';
+import { PropertyEditorItem, SchemaPropertyValueType } from './PropertyEditorItem';
 import type { IButtonStyles, IIconProps, ITextFieldStyles } from '@fluentui/react';
 import { DefaultButton, PrimaryButton, Callout, DirectionalHint, TextField } from '@fluentui/react';
-import { useState } from 'react';
+import { clone } from '@microsoft/utils-logic-apps';
+import isEqual from 'lodash.isequal';
+import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const directionalHint = DirectionalHint.leftCenter;
@@ -39,18 +41,24 @@ const cancelButtonStyles: Partial<IButtonStyles> = {
 };
 
 interface PropertyEditorProps {
-  properties: Record<string, string>;
+  properties: OpenAPIV2.SchemaObject;
   schema?: OpenAPIV2.SchemaObject;
-  updateProperties: (newProperties: Record<string, string>) => void;
+  updateProperties: (newProperties: OpenAPIV2.SchemaObject) => void;
 }
 
 export const PropertyEditor = ({ properties, schema, updateProperties }: PropertyEditorProps): JSX.Element => {
   const intl = useIntl();
-  const [currProperties, setCurrProperties] = useState<Record<string, string>>(properties);
+  const [currProperties, setCurrProperties] = useState<OpenAPIV2.SchemaObject>(properties);
   const [showRenameCallout, setShowRenameCallout] = useState('');
   const [renamedValue, setRenamedValue] = useState('');
   const [newPropertyName, setNewPropertyName] = useState('');
   const [newPropertyNameErrorMessage, setNewPropertyNameErrorMessage] = useState('');
+
+  useEffect(() => {
+    if (!isEqual(currProperties, properties)) {
+      updateProperties(currProperties);
+    }
+  }, [currProperties, properties, updateProperties]);
 
   const duplicatePropertyName = intl.formatMessage({
     defaultMessage: 'Duplicate property name',
@@ -106,7 +114,28 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
       return;
     }
     if (schema?.title) {
-      setCurrProperties({ ...currProperties, [`${schema.title} - ${Object.keys(currProperties).length}`]: '' });
+      setCurrProperties({ ...currProperties, [`${schema.title} - ${Object.keys(currProperties).length}`]: {} });
+    }
+  };
+
+  const updateCurrPropertiesChild = (propertyName: string, newPropertyValue: any) => {
+    const updatedProperties = clone(currProperties);
+    updatedProperties[propertyName] = newPropertyValue;
+    setCurrProperties(updatedProperties);
+  };
+
+  const deleteCurrPropertiesChild = (propertyName: string) => {
+    const updatedProperties = clone(currProperties);
+    delete updatedProperties[propertyName];
+    // reindex current Properties
+    if (schema) {
+      const renamedProperties: OpenAPIV2.SchemaObject = {};
+      Object.entries(updatedProperties).forEach(([, propertyValue], i) => {
+        renamedProperties[`${schema.title} - ${i}`] = propertyValue;
+      });
+      setCurrProperties(renamedProperties);
+    } else {
+      setCurrProperties(updatedProperties);
     }
   };
 
@@ -139,11 +168,12 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
               key={i}
               propertyName={propertyName}
               propertyValue={propertyValue}
+              propertyValueType={typeof propertyValue === 'string' ? SchemaPropertyValueType.STRING : SchemaPropertyValueType.OBJECT}
               schema={schema}
               currProperties={currProperties}
               renameButtonClicked={renameButtonClicked}
-              setCurrProperties={setCurrProperties}
-              updateProperties={updateProperties}
+              deleteCurrPropertiesChild={() => deleteCurrPropertiesChild(propertyName)}
+              updateCurrPropertiesChild={(newPropertyValue: any) => updateCurrPropertiesChild(propertyName, newPropertyValue)}
               clearRename={clearRename}
             />
           );
@@ -153,12 +183,12 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
             <TextField
               styles={newPropertyTextFieldStyles}
               placeholder={newPropertyPlaceholderText}
+              value={newPropertyName}
               onChange={(_e, newValue) => {
                 setNewPropertyName(newValue ?? '');
                 validateNewProperty(newValue);
               }}
               errorMessage={newPropertyNameErrorMessage}
-              value={newPropertyName}
             />
           ) : null}
           <DefaultButton

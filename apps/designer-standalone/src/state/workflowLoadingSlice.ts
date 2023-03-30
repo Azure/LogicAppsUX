@@ -27,7 +27,7 @@ const initialState: WorkflowLoadingState = {
   monitoringView: false,
   darkMode: false,
   consumption: false,
-  isLocalSelected: false,
+  isLocalSelected: true,
 };
 
 type WorkflowPayload = {

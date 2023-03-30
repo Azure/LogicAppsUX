@@ -4,12 +4,12 @@ import { simpleWorkflowDefinitionInput, expectedSimpleWorkflowDefinitionOutput }
 
 describe('core/parsers/BJSWorkflow/BJSDeserializer', () => {
   it('should deserialize a basic workflow with no scoped nodes', () => {
-    const test = Deserialize(simpleWorkflowDefinitionInput);
+    const test = Deserialize(simpleWorkflowDefinitionInput, null);
     expect(test).toEqual(expectedSimpleWorkflowDefinitionOutput);
   });
 
   it('should deserialize a basic workflow with scoped nodes', () => {
-    const test = Deserialize(scopedWorkflowDefinitionInput);
+    const test = Deserialize(scopedWorkflowDefinitionInput, null);
     expect(test).toEqual(expectedScopedWorkflowDefinitionOutput);
   });
 });

@@ -8,7 +8,7 @@ import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeData, NodeInputs, NodeOperation, NodeOutputs } from '../../state/operation/operationMetadataSlice';
 import { initializeOperationInfo, initializeNodes } from '../../state/operation/operationMetadataSlice';
-import { addSchema } from '../../state/staticresultschema/staticresultschemaSlice';
+import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import type { NodesMetadata, Operations } from '../../state/workflow/workflowInterfaces';
@@ -88,9 +88,9 @@ export const initializeOperationMetadata = async (
   dispatch(
     initializeNodes(
       allNodeData.map((data) => {
-        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata } = data;
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, staticResults } = data;
         const actionMetadata = nodesMetadata?.[id]?.actionMetadata;
-        return { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, actionMetadata };
+        return { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, actionMetadata, staticResults };
       })
     )
   );
@@ -143,7 +143,7 @@ export const initializeOperationDetailsForManifest = async (
       const schema = staticResultService.getOperationResultSchema(connectorId, operationId);
       schema.then((schema) => {
         if (schema) {
-          dispatch(addSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
+          dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
         }
       });
 
@@ -174,6 +174,7 @@ export const initializeOperationDetailsForManifest = async (
           operationInfo: nodeOperationInfo,
           manifest,
           operationMetadata: { iconUri, brandColor },
+          staticResults: operation?.runtimeConfiguration?.staticResults,
         },
         ...childGraphInputs,
       ];

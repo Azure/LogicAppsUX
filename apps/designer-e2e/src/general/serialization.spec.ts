@@ -14,11 +14,12 @@ test('Should serialize the workflow after deserializing it and match', async ({ 
     return new Promise((resolve) => {
       setTimeout(() => {
         const state = (window as any).DesignerStore.getState();
-        console.log(JSON.stringify(state, null, 2));
         resolve((window as any).DesignerModule.serializeBJSWorkflow(state));
       }, 5000);
     });
   });
+
+  console.log(JSON.stringify(serialized, null, 2));
 
   const mock = await import('../../../../__mocks__/workflows/Panel.json');
 
@@ -38,7 +39,6 @@ test('Should serialize the workflow after deserializing it and match with a swit
     return new Promise((resolve) => {
       setTimeout(() => {
         const state = (window as any).DesignerStore.getState();
-        console.log(JSON.stringify(state, null, 2));
         resolve((window as any).DesignerModule.serializeBJSWorkflow(state));
       }, 5000);
     });
