@@ -87,6 +87,7 @@ export const scopedWorkflowDefinitionInput = {
   },
   contentVersion: '1.0.0.0',
   outputs: {},
+  staticResults: {},
   triggers: {
     manual: {
       inputs: {},

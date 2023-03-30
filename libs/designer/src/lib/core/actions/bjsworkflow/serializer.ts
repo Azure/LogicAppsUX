@@ -111,18 +111,19 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
     return { ...result, [parameter.name]: parameterDefinition };
   }, {});
 
-  return {
+  const serializedWorkflow: Workflow = {
     definition: {
       $schema: Constants.SCHEMA.GA_20160601.URL,
       actions: await getActions(rootState, options),
       contentVersion: '1.0.0.0',
       outputs: {}, // TODO - Should get this from original definition
-      staticResults: rootState.staticResults.properties,
+      ...(Object.keys(rootState?.staticResults?.properties).length > 0 ? { staticResults: rootState.staticResults.properties } : {}),
       triggers: await getTrigger(rootState, options),
     },
     connectionReferences,
     parameters,
   };
+  return serializedWorkflow;
 };
 
 const getActions = async (rootState: RootState, options?: SerializeOptions): Promise<LogicAppsV2.Actions> => {
