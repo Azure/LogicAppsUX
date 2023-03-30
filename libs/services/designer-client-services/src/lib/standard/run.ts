@@ -73,6 +73,11 @@ export class StandardRunService implements IRunService {
     return { nextLink, runs };
   }
 
+  /**
+   * Gets run details.
+   * @param {string} runId - Run id.
+   * @returns {Promise<Run>} Workflow runs.
+   */
   async getRun(runId: string): Promise<Run> {
     const { apiVersion, baseUrl, httpClient, workflowName } = this.options;
 
@@ -88,25 +93,32 @@ export class StandardRunService implements IRunService {
     }
   }
 
+  /**
+   * Gets workflow run history
+   * @returns {Promise<Runs>} Workflow runs.
+   */
   async getRuns(): Promise<Runs> {
     const { apiVersion, baseUrl, workflowName, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 
     const uri = `${baseUrl}/workflows/${workflowName}/runs?api-version=${apiVersion}`;
-    const response = await httpClient.get<any>({
-      uri,
-      headers: headers as Record<string, any>,
-    });
+    try {
+      const response = await httpClient.get<any>({
+        uri,
+        headers: headers as Record<string, any>,
+      });
 
-    if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+      const { nextLink, value: runs }: ArmResources<Run> = response;
+      return { nextLink, runs };
+    } catch (e: any) {
+      throw new Error(e.message);
     }
-
-    const test: ArmResources<Run> = await response.json();
-    const { nextLink, value: runs } = test;
-    return { nextLink, runs };
   }
 
+  /**
+   * Triggers a workflow run
+   * @param {CallbackInfo} callbackInfo - Information to call Api to trigger workflow.
+   */
   async runTrigger(callbackInfo: CallbackInfo): Promise<void> {
     const { httpClient } = this.options;
     const method = isCallbackInfoWithRelativePath(callbackInfo) ? callbackInfo.method : HTTP_METHODS.POST;
@@ -115,10 +127,10 @@ export class StandardRunService implements IRunService {
       throw new Error();
     }
 
-    const response = await this.getHttpRequestByMethod(httpClient, method, { uri, queryParameters: { mode: 'no-cors' } });
-
-    if (!response.ok && response.status !== 0) {
-      throw new Error(`${response.status} ${response.statusText}`);
+    try {
+      await this.getHttpRequestByMethod(httpClient, method, { uri });
+    } catch (e: any) {
+      throw new Error(`${e.status} ${e?.data?.error?.message}`);
     }
   }
 
