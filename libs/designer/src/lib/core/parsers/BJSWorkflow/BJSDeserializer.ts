@@ -75,13 +75,11 @@ export const Deserialize = (
     edges: [...rootEdges, ...edges],
     type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
   };
-  // staticResults: definition.staticResults ?? {}
-
   return {
     graph,
     actionData: allActions,
     nodesMetadata,
-    ...(Object.keys(definition.staticResults ?? {}).length > 0 && { staticResults: definition.staticResults }),
+    ...(Object.keys(definition.staticResults ?? {}).length > 0 ? { staticResults: definition.staticResults } : {}),
   };
 };
 

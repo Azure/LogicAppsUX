@@ -695,11 +695,7 @@ const getSerializedRuntimeConfiguration = (
   const pagingItemCount = settings.paging?.value?.enabled ? settings.paging.value.value : undefined;
 
   if (Object.keys(nodeStaticResults).length > 0) {
-    safeSetObjectPropertyValue(
-      runtimeConfiguration,
-      [Constants.SETTINGS.PROPERTY_NAMES.STATIC_RESULT, Constants.SETTINGS.PROPERTY_NAMES.STATIC_RESULT],
-      nodeStaticResults
-    );
+    safeSetObjectPropertyValue(runtimeConfiguration, [Constants.SETTINGS.PROPERTY_NAMES.STATIC_RESULT], nodeStaticResults);
   }
 
   if (transferMode) {
