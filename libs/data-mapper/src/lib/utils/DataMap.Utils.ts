@@ -275,9 +275,14 @@ export const qualifyLoopRelativeSourceKeys = (targetKey: string): string => {
 
   let curSrcParentKey = srcKeys[0];
   srcKeys.forEach((srcKey) => {
-    if (!srcKey.includes(curSrcParentKey)) {
+    if (!srcKey.includes(curSrcParentKey) && srcKey !== '*') {
       const fullyQualifiedSrcKey = `${curSrcParentKey}/${srcKey}`;
       qualifiedTargetKey = qualifiedTargetKey.replace(srcKey, fullyQualifiedSrcKey);
+
+      curSrcParentKey = fullyQualifiedSrcKey;
+    } else if (srcKey === '*') {
+      const fullyQualifiedSrcKey = `${curSrcParentKey}/${srcKey}`;
+      qualifiedTargetKey = qualifiedTargetKey.replace('$for(*)', `$for(${fullyQualifiedSrcKey})`);
 
       curSrcParentKey = fullyQualifiedSrcKey;
     } else {

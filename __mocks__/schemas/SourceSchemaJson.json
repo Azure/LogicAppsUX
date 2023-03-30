@@ -654,13 +654,13 @@
       {
         "key": "/root/SourceMadeUp",
         "name": "SourceMadeUp",
-        "type": "Array",
+        "type": "Object",
         "properties": "None",
         "children": [
           {
             "key": "/root/SourceMadeUp/ManyManyArray",
             "name": "ManyManyArray",
-            "type": "Array",
+            "type": "Object",
             "properties": "None",
             "children": [
               {
@@ -693,6 +693,44 @@
               }
             ],
             "qName": "ManyManyArray",
+            "parentKey": "/root/SourceMadeUp"
+          },
+          {
+            "key": "/root/SourceMadeUp/ManySingleArray",
+            "name": "ManySingleArray",
+            "type": "Object",
+            "properties": "None",
+            "children": [
+              {
+                "key": "/root/SourceMadeUp/ManySingleArray/*",
+                "name": "<ArrayItem>",
+                "type": "Array",
+                "properties": "Repeating, ArrayItem",
+                "children": [
+                  {
+                    "key": "/root/SourceMadeUp/ManySingleArray/*/*",
+                    "name": "<ArrayItem>",
+                    "type": "Array",
+                    "properties": "Repeating, ArrayItem",
+                    "children": [
+                      {
+                        "key": "/root/SourceMadeUp/ManySingleArray/*/*/SourceMadeUp_NeedAProp",
+                        "name": "SourceMadeUp_NeedAProp",
+                        "type": "Integer",
+                        "properties": "None",
+                        "qName": "SourceMadeUp_NeedAProp",
+                        "parentKey": "/root/SourceMadeUp/ManySingleArray/*/*"
+                      }
+                    ],
+                    "qName": "<ArrayItem>",
+                    "parentKey": "/root/SourceMadeUp/ManySingleArray/*"
+                  }
+                ],
+                "qName": "<ArrayItem>",
+                "parentKey": "/root/SourceMadeUp/ManySingleArray"
+              }
+            ],
+            "qName": "ManySingleArray",
             "parentKey": "/root/SourceMadeUp"
           }
         ],

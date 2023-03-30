@@ -88,20 +88,31 @@ export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNod
 export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended): SchemaNodeExtended | undefined => {
   let tempKey = nodeKey;
   if (tempKey.includes(mapNodeParams.for)) {
-    const forRegex = new RegExp(/\$for\([^)]+\)/);
+    // Testing XXX
+    const layeredArrayItemForRegex = new RegExp(/\$for\([^)]*(?:\/\*){2,}\)/g);
+    tempKey = nodeKey.replaceAll(layeredArrayItemForRegex, '');
+
+    const forRegex = new RegExp(/\$for\([^)]+\)/g);
     // ArrayItems will have an * instead of a key name
     // And that * is stripped out during serialization
-    tempKey = nodeKey.replace(forRegex, nodeKey.indexOf('*') !== -1 ? '*' : '').replaceAll('//', '/');
+    tempKey = tempKey.replaceAll(forRegex, nodeKey.indexOf('*') !== -1 ? '*' : '');
+
+    while (tempKey.indexOf('//') !== -1) {
+      tempKey = tempKey.replaceAll('//', '/');
+    }
   }
 
-  if (schemaNode.key === tempKey) {
+  return searchChildrenNodeForKey(tempKey, schemaNode);
+};
+
+const searchChildrenNodeForKey = (key: string, schemaNode: SchemaNodeExtended): SchemaNodeExtended | undefined => {
+  if (schemaNode.key === key) {
     return schemaNode;
   }
 
   let result: SchemaNodeExtended | undefined = undefined;
   schemaNode.children.forEach((childNode) => {
-    // found this issue in test, children can be undefined? Ask Reid maybe
-    const tempResult = findNodeForKey(tempKey, childNode);
+    const tempResult = searchChildrenNodeForKey(key, childNode);
 
     if (tempResult) {
       result = tempResult;
