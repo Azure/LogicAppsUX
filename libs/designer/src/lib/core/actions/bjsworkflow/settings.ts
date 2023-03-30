@@ -506,7 +506,7 @@ const getSplitOnValue = (
   operationId?: string,
   definition?: LogicAppsV2.TriggerDefinition
 ): string | undefined => {
-  if (definition) {
+  if (definition?.splitOn) {
     return definition.splitOn;
   } else {
     if (manifest) {
