@@ -52,7 +52,7 @@
           "secureData": {
             "properties": ["inputs"]
           },
-          "staticResults": {
+          "staticResult": {
             "name": "Parse_JSON0",
             "staticResultOptions": "Enabled"
           }
@@ -69,7 +69,7 @@
           "Parse_JSON": ["SUCCEEDED"]
         },
         "runtimeConfiguration": {
-          "staticResults": {
+          "staticResult": {
             "name": "HTTP0",
             "staticResultOptions": "Enabled"
           }

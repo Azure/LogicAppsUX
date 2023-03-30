@@ -1571,7 +1571,7 @@ async function loadDynamicData(
   rootState: RootState,
   operationDefinition?: any
 ): Promise<void> {
-  if (Object.keys(dependencies.outputs).length) {
+  if (Object.keys(dependencies?.outputs ?? {}).length) {
     loadDynamicOutputsInNode(
       nodeId,
       isTrigger,
