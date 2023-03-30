@@ -64,7 +64,7 @@ export function getDotnetProjectTemplatePath(version: FuncVersion, projTemplateK
  * @returns {string} Template directory.
  */
 export function getDotnetTemplateDir(version: FuncVersion, projTemplateKey: string): string {
-  return path.join(ext.context.globalStorageUri.path, version, projTemplateKey);
+  return path.join(ext.context.globalStorageUri.fsPath, version, projTemplateKey);
 }
 
 /**
