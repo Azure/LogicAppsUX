@@ -63,7 +63,7 @@ export class StandardRunService implements IRunService {
     const { httpClient } = this.options;
 
     try {
-      const response = await httpClient.get<any>({
+      const response = await httpClient.get<ArmResources<Run>>({
         uri: continuationToken,
         headers: headers as Record<string, any>,
       });
@@ -86,7 +86,7 @@ export class StandardRunService implements IRunService {
     const uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
 
     try {
-      const response = await httpClient.get<any>({
+      const response = await httpClient.get<Run>({
         uri,
       });
       return response;
@@ -103,9 +103,9 @@ export class StandardRunService implements IRunService {
     const { apiVersion, baseUrl, workflowName, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 
-    const uri = `${baseUrl}/workflows/${workflowName}/runs?api-version=${apiVersion}&$top=5`;
+    const uri = `${baseUrl}/workflows/${workflowName}/runs?api-version=${apiVersion}`;
     try {
-      const response = await httpClient.get<any>({
+      const response = await httpClient.get<ArmResources<Run>>({
         uri,
         headers: headers as Record<string, any>,
       });
