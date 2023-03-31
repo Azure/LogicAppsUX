@@ -7,7 +7,7 @@ type OperationGroupDetailViewProps = {
   connector: Connector;
   groupOperations: DiscoveryOperation<DiscoveryResultTypes>[];
   filters: Record<string, string>;
-  onOperationClick: (id: string) => void;
+  onOperationClick: (id: string, apiId?: string) => void;
   isLoading: boolean;
 };
 

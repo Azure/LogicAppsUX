@@ -16,7 +16,7 @@ export type SearchResultsGridProps = {
   searchTerm: string;
   operationSearchResults: DiscoveryOperation<DiscoveryResultTypes>[];
   onConnectorClick: (connectorId: string) => void;
-  onOperationClick: (operationId: string) => void;
+  onOperationClick: (operationId: string, apiId?: string) => void;
   groupByConnector?: boolean;
 };
 
@@ -38,7 +38,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
         <OperationSearchCard
           key={operation.id}
           operationActionData={OperationActionDataFromOperation(operation)}
-          onClick={() => onOperationClick(operation.id)}
+          onClick={() => onOperationClick(operation.id, operation.properties.api.id)}
           showImage={true}
           style={{ marginBottom: '8px' }}
         />
