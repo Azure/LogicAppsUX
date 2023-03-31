@@ -21,7 +21,7 @@ import { HiddenEdge } from './connections/hiddenEdge';
 import { PanelRoot } from './panel/panelroot';
 import { setLayerHostSelector } from '@fluentui/react';
 import type { WorkflowNodeType } from '@microsoft/utils-logic-apps';
-import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/utils-logic-apps';
+import { isString, useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -134,7 +134,12 @@ export const Designer = (props: DesignerProps) => {
   const isFetchingInitialData = useIsFetching({
     predicate: (query) => {
       const queryKeysToWatch = ['connections', 'manifest', 'apiWithSwaggers'];
-      return (query.queryKey as string[]).some((val) => queryKeysToWatch.includes(val));
+      if (Array.isArray(query.queryKey)) {
+        return (query.queryKey as string[]).some((val) => queryKeysToWatch.includes(val));
+      } else if (isString(query.queryKey)) {
+        return queryKeysToWatch.includes(query.queryKey);
+      }
+      return false;
     },
   });
 
