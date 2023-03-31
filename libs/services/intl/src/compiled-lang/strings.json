@@ -5631,6 +5631,12 @@
       "value": "Properties"
     }
   ],
+  "idcLz4": [
+    {
+      "type": 0,
+      "value": "Insert Data Token"
+    }
+  ],
   "iq+tiv": [
     {
       "type": 0,
