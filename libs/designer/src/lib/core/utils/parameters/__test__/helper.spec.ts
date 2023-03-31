@@ -1674,12 +1674,13 @@ describe('core/utils/parameters/helper', () => {
 
     describe('gets props for array data types which', () => {
       it('are accurate for "Select" -> "From"', () => {
-        const dataType = undefined;
+        const dataType = 'array';
         const itemSchema = undefined;
         const inputSchema = {
           required: true,
           title: 'From',
           type: dataType,
+          itemSchema: {},
         };
         const inputParameter: InputParameter = {
           editor: undefined,
@@ -1698,7 +1699,7 @@ describe('core/utils/parameters/helper', () => {
         expect(result).toMatchObject({
           editor: dataType,
           editorOptions: undefined,
-          editorViewModel: undefined,
+          editorViewModel: { schema: {} },
           schema: inputSchema,
         });
       });

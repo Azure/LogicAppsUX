@@ -817,7 +817,7 @@ export default {
       CONCURRENCY: 'concurrency',
       REPETITIONS: 'repetitions',
       RUNS: 'runs',
-      STATIC_RESULT: 'staticResults',
+      STATIC_RESULT: 'staticResult',
       SECURE_DATA: 'secureData',
       UPLOAD_CHUNK_SIZE: 'uploadChunkSizeInMB',
       DOWNLOAD_CHUNK_SIZE: 'downloadChunkSizeInMB',

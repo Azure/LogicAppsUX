@@ -88,9 +88,9 @@ export const initializeOperationMetadata = async (
   dispatch(
     initializeNodes(
       allNodeData.map((data) => {
-        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, staticResults } = data;
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, staticResult } = data;
         const actionMetadata = nodesMetadata?.[id]?.actionMetadata;
-        return { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, actionMetadata, staticResults };
+        return { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, actionMetadata, staticResult };
       })
     )
   );
@@ -174,7 +174,7 @@ export const initializeOperationDetailsForManifest = async (
           operationInfo: nodeOperationInfo,
           manifest,
           operationMetadata: { iconUri, brandColor },
-          staticResults: operation?.runtimeConfiguration?.staticResults,
+          staticResult: operation?.runtimeConfiguration?.staticResult,
         },
         ...childGraphInputs,
       ];

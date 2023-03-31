@@ -111,7 +111,7 @@ export interface NodeData {
   nodeOutputs: NodeOutputs;
   nodeDependencies: NodeDependencies;
   operationMetadata: OperationMetadata;
-  staticResults?: NodeStaticResults;
+  staticResult?: NodeStaticResults;
   settings?: Settings;
   actionMetadata?: Record<string, any>;
 }
@@ -160,7 +160,7 @@ export const operationMetadataSlice = createSlice({
       for (const nodeData of action.payload) {
         if (!nodeData) return;
 
-        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, actionMetadata, staticResults } = nodeData;
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, actionMetadata, staticResult } = nodeData;
         state.inputParameters[id] = nodeInputs;
         state.outputParameters[id] = nodeOutputs;
         state.dependencies[id] = nodeDependencies;
@@ -169,8 +169,8 @@ export const operationMetadataSlice = createSlice({
         if (settings) {
           state.settings[id] = settings;
         }
-        if (staticResults) {
-          state.staticResults[id] = staticResults;
+        if (staticResult) {
+          state.staticResults[id] = staticResult;
         }
         if (actionMetadata) state.actionMetadata[id] = actionMetadata;
         if (settings) state.settings[id] = settings;
