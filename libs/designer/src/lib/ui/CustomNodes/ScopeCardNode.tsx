@@ -22,7 +22,7 @@ import type { AppDispatch } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
 import type { MenuItemOption } from '@microsoft/designer-ui';
-import { DeleteNodeModal, MenuItemType, ScopeCard } from '@microsoft/designer-ui';
+import { DeleteNodeModal, MenuItemType, ScopeCard, Pager } from '@microsoft/designer-ui';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
@@ -192,7 +192,22 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
 
-  const implementedGraphTypes = ['if', 'switch', 'foreach', 'scope', 'until'];
+  const test = (
+    <Pager
+      current={1}
+      max={3}
+      maxLength={4}
+      min={1}
+      pagerTitleText={'Resources.REQUEST_HISTORY_LABEL_REQUEST_TEXT'}
+      readonlyPagerInput={true}
+      failedIterationProps={{
+        max: 6,
+        min: 3,
+      }}
+    />
+  );
+
+  const implementedGraphTypes = ['if', 'switch', constants.NODE.TYPE.FOREACH, 'scope', 'until'];
   if (implementedGraphTypes.includes(normalizedType)) {
     return (
       <>
@@ -221,6 +236,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
           />
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
+        {normalizedType === constants.NODE.TYPE.FOREACH ? test : null}
         {graphCollapsed && !isFooter ? <p className="no-actions-text">{collapsedText}</p> : null}
         {showEmptyGraphComponents ? (
           !readOnly ? (
