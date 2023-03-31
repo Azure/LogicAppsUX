@@ -26,7 +26,7 @@ export const OperationSearchCard = (props: OperationSearchCardProps) => {
   });
 
   const onCardClick = () => {
-    const apiId = operationActionData.properties?.['api'].id ?? '';
+    const apiId = operationActionData.apiId ?? '';
     onClick(operationActionData.id, apiId);
   };
 

@@ -9,5 +9,5 @@ export interface OperationActionData {
   iconUri?: string;
   isTrigger: boolean;
   isBuiltIn?: boolean;
-  properties?: Record<string, any>;
+  apiId?: string;
 }

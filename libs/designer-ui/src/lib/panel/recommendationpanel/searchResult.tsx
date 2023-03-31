@@ -124,4 +124,5 @@ export const OperationActionDataFromOperation = (operation: DiscoveryOperation<D
   category: getConnectorCategoryString(operation.properties.api.id),
   isTrigger: !!operation.properties?.trigger,
   isBuiltIn: isBuiltInConnector(operation.properties.api.id),
+  apiId: operation.properties.api.id,
 });
