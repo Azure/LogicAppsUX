@@ -158,7 +158,9 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
             if (!(idx in newInputValueArrays)) {
               LogService.error(LogCategory.FunctionNodePropertiesTab, 'useEffect', {
                 message: 'Connection inputs had more input-value-arrays than its Function had input slots',
-                inputs: Object.values(connection.inputs),
+                data: {
+                  inputs: Object.values(connection.inputs),
+                },
               });
 
               return;

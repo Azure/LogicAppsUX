@@ -1,8 +1,8 @@
 import {
-  simpleFunctionCardDiameter,
+  expandedFunctionCardMaxWidth,
   schemaNodeCardDefaultWidth,
   schemaNodeCardHeight,
-  expandedFunctionCardMaxWidth,
+  simpleFunctionCardDiameter,
 } from '../constants/NodeConstants';
 import { targetPrefix } from '../constants/ReactFlowConstants';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models';
@@ -238,25 +238,29 @@ export const applyCustomLayout = async (
           } else {
             LogService.error(LogCategory.ReactFlowUtils, 'Layouting', {
               message: `Failed to recursively calculate inputNode's position`,
-              nodeData:
-                process.env.NODE_ENV === 'development'
-                  ? {
-                      inputNodeId: inputNode.id, // Same as edgeSourceId
-                      edgeTargetId: edge.targetId,
-                    }
-                  : undefined,
+              data: {
+                nodeData:
+                  process.env.NODE_ENV === 'development'
+                    ? {
+                        inputNodeId: inputNode.id, // Same as edgeSourceId
+                        edgeTargetId: edge.targetId,
+                      }
+                    : undefined,
+              },
             });
           }
         } else {
           LogService.error(LogCategory.ReactFlowUtils, 'Layouting', {
             message: `Failed to find input node from an edge's sourceId`,
-            nodeData:
-              process.env.NODE_ENV === 'development'
-                ? {
-                    edgeSourceId: edge.sourceId,
-                    edgeTargetId: edge.targetId,
-                  }
-                : undefined,
+            data: {
+              nodeData:
+                process.env.NODE_ENV === 'development'
+                  ? {
+                      edgeSourceId: edge.sourceId,
+                      edgeTargetId: edge.targetId,
+                    }
+                  : undefined,
+            },
           });
         }
       }

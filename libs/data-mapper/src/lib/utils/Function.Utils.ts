@@ -88,7 +88,9 @@ export const getIndexValueForCurrentConnection = (currentConnection: Connection)
   } else {
     LogService.error(LogCategory.FunctionUtils, 'getIndexValueForCurrentConnection', {
       message: `Didn't find inputNode to make index value`,
-      connection: currentConnection,
+      data: {
+        connection: currentConnection,
+      },
     });
 
     return '';

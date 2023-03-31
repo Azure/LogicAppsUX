@@ -7,6 +7,7 @@ import { ChoiceGroup, DefaultButton, Panel, PanelType, Pivot, PivotItem, Primary
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import type { MonacoProps } from '@microsoft/designer-ui';
 import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
+import { guid } from '@microsoft/utils-logic-apps';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -125,19 +126,34 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
 
     setSelectedPivotItem(PanelPivotItems.Output);
 
+    const testMapAttempt = guid();
+    LogService.log(LogCategory.TestMapPanel, 'testDataMap', {
+      message: 'Attempting test map',
+      data: {
+        testMapAttempt,
+        roughTestMapInputSize: testMapInput.length,
+      },
+    });
+
     testDataMap(dataMapXsltFilename, testMapInput)
       .then((response) => {
         setTestMapResponse(response);
 
         LogService.log(LogCategory.TestMapPanel, 'testDataMap', {
           message: 'Successfully tested data map',
-          statusCode: response.statusCode,
-          statusText: response.statusText,
+          data: {
+            testMapAttempt,
+            statusCode: response.statusCode,
+            statusText: response.statusText,
+          },
         });
       })
       .catch((error: Error) => {
         LogService.error(LogCategory.TestMapPanel, 'testDataMap', {
           message: error.message,
+          data: {
+            testMapAttempt,
+          },
         });
 
         setTestMapResponse(undefined);

@@ -6,6 +6,7 @@ import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '../models';
 import type { FunctionData } from '../models/Function';
+import { LogCategory, LogService } from './Logging.Utils';
 import Fuse from 'fuse.js';
 
 export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {
@@ -13,6 +14,18 @@ export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended =>
     ...schema,
     schemaTreeRoot: convertSchemaNodeToSchemaNodeExtended(schema.schemaTreeRoot, undefined, []),
   };
+
+  LogService.log(LogCategory.SchemaUtils, 'convertSchemaToSchemaExtended', {
+    message: 'Schema converted',
+    data: {
+      schemaFileFormat: schema.type,
+      largestNode: telemetryLargestNode(extendedSchema),
+      deepestNodeChild: telemetryDeepestNodeChild(extendedSchema),
+      totalNumberOfNodes: telemetrySchemaNodeCount(extendedSchema),
+      roughSchemaSize: JSON.stringify(schema).length,
+      roughExtendedSchemaSize: JSON.stringify(extendedSchema).length,
+    },
+  });
 
   return extendedSchema;
 };
@@ -177,3 +190,32 @@ export const isSchemaNodeExtended = (node: SchemaNodeExtended | FunctionData): n
 
 export const isObjectType = (nodeType: NormalizedDataType): boolean =>
   nodeType === NormalizedDataType.Complex || nodeType === NormalizedDataType.Object;
+
+export const telemetryLargestNode = (schema: SchemaExtended): number => {
+  return Math.max(...maxProperties(schema.schemaTreeRoot));
+};
+
+const maxProperties = (schemaNode: SchemaNodeExtended): number[] => {
+  return [schemaNode.children.length, ...schemaNode.children.flatMap((childNode) => maxProperties(childNode))];
+};
+
+export const telemetryDeepestNodeChild = (schema: SchemaExtended): number => {
+  return Math.max(...deepestNode(schema.schemaTreeRoot));
+};
+
+const deepestNode = (schemaNode: SchemaNodeExtended): number[] => {
+  return [schemaNode.pathToRoot.length, ...schemaNode.children.flatMap((childNode) => maxProperties(childNode))];
+};
+
+export const telemetrySchemaNodeCount = (schema: SchemaExtended): number => {
+  return nodeCount(schema.schemaTreeRoot);
+};
+
+const nodeCount = (schemaNode: SchemaNodeExtended): number => {
+  let result = 1;
+  schemaNode.children.forEach((childNode) => {
+    result = +nodeCount(childNode);
+  });
+
+  return result;
+};
