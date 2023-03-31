@@ -9,7 +9,7 @@ import { useIntl } from 'react-intl';
 export interface OperationGroupDetailsPageProps {
   connector: Connector;
   operationActionsData: OperationActionData[];
-  onOperationClick: (id: string) => void;
+  onOperationClick: (id: string, apiId?: string) => void;
   isLoading: boolean;
 }
 
