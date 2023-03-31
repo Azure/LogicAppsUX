@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 
 export const OPEN_TOKEN_PICKER: LexicalCommand<string> = createCommand();
 
-interface OpenTokenPickerProps {
+export interface OpenTokenPickerProps {
   openTokenPicker: (tokenPickerMode: TokenPickerMode) => void;
 }
 
