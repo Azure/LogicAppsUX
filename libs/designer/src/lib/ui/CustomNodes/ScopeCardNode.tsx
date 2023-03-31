@@ -193,20 +193,20 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
 
-  const test = (
-    <Pager
-      current={1}
-      max={3}
-      maxLength={4}
-      min={1}
-      pagerTitleText={'Resources.REQUEST_HISTORY_LABEL_REQUEST_TEXT'}
-      readonlyPagerInput={true}
-      failedIterationProps={{
-        max: 6,
-        min: 3,
-      }}
-    />
-  );
+  const loopsPager =
+    normalizedType === constants.NODE.TYPE.FOREACH ? (
+      <Pager
+        current={1}
+        max={3}
+        maxLength={4}
+        min={1}
+        readonlyPagerInput={true}
+        failedIterationProps={{
+          max: 6,
+          min: 3,
+        }}
+      />
+    ) : null;
 
   const implementedGraphTypes = [
     constants.NODE.TYPE.IF,
@@ -243,7 +243,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
           />
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
-        {normalizedType === constants.NODE.TYPE.FOREACH ? test : null}
+        {loopsPager}
         {graphCollapsed && !isFooter ? <p className="no-actions-text">{collapsedText}</p> : null}
         {showEmptyGraphComponents ? (
           !readOnly ? (
