@@ -3111,6 +3111,12 @@
       "value": "値のバイナリ表現を返します"
     }
   ],
+  "O27gKq": [
+    {
+      "type": 0,
+      "value": "Loading Files..."
+    }
+  ],
   "O36+wl": [
     {
       "type": 0,
@@ -4960,6 +4966,12 @@
     {
       "type": 0,
       "value": " に接続しました。"
+    }
+  ],
+  "dfNjw1": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "dgAu27": [
@@ -7472,6 +7484,20 @@
     {
       "type": 0,
       "value": "接続ゲートウェイ"
+    }
+  ],
+  "z/UY4k": [
+    {
+      "type": 0,
+      "value": "Navigate to "
+    },
+    {
+      "type": 1,
+      "value": "folderName"
+    },
+    {
+      "type": 0,
+      "value": " folder"
     }
   ],
   "z3VuE+": [

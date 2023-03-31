@@ -3111,6 +3111,12 @@
       "value": "값의 이진 표현을 반환합니다."
     }
   ],
+  "O27gKq": [
+    {
+      "type": 0,
+      "value": "Loading Files..."
+    }
+  ],
   "O36+wl": [
     {
       "type": 0,
@@ -4960,6 +4966,12 @@
     {
       "type": 0,
       "value": "에 연결했습니다."
+    }
+  ],
+  "dfNjw1": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "dgAu27": [
@@ -7472,6 +7484,20 @@
     {
       "type": 0,
       "value": "연결 게이트웨이"
+    }
+  ],
+  "z/UY4k": [
+    {
+      "type": 0,
+      "value": "Navigate to "
+    },
+    {
+      "type": 1,
+      "value": "folderName"
+    },
+    {
+      "type": 0,
+      "value": " folder"
     }
   ],
   "z3VuE+": [

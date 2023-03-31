@@ -3347,6 +3347,12 @@
       "value": "Zwraca binarną reprezentację wartości"
     }
   ],
+  "O27gKq": [
+    {
+      "type": 0,
+      "value": "Loading Files..."
+    }
+  ],
   "O36+wl": [
     {
       "type": 0,
@@ -5265,6 +5271,12 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "dfNjw1": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "dgAu27": [
@@ -7903,6 +7915,20 @@
     {
       "type": 0,
       "value": "Brama połączeń"
+    }
+  ],
+  "z/UY4k": [
+    {
+      "type": 0,
+      "value": "Navigate to "
+    },
+    {
+      "type": 1,
+      "value": "folderName"
+    },
+    {
+      "type": 0,
+      "value": " folder"
     }
   ],
   "z3VuE+": [
