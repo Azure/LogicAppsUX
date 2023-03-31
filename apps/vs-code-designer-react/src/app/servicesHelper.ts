@@ -51,7 +51,8 @@ export const getDesignerServices = (
   let authToken = '',
     panelId = '',
     workflowDetails: Record<string, any> = {},
-    appSettings = {};
+    appSettings = {},
+    isStateful = false;
 
   const { subscriptionId, resourceGroup, location } = apiHubServiceDetails;
 
@@ -60,6 +61,7 @@ export const getDesignerServices = (
     panelId = panelMetadata.panelId;
     workflowDetails = panelMetadata.workflowDetails;
     appSettings = panelMetadata.localSettings;
+    isStateful = panelMetadata.standardApp.kind === 'Stateful';
   }
 
   const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
@@ -177,6 +179,7 @@ export const getDesignerServices = (
     httpClient,
     apiHubServiceDetails,
     isDev: false,
+    showStatefulOperations: isStateful,
   });
 
   const oAuthService = new BaseOAuthService({
