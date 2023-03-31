@@ -2,9 +2,9 @@
 import getMoreRunsData from '../../fixtures/get-more-runs.json';
 import getRunData from '../../fixtures/get-run.json';
 import getRunsData from '../../fixtures/get-runs.json';
-import type { CallbackInfo } from '../../run-service/types';
 import type { AppProps } from './app';
 import { App } from './app';
+import type { CallbackInfo } from '@microsoft/designer-client-services-logic-apps';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import withMock from 'storybook-addon-mock';
 

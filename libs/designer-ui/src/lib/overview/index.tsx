@@ -163,5 +163,5 @@ export const Overview: React.FC<OverviewProps> = ({
   );
 };
 
-export { isRunError, Runs, Run, RunError, isCallbackInfoWithRelativePath, getCallbackUrl };
+export { isRunError, Runs, Run, RunError, isCallbackInfoWithRelativePath, getCallbackUrl, mapToRunItem };
 export type { OverviewPropertiesProps };

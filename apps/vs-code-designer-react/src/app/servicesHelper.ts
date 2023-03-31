@@ -1,5 +1,4 @@
 import { clientSupportedOperations } from './constants';
-import { HttpClient } from './services/httpClient';
 import { BaseOAuthService } from './services/oAuth';
 import { resolveConnectionsReferences } from './utilities/workflow';
 import {
@@ -22,7 +21,7 @@ import type {
 } from '@microsoft/designer-client-services-logic-apps';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
-import { ExtensionCommand } from '@microsoft/vscode-extension';
+import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
 import type { WebviewApi } from 'vscode-webview';
 
 export const getDesignerServices = (
