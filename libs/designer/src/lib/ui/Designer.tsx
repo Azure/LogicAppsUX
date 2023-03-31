@@ -139,13 +139,16 @@ export const Designer = (props: DesignerProps) => {
   });
 
   useEffect(() => {
+    if (nodes.length === 0 && initializationStage !== 'Finished') {
+      setInitializationStage('Finished');
+    }
     if (isFetchingInitialData && initializationStage === 'Start') {
       setInitializationStage('Loading');
     }
     if (!isFetchingInitialData && initializationStage === 'Loading') {
       setInitializationStage('Finished');
     }
-  }, [initializationStage, isFetchingInitialData]);
+  }, [initializationStage, isFetchingInitialData, nodes.length]);
   const emptyWorkflowPlaceholderNodes = [
     {
       id: 'newWorkflowTrigger',
