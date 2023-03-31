@@ -21,86 +21,26 @@ a.msla-picker {
 .msla-picker-header {
   width: 100%;
   background-color: @titleBackground;
-  height: 30px;
 
-  .msla-picker-title {
-    border-bottom: 0;
-    height: 30px;
-    display: inline-block;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  height: 49px;
 
-    .msla-title-segment {
-      display: inline-block;
-      height: 100%;
-
-      .msla-segment {
-        height: 100%;
-        max-width: 150px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        direction: ltr;
-
-        .msla-separator {
-          display: inline-block;
-        }
-
-        .msla-text {
-          color: @titleColor;
-          padding: 4px 5px;
-          cursor: text;
-          text-decoration: none;
-          font-size: 16px;
-          height: calc(100% - 8px);
-          display: inline-block;
-        }
-
-        .msla-text-navigation {
-          padding: 4px 5px;
-          color: @navigationTitle;
-          font-size: 16px;
-          height: calc(100% - 8px);
-          display: inline-block;
-
-          &:hover {
-            text-decoration: underline;
-            cursor: pointer;
-          }
-        }
-      }
-    }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .msla-picker-breadcrumb {
+    width: calc(100% - 40px);
   }
-
-  .msla-clipped {
-    position: absolute;
-    width: 300%;
-    right: 30px;
-    direction: rtl;
-    overflow: hidden;
-  }
-
-  .msla-title-ellipsis {
-    position: absolute;
-    z-index: 100;
-    background-color: @titleBackground;
-    padding: 5px 7px 0 7px;
-    cursor: default;
-  }
-
   .msla-picker-close {
     cursor: pointer;
-    display: inline-block;
+
     width: 34px;
     height: 100%;
     padding: 1px 15px 0 5px;
-    float: right;
-    position: relative;
 
     img {
       width: 12px;
       height: 100%;
+
       position: absolute;
       right: 12px;
       top: 0;
