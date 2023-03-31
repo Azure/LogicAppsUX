@@ -27,6 +27,7 @@ import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessi
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider, createTransition, MouseTransition } from 'react-dnd-multi-backend';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { useIsFetching } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { Background, ReactFlow, ReactFlowProvider, useNodes, useReactFlow, useStore, BezierEdge } from 'reactflow';
 import type { BackgroundProps, NodeChange } from 'reactflow';
@@ -108,6 +109,12 @@ export const CanvasFinder = () => {
   return null;
 };
 
+export const SearchBrowsePreloader = () => {
+  usePreloadOperationsQuery();
+  usePreloadConnectorsQuery();
+  return null;
+};
+
 export const Designer = (props: DesignerProps) => {
   const { backgroundProps } = props;
 
@@ -115,9 +122,7 @@ export const Designer = (props: DesignerProps) => {
   const isEmpty = useIsGraphEmpty();
   const isReadOnly = useReadOnly();
   const dispatch = useDispatch();
-
-  usePreloadOperationsQuery();
-  usePreloadConnectorsQuery();
+  const [initializationStage, setInitializationStage] = useState<'Start' | 'Loading' | 'Finished'>('Start');
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
@@ -126,6 +131,21 @@ export const Designer = (props: DesignerProps) => {
     [dispatch]
   );
 
+  const isFetchingInitialData = useIsFetching({
+    predicate: (query) => {
+      const queryKeysToWatch = ['connections', 'manifest', 'apiWithSwaggers'];
+      return (query.queryKey as string[]).some((val) => queryKeysToWatch.includes(val));
+    },
+  });
+
+  useEffect(() => {
+    if (isFetchingInitialData && initializationStage === 'Start') {
+      setInitializationStage('Loading');
+    }
+    if (!isFetchingInitialData && initializationStage === 'Loading') {
+      setInitializationStage('Finished');
+    }
+  }, [initializationStage, isFetchingInitialData]);
   const emptyWorkflowPlaceholderNodes = [
     {
       id: 'newWorkflowTrigger',
@@ -190,6 +210,7 @@ export const Designer = (props: DesignerProps) => {
 
   return (
     <DndProvider options={DND_OPTIONS}>
+      {initializationStage === 'Finished' ? <SearchBrowsePreloader /> : null}
       <div className="msla-designer-canvas msla-panel-mode">
         <ReactFlowProvider>
           <ReactFlow
