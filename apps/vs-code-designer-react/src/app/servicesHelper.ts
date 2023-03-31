@@ -54,7 +54,7 @@ export const getDesignerServices = (
     appSettings = {},
     isStateful = false;
 
-  const { subscriptionId, resourceGroup, location } = apiHubServiceDetails;
+  const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubServiceDetails;
 
   if (panelMetadata) {
     authToken = panelMetadata.accessToken ?? '';
