@@ -10,9 +10,10 @@ import { TokenPickerHeader } from './tokenpickerheader';
 import { TokenPickerPivot } from './tokenpickerpivot';
 import type { GetValueSegmentHandler } from './tokenpickersection/tokenpickeroption';
 import { TokenPickerSection } from './tokenpickersection/tokenpickersection';
-import type { ICalloutContentStyles, PivotItem } from '@fluentui/react';
+import type { ICalloutContentStyles, ISearchBox, PivotItem } from '@fluentui/react';
 import { SearchBox, Callout, DirectionalHint } from '@fluentui/react';
-import type { NodeKey } from 'lexical';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import type { LexicalEditor, NodeKey } from 'lexical';
 import type { editor } from 'monaco-editor';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -72,7 +73,7 @@ export function TokenPicker({
   const [expressionEditorCurrentHeight, setExpressionEditorCurrentHeight] = useState(100);
   const [expressionEditorError, setExpressionEditorError] = useState<string>('');
   const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-
+  const searchBoxRef = useRef<ISearchBox | null>(null);
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 
   useEffect(() => {
@@ -85,12 +86,16 @@ export function TokenPicker({
   }, []);
 
   useEffect(() => {
-    if (expressionEditorRef) {
+    if (initialMode === TokenPickerMode.EXPRESSION) {
       setTimeout(() => {
         expressionEditorRef.current?.focus();
       }, 300);
+    } else {
+      setTimeout(() => {
+        searchBoxRef.current?.focus();
+      }, 0);
     }
-  }, [expressionEditorRef]);
+  }, [initialMode]);
 
   const handleUpdateExpressionToken = (s: string, n: NodeKey) => {
     setExpression({ value: s, selectionStart: 0, selectionEnd: 0 });
@@ -139,6 +144,13 @@ export function TokenPicker({
     description: 'Placeholder text to search token picker',
   });
 
+  let editor: LexicalEditor | null;
+  try {
+    [editor] = useLexicalComposerContext();
+  } catch {
+    editor = null;
+  }
+
   return (
     <>
       <Callout
@@ -158,7 +170,8 @@ export function TokenPicker({
           }
         }}
         onDismiss={() => {
-          tokenPickerFocused?.(false);
+          editor?.focus();
+          closeTokenPicker?.();
         }}
         onRestoreFocus={() => {
           return;
@@ -201,13 +214,15 @@ export function TokenPicker({
             <div className="msla-token-picker-search-container">
               <SearchBox
                 className="msla-token-picker-search"
+                componentRef={(e) => {
+                  searchBoxRef.current = e;
+                }}
                 placeholder={tokenPickerPlaceHolderText}
                 onChange={(_, newValue) => {
                   setSearchQuery(newValue ?? '');
                 }}
               />
             </div>
-
             <TokenPickerSection
               tokenGroup={tokenGroup ?? []}
               expressionGroup={expressionGroup ?? []}
