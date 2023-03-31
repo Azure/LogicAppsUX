@@ -273,6 +273,8 @@ const getDesignerServices = (
       ['connectionProviders/swiftOperations', 'SwiftDecode'],
       ['connectionProviders/swiftOperations', 'SwiftEncode'],
       ['/connectionProviders/apiManagementOperation', 'apiManagement'],
+      ['connectionProviders/http', 'httpswaggeraction'],
+      ['connectionProviders/http', 'httpswaggertrigger'],
     ].map(([connectorId, operationId]) => ({ connectorId, operationId })),
     getConfiguration,
     schemaClient: {
@@ -285,12 +287,23 @@ const getDesignerServices = (
 
         return apiManagementService.getOperationSchema(configuration.connection.apiId, parameters.operationId, isInput);
       },
+      getSwaggerOperationSchema: (args: any) => {
+        const { nodeInputs, isInput } = args;
+        const swaggerUrl = getParameterValueByName(nodeInputs, 'swaggerEndpoint');
+        const operationId = getParameterValueByName(nodeInputs, 'operationId');
+        return connectionService.getOperationSchema(swaggerUrl, operationId, isInput);
+      },
     },
     valuesClient: {
       getWorkflows: () => childWorkflowService.getWorkflowsWithRequestTrigger(),
       getMapArtifacts: (args: any) => {
         const { mapType, mapSource } = args.parameters;
         return artifactService.getMapArtifacts(mapType, mapSource);
+      },
+      getSwaggerOperations: (args: any) => {
+        const { nodeInputs } = args;
+        const swaggerUrl = getParameterValueByName(nodeInputs, 'swaggerEndpoint');
+        return connectionService.getOperations(swaggerUrl);
       },
       getSchemaArtifacts: (args: any) => artifactService.getSchemaArtifacts(args.parameters.schemaSource),
       getApimOperations: (args: any) => {
@@ -459,5 +472,8 @@ const getConnectionsToUpdate = (
 
   return connectionsToUpdate;
 };
+
+const getParameterValueByName = (nodeInputs: any, name: string) =>
+  nodeInputs.parameterGroups?.['default'].parameters.find((p: any) => p.parameterName === name)?.value?.[0].value;
 
 export default DesignerEditor;
