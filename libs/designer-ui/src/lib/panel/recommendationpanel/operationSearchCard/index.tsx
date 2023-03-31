@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl';
 
 export type OperationSearchCardProps = {
   operationActionData: OperationActionData;
-  onClick: (operationId: string) => void;
+  onClick: (operationId: string, apiId?: string) => void;
   showImage?: boolean;
   style?: any;
 } & CommonCardProps;
@@ -25,8 +25,13 @@ export const OperationSearchCard = (props: OperationSearchCardProps) => {
     description: 'Badge showing an action is a logic apps trigger',
   });
 
+  const onCardClick = () => {
+    const apiId = operationActionData.properties?.['api'].id ?? '';
+    onClick(operationActionData.id, apiId);
+  };
+
   return (
-    <button className="msla-op-search-card-container" onClick={() => onClick(operationActionData.id)} style={style}>
+    <button className="msla-op-search-card-container" onClick={() => onCardClick()} style={style}>
       <div className="msla-op-search-card-color-line" style={{ background: brandColor }} />
       {showImage && iconUri ? <Image className="msla-op-search-card-image" alt={title} src={iconUri} /> : null}
       <Text className="msla-op-search-card-name">{title}</Text>
