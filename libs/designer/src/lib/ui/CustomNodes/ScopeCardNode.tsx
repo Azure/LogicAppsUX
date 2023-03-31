@@ -167,7 +167,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     { actionCount }
   );
 
-  const collapsedText = normalizedType === 'switch' || normalizedType === 'if' ? caseString : actionString;
+  const collapsedText =
+    normalizedType === constants.NODE.TYPE.SWITCH || normalizedType === constants.NODE.TYPE.IF ? caseString : actionString;
 
   const isFooter = id.endsWith('#footer');
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isFooter;
@@ -207,7 +208,13 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     />
   );
 
-  const implementedGraphTypes = ['if', 'switch', constants.NODE.TYPE.FOREACH, 'scope', 'until'];
+  const implementedGraphTypes = [
+    constants.NODE.TYPE.IF,
+    constants.NODE.TYPE.SWITCH,
+    constants.NODE.TYPE.FOREACH,
+    constants.NODE.TYPE.SCOPE,
+    constants.NODE.TYPE.UNTIL,
+  ];
   if (implementedGraphTypes.includes(normalizedType)) {
     return (
       <>
