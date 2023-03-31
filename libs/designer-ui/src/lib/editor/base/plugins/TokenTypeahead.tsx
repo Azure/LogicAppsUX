@@ -101,19 +101,19 @@ export const TokenTypeAheadPlugin = ({ openTokenPicker }: OpenTokenPickerProps) 
     description: 'Label for button to open expression token picker',
   });
   const dynamicDataButtonText = intl.formatMessage({
-    defaultMessage: 'Insert Data Token',
-    description: 'Label for button to open data token picker',
+    defaultMessage: 'Insert Dynamic Content',
+    description: 'Label for button to open dynamic content picker',
   });
   const options: TokenOption[] = [
+    new TokenOption(dynamicDataButtonText, 'dynamic', {
+      icon: () => <Icon iconName="LightningBolt" style={{ marginRight: 5 }} />,
+    }),
     new TokenOption(expressionButtonText, 'expression', {
       icon: (_, inverted) => (
         <div style={{ height: 20, width: 20 }}>
           <FxIcon fill={inverted ? constants.STANDARD_TEXT_COLOR : constants.INVERTED_TEXT_COLOR} />
         </div>
       ),
-    }),
-    new TokenOption(dynamicDataButtonText, 'dynamic', {
-      icon: () => <Icon iconName="LightningBolt" style={{ marginRight: 5 }} />,
     }),
   ];
   return (
