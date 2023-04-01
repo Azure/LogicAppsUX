@@ -48,7 +48,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-export const PanelRoot = (): JSX.Element => {
+export interface PanelRootProps {
+  panelLocation?: PanelLocation;
+}
+
+export const PanelRoot = (props: PanelRootProps): JSX.Element => {
+  const { panelLocation } = props;
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -275,7 +280,7 @@ export const PanelRoot = (): JSX.Element => {
     <PanelContainer
       cardIcon={iconUri}
       comment={comment}
-      panelLocation={PanelLocation.Right}
+      panelLocation={panelLocation ?? PanelLocation.Right}
       isCollapsed={collapsed}
       noNodeSelected={!selectedNode}
       isError={opQuery?.isError}
