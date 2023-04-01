@@ -103,7 +103,7 @@ describe('SchemaProcessor Tests', () => {
       },
     } as SchemaObject;
 
-    const parameters = new SchemaProcessor().getSchemaProperties(schema);
+    const parameters = new SchemaProcessor({ expandArrayOutputs: true }).getSchemaProperties(schema);
 
     expect(parameters.length).toBe(3);
 
@@ -160,7 +160,7 @@ describe('SchemaProcessor Tests', () => {
       type: 'array',
     } as SchemaObject;
 
-    const parameters = new SchemaProcessor().getSchemaProperties(schema);
+    const parameters = new SchemaProcessor({ expandArrayOutputs: true }).getSchemaProperties(schema);
 
     expect(parameters.length).toBe(2);
 
@@ -527,7 +527,7 @@ describe('SchemaProcessor Tests', () => {
       },
     };
 
-    const propertiesForSchemaWithNestObject = new SchemaProcessor().getSchemaProperties(schemaWithNestObject);
+    const propertiesForSchemaWithNestObject = new SchemaProcessor({ expandArrayOutputs: true }).getSchemaProperties(schemaWithNestObject);
     expect(propertiesForSchemaWithNestObject.length).toBe(2);
     const addressLine1InObject = propertiesForSchemaWithNestObject[0];
     const firmNameInObject = propertiesForSchemaWithNestObject[1];
@@ -542,7 +542,7 @@ describe('SchemaProcessor Tests', () => {
     expect(firmNameInObject.title).toBe('FirmName');
     expect(firmNameInObject.summary).toBe('');
 
-    const propertiesForSchemaWithNestObjectSummary = new SchemaProcessor().getSchemaProperties(schemaWithNestObjectSummary);
+    const propertiesForSchemaWithNestObjectSummary = new SchemaProcessor({ expandArrayOutputs: true }).getSchemaProperties(schemaWithNestObjectSummary);
     expect(propertiesForSchemaWithNestObjectSummary.length).toBe(2);
     const addressLine1InObjectSummary = propertiesForSchemaWithNestObjectSummary[0];
     const firmNameInObjectSummary = propertiesForSchemaWithNestObjectSummary[1];
@@ -557,7 +557,7 @@ describe('SchemaProcessor Tests', () => {
     expect(firmNameInObjectSummary.title).toBe('Summary for Row object FirmName');
     expect(firmNameInObjectSummary.summary).toBe('');
 
-    const propertiesForSchemaWithNestArray = new SchemaProcessor().getSchemaProperties(schemaWithNestArray);
+    const propertiesForSchemaWithNestArray = new SchemaProcessor({ expandArrayOutputs: true }).getSchemaProperties(schemaWithNestArray);
     expect(propertiesForSchemaWithNestArray.length).toBe(4);
     const addressLine1InArray = propertiesForSchemaWithNestArray[0];
     const firmNameInArray = propertiesForSchemaWithNestArray[1];
@@ -586,7 +586,7 @@ describe('SchemaProcessor Tests', () => {
     expect(rowItemInArray.summary).toBe('');
     expect(rowItemInArray.type).toBe('object');
 
-    const propertiesForSchemaWithNestArrayTitle = new SchemaProcessor().getSchemaProperties(schemaWithNestArrayTitle);
+    const propertiesForSchemaWithNestArrayTitle = new SchemaProcessor({ expandArrayOutputs: true }).getSchemaProperties(schemaWithNestArrayTitle);
     expect(propertiesForSchemaWithNestArrayTitle.length).toBe(4);
 
     const addressLine1InArrayTitle = propertiesForSchemaWithNestArrayTitle[0];
@@ -609,7 +609,7 @@ describe('SchemaProcessor Tests', () => {
     expect(rowItemInArrayTitle.summary).toBe('');
     expect(rowItemInArrayTitle.type).toBe('array');
 
-    const propertiesForSchemaWithNestArrayItemTitle = new SchemaProcessor().getSchemaProperties(schemaWithNestArrayItemTitle);
+    const propertiesForSchemaWithNestArrayItemTitle = new SchemaProcessor({ expandArrayOutputs: true }).getSchemaProperties(schemaWithNestArrayItemTitle);
     expect(propertiesForSchemaWithNestArrayItemTitle.length).toBe(4);
 
     const addressLine1InArrayItemTitle = propertiesForSchemaWithNestArrayItemTitle[0];
@@ -626,7 +626,7 @@ describe('SchemaProcessor Tests', () => {
     expect(rowItemInArrayItemTitle.title).toBe('Object Row');
     expect(rowItemInArrayItemTitle.summary).toBe('');
 
-    const propertiesForSchemaWithNestArrayBothTitle = new SchemaProcessor().getSchemaProperties(schemaWithNestArrayBothTitle);
+    const propertiesForSchemaWithNestArrayBothTitle = new SchemaProcessor({ expandArrayOutputs: true }).getSchemaProperties(schemaWithNestArrayBothTitle);
     expect(propertiesForSchemaWithNestArrayBothTitle.length).toBe(4);
 
     const addressLine1InArrayBothTitle = propertiesForSchemaWithNestArrayBothTitle[0];
@@ -643,7 +643,7 @@ describe('SchemaProcessor Tests', () => {
     expect(rowItemInArrayBothTitle.title).toBe('Object Array Title');
     expect(rowItemInArrayBothTitle.summary).toBe('');
 
-    const propertiesForSchemaWithGrandLevelSchema = new SchemaProcessor().getSchemaProperties(schemaWithGrandLevelObjectSummary);
+    const propertiesForSchemaWithGrandLevelSchema = new SchemaProcessor({ expandArrayOutputs: true }).getSchemaProperties(schemaWithGrandLevelObjectSummary);
     expect(propertiesForSchemaWithGrandLevelSchema.length).toBe(1);
     const grandChildProperty = propertiesForSchemaWithGrandLevelSchema[0];
 
@@ -651,7 +651,7 @@ describe('SchemaProcessor Tests', () => {
     expect(grandChildProperty.summary).toBe('Parent Child Grand child');
     expect(grandChildProperty.title).toBe('Parent Child Grand child');
 
-    const propertiesForSchemaWithGrandNestArray = new SchemaProcessor().getSchemaProperties(schemaWithGrandLevelArrayWithSummary);
+    const propertiesForSchemaWithGrandNestArray = new SchemaProcessor({ expandArrayOutputs: true }).getSchemaProperties(schemaWithGrandLevelArrayWithSummary);
     expect(propertiesForSchemaWithGrandNestArray.length).toBe(4);
     const addressLine1InGrantNestArray = propertiesForSchemaWithGrandNestArray[0];
     const firmNameInGrantNestArray = propertiesForSchemaWithGrandNestArray[1];
@@ -927,6 +927,7 @@ describe('SchemaProcessor Tests', () => {
     };
 
     const options = {
+      expandArrayOutputs: true,
       expandArrayOutputsDepth: 100,
       required: true,
     };
