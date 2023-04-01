@@ -1,4 +1,16 @@
 # Logic Apps Designer
+### [2.0.19](https://github.com/Azure/LogicAppsUX/compare/v2.0.18...v2.0.19) (2023-04-01)
+
+
+### Logic Apps Designer Changes
+
+* Add keyboard typeahead for adding dymanic expressions and tokens ([#1879](https://github.com/Azure/LogicAppsUX/issues/1879)) ([7464ceb](https://github.com/Azure/LogicAppsUX/commit/7464cebecd999e2923f8c3eed49cb0c3a78ad1f3))
+
+
+### Logic Apps Designer Bug Fixes
+
+* Fix issue where query predicate would sometimes crash designer ([#1880](https://github.com/Azure/LogicAppsUX/issues/1880)) ([f06284d](https://github.com/Azure/LogicAppsUX/commit/f06284d40e2fb0baf6199fbbb1e39e1640a8b3b1))
+
 ### [2.0.18](https://github.com/Azure/LogicAppsUX/compare/v2.0.17...v2.0.18) (2023-03-31)
 
 
