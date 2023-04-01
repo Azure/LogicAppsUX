@@ -47,6 +47,11 @@ export interface SerializeOptions {
   ignoreNonCriticalErrors?: boolean;
 }
 
+export interface ConstructInputValuesOptions {
+  encodePathComponents?: boolean;
+  flattenPaths?: boolean;
+}
+
 export const serializeWorkflow = async (rootState: RootState, options?: SerializeOptions): Promise<Workflow> => {
   const operationsWithSettingsErrors = (Object.entries(rootState.settings.validationErrors) ?? []).filter(
     ([_id, errorArr]) => errorArr.length > 0
@@ -219,7 +224,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const inputsToSerialize = getOperationInputsToSerialize(rootState, operationId);
   const nodeSettings = rootState.operations.settings[operationId] ?? {};
   const nodeStaticResults = rootState.operations.staticResults[operationId] ?? {};
-  const inputPathValue = serializeOperationParameters(inputsToSerialize, manifest);
+  const inputPathValue = serializeParametersFromManifest(inputsToSerialize, manifest);
   const hostInfo = serializeHost(operationId, manifest, rootState);
   const inputs = hostInfo !== undefined ? mergeHostWithInputs(hostInfo, inputPathValue) : inputPathValue;
   const operationFromWorkflow = rootState.workflow.operations[operationId];
@@ -228,7 +233,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
     : getRunAfter(operationFromWorkflow, idReplacements);
   const recurrence =
     isTrigger && manifest.properties.recurrence && manifest.properties.recurrence.type !== RecurrenceType.None
-      ? constructInputValues('recurrence.$', inputsToSerialize, false /* encodePathComponents */)
+      ? constructInputValues('recurrence.$', inputsToSerialize, { encodePathComponents: false })
       : undefined;
 
   const childOperations = manifest.properties.allowChildOperations
@@ -266,7 +271,7 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
   const runAfter = isTrigger ? undefined : getRunAfter(operationFromWorkflow, idReplacements);
   const recurrence =
     isTrigger && equals(type, Constants.NODE.TYPE.API_CONNECTION)
-      ? constructInputValues('recurrence.$', inputsToSerialize, false /* encodePathComponents */)
+      ? constructInputValues('recurrence.$', inputsToSerialize, { encodePathComponents: false })
       : undefined;
   const retryPolicy = getRetryPolicy(nodeSettings);
   const inputPathValue = await serializeParametersFromSwagger(inputsToSerialize, operationInfo);
@@ -304,9 +309,9 @@ const getOperationInputsToSerialize = (rootState: RootState, operationId: string
   }));
 };
 
-const serializeOperationParameters = (inputs: SerializedParameter[], manifest: OperationManifest): Record<string, any> => {
+const serializeParametersFromManifest = (inputs: SerializedParameter[], manifest: OperationManifest): Record<string, any> => {
   const inputsLocation = (manifest.properties.inputsLocation ?? ['inputs']).slice(1);
-  const inputPathValue = constructInputValues('inputs.$', inputs, false /* encodePathComponents */);
+  const inputPathValue = constructInputValues('inputs.$', inputs, { encodePathComponents: false, flattenPaths: true });
   let parametersValue: any = inputPathValue;
 
   while (inputsLocation.length) {
@@ -317,7 +322,8 @@ const serializeOperationParameters = (inputs: SerializedParameter[], manifest: O
   return swapInputsLocationIfNeeded(parametersValue, manifest.properties.inputsLocationSwapMap);
 };
 
-export const constructInputValues = (key: string, inputs: SerializedParameter[], encodePathComponents: boolean): any => {
+export const constructInputValues = (key: string, inputs: SerializedParameter[], options: ConstructInputValuesOptions): any => {
+  const { encodePathComponents, flattenPaths: flattenValues } = options;
   let result: any;
 
   const rootParameter = first((parameter) => cleanIndexedValue(parameter.parameterKey) === cleanIndexedValue(key), inputs);
@@ -355,7 +361,13 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
           parameterKey = parameterKey.replace(propertyName, propertyNameParameter.value);
         }
 
-        result = serializeParameterWithPath(result, serializedParameter.value, key, { ...serializedParameter, parameterKey });
+        result = serializeParameter(
+          result,
+          serializedParameter.value,
+          key,
+          { ...serializedParameter, parameterKey },
+          !flattenValues /* withPath */
+        );
       }
     }
   }
@@ -363,11 +375,12 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
   return result;
 };
 
-const serializeParameterWithPath = (
+const serializeParameter = (
   parent: any,
   serializedValue: any,
   parentKey: string,
-  serializedParameter: SerializedParameter
+  serializedParameter: SerializedParameter,
+  withPath: boolean
 ): any => {
   const valueKeys = serializedParameter.alternativeKey
     ? [serializedParameter.parameterKey, serializedParameter.alternativeKey]
@@ -393,6 +406,17 @@ const serializeParameterWithPath = (
         result = [];
       } else {
         result = {};
+      }
+    }
+
+    if (!withPath) {
+      // Some inputs (e.g., OpenAPI) appear in the following format:
+      //   'inputs.$.foo.foo/bar.foo/bar/baz'
+      // This branch handles the case where we do NOT want the parameters to maintain that path, so the result should be:
+      //   'foo/bar/baz'
+      // To do this, eliminate the path segments until we have only the last one.
+      while (pathSegments.length > 1) {
+        pathSegments.shift();
       }
     }
 
@@ -426,7 +450,7 @@ const serializeParametersFromSwagger = async (
   const operationPath = removeConnectionPrefix(path);
   const operationMethod = equals(type, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK) ? undefined : method;
   const parameterInputs = equals(type, Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION)
-    ? constructInputValues(create(['inputs', '$']) as string, inputs, false /* encodePathComponents */)
+    ? constructInputValues(create(['inputs', '$']) as string, inputs, { encodePathComponents: false })
     : buildOperationDetailsFromControls(inputs, operationPath, false /* encodePathComponents */, operationMethod);
 
   // Ignore unencoded newline characters in the operation path since
@@ -643,7 +667,7 @@ const serializeSubGraph = async (
   );
 
   if (graphDetail.inputs && graphDetail.inputsLocation) {
-    const inputs = serializeOperationParameters(getOperationInputsToSerialize(rootState, graphId), { properties: graphDetail } as any);
+    const inputs = serializeParametersFromManifest(getOperationInputsToSerialize(rootState, graphId), { properties: graphDetail } as any);
     safeSetObjectPropertyValue(result, [...graphInputsLocation, ...graphDetail.inputsLocation], inputs);
   }
 

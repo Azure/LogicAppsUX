@@ -210,9 +210,44 @@ describe('constructInputValues', () => {
     },
   ];
 
+  const rootArrayWithComplexObjectOpenApiParametersBase = [
+    {
+      dynamicData: {
+        status: 2,
+      },
+      editor: 'combobox',
+      editorOptions: {
+        options: [],
+      },
+      info: {
+        alias: 'request/to',
+        isDynamic: false,
+      },
+      hideInUI: false,
+      id: '703FC6E1-67F0-48DE-8E05-994B352CDE62',
+      label: 'To',
+      parameterKey: 'inputs.$.request.request/to',
+      parameterName: 'request/to',
+      placeholder: 'A list of valid email addresses separated by a semicolon or a comma.',
+      required: true,
+      schema: {
+        type: 'string',
+        title: 'To',
+        description: 'A list of valid email addresses separated by a semicolon or a comma.',
+        'x-ms-property-name-alias': 'request/to',
+      },
+      showErrors: false,
+      showTokens: true,
+      suppressCasting: true,
+      type: 'string',
+      visibility: '',
+    },
+  ];
+
   let simpleArrayParameters: SerializedParameter[],
     rootNestedArrayParameters: SerializedParameter[],
-    rootArrayWithNestedObjectParameters: SerializedParameter[];
+    rootArrayWithNestedObjectParameters: SerializedParameter[],
+    rootArrayWithComplexObjectOpenApiParameters: SerializedParameter[];
 
   beforeEach(() => {
     simpleArrayParameters = [
@@ -271,13 +306,20 @@ describe('constructInputValues', () => {
         value: 'original first level desc',
       },
     ];
+
+    rootArrayWithComplexObjectOpenApiParameters = [
+      {
+        ...rootArrayWithComplexObjectOpenApiParametersBase[0],
+        value: 'johndoe@example.com;',
+      },
+    ];
   });
 
   it('should serialize the parameter value correctly for simple array case', () => {
     const inputPath = 'body.$.children';
     const parameters = simpleArrayParameters;
 
-    expect(constructInputValues(inputPath, parameters, false)).toEqual([
+    expect(constructInputValues(inputPath, parameters, { encodePathComponents: false })).toEqual([
       {
         name: 'original name',
         id: 99999,
@@ -289,7 +331,7 @@ describe('constructInputValues', () => {
     const inputPath = 'body.$';
     const parameters = rootNestedArrayParameters;
 
-    expect(constructInputValues(inputPath, parameters, false)).toEqual([
+    expect(constructInputValues(inputPath, parameters, { encodePathComponents: false })).toEqual([
       {
         children: [
           {
@@ -307,7 +349,7 @@ describe('constructInputValues', () => {
     const inputPath = 'body.$';
     const parameters = rootArrayWithNestedObjectParameters;
 
-    expect(constructInputValues(inputPath, parameters, false)).toEqual([
+    expect(constructInputValues(inputPath, parameters, { encodePathComponents: false })).toEqual([
       {
         items: {
           firstlevel: {
@@ -356,7 +398,7 @@ describe('constructInputValues', () => {
       },
     ];
 
-    expect(constructInputValues(inputPath, parameters, false)).toEqual([
+    expect(constructInputValues(inputPath, parameters, { encodePathComponents: false })).toEqual([
       {
         '@@odata.type': 'Default value',
         Id: 1,
@@ -389,11 +431,20 @@ describe('constructInputValues', () => {
       },
     ];
 
-    expect(constructInputValues(inputPath, parameters, false)).toEqual([
+    expect(constructInputValues(inputPath, parameters, { encodePathComponents: false })).toEqual([
       {
         '@@odata.type': 'Default value',
         Id: '',
       },
     ]);
+  });
+
+  it('should serialize the parameter value correctly for complex values case when flattening paths', () => {
+    const inputPath = 'inputs.$';
+    const parameters = rootArrayWithComplexObjectOpenApiParameters;
+
+    expect(constructInputValues(inputPath, parameters, { encodePathComponents: false, flattenPaths: true })).toEqual({
+      'request/to': 'johndoe@example.com;',
+    });
   });
 });
