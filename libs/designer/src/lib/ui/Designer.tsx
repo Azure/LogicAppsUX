@@ -135,7 +135,7 @@ export const Designer = (props: DesignerProps) => {
 
   const isFetchingInitialData = useIsFetching({
     predicate: (query) => {
-      const queryKeysToWatch = ['connections', 'manifest', 'apiWithSwaggers'];
+      const queryKeysToWatch = ['connections', 'manifest', 'apiWithSwaggers', 'operationInfo'];
       if (Array.isArray(query.queryKey)) {
         return (query.queryKey as string[]).some((val) => queryKeysToWatch.includes(val));
       } else if (isString(query.queryKey)) {
