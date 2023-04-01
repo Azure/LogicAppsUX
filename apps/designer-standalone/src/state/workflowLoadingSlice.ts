@@ -43,7 +43,10 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
   const currentState: RootState = thunkAPI.getState() as RootState;
 
   const wf = await import(`../../../../__mocks__/workflows/${currentState.workflowLoader.resourcePath}`);
-  return { workflowDefinition: wf.definition as LogicAppsV2.WorkflowDefinition, connectionReferences: {} } as WorkflowPayload;
+  return {
+    workflowDefinition: wf.definition as LogicAppsV2.WorkflowDefinition,
+    connectionReferences: {},
+  } as WorkflowPayload;
 });
 
 export const loadRun = createAsyncThunk('runLoadingState/loadRun', async (_: void, thunkAPI) => {
