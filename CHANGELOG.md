@@ -1,13 +1,34 @@
 # Logic Apps Designer
+
+### [2.0.19](https://github.com/Azure/LogicAppsUX/compare/v2.0.18...v2.0.19) (2023-04-01)
+
+### Logic Apps Designer Changes
+
+- Add keyboard typeahead for adding dymanic expressions and tokens ([#1879](https://github.com/Azure/LogicAppsUX/issues/1879)) ([7464ceb](https://github.com/Azure/LogicAppsUX/commit/7464cebecd999e2923f8c3eed49cb0c3a78ad1f3))
+
+### Logic Apps Designer Bug Fixes
+
+- Fix issue where query predicate would sometimes crash designer ([#1880](https://github.com/Azure/LogicAppsUX/issues/1880)) ([f06284d](https://github.com/Azure/LogicAppsUX/commit/f06284d40e2fb0baf6199fbbb1e39e1640a8b3b1))
+
+### [2.0.18](https://github.com/Azure/LogicAppsUX/compare/v2.0.17...v2.0.18) (2023-03-31)
+
+### Logic Apps Designer Changes
+
+- Dont preload search operations before finished loading workflow data ([#1873](https://github.com/Azure/LogicAppsUX/issues/1873)) ([edc6d83](https://github.com/Azure/LogicAppsUX/commit/edc6d833e71c6bc5dfc81265a6eeabf5cb2ce0e4))
+
+### Logic Apps Designer Bug Fixes
+
+- Custom Connectors - sped up operations, fixed too many connectors ([#1876](https://github.com/Azure/LogicAppsUX/issues/1876)) ([1d0f135](https://github.com/Azure/LogicAppsUX/commit/1d0f1354dd6d14b712696a805cb963c8e2901fa3))
+- Static Result Fix ([#1869](https://github.com/Azure/LogicAppsUX/issues/1869)) ([d7b64c4](https://github.com/Azure/LogicAppsUX/commit/d7b64c418f552e42b152b5d56675e409c44af63f))
+
 ### [2.0.17](https://github.com/Azure/LogicAppsUX/compare/v2.0.16...v2.0.17) (2023-03-31)
 
 ### [2.0.16](https://github.com/Azure/LogicAppsUX/compare/v2.0.15...v2.0.16) (2023-03-30)
 
-
 ### Logic Apps Designer Bug Fixes
 
-* Adding scheme to apim url in connections ([#1857](https://github.com/Azure/LogicAppsUX/issues/1857)) ([28de4fe](https://github.com/Azure/LogicAppsUX/commit/28de4fe00b6462d79a427705d4a137aecb4d8484))
-* defaultSplitOn And Display Array Editors without Schema ([#1862](https://github.com/Azure/LogicAppsUX/issues/1862)) ([14f807b](https://github.com/Azure/LogicAppsUX/commit/14f807b4db4c91f8b4a8dd7becab3c9231d25f57))
+- Adding scheme to apim url in connections ([#1857](https://github.com/Azure/LogicAppsUX/issues/1857)) ([28de4fe](https://github.com/Azure/LogicAppsUX/commit/28de4fe00b6462d79a427705d4a137aecb4d8484))
+- defaultSplitOn And Display Array Editors without Schema ([#1862](https://github.com/Azure/LogicAppsUX/issues/1862)) ([14f807b](https://github.com/Azure/LogicAppsUX/commit/14f807b4db4c91f8b4a8dd7becab3c9231d25f57))
 
 ### [2.0.15](https://github.com/Azure/LogicAppsUX/compare/v2.0.14...v2.0.15) (2023-03-30)
 

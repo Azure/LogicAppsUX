@@ -54,14 +54,14 @@ export const getDesignerServices = (
     appSettings = {},
     isStateful = false;
 
-  const { subscriptionId, resourceGroup, location } = apiHubServiceDetails;
+  const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubServiceDetails;
 
   if (panelMetadata) {
     authToken = panelMetadata.accessToken ?? '';
     panelId = panelMetadata.panelId;
     workflowDetails = panelMetadata.workflowDetails;
     appSettings = panelMetadata.localSettings;
-    isStateful = panelMetadata.standardApp?.stateful ?? false;
+    isStateful = panelMetadata.standardApp?.stateful ?? true;
   }
 
   const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
