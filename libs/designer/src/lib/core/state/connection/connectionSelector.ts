@@ -6,18 +6,18 @@ import type { Connector } from '@microsoft/utils-logic-apps';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
-export const useConnector = (connectorId: string) => {
-  const { data, ...rest } = useConnectorAndSwagger(connectorId);
+export const useConnector = (connectorId: string, enabled = true) => {
+  const { data, ...rest } = useConnectorAndSwagger(connectorId, enabled);
   return { data: data?.connector, ...rest };
 };
-export const useConnectorAndSwagger = (connectorId: string) => {
+export const useConnectorAndSwagger = (connectorId: string, enabled = true) => {
   return useQuery(
     ['apiWithSwaggers', { connectorId }],
     async () => {
       return await ConnectionService().getConnectorAndSwagger(connectorId);
     },
     {
-      enabled: !!connectorId,
+      enabled: !!connectorId && enabled,
       cacheTime: 1000 * 60 * 60 * 24,
       refetchOnMount: false,
       refetchOnWindowFocus: false,
