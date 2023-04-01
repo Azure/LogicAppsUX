@@ -103,7 +103,7 @@ describe('SchemaProcessor Tests', () => {
       },
     } as SchemaObject;
 
-    const parameters = new SchemaProcessor({ expandArrayOutputs: true }).getSchemaProperties(schema);
+    const parameters = new SchemaProcessor().getSchemaProperties(schema);
 
     expect(parameters.length).toBe(3);
 
