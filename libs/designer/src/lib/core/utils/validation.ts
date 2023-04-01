@@ -140,6 +140,14 @@ export function validateType(type: string, parameterFormat: string, parameterVal
       }
       return;
 
+    case Constants.SWAGGER.TYPE.ARRAY:
+      if (isExpression) {
+        return;
+      }
+      if (!isValidArrayFormat(parameterValue)) {
+        return intl.formatMessage({ defaultMessage: 'Enter a valid array.', description: 'Error validation message for the array type' });
+      }
+      return;
     case Constants.SWAGGER.TYPE.STRING:
       return validateStringFormat(parameterFormat, parameterValue, isExpression);
 
@@ -382,6 +390,11 @@ function validateStringEmails(parameterValue: string): string {
 function isValidJSONObjectFormat(value: string): boolean {
   const trimmedValue = (value || '').trim();
   return startsWith(trimmedValue, '{') && endsWith(trimmedValue, '}');
+}
+
+function isValidArrayFormat(value: string): boolean {
+  const trimmedValue = (value || '').trim();
+  return startsWith(trimmedValue, '[') && endsWith(trimmedValue, ']');
 }
 
 export const isISO8601 = (s: string) => {
