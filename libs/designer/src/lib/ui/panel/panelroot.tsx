@@ -41,7 +41,7 @@ import { settingsTab } from './panelTabs/settingsTab';
 import { testingTab } from './panelTabs/testingTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { WorkflowParametersPanel } from './workflowparameterspanel';
-import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
+import type { CommonPanelProps, MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { MenuItemType, PanelContainer, PanelHeaderControlType, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
 import { isNullOrUndefined, SUBGRAPH_TYPES } from '@microsoft/utils-logic-apps';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -264,24 +264,25 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
     styles: { root: { zIndex: 999998 } },
   };
 
+  const commonPanelProps: CommonPanelProps = {
+    isCollapsed: collapsed,
+    toggleCollapse: dismissPanel,
+    width,
+    layerProps,
+    panelLocation: panelLocation ?? PanelLocation.Right,
+  };
+
   return currentPanelMode === 'WorkflowParameters' ? (
-    <WorkflowParametersPanel isCollapsed={collapsed} toggleCollapse={dismissPanel} width={width} layerProps={layerProps} />
+    <WorkflowParametersPanel {...commonPanelProps} />
   ) : currentPanelMode === 'Discovery' ? (
-    <RecommendationPanelContext
-      isCollapsed={collapsed}
-      toggleCollapse={dismissPanel}
-      width={width}
-      key={selectedNode}
-      layerProps={layerProps}
-    />
+    <RecommendationPanelContext {...commonPanelProps} />
   ) : currentPanelMode === 'NodeSearch' ? (
-    <NodeSearchPanel isCollapsed={collapsed} toggleCollapse={dismissPanel} width={width} layerProps={layerProps} />
+    <NodeSearchPanel {...commonPanelProps} />
   ) : (
     <PanelContainer
+      {...commonPanelProps}
       cardIcon={iconUri}
       comment={comment}
-      panelLocation={panelLocation ?? PanelLocation.Right}
-      isCollapsed={collapsed}
       noNodeSelected={!selectedNode}
       isError={opQuery?.isError}
       isLoading={isLoading}
@@ -292,7 +293,6 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       showCommentBox={showCommentBox}
       tabs={registeredTabs}
       nodeId={selectedNode}
-      width={width}
       onDismissButtonClicked={handleDelete}
       readOnlyMode={readOnly}
       setSelectedTab={setSelectedTab}
@@ -316,7 +316,6 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       }}
       title={selectedNodeDisplayName}
       onTitleChange={onTitleChange}
-      layerProps={layerProps}
     />
   );
 };

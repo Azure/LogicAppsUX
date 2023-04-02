@@ -6,6 +6,7 @@ import {
 } from '../../core/state/workflowparameters/workflowparametersselector';
 import { Panel, PanelType, useTheme } from '@fluentui/react';
 import type { CommonPanelProps, WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
+import { PanelLocation } from '@microsoft/designer-ui';
 import { WorkflowParameters } from '@microsoft/designer-ui';
 import { useDispatch } from 'react-redux';
 
@@ -24,13 +25,14 @@ export const WorkflowParametersPanel = (props: CommonPanelProps) => {
   return (
     <Panel
       isLightDismiss
-      type={PanelType.medium}
+      type={props.panelLocation === PanelLocation.Right ? PanelType.medium : PanelType.customNear}
       isOpen={!props.isCollapsed}
       onDismiss={props.toggleCollapse}
       hasCloseButton={false}
       overlayProps={{ isDarkThemed: isInverted }}
       focusTrapZoneProps={{ disabled: props.isCollapsed, forceFocusInsideTrap: true }}
       layerProps={props.layerProps}
+      customWidth={props.width}
     >
       <WorkflowParameters
         parameters={Object.entries(workflowParameters).map(([key, value]) => ({ id: key, ...value }))}
