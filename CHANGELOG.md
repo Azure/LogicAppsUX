@@ -1,5 +1,14 @@
 # Logic Apps Designer
 
+### [2.0.20](https://github.com/Azure/LogicAppsUX/compare/v2.0.19...v2.0.20) (2023-04-02)
+
+### Logic Apps Designer Bug Fixes
+
+- Fix issue where initialize variable array type had an extra pr… ([#1883](https://github.com/Azure/LogicAppsUX/issues/1883)) ([403e96c](https://github.com/Azure/LogicAppsUX/commit/403e96cad91f6fae506e100c31e2342911723aae))
+- Remove erroring requests happening from manifest based operations ([#1884](https://github.com/Azure/LogicAppsUX/issues/1884)) ([f6e07e2](https://github.com/Azure/LogicAppsUX/commit/f6e07e2aa41f5072db2fa5d1a41aad6eeb55c354))
+
+### [2.0.19](https://github.com/Azure/LogicAppsUX/compare/v2.0.18...v2.0.19) (2023-04-01)
+
 ### [2.0.19](https://github.com/Azure/LogicAppsUX/compare/v2.0.18...v2.0.19) (2023-04-01)
 
 ### Logic Apps Designer Changes
