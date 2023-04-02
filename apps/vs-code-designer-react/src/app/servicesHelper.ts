@@ -61,7 +61,7 @@ export const getDesignerServices = (
     panelId = panelMetadata.panelId;
     workflowDetails = panelMetadata.workflowDetails;
     appSettings = panelMetadata.localSettings;
-    isStateful = panelMetadata.standardApp.kind === 'Stateful';
+    isStateful = panelMetadata.standardApp?.stateful ?? false;
   }
 
   const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
