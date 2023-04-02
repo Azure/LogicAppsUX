@@ -38,7 +38,6 @@ const operationManifestService = new StandardOperationManifestService({
   baseUrl: '/url',
   httpClient,
 });
-
 const searchServiceStandard = new StandardSearchService({
   baseUrl: '/url',
   apiVersion: '2018-11-01',
@@ -49,6 +48,7 @@ const searchServiceStandard = new StandardSearchService({
     location: '',
   },
   isDev: true,
+  showStatefulOperations: true,
 });
 
 const searchServiceConsumption = new ConsumptionSearchService({
@@ -61,6 +61,7 @@ const searchServiceConsumption = new ConsumptionSearchService({
     location: '',
   },
   isDev: true,
+  showStatefulOperations: true,
 });
 
 const oAuthService = new BaseOAuthService({

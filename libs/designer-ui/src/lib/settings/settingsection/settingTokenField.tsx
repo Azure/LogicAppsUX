@@ -87,7 +87,7 @@ const TokenField = ({
           initialValue={value}
           options={dropdownOptions.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
           multiSelect={!!editorOptions?.multiSelect}
-          serialization={editorOptions.serialization}
+          serialization={editorOptions?.serialization}
           onChange={onValueChange}
         />
       );
@@ -199,7 +199,7 @@ const TokenField = ({
       );
 
     case 'recurrence':
-      return <ScheduleEditor readOnly={readOnly} type={editorOptions.recurrenceType} initialValue={value} onChange={onValueChange} />;
+      return <ScheduleEditor readOnly={readOnly} type={editorOptions?.recurrenceType} initialValue={value} onChange={onValueChange} />;
 
     default:
       return (

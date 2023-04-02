@@ -1,0 +1,24 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {},
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+      "Recurrence": {
+        "recurrence": {
+          "frequency": "Week",
+          "interval": 15,
+          "schedule": {
+            "hours": ["0", "5", "8"],
+            "minutes": [12, 13]
+          },
+          "timeZone": "Dateline Standard Time"
+        },
+        "type": "Recurrence"
+      }
+    }
+  },
+  "connectionReferences": {},
+  "parameters": {}
+}
