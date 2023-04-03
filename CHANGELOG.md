@@ -1,46 +1,49 @@
 # Logic Apps Designer
-### [2.0.20](https://github.com/Azure/LogicAppsUX/compare/v2.0.19...v2.0.20) (2023-04-02)
+### [2.0.21](https://github.com/Azure/LogicAppsUX/compare/v2.0.20...v2.0.21) (2023-04-03)
 
+
+### Logic Apps Designer Changes
+
+* add Recurrence Trigger editor ([#1888](https://github.com/Azure/LogicAppsUX/issues/1888)) ([c811015](https://github.com/Azure/LogicAppsUX/commit/c8110159263660f7b66dfe13baf5a2ef282c0727))
+
+### [2.0.20](https://github.com/Azure/LogicAppsUX/compare/v2.0.19...v2.0.20) (2023-04-02)
 
 ### Logic Apps Designer Bug Fixes
 
-* Fix issue where initialize variable array type had an extra pr… ([#1883](https://github.com/Azure/LogicAppsUX/issues/1883)) ([403e96c](https://github.com/Azure/LogicAppsUX/commit/403e96cad91f6fae506e100c31e2342911723aae))
-* Remove erroring requests happening from manifest based operations ([#1884](https://github.com/Azure/LogicAppsUX/issues/1884)) ([f6e07e2](https://github.com/Azure/LogicAppsUX/commit/f6e07e2aa41f5072db2fa5d1a41aad6eeb55c354))
+- Fix issue where initialize variable array type had an extra pr… ([#1883](https://github.com/Azure/LogicAppsUX/issues/1883)) ([403e96c](https://github.com/Azure/LogicAppsUX/commit/403e96cad91f6fae506e100c31e2342911723aae))
+- Remove erroring requests happening from manifest based operations ([#1884](https://github.com/Azure/LogicAppsUX/issues/1884)) ([f6e07e2](https://github.com/Azure/LogicAppsUX/commit/f6e07e2aa41f5072db2fa5d1a41aad6eeb55c354))
 
 ### [2.0.19](https://github.com/Azure/LogicAppsUX/compare/v2.0.18...v2.0.19) (2023-04-01)
 
+### [2.0.19](https://github.com/Azure/LogicAppsUX/compare/v2.0.18...v2.0.19) (2023-04-01)
 
 ### Logic Apps Designer Changes
 
-* Add keyboard typeahead for adding dymanic expressions and tokens ([#1879](https://github.com/Azure/LogicAppsUX/issues/1879)) ([7464ceb](https://github.com/Azure/LogicAppsUX/commit/7464cebecd999e2923f8c3eed49cb0c3a78ad1f3))
-
+- Add keyboard typeahead for adding dymanic expressions and tokens ([#1879](https://github.com/Azure/LogicAppsUX/issues/1879)) ([7464ceb](https://github.com/Azure/LogicAppsUX/commit/7464cebecd999e2923f8c3eed49cb0c3a78ad1f3))
 
 ### Logic Apps Designer Bug Fixes
 
-* Fix issue where query predicate would sometimes crash designer ([#1880](https://github.com/Azure/LogicAppsUX/issues/1880)) ([f06284d](https://github.com/Azure/LogicAppsUX/commit/f06284d40e2fb0baf6199fbbb1e39e1640a8b3b1))
+- Fix issue where query predicate would sometimes crash designer ([#1880](https://github.com/Azure/LogicAppsUX/issues/1880)) ([f06284d](https://github.com/Azure/LogicAppsUX/commit/f06284d40e2fb0baf6199fbbb1e39e1640a8b3b1))
 
 ### [2.0.18](https://github.com/Azure/LogicAppsUX/compare/v2.0.17...v2.0.18) (2023-03-31)
 
-
 ### Logic Apps Designer Changes
 
-* Dont preload search operations before finished loading workflow data ([#1873](https://github.com/Azure/LogicAppsUX/issues/1873)) ([edc6d83](https://github.com/Azure/LogicAppsUX/commit/edc6d833e71c6bc5dfc81265a6eeabf5cb2ce0e4))
-
+- Dont preload search operations before finished loading workflow data ([#1873](https://github.com/Azure/LogicAppsUX/issues/1873)) ([edc6d83](https://github.com/Azure/LogicAppsUX/commit/edc6d833e71c6bc5dfc81265a6eeabf5cb2ce0e4))
 
 ### Logic Apps Designer Bug Fixes
 
-* Custom Connectors - sped up operations, fixed too many connectors ([#1876](https://github.com/Azure/LogicAppsUX/issues/1876)) ([1d0f135](https://github.com/Azure/LogicAppsUX/commit/1d0f1354dd6d14b712696a805cb963c8e2901fa3))
-* Static Result Fix ([#1869](https://github.com/Azure/LogicAppsUX/issues/1869)) ([d7b64c4](https://github.com/Azure/LogicAppsUX/commit/d7b64c418f552e42b152b5d56675e409c44af63f))
+- Custom Connectors - sped up operations, fixed too many connectors ([#1876](https://github.com/Azure/LogicAppsUX/issues/1876)) ([1d0f135](https://github.com/Azure/LogicAppsUX/commit/1d0f1354dd6d14b712696a805cb963c8e2901fa3))
+- Static Result Fix ([#1869](https://github.com/Azure/LogicAppsUX/issues/1869)) ([d7b64c4](https://github.com/Azure/LogicAppsUX/commit/d7b64c418f552e42b152b5d56675e409c44af63f))
 
 ### [2.0.17](https://github.com/Azure/LogicAppsUX/compare/v2.0.16...v2.0.17) (2023-03-31)
 
 ### [2.0.16](https://github.com/Azure/LogicAppsUX/compare/v2.0.15...v2.0.16) (2023-03-30)
 
-
 ### Logic Apps Designer Bug Fixes
 
-* Adding scheme to apim url in connections ([#1857](https://github.com/Azure/LogicAppsUX/issues/1857)) ([28de4fe](https://github.com/Azure/LogicAppsUX/commit/28de4fe00b6462d79a427705d4a137aecb4d8484))
-* defaultSplitOn And Display Array Editors without Schema ([#1862](https://github.com/Azure/LogicAppsUX/issues/1862)) ([14f807b](https://github.com/Azure/LogicAppsUX/commit/14f807b4db4c91f8b4a8dd7becab3c9231d25f57))
+- Adding scheme to apim url in connections ([#1857](https://github.com/Azure/LogicAppsUX/issues/1857)) ([28de4fe](https://github.com/Azure/LogicAppsUX/commit/28de4fe00b6462d79a427705d4a137aecb4d8484))
+- defaultSplitOn And Display Array Editors without Schema ([#1862](https://github.com/Azure/LogicAppsUX/issues/1862)) ([14f807b](https://github.com/Azure/LogicAppsUX/commit/14f807b4db4c91f8b4a8dd7becab3c9231d25f57))
 
 ### [2.0.15](https://github.com/Azure/LogicAppsUX/compare/v2.0.14...v2.0.15) (2023-03-30)
 

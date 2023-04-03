@@ -10,6 +10,7 @@ const fileOptions = [
   { key: 'GeneralHeader', text: 'General Workflows', itemType: DropdownMenuItemType.Header },
   { key: 'Empty.json', text: 'Empty/New' },
   { key: 'Panel.json', text: 'Panel' },
+  { key: 'Recurrence.json', text: 'Recurrence' },
   // { key: 'straightLine.json', text: 'Straight Line' },
   { key: 'simpleBigworkflow.json', text: 'Simple Big Workflow' },
   { key: 'UnicodeKeys.json', text: 'Unicode Keys' },
