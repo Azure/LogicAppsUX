@@ -31,6 +31,7 @@ export interface CommonPanelProps {
   toggleCollapse: () => void;
   width: string;
   layerProps?: any;
+  panelLocation: PanelLocation;
 }
 
 // Tab logic has been moved to redux in designer, but data-mapper still uses these
