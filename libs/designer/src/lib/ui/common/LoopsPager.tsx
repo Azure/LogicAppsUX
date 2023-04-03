@@ -15,11 +15,30 @@ export const LoopsPager = ({ normalizedType, metadata }: LoopsPagerProps) => {
   const max = metadata?.runData?.inputsLink?.metadata?.foreachItemsCount ?? 5;
   const hasPager = normalizedType === constants.NODE.TYPE.FOREACH || normalizedType === constants.NODE.TYPE.UNTIL;
 
+  const areFailedRepetitionsSupported = false;
+
+  const onClickNextFailed: PageChangeEventHandler = (page: PageChangeEventArgs) => {
+    setCurrentPage(page.value);
+  };
+
+  const onClickPreviousFailed: PageChangeEventHandler = (page: PageChangeEventArgs) => {
+    setCurrentPage(page.value);
+  };
+
   const onPagerChange: PageChangeEventHandler = (page: PageChangeEventArgs) => {
     setCurrentPage(page.value);
   };
 
-  return hasPager && isMonitoringView ? (
+  const failedIterationProps = areFailedRepetitionsSupported
+    ? {
+        max: 5,
+        min: 1,
+        onClickNext: onClickNextFailed,
+        onClickPrevious: onClickPreviousFailed,
+      }
+    : undefined;
+
+  return hasPager && isMonitoringView && max ? (
     <Pager
       current={currentPage}
       onChange={onPagerChange}
@@ -27,6 +46,7 @@ export const LoopsPager = ({ normalizedType, metadata }: LoopsPagerProps) => {
       maxLength={max.toString().length + 1}
       min={1}
       readonlyPagerInput={false}
+      failedIterationProps={failedIterationProps}
     />
   ) : null;
 };
