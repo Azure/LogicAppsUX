@@ -322,7 +322,7 @@ const serializeParametersFromManifest = (inputs: SerializedParameter[], manifest
 };
 
 export const constructInputValues = (key: string, inputs: SerializedParameter[], options: ConstructInputValuesOptions): any => {
-  const { encodePathComponents, flattenPaths: flattenValues } = options;
+  const { encodePathComponents, flattenPaths } = options;
   let result: any;
 
   const rootParameter = first((parameter) => cleanIndexedValue(parameter.parameterKey) === cleanIndexedValue(key), inputs);
@@ -365,7 +365,7 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
           serializedParameter.value,
           key,
           { ...serializedParameter, parameterKey },
-          !flattenValues /* withPath */
+          !flattenPaths /* withPath */
         );
       }
     }
@@ -413,9 +413,15 @@ const serializeParameter = (
       //   'inputs.$.foo.foo/bar.foo/bar/baz'
       // This branch handles the case where we do NOT want the parameters to maintain that path, so the result should be:
       //   'foo/bar/baz'
-      // To do this, eliminate the path segments until we have only the last one.
-      while (pathSegments.length > 1) {
-        pathSegments.shift();
+      // To do this, eliminate the redundant path segments.
+      for (let i = 0; i < pathSegments.length - 1; i++) {
+        const currentPathSegmentStringValue = `${pathSegments[i].value}`;
+        const nextPathSegmentStringValue = `${pathSegments[i + 1].value}`;
+
+        if (nextPathSegmentStringValue.startsWith(`${currentPathSegmentStringValue}/`)) {
+          pathSegments.splice(i, 1);
+          i--;
+        }
       }
     }
 

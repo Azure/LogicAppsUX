@@ -242,6 +242,33 @@ describe('constructInputValues', () => {
       type: 'string',
       visibility: '',
     },
+    {
+      editorOptions: {
+        options: [],
+      },
+      info: {
+        alias: 'request.request/attachments.attachment.attachment/bytes',
+        isDynamic: false,
+      },
+      hideInUI: false,
+      id: '703FC6E1-67F0-48DE-8E05-994B352CDE62',
+      label: 'Content bytes',
+      parameterKey: 'inputs.$.request.request/attachments.[*].attachment.attachment/bytes',
+      parameterName: 'request.request/attachments.attachment.attachment/bytes',
+      placeholder: 'The content bytes for a message attachment.',
+      required: true,
+      schema: {
+        type: 'string',
+        title: 'Content bytes',
+        description: 'The content bytes for a message attachment.',
+        'x-ms-property-name-alias': 'request.request/attachments.attachment.attachment/bytes',
+      },
+      showErrors: false,
+      showTokens: true,
+      suppressCasting: true,
+      type: 'string',
+      visibility: '',
+    },
   ];
 
   let simpleArrayParameters: SerializedParameter[],
@@ -311,6 +338,10 @@ describe('constructInputValues', () => {
       {
         ...rootArrayWithComplexObjectOpenApiParametersBase[0],
         value: 'johndoe@example.com;',
+      },
+      {
+        ...rootArrayWithComplexObjectOpenApiParametersBase[1],
+        value: 'content',
       },
     ];
   });
@@ -444,6 +475,11 @@ describe('constructInputValues', () => {
     const parameters = rootArrayWithComplexObjectOpenApiParameters;
 
     expect(constructInputValues(inputPath, parameters, { encodePathComponents: false, flattenPaths: true })).toEqual({
+      'request/attachments': [
+        {
+          'attachment/bytes': 'content',
+        },
+      ],
       'request/to': 'johndoe@example.com;',
     });
   });
