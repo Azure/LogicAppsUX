@@ -6,6 +6,7 @@ import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '../models';
 import type { FunctionData } from '../models/Function';
+import { LogCategory, LogService } from './Logging.Utils';
 import Fuse from 'fuse.js';
 
 export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {
@@ -13,6 +14,18 @@ export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended =>
     ...schema,
     schemaTreeRoot: convertSchemaNodeToSchemaNodeExtended(schema.schemaTreeRoot, undefined, []),
   };
+
+  LogService.log(LogCategory.SchemaUtils, 'convertSchemaToSchemaExtended', {
+    message: 'Schema converted',
+    data: {
+      schemaFileFormat: schema.type,
+      largestNode: telemetryLargestNode(extendedSchema),
+      deepestNodeChild: telemetryDeepestNodeChild(extendedSchema),
+      totalNumberOfNodes: telemetrySchemaNodeCount(extendedSchema),
+      roughSchemaSize: JSON.stringify(schema).length,
+      roughExtendedSchemaSize: JSON.stringify(extendedSchema).length,
+    },
+  });
 
   return extendedSchema;
 };
@@ -88,20 +101,31 @@ export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNod
 export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended): SchemaNodeExtended | undefined => {
   let tempKey = nodeKey;
   if (tempKey.includes(mapNodeParams.for)) {
-    const forRegex = new RegExp(/\$for\([^)]+\)/);
+    // Testing XXX
+    const layeredArrayItemForRegex = new RegExp(/\$for\([^)]*(?:\/\*){2,}\)/g);
+    tempKey = nodeKey.replaceAll(layeredArrayItemForRegex, '');
+
+    const forRegex = new RegExp(/\$for\([^)]+\)/g);
     // ArrayItems will have an * instead of a key name
     // And that * is stripped out during serialization
-    tempKey = nodeKey.replace(forRegex, nodeKey.indexOf('*') !== -1 ? '*' : '').replaceAll('//', '/');
+    tempKey = tempKey.replaceAll(forRegex, nodeKey.indexOf('*') !== -1 ? '*' : '');
+
+    while (tempKey.indexOf('//') !== -1) {
+      tempKey = tempKey.replaceAll('//', '/');
+    }
   }
 
-  if (schemaNode.key === tempKey) {
+  return searchChildrenNodeForKey(tempKey, schemaNode);
+};
+
+const searchChildrenNodeForKey = (key: string, schemaNode: SchemaNodeExtended): SchemaNodeExtended | undefined => {
+  if (schemaNode.key === key) {
     return schemaNode;
   }
 
   let result: SchemaNodeExtended | undefined = undefined;
   schemaNode.children.forEach((childNode) => {
-    // found this issue in test, children can be undefined? Ask Reid maybe
-    const tempResult = findNodeForKey(tempKey, childNode);
+    const tempResult = searchChildrenNodeForKey(key, childNode);
 
     if (tempResult) {
       result = tempResult;
@@ -166,3 +190,32 @@ export const isSchemaNodeExtended = (node: SchemaNodeExtended | FunctionData): n
 
 export const isObjectType = (nodeType: NormalizedDataType): boolean =>
   nodeType === NormalizedDataType.Complex || nodeType === NormalizedDataType.Object;
+
+export const telemetryLargestNode = (schema: SchemaExtended): number => {
+  return Math.max(...maxProperties(schema.schemaTreeRoot));
+};
+
+const maxProperties = (schemaNode: SchemaNodeExtended): number[] => {
+  return [schemaNode.children.length, ...schemaNode.children.flatMap((childNode) => maxProperties(childNode))];
+};
+
+export const telemetryDeepestNodeChild = (schema: SchemaExtended): number => {
+  return Math.max(...deepestNode(schema.schemaTreeRoot));
+};
+
+const deepestNode = (schemaNode: SchemaNodeExtended): number[] => {
+  return [schemaNode.pathToRoot.length, ...schemaNode.children.flatMap((childNode) => maxProperties(childNode))];
+};
+
+export const telemetrySchemaNodeCount = (schema: SchemaExtended): number => {
+  return nodeCount(schema.schemaTreeRoot);
+};
+
+const nodeCount = (schemaNode: SchemaNodeExtended): number => {
+  let result = 1;
+  schemaNode.children.forEach((childNode) => {
+    result = +nodeCount(childNode);
+  });
+
+  return result;
+};

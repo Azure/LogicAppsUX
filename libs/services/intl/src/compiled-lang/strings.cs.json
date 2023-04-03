@@ -375,6 +375,12 @@
       "value": "Hour"
     }
   ],
+  "0vfdFS": [
+    {
+      "type": 0,
+      "value": "every day"
+    }
+  ],
   "0y5eia": [
     {
       "type": 0,
@@ -695,6 +701,12 @@
       "value": "Start Time"
     }
   ],
+  "2pRsUf": [
+    {
+      "type": 0,
+      "value": "Enter a valid array."
+    }
+  ],
   "2ri1Kf": [
     {
       "type": 0,
@@ -941,6 +953,16 @@
     {
       "type": 0,
       "value": "Povinný parametr. Počet dnů, které se mají přičíst. Může to být i záporná hodnota, při které se dny odečtou."
+    }
+  ],
+  "4D7H4R": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
     }
   ],
   "4Ekn9t": [
@@ -1961,6 +1983,16 @@
       "value": "(UTC+02:00) Helsinky, Kyjev, Riga, Sofie, Tallinn, Vilnius"
     }
   ],
+  "Czt6YV": [
+    {
+      "type": 0,
+      "value": "at "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    }
+  ],
   "D+Ptnq": [
     {
       "type": 0,
@@ -2001,6 +2033,12 @@
     {
       "type": 0,
       "value": "Select a value"
+    }
+  ],
+  "DWd9vy": [
+    {
+      "type": 0,
+      "value": "every week"
     }
   ],
   "DWsh56": [
@@ -2141,6 +2179,20 @@
     {
       "type": 0,
       "value": "Povinné. Index, kde se má podřetězec začít extrahovat"
+    }
+  ],
+  "Ea/fr+": [
+    {
+      "type": 0,
+      "value": "Every "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " days"
     }
   ],
   "EdzoIs": [
@@ -2403,6 +2455,12 @@
     {
       "type": 0,
       "value": "Zadejte autoritu."
+    }
+  ],
+  "GEB1on": [
+    {
+      "type": 0,
+      "value": "This contains a value that is not between 0 and 59"
     }
   ],
   "GIUSQs": [
@@ -2917,6 +2975,12 @@
       "value": "actionCount"
     }
   ],
+  "KZOa5l": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "Khc8lS": [
     {
       "type": 0,
@@ -3151,6 +3215,12 @@
       "value": "Umožňuje zabezpečit výstupy operace a odkazy výstupních vlastností."
     }
   ],
+  "MCzWDc": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "MDbmMw": [
     {
       "type": 0,
@@ -3327,6 +3397,12 @@
     {
       "type": 0,
       "value": "Vrátí binární reprezentaci hodnoty."
+    }
+  ],
+  "O27gKq": [
+    {
+      "type": 0,
+      "value": "Loading Files..."
     }
   ],
   "O36+wl": [
@@ -3541,6 +3617,16 @@
     {
       "type": 0,
       "value": "Povinný parametr. Číslo, které se má přičíst ke sčítanci 1."
+    }
+  ],
+  "PNk3n4": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
     }
   ],
   "PORNMZ": [
@@ -4053,6 +4139,24 @@
       "value": "Add or replace your schemas."
     }
   ],
+  "TZh8nV": [
+    {
+      "type": 0,
+      "value": "on "
+    },
+    {
+      "type": 1,
+      "value": "weekDays"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "frequencyDesc"
+    }
+  ],
   "Tayrub": [
     {
       "type": 0,
@@ -4131,6 +4235,24 @@
       "value": "Vygeneruje pole celých čísel, které začíná určitým číslem."
     }
   ],
+  "U4zovj": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
+    }
+  ],
   "U56j9a": [
     {
       "type": 0,
@@ -4201,6 +4323,20 @@
     {
       "type": 0,
       "value": "' has an non-terminating connection chain"
+    }
+  ],
+  "Umpr3z": [
+    {
+      "type": 0,
+      "value": "Every "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " weeks"
     }
   ],
   "UnrrzF": [
@@ -5249,6 +5385,12 @@
       "value": "."
     }
   ],
+  "dfNjw1": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -5777,6 +5919,12 @@
     {
       "type": 0,
       "value": "Sítě"
+    }
+  ],
+  "i4Om5O": [
+    {
+      "type": 0,
+      "value": "This contains an invalid value"
     }
   ],
   "iBlvhu": [
@@ -6681,6 +6829,12 @@
       "value": "Koncový čas"
     }
   ],
+  "pMms92": [
+    {
+      "type": 0,
+      "value": "Insert Dynamic Content"
+    }
+  ],
   "pOTcUO": [
     {
       "type": 0,
@@ -7245,6 +7399,20 @@
       "value": "Základní"
     }
   ],
+  "tWV2mC": [
+    {
+      "type": 0,
+      "value": "at "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    },
+    {
+      "type": 0,
+      "value": " every hour"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -7313,6 +7481,12 @@
     {
       "type": 1,
       "value": "parent"
+    }
+  ],
+  "uIurld": [
+    {
+      "type": 0,
+      "value": "Save"
     }
   ],
   "uM1i27": [
@@ -7537,6 +7711,12 @@
     {
       "type": 0,
       "value": "Vytvořit parametr"
+    }
+  ],
+  "vxOc/M": [
+    {
+      "type": 0,
+      "value": "This contains a duplicate value"
     }
   ],
   "vz2gZC": [
@@ -7867,6 +8047,20 @@
     {
       "type": 0,
       "value": "Brána připojení"
+    }
+  ],
+  "z/UY4k": [
+    {
+      "type": 0,
+      "value": "Navigate to "
+    },
+    {
+      "type": 1,
+      "value": "folderName"
+    },
+    {
+      "type": 0,
+      "value": " folder"
     }
   ],
   "z3VuE+": [

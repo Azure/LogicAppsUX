@@ -58,7 +58,7 @@ export const useAllOperations = () => {
   });
 };
 
-export const useOperationManifest = (operationInfo: NodeOperation) => {
+export const useOperationManifest = (operationInfo: NodeOperation, enabled = true) => {
   const operationManifestService = OperationManifestService();
   const connectorId = operationInfo?.connectorId?.toLowerCase();
   const operationId = operationInfo?.operationId?.toLowerCase();
@@ -69,7 +69,7 @@ export const useOperationManifest = (operationInfo: NodeOperation) => {
         ? operationManifestService.getOperationManifest(connectorId, operationId)
         : undefined,
     {
-      enabled: !!connectorId && !!operationId,
+      enabled: !!connectorId && !!operationId && enabled,
       placeholderData: undefined,
       cacheTime: 1000 * 60 * 60 * 24,
       refetchOnMount: false,
@@ -82,18 +82,22 @@ export const useOperationManifest = (operationInfo: NodeOperation) => {
 export const useOperationQuery = (nodeId: string) => {
   const operationInfo = useOperationInfo(nodeId);
 
-  const manifestQuery = useOperationManifest(operationInfo);
-
-  const connectorQuery = useConnector(operationInfo?.connectorId);
-
   const operationManifestService = OperationManifestService();
   const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
+
+  const manifestQuery = useOperationManifest(operationInfo, useManifest);
+
+  const connectorQuery = useConnector(operationInfo?.connectorId, !useManifest);
+
   return useManifest ? manifestQuery : connectorQuery;
 };
 
 const useNodeAttribute = (operationInfo: NodeOperation, propertyInManifest: string[], propertyInConnector: string[]): QueryResult => {
-  const { data: manifest, isLoading } = useOperationManifest(operationInfo);
-  const { data: connector } = useConnector(operationInfo?.connectorId);
+  const operationManifestService = OperationManifestService();
+  const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
+
+  const { data: manifest, isLoading } = useOperationManifest(operationInfo, useManifest);
+  const { data: connector } = useConnector(operationInfo?.connectorId, !useManifest);
   return {
     isLoading,
     result: manifest
@@ -121,7 +125,11 @@ export const useConnectorName = (operationInfo: NodeOperation) => {
 };
 
 export const useOperationDescription = (operationInfo: NodeOperation) => {
-  const { data: connectorData } = useConnectorAndSwagger(operationInfo?.connectorId);
+  const operationManifestService = OperationManifestService();
+  const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
+
+  const { data: connectorData } = useConnectorAndSwagger(operationInfo.connectorId, !useManifest);
+
   const { result, isLoading } = useNodeAttribute(operationInfo, ['description'], ['description']);
 
   const { swagger } = connectorData ?? {};
@@ -134,12 +142,14 @@ export const useOperationDescription = (operationInfo: NodeOperation) => {
 };
 
 export const useOperationDocumentation = (operationInfo: NodeOperation) => {
-  const { data: connectorData } = useConnectorAndSwagger(operationInfo.connectorId);
+  const operationManifestService = OperationManifestService();
+  const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
+
+  const { data: connectorData } = useConnectorAndSwagger(operationInfo.connectorId, !useManifest);
   const { result, isLoading } = useNodeAttribute(operationInfo, ['connector', 'properties', 'externalDocs'], ['externalDocs']);
   const { swagger } = connectorData ?? {};
   if (swagger) {
     const swaggerparsed = new SwaggerParser(swagger);
-    console.log(swaggerparsed.getOperationByOperationId(operationInfo.operationId).summary);
     return { isLoading, result: swaggerparsed.getOperationByOperationId(operationInfo.operationId).externalDocs };
   }
   return { result, isLoading };

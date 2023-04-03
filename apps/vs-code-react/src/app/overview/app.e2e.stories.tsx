@@ -1,7 +1,7 @@
 // app.stories.js|jsx|ts|tsx
-import type { CallbackInfo } from '../../run-service/types';
 import type { AppProps } from './app';
 import { App } from './app';
+import type { CallbackInfo } from '@microsoft/designer-client-services-logic-apps';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {

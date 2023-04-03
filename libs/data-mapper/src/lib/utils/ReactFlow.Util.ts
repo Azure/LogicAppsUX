@@ -14,8 +14,8 @@ import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
 import { SchemaType } from '../models/Schema';
 import { getFunctionBrandingForCategory, isFunctionData } from './Function.Utils';
-import { applyCustomLayout, convertDataMapNodesToLayoutTree, convertWholeDataMapToLayoutTree } from './Layout.Utils';
 import type { LayoutNode, RootLayoutNode } from './Layout.Utils';
+import { applyCustomLayout, convertDataMapNodesToLayoutTree, convertWholeDataMapToLayoutTree } from './Layout.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 import { isLeafNode } from './Schema.Utils';
 import { guid } from '@microsoft/utils-logic-apps';
@@ -174,10 +174,12 @@ export const convertSchemaToReactFlowNodes = (
     if (!layoutNode || layoutNode.x === undefined || layoutNode.y === undefined) {
       LogService.error(LogCategory.ReactFlowUtils, 'convertSchemaToReactFlowNodes', {
         message: 'Layout error: LayoutNode not found, or missing x/y',
-        schemaType,
-        layoutData: {
-          layoutNodeX: layoutNode?.x,
-          layoutNodeY: layoutNode?.y,
+        data: {
+          schemaType,
+          layoutData: {
+            layoutNodeX: layoutNode?.x,
+            layoutNodeY: layoutNode?.y,
+          },
         },
       });
 
@@ -220,9 +222,11 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
     if (!layoutNode || layoutNode.x === undefined || layoutNode.y === undefined) {
       LogService.error(LogCategory.ReactFlowUtils, 'convertFunctionsToReactFlowParentAndChildNodes', {
         message: 'Layout error: LayoutNode not found, or missing x/y',
-        layoutData: {
-          layoutNodeX: layoutNode?.x,
-          layoutNodeY: layoutNode?.y,
+        data: {
+          layoutData: {
+            layoutNodeX: layoutNode?.x,
+            layoutNodeY: layoutNode?.y,
+          },
         },
       });
 

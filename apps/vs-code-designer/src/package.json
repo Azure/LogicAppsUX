@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "2.0.13",
+  "version": "2.0.21",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -288,7 +288,7 @@
         {
           "id": "azure",
           "title": "Azure",
-          "icon": "resources/azure.svg"
+          "icon": "assets/azure.svg"
         }
       ]
     },
@@ -584,7 +584,7 @@
         },
         {
           "command": "azureLogicAppsStandard.reviewValidation",
-          "when": "resourceDirname=~/.logs/export && resourceFilename=~/exportValidation.json/",
+          "when": "resourceDirname=~/\\.logs\\/export/ && resourceFilename=~/exportValidation.json/",
           "group": "navigation@1"
         },
         {

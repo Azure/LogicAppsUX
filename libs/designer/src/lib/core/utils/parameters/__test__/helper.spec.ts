@@ -1680,6 +1680,7 @@ describe('core/utils/parameters/helper', () => {
           required: true,
           title: 'From',
           type: dataType,
+          itemSchema: {},
         };
         const inputParameter: InputParameter = {
           editor: undefined,
@@ -1698,9 +1699,7 @@ describe('core/utils/parameters/helper', () => {
         expect(result).toMatchObject({
           editor: dataType,
           editorOptions: undefined,
-          editorViewModel: {
-            schema: undefined,
-          },
+          editorViewModel: { schema: {} },
           schema: inputSchema,
         });
       });

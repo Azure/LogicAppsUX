@@ -1,5 +1,4 @@
 import { clientSupportedOperations } from './constants';
-import { HttpClient } from './services/httpClient';
 import { BaseOAuthService } from './services/oAuth';
 import { resolveConnectionsReferences } from './utilities/workflow';
 import {
@@ -11,6 +10,7 @@ import {
   StandardRunService,
   StandardArtifactService,
   ApiManagementInstanceService,
+  BaseFunctionService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type {
   IApiHubServiceDetails,
@@ -21,7 +21,7 @@ import type {
 } from '@microsoft/designer-client-services-logic-apps';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
-import { ExtensionCommand } from '@microsoft/vscode-extension';
+import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
 import type { WebviewApi } from 'vscode-webview';
 
 export const getDesignerServices = (
@@ -46,19 +46,22 @@ export const getDesignerServices = (
   hostService: IHostService;
   runService: StandardRunService;
   apimService: ApiManagementInstanceService;
+  functionService: BaseFunctionService;
 } => {
   let authToken = '',
     panelId = '',
     workflowDetails: Record<string, any> = {},
-    appSettings = {};
+    appSettings = {},
+    isStateful = false;
 
-  const { subscriptionId, resourceGroup, location } = apiHubServiceDetails;
+  const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubServiceDetails;
 
   if (panelMetadata) {
     authToken = panelMetadata.accessToken ?? '';
     panelId = panelMetadata.panelId;
     workflowDetails = panelMetadata.workflowDetails;
     appSettings = panelMetadata.localSettings;
+    isStateful = panelMetadata.standardApp?.stateful ?? false;
   }
 
   const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
@@ -176,6 +179,7 @@ export const getDesignerServices = (
     httpClient,
     apiHubServiceDetails,
     isDev: false,
+    showStatefulOperations: isStateful,
   });
 
   const oAuthService = new BaseOAuthService({
@@ -189,6 +193,13 @@ export const getDesignerServices = (
     subscriptionId,
     resourceGroup,
     location,
+  });
+
+  const functionService = new BaseFunctionService({
+    baseUrl,
+    apiVersion,
+    httpClient,
+    subscriptionId,
   });
 
   const gatewayService = new BaseGatewayService({
@@ -248,5 +259,6 @@ export const getDesignerServices = (
     hostService,
     runService,
     apimService,
+    functionService,
   };
 };

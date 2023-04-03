@@ -379,6 +379,12 @@
       "value": "Hour"
     }
   ],
+  "0vfdFS": [
+    {
+      "type": 0,
+      "value": "every day"
+    }
+  ],
   "0y5eia": [
     {
       "type": 0,
@@ -665,6 +671,12 @@
       "value": "Start Time"
     }
   ],
+  "2pRsUf": [
+    {
+      "type": 0,
+      "value": "Enter a valid array."
+    }
+  ],
   "2ri1Kf": [
     {
       "type": 0,
@@ -911,6 +923,16 @@
     {
       "type": 0,
       "value": "Vereist. Het aantal dagen dat moet worden opgeteld. Kan negatief zijn om dagen af te trekken."
+    }
+  ],
+  "4D7H4R": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
     }
   ],
   "4Ekn9t": [
@@ -1913,6 +1935,16 @@
       "value": "(UTC+02:00) Helsinki, Kiev, Riga, Sofia, Tallinn, Vilnius"
     }
   ],
+  "Czt6YV": [
+    {
+      "type": 0,
+      "value": "at "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    }
+  ],
   "D+Ptnq": [
     {
       "type": 0,
@@ -1953,6 +1985,12 @@
     {
       "type": 0,
       "value": "Select a value"
+    }
+  ],
+  "DWd9vy": [
+    {
+      "type": 0,
+      "value": "every week"
     }
   ],
   "DWsh56": [
@@ -2093,6 +2131,20 @@
     {
       "type": 0,
       "value": "Vereist. De index van waar de subtekenreeks moet worden geëxtraheerd."
+    }
+  ],
+  "Ea/fr+": [
+    {
+      "type": 0,
+      "value": "Every "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " days"
     }
   ],
   "EdzoIs": [
@@ -2333,6 +2385,12 @@
     {
       "type": 0,
       "value": "Autoriteit invoeren"
+    }
+  ],
+  "GEB1on": [
+    {
+      "type": 0,
+      "value": "This contains a value that is not between 0 and 59"
     }
   ],
   "GIUSQs": [
@@ -2829,6 +2887,12 @@
       "value": "actionCount"
     }
   ],
+  "KZOa5l": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "Khc8lS": [
     {
       "type": 0,
@@ -3059,6 +3123,12 @@
       "value": "Uitvoerwaarden van de bewerking en verwijzingen naar uitvoereigenschappen beveiligen."
     }
   ],
+  "MCzWDc": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "MDbmMw": [
     {
       "type": 0,
@@ -3231,6 +3301,12 @@
     {
       "type": 0,
       "value": "Er wordt een binaire weergave van een waarde geretourneerd"
+    }
+  ],
+  "O27gKq": [
+    {
+      "type": 0,
+      "value": "Loading Files..."
     }
   ],
   "O36+wl": [
@@ -3441,6 +3517,16 @@
     {
       "type": 0,
       "value": "Vereist. Het getal dat moet worden opgeteld bij opteltal 1."
+    }
+  ],
+  "PNk3n4": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
     }
   ],
   "PORNMZ": [
@@ -3935,6 +4021,24 @@
       "value": "Add or replace your schemas."
     }
   ],
+  "TZh8nV": [
+    {
+      "type": 0,
+      "value": "on "
+    },
+    {
+      "type": 1,
+      "value": "weekDays"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "frequencyDesc"
+    }
+  ],
   "Tayrub": [
     {
       "type": 0,
@@ -4013,6 +4117,24 @@
       "value": "Er wordt een matrix van gehele getallen gegenereerd dat begint bij een bepaald getal"
     }
   ],
+  "U4zovj": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
+    }
+  ],
   "U56j9a": [
     {
       "type": 0,
@@ -4083,6 +4205,20 @@
     {
       "type": 0,
       "value": "' has an non-terminating connection chain"
+    }
+  ],
+  "Umpr3z": [
+    {
+      "type": 0,
+      "value": "Every "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " weeks"
     }
   ],
   "UnrrzF": [
@@ -5123,6 +5259,12 @@
       "value": "."
     }
   ],
+  "dfNjw1": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -5629,6 +5771,12 @@
     {
       "type": 0,
       "value": "Networking"
+    }
+  ],
+  "i4Om5O": [
+    {
+      "type": 0,
+      "value": "This contains an invalid value"
     }
   ],
   "iBlvhu": [
@@ -6533,6 +6681,12 @@
       "value": "Eindtijd"
     }
   ],
+  "pMms92": [
+    {
+      "type": 0,
+      "value": "Insert Dynamic Content"
+    }
+  ],
   "pOTcUO": [
     {
       "type": 0,
@@ -7079,6 +7233,20 @@
       "value": "Basis"
     }
   ],
+  "tWV2mC": [
+    {
+      "type": 0,
+      "value": "at "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    },
+    {
+      "type": 0,
+      "value": " every hour"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -7147,6 +7315,12 @@
     {
       "type": 1,
       "value": "parent"
+    }
+  ],
+  "uIurld": [
+    {
+      "type": 0,
+      "value": "Save"
     }
   ],
   "uM1i27": [
@@ -7371,6 +7545,12 @@
     {
       "type": 0,
       "value": "Parameter maken"
+    }
+  ],
+  "vxOc/M": [
+    {
+      "type": 0,
+      "value": "This contains a duplicate value"
     }
   ],
   "vz2gZC": [
@@ -7701,6 +7881,20 @@
     {
       "type": 0,
       "value": "Verbindingsgateway"
+    }
+  ],
+  "z/UY4k": [
+    {
+      "type": 0,
+      "value": "Navigate to "
+    },
+    {
+      "type": 1,
+      "value": "folderName"
+    },
+    {
+      "type": 0,
+      "value": " folder"
     }
   ],
   "z3VuE+": [

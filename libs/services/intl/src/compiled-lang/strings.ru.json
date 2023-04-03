@@ -379,6 +379,12 @@
       "value": "Hour"
     }
   ],
+  "0vfdFS": [
+    {
+      "type": 0,
+      "value": "every day"
+    }
+  ],
   "0y5eia": [
     {
       "type": 0,
@@ -687,6 +693,12 @@
       "value": "Start Time"
     }
   ],
+  "2pRsUf": [
+    {
+      "type": 0,
+      "value": "Enter a valid array."
+    }
+  ],
   "2ri1Kf": [
     {
       "type": 0,
@@ -933,6 +945,16 @@
     {
       "type": 0,
       "value": "Требуется. Число добавляемых дней. Значение может быть отрицательным для вычитания дней."
+    }
+  ],
+  "4D7H4R": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
     }
   ],
   "4Ekn9t": [
@@ -1957,6 +1979,16 @@
       "value": "(UTC+02:00) Хельсинки, Киев, Рига, София, Таллин, Вильнюс"
     }
   ],
+  "Czt6YV": [
+    {
+      "type": 0,
+      "value": "at "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    }
+  ],
   "D+Ptnq": [
     {
       "type": 0,
@@ -1997,6 +2029,12 @@
     {
       "type": 0,
       "value": "Select a value"
+    }
+  ],
+  "DWd9vy": [
+    {
+      "type": 0,
+      "value": "every week"
     }
   ],
   "DWsh56": [
@@ -2137,6 +2175,20 @@
     {
       "type": 0,
       "value": "Обязательно. Индекс места начала извлечения substring."
+    }
+  ],
+  "Ea/fr+": [
+    {
+      "type": 0,
+      "value": "Every "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " days"
     }
   ],
   "EdzoIs": [
@@ -2399,6 +2451,12 @@
     {
       "type": 0,
       "value": "Введите центр"
+    }
+  ],
+  "GEB1on": [
+    {
+      "type": 0,
+      "value": "This contains a value that is not between 0 and 59"
     }
   ],
   "GIUSQs": [
@@ -2917,6 +2975,12 @@
       "value": "actionCount"
     }
   ],
+  "KZOa5l": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "Khc8lS": [
     {
       "type": 0,
@@ -3151,6 +3215,12 @@
       "value": "Защита выходных данных операции и ссылок выходных свойств."
     }
   ],
+  "MCzWDc": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "MDbmMw": [
     {
       "type": 0,
@@ -3323,6 +3393,12 @@
     {
       "type": 0,
       "value": "Возвращает двоичное представление значения"
+    }
+  ],
+  "O27gKq": [
+    {
+      "type": 0,
+      "value": "Loading Files..."
     }
   ],
   "O36+wl": [
@@ -3537,6 +3613,16 @@
     {
       "type": 0,
       "value": "Требуется. Число, которое прибавляется к слагаемому 1."
+    }
+  ],
+  "PNk3n4": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
     }
   ],
   "PORNMZ": [
@@ -4049,6 +4135,24 @@
       "value": "Add or replace your schemas."
     }
   ],
+  "TZh8nV": [
+    {
+      "type": 0,
+      "value": "on "
+    },
+    {
+      "type": 1,
+      "value": "weekDays"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "frequencyDesc"
+    }
+  ],
   "Tayrub": [
     {
       "type": 0,
@@ -4127,6 +4231,24 @@
       "value": "Создает массив целых чисел, начиная с определенного числа"
     }
   ],
+  "U4zovj": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
+    }
+  ],
   "U56j9a": [
     {
       "type": 0,
@@ -4197,6 +4319,20 @@
     {
       "type": 0,
       "value": "' has an non-terminating connection chain"
+    }
+  ],
+  "Umpr3z": [
+    {
+      "type": 0,
+      "value": "Every "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " weeks"
     }
   ],
   "UnrrzF": [
@@ -5245,6 +5381,12 @@
       "value": "."
     }
   ],
+  "dfNjw1": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -5773,6 +5915,12 @@
     {
       "type": 0,
       "value": "Сеть"
+    }
+  ],
+  "i4Om5O": [
+    {
+      "type": 0,
+      "value": "This contains an invalid value"
     }
   ],
   "iBlvhu": [
@@ -6685,6 +6833,12 @@
       "value": "Время окончания"
     }
   ],
+  "pMms92": [
+    {
+      "type": 0,
+      "value": "Insert Dynamic Content"
+    }
+  ],
   "pOTcUO": [
     {
       "type": 0,
@@ -7253,6 +7407,20 @@
       "value": "Базовый"
     }
   ],
+  "tWV2mC": [
+    {
+      "type": 0,
+      "value": "at "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    },
+    {
+      "type": 0,
+      "value": " every hour"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -7321,6 +7489,12 @@
     {
       "type": 1,
       "value": "parent"
+    }
+  ],
+  "uIurld": [
+    {
+      "type": 0,
+      "value": "Save"
     }
   ],
   "uM1i27": [
@@ -7545,6 +7719,12 @@
     {
       "type": 0,
       "value": "Создать параметр"
+    }
+  ],
+  "vxOc/M": [
+    {
+      "type": 0,
+      "value": "This contains a duplicate value"
     }
   ],
   "vz2gZC": [
@@ -7875,6 +8055,20 @@
     {
       "type": 0,
       "value": "Шлюз для подключения"
+    }
+  ],
+  "z/UY4k": [
+    {
+      "type": 0,
+      "value": "Navigate to "
+    },
+    {
+      "type": 1,
+      "value": "folderName"
+    },
+    {
+      "type": 0,
+      "value": " folder"
     }
   ],
   "z3VuE+": [

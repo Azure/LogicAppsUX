@@ -1,15 +1,35 @@
-import constants from '../constants';
-import { StaticResultProperties } from './staticResultProperties';
-import { Icon, Toggle, useTheme } from '@fluentui/react';
+import { StaticResult } from './StaticResult';
+import { deserializePropertyValues, parseStaticResultSchema, serializePropertyValues } from './util';
+import type { IButtonStyles } from '@fluentui/react';
+import { DefaultButton, PrimaryButton, Toggle } from '@fluentui/react';
 import type { Schema } from '@microsoft/parsers-logic-apps';
-import { useMemo, useState } from 'react';
+import isEqual from 'lodash.isequal';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export interface StaticResultProps {
-  title?: string;
+const actionButtonStyles: IButtonStyles = {
+  root: {
+    width: '100px',
+    minWidth: '60px',
+    margin: '0px 20px',
+    fontSize: '16px',
+  },
+};
+
+export enum StaticResultOption {
+  ENABLED = 'Enabled',
+  DISABLED = 'Disabled',
+}
+export type StaticResultChangeHandler = (newState: OpenAPIV2.SchemaObject, staticResultOption: StaticResultOption) => void;
+
+export interface StaticResultContainerProps {
   enabled?: boolean;
   staticResultSchema: OpenAPIV2.SchemaObject;
-  showEnableButton?: boolean;
+  properties: OpenAPIV2.SchemaObject;
+  savePropertiesCallback?: StaticResultChangeHandler;
+  cancelPropertiesCallback?: () => void;
+  // prop only passed to inner StaticResults
+  updateParentProperties?: (input: any) => void;
 }
 
 export type StaticResultRootSchemaType = OpenAPIV2.SchemaObject & {
@@ -21,11 +41,26 @@ export type StaticResultRootSchemaType = OpenAPIV2.SchemaObject & {
   };
 };
 
-export const StaticResult = ({ title, enabled, staticResultSchema, showEnableButton = true }: StaticResultProps): JSX.Element => {
+export const StaticResultContainer = ({
+  enabled = false,
+  staticResultSchema,
+  properties,
+  updateParentProperties,
+  cancelPropertiesCallback,
+  savePropertiesCallback,
+}: StaticResultContainerProps): JSX.Element => {
   const intl = useIntl();
-  const { isInverted } = useTheme();
-  const [showStaticResults, setShowStaticResults] = useState<boolean>(enabled ?? false);
-  const [expanded, setExpanded] = useState(true);
+  const initialPropertyValues = useMemo(() => deserializePropertyValues(properties, staticResultSchema), [properties, staticResultSchema]);
+
+  const [showStaticResults, setShowStaticResults] = useState<boolean>(enabled);
+  const [propertyValues, setPropertyValues] = useState<OpenAPIV2.SchemaObject>(initialPropertyValues);
+
+  useEffect(() => {
+    // we want to update parentProps whenever our inner properties change
+    if (!isEqual(propertyValues, properties)) {
+      updateParentProperties?.(propertyValues);
+    }
+  }, [properties, propertyValues, updateParentProperties]);
 
   const toggleLabelOn = intl.formatMessage({
     defaultMessage: 'Disable Static Result',
@@ -37,69 +72,84 @@ export const StaticResult = ({ title, enabled, staticResultSchema, showEnableBut
     description: 'Label for toggle to enable static result',
   });
 
-  const expandLabel = intl.formatMessage({
-    defaultMessage: 'Expand Static Result',
-    description: 'An accessible label for expand toggle icon',
-  });
-
-  const collapseLabel = intl.formatMessage({
-    defaultMessage: 'Collapse Static Result',
-    description: 'An accessible label for collapse toggle icon',
-  });
-
   const testingTitle = intl.formatMessage({
     defaultMessage: 'Testing',
     description: 'Title for testing section',
   });
 
+  const saveButtonLabel = intl.formatMessage({
+    defaultMessage: 'Save',
+    description: 'Label for save button',
+  });
+
+  const cancelButtonLabel = intl.formatMessage({
+    defaultMessage: 'Cancel',
+    description: 'Label for cancel button',
+  });
+
+  const saveStaticResults = () => {
+    // console.log(JSON.stringify(serializePropertyValues(propertyValues, staticResultSchema), null, 2));
+    savePropertiesCallback?.(
+      serializePropertyValues(propertyValues, staticResultSchema),
+      showStaticResults ? StaticResultOption.ENABLED : StaticResultOption.DISABLED
+    );
+  };
+
+  const cancelStaticResults = () => {
+    setPropertyValues(initialPropertyValues);
+    cancelPropertiesCallback?.();
+  };
+
   const getLabel = () => {
     return showStaticResults ? toggleLabelOff : toggleLabelOn;
   };
 
-  const { properties, additionalProperties, required } = useMemo(() => {
+  const isLabelDisabled = (): boolean => {
+    return JSON.stringify(propertyValues) === JSON.stringify(initialPropertyValues) && showStaticResults === enabled;
+  };
+
+  const {
+    properties: propertiesSchema,
+    additionalProperties: additionalPropertiesSchema,
+    required,
+  } = useMemo(() => {
     return parseStaticResultSchema(staticResultSchema);
   }, [staticResultSchema]);
 
   return (
     <div className="msla-panel-testing-container">
-      {showEnableButton ? (
-        <Toggle
-          label={getLabel()}
-          onChange={() => {
-            setShowStaticResults(!showStaticResults);
-          }}
+      <Toggle
+        checked={showStaticResults}
+        label={getLabel()}
+        onChange={() => {
+          setShowStaticResults(!showStaticResults);
+        }}
+      />
+      {showStaticResults ? (
+        <StaticResult
+          title={testingTitle}
+          required={required}
+          propertiesSchema={propertiesSchema}
+          additionalPropertiesSchema={additionalPropertiesSchema}
+          propertyValues={propertyValues}
+          setPropertyValues={setPropertyValues}
         />
       ) : null}
-      {showStaticResults ? (
-        <div className="msla-static-result-container">
-          <button className="msla-static-result-container-header" onClick={() => setExpanded(!expanded)}>
-            <Icon
-              className="msla-static-result-container-header-icon"
-              ariaLabel={expanded ? `${expandLabel}` : `${collapseLabel}`}
-              iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
-              styles={{ root: { fontSize: 14, color: isInverted ? constants.STANDARD_TEXT_COLOR : constants.CHEVRON_ROOT_COLOR_LIGHT } }}
-            />
-            <div className="msla-static-result-container-header-text">{title ?? testingTitle}</div>
-          </button>
-          {expanded ? (
-            <StaticResultProperties
-              propertiesSchema={properties as StaticResultRootSchemaType}
-              required={required}
-              additionalProperties={!!additionalProperties}
-            />
-          ) : null}
-        </div>
-      ) : null}
+      <div className="msla-static-result-actions">
+        <PrimaryButton
+          className={'msla-static-result-action-button'}
+          text={saveButtonLabel}
+          onClick={saveStaticResults}
+          styles={actionButtonStyles}
+          disabled={isLabelDisabled()}
+        />
+        <DefaultButton
+          className={'msla-static-result-action-button'}
+          text={cancelButtonLabel}
+          onClick={cancelStaticResults}
+          styles={actionButtonStyles}
+        />
+      </div>
     </div>
   );
-};
-
-const parseStaticResultSchema = (staticResultSchema: OpenAPIV2.SchemaObject) => {
-  const { additionalProperties, properties, required, type } = staticResultSchema;
-  return {
-    additionalProperties,
-    properties,
-    required,
-    type,
-  };
 };

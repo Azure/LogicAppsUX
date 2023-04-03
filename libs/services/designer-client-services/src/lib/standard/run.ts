@@ -5,7 +5,7 @@ import type { CallbackInfo } from '../workflow';
 import type { Runs, Run, ContentLink, BoundParameters } from '@microsoft/designer-ui';
 import { isCallbackInfoWithRelativePath, getCallbackUrl } from '@microsoft/designer-ui';
 import type { ArmResources } from '@microsoft/utils-logic-apps';
-import { ArgumentException, HTTP_METHODS, UnsupportedException } from '@microsoft/utils-logic-apps';
+import { ArgumentException, HTTP_METHODS, UnsupportedException, isString } from '@microsoft/utils-logic-apps';
 
 export interface RunServiceOptions {
   apiVersion: string;
@@ -61,25 +61,32 @@ export class StandardRunService implements IRunService {
   async getMoreRuns(continuationToken: string): Promise<Runs> {
     const headers = this.getAccessTokenHeaders();
     const { httpClient } = this.options;
-    const response = await httpClient.get<any>({
-      uri: continuationToken,
-      headers: headers as Record<string, any>,
-    });
-    if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
-    }
 
-    const { nextLink, value: runs }: ArmResources<Run> = await response.json();
-    return { nextLink, runs };
+    try {
+      const response = await httpClient.get<ArmResources<Run>>({
+        uri: continuationToken,
+        headers: headers as Record<string, any>,
+      });
+
+      const { nextLink, value: runs }: ArmResources<Run> = response;
+      return { nextLink, runs };
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
   }
 
-  async getRun(runId: string): Promise<LogicAppsV2.RunInstanceDefinition> {
+  /**
+   * Gets run details.
+   * @param {string} runId - Run id.
+   * @returns {Promise<Run>} Workflow runs.
+   */
+  async getRun(runId: string): Promise<Run> {
     const { apiVersion, baseUrl, httpClient, workflowName } = this.options;
 
     const uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
 
     try {
-      const response = await httpClient.get<any>({
+      const response = await httpClient.get<Run>({
         uri,
       });
       return response;
@@ -88,25 +95,32 @@ export class StandardRunService implements IRunService {
     }
   }
 
+  /**
+   * Gets workflow run history
+   * @returns {Promise<Runs>} Workflow runs.
+   */
   async getRuns(): Promise<Runs> {
     const { apiVersion, baseUrl, workflowName, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 
     const uri = `${baseUrl}/workflows/${workflowName}/runs?api-version=${apiVersion}`;
-    const response = await httpClient.get<any>({
-      uri,
-      headers: headers as Record<string, any>,
-    });
+    try {
+      const response = await httpClient.get<ArmResources<Run>>({
+        uri,
+        headers: headers as Record<string, any>,
+      });
 
-    if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+      const { nextLink, value: runs }: ArmResources<Run> = response;
+      return { nextLink, runs };
+    } catch (e: any) {
+      throw new Error(e.message);
     }
-
-    const test: ArmResources<Run> = await response.json();
-    const { nextLink, value: runs } = test;
-    return { nextLink, runs };
   }
 
+  /**
+   * Triggers a workflow run
+   * @param {CallbackInfo} callbackInfo - Information to call Api to trigger workflow.
+   */
   async runTrigger(callbackInfo: CallbackInfo): Promise<void> {
     const { httpClient } = this.options;
     const method = isCallbackInfoWithRelativePath(callbackInfo) ? callbackInfo.method : HTTP_METHODS.POST;
@@ -115,10 +129,10 @@ export class StandardRunService implements IRunService {
       throw new Error();
     }
 
-    const response = await this.getHttpRequestByMethod(httpClient, method, { uri, queryParameters: { mode: 'no-cors' } });
-
-    if (!response.ok && response.status !== 0) {
-      throw new Error(`${response.status} ${response.statusText}`);
+    try {
+      await this.getHttpRequestByMethod(httpClient, method, { uri });
+    } catch (e: any) {
+      throw new Error(`${e.status} ${e?.data?.error?.message}`);
     }
   }
 
@@ -136,7 +150,7 @@ export class StandardRunService implements IRunService {
     if (this._isDev) {
       inputs = inputsResponse[nodeId] ?? {};
       outputs = outputsResponse[nodeId] ?? {};
-      return Promise.resolve({ inputs: this.parseActionLink(inputs), outputs: this.parseActionLink(outputs) });
+      return Promise.resolve({ inputs: this.parseActionLink(inputs, true), outputs: this.parseActionLink(outputs, false) });
     }
 
     if (outputsLink && outputsLink.uri) {
@@ -145,21 +159,24 @@ export class StandardRunService implements IRunService {
     if (inputsLink && inputsLink.uri) {
       inputs = await this.getContent(inputsLink);
     }
-    return { inputs: this.parseActionLink(inputs), outputs: this.parseActionLink(outputs) };
+    return { inputs: this.parseActionLink(inputs, true), outputs: this.parseActionLink(outputs, false) };
   }
 
   /**
    * Parse inputs and outputs into dictionary.
-   * @param {Record<string, any>} inputs - Workflow file path.
+   * @param {Record<string, any>} response - Api call raw response.
+   * @param {boolean} isInput - Boolean to determine if it is an input/output response.
    * @returns {BoundParameters} List of parametes.
    */
-  parseActionLink(response: Record<string, any>): BoundParameters {
+  parseActionLink(response: Record<string, any>, isInput: boolean): BoundParameters {
     if (!response) {
       return response;
     }
 
-    return Object.keys(response).reduce((prev, current) => {
-      return { ...prev, [current]: { displayName: current, value: response[current] } };
+    const dictionaryResponse = isString(response) ? { [isInput ? 'Inputs' : 'Outputs']: response } : response;
+
+    return Object.keys(dictionaryResponse).reduce((prev, current) => {
+      return { ...prev, [current]: { displayName: current, value: dictionaryResponse[current] } };
     }, {});
   }
 

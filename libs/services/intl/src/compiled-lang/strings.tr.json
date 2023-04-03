@@ -363,6 +363,12 @@
       "value": "Hour"
     }
   ],
+  "0vfdFS": [
+    {
+      "type": 0,
+      "value": "every day"
+    }
+  ],
   "0y5eia": [
     {
       "type": 0,
@@ -649,6 +655,12 @@
       "value": "Start Time"
     }
   ],
+  "2pRsUf": [
+    {
+      "type": 0,
+      "value": "Enter a valid array."
+    }
+  ],
   "2ri1Kf": [
     {
       "type": 0,
@@ -895,6 +907,16 @@
     {
       "type": 0,
       "value": "Gerekli. Eklenecek gün sayısı. Gün sayısının çıkarılması için negatif olabilir."
+    }
+  ],
+  "4D7H4R": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
     }
   ],
   "4Ekn9t": [
@@ -1865,6 +1887,16 @@
       "value": "(UTC+02:00) Helsinki, Kiev, Riga, Sofya, Tallinn, Vilnius"
     }
   ],
+  "Czt6YV": [
+    {
+      "type": 0,
+      "value": "at "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    }
+  ],
   "D+Ptnq": [
     {
       "type": 0,
@@ -1905,6 +1937,12 @@
     {
       "type": 0,
       "value": "Select a value"
+    }
+  ],
+  "DWd9vy": [
+    {
+      "type": 0,
+      "value": "every week"
     }
   ],
   "DWsh56": [
@@ -2045,6 +2083,20 @@
     {
       "type": 0,
       "value": "Gerekli. Alt dizeyi ayıklama işleminin başlatılacağı yeri belirten dizin."
+    }
+  ],
+  "Ea/fr+": [
+    {
+      "type": 0,
+      "value": "Every "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " days"
     }
   ],
   "EdzoIs": [
@@ -2273,6 +2325,12 @@
     {
       "type": 0,
       "value": "Yetki girin"
+    }
+  ],
+  "GEB1on": [
+    {
+      "type": 0,
+      "value": "This contains a value that is not between 0 and 59"
     }
   ],
   "GIUSQs": [
@@ -2761,6 +2819,12 @@
       "value": "actionCount"
     }
   ],
+  "KZOa5l": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "Khc8lS": [
     {
       "type": 0,
@@ -2971,6 +3035,12 @@
       "value": "İşlemin çıkışlarını ve çıkış özelliği başvurularını güvenli hale getirin."
     }
   ],
+  "MCzWDc": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "MDbmMw": [
     {
       "type": 0,
@@ -3143,6 +3213,12 @@
     {
       "type": 0,
       "value": "Bir değerin ikili gösterimini döndürür"
+    }
+  ],
+  "O27gKq": [
+    {
+      "type": 0,
+      "value": "Loading Files..."
     }
   ],
   "O36+wl": [
@@ -3341,6 +3417,16 @@
     {
       "type": 0,
       "value": "Gerekli. Toplanan 1'e eklenecek sayı."
+    }
+  ],
+  "PNk3n4": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
     }
   ],
   "PORNMZ": [
@@ -3831,6 +3917,24 @@
       "value": "Add or replace your schemas."
     }
   ],
+  "TZh8nV": [
+    {
+      "type": 0,
+      "value": "on "
+    },
+    {
+      "type": 1,
+      "value": "weekDays"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "frequencyDesc"
+    }
+  ],
   "Tayrub": [
     {
       "type": 0,
@@ -3909,6 +4013,24 @@
       "value": "Belirli bir sayıdan başlayan bir tamsayı dizisi üretir"
     }
   ],
+  "U4zovj": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
+    }
+  ],
   "U56j9a": [
     {
       "type": 0,
@@ -3979,6 +4101,20 @@
     {
       "type": 0,
       "value": "' has an non-terminating connection chain"
+    }
+  ],
+  "Umpr3z": [
+    {
+      "type": 0,
+      "value": "Every "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " weeks"
     }
   ],
   "UnrrzF": [
@@ -5007,6 +5143,12 @@
       "value": " ile bağlantı kuruldu."
     }
   ],
+  "dfNjw1": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -5501,6 +5643,12 @@
     {
       "type": 0,
       "value": "Ağ"
+    }
+  ],
+  "i4Om5O": [
+    {
+      "type": 0,
+      "value": "This contains an invalid value"
     }
   ],
   "iBlvhu": [
@@ -6385,6 +6533,12 @@
       "value": "Bitiş zamanı"
     }
   ],
+  "pMms92": [
+    {
+      "type": 0,
+      "value": "Insert Dynamic Content"
+    }
+  ],
   "pOTcUO": [
     {
       "type": 0,
@@ -6915,6 +7069,20 @@
       "value": "Temel"
     }
   ],
+  "tWV2mC": [
+    {
+      "type": 0,
+      "value": "at "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    },
+    {
+      "type": 0,
+      "value": " every hour"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -6983,6 +7151,12 @@
     {
       "type": 1,
       "value": "parent"
+    }
+  ],
+  "uIurld": [
+    {
+      "type": 0,
+      "value": "Save"
     }
   ],
   "uM1i27": [
@@ -7203,6 +7377,12 @@
     {
       "type": 0,
       "value": "Parametre oluştur"
+    }
+  ],
+  "vxOc/M": [
+    {
+      "type": 0,
+      "value": "This contains a duplicate value"
     }
   ],
   "vz2gZC": [
@@ -7533,6 +7713,20 @@
     {
       "type": 0,
       "value": "Bağlantı ağ geçidi"
+    }
+  ],
+  "z/UY4k": [
+    {
+      "type": 0,
+      "value": "Navigate to "
+    },
+    {
+      "type": 1,
+      "value": "folderName"
+    },
+    {
+      "type": 0,
+      "value": " folder"
     }
   ],
   "z3VuE+": [
