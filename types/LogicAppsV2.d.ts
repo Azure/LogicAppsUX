@@ -995,6 +995,7 @@ declare namespace LogicAppsV2 {
     inputsLink: {
       uri?: string;
       secureData?: Record<string, any>;
+      metadata?: Record<string, any>;
       contentSize: number;
     };
     outputsLink: {

@@ -144,6 +144,14 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     statusRun,
   ]);
 
+  const loopsPager = useMemo(() => {
+    const max = metadata?.runData?.inputsLink?.metadata?.foreachItemsCount ?? 5;
+    const type = node?.type.toLowerCase();
+    return node && type === constants.NODE.TYPE.FOREACH && isMonitoringView && max ? (
+      <Pager current={1} max={max} maxLength={max.toString().length + 1} min={1} readonlyPagerInput={false} />
+    ) : null;
+  }, [metadata?.runData?.inputsLink, isMonitoringView, node]);
+
   if (!node) {
     return null;
   }
@@ -192,21 +200,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   };
 
   const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
-
-  const loopsPager =
-    normalizedType === constants.NODE.TYPE.FOREACH ? (
-      <Pager
-        current={1}
-        max={3}
-        maxLength={4}
-        min={1}
-        readonlyPagerInput={true}
-        failedIterationProps={{
-          max: 6,
-          min: 3,
-        }}
-      />
-    ) : null;
 
   const implementedGraphTypes = [
     constants.NODE.TYPE.IF,
