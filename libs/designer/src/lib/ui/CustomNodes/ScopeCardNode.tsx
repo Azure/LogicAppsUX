@@ -19,10 +19,11 @@ import {
 } from '../../core/state/workflow/workflowSelectors';
 import { toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
+import { LoopsPager } from '../common/LoopsPager';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
 import type { MenuItemOption } from '@microsoft/designer-ui';
-import { DeleteNodeModal, MenuItemType, ScopeCard, Pager } from '@microsoft/designer-ui';
+import { DeleteNodeModal, MenuItemType, ScopeCard } from '@microsoft/designer-ui';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
@@ -144,14 +145,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     statusRun,
   ]);
 
-  const loopsPager = useMemo(() => {
-    const max = metadata?.runData?.inputsLink?.metadata?.foreachItemsCount ?? 5;
-    const type = node?.type.toLowerCase();
-    return node && type === constants.NODE.TYPE.FOREACH && isMonitoringView && max ? (
-      <Pager current={1} max={max} maxLength={max.toString().length + 1} min={1} readonlyPagerInput={false} />
-    ) : null;
-  }, [metadata?.runData?.inputsLink, isMonitoringView, node]);
-
   if (!node) {
     return null;
   }
@@ -236,7 +229,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
           />
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
-        {loopsPager}
+        <LoopsPager normalizedType={normalizedType} metadata={metadata} />
         {graphCollapsed && !isFooter ? <p className="no-actions-text">{collapsedText}</p> : null}
         {showEmptyGraphComponents ? (
           !readOnly ? (
