@@ -89,7 +89,7 @@ export const flattenSchemaIntoSortArray = (schemaNode: SchemaNodeExtended): stri
   return flattenSchemaNode(schemaNode).map((node) => node.key);
 };
 
-const flattenSchemaNode = (schemaNode: SchemaNodeExtended): SchemaNodeExtended[] => {
+export const flattenSchemaNode = (schemaNode: SchemaNodeExtended): SchemaNodeExtended[] => {
   const result: SchemaNodeExtended[] = [schemaNode];
   const childArray = schemaNode.children.flatMap((childNode) => flattenSchemaNode(childNode));
 

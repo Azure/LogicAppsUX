@@ -357,22 +357,17 @@ export const addParentConnectionForRepeatingElementsNested = (
   return false;
 };
 
-export const addNodeToCanvasIfDoesNotExist = (
-  node: SchemaNodeExtended,
-  currentCanvasNodes: SchemaNodeExtended[],
-  canvasNodesToAdd: SchemaNodeExtended[]
-) => {
-  const existingNode = currentCanvasNodes.find((currentNode) => currentNode.key === node.key);
+export const addNodeToCanvasIfDoesNotExist = (newNode: SchemaNodeExtended, currentCanvasNodes: SchemaNodeExtended[]) => {
+  const existingNode = currentCanvasNodes.find((currentNode) => currentNode.key === newNode.key);
   if (existingNode === undefined) {
-    canvasNodesToAdd.push(node);
+    currentCanvasNodes.push(newNode);
   }
 };
 
 export const addAncestorNodesToCanvas = (
   payloadNode: SchemaNodeExtended,
   currentSourceSchemaNodes: SchemaNodeExtended[],
-  flattenedSourceSchema: SchemaNodeDictionary,
-  nodes: SchemaNodeExtended[]
+  flattenedSourceSchema: SchemaNodeDictionary
 ) => {
   const grandparentNodesOnCanvas = currentSourceSchemaNodes.filter(
     (node) => payloadNode?.key.includes(node.key) && payloadNode.parentKey !== node.key && payloadNode.key !== node.key
@@ -383,7 +378,7 @@ export const addAncestorNodesToCanvas = (
     const highestAncestor = grandparentNodesOnCanvas[0];
     payloadNode.pathToRoot.forEach((ancestorNode) => {
       if (ancestorNode.key.length > highestAncestor.key.length && ancestorNode.key !== payloadNode.key) {
-        addNodeToCanvasIfDoesNotExist(flattenedSourceSchema[addSourceReactFlowPrefix(ancestorNode.key)], currentSourceSchemaNodes, nodes);
+        addNodeToCanvasIfDoesNotExist(flattenedSourceSchema[addSourceReactFlowPrefix(ancestorNode.key)], currentSourceSchemaNodes);
       }
     });
   } else {
@@ -392,7 +387,7 @@ export const addAncestorNodesToCanvas = (
     const parentNodeToAdd =
       firstSourceNodeWithRepeatingPathItem && flattenedSourceSchema[addSourceReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key)];
     if (parentNodeToAdd) {
-      addNodeToCanvasIfDoesNotExist(parentNodeToAdd, currentSourceSchemaNodes, nodes);
+      addNodeToCanvasIfDoesNotExist(parentNodeToAdd, currentSourceSchemaNodes);
     }
   }
 };
