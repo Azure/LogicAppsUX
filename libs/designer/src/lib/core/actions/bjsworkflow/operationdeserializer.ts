@@ -23,6 +23,7 @@ import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '.
 import { getInputParametersFromManifest, getOutputParametersFromManifest, updateCallbackUrlInInputs } from './initialize';
 import { getOperationSettings } from './settings';
 import {
+  ConnectionService,
   LogEntryLevel,
   LoggerService,
   OperationManifestService,
@@ -124,10 +125,11 @@ const initializeConnectorsForReferences = async (references: ConnectionReference
 
 export const initializeOperationDetailsForManifest = async (
   nodeId: string,
-  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
+  _operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
   isTrigger: boolean,
   dispatch: Dispatch
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
+  const operation = { ..._operation };
   try {
     const staticResultService = StaticResultService();
     const operationInfo = await getOperationInfo(nodeId, operation, isTrigger);
@@ -147,6 +149,8 @@ export const initializeOperationDetailsForManifest = async (
         }
       });
 
+      await addOperationIdIfNeeded(operation);
+
       const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, operation);
 
       if (isTrigger) {
@@ -164,6 +168,7 @@ export const initializeOperationDetailsForManifest = async (
 
       const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
 
+      console.log('### nodeInputs', nodeInputs);
       return [
         {
           id: nodeId,
@@ -407,4 +412,49 @@ export const updateDynamicDataInNodes = async (
       operation
     );
   }
+};
+
+const addOperationIdIfNeeded = async (operation: any) => {
+  const { inputs, metadata } = operation;
+  if (inputs?.operationId) return;
+
+  const { apiDefinitionUrl, swaggerSource } = metadata ?? {};
+  if (!apiDefinitionUrl || swaggerSource !== 'custom') return;
+
+  const { uri, method } = inputs ?? {};
+  if (!uri || !method) return;
+
+  const connectionService = ConnectionService();
+  const swaggerOperation = await connectionService.getOperationFromPathAndMethod(apiDefinitionUrl, getPathFromFullpath(uri), method);
+  if (!swaggerOperation) return;
+  const { operationId, path: operationUri } = swaggerOperation;
+
+  // Remove the paramter keys and values from the source operation uri and serialized uri from the workflow
+  const parameterKeys = getVariablesFromUri(operationUri);
+  const fixedUri = uri.replaceAll(`@{encodeURIComponent('`, '{').replaceAll(`')}`, '}');
+  const parameterValues = getVariablesFromUri(fixedUri);
+
+  const pathParams = parameterKeys.reduce((acc: any, key: string, index: number) => {
+    acc[key] = parameterValues[index];
+    return acc;
+  }, {});
+
+  operation.inputs = {
+    ...operation.inputs,
+    operationId,
+    parameters: {
+      ...operation.inputs.parameters,
+      pathTemplate: {
+        ...operation.inputs.pathTemplate,
+        parameters: pathParams,
+      },
+    },
+  };
+};
+
+const getPathFromFullpath = (fullpath: string): string => fullpath.replace('http://localhost:54335', '');
+
+const getVariablesFromUri = (uri: string): string[] => {
+  const curlyBraceRegex = /[{}]/g;
+  return uri.split(curlyBraceRegex).filter((_: any, index: number) => index % 2 === 1);
 };

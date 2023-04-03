@@ -17,7 +17,7 @@ import {
 import { buildOperationDetailsFromControls } from '../../utils/swagger/inputsbuilder';
 import type { Settings } from './settings';
 import type { NodeStaticResults } from './staticresults';
-import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import { ConnectionService, LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
@@ -197,7 +197,6 @@ export const serializeOperation = async (
     }
   }
 
-  // TODO: Riley - add app service metadata
   const actionMetadata = rootState.operations.actionMetadata[operationId];
   if (actionMetadata) {
     serializedOperation = {
@@ -206,8 +205,12 @@ export const serializeOperation = async (
     };
   }
 
+  // HTTP + SWAGGER
+  if ((serializedOperation as any)?.metadata?.swaggerSource === 'custom') {
+    serializedOperation = await parseSwaggerPathParameters(serializedOperation);
+  }
+
   // TODO - We might have to just serialize bare minimum data for partially loaded node.
-  // TODO - Serialize metadata for each operation.
   return serializedOperation;
 };
 
@@ -898,4 +901,36 @@ const getRunAfter = (operation: LogicAppsV2.ActionDefinition, idReplacements: Re
       [idReplacements[key] ?? key]: value,
     };
   }, {});
+};
+
+const parseSwaggerPathParameters = async (_operation: any): Promise<any> => {
+  const operation = clone(_operation);
+  const { apiDefinitionUrl, swaggerSource } = operation?.metadata ?? {};
+  if (!apiDefinitionUrl || swaggerSource !== 'custom') return;
+  const opId = operation.inputs?.operationId;
+  if (!opId) return;
+  const connectionService = ConnectionService();
+  const appServiceOperation = await connectionService.getOperationFromId(apiDefinitionUrl, opId);
+  if (!appServiceOperation) return;
+  const { method, path: operationUri } = appServiceOperation;
+  const pathParams = operation.inputs?.parameters?.pathTemplate?.parameters ?? {};
+  Object.keys(pathParams).forEach((key) => {
+    if (pathParams[key].toString().startsWith(`@{encodeURIComponent('`)) return;
+    pathParams[key] = `@{encodeURIComponent('${pathParams[key]}')}`;
+  });
+
+  const pathWithParams = Object.keys(pathParams).reduce((acc: string, key: string) => {
+    return acc.replace(`{${key}}`, pathParams[key]);
+  }, operationUri);
+
+  const template = `http://localhost:54335${pathWithParams}`;
+  operation.inputs = {
+    ...operation.inputs,
+    uri: template,
+    method,
+  };
+  if (operation?.inputs?.operationId) delete operation.inputs.operationId;
+  if (operation?.inputs?.parameters?.pathTemplate) delete operation.inputs.parameters.pathTemplate;
+
+  return operation;
 };

@@ -284,12 +284,11 @@ const getDesignerServices = (
         if (!configuration?.connection?.apiId) {
           throw new Error('Missing api information to make dynamic call');
         }
-
         return apiManagementService.getOperationSchema(configuration.connection.apiId, parameters.operationId, isInput);
       },
       getSwaggerOperationSchema: (args: any) => {
-        const { nodeInputs, isInput } = args;
-        const swaggerUrl = getParameterValueByName(nodeInputs, 'swaggerEndpoint');
+        const { nodeInputs, nodeMetadata, isInput } = args;
+        const swaggerUrl = nodeMetadata?.['apiDefinitionUrl'];
         const operationId = getParameterValueByName(nodeInputs, 'operationId');
         return connectionService.getOperationSchema(swaggerUrl, operationId, isInput);
       },
@@ -301,9 +300,9 @@ const getDesignerServices = (
         return artifactService.getMapArtifacts(mapType, mapSource);
       },
       getSwaggerOperations: (args: any) => {
-        const { nodeInputs } = args;
-        const swaggerUrl = getParameterValueByName(nodeInputs, 'swaggerEndpoint');
-        return connectionService.getOperations(swaggerUrl);
+        const { nodeMetadata } = args;
+        const swaggerUrl = nodeMetadata?.['apiDefinitionUrl'];
+        return connectionService.getOperationsList(swaggerUrl);
       },
       getSchemaArtifacts: (args: any) => artifactService.getSchemaArtifacts(args.parameters.schemaSource),
       getApimOperations: (args: any) => {

@@ -206,14 +206,13 @@ export const httpWithSwaggerManifest = {
     inputs: {
       type: 'object',
       properties: {
-        swaggerEndpoint: {
+        uri: {
           type: 'string',
-          title: 'Swagger Endpoint url',
-          description: 'Example: https://myapi.azurewebsites.net/swagger/docs/v1',
           'x-ms-visibility': 'hideInUI',
-          'x-ms-serialization': {
-            location: ['metadata', 'apiDefinitionUrl'],
-          },
+        },
+        method: {
+          type: 'string',
+          'x-ms-visibility': 'hideInUI',
         },
         operationId: {
           type: 'string',
@@ -227,6 +226,7 @@ export const httpWithSwaggerManifest = {
           },
         },
         parameters: {
+          type: 'object',
           title: 'Swagger Parameters',
           description: 'Enter all swagger parameters',
           'x-ms-dynamic-properties': {
@@ -246,9 +246,8 @@ export const httpWithSwaggerManifest = {
           },
         },
       },
-      required: ['swaggerEndpoint', 'operationId'],
+      required: ['operationId'],
     },
-    inputsLocation: ['inputs'],
     isInputsOptional: false,
 
     outputs: {
@@ -260,14 +259,11 @@ export const httpWithSwaggerManifest = {
           'x-ms-dynamic-properties': {
             dynamicState: {
               extension: {
-                operationId: 'getSwaggerOperation',
+                operationId: 'getSwaggerOperationSchema',
               },
             },
             parameters: {
-              uri: {
-                parameterReference: 'swaggerEndpoint',
-                required: true,
-              },
+              type: 'object',
               operationId: {
                 parameterReference: 'operationId',
                 required: true,

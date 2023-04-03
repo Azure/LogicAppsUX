@@ -9,6 +9,7 @@ import type {
 } from '../connection';
 import type { ListDynamicValue } from '../connector';
 import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
+import type { Operations } from '@microsoft/parsers-logic-apps';
 import { ResponseCodes, SwaggerParser } from '@microsoft/parsers-logic-apps';
 import type { Connection, Connector } from '@microsoft/utils-logic-apps';
 import {
@@ -94,17 +95,34 @@ export abstract class BaseConnectionService implements IConnectionService {
     return httpClient.get<OpenAPIV2.Document>({ uri, noAuth: true });
   }
 
-  public async getOperations(uri: string): Promise<ListDynamicValue[]> {
+  async getOperations(uri: string): Promise<Operations> {
     const response = await this.getSwaggerFromUri(uri);
     const swaggerDoc = await SwaggerParser.parse(response);
     const swagger = new SwaggerParser(swaggerDoc);
     const operations = swagger.getOperations();
+    return operations;
+  }
 
+  public async getOperationsList(uri: string): Promise<ListDynamicValue[]> {
+    const operations = await this.getOperations(uri);
     return unmap(operations).map((operation: any) => ({
       value: operation.operationId,
       displayName: operation.summary ?? operation.operationId,
       description: operation.description,
     }));
+  }
+
+  public async getOperationFromPathAndMethod(uri: string, path: string, method: string): Promise<any> {
+    const operations = await this.getOperations(uri);
+    const operation = unmap(operations).find(
+      (operation: any) => cleanPathValue(operation.path) === cleanPathValue(path) && operation.method === method
+    );
+    return operation;
+  }
+
+  public async getOperationFromId(uri: string, operationId: string): Promise<any> {
+    const operations = await this.getOperations(uri);
+    return unmap(operations).find((operation: any) => operation.operationId === operationId);
   }
 
   public async getOperationSchema(uri: string, operationId: string, isInput: boolean): Promise<any> {
@@ -514,3 +532,7 @@ export abstract class BaseConnectionService implements IConnectionService {
 type ConnectionsResponse = {
   value: Connection[];
 };
+
+function cleanPathValue(value: string): string {
+  return value.replace(/{.*?}/g, '').replace('@', '').toLowerCase();
+}
