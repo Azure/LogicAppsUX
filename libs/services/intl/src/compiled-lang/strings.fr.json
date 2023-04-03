@@ -379,6 +379,12 @@
       "value": "Hour"
     }
   ],
+  "0vfdFS": [
+    {
+      "type": 0,
+      "value": "every day"
+    }
+  ],
   "0y5eia": [
     {
       "type": 0,
@@ -676,6 +682,12 @@
       "value": "Start Time"
     }
   ],
+  "2pRsUf": [
+    {
+      "type": 0,
+      "value": "Enter a valid array."
+    }
+  ],
   "2ri1Kf": [
     {
       "type": 0,
@@ -922,6 +934,16 @@
     {
       "type": 0,
       "value": "Obligatoire. Nombre de jours à ajouter. Peut être négatif pour soustraire des jours."
+    }
+  ],
+  "4D7H4R": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
     }
   ],
   "4Ekn9t": [
@@ -1935,6 +1957,16 @@
       "value": "(UTC+02:00) Helsinki, Kiev, Riga, Sofia, Tallinn, Vilnius"
     }
   ],
+  "Czt6YV": [
+    {
+      "type": 0,
+      "value": "at "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    }
+  ],
   "D+Ptnq": [
     {
       "type": 0,
@@ -1975,6 +2007,12 @@
     {
       "type": 0,
       "value": "Select a value"
+    }
+  ],
+  "DWd9vy": [
+    {
+      "type": 0,
+      "value": "every week"
     }
   ],
   "DWsh56": [
@@ -2115,6 +2153,20 @@
     {
       "type": 0,
       "value": "Obligatoire. Index de l’emplacement où commencer l’extraction de la sous-chaîne."
+    }
+  ],
+  "Ea/fr+": [
+    {
+      "type": 0,
+      "value": "Every "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " days"
     }
   ],
   "EdzoIs": [
@@ -2358,6 +2410,12 @@
     {
       "type": 0,
       "value": "Entrer une autorité"
+    }
+  ],
+  "GEB1on": [
+    {
+      "type": 0,
+      "value": "This contains a value that is not between 0 and 59"
     }
   ],
   "GIUSQs": [
@@ -3097,6 +3155,12 @@
       "value": "Sécurisez les sorties de l’opération et les références des propriétés de sortie."
     }
   ],
+  "MCzWDc": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "MDbmMw": [
     {
       "type": 0,
@@ -3489,6 +3553,16 @@
     {
       "type": 0,
       "value": "Obligatoire. Numéro à ajouter à l'opérande 1."
+    }
+  ],
+  "PNk3n4": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
     }
   ],
   "PORNMZ": [
@@ -3990,6 +4064,24 @@
       "value": "Add or replace your schemas."
     }
   ],
+  "TZh8nV": [
+    {
+      "type": 0,
+      "value": "on "
+    },
+    {
+      "type": 1,
+      "value": "weekDays"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "frequencyDesc"
+    }
+  ],
   "Tayrub": [
     {
       "type": 0,
@@ -4068,6 +4160,24 @@
       "value": "Génère un tableau d'entiers commençant à partir d'un certain nombre"
     }
   ],
+  "U4zovj": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
+    }
+  ],
   "U56j9a": [
     {
       "type": 0,
@@ -4138,6 +4248,20 @@
     {
       "type": 0,
       "value": "' has an non-terminating connection chain"
+    }
+  ],
+  "Umpr3z": [
+    {
+      "type": 0,
+      "value": "Every "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " weeks"
     }
   ],
   "UnrrzF": [
@@ -5691,6 +5815,12 @@
       "value": "Réseau"
     }
   ],
+  "i4Om5O": [
+    {
+      "type": 0,
+      "value": "This contains an invalid value"
+    }
+  ],
   "iBlvhu": [
     {
       "type": 0,
@@ -6585,6 +6715,12 @@
       "value": "Heure de fin"
     }
   ],
+  "pMms92": [
+    {
+      "type": 0,
+      "value": "Insert Dynamic Content"
+    }
+  ],
   "pOTcUO": [
     {
       "type": 0,
@@ -7142,6 +7278,20 @@
       "value": "De base"
     }
   ],
+  "tWV2mC": [
+    {
+      "type": 0,
+      "value": "at "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    },
+    {
+      "type": 0,
+      "value": " every hour"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -7440,6 +7590,12 @@
     {
       "type": 0,
       "value": "Créer un paramètre"
+    }
+  ],
+  "vxOc/M": [
+    {
+      "type": 0,
+      "value": "This contains a duplicate value"
     }
   ],
   "vz2gZC": [
