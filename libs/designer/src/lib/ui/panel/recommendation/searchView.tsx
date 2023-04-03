@@ -14,7 +14,7 @@ type SearchViewProps = {
   groupByConnector: boolean;
   isLoading: boolean;
   filters: Record<string, string>;
-  onOperationClick: (id: string) => void;
+  onOperationClick: (id: string, apiId?: string) => void;
 };
 
 type SearchResult = Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>;

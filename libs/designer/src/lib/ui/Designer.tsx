@@ -20,6 +20,7 @@ import { ButtonEdge } from './connections/edge';
 import { HiddenEdge } from './connections/hiddenEdge';
 import { PanelRoot } from './panel/panelroot';
 import { setLayerHostSelector } from '@fluentui/react';
+import type { PanelLocation } from '@microsoft/designer-ui';
 import type { WorkflowNodeType } from '@microsoft/utils-logic-apps';
 import { isString, useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -34,6 +35,7 @@ import type { BackgroundProps, NodeChange } from 'reactflow';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
+  panelLocation?: PanelLocation;
 }
 
 type NodeTypesObj = {
@@ -116,7 +118,7 @@ export const SearchBrowsePreloader = () => {
 };
 
 export const Designer = (props: DesignerProps) => {
-  const { backgroundProps } = props;
+  const { backgroundProps, panelLocation } = props;
 
   const [nodes, edges, flowSize] = useLayout();
   const isEmpty = useIsGraphEmpty();
@@ -133,7 +135,7 @@ export const Designer = (props: DesignerProps) => {
 
   const isFetchingInitialData = useIsFetching({
     predicate: (query) => {
-      const queryKeysToWatch = ['connections', 'manifest', 'apiWithSwaggers'];
+      const queryKeysToWatch = ['connections', 'manifest', 'apiWithSwaggers', 'operationInfo'];
       if (Array.isArray(query.queryKey)) {
         return (query.queryKey as string[]).some((val) => queryKeysToWatch.includes(val));
       } else if (isString(query.queryKey)) {
@@ -240,7 +242,7 @@ export const Designer = (props: DesignerProps) => {
               hideAttribution: true,
             }}
           >
-            <PanelRoot />
+            <PanelRoot panelLocation={panelLocation} />
             {backgroundProps ? <Background {...backgroundProps} /> : null}
           </ReactFlow>
           <div className="msla-designer-tools">

@@ -233,9 +233,8 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
     : getRunAfter(operationFromWorkflow, idReplacements);
   const recurrence =
     isTrigger && manifest.properties.recurrence && manifest.properties.recurrence.type !== RecurrenceType.None
-      ? constructInputValues('recurrence.$', inputsToSerialize, { encodePathComponents: false })
+      ? constructInputValues('recurrence.$.recurrence', inputsToSerialize, { encodePathComponents: false })
       : undefined;
-
   const childOperations = manifest.properties.allowChildOperations
     ? await serializeNestedOperations(operationId, manifest, rootState)
     : undefined;
@@ -271,7 +270,7 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
   const runAfter = isTrigger ? undefined : getRunAfter(operationFromWorkflow, idReplacements);
   const recurrence =
     isTrigger && equals(type, Constants.NODE.TYPE.API_CONNECTION)
-      ? constructInputValues('recurrence.$', inputsToSerialize, { encodePathComponents: false })
+      ? constructInputValues('recurrence.$.recurrence', inputsToSerialize, { encodePathComponents: false })
       : undefined;
   const retryPolicy = getRetryPolicy(nodeSettings);
   const inputPathValue = await serializeParametersFromSwagger(inputsToSerialize, operationInfo);

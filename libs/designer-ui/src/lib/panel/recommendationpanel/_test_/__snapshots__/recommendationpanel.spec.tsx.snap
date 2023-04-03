@@ -2,6 +2,7 @@
 
 exports[`recommendation panel matches snapshot 1`] = `
 <StyledPanelBase
+  customWidth="500px"
   focusTrapZoneProps={
     Object {
       "disabled": false,
@@ -16,7 +17,7 @@ exports[`recommendation panel matches snapshot 1`] = `
       "isDarkThemed": false,
     }
   }
-  type={3}
+  type={8}
 >
   <div
     className="msla-app-action-header"
