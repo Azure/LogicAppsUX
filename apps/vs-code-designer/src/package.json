@@ -584,7 +584,7 @@
         },
         {
           "command": "azureLogicAppsStandard.reviewValidation",
-          "when": "resourceDirname=~/.logs/export && resourceFilename=~/exportValidation.json/",
+          "when": "resourceDirname=~/\\.logs\\/export/ && resourceFilename=~/exportValidation.json/",
           "group": "navigation@1"
         },
         {
