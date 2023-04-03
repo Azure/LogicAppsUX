@@ -6,8 +6,7 @@ import {
 } from '../../core/state/workflowparameters/workflowparametersselector';
 import { Panel, PanelType, useTheme } from '@fluentui/react';
 import type { CommonPanelProps, WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
-import { PanelLocation } from '@microsoft/designer-ui';
-import { WorkflowParameters } from '@microsoft/designer-ui';
+import { PanelLocation, WorkflowParameters } from '@microsoft/designer-ui';
 import { useDispatch } from 'react-redux';
 
 export const WorkflowParametersPanel = (props: CommonPanelProps) => {
