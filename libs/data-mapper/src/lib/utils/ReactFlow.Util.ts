@@ -197,6 +197,7 @@ export const convertSchemaToReactFlowNodes = (
         isLeaf: isLeafNode(schemaNode),
         width: calculateWidth(curDepth, maxLocalDepth),
         disabled: false,
+        disableContextMenu: schemaType === SchemaType.Target,
         error: false,
       },
       type: ReactFlowNodeType.SchemaNode,
@@ -425,6 +426,7 @@ const addChildNodesForOverview = (
       schemaNode: curNode,
       width: calculateWidth(curDepth, maxDepth),
       isLeaf: isLeafNode(curNode),
+      disableContextMenu: true,
     },
     type: ReactFlowNodeType.SchemaNode,
     position: {
