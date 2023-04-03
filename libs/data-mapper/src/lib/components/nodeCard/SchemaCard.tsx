@@ -152,12 +152,14 @@ export interface SchemaCardProps extends CardProps {
   displayChevron: boolean;
   isLeaf: boolean;
   width: number;
+  disableContextMenu: boolean;
   connectionStatus?: ItemToggledState;
 }
 
 export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const reactFlowId = props.id;
-  const { schemaNode, schemaType, isLeaf, onClick, disabled, displayHandle, displayChevron, connectionStatus, width } = props.data;
+  const { schemaNode, schemaType, isLeaf, onClick, disabled, displayHandle, displayChevron, connectionStatus, width, disableContextMenu } =
+    props.data;
   const dispatch = useDispatch<AppDispatch>();
   const sharedStyles = getStylesForSharedState();
   const classes = useStyles();
@@ -319,7 +321,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
           <CardContextMenu
             title={'remove'}
             contextMenuLocation={contextMenu.location}
-            contextMenuOptions={[getRemoveMenuItem()]}
+            contextMenuOptions={disableContextMenu ? [] : [getRemoveMenuItem()]}
             showContextMenu={contextMenu.isShowing}
             onSetShowContextMenu={contextMenu.setIsShowing}
           />

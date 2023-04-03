@@ -394,10 +394,11 @@ export const applyCustomLayout = async (
   });
 
   // Declare diagram size
-  const lastTargetSchemaNode =
-    graph.children[2].children.length > 0 ? graph.children[2].children[graph.children[2].children.length - 1] : undefined;
+  const yPositions = graph.children.flatMap((graphSections) => graphSections.children.map((sectionNodes) => sectionNodes.y ?? 0));
+  const bottomMostNode = Math.max(...yPositions);
+
   graph.width = tgtSchemaStartX + schemaNodeCardDefaultWidth;
-  graph.height = lastTargetSchemaNode?.y !== undefined ? lastTargetSchemaNode.y : 0;
+  graph.height = bottomMostNode + schemaNodeCardHeight;
 
   return Promise.resolve(graph);
 };
