@@ -82,12 +82,12 @@ export const TokenPickerButtonNew = ({ showOnLeft, openTokenPicker }: TokenPicke
   }, [anchorKey, editor, updatePosition]);
 
   const dynamicContentButtonText = intl.formatMessage({
-    defaultMessage: 'Insert data from previous step',
+    defaultMessage: `Insert data from previous step (You can also add by typing / in the editor)`,
     description: 'Label for button to open dynamic content token picker',
   });
 
   const expressionButtonText = intl.formatMessage({
-    defaultMessage: 'Insert Expression',
+    defaultMessage: 'Insert Expression (You can also add by typing / in the editor)',
     description: 'Label for button to open expression token picker',
   });
 

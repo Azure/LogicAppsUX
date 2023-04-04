@@ -14,10 +14,18 @@ interface CodeEditorProps extends BaseEditorProps {
   language: EditorLanguage;
 }
 
-export function CodeEditor({ readonly = false, initialValue, language, onChange, onFocus, getTokenPicker }: CodeEditorProps): JSX.Element {
+export function CodeEditor({
+  readonly = false,
+  initialValue,
+  language,
+  onChange,
+  onFocus,
+  getTokenPicker,
+  label,
+}: CodeEditorProps): JSX.Element {
   const codeEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const editorId = useId('msla-tokenpicker-callout-location');
-  const labelId = useId('msla-tokenpicker-callout-label');
+  const callOutLabelId = useId('msla-tokenpicker-callout-label');
   const [getCurrentValue, setCurrentValue] = useFunctionalState(getInitialValue(initialValue));
   const [editorHeight, setEditorHeight] = useState(getEditorHeight(getInitialValue(initialValue)));
   const [showTokenPickerButton, setShowTokenPickerButton] = useState(false);
@@ -74,6 +82,7 @@ export function CodeEditor({ readonly = false, initialValue, language, onChange,
   return (
     <div className="msla-code-editor-body" id={editorId}>
       <Editor
+        label={label}
         ref={codeEditorRef}
         height={editorHeight}
         value={getCurrentValue()}
@@ -88,10 +97,10 @@ export function CodeEditor({ readonly = false, initialValue, language, onChange,
         onBlur={handleBlur}
       />
       {showTokenPickerButton || getInTokenPicker() ? (
-        <TokenPickerButton labelId={labelId} showTokenPicker={showTokenPicker} setShowTokenPicker={handleShowTokenPicker} />
+        <TokenPickerButton labelId={callOutLabelId} showTokenPicker={showTokenPicker} setShowTokenPicker={handleShowTokenPicker} />
       ) : null}
       {(showTokenPickerButton && showTokenPicker) || getInTokenPicker()
-        ? getTokenPicker?.(editorId, labelId, undefined, undefined, onClickTokenPicker, tokenClicked)
+        ? getTokenPicker?.(editorId, callOutLabelId, undefined, undefined, onClickTokenPicker, tokenClicked)
         : null}
     </div>
   );

@@ -122,6 +122,7 @@ export function SchemaEditor({ readonly, label, initialValue, onChange, onFocus 
     <div className="msla-schema-editor-body">
       {label ? <div className="msla-schema-editor-title">{label}</div> : null}
       <Editor
+        label={label}
         height={editorHeight}
         value={getCurrentValue()}
         fontSize={13}
