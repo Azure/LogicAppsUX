@@ -1,8 +1,9 @@
 import { TokenPickerMode } from '../../../tokenpicker';
+import { useTokenTypeaheadTriggerMatch } from '../utils/tokenTypeaheadMatcher';
 import type { OpenTokenPickerProps } from './OpenTokenPicker';
 import { Icon, css, useTheme } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { LexicalTypeaheadMenuPlugin, TypeaheadOption, useBasicTypeaheadTriggerMatch } from '@lexical/react/LexicalTypeaheadMenuPlugin';
+import { LexicalTypeaheadMenuPlugin, TypeaheadOption } from '@lexical/react/LexicalTypeaheadMenuPlugin';
 import type { TextNode } from 'lexical';
 import { $getSelection, $isRangeSelection } from 'lexical';
 import type { ReactNode } from 'react';
@@ -69,7 +70,7 @@ function TokenMenuItem({
 export const TokenTypeAheadPlugin = ({ openTokenPicker }: OpenTokenPickerProps) => {
   const [editor] = useLexicalComposerContext();
   const { isInverted } = useTheme();
-  const checkForTriggerMatch = useBasicTypeaheadTriggerMatch('/', {
+  const checkForTriggerMatch = useTokenTypeaheadTriggerMatch('/', {
     minLength: 0,
   });
 
