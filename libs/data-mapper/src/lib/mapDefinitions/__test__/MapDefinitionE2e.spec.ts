@@ -1,7 +1,7 @@
 import type { MapDefinitionEntry, SchemaExtended } from '../../models';
 import { functionMock } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
-import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
+import { convertSchemaToSchemaExtended, flattenSchemaIntoSortArray } from '../../utils/Schema.Utils';
 import { convertFromMapDefinition } from '../MapDefinitionDeserializer';
 import { convertToMapDefinition } from '../MapDefinitionSerializer';
 import { comprehensiveMapDefinition, transcriptJsonMapDefinitionString } from '__mocks__/mapDefinitions';
@@ -22,11 +22,14 @@ describe('mapDefinitions/MapDefinitionE2e', () => {
         functionMock
       );
 
+      const targetSortArray = flattenSchemaIntoSortArray(mockTargetSchema.schemaTreeRoot);
+
       // Compare YAML as parsed objects to disregard any comments
       const reserializedMapDefinitionString: string = convertToMapDefinition(
         deserializedConnectionDictionary,
         mockSourceSchema,
-        mockTargetSchema
+        mockTargetSchema,
+        targetSortArray
       );
 
       const reserializedMapDefinition: MapDefinitionEntry = yaml.load(reserializedMapDefinitionString) as MapDefinitionEntry;
@@ -52,11 +55,14 @@ describe('mapDefinitions/MapDefinitionE2e', () => {
         functionMock
       );
 
+      const targetSortArray = flattenSchemaIntoSortArray(mockTargetSchema.schemaTreeRoot);
+
       // Compare YAML as parsed objects to disregard any comments
       const reserializedMapDefinitionString: string = convertToMapDefinition(
         deserializedConnectionDictionary,
         mockSourceSchema,
-        mockTargetSchema
+        mockTargetSchema,
+        targetSortArray
       );
 
       const reserializedMapDefinition: MapDefinitionEntry = yaml.load(reserializedMapDefinitionString) as MapDefinitionEntry;
