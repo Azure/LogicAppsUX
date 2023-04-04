@@ -118,6 +118,7 @@ getTokenPicker={GetTokenPicker}
           }}
         /> */}
         <CodeEditor
+          labelId=""
           initialValue={[
             {
               type: ValueSegmentType.LITERAL,
@@ -157,6 +158,7 @@ getTokenPicker={GetTokenPicker}
           ]}
         /> */}
         <AuthenticationEditor
+          labelId=""
           initialValue={[]}
           getTokenPicker={GetTokenPicker}
           options={{
@@ -173,6 +175,7 @@ getTokenPicker={GetTokenPicker}
           authenticationValue={{}}
         />
         <ArrayEditor
+          labelId=""
           type={ArrayType.SIMPLE}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
           initialValue={[
@@ -190,6 +193,7 @@ getTokenPicker={GetTokenPicker}
         />
 
         <ArrayEditor
+          labelId=""
           itemSchema={{
             content: { type: 'integer', isRequired: true },
             name: { type: 'string', isRequired: true },
@@ -209,6 +213,7 @@ getTokenPicker={GetTokenPicker}
         />
 
         <Combobox
+          labelId=""
           options={[
             { displayName: 'GET', value: 'GET', key: 'GET', disabled: false },
             { displayName: 'PUT', value: 'PUT', key: 'PUT', disabled: false },

@@ -20,6 +20,7 @@ interface DropdownEditorProps {
   readonly?: boolean;
   height?: number;
   fontSize?: number;
+  label?: string;
   onChange?: ChangeHandler;
 }
 
@@ -39,6 +40,7 @@ export const DropdownEditor = ({
   options,
   height,
   fontSize,
+  label,
   onChange,
 }: DropdownEditorProps): JSX.Element => {
   const [selectedKey, setSelectedKey] = useState<string | undefined>(multiSelect ? undefined : getSelectedKey(options, initialValue));
@@ -93,6 +95,7 @@ export const DropdownEditor = ({
   return (
     <div className="msla-dropdown-editor-container">
       <Dropdown
+        ariaLabel={label}
         styles={dropdownStyles}
         disabled={readonly}
         options={dropdownOptions}

@@ -27,7 +27,7 @@ export interface MonacoProps extends MonacoOptions {
   height?: string;
   width?: string;
   monacoContainerStyle?: React.CSSProperties;
-
+  label?: string;
   onBlur?(): void;
   onBlurText?(): void;
   onChanged?(e: editor.IModelChangedEvent): void;
@@ -102,6 +102,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       onScrollChanged,
       onEditorRef,
       onMouseDown,
+      label,
       ...options
     },
     ref
@@ -250,6 +251,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
               lineNumbersMinChars: lineNumbersMinChars,
               unicodeHighlight: { invisibleCharacters: false, nonBasicASCII: false, ambiguousCharacters: false },
               renderWhitespace: 'none',
+              ariaLabel: label,
               ...options,
             }}
             value={value}
