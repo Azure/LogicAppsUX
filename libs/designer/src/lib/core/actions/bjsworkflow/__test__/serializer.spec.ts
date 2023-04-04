@@ -350,7 +350,7 @@ describe('constructInputValues', () => {
     const inputPath = 'body.$.children';
     const parameters = simpleArrayParameters;
 
-    expect(constructInputValues(inputPath, parameters, /* encodePathComponents */ false)).toEqual([
+    expect(constructInputValues(inputPath, parameters, false /* encodePathComponents */)).toEqual([
       {
         name: 'original name',
         id: 99999,
@@ -362,7 +362,7 @@ describe('constructInputValues', () => {
     const inputPath = 'body.$';
     const parameters = rootNestedArrayParameters;
 
-    expect(constructInputValues(inputPath, parameters, /* encodePathComponents */ false)).toEqual([
+    expect(constructInputValues(inputPath, parameters, false /* encodePathComponents */)).toEqual([
       {
         children: [
           {
@@ -380,7 +380,7 @@ describe('constructInputValues', () => {
     const inputPath = 'body.$';
     const parameters = rootArrayWithNestedObjectParameters;
 
-    expect(constructInputValues(inputPath, parameters, /* encodePathComponents */ false)).toEqual([
+    expect(constructInputValues(inputPath, parameters, false /* encodePathComponents */)).toEqual([
       {
         items: {
           firstlevel: {
@@ -429,7 +429,7 @@ describe('constructInputValues', () => {
       },
     ];
 
-    expect(constructInputValues(inputPath, parameters, /* encodePathComponents */ false)).toEqual([
+    expect(constructInputValues(inputPath, parameters, false /* encodePathComponents */)).toEqual([
       {
         '@@odata.type': 'Default value',
         Id: 1,
@@ -462,7 +462,7 @@ describe('constructInputValues', () => {
       },
     ];
 
-    expect(constructInputValues(inputPath, parameters, /* encodePathComponents */ false)).toEqual([
+    expect(constructInputValues(inputPath, parameters, false /* encodePathComponents */)).toEqual([
       {
         '@@odata.type': 'Default value',
         Id: '',
@@ -474,7 +474,7 @@ describe('constructInputValues', () => {
     const inputPath = 'inputs.$';
     const parameters = rootArrayWithComplexObjectOpenApiParameters;
 
-    expect(constructInputValues(inputPath, parameters, /* encodePathComponents */ false)).toEqual({
+    expect(constructInputValues(inputPath, parameters, false /* encodePathComponents */)).toEqual({
       'request/attachments': [
         {
           'attachment/bytes': 'content',

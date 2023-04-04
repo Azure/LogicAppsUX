@@ -175,7 +175,7 @@ function serializeBody(bodyParameters: SerializedParameter[]): Partial<Operation
 
   if (bodyParameters.length > 0) {
     const rootParameterKey = create([ParameterLocations.Body, '$']) as string;
-    bodyValue = constructInputValues(rootParameterKey, bodyParameters, /* encodePathComponents */ false);
+    bodyValue = constructInputValues(rootParameterKey, bodyParameters, false /* encodePathComponents */);
   }
 
   if (bodyValue) {
@@ -191,7 +191,7 @@ function serializeHeaders(headerParameters: SerializedParameter[]): Partial<Oper
   let headersValue: any;
   if (headerParameters.length > 0) {
     const rootParameterKey = create([ParameterLocations.Header, '$']) as string;
-    headersValue = constructInputValues(rootParameterKey, headerParameters, /* encodePathComponents */ false);
+    headersValue = constructInputValues(rootParameterKey, headerParameters, false /* encodePathComponents */);
   }
 
   if (headersValue) {
@@ -214,7 +214,7 @@ function serializePath(
   if (shouldUsePathTemplateFormat) {
     let parametersValue = {};
     if (pathParameters.length > 0) {
-      parametersValue = constructInputValues(rootParameterKey, pathParameters, /* encodePathComponents */ false);
+      parametersValue = constructInputValues(rootParameterKey, pathParameters, false /* encodePathComponents */);
     }
 
     return {
@@ -226,7 +226,7 @@ function serializePath(
   } else {
     let pathValue = operationPath;
     if (pathParameters.length > 0) {
-      const value = constructInputValues(rootParameterKey, pathParameters, encodePathComponents);
+      const value = constructInputValues(rootParameterKey, pathParameters, !!encodePathComponents);
       if (value) {
         pathValue = replacePlaceholders(value, operationPath);
       }
@@ -246,7 +246,7 @@ function serializeQuery(queryParameters: SerializedParameter[]): Partial<Operati
   let queriesValue: any; // tslint:disable-line: no-any
   if (queryParameters.length > 0) {
     const rootParameterKey = create([ParameterLocations.Query, '$']) as string;
-    queriesValue = constructInputValues(rootParameterKey, queryParameters, /* encodePathComponents */ false);
+    queriesValue = constructInputValues(rootParameterKey, queryParameters, false /* encodePathComponents */);
   }
 
   if (queriesValue) {
