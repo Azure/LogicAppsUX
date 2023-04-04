@@ -548,6 +548,12 @@
       "value": "(UTC-04:00) カラカス"
     }
   ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Add children (recursive)"
+    }
+  ],
   "23fENy": [
     {
       "type": 0,
@@ -4506,6 +4512,12 @@
     {
       "type": 0,
       "value": "データ URI のバイナリ表現を返します"
+    }
+  ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Add children"
     }
   ],
   "YHsAKl": [
