@@ -412,12 +412,24 @@ describe('utils/Connections', () => {
           '0': [{ reactFlowKey: 'testSourceSchema1', node: dummyNode }],
           '1': [{ reactFlowKey: 'testSourceSchema2', node: dummyNode }],
         },
-        outputs: [{ node: dummyNode, reactFlowKey: 'testTargetScehema' }],
+        outputs: [{ node: dummyNode, reactFlowKey: 'testTargetSchema' }],
       },
       testTargetSchema: {
         self: { node: dummyNode, reactFlowKey: 'testTargetSchema' },
         inputs: { '0': [{ reactFlowKey: 'concatFunctionNode', node: concatFunction }] },
         outputs: [],
+      },
+      targetSchemaToCustomValueFunction: {
+        self: { node: dummyNode, reactFlowKey: 'targetSchemaToCustomValueFunction' },
+        inputs: { '0': [{ reactFlowKey: 'concatWithOnlyCustom', node: concatFunction }] },
+        outputs: [],
+      },
+      concatWithOnlyCustom: {
+        self: { node: concatFunction, reactFlowKey: 'concatWithOnlyCustom' },
+        inputs: {
+          '0': [`"String 1"`, `"String 2`],
+        },
+        outputs: [{ node: dummyNode, reactFlowKey: 'targetSchemaToCustomValueFunction' }],
       },
     };
 
@@ -428,6 +440,10 @@ describe('utils/Connections', () => {
 
     it('Test can recursively call from depth > 1', () => {
       expect(nodeHasSourceNodeEventually(mockConnections['testTargetSchema'], mockConnections)).toBeTruthy();
+    });
+
+    it('All custom is considered valid', () => {
+      expect(nodeHasSourceNodeEventually(mockConnections['targetSchemaToCustomValueFunction'], mockConnections)).toBeTruthy();
     });
   });
 
