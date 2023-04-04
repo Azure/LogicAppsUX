@@ -196,6 +196,10 @@ export const workflowSlice = createSlice({
       if (state.collapsedGraphIds?.[action.payload] === true) delete state.collapsedGraphIds[action.payload];
       else state.collapsedGraphIds[action.payload] = true;
     },
+    setRunIndex: (state: WorkflowState, action: PayloadAction<any>) => {
+      const { page, nodeId } = action.payload;
+      state.nodesMetadata[nodeId].runIndex = page;
+    },
     addSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
       if (!state.graph) {
         return; // log exception
@@ -335,6 +339,7 @@ export const {
   setFocusNode,
   replaceId,
   addImplicitForeachNode,
+  setRunIndex,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

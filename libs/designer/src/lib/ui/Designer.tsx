@@ -112,6 +112,7 @@ export const Designer = (props: DesignerProps) => {
   const { backgroundProps } = props;
 
   const [nodes, edges, flowSize] = useLayout();
+  console.log(nodes);
   const isEmpty = useIsGraphEmpty();
   const isReadOnly = useReadOnly();
   const dispatch = useDispatch();

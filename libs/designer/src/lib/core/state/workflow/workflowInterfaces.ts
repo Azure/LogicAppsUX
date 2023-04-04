@@ -12,6 +12,7 @@ export interface NodesMetadata {
     isRoot?: boolean;
     runData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
     actionMetadata?: Record<string, any>;
+    runIndex?: number;
   };
 }
 export type Operations = Record<string, LogicAppsV2.OperationDefinition>;

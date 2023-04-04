@@ -1,11 +1,14 @@
 import constants from '../../common/constants';
+import type { AppDispatch } from '../../core';
 import { useMonitoringView } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useRunInstance } from '../../core/state/workflow/workflowSelectors';
+import { setRunIndex } from '../../core/state/workflow/workflowSlice';
 import { RunService } from '@microsoft/designer-client-services-logic-apps';
 import type { PageChangeEventArgs, PageChangeEventHandler } from '@microsoft/designer-ui';
 import { Pager } from '@microsoft/designer-ui';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
+import { useDispatch } from 'react-redux';
 
 export interface LoopsPagerProps {
   normalizedType: string;
@@ -18,6 +21,8 @@ export const LoopsPager = ({ normalizedType, metadata, scopeId }: LoopsPagerProp
   const [failedRepetitions, setFailedRepetitions] = useState<Array<number>>([]);
   const isMonitoringView = useMonitoringView();
   const runInstance = useRunInstance();
+  const dispatch = useDispatch<AppDispatch>();
+
   const hasPager = (normalizedType === constants.NODE.TYPE.FOREACH || normalizedType === constants.NODE.TYPE.UNTIL) && isMonitoringView;
   const max = metadata?.runData?.inputsLink?.metadata?.foreachItemsCount ?? 5;
 
@@ -52,15 +57,8 @@ export const LoopsPager = ({ normalizedType, metadata, scopeId }: LoopsPagerProp
     return null;
   }
 
-  const onClickNextFailed: PageChangeEventHandler = (page: PageChangeEventArgs) => {
-    setCurrentPage(page.value);
-  };
-
-  const onClickPreviousFailed: PageChangeEventHandler = (page: PageChangeEventArgs) => {
-    setCurrentPage(page.value);
-  };
-
   const onPagerChange: PageChangeEventHandler = (page: PageChangeEventArgs) => {
+    dispatch(setRunIndex({ page: page.value, nodeId: scopeId }));
     setCurrentPage(page.value);
   };
 
@@ -69,8 +67,8 @@ export const LoopsPager = ({ normalizedType, metadata, scopeId }: LoopsPagerProp
       ? {
           max: failedRepetitions[failedRepetitions.length - 1] + 1,
           min: failedRepetitions[0] + 1,
-          onClickNext: onClickNextFailed,
-          onClickPrevious: onClickPreviousFailed,
+          onClickNext: onPagerChange,
+          onClickPrevious: onPagerChange,
         }
       : undefined;
 
