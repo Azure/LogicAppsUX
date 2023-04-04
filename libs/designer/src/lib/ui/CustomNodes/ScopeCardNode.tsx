@@ -16,19 +16,22 @@ import {
   useNodeDisplayName,
   useNodeMetadata,
   useRunIndex,
+  useRunInstance,
   useWorkflowNode,
 } from '../../core/state/workflow/workflowSelectors';
-import { toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
+import { setRepetitionRunDataById, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
 import { LoopsPager } from '../common/LoopsPager';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
+import { RunService } from '@microsoft/designer-client-services-logic-apps';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { DeleteNodeModal, MenuItemType, ScopeCard } from '@microsoft/designer-ui';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
+import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { Handle, Position } from 'reactflow';
 import type { NodeProps } from 'reactflow';
@@ -47,11 +50,38 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const graphNode = useWorkflowNode(scopeId) as WorkflowNode;
   const metadata = useNodeMetadata(scopeId);
   const parentRunIndex = useRunIndex(metadata?.parentNodeId ?? '');
+  const runInstance = useRunInstance();
 
-  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun } = metadata?.runData ?? {};
+  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = metadata?.runData ?? {};
+
+  const getRunRepetition = () => {
+    return RunService().getRepetition({ actionId: id, runId: runInstance?.id }, String(parentRunIndex).padStart(6, '0'));
+  };
+
+  const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
+    dispatch(setRepetitionRunDataById({ nodeId: id, runData: runDefinition }));
+  };
+
+  const onRunInstanceError = async () => {
+    dispatch(setRepetitionRunDataById({ nodeId: id, runData: {} }));
+  };
+
+  const {
+    refetch,
+    isLoading: isRepetitionLoading,
+    isRefetching: isRepetitionRefetching,
+  } = useQuery<any>(['runInstance'], getRunRepetition, {
+    refetchOnWindowFocus: false,
+    initialData: null,
+    onSuccess: onRunInstanceSuccess,
+    onError: onRunInstanceError,
+    enabled: repetitionCount !== undefined,
+  });
 
   useEffect(() => {
-    //console.log('charlie 2', parentRunIndex, metadata?.parentNodeId);
+    if (parentRunIndex && isMonitoringView) {
+      refetch();
+    }
   }, [dispatch, parentRunIndex, metadata?.parentNodeId]);
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
@@ -108,7 +138,10 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const opQuery = useOperationQuery(scopeId);
 
-  const isLoading = useMemo(() => opQuery.isLoading || (!brandColor && !iconUri), [brandColor, iconUri, opQuery.isLoading]);
+  const isLoading = useMemo(
+    () => isRepetitionLoading || isRepetitionRefetching || opQuery.isLoading || (!brandColor && !iconUri),
+    [brandColor, iconUri, opQuery.isLoading, isRepetitionLoading || isRepetitionRefetching]
+  );
 
   const opManifestErrorText = intl.formatMessage({
     defaultMessage: 'Error fetching manifest',
