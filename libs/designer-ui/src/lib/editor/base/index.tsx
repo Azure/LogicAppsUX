@@ -164,7 +164,9 @@ export const BaseEditor = ({
         <div className={className ?? 'msla-editor-container'} id={editorId}>
           {toolBar ? <Toolbar /> : null}
           <RichTextPlugin
-            contentEditable={<ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabel={editorInputLabel} />}
+            contentEditable={
+              <ContentEditable className={css('editor-input', readonly && 'readonly', 'focus')} ariaLabel={editorInputLabel} />
+            }
             placeholder={<span className="editor-placeholder"> {placeholder} </span>}
             ErrorBoundary={LexicalErrorBoundary}
           />

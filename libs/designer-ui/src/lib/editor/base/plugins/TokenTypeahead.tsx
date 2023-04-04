@@ -1,7 +1,5 @@
-import constants from '../../../constants';
 import { TokenPickerMode } from '../../../tokenpicker';
 import type { OpenTokenPickerProps } from './OpenTokenPicker';
-import { FxIcon } from './tokenpickerbuttonnew/assets/fxIcon';
 import { Icon, css, useTheme } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { LexicalTypeaheadMenuPlugin, TypeaheadOption, useBasicTypeaheadTriggerMatch } from '@lexical/react/LexicalTypeaheadMenuPlugin';
@@ -109,11 +107,7 @@ export const TokenTypeAheadPlugin = ({ openTokenPicker }: OpenTokenPickerProps) 
       icon: () => <Icon iconName="LightningBolt" style={{ marginRight: 5 }} />,
     }),
     new TokenOption(expressionButtonText, 'expression', {
-      icon: (_, inverted) => (
-        <div style={{ height: 20, width: 20 }}>
-          <FxIcon fill={inverted ? constants.STANDARD_TEXT_COLOR : constants.INVERTED_TEXT_COLOR} />
-        </div>
-      ),
+      icon: () => <Icon iconName="Variable" style={{ marginRight: 5 }} />,
     }),
   ];
   return (
