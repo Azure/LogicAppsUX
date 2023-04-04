@@ -570,6 +570,12 @@
       "value": "(UTC-04:00) Caracas"
     }
   ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Add children (recursive)"
+    }
+  ],
   "23fENy": [
     {
       "type": 0,
@@ -4612,6 +4618,12 @@
     {
       "type": 0,
       "value": "Retorna uma representação binária de um URI de dados"
+    }
+  ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Add children"
     }
   ],
   "YHsAKl": [

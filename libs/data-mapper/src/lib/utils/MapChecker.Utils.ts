@@ -15,8 +15,14 @@ import { isFunctionData } from './Function.Utils';
 import { isObjectType, isSchemaNodeExtended } from './Schema.Utils';
 import { defineMessages } from 'react-intl';
 
-export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _targetSchema: SchemaNodeDictionary): MapCheckerEntry[] => {
+export const collectErrorsForMapChecker = (_connections: ConnectionDictionary, _targetSchema: SchemaNodeDictionary): MapCheckerEntry[] => {
   const errors: MapCheckerEntry[] = [];
+
+  return errors;
+};
+
+export const collectWarningsForMapChecker = (connections: ConnectionDictionary, targetSchema: SchemaNodeDictionary): MapCheckerEntry[] => {
+  const warnings: MapCheckerEntry[] = [];
 
   // Valid input types
   Object.entries(connections).forEach(([_connectionKey, connectionValue]) => {
@@ -24,7 +30,7 @@ export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _t
 
     if (isFunctionData(node)) {
       if (!areInputTypesValidForFunction(node, connectionValue)) {
-        errors.push({
+        warnings.push({
           title: { message: mapCheckerResources.inputTypeMismatchTitle },
           description: {
             message: mapCheckerResources.functionInputTypeMismatchBody,
@@ -36,7 +42,7 @@ export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _t
       }
 
       if (!functionHasRequiredInputs(node, connectionValue)) {
-        errors.push({
+        warnings.push({
           title: { message: mapCheckerResources.functionMissingInputsTitle },
           description: { message: mapCheckerResources.functionMissingInputsBody, value: { functionName: node.displayName } },
           severity: MapCheckerItemSeverity.Error,
@@ -45,7 +51,7 @@ export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _t
       }
 
       if (functionConnectionHasTooManyInputs(node, connectionValue)) {
-        errors.push({
+        warnings.push({
           title: { message: mapCheckerResources.functionExceedsMaxInputsTitle },
           description: { message: mapCheckerResources.functionExceedsMaxInputsBody, value: { functionName: node.displayName } },
           severity: MapCheckerItemSeverity.Error,
@@ -54,7 +60,7 @@ export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _t
       }
     } else {
       if (!connectionValue.self.reactFlowKey.startsWith(sourcePrefix) && !areInputTypesValidForSchemaNode(node, connectionValue)) {
-        errors.push({
+        warnings.push({
           title: { message: mapCheckerResources.inputTypeMismatchTitle },
           description: {
             message: mapCheckerResources.schemaInputTypeMismatchBody,
@@ -66,12 +72,6 @@ export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _t
       }
     }
   });
-
-  return errors;
-};
-
-export const collectWarningsForMapChecker = (connections: ConnectionDictionary, targetSchema: SchemaNodeDictionary): MapCheckerEntry[] => {
-  const warnings: MapCheckerEntry[] = [];
 
   // Required target schema fields
   Object.entries(targetSchema).forEach(([reactFlowId, schemaValue]) => {
