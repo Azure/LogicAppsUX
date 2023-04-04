@@ -1,7 +1,6 @@
 import { TokenPickerMode } from '../../../../tokenpicker';
-import type { IIconProps, ICalloutProps } from '@fluentui/react';
-import { IconButton, DirectionalHint } from '@fluentui/react';
-import { useConst, useId } from '@fluentui/react-hooks';
+import type { IIconProps } from '@fluentui/react';
+import { IconButton } from '@fluentui/react';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import { Depths } from '@fluentui/theme';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -91,22 +90,7 @@ export const TokenPickerButtonNew = ({ showOnLeft, openTokenPicker }: TokenPicke
     defaultMessage: 'Insert Expression',
     description: 'Label for button to open expression token picker',
   });
-  const topButtonTooltipAnchor = useId('tokenpicker-id');
-  const topButtonTooltipAnchor2 = useId('tokenpicker-id');
-  const calloutProps = useConst({
-    gapSpace: 0,
-    // If the tooltip should point to an absolutely-positioned element,
-    // you must manually specify the callout target.
-    target: `#${topButtonTooltipAnchor}`,
-    directionalHint: DirectionalHint.leftCenter,
-  });
-  const calloutProps2 = useConst<ICalloutProps>({
-    gapSpace: 0,
-    // If the tooltip should point to an absolutely-positioned element,
-    // you must manually specify the callout target.
-    target: `#${topButtonTooltipAnchor2}`,
-    directionalHint: DirectionalHint.leftCenter,
-  });
+
   return (
     <>
       {anchorKey ? (
@@ -116,18 +100,16 @@ export const TokenPickerButtonNew = ({ showOnLeft, openTokenPicker }: TokenPicke
           onMouseDown={(e) => e.preventDefault()}
           style={{ boxShadow: Depths.depth4 }}
         >
-          <TooltipHost content={dynamicContentButtonText} calloutProps={calloutProps}>
+          <TooltipHost content={dynamicContentButtonText} >
             <IconButton
-              id={topButtonTooltipAnchor}
               iconProps={dynamicContentIconProps}
               styles={{ root: 'top-root-button-style' }}
               className="msla-token-picker-entrypoint-button-dynamic-content"
               onClick={() => openTokenPicker(TokenPickerMode.TOKEN)}
             />
           </TooltipHost>
-          <TooltipHost content={expressionButtonText} calloutProps={calloutProps2}>
+          <TooltipHost content={expressionButtonText}>
             <IconButton
-              id={topButtonTooltipAnchor2}
               iconProps={expressionButtonProps}
               styles={{ root: 'bottom-root-button-style' }}
               className="msla-token-picker-entrypoint-button-dynamic-content"
