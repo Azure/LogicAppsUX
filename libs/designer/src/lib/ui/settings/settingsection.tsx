@@ -1,5 +1,6 @@
 import type { HeaderClickHandler } from '.';
 import constants from '../../common/constants';
+import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateParameterConditionalVisibility } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { type ValidationError, ValidationWarningKeys } from '../../core/state/setting/settingSlice';
@@ -214,6 +215,7 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
   const intl = useIntl();
   const dispatch = useDispatch();
   const nodeId = useSelectedNodeId();
+  const readOnly = useReadOnly();
   const [hideErrorMessage, setHideErrorMessage] = useState<boolean[]>(new Array(settings.length).fill(false));
 
   const updateHideErrorMessage = (index: number, b: boolean) => {
@@ -301,10 +303,11 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
         );
 
         const RemoveConditionalParameter = () => {
+          const readOnly = useReadOnly();
           return conditionalVisibility === true ? (
             <div style={{ marginTop: '30px' }}>
               <TooltipHost content={removeParamTooltip}>
-                <IconButton iconProps={{ iconName: 'Cancel' }} onClick={removeParamCallback} />
+                <IconButton iconProps={{ iconName: 'Cancel' }} onClick={removeParamCallback} disabled={readOnly} />
               </TooltipHost>
             </div>
           ) : null;
@@ -321,7 +324,7 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
         ) : null;
       })}
 
-      {conditionallyInvisibleSettings.length > 0 ? (
+      {conditionallyInvisibleSettings.length > 0 && !readOnly ? (
         <div style={{ paddingTop: '5px' }}>
           <Dropdown
             placeholder={addNewParamText}
@@ -362,6 +365,7 @@ export interface SettingLabelProps {
 
 export function SettingLabel({ labelText, infoTooltipText, isChild }: SettingLabelProps): JSX.Element {
   const className = isChild ? 'msla-setting-section-row-child-label' : 'msla-setting-section-row-label';
+
   if (infoTooltipText) {
     return (
       <div className={className}>
