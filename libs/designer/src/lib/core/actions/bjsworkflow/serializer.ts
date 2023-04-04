@@ -233,7 +233,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
     : getRunAfter(operationFromWorkflow, idReplacements);
   const recurrence =
     isTrigger && manifest.properties.recurrence && manifest.properties.recurrence.type !== RecurrenceType.None
-      ? constructInputValues('recurrence.$.recurrence', inputsToSerialize, { encodePathComponents: false })
+      ? constructInputValues('recurrence.$.recurrence', inputsToSerialize, /* encodePathComponents */ false)
       : undefined;
   const childOperations = manifest.properties.allowChildOperations
     ? await serializeNestedOperations(operationId, manifest, rootState)
@@ -270,7 +270,7 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
   const runAfter = isTrigger ? undefined : getRunAfter(operationFromWorkflow, idReplacements);
   const recurrence =
     isTrigger && equals(type, Constants.NODE.TYPE.API_CONNECTION)
-      ? constructInputValues('recurrence.$.recurrence', inputsToSerialize, { encodePathComponents: false })
+      ? constructInputValues('recurrence.$.recurrence', inputsToSerialize, /* encodePathComponents */ false)
       : undefined;
   const retryPolicy = getRetryPolicy(nodeSettings);
   const inputPathValue = await serializeParametersFromSwagger(inputsToSerialize, operationInfo);
@@ -310,7 +310,7 @@ const getOperationInputsToSerialize = (rootState: RootState, operationId: string
 
 const serializeParametersFromManifest = (inputs: SerializedParameter[], manifest: OperationManifest): Record<string, any> => {
   const inputsLocation = (manifest.properties.inputsLocation ?? ['inputs']).slice(1);
-  const inputPathValue = constructInputValues('inputs.$', inputs, { encodePathComponents: false, flattenPaths: true });
+  const inputPathValue = constructInputValues('inputs.$', inputs, /* encodePathComponents */ false);
   let parametersValue: any = inputPathValue;
 
   while (inputsLocation.length) {
@@ -321,8 +321,7 @@ const serializeParametersFromManifest = (inputs: SerializedParameter[], manifest
   return swapInputsLocationIfNeeded(parametersValue, manifest.properties.inputsLocationSwapMap);
 };
 
-export const constructInputValues = (key: string, inputs: SerializedParameter[], options: ConstructInputValuesOptions): any => {
-  const { encodePathComponents, flattenPaths } = options;
+export const constructInputValues = (key: string, inputs: SerializedParameter[], encodePathComponents: boolean | undefined): any => {
   let result: any;
 
   const rootParameter = first((parameter) => cleanIndexedValue(parameter.parameterKey) === cleanIndexedValue(key), inputs);
@@ -360,12 +359,14 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
           parameterKey = parameterKey.replace(propertyName, propertyNameParameter.value);
         }
 
+        const isOpenApiParameter = !!serializedParameter.info?.alias;
+
         result = serializeParameter(
           result,
           serializedParameter.value,
           key,
           { ...serializedParameter, parameterKey },
-          !flattenPaths /* withPath */
+          !isOpenApiParameter /* withPath */
         );
       }
     }
@@ -455,7 +456,7 @@ const serializeParametersFromSwagger = async (
   const operationPath = removeConnectionPrefix(path);
   const operationMethod = equals(type, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK) ? undefined : method;
   const parameterInputs = equals(type, Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION)
-    ? constructInputValues(create(['inputs', '$']) as string, inputs, { encodePathComponents: false })
+    ? constructInputValues(create(['inputs', '$']) as string, inputs, /* encodePathComponents */ false)
     : buildOperationDetailsFromControls(inputs, operationPath, false /* encodePathComponents */, operationMethod);
 
   // Ignore unencoded newline characters in the operation path since
