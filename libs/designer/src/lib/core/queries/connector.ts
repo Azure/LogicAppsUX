@@ -55,7 +55,7 @@ export const getListDynamicValues = async (
       (connectionId ?? '').toLowerCase(),
       connectorId.toLowerCase(),
       operationId.toLowerCase(),
-      parameterAlias,
+      parameterAlias ? parameterAlias : getParametersKey(parameters).toLowerCase(),
     ],
     () =>
       service.getListDynamicValues(
