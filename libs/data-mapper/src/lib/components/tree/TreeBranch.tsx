@@ -4,6 +4,7 @@ import { Stack } from '@fluentui/react';
 import { Button, mergeClasses } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import { bundleIcon, ChevronDown12Regular, ChevronDown12Filled, ChevronRight12Regular, ChevronRight12Filled } from '@fluentui/react-icons';
+import { CardContextMenu, useCardContextMenu } from '@microsoft/designer-ui';
 import React, { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -25,9 +26,12 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
     onClickItem,
     shouldShowIndicator,
     parentItemClickShouldExpand,
+    contextMenuItems,
   } = props;
   const intl = useIntl();
   const styles = useTreeStyles();
+  const contextMenu = useCardContextMenu();
+
   const [isExpanded, { toggle: toggleExpanded }] = useBoolean(level === 0);
   const [isHovered, { setFalse: setNotHovered, setTrue: setIsHovered }] = useBoolean(false);
   const [isChevronHovered, { setFalse: setChevronNotHovered, setTrue: setChevronIsHovered }] = useBoolean(false);
@@ -70,7 +74,7 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
   };
 
   return (
-    <>
+    <div onContextMenu={contextMenu.handle}>
       <Stack
         className={mergeClasses(styles.nodeContainer, nodeContainerClassName)}
         style={{
@@ -119,7 +123,14 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
       {hasChildren &&
         isNodeExpanded &&
         node.children?.map((childNode) => <TreeBranch<ITreeNode<T>> {...props} key={childNode.key} node={childNode} level={level + 1} />)}
-    </>
+      <CardContextMenu
+        title={'contextMenu'}
+        contextMenuLocation={contextMenu.location}
+        contextMenuOptions={contextMenuItems ? contextMenuItems(node) : []}
+        showContextMenu={contextMenu.isShowing}
+        onSetShowContextMenu={contextMenu.setIsShowing}
+      />
+    </div>
   );
 };
 

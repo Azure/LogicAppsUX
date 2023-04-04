@@ -1,5 +1,6 @@
 import TreeBranch from './TreeBranch';
 import { makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
+import type { MenuItemOption } from '@microsoft/designer-ui';
 import type { ReactNode } from 'react';
 
 export interface ITreeNode<T> {
@@ -38,6 +39,7 @@ export interface CoreTreeProps<T> {
   onClickItem?: (node: ITreeNode<T>) => void;
   shouldShowIndicator?: (node: ITreeNode<T>) => boolean;
   parentItemClickShouldExpand?: boolean;
+  contextMenuItems?: (node: ITreeNode<T>) => MenuItemOption[];
 }
 
 interface TreeProps<T> extends CoreTreeProps<T> {

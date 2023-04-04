@@ -214,20 +214,15 @@ export const dataMapSlice = createSlice({
     },
 
     addSourceSchemaNodes: (state, action: PayloadAction<SchemaNodeExtended[]>) => {
-      const nodes = [...state.curDataMapOperation.currentSourceSchemaNodes];
+      const currentNodes = [...state.curDataMapOperation.currentSourceSchemaNodes];
       action.payload.forEach((payloadNode) => {
-        addNodeToCanvasIfDoesNotExist(payloadNode, state.curDataMapOperation.currentSourceSchemaNodes, nodes);
-        addAncestorNodesToCanvas(
-          payloadNode,
-          state.curDataMapOperation.currentSourceSchemaNodes,
-          state.curDataMapOperation.flattenedSourceSchema,
-          nodes
-        );
+        addNodeToCanvasIfDoesNotExist(payloadNode, currentNodes);
+        addAncestorNodesToCanvas(payloadNode, currentNodes, state.curDataMapOperation.flattenedSourceSchema);
       });
 
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
-        currentSourceSchemaNodes: nodes,
+        currentSourceSchemaNodes: currentNodes,
       };
 
       doDataMapOperation(state, newState);
