@@ -235,7 +235,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
           />
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
-        <LoopsPager normalizedType={normalizedType} metadata={metadata} scopeId={scopeId} />
+        <LoopsPager normalizedType={normalizedType} metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />
         {graphCollapsed && !isFooter ? <p className="no-actions-text">{collapsedText}</p> : null}
         {showEmptyGraphComponents ? (
           !readOnly ? (

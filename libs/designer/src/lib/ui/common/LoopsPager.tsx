@@ -14,9 +14,10 @@ export interface LoopsPagerProps {
   normalizedType: string;
   metadata: any;
   scopeId: string;
+  collapsed: boolean;
 }
 
-export const LoopsPager = ({ normalizedType, metadata, scopeId }: LoopsPagerProps) => {
+export const LoopsPager = ({ normalizedType, metadata, scopeId, collapsed }: LoopsPagerProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [failedRepetitions, setFailedRepetitions] = useState<Array<number>>([]);
   const isMonitoringView = useMonitoringView();
@@ -53,7 +54,7 @@ export const LoopsPager = ({ normalizedType, metadata, scopeId }: LoopsPagerProp
     onError: onRunRepetitionsError,
   });
 
-  if (!hasPager || !max || isError) {
+  if (!hasPager || !max || isError || collapsed) {
     return null;
   }
 
