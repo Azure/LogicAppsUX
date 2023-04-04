@@ -119,19 +119,23 @@ export class StandardRunService implements IRunService {
 
   /**
    * Gets an array of scope repetition records for an action for the specified status.
-   * @arg {RunAction} action - An object with the action record from a workflow run
+   * @arg {String} actionId - An object with the action record from a workflow run
    * @arg {string} [status] - The status of scope repetition records to fetch
    * @return {Promise<RunScopeRepetition[]>}
    */
   async getScopeRepetitions(action: any, status?: string): Promise<any> {
-    const { id: actionId } = action;
+    const { actionId, runId } = action;
+
+    if (this._isDev) {
+      return Promise.resolve({ value: [] });
+    }
 
     const { apiVersion, baseUrl, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 
-    const uri = status
-      ? `${baseUrl}/${actionId}/scopeRepetitions?api-version=${apiVersion}&$filter=status eq '${status}'`
-      : `${baseUrl}/${actionId}/scopeRepetitions?api-version=${apiVersion}`;
+    const filter = status ? `&$filter=status eq '${status}'` : '';
+    const uri = `${baseUrl}${runId}/actions/${actionId}/scopeRepetitions?api-version=${apiVersion}${filter}`;
+
     try {
       const response = await httpClient.get<ArmResources<any>>({
         uri,

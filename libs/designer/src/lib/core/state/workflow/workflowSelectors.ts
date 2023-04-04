@@ -215,3 +215,11 @@ export const getWorkflowGraphPath = (graph: WorkflowNode, graphId: string) => {
 
   return [...(traverseGraph(graph) ?? []), graphId];
 };
+
+export const useRunInstance = (): LogicAppsV2.RunInstanceDefinition | null => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      return state.runInstance;
+    })
+  );
+};

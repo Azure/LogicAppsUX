@@ -26,6 +26,7 @@ export interface AddImplicitForeachPayload {
 export const initialWorkflowState: WorkflowState = {
   workflowSpec: 'BJS',
   graph: null,
+  runInstance: null,
   operations: {},
   nodesMetadata: {},
   collapsedGraphIds: {},
@@ -41,6 +42,9 @@ export const workflowSlice = createSlice({
   reducers: {
     initWorkflowSpec: (state: WorkflowState, action: PayloadAction<SpecTypes>) => {
       state.workflowSpec = action.payload;
+    },
+    initRunInstance: (state: WorkflowState, action: PayloadAction<LogicAppsV2.RunInstanceDefinition | null>) => {
+      state.runInstance = action.payload;
     },
     setNodeDescription: (state: WorkflowState, action: PayloadAction<{ nodeId: string; description?: string }>) => {
       const { nodeId, description } = action.payload;
@@ -312,6 +316,7 @@ export const workflowSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
   initWorkflowSpec,
+  initRunInstance,
   addNode,
   moveNode,
   deleteNode,
