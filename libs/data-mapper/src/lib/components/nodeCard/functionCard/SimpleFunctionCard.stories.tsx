@@ -33,6 +33,5 @@ Standard.args = {
     functionBranding: getFunctionBrandingForCategory(FunctionCategory.Logical),
     displayHandle: true,
     disabled: false,
-    error: false,
   },
 };
