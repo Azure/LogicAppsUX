@@ -107,12 +107,13 @@ export async function getConnectionParametersForAzureConnection(connectionType?:
     const apimApiId = selectedSubResource?.id;
     const { api } = await getApiManagementSwagger(apimApiId);
     const baseUrl = api.host ? (api.schemes?.length ? `${api.schemes.at(-1)}://${api.host}` : `http://${api.host}`) : 'NotFound';
+    const fullUrl = api.basePath ? `${baseUrl}${api.basePath}` : baseUrl;
     const subscriptionKey = (api.securityDefinitions?.apiKeyHeader as any)?.name ?? 'NotFound';
 
 
     return {
       apiId: apimApiId,
-      baseUrl,
+      baseUrl: fullUrl,
       subscriptionKey,
     };
   }
