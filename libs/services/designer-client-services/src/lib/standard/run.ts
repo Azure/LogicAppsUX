@@ -118,6 +118,55 @@ export class StandardRunService implements IRunService {
   }
 
   /**
+   * Gets an array of scope repetition records for an action for the specified status.
+   * @arg {RunAction} action - An object with the action record from a workflow run
+   * @arg {string} [status] - The status of scope repetition records to fetch
+   * @return {Promise<RunScopeRepetition[]>}
+   */
+  async getScopeRepetitions(action: any, status?: string): Promise<any> {
+    const { id: actionId } = action;
+
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const headers = this.getAccessTokenHeaders();
+
+    const uri = status
+      ? `${baseUrl}/${actionId}/scopeRepetitions?api-version=${apiVersion}&$filter=status eq '${status}'`
+      : `${baseUrl}/${actionId}/scopeRepetitions?api-version=${apiVersion}`;
+    try {
+      const response = await httpClient.get<ArmResources<any>>({
+        uri,
+        headers: headers as Record<string, any>,
+      });
+
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
+   * Gets the repetition record for the repetition item with the specified ID
+   * @arg {string} repetitionId - A string with the resource ID of a repetition record
+   * @return {Promise<any>}
+   */
+  async getRepetition(repetitionId: string): Promise<any> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const headers = this.getAccessTokenHeaders();
+
+    const uri = `${baseUrl}/${repetitionId}?api-version=${apiVersion}`;
+    try {
+      const response = await httpClient.get<ArmResources<any>>({
+        uri,
+        headers: headers as Record<string, any>,
+      });
+
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
    * Triggers a workflow run
    * @param {CallbackInfo} callbackInfo - Information to call Api to trigger workflow.
    */

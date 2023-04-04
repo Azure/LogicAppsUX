@@ -109,12 +109,40 @@ export const App = () => {
     setStandardApp(undefined);
   };
 
-  const { refetch, isError, isFetching, isLoading, isRefetching } = useQuery<any>(['runInstance'], getRunInstance, {
+  const {
+    data: runDefinition2,
+    refetch,
+    isError,
+    isFetching,
+    isLoading,
+    isRefetching,
+  } = useQuery<any>(['runInstance'], getRunInstance, {
+    refetchOnWindowFocus: false,
+    initialData: null,
+  });
+
+  const getFailedRunScopeRepetitions = () => {
+    const runActions = runDefinition2.properties.actions;
+    return Promise.all([
+      ...runActions.map(async (runAction: any) => {
+        const type = 'Foreach';
+        if (type === 'Foreach') {
+          const runScopeRepetitions = await services.runService.getScopeRepetitions(runAction, 'failed');
+          console.log(runScopeRepetitions);
+        }
+      }),
+    ]);
+  };
+
+  const { data: test } = useQuery<any>(['repetitionsInstance'], getFailedRunScopeRepetitions, {
     refetchOnWindowFocus: false,
     initialData: null,
     onSuccess: onRunInstanceSuccess,
     onError: onRunInstanceError,
+    enabled: !!runDefinition2,
   });
+
+  console.log(test);
 
   useEffect(() => {
     refetch();
