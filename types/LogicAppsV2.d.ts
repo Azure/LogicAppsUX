@@ -1015,6 +1015,7 @@ declare namespace LogicAppsV2 {
       code: string;
       message: string;
     };
+    repetitionCount?: number;
     duration?: string;
   }
 

@@ -2,7 +2,7 @@ import constants from '../../common/constants';
 import type { AppDispatch } from '../../core';
 import { useMonitoringView } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useRunInstance } from '../../core/state/workflow/workflowSelectors';
-import { setRunIndex } from '../../core/state/workflow/workflowSlice';
+import { setRunIndexById } from '../../core/state/workflow/workflowSlice';
 import { RunService } from '@microsoft/designer-client-services-logic-apps';
 import type { PageChangeEventArgs, PageChangeEventHandler } from '@microsoft/designer-ui';
 import { Pager } from '@microsoft/designer-ui';
@@ -58,7 +58,7 @@ export const LoopsPager = ({ normalizedType, metadata, scopeId }: LoopsPagerProp
   }
 
   const onPagerChange: PageChangeEventHandler = (page: PageChangeEventArgs) => {
-    dispatch(setRunIndex({ page: page.value, nodeId: scopeId }));
+    dispatch(setRunIndexById({ page: page.value, nodeId: scopeId }));
     setCurrentPage(page.value);
   };
 

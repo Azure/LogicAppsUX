@@ -3,7 +3,7 @@ import type { RootState } from '../../store';
 import { createWorkflowEdge } from '../../utils/graph';
 import type { WorkflowState } from './workflowInterfaces';
 import { operationIsAction } from './workflowInterfaces';
-import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
+import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES, isEmptyString } from '@microsoft/utils-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 
@@ -220,6 +220,15 @@ export const useRunInstance = (): LogicAppsV2.RunInstanceDefinition | null => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       return state.runInstance;
+    })
+  );
+};
+
+export const useRunIndex = (actionId: string): number | undefined => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      if (isEmptyString(actionId)) return undefined;
+      return state.nodesMetadata[actionId]?.runIndex;
     })
   );
 };

@@ -15,6 +15,7 @@ import {
   useIsLeafNode,
   useNodeDisplayName,
   useNodeMetadata,
+  useRunIndex,
   useWorkflowNode,
 } from '../../core/state/workflow/workflowSelectors';
 import { toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
@@ -25,7 +26,7 @@ import { MessageBarType } from '@fluentui/react';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { DeleteNodeModal, MenuItemType, ScopeCard } from '@microsoft/designer-ui';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -45,8 +46,13 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const graphNode = useWorkflowNode(scopeId) as WorkflowNode;
   const metadata = useNodeMetadata(scopeId);
+  const parentRunIndex = useRunIndex(metadata?.parentNodeId ?? '');
 
   const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun } = metadata?.runData ?? {};
+
+  useEffect(() => {
+    console.log('charlie 2', parentRunIndex, metadata?.parentNodeId);
+  }, [dispatch, parentRunIndex, metadata?.parentNodeId]);
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({

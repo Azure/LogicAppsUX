@@ -22,6 +22,7 @@ import {
   useNodeDescription,
   useNodeDisplayName,
   useNodeMetadata,
+  useRunIndex,
   useShouldNodeFocus,
 } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
@@ -29,7 +30,7 @@ import { MessageBarType } from '@fluentui/react';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { Card, MenuItemType, DeleteNodeModal } from '@microsoft/designer-ui';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -46,8 +47,13 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
   const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
+  const parentRunIndex = useRunIndex(metadata?.parentNodeId ?? '');
 
   const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun } = metadata?.runData ?? {};
+
+  useEffect(() => {
+    console.log('charlie 2', parentRunIndex, metadata?.parentNodeId);
+  }, [dispatch, parentRunIndex, metadata?.parentNodeId]);
 
   const dependencies = useTokenDependencies(id);
 
