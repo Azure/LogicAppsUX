@@ -1,5 +1,6 @@
 import type { IAppServiceService } from '../appService';
 import type { ListDynamicValue } from '../connector';
+import { areSwaggerOperationPathsMatching } from '../helpers';
 import type { IHttpClient } from '../httpClient';
 import { ResponseCodes, SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { ArgumentException, equals, unmap } from '@microsoft/utils-logic-apps';
@@ -135,7 +136,7 @@ export class BaseAppServiceService implements IAppServiceService {
     const swagger = await this.fetchAppServiceApiSwagger(swaggerUrl);
     const operations = swagger.getOperations();
     return unmap(operations).find(
-      (operation: any) => cleanPathValue(operation.path) === cleanPathValue(path) && operation.method === method
+      (operation: any) => areSwaggerOperationPathsMatching(operation.path, path) && operation.method === method
     );
   }
 
@@ -162,8 +163,4 @@ export function isFunctionContainer(kind: any): boolean {
   return (
     kinds.some(($kind) => equals($kind, 'functionapp')) && !kinds.some(($kind) => equals($kind, 'botapp') || equals($kind, 'workflowapp'))
   );
-}
-
-function cleanPathValue(value: string): string {
-  return value.replace(/{.*?}/g, '').replace('@', '').toLowerCase();
 }

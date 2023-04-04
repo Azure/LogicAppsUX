@@ -8,6 +8,7 @@ import type {
   ConnectorWithSwagger,
 } from '../connection';
 import type { ListDynamicValue } from '../connector';
+import { areSwaggerOperationPathsMatching } from '../helpers';
 import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
 import type { Operations } from '@microsoft/parsers-logic-apps';
 import { ResponseCodes, SwaggerParser } from '@microsoft/parsers-logic-apps';
@@ -115,7 +116,7 @@ export abstract class BaseConnectionService implements IConnectionService {
   public async getOperationFromPathAndMethod(uri: string, path: string, method: string): Promise<any> {
     const operations = await this.getOperations(uri);
     const operation = unmap(operations).find(
-      (operation: any) => cleanPathValue(operation.path) === cleanPathValue(path) && operation.method === method
+      (operation: any) => areSwaggerOperationPathsMatching(operation.path, path) && operation.method === method
     );
     return operation;
   }
@@ -532,7 +533,3 @@ export abstract class BaseConnectionService implements IConnectionService {
 type ConnectionsResponse = {
   value: Connection[];
 };
-
-function cleanPathValue(value: string): string {
-  return value.replace(/{.*?}/g, '').replace('@', '').toLowerCase();
-}
