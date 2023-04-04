@@ -58,7 +58,7 @@ export const LoopsPager = ({ normalizedType, metadata, scopeId }: LoopsPagerProp
   }
 
   const onPagerChange: PageChangeEventHandler = (page: PageChangeEventArgs) => {
-    dispatch(setRunIndexById({ page: page.value, nodeId: scopeId }));
+    dispatch(setRunIndexById({ page: page.value - 1, nodeId: scopeId }));
     setCurrentPage(page.value);
   };
 

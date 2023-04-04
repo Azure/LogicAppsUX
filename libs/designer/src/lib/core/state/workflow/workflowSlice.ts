@@ -200,6 +200,10 @@ export const workflowSlice = createSlice({
       const { page, nodeId } = action.payload;
       state.nodesMetadata[nodeId].runIndex = page;
     },
+    setRepetitionRunDataById: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: any }>) => {
+      const { nodeId, runData } = action.payload;
+      state.nodesMetadata[nodeId].runData = { ...state.nodesMetadata[nodeId].runData, ...runData.properties };
+    },
     addSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
       if (!state.graph) {
         return; // log exception
@@ -340,6 +344,7 @@ export const {
   replaceId,
   addImplicitForeachNode,
   setRunIndexById,
+  setRepetitionRunDataById,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

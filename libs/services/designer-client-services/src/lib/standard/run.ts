@@ -153,11 +153,12 @@ export class StandardRunService implements IRunService {
    * @arg {string} repetitionId - A string with the resource ID of a repetition record
    * @return {Promise<any>}
    */
-  async getRepetition(repetitionId: string): Promise<any> {
+  async getRepetition(action: any, repetitionId: string): Promise<any> {
     const { apiVersion, baseUrl, httpClient } = this.options;
+    const { actionId, runId } = action;
     const headers = this.getAccessTokenHeaders();
 
-    const uri = `${baseUrl}/${repetitionId}?api-version=${apiVersion}`;
+    const uri = `${baseUrl}${runId}/actions/${actionId}/repetitions/${repetitionId}?api-version=${apiVersion}`;
     try {
       const response = await httpClient.get<ArmResources<any>>({
         uri,

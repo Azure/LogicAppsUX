@@ -51,7 +51,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun } = metadata?.runData ?? {};
 
   useEffect(() => {
-    console.log('charlie 2', parentRunIndex, metadata?.parentNodeId);
+    //console.log('charlie 2', parentRunIndex, metadata?.parentNodeId);
   }, [dispatch, parentRunIndex, metadata?.parentNodeId]);
 
   const [{ isDragging }, drag, dragPreview] = useDrag(

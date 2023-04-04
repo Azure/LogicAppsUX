@@ -10,7 +10,7 @@ export interface IRunService {
   runTrigger(callbackInfo: CallbackInfo): Promise<any>;
   getActionLinks(action: any, nodeId: string): Promise<any>;
   getScopeRepetitions(action: any, status?: string): Promise<any>;
-  getRepetition(repetitionId: string): Promise<any>;
+  getRepetition(action: any, repetitionId: string): Promise<any>;
 }
 
 let service: IRunService;
