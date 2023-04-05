@@ -49,26 +49,20 @@ export const appServiceActionManifest = {
           'x-ms-visibility': 'hideInUI',
         },
         // Dynamic params
-        appService: {
-          type: 'object',
-          properties: {
-            operationId: {
-              required: true,
-              type: 'string',
-              title: 'Operation Id',
-              description: 'Operation Id',
-              'x-ms-dynamic-list': {
-                dynamicState: {
-                  operationId: 'getAppServiceOperations',
-                  parameters: {},
-                },
-                parameters: {},
-              },
+        operationId: {
+          required: true,
+          type: 'string',
+          title: 'Operation Id',
+          description: 'Operation Id',
+          'x-ms-dynamic-list': {
+            dynamicState: {
+              operationId: 'getAppServiceOperations',
+              parameters: {},
             },
+            parameters: {},
           },
-          required: ['operationId'],
         },
-        operationDetails: {
+        parameters: {
           title: 'Operation Parameters',
           description: 'Operation parameters for the above operation',
           'x-ms-dynamic-properties': {
@@ -81,7 +75,7 @@ export const appServiceActionManifest = {
             parameters: {
               type: 'object',
               operationId: {
-                parameterReference: 'appService.operationId',
+                parameterReference: 'operationId',
                 required: true,
               },
             },
@@ -89,7 +83,6 @@ export const appServiceActionManifest = {
         },
       },
     },
-    inputsLocationSwapMap: [{ source: ['operationDetails'], target: [] }],
     isInputsOptional: false,
 
     outputs: {
@@ -102,13 +95,14 @@ export const appServiceActionManifest = {
         parameters: {
           type: 'object',
           operationId: {
-            parameterReference: 'appService.operationId',
+            parameterReference: 'operationId',
             required: true,
           },
         },
       },
     },
     isOutputsOptional: false,
+
     settings: {
       secureData: {},
       trackedProperties: {

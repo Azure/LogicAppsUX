@@ -206,6 +206,16 @@ export const httpWithSwaggerManifest = {
     inputs: {
       type: 'object',
       properties: {
+        authentication: {
+          type: 'object',
+          title: 'Authentication',
+          description: 'Enter JSON object of authentication parameter',
+          'x-ms-visibility': 'advanced',
+          'x-ms-editor': 'authentication',
+          'x-ms-editor-options': {
+            supportedAuthTypes: ['None', 'Basic', 'ClientCertificate', 'ActiveDirectoryOAuth', 'Raw', 'ManagedServiceIdentity'],
+          },
+        },
         uri: {
           type: 'string',
           'x-ms-visibility': 'hideInUI',
@@ -214,19 +224,19 @@ export const httpWithSwaggerManifest = {
           type: 'string',
           'x-ms-visibility': 'hideInUI',
         },
+        // Dynamic Params
         operationId: {
+          required: true,
           type: 'string',
           title: 'Swagger Operation',
+          description: 'Swagger Operation',
           'x-ms-dynamic-list': {
             dynamicState: {
               operationId: 'getSwaggerOperations',
-              parameters: {},
             },
-            parameters: {},
           },
         },
         parameters: {
-          type: 'object',
           title: 'Swagger Parameters',
           description: 'Enter all swagger parameters',
           'x-ms-dynamic-properties': {
@@ -246,6 +256,7 @@ export const httpWithSwaggerManifest = {
           },
         },
       },
+      inputsLocationSwapMap: { source: ['parameters'], target: [] },
       required: ['operationId'],
     },
     isInputsOptional: false,

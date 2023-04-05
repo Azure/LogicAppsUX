@@ -206,7 +206,8 @@ export const serializeOperation = async (
   }
 
   // HTTP + SWAGGER
-  if ((serializedOperation as any)?.metadata?.swaggerSource === 'custom') {
+  const swaggerSource = (serializedOperation as any)?.metadata?.swaggerSource;
+  if (swaggerSource === 'custom' || swaggerSource === 'website') {
     serializedOperation = await parseSwaggerPathParameters(serializedOperation);
   }
 
@@ -906,7 +907,7 @@ const getRunAfter = (operation: LogicAppsV2.ActionDefinition, idReplacements: Re
 const parseSwaggerPathParameters = async (_operation: any): Promise<any> => {
   const operation = clone(_operation);
   const { apiDefinitionUrl, swaggerSource } = operation?.metadata ?? {};
-  if (!apiDefinitionUrl || swaggerSource !== 'custom') return;
+  if (!apiDefinitionUrl || (swaggerSource !== 'custom' && swaggerSource !== 'website')) return;
   const opId = operation.inputs?.operationId;
   if (!opId) return;
   const connectionService = ConnectionService();
@@ -931,6 +932,7 @@ const parseSwaggerPathParameters = async (_operation: any): Promise<any> => {
   };
   if (operation?.inputs?.operationId) delete operation.inputs.operationId;
   if (operation?.inputs?.parameters?.pathTemplate) delete operation.inputs.parameters.pathTemplate;
+  if (Object.keys(operation?.inputs?.parameters)?.length === 0) delete operation.inputs.parameters;
 
   return operation;
 };

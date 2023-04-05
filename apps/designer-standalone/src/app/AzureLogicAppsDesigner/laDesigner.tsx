@@ -290,6 +290,7 @@ const getDesignerServices = (
         const { nodeInputs, nodeMetadata, isInput } = args;
         const swaggerUrl = nodeMetadata?.['apiDefinitionUrl'];
         const operationId = getParameterValueByName(nodeInputs, 'operationId');
+        if (!operationId || !swaggerUrl) return Promise.resolve();
         return connectionService.getOperationSchema(swaggerUrl, operationId, isInput);
       },
     },

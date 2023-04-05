@@ -23,6 +23,7 @@ import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '.
 import { getInputParametersFromManifest, getOutputParametersFromManifest, updateCallbackUrlInInputs } from './initialize';
 import { getOperationSettings } from './settings';
 import {
+  AppServiceService,
   ConnectionService,
   LogEntryLevel,
   LoggerService,
@@ -149,8 +150,6 @@ export const initializeOperationDetailsForManifest = async (
         }
       });
 
-      await addOperationIdIfNeeded(operation);
-
       const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, operation);
 
       if (isTrigger) {
@@ -168,7 +167,6 @@ export const initializeOperationDetailsForManifest = async (
 
       const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
 
-      console.log('### nodeInputs', nodeInputs);
       return [
         {
           id: nodeId,
@@ -374,12 +372,7 @@ const initializeVariables = (
   return declarations;
 };
 
-export const updateDynamicDataInNodes = async (
-  connectionsPromise: Promise<void>,
-  getState: () => RootState,
-  dispatch: Dispatch
-): Promise<void> => {
-  await connectionsPromise;
+export const updateDynamicDataInNodes = async (getState: () => RootState, dispatch: Dispatch): Promise<void> => {
   const rootState = getState();
   const {
     workflow: { nodesMetadata, operations },
@@ -414,18 +407,36 @@ export const updateDynamicDataInNodes = async (
   }
 };
 
-const addOperationIdIfNeeded = async (operation: any) => {
+export const initializeSwaggerDynamicData = async (workflow: DeserializedWorkflow): Promise<any> => {
+  await Promise.all(
+    Object.entries(workflow.actionData).map(async ([id, operation]) => {
+      const newOperation = (await initializeOperationSwaggerDynamicData(operation)) ?? {};
+      workflow.actionData[id] = {
+        ...operation,
+        ...newOperation,
+      };
+    })
+  );
+};
+
+const initializeOperationSwaggerDynamicData = async (operation: any): Promise<any> => {
   const { inputs, metadata } = operation;
   if (inputs?.operationId) return;
 
   const { apiDefinitionUrl, swaggerSource } = metadata ?? {};
-  if (!apiDefinitionUrl || swaggerSource !== 'custom') return;
+  if (!apiDefinitionUrl || (swaggerSource !== 'custom' && swaggerSource !== 'website')) return;
 
   const { uri, method } = inputs ?? {};
   if (!uri || !method) return;
 
-  const connectionService = ConnectionService();
-  const swaggerOperation = await connectionService.getOperationFromPathAndMethod(apiDefinitionUrl, getPathFromFullpath(uri), method);
+  let swaggerOperation;
+  if (swaggerSource === 'custom') {
+    const connectionService = ConnectionService();
+    swaggerOperation = await connectionService.getOperationFromPathAndMethod(apiDefinitionUrl, getPathFromFullpath(uri), method);
+  } else if (swaggerSource === 'website') {
+    const appServiceService = AppServiceService();
+    swaggerOperation = await appServiceService.getOperationFromPathAndMethod(apiDefinitionUrl, getPathFromFullpath(uri), method);
+  }
   if (!swaggerOperation) return;
   const { operationId, path: operationUri } = swaggerOperation;
 
@@ -439,17 +450,24 @@ const addOperationIdIfNeeded = async (operation: any) => {
     return acc;
   }, {});
 
-  operation.inputs = {
-    ...operation.inputs,
-    operationId,
-    parameters: {
-      ...operation.inputs.parameters,
-      pathTemplate: {
-        ...operation.inputs.pathTemplate,
-        parameters: pathParams,
+  operation = {
+    ...operation,
+    inputs: {
+      ...operation.inputs,
+      operationId,
+      parameters: {
+        ...operation.inputs.parameters,
+        pathTemplate: {
+          ...operation.inputs.pathTemplate,
+          parameters: pathParams,
+        },
       },
     },
   };
+
+  if (Object.keys(operation?.inputs?.parameters)?.length === 0) delete operation.inputs.parameters;
+
+  return operation;
 };
 
 const getPathFromFullpath = (fullpath: string): string => fullpath.replace('http://localhost:54335', '');
