@@ -71,7 +71,7 @@ const TokenField = ({
   errorDetails,
   showTokens,
   label,
-  pickerInfo,
+  // pickerInfo,
   onValueChange,
   onComboboxMenuOpen,
   hideValidationErrors,
@@ -205,7 +205,7 @@ const TokenField = ({
       return <ScheduleEditor readOnly={readOnly} type={editorOptions?.recurrenceType} initialValue={value} onChange={onValueChange} />;
 
     case 'filepicker':
-      console.log(pickerInfo);
+      // console.log(pickerInfo);
       return (
         <FilePickerEditor
           className="msla-setting-token-editor-container"
