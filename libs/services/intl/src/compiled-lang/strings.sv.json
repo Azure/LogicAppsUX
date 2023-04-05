@@ -99,12 +99,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -573,6 +567,12 @@
     {
       "type": 0,
       "value": "(UTC-04:00) Caracas"
+    }
+  ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Add children (recursive)"
     }
   ],
   "23fENy": [
@@ -1661,6 +1661,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon"
+    }
+  ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
   "AgrMqq": [
@@ -3637,6 +3643,12 @@
       "value": "Ignorera"
     }
   ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -4665,6 +4677,12 @@
     {
       "type": 0,
       "value": "Returnerar en binär representation av ett data-URI"
+    }
+  ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Add children"
     }
   ],
   "YHsAKl": [
@@ -6267,6 +6285,12 @@
       "value": "Kortkommando för åtgärder(actionName).outputs.body"
     }
   ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -7731,12 +7755,6 @@
     {
       "type": 0,
       "value": "Ange lösenordet som oformaterad text eller använd en säker parameter"
-    }
-  ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "Redigerarens indata"
     }
   ],
   "xQQ9ko": [

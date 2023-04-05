@@ -95,12 +95,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -603,6 +597,12 @@
     {
       "type": 0,
       "value": "(UTC-04:00) Caracas"
+    }
+  ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Add children (recursive)"
     }
   ],
   "23fENy": [
@@ -1687,6 +1687,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangún)"
+    }
+  ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
   "AgrMqq": [
@@ -3737,6 +3743,12 @@
       "value": "Zahodit"
     }
   ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -4787,6 +4799,12 @@
     {
       "type": 0,
       "value": "Vrátí binární reprezentaci identifikátoru URI dat."
+    }
+  ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Add children"
     }
   ],
   "YHsAKl": [
@@ -6411,6 +6429,12 @@
       "value": "Zkratka pro actions('actionName').outputs.body"
     }
   ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -7897,12 +7921,6 @@
     {
       "type": 0,
       "value": "Zadejte heslo jako prostý text nebo použijte zabezpečený parametr."
-    }
-  ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "Vstup editoru"
     }
   ],
   "xQQ9ko": [

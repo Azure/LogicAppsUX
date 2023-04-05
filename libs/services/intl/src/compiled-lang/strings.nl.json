@@ -99,12 +99,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -573,6 +567,12 @@
     {
       "type": 0,
       "value": "(UTC-04:00) Caracas"
+    }
+  ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Add children (recursive)"
     }
   ],
   "23fENy": [
@@ -1661,6 +1661,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangoon)"
+    }
+  ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
   "AgrMqq": [
@@ -3637,6 +3643,12 @@
       "value": "Negeren"
     }
   ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -4669,6 +4681,12 @@
     {
       "type": 0,
       "value": "Er wordt een binaire weergave van een gegevens-URI geretourneerd"
+    }
+  ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Add children"
     }
   ],
   "YHsAKl": [
@@ -6263,6 +6281,12 @@
       "value": "Verkorte versie van acties('actionName').outputs.body"
     }
   ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -7731,12 +7755,6 @@
     {
       "type": 0,
       "value": "Wachtwoord invoeren als tekst zonder opmaak of een beveiligde parameter gebruiken"
-    }
-  ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "Editor-invoer"
     }
   ],
   "xQQ9ko": [

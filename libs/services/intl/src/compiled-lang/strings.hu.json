@@ -99,12 +99,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -573,6 +567,12 @@
     {
       "type": 0,
       "value": "(UTC-04:00) Caracas"
+    }
+  ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Add children (recursive)"
     }
   ],
   "23fENy": [
@@ -1661,6 +1661,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangun)"
+    }
+  ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
   "AgrMqq": [
@@ -3645,6 +3651,12 @@
       "value": "Elvetés"
     }
   ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -4677,6 +4689,12 @@
     {
       "type": 0,
       "value": "Adat-URI bináris értékként való visszaadása."
+    }
+  ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Add children"
     }
   ],
   "YHsAKl": [
@@ -6291,6 +6309,12 @@
       "value": "Az actions('actionName').outputs.body rövid függvényneve."
     }
   ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -7759,12 +7783,6 @@
     {
       "type": 0,
       "value": "Adja meg a jelszót egyszerű szövegként, vagy használjon biztonságos paramétert"
-    }
-  ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "Szerkesztőbe bevitt szöveg"
     }
   ],
   "xQQ9ko": [

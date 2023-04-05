@@ -2,22 +2,24 @@ import { addSourceSchemaNodes, removeSourceSchemaNodes, setCanvasToolboxTabToDis
 import { openAddSourceSchemaPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
-import { searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
+import { flattenSchemaNode, searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
 import type { ButtonPivotProps } from '../buttonPivot/ButtonPivot';
 import { ButtonPivot } from '../buttonPivot/ButtonPivot';
-import { FloatingPanel } from '../floatingPanel/FloatingPanel';
 import type { FloatingPanelProps } from '../floatingPanel/FloatingPanel';
+import { FloatingPanel } from '../floatingPanel/FloatingPanel';
 import { FunctionList } from '../functionList/FunctionList';
 import { schemaRootKey } from '../sidePane/tabs/targetSchemaTab/TargetSchemaTab';
-import { getDefaultFilteredDataTypesDict, SchemaTreeSearchbar } from '../tree/SchemaTreeSearchbar';
 import type { FilteredDataTypesDict } from '../tree/SchemaTreeSearchbar';
+import { SchemaTreeSearchbar, getDefaultFilteredDataTypesDict } from '../tree/SchemaTreeSearchbar';
 import SourceSchemaTreeItem, { SourceSchemaTreeHeader, useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';
-import Tree from '../tree/Tree';
 import type { ITreeNode } from '../tree/Tree';
+import Tree from '../tree/Tree';
 import { Stack } from '@fluentui/react';
-import { Button, mergeClasses, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
+import { Button, Text, mergeClasses, tokens, typographyStyles } from '@fluentui/react-components';
 import { CubeTree20Filled, CubeTree20Regular, MathFormula20Filled, MathFormula20Regular } from '@fluentui/react-icons';
+import type { MenuItemOption } from '@microsoft/designer-ui';
+import { MenuItemType } from '@microsoft/designer-ui';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -119,6 +121,38 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
     }
   };
 
+  const getAllContextMenuItems = (node: SchemaNodeExtended): MenuItemOption[] => {
+    return [getAddAllNodesMenuItem(node), getAddAllNodesRecursiveMenuItem(node)];
+  };
+
+  const getAddAllNodesMenuItem = (node: SchemaNodeExtended): MenuItemOption => {
+    const nodeList = [node, ...node.children];
+    return {
+      key: 'addAll',
+      title: intl.formatMessage({
+        defaultMessage: 'Add children',
+        description: 'Add the current node and its children to the map',
+      }),
+      type: MenuItemType.Advanced,
+      onClick: () => dispatch(addSourceSchemaNodes(nodeList)),
+      disabled: nodeList.every((node) => currentSourceSchemaNodes.find((curNode) => node.key === curNode.key)),
+    };
+  };
+
+  const getAddAllNodesRecursiveMenuItem = (node: SchemaNodeExtended): MenuItemOption => {
+    const nodeList = flattenSchemaNode(node);
+    return {
+      key: 'addAllRecursive',
+      title: intl.formatMessage({
+        defaultMessage: 'Add children (recursive)',
+        description: 'Add the current node and its children to the map',
+      }),
+      type: MenuItemType.Advanced,
+      onClick: () => dispatch(addSourceSchemaNodes(nodeList)),
+      disabled: nodeList.every((node) => currentSourceSchemaNodes.find((curNode) => node.key === curNode.key)),
+    };
+  };
+
   const searchedSourceSchemaTreeRoot = useMemo<ITreeNode<SchemaNodeExtended> | undefined>(() => {
     if (!sourceSchema) {
       return undefined;
@@ -211,6 +245,7 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
                   ? tokens.colorBrandBackground2
                   : undefined,
               })}
+              contextMenuItems={(node) => getAllContextMenuItems(node as SchemaNodeExtended)}
             />
           </>
         ) : (

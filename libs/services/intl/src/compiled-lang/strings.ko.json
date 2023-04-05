@@ -83,12 +83,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -546,6 +540,12 @@
     {
       "type": 0,
       "value": "(UTC-04:00) 카라카스"
+    }
+  ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Add children (recursive)"
     }
   ],
   "23fENy": [
@@ -1618,6 +1618,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) 양곤"
+    }
+  ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
   "AgrMqq": [
@@ -3497,6 +3503,12 @@
       "value": "취소"
     }
   ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -4506,6 +4518,12 @@
     {
       "type": 0,
       "value": "데이터 URI의 이진 표현을 반환합니다."
+    }
+  ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Add children"
     }
   ],
   "YHsAKl": [
@@ -6061,6 +6079,12 @@
       "value": "actions('actionName').outputs.body의 축약형"
     }
   ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -7490,12 +7514,6 @@
     {
       "type": 0,
       "value": "일반 텍스트로 암호 입력 또는 보안 매개 변수 사용"
-    }
-  ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "편집기 입력"
     }
   ],
   "xQQ9ko": [

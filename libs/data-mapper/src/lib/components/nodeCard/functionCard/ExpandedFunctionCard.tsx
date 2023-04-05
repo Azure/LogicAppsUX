@@ -123,11 +123,13 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const handleBaseOffset = 58;
 
   const inputsForBody = [];
-  if (connections[reactFlowId]) {
+  const curConnection = connections[reactFlowId];
+  if (curConnection) {
     if (functionData.maxNumberOfInputs > -1) {
       inputsForBody.push(
         functionData.inputs.map((input, index) => {
           const handleTop = index * handleIndexOffset + handleBaseOffset;
+          const curInput = curConnection.inputs[index][0];
           return (
             <StackItem key={input.name}>
               <div key={input.name} style={inputBodyStyles}>
@@ -138,7 +140,7 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
                   style={{
                     top: `${handleTop}px`,
                     backgroundColor:
-                      typeof input === 'string' ? (input ? tokens.colorPaletteBlueBackground2 : tokens.colorPaletteRedBackground3) : '',
+                      typeof curInput === 'string' ? (input ? tokens.colorPaletteBlueBackground2 : tokens.colorPaletteRedBackground3) : '',
                   }}
                 />
                 {generateInputName(input.name, input.isOptional, input.tooltip)}
@@ -149,10 +151,11 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
       );
     } else {
       inputsForBody.push(
-        connections[reactFlowId].inputs[0].map((input, index) => {
+        curConnection.inputs[0].map((input, index) => {
           const handleTop = index * handleIndexOffset + handleBaseOffset;
           const id = generateInputHandleId(functionData.inputs[0].name, index);
           const name = `${functionData.inputs[0].name} ${index}`;
+          const curInput = curConnection.inputs[0][index];
           return (
             <div key={id} style={inputBodyStyles}>
               <Handle
@@ -162,7 +165,7 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
                 style={{
                   top: `${handleTop}px`,
                   backgroundColor:
-                    typeof input === 'string' ? (input ? tokens.colorPaletteBlueBackground2 : tokens.colorPaletteRedBackground3) : '',
+                    typeof curInput === 'string' ? (input ? tokens.colorPaletteBlueBackground2 : tokens.colorPaletteRedBackground3) : '',
                 }}
               />
               {generateInputName(name, functionData.inputs[0].isOptional, functionData.inputs[0].tooltip)}

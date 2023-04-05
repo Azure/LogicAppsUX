@@ -99,12 +99,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -595,6 +589,12 @@
     {
       "type": 0,
       "value": "(UTC-04:00) Каракас"
+    }
+  ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Add children (recursive)"
     }
   ],
   "23fENy": [
@@ -1683,6 +1683,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Янгон (Рангун)"
+    }
+  ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
   "AgrMqq": [
@@ -3733,6 +3739,12 @@
       "value": "Отменить"
     }
   ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -4783,6 +4795,12 @@
     {
       "type": 0,
       "value": "Возвращает двоичное представление URI данных"
+    }
+  ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Add children"
     }
   ],
   "YHsAKl": [
@@ -6415,6 +6433,12 @@
       "value": "Сокращение для actions('actionName').outputs.body"
     }
   ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -7905,12 +7929,6 @@
     {
       "type": 0,
       "value": "Введите пароль в виде обычного текста или используйте безопасный параметр."
-    }
-  ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "Ввод редактора"
     }
   ],
   "xQQ9ko": [

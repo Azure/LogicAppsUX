@@ -12,6 +12,7 @@ import { useState } from 'react';
 export interface TableEditorProps extends DictionaryEditorProps {
   columnMode: ColumnMode;
   columns: number;
+  labelId: string;
   titles: string[];
   keys: string[];
 }
@@ -45,6 +46,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({
   columnMode,
   titles,
   readonly,
+  labelId,
   placeholder,
   isTrigger,
   getTokenPicker,
@@ -82,6 +84,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({
       {selectedKey === ColumnMode.Custom ? (
         <div className="msla-table-editor-container">
           <DictionaryEditor
+            labelId={labelId}
             keyTitle={titles[0]}
             valueTitle={titles[1]}
             dictionaryType={DictionaryType.TABLE}
