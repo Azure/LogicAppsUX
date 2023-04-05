@@ -1,8 +1,8 @@
-import constants from '../../common/constants';
-import type { AppDispatch } from '../../core';
-import { useMonitoringView } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useRunInstance } from '../../core/state/workflow/workflowSelectors';
-import { setRunIndexById } from '../../core/state/workflow/workflowSlice';
+import constants from '../../../common/constants';
+import type { AppDispatch } from '../../../core';
+import { useRunInstance } from '../../../core/state/workflow/workflowSelectors';
+import { setRunIndexById } from '../../../core/state/workflow/workflowSlice';
+import { getForeachItemsCount } from './helper';
 import { RunService } from '@microsoft/designer-client-services-logic-apps';
 import type { PageChangeEventArgs, PageChangeEventHandler } from '@microsoft/designer-ui';
 import { Pager } from '@microsoft/designer-ui';
@@ -11,21 +11,18 @@ import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 export interface LoopsPagerProps {
-  normalizedType: string;
   metadata: any;
   scopeId: string;
   collapsed: boolean;
 }
 
-export const LoopsPager = ({ normalizedType, metadata, scopeId, collapsed }: LoopsPagerProps) => {
+export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [failedRepetitions, setFailedRepetitions] = useState<Array<number>>([]);
-  const isMonitoringView = useMonitoringView();
   const runInstance = useRunInstance();
   const dispatch = useDispatch<AppDispatch>();
 
-  const hasPager = (normalizedType === constants.NODE.TYPE.FOREACH || normalizedType === constants.NODE.TYPE.UNTIL) && isMonitoringView;
-  const max = metadata?.runData?.inputsLink?.metadata?.foreachItemsCount ?? 5;
+  const forEachItemsCount = getForeachItemsCount(metadata.runData);
 
   const getFailedRunScopeRepetitions = () => {
     return RunService().getScopeRepetitions({ actionId: scopeId, runId: runInstance?.id }, constants.FLOW_STATUS.FAILED);
@@ -54,7 +51,7 @@ export const LoopsPager = ({ normalizedType, metadata, scopeId, collapsed }: Loo
     onError: onRunRepetitionsError,
   });
 
-  if (!hasPager || !max || isError || collapsed) {
+  if (!forEachItemsCount || isError || collapsed) {
     return null;
   }
 
@@ -77,8 +74,8 @@ export const LoopsPager = ({ normalizedType, metadata, scopeId, collapsed }: Loo
     <Pager
       current={currentPage}
       onChange={onPagerChange}
-      max={max}
-      maxLength={max.toString().length + 1}
+      max={forEachItemsCount}
+      maxLength={forEachItemsCount.toString().length + 1}
       min={1}
       readonlyPagerInput={false}
       failedIterationProps={failedIterationProps}

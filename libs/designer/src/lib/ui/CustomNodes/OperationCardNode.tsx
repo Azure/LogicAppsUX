@@ -61,11 +61,13 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   };
 
   const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
-    dispatch(setRepetitionRunDataById({ nodeId: id, runData: runDefinition }));
+    if (parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined) {
+      dispatch(setRepetitionRunDataById({ nodeId: id, runData: runDefinition.properties as any }));
+    }
   };
 
   const onRunInstanceError = async () => {
-    dispatch(setRepetitionRunDataById({ nodeId: id, runData: {} }));
+    //dispatch(setRepetitionRunDataById({ nodeId: id, runData: {} }));
   };
 
   const {
@@ -77,11 +79,11 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     initialData: null,
     onSuccess: onRunInstanceSuccess,
     onError: onRunInstanceError,
-    enabled: repetitionCount !== undefined,
+    enabled: false,
   });
 
   useEffect(() => {
-    if (parentRunIndex && isMonitoringView) {
+    if (parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined) {
       refetch();
     }
   }, [dispatch, parentRunIndex, metadata?.parentNodeId]);

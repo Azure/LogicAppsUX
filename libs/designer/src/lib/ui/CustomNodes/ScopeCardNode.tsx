@@ -21,7 +21,7 @@ import {
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunDataById, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
-import { LoopsPager } from '../common/LoopsPager';
+import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
 import { RunService } from '@microsoft/designer-client-services-logic-apps';
@@ -59,11 +59,11 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   };
 
   const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
-    dispatch(setRepetitionRunDataById({ nodeId: id, runData: runDefinition }));
+    dispatch(setRepetitionRunDataById({ nodeId: id, runData: runDefinition.properties as any }));
   };
 
   const onRunInstanceError = async () => {
-    dispatch(setRepetitionRunDataById({ nodeId: id, runData: {} }));
+    //dispatch(setRepetitionRunDataById({ nodeId: id, runData: {} }));
   };
 
   const {
@@ -266,9 +266,11 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             contextMenuOptions={contextMenuOptions}
             runData={{ status: statusRun, duration: durationRun }}
           />
+          {isMonitoringView && normalizedType === constants.NODE.TYPE.FOREACH ? (
+            <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />
+          ) : null}
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
-        <LoopsPager normalizedType={normalizedType} metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />
         {graphCollapsed && !isFooter ? <p className="no-actions-text">{collapsedText}</p> : null}
         {showEmptyGraphComponents ? (
           !readOnly ? (

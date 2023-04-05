@@ -12,6 +12,7 @@ import { getImmediateSourceNodeIds } from '../../utils/graph';
 import type { SpecTypes, WorkflowState } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
+import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import { equals, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -200,9 +201,14 @@ export const workflowSlice = createSlice({
       const { page, nodeId } = action.payload;
       state.nodesMetadata[nodeId].runIndex = page;
     },
-    setRepetitionRunDataById: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: any }>) => {
+    setRepetitionRunDataById: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.WorkflowRunAction }>) => {
       const { nodeId, runData } = action.payload;
-      state.nodesMetadata[nodeId].runData = { ...state.nodesMetadata[nodeId].runData, ...runData.properties };
+      const test = {
+        ...state.nodesMetadata[nodeId].runData,
+        ...runData,
+        duration: getDurationStringPanelMode(Date.parse(runData.endTime) - Date.parse(runData.startTime), /* abbreviated */ true),
+      };
+      state.nodesMetadata[nodeId].runData = test as LogicAppsV2.WorkflowRunAction;
     },
     addSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
       if (!state.graph) {
