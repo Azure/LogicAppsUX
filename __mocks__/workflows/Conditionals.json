@@ -34,18 +34,18 @@
               "equals": ["abc@microsoft.com", "@variables('goalOwner')"]
             },
             {
-              "equals": ["test", "@variables('goalOwner')"]
+              "equals": ["@null", "@variables('goalOwner')"]
             },
             {
               "not": {
-                "equals": ["", "@variables('goalOwner')"]
+                "equals": ["@true", "@variables('goalOwner')"]
               }
             },
             {
               "and": [
                 {
                   "not": {
-                    "endsWith": ["@true", "@variables('goalOwner')"]
+                    "endsWith": ["@{concat(concat(concat(concat())))}", "@variables('goalOwner')"]
                   }
                 },
                 {
