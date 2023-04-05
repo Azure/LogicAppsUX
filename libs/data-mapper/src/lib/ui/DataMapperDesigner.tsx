@@ -118,6 +118,7 @@ export const DataMapperDesigner = ({
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
+  const targetSchemaSortArray = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchemaOrdering);
   const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
 
@@ -133,7 +134,7 @@ export const DataMapperDesigner = ({
   const dataMapDefinition = useMemo<string>(() => {
     if (sourceSchema && targetSchema) {
       try {
-        const newDataMapDefinition = convertToMapDefinition(currentConnections, sourceSchema, targetSchema);
+        const newDataMapDefinition = convertToMapDefinition(currentConnections, sourceSchema, targetSchema, targetSchemaSortArray);
 
         if (saveDraftStateCall) {
           saveDraftStateCall(newDataMapDefinition);

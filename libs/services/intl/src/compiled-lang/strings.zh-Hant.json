@@ -83,12 +83,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -363,6 +357,12 @@
       "value": "Hour"
     }
   ],
+  "0vfdFS": [
+    {
+      "type": 0,
+      "value": "every day"
+    }
+  ],
   "0y5eia": [
     {
       "type": 0,
@@ -542,6 +542,12 @@
       "value": "(UTC-04:00) 卡拉卡斯"
     }
   ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Add children (recursive)"
+    }
+  ],
   "23fENy": [
     {
       "type": 0,
@@ -636,6 +642,12 @@
     {
       "type": 0,
       "value": "Start Time"
+    }
+  ],
+  "2pRsUf": [
+    {
+      "type": 0,
+      "value": "Enter a valid array."
     }
   ],
   "2ri1Kf": [
@@ -884,6 +896,16 @@
     {
       "type": 0,
       "value": "必要。要加上的天數。可以是負數以減去天數。"
+    }
+  ],
+  "4D7H4R": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
     }
   ],
   "4Ekn9t": [
@@ -1598,6 +1620,12 @@
       "value": "(UTC+06:30) 仰光"
     }
   ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
+    }
+  ],
   "AgrMqq": [
     {
       "type": 0,
@@ -1843,6 +1871,16 @@
       "value": "(UTC+02:00) 赫爾辛基，凱耶夫，里加，蘇非亞，塔林，維爾紐斯"
     }
   ],
+  "Czt6YV": [
+    {
+      "type": 0,
+      "value": "at "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    }
+  ],
   "D+Ptnq": [
     {
       "type": 0,
@@ -1883,6 +1921,12 @@
     {
       "type": 0,
       "value": "Select a value"
+    }
+  ],
+  "DWd9vy": [
+    {
+      "type": 0,
+      "value": "every week"
     }
   ],
   "DWsh56": [
@@ -2023,6 +2067,20 @@
     {
       "type": 0,
       "value": "必要項目。開始擷取子字串之位置的索引。"
+    }
+  ],
+  "Ea/fr+": [
+    {
+      "type": 0,
+      "value": "Every "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " days"
     }
   ],
   "EdzoIs": [
@@ -2244,6 +2302,12 @@
     {
       "type": 0,
       "value": "輸入授權單位"
+    }
+  ],
+  "GEB1on": [
+    {
+      "type": 0,
+      "value": "This contains a value that is not between 0 and 59"
     }
   ],
   "GIUSQs": [
@@ -2937,6 +3001,12 @@
       "value": "保護作業的輸出和輸出屬性的參考。"
     }
   ],
+  "MCzWDc": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "MDbmMw": [
     {
       "type": 0,
@@ -3315,6 +3385,16 @@
       "value": "必要。要加到被加數 1 的數字。"
     }
   ],
+  "PNk3n4": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    }
+  ],
   "PORNMZ": [
     {
       "type": 0,
@@ -3421,6 +3501,12 @@
     {
       "type": 0,
       "value": "捨棄"
+    }
+  ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
     }
   ],
   "QEp3C8": [
@@ -3792,6 +3878,24 @@
       "value": "Add or replace your schemas."
     }
   ],
+  "TZh8nV": [
+    {
+      "type": 0,
+      "value": "on "
+    },
+    {
+      "type": 1,
+      "value": "weekDays"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "frequencyDesc"
+    }
+  ],
   "Tayrub": [
     {
       "type": 0,
@@ -3870,6 +3974,24 @@
       "value": "從特定數字開始產生整數陣列"
     }
   ],
+  "U4zovj": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
+    }
+  ],
   "U56j9a": [
     {
       "type": 0,
@@ -3940,6 +4062,20 @@
     {
       "type": 0,
       "value": "' has an non-terminating connection chain"
+    }
+  ],
+  "Umpr3z": [
+    {
+      "type": 0,
+      "value": "Every "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " weeks"
     }
   ],
   "UnrrzF": [
@@ -4382,6 +4518,12 @@
     {
       "type": 0,
       "value": "傳回資料 URI 的二進位表示法"
+    }
+  ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Add children"
     }
   ],
   "YHsAKl": [
@@ -5467,6 +5609,12 @@
       "value": "網路"
     }
   ],
+  "i4Om5O": [
+    {
+      "type": 0,
+      "value": "This contains an invalid value"
+    }
+  ],
   "iBlvhu": [
     {
       "type": 0,
@@ -5943,6 +6091,12 @@
       "value": "actions('actionName').outputs.body 的速記"
     }
   ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -6351,6 +6505,12 @@
     {
       "type": 0,
       "value": "結束時間"
+    }
+  ],
+  "pMms92": [
+    {
+      "type": 0,
+      "value": "Insert Dynamic Content"
     }
   ],
   "pOTcUO": [
@@ -6872,6 +7032,20 @@
       "value": "基本"
     }
   ],
+  "tWV2mC": [
+    {
+      "type": 0,
+      "value": "at "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    },
+    {
+      "type": 0,
+      "value": " every hour"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -7172,6 +7346,12 @@
       "value": "建立參數"
     }
   ],
+  "vxOc/M": [
+    {
+      "type": 0,
+      "value": "This contains a duplicate value"
+    }
+  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -7350,12 +7530,6 @@
     {
       "type": 0,
       "value": "以純文字形式輸入密碼或使用安全參數"
-    }
-  ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "編輯器輸入"
     }
   ],
   "xQQ9ko": [

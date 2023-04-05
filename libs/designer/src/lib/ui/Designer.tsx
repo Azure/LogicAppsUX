@@ -20,7 +20,7 @@ import { ButtonEdge } from './connections/edge';
 import { HiddenEdge } from './connections/hiddenEdge';
 import { PanelRoot } from './panel/panelroot';
 import { setLayerHostSelector } from '@fluentui/react';
-import type { PanelLocation } from '@microsoft/designer-ui';
+import { PanelLocation } from '@microsoft/designer-ui';
 import type { WorkflowNodeType } from '@microsoft/utils-logic-apps';
 import { isString, useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -245,7 +245,7 @@ export const Designer = (props: DesignerProps) => {
             <PanelRoot panelLocation={panelLocation} />
             {backgroundProps ? <Background {...backgroundProps} /> : null}
           </ReactFlow>
-          <div className="msla-designer-tools">
+          <div className={`msla-designer-tools ${panelLocation === PanelLocation.Left ? 'msla-designer-tools-left-panel' : ''}`}>
             <Controls />
             <Minimap />
           </div>

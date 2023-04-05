@@ -71,6 +71,8 @@ export const Combobox = ({
   useOption = true,
   onChange,
   onMenuOpen,
+  labelId,
+  label,
   ...baseEditorProps
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
@@ -210,6 +212,7 @@ export const Combobox = ({
       {mode === Mode.Custom ? (
         <div className="msla-combobox-editor-container">
           <BaseEditor
+            labelId={labelId}
             readonly={baseEditorProps.readonly}
             className="msla-combobox-editor"
             BasePlugins={{ tokens: true, clearEditor: true, autoFocus: canAutoFocus }}
@@ -228,6 +231,7 @@ export const Combobox = ({
         </div>
       ) : (
         <ComboBox
+          ariaLabel={label}
           className="msla-combobox"
           selectedKey={selectedKey}
           componentRef={comboBoxRef}
