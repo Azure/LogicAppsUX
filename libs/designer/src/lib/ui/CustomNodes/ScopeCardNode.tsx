@@ -61,12 +61,12 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const getRunRepetition = () => {
     const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData);
-    return RunService().getRepetition({ actionId: scopeId, runId: runInstance?.id }, repetitionName);
+    return RunService().getRepetition({ nodeId: scopeId, runId: runInstance?.id }, repetitionName);
   };
 
-  const onRunRepetitionSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
+  const onRunRepetitionSuccess = async (runDefinition: LogicAppsV2.RunRepetition) => {
     if (parentRunIndex && isMonitoringView) {
-      dispatch(setRepetitionRunData({ nodeId: id, runData: runDefinition.properties as any }));
+      dispatch(setRepetitionRunData({ nodeId: id, runData: runDefinition.properties as LogicAppsV2.WorkflowRunAction }));
     }
   };
 

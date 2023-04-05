@@ -25,7 +25,7 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
   const forEachItemsCount = getForeachItemsCount(metadata?.runData);
 
   const getFailedRunScopeRepetitions = () => {
-    return RunService().getScopeRepetitions({ actionId: scopeId, runId: runInstance?.id }, constants.FLOW_STATUS.FAILED);
+    return RunService().getScopeRepetitions({ nodeId: scopeId, runId: runInstance?.id }, constants.FLOW_STATUS.FAILED);
   };
 
   const onRunRepetitionsSuccess = async (repetitionValues: any) => {

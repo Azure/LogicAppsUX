@@ -118,13 +118,13 @@ export class StandardRunService implements IRunService {
   }
 
   /**
-   * Gets an array of scope repetition records for an action for the specified status.
-   * @arg {String} actionId - An object with the action record from a workflow run
-   * @arg {string} [status] - The status of scope repetition records to fetch
+   * Gets an array of scope repetition records for a node with the specified status.
+   * @param {{ actionId: string, runId: string }} action - An object with nodeId and the runId of the workflow
+   * @param {string} status - The status of scope repetition records to fetch
    * @return {Promise<RunScopeRepetition[]>}
    */
-  async getScopeRepetitions(action: any, status?: string): Promise<any> {
-    const { actionId, runId } = action;
+  async getScopeRepetitions(action: { nodeId: string; runId: string | undefined }, status?: string): Promise<any> {
+    const { nodeId, runId } = action;
 
     if (this._isDev) {
       return Promise.resolve({ value: [] });
@@ -134,7 +134,7 @@ export class StandardRunService implements IRunService {
     const headers = this.getAccessTokenHeaders();
 
     const filter = status ? `&$filter=status eq '${status}'` : '';
-    const uri = `${baseUrl}${runId}/actions/${actionId}/scopeRepetitions?api-version=${apiVersion}${filter}`;
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/scopeRepetitions?api-version=${apiVersion}${filter}`;
 
     try {
       const response = await httpClient.get<ArmResources<any>>({
@@ -150,17 +150,18 @@ export class StandardRunService implements IRunService {
 
   /**
    * Gets the repetition record for the repetition item with the specified ID
-   * @arg {string} repetitionId - A string with the resource ID of a repetition record
+   * @param {{ actionId: string, runId: string }} action - An object with nodeId and the runId of the workflow
+   * @param {string} repetitionId - A string with the resource ID of a repetition record
    * @return {Promise<any>}
    */
-  async getRepetition(action: any, repetitionId: string): Promise<any> {
+  async getRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<LogicAppsV2.RunRepetition> {
     const { apiVersion, baseUrl, httpClient } = this.options;
-    const { actionId, runId } = action;
+    const { nodeId, runId } = action;
     const headers = this.getAccessTokenHeaders();
 
-    const uri = `${baseUrl}${runId}/actions/${actionId}/repetitions/${repetitionId}?api-version=${apiVersion}`;
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/repetitions/${repetitionId}?api-version=${apiVersion}`;
     try {
-      const response = await httpClient.get<ArmResources<any>>({
+      const response = await httpClient.get<LogicAppsV2.RunRepetition>({
         uri,
         headers: headers as Record<string, any>,
       });

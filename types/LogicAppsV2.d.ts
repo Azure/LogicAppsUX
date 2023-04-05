@@ -1052,6 +1052,13 @@ declare namespace LogicAppsV2 {
     };
   }
 
+  interface RunRepetition {
+    properties: WorkflowRunAction;
+    id: string;
+    name: string;
+    type: string;
+  }
+
   /* Run instance definition types */
   interface RunInstanceDefinition {
     properties: runInstanceProperties;

@@ -63,7 +63,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const getRunRepetition = () => {
     const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData);
-    return RunService().getRepetition({ actionId: id, runId: runInstance?.id }, String(repetitionName).padStart(6, '0'));
+    return RunService().getRepetition({ nodeId: id, runId: runInstance?.id }, String(repetitionName).padStart(6, '0'));
   };
 
   const onRunRepetitionSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {

@@ -9,8 +9,8 @@ export interface IRunService {
   getRuns(workflowId: string): Promise<Runs>;
   runTrigger(callbackInfo: CallbackInfo): Promise<any>;
   getActionLinks(action: any, nodeId: string): Promise<any>;
-  getScopeRepetitions(action: any, status?: string): Promise<any>;
-  getRepetition(action: any, repetitionId: string): Promise<any>;
+  getScopeRepetitions(action: { nodeId: string; runId: string | undefined }, status?: string): Promise<any>;
+  getRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<LogicAppsV2.RunRepetition>;
 }
 
 let service: IRunService;
