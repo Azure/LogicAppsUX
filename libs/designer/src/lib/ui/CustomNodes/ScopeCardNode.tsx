@@ -15,6 +15,7 @@ import {
   useIsLeafNode,
   useNodeDisplayName,
   useNodeMetadata,
+  useRunData,
   useRunIndex,
   useRunInstance,
   useWorkflowNode,
@@ -51,38 +52,37 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const metadata = useNodeMetadata(scopeId);
   const parentRunIndex = useRunIndex(metadata?.parentNodeId ?? '');
   const runInstance = useRunInstance();
+  const runData = useRunData(scopeId);
 
-  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = metadata?.runData ?? {};
+  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
   const getRunRepetition = () => {
     return RunService().getRepetition({ actionId: id, runId: runInstance?.id }, String(parentRunIndex).padStart(6, '0'));
   };
 
   const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
-    dispatch(setRepetitionRunDataById({ nodeId: id, runData: runDefinition.properties as any }));
-  };
-
-  const onRunInstanceError = async () => {
-    //dispatch(setRepetitionRunDataById({ nodeId: id, runData: {} }));
+    if (parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined) {
+      console.log('charlie', id, metadata?.parentNodeId, parentRunIndex, metadata?.runData);
+      dispatch(setRepetitionRunDataById({ nodeId: id, runData: runDefinition.properties as any }));
+    }
   };
 
   const {
     refetch,
     isLoading: isRepetitionLoading,
     isRefetching: isRepetitionRefetching,
-  } = useQuery<any>(['runInstance'], getRunRepetition, {
+  } = useQuery<any>(['runInstance', { scopeId: scopeId }], getRunRepetition, {
     refetchOnWindowFocus: false,
     initialData: null,
     onSuccess: onRunInstanceSuccess,
-    onError: onRunInstanceError,
     enabled: repetitionCount !== undefined,
   });
 
   useEffect(() => {
-    if (parentRunIndex && isMonitoringView) {
+    if (parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined) {
       refetch();
     }
-  }, [dispatch, parentRunIndex, metadata?.parentNodeId]);
+  }, [dispatch, parentRunIndex, isMonitoringView, repetitionCount]);
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({

@@ -22,6 +22,7 @@ import {
   useNodeDescription,
   useNodeDisplayName,
   useNodeMetadata,
+  useRunData,
   useRunIndex,
   useRunInstance,
   useShouldNodeFocus,
@@ -53,8 +54,9 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
   const parentRunIndex = useRunIndex(metadata?.parentNodeId ?? '');
   const runInstance = useRunInstance();
+  const runData = useRunData(id);
 
-  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = metadata?.runData ?? {};
+  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
   const getRunRepetition = () => {
     return RunService().getRepetition({ actionId: id, runId: runInstance?.id }, String(parentRunIndex).padStart(6, '0'));
@@ -62,31 +64,28 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
     if (parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined) {
+      console.log('charlie', id, metadata?.parentNodeId, parentRunIndex, metadata?.runData);
       dispatch(setRepetitionRunDataById({ nodeId: id, runData: runDefinition.properties as any }));
     }
-  };
-
-  const onRunInstanceError = async () => {
-    //dispatch(setRepetitionRunDataById({ nodeId: id, runData: {} }));
   };
 
   const {
     refetch,
     isLoading: isRepetitionLoading,
     isRefetching: isRepetitionRefetching,
-  } = useQuery<any>(['runInstance'], getRunRepetition, {
+  } = useQuery<any>(['runInstance', { nodeId: id }], getRunRepetition, {
     refetchOnWindowFocus: false,
     initialData: null,
     onSuccess: onRunInstanceSuccess,
-    onError: onRunInstanceError,
     enabled: false,
   });
 
   useEffect(() => {
     if (parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined) {
+      console.log('charlie onRefetch');
       refetch();
     }
-  }, [dispatch, parentRunIndex]);
+  }, [dispatch, parentRunIndex, isMonitoringView, repetitionCount]);
 
   const dependencies = useTokenDependencies(id);
 

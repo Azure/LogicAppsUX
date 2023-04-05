@@ -224,6 +224,14 @@ export const useRunInstance = (): LogicAppsV2.RunInstanceDefinition | null => {
   );
 };
 
+export const useRunData = (id: string): LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      return state.nodesMetadata[id]?.runData;
+    })
+  );
+};
+
 export const useRunIndex = (actionId: string): number | undefined => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
