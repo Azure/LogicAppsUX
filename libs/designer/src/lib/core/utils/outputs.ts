@@ -95,10 +95,7 @@ export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitO
     const properties: string[] = [];
     let manifestSection = updatedManifest.properties.outputs;
     if (isSupportedSplitOnExpression(parsedValue)) {
-      const { dereferences, name } = parsedValue as ExpressionFunction;
-      if (equals(name, 'triggerBody')) {
-        properties.push('body');
-      }
+      const { dereferences } = parsedValue as ExpressionFunction;
 
       if (dereferences.length) {
         properties.push(...dereferences.map((dereference) => (dereference.expression as ExpressionLiteral).value));

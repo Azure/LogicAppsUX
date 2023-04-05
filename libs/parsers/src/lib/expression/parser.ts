@@ -1,7 +1,14 @@
 import { ExpressionExceptionCode } from '../common/exceptions/expression';
 import { ParserException } from '../common/exceptions/parser';
 import { isTemplateExpression } from '../common/helpers/expression';
-import type { Dereference, Expression, ExpressionFunction, ExpressionStringInterpolation, ExpressionToken } from '../models/expression';
+import type {
+  Dereference,
+  Expression,
+  ExpressionFunction,
+  ExpressionStringInterpolation,
+  ExpressionToken,
+  ExpressionLiteral,
+} from '../models/expression';
 import { ExpressionType, ExpressionTokenType } from '../models/expression';
 import { ExpressionScanner } from './scanner';
 import { equals } from '@microsoft/utils-logic-apps';
@@ -132,11 +139,23 @@ export class ExpressionParser {
       if (scanner.getTokenForTypeAndValue(ExpressionTokenType.LeftSquareBracket)) {
         const expression = this._parseExpressionRecursively(scanner);
         token = ExpressionParser._getTokenOrThrowException(scanner, ExpressionTokenType.RightSquareBracket);
-        dereferences.push({
-          isSafe,
-          isDotNotation: false,
-          expression: expression,
-        });
+
+        if (expression.type === ExpressionType.StringLiteral) {
+          // takes care of expressions that are nested such as ['body/value']
+          for (const expressionValue of (expression as ExpressionLiteral).value.split('/')) {
+            dereferences.push({
+              isSafe,
+              isDotNotation: false,
+              expression: { type: ExpressionType.StringLiteral, value: expressionValue },
+            });
+          }
+        } else {
+          dereferences.push({
+            isSafe,
+            isDotNotation: false,
+            expression: expression,
+          });
+        }
         continue;
       }
 
