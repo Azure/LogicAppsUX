@@ -99,12 +99,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -1660,6 +1654,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30)仰光"
+    }
+  ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
   "AgrMqq": [
@@ -3593,6 +3593,12 @@
     {
       "type": 0,
       "value": "放弃"
+    }
+  ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
     }
   ],
   "QEp3C8": [
@@ -6221,6 +6227,12 @@
       "value": "actions('actionName').outputs.body 的速记"
     }
   ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -7686,12 +7698,6 @@
     {
       "type": 0,
       "value": "以纯文本形式输入密码或使用安全参数"
-    }
-  ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "编辑器输入"
     }
   ],
   "xQQ9ko": [
