@@ -57,7 +57,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const runData = useRunData(scopeId);
   const nodesMetaData = useNodesMetadata();
 
-  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun } = runData ?? {};
+  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
   const getRunRepetition = () => {
     const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData);
@@ -65,9 +65,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   };
 
   const onRunRepetitionSuccess = async (runDefinition: LogicAppsV2.RunRepetition) => {
-    if (parentRunIndex && isMonitoringView) {
-      dispatch(setRepetitionRunData({ nodeId: id, runData: runDefinition.properties as LogicAppsV2.WorkflowRunAction }));
-    }
+    dispatch(setRepetitionRunData({ nodeId: id, runData: runDefinition.properties as LogicAppsV2.WorkflowRunAction }));
   };
 
   const {
@@ -78,11 +76,11 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     refetchOnWindowFocus: false,
     initialData: null,
     onSuccess: onRunRepetitionSuccess,
-    enabled: false,
+    enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
   });
 
   useEffect(() => {
-    if (parentRunIndex && isMonitoringView) {
+    if (parentRunIndex !== undefined && isMonitoringView) {
       refetch();
     }
   }, [dispatch, parentRunIndex, isMonitoringView, refetch]);

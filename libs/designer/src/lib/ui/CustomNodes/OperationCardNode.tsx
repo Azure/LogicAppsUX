@@ -59,17 +59,17 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const runData = useRunData(id);
   const nodesMetaData = useNodesMetadata();
 
-  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun } = runData ?? {};
+  console.log('charlie', id, parentRunIndex, runData);
+
+  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
   const getRunRepetition = () => {
     const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData);
-    return RunService().getRepetition({ nodeId: id, runId: runInstance?.id }, String(repetitionName).padStart(6, '0'));
+    return RunService().getRepetition({ nodeId: id, runId: runInstance?.id }, repetitionName);
   };
 
   const onRunRepetitionSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
-    if (parentRunIndex && isMonitoringView) {
-      dispatch(setRepetitionRunData({ nodeId: id, runData: runDefinition.properties as any }));
-    }
+    dispatch(setRepetitionRunData({ nodeId: id, runData: runDefinition.properties as any }));
   };
 
   const {
@@ -80,11 +80,11 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     refetchOnWindowFocus: false,
     initialData: null,
     onSuccess: onRunRepetitionSuccess,
-    enabled: false,
+    enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
   });
 
   useEffect(() => {
-    if (parentRunIndex && isMonitoringView) {
+    if (parentRunIndex !== undefined && isMonitoringView) {
       refetch();
     }
   }, [dispatch, parentRunIndex, isMonitoringView, refetch]);
