@@ -133,12 +133,8 @@ const ParameterSection = ({
         propertiesToUpdate.editorViewModel = viewModel;
       }
       const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
-      if (variables[nodeId]) {
-        if (parameter?.parameterKey === 'inputs.$.name') {
-          dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
-        } else if (parameter?.parameterKey === 'inputs.$.type') {
-          dispatch(updateVariableInfo({ id: nodeId, type: value[0]?.value }));
-        }
+      if (variables[nodeId] && (parameter?.parameterKey === 'inputs.$.name' || parameter?.parameterKey === 'inputs.$.type')) {
+        dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
       }
 
       updateParameterAndDependencies(
@@ -248,9 +244,20 @@ const ParameterSection = ({
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI && shouldUseParameterInGroup(x, group.parameters))
     .map((param) => {
-      const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
-        param;
-      const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel, conditionalVisibility };
+      const {
+        id,
+        label,
+        value,
+        required,
+        showTokens,
+        placeholder,
+        editorViewModel,
+        dynamicData,
+        conditionalVisibility,
+        validationErrors,
+        pickerInfo,
+      } = param;
+      const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel, conditionalVisibility, pickerInfo };
       const { editor, editorOptions } = getEditorAndOptions(param, upstreamNodeIds ?? [], variables);
 
       const remappedValues: ValueSegment[] = value.map((v: ValueSegment) => {
@@ -315,14 +322,20 @@ const getEditorAndOptions = (
   variables: Record<string, VariableDeclaration[]>
 ): { editor?: string; editorOptions?: any } => {
   const { editor, editorOptions } = parameter;
+  const supportedTypes: string[] = editorOptions?.supportedTypes ?? [];
   if (equals(editor, 'variablename')) {
     return {
       editor: 'dropdown',
       editorOptions: {
-        options: getAvailableVariables(variables, upstreamNodeIds).map((variable) => ({
-          value: variable.name,
-          displayName: variable.name,
-        })),
+        options: getAvailableVariables(variables, upstreamNodeIds)
+          .filter((variable) => {
+            if (supportedTypes?.length === 0) return true;
+            return supportedTypes.includes(variable.type);
+          })
+          .map((variable) => ({
+            value: variable.name,
+            displayName: variable.name,
+          })),
       },
     };
   }

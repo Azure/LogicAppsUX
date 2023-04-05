@@ -1,15 +1,19 @@
-/* eslint-disable react/jsx-no-literals */
-
-/* eslint-disable no-script-url */
 import type { PickerProps } from './picker';
 import { useId } from '@fluentui/react-hooks';
 import { Breadcrumb } from '@fluentui/react/lib/Breadcrumb';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IButton, IconButton } from '@fluentui/react/lib/Button';
+import type { IButtonStyles } from '@fluentui/react/lib/Button';
+import { IconButton } from '@fluentui/react/lib/Button';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import { useIntl } from 'react-intl';
 
-/* eslint-disable jsx-a11y/anchor-is-valid */
+const closeButtonStyles: IButtonStyles = {
+  rootHovered: {
+    backgroundColor: 'transparent',
+  },
+  rootPressed: {
+    backgroundColor: 'transparent',
+  },
+};
 
 export const PickerHeader = ({ onCancel, currentPathSegments }: Pick<PickerProps, 'onCancel' | 'currentPathSegments'>) => {
   const closeId = useId();
@@ -31,6 +35,7 @@ export const PickerHeader = ({ onCancel, currentPathSegments }: Pick<PickerProps
           iconProps={{
             iconName: 'Cancel',
           }}
+          styles={closeButtonStyles}
           onClick={onCancel}
         />
       </TooltipHost>

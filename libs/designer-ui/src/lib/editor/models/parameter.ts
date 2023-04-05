@@ -1,3 +1,4 @@
+import type { PickerInfo } from '../../picker/models/PickerInfo';
 import type { Expression, InputDependencies, ParameterSerializationOptions } from '@microsoft/parsers-logic-apps';
 import type { Exception } from '@microsoft/utils-logic-apps';
 
@@ -25,6 +26,7 @@ export interface ParameterInfo {
   showErrors?: boolean;
   showTokens?: boolean;
   suppressCasting?: boolean;
+  pickerInfo?: PickerInfo;
   type: string;
   validationErrors?: string[];
   value: ValueSegment[];

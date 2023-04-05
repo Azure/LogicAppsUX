@@ -9,6 +9,8 @@ import type { ValueSegment } from '../../editor';
 import type { CallbackHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
+import type { PickerInfo } from '../../picker/filepickereditor';
+import { FilePickerEditor } from '../../picker/filepickereditor';
 import { QueryBuilderEditor } from '../../querybuilder';
 import { UntilEditor } from '../../querybuilder/Until';
 import { ScheduleEditor } from '../../recurrence';
@@ -17,7 +19,6 @@ import { TableEditor } from '../../table';
 import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
-import React from 'react';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -37,6 +38,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
   isTrigger?: boolean;
+  pickerInfo?: PickerInfo;
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
   getTokenPicker: GetTokenPickerHandler;
@@ -69,6 +71,7 @@ const TokenField = ({
   errorDetails,
   showTokens,
   label,
+  pickerInfo,
   onValueChange,
   onComboboxMenuOpen,
   hideValidationErrors,
@@ -200,6 +203,22 @@ const TokenField = ({
 
     case 'recurrence':
       return <ScheduleEditor readOnly={readOnly} type={editorOptions?.recurrenceType} initialValue={value} onChange={onValueChange} />;
+
+    case 'filepicker':
+      console.log(pickerInfo);
+      return (
+        <FilePickerEditor
+          className="msla-setting-token-editor-container"
+          placeholder={placeholder}
+          BasePlugins={{ tokens: showTokens }}
+          readonly={readOnly}
+          isTrigger={isTrigger}
+          initialValue={value}
+          editorBlur={onValueChange}
+          getTokenPicker={getTokenPicker}
+          onChange={hideValidationErrors}
+        />
+      );
 
     default:
       return (

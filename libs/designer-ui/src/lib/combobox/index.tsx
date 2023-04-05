@@ -222,7 +222,7 @@ export const Combobox = ({
           >
             <Change setValue={setValue} />
           </BaseEditor>
-          <TooltipHost content={clearEditor} calloutProps={calloutProps} styles={hostStyles} setAriaDescribedBy={false}>
+          <TooltipHost content={clearEditor} calloutProps={calloutProps} styles={hostStyles}>
             <IconButton styles={buttonStyles} iconProps={clearIcon} aria-label={clearEditor} onClick={() => handleClearClick()} />
           </TooltipHost>
         </div>
