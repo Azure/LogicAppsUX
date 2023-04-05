@@ -123,7 +123,10 @@ export class StandardRunService implements IRunService {
    * @param {string} status - The status of scope repetition records to fetch
    * @return {Promise<RunScopeRepetition[]>}
    */
-  async getScopeRepetitions(action: { nodeId: string; runId: string | undefined }, status?: string): Promise<any> {
+  async getScopeRepetitions(
+    action: { nodeId: string; runId: string | undefined },
+    status?: string
+  ): Promise<{ value: Array<LogicAppsV2.RunRepetition> }> {
     const { nodeId, runId } = action;
 
     if (this._isDev) {
@@ -137,7 +140,7 @@ export class StandardRunService implements IRunService {
     const uri = `${baseUrl}${runId}/actions/${nodeId}/scopeRepetitions?api-version=${apiVersion}${filter}`;
 
     try {
-      const response = await httpClient.get<ArmResources<any>>({
+      const response = await httpClient.get<{ value: Array<LogicAppsV2.RunRepetition> }>({
         uri,
         headers: headers as Record<string, any>,
       });

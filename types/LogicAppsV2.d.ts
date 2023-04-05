@@ -1017,6 +1017,7 @@ declare namespace LogicAppsV2 {
     };
     repetitionCount?: number;
     iterationCount?: number;
+    repetitionIndexes?: Array<Record<string, any>>;
     duration?: string;
   }
 

@@ -28,7 +28,7 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
     return RunService().getScopeRepetitions({ nodeId: scopeId, runId: runInstance?.id }, constants.FLOW_STATUS.FAILED);
   };
 
-  const onRunRepetitionsSuccess = async (repetitionValues: any) => {
+  const onRunRepetitionsSuccess = async (repetitionValues: { value: Array<LogicAppsV2.RunRepetition> }) => {
     const { value } = repetitionValues;
     const sortedFailedRepetitions: Array<number> = value
       .reduce((prev: Array<number>, current: any) => {
