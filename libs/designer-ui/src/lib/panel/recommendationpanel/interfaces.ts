@@ -9,4 +9,5 @@ export interface OperationActionData {
   iconUri?: string;
   isTrigger: boolean;
   isBuiltIn?: boolean;
+  apiId?: string;
 }

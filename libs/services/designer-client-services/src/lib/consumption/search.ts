@@ -32,7 +32,7 @@ export class ConsumptionSearchService extends BaseSearchService {
         'api-version': apiVersion,
         $filter: `properties/trigger eq null and type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
       };
-      const response = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters);
+      const response = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters, 1);
       return response;
     } catch (error) {
       return [];
@@ -98,14 +98,17 @@ export class ConsumptionSearchService extends BaseSearchService {
     try {
       const {
         httpClient,
-        apiHubServiceDetails: { apiVersion, subscriptionId },
+        apiHubServiceDetails: { apiVersion, subscriptionId, location },
       } = this.options;
       const filter = `$filter=${ISE_RESOURCE_ID} eq null`;
       const startUri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/customApis?api-version=${apiVersion}`;
       const uri = `${prevNextlink ?? startUri}&${filter}`;
 
       const { nextLink, value } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri });
-      return { nextlink: nextLink, value: value.filter((connector) => connector.properties?.supportedConnectionKinds?.includes('V1')) };
+      const filteredValue = value
+        .filter((connector) => connector.properties?.supportedConnectionKinds?.includes('V1'))
+        .filter((connector) => connector?.location === location);
+      return { nextlink: nextLink, value: filteredValue };
     } catch (error) {
       return { value: [] };
     }

@@ -13,6 +13,7 @@ import OnFocus from './plugins/OnFocus';
 import OpenTokenPicker from './plugins/OpenTokenPicker';
 import { ReadOnly } from './plugins/ReadOnly';
 import SingleValueSegment from './plugins/SingleValueSegment';
+import { TokenTypeAheadPlugin } from './plugins/TokenTypeahead';
 import { TreeView } from './plugins/TreeView';
 import type { TokenPickerButtonEditorProps } from './plugins/tokenpickerbuttonnew';
 import { TokenPickerButtonNew } from './plugins/tokenpickerbuttonnew';
@@ -63,6 +64,8 @@ export interface BaseEditorProps {
   initialValue: ValueSegment[];
   children?: React.ReactNode;
   isTrigger?: boolean;
+  labelId?: string;
+  label?: string;
   tokenPickerButtonEditorProps?: TokenPickerButtonEditorProps;
   onChange?: ChangeHandler;
   onBlur?: () => void;
@@ -93,16 +96,15 @@ export const BaseEditor = ({
   BasePlugins = {},
   initialValue,
   children,
+  labelId,
   isTrigger,
   tokenPickerButtonEditorProps,
   onFocus,
   onBlur,
   getTokenPicker,
 }: BaseEditorProps) => {
-  const intl = useIntl();
   const editorId = useId('msla-tokenpicker-callout-location');
-  const labelId = useId('msla-tokenpicker-callout-label');
-
+  const intl = useIntl();
   const [isEditorFocused, setIsEditorFocused] = useState(false);
   const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
   const [tokenPickerMode, setTokenPickerMode] = useState<TokenPickerMode | undefined>();
@@ -120,11 +122,14 @@ export const BaseEditor = ({
   };
 
   const { autoFocus, autoLink, clearEditor, history = true, tokens, treeView, toolBar, tabbable, singleValueSegment } = BasePlugins;
-
-  const editorInputLabel = intl.formatMessage({
-    defaultMessage: 'Editor Input',
-    description: 'Label for input Field for String Editor',
+  const describedByMessage = intl.formatMessage({
+    defaultMessage: 'Add dynamic data or expressions by inserting a /',
+    description: 'This is an a11y message meant to help screen reader users figure out how to insert dynamic data',
   });
+
+  const closeTokenPicker = () => {
+    setInTokenPicker(false);
+  };
 
   const handleFocus = () => {
     setIsEditorFocused(true);
@@ -156,23 +161,29 @@ export const BaseEditor = ({
     hidden: isEditorFocused,
     directionalHint: DirectionalHint.bottomRightEdge,
   };
-
+  const id = useId('deiosnoin');
   return (
     <TooltipHost content={placeholder} calloutProps={calloutProps} styles={{ root: { width: '100%' } }}>
       <LexicalComposer initialConfig={initialConfig}>
         <div className={className ?? 'msla-editor-container'} id={editorId}>
           {toolBar ? <Toolbar /> : null}
           <RichTextPlugin
-            contentEditable={<ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabel={editorInputLabel} />}
+            contentEditable={
+              <ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabelledBy={labelId} ariaDescribedBy={id} />
+            }
             placeholder={<span className="editor-placeholder"> {placeholder} </span>}
             ErrorBoundary={LexicalErrorBoundary}
           />
+          <span id={id} hidden={true}>
+            {describedByMessage}
+          </span>
           {treeView ? <TreeView /> : null}
           {autoFocus ? <AutoFocus /> : null}
           {history ? <History /> : null}
           {autoLink ? <AutoLink /> : null}
           {clearEditor ? <ClearEditor showButton={false} /> : null}
           {singleValueSegment ? <SingleValueSegment /> : null}
+          <TokenTypeAheadPlugin openTokenPicker={openTokenPicker} />
           <OnBlur command={handleBlur} />
           <OnFocus command={handleFocus} />
           <ReadOnly readonly={readonly} />
@@ -182,7 +193,7 @@ export const BaseEditor = ({
           {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
           {children}
           {!isTrigger && tokens && getInTokenPicker()
-            ? getTokenPicker(editorId, labelId, tokenPickerMode, handleFocus, tokenPickerClicked)
+            ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, closeTokenPicker, tokenPickerClicked)
             : null}
         </div>
 

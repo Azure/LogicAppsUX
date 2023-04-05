@@ -99,12 +99,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -379,6 +373,12 @@
       "value": "Hour"
     }
   ],
+  "0vfdFS": [
+    {
+      "type": 0,
+      "value": "every day"
+    }
+  ],
   "0y5eia": [
     {
       "type": 0,
@@ -591,6 +591,12 @@
       "value": "(UTC-04:00) Каракас"
     }
   ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Add children (recursive)"
+    }
+  ],
   "23fENy": [
     {
       "type": 0,
@@ -685,6 +691,12 @@
     {
       "type": 0,
       "value": "Start Time"
+    }
+  ],
+  "2pRsUf": [
+    {
+      "type": 0,
+      "value": "Enter a valid array."
     }
   ],
   "2ri1Kf": [
@@ -933,6 +945,16 @@
     {
       "type": 0,
       "value": "Требуется. Число добавляемых дней. Значение может быть отрицательным для вычитания дней."
+    }
+  ],
+  "4D7H4R": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
     }
   ],
   "4Ekn9t": [
@@ -1663,6 +1685,12 @@
       "value": "(UTC+06:30) Янгон (Рангун)"
     }
   ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
+    }
+  ],
   "AgrMqq": [
     {
       "type": 0,
@@ -1957,6 +1985,16 @@
       "value": "(UTC+02:00) Хельсинки, Киев, Рига, София, Таллин, Вильнюс"
     }
   ],
+  "Czt6YV": [
+    {
+      "type": 0,
+      "value": "at "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    }
+  ],
   "D+Ptnq": [
     {
       "type": 0,
@@ -1997,6 +2035,12 @@
     {
       "type": 0,
       "value": "Select a value"
+    }
+  ],
+  "DWd9vy": [
+    {
+      "type": 0,
+      "value": "every week"
     }
   ],
   "DWsh56": [
@@ -2137,6 +2181,20 @@
     {
       "type": 0,
       "value": "Обязательно. Индекс места начала извлечения substring."
+    }
+  ],
+  "Ea/fr+": [
+    {
+      "type": 0,
+      "value": "Every "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " days"
     }
   ],
   "EdzoIs": [
@@ -2399,6 +2457,12 @@
     {
       "type": 0,
       "value": "Введите центр"
+    }
+  ],
+  "GEB1on": [
+    {
+      "type": 0,
+      "value": "This contains a value that is not between 0 and 59"
     }
   ],
   "GIUSQs": [
@@ -3157,6 +3221,12 @@
       "value": "Защита выходных данных операции и ссылок выходных свойств."
     }
   ],
+  "MCzWDc": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "MDbmMw": [
     {
       "type": 0,
@@ -3551,6 +3621,16 @@
       "value": "Требуется. Число, которое прибавляется к слагаемому 1."
     }
   ],
+  "PNk3n4": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    }
+  ],
   "PORNMZ": [
     {
       "type": 0,
@@ -3657,6 +3737,12 @@
     {
       "type": 0,
       "value": "Отменить"
+    }
+  ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
     }
   ],
   "QEp3C8": [
@@ -4061,6 +4147,24 @@
       "value": "Add or replace your schemas."
     }
   ],
+  "TZh8nV": [
+    {
+      "type": 0,
+      "value": "on "
+    },
+    {
+      "type": 1,
+      "value": "weekDays"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "frequencyDesc"
+    }
+  ],
   "Tayrub": [
     {
       "type": 0,
@@ -4139,6 +4243,24 @@
       "value": "Создает массив целых чисел, начиная с определенного числа"
     }
   ],
+  "U4zovj": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
+    }
+  ],
   "U56j9a": [
     {
       "type": 0,
@@ -4209,6 +4331,20 @@
     {
       "type": 0,
       "value": "' has an non-terminating connection chain"
+    }
+  ],
+  "Umpr3z": [
+    {
+      "type": 0,
+      "value": "Every "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " weeks"
     }
   ],
   "UnrrzF": [
@@ -4659,6 +4795,12 @@
     {
       "type": 0,
       "value": "Возвращает двоичное представление URI данных"
+    }
+  ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Add children"
     }
   ],
   "YHsAKl": [
@@ -5793,6 +5935,12 @@
       "value": "Сеть"
     }
   ],
+  "i4Om5O": [
+    {
+      "type": 0,
+      "value": "This contains an invalid value"
+    }
+  ],
   "iBlvhu": [
     {
       "type": 0,
@@ -6285,6 +6433,12 @@
       "value": "Сокращение для actions('actionName').outputs.body"
     }
   ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -6701,6 +6855,12 @@
     {
       "type": 0,
       "value": "Время окончания"
+    }
+  ],
+  "pMms92": [
+    {
+      "type": 0,
+      "value": "Insert Dynamic Content"
     }
   ],
   "pOTcUO": [
@@ -7271,6 +7431,20 @@
       "value": "Базовый"
     }
   ],
+  "tWV2mC": [
+    {
+      "type": 0,
+      "value": "at "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    },
+    {
+      "type": 0,
+      "value": " every hour"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -7571,6 +7745,12 @@
       "value": "Создать параметр"
     }
   ],
+  "vxOc/M": [
+    {
+      "type": 0,
+      "value": "This contains a duplicate value"
+    }
+  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -7749,12 +7929,6 @@
     {
       "type": 0,
       "value": "Введите пароль в виде обычного текста или используйте безопасный параметр."
-    }
-  ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "Ввод редактора"
     }
   ],
   "xQQ9ko": [

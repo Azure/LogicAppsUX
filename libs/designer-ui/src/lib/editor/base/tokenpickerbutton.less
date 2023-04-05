@@ -37,16 +37,105 @@
   right: -7px;
 }
 
+.typeahead-popover {
+  background: #fff;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  margin-top: 25px;
+  z-index: 1000000;
+  position: fixed;
+  ul {
+    padding: 0;
+    list-style: none;
+    margin: 0;
+    border-radius: 8px;
+    max-height: 200px;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    li {
+      margin: 0;
+      min-width: 180px;
+      font-size: 14px;
+      outline: none;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+    li.selected {
+      background: #eee;
+    }
+  }
+  li {
+    margin: 0 8px 0 8px;
+    padding: 8px;
+    color: #323130;
+    cursor: pointer;
+    line-height: 16px;
+    font-size: 15px;
+    display: flex;
+    align-content: center;
+    flex-direction: row;
+    flex-shrink: 0;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 0;
+    &:first-child {
+      border-radius: 8px 8px 0px 0px;
+    }
+    &:last-child {
+      border-radius: 0px 0px 8px 8px;
+    }
+    &:hover {
+      background-color: #eee;
+    }
+    .text {
+      display: flex;
+      line-height: 20px;
+      flex-grow: 1;
+      min-width: 150px;
+    }
+    .icon {
+      display: flex;
+      width: 20px;
+      height: 20px;
+      user-select: none;
+      margin-right: 8px;
+      line-height: 16px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+  }
+  li.active {
+    display: flex;
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+  }
+}
+
 .msla-theme-dark {
   .msla-tokenpicker-button-text {
     color: @brandColorLight;
   }
-}
 
-.msla-token-picker-entrypoint-button-expression-icon {
-  border: none;
-  position: relative;
-  right: 0px;
-  height: 32px;
-  width: 32px;
+  .typeahead-popover {
+    background: #1b1a19;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+    ul {
+      li.selected {
+        background: rgb(59, 58, 57);
+      }
+    }
+    li {
+      color: #f3f2f1;
+      background-color: #1b1a19;
+      &:hover {
+        background-color: rgb(59, 58, 57);
+      }
+    }
+  }
 }

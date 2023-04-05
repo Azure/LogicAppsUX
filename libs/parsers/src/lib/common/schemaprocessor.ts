@@ -72,7 +72,8 @@ export class SchemaProcessor {
       arrayOutputDepth: 0,
       excludeAdvanced: false,
       excludeInternal: true,
-      expandArrayOutputs: true,
+      // This is expanded as an option where it's actually needed
+      expandArrayOutputs: false,
       expandArrayOutputsDepth: 0,
       isInputSchema: false,
       required: false,

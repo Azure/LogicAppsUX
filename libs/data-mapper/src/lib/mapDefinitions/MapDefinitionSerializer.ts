@@ -31,6 +31,7 @@ export const convertToMapDefinition = (
   connections: ConnectionDictionary,
   sourceSchema: SchemaExtended | undefined,
   targetSchema: SchemaExtended | undefined,
+  targetSchemaSortArray: string[],
   generateHeader = true
 ): string => {
   if (sourceSchema && targetSchema && isValidToMakeMapDefinition(connections)) {
@@ -40,7 +41,7 @@ export const convertToMapDefinition = (
       generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
     }
 
-    generateMapDefinitionBody(mapDefinition, connections);
+    generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
 
     return yaml.dump(mapDefinition, { replacer: yamlReplacer });
   }
@@ -78,16 +79,22 @@ export const generateMapDefinitionHeader = (
 };
 
 // Exported for testing purposes
-export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connections: ConnectionDictionary): void => {
+export const generateMapDefinitionBody = (
+  mapDefinition: MapDefinitionEntry,
+  connections: ConnectionDictionary,
+  targetSchemaSortArray: string[]
+): void => {
   // Filter to just the target node connections, all the rest will be picked up be traversing up the chain
-  const targetSchemaConnections = Object.entries(connections).filter(([key, connection]) => {
-    const selfNode = connection.self.node;
-    if (key.startsWith(targetPrefix) && isSchemaNodeExtended(selfNode)) {
-      return selfNode.nodeProperties.every((property) => property !== SchemaNodeProperty.Repeating);
-    } else {
-      return false;
-    }
-  });
+  const targetSchemaConnections = Object.entries(connections)
+    .filter(([key, connection]) => {
+      const selfNode = connection.self.node;
+      if (key.startsWith(targetPrefix) && isSchemaNodeExtended(selfNode)) {
+        return selfNode.nodeProperties.every((property) => property !== SchemaNodeProperty.Repeating);
+      } else {
+        return false;
+      }
+    })
+    .sort((nodeA, nodeB) => targetSchemaSortArray.indexOf(nodeA[0]) - targetSchemaSortArray.indexOf(nodeB[0]));
 
   targetSchemaConnections.forEach(([_key, connection]) => {
     const flattenedInputs = flattenInputs(connection.inputs);

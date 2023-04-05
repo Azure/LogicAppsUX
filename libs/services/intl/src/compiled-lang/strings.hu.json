@@ -99,12 +99,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -379,6 +373,12 @@
       "value": "Hour"
     }
   ],
+  "0vfdFS": [
+    {
+      "type": 0,
+      "value": "every day"
+    }
+  ],
   "0y5eia": [
     {
       "type": 0,
@@ -569,6 +569,12 @@
       "value": "(UTC-04:00) Caracas"
     }
   ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Add children (recursive)"
+    }
+  ],
   "23fENy": [
     {
       "type": 0,
@@ -663,6 +669,12 @@
     {
       "type": 0,
       "value": "Start Time"
+    }
+  ],
+  "2pRsUf": [
+    {
+      "type": 0,
+      "value": "Enter a valid array."
     }
   ],
   "2ri1Kf": [
@@ -911,6 +923,16 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A hozzáadni kívánt napok száma. Lehet negatív érték is napok kivonása céljából."
+    }
+  ],
+  "4D7H4R": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
     }
   ],
   "4Ekn9t": [
@@ -1641,6 +1663,12 @@
       "value": "(UTC+06:30) Yangon (Rangun)"
     }
   ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
+    }
+  ],
   "AgrMqq": [
     {
       "type": 0,
@@ -1913,6 +1941,16 @@
       "value": "(UTC+02:00) Helsinki, Kijev, Riga, Szófia, Tallinn, Vilnius"
     }
   ],
+  "Czt6YV": [
+    {
+      "type": 0,
+      "value": "at "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    }
+  ],
   "D+Ptnq": [
     {
       "type": 0,
@@ -1953,6 +1991,12 @@
     {
       "type": 0,
       "value": "Select a value"
+    }
+  ],
+  "DWd9vy": [
+    {
+      "type": 0,
+      "value": "every week"
     }
   ],
   "DWsh56": [
@@ -2093,6 +2137,20 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A sztringrészlet kinyerésének elejét jelző hely indexe."
+    }
+  ],
+  "Ea/fr+": [
+    {
+      "type": 0,
+      "value": "Every "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " days"
     }
   ],
   "EdzoIs": [
@@ -2333,6 +2391,12 @@
     {
       "type": 0,
       "value": "Adja meg a hitelesítésszolgáltatót"
+    }
+  ],
+  "GEB1on": [
+    {
+      "type": 0,
+      "value": "This contains a value that is not between 0 and 59"
     }
   ],
   "GIUSQs": [
@@ -3069,6 +3133,12 @@
       "value": "A művelet kimeneteinek és a kimeneti tulajdonságok hivatkozásainak biztonságossá tétele."
     }
   ],
+  "MCzWDc": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "MDbmMw": [
     {
       "type": 0,
@@ -3463,6 +3533,16 @@
       "value": "Kötelező megadni. Az 1. összeadandóhoz hozzáadandó szám."
     }
   ],
+  "PNk3n4": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    }
+  ],
   "PORNMZ": [
     {
       "type": 0,
@@ -3569,6 +3649,12 @@
     {
       "type": 0,
       "value": "Elvetés"
+    }
+  ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
     }
   ],
   "QEp3C8": [
@@ -3955,6 +4041,24 @@
       "value": "Add or replace your schemas."
     }
   ],
+  "TZh8nV": [
+    {
+      "type": 0,
+      "value": "on "
+    },
+    {
+      "type": 1,
+      "value": "weekDays"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "frequencyDesc"
+    }
+  ],
   "Tayrub": [
     {
       "type": 0,
@@ -4033,6 +4137,24 @@
       "value": "Egész számokból álló tömb létrehozása egy meghatározott számmal kezdődően."
     }
   ],
+  "U4zovj": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
+    }
+  ],
   "U56j9a": [
     {
       "type": 0,
@@ -4103,6 +4225,20 @@
     {
       "type": 0,
       "value": "' has an non-terminating connection chain"
+    }
+  ],
+  "Umpr3z": [
+    {
+      "type": 0,
+      "value": "Every "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " weeks"
     }
   ],
   "UnrrzF": [
@@ -4553,6 +4689,12 @@
     {
       "type": 0,
       "value": "Adat-URI bináris értékként való visszaadása."
+    }
+  ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Add children"
     }
   ],
   "YHsAKl": [
@@ -5673,6 +5815,12 @@
       "value": "Hálózatkezelés"
     }
   ],
+  "i4Om5O": [
+    {
+      "type": 0,
+      "value": "This contains an invalid value"
+    }
+  ],
   "iBlvhu": [
     {
       "type": 0,
@@ -6161,6 +6309,12 @@
       "value": "Az actions('actionName').outputs.body rövid függvényneve."
     }
   ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -6577,6 +6731,12 @@
     {
       "type": 0,
       "value": "Befejezés időpontja"
+    }
+  ],
+  "pMms92": [
+    {
+      "type": 0,
+      "value": "Insert Dynamic Content"
     }
   ],
   "pOTcUO": [
@@ -7125,6 +7285,20 @@
       "value": "Alapszintű"
     }
   ],
+  "tWV2mC": [
+    {
+      "type": 0,
+      "value": "at "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    },
+    {
+      "type": 0,
+      "value": " every hour"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -7425,6 +7599,12 @@
       "value": "Paraméter létrehozása"
     }
   ],
+  "vxOc/M": [
+    {
+      "type": 0,
+      "value": "This contains a duplicate value"
+    }
+  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -7603,12 +7783,6 @@
     {
       "type": 0,
       "value": "Adja meg a jelszót egyszerű szövegként, vagy használjon biztonságos paramétert"
-    }
-  ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "Szerkesztőbe bevitt szöveg"
     }
   ],
   "xQQ9ko": [

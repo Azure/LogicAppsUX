@@ -79,6 +79,14 @@ export default {
   FORMAT: {
     URI: 'uri',
   },
+  FREQUENCY: {
+    MONTH: 'month',
+    WEEK: 'week',
+    DAY: 'day',
+    HOUR: 'hour',
+    MINUTE: 'minute',
+    SECOND: 'second',
+  },
 
   CHECKBOX_OPACITY: 0.2,
   DURATION_OPACITY: 0.3,

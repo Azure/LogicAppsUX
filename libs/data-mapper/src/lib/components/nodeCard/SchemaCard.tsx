@@ -15,22 +15,22 @@ import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
 import {
   Badge,
   Button,
+  Tooltip,
   createFocusOutlineStyle,
   makeStyles,
   mergeClasses,
   shorthands,
   tokens,
-  Tooltip,
   typographyStyles,
 } from '@fluentui/react-components';
 import {
-  bundleIcon,
   CheckmarkCircle12Filled,
   ChevronRight16Filled,
   ChevronRight16Regular,
   Circle12Regular,
   CircleHalfFill12Regular,
   Important12Filled,
+  bundleIcon,
 } from '@fluentui/react-icons';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
@@ -152,12 +152,14 @@ export interface SchemaCardProps extends CardProps {
   displayChevron: boolean;
   isLeaf: boolean;
   width: number;
+  disableContextMenu: boolean;
   connectionStatus?: ItemToggledState;
 }
 
 export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const reactFlowId = props.id;
-  const { schemaNode, schemaType, isLeaf, onClick, disabled, displayHandle, displayChevron, connectionStatus, width } = props.data;
+  const { schemaNode, schemaType, isLeaf, onClick, disabled, displayHandle, displayChevron, connectionStatus, width, disableContextMenu } =
+    props.data;
   const dispatch = useDispatch<AppDispatch>();
   const sharedStyles = getStylesForSharedState();
   const classes = useStyles();
@@ -319,7 +321,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
           <CardContextMenu
             title={'remove'}
             contextMenuLocation={contextMenu.location}
-            contextMenuOptions={[getRemoveMenuItem()]}
+            contextMenuOptions={disableContextMenu ? [] : [getRemoveMenuItem()]}
             showContextMenu={contextMenu.isShowing}
             onSetShowContextMenu={contextMenu.setIsShowing}
           />

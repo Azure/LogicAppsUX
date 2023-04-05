@@ -60,6 +60,7 @@ export interface DataMapOperationState {
   sourceSchemaOrdering: string[];
   targetSchema?: SchemaExtended;
   flattenedTargetSchema: SchemaNodeDictionary;
+  targetSchemaOrdering: string[];
   currentSourceSchemaNodes: SchemaNodeExtended[];
   currentTargetSchemaNode?: SchemaNodeExtended;
   currentFunctionNodes: FunctionDictionary;
@@ -75,6 +76,7 @@ const emptyPristineState: DataMapOperationState = {
   flattenedSourceSchema: {},
   sourceSchemaOrdering: [],
   flattenedTargetSchema: {},
+  targetSchemaOrdering: [],
   xsltFilename: '',
   inlineFunctionInputOutputKeys: [],
 };
@@ -133,20 +135,24 @@ export const dataMapSlice = createSlice({
       const flattenedSchema = flattenSchemaIntoDictionary(action.payload.schema, action.payload.schemaType);
 
       if (action.payload.schemaType === SchemaType.Source) {
-        const schemaSortArray = flattenSchemaIntoSortArray(action.payload.schema.schemaTreeRoot);
+        const sourceSchemaSortArray = flattenSchemaIntoSortArray(action.payload.schema.schemaTreeRoot);
 
         state.curDataMapOperation.sourceSchema = action.payload.schema;
         state.curDataMapOperation.flattenedSourceSchema = flattenedSchema;
-        state.curDataMapOperation.sourceSchemaOrdering = schemaSortArray;
+        state.curDataMapOperation.sourceSchemaOrdering = sourceSchemaSortArray;
         state.pristineDataMap.sourceSchema = action.payload.schema;
         state.pristineDataMap.flattenedSourceSchema = flattenedSchema;
-        state.pristineDataMap.sourceSchemaOrdering = schemaSortArray;
+        state.pristineDataMap.sourceSchemaOrdering = sourceSchemaSortArray;
       } else {
+        const targetSchemaSortArray = flattenSchemaIntoSortArray(action.payload.schema.schemaTreeRoot);
+
         state.curDataMapOperation.targetSchema = action.payload.schema;
         state.curDataMapOperation.flattenedTargetSchema = flattenedSchema;
+        state.curDataMapOperation.targetSchemaOrdering = targetSchemaSortArray;
         state.curDataMapOperation.currentTargetSchemaNode = undefined;
         state.pristineDataMap.targetSchema = action.payload.schema;
         state.pristineDataMap.flattenedTargetSchema = flattenedSchema;
+        state.pristineDataMap.targetSchemaOrdering = targetSchemaSortArray;
       }
     },
 
@@ -155,16 +161,18 @@ export const dataMapSlice = createSlice({
       const currentState = state.curDataMapOperation;
 
       const flattenedSourceSchema = flattenSchemaIntoDictionary(sourceSchema, SchemaType.Source);
-      const schemaSortArray = flattenSchemaIntoSortArray(sourceSchema.schemaTreeRoot);
+      const sourceSchemaSortArray = flattenSchemaIntoSortArray(sourceSchema.schemaTreeRoot);
       const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
+      const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
 
       const newState: DataMapOperationState = {
         ...currentState,
         sourceSchema,
         targetSchema,
         flattenedSourceSchema,
-        sourceSchemaOrdering: schemaSortArray,
+        sourceSchemaOrdering: sourceSchemaSortArray,
         flattenedTargetSchema,
+        targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
         currentSourceSchemaNodes: [],
         currentTargetSchemaNode: undefined,
@@ -214,20 +222,15 @@ export const dataMapSlice = createSlice({
     },
 
     addSourceSchemaNodes: (state, action: PayloadAction<SchemaNodeExtended[]>) => {
-      const nodes = [...state.curDataMapOperation.currentSourceSchemaNodes];
+      const currentNodes = [...state.curDataMapOperation.currentSourceSchemaNodes];
       action.payload.forEach((payloadNode) => {
-        addNodeToCanvasIfDoesNotExist(payloadNode, state.curDataMapOperation.currentSourceSchemaNodes, nodes);
-        addAncestorNodesToCanvas(
-          payloadNode,
-          state.curDataMapOperation.currentSourceSchemaNodes,
-          state.curDataMapOperation.flattenedSourceSchema,
-          nodes
-        );
+        addNodeToCanvasIfDoesNotExist(payloadNode, currentNodes);
+        addAncestorNodesToCanvas(payloadNode, currentNodes, state.curDataMapOperation.flattenedSourceSchema);
       });
 
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
-        currentSourceSchemaNodes: nodes,
+        currentSourceSchemaNodes: currentNodes,
       };
 
       doDataMapOperation(state, newState);

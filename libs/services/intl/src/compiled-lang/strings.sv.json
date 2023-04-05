@@ -99,12 +99,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -379,6 +373,12 @@
       "value": "Hour"
     }
   ],
+  "0vfdFS": [
+    {
+      "type": 0,
+      "value": "every day"
+    }
+  ],
   "0y5eia": [
     {
       "type": 0,
@@ -569,6 +569,12 @@
       "value": "(UTC-04:00) Caracas"
     }
   ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Add children (recursive)"
+    }
+  ],
   "23fENy": [
     {
       "type": 0,
@@ -663,6 +669,12 @@
     {
       "type": 0,
       "value": "Start Time"
+    }
+  ],
+  "2pRsUf": [
+    {
+      "type": 0,
+      "value": "Enter a valid array."
     }
   ],
   "2ri1Kf": [
@@ -911,6 +923,16 @@
     {
       "type": 0,
       "value": "Krävs. Antalet dagar att lägga till. Kan vara negativt för att subtrahera dagar."
+    }
+  ],
+  "4D7H4R": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
     }
   ],
   "4Ekn9t": [
@@ -1641,6 +1663,12 @@
       "value": "(UTC+06:30) Yangon"
     }
   ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
+    }
+  ],
   "AgrMqq": [
     {
       "type": 0,
@@ -1913,6 +1941,16 @@
       "value": "(UTC+02:00) Helsingfors, Kyiv, Riga, Sofia, Tallinn, Vilnius"
     }
   ],
+  "Czt6YV": [
+    {
+      "type": 0,
+      "value": "at "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    }
+  ],
   "D+Ptnq": [
     {
       "type": 0,
@@ -1953,6 +1991,12 @@
     {
       "type": 0,
       "value": "Select a value"
+    }
+  ],
+  "DWd9vy": [
+    {
+      "type": 0,
+      "value": "every week"
     }
   ],
   "DWsh56": [
@@ -2093,6 +2137,20 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Indexet för var delsträngen ska börja extraheras."
+    }
+  ],
+  "Ea/fr+": [
+    {
+      "type": 0,
+      "value": "Every "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " days"
     }
   ],
   "EdzoIs": [
@@ -2333,6 +2391,12 @@
     {
       "type": 0,
       "value": "Ange utfärdare"
+    }
+  ],
+  "GEB1on": [
+    {
+      "type": 0,
+      "value": "This contains a value that is not between 0 and 59"
     }
   ],
   "GIUSQs": [
@@ -3065,6 +3129,12 @@
       "value": "Säkra utdata för åtgärden och referenser till utdataegenskaper."
     }
   ],
+  "MCzWDc": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "MDbmMw": [
     {
       "type": 0,
@@ -3455,6 +3525,16 @@
       "value": "Krävs. Talet som ska läggas till i Summand 1."
     }
   ],
+  "PNk3n4": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    }
+  ],
   "PORNMZ": [
     {
       "type": 0,
@@ -3561,6 +3641,12 @@
     {
       "type": 0,
       "value": "Ignorera"
+    }
+  ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
     }
   ],
   "QEp3C8": [
@@ -3947,6 +4033,24 @@
       "value": "Add or replace your schemas."
     }
   ],
+  "TZh8nV": [
+    {
+      "type": 0,
+      "value": "on "
+    },
+    {
+      "type": 1,
+      "value": "weekDays"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "frequencyDesc"
+    }
+  ],
   "Tayrub": [
     {
       "type": 0,
@@ -4025,6 +4129,24 @@
       "value": "Genererar en matris av heltal med början från ett visst tal"
     }
   ],
+  "U4zovj": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
+    }
+  ],
   "U56j9a": [
     {
       "type": 0,
@@ -4095,6 +4217,20 @@
     {
       "type": 0,
       "value": "' has an non-terminating connection chain"
+    }
+  ],
+  "Umpr3z": [
+    {
+      "type": 0,
+      "value": "Every "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " weeks"
     }
   ],
   "UnrrzF": [
@@ -4541,6 +4677,12 @@
     {
       "type": 0,
       "value": "Returnerar en binär representation av ett data-URI"
+    }
+  ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Add children"
     }
   ],
   "YHsAKl": [
@@ -5649,6 +5791,12 @@
       "value": "Nätverk"
     }
   ],
+  "i4Om5O": [
+    {
+      "type": 0,
+      "value": "This contains an invalid value"
+    }
+  ],
   "iBlvhu": [
     {
       "type": 0,
@@ -6137,6 +6285,12 @@
       "value": "Kortkommando för åtgärder(actionName).outputs.body"
     }
   ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -6549,6 +6703,12 @@
     {
       "type": 0,
       "value": "Sluttid"
+    }
+  ],
+  "pMms92": [
+    {
+      "type": 0,
+      "value": "Insert Dynamic Content"
     }
   ],
   "pOTcUO": [
@@ -7097,6 +7257,20 @@
       "value": "Grundläggande"
     }
   ],
+  "tWV2mC": [
+    {
+      "type": 0,
+      "value": "at "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    },
+    {
+      "type": 0,
+      "value": " every hour"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -7397,6 +7571,12 @@
       "value": "Skapa parameter"
     }
   ],
+  "vxOc/M": [
+    {
+      "type": 0,
+      "value": "This contains a duplicate value"
+    }
+  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -7575,12 +7755,6 @@
     {
       "type": 0,
       "value": "Ange lösenordet som oformaterad text eller använd en säker parameter"
-    }
-  ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "Redigerarens indata"
     }
   ],
   "xQQ9ko": [
