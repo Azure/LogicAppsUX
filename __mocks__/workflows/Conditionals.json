@@ -6,7 +6,8 @@
         "actions": {
           "Terminate": {
             "inputs": {
-              "runStatus": "Succeeded"
+              "runStatus": "Succeeded",
+              "runError": { "message": "@false" }
             },
             "runAfter": {},
             "type": "Terminate"
@@ -44,11 +45,11 @@
               "and": [
                 {
                   "not": {
-                    "endsWith": ["g", "@variables('goalOwner')"]
+                    "endsWith": ["@true", "@variables('goalOwner')"]
                   }
                 },
                 {
-                  "equals": ["test", "@variables('goalOwner')"]
+                  "equals": ["@null", "@variables('goalOwner')"]
                 }
               ]
             }
@@ -65,7 +66,7 @@
             {
               "name": "goalOwner",
               "type": "string",
-              "value": "abc@microsoft.com"
+              "value": "@null"
             }
           ]
         },

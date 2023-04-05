@@ -425,8 +425,12 @@ const toUntilViewModel = (input: any): { isOldFormat: boolean; items: RowItemPro
     } else {
       operation = input.substring(input.indexOf('@') + 1, input.indexOf('('));
       const operations = input.split(',');
-      operand1 = loadParameterValue({ value: operations[0].substring(operations[0].indexOf('(') + 1).trim() } as InputParameter);
-      operand2 = loadParameterValue({ value: operations[1].substring(0, operations[1].indexOf(')')).trim() } as InputParameter);
+      operand1 = loadParameterValue({
+        value: operations[0].substring(operations[0].indexOf('(') + 1).trim(),
+      } as InputParameter);
+      operand2 = loadParameterValue({
+        value: operations[1].substring(0, operations[1].indexOf(')')).trim(),
+      } as InputParameter);
     }
   } catch {
     operation = 'equals';
