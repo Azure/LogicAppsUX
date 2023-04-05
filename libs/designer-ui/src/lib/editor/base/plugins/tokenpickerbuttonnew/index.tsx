@@ -100,7 +100,7 @@ export const TokenPickerButtonNew = ({ showOnLeft, openTokenPicker }: TokenPicke
           onMouseDown={(e) => e.preventDefault()}
           style={{ boxShadow: Depths.depth4 }}
         >
-          <TooltipHost content={dynamicContentButtonText} >
+          <TooltipHost content={dynamicContentButtonText}>
             <IconButton
               iconProps={dynamicContentIconProps}
               styles={{ root: 'top-root-button-style' }}
