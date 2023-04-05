@@ -38,7 +38,7 @@
             },
             {
               "not": {
-                "equals": ["test", "@variables('goalOwner')"]
+                "equals": ["", "@variables('goalOwner')"]
               }
             },
             {
@@ -49,7 +49,7 @@
                   }
                 },
                 {
-                  "equals": ["@null", "@variables('goalOwner')"]
+                  "equals": [null, "@variables('goalOwner')"]
                 }
               ]
             }
