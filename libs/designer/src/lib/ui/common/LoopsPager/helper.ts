@@ -1,5 +1,11 @@
+import type { NodesMetadata } from '../../../core/state/workflow/workflowInterfaces';
 import { getAllParentsForNode } from '../../../core/utils/graph';
 
+/**
+ * Gets number of loops for loop nodes.
+ * @param {LogicAppsV2.WorkflowRunAction} action - Node run metadata.
+ * @returns {number | undefined} Number of loops if metadata has the property otherwise undefined.
+ */
 export const getForeachItemsCount = (action: LogicAppsV2.WorkflowRunAction): number | undefined => {
   const { inputsLink, iterationCount, repetitionCount } = action || {};
 
@@ -26,7 +32,14 @@ export const getForeachItemsCount = (action: LogicAppsV2.WorkflowRunAction): num
   return undefined;
 };
 
-export const getRepetitionName = (index: number | undefined, id: string, nodesMetadata: any): string => {
+/**
+ * Gets repetition name for API call.
+ * @param {number | undefined} index - Node's parent loop index.
+ * @param {string} id - Node id.
+ * @param {NodesMetadata} nodesMetadata - Node run metadata.
+ * @returns {string} Repetition name.
+ */
+export const getRepetitionName = (index: number | undefined, id: string, nodesMetadata: NodesMetadata): string => {
   let repetitionName = '';
   const parentsForNode = getAllParentsForNode(id, nodesMetadata);
 

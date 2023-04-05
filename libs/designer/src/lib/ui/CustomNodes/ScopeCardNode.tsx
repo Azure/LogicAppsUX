@@ -57,7 +57,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const runData = useRunData(scopeId);
   const nodesMetaData = useNodesMetadata();
 
-  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
+  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun } = runData ?? {};
 
   const getRunRepetition = () => {
     const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData);
@@ -65,7 +65,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   };
 
   const onRunRepetitionSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
-    if (parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined) {
+    if (parentRunIndex && isMonitoringView) {
       dispatch(setRepetitionRunData({ nodeId: id, runData: runDefinition.properties as any }));
     }
   };
@@ -82,10 +82,10 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   });
 
   useEffect(() => {
-    if (parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined) {
+    if (parentRunIndex && isMonitoringView) {
       refetch();
     }
-  }, [dispatch, parentRunIndex, isMonitoringView, repetitionCount, refetch]);
+  }, [dispatch, parentRunIndex, isMonitoringView, refetch]);
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({

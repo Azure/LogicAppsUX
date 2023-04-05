@@ -203,12 +203,12 @@ export const workflowSlice = createSlice({
     },
     setRepetitionRunData: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.WorkflowRunAction }>) => {
       const { nodeId, runData } = action.payload;
-      const test = {
+      const nodeRunData = {
         ...state.nodesMetadata[nodeId].runData,
         ...runData,
         duration: getDurationStringPanelMode(Date.parse(runData.endTime) - Date.parse(runData.startTime), /* abbreviated */ true),
       };
-      state.nodesMetadata[nodeId].runData = test as LogicAppsV2.WorkflowRunAction;
+      state.nodesMetadata[nodeId].runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     },
     addSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
       if (!state.graph) {
