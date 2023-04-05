@@ -354,15 +354,7 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
           parameterKey = parameterKey.replace(propertyName, propertyNameParameter.value);
         }
 
-        const isOpenApiParameter = !!serializedParameter.info?.alias;
-
-        result = serializeParameter(
-          result,
-          serializedParameter.value,
-          key,
-          { ...serializedParameter, parameterKey },
-          !isOpenApiParameter /* withPath */
-        );
+        result = serializeParameterWithPath(result, serializedParameter.value, key, { ...serializedParameter, parameterKey });
       }
     }
   }
@@ -370,13 +362,13 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
   return result;
 };
 
-const serializeParameter = (
+const serializeParameterWithPath = (
   parent: any,
   serializedValue: any,
   parentKey: string,
-  serializedParameter: SerializedParameter,
-  withPath: boolean
+  serializedParameter: SerializedParameter
 ): any => {
+  const parameterAlias = serializedParameter.info?.alias;
   const valueKeys = serializedParameter.alternativeKey
     ? [serializedParameter.parameterKey, serializedParameter.alternativeKey]
     : [serializedParameter.parameterKey];
@@ -404,8 +396,8 @@ const serializeParameter = (
       }
     }
 
-    if (!withPath) {
-      // Some inputs (e.g., OpenAPI) appear in the following format:
+    if (parameterAlias) {
+      // Aliased inputs (e.g., OpenAPI) may appear in the following format:
       //   'inputs.$.foo.foo/bar.foo/bar/baz'
       // This branch handles the case where we do NOT want the parameters to maintain that path, so the result should be:
       //   'foo/bar/baz'
