@@ -22,12 +22,14 @@ import {
   useNodeDescription,
   useNodeDisplayName,
   useNodeMetadata,
+  useNodesMetadata,
   useRunData,
   useRunIndex,
   useRunInstance,
   useShouldNodeFocus,
 } from '../../core/state/workflow/workflowSelectors';
-import { setRepetitionRunDataById } from '../../core/state/workflow/workflowSlice';
+import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
+import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
 import { RunService } from '@microsoft/designer-client-services-logic-apps';
@@ -52,19 +54,21 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
   const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
-  const parentRunIndex = useRunIndex(metadata?.parentNodeId ?? '');
+  const parentRunIndex = useRunIndex(metadata?.parentNodeId);
   const runInstance = useRunInstance();
   const runData = useRunData(id);
+  const nodesMetaData = useNodesMetadata();
 
   const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
   const getRunRepetition = () => {
-    return RunService().getRepetition({ actionId: id, runId: runInstance?.id }, String(parentRunIndex).padStart(6, '0'));
+    const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData);
+    return RunService().getRepetition({ actionId: id, runId: runInstance?.id }, String(repetitionName).padStart(6, '0'));
   };
 
   const onRunRepetitionSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
     if (parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined) {
-      dispatch(setRepetitionRunDataById({ nodeId: id, runData: runDefinition.properties as any }));
+      dispatch(setRepetitionRunData({ nodeId: id, runData: runDefinition.properties as any }));
     }
   };
 
@@ -83,7 +87,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     if (parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined) {
       refetch();
     }
-  }, [dispatch, parentRunIndex, isMonitoringView, repetitionCount]);
+  }, [dispatch, parentRunIndex, isMonitoringView, repetitionCount, refetch]);
 
   const dependencies = useTokenDependencies(id);
 
@@ -184,7 +188,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const isLoading = useMemo(
     () => isRepetitionLoading || isRepetitionRefetching || opQuery.isLoading || connectionResult.isLoading,
-    [opQuery.isLoading, connectionResult.isLoading, isRepetitionLoading || isRepetitionRefetching]
+    [opQuery.isLoading, connectionResult.isLoading, isRepetitionLoading, isRepetitionRefetching]
   );
 
   const opManifestErrorText = intl.formatMessage({

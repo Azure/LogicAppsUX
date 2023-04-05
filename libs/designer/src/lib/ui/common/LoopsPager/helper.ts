@@ -1,3 +1,5 @@
+import { getAllParentsForNode } from '../../../core/utils/graph';
+
 export const getForeachItemsCount = (action: LogicAppsV2.WorkflowRunAction): number | undefined => {
   const { inputsLink, iterationCount, repetitionCount } = action || {};
 
@@ -22,4 +24,16 @@ export const getForeachItemsCount = (action: LogicAppsV2.WorkflowRunAction): num
   }
 
   return undefined;
+};
+
+export const getRepetitionName = (index: number | undefined, id: string, nodesMetadata: any): string => {
+  let repetitionName = '';
+  const parentsForNode = getAllParentsForNode(id, nodesMetadata);
+
+  parentsForNode.forEach((parent) => {
+    const zeroBasedCurrent = nodesMetadata[parent]?.runIndex;
+    repetitionName = repetitionName ? `${String(zeroBasedCurrent).padStart(6, '0')}-${repetitionName}` : String(index).padStart(6, '0');
+  });
+
+  return repetitionName;
 };

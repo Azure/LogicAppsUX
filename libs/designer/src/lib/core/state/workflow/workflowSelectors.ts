@@ -1,9 +1,9 @@
 import type { WorkflowEdge, WorkflowNode } from '../../parsers/models/workflowNode';
 import type { RootState } from '../../store';
 import { createWorkflowEdge } from '../../utils/graph';
-import type { WorkflowState } from './workflowInterfaces';
+import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
 import { operationIsAction } from './workflowInterfaces';
-import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES, isEmptyString } from '@microsoft/utils-logic-apps';
+import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 
@@ -232,11 +232,18 @@ export const useRunData = (id: string): LogicAppsV2.WorkflowRunAction | LogicApp
   );
 };
 
-export const useRunIndex = (actionId: string): number | undefined => {
+export const useNodesMetadata = (): NodesMetadata => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
-      if (isEmptyString(actionId)) return undefined;
-      return state.nodesMetadata[actionId]?.runIndex;
+      return state.nodesMetadata;
+    })
+  );
+};
+
+export const useRunIndex = (id: string | undefined): number | undefined => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      return id ? state.nodesMetadata[id]?.runIndex : undefined;
     })
   );
 };

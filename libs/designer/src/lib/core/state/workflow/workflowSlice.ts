@@ -197,11 +197,11 @@ export const workflowSlice = createSlice({
       if (state.collapsedGraphIds?.[action.payload] === true) delete state.collapsedGraphIds[action.payload];
       else state.collapsedGraphIds[action.payload] = true;
     },
-    setRunIndexById: (state: WorkflowState, action: PayloadAction<any>) => {
+    setRunIndex: (state: WorkflowState, action: PayloadAction<any>) => {
       const { page, nodeId } = action.payload;
       state.nodesMetadata[nodeId].runIndex = page;
     },
-    setRepetitionRunDataById: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.WorkflowRunAction }>) => {
+    setRepetitionRunData: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.WorkflowRunAction }>) => {
       const { nodeId, runData } = action.payload;
       const test = {
         ...state.nodesMetadata[nodeId].runData,
@@ -349,8 +349,8 @@ export const {
   setFocusNode,
   replaceId,
   addImplicitForeachNode,
-  setRunIndexById,
-  setRepetitionRunDataById,
+  setRunIndex,
+  setRepetitionRunData,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

@@ -15,14 +15,16 @@ import {
   useIsLeafNode,
   useNodeDisplayName,
   useNodeMetadata,
+  useNodesMetadata,
   useRunData,
   useRunIndex,
   useRunInstance,
   useWorkflowNode,
 } from '../../core/state/workflow/workflowSelectors';
-import { setRepetitionRunDataById, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
+import { setRepetitionRunData, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
+import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
 import { RunService } from '@microsoft/designer-client-services-logic-apps';
@@ -50,19 +52,21 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const graphNode = useWorkflowNode(scopeId) as WorkflowNode;
   const metadata = useNodeMetadata(scopeId);
-  const parentRunIndex = useRunIndex(metadata?.parentNodeId ?? '');
+  const parentRunIndex = useRunIndex(metadata?.parentNodeId);
   const runInstance = useRunInstance();
   const runData = useRunData(scopeId);
+  const nodesMetaData = useNodesMetadata();
 
   const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
   const getRunRepetition = () => {
-    return RunService().getRepetition({ actionId: scopeId, runId: runInstance?.id }, String(parentRunIndex).padStart(6, '0'));
+    const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData);
+    return RunService().getRepetition({ actionId: scopeId, runId: runInstance?.id }, repetitionName);
   };
 
   const onRunRepetitionSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
     if (parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined) {
-      dispatch(setRepetitionRunDataById({ nodeId: id, runData: runDefinition.properties as any }));
+      dispatch(setRepetitionRunData({ nodeId: id, runData: runDefinition.properties as any }));
     }
   };
 
@@ -74,14 +78,14 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     refetchOnWindowFocus: false,
     initialData: null,
     onSuccess: onRunRepetitionSuccess,
-    enabled: repetitionCount !== undefined,
+    enabled: false,
   });
 
   useEffect(() => {
     if (parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined) {
       refetch();
     }
-  }, [dispatch, parentRunIndex, isMonitoringView, repetitionCount]);
+  }, [dispatch, parentRunIndex, isMonitoringView, repetitionCount, refetch]);
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
@@ -139,7 +143,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const isLoading = useMemo(
     () => isRepetitionLoading || isRepetitionRefetching || opQuery.isLoading || (!brandColor && !iconUri),
-    [brandColor, iconUri, opQuery.isLoading, isRepetitionLoading || isRepetitionRefetching]
+    [brandColor, iconUri, opQuery.isLoading, isRepetitionLoading, isRepetitionRefetching]
   );
 
   const opManifestErrorText = intl.formatMessage({
