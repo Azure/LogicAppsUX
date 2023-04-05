@@ -433,8 +433,12 @@ const toUntilViewModel = (input: any): { isOldFormat: boolean; items: RowItemPro
     } else {
       operation = input.substring(input.indexOf('@') + 1, input.indexOf('('));
       const operations = input.split(',');
-      operand1 = loadParameterValue({ value: operations[0].substring(operations[0].indexOf('(') + 1).trim() } as InputParameter);
-      operand2 = loadParameterValue({ value: operations[1].substring(0, operations[1].indexOf(')')).trim() } as InputParameter);
+      operand1 = loadParameterValue({
+        value: operations[0].substring(operations[0].indexOf('(') + 1).trim(),
+      } as InputParameter);
+      operand2 = loadParameterValue({
+        value: operations[1].substring(0, operations[1].indexOf(')')).trim(),
+      } as InputParameter);
     }
   } catch {
     operation = 'equals';
@@ -1816,14 +1820,17 @@ export const recurseSerializeCondition = (parameter: ParameterInfo, editorViewMo
     if (!operator) {
       operator = RowDropdownOptions.EQUALS;
     }
-    const stringifiedOperand1 = getJSONValueFromString(
-      parameterValueToString({ type: 'any', value: operand1, ...commonProperties } as any, isDefinitionValue),
-      'any'
-    );
-    const stringifiedOperand2 = getJSONValueFromString(
-      parameterValueToString({ type: 'any', value: operand2, ...commonProperties } as any, isDefinitionValue),
-      'any'
-    );
+
+    const stringifiedOperand1 =
+      getJSONValueFromString(
+        parameterValueToString({ type: 'any', value: operand1, ...commonProperties } as any, isDefinitionValue),
+        'any'
+      ) ?? '';
+    const stringifiedOperand2 =
+      getJSONValueFromString(
+        parameterValueToString({ type: 'any', value: operand2, ...commonProperties } as any, isDefinitionValue),
+        'any'
+      ) ?? '';
     if (not) {
       returnVal.not = {};
       returnVal['not'][operator] = [stringifiedOperand1, stringifiedOperand2];

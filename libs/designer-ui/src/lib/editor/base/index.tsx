@@ -126,6 +126,11 @@ export const BaseEditor = ({
     defaultMessage: 'Add dynamic data or expressions by inserting a /',
     description: 'This is an a11y message meant to help screen reader users figure out how to insert dynamic data',
   });
+
+  const closeTokenPicker = () => {
+    setInTokenPicker(false);
+  };
+
   const handleFocus = () => {
     setIsEditorFocused(true);
     setInTokenPicker(false);
@@ -188,7 +193,7 @@ export const BaseEditor = ({
           {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
           {children}
           {!isTrigger && tokens && getInTokenPicker()
-            ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, handleFocus, tokenPickerClicked)
+            ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, closeTokenPicker, tokenPickerClicked)
             : null}
         </div>
 
