@@ -219,7 +219,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const inputsToSerialize = getOperationInputsToSerialize(rootState, operationId);
   const nodeSettings = rootState.operations.settings[operationId] ?? {};
   const nodeStaticResults = rootState.operations.staticResults[operationId] ?? {};
-  const inputPathValue = serializeOperationParameters(inputsToSerialize, manifest);
+  const inputPathValue = serializeParametersFromManifest(inputsToSerialize, manifest);
   const hostInfo = serializeHost(operationId, manifest, rootState);
   const inputs = hostInfo !== undefined ? mergeHostWithInputs(hostInfo, inputPathValue) : inputPathValue;
   const operationFromWorkflow = rootState.workflow.operations[operationId];
@@ -303,7 +303,7 @@ const getOperationInputsToSerialize = (rootState: RootState, operationId: string
   }));
 };
 
-const serializeOperationParameters = (inputs: SerializedParameter[], manifest: OperationManifest): Record<string, any> => {
+const serializeParametersFromManifest = (inputs: SerializedParameter[], manifest: OperationManifest): Record<string, any> => {
   const inputsLocation = (manifest.properties.inputsLocation ?? ['inputs']).slice(1);
   const inputPathValue = constructInputValues('inputs.$', inputs, false /* encodePathComponents */);
   let parametersValue: any = inputPathValue;
@@ -368,6 +368,7 @@ const serializeParameterWithPath = (
   parentKey: string,
   serializedParameter: SerializedParameter
 ): any => {
+  const parameterAlias = serializedParameter.info?.alias;
   const valueKeys = serializedParameter.alternativeKey
     ? [serializedParameter.parameterKey, serializedParameter.alternativeKey]
     : [serializedParameter.parameterKey];
@@ -392,6 +393,23 @@ const serializeParameterWithPath = (
         result = [];
       } else {
         result = {};
+      }
+    }
+
+    if (parameterAlias) {
+      // Aliased inputs (e.g., OpenAPI) may appear in the following format:
+      //   'inputs.$.foo.foo/bar.foo/bar/baz'
+      // This branch handles the case where we do NOT want the parameters to maintain that path, so the result should be:
+      //   'foo/bar/baz'
+      // To do this, eliminate the redundant path segments.
+      for (let i = 0; i < pathSegments.length - 1; i++) {
+        const currentPathSegmentStringValue = `${pathSegments[i].value}`;
+        const nextPathSegmentStringValue = `${pathSegments[i + 1].value}`;
+
+        if (nextPathSegmentStringValue.startsWith(`${currentPathSegmentStringValue}/`)) {
+          pathSegments.splice(i, 1);
+          i--;
+        }
       }
     }
 
@@ -642,7 +660,7 @@ const serializeSubGraph = async (
   );
 
   if (graphDetail.inputs && graphDetail.inputsLocation) {
-    const inputs = serializeOperationParameters(getOperationInputsToSerialize(rootState, graphId), { properties: graphDetail } as any);
+    const inputs = serializeParametersFromManifest(getOperationInputsToSerialize(rootState, graphId), { properties: graphDetail } as any);
     safeSetObjectPropertyValue(result, [...graphInputsLocation, ...graphDetail.inputsLocation], inputs);
   }
 
