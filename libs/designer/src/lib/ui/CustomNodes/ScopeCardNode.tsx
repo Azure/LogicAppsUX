@@ -57,12 +57,11 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
   const getRunRepetition = () => {
-    return RunService().getRepetition({ actionId: id, runId: runInstance?.id }, String(parentRunIndex).padStart(6, '0'));
+    return RunService().getRepetition({ actionId: scopeId, runId: runInstance?.id }, String(parentRunIndex).padStart(6, '0'));
   };
 
-  const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
+  const onRunRepetitionSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
     if (parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined) {
-      console.log('charlie', id, metadata?.parentNodeId, parentRunIndex, metadata?.runData);
       dispatch(setRepetitionRunDataById({ nodeId: id, runData: runDefinition.properties as any }));
     }
   };
@@ -74,7 +73,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   } = useQuery<any>(['runInstance', { scopeId: scopeId }], getRunRepetition, {
     refetchOnWindowFocus: false,
     initialData: null,
-    onSuccess: onRunInstanceSuccess,
+    onSuccess: onRunRepetitionSuccess,
     enabled: repetitionCount !== undefined,
   });
 

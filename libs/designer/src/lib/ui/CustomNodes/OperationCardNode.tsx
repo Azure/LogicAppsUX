@@ -62,9 +62,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     return RunService().getRepetition({ actionId: id, runId: runInstance?.id }, String(parentRunIndex).padStart(6, '0'));
   };
 
-  const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
+  const onRunRepetitionSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
     if (parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined) {
-      console.log('charlie', id, metadata?.parentNodeId, parentRunIndex, metadata?.runData);
       dispatch(setRepetitionRunDataById({ nodeId: id, runData: runDefinition.properties as any }));
     }
   };
@@ -76,13 +75,12 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   } = useQuery<any>(['runInstance', { nodeId: id }], getRunRepetition, {
     refetchOnWindowFocus: false,
     initialData: null,
-    onSuccess: onRunInstanceSuccess,
+    onSuccess: onRunRepetitionSuccess,
     enabled: false,
   });
 
   useEffect(() => {
     if (parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined) {
-      console.log('charlie onRefetch');
       refetch();
     }
   }, [dispatch, parentRunIndex, isMonitoringView, repetitionCount]);
