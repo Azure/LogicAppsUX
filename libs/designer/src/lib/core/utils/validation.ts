@@ -289,8 +289,20 @@ export function validateJSONParameter(parameterMetadata: ParameterInfo, paramete
 
 const validateConditionalEditor = (value: string, errors: string[]) => {
   const intl = getIntl();
-  if (value.indexOf('null') !== -1) {
-    errors.push(intl.formatMessage({ defaultMessage: 'Enter a valid condition.', description: 'Invalid Json' }));
+  let index = value.indexOf('null');
+  const indices = [];
+  while (index !== -1) {
+    indices.push(index);
+    index = value.indexOf('null', index + 1);
+  }
+
+  for (let i = 0; i < indices.length; i++) {
+    if (value[indices[i] - 1] === '@' || (value.substring(indices[i] - 2, indices[i]) === '@{' && value[indices[i] + 4] === '}')) {
+      continue;
+    } else {
+      errors.push(intl.formatMessage({ defaultMessage: 'Enter a valid condition.', description: 'Invalid Json' }));
+      return;
+    }
   }
 };
 

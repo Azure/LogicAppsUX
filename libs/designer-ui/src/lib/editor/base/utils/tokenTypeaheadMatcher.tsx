@@ -11,8 +11,8 @@ export function useTokenTypeaheadTriggerMatch(
   return useCallback(
     (text: string) => {
       const validChars = '[^' + trigger + PUNCTUATION + '\\s]';
+      // eslint-disable-next-line no-useless-concat
       const TypeaheadTriggerRegex = new RegExp('(' + '[' + trigger + ']' + '((?:' + validChars + '){0,' + maxLength + '})' + ')$');
-      console.log(TypeaheadTriggerRegex);
       const match = TypeaheadTriggerRegex.exec(text);
       if (match !== null) {
         const maybeLeadingWhitespace = match[1];

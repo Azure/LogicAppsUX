@@ -170,7 +170,7 @@ export function TokenPicker({
           }
         }}
         onDismiss={() => {
-          editor?.focus();
+          editor?.blur();
           closeTokenPicker?.();
         }}
         onRestoreFocus={() => {
