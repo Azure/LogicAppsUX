@@ -83,12 +83,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -1624,6 +1618,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) ヤンゴン (ラングーン)"
+    }
+  ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
   "AgrMqq": [
@@ -3501,6 +3501,12 @@
     {
       "type": 0,
       "value": "破棄"
+    }
+  ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
     }
   ],
   "QEp3C8": [
@@ -6073,6 +6079,12 @@
       "value": "actions('actionName').outputs.body の短縮形"
     }
   ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -7502,12 +7514,6 @@
     {
       "type": 0,
       "value": "パスワードをプレーンテキストとして入力するか、セキュリティで保護されたパラメーターを使用してください"
-    }
-  ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "エディター入力"
     }
   ],
   "xQQ9ko": [

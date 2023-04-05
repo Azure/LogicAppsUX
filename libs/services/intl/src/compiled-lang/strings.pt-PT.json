@@ -99,12 +99,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -1678,6 +1672,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangum)"
+    }
+  ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
   "AgrMqq": [
@@ -3693,6 +3693,12 @@
     {
       "type": 0,
       "value": "Eliminar"
+    }
+  ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
     }
   ],
   "QEp3C8": [
@@ -6365,6 +6371,12 @@
       "value": "Forma abreviada de ações (\"actionName\").outputs.body"
     }
   ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -7844,12 +7856,6 @@
     {
       "type": 0,
       "value": "Introduzir palavra-passe como texto simples ou utilizar um parâmetro seguro"
-    }
-  ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "Entrada do Editor"
     }
   ],
   "xQQ9ko": [
