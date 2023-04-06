@@ -24,7 +24,7 @@ import {
   useNodeMetadata,
   useNodesMetadata,
   useRunData,
-  useRunIndex,
+  useParentRunIndex,
   useRunInstance,
   useShouldNodeFocus,
 } from '../../core/state/workflow/workflowSelectors';
@@ -54,7 +54,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
   const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
-  const parentRunIndex = useRunIndex(metadata?.parentNodeId);
+  const parentRunIndex = useParentRunIndex(id);
   const runInstance = useRunInstance();
   const runData = useRunData(id);
   const nodesMetaData = useNodesMetadata();

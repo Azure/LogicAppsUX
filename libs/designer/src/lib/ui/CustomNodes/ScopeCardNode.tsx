@@ -17,7 +17,7 @@ import {
   useNodeMetadata,
   useNodesMetadata,
   useRunData,
-  useRunIndex,
+  useParentRunIndex,
   useRunInstance,
   useWorkflowNode,
 } from '../../core/state/workflow/workflowSelectors';
@@ -52,7 +52,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const graphNode = useWorkflowNode(scopeId) as WorkflowNode;
   const metadata = useNodeMetadata(scopeId);
-  const parentRunIndex = useRunIndex(metadata?.parentNodeId);
+  const parentRunIndex = useParentRunIndex(scopeId);
   const runInstance = useRunInstance();
   const runData = useRunData(scopeId);
   const nodesMetaData = useNodesMetadata();

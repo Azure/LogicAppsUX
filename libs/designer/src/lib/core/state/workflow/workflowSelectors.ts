@@ -1,6 +1,6 @@
 import type { WorkflowEdge, WorkflowNode } from '../../parsers/models/workflowNode';
 import type { RootState } from '../../store';
-import { createWorkflowEdge } from '../../utils/graph';
+import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
 import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
 import { operationIsAction } from './workflowInterfaces';
 import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
@@ -240,10 +240,12 @@ export const useNodesMetadata = (): NodesMetadata => {
   );
 };
 
-export const useRunIndex = (id: string | undefined): number | undefined => {
+export const useParentRunIndex = (id: string | undefined): number | undefined => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
-      return id ? state.nodesMetadata[id]?.runIndex : undefined;
+      if (!id) return undefined;
+      const parents = getAllParentsForNode(id, state.nodesMetadata).filter((x) => !state.nodesMetadata[x].isRoot);
+      return parents.length ? state.nodesMetadata[parents[0]].runIndex : undefined;
     })
   );
 };
