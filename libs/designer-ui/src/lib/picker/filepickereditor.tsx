@@ -1,4 +1,4 @@
-import type { BaseEditorProps, ChangeHandler } from '../editor/base';
+import type { BaseEditorProps, CallbackHandler, ChangeHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
 import { Change } from '../editor/base/plugins/Change';
 import type { ValueSegment } from '../editor/models/parameter';
@@ -11,19 +11,35 @@ import { useIntl } from 'react-intl';
 
 export * from './models/PickerInfo';
 
+export interface PickerCallbackHandler {
+  onShowPicker: CallbackHandler;
+  onFolderNavigated: CallbackHandler;
+  onTitleSelected: CallbackHandler;
+}
+
 export interface FilePickerEditorProps extends BaseEditorProps {
   editorBlur?: ChangeHandler;
+  pickerCallback?: () => PickerCallbackHandler;
 }
 
 const folderIcon: IIconProps = { iconName: 'FolderOpen' };
 const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } };
 const calloutProps = { gapSpace: 0 };
 
-export const FilePickerEditor = ({ initialValue, editorBlur, onChange, ...baseEditorProps }: FilePickerEditorProps) => {
+export const FilePickerEditor = ({ initialValue, editorBlur, onChange, pickerCallback, ...baseEditorProps }: FilePickerEditorProps) => {
   const [value, setValue] = useState(initialValue);
   const [showPicker, setShowPicker] = useState(false);
   const pickerIconId = useId();
   const intl = useIntl();
+
+  const { onFolderNavigated, onTitleSelected, onShowPicker } = pickerCallback?.() ?? {};
+
+  const openTokenPicker = () => {
+    if (!showPicker) {
+      onShowPicker?.();
+      setShowPicker(true);
+    }
+  };
 
   const onValueChange = (newValue: ValueSegment[]): void => {
     setValue(newValue);
@@ -54,9 +70,17 @@ export const FilePickerEditor = ({ initialValue, editorBlur, onChange, ...baseEd
         <Change setValue={onValueChange} />
       </BaseEditor>
       <TooltipHost content={openFolderLabel} calloutProps={calloutProps} styles={hostStyles}>
-        <IconButton iconProps={folderIcon} aria-label={openFolderLabel} onClick={() => setShowPicker(true)} id={pickerIconId} />
+        <IconButton iconProps={folderIcon} aria-label={openFolderLabel} onClick={openTokenPicker} id={pickerIconId} />
       </TooltipHost>
-      <Picker visible={showPicker} anchorId={pickerIconId} currentPathSegments={[]} files={[]} onCancel={() => setShowPicker(false)} />
+      <Picker
+        visible={showPicker}
+        anchorId={pickerIconId}
+        currentPathSegments={[]}
+        files={[]}
+        onCancel={() => setShowPicker(false)}
+        handleFolderNavigation={onFolderNavigated}
+        handleTitleSelected={onTitleSelected}
+      />
     </div>
   );
 };

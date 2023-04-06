@@ -1,3 +1,4 @@
+import type { CallbackHandler } from '..';
 import { PickerHeader } from './pickerHeader';
 import type { FileItem } from './pickerItem';
 import { PickerItem } from './pickerItem';
@@ -24,7 +25,9 @@ export interface PickerProps {
   currentPathSegments: IBreadcrumbItem[];
   files: FileItem[];
   loadingFiles?: boolean;
-  onCancel?: () => void;
+  onCancel?: CallbackHandler;
+  handleFolderNavigation?: CallbackHandler;
+  handleTitleSelected?: CallbackHandler;
 }
 
 export const Picker = ({ visible, onCancel, anchorId, currentPathSegments, files, loadingFiles }: PickerProps) => {

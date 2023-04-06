@@ -53,6 +53,7 @@ export interface IConnectionService {
   ): Promise<CreateConnectionResult>;
   setupConnectionIfNeeded(connection: Connection): Promise<void>;
   getUniqueConnectionName(connectorId: string, connectionNames: string[], connectorName: string): Promise<string>;
+  getFileSourceIdForConnection(connectionId: string): Promise<string>;
 }
 
 let service: IConnectionService;

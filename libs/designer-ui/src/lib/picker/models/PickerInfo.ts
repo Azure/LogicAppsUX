@@ -55,21 +55,6 @@ export interface PickerInfo {
    * @member {string} [valuePath]
    */
   valuePath?: string;
-
-  /**
-   * @member {ParameterChangeHandler} onFolderNavigated
-   */
-  onFolderNavigated: ParameterChangeHandler;
-
-  /**
-   * @member {ParameterChangeHandler} onShowPicker
-   */
-  onShowPicker: ParameterChangeHandler;
-
-  /**
-   * @member {ParameterChangeHandler} onTitleSelected
-   */
-  onTitleSelected: ParameterChangeHandler;
 }
 
 export interface PickerItemInfo {

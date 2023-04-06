@@ -9,7 +9,7 @@ import type { ValueSegment } from '../../editor';
 import type { CallbackHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
-import type { PickerInfo } from '../../picker/filepickereditor';
+import type { PickerCallbackHandler, PickerInfo } from '../../picker/filepickereditor';
 import { FilePickerEditor } from '../../picker/filepickereditor';
 import { QueryBuilderEditor } from '../../querybuilder';
 import { UntilEditor } from '../../querybuilder/Until';
@@ -42,6 +42,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   pickerInfo?: PickerInfo;
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
+  pickerCallback?: () => PickerCallbackHandler;
   getTokenPicker: GetTokenPickerHandler;
   validationErrors?: string[];
   hideValidationErrors?: ChangeHandler;
@@ -76,6 +77,7 @@ const TokenField = ({
   // pickerInfo,
   labelId,
   onValueChange,
+  pickerCallback,
   onComboboxMenuOpen,
   hideValidationErrors,
   getTokenPicker,
@@ -213,7 +215,15 @@ const TokenField = ({
       );
 
     case 'recurrence':
-      return <ScheduleEditor readOnly={readOnly} type={editorOptions?.recurrenceType} initialValue={value} onChange={onValueChange} />;
+      return (
+        <ScheduleEditor
+          readOnly={readOnly}
+          type={editorOptions?.recurrenceType}
+          showPreview={editorOptions?.showPreview}
+          initialValue={value}
+          onChange={onValueChange}
+        />
+      );
 
     case 'filepicker':
       // console.log(pickerInfo);
@@ -228,6 +238,7 @@ const TokenField = ({
           editorBlur={onValueChange}
           getTokenPicker={getTokenPicker}
           onChange={hideValidationErrors}
+          pickerCallback={pickerCallback}
         />
       );
 

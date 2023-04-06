@@ -19,6 +19,7 @@ import {
   shouldUseParameterInGroup,
   updateParameterAndDependencies,
 } from '../../../../core/utils/parameters/helper';
+import { getFilePickerCallbacks } from '../../../../core/utils/parameters/picker';
 import type { TokenGroup } from '../../../../core/utils/tokens';
 import { createValueSegmentFromToken, getExpressionTokenSections, getOutputTokenSections } from '../../../../core/utils/tokens';
 import { getAllVariables, getAvailableVariables } from '../../../../core/utils/variables';
@@ -290,6 +291,7 @@ const ParameterSection = ({
           validationErrors,
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
+          pickerCallback: () => getFilePickerCallbacks(nodeId, group.id, param, connectionReference),
           getTokenPicker: (
             editorId: string,
             labelId: string,

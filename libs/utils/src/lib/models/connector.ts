@@ -128,6 +128,26 @@ export interface ConnectionParameter {
   parameterSource?: ConnectionParameterSource;
 }
 
+export interface CompositeConnectionParameter {
+  /**
+   * @member {string} connectionId - A string with the connection ID of a dependent connector
+   * @example /providers/Microsoft.PowerApps/apis/shared_onedrive/connections/{connectionName}
+   */
+  connectionId?: string;
+
+  /**
+   * @member {string} id - A string with the API Hubs ID for a connection
+   * @example tip1-shared/onedrive/{connectionName}
+   */
+  id?: string;
+
+  /**
+   * @member {string} url - A string with the API Hubs full URL for a connection
+   * @example https://tip1-shared.azure-apim.net/apim/onedrive/{connectionName}
+   */
+  url?: string;
+}
+
 export enum ConnectionParameterSchemaType {
   string = 'string',
 }

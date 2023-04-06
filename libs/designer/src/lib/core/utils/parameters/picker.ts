@@ -1,5 +1,11 @@
+import type { ConnectionReference } from '../../..';
 import constants from '../../../common/constants';
-import type { ParameterChangeEvent, PickerInfo } from '@microsoft/designer-ui';
+import type {
+  ParameterInfo,
+  PickerCallbackHandler,
+  /*PrameterChangeEvent, */
+  PickerInfo,
+} from '@microsoft/designer-ui';
 import { PickerType } from '@microsoft/designer-ui';
 import type { InputParameter } from '@microsoft/parsers-logic-apps';
 import { isDynamicTreeExtension, isLegacyDynamicValuesExtension } from '@microsoft/parsers-logic-apps';
@@ -36,20 +42,52 @@ export const getFilePickerInfo = (parameter: InputParameter): PickerInfo | undef
     dynamicTree: dynamicTree ? dynamicTree.extension : undefined,
     type,
     valuePath,
-    onShowPicker: handleShowPicker,
-    onTitleSelected: handleTitleSelection,
-    onFolderNavigated: handleFolderNavigation,
   };
 };
 
-function handleShowPicker(_e: ParameterChangeEvent): void {
-  throw new Error('Function not implemented.');
-}
+export const getFilePickerCallbacks = (
+  nodeId: string,
+  groupId: string,
+  parameter: ParameterInfo,
+  connectionReference: ConnectionReference
+): PickerCallbackHandler => {
+  console.log(nodeId, groupId, parameter, connectionReference);
+  const handleShowPicker = () => {
+    // const titleSegments = [createTitleSegments({isRoot: true, title: getFileSourceName()})]
+    console.log(getFileSourceName());
+    console.log('handleShowPicker');
+  };
 
-function handleTitleSelection(_e: ParameterChangeEvent): void {
-  throw new Error('Function not implemented.');
-}
+  const getFileSourceName = (): string => {
+    // const fileSourceId = getFileSourceProviderId();
+    return '';
+    // return this.context.ConnectorStore.getConnectorDisplayName(fileSourceId);
+  };
 
-function handleFolderNavigation(_e: ParameterChangeEvent): void {
-  throw new Error('Function not implemented.');
-}
+  // const getFileSourceProviderId = (): string => {
+  //   const connectionId = connectionReference?.connection?.id ?? '';
+  //   return (
+  //     this.context.ConnectionsStore.getFileSourceIdForConnection(connectionId) ||
+  //     // TODO: Remove this when RP implements the getConnections call with connection parameters
+  //     this.context.GraphStore.getConnectorId(this.nodeId)
+  // );
+  // }
+
+  // const createTitleSegments =(selectedFolder: any) => {
+
+  // }
+
+  return {
+    onShowPicker: () => handleShowPicker(),
+    onFolderNavigated: handleFolderNavigated,
+    onTitleSelected: handleTitleSelected,
+  };
+};
+
+const handleFolderNavigated = () => {
+  console.log('handleFolderNavigated');
+};
+
+const handleTitleSelected = () => {
+  console.log('handleTitleSelected');
+};
