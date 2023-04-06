@@ -214,7 +214,7 @@ export const telemetrySchemaNodeCount = (schema: SchemaExtended): number => {
 const nodeCount = (schemaNode: SchemaNodeExtended): number => {
   let result = 1;
   schemaNode.children.forEach((childNode) => {
-    result = +nodeCount(childNode);
+    result = result + nodeCount(childNode);
   });
 
   return result;
