@@ -9,11 +9,11 @@ import { SchemaNameBadge } from '../components/schemaSelection/SchemaNameBadge';
 import { SourceSchemaPlaceholder } from '../components/schemaSelection/SourceSchemaPlaceholder';
 import { schemaNodeCardDefaultWidth, schemaNodeCardHeight } from '../constants/NodeConstants';
 import {
+  ReactFlowEdgeType,
+  ReactFlowNodeType,
   checkerboardBackgroundImage,
   defaultCanvasZoom,
-  ReactFlowEdgeType,
   reactFlowFitViewOptions,
-  ReactFlowNodeType,
   sourcePrefix,
   targetPrefix,
 } from '../constants/ReactFlowConstants';
@@ -35,10 +35,10 @@ import { isFunctionData } from '../utils/Function.Utils';
 import { useLayout } from '../utils/ReactFlow.Util';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
-import type { KeyboardEventHandler, MouseEvent as ReactMouseEvent } from 'react';
+import type { MouseEvent as ReactMouseEvent } from 'react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode, OnConnectStartParams } from 'reactflow';
+import type { OnConnectStartParams, Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
 // eslint-disable-next-line import/no-named-as-default
 import ReactFlow, { ConnectionLineType, useKeyPress } from 'reactflow';
 
@@ -138,20 +138,21 @@ export const ReactFlowWrapper = ({
     dispatch(setSelectedItem(node.id));
   };
 
-  const keyDownHandler: KeyboardEventHandler<HTMLDivElement> = (event) => {
-    if (event.key === 'Delete' || event.key === 'Backspace') {
+  const deletePressed = useKeyPress(['Delete', 'Backspace']);
+  useEffect(() => {
+    if (deletePressed) {
       dispatch(deleteCurrentlySelectedItem());
     }
-  };
+  }, [deletePressed, dispatch]);
 
-  const ctrlZPressed = useKeyPress(['Meta+z', 'ctrl+z']);
+  const ctrlZPressed = useKeyPress(['Meta+z', 'Control+z']);
   useEffect(() => {
     if (ctrlZPressed) {
       dispatch(undoDataMapOperation());
     }
   }, [ctrlZPressed, dispatch]);
 
-  const ctrlYPressed = useKeyPress(['Meta+y', 'ctrl+y']);
+  const ctrlYPressed = useKeyPress(['Meta+y', 'Control+y']);
   useEffect(() => {
     if (ctrlYPressed) {
       dispatch(redoDataMapOperation());
@@ -206,7 +207,6 @@ export const ReactFlowWrapper = ({
       nodesFocusable={false} // we handle keyboard focus from within the node
       // Not ideal, but it's this or useViewport that re-renders 3000 (due to x/y changes)
       onMove={(_e, viewport) => setCanvasZoom(viewport.zoom)}
-      onKeyDown={keyDownHandler}
       onConnect={onConnect}
       onConnectStart={onConnectStart}
       onConnectEnd={onConnectEnd}
