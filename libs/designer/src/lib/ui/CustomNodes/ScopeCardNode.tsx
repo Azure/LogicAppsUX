@@ -65,7 +65,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   };
 
   const onRunRepetitionSuccess = async (runDefinition: LogicAppsV2.RunRepetition) => {
-    dispatch(setRepetitionRunData({ nodeId: id, runData: runDefinition.properties as LogicAppsV2.WorkflowRunAction }));
+    dispatch(setRepetitionRunData({ nodeId: scopeId, runData: runDefinition.properties as LogicAppsV2.WorkflowRunAction }));
   };
 
   const {

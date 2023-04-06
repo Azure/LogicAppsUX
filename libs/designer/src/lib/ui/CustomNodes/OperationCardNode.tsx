@@ -59,8 +59,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const runData = useRunData(id);
   const nodesMetaData = useNodesMetadata();
 
-  console.log('charlie', id, parentRunIndex, runData);
-
   const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
   const getRunRepetition = () => {

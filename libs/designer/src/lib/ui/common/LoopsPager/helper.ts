@@ -42,10 +42,12 @@ export const getForeachItemsCount = (action: LogicAppsV2.WorkflowRunAction): num
 export const getRepetitionName = (index: number | undefined, id: string, nodesMetadata: NodesMetadata): string => {
   let repetitionName = '';
   const parentsForNode = getAllParentsForNode(id, nodesMetadata);
-
   parentsForNode.forEach((parent) => {
-    const zeroBasedCurrent = nodesMetadata[parent]?.runIndex;
-    repetitionName = repetitionName ? `${String(zeroBasedCurrent).padStart(6, '0')}-${repetitionName}` : String(index).padStart(6, '0');
+    const isRoot = nodesMetadata[parent]?.isRoot ?? false;
+    if (!isRoot) {
+      const zeroBasedCurrent = nodesMetadata[parent]?.runIndex;
+      repetitionName = repetitionName ? `${String(zeroBasedCurrent).padStart(6, '0')}-${repetitionName}` : String(index).padStart(6, '0');
+    }
   });
 
   return repetitionName;
