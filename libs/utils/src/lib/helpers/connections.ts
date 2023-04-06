@@ -76,7 +76,11 @@ export function isFirstPartyConnector(connector: Connector): boolean {
   );
 }
 
-export function getConnectionParametersWithType(connector: Connector, connectionParameterType: string): ConnectionParameter[] {
+export function getConnectionParametersWithType(
+  connector: Connector,
+  connectionParameterType: string,
+  showServicePrincipal = false
+): ConnectionParameter[] {
   if (connector && connector.properties) {
     const connectionParameters =
       connector.properties.connectionParameterSets !== undefined
@@ -84,7 +88,7 @@ export function getConnectionParametersWithType(connector: Connector, connection
         : connector.properties.connectionParameters;
     if (!connectionParameters) return [];
     return Object.keys(connectionParameters || {})
-      .filter((connectionParameterKey) => !isHiddenConnectionParameter(connectionParameters, connectionParameterKey))
+      .filter((connectionParameterKey) => !isHiddenConnectionParameter(connectionParameters, connectionParameterKey, showServicePrincipal))
       .map((connectionParameterKey) => connectionParameters[connectionParameterKey])
       .filter((connectionParameter) => equals(connectionParameter.type, connectionParameterType));
   }
@@ -105,51 +109,47 @@ function _getConnectionParameterSetParametersUsingType(connector: Connector, par
 
 export function isHiddenConnectionParameter(
   connectionParameters: Record<string, ConnectionParameter>,
-  connectionParameterKey: string
+  connectionParameterKey: string,
+  showServicePrincipal = false
 ): boolean {
-  return (
-    !(
-      _isServicePrinicipalConnectionParameter(connectionParameterKey) &&
-      _connectorContainsAllServicePrinicipalConnectionParameters(connectionParameters)
-    ) && _isConnectionParameterHidden(connectionParameters[connectionParameterKey])
-  );
+  const isServicePrincipalParameter =
+    isServicePrinicipalConnectionParameter(connectionParameterKey) &&
+    connectorContainsAllServicePrinicipalConnectionParameters(connectionParameters);
+  return showServicePrincipal === isServicePrincipalParameter && _isConnectionParameterHidden(connectionParameters[connectionParameterKey]);
 }
 
-const Constants = {
-  PARAMETER_VALUE_TYPE: {
-    ALTERNATIVE: 'Alternative',
-  },
-  SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS: {
+const ALT_PARAMETER_VALUE_TYPE = 'Alternative';
+
+export const SERVICE_PRINCIPLE_CONSTANTS = {
+  CONFIG_ITEM_KEYS: {
     TOKEN_CLIENT_ID: 'token:clientId',
     TOKEN_CLIENT_SECRET: 'token:clientSecret',
     TOKEN_RESOURCE_URI: 'token:resourceUri',
     TOKEN_GRANT_TYPE: 'token:grantType',
     TOKEN_TENANT_ID: 'token:tenantId',
   },
-  SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS_PREFIX: 'token:',
-  SERVICE_PRINCIPLE_GRANT_TYPE_VALUES: {
+  CONFIG_ITEM_KEYS_PREFIX: 'token:',
+  GRANT_TYPE_VALUES: {
     CODE: 'code',
     CLIENT_CREDENTIALS: 'client_credentials',
   },
 };
 
-function _isServicePrinicipalConnectionParameter(connectionParameterKey: string): boolean {
-  return (
-    equals(connectionParameterKey, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_CLIENT_ID) ||
-    equals(connectionParameterKey, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_CLIENT_SECRET) ||
-    equals(connectionParameterKey, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_RESOURCE_URI) ||
-    equals(connectionParameterKey, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE) ||
-    equals(connectionParameterKey, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)
-  );
+export function isServicePrinicipalConnectionParameter(connectionParameterKey: string): boolean {
+  return Object.values(SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS)
+    .map((key) => key.toLowerCase())
+    .includes(connectionParameterKey.toLowerCase());
 }
 
-function _connectorContainsAllServicePrinicipalConnectionParameters(connectionParameters: Record<string, ConnectionParameter>): boolean {
+export function connectorContainsAllServicePrinicipalConnectionParameters(
+  connectionParameters: Record<string, ConnectionParameter>
+): boolean {
   return (
-    hasProperty(connectionParameters, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_CLIENT_ID) &&
-    hasProperty(connectionParameters, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_CLIENT_SECRET) &&
-    hasProperty(connectionParameters, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_RESOURCE_URI) &&
-    hasProperty(connectionParameters, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE) &&
-    hasProperty(connectionParameters, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)
+    hasProperty(connectionParameters, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_CLIENT_ID) &&
+    hasProperty(connectionParameters, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_CLIENT_SECRET) &&
+    hasProperty(connectionParameters, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_RESOURCE_URI) &&
+    hasProperty(connectionParameters, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE) &&
+    hasProperty(connectionParameters, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)
   );
 }
 
@@ -207,9 +207,7 @@ export function isConnectionMultiAuthManagedIdentityType(connection: Connection,
 
 // NOTE: This method is specifically for Single-Auth type connectors.
 export function isConnectionSingleAuthManagedIdentityType(connection: Connection): boolean {
-  return (
-    !!(connection?.properties?.parameterValueType === Constants.PARAMETER_VALUE_TYPE.ALTERNATIVE) && !isMultiAuthConnection(connection)
-  );
+  return !!(connection?.properties?.parameterValueType === ALT_PARAMETER_VALUE_TYPE) && !isMultiAuthConnection(connection);
 }
 
 function isMultiAuthConnection(connection: Connection | undefined): boolean {
