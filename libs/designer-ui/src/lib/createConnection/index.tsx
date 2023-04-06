@@ -13,6 +13,7 @@ import {
   PrimaryButton,
   TextField,
   TooltipHost,
+  Link,
 } from '@fluentui/react';
 import type {
   ConnectionParameter,
@@ -335,7 +336,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   });
 
   const servicePrincipalTooltipText = intl.formatMessage({
-    defaultMessage: 'Use a service principal to connect using application permissions',
+    defaultMessage: 'Use a service principal to connect using application permissions.',
     description: 'Tooltip for service principal connection checkbox',
   });
 
@@ -396,10 +397,12 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
             />
             <TooltipHost
               content={
-                <div>
-                  <p>{servicePrincipalTooltipText}</p>
-                  <a href={servicePrincipalLearnMoreURL}>{learnMoreText}</a>
-                </div>
+                <p>
+                  {servicePrincipalTooltipText}
+                  <Link href={servicePrincipalLearnMoreURL} target="_blank" rel="noopener noreferrer">
+                    {learnMoreText}
+                  </Link>
+                </p>
               }
             >
               <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
