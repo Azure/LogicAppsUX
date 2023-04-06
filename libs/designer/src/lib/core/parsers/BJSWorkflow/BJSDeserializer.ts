@@ -381,6 +381,7 @@ const addActionsInstanceMetaData = (nodesMetadata: NodesMetadata, runInstance: L
           ...nodeRunData,
           duration: getDurationStringPanelMode(Date.parse(nodeRunData.endTime) - Date.parse(nodeRunData.startTime), /* abbreviated */ true),
         },
+        runIndex: 0,
       };
     }
   });

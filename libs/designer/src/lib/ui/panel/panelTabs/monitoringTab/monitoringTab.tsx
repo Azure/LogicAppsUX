@@ -2,7 +2,7 @@ import constants from '../../../../common/constants';
 import { getMonitoringTabError } from '../../../../common/utilities/error';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useBrandColor } from '../../../../core/state/selectors/actionMetadataSelector';
-import { useNodeMetadata } from '../../../../core/state/workflow/workflowSelectors';
+import { useRunData } from '../../../../core/state/workflow/workflowSelectors';
 import { InputsPanel } from './inputsPanel';
 import { OutputsPanel } from './outputsPanel';
 import { PropertiesPanel } from './propertiesPanel';
@@ -15,9 +15,8 @@ import { useQuery } from 'react-query';
 
 export const MonitoringPanel: React.FC = () => {
   const selectedNodeId = useSelectedNodeId();
-  const nodeMetadata = useNodeMetadata(selectedNodeId);
   const brandColor = useBrandColor(selectedNodeId);
-  const runMetaData = nodeMetadata?.runData;
+  const runMetaData = useRunData(selectedNodeId);
   const { status: statusRun, error: errorRun, code: codeRun } = runMetaData ?? {};
   const error = getMonitoringTabError(errorRun, statusRun, codeRun);
 

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import constants from '../../common/constants';
 import type { AppDispatch } from '../../core';
 import { initializeSwitchCaseFromManifest } from '../../core/actions/bjsworkflow/add';
 import { deleteGraphNode } from '../../core/actions/bjsworkflow/delete';
@@ -8,6 +9,7 @@ import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
 import { useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import {
+  useActionMetadata,
   useIsGraphCollapsed,
   useIsLeafNode,
   useNewSwitchCaseId,
@@ -16,6 +18,7 @@ import {
   useWorkflowNode,
 } from '../../core/state/workflow/workflowSelectors';
 import { addSwitchCase, deleteSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
+import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { DeleteNodeModal, MenuItemType, SubgraphCard } from '@microsoft/designer-ui';
@@ -29,6 +32,7 @@ import type { NodeProps } from 'reactflow';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const subgraphId = id.split('-#')[0];
+  const node = useActionMetadata(subgraphId);
 
   const intl = useIntl();
   const readOnly = useReadOnly();
@@ -42,6 +46,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const subgraphNode = useWorkflowNode(subgraphId);
   const operationInfo = useOperationInfo(graphId);
   const isMonitoringView = useMonitoringView();
+  const normalizedType = node?.type.toLowerCase();
 
   const label = useNodeDisplayName(subgraphId);
 
@@ -122,18 +127,23 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
         <div style={{ position: 'relative' }}>
           <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
           {metadata?.subgraphType ? (
-            <SubgraphCard
-              id={subgraphId}
-              parentId={metadata?.graphId}
-              subgraphType={metadata.subgraphType}
-              title={label}
-              selected={selected}
-              readOnly={readOnly}
-              onClick={subgraphClick}
-              collapsed={graphCollapsed}
-              handleCollapse={handleGraphCollapse}
-              contextMenuOptions={contextMenuOptions}
-            />
+            <>
+              <SubgraphCard
+                id={subgraphId}
+                parentId={metadata?.graphId}
+                subgraphType={metadata.subgraphType}
+                title={label}
+                selected={selected}
+                readOnly={readOnly}
+                onClick={subgraphClick}
+                collapsed={graphCollapsed}
+                handleCollapse={handleGraphCollapse}
+                contextMenuOptions={contextMenuOptions}
+              />
+              {isMonitoringView && normalizedType === constants.NODE.TYPE.UNTIL ? (
+                <LoopsPager metadata={metadata} scopeId={subgraphId} collapsed={graphCollapsed} />
+              ) : null}
+            </>
           ) : null}
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>

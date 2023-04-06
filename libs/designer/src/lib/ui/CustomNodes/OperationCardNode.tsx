@@ -22,16 +22,24 @@ import {
   useNodeDescription,
   useNodeDisplayName,
   useNodeMetadata,
+  useNodesMetadata,
+  useRunData,
+  useParentRunIndex,
+  useRunInstance,
   useShouldNodeFocus,
 } from '../../core/state/workflow/workflowSelectors';
+import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
+import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
+import { RunService } from '@microsoft/designer-client-services-logic-apps';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { Card, MenuItemType, DeleteNodeModal } from '@microsoft/designer-ui';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
+import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { Handle, Position } from 'reactflow';
 import type { NodeProps } from 'reactflow';
@@ -46,8 +54,38 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
   const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
+  const parentRunIndex = useParentRunIndex(id);
+  const runInstance = useRunInstance();
+  const runData = useRunData(id);
+  const nodesMetaData = useNodesMetadata();
 
-  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun } = metadata?.runData ?? {};
+  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
+
+  const getRunRepetition = () => {
+    const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData);
+    return RunService().getRepetition({ nodeId: id, runId: runInstance?.id }, repetitionName);
+  };
+
+  const onRunRepetitionSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
+    dispatch(setRepetitionRunData({ nodeId: id, runData: runDefinition.properties as any }));
+  };
+
+  const {
+    refetch,
+    isLoading: isRepetitionLoading,
+    isRefetching: isRepetitionRefetching,
+  } = useQuery<any>(['runInstance', { nodeId: id }], getRunRepetition, {
+    refetchOnWindowFocus: false,
+    initialData: null,
+    onSuccess: onRunRepetitionSuccess,
+    enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
+  });
+
+  useEffect(() => {
+    if (parentRunIndex !== undefined && isMonitoringView) {
+      refetch();
+    }
+  }, [dispatch, parentRunIndex, isMonitoringView, refetch]);
 
   const dependencies = useTokenDependencies(id);
 
@@ -146,7 +184,10 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const opQuery = useOperationQuery(id);
 
-  const isLoading = useMemo(() => opQuery.isLoading || connectionResult.isLoading, [opQuery.isLoading, connectionResult.isLoading]);
+  const isLoading = useMemo(
+    () => isRepetitionLoading || isRepetitionRefetching || opQuery.isLoading || connectionResult.isLoading,
+    [opQuery.isLoading, connectionResult.isLoading, isRepetitionLoading, isRepetitionRefetching]
+  );
 
   const opManifestErrorText = intl.formatMessage({
     defaultMessage: 'Error fetching manifest',

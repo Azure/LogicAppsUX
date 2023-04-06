@@ -15,18 +15,26 @@ import {
   useIsLeafNode,
   useNodeDisplayName,
   useNodeMetadata,
+  useNodesMetadata,
+  useRunData,
+  useParentRunIndex,
+  useRunInstance,
   useWorkflowNode,
 } from '../../core/state/workflow/workflowSelectors';
-import { toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
+import { setRepetitionRunData, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
+import { LoopsPager } from '../common/LoopsPager/LoopsPager';
+import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
+import { RunService } from '@microsoft/designer-client-services-logic-apps';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { DeleteNodeModal, MenuItemType, ScopeCard } from '@microsoft/designer-ui';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
+import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { Handle, Position } from 'reactflow';
 import type { NodeProps } from 'reactflow';
@@ -44,8 +52,38 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const graphNode = useWorkflowNode(scopeId) as WorkflowNode;
   const metadata = useNodeMetadata(scopeId);
+  const parentRunIndex = useParentRunIndex(scopeId);
+  const runInstance = useRunInstance();
+  const runData = useRunData(scopeId);
+  const nodesMetaData = useNodesMetadata();
 
-  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun } = metadata?.runData ?? {};
+  const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
+
+  const getRunRepetition = () => {
+    const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData);
+    return RunService().getRepetition({ nodeId: scopeId, runId: runInstance?.id }, repetitionName);
+  };
+
+  const onRunRepetitionSuccess = async (runDefinition: LogicAppsV2.RunRepetition) => {
+    dispatch(setRepetitionRunData({ nodeId: scopeId, runData: runDefinition.properties as LogicAppsV2.WorkflowRunAction }));
+  };
+
+  const {
+    refetch,
+    isLoading: isRepetitionLoading,
+    isRefetching: isRepetitionRefetching,
+  } = useQuery<any>(['runInstance', { scopeId: scopeId }], getRunRepetition, {
+    refetchOnWindowFocus: false,
+    initialData: null,
+    onSuccess: onRunRepetitionSuccess,
+    enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
+  });
+
+  useEffect(() => {
+    if (parentRunIndex !== undefined && isMonitoringView) {
+      refetch();
+    }
+  }, [dispatch, parentRunIndex, isMonitoringView, refetch]);
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
@@ -101,7 +139,10 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const opQuery = useOperationQuery(scopeId);
 
-  const isLoading = useMemo(() => opQuery.isLoading || (!brandColor && !iconUri), [brandColor, iconUri, opQuery.isLoading]);
+  const isLoading = useMemo(
+    () => isRepetitionLoading || isRepetitionRefetching || opQuery.isLoading || (!brandColor && !iconUri),
+    [brandColor, iconUri, opQuery.isLoading, isRepetitionLoading, isRepetitionRefetching]
+  );
 
   const opManifestErrorText = intl.formatMessage({
     defaultMessage: 'Error fetching manifest',
@@ -167,7 +208,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     { actionCount }
   );
 
-  const collapsedText = normalizedType === 'switch' || normalizedType === 'if' ? caseString : actionString;
+  const collapsedText =
+    normalizedType === constants.NODE.TYPE.SWITCH || normalizedType === constants.NODE.TYPE.IF ? caseString : actionString;
 
   const isFooter = id.endsWith('#footer');
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isFooter;
@@ -192,7 +234,13 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
 
-  const implementedGraphTypes = ['if', 'switch', 'foreach', 'scope', 'until'];
+  const implementedGraphTypes = [
+    constants.NODE.TYPE.IF,
+    constants.NODE.TYPE.SWITCH,
+    constants.NODE.TYPE.FOREACH,
+    constants.NODE.TYPE.SCOPE,
+    constants.NODE.TYPE.UNTIL,
+  ];
   if (implementedGraphTypes.includes(normalizedType)) {
     return (
       <>
@@ -219,6 +267,9 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             contextMenuOptions={contextMenuOptions}
             runData={{ status: statusRun, duration: durationRun }}
           />
+          {isMonitoringView && normalizedType === constants.NODE.TYPE.FOREACH ? (
+            <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />
+          ) : null}
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
         {graphCollapsed && !isFooter ? <p className="no-actions-text">{collapsedText}</p> : null}

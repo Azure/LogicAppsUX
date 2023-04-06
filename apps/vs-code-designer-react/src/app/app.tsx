@@ -135,7 +135,6 @@ export const App = () => {
   const designerCommandBar =
     readOnly && !isMonitoringView ? null : (
       <DesignerCommandBar
-        isMonitoringView={isMonitoringView}
         isDisabled={isError || isFetching || isLoading}
         isRefreshing={isRefetching}
         onRefresh={refetch}
