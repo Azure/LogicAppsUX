@@ -4,13 +4,13 @@ import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import { addParentConnectionForRepeatingElements, deleteConnectionFromConnections } from '../core/state/DataMapSlice';
 import type { FunctionData, MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import {
+  SchemaType,
   directAccessPseudoFunction,
   directAccessPseudoFunctionKey,
   ifPseudoFunction,
   ifPseudoFunctionKey,
   indexPseudoFunction,
   indexPseudoFunctionKey,
-  SchemaType,
 } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import { isConnectionUnit, setConnectionInputValue } from '../utils/Connection.Utils';
@@ -426,7 +426,8 @@ const createConnections = (
     createdNodes[amendedSourceKey] = amendedSourceKey; // Bypass below block since we already have rfKey here
   } else if (amendedSourceKey.startsWith(directAccessPseudoFunctionKey)) {
     sourceNode = directAccessPseudoFunction;
-  } else if (amendedSourceKey.startsWith(ifPseudoFunctionKey)) {
+  } else if (amendedSourceKey.startsWith(ifPseudoFunctionKey) && amendedSourceKey.charAt(ifPseudoFunctionKey.length) === '(') {
+    // We don't want if-else to be caught here
     sourceNode = ifPseudoFunction;
     createdNodes[amendedSourceKey] = amendedSourceKey;
   } else if (sourceEndOfFunctionName > -1) {
