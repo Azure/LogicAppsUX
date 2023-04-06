@@ -291,9 +291,9 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[1][0]).toContain(ifPseudoFunctionKey);
         expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
         expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
         expect((resultEntries[1][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
 
         expect(resultEntries[2][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
         expect(resultEntries[2][1]).toBeTruthy();
@@ -1064,6 +1064,49 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[7][0]).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest/Direct');
         expect(resultEntries[7][1]).toBeTruthy();
         expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(directAccessId);
+      });
+
+      it('If-Else test', () => {
+        simpleMap['ns0:Root'] = {
+          DirectTranslation: {
+            Employee: {
+              Name: 'if-then-else(is-greater-than(/ns0:Root/DirectTranslation/EmployeeID, 10), /ns0:Root/DirectTranslation/EmployeeName, "Custom")',
+            },
+          },
+        };
+
+        const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, functionMock);
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries.length).toEqual(5);
+
+        expect(resultEntries[0][0]).toContain('IfElse');
+        expect(resultEntries[0][1]).toBeTruthy();
+        expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
+        expect((resultEntries[0][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual(
+          'source-/ns0:Root/DirectTranslation/EmployeeName'
+        );
+        expect(resultEntries[0][1].inputs[2][0]).toEqual('"Custom"');
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+
+        expect(resultEntries[1][0]).toContain('IsGreater');
+        expect(resultEntries[1][1]).toBeTruthy();
+        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeID');
+        expect(resultEntries[1][1].inputs[1][0]).toEqual('10');
+        expect(resultEntries[1][1].outputs[0].reactFlowKey).toContain('IfElse');
+
+        expect(resultEntries[2][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeID');
+        expect(resultEntries[2][1]).toBeTruthy();
+        expect(resultEntries[2][1].outputs[0].reactFlowKey).toContain('IsGreater');
+
+        expect(resultEntries[3][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+        expect(resultEntries[3][1]).toBeTruthy();
+        expect(resultEntries[3][1].outputs[0].reactFlowKey).toContain('IfElse');
+
+        expect(resultEntries[4][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+        expect(resultEntries[4][1]).toBeTruthy();
+        expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IfElse');
       });
     });
   });
