@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.0.24](https://github.com/Azure/LogicAppsUX/compare/v2.0.23...v2.0.24) (2023-04-06)
+
+
+### Logic Apps Designer Bug Fixes
+
+* Conditional Bugs/ Other Bugs ([#1928](https://github.com/Azure/LogicAppsUX/issues/1928)) ([af4ad3d](https://github.com/Azure/LogicAppsUX/commit/af4ad3d722eed8a1a6706fab86877bee26167bc3))
+* Fix serializer to flatten paths for OpenAPI ([#1882](https://github.com/Azure/LogicAppsUX/issues/1882)) ([2ce3956](https://github.com/Azure/LogicAppsUX/commit/2ce395687d8d061d40461bb7f1640cb0fa0f4bbd))
 
 ### [2.0.23](https://github.com/Azure/LogicAppsUX/compare/v2.0.22...v2.0.23) (2023-04-05)
 
