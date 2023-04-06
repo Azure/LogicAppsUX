@@ -1013,6 +1013,12 @@
       "value": "Enter a valid double."
     }
   ],
+  "535FGR": [
+    {
+      "type": 0,
+      "value": "Use a service principal to connect using application permissions"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -1419,6 +1425,12 @@
     {
       "type": 0,
       "value": "Adds an integer number of days to a string timestamp passed in"
+    }
+  ],
+  "8yjjTX": [
+    {
+      "type": 0,
+      "value": "Connect via Service Principal"
     }
   ],
   "9/UeTh": [
@@ -5805,6 +5817,12 @@
     {
       "type": 0,
       "value": "Test"
+    }
+  ],
+  "izS5yQ": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "j1VU25": [
