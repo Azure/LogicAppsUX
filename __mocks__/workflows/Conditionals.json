@@ -6,7 +6,8 @@
         "actions": {
           "Terminate": {
             "inputs": {
-              "runStatus": "Succeeded"
+              "runStatus": "Succeeded",
+              "runError": { "message": "@false" }
             },
             "runAfter": {},
             "type": "Terminate"
@@ -33,22 +34,22 @@
               "equals": ["abc@microsoft.com", "@variables('goalOwner')"]
             },
             {
-              "equals": ["test", "@variables('goalOwner')"]
+              "equals": ["@null", "@variables('goalOwner')"]
             },
             {
               "not": {
-                "equals": ["test", "@variables('goalOwner')"]
+                "equals": ["@true", "@variables('goalOwner')"]
               }
             },
             {
               "and": [
                 {
                   "not": {
-                    "endsWith": ["g", "@variables('goalOwner')"]
+                    "endsWith": ["@{concat(concat(concat(concat())))}", "@variables('goalOwner')"]
                   }
                 },
                 {
-                  "equals": ["test", "@variables('goalOwner')"]
+                  "equals": [null, "@variables('goalOwner')"]
                 }
               ]
             }
@@ -65,7 +66,7 @@
             {
               "name": "goalOwner",
               "type": "string",
-              "value": "abc@microsoft.com"
+              "value": "@null"
             }
           ]
         },
