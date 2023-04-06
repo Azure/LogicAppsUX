@@ -13,6 +13,7 @@ import {
   PrimaryButton,
   TextField,
   TooltipHost,
+  Link,
 } from '@fluentui/react';
 import type {
   ConnectionParameter,
@@ -22,7 +23,13 @@ import type {
   Gateway,
   Subscription,
 } from '@microsoft/utils-logic-apps';
-import { Capabilities, ConnectionParameterTypes } from '@microsoft/utils-logic-apps';
+import {
+  Capabilities,
+  ConnectionParameterTypes,
+  SERVICE_PRINCIPLE_CONSTANTS,
+  connectorContainsAllServicePrinicipalConnectionParameters,
+  isServicePrinicipalConnectionParameter,
+} from '@microsoft/utils-logic-apps';
 import type { FormEvent } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -115,16 +122,28 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     [enabledCapabilities]
   );
 
+  const supportsServicePrincipalConnection = useMemo(
+    () => connectorContainsAllServicePrinicipalConnectionParameters(singleAuthParams),
+    [singleAuthParams]
+  );
+
+  const showServicePrincipalButton = useMemo(() => supportsServicePrincipalConnection, [supportsServicePrincipalConnection]);
+  const [useServicePrincipal, setUseServicePrincipal] = useState<boolean>(false);
+  const toggleServicePrincipal = () => {
+    setUseServicePrincipal(!useServicePrincipal);
+  };
+
   const isParamVisible = useCallback(
-    (parameter: ParamType) => {
+    (key: string, parameter: ParamType) => {
       const constraints = parameter?.uiDefinition?.constraints;
+      if (useServicePrincipal) return isServicePrinicipalConnectionParameter(key) && isServicePrincipalParameterVisible(key, parameter);
       if (constraints?.hidden === 'true' || constraints?.hideInUI === 'true') return false;
       const dependencyParam = constraints?.dependentParameter;
       if (dependencyParam && parameterValues[dependencyParam.parameter] !== dependencyParam.value) return false;
       if (parameter.type === ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]) return false;
       return true;
     },
-    [parameterValues]
+    [parameterValues, useServicePrincipal]
   );
 
   const unfilteredParameters: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = useMemo(
@@ -133,7 +152,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   );
 
   const parameters: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = useMemo(
-    () => filterRecord<any>(unfilteredParameters, (_, value) => isParamVisible(value)),
+    () => filterRecord<any>(unfilteredParameters, (key, value) => isParamVisible(key, value)),
     [isParamVisible, unfilteredParameters]
   );
 
@@ -180,6 +199,8 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     [checkOAuthCallback, enabledCapabilities, isMultiAuth, multiAuthParams, singleAuthParams]
   );
 
+  const isUsingOAuth = useMemo(() => hasOAuth && !useServicePrincipal, [hasOAuth, useServicePrincipal]);
+
   const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
   const validParams = useMemo(() => {
     if (showNameInput && !connectionDisplayName) return false;
@@ -202,20 +223,36 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
       Object.entries(parameterValues).filter(([key]) => Object.keys(capabilityEnabledParameters).includes(key)) ?? []
     );
 
+    // This value needs to be passed conditionally but the parameter is hidden, so we're manually inputting it here
+    if (
+      supportsServicePrincipalConnection &&
+      Object.keys(unfilteredParameters).includes(SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE)
+    ) {
+      const oauthValue = SERVICE_PRINCIPLE_CONSTANTS.GRANT_TYPE_VALUES.CODE;
+      const servicePrincipalValue = SERVICE_PRINCIPLE_CONSTANTS.GRANT_TYPE_VALUES.CLIENT_CREDENTIALS;
+      visibleParameterValues[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE] = useServicePrincipal
+        ? servicePrincipalValue
+        : oauthValue;
+    }
+
     return createConnectionCallback?.(
-      connectionDisplayName,
+      showNameInput ? connectionDisplayName : '',
       connectionParameterSets?.values[selectedParamSetIndex],
       visibleParameterValues,
-      hasOAuth
+      isUsingOAuth
     );
   }, [
     parameterValues,
+    supportsServicePrincipalConnection,
+    unfilteredParameters,
     createConnectionCallback,
+    showNameInput,
     connectionDisplayName,
     connectionParameterSets?.values,
     selectedParamSetIndex,
-    hasOAuth,
+    isUsingOAuth,
     capabilityEnabledParameters,
+    useServicePrincipal,
   ]);
 
   // INTL STRINGS
@@ -298,20 +335,33 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     description: 'Tooltip for on-prem gateway connection checkbox',
   });
 
+  const servicePrincipalTooltipText = intl.formatMessage({
+    defaultMessage: 'Use a service principal to connect using application permissions.',
+    description: 'Tooltip for service principal connection checkbox',
+  });
+
+  const servicePrincipalLearnMoreURL =
+    'https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal';
+
+  const learnMoreText = intl.formatMessage({
+    defaultMessage: 'Learn more',
+    description: 'Learn more link text',
+  });
+
   const connectorDescription = useMemo(() => {
-    if (hasOAuth) return authDescriptionText;
+    if (isUsingOAuth) return authDescriptionText;
     if (Object.keys(parameters ?? {}).length === 0) return simpleDescriptionText;
     return '';
-  }, [authDescriptionText, hasOAuth, parameters, simpleDescriptionText]);
+  }, [authDescriptionText, isUsingOAuth, parameters, simpleDescriptionText]);
 
   const submitButtonText = useMemo(() => {
-    if (isLoading) return hasOAuth ? signInButtonLoadingText : createButtonLoadingText;
-    return hasOAuth ? signInButtonText : createButtonText;
-  }, [createButtonLoadingText, createButtonText, isLoading, hasOAuth, signInButtonLoadingText, signInButtonText]);
+    if (isLoading) return isUsingOAuth ? signInButtonLoadingText : createButtonLoadingText;
+    return isUsingOAuth ? signInButtonText : createButtonText;
+  }, [createButtonLoadingText, createButtonText, isLoading, isUsingOAuth, signInButtonLoadingText, signInButtonText]);
 
   const submitButtonAriaLabel = useMemo(() => {
-    return hasOAuth ? signInButtonAria : createButtonAria;
-  }, [hasOAuth, signInButtonAria, createButtonAria]);
+    return isUsingOAuth ? signInButtonAria : createButtonAria;
+  }, [isUsingOAuth, signInButtonAria, createButtonAria]);
 
   const showConfigParameters = useMemo(() => !resourceSelectedProps, [resourceSelectedProps]);
 
@@ -333,6 +383,33 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
 
       {/* Parameters */}
       <div className="connection-params-container">
+        {/* ServicePrincipal support */}
+        {showServicePrincipalButton && (
+          <div className="param-row center" style={{ margin: '8px 0px' }}>
+            <Checkbox
+              label={intl.formatMessage({
+                defaultMessage: 'Connect via Service Principal',
+                description: 'Checkbox label for using an Service Pricipal connection',
+              })}
+              checked={useServicePrincipal}
+              onChange={() => toggleServicePrincipal()}
+              disabled={isLoading}
+            />
+            <TooltipHost
+              content={
+                <p>
+                  {servicePrincipalTooltipText}
+                  <Link href={servicePrincipalLearnMoreURL} target="_blank" rel="noopener noreferrer">
+                    {learnMoreText}
+                  </Link>
+                </p>
+              }
+            >
+              <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
+            </TooltipHost>
+          </div>
+        )}
+
         {/* Name */}
         {showNameInput && (
           <div className="param-row">
@@ -451,4 +528,21 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
       </div>
     </div>
   );
+};
+
+const isServicePrincipalParameterVisible = (key: string, parameter: any): boolean => {
+  const hiddenOverrrideKeys = {
+    TOKEN_CLIENT_ID: 'token:clientId',
+    TOKEN_CLIENT_SECRET: 'token:clientSecret',
+    TOKEN_TENANT_ID: 'token:tenantId',
+  };
+  if (
+    Object.values(hiddenOverrrideKeys)
+      .map((key) => key.toLowerCase())
+      .includes(key.toLowerCase())
+  )
+    return true;
+  const constraints = parameter?.uiDefinition?.constraints;
+  if (constraints?.hidden === 'true' || constraints?.hideInUI === 'true') return false;
+  return true;
 };
