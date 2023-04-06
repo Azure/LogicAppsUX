@@ -39,8 +39,8 @@
     "generateArmToken": "az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 > ./apps/designer-standalone/src/environments/armToken.json"
   },
   "engines": {
-    "node": "16",
-    "npm": "8"
+    "node": ">=16",
+    "npm": ">=8"
   },
   "private": true,
   "dependencies": {
