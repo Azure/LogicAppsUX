@@ -24,7 +24,7 @@ import {
   qualifyLoopRelativeSourceKeys,
   splitKeyIntoChildren,
 } from '../utils/DataMap.Utils';
-import { findFunctionForFunctionName, isFunctionData, isKeyAnIndexValue } from '../utils/Function.Utils';
+import { findFunctionForFunctionName, isFunctionData, isIfAndGuid, isKeyAnIndexValue } from '../utils/Function.Utils';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
 import { createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
 import { findNodeForKey, flattenSchemaIntoDictionary } from '../utils/Schema.Utils';
@@ -426,7 +426,10 @@ const createConnections = (
     createdNodes[amendedSourceKey] = amendedSourceKey; // Bypass below block since we already have rfKey here
   } else if (amendedSourceKey.startsWith(directAccessPseudoFunctionKey)) {
     sourceNode = directAccessPseudoFunction;
-  } else if (amendedSourceKey.startsWith(ifPseudoFunctionKey) && amendedSourceKey.charAt(ifPseudoFunctionKey.length) === '(') {
+  } else if (
+    (amendedSourceKey.startsWith(ifPseudoFunctionKey) && amendedSourceKey.charAt(ifPseudoFunctionKey.length) === '(') ||
+    isIfAndGuid(amendedSourceKey)
+  ) {
     // We don't want if-else to be caught here
     sourceNode = ifPseudoFunction;
     createdNodes[amendedSourceKey] = amendedSourceKey;

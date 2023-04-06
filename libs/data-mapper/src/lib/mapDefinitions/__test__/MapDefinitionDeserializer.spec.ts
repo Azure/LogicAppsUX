@@ -291,9 +291,9 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[1][0]).toContain(ifPseudoFunctionKey);
         expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
         expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
         expect((resultEntries[1][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
 
         expect(resultEntries[2][0]).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
         expect(resultEntries[2][1]).toBeTruthy();
