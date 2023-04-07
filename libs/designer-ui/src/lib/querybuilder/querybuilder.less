@@ -43,6 +43,9 @@
         &.readonly {
           background-color: rgba(128, 128, 128, 0.1);
         }
+        &:focus {
+          outline: 2px solid @primary_focus_blue;
+        }
         p {
           margin: 0;
         }
@@ -178,6 +181,9 @@
     padding-inline-end: 15px;
     &.readonly {
       background-color: rgba(128, 128, 128, 0.1);
+    }
+    &:focus {
+      outline: 2px solid @primary_focus_blue;
     }
     p {
       margin: 0;
