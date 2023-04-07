@@ -147,7 +147,6 @@ export abstract class BaseConnectionService implements IConnectionService {
     if (isInput) {
       schema.properties = {
         method: { type: 'string', default: operation.method, 'x-ms-visibility': 'hideInUI' },
-        host: { type: 'string', default: `https://${swagger.api.host}`, 'x-ms-visibility': 'hideInUI', 'x-ms-serialize': { skip: true } },
         uri: { type: 'string', default: `https://${swagger.api.host}${operation.path}`, 'x-ms-visibility': 'hideInUI' },
         pathTemplate: {
           type: 'object',
@@ -157,7 +156,7 @@ export abstract class BaseConnectionService implements IConnectionService {
           required: ['template'],
         },
       };
-      schema.required = ['method', 'pathTemplate'];
+      schema.required = ['method', 'pathTemplate', 'uri'];
       for (const parameter of rawOperation.parameters ?? []) {
         this._addParameterInSchema(schema, parameter);
       }

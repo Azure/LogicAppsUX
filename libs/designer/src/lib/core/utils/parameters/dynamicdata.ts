@@ -420,6 +420,9 @@ function getManifestBasedInputParameters(
     knownKeys.add(clonedInputParameter.key);
   }
 
+  const pathParams = initializeDynamicPathParameters(dynamicInputs, dynamicParameter, operationDefinition);
+  result = result.filter((input) => !pathParams.some((pathParam) => pathParam.key === input.key)).concat(pathParams);
+
   if (stepInputs !== undefined && !manifest.properties.inputsLocationSwapMap) {
     // load unknown inputs not in the schema by key.
     const resultParameters = map(result, 'key');
@@ -536,59 +539,43 @@ function getSwaggerBasedInputParameters(
   }
 }
 
-// function TEMP_FUNC(
-//   inputs: InputParameter[],
-//   dynamicParameter: InputParameter,
-//   operationDefinition: any
-// ): InputParameter[] {
-//   const swaggerKey = dynamicParameter.name;
-//   // const uri = inputs.find((input) => input.name === `${swaggerKey}.uri`)?.default;
-//   // const basePath = inputs.find((input) => input.name === `${swaggerKey}.host`)?.default;
-//   const basePath = ''
-//   const operationPath = inputs.find((input) => input.name === `${swaggerKey}.pathTemplate.template`)?.default;
-//   const { key, isNested } = dynamicParameter;
-//   const parameterKey = 'uri';
-//   const propertyNames = parseEx(parameterKey).map((segment) => segment.value?.toString()) as string[];
-//   const dynamicInputDefinition = safeSetObjectPropertyValue(
-//     {},
-//     propertyNames,
-//     getObjectPropertyValue(operationDefinition.inputs, propertyNames)
-//   );
-//   const dynamicInputParameters = loadInputValuesFromDefinition(
-//     dynamicInputDefinition as Record<string, any>,
-//     inputs,
-//     operationPath,
-//     basePath as string,
-//   );
+function initializeDynamicPathParameters(
+  inputs: InputParameter[],
+  dynamicParameter: InputParameter,
+  operationDefinition: any
+): InputParameter[] {
+  const swaggerKey = dynamicParameter.name;
+  const basePath = '';
+  const operationPath = inputs.find((input) => input.name === `${swaggerKey}.pathTemplate.template`)?.default;
+  const parameterKey = 'uri';
+  const propertyNames = parseEx(parameterKey).map((segment) => segment.value?.toString()) as string[];
+  const dynamicInputDefinition = safeSetObjectPropertyValue(
+    {},
+    propertyNames,
+    getObjectPropertyValue(operationDefinition.inputs, propertyNames)
+  );
+  const dynamicInputParameters = loadInputValuesFromDefinition(
+    dynamicInputDefinition as Record<string, any>,
+    inputs,
+    operationPath,
+    basePath as string
+  );
 
-//   console.log('### dynamicInputParameters', dynamicInputParameters);
+  const result: InputParameter[] = [];
 
-//   if (isNested) {
-//     const parameter = first((inputParameter) => inputParameter.key === key, dynamicInputParameters);
-//     const isArrayParameter = parameter?.type === Constants.SWAGGER.TYPE.ARRAY;
-//     const parameterValue = ((value: any) => (value && isArrayParameter ? value[0] : value))(parameter?.value);
-//     const result: InputParameter[] = [];
-
-//     for (const inputParameter of inputs) {
-//       if (inputParameter.value === undefined) {
-//         // NOTE: For scenarios when dynamic parameter doesn't have any schema, then value is read for the whole
-//         // parameter from definition.
-//         if (inputParameter.key === parameter?.key) {
-//           inputParameter.value = parameterValue;
-//         } else {
-//           const key = inputParameter.name.replace(parameter?.name ?? '', '').slice(1);
-//           inputParameter.value = parameterValue ? getObjectValue(key, parameterValue) : undefined;
-//         }
-//       }
-
-//       result.push(inputParameter);
-//     }
-
-//     return result;
-//   } else {
-//     return dynamicInputParameters;
-//   }
-// }
+  for (const inputParameter of inputs) {
+    if (inputParameter.default && inputParameter.value === undefined) {
+      inputParameter.value = inputParameter.default;
+    }
+    if (inputParameter.value === undefined) {
+      const inputKey = `${inputParameter.schema.in}.$.${inputParameter.schema.name}`;
+      const value = dynamicInputParameters.find((parameter) => parameter.key === inputKey)?.value;
+      inputParameter.value = value;
+    }
+    result.push(inputParameter);
+  }
+  return result;
+}
 
 function _getKeyPrefixFromParameter(parameterKey: string): string {
   const separator = '.';
