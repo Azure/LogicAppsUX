@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "2.0.24",
+  "version": "2.0.25",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -777,7 +777,8 @@
   },
   "extensionDependencies": [
     "ms-vscode.azure-account",
-    "ms-azuretools.vscode-azurefunctions"
+    "ms-azuretools.vscode-azurefunctions",
+    "azurite.azurite"
   ],
   "activationEvents": [
     "onCommand:azureLogicAppsStandard.openDesigner",
