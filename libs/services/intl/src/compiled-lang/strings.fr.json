@@ -1464,6 +1464,12 @@
       "value": "Ajoute un nombre entier de jours à un horodateur de chaîne transmis"
     }
   ],
+  "8yjjTX": [
+    {
+      "type": 0,
+      "value": "Connect via Service Principal"
+    }
+  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -4106,6 +4112,12 @@
       "value": "ID de demande de client"
     }
   ],
+  "TeRxLv": [
+    {
+      "type": 0,
+      "value": "Use a service principal to connect using application permissions."
+    }
+  ],
   "TgcgXE": [
     {
       "type": 0,
@@ -5971,6 +5983,12 @@
     {
       "type": 0,
       "value": "Test"
+    }
+  ],
+  "izS5yQ": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "j1VU25": [

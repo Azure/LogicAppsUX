@@ -1475,6 +1475,12 @@
       "value": "Добавляет целое число дней в метку времени строки, переданной в функцию"
     }
   ],
+  "8yjjTX": [
+    {
+      "type": 0,
+      "value": "Connect via Service Principal"
+    }
+  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -4177,6 +4183,12 @@
       "value": "Идентификатор запроса клиента"
     }
   ],
+  "TeRxLv": [
+    {
+      "type": 0,
+      "value": "Use a service principal to connect using application permissions."
+    }
+  ],
   "TgcgXE": [
     {
       "type": 0,
@@ -6073,6 +6085,12 @@
     {
       "type": 0,
       "value": "Тест"
+    }
+  ],
+  "izS5yQ": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "j1VU25": [

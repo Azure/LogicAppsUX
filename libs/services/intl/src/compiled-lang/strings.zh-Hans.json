@@ -1446,6 +1446,12 @@
       "value": "将天数的整数值添加到传入的字符串时间戳"
     }
   ],
+  "8yjjTX": [
+    {
+      "type": 0,
+      "value": "Connect via Service Principal"
+    }
+  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -4000,6 +4006,12 @@
       "value": "客户端请求 ID"
     }
   ],
+  "TeRxLv": [
+    {
+      "type": 0,
+      "value": "Use a service principal to connect using application permissions."
+    }
+  ],
   "TgcgXE": [
     {
       "type": 0,
@@ -5867,6 +5879,12 @@
     {
       "type": 0,
       "value": "测试"
+    }
+  ],
+  "izS5yQ": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "j1VU25": [
