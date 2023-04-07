@@ -137,7 +137,7 @@ const getAllSourceNodeIds = (graph: WorkflowNode, nodeId: string, operationMap: 
 };
 
 export const getAllParentsForNode = (nodeId: string, nodesMetadata: NodesMetadata): string[] => {
-  let currentParent = nodesMetadata[nodeId].parentNodeId;
+  let currentParent = nodesMetadata[nodeId]?.parentNodeId;
   const result: string[] = [];
 
   while (currentParent) {
