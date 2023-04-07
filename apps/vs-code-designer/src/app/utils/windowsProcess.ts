@@ -12,8 +12,11 @@ import processTree = require('process-tree');
  */
 export async function getWindowsProcess(pid: number): Promise<IProcessInfo[]> {
   try {
-    return await new Promise((resolve) => {
-      processTree(pid, (_err, children) => {
+    return await new Promise((resolve, reject): void => {
+      processTree(pid, (err, children) => {
+        if (err) {
+          reject(err);
+        }
         resolve(children);
       });
     });
