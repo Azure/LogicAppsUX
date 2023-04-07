@@ -183,7 +183,7 @@ export const BaseEditor = ({
           {autoLink ? <AutoLink /> : null}
           {clearEditor ? <ClearEditor showButton={false} /> : null}
           {singleValueSegment ? <SingleValueSegment /> : null}
-          <TokenTypeAheadPlugin openTokenPicker={openTokenPicker} />
+          {tokens ? <TokenTypeAheadPlugin openTokenPicker={openTokenPicker} /> : null}
           <OnBlur command={handleBlur} />
           <OnFocus command={handleFocus} />
           <ReadOnly readonly={readonly} />

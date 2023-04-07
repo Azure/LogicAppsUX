@@ -30,7 +30,6 @@ export const AuthenticationProperty = ({
           initialValue={initialValue}
           placeholder={AuthProperty.placeHolder}
           BasePlugins={{ tokens: true }}
-          singleLine={true}
           getTokenPicker={getTokenPicker}
           onChange={onBlur}
         />

@@ -17,6 +17,9 @@
     &.readonly {
       background-color: rgba(128, 128, 128, 0.1);
     }
+    &:focus {
+      outline: 2px solid @primary_focus_blue;
+    }
   }
   .editor-placeholder {
     color: #696969;
@@ -58,6 +61,9 @@
     caret-color: #444;
     &.readonly {
       background-color: rgba(128, 128, 128, 0.1);
+    }
+    &:focus {
+      outline: 2px solid @primary_focus_blue;
     }
   }
 
