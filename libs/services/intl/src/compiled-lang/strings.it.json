@@ -1432,6 +1432,12 @@
       "value": "Aggiunge un numero intero di giorni al timestamp in formato stringa passato"
     }
   ],
+  "8yjjTX": [
+    {
+      "type": 0,
+      "value": "Connect via Service Principal"
+    }
+  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -4026,6 +4032,12 @@
       "value": "ID richiesta client"
     }
   ],
+  "TeRxLv": [
+    {
+      "type": 0,
+      "value": "Use a service principal to connect using application permissions."
+    }
+  ],
   "TgcgXE": [
     {
       "type": 0,
@@ -5875,6 +5887,12 @@
     {
       "type": 0,
       "value": "Test"
+    }
+  ],
+  "izS5yQ": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "j1VU25": [
