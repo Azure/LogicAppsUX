@@ -12,7 +12,7 @@ import type { IRunningFuncTask } from '../utils/funcCoreTools/funcHostTask';
 import { isTimeoutError } from '../utils/requestUtils';
 import { executeIfNotActive } from '../utils/taskUtils';
 import { getWorkspaceSetting } from '../utils/vsCodeConfig/settings';
-import { getWindowsProcessTree } from '../utils/windowsProcessTree';
+import { getWindowsProcess } from '../utils/windowsProcess';
 import type { HttpOperationResponse } from '@azure/ms-rest-js';
 import { delay } from '@azure/ms-rest-js';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
@@ -20,8 +20,8 @@ import type { AzExtRequestPrepareOptions } from '@microsoft/vscode-azext-azureut
 import { sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
 import { UserCancelledError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { ProcessDataFlag, ProjectLanguage } from '@microsoft/vscode-extension';
-import type { IPreDebugValidateResult, IProcessInfo, IWindowsProcessTree } from '@microsoft/vscode-extension';
+import { ProjectLanguage } from '@microsoft/vscode-extension';
+import type { IPreDebugValidateResult, IProcessInfo } from '@microsoft/vscode-extension';
 import * as unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
 import * as parse from 'yargs-parser';
@@ -241,10 +241,7 @@ async function getUnixChildren(pid: number): Promise<OSAgnosticProcess[]> {
 }
 
 async function getWindowsChildren(pid: number): Promise<OSAgnosticProcess[]> {
-  const windowsProcessTree: IWindowsProcessTree = getWindowsProcessTree();
-  const processes: IProcessInfo[] | undefined = await new Promise((resolve): void => {
-    windowsProcessTree.getProcessList(pid, resolve, ProcessDataFlag.None);
-  });
+  const processes: IProcessInfo[] = await getWindowsProcess(pid);
   return (processes || []).map((c) => {
     return { command: c.name, pid: c.pid };
   });
