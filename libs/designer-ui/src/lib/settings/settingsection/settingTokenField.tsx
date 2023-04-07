@@ -74,7 +74,7 @@ const TokenField = ({
   errorDetails,
   showTokens,
   label,
-  // pickerInfo,
+  pickerInfo,
   labelId,
   onValueChange,
   pickerCallback,
@@ -233,8 +233,9 @@ const TokenField = ({
           placeholder={placeholder}
           BasePlugins={{ tokens: showTokens }}
           readonly={readOnly}
-          isTrigger={isTrigger}
           initialValue={value}
+          titleSegments={pickerInfo?.titleSegments}
+          isLoading={pickerInfo?.isLoading}
           editorBlur={onValueChange}
           getTokenPicker={getTokenPicker}
           onChange={hideValidationErrors}

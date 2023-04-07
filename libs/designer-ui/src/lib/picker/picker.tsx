@@ -14,7 +14,7 @@ const calloutStyles: Partial<ICalloutContentStyles> = {
   },
   calloutMain: {
     maxHeight: 430,
-    width: 300,
+    width: 400,
     overflow: 'hidden',
   },
 };
@@ -28,6 +28,7 @@ export interface PickerProps {
   onCancel?: CallbackHandler;
   handleFolderNavigation?: CallbackHandler;
   handleTitleSelected?: CallbackHandler;
+  fetchPickerItems?: CallbackHandler;
 }
 
 export const Picker = ({ visible, onCancel, anchorId, currentPathSegments, files, loadingFiles }: PickerProps) => {

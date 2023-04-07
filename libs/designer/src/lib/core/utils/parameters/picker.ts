@@ -1,14 +1,14 @@
 import type { ConnectionReference } from '../../..';
 import constants from '../../../common/constants';
-import type {
-  ParameterInfo,
-  PickerCallbackHandler,
-  /*PrameterChangeEvent, */
-  PickerInfo,
-} from '@microsoft/designer-ui';
+import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
+import { updatePickerInfo } from '../../state/operation/operationMetadataSlice';
+import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import type { ParameterInfo, PickerCallbackHandler, PickerInfo, PickerItemInfo, PickerTitleInfo } from '@microsoft/designer-ui';
 import { PickerType } from '@microsoft/designer-ui';
 import type { InputParameter } from '@microsoft/parsers-logic-apps';
 import { isDynamicTreeExtension, isLegacyDynamicValuesExtension } from '@microsoft/parsers-logic-apps';
+import { guid } from '@microsoft/utils-logic-apps';
+import type { Dispatch } from '@reduxjs/toolkit';
 
 export const requiresFilePickerEditor = (parameter: InputParameter) => {
   const { dynamicValues } = parameter;
@@ -49,38 +49,58 @@ export const getFilePickerCallbacks = (
   nodeId: string,
   groupId: string,
   parameter: ParameterInfo,
-  connectionReference: ConnectionReference
+  displayNameResult: string,
+  operationInfo: NodeOperation,
+  connectionReference: ConnectionReference,
+  dispatch: Dispatch
 ): PickerCallbackHandler => {
-  console.log(nodeId, groupId, parameter, connectionReference);
+  // console.log(nodeId, groupId, parameter, connectionReference);
   const handleShowPicker = () => {
-    // const titleSegments = [createTitleSegments({isRoot: true, title: getFileSourceName()})]
-    console.log(getFileSourceName());
-    console.log('handleShowPicker');
+    if (!parameter.pickerInfo) return;
+    const titleSegments: PickerTitleInfo[] = [createTitleSegment({ isRoot: true, title: displayNameResult })];
+    dispatch(
+      updatePickerInfo({
+        nodeId,
+        groupId,
+        parameterId: parameter.id,
+        pickerInfo: { ...parameter.pickerInfo, titleSegments, isLoading: true },
+      })
+    );
   };
 
-  const getFileSourceName = (): string => {
-    // const fileSourceId = getFileSourceProviderId();
-    return '';
-    // return this.context.ConnectorStore.getConnectorDisplayName(fileSourceId);
+  const handleFetchItems = async () => {
+    const pickerItems: PickerItemInfo[] = [];
+    const getFolderItemsPromise = OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)
+      ? await getFolderItemsUsingInvokeOperationEndpoint()
+      : await getFolderItemsForPickerUsingSwagger();
+    console.log(operationInfo, pickerItems, getFolderItemsPromise);
+
+    console.log('fetching');
   };
-
-  // const getFileSourceProviderId = (): string => {
-  //   const connectionId = connectionReference?.connection?.id ?? '';
-  //   return (
-  //     this.context.ConnectionsStore.getFileSourceIdForConnection(connectionId) ||
-  //     // TODO: Remove this when RP implements the getConnections call with connection parameters
-  //     this.context.GraphStore.getConnectorId(this.nodeId)
-  // );
-  // }
-
-  // const createTitleSegments =(selectedFolder: any) => {
-
-  // }
 
   return {
-    onShowPicker: () => handleShowPicker(),
+    onShowPicker: handleShowPicker,
     onFolderNavigated: handleFolderNavigated,
     onTitleSelected: handleTitleSelected,
+    fetchPickerItems: handleFetchItems,
+  };
+};
+
+const getFolderItemsUsingInvokeOperationEndpoint = async () => {
+  Promise.resolve({});
+};
+
+const getFolderItemsForPickerUsingSwagger = async () => {
+  Promise.resolve({});
+};
+
+const createTitleSegment = (selectedFolder: any): PickerTitleInfo => {
+  return {
+    titleKey: guid(),
+    isRoot: selectedFolder.isRoot,
+    title: selectedFolder.title,
+    value: selectedFolder.value,
+    dynamicState: selectedFolder.dynamicState,
   };
 };
 

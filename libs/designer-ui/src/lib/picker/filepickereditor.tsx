@@ -2,8 +2,9 @@ import type { BaseEditorProps, CallbackHandler, ChangeHandler } from '../editor/
 import { BaseEditor } from '../editor/base';
 import { Change } from '../editor/base/plugins/Change';
 import type { ValueSegment } from '../editor/models/parameter';
+import type { PickerTitleInfo } from './models/PickerInfo';
 import { Picker } from './picker';
-import type { IIconProps, ITooltipHostStyles } from '@fluentui/react';
+import type { IBreadcrumbItem, IIconProps, ITooltipHostStyles } from '@fluentui/react';
 import { TooltipHost, IconButton } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
 import { useState } from 'react';
@@ -15,9 +16,12 @@ export interface PickerCallbackHandler {
   onShowPicker: CallbackHandler;
   onFolderNavigated: CallbackHandler;
   onTitleSelected: CallbackHandler;
+  fetchPickerItems: CallbackHandler;
 }
 
 export interface FilePickerEditorProps extends BaseEditorProps {
+  isLoading?: boolean;
+  titleSegments?: PickerTitleInfo[];
   editorBlur?: ChangeHandler;
   pickerCallback?: () => PickerCallbackHandler;
 }
@@ -26,18 +30,27 @@ const folderIcon: IIconProps = { iconName: 'FolderOpen' };
 const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } };
 const calloutProps = { gapSpace: 0 };
 
-export const FilePickerEditor = ({ initialValue, editorBlur, onChange, pickerCallback, ...baseEditorProps }: FilePickerEditorProps) => {
+export const FilePickerEditor = ({
+  initialValue,
+  isLoading = false,
+  titleSegments,
+  editorBlur,
+  onChange,
+  pickerCallback,
+  ...baseEditorProps
+}: FilePickerEditorProps) => {
   const [value, setValue] = useState(initialValue);
   const [showPicker, setShowPicker] = useState(false);
   const pickerIconId = useId();
   const intl = useIntl();
 
-  const { onFolderNavigated, onTitleSelected, onShowPicker } = pickerCallback?.() ?? {};
+  const { onFolderNavigated, onTitleSelected, onShowPicker, fetchPickerItems } = pickerCallback?.() ?? {};
 
   const openTokenPicker = () => {
     if (!showPicker) {
       onShowPicker?.();
       setShowPicker(true);
+      fetchPickerItems?.();
     }
   };
 
@@ -75,12 +88,24 @@ export const FilePickerEditor = ({ initialValue, editorBlur, onChange, pickerCal
       <Picker
         visible={showPicker}
         anchorId={pickerIconId}
-        currentPathSegments={[]}
+        loadingFiles={isLoading}
+        currentPathSegments={getPathSegments(titleSegments)}
         files={[]}
         onCancel={() => setShowPicker(false)}
         handleFolderNavigation={onFolderNavigated}
         handleTitleSelected={onTitleSelected}
+        fetchPickerItems={fetchPickerItems}
       />
     </div>
   );
+};
+
+const getPathSegments = (titleSegments?: PickerTitleInfo[]): IBreadcrumbItem[] => {
+  if (!titleSegments || titleSegments.length === 0) return [];
+  return titleSegments.map((titleSegment) => {
+    return {
+      text: titleSegment.title ?? '',
+      key: titleSegment.titleKey,
+    };
+  });
 };

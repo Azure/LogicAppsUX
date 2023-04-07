@@ -8,9 +8,8 @@ import type {
   ConnectorWithSwagger,
 } from '../connection';
 import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
-import type { CompositeConnectionParameter, Connection, Connector } from '@microsoft/utils-logic-apps';
+import type { Connection, Connector } from '@microsoft/utils-logic-apps';
 import {
-  getPropertyValue,
   isCustomConnector,
   getUniqueName,
   HTTP_METHODS,
@@ -420,33 +419,6 @@ export abstract class BaseConnectionService implements IConnectionService {
       .get<Connection>(request)
       .then(() => false)
       .catch(() => true);
-  }
-
-  async getFileSourceIdForConnection(connectionId: string): Promise<string> {
-    const connection = await this.getConnection(connectionId);
-    let fileSourceId = '';
-    if (connection) {
-      const { properties } = connection;
-      const compositeConnectionDetails = this._getCompositeConnection(connection);
-      if (compositeConnectionDetails.connectionId) {
-        const compositeConnection = await this.getConnection(compositeConnectionDetails.connectionId);
-        fileSourceId = compositeConnection ? compositeConnection.properties.api.id : properties?.api?.id;
-      } else {
-        fileSourceId = properties?.api?.id;
-      }
-    }
-    return Promise.resolve(fileSourceId);
-  }
-
-  protected _getCompositeConnection(connection: Connection): CompositeConnectionParameter {
-    let fileSource: CompositeConnectionParameter = {};
-    const fileSourceProperty = 'fileSource';
-
-    if (connection?.properties?.connectionParameters) {
-      fileSource = getPropertyValue(connection.properties.connectionParameters, fileSourceProperty);
-    }
-
-    return fileSource;
   }
 }
 

@@ -4,6 +4,7 @@ import type { ParameterGroup } from '../../../../core/state/operation/operationM
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import {
   useAllowUserToChangeConnection,
+  useConnectorName,
   useNodeConnectionName,
   useOperationInfo,
 } from '../../../../core/state/selectors/actionMetadataSelector';
@@ -124,6 +125,7 @@ const ParameterSection = ({
     };
   });
   const rootState = useSelector((state: RootState) => state);
+  const displayNameResult = useConnectorName(operationInfo);
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState) => {
@@ -291,7 +293,8 @@ const ParameterSection = ({
           validationErrors,
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
-          pickerCallback: () => getFilePickerCallbacks(nodeId, group.id, param, connectionReference),
+          pickerCallback: () =>
+            getFilePickerCallbacks(nodeId, group.id, param, displayNameResult.result, operationInfo, connectionReference, dispatch),
           getTokenPicker: (
             editorId: string,
             labelId: string,
