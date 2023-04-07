@@ -46,7 +46,7 @@ export abstract class WorkflowNameStepBase<T extends IFunctionWizardContext> ext
   private async validateFunctionName(context: T, name: string | undefined): Promise<string | undefined> {
     if (!name) {
       return localize('emptyTemplateNameError', 'The function name cannot be empty.');
-    } else if (!/^[a-z][a-z\d_]*$/i.test(name)) {
+    } else if (!/^[a-z][a-z\d_-]*$/i.test(name)) {
       return localize(
         'functionNameInvalidMessage',
         'Function name must start with a letter and can only contain letters, digits, "_" and "-".'
