@@ -78,6 +78,7 @@
     "core-js": "3.24.1",
     "d3-shape": "3.1.0",
     "elkjs": "^0.8.2",
+    "find-process": "^1.4.7",
     "fuse.js": "6.6.2",
     "github-markdown-css": "5.1.0",
     "guid-typescript": "1.0.9",
