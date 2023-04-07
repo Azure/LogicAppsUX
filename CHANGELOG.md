@@ -1,4 +1,13 @@
 # Logic Apps Designer
+### [2.0.26](https://github.com/Azure/LogicAppsUX/compare/v2.0.25...v2.0.26) (2023-04-07)
+
+
+### Logic Apps Designer Bug Fixes
+
+* Add validation for node metadata ([#1946](https://github.com/Azure/LogicAppsUX/issues/1946)) ([1372b64](https://github.com/Azure/LogicAppsUX/commit/1372b64762c23d38d6171899b328e3641fa418b3))
+* On escape of token picker, refocus on the editor ([#1937](https://github.com/Azure/LogicAppsUX/issues/1937)) ([43e724e](https://github.com/Azure/LogicAppsUX/commit/43e724ebf3dfcb8bf642987bddea6a6fe1f79ef8))
+* Removing SingleLine Plugin, Clickable typeahead plugin buttons ([#1950](https://github.com/Azure/LogicAppsUX/issues/1950)) ([8ced0bf](https://github.com/Azure/LogicAppsUX/commit/8ced0bf7213668fdbeb1555ea3a4a5d5eac5ae4c))
+
 ### [2.0.25](https://github.com/Azure/LogicAppsUX/compare/v2.0.24...v2.0.25) (2023-04-07)
 
 
