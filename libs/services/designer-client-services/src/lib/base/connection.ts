@@ -96,10 +96,14 @@ export abstract class BaseConnectionService implements IConnectionService {
     return httpClient.get<OpenAPIV2.Document>({ uri, noAuth: true });
   }
 
-  async getOperations(uri: string): Promise<Operations> {
+  async getSwaggerParser(uri: string): Promise<SwaggerParser> {
     const response = await this.getSwaggerFromUri(uri);
     const swaggerDoc = await SwaggerParser.parse(response);
-    const swagger = new SwaggerParser(swaggerDoc);
+    return new SwaggerParser(swaggerDoc);
+  }
+
+  async getOperations(uri: string): Promise<Operations> {
+    const swagger = await this.getSwaggerParser(uri);
     const operations = swagger.getOperations();
     return operations;
   }
@@ -113,8 +117,10 @@ export abstract class BaseConnectionService implements IConnectionService {
     }));
   }
 
-  public async getOperationFromPathAndMethod(uri: string, path: string, method: string): Promise<any> {
-    const operations = await this.getOperations(uri);
+  public async getOperationFromPathAndMethod(uri: string, fullPath: string, method: string): Promise<any> {
+    const swagger = await this.getSwaggerParser(uri);
+    const path = fullPath.split(swagger.api.host ?? '').pop() ?? '';
+    const operations = swagger.getOperations();
     const operation = unmap(operations).find(
       (operation: any) => areSwaggerOperationPathsMatching(operation.path, path) && operation.method === method
     );
@@ -141,6 +147,8 @@ export abstract class BaseConnectionService implements IConnectionService {
     if (isInput) {
       schema.properties = {
         method: { type: 'string', default: operation.method, 'x-ms-visibility': 'hideInUI' },
+        host: { type: 'string', default: `https://${swagger.api.host}`, 'x-ms-visibility': 'hideInUI', 'x-ms-serialize': { skip: true } },
+        uri: { type: 'string', default: `https://${swagger.api.host}${operation.path}`, 'x-ms-visibility': 'hideInUI' },
         pathTemplate: {
           type: 'object',
           properties: {

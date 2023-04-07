@@ -132,8 +132,9 @@ export class BaseAppServiceService implements IAppServiceService {
     }));
   }
 
-  public async getOperationFromPathAndMethod(swaggerUrl: string, path: string, method: string): Promise<any> {
+  public async getOperationFromPathAndMethod(swaggerUrl: string, fullPath: string, method: string): Promise<any> {
     const swagger = await this.fetchAppServiceApiSwagger(swaggerUrl);
+    const path = fullPath.split(swagger.api.host ?? '').pop() ?? '';
     const operations = swagger.getOperations();
     return unmap(operations).find(
       (operation: any) => areSwaggerOperationPathsMatching(operation.path, path) && operation.method === method

@@ -216,14 +216,6 @@ export const httpWithSwaggerManifest = {
             supportedAuthTypes: ['None', 'Basic', 'ClientCertificate', 'ActiveDirectoryOAuth', 'Raw', 'ManagedServiceIdentity'],
           },
         },
-        uri: {
-          type: 'string',
-          'x-ms-visibility': 'hideInUI',
-        },
-        method: {
-          type: 'string',
-          'x-ms-visibility': 'hideInUI',
-        },
         // Dynamic Params
         operationId: {
           required: true,
@@ -233,10 +225,12 @@ export const httpWithSwaggerManifest = {
           'x-ms-dynamic-list': {
             dynamicState: {
               operationId: 'getSwaggerOperations',
+              parameters: {},
             },
+            parameters: {},
           },
         },
-        parameters: {
+        operationDetails: {
           title: 'Swagger Parameters',
           description: 'Enter all swagger parameters',
           'x-ms-dynamic-properties': {
@@ -256,9 +250,10 @@ export const httpWithSwaggerManifest = {
           },
         },
       },
-      inputsLocationSwapMap: { source: ['parameters'], target: [] },
       required: ['operationId'],
     },
+    inputsLocationSwapMap: [{ source: ['operationDetails'], target: [] }],
+    inputsLocation: ['inputs'],
     isInputsOptional: false,
 
     outputs: {

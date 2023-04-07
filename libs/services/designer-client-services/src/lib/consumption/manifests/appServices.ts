@@ -40,14 +40,6 @@ export const appServiceActionManifest = {
             supportedAuthTypes: ['None', 'Basic', 'ClientCertificate', 'ActiveDirectoryOAuth', 'Raw', 'ManagedServiceIdentity'],
           },
         },
-        uri: {
-          type: 'string',
-          'x-ms-visibility': 'hideInUI',
-        },
-        method: {
-          type: 'string',
-          'x-ms-visibility': 'hideInUI',
-        },
         // Dynamic params
         operationId: {
           required: true,
@@ -62,7 +54,7 @@ export const appServiceActionManifest = {
             parameters: {},
           },
         },
-        parameters: {
+        operationDetails: {
           title: 'Operation Parameters',
           description: 'Operation parameters for the above operation',
           'x-ms-dynamic-properties': {
@@ -83,6 +75,7 @@ export const appServiceActionManifest = {
         },
       },
     },
+    inputsLocationSwapMap: [{ source: ['operationDetails'], target: [] }],
     isInputsOptional: false,
 
     outputs: {

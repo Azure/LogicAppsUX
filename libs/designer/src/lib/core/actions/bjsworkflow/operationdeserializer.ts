@@ -432,47 +432,46 @@ const initializeOperationSwaggerDynamicData = async (operation: any): Promise<an
   let swaggerOperation;
   if (swaggerSource === 'custom') {
     const connectionService = ConnectionService();
-    swaggerOperation = await connectionService.getOperationFromPathAndMethod(apiDefinitionUrl, getPathFromFullpath(uri), method);
+    swaggerOperation = await connectionService.getOperationFromPathAndMethod(apiDefinitionUrl, uri, method);
   } else if (swaggerSource === 'website') {
     const appServiceService = AppServiceService();
-    swaggerOperation = await appServiceService.getOperationFromPathAndMethod(apiDefinitionUrl, getPathFromFullpath(uri), method);
+    swaggerOperation = await appServiceService.getOperationFromPathAndMethod(apiDefinitionUrl, uri, method);
   }
   if (!swaggerOperation) return;
-  const { operationId, path: operationUri } = swaggerOperation;
+  const { operationId } = swaggerOperation;
+  // const { operationId, path: operationUri } = swaggerOperation;
 
   // Remove the paramter keys and values from the source operation uri and serialized uri from the workflow
-  const parameterKeys = getVariablesFromUri(operationUri);
-  const fixedUri = uri.replaceAll(`@{encodeURIComponent('`, '{').replaceAll(`')}`, '}');
-  const parameterValues = getVariablesFromUri(fixedUri);
+  // const parameterKeys = getVariablesFromUri(operationUri);
+  // const fixedUri = uri.replaceAll(`@{encodeURIComponent('`, '{').replaceAll(`')}`, '}');
+  // const parameterValues = getVariablesFromUri(fixedUri);
 
-  const pathParams = parameterKeys.reduce((acc: any, key: string, index: number) => {
-    acc[key] = parameterValues[index];
-    return acc;
-  }, {});
+  // const pathParams = parameterKeys.reduce((acc: any, key: string, index: number) => {
+  //   acc[key] = parameterValues[index];
+  //   return acc;
+  // }, {});
 
   operation = {
     ...operation,
     inputs: {
       ...operation.inputs,
       operationId,
-      parameters: {
-        ...operation.inputs.parameters,
-        pathTemplate: {
-          ...operation.inputs.pathTemplate,
-          parameters: pathParams,
-        },
-      },
+      // parameters: {
+      //   ...operation.inputs.parameters,
+      //   pathTemplate: {
+      //     ...operation.inputs.pathTemplate,
+      //     parameters: pathParams,
+      //   },
+      // },
     },
   };
 
-  if (Object.keys(operation?.inputs?.parameters)?.length === 0) delete operation.inputs.parameters;
+  // if (Object.keys(operation?.inputs?.parameters)?.length === 0) delete operation.inputs.parameters;
 
   return operation;
 };
 
-const getPathFromFullpath = (fullpath: string): string => fullpath.replace('http://localhost:54335', '');
-
-const getVariablesFromUri = (uri: string): string[] => {
-  const curlyBraceRegex = /[{}]/g;
-  return uri.split(curlyBraceRegex).filter((_: any, index: number) => index % 2 === 1);
-};
+// const getVariablesFromUri = (uri: string): string[] => {
+//   const curlyBraceRegex = /[{}]/g;
+//   return uri.split(curlyBraceRegex).filter((_: any, index: number) => index % 2 === 1);
+// };
