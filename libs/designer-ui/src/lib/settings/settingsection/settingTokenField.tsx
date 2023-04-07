@@ -9,6 +9,8 @@ import type { ValueSegment } from '../../editor';
 import type { CallbackHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
+import { FloatingActionMenu } from '../../floatingactionmenu';
+import { getMenuItemsForDynamicAddedParameters } from '../../floatingactionmenu/helper';
 import { QueryBuilderEditor } from '../../querybuilder';
 import { UntilEditor } from '../../querybuilder/Until';
 import { ScheduleEditor } from '../../recurrence';
@@ -211,6 +213,21 @@ const TokenField = ({
 
     case 'recurrence':
       return <ScheduleEditor readOnly={readOnly} type={editorOptions?.recurrenceType} initialValue={value} onChange={onValueChange} />;
+
+    case 'floatingactionmenu': {
+      const menuItems = getMenuItemsForDynamicAddedParameters(editorOptions?.supportedTypes);
+      return (
+        <FloatingActionMenu
+          collapsedTitle="Add an input" // TODO: localize
+          expandable={menuItems.length > 1}
+          expandedTitle="Choose the type of user input" // TODO: localize
+          menuItems={menuItems}
+          onMenuItemSelected={() => {
+            // TODO(WI#17890957): Add callback to render dynamically added parameter
+          }}
+        />
+      );
+    }
 
     default:
       return (
