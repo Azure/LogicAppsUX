@@ -15,6 +15,7 @@
           "apps/vs-code-designer/src/assets",
           "apps/vs-code-designer/src/package.json",
           "apps/vs-code-designer/src/LICENSE.md",
+          "apps/vs-code-designer/src/README.md",
           {
             "glob": "**/*.svg",
             "input": "node_modules/@microsoft/vscode-azext-azureutils/resources",
