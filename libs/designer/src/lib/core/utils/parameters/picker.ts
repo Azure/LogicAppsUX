@@ -68,23 +68,45 @@ export const getFilePickerCallbacks = (
     );
   };
 
-  const handleFetchItems = async () => {
+  const handleFetchPickerItems = async () => {
+    // const browseMetadata = getBrowseMetadataForParameter(parameter);
     const pickerItems: PickerItemInfo[] = [];
     const getFolderItemsPromise = OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)
       ? await getFolderItemsUsingInvokeOperationEndpoint()
       : await getFolderItemsForPickerUsingSwagger();
-    console.log(operationInfo, pickerItems, getFolderItemsPromise);
 
-    console.log('fetching');
+    console.log('fetching', pickerItems, getFolderItemsPromise);
   };
 
   return {
     onShowPicker: handleShowPicker,
     onFolderNavigated: handleFolderNavigated,
     onTitleSelected: handleTitleSelected,
-    fetchPickerItems: handleFetchItems,
+    fetchPickerItems: handleFetchPickerItems,
   };
 };
+
+// const getBrowseMetadataForParameter = (parameter: ParameterInfo) => {
+//   if (!parameter.pickerInfo) return;
+//   const parameterDynamicTree = parameter.pickerInfo.dynamicTree;
+//   if (parameterDynamicTree) {
+//     return {
+//       rootFolderInfo: {
+//         referenceParameters: parameterDynamicTree.open.parameters,
+//       },
+//       selectFolderInfo: {
+//         referenceParameters: parameterDynamicTree.browse.parameters,
+//       },
+//       collectionProperty: null,
+//       titleProperty: null,
+//       folderProperty: null,
+//       mediaProperty: null,
+//       dynamicState: parameterDynamicTree.dynamicState,
+//     };
+//   } else {
+
+//   }
+// };
 
 const getFolderItemsUsingInvokeOperationEndpoint = async () => {
   Promise.resolve({});
