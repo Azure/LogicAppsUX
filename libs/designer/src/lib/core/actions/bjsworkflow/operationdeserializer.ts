@@ -410,16 +410,18 @@ export const updateDynamicDataInNodes = async (getState: () => RootState, dispat
 export const initializeSwaggerDynamicData = async (workflow: DeserializedWorkflow): Promise<any> => {
   await Promise.all(
     Object.entries(workflow.actionData).map(async ([id, operation]) => {
-      const newOperation = (await initializeOperationSwaggerDynamicData(operation)) ?? {};
-      workflow.actionData[id] = {
-        ...operation,
-        ...newOperation,
-      };
+      const newOperation = await initializeOperationSwaggerDynamicData(operation);
+      if (newOperation) {
+        workflow.actionData[id] = {
+          ...operation,
+          ...newOperation,
+        };
+      }
     })
   );
 };
 
-const initializeOperationSwaggerDynamicData = async (operation: any): Promise<any> => {
+const initializeOperationSwaggerDynamicData = async (operation: any): Promise<LogicAppsV2.OperationDefinition | undefined> => {
   const { inputs, metadata } = operation;
   if (inputs?.operationId) return;
 

@@ -205,9 +205,8 @@ export const serializeOperation = async (
     };
   }
 
-  // HTTP + SWAGGER
-  const validIds = ['httpswaggeraction', 'httpswaggertrigger', 'appservice'];
-  if (validIds.includes(operation.operationId)) {
+  const swaggerBasedDynamicDataOperationIds = ['httpswaggeraction', 'httpswaggertrigger', 'appservice'];
+  if (swaggerBasedDynamicDataOperationIds.includes(operation.operationId)) {
     serializedOperation = await parseSwaggerPathParameters(serializedOperation);
   }
 
@@ -933,7 +932,6 @@ const parseSwaggerPathParameters = async (_operation: any): Promise<any> => {
   const swaggerOperation = await connectionService.getOperationFromId(apiDefinitionUrl, opId);
   if (!swaggerOperation) return operation;
   const operationUri = `https://${host}${swaggerOperation.path}`;
-  console.log('### operationUri', operationUri);
   const pathParams = operation.inputs?.pathTemplate?.parameters ?? {};
   Object.keys(pathParams).forEach((key) => {
     if (pathParams[key].toString().startsWith(`@{encodeURIComponent('`)) return;

@@ -304,7 +304,14 @@ export async function getDynamicInputsFromSchema(
 
   if (OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
     const manifest = await getOperationManifest(operationInfo);
-    const output = getManifestBasedInputParameters(dynamicInputs, dynamicParameter, allInputKeys, manifest, operationDefinition);
+    const output = getManifestBasedInputParameters(
+      dynamicInputs,
+      dynamicParameter,
+      allInputKeys,
+      manifest,
+      operationDefinition,
+      operationInfo
+    );
     return output;
   } else {
     const { parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
@@ -384,7 +391,8 @@ function getManifestBasedInputParameters(
   dynamicParameter: InputParameter,
   allInputKeys: string[],
   manifest: OperationManifest,
-  operationDefinition: any
+  operationDefinition: any,
+  operationInfo: NodeOperation
 ): InputParameter[] {
   let result: InputParameter[] = [];
   const stepInputs = getInputsValueFromDefinitionForManifest(
@@ -420,7 +428,10 @@ function getManifestBasedInputParameters(
     knownKeys.add(clonedInputParameter.key);
   }
 
-  initializeDynamicPathParameters(result, dynamicParameter, operationDefinition);
+  const swaggerBasedDynamicDataOperationIds = ['httpswaggeraction', 'httpswaggertrigger', 'appservice'];
+  if (swaggerBasedDynamicDataOperationIds.includes(operationInfo?.operationId)) {
+    initializeSwaggerBasedDynamicPathParameters(result, dynamicParameter, operationDefinition);
+  }
 
   if (stepInputs !== undefined && !manifest.properties.inputsLocationSwapMap) {
     // load unknown inputs not in the schema by key.
@@ -538,7 +549,7 @@ function getSwaggerBasedInputParameters(
   }
 }
 
-function initializeDynamicPathParameters(inputs: InputParameter[], dynamicParameter: InputParameter, operationDefinition: any) {
+function initializeSwaggerBasedDynamicPathParameters(inputs: InputParameter[], dynamicParameter: InputParameter, operationDefinition: any) {
   const swaggerKey = dynamicParameter.name;
   const basePath = '';
   const operationPath = inputs.find((input) => input.name === `${swaggerKey}.pathTemplate.template`)?.default;
