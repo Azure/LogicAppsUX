@@ -1,6 +1,7 @@
 import { TokenNode } from '../nodes/tokenNode';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type { LexicalEditor } from 'lexical';
+import type { editor } from 'monaco-editor';
 import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -14,6 +15,7 @@ export interface TokenPickerButtonProps {
   buttonOffset?: ButtonOffSet;
   customButton?: boolean;
   setShowTokenPicker?: () => void;
+  codeEditor?: editor.IStandaloneCodeEditor | null;
 }
 
 interface ButtonProps extends TokenPickerButtonProps {
@@ -28,6 +30,7 @@ export default function TokenPickerButton({
   labelId,
   customButton,
   setShowTokenPicker,
+  codeEditor,
 }: ButtonProps): JSX.Element {
   let editor: LexicalEditor | null;
   try {
@@ -58,6 +61,9 @@ export default function TokenPickerButton({
   });
 
   const handleClick = () => {
+    if (showTokenPicker && codeEditor) {
+      codeEditor.focus();
+    }
     setShowTokenPicker?.();
     if (editor) {
       editor.focus();

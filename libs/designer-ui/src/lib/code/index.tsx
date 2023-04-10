@@ -29,7 +29,6 @@ export function CodeEditor({
   const [getCurrentValue, setCurrentValue] = useFunctionalState(getInitialValue(initialValue));
   const [editorHeight, setEditorHeight] = useState(getEditorHeight(getInitialValue(initialValue)));
   const [showTokenPickerButton, setShowTokenPickerButton] = useState(false);
-  const [showTokenPicker, setShowTokenPicker] = useState(true);
   const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
 
   const handleContentChanged = (e: EditorContentChangedEventArgs): void => {
@@ -41,9 +40,8 @@ export function CodeEditor({
 
   const handleBlur = (): void => {
     if (!getInTokenPicker()) {
-      setInTokenPicker(false);
+      setShowTokenPickerButton(false);
     }
-    setShowTokenPickerButton(false);
     onChange?.({ value: [{ id: 'key', type: ValueSegmentType.LITERAL, value: getCurrentValue() }] });
   };
 
@@ -54,10 +52,7 @@ export function CodeEditor({
   };
 
   const handleShowTokenPicker = () => {
-    if (showTokenPicker) {
-      setInTokenPicker(false);
-    }
-    setShowTokenPicker(!showTokenPicker);
+    setInTokenPicker(!getInTokenPicker());
   };
 
   const onClickTokenPicker = (b: boolean) => {
@@ -97,11 +92,14 @@ export function CodeEditor({
         onBlur={handleBlur}
       />
       {showTokenPickerButton || getInTokenPicker() ? (
-        <TokenPickerButton labelId={callOutLabelId} showTokenPicker={showTokenPicker} setShowTokenPicker={handleShowTokenPicker} />
+        <TokenPickerButton
+          labelId={callOutLabelId}
+          showTokenPicker={getInTokenPicker()}
+          setShowTokenPicker={handleShowTokenPicker}
+          codeEditor={codeEditorRef.current}
+        />
       ) : null}
-      {(showTokenPickerButton && showTokenPicker) || getInTokenPicker()
-        ? getTokenPicker?.(editorId, callOutLabelId, undefined, undefined, onClickTokenPicker, tokenClicked)
-        : null}
+      {getInTokenPicker() ? getTokenPicker?.(editorId, callOutLabelId, undefined, undefined, onClickTokenPicker, tokenClicked) : null}
     </div>
   );
 }

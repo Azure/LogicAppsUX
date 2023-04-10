@@ -2,6 +2,7 @@ import constants from '../constants';
 import type { Token } from '../editor';
 import { ValueSegmentType, TokenType } from '../editor';
 import { INSERT_TOKEN_NODE } from '../editor/base/plugins/InsertTokenNode';
+import { SINGLE_VALUE_SEGMENT } from '../editor/base/plugins/SingleValueSegment';
 import type { ExpressionEditorEvent } from '../expressioneditor';
 import { UPDATE_TOKEN_NODE } from './plugins/UpdateTokenNode';
 import { getExpressionTokenTitle } from './util';
@@ -76,6 +77,7 @@ export function TokenPickerFooter({ expression, expressionToBeUpdated, setExpres
         nodeKey: expressionToBeUpdated,
       });
     } else {
+      editor?.dispatchCommand(SINGLE_VALUE_SEGMENT, true);
       editor?.dispatchCommand(INSERT_TOKEN_NODE, {
         brandColor: token.brandColor,
         description: token.description,

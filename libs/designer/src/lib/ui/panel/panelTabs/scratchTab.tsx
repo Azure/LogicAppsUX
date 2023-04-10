@@ -13,7 +13,7 @@ import {
   // GroupType,
   // GroupDropdownOptions,
   // QueryBuilderEditor, // DictionaryType, // EditorLanguage,
-  UntilEditor,
+  SimpleQueryBuilder,
   ValueSegmentType,
   CodeEditor,
   EditorLanguage, // HTMLEditor,
@@ -380,7 +380,7 @@ getTokenPicker={GetTokenPicker}
         /> */}
         {/* <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail"           getTokenPicker={GetTokenPicker}*/}
         {
-          <UntilEditor
+          <SimpleQueryBuilder
             getTokenPicker={GetTokenPicker}
             items={{ type: GroupType.ROW, operand1: [], operand2: [], operator: RowDropdownOptions.EQUALS }}
           />

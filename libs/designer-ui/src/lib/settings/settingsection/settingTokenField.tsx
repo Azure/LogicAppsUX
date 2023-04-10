@@ -10,7 +10,7 @@ import type { CallbackHandler, ChangeHandler, GetTokenPickerHandler } from '../.
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { QueryBuilderEditor } from '../../querybuilder';
-import { UntilEditor } from '../../querybuilder/Until';
+import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
 import { ScheduleEditor } from '../../recurrence';
 import { SchemaEditor } from '../../schemaeditor';
 import { TableEditor } from '../../table';
@@ -194,7 +194,7 @@ const TokenField = ({
 
     case 'condition':
       return editorViewModel.isOldFormat ? (
-        <UntilEditor
+        <SimpleQueryBuilder
           readonly={readOnly}
           items={JSON.parse(JSON.stringify(editorViewModel.items))}
           getTokenPicker={getTokenPicker}

@@ -3,7 +3,7 @@ import { handleOnEscapeDown } from './panelheader';
 import type { ITextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { TextField } from '@fluentui/react/lib/TextField';
 import { css } from '@fluentui/react/lib/Utilities';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const titleTextFieldStyle: Partial<ITextFieldStyles> = {
@@ -35,11 +35,10 @@ export const PanelHeaderTitle = ({
   const titleTextFieldRef = React.createRef<ITextField>();
 
   const [newTitleValue, setNewTitleValue] = useState(titleValue);
-  useEffect(() => setNewTitleValue(titleValue), [titleValue]);
 
   const onTitleChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
-    if (newValue || '') onChange(newValue || '');
-    else setNewTitleValue(newValue || '');
+    onChange(newValue || '');
+    setNewTitleValue(newValue || '');
   };
 
   const onTitleBlur = (): void => {
