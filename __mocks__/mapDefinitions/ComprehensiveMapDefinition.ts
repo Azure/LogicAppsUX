@@ -25,7 +25,7 @@ ns0:TargetSchemaRoot:
       multiply(/ns0:SourceSchemaRoot/Transformations/AssignedTasks,
       /ns0:SourceSchemaRoot/Transformations/SleepDeprivationLevel)
   CustomValues:
-    SuperSecretKey: '"password"'
+    SuperSecretKey: "password"
     MOTD: concat("Welcome! Today's date is ", string(current-date()))
   Conditionals:
     $if(is-null(/ns0:SourceSchemaRoot/Conditionals/SourceObject)):
