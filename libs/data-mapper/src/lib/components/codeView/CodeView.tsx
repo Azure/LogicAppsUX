@@ -81,7 +81,6 @@ export const CodeView = ({
       return;
     }
 
-    // Automatically collapse pane if resized below a certain amount, and reset expanded height
     if (newPaneContentHeight <= minCodeViewWidth) {
       setContentWidth(minCodeViewWidth);
       return;
