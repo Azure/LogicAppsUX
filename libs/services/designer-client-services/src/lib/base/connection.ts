@@ -133,10 +133,7 @@ export abstract class BaseConnectionService implements IConnectionService {
   }
 
   public async getOperationSchema(uri: string, operationId: string, isInput: boolean): Promise<any> {
-    const response = await this.getSwaggerFromUri(uri);
-    const swaggerDoc = await SwaggerParser.parse(response);
-    const swagger = new SwaggerParser(swaggerDoc);
-
+    const swagger = await this.getSwaggerParser(uri);
     const operation = swagger.getOperationByOperationId(operationId);
     if (!operation) throw new Error('Operation not found');
 

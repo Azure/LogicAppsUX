@@ -173,8 +173,6 @@ const DesignerEditor = () => {
     const parametersToUpdate = !isEqual(originalParametersData, parameters) ? (parameters as ParametersData) : undefined;
     const settingsToUpdate = !isEqual(settingsData?.properties, originalSettings) ? settingsData?.properties : undefined;
 
-    // console.log('### SERIALIZED WORKFLOW', workflowToSave);
-
     return saveWorkflowStandard(siteResourceId, workflowName, workflowToSave, connectionsToUpdate, parametersToUpdate, settingsToUpdate);
   };
 
