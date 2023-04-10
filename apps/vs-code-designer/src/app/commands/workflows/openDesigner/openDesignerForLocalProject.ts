@@ -121,6 +121,31 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     this.panel.webview.onDidReceiveMessage(async (message) => await this._handleWebviewMsg(message), ext.context.subscriptions);
 
+    this.panel.onDidChangeViewState(
+      async (event) => {
+        const eventPanel: WebviewPanel = event.webviewPanel;
+        this.panelMetadata = await this._getDesignerPanelMetadata(this.migrationOptions);
+        eventPanel.webview.html = await this.getWebviewContent({
+          connectionsData: this.panelMetadata.connectionsData,
+          parametersData: this.panelMetadata.parametersData || {},
+          localSettings: this.panelMetadata.localSettings,
+          artifacts: this.panelMetadata.artifacts,
+          azureDetails: this.panelMetadata.azureDetails,
+          workflowDetails: this.panelMetadata.workflowDetails,
+        });
+        this.sendMsgToWebview({
+          command: ExtensionCommand.update_panel_metadata,
+          data: {
+            panelMetadata: this.panelMetadata,
+            connectionData: this.connectionData,
+            apiHubServiceDetails: this.apiHubServiceDetails,
+          },
+        });
+      },
+      undefined,
+      ext.context.subscriptions
+    );
+
     this.panel.onDidDispose(
       () => {
         removeWebviewPanelFromCache(this.panelGroupKey, this.panelName);

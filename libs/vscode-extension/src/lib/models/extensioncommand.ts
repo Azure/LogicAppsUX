@@ -6,6 +6,7 @@ export enum ExtensionCommand {
   initialize_frame = 'initialize-frame',
   update_access_token = 'update-access-token',
   update_export_path = 'update-export-path',
+  update_panel_metadata = 'update-panel-metadata',
   export_package = 'export-package',
   add_status = 'add-status',
   set_final_status = 'set-final-status',

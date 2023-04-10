@@ -80,6 +80,19 @@ export const designerSlice = createSlice({
       const { callbackInfo } = action.payload;
       state.callbackInfo = callbackInfo;
     },
+    updatePanelMetadata: (
+      state,
+      action: PayloadAction<{
+        panelMetadata: IDesignerPanelMetadata;
+        connectionData: ConnectionsData;
+        apiHubServiceDetails: IApiHubServiceDetails;
+      }>
+    ) => {
+      const { panelMetadata, connectionData, apiHubServiceDetails } = action.payload;
+      state.panelMetaData = panelMetadata;
+      state.connectionData = connectionData;
+      state.apiHubServiceDetails = apiHubServiceDetails;
+    },
     createFileSystemConnection: (state, action: PayloadAction<any>) => {
       const { connectionName, resolve, reject } = action.payload;
       state.fileSystemConnections[connectionName] = { resolveConnection: resolve, rejectConnection: reject };
@@ -97,4 +110,5 @@ export const designerSlice = createSlice({
   },
 });
 
-export const { initializeDesigner, updateCallbackUrl, createFileSystemConnection, updateFileSystemConnection } = designerSlice.actions;
+export const { initializeDesigner, updateCallbackUrl, createFileSystemConnection, updateFileSystemConnection, updatePanelMetadata } =
+  designerSlice.actions;
