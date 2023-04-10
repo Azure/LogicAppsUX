@@ -206,8 +206,6 @@ export const serializeOperation = async (
   }
 
   // HTTP + SWAGGER
-  // console.log('### serializeOperation', {operation, serializedOperation});
-  // const swaggerSource = (serializedOperation as any)?.metadata?.swaggerSource;
   const validIds = ['httpswaggeraction', 'httpswaggertrigger', 'appservice'];
   if (validIds.includes(operation.operationId)) {
     serializedOperation = await parseSwaggerPathParameters(serializedOperation);
@@ -913,9 +911,12 @@ const parseSwaggerPathParameters = async (_operation: any): Promise<any> => {
   const opId = operation.inputs?.operationId;
   if (!opId) return operation;
   const connectionService = ConnectionService();
-  const appServiceOperation = await connectionService.getOperationFromId(apiDefinitionUrl, opId);
-  if (!appServiceOperation) return operation;
-  const operationUri = operation?.inputs?.uri ?? '';
+  const swagger = await connectionService.getSwaggerParser(apiDefinitionUrl);
+  const host = swagger?.api?.host ?? '';
+  const swaggerOperation = await connectionService.getOperationFromId(apiDefinitionUrl, opId);
+  if (!swaggerOperation) return operation;
+  const operationUri = `https://${host}${swaggerOperation.path}`;
+  console.log('### operationUri', operationUri);
   const pathParams = operation.inputs?.pathTemplate?.parameters ?? {};
   Object.keys(pathParams).forEach((key) => {
     if (pathParams[key].toString().startsWith(`@{encodeURIComponent('`)) return;
@@ -931,7 +932,7 @@ const parseSwaggerPathParameters = async (_operation: any): Promise<any> => {
     uri: pathWithParams,
   };
   if (operation?.inputs?.operationId) delete operation.inputs.operationId;
-  if (operation?.inputs?.pathTemplate) delete operation.inputs.parameters.pathTemplate;
+  if (operation?.inputs?.pathTemplate) delete operation.inputs.pathTemplate;
 
   return operation;
 };

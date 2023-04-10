@@ -93,10 +93,10 @@ export abstract class BaseConnectionService implements IConnectionService {
 
   async getSwaggerFromUri(uri: string): Promise<OpenAPIV2.Document> {
     const { httpClient } = this.options;
-    return httpClient.get<OpenAPIV2.Document>({ uri, noAuth: true });
+    return httpClient.get<OpenAPIV2.Document>({ uri, noAuth: true, headers: { 'Access-Control-Allow-Origin': '*' } });
   }
 
-  async getSwaggerParser(uri: string): Promise<SwaggerParser> {
+  public async getSwaggerParser(uri: string): Promise<SwaggerParser> {
     const response = await this.getSwaggerFromUri(uri);
     const swaggerDoc = await SwaggerParser.parse(response);
     return new SwaggerParser(swaggerDoc);

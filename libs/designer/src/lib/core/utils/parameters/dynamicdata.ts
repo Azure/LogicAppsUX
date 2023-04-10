@@ -420,8 +420,7 @@ function getManifestBasedInputParameters(
     knownKeys.add(clonedInputParameter.key);
   }
 
-  const pathParams = initializeDynamicPathParameters(dynamicInputs, dynamicParameter, operationDefinition);
-  result = result.filter((input) => !pathParams.some((pathParam) => pathParam.key === input.key)).concat(pathParams);
+  initializeDynamicPathParameters(result, dynamicParameter, operationDefinition);
 
   if (stepInputs !== undefined && !manifest.properties.inputsLocationSwapMap) {
     // load unknown inputs not in the schema by key.
@@ -539,11 +538,7 @@ function getSwaggerBasedInputParameters(
   }
 }
 
-function initializeDynamicPathParameters(
-  inputs: InputParameter[],
-  dynamicParameter: InputParameter,
-  operationDefinition: any
-): InputParameter[] {
+function initializeDynamicPathParameters(inputs: InputParameter[], dynamicParameter: InputParameter, operationDefinition: any) {
   const swaggerKey = dynamicParameter.name;
   const basePath = '';
   const operationPath = inputs.find((input) => input.name === `${swaggerKey}.pathTemplate.template`)?.default;
@@ -561,8 +556,6 @@ function initializeDynamicPathParameters(
     basePath as string
   );
 
-  const result: InputParameter[] = [];
-
   for (const inputParameter of inputs) {
     if (inputParameter.default && inputParameter.value === undefined) {
       inputParameter.value = inputParameter.default;
@@ -572,9 +565,7 @@ function initializeDynamicPathParameters(
       const value = dynamicInputParameters.find((parameter) => parameter.key === inputKey)?.value;
       inputParameter.value = value;
     }
-    result.push(inputParameter);
   }
-  return result;
 }
 
 function _getKeyPrefixFromParameter(parameterKey: string): string {

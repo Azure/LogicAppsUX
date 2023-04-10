@@ -439,39 +439,14 @@ const initializeOperationSwaggerDynamicData = async (operation: any): Promise<an
   }
   if (!swaggerOperation) return;
   const { operationId } = swaggerOperation;
-  // const { operationId, path: operationUri } = swaggerOperation;
-
-  // Remove the paramter keys and values from the source operation uri and serialized uri from the workflow
-  // const parameterKeys = getVariablesFromUri(operationUri);
-  // const fixedUri = uri.replaceAll(`@{encodeURIComponent('`, '{').replaceAll(`')}`, '}');
-  // const parameterValues = getVariablesFromUri(fixedUri);
-
-  // const pathParams = parameterKeys.reduce((acc: any, key: string, index: number) => {
-  //   acc[key] = parameterValues[index];
-  //   return acc;
-  // }, {});
 
   operation = {
     ...operation,
     inputs: {
       ...operation.inputs,
       operationId,
-      // parameters: {
-      //   ...operation.inputs.parameters,
-      //   pathTemplate: {
-      //     ...operation.inputs.pathTemplate,
-      //     parameters: pathParams,
-      //   },
-      // },
     },
   };
 
-  // if (Object.keys(operation?.inputs?.parameters)?.length === 0) delete operation.inputs.parameters;
-
   return operation;
 };
-
-// const getVariablesFromUri = (uri: string): string[] => {
-//   const curlyBraceRegex = /[{}]/g;
-//   return uri.split(curlyBraceRegex).filter((_: any, index: number) => index % 2 === 1);
-// };
