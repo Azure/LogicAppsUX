@@ -10,7 +10,6 @@ import type { CallbackHandler, ChangeHandler, GetTokenPickerHandler } from '../.
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { FloatingActionMenu } from '../../floatingactionmenu';
-import { getMenuItemsForDynamicAddedParameters } from '../../floatingactionmenu/helper';
 import { QueryBuilderEditor } from '../../querybuilder';
 import { UntilEditor } from '../../querybuilder/Until';
 import { ScheduleEditor } from '../../recurrence';
@@ -49,13 +48,16 @@ export interface SettingTokenFieldProps extends SettingProps {
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   const labelId = useId('msla-editor-label');
+  const renderLabel = props.editor?.toLowerCase() !== 'floatingactionmenu';
   return (
     <>
-      <div className="msla-input-parameter-label">
-        <Label id={labelId} className="msla-label" required={props.required}>
-          {props.label}
-        </Label>
-      </div>
+      {renderLabel && (
+        <div className="msla-input-parameter-label">
+          <Label id={labelId} className="msla-label" required={props.required}>
+            {props.label}
+          </Label>
+        </div>
+      )}
       <TokenField {...props} labelId={labelId} />
     </>
   );
@@ -215,18 +217,7 @@ const TokenField = ({
       return <ScheduleEditor readOnly={readOnly} type={editorOptions?.recurrenceType} initialValue={value} onChange={onValueChange} />;
 
     case 'floatingactionmenu': {
-      const menuItems = getMenuItemsForDynamicAddedParameters(editorOptions?.supportedTypes);
-      return (
-        <FloatingActionMenu
-          collapsedTitle="Add an input" // TODO: localize
-          expandable={menuItems.length > 1}
-          expandedTitle="Choose the type of user input" // TODO: localize
-          menuItems={menuItems}
-          onMenuItemSelected={() => {
-            // TODO(WI#17890957): Add callback to render dynamically added parameter
-          }}
-        />
-      );
+      return <FloatingActionMenu supportedTypes={editorOptions?.supportedTypes} />;
     }
 
     default:

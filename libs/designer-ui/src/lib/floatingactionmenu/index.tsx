@@ -1,33 +1,47 @@
+import { getMenuItemsForDynamicAddedParameters } from './helper';
 import { KeyCodes } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
+import { ValidationErrorCode, ValidationException } from '@microsoft/utils-logic-apps';
 import React from 'react';
 import { useIntl } from 'react-intl';
 
 export enum DynamicallyAddedParameterType {
-  Text = 1,
-  File,
-  Email,
-  Boolean,
-  Number,
-  Date,
+  Text = 'Text',
+  File = 'File',
+  Email = 'Email',
+  Boolean = 'Boolean',
+  Number = 'Number',
+  Date = 'Date',
 }
 
 export interface FloatingActionMenuItem {
-  id: number;
+  id: string;
   icon: string;
   label: string;
 }
 
 export interface FloatingActionMenuProps {
-  collapsedTitle: string;
-  expandable: boolean;
-  expandedTitle: string;
-  menuItems: FloatingActionMenuItem[];
-  onMenuItemSelected(item: FloatingActionMenuItem): void;
+  supportedTypes: Array<string>;
 }
 
 export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element => {
   const [expanded, { toggle: toggleExpanded }] = useBoolean(false);
+
+  if (!props.supportedTypes) {
+    throw new ValidationException(ValidationErrorCode.INVALID_PARAMETERS, 'supportedTypes are necessary.');
+  }
+  const menuItems = getMenuItemsForDynamicAddedParameters(props.supportedTypes);
+
+  const intl = useIntl();
+  const closeErrorButtonAriaLabel = intl.formatMessage({
+    defaultMessage: 'Close',
+    description: 'Close button aria label',
+  });
+  const collapsedTitle = intl.formatMessage({ defaultMessage: 'Add an input', description: 'Button to add a dynamically added parameter' });
+  const expandedTitle = intl.formatMessage({
+    defaultMessage: 'Choose the type of user input',
+    description: 'Button to choose data type of the dynamically added parameter',
+  });
 
   const toggleExpandedOnKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
     const { keyCode } = e;
@@ -43,7 +57,7 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
     return (
       <div role="button" className="msla-floating-action-menu" onClick={toggleExpanded} onKeyDown={toggleExpandedOnKeyDown} tabIndex={0}>
         <span className="msla-floating-action-menu-plus-icon">{'+'}</span>
-        <span className="msla-floating-action-menu-title">{props.collapsedTitle}</span>
+        <span className="msla-floating-action-menu-title">{collapsedTitle}</span>
       </div>
     );
   };
@@ -53,7 +67,7 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
       <div className="msla-floating-action-menu-items-container">
         {renderMenuItemsHeader()}
         <div className="msla-floating-action-menu-items">
-          {props.menuItems.map((item: FloatingActionMenuItem) => {
+          {menuItems.map((item: FloatingActionMenuItem) => {
             return renderMenuItem(item);
           })}
         </div>
@@ -64,7 +78,7 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
   const renderMenuItemsHeader = (): JSX.Element => {
     return (
       <div>
-        <span className="msla-floating-action-menu-items-title">{props.expandedTitle}</span>
+        <span className="msla-floating-action-menu-items-title">{expandedTitle}</span>
         <span
           role="button"
           aria-label={closeErrorButtonAriaLabel}
@@ -84,7 +98,7 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
       background: `url('${menuItem.icon}') no-repeat center`,
     };
 
-    if (props.menuItems.length === 1) {
+    if (menuItems.length === 1) {
       return (
         <div
           role="button"
@@ -117,9 +131,9 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
     }
   };
 
-  const handleMenuItemSelected = (item: FloatingActionMenuItem) => {
+  const handleMenuItemSelected = (_item: FloatingActionMenuItem) => {
     toggleExpanded();
-    props.onMenuItemSelected(item);
+    // TODO(WI#17890957): Add callback to render dynamically added parameter
   };
 
   const handleMenuItemSelectedOnKeyDown = (e: React.KeyboardEvent<HTMLElement>, item: FloatingActionMenuItem) => {
@@ -131,13 +145,6 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
       handleMenuItemSelected(item);
     }
   };
-
-  const intl = useIntl();
-
-  const closeErrorButtonAriaLabel = intl.formatMessage({
-    defaultMessage: 'Close',
-    description: 'Close button aria label',
-  });
 
   return (
     <div className="msla-floating-action-menu-container">
