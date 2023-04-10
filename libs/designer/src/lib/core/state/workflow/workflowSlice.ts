@@ -12,6 +12,7 @@ import { getImmediateSourceNodeIds } from '../../utils/graph';
 import type { SpecTypes, WorkflowState } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
+import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import { equals, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -26,6 +27,7 @@ export interface AddImplicitForeachPayload {
 export const initialWorkflowState: WorkflowState = {
   workflowSpec: 'BJS',
   graph: null,
+  runInstance: null,
   operations: {},
   nodesMetadata: {},
   collapsedGraphIds: {},
@@ -41,6 +43,9 @@ export const workflowSlice = createSlice({
   reducers: {
     initWorkflowSpec: (state: WorkflowState, action: PayloadAction<SpecTypes>) => {
       state.workflowSpec = action.payload;
+    },
+    initRunInstance: (state: WorkflowState, action: PayloadAction<LogicAppsV2.RunInstanceDefinition | null>) => {
+      state.runInstance = action.payload;
     },
     setNodeDescription: (state: WorkflowState, action: PayloadAction<{ nodeId: string; description?: string }>) => {
       const { nodeId, description } = action.payload;
@@ -192,6 +197,19 @@ export const workflowSlice = createSlice({
       if (state.collapsedGraphIds?.[action.payload] === true) delete state.collapsedGraphIds[action.payload];
       else state.collapsedGraphIds[action.payload] = true;
     },
+    setRunIndex: (state: WorkflowState, action: PayloadAction<{ page: number; nodeId: string }>) => {
+      const { page, nodeId } = action.payload;
+      state.nodesMetadata[nodeId].runIndex = page;
+    },
+    setRepetitionRunData: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.WorkflowRunAction }>) => {
+      const { nodeId, runData } = action.payload;
+      const nodeRunData = {
+        ...state.nodesMetadata[nodeId].runData,
+        ...runData,
+        duration: getDurationStringPanelMode(Date.parse(runData.endTime) - Date.parse(runData.startTime), /* abbreviated */ true),
+      };
+      state.nodesMetadata[nodeId].runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
+    },
     addSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
       if (!state.graph) {
         return; // log exception
@@ -312,6 +330,7 @@ export const workflowSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
   initWorkflowSpec,
+  initRunInstance,
   addNode,
   moveNode,
   deleteNode,
@@ -330,6 +349,8 @@ export const {
   setFocusNode,
   replaceId,
   addImplicitForeachNode,
+  setRunIndex,
+  setRepetitionRunData,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

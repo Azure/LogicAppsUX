@@ -12,7 +12,7 @@ import { StringEditor } from '../../editor/string';
 import type { PickerCallbackHandler, PickerInfo } from '../../picker/filepickereditor';
 import { FilePickerEditor } from '../../picker/filepickereditor';
 import { QueryBuilderEditor } from '../../querybuilder';
-import { UntilEditor } from '../../querybuilder/Until';
+import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
 import { ScheduleEditor } from '../../recurrence';
 import { SchemaEditor } from '../../schemaeditor';
 import { TableEditor } from '../../table';
@@ -199,7 +199,7 @@ const TokenField = ({
 
     case 'condition':
       return editorViewModel.isOldFormat ? (
-        <UntilEditor
+        <SimpleQueryBuilder
           readonly={readOnly}
           items={JSON.parse(JSON.stringify(editorViewModel.items))}
           getTokenPicker={getTokenPicker}

@@ -1410,6 +1410,12 @@
       "value": "渡された文字列のタイムスタンプに日数を表す整数を加算します"
     }
   ],
+  "8yjjTX": [
+    {
+      "type": 0,
+      "value": "Connect via Service Principal"
+    }
+  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -3908,6 +3914,12 @@
       "value": "クライアント要求 ID"
     }
   ],
+  "TeRxLv": [
+    {
+      "type": 0,
+      "value": "Use a service principal to connect using application permissions."
+    }
+  ],
   "TgcgXE": [
     {
       "type": 0,
@@ -5727,6 +5739,12 @@
     {
       "type": 0,
       "value": "テスト"
+    }
+  ],
+  "izS5yQ": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "j1VU25": [

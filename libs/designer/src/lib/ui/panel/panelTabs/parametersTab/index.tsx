@@ -216,16 +216,19 @@ const ParameterSection = ({
     editorId: string,
     labelId: string,
     tokenPickerMode?: TokenPickerMode,
+    isCodeEditor?: boolean,
     closeTokenPicker?: () => void,
     tokenPickerClicked?: (b: boolean) => void,
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
-    // check to see if there's a custom Token Picker
+    const codeEditorFilteredTokens = tokenGroup.filter((group) => {
+      return group.id !== 'workflowparameters' && group.id !== 'variables';
+    });
     return (
       <TokenPicker
         editorId={editorId}
         labelId={labelId}
-        tokenGroup={tokenGroup}
+        tokenGroup={isCodeEditor ? codeEditorFilteredTokens : tokenGroup}
         expressionGroup={expressionGroup}
         tokenPickerFocused={tokenPickerClicked}
         initialMode={tokenPickerMode}
@@ -262,6 +265,8 @@ const ParameterSection = ({
       } = param;
       const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel, conditionalVisibility, pickerInfo };
       const { editor, editorOptions } = getEditorAndOptions(param, upstreamNodeIds ?? [], variables);
+
+      const isCodeEditor = editor?.toLowerCase() === 'code';
 
       const remappedValues: ValueSegment[] = value.map((v: ValueSegment) => {
         if (v.type !== ValueSegmentType.TOKEN) return v;
@@ -302,7 +307,17 @@ const ParameterSection = ({
             closeTokenPicker?: () => void,
             tokenPickerClicked?: (b: boolean) => void,
             tokenClickedCallback?: (token: ValueSegment) => void
-          ) => getTokenPicker(id, editorId, labelId, tokenPickerMode, closeTokenPicker, tokenPickerClicked, tokenClickedCallback),
+          ) =>
+            getTokenPicker(
+              id,
+              editorId,
+              labelId,
+              tokenPickerMode,
+              isCodeEditor,
+              closeTokenPicker,
+              tokenPickerClicked,
+              tokenClickedCallback
+            ),
         },
       };
     });
