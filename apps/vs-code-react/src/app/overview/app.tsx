@@ -1,10 +1,13 @@
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import messages from '../../../../../libs/services/intl/src/compiled-lang/strings.json';
-import { mapToRunItem, RunService, QueryKeys } from '../../run-service';
-import type { RunDisplayItem, Runs } from '../../run-service';
+import { QueryKeys } from '../../run-service';
+import type { RunDisplayItem } from '../../run-service';
 import type { OnErrorFn } from '@formatjs/intl';
-import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
-import { Overview, isRunError } from '@microsoft/designer-ui';
+import { StandardRunService } from '@microsoft/designer-client-services-logic-apps';
+import type { CallbackInfo } from '@microsoft/designer-client-services-logic-apps';
+import type { OverviewPropertiesProps, Runs } from '@microsoft/designer-ui';
+import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
+import { HttpClient } from '@microsoft/vscode-extension';
 import { useCallback, useMemo } from 'react';
 import { IntlProvider } from 'react-intl';
 import { QueryClient, QueryClientProvider, useInfiniteQuery, useMutation } from 'react-query';
@@ -38,16 +41,17 @@ export const App: React.FC<AppProps> = (props) => {
 };
 
 const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseUrl, accessToken, onOpenRun, corsNotice }) => {
-  const runService = useMemo(
-    () =>
-      new RunService({
-        baseUrl,
-        apiVersion,
-        accessToken,
-        workflowName: workflowProperties.name,
-      }),
-    [baseUrl, apiVersion, accessToken, workflowProperties.name]
-  );
+  const runService = useMemo(() => {
+    const httpClient = new HttpClient({ accessToken: accessToken, baseUrl, apiHubBaseUrl: '' });
+
+    return new StandardRunService({
+      baseUrl,
+      apiVersion,
+      accessToken,
+      workflowName: workflowProperties.name,
+      httpClient,
+    });
+  }, [baseUrl, apiVersion, accessToken, workflowProperties.name]);
 
   const loadRuns = ({ pageParam }: { pageParam?: string }) => {
     if (pageParam) {
@@ -80,7 +84,7 @@ const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseU
     error: runTriggerError,
   } = useMutation(async () => {
     invariant(workflowProperties.callbackInfo, 'Run Trigger should not be runable unless callbackInfo has information');
-    await runService.runTrigger(workflowProperties.callbackInfo);
+    await runService.runTrigger(workflowProperties.callbackInfo as CallbackInfo);
     return refetch();
   });
 

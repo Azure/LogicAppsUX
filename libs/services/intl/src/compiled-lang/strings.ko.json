@@ -83,12 +83,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -363,6 +357,12 @@
       "value": "Hour"
     }
   ],
+  "0vfdFS": [
+    {
+      "type": 0,
+      "value": "every day"
+    }
+  ],
   "0y5eia": [
     {
       "type": 0,
@@ -542,6 +542,12 @@
       "value": "(UTC-04:00) 카라카스"
     }
   ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Add children (recursive)"
+    }
+  ],
   "23fENy": [
     {
       "type": 0,
@@ -636,6 +642,12 @@
     {
       "type": 0,
       "value": "Start Time"
+    }
+  ],
+  "2pRsUf": [
+    {
+      "type": 0,
+      "value": "Enter a valid array."
     }
   ],
   "2ri1Kf": [
@@ -884,6 +896,16 @@
     {
       "type": 0,
       "value": "필수 사항으로, 추가할 일 수입니다. 일을 빼려는 경우 음수일 수 있습니다."
+    }
+  ],
+  "4D7H4R": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
     }
   ],
   "4Ekn9t": [
@@ -1388,6 +1410,12 @@
       "value": "전달된 문자열 타임스탬프에 정수 일 수를 더합니다."
     }
   ],
+  "8yjjTX": [
+    {
+      "type": 0,
+      "value": "Connect via Service Principal"
+    }
+  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -1596,6 +1624,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) 양곤"
+    }
+  ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
   "AgrMqq": [
@@ -1843,6 +1877,16 @@
       "value": "(UTC+02:00) 헬싱키, 키예프, 리가, 소피아, 탈린, 빌뉴스"
     }
   ],
+  "Czt6YV": [
+    {
+      "type": 0,
+      "value": "at "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    }
+  ],
   "D+Ptnq": [
     {
       "type": 0,
@@ -1883,6 +1927,12 @@
     {
       "type": 0,
       "value": "Select a value"
+    }
+  ],
+  "DWd9vy": [
+    {
+      "type": 0,
+      "value": "every week"
     }
   ],
   "DWsh56": [
@@ -2023,6 +2073,20 @@
     {
       "type": 0,
       "value": "선택 과목. substring 추출을 시작할 위치의 인덱스입니다."
+    }
+  ],
+  "Ea/fr+": [
+    {
+      "type": 0,
+      "value": "Every "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " days"
     }
   ],
   "EdzoIs": [
@@ -2244,6 +2308,12 @@
     {
       "type": 0,
       "value": "권한 입력"
+    }
+  ],
+  "GEB1on": [
+    {
+      "type": 0,
+      "value": "This contains a value that is not between 0 and 59"
     }
   ],
   "GIUSQs": [
@@ -2721,6 +2791,12 @@
       "value": "actionCount"
     }
   ],
+  "KZOa5l": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "Khc8lS": [
     {
       "type": 0,
@@ -2931,6 +3007,12 @@
       "value": "작업의 출력과 출력 속성의 참조를 보안 설정합니다."
     }
   ],
+  "MCzWDc": [
+    {
+      "type": 0,
+      "value": "Preview"
+    }
+  ],
   "MDbmMw": [
     {
       "type": 0,
@@ -3103,6 +3185,12 @@
     {
       "type": 0,
       "value": "값의 이진 표현을 반환합니다."
+    }
+  ],
+  "O27gKq": [
+    {
+      "type": 0,
+      "value": "Loading Files..."
     }
   ],
   "O36+wl": [
@@ -3303,6 +3391,16 @@
       "value": "필수 사항으로, 피가수 1에 추가할 숫자입니다."
     }
   ],
+  "PNk3n4": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    }
+  ],
   "PORNMZ": [
     {
       "type": 0,
@@ -3409,6 +3507,12 @@
     {
       "type": 0,
       "value": "취소"
+    }
+  ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
     }
   ],
   "QEp3C8": [
@@ -3780,6 +3884,24 @@
       "value": "Add or replace your schemas."
     }
   ],
+  "TZh8nV": [
+    {
+      "type": 0,
+      "value": "on "
+    },
+    {
+      "type": 1,
+      "value": "weekDays"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "frequencyDesc"
+    }
+  ],
   "Tayrub": [
     {
       "type": 0,
@@ -3790,6 +3912,12 @@
     {
       "type": 0,
       "value": "클라이언트 요청 ID"
+    }
+  ],
+  "TeRxLv": [
+    {
+      "type": 0,
+      "value": "Use a service principal to connect using application permissions."
     }
   ],
   "TgcgXE": [
@@ -3856,6 +3984,24 @@
     {
       "type": 0,
       "value": "특정 숫자부터 시작하는 정수 배열을 생성합니다."
+    }
+  ],
+  "U4zovj": [
+    {
+      "type": 0,
+      "value": "Runs "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
     }
   ],
   "U56j9a": [
@@ -3928,6 +4074,20 @@
     {
       "type": 0,
       "value": "' has an non-terminating connection chain"
+    }
+  ],
+  "Umpr3z": [
+    {
+      "type": 0,
+      "value": "Every "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " weeks"
     }
   ],
   "UnrrzF": [
@@ -4370,6 +4530,12 @@
     {
       "type": 0,
       "value": "데이터 URI의 이진 표현을 반환합니다."
+    }
+  ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Add children"
     }
   ],
   "YHsAKl": [
@@ -4956,6 +5122,12 @@
       "value": "에 연결했습니다."
     }
   ],
+  "dfNjw1": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -5441,6 +5613,12 @@
       "value": "네트워킹"
     }
   ],
+  "i4Om5O": [
+    {
+      "type": 0,
+      "value": "This contains an invalid value"
+    }
+  ],
   "iBlvhu": [
     {
       "type": 0,
@@ -5561,6 +5739,12 @@
     {
       "type": 0,
       "value": "테스트"
+    }
+  ],
+  "izS5yQ": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "j1VU25": [
@@ -5911,6 +6095,12 @@
     {
       "type": 0,
       "value": "actions('actionName').outputs.body의 축약형"
+    }
+  ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
     }
   ],
   "lsKVU6": [
@@ -6321,6 +6511,12 @@
     {
       "type": 0,
       "value": "종료 시간"
+    }
+  ],
+  "pMms92": [
+    {
+      "type": 0,
+      "value": "Insert Dynamic Content"
     }
   ],
   "pOTcUO": [
@@ -6842,6 +7038,20 @@
       "value": "기본"
     }
   ],
+  "tWV2mC": [
+    {
+      "type": 0,
+      "value": "at "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    },
+    {
+      "type": 0,
+      "value": " every hour"
+    }
+  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -6910,6 +7120,12 @@
     {
       "type": 1,
       "value": "parent"
+    }
+  ],
+  "uIurld": [
+    {
+      "type": 0,
+      "value": "Save"
     }
   ],
   "uM1i27": [
@@ -7132,6 +7348,12 @@
       "value": "매개 변수 만들기"
     }
   ],
+  "vxOc/M": [
+    {
+      "type": 0,
+      "value": "This contains a duplicate value"
+    }
+  ],
   "vz2gZC": [
     {
       "type": 0,
@@ -7312,12 +7534,6 @@
       "value": "일반 텍스트로 암호 입력 또는 보안 매개 변수 사용"
     }
   ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "편집기 입력"
-    }
-  ],
   "xQQ9ko": [
     {
       "type": 0,
@@ -7460,6 +7676,20 @@
     {
       "type": 0,
       "value": "연결 게이트웨이"
+    }
+  ],
+  "z/UY4k": [
+    {
+      "type": 0,
+      "value": "Navigate to "
+    },
+    {
+      "type": 1,
+      "value": "folderName"
+    },
+    {
+      "type": 0,
+      "value": " folder"
     }
   ],
   "z3VuE+": [

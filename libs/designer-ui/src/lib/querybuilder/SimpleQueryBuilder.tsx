@@ -13,7 +13,7 @@ import { useFunctionalState, useUpdateEffect } from '@react-hookz/web';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export interface UntilProps {
+export interface SimpleQueryBuilderProps {
   readonly?: boolean;
   items: RowItemProps;
   getTokenPicker: GetTokenPickerHandler;
@@ -36,7 +36,7 @@ const buttonStyles: IButtonStyles = {
 
 const emptyValue = [{ id: guid(), type: ValueSegmentType.LITERAL, value: 'null' }];
 
-export const UntilEditor = ({ getTokenPicker, items, readonly, onChange }: UntilProps) => {
+export const SimpleQueryBuilder = ({ getTokenPicker, items, readonly, onChange }: SimpleQueryBuilderProps) => {
   const intl = useIntl();
 
   const [getRootProp, setRootProp] = useFunctionalState<GroupItems>(items);
@@ -75,7 +75,7 @@ export const UntilEditor = ({ getTokenPicker, items, readonly, onChange }: Until
     <div className="msla-querybuilder-container">
       {isAdvanced ? (
         <StringEditor
-          className={'msla-until-editor-container'}
+          className={'msla-simple-querybuilder-editor-container'}
           initialValue={[{ id: guid(), type: ValueSegmentType.LITERAL, value: currValue }]}
           getTokenPicker={getTokenPicker}
           BasePlugins={{ tokens: false }}
@@ -98,7 +98,7 @@ export const UntilEditor = ({ getTokenPicker, items, readonly, onChange }: Until
         />
       )}
       <ActionButton
-        className="msla-until-advanced-button"
+        className="msla-simple-querybuilder-advanced-button"
         disabled={readonly}
         styles={buttonStyles}
         onClick={() => {
@@ -112,8 +112,8 @@ export const UntilEditor = ({ getTokenPicker, items, readonly, onChange }: Until
 };
 
 const convertRootPropToValue = (rootProps: RowItemProps): string => {
-  const op1: string = rootProps.operand1?.[0]?.value ? getOperationValue(rootProps.operand1?.[0].value) : 'null';
-  const op2: string = rootProps.operand2?.[0]?.value ? getOperationValue(rootProps.operand2?.[0].value) : 'null';
+  const op1: string = rootProps.operand1?.[0]?.value ? getOperationValue(rootProps.operand1?.[0]) : 'null';
+  const op2: string = rootProps.operand2?.[0]?.value ? getOperationValue(rootProps.operand2?.[0]) : 'null';
   return `@${rootProps.operator}(${op1},${op2})`;
 };
 
@@ -130,19 +130,27 @@ const convertValueToRootProp = (value: ValueSegment[]): GroupItems => {
   return { operator: operation, operand1, operand2, type: GroupType.ROW };
 };
 
-const getOperationValue = (s: string): string => {
-  const opeartionHasQuote = checkIfHasQuotes(s);
-  return `${opeartionHasQuote ? "'" : ''}${s}${opeartionHasQuote ? "'" : ''}`;
+const getOperationValue = (valSegment?: ValueSegment): string => {
+  if (!valSegment) {
+    return '';
+  }
+  let currValue = valSegment.value;
+  if (valSegment.type === ValueSegmentType.TOKEN) {
+    currValue = '@' + currValue;
+  }
+  const opeartionHasQuote = checkIfShouldHaveQuotes(valSegment);
+  return `${opeartionHasQuote ? "'" : ''}${currValue}${opeartionHasQuote ? "'" : ''}`;
 };
 
-export function checkIfHasQuotes(value?: string): boolean {
-  if (value && (isNumber(value) || isBoolean(value))) {
+export function checkIfShouldHaveQuotes(valSegment: ValueSegment): boolean {
+  const value = valSegment.value;
+  if (valSegment.type === ValueSegmentType.TOKEN || (value && (isNumber(value) || isBoolean(value)))) {
     return false;
   }
   return true;
 }
 
-const removeQuotes = (s: string): string => {
+export const removeQuotes = (s: string): string => {
   if ((s.startsWith("'") && s.endsWith("'")) || (s.startsWith('"') && s.endsWith('"'))) {
     return s.slice(1, -1);
   }

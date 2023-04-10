@@ -140,6 +140,14 @@ export function validateType(type: string, parameterFormat: string, parameterVal
       }
       return;
 
+    case Constants.SWAGGER.TYPE.ARRAY:
+      if (isExpression) {
+        return;
+      }
+      if (!isValidArrayFormat(parameterValue)) {
+        return intl.formatMessage({ defaultMessage: 'Enter a valid array.', description: 'Error validation message for the array type' });
+      }
+      return;
     case Constants.SWAGGER.TYPE.STRING:
       return validateStringFormat(parameterFormat, parameterValue, isExpression);
 
@@ -281,8 +289,20 @@ export function validateJSONParameter(parameterMetadata: ParameterInfo, paramete
 
 const validateConditionalEditor = (value: string, errors: string[]) => {
   const intl = getIntl();
-  if (value.indexOf('null') !== -1) {
-    errors.push(intl.formatMessage({ defaultMessage: 'Enter a valid condition.', description: 'Invalid Json' }));
+  let index = value.indexOf('null');
+  const indices = [];
+  while (index !== -1) {
+    indices.push(index);
+    index = value.indexOf('null', index + 1);
+  }
+
+  for (let i = 0; i < indices.length; i++) {
+    if (value[indices[i] - 1] === '@' || (value.substring(indices[i] - 2, indices[i]) === '@{' && value[indices[i] + 4] === '}')) {
+      continue;
+    } else {
+      errors.push(intl.formatMessage({ defaultMessage: 'Enter a valid condition.', description: 'Invalid Json' }));
+      return;
+    }
   }
 };
 
@@ -382,6 +402,11 @@ function validateStringEmails(parameterValue: string): string {
 function isValidJSONObjectFormat(value: string): boolean {
   const trimmedValue = (value || '').trim();
   return startsWith(trimmedValue, '{') && endsWith(trimmedValue, '}');
+}
+
+function isValidArrayFormat(value: string): boolean {
+  const trimmedValue = (value || '').trim();
+  return startsWith(trimmedValue, '[') && endsWith(trimmedValue, ']');
 }
 
 export const isISO8601 = (s: string) => {

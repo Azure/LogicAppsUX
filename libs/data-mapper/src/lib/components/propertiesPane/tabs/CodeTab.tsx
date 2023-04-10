@@ -1,14 +1,14 @@
 import { targetPrefix } from '../../../constants/ReactFlowConstants';
 import type { RootState } from '../../../core/state/Store';
 import { convertToMapDefinition } from '../../../mapDefinitions';
-import type { SchemaNodeExtended, FunctionData } from '../../../models';
+import type { FunctionData, SchemaNodeExtended } from '../../../models';
 import type { ConnectionDictionary } from '../../../models/Connection';
 import { collectFunctionValue } from '../../../utils/DataMap.Utils';
 import { isFunctionData } from '../../../utils/Function.Utils';
 import { addSourceReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 import { commonCodeEditorProps } from '../../testMapPanel/TestMapPanel';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
-import { MonacoEditor, EditorLanguage } from '@microsoft/designer-ui';
+import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -31,6 +31,7 @@ export const CodeTab = ({ currentNode, contentHeight }: CodeTabProps) => {
 
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
+  const targetSchemaSortArray = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchemaOrdering);
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   // RF key of currently selected item PropPane is open for (needed for function node keys)
@@ -64,10 +65,10 @@ export const CodeTab = ({ currentNode, contentHeight }: CodeTabProps) => {
           }
         });
 
-        return convertToMapDefinition(reducedConnectionDictionary, sourceSchema, targetSchema, false);
+        return convertToMapDefinition(reducedConnectionDictionary, sourceSchema, targetSchema, targetSchemaSortArray, false);
       }
     }
-  }, [currentNode, sourceSchemaDictionary, connectionDictionary, selectedItemKey, sourceSchema, targetSchema]);
+  }, [currentNode, selectedItemKey, connectionDictionary, sourceSchemaDictionary, sourceSchema, targetSchema, targetSchemaSortArray]);
 
   return (
     <MonacoEditor

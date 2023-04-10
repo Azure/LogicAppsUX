@@ -4,7 +4,7 @@ import { useNodeDisplayName, useNodeIds } from '../../core/state/workflow/workfl
 import { setFocusNode } from '../../core/state/workflow/workflowSlice';
 import { IconButton, Panel, PanelType, SearchBox, useTheme, Text, FocusTrapZone } from '@fluentui/react';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
-import { OperationSearchCard } from '@microsoft/designer-ui';
+import { OperationSearchCard, PanelLocation } from '@microsoft/designer-ui';
 import { labelCase } from '@microsoft/utils-logic-apps';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
@@ -65,13 +65,14 @@ export const NodeSearchPanel = (props: CommonPanelProps) => {
   return (
     <Panel
       isLightDismiss
-      type={PanelType.medium}
+      type={props.panelLocation === PanelLocation.Right ? PanelType.medium : PanelType.customNear}
       isOpen={!props.isCollapsed}
       onDismiss={props.toggleCollapse}
       hasCloseButton={false}
       overlayProps={{ isDarkThemed: isInverted }}
       focusTrapZoneProps={{ disabled: props.isCollapsed, forceFocusInsideTrap: true }}
       layerProps={props.layerProps}
+      customWidth={props.width}
     >
       <FocusTrapZone>
         <div className="msla-app-action-header">

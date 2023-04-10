@@ -61,6 +61,7 @@ import type {
   ValueSegment,
 } from '@microsoft/designer-ui';
 import {
+  removeQuotes,
   RowDropdownOptions,
   GroupDropdownOptions,
   GroupType,
@@ -376,7 +377,6 @@ export function getParameterEditorProps(parameter: InputParameter, shouldIgnoreD
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     editor = undefined;
   }
-
   return { editor, editorOptions, editorViewModel, schema };
 }
 
@@ -405,29 +405,15 @@ const destructureSchema = (schema: any): any => {
 const toUntilViewModel = (input: any): { isOldFormat: boolean; items: RowItemProps } => {
   let operand1: ValueSegment[], operand2: ValueSegment[], operation: string;
   try {
-    const valSegments = loadParameterValue({ value: input } as InputParameter);
-    if (valSegments.length === 1 && valSegments[0].type === ValueSegmentType.TOKEN) {
-      operand1 = [
-        {
-          id: guid(),
-          type: ValueSegmentType.LITERAL,
-          value: ((valSegments[0].token?.expression as ExpressionFunction).arguments[0] as ExpressionLiteral).value,
-        },
-      ];
-      operand2 = [
-        {
-          id: guid(),
-          type: ValueSegmentType.LITERAL,
-          value: ((valSegments[0].token?.expression as ExpressionFunction).arguments[1] as ExpressionLiteral).value,
-        },
-      ];
-      operation = (valSegments[0].token?.expression as ExpressionFunction).name;
-    } else {
-      operation = input.substring(input.indexOf('@') + 1, input.indexOf('('));
-      const operations = input.split(',');
-      operand1 = loadParameterValue({ value: operations[0].substring(operations[0].indexOf('(') + 1).trim() } as InputParameter);
-      operand2 = loadParameterValue({ value: operations[1].substring(0, operations[1].indexOf(')')).trim() } as InputParameter);
-    }
+    operation = input.substring(input.indexOf('@') + 1, input.indexOf('('));
+    const operations = input.split(',');
+    operand1 = loadParameterValue(
+      convertStringToInputParameter(removeQuotes(operations[0].substring(operations[0].indexOf('(') + 1)).trim())
+    );
+
+    operand2 = loadParameterValue(
+      convertStringToInputParameter(removeQuotes(operations[1].substring(0, operations[1].indexOf(')'))).trim())
+    );
   } catch {
     operation = 'equals';
     operand1 = [];
@@ -437,6 +423,16 @@ const toUntilViewModel = (input: any): { isOldFormat: boolean; items: RowItemPro
   return {
     isOldFormat: true,
     items: { type: GroupType.ROW, operator: operation, operand1, operand2 },
+  };
+};
+
+const convertStringToInputParameter = (s: string): InputParameter => {
+  return {
+    key: s,
+    name: s,
+    type: 'any',
+    hideInUI: false,
+    value: s,
   };
 };
 
@@ -1807,14 +1803,17 @@ export const recurseSerializeCondition = (parameter: ParameterInfo, editorViewMo
     if (!operator) {
       operator = RowDropdownOptions.EQUALS;
     }
-    const stringifiedOperand1 = getJSONValueFromString(
-      parameterValueToString({ type: 'any', value: operand1, ...commonProperties } as any, isDefinitionValue),
-      'any'
-    );
-    const stringifiedOperand2 = getJSONValueFromString(
-      parameterValueToString({ type: 'any', value: operand2, ...commonProperties } as any, isDefinitionValue),
-      'any'
-    );
+
+    const stringifiedOperand1 =
+      getJSONValueFromString(
+        parameterValueToString({ type: 'any', value: operand1, ...commonProperties } as any, isDefinitionValue),
+        'any'
+      ) ?? '';
+    const stringifiedOperand2 =
+      getJSONValueFromString(
+        parameterValueToString({ type: 'any', value: operand2, ...commonProperties } as any, isDefinitionValue),
+        'any'
+      ) ?? '';
     if (not) {
       returnVal.not = {};
       returnVal['not'][operator] = [stringifiedOperand1, stringifiedOperand2];

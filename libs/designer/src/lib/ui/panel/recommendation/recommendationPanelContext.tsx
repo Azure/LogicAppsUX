@@ -122,8 +122,10 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   }, []);
 
   const onOperationClick = useCallback(
-    (id: string) => {
-      const operation = (allOperations ?? []).find((o: DiscoveryOperation<DiscoveryResultTypes>) => o.id === id);
+    (id: string, apiId?: string) => {
+      const operation = (allOperations ?? []).find((o: DiscoveryOperation<DiscoveryResultTypes>) => {
+        return apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id;
+      });
       if (!operation) return;
       dispatch(selectOperationId(operation.id));
       if (isAzureResourceActionId(operation.id) && isConsumption) {

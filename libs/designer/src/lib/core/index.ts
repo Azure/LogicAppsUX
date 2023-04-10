@@ -9,3 +9,4 @@ export { useNodeDisplayName } from './state/workflow/workflowSelectors';
 export { serializeWorkflow } from './actions/bjsworkflow/serializer';
 export { clearPanel, switchToWorkflowParameters } from './state/panel/panelSlice';
 export { useSelectedNodeId } from './state/panel/panelSelectors';
+export { initializeServices } from './state/designerOptions/designerOptionsSlice';

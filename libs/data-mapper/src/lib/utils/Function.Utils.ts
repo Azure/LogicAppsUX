@@ -11,10 +11,11 @@ import { reservedMapNodeParamsArray } from '../constants/MapDefinitionConstants'
 import type { SchemaNodeExtended } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
-import { FunctionCategory } from '../models/Function';
+import { FunctionCategory, ifPseudoFunctionKey } from '../models/Function';
 import { isConnectionUnit } from './Connection.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 import { isSchemaNodeExtended } from './Schema.Utils';
+import { isAGuid } from '@microsoft/utils-logic-apps';
 
 export const getFunctionBrandingForCategory = (functionCategory: FunctionCategory) => {
   switch (functionCategory) {
@@ -88,7 +89,9 @@ export const getIndexValueForCurrentConnection = (currentConnection: Connection)
   } else {
     LogService.error(LogCategory.FunctionUtils, 'getIndexValueForCurrentConnection', {
       message: `Didn't find inputNode to make index value`,
-      connection: currentConnection,
+      data: {
+        connection: currentConnection,
+      },
     });
 
     return '';
@@ -116,3 +119,7 @@ export const formatDirectAccess = (indexValue: string, scope: string, destinatio
 };
 
 export const isKeyAnIndexValue = (key: string): boolean => key.startsWith('$') && !reservedMapNodeParamsArray.includes(key);
+
+export const isIfAndGuid = (key: string) => {
+  return key.startsWith(ifPseudoFunctionKey) && isAGuid(key.substring(ifPseudoFunctionKey.length + 1));
+};

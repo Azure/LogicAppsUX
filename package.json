@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logicappsux",
-  "version": "2.0.15",
+  "version": "2.0.30",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -39,8 +39,8 @@
     "generateArmToken": "az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 > ./apps/designer-standalone/src/environments/armToken.json"
   },
   "engines": {
-    "node": "16",
-    "npm": "8"
+    "node": ">=16",
+    "npm": ">=8"
   },
   "private": true,
   "dependencies": {
@@ -95,6 +95,7 @@
     "pathfinding": "^0.4.18",
     "prism-react-renderer": "1.3.5",
     "process": "^0.11.10",
+    "process-tree": "^1.0.3",
     "ps-tree": "^1.2.0",
     "react-dnd": "16.0.1",
     "react-dnd-accessible-backend": "^1.0.1",

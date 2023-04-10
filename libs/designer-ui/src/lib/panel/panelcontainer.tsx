@@ -11,7 +11,7 @@ import type { ILayerProps } from '@fluentui/react';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import type { IPanelHeaderRenderer, IPanelProps, IPanelStyles } from '@fluentui/react/lib/Panel';
 import { Panel, PanelType } from '@fluentui/react/lib/Panel';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
 const panelStyles: Partial<IPanelStyles> = {
@@ -29,7 +29,6 @@ const panelStylesCollapsed: Partial<IPanelStyles> = {
 export type PanelContainerProps = {
   cardIcon?: string;
   comment?: string;
-  panelLocation: PanelLocation;
   noNodeSelected: boolean;
   isError?: boolean;
   isLoading?: boolean;
@@ -89,6 +88,7 @@ export const PanelContainer = ({
     (_props?: IPanelProps, _defaultrender?: IPanelHeaderRenderer, headerTextId?: string): JSX.Element => {
       return (
         <PanelHeader
+          nodeId={nodeId}
           cardIcon={cardIcon}
           isCollapsed={isCollapsed}
           headerLocation={panelLocation}
@@ -112,6 +112,7 @@ export const PanelContainer = ({
       );
     },
     [
+      nodeId,
       cardIcon,
       isCollapsed,
       panelLocation,

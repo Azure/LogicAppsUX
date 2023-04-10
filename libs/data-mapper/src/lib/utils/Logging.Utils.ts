@@ -1,7 +1,12 @@
 import appInsights from '../core/services/appInsights/AppInsights';
 
+export interface LogMessage {
+  message: string;
+  data?: any;
+}
+
 export class LogService {
-  public static error(category: LogCategory, id: string, data: any) {
+  public static error(category: LogCategory, id: string, data: LogMessage) {
     LogService._validateCategory(category);
     LogService._validateId(id);
     LogService._validateData(data);
@@ -12,12 +17,12 @@ export class LogService {
       LogService._trackEvent(errorId, data);
     }
 
-    if (LogService._logToConsole) {
+    if (LogService.logToConsole) {
       console.error(`[${category}] - ${LogService._getDataString(data)}`);
     }
   }
 
-  public static warn(category: LogCategory, id: string, data: any) {
+  public static warn(category: LogCategory, id: string, data: LogMessage) {
     LogService._validateCategory(category);
     LogService._validateId(id);
     LogService._validateData(data);
@@ -28,12 +33,12 @@ export class LogService {
       LogService._trackEvent(warningId, data);
     }
 
-    if (LogService._logToConsole) {
+    if (LogService.logToConsole) {
       console.warn(`[${category}] - ${LogService._getDataString(data)}`);
     }
   }
 
-  public static log(category: LogCategory, id: string, data: any) {
+  public static log(category: LogCategory, id: string, data: LogMessage) {
     LogService._validateCategory(category);
     LogService._validateId(id);
     LogService._validateData(data);
@@ -44,7 +49,7 @@ export class LogService {
       LogService._trackEvent(logId, data);
     }
 
-    if (LogService._logToConsole) {
+    if (LogService.logToConsole) {
       console.log(`%c[${category}] - ${LogService._getDataString(data)}`, 'color: #ff8c00');
     }
   }
@@ -54,17 +59,17 @@ export class LogService {
       appInsights.startTrackPage(pageName);
     }
 
-    if (LogService._logToConsole) {
+    if (LogService.logToConsole) {
       console.log(`${LogService._getTime()} [Start Track Page] - ${pageName}`);
     }
   }
 
-  public static stopTrackPage(pageName: string, data: any) {
+  public static stopTrackPage(pageName: string, data: LogMessage) {
     if (LogService._logToAppInsights) {
       appInsights.stopTrackPage(pageName, window.location.href, data);
     }
 
-    if (LogService._logToConsole) {
+    if (LogService.logToConsole) {
       console.log(`${LogService._getTime()} [Stop Track Page] - ${pageName}`);
     }
   }
@@ -74,37 +79,37 @@ export class LogService {
       appInsights.startTrackEvent(eventName);
     }
 
-    if (LogService._logToConsole) {
+    if (LogService.logToConsole) {
       console.log(`${LogService._getTime()} [Start Track Event] - ${eventName}`);
     }
   }
 
-  public static stopTrackEvent(eventName: string, data: any) {
+  public static stopTrackEvent(eventName: string, data: LogMessage) {
     LogService._validateData(data);
     if (LogService._logToAppInsights) {
-      appInsights.stopTrackEvent(eventName, data);
+      appInsights.stopTrackEvent(eventName, { ...data });
     }
 
-    if (LogService._logToConsole) {
+    if (LogService.logToConsole) {
       console.log(`${LogService._getTime()} [Stop Track Event] - ${eventName}`);
     }
   }
 
-  public static debug(category: LogCategory, data: any) {
+  public static debug(category: LogCategory, data: LogMessage) {
     LogService._validateCategory(category);
     LogService._validateData(data);
 
-    if (LogService._logToConsole) {
+    if (LogService.logToConsole) {
       console.debug(`${LogService._getTime()} %c[${category}] - ${LogService._getDataString(data)}`);
     }
   }
 
-  private static _logToAppInsights = process.env.NODE_ENV !== 'development' && !!appInsights;
+  private static readonly _logToAppInsights = process.env.NODE_ENV !== 'development' && !!appInsights;
   // TODO Allow manual turning on of console logging by providing a variable
-  private static _logToConsole = process.env.NODE_ENV !== 'production';
+  public static readonly logToConsole = process.env.NODE_ENV !== 'production';
 
-  private static _getDataString(data: any): string {
-    return typeof data === 'string' ? data : JSON.stringify(data);
+  private static _getDataString(data: LogMessage): string {
+    return JSON.stringify(data);
   }
 
   private static _getTime() {
@@ -166,4 +171,6 @@ export enum LogCategory {
   OverviewCanvas = 'OverviewCanvas',
   EditingCanvas = 'EditingCanvas',
   FunctionList = 'FunctionList',
+  SchemaUtils = 'SchemaUtils',
+  VsixCommands = 'VsixCommands',
 }

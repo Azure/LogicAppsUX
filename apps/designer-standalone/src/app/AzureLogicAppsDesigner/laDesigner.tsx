@@ -178,7 +178,7 @@ const DesignerEditor = () => {
 
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
-      <DesignerProvider locale={'en-US'} options={{ services, isDarkMode }}>
+      <DesignerProvider locale={'en-US'} options={{ services, isDarkMode, readOnly: isReadOnly }}>
         {workflow?.definition ? (
           <BJSWorkflowProvider workflow={{ definition: workflow?.definition, connectionReferences, parameters }}>
             <div style={{ height: 'inherit', width: 'inherit' }}>

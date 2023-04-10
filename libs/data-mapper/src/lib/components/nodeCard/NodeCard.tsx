@@ -4,7 +4,6 @@ export interface CardProps {
   onClick?: () => void;
   displayHandle: boolean;
   disabled: boolean;
-  error: boolean;
 }
 
 export const getStylesForSharedState = makeStyles({
