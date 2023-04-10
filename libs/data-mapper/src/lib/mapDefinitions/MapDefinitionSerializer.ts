@@ -43,7 +43,8 @@ export const convertToMapDefinition = (
 
     generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
 
-    return yaml.dump(mapDefinition, { replacer: yamlReplacer });
+    // Custom values directly on target nodes need to have extra single quotes stripped out
+    return yaml.dump(mapDefinition, { replacer: yamlReplacer }).replaceAll(/'"|"'/g, '"');
   }
 
   return '';
