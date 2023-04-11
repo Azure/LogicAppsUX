@@ -86,10 +86,9 @@ export const TokenTypeAheadPlugin = ({ openTokenPicker }: OpenTokenPickerProps) 
         if (nodeToRemove) {
           nodeToRemove.remove();
         }
-
-        closeMenu();
-        openTokenPicker(selectedOption.key === 'expression' ? TokenPickerMode.EXPRESSION : TokenPickerMode.TOKEN);
       });
+      closeMenu();
+      openTokenPicker(selectedOption.key === 'expression' ? TokenPickerMode.EXPRESSION : TokenPickerMode.TOKEN);
     },
     [editor, openTokenPicker]
   );
@@ -125,7 +124,7 @@ export const TokenTypeAheadPlugin = ({ openTokenPicker }: OpenTokenPickerProps) 
 
         return anchorElementRef.current && options.length
           ? ReactDOM.createPortal(
-              <div className={css(isInverted ? 'msla-theme-dark' : null)}>
+              <div className={css(isInverted ? 'msla-theme-dark' : null)} onMouseDown={(e) => e.preventDefault()}>
                 <div className="typeahead-popover">
                   <ul>
                     {options.map((option: TokenOption, index) => (

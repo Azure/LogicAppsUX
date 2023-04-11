@@ -11,7 +11,7 @@ import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { FloatingActionMenu } from '../../floatingactionmenu';
 import { QueryBuilderEditor } from '../../querybuilder';
-import { UntilEditor } from '../../querybuilder/Until';
+import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
 import { ScheduleEditor } from '../../recurrence';
 import { SchemaEditor } from '../../schemaeditor';
 import { TableEditor } from '../../table';
@@ -39,6 +39,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
   isTrigger?: boolean;
+  isCallback?: boolean;
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
   getTokenPicker: GetTokenPickerHandler;
@@ -71,6 +72,7 @@ const TokenField = ({
   readOnly,
   value,
   isTrigger,
+  isCallback,
   isLoading,
   errorDetails,
   showTokens,
@@ -198,7 +200,7 @@ const TokenField = ({
 
     case 'condition':
       return editorViewModel.isOldFormat ? (
-        <UntilEditor
+        <SimpleQueryBuilder
           readonly={readOnly}
           items={JSON.parse(JSON.stringify(editorViewModel.items))}
           getTokenPicker={getTokenPicker}
@@ -229,6 +231,7 @@ const TokenField = ({
           BasePlugins={{ tokens: showTokens }}
           readonly={readOnly}
           isTrigger={isTrigger}
+          showCallbackTokens={isCallback}
           initialValue={value}
           editorBlur={onValueChange}
           getTokenPicker={getTokenPicker}
