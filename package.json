@@ -27,7 +27,7 @@
     "build:vscode-react": "nx run vs-code-react:build",
     "build:vscode-designer": "nx run vs-code-designer:build && nx run vs-code-designer-react:build && nx run vs-code-react:build",
     "build:utils": "nx run utils:build",
-    "bump": "standard-version --no-verify --skip.tag --skip.commit",
+    "bump": "standard-version --no-verify --skip.tag",
     "vscode:designer:pack:step1": "cd ./dist/apps/vs-code-designer && npm install",
     "vscode:designer:pack:step2": "node extension-copy-svgs.js",
     "vscode:designer:pack:step3": "cd ./dist/apps/vs-code-designer && vsce package",
