@@ -1,6 +1,9 @@
+import { getExpressionTokenTitle } from '../../../tokenpicker/util';
 import type { ValueSegment } from '../../models/parameter';
-import { ValueSegmentType } from '../../models/parameter';
+import { TokenType, ValueSegmentType } from '../../models/parameter';
 import { $createTokenNode } from '../nodes/tokenNode';
+import type { Expression } from '@microsoft/parsers-logic-apps';
+import { ExpressionParser } from '@microsoft/parsers-logic-apps';
 import type { ParagraphNode, RootNode } from 'lexical';
 import { $isParagraphNode, $createParagraphNode, $createTextNode, $getRoot } from 'lexical';
 
@@ -18,8 +21,18 @@ export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): R
   value.forEach((segment) => {
     const segmentValue = segment.value;
     if (segment.type === ValueSegmentType.TOKEN && segment.token) {
-      const { brandColor, icon, title, name, remappedValue } = segment.token;
-      if (title || name) {
+      const { brandColor, icon, title, name, remappedValue, tokenType } = segment.token;
+      if (tokenType === TokenType.FX) {
+        const expressionValue: Expression = ExpressionParser.parseExpression(segmentValue);
+        const token = $createTokenNode({
+          title: getExpressionTokenTitle(expressionValue) ?? segmentValue ?? title,
+          data: segment,
+          brandColor,
+          icon: icon,
+          value: segmentValue,
+        });
+        tokensEnabled && paragraph.append(token);
+      } else if (title || name) {
         const token = $createTokenNode({
           title: title ?? name,
           data: segment,

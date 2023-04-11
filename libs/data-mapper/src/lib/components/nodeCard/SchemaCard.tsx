@@ -15,22 +15,22 @@ import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
 import {
   Badge,
   Button,
+  Tooltip,
   createFocusOutlineStyle,
   makeStyles,
   mergeClasses,
   shorthands,
   tokens,
-  Tooltip,
   typographyStyles,
 } from '@fluentui/react-components';
 import {
-  bundleIcon,
   CheckmarkCircle12Filled,
   ChevronRight16Filled,
   ChevronRight16Regular,
   Circle12Regular,
   CircleHalfFill12Regular,
   Important12Filled,
+  bundleIcon,
 } from '@fluentui/react-icons';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';

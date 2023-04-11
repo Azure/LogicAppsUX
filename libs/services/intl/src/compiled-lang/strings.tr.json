@@ -83,12 +83,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -557,6 +551,12 @@
     {
       "type": 0,
       "value": "(UTC-04:00) Karakas"
+    }
+  ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Add children (recursive)"
     }
   ],
   "23fENy": [
@@ -1421,6 +1421,12 @@
       "value": "Geçirilen dize zaman damgasına tamsayı cinsinden bir gün sayısı ekler"
     }
   ],
+  "8yjjTX": [
+    {
+      "type": 0,
+      "value": "Connect via Service Principal"
+    }
+  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -1629,6 +1635,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangoon)"
+    }
+  ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
   "AgrMqq": [
@@ -3537,6 +3549,12 @@
       "value": "At"
     }
   ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -3945,6 +3963,12 @@
     {
       "type": 0,
       "value": "İstemci istek kimliği"
+    }
+  ],
+  "TeRxLv": [
+    {
+      "type": 0,
+      "value": "Use a service principal to connect using application permissions."
     }
   ],
   "TgcgXE": [
@@ -4557,6 +4581,12 @@
     {
       "type": 0,
       "value": "Bir veri URI'sinin ikili gösterimini döndürür"
+    }
+  ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Add children"
     }
   ],
   "YHsAKl": [
@@ -5773,6 +5803,12 @@
       "value": "Sına"
     }
   ],
+  "izS5yQ": [
+    {
+      "type": 0,
+      "value": "Learn more"
+    }
+  ],
   "j1VU25": [
     {
       "type": 0,
@@ -6121,6 +6157,12 @@
     {
       "type": 0,
       "value": "actions('eylemAdı').outputs.body için kısayol"
+    }
+  ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
     }
   ],
   "lsKVU6": [
@@ -7563,12 +7605,6 @@
     {
       "type": 0,
       "value": "Parolayı düz metin olarak girin veya güvenli bir parametre kullanın"
-    }
-  ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "Düzenleyici Girişi"
     }
   ],
   "xQQ9ko": [

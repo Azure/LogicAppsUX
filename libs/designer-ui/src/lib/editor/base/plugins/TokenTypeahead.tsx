@@ -1,10 +1,9 @@
-import constants from '../../../constants';
 import { TokenPickerMode } from '../../../tokenpicker';
+import { useTokenTypeaheadTriggerMatch } from '../utils/tokenTypeaheadMatcher';
 import type { OpenTokenPickerProps } from './OpenTokenPicker';
-import { FxIcon } from './tokenpickerbuttonnew/assets/fxIcon';
 import { Icon, css, useTheme } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { LexicalTypeaheadMenuPlugin, TypeaheadOption, useBasicTypeaheadTriggerMatch } from '@lexical/react/LexicalTypeaheadMenuPlugin';
+import { LexicalTypeaheadMenuPlugin, TypeaheadOption } from '@lexical/react/LexicalTypeaheadMenuPlugin';
 import type { TextNode } from 'lexical';
 import { $getSelection, $isRangeSelection } from 'lexical';
 import type { ReactNode } from 'react';
@@ -71,7 +70,7 @@ function TokenMenuItem({
 export const TokenTypeAheadPlugin = ({ openTokenPicker }: OpenTokenPickerProps) => {
   const [editor] = useLexicalComposerContext();
   const { isInverted } = useTheme();
-  const checkForTriggerMatch = useBasicTypeaheadTriggerMatch('/', {
+  const checkForTriggerMatch = useTokenTypeaheadTriggerMatch('/', {
     minLength: 0,
   });
 
@@ -87,10 +86,9 @@ export const TokenTypeAheadPlugin = ({ openTokenPicker }: OpenTokenPickerProps) 
         if (nodeToRemove) {
           nodeToRemove.remove();
         }
-
-        closeMenu();
-        openTokenPicker(selectedOption.key === 'expression' ? TokenPickerMode.EXPRESSION : TokenPickerMode.TOKEN);
       });
+      closeMenu();
+      openTokenPicker(selectedOption.key === 'expression' ? TokenPickerMode.EXPRESSION : TokenPickerMode.TOKEN);
     },
     [editor, openTokenPicker]
   );
@@ -109,11 +107,7 @@ export const TokenTypeAheadPlugin = ({ openTokenPicker }: OpenTokenPickerProps) 
       icon: () => <Icon iconName="LightningBolt" style={{ marginRight: 5 }} />,
     }),
     new TokenOption(expressionButtonText, 'expression', {
-      icon: (_, inverted) => (
-        <div style={{ height: 20, width: 20 }}>
-          <FxIcon fill={inverted ? constants.STANDARD_TEXT_COLOR : constants.INVERTED_TEXT_COLOR} />
-        </div>
-      ),
+      icon: () => <Icon iconName="Variable" style={{ marginRight: 5 }} />,
     }),
   ];
   return (
@@ -130,7 +124,7 @@ export const TokenTypeAheadPlugin = ({ openTokenPicker }: OpenTokenPickerProps) 
 
         return anchorElementRef.current && options.length
           ? ReactDOM.createPortal(
-              <div className={css(isInverted ? 'msla-theme-dark' : null)}>
+              <div className={css(isInverted ? 'msla-theme-dark' : null)} onMouseDown={(e) => e.preventDefault()}>
                 <div className="typeahead-popover">
                   <ul>
                     {options.map((option: TokenOption, index) => (

@@ -40,6 +40,7 @@ Standard.args = {
       children: [],
       pathToRoot: [],
       parentKey: undefined,
+      arrayItemIndex: undefined,
     },
     schemaType: SchemaType.Source,
     displayHandle: true,
@@ -48,6 +49,6 @@ Standard.args = {
     displayChevron: true,
     onClick: () => console.log('Schema card clicked'),
     disabled: false,
-    error: false,
+    disableContextMenu: false,
   },
 };

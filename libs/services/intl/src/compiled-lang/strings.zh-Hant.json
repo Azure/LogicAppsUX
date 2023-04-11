@@ -83,12 +83,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -546,6 +540,12 @@
     {
       "type": 0,
       "value": "(UTC-04:00) 卡拉卡斯"
+    }
+  ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Add children (recursive)"
     }
   ],
   "23fENy": [
@@ -1410,6 +1410,12 @@
       "value": "將整數天數新增至傳入的字串時間戳記中"
     }
   ],
+  "8yjjTX": [
+    {
+      "type": 0,
+      "value": "Connect via Service Principal"
+    }
+  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -1618,6 +1624,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) 仰光"
+    }
+  ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
   "AgrMqq": [
@@ -3497,6 +3509,12 @@
       "value": "捨棄"
     }
   ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -3894,6 +3912,12 @@
     {
       "type": 0,
       "value": "用戶端要求識別碼"
+    }
+  ],
+  "TeRxLv": [
+    {
+      "type": 0,
+      "value": "Use a service principal to connect using application permissions."
     }
   ],
   "TgcgXE": [
@@ -4506,6 +4530,12 @@
     {
       "type": 0,
       "value": "傳回資料 URI 的二進位表示法"
+    }
+  ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Add children"
     }
   ],
   "YHsAKl": [
@@ -5723,6 +5753,12 @@
       "value": "測試"
     }
   ],
+  "izS5yQ": [
+    {
+      "type": 0,
+      "value": "Learn more"
+    }
+  ],
   "j1VU25": [
     {
       "type": 0,
@@ -6071,6 +6107,12 @@
     {
       "type": 0,
       "value": "actions('actionName').outputs.body 的速記"
+    }
+  ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
     }
   ],
   "lsKVU6": [
@@ -7506,12 +7548,6 @@
     {
       "type": 0,
       "value": "以純文字形式輸入密碼或使用安全參數"
-    }
-  ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "編輯器輸入"
     }
   ],
   "xQQ9ko": [

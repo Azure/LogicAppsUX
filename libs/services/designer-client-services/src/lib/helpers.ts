@@ -29,3 +29,12 @@ export function trimUrl(url: string): string {
 
   return updatedUrl;
 }
+
+// Removes vars and values from path to allow comparison
+export function cleanSwaggerOperationPathValue(value: string): string {
+  return value.replace(/{.*?}/g, '').replace('@', '').toLowerCase();
+}
+
+export function areSwaggerOperationPathsMatching(path1: string, path2: string): boolean {
+  return cleanSwaggerOperationPathValue(path1) === cleanSwaggerOperationPathValue(path2);
+}

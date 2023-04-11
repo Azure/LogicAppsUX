@@ -3,6 +3,7 @@
   margin: 20px auto 0px auto;
   border-radius: 2px;
   position: relative;
+
   .editor-input {
     outline: 1px solid @panel-mode-panel-border-color;
     margin: 1px;
@@ -11,10 +12,12 @@
     tab-size: 1;
     min-height: 30px;
     line-height: 30px;
-    caret-color: #444;
     padding-inline-start: 5px;
     &.readonly {
       background-color: rgba(128, 128, 128, 0.1);
+    }
+    &:focus {
+      outline: 2px solid @primary_focus_blue;
     }
   }
   .editor-placeholder {
@@ -54,9 +57,11 @@
     tab-size: 1;
     outline: 0;
     padding: 15px 10px;
-    caret-color: #444;
     &.readonly {
       background-color: rgba(128, 128, 128, 0.1);
+    }
+    &:focus {
+      outline: 2px solid @primary_focus_blue;
     }
   }
 
@@ -155,9 +160,32 @@
   display: block;
   position: fixed;
   border-radius: 20px;
-  width: 40px;
+  width: 24px;
   height: 60px;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
   z-index: 1000000;
-  background-color: lightskyblue;
+  background-color: @primary_focus_blue;
+  margin-left: 9px;
+  .top-root-button-style {
+    color: @defaultButtonTextColor;
+    width: 100%;
+    height: 30px;
+
+    &:hover {
+      background-color: @primary_hover_blue;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+    }
+  }
+
+  .bottom-root-button-style {
+    color: @defaultButtonTextColor;
+    width: 100%;
+    height: 30px;
+    &:hover {
+      background-color: @primary_hover_blue;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+    }
+  }
 }

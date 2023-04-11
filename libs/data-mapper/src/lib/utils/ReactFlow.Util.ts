@@ -198,7 +198,6 @@ export const convertSchemaToReactFlowNodes = (
         width: calculateWidth(curDepth, maxLocalDepth),
         disabled: false,
         disableContextMenu: schemaType === SchemaType.Target,
-        error: false,
       },
       type: ReactFlowNodeType.SchemaNode,
       targetPosition: isSourceSchema ? Position.Right : Position.Left,
@@ -241,7 +240,6 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
         displayHandle: true,
         functionBranding: getFunctionBrandingForCategory(fnNode.category),
         disabled: false,
-        error: false,
         dataTestId: `${fnNode.key}-${idx}`, // For e2e testing
       },
       type: ReactFlowNodeType.FunctionNode,
@@ -415,7 +413,6 @@ const addChildNodesForOverview = (
     displayChevron: !isSourceSchema && sourceSchemaSpecified,
     displayHandle: false,
     disabled: false,
-    error: false,
     connectionStatus: !isSourceSchema && targetSchemaStates ? targetSchemaStates[curNode.key] : undefined,
   };
 
