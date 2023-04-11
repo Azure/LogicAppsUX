@@ -57,14 +57,14 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
 
   // Dropdown Parameter
   else if ((constraints?.allowedValues?.length ?? 0) > 0) {
+    const selectedKey = constraints?.allowedValues?.findIndex((_value) => _value.text === value);
+    if (selectedKey === -1) setValue(constraints?.allowedValues?.[0].text);
     inputComponent = (
       <Dropdown
         id={`connection-param-${parameterKey}`}
         className="connection-parameter-input"
-        selectedKey={constraints?.allowedValues?.findIndex((_value) => _value.text === value)}
-        onChange={(e: any, newVal?: IDropdownOption) => {
-          setValue(newVal?.text);
-        }}
+        selectedKey={selectedKey}
+        onChange={(e: any, newVal?: IDropdownOption) => setValue(newVal?.text)}
         disabled={isLoading}
         ariaLabel={description}
         placeholder={description}
