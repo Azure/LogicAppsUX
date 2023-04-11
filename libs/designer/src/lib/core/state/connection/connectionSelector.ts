@@ -39,8 +39,7 @@ export const useSubscriptions = () => useQuery('subscriptions', async () => Gate
 
 export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
   const storeConnectorId = useSelector((state: RootState) => state.operations.operationInfo[nodeId]?.connectorId);
-  const connectorFromService = useConnector(storeConnectorId)?.data;
-  return connectorFromService;
+  return useConnector(storeConnectorId)?.data;
 };
 
 export const useConnectionRefsByConnectorId = (connectorId?: string) => {
