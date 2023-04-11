@@ -73,7 +73,7 @@ const cleanupExtraneousConnections = (connections: ConnectionDictionary) => {
       const valueInput = connectionValue.inputs[1][0];
       if (isConnectionUnit(valueInput)) {
         connectionValue.outputs.forEach((output) => {
-          deleteConnectionFromConnections(connections, valueInput.reactFlowKey, output.reactFlowKey);
+          deleteConnectionFromConnections(connections, valueInput.reactFlowKey, output.reactFlowKey, undefined);
         });
       }
     }

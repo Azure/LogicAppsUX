@@ -38,6 +38,7 @@ import {
   addTargetReactFlowPrefix,
   createReactFlowFunctionKey,
   getDestinationIdFromReactFlowConnectionId,
+  getPortFromReactFlowConnectionId,
   getSourceIdFromReactFlowConnectionId,
 } from '../../utils/ReactFlow.Util';
 import { flattenSchemaIntoDictionary, flattenSchemaIntoSortArray, isSchemaNodeExtended } from '../../utils/Schema.Utils';
@@ -621,7 +622,12 @@ export const deleteNodeFromConnections = (connections: ConnectionDictionary, key
   delete connections[keyToDelete];
 };
 
-export const deleteConnectionFromConnections = (connections: ConnectionDictionary, inputKey: string, outputKey: string, port?: string) => {
+export const deleteConnectionFromConnections = (
+  connections: ConnectionDictionary,
+  inputKey: string,
+  outputKey: string,
+  port: string | undefined
+) => {
   connections[inputKey].outputs = connections[inputKey].outputs.filter((output) => output.reactFlowKey !== outputKey);
 
   const outputNode = connections[outputKey].self.node;
@@ -671,7 +677,7 @@ export const deleteParentRepeatingConnections = (connections: ConnectionDictiona
       connections[parentId].outputs.forEach((output) => {
         if (output.reactFlowKey.includes('target')) {
           // make sure connection is direct to target, not an index or other func
-          deleteConnectionFromConnections(connections, parentId, connections[parentId].outputs[0].reactFlowKey);
+          deleteConnectionFromConnections(connections, parentId, connections[parentId].outputs[0].reactFlowKey, undefined);
         }
       });
 
@@ -778,7 +784,8 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
   deleteConnectionFromConnections(
     connections,
     getSourceIdFromReactFlowConnectionId(reactFlowKey),
-    getDestinationIdFromReactFlowConnectionId(reactFlowKey)
+    getDestinationIdFromReactFlowConnectionId(reactFlowKey),
+    getPortFromReactFlowConnectionId(reactFlowKey)
   );
   const tempConn = connections[getSourceIdFromReactFlowConnectionId(reactFlowKey)];
   const ids = getConnectedSourceSchemaNodes([tempConn], connections);
