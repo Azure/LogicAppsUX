@@ -1649,6 +1649,16 @@
       "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
+  "Aci186": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Add dynamic data pressing Alt + /"
+    }
+  ],
   "AgrMqq": [
     {
       "type": 0,

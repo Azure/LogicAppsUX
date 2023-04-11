@@ -9,6 +9,7 @@ import { useId } from '@fluentui/react-hooks';
 import { useFunctionalState } from '@react-hookz/web';
 import type { editor, IRange } from 'monaco-editor';
 import { useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 interface CodeEditorProps extends BaseEditorProps {
   language: EditorLanguage;
@@ -23,6 +24,7 @@ export function CodeEditor({
   getTokenPicker,
   label,
 }: CodeEditorProps): JSX.Element {
+  const intl = useIntl();
   const codeEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const editorId = useId('msla-tokenpicker-callout-location');
   const callOutLabelId = useId('msla-tokenpicker-callout-label');
@@ -79,10 +81,20 @@ export function CodeEditor({
     }
   };
 
+  const getLabel = (label?: string): string => {
+    return intl.formatMessage(
+      {
+        defaultMessage: '{label} Add dynamic data pressing Alt + /',
+        description: 'This is an a11y message meant to help screen reader users figure out how to insert dynamic data',
+      },
+      { label }
+    );
+  };
+
   return (
     <div className="msla-code-editor-body" id={editorId}>
       <Editor
-        label={label}
+        label={getLabel(label)}
         ref={codeEditorRef}
         height={editorHeight}
         value={getCurrentValue()}
