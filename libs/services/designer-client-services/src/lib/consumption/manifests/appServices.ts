@@ -40,33 +40,19 @@ export const appServiceActionManifest = {
             supportedAuthTypes: ['None', 'Basic', 'ClientCertificate', 'ActiveDirectoryOAuth', 'Raw', 'ManagedServiceIdentity'],
           },
         },
-        uri: {
-          type: 'string',
-          'x-ms-visibility': 'hideInUI',
-        },
-        method: {
-          type: 'string',
-          'x-ms-visibility': 'hideInUI',
-        },
         // Dynamic params
-        appService: {
-          type: 'object',
-          properties: {
-            operationId: {
-              required: true,
-              type: 'string',
-              title: 'Operation Id',
-              description: 'Operation Id',
-              'x-ms-dynamic-list': {
-                dynamicState: {
-                  operationId: 'getAppServiceOperations',
-                  parameters: {},
-                },
-                parameters: {},
-              },
+        operationId: {
+          required: true,
+          type: 'string',
+          title: 'Operation Id',
+          description: 'Operation Id',
+          'x-ms-dynamic-list': {
+            dynamicState: {
+              operationId: 'getAppServiceOperations',
+              parameters: {},
             },
+            parameters: {},
           },
-          required: ['operationId'],
         },
         operationDetails: {
           title: 'Operation Parameters',
@@ -81,7 +67,7 @@ export const appServiceActionManifest = {
             parameters: {
               type: 'object',
               operationId: {
-                parameterReference: 'appService.operationId',
+                parameterReference: 'operationId',
                 required: true,
               },
             },
@@ -102,13 +88,14 @@ export const appServiceActionManifest = {
         parameters: {
           type: 'object',
           operationId: {
-            parameterReference: 'appService.operationId',
+            parameterReference: 'operationId',
             required: true,
           },
         },
       },
     },
     isOutputsOptional: false,
+
     settings: {
       secureData: {},
       trackedProperties: {
