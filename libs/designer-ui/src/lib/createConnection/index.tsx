@@ -446,7 +446,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
               options={
                 connectionParameterSets?.values.map((paramSet, index) => ({
                   key: index,
-                  text: paramSet?.uiDefinition?.displayName,
+                  text: paramSet?.uiDefinition?.displayName ?? paramSet?.name,
                 })) ?? []
               }
             />
