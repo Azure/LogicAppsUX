@@ -15,8 +15,33 @@ import { isFunctionData } from './Function.Utils';
 import { isObjectType, isSchemaNodeExtended } from './Schema.Utils';
 import { defineMessages } from 'react-intl';
 
-export const collectErrorsForMapChecker = (_connections: ConnectionDictionary, _targetSchema: SchemaNodeDictionary): MapCheckerEntry[] => {
+export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _targetSchema: SchemaNodeDictionary): MapCheckerEntry[] => {
   const errors: MapCheckerEntry[] = [];
+
+  // Valid input types
+  Object.entries(connections).forEach(([_connectionKey, connectionValue]) => {
+    const node = connectionValue.self.node;
+
+    if (isFunctionData(node)) {
+      if (!functionHasRequiredInputs(node, connectionValue)) {
+        errors.push({
+          title: { message: mapCheckerResources.functionMissingInputsTitle },
+          description: { message: mapCheckerResources.functionMissingInputsBody, value: { functionName: node.displayName } },
+          severity: MapCheckerItemSeverity.Error,
+          reactFlowId: connectionValue.self.reactFlowKey,
+        });
+      }
+
+      if (functionConnectionHasTooManyInputs(node, connectionValue)) {
+        errors.push({
+          title: { message: mapCheckerResources.functionExceedsMaxInputsTitle },
+          description: { message: mapCheckerResources.functionExceedsMaxInputsBody, value: { functionName: node.displayName } },
+          severity: MapCheckerItemSeverity.Error,
+          reactFlowId: connectionValue.self.reactFlowKey,
+        });
+      }
+    }
+  });
 
   return errors;
 };
@@ -36,25 +61,7 @@ export const collectWarningsForMapChecker = (connections: ConnectionDictionary, 
             message: mapCheckerResources.functionInputTypeMismatchBody,
             value: { nodeName: node.displayName },
           },
-          severity: MapCheckerItemSeverity.Error,
-          reactFlowId: connectionValue.self.reactFlowKey,
-        });
-      }
-
-      if (!functionHasRequiredInputs(node, connectionValue)) {
-        warnings.push({
-          title: { message: mapCheckerResources.functionMissingInputsTitle },
-          description: { message: mapCheckerResources.functionMissingInputsBody, value: { functionName: node.displayName } },
-          severity: MapCheckerItemSeverity.Error,
-          reactFlowId: connectionValue.self.reactFlowKey,
-        });
-      }
-
-      if (functionConnectionHasTooManyInputs(node, connectionValue)) {
-        warnings.push({
-          title: { message: mapCheckerResources.functionExceedsMaxInputsTitle },
-          description: { message: mapCheckerResources.functionExceedsMaxInputsBody, value: { functionName: node.displayName } },
-          severity: MapCheckerItemSeverity.Error,
+          severity: MapCheckerItemSeverity.Warning,
           reactFlowId: connectionValue.self.reactFlowKey,
         });
       }
@@ -66,7 +73,7 @@ export const collectWarningsForMapChecker = (connections: ConnectionDictionary, 
             message: mapCheckerResources.schemaInputTypeMismatchBody,
             value: { nodeName: node.name },
           },
-          severity: MapCheckerItemSeverity.Error,
+          severity: MapCheckerItemSeverity.Warning,
           reactFlowId: connectionValue.self.reactFlowKey,
         });
       }

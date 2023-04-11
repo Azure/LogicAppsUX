@@ -9,8 +9,10 @@ import {
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { FunctionData } from '../../models/Function';
 import { FunctionCategory } from '../../models/Function';
+import { inputFromHandleId } from '../../utils/Connection.Utils';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
+import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import Tree from '../tree/Tree';
 import FunctionListHeader from './FunctionListHeader';
 import FunctionListItem from './FunctionListItem';
@@ -48,7 +50,7 @@ export const FunctionList = () => {
 
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  const isAddingInlineFunction = inlineFunctionInputOutputKeys.length === 2;
+  const isAddingInlineFunction = inlineFunctionInputOutputKeys.length > 0;
 
   const onFunctionItemClick = (selectedFunction: FunctionData) => {
     if (isAddingInlineFunction) {
@@ -57,6 +59,7 @@ export const FunctionList = () => {
 
       const reactFlowSource = inlineFunctionInputOutputKeys[0];
       const reactFlowDestination = inlineFunctionInputOutputKeys[1];
+      const reactFlowDestinationPort = inlineFunctionInputOutputKeys[2];
 
       const source = reactFlowSource.startsWith(sourcePrefix)
         ? flattenedSourceSchema[reactFlowSource]
@@ -65,7 +68,7 @@ export const FunctionList = () => {
         ? flattenedTargetSchema[reactFlowDestination]
         : currentFunctionNodes[reactFlowDestination];
 
-      dispatch(deleteConnection({ inputKey: reactFlowSource, outputKey: reactFlowDestination }));
+      dispatch(deleteConnection({ inputKey: reactFlowSource, outputKey: reactFlowDestination, port: reactFlowDestinationPort }));
 
       // Create connection between input and new function
       dispatch(
@@ -77,6 +80,11 @@ export const FunctionList = () => {
         })
       );
 
+      const destinationInput =
+        isSchemaNodeExtended(destination) || !reactFlowDestinationPort
+          ? undefined
+          : inputFromHandleId(reactFlowDestinationPort, destination);
+
       // Create connection between new function and output
       dispatch(
         makeConnection({
@@ -84,6 +92,7 @@ export const FunctionList = () => {
           reactFlowSource: newReactFlowKey,
           destination,
           reactFlowDestination,
+          specificInput: destinationInput,
         })
       );
 
