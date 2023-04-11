@@ -1,6 +1,5 @@
 import type { ConnectionReference } from '../../../common/models/workflow';
 import type { RootState } from '../../store';
-import { useOperationManifest, useOperationInfo } from '../selectors/actionMetadataSelector';
 import { ConnectionService, GatewayService } from '@microsoft/designer-client-services-logic-apps';
 import type { Connector } from '@microsoft/utils-logic-apps';
 import { useQuery } from 'react-query';
@@ -39,11 +38,9 @@ export const useGateways = (subscriptionId: string, connectorName: string) => {
 export const useSubscriptions = () => useQuery('subscriptions', async () => GatewayService().getSubscriptions());
 
 export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
-  // TODO: Revisit trying to conditionally ask for the connector from the service
-  const connectorFromManifest = useOperationManifest(useOperationInfo(nodeId)).data?.properties.connector;
   const storeConnectorId = useSelector((state: RootState) => state.operations.operationInfo[nodeId]?.connectorId);
   const connectorFromService = useConnector(storeConnectorId)?.data;
-  return connectorFromManifest ?? connectorFromService;
+  return connectorFromService;
 };
 
 export const useConnectionRefsByConnectorId = (connectorId?: string) => {
