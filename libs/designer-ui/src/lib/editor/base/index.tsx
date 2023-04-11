@@ -64,6 +64,7 @@ export interface BaseEditorProps {
   initialValue: ValueSegment[];
   children?: React.ReactNode;
   isTrigger?: boolean;
+  showCallbackTokens?: boolean;
   labelId?: string;
   label?: string;
   tokenPickerButtonEditorProps?: TokenPickerButtonEditorProps;
@@ -98,6 +99,7 @@ export const BaseEditor = ({
   children,
   labelId,
   isTrigger,
+  showCallbackTokens,
   tokenPickerButtonEditorProps,
   onFocus,
   onBlur,
@@ -183,7 +185,7 @@ export const BaseEditor = ({
           {autoLink ? <AutoLink /> : null}
           {clearEditor ? <ClearEditor showButton={false} /> : null}
           {singleValueSegment ? <SingleValueSegment /> : null}
-          <TokenTypeAheadPlugin openTokenPicker={openTokenPicker} />
+          {tokens ? <TokenTypeAheadPlugin openTokenPicker={openTokenPicker} /> : null}
           <OnBlur command={handleBlur} />
           <OnFocus command={handleFocus} />
           <ReadOnly readonly={readonly} />
@@ -192,12 +194,12 @@ export const BaseEditor = ({
           {tokens ? <DeleteTokenNode /> : null}
           {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
           {children}
-          {!isTrigger && tokens && getInTokenPicker()
+          {(!isTrigger || showCallbackTokens) && tokens && getInTokenPicker()
             ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, closeTokenPicker, tokenPickerClicked)
             : null}
         </div>
 
-        {!isTrigger && tokens && isEditorFocused && !getInTokenPicker() ? (
+        {(!isTrigger || showCallbackTokens) && tokens && isEditorFocused && !getInTokenPicker() ? (
           createPortal(
             <TokenPickerButtonNew openTokenPicker={openTokenPicker} showOnLeft={tokenPickerButtonEditorProps?.showOnLeft} />,
             document.body

@@ -40,6 +40,7 @@ export interface PanelHeaderProps {
   showCommentBox?: boolean;
   title?: string;
   includeTitle: boolean;
+  nodeId: string;
   commentChange(panelCommentChangeEvent?: string): void;
   onDismissButtonClicked?(): void;
   onRenderWarningMessage?(): JSX.Element;
@@ -101,6 +102,7 @@ export const PanelHeader = ({
   showCommentBox,
   title,
   includeTitle,
+  nodeId,
   commentChange,
   onDismissButtonClicked,
   onRenderWarningMessage,
@@ -227,6 +229,7 @@ export const PanelHeader = ({
             {includeTitle ? (
               <div className="msla-panel-card-title-container" hidden={isCollapsed}>
                 <PanelHeaderTitle
+                  key={nodeId}
                   titleId={titleId}
                   readOnlyMode={readOnlyMode}
                   renameTitleDisabled={renameTitleDisabled}

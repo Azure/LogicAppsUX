@@ -1,4 +1,59 @@
 # Logic Apps Designer
+### [2.0.32](https://github.com/Azure/LogicAppsUX/compare/v2.0.31...v2.0.32) (2023-04-11)
+
+
+### Logic Apps Designer Changes
+
+* HTTP + Swagger Operation ([#1907](https://github.com/Azure/LogicAppsUX/issues/1907)) ([614ab72](https://github.com/Azure/LogicAppsUX/commit/614ab72400611530ecf65bd31ea0c2d4c27818ee))
+
+### [2.0.31](https://github.com/Azure/LogicAppsUX/compare/v2.0.30...v2.0.31) (2023-04-11)
+
+### [2.0.30](https://github.com/Azure/LogicAppsUX/compare/v2.0.29...v2.0.30) (2023-04-10)
+
+
+### Logic Apps Designer Bug Fixes
+
+* SimpleQueryBuilder Serialization + Code Editor Fixes ([#1957](https://github.com/Azure/LogicAppsUX/issues/1957)) ([b7c3fb4](https://github.com/Azure/LogicAppsUX/commit/b7c3fb434e7b138d94508e6bef73b83f31fcb9dc))
+
+### [2.0.29](https://github.com/Azure/LogicAppsUX/compare/v2.0.28...v2.0.29) (2023-04-10)
+
+### [2.0.28](https://github.com/Azure/LogicAppsUX/compare/v2.0.27...v2.0.28) (2023-04-09)
+
+
+### Logic Apps Designer Bug Fixes
+
+* Make the caret in editors have consistent color with a11y contrast ([#1943](https://github.com/Azure/LogicAppsUX/issues/1943)) ([0d30e79](https://github.com/Azure/LogicAppsUX/commit/0d30e7905e145bfbf893f4ade376b6ad8242826e))
+
+### [2.0.27](https://github.com/Azure/LogicAppsUX/compare/v2.0.26...v2.0.27) (2023-04-08)
+
+### [2.0.26](https://github.com/Azure/LogicAppsUX/compare/v2.0.25...v2.0.26) (2023-04-07)
+
+
+### Logic Apps Designer Bug Fixes
+
+* Add validation for node metadata ([#1946](https://github.com/Azure/LogicAppsUX/issues/1946)) ([1372b64](https://github.com/Azure/LogicAppsUX/commit/1372b64762c23d38d6171899b328e3641fa418b3))
+* On escape of token picker, refocus on the editor ([#1937](https://github.com/Azure/LogicAppsUX/issues/1937)) ([43e724e](https://github.com/Azure/LogicAppsUX/commit/43e724ebf3dfcb8bf642987bddea6a6fe1f79ef8))
+* Removing SingleLine Plugin, Clickable typeahead plugin buttons ([#1950](https://github.com/Azure/LogicAppsUX/issues/1950)) ([8ced0bf](https://github.com/Azure/LogicAppsUX/commit/8ced0bf7213668fdbeb1555ea3a4a5d5eac5ae4c))
+
+### [2.0.25](https://github.com/Azure/LogicAppsUX/compare/v2.0.24...v2.0.25) (2023-04-07)
+
+
+### Logic Apps Designer Bug Fixes
+
+* Implementation of loops UI widgets ([#1925](https://github.com/Azure/LogicAppsUX/issues/1925)) ([9154253](https://github.com/Azure/LogicAppsUX/commit/91542534f8e47266e22fdc5ee36d88c59b8dbd21))
+
+
+### Logic Apps Designer Changes
+
+* Can now create Service Principal connections  ([#1935](https://github.com/Azure/LogicAppsUX/issues/1935)) ([85b9d45](https://github.com/Azure/LogicAppsUX/commit/85b9d45d174bfd530b091a9807edaacc36baac30))
+
+### [2.0.24](https://github.com/Azure/LogicAppsUX/compare/v2.0.23...v2.0.24) (2023-04-06)
+
+
+### Logic Apps Designer Bug Fixes
+
+* Conditional Bugs/ Other Bugs ([#1928](https://github.com/Azure/LogicAppsUX/issues/1928)) ([af4ad3d](https://github.com/Azure/LogicAppsUX/commit/af4ad3d722eed8a1a6706fab86877bee26167bc3))
+* Fix serializer to flatten paths for OpenAPI ([#1882](https://github.com/Azure/LogicAppsUX/issues/1882)) ([2ce3956](https://github.com/Azure/LogicAppsUX/commit/2ce395687d8d061d40461bb7f1640cb0fa0f4bbd))
 
 ### [2.0.23](https://github.com/Azure/LogicAppsUX/compare/v2.0.22...v2.0.23) (2023-04-05)
 
