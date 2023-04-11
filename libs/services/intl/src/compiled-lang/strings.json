@@ -2585,6 +2585,16 @@
       "value": "22"
     }
   ],
+  "IHMd3X": [
+    {
+      "type": 0,
+      "value": "Example: "
+    },
+    {
+      "type": 1,
+      "value": "url"
+    }
+  ],
   "IPbBB2": [
     {
       "type": 0,
@@ -5269,6 +5279,12 @@
       "value": "(UTC+05:00) Ekaterinburg"
     }
   ],
+  "eHgfpz": [
+    {
+      "type": 0,
+      "value": "Please enter a valid URL"
+    }
+  ],
   "eHgi14": [
     {
       "type": 0,
@@ -6751,6 +6767,12 @@
     {
       "type": 0,
       "value": "Error code: {errorCode}, Message: {message}."
+    }
+  ],
+  "qUMXpq": [
+    {
+      "type": 0,
+      "value": "Swagger Endpoint"
     }
   ],
   "qUWBUX": [

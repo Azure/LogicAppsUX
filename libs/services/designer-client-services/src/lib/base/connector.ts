@@ -105,16 +105,43 @@ export abstract class BaseConnectorService implements IConnectorService {
     return response;
   }
 
-  abstract getListDynamicValues(
+  async getListDynamicValues(
     connectionId: string | undefined,
     connectorId: string,
     operationId: string,
-    parameterAlias: string | undefined,
+    _parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any,
     nodeInputs: any,
     nodeMetadata: any
-  ): Promise<ListDynamicValue[]>;
+  ): Promise<ListDynamicValue[]> {
+    const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
+    const { operationId: dynamicOperation } = dynamicState;
+
+    const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
+    const configuration = await getConfiguration(connectionId ?? '');
+
+    if (this._isClientSupportedOperation(connectorId, operationId)) {
+      if (!this.options.valuesClient[dynamicOperation]) {
+        throw new UnsupportedException(`Operation ${dynamicOperation} is not implemented by the values client.`);
+      }
+      return this.options.valuesClient[dynamicOperation]({
+        operationId,
+        parameters: invokeParameters,
+        configuration,
+        nodeInputs,
+        nodeMetadata,
+      });
+    }
+
+    const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`;
+    const response = await httpClient.post({
+      uri,
+      queryParameters: { 'api-version': apiVersion },
+      content: { parameters: invokeParameters, configuration },
+    });
+    return this._getResponseFromDynamicApi(response, uri);
+  }
 
   async getLegacyDynamicSchema(
     connectionId: string,
@@ -145,16 +172,47 @@ export abstract class BaseConnectorService implements IConnectorService {
       : { properties: response, type: Types.Object };
   }
 
-  abstract getDynamicSchema(
+  async getDynamicSchema(
     connectionId: string | undefined,
     connectorId: string,
     operationId: string,
-    parameterAlias: string | undefined,
+    _parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any,
     nodeInputs: any,
     nodeMetadata: any
-  ): Promise<OpenAPIV2.SchemaObject>;
+  ): Promise<OpenAPIV2.SchemaObject> {
+    const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
+    const {
+      extension: { operationId: dynamicOperation },
+      isInput,
+    } = dynamicState;
+
+    const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
+    const configuration = await getConfiguration(connectionId ?? '');
+
+    if (this._isClientSupportedOperation(connectorId, operationId)) {
+      if (!this.options.schemaClient[dynamicOperation]) {
+        throw new UnsupportedException(`Operation ${dynamicOperation} is not implemented by the schema client.`);
+      }
+      return this.options.schemaClient[dynamicOperation]({
+        operationId,
+        parameters: invokeParameters,
+        configuration,
+        isInput,
+        nodeInputs,
+        nodeMetadata,
+      });
+    }
+
+    const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`;
+    const response = await httpClient.post({
+      uri,
+      queryParameters: { 'api-version': apiVersion },
+      content: { parameters: invokeParameters, configuration },
+    });
+    return this._getResponseFromDynamicApi(response, uri);
+  }
 
   protected _isClientSupportedOperation(connectorId: string, operationId: string): boolean {
     return this.options.clientSupportedOperations.some(

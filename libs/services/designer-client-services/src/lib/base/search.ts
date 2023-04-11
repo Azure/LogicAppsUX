@@ -322,6 +322,8 @@ export function getClientBuiltInOperations(showStatefulOperations = false): Disc
     ClientOperationsData.delayUntilOperation,
     ClientOperationsData.httpActionOperation,
     ClientOperationsData.httpTriggerOperation,
+    ClientOperationsData.httpSwaggerActionOperation,
+    ClientOperationsData.httpSwaggerTriggerOperation,
     ClientOperationsData.httpWebhookActionOperation,
     ClientOperationsData.httpWebhookTriggerOperation,
     ClientOperationsData.initializeVariableOperation,
