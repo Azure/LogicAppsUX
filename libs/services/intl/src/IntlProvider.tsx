@@ -4,7 +4,17 @@ import type { MessageFormatElement } from 'react-intl';
 import { IntlProvider as ReactIntlProvider } from 'react-intl';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchInterval: false,
+      refetchIntervalInBackground: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
+    },
+  },
+});
 
 export interface IntlProviderProps {
   locale: string;
