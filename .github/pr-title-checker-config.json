@@ -1,6 +1,6 @@
 {
   "LABEL": {
-    "name": "PR Title must follow the Conventional Commits Format",
+    "name": "ConventionalCommitMessage",
     "color": "EEEEEE"
   },
   "CHECKS": {
@@ -10,6 +10,7 @@
   },
   "MESSAGES": {
     "success": "PR Message follows Standards",
-    "failure": "Please modify your PR title to match the conventional commits format: https://www.conventionalcommits.org/"
+    "failure": "Please modify your PR title to match the conventional commits format: https://www.conventionalcommits.org/",
+    "notice": "Please modify your PR title to match the conventional commits format: https://www.conventionalcommits.org/"
   }
 }
