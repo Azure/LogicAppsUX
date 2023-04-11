@@ -126,7 +126,7 @@ export const DesignerCommandBar = ({
       items={items}
       ariaLabel="Use left and right arrow keys to navigate between commands"
       styles={{
-        root: { borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}` },
+        root: { borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`, padding: '4px 8px' },
       }}
     />
   );

@@ -320,7 +320,7 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
         return {
           connectorId: httpConnectorId,
           operationId:
-            definition.inputs?.metadata?.apiDefinitionUrl && equals(definition.inputs?.metadata?.swaggerSource, 'custom')
+            definition?.metadata?.apiDefinitionUrl && equals(definition?.metadata?.swaggerSource, 'custom')
               ? isTrigger
                 ? httpswaggertrigger
                 : httpswaggeraction

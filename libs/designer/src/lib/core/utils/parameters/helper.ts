@@ -1581,7 +1581,7 @@ async function loadDynamicData(
     );
   }
 
-  if (Object.keys(dependencies.inputs).length) {
+  if (Object.keys(dependencies?.inputs ?? {}).length) {
     loadDynamicContentForInputsInNode(
       nodeId,
       dependencies.inputs,

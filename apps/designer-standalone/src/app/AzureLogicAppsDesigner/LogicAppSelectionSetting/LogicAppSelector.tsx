@@ -39,13 +39,15 @@ export const LogicAppSelector = () => {
       };
     }) ?? [];
   const options =
-    workflows?.value?.map<IDropdownOption>((workflow) => {
-      const name = workflow.name?.split('/')[1];
-      return {
-        key: name ?? '',
-        text: name ?? '',
-      };
-    }) ?? [];
+    workflows?.value
+      ?.map<IDropdownOption>((workflow) => {
+        const name = workflow.name?.split('/')[1];
+        return {
+          key: name ?? '',
+          text: name ?? '',
+        };
+      })
+      .sort((a, b) => a.text.localeCompare(b.text)) ?? [];
 
   return (
     <Stack {...columnProps}>
