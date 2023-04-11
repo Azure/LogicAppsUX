@@ -1,7 +1,7 @@
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
-import TokenPickerButton from '../editor/base/plugins/TokenPickerButton';
+import TokenPickerButtonLegacy from '../editor/base/plugins/TokenPickerButtonLegacy';
 import type { EditorContentChangedEventArgs, EditorLanguage } from '../editor/monaco';
 import { MonacoEditor as Editor } from '../editor/monaco';
 import { buildInlineCodeTextFromToken } from './util';
@@ -55,6 +55,11 @@ export function CodeEditor({
     setInTokenPicker(!getInTokenPicker());
   };
 
+  const closeTokenPicker = () => {
+    setInTokenPicker(false);
+    codeEditorRef.current?.focus();
+  };
+
   const onClickTokenPicker = (b: boolean) => {
     setInTokenPicker(b);
   };
@@ -90,16 +95,19 @@ export function CodeEditor({
         onContentChanged={handleContentChanged}
         onFocus={handleFocus}
         onBlur={handleBlur}
+        openTokenPicker={handleShowTokenPicker}
       />
       {showTokenPickerButton || getInTokenPicker() ? (
-        <TokenPickerButton
+        <TokenPickerButtonLegacy
           labelId={callOutLabelId}
           showTokenPicker={getInTokenPicker()}
           setShowTokenPicker={handleShowTokenPicker}
           codeEditor={codeEditorRef.current}
         />
       ) : null}
-      {getInTokenPicker() ? getTokenPicker?.(editorId, callOutLabelId, undefined, undefined, onClickTokenPicker, tokenClicked) : null}
+      {getInTokenPicker()
+        ? getTokenPicker?.(editorId, callOutLabelId, undefined, closeTokenPicker, onClickTokenPicker, tokenClicked)
+        : null}
     </div>
   );
 }

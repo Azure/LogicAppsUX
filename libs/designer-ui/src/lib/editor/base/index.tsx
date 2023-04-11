@@ -15,8 +15,8 @@ import { ReadOnly } from './plugins/ReadOnly';
 import SingleValueSegment from './plugins/SingleValueSegment';
 import { TokenTypeAheadPlugin } from './plugins/TokenTypeahead';
 import { TreeView } from './plugins/TreeView';
-import type { TokenPickerButtonEditorProps } from './plugins/tokenpickerbuttonnew';
-import { TokenPickerButtonNew } from './plugins/tokenpickerbuttonnew';
+import type { TokenPickerButtonEditorProps } from './plugins/tokenpickerbutton';
+import { TokenPickerButton } from './plugins/tokenpickerbutton';
 import EditorTheme from './themes/editorTheme';
 import { parseSegments } from './utils/parsesegments';
 import type { ICalloutProps } from '@fluentui/react';
@@ -201,7 +201,7 @@ export const BaseEditor = ({
 
         {(!isTrigger || showCallbackTokens) && tokens && isEditorFocused && !getInTokenPicker() ? (
           createPortal(
-            <TokenPickerButtonNew openTokenPicker={openTokenPicker} showOnLeft={tokenPickerButtonEditorProps?.showOnLeft} />,
+            <TokenPickerButton openTokenPicker={openTokenPicker} showOnLeft={tokenPickerButtonEditorProps?.showOnLeft} />,
             document.body
           )
         ) : (

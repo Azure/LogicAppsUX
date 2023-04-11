@@ -3,6 +3,7 @@ import { registerWorkflowLanguageProviders } from '../../workflow/languageservic
 import { useTheme } from '@fluentui/react';
 import Editor, { loader } from '@monaco-editor/react';
 import type { IScrollEvent, editor } from 'monaco-editor';
+import { KeyCode, KeyMod } from 'monaco-editor';
 import type { MutableRefObject } from 'react';
 import { useState, useEffect, forwardRef, useRef } from 'react';
 
@@ -47,6 +48,7 @@ export interface MonacoProps extends MonacoOptions {
   onScrollChanged?(e: IScrollEvent): void;
   onEditorRef?(editor: editor.IStandaloneCodeEditor | undefined): void;
   onMouseDown?(e: editor.IEditorMouseEvent): void;
+  openTokenPicker?(): void;
 }
 
 export interface MonacoOptions {
@@ -102,6 +104,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       onScrollChanged,
       onEditorRef,
       onMouseDown,
+      openTokenPicker,
       label,
       ...options
     },
@@ -202,6 +205,15 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       currentRef.current?.layout();
     };
 
+    const openTokenPickerAction: editor.IActionDescriptor = {
+      id: 'open-tokenpicker',
+      label: 'Open TokenPicker',
+      keybindings: [KeyMod.Alt | KeyCode.Slash],
+      run: function (): void | Promise<void> {
+        openTokenPicker?.();
+      },
+    };
+
     const handleEditorMounted = (editor: editor.IStandaloneCodeEditor) => {
       currentRef.current = editor;
 
@@ -233,6 +245,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       editor.onDidLayoutChange(handleDidLayoutChange);
       editor.onDidScrollChange(handleDidScrollChange);
       editor.onMouseDown(handleMouseDown);
+      editor.addAction(openTokenPickerAction);
       onEditorLoaded?.();
     };
 
