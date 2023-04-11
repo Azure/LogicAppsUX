@@ -1,6 +1,6 @@
 import { TokenPickerMode } from '../../../../tokenpicker';
 import type { IIconProps } from '@fluentui/react';
-import { IconButton } from '@fluentui/react';
+import { css, IconButton } from '@fluentui/react';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import { Depths } from '@fluentui/theme';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -95,7 +95,7 @@ export const TokenPickerButtonNew = ({ showOnLeft, openTokenPicker }: TokenPicke
     <>
       {anchorKey ? (
         <div
-          className="msla-token-picker-entrypoint-button-container"
+          className={css('msla-token-picker-entrypoint-button-container')}
           ref={boxRef}
           onMouseDown={(e) => e.preventDefault()}
           style={{ boxShadow: Depths.depth4 }}
