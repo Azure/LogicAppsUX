@@ -12,7 +12,17 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { useSelector } from 'react-redux';
 import { Outlet, useOutletContext } from 'react-router-dom';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchInterval: false,
+      refetchIntervalInBackground: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
+    },
+  },
+});
 
 export const ExportApp: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
