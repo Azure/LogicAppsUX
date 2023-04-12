@@ -2205,6 +2205,12 @@
       "value": "Must provide name of parameter."
     }
   ],
+  "FT3jt6": [
+    {
+      "type": 0,
+      "value": "Webhook reference information"
+    }
+  ],
   "FUhNu4": [
     {
       "type": 0,
@@ -2544,6 +2550,16 @@
     {
       "type": 0,
       "value": "22"
+    }
+  ],
+  "IHMd3X": [
+    {
+      "type": 0,
+      "value": "Example: "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "IPbBB2": [
@@ -3706,12 +3722,6 @@
       "value": "암호"
     }
   ],
-  "SGxmEY": [
-    {
-      "type": 0,
-      "value": "사전 입력"
-    }
-  ],
   "SJFVxf": [
     {
       "type": 0,
@@ -4856,6 +4866,12 @@
       "value": "(UTC+02:00) 칼리닌그라드"
     }
   ],
+  "bSZ0lL": [
+    {
+      "type": 0,
+      "value": "Callback url"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -5198,6 +5214,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) 예카테린부르크"
+    }
+  ],
+  "eHgfpz": [
+    {
+      "type": 0,
+      "value": "Please enter a valid URL"
     }
   ],
   "eHgi14": [
@@ -6459,6 +6481,12 @@
       "value": "(UTC-03:00) 살바도르"
     }
   ],
+  "ox2Ou7": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON"
+    }
+  ],
   "oxH1L/": [
     {
       "type": 0,
@@ -6661,6 +6689,12 @@
     {
       "type": 0,
       "value": "오류 코드: {errorCode}, 메시지: {message}."
+    }
+  ],
+  "qUMXpq": [
+    {
+      "type": 0,
+      "value": "Swagger Endpoint"
     }
   ],
   "qUWBUX": [
