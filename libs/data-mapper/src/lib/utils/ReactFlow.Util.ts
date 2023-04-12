@@ -9,7 +9,7 @@ import {
   schemaNodeCardWidthDifference,
 } from '../constants/NodeConstants';
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { ConnectionDictionary } from '../models/Connection';
+import type { ConnectionDictionary, ConnectionUnit } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
 import { SchemaType } from '../models/Schema';
@@ -34,6 +34,12 @@ interface SimplifiedLayoutEdge {
 interface Size2D {
   width: number;
   height: number;
+}
+
+export interface ReactFlowIdParts {
+  sourceId: string;
+  destinationId: string | undefined;
+  portId: string | undefined;
 }
 
 // Hidden dummy node placed at 0,0 (same as source schema block) to allow initial load fitView to center diagram
@@ -476,8 +482,38 @@ export const createReactFlowConnectionId = (sourceId: string, targetId: string, 
 
   return result;
 };
+
+export const getSplitIdsFromReactFlowConnectionId = (reactFlowId: string): ReactFlowIdParts => {
+  const sourceDestSplit = reactFlowId.split(reactFlowConnectionIdSeparator);
+  const destPortSplit = sourceDestSplit.length > 1 ? sourceDestSplit[1].split(reactFlowConnectionPortSeparator) : [undefined, undefined];
+
+  return {
+    sourceId: sourceDestSplit[0],
+    destinationId: destPortSplit[0],
+    portId: destPortSplit[1],
+  };
+};
 export const getSourceIdFromReactFlowConnectionId = (reactFlowId: string): string => reactFlowId.split(reactFlowConnectionIdSeparator)[0];
 export const getDestinationIdFromReactFlowConnectionId = (reactFlowId: string): string =>
   reactFlowId.split(reactFlowConnectionIdSeparator)[1].split(reactFlowConnectionPortSeparator, 1)[0];
 export const getPortFromReactFlowConnectionId = (reactFlowId: string): string | undefined =>
   reactFlowId.split(reactFlowConnectionPortSeparator)[1];
+
+export const isNodeHighlighted = (
+  isCurrentNodeSelected: boolean,
+  connectionReactFlowIds: ReactFlowIdParts | undefined,
+  connectedNodes: ConnectionUnit[]
+): boolean => {
+  if (isCurrentNodeSelected || !connectionReactFlowIds) {
+    return false;
+  }
+
+  if (connectionReactFlowIds && connectionReactFlowIds.destinationId) {
+    return (
+      connectedNodes.some((node) => node.reactFlowKey === connectionReactFlowIds.sourceId) &&
+      connectedNodes.some((node) => node.reactFlowKey === connectionReactFlowIds.destinationId)
+    );
+  } else {
+    return connectedNodes.some((node) => node.reactFlowKey === connectionReactFlowIds.sourceId);
+  }
+};

@@ -2,9 +2,11 @@ import { ReactFlowNodeType } from '../../../constants/ReactFlowConstants';
 import { customTokens } from '../../../core';
 import { deleteCurrentlySelectedItem, setSelectedItem } from '../../../core/state/DataMapSlice';
 import type { RootState } from '../../../core/state/Store';
+import { collectSourceNodesForConnectionChain, collectTargetNodesForConnectionChain } from '../../../utils/Connection.Utils';
+import { isNodeHighlighted } from '../../../utils/ReactFlow.Util';
 import { FunctionIcon } from '../../functionIcon/FunctionIcon';
 import HandleWrapper from './../HandleWrapper';
-import { errorCardStyles, getStylesForSharedState, selectedCardStyles } from './../NodeCard';
+import { errorCardStyles, getStylesForSharedState, highlightedCardStyles, selectedCardStyles } from './../NodeCard';
 import type { FunctionCardProps } from './FunctionCard';
 import { inputsValid, shouldDisplaySourceHandle, shouldDisplayTargetHandle, useFunctionCardStyles } from './FunctionCard';
 import { Button, mergeClasses, PresenceBadge, Text, tokens, Tooltip } from '@fluentui/react-components';
@@ -25,11 +27,28 @@ export const SimpleFunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
+  const selectedItemKeyParts = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKeyParts);
   const sourceNodeConnectionBeingDrawnFromId = useSelector((state: RootState) => state.dataMap.sourceNodeConnectionBeingDrawnFromId);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   const [isCardHovered, setIsCardHovered] = useState<boolean>(false);
+
+  const connectedNodes = useMemo(
+    () =>
+      reactFlowId && connections[reactFlowId]
+        ? [
+            ...collectSourceNodesForConnectionChain(connections[reactFlowId], connections),
+            ...collectTargetNodesForConnectionChain(connections[reactFlowId], connections),
+          ]
+        : [],
+    // Only want to update when that specific connection updates
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [reactFlowId, connections[reactFlowId]]
+  );
   const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
+  const isCurrentNodeHighlighted = useMemo<boolean>(() => {
+    return isNodeHighlighted(isCurrentNodeSelected, selectedItemKeyParts, connectedNodes);
+  }, [connectedNodes, isCurrentNodeSelected, selectedItemKeyParts]);
 
   const intl = useIntl();
   const contextMenu = useCardContextMenu();
@@ -66,12 +85,17 @@ export const SimpleFunctionCard = (props: NodeProps<FunctionCardProps>) => {
     return inputsValid(reactFlowId, functionData, connections);
   }, [connections, reactFlowId, functionData]);
 
-  const cardStyle =
-    isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId
-      ? { ...selectedCardStyles, backgroundColor: customTokens[functionBranding.colorTokenName] }
-      : areCurrentInputsValid
-      ? { backgroundColor: customTokens[functionBranding.colorTokenName] }
-      : { ...errorCardStyles, backgroundColor: customTokens[functionBranding.colorTokenName] };
+  let cardStyle: React.CSSProperties = {
+    backgroundColor: customTokens[functionBranding.colorTokenName],
+  };
+
+  if (isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId) {
+    cardStyle = { ...selectedCardStyles, ...cardStyle };
+  } else if (isCurrentNodeHighlighted) {
+    cardStyle = { ...highlightedCardStyles, ...cardStyle };
+  } else if (!areCurrentInputsValid) {
+    cardStyle = { ...errorCardStyles, ...cardStyle };
+  }
 
   return (
     <div

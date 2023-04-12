@@ -54,6 +54,14 @@ export const selectedCardStyles = {
   boxShadow: tokens.shadow4,
 };
 
+export const highlightedCardStyles = {
+  outlineWidth: tokens.strokeWidthThick,
+  outlineColor: tokens.colorBrandStroke2,
+  outlineStyle: 'solid',
+  opacity: 1,
+  boxShadow: tokens.shadow4,
+};
+
 export const errorCardStyles = {
   outlineWidth: tokens.strokeWidthThick,
   outlineColor: tokens.colorPaletteRedBackground3,
