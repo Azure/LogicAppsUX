@@ -6,7 +6,11 @@ import {
 } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { getSmoothStepEdge } from '../../utils/Edge.Utils';
-import { getDestinationIdFromReactFlowConnectionId, getSourceIdFromReactFlowConnectionId } from '../../utils/ReactFlow.Util';
+import {
+  getDestinationIdFromReactFlowConnectionId,
+  getPortFromReactFlowConnectionId,
+  getSourceIdFromReactFlowConnectionId,
+} from '../../utils/ReactFlow.Util';
 import { ToolboxPanelTabs } from '../canvasToolbox/CanvasToolbox';
 import { Button, makeStyles, shorthands, tokens, Tooltip } from '@fluentui/react-components';
 import { Add20Filled } from '@fluentui/react-icons';
@@ -118,6 +122,7 @@ export const ConnectionEdge = (props: EdgeProps) => {
       setInlineFunctionInputOutputKeys({
         inputKey: getSourceIdFromReactFlowConnectionId(id),
         outputKey: getDestinationIdFromReactFlowConnectionId(id),
+        port: getPortFromReactFlowConnectionId(id),
       })
     );
 

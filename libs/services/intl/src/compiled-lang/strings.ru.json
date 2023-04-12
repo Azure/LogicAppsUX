@@ -2319,6 +2319,12 @@
       "value": "Must provide name of parameter."
     }
   ],
+  "FT3jt6": [
+    {
+      "type": 0,
+      "value": "Webhook reference information"
+    }
+  ],
   "FUhNu4": [
     {
       "type": 0,
@@ -2707,6 +2713,16 @@
     {
       "type": 0,
       "value": "22"
+    }
+  ],
+  "IHMd3X": [
+    {
+      "type": 0,
+      "value": "Example: "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "IPbBB2": [
@@ -3975,12 +3991,6 @@
       "value": "Пароль"
     }
   ],
-  "SGxmEY": [
-    {
-      "type": 0,
-      "value": "Введите словарь"
-    }
-  ],
   "SJFVxf": [
     {
       "type": 0,
@@ -5141,6 +5151,12 @@
       "value": "(UTC+02:00) Калининград"
     }
   ],
+  "bSZ0lL": [
+    {
+      "type": 0,
+      "value": "Callback url"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -5487,6 +5503,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Екатеринбург"
+    }
+  ],
+  "eHgfpz": [
+    {
+      "type": 0,
+      "value": "Please enter a valid URL"
     }
   ],
   "eHgi14": [
@@ -6813,6 +6835,12 @@
       "value": "(UTC-03:00) Сальвадор"
     }
   ],
+  "ox2Ou7": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON"
+    }
+  ],
   "oxH1L/": [
     {
       "type": 0,
@@ -7039,6 +7067,12 @@
     {
       "type": 0,
       "value": "\"."
+    }
+  ],
+  "qUMXpq": [
+    {
+      "type": 0,
+      "value": "Swagger Endpoint"
     }
   ],
   "qUWBUX": [
