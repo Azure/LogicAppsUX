@@ -5,14 +5,15 @@ import { ValidationErrorCode, ValidationException } from '@microsoft/utils-logic
 import React from 'react';
 import { useIntl } from 'react-intl';
 
-export enum DynamicallyAddedParameterType {
-  Text = 'Text',
-  File = 'File',
-  Email = 'Email',
-  Boolean = 'Boolean',
-  Number = 'Number',
-  Date = 'Date',
-}
+export const DynamicallyAddedParameterType = {
+  Text: 'Text',
+  File: 'File',
+  Email: 'Email',
+  Boolean: 'Boolean',
+  Number: 'Number',
+  Date: 'Date',
+} as const;
+type DynamicallyAddedParameterType = (typeof DynamicallyAddedParameterType)[keyof typeof DynamicallyAddedParameterType];
 
 export interface FloatingActionMenuItem {
   id: string;
