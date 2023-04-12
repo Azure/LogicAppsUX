@@ -16,7 +16,7 @@ export interface PickerCallbackHandler {
   onShowPicker: CallbackHandler;
   onFolderNavigated: CallbackHandler;
   onTitleSelected: CallbackHandler;
-  fetchPickerItems: CallbackHandler;
+  fetchPickerItems: (isRoot?: boolean) => void;
 }
 
 export interface FilePickerEditorProps extends BaseEditorProps {
@@ -50,7 +50,7 @@ export const FilePickerEditor = ({
     if (!showPicker) {
       onShowPicker?.();
       setShowPicker(true);
-      fetchPickerItems?.();
+      fetchPickerItems?.(true /*isRoot*/);
     }
   };
 

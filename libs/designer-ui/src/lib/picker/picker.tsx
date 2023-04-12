@@ -28,7 +28,7 @@ export interface PickerProps {
   onCancel?: CallbackHandler;
   handleFolderNavigation?: CallbackHandler;
   handleTitleSelected?: CallbackHandler;
-  fetchPickerItems?: CallbackHandler;
+  fetchPickerItems?: (isRoot?: boolean) => void;
 }
 
 export const Picker = ({ visible, onCancel, anchorId, currentPathSegments, files, loadingFiles }: PickerProps) => {

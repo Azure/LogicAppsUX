@@ -70,6 +70,7 @@ export const getFilePickerCallbacks = (
   connectionReference: ConnectionReference,
   dispatch: Dispatch
 ): PickerCallbackHandler => {
+  console.log(parameter);
   // console.log(nodeId, groupId, parameter, connectionReference);
   const handleShowPicker = () => {
     if (!parameter.pickerInfo) return;
@@ -84,7 +85,10 @@ export const getFilePickerCallbacks = (
     );
   };
 
-  const handleFetchPickerItems = async () => {
+  const handleFetchPickerItems = async (isRoot?: boolean) => {
+    if (isRoot) {
+      console.log('isRoot');
+    }
     // const browseMetadata = getBrowseMetadataForParameter(parameter);
     const pickerInfo = getPickerInfoForParameter(parameter);
     const pickerItems: PickerItemInfo[] = [];
@@ -103,7 +107,7 @@ export const getFilePickerCallbacks = (
   };
 };
 
-const getPickerInfoForParameter = (parameter: ParameterInfo): BrowseMetadata | null => {
+const getPickerInfoForParameter = (parameter: ParameterInfo): BrowseMetadata | undefined => {
   const parameterDynamicTree = parameter.pickerInfo?.dynamicTree;
   if (parameterDynamicTree) {
     return {
@@ -119,30 +123,9 @@ const getPickerInfoForParameter = (parameter: ParameterInfo): BrowseMetadata | n
       mediaProperty: '',
       dynamicState: parameterDynamicTree.dynamicState,
     };
-  } else return null;
+  }
+  return undefined;
 };
-
-// const getBrowseMetadataForParameter = (parameter: ParameterInfo) => {
-//   if (!parameter.pickerInfo) return;
-//   const parameterDynamicTree = parameter.pickerInfo.dynamicTree;
-//   if (parameterDynamicTree) {
-//     return {
-//       rootFolderInfo: {
-//         referenceParameters: parameterDynamicTree.open.parameters,
-//       },
-//       selectFolderInfo: {
-//         referenceParameters: parameterDynamicTree.browse.parameters,
-//       },
-//       collectionProperty: null,
-//       titleProperty: null,
-//       folderProperty: null,
-//       mediaProperty: null,
-//       dynamicState: parameterDynamicTree.dynamicState,
-//     };
-//   } else {
-
-//   }
-// };
 
 const getFolderItemsUsingInvokeOperationEndpoint = async () => {
   console.log('getFolderItemsUsingInvokeOperationEndpoint');
