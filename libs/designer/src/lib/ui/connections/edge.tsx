@@ -92,7 +92,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const multipleSources = edgeSources.length > 1;
   const multipleTargets = edgeTargets.length > 1;
   const onlyEdge = !multipleSources && !multipleTargets;
-  const isLeaf = onlyEdge && edgeSources.length === 1;
+  const isLeaf = edgeTargets.length === 0;
 
   const dynamicMidEdgeY =
     multipleSources && !multipleTargets ? targetY - 64 : multipleTargets && !multipleSources ? sourceY + 64 : edgeCenterY;
