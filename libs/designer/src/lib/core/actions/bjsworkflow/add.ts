@@ -10,7 +10,7 @@ import { changePanelNode, isolateTab, showDefaultTabs } from '../../state/panel/
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
-import { WorkflowState } from '../../state/workflow/workflowInterfaces';
+import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
@@ -310,14 +310,13 @@ const getOperationType = (operation: DiscoveryOperation<DiscoveryResultTypes>): 
     : operationType;
 };
 
-export const getRootNodeDetails = (workflowState: WorkflowState, connectorId: string) : string | undefined => 
-{
+export const getRootNodeDetails = (workflowState: WorkflowState, connectorId: string): string | undefined => {
   if (workflowState.graph?.children && connectorId.indexOf(Constants.INVOKER_CONNECTION.DATAVERSE_CONNECTOR_ID) > -1) {
-  for (const child of workflowState.graph.children) {
-      if (workflowState.graph?.id === "root") {
-        return child.id 
+    for (const child of workflowState.graph.children) {
+      if (workflowState.graph?.id === 'root') {
+        return child.id;
       }
+    }
   }
-}
   return undefined;
-}
+};
