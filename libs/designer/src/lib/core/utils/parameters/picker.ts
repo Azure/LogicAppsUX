@@ -10,6 +10,22 @@ import { isDynamicTreeExtension, isLegacyDynamicValuesExtension } from '@microso
 import { guid } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
+export interface FolderBrowseInfo {
+  operationId?: string;
+  inputParameters?: Record<string, ParameterInfo>; // sample data - { parameterKey: ParameterInfo }
+  referenceParameters?: Record<string, any>; // sample data - { parameterKey: constant/parameter reference }
+}
+
+export interface BrowseMetadata {
+  rootFolderInfo: FolderBrowseInfo;
+  selectFolderInfo: FolderBrowseInfo;
+  collectionProperty: string;
+  titleProperty: string;
+  folderProperty: string;
+  mediaProperty: string;
+  dynamicState?: any;
+}
+
 export const requiresFilePickerEditor = (parameter: InputParameter) => {
   const { dynamicValues } = parameter;
   return (
@@ -70,6 +86,7 @@ export const getFilePickerCallbacks = (
 
   const handleFetchPickerItems = async () => {
     // const browseMetadata = getBrowseMetadataForParameter(parameter);
+    const pickerInfo = getPickerInfoForParameter(parameter);
     const pickerItems: PickerItemInfo[] = [];
     const getFolderItemsPromise = OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)
       ? await getFolderItemsUsingInvokeOperationEndpoint()
@@ -84,6 +101,25 @@ export const getFilePickerCallbacks = (
     onTitleSelected: handleTitleSelected,
     fetchPickerItems: handleFetchPickerItems,
   };
+};
+
+const getPickerInfoForParameter = (parameter: ParameterInfo): BrowseMetadata | null => {
+  const parameterDynamicTree = parameter.pickerInfo?.dynamicTree;
+  if (parameterDynamicTree) {
+    return {
+      rootFolderInfo: {
+        referenceParameters: parameterDynamicTree.open.parameters,
+      },
+      selectFolderInfo: {
+        referenceParameters: parameterDynamicTree.browse.parameters,
+      },
+      collectionProperty: '',
+      titleProperty: '',
+      folderProperty: '',
+      mediaProperty: '',
+      dynamicState: parameterDynamicTree.dynamicState,
+    };
+  } else return null;
 };
 
 // const getBrowseMetadataForParameter = (parameter: ParameterInfo) => {
@@ -109,10 +145,12 @@ export const getFilePickerCallbacks = (
 // };
 
 const getFolderItemsUsingInvokeOperationEndpoint = async () => {
+  console.log('getFolderItemsUsingInvokeOperationEndpoint');
   Promise.resolve({});
 };
 
 const getFolderItemsForPickerUsingSwagger = async () => {
+  console.log('getFolderItemsForPickerUsingSwagger');
   Promise.resolve({});
 };
 
