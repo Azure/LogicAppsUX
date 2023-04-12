@@ -173,4 +173,5 @@ export enum LogCategory {
   FunctionList = 'FunctionList',
   SchemaUtils = 'SchemaUtils',
   VsixCommands = 'VsixCommands',
+  DataMapSlice = 'DataMapSlice',
 }
