@@ -36,8 +36,7 @@ jobs:
           node-version: 16.x
 
       - run: npm ci
-      - run: npm run build-storybook
-
+      - run: npm run build:docs
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -46,9 +45,9 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: 'upload'
           skip_app_build: true
-          app_build_command: 'npm run build-storybook'
-          app_location: 'dist/storybook/designer'
-          output_location: 'dist/storybook/designer'
+          app_build_command: 'npm run build:docs'
+          app_location: 'dist/apps/logic-apps-ux-docs'
+          output_location: 'dist/apps/logic-apps-ux-docs'
 
   close_pull_request_job:
     if: (github.event_name == 'pull_request' && github.event.action == 'closed') && github.actor != 'csigs' &&  github.actor != 'azure-logic-apps-automation'

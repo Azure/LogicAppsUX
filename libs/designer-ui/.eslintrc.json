@@ -6,7 +6,7 @@
   },
   "overrides": [
     {
-      "files": ["*.test.ts", "*.test.tsx", "*.spec.tsx", "*.spec.ts", "*.stories.tsx"],
+      "files": ["*.test.ts", "*.test.tsx", "*.spec.tsx", "*.spec.ts"],
       "rules": {
         "react/jsx-no-literals": "off"
       }
