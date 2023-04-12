@@ -51,6 +51,12 @@ const config = {
             label: 'Docs',
           },
           {
+            to: 'changelog',
+            docId: 'changelog',
+            position: 'left',
+            label: 'Changelog',
+          },
+          {
             href: 'https://github.com/Azure/LogicAppsUX',
             label: 'GitHub',
             position: 'right',
