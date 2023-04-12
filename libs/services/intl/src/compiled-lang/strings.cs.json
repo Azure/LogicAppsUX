@@ -95,12 +95,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -603,6 +597,12 @@
     {
       "type": 0,
       "value": "(UTC-04:00) Caracas"
+    }
+  ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Add children (recursive)"
     }
   ],
   "23fENy": [
@@ -1479,6 +1479,12 @@
       "value": "Přidá celočíselný počet dní do předaného řetězcového časového razítka."
     }
   ],
+  "8yjjTX": [
+    {
+      "type": 0,
+      "value": "Connect via Service Principal"
+    }
+  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -1687,6 +1693,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangún)"
+    }
+  ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
   "AgrMqq": [
@@ -2311,6 +2323,12 @@
       "value": "Must provide name of parameter."
     }
   ],
+  "FT3jt6": [
+    {
+      "type": 0,
+      "value": "Webhook reference information"
+    }
+  ],
   "FUhNu4": [
     {
       "type": 0,
@@ -2699,6 +2717,16 @@
     {
       "type": 0,
       "value": "22"
+    }
+  ],
+  "IHMd3X": [
+    {
+      "type": 0,
+      "value": "Example: "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "IPbBB2": [
@@ -3737,6 +3765,12 @@
       "value": "Zahodit"
     }
   ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -3961,12 +3995,6 @@
       "value": "Heslo"
     }
   ],
-  "SGxmEY": [
-    {
-      "type": 0,
-      "value": "Zadejte slovník."
-    }
-  ],
   "SJFVxf": [
     {
       "type": 0,
@@ -4167,6 +4195,12 @@
     {
       "type": 0,
       "value": "ID žádosti klienta"
+    }
+  ],
+  "TeRxLv": [
+    {
+      "type": 0,
+      "value": "Use a service principal to connect using application permissions."
     }
   ],
   "TgcgXE": [
@@ -4789,6 +4823,12 @@
       "value": "Vrátí binární reprezentaci identifikátoru URI dat."
     }
   ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Add children"
+    }
+  ],
   "YHsAKl": [
     {
       "type": 0,
@@ -5113,6 +5153,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Kaliningrad"
+    }
+  ],
+  "bSZ0lL": [
+    {
+      "type": 0,
+      "value": "Callback url"
     }
   ],
   "bTrk+S": [
@@ -5461,6 +5507,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Jekatěrinburg"
+    }
+  ],
+  "eHgfpz": [
+    {
+      "type": 0,
+      "value": "Please enter a valid URL"
     }
   ],
   "eHgi14": [
@@ -6057,6 +6109,12 @@
       "value": "Test"
     }
   ],
+  "izS5yQ": [
+    {
+      "type": 0,
+      "value": "Learn more"
+    }
+  ],
   "j1VU25": [
     {
       "type": 0,
@@ -6409,6 +6467,12 @@
     {
       "type": 0,
       "value": "Zkratka pro actions('actionName').outputs.body"
+    }
+  ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
     }
   ],
   "lsKVU6": [
@@ -6767,6 +6831,12 @@
       "value": "(UTC-03:00) Salvador"
     }
   ],
+  "ox2Ou7": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON"
+    }
+  ],
   "oxH1L/": [
     {
       "type": 0,
@@ -6989,6 +7059,12 @@
     {
       "type": 1,
       "value": "message"
+    }
+  ],
+  "qUMXpq": [
+    {
+      "type": 0,
+      "value": "Swagger Endpoint"
     }
   ],
   "qUWBUX": [
@@ -7897,12 +7973,6 @@
     {
       "type": 0,
       "value": "Zadejte heslo jako prostý text nebo použijte zabezpečený parametr."
-    }
-  ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "Vstup editoru"
     }
   ],
   "xQQ9ko": [

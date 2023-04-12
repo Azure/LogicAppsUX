@@ -83,12 +83,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -546,6 +540,12 @@
     {
       "type": 0,
       "value": "(UTC-04:00) 카라카스"
+    }
+  ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Add children (recursive)"
     }
   ],
   "23fENy": [
@@ -1410,6 +1410,12 @@
       "value": "전달된 문자열 타임스탬프에 정수 일 수를 더합니다."
     }
   ],
+  "8yjjTX": [
+    {
+      "type": 0,
+      "value": "Connect via Service Principal"
+    }
+  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -1618,6 +1624,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) 양곤"
+    }
+  ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
   "AgrMqq": [
@@ -2193,6 +2205,12 @@
       "value": "Must provide name of parameter."
     }
   ],
+  "FT3jt6": [
+    {
+      "type": 0,
+      "value": "Webhook reference information"
+    }
+  ],
   "FUhNu4": [
     {
       "type": 0,
@@ -2532,6 +2550,16 @@
     {
       "type": 0,
       "value": "22"
+    }
+  ],
+  "IHMd3X": [
+    {
+      "type": 0,
+      "value": "Example: "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "IPbBB2": [
@@ -3497,6 +3525,12 @@
       "value": "취소"
     }
   ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -3686,12 +3720,6 @@
     {
       "type": 0,
       "value": "암호"
-    }
-  ],
-  "SGxmEY": [
-    {
-      "type": 0,
-      "value": "사전 입력"
     }
   ],
   "SJFVxf": [
@@ -3894,6 +3922,12 @@
     {
       "type": 0,
       "value": "클라이언트 요청 ID"
+    }
+  ],
+  "TeRxLv": [
+    {
+      "type": 0,
+      "value": "Use a service principal to connect using application permissions."
     }
   ],
   "TgcgXE": [
@@ -4508,6 +4542,12 @@
       "value": "데이터 URI의 이진 표현을 반환합니다."
     }
   ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Add children"
+    }
+  ],
   "YHsAKl": [
     {
       "type": 0,
@@ -4824,6 +4864,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) 칼리닌그라드"
+    }
+  ],
+  "bSZ0lL": [
+    {
+      "type": 0,
+      "value": "Callback url"
     }
   ],
   "bTrk+S": [
@@ -5168,6 +5214,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) 예카테린부르크"
+    }
+  ],
+  "eHgfpz": [
+    {
+      "type": 0,
+      "value": "Please enter a valid URL"
     }
   ],
   "eHgi14": [
@@ -5711,6 +5763,12 @@
       "value": "테스트"
     }
   ],
+  "izS5yQ": [
+    {
+      "type": 0,
+      "value": "Learn more"
+    }
+  ],
   "j1VU25": [
     {
       "type": 0,
@@ -6059,6 +6117,12 @@
     {
       "type": 0,
       "value": "actions('actionName').outputs.body의 축약형"
+    }
+  ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
     }
   ],
   "lsKVU6": [
@@ -6417,6 +6481,12 @@
       "value": "(UTC-03:00) 살바도르"
     }
   ],
+  "ox2Ou7": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON"
+    }
+  ],
   "oxH1L/": [
     {
       "type": 0,
@@ -6619,6 +6689,12 @@
     {
       "type": 0,
       "value": "오류 코드: {errorCode}, 메시지: {message}."
+    }
+  ],
+  "qUMXpq": [
+    {
+      "type": 0,
+      "value": "Swagger Endpoint"
     }
   ],
   "qUWBUX": [
@@ -7490,12 +7566,6 @@
     {
       "type": 0,
       "value": "일반 텍스트로 암호 입력 또는 보안 매개 변수 사용"
-    }
-  ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "편집기 입력"
     }
   ],
   "xQQ9ko": [

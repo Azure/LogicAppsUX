@@ -198,7 +198,6 @@ export const convertSchemaToReactFlowNodes = (
         width: calculateWidth(curDepth, maxLocalDepth),
         disabled: false,
         disableContextMenu: schemaType === SchemaType.Target,
-        error: false,
       },
       type: ReactFlowNodeType.SchemaNode,
       targetPosition: isSourceSchema ? Position.Right : Position.Left,
@@ -241,7 +240,6 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
         displayHandle: true,
         functionBranding: getFunctionBrandingForCategory(fnNode.category),
         disabled: false,
-        error: false,
         dataTestId: `${fnNode.key}-${idx}`, // For e2e testing
       },
       type: ReactFlowNodeType.FunctionNode,
@@ -265,7 +263,7 @@ export const convertToReactFlowEdges = (
   return simplifiedLayoutEdges
     .map<ReactFlowEdge>((simplifiedLayoutEdge) => {
       // Sort the resulting edges so that the selected edge is rendered last and thus on top of all other edges
-      const id = createReactFlowConnectionId(simplifiedLayoutEdge.srcRfId, simplifiedLayoutEdge.tgtRfId);
+      const id = createReactFlowConnectionId(simplifiedLayoutEdge.srcRfId, simplifiedLayoutEdge.tgtRfId, simplifiedLayoutEdge.tgtPort);
       return {
         id,
         source: simplifiedLayoutEdge.srcRfId,
@@ -415,7 +413,6 @@ const addChildNodesForOverview = (
     displayChevron: !isSourceSchema && sourceSchemaSpecified,
     displayHandle: false,
     disabled: false,
-    error: false,
     connectionStatus: !isSourceSchema && targetSchemaStates ? targetSchemaStates[curNode.key] : undefined,
   };
 
@@ -469,8 +466,18 @@ export const addSourceReactFlowPrefix = (key: string) => `${sourcePrefix}${key}`
 export const addTargetReactFlowPrefix = (key: string) => `${targetPrefix}${key}`;
 
 export const reactFlowConnectionIdSeparator = '-to-';
-export const createReactFlowConnectionId = (sourceId: string, targetId: string): string =>
-  `${sourceId}${reactFlowConnectionIdSeparator}${targetId}`;
+export const reactFlowConnectionPortSeparator = '-port-';
+export const createReactFlowConnectionId = (sourceId: string, targetId: string, port: string | undefined): string => {
+  let result = `${sourceId}${reactFlowConnectionIdSeparator}${targetId}`;
+
+  if (port) {
+    result = result + `${reactFlowConnectionPortSeparator}${port}`;
+  }
+
+  return result;
+};
 export const getSourceIdFromReactFlowConnectionId = (reactFlowId: string): string => reactFlowId.split(reactFlowConnectionIdSeparator)[0];
 export const getDestinationIdFromReactFlowConnectionId = (reactFlowId: string): string =>
-  reactFlowId.split(reactFlowConnectionIdSeparator)[1];
+  reactFlowId.split(reactFlowConnectionIdSeparator)[1].split(reactFlowConnectionPortSeparator, 1)[0];
+export const getPortFromReactFlowConnectionId = (reactFlowId: string): string | undefined =>
+  reactFlowId.split(reactFlowConnectionPortSeparator)[1];

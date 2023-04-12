@@ -169,8 +169,12 @@ export function TokenPicker({
             setIsDraggingExpressionEditor(false);
           }
         }}
-        onDismiss={() => {
-          editor?.focus();
+        onDismiss={(e) => {
+          if (e?.type === 'keydown' && (e as React.KeyboardEvent<HTMLElement>).key === 'Escape') {
+            editor?.focus();
+          } else {
+            editor?.blur();
+          }
           closeTokenPicker?.();
         }}
         onRestoreFocus={() => {

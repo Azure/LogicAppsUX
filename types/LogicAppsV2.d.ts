@@ -995,6 +995,7 @@ declare namespace LogicAppsV2 {
     inputsLink: {
       uri?: string;
       secureData?: Record<string, any>;
+      metadata?: Record<string, any>;
       contentSize: number;
     };
     outputsLink: {
@@ -1014,6 +1015,9 @@ declare namespace LogicAppsV2 {
       code: string;
       message: string;
     };
+    repetitionCount?: number;
+    iterationCount?: number;
+    repetitionIndexes?: Array<Record<string, any>>;
     duration?: string;
   }
 
@@ -1047,6 +1051,13 @@ declare namespace LogicAppsV2 {
       name: string;
       type: string;
     };
+  }
+
+  interface RunRepetition {
+    properties: WorkflowRunAction;
+    id: string;
+    name: string;
+    type: string;
   }
 
   /* Run instance definition types */

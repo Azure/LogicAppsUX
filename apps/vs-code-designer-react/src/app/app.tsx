@@ -109,7 +109,7 @@ export const App = () => {
     setStandardApp(undefined);
   };
 
-  const { refetch, isError, isFetching, isLoading, isRefetching } = useQuery<any>(['runInstance'], getRunInstance, {
+  const { refetch, isError, isFetching, isLoading, isRefetching } = useQuery<any>(['runInstance', { runId }], getRunInstance, {
     refetchOnWindowFocus: false,
     initialData: null,
     onSuccess: onRunInstanceSuccess,
@@ -135,7 +135,6 @@ export const App = () => {
   const designerCommandBar =
     readOnly && !isMonitoringView ? null : (
       <DesignerCommandBar
-        isMonitoringView={isMonitoringView}
         isDisabled={isError || isFetching || isLoading}
         isRefreshing={isRefetching}
         onRefresh={refetch}

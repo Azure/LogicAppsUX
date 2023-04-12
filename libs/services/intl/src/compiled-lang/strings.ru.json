@@ -99,12 +99,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -595,6 +589,12 @@
     {
       "type": 0,
       "value": "(UTC-04:00) Каракас"
+    }
+  ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Add children (recursive)"
     }
   ],
   "23fENy": [
@@ -1475,6 +1475,12 @@
       "value": "Добавляет целое число дней в метку времени строки, переданной в функцию"
     }
   ],
+  "8yjjTX": [
+    {
+      "type": 0,
+      "value": "Connect via Service Principal"
+    }
+  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -1683,6 +1689,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Янгон (Рангун)"
+    }
+  ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
   "AgrMqq": [
@@ -2307,6 +2319,12 @@
       "value": "Must provide name of parameter."
     }
   ],
+  "FT3jt6": [
+    {
+      "type": 0,
+      "value": "Webhook reference information"
+    }
+  ],
   "FUhNu4": [
     {
       "type": 0,
@@ -2695,6 +2713,16 @@
     {
       "type": 0,
       "value": "22"
+    }
+  ],
+  "IHMd3X": [
+    {
+      "type": 0,
+      "value": "Example: "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "IPbBB2": [
@@ -3733,6 +3761,12 @@
       "value": "Отменить"
     }
   ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -3957,12 +3991,6 @@
       "value": "Пароль"
     }
   ],
-  "SGxmEY": [
-    {
-      "type": 0,
-      "value": "Введите словарь"
-    }
-  ],
   "SJFVxf": [
     {
       "type": 0,
@@ -4163,6 +4191,12 @@
     {
       "type": 0,
       "value": "Идентификатор запроса клиента"
+    }
+  ],
+  "TeRxLv": [
+    {
+      "type": 0,
+      "value": "Use a service principal to connect using application permissions."
     }
   ],
   "TgcgXE": [
@@ -4785,6 +4819,12 @@
       "value": "Возвращает двоичное представление URI данных"
     }
   ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Add children"
+    }
+  ],
   "YHsAKl": [
     {
       "type": 0,
@@ -5109,6 +5149,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Калининград"
+    }
+  ],
+  "bSZ0lL": [
+    {
+      "type": 0,
+      "value": "Callback url"
     }
   ],
   "bTrk+S": [
@@ -5457,6 +5503,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Екатеринбург"
+    }
+  ],
+  "eHgfpz": [
+    {
+      "type": 0,
+      "value": "Please enter a valid URL"
     }
   ],
   "eHgi14": [
@@ -6057,6 +6109,12 @@
       "value": "Тест"
     }
   ],
+  "izS5yQ": [
+    {
+      "type": 0,
+      "value": "Learn more"
+    }
+  ],
   "j1VU25": [
     {
       "type": 0,
@@ -6415,6 +6473,12 @@
       "value": "Сокращение для actions('actionName').outputs.body"
     }
   ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
@@ -6771,6 +6835,12 @@
       "value": "(UTC-03:00) Сальвадор"
     }
   ],
+  "ox2Ou7": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON"
+    }
+  ],
   "oxH1L/": [
     {
       "type": 0,
@@ -6997,6 +7067,12 @@
     {
       "type": 0,
       "value": "\"."
+    }
+  ],
+  "qUMXpq": [
+    {
+      "type": 0,
+      "value": "Swagger Endpoint"
     }
   ],
   "qUWBUX": [
@@ -7905,12 +7981,6 @@
     {
       "type": 0,
       "value": "Введите пароль в виде обычного текста или используйте безопасный параметр."
-    }
-  ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "Ввод редактора"
     }
   ],
   "xQQ9ko": [

@@ -23,18 +23,6 @@ export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _t
     const node = connectionValue.self.node;
 
     if (isFunctionData(node)) {
-      if (!areInputTypesValidForFunction(node, connectionValue)) {
-        errors.push({
-          title: { message: mapCheckerResources.inputTypeMismatchTitle },
-          description: {
-            message: mapCheckerResources.functionInputTypeMismatchBody,
-            value: { nodeName: node.displayName },
-          },
-          severity: MapCheckerItemSeverity.Error,
-          reactFlowId: connectionValue.self.reactFlowKey,
-        });
-      }
-
       if (!functionHasRequiredInputs(node, connectionValue)) {
         errors.push({
           title: { message: mapCheckerResources.functionMissingInputsTitle },
@@ -52,18 +40,6 @@ export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _t
           reactFlowId: connectionValue.self.reactFlowKey,
         });
       }
-    } else {
-      if (!connectionValue.self.reactFlowKey.startsWith(sourcePrefix) && !areInputTypesValidForSchemaNode(node, connectionValue)) {
-        errors.push({
-          title: { message: mapCheckerResources.inputTypeMismatchTitle },
-          description: {
-            message: mapCheckerResources.schemaInputTypeMismatchBody,
-            value: { nodeName: node.name },
-          },
-          severity: MapCheckerItemSeverity.Error,
-          reactFlowId: connectionValue.self.reactFlowKey,
-        });
-      }
     }
   });
 
@@ -72,6 +48,37 @@ export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _t
 
 export const collectWarningsForMapChecker = (connections: ConnectionDictionary, targetSchema: SchemaNodeDictionary): MapCheckerEntry[] => {
   const warnings: MapCheckerEntry[] = [];
+
+  // Valid input types
+  Object.entries(connections).forEach(([_connectionKey, connectionValue]) => {
+    const node = connectionValue.self.node;
+
+    if (isFunctionData(node)) {
+      if (!areInputTypesValidForFunction(node, connectionValue)) {
+        warnings.push({
+          title: { message: mapCheckerResources.inputTypeMismatchTitle },
+          description: {
+            message: mapCheckerResources.functionInputTypeMismatchBody,
+            value: { nodeName: node.displayName },
+          },
+          severity: MapCheckerItemSeverity.Warning,
+          reactFlowId: connectionValue.self.reactFlowKey,
+        });
+      }
+    } else {
+      if (!connectionValue.self.reactFlowKey.startsWith(sourcePrefix) && !areInputTypesValidForSchemaNode(node, connectionValue)) {
+        warnings.push({
+          title: { message: mapCheckerResources.inputTypeMismatchTitle },
+          description: {
+            message: mapCheckerResources.schemaInputTypeMismatchBody,
+            value: { nodeName: node.name },
+          },
+          severity: MapCheckerItemSeverity.Warning,
+          reactFlowId: connectionValue.self.reactFlowKey,
+        });
+      }
+    }
+  });
 
   // Required target schema fields
   Object.entries(targetSchema).forEach(([reactFlowId, schemaValue]) => {

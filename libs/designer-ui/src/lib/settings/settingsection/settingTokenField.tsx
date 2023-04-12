@@ -10,13 +10,14 @@ import type { CallbackHandler, ChangeHandler, GetTokenPickerHandler } from '../.
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { QueryBuilderEditor } from '../../querybuilder';
-import { UntilEditor } from '../../querybuilder/Until';
+import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
 import { ScheduleEditor } from '../../recurrence';
 import { SchemaEditor } from '../../schemaeditor';
 import { TableEditor } from '../../table';
 import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
+import { useId } from '@fluentui/react-hooks';
 import React from 'react';
 
 export interface SettingTokenFieldProps extends SettingProps {
@@ -37,6 +38,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
   isTrigger?: boolean;
+  isCallback?: boolean;
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
   getTokenPicker: GetTokenPickerHandler;
@@ -45,14 +47,15 @@ export interface SettingTokenFieldProps extends SettingProps {
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
+  const labelId = useId('msla-editor-label');
   return (
     <>
       <div className="msla-input-parameter-label">
-        <Label className="msla-label" required={props.required}>
+        <Label id={labelId} className="msla-label" required={props.required}>
           {props.label}
         </Label>
       </div>
-      <TokenField {...props} />
+      <TokenField {...props} labelId={labelId} />
     </>
   );
 };
@@ -65,15 +68,17 @@ const TokenField = ({
   readOnly,
   value,
   isTrigger,
+  isCallback,
   isLoading,
   errorDetails,
   showTokens,
   label,
+  labelId,
   onValueChange,
   onComboboxMenuOpen,
   hideValidationErrors,
   getTokenPicker,
-}: SettingTokenFieldProps) => {
+}: SettingTokenFieldProps & { labelId: string }) => {
   const dropdownOptions = editorOptions?.options?.value ?? editorOptions?.options ?? [];
 
   switch (editor?.toLowerCase()) {
@@ -83,6 +88,7 @@ const TokenField = ({
     case 'dropdown':
       return (
         <DropdownEditor
+          label={label}
           readonly={readOnly}
           initialValue={value}
           options={dropdownOptions.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
@@ -95,6 +101,7 @@ const TokenField = ({
     case 'code':
       return (
         <CodeEditor
+          labelId={labelId}
           initialValue={value}
           getTokenPicker={getTokenPicker}
           language={EditorLanguage.javascript}
@@ -107,6 +114,8 @@ const TokenField = ({
     case 'combobox':
       return (
         <Combobox
+          labelId={labelId}
+          label={label}
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
@@ -122,11 +131,12 @@ const TokenField = ({
       );
 
     case 'schema':
-      return <SchemaEditor readonly={readOnly} initialValue={value} onChange={onValueChange} />;
+      return <SchemaEditor label={label} readonly={readOnly} initialValue={value} onChange={onValueChange} />;
 
     case 'dictionary':
       return (
         <DictionaryEditor
+          labelId={labelId}
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
@@ -140,6 +150,7 @@ const TokenField = ({
     case 'table':
       return (
         <TableEditor
+          labelId={labelId}
           readonly={readOnly}
           initialValue={value}
           initialItems={editorViewModel.items}
@@ -156,6 +167,7 @@ const TokenField = ({
     case 'array':
       return (
         <ArrayEditor
+          labelId={labelId}
           type={editorViewModel.schema ? ArrayType.COMPLEX : ArrayType.SIMPLE}
           labelProps={{ text: label ? `${label} Item` : 'Array Item' }}
           placeholder={placeholder}
@@ -171,6 +183,7 @@ const TokenField = ({
     case 'authentication':
       return (
         <AuthenticationEditor
+          labelId={labelId}
           initialValue={value}
           options={editorOptions}
           type={editorViewModel.type}
@@ -183,7 +196,7 @@ const TokenField = ({
 
     case 'condition':
       return editorViewModel.isOldFormat ? (
-        <UntilEditor
+        <SimpleQueryBuilder
           readonly={readOnly}
           items={JSON.parse(JSON.stringify(editorViewModel.items))}
           getTokenPicker={getTokenPicker}
@@ -204,11 +217,13 @@ const TokenField = ({
     default:
       return (
         <StringEditor
+          labelId={labelId}
           className="msla-setting-token-editor-container"
           placeholder={placeholder}
           BasePlugins={{ tokens: showTokens }}
           readonly={readOnly}
           isTrigger={isTrigger}
+          showCallbackTokens={isCallback}
           initialValue={value}
           editorBlur={onValueChange}
           getTokenPicker={getTokenPicker}

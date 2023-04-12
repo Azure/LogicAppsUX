@@ -14,6 +14,7 @@ export interface StringEditorProps extends BaseEditorProps {
 export const StringEditor = ({
   singleLine,
   initialValue,
+  labelId,
   clearEditorOnTokenInsertion,
   editorBlur,
   onChange,
@@ -42,9 +43,11 @@ export const StringEditor = ({
       }}
       readonly={baseEditorProps.readonly}
       isTrigger={baseEditorProps.isTrigger}
+      showCallbackTokens={baseEditorProps.showCallbackTokens}
       getTokenPicker={baseEditorProps.getTokenPicker}
       onBlur={handleBlur}
       onFocus={baseEditorProps.onFocus}
+      labelId={labelId}
     >
       {singleLine ? <SingleLine /> : null}
       <Change setValue={onValueChange} />
