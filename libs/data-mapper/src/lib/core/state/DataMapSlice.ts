@@ -15,6 +15,7 @@ import {
   bringInParentSourceNodesForRepeating,
   createConnectionEntryIfNeeded,
   flattenInputs,
+  generateInputHandleId,
   getConnectedSourceSchemaNodes,
   getConnectedTargetSchemaNodes,
   getFunctionConnectionUnits,
@@ -37,6 +38,7 @@ import {
   addTargetReactFlowPrefix,
   createReactFlowFunctionKey,
   getDestinationIdFromReactFlowConnectionId,
+  getPortFromReactFlowConnectionId,
   getSourceIdFromReactFlowConnectionId,
 } from '../../utils/ReactFlow.Util';
 import { flattenSchemaIntoDictionary, flattenSchemaIntoSortArray, isSchemaNodeExtended } from '../../utils/Schema.Utils';
@@ -359,9 +361,9 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState, 'Add function node');
     },
 
-    deleteConnection: (state, action: PayloadAction<{ inputKey: string; outputKey: string }>) => {
+    deleteConnection: (state, action: PayloadAction<{ inputKey: string; outputKey: string; port?: string }>) => {
       const newState = { ...state.curDataMapOperation };
-      deleteConnectionFromConnections(newState.dataMapConnections, action.payload.inputKey, action.payload.outputKey);
+      deleteConnectionFromConnections(newState.dataMapConnections, action.payload.inputKey, action.payload.outputKey, action.payload.port);
 
       doDataMapOperation(state, newState, 'Delete connection');
     },
@@ -514,16 +516,22 @@ export const dataMapSlice = createSlice({
     },
 
     // Will always be either [] or [inputKey, outputKey]
-    setInlineFunctionInputOutputKeys: (state, action: PayloadAction<{ inputKey: string; outputKey: string } | undefined>) => {
+    setInlineFunctionInputOutputKeys: (
+      state,
+      action: PayloadAction<{ inputKey: string; outputKey: string; port?: string } | undefined>
+    ) => {
       const newState: DataMapOperationState = { ...state.curDataMapOperation };
 
       if (!action.payload) {
         newState.inlineFunctionInputOutputKeys = [];
       } else {
         newState.inlineFunctionInputOutputKeys = [action.payload.inputKey, action.payload.outputKey];
+        if (action.payload.port) {
+          newState.inlineFunctionInputOutputKeys.push(action.payload.port);
+        }
       }
 
-      doDataMapOperation(state, newState, 'Set inline function i/o keys');
+      doDataMapOperation(state, newState, 'Set inline function creation i/o keys');
     },
 
     setCanvasToolboxTabToDisplay: (state, action: PayloadAction<ToolboxPanelTabs | ''>) => {
@@ -614,24 +622,30 @@ export const deleteNodeFromConnections = (connections: ConnectionDictionary, key
   delete connections[keyToDelete];
 };
 
-export const deleteConnectionFromConnections = (connections: ConnectionDictionary, inputKey: string, outputKey: string) => {
+export const deleteConnectionFromConnections = (
+  connections: ConnectionDictionary,
+  inputKey: string,
+  outputKey: string,
+  port: string | undefined
+) => {
   connections[inputKey].outputs = connections[inputKey].outputs.filter((output) => output.reactFlowKey !== outputKey);
 
   const outputNode = connections[outputKey].self.node;
+  const outputNodeInputs = connections[outputKey].inputs;
   if (isFunctionData(outputNode) && outputNode.maxNumberOfInputs === -1) {
-    Object.values(connections[outputKey].inputs).forEach((input, inputIndex) =>
+    Object.values(outputNodeInputs).forEach((input, inputIndex) =>
       input.forEach((inputValue, inputValueIndex) => {
         if (isConnectionUnit(inputValue) && inputValue.reactFlowKey === inputKey) {
-          connections[outputKey].inputs[inputIndex][inputValueIndex] = undefined;
+          if (!port || (port && generateInputHandleId(outputNode.inputs[inputIndex].name, inputValueIndex) === port)) {
+            outputNodeInputs[inputIndex][inputValueIndex] = undefined;
+          }
         }
       })
     );
   } else {
-    Object.entries(connections[outputKey].inputs).forEach(
+    Object.entries(outputNodeInputs).forEach(
       ([key, input]) =>
-        (connections[outputKey].inputs[key] = input.filter((inputEntry) =>
-          isConnectionUnit(inputEntry) ? inputEntry.reactFlowKey !== inputKey : true
-        ))
+        (outputNodeInputs[key] = input.filter((inputEntry) => (isConnectionUnit(inputEntry) ? inputEntry.reactFlowKey !== inputKey : true)))
     );
   }
 };
@@ -663,7 +677,7 @@ export const deleteParentRepeatingConnections = (connections: ConnectionDictiona
       connections[parentId].outputs.forEach((output) => {
         if (output.reactFlowKey.includes('target')) {
           // make sure connection is direct to target, not an index or other func
-          deleteConnectionFromConnections(connections, parentId, connections[parentId].outputs[0].reactFlowKey);
+          deleteConnectionFromConnections(connections, parentId, connections[parentId].outputs[0].reactFlowKey, undefined);
         }
       });
 
@@ -770,7 +784,8 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
   deleteConnectionFromConnections(
     connections,
     getSourceIdFromReactFlowConnectionId(reactFlowKey),
-    getDestinationIdFromReactFlowConnectionId(reactFlowKey)
+    getDestinationIdFromReactFlowConnectionId(reactFlowKey),
+    getPortFromReactFlowConnectionId(reactFlowKey)
   );
   const tempConn = connections[getSourceIdFromReactFlowConnectionId(reactFlowKey)];
   const ids = getConnectedSourceSchemaNodes([tempConn], connections);
