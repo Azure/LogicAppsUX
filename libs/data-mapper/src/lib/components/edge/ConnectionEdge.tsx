@@ -5,11 +5,14 @@ import {
   setSelectedItem,
 } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
+import { collectSourceNodesForConnectionChain, collectTargetNodesForConnectionChain } from '../../utils/Connection.Utils';
 import { getSmoothStepEdge } from '../../utils/Edge.Utils';
 import {
   getDestinationIdFromReactFlowConnectionId,
   getPortFromReactFlowConnectionId,
   getSourceIdFromReactFlowConnectionId,
+  getSplitIdsFromReactFlowConnectionId,
+  isNodeHighlighted,
 } from '../../utils/ReactFlow.Util';
 import { ToolboxPanelTabs } from '../canvasToolbox/CanvasToolbox';
 import { Button, makeStyles, shorthands, tokens, Tooltip } from '@fluentui/react-components';
@@ -26,9 +29,12 @@ const addFunctionBtnSize = 24;
 const parentPadding = 4;
 const parentTotalSize = addFunctionBtnSize + parentPadding * 2;
 
-const getLineColor = (isSelected: boolean, isHovered: boolean) => {
+const getLineColor = (isSelected: boolean, isHighlighted: boolean, isHovered: boolean) => {
   if (isSelected) {
     return tokens.colorCompoundBrandStroke;
+  }
+  if (isHighlighted) {
+    return tokens.colorBrandStroke2;
   } else {
     return isHovered ? tokens.colorNeutralStroke1Hover : tokens.colorNeutralStroke1;
   }
@@ -75,7 +81,11 @@ export const ConnectionEdge = (props: EdgeProps) => {
   const styles = useStyles();
   const reactFlowNodes = useNodes();
 
-  const inlineFunctionInputOutputKeys = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inlineFunctionInputOutputKeys);
+  const [sourceReactFlowKey, destinationRectFlowKey, _destinationPortReactFlowKey] = useSelector(
+    (state: RootState) => state.dataMap.curDataMapOperation.inlineFunctionInputOutputKeys
+  );
+  const selectedItemKeyParts = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKeyParts);
+  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -106,13 +116,34 @@ export const ConnectionEdge = (props: EdgeProps) => {
     };
   }, [reactFlowNodes, sourcePosition, targetPosition, sourceX, sourceY, targetX, targetY]);
 
+  const currentItemSplitIds = useMemo(() => getSplitIdsFromReactFlowConnectionId(id), [id]);
+
   const isAddingInlineFunctionOnThisEdge = useMemo(() => {
     return (
-      inlineFunctionInputOutputKeys.length === 2 &&
-      inlineFunctionInputOutputKeys[0] === getSourceIdFromReactFlowConnectionId(id) &&
-      inlineFunctionInputOutputKeys[1] === getDestinationIdFromReactFlowConnectionId(id)
+      selectedItemKeyParts &&
+      selectedItemKeyParts.destinationId &&
+      sourceReactFlowKey &&
+      sourceReactFlowKey === selectedItemKeyParts.sourceId &&
+      destinationRectFlowKey &&
+      destinationRectFlowKey === selectedItemKeyParts.destinationId
     );
-  }, [id, inlineFunctionInputOutputKeys]);
+  }, [destinationRectFlowKey, selectedItemKeyParts, sourceReactFlowKey]);
+
+  const connectedNodes = useMemo(() => {
+    const results = [];
+    if (currentItemSplitIds && connections[currentItemSplitIds.sourceId]) {
+      // Inverted input/output and source/target means that we should have overlap
+      results.push(...collectTargetNodesForConnectionChain(connections[currentItemSplitIds.sourceId], connections));
+      if (currentItemSplitIds.destinationId) {
+        results.push(...collectSourceNodesForConnectionChain(connections[currentItemSplitIds.destinationId], connections));
+      }
+    }
+
+    return results;
+  }, [currentItemSplitIds, connections]);
+  const isCurrentNodeHighlighted = useMemo<boolean>(() => {
+    return isNodeHighlighted(!!selected, selectedItemKeyParts, connectedNodes);
+  }, [connectedNodes, selected, selectedItemKeyParts]);
 
   const onAddFunctionClick = (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -160,7 +191,7 @@ export const ConnectionEdge = (props: EdgeProps) => {
         {...props}
         style={{
           strokeWidth: tokens.strokeWidthThick,
-          stroke: getLineColor(!!selected, isHovered),
+          stroke: getLineColor(!!selected, isCurrentNodeHighlighted, isHovered),
         }}
         interactionWidth={10}
       />
