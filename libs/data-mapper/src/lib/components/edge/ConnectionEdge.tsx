@@ -5,25 +5,24 @@ import {
   setSelectedItem,
 } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { collectSourceNodesForConnectionChain, collectTargetNodesForConnectionChain } from '../../utils/Connection.Utils';
 import { getSmoothStepEdge } from '../../utils/Edge.Utils';
 import {
   getDestinationIdFromReactFlowConnectionId,
   getPortFromReactFlowConnectionId,
   getSourceIdFromReactFlowConnectionId,
   getSplitIdsFromReactFlowConnectionId,
-  isNodeHighlighted,
+  isEdgeHighlighted,
 } from '../../utils/ReactFlow.Util';
 import { ToolboxPanelTabs } from '../canvasToolbox/CanvasToolbox';
-import { Button, makeStyles, shorthands, tokens, Tooltip } from '@fluentui/react-components';
+import { Button, Tooltip, makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { Add20Filled } from '@fluentui/react-icons';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
 import React, { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
-import { BaseEdge, useNodes } from 'reactflow';
 import type { EdgeProps } from 'reactflow';
+import { BaseEdge, useNodes } from 'reactflow';
 
 const addFunctionBtnSize = 24;
 const parentPadding = 4;
@@ -85,7 +84,7 @@ export const ConnectionEdge = (props: EdgeProps) => {
     (state: RootState) => state.dataMap.curDataMapOperation.inlineFunctionInputOutputKeys
   );
   const selectedItemKeyParts = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKeyParts);
-  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+  const selectedItemConnectedNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemConnectedNodes);
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -129,21 +128,9 @@ export const ConnectionEdge = (props: EdgeProps) => {
     );
   }, [destinationRectFlowKey, selectedItemKeyParts, sourceReactFlowKey]);
 
-  const connectedNodes = useMemo(() => {
-    const results = [];
-    if (currentItemSplitIds && connections[currentItemSplitIds.sourceId]) {
-      // Inverted input/output and source/target means that we should have overlap
-      results.push(...collectTargetNodesForConnectionChain(connections[currentItemSplitIds.sourceId], connections));
-      if (currentItemSplitIds.destinationId) {
-        results.push(...collectSourceNodesForConnectionChain(connections[currentItemSplitIds.destinationId], connections));
-      }
-    }
-
-    return results;
-  }, [currentItemSplitIds, connections]);
   const isCurrentNodeHighlighted = useMemo<boolean>(() => {
-    return isNodeHighlighted(!!selected, selectedItemKeyParts, connectedNodes);
-  }, [connectedNodes, selected, selectedItemKeyParts]);
+    return isEdgeHighlighted(!!selected, currentItemSplitIds, selectedItemConnectedNodes);
+  }, [currentItemSplitIds, selected, selectedItemConnectedNodes]);
 
   const onAddFunctionClick = (event: React.MouseEvent) => {
     event.stopPropagation();

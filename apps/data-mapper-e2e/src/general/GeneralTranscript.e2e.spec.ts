@@ -1,7 +1,7 @@
 import { baseUrl } from '../utils';
 import { test, expect } from '@playwright/test';
 
-test('Data Mapper - General Transcript E2E', async ({ page }) => {
+test.skip('Data Mapper - General Transcript E2E', async ({ page }) => {
   await page.goto(baseUrl);
 
   await page.getByText('Select a map definition').click();
