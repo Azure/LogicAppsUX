@@ -263,7 +263,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       </div>
       {showLeafComponents ? (
         <div className={'edge-drop-zone-container'}>
-          <DropZone graphId={metadata?.graphId ?? ''} parentId={id} />
+          <DropZone graphId={metadata?.graphId ?? ''} parentId={id} isLeaf={isLeaf} />
         </div>
       ) : null}
       <DeleteNodeModal
