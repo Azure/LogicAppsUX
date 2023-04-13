@@ -766,6 +766,12 @@
       "value": "(UTC+06:00) 다카"
     }
   ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Choose the type of user input"
+    }
+  ],
   "3Y8a6G": [
     {
       "type": 0,
@@ -1214,6 +1220,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 하위 문자열을 가져온 문자열입니다."
+    }
+  ],
+  "7Vyxu0": [
+    {
+      "type": 0,
+      "value": "Yes/No"
     }
   ],
   "7WVgiU": [
@@ -1981,6 +1993,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) 아조레스"
+    }
+  ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Add an input"
     }
   ],
   "DyYcJZ": [
@@ -4242,6 +4260,12 @@
       "value": "Error Type"
     }
   ],
+  "VggzRB": [
+    {
+      "type": 0,
+      "value": "Text"
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -4736,6 +4760,12 @@
       "value": "지원되지 않는 'in' 값: 매개변수의 {value}"
     }
   ],
+  "a+6uyE": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -4982,6 +5012,12 @@
     {
       "type": 0,
       "value": "동적 콘텐츠는 다른 원본에서도 추가할 수 있습니다."
+    }
+  ],
+  "cF4w+R": [
+    {
+      "type": 0,
+      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -6129,6 +6165,12 @@
     {
       "type": 0,
       "value": "Select an action type"
+    }
+  ],
+  "lv9QyZ": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "lzBHHT": [
@@ -7608,6 +7650,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) 협정 세계시+12"
+    }
+  ],
+  "xeREzb": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "xt5TeT": [

@@ -5,46 +5,57 @@ slug: /
 
 # Getting Started
 
-## Requirements
+Welcome to the LogicApps UX documentation! This guide will help new engineers set up and navigate the project. Make sure to follow the steps below to ensure a smooth setup process.
 
-- Node v14+
+## Prerequisites
+
+Ensure you have the following installed on your system:
+
+- Node.js v16 or higher
 - MkCert
-  _One Time Only_
-  Install from instructions found at: https://github.com/FiloSottile/mkcert
+- (Optional) Nx CLI
 
-Make Sure to run:
+### MkCert Installation
+
+MkCert is a one-time installation. Follow the instructions provided at [MkCert GitHub Repository](https://github.com/FiloSottile/mkcert) to install it. After the installation, run the following command:
 
 ```bash
 mkcert -install
 ```
 
-- Recommended - Nx CLI
+### Nx CLI Installation (Recommended)
+
+To install the Nx CLI, run:
 
 ```bash
 npm install -g nx
 ```
 
-## Running Code
+## Running the Code
 
-Make sure to run npm install at the root level
+First, navigate to the root level of the repository and run:
 
 ```bash
 npm install
 ```
 
-All commands should be run from the root repo directory
+**Note:** All commands should be executed from the root repo directory.
 
-### Standalone Designer for testing
+### Standalone Designer (for testing)
 
-**Code Location:** `/apps/designer-standalone`
+- Code Location: `/apps/designer-standalone`
+
+To start the standalone designer, run:
 
 ```bash
 nx serve
 ```
 
-### Build Designer Library For Publishing To NPM
+### Building the Designer Library (for NPM publishing)
 
-**Code Location:** `/libs/designer`
+- Code Location: `/libs/designer`
+
+To build the designer library, run:
 
 ```bash
 nx run designer:build
@@ -52,20 +63,21 @@ nx run designer:build
 
 ### Unit Tests
 
-**Code Location:** `/libs/designer/**/__test__/*.spec.ts(x)`
+- Code Location: `/libs/designer/**/__test__/*.spec.ts(x)`
 
-**Running tests:**
+To run unit tests, execute:
 
 ```bash
 nx test designer
 ```
 
-**Debugging tests:** For easy debugging, install [Jest for VS Code.](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest)
-No additional configuration should be needed, but you may need to restart your VSCode instance.
+**Debugging tests:** For easier debugging, install [Jest for VS Code](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest). No additional configuration should be needed, but you may need to restart your VSCode instance.
 
-### Running E2E Tests
+### End-to-End (E2E) Tests
 
-**Code Location:** `/apps/designer-e2e`
+- Code Location: `/apps/designer-e2e`
+
+To run E2E tests, execute:
 
 ```bash
 nx run designer-e2e:e2e
