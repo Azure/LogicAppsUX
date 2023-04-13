@@ -79,6 +79,9 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
       artifacts: await this.node.getArtifacts(),
     });
 
+    this.panelMetadata.mapArtifacts = this.mapArtifacts;
+    this.panelMetadata.schemaArtifacts = this.schemaArtifacts;
+
     this.panel.webview.onDidReceiveMessage(
       async (message) => await this._handleWebviewMsg(message),
       /* thisArgs */ undefined,
