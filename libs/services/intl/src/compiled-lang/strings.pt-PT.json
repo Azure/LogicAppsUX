@@ -804,6 +804,12 @@
       "value": "(UTC+06:00) Daca"
     }
   ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Choose the type of user input"
+    }
+  ],
   "3Y8a6G": [
     {
       "type": 0,
@@ -1252,6 +1258,12 @@
     {
       "type": 0,
       "value": "Obrigatório. A cadeia da qual a subcadeia é retirada."
+    }
+  ],
+  "7Vyxu0": [
+    {
+      "type": 0,
+      "value": "Yes/No"
     }
   ],
   "7WVgiU": [
@@ -2075,6 +2087,12 @@
       "value": "(UTC-01:00) Açores"
     }
   ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Add an input"
+    }
+  ],
   "DyYcJZ": [
     {
       "type": 0,
@@ -2295,6 +2313,12 @@
     {
       "type": 0,
       "value": "Must provide name of parameter."
+    }
+  ],
+  "FT3jt6": [
+    {
+      "type": 0,
+      "value": "Webhook reference information"
     }
   ],
   "FUhNu4": [
@@ -2674,6 +2698,16 @@
     {
       "type": 0,
       "value": "22"
+    }
+  ],
+  "IHMd3X": [
+    {
+      "type": 0,
+      "value": "Example: "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "IPbBB2": [
@@ -3920,12 +3954,6 @@
       "value": "Palavra-passe"
     }
   ],
-  "SGxmEY": [
-    {
-      "type": 0,
-      "value": "Introduza um Dicionário"
-    }
-  ],
   "SJFVxf": [
     {
       "type": 0,
@@ -4446,6 +4474,12 @@
       "value": "Error Type"
     }
   ],
+  "VggzRB": [
+    {
+      "type": 0,
+      "value": "Text"
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -4956,6 +4990,12 @@
       "value": "\" no Parâmetro"
     }
   ],
+  "a+6uyE": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5086,6 +5126,12 @@
       "value": "(UTC+02:00) Kaliningrado"
     }
   ],
+  "bSZ0lL": [
+    {
+      "type": 0,
+      "value": "Callback url"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -5196,6 +5242,12 @@
     {
       "type": 0,
       "value": "O conteúdo dinâmico também pode ser adicionado a partir de outras origens."
+    }
+  ],
+  "cF4w+R": [
+    {
+      "type": 0,
+      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5432,6 +5484,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Ecaterimburgo"
+    }
+  ],
+  "eHgfpz": [
+    {
+      "type": 0,
+      "value": "Please enter a valid URL"
     }
   ],
   "eHgi14": [
@@ -6401,6 +6459,12 @@
       "value": "Select an action type"
     }
   ],
+  "lv9QyZ": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6751,6 +6815,12 @@
       "value": "(UTC-03:00) Salvador"
     }
   ],
+  "ox2Ou7": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON"
+    }
+  ],
   "oxH1L/": [
     {
       "type": 0,
@@ -6977,6 +7047,12 @@
     {
       "type": 0,
       "value": "\"."
+    }
+  ],
+  "qUMXpq": [
+    {
+      "type": 0,
+      "value": "Swagger Endpoint"
     }
   ],
   "qUWBUX": [
@@ -7916,6 +7992,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Hora Universal Coordenada +12"
+    }
+  ],
+  "xeREzb": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "xt5TeT": [

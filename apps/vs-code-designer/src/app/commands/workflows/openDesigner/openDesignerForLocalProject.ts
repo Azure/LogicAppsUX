@@ -118,6 +118,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       azureDetails: this.panelMetadata.azureDetails,
       workflowDetails: this.panelMetadata.workflowDetails,
     });
+    this.panelMetadata.mapArtifacts = this.mapArtifacts;
+    this.panelMetadata.schemaArtifacts = this.schemaArtifacts;
 
     this.panel.webview.onDidReceiveMessage(async (message) => await this._handleWebviewMsg(message), ext.context.subscriptions);
 
