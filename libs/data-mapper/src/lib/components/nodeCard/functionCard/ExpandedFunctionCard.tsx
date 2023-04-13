@@ -2,11 +2,7 @@ import { expandedFunctionCardMaxWidth } from '../../../constants/NodeConstants';
 import { customTokens } from '../../../core';
 import { deleteCurrentlySelectedItem, setSelectedItem } from '../../../core/state/DataMapSlice';
 import type { RootState } from '../../../core/state/Store';
-import {
-  collectSourceNodesForConnectionChain,
-  collectTargetNodesForConnectionChain,
-  generateInputHandleId,
-} from '../../../utils/Connection.Utils';
+import { generateInputHandleId } from '../../../utils/Connection.Utils';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { isNodeHighlighted } from '../../../utils/ReactFlow.Util';
 import { FunctionIcon } from '../../functionIcon/FunctionIcon';
@@ -32,28 +28,16 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const classes = useFunctionCardStyles();
 
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
-  const selectedItemKeyParts = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKeyParts);
+  const selectedItemConnectedNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemConnectedNodes);
   const sourceNodeConnectionBeingDrawnFromId = useSelector((state: RootState) => state.dataMap.sourceNodeConnectionBeingDrawnFromId);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   const [isExpanded, { toggle: toggleIsExpanded }] = useBoolean(false);
 
-  const connectedNodes = useMemo(
-    () =>
-      reactFlowId && connections[reactFlowId]
-        ? [
-            ...collectSourceNodesForConnectionChain(connections[reactFlowId], connections),
-            ...collectTargetNodesForConnectionChain(connections[reactFlowId], connections),
-          ]
-        : [],
-    // Only want to update when that specific connection updates
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [reactFlowId, connections[reactFlowId]]
-  );
   const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
   const isCurrentNodeHighlighted = useMemo<boolean>(() => {
-    return isNodeHighlighted(isCurrentNodeSelected, selectedItemKeyParts, connectedNodes);
-  }, [connectedNodes, isCurrentNodeSelected, selectedItemKeyParts]);
+    return isNodeHighlighted(isCurrentNodeSelected, reactFlowId, selectedItemConnectedNodes);
+  }, [isCurrentNodeSelected, reactFlowId, selectedItemConnectedNodes]);
 
   const intl = useIntl();
   const contextMenu = useCardContextMenu();

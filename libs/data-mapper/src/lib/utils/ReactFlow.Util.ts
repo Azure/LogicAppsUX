@@ -501,19 +501,25 @@ export const getPortFromReactFlowConnectionId = (reactFlowId: string): string | 
 
 export const isNodeHighlighted = (
   isCurrentNodeSelected: boolean,
-  connectionReactFlowIds: ReactFlowIdParts | undefined,
-  connectedNodes: ConnectionUnit[]
+  currentReactFlowId: string,
+  selectedItemConnectedNodes: ConnectionUnit[]
+): boolean => !isCurrentNodeSelected && selectedItemConnectedNodes.some((node) => node.reactFlowKey === currentReactFlowId);
+
+export const isEdgeHighlighted = (
+  isCurrentNodeSelected: boolean,
+  currentItemSplit: ReactFlowIdParts,
+  selectedItemConnectedNodes: ConnectionUnit[]
 ): boolean => {
-  if (isCurrentNodeSelected || !connectionReactFlowIds) {
+  if (isCurrentNodeSelected) {
     return false;
   }
 
-  if (connectionReactFlowIds && connectionReactFlowIds.destinationId) {
+  if (currentItemSplit.destinationId) {
     return (
-      connectedNodes.some((node) => node.reactFlowKey === connectionReactFlowIds.sourceId) &&
-      connectedNodes.some((node) => node.reactFlowKey === connectionReactFlowIds.destinationId)
+      selectedItemConnectedNodes.some((node) => node.reactFlowKey === currentItemSplit.sourceId) &&
+      selectedItemConnectedNodes.some((node) => node.reactFlowKey === currentItemSplit.destinationId)
     );
   } else {
-    return connectedNodes.some((node) => node.reactFlowKey === connectionReactFlowIds.sourceId);
+    return selectedItemConnectedNodes.some((node) => node.reactFlowKey === currentItemSplit.sourceId);
   }
 };
