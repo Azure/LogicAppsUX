@@ -788,6 +788,12 @@
       "value": "(UTC+06:00) Dacca"
     }
   ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Choose the type of user input"
+    }
+  ],
   "3Y8a6G": [
     {
       "type": 0,
@@ -1236,6 +1242,12 @@
     {
       "type": 0,
       "value": "Necessário. A cadeia de caracteres da qual a subcadeia de caracteres é obtida."
+    }
+  ],
+  "7Vyxu0": [
+    {
+      "type": 0,
+      "value": "Yes/No"
     }
   ],
   "7WVgiU": [
@@ -2021,6 +2033,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Açores"
+    }
+  ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Add an input"
     }
   ],
   "DyYcJZ": [
@@ -4348,6 +4366,12 @@
       "value": "Error Type"
     }
   ],
+  "VggzRB": [
+    {
+      "type": 0,
+      "value": "Text"
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -4842,6 +4866,12 @@
       "value": "Valor 'in' não suportado: {value} no parâmetro"
     }
   ],
+  "a+6uyE": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5088,6 +5118,12 @@
     {
       "type": 0,
       "value": "O conteúdo dinâmico também pode ser adicionado de outras fontes."
+    }
+  ],
+  "cF4w+R": [
+    {
+      "type": 0,
+      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -6265,6 +6301,12 @@
     {
       "type": 0,
       "value": "Select an action type"
+    }
+  ],
+  "lv9QyZ": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "lzBHHT": [
@@ -7770,6 +7812,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Tempo Universal Coordenado +12"
+    }
+  ],
+  "xeREzb": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "xt5TeT": [

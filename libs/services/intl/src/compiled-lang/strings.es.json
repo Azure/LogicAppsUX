@@ -804,6 +804,12 @@
       "value": "(UTC+06:00) Dacca"
     }
   ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Choose the type of user input"
+    }
+  ],
   "3Y8a6G": [
     {
       "type": 0,
@@ -1252,6 +1258,12 @@
     {
       "type": 0,
       "value": "Obligatorio. La cadena de la que se toma la subcadena."
+    }
+  ],
+  "7Vyxu0": [
+    {
+      "type": 0,
+      "value": "Yes/No"
     }
   ],
   "7WVgiU": [
@@ -2073,6 +2085,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Azores"
+    }
+  ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Add an input"
     }
   ],
   "DyYcJZ": [
@@ -4440,6 +4458,12 @@
       "value": "Error Type"
     }
   ],
+  "VggzRB": [
+    {
+      "type": 0,
+      "value": "Text"
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -4942,6 +4966,12 @@
       "value": "\" en el parámetro"
     }
   ],
+  "a+6uyE": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5188,6 +5218,12 @@
     {
       "type": 0,
       "value": "También se puede agregar contenido dinámico desde otros orígenes."
+    }
+  ],
+  "cF4w+R": [
+    {
+      "type": 0,
+      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -6389,6 +6425,12 @@
     {
       "type": 0,
       "value": "Select an action type"
+    }
+  ],
+  "lv9QyZ": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "lzBHHT": [
@@ -7910,6 +7952,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Hora universal coordinada +12"
+    }
+  ],
+  "xeREzb": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "xt5TeT": [

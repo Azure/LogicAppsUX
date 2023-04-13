@@ -823,6 +823,12 @@
       "value": "(UTC+06:00) Dháka"
     }
   ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Choose the type of user input"
+    }
+  ],
   "3Y8a6G": [
     {
       "type": 0,
@@ -1271,6 +1277,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Řetězec, ze kterého se má získat podřetězec."
+    }
+  ],
+  "7Vyxu0": [
+    {
+      "type": 0,
+      "value": "Yes/No"
     }
   ],
   "7WVgiU": [
@@ -2099,6 +2111,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Azory"
+    }
+  ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Add an input"
     }
   ],
   "DyYcJZ": [
@@ -4515,6 +4533,12 @@
       "value": "Error Type"
     }
   ],
+  "VggzRB": [
+    {
+      "type": 0,
+      "value": "Text"
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -5025,6 +5049,12 @@
       "value": " v parametru"
     }
   ],
+  "a+6uyE": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5271,6 +5301,12 @@
     {
       "type": 0,
       "value": "Dynamický obsah se dá přidat i z jiných zdrojů."
+    }
+  ],
+  "cF4w+R": [
+    {
+      "type": 0,
+      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -6479,6 +6515,12 @@
     {
       "type": 0,
       "value": "Select an action type"
+    }
+  ],
+  "lv9QyZ": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "lzBHHT": [
@@ -8015,6 +8057,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Koordinovaný univerzální čas (UTC)+12"
+    }
+  ],
+  "xeREzb": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "xt5TeT": [
