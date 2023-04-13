@@ -7,14 +7,10 @@ import type {
   IConnectionService,
   ConnectorWithSwagger,
 } from '../connection';
-import type { ListDynamicValue } from '../connector';
-import { areSwaggerOperationPathsMatching } from '../helpers';
 import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
-import type { Operations } from '@microsoft/parsers-logic-apps';
-import { ResponseCodes, SwaggerParser } from '@microsoft/parsers-logic-apps';
+import { SwaggerParser } from '@microsoft/parsers-logic-apps';
 import type { Connection, Connector } from '@microsoft/utils-logic-apps';
 import {
-  unmap,
   isCustomConnector,
   getUniqueName,
   HTTP_METHODS,
@@ -100,107 +96,6 @@ export abstract class BaseConnectionService implements IConnectionService {
     const response = await this.getSwaggerFromUri(uri);
     const swaggerDoc = await SwaggerParser.parse(response);
     return new SwaggerParser(swaggerDoc);
-  }
-
-  async getOperations(uri: string): Promise<Operations> {
-    const swagger = await this.getSwaggerParser(uri);
-    const operations = swagger.getOperations();
-    return operations;
-  }
-
-  public async getOperationsList(uri: string): Promise<ListDynamicValue[]> {
-    const operations = await this.getOperations(uri);
-    return unmap(operations).map((operation: any) => ({
-      value: operation.operationId,
-      displayName: operation.summary ?? operation.operationId,
-      description: operation.description,
-    }));
-  }
-
-  public async getOperationFromPathAndMethod(uri: string, fullPath: string, method: string): Promise<any> {
-    const swagger = await this.getSwaggerParser(uri);
-    const path = fullPath.split(swagger.api.host ?? '').pop() ?? '';
-    const operations = swagger.getOperations();
-    const operation = unmap(operations).find(
-      (operation: any) => areSwaggerOperationPathsMatching(operation.path, path) && operation.method === method
-    );
-    return operation;
-  }
-
-  public async getOperationFromId(uri: string, operationId: string): Promise<any> {
-    const operations = await this.getOperations(uri);
-    return unmap(operations).find((operation: any) => operation.operationId === operationId);
-  }
-
-  public async getOperationSchema(uri: string, operationId: string, isInput: boolean): Promise<any> {
-    const swagger = await this.getSwaggerParser(uri);
-    const operation = swagger.getOperationByOperationId(operationId);
-    if (!operation) throw new Error('Operation not found');
-
-    const paths = swagger.api.paths[operation.path];
-    const rawOperation = paths[operation.method];
-    const schema = { type: 'object', properties: {} as any, required: [] as string[] };
-
-    if (isInput) {
-      schema.properties = {
-        method: { type: 'string', default: operation.method, 'x-ms-visibility': 'hideInUI' },
-        uri: { type: 'string', default: `https://${swagger.api.host}${operation.path}`, 'x-ms-visibility': 'hideInUI' },
-        pathTemplate: {
-          type: 'object',
-          properties: {
-            template: { type: 'string', default: operation.path, 'x-ms-visibility': 'hideInUI' },
-          },
-          required: ['template'],
-        },
-      };
-      schema.required = ['method', 'pathTemplate', 'uri'];
-      for (const parameter of rawOperation.parameters ?? []) {
-        this._addParameterInSchema(schema, parameter);
-      }
-    } else {
-      const { responses } = rawOperation;
-      let response: any = {};
-
-      if (responses[ResponseCodes.$200]) response = responses[ResponseCodes.$200];
-      else if (responses[ResponseCodes.$201]) response = responses[ResponseCodes.$201];
-      else if (responses[ResponseCodes.$default]) response = responses[ResponseCodes.$default];
-
-      if (response.schema) schema.properties['body'] = response.schema;
-      if (response.headers) schema.properties['headers'] = response.headers;
-    }
-
-    return schema;
-  }
-
-  private _addParameterInSchema(finalSchema: any, parameter: any) {
-    const schemaProperties = finalSchema.properties;
-    const { in: $in, name, required, schema } = parameter;
-    switch ($in) {
-      case 'header':
-      case 'query': {
-        const property = $in === 'header' ? 'headers' : 'queries';
-        if (!schemaProperties[property]) schemaProperties[property] = { type: 'object', properties: {}, required: [] };
-        schemaProperties[property].properties[name] = parameter;
-        if (required) schemaProperties[property].required.push(name);
-        break;
-      }
-      case 'path': {
-        const pathProperty = 'pathTemplate';
-        if (!schemaProperties[pathProperty].properties.parameters) {
-          schemaProperties[pathProperty].properties.parameters = { type: 'object', properties: {}, required: [] };
-          schemaProperties[pathProperty].required.push('parameters');
-        }
-
-        schemaProperties[pathProperty].properties.parameters.properties[name] = parameter;
-        if (required) schemaProperties[pathProperty].properties.parameters.required.push(name);
-        break;
-      }
-      default: {
-        // eslint-disable-next-line no-param-reassign
-        finalSchema.properties[$in] = schema;
-        break;
-      }
-    }
   }
 
   async getConnector(connectorId: string): Promise<Connector> {

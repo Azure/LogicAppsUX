@@ -298,7 +298,7 @@ const getOperationInfo = async (
   }
 };
 
-const getOperationIdFromDefinition = (operationInputInfo: OperationInputInfo, swagger: SwaggerParser): string | undefined => {
+export const getOperationIdFromDefinition = (operationInputInfo: OperationInputInfo, swagger: SwaggerParser): string | undefined => {
   const operations = unmap(swagger.getOperations());
 
   if (!operationInputInfo.path && (!operationInputInfo.pathTemplate || !operationInputInfo.pathTemplate.template)) {
@@ -392,7 +392,7 @@ function getOperationInputInfoFromDefinition(swagger: SwaggerParser, operation: 
   }
 }
 
-function extractPathFromUri(baseUri: string, path: string): string {
+export function extractPathFromUri(baseUri: string, path: string): string {
   let basePath = path;
   let uri = baseUri;
   if (basePath && !startsWith(basePath, '/')) {

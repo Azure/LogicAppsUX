@@ -1,6 +1,5 @@
 import type { IAppServiceService } from '../appService';
 import type { ListDynamicValue } from '../connector';
-import { areSwaggerOperationPathsMatching } from '../helpers';
 import type { IHttpClient } from '../httpClient';
 import { ResponseCodes, SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { ArgumentException, equals, unmap } from '@microsoft/utils-logic-apps';
@@ -24,13 +23,9 @@ export class BaseAppServiceService implements IAppServiceService {
     }
   }
 
-  protected getAppServiceRequestPath(): string {
-    return `/subscriptions/${this.options.subscriptionId}/providers/Microsoft.Web/sites`;
-  }
-
   async fetchAppServices(): Promise<any> {
     const functionAppsResponse = await this.options.httpClient.get<any>({
-      uri: this.getAppServiceRequestPath(),
+      uri: `/subscriptions/${this.options.subscriptionId}/providers/Microsoft.Web/sites`,
       queryParameters: {
         'api-version': this.options.apiVersion,
         propertiesToInclude: 'SiteConfig',
@@ -41,16 +36,7 @@ export class BaseAppServiceService implements IAppServiceService {
     return apps;
   }
 
-  public async fetchAppServiceApiSwagger(swaggerUrl: string): Promise<any> {
-    const response = await this.options.httpClient.get<any>({
-      uri: swaggerUrl,
-      headers: { 'Access-Control-Allow-Origin': '*' },
-    });
-    const swaggerDoc = await SwaggerParser.parse(response);
-    return new SwaggerParser(swaggerDoc);
-  }
-
-  public async getOperationSchema(swaggerUrl: string, operationId: string, isInput: boolean): Promise<any> {
+  async getOperationSchema(swaggerUrl: string, operationId: string, isInput: boolean): Promise<any> {
     const swagger = await this.fetchAppServiceApiSwagger(swaggerUrl);
 
     const operation = swagger.getOperationByOperationId(operationId);
@@ -61,18 +47,22 @@ export class BaseAppServiceService implements IAppServiceService {
     const schema = { type: 'object', properties: {} as any, required: [] as string[] };
 
     if (isInput) {
+      const baseUrl = swagger.api.host
+        ? swagger.api.schemes?.length
+          ? `${swagger.api.schemes.at(-1)}://${swagger.api.host}`
+          : `http://${swagger.api.host}`
+        : 'NotFound';
       schema.properties = {
         method: { type: 'string', default: operation.method, 'x-ms-visibility': 'hideInUI' },
-        uri: { type: 'string', default: `https://${swagger.api.host}${operation.path}`, 'x-ms-visibility': 'hideInUI' },
-        pathTemplate: {
-          type: 'object',
-          properties: {
-            template: { type: 'string', default: operation.path, 'x-ms-visibility': 'hideInUI' },
-          },
-          required: ['template'],
+        uri: {
+          type: 'string',
+          default: `${baseUrl}${operation.path}`,
+          'x-ms-visibility': 'hideInUI',
+          'x-ms-serialization': { property: { type: 'pathtemplate', parameterReference: 'operationDetails.pathParameters' } },
         },
+        pathParameters: { type: 'object', properties: {}, required: [] },
       };
-      schema.required = ['method', 'pathTemplate', 'uri'];
+      schema.required = ['method', 'uri', 'pathParameters'];
       for (const parameter of rawOperation.parameters ?? []) {
         this._addParameterInSchema(schema, parameter);
       }
@@ -104,14 +94,12 @@ export class BaseAppServiceService implements IAppServiceService {
         break;
       }
       case 'path': {
-        const pathProperty = 'pathTemplate';
-        if (!schemaProperties[pathProperty].properties.parameters) {
-          schemaProperties[pathProperty].properties.parameters = { type: 'object', properties: {}, required: [] };
-          schemaProperties[pathProperty].required.push('parameters');
-        }
-
-        schemaProperties[pathProperty].properties.parameters.properties[name] = parameter;
-        if (required) schemaProperties[pathProperty].properties.parameters.required.push(name);
+        const pathProperty = 'pathParameters';
+        schemaProperties[pathProperty].properties[name] = {
+          ...parameter,
+          'x-ms-deserialization': { type: 'pathtemplateproperties', parameterReference: `operationDetails.uri` },
+        };
+        if (required) schemaProperties[pathProperty].required.push(name);
         break;
       }
       default: {
@@ -122,7 +110,7 @@ export class BaseAppServiceService implements IAppServiceService {
     }
   }
 
-  public async getOperations(swaggerUrl: string): Promise<ListDynamicValue[]> {
+  async getOperations(swaggerUrl: string): Promise<ListDynamicValue[]> {
     const swagger = await this.fetchAppServiceApiSwagger(swaggerUrl);
     const operations = swagger.getOperations();
 
@@ -133,19 +121,13 @@ export class BaseAppServiceService implements IAppServiceService {
     }));
   }
 
-  public async getOperationFromPathAndMethod(swaggerUrl: string, fullPath: string, method: string): Promise<any> {
-    const swagger = await this.fetchAppServiceApiSwagger(swaggerUrl);
-    const path = fullPath.split(swagger.api.host ?? '').pop() ?? '';
-    const operations = swagger.getOperations();
-    return unmap(operations).find(
-      (operation: any) => areSwaggerOperationPathsMatching(operation.path, path) && operation.method === method
-    );
-  }
-
-  public async getOperationFromId(swaggerUrl: string, operationId: string): Promise<any> {
-    const swagger = await this.fetchAppServiceApiSwagger(swaggerUrl);
-    const operations = swagger.getOperations();
-    return unmap(operations).find((operation: any) => operation.operationId === operationId);
+  private async fetchAppServiceApiSwagger(swaggerUrl: string): Promise<any> {
+    const response = await this.options.httpClient.get<any>({
+      uri: swaggerUrl,
+      headers: { 'Access-Control-Allow-Origin': '*' },
+    });
+    const swaggerDoc = await SwaggerParser.parse(response);
+    return new SwaggerParser(swaggerDoc);
   }
 }
 

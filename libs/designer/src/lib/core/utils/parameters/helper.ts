@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations  */
 import constants from '../../../common/constants';
 import type { ConnectionReference, WorkflowParameter } from '../../../common/models/workflow';
 import type { NodeDataWithOperationMetadata } from '../../actions/bjsworkflow/operationdeserializer';
@@ -29,6 +30,8 @@ import { getParentArrayKey, isForeachActionNameForLoopsource } from '../loops';
 import { isOneOf } from '../openapi/schema';
 import { loadDynamicOutputsInNode } from '../outputs';
 import { hasSecureOutputs } from '../setting';
+import { processPathInputs } from '../swagger/inputsbuilder';
+import { extractPathFromUri, getOperationIdFromDefinition } from '../swagger/operation';
 import { convertWorkflowParameterTypeToSwaggerType } from '../tokens';
 import { validateJSONParameter, validateStaticParameterInfo } from '../validation';
 import { getRecurrenceParameters } from './builtins';
@@ -87,7 +90,7 @@ import type {
   SwaggerParser,
 } from '@microsoft/parsers-logic-apps';
 import {
-  DeserializationLocation,
+  DeserializationType,
   PropertySerializationType,
   getKnownTitles,
   isLegacyDynamicValuesExtension,
@@ -274,7 +277,7 @@ export function createParameterInfo(
 ): ParameterInfo {
   const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, shouldIgnoreDefaultValue);
   const value = loadParameterValue(parameter);
-  const { alias, dependencies, encode, format, isDynamic, isUnknown, serialization } = parameter;
+  const { alias, dependencies, encode, format, isDynamic, isUnknown, serialization, deserialization } = parameter;
   const info = {
     alias,
     dependencies,
@@ -284,6 +287,7 @@ export function createParameterInfo(
     isDynamic: !!isDynamic,
     isUnknown,
     serialization,
+    deserialization,
   };
 
   const parameterInfo: ParameterInfo = {
@@ -1918,6 +1922,7 @@ export function getGroupAndParameterFromParameterKey(
 export function getInputsValueFromDefinitionForManifest(
   inputsLocation: string[],
   manifest: OperationManifest,
+  customSwagger: SwaggerParser | undefined,
   stepDefinition: any,
   allInputs: InputParameter[]
 ): any {
@@ -1931,7 +1936,7 @@ export function getInputsValueFromDefinitionForManifest(
 
   inputsValue = swapInputsValueIfNeeded(inputsValue, manifest);
 
-  return updateInputsValueForSpecialCases(inputsValue, allInputs);
+  return updateInputsValueForSpecialCases(inputsValue, allInputs, customSwagger);
 }
 
 function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) {
@@ -1969,7 +1974,7 @@ function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) 
  * serialization or special cases for deserialiation like reading values from inputs for non serializable parameter.
  * Example: Batch trigger
  */
-function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputParameter[]) {
+function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputParameter[], customSwagger?: SwaggerParser) {
   if (!inputsValue || typeof inputsValue !== 'object') {
     return inputsValue;
   }
@@ -1977,41 +1982,79 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
   const propertyNameParameters = allInputs.filter((input) => !!input.serialization?.property);
   const finalValue = clone(inputsValue);
 
-  for (const propertyParameter of propertyNameParameters) {
-    const { name, serialization } = propertyParameter;
-    if (serialization?.property?.type === PropertySerializationType.ParentObject) {
-      const parameterReference = serialization.property.parameterReference;
-      const parentPropertyName = parameterReference.substring(0, parameterReference.lastIndexOf('.'));
-      const parentPropertySegments = parentPropertyName.split('.');
-      const objectValue = getObjectPropertyValue(finalValue, parentPropertySegments);
-
-      // NOTE: Currently this only handles only one variable property name in the object
-      const keys = Object.keys(objectValue);
-      if (keys.length !== 1) {
-        return inputsValue;
-      }
-
-      const propertyName = keys[0];
-
-      safeSetObjectPropertyValue(finalValue, parentPropertySegments, {
-        [serialization.property.name]: {
-          ...objectValue[propertyName],
-          [name.substring(name.lastIndexOf('.') + 1)]: propertyName,
-        },
-      });
-    }
-  }
-
   const parametersWithDeserialization = allInputs.filter((input) => !!input.deserialization);
   for (const parameter of parametersWithDeserialization) {
     const { name, deserialization } = parameter;
-    if (deserialization?.type === DeserializationLocation.ParentObjectProperties) {
-      const parentPropertySegments = deserialization.parameterReference.split('.');
-      const objectValue = getObjectPropertyValue(finalValue, parentPropertySegments);
-      const value = Object.keys(objectValue ?? {});
+    if (deserialization?.parameterReference) {
+      const { type, parameterReference, options } = deserialization;
+      const propertySegments = parameterReference.split('.');
 
-      objectValue[name.split('.').at(-1) as string] = value;
-      safeSetObjectPropertyValue(finalValue, parentPropertySegments, objectValue);
+      switch (type) {
+        case DeserializationType.ParentObjectProperties:
+          const objectValue = getObjectPropertyValue(finalValue, propertySegments);
+          const value = Object.keys(objectValue ?? {});
+          objectValue[name.split('.').at(-1) as string] = value;
+          safeSetObjectPropertyValue(finalValue, propertySegments, objectValue);
+          break;
+
+        case DeserializationType.SwaggerOperationId:
+          const method = getObjectPropertyValue(finalValue, options?.swaggerOperation.methodPath as string[]);
+          const uri = getObjectPropertyValue(finalValue, options?.swaggerOperation.uriPath as string[]);
+          const operationId = getOperationIdFromDefinition(
+            {
+              method,
+              path: extractPathFromUri(uri, customSwagger?.api.basePath as string),
+            },
+            customSwagger as SwaggerParser
+          );
+          safeSetObjectPropertyValue(finalValue, propertySegments, operationId);
+          break;
+
+        default:
+          break;
+      }
+    }
+  }
+
+  for (const propertyParameter of propertyNameParameters) {
+    const { name, serialization } = propertyParameter;
+    if (serialization?.property) {
+      const parameterReference = serialization.property.parameterReference as string;
+
+      switch (serialization?.property?.type?.toLowerCase()) {
+        case PropertySerializationType.ParentObject:
+          const parentPropertyName = parameterReference.substring(0, parameterReference.lastIndexOf('.'));
+          const parentPropertySegments = parentPropertyName.split('.');
+          const objectValue = getObjectPropertyValue(finalValue, parentPropertySegments);
+
+          // NOTE: Currently this only handles only one variable property name in the object
+          const keys = Object.keys(objectValue);
+          if (keys.length !== 1) {
+            return inputsValue;
+          }
+
+          const propertyName = keys[0];
+
+          safeSetObjectPropertyValue(finalValue, parentPropertySegments, {
+            [serialization.property.name as string]: {
+              ...objectValue[propertyName],
+              [name.substring(name.lastIndexOf('.') + 1)]: propertyName,
+            },
+          });
+          break;
+
+        case PropertySerializationType.PathTemplate:
+          const parameterLocation = propertyParameter.name.split('.');
+          const pathParametersLocation = parameterReference.split('.');
+          const uriValue = getObjectPropertyValue(finalValue, parameterLocation);
+          const pathParameters = processPathInputs(uriValue, propertyParameter.default);
+          safeSetObjectPropertyValue(finalValue, pathParametersLocation, pathParameters);
+          safeSetObjectPropertyValue(finalValue, parameterLocation, propertyParameter.default);
+          break;
+
+        default:
+          break;
+      }
     }
   }
 
