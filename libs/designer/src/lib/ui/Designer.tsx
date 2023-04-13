@@ -1,5 +1,4 @@
 import { useLayout } from '../core/graphlayout';
-import { usePreloadConnectorsQuery, usePreloadOperationsQuery } from '../core/queries/browse';
 import { useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
@@ -22,13 +21,12 @@ import { PanelRoot } from './panel/panelroot';
 import { setLayerHostSelector } from '@fluentui/react';
 import { PanelLocation } from '@microsoft/designer-ui';
 import type { WorkflowNodeType } from '@microsoft/utils-logic-apps';
-import { isString, useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/utils-logic-apps';
+import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider, createTransition, MouseTransition } from 'react-dnd-multi-backend';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { useIsFetching } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { Background, ReactFlow, ReactFlowProvider, useNodes, useReactFlow, useStore, BezierEdge } from 'reactflow';
 import type { BackgroundProps, NodeChange } from 'reactflow';
@@ -111,12 +109,6 @@ export const CanvasFinder = () => {
   return null;
 };
 
-export const SearchBrowsePreloader = () => {
-  usePreloadOperationsQuery();
-  usePreloadConnectorsQuery();
-  return null;
-};
-
 export const Designer = (props: DesignerProps) => {
   const { backgroundProps, panelLocation } = props;
 
@@ -124,8 +116,6 @@ export const Designer = (props: DesignerProps) => {
   const isEmpty = useIsGraphEmpty();
   const isReadOnly = useReadOnly();
   const dispatch = useDispatch();
-  const [initializationStage, setInitializationStage] = useState<'Start' | 'Loading' | 'Finished'>('Start');
-
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
       dispatch(updateNodeSizes(changes));
@@ -133,29 +123,6 @@ export const Designer = (props: DesignerProps) => {
     [dispatch]
   );
 
-  const isFetchingInitialData = useIsFetching({
-    predicate: (query) => {
-      const queryKeysToWatch = ['connections', 'manifest', 'apiWithSwaggers', 'operationInfo'];
-      if (Array.isArray(query.queryKey)) {
-        return (query.queryKey as string[]).some((val) => queryKeysToWatch.includes(val));
-      } else if (isString(query.queryKey)) {
-        return queryKeysToWatch.includes(query.queryKey);
-      }
-      return false;
-    },
-  });
-
-  useEffect(() => {
-    if (nodes.length === 0 && initializationStage !== 'Finished') {
-      setInitializationStage('Finished');
-    }
-    if (isFetchingInitialData && initializationStage === 'Start') {
-      setInitializationStage('Loading');
-    }
-    if (!isFetchingInitialData && initializationStage === 'Loading') {
-      setInitializationStage('Finished');
-    }
-  }, [initializationStage, isFetchingInitialData, nodes.length]);
   const emptyWorkflowPlaceholderNodes = [
     {
       id: 'newWorkflowTrigger',
@@ -220,7 +187,6 @@ export const Designer = (props: DesignerProps) => {
 
   return (
     <DndProvider options={DND_OPTIONS}>
-      {initializationStage === 'Finished' ? <SearchBrowsePreloader /> : null}
       <div className="msla-designer-canvas msla-panel-mode">
         <ReactFlowProvider>
           <ReactFlow
