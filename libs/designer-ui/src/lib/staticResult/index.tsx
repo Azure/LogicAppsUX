@@ -127,7 +127,6 @@ export const StaticResultContainer = ({
       />
       {showStaticResults ? (
         <StaticResult
-          isRoot={true}
           title={testingTitle}
           required={required}
           propertiesSchema={propertiesSchema}

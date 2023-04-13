@@ -26,38 +26,23 @@ const dropdownStyles: Partial<IDropdownStyles> = {
   },
 };
 
-const dropdownRootStyles: Partial<IDropdownStyles> = {
-  ...dropdownStyles,
-  root: {
-    minHeight: '30px',
-    fontSize: '14px',
-    label: {
-      fontSize: '14px',
-      fontWeight: 600,
-      lineHeight: '40px',
-    },
-  },
-};
-
 export const textFieldStyles: Partial<ITextFieldStyles> = {
   fieldGroup: { height: 30, width: '100%', fontSize: 14 },
   wrapper: { width: '100%', maxHeight: 40, alignItems: 'center', paddingBottom: 14 },
 };
 
 interface StaticResultPropertyProps {
-  isRoot?: boolean;
   schema: StaticResultRootSchemaType | OpenAPIV2.SchemaObject;
   required?: boolean;
   properties?: OpenAPIV2.SchemaObject;
   updateParentProperties: (newPropertyValue: any) => void;
 }
 
-const onRenderLabel = (text: string, required?: boolean, isRoot?: boolean): JSX.Element => {
-  return <Label text={text} isRequiredField={required} className={isRoot ? 'msla-static-result-label' : undefined} />;
+const onRenderLabel = (text: string, required?: boolean): JSX.Element => {
+  return <Label text={text} isRequiredField={required} />;
 };
 
 function WrappedStaticResultProperty({
-  isRoot = false,
   schema,
   required = false,
   properties = {},
@@ -127,7 +112,7 @@ function WrappedStaticResultProperty({
           return (
             <Dropdown
               className="msla-static-result-property-dropdown"
-              styles={isRoot ? dropdownRootStyles : dropdownStyles}
+              styles={dropdownStyles}
               options={getEnumValues()}
               selectedKey={inputValue}
               onChange={selectDropdownKey}
@@ -141,7 +126,7 @@ function WrappedStaticResultProperty({
             <TextField
               className="msla-static-result-property-textField"
               styles={textFieldStyles}
-              onRenderLabel={() => onRenderLabel(schema.title ?? '', required, isRoot)}
+              onRenderLabel={() => onRenderLabel(schema.title ?? '', required)}
               value={inputValue}
               placeholder={textFieldPlaceHolder}
               onChange={(_e, newVal) => {
@@ -156,7 +141,7 @@ function WrappedStaticResultProperty({
           <TextField
             className="msla-static-result-property-textField"
             styles={textFieldStyles}
-            onRenderLabel={() => onRenderLabel(schema.title ?? '', required, isRoot)}
+            onRenderLabel={() => onRenderLabel(schema.title ?? '', required)}
             value={inputValue}
             placeholder={integerTextFieldPlaceHolder}
             onChange={validateInteger}
@@ -198,7 +183,7 @@ function WrappedStaticResultProperty({
           <TextField
             className="msla-static-result-property-textField"
             styles={textFieldStyles}
-            onRenderLabel={() => onRenderLabel(schema.title ?? '', required, isRoot)}
+            onRenderLabel={() => onRenderLabel(schema.title ?? '', required)}
             value={inputValue}
             placeholder={textFieldPlaceHolder}
             onChange={(_e, newVal) => {

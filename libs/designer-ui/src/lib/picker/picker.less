@@ -32,8 +32,10 @@ a.msla-picker {
   }
   .msla-picker-close {
     cursor: pointer;
+
     width: 34px;
-    height: 34px;
+    height: 100%;
+    padding: 1px 15px 0 5px;
 
     img {
       width: 12px;
@@ -44,6 +46,13 @@ a.msla-picker {
       top: 0;
     }
   }
+}
+
+.msla-picker-message {
+  color: black;
+  padding: 10px;
+  border: 1px solid rgba(128, 128, 128, 0.5);
+  background-color: #fff;
 }
 
 .msla-picker-items {
@@ -118,6 +127,7 @@ a.msla-picker {
         border-right: 1px solid #d2d2d2;
         content: '';
         display: inline-block;
+        float: right;
         height: 70%;
         margin-top: 7px;
       }
@@ -126,6 +136,7 @@ a.msla-picker {
     .msla-navigate-button {
       display: inline-block;
       width: 52px;
+      float: right;
       border: none;
       background-color: transparent;
       height: 100%;
@@ -185,6 +196,54 @@ a.msla-picker {
   }
 }
 
+.msla-picker-command-bar {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  border: @titleBorder;
+  border-bottom: 0;
+  background-color: @titleBackground;
+  height: 40px;
+  margin-top: -5px;
+
+  .msla-confirm {
+    display: inline-block;
+    float: right;
+    margin: 5px;
+    padding: 5px;
+    width: 90px;
+    height: 30px;
+    color: @defaultButtonTextColor;
+    cursor: pointer;
+    background-color: @defaultButtonColor;
+
+    &:hover {
+      background-color: @defaultButtonHoverColor;
+    }
+
+    &:disabled {
+      background-color: rgba(155, 155, 155, 0.5);
+    }
+  }
+
+  .msla-cancel {
+    cursor: pointer;
+    display: inline-block;
+    float: right;
+    margin: 5px;
+    padding: 5px;
+    width: 90px;
+    height: 30px;
+    background-color: rgb(155, 155, 155);
+    color: @defaultButtonTextColor;
+  }
+}
+
+.msla-picker-pin {
+  position: relative;
+  top: 2px;
+}
+
 .msla-theme-dark {
   .msla-picker-header {
     background-color: @ms-color-white;
@@ -214,6 +273,11 @@ a.msla-picker {
     .msla-picker-close {
       color: @ms-color-black;
     }
+  }
+
+  .msla-picker-message {
+    background-color: @ms-color-white;
+    color: @ms-color-black;
   }
 
   .msla-picker-items {
@@ -257,55 +321,6 @@ a.msla-picker {
       &:active {
         background-color: @ms-color-themeLighter;
       }
-    }
-  }
-}
-
-.msla-filepicker-editor-container {
-  outline: 1px solid @panel-mode-panel-border-color;
-  margin: 1px;
-  border-radius: 2px;
-  resize: none;
-  text-overflow: ellipsis;
-  display: flex;
-  position: relative;
-  .msla-filepicker-editor {
-    position: relative;
-    .editor-input {
-      outline: none;
-      resize: none;
-      font-size: 14px;
-      font-weight: 400;
-      min-height: 30px;
-      text-overflow: ellipsis;
-      position: relative;
-      padding-inline-start: 10px;
-      box-sizing: border-box;
-      &.readonly {
-        background-color: rgba(128, 128, 128, 0.1);
-      }
-      p {
-        margin: 0;
-        line-height: 22px;
-        padding: 4px 30px 4px 0px;
-        margin-inline-start: 2px;
-      }
-    }
-    .editor-placeholder {
-      color: #696969;
-      overflow: hidden;
-      position: absolute;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      width: 95%;
-      margin-top: -25px;
-      margin-left: 13px;
-      font-size: 13px;
-      font-weight: 400;
-      font-style: italic;
-      user-select: none;
-      display: inline-block;
-      pointer-events: none;
     }
   }
 }

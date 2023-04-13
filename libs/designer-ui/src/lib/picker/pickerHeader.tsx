@@ -1,38 +1,19 @@
+/* eslint-disable react/jsx-no-literals */
+
+/* eslint-disable no-script-url */
 import type { PickerProps } from './picker';
 import { useId } from '@fluentui/react-hooks';
-import type { IBreadcrumbStyles } from '@fluentui/react/lib/Breadcrumb';
 import { Breadcrumb } from '@fluentui/react/lib/Breadcrumb';
-import type { IButtonStyles } from '@fluentui/react/lib/Button';
-import { IconButton } from '@fluentui/react/lib/Button';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { IButton, IconButton } from '@fluentui/react/lib/Button';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import { useIntl } from 'react-intl';
 
-const closeButtonStyles: IButtonStyles = {
-  rootHovered: {
-    backgroundColor: 'transparent',
-  },
-  rootPressed: {
-    backgroundColor: 'transparent',
-  },
-};
-
-const bedcrumbStyles: Partial<IBreadcrumbStyles> = {
-  item: {
-    fontSize: '14px',
-    fontWeight: 400,
-    '&:last-child': {
-      fontSize: '14px',
-    },
-  },
-  root: {
-    margin: 0,
-  },
-};
+/* eslint-disable jsx-a11y/anchor-is-valid */
 
 export const PickerHeader = ({ onCancel, currentPathSegments }: Pick<PickerProps, 'onCancel' | 'currentPathSegments'>) => {
   const closeId = useId();
   const intl = useIntl();
-
   const closeText = intl.formatMessage({
     defaultMessage: 'Close',
     description: 'Label for a button that closes a dialog callout',
@@ -40,12 +21,7 @@ export const PickerHeader = ({ onCancel, currentPathSegments }: Pick<PickerProps
   return (
     <div className="msla-picker-header">
       <div className="msla-picker-breadcrumb">
-        <Breadcrumb
-          items={currentPathSegments}
-          maxDisplayedItems={3}
-          styles={bedcrumbStyles}
-          overflowIndex={currentPathSegments.length > 3 ? 1 : undefined}
-        />
+        <Breadcrumb items={currentPathSegments} maxDisplayedItems={3} />
       </div>
       <TooltipHost content={closeText} calloutProps={{ target: `#${closeId}` }}>
         <IconButton
@@ -55,7 +31,6 @@ export const PickerHeader = ({ onCancel, currentPathSegments }: Pick<PickerProps
           iconProps={{
             iconName: 'Cancel',
           }}
-          styles={closeButtonStyles}
           onClick={onCancel}
         />
       </TooltipHost>

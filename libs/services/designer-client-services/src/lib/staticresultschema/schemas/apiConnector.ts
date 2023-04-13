@@ -20,7 +20,7 @@ export const getStaticResultSchemaForAPIConnector = (
 /**
  * Wraps the static output schema to the operation schema.
  * @arg {Schema} outputSchema - the operation output schema.
- * @return {StaticResultRootSchemaType} - The root schema for connector operation.
+ * @return {StaticResultRootSchema} - The root schema for connector operation.
  */
 const wrapOutputsSchemaToOperationSchema = (outputSchema: Schema): Promise<StaticResultRootSchemaType> => {
   const schema = clone(HttpStaticResultSchema);

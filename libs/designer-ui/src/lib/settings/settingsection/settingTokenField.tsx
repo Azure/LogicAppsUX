@@ -9,8 +9,7 @@ import type { ValueSegment } from '../../editor';
 import type { CallbackHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
-import type { PickerCallbackHandler, PickerInfo } from '../../picker/filepickereditor';
-import { FilePickerEditor } from '../../picker/filepickereditor';
+import { FloatingActionMenu } from '../../floatingactionmenu';
 import { QueryBuilderEditor } from '../../querybuilder';
 import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
 import { ScheduleEditor } from '../../recurrence';
@@ -20,6 +19,7 @@ import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
+import React from 'react';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -39,11 +39,9 @@ export interface SettingTokenFieldProps extends SettingProps {
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
   isTrigger?: boolean;
-  pickerInfo?: PickerInfo;
   isCallback?: boolean;
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
-  pickerCallback?: () => PickerCallbackHandler;
   getTokenPicker: GetTokenPickerHandler;
   validationErrors?: string[];
   hideValidationErrors?: ChangeHandler;
@@ -51,13 +49,16 @@ export interface SettingTokenFieldProps extends SettingProps {
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   const labelId = useId('msla-editor-label');
+  const renderLabel = props.editor?.toLowerCase() !== 'floatingactionmenu';
   return (
     <>
-      <div className="msla-input-parameter-label">
-        <Label id={labelId} className="msla-label" required={props.required}>
-          {props.label}
-        </Label>
-      </div>
+      {renderLabel && (
+        <div className="msla-input-parameter-label">
+          <Label id={labelId} className="msla-label" required={props.required}>
+            {props.label}
+          </Label>
+        </div>
+      )}
       <TokenField {...props} labelId={labelId} />
     </>
   );
@@ -76,10 +77,8 @@ const TokenField = ({
   errorDetails,
   showTokens,
   label,
-  pickerInfo,
   labelId,
   onValueChange,
-  pickerCallback,
   onComboboxMenuOpen,
   hideValidationErrors,
   getTokenPicker,
@@ -217,33 +216,11 @@ const TokenField = ({
       );
 
     case 'recurrence':
-      return (
-        <ScheduleEditor
-          readOnly={readOnly}
-          type={editorOptions?.recurrenceType}
-          showPreview={editorOptions?.showPreview}
-          initialValue={value}
-          onChange={onValueChange}
-        />
-      );
+      return <ScheduleEditor readOnly={readOnly} type={editorOptions?.recurrenceType} initialValue={value} onChange={onValueChange} />;
 
-    case 'filepicker':
-      // console.log(pickerInfo);
-      return (
-        <FilePickerEditor
-          className="msla-setting-token-editor-container"
-          placeholder={placeholder}
-          BasePlugins={{ tokens: showTokens }}
-          readonly={readOnly}
-          initialValue={value}
-          titleSegments={pickerInfo?.titleSegments}
-          isLoading={pickerInfo?.isLoading}
-          editorBlur={onValueChange}
-          getTokenPicker={getTokenPicker}
-          onChange={hideValidationErrors}
-          pickerCallback={pickerCallback}
-        />
-      );
+    case 'floatingactionmenu': {
+      return <FloatingActionMenu supportedTypes={editorOptions?.supportedTypes} />;
+    }
 
     default:
       return (

@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 interface StaticResultPropertiesProps {
-  isRoot?: boolean;
   propertiesSchema: StaticResultRootSchemaType;
   required: string[];
   additionalPropertiesSchema?: boolean;
@@ -17,7 +16,6 @@ interface StaticResultPropertiesProps {
 }
 
 export const StaticResultProperties = ({
-  isRoot = false,
   propertiesSchema,
   required = [],
   propertyValues,
@@ -81,20 +79,17 @@ export const StaticResultProperties = ({
           />
         </div>
       </div>
-      <div className={!isRoot ? 'msla-static-result-properties-inner' : undefined}>
-        {Object.entries(shownProperties).map(([propertyName, showProperty], key) => {
-          return showProperty && propertiesSchema[propertyName] ? (
-            <StaticResultProperty
-              isRoot={isRoot}
-              schema={propertiesSchema[propertyName]}
-              key={key}
-              required={required.includes(propertyName)}
-              properties={propertyValues?.[propertyName]}
-              updateParentProperties={(newPropertyValue: any) => updatePropertyValues(propertyName, newPropertyValue)}
-            />
-          ) : null;
-        })}
-      </div>
+      {Object.entries(shownProperties).map(([propertyName, showProperty], key) => {
+        return showProperty && propertiesSchema[propertyName] ? (
+          <StaticResultProperty
+            schema={propertiesSchema[propertyName]}
+            key={key}
+            required={required.includes(propertyName)}
+            properties={propertyValues?.[propertyName]}
+            updateParentProperties={(newPropertyValue: any) => updatePropertyValues(propertyName, newPropertyValue)}
+          />
+        ) : null;
+      })}
     </div>
   );
 };

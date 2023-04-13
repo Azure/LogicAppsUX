@@ -179,7 +179,6 @@ export default {
     COPYABLE: 'copyable',
     DICTIONARY: 'dictionary',
     DROPDOWN: 'dropdown',
-    FILEPICKER: 'filepicker',
     SCHEMA: 'schema',
     STRING: 'string',
     TABLE: 'table',
@@ -192,10 +191,6 @@ export default {
   },
   ERROR_NAMES: {
     UNAUTHORIZED: 'Unauthorized',
-  },
-  FILEPICKER_TYPE: {
-    FILE: 'file',
-    FOLDER: 'folder',
   },
   FOREACH_CURRENT_ITEM_KEY: 'builtin.$.currentItem',
   FOREACH_CURRENT_ITEM_EXPRESSION_NAME: 'items',

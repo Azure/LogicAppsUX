@@ -2,7 +2,7 @@ import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
 import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
-import type { ParameterInfo, PickerInfo } from '@microsoft/designer-ui';
+import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { InputParameter, OutputParameter } from '@microsoft/parsers-logic-apps';
 import type { OperationInfo } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
@@ -318,17 +318,6 @@ export const operationMetadataSlice = createSlice({
         ...actionMetadata,
       };
     },
-    updatePickerInfo: (state, action: PayloadAction<{ nodeId: string; groupId: string; parameterId: string; pickerInfo?: PickerInfo }>) => {
-      const { nodeId, groupId, parameterId, pickerInfo } = action.payload;
-      if (!pickerInfo) return;
-
-      const index = state.inputParameters[nodeId].parameterGroups[groupId].parameters.findIndex(
-        (parameter) => parameter.id === parameterId
-      );
-      if (index > -1) {
-        state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].pickerInfo = pickerInfo;
-      }
-    },
     deinitializeOperationInfo: (state, action: PayloadAction<{ id: string }>) => {
       const { id } = action.payload;
       delete state.operationInfo[id];
@@ -363,7 +352,6 @@ export const {
   removeParameterValidationError,
   updateOutputs,
   updateActionMetadata,
-  updatePickerInfo,
   deinitializeOperationInfo,
   deinitializeNodes,
 } = operationMetadataSlice.actions;

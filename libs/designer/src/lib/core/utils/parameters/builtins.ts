@@ -13,7 +13,6 @@ const getRecurrenceSchema = (recurrenceType?: RecurrenceType): OpenAPIV2.SchemaO
         'x-ms-editor': 'recurrence',
         'x-ms-editor-options': {
           recurrenceType: recurrenceType,
-          showPreview: true,
         },
         title: 'Recurrence',
       },

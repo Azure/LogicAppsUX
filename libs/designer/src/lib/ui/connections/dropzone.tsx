@@ -4,7 +4,7 @@ import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
 import AddNodeIcon from './edgeContextMenuSvgs/addNodeIcon.svg';
-import { ActionButton, Callout, DirectionalHint, FocusZone } from '@fluentui/react';
+import { ActionButton, Callout, DirectionalHint, FocusTrapZone } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { css } from '@fluentui/utilities';
 import { ActionButtonV2 } from '@microsoft/designer-ui';
@@ -125,9 +125,8 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
               onDismiss={toggleIsCalloutVisible}
               onMouseLeave={toggleIsCalloutVisible}
               directionalHint={DirectionalHint.bottomCenter}
-              setInitialFocus
             >
-              <FocusZone>
+              <FocusTrapZone>
                 <div className="msla-add-context-menu">
                   <ActionButton iconProps={{ imageProps: { src: AddNodeIcon } }} onClick={openAddNodePanel}>
                     {newActionText}
@@ -138,7 +137,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
                     </ActionButton>
                   ) : null}
                 </div>
-              </FocusZone>
+              </FocusTrapZone>
             </Callout>
           )}
         </>

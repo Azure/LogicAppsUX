@@ -105,7 +105,6 @@ export interface DynamicTreeExtension {
   browse: {
     parameters: DynamicParameters;
   };
-  capability: string;
   dynamicState: any;
 }
 
