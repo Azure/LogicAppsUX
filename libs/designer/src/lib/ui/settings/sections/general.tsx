@@ -108,7 +108,7 @@ export const General = ({
     description: 'title for array dropdown input setting',
   });
   const invokerConnectionTitle = intl.formatMessage({
-    defaultMessage:'Use Invoker\'s Connection',
+    defaultMessage:"Use Invoker's Connection",
     description: 'title for invoker connection',
   });
   const invokerConnectionTooltipText = intl.formatMessage({
