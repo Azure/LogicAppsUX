@@ -241,7 +241,7 @@ function GeneralSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: bool
         settings: {
           invokerConnection: {
             isSupported: !!invokerConnection?.isSupported,
-            value: { value: invokerConnection?.value?.value ?? undefined, enabled: checked },
+            value: { value: invokerConnection?.value?.value, enabled: checked },
           },
         },
       })
