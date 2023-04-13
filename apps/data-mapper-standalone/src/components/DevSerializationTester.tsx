@@ -13,15 +13,15 @@ import {
   Text,
   tokens,
 } from '@fluentui/react-components';
-import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
 import type { MonacoProps } from '@microsoft/designer-ui';
-import {
-  convertFromMapDefinition,
-  convertToMapDefinition,
-  convertSchemaToSchemaExtended,
-  flattenSchemaIntoSortArray,
-} from '@microsoft/logic-apps-data-mapper';
+import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
 import type { MapDefinitionEntry } from '@microsoft/logic-apps-data-mapper';
+import {
+  convertSchemaToSchemaExtended,
+  convertToMapDefinition,
+  flattenSchemaIntoSortArray,
+  MapDefinitionDeserializer,
+} from '@microsoft/logic-apps-data-mapper';
 import * as yaml from 'js-yaml';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -90,12 +90,14 @@ export const DevSerializationTester = () => {
       return;
     }
 
-    const deserializedConnections = convertFromMapDefinition(
+    const mapDefinitionDeserializer = new MapDefinitionDeserializer(
       yaml.load(inputMapDefinition ?? '') as MapDefinitionEntry,
       sourceSchemaExtended,
       targetSchemaExtended,
       fetchedFunctions
     );
+
+    const deserializedConnections = mapDefinitionDeserializer.convertFromMapDefinition();
 
     setOutputConnections(JSON.stringify(deserializedConnections, null, 2));
   };

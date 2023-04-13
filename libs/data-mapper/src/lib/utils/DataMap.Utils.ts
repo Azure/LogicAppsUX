@@ -1,10 +1,17 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { MapDefinitionEntry, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
+import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import { SchemaType } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
-import { directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
+import {
+  directAccessPseudoFunction,
+  directAccessPseudoFunctionKey,
+  ifPseudoFunction,
+  ifPseudoFunctionKey,
+  indexPseudoFunction,
+  indexPseudoFunctionKey,
+} from '../models/Function';
 import { findLast } from './Array.Utils';
 import {
   flattenInputs,
@@ -19,6 +26,7 @@ import {
   formatDirectAccess,
   getIndexValueForCurrentConnection,
   isFunctionData,
+  isIfAndGuid,
 } from './Function.Utils';
 import { addReactFlowPrefix, addSourceReactFlowPrefix } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
@@ -109,6 +117,77 @@ export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): b
 
   // Is valid to generate the map definition
   return allNodesTerminateIntoSource && allRequiredInputsFilledOut;
+};
+
+export const amendSourceKeyForDirectAccessIfNeeded = (sourceKey: string): [string, string] => {
+  // Parse the outermost Direct Access (if present) into the typical Function format
+  let mockDirectAccessFnKey: string | undefined = undefined;
+  const [daOpenBracketIdx, daClosedBracketIdx] = [sourceKey.indexOf('['), sourceKey.lastIndexOf(']')];
+  if (daOpenBracketIdx > -1 && daClosedBracketIdx > -1) {
+    // Need to isolate the singular key the DA is apart of as it could be wrapped in a function, etc.
+    let keyWithDaStartIdx = 0;
+    let keyWithDaEndIdx = sourceKey.length;
+    // For start, back track until idx-0, whitespace, or '('
+    for (let i = daOpenBracketIdx; i >= 0; i--) {
+      if (sourceKey[i] === ' ' || sourceKey[i] === '(') {
+        keyWithDaStartIdx = i + 1; // +1 as substr includes start idx but excludes end idx
+        break;
+      }
+    }
+    // For end, idx-length-1, ',', or ')'
+    for (let i = daClosedBracketIdx; i < sourceKey.length; i++) {
+      if (sourceKey[i] === ',' || sourceKey[i] === ')') {
+        keyWithDaEndIdx = i;
+        break;
+      }
+    }
+
+    mockDirectAccessFnKey = `${directAccessPseudoFunctionKey}(`;
+    mockDirectAccessFnKey += `${sourceKey.substring(daOpenBracketIdx + 1, daClosedBracketIdx)}, `; // Index value
+    mockDirectAccessFnKey += `${sourceKey.substring(keyWithDaStartIdx, daOpenBracketIdx)}, `; // Scope (source loop element)
+    mockDirectAccessFnKey += `${sourceKey.substring(keyWithDaStartIdx, daOpenBracketIdx)}${sourceKey.substring(
+      daClosedBracketIdx + 1,
+      keyWithDaEndIdx
+    )}`; // Output value
+    mockDirectAccessFnKey += ')';
+
+    return [
+      sourceKey.substring(0, keyWithDaStartIdx) + mockDirectAccessFnKey + sourceKey.substring(keyWithDaEndIdx),
+      mockDirectAccessFnKey,
+    ];
+  }
+
+  return [sourceKey, ''];
+};
+
+export const getSourceNode = (
+  sourceKey: string,
+  sourceSchema: SchemaExtended,
+  endOfFunctionIndex: number,
+  functions: FunctionData[],
+  createdNodes: { [completeFunction: string]: string }
+) => {
+  if (sourceKey.startsWith(indexPseudoFunctionKey)) {
+    // Handle index variable usage
+    // eslint-disable-next-line no-param-reassign
+    createdNodes[sourceKey] = sourceKey; // Bypass below block since we already have rfKey here
+    return indexPseudoFunction;
+  } else if (sourceKey.startsWith(directAccessPseudoFunctionKey)) {
+    return directAccessPseudoFunction;
+  } else if (
+    (sourceKey.startsWith(ifPseudoFunctionKey) && sourceKey.charAt(ifPseudoFunctionKey.length) === '(') ||
+    isIfAndGuid(sourceKey)
+  ) {
+    // We don't want if-else to be caught here
+    // eslint-disable-next-line no-param-reassign
+    createdNodes[sourceKey] = sourceKey;
+    return ifPseudoFunction;
+  } else if (endOfFunctionIndex > -1) {
+    // We found a Function in source key -> let's find its data
+    return findFunctionForFunctionName(sourceKey.substring(0, endOfFunctionIndex), functions);
+  } else {
+    return findNodeForKey(sourceKey, sourceSchema.schemaTreeRoot);
+  }
 };
 
 export const getDestinationNode = (targetKey: string, functions: FunctionData[], schemaTreeRoot: SchemaNodeExtended): UnknownNode => {
