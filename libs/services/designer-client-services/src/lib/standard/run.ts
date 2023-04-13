@@ -39,6 +39,7 @@ export class StandardRunService implements IRunService {
 
     try {
       const response = await httpClient.get<any>({
+        noAuth: true,
         uri,
       });
       return response;
