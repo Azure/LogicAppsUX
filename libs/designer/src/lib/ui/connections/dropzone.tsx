@@ -1,5 +1,5 @@
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
-import { useAllGraphParents, useGetAllAncestors, useNodeGraphId } from '../../core/state/workflow/workflowSelectors';
+import { useAllGraphParents, useGetAllAncestors, useNodeDisplayName, useNodeGraphId } from '../../core/state/workflow/workflowSelectors';
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
@@ -75,24 +75,27 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
     [graphId, parentId, childId]
   );
 
+  const parentName = useNodeDisplayName(parentId);
+  const childName = useNodeDisplayName(childId);
+
   const tooltipText = childId
     ? intl.formatMessage(
         {
-          defaultMessage: 'Insert a new step between {parent} and {child}',
+          defaultMessage: 'Insert a new step between {parentName} and {childName}',
           description: 'Tooltip for the button to add a new step (action or branch)',
         },
         {
-          parent: parentId,
-          child: childId,
+          parentName,
+          childName,
         }
       )
     : intl.formatMessage(
         {
-          defaultMessage: 'Insert a new step after {parent}',
+          defaultMessage: 'Insert a new step after {parentName}',
           description: 'Tooltip for the button to add a new step (action or branch)',
         },
         {
-          parent: parentId,
+          parentName,
         }
       );
 

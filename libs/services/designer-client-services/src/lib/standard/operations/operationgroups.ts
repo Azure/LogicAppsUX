@@ -29,7 +29,7 @@ export const httpGroup = {
     brandColor: '#709727',
     description: 'All Http operations',
     displayName: 'HTTP',
-    capabilities: ['actions'],
+    capabilities: ['actions', 'triggers'],
     iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/http.svg',
   },
 };
@@ -54,7 +54,7 @@ export const scheduleGroup = {
     description: 'Schedule operations',
     displayName: 'Schedule',
     iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/recurrence.svg',
-    capabilities: ['Stateful'],
+    capabilities: ['actions', 'triggers'],
   },
 };
 

@@ -1,5 +1,5 @@
 import { coreBadge } from '../../badges';
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
+import { SettingScope, type OperationManifest, RecurrenceType } from '@microsoft/utils-logic-apps';
 
 const iconUri = 'https://logicappsv2resources.blob.core.windows.net/icons/apimanagement.svg';
 
@@ -136,22 +136,15 @@ export const apiManagementActionManifest = {
 
 export const apiManagementTriggerManifest = {
   properties: {
-    iconUri,
-    brandColor,
+    ...apiManagementActionManifest.properties,
     summary: 'Choose an Azure API Management trigger',
     description: `Show API Management APIs in my subscription`,
 
-    environmentBadge: coreBadge,
-
-    inputs: {},
-    isInputsOptional: false,
-
-    outputs: {},
-    isOutputsOptional: false,
-    includeRootOutputs: true,
-
-    connector,
-
-    settings: {},
+    recurrence: {
+      type: RecurrenceType.Basic,
+    },
+    settings: {
+      concurrency: { scopes: [SettingScope.Trigger] },
+    },
   },
 } as OperationManifest;
