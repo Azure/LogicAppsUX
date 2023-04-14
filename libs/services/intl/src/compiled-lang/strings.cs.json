@@ -2257,6 +2257,12 @@
       "value": "(UTC-05:00) Východ USA a Kanady"
     }
   ],
+  "Ex4U46": [
+    {
+      "type": 0,
+      "value": "Use Invoker's Connection"
+    }
+  ],
   "ExaACE": [
     {
       "type": 0,
@@ -2921,6 +2927,12 @@
     {
       "type": 0,
       "value": "Název:"
+    }
+  ],
+  "Jpox7O": [
+    {
+      "type": 0,
+      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
     }
   ],
   "JpthWY": [

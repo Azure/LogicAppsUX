@@ -2183,6 +2183,12 @@
       "value": "(UTC-5.00) Fuso orientale (USA e Canada)"
     }
   ],
+  "Ex4U46": [
+    {
+      "type": 0,
+      "value": "Use Invoker's Connection"
+    }
+  ],
   "ExaACE": [
     {
       "type": 0,
@@ -2824,6 +2830,12 @@
     {
       "type": 0,
       "value": "Nome:"
+    }
+  ],
+  "Jpox7O": [
+    {
+      "type": 0,
+      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
     }
   ],
   "JpthWY": [
