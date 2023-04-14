@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.3.1](https://github.com/Azure/LogicAppsUX/compare/v2.3.0...v2.3.1) (2023-04-14)
+
+
+### Bug Fixes
+
+* **Services:** Gateway service now works in VSCode/Standalone ([#2030](https://github.com/Azure/LogicAppsUX/issues/2030)) ([f3483c3](https://github.com/Azure/LogicAppsUX/commit/f3483c36c1d068ee492bcbfe573b8e889682ee32))
+
 ## [2.3.0](https://github.com/Azure/LogicAppsUX/compare/v2.2.3...v2.3.0) (2023-04-14)
 
 
