@@ -18,9 +18,10 @@ export interface DropZoneProps {
   graphId: string;
   parentId?: string;
   childId?: string;
+  isLeaf?: boolean;
 }
 
-export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }) => {
+export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, isLeaf = false }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const [showCallout, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
@@ -103,6 +104,8 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
 
   const buttonId = `msla-edge-button-${parentId}-${childId}`.replace(/\W/g, '-');
 
+  const showParallelBranchButton = !isLeaf && parentId;
+
   return (
     <div
       ref={drop}
@@ -132,7 +135,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
                   <ActionButton iconProps={{ imageProps: { src: AddNodeIcon } }} onClick={openAddNodePanel}>
                     {newActionText}
                   </ActionButton>
-                  {parentId ? (
+                  {showParallelBranchButton ? (
                     <ActionButton iconProps={{ imageProps: { src: AddBranchIcon } }} onClick={addParallelBranch}>
                       {newBranchText}
                     </ActionButton>

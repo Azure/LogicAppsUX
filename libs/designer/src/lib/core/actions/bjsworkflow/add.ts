@@ -10,6 +10,7 @@ import { changePanelNode, isolateTab, showDefaultTabs } from '../../state/panel/
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
+import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
@@ -200,8 +201,9 @@ const initializeOperationDetails = async (
   }
 
   // Re-update settings after we have valid operation data
+  const rootNodeId = getRootNodeDetails(state.workflow, connectorId);
   const operation = getState().workflow.operations[nodeId];
-  const settings = getOperationSettings(isTrigger, operationInfo, initData.nodeOutputs, manifest, swagger, operation);
+  const settings = getOperationSettings(isTrigger, operationInfo, initData.nodeOutputs, manifest, swagger, operation, rootNodeId);
   dispatch(updateNodeSettings({ id: nodeId, settings }));
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);
@@ -308,4 +310,15 @@ const getOperationType = (operation: DiscoveryOperation<DiscoveryResultTypes>): 
       ? Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
       : Constants.NODE.TYPE.API_CONNECTION
     : operationType;
+};
+
+export const getRootNodeDetails = (workflowState: WorkflowState, connectorId: string): string | undefined => {
+  if (workflowState.graph?.children && connectorId.indexOf(Constants.INVOKER_CONNECTION.DATAVERSE_CONNECTOR_ID) > -1) {
+    for (const child of workflowState.graph.children) {
+      if (workflowState.graph?.id === 'root') {
+        return child.id;
+      }
+    }
+  }
+  return undefined;
 };

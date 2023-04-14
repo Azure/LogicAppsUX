@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 
 export interface GeneralSectionProps extends SectionProps {
   onConcurrencyToggle: ToggleHandler;
+  onInvokerConnectionToggle: ToggleHandler;
   onConcurrencyValueChange: NumberChangeHandler;
   onSplitOnToggle: ToggleHandler;
   onSplitOnSelectionChanged: DropdownSelectionChangeHandler;
@@ -24,9 +25,11 @@ export const General = ({
   splitOnConfiguration,
   timeout,
   concurrency,
+  invokerConnection,
   conditionExpressions,
   readOnly,
   onConcurrencyToggle,
+  onInvokerConnectionToggle,
   onConcurrencyValueChange,
   onSplitOnToggle,
   onSplitOnSelectionChanged,
@@ -104,12 +107,23 @@ export const General = ({
     defaultMessage: 'Array',
     description: 'title for array dropdown input setting',
   });
+  const invokerConnectionTitle = intl.formatMessage({
+    defaultMessage: "Use Invoker's Connection",
+    description: 'title for invoker connection',
+  });
+  const invokerConnectionTooltipText = intl.formatMessage({
+    defaultMessage: 'When enabled, this action will run with the user from the "Run as" setting in the Dataverse trigger.',
+    description: 'description of invoker connection setting',
+  });
 
   const splitOnLabel = <SettingLabel labelText={splitOnTitle} infoTooltipText={splitOnTooltipText} isChild={false} />;
   const clientTrackingIdLabel = <SettingLabel labelText={clientTrackingId} infoTooltipText={clientTrackingIdTooltipText} isChild={true} />;
   const timeoutLabel = <SettingLabel labelText={actionTimeoutTitle} infoTooltipText={actionTimeoutTooltipText} isChild={false} />;
   const concurrencyLabel = <SettingLabel labelText={concurrencyTitle} infoTooltipText={concurrencyTooltipText} isChild={false} />;
   const arrayDropdownLabel = <SettingLabel labelText={arrayDropdownTitle} isChild={true} />;
+  const invokerConnectionLabel = (
+    <SettingLabel labelText={invokerConnectionTitle} infoTooltipText={invokerConnectionTooltipText} isChild={false} />
+  );
   const triggerConditionsLabel = (
     <SettingLabel labelText={triggerConditionsTitle} infoTooltipText={triggerConditionsTooltipText} isChild={false} />
   );
@@ -201,6 +215,18 @@ export const General = ({
           onExpressionsChange: onTriggerConditionsChange,
         },
         visible: conditionExpressions?.isSupported,
+      },
+      {
+        settingType: 'SettingToggle',
+        settingProp: {
+          readOnly,
+          checked: invokerConnection?.value?.enabled,
+          onToggleInputChange: (_, checked) => onInvokerConnectionToggle(!!checked),
+          customLabel: () => invokerConnectionLabel,
+          onText,
+          offText,
+        },
+        visible: invokerConnection?.isSupported,
       },
     ],
     validationErrors,

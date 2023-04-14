@@ -17,10 +17,9 @@ import { ScheduleEditor } from '../../recurrence';
 import { SchemaEditor } from '../../schemaeditor';
 import { TableEditor } from '../../table';
 import type { TokenGroup } from '../../tokenpicker/models/token';
+import { useId } from '../../useId';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
-import { useId } from '@fluentui/react-hooks';
-import React from 'react';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
