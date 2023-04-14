@@ -87,7 +87,7 @@ export async function getDynamicValues(
     return getListDynamicValues(
       connectionReference?.connection.id,
       operationInfo.connectorId,
-      operationInfo.operationId,
+      dynamicState.operationId,
       parameter?.alias,
       operationParameters,
       dynamicState,

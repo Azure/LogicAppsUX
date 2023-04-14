@@ -152,7 +152,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
       {showEmptyGraphComponents ? (
         !readOnly ? (
           <div className={'edge-drop-zone-container'}>
-            <DropZone graphId={subgraphId} parentId={id} />
+            <DropZone graphId={subgraphId} parentId={id} isLeaf={isLeaf} />
           </div>
         ) : (
           <p className="no-actions-text">No Actions</p>

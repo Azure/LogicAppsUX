@@ -1,5 +1,6 @@
 import { Toolbar } from '../../html/plugins/toolbar';
 import type { TokenPickerMode } from '../../tokenpicker';
+import { useId } from '../../useId';
 import type { ValueSegment } from '../models/parameter';
 import { TokenNode } from './nodes/tokenNode';
 import { AutoFocus } from './plugins/AutoFocus';
@@ -21,7 +22,6 @@ import EditorTheme from './themes/editorTheme';
 import { parseSegments } from './utils/parsesegments';
 import type { ICalloutProps } from '@fluentui/react';
 import { DirectionalHint, css, TooltipHost } from '@fluentui/react';
-import { useId } from '@fluentui/react-hooks';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';

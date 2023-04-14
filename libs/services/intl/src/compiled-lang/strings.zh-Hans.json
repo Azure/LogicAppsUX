@@ -786,6 +786,12 @@
       "value": "(UTC+06:00)达卡"
     }
   ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Choose the type of user input"
+    }
+  ],
   "3Y8a6G": [
     {
       "type": 0,
@@ -1234,6 +1240,12 @@
     {
       "type": 0,
       "value": "必需。要从中获取子字符串的字符串。"
+    }
+  ],
+  "7Vyxu0": [
+    {
+      "type": 0,
+      "value": "Yes/No"
     }
   ],
   "7WVgiU": [
@@ -2035,6 +2047,12 @@
       "value": "(UTC-01:00)亚速尔群岛"
     }
   ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Add an input"
+    }
+  ],
   "DyYcJZ": [
     {
       "type": 0,
@@ -2171,6 +2189,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00)东部时间(美国和加拿大)(& )"
+    }
+  ],
+  "Ex4U46": [
+    {
+      "type": 0,
+      "value": "Use Invoker's Connection"
     }
   ],
   "ExaACE": [
@@ -2800,6 +2824,12 @@
     {
       "type": 0,
       "value": "名称:"
+    }
+  ],
+  "Jpox7O": [
+    {
+      "type": 0,
+      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
     }
   ],
   "JpthWY": [
@@ -4334,6 +4364,12 @@
       "value": "Error Type"
     }
   ],
+  "VggzRB": [
+    {
+      "type": 0,
+      "value": "Text"
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -4848,6 +4884,12 @@
       "value": "\""
     }
   ],
+  "a+6uyE": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5098,6 +5140,12 @@
     {
       "type": 0,
       "value": "也可以从其他源添加动态内容。"
+    }
+  ],
+  "cF4w+R": [
+    {
+      "type": 0,
+      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -6277,6 +6325,12 @@
     {
       "type": 0,
       "value": "Select an action type"
+    }
+  ],
+  "lv9QyZ": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "lzBHHT": [
@@ -7792,6 +7846,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00)协调世界时+12"
+    }
+  ],
+  "xeREzb": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "xt5TeT": [

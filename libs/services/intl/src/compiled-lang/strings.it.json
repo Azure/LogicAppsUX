@@ -788,6 +788,12 @@
       "value": "(UTC+06:00) Dacca"
     }
   ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Choose the type of user input"
+    }
+  ],
   "3Y8a6G": [
     {
       "type": 0,
@@ -1236,6 +1242,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Stringa da cui viene recuperata la sottostringa."
+    }
+  ],
+  "7Vyxu0": [
+    {
+      "type": 0,
+      "value": "Yes/No"
     }
   ],
   "7WVgiU": [
@@ -2027,6 +2039,12 @@
       "value": "(UTC-01:00) Azzorre"
     }
   ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Add an input"
+    }
+  ],
   "DyYcJZ": [
     {
       "type": 0,
@@ -2163,6 +2181,12 @@
     {
       "type": 0,
       "value": "(UTC-5.00) Fuso orientale (USA e Canada)"
+    }
+  ],
+  "Ex4U46": [
+    {
+      "type": 0,
+      "value": "Use Invoker's Connection"
     }
   ],
   "ExaACE": [
@@ -2806,6 +2830,12 @@
     {
       "type": 0,
       "value": "Nome:"
+    }
+  ],
+  "Jpox7O": [
+    {
+      "type": 0,
+      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
     }
   ],
   "JpthWY": [
@@ -4360,6 +4390,12 @@
       "value": "Error Type"
     }
   ],
+  "VggzRB": [
+    {
+      "type": 0,
+      "value": "Text"
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -4854,6 +4890,12 @@
       "value": "Valore 'in' non supportato: {value} nel parametro"
     }
   ],
+  "a+6uyE": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5100,6 +5142,12 @@
     {
       "type": 0,
       "value": "È possibile aggiungere contenuto dinamico anche da altre origini."
+    }
+  ],
+  "cF4w+R": [
+    {
+      "type": 0,
+      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -6277,6 +6325,12 @@
     {
       "type": 0,
       "value": "Select an action type"
+    }
+  ],
+  "lv9QyZ": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "lzBHHT": [
@@ -7782,6 +7836,12 @@
     {
       "type": 0,
       "value": "(UTC+12.00) Coordinated Universal Time+12"
+    }
+  ],
+  "xeREzb": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "xt5TeT": [

@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-no-literals */
 
 /* eslint-disable no-script-url */
+import { useId } from '../useId';
 import type { PickerProps } from './picker';
-import { useId } from '@fluentui/react-hooks';
 import { Breadcrumb } from '@fluentui/react/lib/Breadcrumb';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IButton, IconButton } from '@fluentui/react/lib/Button';
