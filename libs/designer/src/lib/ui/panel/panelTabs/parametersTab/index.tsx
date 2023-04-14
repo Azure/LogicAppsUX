@@ -276,6 +276,17 @@ const ParameterSection = ({
         } as ValueSegment;
       });
 
+      const updatedEditorViewModel = {
+        ...editorViewModel,
+        ...(editorViewModel?.items && {
+          items: editorViewModel.items.map((item: any) => {
+            const key = replaceWithValidItems(item.key, remappedValues);
+            const value = replaceWithValidItems(item.value, remappedValues);
+            return { key, value };
+          }),
+        }),
+      };
+
       return {
         settingType: 'SettingTokenField',
         settingProp: {
@@ -286,6 +297,7 @@ const ParameterSection = ({
           editorOptions,
           tokenEditor: true,
           isTrigger,
+          editorViewModel: updatedEditorViewModel,
           isCallback: nodeType?.toLowerCase() === constants.NODE.TYPE.HTTP_WEBHOOK,
           isLoading: dynamicData?.status === DynamicCallStatus.STARTED,
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
@@ -357,4 +369,13 @@ export const parametersTab: PanelTab = {
   content: <ParametersTab />,
   order: 0,
   icon: 'Info',
+};
+
+const replaceWithValidItems = (toReplace: any[], validItems: ValueSegment[]) => {
+  return toReplace.map((keyItem: any) => {
+    if (keyItem.type !== ValueSegmentType.TOKEN) return keyItem;
+    const tokenToInsert = validItems.find((t) => t.token?.value === keyItem.token?.value);
+    if (tokenToInsert) return tokenToInsert;
+    return keyItem;
+  });
 };
