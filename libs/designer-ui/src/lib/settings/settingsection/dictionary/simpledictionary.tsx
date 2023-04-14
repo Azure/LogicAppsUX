@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { EventHandler } from '../../../eventhandler';
 import { Label } from '../../../label';
+import { useId } from '../../../useId';
 import { SimpleDictionaryItem } from './simpledictionaryitem';
 import type { SimpleDictionaryItemProps, SimpleDictionaryRowModel, SimpleDictionaryChangeModel } from './simpledictionaryitem';
-import { useId } from '@fluentui/react-hooks';
-import { guid } from '@microsoft/utils-logic-apps';
 import { useDebouncedEffect } from '@react-hookz/web';
 import React, { useEffect, useState } from 'react';
 

@@ -1,4 +1,4 @@
-import { useId } from '@fluentui/react-hooks';
+import { useId } from '../../useId';
 import type { ValueProps } from './types';
 
 export const HtmlValue: React.FC<ValueProps> = (props) => {
