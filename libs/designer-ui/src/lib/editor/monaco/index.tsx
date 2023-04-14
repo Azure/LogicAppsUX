@@ -3,7 +3,6 @@ import { registerWorkflowLanguageProviders } from '../../workflow/languageservic
 import { useTheme } from '@fluentui/react';
 import Editor, { loader } from '@monaco-editor/react';
 import type { IScrollEvent, editor } from 'monaco-editor';
-import { KeyMod } from 'monaco-editor';
 import type { MutableRefObject } from 'react';
 import { useState, useEffect, forwardRef, useRef } from 'react';
 
@@ -208,7 +207,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     const openTokenPickerAction: editor.IActionDescriptor = {
       id: 'open-tokenpicker',
       label: 'Open TokenPicker',
-      keybindings: [KeyMod.Alt | 85],
+      keybindings: [512 | 85],
       run: function (): void | Promise<void> {
         openTokenPicker?.();
       },
