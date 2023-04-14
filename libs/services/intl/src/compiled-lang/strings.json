@@ -1091,6 +1091,12 @@
       "value": "Hybrid Connector"
     }
   ],
+  "61iT9C": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing Alt + / in the editor)"
+    }
+  ],
   "62Ypnr": [
     {
       "type": 0,
@@ -1653,6 +1659,16 @@
     {
       "type": 0,
       "value": "Insert data from previous step (You can also add by typing / in the editor)"
+    }
+  ],
+  "Aci186": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Add dynamic data pressing Alt + /"
     }
   ],
   "AgrMqq": [
