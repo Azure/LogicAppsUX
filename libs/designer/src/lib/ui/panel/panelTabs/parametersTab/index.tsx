@@ -4,6 +4,7 @@ import type { ParameterGroup } from '../../../../core/state/operation/operationM
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import {
   useAllowUserToChangeConnection,
+  useConnectorName,
   useNodeConnectionName,
   useOperationInfo,
 } from '../../../../core/state/selectors/actionMetadataSelector';
@@ -19,6 +20,7 @@ import {
   shouldUseParameterInGroup,
   updateParameterAndDependencies,
 } from '../../../../core/utils/parameters/helper';
+import { getFilePickerCallbacks } from '../../../../core/utils/parameters/picker';
 import type { TokenGroup } from '../../../../core/utils/tokens';
 import { createValueSegmentFromToken, getExpressionTokenSections, getOutputTokenSections } from '../../../../core/utils/tokens';
 import { getAllVariables, getAvailableVariables } from '../../../../core/utils/variables';
@@ -126,6 +128,7 @@ const ParameterSection = ({
     };
   });
   const rootState = useSelector((state: RootState) => state);
+  const displayNameResult = useConnectorName(operationInfo);
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState) => {
@@ -136,12 +139,8 @@ const ParameterSection = ({
         propertiesToUpdate.editorViewModel = viewModel;
       }
       const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
-      if (variables[nodeId]) {
-        if (parameter?.parameterKey === 'inputs.$.name') {
-          dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
-        } else if (parameter?.parameterKey === 'inputs.$.type') {
-          dispatch(updateVariableInfo({ id: nodeId, type: value[0]?.value }));
-        }
+      if (variables[nodeId] && (parameter?.parameterKey === 'inputs.$.name' || parameter?.parameterKey === 'inputs.$.type')) {
+        dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
       }
 
       updateParameterAndDependencies(
@@ -292,6 +291,8 @@ const ParameterSection = ({
           validationErrors,
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
+          pickerCallback: () =>
+            getFilePickerCallbacks(nodeId, group.id, param, displayNameResult.result, operationInfo, connectionReference, dispatch),
           getTokenPicker: (
             editorId: string,
             labelId: string,
@@ -334,14 +335,20 @@ const getEditorAndOptions = (
   variables: Record<string, VariableDeclaration[]>
 ): { editor?: string; editorOptions?: any } => {
   const { editor, editorOptions } = parameter;
+  const supportedTypes: string[] = editorOptions?.supportedTypes ?? [];
   if (equals(editor, 'variablename')) {
     return {
       editor: 'dropdown',
       editorOptions: {
-        options: getAvailableVariables(variables, upstreamNodeIds).map((variable) => ({
-          value: variable.name,
-          displayName: variable.name,
-        })),
+        options: getAvailableVariables(variables, upstreamNodeIds)
+          .filter((variable) => {
+            if (supportedTypes?.length === 0) return true;
+            return supportedTypes.includes(variable.type);
+          })
+          .map((variable) => ({
+            value: variable.name,
+            displayName: variable.name,
+          })),
       },
     };
   }

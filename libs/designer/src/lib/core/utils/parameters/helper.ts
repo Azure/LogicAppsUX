@@ -34,6 +34,7 @@ import { validateJSONParameter, validateStaticParameterInfo } from '../validatio
 import { getRecurrenceParameters } from './builtins';
 import { addCastToExpression, addFoldingCastToExpression } from './casting';
 import { getDynamicInputsFromSchema, getDynamicSchema, getDynamicValues } from './dynamicdata';
+import { requiresFilePickerEditor } from './picker';
 import {
   createLiteralValueSegment,
   isExpressionToken,
@@ -272,7 +273,8 @@ export function createParameterInfo(
   _metadata?: Record<string, string>,
   shouldIgnoreDefaultValue = false
 ): ParameterInfo {
-  const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, shouldIgnoreDefaultValue);
+  const isFilePicker = requiresFilePickerEditor(parameter);
+  const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, shouldIgnoreDefaultValue, isFilePicker);
   const value = loadParameterValue(parameter);
   const { alias, dependencies, encode, format, isDynamic, isUnknown, serialization } = parameter;
   const info = {
@@ -333,7 +335,11 @@ function hasValue(parameter: ResolvedParameter): boolean {
 }
 
 // TODO - Need to figure out a way to get the managedIdentity for the app for authentication editor
-export function getParameterEditorProps(parameter: InputParameter, shouldIgnoreDefaultValue = false): ParameterEditorProps {
+export function getParameterEditorProps(
+  parameter: InputParameter,
+  shouldIgnoreDefaultValue = false,
+  isFilePicker?: boolean
+): ParameterEditorProps {
   const { dynamicValues, type, itemSchema, visibility, value } = parameter;
   let { editor, editorOptions, schema } = parameter;
   let editorViewModel;
@@ -380,6 +386,8 @@ export function getParameterEditorProps(parameter: InputParameter, shouldIgnoreD
     editorViewModel = editorOptions?.isOldFormat ? toUntilViewModel(value) : toConditionViewModel(value);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     editor = undefined;
+  } else if (isFilePicker) {
+    editor = constants.EDITOR.FILEPICKER;
   }
   return { editor, editorOptions, editorViewModel, schema };
 }

@@ -10,6 +10,7 @@ import type { CallbackHandler, ChangeHandler, GetTokenPickerHandler } from '../.
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { FloatingActionMenu } from '../../floatingactionmenu';
+import { FilePickerEditor } from '../../picker/filepickereditor';
 import { QueryBuilderEditor } from '../../querybuilder';
 import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
 import { ScheduleEditor } from '../../recurrence';
@@ -216,8 +217,31 @@ const TokenField = ({
       );
 
     case 'recurrence':
-      return <ScheduleEditor readOnly={readOnly} type={editorOptions?.recurrenceType} initialValue={value} onChange={onValueChange} />;
-
+      return (
+        <ScheduleEditor
+          readOnly={readOnly}
+          type={editorOptions?.recurrenceType}
+          showPreview={editorOptions?.showPreview}
+          initialValue={value}
+          onChange={onValueChange}
+        />
+      );
+    case 'filepicker':
+      // console.log(pickerInfo);
+      return (
+        <FilePickerEditor
+          className="msla-setting-token-editor-container"
+          placeholder={placeholder}
+          BasePlugins={{ tokens: showTokens }}
+          readonly={readOnly}
+          initialValue={value}
+          titleSegments={dropdownOptions}
+          isLoading={isLoading}
+          editorBlur={onValueChange}
+          getTokenPicker={getTokenPicker}
+          onChange={hideValidationErrors}
+        />
+      );
     case 'floatingactionmenu': {
       return <FloatingActionMenu supportedTypes={editorOptions?.supportedTypes} />;
     }
