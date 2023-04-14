@@ -50,7 +50,13 @@ export const getListDynamicValues = async (
   const service = ConnectorService();
 
   return queryClient.fetchQuery(
-    ['listdynamicvalues', (connectionId ?? '').toLowerCase(), connectorId.toLowerCase(), operationId.toLowerCase(), parameterAlias],
+    [
+      'listdynamicvalues',
+      (connectionId ?? '').toLowerCase(),
+      connectorId.toLowerCase(),
+      operationId.toLowerCase(),
+      getParametersKey(parameters).toLowerCase(),
+    ],
     () =>
       service.getListDynamicValues(
         connectionId,

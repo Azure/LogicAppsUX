@@ -113,7 +113,7 @@ function GeneralSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: bool
     };
   });
 
-  const { timeout, splitOn, splitOnConfiguration, concurrency, conditionExpressions, invokerConnection } = useSelector(
+  const { timeout, splitOn, splitOnConfiguration, concurrency, conditionExpressions } = useSelector(
     (state: RootState) => state.operations.settings?.[nodeId] ?? {}
   );
 
@@ -234,31 +234,15 @@ function GeneralSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: bool
     updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, { ...settings, splitOn: splitOnSetting });
   };
 
-  const onInvokerConnectionToggle = (checked: boolean): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          invokerConnection: {
-            isSupported: !!invokerConnection?.isSupported,
-            value: { value: invokerConnection?.value?.value, enabled: checked },
-          },
-        },
-      })
-    );
-  };
-
   const generalSectionProps: GeneralSectionProps = {
     splitOn,
     timeout,
     concurrency,
-    invokerConnection,
     conditionExpressions,
     splitOnConfiguration,
     readOnly,
     nodeId,
     onConcurrencyToggle,
-    onInvokerConnectionToggle,
     onConcurrencyValueChange,
     onSplitOnToggle,
     onSplitOnSelectionChanged,
@@ -276,13 +260,7 @@ function GeneralSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: bool
     }),
   };
 
-  if (
-    splitOn?.isSupported ||
-    timeout?.isSupported ||
-    concurrency?.isSupported ||
-    conditionExpressions?.isSupported ||
-    invokerConnection?.isSupported
-  ) {
+  if (splitOn?.isSupported || timeout?.isSupported || concurrency?.isSupported || conditionExpressions?.isSupported) {
     return <General {...generalSectionProps} />;
   } else return null;
 }
