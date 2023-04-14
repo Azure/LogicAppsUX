@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.2.3](https://github.com/Azure/LogicAppsUX/compare/v2.2.2...v2.2.3) (2023-04-14)
+
+
+### Bug Fixes
+
+* **designer:** move useId into the code instead of import to fix webpack issue ([058aa38](https://github.com/Azure/LogicAppsUX/commit/058aa38ef1071eb291c20dffb63a06eb0ab047e0))
+
 ### [2.2.2](https://github.com/Azure/LogicAppsUX/compare/v2.2.1...v2.2.2) (2023-04-14)
 
 
