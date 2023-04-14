@@ -34,9 +34,9 @@ export class BaseGatewayService implements IGatewayService {
 
   private async fetchGatewaysList(subscriptionId: string, apiName: string): Promise<Gateway[]> {
     const filter = `apiName eq '${apiName}'`;
-    const { apiVersions } = this.options;
+    const { baseUrl, apiVersions } = this.options;
     const request: HttpRequestOptions<any> = {
-      uri: `${subscriptionId}/providers/Microsoft.Web/connectionGateways`,
+      uri: `${baseUrl}${subscriptionId}/providers/Microsoft.Web/connectionGateways`,
       queryParameters: {
         'api-version': apiVersions.gateway,
         $filter: filter,
@@ -56,9 +56,9 @@ export class BaseGatewayService implements IGatewayService {
   }
 
   private async fetchSubscriptions(): Promise<Subscription[]> {
-    const { apiVersions } = this.options;
+    const { baseUrl, apiVersions } = this.options;
     const request: HttpRequestOptions<SubscriptionsResponse> = {
-      uri: '/subscriptions',
+      uri: `${baseUrl}/subscriptions/`,
       queryParameters: {
         'api-version': apiVersions.subscription,
       },
