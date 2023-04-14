@@ -26,7 +26,7 @@ interface TokenPickerButtonProps extends TokenPickerButtonEditorProps {
   openTokenPicker: (mode: TokenPickerMode) => void;
 }
 
-export const TokenPickerButtonNew = ({ showOnLeft, openTokenPicker }: TokenPickerButtonProps): JSX.Element => {
+export const TokenPickerButton = ({ showOnLeft, openTokenPicker }: TokenPickerButtonProps): JSX.Element => {
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
   const [anchorKey, setAnchorKey] = useState<NodeKey | null>(null);
