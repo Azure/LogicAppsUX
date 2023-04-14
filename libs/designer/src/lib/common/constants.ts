@@ -244,10 +244,6 @@ export default {
   INT_MIN: -2147483648,
   INTEGRATION_ACCOUNT_ARTIFACT_LOOKUP_ARTIFACT_TYPES: ['Schema', 'Map', 'Partner', 'Agreement'],
   ITEM: 'item()',
-  INVOKER_CONNECTION: {
-    DATAVERSE_CUD_TRIGGER: 'When_a_row_is_added,_modified_or_deleted',
-    DATAVERSE_CONNECTOR_ID: '/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps'
-  },
   LINKS: {
     CUSTOM_API: 'http://aka.ms/logicapps-customapi',
     FUNCTION: 'http://aka.ms/logicapps-functions',
