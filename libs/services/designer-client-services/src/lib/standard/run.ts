@@ -40,6 +40,8 @@ export class StandardRunService implements IRunService {
     try {
       const response = await httpClient.get<any>({
         uri,
+        noAuth: true,
+        headers: { 'Access-Control-Allow-Origin': '*' },
       });
       return response;
     } catch (e: any) {
