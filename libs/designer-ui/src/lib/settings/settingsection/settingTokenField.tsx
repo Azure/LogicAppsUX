@@ -226,7 +226,6 @@ const TokenField = ({
         />
       );
     case 'filepicker':
-      // console.log(pickerInfo);
       return (
         <FilePickerEditor
           className="msla-setting-token-editor-container"
