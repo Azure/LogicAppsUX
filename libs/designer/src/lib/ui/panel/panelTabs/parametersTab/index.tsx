@@ -132,13 +132,21 @@ const ParameterSection = ({
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState) => {
-      const { value, viewModel } = newState;
+      let { value } = newState;
+      const { viewModel } = newState;
+      const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
+      if (
+        (parameter?.type === constants.SWAGGER.TYPE.BOOLEAN && value.length === 1 && value[0]?.value === 'True') ||
+        value[0]?.value === 'False'
+      ) {
+        value = [{ ...value[0], value: value[0].value.toLowerCase() }];
+      }
+
       const propertiesToUpdate = { value, preservedValue: undefined } as Partial<ParameterInfo>;
 
       if (viewModel !== undefined) {
         propertiesToUpdate.editorViewModel = viewModel;
       }
-      const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
       if (variables[nodeId] && (parameter?.parameterKey === 'inputs.$.name' || parameter?.parameterKey === 'inputs.$.type')) {
         dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
       }
@@ -275,17 +283,6 @@ const ParameterSection = ({
         } as ValueSegment;
       });
 
-      const updatedEditorViewModel = {
-        ...editorViewModel,
-        ...(editorViewModel?.items && {
-          items: editorViewModel.items.map((item: any) => {
-            const key = replaceWithValidItems(item.key, remappedValues);
-            const value = replaceWithValidItems(item.value, remappedValues);
-            return { key, value };
-          }),
-        }),
-      };
-
       return {
         settingType: 'SettingTokenField',
         settingProp: {
@@ -296,7 +293,6 @@ const ParameterSection = ({
           editorOptions,
           tokenEditor: true,
           isTrigger,
-          editorViewModel: updatedEditorViewModel,
           isCallback: nodeType?.toLowerCase() === constants.NODE.TYPE.HTTP_WEBHOOK,
           isLoading: dynamicData?.status === DynamicCallStatus.STARTED,
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
@@ -376,13 +372,4 @@ export const parametersTab: PanelTab = {
   content: <ParametersTab />,
   order: 0,
   icon: 'Info',
-};
-
-const replaceWithValidItems = (toReplace: any[], validItems: ValueSegment[]) => {
-  return toReplace.map((keyItem: any) => {
-    if (keyItem.type !== ValueSegmentType.TOKEN) return keyItem;
-    const tokenToInsert = validItems.find((t) => t.token?.value === keyItem.token?.value);
-    if (tokenToInsert) return tokenToInsert;
-    return keyItem;
-  });
 };
