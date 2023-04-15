@@ -24,15 +24,20 @@ export const staticResultsSlice = createSlice({
     initializeStaticResultProperties: (state, action: PayloadAction<Record<string, any>>) => {
       state.properties = action.payload;
     },
+    deinitializeStaticResultProperty: (state, action: PayloadAction<{ id: string }>) => {
+      const { id } = action.payload;
+      delete state.properties[id];
+    },
     addResultSchema: (state, action: PayloadAction<StaticResultsSchemaUpdateEvent>) => {
       state.schemas[action.payload.id] = action.payload.schema;
     },
-    updateProperties: (state, action: PayloadAction<{ name: string; properties: any }>) => {
+    updateStaticResultProperties: (state, action: PayloadAction<{ name: string; properties: any }>) => {
       state.properties[action.payload.name] = action.payload.properties;
     },
   },
 });
 
-export const { initializeStaticResultProperties, addResultSchema, updateProperties } = staticResultsSlice.actions;
+export const { initializeStaticResultProperties, deinitializeStaticResultProperty, addResultSchema, updateStaticResultProperties } =
+  staticResultsSlice.actions;
 
 export default staticResultsSlice.reducer;

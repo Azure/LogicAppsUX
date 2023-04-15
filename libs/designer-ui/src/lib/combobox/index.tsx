@@ -185,7 +185,7 @@ export const Combobox = ({
       setMode(Mode.Custom);
       setCanAutoFocus(true);
     } else {
-      if (setSelectedKey && option?.key) {
+      if (setSelectedKey && option) {
         setSelectedKey(option.key.toString());
         setMode(Mode.Default);
       }
@@ -285,7 +285,7 @@ const getSelectedKey = (options: ComboboxItem[], initialValue?: ValueSegment[]):
   if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
     return (
       options.find((option) => {
-        return option.value === initialValue[0].value;
+        return option.key === initialValue[0].value;
       })?.key ?? ''
     );
   }
