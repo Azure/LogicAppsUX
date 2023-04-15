@@ -211,6 +211,17 @@ export class ValueSegmentConvertor {
 }
 
 /**
+ * Checks whether the segment is a value segment.
+ * @arg {any} object - The value segment.
+ * @return {boolean}
+ */
+export function isValueSegment(object: any): boolean {
+  return (
+    object?.id && !isNullOrUndefined(object.value) && (object.type === ValueSegmentType.LITERAL || object.type === ValueSegmentType.TOKEN)
+  );
+}
+
+/**
  * Checks whether the segment is a literal value segment.
  * @arg {ValueSegment} segment - The value segment.
  * @return {boolean}
