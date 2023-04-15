@@ -29,7 +29,7 @@ import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { useFunctionalState } from '@react-hookz/web';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
 
@@ -107,9 +107,21 @@ export const BaseEditor = ({
 }: BaseEditorProps) => {
   const editorId = useId('msla-tokenpicker-callout-location');
   const intl = useIntl();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const placeholderRef = useRef<HTMLDivElement>(null);
+  const [isOverflowed, setIsOverflowed] = useState(false);
   const [isEditorFocused, setIsEditorFocused] = useState(false);
   const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
   const [tokenPickerMode, setTokenPickerMode] = useState<TokenPickerMode | undefined>();
+
+  useEffect(() => {
+    if (containerRef.current && placeholderRef.current) {
+      const containerWidth = containerRef.current.clientWidth;
+      const placeholderWidth = placeholderRef.current.clientWidth;
+      setIsOverflowed(placeholderWidth > containerWidth);
+    }
+  }, []);
+
   const initialConfig = {
     theme: EditorTheme,
     editable: !readonly,
@@ -160,20 +172,24 @@ export const BaseEditor = ({
   const calloutProps: Partial<ICalloutProps> = {
     gapSpace: 1,
     isBeakVisible: false,
-    hidden: isEditorFocused,
+    hidden: isEditorFocused || !isOverflowed,
     directionalHint: DirectionalHint.bottomRightEdge,
   };
   const id = useId('deiosnoin');
   return (
     <TooltipHost content={placeholder} calloutProps={calloutProps} styles={{ root: { width: '100%' } }}>
       <LexicalComposer initialConfig={initialConfig}>
-        <div className={className ?? 'msla-editor-container'} id={editorId}>
+        <div className={className ?? 'msla-editor-container'} id={editorId} ref={containerRef}>
           {toolBar ? <Toolbar /> : null}
           <RichTextPlugin
             contentEditable={
               <ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabelledBy={labelId} ariaDescribedBy={id} />
             }
-            placeholder={<span className="editor-placeholder"> {placeholder} </span>}
+            placeholder={
+              <span className="editor-placeholder" ref={placeholderRef}>
+                {placeholder}
+              </span>
+            }
             ErrorBoundary={LexicalErrorBoundary}
           />
           <span id={id} hidden={true}>
