@@ -35,6 +35,7 @@ const FOLDER_TYPE = 'folder';
 export interface FileItem {
   text: string;
   type: 'folder' | 'file';
+  value: any;
   onSelect?: () => void;
   onNavigation?: () => void;
 }
