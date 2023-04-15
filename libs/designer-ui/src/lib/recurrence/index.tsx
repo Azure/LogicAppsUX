@@ -36,9 +36,16 @@ interface ScheduleEditorProps {
   initialValue: ValueSegment[];
   onChange?: ChangeHandler;
   readOnly?: boolean;
+  showPreview?: boolean;
 }
 
-export const ScheduleEditor = ({ type = RecurrenceType.Basic, initialValue, onChange, readOnly }: ScheduleEditorProps): JSX.Element => {
+export const ScheduleEditor = ({
+  type = RecurrenceType.Basic,
+  initialValue,
+  readOnly,
+  showPreview = false,
+  onChange,
+}: ScheduleEditorProps): JSX.Element => {
   const intl = useIntl();
   const [recurrence, setRecurrence] = useState<Recurrence>(getRecurrenceValue(initialValue));
 
@@ -100,7 +107,7 @@ export const ScheduleEditor = ({ type = RecurrenceType.Basic, initialValue, onCh
             }}
             readOnly={readOnly}
           />
-          <Preview recurrence={recurrence} />
+          {showPreview ? <Preview recurrence={recurrence} /> : null}
         </div>
       );
     } else {

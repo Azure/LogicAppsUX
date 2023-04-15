@@ -51,7 +51,7 @@ export interface NodeOutputs {
   originalOutputs?: Record<string, OutputInfo>;
 }
 
-type DependencyType = 'StaticSchema' | 'ApiSchema' | 'ListValues';
+type DependencyType = 'StaticSchema' | 'ApiSchema' | 'ListValues' | 'TreeNavigation';
 export interface DependencyInfo {
   definition: any; // This is the dependency definition from manifest/swagger.
   dependencyType: DependencyType;

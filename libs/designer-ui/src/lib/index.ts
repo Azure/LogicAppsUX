@@ -61,6 +61,7 @@ export * from './panel/panelheader/panelheader';
 export * from './panel/recommendationpanel';
 export * from './recurrence';
 export * from './scratch';
+export * from './picker/filepickereditor';
 // export * from './picker';
 // export * from './rulescontrol';
 export * from './schemaeditor';
