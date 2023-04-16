@@ -340,7 +340,7 @@ export function getParameterEditorProps(
   shouldIgnoreDefaultValue = false,
   isFilePicker?: boolean
 ): ParameterEditorProps {
-  const { dynamicValues, type, itemSchema, visibility, value } = parameter;
+  const { dynamicValues, type, itemSchema, visibility, value, enum: schemaEnum } = parameter;
   let { editor, editorOptions, schema } = parameter;
   let editorViewModel;
   if (!editor) {
@@ -348,12 +348,14 @@ export function getParameterEditorProps(
       editor = constants.EDITOR.ARRAY;
       editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
-    } else if (schema && (schema.enum || schema[ExtensionProperties.CustomEnum]) && !equals(visibility, Visibility.Internal)) {
+    } else if (schemaEnum || schema?.enum || (schema?.[ExtensionProperties.CustomEnum] && !equals(visibility, Visibility.Internal))) {
       editor = constants.EDITOR.COMBOBOX;
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
 
       let schemaEnumOptions: ComboboxItem[];
-      if (schema[ExtensionProperties.CustomEnum]) {
+      if (schemaEnum) {
+        schemaEnumOptions = schemaEnum.map((enumItem) => ({ ...enumItem, key: enumItem.value?.toString() }));
+      } else if (schema[ExtensionProperties.CustomEnum]) {
         schemaEnumOptions = schema[ExtensionProperties.CustomEnum];
       } else {
         schemaEnumOptions = schema.enum.map(

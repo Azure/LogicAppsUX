@@ -4,6 +4,7 @@ import { removeNodeConnectionData } from '../../state/connection/connectionSlice
 import { deinitializeNodes, deinitializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import { clearPanel } from '../../state/panel/panelSlice';
 import { setValidationError } from '../../state/setting/settingSlice';
+import { deinitializeStaticResultProperty } from '../../state/staticresultschema/staticresultsSlice';
 import { deinitializeTokensAndVariables } from '../../state/tokensSlice';
 import { clearFocusNode, deleteNode } from '../../state/workflow/workflowSlice';
 import { updateAllUpstreamNodes } from './initialize';
@@ -44,6 +45,7 @@ const deleteOperationDetails = async (nodeId: string, dispatch: Dispatch): Promi
   dispatch(deinitializeTokensAndVariables({ id: nodeId }));
   dispatch(deinitializeOperationInfo({ id: nodeId }));
   dispatch(setValidationError({ nodeId, errors: [] }));
+  dispatch(deinitializeStaticResultProperty({ id: nodeId + 0 }));
 };
 
 export const deleteGraphNode = createAsyncThunk('deleteGraph', async (deletePayload: DeleteGraphPayload, { dispatch }) => {
