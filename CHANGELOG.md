@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.4.1](https://github.com/Azure/LogicAppsUX/compare/v2.4.0...v2.4.1) (2023-04-16)
+
+
+### Bug Fixes
+
+* **Designer:** Update Token metadata for editorviewmodel editors/ other bugs ([#2031](https://github.com/Azure/LogicAppsUX/issues/2031)) ([4adef0f](https://github.com/Azure/LogicAppsUX/commit/4adef0fe971774fdf8f41785b14b1168cee48280))
+
 ## [2.4.0](https://github.com/Azure/LogicAppsUX/compare/v2.3.1...v2.4.0) (2023-04-15)
 
 
