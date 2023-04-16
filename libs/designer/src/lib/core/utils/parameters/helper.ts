@@ -348,7 +348,7 @@ export function getParameterEditorProps(
       editor = constants.EDITOR.ARRAY;
       editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
-    } else if (schemaEnum || schema?.enum || (schema[ExtensionProperties.CustomEnum] && !equals(visibility, Visibility.Internal))) {
+    } else if (schemaEnum || schema?.enum || (schema?.[ExtensionProperties.CustomEnum] && !equals(visibility, Visibility.Internal))) {
       editor = constants.EDITOR.COMBOBOX;
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
 
