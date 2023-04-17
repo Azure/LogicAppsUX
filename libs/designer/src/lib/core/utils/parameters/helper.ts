@@ -1982,40 +1982,6 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
   const propertyNameParameters = allInputs.filter((input) => !!input.serialization?.property);
   const finalValue = clone(inputsValue);
 
-  const parametersWithDeserialization = allInputs.filter((input) => !!input.deserialization);
-  for (const parameter of parametersWithDeserialization) {
-    const { name, deserialization } = parameter;
-    if (deserialization?.parameterReference) {
-      const { type, parameterReference, options } = deserialization;
-      const propertySegments = parameterReference.split('.');
-
-      switch (type) {
-        case DeserializationType.ParentObjectProperties:
-          const objectValue = getObjectPropertyValue(finalValue, propertySegments);
-          const value = Object.keys(objectValue ?? {});
-          objectValue[name.split('.').at(-1) as string] = value;
-          safeSetObjectPropertyValue(finalValue, propertySegments, objectValue);
-          break;
-
-        case DeserializationType.SwaggerOperationId:
-          const method = getObjectPropertyValue(finalValue, options?.swaggerOperation.methodPath as string[]);
-          const uri = getObjectPropertyValue(finalValue, options?.swaggerOperation.uriPath as string[]);
-          const operationId = getOperationIdFromDefinition(
-            {
-              method,
-              path: extractPathFromUri(uri, customSwagger?.api.basePath as string),
-            },
-            customSwagger as SwaggerParser
-          );
-          safeSetObjectPropertyValue(finalValue, propertySegments, operationId);
-          break;
-
-        default:
-          break;
-      }
-    }
-  }
-
   for (const propertyParameter of propertyNameParameters) {
     const { name, serialization } = propertyParameter;
     if (serialization?.property) {
@@ -2050,6 +2016,41 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
           const pathParameters = processPathInputs(uriValue, propertyParameter.default);
           safeSetObjectPropertyValue(finalValue, pathParametersLocation, pathParameters);
           safeSetObjectPropertyValue(finalValue, parameterLocation, propertyParameter.default);
+          break;
+
+        default:
+          break;
+      }
+    }
+  }
+
+  // NOTE: Deserialization should be processed only after parameters serialization property is processed.
+  const parametersWithDeserialization = allInputs.filter((input) => !!input.deserialization);
+  for (const parameter of parametersWithDeserialization) {
+    const { name, deserialization } = parameter;
+    if (deserialization?.parameterReference) {
+      const { type, parameterReference, options } = deserialization;
+      const propertySegments = parameterReference.split('.');
+
+      switch (type) {
+        case DeserializationType.ParentObjectProperties:
+          const objectValue = getObjectPropertyValue(finalValue, propertySegments);
+          const value = Object.keys(objectValue ?? {});
+          objectValue[name.split('.').at(-1) as string] = value;
+          safeSetObjectPropertyValue(finalValue, propertySegments, objectValue);
+          break;
+
+        case DeserializationType.SwaggerOperationId:
+          const method = getObjectPropertyValue(finalValue, options?.swaggerOperation.methodPath as string[]);
+          const uri = getObjectPropertyValue(finalValue, options?.swaggerOperation.uriPath as string[]);
+          const operationId = getOperationIdFromDefinition(
+            {
+              method,
+              path: extractPathFromUri(uri, customSwagger?.api.basePath as string),
+            },
+            customSwagger as SwaggerParser
+          );
+          safeSetObjectPropertyValue(finalValue, propertySegments, operationId);
           break;
 
         default:
