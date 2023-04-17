@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.4.2](https://github.com/Azure/LogicAppsUX/compare/v2.4.1...v2.4.2) (2023-04-17)
+
+
+### Bug Fixes
+
+* **designer:** Delete StaticResults when node is deleted/ Support Combobox for enums ([#2032](https://github.com/Azure/LogicAppsUX/issues/2032)) ([4e2848f](https://github.com/Azure/LogicAppsUX/commit/4e2848f4d198f81822546e96c15590118c2eb8f9))
+
 ### [2.4.1](https://github.com/Azure/LogicAppsUX/compare/v2.4.0...v2.4.1) (2023-04-16)
 
 
