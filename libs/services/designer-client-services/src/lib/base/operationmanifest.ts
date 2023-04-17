@@ -317,7 +317,7 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
       if (equals(definition?.metadata?.swaggerSource, 'website')) {
         return {
           connectorId: appServiceConnectorId,
-          operationId: isTrigger ? appservice : appservicetrigger,
+          operationId: isTrigger ? appservicetrigger : appservice,
         };
       } else {
         return {

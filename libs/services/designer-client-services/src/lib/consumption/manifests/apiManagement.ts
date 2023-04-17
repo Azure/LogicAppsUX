@@ -145,6 +145,8 @@ export const apiManagementTriggerManifest = {
     },
     settings: {
       concurrency: { scopes: [SettingScope.Trigger] },
+      retryPolicy: { scopes: [SettingScope.Trigger] },
+      secureData: {},
     },
   },
 } as OperationManifest;

@@ -42,7 +42,7 @@ export const apiManagementActionOperation = {
 export const apiManagementTriggerOperation = {
   id: 'apimanagementtrigger',
   name: 'apimanagementtrigger',
-  type: 'apimanagementtrigger',
+  type: 'apimanagement',
   properties: {
     api,
     summary: 'Choose an Azure API Management Trigger',

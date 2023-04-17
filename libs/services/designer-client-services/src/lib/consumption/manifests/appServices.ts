@@ -74,6 +74,7 @@ export const appServiceActionManifest = {
           },
         },
       },
+      required: ['operationId'],
     },
     inputsLocationSwapMap: [{ source: ['operationDetails'], target: [] }],
     isInputsOptional: false,
@@ -125,6 +126,8 @@ export const appServiceTriggerManifest = {
     },
     settings: {
       concurrency: { scopes: [SettingScope.Trigger] },
+      retryPolicy: { scopes: [SettingScope.Trigger] },
+      secureData: {},
     },
   },
 } as OperationManifest;

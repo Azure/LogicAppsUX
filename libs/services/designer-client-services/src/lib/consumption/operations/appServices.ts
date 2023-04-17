@@ -42,7 +42,7 @@ export const appServiceActionOperation = {
 export const appServiceTriggerOperation = {
   id: 'appservicetrigger',
   name: 'appservicetrigger',
-  type: 'appservicetrigger',
+  type: 'appservice',
   properties: {
     api,
     summary: 'Choose an Azure App Services trigger',
