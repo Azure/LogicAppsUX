@@ -4,7 +4,6 @@ export interface CardProps {
   onClick?: () => void;
   displayHandle: boolean;
   disabled: boolean;
-  error: boolean;
 }
 
 export const getStylesForSharedState = makeStyles({
@@ -50,6 +49,14 @@ export const getStylesForSharedState = makeStyles({
 export const selectedCardStyles = {
   outlineWidth: tokens.strokeWidthThick,
   outlineColor: tokens.colorBrandStroke1,
+  outlineStyle: 'solid',
+  opacity: 1,
+  boxShadow: tokens.shadow4,
+};
+
+export const highlightedCardStyles = {
+  outlineWidth: tokens.strokeWidthThick,
+  outlineColor: tokens.colorBrandStroke2,
   outlineStyle: 'solid',
   opacity: 1,
   boxShadow: tokens.shadow4,

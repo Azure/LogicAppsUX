@@ -89,7 +89,7 @@ export const flattenSchemaIntoSortArray = (schemaNode: SchemaNodeExtended): stri
   return flattenSchemaNode(schemaNode).map((node) => node.key);
 };
 
-const flattenSchemaNode = (schemaNode: SchemaNodeExtended): SchemaNodeExtended[] => {
+export const flattenSchemaNode = (schemaNode: SchemaNodeExtended): SchemaNodeExtended[] => {
   const result: SchemaNodeExtended[] = [schemaNode];
   const childArray = schemaNode.children.flatMap((childNode) => flattenSchemaNode(childNode));
 
@@ -101,7 +101,6 @@ export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNod
 export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended): SchemaNodeExtended | undefined => {
   let tempKey = nodeKey;
   if (tempKey.includes(mapNodeParams.for)) {
-    // Testing XXX
     const layeredArrayItemForRegex = new RegExp(/\$for\([^)]*(?:\/\*){2,}\)/g);
     tempKey = nodeKey.replaceAll(layeredArrayItemForRegex, '');
 
@@ -214,7 +213,7 @@ export const telemetrySchemaNodeCount = (schema: SchemaExtended): number => {
 const nodeCount = (schemaNode: SchemaNodeExtended): number => {
   let result = 1;
   schemaNode.children.forEach((childNode) => {
-    result = +nodeCount(childNode);
+    result = result + nodeCount(childNode);
   });
 
   return result;

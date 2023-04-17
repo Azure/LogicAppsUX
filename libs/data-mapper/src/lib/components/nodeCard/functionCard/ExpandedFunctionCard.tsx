@@ -4,12 +4,13 @@ import { deleteCurrentlySelectedItem, setSelectedItem } from '../../../core/stat
 import type { RootState } from '../../../core/state/Store';
 import { generateInputHandleId } from '../../../utils/Connection.Utils';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
+import { isNodeHighlighted } from '../../../utils/ReactFlow.Util';
 import { FunctionIcon } from '../../functionIcon/FunctionIcon';
-import { errorCardStyles, selectedCardStyles } from '../NodeCard';
+import { errorCardStyles, highlightedCardStyles, selectedCardStyles } from '../NodeCard';
 import type { FunctionCardProps } from './FunctionCard';
 import { inputsValid, useFunctionCardStyles } from './FunctionCard';
 import { Stack, StackItem } from '@fluentui/react';
-import { Button, Divider, mergeClasses, PresenceBadge, Text, tokens, Tooltip } from '@fluentui/react-components';
+import { Button, Divider, PresenceBadge, Text, Tooltip, mergeClasses, tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
@@ -27,11 +28,16 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const classes = useFunctionCardStyles();
 
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
+  const selectedItemConnectedNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemConnectedNodes);
   const sourceNodeConnectionBeingDrawnFromId = useSelector((state: RootState) => state.dataMap.sourceNodeConnectionBeingDrawnFromId);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   const [isExpanded, { toggle: toggleIsExpanded }] = useBoolean(false);
+
   const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
+  const isCurrentNodeHighlighted = useMemo<boolean>(() => {
+    return isNodeHighlighted(isCurrentNodeSelected, reactFlowId, selectedItemConnectedNodes);
+  }, [isCurrentNodeSelected, reactFlowId, selectedItemConnectedNodes]);
 
   const intl = useIntl();
   const contextMenu = useCardContextMenu();
@@ -123,11 +129,13 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const handleBaseOffset = 58;
 
   const inputsForBody = [];
-  if (connections[reactFlowId]) {
+  const curConnection = connections[reactFlowId];
+  if (curConnection) {
     if (functionData.maxNumberOfInputs > -1) {
       inputsForBody.push(
         functionData.inputs.map((input, index) => {
           const handleTop = index * handleIndexOffset + handleBaseOffset;
+          const curInput = curConnection.inputs[index][0];
           return (
             <StackItem key={input.name}>
               <div key={input.name} style={inputBodyStyles}>
@@ -138,7 +146,7 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
                   style={{
                     top: `${handleTop}px`,
                     backgroundColor:
-                      typeof input === 'string' ? (input ? tokens.colorPaletteBlueBackground2 : tokens.colorPaletteRedBackground3) : '',
+                      typeof curInput === 'string' ? (input ? tokens.colorPaletteBlueBackground2 : tokens.colorPaletteRedBackground3) : '',
                   }}
                 />
                 {generateInputName(input.name, input.isOptional, input.tooltip)}
@@ -149,10 +157,11 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
       );
     } else {
       inputsForBody.push(
-        connections[reactFlowId].inputs[0].map((input, index) => {
+        curConnection.inputs[0].map((input, index) => {
           const handleTop = index * handleIndexOffset + handleBaseOffset;
           const id = generateInputHandleId(functionData.inputs[0].name, index);
           const name = `${functionData.inputs[0].name} ${index}`;
+          const curInput = curConnection.inputs[0][index];
           return (
             <div key={id} style={inputBodyStyles}>
               <Handle
@@ -162,7 +171,7 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
                 style={{
                   top: `${handleTop}px`,
                   backgroundColor:
-                    typeof input === 'string' ? (input ? tokens.colorPaletteBlueBackground2 : tokens.colorPaletteRedBackground3) : '',
+                    typeof curInput === 'string' ? (input ? tokens.colorPaletteBlueBackground2 : tokens.colorPaletteRedBackground3) : '',
                 }}
               />
               {generateInputName(name, functionData.inputs[0].isOptional, functionData.inputs[0].tooltip)}
@@ -181,6 +190,8 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
 
   if (isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId) {
     divStyle = { ...selectedCardStyles, ...divStyle };
+  } else if (isCurrentNodeHighlighted) {
+    divStyle = { ...highlightedCardStyles, ...divStyle };
   } else if (!areCurrentInputsValid) {
     divStyle = { ...errorCardStyles, ...divStyle };
   }

@@ -17,7 +17,7 @@ export class LogService {
       LogService._trackEvent(errorId, data);
     }
 
-    if (LogService._logToConsole) {
+    if (LogService.logToConsole) {
       console.error(`[${category}] - ${LogService._getDataString(data)}`);
     }
   }
@@ -33,7 +33,7 @@ export class LogService {
       LogService._trackEvent(warningId, data);
     }
 
-    if (LogService._logToConsole) {
+    if (LogService.logToConsole) {
       console.warn(`[${category}] - ${LogService._getDataString(data)}`);
     }
   }
@@ -49,7 +49,7 @@ export class LogService {
       LogService._trackEvent(logId, data);
     }
 
-    if (LogService._logToConsole) {
+    if (LogService.logToConsole) {
       console.log(`%c[${category}] - ${LogService._getDataString(data)}`, 'color: #ff8c00');
     }
   }
@@ -59,7 +59,7 @@ export class LogService {
       appInsights.startTrackPage(pageName);
     }
 
-    if (LogService._logToConsole) {
+    if (LogService.logToConsole) {
       console.log(`${LogService._getTime()} [Start Track Page] - ${pageName}`);
     }
   }
@@ -69,7 +69,7 @@ export class LogService {
       appInsights.stopTrackPage(pageName, window.location.href, data);
     }
 
-    if (LogService._logToConsole) {
+    if (LogService.logToConsole) {
       console.log(`${LogService._getTime()} [Stop Track Page] - ${pageName}`);
     }
   }
@@ -79,7 +79,7 @@ export class LogService {
       appInsights.startTrackEvent(eventName);
     }
 
-    if (LogService._logToConsole) {
+    if (LogService.logToConsole) {
       console.log(`${LogService._getTime()} [Start Track Event] - ${eventName}`);
     }
   }
@@ -90,7 +90,7 @@ export class LogService {
       appInsights.stopTrackEvent(eventName, { ...data });
     }
 
-    if (LogService._logToConsole) {
+    if (LogService.logToConsole) {
       console.log(`${LogService._getTime()} [Stop Track Event] - ${eventName}`);
     }
   }
@@ -99,14 +99,14 @@ export class LogService {
     LogService._validateCategory(category);
     LogService._validateData(data);
 
-    if (LogService._logToConsole) {
+    if (LogService.logToConsole) {
       console.debug(`${LogService._getTime()} %c[${category}] - ${LogService._getDataString(data)}`);
     }
   }
 
-  private static _logToAppInsights = process.env.NODE_ENV !== 'development' && !!appInsights;
+  private static readonly _logToAppInsights = process.env.NODE_ENV !== 'development' && !!appInsights;
   // TODO Allow manual turning on of console logging by providing a variable
-  private static _logToConsole = process.env.NODE_ENV !== 'production';
+  public static readonly logToConsole = process.env.NODE_ENV !== 'production';
 
   private static _getDataString(data: LogMessage): string {
     return JSON.stringify(data);
@@ -173,4 +173,5 @@ export enum LogCategory {
   FunctionList = 'FunctionList',
   SchemaUtils = 'SchemaUtils',
   VsixCommands = 'VsixCommands',
+  DataMapSlice = 'DataMapSlice',
 }

@@ -27,7 +27,17 @@ export class ApiManagementInstanceService implements IApiManagementService {
     } else if (!httpClient) {
       throw new ArgumentException('httpClient required for workflow app');
     }
-    this.queryClient = new QueryClient();
+    this.queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          refetchInterval: false,
+          refetchIntervalInBackground: false,
+          refetchOnWindowFocus: false,
+          refetchOnReconnect: false,
+          refetchOnMount: false,
+        },
+      },
+    });
   }
 
   async fetchApiManagementInstances(): Promise<any> {

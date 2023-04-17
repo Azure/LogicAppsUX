@@ -10,11 +10,11 @@ If building the extension make sure you are using node version 14. If you are us
 
 ## Known issues
 
-You can see known issues [here](https://github.com/Azure/logicapps/blob/master/articles/logic-apps-public-preview-known-issues.md).
+You can see known issues [here](https://github.com/Azure/LogicAppsUX/issues).
 
 ## Providing feedback
 
-- To open product bugs, go to [GitHub issues for Azure Logic Apps](https://github.com/Azure/logicapps/issues).
+- To open product bugs, go to [GitHub issues for Azure Logic Apps](https://github.com/Azure/LogicAppsUX/issues).
 
 - To submit feedback and comments, use the [Azure Logic Apps feedback form](https://aka.ms/lafeedback).
 

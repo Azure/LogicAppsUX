@@ -36,33 +36,32 @@ describe('utils/DataMap', () => {
 
       const nodesCurrentlyOnCanvas: SchemaNodeExtended[] = [];
       const nodeToAdd = flattenedSchema[nodeToAddKey];
-      const newNodesOnCanvas = [...nodesCurrentlyOnCanvas, nodeToAdd];
-      addAncestorNodesToCanvas(nodeToAdd, nodesCurrentlyOnCanvas, flattenedSchema, newNodesOnCanvas);
+      addAncestorNodesToCanvas(nodeToAdd, nodesCurrentlyOnCanvas, flattenedSchema);
+      const canvasNodeKeys = nodesCurrentlyOnCanvas.map((node) => node.key);
 
-      const parentOnCanvasKey = addSourceReactFlowPrefix(
-        '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild'
-      );
-      expect(newNodesOnCanvas).toContain(flattenedSchema[parentOnCanvasKey]);
+      const parentOnCanvasKey = '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild';
+      expect(canvasNodeKeys).toContain(parentOnCanvasKey);
     });
 
     it('includes all nodes under highest ancestor on the canvas', () => {
+      const ancestorOnCanvasKey = '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple';
+      const interimAncestorKey1 = '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild';
+      const interimAncestorKey2 = '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild';
+
       const nodeToAddKey = addSourceReactFlowPrefix(
         '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect'
       );
-      const ancestorOnCanvasKey = addSourceReactFlowPrefix('/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple');
-      const nodesCurrentlyOnCanvas = [flattenedSchema[ancestorOnCanvasKey]];
-      const nodeToAdd = flattenedSchema[nodeToAddKey];
-      const newNodesOnCanvas = [...nodesCurrentlyOnCanvas, nodeToAdd];
 
-      addAncestorNodesToCanvas(nodeToAdd, nodesCurrentlyOnCanvas, flattenedSchema, newNodesOnCanvas);
-      const interimAncestorKey1 = addSourceReactFlowPrefix(
-        '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild'
-      );
-      const interimAncestorKey2 = addSourceReactFlowPrefix(
-        '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect'
-      );
-      expect(newNodesOnCanvas).toContain(flattenedSchema[interimAncestorKey1]);
-      expect(newNodesOnCanvas).toContain(flattenedSchema[interimAncestorKey2]);
+      const nodesCurrentlyOnCanvas = [flattenedSchema[addSourceReactFlowPrefix(ancestorOnCanvasKey)]];
+      const nodeToAdd = flattenedSchema[nodeToAddKey];
+
+      addAncestorNodesToCanvas(nodeToAdd, nodesCurrentlyOnCanvas, flattenedSchema);
+      const canvasNodeKeys = nodesCurrentlyOnCanvas.map((node) => node.key);
+      expect(canvasNodeKeys.length).toEqual(3);
+
+      expect(canvasNodeKeys).toContain(ancestorOnCanvasKey);
+      expect(canvasNodeKeys).toContain(interimAncestorKey1);
+      expect(canvasNodeKeys).toContain(interimAncestorKey2);
     });
   });
 

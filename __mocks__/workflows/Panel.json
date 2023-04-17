@@ -2,150 +2,79 @@
   "definition": {
     "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
     "actions": {
-      "Initialize_variable": {
+      "Initialize_ArrayVariable": {
+        "type": "InitializeVariable",
         "inputs": {
           "variables": [
             {
-              "name": "stringvar",
-              "type": "string",
-              "value": "sdfsdf"
-            }
-          ]
-        },
-        "runAfter": {},
-        "type": "InitializeVariable"
-      },
-      "Initialize_variable_1": {
-        "inputs": {
-          "variables": [
-            {
-              "name": "IntegerVar",
-              "type": "integer",
-              "value": "test@{triggerOutputs()['headers']}@{variables('stringvar')}"
-            }
-          ]
-        },
-        "runAfter": {
-          "Initialize_variable": ["SUCCEEDED"]
-        },
-        "type": "InitializeVariable"
-      },
-      "Parse_JSON": {
-        "inputs": {
-          "content": "@triggerBody()",
-          "schema": {
-            "properties": {
-              "a": {
-                "type": "string"
-              },
-              "number": {
-                "type": "integer"
-              }
-            },
-            "type": "object"
-          }
-        },
-        "runAfter": {
-          "Initialize_variable_1": ["SUCCEEDED"]
-        },
-        "runtimeConfiguration": {
-          "secureData": {
-            "properties": ["inputs"]
-          },
-          "staticResult": {
-            "name": "Parse_JSON0",
-            "staticResultOptions": "Enabled"
-          }
-        },
-        "type": "ParseJson"
-      },
-      "HTTP": {
-        "type": "Http",
-        "inputs": {
-          "uri": "",
-          "method": ""
-        },
-        "runAfter": {
-          "Parse_JSON": ["SUCCEEDED"]
-        },
-        "runtimeConfiguration": {
-          "staticResult": {
-            "name": "HTTP0",
-            "staticResultOptions": "Enabled"
-          }
-        }
-      },
-      "HTTP2": {
-        "type": "Http",
-        "inputs": {
-          "uri": "",
-          "method": ""
-        },
-        "runAfter": {
-          "HTTP": ["SUCCEEDED"]
-        }
-      },
-      "For_each": {
-        "type": "Foreach",
-        "foreach": "@body('Parse_JSON')",
-        "actions": {
-          "Response": {
-            "type": "Response",
-            "kind": "Http",
-            "inputs": {
-              "statusCode": 200
-            }
-          }
-        },
-        "runAfter": {
-          "Parse_JSON": ["SUCCEEDED"]
-        }
-      },
-      "Until": {
-        "actions": {},
-        "expression": "@equals('test', 123)",
-        "limit": {
-          "count": 60,
-          "timeout": "PT1H"
-        },
-        "runAfter": {},
-        "type": "Until"
-      }
-    },
-    "staticResults": {
-      "Parse_JSON0": {
-        "status": "Failed",
-        "code": "this is a test",
-        "outputs": {
-          "body": "hi",
-          "errors": [
-            {
-              "message": "test message"
-            },
-            {
-              "errorType": "Dependencies",
-              "childErrors": [
+              "name": "ArrayVariable",
+              "type": "array",
+              "value": [
                 {
-                  "schema": "schemaHELLO",
-                  "childErrors": ["childerror1", "childerror2"]
+                  "document": "A",
+                  "min": 7500001,
+                  "policy": "X"
+                },
+                {
+                  "document": "B",
+                  "min": 7500001,
+                  "policy": "Y"
+                },
+                {
+                  "document": "C",
+                  "min": 7500001,
+                  "policy": "Z"
                 }
               ]
             }
           ]
+        },
+        "runAfter": {}
+      },
+      "Parse_JSON": {
+        "type": "ParseJson",
+        "inputs": {
+          "content": "@triggerBody()?['string']",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "document": {
+                  "type": "string"
+                },
+                "min": {
+                  "type": "integer"
+                },
+                "policy": {
+                  "type": "string"
+                }
+              },
+              "required": ["document", "min", "policy"]
+            }
+          }
+        },
+        "runAfter": {
+          "Initialize_ArrayVariable": ["SUCCEEDED"]
         }
       },
-      "HTTP0": {
-        "outputs": {
-          "headers": {},
-          "statusCode": "OK"
+      "Filter_array": {
+        "type": "Query",
+        "inputs": {
+          "from": "@body('Parse_JSON')",
+          "where": "@equals(test,@triggerBody()?['string'])"
         },
-        "status": "Succeeded"
+        "runAfter": {
+          "Parse_JSON": ["SUCCEEDED"]
+        }
       }
     },
     "contentVersion": "1.0.0.0",
     "outputs": {},
     "triggers": {
       "manual": {
+        "type": "Request",
+        "kind": "Http",
         "inputs": {
           "schema": {
             "type": "object",
@@ -170,11 +99,10 @@
               }
             }
           }
-        },
-        "kind": "Http",
-        "type": "Request"
+        }
       }
     }
   },
-  "kind": "Stateful"
+  "connectionReferences": {},
+  "parameters": {}
 }

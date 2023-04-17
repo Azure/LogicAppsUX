@@ -172,12 +172,13 @@ const DesignerEditor = () => {
     const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
     const parametersToUpdate = !isEqual(originalParametersData, parameters) ? (parameters as ParametersData) : undefined;
     const settingsToUpdate = !isEqual(settingsData?.properties, originalSettings) ? settingsData?.properties : undefined;
+
     return saveWorkflowStandard(siteResourceId, workflowName, workflowToSave, connectionsToUpdate, parametersToUpdate, settingsToUpdate);
   };
 
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
-      <DesignerProvider locale={'en-US'} options={{ services, isDarkMode }}>
+      <DesignerProvider locale={'en-US'} options={{ services, isDarkMode, readOnly: isReadOnly }}>
         {workflow?.definition ? (
           <BJSWorkflowProvider workflow={{ definition: workflow?.definition, connectionReferences, parameters }}>
             <div style={{ height: 'inherit', width: 'inherit' }}>
@@ -273,6 +274,8 @@ const getDesignerServices = (
       ['connectionProviders/swiftOperations', 'SwiftDecode'],
       ['connectionProviders/swiftOperations', 'SwiftEncode'],
       ['/connectionProviders/apiManagementOperation', 'apiManagement'],
+      ['connectionProviders/http', 'httpswaggeraction'],
+      ['connectionProviders/http', 'httpswaggertrigger'],
     ].map(([connectorId, operationId]) => ({ connectorId, operationId })),
     getConfiguration,
     schemaClient: {
@@ -282,8 +285,14 @@ const getDesignerServices = (
         if (!configuration?.connection?.apiId) {
           throw new Error('Missing api information to make dynamic call');
         }
-
         return apiManagementService.getOperationSchema(configuration.connection.apiId, parameters.operationId, isInput);
+      },
+      getSwaggerOperationSchema: (args: any) => {
+        const { nodeInputs, nodeMetadata, isInput } = args;
+        const swaggerUrl = nodeMetadata?.['apiDefinitionUrl'];
+        const operationId = getParameterValueByName(nodeInputs, 'operationId');
+        if (!operationId || !swaggerUrl) return Promise.resolve();
+        return connectionService.getOperationSchema(swaggerUrl, operationId, isInput);
       },
     },
     valuesClient: {
@@ -291,6 +300,11 @@ const getDesignerServices = (
       getMapArtifacts: (args: any) => {
         const { mapType, mapSource } = args.parameters;
         return artifactService.getMapArtifacts(mapType, mapSource);
+      },
+      getSwaggerOperations: (args: any) => {
+        const { nodeMetadata } = args;
+        const swaggerUrl = nodeMetadata?.['apiDefinitionUrl'];
+        return connectionService.getOperationsList(swaggerUrl);
       },
       getSchemaArtifacts: (args: any) => artifactService.getSchemaArtifacts(args.parameters.schemaSource),
       getApimOperations: (args: any) => {
@@ -311,7 +325,7 @@ const getDesignerServices = (
     workflowReferenceId: '',
   });
   const gatewayService = new BaseGatewayService({
-    baseUrl,
+    baseUrl: armUrl,
     httpClient,
     apiVersions: {
       subscription: apiVersion,
@@ -459,5 +473,8 @@ const getConnectionsToUpdate = (
 
   return connectionsToUpdate;
 };
+
+const getParameterValueByName = (nodeInputs: any, name: string) =>
+  nodeInputs.parameterGroups?.['default'].parameters.find((p: any) => p.parameterName === name)?.value?.[0].value;
 
 export default DesignerEditor;

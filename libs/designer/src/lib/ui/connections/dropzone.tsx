@@ -1,10 +1,10 @@
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
-import { useAllGraphParents, useGetAllAncestors, useNodeGraphId } from '../../core/state/workflow/workflowSelectors';
+import { useAllGraphParents, useGetAllAncestors, useNodeDisplayName, useNodeGraphId } from '../../core/state/workflow/workflowSelectors';
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
 import AddNodeIcon from './edgeContextMenuSvgs/addNodeIcon.svg';
-import { ActionButton, Callout, DirectionalHint, FocusTrapZone } from '@fluentui/react';
+import { ActionButton, Callout, DirectionalHint, FocusZone } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { css } from '@fluentui/utilities';
 import { ActionButtonV2 } from '@microsoft/designer-ui';
@@ -18,9 +18,10 @@ export interface DropZoneProps {
   graphId: string;
   parentId?: string;
   childId?: string;
+  isLeaf?: boolean;
 }
 
-export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }) => {
+export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, isLeaf = false }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const [showCallout, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
@@ -75,24 +76,27 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
     [graphId, parentId, childId]
   );
 
+  const parentName = useNodeDisplayName(parentId);
+  const childName = useNodeDisplayName(childId);
+
   const tooltipText = childId
     ? intl.formatMessage(
         {
-          defaultMessage: 'Insert a new step between {parent} and {child}',
+          defaultMessage: 'Insert a new step between {parentName} and {childName}',
           description: 'Tooltip for the button to add a new step (action or branch)',
         },
         {
-          parent: parentId,
-          child: childId,
+          parentName,
+          childName,
         }
       )
     : intl.formatMessage(
         {
-          defaultMessage: 'Insert a new step after {parent}',
+          defaultMessage: 'Insert a new step after {parentName}',
           description: 'Tooltip for the button to add a new step (action or branch)',
         },
         {
-          parent: parentId,
+          parentName,
         }
       );
 
@@ -102,6 +106,8 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
   };
 
   const buttonId = `msla-edge-button-${parentId}-${childId}`.replace(/\W/g, '-');
+
+  const showParallelBranchButton = !isLeaf && parentId;
 
   return (
     <div
@@ -125,19 +131,20 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
               onDismiss={toggleIsCalloutVisible}
               onMouseLeave={toggleIsCalloutVisible}
               directionalHint={DirectionalHint.bottomCenter}
+              setInitialFocus
             >
-              <FocusTrapZone>
+              <FocusZone>
                 <div className="msla-add-context-menu">
                   <ActionButton iconProps={{ imageProps: { src: AddNodeIcon } }} onClick={openAddNodePanel}>
                     {newActionText}
                   </ActionButton>
-                  {parentId ? (
+                  {showParallelBranchButton ? (
                     <ActionButton iconProps={{ imageProps: { src: AddBranchIcon } }} onClick={addParallelBranch}>
                       {newBranchText}
                     </ActionButton>
                   ) : null}
                 </div>
-              </FocusTrapZone>
+              </FocusZone>
             </Callout>
           )}
         </>

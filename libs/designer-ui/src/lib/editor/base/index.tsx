@@ -1,5 +1,6 @@
 import { Toolbar } from '../../html/plugins/toolbar';
 import type { TokenPickerMode } from '../../tokenpicker';
+import { useId } from '../../useId';
 import type { ValueSegment } from '../models/parameter';
 import { TokenNode } from './nodes/tokenNode';
 import { AutoFocus } from './plugins/AutoFocus';
@@ -15,13 +16,12 @@ import { ReadOnly } from './plugins/ReadOnly';
 import SingleValueSegment from './plugins/SingleValueSegment';
 import { TokenTypeAheadPlugin } from './plugins/TokenTypeahead';
 import { TreeView } from './plugins/TreeView';
-import type { TokenPickerButtonEditorProps } from './plugins/tokenpickerbuttonnew';
-import { TokenPickerButtonNew } from './plugins/tokenpickerbuttonnew';
+import type { TokenPickerButtonEditorProps } from './plugins/tokenpickerbutton';
+import { TokenPickerButton } from './plugins/tokenpickerbutton';
 import EditorTheme from './themes/editorTheme';
 import { parseSegments } from './utils/parsesegments';
 import type { ICalloutProps } from '@fluentui/react';
 import { DirectionalHint, css, TooltipHost } from '@fluentui/react';
-import { useId } from '@fluentui/react-hooks';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
@@ -29,7 +29,7 @@ import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { useFunctionalState } from '@react-hookz/web';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
 
@@ -64,6 +64,9 @@ export interface BaseEditorProps {
   initialValue: ValueSegment[];
   children?: React.ReactNode;
   isTrigger?: boolean;
+  showCallbackTokens?: boolean;
+  labelId?: string;
+  label?: string;
   tokenPickerButtonEditorProps?: TokenPickerButtonEditorProps;
   onChange?: ChangeHandler;
   onBlur?: () => void;
@@ -94,19 +97,31 @@ export const BaseEditor = ({
   BasePlugins = {},
   initialValue,
   children,
+  labelId,
   isTrigger,
+  showCallbackTokens,
   tokenPickerButtonEditorProps,
   onFocus,
   onBlur,
   getTokenPicker,
 }: BaseEditorProps) => {
-  const intl = useIntl();
   const editorId = useId('msla-tokenpicker-callout-location');
-  const labelId = useId('msla-tokenpicker-callout-label');
-
+  const intl = useIntl();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const placeholderRef = useRef<HTMLDivElement>(null);
+  const [isOverflowed, setIsOverflowed] = useState(false);
   const [isEditorFocused, setIsEditorFocused] = useState(false);
   const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
   const [tokenPickerMode, setTokenPickerMode] = useState<TokenPickerMode | undefined>();
+
+  useEffect(() => {
+    if (containerRef.current && placeholderRef.current) {
+      const containerWidth = containerRef.current.clientWidth;
+      const placeholderWidth = placeholderRef.current.clientWidth;
+      setIsOverflowed(placeholderWidth > containerWidth);
+    }
+  }, []);
+
   const initialConfig = {
     theme: EditorTheme,
     editable: !readonly,
@@ -121,11 +136,14 @@ export const BaseEditor = ({
   };
 
   const { autoFocus, autoLink, clearEditor, history = true, tokens, treeView, toolBar, tabbable, singleValueSegment } = BasePlugins;
-
-  const editorInputLabel = intl.formatMessage({
-    defaultMessage: 'Editor Input',
-    description: 'Label for input Field for String Editor',
+  const describedByMessage = intl.formatMessage({
+    defaultMessage: 'Add dynamic data or expressions by inserting a /',
+    description: 'This is an a11y message meant to help screen reader users figure out how to insert dynamic data',
   });
+
+  const closeTokenPicker = () => {
+    setInTokenPicker(false);
+  };
 
   const handleFocus = () => {
     setIsEditorFocused(true);
@@ -154,27 +172,36 @@ export const BaseEditor = ({
   const calloutProps: Partial<ICalloutProps> = {
     gapSpace: 1,
     isBeakVisible: false,
-    hidden: isEditorFocused,
+    hidden: isEditorFocused || !isOverflowed,
     directionalHint: DirectionalHint.bottomRightEdge,
   };
-
+  const id = useId('deiosnoin');
   return (
     <TooltipHost content={placeholder} calloutProps={calloutProps} styles={{ root: { width: '100%' } }}>
       <LexicalComposer initialConfig={initialConfig}>
-        <div className={className ?? 'msla-editor-container'} id={editorId}>
+        <div className={className ?? 'msla-editor-container'} id={editorId} ref={containerRef}>
           {toolBar ? <Toolbar /> : null}
           <RichTextPlugin
-            contentEditable={<ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabel={editorInputLabel} />}
-            placeholder={<span className="editor-placeholder"> {placeholder} </span>}
+            contentEditable={
+              <ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabelledBy={labelId} ariaDescribedBy={id} />
+            }
+            placeholder={
+              <span className="editor-placeholder" ref={placeholderRef}>
+                {placeholder}
+              </span>
+            }
             ErrorBoundary={LexicalErrorBoundary}
           />
+          <span id={id} hidden={true}>
+            {describedByMessage}
+          </span>
           {treeView ? <TreeView /> : null}
           {autoFocus ? <AutoFocus /> : null}
           {history ? <History /> : null}
           {autoLink ? <AutoLink /> : null}
           {clearEditor ? <ClearEditor showButton={false} /> : null}
           {singleValueSegment ? <SingleValueSegment /> : null}
-          <TokenTypeAheadPlugin openTokenPicker={openTokenPicker} />
+          {tokens ? <TokenTypeAheadPlugin openTokenPicker={openTokenPicker} /> : null}
           <OnBlur command={handleBlur} />
           <OnFocus command={handleFocus} />
           <ReadOnly readonly={readonly} />
@@ -183,14 +210,14 @@ export const BaseEditor = ({
           {tokens ? <DeleteTokenNode /> : null}
           {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
           {children}
-          {!isTrigger && tokens && getInTokenPicker()
-            ? getTokenPicker(editorId, labelId, tokenPickerMode, handleFocus, tokenPickerClicked)
+          {(!isTrigger || showCallbackTokens) && tokens && getInTokenPicker()
+            ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, closeTokenPicker, tokenPickerClicked)
             : null}
         </div>
 
-        {!isTrigger && tokens && isEditorFocused && !getInTokenPicker() ? (
+        {(!isTrigger || showCallbackTokens) && tokens && isEditorFocused && !getInTokenPicker() ? (
           createPortal(
-            <TokenPickerButtonNew openTokenPicker={openTokenPicker} showOnLeft={tokenPickerButtonEditorProps?.showOnLeft} />,
+            <TokenPickerButton openTokenPicker={openTokenPicker} showOnLeft={tokenPickerButtonEditorProps?.showOnLeft} />,
             document.body
           )
         ) : (

@@ -17,7 +17,7 @@ import {
 import { buildOperationDetailsFromControls } from '../../utils/swagger/inputsbuilder';
 import type { Settings } from './settings';
 import type { NodeStaticResults } from './staticresults';
-import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import { ConnectionService, LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
@@ -197,7 +197,6 @@ export const serializeOperation = async (
     }
   }
 
-  // TODO: Riley - add app service metadata
   const actionMetadata = rootState.operations.actionMetadata[operationId];
   if (actionMetadata) {
     serializedOperation = {
@@ -206,8 +205,12 @@ export const serializeOperation = async (
     };
   }
 
+  const swaggerBasedDynamicDataOperationIds = ['httpswaggeraction', 'httpswaggertrigger', 'appservice', 'appservicetrigger'];
+  if (swaggerBasedDynamicDataOperationIds.includes(operation.operationId)) {
+    serializedOperation = await parseSwaggerPathParameters(serializedOperation);
+  }
+
   // TODO - We might have to just serialize bare minimum data for partially loaded node.
-  // TODO - Serialize metadata for each operation.
   return serializedOperation;
 };
 
@@ -219,7 +222,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const inputsToSerialize = getOperationInputsToSerialize(rootState, operationId);
   const nodeSettings = rootState.operations.settings[operationId] ?? {};
   const nodeStaticResults = rootState.operations.staticResults[operationId] ?? {};
-  const inputPathValue = serializeOperationParameters(inputsToSerialize, manifest);
+  const inputPathValue = serializeParametersFromManifest(inputsToSerialize, manifest);
   const hostInfo = serializeHost(operationId, manifest, rootState);
   const inputs = hostInfo !== undefined ? mergeHostWithInputs(hostInfo, inputPathValue) : inputPathValue;
   const operationFromWorkflow = rootState.workflow.operations[operationId];
@@ -303,7 +306,7 @@ const getOperationInputsToSerialize = (rootState: RootState, operationId: string
   }));
 };
 
-const serializeOperationParameters = (inputs: SerializedParameter[], manifest: OperationManifest): Record<string, any> => {
+const serializeParametersFromManifest = (inputs: SerializedParameter[], manifest: OperationManifest): Record<string, any> => {
   const inputsLocation = (manifest.properties.inputsLocation ?? ['inputs']).slice(1);
   const inputPathValue = constructInputValues('inputs.$', inputs, false /* encodePathComponents */);
   let parametersValue: any = inputPathValue;
@@ -368,6 +371,7 @@ const serializeParameterWithPath = (
   parentKey: string,
   serializedParameter: SerializedParameter
 ): any => {
+  const parameterAlias = serializedParameter.info?.alias;
   const valueKeys = serializedParameter.alternativeKey
     ? [serializedParameter.parameterKey, serializedParameter.alternativeKey]
     : [serializedParameter.parameterKey];
@@ -392,6 +396,23 @@ const serializeParameterWithPath = (
         result = [];
       } else {
         result = {};
+      }
+    }
+
+    if (parameterAlias) {
+      // Aliased inputs (e.g., OpenAPI) may appear in the following format:
+      //   'inputs.$.foo.foo/bar.foo/bar/baz'
+      // This branch handles the case where we do NOT want the parameters to maintain that path, so the result should be:
+      //   'foo/bar/baz'
+      // To do this, eliminate the redundant path segments.
+      for (let i = 0; i < pathSegments.length - 1; i++) {
+        const currentPathSegmentStringValue = `${pathSegments[i].value}`;
+        const nextPathSegmentStringValue = `${pathSegments[i + 1].value}`;
+
+        if (nextPathSegmentStringValue.startsWith(`${currentPathSegmentStringValue}/`)) {
+          pathSegments.splice(i, 1);
+          i--;
+        }
       }
     }
 
@@ -642,7 +663,7 @@ const serializeSubGraph = async (
   );
 
   if (graphDetail.inputs && graphDetail.inputsLocation) {
-    const inputs = serializeOperationParameters(getOperationInputsToSerialize(rootState, graphId), { properties: graphDetail } as any);
+    const inputs = serializeParametersFromManifest(getOperationInputsToSerialize(rootState, graphId), { properties: graphDetail } as any);
     safeSetObjectPropertyValue(result, [...graphInputsLocation, ...graphDetail.inputsLocation], inputs);
   }
 
@@ -897,4 +918,36 @@ const getRunAfter = (operation: LogicAppsV2.ActionDefinition, idReplacements: Re
       [idReplacements[key] ?? key]: value,
     };
   }, {});
+};
+
+const parseSwaggerPathParameters = async (_operation: any): Promise<any> => {
+  const operation = clone(_operation);
+  const { apiDefinitionUrl, swaggerSource } = operation?.metadata ?? {};
+  if (!apiDefinitionUrl || (swaggerSource !== 'custom' && swaggerSource !== 'website')) return operation;
+  const opId = operation.inputs?.operationId;
+  if (!opId) return operation;
+  const connectionService = ConnectionService();
+  const swagger = await connectionService.getSwaggerParser(apiDefinitionUrl);
+  const host = swagger?.api?.host ?? '';
+  const swaggerOperation = await connectionService.getOperationFromId(apiDefinitionUrl, opId);
+  if (!swaggerOperation) return operation;
+  const operationUri = `https://${host}${swaggerOperation.path}`;
+  const pathParams = operation.inputs?.pathTemplate?.parameters ?? {};
+  Object.keys(pathParams).forEach((key) => {
+    if (pathParams[key].toString().startsWith(`@{encodeURIComponent('`)) return;
+    pathParams[key] = `@{encodeURIComponent('${pathParams[key]}')}`;
+  });
+
+  const pathWithParams = Object.keys(pathParams).reduce((acc: string, key: string) => {
+    return acc.replace(`{${key}}`, pathParams[key]);
+  }, operationUri);
+
+  operation.inputs = {
+    ...operation.inputs,
+    uri: pathWithParams,
+  };
+  if (operation?.inputs?.operationId) delete operation.inputs.operationId;
+  if (operation?.inputs?.pathTemplate) delete operation.inputs.pathTemplate;
+
+  return operation;
 };
