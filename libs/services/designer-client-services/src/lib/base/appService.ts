@@ -60,9 +60,8 @@ export class BaseAppServiceService implements IAppServiceService {
           'x-ms-visibility': 'hideInUI',
           'x-ms-serialization': { property: { type: 'pathtemplate', parameterReference: 'operationDetails.pathParameters' } },
         },
-        pathParameters: { type: 'object', properties: {}, required: [] },
       };
-      schema.required = ['method', 'uri', 'pathParameters'];
+      schema.required = ['method', 'uri'];
       for (const parameter of rawOperation.parameters ?? []) {
         this._addParameterInSchema(schema, parameter);
       }
@@ -95,6 +94,12 @@ export class BaseAppServiceService implements IAppServiceService {
       }
       case 'path': {
         const pathProperty = 'pathParameters';
+        if (!finalSchema.properties[pathProperty]) {
+          // eslint-disable-next-line no-param-reassign
+          finalSchema.properties[pathProperty] = { type: 'object', properties: {}, required: [] };
+          finalSchema.required.push(pathProperty);
+        }
+
         schemaProperties[pathProperty].properties[name] = {
           ...parameter,
           'x-ms-deserialization': { type: 'pathtemplateproperties', parameterReference: `operationDetails.uri` },
