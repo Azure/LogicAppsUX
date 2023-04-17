@@ -1118,6 +1118,12 @@
       "value": "Conector Híbrido"
     }
   ],
+  "61iT9C": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing Alt + / in the editor)"
+    }
+  ],
   "62Ypnr": [
     {
       "type": 0,
@@ -1698,6 +1704,16 @@
       "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
+  "Aci186": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Add dynamic data pressing Alt + /"
+    }
+  ],
   "AgrMqq": [
     {
       "type": 0,
@@ -2229,12 +2245,6 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Hora do Leste (E.U.A. e Canadá)"
-    }
-  ],
-  "Ex4U46": [
-    {
-      "type": 0,
-      "value": "Use Invoker's Connection"
     }
   ],
   "ExaACE": [
@@ -2894,12 +2904,6 @@
     {
       "type": 0,
       "value": "Nome:"
-    }
-  ],
-  "Jpox7O": [
-    {
-      "type": 0,
-      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
     }
   ],
   "JpthWY": [
@@ -7258,6 +7262,12 @@
     {
       "type": 0,
       "value": "Adicionar novo"
+    }
+  ],
+  "s+4LEa": [
+    {
+      "type": 0,
+      "value": "Open folder"
     }
   ],
   "s5RV9B": [
