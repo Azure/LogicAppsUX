@@ -29,8 +29,8 @@ const ContextSettings = () => {
         checked={readOnly}
         onChange={(_, checked) => dispatch(setReadOnly(!!checked))}
       />
-      <Checkbox label="Monitoring View" checked={monitoringView} onChange={changeMonitoringView} />
       <Checkbox label="Dark Mode" checked={darkMode} onChange={(_, checked) => dispatch(setDarkMode(!!checked))} />
+      <Checkbox label="Monitoring View" checked={monitoringView} onChange={changeMonitoringView} />
       <Checkbox label="Consumption" checked={consumption} onChange={(_, checked) => dispatch(setConsumption(!!checked))} />
     </div>
   );

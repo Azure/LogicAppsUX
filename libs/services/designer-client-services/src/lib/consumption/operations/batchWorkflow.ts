@@ -3,6 +3,15 @@ const iconUri =
 
 const brandColor = '#2280CC';
 
+const api = {
+  id: '/connectionProviders/batch',
+  name: 'connectionProviders/batch',
+  displayName: 'Send messages to batch',
+  iconUri,
+  brandColor,
+  description: 'Send messages to batch',
+};
+
 export const selectBatchWorkflowGroup = {
   id: '/connectionProviders/batch',
   name: 'connectionProviders/batch',
@@ -11,7 +20,7 @@ export const selectBatchWorkflowGroup = {
     description: 'Send messages to batch',
     iconUri,
     brandColor,
-    capabilities: ['actions'],
+    capabilities: ['actions', 'triggers'],
   },
 };
 
@@ -20,14 +29,7 @@ export const selectBatchWorkflowOperation = {
   name: 'sendtobatch',
   type: 'sendtobatch',
   properties: {
-    api: {
-      id: '/connectionProviders/batch',
-      name: 'connectionProviders/batch',
-      displayName: 'Send messages to batch',
-      iconUri,
-      brandColor,
-      description: 'Send messages to batch',
-    },
+    api,
     summary: 'Choose a Logic Apps workflow with batch trigger',
     description: 'Show Logic Apps with batch triggers in the same region',
     visibility: 'Important',
@@ -36,3 +38,21 @@ export const selectBatchWorkflowOperation = {
     iconUri,
   },
 };
+
+// TODO: This needs a decent bit of work
+
+// export const selectBatchWorkflowTriggerOperation = {
+//   id: 'sendtobatchtrigger',
+//   name: 'sendtobatchtrigger',
+//   type: 'sendtobatchtrigger',
+//   properties: {
+//     api,
+//     summary: 'Batch messages',
+//     description: 'Trigger a flow when batch release criteria is met.',
+//     visibility: 'Important',
+//     operationType: 'sendtobatch',
+//     brandColor,
+//     iconUri,
+//     trigger: 'single',
+//   },
+// };

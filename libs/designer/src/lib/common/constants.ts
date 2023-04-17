@@ -909,11 +909,12 @@ export default {
   },
   AZURE_RESOURCE_ACTION_TYPES: {
     SELECT_APIMANAGEMENT_ACTION: 'apimanagement',
-    SELECT_APIMANAGEMENT_TRIGGER: 'selectapimanagementtrigger',
+    SELECT_APIMANAGEMENT_TRIGGER: 'apimanagementtrigger',
     SELECT_APPSERVICE_ACTION: 'appservice',
-    SELECT_APPSERVICE_TRIGGER: 'selectappservicetrigger',
+    SELECT_APPSERVICE_TRIGGER: 'appservicetrigger',
     SELECT_FUNCTION_ACTION: 'azurefunction',
     SELECT_BATCH_WORKFLOW_ACTION: 'sendtobatch',
+    SELECT_BATCH_WORKFLOW_TRIGGER: 'sendtobatchtrigger',
     SELECT_MANUAL_WORKFLOW_ACTION: 'invokeworkflow',
   },
 };

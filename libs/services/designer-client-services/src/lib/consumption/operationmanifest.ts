@@ -5,8 +5,8 @@ import {
   supportedBaseManifestObjects,
   supportedBaseManifestTypes,
 } from '../base/operationmanifest';
-import { apiManagementActionManifest } from './manifests/apiManagement';
-import { appServiceActionManifest } from './manifests/appServices';
+import { apiManagementActionManifest, apiManagementTriggerManifest } from './manifests/apiManagement';
+import { appServiceActionManifest, appServiceTriggerManifest } from './manifests/appServices';
 import { selectBatchWorkflowManifest } from './manifests/batchWorkflow';
 import { composeManifest } from './manifests/compose';
 import { flatFileDecodingManifest, flatFileEncodingManifest } from './manifests/flatfile';
@@ -60,10 +60,13 @@ const flatfileencoding = 'flatfileencoding';
 
 // Azure Resource Connectors
 const apimanagement = 'apimanagement';
+const apimanagementtrigger = 'apimanagementtrigger';
 const azurefunction = 'function';
 const appservice = 'appservice';
+const appservicetrigger = 'appservicetrigger';
 const invokeworkflow = 'invokeworkflow';
 const sendtobatch = 'sendtobatch';
+// const sendtobatchtrigger = 'sendtobatchtrigger';
 
 const supportedConsumptionManifestTypes = [
   ...supportedBaseManifestTypes,
@@ -88,10 +91,11 @@ const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   [flatfiledecoding, flatFileDecodingManifest],
   [flatfileencoding, flatFileEncodingManifest],
   [apimanagement, apiManagementActionManifest],
-  // [apiManagementTrigger, apiManagementTriggerManifest],
+  [apimanagementtrigger, apiManagementTriggerManifest],
   [appservice, appServiceActionManifest],
-  // [selectAppServiceTrigger, appServiceTriggerManifest],
+  [appservicetrigger, appServiceTriggerManifest],
   ['azurefunction', selectFunctionManifest],
   [invokeworkflow, invokeWorkflowManifest],
   [sendtobatch, selectBatchWorkflowManifest],
+  // [sendtobatchtrigger, selectBatchWorkflowTriggerManifest]
 ]);

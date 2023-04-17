@@ -205,7 +205,7 @@ export const serializeOperation = async (
     };
   }
 
-  const swaggerBasedDynamicDataOperationIds = ['httpswaggeraction', 'httpswaggertrigger', 'appservice'];
+  const swaggerBasedDynamicDataOperationIds = ['httpswaggeraction', 'httpswaggertrigger', 'appservice', 'appservicetrigger'];
   if (swaggerBasedDynamicDataOperationIds.includes(operation.operationId)) {
     serializedOperation = await parseSwaggerPathParameters(serializedOperation);
   }

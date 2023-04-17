@@ -42,6 +42,7 @@ export class ConsumptionSearchService extends BaseSearchService {
   public getBuiltInOperations(): Promise<DiscoveryOpArray> {
     const clientBuiltInOperations = getClientBuiltInOperations(true);
     const consumptionBuiltIn: any[] = [
+      ClientOperationsData.slidingWindowOperation,
       ClientOperationsData.inlineCodeOperation,
       ClientOperationsData.composeOperation,
       ClientOperationsData.flatFileDecodingOperations,
@@ -60,6 +61,7 @@ export class ConsumptionSearchService extends BaseSearchService {
       AzureResourceOperationsData.functionOperation,
       AzureResourceOperationsData.invokeWorkflowOperation,
       AzureResourceOperationsData.selectBatchWorkflowOperation,
+      // AzureResourceOperationsData.selectBatchWorkflowTriggerOperation,
     ];
     return Promise.resolve([...clientBuiltInOperations, ...consumptionBuiltIn]);
   }

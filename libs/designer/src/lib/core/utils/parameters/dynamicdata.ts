@@ -428,7 +428,7 @@ function getManifestBasedInputParameters(
     knownKeys.add(clonedInputParameter.key);
   }
 
-  const swaggerBasedDynamicDataOperationIds = ['httpswaggeraction', 'httpswaggertrigger', 'appservice'];
+  const swaggerBasedDynamicDataOperationIds = ['httpswaggeraction', 'httpswaggertrigger', 'appservice', 'appservicetrigger'];
   if (swaggerBasedDynamicDataOperationIds.includes(operationInfo?.operationId)) {
     initializeSwaggerBasedDynamicPathParameters(result, dynamicParameter, operationDefinition);
   }
