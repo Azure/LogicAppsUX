@@ -62,15 +62,17 @@ export const initializeOperationDetailsForSwagger = async (
 
     if (operationInfo) {
       const { connectorId, operationId } = operationInfo;
-      const schema = staticResultService.getOperationResultSchema(connectorId, operationId);
-      schema.then((schema) => {
+
+      const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
+      dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
+      const { connector, parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
+
+      const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId, parsedSwagger);
+      schemaService.then((schema) => {
         if (schema) {
           dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
         }
       });
-      const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
-      dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
-      const { connector, parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
 
       const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromSwagger(
         nodeId,

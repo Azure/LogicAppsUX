@@ -15,7 +15,12 @@ import type { NodesMetadata, Operations } from '../../state/workflow/workflowInt
 import type { RootState } from '../../store';
 import { getConnectionReference } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
-import { getAllInputParameters, updateDynamicDataInNode, updateTokenMetadata } from '../../utils/parameters/helper';
+import {
+  flattenAndUpdateViewModel,
+  getAllInputParameters,
+  updateDynamicDataInNode,
+  updateTokenMetadata,
+} from '../../utils/parameters/helper';
 import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { initializeOperationDetailsForSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
@@ -297,6 +302,20 @@ const updateTokenMetadataInParameters = (
 
           return segment;
         });
+      }
+
+      const viewModel = parameter.editorViewModel;
+      if (viewModel) {
+        flattenAndUpdateViewModel(
+          viewModel,
+          actionNodes,
+          triggerNodeId,
+          nodesData,
+          operations,
+          workflowParameters,
+          nodesMetadata,
+          parameter.type
+        );
       }
     }
   }

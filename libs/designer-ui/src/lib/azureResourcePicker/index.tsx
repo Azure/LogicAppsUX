@@ -115,7 +115,7 @@ export const ResourceEntry = (props: ResourceEntryProps) => {
   } = props;
 
   const intl = useIntl();
-  const hasSubResources = !!onSubResourceSelect || !!fetchSubResourcesCallback;
+  const hasSubResources = !!fetchSubResourcesCallback;
 
   const subResourcesQuery = useQuery([subResourceType, resource.id], async () => fetchSubResourcesCallback?.(resource) ?? [], {
     enabled: resource.selected && hasSubResources,
@@ -146,7 +146,7 @@ export const ResourceEntry = (props: ResourceEntryProps) => {
           <Text key={`${value}-${index}`}>{value ?? ' '}</Text>
         ))}
       </button>
-      {expanded && (
+      {hasSubResources && expanded && (
         <div className="msla-azure-resource-entry-content">
           {subResourcesQuery?.isLoading ? (
             <Spinner label={subResourceLoadingText} style={{ margin: '8px' }} />

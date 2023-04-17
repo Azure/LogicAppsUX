@@ -101,7 +101,6 @@ export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNod
 export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended): SchemaNodeExtended | undefined => {
   let tempKey = nodeKey;
   if (tempKey.includes(mapNodeParams.for)) {
-    // Testing XXX
     const layeredArrayItemForRegex = new RegExp(/\$for\([^)]*(?:\/\*){2,}\)/g);
     tempKey = nodeKey.replaceAll(layeredArrayItemForRegex, '');
 

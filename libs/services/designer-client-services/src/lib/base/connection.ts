@@ -211,7 +211,7 @@ export abstract class BaseConnectionService implements IConnectionService {
       if (testLinks && testLinks.length > 0) response = await this.requestTestOtherConnections(connection);
       if (response) this.handleTestConnectionResponse(response);
     } catch (error: any) {
-      Promise.reject(error);
+      return Promise.reject(error);
     }
   }
 
@@ -222,14 +222,18 @@ export abstract class BaseConnectionService implements IConnectionService {
     const { method: httpMethod, requestUri: uri } = testLinks[0];
     const method = httpMethod.toUpperCase() as HTTP_METHODS;
 
-    let response: HttpResponse<any> | undefined = undefined;
-    const requestOptions: HttpRequestOptions<any> = { uri };
-    if (method === HTTP_METHODS.GET) response = await httpClient.get<any>(requestOptions);
-    else if (method === HTTP_METHODS.POST) response = await httpClient.post<any, any>(requestOptions);
-    else if (method === HTTP_METHODS.PUT) response = await httpClient.put<any, any>(requestOptions);
-    else if (method === HTTP_METHODS.DELETE) response = await httpClient.delete<any>(requestOptions);
-    if (!response) return Promise.reject('Failed to test connection');
-    return response;
+    try {
+      let response: HttpResponse<any> | undefined = undefined;
+      const requestOptions: HttpRequestOptions<any> = { uri };
+      if (method === HTTP_METHODS.GET) response = await httpClient.get<any>(requestOptions);
+      else if (method === HTTP_METHODS.POST) response = await httpClient.post<any, any>(requestOptions);
+      else if (method === HTTP_METHODS.PUT) response = await httpClient.put<any, any>(requestOptions);
+      else if (method === HTTP_METHODS.DELETE) response = await httpClient.delete<any>(requestOptions);
+      if (!response) return Promise.reject('Failed to test connection');
+      return response;
+    } catch (error: any) {
+      return Promise.reject(error);
+    }
   }
 
   protected async pretestServiceProviderConnection(

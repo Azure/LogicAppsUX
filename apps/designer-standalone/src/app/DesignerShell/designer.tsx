@@ -7,7 +7,17 @@ import { ReactQueryProvider } from '@microsoft/logic-apps-designer';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useSelector } from 'react-redux';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchInterval: false,
+      refetchIntervalInBackground: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
+    },
+  },
+});
 
 const InnerDesigner = () => {
   const { data, isLoading } = useFetchStandardApps();

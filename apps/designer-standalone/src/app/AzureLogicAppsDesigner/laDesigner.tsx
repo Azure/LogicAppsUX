@@ -326,7 +326,7 @@ const getDesignerServices = (
     workflowReferenceId: '',
   });
   const gatewayService = new BaseGatewayService({
-    baseUrl,
+    baseUrl: armUrl,
     httpClient,
     apiVersions: {
       subscription: apiVersion,

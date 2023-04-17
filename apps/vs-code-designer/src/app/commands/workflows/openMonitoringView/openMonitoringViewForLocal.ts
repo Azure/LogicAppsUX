@@ -75,6 +75,8 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       artifacts: await getArtifactsInLocalProject(this.projectPath),
       azureDetails: await getAzureConnectorDetailsForLocalProject(this.context, this.projectPath),
     });
+    this.panelMetadata.mapArtifacts = this.mapArtifacts;
+    this.panelMetadata.schemaArtifacts = this.schemaArtifacts;
 
     this.panel.webview.onDidReceiveMessage(
       async (message) => await this._handleWebviewMsg(message),
