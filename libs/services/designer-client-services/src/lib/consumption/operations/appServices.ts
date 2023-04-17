@@ -20,7 +20,7 @@ export const appServiceGroup = {
     description: 'Azure App Services',
     iconUri,
     brandColor,
-    capabilities: ['actions'],
+    capabilities: ['actions', 'triggers'],
   },
 };
 
@@ -40,9 +40,9 @@ export const appServiceActionOperation = {
 };
 
 export const appServiceTriggerOperation = {
-  id: 'selectappservicetrigger',
-  name: 'selectappservicetrigger',
-  type: 'selectappservicetrigger',
+  id: 'appservicetrigger',
+  name: 'appservicetrigger',
+  type: 'appservice',
   properties: {
     api,
     summary: 'Choose an Azure App Services trigger',
