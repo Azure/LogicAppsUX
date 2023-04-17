@@ -4,6 +4,7 @@ import type { ParameterGroup } from '../../../../core/state/operation/operationM
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import {
   useAllowUserToChangeConnection,
+  useConnectorName,
   useNodeConnectionName,
   useOperationInfo,
 } from '../../../../core/state/selectors/actionMetadataSelector';
@@ -19,6 +20,7 @@ import {
   shouldUseParameterInGroup,
   updateParameterAndDependencies,
 } from '../../../../core/utils/parameters/helper';
+import { getFilePickerCallbacks } from '../../../../core/utils/parameters/picker';
 import type { TokenGroup } from '../../../../core/utils/tokens';
 import { createValueSegmentFromToken, getExpressionTokenSections, getOutputTokenSections } from '../../../../core/utils/tokens';
 import { getAllVariables, getAvailableVariables } from '../../../../core/utils/variables';
@@ -66,6 +68,7 @@ export const ParametersTab = () => {
           <ParameterSection
             key={selectedNodeId}
             nodeId={selectedNodeId}
+            nodeType={nodeType}
             group={inputs.parameterGroups[sectionName]}
             readOnly={readOnly}
             tokenGroup={tokenGroup}
@@ -82,12 +85,14 @@ export const ParametersTab = () => {
 
 const ParameterSection = ({
   nodeId,
+  nodeType,
   group,
   readOnly,
   tokenGroup,
   expressionGroup,
 }: {
   nodeId: string;
+  nodeType?: string;
   group: ParameterGroup;
   readOnly: boolean | undefined;
   tokenGroup: TokenGroup[];
@@ -123,22 +128,27 @@ const ParameterSection = ({
     };
   });
   const rootState = useSelector((state: RootState) => state);
+  const displayNameResult = useConnectorName(operationInfo);
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState) => {
-      const { value, viewModel } = newState;
+      let { value } = newState;
+      const { viewModel } = newState;
+      const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
+      if (
+        (parameter?.type === constants.SWAGGER.TYPE.BOOLEAN && value.length === 1 && value[0]?.value === 'True') ||
+        value[0]?.value === 'False'
+      ) {
+        value = [{ ...value[0], value: value[0].value.toLowerCase() }];
+      }
+
       const propertiesToUpdate = { value, preservedValue: undefined } as Partial<ParameterInfo>;
 
       if (viewModel !== undefined) {
         propertiesToUpdate.editorViewModel = viewModel;
       }
-      const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
-      if (variables[nodeId]) {
-        if (parameter?.parameterKey === 'inputs.$.name') {
-          dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
-        } else if (parameter?.parameterKey === 'inputs.$.type') {
-          dispatch(updateVariableInfo({ id: nodeId, type: value[0]?.value }));
-        }
+      if (variables[nodeId] && (parameter?.parameterKey === 'inputs.$.name' || parameter?.parameterKey === 'inputs.$.type')) {
+        dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
       }
 
       updateParameterAndDependencies(
@@ -217,16 +227,19 @@ const ParameterSection = ({
     editorId: string,
     labelId: string,
     tokenPickerMode?: TokenPickerMode,
+    isCodeEditor?: boolean,
     closeTokenPicker?: () => void,
     tokenPickerClicked?: (b: boolean) => void,
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
-    // check to see if there's a custom Token Picker
+    const codeEditorFilteredTokens = tokenGroup.filter((group) => {
+      return group.id !== 'workflowparameters' && group.id !== 'variables';
+    });
     return (
       <TokenPicker
         editorId={editorId}
         labelId={labelId}
-        tokenGroup={tokenGroup}
+        tokenGroup={isCodeEditor ? codeEditorFilteredTokens : tokenGroup}
         expressionGroup={expressionGroup}
         tokenPickerFocused={tokenPickerClicked}
         initialMode={tokenPickerMode}
@@ -253,6 +266,8 @@ const ParameterSection = ({
       const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel, conditionalVisibility };
       const { editor, editorOptions } = getEditorAndOptions(param, upstreamNodeIds ?? [], variables);
 
+      const isCodeEditor = editor?.toLowerCase() === 'code';
+
       const remappedValues: ValueSegment[] = value.map((v: ValueSegment) => {
         if (v.type !== ValueSegmentType.TOKEN) return v;
         const oldId = v.token?.actionName ?? '';
@@ -278,11 +293,14 @@ const ParameterSection = ({
           editorOptions,
           tokenEditor: true,
           isTrigger,
+          isCallback: nodeType?.toLowerCase() === constants.NODE.TYPE.HTTP_WEBHOOK,
           isLoading: dynamicData?.status === DynamicCallStatus.STARTED,
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
+          pickerCallback: () =>
+            getFilePickerCallbacks(nodeId, group.id, param, displayNameResult.result, operationInfo, connectionReference, dispatch),
           getTokenPicker: (
             editorId: string,
             labelId: string,
@@ -290,7 +308,17 @@ const ParameterSection = ({
             closeTokenPicker?: () => void,
             tokenPickerClicked?: (b: boolean) => void,
             tokenClickedCallback?: (token: ValueSegment) => void
-          ) => getTokenPicker(id, editorId, labelId, tokenPickerMode, closeTokenPicker, tokenPickerClicked, tokenClickedCallback),
+          ) =>
+            getTokenPicker(
+              id,
+              editorId,
+              labelId,
+              tokenPickerMode,
+              isCodeEditor,
+              closeTokenPicker,
+              tokenPickerClicked,
+              tokenClickedCallback
+            ),
         },
       };
     });
@@ -315,14 +343,20 @@ const getEditorAndOptions = (
   variables: Record<string, VariableDeclaration[]>
 ): { editor?: string; editorOptions?: any } => {
   const { editor, editorOptions } = parameter;
+  const supportedTypes: string[] = editorOptions?.supportedTypes ?? [];
   if (equals(editor, 'variablename')) {
     return {
       editor: 'dropdown',
       editorOptions: {
-        options: getAvailableVariables(variables, upstreamNodeIds).map((variable) => ({
-          value: variable.name,
-          displayName: variable.name,
-        })),
+        options: getAvailableVariables(variables, upstreamNodeIds)
+          .filter((variable) => {
+            if (supportedTypes?.length === 0) return true;
+            return supportedTypes.includes(variable.type);
+          })
+          .map((variable) => ({
+            value: variable.name,
+            displayName: variable.name,
+          })),
       },
     };
   }

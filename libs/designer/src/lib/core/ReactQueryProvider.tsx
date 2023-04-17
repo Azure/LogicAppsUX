@@ -9,14 +9,34 @@ let reactQueryClient: QueryClient | undefined;
 
 export const getReactQueryClient = (): QueryClient => {
   if (!reactQueryClient) {
-    reactQueryClient = new QueryClient();
+    reactQueryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          refetchInterval: false,
+          refetchIntervalInBackground: false,
+          refetchOnWindowFocus: false,
+          refetchOnReconnect: false,
+          refetchOnMount: false,
+        },
+      },
+    });
   }
   return reactQueryClient;
 };
 
 export const ReactQueryProvider = (props: ProviderProps) => {
   if (!reactQueryClient) {
-    reactQueryClient = new QueryClient();
+    reactQueryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          refetchInterval: false,
+          refetchIntervalInBackground: false,
+          refetchOnWindowFocus: false,
+          refetchOnReconnect: false,
+          refetchOnMount: false,
+        },
+      },
+    });
   }
   return (
     <QueryClientProvider client={reactQueryClient}>

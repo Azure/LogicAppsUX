@@ -831,6 +831,12 @@
       "value": "(UTC+06:00) Dakka"
     }
   ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Choose the type of user input"
+    }
+  ],
   "3Y8a6G": [
     {
       "type": 0,
@@ -1139,6 +1145,12 @@
       "value": "Łącznik hybrydowy"
     }
   ],
+  "61iT9C": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing Alt + / in the editor)"
+    }
+  ],
   "62Ypnr": [
     {
       "type": 0,
@@ -1279,6 +1291,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Ciąg, z którego został pobrany podciąg."
+    }
+  ],
+  "7Vyxu0": [
+    {
+      "type": 0,
+      "value": "Yes/No"
     }
   ],
   "7WVgiU": [
@@ -1489,6 +1507,12 @@
     {
       "type": 0,
       "value": "Dodaje liczbę całkowitą dni do przekazanej sygnatury czasowej ciągu"
+    }
+  ],
+  "8yjjTX": [
+    {
+      "type": 0,
+      "value": "Connect via Service Principal"
     }
   ],
   "9/UeTh": [
@@ -1705,6 +1729,16 @@
     {
       "type": 0,
       "value": "Insert data from previous step (You can also add by typing / in the editor)"
+    }
+  ],
+  "Aci186": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Add dynamic data pressing Alt + /"
     }
   ],
   "AgrMqq": [
@@ -2107,6 +2141,12 @@
       "value": "(UTC-01:00) Azory"
     }
   ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Add an input"
+    }
+  ],
   "DyYcJZ": [
     {
       "type": 0,
@@ -2327,6 +2367,12 @@
     {
       "type": 0,
       "value": "Must provide name of parameter."
+    }
+  ],
+  "FT3jt6": [
+    {
+      "type": 0,
+      "value": "Webhook reference information"
     }
   ],
   "FUhNu4": [
@@ -2717,6 +2763,16 @@
     {
       "type": 0,
       "value": "22"
+    }
+  ],
+  "IHMd3X": [
+    {
+      "type": 0,
+      "value": "Example: "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "IPbBB2": [
@@ -3985,12 +4041,6 @@
       "value": "Hasło"
     }
   ],
-  "SGxmEY": [
-    {
-      "type": 0,
-      "value": "Wprowadź słownik"
-    }
-  ],
   "SJFVxf": [
     {
       "type": 0,
@@ -4191,6 +4241,12 @@
     {
       "type": 0,
       "value": "Identyfikator żądania klienta"
+    }
+  ],
+  "TeRxLv": [
+    {
+      "type": 0,
+      "value": "Use a service principal to connect using application permissions."
     }
   ],
   "TgcgXE": [
@@ -4503,6 +4559,12 @@
     {
       "type": 0,
       "value": "Error Type"
+    }
+  ],
+  "VggzRB": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "VlvlX1": [
@@ -5015,6 +5077,12 @@
       "value": "” w parametrze"
     }
   ],
+  "a+6uyE": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5145,6 +5213,12 @@
       "value": "(UTC+02:00) Kaliningrad"
     }
   ],
+  "bSZ0lL": [
+    {
+      "type": 0,
+      "value": "Callback url"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -5255,6 +5329,12 @@
     {
       "type": 0,
       "value": "Zawartość dynamiczną można również dodać z innych źródeł."
+    }
+  ],
+  "cF4w+R": [
+    {
+      "type": 0,
+      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5491,6 +5571,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Jekaterynburg"
+    }
+  ],
+  "eHgfpz": [
+    {
+      "type": 0,
+      "value": "Please enter a valid URL"
     }
   ],
   "eHgi14": [
@@ -6091,6 +6177,12 @@
       "value": "Test"
     }
   ],
+  "izS5yQ": [
+    {
+      "type": 0,
+      "value": "Learn more"
+    }
+  ],
   "j1VU25": [
     {
       "type": 0,
@@ -6461,6 +6553,12 @@
       "value": "Select an action type"
     }
   ],
+  "lv9QyZ": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6811,6 +6909,12 @@
       "value": "(UTC-03:00) Salwador"
     }
   ],
+  "ox2Ou7": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON"
+    }
+  ],
   "oxH1L/": [
     {
       "type": 0,
@@ -7039,6 +7143,12 @@
       "value": "”."
     }
   ],
+  "qUMXpq": [
+    {
+      "type": 0,
+      "value": "Swagger Endpoint"
+    }
+  ],
   "qUWBUX": [
     {
       "offset": 0,
@@ -7241,6 +7351,12 @@
     {
       "type": 0,
       "value": "Dodaj nowy"
+    }
+  ],
+  "s+4LEa": [
+    {
+      "type": 0,
+      "value": "Open folder"
     }
   ],
   "s5RV9B": [
@@ -7987,6 +8103,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Uniwersalny czas koordynowany+12"
+    }
+  ],
+  "xeREzb": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "xt5TeT": [

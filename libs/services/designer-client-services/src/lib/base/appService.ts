@@ -1,5 +1,6 @@
 import type { IAppServiceService } from '../appService';
 import type { ListDynamicValue } from '../connector';
+import { areSwaggerOperationPathsMatching } from '../helpers';
 import type { IHttpClient } from '../httpClient';
 import { ResponseCodes, SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { ArgumentException, equals, unmap } from '@microsoft/utils-logic-apps';
@@ -51,7 +52,7 @@ export class BaseAppServiceService implements IAppServiceService {
 
   public async getOperationSchema(swaggerUrl: string, operationId: string, isInput: boolean): Promise<any> {
     const swagger = await this.fetchAppServiceApiSwagger(swaggerUrl);
-
+    if (!operationId) return Promise.resolve();
     const operation = swagger.getOperationByOperationId(operationId);
     if (!operation) throw new Error('Operation not found');
 
@@ -62,6 +63,7 @@ export class BaseAppServiceService implements IAppServiceService {
     if (isInput) {
       schema.properties = {
         method: { type: 'string', default: operation.method, 'x-ms-visibility': 'hideInUI' },
+        uri: { type: 'string', default: `https://${swagger.api.host}${operation.path}`, 'x-ms-visibility': 'hideInUI' },
         pathTemplate: {
           type: 'object',
           properties: {
@@ -70,7 +72,7 @@ export class BaseAppServiceService implements IAppServiceService {
           required: ['template'],
         },
       };
-      schema.required = ['method', 'pathTemplate'];
+      schema.required = ['method', 'pathTemplate', 'uri'];
       for (const parameter of rawOperation.parameters ?? []) {
         this._addParameterInSchema(schema, parameter);
       }
@@ -131,11 +133,12 @@ export class BaseAppServiceService implements IAppServiceService {
     }));
   }
 
-  public async getOperationFromPathAndMethod(swaggerUrl: string, path: string, method: string): Promise<any> {
+  public async getOperationFromPathAndMethod(swaggerUrl: string, fullPath: string, method: string): Promise<any> {
     const swagger = await this.fetchAppServiceApiSwagger(swaggerUrl);
+    const path = fullPath.split(swagger.api.host ?? '').pop() ?? '';
     const operations = swagger.getOperations();
     return unmap(operations).find(
-      (operation: any) => cleanPathValue(operation.path) === cleanPathValue(path) && operation.method === method
+      (operation: any) => areSwaggerOperationPathsMatching(operation.path, path) && operation.method === method
     );
   }
 
@@ -162,8 +165,4 @@ export function isFunctionContainer(kind: any): boolean {
   return (
     kinds.some(($kind) => equals($kind, 'functionapp')) && !kinds.some(($kind) => equals($kind, 'botapp') || equals($kind, 'workflowapp'))
   );
-}
-
-function cleanPathValue(value: string): string {
-  return value.replace(/{.*?}/g, '').replace('@', '').toLowerCase();
 }

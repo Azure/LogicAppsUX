@@ -46,7 +46,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
     IsEncrypted: false,
     Values: {
       AzureWebJobsSecretStorageType: 'Files',
-      FUNCTIONS_WORKER_RUNTIME: WorkerRuntime.DotnetIsolated,
+      FUNCTIONS_WORKER_RUNTIME: os.platform() === 'win32' ? WorkerRuntime.DotnetIsolated : WorkerRuntime.Node,
     },
   };
   if (!ext.workflowDesignTimePort) {

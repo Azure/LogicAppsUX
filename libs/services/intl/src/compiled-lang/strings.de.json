@@ -793,6 +793,12 @@
       "value": "(UTC+06:00) Dhaka"
     }
   ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Choose the type of user input"
+    }
+  ],
   "3Y8a6G": [
     {
       "type": 0,
@@ -1101,6 +1107,12 @@
       "value": "Hybridconnector"
     }
   ],
+  "61iT9C": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing Alt + / in the editor)"
+    }
+  ],
   "62Ypnr": [
     {
       "type": 0,
@@ -1241,6 +1253,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Zeichenfolge, aus der die Teilzeichenfolge entnommen wird."
+    }
+  ],
+  "7Vyxu0": [
+    {
+      "type": 0,
+      "value": "Yes/No"
     }
   ],
   "7WVgiU": [
@@ -1451,6 +1469,12 @@
     {
       "type": 0,
       "value": "Fügt einem übergebenen Zeichenfolgen-Zeitstempel eine ganze Zahl von Tagen hinzu."
+    }
+  ],
+  "8yjjTX": [
+    {
+      "type": 0,
+      "value": "Connect via Service Principal"
     }
   ],
   "9/UeTh": [
@@ -1667,6 +1691,16 @@
     {
       "type": 0,
       "value": "Insert data from previous step (You can also add by typing / in the editor)"
+    }
+  ],
+  "Aci186": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Add dynamic data pressing Alt + /"
     }
   ],
   "AgrMqq": [
@@ -2047,6 +2081,12 @@
       "value": "(UTC-01:00) Azoren"
     }
   ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Add an input"
+    }
+  ],
   "DyYcJZ": [
     {
       "type": 0,
@@ -2267,6 +2307,12 @@
     {
       "type": 0,
       "value": "Must provide name of parameter."
+    }
+  ],
+  "FT3jt6": [
+    {
+      "type": 0,
+      "value": "Webhook reference information"
     }
   ],
   "FUhNu4": [
@@ -2635,6 +2681,16 @@
     {
       "type": 0,
       "value": "22"
+    }
+  ],
+  "IHMd3X": [
+    {
+      "type": 0,
+      "value": "Example: "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "IPbBB2": [
@@ -3863,12 +3919,6 @@
       "value": "Kennwort"
     }
   ],
-  "SGxmEY": [
-    {
-      "type": 0,
-      "value": "Wörterbuch eingeben"
-    }
-  ],
   "SJFVxf": [
     {
       "type": 0,
@@ -4069,6 +4119,12 @@
     {
       "type": 0,
       "value": "Clientanforderungs-ID"
+    }
+  ],
+  "TeRxLv": [
+    {
+      "type": 0,
+      "value": "Use a service principal to connect using application permissions."
     }
   ],
   "TgcgXE": [
@@ -4381,6 +4437,12 @@
     {
       "type": 0,
       "value": "Error Type"
+    }
+  ],
+  "VggzRB": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "VlvlX1": [
@@ -4885,6 +4947,12 @@
       "value": "Nicht unterstützter \"in\"-Wert: {value} im Parameter"
     }
   ],
+  "a+6uyE": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5015,6 +5083,12 @@
       "value": "(UTC+02:00) Kaliningrad"
     }
   ],
+  "bSZ0lL": [
+    {
+      "type": 0,
+      "value": "Callback url"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -5129,6 +5203,12 @@
     {
       "type": 0,
       "value": "Dynamische Inhalte können auch aus anderen Quellen hinzugefügt werden."
+    }
+  ],
+  "cF4w+R": [
+    {
+      "type": 0,
+      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5365,6 +5445,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Jekaterinburg"
+    }
+  ],
+  "eHgfpz": [
+    {
+      "type": 0,
+      "value": "Please enter a valid URL"
     }
   ],
   "eHgi14": [
@@ -5939,6 +6025,12 @@
       "value": "Test"
     }
   ],
+  "izS5yQ": [
+    {
+      "type": 0,
+      "value": "Learn more"
+    }
+  ],
   "j1VU25": [
     {
       "type": 0,
@@ -6309,6 +6401,12 @@
       "value": "Select an action type"
     }
   ],
+  "lv9QyZ": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6659,6 +6757,12 @@
       "value": "(UTC-03:00) Salvador"
     }
   ],
+  "ox2Ou7": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON"
+    }
+  ],
   "oxH1L/": [
     {
       "type": 0,
@@ -6871,6 +6975,12 @@
       "value": "Fehlercode: {errorCode}, Meldung: {message}."
     }
   ],
+  "qUMXpq": [
+    {
+      "type": 0,
+      "value": "Swagger Endpoint"
+    }
+  ],
   "qUWBUX": [
     {
       "offset": 0,
@@ -7051,6 +7161,12 @@
     {
       "type": 0,
       "value": "Neu hinzufügen"
+    }
+  ],
+  "s+4LEa": [
+    {
+      "type": 0,
+      "value": "Open folder"
     }
   ],
   "s5RV9B": [
@@ -7797,6 +7913,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Koordinierte Weltzeit +12"
+    }
+  ],
+  "xeREzb": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "xt5TeT": [

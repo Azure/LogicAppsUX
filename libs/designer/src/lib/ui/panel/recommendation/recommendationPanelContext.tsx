@@ -13,6 +13,7 @@ import {
 import { selectOperationGroupId, selectOperationId } from '../../../core/state/panel/panelSlice';
 import { AzureResourceSelection } from './azureResourceSelection';
 import { BrowseView } from './browseView';
+import { CustomSwaggerSelection } from './customSwaggerSelection';
 import { OperationGroupDetailView } from './operationGroupDetailView';
 import { SearchView } from './searchView';
 import { Link, Icon } from '@fluentui/react';
@@ -23,6 +24,14 @@ import { guid, areApiIdsEqual } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+
+type SelectionState = (typeof SELECTION_STATES)[keyof typeof SELECTION_STATES];
+const SELECTION_STATES = {
+  SEARCH: 'SEARCH',
+  DETAILS: 'DETAILS',
+  AZURE_RESOURCE: 'AZURE_RESOURCE',
+  CUSTOM_SWAGGER: 'HTTP_SWAGGER',
+};
 
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -36,7 +45,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const [isGrouped, setIsGrouped] = useState(true);
 
-  const [isSelectingAzureResource, setIsSelectingAzureResource] = useState(false);
+  const [selectionState, setSelectionState] = useState<SelectionState>(SELECTION_STATES.SEARCH);
 
   const selectedOperationId = useSelectedSearchOperationId();
   const { data: allOperations, isLoading: isLoadingOperations } = useAllOperations();
@@ -53,12 +62,13 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       return areApiIdsEqual(apiId, selectedOperationGroupId);
     });
     setAllOperationsForGroup(filteredOps);
+    setSelectionState(SELECTION_STATES.DETAILS);
   }, [selectedOperationGroupId, allOperations]);
 
   const navigateBack = useCallback(() => {
     dispatch(selectOperationGroupId(''));
     dispatch(selectOperationId(''));
-    setIsSelectingAzureResource(false);
+    setSelectionState(SELECTION_STATES.SEARCH);
   }, [dispatch]);
 
   const relationshipIds = useRelationshipIds();
@@ -69,41 +79,12 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     return azureResourceOperationIds.some((_id) => areApiIdsEqual(id, _id));
   }, []);
 
-  const startAzureResourceSelection = useCallback((operation: DiscoveryOperation<DiscoveryResultTypes>) => {
-    console.log('startAzureResourceSelection', operation);
-    setIsSelectingAzureResource(true);
+  const startAzureResourceSelection = useCallback(() => {
+    setSelectionState(SELECTION_STATES.AZURE_RESOURCE);
+  }, []);
 
-    const selectedService = operation.properties.api.id;
-    let apiType: string;
-
-    switch (operation.id?.toLowerCase()) {
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_ACTION:
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_TRIGGER:
-        apiType = Constants.API_CATEGORIES.API_MANAGEMENT;
-        break;
-
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APPSERVICE_ACTION:
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APPSERVICE_TRIGGER:
-        apiType = Constants.API_CATEGORIES.APP_SERVICES;
-        break;
-
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_FUNCTION_ACTION:
-        apiType = Constants.API_CATEGORIES.AZURE_FUNCTIONS;
-        break;
-
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_MANUAL_WORKFLOW_ACTION:
-        apiType = Constants.API_CATEGORIES.WORKFLOWS;
-        break;
-
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_BATCH_WORKFLOW_ACTION:
-        apiType = Constants.API_CATEGORIES.WORKFLOWS;
-        break;
-
-      default:
-        throw new Error(`Unexpected API category type '${operation.id}'`);
-    }
-
-    console.log('startAzureResourceSelection', selectedService, apiType);
+  const startHttpSwaggerSelection = useCallback(() => {
+    setSelectionState(SELECTION_STATES.CUSTOM_SWAGGER);
   }, []);
 
   const onOperationClick = useCallback(
@@ -114,7 +95,11 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       if (!operation) return;
       dispatch(selectOperationId(operation.id));
       if (isAzureResourceActionId(operation.id) && isConsumption) {
-        startAzureResourceSelection(operation);
+        startAzureResourceSelection();
+        return;
+      }
+      if (operation.id === 'httpswaggeraction' || operation.id === 'httpswaggertrigger') {
+        startHttpSwaggerSelection();
         return;
       }
       const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
@@ -129,6 +114,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       isTrigger,
       relationshipIds,
       startAzureResourceSelection,
+      startHttpSwaggerSelection,
     ]
   );
 
@@ -140,7 +126,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   return (
     <RecommendationPanel placeholder={''} {...props}>
-      {isSelectingAzureResource || selectedOperationGroupId ? (
+      {selectionState !== SELECTION_STATES.SEARCH || selectedOperationGroupId ? (
         <div className={'msla-sub-heading-container'}>
           <Link onClick={navigateBack} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Icon iconName="Back" />
@@ -148,41 +134,46 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
           </Link>
         </div>
       ) : null}
-      {isSelectingAzureResource && selectedOperation ? (
-        <AzureResourceSelection operation={selectedOperation} />
-      ) : selectedOperationGroupId && selectedConnector ? (
-        <OperationGroupDetailView
-          connector={selectedConnector}
-          groupOperations={allOperationsForGroup}
-          filters={filters}
-          onOperationClick={onOperationClick}
-          isLoading={isLoadingOperations}
-        />
-      ) : (
-        <>
-          <OperationSearchHeader
-            searchCallback={setSearchTerm}
-            onGroupToggleChange={() => setIsGrouped(!isGrouped)}
-            isGrouped={isGrouped}
-            searchTerm={searchTerm}
-            filters={filters}
-            setFilters={setFilters}
-            isTriggerNode={isTrigger}
-          />
-          {searchTerm ? (
-            <SearchView
-              searchTerm={searchTerm}
-              allOperations={allOperations ?? []}
-              groupByConnector={isGrouped}
-              isLoading={isLoadingOperations}
+      {
+        {
+          [SELECTION_STATES.AZURE_RESOURCE]: selectedOperation ? <AzureResourceSelection operation={selectedOperation} /> : null,
+          [SELECTION_STATES.CUSTOM_SWAGGER]: selectedOperation ? <CustomSwaggerSelection operation={selectedOperation} /> : null,
+          [SELECTION_STATES.DETAILS]: selectedConnector ? (
+            <OperationGroupDetailView
+              connector={selectedConnector}
+              groupOperations={allOperationsForGroup}
               filters={filters}
               onOperationClick={onOperationClick}
+              isLoading={isLoadingOperations}
             />
-          ) : (
-            <BrowseView filters={filters} />
-          )}
-        </>
-      )}
+          ) : null,
+          [SELECTION_STATES.SEARCH]: (
+            <>
+              <OperationSearchHeader
+                searchCallback={setSearchTerm}
+                onGroupToggleChange={() => setIsGrouped(!isGrouped)}
+                isGrouped={isGrouped}
+                searchTerm={searchTerm}
+                filters={filters}
+                setFilters={setFilters}
+                isTriggerNode={isTrigger}
+              />
+              {searchTerm ? (
+                <SearchView
+                  searchTerm={searchTerm}
+                  allOperations={allOperations ?? []}
+                  groupByConnector={isGrouped}
+                  isLoading={isLoadingOperations}
+                  filters={filters}
+                  onOperationClick={onOperationClick}
+                />
+              ) : (
+                <BrowseView filters={filters} />
+              )}
+            </>
+          ),
+        }[selectionState ?? '']
+      }
     </RecommendationPanel>
   );
 };

@@ -10,29 +10,30 @@ import {
 import type { RootState } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
+import { createSelector } from '@reduxjs/toolkit';
 import { useContext } from 'react';
 import { useIntl } from 'react-intl';
 import { useMutation } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export interface DesignerCommandBarProps {
-  isMonitoringView: boolean;
   isRefreshing: boolean;
   isDisabled: boolean;
   onRefresh(): void;
   isDarkMode: boolean;
 }
 
-export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
-  isMonitoringView,
-  isRefreshing,
-  isDisabled,
-  onRefresh,
-  isDarkMode,
-}) => {
+export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefreshing, isDisabled, onRefresh, isDarkMode }) => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch = useDispatch();
+
+  const isMonitoringView = useSelector(
+    createSelector(
+      (state: RootState) => state.designerOptions,
+      (state: any) => state.isMonitoringView
+    )
+  );
 
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();

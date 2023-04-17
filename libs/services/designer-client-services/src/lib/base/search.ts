@@ -322,6 +322,8 @@ export function getClientBuiltInOperations(showStatefulOperations = false): Disc
     ClientOperationsData.delayUntilOperation,
     ClientOperationsData.httpActionOperation,
     ClientOperationsData.httpTriggerOperation,
+    ClientOperationsData.httpSwaggerActionOperation,
+    ClientOperationsData.httpSwaggerTriggerOperation,
     ClientOperationsData.httpWebhookActionOperation,
     ClientOperationsData.httpWebhookTriggerOperation,
     ClientOperationsData.initializeVariableOperation,
@@ -353,11 +355,8 @@ export function getClientBuiltInConnectors(showStatefulOperations = false): Conn
 }
 
 function filterStateful(operation: DiscoveryOperation<BuiltInOperation> | Connector, showStateful: boolean): boolean {
+  if (operation.properties.capabilities === undefined) return true;
   return showStateful
-    ? !operation.properties.capabilities ||
-        operation.properties.capabilities.includes('Stateful') ||
-        !operation.properties.capabilities.includes('Stateless')
-    : !operation.properties.capabilities ||
-        operation.properties.capabilities.includes('Stateless') ||
-        !operation.properties.capabilities.includes('Stateful');
+    ? operation.properties.capabilities.includes('Stateful') || !operation.properties.capabilities.includes('Stateless')
+    : operation.properties.capabilities.includes('Stateless') || !operation.properties.capabilities.includes('Stateful');
 }

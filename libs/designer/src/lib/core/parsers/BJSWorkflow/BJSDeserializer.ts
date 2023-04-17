@@ -43,6 +43,7 @@ export const Deserialize = (
     nodesMetadata[tID] = {
       graphId: 'root',
       isRoot: true,
+      ...(trigger?.metadata && { actionMetadata: trigger?.metadata }),
       ...addTriggerInstanceMetaData(runInstance),
     };
   }
@@ -381,6 +382,7 @@ const addActionsInstanceMetaData = (nodesMetadata: NodesMetadata, runInstance: L
           ...nodeRunData,
           duration: getDurationStringPanelMode(Date.parse(nodeRunData.endTime) - Date.parse(nodeRunData.startTime), /* abbreviated */ true),
         },
+        runIndex: 0,
       };
     }
   });

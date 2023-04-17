@@ -1,14 +1,15 @@
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
-import TokenPickerButton from '../editor/base/plugins/TokenPickerButton';
+import TokenPickerButtonLegacy from '../editor/base/plugins/TokenPickerButtonLegacy';
 import type { EditorContentChangedEventArgs, EditorLanguage } from '../editor/monaco';
 import { MonacoEditor as Editor } from '../editor/monaco';
+import { useId } from '../useId';
 import { buildInlineCodeTextFromToken } from './util';
-import { useId } from '@fluentui/react-hooks';
 import { useFunctionalState } from '@react-hookz/web';
 import type { editor, IRange } from 'monaco-editor';
 import { useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 interface CodeEditorProps extends BaseEditorProps {
   language: EditorLanguage;
@@ -23,13 +24,13 @@ export function CodeEditor({
   getTokenPicker,
   label,
 }: CodeEditorProps): JSX.Element {
+  const intl = useIntl();
   const codeEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const editorId = useId('msla-tokenpicker-callout-location');
   const callOutLabelId = useId('msla-tokenpicker-callout-label');
   const [getCurrentValue, setCurrentValue] = useFunctionalState(getInitialValue(initialValue));
   const [editorHeight, setEditorHeight] = useState(getEditorHeight(getInitialValue(initialValue)));
   const [showTokenPickerButton, setShowTokenPickerButton] = useState(false);
-  const [showTokenPicker, setShowTokenPicker] = useState(true);
   const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
 
   const handleContentChanged = (e: EditorContentChangedEventArgs): void => {
@@ -41,9 +42,8 @@ export function CodeEditor({
 
   const handleBlur = (): void => {
     if (!getInTokenPicker()) {
-      setInTokenPicker(false);
+      setShowTokenPickerButton(false);
     }
-    setShowTokenPickerButton(false);
     onChange?.({ value: [{ id: 'key', type: ValueSegmentType.LITERAL, value: getCurrentValue() }] });
   };
 
@@ -54,10 +54,12 @@ export function CodeEditor({
   };
 
   const handleShowTokenPicker = () => {
-    if (showTokenPicker) {
-      setInTokenPicker(false);
-    }
-    setShowTokenPicker(!showTokenPicker);
+    setInTokenPicker(!getInTokenPicker());
+  };
+
+  const closeTokenPicker = () => {
+    setInTokenPicker(false);
+    codeEditorRef.current?.focus();
   };
 
   const onClickTokenPicker = (b: boolean) => {
@@ -79,10 +81,20 @@ export function CodeEditor({
     }
   };
 
+  const getLabel = (label?: string): string => {
+    return intl.formatMessage(
+      {
+        defaultMessage: '{label} Add dynamic data pressing Alt + /',
+        description: 'This is an a11y message meant to help screen reader users figure out how to insert dynamic data',
+      },
+      { label }
+    );
+  };
+
   return (
     <div className="msla-code-editor-body" id={editorId}>
       <Editor
-        label={label}
+        label={getLabel(label)}
         ref={codeEditorRef}
         height={editorHeight}
         value={getCurrentValue()}
@@ -95,12 +107,18 @@ export function CodeEditor({
         onContentChanged={handleContentChanged}
         onFocus={handleFocus}
         onBlur={handleBlur}
+        openTokenPicker={handleShowTokenPicker}
       />
       {showTokenPickerButton || getInTokenPicker() ? (
-        <TokenPickerButton labelId={callOutLabelId} showTokenPicker={showTokenPicker} setShowTokenPicker={handleShowTokenPicker} />
+        <TokenPickerButtonLegacy
+          labelId={callOutLabelId}
+          showTokenPicker={getInTokenPicker()}
+          setShowTokenPicker={handleShowTokenPicker}
+          codeEditor={codeEditorRef.current}
+        />
       ) : null}
-      {(showTokenPickerButton && showTokenPicker) || getInTokenPicker()
-        ? getTokenPicker?.(editorId, callOutLabelId, undefined, undefined, onClickTokenPicker, tokenClicked)
+      {getInTokenPicker()
+        ? getTokenPicker?.(editorId, callOutLabelId, undefined, closeTokenPicker, onClickTokenPicker, tokenClicked)
         : null}
     </div>
   );

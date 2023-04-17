@@ -40,6 +40,8 @@ export class StandardRunService implements IRunService {
     try {
       const response = await httpClient.get<any>({
         uri,
+        noAuth: true,
+        headers: { 'Access-Control-Allow-Origin': '*' },
       });
       return response;
     } catch (e: any) {
@@ -118,6 +120,64 @@ export class StandardRunService implements IRunService {
   }
 
   /**
+   * Gets an array of scope repetition records for a node with the specified status.
+   * @param {{ actionId: string, runId: string }} action - An object with nodeId and the runId of the workflow
+   * @param {string} status - The status of scope repetition records to fetch
+   * @return {Promise<RunScopeRepetition[]>}
+   */
+  async getScopeRepetitions(
+    action: { nodeId: string; runId: string | undefined },
+    status?: string
+  ): Promise<{ value: Array<LogicAppsV2.RunRepetition> }> {
+    const { nodeId, runId } = action;
+
+    if (this._isDev) {
+      return Promise.resolve({ value: [] });
+    }
+
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const headers = this.getAccessTokenHeaders();
+
+    const filter = status ? `&$filter=status eq '${status}'` : '';
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/scopeRepetitions?api-version=${apiVersion}${filter}`;
+
+    try {
+      const response = await httpClient.get<{ value: Array<LogicAppsV2.RunRepetition> }>({
+        uri,
+        headers: headers as Record<string, any>,
+      });
+
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
+   * Gets the repetition record for the repetition item with the specified ID
+   * @param {{ actionId: string, runId: string }} action - An object with nodeId and the runId of the workflow
+   * @param {string} repetitionId - A string with the resource ID of a repetition record
+   * @return {Promise<any>}
+   */
+  async getRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<LogicAppsV2.RunRepetition> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const { nodeId, runId } = action;
+    const headers = this.getAccessTokenHeaders();
+
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/repetitions/${repetitionId}?api-version=${apiVersion}`;
+    try {
+      const response = await httpClient.get<LogicAppsV2.RunRepetition>({
+        uri,
+        headers: headers as Record<string, any>,
+      });
+
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
    * Triggers a workflow run
    * @param {CallbackInfo} callbackInfo - Information to call Api to trigger workflow.
    */
@@ -143,7 +203,7 @@ export class StandardRunService implements IRunService {
    * @returns {Promise<any>} Action inputs and outputs.
    */
   async getActionLinks(actionMetadata: { inputsLink?: ContentLink; outputsLink?: ContentLink }, nodeId: string): Promise<any> {
-    const { inputsLink, outputsLink } = actionMetadata;
+    const { inputsLink, outputsLink } = actionMetadata ?? {};
     let inputs: Record<string, any> = {};
     let outputs: Record<string, any> = {};
 

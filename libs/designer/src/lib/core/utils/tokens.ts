@@ -15,6 +15,8 @@ import {
   FxIcon,
   getExpressionValueForOutputToken,
   getTokenValueFromToken,
+  httpWebhookBrandColor,
+  httpWebhookIcon,
   ParameterBrandColor,
   ParameterIcon,
   shouldIncludeSelfForRepetitionReference,
@@ -190,6 +192,10 @@ export const getOutputTokenSections = (
         value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
       })),
     });
+
+    if (nodeType.toLowerCase() === Constants.NODE.TYPE.HTTP_WEBHOOK) {
+      tokenGroups.push(getListCallbackUrlToken(nodeId));
+    }
 
     const outputTokenGroups = nodeTokens.upstreamNodeIds.map((upstreamNodeId) => {
       let tokens = outputTokens[upstreamNodeId]?.tokens ?? [];
@@ -379,4 +385,34 @@ export const convertWorkflowParameterTypeToSwaggerType = (type: string | undefin
 
 const rewriteValueId = (id: string, value: string, replacementIds: Record<string, string>): string => {
   return value.replace(id, replacementIds[id] ?? id);
+};
+const getListCallbackUrlToken = (nodeId: string): TokenGroup => {
+  const callbackUrlToken: OutputToken = {
+    brandColor: httpWebhookBrandColor,
+    key: `${Constants.KEY_SEGMENTS.SYSTEM}.${Constants.DEFAULT_KEY_PREFIX}.${Constants.KEY_SEGMENTS.FUNCTION}.${Constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}`,
+    title: getIntl().formatMessage({
+      defaultMessage: 'Callback url',
+      description: 'Callback url token title',
+    }),
+    type: Constants.SWAGGER.TYPE.OBJECT,
+    icon: httpWebhookIcon,
+    name: Constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME,
+    value: Constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME,
+    outputInfo: {
+      type: TokenType.OUTPUTS,
+      required: false,
+      isSecure: false,
+      source: Constants.OUTPUTS,
+    },
+  };
+
+  return {
+    hasAdvanced: false,
+    label: getIntl().formatMessage({
+      defaultMessage: 'Webhook reference information',
+      description: 'httpwebhook callback url section title',
+    }),
+    id: nodeId,
+    tokens: [callbackUrlToken],
+  };
 };

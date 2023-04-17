@@ -1832,8 +1832,26 @@ describe('core/utils/parameters/helper', () => {
         const result = getParameterEditorProps(inputParameter);
 
         expect(result).toMatchObject({
-          editor: undefined,
-          editorOptions: undefined,
+          editor: 'combobox',
+          editorOptions: {
+            options: [
+              {
+                displayName: '',
+                key: '',
+                value: '',
+              },
+              {
+                displayName: 'Yes',
+                key: 'true',
+                value: true,
+              },
+              {
+                displayName: 'No',
+                key: 'false',
+                value: false,
+              },
+            ],
+          },
           editorViewModel: undefined,
           schema: inputSchema,
         });

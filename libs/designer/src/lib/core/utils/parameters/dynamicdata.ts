@@ -304,7 +304,15 @@ export async function getDynamicInputsFromSchema(
 
   if (OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
     const manifest = await getOperationManifest(operationInfo);
-    return getManifestBasedInputParameters(dynamicInputs, allInputKeys, manifest, operationDefinition);
+    const output = getManifestBasedInputParameters(
+      dynamicInputs,
+      dynamicParameter,
+      allInputKeys,
+      manifest,
+      operationDefinition,
+      operationInfo
+    );
+    return output;
   } else {
     const { parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
     return getSwaggerBasedInputParameters(dynamicInputs, dynamicParameter, parsedSwagger, operationInfo, operationDefinition);
@@ -380,13 +388,15 @@ function getParametersForDynamicInvoke(
 
 function getManifestBasedInputParameters(
   dynamicInputs: InputParameter[],
+  dynamicParameter: InputParameter,
   allInputKeys: string[],
   manifest: OperationManifest,
-  operationDefinition: any
+  operationDefinition: any,
+  operationInfo: NodeOperation
 ): InputParameter[] {
   let result: InputParameter[] = [];
   const stepInputs = getInputsValueFromDefinitionForManifest(
-    manifest.properties.inputsLocation ?? ['inputs'],
+    manifest.properties?.inputsLocation ?? ['inputs'],
     manifest,
     operationDefinition,
     dynamicInputs
@@ -416,6 +426,11 @@ function getManifestBasedInputParameters(
     result.push(clonedInputParameter);
 
     knownKeys.add(clonedInputParameter.key);
+  }
+
+  const swaggerBasedDynamicDataOperationIds = ['httpswaggeraction', 'httpswaggertrigger', 'appservice', 'appservicetrigger'];
+  if (swaggerBasedDynamicDataOperationIds.includes(operationInfo?.operationId)) {
+    initializeSwaggerBasedDynamicPathParameters(result, dynamicParameter, operationDefinition);
   }
 
   if (stepInputs !== undefined && !manifest.properties.inputsLocationSwapMap) {
@@ -531,6 +546,36 @@ function getSwaggerBasedInputParameters(
     return result;
   } else {
     return dynamicInputParameters;
+  }
+}
+
+function initializeSwaggerBasedDynamicPathParameters(inputs: InputParameter[], dynamicParameter: InputParameter, operationDefinition: any) {
+  const swaggerKey = dynamicParameter.name;
+  const basePath = '';
+  const operationPath = inputs.find((input) => input.name === `${swaggerKey}.pathTemplate.template`)?.default;
+  const parameterKey = 'uri';
+  const propertyNames = parseEx(parameterKey).map((segment) => segment.value?.toString()) as string[];
+  const dynamicInputDefinition = safeSetObjectPropertyValue(
+    {},
+    propertyNames,
+    getObjectPropertyValue(operationDefinition.inputs, propertyNames)
+  );
+  const dynamicInputParameters = loadInputValuesFromDefinition(
+    dynamicInputDefinition as Record<string, any>,
+    inputs,
+    operationPath,
+    basePath as string
+  );
+
+  for (const inputParameter of inputs) {
+    if (inputParameter.default && inputParameter.value === undefined) {
+      inputParameter.value = inputParameter.default;
+    }
+    if (inputParameter.value === undefined) {
+      const inputKey = `${inputParameter.schema.in}.$.${inputParameter.schema.name}`;
+      const value = dynamicInputParameters.find((parameter) => parameter.key === inputKey)?.value;
+      inputParameter.value = value;
+    }
   }
 }
 

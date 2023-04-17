@@ -34,6 +34,7 @@ import { validateJSONParameter, validateStaticParameterInfo } from '../validatio
 import { getRecurrenceParameters } from './builtins';
 import { addCastToExpression, addFoldingCastToExpression } from './casting';
 import { getDynamicInputsFromSchema, getDynamicSchema, getDynamicValues } from './dynamicdata';
+import { requiresFilePickerEditor } from './picker';
 import {
   createLiteralValueSegment,
   isExpressionToken,
@@ -45,6 +46,7 @@ import {
   isOutputTokenValueSegment,
   isParameterToken,
   isTokenValueSegment,
+  isValueSegment,
   isVariableToken,
   ValueSegmentConvertor,
 } from './segment';
@@ -61,6 +63,7 @@ import type {
   ValueSegment,
 } from '@microsoft/designer-ui';
 import {
+  removeQuotes,
   RowDropdownOptions,
   GroupDropdownOptions,
   GroupType,
@@ -150,6 +153,10 @@ export const VariableIcon =
 export const ItemBrandColor = '#486991';
 export const ItemIcon =
   'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDMyIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPg0KIDxwYXRoIGQ9Im0wIDBoMzJ2MzJoLTMyeiIgZmlsbD0iIzQ4Njk5MSIvPg0KIDxwYXRoIGQ9Ik0xMSAyMGg3LjJsMSAxaC05LjJ2LTguM2wtMS4zIDEuMy0uNy0uNyAyLjUtMi41IDIuNSAyLjUtLjcuNy0xLjMtMS4zem0xMi4zLTJsLjcuNy0yLjUgMi41LTIuNS0yLjUuNy0uNyAxLjMgMS4zdi03LjNoLTcuMmwtMS0xaDkuMnY4LjN6IiBmaWxsPSIjZmZmIi8+DQo8L3N2Zz4NCg==';
+
+export const httpWebhookBrandColor = '#709727';
+export const httpWebhookIcon =
+  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDMyIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPg0KIDxwYXRoIGZpbGw9IiM3MDk3MjciIGQ9Im0wIDBoMzJ2MzJoLTMyeiIvPg0KIDxnIGZpbGw9IiNmZmYiPg0KICA8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMTEuODE3IDIxLjIwNmMtLjM2NyAwLS42NjEtLjE0Ny0uNjYxLS41ODdsLS4wNzMtMS43NjJjLS4wNzMtMS4xMDEtLjE0Ny0yLjIwMi0xLjI0OC0yLjkzNi42NjEtLjQ0IDEuMTAxLTEuMTAxIDEuMTc0LTEuODM1bC4xNDctMi4yMDJjMC0xLjAyOC4yMi0xLjMyMSAxLjEwMS0xLjE3NGguMDczYy4wNzMtLjA3My4yMi0uMTQ3LjIyLS4yMnYtMS4yNDhoLS44MDdjLTEuMzIxIDAtMi4wNTUuNzM0LTIuMTI5IDIuMDU1LS4wNzMuNzM0LS4wNzMgMS41NDItLjA3MyAyLjI3NiAwIDEuMTAxLS4zNjcgMS4zOTUtMS4zMjEgMS42MTUtLjA3MyAwLS4yMi4yMi0uMjIuMjk0djEuMDI4YzAgLjI5NC4wNzMuMzY3LjM2Ny4zNjcuNTg3IDAgLjg4MS4yMiAxLjAyOC44MDcuMDczLjI5NC4xNDcuNjYxLjE0Ny45NTRsLjA3MyAyLjIwMmMuMDczLjczNC4yOTQgMS4zOTUgMS4wMjggMS42ODguNTg3LjI5NCAxLjI0OC4yOTQgMS45ODIuMjJ2LS42NjFjLS4wNzMtLjgwNy0uMDczLS44ODEtLjgwNy0uODgxeiIvPg0KICA8cGF0aCBjbGFzcz0ic3QxIiBkPSJNMjMuNjM1IDE1LjExM2MtLjQ0IDAtLjgwNy0uMjItLjk1NC0uNjYxbC0uMjItMS4xMDFjLS4wNzMtLjczNC0uMDczLTEuMzk1LS4wNzMtMi4xMjktLjA3My0xLjI0OC0uODA3LTEuOTA5LTEuOTgyLTEuOTgyLS45NTQtLjA3My0uOTU0LS4wNzMtLjk1NC44ODF2LjA3M2MwIC41MTQgMCAuNTE0LjUxNC41MTQuNjYxIDAgLjg4MS4yMi44ODEuODgxIDAgLjczNCAwIDEuMzk1LjA3MyAyLjEyOS4wNzMuODA3LjI5NCAxLjYxNSAxLjAyOCAyLjEyOWwuMjIuMTQ3Yy0uNzM0LjQ0LTEuMTAxIDEuMTAxLTEuMTc0IDEuOTA5LS4wNzMuNzM0LS4xNDcgMS40NjgtLjE0NyAyLjEyOSAwIDEuMDI4LS4yMiAxLjMyMS0xLjE3NCAxLjI0OC0uMDczIDAtLjI5NC4xNDctLjI5NC4yMnYxLjI0OGgxLjAyOGMxLjAyOC0uMDczIDEuNjE1LS41ODcgMS44MzUtMS42MTUuMTQ3LS41ODcuMDczLTEuMjQ4LjE0Ny0xLjgzNSAwLS40NCAwLS44ODEuMDczLTEuMzIxLjA3My0uNzM0LjQ0LTEuMTAxIDEuMTc0LTEuMTAxLjIyIDAgLjI5NC0uMDczLjI5NC0uMjk0di0uOTU0Yy4xNDctLjQ0LjA3My0uNTg3LS4yOTQtLjUxNHoiLz4NCiAgPHBhdGggY2xhc3M9InN0MSIgZD0iTTEyLjc3MSAxNS4wNGMtLjUxNCAwLS45NTQuNDQtLjk1NC45NTRzLjQ0Ljg4MS45NTQuODgxLjk1NC0uMzY3Ljk1NC0uOTU0YzAtLjUxNC0uNDQtLjg4MS0uOTU0LS44ODF6Ii8+DQogIDxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0xNi4wMDEgMTUuMDRjLS41MTQgMC0uOTU0LjM2Ny0uOTU0Ljg4MSAwIC41ODcuMzY3Ljk1NC44ODEuOTU0cy45NTQtLjM2Ny45NTQtLjg4MWMuMDczLS41ODctLjI5NC0uOTU0LS44ODEtLjk1NHoiLz4NCiAgPHBhdGggY2xhc3M9InN0MSIgZD0iTTIwLjE4NSAxNS45MmMwLS41MTQtLjQ0LS44ODEtLjk1NC0uODgxcy0uOTU0LjQ0LS45NTQuODgxYzAgLjUxNC40NC45NTQuOTU0Ljk1NHMuOTU0LS40NC45NTQtLjk1NHoiLz4NCiA8L2c+DQo8L3N2Zz4NCg==';
 
 export const ParameterGroupKeys = {
   DEFAULT: 'default',
@@ -256,8 +263,7 @@ export function toParameterInfoMap(inputParameters: InputParameter[], stepDefini
 
 /**
  * Gets the parameter info object for UI elements from the resolved parameters from schema, swagger, definition, etc.
- * @arg {InputParameter} parameter - An object with metadata about a Swagger input parameter.
- * @arg {RepetitionContext} repetitionContext - An object contains the repetition related context data.
+ * @arg {ResolvedParameter} parameter - An object with metadata about a Swagger input parameter.
  * @arg {Record<string, string>} [metadata] - A hash mapping dynamic value lookup values to their display strings.
  * @arg {boolean} [shouldIgnoreDefaultValue=false] - True if should not populate with default value of dynamic parameter.
  * @return {ParameterInfo} - An object with the view model for an input parameter field.
@@ -267,7 +273,8 @@ export function createParameterInfo(
   _metadata?: Record<string, string>,
   shouldIgnoreDefaultValue = false
 ): ParameterInfo {
-  const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, shouldIgnoreDefaultValue);
+  const isFilePicker = requiresFilePickerEditor(parameter);
+  const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, shouldIgnoreDefaultValue, isFilePicker);
   const value = loadParameterValue(parameter);
   const { alias, dependencies, encode, format, isDynamic, isUnknown, serialization } = parameter;
   const info = {
@@ -328,8 +335,12 @@ function hasValue(parameter: ResolvedParameter): boolean {
 }
 
 // TODO - Need to figure out a way to get the managedIdentity for the app for authentication editor
-export function getParameterEditorProps(parameter: InputParameter, shouldIgnoreDefaultValue = false): ParameterEditorProps {
-  const { dynamicValues, type, itemSchema, visibility, value } = parameter;
+export function getParameterEditorProps(
+  parameter: InputParameter,
+  shouldIgnoreDefaultValue = false,
+  isFilePicker?: boolean
+): ParameterEditorProps {
+  const { dynamicValues, type, itemSchema, visibility, value, enum: schemaEnum } = parameter;
   let { editor, editorOptions, schema } = parameter;
   let editorViewModel;
   if (!editor) {
@@ -337,12 +348,14 @@ export function getParameterEditorProps(parameter: InputParameter, shouldIgnoreD
       editor = constants.EDITOR.ARRAY;
       editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
-    } else if (schema && (schema.enum || schema[ExtensionProperties.CustomEnum]) && !equals(visibility, Visibility.Internal)) {
+    } else if (schemaEnum || schema?.enum || (schema?.[ExtensionProperties.CustomEnum] && !equals(visibility, Visibility.Internal))) {
       editor = constants.EDITOR.COMBOBOX;
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
 
       let schemaEnumOptions: ComboboxItem[];
-      if (schema[ExtensionProperties.CustomEnum]) {
+      if (schemaEnum) {
+        schemaEnumOptions = schemaEnum.map((enumItem) => ({ ...enumItem, key: enumItem.value?.toString() }));
+      } else if (schema[ExtensionProperties.CustomEnum]) {
         schemaEnumOptions = schema[ExtensionProperties.CustomEnum];
       } else {
         schemaEnumOptions = schema.enum.map(
@@ -372,14 +385,47 @@ export function getParameterEditorProps(parameter: InputParameter, shouldIgnoreD
     editorViewModel = toAuthenticationViewModel(value);
     editorOptions = { ...editorOptions, identity: WorkflowService().getAppIdentity?.() };
   } else if (editor === constants.EDITOR.CONDITION) {
-    editorViewModel = editorOptions?.isOldFormat ? toUntilViewModel(value) : toConditionViewModel(value);
+    editorViewModel = editorOptions?.isOldFormat ? toSimpleQueryBuilderViewModel(value) : toConditionViewModel(value);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     editor = undefined;
+  } else if (isFilePicker) {
+    editor = constants.EDITOR.FILEPICKER;
   }
-
   return { editor, editorOptions, editorViewModel, schema };
 }
 
+// Helper Functions for Creating Editor View Models
+const containsExpression = (operand: string): boolean => {
+  return operand.includes('(') && operand.includes(')');
+};
+
+const convertStringToInputParameter = (
+  value: string,
+  removeQuotesFromExpression?: boolean,
+  trimExpression?: boolean,
+  convertIfContainsExpression?: boolean
+): InputParameter => {
+  const hasExpression = containsExpression(value);
+  let newValue = value;
+  if (removeQuotesFromExpression) {
+    newValue = removeQuotes(newValue);
+  }
+  if (trimExpression) {
+    newValue = newValue.trim();
+  }
+  if (hasExpression && convertIfContainsExpression && !newValue.startsWith('@')) {
+    newValue = `@${newValue}`;
+  }
+  return {
+    key: guid(),
+    name: newValue,
+    type: 'any',
+    hideInUI: false,
+    value: newValue,
+  };
+};
+
+// Create Array Editor View Model
 const toArrayViewModel = (input: any): { schema: any } => {
   const schema: any = destructureSchema(input.itemSchema);
   return { schema };
@@ -402,36 +448,16 @@ const destructureSchema = (schema: any): any => {
   return newSchema;
 };
 
-const toUntilViewModel = (input: any): { isOldFormat: boolean; items: RowItemProps } => {
+// Create SimpleQueryBuilder Editor View Model
+const toSimpleQueryBuilderViewModel = (input: any): { isOldFormat: boolean; items: RowItemProps } => {
   let operand1: ValueSegment[], operand2: ValueSegment[], operation: string;
   try {
-    const valSegments = loadParameterValue({ value: input } as InputParameter);
-    if (valSegments.length === 1 && valSegments[0].type === ValueSegmentType.TOKEN) {
-      operand1 = [
-        {
-          id: guid(),
-          type: ValueSegmentType.LITERAL,
-          value: ((valSegments[0].token?.expression as ExpressionFunction).arguments[0] as ExpressionLiteral).value,
-        },
-      ];
-      operand2 = [
-        {
-          id: guid(),
-          type: ValueSegmentType.LITERAL,
-          value: ((valSegments[0].token?.expression as ExpressionFunction).arguments[1] as ExpressionLiteral).value,
-        },
-      ];
-      operation = (valSegments[0].token?.expression as ExpressionFunction).name;
-    } else {
-      operation = input.substring(input.indexOf('@') + 1, input.indexOf('('));
-      const operations = input.split(',');
-      operand1 = loadParameterValue({
-        value: operations[0].substring(operations[0].indexOf('(') + 1).trim(),
-      } as InputParameter);
-      operand2 = loadParameterValue({
-        value: operations[1].substring(0, operations[1].indexOf(')')).trim(),
-      } as InputParameter);
-    }
+    operation = input.substring(input.indexOf('@') + 1, input.indexOf('('));
+    const operations = input.split(',');
+    const operand1String = operations[0].substring(operations[0].indexOf('(') + 1);
+    const operand2String = operations[1].substring(0, operations[1].lastIndexOf(')'));
+    operand1 = loadParameterValue(convertStringToInputParameter(operand1String, true, true, true));
+    operand2 = loadParameterValue(convertStringToInputParameter(operand2String, true, true, true));
   } catch {
     operation = 'equals';
     operand1 = [];
@@ -444,6 +470,7 @@ const toUntilViewModel = (input: any): { isOldFormat: boolean; items: RowItemPro
   };
 };
 
+// Create QueryBuilder Editor View Model
 export const toConditionViewModel = (input: any): { items: GroupItemProps } => {
   const getConditionOption = getConditionalSelectedOption(input);
   const items: GroupItemProps = {
@@ -481,8 +508,12 @@ function recurseConditionalItems(input: any, selectedOption?: GroupDropdownOptio
         output.push({
           type: GroupType.ROW,
           operator: not + dropdownVal,
-          operand1: loadParameterValue({ value: not ? item[not][dropdownVal][0] : item[dropdownVal][0] } as InputParameter),
-          operand2: loadParameterValue({ value: not ? item[not][dropdownVal][1] : item[dropdownVal][1] } as InputParameter),
+          operand1: loadParameterValue(
+            convertStringToInputParameter(not ? item[not][dropdownVal][0] : item[dropdownVal][0], true, true, true)
+          ),
+          operand2: loadParameterValue(
+            convertStringToInputParameter(not ? item[not][dropdownVal][1] : item[dropdownVal][1], true, true, true)
+          ),
         });
       } else {
         output.push({ type: GroupType.GROUP, condition: condition, items: recurseConditionalItems(item, condition) });
@@ -492,6 +523,7 @@ function recurseConditionalItems(input: any, selectedOption?: GroupDropdownOptio
   return output;
 }
 
+// Create Dictionary Editor View Model
 function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[] | undefined } {
   let items: DictionaryEditorItemProps[] | undefined = [];
   const valueToParse = value !== null ? value ?? {} : value;
@@ -501,8 +533,8 @@ function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[]
     const keys = Object.keys(valueToParse);
     for (const itemKey of keys) {
       items.push({
-        key: loadParameterValue({ value: itemKey } as any),
-        value: loadParameterValue({ value: valueToParse[itemKey] } as any),
+        key: loadParameterValue(convertStringToInputParameter(itemKey)),
+        value: loadParameterValue(convertStringToInputParameter(valueToParse[itemKey])),
       });
     }
 
@@ -516,6 +548,7 @@ function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[]
   return { items };
 }
 
+// Create Table Editor View Model
 function toTableViewModel(value: any, editorOptions: any): { items: DictionaryEditorItemProps[]; columnMode: ColumnMode } {
   const placeholderItem = { key: [createLiteralValueSegment('')], value: [createLiteralValueSegment('')] };
   if (Array.isArray(value)) {
@@ -523,8 +556,8 @@ function toTableViewModel(value: any, editorOptions: any): { items: DictionaryEd
     const items: DictionaryEditorItemProps[] = [];
     for (const item of value) {
       items.push({
-        key: loadParameterValue({ value: item[keys[0]] } as any),
-        value: loadParameterValue({ value: item[keys[1]] } as any),
+        key: loadParameterValue(convertStringToInputParameter(item[keys[0]])),
+        value: loadParameterValue(convertStringToInputParameter(item[keys[1]])),
       });
     }
 
@@ -534,6 +567,7 @@ function toTableViewModel(value: any, editorOptions: any): { items: DictionaryEd
   return { items: [placeholderItem], columnMode: ColumnMode.Automatic };
 }
 
+// Create Authentication Editor View Model
 function toAuthenticationViewModel(value: any): { type: AuthenticationType; authenticationValue: AuthProps } {
   const emptyValue = { type: AuthenticationType.NONE, authenticationValue: {} };
 
@@ -544,8 +578,8 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             basic: {
-              basicUsername: loadParameterValue({ value: value.username } as InputParameter),
-              basicPassword: loadParameterValue({ value: value.password } as InputParameter),
+              basicUsername: loadParameterValue(convertStringToInputParameter(value.username)),
+              basicPassword: loadParameterValue(convertStringToInputParameter(value.password)),
             },
           },
         };
@@ -554,8 +588,8 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             clientCertificate: {
-              clientCertificatePfx: loadParameterValue({ value: value.pfx } as InputParameter),
-              clientCertificatePassword: loadParameterValue({ value: value.password } as InputParameter),
+              clientCertificatePfx: loadParameterValue(convertStringToInputParameter(value.pfx)),
+              clientCertificatePassword: loadParameterValue(convertStringToInputParameter(value.password)),
             },
           },
         };
@@ -565,12 +599,12 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             aadOAuth: {
-              oauthTenant: loadParameterValue({ value: value.tenant } as InputParameter),
-              oauthAudience: loadParameterValue({ value: value.audience } as InputParameter),
-              oauthClientId: loadParameterValue({ value: value.clientId } as InputParameter),
-              oauthTypeSecret: loadParameterValue({ value: value.secret } as InputParameter),
-              oauthTypeCertificatePfx: loadParameterValue({ value: value.pfx } as InputParameter),
-              oauthTypeCertificatePassword: loadParameterValue({ value: value.password } as InputParameter),
+              oauthTenant: loadParameterValue(convertStringToInputParameter(value.tenant)),
+              oauthAudience: loadParameterValue(convertStringToInputParameter(value.audience)),
+              oauthClientId: loadParameterValue(convertStringToInputParameter(value.clientId)),
+              oauthTypeSecret: loadParameterValue(convertStringToInputParameter(value.secret)),
+              oauthTypeCertificatePfx: loadParameterValue(convertStringToInputParameter(value.pfx)),
+              oauthTypeCertificatePassword: loadParameterValue(convertStringToInputParameter(value.password)),
             },
           },
         };
@@ -580,7 +614,7 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             raw: {
-              rawValue: loadParameterValue({ value: value.value } as InputParameter),
+              rawValue: loadParameterValue(convertStringToInputParameter(value.value)),
             },
           },
         };
@@ -590,7 +624,7 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             msi: {
-              msiAudience: loadParameterValue({ value: value.audience } as InputParameter),
+              msiAudience: loadParameterValue(convertStringToInputParameter(value.audience)),
               msiIdentity: value.identity,
             },
           },
@@ -1589,7 +1623,7 @@ async function loadDynamicData(
     );
   }
 
-  if (Object.keys(dependencies.inputs).length) {
+  if (Object.keys(dependencies?.inputs ?? {}).length) {
     loadDynamicContentForInputsInNode(
       nodeId,
       dependencies.inputs,
@@ -1786,14 +1820,14 @@ function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefi
       return undefined;
     case constants.EDITOR.CONDITION:
       return editorOptions?.isOldFormat
-        ? serializeUntil(editorViewModel)
+        ? serializeSimpleQueryBuilder(editorViewModel)
         : JSON.stringify(recurseSerializeCondition(parameter, editorViewModel.items, isDefinitionValue));
     default:
       return undefined;
   }
 }
 
-export const serializeUntil = (editorViewModel: any): string => {
+export const serializeSimpleQueryBuilder = (editorViewModel: any): string => {
   return editorViewModel.value;
 };
 
@@ -2111,8 +2145,69 @@ export function updateTokenMetadataInParameters(parameters: ParameterInfo[], roo
         return segment;
       });
     }
+    const viewModel = parameter.editorViewModel;
+    if (viewModel) {
+      flattenAndUpdateViewModel(viewModel, actionNodes, triggerNodeId, nodesData, operations, definitions, nodesMetadata, parameter.type);
+    }
   }
 }
+
+export const flattenAndUpdateViewModel = (
+  items: any,
+  actionNodes: Record<string, string>,
+  triggerNodeId: string,
+  nodes: Record<string, Partial<NodeDataWithOperationMetadata>>,
+  operations: Actions,
+  workflowParameters: Record<string, WorkflowParameter | WorkflowParameterDefinition>,
+  nodesMetadata: NodesMetadata,
+  parameterType?: string
+) => {
+  if (!items) return;
+  // check if on bottom-most level (array of valueSegments)
+  if (Array.isArray(items) && items.every((item) => isValueSegment(item))) {
+    return items.map((keyItem: ValueSegment) => {
+      if (!isTokenValueSegment(keyItem)) return keyItem;
+      const valueSegmentToUpdate = updateTokenMetadata(
+        keyItem,
+        actionNodes,
+        triggerNodeId,
+        nodes,
+        operations,
+        workflowParameters,
+        nodesMetadata,
+        parameterType
+      );
+      if (valueSegmentToUpdate) return valueSegmentToUpdate;
+      return keyItem;
+    }) as ValueSegment[];
+  }
+
+  const replacedItems: any = {};
+  Object.entries(items).forEach(([itemKey, itemValue]) => {
+    if (typeof itemValue === 'object') {
+      replacedItems[itemKey] = flattenAndUpdateViewModel(
+        itemValue,
+        actionNodes,
+        triggerNodeId,
+        nodes,
+        operations,
+        workflowParameters,
+        nodesMetadata,
+        parameterType
+      );
+    } else {
+      replacedItems[itemKey] = itemValue;
+    }
+  });
+  // Keep Array Format and preserve the order of the elements
+  return Array.isArray(items)
+    ? Object.keys(replacedItems)
+        .map(Number)
+        .sort((a, b) => a - b)
+        .map((key) => replacedItems[key])
+    : replacedItems;
+};
+
 export function updateTokenMetadata(
   valueSegment: ValueSegment,
   actionNodes: Record<string, string>,
