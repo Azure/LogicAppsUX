@@ -9,8 +9,7 @@ import { memo } from 'react';
 import { Handle, Position } from 'reactflow';
 import type { NodeProps } from 'reactflow';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const GraphContainerNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
+const GraphContainerNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
 
   const selected = useIsNodeSelected(id);
@@ -30,7 +29,7 @@ const GraphContainerNode = ({ data, targetPosition = Position.Top, sourcePositio
       </div>
       {showLeafComponents && (
         <div className="edge-drop-zone-container">
-          <DropZone graphId={nodeMetadata?.graphId ?? ''} parentId={id} />
+          <DropZone graphId={nodeMetadata?.graphId ?? ''} parentId={id} isLeaf={isLeaf} />
         </div>
       )}
     </>

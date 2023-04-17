@@ -7,6 +7,10 @@
   border: none;
   cursor: pointer;
   background-color: transparent;
+  justify-content: space-between;
+  padding-left: 0;
+  margin-top: 10px;
+  height: 30px;
   &:hover,
   &:hover,
   &:active {
@@ -15,7 +19,7 @@
 
   .msla-static-result-container-header-icon {
     padding-left: 10px;
-    padding-top: 12px;
+    padding-top: 8px;
     padding-bottom: 12px;
     width: 20px;
   }
@@ -26,8 +30,28 @@
     font-weight: 600;
     font-family: @font-family;
     min-width: 80%;
-    line-height: 40px;
-    padding-left: 10px;
+    line-height: 25px;
+  }
+}
+.msla-static-result-label {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 25px;
+}
+
+.msla-static-result-container-header-root {
+  display: flex;
+  width: 100%;
+  vertical-align: middle;
+  border: none;
+  .msla-static-result-container-header-text {
+    border: none;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: @font-family;
+    min-width: 80%;
+    line-height: 25px;
   }
 }
 
@@ -38,9 +62,11 @@
     width: 50%;
   }
 }
+.msla-static-result-properties-inner {
+  margin-left: 20px;
+}
 .msla-static-result-property-inner {
   padding-top: 10px;
-  padding-left: 30px;
 }
 .msla-property-editor-container {
   border: 1px solid #8a8886;

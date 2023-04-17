@@ -167,7 +167,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const intl = useIntl();
 
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
-  const selectedItemKeyParts = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKeyParts);
+  const selectedItemConnectedNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemConnectedNodes);
   const sourceNodeConnectionBeingDrawnFromId = useSelector((state: RootState) => state.dataMap.sourceNodeConnectionBeingDrawnFromId);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
@@ -197,8 +197,8 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   );
   const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
   const isCurrentNodeHighlighted = useMemo<boolean>(() => {
-    return isNodeHighlighted(isCurrentNodeSelected, selectedItemKeyParts, connectedNodes);
-  }, [connectedNodes, isCurrentNodeSelected, selectedItemKeyParts]);
+    return isNodeHighlighted(isCurrentNodeSelected, reactFlowId, selectedItemConnectedNodes);
+  }, [isCurrentNodeSelected, reactFlowId, selectedItemConnectedNodes]);
 
   const shouldDisplaySourceHandle = displayHandle && !sourceNodeConnectionBeingDrawnFromId && (isCardHovered || isCurrentNodeSelected);
   const shouldDisplayTargetHandle = displayHandle && !!sourceNodeConnectionBeingDrawnFromId;

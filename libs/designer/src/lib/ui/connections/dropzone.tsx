@@ -4,7 +4,7 @@ import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
 import AddNodeIcon from './edgeContextMenuSvgs/addNodeIcon.svg';
-import { ActionButton, Callout, DirectionalHint, FocusTrapZone } from '@fluentui/react';
+import { ActionButton, Callout, DirectionalHint, FocusZone } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { css } from '@fluentui/utilities';
 import { ActionButtonV2 } from '@microsoft/designer-ui';
@@ -18,9 +18,10 @@ export interface DropZoneProps {
   graphId: string;
   parentId?: string;
   childId?: string;
+  isLeaf?: boolean;
 }
 
-export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }) => {
+export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, isLeaf = false }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const [showCallout, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
@@ -106,6 +107,8 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
 
   const buttonId = `msla-edge-button-${parentId}-${childId}`.replace(/\W/g, '-');
 
+  const showParallelBranchButton = !isLeaf && parentId;
+
   return (
     <div
       ref={drop}
@@ -128,19 +131,20 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
               onDismiss={toggleIsCalloutVisible}
               onMouseLeave={toggleIsCalloutVisible}
               directionalHint={DirectionalHint.bottomCenter}
+              setInitialFocus
             >
-              <FocusTrapZone>
+              <FocusZone>
                 <div className="msla-add-context-menu">
                   <ActionButton iconProps={{ imageProps: { src: AddNodeIcon } }} onClick={openAddNodePanel}>
                     {newActionText}
                   </ActionButton>
-                  {parentId ? (
+                  {showParallelBranchButton ? (
                     <ActionButton iconProps={{ imageProps: { src: AddBranchIcon } }} onClick={addParallelBranch}>
                       {newBranchText}
                     </ActionButton>
                   ) : null}
                 </div>
-              </FocusTrapZone>
+              </FocusZone>
             </Callout>
           )}
         </>

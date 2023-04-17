@@ -1102,6 +1102,12 @@
       "value": "Connettore ibrido"
     }
   ],
+  "61iT9C": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing Alt + / in the editor)"
+    }
+  ],
   "62Ypnr": [
     {
       "type": 0,
@@ -1664,6 +1670,16 @@
     {
       "type": 0,
       "value": "Insert data from previous step (You can also add by typing / in the editor)"
+    }
+  ],
+  "Aci186": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Add dynamic data pressing Alt + /"
     }
   ],
   "AgrMqq": [
@@ -7078,6 +7094,12 @@
     {
       "type": 0,
       "value": "Aggiungi nuovo"
+    }
+  ],
+  "s+4LEa": [
+    {
+      "type": 0,
+      "value": "Open folder"
     }
   ],
   "s5RV9B": [
