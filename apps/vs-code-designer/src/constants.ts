@@ -116,6 +116,7 @@ export enum extensionCommand {
   configureDeploymentSource = 'azureLogicAppsStandard.configureDeploymentSource',
   startRemoteDebug = 'azureLogicAppsStandard.startRemoteDebug',
   validateLogicAppProjects = 'azureLogicAppsStandard.validateFunctionProjects',
+  reportIssue = 'azureLogicAppsStandard.reportIssue',
 }
 
 // Context

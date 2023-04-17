@@ -281,6 +281,11 @@
         "command": "azureLogicAppsStandard.configureDeploymentSource",
         "title": "Configure Deployment Source...",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.reportIssue",
+        "title": "Report Issue...",
+        "category": "Azure Logic Apps"
       }
     ],
     "viewsContainers": {

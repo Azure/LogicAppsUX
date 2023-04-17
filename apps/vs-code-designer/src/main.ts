@@ -14,6 +14,7 @@ import {
   callWithTelemetryAndErrorHandling,
   createAzExtOutputChannel,
   registerEvent,
+  registerReportIssueCommand,
   registerUIExtensionVariables,
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -62,6 +63,7 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(ext.azureAccountTreeItem);
     context.subscriptions.push(ext.treeView);
 
+    registerReportIssueCommand(extensionCommand.reportIssue);
     registerCommands();
     registerFuncHostTaskEvents();
 
