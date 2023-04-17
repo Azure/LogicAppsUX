@@ -32,6 +32,18 @@ import * as vscode from 'vscode';
 
 export async function switchToDotnetProject(context: IProjectWizardContext, target: vscode.Uri) {
   await validateDotnetInstalled(context);
+
+  if (target === undefined) {
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    if (workspaceFolders === undefined || workspaceFolders.length === 0) {
+      throw new Error(localize('noWorkspace', 'No workspace is open.'));
+    } else if (workspaceFolders.length > 1) {
+      throw new Error(localize('multipleWorkspaces', 'Multiple workspaces are open.'));
+    } else {
+      target = workspaceFolders[0].uri;
+    }
+  }
+
   let version: FuncVersion | undefined = tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, target.fsPath));
 
   const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, target.fsPath);

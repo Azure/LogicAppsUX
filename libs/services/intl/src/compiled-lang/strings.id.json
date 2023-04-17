@@ -766,6 +766,12 @@
       "value": "(UTC+06.00) Dhaka"
     }
   ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Choose the type of user input"
+    }
+  ],
   "3Y8a6G": [
     {
       "type": 0,
@@ -1074,6 +1080,12 @@
       "value": "Konektor Hibrid"
     }
   ],
+  "61iT9C": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing Alt + / in the editor)"
+    }
+  ],
   "62Ypnr": [
     {
       "type": 0,
@@ -1214,6 +1226,12 @@
     {
       "type": 0,
       "value": "Harus diisi. String dari substring yang diambil."
+    }
+  ],
+  "7Vyxu0": [
+    {
+      "type": 0,
+      "value": "Yes/No"
     }
   ],
   "7WVgiU": [
@@ -1632,6 +1650,16 @@
       "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
+  "Aci186": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Add dynamic data pressing Alt + /"
+    }
+  ],
   "AgrMqq": [
     {
       "type": 0,
@@ -1981,6 +2009,12 @@
     {
       "type": 0,
       "value": "(UTC-01.00) Azores"
+    }
+  ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Add an input"
     }
   ],
   "DyYcJZ": [
@@ -4242,6 +4276,12 @@
       "value": "Error Type"
     }
   ],
+  "VggzRB": [
+    {
+      "type": 0,
+      "value": "Text"
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -4736,6 +4776,12 @@
       "value": "Nilai 'in' yang tidak didukung: {value} dalam Parameter"
     }
   ],
+  "a+6uyE": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -4982,6 +5028,12 @@
     {
       "type": 0,
       "value": "Konten dinamis juga dapat ditambahkan dari sumber lain."
+    }
+  ],
+  "cF4w+R": [
+    {
+      "type": 0,
+      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -6139,6 +6191,12 @@
       "value": "Select an action type"
     }
   ],
+  "lv9QyZ": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6874,6 +6932,12 @@
     {
       "type": 0,
       "value": "Tambah baru"
+    }
+  ],
+  "s+4LEa": [
+    {
+      "type": 0,
+      "value": "Open folder"
     }
   ],
   "s5RV9B": [
@@ -7620,6 +7684,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Waktu Universal Terkoordinasi+12"
+    }
+  ],
+  "xeREzb": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "xt5TeT": [

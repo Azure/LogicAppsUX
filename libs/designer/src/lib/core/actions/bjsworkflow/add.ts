@@ -94,8 +94,10 @@ const initializeOperationDetails = async (
   const operationManifestService = OperationManifestService();
   const staticResultService = StaticResultService();
 
-  const schema = staticResultService.getOperationResultSchema(connectorId, operationId);
-  schema.then((schema) => {
+  const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId);
+  let hasSchema;
+  schemaService.then((schema) => {
+    hasSchema = true;
     if (schema) {
       dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
     }
@@ -205,7 +207,7 @@ const initializeOperationDetails = async (
   dispatch(updateNodeSettings({ id: nodeId, settings }));
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);
-  dispatch(showDefaultTabs({ isScopeNode: operationInfo?.type.toLowerCase() === Constants.NODE.TYPE.SCOPE, hasSchema: !!schema }));
+  dispatch(showDefaultTabs({ isScopeNode: operationInfo?.type.toLowerCase() === Constants.NODE.TYPE.SCOPE, hasSchema: hasSchema }));
 };
 
 export const initializeSwitchCaseFromManifest = async (id: string, manifest: OperationManifest, dispatch: Dispatch): Promise<void> => {

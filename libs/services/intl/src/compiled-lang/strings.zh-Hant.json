@@ -766,6 +766,12 @@
       "value": "(UTC+06:00) 達卡"
     }
   ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Choose the type of user input"
+    }
+  ],
   "3Y8a6G": [
     {
       "type": 0,
@@ -1074,6 +1080,12 @@
       "value": "混合式連接器"
     }
   ],
+  "61iT9C": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing Alt + / in the editor)"
+    }
+  ],
   "62Ypnr": [
     {
       "type": 0,
@@ -1214,6 +1226,12 @@
     {
       "type": 0,
       "value": "必要。取出子字串的字串。"
+    }
+  ],
+  "7Vyxu0": [
+    {
+      "type": 0,
+      "value": "Yes/No"
     }
   ],
   "7WVgiU": [
@@ -1632,6 +1650,16 @@
       "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
+  "Aci186": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Add dynamic data pressing Alt + /"
+    }
+  ],
   "AgrMqq": [
     {
       "type": 0,
@@ -1981,6 +2009,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) 亞述群島"
+    }
+  ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Add an input"
     }
   ],
   "DyYcJZ": [
@@ -4242,6 +4276,12 @@
       "value": "Error Type"
     }
   ],
+  "VggzRB": [
+    {
+      "type": 0,
+      "value": "Text"
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -4736,6 +4776,12 @@
       "value": "不支援的 'in' 值: 參數中的 {value}"
     }
   ],
+  "a+6uyE": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -4986,6 +5032,12 @@
     {
       "type": 0,
       "value": "動態內容也可以從其他來源新增。"
+    }
+  ],
+  "cF4w+R": [
+    {
+      "type": 0,
+      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -6143,6 +6195,12 @@
       "value": "Select an action type"
     }
   ],
+  "lv9QyZ": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6878,6 +6936,12 @@
     {
       "type": 0,
       "value": "新增"
+    }
+  ],
+  "s+4LEa": [
+    {
+      "type": 0,
+      "value": "Open folder"
     }
   ],
   "s5RV9B": [
@@ -7624,6 +7688,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) 國際標準時間+12"
+    }
+  ],
+  "xeREzb": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "xt5TeT": [

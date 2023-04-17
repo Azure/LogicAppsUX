@@ -179,6 +179,7 @@ export default {
     COPYABLE: 'copyable',
     DICTIONARY: 'dictionary',
     DROPDOWN: 'dropdown',
+    FILEPICKER: 'filepicker',
     SCHEMA: 'schema',
     STRING: 'string',
     TABLE: 'table',
@@ -191,6 +192,10 @@ export default {
   },
   ERROR_NAMES: {
     UNAUTHORIZED: 'Unauthorized',
+  },
+  FILEPICKER_TYPE: {
+    FILE: 'file',
+    FOLDER: 'folder',
   },
   FOREACH_CURRENT_ITEM_KEY: 'builtin.$.currentItem',
   FOREACH_CURRENT_ITEM_EXPRESSION_NAME: 'items',
@@ -908,11 +913,12 @@ export default {
   },
   AZURE_RESOURCE_ACTION_TYPES: {
     SELECT_APIMANAGEMENT_ACTION: 'apimanagement',
-    SELECT_APIMANAGEMENT_TRIGGER: 'selectapimanagementtrigger',
+    SELECT_APIMANAGEMENT_TRIGGER: 'apimanagementtrigger',
     SELECT_APPSERVICE_ACTION: 'appservice',
-    SELECT_APPSERVICE_TRIGGER: 'selectappservicetrigger',
+    SELECT_APPSERVICE_TRIGGER: 'appservicetrigger',
     SELECT_FUNCTION_ACTION: 'azurefunction',
     SELECT_BATCH_WORKFLOW_ACTION: 'sendtobatch',
+    SELECT_BATCH_WORKFLOW_TRIGGER: 'sendtobatchtrigger',
     SELECT_MANUAL_WORKFLOW_ACTION: 'invokeworkflow',
   },
 };

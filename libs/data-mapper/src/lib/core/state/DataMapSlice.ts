@@ -7,12 +7,14 @@ import {
 } from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
-import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
+import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import { directAccessPseudoFunctionKey, indexPseudoFunction } from '../../models/Function';
 import { findLast } from '../../utils/Array.Utils';
 import {
   bringInParentSourceNodesForRepeating,
+  collectSourceNodesForConnectionChain,
+  collectTargetNodesForConnectionChain,
   createConnectionEntryIfNeeded,
   flattenInputs,
   generateInputHandleId,
@@ -31,15 +33,15 @@ import {
   getParentId,
 } from '../../utils/DataMap.Utils';
 import { isFunctionData } from '../../utils/Function.Utils';
-import { LogService } from '../../utils/Logging.Utils';
+import { LogCategory, LogService } from '../../utils/Logging.Utils';
+import type { ReactFlowIdParts } from '../../utils/ReactFlow.Util';
 import {
   addReactFlowPrefix,
   addSourceReactFlowPrefix,
   addTargetReactFlowPrefix,
   createReactFlowFunctionKey,
-  getDestinationIdFromReactFlowConnectionId,
-  getPortFromReactFlowConnectionId,
   getSourceIdFromReactFlowConnectionId,
+  getSplitIdsFromReactFlowConnectionId,
 } from '../../utils/ReactFlow.Util';
 import { flattenSchemaIntoDictionary, flattenSchemaIntoSortArray, isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -68,6 +70,8 @@ export interface DataMapOperationState {
   currentTargetSchemaNode?: SchemaNodeExtended;
   currentFunctionNodes: FunctionDictionary;
   selectedItemKey?: string;
+  selectedItemKeyParts?: ReactFlowIdParts;
+  selectedItemConnectedNodes: ConnectionUnit[];
   xsltFilename: string;
   inlineFunctionInputOutputKeys: string[];
   lastAction: string;
@@ -83,6 +87,7 @@ const emptyPristineState: DataMapOperationState = {
   targetSchemaOrdering: [],
   xsltFilename: '',
   inlineFunctionInputOutputKeys: [],
+  selectedItemConnectedNodes: [],
   lastAction: 'Pristine',
 };
 
@@ -323,7 +328,30 @@ export const dataMapSlice = createSlice({
     },
 
     setSelectedItem: (state, action: PayloadAction<string | undefined>) => {
+      const connections = state.curDataMapOperation.dataMapConnections;
+      const selectedItemKey = action.payload;
+
       state.curDataMapOperation.selectedItemKey = action.payload;
+
+      if (selectedItemKey) {
+        const selectedItemKeyParts = getSplitIdsFromReactFlowConnectionId(selectedItemKey);
+        state.curDataMapOperation.selectedItemKeyParts = selectedItemKeyParts;
+
+        const selectedItemConnectedNodes = [];
+        if (connections[selectedItemKeyParts.sourceId]) {
+          selectedItemConnectedNodes.push(...collectSourceNodesForConnectionChain(connections[selectedItemKeyParts.sourceId], connections));
+          selectedItemConnectedNodes.push(...collectTargetNodesForConnectionChain(connections[selectedItemKeyParts.sourceId], connections));
+        }
+
+        const uniqueSelectedItemConnectedNodes = selectedItemConnectedNodes.filter((node, index, self) => {
+          return self.findIndex((subNode) => subNode.reactFlowKey === node.reactFlowKey) === index;
+        });
+
+        state.curDataMapOperation.selectedItemConnectedNodes = uniqueSelectedItemConnectedNodes;
+      } else {
+        state.curDataMapOperation.selectedItemKeyParts = undefined;
+        state.curDataMapOperation.selectedItemConnectedNodes = [];
+      }
     },
 
     deleteCurrentlySelectedItem: (state) => {
@@ -740,6 +768,9 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
     // NOTE: Do NOT delete source schema node from connections - at this stage, it's not guaranteed that
     // there are no connections to it, and we don't want to accidentally delete connections on other layers
     curDataMapState.curDataMapOperation.selectedItemKey = undefined;
+    curDataMapState.curDataMapOperation.selectedItemKeyParts = undefined;
+    curDataMapState.curDataMapOperation.selectedItemConnectedNodes = [];
+
     doDataMapOperation(
       curDataMapState,
       {
@@ -764,6 +795,9 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
     deleteNodeFromConnections(curDataMapState.curDataMapOperation.dataMapConnections, reactFlowKey);
 
     curDataMapState.curDataMapOperation.selectedItemKey = undefined;
+    curDataMapState.curDataMapOperation.selectedItemKeyParts = undefined;
+    curDataMapState.curDataMapOperation.selectedItemConnectedNodes = [];
+
     doDataMapOperation(
       curDataMapState,
       { ...curDataMapState.curDataMapOperation, currentFunctionNodes: newFunctionsState },
@@ -781,12 +815,15 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
   // Item to be deleted is a connection
   const connections = { ...curDataMapState.curDataMapOperation.dataMapConnections };
 
-  deleteConnectionFromConnections(
-    connections,
-    getSourceIdFromReactFlowConnectionId(reactFlowKey),
-    getDestinationIdFromReactFlowConnectionId(reactFlowKey),
-    getPortFromReactFlowConnectionId(reactFlowKey)
-  );
+  const splitIds = getSplitIdsFromReactFlowConnectionId(reactFlowKey);
+  if (splitIds.destinationId) {
+    deleteConnectionFromConnections(connections, splitIds.sourceId, splitIds.destinationId, splitIds.portId);
+  } else {
+    LogService.error(LogCategory.DataMapSlice, 'deleteNodeWithKey', {
+      message: 'Missing destination id',
+    });
+  }
+
   const tempConn = connections[getSourceIdFromReactFlowConnectionId(reactFlowKey)];
   const ids = getConnectedSourceSchemaNodes([tempConn], connections);
   if (ids.length > 0) {
