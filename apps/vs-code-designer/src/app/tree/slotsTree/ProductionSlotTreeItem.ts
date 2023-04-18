@@ -14,11 +14,8 @@ export class ProductionSlotTreeItem extends SlotTreeItemBase {
   public static contextValue = 'azLogicAppsProductionSlot';
   public readonly contextValue: string = ProductionSlotTreeItem.contextValue;
 
-  private readonly _slotsTreeItem: SlotsTreeItem;
-
   public constructor(parent: SubscriptionTreeItem, site: ParsedSite) {
     super(parent, site);
-    this._slotsTreeItem = new SlotsTreeItem(this);
   }
 
   public get label(): string {
@@ -28,7 +25,7 @@ export class ProductionSlotTreeItem extends SlotTreeItemBase {
   public async loadMoreChildrenImpl(clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
     const children: AzExtTreeItem[] = await super.loadMoreChildrenImpl(clearCache, context);
     if (await this.supportsSlots()) {
-      children.push(this._slotsTreeItem);
+      console.log('supportsSlots');
     }
     return children;
   }
@@ -39,10 +36,11 @@ export class ProductionSlotTreeItem extends SlotTreeItemBase {
         case SlotsTreeItem.contextValue:
         case SlotTreeItem.contextValue:
           if (await this.supportsSlots()) {
-            return this._slotsTreeItem;
+            console.log('supportsSlots');
           } else {
             throw new Error(localize('slotNotSupported', 'Linux apps do not support slots.'));
           }
+          break;
         default:
       }
     }

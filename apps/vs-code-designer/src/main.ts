@@ -1,3 +1,4 @@
+import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createCodeless/createCodelessSteps/WorkflowCreateStepBase';
 import { validateFuncCoreToolsIsLatest } from './app/commands/funcCoreTools/validateFuncCoreToolsIsLatest';
 import { registerCommands } from './app/commands/registerCommands';
@@ -6,7 +7,7 @@ import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
-import { extensionCommand } from './constants';
+import { extensionCommand, logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
 import type { AzureAccountTreeItemBase } from '@microsoft/vscode-azext-azureutils';
@@ -16,6 +17,7 @@ import {
   registerEvent,
   registerReportIssueCommand,
   registerUIExtensionVariables,
+  getAzExtResourceType,
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
@@ -63,6 +65,8 @@ export async function activate(context: vscode.ExtensionContext) {
     registerReportIssueCommand(extensionCommand.reportIssue);
     registerCommands();
     registerFuncHostTaskEvents();
+
+    ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter), new LogicAppResolver());
 
     vscode.window.registerUriHandler(new UriHandler());
   });

@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../localize';
 import { getIconPath } from '../../utils/tree/assets';
-import type { ProductionSlotTreeItem } from './ProductionSlotTreeItem';
 import { SlotTreeItem } from './SlotTreeItem';
 import type { Site, WebSiteManagementClient } from '@azure/arm-appservice';
 import { createSlot, createWebSiteClient, ParsedSite } from '@microsoft/vscode-azext-azureappservice';
@@ -17,11 +16,11 @@ export class SlotsTreeItem extends AzExtParentTreeItem {
   public readonly contextValue: string = SlotsTreeItem.contextValue;
   public readonly label: string = localize('slots', 'Slots');
   public readonly childTypeLabel: string = localize('slot', 'Slot');
-  public readonly parent: ProductionSlotTreeItem;
+  public readonly parent: SlotTreeItem;
 
   private _nextLink: string | undefined;
 
-  public constructor(parent: ProductionSlotTreeItem) {
+  public constructor(parent: SlotTreeItem) {
     super(parent);
   }
 

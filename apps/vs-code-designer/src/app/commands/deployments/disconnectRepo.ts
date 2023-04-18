@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { logicAppFilter } from '../../../constants';
 import { ext } from '../../../extensionVariables';
-import { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
+import { isLogicAppResourceTree } from '../../tree/LogicAppResourceTree';
 import { DeploymentsTreeItem, disconnectRepo as disconnectRepository } from '@microsoft/vscode-azext-azureappservice';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
@@ -16,7 +16,7 @@ export async function disconnectRepo(context: IActionContext, node?: Deployments
     });
   }
 
-  if (node.parent instanceof SlotTreeItemBase) {
+  if (isLogicAppResourceTree(node.parent)) {
     await disconnectRepository(context, node.site, node.subscription);
     await node.refresh(context);
   } else {

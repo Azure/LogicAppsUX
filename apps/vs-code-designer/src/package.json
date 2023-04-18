@@ -297,272 +297,263 @@
         }
       ]
     },
-    "views": {
-      "azure": [
-        {
-          "id": "azLogicApps",
-          "name": "Logic Apps (Standard)",
-          "when": "config.azureLogicAppsStandard.showExplorer == true"
-        }
-      ]
-    },
     "menus": {
       "view/title": [
         {
           "command": "azureLogicAppsStandard.createNewProject",
-          "when": "view == azLogicApps",
+          "when": "view == azureWorkspace",
           "group": "navigation@1"
         },
         {
           "command": "azureLogicAppsStandard.createCodeless",
-          "when": "view == azLogicApps",
+          "when": "view == azureWorkspace",
           "group": "navigation@2"
         },
         {
           "command": "azureLogicAppsStandard.deploy",
-          "when": "view == azLogicApps",
+          "when": "view == azureWorkspace",
           "group": "navigation@3"
         },
         {
           "command": "azureLogicAppsStandard.exportLogicApp",
-          "when": "view == azLogicApps",
+          "when": "view == azureWorkspace",
           "group": "navigation@4"
         },
         {
           "command": "azureLogicAppsStandard.refresh",
-          "when": "view == azLogicApps",
+          "when": "view == azureWorkspace",
           "group": "navigation@5"
         }
       ],
       "view/item/context": [
         {
           "command": "azureLogicAppsStandard.selectSubscriptions",
-          "when": "view == azLogicApps && viewItem == azureextensionui.azureSubscription",
+          "when": "view == azureWorkspace && viewItem == azureextensionui.azureSubscription",
           "group": "inline"
         },
         {
           "command": "azureLogicAppsStandard.createLogicApp",
-          "when": "view == azLogicApps && viewItem == azureextensionui.azureSubscription",
+          "when": "view == azureWorkspace && viewItem == azureextensionui.azureSubscription",
           "group": "1@1"
         },
         {
           "command": "azureLogicAppsStandard.createLogicAppAdvanced",
-          "when": "view == azLogicApps && viewItem == azureextensionui.azureSubscription",
+          "when": "view == azureWorkspace && viewItem == azureextensionui.azureSubscription",
           "group": "1@2"
         },
         {
           "command": "azureLogicAppsStandard.deleteLogicApp",
-          "when": "view == azLogicApps && viewItem == azLogicAppsProductionSlot",
+          "when": "view == azureWorkspace && viewItem == azLogicAppsProductionSlot",
           "group": "2@5"
         },
         {
           "command": "azureLogicAppsStandard.openDesigner",
-          "when": "view == azLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
+          "when": "view == azureWorkspace && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "1@2"
         },
         {
           "command": "azureLogicAppsStandard.viewContent",
-          "when": "view == azLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
+          "when": "view == azureWorkspace && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "2@1"
         },
         {
           "command": "azureLogicAppsStandard.deploy",
-          "when": "view == azLogicApps && viewItem == azLogicAppsProductionSlot",
+          "when": "view == azureWorkspace && viewItem == azLogicAppsProductionSlot",
           "group": "3@1"
         },
         {
           "command": "azureLogicAppsStandard.deploySlot",
-          "when": "view == azLogicApps && viewItem == azLogicAppsSlot",
+          "when": "view == azureWorkspace && viewItem == azLogicAppsSlot",
           "group": "3@2"
         },
         {
           "command": "azureLogicAppsStandard.startLogicApp",
-          "when": "view == azLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "when": "view == azureWorkspace && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "2@1"
         },
         {
           "command": "azureLogicAppsStandard.stopLogicApp",
-          "when": "view == azLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "when": "view == azureWorkspace && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "2@2"
         },
         {
           "command": "azureLogicAppsStandard.restartLogicApp",
-          "when": "view == azLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "when": "view == azureWorkspace && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "2@3"
         },
         {
           "command": "azureLogicAppsStandard.refresh",
-          "when": "view == azLogicApps && viewItem == azureextensionui.azureSubscription",
+          "when": "view == azureWorkspace && viewItem == azureextensionui.azureSubscription",
           "group": "3@1"
         },
         {
           "command": "azureLogicAppsStandard.refresh",
-          "when": "view == azLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "when": "view == azureWorkspace && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "6@2"
         },
         {
           "command": "azureLogicAppsStandard.refresh",
-          "when": "view == azLogicApps && viewItem == azLogicAppsSlots",
+          "when": "view == azureWorkspace && viewItem == azLogicAppsSlots",
           "group": "2@1"
         },
         {
           "command": "azureLogicAppsStandard.refresh",
-          "when": "view == azLogicApps && viewItem =~ /Workflows;/i",
+          "when": "view == azureWorkspace && viewItem =~ /Workflows;/i",
           "group": "1@1"
         },
         {
           "command": "azureLogicAppsStandard.refresh",
-          "when": "view == azLogicApps && viewItem == applicationSettings",
+          "when": "view == azureWorkspace && viewItem == applicationSettings",
           "group": "2@1"
         },
         {
           "command": "azureLogicAppsStandard.refresh",
-          "when": "view == azLogicApps && viewItem == azFuncProxies",
+          "when": "view == azureWorkspace && viewItem == azFuncProxies",
           "group": "1@1"
         },
         {
           "command": "azureLogicAppsStandard.refresh",
-          "when": "view == azLogicApps && viewItem =~ /^deployments(C|Unc)onnected$/",
+          "when": "view == azureWorkspace && viewItem =~ /^deployments(C|Unc)onnected$/",
           "group": "2@1"
         },
         {
           "command": "azureLogicAppsStandard.refresh",
-          "when": "view == azLogicApps && viewItem == siteFiles",
+          "when": "view == azureWorkspace && viewItem == siteFiles",
           "group": "1@1"
         },
         {
           "command": "azureLogicAppsStandard.refresh",
-          "when": "view == azLogicApps && viewItem == logFiles",
+          "when": "view == azureWorkspace && viewItem == logFiles",
           "group": "1@1"
         },
         {
           "command": "azureLogicAppsStandard.refresh",
-          "when": "view == azLogicApps && viewItem == folder",
+          "when": "view == azureWorkspace && viewItem == folder",
           "group": "1@1"
         },
         {
           "command": "azureLogicAppsStandard.openOverview",
-          "when": "view == azLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
+          "when": "view == azureWorkspace && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "1@1"
         },
         {
           "command": "azureLogicAppsStandard.redeploy",
-          "when": "view == azLogicApps && viewItem =~ /^deployment\\//",
+          "when": "view == azureWorkspace && viewItem =~ /^deployment\\//",
           "group": "1@2"
         },
         {
           "command": "azureLogicAppsStandard.openInPortal",
-          "when": "view == azLogicApps && viewItem == azureextensionui.azureSubscription",
+          "when": "view == azureWorkspace && viewItem == azureextensionui.azureSubscription",
           "group": "2@1"
         },
         {
           "command": "azureLogicAppsStandard.openInPortal",
-          "when": "view == azLogicApps && viewItem == azLogicAppsProductionSlot",
+          "when": "view == azureWorkspace && viewItem == azLogicAppsProductionSlot",
           "group": "1@1"
         },
         {
           "command": "azureLogicAppsStandard.openInPortal",
-          "when": "view == azLogicApps && viewItem =~ /^deployment\\//",
+          "when": "view == azureWorkspace && viewItem =~ /^deployment\\//",
           "group": "1@3"
         },
         {
           "command": "azureLogicAppsStandard.browseWebsite",
-          "when": "view == azLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "when": "view == azureWorkspace && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "1@2"
         },
         {
           "command": "azureLogicAppsStandard.viewProperties",
-          "when": "view == azLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "when": "view == azureWorkspace && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "6@1"
         },
         {
           "command": "azureLogicAppsStandard.createSlot",
-          "when": "view == azLogicApps && viewItem == azLogicAppsSlots",
+          "when": "view == azureWorkspace && viewItem == azLogicAppsSlots",
           "group": "1@1"
         },
         {
           "command": "azureLogicAppsStandard.deleteSlot",
-          "when": "view == azLogicApps && viewItem == azLogicAppsSlot",
+          "when": "view == azureWorkspace && viewItem == azLogicAppsSlot",
           "group": "2@5"
         },
         {
           "command": "azureLogicAppsStandard.viewDeploymentLogs",
-          "when": "view == azLogicApps && viewItem =~ /^deployment\\//",
+          "when": "view == azureWorkspace && viewItem =~ /^deployment\\//",
           "group": "1@1"
         },
         {
           "command": "azureLogicAppsStandard.startStreamingLogs",
-          "when": "view == azLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "when": "view == azureWorkspace && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "4@1"
         },
         {
           "command": "azureLogicAppsStandard.stopStreamingLogs",
-          "when": "view == azLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "when": "view == azureWorkspace && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "4@2"
         },
         {
           "command": "azureLogicAppsStandard.swapSlot",
-          "when": "view == azLogicApps && viewItem == azLogicAppsSlot",
+          "when": "view == azureWorkspace && viewItem == azLogicAppsSlot",
           "group": "2@4"
         },
         {
           "command": "azureLogicAppsStandard.toggleAppSettingVisibility",
-          "when": "view == azLogicApps && viewItem == applicationSettingItem",
+          "when": "view == azureWorkspace && viewItem == applicationSettingItem",
           "group": "inline"
         },
         {
           "command": "azureLogicAppsStandard.appSettings.add",
-          "when": "view == azLogicApps && viewItem == applicationSettings",
+          "when": "view == azureWorkspace && viewItem == applicationSettings",
           "group": "1@1"
         },
         {
           "command": "azureLogicAppsStandard.appSettings.delete",
-          "when": "view == azLogicApps && viewItem == applicationSettingItem",
+          "when": "view == azureWorkspace && viewItem == applicationSettingItem",
           "group": "1@3"
         },
         {
           "command": "azureLogicAppsStandard.appSettings.download",
-          "when": "view == azLogicApps && viewItem == applicationSettings",
+          "when": "view == azureWorkspace && viewItem == applicationSettings",
           "group": "1@2"
         },
         {
           "command": "azureLogicAppsStandard.appSettings.edit",
-          "when": "view == azLogicApps && viewItem == applicationSettingItem",
+          "when": "view == azureWorkspace && viewItem == applicationSettingItem",
           "group": "1@1"
         },
         {
           "command": "azureLogicAppsStandard.appSettings.rename",
-          "when": "view == azLogicApps && viewItem == applicationSettingItem",
+          "when": "view == azureWorkspace && viewItem == applicationSettingItem",
           "group": "1@2"
         },
         {
           "command": "azureLogicAppsStandard.appSettings.toggleSlotSetting",
-          "when": "view == azLogicApps && viewItem == applicationSettingItem",
+          "when": "view == azureWorkspace && viewItem == applicationSettingItem",
           "group": "1@4"
         },
         {
           "command": "azureLogicAppsStandard.appSettings.upload",
-          "when": "view == azLogicApps && viewItem == applicationSettings",
+          "when": "view == azureWorkspace && viewItem == applicationSettings",
           "group": "1@3"
         },
         {
           "command": "azureLogicAppsStandard.disconnectRepo",
-          "when": "view == azLogicApps && viewItem == deploymentsConnected",
+          "when": "view == azureWorkspace && viewItem == deploymentsConnected",
           "group": "1@2"
         },
         {
           "command": "azureLogicAppsStandard.viewCommitInGitHub",
-          "when": "view == azLogicApps && viewItem == deployment/github",
+          "when": "view == azureWorkspace && viewItem == deployment/github",
           "group": "1@4"
         },
         {
           "command": "azureLogicAppsStandard.startRemoteDebug",
-          "when": "view == azLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/ && config.azureLogicAppsStandard.enableRemoteDebugging == true",
+          "when": "view == azureWorkspace && viewItem =~ /^azLogicApps(Production|)Slot$/ && config.azureLogicAppsStandard.enableRemoteDebugging == true",
           "group": "5@1"
         },
         {
           "command": "azureLogicAppsStandard.configureDeploymentSource",
-          "when": "view == azLogicApps && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "when": "view == azureWorkspace && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "3@2"
         }
       ],
@@ -832,6 +823,8 @@
     "onCommand:azureLogicAppsStandard.connectToGitHub",
     "onCommand:azureLogicAppsStandard.startRemoteDebug",
     "onView:azLogicApps",
+    "onView:azureWorkspace",
+    "onView:azureResourceGroups",
     "workspaceContains:host.json",
     "workspaceContains:*/host.json",
     "onDebugInitialConfigurations"
