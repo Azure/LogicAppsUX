@@ -1,4 +1,5 @@
 import type { ConnectionReferences } from '../../../common/models/workflow';
+import { resetWorkflowState } from '../global';
 import { equals, getUniqueName } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -53,6 +54,9 @@ export const connectionSlice = createSlice({
       const { nodeId } = action.payload;
       delete state.connectionsMapping[nodeId];
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resetWorkflowState, () => initialConnectionsState);
   },
 });
 
