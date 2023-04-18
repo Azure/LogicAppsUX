@@ -5,19 +5,22 @@ import { ScannerException } from '../common/exceptions/scanner';
 import { isNumeric, isWhitespace } from '../common/helpers/expression';
 import type { ExpressionToken } from '../models/expression';
 import { ExpressionTokenType } from '../models/expression';
+import type { ConnectionReferenceKeyFormat } from '@microsoft/utils-logic-apps';
 import { equals } from '@microsoft/utils-logic-apps';
 
 export class ExpressionScanner {
   private _expression: string;
   private _startPosition: number;
   private _currentToken: ExpressionToken;
+  private _referenceKeyFormat: ConnectionReferenceKeyFormat | undefined;
 
-  constructor(expression: string, prefetch = true) {
+  constructor(expression: string, prefetch = true, referenceKeyFormat?: ConnectionReferenceKeyFormat | undefined) {
     if (expression.length > ExpressionConstants.Expression.maxExpressionLimit) {
       throw new ScannerException(ExpressionExceptionCode.LIMIT_EXCEEDED, ExpressionExceptionCode.LIMIT_EXCEEDED);
     }
 
     this._expression = expression;
+    this._referenceKeyFormat = referenceKeyFormat;
     this._startPosition = 0;
     this._currentToken = this._createToken('', ExpressionTokenType.EndOfData, 0, 0);
 
@@ -32,6 +35,14 @@ export class ExpressionScanner {
    */
   public get expression(): string {
     return this._expression;
+  }
+
+  /**
+   * Gets the referenceKeyFormat.
+   * @return {ConnectionReferenceKeyFormat}
+   */
+  public get referenceKeyFormat(): ConnectionReferenceKeyFormat | undefined {
+    return this._referenceKeyFormat;
   }
 
   /**

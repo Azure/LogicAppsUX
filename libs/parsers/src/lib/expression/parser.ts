@@ -11,7 +11,7 @@ import type {
 } from '../models/expression';
 import { ExpressionType, ExpressionTokenType } from '../models/expression';
 import { ExpressionScanner } from './scanner';
-import { equals } from '@microsoft/utils-logic-apps';
+import { ConnectionReferenceKeyFormat, equals } from '@microsoft/utils-logic-apps';
 
 interface TokenToParse {
   tokenType: ExpressionTokenType;
@@ -50,14 +50,14 @@ export class ExpressionParser {
     },
   ];
 
-  public static parseExpression(expression: string): Expression {
-    const scanner = new ExpressionScanner(expression);
+  public static parseExpression(expression: string, referenceKeyFormat?: ConnectionReferenceKeyFormat): Expression {
+    const scanner = new ExpressionScanner(expression, /*prefetch*/ true, referenceKeyFormat);
     const parsedExpression = ExpressionParser._parseExpressionRecursively(scanner);
     scanner.getTokenForTypeAndValue(ExpressionTokenType.EndOfData);
     return parsedExpression;
   }
 
-  public static parseTemplateExpression(expression: string): Expression {
+  public static parseTemplateExpression(expression: string, referenceKeyFormat?: ConnectionReferenceKeyFormat): Expression {
     if (!isTemplateExpression(expression)) {
       throw new ParserException(ExpressionExceptionCode.UNRECOGNIZED_EXPRESSION, ExpressionExceptionCode.UNRECOGNIZED_EXPRESSION);
     }
@@ -69,7 +69,7 @@ export class ExpressionParser {
           value: expression.substring(1),
         };
       } else {
-        return ExpressionParser.parseExpression(expression.substring(1));
+        return ExpressionParser.parseExpression(expression.substring(1), referenceKeyFormat);
       }
     } else {
       return ExpressionParser._parseStringInterpolationExpression(expression);
@@ -140,7 +140,7 @@ export class ExpressionParser {
         const expression = this._parseExpressionRecursively(scanner);
         token = ExpressionParser._getTokenOrThrowException(scanner, ExpressionTokenType.RightSquareBracket);
 
-        if (expression.type === ExpressionType.StringLiteral) {
+        if (expression.type === ExpressionType.StringLiteral && scanner.referenceKeyFormat === ConnectionReferenceKeyFormat.OpenApi) {
           // takes care of expressions that are nested such as ['body/value']
           for (const expressionValue of (expression as ExpressionLiteral).value.split('/')) {
             dereferences.push({

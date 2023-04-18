@@ -91,11 +91,16 @@ export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitO
       throw new AssertionException(AssertionErrorCode.INVALID_SPLITON, invalidSplitOn);
     }
 
-    const parsedValue = ExpressionParser.parseTemplateExpression(splitOn);
+    const parsedValue = ExpressionParser.parseTemplateExpression(splitOn, manifest.properties.connectionReference?.referenceKeyFormat);
     const properties: string[] = [];
     let manifestSection = updatedManifest.properties.outputs;
     if (isSupportedSplitOnExpression(parsedValue)) {
-      const { dereferences } = parsedValue as ExpressionFunction;
+      const { dereferences, name } = parsedValue as ExpressionFunction;
+
+      // prevents duplicate 'body' property when parsing OpenApi manifests
+      if (equals(name, 'triggerBody') && dereferences.length && !equals((dereferences[0].expression as ExpressionLiteral).value, 'body')) {
+        properties.push('body');
+      }
 
       if (dereferences.length) {
         properties.push(...dereferences.map((dereference) => (dereference.expression as ExpressionLiteral).value));

@@ -69,23 +69,28 @@ describe('Outputs Utilities', () => {
       };
       const simpleSplitOn = "@triggerOutputs()?['body']";
       const simpleSplitOnResult = getUpdatedManifestForSpiltOn(sampleManifest, simpleSplitOn);
-
       // Ensure the original is not modified.
       expect(sampleManifest.properties.outputs.properties.body.items.properties.importance['x-ms-property-name-alias']).toBe('importance');
-
-      // Ensure the result has the correct format for alias.
+      // Ensure non-open API manifest has the correct format for alias.
       expect(simpleSplitOnResult.properties.outputs.properties.body.properties.importance['x-ms-property-name-alias']).toBe(
         'body/importance'
       );
 
-      const nestedSplitOn = "@triggerOutputs()?['body/value']";
-      const nestedSplitOnResult = getUpdatedManifestForSpiltOn(onNewEmail, nestedSplitOn);
-
+      const nestedOpenAPISplitOn = "@triggerOutputs()?['body/value']";
+      const nestedOpenAPISplitOnResult = getUpdatedManifestForSpiltOn(onNewEmail, nestedOpenAPISplitOn);
       // Ensure the original is not modified.
       expect(onNewEmail.properties.outputs.properties.body.properties.value.items.properties.From['x-ms-property-name-alias']).toBe('From');
+      // Ensure open API manifest has the correct format for alias when using splitOn.
+      expect(nestedOpenAPISplitOnResult.properties.outputs.properties.body.properties.From['x-ms-property-name-alias']).toBe('body/From');
 
-      // Ensure the result has the correct format for alias.
-      expect(nestedSplitOnResult.properties.outputs.properties.body.properties.From['x-ms-property-name-alias']).toBe('body/From');
+      const triggerBodyOpenAPISplitOn = "@triggerBody()?['body/value']";
+      const triggerBodyOpenAPISplitOnResult = getUpdatedManifestForSpiltOn(onNewEmail, triggerBodyOpenAPISplitOn);
+      // Ensure the original is not modified.
+      expect(onNewEmail.properties.outputs.properties.body.properties.value.items.properties.From['x-ms-property-name-alias']).toBe('From');
+      // Ensure open API manifest has the correct format for alias when using splitOn string starting with triggerBody
+      expect(triggerBodyOpenAPISplitOnResult.properties.outputs.properties.body.properties.From['x-ms-property-name-alias']).toBe(
+        'body/From'
+      );
     });
   });
 });
