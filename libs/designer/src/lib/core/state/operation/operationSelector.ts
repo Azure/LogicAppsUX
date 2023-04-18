@@ -1,6 +1,7 @@
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
 import type { RootState } from '../../store';
 import { shouldUseParameterInGroup } from '../../utils/parameters/helper';
+import type { NodeInputs } from './operationMetadataSlice';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
 
@@ -24,11 +25,18 @@ export const getOperationInputParameters = (rootState: RootState, nodeId: string
   return allParameters;
 };
 
+export const useOperationsInputParameters = (): Record<string, NodeInputs> => {
+  return useSelector((rootState: RootState) => {
+    return rootState.operations.inputParameters;
+  });
+};
+
 export const useParameterStaticResult = (nodeId: string): NodeStaticResults => {
   return useSelector((rootState: RootState) => {
     return rootState.operations.staticResults[nodeId];
   });
 };
+
 export const useTokenDependencies = (nodeId: string) =>
   useSelector((rootState: RootState) => {
     const operationInputParameters = rootState.operations.inputParameters[nodeId];
