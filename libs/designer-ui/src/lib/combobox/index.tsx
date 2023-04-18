@@ -285,7 +285,7 @@ const getSelectedKey = (options: ComboboxItem[], initialValue?: ValueSegment[]):
   if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
     return (
       options.find((option) => {
-        return option.key === initialValue[0].value;
+        return option.value === initialValue[0].value;
       })?.key ?? ''
     );
   }

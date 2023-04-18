@@ -352,15 +352,21 @@ export function getParameterEditorProps(
       editor = constants.EDITOR.ARRAY;
       editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
-    } else if (schemaEnum || schema?.enum || (schema?.[ExtensionProperties.CustomEnum] && !equals(visibility, Visibility.Internal))) {
+    } else if ((schemaEnum || schema?.enum || schema?.[ExtensionProperties.CustomEnum]) && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.COMBOBOX;
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
 
       let schemaEnumOptions: ComboboxItem[];
-      if (schemaEnum) {
-        schemaEnumOptions = schemaEnum.map((enumItem) => ({ ...enumItem, key: enumItem.value?.toString() }));
-      } else if (schema[ExtensionProperties.CustomEnum]) {
+      if (schema[ExtensionProperties.CustomEnum]) {
         schemaEnumOptions = schema[ExtensionProperties.CustomEnum];
+      } else if (schemaEnum) {
+        schemaEnumOptions = schemaEnum.map((enumItem) => {
+          return {
+            ...enumItem,
+            value: enumItem.value?.toString(),
+            key: enumItem.displayName,
+          };
+        });
       } else {
         schemaEnumOptions = schema.enum.map(
           (val: string): ComboboxItem => ({
