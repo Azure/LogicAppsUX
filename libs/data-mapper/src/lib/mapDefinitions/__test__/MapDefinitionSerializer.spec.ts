@@ -1,7 +1,7 @@
 import { addFunction, concatFunction, greaterThanFunction } from '../../__mocks__/FunctionMock';
 import { reservedMapDefinitionKeys } from '../../constants/MapDefinitionConstants';
 import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '../../models';
-import { directAccessPseudoFunction, ifPseudoFunction, indexPseudoFunction, SchemaFileFormat, SchemaType } from '../../models';
+import { SchemaFileFormat, SchemaType, directAccessPseudoFunction, ifPseudoFunction, indexPseudoFunction } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
 import { applyConnectionValue } from '../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
@@ -1410,7 +1410,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: greaterThanFunction,
           targetNodeReactFlowKey: greaterThanId,
           inputIndex: 1,
-          value: '10',
+          input: '10',
         });
 
         // Greater than and source parent to if
@@ -1517,7 +1517,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: directAccessPseudoFunction,
           targetNodeReactFlowKey: directAccessId,
           inputIndex: 0,
-          value: '1',
+          input: '1',
         });
         applyConnectionValue(connections, {
           targetNode: directAccessPseudoFunction,
@@ -1702,7 +1702,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: greaterThanFunction,
           targetNodeReactFlowKey: greaterThanId,
           findInputSlot: true,
-          value: '2',
+          input: '2',
         });
 
         generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
@@ -1790,7 +1790,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: greaterThanFunction,
           targetNodeReactFlowKey: greaterThanId,
           inputIndex: 1,
-          value: '2',
+          input: '2',
         });
 
         // Greater than to if
@@ -2077,7 +2077,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: greaterThanFunction,
           targetNodeReactFlowKey: greaterThanId,
           findInputSlot: true,
-          value: '10',
+          input: '10',
         });
 
         // Inputs to conditional
@@ -2094,7 +2094,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: ifPseudoFunction,
           targetNodeReactFlowKey: ifFunctionId,
           findInputSlot: true,
-          value: '"Good"',
+          input: '"Good"',
         });
 
         //Conditional to target
@@ -2153,13 +2153,13 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: greaterThanFunction,
           targetNodeReactFlowKey: greaterThanId,
           findInputSlot: true,
-          value: '20',
+          input: '20',
         });
         applyConnectionValue(connections, {
           targetNode: greaterThanFunction,
           targetNodeReactFlowKey: greaterThanId,
           findInputSlot: true,
-          value: '10',
+          input: '10',
         });
 
         // Inputs to conditional
@@ -3042,7 +3042,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: greaterThanFunction,
           targetNodeReactFlowKey: greaterThanId,
           findInputSlot: true,
-          value: '10',
+          input: '10',
         });
 
         applyConnectionValue(connections, {
@@ -3161,7 +3161,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: greaterThanFunction,
           targetNodeReactFlowKey: greaterThanId,
           findInputSlot: true,
-          value: '10',
+          input: '10',
         });
 
         applyConnectionValue(connections, {
@@ -3254,7 +3254,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: directAccessPseudoFunction,
           targetNodeReactFlowKey: directAccessId,
           findInputSlot: true,
-          value: '1',
+          input: '1',
         });
 
         applyConnectionValue(connections, {
@@ -3354,7 +3354,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: greaterThanFunction,
           targetNodeReactFlowKey: greaterThanId,
           findInputSlot: true,
-          value: '10',
+          input: '10',
         });
 
         applyConnectionValue(connections, {
