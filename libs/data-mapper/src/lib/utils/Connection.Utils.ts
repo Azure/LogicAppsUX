@@ -173,7 +173,7 @@ export const applyConnectionValue = (
 
         const selfNode = connection.self.node;
         if (isFunctionData(selfNode) && selfNode.maxNumberOfInputs !== -1 && connection.inputs[0].length > 1) {
-          LogService.log(LogCategory.ConnectionUtils, 'setConnectionInputValue', {
+          LogService.log(LogCategory.ConnectionUtils, 'applyConnectionValue', {
             message: 'Too many inputs applied to connection',
             data: {
               reactFlowId: connection.self.reactFlowKey,
