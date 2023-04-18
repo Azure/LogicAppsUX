@@ -25,11 +25,14 @@ import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { initializeOperationDetailsForSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
-import { getInputParametersFromManifest, getOutputParametersFromManifest, updateCallbackUrlInInputs } from './initialize';
+import {
+  getCustomSwaggerIfNeeded,
+  getInputParametersFromManifest,
+  getOutputParametersFromManifest,
+  updateCallbackUrlInInputs,
+} from './initialize';
 import { getOperationSettings } from './settings';
 import {
-  AppServiceService,
-  ConnectionService,
   LogEntryLevel,
   LoggerService,
   OperationManifestService,
@@ -155,7 +158,13 @@ export const initializeOperationDetailsForManifest = async (
         }
       });
 
-      const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, operation);
+      const customSwagger = await getCustomSwaggerIfNeeded(manifest.properties, operation);
+      const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
+        nodeId,
+        manifest,
+        customSwagger,
+        operation
+      );
 
       if (isTrigger) {
         await updateCallbackUrlInInputs(nodeId, nodeOperationInfo, nodeInputs);
@@ -220,6 +229,7 @@ const processChildGraphAndItsInputs = (
             const { inputs: subNodeInputs, dependencies: subNodeInputDependencies } = getInputParametersFromManifest(
               subNodeKey,
               subManifest,
+              /* customSwagger */ undefined,
               subOperation[subNodeKey]
             );
             const subNodeOutputs = { outputs: {} };
@@ -238,6 +248,7 @@ const processChildGraphAndItsInputs = (
         const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
           subGraphKey,
           subManifest,
+          /* customSwagger */ undefined,
           subOperation
         );
         const nodeOutputs = { outputs: {} };
@@ -424,50 +435,4 @@ export const updateDynamicDataInNodes = async (getState: () => RootState, dispat
       operation
     );
   }
-};
-
-export const initializeSwaggerDynamicData = async (workflow: DeserializedWorkflow): Promise<any> => {
-  await Promise.all(
-    Object.entries(workflow.actionData).map(async ([id, operation]) => {
-      const newOperation = await initializeOperationSwaggerDynamicData(operation);
-      if (newOperation) {
-        workflow.actionData[id] = {
-          ...operation,
-          ...newOperation,
-        };
-      }
-    })
-  );
-};
-
-const initializeOperationSwaggerDynamicData = async (operation: any): Promise<LogicAppsV2.OperationDefinition | undefined> => {
-  const { inputs, metadata } = operation;
-  if (inputs?.operationId) return;
-
-  const { apiDefinitionUrl, swaggerSource } = metadata ?? {};
-  if (!apiDefinitionUrl || (swaggerSource !== 'custom' && swaggerSource !== 'website')) return;
-
-  const { uri, method } = inputs ?? {};
-  if (!uri || !method) return;
-
-  let swaggerOperation;
-  if (swaggerSource === 'custom') {
-    const connectionService = ConnectionService();
-    swaggerOperation = await connectionService.getOperationFromPathAndMethod(apiDefinitionUrl, uri, method);
-  } else if (swaggerSource === 'website') {
-    const appServiceService = AppServiceService();
-    swaggerOperation = await appServiceService.getOperationFromPathAndMethod(apiDefinitionUrl, uri, method);
-  }
-  if (!swaggerOperation) return;
-  const { operationId } = swaggerOperation;
-
-  operation = {
-    ...operation,
-    inputs: {
-      ...operation.inputs,
-      operationId,
-    },
-  };
-
-  return operation;
 };

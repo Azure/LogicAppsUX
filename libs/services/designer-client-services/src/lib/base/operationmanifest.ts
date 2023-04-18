@@ -108,7 +108,6 @@ const appendtoarrayvariable = 'appendtoarrayvariable';
 const appendtostringvariable = 'appendtostringvariable';
 const batch = 'batch';
 const sendtobatch = 'sendtobatch';
-const sendtobatchtrigger = 'sendtobatchtrigger';
 const xslttransform = 'xslttransform';
 const datamapper = 'datamapper';
 
@@ -409,12 +408,6 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
         operationId: isTrigger ? apimanagementtrigger : apimanagement,
       };
 
-    case sendtobatch:
-      return {
-        connectorId: batchConnectorId,
-        operationId: isTrigger ? sendtobatchtrigger : sendtobatch,
-      };
-
     case appservice:
       return {
         connectorId: appServiceConnectorId,
@@ -471,6 +464,14 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [as2Decode]: {
     connectorId: 'connectionProviders/as2Operations',
     operationId: as2Decode,
+  },
+  [batch]: {
+    connectorId: batchConnectorId,
+    operationId: batch,
+  },
+  [sendtobatch]: {
+    connectorId: batchConnectorId,
+    operationId: sendtobatch,
   },
   [compose]: {
     connectorId: dataOperationConnectorId,

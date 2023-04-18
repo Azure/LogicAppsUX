@@ -1,4 +1,9 @@
-import type { Expression, InputDependencies, ParameterSerializationOptions } from '@microsoft/parsers-logic-apps';
+import type {
+  Expression,
+  InputDependencies,
+  ParameterDeserializationOptions,
+  ParameterSerializationOptions,
+} from '@microsoft/parsers-logic-apps';
 import type { Exception } from '@microsoft/utils-logic-apps';
 
 export interface ParameterInfo {
@@ -43,6 +48,7 @@ export interface ParameterDetails {
   isUnknown?: boolean; // Whether the parameter is an unknown parameter (inferred to be 'any' type) sourced from the workflow definition
   parentProperty?: any;
   serialization?: ParameterSerializationOptions;
+  deserialization?: ParameterDeserializationOptions;
 }
 
 export enum DynamicCallStatus {

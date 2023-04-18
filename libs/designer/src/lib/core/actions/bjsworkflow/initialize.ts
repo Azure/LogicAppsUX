@@ -2,7 +2,7 @@
 import Constants from '../../../common/constants';
 import type { WorkflowParameter } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
-import { getConnectorWithSwagger } from '../../queries/connections';
+import { getConnectorWithSwagger, getSwaggerFromEndpoint } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
 import { updateNodeSettings, updateNodeParameters, DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
@@ -44,7 +44,7 @@ import type {
 import { WorkflowService, LoggerService, LogEntryLevel, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { SchemaProperty, InputParameter } from '@microsoft/parsers-logic-apps';
+import type { SchemaProperty, InputParameter, SwaggerParser } from '@microsoft/parsers-logic-apps';
 import {
   isDynamicListExtension,
   isDynamicPropertiesExtension,
@@ -54,8 +54,8 @@ import {
   ManifestParser,
   PropertyName,
 } from '@microsoft/parsers-logic-apps';
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
-import { clone, equals, ConnectionReferenceKeyFormat, unmap } from '@microsoft/utils-logic-apps';
+import type { OperationManifest, OperationManifestProperties } from '@microsoft/utils-logic-apps';
+import { clone, equals, ConnectionReferenceKeyFormat, unmap, getObjectPropertyValue } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface ServiceOptions {
@@ -83,6 +83,7 @@ export const parseWorkflowParameters = (parameters: Record<string, WorkflowParam
 export const getInputParametersFromManifest = (
   nodeId: string,
   manifest: OperationManifest,
+  customSwagger?: SwaggerParser,
   stepDefinition?: any
 ): NodeInputsWithDependencies => {
   const primaryInputParameters = new ManifestParser(manifest).getInputParameters(
@@ -134,7 +135,13 @@ export const getInputParametersFromManifest = (
 
       primaryInputParametersInArray = updateParameterWithValues(
         'inputs.$',
-        getInputsValueFromDefinitionForManifest(inputsLocation ?? ['inputs'], manifest, operationData, primaryInputParametersInArray),
+        getInputsValueFromDefinitionForManifest(
+          inputsLocation ?? ['inputs'],
+          manifest,
+          customSwagger,
+          operationData,
+          primaryInputParametersInArray
+        ),
         '',
         primaryInputParametersInArray,
         (!inputsLocation || !!inputsLocation.length) && !manifest.properties.inputsLocationSwapMap /* createInvisibleParameter */,
@@ -400,4 +407,16 @@ export const updateAllUpstreamNodes = (state: RootState, dispatch: Dispatch): vo
   }
 
   dispatch(updateUpstreamNodes(payload));
+};
+
+export const getCustomSwaggerIfNeeded = async (
+  manifestProperties: OperationManifestProperties,
+  stepDefinition?: any
+): Promise<SwaggerParser | undefined> => {
+  const swaggerUrlLocation = manifestProperties.customSwagger?.location;
+  if (!swaggerUrlLocation || !stepDefinition) {
+    return undefined;
+  }
+
+  return getSwaggerFromEndpoint(getObjectPropertyValue(stepDefinition, swaggerUrlLocation));
 };

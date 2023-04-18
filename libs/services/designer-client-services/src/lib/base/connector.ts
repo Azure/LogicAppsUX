@@ -112,7 +112,6 @@ export abstract class BaseConnectorService implements IConnectorService {
     _parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any,
-    nodeInputs: any,
     nodeMetadata: any
   ): Promise<ListDynamicValue[]> {
     const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
@@ -129,7 +128,6 @@ export abstract class BaseConnectorService implements IConnectorService {
         operationId,
         parameters: invokeParameters,
         configuration,
-        nodeInputs,
         nodeMetadata,
       });
     }
@@ -179,7 +177,6 @@ export abstract class BaseConnectorService implements IConnectorService {
     _parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any,
-    nodeInputs: any,
     nodeMetadata: any
   ): Promise<OpenAPIV2.SchemaObject> {
     const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
@@ -200,7 +197,6 @@ export abstract class BaseConnectorService implements IConnectorService {
         parameters: invokeParameters,
         configuration,
         isInput,
-        nodeInputs,
         nodeMetadata,
       });
     }

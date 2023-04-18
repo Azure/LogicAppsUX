@@ -152,17 +152,26 @@ export interface DynamicProperties {
 
 export type ParameterDynamicSchema = LegacyDynamicSchema | DynamicProperties;
 
-export enum DeserializationLocation {
+export enum DeserializationType {
   ParentObjectProperties = 'parentobjectproperties',
+  PathTemplateProperties = 'pathtemplateproperties',
+  SwaggerOperationId = 'swaggeroperationid',
 }
 
 export interface ParameterDeserializationOptions {
-  type: DeserializationLocation;
-  parameterReference: string;
+  type: DeserializationType;
+  parameterReference?: string;
+  options?: {
+    swaggerOperation: {
+      methodPath: string[];
+      uriPath: string[];
+    };
+  };
 }
 
 export enum PropertySerializationType {
   ParentObject = 'parentobject',
+  PathTemplate = 'pathtemplate',
 }
 
 export interface ParameterSerializationOptions {
@@ -170,8 +179,8 @@ export interface ParameterSerializationOptions {
   location?: string[];
   property?: {
     type: string;
-    name: string;
-    parameterReference: string;
+    name?: string;
+    parameterReference?: string;
   };
 }
 

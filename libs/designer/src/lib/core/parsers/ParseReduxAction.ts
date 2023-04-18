@@ -1,11 +1,7 @@
 import type { Workflow } from '../../common/models/workflow';
 import { getConnectionsApiAndMapping } from '../actions/bjsworkflow/connections';
 import { parseWorkflowParameters } from '../actions/bjsworkflow/initialize';
-import {
-  initializeOperationMetadata,
-  initializeSwaggerDynamicData,
-  updateDynamicDataInNodes,
-} from '../actions/bjsworkflow/operationdeserializer';
+import { initializeOperationMetadata, updateDynamicDataInNodes } from '../actions/bjsworkflow/operationdeserializer';
 import { getConnectionsQuery } from '../queries/connections';
 import { initializeConnectionReferences } from '../state/connection/connectionSlice';
 import { initializeStaticResultProperties } from '../state/staticresultschema/staticresultsSlice';
@@ -33,8 +29,6 @@ export const initializeGraphState = createAsyncThunk<
     thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
     thunkAPI.dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
     parseWorkflowParameters(parameters ?? {}, thunkAPI.dispatch);
-
-    await initializeSwaggerDynamicData(deserializedWorkflow);
 
     const asyncInitialize = async () => {
       await initializeOperationMetadata(deserializedWorkflow, connectionReferences, parameters ?? {}, thunkAPI.dispatch);

@@ -27,6 +27,7 @@ import {
   getPropertyValue,
   isNullOrUndefined,
   parsePathnameAndQueryKeyFromUri,
+  replaceTemplatePlaceholders,
   startsWith,
   UnsupportedException,
 } from '@microsoft/utils-logic-apps';
@@ -231,7 +232,7 @@ function serializePath(
     if (pathParameters.length > 0) {
       const value = constructInputValues(rootParameterKey, pathParameters, !!encodePathComponents);
       if (value) {
-        pathValue = replacePlaceholders(value, operationPath);
+        pathValue = replaceTemplatePlaceholders(value, operationPath);
       }
     }
 
@@ -496,41 +497,6 @@ function isEmptySegment(value: any, inputParameters: InputParameter[]): boolean 
   return (!inputParameters || inputParameters.length === 0) && (isNullOrUndefined(value) || Object.keys(value).length === 0);
 }
 
-function replacePlaceholders(placeholderValues: Record<string, any>, template: string): string {
-  const placeholders = Object.keys(placeholderValues).map((placeholderKey) => {
-    const value = placeholderValues[placeholderKey];
-    return {
-      key: placeholderKey,
-      placeholderKey: `{${placeholderKey.toUpperCase()}}`,
-      value: value ? value : '',
-    };
-  });
-  let updatedTemplate = normalizeTemplate(template);
-  for (const placeholder of placeholders) {
-    updatedTemplate = updatedTemplate.replace(placeholder.placeholderKey, placeholder.value);
-  }
-
-  return updatedTemplate;
-}
-
-/**
- * Normalizes the placeholder keys in the template
- * @arg {string} template - path template from the swagger operation
- * @return {string} - template with all the placeholder keys replaced with uppercase values
- */
-function normalizeTemplate(template: string): string {
-  const pathKeys = template.match(/{(.*?)}/g);
-  let updatedTemplate = template;
-
-  if (pathKeys) {
-    for (const pathKey of pathKeys) {
-      updatedTemplate = updatedTemplate.replace(pathKey, pathKey.toUpperCase());
-    }
-  }
-
-  return updatedTemplate;
-}
-
 function createMultipart(name: string, body: any, fileName?: string) {
   const fileNameSegment = fileName ? `; filename="${fileName}"` : '';
   const contentDisposition = `form-data; name="${name}"${fileNameSegment}`;
@@ -564,7 +530,7 @@ function createMultipart(name: string, body: any, fileName?: string) {
  * @arg {string} pathTemplate - Value of the path template
  * @return {Record<string, any>} - input parameters in the path input {pathKey: value}
  */
-function processPathInputs(pathValue: string, pathTemplate: string): Record<string, any> {
+export function processPathInputs(pathValue: string, pathTemplate: string): Record<string, any> {
   const intl = getIntl();
   const pathInputs: Record<string, any> = {};
   const regex = /{(.*?)}/g;

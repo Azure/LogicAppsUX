@@ -1,5 +1,6 @@
 import Constants from '../../../common/constants';
 import type { ConnectionReference } from '../../../common/models/workflow';
+import { getCustomSwaggerIfNeeded } from '../../actions/bjsworkflow/initialize';
 import type { SerializedParameter } from '../../actions/bjsworkflow/serializer';
 import { getConnection, getConnectorWithSwagger } from '../../queries/connections';
 import { getDynamicSchemaProperties, getLegacyDynamicSchema, getLegacyDynamicValues, getListDynamicValues } from '../../queries/connector';
@@ -91,7 +92,6 @@ export async function getDynamicValues(
       parameter?.alias,
       operationParameters,
       dynamicState,
-      nodeInputs,
       nodeMetadata
     );
   } else if (isLegacyDynamicValuesExtension(definition)) {
@@ -174,7 +174,6 @@ export async function getDynamicSchema(
             parameter?.alias,
             operationParameters,
             dynamicState,
-            nodeInputs,
             nodeMetadata
           );
           break;
@@ -304,15 +303,8 @@ export async function getDynamicInputsFromSchema(
 
   if (OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
     const manifest = await getOperationManifest(operationInfo);
-    const output = getManifestBasedInputParameters(
-      dynamicInputs,
-      dynamicParameter,
-      allInputKeys,
-      manifest,
-      operationDefinition,
-      operationInfo
-    );
-    return output;
+    const customSwagger = await getCustomSwaggerIfNeeded(manifest.properties, operationDefinition);
+    return getManifestBasedInputParameters(dynamicInputs, dynamicParameter, allInputKeys, manifest, customSwagger, operationDefinition);
   } else {
     const { parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
     return getSwaggerBasedInputParameters(dynamicInputs, dynamicParameter, parsedSwagger, operationInfo, operationDefinition);
@@ -391,13 +383,14 @@ function getManifestBasedInputParameters(
   dynamicParameter: InputParameter,
   allInputKeys: string[],
   manifest: OperationManifest,
-  operationDefinition: any,
-  operationInfo: NodeOperation
+  customSwagger: SwaggerParser | undefined,
+  operationDefinition: any
 ): InputParameter[] {
   let result: InputParameter[] = [];
   const stepInputs = getInputsValueFromDefinitionForManifest(
     manifest.properties?.inputsLocation ?? ['inputs'],
     manifest,
+    customSwagger,
     operationDefinition,
     dynamicInputs
   );
@@ -426,11 +419,6 @@ function getManifestBasedInputParameters(
     result.push(clonedInputParameter);
 
     knownKeys.add(clonedInputParameter.key);
-  }
-
-  const swaggerBasedDynamicDataOperationIds = ['httpswaggeraction', 'httpswaggertrigger', 'appservice', 'appservicetrigger'];
-  if (swaggerBasedDynamicDataOperationIds.includes(operationInfo?.operationId)) {
-    initializeSwaggerBasedDynamicPathParameters(result, dynamicParameter, operationDefinition);
   }
 
   if (stepInputs !== undefined && !manifest.properties.inputsLocationSwapMap) {
@@ -546,36 +534,6 @@ function getSwaggerBasedInputParameters(
     return result;
   } else {
     return dynamicInputParameters;
-  }
-}
-
-function initializeSwaggerBasedDynamicPathParameters(inputs: InputParameter[], dynamicParameter: InputParameter, operationDefinition: any) {
-  const swaggerKey = dynamicParameter.name;
-  const basePath = '';
-  const operationPath = inputs.find((input) => input.name === `${swaggerKey}.pathTemplate.template`)?.default;
-  const parameterKey = 'uri';
-  const propertyNames = parseEx(parameterKey).map((segment) => segment.value?.toString()) as string[];
-  const dynamicInputDefinition = safeSetObjectPropertyValue(
-    {},
-    propertyNames,
-    getObjectPropertyValue(operationDefinition.inputs, propertyNames)
-  );
-  const dynamicInputParameters = loadInputValuesFromDefinition(
-    dynamicInputDefinition as Record<string, any>,
-    inputs,
-    operationPath,
-    basePath as string
-  );
-
-  for (const inputParameter of inputs) {
-    if (inputParameter.default && inputParameter.value === undefined) {
-      inputParameter.value = inputParameter.default;
-    }
-    if (inputParameter.value === undefined) {
-      const inputKey = `${inputParameter.schema.in}.$.${inputParameter.schema.name}`;
-      const value = dynamicInputParameters.find((parameter) => parameter.key === inputKey)?.value;
-      inputParameter.value = value;
-    }
   }
 }
 
