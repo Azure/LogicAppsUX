@@ -1,5 +1,6 @@
-import type { ConnectionReference } from '../../../common/models/workflow';
+import type { ConnectionReference, ConnectionReferences } from '../../../common/models/workflow';
 import type { RootState } from '../../store';
+import type { ConnectionMapping } from './connectionSlice';
 import { ConnectionService, GatewayService } from '@microsoft/designer-client-services-logic-apps';
 import type { Connector } from '@microsoft/utils-logic-apps';
 import { useQuery } from 'react-query';
@@ -42,9 +43,21 @@ export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
   return useConnector(storeConnectorId)?.data;
 };
 
+export const useConnectionMapping = (): ConnectionMapping => {
+  return useSelector((state: RootState) => {
+    return state.connections.connectionsMapping;
+  });
+};
+
+export const useConnectionRefs = (): ConnectionReferences => {
+  return useSelector((state: RootState) => {
+    return state.connections.connectionReferences;
+  });
+};
+
 export const useConnectionRefsByConnectorId = (connectorId?: string) => {
-  const allConnectonReferences = useSelector((state: RootState) => Object.values(state.connections.connectionReferences));
-  return allConnectonReferences.filter((ref: ConnectionReference) => ref.api.id === connectorId);
+  const allConnectionReferences = useSelector((state: RootState) => Object.values(state.connections.connectionReferences));
+  return allConnectionReferences.filter((ref: ConnectionReference) => ref.api.id === connectorId);
 };
 
 export const useIsOperationMissingConnection = (nodeId: string) => {
