@@ -9,6 +9,7 @@ import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
 import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
 import { addNewEdge } from '../../parsers/restructuringHelpers';
 import { getImmediateSourceNodeIds } from '../../utils/graph';
+import { resetWorkflowState } from '../global';
 import type { SpecTypes, WorkflowState } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
@@ -324,6 +325,7 @@ export const workflowSlice = createSlice({
         ([, value]) => !(value as LogicAppsV2.ActionDefinition).runAfter
       )?.[0];
     });
+    builder.addCase(resetWorkflowState, () => initialWorkflowState);
   },
 });
 
