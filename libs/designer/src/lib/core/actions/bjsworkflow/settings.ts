@@ -96,6 +96,7 @@ export interface Settings {
   uploadChunk?: SettingData<UploadChunk>;
   downloadChunkSize?: SettingData<number>;
   runAfter?: SettingData<GraphEdge[]>;
+  invokerConnection?: SettingData<SimpleSetting<boolean>>;
 }
 
 /**
@@ -114,7 +115,8 @@ export const getOperationSettings = (
   nodeOutputs: NodeOutputs,
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
-  operation?: LogicAppsV2.OperationDefinition
+  operation?: LogicAppsV2.OperationDefinition,
+  rootNodeId?: string
 ): Settings => {
   const { operationId, type: nodeType } = operationInfo;
   return {
@@ -185,6 +187,10 @@ export const getOperationSettings = (
     runAfter: {
       isSupported: getRunAfter(operation).length > 0,
       value: getRunAfter(operation),
+    },
+    invokerConnection: {
+      isSupported: isInvokerConnectionSupported(isTrigger, nodeType, rootNodeId),
+      // value: TODO in next PR
     },
   };
 };
@@ -852,4 +858,15 @@ const isSettingSupportedFromOperationManifest = <T>(
     (!operationManifestSetting.scopes ||
       operationManifestSetting.scopes.findIndex((scope) => equals(scope, isTrigger ? SettingScope.Trigger : SettingScope.Action)) >= 0)
   );
+};
+
+const isInvokerConnectionSupported = (isTrigger: boolean, nodeType: string, rootNodeId: string | undefined): boolean => {
+  if (!isTrigger && rootNodeId === Constants.INVOKER_CONNECTION.DATAVERSE_CUD_TRIGGER) {
+    const supportedTypes = [
+      Constants.NODE.TYPE.OPEN_API_CONNECTION,
+    ];
+    return supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
+  } else {
+    return false;
+  }
 };

@@ -1,10 +1,11 @@
 import type { RootState } from '../../core/state/Store';
 import { MapCheckerTab } from './tabs/mapCheckerTab/MapCheckerTab';
 import { TargetSchemaTab } from './tabs/targetSchemaTab/TargetSchemaTab';
-import { Stack, StackItem } from '@fluentui/react';
+import { Stack } from '@fluentui/react';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
-import { Button, makeStyles, shorthands, Tab, TabList, Text, tokens, typographyStyles } from '@fluentui/react-components';
+import { Button, Tab, TabList, Text, makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleLeft20Regular, ChevronDoubleRight20Regular } from '@fluentui/react-icons';
+import type { CSSProperties } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
@@ -74,93 +75,71 @@ export const SidePane = ({ isExpanded, setIsExpanded, sidePaneTab, setSidePaneTa
     setSidePaneTab(data.value as SidePanelTabValue);
   };
 
-  const collapsedStackItemStyle = {
-    height: '100px',
-  };
-
-  const expandedStackItemStyle = {
-    display: 'none',
-  };
-
-  const collapsedButtonStyle = {
-    height: 'inherit',
-  };
-
-  const collapsedButtonTextStyle = {
+  const collapsedButtonTextStyle: CSSProperties = {
     color: !targetSchema ? tokens.colorNeutralForegroundDisabled : undefined,
-    transform: 'rotate(90deg)',
+    writingMode: 'vertical-rl',
   };
 
   return (
     <div className={styles.outputPane}>
+      <Stack horizontal={isExpanded} verticalAlign="center" horizontalAlign={isExpanded ? 'start' : 'center'}>
+        <Button
+          icon={isExpanded ? <ChevronDoubleRight20Regular /> : <ChevronDoubleLeft20Regular />}
+          size="medium"
+          appearance="transparent"
+          style={{ color: !targetSchema ? tokens.colorNeutralForegroundDisabled : tokens.colorNeutralForeground2 }}
+          onClick={() => expandAndChangeTab(!isExpanded, sidePaneTab)}
+          disabled={!targetSchema}
+          aria-label={!isExpanded ? expandLoc : collapseLoc}
+        />
+        {!isExpanded ? (
+          <Button
+            size="medium"
+            appearance="transparent"
+            onClick={() => expandAndChangeTab(true, SidePanelTabValue.OutputTree)}
+            disabled={!targetSchema}
+            style={{ minWidth: '0px' }}
+          >
+            <Text wrap={false} className={styles.title} style={collapsedButtonTextStyle}>
+              {targetSchemaLoc}
+            </Text>
+          </Button>
+        ) : undefined}
+        {!isExpanded ? (
+          <Button
+            size="medium"
+            appearance="transparent"
+            onClick={() => expandAndChangeTab(true, SidePanelTabValue.MapChecker)}
+            disabled={!targetSchema}
+            style={{ minWidth: '0px' }}
+          >
+            <Text className={styles.title} wrap={false} style={collapsedButtonTextStyle}>
+              {mapCheckerLoc}
+            </Text>
+          </Button>
+        ) : undefined}
+        {isExpanded ? (
+          <TabList selectedValue={sidePaneTab} onTabSelect={onTabSelect}>
+            <Tab id={SidePanelTabValue.OutputTree} value={SidePanelTabValue.OutputTree}>
+              {targetSchemaLoc}
+            </Tab>
+            <Tab id={SidePanelTabValue.MapChecker} value={SidePanelTabValue.MapChecker}>
+              {mapCheckerLoc}
+            </Tab>
+          </TabList>
+        ) : undefined}
+      </Stack>
       <Stack
+        style={
+          !isExpanded
+            ? { display: 'none' }
+            : { display: 'flex', flexDirection: 'column', marginLeft: '40px', marginTop: '8px', width: '290px', height: '100%' }
+        }
         horizontal={false}
-        verticalAlign={isExpanded ? 'center' : undefined}
-        horizontalAlign={!isExpanded ? 'center' : undefined}
-        style={!isExpanded ? { width: 40, margin: '4px 4px 4px 4px' } : { padding: '4px 4px 0 4px' }}
         verticalFill={true}
       >
-        <Stack horizontal={isExpanded} style={{ alignItems: 'center' }}>
-          <StackItem>
-            <Button
-              icon={isExpanded ? <ChevronDoubleRight20Regular /> : <ChevronDoubleLeft20Regular />}
-              size="medium"
-              appearance="transparent"
-              style={{ color: !targetSchema ? tokens.colorNeutralForegroundDisabled : tokens.colorNeutralForeground2 }}
-              onClick={() => expandAndChangeTab(!isExpanded, sidePaneTab)}
-              disabled={!targetSchema}
-              aria-label={!isExpanded ? expandLoc : collapseLoc}
-            />
-          </StackItem>
-          <StackItem style={!isExpanded ? collapsedStackItemStyle : expandedStackItemStyle}>
-            <Button
-              size="medium"
-              appearance="transparent"
-              style={collapsedButtonStyle}
-              onClick={() => expandAndChangeTab(true, SidePanelTabValue.OutputTree)}
-              disabled={!targetSchema}
-            >
-              <Text wrap={false} className={styles.title} style={collapsedButtonTextStyle}>
-                {targetSchemaLoc}
-              </Text>
-            </Button>
-          </StackItem>
-          <StackItem style={!isExpanded ? collapsedButtonStyle : expandedStackItemStyle}>
-            <Button
-              size="medium"
-              appearance="transparent"
-              style={collapsedStackItemStyle}
-              onClick={() => expandAndChangeTab(true, SidePanelTabValue.MapChecker)}
-              disabled={!targetSchema}
-            >
-              <Text className={styles.title} wrap={false} style={collapsedButtonTextStyle}>
-                {mapCheckerLoc}
-              </Text>
-            </Button>
-          </StackItem>
-          <StackItem style={isExpanded ? collapsedButtonStyle : expandedStackItemStyle}>
-            <TabList selectedValue={sidePaneTab} onTabSelect={onTabSelect}>
-              <Tab id={SidePanelTabValue.OutputTree} value={SidePanelTabValue.OutputTree}>
-                {targetSchemaLoc}
-              </Tab>
-              <Tab id={SidePanelTabValue.MapChecker} value={SidePanelTabValue.MapChecker}>
-                {mapCheckerLoc}
-              </Tab>
-            </TabList>
-          </StackItem>
-        </Stack>
-        <Stack
-          style={
-            !isExpanded
-              ? { display: 'none' }
-              : { display: 'flex', flexDirection: 'column', marginLeft: '40px', marginTop: '8px', width: '290px', height: '100%' }
-          }
-          horizontal={false}
-          verticalFill={true}
-        >
-          {sidePaneTab === SidePanelTabValue.OutputTree && <TargetSchemaTab />}
-          {sidePaneTab === SidePanelTabValue.MapChecker && <MapCheckerTab />}
-        </Stack>
+        {sidePaneTab === SidePanelTabValue.OutputTree && <TargetSchemaTab />}
+        {sidePaneTab === SidePanelTabValue.MapChecker && <MapCheckerTab />}
       </Stack>
     </div>
   );

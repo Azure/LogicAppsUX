@@ -37,11 +37,13 @@
         tab-size: 1;
         min-height: 24px;
         line-height: 24px;
-        caret-color: #444;
         padding-inline-start: 5px;
         padding-inline-end: 15px;
         &.readonly {
           background-color: rgba(128, 128, 128, 0.1);
+        }
+        &:focus {
+          outline: 2px solid @primary_focus_blue;
         }
         p {
           margin: 0;
@@ -160,7 +162,7 @@
   }
 }
 
-.msla-until-editor-container {
+.msla-simple-querybuilder-editor-container {
   width: 100%;
   border-radius: 2px;
   position: relative;
@@ -173,11 +175,13 @@
     tab-size: 1;
     min-height: 24px;
     line-height: 24px;
-    caret-color: #444;
     padding-inline-start: 5px;
     padding-inline-end: 15px;
     &.readonly {
       background-color: rgba(128, 128, 128, 0.1);
+    }
+    &:focus {
+      outline: 2px solid @primary_focus_blue;
     }
     p {
       margin: 0;

@@ -88,6 +88,7 @@ export const PanelContainer = ({
     (_props?: IPanelProps, _defaultrender?: IPanelHeaderRenderer, headerTextId?: string): JSX.Element => {
       return (
         <PanelHeader
+          nodeId={nodeId}
           cardIcon={cardIcon}
           isCollapsed={isCollapsed}
           headerLocation={panelLocation}
@@ -111,6 +112,7 @@ export const PanelContainer = ({
       );
     },
     [
+      nodeId,
       cardIcon,
       isCollapsed,
       panelLocation,

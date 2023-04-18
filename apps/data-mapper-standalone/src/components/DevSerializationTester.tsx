@@ -13,12 +13,17 @@ import {
   Text,
   tokens,
 } from '@fluentui/react-components';
-import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
 import type { MonacoProps } from '@microsoft/designer-ui';
-import { convertFromMapDefinition, convertToMapDefinition, convertSchemaToSchemaExtended } from '@microsoft/logic-apps-data-mapper';
+import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
 import type { MapDefinitionEntry } from '@microsoft/logic-apps-data-mapper';
+import {
+  convertSchemaToSchemaExtended,
+  convertToMapDefinition,
+  flattenSchemaIntoSortArray,
+  MapDefinitionDeserializer,
+} from '@microsoft/logic-apps-data-mapper';
 import * as yaml from 'js-yaml';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 enum SerializationTab {
@@ -54,8 +59,28 @@ export const DevSerializationTester = () => {
   const { fetchedFunctions } = useSelector((state: RootState) => state.dataMapDataLoader);
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.schemaDataLoader);
 
+  const sourceSchemaExtended = useMemo(() => {
+    if (sourceSchema) {
+      return convertSchemaToSchemaExtended(sourceSchema);
+    }
+
+    return undefined;
+  }, [sourceSchema]);
+
+  const targetSchemaExtended = useMemo(() => {
+    if (targetSchema) {
+      return convertSchemaToSchemaExtended(targetSchema);
+    }
+
+    return undefined;
+  }, [targetSchema]);
+
+  const targetSchemaSortArray = useMemo(() => {
+    return targetSchemaExtended ? flattenSchemaIntoSortArray(targetSchemaExtended.schemaTreeRoot) : [];
+  }, [targetSchemaExtended]);
+
   const deserializeMapDefinitionIntoConnections = () => {
-    if (!sourceSchema || !targetSchema) {
+    if (!sourceSchemaExtended || !targetSchemaExtended) {
       window.alert('You must select your source and target schemas in the dropdowns above!');
       return;
     }
@@ -65,12 +90,14 @@ export const DevSerializationTester = () => {
       return;
     }
 
-    const deserializedConnections = convertFromMapDefinition(
+    const mapDefinitionDeserializer = new MapDefinitionDeserializer(
       yaml.load(inputMapDefinition ?? '') as MapDefinitionEntry,
-      convertSchemaToSchemaExtended(sourceSchema),
-      convertSchemaToSchemaExtended(targetSchema),
+      sourceSchemaExtended,
+      targetSchemaExtended,
       fetchedFunctions
     );
+
+    const deserializedConnections = mapDefinitionDeserializer.convertFromMapDefinition();
 
     setOutputConnections(JSON.stringify(deserializedConnections, null, 2));
   };
@@ -83,8 +110,9 @@ export const DevSerializationTester = () => {
 
     const serializedMapDefinition = convertToMapDefinition(
       JSON.parse(inputConnections),
-      convertSchemaToSchemaExtended(sourceSchema),
-      convertSchemaToSchemaExtended(targetSchema)
+      sourceSchemaExtended,
+      targetSchemaExtended,
+      targetSchemaSortArray
     );
 
     setOutputMapDefinition(serializedMapDefinition);

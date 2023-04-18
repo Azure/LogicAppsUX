@@ -83,12 +83,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -570,6 +564,12 @@
       "value": "(UTC-04:00) Caracas"
     }
   ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Add children (recursive)"
+    }
+  ],
   "23fENy": [
     {
       "type": 0,
@@ -786,6 +786,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Dacca"
+    }
+  ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Choose the type of user input"
     }
   ],
   "3Y8a6G": [
@@ -1238,6 +1244,12 @@
       "value": "Obbligatorio. Stringa da cui viene recuperata la sottostringa."
     }
   ],
+  "7Vyxu0": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "7WVgiU": [
     {
       "type": 0,
@@ -1430,6 +1442,12 @@
     {
       "type": 0,
       "value": "Aggiunge un numero intero di giorni al timestamp in formato stringa passato"
+    }
+  ],
+  "8yjjTX": [
+    {
+      "type": 0,
+      "value": "Connect via Service Principal"
     }
   ],
   "9/UeTh": [
@@ -1640,6 +1658,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangoon)"
+    }
+  ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
   "AgrMqq": [
@@ -2015,6 +2039,12 @@
       "value": "(UTC-01:00) Azzorre"
     }
   ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Add an input"
+    }
+  ],
   "DyYcJZ": [
     {
       "type": 0,
@@ -2235,6 +2265,12 @@
     {
       "type": 0,
       "value": "Must provide name of parameter."
+    }
+  ],
+  "FT3jt6": [
+    {
+      "type": 0,
+      "value": "Webhook reference information"
     }
   ],
   "FUhNu4": [
@@ -2598,6 +2634,16 @@
     {
       "type": 0,
       "value": "22"
+    }
+  ],
+  "IHMd3X": [
+    {
+      "type": 0,
+      "value": "Example: "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "IPbBB2": [
@@ -3593,6 +3639,12 @@
       "value": "Rimuovi"
     }
   ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -3806,12 +3858,6 @@
       "value": "Password"
     }
   ],
-  "SGxmEY": [
-    {
-      "type": 0,
-      "value": "Immettere un dizionario"
-    }
-  ],
   "SJFVxf": [
     {
       "type": 0,
@@ -4012,6 +4058,12 @@
     {
       "type": 0,
       "value": "ID richiesta client"
+    }
+  ],
+  "TeRxLv": [
+    {
+      "type": 0,
+      "value": "Use a service principal to connect using application permissions."
     }
   ],
   "TgcgXE": [
@@ -4326,6 +4378,12 @@
       "value": "Error Type"
     }
   ],
+  "VggzRB": [
+    {
+      "type": 0,
+      "value": "Text"
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -4626,6 +4684,12 @@
       "value": "Restituisce una rappresentazione binaria di un URI di dati"
     }
   ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Add children"
+    }
+  ],
   "YHsAKl": [
     {
       "type": 0,
@@ -4814,6 +4878,12 @@
       "value": "Valore 'in' non supportato: {value} nel parametro"
     }
   ],
+  "a+6uyE": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -4944,6 +5014,12 @@
       "value": "(UTC+02:00) Kaliningrad"
     }
   ],
+  "bSZ0lL": [
+    {
+      "type": 0,
+      "value": "Callback url"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -5054,6 +5130,12 @@
     {
       "type": 0,
       "value": "È possibile aggiungere contenuto dinamico anche da altre origini."
+    }
+  ],
+  "cF4w+R": [
+    {
+      "type": 0,
+      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5290,6 +5372,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Ekaterinburg"
+    }
+  ],
+  "eHgfpz": [
+    {
+      "type": 0,
+      "value": "Please enter a valid URL"
     }
   ],
   "eHgi14": [
@@ -5859,6 +5947,12 @@
       "value": "Test"
     }
   ],
+  "izS5yQ": [
+    {
+      "type": 0,
+      "value": "Learn more"
+    }
+  ],
   "j1VU25": [
     {
       "type": 0,
@@ -6209,10 +6303,22 @@
       "value": "Abbreviazione per actions('actionName').outputs.body"
     }
   ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
       "value": "Select an action type"
+    }
+  ],
+  "lv9QyZ": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "lzBHHT": [
@@ -6565,6 +6671,12 @@
       "value": "(UTC-03:00) Salvador"
     }
   ],
+  "ox2Ou7": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON"
+    }
+  ],
   "oxH1L/": [
     {
       "type": 0,
@@ -6767,6 +6879,12 @@
     {
       "type": 0,
       "value": "Codice di errore: {errorCode}, messaggio: {message}."
+    }
+  ],
+  "qUMXpq": [
+    {
+      "type": 0,
+      "value": "Swagger Endpoint"
     }
   ],
   "qUWBUX": [
@@ -7666,12 +7784,6 @@
       "value": "Immettere la password come testo normale o usare un parametro protetto"
     }
   ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "Input editor"
-    }
-  ],
   "xQQ9ko": [
     {
       "type": 0,
@@ -7712,6 +7824,12 @@
     {
       "type": 0,
       "value": "(UTC+12.00) Coordinated Universal Time+12"
+    }
+  ],
+  "xeREzb": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "xt5TeT": [

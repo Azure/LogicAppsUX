@@ -99,12 +99,6 @@
       "value": "Select an api from apim instance"
     }
   ],
-  "/2+p0Z": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step"
-    }
-  ],
   "/AtN16": [
     {
       "type": 0,
@@ -568,6 +562,12 @@
       "value": "(UTC-04:00)加拉加斯"
     }
   ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Add children (recursive)"
+    }
+  ],
   "23fENy": [
     {
       "type": 0,
@@ -784,6 +784,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00)达卡"
+    }
+  ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Choose the type of user input"
     }
   ],
   "3Y8a6G": [
@@ -1236,6 +1242,12 @@
       "value": "必需。要从中获取子字符串的字符串。"
     }
   ],
+  "7Vyxu0": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "7WVgiU": [
     {
       "type": 0,
@@ -1446,6 +1458,12 @@
       "value": "将天数的整数值添加到传入的字符串时间戳"
     }
   ],
+  "8yjjTX": [
+    {
+      "type": 0,
+      "value": "Connect via Service Principal"
+    }
+  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -1654,6 +1672,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30)仰光"
+    }
+  ],
+  "AcdX+2": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing / in the editor)"
     }
   ],
   "AgrMqq": [
@@ -2023,6 +2047,12 @@
       "value": "(UTC-01:00)亚速尔群岛"
     }
   ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Add an input"
+    }
+  ],
   "DyYcJZ": [
     {
       "type": 0,
@@ -2243,6 +2273,12 @@
     {
       "type": 0,
       "value": "Must provide name of parameter."
+    }
+  ],
+  "FT3jt6": [
+    {
+      "type": 0,
+      "value": "Webhook reference information"
     }
   ],
   "FUhNu4": [
@@ -2592,6 +2628,16 @@
     {
       "type": 0,
       "value": "22"
+    }
+  ],
+  "IHMd3X": [
+    {
+      "type": 0,
+      "value": "Example: "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "IPbBB2": [
@@ -3589,6 +3635,12 @@
       "value": "放弃"
     }
   ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Add dynamic data or expressions by inserting a /"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -3778,12 +3830,6 @@
     {
       "type": 0,
       "value": "密码"
-    }
-  ],
-  "SGxmEY": [
-    {
-      "type": 0,
-      "value": "输入字典"
     }
   ],
   "SJFVxf": [
@@ -3986,6 +4032,12 @@
     {
       "type": 0,
       "value": "客户端请求 ID"
+    }
+  ],
+  "TeRxLv": [
+    {
+      "type": 0,
+      "value": "Use a service principal to connect using application permissions."
     }
   ],
   "TgcgXE": [
@@ -4300,6 +4352,12 @@
       "value": "Error Type"
     }
   ],
+  "VggzRB": [
+    {
+      "type": 0,
+      "value": "Text"
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -4612,6 +4670,12 @@
       "value": "返回数据 URI 的二进制表示形式"
     }
   ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Add children"
+    }
+  ],
   "YHsAKl": [
     {
       "type": 0,
@@ -4808,6 +4872,12 @@
       "value": "\""
     }
   ],
+  "a+6uyE": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -4938,6 +5008,12 @@
       "value": "(UTC+02:00)加里宁格勒"
     }
   ],
+  "bSZ0lL": [
+    {
+      "type": 0,
+      "value": "Callback url"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -5052,6 +5128,12 @@
     {
       "type": 0,
       "value": "也可以从其他源添加动态内容。"
+    }
+  ],
+  "cF4w+R": [
+    {
+      "type": 0,
+      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5288,6 +5370,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00)叶卡捷琳堡"
+    }
+  ],
+  "eHgfpz": [
+    {
+      "type": 0,
+      "value": "Please enter a valid URL"
     }
   ],
   "eHgi14": [
@@ -5851,6 +5939,12 @@
       "value": "测试"
     }
   ],
+  "izS5yQ": [
+    {
+      "type": 0,
+      "value": "Learn more"
+    }
+  ],
   "j1VU25": [
     {
       "type": 0,
@@ -6209,10 +6303,22 @@
       "value": "actions('actionName').outputs.body 的速记"
     }
   ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Insert Expression (You can also add by typing / in the editor)"
+    }
+  ],
   "lsKVU6": [
     {
       "type": 0,
       "value": "Select an action type"
+    }
+  ],
+  "lv9QyZ": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "lzBHHT": [
@@ -6573,6 +6679,12 @@
       "value": "(UTC-03:00)萨尔瓦多"
     }
   ],
+  "ox2Ou7": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON"
+    }
+  ],
   "oxH1L/": [
     {
       "type": 0,
@@ -6799,6 +6911,12 @@
     {
       "type": 0,
       "value": "\"。"
+    }
+  ],
+  "qUMXpq": [
+    {
+      "type": 0,
+      "value": "Swagger Endpoint"
     }
   ],
   "qUWBUX": [
@@ -7676,12 +7794,6 @@
       "value": "以纯文本形式输入密码或使用安全参数"
     }
   ],
-  "xOAOHM": [
-    {
-      "type": 0,
-      "value": "编辑器输入"
-    }
-  ],
   "xQQ9ko": [
     {
       "type": 0,
@@ -7722,6 +7834,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00)协调世界时+12"
+    }
+  ],
+  "xeREzb": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "xt5TeT": [

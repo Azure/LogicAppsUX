@@ -3,7 +3,7 @@ import { ProviderWrappedContext } from './ProviderWrappedContext';
 import { initializeGraphState } from './parsers/ParseReduxAction';
 import type { DesignerOptionsState } from './state/designerOptions/designerOptionsInterfaces';
 import { initializeServices } from './state/designerOptions/designerOptionsSlice';
-import { initWorkflowSpec } from './state/workflow/workflowSlice';
+import { initRunInstance, initWorkflowSpec } from './state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from './store';
 import { createSelector } from '@reduxjs/toolkit';
 import React, { useContext, useEffect } from 'react';
@@ -19,6 +19,7 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, child
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     dispatch(initWorkflowSpec('BJS'));
+    dispatch(initRunInstance(runInstance ?? null));
     dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance }));
   }, [dispatch, workflow, runInstance]);
 

@@ -1,5 +1,5 @@
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
-import { CodeView } from '../components/codeView/CodeView';
+import { CodeView, minCodeViewWidth } from '../components/codeView/CodeView';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/AddOrUpdateSchemaView';
 import { ConfigPanel } from '../components/configPanel/ConfigPanel';
@@ -118,13 +118,15 @@ export const DataMapperDesigner = ({
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
+  const targetSchemaSortArray = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchemaOrdering);
   const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
 
-  const { centerViewHeight, centerViewWidth } = useCenterViewHeight();
+  const { centerViewHeight, centerViewWidth } = useCenterViewSize();
   const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!selectedItemKey);
   const [propPaneExpandedHeight, setPropPaneExpandedHeight] = useState(basePropPaneContentHeight);
   const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
+  const [codeViewExpandedWidth, setCodeViewExpandedWidth] = useState(minCodeViewWidth);
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
   const [isSidePaneExpanded, setIsSidePaneExpanded] = useState(false);
   const [sidePaneTab, setSidePaneTab] = useState(SidePanelTabValue.OutputTree);
@@ -133,7 +135,7 @@ export const DataMapperDesigner = ({
   const dataMapDefinition = useMemo<string>(() => {
     if (sourceSchema && targetSchema) {
       try {
-        const newDataMapDefinition = convertToMapDefinition(currentConnections, sourceSchema, targetSchema);
+        const newDataMapDefinition = convertToMapDefinition(currentConnections, sourceSchema, targetSchema, targetSchemaSortArray);
 
         if (saveDraftStateCall) {
           saveDraftStateCall(newDataMapDefinition);
@@ -157,7 +159,7 @@ export const DataMapperDesigner = ({
     }
 
     return '';
-  }, [currentConnections, sourceSchema, targetSchema, saveDraftStateCall]);
+  }, [sourceSchema, targetSchema, currentConnections, targetSchemaSortArray, saveDraftStateCall]);
 
   const showMapOverview = useMemo<boolean>(() => !targetSchema || !currentTargetSchemaNode, [targetSchema, currentTargetSchemaNode]);
 
@@ -310,7 +312,6 @@ export const DataMapperDesigner = ({
                     className={styles.canvasWrapper}
                     style={{
                       width: isCodeViewOpen ? '75%' : '100%',
-                      marginRight: isCodeViewOpen ? '8px' : 0,
                       backgroundColor: tokens.colorNeutralBackground4,
                     }}
                   >
@@ -338,6 +339,9 @@ export const DataMapperDesigner = ({
                     isCodeViewOpen={isCodeViewOpen}
                     setIsCodeViewOpen={setCodeViewOpen}
                     canvasAreaHeight={getCanvasAreaHeight()}
+                    centerViewWidth={centerViewWidth}
+                    contentWidth={codeViewExpandedWidth}
+                    setContentWidth={setCodeViewExpandedWidth}
                   />
                 </Stack>
               </div>
@@ -376,7 +380,7 @@ export const DataMapperDesigner = ({
   );
 };
 
-const useCenterViewHeight = () => {
+const useCenterViewSize = () => {
   const [centerViewWidth, setCenterViewWidth] = useState(0);
   const [centerViewHeight, setCenterViewHeight] = useState(0);
 

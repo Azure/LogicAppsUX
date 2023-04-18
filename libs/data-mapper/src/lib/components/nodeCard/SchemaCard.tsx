@@ -5,32 +5,33 @@ import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
 import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
-import { flattenInputs } from '../../utils/Connection.Utils';
+import { collectSourceNodesForConnectionChain, collectTargetNodesForConnectionChain } from '../../utils/Connection.Utils';
 import { iconForNormalizedDataType } from '../../utils/Icon.Utils';
 import { areInputTypesValidForSchemaNode } from '../../utils/MapChecker.Utils';
+import { isNodeHighlighted } from '../../utils/ReactFlow.Util';
 import { ItemToggledState } from '../tree/TargetSchemaTreeItem';
 import HandleWrapper from './HandleWrapper';
 import type { CardProps } from './NodeCard';
-import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
+import { getStylesForSharedState, highlightedCardStyles, selectedCardStyles } from './NodeCard';
 import {
   Badge,
   Button,
+  Tooltip,
   createFocusOutlineStyle,
   makeStyles,
   mergeClasses,
   shorthands,
   tokens,
-  Tooltip,
   typographyStyles,
 } from '@fluentui/react-components';
 import {
-  bundleIcon,
   CheckmarkCircle12Filled,
   ChevronRight16Filled,
   ChevronRight16Regular,
   Circle12Regular,
   CircleHalfFill12Regular,
   Important12Filled,
+  bundleIcon,
 } from '@fluentui/react-icons';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
@@ -166,6 +167,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const intl = useIntl();
 
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
+  const selectedItemConnectedNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemConnectedNodes);
   const sourceNodeConnectionBeingDrawnFromId = useSelector((state: RootState) => state.dataMap.sourceNodeConnectionBeingDrawnFromId);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
@@ -174,13 +176,19 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const [isChevronHovered, setIsChevronHovered] = useState<boolean>(false);
   const [isTooltipEnabled, setIsTooltipEnabled] = useState<boolean>(false);
 
-  const isNodeConnected = useMemo(
+  const connectedNodes = useMemo(
     () =>
-      connections[reactFlowId] &&
-      (connections[reactFlowId].outputs.length > 0 || flattenInputs(connections[reactFlowId].inputs).length > 0),
-    [connections, reactFlowId]
+      reactFlowId && connections[reactFlowId]
+        ? [
+            ...collectSourceNodesForConnectionChain(connections[reactFlowId], connections),
+            ...collectTargetNodesForConnectionChain(connections[reactFlowId], connections),
+          ]
+        : [],
+    // Only want to update when that specific connection updates
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [reactFlowId, connections[reactFlowId]]
   );
-
+  const isNodeConnected = useMemo(() => connectedNodes.length > 0, [connectedNodes]);
   const isSourceSchemaNode = useMemo(() => schemaType === SchemaType.Source, [schemaType]);
   const showOutputChevron = useMemo(() => !isSourceSchemaNode && !isLeaf && displayChevron, [isSourceSchemaNode, displayChevron, isLeaf]);
   const isNBadgeRequired = useMemo(
@@ -188,6 +196,9 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     [isNodeConnected, schemaNode]
   );
   const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
+  const isCurrentNodeHighlighted = useMemo<boolean>(() => {
+    return isNodeHighlighted(isCurrentNodeSelected, reactFlowId, selectedItemConnectedNodes);
+  }, [isCurrentNodeSelected, reactFlowId, selectedItemConnectedNodes]);
 
   const shouldDisplaySourceHandle = displayHandle && !sourceNodeConnectionBeingDrawnFromId && (isCardHovered || isCurrentNodeSelected);
   const shouldDisplayTargetHandle = displayHandle && !!sourceNodeConnectionBeingDrawnFromId;
@@ -262,16 +273,20 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     dispatch(removeSourceSchemaNodes([schemaNode]));
   };
 
-  const selectedNodeStyles = isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId ? selectedCardStyles : undefined;
+  const nodeStyles =
+    isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId
+      ? selectedCardStyles
+      : isCurrentNodeHighlighted
+      ? highlightedCardStyles
+      : undefined;
 
   return (
     <div className={classes.badgeContainer}>
       {isNBadgeRequired && !isSourceSchemaNode && <NBadge isOutput />}
-
       <div
         onContextMenu={contextMenu.handle}
         className={containerStyle}
-        style={{ ...selectedNodeStyles, width }}
+        style={{ ...nodeStyles, width }}
         onMouseLeave={() => setIsCardHovered(false)}
         onMouseEnter={() => setIsCardHovered(true)}
       >
