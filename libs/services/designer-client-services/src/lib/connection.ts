@@ -34,7 +34,6 @@ export interface CreateConnectionResult {
 }
 
 export interface IConnectionService {
-  [x: string]: any;
   getConnector(connectorId: string): Promise<Connector>;
   getConnectorAndSwagger(connectorId: string): Promise<ConnectorWithSwagger>;
   getSwaggerFromUri(uri: string): Promise<OpenAPIV2.Document>;
