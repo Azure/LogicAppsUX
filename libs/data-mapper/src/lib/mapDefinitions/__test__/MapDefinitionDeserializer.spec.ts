@@ -1885,10 +1885,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         );
       });
 
-      it.skip('creates a loop connection with dot access', () => {
-        const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
-        const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema);
-        delete simpleMap['ns0:TargetSchemaRoot'];
+      it('creates a loop connection with dot access', () => {
         simpleMap['root'] = {
           ForLoop: {
             '$for(/root/generalData/address/telephone/*)': [
@@ -1906,27 +1903,20 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         const resultEntries = Object.entries(result);
         resultEntries.sort();
 
-        expect(resultEntries.length).toEqual(4);
+        expect(resultEntries.length).toEqual(3);
 
-        const indexId = resultEntries[0][0];
-
-        expect(resultEntries[0][0]).toEqual(indexId);
+        expect(resultEntries[0][0]).toEqual('source-/root/generalData/address/telephone/*');
         expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*');
-        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*');
-        expect(resultEntries[0][1].outputs[1].reactFlowKey).toEqual('target-/root/ComplexArray1/*/F1');
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/ForLoop/*');
+        expect(resultEntries[0][1].outputs[1].reactFlowKey).toEqual('target-/root/ForLoop/*/prop1/TEL_NUMBER');
 
-        expect(resultEntries[1][0]).toEqual('source-/root/Nums/*');
+        expect(resultEntries[1][0]).toEqual('target-/root/ForLoop/*');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual(indexId);
+        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/generalData/address/telephone/*');
 
-        expect(resultEntries[2][0]).toEqual('target-/root/ComplexArray1/*');
+        expect(resultEntries[2][0]).toEqual('target-/root/ForLoop/*/prop1/TEL_NUMBER');
         expect(resultEntries[2][1]).toBeTruthy();
-        expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
-
-        expect(resultEntries[3][0]).toEqual('target-/root/ComplexArray1/*/F1');
-        expect(resultEntries[3][1]).toBeTruthy();
-        expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
+        expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/generalData/address/telephone/*');
       });
     });
   });
