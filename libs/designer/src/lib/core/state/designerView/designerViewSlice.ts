@@ -1,3 +1,4 @@
+import { resetWorkflowState } from '../global';
 import type { DesignerViewState } from './designerViewInterfaces';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -16,6 +17,9 @@ export const designerViewSlice = createSlice({
     toggleClampPan: (state: DesignerViewState) => {
       state.clampPan = !state.clampPan;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resetWorkflowState, () => initialState);
   },
 });
 

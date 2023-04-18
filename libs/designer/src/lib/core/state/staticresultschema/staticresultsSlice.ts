@@ -1,3 +1,4 @@
+import { resetWorkflowState } from '../global';
 import type { Schema } from '@microsoft/parsers-logic-apps';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -34,6 +35,9 @@ export const staticResultsSlice = createSlice({
     updateStaticResultProperties: (state, action: PayloadAction<{ name: string; properties: any }>) => {
       state.properties[action.payload.name] = action.payload.properties;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resetWorkflowState, () => initialState);
   },
 });
 

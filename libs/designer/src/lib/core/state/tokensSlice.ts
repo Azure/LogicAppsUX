@@ -1,3 +1,4 @@
+import { resetWorkflowState } from './global';
 import type { OutputToken as Token } from '@microsoft/designer-ui';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -98,6 +99,9 @@ export const tokensSlice = createSlice({
         state.outputTokens[nodeId].upstreamNodeIds = action.payload[nodeId];
       }
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resetWorkflowState, () => initialState);
   },
 });
 
