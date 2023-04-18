@@ -261,7 +261,6 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const layerProps = {
     hostId: 'msla-layer-host',
-    styles: { root: { zIndex: 999998 } },
   };
 
   const commonPanelProps: CommonPanelProps = {

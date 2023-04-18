@@ -209,14 +209,14 @@ export abstract class BaseConnectionService implements IConnectionService {
     try {
       const testLinks = connection.properties?.testLinks;
       if (!testLinks || testLinks.length === 0) return;
-      response = await this.requestTestOtherConnections(connection);
+      response = await this.requestTestConnection(connection);
       if (response) this.handleTestConnectionResponse(response);
     } catch (error: any) {
       return Promise.reject(error);
     }
   }
 
-  protected async requestTestOtherConnections(connection: Connection): Promise<HttpResponse<any> | undefined> {
+  protected async requestTestConnection(connection: Connection): Promise<HttpResponse<any> | undefined> {
     const testLinks = connection.properties?.testLinks;
     if (!testLinks || testLinks.length === 0) return undefined;
     const { httpClient } = this.options;
@@ -231,8 +231,8 @@ export abstract class BaseConnectionService implements IConnectionService {
       else if (equals(method, HTTP_METHODS.PUT)) response = await httpClient.put<any, any>(requestOptions);
       else if (equals(method, HTTP_METHODS.DELETE)) response = await httpClient.delete<any>(requestOptions);
       return response;
-    } catch (error: any) {
-      return Promise.reject(error);
+    } catch (eror: any) {
+      return Promise.reject(eror);
     }
   }
 
