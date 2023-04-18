@@ -48,6 +48,7 @@ export const getListDynamicValues = async (
 ): Promise<ListDynamicValue[]> => {
   const queryClient = getReactQueryClient();
   const service = ConnectorService();
+  const parameterKey = getParametersKey(parameters);
 
   return queryClient.fetchQuery(
     [
@@ -55,7 +56,7 @@ export const getListDynamicValues = async (
       (connectionId ?? '').toLowerCase(),
       connectorId.toLowerCase(),
       operationId.toLowerCase(),
-      parameterAlias ? parameterAlias : getParametersKey(parameters).toLowerCase(),
+      parameterKey ? parameterKey.toLowerCase() : parameterAlias,
     ],
     () =>
       service.getListDynamicValues(
