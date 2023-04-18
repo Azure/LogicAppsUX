@@ -10,7 +10,7 @@ import { openReadOnlyJson } from '@microsoft/vscode-azext-utils';
 
 export async function viewProperties(context: IActionContext, node?: SlotTreeItemBase | ProductionSlotTreeItem): Promise<void> {
   if (!node) {
-    node = await ext.tree.showTreeItemPicker<ProductionSlotTreeItem>(ProductionSlotTreeItem.contextValue, context);
+    node = await ext.rgApi.appResourceTree.showTreeItemPicker<ProductionSlotTreeItem>(ProductionSlotTreeItem.contextValue, context);
   }
 
   const data = node.site;

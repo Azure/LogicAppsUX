@@ -57,10 +57,6 @@ import { commands } from 'vscode';
 
 export function registerCommands(): void {
   registerCommand(extensionCommand.openDesigner, openDesigner);
-  registerCommand(
-    extensionCommand.loadMore,
-    async (context: IActionContext, node: AzExtTreeItem) => await ext.tree.loadMore(node, context)
-  );
   registerCommand(extensionCommand.selectSubscriptions, () => commands.executeCommand(extensionCommand.azureSelectSubscriptions));
   registerCommand(extensionCommand.openFile, (context: IActionContext, node: FileTreeItem) =>
     executeOnFunctions(openFile, context, context, node)
@@ -86,7 +82,6 @@ export function registerCommands(): void {
     async (context: IActionContext, node?: AzExtTreeItem) => await deleteNode(context, ProductionSlotTreeItem.contextValue, node)
   );
   registerCommand(extensionCommand.openOverview, openOverview);
-  registerCommand(extensionCommand.refresh, async (context: IActionContext, node?: AzExtTreeItem) => await ext.tree.refresh(context, node));
   registerCommand(extensionCommand.exportLogicApp, exportLogicApp);
   registerCommand(extensionCommand.reviewValidation, reviewValidation);
   registerCommand(extensionCommand.switchToDotnetProject, switchToDotnetProject);

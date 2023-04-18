@@ -2,9 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { logicAppFilter } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { ProductionSlotTreeItem } from '../../tree/slotsTree/ProductionSlotTreeItem';
+import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import type { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
 import { enableFileLogging } from './enableFileLogging';
 import type { ApplicationInsightsManagementClient, ApplicationInsightsComponent } from '@azure/arm-appinsights';
@@ -22,7 +23,9 @@ import type { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-util
  */
 export async function startStreamingLogs(context: IActionContext, treeItem?: SlotTreeItemBase): Promise<void> {
   if (!treeItem) {
-    treeItem = await ext.tree.showTreeItemPicker<SlotTreeItemBase>(ProductionSlotTreeItem.contextValue, context);
+    treeItem = await ext.rgApi.pickAppResource<SlotTreeItem>(context, {
+      filter: logicAppFilter,
+    });
   }
 
   const site: ParsedSite = treeItem.site;

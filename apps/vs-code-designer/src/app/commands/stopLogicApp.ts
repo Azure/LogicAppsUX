@@ -2,16 +2,19 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { logicAppFilter } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
-import { ProductionSlotTreeItem } from '../tree/slotsTree/ProductionSlotTreeItem';
+import type { SlotTreeItem } from '../tree/slotsTree/SlotTreeItem';
 import type { SlotTreeItemBase } from '../tree/slotsTree/SlotTreeItemBase';
 import type { SiteClient } from '@microsoft/vscode-azext-azureappservice';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
 export async function stopLogicApp(context: IActionContext, node?: SlotTreeItemBase): Promise<SlotTreeItemBase> {
   if (!node) {
-    node = await ext.tree.showTreeItemPicker<SlotTreeItemBase>(ProductionSlotTreeItem.contextValue, context);
+    node = await ext.rgApi.pickAppResource<SlotTreeItem>(context, {
+      filter: logicAppFilter,
+    });
   }
 
   const client: SiteClient = await node.site.createClient(context);

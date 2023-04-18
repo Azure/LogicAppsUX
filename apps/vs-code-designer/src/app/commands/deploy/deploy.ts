@@ -13,6 +13,7 @@ import {
   workflowAppAADTenantId,
   kubernetesKind,
   showDeployConfirmationSetting,
+  logicAppFilter,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -31,14 +32,12 @@ import {
   AdvancedIdentityTenantIdStep,
   AdvancedIdentityClientSecretStep,
 } from '../createLogicApp/createLogicAppSteps/AdvancedIdentityPromptSteps';
-import { getDeployNode as getInnerDeployNode } from './getDeployNode';
-import type { IDeployNode } from './getDeployNode';
 import { notifyDeployComplete } from './notifyDeployComplete';
 import { updateAppSettingsWithIdentityDetails } from './updateAppSettings';
 import { verifyAppSettings } from './verifyAppSettings';
 import type { SiteConfigResource, StringDictionary } from '@azure/arm-appservice';
 import { ResolutionService } from '@microsoft/parsers-logic-apps';
-import { deploy as innerDeploy, getDeployFsPath, runPreDeployTask } from '@microsoft/vscode-azext-azureappservice';
+import { deploy as innerDeploy, getDeployFsPath, runPreDeployTask, getDeployNode } from '@microsoft/vscode-azext-azureappservice';
 import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { ScmType } from '@microsoft/vscode-azext-azureappservice/out/src/ScmType';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -80,7 +79,12 @@ async function deploy(
 
   ext.deploymentFolderPath = originalDeployFsPath;
 
-  const { node, isNewFunctionApp }: IDeployNode = await getInnerDeployNode(context, target, functionAppId, expectedContextValue);
+  const node: SlotTreeItem = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () =>
+    ext.rgApi.pickAppResource(context, {
+      filter: logicAppFilter,
+      expectedChildContextValue: expectedContextValue,
+    })
+  );
 
   const nodeKind = node.site.kind && node.site.kind.toLowerCase();
   const isWorkflowApp = nodeKind?.includes(logicAppKind);
@@ -120,13 +124,13 @@ async function deploy(
 
   identityWizardContext?.useAdvancedIdentity ? await updateAppSettingsWithIdentityDetails(context, node, identityWizardContext) : undefined;
 
-  await verifyAppSettings(context, node, version, language, originalDeployFsPath, isNewFunctionApp);
+  await verifyAppSettings(context, node, version, language, originalDeployFsPath, !context.isNewApp);
 
   const client = await node.site.createClient(actionContext);
   const siteConfig: SiteConfigResource = await client.getSiteConfig();
   const isZipDeploy: boolean = siteConfig.scmType !== ScmType.LocalGit && siteConfig.scmType !== ScmType.GitHub;
 
-  if (getWorkspaceSetting<boolean>(showDeployConfirmationSetting, workspaceFolder.uri.fsPath) && !isNewFunctionApp && isZipDeploy) {
+  if (getWorkspaceSetting<boolean>(showDeployConfirmationSetting, workspaceFolder.uri.fsPath) && !context.isNewApp && isZipDeploy) {
     const warning: string = localize(
       'confirmDeploy',
       'Are you sure you want to deploy to "{0}"? This will overwrite any previous deployment and cannot be undone.',

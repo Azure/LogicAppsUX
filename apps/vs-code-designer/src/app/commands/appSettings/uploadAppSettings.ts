@@ -2,14 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localSettingsFileName } from '../../../constants';
+import { localSettingsFileName, logicAppFilter } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import { getLocalSettingsFile } from './getLocalSettingsFile';
 import type { StringDictionary } from '@azure/arm-appservice';
-import type { IAppSettingsClient } from '@microsoft/vscode-azext-azureappservice';
 import { AppSettingsTreeItem, confirmOverwriteSettings } from '@microsoft/vscode-azext-azureappservice';
+import type { IAppSettingsClient } from '@microsoft/vscode-azext-azureappservice';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension';
 import type { WorkspaceFolder } from 'vscode';
@@ -32,7 +32,10 @@ export async function uploadAppSettings(
   const localSettingsPath: string = await getLocalSettingsFile(context, message, workspacePath);
 
   if (!node) {
-    node = await ext.tree.showTreeItemPicker<AppSettingsTreeItem>(AppSettingsTreeItem.contextValue, context);
+    node = await ext.rgApi.pickAppResource<AppSettingsTreeItem>(context, {
+      filter: logicAppFilter,
+      expectedChildContextValue: new RegExp(AppSettingsTreeItem.contextValue),
+    });
   }
 
   const client: IAppSettingsClient = await node.clientProvider.createClient(context);

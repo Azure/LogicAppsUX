@@ -19,12 +19,12 @@ export async function createLogicApp(
   let node: AzExtParentTreeItem | undefined;
 
   if (isString(subscription)) {
-    node = await ext.tree.findTreeItem(`/subscriptions/${subscription}`, context);
+    node = await ext.rgApi.appResourceTree.findTreeItem(`/subscriptions/${subscription}`, context);
     if (!node) {
       throw new Error(localize('noMatchingSubscription', 'Failed to find a subscription matching id "{0}".', subscription));
     }
   } else if (!subscription) {
-    node = await ext.tree.showTreeItemPicker<AzExtParentTreeItem>(SubscriptionTreeItem.contextValue, context);
+    node = await ext.rgApi.appResourceTree.showTreeItemPicker<AzExtParentTreeItem>(SubscriptionTreeItem.contextValue, context);
   } else {
     node = subscription;
   }
