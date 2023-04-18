@@ -1,19 +1,12 @@
+import { DynamicallyAddedParameter } from '../dynamicallyaddedparameter';
+import { ValueSegment, ValueSegmentType } from '../editor';
+import { ChangeHandler } from '../editor/base';
 import { getMenuItemsForDynamicAddedParameters } from './helper';
 import { KeyCodes } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
-import { ValidationErrorCode, ValidationException } from '@microsoft/utils-logic-apps';
-import React from 'react';
+import { ValidationErrorCode, ValidationException, guid } from '@microsoft/utils-logic-apps';
+import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
-
-export const DynamicallyAddedParameterType = {
-  Text: 'Text',
-  File: 'File',
-  Email: 'Email',
-  Boolean: 'Boolean',
-  Number: 'Number',
-  Date: 'Date',
-} as const;
-type DynamicallyAddedParameterType = (typeof DynamicallyAddedParameterType)[keyof typeof DynamicallyAddedParameterType];
 
 export interface FloatingActionMenuItem {
   id: string;
@@ -23,10 +16,19 @@ export interface FloatingActionMenuItem {
 
 export interface FloatingActionMenuProps {
   supportedTypes: Array<string>;
+  onChange?: ChangeHandler;
+  initialValue?: ValueSegment[];
 }
 
 export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element => {
   const [expanded, { toggle: toggleExpanded }] = useBoolean(false);
+  const [value, setValue] = useState(props.initialValue ?? []);
+
+  // const dynamicParameters = value.map((value) => {
+  //   const schemaObject = JSON.parse(value.value);
+  //   const dynamicProperties = schemaObject.properties;
+  //   // return <DynamicallyAddedParameter key={item.id} labelIcon={item.icon} />;
+  // });
 
   if (!props.supportedTypes) {
     throw new ValidationException(ValidationErrorCode.INVALID_PARAMETERS, 'supportedTypes are necessary.');
@@ -132,9 +134,17 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
     }
   };
 
-  const handleMenuItemSelected = (_item: FloatingActionMenuItem) => {
+  const handleMenuItemSelected = (item: FloatingActionMenuItem) => {
     toggleExpanded();
     // TODO(WI#17890957): Add callback to render dynamically added parameter
+    setValue([
+      ...value,
+      {
+        id: guid(),
+        type: ValueSegmentType.LITERAL,
+        value: JSON.stringify(item),
+      },
+    ]);
   };
 
   const handleMenuItemSelectedOnKeyDown = (e: React.KeyboardEvent<HTMLElement>, item: FloatingActionMenuItem) => {
@@ -148,9 +158,12 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
   };
 
   return (
-    <div className="msla-floating-action-menu-container">
-      {!expanded ? renderMenuButton() : undefined}
-      {expanded ? renderMenuItems() : undefined}
-    </div>
+    <>
+      {/* {dynamicParameters} */}
+      <div className="msla-floating-action-menu-container">
+        {!expanded ? renderMenuButton() : undefined}
+        {expanded ? renderMenuItems() : undefined}
+      </div>
+    </>
   );
 };

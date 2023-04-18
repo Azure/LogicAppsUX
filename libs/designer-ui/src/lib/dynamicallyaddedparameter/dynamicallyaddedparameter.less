@@ -1,0 +1,102 @@
+.msla-dynamic-added-param-header {
+  display: flex;
+
+  .msla-dynamic-added-param-icon {
+      display: flex;
+      flex-grow: 0;
+      width: @dynamic-added-param-icon-width;
+      height: 29px;
+      margin-top: 3px;
+      margin-right: 5px;
+  }
+
+  .msla-dynamic-added-param-inputs-container {
+      display: flex;
+      flex-grow: 1;
+
+      .msla-input-parameter {
+          margin-left: 2px;
+          margin-right: 10px;
+          display: flex;
+
+          &.dynamic {
+              width: 100%;
+
+              .msla-input-parameter {
+                  width: 100%;
+              }
+          }
+
+          &.msla-dynamic-added-param-title {
+              width: 90px;
+          }
+      }
+  }
+
+  .msla-dynamic-add-param-menu-container {
+      display: flex;
+      flex-grow: 0;
+      flex-direction: column-reverse;
+
+      .msla-card-header-menu-button {
+          line-height: 5px;
+      }
+  }
+
+  .msla-dynamic-added-param-delete {
+      display: flex;
+      flex-grow: 0;
+      width: 36px;
+      height: 20px;
+      color: #6A6A6A;
+      vertical-align: top;
+      margin-top: 4px;
+  }
+
+  .msla-dynamic-added-param-label {
+      display: inline-block;
+      color: @dynamic-param-label-text-color;
+      font-size: @dynamic-param-label-text-size;
+      vertical-align: 4px;
+      width: calc(100% - 69px);
+
+      &.param-in-use {
+          width: calc(100% - 110px);
+      }
+  }
+
+  .msla-flyout {
+      display: inline-block;
+      width: 41px;
+
+      .msla-flyout-icon {
+          width: 19px;
+          height: 19px;
+          margin: 0px;
+      }
+  }
+}
+
+.msla-dynamic-added-param-bottom-divider {
+  border-bottom: solid 1px #D8D8D8;
+  margin-top: 20px;
+}
+
+.msla-dynamic-added-param-token-label {
+  display: inline-block;
+  margin: 4px 12px 8px 12px;
+  font-size: @dynamic-param-label-text-size;
+  color: @dynamic-param-label-text-color;
+}
+
+.msla-dynamic-added-param-info {
+  display: block;
+  font-size: @dynamic-param-label-text-size;
+  color: @dynamic-param-label-text-color;
+
+  &.error-msg {
+      margin-left: 45px;
+      margin-top: 6px;
+      color: @dynamic-param-error-color;
+  }
+}

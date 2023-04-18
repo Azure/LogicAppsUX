@@ -1,6 +1,6 @@
 import type { FloatingActionMenuItem } from '.';
-import { DynamicallyAddedParameterType } from '.';
 import { getIntl } from '@microsoft/intl-logic-apps';
+import { DynamicallyAddedParameterProps, DynamicallyAddedParameterType } from '../dynamicallyaddedparameter';
 
 export function getMenuItemsForDynamicAddedParameters(supportedTypes: any): FloatingActionMenuItem[] {
   const intl = getIntl();
