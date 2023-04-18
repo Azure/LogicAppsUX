@@ -23,6 +23,8 @@ import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '.
 import { getInputParametersFromManifest, getOutputParametersFromManifest, updateCallbackUrlInInputs } from './initialize';
 import { getOperationSettings } from './settings';
 import {
+  AppServiceService,
+  ConnectionService,
   LogEntryLevel,
   LoggerService,
   OperationManifestService,
@@ -124,10 +126,11 @@ const initializeConnectorsForReferences = async (references: ConnectionReference
 
 export const initializeOperationDetailsForManifest = async (
   nodeId: string,
-  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
+  _operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
   isTrigger: boolean,
   dispatch: Dispatch
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
+  const operation = { ..._operation };
   try {
     const staticResultService = StaticResultService();
     const operationInfo = await getOperationInfo(nodeId, operation, isTrigger);
@@ -369,12 +372,7 @@ const initializeVariables = (
   return declarations;
 };
 
-export const updateDynamicDataInNodes = async (
-  connectionsPromise: Promise<void>,
-  getState: () => RootState,
-  dispatch: Dispatch
-): Promise<void> => {
-  await connectionsPromise;
+export const updateDynamicDataInNodes = async (getState: () => RootState, dispatch: Dispatch): Promise<void> => {
   const rootState = getState();
   const {
     workflow: { nodesMetadata, operations },
@@ -407,4 +405,50 @@ export const updateDynamicDataInNodes = async (
       operation
     );
   }
+};
+
+export const initializeSwaggerDynamicData = async (workflow: DeserializedWorkflow): Promise<any> => {
+  await Promise.all(
+    Object.entries(workflow.actionData).map(async ([id, operation]) => {
+      const newOperation = await initializeOperationSwaggerDynamicData(operation);
+      if (newOperation) {
+        workflow.actionData[id] = {
+          ...operation,
+          ...newOperation,
+        };
+      }
+    })
+  );
+};
+
+const initializeOperationSwaggerDynamicData = async (operation: any): Promise<LogicAppsV2.OperationDefinition | undefined> => {
+  const { inputs, metadata } = operation;
+  if (inputs?.operationId) return;
+
+  const { apiDefinitionUrl, swaggerSource } = metadata ?? {};
+  if (!apiDefinitionUrl || (swaggerSource !== 'custom' && swaggerSource !== 'website')) return;
+
+  const { uri, method } = inputs ?? {};
+  if (!uri || !method) return;
+
+  let swaggerOperation;
+  if (swaggerSource === 'custom') {
+    const connectionService = ConnectionService();
+    swaggerOperation = await connectionService.getOperationFromPathAndMethod(apiDefinitionUrl, uri, method);
+  } else if (swaggerSource === 'website') {
+    const appServiceService = AppServiceService();
+    swaggerOperation = await appServiceService.getOperationFromPathAndMethod(apiDefinitionUrl, uri, method);
+  }
+  if (!swaggerOperation) return;
+  const { operationId } = swaggerOperation;
+
+  operation = {
+    ...operation,
+    inputs: {
+      ...operation.inputs,
+      operationId,
+    },
+  };
+
+  return operation;
 };

@@ -132,7 +132,7 @@ export const TokenPickerOptions = ({
         brandColor,
         description,
         title,
-        icon: icon,
+        icon,
         value,
         data: segment,
       });
