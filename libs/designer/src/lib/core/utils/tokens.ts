@@ -272,7 +272,8 @@ export const createValueSegmentFromToken = async (
           token.key,
           !!tokenValueSegment.token?.arrayDetails,
           tokenValueSegment.token?.arrayDetails?.loopSource,
-          tokenOwnerActionName
+          tokenOwnerActionName,
+          !!tokenValueSegment.token?.required
         );
       } else {
         ensureExpressionValue(tokenValueSegment);
