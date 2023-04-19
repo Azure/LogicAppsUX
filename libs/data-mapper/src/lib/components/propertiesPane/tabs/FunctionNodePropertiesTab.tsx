@@ -123,7 +123,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
         targetNode: functionData,
         targetNodeReactFlowKey,
         inputIndex,
-        value: newValue,
+        input: newValue,
       })
     );
   };

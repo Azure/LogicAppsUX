@@ -18,7 +18,7 @@ import {
   isCustomValue,
   nodeHasSourceNodeEventually,
   nodeHasSpecificInputEventually,
-  setConnectionInputValue,
+  applyConnectionValue,
 } from './Connection.Utils';
 import {
   findFunctionForFunctionName,
@@ -405,11 +405,11 @@ export const addParentConnectionForRepeatingElementsNested = (
       );
 
       if (!parentsAlreadyConnected) {
-        setConnectionInputValue(dataMapConnections, {
+        applyConnectionValue(dataMapConnections, {
           targetNode: firstRepeatingTargetNode,
           targetNodeReactFlowKey: prefixedTargetKey,
           findInputSlot: true,
-          value: {
+          input: {
             reactFlowKey: prefixedSourceKey,
             node: firstRepeatingSourceNode,
           },
