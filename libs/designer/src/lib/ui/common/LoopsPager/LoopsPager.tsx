@@ -6,7 +6,7 @@ import { getForeachItemsCount } from './helper';
 import { RunService } from '@microsoft/designer-client-services-logic-apps';
 import type { PageChangeEventArgs, PageChangeEventHandler } from '@microsoft/designer-ui';
 import { Pager } from '@microsoft/designer-ui';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 
@@ -44,12 +44,20 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
     setFailedRepetitions([]);
   };
 
-  const { isError } = useQuery<any>(['runRepetitions'], getFailedRunScopeRepetitions, {
-    refetchOnWindowFocus: false,
-    initialData: null,
-    onSuccess: onRunRepetitionsSuccess,
-    onError: onRunRepetitionsError,
-  });
+  const { isError, refetch } = useQuery<any>(
+    ['runRepetitions', { nodeId: scopeId, runId: runInstance?.id }],
+    getFailedRunScopeRepetitions,
+    {
+      refetchOnWindowFocus: false,
+      initialData: null,
+      onSuccess: onRunRepetitionsSuccess,
+      onError: onRunRepetitionsError,
+    }
+  );
+
+  useEffect(() => {
+    refetch();
+  }, [runInstance?.id, refetch, scopeId]);
 
   if (!forEachItemsCount || isError || collapsed) {
     return null;
