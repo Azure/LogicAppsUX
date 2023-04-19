@@ -4,17 +4,13 @@ In Visual Studio Code, you can use the Azure Logic Apps (Standard) extension to 
 
 > Sign up today for your free Azure account and receive 12 months of free popular services, $200 free credit and 25+ always free services 👉 [Start Free](https://azure.microsoft.com/free/open-source).
 
-## Development Notes
-
-If building the extension make sure you are using node version 14. If you are using [NVM](https://github.com/nvm-sh/nvm) or [NVM Windows](https://github.com/coreybutler/nvm-windows) you can just use 'nvm use' in this repo to switch to the supported version.
-
 ## Known issues
 
-You can see known issues [here](https://github.com/Azure/logicapps/blob/master/articles/logic-apps-public-preview-known-issues.md).
+You can see known issues [here](https://github.com/Azure/LogicAppsUX/issues).
 
 ## Providing feedback
 
-- To open product bugs, go to [GitHub issues for Azure Logic Apps](https://github.com/Azure/logicapps/issues).
+- To open product bugs, go to [GitHub issues for Azure Logic Apps](https://github.com/Azure/LogicAppsUX/issues).
 
 - To submit feedback and comments, use the [Azure Logic Apps feedback form](https://aka.ms/lafeedback).
 

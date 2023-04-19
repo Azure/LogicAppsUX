@@ -10,16 +10,16 @@ import type { CallbackHandler, ChangeHandler, GetTokenPickerHandler } from '../.
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { FloatingActionMenu } from '../../floatingactionmenu';
+import { FilePickerEditor } from '../../picker/filepickereditor';
 import { QueryBuilderEditor } from '../../querybuilder';
 import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
 import { ScheduleEditor } from '../../recurrence';
 import { SchemaEditor } from '../../schemaeditor';
 import { TableEditor } from '../../table';
 import type { TokenGroup } from '../../tokenpicker/models/token';
+import { useId } from '../../useId';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
-import { useId } from '@fluentui/react-hooks';
-import React from 'react';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -216,8 +216,30 @@ const TokenField = ({
       );
 
     case 'recurrence':
-      return <ScheduleEditor readOnly={readOnly} type={editorOptions?.recurrenceType} initialValue={value} onChange={onValueChange} />;
-
+      return (
+        <ScheduleEditor
+          readOnly={readOnly}
+          type={editorOptions?.recurrenceType}
+          showPreview={editorOptions?.showPreview}
+          initialValue={value}
+          onChange={onValueChange}
+        />
+      );
+    case 'filepicker':
+      return (
+        <FilePickerEditor
+          className="msla-setting-token-editor-container"
+          placeholder={placeholder}
+          BasePlugins={{ tokens: showTokens }}
+          readonly={readOnly}
+          initialValue={value}
+          titleSegments={dropdownOptions}
+          isLoading={isLoading}
+          editorBlur={onValueChange}
+          getTokenPicker={getTokenPicker}
+          onChange={hideValidationErrors}
+        />
+      );
     case 'floatingactionmenu': {
       return <FloatingActionMenu supportedTypes={editorOptions?.supportedTypes} />;
     }

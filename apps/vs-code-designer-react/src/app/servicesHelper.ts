@@ -56,6 +56,8 @@ export const getDesignerServices = (
 
   const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubServiceDetails;
 
+  const armUrl = 'https://management.azure.com';
+
   if (panelMetadata) {
     authToken = panelMetadata.accessToken ?? '';
     panelId = panelMetadata.panelId;
@@ -203,7 +205,7 @@ export const getDesignerServices = (
   });
 
   const gatewayService = new BaseGatewayService({
-    baseUrl,
+    baseUrl: armUrl,
     httpClient,
     apiVersions: {
       subscription: apiVersion,

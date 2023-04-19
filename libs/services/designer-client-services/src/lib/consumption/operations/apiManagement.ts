@@ -20,7 +20,7 @@ export const apiManagementGroup = {
     description: 'Azure API Management',
     iconUri,
     brandColor,
-    capabilities: ['actions'],
+    capabilities: ['actions', 'triggers'],
   },
 };
 
@@ -40,9 +40,9 @@ export const apiManagementActionOperation = {
 };
 
 export const apiManagementTriggerOperation = {
-  id: 'selectapimanagementtrigger',
-  name: 'selectapimanagementtrigger',
-  type: 'selectapimanagementtrigger',
+  id: 'apimanagementtrigger',
+  name: 'apimanagementtrigger',
+  type: 'apimanagement',
   properties: {
     api,
     summary: 'Choose an Azure API Management Trigger',

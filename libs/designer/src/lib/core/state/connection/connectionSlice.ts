@@ -1,5 +1,6 @@
 import Constants from '../../../common/constants';
 import type { ConnectionReferences } from '../../../common/models/workflow';
+import { resetWorkflowState } from '../global';
 import { equals, getUniqueName } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -69,6 +70,9 @@ export const connectionSlice = createSlice({
       }
       return undefined;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resetWorkflowState, () => initialConnectionsState);
   },
 });
 

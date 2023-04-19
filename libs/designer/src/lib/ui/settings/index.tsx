@@ -258,8 +258,8 @@ function GeneralSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: bool
     readOnly,
     nodeId,
     onConcurrencyToggle,
-    onInvokerConnectionToggle,
     onConcurrencyValueChange,
+    onInvokerConnectionToggle,
     onSplitOnToggle,
     onSplitOnSelectionChanged,
     onTimeoutValueChange,
@@ -276,7 +276,13 @@ function GeneralSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: bool
     }),
   };
 
-  if (splitOn?.isSupported || timeout?.isSupported || concurrency?.isSupported || conditionExpressions?.isSupported || invokerConnection?.isSupported) {
+  if (
+    splitOn?.isSupported ||
+    timeout?.isSupported ||
+    concurrency?.isSupported ||
+    conditionExpressions?.isSupported ||
+    invokerConnection?.isSupported
+  ) {
     return <General {...generalSectionProps} />;
   } else return null;
 }
