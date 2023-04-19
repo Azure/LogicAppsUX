@@ -24,7 +24,7 @@ import {
   getTargetSchemaNodeConnections,
   isConnectionUnit,
   nodeHasSpecificInputEventually,
-  setConnectionInputValue,
+  applyConnectionValue,
 } from '../../utils/Connection.Utils';
 import {
   addAncestorNodesToCanvas,
@@ -123,7 +123,7 @@ export interface SetConnectionInputAction {
   targetNode: SchemaNodeExtended | FunctionData;
   targetNodeReactFlowKey: string;
   inputIndex?: number;
-  value: InputConnection | null; // null is indicator to remove an unbounded input value
+  input: InputConnection | null; // null is indicator to remove an unbounded input value
   findInputSlot?: boolean;
 }
 
@@ -479,7 +479,7 @@ export const dataMapSlice = createSlice({
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
       };
 
-      setConnectionInputValue(newState.dataMapConnections, action.payload);
+      applyConnectionValue(newState.dataMapConnections, action.payload);
 
       doDataMapOperation(state, newState, 'Set connection input value');
     },
@@ -613,12 +613,12 @@ const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapOperati
 };
 
 const addConnection = (newConnections: ConnectionDictionary, nodes: ConnectionAction): void => {
-  setConnectionInputValue(newConnections, {
+  applyConnectionValue(newConnections, {
     targetNode: nodes.destination,
     targetNodeReactFlowKey: nodes.reactFlowDestination,
     findInputSlot: nodes.specificInput === undefined, // 0 should be counted as truthy
     inputIndex: nodes.specificInput,
-    value: {
+    input: {
       reactFlowKey: nodes.reactFlowSource,
       node: nodes.source,
     },
@@ -883,11 +883,11 @@ export const addParentConnectionForRepeatingElements = (
 
         if (!parentsAlreadyConnected) {
           if (!indexFnRfKey) {
-            setConnectionInputValue(dataMapConnections, {
+            applyConnectionValue(dataMapConnections, {
               targetNode: parentTargetNode,
               targetNodeReactFlowKey: parentPrefixedTargetKey,
               findInputSlot: true,
-              value: {
+              input: {
                 reactFlowKey: parentPrefixedSourceKey,
                 node: parentSourceNode,
               },
@@ -895,22 +895,22 @@ export const addParentConnectionForRepeatingElements = (
           } else {
             // If provided, we need to plug in an index() between the parent loop elements
             // Source schema node -> Index()
-            setConnectionInputValue(dataMapConnections, {
+            applyConnectionValue(dataMapConnections, {
               targetNode: indexPseudoFunction,
               targetNodeReactFlowKey: indexFnRfKey,
               findInputSlot: true,
-              value: {
+              input: {
                 reactFlowKey: parentPrefixedSourceKey,
                 node: parentSourceNode,
               },
             });
 
             // Index() -> target schema node
-            setConnectionInputValue(dataMapConnections, {
+            applyConnectionValue(dataMapConnections, {
               targetNode: parentTargetNode,
               targetNodeReactFlowKey: parentPrefixedTargetKey,
               findInputSlot: true,
-              value: {
+              input: {
                 reactFlowKey: indexFnRfKey,
                 node: indexPseudoFunction,
               },

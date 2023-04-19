@@ -253,7 +253,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
         targetNode: currentNode,
         targetNodeReactFlowKey,
         inputIndex,
-        value: newValue,
+        input: newValue,
       })
     );
   };

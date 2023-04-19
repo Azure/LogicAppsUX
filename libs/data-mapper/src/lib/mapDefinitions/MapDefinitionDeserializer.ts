@@ -4,7 +4,7 @@ import { addParentConnectionForRepeatingElements, deleteConnectionFromConnection
 import type { FunctionData, MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import { SchemaType, ifPseudoFunction, ifPseudoFunctionKey, indexPseudoFunction, indexPseudoFunctionKey } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
-import { isConnectionUnit, setConnectionInputValue } from '../utils/Connection.Utils';
+import { isConnectionUnit, applyConnectionValue } from '../utils/Connection.Utils';
 import {
   amendSourceKeyForDirectAccessIfNeeded,
   flattenMapDefinitionValues,
@@ -231,6 +231,19 @@ export class MapDefinitionDeserializer {
     let mockDirectAccessFnKey = '';
     [amendedSourceKey, mockDirectAccessFnKey] = amendSourceKeyForDirectAccessIfNeeded(amendedSourceKey);
 
+    if (isKeyAnIndexValue(amendedSourceKey)) {
+      const directAccessScopeNodeEntry = Object.entries(this._createdNodes).find(([_nodeKey, nodeValue]) => nodeValue === amendedTargetKey);
+
+      if (directAccessScopeNodeEntry) {
+        const directAccessScopeNodeKey = directAccessScopeNodeEntry[0];
+        const sourceLoopKey = directAccessScopeNodeKey.split(',')[1].trim();
+        const trimmedIndexVariable = amendedSourceKey.substring(1);
+        const combinedKey = `${trimmedIndexVariable}-${sourceLoopKey}`;
+        const indexKey = this._createdNodes[combinedKey];
+        amendedSourceKey = indexKey;
+      }
+    }
+
     const sourceNode = getSourceNode(amendedSourceKey, this._sourceSchema, sourceEndOfFunctionName, this._functions, this._createdNodes);
 
     let sourceKey: string;
@@ -300,14 +313,17 @@ export class MapDefinitionDeserializer {
         // Handle index variables
         if (idxOfIndexVariable > -1 && tgtLoopNodeKey) {
           const idxVariable = loopKey[idxOfIndexVariable + 1];
-          const idxVariableKey = `${idxVariable}-${tgtLoopNodeKey}`;
+          const idxTargetVariableKey = `${idxVariable}-${tgtLoopNodeKey}`;
+          const idxSourceVariableKey = `${idxVariable}-${srcLoopNodeKey}`;
 
           // Check if an index() node/id has already been created for this loop's index variable
-          if (this._createdNodes[idxVariableKey]) {
-            indexFnRfKey = this._createdNodes[idxVariableKey];
+          if (this._createdNodes[idxTargetVariableKey]) {
+            indexFnRfKey = this._createdNodes[idxTargetVariableKey];
           } else {
             indexFnRfKey = createReactFlowFunctionKey(indexPseudoFunction);
-            this._createdNodes[idxVariableKey] = indexFnRfKey;
+            // We apply the index function to both inputs and outputs so that we can go either direction in finding the source index key
+            this._createdNodes[idxTargetVariableKey] = indexFnRfKey;
+            this._createdNodes[idxSourceVariableKey] = indexFnRfKey;
           }
 
           // Replace all instances of index variable w/ its key,
@@ -337,11 +353,11 @@ export class MapDefinitionDeserializer {
 
         // This should handle cases where the index is being directly applied to the target property
         if (indexFnRfKey && destinationNode && isKeyAnIndexValue(sourceNodeString)) {
-          setConnectionInputValue(connections, {
+          applyConnectionValue(connections, {
             targetNode: destinationNode,
             targetNodeReactFlowKey: destinationKey,
             findInputSlot: true,
-            value: {
+            input: {
               reactFlowKey: indexFnRfKey,
               node: indexPseudoFunction,
             },
@@ -359,21 +375,21 @@ export class MapDefinitionDeserializer {
       (isLoopCase || !isKeyAnIndexValue(sourceNodeString) || (!isLoopCase && isKeyAnIndexValue(sourceNodeString)))
     ) {
       if (!sourceNode && amendedSourceKey.startsWith(indexPseudoFunctionKey)) {
-        setConnectionInputValue(connections, {
+        applyConnectionValue(connections, {
           targetNode: destinationNode,
           targetNodeReactFlowKey: destinationKey,
           findInputSlot: true,
-          value: {
+          input: {
             reactFlowKey: amendedSourceKey,
             node: indexPseudoFunction,
           },
         });
       } else {
-        setConnectionInputValue(connections, {
+        applyConnectionValue(connections, {
           targetNode: destinationNode,
           targetNodeReactFlowKey: destinationKey,
           findInputSlot: true,
-          value: sourceNode
+          input: sourceNode
             ? {
                 reactFlowKey: sourceKey,
                 node: sourceNode,

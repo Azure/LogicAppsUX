@@ -3,7 +3,7 @@ import { concatFunction } from '../../../__mocks__/FunctionMock';
 import type { Schema, SchemaExtended } from '../../../models';
 import { SchemaType } from '../../../models';
 import type { ConnectionDictionary } from '../../../models/Connection';
-import { flattenInputs, setConnectionInputValue } from '../../../utils/Connection.Utils';
+import { applyConnectionValue, flattenInputs } from '../../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../../../utils/Schema.Utils';
 import {
@@ -27,11 +27,11 @@ describe('DataMapSlice', () => {
     it('Add passthrough connection', () => {
       const connections: ConnectionDictionary = {};
 
-      setConnectionInputValue(connections, {
+      applyConnectionValue(connections, {
         targetNode: node,
         targetNodeReactFlowKey: destinationId,
         findInputSlot: true,
-        value: {
+        input: {
           reactFlowKey: sourceId,
           node: node,
         },
@@ -53,20 +53,20 @@ describe('DataMapSlice', () => {
     it('Add function connection', () => {
       const connections: ConnectionDictionary = {};
 
-      setConnectionInputValue(connections, {
+      applyConnectionValue(connections, {
         targetNode: node,
         targetNodeReactFlowKey: destinationId,
         findInputSlot: true,
-        value: {
+        input: {
           reactFlowKey: functionId,
           node: concatFunction,
         },
       });
-      setConnectionInputValue(connections, {
+      applyConnectionValue(connections, {
         targetNode: concatFunction,
         targetNodeReactFlowKey: functionId,
         findInputSlot: true,
-        value: {
+        input: {
           reactFlowKey: sourceId,
           node: node,
         },
@@ -93,29 +93,29 @@ describe('DataMapSlice', () => {
     it('Add same function connection twice', () => {
       const connections: ConnectionDictionary = {};
 
-      setConnectionInputValue(connections, {
+      applyConnectionValue(connections, {
         targetNode: node,
         targetNodeReactFlowKey: destinationId,
         findInputSlot: true,
-        value: {
+        input: {
           reactFlowKey: functionId,
           node: concatFunction,
         },
       });
-      setConnectionInputValue(connections, {
+      applyConnectionValue(connections, {
         targetNode: concatFunction,
         targetNodeReactFlowKey: functionId,
         findInputSlot: true,
-        value: {
+        input: {
           reactFlowKey: sourceId,
           node: node,
         },
       });
-      setConnectionInputValue(connections, {
+      applyConnectionValue(connections, {
         targetNode: node,
         targetNodeReactFlowKey: destinationId,
         findInputSlot: true,
-        value: {
+        input: {
           reactFlowKey: functionId,
           node: concatFunction,
         },
@@ -152,11 +152,11 @@ describe('DataMapSlice', () => {
     it('Delete node with a connection', () => {
       const connections: ConnectionDictionary = {};
 
-      setConnectionInputValue(connections, {
+      applyConnectionValue(connections, {
         targetNode: node,
         targetNodeReactFlowKey: destinationId,
         findInputSlot: true,
-        value: {
+        input: {
           reactFlowKey: sourceId,
           node: node,
         },
@@ -176,20 +176,20 @@ describe('DataMapSlice', () => {
     it('Delete function node', () => {
       const connections: ConnectionDictionary = {};
 
-      setConnectionInputValue(connections, {
+      applyConnectionValue(connections, {
         targetNode: node,
         targetNodeReactFlowKey: destinationId,
         findInputSlot: true,
-        value: {
+        input: {
           reactFlowKey: functionId,
           node: concatFunction,
         },
       });
-      setConnectionInputValue(connections, {
+      applyConnectionValue(connections, {
         targetNode: concatFunction,
         targetNodeReactFlowKey: functionId,
         findInputSlot: true,
-        value: {
+        input: {
           reactFlowKey: sourceId,
           node: node,
         },
@@ -217,16 +217,16 @@ describe('DataMapSlice', () => {
     it('Delete passthrough connection', () => {
       const connections: ConnectionDictionary = {};
 
-      setConnectionInputValue(connections, {
+      applyConnectionValue(connections, {
         targetNode: node,
         targetNodeReactFlowKey: destinationId,
         findInputSlot: true,
-        value: {
+        input: {
           reactFlowKey: sourceId,
           node: node,
         },
       });
-      deleteConnectionFromConnections(connections, sourceId, destinationId);
+      deleteConnectionFromConnections(connections, sourceId, destinationId, undefined);
 
       expect(Object.keys(connections).length).toEqual(2);
 
@@ -244,26 +244,26 @@ describe('DataMapSlice', () => {
     it('Delete function connection', () => {
       const connections: ConnectionDictionary = {};
 
-      setConnectionInputValue(connections, {
+      applyConnectionValue(connections, {
         targetNode: node,
         targetNodeReactFlowKey: destinationId,
         findInputSlot: true,
-        value: {
+        input: {
           reactFlowKey: functionId,
           node: concatFunction,
         },
       });
-      setConnectionInputValue(connections, {
+      applyConnectionValue(connections, {
         targetNode: concatFunction,
         targetNodeReactFlowKey: functionId,
         findInputSlot: true,
-        value: {
+        input: {
           reactFlowKey: sourceId,
           node: node,
         },
       });
 
-      deleteConnectionFromConnections(connections, functionId, destinationId);
+      deleteConnectionFromConnections(connections, functionId, destinationId, undefined);
 
       expect(Object.keys(connections).length).toEqual(3);
 
