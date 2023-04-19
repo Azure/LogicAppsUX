@@ -650,6 +650,16 @@
       "value": "Enter a valid array."
     }
   ],
+  "2r30S9": [
+    {
+      "type": 0,
+      "value": "Insert a new step after "
+    },
+    {
+      "type": 1,
+      "value": "parentName"
+    }
+  ],
   "2ri1Kf": [
     {
       "type": 0,
@@ -1446,24 +1456,6 @@
       "value": "(UTC+07:00) 科布多城"
     }
   ],
-  "90HY0L": [
-    {
-      "type": 0,
-      "value": "Insert a new step between "
-    },
-    {
-      "type": 1,
-      "value": "parent"
-    },
-    {
-      "type": 0,
-      "value": " and "
-    },
-    {
-      "type": 1,
-      "value": "child"
-    }
-  ],
   "90Q7Pw": [
     {
       "type": 0,
@@ -1905,6 +1897,24 @@
       "value": "(UTC+02:00) 赫爾辛基，凱耶夫，里加，蘇非亞，塔林，維爾紐斯"
     }
   ],
+  "CypYLs": [
+    {
+      "type": 0,
+      "value": "Insert a new step between "
+    },
+    {
+      "type": 1,
+      "value": "parentName"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "childName"
+    }
+  ],
   "Czt6YV": [
     {
       "type": 0,
@@ -2153,6 +2163,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) 東部時間 (美國及加拿大)"
+    }
+  ],
+  "Ex4U46": [
+    {
+      "type": 0,
+      "value": "Use Invoker's Connection"
     }
   ],
   "ExaACE": [
@@ -2774,6 +2790,12 @@
     {
       "type": 0,
       "value": "名稱:"
+    }
+  ],
+  "Jpox7O": [
+    {
+      "type": 0,
+      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
     }
   ],
   "JpthWY": [
@@ -7220,16 +7242,6 @@
     {
       "type": 0,
       "value": "Status Code"
-    }
-  ],
-  "uIQrat": [
-    {
-      "type": 0,
-      "value": "Insert a new step after "
-    },
-    {
-      "type": 1,
-      "value": "parent"
     }
   ],
   "uIurld": [
