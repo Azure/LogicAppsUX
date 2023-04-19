@@ -5,10 +5,9 @@
 import { getIconPath } from '../../utils/tree/assets';
 import { LogicAppResourceTree } from '../LogicAppResourceTree';
 import type { ConfigurationsTreeItem } from '../configurationsTree/ConfigurationsTreeItem';
-import type { AppSettingsTreeItem, DeploymentsTreeItem } from '@microsoft/vscode-azext-azureappservice';
-import type { IDeployContext, ParsedSite } from '@microsoft/vscode-azext-azureappservice';
+import type { AppSettingsTreeItem, DeploymentsTreeItem, IDeployContext, ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
-import type { AzExtTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
+import type { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ApplicationSettings, FuncHostRequest, FuncVersion, IParsedHostJson, IProjectTreeItem } from '@microsoft/vscode-extension';
 import { ProjectSource } from '@microsoft/vscode-extension';
 
@@ -20,15 +19,21 @@ export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IP
   public site: ParsedSite;
   public readonly appSettingsTreeItem: AppSettingsTreeItem;
 
-  public abstract readonly contextValue: string;
-  public abstract readonly label: string;
+  public readonly contextValue: string;
 
   public resourceTree: LogicAppResourceTree;
 
   public constructor(parent: AzExtParentTreeItem, resourceTree: LogicAppResourceTree) {
     super(parent);
     this.resourceTree = resourceTree;
+    // this is for the slotContextValue because it never gets resolved by the Resources extension
+    const slotContextValue = this.resourceTree.site.isSlot
+      ? LogicAppResourceTree.slotContextValue
+      : LogicAppResourceTree.productionContextValue;
+    const contextValues = [slotContextValue, 'slot'];
+    this.contextValue = Array.from(new Set(contextValues)).sort().join(';');
     this.site = this.resourceTree.site;
+    this.iconPath = getIconPath(slotContextValue);
   }
 
   public get id(): string {
@@ -39,11 +44,8 @@ export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IP
     return this.resourceTree.description;
   }
 
-  public get iconPath(): TreeItemIconPath {
-    const slotContextValue = this.resourceTree.site.isSlot
-      ? LogicAppResourceTree.slotContextValue
-      : LogicAppResourceTree.productionContextValue;
-    return getIconPath(slotContextValue);
+  public get label(): string {
+    return this.resourceTree.label;
   }
 
   public hasMoreChildrenImpl(): boolean {

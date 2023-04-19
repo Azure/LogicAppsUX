@@ -5,7 +5,7 @@
 import { extensionCommand } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt';
-import { SlotTreeItem } from '../tree/slotsTree/SlotTreeItem';
+import { LogicAppResourceTree } from '../tree/LogicAppResourceTree';
 import { downloadAppSettings } from './appSettings/downloadAppSettings';
 import { editAppSetting } from './appSettings/editAppSetting';
 import { renameAppSetting } from './appSettings/renameAppSetting';
@@ -86,9 +86,9 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.browseWebsite, browseWebsite);
   registerCommand(extensionCommand.viewProperties, viewProperties);
   registerCommand(extensionCommand.createSlot, createSlot);
-  registerCommand(
+  registerCommandWithTreeNodeUnwrapping(
     extensionCommand.deleteSlot,
-    async (context: IActionContext, node?: AzExtTreeItem) => await deleteNode(context, SlotTreeItem.contextValue, node)
+    async (context: IActionContext, node?: AzExtTreeItem) => await deleteNode(context, LogicAppResourceTree.pickSlotContextValue, node)
   );
   registerCommand(extensionCommand.swapSlot, swapSlot);
   registerCommand(extensionCommand.startStreamingLogs, startStreamingLogs);

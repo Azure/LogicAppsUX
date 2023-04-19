@@ -8,16 +8,10 @@ import { SlotTreeItemBase } from './SlotTreeItemBase';
 import type { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 
 export class SlotTreeItem extends SlotTreeItemBase {
-  public static contextValue = 'azLogicAppsSlot';
-  public readonly contextValue: string = SlotTreeItem.contextValue;
   public readonly parent: AzExtParentTreeItem;
 
   public constructor(parent: AzExtParentTreeItem, resourceTree: LogicAppResourceTree) {
     super(parent, resourceTree);
-  }
-
-  public get label(): string {
-    return this.site.slotName;
   }
 }
 

@@ -4,7 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 import { logicAppFilter } from '../../constants';
 import { ext } from '../../extensionVariables';
-import { SlotTreeItem } from '../tree/slotsTree/SlotTreeItem';
+import { LogicAppResourceTree } from '../tree/LogicAppResourceTree';
+import type { SlotTreeItem } from '../tree/slotsTree/SlotTreeItem';
 import * as appservice from '@microsoft/vscode-azext-azureappservice';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
@@ -14,7 +15,7 @@ export async function swapSlot(context: IActionContext, sourceSlotNode?: SlotTre
       { ...context, suppressCreatePick: true },
       {
         filter: logicAppFilter,
-        expectedChildContextValue: new RegExp(SlotTreeItem.contextValue),
+        expectedChildContextValue: new RegExp(LogicAppResourceTree.pickSlotContextValue),
       }
     );
   }
