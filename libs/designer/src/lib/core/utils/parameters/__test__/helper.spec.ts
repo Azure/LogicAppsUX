@@ -1843,12 +1843,12 @@ describe('core/utils/parameters/helper', () => {
               {
                 displayName: 'Yes',
                 key: 'Yes',
-                value: true,
+                value: 'true',
               },
               {
                 displayName: 'No',
                 key: 'No',
-                value: false,
+                value: 'false',
               },
             ],
           },
