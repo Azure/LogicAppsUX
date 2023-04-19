@@ -77,13 +77,18 @@ export const Combobox = ({
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
   const comboBoxRef = useRef<IComboBox>(null);
-  const optionKey = getSelectedKey(options, initialValue);
+  const optionKey = getSelectedKey(options, initialValue, isLoading);
   const [value, setValue] = useState<ValueSegment[]>(initialValue);
-  const [mode, setMode] = useState<Mode>(getMode(optionKey, initialValue));
+  const [mode, setMode] = useState<Mode>(getMode(optionKey, initialValue, isLoading));
   const [selectedKey, setSelectedKey] = useState<string>(optionKey);
   const [searchValue, setSearchValue] = useState<string>('');
-  //const [comboboxOptions, setComboBoxOptions] = useState<IComboBoxOption[]>(getOptions(options));
   const [canAutoFocus, setCanAutoFocus] = useState(false);
+
+  useUpdateEffect(() => {
+    const updatedOptionkey = getSelectedKey(options, initialValue, isLoading);
+    setSelectedKey(updatedOptionkey);
+    setMode(getMode(updatedOptionkey, initialValue, isLoading));
+  }, [options]);
 
   const comboboxOptions = useMemo(() => {
     const loadingOption: ComboboxItem = {
@@ -138,16 +143,6 @@ export const Combobox = ({
     return getOptions(isLoading ? [loadingOption] : errorDetails ? [errorOption] : options);
   }, [intl, errorDetails, searchValue, isLoading, options, useOption]);
 
-  useUpdateEffect(() => {
-    onChange?.({
-      value:
-        mode === Mode.Custom
-          ? value
-          : [{ id: guid(), type: ValueSegmentType.LITERAL, value: selectedKey ? getSelectedValue(options, selectedKey).toString() : '' }],
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, selectedKey]);
-
   const toggleExpand = useCallback(() => {
     comboBoxRef.current?.focus(true);
     comboBoxRef.current?.dismissMenu();
@@ -186,8 +181,18 @@ export const Combobox = ({
       setCanAutoFocus(true);
     } else {
       if (setSelectedKey && option) {
-        setSelectedKey(option.key.toString());
+        const currSelectedKey = option.key.toString();
+        setSelectedKey(currSelectedKey);
         setMode(Mode.Default);
+        onChange?.({
+          value: [
+            {
+              id: guid(),
+              type: ValueSegmentType.LITERAL,
+              value: currSelectedKey ? getSelectedValue(options, currSelectedKey).toString() : '',
+            },
+          ],
+        });
       }
     }
   };
@@ -276,16 +281,18 @@ const getOptions = (options: ComboboxItem[]): IComboBoxOption[] => {
   ];
 };
 
-const getMode = (selectedKey: string, initialValue: ValueSegment[]): Mode => {
+const getMode = (selectedKey: string, initialValue: ValueSegment[], isLoading?: boolean): Mode => {
+  if (isLoading) return Mode.Default;
   const hasValue = initialValue.length > 0 && initialValue[0].value;
   return hasValue ? (selectedKey ? Mode.Default : Mode.Custom) : Mode.Default;
 };
 
-const getSelectedKey = (options: ComboboxItem[], initialValue?: ValueSegment[]): string => {
+const getSelectedKey = (options: ComboboxItem[], initialValue?: ValueSegment[], isLoading?: boolean): string => {
+  if (isLoading) return '';
   if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
     return (
       options.find((option) => {
-        return option.key === initialValue[0].value;
+        return option.value === initialValue[0].value;
       })?.key ?? ''
     );
   }
