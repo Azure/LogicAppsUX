@@ -1,4 +1,19 @@
 # Logic Apps Designer
+## [2.6.0](https://github.com/Azure/LogicAppsUX/compare/v2.5.1...v2.6.0) (2023-04-19)
+
+
+### Features
+
+* **Data Mapper:** Enable everything test ([#2053](https://github.com/Azure/LogicAppsUX/issues/2053)) ([5e693f7](https://github.com/Azure/LogicAppsUX/commit/5e693f7f054021bf2873c098b37ae5d38461319d))
+* **Data Mapper:** Enable JSON . test ([#2060](https://github.com/Azure/LogicAppsUX/issues/2060)) ([c88feef](https://github.com/Azure/LogicAppsUX/commit/c88feefda97e4fec3abf9206f0636caba71ae091))
+
+
+### Bug Fixes
+
+* **designer:** add logic to fallback to connector data from Operation Manifest when Connection Service data is undefined ([#2070](https://github.com/Azure/LogicAppsUX/issues/2070)) ([6858493](https://github.com/Azure/LogicAppsUX/commit/6858493fb5e2f9a31df06242c2bb2c0b6feb8f7a))
+* **designer:** combobox showing UIUD when clicking on a loading dynamic data parameter ([#2067](https://github.com/Azure/LogicAppsUX/issues/2067)) ([9e75da7](https://github.com/Azure/LogicAppsUX/commit/9e75da76ca615e84c52e72dc663cbdc2e728ea38))
+* **designer:** Output token expressions generated incorrectly for swagger based operations ([#2069](https://github.com/Azure/LogicAppsUX/issues/2069)) ([0b33a53](https://github.com/Azure/LogicAppsUX/commit/0b33a53ee77e0565bb621d585772d6df43d64548))
+
 ### [2.5.1](https://github.com/Azure/LogicAppsUX/compare/v2.5.0...v2.5.1) (2023-04-19)
 
 
