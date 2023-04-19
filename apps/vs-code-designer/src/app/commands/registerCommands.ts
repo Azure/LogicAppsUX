@@ -5,7 +5,6 @@
 import { extensionCommand } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt';
-import { ProductionSlotTreeItem } from '../tree/slotsTree/ProductionSlotTreeItem';
 import { SlotTreeItem } from '../tree/slotsTree/SlotTreeItem';
 import { downloadAppSettings } from './appSettings/downloadAppSettings';
 import { editAppSetting } from './appSettings/editAppSetting';
@@ -19,6 +18,7 @@ import { createCodeless } from './createCodeless/createCodeless';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
 import { createSlot } from './createSlot';
+import { deleteLogicApp } from './deleteLogicApp/deleteLogicApp';
 import { deleteNode } from './deleteNode';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
 import { connectToGitHub } from './deployments/connectToGitHub';
@@ -51,7 +51,7 @@ import { useSQLStorage } from './workflows/useSQLStorage';
 import { viewContent } from './workflows/viewContent';
 import { AppSettingsTreeItem, AppSettingTreeItem, registerSiteCommand } from '@microsoft/vscode-azext-azureappservice';
 import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
-import { registerCommand } from '@microsoft/vscode-azext-utils';
+import { registerCommand, registerCommandWithTreeNodeUnwrapping } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import { commands } from 'vscode';
 
@@ -77,10 +77,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.restartLogicApp, restartLogicApp);
   registerCommand(extensionCommand.pickProcess, pickFuncProcess);
   registerCommand(extensionCommand.getDebugSymbolDll, getDebugSymbolDll);
-  registerCommand(
-    extensionCommand.deleteLogicApp,
-    async (context: IActionContext, node?: AzExtTreeItem) => await deleteNode(context, ProductionSlotTreeItem.contextValue, node)
-  );
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.deleteLogicApp, deleteLogicApp);
   registerCommand(extensionCommand.openOverview, openOverview);
   registerCommand(extensionCommand.exportLogicApp, exportLogicApp);
   registerCommand(extensionCommand.reviewValidation, reviewValidation);

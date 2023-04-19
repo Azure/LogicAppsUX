@@ -343,7 +343,7 @@
         },
         {
           "command": "azureLogicAppsStandard.deleteLogicApp",
-          "when": "view == azureWorkspace && viewItem == azLogicAppsProductionSlot",
+          "when": "view == azureResourceGroups && viewItem =~ /azLogicAppsProductionSlot/",
           "group": "2@5"
         },
         {

@@ -3,7 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../localize';
+import { showSiteCreated } from '../../commands/createLogicApp/showSiteCreated';
 import { getIconPath } from '../../utils/tree/assets';
+import { LogicAppResourceTree } from '../LogicAppResourceTree';
 import { SlotTreeItem } from './SlotTreeItem';
 import type { Site, WebSiteManagementClient } from '@azure/arm-appservice';
 import { createSlot, createWebSiteClient, ParsedSite } from '@microsoft/vscode-azext-azureappservice';
@@ -50,7 +52,7 @@ export class SlotsTreeItem extends AzExtParentTreeItem {
       webAppCollection,
       'azLogicAppInvalidSlot',
       async (site: Site) => {
-        return new SlotTreeItem(this, new ParsedSite(site, this.subscription));
+        return new SlotTreeItem(this, new LogicAppResourceTree(this.subscription, site));
       },
       (site: Site) => {
         return site.name;
@@ -66,6 +68,7 @@ export class SlotsTreeItem extends AzExtParentTreeItem {
       context
     );
     const parsedSite = new ParsedSite(newSite, this.subscription);
-    return new SlotTreeItem(this, parsedSite);
+    showSiteCreated(parsedSite, context);
+    return new SlotTreeItem(this, new LogicAppResourceTree(this.subscription, newSite));
   }
 }

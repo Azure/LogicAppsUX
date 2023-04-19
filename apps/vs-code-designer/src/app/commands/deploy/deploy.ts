@@ -17,8 +17,8 @@ import {
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { ProductionSlotTreeItem } from '../../tree/slotsTree/ProductionSlotTreeItem';
-import { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
+import { LogicAppResourceTree } from '../../tree/LogicAppResourceTree';
+import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import type { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
 import { createAclInConnectionIfNeeded, getConnectionsJson } from '../../utils/codeless/connection';
 import { getParametersJson } from '../../utils/codeless/parameter';
@@ -52,7 +52,7 @@ export async function deployProductionSlot(
   target?: Uri | string | SlotTreeItemBase,
   functionAppId?: string | Record<string, any>
 ): Promise<void> {
-  await deploy(context, target, functionAppId, ProductionSlotTreeItem.contextValue);
+  await deploy(context, target, functionAppId);
 }
 
 export async function deploySlot(
@@ -60,14 +60,14 @@ export async function deploySlot(
   target?: Uri | string | SlotTreeItemBase,
   functionAppId?: string | Record<string, any>
 ): Promise<void> {
-  await deploy(context, target, functionAppId, SlotTreeItem.contextValue);
+  await deploy(context, target, functionAppId, new RegExp(LogicAppResourceTree.pickSlotContextValue));
 }
 
 async function deploy(
   actionContext: IActionContext,
   target: Uri | string | SlotTreeItemBase | undefined,
   functionAppId: string | Record<string, any> | undefined,
-  expectedContextValue: string
+  expectedContextValue?: string | RegExp
 ): Promise<void> {
   addLocalFuncTelemetry(actionContext);
 

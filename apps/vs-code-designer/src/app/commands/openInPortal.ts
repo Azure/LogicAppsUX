@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import { logicAppFilter } from '../../constants';
 import { ext } from '../../extensionVariables';
-import { ProductionSlotTreeItem } from '../tree/slotsTree/ProductionSlotTreeItem';
 import { openInPortal as uiOpenInPortal } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
 
@@ -12,7 +11,6 @@ export async function openInPortal(context: IActionContext, node?: AzExtTreeItem
   if (!node) {
     node = await ext.rgApi.pickAppResource<AzExtTreeItem>(context, {
       filter: logicAppFilter,
-      expectedChildContextValue: ProductionSlotTreeItem.contextValue,
     });
   }
 

@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import { logicAppFilter } from '../../../constants';
 import { ext } from '../../../extensionVariables';
-import { ProductionSlotTreeItem } from '../../tree/slotsTree/ProductionSlotTreeItem';
 import type { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
 import { getRemoteDebugLanguage } from './getRemoteDebugLanguage';
 import type { SiteConfig } from '@azure/arm-appservice';
@@ -16,7 +15,6 @@ export async function startRemoteDebug(context: IActionContext, node?: SlotTreeI
   if (!node) {
     node = await ext.rgApi.pickAppResource<SlotTreeItemBase>(context, {
       filter: logicAppFilter,
-      expectedChildContextValue: new RegExp(ProductionSlotTreeItem.contextValue),
     });
   }
 

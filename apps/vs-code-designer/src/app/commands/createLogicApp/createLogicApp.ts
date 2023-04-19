@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import type { ProductionSlotTreeItem } from '../../tree/slotsTree/ProductionSlotTreeItem';
+import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { SubscriptionTreeItem } from '../../tree/subscriptionTree/SubscriptionTreeItem';
 import { notifyCreateLogicAppComplete } from './notifyCreateLogicAppComplete';
 import { isString } from '@microsoft/utils-logic-apps';
@@ -30,10 +30,14 @@ export async function createLogicApp(
   }
 
   context.newResourceGroupName = newResourceGroupName;
+
   try {
-    const funcAppNode: ProductionSlotTreeItem = await node.createChild(context);
-    await notifyCreateLogicAppComplete(funcAppNode);
-    return funcAppNode.fullId;
+    const logicAppNode: SlotTreeItem = await SubscriptionTreeItem.createChild(
+      context as ICreateLogicAppContext,
+      node as SubscriptionTreeItem
+    );
+    await notifyCreateLogicAppComplete(logicAppNode);
+    return logicAppNode.fullId;
   } catch (error) {
     throw new Error(`Error in creating logic app. ${error}`);
   }
