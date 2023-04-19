@@ -570,8 +570,6 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
       });
 
-      // TODO: 16770037 - Once the BE fixes how loops are parsed in getSchemaTree we should restore this to match
-      // the transcript yml file
       it('creates a looping conditional connection', () => {
         simpleMap['ns0:Root'] = {
           ConditionalLooping: {
@@ -1011,7 +1009,51 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         ).toBe('source-/ns0:Root/NameValueTransforms/PurchaseOrderStatus/ns0:LineItem');
       });
 
-      it.skip('Everything test', () => {
+      it('If-Else test', () => {
+        simpleMap['ns0:Root'] = {
+          DirectTranslation: {
+            Employee: {
+              Name: 'if-then-else(is-greater-than(/ns0:Root/DirectTranslation/EmployeeID, 10), /ns0:Root/DirectTranslation/EmployeeName, "Custom")',
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries.length).toEqual(5);
+
+        expect(resultEntries[0][0]).toContain('IfElse');
+        expect(resultEntries[0][1]).toBeTruthy();
+        expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
+        expect((resultEntries[0][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual(
+          'source-/ns0:Root/DirectTranslation/EmployeeName'
+        );
+        expect(resultEntries[0][1].inputs[2][0]).toEqual('"Custom"');
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+
+        expect(resultEntries[1][0]).toContain('IsGreater');
+        expect(resultEntries[1][1]).toBeTruthy();
+        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeID');
+        expect(resultEntries[1][1].inputs[1][0]).toEqual('10');
+        expect(resultEntries[1][1].outputs[0].reactFlowKey).toContain('IfElse');
+
+        expect(resultEntries[2][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeID');
+        expect(resultEntries[2][1]).toBeTruthy();
+        expect(resultEntries[2][1].outputs[0].reactFlowKey).toContain('IsGreater');
+
+        expect(resultEntries[3][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+        expect(resultEntries[3][1]).toBeTruthy();
+        expect(resultEntries[3][1].outputs[0].reactFlowKey).toContain('IfElse');
+
+        expect(resultEntries[4][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+        expect(resultEntries[4][1]).toBeTruthy();
+        expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IfElse');
+      });
+
+      it('Everything test', () => {
         const extendedSource = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
         const extendedTarget = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
         delete simpleMap['ns0:Root'];
@@ -1061,7 +1103,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[2][0]).toEqual(ifId);
         expect(resultEntries[2][1]).toBeTruthy();
         expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(isGreaterId);
-        expect((resultEntries[2][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual(ifId);
+        expect((resultEntries[2][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual(directAccessId);
         expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest/Direct');
 
         expect(resultEntries[3][0]).toEqual(indexId);
@@ -1069,12 +1111,14 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
           'source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest'
         );
-        expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest');
-        expect(resultEntries[3][1].outputs[1].reactFlowKey).toEqual(ifId);
+        expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual(isGreaterId);
+        expect(resultEntries[3][1].outputs[1].reactFlowKey).toEqual(directAccessId);
+        expect(resultEntries[3][1].outputs[2].reactFlowKey).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest');
 
         expect(resultEntries[4][0]).toEqual('source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest');
         expect(resultEntries[4][1]).toBeTruthy();
-        expect(resultEntries[4][1].outputs[0].reactFlowKey).toEqual(indexId);
+        expect(resultEntries[4][1].outputs[0].reactFlowKey).toEqual(directAccessId);
+        expect(resultEntries[4][1].outputs[1].reactFlowKey).toEqual(indexId);
 
         expect(resultEntries[5][0]).toEqual('source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest/SourceDirect');
         expect(resultEntries[5][1]).toBeTruthy();
@@ -1086,51 +1130,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[7][0]).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest/Direct');
         expect(resultEntries[7][1]).toBeTruthy();
-        expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(directAccessId);
-      });
-
-      it('If-Else test', () => {
-        simpleMap['ns0:Root'] = {
-          DirectTranslation: {
-            Employee: {
-              Name: 'if-then-else(is-greater-than(/ns0:Root/DirectTranslation/EmployeeID, 10), /ns0:Root/DirectTranslation/EmployeeName, "Custom")',
-            },
-          },
-        };
-
-        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
-        const result = mapDefinitionDeserializer.convertFromMapDefinition();
-        const resultEntries = Object.entries(result);
-        resultEntries.sort();
-
-        expect(resultEntries.length).toEqual(5);
-
-        expect(resultEntries[0][0]).toContain('IfElse');
-        expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
-        expect((resultEntries[0][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual(
-          'source-/ns0:Root/DirectTranslation/EmployeeName'
-        );
-        expect(resultEntries[0][1].inputs[2][0]).toEqual('"Custom"');
-        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
-
-        expect(resultEntries[1][0]).toContain('IsGreater');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeID');
-        expect(resultEntries[1][1].inputs[1][0]).toEqual('10');
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toContain('IfElse');
-
-        expect(resultEntries[2][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeID');
-        expect(resultEntries[2][1]).toBeTruthy();
-        expect(resultEntries[2][1].outputs[0].reactFlowKey).toContain('IsGreater');
-
-        expect(resultEntries[3][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
-        expect(resultEntries[3][1]).toBeTruthy();
-        expect(resultEntries[3][1].outputs[0].reactFlowKey).toContain('IfElse');
-
-        expect(resultEntries[4][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
-        expect(resultEntries[4][1]).toBeTruthy();
-        expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IfElse');
+        expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(ifId);
       });
     });
   });
