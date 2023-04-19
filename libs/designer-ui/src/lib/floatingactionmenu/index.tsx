@@ -1,13 +1,12 @@
 import { DynamicallyAddedParameter } from '../dynamicallyaddedparameter';
 import { deserialize, serialize } from '../dynamicallyaddedparameter/helper';
 import type { ValueSegment } from '../editor';
-import { ValueSegmentType } from '../editor';
 import type { ChangeHandler } from '../editor/base';
 import { getMenuItemsForDynamicAddedParameters } from './helper';
 import { KeyCodes } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
-import { ValidationErrorCode, ValidationException, guid, safeSetObjectPropertyValue } from '@microsoft/utils-logic-apps';
-import React, { useState } from 'react';
+import { ValidationErrorCode, ValidationException, safeSetObjectPropertyValue } from '@microsoft/utils-logic-apps';
+import React from 'react';
 import { useIntl } from 'react-intl';
 
 export interface FloatingActionMenuItem {
@@ -31,8 +30,8 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
   const menuItems = getMenuItemsForDynamicAddedParameters(props.supportedTypes);
 
   const onDynamicallyAddedParameterChange = (key: string, type: string, newValue?: string) => {
-    const propToUpdate = dynamicParameterProps.find((prop) => prop.key === key);
-    safeSetObjectPropertyValue(propToUpdate, [type], newValue);
+    const indexOfPropToUpdate = dynamicParameterProps.findIndex((prop) => prop.schemaKey === key);
+    safeSetObjectPropertyValue(dynamicParameterProps[indexOfPropToUpdate], ['properties', type], newValue);
     const value = serialize(dynamicParameterProps);
     props.onChange({ value });
   };
@@ -155,7 +154,7 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
   return (
     <>
       {dynamicParameterProps.map((props) => (
-        <DynamicallyAddedParameter {...props} key={props.key} />
+        <DynamicallyAddedParameter {...props} key={props.schemaKey} />
       ))}
       <div className="msla-floating-action-menu-container">
         {!expanded ? renderMenuButton() : undefined}

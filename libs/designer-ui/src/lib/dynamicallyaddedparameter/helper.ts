@@ -53,7 +53,7 @@ export function deserialize(value: ValueSegment[], onChange: TextFieldOnChangeHa
       const required = rootObject.schema.required.includes(key);
       retval.push({
         icon,
-        key,
+        schemaKey: key,
         properties,
         required,
         onChange,
@@ -67,15 +67,22 @@ export function deserialize(value: ValueSegment[], onChange: TextFieldOnChangeHa
 export function serialize(props: DynamicallyAddedParameterProps[]): ValueSegment[] {
   const required: string[] = [];
   props.forEach((prop) => {
-    if (prop.required) required.push(prop.key);
+    if (prop.required) required.push(prop.schemaKey);
   });
+
+  const properties = props
+    .map((prop) => {
+      return { [prop.schemaKey]: prop.properties };
+    })
+    .reduce((result, nextItem) => {
+      const [key, value] = Object.entries(nextItem)[0];
+      return { ...result, [key]: value };
+    }, {});
 
   const rootObject = {
     schema: {
       type: 'object',
-      properties: props.map((prop) => {
-        return { [prop.key]: prop.properties };
-      }),
+      properties: properties,
       required,
     },
   };
