@@ -1,10 +1,12 @@
 import { DynamicallyAddedParameter } from '../dynamicallyaddedparameter';
-import { ValueSegment, ValueSegmentType } from '../editor';
-import { ChangeHandler } from '../editor/base';
+import { deserialize, serialize } from '../dynamicallyaddedparameter/helper';
+import type { ValueSegment } from '../editor';
+import { ValueSegmentType } from '../editor';
+import type { ChangeHandler } from '../editor/base';
 import { getMenuItemsForDynamicAddedParameters } from './helper';
 import { KeyCodes } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
-import { ValidationErrorCode, ValidationException, guid } from '@microsoft/utils-logic-apps';
+import { ValidationErrorCode, ValidationException, guid, safeSetObjectPropertyValue } from '@microsoft/utils-logic-apps';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -16,24 +18,25 @@ export interface FloatingActionMenuItem {
 
 export interface FloatingActionMenuProps {
   supportedTypes: Array<string>;
-  onChange?: ChangeHandler;
-  initialValue?: ValueSegment[];
+  onChange: ChangeHandler;
+  initialValue: ValueSegment[];
 }
 
 export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element => {
   const [expanded, { toggle: toggleExpanded }] = useBoolean(false);
-  const [value, setValue] = useState(props.initialValue ?? []);
-
-  // const dynamicParameters = value.map((value) => {
-  //   const schemaObject = JSON.parse(value.value);
-  //   const dynamicProperties = schemaObject.properties;
-  //   // return <DynamicallyAddedParameter key={item.id} labelIcon={item.icon} />;
-  // });
 
   if (!props.supportedTypes) {
     throw new ValidationException(ValidationErrorCode.INVALID_PARAMETERS, 'supportedTypes are necessary.');
   }
   const menuItems = getMenuItemsForDynamicAddedParameters(props.supportedTypes);
+
+  const onDynamicallyAddedParameterChange = (key: string, type: string, newValue?: string) => {
+    const propToUpdate = dynamicParameterProps.find((prop) => prop.key === key);
+    safeSetObjectPropertyValue(propToUpdate, [type], newValue);
+    const value = serialize(dynamicParameterProps);
+    props.onChange({ value });
+  };
+  const dynamicParameterProps = deserialize(props.initialValue, onDynamicallyAddedParameterChange);
 
   const intl = useIntl();
   const closeErrorButtonAriaLabel = intl.formatMessage({
@@ -134,17 +137,9 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
     }
   };
 
-  const handleMenuItemSelected = (item: FloatingActionMenuItem) => {
+  const handleMenuItemSelected = (_item: FloatingActionMenuItem) => {
     toggleExpanded();
     // TODO(WI#17890957): Add callback to render dynamically added parameter
-    setValue([
-      ...value,
-      {
-        id: guid(),
-        type: ValueSegmentType.LITERAL,
-        value: JSON.stringify(item),
-      },
-    ]);
   };
 
   const handleMenuItemSelectedOnKeyDown = (e: React.KeyboardEvent<HTMLElement>, item: FloatingActionMenuItem) => {
@@ -159,7 +154,9 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
 
   return (
     <>
-      {/* {dynamicParameters} */}
+      {dynamicParameterProps.map((props) => (
+        <DynamicallyAddedParameter {...props} key={props.key} />
+      ))}
       <div className="msla-floating-action-menu-container">
         {!expanded ? renderMenuButton() : undefined}
         {expanded ? renderMenuItems() : undefined}
