@@ -231,8 +231,8 @@ export abstract class BaseConnectionService implements IConnectionService {
       else if (equals(method, HTTP_METHODS.PUT)) response = await httpClient.put<any, any>(requestOptions);
       else if (equals(method, HTTP_METHODS.DELETE)) response = await httpClient.delete<any>(requestOptions);
       return response;
-    } catch (eror: any) {
-      return Promise.reject(eror);
+    } catch (error: any) {
+      return Promise.reject(error);
     }
   }
 
