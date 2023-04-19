@@ -10,6 +10,7 @@ export interface ConnectionReference {
   connectionName?: string;
   connectionProperties?: Record<string, any>;
   authentication?: { type: string; identity?: string };
+  impersonation?: { source: string };
 }
 
 type ReferenceKey = string;

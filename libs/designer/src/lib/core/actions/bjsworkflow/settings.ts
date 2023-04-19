@@ -1,5 +1,9 @@
 import Constants from '../../../common/constants';
+import type { ConnectionsStoreState } from '../../state/connection/connectionSlice';
+import { addInvokerSupport } from '../../state/connection/connectionSlice';
 import type { NodeOperation, NodeOutputs } from '../../state/operation/operationMetadataSlice';
+import type { RootState } from '../../store';
+import { getConnectionReference } from '../../utils/connectors/connections';
 import { getSplitOnOptions } from '../../utils/outputs';
 import { getTokenExpressionValue } from '../../utils/parameters/helper';
 import { TokenType } from '@microsoft/designer-ui';
@@ -22,6 +26,7 @@ import {
   ValidationErrorCode,
   ValidationException,
 } from '@microsoft/utils-logic-apps';
+import type { Dispatch } from '@reduxjs/toolkit';
 
 type OperationManifestSettingType = UploadChunkMetadata | DownloadChunkMetadata | SecureDataOptions | OperationOptions[] | void;
 
@@ -96,7 +101,7 @@ export interface Settings {
   uploadChunk?: SettingData<UploadChunk>;
   downloadChunkSize?: SettingData<number>;
   runAfter?: SettingData<GraphEdge[]>;
-  invokerConnection?: SettingData<SimpleSetting<boolean>>;
+  invokerConnection?: SettingData<SimpleSetting<ConnectionsStoreState>>;
 }
 
 /**
@@ -116,9 +121,12 @@ export const getOperationSettings = (
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
   operation?: LogicAppsV2.OperationDefinition,
-  rootNodeId?: string
+  rootNodeId?: string,
+  getState?: () => RootState,
+  dispatch?: Dispatch
 ): Settings => {
   const { operationId, type: nodeType } = operationInfo;
+  const state = getState?.();
   return {
     asynchronous: { isSupported: isAsynchronousSupported(isTrigger, nodeType, manifest), value: getAsynchronous(operation) },
     correlation: { isSupported: isCorrelationSupported(isTrigger, manifest), value: getCorrelationSettings(operation) },
@@ -190,7 +198,7 @@ export const getOperationSettings = (
     },
     invokerConnection: {
       isSupported: isInvokerConnectionSupported(isTrigger, nodeType, rootNodeId),
-      // value: TODO in next PR
+      value: invokerConnection(state, dispatch, rootNodeId!),
     },
   };
 };
@@ -862,11 +870,26 @@ const isSettingSupportedFromOperationManifest = <T>(
 
 const isInvokerConnectionSupported = (isTrigger: boolean, nodeType: string, rootNodeId: string | undefined): boolean => {
   if (!isTrigger && rootNodeId === Constants.INVOKER_CONNECTION.DATAVERSE_CUD_TRIGGER) {
-    const supportedTypes = [
-      Constants.NODE.TYPE.OPEN_API_CONNECTION,
-    ];
+    const supportedTypes = [Constants.NODE.TYPE.OPEN_API_CONNECTION];
     return supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
   } else {
     return false;
   }
+};
+
+const invokerConnection = (
+  state: RootState | undefined,
+  dispatch: Dispatch | undefined,
+  nodeId: string
+): SimpleSetting<ConnectionsStoreState> | undefined => {
+  if (state?.connections.connectionReferences !== undefined) {
+    const connectionReference = getConnectionReference(state.connections, nodeId);
+    dispatch?.(addInvokerSupport({ connectionReference }));
+  }
+  return state?.connections
+    ? {
+        enabled: true,
+        value: state?.connections,
+      }
+    : { enabled: false };
 };

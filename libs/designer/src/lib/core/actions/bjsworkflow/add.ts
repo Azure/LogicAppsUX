@@ -2,7 +2,7 @@ import Constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
-import { initEmptyConnectionMap } from '../../state/connection/connectionSlice';
+import { addInvokerSupport, initEmptyConnectionMap } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { updateNodeSettings, initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
@@ -14,6 +14,7 @@ import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
+import { getConnectionReference } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
 import { getParameterFromName, updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { createLiteralValueSegment } from '../../utils/parameters/segment';
@@ -201,8 +202,23 @@ const initializeOperationDetails = async (
   // Re-update settings after we have valid operation data
   const rootNodeId = getRootNodeDetails(state.workflow, connectorId);
   const operation = getState().workflow.operations[nodeId];
-  const settings = getOperationSettings(isTrigger, operationInfo, initData.nodeOutputs, manifest, swagger, operation, rootNodeId);
+  const settings = getOperationSettings(
+    isTrigger,
+    operationInfo,
+    initData.nodeOutputs,
+    manifest,
+    swagger,
+    operation,
+    rootNodeId,
+    getState,
+    dispatch
+  );
   dispatch(updateNodeSettings({ id: nodeId, settings }));
+
+  if (state.connections.connectionReferences !== undefined) {
+    const connectionReference = getConnectionReference(state.connections, nodeId);
+    dispatch(addInvokerSupport({ connectionReference }));
+  }
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);
   dispatch(showDefaultTabs({ isScopeNode: operationInfo?.type.toLowerCase() === Constants.NODE.TYPE.SCOPE, hasSchema: !!schema }));
