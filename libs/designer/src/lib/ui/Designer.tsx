@@ -55,7 +55,11 @@ const edgeTypes = {
   ONLY_EDGE: BezierEdge, // Setting it as default React Flow Edge, can be changed as needed
   HIDDEN_EDGE: HiddenEdge,
 };
-export const CanvasFinder = () => {
+export interface CanvasFinderProps {
+  panelLocation?: PanelLocation;
+}
+export const CanvasFinder = (props: CanvasFinderProps) => {
+  const { panelLocation } = props;
   const focusNode = useSelector((state: RootState) => state.workflow.focusedCanvasNodeId);
   const isEmpty = useIsGraphEmpty();
   const { setCenter, getZoom } = useReactFlow();
@@ -84,7 +88,11 @@ export const CanvasFinder = () => {
     const yRawPos = nodeData?.positionAbsolute?.y ?? 0;
 
     // If the panel is open, reduce X space
-    if (!isPanelCollapsed) xRawPos += 630 / 2;
+    if (!isPanelCollapsed) {
+      // Move center to the right if Panel is located to the left; otherwise move center to the left.
+      const directionMultiplier = panelLocation && panelLocation === PanelLocation.Left ? -1 : 1;
+      xRawPos += (directionMultiplier * 630) / 2;
+    }
 
     const xTarget = xRawPos + (nodeData?.width ?? DEFAULT_NODE_SIZE.width) / 2; // Center X on node midpoint
     const yTarget = yRawPos + (nodeData?.height ?? DEFAULT_NODE_SIZE.height); // Center Y on bottom edge
@@ -100,7 +108,7 @@ export const CanvasFinder = () => {
       });
     }
     dispatch(clearFocusNode());
-  }, [dispatch, firstLoad, focusNode, getZoom, nodeData, setCenter, height, isPanelCollapsed]);
+  }, [dispatch, firstLoad, focusNode, getZoom, nodeData, setCenter, height, isPanelCollapsed, panelLocation]);
 
   useEffect(() => {
     handleTransform();
@@ -215,7 +223,7 @@ export const Designer = (props: DesignerProps) => {
             <Controls />
             <Minimap />
           </div>
-          <CanvasFinder />
+          <CanvasFinder panelLocation={panelLocation} />
         </ReactFlowProvider>
         <div
           id={'msla-layer-host'}

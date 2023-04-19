@@ -2,6 +2,7 @@ import Constants from '../../../common/constants';
 import type { WorkflowParameter } from '../../../common/models/workflow';
 import { convertWorkflowParameterTypeToSwaggerType } from '../../utils/tokens';
 import { validateType } from '../../utils/validation';
+import { resetWorkflowState } from '../global';
 import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
@@ -194,6 +195,9 @@ export const workflowParametersSlice = createSlice({
         ...validationErrors,
       };
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resetWorkflowState, () => initialState);
   },
 });
 
