@@ -243,7 +243,8 @@ const getParentArrayExpression = (
         parentArrayTokenInfo.key,
         !!parentArrayTokenInfo.arrayDetails,
         parentArrayTokenInfo.arrayDetails?.loopSource,
-        tokenOwnerActionName
+        tokenOwnerActionName,
+        !!parentArrayTokenInfo.required
       )}`
     : `@${getTokenExpressionValue(parentArrayTokenInfo)}`;
 };
@@ -467,7 +468,8 @@ export const getTokenExpressionValueForManifestBasedOperation = (
   key: string,
   isInsideArray: boolean,
   loopSource: string | undefined,
-  actionName: string | undefined
+  actionName: string | undefined,
+  required: boolean
 ): string => {
   // TODO: This might require update for Open API for aliasing support.
   const method = isInsideArray
@@ -478,7 +480,7 @@ export const getTokenExpressionValueForManifestBasedOperation = (
     ? `${Constants.OUTPUTS}(${convertToStringLiteral(actionName)})`
     : Constants.TRIGGER_OUTPUTS_OUTPUT;
 
-  return generateExpressionFromKey(method, key, actionName, isInsideArray);
+  return generateExpressionFromKey(method, key, actionName, isInsideArray, required);
 };
 /**
  * generate the full path for the specifiecd expression segments, e.g, for @body('action')?[test] => body.$.test
