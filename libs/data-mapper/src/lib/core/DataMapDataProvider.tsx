@@ -1,4 +1,4 @@
-import { convertFromMapDefinition } from '../mapDefinitions';
+import { MapDefinitionDeserializer } from '../mapDefinitions';
 import type { FunctionData } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { Schema } from '../models/Schema';
@@ -50,7 +50,13 @@ const DataProviderInner = ({
 
   useEffect(() => {
     if (mapDefinition && extendedSourceSchema && extendedTargetSchema && fetchedFunctions) {
-      const connections = convertFromMapDefinition(mapDefinition, extendedSourceSchema, extendedTargetSchema, fetchedFunctions);
+      const mapDefinitionDeserializer = new MapDefinitionDeserializer(
+        mapDefinition,
+        extendedSourceSchema,
+        extendedTargetSchema,
+        fetchedFunctions
+      );
+      const connections = mapDefinitionDeserializer.convertFromMapDefinition();
       dispatch(
         setInitialDataMap({ sourceSchema: extendedSourceSchema, targetSchema: extendedTargetSchema, dataMapConnections: connections })
       );

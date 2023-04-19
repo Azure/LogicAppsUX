@@ -677,6 +677,16 @@
       "value": "Enter a valid array."
     }
   ],
+  "2r30S9": [
+    {
+      "type": 0,
+      "value": "Insert a new step after "
+    },
+    {
+      "type": 1,
+      "value": "parentName"
+    }
+  ],
   "2ri1Kf": [
     {
       "type": 0,
@@ -791,6 +801,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Dakka"
+    }
+  ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Choose the type of user input"
     }
   ],
   "3Y8a6G": [
@@ -1101,6 +1117,12 @@
       "value": "Hibrid összekötő"
     }
   ],
+  "61iT9C": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing Alt + / in the editor)"
+    }
+  ],
   "62Ypnr": [
     {
       "type": 0,
@@ -1241,6 +1263,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az a sztring, amelyből a sztringrész származik."
+    }
+  ],
+  "7Vyxu0": [
+    {
+      "type": 0,
+      "value": "Yes/No"
     }
   ],
   "7WVgiU": [
@@ -1471,24 +1499,6 @@
       "value": "(UTC+07:00) Hovd"
     }
   ],
-  "90HY0L": [
-    {
-      "type": 0,
-      "value": "Insert a new step between "
-    },
-    {
-      "type": 1,
-      "value": "parent"
-    },
-    {
-      "type": 0,
-      "value": " and "
-    },
-    {
-      "type": 1,
-      "value": "child"
-    }
-  ],
   "90Q7Pw": [
     {
       "type": 0,
@@ -1673,6 +1683,16 @@
     {
       "type": 0,
       "value": "Insert data from previous step (You can also add by typing / in the editor)"
+    }
+  ],
+  "Aci186": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Add dynamic data pressing Alt + /"
     }
   ],
   "AgrMqq": [
@@ -1947,6 +1967,24 @@
       "value": "(UTC+02:00) Helsinki, Kijev, Riga, Szófia, Tallinn, Vilnius"
     }
   ],
+  "CypYLs": [
+    {
+      "type": 0,
+      "value": "Insert a new step between "
+    },
+    {
+      "type": 1,
+      "value": "parentName"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "childName"
+    }
+  ],
   "Czt6YV": [
     {
       "type": 0,
@@ -2051,6 +2089,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Azori-szigetek"
+    }
+  ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Add an input"
     }
   ],
   "DyYcJZ": [
@@ -2191,6 +2235,12 @@
       "value": "(UTC-05:00) Keleti idő (Amerikai Egyesült Államok és Kanada)"
     }
   ],
+  "Ex4U46": [
+    {
+      "type": 0,
+      "value": "Use Invoker's Connection"
+    }
+  ],
   "ExaACE": [
     {
       "type": 0,
@@ -2273,6 +2323,12 @@
     {
       "type": 0,
       "value": "Must provide name of parameter."
+    }
+  ],
+  "FT3jt6": [
+    {
+      "type": 0,
+      "value": "Webhook reference information"
     }
   ],
   "FUhNu4": [
@@ -2643,6 +2699,16 @@
       "value": "22"
     }
   ],
+  "IHMd3X": [
+    {
+      "type": 0,
+      "value": "Example: "
+    },
+    {
+      "type": 1,
+      "value": "url"
+    }
+  ],
   "IPbBB2": [
     {
       "type": 0,
@@ -2821,6 +2887,12 @@
     {
       "type": 0,
       "value": "Név:"
+    }
+  ],
+  "Jpox7O": [
+    {
+      "type": 0,
+      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
     }
   ],
   "JpthWY": [
@@ -3869,12 +3941,6 @@
       "value": "Jelszó"
     }
   ],
-  "SGxmEY": [
-    {
-      "type": 0,
-      "value": "Adjon meg egy tulajdonságtárat"
-    }
-  ],
   "SJFVxf": [
     {
       "type": 0,
@@ -4395,6 +4461,12 @@
       "value": "Error Type"
     }
   ],
+  "VggzRB": [
+    {
+      "type": 0,
+      "value": "Text"
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -4905,6 +4977,12 @@
       "value": "” a paraméterben"
     }
   ],
+  "a+6uyE": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5035,6 +5113,12 @@
       "value": "(UTC+02:00) Kalinyingrád"
     }
   ],
+  "bSZ0lL": [
+    {
+      "type": 0,
+      "value": "Callback url"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -5149,6 +5233,12 @@
     {
       "type": 0,
       "value": "Más forrásokból is hozzáadható dinamikus tartalom."
+    }
+  ],
+  "cF4w+R": [
+    {
+      "type": 0,
+      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5385,6 +5475,12 @@
     {
       "type": 0,
       "value": "(UTC+05:00) Jekatyerinburg"
+    }
+  ],
+  "eHgfpz": [
+    {
+      "type": 0,
+      "value": "Please enter a valid URL"
     }
   ],
   "eHgi14": [
@@ -6339,6 +6435,12 @@
       "value": "Select an action type"
     }
   ],
+  "lv9QyZ": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6689,6 +6791,12 @@
       "value": "(UTC-03:00) Salvador"
     }
   ],
+  "ox2Ou7": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON"
+    }
+  ],
   "oxH1L/": [
     {
       "type": 0,
@@ -6917,6 +7025,12 @@
       "value": "."
     }
   ],
+  "qUMXpq": [
+    {
+      "type": 0,
+      "value": "Swagger Endpoint"
+    }
+  ],
   "qUWBUX": [
     {
       "offset": 0,
@@ -7097,6 +7211,12 @@
     {
       "type": 0,
       "value": "Új hozzáadása"
+    }
+  ],
+  "s+4LEa": [
+    {
+      "type": 0,
+      "value": "Open folder"
     }
   ],
   "s5RV9B": [
@@ -7375,16 +7495,6 @@
     {
       "type": 0,
       "value": "Status Code"
-    }
-  ],
-  "uIQrat": [
-    {
-      "type": 0,
-      "value": "Insert a new step after "
-    },
-    {
-      "type": 1,
-      "value": "parent"
     }
   ],
   "uIurld": [
@@ -7843,6 +7953,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Egyezményes világidő+12"
+    }
+  ],
+  "xeREzb": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "xt5TeT": [

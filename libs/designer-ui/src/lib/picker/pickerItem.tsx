@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { useId } from '../useId';
 import { Icon, IconButton, TooltipHost } from '@fluentui/react';
-import { useId } from '@fluentui/react-hooks';
 import { useIntl } from 'react-intl';
 
 const iconInfo = {
@@ -35,6 +35,7 @@ const FOLDER_TYPE = 'folder';
 export interface FileItem {
   text: string;
   type: 'folder' | 'file';
+  value: any;
   onSelect?: () => void;
   onNavigation?: () => void;
 }
