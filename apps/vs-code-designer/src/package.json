@@ -16,14 +16,6 @@
     ],
     "commands": [
       {
-        "command": "azureLogicAppsStandard.selectSubscriptions",
-        "title": "Select Subscriptions...",
-        "icon": {
-          "light": "assets/light/filter.svg",
-          "dark": "assets/dark/filter.svg"
-        }
-      },
-      {
         "command": "azureLogicAppsStandard.openDesigner",
         "title": "Open Designer",
         "category": "Azure Logic Apps"
@@ -318,27 +310,17 @@
           "command": "azureLogicAppsStandard.exportLogicApp",
           "when": "view == azureWorkspace",
           "group": "navigation@4"
-        },
-        {
-          "command": "azureLogicAppsStandard.refresh",
-          "when": "view == azureWorkspace",
-          "group": "navigation@5"
         }
       ],
       "view/item/context": [
         {
-          "command": "azureLogicAppsStandard.selectSubscriptions",
-          "when": "view == azureWorkspace && viewItem == azureextensionui.azureSubscription",
-          "group": "inline"
-        },
-        {
           "command": "azureLogicAppsStandard.createLogicApp",
-          "when": "view == azureWorkspace && viewItem == azureextensionui.azureSubscription",
+          "when": "view == azureResourceGroups && viewItem == azureextensionui.azureSubscription",
           "group": "1@1"
         },
         {
           "command": "azureLogicAppsStandard.createLogicAppAdvanced",
-          "when": "view == azureWorkspace && viewItem == azureextensionui.azureSubscription",
+          "when": "view == azureResourceGroups && viewItem == azureextensionui.azureSubscription",
           "group": "1@2"
         },
         {
@@ -348,48 +330,38 @@
         },
         {
           "command": "azureLogicAppsStandard.openDesigner",
-          "when": "view == azureWorkspace && viewItem =~ /Remote;.*;Workflow;/i",
+          "when": "view == azureResourceGroups && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "1@2"
         },
         {
           "command": "azureLogicAppsStandard.viewContent",
-          "when": "view == azureWorkspace && viewItem =~ /Remote;.*;Workflow;/i",
+          "when": "view == azureResourceGroups && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "2@1"
         },
         {
           "command": "azureLogicAppsStandard.deploy",
-          "when": "view == azureWorkspace && viewItem == azLogicAppsProductionSlot",
+          "when": "view == azureResourceGroups && viewItem == azLogicAppsProductionSlot",
           "group": "3@1"
         },
         {
           "command": "azureLogicAppsStandard.deploySlot",
-          "when": "view == azureWorkspace && viewItem == azLogicAppsSlot",
+          "when": "view == azureResourceGroups && viewItem == azLogicAppsSlot",
           "group": "3@2"
         },
         {
           "command": "azureLogicAppsStandard.startLogicApp",
-          "when": "view == azureWorkspace && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "when": "view == azureResourceGroups && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "2@1"
         },
         {
           "command": "azureLogicAppsStandard.stopLogicApp",
-          "when": "view == azureWorkspace && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "when": "view == azureResourceGroups && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "2@2"
         },
         {
           "command": "azureLogicAppsStandard.restartLogicApp",
-          "when": "view == azureWorkspace && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "when": "view == azureResourceGroups && viewItem =~ /^azLogicApps(Production|)Slot$/",
           "group": "2@3"
-        },
-        {
-          "command": "azureLogicAppsStandard.refresh",
-          "when": "view == azureWorkspace && viewItem == azureextensionui.azureSubscription",
-          "group": "3@1"
-        },
-        {
-          "command": "azureLogicAppsStandard.refresh",
-          "when": "view == azureWorkspace && viewItem =~ /^azLogicApps(Production|)Slot$/",
-          "group": "6@2"
         },
         {
           "command": "azureLogicAppsStandard.refresh",
@@ -606,10 +578,6 @@
       ],
       "commandPalette": [
         {
-          "command": "azureLogicAppsStandard.selectSubscriptions",
-          "when": "never"
-        },
-        {
           "command": "azureLogicAppsStandard.openDesigner",
           "when": "resourceFilename==workflow.json"
         },
@@ -822,7 +790,6 @@
     "onCommand:azureLogicAppsStandard.disconnectRepo",
     "onCommand:azureLogicAppsStandard.connectToGitHub",
     "onCommand:azureLogicAppsStandard.startRemoteDebug",
-    "onView:azLogicApps",
     "onView:azureWorkspace",
     "onView:azureResourceGroups",
     "workspaceContains:host.json",

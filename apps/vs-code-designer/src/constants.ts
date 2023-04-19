@@ -60,7 +60,6 @@ export const workflowDesignerLoadTimeout = 300000;
 export enum extensionCommand {
   openDesigner = 'azureLogicAppsStandard.openDesigner',
   activate = 'azureLogicAppsStandard.activate',
-  selectSubscriptions = 'azureLogicAppsStandard.selectSubscriptions',
   viewContent = 'azureLogicAppsStandard.viewContent',
   openFile = 'azureLogicAppsStandard.openFile',
   createNewProject = 'azureLogicAppsStandard.createNewProject',
@@ -83,7 +82,6 @@ export enum extensionCommand {
   azureFunctionsUninstallFuncCoreTools = 'azureFunctions.uninstallFuncCoreTools',
   azureFunctionsAppSettingsEncrypt = 'azureFunctions.appSettings.encrypt',
   azureFunctionsAppSettingsDecrypt = 'azureFunctions.appSettings.decrypt',
-  azureSelectSubscriptions = 'azure-account.selectSubscriptions',
   openOverview = 'azureLogicAppsStandard.openOverview',
   exportLogicApp = 'azureLogicAppsStandard.exportLogicApp',
   reviewValidation = 'azureLogicAppsStandard.reviewValidation',

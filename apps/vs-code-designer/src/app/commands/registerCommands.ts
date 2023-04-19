@@ -53,11 +53,9 @@ import { AppSettingsTreeItem, AppSettingTreeItem, registerSiteCommand } from '@m
 import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
 import { registerCommand, registerCommandWithTreeNodeUnwrapping } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
-import { commands } from 'vscode';
 
 export function registerCommands(): void {
   registerCommand(extensionCommand.openDesigner, openDesigner);
-  registerCommand(extensionCommand.selectSubscriptions, () => commands.executeCommand(extensionCommand.azureSelectSubscriptions));
   registerCommand(extensionCommand.openFile, (context: IActionContext, node: FileTreeItem) =>
     executeOnFunctions(openFile, context, context, node)
   );
