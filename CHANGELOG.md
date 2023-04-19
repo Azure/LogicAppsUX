@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.5.1](https://github.com/Azure/LogicAppsUX/compare/v2.5.0...v2.5.1) (2023-04-19)
+
+
+### Bug Fixes
+
+* **designer:** Fix issue where oAuth flow would crash the designer ([#2062](https://github.com/Azure/LogicAppsUX/issues/2062)) ([172763c](https://github.com/Azure/LogicAppsUX/commit/172763c797dd887ca9432142e0e494c1f83a9439))
+
 ## [2.5.0](https://github.com/Azure/LogicAppsUX/compare/v2.4.5...v2.5.0) (2023-04-19)
 
 
