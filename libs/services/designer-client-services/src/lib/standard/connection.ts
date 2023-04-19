@@ -154,7 +154,8 @@ export class StandardConnectionService extends BaseConnectionService {
     connectionId: string,
     connector: Connector,
     connectionInfo: ConnectionCreationInfo,
-    parametersMetadata?: ConnectionParametersMetadata
+    parametersMetadata?: ConnectionParametersMetadata,
+    shouldTestConnection = true
   ): Promise<Connection> {
     const connectionName = connectionId.split('/').at(-1) as string;
 
@@ -175,7 +176,7 @@ export class StandardConnectionService extends BaseConnectionService {
             connectionInfo,
             parametersMetadata as ConnectionParametersMetadata
           );
-      await this.testConnection(connection);
+      if (shouldTestConnection) await this.testConnection(connection);
       LoggerService().endTrace(logId, { status: Status.Success });
       return connection;
     } catch (error) {
@@ -386,7 +387,7 @@ export class StandardConnectionService extends BaseConnectionService {
     parametersMetadata?: ConnectionParametersMetadata
   ): Promise<CreateConnectionResult> {
     const connector = await this.getConnector(connectorId);
-    const connection = await this.createConnection(connectionId, connector, connectionInfo, parametersMetadata);
+    const connection = await this.createConnection(connectionId, connector, connectionInfo, parametersMetadata, false);
     const oAuthService = OAuthService();
     let oAuthPopupInstance: IOAuthPopup | undefined;
 
@@ -403,9 +404,9 @@ export class StandardConnectionService extends BaseConnectionService {
 
       await this.createConnectionAclIfNeeded(connection);
 
-      await this.testConnection(connection);
-
       const fetchedConnection = await this.getConnection(connection.id);
+      await this.testConnection(fetchedConnection);
+
       return { connection: fetchedConnection };
     } catch (error: any) {
       this.deleteConnection(connectionId);
