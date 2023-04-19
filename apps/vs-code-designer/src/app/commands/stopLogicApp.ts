@@ -6,11 +6,10 @@ import { logicAppFilter } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import type { SlotTreeItem } from '../tree/slotsTree/SlotTreeItem';
-import type { SlotTreeItemBase } from '../tree/slotsTree/SlotTreeItemBase';
 import type { SiteClient } from '@microsoft/vscode-azext-azureappservice';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
-export async function stopLogicApp(context: IActionContext, node?: SlotTreeItemBase): Promise<SlotTreeItemBase> {
+export async function stopLogicApp(context: IActionContext, node?: SlotTreeItem): Promise<SlotTreeItem> {
   if (!node) {
     node = await ext.rgApi.pickAppResource<SlotTreeItem>(context, {
       filter: logicAppFilter,

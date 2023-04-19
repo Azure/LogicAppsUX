@@ -6,7 +6,6 @@ import { logicAppFilter } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
-import type { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
 import { enableFileLogging } from './enableFileLogging';
 import type { ApplicationInsightsManagementClient, ApplicationInsightsComponent } from '@azure/arm-appinsights';
 import type { SiteLogsConfig, StringDictionary } from '@azure/arm-appservice';
@@ -19,9 +18,9 @@ import type { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-util
 /**
  * Start streaming logs to remote app.
  * @param {IActionContext} context - Workflow file path.
- * @param {SlotTreeItemBase} treeItem - Logic app node structure.
+ * @param {SlotTreeItem} treeItem - Logic app node structure.
  */
-export async function startStreamingLogs(context: IActionContext, treeItem?: SlotTreeItemBase): Promise<void> {
+export async function startStreamingLogs(context: IActionContext, treeItem?: SlotTreeItem): Promise<void> {
   if (!treeItem) {
     treeItem = await ext.rgApi.pickAppResource<SlotTreeItem>(context, {
       filter: logicAppFilter,

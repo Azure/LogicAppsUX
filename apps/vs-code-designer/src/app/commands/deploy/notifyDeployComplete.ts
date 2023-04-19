@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import type { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
+import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { uploadAppSettings } from '../appSettings/uploadAppSettings';
 import { startStreamingLogs } from '../logstream/startStreamingLogs';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -14,12 +14,12 @@ import { window } from 'vscode';
 
 /**
  * Shows information message after deployment has been completed and let user select post actions.
- * @param {SlotTreeItemBase} node - Logic app node structure.
+ * @param {SlotTreeItem} node - Logic app node structure.
  * @param {WorkspaceFolder} workspaceFolder - Workspace folder path.
  * @param {string[]} settingsToExclude - Array of settings to exclude from uploading.
  */
 export async function notifyDeployComplete(
-  node: SlotTreeItemBase,
+  node: SlotTreeItem,
   workspaceFolder: WorkspaceFolder,
   settingsToExclude?: string[]
 ): Promise<void> {

@@ -23,7 +23,7 @@ import {
   getFile,
   ParsedSite,
 } from '@microsoft/vscode-azext-azureappservice';
-import type { AppSettingsTreeItem, LogFilesTreeItem, SiteFilesTreeItem } from '@microsoft/vscode-azext-azureappservice';
+import { AppSettingsTreeItem, LogFilesTreeItem, SiteFilesTreeItem } from '@microsoft/vscode-azext-azureappservice';
 import { AzureWizard, DeleteConfirmationStep, nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, ISubscriptionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import type { ResolvedAppResourceBase } from '@microsoft/vscode-azext-utils/hostapi';
@@ -36,8 +36,6 @@ export function isLogicAppResourceTree(ti: unknown): ti is ResolvedAppResourceBa
 
 export class LogicAppResourceTree implements ResolvedAppResourceBase {
   public static instance = 'logicAppResourceTree';
-  ISubscriptionContext;
-
   public readonly instance = LogicAppResourceTree.instance;
 
   public site: ParsedSite;
@@ -235,6 +233,25 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
       sourceControl: sourceControl,
     });
 
+    this.deploymentsNode = new DeploymentsTreeItem(proxyTree, {
+      site: this.site,
+      siteConfig,
+      sourceControl,
+      contextValuesToAdd: ['azLogicApps'],
+    });
+    this.appSettingsTreeItem = new AppSettingsTreeItem(proxyTree, this.site, {
+      contextValuesToAdd: ['azLogicApps'],
+    });
+    this._siteFilesTreeItem = new SiteFilesTreeItem(proxyTree, {
+      site: this.site,
+      isReadOnly: true,
+      contextValuesToAdd: ['azLogicApps'],
+    });
+    this._logFilesTreeItem = new LogFilesTreeItem(proxyTree, {
+      site: this.site,
+      contextValuesToAdd: ['azLogicApps'],
+    });
+
     if (!this._workflowsTreeItem) {
       this._workflowsTreeItem = await RemoteWorkflowsTreeItem.createWorkflowsTreeItem(context, proxyTree);
     }
@@ -243,27 +260,9 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
       this.configurationsTreeItem = await ConfigurationsTreeItem.createConfigurationsTreeItem(proxyTree, context);
     }
 
-    if (!this._artifactsTreeItem) {
-      try {
-        await getFileOrFolderContent(context, proxyTree, 'Artifacts');
-      } catch (error) {
-        if (error.statusCode === 404) {
-          return [
-            this._workflowsTreeItem,
-            this.configurationsTreeItem,
-            this._siteFilesTreeItem,
-            this._logFilesTreeItem,
-            this.deploymentsNode,
-          ];
-        }
-      }
-      this._artifactsTreeItem = new ArtifactsTreeItem(proxyTree, this.site);
-    }
-
     const children: AzExtTreeItem[] = [
       this._workflowsTreeItem,
       this.configurationsTreeItem,
-      this._artifactsTreeItem,
       this._siteFilesTreeItem,
       this._logFilesTreeItem,
       this.deploymentsNode,
@@ -274,6 +273,17 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
       children.push(this._slotsTreeItem);
     }
 
+    if (!this._artifactsTreeItem) {
+      try {
+        await getFileOrFolderContent(context, proxyTree, 'Artifacts');
+      } catch (error) {
+        if (error.statusCode === 404) {
+          return children;
+        }
+      }
+      this._artifactsTreeItem = new ArtifactsTreeItem(proxyTree, this.site);
+      children.push(this._artifactsTreeItem);
+    }
     return children;
   }
 

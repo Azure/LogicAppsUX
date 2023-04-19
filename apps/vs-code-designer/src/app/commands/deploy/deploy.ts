@@ -19,7 +19,6 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { LogicAppResourceTree } from '../../tree/LogicAppResourceTree';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
-import type { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
 import { createAclInConnectionIfNeeded, getConnectionsJson } from '../../utils/codeless/connection';
 import { getParametersJson } from '../../utils/codeless/parameter';
 import { isPathEqual, writeFormattedJson } from '../../utils/fs';
@@ -49,7 +48,7 @@ import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
 
 export async function deployProductionSlot(
   context: IActionContext,
-  target?: Uri | string | SlotTreeItemBase,
+  target?: Uri | string | SlotTreeItem,
   functionAppId?: string | Record<string, any>
 ): Promise<void> {
   await deploy(context, target, functionAppId);
@@ -57,7 +56,7 @@ export async function deployProductionSlot(
 
 export async function deploySlot(
   context: IActionContext,
-  target?: Uri | string | SlotTreeItemBase,
+  target?: Uri | string | SlotTreeItem,
   functionAppId?: string | Record<string, any>
 ): Promise<void> {
   await deploy(context, target, functionAppId, new RegExp(LogicAppResourceTree.pickSlotContextValue));
@@ -65,7 +64,7 @@ export async function deploySlot(
 
 async function deploy(
   actionContext: IActionContext,
-  target: Uri | string | SlotTreeItemBase | undefined,
+  target: Uri | string | SlotTreeItem | undefined,
   functionAppId: string | Record<string, any> | undefined,
   expectedContextValue?: string | RegExp
 ): Promise<void> {
@@ -211,7 +210,7 @@ async function managedApiConnectionsExists(workspaceFolder: WorkspaceFolder): Pr
 }
 
 async function getProjectPathToDeploy(
-  node: SlotTreeItemBase,
+  node: SlotTreeItem,
   workspaceFolder: WorkspaceFolder,
   settingsToExclude: string[],
   originalDeployFsPath: string,
@@ -281,7 +280,7 @@ async function cleanAndRemoveDeployFolder(deployProjectPath: string): Promise<vo
   fse.rmdirSync(deployProjectPath);
 }
 
-async function checkAADDetailsExistsInAppSettings(node: SlotTreeItemBase, identityWizardContext: IIdentityWizardContext): Promise<boolean> {
+async function checkAADDetailsExistsInAppSettings(node: SlotTreeItem, identityWizardContext: IIdentityWizardContext): Promise<boolean> {
   const client = await node.site.createClient(identityWizardContext);
   const appSettings: StringDictionary | undefined = (await client.listApplicationSettings())?.properties;
   if (appSettings) {
