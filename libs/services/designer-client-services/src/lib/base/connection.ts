@@ -207,17 +207,18 @@ export abstract class BaseConnectionService implements IConnectionService {
   protected async testConnection(connection: Connection): Promise<void> {
     let response: HttpResponse<any> | undefined = undefined;
     try {
-      const testLinks = connection.properties.testLinks;
-      if (testLinks && testLinks.length > 0) response = await this.requestTestOtherConnections(connection);
+      const testLinks = connection.properties?.testLinks;
+      if (!testLinks || testLinks.length === 0) return;
+      response = await this.requestTestConnection(connection);
       if (response) this.handleTestConnectionResponse(response);
     } catch (error: any) {
       return Promise.reject(error);
     }
   }
 
-  protected async requestTestOtherConnections(connection: Connection): Promise<HttpResponse<any>> {
-    const testLinks = connection.properties.testLinks;
-    if (!testLinks || testLinks.length === 0) return Promise.reject('No test links found');
+  protected async requestTestConnection(connection: Connection): Promise<HttpResponse<any> | undefined> {
+    const testLinks = connection.properties?.testLinks;
+    if (!testLinks || testLinks.length === 0) return undefined;
     const { httpClient } = this.options;
     const { method: httpMethod, requestUri: uri } = testLinks[0];
     const method = httpMethod.toUpperCase() as HTTP_METHODS;
@@ -225,11 +226,10 @@ export abstract class BaseConnectionService implements IConnectionService {
     try {
       let response: HttpResponse<any> | undefined = undefined;
       const requestOptions: HttpRequestOptions<any> = { uri };
-      if (method === HTTP_METHODS.GET) response = await httpClient.get<any>(requestOptions);
-      else if (method === HTTP_METHODS.POST) response = await httpClient.post<any, any>(requestOptions);
-      else if (method === HTTP_METHODS.PUT) response = await httpClient.put<any, any>(requestOptions);
-      else if (method === HTTP_METHODS.DELETE) response = await httpClient.delete<any>(requestOptions);
-      if (!response) return Promise.reject('Failed to test connection');
+      if (equals(method, HTTP_METHODS.GET)) response = await httpClient.get<any>(requestOptions);
+      else if (equals(method, HTTP_METHODS.POST)) response = await httpClient.post<any, any>(requestOptions);
+      else if (equals(method, HTTP_METHODS.PUT)) response = await httpClient.put<any, any>(requestOptions);
+      else if (equals(method, HTTP_METHODS.DELETE)) response = await httpClient.delete<any>(requestOptions);
       return response;
     } catch (error: any) {
       return Promise.reject(error);
