@@ -28,7 +28,8 @@ export class ConsumptionConnectionService extends BaseConnectionService {
     connectionId: string,
     connector: Connector,
     connectionInfo: ConnectionCreationInfo,
-    _parametersMetadata?: ConnectionParametersMetadata
+    _parametersMetadata?: ConnectionParametersMetadata,
+    shouldTestConnection = true
   ): Promise<Connection> {
     const connectionName = connectionId.split('/').at(-1) as string;
 
@@ -44,7 +45,7 @@ export class ConsumptionConnectionService extends BaseConnectionService {
       if (!isArmResourceId(connector.id)) throw 'Connector id is not a valid ARM resource id.';
 
       const connection = await this.createConnectionInApiHub(connectionName, connector.id, connectionInfo);
-      await this.testConnection(connection);
+      if (shouldTestConnection) await this.testConnection(connection);
       LoggerService().endTrace(logId, { status: Status.Success });
       return connection;
     } catch (error) {
@@ -94,7 +95,7 @@ export class ConsumptionConnectionService extends BaseConnectionService {
   ): Promise<CreateConnectionResult> {
     try {
       const connector = await this.getConnector(connectorId);
-      const connection = await this.createConnection(connectionId, connector, connectionInfo, parametersMetadata);
+      const connection = await this.createConnection(connectionId, connector, connectionInfo, parametersMetadata, false);
       const oAuthService = OAuthService();
       const consentUrl = await oAuthService.fetchConsentUrlForConnection(connectionId);
       const oAuthPopupInstance: IOAuthPopup = oAuthService.openLoginPopup({ consentUrl });
@@ -106,9 +107,9 @@ export class ConsumptionConnectionService extends BaseConnectionService {
         await oAuthService.confirmConsentCodeForConnection(connectionId, loginResponse.code);
       }
 
-      await this.testConnection(connection);
-
       const fetchedConnection = await this.getConnection(connection.id);
+      await this.testConnection(fetchedConnection);
+
       return { connection: fetchedConnection };
     } catch (error: any) {
       try {
