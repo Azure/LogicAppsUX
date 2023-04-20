@@ -1,13 +1,8 @@
-import type {
-  DynamicallyAddedParameterProps,
-  DynamicallyAddedParameterTypeType,
-  IDynamicallyAddedParameterProperties,
-  TextFieldOnChangeHandler,
-} from '.';
+import type { DynamicallyAddedParameterProps, DynamicallyAddedParameterTypeType, IDynamicallyAddedParameterProperties } from '.';
 import { DynamicallyAddedParameterType } from '.';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
-import { guid } from '@microsoft/utils-logic-apps';
+import { ValidationErrorCode, ValidationException, guid } from '@microsoft/utils-logic-apps';
 
 export type DynamicallyAddedParameterIcon = string;
 
@@ -41,22 +36,42 @@ export function getIconForDynamicallyAddedParameterType(type: DynamicallyAddedPa
   }
 }
 
-export function deserialize(value: ValueSegment[], onChange: TextFieldOnChangeHandler): DynamicallyAddedParameterProps[] {
-  // For now, assume there is only one ValueSegment for manual trigger
+/**
+ * Sample shape of schema object JSON expected by FlowRP that we are serializing/deserializing:
+ *      object: {
+ *          schema: {
+ *              type: 'object',
+ *              properties: {
+ *                  'text' : ...,
+ *                  'text_1': ...,
+ *                  'number': ...,
+ *              },
+ *              required: ['text', 'text_1'],
+ *          }
+ *      }
+ *
+ * @param value - valueSegment provided to us by rest of designer parent components
+ * @param onChange - handler to update value when the user changes their input in one of the dynamic parameters
+ * @returns - array of props to render DynamicallyAddedParameter editors with
+ */
+export function deserialize(value: ValueSegment[]): DynamicallyAddedParameterProps[] {
+  // ASSUMPTION: for manual trigger, we assume there is only one ValueSegment which contains the required data
+  if (!value || value.length === 0 || !value[0].value) {
+    throw new ValidationException(ValidationErrorCode.INVALID_PARAMETERS, 'Expected to find one valueSegment');
+  }
   const rootObject = JSON.parse(value[0].value);
 
   const retval: DynamicallyAddedParameterProps[] = [];
-  for (const [key, val] of Object.entries(rootObject.schema.properties)) {
-    const properties = val as IDynamicallyAddedParameterProperties;
+  for (const [schemaKey, propertiesUnknown] of Object.entries(rootObject?.schema?.properties)) {
+    const properties = propertiesUnknown as IDynamicallyAddedParameterProperties;
     if (properties) {
       const icon = getIconForDynamicallyAddedParameterType(properties['x-ms-content-hint'] as DynamicallyAddedParameterTypeType);
-      const required = rootObject.schema.required.includes(key);
+      const required = rootObject?.schema?.required?.includes(schemaKey);
       retval.push({
         icon,
-        schemaKey: key,
+        schemaKey,
         properties,
         required,
-        onChange,
       });
     }
   }
@@ -64,26 +79,33 @@ export function deserialize(value: ValueSegment[], onChange: TextFieldOnChangeHa
   return retval;
 }
 
+/**
+ * See deserialize function above for sample.
+ * @param props - array of props of all DynamicallyAddedParameter editors currently rendered
+ * @returns - ValueSegment array with one literal -- value for which is a JSON representation of the dynamically added parameters in the shape expected by FlowRP
+ */
 export function serialize(props: DynamicallyAddedParameterProps[]): ValueSegment[] {
-  const required: string[] = [];
+  const requiredArray: string[] = [];
   props.forEach((prop) => {
-    if (prop.required) required.push(prop.schemaKey);
+    if (prop.required) requiredArray.push(prop.schemaKey);
   });
 
   const properties = props
     .map((prop) => {
+      // Reshape array objects so schemaKey is the key
       return { [prop.schemaKey]: prop.properties };
     })
-    .reduce((result, nextItem) => {
-      const [key, value] = Object.entries(nextItem)[0];
-      return { ...result, [key]: value };
+    .reduce((resultPropertiesObj, nextProperty) => {
+      // Convert array to object; replace array index key with schemaKey
+      const [schemaKey, propertyValue] = Object.entries(nextProperty)[0];
+      return { ...resultPropertiesObj, [schemaKey]: propertyValue };
     }, {});
 
   const rootObject = {
     schema: {
       type: 'object',
-      properties: properties,
-      required,
+      properties,
+      required: requiredArray,
     },
   };
 
