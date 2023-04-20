@@ -116,15 +116,13 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
     };
 
     return (
-      <div>
-        <div className="msla-dynamic-added-param-header">
-          <div className="msla-dynamic-added-param-icon" style={iconStyle}></div>
-          <div className="msla-dynamic-added-param-inputs-container">
-            <TextField value={props.properties.title} onChange={onTitleChange} />
-            <TextField value={props.properties.description} onChange={onDescriptionChange} />
-          </div>
-          <div className="msla-dynamic-add-param-menu-container">{renderMenuButton()}</div>
+      <div className="msla-dynamic-added-param-header">
+        <div className="msla-dynamic-added-param-icon" style={iconStyle}></div>
+        <div className="msla-dynamic-added-param-inputs-container">
+          <TextField className="msla-dynamic-added-param-title" value={props.properties.title} onChange={onTitleChange} />
+          <TextField className="msla-dynamic-added-param-description" value={props.properties.description} onChange={onDescriptionChange} />
         </div>
+        <div className="msla-dynamic-add-param-menu-container">{renderMenuButton()}</div>
       </div>
     );
   };

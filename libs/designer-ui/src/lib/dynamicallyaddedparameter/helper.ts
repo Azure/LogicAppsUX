@@ -2,7 +2,7 @@ import type { DynamicallyAddedParameterProps, DynamicallyAddedParameterTypeType,
 import { DynamicallyAddedParameterType } from '.';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
-import { ValidationErrorCode, ValidationException, guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/utils-logic-apps';
 
 export type DynamicallyAddedParameterIcon = string;
 
@@ -55,10 +55,10 @@ export function getIconForDynamicallyAddedParameterType(type: DynamicallyAddedPa
  * @returns - array of props to render DynamicallyAddedParameter editors with
  */
 export function deserialize(value: ValueSegment[]): DynamicallyAddedParameterProps[] {
-  // ASSUMPTION: for manual trigger, we assume there is only one ValueSegment which contains the required data
   if (!value || value.length === 0 || !value[0].value) {
-    throw new ValidationException(ValidationErrorCode.INVALID_PARAMETERS, 'Expected to find one valueSegment');
+    return [];
   }
+  // ASSUMPTION: for manual trigger, we assume there is *only one* ValueSegment which contains the required data
   const rootObject = JSON.parse(value[0].value);
 
   const retval: DynamicallyAddedParameterProps[] = [];

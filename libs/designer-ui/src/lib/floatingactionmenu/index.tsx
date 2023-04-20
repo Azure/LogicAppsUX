@@ -156,8 +156,8 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
     }
   };
 
-  const enterVariableNamePlaceholder = intl.formatMessage({
-    defaultMessage: 'Enter variable name',
+  const titlePlaceholder = intl.formatMessage({
+    defaultMessage: 'Enter title',
     description: 'Placeholder for variable name for new dynamically added parameter',
   });
 
@@ -171,7 +171,7 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
       properties: {
         description: placeholder,
         format,
-        title: enterVariableNamePlaceholder, // TODO: generate title based on schemaKey
+        title: titlePlaceholder, // TODO: generate title based on schemaKey
         type,
         'x-ms-content-hint': type,
         'x-ms-dynamically-added': true,
@@ -206,9 +206,11 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
 
   return (
     <>
-      {dynamicParameterProps.map((props) => (
-        <DynamicallyAddedParameter {...props} key={props.schemaKey} />
-      ))}
+      <div className="msla-dynamic-added-params-container">
+        {dynamicParameterProps.map((props) => (
+          <DynamicallyAddedParameter {...props} key={props.schemaKey} />
+        ))}
+      </div>
       <div className="msla-floating-action-menu-container">
         {!expanded ? renderMenuButton() : undefined}
         {expanded ? renderMenuItems() : undefined}
