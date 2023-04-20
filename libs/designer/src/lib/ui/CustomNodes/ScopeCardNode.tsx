@@ -56,11 +56,11 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const runInstance = useRunInstance();
   const runData = useRunData(scopeId);
   const nodesMetaData = useNodesMetadata();
+  const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData);
 
   const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
   const getRunRepetition = () => {
-    const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData);
     return RunService().getRepetition({ nodeId: scopeId, runId: runInstance?.id }, repetitionName);
   };
 
@@ -72,9 +72,10 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     refetch,
     isLoading: isRepetitionLoading,
     isRefetching: isRepetitionRefetching,
-  } = useQuery<any>(['runInstance', { scopeId: scopeId }], getRunRepetition, {
+  } = useQuery<any>(['runInstance', { nodeId: scopeId, runId: runInstance?.id, repetitionName }], getRunRepetition, {
     refetchOnWindowFocus: false,
     initialData: null,
+    refetchOnMount: true,
     onSuccess: onRunRepetitionSuccess,
     enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
   });

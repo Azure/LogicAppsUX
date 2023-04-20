@@ -244,7 +244,9 @@ export const useParentRunIndex = (id: string | undefined): number | undefined =>
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       if (!id) return undefined;
-      const parents = getAllParentsForNode(id, state.nodesMetadata).filter((x) => !state.nodesMetadata[x].isRoot);
+      const parents = getAllParentsForNode(id, state.nodesMetadata).filter(
+        (x) => state.nodesMetadata[x].isRoot && state.nodesMetadata[x].runIndex !== undefined
+      );
       return parents.length ? state.nodesMetadata[parents[0]].runIndex : undefined;
     })
   );

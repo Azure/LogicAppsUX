@@ -44,12 +44,13 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
     setFailedRepetitions([]);
   };
 
-  const { isError, refetch } = useQuery<any>(
+  const { isError, refetch, isLoading, isRefetching } = useQuery<any>(
     ['runRepetitions', { nodeId: scopeId, runId: runInstance?.id }],
     getFailedRunScopeRepetitions,
     {
       refetchOnWindowFocus: false,
       initialData: null,
+      refetchOnMount: true,
       onSuccess: onRunRepetitionsSuccess,
       onError: onRunRepetitionsError,
     }
@@ -78,7 +79,7 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
         }
       : undefined;
 
-  return (
+  return isLoading || isRefetching ? null : (
     <Pager
       current={currentPage}
       onChange={onPagerChange}
