@@ -409,6 +409,15 @@ const convertStringToInputParameter = (
   trimExpression?: boolean,
   convertIfContainsExpression?: boolean
 ): InputParameter => {
+  if (typeof value !== 'string') {
+    return {
+      key: guid(),
+      name: value,
+      type: typeof value,
+      hideInUI: false,
+      value: value,
+    };
+  }
   const hasExpression = containsExpression(value);
   let newValue = value;
   if (removeQuotesFromExpression) {
