@@ -347,6 +347,7 @@ export const updateCallbackUrl = async (rootState: RootState, dispatch: Dispatch
   if (updatedParameter) {
     dispatch(
       updateNodeParameters({
+        isUserAction: false,
         nodeId: trigger,
         parameters: [{ groupId: ParameterGroupKeys.DEFAULT, parameterId: updatedParameter.id, propertiesToUpdate: updatedParameter }],
       })
