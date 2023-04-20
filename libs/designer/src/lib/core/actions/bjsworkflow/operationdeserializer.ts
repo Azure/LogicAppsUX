@@ -86,7 +86,7 @@ export const initializeOperationMetadata = async (
       triggerNodeId = operationId;
     }
     if (operationManifestService.isSupported(operation.type, operation.kind)) {
-      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, dispatch, graph));
+      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, dispatch, graph, references));
     } else {
       promises.push(initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, dispatch) as any);
     }
@@ -137,7 +137,8 @@ export const initializeOperationDetailsForManifest = async (
   _operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
   isTrigger: boolean,
   dispatch: Dispatch,
-  graph?: WorkflowNode
+  graph?: WorkflowNode,
+  connectionReferences?: ConnectionReferences
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   const operation = { ..._operation };
   try {
@@ -189,7 +190,9 @@ export const initializeOperationDetailsForManifest = async (
         manifest,
         undefined /* swagger */,
         operation,
-        rootNodeId
+        rootNodeId,
+        connectionReferences,
+        dispatch
       );
 
       const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);

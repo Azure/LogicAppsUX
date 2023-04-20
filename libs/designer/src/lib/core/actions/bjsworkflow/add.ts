@@ -14,7 +14,6 @@ import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
-import { getConnectionReference } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
 import { getParameterFromName, updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { createLiteralValueSegment } from '../../utils/parameters/segment';
@@ -204,6 +203,11 @@ const initializeOperationDetails = async (
   // Re-update settings after we have valid operation data
   const rootNodeId = getRootNodeDetails(state.workflow, connectorId);
   const operation = getState().workflow.operations[nodeId];
+
+  const connectionReferences = state.connections.connectionReferences;
+  if (state.connections.connectionReferences !== undefined) {
+    dispatch(addInvokerSupport({ connectionReferences }));
+  }
   const settings = getOperationSettings(
     isTrigger,
     operationInfo,
@@ -212,15 +216,10 @@ const initializeOperationDetails = async (
     swagger,
     operation,
     rootNodeId,
-    getState,
+    state.connections.connectionReferences,
     dispatch
   );
   dispatch(updateNodeSettings({ id: nodeId, settings }));
-
-  if (state.connections.connectionReferences !== undefined) {
-    const connectionReference = getConnectionReference(state.connections, nodeId);
-    dispatch(addInvokerSupport({ connectionReference }));
-  }
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);
   dispatch(showDefaultTabs({ isScopeNode: operationInfo?.type.toLowerCase() === Constants.NODE.TYPE.SCOPE, hasSchema: hasSchema }));
