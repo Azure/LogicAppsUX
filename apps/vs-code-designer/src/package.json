@@ -21,11 +21,6 @@
         "category": "Azure Logic Apps"
       },
       {
-        "command": "azureLogicAppsStandard.loadMore",
-        "title": "Load More",
-        "category": "Azure Logic Apps"
-      },
-      {
         "command": "azureLogicAppsStandard.viewContent",
         "title": "View Content",
         "category": "Azure Logic Apps"
@@ -96,15 +91,6 @@
         "command": "azureLogicAppsStandard.pickProcess",
         "title": "Pick Process",
         "category": "Azure Logic Apps"
-      },
-      {
-        "command": "azureLogicAppsStandard.refresh",
-        "title": "Refresh",
-        "category": "Azure Logic Apps",
-        "icon": {
-          "light": "assets/light/refresh.svg",
-          "dark": "assets/dark/refresh.svg"
-        }
       },
       {
         "command": "azureLogicAppsStandard.openOverview",
@@ -315,12 +301,12 @@
       "view/item/context": [
         {
           "command": "azureLogicAppsStandard.createLogicApp",
-          "when": "view == azureResourceGroups && viewItem == azureextensionui.azureSubscription",
+          "when": "view == azureResourceGroups && viewItem =~ /logicapp/i && viewItem =~ /azureResourceTypeGroup/i",
           "group": "1@1"
         },
         {
           "command": "azureLogicAppsStandard.createLogicAppAdvanced",
-          "when": "view == azureResourceGroups && viewItem == azureextensionui.azureSubscription",
+          "when": "view == azureResourceGroups && viewItem =~ /logicapp/i && viewItem =~ /azureResourceTypeGroup/i",
           "group": "1@2"
         },
         {
@@ -415,17 +401,7 @@
         },
         {
           "command": "azureLogicAppsStandard.openInPortal",
-          "when": "view == azureWorkspace && viewItem == azureextensionui.azureSubscription",
-          "group": "2@1"
-        },
-        {
-          "command": "azureLogicAppsStandard.openInPortal",
-          "when": "view == azureWorkspace && viewItem == azLogicAppsProductionSlot",
-          "group": "1@1"
-        },
-        {
-          "command": "azureLogicAppsStandard.openInPortal",
-          "when": "view == azureWorkspace && viewItem =~ /^deployment\\//",
+          "when": "view == azureResourceGroups && viewItem =~ /^deployment\\//",
           "group": "1@3"
         },
         {
@@ -435,7 +411,7 @@
         },
         {
           "command": "azureLogicAppsStandard.viewProperties",
-          "when": "view == azureWorkspace && viewItem =~ /^azLogicApps(Production|)Slot$/",
+          "when": "view == azureResourceGroups && viewItem =~ /azLogicApps(Production|)Slot(?!s).*slot/",
           "group": "6@1"
         },
         {
@@ -450,7 +426,7 @@
         },
         {
           "command": "azureLogicAppsStandard.viewDeploymentLogs",
-          "when": "view == azureWorkspace && viewItem =~ /^deployment\\//",
+          "when": "view == azureResourceGroups && viewItem =~ /azLogicApps.*deployment\\//",
           "group": "1@1"
         },
         {
@@ -582,19 +558,11 @@
           "when": "resourceFilename==workflow.json"
         },
         {
-          "command": "azureLogicAppsStandard.loadMore",
-          "when": "never"
-        },
-        {
           "command": "azureLogicAppsStandard.viewContent",
           "when": "never"
         },
         {
           "command": "azureLogicAppsStandard.pickProcess",
-          "when": "never"
-        },
-        {
-          "command": "azureLogicAppsStandard.refresh",
           "when": "never"
         },
         {
@@ -608,6 +576,10 @@
         {
           "command": "azureLogicAppsStandard.startRemoteDebug",
           "when": "config.azureLogicAppsStandard.enableRemoteDebugging == true"
+        },
+        {
+          "command": "azureLogicAppsStandard.viewProperties",
+          "when": "never"
         }
       ]
     },
@@ -747,7 +719,6 @@
   ],
   "activationEvents": [
     "onCommand:azureLogicAppsStandard.openDesigner",
-    "onCommand:azureLogicAppsStandard.loadMore",
     "onCommand:azureLogicAppsStandard.viewContent",
     "onCommand:azureLogicAppsStandard.createNewProject",
     "onCommand:azureLogicAppsStandard.createCodeless",
@@ -761,7 +732,6 @@
     "onCommand:azureLogicAppsStandard.pickProcess",
     "onCommand:azureLogicAppsStandard.deleteLogicApp",
     "onCommand:azureLogicAppsStandard.openOverview",
-    "onCommand:azureLogicAppsStandard.refresh",
     "onCommand:azureLogicAppsStandard.exportLogicApp",
     "onCommand:azureLogicAppsStandard.reviewValidation",
     "onCommand:azureLogicAppsStandard.switchToDotnetProject",

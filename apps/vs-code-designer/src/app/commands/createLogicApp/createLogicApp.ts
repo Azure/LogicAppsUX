@@ -14,8 +14,9 @@ import type { ICreateLogicAppContext } from '@microsoft/vscode-extension';
 export async function createLogicApp(
   context: IActionContext & Partial<ICreateLogicAppContext>,
   subscription?: AzExtParentTreeItem | string,
-  newResourceGroupName?: string
+  nodesOrNewResourceGroupName?: string | (string | AzExtParentTreeItem)[]
 ): Promise<string> {
+  const newResourceGroupName = Array.isArray(nodesOrNewResourceGroupName) ? undefined : nodesOrNewResourceGroupName;
   let node: AzExtParentTreeItem | undefined;
 
   if (isString(subscription)) {
@@ -46,7 +47,7 @@ export async function createLogicApp(
 export async function createLogicAppAdvanced(
   context: IActionContext,
   subscription?: AzExtParentTreeItem | string,
-  newResourceGroupName?: string
+  nodesOrNewResourceGroupName?: string | (string | AzExtParentTreeItem)[]
 ): Promise<string> {
-  return await createLogicApp({ ...context, advancedCreation: true }, subscription, newResourceGroupName);
+  return await createLogicApp({ ...context, advancedCreation: true }, subscription, nodesOrNewResourceGroupName);
 }

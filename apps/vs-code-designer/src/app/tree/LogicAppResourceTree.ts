@@ -22,8 +22,10 @@ import {
   DeploymentTreeItem,
   getFile,
   ParsedSite,
+  AppSettingsTreeItem,
+  LogFilesTreeItem,
+  SiteFilesTreeItem,
 } from '@microsoft/vscode-azext-azureappservice';
-import { AppSettingsTreeItem, LogFilesTreeItem, SiteFilesTreeItem } from '@microsoft/vscode-azext-azureappservice';
 import { AzureWizard, DeleteConfirmationStep, nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, ISubscriptionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import type { ResolvedAppResourceBase } from '@microsoft/vscode-azext-utils/hostapi';
