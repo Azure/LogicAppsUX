@@ -36,7 +36,7 @@ export async function notifyDeployComplete(
       } else if (result === streamLogs) {
         await startStreamingLogs(postDeployContext, node);
       } else if (result === uploadSettings) {
-        await uploadAppSettings(postDeployContext, node.appSettingsTreeItem, workspaceFolder, settingsToExclude);
+        await uploadAppSettings(postDeployContext, node.appSettingsTreeItem, undefined, workspaceFolder, settingsToExclude);
       }
     });
   });
