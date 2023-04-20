@@ -359,14 +359,18 @@ export const applyCustomLayout = async (
     // Final assignment
     fnNode.x = fnNodeXPos;
     fnNode.y = fnNodeYPos;
-
-    if (fnNode.x !== undefined && fnNode.x > farthestRightFnNodeXPos) {
-      farthestRightFnNodeXPos = fnNode.x;
-    }
   };
 
   graph.children[1].children.forEach((fnNode) => {
     calculateFnNodePosition(fnNode);
+
+    // Quick workaround to remove the extra spacing added, should be removed when we move to unlocked positions
+    if (fnNode.x) {
+      fnNode.x = fnNode.x >= fnStartX ? fnNode.x - fnStartX : fnNode.x;
+      if (fnNode.x > farthestRightFnNodeXPos) {
+        farthestRightFnNodeXPos = fnNode.x;
+      }
+    }
   });
 
   // Target schema node positioning

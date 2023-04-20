@@ -47,7 +47,12 @@ const GlobalViewReactFlowWrapper = () => {
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
-  const [reactFlowNodes, reactFlowEdges] = useGlobalViewLayout(sourceSchemaDictionary, targetSchemaDictionary, connectionDictionary);
+  const [reactFlowNodes, reactFlowEdges] = useGlobalViewLayout(
+    undefined,
+    sourceSchemaDictionary,
+    targetSchemaDictionary,
+    connectionDictionary
+  );
 
   // Fit the canvas view any time a schema changes
   useEffect(() => {
