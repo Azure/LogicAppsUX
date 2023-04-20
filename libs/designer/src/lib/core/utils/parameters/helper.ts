@@ -1481,6 +1481,7 @@ export async function updateParameterAndDependencies(
     },
   ];
   const payload: UpdateParametersPayload = {
+    isUserAction: true,
     nodeId,
     parameters: parametersToUpdate,
   };
@@ -1730,6 +1731,7 @@ export async function loadDynamicValuesForParameter(
     if (isDynamicDataReadyToLoad(dependencyInfo)) {
       dispatch(
         updateNodeParameters({
+          isUserAction: false,
           nodeId,
           parameters: [
             {
@@ -1753,6 +1755,7 @@ export async function loadDynamicValuesForParameter(
 
         dispatch(
           updateNodeParameters({
+            isUserAction: false,
             nodeId,
             parameters: [
               {
@@ -1766,6 +1769,7 @@ export async function loadDynamicValuesForParameter(
       } catch (error) {
         dispatch(
           updateNodeParameters({
+            isUserAction: false,
             nodeId,
             parameters: [
               {
@@ -1785,6 +1789,7 @@ export async function loadDynamicValuesForParameter(
 
       dispatch(
         updateNodeParameters({
+          isUserAction: false,
           nodeId,
           parameters: [
             {
