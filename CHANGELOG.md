@@ -1,4 +1,10 @@
 # Logic Apps Designer
+### [2.6.3](https://github.com/Azure/LogicAppsUX/compare/v2.6.2...v2.6.3) (2023-04-20)
+
+
+### Bug Fixes
+
+* **designer:** Handle non-string types when converting string to value segments in editorviewmode ([#2079](https://github.com/Azure/LogicAppsUX/issues/2079)) ([b0dc77a](https://github.com/Azure/LogicAppsUX/commit/b0dc77adea01575b228b6d953d08263224544edc))
 
 ### [2.6.2](https://github.com/Azure/LogicAppsUX/compare/v2.6.1...v2.6.2) (2023-04-20)
 
