@@ -1,16 +1,18 @@
-# Azure Logic Apps - Data Mapper for Visual Studio Code
+# Azure Logic Apps - Data Mapper extension for Visual Studio Code
 
-In Visual Studio Code, you can use the Azure Logic Apps - Data Mapper extension to provide a graphical way to map data from a source schema to a target schema using direct mappings and functions, handling any translation between supported schema types in the backend.
+In Visual Studio Code, you can graphically describe transformations by mapping relationships between data types in a source schema and a target schema. After you install the Azure Logic Apps - Data Mapper extension, you can create direct basic relationships and more complex transformations using functions, handling any translation between supported schema types in the backend. For more information, see [Create maps to transform data in Azure Logic Apps with Visual Studio Code (preview)](https://go.microsoft.com/fwlink/?linkid=2234193).
 
-> Sign up today for your free Azure account and receive 12 months of free popular services, $200 free credit and 25+ always free services 👉 [Start Free](https://azure.microsoft.com/free/open-source).
+> Sign up today for your free Azure account and receive 12 months of free popular services, $200 free credit, and 25+ always free services.
+>
+> 👉 [Start Free](https://azure.microsoft.com/free/open-source)
 
 ## Known issues
 
-You can see known issues [here](https://github.com/Azure/LogicAppsUX/issues).
+To view current issues, go to [GitHub issues for Azure Logic Apps](https://github.com/Azure/LogicAppsUX/issues).
 
-## Providing feedback
+## Provide feedback
 
-- To open product bugs, go to [GitHub issues for Azure Logic Apps - Data Mapper](https://github.com/Azure/LogicAppsUX/issues).
+To open product bugs for Data Mapper, go to [GitHub issues for Azure Logic Apps](https://github.com/Azure/LogicAppsUX/issues).
 
 ### Code of Conduct
 
