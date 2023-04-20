@@ -168,7 +168,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
                   onOperationClick={onOperationClick}
                 />
               ) : (
-                <BrowseView filters={filters} />
+                <BrowseView filters={filters} isLoadingOperations={isLoadingOperations} />
               )}
             </>
           ),
