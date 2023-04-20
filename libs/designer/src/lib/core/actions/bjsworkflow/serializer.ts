@@ -694,7 +694,7 @@ const serializeSubGraph = async (
   return result;
 };
 
-const isWorkflowOperationNode = (node: WorkflowNode) =>
+export const isWorkflowOperationNode = (node: WorkflowNode) =>
   node.type === WORKFLOW_NODE_TYPES.OPERATION_NODE || node.type === WORKFLOW_NODE_TYPES.GRAPH_NODE;
 //#endregion
 
