@@ -11,8 +11,8 @@ import { useSelector } from 'react-redux';
 
 export interface GeneralSectionProps extends SectionProps {
   onConcurrencyToggle: ToggleHandler;
-  onInvokerConnectionToggle: ToggleHandler;
   onConcurrencyValueChange: NumberChangeHandler;
+  onInvokerConnectionToggle: ToggleHandler;
   onSplitOnToggle: ToggleHandler;
   onSplitOnSelectionChanged: DropdownSelectionChangeHandler;
   onTimeoutValueChange: TextChangeHandler;
@@ -25,12 +25,12 @@ export const General = ({
   splitOnConfiguration,
   timeout,
   concurrency,
-  invokerConnection,
   conditionExpressions,
+  invokerConnection,
   readOnly,
   onConcurrencyToggle,
-  onInvokerConnectionToggle,
   onConcurrencyValueChange,
+  onInvokerConnectionToggle,
   onSplitOnToggle,
   onSplitOnSelectionChanged,
   onTimeoutValueChange,
@@ -108,12 +108,11 @@ export const General = ({
     description: 'title for array dropdown input setting',
   });
   const invokerConnectionTitle = intl.formatMessage({
-    defaultMessage:"Use Invoker's Connection",
+    defaultMessage: "Use Invoker's Connection",
     description: 'title for invoker connection',
   });
   const invokerConnectionTooltipText = intl.formatMessage({
-    defaultMessage:
-      "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger.",
+    defaultMessage: 'When enabled, this action will run with the user from the "Run as" setting in the Dataverse trigger.',
     description: 'description of invoker connection setting',
   });
 
@@ -122,7 +121,9 @@ export const General = ({
   const timeoutLabel = <SettingLabel labelText={actionTimeoutTitle} infoTooltipText={actionTimeoutTooltipText} isChild={false} />;
   const concurrencyLabel = <SettingLabel labelText={concurrencyTitle} infoTooltipText={concurrencyTooltipText} isChild={false} />;
   const arrayDropdownLabel = <SettingLabel labelText={arrayDropdownTitle} isChild={true} />;
-  const invokerConnectionLabel = <SettingLabel labelText={invokerConnectionTitle} infoTooltipText={invokerConnectionTooltipText} isChild={false} />;
+  const invokerConnectionLabel = (
+    <SettingLabel labelText={invokerConnectionTitle} infoTooltipText={invokerConnectionTooltipText} isChild={false} />
+  );
   const triggerConditionsLabel = (
     <SettingLabel labelText={triggerConditionsTitle} infoTooltipText={triggerConditionsTooltipText} isChild={false} />
   );

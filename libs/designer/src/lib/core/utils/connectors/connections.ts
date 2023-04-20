@@ -110,7 +110,6 @@ export async function getConnectionParametersForAzureConnection(connectionType?:
     const fullUrl = api.basePath ? `${baseUrl}${api.basePath}` : baseUrl;
     const subscriptionKey = (api.securityDefinitions?.apiKeyHeader as any)?.name ?? 'NotFound';
 
-
     return {
       apiId: apimApiId,
       baseUrl: fullUrl,
