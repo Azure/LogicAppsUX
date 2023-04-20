@@ -862,9 +862,7 @@ const isSettingSupportedFromOperationManifest = <T>(
 
 const isInvokerConnectionSupported = (isTrigger: boolean, nodeType: string, rootNodeId: string | undefined): boolean => {
   if (!isTrigger && rootNodeId === Constants.INVOKER_CONNECTION.DATAVERSE_CUD_TRIGGER) {
-    const supportedTypes = [
-      Constants.NODE.TYPE.OPEN_API_CONNECTION,
-    ];
+    const supportedTypes = [Constants.NODE.TYPE.OPEN_API_CONNECTION];
     return supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
   } else {
     return false;

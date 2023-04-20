@@ -190,6 +190,10 @@ export interface OperationManifestProperties {
     outputPaths: InputsDependency[];
   };
 
+  customSwagger?: {
+    location: string[];
+  };
+
   /*
    * Note: Output resolution takes place as follows. If no payload outputs are present, then use outputs.
    * If payload outputs are present then walk the path defined by alternativeOutputs.keyPath to find the outputsKey. If the outputsKey is not defined, use outputs.

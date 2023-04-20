@@ -7,12 +7,14 @@ import {
 } from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
-import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
+import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import { directAccessPseudoFunctionKey, indexPseudoFunction } from '../../models/Function';
 import { findLast } from '../../utils/Array.Utils';
 import {
   bringInParentSourceNodesForRepeating,
+  collectSourceNodesForConnectionChain,
+  collectTargetNodesForConnectionChain,
   createConnectionEntryIfNeeded,
   flattenInputs,
   generateInputHandleId,
@@ -22,7 +24,7 @@ import {
   getTargetSchemaNodeConnections,
   isConnectionUnit,
   nodeHasSpecificInputEventually,
-  setConnectionInputValue,
+  applyConnectionValue,
 } from '../../utils/Connection.Utils';
 import {
   addAncestorNodesToCanvas,
@@ -69,6 +71,7 @@ export interface DataMapOperationState {
   currentFunctionNodes: FunctionDictionary;
   selectedItemKey?: string;
   selectedItemKeyParts?: ReactFlowIdParts;
+  selectedItemConnectedNodes: ConnectionUnit[];
   xsltFilename: string;
   inlineFunctionInputOutputKeys: string[];
   lastAction: string;
@@ -84,6 +87,7 @@ const emptyPristineState: DataMapOperationState = {
   targetSchemaOrdering: [],
   xsltFilename: '',
   inlineFunctionInputOutputKeys: [],
+  selectedItemConnectedNodes: [],
   lastAction: 'Pristine',
 };
 
@@ -119,7 +123,7 @@ export interface SetConnectionInputAction {
   targetNode: SchemaNodeExtended | FunctionData;
   targetNodeReactFlowKey: string;
   inputIndex?: number;
-  value: InputConnection | null; // null is indicator to remove an unbounded input value
+  input: InputConnection | null; // null is indicator to remove an unbounded input value
   findInputSlot?: boolean;
 }
 
@@ -324,8 +328,30 @@ export const dataMapSlice = createSlice({
     },
 
     setSelectedItem: (state, action: PayloadAction<string | undefined>) => {
+      const connections = state.curDataMapOperation.dataMapConnections;
+      const selectedItemKey = action.payload;
+
       state.curDataMapOperation.selectedItemKey = action.payload;
-      state.curDataMapOperation.selectedItemKeyParts = action.payload ? getSplitIdsFromReactFlowConnectionId(action.payload) : undefined;
+
+      if (selectedItemKey) {
+        const selectedItemKeyParts = getSplitIdsFromReactFlowConnectionId(selectedItemKey);
+        state.curDataMapOperation.selectedItemKeyParts = selectedItemKeyParts;
+
+        const selectedItemConnectedNodes = [];
+        if (connections[selectedItemKeyParts.sourceId]) {
+          selectedItemConnectedNodes.push(...collectSourceNodesForConnectionChain(connections[selectedItemKeyParts.sourceId], connections));
+          selectedItemConnectedNodes.push(...collectTargetNodesForConnectionChain(connections[selectedItemKeyParts.sourceId], connections));
+        }
+
+        const uniqueSelectedItemConnectedNodes = selectedItemConnectedNodes.filter((node, index, self) => {
+          return self.findIndex((subNode) => subNode.reactFlowKey === node.reactFlowKey) === index;
+        });
+
+        state.curDataMapOperation.selectedItemConnectedNodes = uniqueSelectedItemConnectedNodes;
+      } else {
+        state.curDataMapOperation.selectedItemKeyParts = undefined;
+        state.curDataMapOperation.selectedItemConnectedNodes = [];
+      }
     },
 
     deleteCurrentlySelectedItem: (state) => {
@@ -453,7 +479,7 @@ export const dataMapSlice = createSlice({
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
       };
 
-      setConnectionInputValue(newState.dataMapConnections, action.payload);
+      applyConnectionValue(newState.dataMapConnections, action.payload);
 
       doDataMapOperation(state, newState, 'Set connection input value');
     },
@@ -587,12 +613,12 @@ const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapOperati
 };
 
 const addConnection = (newConnections: ConnectionDictionary, nodes: ConnectionAction): void => {
-  setConnectionInputValue(newConnections, {
+  applyConnectionValue(newConnections, {
     targetNode: nodes.destination,
     targetNodeReactFlowKey: nodes.reactFlowDestination,
     findInputSlot: nodes.specificInput === undefined, // 0 should be counted as truthy
     inputIndex: nodes.specificInput,
-    value: {
+    input: {
       reactFlowKey: nodes.reactFlowSource,
       node: nodes.source,
     },
@@ -743,6 +769,8 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
     // there are no connections to it, and we don't want to accidentally delete connections on other layers
     curDataMapState.curDataMapOperation.selectedItemKey = undefined;
     curDataMapState.curDataMapOperation.selectedItemKeyParts = undefined;
+    curDataMapState.curDataMapOperation.selectedItemConnectedNodes = [];
+
     doDataMapOperation(
       curDataMapState,
       {
@@ -768,6 +796,8 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
 
     curDataMapState.curDataMapOperation.selectedItemKey = undefined;
     curDataMapState.curDataMapOperation.selectedItemKeyParts = undefined;
+    curDataMapState.curDataMapOperation.selectedItemConnectedNodes = [];
+
     doDataMapOperation(
       curDataMapState,
       { ...curDataMapState.curDataMapOperation, currentFunctionNodes: newFunctionsState },
@@ -853,11 +883,11 @@ export const addParentConnectionForRepeatingElements = (
 
         if (!parentsAlreadyConnected) {
           if (!indexFnRfKey) {
-            setConnectionInputValue(dataMapConnections, {
+            applyConnectionValue(dataMapConnections, {
               targetNode: parentTargetNode,
               targetNodeReactFlowKey: parentPrefixedTargetKey,
               findInputSlot: true,
-              value: {
+              input: {
                 reactFlowKey: parentPrefixedSourceKey,
                 node: parentSourceNode,
               },
@@ -865,22 +895,22 @@ export const addParentConnectionForRepeatingElements = (
           } else {
             // If provided, we need to plug in an index() between the parent loop elements
             // Source schema node -> Index()
-            setConnectionInputValue(dataMapConnections, {
+            applyConnectionValue(dataMapConnections, {
               targetNode: indexPseudoFunction,
               targetNodeReactFlowKey: indexFnRfKey,
               findInputSlot: true,
-              value: {
+              input: {
                 reactFlowKey: parentPrefixedSourceKey,
                 node: parentSourceNode,
               },
             });
 
             // Index() -> target schema node
-            setConnectionInputValue(dataMapConnections, {
+            applyConnectionValue(dataMapConnections, {
               targetNode: parentTargetNode,
               targetNodeReactFlowKey: parentPrefixedTargetKey,
               findInputSlot: true,
-              value: {
+              input: {
                 reactFlowKey: indexFnRfKey,
                 node: indexPseudoFunction,
               },
