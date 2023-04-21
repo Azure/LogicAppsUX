@@ -14,30 +14,36 @@ import {
 
 describe('mapDefinitions/MapDefinitionDeserializer', () => {
   describe('XML', () => {
-    const simpleMap: MapDefinitionEntry = {
-      $version: '1',
-      $input: 'XML',
-      $output: 'XML',
-      $sourceSchema: 'demo-source.xsd',
-      $targetSchema: 'demo-source.xsd',
-      $sourceNamespaces: {
-        ns0: 'http://tempuri.org/source.xsd',
-        xs: 'http://www.w3.org/2001/XMLSchema',
-      },
-      $targetNamespaces: {},
-      'ns0:Root': {
-        DirectTranslation: {
-          Employee: {
-            Name: '/ns0:Root/DirectTranslation/EmployeeName',
-          },
-        },
-      },
-    };
+    let simpleMap: MapDefinitionEntry = {};
+
     const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
     const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema);
 
+    beforeEach(() => {
+      simpleMap = {
+        $version: '1',
+        $input: 'XML',
+        $output: 'XML',
+        $sourceSchema: 'demo-source.xsd',
+        $targetSchema: 'demo-source.xsd',
+        $sourceNamespaces: {
+          ns0: 'http://tempuri.org/source.xsd',
+          xs: 'http://www.w3.org/2001/XMLSchema',
+        },
+        $targetNamespaces: {},
+      };
+    });
+
     describe('convertFromMapDefinition', () => {
       it('creates a simple connection between one source and target node', () => {
+        simpleMap['ns0:Root'] = {
+          DirectTranslation: {
+            Employee: {
+              Name: '/ns0:Root/DirectTranslation/EmployeeName',
+            },
+          },
+        };
+
         const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
         const result = mapDefinitionDeserializer.convertFromMapDefinition();
         const resultEntries = Object.entries(result);
@@ -570,8 +576,6 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
       });
 
-      // TODO: 16770037 - Once the BE fixes how loops are parsed in getSchemaTree we should restore this to match
-      // the transcript yml file
       it('creates a looping conditional connection', () => {
         simpleMap['ns0:Root'] = {
           ConditionalLooping: {
@@ -807,7 +811,6 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       it('creates a many-to-many loop connections', () => {
         const extendedLoopSource = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
         const extendedLoopTarget = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
-        delete simpleMap['ns0:Root'];
         simpleMap['ns0:TargetSchemaRoot'] = {
           Looping: {
             ManyToMany: {
@@ -854,7 +857,6 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       it('creates a many-to-one loop connections', () => {
         const extendedComprehensiveSourceSchema = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
         const extendedComprehensiveTargetSchema = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
-        delete simpleMap['ns0:Root'];
         simpleMap['ns0:TargetSchemaRoot'] = {
           Looping: {
             ManyToOne: {
@@ -925,7 +927,6 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       it('creates a many-to-one loop connection with nested index variables', () => {
         const extendedComprehensiveSourceSchema = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
         const extendedComprehensiveTargetSchema = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
-        delete simpleMap['ns0:Root'];
         simpleMap['ns0:TargetSchemaRoot'] = {
           Looping: {
             ManyToOne: {
@@ -985,7 +986,6 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       it('creates a loop connection with dot access', () => {
         const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
         const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema);
-        delete simpleMap['ns0:TargetSchemaRoot'];
         simpleMap['ns0:Root'] = {
           NameValueTransforms: {
             PO_Status: {
@@ -1011,10 +1011,53 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         ).toBe('source-/ns0:Root/NameValueTransforms/PurchaseOrderStatus/ns0:LineItem');
       });
 
-      it.skip('Everything test', () => {
+      it('If-Else test', () => {
+        simpleMap['ns0:Root'] = {
+          DirectTranslation: {
+            Employee: {
+              Name: 'if-then-else(is-greater-than(/ns0:Root/DirectTranslation/EmployeeID, 10), /ns0:Root/DirectTranslation/EmployeeName, "Custom")',
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries.length).toEqual(5);
+
+        expect(resultEntries[0][0]).toContain('IfElse');
+        expect(resultEntries[0][1]).toBeTruthy();
+        expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
+        expect((resultEntries[0][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual(
+          'source-/ns0:Root/DirectTranslation/EmployeeName'
+        );
+        expect(resultEntries[0][1].inputs[2][0]).toEqual('"Custom"');
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+
+        expect(resultEntries[1][0]).toContain('IsGreater');
+        expect(resultEntries[1][1]).toBeTruthy();
+        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeID');
+        expect(resultEntries[1][1].inputs[1][0]).toEqual('10');
+        expect(resultEntries[1][1].outputs[0].reactFlowKey).toContain('IfElse');
+
+        expect(resultEntries[2][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeID');
+        expect(resultEntries[2][1]).toBeTruthy();
+        expect(resultEntries[2][1].outputs[0].reactFlowKey).toContain('IsGreater');
+
+        expect(resultEntries[3][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+        expect(resultEntries[3][1]).toBeTruthy();
+        expect(resultEntries[3][1].outputs[0].reactFlowKey).toContain('IfElse');
+
+        expect(resultEntries[4][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+        expect(resultEntries[4][1]).toBeTruthy();
+        expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IfElse');
+      });
+
+      it('Everything test', () => {
         const extendedSource = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
         const extendedTarget = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
-        delete simpleMap['ns0:Root'];
         simpleMap['ns0:TargetSchemaRoot'] = {
           Looping: {
             OneToOne: {
@@ -1061,7 +1104,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[2][0]).toEqual(ifId);
         expect(resultEntries[2][1]).toBeTruthy();
         expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(isGreaterId);
-        expect((resultEntries[2][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual(ifId);
+        expect((resultEntries[2][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual(directAccessId);
         expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest/Direct');
 
         expect(resultEntries[3][0]).toEqual(indexId);
@@ -1069,12 +1112,14 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
           'source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest'
         );
-        expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest');
-        expect(resultEntries[3][1].outputs[1].reactFlowKey).toEqual(ifId);
+        expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual(isGreaterId);
+        expect(resultEntries[3][1].outputs[1].reactFlowKey).toEqual(directAccessId);
+        expect(resultEntries[3][1].outputs[2].reactFlowKey).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest');
 
         expect(resultEntries[4][0]).toEqual('source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest');
         expect(resultEntries[4][1]).toBeTruthy();
-        expect(resultEntries[4][1].outputs[0].reactFlowKey).toEqual(indexId);
+        expect(resultEntries[4][1].outputs[0].reactFlowKey).toEqual(directAccessId);
+        expect(resultEntries[4][1].outputs[1].reactFlowKey).toEqual(indexId);
 
         expect(resultEntries[5][0]).toEqual('source-/ns0:SourceSchemaRoot/Looping/OneToOne/StressTest/SourceDirect');
         expect(resultEntries[5][1]).toBeTruthy();
@@ -1086,51 +1131,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[7][0]).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest/Direct');
         expect(resultEntries[7][1]).toBeTruthy();
-        expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(directAccessId);
-      });
-
-      it('If-Else test', () => {
-        simpleMap['ns0:Root'] = {
-          DirectTranslation: {
-            Employee: {
-              Name: 'if-then-else(is-greater-than(/ns0:Root/DirectTranslation/EmployeeID, 10), /ns0:Root/DirectTranslation/EmployeeName, "Custom")',
-            },
-          },
-        };
-
-        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
-        const result = mapDefinitionDeserializer.convertFromMapDefinition();
-        const resultEntries = Object.entries(result);
-        resultEntries.sort();
-
-        expect(resultEntries.length).toEqual(5);
-
-        expect(resultEntries[0][0]).toContain('IfElse');
-        expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IsGreater');
-        expect((resultEntries[0][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual(
-          'source-/ns0:Root/DirectTranslation/EmployeeName'
-        );
-        expect(resultEntries[0][1].inputs[2][0]).toEqual('"Custom"');
-        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
-
-        expect(resultEntries[1][0]).toContain('IsGreater');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeID');
-        expect(resultEntries[1][1].inputs[1][0]).toEqual('10');
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toContain('IfElse');
-
-        expect(resultEntries[2][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeID');
-        expect(resultEntries[2][1]).toBeTruthy();
-        expect(resultEntries[2][1].outputs[0].reactFlowKey).toContain('IsGreater');
-
-        expect(resultEntries[3][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
-        expect(resultEntries[3][1]).toBeTruthy();
-        expect(resultEntries[3][1].outputs[0].reactFlowKey).toContain('IfElse');
-
-        expect(resultEntries[4][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
-        expect(resultEntries[4][1]).toBeTruthy();
-        expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IfElse');
+        expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(ifId);
       });
     });
   });
@@ -1142,15 +1143,16 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       $output: 'JSON',
       $sourceSchema: 'SourceSchemaJson.json',
       $targetSchema: 'TargetSchemaJson.json',
-      root: {
-        String1: '/root/OrderNo',
-      },
     };
     const extendedSource = convertSchemaToSchemaExtended(sourceMockJsonSchema);
     const extendedTarget = convertSchemaToSchemaExtended(targetMockJsonSchema);
 
     describe('convertFromMapDefinition', () => {
       it('creates a simple connection between one source and target node', () => {
+        simpleMap['root'] = {
+          String1: '/root/OrderNo',
+        };
+
         const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
         const result = mapDefinitionDeserializer.convertFromMapDefinition();
         const resultEntries = Object.entries(result);
@@ -1680,49 +1682,83 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[5][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(directAccessId);
       });
 
-      it.skip('creates a looping connection w/ index variable, conditional, and relative attribute path', () => {
+      it('creates a looping connection w/ index variable and conditional', () => {
         simpleMap['root'] = {
-          LoopingWithIndex: {
-            WeatherSummary: {
-              '$for(/root/LoopingWithIndex/WeatherReport, $a)': {
+          ForLoop: {
+            '$for(/root/text/*, $a)': [
+              {
                 '$if(is-greater-than($a, 2))': {
-                  Day: {
-                    Name: 'concat("Day ", $a)',
-                    Pressure: './@Pressure',
+                  prop1: {
+                    TEL_NUMBER: 'itemNumber',
+                    TEL_EXTENS: 'concat("Ext", " ", $a)',
                   },
                 },
               },
-            },
+            ],
           },
         };
 
         const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
         const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
 
-        expect(Object.entries(result).length).toEqual(9);
+        expect(resultEntries.length).toEqual(10);
 
-        const indexFnRfKey = (result['target-/root/LoopingWithIndex/WeatherSummary/Day'].inputs[0][0] as ConnectionUnit).reactFlowKey;
-        expect(indexFnRfKey).toContain(indexPseudoFunctionKey);
-        expect((result[indexFnRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe('source-/root/LoopingWithIndex/WeatherReport');
+        const concatId = resultEntries[0][0];
+        const isGreaterId = resultEntries[1][0];
+        const ifId = resultEntries[2][0];
+        const indexId = resultEntries[3][0];
 
-        const conditionalFnRfKey = (result['target-/root/LoopingWithIndex/WeatherSummary/Day'].inputs[0][1] as ConnectionUnit).reactFlowKey;
-        expect(conditionalFnRfKey).toContain(ifPseudoFunctionKey);
-        expect((result[conditionalFnRfKey].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
-          'source-/root/LoopingWithIndex/WeatherReport'
-        );
-        const greaterFnRfKey = (result[conditionalFnRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey;
-        expect(greaterFnRfKey).toContain('IsGreater');
-        expect((result[greaterFnRfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(indexFnRfKey);
-        expect(result[greaterFnRfKey].inputs[1][0] as string).toBe('2');
+        expect(resultEntries[0][0]).toEqual(concatId);
+        expect(resultEntries[0][1]).toBeTruthy();
+        expect(resultEntries[0][1].inputs[0][0]).toEqual('"Ext"');
+        expect(resultEntries[0][1].inputs[0][1]).toEqual('" "');
+        expect((resultEntries[0][1].inputs[0][2] as ConnectionUnit).reactFlowKey).toEqual(indexId);
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/ForLoop/*/prop1/TEL_EXTENS');
 
-        const concatFnRfKey = (result['target-/root/LoopingWithIndex/WeatherSummary/Day/Name'].inputs[0][0] as ConnectionUnit).reactFlowKey;
-        expect(concatFnRfKey).toContain('Concat');
-        expect(result[concatFnRfKey].inputs[0][0] as string).toBe('"Day "');
-        expect((result[concatFnRfKey].inputs[0][1] as ConnectionUnit).reactFlowKey).toBe(indexFnRfKey);
+        expect(resultEntries[1][0]).toEqual(isGreaterId);
+        expect(resultEntries[1][1]).toBeTruthy();
+        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
+        expect(resultEntries[1][1].inputs[1][0]).toEqual('2');
+        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual(ifId);
 
-        expect((result['target-/root/LoopingWithIndex/WeatherSummary/Day/Pressure'].inputs[0][0] as ConnectionUnit).reactFlowKey).toBe(
-          'source-/root/LoopingWithIndex/WeatherReport/@Pressure'
-        );
+        expect(resultEntries[2][0]).toEqual(ifId);
+        expect(resultEntries[2][1]).toBeTruthy();
+        expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(isGreaterId);
+        expect((resultEntries[2][1].inputs[1][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/text/*');
+        expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual('target-/root/ForLoop/*/prop1');
+
+        expect(resultEntries[3][0]).toEqual(indexId);
+        expect(resultEntries[3][1]).toBeTruthy();
+        expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/text/*');
+        expect(resultEntries[3][1].outputs[0].reactFlowKey).toEqual(isGreaterId);
+        expect(resultEntries[3][1].outputs[1].reactFlowKey).toEqual('target-/root/ForLoop/*');
+        expect(resultEntries[3][1].outputs[2].reactFlowKey).toEqual(concatId);
+
+        expect(resultEntries[4][0]).toEqual('source-/root/text/*');
+        expect(resultEntries[4][1]).toBeTruthy();
+        expect(resultEntries[4][1].outputs[0].reactFlowKey).toEqual(indexId);
+
+        expect(resultEntries[5][0]).toEqual('source-/root/text/*/itemNumber');
+        expect(resultEntries[5][1]).toBeTruthy();
+        expect(resultEntries[5][1].outputs[0].reactFlowKey).toEqual('target-/root/ForLoop/*/prop1/TEL_NUMBER');
+
+        expect(resultEntries[6][0]).toEqual('target-/root/ForLoop/*');
+        expect(resultEntries[6][1]).toBeTruthy();
+        expect((resultEntries[6][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
+
+        expect(resultEntries[7][0]).toEqual('target-/root/ForLoop/*/prop1');
+        expect(resultEntries[7][1]).toBeTruthy();
+        expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(ifId);
+
+        expect(resultEntries[8][0]).toEqual('target-/root/ForLoop/*/prop1/TEL_EXTENS');
+        expect(resultEntries[8][1]).toBeTruthy();
+        expect((resultEntries[8][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
+
+        expect(resultEntries[9][0]).toEqual('target-/root/ForLoop/*/prop1/TEL_NUMBER');
+        expect(resultEntries[9][1]).toBeTruthy();
+        expect((resultEntries[9][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/text/*/itemNumber');
       });
 
       it.skip('creates a many-to-one loop connections', () => {
@@ -1828,7 +1864,6 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       it.skip('creates a many-to-one loop connection with nested index variables', () => {
         const extendedComprehensiveSourceSchema = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
         const extendedComprehensiveTargetSchema = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
-        delete simpleMap['root'];
         simpleMap['ns0:TargetSchemaRoot'] = {
           Looping: {
             ManyToOne: {
@@ -1885,10 +1920,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         );
       });
 
-      it.skip('creates a loop connection with dot access', () => {
-        const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
-        const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema);
-        delete simpleMap['ns0:TargetSchemaRoot'];
+      it('creates a loop connection with dot access', () => {
         simpleMap['root'] = {
           ForLoop: {
             '$for(/root/generalData/address/telephone/*)': [
@@ -1906,27 +1938,20 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         const resultEntries = Object.entries(result);
         resultEntries.sort();
 
-        expect(resultEntries.length).toEqual(4);
+        expect(resultEntries.length).toEqual(3);
 
-        const indexId = resultEntries[0][0];
-
-        expect(resultEntries[0][0]).toEqual(indexId);
+        expect(resultEntries[0][0]).toEqual('source-/root/generalData/address/telephone/*');
         expect(resultEntries[0][1]).toBeTruthy();
-        expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*');
-        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*');
-        expect(resultEntries[0][1].outputs[1].reactFlowKey).toEqual('target-/root/ComplexArray1/*/F1');
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/ForLoop/*');
+        expect(resultEntries[0][1].outputs[1].reactFlowKey).toEqual('target-/root/ForLoop/*/prop1/TEL_NUMBER');
 
-        expect(resultEntries[1][0]).toEqual('source-/root/Nums/*');
+        expect(resultEntries[1][0]).toEqual('target-/root/ForLoop/*');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual(indexId);
+        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/generalData/address/telephone/*');
 
-        expect(resultEntries[2][0]).toEqual('target-/root/ComplexArray1/*');
+        expect(resultEntries[2][0]).toEqual('target-/root/ForLoop/*/prop1/TEL_NUMBER');
         expect(resultEntries[2][1]).toBeTruthy();
-        expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
-
-        expect(resultEntries[3][0]).toEqual('target-/root/ComplexArray1/*/F1');
-        expect(resultEntries[3][1]).toBeTruthy();
-        expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
+        expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/generalData/address/telephone/*');
       });
     });
   });

@@ -151,10 +151,10 @@ const CreateConnectionTab = () => {
           applyNewConnection(connection, newName);
           dispatch(showDefaultTabs({ isMonitoringView }));
         } else if (err) {
-          setErrorMessage(err);
+          setErrorMessage(String(err));
         }
       } catch (error: any) {
-        setErrorMessage(error.responseText);
+        setErrorMessage(String(error?.responseText));
         const message = `Failed to create connection: ${error}`;
         LoggerService().log({
           level: LogEntryLevel.Error,

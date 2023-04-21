@@ -46,6 +46,14 @@ export const appServiceActionManifest = {
           type: 'string',
           title: 'Operation Id',
           description: 'Operation Id',
+          'x-ms-serialization': { skip: true },
+          'x-ms-deserialization': {
+            type: 'swaggeroperationid',
+            parameterReference: 'operationDetails.uri',
+            options: {
+              swaggerOperation: { methodPath: ['operationDetails', 'method'], uriPath: ['operationDetails', 'uri'] },
+            },
+          },
           'x-ms-dynamic-list': {
             dynamicState: {
               operationId: 'getAppServiceOperations',
@@ -96,6 +104,8 @@ export const appServiceActionManifest = {
       },
     },
     isOutputsOptional: false,
+
+    customSwagger: { location: ['metadata', 'apiDefinitionUrl'] },
 
     settings: {
       secureData: {},

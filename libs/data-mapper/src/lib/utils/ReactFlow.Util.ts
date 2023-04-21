@@ -91,7 +91,7 @@ export const useLayout = (
           // Convert the calculated layout to ReactFlow nodes + edges
           setReactFlowNodes([
             placeholderReactFlowNode,
-            ...convertToReactFlowNodes(computedLayout, sortedSourceSchemaNodes, currentFunctionNodes, [
+            ...convertToReactFlowNodes(computedLayout, selectedItemKey, sortedSourceSchemaNodes, currentFunctionNodes, [
               currentTargetSchemaNode,
               ...currentTargetSchemaNode.children,
             ]),
@@ -137,13 +137,14 @@ export const useLayout = (
 
 export const convertToReactFlowNodes = (
   layoutTree: RootLayoutNode,
+  selectedNodeId: string | undefined,
   currentSourceSchemaNodes: SchemaNodeExtended[],
   currentFunctionNodes: FunctionDictionary,
   currentTargetSchemaNodes: SchemaNodeExtended[]
 ): ReactFlowNode<CardProps>[] => {
   return [
     ...convertSourceSchemaToReactFlowNodes(layoutTree.children[0], currentSourceSchemaNodes),
-    ...convertFunctionsToReactFlowParentAndChildNodes(layoutTree.children[1], currentFunctionNodes),
+    ...convertFunctionsToReactFlowParentAndChildNodes(layoutTree.children[1], selectedNodeId, currentFunctionNodes),
     ...convertTargetSchemaToReactFlowNodes(layoutTree.children[2], currentTargetSchemaNodes),
   ];
 };
@@ -219,12 +220,15 @@ export const convertSchemaToReactFlowNodes = (
 
 const convertFunctionsToReactFlowParentAndChildNodes = (
   functionsLayoutTree: LayoutNode,
+  selectedNodeId: string | undefined,
   currentFunctionNodes: FunctionDictionary
 ): ReactFlowNode<FunctionCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<FunctionCardProps>[] = [];
 
   Object.entries(currentFunctionNodes).forEach(([functionKey, fnNode], idx) => {
     const layoutNode = functionsLayoutTree.children?.find((node) => node.id === functionKey);
+    const isSelectedNode = functionKey === selectedNodeId;
+
     if (!layoutNode || layoutNode.x === undefined || layoutNode.y === undefined) {
       LogService.error(LogCategory.ReactFlowUtils, 'convertFunctionsToReactFlowParentAndChildNodes', {
         message: 'Layout error: LayoutNode not found, or missing x/y',
@@ -254,6 +258,7 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
         x: layoutNode.x,
         y: layoutNode.y,
       },
+      zIndex: isSelectedNode ? 150 : 0,
     });
   });
 
@@ -320,6 +325,7 @@ export const useOverviewLayout = (
 };
 
 export const useGlobalViewLayout = (
+  selectedNodeId: string | undefined,
   flattenedSourceSchema: SchemaNodeDictionary,
   flattenedTargetSchema: SchemaNodeDictionary,
   connections: ConnectionDictionary
@@ -353,6 +359,7 @@ export const useGlobalViewLayout = (
           placeholderReactFlowNode,
           ...convertToReactFlowNodes(
             computedLayoutTree,
+            selectedNodeId,
             Object.values(flattenedSourceSchema),
             functionDictionary,
             Object.values(flattenedTargetSchema)
@@ -382,7 +389,7 @@ export const useGlobalViewLayout = (
           message: `${error}`,
         });
       });
-  }, [connections, flattenedSourceSchema, flattenedTargetSchema]);
+  }, [connections, flattenedSourceSchema, flattenedTargetSchema, selectedNodeId]);
 
   return [reactFlowNodes, reactFlowEdges];
 };

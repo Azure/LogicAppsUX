@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations  */
 import constants from '../../../common/constants';
 import type { ConnectionReference, WorkflowParameter } from '../../../common/models/workflow';
 import type { NodeDataWithOperationMetadata } from '../../actions/bjsworkflow/operationdeserializer';
@@ -29,6 +30,8 @@ import { getParentArrayKey, isForeachActionNameForLoopsource } from '../loops';
 import { isOneOf } from '../openapi/schema';
 import { loadDynamicOutputsInNode } from '../outputs';
 import { hasSecureOutputs } from '../setting';
+import { processPathInputs } from '../swagger/inputsbuilder';
+import { extractPathFromUri, getOperationIdFromDefinition } from '../swagger/operation';
 import { convertWorkflowParameterTypeToSwaggerType } from '../tokens';
 import { validateJSONParameter, validateStaticParameterInfo } from '../validation';
 import { getRecurrenceParameters } from './builtins';
@@ -89,7 +92,7 @@ import type {
   SwaggerParser,
 } from '@microsoft/parsers-logic-apps';
 import {
-  DeserializationLocation,
+  DeserializationType,
   PropertySerializationType,
   getKnownTitles,
   isLegacyDynamicValuesExtension,
@@ -276,7 +279,7 @@ export function createParameterInfo(
   const isFilePicker = requiresFilePickerEditor(parameter);
   const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, shouldIgnoreDefaultValue, isFilePicker);
   const value = loadParameterValue(parameter);
-  const { alias, dependencies, encode, format, isDynamic, isUnknown, serialization } = parameter;
+  const { alias, dependencies, encode, format, isDynamic, isUnknown, serialization, deserialization } = parameter;
   const info = {
     alias,
     dependencies,
@@ -286,6 +289,7 @@ export function createParameterInfo(
     isDynamic: !!isDynamic,
     isUnknown,
     serialization,
+    deserialization,
   };
 
   const parameterInfo: ParameterInfo = {
@@ -348,15 +352,21 @@ export function getParameterEditorProps(
       editor = constants.EDITOR.ARRAY;
       editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
-    } else if (schemaEnum || schema?.enum || (schema?.[ExtensionProperties.CustomEnum] && !equals(visibility, Visibility.Internal))) {
+    } else if ((schemaEnum || schema?.enum || schema?.[ExtensionProperties.CustomEnum]) && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.COMBOBOX;
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
 
       let schemaEnumOptions: ComboboxItem[];
-      if (schemaEnum) {
-        schemaEnumOptions = schemaEnum.map((enumItem) => ({ ...enumItem, key: enumItem.value?.toString() }));
-      } else if (schema[ExtensionProperties.CustomEnum]) {
+      if (schema[ExtensionProperties.CustomEnum]) {
         schemaEnumOptions = schema[ExtensionProperties.CustomEnum];
+      } else if (schemaEnum) {
+        schemaEnumOptions = schemaEnum.map((enumItem) => {
+          return {
+            ...enumItem,
+            value: enumItem.value?.toString(),
+            key: enumItem.displayName,
+          };
+        });
       } else {
         schemaEnumOptions = schema.enum.map(
           (val: string): ComboboxItem => ({
@@ -405,6 +415,15 @@ const convertStringToInputParameter = (
   trimExpression?: boolean,
   convertIfContainsExpression?: boolean
 ): InputParameter => {
+  if (typeof value !== 'string') {
+    return {
+      key: guid(),
+      name: value,
+      type: typeof value,
+      hideInUI: false,
+      value: value,
+    };
+  }
   const hasExpression = containsExpression(value);
   let newValue = value;
   if (removeQuotesFromExpression) {
@@ -809,13 +828,18 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
       }
 
     default:
-      method = arrayDetails
-        ? constants.ITEM
-        : actionName
-        ? `${constants.OUTPUTS}(${convertToStringLiteral(actionName)})`
-        : constants.TRIGGER_OUTPUTS_OUTPUT;
+      method = arrayDetails ? constants.ITEM : getTokenExpressionMethodFromKey(key, actionName);
 
-      return generateExpressionFromKey(method, key, actionName, !!arrayDetails);
+      return generateExpressionFromKey(method, key, actionName, !!arrayDetails, !!required);
+  }
+}
+
+function getTokenExpressionMethodFromKey(key: string, actionName: string | undefined): string {
+  const segments = parseEx(key);
+  if (segments.length >= 2 && segments[0].value === OutputSource.Body && segments[1].value === '$') {
+    return actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
+  } else {
+    return actionName ? `${constants.OUTPUTS}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_OUTPUTS_OUTPUT;
   }
 }
 
@@ -826,7 +850,8 @@ export function generateExpressionFromKey(
   method: string,
   tokenKey: string,
   actionName: string | undefined,
-  isInsideArray: boolean
+  isInsideArray: boolean,
+  required: boolean
 ): string {
   const segments = parseEx(tokenKey);
   segments.shift();
@@ -836,7 +861,7 @@ export function generateExpressionFromKey(
   let rootMethod = method;
   if (!isInsideArray && segments[0]?.value?.toString()?.toLowerCase() === OutputSource.Body) {
     segments.shift();
-    rootMethod = actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : `triggerBody()`;
+    rootMethod = actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
   }
 
   while (segments.length) {
@@ -845,7 +870,7 @@ export function generateExpressionFromKey(
       break;
     } else {
       const propertyName = segment.value as string;
-      result.push(`?[${convertToStringLiteral(propertyName)}]`);
+      result.push(required ? `[${convertToStringLiteral(propertyName)}]` : `?[${convertToStringLiteral(propertyName)}]`);
     }
   }
 
@@ -1456,6 +1481,7 @@ export async function updateParameterAndDependencies(
     },
   ];
   const payload: UpdateParametersPayload = {
+    isUserAction: true,
     nodeId,
     parameters: parametersToUpdate,
   };
@@ -1956,6 +1982,7 @@ export function getGroupAndParameterFromParameterKey(
 export function getInputsValueFromDefinitionForManifest(
   inputsLocation: string[],
   manifest: OperationManifest,
+  customSwagger: SwaggerParser | undefined,
   stepDefinition: any,
   allInputs: InputParameter[]
 ): any {
@@ -1969,7 +1996,7 @@ export function getInputsValueFromDefinitionForManifest(
 
   inputsValue = swapInputsValueIfNeeded(inputsValue, manifest);
 
-  return updateInputsValueForSpecialCases(inputsValue, allInputs);
+  return updateInputsValueForSpecialCases(inputsValue, allInputs, customSwagger);
 }
 
 function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) {
@@ -2007,7 +2034,7 @@ function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) 
  * serialization or special cases for deserialiation like reading values from inputs for non serializable parameter.
  * Example: Batch trigger
  */
-function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputParameter[]) {
+function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputParameter[], customSwagger?: SwaggerParser) {
   if (!inputsValue || typeof inputsValue !== 'object') {
     return inputsValue;
   }
@@ -2017,39 +2044,78 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
 
   for (const propertyParameter of propertyNameParameters) {
     const { name, serialization } = propertyParameter;
-    if (serialization?.property?.type === PropertySerializationType.ParentObject) {
-      const parameterReference = serialization.property.parameterReference;
-      const parentPropertyName = parameterReference.substring(0, parameterReference.lastIndexOf('.'));
-      const parentPropertySegments = parentPropertyName.split('.');
-      const objectValue = getObjectPropertyValue(finalValue, parentPropertySegments);
+    if (serialization?.property) {
+      const parameterReference = serialization.property.parameterReference as string;
 
-      // NOTE: Currently this only handles only one variable property name in the object
-      const keys = Object.keys(objectValue);
-      if (keys.length !== 1) {
-        return inputsValue;
+      switch (serialization?.property?.type?.toLowerCase()) {
+        case PropertySerializationType.ParentObject:
+          const parentPropertyName = parameterReference.substring(0, parameterReference.lastIndexOf('.'));
+          const parentPropertySegments = parentPropertyName.split('.');
+          const objectValue = getObjectPropertyValue(finalValue, parentPropertySegments);
+
+          // NOTE: Currently this only handles only one variable property name in the object
+          const keys = Object.keys(objectValue);
+          if (keys.length !== 1) {
+            return inputsValue;
+          }
+
+          const propertyName = keys[0];
+
+          safeSetObjectPropertyValue(finalValue, parentPropertySegments, {
+            [serialization.property.name as string]: {
+              ...objectValue[propertyName],
+              [name.substring(name.lastIndexOf('.') + 1)]: propertyName,
+            },
+          });
+          break;
+
+        case PropertySerializationType.PathTemplate:
+          const parameterLocation = propertyParameter.name.split('.');
+          const pathParametersLocation = parameterReference.split('.');
+          const uriValue = getObjectPropertyValue(finalValue, parameterLocation);
+          const pathParameters = processPathInputs(uriValue, propertyParameter.default);
+          safeSetObjectPropertyValue(finalValue, pathParametersLocation, pathParameters);
+          safeSetObjectPropertyValue(finalValue, parameterLocation, propertyParameter.default);
+          break;
+
+        default:
+          break;
       }
-
-      const propertyName = keys[0];
-
-      safeSetObjectPropertyValue(finalValue, parentPropertySegments, {
-        [serialization.property.name]: {
-          ...objectValue[propertyName],
-          [name.substring(name.lastIndexOf('.') + 1)]: propertyName,
-        },
-      });
     }
   }
 
+  // NOTE: Deserialization should be processed only after parameters serialization property is processed.
   const parametersWithDeserialization = allInputs.filter((input) => !!input.deserialization);
   for (const parameter of parametersWithDeserialization) {
     const { name, deserialization } = parameter;
-    if (deserialization?.type === DeserializationLocation.ParentObjectProperties) {
-      const parentPropertySegments = deserialization.parameterReference.split('.');
-      const objectValue = getObjectPropertyValue(finalValue, parentPropertySegments);
-      const value = Object.keys(objectValue ?? {});
+    if (deserialization?.parameterReference) {
+      const { type, parameterReference, options } = deserialization;
+      const propertySegments = parameterReference.split('.');
 
-      objectValue[name.split('.').at(-1) as string] = value;
-      safeSetObjectPropertyValue(finalValue, parentPropertySegments, objectValue);
+      switch (type) {
+        case DeserializationType.ParentObjectProperties:
+          const objectValue = getObjectPropertyValue(finalValue, propertySegments);
+          const value = Object.keys(objectValue ?? {});
+          objectValue[name.split('.').at(-1) as string] = value;
+          safeSetObjectPropertyValue(finalValue, propertySegments, objectValue);
+          break;
+
+        case DeserializationType.SwaggerOperationId:
+          const method = getObjectPropertyValue(finalValue, options?.swaggerOperation.methodPath as string[]);
+          const uri = getObjectPropertyValue(finalValue, options?.swaggerOperation.uriPath as string[]);
+          const operationId = getOperationIdFromDefinition(
+            {
+              method,
+              path: extractPathFromUri(uri, customSwagger?.api.basePath as string),
+            },
+            customSwagger as SwaggerParser
+          );
+          safeSetObjectPropertyValue(finalValue, propertySegments, operationId);
+          break;
+
+        default:
+          break;
+      }
     }
   }
 

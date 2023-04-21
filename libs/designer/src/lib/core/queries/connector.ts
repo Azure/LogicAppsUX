@@ -43,7 +43,6 @@ export const getListDynamicValues = async (
   parameterAlias: string | undefined,
   parameters: Record<string, any>,
   dynamicState: any,
-  nodeInputs: any,
   nodeMetadata: any
 ): Promise<ListDynamicValue[]> => {
   const queryClient = getReactQueryClient();
@@ -55,19 +54,9 @@ export const getListDynamicValues = async (
       (connectionId ?? '').toLowerCase(),
       connectorId.toLowerCase(),
       operationId.toLowerCase(),
-      getParametersKey(parameters).toLowerCase(),
+      getParametersKey({ ...dynamicState.parameters, ...parameters }),
     ],
-    () =>
-      service.getListDynamicValues(
-        connectionId,
-        connectorId,
-        operationId,
-        parameterAlias,
-        parameters,
-        dynamicState,
-        nodeInputs,
-        nodeMetadata
-      )
+    () => service.getListDynamicValues(connectionId, connectorId, operationId, parameterAlias, parameters, dynamicState, nodeMetadata)
   );
 };
 
@@ -109,7 +98,6 @@ export const getDynamicSchemaProperties = async (
   parameterAlias: string | undefined,
   parameters: Record<string, any>,
   dynamicState: any,
-  nodeInputs: any,
   nodeMetadata: any
 ): Promise<OpenAPIV2.SchemaObject> => {
   const queryClient = getReactQueryClient();
@@ -121,17 +109,16 @@ export const getDynamicSchemaProperties = async (
       (connectionId ?? '').toLowerCase(),
       connectorId.toLowerCase(),
       operationId.toLowerCase(),
-      getParametersKey(parameters),
+      getParametersKey({ ...dynamicState.parameters, ...parameters }),
       `isInput:${!!dynamicState?.isInput}`,
     ],
-    () =>
-      service.getDynamicSchema(connectionId, connectorId, operationId, parameterAlias, parameters, dynamicState, nodeInputs, nodeMetadata)
+    () => service.getDynamicSchema(connectionId, connectorId, operationId, parameterAlias, parameters, dynamicState, nodeMetadata)
   );
 };
 
 const getParametersKey = (parameters: Record<string, any>): string => {
   return Object.keys(parameters).reduce(
-    (result: string, parameterKey: string) => `${result}, ${parameterKey}-${parameters[parameterKey]}`,
+    (result: string, parameterKey: string) => `${result}, ${parameterKey}-${JSON.stringify(parameters[parameterKey])}`,
     ''
   );
 };

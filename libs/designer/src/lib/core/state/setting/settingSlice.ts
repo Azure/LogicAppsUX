@@ -1,3 +1,4 @@
+import { resetWorkflowState } from '../global';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -50,6 +51,9 @@ export const settingsSlice = createSlice({
         state.expandedSections = [...state.expandedSections, sectionName];
       }
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resetWorkflowState, () => initialState);
   },
 });
 
