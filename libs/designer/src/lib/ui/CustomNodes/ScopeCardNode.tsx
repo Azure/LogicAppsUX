@@ -7,7 +7,13 @@ import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions
 import { useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
-import { useBrandColor, useIconUri, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
+import {
+  useAllOperations,
+  useBrandColor,
+  useIconUri,
+  useOperationInfo,
+  useOperationQuery,
+} from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import {
   useActionMetadata,
@@ -44,6 +50,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const scopeId = id.split('-#')[0];
 
   const node = useActionMetadata(scopeId);
+  const operationsInfo = useAllOperations();
 
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
@@ -56,7 +63,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const runInstance = useRunInstance();
   const runData = useRunData(scopeId);
   const nodesMetaData = useNodesMetadata();
-  const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData);
+  const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo);
 
   const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
