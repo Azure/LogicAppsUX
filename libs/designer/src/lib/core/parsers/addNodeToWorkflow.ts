@@ -39,6 +39,12 @@ export const addNodeToWorkflow = (
   const isTrigger = !!operation.properties?.trigger;
   const isRoot = isTrigger || (parentId ? parentId?.split('-#')[0] === graphId : false);
   const parentNodeId = graphId !== 'root' ? graphId : undefined;
+  nodesMetadata[newNodeId] = { graphId, parentNodeId, isRoot };
+
+  state.operations[newNodeId] = { ...state.operations[newNodeId], type: payload.operation.type };
+  state.newlyAddedOperations[newNodeId] = newNodeId;
+  state.isDirty = true;
+
   const isAfterTrigger = nodesMetadata[parentId ?? '']?.isRoot && graphId === 'root';
   const shouldAddRunAfters = !isRoot && !isAfterTrigger;
 

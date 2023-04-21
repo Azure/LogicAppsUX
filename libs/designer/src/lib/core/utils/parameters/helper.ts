@@ -352,15 +352,21 @@ export function getParameterEditorProps(
       editor = constants.EDITOR.ARRAY;
       editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
-    } else if (schemaEnum || schema?.enum || (schema?.[ExtensionProperties.CustomEnum] && !equals(visibility, Visibility.Internal))) {
+    } else if ((schemaEnum || schema?.enum || schema?.[ExtensionProperties.CustomEnum]) && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.COMBOBOX;
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
 
       let schemaEnumOptions: ComboboxItem[];
-      if (schemaEnum) {
-        schemaEnumOptions = schemaEnum.map((enumItem) => ({ ...enumItem, key: enumItem.value?.toString() }));
-      } else if (schema[ExtensionProperties.CustomEnum]) {
+      if (schema[ExtensionProperties.CustomEnum]) {
         schemaEnumOptions = schema[ExtensionProperties.CustomEnum];
+      } else if (schemaEnum) {
+        schemaEnumOptions = schemaEnum.map((enumItem) => {
+          return {
+            ...enumItem,
+            value: enumItem.value?.toString(),
+            key: enumItem.displayName,
+          };
+        });
       } else {
         schemaEnumOptions = schema.enum.map(
           (val: string): ComboboxItem => ({
@@ -409,6 +415,15 @@ const convertStringToInputParameter = (
   trimExpression?: boolean,
   convertIfContainsExpression?: boolean
 ): InputParameter => {
+  if (typeof value !== 'string') {
+    return {
+      key: guid(),
+      name: value,
+      type: typeof value,
+      hideInUI: false,
+      value: value,
+    };
+  }
   const hasExpression = containsExpression(value);
   let newValue = value;
   if (removeQuotesFromExpression) {
@@ -813,13 +828,18 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
       }
 
     default:
-      method = arrayDetails
-        ? constants.ITEM
-        : actionName
-        ? `${constants.OUTPUTS}(${convertToStringLiteral(actionName)})`
-        : constants.TRIGGER_OUTPUTS_OUTPUT;
+      method = arrayDetails ? constants.ITEM : getTokenExpressionMethodFromKey(key, actionName);
 
-      return generateExpressionFromKey(method, key, actionName, !!arrayDetails);
+      return generateExpressionFromKey(method, key, actionName, !!arrayDetails, !!required);
+  }
+}
+
+function getTokenExpressionMethodFromKey(key: string, actionName: string | undefined): string {
+  const segments = parseEx(key);
+  if (segments.length >= 2 && segments[0].value === OutputSource.Body && segments[1].value === '$') {
+    return actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
+  } else {
+    return actionName ? `${constants.OUTPUTS}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_OUTPUTS_OUTPUT;
   }
 }
 
@@ -830,7 +850,8 @@ export function generateExpressionFromKey(
   method: string,
   tokenKey: string,
   actionName: string | undefined,
-  isInsideArray: boolean
+  isInsideArray: boolean,
+  required: boolean
 ): string {
   const segments = parseEx(tokenKey);
   segments.shift();
@@ -840,7 +861,7 @@ export function generateExpressionFromKey(
   let rootMethod = method;
   if (!isInsideArray && segments[0]?.value?.toString()?.toLowerCase() === OutputSource.Body) {
     segments.shift();
-    rootMethod = actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : `triggerBody()`;
+    rootMethod = actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
   }
 
   while (segments.length) {
@@ -849,7 +870,7 @@ export function generateExpressionFromKey(
       break;
     } else {
       const propertyName = segment.value as string;
-      result.push(`?[${convertToStringLiteral(propertyName)}]`);
+      result.push(required ? `[${convertToStringLiteral(propertyName)}]` : `?[${convertToStringLiteral(propertyName)}]`);
     }
   }
 
@@ -1460,6 +1481,7 @@ export async function updateParameterAndDependencies(
     },
   ];
   const payload: UpdateParametersPayload = {
+    isUserAction: true,
     nodeId,
     parameters: parametersToUpdate,
   };

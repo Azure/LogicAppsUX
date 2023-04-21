@@ -1,24 +1,71 @@
 # Logic Apps Designer
-### [2.5.1](https://github.com/Azure/LogicAppsUX/compare/v2.5.0...v2.5.1) (2023-04-19)
 
-
-### Bug Fixes
-
-* **designer:** Fix issue where oAuth flow would crash the designer ([#2062](https://github.com/Azure/LogicAppsUX/issues/2062)) ([172763c](https://github.com/Azure/LogicAppsUX/commit/172763c797dd887ca9432142e0e494c1f83a9439))
-
-## [2.5.0](https://github.com/Azure/LogicAppsUX/compare/v2.4.5...v2.5.0) (2023-04-19)
-
+## [2.8.0](https://github.com/Azure/LogicAppsUX/compare/v2.7.0...v2.8.0) (2023-04-21)
 
 ### Features
 
-* **state:** Add hooks for connection refs & map, and input parameters ([#2059](https://github.com/Azure/LogicAppsUX/issues/2059)) ([bdfb328](https://github.com/Azure/LogicAppsUX/commit/bdfb328511c6f05f2f9d12cd8ee78d925db88c32))
-* **state:** Add redux action to revert workflow state to initial ([#2058](https://github.com/Azure/LogicAppsUX/issues/2058)) ([43984e7](https://github.com/Azure/LogicAppsUX/commit/43984e73a62805ff6035142ddfcfc65e92959b3b))
-
+- **state:** Implement basis for workflow state `isDirty` ([#2095](https://github.com/Azure/LogicAppsUX/issues/2095)) ([dce056f](https://github.com/Azure/LogicAppsUX/commit/dce056f54044847e33a45059b78c3478a49a5972))
 
 ### Bug Fixes
 
-* **designer:** Move designer to the right or left on operation addition depending on where the panel is located ([#2055](https://github.com/Azure/LogicAppsUX/issues/2055)) ([c8a7bff](https://github.com/Azure/LogicAppsUX/commit/c8a7bff9eb0706534e3365beb3be61f86c890405))
-* **designer:** Updating manifest and logic to support Http+swagger/Appservice serialization and deserialization generically ([#2015](https://github.com/Azure/LogicAppsUX/issues/2015)) ([68dc6c1](https://github.com/Azure/LogicAppsUX/commit/68dc6c163e6d4224fdfc4b9303a3526d4725c3f8))
+- **designer:** Panel should validate params onBlur + Foreach shouldn't add another when selecting a token ([#2096](https://github.com/Azure/LogicAppsUX/issues/2096)) ([6a58723](https://github.com/Azure/LogicAppsUX/commit/6a587235d413cb3cf7047f06ccd7a1e2949ca331))
+
+## [2.7.0](https://github.com/Azure/LogicAppsUX/compare/v2.6.3...v2.7.0) (2023-04-21)
+
+### Features
+
+- **Data Mapper:** Github issue template ([#2085](https://github.com/Azure/LogicAppsUX/issues/2085)) ([c23ea6b](https://github.com/Azure/LogicAppsUX/commit/c23ea6b74dc64038be30237a3aefad034223b969))
+- **powerautomate:** Implement DynamicallyAddedParameter to support manual trigger ([#2068](https://github.com/Azure/LogicAppsUX/issues/2068)) ([e9b0118](https://github.com/Azure/LogicAppsUX/commit/e9b01187e85b5e6339d295f56a252ca53a40724a))
+
+### Bug Fixes
+
+- **Data Mapper:** Adjust functions left ([#2084](https://github.com/Azure/LogicAppsUX/issues/2084)) ([17d7c2c](https://github.com/Azure/LogicAppsUX/commit/17d7c2c8d964ee50780e25366c1ed4a0ac8e4941))
+- **designer:** ensure all operations and connectors pages are fetched on fisrt search ([#2083](https://github.com/Azure/LogicAppsUX/issues/2083)) ([c330803](https://github.com/Azure/LogicAppsUX/commit/c330803865841482b9ffbc1164a25bfb0e6a447f))
+
+### [2.6.3](https://github.com/Azure/LogicAppsUX/compare/v2.6.2...v2.6.3) (2023-04-20)
+
+### Bug Fixes
+
+- **designer:** Handle non-string types when converting string to value segments in editorviewmode ([#2079](https://github.com/Azure/LogicAppsUX/issues/2079)) ([b0dc77a](https://github.com/Azure/LogicAppsUX/commit/b0dc77adea01575b228b6d953d08263224544edc))
+
+### [2.6.2](https://github.com/Azure/LogicAppsUX/compare/v2.6.1...v2.6.2) (2023-04-20)
+
+### Bug Fixes
+
+- **designer:** Add refetch for failed iterations ([#2072](https://github.com/Azure/LogicAppsUX/issues/2072)) ([de370e5](https://github.com/Azure/LogicAppsUX/commit/de370e535bb614cf14818b2a2ca98c09c4dc5460))
+
+### [2.6.1](https://github.com/Azure/LogicAppsUX/compare/v2.6.0...v2.6.1) (2023-04-19)
+
+## [2.6.0](https://github.com/Azure/LogicAppsUX/compare/v2.5.1...v2.6.0) (2023-04-19)
+
+### Features
+
+- **Data Mapper:** Enable everything test ([#2053](https://github.com/Azure/LogicAppsUX/issues/2053)) ([5e693f7](https://github.com/Azure/LogicAppsUX/commit/5e693f7f054021bf2873c098b37ae5d38461319d))
+- **Data Mapper:** Enable JSON . test ([#2060](https://github.com/Azure/LogicAppsUX/issues/2060)) ([c88feef](https://github.com/Azure/LogicAppsUX/commit/c88feefda97e4fec3abf9206f0636caba71ae091))
+
+### Bug Fixes
+
+- **designer:** add logic to fallback to connector data from Operation Manifest when Connection Service data is undefined ([#2070](https://github.com/Azure/LogicAppsUX/issues/2070)) ([6858493](https://github.com/Azure/LogicAppsUX/commit/6858493fb5e2f9a31df06242c2bb2c0b6feb8f7a))
+- **designer:** combobox showing UIUD when clicking on a loading dynamic data parameter ([#2067](https://github.com/Azure/LogicAppsUX/issues/2067)) ([9e75da7](https://github.com/Azure/LogicAppsUX/commit/9e75da76ca615e84c52e72dc663cbdc2e728ea38))
+- **designer:** Output token expressions generated incorrectly for swagger based operations ([#2069](https://github.com/Azure/LogicAppsUX/issues/2069)) ([0b33a53](https://github.com/Azure/LogicAppsUX/commit/0b33a53ee77e0565bb621d585772d6df43d64548))
+
+### [2.5.1](https://github.com/Azure/LogicAppsUX/compare/v2.5.0...v2.5.1) (2023-04-19)
+
+### Bug Fixes
+
+- **designer:** Fix issue where oAuth flow would crash the designer ([#2062](https://github.com/Azure/LogicAppsUX/issues/2062)) ([172763c](https://github.com/Azure/LogicAppsUX/commit/172763c797dd887ca9432142e0e494c1f83a9439))
+
+## [2.5.0](https://github.com/Azure/LogicAppsUX/compare/v2.4.5...v2.5.0) (2023-04-19)
+
+### Features
+
+- **state:** Add hooks for connection refs & map, and input parameters ([#2059](https://github.com/Azure/LogicAppsUX/issues/2059)) ([bdfb328](https://github.com/Azure/LogicAppsUX/commit/bdfb328511c6f05f2f9d12cd8ee78d925db88c32))
+- **state:** Add redux action to revert workflow state to initial ([#2058](https://github.com/Azure/LogicAppsUX/issues/2058)) ([43984e7](https://github.com/Azure/LogicAppsUX/commit/43984e73a62805ff6035142ddfcfc65e92959b3b))
+
+### Bug Fixes
+
+- **designer:** Move designer to the right or left on operation addition depending on where the panel is located ([#2055](https://github.com/Azure/LogicAppsUX/issues/2055)) ([c8a7bff](https://github.com/Azure/LogicAppsUX/commit/c8a7bff9eb0706534e3365beb3be61f86c890405))
+- **designer:** Updating manifest and logic to support Http+swagger/Appservice serialization and deserialization generically ([#2015](https://github.com/Azure/LogicAppsUX/issues/2015)) ([68dc6c1](https://github.com/Azure/LogicAppsUX/commit/68dc6c163e6d4224fdfc4b9303a3526d4725c3f8))
 
 ### [2.4.5](https://github.com/Azure/LogicAppsUX/compare/v2.4.4...v2.4.5) (2023-04-18)
 
