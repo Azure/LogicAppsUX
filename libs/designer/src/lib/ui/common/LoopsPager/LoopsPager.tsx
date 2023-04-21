@@ -74,13 +74,35 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
     setCurrentPage(page.value);
   };
 
+  const onClickNextFailed: PageChangeEventHandler = (page: PageChangeEventArgs) => {
+    let nextFailedRepetition = -1;
+    if (failedRepetitions.includes(page.value - 1)) {
+      nextFailedRepetition = page.value - 1;
+    } else if (page.value - 1 < failedRepetitions[0]) {
+      nextFailedRepetition = failedRepetitions[0];
+    }
+    dispatch(setRunIndex({ page: nextFailedRepetition, nodeId: scopeId }));
+    setCurrentPage(nextFailedRepetition + 1);
+  };
+
+  const onClickPreviousFailed: PageChangeEventHandler = (page: PageChangeEventArgs) => {
+    let prevFailedRepetition = -1;
+    if (failedRepetitions.includes(page.value - 1)) {
+      prevFailedRepetition = page.value - 1;
+    } else if (page.value - 1 > failedRepetitions[failedRepetitions.length - 1]) {
+      prevFailedRepetition = failedRepetitions[failedRepetitions.length - 1];
+    }
+    dispatch(setRunIndex({ page: prevFailedRepetition, nodeId: scopeId }));
+    setCurrentPage(prevFailedRepetition + 1);
+  };
+
   const failedIterationProps =
     failedRepetitions.length > 0
       ? {
           max: failedRepetitions[failedRepetitions.length - 1] + 1,
           min: failedRepetitions[0] + 1,
-          onClickNext: onPagerChange,
-          onClickPrevious: onPagerChange,
+          onClickNext: onClickNextFailed,
+          onClickPrevious: onClickPreviousFailed,
         }
       : undefined;
 
