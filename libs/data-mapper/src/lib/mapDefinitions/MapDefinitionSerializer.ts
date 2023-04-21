@@ -171,8 +171,6 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
                 value = '';
               } else {
                 value = value.replaceAll(`${valueToTrim}/`, '');
-                value = value.replaceAll(/\(@/g, './@');
-                value = value.replaceAll(/ @/g, ' ./@');
 
                 // Handle dot access
                 if (!value.includes('[') && !value.includes(']')) {

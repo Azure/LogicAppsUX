@@ -55,7 +55,7 @@ export const getInputValues = (
           if (isCustomValue(input)) {
             return input;
           } else if (isSchemaNodeExtended(input.node)) {
-            return shouldLocalizePaths && input.node.qName.startsWith('@') ? `./${input.node.qName}` : input.node.key;
+            return shouldLocalizePaths && input.node.qName.startsWith('@') ? `./${input.node.key}` : input.node.key;
           } else {
             if (input.node.key === indexPseudoFunctionKey) {
               return getIndexValueForCurrentConnection(connections[input.reactFlowKey]);
