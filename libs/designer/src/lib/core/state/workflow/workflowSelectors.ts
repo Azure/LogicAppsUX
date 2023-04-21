@@ -45,6 +45,9 @@ export const useNodeDescription = (id: string) =>
 export const useShouldNodeFocus = (id: string) =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.focusedCanvasNodeId === id));
 
+export const useIsWorkflowDirty = () =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.isDirty));
+
 export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (data) => {
   const rootNode = data.graph;
   const collapsedIds = data.collapsedGraphIds;
