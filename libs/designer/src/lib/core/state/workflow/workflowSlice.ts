@@ -331,18 +331,12 @@ export const workflowSlice = createSlice({
         ([, value]) => !(value as LogicAppsV2.ActionDefinition).runAfter
       )?.[0];
     });
-    builder.addCase(
-      updateNodeParameters,
-      (state, action) => {
-        state.isDirty = state.isDirty || action.payload.isUserAction;
-      }
-    );
-    builder.addCase(
-      updateNodeConnection.fulfilled,
-      (state) => {
-        state.isDirty = true;
-      }
-    );
+    builder.addCase(updateNodeParameters, (state, action) => {
+      state.isDirty = state.isDirty || action.payload.isUserAction || false;
+    });
+    builder.addCase(updateNodeConnection.fulfilled, (state) => {
+      state.isDirty = true;
+    });
     builder.addCase(resetWorkflowState, () => initialWorkflowState);
   },
 });
