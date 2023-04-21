@@ -1,28 +1,26 @@
+import type { DynamicallyAddedParameterTypeType } from '../dynamicallyaddedparameter';
+import { DynamicallyAddedParameter, DynamicallyAddedParameterType } from '../dynamicallyaddedparameter';
+import { deserialize, serialize } from '../dynamicallyaddedparameter/helper';
+import type { ValueSegment } from '../editor';
+import type { ChangeHandler } from '../editor/base';
 import { getMenuItemsForDynamicAddedParameters } from './helper';
 import { KeyCodes } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
-import { ValidationErrorCode, ValidationException } from '@microsoft/utils-logic-apps';
+import { ValidationErrorCode, ValidationException, guid, safeSetObjectPropertyValue } from '@microsoft/utils-logic-apps';
 import React from 'react';
 import { useIntl } from 'react-intl';
 
-export const DynamicallyAddedParameterType = {
-  Text: 'Text',
-  File: 'File',
-  Email: 'Email',
-  Boolean: 'Boolean',
-  Number: 'Number',
-  Date: 'Date',
-} as const;
-type DynamicallyAddedParameterType = (typeof DynamicallyAddedParameterType)[keyof typeof DynamicallyAddedParameterType];
-
 export interface FloatingActionMenuItem {
-  id: string;
+  type: DynamicallyAddedParameterTypeType;
   icon: string;
   label: string;
+  placeholder: string;
 }
 
 export interface FloatingActionMenuProps {
   supportedTypes: Array<string>;
+  initialValue: ValueSegment[];
+  onChange?: ChangeHandler;
 }
 
 export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element => {
@@ -43,6 +41,32 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
     defaultMessage: 'Choose the type of user input',
     description: 'Button to choose data type of the dynamically added parameter',
   });
+
+  const onDynamicallyAddedParameterChange = (schemaKey: string, propertyName: string, newPropertyValue?: string) => {
+    const { onChange } = props;
+    if (onChange) {
+      const indexOfPropToUpdate = dynamicParameterProps.findIndex((prop) => prop.schemaKey === schemaKey);
+      safeSetObjectPropertyValue(dynamicParameterProps[indexOfPropToUpdate], ['properties', propertyName], newPropertyValue);
+      const value = serialize(dynamicParameterProps);
+      onChange({ value });
+    }
+  };
+
+  const onDynamicallyAddedParameterDelete = (schemaKey: string) => {
+    const { onChange } = props;
+    if (onChange) {
+      const indexToDelete = dynamicParameterProps.findIndex((prop) => prop.schemaKey === schemaKey);
+      dynamicParameterProps.splice(indexToDelete, 1);
+      const value = serialize(dynamicParameterProps);
+      onChange({ value });
+    }
+  };
+
+  const dynamicParameterProps = deserialize(props.initialValue).map((prop) => ({
+    ...prop,
+    onChange: onDynamicallyAddedParameterChange,
+    onDelete: onDynamicallyAddedParameterDelete,
+  }));
 
   const toggleExpandedOnKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
     const { keyCode } = e;
@@ -116,7 +140,7 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
       );
     } else {
       return (
-        <div key={menuItem.id} className="msla-floating-action-menu-item-horizontal-container">
+        <div key={menuItem.type} className="msla-floating-action-menu-item-horizontal-container">
           <div
             role="button"
             aria-label={menuItem.label}
@@ -132,9 +156,42 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
     }
   };
 
-  const handleMenuItemSelected = (_item: FloatingActionMenuItem) => {
+  const titlePlaceholder = intl.formatMessage({
+    defaultMessage: 'Enter title',
+    description: 'Placeholder for variable name for new dynamically added parameter',
+  });
+
+  const addNewDynamicallyAddedParameter = (item: FloatingActionMenuItem) => {
+    const { icon, type, placeholder } = item;
+    const format =
+      type === DynamicallyAddedParameterType.Date || type === DynamicallyAddedParameterType.Email ? type.toLowerCase() : undefined;
+    dynamicParameterProps.push({
+      icon,
+      schemaKey: guid(), // TODO: generate schemaKey
+      properties: {
+        description: placeholder,
+        format,
+        title: titlePlaceholder, // TODO: generate title based on schemaKey
+        type,
+        'x-ms-content-hint': type,
+        'x-ms-dynamically-added': true,
+      },
+      required: true, // TODO: add functionality to allow making parameters optional
+      onChange: onDynamicallyAddedParameterChange,
+      onDelete: onDynamicallyAddedParameterDelete,
+    });
+  };
+
+  const handleMenuItemSelected = (selectedItem: FloatingActionMenuItem) => {
     toggleExpanded();
-    // TODO(WI#17890957): Add callback to render dynamically added parameter
+
+    addNewDynamicallyAddedParameter(selectedItem);
+
+    const { onChange } = props;
+    if (onChange) {
+      const value = serialize(dynamicParameterProps);
+      onChange({ value });
+    }
   };
 
   const handleMenuItemSelectedOnKeyDown = (e: React.KeyboardEvent<HTMLElement>, item: FloatingActionMenuItem) => {
@@ -148,9 +205,16 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
   };
 
   return (
-    <div className="msla-floating-action-menu-container">
-      {!expanded ? renderMenuButton() : undefined}
-      {expanded ? renderMenuItems() : undefined}
-    </div>
+    <>
+      <div className="msla-dynamic-added-params-container">
+        {dynamicParameterProps.map((props) => (
+          <DynamicallyAddedParameter {...props} key={props.schemaKey} />
+        ))}
+      </div>
+      <div className="msla-floating-action-menu-container">
+        {!expanded ? renderMenuButton() : undefined}
+        {expanded ? renderMenuItems() : undefined}
+      </div>
+    </>
   );
 };
