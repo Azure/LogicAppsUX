@@ -1,6 +1,6 @@
 import constants from '../../../common/constants';
 import type { AppDispatch } from '../../../core';
-import { useRunInstance } from '../../../core/state/workflow/workflowSelectors';
+import { useActionMetadata, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { setRunIndex } from '../../../core/state/workflow/workflowSlice';
 import { getForeachItemsCount } from './helper';
 import { RunService } from '@microsoft/designer-client-services-logic-apps';
@@ -21,6 +21,8 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
   const [failedRepetitions, setFailedRepetitions] = useState<Array<number>>([]);
   const runInstance = useRunInstance();
   const dispatch = useDispatch<AppDispatch>();
+  const node = useActionMetadata(scopeId);
+  const normalizedType = node?.type.toLowerCase();
 
   const forEachItemsCount = getForeachItemsCount(metadata?.runData);
 
@@ -53,12 +55,15 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
       refetchOnMount: true,
       onSuccess: onRunRepetitionsSuccess,
       onError: onRunRepetitionsError,
+      enabled: normalizedType === constants.NODE.TYPE.FOREACH,
     }
   );
 
   useEffect(() => {
-    refetch();
-  }, [runInstance?.id, refetch, scopeId]);
+    if (normalizedType === constants.NODE.TYPE.FOREACH) {
+      refetch();
+    }
+  }, [runInstance?.id, refetch, scopeId, normalizedType]);
 
   if (!forEachItemsCount || isError || collapsed) {
     return null;
