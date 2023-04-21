@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [2.8.0](https://github.com/Azure/LogicAppsUX/compare/v2.7.0...v2.8.0) (2023-04-21)
+
+
+### Features
+
+* **state:** Implement basis for workflow state `isDirty` ([#2095](https://github.com/Azure/LogicAppsUX/issues/2095)) ([dce056f](https://github.com/Azure/LogicAppsUX/commit/dce056f54044847e33a45059b78c3478a49a5972))
+
+
+### Bug Fixes
+
+* **designer:** Panel should validate params onBlur + Foreach shouldn't add another when selecting a token ([#2096](https://github.com/Azure/LogicAppsUX/issues/2096)) ([6a58723](https://github.com/Azure/LogicAppsUX/commit/6a587235d413cb3cf7047f06ccd7a1e2949ca331))
+
 ## [2.7.0](https://github.com/Azure/LogicAppsUX/compare/v2.6.3...v2.7.0) (2023-04-21)
 
 
