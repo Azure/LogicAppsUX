@@ -1141,6 +1141,12 @@
       "value": "(UTC+08:45) Eucla"
     }
   ],
+  "6H3oG1": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1263,12 +1269,6 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Den sträng från vilken delsträngen hämtas."
-    }
-  ],
-  "7Vyxu0": [
-    {
-      "type": 0,
-      "value": "Yes/No"
     }
   ],
   "7WVgiU": [
@@ -1505,6 +1505,12 @@
       "value": "Värde"
     }
   ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "92OUl9": [
     {
       "type": 0,
@@ -1581,6 +1587,12 @@
     {
       "type": 0,
       "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "9atGYe": [
@@ -2037,6 +2049,12 @@
       "value": "Select a value"
     }
   ],
+  "DOf1/I": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
+    }
+  ],
   "DWd9vy": [
     {
       "type": 0,
@@ -2257,6 +2275,12 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Irkutsk"
+    }
+  ],
+  "F51kU8": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "F9dR1Q": [
@@ -2773,6 +2797,12 @@
     {
       "type": 0,
       "value": "No properties"
+    }
+  ],
+  "Iwi+x0": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
     }
   ],
   "J/Kz1j": [
@@ -3369,6 +3399,12 @@
       "value": "Välj en identitet"
     }
   ],
+  "Nro0qr": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -3493,6 +3529,12 @@
     {
       "type": 0,
       "value": "Returnerar resultaten från åtgärderna på toppnivå i den angivna omfångsdefinierade åtgärden, till exempel en For_each, Until eller Scope."
+    }
+  ],
+  "OcnU0i": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
     }
   ],
   "OdNhwc": [
@@ -4453,12 +4495,6 @@
       "value": "Error Type"
     }
   ],
-  "VggzRB": [
-    {
-      "type": 0,
-      "value": "Text"
-    }
-  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -4493,6 +4529,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Den nya egenskapens namn."
+    }
+  ],
+  "W7sa4b": [
+    {
+      "type": 0,
+      "value": "Enter title"
     }
   ],
   "WGwH45": [
@@ -4965,12 +5007,6 @@
       "value": " i parameter"
     }
   ],
-  "a+6uyE": [
-    {
-      "type": 0,
-      "value": "File"
-    }
-  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5143,6 +5179,12 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
     }
   ],
+  "bv9QPA": [
+    {
+      "type": 0,
+      "value": "Date"
+    }
+  ],
   "bwfJdj": [
     {
       "type": 0,
@@ -5217,12 +5259,6 @@
     {
       "type": 0,
       "value": "Dynamiskt innehåll kan också läggas till från andra källor."
-    }
-  ],
-  "cF4w+R": [
-    {
-      "type": 0,
-      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5717,10 +5753,22 @@
       "value": "Utlösarvillkor"
     }
   ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06:00) Saskatchewan"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "gpbgjJ": [
@@ -5747,6 +5795,12 @@
     {
       "type": 0,
       "value": "Select a Batch Workflow resource"
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "h1lQDa": [
@@ -6411,12 +6465,6 @@
       "value": "Select an action type"
     }
   ],
-  "lv9QyZ": [
-    {
-      "type": 0,
-      "value": "Email"
-    }
-  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6607,6 +6655,12 @@
     {
       "type": 0,
       "value": "End time"
+    }
+  ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Yes/No"
     }
   ],
   "nRpM02": [
@@ -7795,6 +7849,12 @@
       "value": "Returnerar ett specificerat värde baserat på huruvida uttrycket har resulterat i sant eller falskt"
     }
   ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
   "wkiETV": [
     {
       "type": 0,
@@ -7925,12 +7985,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Coordinated Universal Time+12"
-    }
-  ],
-  "xeREzb": [
-    {
-      "type": 0,
-      "value": "Number"
     }
   ],
   "xt5TeT": [

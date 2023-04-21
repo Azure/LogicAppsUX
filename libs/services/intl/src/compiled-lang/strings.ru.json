@@ -1163,6 +1163,12 @@
       "value": "(UTC+08:45) Юкла"
     }
   ],
+  "6H3oG1": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1285,12 +1291,6 @@
     {
       "type": 0,
       "value": "Обязательное поле. Строка, из которой извлекается подстрока."
-    }
-  ],
-  "7Vyxu0": [
-    {
-      "type": 0,
-      "value": "Yes/No"
     }
   ],
   "7WVgiU": [
@@ -1527,6 +1527,12 @@
       "value": "Значение"
     }
   ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "92OUl9": [
     {
       "type": 0,
@@ -1603,6 +1609,12 @@
     {
       "type": 0,
       "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "9atGYe": [
@@ -2081,6 +2093,12 @@
       "value": "Select a value"
     }
   ],
+  "DOf1/I": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
+    }
+  ],
   "DWd9vy": [
     {
       "type": 0,
@@ -2301,6 +2319,12 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Иркутск"
+    }
+  ],
+  "F51kU8": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "F9dR1Q": [
@@ -2839,6 +2863,12 @@
     {
       "type": 0,
       "value": "No properties"
+    }
+  ],
+  "Iwi+x0": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
     }
   ],
   "J/Kz1j": [
@@ -3461,6 +3491,12 @@
       "value": "Выберите удостоверение."
     }
   ],
+  "Nro0qr": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -3589,6 +3625,12 @@
     {
       "type": 0,
       "value": "Возвращает результаты действий верхнего уровня в заданном действии области, например For_each, Until или Scope."
+    }
+  ],
+  "OcnU0i": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
     }
   ],
   "OdNhwc": [
@@ -4567,12 +4609,6 @@
       "value": "Error Type"
     }
   ],
-  "VggzRB": [
-    {
-      "type": 0,
-      "value": "Text"
-    }
-  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -4607,6 +4643,12 @@
     {
       "type": 0,
       "value": "Требуется. Имя нового свойства."
+    }
+  ],
+  "W7sa4b": [
+    {
+      "type": 0,
+      "value": "Enter title"
     }
   ],
   "WGwH45": [
@@ -5083,12 +5125,6 @@
       "value": "\" в параметре"
     }
   ],
-  "a+6uyE": [
-    {
-      "type": 0,
-      "value": "File"
-    }
-  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5261,6 +5297,12 @@
       "value": "(UTC+05:30) Ченнаи, Колката, Мумбаи, Нью-Дели"
     }
   ],
+  "bv9QPA": [
+    {
+      "type": 0,
+      "value": "Date"
+    }
+  ],
   "bwfJdj": [
     {
       "type": 0,
@@ -5335,12 +5377,6 @@
     {
       "type": 0,
       "value": "Динамическое содержимое можно также добавить из других источников."
-    }
-  ],
-  "cF4w+R": [
-    {
-      "type": 0,
-      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5835,10 +5871,22 @@
       "value": "Условия триггера"
     }
   ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06:00) Саскачеван"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "gpbgjJ": [
@@ -5865,6 +5913,12 @@
     {
       "type": 0,
       "value": "Select a Batch Workflow resource"
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "h1lQDa": [
@@ -6559,12 +6613,6 @@
       "value": "Select an action type"
     }
   ],
-  "lv9QyZ": [
-    {
-      "type": 0,
-      "value": "Email"
-    }
-  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6755,6 +6803,12 @@
     {
       "type": 0,
       "value": "End time"
+    }
+  ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Yes/No"
     }
   ],
   "nRpM02": [
@@ -7969,6 +8023,12 @@
       "value": "Возвращает указанное значение в зависимости от результата выражения: true или false"
     }
   ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
   "wkiETV": [
     {
       "type": 0,
@@ -8099,12 +8159,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Время в формате UTC+12"
-    }
-  ],
-  "xeREzb": [
-    {
-      "type": 0,
-      "value": "Number"
     }
   ],
   "xt5TeT": [
