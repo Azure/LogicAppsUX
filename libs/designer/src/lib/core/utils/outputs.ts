@@ -27,8 +27,8 @@ import {
   isStringLiteral,
 } from '@microsoft/parsers-logic-apps';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
-import { ConnectionReferenceKeyFormat } from '@microsoft/utils-logic-apps';
 import {
+  ConnectionReferenceKeyFormat,
   getObjectPropertyValue,
   safeSetObjectPropertyValue,
   unmap,

@@ -861,7 +861,11 @@ export function generateExpressionFromKey(
   let rootMethod = method;
   if (!isInsideArray && segments[0]?.value?.toString()?.toLowerCase() === OutputSource.Body) {
     segments.shift();
-    rootMethod = actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
+    rootMethod = actionName
+      ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})`
+      : method === constants.TRIGGER_OUTPUTS_OUTPUT
+      ? method
+      : constants.TRIGGER_BODY_OUTPUT;
   }
 
   while (segments.length) {
