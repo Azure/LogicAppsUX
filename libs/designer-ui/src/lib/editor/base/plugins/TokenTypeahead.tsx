@@ -1,7 +1,7 @@
 import { TokenPickerMode } from '../../../tokenpicker';
 import { useTokenTypeaheadTriggerMatch } from '../utils/tokenTypeaheadMatcher';
 import type { OpenTokenPickerProps } from './OpenTokenPicker';
-import { Icon, css, useTheme } from '@fluentui/react';
+import { Icon, Text, css, useTheme } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { LexicalTypeaheadMenuPlugin, TypeaheadOption } from '@lexical/react/LexicalTypeaheadMenuPlugin';
 import type { TextNode } from 'lexical';
@@ -60,9 +60,8 @@ function TokenMenuItem({
       onMouseEnter={onMouseEnter}
       onClick={onClick}
     >
-      <span className="text">
-        {option.icon(isSelected, isInverted)} {option.title}
-      </span>
+      {option.icon(isSelected, isInverted)}
+      <Text>{option.title}</Text>
     </li>
   );
 }
@@ -104,10 +103,10 @@ export const TokenTypeAheadPlugin = ({ openTokenPicker }: OpenTokenPickerProps) 
   });
   const options: TokenOption[] = [
     new TokenOption(dynamicDataButtonText, 'dynamic', {
-      icon: () => <Icon iconName="LightningBolt" style={{ marginRight: 5 }} />,
+      icon: () => <Icon iconName="LightningBolt" />,
     }),
     new TokenOption(expressionButtonText, 'expression', {
-      icon: () => <Icon iconName="Variable" style={{ marginRight: 5 }} />,
+      icon: () => <Icon iconName="Variable" />,
     }),
   ];
   return (

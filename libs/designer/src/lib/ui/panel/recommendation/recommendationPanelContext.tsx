@@ -79,45 +79,11 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     return azureResourceOperationIds.some((_id) => areApiIdsEqual(id, _id));
   }, []);
 
-  const startAzureResourceSelection = useCallback((operation: DiscoveryOperation<DiscoveryResultTypes>) => {
-    console.log('startAzureResourceSelection', operation);
+  const startAzureResourceSelection = useCallback(() => {
     setSelectionState(SELECTION_STATES.AZURE_RESOURCE);
-
-    const selectedService = operation.properties.api.id;
-    let apiType: string;
-
-    switch (operation.id?.toLowerCase()) {
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_ACTION:
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_TRIGGER:
-        apiType = Constants.API_CATEGORIES.API_MANAGEMENT;
-        break;
-
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APPSERVICE_ACTION:
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APPSERVICE_TRIGGER:
-        apiType = Constants.API_CATEGORIES.APP_SERVICES;
-        break;
-
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_FUNCTION_ACTION:
-        apiType = Constants.API_CATEGORIES.AZURE_FUNCTIONS;
-        break;
-
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_MANUAL_WORKFLOW_ACTION:
-        apiType = Constants.API_CATEGORIES.WORKFLOWS;
-        break;
-
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_BATCH_WORKFLOW_ACTION:
-        apiType = Constants.API_CATEGORIES.WORKFLOWS;
-        break;
-
-      default:
-        throw new Error(`Unexpected API category type '${operation.id}'`);
-    }
-
-    console.log('startAzureResourceSelection', selectedService, apiType);
   }, []);
 
-  const startHttpSwaggerSelection = useCallback((operation: DiscoveryOperation<DiscoveryResultTypes>) => {
-    console.log('startHttpSwaggerSelection', operation);
+  const startHttpSwaggerSelection = useCallback(() => {
     setSelectionState(SELECTION_STATES.CUSTOM_SWAGGER);
   }, []);
 
@@ -129,11 +95,11 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       if (!operation) return;
       dispatch(selectOperationId(operation.id));
       if (isAzureResourceActionId(operation.id) && isConsumption) {
-        startAzureResourceSelection(operation);
+        startAzureResourceSelection();
         return;
       }
-      if (operation.id === 'httpswaggeraction') {
-        startHttpSwaggerSelection(operation);
+      if (operation.id === 'httpswaggeraction' || operation.id === 'httpswaggertrigger') {
+        startHttpSwaggerSelection();
         return;
       }
       const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
@@ -202,7 +168,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
                   onOperationClick={onOperationClick}
                 />
               ) : (
-                <BrowseView filters={filters} />
+                <BrowseView filters={filters} isLoadingOperations={isLoadingOperations} />
               )}
             </>
           ),

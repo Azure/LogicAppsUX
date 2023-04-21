@@ -707,6 +707,16 @@
       "value": "Enter a valid array."
     }
   ],
+  "2r30S9": [
+    {
+      "type": 0,
+      "value": "Insert a new step after "
+    },
+    {
+      "type": 1,
+      "value": "parentName"
+    }
+  ],
   "2ri1Kf": [
     {
       "type": 0,
@@ -821,6 +831,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Dháka"
+    }
+  ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Choose the type of user input"
     }
   ],
   "3Y8a6G": [
@@ -1131,6 +1147,12 @@
       "value": "Hybridní konektor"
     }
   ],
+  "61iT9C": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing Alt + / in the editor)"
+    }
+  ],
   "62Ypnr": [
     {
       "type": 0,
@@ -1147,6 +1169,12 @@
     {
       "type": 0,
       "value": "(UTC+08:45) Eucla"
+    }
+  ],
+  "6H3oG1": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "6OSgRP": [
@@ -1497,28 +1525,16 @@
       "value": "(UTC+07:00) Chovd"
     }
   ],
-  "90HY0L": [
-    {
-      "type": 0,
-      "value": "Insert a new step between "
-    },
-    {
-      "type": 1,
-      "value": "parent"
-    },
-    {
-      "type": 0,
-      "value": " and "
-    },
-    {
-      "type": 1,
-      "value": "child"
-    }
-  ],
   "90Q7Pw": [
     {
       "type": 0,
       "value": "Hodnota"
+    }
+  ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "File"
     }
   ],
   "92OUl9": [
@@ -1597,6 +1613,12 @@
     {
       "type": 0,
       "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "9atGYe": [
@@ -1699,6 +1721,16 @@
     {
       "type": 0,
       "value": "Insert data from previous step (You can also add by typing / in the editor)"
+    }
+  ],
+  "Aci186": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Add dynamic data pressing Alt + /"
     }
   ],
   "AgrMqq": [
@@ -1995,6 +2027,24 @@
       "value": "(UTC+02:00) Helsinky, Kyjev, Riga, Sofie, Tallinn, Vilnius"
     }
   ],
+  "CypYLs": [
+    {
+      "type": 0,
+      "value": "Insert a new step between "
+    },
+    {
+      "type": 1,
+      "value": "parentName"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "childName"
+    }
+  ],
   "Czt6YV": [
     {
       "type": 0,
@@ -2045,6 +2095,12 @@
     {
       "type": 0,
       "value": "Select a value"
+    }
+  ],
+  "DOf1/I": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
     }
   ],
   "DWd9vy": [
@@ -2099,6 +2155,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Azory"
+    }
+  ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Add an input"
     }
   ],
   "DyYcJZ": [
@@ -2239,6 +2301,12 @@
       "value": "(UTC-05:00) Východ USA a Kanady"
     }
   ],
+  "Ex4U46": [
+    {
+      "type": 0,
+      "value": "Use Invoker's Connection"
+    }
+  ],
   "ExaACE": [
     {
       "type": 0,
@@ -2255,6 +2323,12 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Irkutsk"
+    }
+  ],
+  "F51kU8": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "F9dR1Q": [
@@ -2321,6 +2395,12 @@
     {
       "type": 0,
       "value": "Must provide name of parameter."
+    }
+  ],
+  "FT3jt6": [
+    {
+      "type": 0,
+      "value": "Webhook reference information"
     }
   ],
   "FUhNu4": [
@@ -2713,6 +2793,16 @@
       "value": "22"
     }
   ],
+  "IHMd3X": [
+    {
+      "type": 0,
+      "value": "Example: "
+    },
+    {
+      "type": 1,
+      "value": "url"
+    }
+  ],
   "IPbBB2": [
     {
       "type": 0,
@@ -2777,6 +2867,12 @@
     {
       "type": 0,
       "value": "No properties"
+    }
+  ],
+  "Iwi+x0": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
     }
   ],
   "J/Kz1j": [
@@ -2887,6 +2983,12 @@
     {
       "type": 0,
       "value": "Název:"
+    }
+  ],
+  "Jpox7O": [
+    {
+      "type": 0,
+      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
     }
   ],
   "JpthWY": [
@@ -3393,6 +3495,12 @@
       "value": "Vyberte prosím identitu."
     }
   ],
+  "Nro0qr": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -3521,6 +3629,12 @@
     {
       "type": 0,
       "value": "Vrátí výsledky z akcí na nejvyšší úrovni s určeným rozsahem, například z akcí For_each, Until nebo Scope."
+    }
+  ],
+  "OcnU0i": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
     }
   ],
   "OdNhwc": [
@@ -3977,12 +4091,6 @@
     {
       "type": 0,
       "value": "Heslo"
-    }
-  ],
-  "SGxmEY": [
-    {
-      "type": 0,
-      "value": "Zadejte slovník."
     }
   ],
   "SJFVxf": [
@@ -4539,6 +4647,12 @@
     {
       "type": 0,
       "value": "Povinné. Název nové vlastnosti"
+    }
+  ],
+  "W7sa4b": [
+    {
+      "type": 0,
+      "value": "Enter title"
     }
   ],
   "WGwH45": [
@@ -5145,6 +5259,12 @@
       "value": "(UTC+02:00) Kaliningrad"
     }
   ],
+  "bSZ0lL": [
+    {
+      "type": 0,
+      "value": "Callback url"
+    }
+  ],
   "bTrk+S": [
     {
       "type": 0,
@@ -5179,6 +5299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Čennaj, Kolkata (Kalkata), Mumbaí (Bombaj), Dillí"
+    }
+  ],
+  "bv9QPA": [
+    {
+      "type": 0,
+      "value": "Date"
     }
   ],
   "bwfJdj": [
@@ -5493,6 +5619,12 @@
       "value": "(UTC+05:00) Jekatěrinburg"
     }
   ],
+  "eHgfpz": [
+    {
+      "type": 0,
+      "value": "Please enter a valid URL"
+    }
+  ],
   "eHgi14": [
     {
       "type": 0,
@@ -5743,10 +5875,22 @@
       "value": "Podmínky aktivační události"
     }
   ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06:00) Saskatchewan"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "gpbgjJ": [
@@ -5773,6 +5917,12 @@
     {
       "type": 0,
       "value": "Select a Batch Workflow resource"
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "h1lQDa": [
@@ -6651,6 +6801,12 @@
       "value": "End time"
     }
   ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "nRpM02": [
     {
       "type": 0,
@@ -6807,6 +6963,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Salvador"
+    }
+  ],
+  "ox2Ou7": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON"
     }
   ],
   "oxH1L/": [
@@ -7033,6 +7195,12 @@
       "value": "message"
     }
   ],
+  "qUMXpq": [
+    {
+      "type": 0,
+      "value": "Swagger Endpoint"
+    }
+  ],
   "qUWBUX": [
     {
       "offset": 0,
@@ -7235,6 +7403,12 @@
     {
       "type": 0,
       "value": "Přidat nový"
+    }
+  ],
+  "s+4LEa": [
+    {
+      "type": 0,
+      "value": "Open folder"
     }
   ],
   "s5RV9B": [
@@ -7513,16 +7687,6 @@
     {
       "type": 0,
       "value": "Status Code"
-    }
-  ],
-  "uIQrat": [
-    {
-      "type": 0,
-      "value": "Insert a new step after "
-    },
-    {
-      "type": 1,
-      "value": "parent"
     }
   ],
   "uIurld": [
@@ -7849,6 +8013,12 @@
     {
       "type": 0,
       "value": "Vrátí zadanou hodnotu podle toho, jestli se daný výraz vyhodnotil jako true, nebo false."
+    }
+  ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
     }
   ],
   "wkiETV": [

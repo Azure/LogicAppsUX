@@ -60,16 +60,16 @@ export const createConnectionEntryIfNeeded = (
  * @param value The value to set the input to (InputConnection, or `null` to delete an unbounded input)
  * @param findInputSlot Flag to find an available input spot if `true`, or use inputIndex if `false`/`undefined` (used for drawn and deserialized connections)
  */
-export const setConnectionInputValue = (
+export const applyConnectionValue = (
   connections: ConnectionDictionary,
-  { targetNode, targetNodeReactFlowKey, inputIndex, value, findInputSlot }: SetConnectionInputAction
+  { targetNode, targetNodeReactFlowKey, inputIndex, input, findInputSlot }: SetConnectionInputAction
 ) => {
   if (!findInputSlot && inputIndex === undefined) {
     console.error('Invalid Connection Input Op: inputIndex was not provided for a non-handle-drawn/deserialized connection');
     return;
   }
 
-  if (findInputSlot && (value === undefined || value === null)) {
+  if (findInputSlot && (input === undefined || input === null)) {
     console.error('Invalid Connection Input Op: value is undefined or null for a handle-drawn/deserialized connection');
     return;
   }
@@ -112,7 +112,7 @@ export const setConnectionInputValue = (
 
   let confirmedInputIndex = inputIndex ?? 0;
 
-  if (findInputSlot && value !== undefined && value !== null) {
+  if (findInputSlot && input !== undefined && input !== null) {
     // Schema nodes can only ever have 1 input as long as it is not repeating
     if (isSchemaNodeExtended(targetNode)) {
       if (targetNode.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
@@ -126,10 +126,10 @@ export const setConnectionInputValue = (
         const indexOfFirstOpenInput = connection.inputs[0].findIndex((inputCon) => !inputCon);
         confirmedInputIndex = indexOfFirstOpenInput >= 0 ? indexOfFirstOpenInput : -1;
       } else {
-        if (isConnectionUnit(value)) {
+        if (isConnectionUnit(input)) {
           // Add input to first available slot (Handle & PropPane validation should guarantee there's at least one)
           confirmedInputIndex = Object.values(connection.inputs).findIndex((inputCon) => inputCon.length < 1);
-        } else if (isCustomValue(value)) {
+        } else if (isCustomValue(input)) {
           // Add input to first available that allows custom values
           confirmedInputIndex = Object.values(connection.inputs).findIndex(
             (inputCon, idx) => inputCon.length < 1 && targetNode.inputs[idx].allowCustomInput
@@ -140,7 +140,7 @@ export const setConnectionInputValue = (
   }
 
   // null is signal to delete unbounded input value
-  if (value === null) {
+  if (input === null) {
     if (isFunctionUnboundedInputOrRepeatingSchemaNode) {
       const newUnboundedInputValues = connection.inputs[0];
       newUnboundedInputValues.splice(confirmedInputIndex, 1);
@@ -148,7 +148,7 @@ export const setConnectionInputValue = (
     } else {
       console.error('Invalid Connection Input Op: null was provided for non-unbounded-input value');
     }
-  } else if (value === undefined) {
+  } else if (input === undefined) {
     // Explicit undefined check to handle empty custom values ('') in the next block
     if (isFunctionUnboundedInputOrRepeatingSchemaNode) {
       connection.inputs[0][confirmedInputIndex] = undefined;
@@ -160,20 +160,20 @@ export const setConnectionInputValue = (
     if (isFunctionUnboundedInputOrRepeatingSchemaNode) {
       if (confirmedInputIndex === -1) {
         // Repeating schema node
-        connection.inputs[0].push(value);
+        connection.inputs[0].push(input);
       } else {
         // Function unbounded input
-        connection.inputs[0][confirmedInputIndex] = value;
+        connection.inputs[0][confirmedInputIndex] = input;
       }
     } else {
       if (confirmedInputIndex !== -1) {
-        connection.inputs[confirmedInputIndex][0] = value;
+        connection.inputs[confirmedInputIndex][0] = input;
       } else {
-        connection.inputs[0].push(value);
+        connection.inputs[0].push(input);
 
         const selfNode = connection.self.node;
         if (isFunctionData(selfNode) && selfNode.maxNumberOfInputs !== -1 && connection.inputs[0].length > 1) {
-          LogService.log(LogCategory.ConnectionUtils, 'setConnectionInputValue', {
+          LogService.log(LogCategory.ConnectionUtils, 'applyConnectionValue', {
             message: 'Too many inputs applied to connection',
             data: {
               reactFlowId: connection.self.reactFlowKey,
@@ -184,15 +184,15 @@ export const setConnectionInputValue = (
     }
 
     // Only need to update/add value to source's outputs[] if it's a ConnectionUnit
-    if (isConnectionUnit(value)) {
+    if (isConnectionUnit(input)) {
       const tgtConUnit: ConnectionUnit = {
         node: targetNode,
         reactFlowKey: targetNodeReactFlowKey,
       };
 
-      createConnectionEntryIfNeeded(connections, value.node, value.reactFlowKey);
-      connections[value.reactFlowKey].outputs.push(tgtConUnit);
-      connections[value.reactFlowKey].outputs = connections[value.reactFlowKey].outputs.filter(onlyUniqueConnections);
+      createConnectionEntryIfNeeded(connections, input.node, input.reactFlowKey);
+      connections[input.reactFlowKey].outputs.push(tgtConUnit);
+      connections[input.reactFlowKey].outputs = connections[input.reactFlowKey].outputs.filter(onlyUniqueConnections);
     }
   }
 };

@@ -7,6 +7,7 @@
     "designer-e2e": "apps/designer-e2e",
     "designer-standalone": "apps/designer-standalone",
     "designer-ui": "libs/designer-ui",
+    "logic-apps-ux-docs": "apps/logic-apps-ux-docs",
     "parsers": "libs/parsers",
     "plugins-playwright": "libs/plugins/playwright",
     "plugins-playwright-e2e": "apps/plugins/playwright-e2e",

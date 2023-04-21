@@ -34,7 +34,7 @@
       "Parse_JSON": {
         "type": "ParseJson",
         "inputs": {
-          "content": "@variables('ArrayVariable')",
+          "content": "@triggerBody()?['string']",
           "schema": {
             "type": "array",
             "items": {
@@ -62,7 +62,7 @@
         "type": "Query",
         "inputs": {
           "from": "@body('Parse_JSON')",
-          "where": "@equals(@item()?['policy'],'X')"
+          "where": "@equals(test,@triggerBody()?['string'])"
         },
         "runAfter": {
           "Parse_JSON": ["SUCCEEDED"]
@@ -103,5 +103,6 @@
       }
     }
   },
-  "kind": "Stateful"
+  "connectionReferences": {},
+  "parameters": {}
 }

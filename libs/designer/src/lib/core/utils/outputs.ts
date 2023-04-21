@@ -399,6 +399,6 @@ export const loadDynamicOutputsInNode = async (
   }
 };
 
-const getExpressionValue = ({ key }: OutputInfo): string => {
-  return `@${getTokenExpressionValueForManifestBasedOperation(key, false, undefined, undefined)}`;
+const getExpressionValue = ({ key, required }: OutputInfo): string => {
+  return `@${getTokenExpressionValueForManifestBasedOperation(key, false, undefined, undefined, !!required)}`;
 };
