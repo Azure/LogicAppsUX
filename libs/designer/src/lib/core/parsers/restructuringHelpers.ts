@@ -103,7 +103,7 @@ export const moveRunAfterSource = (
   newSourceId: string,
   shouldHaveRunAfters: boolean
 ) => {
-  if (!state) return;
+  if (!state?.operations?.[nodeId]) return;
   const targetRunAfter = (state.operations[nodeId] as LogicAppsV2.ActionDefinition)?.runAfter ?? {};
   if (shouldHaveRunAfters && !targetRunAfter?.[newSourceId]) {
     targetRunAfter[newSourceId] = targetRunAfter[oldSourceId] ?? [RUN_AFTER_STATUS.SUCCEEDED];
