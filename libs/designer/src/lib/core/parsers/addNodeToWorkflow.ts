@@ -43,6 +43,7 @@ export const addNodeToWorkflow = (
 
   state.operations[newNodeId] = { ...state.operations[newNodeId], type: payload.operation.type };
   state.newlyAddedOperations[newNodeId] = newNodeId;
+  state.isDirty = true;
 
   const isAfterTrigger = nodesMetadata[parentId ?? '']?.isRoot && graphId === 'root';
   const shouldAddRunAfters = !isRoot && !isAfterTrigger;

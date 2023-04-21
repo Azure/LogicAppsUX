@@ -147,6 +147,7 @@ export interface UpdateParametersPayload {
     parameterId: string;
     propertiesToUpdate: Partial<ParameterInfo>;
   }[];
+  isUserAction?: boolean;
 }
 
 export const operationMetadataSlice = createSlice({

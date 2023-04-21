@@ -15,6 +15,7 @@ export const initialState: WorkflowState = {
   edgeIdsBySource: {},
   idReplacements: {},
   newlyAddedOperations: {},
+  isDirty: false,
 };
 
 const createMockNode = (id: string) => ({
