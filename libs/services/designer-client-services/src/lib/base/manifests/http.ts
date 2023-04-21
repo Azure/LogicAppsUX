@@ -222,6 +222,14 @@ export const httpWithSwaggerManifest = {
           type: 'string',
           title: 'Swagger Operation',
           description: 'Swagger Operation',
+          'x-ms-serialization': { skip: true },
+          'x-ms-deserialization': {
+            type: 'swaggeroperationid',
+            parameterReference: 'operationId',
+            options: {
+              swaggerOperation: { methodPath: ['operationDetails', 'method'], uriPath: ['operationDetails', 'uri'] },
+            },
+          },
           'x-ms-dynamic-list': {
             dynamicState: {
               operationId: 'getSwaggerOperations',
@@ -280,6 +288,8 @@ export const httpWithSwaggerManifest = {
       },
     },
     isOutputsOptional: false,
+
+    customSwagger: { location: ['metadata', 'apiDefinitionUrl'] },
 
     connector,
 

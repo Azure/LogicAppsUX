@@ -1,3 +1,4 @@
+import { updateNodeConnection } from '../../actions/bjsworkflow/connections';
 import { initializeGraphState } from '../../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
 import { addSwitchCaseToWorkflow, addNodeToWorkflow } from '../../parsers/addNodeToWorkflow';
@@ -9,6 +10,8 @@ import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
 import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
 import { addNewEdge } from '../../parsers/restructuringHelpers';
 import { getImmediateSourceNodeIds } from '../../utils/graph';
+import { resetWorkflowState } from '../global';
+import { updateNodeParameters } from '../operation/operationMetadataSlice';
 import type { SpecTypes, WorkflowState } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
@@ -34,6 +37,7 @@ export const initialWorkflowState: WorkflowState = {
   edgeIdsBySource: {},
   idReplacements: {},
   newlyAddedOperations: {},
+  isDirty: false,
 };
 
 const placeholderNodeId = 'builtin:newWorkflowTrigger';
@@ -313,6 +317,9 @@ export const workflowSlice = createSlice({
       const { originalId, newId } = action.payload;
       state.idReplacements[originalId] = newId.replaceAll(' ', '_').replaceAll('#', '');
     },
+    setIsWorkflowDirty: (state: WorkflowState, action: PayloadAction<boolean>) => {
+      state.isDirty = action.payload;
+    },
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -324,6 +331,13 @@ export const workflowSlice = createSlice({
         ([, value]) => !(value as LogicAppsV2.ActionDefinition).runAfter
       )?.[0];
     });
+    builder.addCase(updateNodeParameters, (state, action) => {
+      state.isDirty = state.isDirty || action.payload.isUserAction || false;
+    });
+    builder.addCase(updateNodeConnection.fulfilled, (state) => {
+      state.isDirty = true;
+    });
+    builder.addCase(resetWorkflowState, () => initialWorkflowState);
   },
 });
 
@@ -351,6 +365,7 @@ export const {
   addImplicitForeachNode,
   setRunIndex,
   setRepetitionRunData,
+  setIsWorkflowDirty,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

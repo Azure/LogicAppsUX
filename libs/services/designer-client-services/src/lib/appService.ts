@@ -1,9 +1,7 @@
 import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface IAppServiceService {
-  [x: string]: any;
   fetchAppServices(): Promise<any>;
-  fetchAppServiceApiSwagger(swaggerUrl: string): Promise<any>;
   getOperationSchema(swaggerUrl: string, operationId: string, isInput: boolean): Promise<any>;
   getOperations(swaggerUrl: string): Promise<any>;
 }

@@ -17,12 +17,21 @@ import {
 import { buildOperationDetailsFromControls } from '../../utils/swagger/inputsbuilder';
 import type { Settings } from './settings';
 import type { NodeStaticResults } from './staticresults';
-import { ConnectionService, LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { Segment } from '@microsoft/parsers-logic-apps';
-import { create, removeConnectionPrefix, cleanIndexedValue, isAncestorKey, parseEx, SegmentType } from '@microsoft/parsers-logic-apps';
+import {
+  create,
+  removeConnectionPrefix,
+  cleanIndexedValue,
+  isAncestorKey,
+  parseEx,
+  SegmentType,
+  DeserializationType,
+  PropertySerializationType,
+} from '@microsoft/parsers-logic-apps';
 import type { LocationSwapMap, OperationManifest, SubGraphDetail } from '@microsoft/utils-logic-apps';
 import {
   clone,
@@ -39,6 +48,7 @@ import {
   first,
   isNullOrEmpty,
   WORKFLOW_NODE_TYPES,
+  replaceTemplatePlaceholders,
 } from '@microsoft/utils-logic-apps';
 import merge from 'lodash.merge';
 
@@ -205,11 +215,6 @@ export const serializeOperation = async (
     };
   }
 
-  const swaggerBasedDynamicDataOperationIds = ['httpswaggeraction', 'httpswaggertrigger', 'appservice', 'appservicetrigger'];
-  if (swaggerBasedDynamicDataOperationIds.includes(operation.operationId)) {
-    serializedOperation = await parseSwaggerPathParameters(serializedOperation);
-  }
-
   // TODO - We might have to just serialize bare minimum data for partially loaded node.
   return serializedOperation;
 };
@@ -332,6 +337,10 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
     return result !== undefined ? result : rootParameter.required ? null : undefined;
   } else {
     const propertyNameParameters: SerializedParameter[] = [];
+    const pathTemplateParameters: SerializedParameter[] = [];
+    const isPathTemplateParameter = (param: SerializedParameter) =>
+      param.info.deserialization?.type === DeserializationType.PathTemplateProperties;
+
     const serializedParameters = inputs
       .filter((item) => isAncestorKey(item.parameterKey, key))
       .map((descendantParameter) => {
@@ -342,15 +351,30 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
         }
 
         const serializedParameter = { ...descendantParameter, value: parameterValue };
-        if (descendantParameter.info.serialization?.property) {
+        if (descendantParameter.info.serialization?.property?.type === PropertySerializationType.ParentObject) {
           propertyNameParameters.push(serializedParameter);
+        }
+
+        if (isPathTemplateParameter(descendantParameter)) {
+          pathTemplateParameters.push(serializedParameter);
         }
 
         return serializedParameter;
       });
 
-    for (const serializedParameter of serializedParameters) {
-      if (!propertyNameParameters.find((param) => param.parameterKey === serializedParameter.parameterKey)) {
+    const pathParameters = pathTemplateParameters.reduce(
+      (allPathParams: Record<string, string>, current: SerializedParameter) => ({
+        ...allPathParams,
+        [current.parameterName.split('.').at(-1) as string]: current.value,
+      }),
+      {}
+    );
+    const parametersToSerialize = serializedParameters.filter((param) => !isPathTemplateParameter(param));
+    for (const serializedParameter of parametersToSerialize) {
+      if (serializedParameter.info.serialization?.property?.type === PropertySerializationType.PathTemplate) {
+        serializedParameter.value = replaceTemplatePlaceholders(pathParameters, serializedParameter.value);
+        result = serializeParameterWithPath(result, serializedParameter.value, key, serializedParameter);
+      } else if (!propertyNameParameters.find((param) => param.parameterKey === serializedParameter.parameterKey)) {
         let parameterKey = serializedParameter.parameterKey;
         for (const propertyNameParameter of propertyNameParameters) {
           const propertyName = propertyNameParameter.info.serialization?.property?.name as string;
@@ -918,36 +942,4 @@ const getRunAfter = (operation: LogicAppsV2.ActionDefinition, idReplacements: Re
       [idReplacements[key] ?? key]: value,
     };
   }, {});
-};
-
-const parseSwaggerPathParameters = async (_operation: any): Promise<any> => {
-  const operation = clone(_operation);
-  const { apiDefinitionUrl, swaggerSource } = operation?.metadata ?? {};
-  if (!apiDefinitionUrl || (swaggerSource !== 'custom' && swaggerSource !== 'website')) return operation;
-  const opId = operation.inputs?.operationId;
-  if (!opId) return operation;
-  const connectionService = ConnectionService();
-  const swagger = await connectionService.getSwaggerParser(apiDefinitionUrl);
-  const host = swagger?.api?.host ?? '';
-  const swaggerOperation = await connectionService.getOperationFromId(apiDefinitionUrl, opId);
-  if (!swaggerOperation) return operation;
-  const operationUri = `https://${host}${swaggerOperation.path}`;
-  const pathParams = operation.inputs?.pathTemplate?.parameters ?? {};
-  Object.keys(pathParams).forEach((key) => {
-    if (pathParams[key].toString().startsWith(`@{encodeURIComponent('`)) return;
-    pathParams[key] = `@{encodeURIComponent('${pathParams[key]}')}`;
-  });
-
-  const pathWithParams = Object.keys(pathParams).reduce((acc: string, key: string) => {
-    return acc.replace(`{${key}}`, pathParams[key]);
-  }, operationUri);
-
-  operation.inputs = {
-    ...operation.inputs,
-    uri: pathWithParams,
-  };
-  if (operation?.inputs?.operationId) delete operation.inputs.operationId;
-  if (operation?.inputs?.pathTemplate) delete operation.inputs.pathTemplate;
-
-  return operation;
 };
