@@ -150,7 +150,7 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
               const functionValues = getInputValues(connections[input.reactFlowKey], connections, false);
               value = formatDirectAccess(functionValues[0], functionValues[1], functionValues[2]);
             } else {
-              value = collectFunctionValue(input.node, connections[input.reactFlowKey], connections);
+              value = collectFunctionValue(input.node, connections[input.reactFlowKey], connections, pathItem.repeating);
             }
           }
         }
@@ -171,6 +171,8 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
                 value = '';
               } else {
                 value = value.replaceAll(`${valueToTrim}/`, '');
+                value = value.replaceAll(/\(@/g, './@');
+                value = value.replaceAll(/ @/g, ' ./@');
 
                 // Handle dot access
                 if (!value.includes('[') && !value.includes(']')) {
