@@ -27,6 +27,7 @@ import {
   isStringLiteral,
 } from '@microsoft/parsers-logic-apps';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
+import { ConnectionReferenceKeyFormat } from '@microsoft/utils-logic-apps';
 import {
   getObjectPropertyValue,
   safeSetObjectPropertyValue,
@@ -91,14 +92,16 @@ export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitO
       throw new AssertionException(AssertionErrorCode.INVALID_SPLITON, invalidSplitOn);
     }
 
-    const parsedValue = ExpressionParser.parseTemplateExpression(splitOn, manifest.properties.connectionReference?.referenceKeyFormat);
+    const parsedValue = ExpressionParser.parseTemplateExpression(
+      splitOn,
+      manifest.properties.connectionReference?.referenceKeyFormat === ConnectionReferenceKeyFormat.OpenApi
+    );
     const properties: string[] = [];
     let manifestSection = updatedManifest.properties.outputs;
     if (isSupportedSplitOnExpression(parsedValue)) {
       const { dereferences, name } = parsedValue as ExpressionFunction;
 
-      // prevents duplicate 'body' property when parsing OpenApi manifests
-      if (equals(name, 'triggerBody') && dereferences.length && !equals((dereferences[0].expression as ExpressionLiteral).value, 'body')) {
+      if (equals(name, 'triggerBody')) {
         properties.push('body');
       }
 

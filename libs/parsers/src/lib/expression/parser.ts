@@ -11,7 +11,7 @@ import type {
 } from '../models/expression';
 import { ExpressionType, ExpressionTokenType } from '../models/expression';
 import { ExpressionScanner } from './scanner';
-import { ConnectionReferenceKeyFormat, equals } from '@microsoft/utils-logic-apps';
+import { equals } from '@microsoft/utils-logic-apps';
 
 interface TokenToParse {
   tokenType: ExpressionTokenType;
@@ -50,14 +50,14 @@ export class ExpressionParser {
     },
   ];
 
-  public static parseExpression(expression: string, referenceKeyFormat?: ConnectionReferenceKeyFormat): Expression {
-    const scanner = new ExpressionScanner(expression, /*prefetch*/ true, referenceKeyFormat);
-    const parsedExpression = ExpressionParser._parseExpressionRecursively(scanner);
+  public static parseExpression(expression: string, isAliasPathParsingEnabled?: boolean): Expression {
+    const scanner = new ExpressionScanner(expression, /*prefetch*/ true);
+    const parsedExpression = ExpressionParser._parseExpressionRecursively(scanner, 0, isAliasPathParsingEnabled);
     scanner.getTokenForTypeAndValue(ExpressionTokenType.EndOfData);
     return parsedExpression;
   }
 
-  public static parseTemplateExpression(expression: string, referenceKeyFormat?: ConnectionReferenceKeyFormat): Expression {
+  public static parseTemplateExpression(expression: string, isAliasPathParsingEnabled?: boolean): Expression {
     if (!isTemplateExpression(expression)) {
       throw new ParserException(ExpressionExceptionCode.UNRECOGNIZED_EXPRESSION, ExpressionExceptionCode.UNRECOGNIZED_EXPRESSION);
     }
@@ -69,14 +69,14 @@ export class ExpressionParser {
           value: expression.substring(1),
         };
       } else {
-        return ExpressionParser.parseExpression(expression.substring(1), referenceKeyFormat);
+        return ExpressionParser.parseExpression(expression.substring(1), isAliasPathParsingEnabled);
       }
     } else {
       return ExpressionParser._parseStringInterpolationExpression(expression);
     }
   }
 
-  private static _parseExpressionRecursively(scanner: ExpressionScanner, index = 0): Expression {
+  private static _parseExpressionRecursively(scanner: ExpressionScanner, index = 0, isAliasPathParsingEnabled?: boolean): Expression {
     if (index < this._tokenList.length) {
       const token = scanner.getTokenForTypeAndValue(ExpressionParser._tokenList[index].tokenType, ExpressionParser._tokenList[index].value);
       if (token) {
@@ -85,9 +85,9 @@ export class ExpressionParser {
           value: token.value,
         };
       }
-      return ExpressionParser._parseExpressionRecursively(scanner, index + 1);
+      return ExpressionParser._parseExpressionRecursively(scanner, index + 1, isAliasPathParsingEnabled);
     } else {
-      return this._parseFunctionExpression(scanner);
+      return this._parseFunctionExpression(scanner, isAliasPathParsingEnabled);
     }
   }
 
@@ -99,7 +99,7 @@ export class ExpressionParser {
     throw new ParserException(ExpressionExceptionCode.UNRECOGNIZED_EXPRESSION, ExpressionExceptionCode.UNRECOGNIZED_EXPRESSION);
   }
 
-  private static _parseFunctionExpression(scanner: ExpressionScanner): ExpressionFunction {
+  private static _parseFunctionExpression(scanner: ExpressionScanner, isAliasPathParsingEnabled?: boolean): ExpressionFunction {
     let token: ExpressionToken | undefined = ExpressionParser._getTokenOrThrowException(scanner, ExpressionTokenType.Identifier);
 
     const startPosition = token.startPosition;
@@ -140,7 +140,7 @@ export class ExpressionParser {
         const expression = this._parseExpressionRecursively(scanner);
         token = ExpressionParser._getTokenOrThrowException(scanner, ExpressionTokenType.RightSquareBracket);
 
-        if (expression.type === ExpressionType.StringLiteral && scanner.referenceKeyFormat === ConnectionReferenceKeyFormat.OpenApi) {
+        if (expression.type === ExpressionType.StringLiteral && isAliasPathParsingEnabled) {
           // takes care of expressions that are nested such as ['body/value']
           for (const expressionValue of (expression as ExpressionLiteral).value.split('/')) {
             dereferences.push({
