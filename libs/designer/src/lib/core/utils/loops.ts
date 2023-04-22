@@ -59,16 +59,11 @@ export const shouldAddForeach = async (
   token: OutputToken,
   state: RootState
 ): Promise<ImplicitForeachDetails> => {
-  const operationInfo = state.operations.operationInfo[nodeId];
-  if (
-    token.outputInfo.type === TokenType.VARIABLE ||
-    token.outputInfo.type === TokenType.PARAMETER ||
-    !token.outputInfo?.arrayDetails ||
-    operationInfo.type.toLowerCase() === foreachOperationInfo.type.toLowerCase()
-  ) {
+  if (token.outputInfo.type === TokenType.VARIABLE || token.outputInfo.type === TokenType.PARAMETER || !token.outputInfo?.arrayDetails) {
     return { shouldAdd: false };
   }
 
+  const operationInfo = state.operations.operationInfo[nodeId];
   const parameter = getParameterFromId(state.operations.inputParameters[nodeId], parameterId);
   const manifest = OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)
     ? await getOperationManifest(operationInfo)
