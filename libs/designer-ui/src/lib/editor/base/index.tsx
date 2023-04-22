@@ -1,4 +1,4 @@
-import { Toolbar } from '../../html/plugins/toolbar';
+import { Toolbar } from '../../html/plugins/toolbar/Toolbar';
 import type { TokenPickerMode } from '../../tokenpicker';
 import { useId } from '../../useId';
 import type { ValueSegment } from '../models/parameter';
@@ -195,6 +195,7 @@ export const BaseEditor = ({
           <span id={id} hidden={true}>
             {describedByMessage}
           </span>
+          {/* {toolBar ? <FormatTextNode/> : null} */}
           {treeView ? <TreeView /> : null}
           {autoFocus ? <AutoFocus /> : null}
           {history ? <History /> : null}

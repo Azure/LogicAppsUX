@@ -10,6 +10,7 @@ import type { CallbackHandler, ChangeHandler, GetTokenPickerHandler } from '../.
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { FloatingActionMenu } from '../../floatingactionmenu';
+import { HTMLEditor } from '../../html';
 import { FilePickerEditor } from '../../picker/filepickereditor';
 import { QueryBuilderEditor } from '../../querybuilder';
 import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
@@ -238,6 +239,17 @@ const TokenField = ({
           editorBlur={onValueChange}
           getTokenPicker={getTokenPicker}
           onChange={hideValidationErrors}
+        />
+      );
+    case 'html':
+      return (
+        <HTMLEditor
+          initialValue={value}
+          placeholder={placeholder}
+          BasePlugins={{ tokens: showTokens }}
+          readonly={readOnly}
+          getTokenPicker={getTokenPicker}
+          // editorBlur={onValueChange}
         />
       );
     case 'floatingactionmenu': {

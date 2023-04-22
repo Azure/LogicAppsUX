@@ -253,7 +253,7 @@ export const getDependentParameters = (
 export function toParameterInfoMap(inputParameters: InputParameter[], stepDefinition?: any): ParameterInfo[] {
   const metadata = stepDefinition && stepDefinition.metadata;
   const result: ParameterInfo[] = [];
-
+  console.log(inputParameters);
   for (const inputParameter of inputParameters) {
     if (!inputParameter.dynamicSchema) {
       const parameter = createParameterInfo(inputParameter, metadata);
@@ -344,10 +344,13 @@ export function getParameterEditorProps(
   shouldIgnoreDefaultValue = false,
   isFilePicker?: boolean
 ): ParameterEditorProps {
-  const { dynamicValues, type, itemSchema, visibility, value, enum: schemaEnum } = parameter;
+  const { dynamicValues, type, itemSchema, visibility, value, enum: schemaEnum, format } = parameter;
   let { editor, editorOptions, schema } = parameter;
   let editorViewModel;
   if (!editor) {
+    if (format === constants.EDITOR.HTML) {
+      editor = constants.EDITOR.HTML;
+    }
     if (type === constants.SWAGGER.TYPE.ARRAY && !!itemSchema && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.ARRAY;
       editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);

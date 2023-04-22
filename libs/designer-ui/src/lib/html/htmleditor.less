@@ -110,7 +110,7 @@
   margin: 0 4px;
 }
 
-.dropdown {
+.msla-html-editor-dropdown-items-container {
   z-index: 1000001;
   display: block;
   position: fixed;
@@ -120,7 +120,7 @@
   background-color: #fff;
 }
 
-.dropdown .item {
+.msla-html-editor-dropdown-items-container .item {
   margin: 0 8px 0 8px;
   padding: 8px;
   color: #050505;
@@ -139,38 +139,38 @@
   min-width: 100px;
 }
 
-.dropdown .item.fontsize-item,
-.dropdown .item.fontsize-item .text {
+.msla-html-editor-dropdown-items-container .item.fontsize-item,
+.msla-html-editor-dropdown-items-container .item.fontsize-item .text {
   min-width: unset;
 }
 
-.dropdown .item .active {
+.msla-html-editor-dropdown-items-container .item .active {
   display: flex;
   width: 20px;
   height: 20px;
   background-size: contain;
 }
 
-.dropdown .item:first-child {
+.msla-html-editor-dropdown-items-container .item:first-child {
   margin-top: 8px;
 }
 
-.dropdown .item:last-child {
+.msla-html-editor-dropdown-items-container .item:last-child {
   margin-bottom: 8px;
 }
 
-.dropdown .item:hover {
+.msla-html-editor-dropdown-items-container .item:hover {
   background-color: #eee;
 }
 
-.dropdown .item .text {
+.msla-html-editor-dropdown-items-container .item .text {
   display: flex;
   line-height: 20px;
   flex-grow: 1;
   min-width: 150px;
 }
 
-.dropdown .item .icon {
+.msla-html-editor-dropdown-items-container .item .icon {
   display: flex;
   width: 20px;
   height: 20px;
@@ -182,7 +182,7 @@
   background-repeat: no-repeat;
 }
 
-.dropdown .divider {
+.msla-html-editor-dropdown-items-container .divider {
   width: auto;
   background-color: #eee;
   margin: 4px 8px;
@@ -219,10 +219,9 @@ button.item.dropdown-item-active img {
 
 .msla-html-editor {
   width: 100%;
-  margin: 20px auto 0px auto;
   border-radius: 2px;
   position: relative;
-  padding-bottom: 15px;
+  outline: 1px solid @panel-mode-panel-border-color;
   .editor-input {
     outline: none;
     margin: 1px;
@@ -230,6 +229,7 @@ button.item.dropdown-item-active img {
     font-size: 15px;
     tab-size: 1;
     padding-inline-start: 13px;
+    padding-bottom: 60px;
     &.readonly {
       background-color: rgba(128, 128, 128, 0.1);
     }
@@ -248,7 +248,7 @@ button.item.dropdown-item-active img {
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 95%;
-    margin-top: -20px;
+    margin-top: -80px;
     margin-left: 15px;
     font-size: 15px;
     user-select: none;
@@ -261,4 +261,108 @@ button.item.dropdown-item-active img {
   width: 1px;
   background-color: #eee;
   margin: 0 4px;
+}
+
+.Input__wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.Input__label {
+  display: flex;
+  flex: 1;
+  color: #666;
+}
+.Input__input {
+  display: flex;
+  flex: 2;
+  border: 1px solid #999;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  min-width: 0;
+}
+
+.color-picker-wrapper {
+  padding: 20px;
+}
+
+.color-picker-basic-color {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+.color-picker-basic-color button {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  height: 16px;
+  width: 16px;
+  cursor: pointer;
+  list-style-type: none;
+}
+
+.color-picker-basic-color button.active {
+  box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.color-picker-saturation {
+  width: 100%;
+  position: relative;
+  margin-top: 15px;
+  height: 150px;
+  background-image: linear-gradient(transparent, black), linear-gradient(to right, white, transparent);
+  user-select: none;
+}
+.color-picker-saturation_cursor {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 15px #00000026;
+  box-sizing: border-box;
+  transform: translate(-10px, -10px);
+}
+.color-picker-hue {
+  width: 100%;
+  position: relative;
+  margin-top: 15px;
+  height: 12px;
+  background-image: linear-gradient(
+    to right,
+    rgb(255, 0, 0),
+    rgb(255, 255, 0),
+    rgb(0, 255, 0),
+    rgb(0, 255, 255),
+    rgb(0, 0, 255),
+    rgb(255, 0, 255),
+    rgb(255, 0, 0)
+  );
+  user-select: none;
+  border-radius: 12px;
+}
+
+.color-picker-hue_cursor {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  box-shadow: #0003 0 0 0 0.5px;
+  box-sizing: border-box;
+  transform: translate(-10px, -4px);
+}
+
+.color-picker-color {
+  border: 1px solid #ccc;
+  margin-top: 15px;
+  width: 100%;
+  height: 20px;
 }

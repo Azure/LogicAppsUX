@@ -7,7 +7,7 @@ export const HTMLEditor = ({ placeholder, readonly, initialValue, getTokenPicker
       className="msla-html-editor"
       readonly={readonly}
       placeholder={placeholder}
-      BasePlugins={{ tokens: true, clearEditor: true, toolBar: true }}
+      BasePlugins={{ tokens: true, clearEditor: true, toolBar: true, tabbable: true }}
       initialValue={initialValue}
       getTokenPicker={getTokenPicker}
     />
