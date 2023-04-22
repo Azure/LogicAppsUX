@@ -8,6 +8,7 @@ import { useParameterStaticResult, useParameterValidationErrors, useTokenDepende
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
 import {
+  useAllOperations,
   useBrandColor,
   useIconUri,
   useIsConnectionRequired,
@@ -50,6 +51,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const intl = useIntl();
 
   const dispatch = useDispatch<AppDispatch>();
+  const operationsInfo = useAllOperations();
 
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
@@ -58,11 +60,11 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const runInstance = useRunInstance();
   const runData = useRunData(id);
   const nodesMetaData = useNodesMetadata();
+  const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo);
 
   const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
   const getRunRepetition = () => {
-    const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData);
     return RunService().getRepetition({ nodeId: id, runId: runInstance?.id }, repetitionName);
   };
 
@@ -74,9 +76,10 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     refetch,
     isLoading: isRepetitionLoading,
     isRefetching: isRepetitionRefetching,
-  } = useQuery<any>(['runInstance', { nodeId: id }], getRunRepetition, {
+  } = useQuery<any>(['runInstance', { nodeId: id, runId: runInstance?.id, repetitionName }], getRunRepetition, {
     refetchOnWindowFocus: false,
     initialData: null,
+    refetchIntervalInBackground: true,
     onSuccess: onRunRepetitionSuccess,
     enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
   });
