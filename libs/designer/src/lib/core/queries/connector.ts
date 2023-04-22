@@ -44,7 +44,7 @@ export const getListDynamicValues = async (
       (connectionId ?? '').toLowerCase(),
       connectorId.toLowerCase(),
       operationId.toLowerCase(),
-      getParametersKey(parameters).toLowerCase(),
+      getParametersKey({ ...dynamicState.parameters, ...parameters }),
     ],
     () => service.getListDynamicValues(connectionId, connectorId, operationId, parameterAlias, parameters, dynamicState, nodeMetadata)
   );
@@ -90,7 +90,7 @@ export const getDynamicSchemaProperties = async (
       (connectionId ?? '').toLowerCase(),
       connectorId.toLowerCase(),
       operationId.toLowerCase(),
-      getParametersKey(parameters),
+      getParametersKey({ ...dynamicState.parameters, ...parameters }),
       `isInput:${!!dynamicState?.isInput}`,
     ],
     () => service.getDynamicSchema(connectionId, connectorId, operationId, parameterAlias, parameters, dynamicState, nodeMetadata)
@@ -123,7 +123,7 @@ export const getLegacyDynamicTreeItems = async (
 
 const getParametersKey = (parameters: Record<string, any>): string => {
   return Object.keys(parameters).reduce(
-    (result: string, parameterKey: string) => `${result}, ${parameterKey}-${parameters[parameterKey]}`,
+    (result: string, parameterKey: string) => `${result}, ${parameterKey}-${JSON.stringify(parameters[parameterKey])}`,
     ''
   );
 };

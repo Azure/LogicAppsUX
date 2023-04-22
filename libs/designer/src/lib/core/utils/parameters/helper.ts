@@ -1489,6 +1489,7 @@ export async function updateParameterAndDependencies(
     },
   ];
   const payload: UpdateParametersPayload = {
+    isUserAction: true,
     nodeId,
     parameters: parametersToUpdate,
   };

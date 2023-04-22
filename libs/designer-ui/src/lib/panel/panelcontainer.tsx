@@ -9,13 +9,13 @@ import { PanelHeader } from './panelheader/panelheader';
 import { PanelPivot } from './panelpivot';
 import type { ILayerProps } from '@fluentui/react';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
-import type { IPanelHeaderRenderer, IPanelProps, IPanelStyles } from '@fluentui/react/lib/Panel';
+import type { IPanelHeaderRenderer, IPanelProps, IPanelStyles, PanelBase } from '@fluentui/react/lib/Panel';
 import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
 const panelStyles: Partial<IPanelStyles> = {
-  content: { padding: '1rem' },
+  content: { padding: '1rem 2rem' },
   main: { overflow: 'hidden' },
   scrollableContent: { height: '100%' },
 };
@@ -50,6 +50,7 @@ export type PanelContainerProps = {
   onCommentChange: (panelCommentChangeEvent?: string) => void;
   renderHeader?: (props?: IPanelProps, defaultrender?: IPanelHeaderRenderer, headerTextId?: string) => JSX.Element;
   onTitleChange: (newValue: string) => void;
+  onBlur?: React.FocusEventHandler<PanelBase> | undefined;
 } & CommonPanelProps;
 
 export const PanelContainer = ({
@@ -78,6 +79,7 @@ export const PanelContainer = ({
   renderHeader,
   onCommentChange,
   onTitleChange,
+  onBlur,
 }: PanelContainerProps) => {
   const intl = useIntl();
   const onTabChange = (itemKey: string): void => {
@@ -158,6 +160,7 @@ export const PanelContainer = ({
       customWidth={width}
       styles={isCollapsed ? panelStylesCollapsed : panelStyles}
       layerProps={layerProps}
+      onBlur={onBlur}
     >
       {!isCollapsed && (
         <>
