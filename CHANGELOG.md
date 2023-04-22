@@ -1,5 +1,13 @@
 # Logic Apps Designer
 
+### [2.8.1](https://github.com/Azure/LogicAppsUX/compare/v2.8.0...v2.8.1) (2023-04-22)
+
+### Bug Fixes
+
+- **designer:** Fixing the subsequent ListDynamicValues calls by adding correct cache key ([#1908](https://github.com/Azure/LogicAppsUX/issues/1908)) ([573db3c](https://github.com/Azure/LogicAppsUX/commit/573db3c4bb7ae51cb2f994cfa6b6535756a35a22))
+- **designer:** Rename `comment` to `note` ([#2109](https://github.com/Azure/LogicAppsUX/issues/2109)) ([fb42a1b](https://github.com/Azure/LogicAppsUX/commit/fb42a1b9704d990c6372df43f771b21fed1313c9))
+- Fix issue where Token Picker is clipped when Panel is rendered on the left ([#2106](https://github.com/Azure/LogicAppsUX/issues/2106)) ([5521136](https://github.com/Azure/LogicAppsUX/commit/5521136dd566a46f67e6eda9da63c42ded8680be))
+
 ## [2.8.0](https://github.com/Azure/LogicAppsUX/compare/v2.7.0...v2.8.0) (2023-04-21)
 
 ### Features
