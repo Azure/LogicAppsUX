@@ -1,10 +1,10 @@
 /* eslint-disable no-param-reassign */
 import type { SchemaProperty } from '../models/operation';
-import { isDynamicTreeExtension, isLegacyDynamicValuesTreeExtension } from '../models/operation';
 import * as SwaggerConstants from './constants';
 import * as ParameterKeyUtility from './helpers/keysutility';
 import {
   dereferenceRefSchema,
+  getEditorForParameter,
   getEnum,
   getKnownTitles,
   getKnownTitlesFromKey,
@@ -321,7 +321,7 @@ export class SchemaProcessor {
         description: schema.description,
         dynamicValues,
         dynamicSchema: getParameterDynamicSchema(schema),
-        editor: dynamicValues ? 'combobox' : schema[SwaggerConstants.ExtensionProperties.Editor],
+        editor: getEditorForParameter(schema, dynamicValues),
         editorOptions: dynamicValues ? { options: [] } : schema[SwaggerConstants.ExtensionProperties.EditorOptions],
         format: schema.format,
         isInsideArray: this.options.parentProperty && this.options.parentProperty.isArray,
@@ -467,11 +467,7 @@ export class SchemaProcessor {
     const description = schema.description;
     const dynamicallyAdded = schema[SwaggerConstants.ExtensionProperties.DynamicallyAdded];
     const dynamicValues = getParameterDynamicValues(schema);
-    const editor = dynamicValues
-      ? isLegacyDynamicValuesTreeExtension(dynamicValues) || isDynamicTreeExtension(dynamicValues)
-        ? 'filepicker'
-        : 'combobox'
-      : schema[SwaggerConstants.ExtensionProperties.Editor];
+    const editor = getEditorForParameter(schema, dynamicValues);
     const editorOptions = dynamicValues ? { options: [] } : schema[SwaggerConstants.ExtensionProperties.EditorOptions];
     const encode = schema[SwaggerConstants.ExtensionProperties.Encode];
     const $enum = getEnum(schema, $required);

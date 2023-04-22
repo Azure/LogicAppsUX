@@ -344,7 +344,9 @@ function getParameterValuesForLegacyDynamicOperation(
 ): Record<string, any> {
   const { method, path } = swagger.getOperationByOperationId(operationId as string);
   const operationInputs = map(
-    toParameterInfoMap(unmap(swagger.getInputParameters(operationId as string, { excludeInternalParameters: false }).byId)),
+    toParameterInfoMap(
+      unmap(swagger.getInputParameters(operationId as string, { excludeInternalParameters: false, excludeInternalOperations: false }).byId)
+    ),
     'parameterName'
   );
   const operationParameters = getParametersForDynamicInvoke(parameters, nodeInputs, idReplacements, operationInputs);
