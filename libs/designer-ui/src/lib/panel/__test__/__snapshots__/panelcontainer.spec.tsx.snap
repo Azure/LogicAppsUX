@@ -19,7 +19,7 @@ exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
   styles={
     Object {
       "content": Object {
-        "padding": "1rem",
+        "padding": "1rem 2rem",
       },
       "main": Object {
         "overflow": "hidden",

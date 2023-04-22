@@ -15,7 +15,7 @@ import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
 const panelStyles: Partial<IPanelStyles> = {
-  content: { padding: '1rem' },
+  content: { padding: '1rem 2rem' },
   main: { overflow: 'hidden' },
   scrollableContent: { height: '100%' },
 };
