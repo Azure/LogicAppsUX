@@ -20,6 +20,7 @@ declare namespace OpenAPIV2 {
       | ((request: any, response: any, next: any) => void)
     )[];
     'x-express-openapi-validation-strict'?: boolean;
+    'x-ms-capabilities'?: any;
   }
   interface TagObject {
     name: string;

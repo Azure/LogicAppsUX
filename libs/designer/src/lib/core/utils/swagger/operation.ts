@@ -207,7 +207,7 @@ export const getInputParametersFromSwagger = (
   defaultParameterGroup.parameters = getParametersSortedByVisibility(defaultParameterGroup.parameters);
 
   const nodeInputs = { dynamicLoadStatus: dynamicInput ? DynamicLoadStatus.NOTSTARTED : undefined, parameterGroups };
-  return { inputs: nodeInputs, dependencies: getInputDependencies(nodeInputs, inputParametersAsArray) };
+  return { inputs: nodeInputs, dependencies: getInputDependencies(nodeInputs, inputParametersAsArray, swagger) };
 };
 
 export const getOutputParametersFromSwagger = (

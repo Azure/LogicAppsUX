@@ -1,7 +1,13 @@
 /* eslint-disable no-case-declarations */
 import * as Constants from '../common/constants';
 import { create, encodePropertySegment } from '../common/helpers/keysutility';
-import { getEnum, getParameterDynamicSchema, getParameterDynamicValues, toSwaggerSchema } from '../common/helpers/utils';
+import {
+  getEditorForParameter,
+  getEnum,
+  getParameterDynamicSchema,
+  getParameterDynamicValues,
+  toSwaggerSchema,
+} from '../common/helpers/utils';
 import { SchemaProcessor } from '../common/schemaprocessor';
 import type { InputParameter, InputParameters } from '../models/operation';
 import { toInputParameter } from '../models/operation';
@@ -214,7 +220,7 @@ export class ParametersProcessor {
     const dynamicValues = getParameterDynamicValues(parameter as unknown as OpenAPIV2.SchemaObject);
     const $default = parameter.default,
       description = parameter.description,
-      editor = dynamicValues ? 'combobox' : parameter[Constants.ExtensionProperties.Editor],
+      editor = getEditorForParameter(parameter as unknown as OpenAPIV2.SchemaObject, dynamicValues),
       editorOptions = dynamicValues ? { options: [] } : parameter[Constants.ExtensionProperties.EditorOptions],
       encode = parameter[Constants.ExtensionProperties.Encode],
       $enum = getEnum(parameter as unknown as OpenAPIV2.SchemaObject, parameter.required),
