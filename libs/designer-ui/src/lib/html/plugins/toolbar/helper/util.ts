@@ -132,6 +132,6 @@ export const toHex = (value: string): string => {
 };
 
 export const dropDownActiveClass = (active: boolean) => {
-  if (active) return 'active dropdown-item-active';
+  if (active) return 'active msla-dropdown-item-active';
   else return '';
 };

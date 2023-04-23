@@ -7,7 +7,7 @@ import { transformColor } from './helper/util';
 import type { ReactNode } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-interface ColorPickerProps {
+interface DropdownColorPickerProps {
   buttonAriaLabel?: string;
   buttonClassName: string;
   buttonIconClassName?: string;
@@ -18,7 +18,7 @@ interface ColorPickerProps {
   title?: string;
 }
 
-export const ColorPicker = ({ color, children, onChange, ...dropdownProps }: ColorPickerProps) => {
+export const DropdownColorPicker = ({ color, children, onChange, ...dropdownProps }: DropdownColorPickerProps) => {
   const [selfColor, setSelfColor] = useState(transformColor('hex', color));
   const [inputColor, setInputColor] = useState(color);
   const innerDivRef = useRef(null);

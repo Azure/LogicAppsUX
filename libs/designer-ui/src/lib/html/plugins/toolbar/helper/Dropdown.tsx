@@ -84,7 +84,7 @@ export const DropDown = ({
 
       {showDropDown &&
         createPortal(
-          <DropDownItems dropDownRef={dropDownRef} onClose={handleClose}>
+          <DropDownItems dropDownRef={dropDownRef} onClose={handleClose} >
             {children}
           </DropDownItems>,
           document.body

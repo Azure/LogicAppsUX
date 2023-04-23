@@ -1,3 +1,4 @@
+import { FontDropDownType } from './FontDropDown';
 import type { RefObject } from 'react';
 import { createContext, useEffect, useMemo, useCallback, useState } from 'react';
 
@@ -70,7 +71,25 @@ export const DropDownItems = ({ children, dropDownRef, onClose }: DropdownItemsP
 
   return (
     <DropDownContext.Provider value={contextValue}>
-      <div className="msla-html-editor-dropdown-items-container" ref={dropDownRef} onKeyDown={handleKeyDown} onClick={() => onClose()}>
+      <div
+        className="msla-html-editor-dropdown-items-container"
+        ref={dropDownRef}
+        onKeyDown={handleKeyDown}
+        onClick={() => onClose()}
+        onBlur={(e) => {
+          const type: string = e.target.classList.contains('fontfamily-item')
+            ? FontDropDownType.FONTFAMILY
+            : e.target.classList.contains('fontsize-item')
+            ? FontDropDownType.FONTSIZE
+            : '';
+          if (
+            (!e.relatedTarget?.classList.contains('fontsize-item') && !e.relatedTarget?.classList.contains('fontfamily-item')) ||
+            (e.relatedTarget?.classList.contains('toolbar-item') && e.relatedTarget?.classList.contains(type))
+          ) {
+            onClose();
+          }
+        }}
+      >
         {children}
       </div>
     </DropDownContext.Provider>

@@ -32,18 +32,22 @@ export enum blockTypeToBlockName {
   quote = 'Quote',
 }
 
-export const Toolbar = (): JSX.Element => {
+interface toolbarProps {
+  readonly?: boolean;
+}
+
+export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
-  const [fontSize, setFontSize] = useState<string>('15px');
-  const [fontColor, setFontColor] = useState<string>('#000000');
-  const [backgroundColor, setBackgroundColor] = useState<string>('#ffffff');
+
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
+  const [fontSize, setFontSize] = useState<string>('12px');
   const [fontFamily, setFontFamily] = useState<string>('Arial');
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
+    // Currently a bug affecting the toolbug due to $getSelection https://github.com/facebook/lexical/issues/4011
     if ($isRangeSelection(selection)) {
       setFontFamily($getSelectionStyleValueForProperty(selection, 'font-family', 'Arial'));
       setFontSize($getSelectionStyleValueForProperty(selection, 'font-size', '12px'));
@@ -74,12 +78,12 @@ export const Toolbar = (): JSX.Element => {
         COMMAND_PRIORITY_CRITICAL
       )
     );
-  }, [activeEditor, updateToolbar]);
+  }, [editor, activeEditor, updateToolbar]);
 
   return (
-    <div className="toolbar">
+    <div className="msla-html-editor-toolbar">
       <button
-        disabled={!canUndo}
+        disabled={!canUndo || readonly}
         onClick={() => {
           activeEditor.dispatchCommand(UNDO_COMMAND, undefined);
         }}
@@ -90,7 +94,7 @@ export const Toolbar = (): JSX.Element => {
         <img className={'format'} src={counterClockWiseArrow} alt={'counter clockwise arrow'} />
       </button>
       <button
-        disabled={!canRedo}
+        disabled={!canRedo || readonly}
         onClick={() => {
           activeEditor.dispatchCommand(REDO_COMMAND, undefined);
         }}
@@ -102,10 +106,10 @@ export const Toolbar = (): JSX.Element => {
       </button>
       <Divider />
 
-      <FontDropDown fontDropdownType={FontDropDownType.FONTFAMILY} value={fontFamily} editor={editor} />
-      <FontDropDown fontDropdownType={FontDropDownType.FONTSIZE} value={fontSize} editor={editor} />
+      <FontDropDown fontDropdownType={FontDropDownType.FONTFAMILY} value={fontFamily} editor={editor} disabled={readonly} />
+      <FontDropDown fontDropdownType={FontDropDownType.FONTSIZE} value={fontSize} editor={editor} disabled={readonly} />
       <Divider />
-      <Format activeEditor={activeEditor} fontColor={'black'} />
+      <Format activeEditor={activeEditor} readonly={readonly} />
     </div>
   );
 };

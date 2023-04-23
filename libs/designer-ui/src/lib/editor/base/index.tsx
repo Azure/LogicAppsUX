@@ -180,7 +180,7 @@ export const BaseEditor = ({
     <TooltipHost content={placeholder} calloutProps={calloutProps} styles={{ root: { width: '100%' } }}>
       <LexicalComposer initialConfig={initialConfig}>
         <div className={className ?? 'msla-editor-container'} id={editorId} ref={containerRef}>
-          {toolBar ? <Toolbar /> : null}
+          {toolBar ? <Toolbar readonly={readonly} /> : null}
           <RichTextPlugin
             contentEditable={
               <ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabelledBy={labelId} ariaDescribedBy={id} />

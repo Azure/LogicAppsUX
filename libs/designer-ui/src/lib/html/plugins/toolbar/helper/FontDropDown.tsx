@@ -1,4 +1,5 @@
-
+import { DropDown } from './Dropdown';
+import { DropDownItem } from './DropdownItem';
 import { FONT_FAMILY_OPTIONS, FONT_SIZE_OPTIONS } from './constants';
 import { dropDownActiveClass } from './util';
 import { $patchStyleText } from '@lexical/selection';
@@ -6,8 +7,6 @@ import type { LexicalEditor } from 'lexical';
 import { $isRangeSelection, $getSelection } from 'lexical';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
-import { DropDown } from './Dropdown';
-import { DropDownItem } from './DropdownItem';
 
 export enum FontDropDownType {
   FONTFAMILY = 'font-family',
@@ -53,9 +52,11 @@ export function FontDropDown({ editor, value, fontDropdownType, disabled = false
       {(fontDropdownType === FontDropDownType.FONTFAMILY ? FONT_FAMILY_OPTIONS : FONT_SIZE_OPTIONS).map(([option, text]) => (
         <DropDownItem
           className={`item ${dropDownActiveClass(value === option)} ${
-            fontDropdownType === FontDropDownType.FONTSIZE ? 'fontsize-item' : ''
+            fontDropdownType === FontDropDownType.FONTSIZE ? 'fontsize-item' : 'fontfamily-item'
           }`}
-          onClick={() => handleClick(option)}
+          onClick={() => {
+            handleClick(option);
+          }}
           key={option}
         >
           <span className="text">{text}</span>
