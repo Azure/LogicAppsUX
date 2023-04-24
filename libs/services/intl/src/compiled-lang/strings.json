@@ -707,6 +707,12 @@
       "value": "Identifier"
     }
   ],
+  "34Nt/B": [
+    {
+      "type": 0,
+      "value": "alt text for button icon"
+    }
+  ],
   "36RiST": [
     {
       "type": 0,
@@ -2747,6 +2753,12 @@
       "value": "Asynchronous Pattern"
     }
   ],
+  "J2Su6x": [
+    {
+      "type": 0,
+      "value": "Formatting options for font size"
+    }
+  ],
   "J5/7vN": [
     {
       "type": 0,
@@ -3697,6 +3709,12 @@
     {
       "type": 0,
       "value": " card"
+    }
+  ],
+  "QZ5DZl": [
+    {
+      "type": 0,
+      "value": "alt text for chevron down"
     }
   ],
   "QZBPUx": [
@@ -7131,6 +7149,12 @@
     {
       "type": 0,
       "value": "Degree of Parallelism"
+    }
+  ],
+  "sYQDN+": [
+    {
+      "type": 0,
+      "value": "Formatting options for font family"
     }
   ],
   "sZ0G/Z": [

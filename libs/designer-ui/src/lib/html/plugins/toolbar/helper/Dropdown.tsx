@@ -1,18 +1,23 @@
 import chevronDown from './../../icons/chevron-down.svg';
-import fontFamily from './../../icons/font-family.svg';
 import { DropDownItems } from './DropdownItems';
+import type { LexicalCommand, LexicalEditor } from 'lexical';
+import { COMMAND_PRIORITY_CRITICAL, createCommand } from 'lexical';
 import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useIntl } from 'react-intl';
+
+export const CLOSE_DROPDOWN_COMMAND: LexicalCommand<undefined> = createCommand();
 
 interface DropdownProps {
   disabled?: boolean;
   buttonAriaLabel?: string;
   buttonClassName: string;
-  buttonIconClassName?: string;
+  buttonIconSrc?: string;
   buttonLabel?: string;
   children: ReactNode;
   stopCloseOnClickSelf?: boolean;
+  editor: LexicalEditor;
 }
 
 export const DropDown = ({
@@ -20,10 +25,12 @@ export const DropDown = ({
   buttonLabel,
   buttonAriaLabel,
   buttonClassName,
-  buttonIconClassName,
+  buttonIconSrc,
   children,
   stopCloseOnClickSelf,
+  editor,
 }: DropdownProps): JSX.Element => {
+  const intl = useIntl();
   const dropDownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [showDropDown, setShowDropDown] = useState(false);
@@ -36,6 +43,17 @@ export const DropDown = ({
   };
 
   useEffect(() => {
+    editor.registerCommand<boolean>(
+      CLOSE_DROPDOWN_COMMAND,
+      () => {
+        handleClose();
+        return false;
+      },
+      COMMAND_PRIORITY_CRITICAL
+    );
+  }, [editor]);
+
+  useEffect(() => {
     const button = buttonRef.current;
     const dropDown = dropDownRef.current;
 
@@ -46,45 +64,39 @@ export const DropDown = ({
     }
   }, [dropDownRef, buttonRef, showDropDown]);
 
-  useEffect(() => {
-    const button = buttonRef.current;
+  const altTextForButtonIcon = intl.formatMessage({
+    defaultMessage: 'alt text for button icon',
+    description: 'alt text for button icon',
+  });
 
-    if (button !== null && showDropDown) {
-      const handle = (event: MouseEvent) => {
-        const target = event.target;
-        if (stopCloseOnClickSelf) {
-          if (dropDownRef.current && dropDownRef.current.contains(target as Node)) return;
-        }
-        if (!button.contains(target as Node)) {
-          setShowDropDown(false);
-        }
-      };
-      document.addEventListener('click', handle);
-
-      return () => {
-        document.removeEventListener('click', handle);
-      };
-    }
-    return;
-  }, [dropDownRef, buttonRef, showDropDown, stopCloseOnClickSelf]);
+  const altTextForChevronDown = intl.formatMessage({
+    defaultMessage: 'alt text for chevron down',
+    description: 'alt text for chevron down',
+  });
 
   return (
     <>
       <button
+        onMouseDown={(e) => {
+          e.preventDefault();
+        }}
         disabled={disabled}
         aria-label={buttonAriaLabel || buttonLabel}
         className={buttonClassName}
-        onClick={() => setShowDropDown(!showDropDown)}
+        onClick={() => {
+          editor.dispatchCommand(CLOSE_DROPDOWN_COMMAND, undefined);
+          setShowDropDown(!showDropDown);
+        }}
         ref={buttonRef}
       >
-        {buttonIconClassName ? <img src={fontFamily} alt="font-family" /> : null}
+        {buttonIconSrc ? <img src={buttonIconSrc} alt={altTextForButtonIcon} /> : null}
         {buttonLabel && <span className="text dropdown-button-text">{buttonLabel}</span>}
-        <img className="chevron-down" src={chevronDown} alt="chevron down" />
+        <img className="chevron-down" src={chevronDown} alt={altTextForChevronDown} />
       </button>
 
       {showDropDown &&
         createPortal(
-          <DropDownItems dropDownRef={dropDownRef} onClose={handleClose} >
+          <DropDownItems dropDownRef={dropDownRef} onClose={handleClose} stopCloseOnClickSelf={stopCloseOnClickSelf}>
             {children}
           </DropDownItems>,
           document.body

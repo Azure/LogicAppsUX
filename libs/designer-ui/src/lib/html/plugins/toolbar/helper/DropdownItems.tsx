@@ -1,10 +1,10 @@
-import { FontDropDownType } from './FontDropDown';
 import type { RefObject } from 'react';
 import { createContext, useEffect, useMemo, useCallback, useState } from 'react';
 
 interface DropdownItemsProps {
   children: React.ReactNode;
   dropDownRef: React.Ref<HTMLDivElement>;
+  stopCloseOnClickSelf?: boolean;
   onClose: () => void;
 }
 
@@ -14,7 +14,7 @@ export type DropDownContextType = {
 
 export const DropDownContext = createContext<DropDownContextType | null>(null);
 
-export const DropDownItems = ({ children, dropDownRef, onClose }: DropdownItemsProps) => {
+export const DropDownItems = ({ children, dropDownRef, stopCloseOnClickSelf, onClose }: DropdownItemsProps) => {
   const [items, setItems] = useState<RefObject<HTMLButtonElement>[]>();
   const [highlightedItem, setHighlightedItem] = useState<RefObject<HTMLButtonElement>>();
 
@@ -75,17 +75,19 @@ export const DropDownItems = ({ children, dropDownRef, onClose }: DropdownItemsP
         className="msla-html-editor-dropdown-items-container"
         ref={dropDownRef}
         onKeyDown={handleKeyDown}
-        onClick={() => onClose()}
+        onClick={() => {
+          if (stopCloseOnClickSelf) return;
+          onClose();
+        }}
         onBlur={(e) => {
-          const type: string = e.target.classList.contains('fontfamily-item')
-            ? FontDropDownType.FONTFAMILY
-            : e.target.classList.contains('fontsize-item')
-            ? FontDropDownType.FONTSIZE
-            : '';
           if (
-            (!e.relatedTarget?.classList.contains('fontsize-item') && !e.relatedTarget?.classList.contains('fontfamily-item')) ||
-            (e.relatedTarget?.classList.contains('toolbar-item') && e.relatedTarget?.classList.contains(type))
+            e.relatedTarget?.classList.contains('fontsize-item') ||
+            e.relatedTarget?.classList.contains('fontfamily-item') ||
+            e.relatedTarget?.classList.contains('fontcolor-item') ||
+            e.target.classList.contains('default-color-buttons')
           ) {
+            return;
+          } else {
             onClose();
           }
         }}

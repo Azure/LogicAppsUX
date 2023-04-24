@@ -47,6 +47,10 @@
     background-color: #eee;
   }
 
+  .toolbar-item.font-family {
+    width: 110px;
+  }
+
   .toolbar-item.font-family .text {
     display: block;
   }
@@ -126,54 +130,52 @@
   min-width: 100px;
 }
 
-.msla-html-editor-dropdown-items-container .item.fontsize-item,
-.msla-html-editor-dropdown-items-container .item.fontsize-item .text {
-  min-width: unset;
-}
-
-.msla-html-editor-dropdown-items-container .item .active {
-  display: flex;
-  width: 20px;
-  height: 20px;
-  background-size: contain;
-}
-
-.msla-html-editor-dropdown-items-container .item:first-child {
-  margin-top: 8px;
-}
-
-.msla-html-editor-dropdown-items-container .item:last-child {
-  margin-bottom: 8px;
-}
-
-.msla-html-editor-dropdown-items-container .item:hover {
-  background-color: #eee;
-}
-
-.msla-html-editor-dropdown-items-container .item .text {
-  display: flex;
-  line-height: 20px;
-  flex-grow: 1;
-  min-width: 150px;
-}
-
-.msla-html-editor-dropdown-items-container .item .icon {
-  display: flex;
-  width: 20px;
-  height: 20px;
-  user-select: none;
-  margin-right: 12px;
-  line-height: 16px;
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.msla-html-editor-dropdown-items-container .divider {
-  width: auto;
-  background-color: #eee;
-  margin: 4px 8px;
-  height: 1px;
+.msla-html-editor-dropdown-items-container {
+  .item.fontsize-item {
+    .text {
+      min-width: unset;
+    }
+  }
+  .item {
+    .active {
+      display: flex;
+      width: 20px;
+      height: 20px;
+      background-size: contain;
+    }
+    .text {
+      display: flex;
+      line-height: 20px;
+      flex-grow: 1;
+      min-width: 150px;
+    }
+    .icon {
+      display: flex;
+      width: 20px;
+      height: 20px;
+      user-select: none;
+      margin-right: 12px;
+      line-height: 16px;
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+  }
+  .item:first-child {
+    margin-top: 8px;
+  }
+  .item:last-child {
+    margin-bottom: 8px;
+  }
+  .item:hover {
+    background-color: #eee;
+  }
+  .divider {
+    width: auto;
+    background-color: #eee;
+    margin: 4px 8px;
+    height: 1px;
+  }
 }
 
 img.chevron-down {
@@ -263,7 +265,13 @@ button.item.msla-dropdown-item-active img {
 }
 
 .color-picker-wrapper {
-  padding: 20px;
+  padding: 10px;
+  .color-picker-title {
+    text-align: center;
+    display: -webkit-box;
+    display: block;
+    padding-bottom: 5px;
+  }
 }
 
 .color-picker-basic-color {

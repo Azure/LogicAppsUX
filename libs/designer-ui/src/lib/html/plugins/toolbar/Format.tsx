@@ -1,14 +1,16 @@
 import constants from '../../../constants';
 import { isApple } from '../../../helper';
+import fontColorSvg from '../icons/font-color.svg';
+import paintBucketSvg from '../icons/paint-bucket.svg';
 import bold from '../icons/type-bold.svg';
 import italic from '../icons/type-italic.svg';
 import underline from '../icons/type-underline.svg';
 import { DropdownColorPicker } from './DropdownColorPicker';
 import { useTheme } from '@fluentui/react';
-import { $patchStyleText } from '@lexical/selection';
+import { $patchStyleText, $getSelectionStyleValueForProperty } from '@lexical/selection';
 import { mergeRegister } from '@lexical/utils';
 import type { LexicalEditor } from 'lexical';
-import { $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND } from 'lexical';
+import { COMMAND_PRIORITY_CRITICAL, SELECTION_CHANGE_COMMAND, $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND } from 'lexical';
 import { useCallback, useEffect, useState } from 'react';
 
 interface FormatProps {
@@ -32,8 +34,29 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
       setIsBold(selection.hasFormat('bold'));
       setIsItalic(selection.hasFormat('italic'));
       setIsUnderline(selection.hasFormat('underline'));
+      setFontColor(
+        $getSelectionStyleValueForProperty(selection, 'color', isInverted ? constants.INVERTED_TEXT_COLOR : constants.STANDARD_TEXT_COLOR)
+      );
+      setBgColor(
+        $getSelectionStyleValueForProperty(
+          selection,
+          'background-color',
+          isInverted ? constants.INVERTED_EDITOR_BACKGROUND_COLOR : constants.STANDARD_EDITOR_BACKGROUND_COLOR
+        )
+      );
     }
-  }, []);
+  }, [isInverted]);
+
+  useEffect(() => {
+    return activeEditor.registerCommand(
+      SELECTION_CHANGE_COMMAND,
+      (_payload) => {
+        updateFormat();
+        return false;
+      },
+      COMMAND_PRIORITY_CRITICAL
+    );
+  }, [activeEditor, updateFormat]);
 
   const applyStyleText = useCallback(
     (styles: Record<string, string>) => {
@@ -48,17 +71,17 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
   );
 
   const onFontColorSelect = useCallback(
-    (option: string) => {
-      activeEditor.update(() => {
-        const selection = $getSelection();
-        if ($isRangeSelection(selection)) {
-          $patchStyleText(selection, {
-            color: option,
-          });
-        }
-      });
+    (value: string) => {
+      applyStyleText({ color: value });
     },
-    [activeEditor]
+    [applyStyleText]
+  );
+
+  const onBgColorSelect = useCallback(
+    (value: string) => {
+      applyStyleText({ 'background-color': value });
+    },
+    [applyStyleText]
   );
 
   useEffect(() => {
@@ -74,6 +97,7 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
   return (
     <>
       <button
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
         }}
@@ -85,6 +109,7 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         <img className={'format'} src={bold} alt={'bold icon'} />
       </button>
       <button
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
         }}
@@ -96,6 +121,7 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         <img className={'format'} src={italic} alt={'italic icon'} />
       </button>
       <button
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
         }}
@@ -106,15 +132,26 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
       >
         <img className={'format'} src={underline} alt={'underline icon'} />
       </button>
-      {/* <DropdownColorPicker
-        disabled={!isEditable}
+      <DropdownColorPicker
+        editor={activeEditor}
+        disabled={readonly}
         buttonClassName="toolbar-item color-picker"
         buttonAriaLabel="Formatting text color"
-        buttonIconClassName="icon font-color"
+        buttonIconSrc={fontColorSvg}
         color={fontColor}
         onChange={onFontColorSelect}
         title="text color"
-      /> */}
+      />
+      <DropdownColorPicker
+        editor={activeEditor}
+        disabled={readonly}
+        buttonClassName="toolbar-item color-picker"
+        buttonAriaLabel="Formatting background color"
+        buttonIconSrc={paintBucketSvg}
+        color={bgColor}
+        onChange={onBgColorSelect}
+        title="background color"
+      />
     </>
   );
 };

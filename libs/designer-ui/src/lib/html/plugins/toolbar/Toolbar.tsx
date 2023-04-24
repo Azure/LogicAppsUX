@@ -13,6 +13,7 @@ import {
   CAN_UNDO_COMMAND,
   COMMAND_PRIORITY_CRITICAL,
   REDO_COMMAND,
+  SELECTION_CHANGE_COMMAND,
   UNDO_COMMAND,
 } from 'lexical';
 import { useCallback, useEffect, useState } from 'react';
@@ -42,7 +43,7 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
 
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
-  const [fontSize, setFontSize] = useState<string>('12px');
+  const [fontSize, setFontSize] = useState<string>('15px');
   const [fontFamily, setFontFamily] = useState<string>('Arial');
 
   const updateToolbar = useCallback(() => {
@@ -50,9 +51,21 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
     // Currently a bug affecting the toolbug due to $getSelection https://github.com/facebook/lexical/issues/4011
     if ($isRangeSelection(selection)) {
       setFontFamily($getSelectionStyleValueForProperty(selection, 'font-family', 'Arial'));
-      setFontSize($getSelectionStyleValueForProperty(selection, 'font-size', '12px'));
+      setFontSize($getSelectionStyleValueForProperty(selection, 'font-size', '15px'));
     }
   }, []);
+
+  useEffect(() => {
+    return editor.registerCommand(
+      SELECTION_CHANGE_COMMAND,
+      (_payload, newEditor) => {
+        updateToolbar();
+        setActiveEditor(newEditor);
+        return false;
+      },
+      COMMAND_PRIORITY_CRITICAL
+    );
+  }, [editor, updateToolbar]);
 
   useEffect(() => {
     return mergeRegister(
@@ -83,6 +96,9 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
   return (
     <div className="msla-html-editor-toolbar">
       <button
+        onMouseDown={(e) => {
+          e.preventDefault();
+        }}
         disabled={!canUndo || readonly}
         onClick={() => {
           activeEditor.dispatchCommand(UNDO_COMMAND, undefined);
@@ -94,6 +110,9 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
         <img className={'format'} src={counterClockWiseArrow} alt={'counter clockwise arrow'} />
       </button>
       <button
+        onMouseDown={(e) => {
+          e.preventDefault();
+        }}
         disabled={!canRedo || readonly}
         onClick={() => {
           activeEditor.dispatchCommand(REDO_COMMAND, undefined);

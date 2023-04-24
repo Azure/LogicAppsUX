@@ -46,8 +46,8 @@ export function FontDropDown({ editor, value, fontDropdownType, disabled = false
       disabled={disabled}
       buttonClassName={'toolbar-item ' + fontDropdownType}
       buttonLabel={value}
-      buttonIconClassName={fontDropdownType === FontDropDownType.FONTFAMILY ? 'icon block-type font-family' : ''}
       buttonAriaLabel={buttonAriaLabel}
+      editor={editor}
     >
       {(fontDropdownType === FontDropDownType.FONTFAMILY ? FONT_FAMILY_OPTIONS : FONT_SIZE_OPTIONS).map(([option, text]) => (
         <DropDownItem

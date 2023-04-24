@@ -4,21 +4,35 @@ import { MoveWrapper } from './helper/MoveWrapper';
 import { basicColors, COLORPICKER_HEIGHT as HEIGHT, COLORPICKER_WIDTH as WIDTH } from './helper/constants';
 import type { Position } from './helper/util';
 import { transformColor } from './helper/util';
+import { Text } from '@fluentui/react';
+import { capitalizeFirstLetter } from '@microsoft/utils-logic-apps';
+import type { LexicalEditor } from 'lexical';
 import type { ReactNode } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 interface DropdownColorPickerProps {
+  disabled?: boolean;
   buttonAriaLabel?: string;
   buttonClassName: string;
-  buttonIconClassName?: string;
+  buttonIconSrc?: string;
   buttonLabel?: string;
   color: string;
   children?: ReactNode;
   onChange?: (color: string) => void;
   title?: string;
+  editor: LexicalEditor;
 }
 
-export const DropdownColorPicker = ({ color, children, onChange, ...dropdownProps }: DropdownColorPickerProps) => {
+export const DropdownColorPicker = ({
+  editor,
+  disabled,
+  color,
+  children,
+  onChange,
+  title,
+  buttonIconSrc,
+  ...dropdownProps
+}: DropdownColorPickerProps) => {
   const [selfColor, setSelfColor] = useState(transformColor('hex', color));
   const [inputColor, setInputColor] = useState(color);
   const innerDivRef = useRef(null);
@@ -80,13 +94,14 @@ export const DropdownColorPicker = ({ color, children, onChange, ...dropdownProp
   }, [color]);
 
   return (
-    <DropDown {...dropdownProps} stopCloseOnClickSelf={true}>
+    <DropDown {...dropdownProps} disabled={disabled} stopCloseOnClickSelf buttonIconSrc={buttonIconSrc} editor={editor}>
       <div className="color-picker-wrapper" style={{ width: WIDTH }} ref={innerDivRef}>
+        <Text className="color-picker-title">{capitalizeFirstLetter(title ?? '')}</Text>
         <TextInput label="Hex" onChange={onSetHex} value={inputColor} />
         <div className="color-picker-basic-color">
           {basicColors.map((basicColor) => (
             <button
-              className={basicColor === selfColor.hex ? ' active' : ''}
+              className={basicColor === selfColor.hex ? 'default-color-buttons active' : 'default-color-buttons'}
               key={basicColor}
               style={{ backgroundColor: basicColor }}
               onClick={() => {
