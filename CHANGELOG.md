@@ -1,5 +1,28 @@
 # Logic Apps Designer
 
+### [2.9.1](https://github.com/Azure/LogicAppsUX/compare/v2.9.0...v2.9.1) (2023-04-24)
+
+## [2.9.0](https://github.com/Azure/LogicAppsUX/compare/v2.8.1...v2.9.0) (2023-04-23)
+
+## [2.8.0](https://github.com/Azure/LogicAppsUX/compare/v2.7.0...v2.8.0) (2023-04-21)
+
+### Features
+
+- **designer:** Adding initial data processing layer to support file-folder picker ([#2111](https://github.com/Azure/LogicAppsUX/issues/2111)) ([6216313](https://github.com/Azure/LogicAppsUX/commit/6216313c8864b07f8f8ceda2d0e5c97a0e526479))
+
+### Bug Fixes
+
+- **designer:** Revert my recent changes to `shouldAddForeach` due to double array regression ([#2110](https://github.com/Azure/LogicAppsUX/issues/2110)) ([e4cf418](https://github.com/Azure/LogicAppsUX/commit/e4cf4186687dc27f460c2afb9fb278fe72d4ca8a))
+- **designer:** Update repetition name and index based on node type ([#2100](https://github.com/Azure/LogicAppsUX/issues/2100)) ([20cf577](https://github.com/Azure/LogicAppsUX/commit/20cf57772625dab37f79f1cf6a805c5c096b70cc))
+
+### [2.8.1](https://github.com/Azure/LogicAppsUX/compare/v2.8.0...v2.8.1) (2023-04-22)
+
+### Bug Fixes
+
+- **designer:** Fixing the subsequent ListDynamicValues calls by adding correct cache key ([#1908](https://github.com/Azure/LogicAppsUX/issues/1908)) ([573db3c](https://github.com/Azure/LogicAppsUX/commit/573db3c4bb7ae51cb2f994cfa6b6535756a35a22))
+- **designer:** Rename `comment` to `note` ([#2109](https://github.com/Azure/LogicAppsUX/issues/2109)) ([fb42a1b](https://github.com/Azure/LogicAppsUX/commit/fb42a1b9704d990c6372df43f771b21fed1313c9))
+- Fix issue where Token Picker is clipped when Panel is rendered on the left ([#2106](https://github.com/Azure/LogicAppsUX/issues/2106)) ([5521136](https://github.com/Azure/LogicAppsUX/commit/5521136dd566a46f67e6eda9da63c42ded8680be))
+
 ## [2.8.0](https://github.com/Azure/LogicAppsUX/compare/v2.7.0...v2.8.0) (2023-04-21)
 
 ### Features

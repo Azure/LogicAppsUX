@@ -111,6 +111,7 @@ export const App = () => {
 
   const { refetch, isError, isFetching, isLoading, isRefetching } = useQuery<any>(['runInstance', { runId }], getRunInstance, {
     refetchOnWindowFocus: false,
+    refetchOnMount: true,
     initialData: null,
     onSuccess: onRunInstanceSuccess,
     onError: onRunInstanceError,
