@@ -11,10 +11,11 @@ export interface OperationGroupDetailsPageProps {
   operationActionsData: OperationActionData[];
   onOperationClick: (id: string, apiId?: string) => void;
   isLoading: boolean;
+  displayRuntimeInfo: boolean;
 }
 
 export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps> = (props) => {
-  const { connector, operationActionsData, onOperationClick, isLoading } = props;
+  const { connector, operationActionsData, onOperationClick, isLoading, displayRuntimeInfo } = props;
   const { id, properties } = connector;
   const { displayName, description, iconUri, externalDocs, generalInformation } = properties;
 
@@ -48,7 +49,7 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
           <MessageBar messageBarType={MessageBarType.info}>{noOperationsText}</MessageBar>
         ) : null}
         {operationActionsData?.map((op) => (
-          <OperationSearchCard key={op.id} operationActionData={op} onClick={onOperationClick} />
+          <OperationSearchCard key={op.id} operationActionData={op} onClick={onOperationClick} displayRuntimeInfo={displayRuntimeInfo} />
         ))}
         {isLoading ? (
           <div style={{ margin: '16px 0' }}>

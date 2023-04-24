@@ -10,10 +10,11 @@ export type BrowseGridProps = {
   onConnectorSelected: (connectorId: string) => void;
   connectors: Connector[];
   isLoading: boolean;
+  displayRuntimeInfo: boolean;
 };
 
 export const BrowseGrid = (props: BrowseGridProps) => {
-  const { connectors, onConnectorSelected, isLoading } = props;
+  const { connectors, onConnectorSelected, isLoading, displayRuntimeInfo } = props;
 
   const intl = useIntl();
   const ref = useRef(null);
@@ -41,12 +42,13 @@ export const BrowseGrid = (props: BrowseGridProps) => {
               brandColor={brandColor}
               onClick={onConnectorSelected}
               category={getConnectorCategoryString(connector.id)}
+              displayRuntimeInfo={displayRuntimeInfo}
             />
           </div>
         </div>
       );
     },
-    [forceSingleCol, onConnectorSelected]
+    [forceSingleCol, onConnectorSelected, displayRuntimeInfo]
   );
 
   const noResultsText = intl.formatMessage({

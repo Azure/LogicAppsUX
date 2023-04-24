@@ -19,7 +19,7 @@ const fuseOptions: Fuse.IFuseOptions<{ id: string; text: string }> = {
   keys: ['text'],
 };
 
-const NodeSearchCard = ({ node }: { node: string }) => {
+const NodeSearchCard = ({ node, displayRuntimeInfo }: { node: string; displayRuntimeInfo: boolean }) => {
   const brandColor = useBrandColor(node);
   const icon = useIconUri(node);
   const dispatch = useDispatch();
@@ -33,12 +33,18 @@ const NodeSearchCard = ({ node }: { node: string }) => {
           dispatch(setFocusNode(node));
           dispatch(clearPanel());
         }}
+        displayRuntimeInfo={displayRuntimeInfo}
       />
     </div>
   );
 };
 
-export const NodeSearchPanel = (props: CommonPanelProps) => {
+export type NodeSearchPanelProps = {
+  displayRuntimeInfo: boolean;
+} & CommonPanelProps;
+
+export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
+  const { displayRuntimeInfo } = props;
   const { isInverted } = useTheme();
   const allNodeNames = useNodeIds();
   const [searchTerm, setSearchTerm] = useState<string | null>(null);
@@ -83,7 +89,7 @@ export const NodeSearchPanel = (props: CommonPanelProps) => {
           <SearchBox placeholder={searchOperation} autoFocus={true} onChange={(e, newValue) => setSearchTerm(newValue ?? null)} />
         </div>
         {searchNodeNames.map((node) => {
-          return <NodeSearchCard key={node} node={node} />;
+          return <NodeSearchCard key={node} node={node} displayRuntimeInfo={displayRuntimeInfo} />;
         })}
       </FocusTrapZone>
     </Panel>

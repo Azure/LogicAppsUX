@@ -50,10 +50,11 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export interface PanelRootProps {
   panelLocation?: PanelLocation;
+  displayRuntimeInfo: boolean;
 }
 
 export const PanelRoot = (props: PanelRootProps): JSX.Element => {
-  const { panelLocation } = props;
+  const { panelLocation, displayRuntimeInfo } = props;
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -283,9 +284,9 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   return currentPanelMode === 'WorkflowParameters' ? (
     <WorkflowParametersPanel {...commonPanelProps} />
   ) : currentPanelMode === 'Discovery' ? (
-    <RecommendationPanelContext {...commonPanelProps} />
+    <RecommendationPanelContext {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
   ) : currentPanelMode === 'NodeSearch' ? (
-    <NodeSearchPanel {...commonPanelProps} />
+    <NodeSearchPanel {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
   ) : (
     <PanelContainer
       {...commonPanelProps}

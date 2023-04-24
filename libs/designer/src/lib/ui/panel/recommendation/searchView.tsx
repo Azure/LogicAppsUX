@@ -15,13 +15,14 @@ type SearchViewProps = {
   isLoading: boolean;
   filters: Record<string, string>;
   onOperationClick: (id: string, apiId?: string) => void;
+  displayRuntimeInfo: boolean;
 };
 
 type SearchResult = Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>;
 type SearchResults = SearchResult[];
 
 export const SearchView: React.FC<SearchViewProps> = (props) => {
-  const { searchTerm, allOperations, groupByConnector, isLoading, filters, onOperationClick } = props;
+  const { searchTerm, allOperations, groupByConnector, isLoading, filters, onOperationClick, displayRuntimeInfo } = props;
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -105,6 +106,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
       onOperationClick={onOperationClick}
       operationSearchResults={searchResults.map((result) => result.item)}
       groupByConnector={groupByConnector}
+      displayRuntimeInfo={displayRuntimeInfo}
     />
   );
 };
