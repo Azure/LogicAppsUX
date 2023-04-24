@@ -48,7 +48,7 @@ export const BrowseGrid = (props: BrowseGridProps) => {
         </div>
       );
     },
-    [forceSingleCol, onConnectorSelected]
+    [forceSingleCol, onConnectorSelected, displayRuntimeInfo]
   );
 
   const noResultsText = intl.formatMessage({
