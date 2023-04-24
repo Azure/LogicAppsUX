@@ -986,12 +986,6 @@
       "value": "必需。需要获取其值的参数的名称。"
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "只可在编辑某步骤的输入时添加注释。"
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1134,6 +1128,12 @@
       "value": "(UTC+08:45)尤克拉"
     }
   ],
+  "6H3oG1": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1256,12 +1256,6 @@
     {
       "type": 0,
       "value": "必需。要从中获取子字符串的字符串。"
-    }
-  ],
-  "7Vyxu0": [
-    {
-      "type": 0,
-      "value": "Yes/No"
     }
   ],
   "7WVgiU": [
@@ -1498,6 +1492,12 @@
       "value": "值"
     }
   ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "92OUl9": [
     {
       "type": 0,
@@ -1574,6 +1574,12 @@
     {
       "type": 0,
       "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "9atGYe": [
@@ -2019,6 +2025,12 @@
       "value": "Select a value"
     }
   ],
+  "DOf1/I": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
+    }
+  ],
   "DWd9vy": [
     {
       "type": 0,
@@ -2239,6 +2251,12 @@
     {
       "type": 0,
       "value": "(UTC+08:00)伊尔库次克"
+    }
+  ],
+  "F51kU8": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "F9dR1Q": [
@@ -2738,6 +2756,12 @@
       "value": "No properties"
     }
   ],
+  "Iwi+x0": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -3107,10 +3131,10 @@
       "value": "(UTC+00:00)都柏林，爱丁堡，里斯本，伦敦"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "添加评论"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -3317,6 +3341,12 @@
       "value": "请选择一个标识"
     }
   ],
+  "Nro0qr": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -3445,6 +3475,12 @@
     {
       "type": 0,
       "value": "返回指定范围内操作中的顶级操作结果，如 For_each、Until 或 Scope 操作。"
+    }
+  ],
+  "OcnU0i": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
     }
   ],
   "OdNhwc": [
@@ -4108,6 +4144,12 @@
       "value": "(UTC+01:00)布鲁塞尔，哥本哈根，马德里，巴黎"
     }
   ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -4390,12 +4432,6 @@
       "value": "Error Type"
     }
   ],
-  "VggzRB": [
-    {
-      "type": 0,
-      "value": "Text"
-    }
-  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -4434,6 +4470,12 @@
     {
       "type": 0,
       "value": "必填。新属性的名称。"
+    }
+  ],
+  "W7sa4b": [
+    {
+      "type": 0,
+      "value": "Enter title"
     }
   ],
   "WGwH45": [
@@ -4910,12 +4952,6 @@
       "value": "\""
     }
   ],
-  "a+6uyE": [
-    {
-      "type": 0,
-      "value": "File"
-    }
-  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5088,6 +5124,12 @@
       "value": "(UTC+05:30)钦奈，加尔各答，孟买，新德里"
     }
   ],
+  "bv9QPA": [
+    {
+      "type": 0,
+      "value": "Date"
+    }
+  ],
   "bwfJdj": [
     {
       "type": 0,
@@ -5166,12 +5208,6 @@
     {
       "type": 0,
       "value": "也可以从其他源添加动态内容。"
-    }
-  ],
-  "cF4w+R": [
-    {
-      "type": 0,
-      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5256,12 +5292,6 @@
     {
       "type": 0,
       "value": "必需。要从中跳过第一批计数对象的集合。"
-    }
-  ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "删除评论"
     }
   ],
   "d4xMIx": [
@@ -5670,10 +5700,22 @@
       "value": "触发器条件"
     }
   ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06:00)萨斯喀彻温"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "gpbgjJ": [
@@ -5692,6 +5734,12 @@
     {
       "type": 0,
       "value": "Select a Batch Workflow resource"
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "h1lQDa": [
@@ -5841,12 +5889,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "评论"
     }
   ],
   "iCSHJG": [
@@ -6353,12 +6395,6 @@
       "value": "Select an action type"
     }
   ],
-  "lv9QyZ": [
-    {
-      "type": 0,
-      "value": "Email"
-    }
-  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6551,6 +6587,12 @@
       "value": "End time"
     }
   ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "nRpM02": [
     {
       "type": 0,
@@ -6715,6 +6757,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00)萨尔瓦多"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7738,6 +7786,12 @@
       "value": "根据表达式的 true 或 false 结果返回指定值"
     }
   ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
   "wkiETV": [
     {
       "type": 0,
@@ -7796,6 +7850,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
@@ -7868,12 +7928,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00)协调世界时+12"
-    }
-  ],
-  "xeREzb": [
-    {
-      "type": 0,
-      "value": "Number"
     }
   ],
   "xt5TeT": [

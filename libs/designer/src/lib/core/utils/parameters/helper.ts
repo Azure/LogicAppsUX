@@ -3,6 +3,7 @@ import constants from '../../../common/constants';
 import type { ConnectionReference, WorkflowParameter } from '../../../common/models/workflow';
 import type { NodeDataWithOperationMetadata } from '../../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../../actions/bjsworkflow/settings';
+import { getConnectorWithSwagger } from '../../queries/connections';
 import type {
   DependencyInfo,
   NodeDependencies,
@@ -37,7 +38,6 @@ import { validateJSONParameter, validateStaticParameterInfo } from '../validatio
 import { getRecurrenceParameters } from './builtins';
 import { addCastToExpression, addFoldingCastToExpression } from './casting';
 import { getDynamicInputsFromSchema, getDynamicSchema, getDynamicValues } from './dynamicdata';
-import { requiresFilePickerEditor } from './picker';
 import {
   createLiteralValueSegment,
   isExpressionToken,
@@ -53,7 +53,7 @@ import {
   isVariableToken,
   ValueSegmentConvertor,
 } from './segment';
-import { WorkflowService } from '@microsoft/designer-client-services-logic-apps';
+import { OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type {
   AuthProps,
   ComboboxItem,
@@ -92,6 +92,8 @@ import type {
   SwaggerParser,
 } from '@microsoft/parsers-logic-apps';
 import {
+  isDynamicTreeExtension,
+  isLegacyDynamicValuesTreeExtension,
   DeserializationType,
   PropertySerializationType,
   getKnownTitles,
@@ -273,11 +275,10 @@ export function toParameterInfoMap(inputParameters: InputParameter[], stepDefini
  */
 export function createParameterInfo(
   parameter: ResolvedParameter,
-  _metadata?: Record<string, string>,
+  metadata?: Record<string, string>,
   shouldIgnoreDefaultValue = false
 ): ParameterInfo {
-  const isFilePicker = requiresFilePickerEditor(parameter);
-  const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, shouldIgnoreDefaultValue, isFilePicker);
+  const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, shouldIgnoreDefaultValue, metadata);
   const value = loadParameterValue(parameter);
   const { alias, dependencies, encode, format, isDynamic, isUnknown, serialization, deserialization } = parameter;
   const info = {
@@ -342,7 +343,7 @@ function hasValue(parameter: ResolvedParameter): boolean {
 export function getParameterEditorProps(
   parameter: InputParameter,
   shouldIgnoreDefaultValue = false,
-  isFilePicker?: boolean
+  nodeMetadata?: any
 ): ParameterEditorProps {
   const { dynamicValues, type, itemSchema, visibility, value, enum: schemaEnum } = parameter;
   let { editor, editorOptions, schema } = parameter;
@@ -398,9 +399,16 @@ export function getParameterEditorProps(
     editorViewModel = editorOptions?.isOldFormat ? toSimpleQueryBuilderViewModel(value) : toConditionViewModel(value);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     editor = undefined;
-  } else if (isFilePicker) {
-    editor = constants.EDITOR.FILEPICKER;
+  } else if (editor === constants.EDITOR.FILEPICKER && dynamicValues) {
+    const pickerType =
+      (isLegacyDynamicValuesTreeExtension(dynamicValues) && dynamicValues.extension.parameters['isFolder']) ||
+      (isDynamicTreeExtension(dynamicValues) && dynamicValues.extension.settings.canSelectParentNodes)
+        ? constants.FILEPICKER_TYPE.FOLDER
+        : constants.FILEPICKER_TYPE.FILE;
+    const fileFilters = isLegacyDynamicValuesTreeExtension(dynamicValues) ? dynamicValues.extension.parameters['fileFilter'] : undefined;
+    editorOptions = { pickerType, fileFilters, selection: { value: undefined, displayName: nodeMetadata?.[value] ?? value } };
   }
+
   return { editor, editorOptions, editorViewModel, schema };
 }
 
@@ -1481,6 +1489,7 @@ export async function updateParameterAndDependencies(
     },
   ];
   const payload: UpdateParametersPayload = {
+    isUserAction: true,
     nodeId,
     parameters: parametersToUpdate,
   };
@@ -1700,7 +1709,16 @@ async function loadDynamicContentForInputsInNode(
         })) as ParameterInfo[];
 
         updateTokenMetadataInParameters(inputParameters, rootState);
-        dispatch(addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters, newInputs: schemaInputs }));
+
+        let swagger: SwaggerParser | undefined = undefined;
+        if (!OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
+          const { parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
+          swagger = parsedSwagger;
+        }
+
+        dispatch(
+          addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters, newInputs: schemaInputs, swagger })
+        );
       }
     }
   }

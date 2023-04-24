@@ -988,12 +988,6 @@
       "value": "Obbligatorio. Nome del parametro di cui si desidera ottenere i valori."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "È possibile aggiungere i commenti solo durante la modifica degli input di un passaggio."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1136,6 +1130,12 @@
       "value": "(UTC+08:45) Eucla"
     }
   ],
+  "6H3oG1": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1258,12 +1258,6 @@
     {
       "type": 0,
       "value": "Obbligatorio. Stringa da cui viene recuperata la sottostringa."
-    }
-  ],
-  "7Vyxu0": [
-    {
-      "type": 0,
-      "value": "Yes/No"
     }
   ],
   "7WVgiU": [
@@ -1484,6 +1478,12 @@
       "value": "Valore"
     }
   ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "92OUl9": [
     {
       "type": 0,
@@ -1560,6 +1560,12 @@
     {
       "type": 0,
       "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "9atGYe": [
@@ -2011,6 +2017,12 @@
       "value": "Select a value"
     }
   ],
+  "DOf1/I": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
+    }
+  ],
   "DWd9vy": [
     {
       "type": 0,
@@ -2231,6 +2243,12 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Irkutsk"
+    }
+  ],
+  "F51kU8": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "F9dR1Q": [
@@ -2744,6 +2762,12 @@
       "value": "No properties"
     }
   ],
+  "Iwi+x0": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -3119,10 +3143,10 @@
       "value": "(UTC + 00.00) Dublino, Edimburgo, Lisbona, Londra"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "Aggiungere un commento"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -3329,6 +3353,12 @@
       "value": "Selezionare un'identità"
     }
   ],
+  "Nro0qr": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -3441,6 +3471,12 @@
     {
       "type": 0,
       "value": "Restituisce i risultati delle azioni di primo livello nell'azione con ambito specificata, ad esempio un'azione For_each, Until o Scope."
+    }
+  ],
+  "OcnU0i": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
     }
   ],
   "OdNhwc": [
@@ -4134,6 +4170,12 @@
       "value": "(UTC+1.00) Bruxelles, Copenaghen, Madrid, Parigi"
     }
   ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -4416,12 +4458,6 @@
       "value": "Error Type"
     }
   ],
-  "VggzRB": [
-    {
-      "type": 0,
-      "value": "Text"
-    }
-  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -4456,6 +4492,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Nome della nuova proprietà."
+    }
+  ],
+  "W7sa4b": [
+    {
+      "type": 0,
+      "value": "Enter title"
     }
   ],
   "WGwH45": [
@@ -4916,12 +4958,6 @@
       "value": "Valore 'in' non supportato: {value} nel parametro"
     }
   ],
-  "a+6uyE": [
-    {
-      "type": 0,
-      "value": "File"
-    }
-  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5094,6 +5130,12 @@
       "value": "(UTC+05.30) Chennai, Kolkata (Calcutta), Mumbai, Nuova Delhi"
     }
   ],
+  "bv9QPA": [
+    {
+      "type": 0,
+      "value": "Date"
+    }
+  ],
   "bwfJdj": [
     {
       "type": 0,
@@ -5168,12 +5210,6 @@
     {
       "type": 0,
       "value": "È possibile aggiungere contenuto dinamico anche da altre origini."
-    }
-  ],
-  "cF4w+R": [
-    {
-      "type": 0,
-      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5258,12 +5294,6 @@
     {
       "type": 0,
       "value": "Obbligatorio. Raccolta in cui ignorare i primi oggetti Count."
-    }
-  ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "Eliminare commento"
     }
   ],
   "d4xMIx": [
@@ -5672,10 +5702,22 @@
       "value": "Condizioni trigger"
     }
   ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06:00) Saskatchewan"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "gpbgjJ": [
@@ -5694,6 +5736,12 @@
     {
       "type": 0,
       "value": "Select a Batch Workflow resource"
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "h1lQDa": [
@@ -5857,12 +5905,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "Commento"
     }
   ],
   "iCSHJG": [
@@ -6353,12 +6395,6 @@
       "value": "Select an action type"
     }
   ],
-  "lv9QyZ": [
-    {
-      "type": 0,
-      "value": "Email"
-    }
-  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6551,6 +6587,12 @@
       "value": "End time"
     }
   ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "nRpM02": [
     {
       "type": 0,
@@ -6707,6 +6749,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Salvador"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7728,6 +7776,12 @@
       "value": "Restituisce un valore specificato a seconda del fatto che l'espressione abbia restituito true o false"
     }
   ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
   "wkiETV": [
     {
       "type": 0,
@@ -7786,6 +7840,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
@@ -7858,12 +7918,6 @@
     {
       "type": 0,
       "value": "(UTC+12.00) Coordinated Universal Time+12"
-    }
-  ],
-  "xeREzb": [
-    {
-      "type": 0,
-      "value": "Number"
     }
   ],
   "xt5TeT": [

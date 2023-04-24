@@ -966,12 +966,6 @@
       "value": "Wajib. Nama parameter yang nilainya Anda inginkan."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "Komentar hanya dapat ditambahkan saat mengedit input langkah."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1114,6 +1108,12 @@
       "value": "(UTC+08.45) Eucla"
     }
   ],
+  "6H3oG1": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1236,12 +1236,6 @@
     {
       "type": 0,
       "value": "Harus diisi. String dari substring yang diambil."
-    }
-  ],
-  "7Vyxu0": [
-    {
-      "type": 0,
-      "value": "Yes/No"
     }
   ],
   "7WVgiU": [
@@ -1462,6 +1456,12 @@
       "value": "Nilai"
     }
   ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "92OUl9": [
     {
       "type": 0,
@@ -1538,6 +1538,12 @@
     {
       "type": 0,
       "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "9atGYe": [
@@ -1967,6 +1973,12 @@
       "value": "Select a value"
     }
   ],
+  "DOf1/I": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
+    }
+  ],
   "DWd9vy": [
     {
       "type": 0,
@@ -2187,6 +2199,12 @@
     {
       "type": 0,
       "value": "(UTC+08.00) Irkutsk"
+    }
+  ],
+  "F51kU8": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "F9dR1Q": [
@@ -2678,6 +2696,12 @@
       "value": "No properties"
     }
   ],
+  "Iwi+x0": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -3031,10 +3055,10 @@
       "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "Tambahkan komentar"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -3241,6 +3265,12 @@
       "value": "Silakan pilih identitas"
     }
   ],
+  "Nro0qr": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -3353,6 +3383,12 @@
     {
       "type": 0,
       "value": "Menghasilkan hasil dari tindakan tingkat atas dalam tindakan tercakup yang ditentukan, seperti tindakan For_each, Until, atau Scope."
+    }
+  ],
+  "OcnU0i": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
     }
   ],
   "OdNhwc": [
@@ -4016,6 +4052,12 @@
       "value": "(UTC+01:00) Brussel, Kopenhagen, Madrid, Paris"
     }
   ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -4298,12 +4340,6 @@
       "value": "Error Type"
     }
   ],
-  "VggzRB": [
-    {
-      "type": 0,
-      "value": "Text"
-    }
-  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -4338,6 +4374,12 @@
     {
       "type": 0,
       "value": "Diperlukan. Nama properti baru."
+    }
+  ],
+  "W7sa4b": [
+    {
+      "type": 0,
+      "value": "Enter title"
     }
   ],
   "WGwH45": [
@@ -4798,12 +4840,6 @@
       "value": "Nilai 'in' yang tidak didukung: {value} dalam Parameter"
     }
   ],
-  "a+6uyE": [
-    {
-      "type": 0,
-      "value": "File"
-    }
-  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -4976,6 +5012,12 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
     }
   ],
+  "bv9QPA": [
+    {
+      "type": 0,
+      "value": "Date"
+    }
+  ],
   "bwfJdj": [
     {
       "type": 0,
@@ -5050,12 +5092,6 @@
     {
       "type": 0,
       "value": "Konten dinamis juga dapat ditambahkan dari sumber lain."
-    }
-  ],
-  "cF4w+R": [
-    {
-      "type": 0,
-      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5140,12 +5176,6 @@
     {
       "type": 0,
       "value": "Harus diisi. Koleksi untuk melompati objek Hitungan pertama."
-    }
-  ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "Hapus komentar"
     }
   ],
   "d4xMIx": [
@@ -5554,10 +5584,22 @@
       "value": "Kondisi Pemicu"
     }
   ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06.00) Saskatchewan"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "gpbgjJ": [
@@ -5576,6 +5618,12 @@
     {
       "type": 0,
       "value": "Select a Batch Workflow resource"
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "h1lQDa": [
@@ -5717,12 +5765,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "Komentar"
     }
   ],
   "iCSHJG": [
@@ -6213,12 +6255,6 @@
       "value": "Select an action type"
     }
   ],
-  "lv9QyZ": [
-    {
-      "type": 0,
-      "value": "Email"
-    }
-  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6411,6 +6447,12 @@
       "value": "End time"
     }
   ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "nRpM02": [
     {
       "type": 0,
@@ -6567,6 +6609,12 @@
     {
       "type": 0,
       "value": "(UTC-03.00) Salvador"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7566,6 +7614,12 @@
       "value": "Menampilkan nilai yang ditentukan berdasarkan apakah ekspresi menghasilkan true atau false"
     }
   ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
   "wkiETV": [
     {
       "type": 0,
@@ -7624,6 +7678,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
@@ -7696,12 +7756,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Waktu Universal Terkoordinasi+12"
-    }
-  ],
-  "xeREzb": [
-    {
-      "type": 0,
-      "value": "Number"
     }
   ],
   "xt5TeT": [

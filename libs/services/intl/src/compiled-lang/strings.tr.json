@@ -977,12 +977,6 @@
       "value": "Gerekli. Değerlerini istediğiniz parametrenin adı."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "Açıklamalar yalnızca bir adımın girişleri düzenlenirken eklenebilir."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1125,6 +1119,12 @@
       "value": "(UTC+08:45) Eucla"
     }
   ],
+  "6H3oG1": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1247,12 +1247,6 @@
     {
       "type": 0,
       "value": "Gerekli. Alt dizenin alındığı dize."
-    }
-  ],
-  "7Vyxu0": [
-    {
-      "type": 0,
-      "value": "Yes/No"
     }
   ],
   "7WVgiU": [
@@ -1473,6 +1467,12 @@
       "value": "Değer"
     }
   ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "92OUl9": [
     {
       "type": 0,
@@ -1549,6 +1549,12 @@
     {
       "type": 0,
       "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "9atGYe": [
@@ -1989,6 +1995,12 @@
       "value": "Select a value"
     }
   ],
+  "DOf1/I": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
+    }
+  ],
   "DWd9vy": [
     {
       "type": 0,
@@ -2205,6 +2217,12 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Irkutsk"
+    }
+  ],
+  "F51kU8": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "F9dR1Q": [
@@ -2707,6 +2725,12 @@
       "value": "No properties"
     }
   ],
+  "Iwi+x0": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -3071,10 +3095,10 @@
       "value": "(UTC+00:00) Dublin, Edinburgh, Lizbon, Londra"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "Yorum ekle"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -3281,6 +3305,12 @@
       "value": "Lütfen kimlik seçin"
     }
   ],
+  "Nro0qr": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -3393,6 +3423,12 @@
     {
       "type": 0,
       "value": "Bir For_each, Until veya Scope eylemi gibi, belirtilen kapsamlı eylemdeki en üst düzey eylemlerden sonuçları döndürür."
+    }
+  ],
+  "OcnU0i": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
     }
   ],
   "OdNhwc": [
@@ -4067,6 +4103,12 @@
       "value": "(UTC+01:00) Brüksel, Kopenhag, Madrid, Paris"
     }
   ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -4349,12 +4391,6 @@
       "value": "Error Type"
     }
   ],
-  "VggzRB": [
-    {
-      "type": 0,
-      "value": "Text"
-    }
-  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -4389,6 +4425,12 @@
     {
       "type": 0,
       "value": "Gerekli. Yeni özelliğin adı."
+    }
+  ],
+  "W7sa4b": [
+    {
+      "type": 0,
+      "value": "Enter title"
     }
   ],
   "WGwH45": [
@@ -4849,12 +4891,6 @@
       "value": "Parametrede desteklenmeyen 'in' değeri: {value}"
     }
   ],
-  "a+6uyE": [
-    {
-      "type": 0,
-      "value": "File"
-    }
-  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5027,6 +5063,12 @@
       "value": "(UTC+05:30) Chennai, Kolkata (Calcutta), Mumbai, Yeni Delhi"
     }
   ],
+  "bv9QPA": [
+    {
+      "type": 0,
+      "value": "Date"
+    }
+  ],
   "bwfJdj": [
     {
       "type": 1,
@@ -5101,12 +5143,6 @@
     {
       "type": 0,
       "value": "Dinamik içerik diğer kaynaklardan da eklenebilir."
-    }
-  ],
-  "cF4w+R": [
-    {
-      "type": 0,
-      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5191,12 +5227,6 @@
     {
       "type": 0,
       "value": "Gerekli. İlk Count nesnenin atlanacağı koleksiyon."
-    }
-  ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "Yorumu sil"
     }
   ],
   "d4xMIx": [
@@ -5601,10 +5631,22 @@
       "value": "Tetikleyici Koşulları"
     }
   ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06:00) Saskatchewan"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "gpbgjJ": [
@@ -5623,6 +5665,12 @@
     {
       "type": 0,
       "value": "Select a Batch Workflow resource"
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "h1lQDa": [
@@ -5775,12 +5823,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "Yorum"
     }
   ],
   "iCSHJG": [
@@ -6267,12 +6309,6 @@
       "value": "Select an action type"
     }
   ],
-  "lv9QyZ": [
-    {
-      "type": 0,
-      "value": "Email"
-    }
-  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6465,6 +6501,12 @@
       "value": "End time"
     }
   ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "nRpM02": [
     {
       "type": 0,
@@ -6621,6 +6663,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Salvador"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7627,6 +7675,12 @@
       "value": "İfadenin true veya false ile sonuçlanmasına bağlı olarak belirli bir değer döndürür"
     }
   ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
   "wkiETV": [
     {
       "type": 0,
@@ -7685,6 +7739,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
@@ -7757,12 +7817,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Eşgüdümlü Evrensel Saat+12"
-    }
-  ],
-  "xeREzb": [
-    {
-      "type": 0,
-      "value": "Number"
     }
   ],
   "xt5TeT": [

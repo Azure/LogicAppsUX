@@ -184,19 +184,19 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const getCommentMenuItem = (options: MenuItemOption[]): MenuItemOption[] => {
     const commentDescription = intl.formatMessage({
-      defaultMessage: 'Comment',
-      description: 'Comment text',
+      defaultMessage: 'Note',
+      description: 'Note text',
     });
     const disabledCommentAction = intl.formatMessage({
-      defaultMessage: 'Comments can only be added while editing the inputs of a step.',
-      description: 'Text to tell users why a comment is disabled',
+      defaultMessage: 'Notes can only be added while editing the inputs of a step.',
+      description: 'Text to tell users why notes are disabled',
     });
     const commentAdd = intl.formatMessage({
-      defaultMessage: 'Add a comment',
+      defaultMessage: 'Add a note',
       description: 'Text to tell users to click to add comments',
     });
     const commentDelete = intl.formatMessage({
-      defaultMessage: 'Delete comment',
+      defaultMessage: 'Delete note',
       description: 'Text to tell users to click to delete comments',
     });
 
@@ -249,6 +249,15 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
     // TODO: 12798935 Analytics (event logging)
   };
 
+  const validateAllParams = (): void => {
+    Object.keys(inputs?.parameterGroups ?? {}).forEach((parameterGroup) => {
+      inputs.parameterGroups[parameterGroup].parameters.forEach((parameter) => {
+        const validationErrors = validateParameter(parameter, parameter.value);
+        dispatch(updateParameterValidation({ nodeId: selectedNode, groupId: parameterGroup, parameterId: parameter.id, validationErrors }));
+      });
+    });
+  };
+
   const togglePanel = (): void => (!collapsed ? collapse() : expand());
   const dismissPanel = () => dispatch(clearPanel());
 
@@ -298,17 +307,11 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       toggleCollapse={() => {
         //only run validation when collapsing the panel
         if (!collapsed) {
-          Object.keys(inputs?.parameterGroups ?? {}).forEach((parameterGroup) => {
-            inputs.parameterGroups[parameterGroup].parameters.forEach((parameter) => {
-              const validationErrors = validateParameter(parameter, parameter.value);
-              dispatch(
-                updateParameterValidation({ nodeId: selectedNode, groupId: parameterGroup, parameterId: parameter.id, validationErrors })
-              );
-            });
-          });
+          validateAllParams();
         }
         togglePanel();
       }}
+      onBlur={() => validateAllParams()}
       trackEvent={handleTrackEvent}
       onCommentChange={(value) => {
         dispatch(setNodeDescription({ nodeId: selectedNode, description: value }));

@@ -966,12 +966,6 @@
       "value": "필수 사항으로, 값을 원하는 매개 변수의 이름입니다."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "단계 입력을 편집하는 동안에만 주석을 추가할 수 있습니다."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1114,6 +1108,12 @@
       "value": "(UTC+08:45) 유클라"
     }
   ],
+  "6H3oG1": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
+    }
+  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1236,12 +1236,6 @@
     {
       "type": 0,
       "value": "필수 항목으로, 하위 문자열을 가져온 문자열입니다."
-    }
-  ],
-  "7Vyxu0": [
-    {
-      "type": 0,
-      "value": "Yes/No"
     }
   ],
   "7WVgiU": [
@@ -1462,6 +1456,12 @@
       "value": "값"
     }
   ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "92OUl9": [
     {
       "type": 0,
@@ -1538,6 +1538,12 @@
     {
       "type": 0,
       "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "9atGYe": [
@@ -1967,6 +1973,12 @@
       "value": "Select a value"
     }
   ],
+  "DOf1/I": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
+    }
+  ],
   "DWd9vy": [
     {
       "type": 0,
@@ -2187,6 +2199,12 @@
     {
       "type": 0,
       "value": "(UTC+08:00) 이르쿠츠크"
+    }
+  ],
+  "F51kU8": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "F9dR1Q": [
@@ -2678,6 +2696,12 @@
       "value": "No properties"
     }
   ],
+  "Iwi+x0": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
+    }
+  ],
   "J/Kz1j": [
     {
       "type": 0,
@@ -3031,10 +3055,10 @@
       "value": "(UTC+00:00) 더블린, 에든버러, 리스본, 런던"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "주석 추가"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -3241,6 +3265,12 @@
       "value": "ID를 선택하세요."
     }
   ],
+  "Nro0qr": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -3353,6 +3383,12 @@
     {
       "type": 0,
       "value": "지정된 범위 작업(예: For_each, Until 또는 Scope 작업)에서 최상위 작업의 결과를 반환합니다."
+    }
+  ],
+  "OcnU0i": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
     }
   ],
   "OdNhwc": [
@@ -4016,6 +4052,12 @@
       "value": "(UTC+01:00) 브뤼셀, 코펜하겐, 마드리드, 파리"
     }
   ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -4298,12 +4340,6 @@
       "value": "Error Type"
     }
   ],
-  "VggzRB": [
-    {
-      "type": 0,
-      "value": "Text"
-    }
-  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -4338,6 +4374,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 새 속성의 이름입니다."
+    }
+  ],
+  "W7sa4b": [
+    {
+      "type": 0,
+      "value": "Enter title"
     }
   ],
   "WGwH45": [
@@ -4798,12 +4840,6 @@
       "value": "지원되지 않는 'in' 값: 매개변수의 {value}"
     }
   ],
-  "a+6uyE": [
-    {
-      "type": 0,
-      "value": "File"
-    }
-  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -4976,6 +5012,12 @@
       "value": "(UTC+05:30) 첸나이, 콜카타, 뭄바이, 뉴델리"
     }
   ],
+  "bv9QPA": [
+    {
+      "type": 0,
+      "value": "Date"
+    }
+  ],
   "bwfJdj": [
     {
       "type": 1,
@@ -5050,12 +5092,6 @@
     {
       "type": 0,
       "value": "동적 콘텐츠는 다른 원본에서도 추가할 수 있습니다."
-    }
-  ],
-  "cF4w+R": [
-    {
-      "type": 0,
-      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5140,12 +5176,6 @@
     {
       "type": 0,
       "value": "필수 항목으로, 첫 번째 Count 개체를 건너뛸 컬렉션입니다."
-    }
-  ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "주석 삭제"
     }
   ],
   "d4xMIx": [
@@ -5550,10 +5580,22 @@
       "value": "트리거 조건"
     }
   ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06:00) 서스캐처원"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "gpbgjJ": [
@@ -5572,6 +5614,12 @@
     {
       "type": 0,
       "value": "Select a Batch Workflow resource"
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "h1lQDa": [
@@ -5713,12 +5761,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "메모"
     }
   ],
   "iCSHJG": [
@@ -6205,12 +6247,6 @@
       "value": "Select an action type"
     }
   ],
-  "lv9QyZ": [
-    {
-      "type": 0,
-      "value": "Email"
-    }
-  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6403,6 +6439,12 @@
       "value": "End time"
     }
   ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "nRpM02": [
     {
       "type": 0,
@@ -6559,6 +6601,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) 살바도르"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7554,6 +7602,12 @@
       "value": "식의 결과가 true인지, 아니면 false인지 여부에 따라 지정된 값을 반환합니다."
     }
   ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
   "wkiETV": [
     {
       "type": 0,
@@ -7612,6 +7666,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
@@ -7684,12 +7744,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) 협정 세계시+12"
-    }
-  ],
-  "xeREzb": [
-    {
-      "type": 0,
-      "value": "Number"
     }
   ],
   "xt5TeT": [
