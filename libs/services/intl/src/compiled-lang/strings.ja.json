@@ -966,12 +966,6 @@
       "value": "必須。値を求める対象のパラメーターの名前。"
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "コメントを追加できるのは、ステップの入力を編集している間だけです。"
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -3061,10 +3055,10 @@
       "value": "(UTC+00:00) ダブリン、エジンバラ、リスボン、ロンドン"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "コメントの追加"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -4056,6 +4050,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) ブリュッセル、コペンハーゲン、マドリード、パリ"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
     }
   ],
   "Twfck/": [
@@ -5178,12 +5178,6 @@
       "value": "必須。最初の Count 個のオブジェクトをスキップするコレクション。"
     }
   ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "コメントの削除"
-    }
-  ],
   "d4xMIx": [
     {
       "type": 0,
@@ -5767,12 +5761,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "コメント"
     }
   ],
   "iCSHJG": [
@@ -6613,6 +6601,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) サルバドル"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7672,6 +7666,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
