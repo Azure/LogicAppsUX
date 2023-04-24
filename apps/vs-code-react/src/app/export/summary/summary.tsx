@@ -144,9 +144,11 @@ export const Summary: React.FC = () => {
     return !isSummaryLoading && !packageUrl ? (
       <MessageBar className="msla-export-summary-package-warning" messageBarType={MessageBarType.error} isMultiline={true}>
         {intlText.PACKAGE_WARNING}
+        <br />
+        {summaryData.message ? summaryData.message : null}
       </MessageBar>
     ) : null;
-  }, [isSummaryLoading, packageUrl, intlText.PACKAGE_WARNING]);
+  }, [isSummaryLoading, packageUrl, intlText.PACKAGE_WARNING, summaryData?.message]);
 
   return (
     <div className="msla-export-summary">
