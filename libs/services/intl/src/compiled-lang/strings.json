@@ -983,12 +983,6 @@
       "value": "Required. The name of the parameter whose values you want."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "Comments can only be added while editing the inputs of a step."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -3123,10 +3117,10 @@
       "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "Add a comment"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -4151,6 +4145,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
     }
   ],
   "Ttc0SM": [
@@ -5285,12 +5285,6 @@
       "value": "Required. The collection to skip the first Count objects from."
     }
   ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "Delete comment"
-    }
-  ],
   "d4xMIx": [
     {
       "type": 0,
@@ -5889,12 +5883,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "Comment"
     }
   ],
   "iCSHJG": [
@@ -6745,6 +6733,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Salvador"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7825,6 +7819,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
