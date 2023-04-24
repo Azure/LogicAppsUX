@@ -63,7 +63,7 @@ export const getInputValues = (
               const functionValues = getInputValues(connections[input.reactFlowKey], connections, false);
               return formatDirectAccess(functionValues[0], functionValues[1], functionValues[2]);
             } else {
-              return collectFunctionValue(input.node, connections[input.reactFlowKey], connections);
+              return collectFunctionValue(input.node, connections[input.reactFlowKey], connections, shouldLocalizePaths);
             }
           }
         })
@@ -75,13 +75,18 @@ const combineFunctionAndInputs = (functionData: FunctionData, inputs: string[]):
   return `${functionData.functionName}(${inputs.join(', ')})`;
 };
 
-export const collectFunctionValue = (node: FunctionData, currentConnection: Connection, connections: ConnectionDictionary): string => {
+export const collectFunctionValue = (
+  node: FunctionData,
+  currentConnection: Connection,
+  connections: ConnectionDictionary,
+  shouldLocalizePaths: boolean
+): string => {
   // Special case where the index is used directly
   if (currentConnection.self.node.key === indexPseudoFunctionKey) {
     return getIndexValueForCurrentConnection(currentConnection);
   }
 
-  const inputValues = getInputValues(currentConnection, connections);
+  const inputValues = getInputValues(currentConnection, connections, shouldLocalizePaths);
 
   // Special case for conditionals
   if (currentConnection.self.node.key === ifPseudoFunctionKey) {
