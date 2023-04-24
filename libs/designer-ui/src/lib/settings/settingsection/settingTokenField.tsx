@@ -20,6 +20,7 @@ import type { TokenGroup } from '../../tokenpicker/models/token';
 import { useId } from '../../useId';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
+import { Stack } from '@fluentui/react/lib/Stack';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -32,6 +33,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   defaultValue?: string;
   placeholder?: string;
   label: string;
+  useFormLabel?: boolean;
   readOnly?: boolean;
   tokenEditor: true;
   required?: boolean;
@@ -52,14 +54,23 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   const renderLabel = props.editor?.toLowerCase() !== 'floatingactionmenu';
   return (
     <>
-      {renderLabel && (
+      {renderLabel && !props.useFormLabel && (
         <div className="msla-input-parameter-label">
           <Label id={labelId} className="msla-label" required={props.required}>
             {props.label}
           </Label>
         </div>
       )}
-      <TokenField {...props} labelId={labelId} />
+      {props.useFormLabel ? (
+        <Stack horizontal tokens={{ childrenGap: 15 }}>
+          <Label id={labelId} className="msla-label" required={props.required}>
+            {props.label}
+          </Label>
+          <TokenField {...props} labelId={labelId} />
+        </Stack>
+      ) : (
+        <TokenField {...props} labelId={labelId} />
+      )}
     </>
   );
 };

@@ -1,7 +1,7 @@
 import constants from '../../common/constants';
 import type { AppDispatch, RootState } from '../../core';
 import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
-import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly, useTrackedPropertiesView } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateParameterValidation } from '../../core/state/operation/operationMetadataSlice';
 import { useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import {
@@ -39,6 +39,7 @@ import { scratchTab } from './panelTabs/scratchTab';
 import { selectConnectionTab } from './panelTabs/selectConnectionTab';
 import { settingsTab } from './panelTabs/settingsTab';
 import { testingTab } from './panelTabs/testingTab';
+import { trackedPropertiesTab } from './panelTabs/trackedPropertiesTab/trackedPropertiesTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { WorkflowParametersPanel } from './workflowparameterspanel';
 import type { CommonPanelProps, MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
@@ -59,7 +60,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
-
+  const isTrackedPropertiesOnlyView = useTrackedPropertiesView();
   const collapsed = useIsPanelCollapsed();
   const selectedNode = useSelectedNodeId();
   const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata));
@@ -80,22 +81,24 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
 
   useEffect(() => {
-    const tabs = [
-      monitoringTab,
-      parametersTab,
-      settingsTab,
-      codeViewTab,
-      testingTab,
-      createConnectionTab,
-      selectConnectionTab,
-      aboutTab,
-      loadingTab,
-    ];
+    const tabs = isTrackedPropertiesOnlyView
+      ? [trackedPropertiesTab]
+      : [
+          monitoringTab,
+          parametersTab,
+          settingsTab,
+          codeViewTab,
+          testingTab,
+          createConnectionTab,
+          selectConnectionTab,
+          aboutTab,
+          loadingTab,
+        ];
     if (process.env.NODE_ENV !== 'production') {
       tabs.push(scratchTab);
     }
     dispatch(registerPanelTabs(tabs));
-  }, [dispatch]);
+  }, [dispatch, isTrackedPropertiesOnlyView]);
 
   useEffect(() => {
     dispatch(

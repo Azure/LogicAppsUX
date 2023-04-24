@@ -25,6 +25,7 @@ const OptionsStateSet = ({ options, children }: any) => {
       initDesignerOptions({
         readOnly: options.readOnly,
         isMonitoringView: options.isMonitoringView,
+        isTrackedPropertiesOnlyView: options.isTrackedPropertiesOnlyView,
         isDarkMode: options.isDarkMode,
         isConsumption: options.isConsumption,
       })

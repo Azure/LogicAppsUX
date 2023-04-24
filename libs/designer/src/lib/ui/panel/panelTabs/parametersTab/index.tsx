@@ -210,10 +210,10 @@ const ParameterSection = ({
   ): Promise<ValueSegment> => {
     const { segment, foreachDetails } = await createValueSegmentFromToken(
       nodeId,
-      parameterId,
       token,
       addImplicitForeachIfNeeded,
-      rootState
+      rootState,
+      parameterId
     );
     if (foreachDetails) {
       dispatch(addForeachToNode({ arrayName: foreachDetails.arrayValue, nodeId, token }));

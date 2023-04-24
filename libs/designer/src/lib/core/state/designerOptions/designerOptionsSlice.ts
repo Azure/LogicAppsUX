@@ -82,6 +82,7 @@ export const designerOptionsSlice = createSlice({
   reducers: {
     initDesignerOptions: (state: DesignerOptionsState, action: PayloadAction<Omit<DesignerOptionsState, 'servicesInitialized'>>) => {
       state.readOnly = action.payload.readOnly;
+      state.isTrackedPropertiesOnlyView = action.payload.isTrackedPropertiesOnlyView;
       state.isMonitoringView = action.payload.isMonitoringView;
       state.isDarkMode = action.payload.isDarkMode;
       state.isConsumption = action.payload.isConsumption;

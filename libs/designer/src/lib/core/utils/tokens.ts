@@ -227,10 +227,10 @@ export const getOutputTokenSections = (
 
 export const createValueSegmentFromToken = async (
   nodeId: string,
-  parameterId: string,
   token: OutputToken,
   addImplicitForeachIfNeeded: boolean,
-  rootState: RootState
+  rootState: RootState,
+  parameterId?: string
 ): Promise<{ segment: ValueSegment; foreachDetails?: { arrayValue: string | undefined } }> => {
   const tokenOwnerNodeId = token.outputInfo.actionName ?? getTriggerNodeId(rootState.workflow);
   const nodeType = rootState.operations.operationInfo[tokenOwnerNodeId].type;
@@ -245,9 +245,9 @@ export const createValueSegmentFromToken = async (
     const tokenOwnerOperationInfo = rootState.operations.operationInfo[tokenOwnerNodeId];
     const { shouldAdd, parentArrayKey, parentArrayValue, repetitionContext } = await shouldAddForeach(
       nodeId,
-      parameterId,
       token,
-      rootState
+      rootState,
+      parameterId
     );
 
     if (parentArrayKey && repetitionContext) {

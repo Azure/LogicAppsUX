@@ -55,20 +55,24 @@ interface ImplicitForeachDetails {
 
 export const shouldAddForeach = async (
   nodeId: string,
-  parameterId: string,
   token: OutputToken,
-  state: RootState
+  state: RootState,
+  parameterId?: string
 ): Promise<ImplicitForeachDetails> => {
   if (token.outputInfo.type === TokenType.VARIABLE || token.outputInfo.type === TokenType.PARAMETER || !token.outputInfo?.arrayDetails) {
     return { shouldAdd: false };
   }
 
   const operationInfo = state.operations.operationInfo[nodeId];
-  const parameter = getParameterFromId(state.operations.inputParameters[nodeId], parameterId);
-  const manifest = OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)
-    ? await getOperationManifest(operationInfo)
-    : undefined;
-  const includeSelf = manifest ? shouldIncludeSelfForRepetitionReference(manifest, parameter?.parameterName) : false;
+  let includeSelf = false;
+  if (parameterId) {
+    const parameter = getParameterFromId(state.operations.inputParameters[nodeId], parameterId);
+    const manifest = OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)
+      ? await getOperationManifest(operationInfo)
+      : undefined;
+    includeSelf = manifest ? shouldIncludeSelfForRepetitionReference(manifest, parameter?.parameterName) : false;
+  }
+
   const repetitionContext = await getRepetitionContext(nodeId, state, includeSelf);
   const tokenOwnerNodeId = token.outputInfo.actionName ?? getTriggerNodeId(state.workflow);
   const parentArrayKey = getParentArrayKey(token.key);

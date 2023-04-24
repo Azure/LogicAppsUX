@@ -14,8 +14,15 @@ import type {
   IRunService,
 } from '@microsoft/designer-client-services-logic-apps';
 
+export type TrackedProperty = {
+  name: string;
+  type: string;
+  token?: string;
+};
 export interface DesignerOptionsState {
   readOnly?: boolean;
+  isTrackedPropertiesOnlyView?: boolean;
+  trackedProperties?: TrackedProperty[];
   isMonitoringView?: boolean;
   isDarkMode?: boolean;
   servicesInitialized?: boolean;
