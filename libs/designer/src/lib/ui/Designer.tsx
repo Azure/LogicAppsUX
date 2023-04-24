@@ -229,7 +229,6 @@ export const Designer = (props: DesignerProps) => {
           id={'msla-layer-host'}
           style={{
             position: 'absolute',
-            zIndex: 1000000,
             inset: '0px',
             visibility: 'hidden',
           }}
