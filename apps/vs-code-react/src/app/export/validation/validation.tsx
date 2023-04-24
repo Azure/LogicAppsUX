@@ -6,7 +6,7 @@ import { updateValidationState } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { ReviewList } from '../../components/reviewList/reviewList';
 import { getOverallValidationStatus, parseValidationData } from './helper';
-import { Label, Text } from '@fluentui/react';
+import { MessageBar, MessageBarType, Text } from '@fluentui/react';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
@@ -61,7 +61,7 @@ export const Validation: React.FC = () => {
     data: validationData,
     isLoading: isValidationLoading,
     error,
-    status,
+    isError,
   } = useQuery<any>([QueryKeys.validation, { selectedWorkflows: selectedWorkflows }], validateWorkflows, {
     refetchOnWindowFocus: false,
     onSuccess: onValidationSuccess,
@@ -69,6 +69,14 @@ export const Validation: React.FC = () => {
 
   const { validationItems = [], validationGroups = [] }: any =
     isValidationLoading || !validationData ? {} : parseValidationData(validationData?.properties, intlText.WORKFLOW_GROUP_DISPLAY_NAME);
+
+  const validationError = useMemo(() => {
+    return isError ? (
+      <MessageBar messageBarType={MessageBarType.error} isMultiline={true}>
+        {(error as any)?.message}
+      </MessageBar>
+    ) : null;
+  }, [isError, error]);
 
   return (
     <div className="msla-export-validation">
@@ -79,8 +87,8 @@ export const Validation: React.FC = () => {
         {intlText.REVIEW_DESCRIPTION}
       </Text>
       <div className="msla-export-validation-list">
+        {isError ? validationError : null}
         <ReviewList isValidationLoading={isValidationLoading} validationItems={validationItems} validationGroups={validationGroups} />
-        <Label>{status === 'error' ? (error as any)?.message : ''}</Label>
       </div>
     </div>
   );
