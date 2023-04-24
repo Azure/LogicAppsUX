@@ -149,7 +149,7 @@ export const Summary: React.FC = () => {
         {(summaryError as any)?.message ?? null}
       </MessageBar>
     ) : null;
-  }, [isSummaryLoading, packageUrl, intlText.PACKAGE_WARNING, summaryData?.message]);
+  }, [packageUrl, intlText.PACKAGE_WARNING, isError, summaryError]);
 
   return (
     <div className="msla-export-summary">
