@@ -54,7 +54,7 @@ export interface PanelRootProps {
 }
 
 export const PanelRoot = (props: PanelRootProps): JSX.Element => {
-  const { panelLocation } = props;
+  const { panelLocation, displayRuntimeInfo } = props;
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -284,9 +284,9 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   return currentPanelMode === 'WorkflowParameters' ? (
     <WorkflowParametersPanel {...commonPanelProps} />
   ) : currentPanelMode === 'Discovery' ? (
-    <RecommendationPanelContext {...commonPanelProps} displayRuntimeInfo />
+    <RecommendationPanelContext {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
   ) : currentPanelMode === 'NodeSearch' ? (
-    <NodeSearchPanel {...commonPanelProps} displayRuntimeInfo />
+    <NodeSearchPanel {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
   ) : (
     <PanelContainer
       {...commonPanelProps}
