@@ -8,7 +8,7 @@ import { getDropdownPlaceholder, parseIseData, parseRegionData, parseSubscriptio
 import { Text, DropdownMenuItemType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { isEmptyString } from '@microsoft/utils-logic-apps';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -127,11 +127,16 @@ export const InstanceSelection: React.FC = () => {
             selectedSubscription: subscriptionId,
           })
         );
-        refetchIse();
-        refetchRegion();
       }
     }
   };
+
+  useEffect(() => {
+    if (!isEmptyString(selectedSubscription)) {
+      refetchIse();
+      refetchRegion();
+    }
+  }, [selectedSubscription, refetchIse, refetchRegion]);
 
   const onChangeLocation = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
     if (selectedOption) {
