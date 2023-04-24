@@ -195,8 +195,7 @@ export const getOperationSettings = (
     },
     invokerConnection: {
       isSupported: isInvokerConnectionSupported(isTrigger, nodeType, rootNodeId),
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      value: invokerConnection(connectionReferences!, dispatch),
+      value: invokerConnection(connectionReferences, dispatch),
     },
   };
 };
@@ -876,7 +875,7 @@ const isInvokerConnectionSupported = (isTrigger: boolean, nodeType: string, root
 };
 
 const invokerConnection = (
-  connectionReferences: ConnectionReferences,
+  connectionReferences: ConnectionReferences | undefined,
   dispatch: Dispatch | undefined
 ): SimpleSetting<ConnectionReferences> | undefined => {
   if (connectionReferences !== undefined) {

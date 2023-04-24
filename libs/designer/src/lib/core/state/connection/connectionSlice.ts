@@ -1,5 +1,6 @@
 import Constants from '../../../common/constants';
 import type { ConnectionReferences } from '../../../common/models/workflow';
+import { ImpersonationSource } from '../../../common/models/workflow';
 import { resetWorkflowState } from '../global';
 import { equals, getUniqueName } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
@@ -65,7 +66,7 @@ export const connectionSlice = createSlice({
           state.connectionReferences[connection] = {
             ...connectionReferences[connection],
             impersonation: {
-              source: 'invoker',
+              source: ImpersonationSource.Invoker,
             },
           };
         }

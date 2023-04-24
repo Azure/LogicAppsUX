@@ -10,7 +10,16 @@ export interface ConnectionReference {
   connectionName?: string;
   connectionProperties?: Record<string, any>;
   authentication?: { type: string; identity?: string };
-  impersonation?: { source: string };
+  impersonation?: Impersonation;
+}
+
+export interface Impersonation {
+  source?: ImpersonationSource;
+  objectId?: string;
+}
+
+export enum ImpersonationSource {
+  Invoker = 'invoker',
 }
 
 type ReferenceKey = string;

@@ -205,7 +205,7 @@ const initializeOperationDetails = async (
   const operation = getState().workflow.operations[nodeId];
 
   const connectionReferences = state.connections.connectionReferences;
-  if (state.connections.connectionReferences !== undefined) {
+  if (!state.connections.connectionReferences) {
     dispatch(addInvokerSupport({ connectionReferences }));
   }
   const settings = getOperationSettings(
