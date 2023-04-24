@@ -2,6 +2,7 @@ import type { DynamicallyAddedParameterProps, DynamicallyAddedParameterTypeType,
 import { DynamicallyAddedParameterType } from '.';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
+import { getIntl } from '@microsoft/intl-logic-apps';
 import { guid } from '@microsoft/utils-logic-apps';
 
 export type DynamicallyAddedParameterIcon = string;
@@ -116,4 +117,51 @@ export function serialize(props: DynamicallyAddedParameterProps[]): ValueSegment
       value: JSON.stringify(rootObject),
     },
   ];
+}
+
+export function createDynamicallyAddedParameterProperties(
+  itemType: DynamicallyAddedParameterTypeType,
+  description: string
+): IDynamicallyAddedParameterProperties {
+  let format, fileProperties;
+  let type = '';
+  switch (itemType) {
+    case DynamicallyAddedParameterType.Date:
+      type = 'string';
+      format = itemType.toLowerCase();
+      break;
+    case DynamicallyAddedParameterType.Email:
+      type = 'string';
+      format = itemType.toLowerCase();
+      break;
+    case DynamicallyAddedParameterType.Text:
+      type = 'string';
+      break;
+    case DynamicallyAddedParameterType.File:
+      type = 'object';
+      fileProperties = { contentBytes: { type: 'string', format: 'byte' }, name: { type: 'string' } };
+      break;
+    case DynamicallyAddedParameterType.Boolean:
+      type = 'boolean';
+      break;
+    case DynamicallyAddedParameterType.Number:
+      type = 'number';
+      break;
+  }
+
+  const intl = getIntl();
+  const titlePlaceholder = intl.formatMessage({
+    defaultMessage: 'Enter title',
+    description: 'Placeholder for variable name for new dynamically added parameter',
+  });
+
+  return {
+    description,
+    format,
+    title: titlePlaceholder, // TODO: generate title based on schemaKey
+    type,
+    properties: fileProperties,
+    'x-ms-content-hint': itemType,
+    'x-ms-dynamically-added': true,
+  };
 }

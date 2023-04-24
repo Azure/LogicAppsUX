@@ -1,6 +1,6 @@
 import type { DynamicallyAddedParameterTypeType } from '../dynamicallyaddedparameter';
-import { DynamicallyAddedParameter, DynamicallyAddedParameterType } from '../dynamicallyaddedparameter';
-import { deserialize, serialize } from '../dynamicallyaddedparameter/helper';
+import { DynamicallyAddedParameter } from '../dynamicallyaddedparameter';
+import { createDynamicallyAddedParameterProperties, deserialize, serialize } from '../dynamicallyaddedparameter/helper';
 import type { ValueSegment } from '../editor';
 import type { ChangeHandler } from '../editor/base';
 import { getMenuItemsForDynamicAddedParameters } from './helper';
@@ -156,26 +156,13 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
     }
   };
 
-  const titlePlaceholder = intl.formatMessage({
-    defaultMessage: 'Enter title',
-    description: 'Placeholder for variable name for new dynamically added parameter',
-  });
-
   const addNewDynamicallyAddedParameter = (item: FloatingActionMenuItem) => {
-    const { icon, type, placeholder } = item;
-    const format =
-      type === DynamicallyAddedParameterType.Date || type === DynamicallyAddedParameterType.Email ? type.toLowerCase() : undefined;
+    const { icon, type: floatingActionMenuItemType, placeholder } = item;
+
     dynamicParameterProps.push({
       icon,
       schemaKey: guid(), // TODO: generate schemaKey
-      properties: {
-        description: placeholder,
-        format,
-        title: titlePlaceholder, // TODO: generate title based on schemaKey
-        type,
-        'x-ms-content-hint': type,
-        'x-ms-dynamically-added': true,
-      },
+      properties: createDynamicallyAddedParameterProperties(floatingActionMenuItemType, placeholder),
       required: true, // TODO: add functionality to allow making parameters optional
       onChange: onDynamicallyAddedParameterChange,
       onDelete: onDynamicallyAddedParameterDelete,
