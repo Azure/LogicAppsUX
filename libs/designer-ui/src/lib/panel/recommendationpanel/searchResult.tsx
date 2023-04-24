@@ -17,12 +17,21 @@ export type SearchResultsGridProps = {
   operationSearchResults: DiscoveryOperation<DiscoveryResultTypes>[];
   onConnectorClick: (connectorId: string) => void;
   onOperationClick: (operationId: string, apiId?: string) => void;
+  displayRuntimeInfo: boolean;
   groupByConnector?: boolean;
 };
 
 export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProps>> = (props) => {
-  const { isLoadingMore, isLoadingSearch, searchTerm, operationSearchResults, onConnectorClick, onOperationClick, groupByConnector } =
-    props;
+  const {
+    isLoadingMore,
+    isLoadingSearch,
+    searchTerm,
+    operationSearchResults,
+    onConnectorClick,
+    onOperationClick,
+    groupByConnector,
+    displayRuntimeInfo,
+  } = props;
 
   const intl = useIntl();
 
@@ -41,10 +50,11 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
           onClick={() => onOperationClick(operation.id, operation.properties.api.id)}
           showImage={true}
           style={{ marginBottom: '8px' }}
+          displayRuntimeInfo={displayRuntimeInfo}
         />
       );
     },
-    [onOperationClick]
+    [onOperationClick, displayRuntimeInfo]
   );
 
   const onRenderOperationGroup = React.useCallback(
@@ -61,11 +71,12 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
             operationActionsData={operations.map((operation) => OperationActionDataFromOperation(operation))}
             onConnectorClick={onConnectorClick}
             onOperationClick={onOperationClick}
+            displayRuntimeInfo={displayRuntimeInfo}
           />
         </div>
       );
     },
-    [onConnectorClick, onOperationClick, operationSearchResults]
+    [onConnectorClick, onOperationClick, operationSearchResults, displayRuntimeInfo]
   );
 
   const noResultsText = intl.formatMessage(
