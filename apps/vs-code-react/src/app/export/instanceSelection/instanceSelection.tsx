@@ -7,7 +7,8 @@ import { SearchableDropdown } from '../../components/searchableDropdown';
 import { getDropdownPlaceholder, parseIseData, parseRegionData, parseSubscriptionsData } from './helper';
 import { Text, DropdownMenuItemType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
-import { useMemo } from 'react';
+import { isEmptyString } from '@microsoft/utils-logic-apps';
+import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -103,7 +104,7 @@ export const InstanceSelection: React.FC = () => {
     refetch: refetchRegion,
   } = useQuery<any>([QueryKeys.regionData, { subscriptionId: selectedSubscription }], loadRegion, {
     refetchOnWindowFocus: false,
-    enabled: selectedSubscription !== '',
+    enabled: !isEmptyString(selectedSubscription),
     retry: 4,
   });
 
@@ -113,22 +114,29 @@ export const InstanceSelection: React.FC = () => {
     refetch: refetchIse,
   } = useQuery<any>([QueryKeys.iseData, { subscriptionId: selectedSubscription }], loadIse, {
     refetchOnWindowFocus: false,
-    enabled: selectedSubscription !== '',
+    enabled: !isEmptyString(selectedSubscription),
     retry: 4,
   });
 
   const onChangeSubscriptions = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
     if (selectedOption && selectedSubscription !== selectedOption.key) {
       const subscriptionId = selectedOption.key as string;
-      dispatch(
-        updateSelectedSubscripton({
-          selectedSubscription: subscriptionId,
-        })
-      );
+      if (!isEmptyString(subscriptionId)) {
+        dispatch(
+          updateSelectedSubscripton({
+            selectedSubscription: subscriptionId,
+          })
+        );
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!isEmptyString(selectedSubscription)) {
       refetchIse();
       refetchRegion();
     }
-  };
+  }, [selectedSubscription, refetchIse, refetchRegion]);
 
   const onChangeLocation = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
     if (selectedOption) {

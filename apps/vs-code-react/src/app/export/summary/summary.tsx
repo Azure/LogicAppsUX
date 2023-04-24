@@ -81,14 +81,15 @@ export const Summary: React.FC = () => {
     );
   };
 
-  const { data: summaryData, isLoading: isSummaryLoading } = useQuery<any>(
-    [QueryKeys.summary, { selectedWorkflows: selectedWorkflows }],
-    exportWorkflows,
-    {
-      refetchOnWindowFocus: false,
-      onSuccess: onSummarySuccess,
-    }
-  );
+  const {
+    data: summaryData,
+    isLoading: isSummaryLoading,
+    isError,
+    error: summaryError,
+  } = useQuery<any>([QueryKeys.summary, { selectedWorkflows: selectedWorkflows }], exportWorkflows, {
+    refetchOnWindowFocus: false,
+    onSuccess: onSummarySuccess,
+  });
 
   const { exportDetails = [] } = isSummaryLoading || !summaryData ? {} : getSummaryData(summaryData);
 
@@ -141,12 +142,14 @@ export const Summary: React.FC = () => {
   }, [exportDetails, isSummaryLoading, intlText.NO_DETAILS, intlText.ADDITIONAL_STEPS, intlText.AFTER_EXPORT]);
 
   const packageWarning = useMemo(() => {
-    return !isSummaryLoading && !packageUrl ? (
+    return isError && !packageUrl ? (
       <MessageBar className="msla-export-summary-package-warning" messageBarType={MessageBarType.error} isMultiline={true}>
         {intlText.PACKAGE_WARNING}
+        <br />
+        {(summaryError as any)?.message ?? null}
       </MessageBar>
     ) : null;
-  }, [isSummaryLoading, packageUrl, intlText.PACKAGE_WARNING]);
+  }, [packageUrl, intlText.PACKAGE_WARNING, isError, summaryError]);
 
   return (
     <div className="msla-export-summary">

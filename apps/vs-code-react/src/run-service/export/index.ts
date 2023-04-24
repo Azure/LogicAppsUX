@@ -255,6 +255,16 @@ export class ApiService implements IApiService {
     const response = await fetch(exportUri, { headers, method: 'POST', body: JSON.stringify(exportPayload) });
 
     if (!response.ok) {
+      let errorBody: any;
+      try {
+        errorBody = await response.json();
+      } catch (_ex) {
+        throw new Error(`${response.status} ${response.statusText}`);
+      }
+      throw new Error(errorBody.error.message);
+    }
+
+    if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
     }
 

@@ -43,8 +43,7 @@ export const getExportDetails = (details: Array<IExportDetails>): Array<IExportD
 
 export const getSummaryData = (summaryData: ISummaryData) => {
   const exportSchema: Record<string, any> = summaryData?.properties ?? {};
-  const exportDetails = getExportDetails(exportSchema?.details);
-
+  const exportDetails = exportSchema?.details ? getExportDetails(exportSchema?.details) : [];
   return { exportDetails };
 };
 
