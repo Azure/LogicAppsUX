@@ -1,4 +1,6 @@
+import Constants from '../../../common/constants';
 import type { ConnectionReferences } from '../../../common/models/workflow';
+import { ImpersonationSource } from '../../../common/models/workflow';
 import { resetWorkflowState } from '../global';
 import { equals, getUniqueName } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
@@ -54,6 +56,22 @@ export const connectionSlice = createSlice({
       const { nodeId } = action.payload;
       delete state.connectionsMapping[nodeId];
     },
+    addInvokerSupport: (state, action: PayloadAction<{ connectionReferences: ConnectionReferences }>) => {
+      const connectionReferences = action.payload.connectionReferences;
+      for (const connection in connectionReferences) {
+        if (
+          connectionReferences[connection] !== undefined &&
+          connectionReferences[connection].api.id.indexOf(Constants.INVOKER_CONNECTION.DATAVERSE_CONNECTOR_ID) > -1
+        ) {
+          state.connectionReferences[connection] = {
+            ...connectionReferences[connection],
+            impersonation: {
+              source: ImpersonationSource.Invoker,
+            },
+          };
+        }
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialConnectionsState);
@@ -67,6 +85,7 @@ export const {
   changeConnectionMapping,
   initEmptyConnectionMap,
   removeNodeConnectionData,
+  addInvokerSupport,
 } = connectionSlice.actions;
 
 export default connectionSlice.reducer;
