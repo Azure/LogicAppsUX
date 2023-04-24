@@ -23,12 +23,18 @@ import { parseSegments } from './utils/parsesegments';
 import type { ICalloutProps } from '@fluentui/react';
 import { DirectionalHint, css, TooltipHost } from '@fluentui/react';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
+import { ListItemNode, ListNode } from '@lexical/list';
+import type { InitialConfigType } from '@lexical/react/LexicalComposer';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
+import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { HeadingNode } from '@lexical/rich-text';
 import { useFunctionalState } from '@react-hookz/web';
+import type { Klass } from 'lexical/LexicalEditor';
+import type { LexicalNode } from 'lexical/LexicalNode';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
@@ -122,11 +128,19 @@ export const BaseEditor = ({
     }
   }, []);
 
-  const initialConfig = {
+  const { autoFocus, autoLink, clearEditor, history = true, tokens, treeView, toolBar, tabbable, singleValueSegment } = BasePlugins;
+  const describedByMessage = intl.formatMessage({
+    defaultMessage: 'Add dynamic data or expressions by inserting a /',
+    description: 'This is an a11y message meant to help screen reader users figure out how to insert dynamic data',
+  });
+
+  const htmlNodes: Array<Klass<LexicalNode>> = [AutoLinkNode, LinkNode, TokenNode, ListNode, ListItemNode, HeadingNode];
+
+  const initialConfig: InitialConfigType = {
     theme: EditorTheme,
     editable: !readonly,
     onError,
-    nodes: [AutoLinkNode, LinkNode, TokenNode],
+    nodes: toolBar ? htmlNodes : [AutoLinkNode, LinkNode, TokenNode],
     namespace: 'editor',
     editorState:
       initialValue &&
@@ -134,12 +148,6 @@ export const BaseEditor = ({
         parseSegments(initialValue, tokens);
       }),
   };
-
-  const { autoFocus, autoLink, clearEditor, history = true, tokens, treeView, toolBar, tabbable, singleValueSegment } = BasePlugins;
-  const describedByMessage = intl.formatMessage({
-    defaultMessage: 'Add dynamic data or expressions by inserting a /',
-    description: 'This is an a11y message meant to help screen reader users figure out how to insert dynamic data',
-  });
 
   const closeTokenPicker = () => {
     setInTokenPicker(false);
@@ -195,7 +203,7 @@ export const BaseEditor = ({
           <span id={id} hidden={true}>
             {describedByMessage}
           </span>
-          {/* {toolBar ? <FormatTextNode/> : null} */}
+          {toolBar ? <ListPlugin /> : null}
           {treeView ? <TreeView /> : null}
           {autoFocus ? <AutoFocus /> : null}
           {history ? <History /> : null}

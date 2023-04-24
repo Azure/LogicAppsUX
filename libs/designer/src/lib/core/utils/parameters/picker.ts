@@ -33,9 +33,9 @@ export const getFilePickerCallbacks = (
   console.log('getFilePickerCallbacks', nodeId, groupId, parameter, displayNameResult, operationInfo, connectionReference, dispatch);
 
   return {
-    onShowPicker: handleShowPicker,
+    onOpenPicker: handleShowPicker,
     onFolderNavigated: handleFolderNavigated,
-    onTitleSelected: handleTitleSelected,
+    getValueFromSelectedItem: getValueFromSelectedItem,
   };
 };
 
@@ -46,6 +46,7 @@ const handleShowPicker = () => {
 function handleFolderNavigated(): void {
   throw new Error('Function not implemented.');
 }
-function handleTitleSelected(): void {
+function getValueFromSelectedItem(input: any): string {
+  console.log(input);
   throw new Error('Function not implemented.');
 }

@@ -1,14 +1,18 @@
 import { isApple } from '../../../helper';
 import clockWiseArrow from '../icons/arrow-clockwise.svg';
 import counterClockWiseArrow from '../icons/arrow-counterclockwise.svg';
+import { BlockFormatDropDown } from './DropdownBlockFormat';
 import { Format } from './Format';
 import { FontDropDown, FontDropDownType } from './helper/FontDropDown';
+import { $isListNode, ListNode } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { $isHeadingNode } from '@lexical/rich-text';
 import { $getSelectionStyleValueForProperty } from '@lexical/selection';
-import { mergeRegister } from '@lexical/utils';
+import { mergeRegister, $getNearestNodeOfType, $findMatchingParent } from '@lexical/utils';
 import {
   $getSelection,
   $isRangeSelection,
+  $isRootOrShadowRoot,
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
   COMMAND_PRIORITY_CRITICAL,
@@ -45,15 +49,44 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
   const [canRedo, setCanRedo] = useState(false);
   const [fontSize, setFontSize] = useState<string>('15px');
   const [fontFamily, setFontFamily] = useState<string>('Arial');
+  const [blockType, setBlockType] = useState<keyof typeof blockTypeToBlockName>('paragraph');
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
     // Currently a bug affecting the toolbug due to $getSelection https://github.com/facebook/lexical/issues/4011
     if ($isRangeSelection(selection)) {
+      const anchorNode = selection.anchor.getNode();
+      let element =
+        anchorNode.getKey() === 'root'
+          ? anchorNode
+          : $findMatchingParent(anchorNode, (e) => {
+              const parent = e.getParent();
+              return parent !== null && $isRootOrShadowRoot(parent);
+            });
+
+      if (element === null) {
+        element = anchorNode.getTopLevelElementOrThrow();
+      }
+
+      const elementKey = element.getKey();
+      const elementDOM = activeEditor.getElementByKey(elementKey);
+
+      if (elementDOM !== null) {
+        if ($isListNode(element)) {
+          const parentList = $getNearestNodeOfType<ListNode>(anchorNode, ListNode);
+          const type = parentList ? parentList.getListType() : element.getListType();
+          setBlockType(type);
+        } else {
+          const type = $isHeadingNode(element) ? element.getTag() : element.getType();
+          if (type in blockTypeToBlockName) {
+            setBlockType(type as keyof typeof blockTypeToBlockName);
+          }
+        }
+      }
       setFontFamily($getSelectionStyleValueForProperty(selection, 'font-family', 'Arial'));
       setFontSize($getSelectionStyleValueForProperty(selection, 'font-size', '15px'));
     }
-  }, []);
+  }, [activeEditor]);
 
   useEffect(() => {
     return editor.registerCommand(
@@ -124,7 +157,7 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
         <img className={'format'} src={clockWiseArrow} alt={'clockwise arrow'} />
       </button>
       <Divider />
-
+      <BlockFormatDropDown disabled={readonly} blockType={blockType} editor={editor} />
       <FontDropDown fontDropdownType={FontDropDownType.FONTFAMILY} value={fontFamily} editor={editor} disabled={readonly} />
       <FontDropDown fontDropdownType={FontDropDownType.FONTSIZE} value={fontSize} editor={editor} disabled={readonly} />
       <Divider />

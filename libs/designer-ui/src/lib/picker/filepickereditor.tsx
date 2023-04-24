@@ -13,9 +13,9 @@ import { useIntl } from 'react-intl';
 export * from './models/PickerInfo';
 
 export interface PickerCallbackHandler {
-  onShowPicker: () => void;
-  onFolderNavigated: () => void;
-  onTitleSelected: () => void;
+  onOpenPicker: () => void;
+  onFolderNavigated: (selectedObject: any) => void;
+  getValueFromSelectedItem: (selectedObject: any) => string;
 }
 
 export interface FilePickerEditorProps extends BaseEditorProps {
@@ -23,6 +23,7 @@ export interface FilePickerEditorProps extends BaseEditorProps {
   titleSegments?: PickerTitleInfo[];
   editorBlur?: ChangeHandler;
   pickerCallback?: PickerCallbackHandler;
+  errorDetails?: string;
 }
 
 const folderIcon: IIconProps = { iconName: 'FolderOpen' };
@@ -43,11 +44,11 @@ export const FilePickerEditor = ({
   const pickerIconId = useId();
   const intl = useIntl();
 
-  const { onFolderNavigated, onTitleSelected, onShowPicker } = pickerCallback ?? {};
+  const { onFolderNavigated, onOpenPicker } = pickerCallback ?? {};
 
   const openTokenPicker = () => {
     if (!showPicker) {
-      onShowPicker?.();
+      onOpenPicker?.();
       setShowPicker(true);
     }
   };
@@ -91,7 +92,6 @@ export const FilePickerEditor = ({
         files={[]}
         onCancel={() => setShowPicker(false)}
         handleFolderNavigation={onFolderNavigated}
-        handleTitleSelected={onTitleSelected}
       />
     </div>
   );

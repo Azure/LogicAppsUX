@@ -26,7 +26,14 @@ export const DropDownItem = ({ children, className, onClick, title }: DropDownIt
   }, [ref, registerItem]);
 
   return (
-    <button className={className} onClick={onClick} ref={ref} title={title}>
+    <button
+      className={className}
+      onClick={(e) => {
+        onClick(e);
+      }}
+      ref={ref}
+      title={title}
+    >
       {children}
     </button>
   );

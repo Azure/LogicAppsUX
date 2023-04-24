@@ -84,10 +84,12 @@ export const DropDownItems = ({ children, dropDownRef, stopCloseOnClickSelf, onC
             e.relatedTarget?.classList.contains('fontsize-item') ||
             e.relatedTarget?.classList.contains('fontfamily-item') ||
             e.relatedTarget?.classList.contains('fontcolor-item') ||
+            e.target.classList.contains('blockcontrol-item') ||
             e.target.classList.contains('default-color-buttons')
           ) {
             return;
           } else {
+            console.log('here');
             onClose();
           }
         }}
