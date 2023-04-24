@@ -986,12 +986,6 @@
       "value": "必需。需要获取其值的参数的名称。"
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "只可在编辑某步骤的输入时添加注释。"
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -3137,10 +3131,10 @@
       "value": "(UTC+00:00)都柏林，爱丁堡，里斯本，伦敦"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "添加评论"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -4148,6 +4142,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00)布鲁塞尔，哥本哈根，马德里，巴黎"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
     }
   ],
   "Twfck/": [
@@ -5294,12 +5294,6 @@
       "value": "必需。要从中跳过第一批计数对象的集合。"
     }
   ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "删除评论"
-    }
-  ],
   "d4xMIx": [
     {
       "type": 0,
@@ -5895,12 +5889,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "评论"
     }
   ],
   "iCSHJG": [
@@ -6769,6 +6757,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00)萨尔瓦多"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7856,6 +7850,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [

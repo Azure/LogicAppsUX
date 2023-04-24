@@ -1023,12 +1023,6 @@
       "value": "Povinný parametr. Název parametru, jehož hodnoty požadujete."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "Komentáře je možné přidávat jenom při úpravách vstupů kroku."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -3281,10 +3275,10 @@
       "value": "(UTC+00:00) Dublin, Edinburgh, Lisabon, Londýn"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "Přidat komentář"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -4329,6 +4323,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Brusel, Kodaň, Madrid, Paříž"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
     }
   ],
   "Twfck/": [
@@ -5467,12 +5467,6 @@
       "value": "Vyžadováno. Kolekce, ze které se mají přeskočit první objekty Count."
     }
   ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "Odstranit komentář"
-    }
-  ],
   "d4xMIx": [
     {
       "type": 0,
@@ -6105,12 +6099,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "Komentář"
     }
   ],
   "iCSHJG": [
@@ -6963,6 +6951,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Salvador"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -8079,6 +8073,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [

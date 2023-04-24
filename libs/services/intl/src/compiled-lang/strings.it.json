@@ -988,12 +988,6 @@
       "value": "Obbligatorio. Nome del parametro di cui si desidera ottenere i valori."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "È possibile aggiungere i commenti solo durante la modifica degli input di un passaggio."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -3149,10 +3143,10 @@
       "value": "(UTC + 00.00) Dublino, Edimburgo, Lisbona, Londra"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "Aggiungere un commento"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -4174,6 +4168,12 @@
     {
       "type": 0,
       "value": "(UTC+1.00) Bruxelles, Copenaghen, Madrid, Parigi"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
     }
   ],
   "Twfck/": [
@@ -5296,12 +5296,6 @@
       "value": "Obbligatorio. Raccolta in cui ignorare i primi oggetti Count."
     }
   ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "Eliminare commento"
-    }
-  ],
   "d4xMIx": [
     {
       "type": 0,
@@ -5911,12 +5905,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "Commento"
     }
   ],
   "iCSHJG": [
@@ -6761,6 +6749,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Salvador"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7846,6 +7840,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
