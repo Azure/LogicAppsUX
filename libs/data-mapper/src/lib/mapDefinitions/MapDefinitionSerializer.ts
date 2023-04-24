@@ -150,7 +150,12 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
               const functionValues = getInputValues(connections[input.reactFlowKey], connections, false);
               value = formatDirectAccess(functionValues[0], functionValues[1], functionValues[2]);
             } else {
-              value = collectFunctionValue(input.node, connections[input.reactFlowKey], connections, pathItem.repeating);
+              value = collectFunctionValue(
+                input.node,
+                connections[input.reactFlowKey],
+                connections,
+                array.some((arrayItems) => arrayItems.repeating)
+              );
             }
           }
         }
