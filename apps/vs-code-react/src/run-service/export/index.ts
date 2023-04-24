@@ -261,7 +261,7 @@ export class ApiService implements IApiService {
       } catch (_ex) {
         throw new Error(`${response.status} ${response.statusText}`);
       }
-      return new Error(errorBody.error.message);
+      throw new Error(errorBody.error.message);
     }
 
     if (!response.ok) {
