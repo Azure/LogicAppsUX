@@ -311,6 +311,11 @@
           "group": "1@2"
         },
         {
+          "command": "azureLogicAppsStandard.openOverview",
+          "when": "view == azureResourceGroups && viewItem =~ /Remote;.*;Workflow;/i",
+          "group": "1@1"
+        },
+        {
           "command": "azureLogicAppsStandard.viewContent",
           "when": "view == azureResourceGroups && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "2@1"
@@ -378,11 +383,6 @@
         {
           "command": "azureLogicAppsStandard.refresh",
           "when": "view == azureWorkspace && viewItem == folder",
-          "group": "1@1"
-        },
-        {
-          "command": "azureLogicAppsStandard.openOverview",
-          "when": "view == azureWorkspace && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "1@1"
         },
         {
