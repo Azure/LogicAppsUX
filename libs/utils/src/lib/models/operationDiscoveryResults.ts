@@ -30,14 +30,12 @@ export interface SomeKindOfAzureOperationDiscovery {
   isNotification?: boolean;
   api: OperationApi;
   description: string;
-  operationGroup?: {
-    isCustomApi?: boolean;
-  };
   operationType?: string;
   operationKind?: string;
   summary: string;
   swaggerOperationId?: string;
   environmentBadge?: Badge;
+  isCustomApi?: boolean;
   isChunkingSupported?: boolean;
   pageable: boolean;
   isWebhook: boolean;
@@ -56,9 +54,6 @@ export interface BuiltInOperation {
   };
   api: OperationApi;
   description: string;
-  operationGroup?: {
-    isCustomApi?: boolean;
-  };
   operationType: 'serviceProvider' | string;
   operationKind?: string;
   summary: string;
@@ -67,6 +62,7 @@ export interface BuiltInOperation {
   iconUri: string;
   trigger?: string;
   capabilities?: string[];
+  isCustomApi?: boolean;
 }
 
 export interface DiscoveryOperation<TData extends DiscoveryResultTypes> {

@@ -54,9 +54,10 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     a: Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>,
     b: Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>
   ): number => {
-    // isCustomApi can be undefined since up to the host to add it; when undefined we default to false so that the custom checks are not true/executed
-    const isACustom: boolean = a.item.properties.operationGroup?.isCustomApi || false;
-    const isBCustom: boolean = b.item.properties.operationGroup?.isCustomApi || false;
+    // isCustomApi can be undefined since it is up to the host to pass it; when
+    // undefined we default to false so that the custom checks are not true/executed
+    const isACustom: boolean = a.item.properties.isCustomApi || false;
+    const isBCustom: boolean = b.item.properties.isCustomApi || false;
     if (isACustom && !isBCustom) return 1;
     if (!isACustom && isBCustom) return -1;
     if (a.score !== undefined && b.score !== undefined) {
