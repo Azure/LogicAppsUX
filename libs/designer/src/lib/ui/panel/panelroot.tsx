@@ -41,8 +41,17 @@ import { settingsTab } from './panelTabs/settingsTab';
 import { testingTab } from './panelTabs/testingTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { WorkflowParametersPanel } from './workflowparameterspanel';
+import type { PanelBase } from '@fluentui/react/lib/components/Panel/Panel.base';
 import type { CommonPanelProps, MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
-import { MenuItemType, PanelContainer, PanelHeaderControlType, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
+import {
+  isTokenPickerElement,
+  MenuItemType,
+  PanelContainer,
+  PanelHeaderControlType,
+  PanelLocation,
+  PanelScope,
+  PanelSize,
+} from '@microsoft/designer-ui';
 import { isNullOrUndefined, SUBGRAPH_TYPES } from '@microsoft/utils-logic-apps';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -312,7 +321,16 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
         }
         togglePanel();
       }}
-      onBlur={() => validateAllParams()}
+      onBlur={(event: React.FocusEvent<PanelBase>) => {
+        // ignore if the focus is moving to a child element, or if the focus is moving to the token picker (so the user is still editing the same panel)
+        if (
+          (event.currentTarget as unknown as Element).contains(event.relatedTarget) ||
+          isTokenPickerElement(event.relatedTarget as HTMLElement)
+        ) {
+          return;
+        }
+        validateAllParams();
+      }}
       trackEvent={handleTrackEvent}
       onCommentChange={(value) => {
         dispatch(setNodeDescription({ nodeId: selectedNode, description: value }));

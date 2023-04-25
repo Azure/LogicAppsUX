@@ -38,6 +38,8 @@ const calloutStyles: Partial<ICalloutContentStyles> = {
 
 export type SearchTextChangedEventHandler = (e: string) => void;
 
+const tokenPickerClassName = 'msla-token-picker';
+
 export interface TokenPickerProps {
   editorId: string;
   labelId: string;
@@ -193,7 +195,7 @@ export function TokenPicker({
               : { maxHeight: '550px', width: '400px' }
           }
         >
-          <div className="msla-token-picker">
+          <div className={tokenPickerClassName}>
             {initialMode ? (
               <TokenPickerHeader fullScreen={fullScreen} closeTokenPicker={closeTokenPicker} setFullScreen={setFullScreen} />
             ) : null}
@@ -263,4 +265,13 @@ export function getWindowDimensions() {
     width,
     height,
   };
+}
+
+export function isTokenPickerElement(element: HTMLElement | null) {
+  for (let e = element; e !== null; e = e.parentElement) {
+    if (e.className.includes(tokenPickerClassName)) {
+      return true;
+    }
+  }
+  return false;
 }
