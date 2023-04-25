@@ -269,7 +269,7 @@ export function getWindowDimensions() {
 
 export function isTokenPickerElement(element: HTMLElement | null) {
   for (let e = element; e !== null; e = e.parentElement) {
-    if (e.className.includes(tokenPickerClassName)) {
+    if (e.className?.includes(tokenPickerClassName)) {
       return true;
     }
   }
