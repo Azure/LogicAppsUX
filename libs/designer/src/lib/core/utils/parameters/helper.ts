@@ -255,7 +255,6 @@ export const getDependentParameters = (
 export function toParameterInfoMap(inputParameters: InputParameter[], stepDefinition?: any): ParameterInfo[] {
   const metadata = stepDefinition && stepDefinition.metadata;
   const result: ParameterInfo[] = [];
-  console.log(inputParameters);
   for (const inputParameter of inputParameters) {
     if (!inputParameter.dynamicSchema) {
       const parameter = createParameterInfo(inputParameter, metadata);

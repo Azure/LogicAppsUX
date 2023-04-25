@@ -249,7 +249,7 @@ const TokenField = ({
           BasePlugins={{ tokens: showTokens }}
           readonly={readOnly}
           getTokenPicker={getTokenPicker}
-          // editorBlur={onValueChange}
+          onChange={onValueChange}
         />
       );
     case 'floatingactionmenu': {

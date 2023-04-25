@@ -46,12 +46,15 @@ export const DropDown = ({
     editor.registerCommand<boolean>(
       CLOSE_DROPDOWN_COMMAND,
       () => {
-        handleClose();
+        if (showDropDown) {
+          handleClose();
+        }
+
         return false;
       },
       COMMAND_PRIORITY_CRITICAL
     );
-  }, [editor]);
+  }, [editor, showDropDown]);
 
   useEffect(() => {
     const button = buttonRef.current;

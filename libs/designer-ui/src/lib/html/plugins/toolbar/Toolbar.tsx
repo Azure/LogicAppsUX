@@ -3,6 +3,7 @@ import clockWiseArrow from '../icons/arrow-clockwise.svg';
 import counterClockWiseArrow from '../icons/arrow-counterclockwise.svg';
 import { BlockFormatDropDown } from './DropdownBlockFormat';
 import { Format } from './Format';
+import { CLOSE_DROPDOWN_COMMAND } from './helper/Dropdown';
 import { FontDropDown, FontDropDownType } from './helper/FontDropDown';
 import { $isListNode, ListNode } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -134,6 +135,7 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
         }}
         disabled={!canUndo || readonly}
         onClick={() => {
+          activeEditor.dispatchCommand(CLOSE_DROPDOWN_COMMAND, undefined);
           activeEditor.dispatchCommand(UNDO_COMMAND, undefined);
         }}
         title={isApple() ? 'Undo (⌘Z)' : 'Undo (Ctrl+Z)'}
@@ -148,6 +150,7 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
         }}
         disabled={!canRedo || readonly}
         onClick={() => {
+          activeEditor.dispatchCommand(CLOSE_DROPDOWN_COMMAND, undefined);
           activeEditor.dispatchCommand(REDO_COMMAND, undefined);
         }}
         title={isApple() ? 'Redo (⌘Y)' : 'Redo (Ctrl+Y)'}

@@ -89,7 +89,6 @@ export const DropDownItems = ({ children, dropDownRef, stopCloseOnClickSelf, onC
           ) {
             return;
           } else {
-            console.log('here');
             onClose();
           }
         }}
