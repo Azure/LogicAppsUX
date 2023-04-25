@@ -186,7 +186,7 @@ export function TokenPicker({
         }}
       >
         <div
-          className="msla-token-picker-container"
+          className="msla-token-picker-container-v3"
           style={
             fullScreen
               ? { height: windowDimensions.height - 100, width: windowDimensions.width - (parseInt(PanelSize.Medium, 10) + 40) }
