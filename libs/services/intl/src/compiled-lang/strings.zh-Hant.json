@@ -966,12 +966,6 @@
       "value": "必要。您需要之值所屬參數的名稱。"
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "只能在編輯步驟的輸入時新增註解。"
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -3061,10 +3055,10 @@
       "value": "(UTC+00:00) 都柏林，愛丁堡，里斯本，倫敦"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "新增註解"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -4056,6 +4050,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) 布魯塞爾，哥本哈根，馬德里，巴黎"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
     }
   ],
   "Twfck/": [
@@ -5182,12 +5182,6 @@
       "value": "必要。要跳過第一個計數物件的集合。"
     }
   ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "刪除註解"
-    }
-  ],
   "d4xMIx": [
     {
       "type": 0,
@@ -5775,12 +5769,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "註解"
     }
   ],
   "iCSHJG": [
@@ -6625,6 +6613,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) 薩爾瓦多"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7688,6 +7682,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
