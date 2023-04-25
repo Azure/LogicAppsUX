@@ -25,8 +25,7 @@ export interface PickerProps {
   files: FileItem[];
   loadingFiles?: boolean;
   onCancel?: () => void;
-  handleFolderNavigation?: () => void;
-  handleTitleSelected?: () => void;
+  handleFolderNavigation?: (selectedObject: any) => void;
 }
 
 export const Picker = ({ visible, onCancel, anchorId, currentPathSegments, files, loadingFiles }: PickerProps) => {
