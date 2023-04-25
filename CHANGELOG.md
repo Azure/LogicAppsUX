@@ -1,18 +1,30 @@
 # Logic Apps Designer
+
+## [2.10.0](https://github.com/Azure/LogicAppsUX/compare/v2.9.1...v2.10.0) (2023-04-25)
+
+### Features
+
+- Add prop to specify whether to display Runtime dropdown and labels ([#2118](https://github.com/Azure/LogicAppsUX/issues/2118)) ([19e4cfe](https://github.com/Azure/LogicAppsUX/commit/19e4cfe081f6f89ba17d3317986f8840b070d711))
+- **designer:** Add invoker connection support on toggle ([#2063](https://github.com/Azure/LogicAppsUX/issues/2063)) ([e6383aa](https://github.com/Azure/LogicAppsUX/commit/e6383aa8a0eac6893594ae17c4a6cb45cc3bb6fc))
+
+### Bug Fixes
+
+- **Data Mapper:** Fix source schema attributes and functions ([#2108](https://github.com/Azure/LogicAppsUX/issues/2108)) ([d146a52](https://github.com/Azure/LogicAppsUX/commit/d146a52445913fcf3a34f7f0b9470f2282cf707e))
+- updating Panel z-Index so that it does not overlap external components ([#2113](https://github.com/Azure/LogicAppsUX/issues/2113)) ([a8ea427](https://github.com/Azure/LogicAppsUX/commit/a8ea427307225d1f5bbbdfdecaf022765b295391))
+- **vscode:** Export url fail error ([#2115](https://github.com/Azure/LogicAppsUX/issues/2115)) ([6001fe1](https://github.com/Azure/LogicAppsUX/commit/6001fe1959bcb3f4a02e7333627f854f43d93701))
+
 ### [2.9.1](https://github.com/Azure/LogicAppsUX/compare/v2.9.0...v2.9.1) (2023-04-24)
 
 ## [2.9.0](https://github.com/Azure/LogicAppsUX/compare/v2.8.1...v2.9.0) (2023-04-23)
 
-
 ### Features
 
-* **designer:** Adding initial data processing layer to support file-folder picker ([#2111](https://github.com/Azure/LogicAppsUX/issues/2111)) ([6216313](https://github.com/Azure/LogicAppsUX/commit/6216313c8864b07f8f8ceda2d0e5c97a0e526479))
-
+- **designer:** Adding initial data processing layer to support file-folder picker ([#2111](https://github.com/Azure/LogicAppsUX/issues/2111)) ([6216313](https://github.com/Azure/LogicAppsUX/commit/6216313c8864b07f8f8ceda2d0e5c97a0e526479))
 
 ### Bug Fixes
 
-* **designer:** Revert my recent changes to `shouldAddForeach` due to double array regression ([#2110](https://github.com/Azure/LogicAppsUX/issues/2110)) ([e4cf418](https://github.com/Azure/LogicAppsUX/commit/e4cf4186687dc27f460c2afb9fb278fe72d4ca8a))
-* **designer:** Update repetition name and index based on node type ([#2100](https://github.com/Azure/LogicAppsUX/issues/2100)) ([20cf577](https://github.com/Azure/LogicAppsUX/commit/20cf57772625dab37f79f1cf6a805c5c096b70cc))
+- **designer:** Revert my recent changes to `shouldAddForeach` due to double array regression ([#2110](https://github.com/Azure/LogicAppsUX/issues/2110)) ([e4cf418](https://github.com/Azure/LogicAppsUX/commit/e4cf4186687dc27f460c2afb9fb278fe72d4ca8a))
+- **designer:** Update repetition name and index based on node type ([#2100](https://github.com/Azure/LogicAppsUX/issues/2100)) ([20cf577](https://github.com/Azure/LogicAppsUX/commit/20cf57772625dab37f79f1cf6a805c5c096b70cc))
 
 ### [2.8.1](https://github.com/Azure/LogicAppsUX/compare/v2.8.0...v2.8.1) (2023-04-22)
 

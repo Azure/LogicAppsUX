@@ -6,7 +6,15 @@ import { isCustomConnector, isBuiltInConnector } from '@microsoft/utils-logic-ap
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
-export const BrowseView = ({ filters, isLoadingOperations }: { filters: Record<string, string>; isLoadingOperations: boolean }) => {
+export const BrowseView = ({
+  filters,
+  isLoadingOperations,
+  displayRuntimeInfo,
+}: {
+  filters: Record<string, string>;
+  isLoadingOperations: boolean;
+  displayRuntimeInfo: boolean;
+}) => {
   const dispatch = useDispatch();
 
   const { data: allConnectors, isLoading } = useAllConnectors();
@@ -46,6 +54,11 @@ export const BrowseView = ({ filters, isLoadingOperations }: { filters: Record<s
   );
 
   return (
-    <BrowseGrid onConnectorSelected={onConnectorCardSelected} connectors={sortedConnectors} isLoading={isLoading || isLoadingOperations} />
+    <BrowseGrid
+      onConnectorSelected={onConnectorCardSelected}
+      connectors={sortedConnectors}
+      isLoading={isLoading || isLoadingOperations}
+      displayRuntimeInfo={displayRuntimeInfo}
+    />
   );
 };
