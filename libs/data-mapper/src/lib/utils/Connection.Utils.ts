@@ -198,6 +198,10 @@ export const applyConnectionValue = (
 };
 
 export const isValidCustomValueByType = (customValue: string, tgtDataType: NormalizedDataType) => {
+  if (tgtDataType === NormalizedDataType.Any) {
+    return true;
+  }
+
   switch (tgtDataType) {
     case NormalizedDataType.String: {
       return customValue.startsWith('"') && customValue.endsWith('"');
@@ -223,10 +227,6 @@ export const isValidCustomValueByType = (customValue: string, tgtDataType: Norma
 
     case NormalizedDataType.Binary: {
       // TODO
-      return true;
-    }
-
-    case NormalizedDataType.Any: {
       return true;
     }
 
