@@ -169,8 +169,8 @@ export const BaseEditor = ({
   };
 
   const openTokenPicker = (mode: TokenPickerMode) => {
-    setTokenPickerMode(mode);
     setInTokenPicker(true);
+    setTokenPickerMode(mode);
   };
 
   const tokenPickerClicked = (b: boolean) => {
