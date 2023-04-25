@@ -966,12 +966,6 @@
       "value": "필수 사항으로, 값을 원하는 매개 변수의 이름입니다."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "단계 입력을 편집하는 동안에만 주석을 추가할 수 있습니다."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -3061,10 +3055,10 @@
       "value": "(UTC+00:00) 더블린, 에든버러, 리스본, 런던"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "주석 추가"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -4056,6 +4050,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) 브뤼셀, 코펜하겐, 마드리드, 파리"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
     }
   ],
   "Twfck/": [
@@ -5178,12 +5178,6 @@
       "value": "필수 항목으로, 첫 번째 Count 개체를 건너뛸 컬렉션입니다."
     }
   ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "주석 삭제"
-    }
-  ],
   "d4xMIx": [
     {
       "type": 0,
@@ -5767,12 +5761,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "메모"
     }
   ],
   "iCSHJG": [
@@ -6613,6 +6601,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) 살바도르"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7672,6 +7666,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [

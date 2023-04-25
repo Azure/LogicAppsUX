@@ -406,11 +406,7 @@ export function getParameterEditorProps(
         ? constants.FILEPICKER_TYPE.FOLDER
         : constants.FILEPICKER_TYPE.FILE;
     const fileFilters = isLegacyDynamicValuesTreeExtension(dynamicValues) ? dynamicValues.extension.parameters['fileFilter'] : undefined;
-    editorOptions = {
-      pickerType,
-      fileFilters,
-      items: undefined,
-    };
+    editorOptions = { pickerType, fileFilters, items: undefined };
     editorViewModel = { displayValue: nodeMetadata?.[value] ?? value, selectedItem: undefined };
   }
 

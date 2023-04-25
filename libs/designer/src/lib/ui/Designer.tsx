@@ -34,6 +34,7 @@ import type { BackgroundProps, NodeChange } from 'reactflow';
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
   panelLocation?: PanelLocation;
+  displayRuntimeInfo?: boolean;
 }
 
 type NodeTypesObj = {
@@ -118,7 +119,7 @@ export const CanvasFinder = (props: CanvasFinderProps) => {
 };
 
 export const Designer = (props: DesignerProps) => {
-  const { backgroundProps, panelLocation } = props;
+  const { backgroundProps, panelLocation, displayRuntimeInfo } = props;
 
   const [nodes, edges, flowSize] = useLayout();
   const isEmpty = useIsGraphEmpty();
@@ -216,7 +217,7 @@ export const Designer = (props: DesignerProps) => {
               hideAttribution: true,
             }}
           >
-            <PanelRoot panelLocation={panelLocation} />
+            <PanelRoot panelLocation={panelLocation} displayRuntimeInfo={displayRuntimeInfo ?? true} />
             {backgroundProps ? <Background {...backgroundProps} /> : null}
           </ReactFlow>
           <div className={`msla-designer-tools ${panelLocation === PanelLocation.Left ? 'msla-designer-tools-left-panel' : ''}`}>
@@ -229,7 +230,6 @@ export const Designer = (props: DesignerProps) => {
           id={'msla-layer-host'}
           style={{
             position: 'absolute',
-            zIndex: 1000000,
             inset: '0px',
             visibility: 'hidden',
           }}

@@ -9,10 +9,11 @@ type OperationGroupDetailViewProps = {
   filters: Record<string, string>;
   onOperationClick: (id: string, apiId?: string) => void;
   isLoading: boolean;
+  displayRuntimeInfo: boolean;
 };
 
 export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) => {
-  const { connector, groupOperations, filters, onOperationClick, isLoading } = props;
+  const { connector, groupOperations, filters, onOperationClick, isLoading, displayRuntimeInfo } = props;
 
   const filterItems = useCallback(
     (data: OperationActionData): boolean =>
@@ -32,6 +33,7 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
       operationActionsData={operationGroupActions}
       onOperationClick={onOperationClick}
       isLoading={isLoading}
+      displayRuntimeInfo={displayRuntimeInfo}
     />
   );
 };
