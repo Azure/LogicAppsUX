@@ -1,5 +1,6 @@
 import type { DynamicallyAddedParameterProps, DynamicallyAddedParameterTypeType, IDynamicallyAddedParameterProperties } from '.';
 import { DynamicallyAddedParameterType } from '.';
+import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import { getIntl } from '@microsoft/intl-logic-apps';
@@ -127,25 +128,25 @@ export function createDynamicallyAddedParameterProperties(
   let type = '';
   switch (itemType) {
     case DynamicallyAddedParameterType.Date:
-      type = 'string';
-      format = itemType.toLowerCase();
-      break;
     case DynamicallyAddedParameterType.Email:
-      type = 'string';
+      type = constants.SWAGGER.TYPE.STRING;
       format = itemType.toLowerCase();
       break;
     case DynamicallyAddedParameterType.Text:
-      type = 'string';
+      type = constants.SWAGGER.TYPE.STRING;
       break;
     case DynamicallyAddedParameterType.File:
-      type = 'object';
-      fileProperties = { contentBytes: { type: 'string', format: 'byte' }, name: { type: 'string' } };
+      type = constants.SWAGGER.TYPE.OBJECT;
+      fileProperties = {
+        contentBytes: { type: constants.SWAGGER.TYPE.STRING, format: constants.SWAGGER.FORMAT.BYTE },
+        name: { type: constants.SWAGGER.TYPE.STRING },
+      };
       break;
     case DynamicallyAddedParameterType.Boolean:
-      type = 'boolean';
+      type = constants.SWAGGER.TYPE.BOOLEAN;
       break;
     case DynamicallyAddedParameterType.Number:
-      type = 'number';
+      type = constants.SWAGGER.TYPE.NUMBER;
       break;
   }
 
