@@ -4,7 +4,7 @@ import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import { guid } from '@microsoft/utils-logic-apps';
+import { generateUniqueName, guid } from '@microsoft/utils-logic-apps';
 
 export type DynamicallyAddedParameterIcon = string;
 
@@ -35,6 +35,78 @@ export function getIconForDynamicallyAddedParameterType(type: DynamicallyAddedPa
       return DynamicallyAddedParameterNumberIcon;
     case DynamicallyAddedParameterType.Date:
       return DynamicallyAddedParameterDateIcon;
+  }
+}
+
+export function getDefaultTitleForDynamicallyAddedParameterType(type: DynamicallyAddedParameterTypeType): string {
+  const intl = getIntl();
+  switch (type) {
+    case DynamicallyAddedParameterType.Text:
+      return intl.formatMessage({
+        defaultMessage: 'Input',
+        description: 'Placeholder title for a newly inserted Text parameter',
+      });
+    case DynamicallyAddedParameterType.Boolean:
+      return intl.formatMessage({
+        defaultMessage: 'Yes/No',
+        description: 'Placeholder title for a newly inserted Boolean parameter',
+      });
+    case DynamicallyAddedParameterType.File:
+      return intl.formatMessage({
+        defaultMessage: 'File Content',
+        description: 'Placeholder title for a newly inserted File parameter',
+      });
+    case DynamicallyAddedParameterType.Email:
+      return intl.formatMessage({
+        defaultMessage: 'Email',
+        description: 'Placeholder title for a newly inserted Email parameter',
+      });
+    case DynamicallyAddedParameterType.Number:
+      return intl.formatMessage({
+        defaultMessage: 'Number',
+        description: 'Placeholder title for a newly inserted Number parameter',
+      });
+    case DynamicallyAddedParameterType.Date:
+      return intl.formatMessage({
+        defaultMessage: 'Trigger date',
+        description: 'Placeholder title for a newly inserted Date parameter',
+      });
+  }
+}
+
+function getDescriptionForDynamicallyAddedParameterType(type: DynamicallyAddedParameterTypeType): string {
+  const intl = getIntl();
+  switch (type) {
+    case DynamicallyAddedParameterType.Text:
+      return intl.formatMessage({
+        defaultMessage: 'Please enter your input',
+        description: 'Placeholder description for a newly inserted Text parameter',
+      });
+    case DynamicallyAddedParameterType.Boolean:
+      return intl.formatMessage({
+        defaultMessage: 'Please select yes or no',
+        description: 'Placeholder description for a newly inserted Boolean parameter',
+      });
+    case DynamicallyAddedParameterType.File:
+      return intl.formatMessage({
+        defaultMessage: 'Please select file or image',
+        description: 'Placeholder description for a newly inserted File parameter',
+      });
+    case DynamicallyAddedParameterType.Email:
+      return intl.formatMessage({
+        defaultMessage: 'Please enter an e-mail address',
+        description: 'Placeholder description for a newly inserted Email parameter',
+      });
+    case DynamicallyAddedParameterType.Number:
+      return intl.formatMessage({
+        defaultMessage: 'Please enter a number',
+        description: 'Placeholder description for a newly inserted Number parameter',
+      });
+    case DynamicallyAddedParameterType.Date:
+      return intl.formatMessage({
+        defaultMessage: 'Please enter or select a date (YYYY-MM-DD)',
+        description: 'Placeholder description for a newly inserted Date parameter',
+      });
   }
 }
 
@@ -122,7 +194,7 @@ export function serialize(props: DynamicallyAddedParameterProps[]): ValueSegment
 
 export function createDynamicallyAddedParameterProperties(
   itemType: DynamicallyAddedParameterTypeType,
-  description: string
+  schemaKey: string
 ): IDynamicallyAddedParameterProperties {
   let format, fileProperties;
   let type = '';
@@ -150,19 +222,37 @@ export function createDynamicallyAddedParameterProperties(
       break;
   }
 
-  const intl = getIntl();
-  const titlePlaceholder = intl.formatMessage({
-    defaultMessage: 'Enter title',
-    description: 'Placeholder for variable name for new dynamically added parameter',
-  });
-
   return {
-    description,
+    description: getDescriptionForDynamicallyAddedParameterType(itemType),
     format,
-    title: titlePlaceholder, // TODO: generate title based on schemaKey
+    title: convertDynamicallyAddedSchemaKeyToTitle(schemaKey, itemType),
     type,
     properties: fileProperties,
     'x-ms-content-hint': itemType,
     'x-ms-dynamically-added': true,
   };
+}
+
+export function generateDynamicParameterKey(
+  parameters: DynamicallyAddedParameterProps[],
+  typeHint: DynamicallyAddedParameterTypeType
+): string {
+  const currentKeys = parameters.map((parameter) => parameter.schemaKey);
+
+  const processedTypeHint = typeHint.toLowerCase().replace(/\s+/g, '');
+  const newTitle = generateUniqueName(processedTypeHint, currentKeys, 1);
+
+  return newTitle.replace(/\s+/g, '_');
+}
+
+function convertDynamicallyAddedSchemaKeyToTitle(name: string, itemType: DynamicallyAddedParameterTypeType): string {
+  const title = getDefaultTitleForDynamicallyAddedParameterType(itemType);
+  let result = title;
+
+  if (name && name.indexOf('_') > -1) {
+    const split = name.split('_');
+    result = `${title} ${split[1]}`;
+  }
+
+  return result;
 }
