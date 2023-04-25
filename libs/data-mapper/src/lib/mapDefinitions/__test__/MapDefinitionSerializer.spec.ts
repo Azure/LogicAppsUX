@@ -25,7 +25,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
       const targetSchema: Schema = targetMockSchema;
       const extendedTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(targetSchema);
 
-      it('Generates header', async () => {
+      it('Generates header', () => {
         const mapDefinition: MapDefinitionEntry = {};
         generateMapDefinitionHeader(mapDefinition, extendedSourceSchema, extendedTargetSchema);
 
@@ -49,7 +49,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
 
       const targetSchemaSortArray = flattenSchemaIntoSortArray(extendedTargetSchema.schemaTreeRoot);
 
-      it('Generates body with passthrough', async () => {
+      it('Generates body with passthrough', () => {
         const sourceNode = extendedSourceSchema.schemaTreeRoot.children[0];
         const targetNode = extendedTargetSchema.schemaTreeRoot.children[0];
         const mapDefinition: MapDefinitionEntry = {};
@@ -98,7 +98,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(employeeChildren[1][1]).toEqual('/ns0:Root/DirectTranslation/EmployeeName');
       });
 
-      it('Generates body with value object', async () => {
+      it('Generates body with value object', () => {
         const sourceNode = extendedSourceSchema.schemaTreeRoot.children[1].children[0];
         const targetNode = extendedTargetSchema.schemaTreeRoot.children[1].children[0];
         const mapDefinition: MapDefinitionEntry = {};
@@ -147,7 +147,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(employeeNameChildren[1][1]).toEqual('/ns0:Root/DataTranslation/Employee/FirstName');
       });
 
-      it('Generates body with a function', async () => {
+      it('Generates body with a function', () => {
         const sourceNode = extendedSourceSchema.schemaTreeRoot.children[0];
         const targetNode = extendedTargetSchema.schemaTreeRoot.children[0];
         const concatFunctionId = createReactFlowFunctionKey(concatFunction);
@@ -215,7 +215,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(employeeChildren[1][1]).toEqual('/ns0:Root/DirectTranslation/EmployeeName');
       });
 
-      it('Generates body with a property conditional', async () => {
+      it('Generates body with a property conditional', () => {
         const sourceNode = extendedSourceSchema.schemaTreeRoot.children[3];
         const targetNode = extendedTargetSchema.schemaTreeRoot.children[4];
         const ifFunctionId = createReactFlowFunctionKey(ifPseudoFunction);
@@ -312,7 +312,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(ifChildren[0][1]).toEqual('/ns0:Root/ConditionalMapping/ItemPrice');
       });
 
-      it('Generates body with an object conditional', async () => {
+      it('Generates body with an object conditional', () => {
         const sourceNode = extendedSourceSchema.schemaTreeRoot.children[3];
         const targetNode = extendedTargetSchema.schemaTreeRoot.children[4];
         const ifFunctionId = createReactFlowFunctionKey(ifPseudoFunction);
@@ -418,7 +418,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(conditionalMappingChildren[1][1]).toEqual('/ns0:Root/ConditionalMapping/ItemQuantity');
       });
 
-      it('Generates body with loop', async () => {
+      it('Generates body with loop', () => {
         const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
         const targetNode = extendedTargetSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
         const mapDefinition: MapDefinitionEntry = {};
@@ -491,7 +491,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(employeeObjectEntries[1][1]).toEqual('Name');
       });
 
-      it('Generates body with child objects loop', async () => {
+      it('Generates body with child objects loop', () => {
         const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find(
           (child) => child.name === 'LoopingWithIndex'
         ) as SchemaNodeExtended;
@@ -562,7 +562,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(dayEntries[0][1]).toEqual('./@Pressure');
       });
 
-      it('Generates body with many to many nested loops', async () => {
+      it('Generates body with many to many nested loops', () => {
         const mockComprehensiveSourceSchema: Schema = comprehensiveSourceSchema;
         const extendedComprehensiveSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveSourceSchema);
 
@@ -671,7 +671,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(simpleChildChildEntries[0][1]).toEqual('SourceDirect');
       });
 
-      it('Generates body with many to one nested loops', async () => {
+      it('Generates body with many to one nested loops', () => {
         const mockComprehensiveSourceSchema: Schema = comprehensiveSourceSchema;
         const extendedComprehensiveSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveSourceSchema);
 
@@ -768,7 +768,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(simpleChildChildEntries[0][1]).toEqual('SourceDirect');
       });
 
-      it('Generates body with function loop', async () => {
+      it('Generates body with function loop', () => {
         const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
         const targetNode = extendedTargetSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
         const concatFunctionId = createReactFlowFunctionKey(concatFunction);
@@ -860,7 +860,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(employeeObjectEntries[1][1]).toEqual('Name');
       });
 
-      it('Generates body with index loop', async () => {
+      it('Generates body with index loop', () => {
         const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
         const targetNode = extendedTargetSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
         const indexFunctionId = createReactFlowFunctionKey(indexPseudoFunction);
@@ -942,7 +942,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(employeeObjectEntries[1][1]).toEqual('Name');
       });
 
-      it('Generates body with index and passthrough loop', async () => {
+      it('Generates body with index and passthrough loop', () => {
         const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
         const targetNode = extendedTargetSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
         const indexFunctionId = createReactFlowFunctionKey(indexPseudoFunction);
@@ -1012,7 +1012,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(employeeObjectEntries[0][1]).toEqual('$a');
       });
 
-      it('Generates body with function and index loop', async () => {
+      it('Generates body with function and index loop', () => {
         const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
         const targetNode = extendedTargetSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
         const indexFunctionId = createReactFlowFunctionKey(indexPseudoFunction);
@@ -1114,7 +1114,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(employeeObjectEntries[1][1]).toEqual('concat(Name, $a)');
       });
 
-      it('Generates body with many to one nested index loops', async () => {
+      it('Generates body with many to one nested index loops', () => {
         const mockComprehensiveSourceSchema: Schema = comprehensiveSourceSchema;
         const extendedComprehensiveSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveSourceSchema);
 
@@ -1245,7 +1245,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(simpleChildChildEntries[0][1]).toEqual('SourceDirect');
       });
 
-      it('Generates body with conditional looping', async () => {
+      it('Generates body with conditional looping', () => {
         const sourceNode = extendedSourceSchema.schemaTreeRoot.children[5].children[0].children[0];
         const targetNode = extendedTargetSchema.schemaTreeRoot.children[6].children[0];
         const ifFunctionId = createReactFlowFunctionKey(ifPseudoFunction);
@@ -1365,7 +1365,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(petProductChildren[0][1]).toEqual('Name');
       });
 
-      it('Generates body with an index and a conditional looping', async () => {
+      it('Generates body with an index and a conditional looping', () => {
         const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find(
           (child) => child.name === 'LoopingWithIndex'
         ) as SchemaNodeExtended;
@@ -1494,7 +1494,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(dayChildren[0][1]).toEqual('./@Pressure');
       });
 
-      it('Generates body with custom value direct index access', async () => {
+      it('Generates body with custom value direct index access', () => {
         const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find(
           (child) => child.name === 'LoopingWithIndex'
         ) as SchemaNodeExtended;
@@ -1576,7 +1576,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(dayChildren[0][1]).toEqual('/ns0:Root/LoopingWithIndex/WeatherReport[1]/@Pressure');
       });
 
-      it('Generates body with an index loop, a conditional and direct index access', async () => {
+      it('Generates body with an index loop, a conditional and direct index access', () => {
         const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find(
           (child) => child.name === 'LoopingWithIndex'
         ) as SchemaNodeExtended;
@@ -1744,7 +1744,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(dayChildren[0][1]).toEqual('/ns0:Root/LoopingWithIndex/WeatherReport[$a]/@Pressure');
       });
 
-      it('Generates body with an index loop and direct index access', async () => {
+      it('Generates body with an index loop and direct index access', () => {
         const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find(
           (child) => child.name === 'LoopingWithIndex'
         ) as SchemaNodeExtended;
@@ -1913,7 +1913,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
       const targetSchema: Schema = targetMockJsonSchema;
       const extendedTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(targetSchema);
 
-      it('Generates header', async () => {
+      it('Generates header', () => {
         const mapDefinition: MapDefinitionEntry = {};
         generateMapDefinitionHeader(mapDefinition, extendedSourceSchema, extendedTargetSchema);
 
@@ -1935,7 +1935,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
 
       const targetSchemaSortArray = flattenSchemaIntoSortArray(extendedTargetSchema.schemaTreeRoot);
 
-      it('Generates body with passthrough', async () => {
+      it('Generates body with passthrough', () => {
         const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
         const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const mapDefinition: MapDefinitionEntry = {};
@@ -1982,7 +1982,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(targetNode2ParentObject[targetNode2.name]).toEqual(sourceNode2.key);
       });
 
-      it('Generates body with a function', async () => {
+      it('Generates body with a function', () => {
         const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
         const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const concatFunctionId = createReactFlowFunctionKey(concatFunction);
@@ -2049,7 +2049,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(targetNode2ParentObject[targetNode2.name]).toEqual(sourceNode2.key);
       });
 
-      it('Generates body with a property conditional', async () => {
+      it('Generates body with a property conditional', () => {
         const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
         const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const ifFunctionId = createReactFlowFunctionKey(ifPseudoFunction);
@@ -2134,7 +2134,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(ifObject[targetNode2.name]).toEqual('"Good"');
       });
 
-      it('Generates body with an object conditional', async () => {
+      it('Generates body with an object conditional', () => {
         const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
         const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const ifFunctionId = createReactFlowFunctionKey(ifPseudoFunction);
@@ -2220,7 +2220,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(isStatementBadObject[targetNode1.name]).toEqual(sourceNode1.key);
       });
 
-      it('Generates body with loop', async () => {
+      it('Generates body with loop', () => {
         const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
         const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const mapDefinition: MapDefinitionEntry = {};
@@ -2228,11 +2228,13 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
 
         const sourceLoopNode = rootSourceNode.children[20];
         const sourceArrayItemNode = sourceLoopNode.children[0];
-        const sourceArrayItemPropNode = sourceArrayItemNode.children[0];
+        const sourceArrayItemPropNode1 = sourceArrayItemNode.children[0];
+        const sourceArrayItemPropNode2 = sourceArrayItemNode.children[1];
 
         const targetLoopNode = rootTargetNode.children[3];
         const targetArrayItemNode = targetLoopNode.children[0];
-        const targetArrayItemPropNode = targetArrayItemNode.children[0];
+        const targetArrayItemPropNode1 = targetArrayItemNode.children[0];
+        const targetArrayItemPropNode2 = targetArrayItemNode.children[1];
 
         const sourceNode1 = rootSourceNode.children[0].children[0];
         const targetNode1 = rootTargetNode.children[0];
@@ -2259,12 +2261,22 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         });
 
         applyConnectionValue(connections, {
-          targetNode: targetArrayItemPropNode,
-          targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemPropNode.key, SchemaType.Target),
+          targetNode: targetArrayItemPropNode1,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemPropNode1.key, SchemaType.Target),
           findInputSlot: true,
           input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source),
-            node: sourceArrayItemPropNode,
+            reactFlowKey: addReactFlowPrefix(sourceArrayItemPropNode1.key, SchemaType.Source),
+            node: sourceArrayItemPropNode1,
+          },
+        });
+
+        applyConnectionValue(connections, {
+          targetNode: targetArrayItemPropNode2,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemPropNode2.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(sourceArrayItemPropNode2.key, SchemaType.Source),
+            node: sourceArrayItemPropNode2,
           },
         });
 
@@ -2282,10 +2294,11 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(actualForLoopObject.length).toEqual(1);
 
         const arrayElement = actualForLoopObject[0] as MapDefinitionEntry;
-        expect(arrayElement[targetArrayItemPropNode.name]).toEqual(sourceArrayItemPropNode.qName);
+        expect(arrayElement[targetArrayItemPropNode1.name]).toEqual(sourceArrayItemPropNode1.qName);
+        expect(arrayElement[targetArrayItemPropNode2.name]).toEqual(sourceArrayItemPropNode2.qName);
       });
 
-      it('Generates body with child objects loop', async () => {
+      it('Generates body with child objects loop', () => {
         const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
         const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const mapDefinition: MapDefinitionEntry = {};
@@ -2293,11 +2306,13 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
 
         const sourceLoopNode = rootSourceNode.children[16].children[0];
         const sourceLoopChildObjectNode = sourceLoopNode.children[0];
-        const sourceLoopChildObjectPropNode = sourceLoopChildObjectNode.children[0].children[1];
+        const sourceLoopChildObjectPropNode1 = sourceLoopChildObjectNode.children[0].children[1];
+        const sourceLoopChildObjectPropNode2 = sourceLoopChildObjectNode.children[0].children[2];
 
         const targetLoopNode = rootTargetNode.children[13].children[0];
         const targetLoopChildObjectNode = targetLoopNode.children[0];
-        const targetLoopChildObjectPropNode = targetLoopChildObjectNode.children[0];
+        const targetLoopChildObjectPropNode1 = targetLoopChildObjectNode.children[0];
+        const targetLoopChildObjectPropNode2 = targetLoopChildObjectNode.children[1];
 
         // Add unrelated node
         const sourceNode1 = rootSourceNode.children[0].children[0];
@@ -2335,12 +2350,22 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         });
 
         applyConnectionValue(connections, {
-          targetNode: targetLoopChildObjectPropNode,
-          targetNodeReactFlowKey: addReactFlowPrefix(targetLoopChildObjectPropNode.key, SchemaType.Target),
+          targetNode: targetLoopChildObjectPropNode1,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetLoopChildObjectPropNode1.key, SchemaType.Target),
           findInputSlot: true,
           input: {
-            reactFlowKey: addReactFlowPrefix(sourceLoopChildObjectPropNode.key, SchemaType.Source),
-            node: sourceLoopChildObjectPropNode,
+            reactFlowKey: addReactFlowPrefix(sourceLoopChildObjectPropNode1.key, SchemaType.Source),
+            node: sourceLoopChildObjectPropNode1,
+          },
+        });
+
+        applyConnectionValue(connections, {
+          targetNode: targetLoopChildObjectPropNode2,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetLoopChildObjectPropNode2.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(sourceLoopChildObjectPropNode2.key, SchemaType.Source),
+            node: sourceLoopChildObjectPropNode2,
           },
         });
 
@@ -2359,11 +2384,15 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
 
         const arrayElement = actualForLoopObject[0] as MapDefinitionEntry;
         const prop1Object = arrayElement[targetLoopChildObjectNode.name] as MapDefinitionEntry;
-        const telNumberObject = prop1Object[targetLoopChildObjectPropNode.name] as MapDefinitionEntry;
-        expect(telNumberObject).toEqual(sourceLoopChildObjectPropNode.qName);
+
+        const telNumberObject = prop1Object[targetLoopChildObjectPropNode1.name] as MapDefinitionEntry;
+        expect(telNumberObject).toEqual(sourceLoopChildObjectPropNode1.qName);
+
+        const extObject = prop1Object[targetLoopChildObjectPropNode2.name] as MapDefinitionEntry;
+        expect(extObject).toEqual(sourceLoopChildObjectPropNode2.qName);
       });
 
-      it('Generates body with many to many nested loops', async () => {
+      it('Generates body with many to many nested loops', () => {
         const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
         const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const mapDefinition: MapDefinitionEntry = {};
@@ -2446,7 +2475,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(innerArrayElement[targetInnerArrayItemPropNode.qName]).toEqual(sourceInnerArrayItemPropNode.name);
       });
 
-      it('Generates body with many to one nested loops', async () => {
+      it('Generates body with many to one nested loops', () => {
         const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
         const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const mapDefinition: MapDefinitionEntry = {};
@@ -2525,7 +2554,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(innerArrayElement[targetArrayItemPropNode.qName]).toEqual(sourceInnerArrayItemPropNode.name);
       });
 
-      it('Generates body with function loop', async () => {
+      it('Generates body with function loop', () => {
         const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
         const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const addFunctionId = createReactFlowFunctionKey(addFunction);
@@ -2613,7 +2642,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(arrayElement[targetArrayItemPropNode.name]).toEqual('add(targetQuantity, rate)');
       });
 
-      it('Generates body with index loop', async () => {
+      it('Generates body with index loop', () => {
         const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
         const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const indexFunctionId = createReactFlowFunctionKey(indexPseudoFunction);
@@ -2689,7 +2718,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(arrayElement[targetArrayItemPropNode.name]).toEqual(sourceArrayItemPropNode.qName);
       });
 
-      it('Generates body with index and passthrough loop', async () => {
+      it('Generates body with index and passthrough loop', () => {
         const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
         const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const indexFunctionId = createReactFlowFunctionKey(indexPseudoFunction);
@@ -2777,7 +2806,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(arrayElement[targetArrayItemPropNode2.name]).toEqual('$a');
       });
 
-      it('Generates body with function and index loop', async () => {
+      it('Generates body with function and index loop', () => {
         const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
         const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const indexFunctionId = createReactFlowFunctionKey(indexPseudoFunction);
@@ -2886,7 +2915,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(arrayElement[targetArrayItemPropNode2.name]).toEqual('add(targetQuantity, $a)');
       });
 
-      it('Generates body with many to one nested index loops', async () => {
+      it('Generates body with many to one nested index loops', () => {
         const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
         const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const outerLoopIndexFunctionId = createReactFlowFunctionKey(indexPseudoFunction);
@@ -2998,7 +3027,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(innerArrayElement[targetArrayItemPropNode2.qName]).toEqual('$a');
       });
 
-      it('Generates body with conditional looping', async () => {
+      it('Generates body with conditional looping', () => {
         const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
         const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const ifFunctionId = createReactFlowFunctionKey(ifPseudoFunction);
@@ -3105,7 +3134,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(arrayElement[targetArrayItemPropNode.name]).toEqual(sourceArrayItemPropNode.qName);
       });
 
-      it('Generates body with an index and a conditional looping', async () => {
+      it('Generates body with an index and a conditional looping', () => {
         const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
         const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const ifFunctionId = createReactFlowFunctionKey(ifPseudoFunction);
@@ -3224,7 +3253,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(arrayElement[targetArrayItemPropNode.name]).toEqual(sourceArrayItemPropNode.qName);
       });
 
-      it('Generates body with custom value direct index access', async () => {
+      it('Generates body with custom value direct index access', () => {
         const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
         const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const directAccessId = createReactFlowFunctionKey(directAccessPseudoFunction);
@@ -3297,7 +3326,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(rootObject[targetNode1.name]).toEqual('/root/Strings/*[1]/String');
       });
 
-      it('Generates body with an index loop, a conditional and direct index access', async () => {
+      it('Generates body with an index loop, a conditional and direct index access', () => {
         const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
         const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const directAccessId = createReactFlowFunctionKey(directAccessPseudoFunction);
@@ -3447,7 +3476,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(arrayElement[targetArrayItemPropNode.name]).toEqual('/root/Nums/*[$a]/Num');
       });
 
-      it('Generates body with an index loop and direct index access', async () => {
+      it('Generates body with an index loop and direct index access', () => {
         const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
         const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
         const directAccessId = createReactFlowFunctionKey(directAccessPseudoFunction);
