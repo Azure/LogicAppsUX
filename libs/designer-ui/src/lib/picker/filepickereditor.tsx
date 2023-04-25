@@ -4,6 +4,7 @@ import { Change } from '../editor/base/plugins/Change';
 import type { ValueSegment } from '../editor/models/parameter';
 import type { PickerTitleInfo } from './models/PickerInfo';
 import { Picker } from './picker';
+import type { FileItem } from './pickerItem';
 import type { IBreadcrumbItem, IIconProps, ITooltipHostStyles } from '@fluentui/react';
 import { TooltipHost, IconButton } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
@@ -12,17 +13,22 @@ import { useIntl } from 'react-intl';
 
 export * from './models/PickerInfo';
 
-export interface PickerCallbackHandler {
-  onShowPicker: () => void;
-  onFolderNavigated: () => void;
-  onTitleSelected: () => void;
+export interface PickerCallbackHandlers {
+  getFileSourceName: () => string;
+  getDisplayNameFromSelectedItem: (selectedItem: any) => string;
+  getValueFromSelectedItem: (selectedItem: any) => string;
+  onFolderNavigation: (selectedItem: any | undefined) => void;
 }
 
 export interface FilePickerEditorProps extends BaseEditorProps {
+  type: string;
+  items: FileItem[] | undefined;
+  displayValue?: string;
+  fileFilters?: string[];
   isLoading?: boolean;
-  titleSegments?: PickerTitleInfo[];
+  errorDetails?: { message: string };
   editorBlur?: ChangeHandler;
-  pickerCallback?: PickerCallbackHandler;
+  pickerCallbacks: PickerCallbackHandlers;
 }
 
 const folderIcon: IIconProps = { iconName: 'FolderOpen' };
@@ -32,32 +38,34 @@ const calloutProps = { gapSpace: 0 };
 export const FilePickerEditor = ({
   initialValue,
   isLoading = false,
-  titleSegments,
   editorBlur,
   onChange,
-  pickerCallback,
+  pickerCallbacks,
   ...baseEditorProps
 }: FilePickerEditorProps) => {
   const [value, setValue] = useState(initialValue);
   const [showPicker, setShowPicker] = useState(false);
+  const [titleSegments] = useState<PickerTitleInfo[] | undefined>();
   const pickerIconId = useId();
   const intl = useIntl();
 
-  const { onFolderNavigated, onTitleSelected, onShowPicker } = pickerCallback ?? {};
+  const { onFolderNavigation: onFolderNavigated } = pickerCallbacks;
 
   const openTokenPicker = () => {
     if (!showPicker) {
-      onShowPicker?.();
+      onFolderNavigated?.(/* selectedItem */ undefined);
       setShowPicker(true);
     }
   };
 
   const onValueChange = (newValue: ValueSegment[]): void => {
     setValue(newValue);
+    // TODO: Make sure to update displayValue and selectedItem in viewModel.
     onChange?.({ value: newValue, viewModel: { hideErrorMessage: true } });
   };
   const handleBlur = () => {
     editorBlur?.({ value: value });
+    // TODO: Make sure to update displayValue and selectedItem in viewModel.
     onChange?.({ value: value, viewModel: { hideErrorMessage: false } });
   };
 
@@ -91,7 +99,6 @@ export const FilePickerEditor = ({
         files={[]}
         onCancel={() => setShowPicker(false)}
         handleFolderNavigation={onFolderNavigated}
-        handleTitleSelected={onTitleSelected}
       />
     </div>
   );

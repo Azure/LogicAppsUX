@@ -16,11 +16,11 @@ import { getConnectionReference } from '../../../../core/utils/connectors/connec
 import { isRootNodeInGraph } from '../../../../core/utils/graph';
 import { addForeachToNode } from '../../../../core/utils/loops';
 import {
+  loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
   shouldUseParameterInGroup,
   updateParameterAndDependencies,
 } from '../../../../core/utils/parameters/helper';
-import { getFilePickerCallbacks } from '../../../../core/utils/parameters/picker';
 import type { TokenGroup } from '../../../../core/utils/tokens';
 import { createValueSegmentFromToken, getExpressionTokenSections, getOutputTokenSections } from '../../../../core/utils/tokens';
 import { getAllVariables, getAvailableVariables } from '../../../../core/utils/variables';
@@ -203,6 +203,38 @@ const ParameterSection = ({
     }
   };
 
+  const getPickerCallbacks = (parameter: ParameterInfo) => ({
+    getFileSourceName: (): string => {
+      return displayNameResult.result;
+    },
+    getDisplayNameFromSelectedItem: (selectedItem: any): string => {
+      const dependency = dependencies.inputs[parameter.parameterKey];
+      const propertyPath = dependency.filePickerInfo?.titlePath ?? dependency.filePickerInfo?.browse.itemTitlePath;
+      return selectedItem[propertyPath ?? ''];
+    },
+    getValueFromSelectedItem: (selectedItem: any): string => {
+      const dependency = dependencies.inputs[parameter.parameterKey];
+      const propertyPath = dependency.filePickerInfo?.valuePath ?? dependency.filePickerInfo?.browse.itemValuePath;
+      return selectedItem[propertyPath ?? ''];
+    },
+    onFolderNavigation: (selectedItem: any | undefined): void => {
+      loadDynamicTreeItemsForParameter(
+        selectedItem,
+        nodeId,
+        group.id,
+        parameter.id,
+        operationInfo,
+        connectionReference,
+        nodeInputs,
+        nodeMetadata,
+        dependencies,
+        true /* showErrorWhenNotReady */,
+        dispatch,
+        idReplacements
+      );
+    },
+  });
+
   const getValueSegmentFromToken = async (
     parameterId: string,
     token: OutputToken,
@@ -266,8 +298,6 @@ const ParameterSection = ({
       const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel, conditionalVisibility };
       const { editor, editorOptions } = getEditorAndOptions(param, upstreamNodeIds ?? [], variables);
 
-      const isCodeEditor = editor?.toLowerCase() === 'code';
-
       const remappedValues: ValueSegment[] = value.map((v: ValueSegment) => {
         if (v.type !== ValueSegmentType.TOKEN) return v;
         const oldId = v.token?.actionName ?? '';
@@ -299,8 +329,7 @@ const ParameterSection = ({
           validationErrors,
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
-          pickerCallback: () =>
-            getFilePickerCallbacks(nodeId, group.id, param, displayNameResult.result, operationInfo, connectionReference, dispatch),
+          pickerCallbacks: getPickerCallbacks(param),
           getTokenPicker: (
             editorId: string,
             labelId: string,
@@ -314,7 +343,7 @@ const ParameterSection = ({
               editorId,
               labelId,
               tokenPickerMode,
-              isCodeEditor,
+              editor?.toLowerCase() === 'code',
               closeTokenPicker,
               tokenPickerClicked,
               tokenClickedCallback

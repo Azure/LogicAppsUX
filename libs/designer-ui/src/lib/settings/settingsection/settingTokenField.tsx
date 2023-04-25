@@ -10,6 +10,7 @@ import type { CallbackHandler, ChangeHandler, GetTokenPickerHandler } from '../.
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { FloatingActionMenu } from '../../floatingactionmenu';
+import type { PickerCallbackHandlers } from '../../picker/filepickereditor';
 import { FilePickerEditor } from '../../picker/filepickereditor';
 import { QueryBuilderEditor } from '../../querybuilder';
 import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
@@ -42,6 +43,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   isCallback?: boolean;
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
+  pickerCallbacks?: PickerCallbackHandlers;
   getTokenPicker: GetTokenPickerHandler;
   validationErrors?: string[];
   hideValidationErrors?: ChangeHandler;
@@ -78,6 +80,7 @@ const TokenField = ({
   showTokens,
   label,
   labelId,
+  pickerCallbacks,
   onValueChange,
   onComboboxMenuOpen,
   hideValidationErrors,
@@ -115,6 +118,7 @@ const TokenField = ({
           placeholder={placeholder}
         />
       );
+
     case 'combobox':
       return (
         <Combobox
@@ -225,6 +229,7 @@ const TokenField = ({
           onChange={onValueChange}
         />
       );
+
     case 'filepicker':
       return (
         <FilePickerEditor
@@ -233,13 +238,19 @@ const TokenField = ({
           BasePlugins={{ tokens: showTokens }}
           readonly={readOnly}
           initialValue={value}
-          titleSegments={dropdownOptions}
+          displayValue={editorViewModel.displayValue}
+          type={editorOptions.pickerType}
+          items={editorOptions.items}
+          fileFilters={editorOptions.fileFilters}
+          pickerCallbacks={pickerCallbacks as PickerCallbackHandlers}
           isLoading={isLoading}
+          errorDetails={errorDetails}
           editorBlur={onValueChange}
           getTokenPicker={getTokenPicker}
           onChange={hideValidationErrors}
         />
       );
+
     case 'floatingactionmenu': {
       return <FloatingActionMenu supportedTypes={editorOptions?.supportedTypes} initialValue={value} onChange={onValueChange} />;
     }
