@@ -14,10 +14,6 @@ export function getMenuItemsForDynamicAddedParameters(supportedTypes: any): Floa
       type,
       label: intl.formatMessage({ defaultMessage: 'Text', description: 'Label for Text type dynamically added parameter' }),
       icon: getIconForDynamicallyAddedParameterType(type),
-      placeholder: intl.formatMessage({
-        defaultMessage: 'Please enter your input',
-        description: 'Placeholder text shown for a newly inserted Text parameter',
-      }),
     });
   }
 
@@ -27,10 +23,6 @@ export function getMenuItemsForDynamicAddedParameters(supportedTypes: any): Floa
       type,
       label: intl.formatMessage({ defaultMessage: 'Yes/No', description: 'Label for Bool type dynamically added parameter' }),
       icon: getIconForDynamicallyAddedParameterType(type),
-      placeholder: intl.formatMessage({
-        defaultMessage: 'Please select yes or no',
-        description: 'Placeholder text shown for a newly inserted Boolean parameter',
-      }),
     });
   }
 
@@ -40,10 +32,6 @@ export function getMenuItemsForDynamicAddedParameters(supportedTypes: any): Floa
       type,
       label: intl.formatMessage({ defaultMessage: 'File', description: 'Label for File type dynamically added parameter' }),
       icon: getIconForDynamicallyAddedParameterType(type),
-      placeholder: intl.formatMessage({
-        defaultMessage: 'Please select file or image',
-        description: 'Placeholder text shown for a newly inserted File parameter',
-      }),
     });
   }
 
@@ -53,10 +41,6 @@ export function getMenuItemsForDynamicAddedParameters(supportedTypes: any): Floa
       type,
       label: intl.formatMessage({ defaultMessage: 'Email', description: 'Label for Email type dynamically added parameter' }),
       icon: getIconForDynamicallyAddedParameterType(type),
-      placeholder: intl.formatMessage({
-        defaultMessage: 'Please enter an e-mail address',
-        description: 'Placeholder text shown for a newly inserted Email parameter',
-      }),
     });
   }
 
@@ -66,10 +50,6 @@ export function getMenuItemsForDynamicAddedParameters(supportedTypes: any): Floa
       type,
       label: intl.formatMessage({ defaultMessage: 'Number', description: 'Label for Number type dynamically added parameter' }),
       icon: getIconForDynamicallyAddedParameterType(type),
-      placeholder: intl.formatMessage({
-        defaultMessage: 'Please enter a number',
-        description: 'Placeholder text shown for a newly inserted Number parameter',
-      }),
     });
   }
 
@@ -79,10 +59,6 @@ export function getMenuItemsForDynamicAddedParameters(supportedTypes: any): Floa
       type,
       label: intl.formatMessage({ defaultMessage: 'Date', description: 'Label for Date type dynamically added parameter' }),
       icon: getIconForDynamicallyAddedParameterType(DynamicallyAddedParameterType.Date),
-      placeholder: intl.formatMessage({
-        defaultMessage: 'Please enter or select a date (YYYY-MM-DD)',
-        description: 'Placeholder text shown for a newly inserted Date parameter',
-      }),
     });
   }
 
