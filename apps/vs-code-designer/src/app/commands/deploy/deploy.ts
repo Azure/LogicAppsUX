@@ -79,10 +79,13 @@ async function deploy(
   ext.deploymentFolderPath = originalDeployFsPath;
 
   const node: SlotTreeItem = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () =>
-    ext.rgApi.pickAppResource(context, {
-      filter: logicAppFilter,
-      expectedChildContextValue: expectedContextValue,
-    })
+    ext.rgApi.pickAppResource(
+      { ...context, suppressCreatePick: false },
+      {
+        filter: logicAppFilter,
+        expectedChildContextValue: expectedContextValue,
+      }
+    )
   );
 
   const nodeKind = node.site.kind && node.site.kind.toLowerCase();
