@@ -50,14 +50,14 @@ export class ExpressionParser {
     },
   ];
 
-  public static parseExpression(expression: string, isAliasPathParsingEnabled: boolean): Expression {
+  public static parseExpression(expression: string, isAliasPathParsingEnabled = false): Expression {
     const scanner = new ExpressionScanner(expression);
     const parsedExpression = ExpressionParser._parseExpressionRecursively(scanner, 0, isAliasPathParsingEnabled);
     scanner.getTokenForTypeAndValue(ExpressionTokenType.EndOfData);
     return parsedExpression;
   }
 
-  public static parseTemplateExpression(expression: string, isAliasPathParsingEnabled: boolean): Expression {
+  public static parseTemplateExpression(expression: string, isAliasPathParsingEnabled = false): Expression {
     if (!isTemplateExpression(expression)) {
       throw new ParserException(ExpressionExceptionCode.UNRECOGNIZED_EXPRESSION, ExpressionExceptionCode.UNRECOGNIZED_EXPRESSION);
     }

@@ -87,7 +87,7 @@ export class ValueSegmentConvertor {
     } else {
       const value = JSON.parse(section);
       if (isTemplateExpression(value)) {
-        const expression = ExpressionParser.parseTemplateExpression(value, /*isAliasPathParsingEnabled*/ false);
+        const expression = ExpressionParser.parseTemplateExpression(value);
         const segments = this._convertTemplateExpressionToValueSegments(expression);
 
         // Note: If an non-interpolated expression is turned into a signle TOKEN, we don't surround with double quote. Otherwise,
@@ -114,7 +114,7 @@ export class ValueSegmentConvertor {
 
   private _convertStringToValueSegments(value: string): ValueSegment[] {
     if (isTemplateExpression(value)) {
-      const expression = ExpressionParser.parseTemplateExpression(value, /*isAliasPathParsingEnabled*/ false);
+      const expression = ExpressionParser.parseTemplateExpression(value);
       return this._convertTemplateExpressionToValueSegments(expression);
     } else {
       return [this._createLiteralValueSegment(value)];

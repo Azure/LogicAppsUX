@@ -318,7 +318,7 @@ const getSplitOnArrayName = (splitOnValue: string): string | undefined => {
   if (isTemplateExpression(splitOnValue)) {
     try {
       // TODO: Might require aliasing path parsing support
-      const parsedValue = ExpressionParser.parseTemplateExpression(splitOnValue, /*isAliasPathParsingEnabled*/ false);
+      const parsedValue = ExpressionParser.parseTemplateExpression(splitOnValue);
       if (isSupportedSplitOnExpression(parsedValue)) {
         const { dereferences } = parsedValue as ExpressionFunction;
         return !dereferences.length
