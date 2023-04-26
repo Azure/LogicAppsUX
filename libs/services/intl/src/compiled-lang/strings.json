@@ -35,6 +35,12 @@
       "value": "Select this if you are configuring an on-prem connection"
     }
   ],
+  "+W2vTp": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -977,12 +983,6 @@
       "value": "Required. The name of the parameter whose values you want."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "Comments can only be added while editing the inputs of a step."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1123,12 +1123,6 @@
     {
       "type": 0,
       "value": "(UTC+08:45) Eucla"
-    }
-  ],
-  "6H3oG1": [
-    {
-      "type": 0,
-      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "6OSgRP": [
@@ -1865,6 +1859,12 @@
       "value": "(UTC-05:00) Havana"
     }
   ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Number"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1923,6 +1923,12 @@
     {
       "type": 0,
       "value": "Credential Type"
+    }
+  ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "Cy9qeQ": [
@@ -1999,12 +2005,6 @@
     {
       "type": 0,
       "value": "Select a value"
-    }
-  ],
-  "DOf1/I": [
-    {
-      "type": 0,
-      "value": "Please enter your input"
     }
   ],
   "DWd9vy": [
@@ -2205,6 +2205,12 @@
       "value": "(UTC-05:00) Eastern Time (US & Canada)"
     }
   ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
+    }
+  ],
   "Ex4U46": [
     {
       "type": 0,
@@ -2227,12 +2233,6 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Irkutsk"
-    }
-  ],
-  "F51kU8": [
-    {
-      "type": 0,
-      "value": "Please enter a number"
     }
   ],
   "F9dR1Q": [
@@ -2513,6 +2513,12 @@
       "value": "Array"
     }
   ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "File Content"
+    }
+  ],
   "H17jEE": [
     {
       "type": 0,
@@ -2733,12 +2739,6 @@
     {
       "type": 0,
       "value": "No properties"
-    }
-  ],
-  "Iwi+x0": [
-    {
-      "type": 0,
-      "value": "Please select yes or no"
     }
   ],
   "J/Kz1j": [
@@ -3105,10 +3105,10 @@
       "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "Add a comment"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -3315,12 +3315,6 @@
       "value": "Please select an identity"
     }
   ],
-  "Nro0qr": [
-    {
-      "type": 0,
-      "value": "Please enter an e-mail address"
-    }
-  ],
   "NvANon": [
     {
       "type": 0,
@@ -3433,12 +3427,6 @@
     {
       "type": 0,
       "value": "Returns the results from the top-level actions in the specified scoped action, such as a For_each, Until, or Scope action."
-    }
-  ],
-  "OcnU0i": [
-    {
-      "type": 0,
-      "value": "Please select file or image"
     }
   ],
   "OdNhwc": [
@@ -3919,6 +3907,12 @@
       "value": "Required. The name of the action with a form-data or form-encoded response."
     }
   ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
+    }
+  ],
   "Sh10cw": [
     {
       "type": 0,
@@ -4115,6 +4109,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
     }
   ],
   "Twfck/": [
@@ -4435,12 +4435,6 @@
       "value": "Required. The name of the new property."
     }
   ],
-  "W7sa4b": [
-    {
-      "type": 0,
-      "value": "Enter title"
-    }
-  ],
   "WGwH45": [
     {
       "type": 0,
@@ -4743,6 +4737,12 @@
     {
       "type": 0,
       "value": "Enter Pfx"
+    }
+  ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Yes/No"
     }
   ],
   "YaFjJQ": [
@@ -5237,12 +5237,6 @@
       "value": "Required. The collection to skip the first Count objects from."
     }
   ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "Delete comment"
-    }
-  ],
   "d4xMIx": [
     {
       "type": 0,
@@ -5357,6 +5351,12 @@
     {
       "type": 0,
       "value": "timed out"
+    }
+  ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "e00zot": [
@@ -5491,6 +5491,12 @@
       "value": "Paging count exceeds maximum value"
     }
   ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5539,6 +5545,12 @@
     {
       "type": 0,
       "value": "Ignored"
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "g0a4Qe": [
@@ -5841,12 +5853,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "Comment"
     }
   ],
   "iCSHJG": [
@@ -6693,6 +6699,12 @@
       "value": "(UTC-03:00) Salvador"
     }
   ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
+    }
+  ],
   "ox2Ou7": [
     {
       "type": 0,
@@ -7483,6 +7495,12 @@
       "value": "Creates an array from the parameters"
     }
   ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Trigger date"
+    }
+  ],
   "v39HKj": [
     {
       "type": 0,
@@ -7767,6 +7785,12 @@
       "value": "Status Code"
     }
   ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
+    }
+  ],
   "xC1zg3": [
     {
       "type": 0,
@@ -7927,6 +7951,12 @@
     {
       "type": 0,
       "value": "Add field"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "yxsn7s": [

@@ -2,7 +2,7 @@ import Constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
-import { initEmptyConnectionMap } from '../../state/connection/connectionSlice';
+import { addInvokerSupport, initEmptyConnectionMap } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { updateNodeSettings, initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
@@ -203,7 +203,22 @@ const initializeOperationDetails = async (
   // Re-update settings after we have valid operation data
   const rootNodeId = getRootNodeDetails(state.workflow, connectorId);
   const operation = getState().workflow.operations[nodeId];
-  const settings = getOperationSettings(isTrigger, operationInfo, initData.nodeOutputs, manifest, swagger, operation, rootNodeId);
+
+  const connectionReferences = state.connections.connectionReferences;
+  if (!state.connections.connectionReferences) {
+    dispatch(addInvokerSupport({ connectionReferences }));
+  }
+  const settings = getOperationSettings(
+    isTrigger,
+    operationInfo,
+    initData.nodeOutputs,
+    manifest,
+    swagger,
+    operation,
+    rootNodeId,
+    state.connections.connectionReferences,
+    dispatch
+  );
   dispatch(updateNodeSettings({ id: nodeId, settings }));
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);

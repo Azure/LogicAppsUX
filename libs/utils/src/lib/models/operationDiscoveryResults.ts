@@ -35,6 +35,7 @@ export interface SomeKindOfAzureOperationDiscovery {
   summary: string;
   swaggerOperationId?: string;
   environmentBadge?: Badge;
+  isCustomApi?: boolean;
   isChunkingSupported?: boolean;
   pageable: boolean;
   isWebhook: boolean;
@@ -61,6 +62,7 @@ export interface BuiltInOperation {
   iconUri: string;
   trigger?: string;
   capabilities?: string[];
+  isCustomApi?: boolean;
 }
 
 export interface DiscoveryOperation<TData extends DiscoveryResultTypes> {
