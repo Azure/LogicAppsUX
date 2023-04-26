@@ -3,7 +3,7 @@ import type { AppDispatch } from '../../../core';
 import { updateNodeConnection } from '../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
-import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useIsXrmConnectionReferenceMode, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, selectPanelTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useNodeConnectionId } from '../../../core/state/selectors/actionMetadataSelector';
@@ -23,6 +23,7 @@ export const SelectConnectionTab = () => {
   const selectedNodeId = useSelectedNodeId();
   const currentConnectionId = useNodeConnectionId(selectedNodeId);
   const isMonitoringView = useMonitoringView();
+  const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
 
   const hideConnectionTabs = useCallback(() => {
     dispatch(showDefaultTabs({ isMonitoringView }));
@@ -86,15 +87,18 @@ export const SelectConnectionTab = () => {
       saveSelectionCallback={saveSelectionCallback}
       cancelSelectionCallback={cancelSelectionCallback}
       createConnectionCallback={createConnectionCallback}
+      isXrmConnectionReferenceMode={!!isXrmConnectionReferenceMode}
     />
   );
 };
 
-export const selectConnectionTab: PanelTab = {
-  title: 'Select Connection',
-  name: constants.PANEL_TAB_NAMES.CONNECTION_SELECTOR,
-  description: 'Select Connection Tab',
-  visible: true,
-  content: <SelectConnectionTab />,
-  order: 0,
-};
+export function getSelectConnectionTab(title: string): PanelTab {
+  return {
+    title: title,
+    name: constants.PANEL_TAB_NAMES.CONNECTION_SELECTOR,
+    description: 'Select Connection Tab',
+    visible: true,
+    content: <SelectConnectionTab />,
+    order: 0,
+  };
+}

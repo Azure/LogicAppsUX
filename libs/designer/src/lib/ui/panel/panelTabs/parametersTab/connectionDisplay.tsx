@@ -1,5 +1,6 @@
 import constants from '../../../../common/constants';
 import { useIsOperationMissingConnection } from '../../../../core/state/connection/connectionSelector';
+import { useIsXrmConnectionReferenceMode } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import { isolateTab } from '../../../../core/state/panel/panelSlice';
 import { useIsConnectionRequired, useOperationInfo } from '../../../../core/state/selectors/actionMetadataSelector';
 import '../../../../core/utils/connectors/connections';
@@ -18,6 +19,7 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
 
   const intl = useIntl();
   const dispatch = useDispatch();
+  const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
 
   const isOperationMissingConnection = useIsOperationMissingConnection(nodeId);
 
@@ -44,10 +46,15 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
     }
   );
 
-  const openChangeConnectionText = intl.formatMessage({
-    defaultMessage: 'Change connection',
-    description: "Button text to take the user to the 'change connection' component",
-  });
+  const openChangeConnectionText = isXrmConnectionReferenceMode
+    ? intl.formatMessage({
+        defaultMessage: 'Change connection reference',
+        description: "Button text to take the user to the 'change connection' component while in xrm connection reference mode",
+      })
+    : intl.formatMessage({
+        defaultMessage: 'Change connection',
+        description: "Button text to take the user to the 'change connection' component",
+      });
 
   return (
     <div className="connection-info">
