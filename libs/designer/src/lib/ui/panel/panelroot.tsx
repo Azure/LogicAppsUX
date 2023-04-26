@@ -250,15 +250,6 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
     // TODO: 12798935 Analytics (event logging)
   };
 
-  const validateAllParams = (): void => {
-    Object.keys(inputs?.parameterGroups ?? {}).forEach((parameterGroup) => {
-      inputs.parameterGroups[parameterGroup].parameters.forEach((parameter) => {
-        const validationErrors = validateParameter(parameter, parameter.value);
-        dispatch(updateParameterValidation({ nodeId: selectedNode, groupId: parameterGroup, parameterId: parameter.id, validationErrors }));
-      });
-    });
-  };
-
   const togglePanel = (): void => (!collapsed ? collapse() : expand());
   const dismissPanel = () => dispatch(clearPanel());
 
@@ -308,11 +299,17 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       toggleCollapse={() => {
         //only run validation when collapsing the panel
         if (!collapsed) {
-          validateAllParams();
+          Object.keys(inputs?.parameterGroups ?? {}).forEach((parameterGroup) => {
+            inputs.parameterGroups[parameterGroup].parameters.forEach((parameter) => {
+              const validationErrors = validateParameter(parameter, parameter.value);
+              dispatch(
+                updateParameterValidation({ nodeId: selectedNode, groupId: parameterGroup, parameterId: parameter.id, validationErrors })
+              );
+            });
+          });
         }
         togglePanel();
       }}
-      onBlur={() => validateAllParams()}
       trackEvent={handleTrackEvent}
       onCommentChange={(value) => {
         dispatch(setNodeDescription({ nodeId: selectedNode, description: value }));
