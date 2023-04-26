@@ -195,7 +195,7 @@ export const getOperationSettings = (
     },
     invokerConnection: {
       isSupported: isInvokerConnectionSupported(isTrigger, nodeType, rootNodeId),
-      value: invokerConnection(connectionReferences, dispatch),
+      value: invokerConnection(isTrigger, nodeType, rootNodeId, connectionReferences, dispatch),
     },
   };
 };
@@ -875,16 +875,20 @@ const isInvokerConnectionSupported = (isTrigger: boolean, nodeType: string, root
 };
 
 const invokerConnection = (
+  isTrigger: boolean,
+  nodeType: string,
+  rootNodeId: string | undefined,
   connectionReferences: ConnectionReferences | undefined,
   dispatch: Dispatch | undefined
 ): SimpleSetting<ConnectionReferences> | undefined => {
-  if (connectionReferences !== undefined) {
-    dispatch?.(addInvokerSupport({ connectionReferences }));
+  if (!isInvokerConnectionSupported(isTrigger, nodeType, rootNodeId)) {
+    return {
+      enabled: true,
+      value: connectionReferences,
+    };
   }
-  return connectionReferences
-    ? {
-        enabled: true,
-        value: connectionReferences,
-      }
-    : { enabled: false };
+  if (connectionReferences !== undefined && dispatch !== undefined) {
+    dispatch(addInvokerSupport({ connectionReferences }));
+  }
+  return { enabled: false };
 };
