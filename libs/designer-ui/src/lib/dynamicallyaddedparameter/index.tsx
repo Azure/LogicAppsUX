@@ -1,6 +1,5 @@
 import type { IContextualMenuItem, IContextualMenuProps } from '@fluentui/react';
-import { ContextualMenuItemType, DirectionalHint, IconButton, TextField, TooltipHost } from '@fluentui/react';
-import { guid } from '@microsoft/utils-logic-apps';
+import { DirectionalHint, IconButton, TextField, TooltipHost } from '@fluentui/react';
 import React from 'react';
 import { useIntl } from 'react-intl';
 
@@ -49,8 +48,6 @@ export interface DynamicallyAddedParameterProps {
 }
 
 export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps): JSX.Element => {
-  const menuRef = React.useRef(null);
-
   const intl = useIntl();
   const menuButtonTitle = intl.formatMessage({
     defaultMessage: 'Menu',
@@ -68,7 +65,7 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
       items: [
         {
           iconProps: { iconName: 'Delete' },
-          key: guid(),
+          key: 'dynamicallyaddedparameter_menu_delete',
           text: deleteText,
           onClick: (ev?: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>, _item?: IContextualMenuItem) => {
             ev?.preventDefault();
@@ -77,7 +74,6 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
             return true;
           },
         },
-        { key: 'divider_1', itemType: ContextualMenuItemType.Divider },
       ],
       gapSpace: 2,
       directionalHint: DirectionalHint.leftBottomEdge,
@@ -90,7 +86,6 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
           iconProps={{ iconName: 'CollapseMenu' }}
           title={menuButtonTitle}
           aria-label={menuButtonTitle}
-          ref={menuRef}
           menuProps={menuProps}
         />
       </TooltipHost>

@@ -35,6 +35,12 @@
       "value": "Select this if you are configuring an on-prem connection"
     }
   ],
+  "+W2vTp": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -1108,12 +1114,6 @@
       "value": "(UTC+08:45) 尤克拉"
     }
   ],
-  "6H3oG1": [
-    {
-      "type": 0,
-      "value": "Please enter or select a date (YYYY-MM-DD)"
-    }
-  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1837,6 +1837,12 @@
       "value": "(UTC-05:00) 哈瓦那"
     }
   ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Number"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1895,6 +1901,12 @@
     {
       "type": 0,
       "value": "認證類型"
+    }
+  ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "Cy9qeQ": [
@@ -1971,12 +1983,6 @@
     {
       "type": 0,
       "value": "Select a value"
-    }
-  ],
-  "DOf1/I": [
-    {
-      "type": 0,
-      "value": "Please enter your input"
     }
   ],
   "DWd9vy": [
@@ -2177,6 +2183,12 @@
       "value": "(UTC-05:00) 東部時間 (美國及加拿大)"
     }
   ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
+    }
+  ],
   "Ex4U46": [
     {
       "type": 0,
@@ -2199,12 +2211,6 @@
     {
       "type": 0,
       "value": "(UTC+08:00) 伊爾庫次克"
-    }
-  ],
-  "F51kU8": [
-    {
-      "type": 0,
-      "value": "Please enter a number"
     }
   ],
   "F9dR1Q": [
@@ -2474,6 +2480,12 @@
       "value": "陣列"
     }
   ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "File Content"
+    }
+  ],
   "H17jEE": [
     {
       "type": 0,
@@ -2694,12 +2706,6 @@
     {
       "type": 0,
       "value": "No properties"
-    }
-  ],
-  "Iwi+x0": [
-    {
-      "type": 0,
-      "value": "Please select yes or no"
     }
   ],
   "J/Kz1j": [
@@ -3265,12 +3271,6 @@
       "value": "請選取身分識別"
     }
   ],
-  "Nro0qr": [
-    {
-      "type": 0,
-      "value": "Please enter an e-mail address"
-    }
-  ],
   "NvANon": [
     {
       "type": 0,
@@ -3383,12 +3383,6 @@
     {
       "type": 0,
       "value": "傳回指定範圍動作內的最上層動作結果，例如 For_each、Until 或 Scope 動作。"
-    }
-  ],
-  "OcnU0i": [
-    {
-      "type": 0,
-      "value": "Please select file or image"
     }
   ],
   "OdNhwc": [
@@ -3852,6 +3846,12 @@
     {
       "type": 0,
       "value": "必要。具有表單資料或表單編碼回應之行動的名稱。"
+    }
+  ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
     }
   ],
   "Sh10cw": [
@@ -4376,12 +4376,6 @@
       "value": "必要。新屬性的名稱。"
     }
   ],
-  "W7sa4b": [
-    {
-      "type": 0,
-      "value": "Enter title"
-    }
-  ],
   "WGwH45": [
     {
       "type": 0,
@@ -4684,6 +4678,12 @@
     {
       "type": 0,
       "value": "請輸入 PfX"
+    }
+  ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Yes/No"
     }
   ],
   "YaFjJQ": [
@@ -5298,6 +5298,12 @@
       "value": "逾時"
     }
   ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Input"
+    }
+  ],
   "e00zot": [
     {
       "type": 0,
@@ -5430,6 +5436,12 @@
       "value": "分頁計數超過最大值"
     }
   ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5478,6 +5490,12 @@
     {
       "type": 0,
       "value": "已略過"
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "g0a4Qe": [
@@ -7400,6 +7418,12 @@
       "value": "從參數建立陣列"
     }
   ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Trigger date"
+    }
+  ],
   "v39HKj": [
     {
       "type": 0,
@@ -7850,6 +7874,12 @@
     {
       "type": 0,
       "value": "新增欄位"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "yxsn7s": [
