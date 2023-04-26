@@ -32,6 +32,7 @@ export interface OutputInfo {
   source?: string;
   title: string;
   value?: string;
+  alias?: string;
 }
 
 export enum DynamicLoadStatus {
