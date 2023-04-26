@@ -140,6 +140,7 @@ export class ExpressionParser {
         const expression = this._parseExpressionRecursively(scanner, 0, /*isAliasPathParsingEnabled*/ false);
         token = ExpressionParser._getTokenOrThrowException(scanner, ExpressionTokenType.RightSquareBracket);
 
+        // TODO: This might require to support string interpolation as well.
         if (expression.type === ExpressionType.StringLiteral && isAliasPathParsingEnabled) {
           // takes care of expressions that are nested such as ['body/value']
           for (const expressionValue of (expression as ExpressionLiteral).value.split('/')) {
