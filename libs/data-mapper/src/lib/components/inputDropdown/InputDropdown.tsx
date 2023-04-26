@@ -23,10 +23,10 @@ import { iconForNormalizedDataType } from '../../utils/Icon.Utils';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { addSourceReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
-import { errorNotificationAutoHideDuration, NotificationTypes } from '../notification/Notification';
+import { NotificationTypes, errorNotificationAutoHideDuration } from '../notification/Notification';
 import type { IDropdownOption, IRawStyle } from '@fluentui/react';
 import { Dropdown, SelectableOptionMenuItemType, Stack, TextField } from '@fluentui/react';
-import { Button, makeStyles, tokens, Tooltip, typographyStyles } from '@fluentui/react-components';
+import { Button, Tooltip, makeStyles, tokens, typographyStyles } from '@fluentui/react-components';
 import { Dismiss20Regular } from '@fluentui/react-icons';
 import { useDebouncedCallback } from '@react-hookz/web';
 import { useEffect, useMemo, useState } from 'react';
@@ -270,7 +270,9 @@ export const InputDropdown = (props: InputDropdownProps) => {
       setCustomValue('');
       setInputIsCustomValue(false);
     }
-  }, [inputValue, sourceSchemaDictionary, functionNodeDictionary]);
+    // Ignore the inputValue, we are handling that elsewhere
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sourceSchemaDictionary, functionNodeDictionary]);
 
   const availableInputOptions = useMemo<IDropdownOption<SharedOptionData>[]>(() => {
     // Add source schema nodes currently on the canvas
