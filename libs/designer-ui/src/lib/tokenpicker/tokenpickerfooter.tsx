@@ -48,7 +48,7 @@ export function TokenPickerFooter({ expression, expressionToBeUpdated, setExpres
   const onUpdateOrAddClicked = () => {
     let currExpression: Expression | null = null;
     try {
-      currExpression = ExpressionParser.parseExpression(expression.value);
+      currExpression = ExpressionParser.parseExpression(expression.value, /*isAliasPathParsingEnabled*/ false);
     } catch (ex) {
       setExpressionEditorError(invalidExpression);
       return;

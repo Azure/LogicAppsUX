@@ -351,14 +351,14 @@ const parseForeach = (repetitionValue: string, repetitionContext: RepetitionCont
     let foreachExpression: Expression | undefined;
     let splitOnExpression: Expression | undefined;
     try {
-      foreachExpression = ExpressionParser.parseTemplateExpression(repetitionValue);
+      foreachExpression = ExpressionParser.parseTemplateExpression(repetitionValue, /*isAliasPathParsingEnabled*/ false);
     } catch {
       // for invalid case, we just ignore it and return empty object
     }
 
     if (repetitionContext.splitOn) {
       try {
-        splitOnExpression = ExpressionParser.parseTemplateExpression(repetitionContext.splitOn);
+        splitOnExpression = ExpressionParser.parseTemplateExpression(repetitionContext.splitOn, /*isAliasPathParsingEnabled*/ false);
       } catch {
         // for invalid case, we just ignore it
       }

@@ -64,7 +64,7 @@ export class ResolutionService {
     let parsedExpression: Expression = { value: '', type: ExpressionType.StringLiteral };
 
     if (isTemplateExpression(root)) {
-      parsedExpression = ExpressionParser.parseTemplateExpression(root);
+      parsedExpression = ExpressionParser.parseTemplateExpression(root, /*isAliasPathParsingEnabled*/ false);
     } else {
       return root;
     }
@@ -124,7 +124,7 @@ export class ResolutionService {
       throw new ExpressionException(ExpressionExceptionCode.EMPTY_VALUE, ExpressionExceptionCode.EMPTY_VALUE);
     }
 
-    const parsedTemplateExpression = ExpressionParser.parseTemplateExpression(expression);
+    const parsedTemplateExpression = ExpressionParser.parseTemplateExpression(expression, /*isAliasPathParsingEnabled*/ false);
 
     let segment = parsedTemplateExpression;
     let isStringInterpolationExpression = false;

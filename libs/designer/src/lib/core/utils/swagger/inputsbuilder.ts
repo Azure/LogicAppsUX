@@ -553,7 +553,7 @@ export function processPathInputs(pathValue: string, pathTemplate: string): Reco
     if (isTemplateExpression(pathValue)) {
       let result: Expression;
       try {
-        result = ExpressionParser.parseTemplateExpression(pathValue);
+        result = ExpressionParser.parseTemplateExpression(pathValue, /*isAliasPathParsingEnabled*/ false);
       } catch (error: any) {
         if (error?.name === ExpressionExceptionCode) {
           throw new Error(errorMessage);

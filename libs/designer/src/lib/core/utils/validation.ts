@@ -340,7 +340,7 @@ function validateEmailLiteralsFromExpression(expressionString: string): string {
 
   // NOTE: Parse expression and split into an array of expression groups, each group make up the expression for an email.
   // Example: email1;name@{null}@microsoft.com is parsed into two groups [[email1],[name,@{null},@microsofot.com]].
-  const expression = ExpressionParser.parseTemplateExpression(expressionString);
+  const expression = ExpressionParser.parseTemplateExpression(expressionString, /*isAliasPathParsingEnabled*/ false);
   if (isStringLiteral(expression)) {
     return validateStringEmails(expression.value);
   } else if (isStringInterpolation(expression)) {

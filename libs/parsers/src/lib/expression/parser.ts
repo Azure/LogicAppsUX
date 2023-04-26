@@ -50,14 +50,14 @@ export class ExpressionParser {
     },
   ];
 
-  public static parseExpression(expression: string, isAliasPathParsingEnabled?: boolean): Expression {
-    const scanner = new ExpressionScanner(expression, /*prefetch*/ true);
+  public static parseExpression(expression: string, isAliasPathParsingEnabled: boolean): Expression {
+    const scanner = new ExpressionScanner(expression);
     const parsedExpression = ExpressionParser._parseExpressionRecursively(scanner, 0, isAliasPathParsingEnabled);
     scanner.getTokenForTypeAndValue(ExpressionTokenType.EndOfData);
     return parsedExpression;
   }
 
-  public static parseTemplateExpression(expression: string, isAliasPathParsingEnabled?: boolean): Expression {
+  public static parseTemplateExpression(expression: string, isAliasPathParsingEnabled: boolean): Expression {
     if (!isTemplateExpression(expression)) {
       throw new ParserException(ExpressionExceptionCode.UNRECOGNIZED_EXPRESSION, ExpressionExceptionCode.UNRECOGNIZED_EXPRESSION);
     }
@@ -72,11 +72,11 @@ export class ExpressionParser {
         return ExpressionParser.parseExpression(expression.substring(1), isAliasPathParsingEnabled);
       }
     } else {
-      return ExpressionParser._parseStringInterpolationExpression(expression);
+      return ExpressionParser._parseStringInterpolationExpression(expression, isAliasPathParsingEnabled);
     }
   }
 
-  private static _parseExpressionRecursively(scanner: ExpressionScanner, index = 0, isAliasPathParsingEnabled?: boolean): Expression {
+  private static _parseExpressionRecursively(scanner: ExpressionScanner, index = 0, isAliasPathParsingEnabled: boolean): Expression {
     if (index < this._tokenList.length) {
       const token = scanner.getTokenForTypeAndValue(ExpressionParser._tokenList[index].tokenType, ExpressionParser._tokenList[index].value);
       if (token) {
@@ -99,7 +99,7 @@ export class ExpressionParser {
     throw new ParserException(ExpressionExceptionCode.UNRECOGNIZED_EXPRESSION, ExpressionExceptionCode.UNRECOGNIZED_EXPRESSION);
   }
 
-  private static _parseFunctionExpression(scanner: ExpressionScanner, isAliasPathParsingEnabled?: boolean): ExpressionFunction {
+  private static _parseFunctionExpression(scanner: ExpressionScanner, isAliasPathParsingEnabled: boolean): ExpressionFunction {
     let token: ExpressionToken | undefined = ExpressionParser._getTokenOrThrowException(scanner, ExpressionTokenType.Identifier);
 
     const startPosition = token.startPosition;
@@ -111,7 +111,7 @@ export class ExpressionParser {
     token = scanner.getTokenForTypeAndValue(ExpressionTokenType.RightParenthesis);
     if (!token) {
       do {
-        functionArguments.push(this._parseExpressionRecursively(scanner));
+        functionArguments.push(this._parseExpressionRecursively(scanner, 0, /*isAliasPathParsingEnabled*/ false));
       } while (scanner.getTokenForTypeAndValue(ExpressionTokenType.Comma));
 
       token = ExpressionParser._getTokenOrThrowException(scanner, ExpressionTokenType.RightParenthesis);
@@ -137,7 +137,7 @@ export class ExpressionParser {
       }
 
       if (scanner.getTokenForTypeAndValue(ExpressionTokenType.LeftSquareBracket)) {
-        const expression = this._parseExpressionRecursively(scanner);
+        const expression = this._parseExpressionRecursively(scanner, 0, /*isAliasPathParsingEnabled*/ false);
         token = ExpressionParser._getTokenOrThrowException(scanner, ExpressionTokenType.RightSquareBracket);
 
         if (expression.type === ExpressionType.StringLiteral && isAliasPathParsingEnabled) {
@@ -177,7 +177,10 @@ export class ExpressionParser {
     };
   }
 
-  private static _parseStringInterpolationExpression(expression: string): ExpressionStringInterpolation {
+  private static _parseStringInterpolationExpression(
+    expression: string,
+    isAliasPathParsingEnabled: boolean
+  ): ExpressionStringInterpolation {
     let previousPosition = 0;
     let currentPosition = 0;
     const segments: Expression[] = [];
@@ -223,7 +226,7 @@ export class ExpressionParser {
         );
       }
 
-      segments.push(this.parseExpression(expression.substring(startPosition + 2, currentPosition)));
+      segments.push(this.parseExpression(expression.substring(startPosition + 2, currentPosition), isAliasPathParsingEnabled));
       previousPosition = ++currentPosition;
     }
 

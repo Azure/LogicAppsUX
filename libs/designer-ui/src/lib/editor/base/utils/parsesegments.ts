@@ -23,7 +23,7 @@ export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): R
     if (segment.type === ValueSegmentType.TOKEN && segment.token) {
       const { brandColor, icon, title, name, remappedValue, tokenType } = segment.token;
       if (tokenType === TokenType.FX) {
-        const expressionValue: Expression = ExpressionParser.parseExpression(segmentValue);
+        const expressionValue: Expression = ExpressionParser.parseExpression(segmentValue, /*isAliasPathParsingEnabled*/ false);
         const token = $createTokenNode({
           title: getExpressionTokenTitle(expressionValue) ?? segmentValue ?? title,
           data: segment,
