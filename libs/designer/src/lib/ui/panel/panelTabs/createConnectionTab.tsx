@@ -215,11 +215,13 @@ const CreateConnectionTab = () => {
   );
 };
 
-export const createConnectionTab: PanelTab = {
-  title: 'Create Connection',
-  name: constants.PANEL_TAB_NAMES.CONNECTION_CREATE,
-  description: 'Create Connection Tab',
-  visible: true,
-  content: <CreateConnectionTab />,
-  order: 0,
-};
+export function getCreateConnectionTab(title: string): PanelTab {
+  return {
+    title: title,
+    name: constants.PANEL_TAB_NAMES.CONNECTION_CREATE,
+    description: 'Create Connection Tab',
+    visible: true,
+    content: <CreateConnectionTab />,
+    order: 0,
+  };
+}
