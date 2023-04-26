@@ -2099,6 +2099,12 @@
       "value": "Converts the parameter to a decimal number"
     }
   ],
+  "EG6R8s": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
   "ERAWZA": [
     {
       "type": 0,
@@ -2357,6 +2363,12 @@
       "value": "2"
     }
   ],
+  "FjCk1r": [
+    {
+      "type": 0,
+      "value": "Continue"
+    }
+  ],
   "FslNgF": [
     {
       "type": 0,
@@ -2601,6 +2613,12 @@
     {
       "type": 0,
       "value": " Install Gateway"
+    }
+  ],
+  "HxCwn5": [
+    {
+      "type": 0,
+      "value": "Value is assigned to property that is not found"
     }
   ],
   "Hyp0Ao": [
@@ -2977,6 +2995,12 @@
     {
       "type": 0,
       "value": "Loading Function Apps..."
+    }
+  ],
+  "LFBVn4": [
+    {
+      "type": 0,
+      "value": "Token selector properties not found. When using token selector mode, the token selector properties must be provided."
     }
   ],
   "LJmfmK": [
@@ -3599,6 +3623,12 @@
     {
       "type": 0,
       "value": "Returns the base 64 representation of the input string"
+    }
+  ],
+  "PxjmAH": [
+    {
+      "type": 0,
+      "value": "Entering a value here will update any other business process stages that selected the same Logic App and workflow data source."
     }
   ],
   "Q+oELo": [
@@ -4313,6 +4343,12 @@
     {
       "type": 0,
       "value": "23"
+    }
+  ],
+  "VUNM37": [
+    {
+      "type": 0,
+      "value": "Selected node"
     }
   ],
   "VVfYvq": [
@@ -5079,6 +5115,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Nuku'alofa"
+    }
+  ],
+  "c26Z1m": [
+    {
+      "type": 0,
+      "value": "Build an expression for each property."
     }
   ],
   "c2XklE": [
@@ -7941,6 +7983,12 @@
     {
       "type": 0,
       "value": "Select Actions"
+    }
+  ],
+  "zTeIyh": [
+    {
+      "type": 0,
+      "value": "Business identifier"
     }
   ],
   "zUgja+": [

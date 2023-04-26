@@ -1,4 +1,4 @@
-import type { DesignerOptionsState, ServiceOptions } from './designerOptionsInterfaces';
+import type { DesignerOptionsState, ServiceOptions, TrackedProperty } from './designerOptionsInterfaces';
 import type { ILoggerService } from '@microsoft/designer-client-services-logic-apps';
 import {
   DevLogger,
@@ -22,6 +22,17 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 const initialState: DesignerOptionsState = {
   readOnly: false,
   isMonitoringView: false,
+  tokenSelectorViewProps: {
+    trackedProperties: [
+      { name: 'test', type: 'string' },
+      { name: 'test2', type: 'string' },
+    ],
+    onCompleted: (props: TrackedProperty[]) => {
+      console.log('Complete!');
+      console.log(props);
+    },
+  },
+  isTokenSelectorOnlyView: false,
   isDarkMode: false,
   servicesInitialized: false,
   isConsumption: false,
@@ -82,7 +93,8 @@ export const designerOptionsSlice = createSlice({
   reducers: {
     initDesignerOptions: (state: DesignerOptionsState, action: PayloadAction<Omit<DesignerOptionsState, 'servicesInitialized'>>) => {
       state.readOnly = action.payload.readOnly;
-      state.isTrackedPropertiesOnlyView = action.payload.isTrackedPropertiesOnlyView;
+      state.isTokenSelectorOnlyView = action.payload.isTokenSelectorOnlyView;
+      state.tokenSelectorViewProps = action.payload.tokenSelectorViewProps;
       state.isMonitoringView = action.payload.isMonitoringView;
       state.isDarkMode = action.payload.isDarkMode;
       state.isConsumption = action.payload.isConsumption;

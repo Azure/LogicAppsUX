@@ -9,12 +9,12 @@ export const useMonitoringView = () => {
   return useSelector((state: RootState) => state.designerOptions.isMonitoringView);
 };
 
-export const useTrackedPropertiesView = () => {
-  return useSelector((state: RootState) => state.designerOptions.isTrackedPropertiesOnlyView);
+export const useTokenSelectorView = () => {
+  return useSelector((state: RootState) => state.designerOptions.isTokenSelectorOnlyView);
 };
 
-export const useTrackedProperties = () => {
-  return useSelector((state: RootState) => state.designerOptions.trackedProperties);
+export const useTokenSelectorData = () => {
+  return useSelector((state: RootState) => state.designerOptions.tokenSelectorViewProps);
 };
 
 export const useIsConsumption = () => {

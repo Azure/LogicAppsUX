@@ -11,7 +11,7 @@ import type { ILayerProps } from '@fluentui/react';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import type { IPanelHeaderRenderer, IPanelProps, IPanelStyles } from '@fluentui/react/lib/Panel';
 import { Panel, PanelType } from '@fluentui/react/lib/Panel';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
 const panelStyles: Partial<IPanelStyles> = {
@@ -143,8 +143,6 @@ export const PanelContainer = ({
     description: 'label for panel error',
   });
 
-  const hasMultipleTabs = useMemo(() => Object.keys(tabs).length > 1, [tabs]);
-
   return (
     <Panel
       aria-label={panelLabel}
@@ -173,16 +171,14 @@ export const PanelContainer = ({
             <MessageBar messageBarType={MessageBarType.error}>{panelErrorMessage}</MessageBar>
           ) : (
             <div className="msla-panel-page">
-              {hasMultipleTabs && (
-                <PanelPivot
-                  isCollapsed={isCollapsed}
-                  tabs={tabs}
-                  selectedTab={selectedTab}
-                  onTabChange={onTabChange}
-                  trackEvent={trackEvent}
-                  nodeId={nodeId}
-                />
-              )}
+              <PanelPivot
+                isCollapsed={isCollapsed}
+                tabs={tabs}
+                selectedTab={selectedTab}
+                onTabChange={onTabChange}
+                trackEvent={trackEvent}
+                nodeId={nodeId}
+              />
               <PanelContent tabs={tabs} selectedTab={selectedTab} />
             </div>
           )}

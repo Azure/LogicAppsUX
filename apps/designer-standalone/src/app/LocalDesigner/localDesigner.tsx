@@ -109,9 +109,17 @@ const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST'
 const hostService = { fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type) };
 
 export const LocalDesigner = () => {
-  const { workflowDefinition, readOnly, monitoringView, darkMode, consumption, connections, runInstance } = useSelector(
-    (state: RootState) => state.workflowLoader
-  );
+  const {
+    workflowDefinition,
+    readOnly,
+    monitoringView,
+    isTokenSelectorOnlyView,
+    darkMode,
+    consumption,
+    connections,
+    runInstance,
+    tokenSelectorViewProps,
+  } = useSelector((state: RootState) => state.workflowLoader);
   const designerProviderProps = {
     services: {
       connectionService,
@@ -127,10 +135,11 @@ export const LocalDesigner = () => {
     },
     readOnly,
     isMonitoringView: monitoringView,
+    isTokenSelectorOnlyView,
+    tokenSelectorViewProps,
     isDarkMode: darkMode,
     isConsumption: consumption,
   };
-
   return (
     <DesignerProvider locale="en-US" options={{ ...designerProviderProps }}>
       {workflowDefinition ? (

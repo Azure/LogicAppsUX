@@ -9,6 +9,7 @@ import type { ValueSegment } from '../../editor';
 import type { CallbackHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
+import type { StringEditorProps } from '../../editor/string';
 import { FloatingActionMenu } from '../../floatingactionmenu';
 import { FilePickerEditor } from '../../picker/filepickereditor';
 import { QueryBuilderEditor } from '../../querybuilder';
@@ -47,6 +48,11 @@ export interface SettingTokenFieldProps extends SettingProps {
   getTokenPicker: GetTokenPickerHandler;
   validationErrors?: string[];
   hideValidationErrors?: ChangeHandler;
+  className?: string;
+}
+
+export interface PropertyTokenFieldProps extends StringEditorProps {
+  label: string;
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
@@ -62,8 +68,8 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
         </div>
       )}
       {props.useFormLabel ? (
-        <Stack horizontal tokens={{ childrenGap: 15 }}>
-          <Label id={labelId} className="msla-label" required={props.required}>
+        <Stack horizontal tokens={{ childrenGap: 50 }}>
+          <Label id={labelId} className="msla-panel-form-label">
             {props.label}
           </Label>
           <TokenField {...props} labelId={labelId} />
@@ -93,6 +99,7 @@ const TokenField = ({
   onComboboxMenuOpen,
   hideValidationErrors,
   getTokenPicker,
+  className,
 }: SettingTokenFieldProps & { labelId: string }) => {
   const dropdownOptions = editorOptions?.options?.value ?? editorOptions?.options ?? [];
 
@@ -259,7 +266,7 @@ const TokenField = ({
       return (
         <StringEditor
           labelId={labelId}
-          className="msla-setting-token-editor-container"
+          className={className ?? 'msla-setting-token-editor-container'}
           placeholder={placeholder}
           BasePlugins={{ tokens: showTokens }}
           readonly={readOnly}

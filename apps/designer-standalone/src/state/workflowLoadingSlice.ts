@@ -4,6 +4,18 @@ import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
+// TODO: remove these and use shared types
+type TrackedProperty = {
+  name: string;
+  type: string;
+  token?: string;
+};
+
+interface TokenSelectorViewProps {
+  trackedProperties: TrackedProperty[];
+  onCompleted: (properties: TrackedProperty[]) => void;
+}
+
 export interface WorkflowLoadingState {
   resourcePath?: string;
   appId?: string;
@@ -13,6 +25,8 @@ export interface WorkflowLoadingState {
   connections: ConnectionReferences;
   readOnly: boolean;
   monitoringView: boolean;
+  isTokenSelectorOnlyView: boolean;
+  tokenSelectorViewProps: TokenSelectorViewProps;
   darkMode: boolean;
   consumption: boolean;
   isLocalSelected: boolean;
@@ -24,6 +38,15 @@ const initialState: WorkflowLoadingState = {
   connections: {},
   resourcePath: '',
   readOnly: false,
+  isTokenSelectorOnlyView: false,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  tokenSelectorViewProps: {
+    trackedProperties: [
+      { name: 'test', type: 'string' },
+      { name: 'test2', type: 'string' },
+    ],
+    onCompleted: (props: TrackedProperty[]) => {},
+  },
   monitoringView: false,
   darkMode: false,
   consumption: false,
@@ -95,6 +118,9 @@ export const workflowLoadingSlice = createSlice({
     setIsLocalSelected: (state, action: PayloadAction<boolean>) => {
       state.isLocalSelected = action.payload;
     },
+    setTokenSelectorView: (state, action: PayloadAction<boolean>) => {
+      state.isTokenSelectorOnlyView = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload | null>) => {
@@ -125,6 +151,7 @@ export const {
   setDarkMode,
   setConsumption,
   setIsLocalSelected,
+  setTokenSelectorView,
 } = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;

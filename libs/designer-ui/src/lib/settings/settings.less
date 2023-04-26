@@ -1,6 +1,6 @@
 @import (reference) '../variables.less';
 
-.msla-setting-token-editor-container {
+.msla-setting-token-editor-container(@editor-height: 30px) {
   width: 100%;
   border-radius: 2px;
   position: relative;
@@ -10,7 +10,7 @@
     resize: none;
     font-size: 15px;
     tab-size: 1;
-    min-height: 30px;
+    min-height: @editor-height;
     line-height: 20px;
     padding-inline-start: 5px;
     &.readonly {
@@ -39,6 +39,18 @@
     display: inline-block;
     pointer-events: none;
   }
+}
+
+.msla-panel-form-label {
+  .msla-label();
+  width: 150px;
+  min-width: 150px;
+  font-size: 13px;
+}
+
+.msla-setting-property-editor-container {
+  .msla-setting-token-editor-container(20px);
+  width: 225px;
 }
 
 .msla-setting-section {
