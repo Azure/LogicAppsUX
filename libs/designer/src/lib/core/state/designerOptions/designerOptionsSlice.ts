@@ -1,4 +1,4 @@
-import type { DesignerOptionsState, ServiceOptions, TrackedProperty } from './designerOptionsInterfaces';
+import type { DesignerOptionsState, ServiceOptions } from './designerOptionsInterfaces';
 import type { ILoggerService } from '@microsoft/designer-client-services-logic-apps';
 import {
   DevLogger,
@@ -22,16 +22,6 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 const initialState: DesignerOptionsState = {
   readOnly: false,
   isMonitoringView: false,
-  tokenSelectorViewProps: {
-    trackedProperties: [
-      { name: 'test', type: 'string' },
-      { name: 'test2', type: 'string' },
-    ],
-    onCompleted: (props: TrackedProperty[]) => {
-      console.log('Complete!');
-      console.log(props);
-    },
-  },
   isTokenSelectorOnlyView: false,
   isDarkMode: false,
   servicesInitialized: false,

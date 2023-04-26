@@ -12,19 +12,8 @@ import type {
   IFunctionService,
   IAppServiceService,
   IRunService,
+  TokenSelectorViewProps,
 } from '@microsoft/designer-client-services-logic-apps';
-
-// TODO: remove these and use shared types
-export type TrackedProperty = {
-  name: string;
-  type: string;
-  token?: string;
-};
-
-export interface TokenSelectorViewProps {
-  trackedProperties: TrackedProperty[];
-  onCompleted: (properties: TrackedProperty[]) => void;
-}
 
 export interface DesignerOptionsState {
   readOnly?: boolean;

@@ -1,20 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { RootState } from './store';
+import type { TokenSelectorViewProps, TrackedProperty } from '@microsoft/designer-client-services-logic-apps';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-
-// TODO: remove these and use shared types
-type TrackedProperty = {
-  name: string;
-  type: string;
-  token?: string;
-};
-
-interface TokenSelectorViewProps {
-  trackedProperties: TrackedProperty[];
-  onCompleted: (properties: TrackedProperty[]) => void;
-}
 
 export interface WorkflowLoadingState {
   resourcePath?: string;
@@ -39,12 +28,12 @@ const initialState: WorkflowLoadingState = {
   resourcePath: '',
   readOnly: false,
   isTokenSelectorOnlyView: false,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tokenSelectorViewProps: {
     trackedProperties: [
       { name: 'test', type: 'string' },
       { name: 'test2', type: 'string' },
     ],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onCompleted: (props: TrackedProperty[]) => {},
   },
   monitoringView: false,

@@ -1,5 +1,4 @@
 import constants from '../../common/constants';
-import type { TrackedProperty } from '../../core/state/designerOptions/designerOptionsInterfaces';
 import { useTokenSelectorData } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
@@ -12,6 +11,7 @@ import { createValueSegmentFromToken, getExpressionTokenSections, getOutputToken
 import { Spinner, SpinnerSize, Panel, PanelType, useTheme, Label, MessageBar, MessageBarType, TextField, Text } from '@fluentui/react';
 import { PrimaryButton } from '@fluentui/react/lib/Button';
 import { Stack } from '@fluentui/react/lib/Stack';
+import type { TrackedProperty } from '@microsoft/designer-client-services-logic-apps';
 import { PanelLocation, TokenPicker, SettingTokenField } from '@microsoft/designer-ui';
 import type {
   ChangeState,
