@@ -47,6 +47,12 @@
       "value": "Select this if you are configuring an on-prem connection"
     }
   ],
+  "+W2vTp": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -1165,12 +1171,6 @@
       "value": "(UTC+08:45) Eucla"
     }
   ],
-  "6H3oG1": [
-    {
-      "type": 0,
-      "value": "Please enter or select a date (YYYY-MM-DD)"
-    }
-  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1955,6 +1955,12 @@
       "value": "(UTC-05:00) Havana"
     }
   ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Number"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -2013,6 +2019,12 @@
     {
       "type": 0,
       "value": "Typ přihlašovacích údajů"
+    }
+  ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "Cy9qeQ": [
@@ -2089,12 +2101,6 @@
     {
       "type": 0,
       "value": "Select a value"
-    }
-  ],
-  "DOf1/I": [
-    {
-      "type": 0,
-      "value": "Please enter your input"
     }
   ],
   "DWd9vy": [
@@ -2295,6 +2301,12 @@
       "value": "(UTC-05:00) Východ USA a Kanady"
     }
   ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
+    }
+  ],
   "Ex4U46": [
     {
       "type": 0,
@@ -2317,12 +2329,6 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Irkutsk"
-    }
-  ],
-  "F51kU8": [
-    {
-      "type": 0,
-      "value": "Please enter a number"
     }
   ],
   "F9dR1Q": [
@@ -2633,6 +2639,12 @@
       "value": "Pole"
     }
   ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "File Content"
+    }
+  ],
   "H17jEE": [
     {
       "type": 0,
@@ -2861,12 +2873,6 @@
     {
       "type": 0,
       "value": "No properties"
-    }
-  ],
-  "Iwi+x0": [
-    {
-      "type": 0,
-      "value": "Please select yes or no"
     }
   ],
   "J/Kz1j": [
@@ -3489,12 +3495,6 @@
       "value": "Vyberte prosím identitu."
     }
   ],
-  "Nro0qr": [
-    {
-      "type": 0,
-      "value": "Please enter an e-mail address"
-    }
-  ],
   "NvANon": [
     {
       "type": 0,
@@ -3623,12 +3623,6 @@
     {
       "type": 0,
       "value": "Vrátí výsledky z akcí na nejvyšší úrovni s určeným rozsahem, například z akcí For_each, Until nebo Scope."
-    }
-  ],
-  "OcnU0i": [
-    {
-      "type": 0,
-      "value": "Please select file or image"
     }
   ],
   "OdNhwc": [
@@ -4125,6 +4119,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Název akce s odpovědí form-data nebo form-encoded."
+    }
+  ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
     }
   ],
   "Sh10cw": [
@@ -4649,12 +4649,6 @@
       "value": "Povinné. Název nové vlastnosti"
     }
   ],
-  "W7sa4b": [
-    {
-      "type": 0,
-      "value": "Enter title"
-    }
-  ],
   "WGwH45": [
     {
       "type": 0,
@@ -4965,6 +4959,12 @@
     {
       "type": 0,
       "value": "Zadejte PFX."
+    }
+  ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Yes/No"
     }
   ],
   "YaFjJQ": [
@@ -5583,6 +5583,12 @@
       "value": "vypršel časový limit"
     }
   ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Input"
+    }
+  ],
   "e00zot": [
     {
       "type": 0,
@@ -5715,6 +5721,12 @@
       "value": "Počet stránkování překračuje maximální hodnotu."
     }
   ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5759,6 +5771,12 @@
     {
       "type": 0,
       "value": "Ignorováno"
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "g0a4Qe": [
@@ -7791,6 +7809,12 @@
       "value": "Vytvoří z parametrů pole."
     }
   ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Trigger date"
+    }
+  ],
   "v39HKj": [
     {
       "type": 0,
@@ -8241,6 +8265,12 @@
     {
       "type": 0,
       "value": "Přidat pole"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "yxsn7s": [

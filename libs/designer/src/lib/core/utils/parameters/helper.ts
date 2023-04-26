@@ -37,7 +37,7 @@ import { convertWorkflowParameterTypeToSwaggerType } from '../tokens';
 import { validateJSONParameter, validateStaticParameterInfo } from '../validation';
 import { getRecurrenceParameters } from './builtins';
 import { addCastToExpression, addFoldingCastToExpression } from './casting';
-import { getDynamicInputsFromSchema, getDynamicSchema, getDynamicValues } from './dynamicdata';
+import { getDynamicInputsFromSchema, getDynamicSchema, getDynamicValues, getFolderItems } from './dynamicdata';
 import {
   createLiteralValueSegment,
   isExpressionToken,
@@ -408,7 +408,8 @@ export function getParameterEditorProps(
         ? constants.FILEPICKER_TYPE.FOLDER
         : constants.FILEPICKER_TYPE.FILE;
     const fileFilters = isLegacyDynamicValuesTreeExtension(dynamicValues) ? dynamicValues.extension.parameters['fileFilter'] : undefined;
-    editorOptions = { pickerType, fileFilters, selection: { value: undefined, displayName: nodeMetadata?.[value] ?? value } };
+    editorOptions = { pickerType, fileFilters, items: undefined };
+    editorViewModel = { displayValue: nodeMetadata?.[value] ?? value, selectedItem: undefined };
   }
 
   return { editor, editorOptions, editorViewModel, schema };
@@ -1726,6 +1727,92 @@ async function loadDynamicContentForInputsInNode(
   }
 }
 
+export async function loadDynamicTreeItemsForParameter(
+  nodeId: string,
+  groupId: string,
+  parameterId: string,
+  selectedValue: any | undefined,
+  operationInfo: NodeOperation,
+  connectionReference: ConnectionReference | undefined,
+  nodeInputs: NodeInputs,
+  nodeMetadata: any,
+  dependencies: NodeDependencies,
+  showErrorWhenNotReady: boolean,
+  dispatch: Dispatch,
+  idReplacements: Record<string, string> = {}
+): Promise<void> {
+  const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
+  const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as ParameterInfo;
+  if (!parameter) {
+    return;
+  }
+
+  const originalEditorOptions = parameter.editorOptions as any;
+  const dependencyInfo = dependencies.inputs[parameter.parameterKey];
+  if (dependencyInfo) {
+    if (isDynamicDataReadyToLoad(dependencyInfo)) {
+      dispatch(
+        updateNodeParameters({
+          nodeId,
+          parameters: [
+            {
+              parameterId,
+              groupId,
+              propertiesToUpdate: {
+                dynamicData: { status: DynamicCallStatus.STARTED },
+                editorOptions: { ...originalEditorOptions, items: [] },
+              },
+            },
+          ],
+        })
+      );
+
+      try {
+        const treeItems = await getFolderItems(
+          selectedValue,
+          dependencyInfo,
+          nodeInputs,
+          nodeMetadata,
+          operationInfo,
+          connectionReference,
+          idReplacements
+        );
+
+        dispatch(
+          updateNodeParameters({
+            nodeId,
+            parameters: [
+              {
+                parameterId,
+                groupId,
+                propertiesToUpdate: {
+                  dynamicData: { status: DynamicCallStatus.SUCCEEDED },
+                  editorOptions: { ...originalEditorOptions, items: treeItems },
+                },
+              },
+            ],
+          })
+        );
+      } catch (error) {
+        dispatch(
+          updateNodeParameters({
+            nodeId,
+            parameters: [
+              {
+                parameterId,
+                groupId,
+                propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.FAILED, error: error as Exception } },
+              },
+            ],
+          })
+        );
+      }
+    } else if (showErrorWhenNotReady) {
+      showErrorWhenDependenciesNotReady(nodeId, groupId, parameterId, dependencyInfo, groupParameters, /* isTreeCall */ true, dispatch);
+    }
+  }
+}
+
 export async function loadDynamicValuesForParameter(
   nodeId: string,
   groupId: string,
@@ -1798,37 +1885,7 @@ export async function loadDynamicValuesForParameter(
         );
       }
     } else if (showErrorWhenNotReady) {
-      const intl = getIntl();
-      const invalidParameterNames = Object.keys(dependencyInfo.dependentParameters)
-        .filter((key) => !dependencyInfo.dependentParameters[key].isValid)
-        .map((id) => groupParameters.find((param) => param.id === id)?.parameterName);
-
-      dispatch(
-        updateNodeParameters({
-          nodeId,
-          parameters: [
-            {
-              parameterId,
-              groupId,
-              propertiesToUpdate: {
-                dynamicData: {
-                  error: {
-                    name: 'DynamicListFailed',
-                    message: intl.formatMessage(
-                      {
-                        defaultMessage: 'Required parameters {parameters} not set or invalid',
-                        description: 'Error message to show when required parameters are not set or invalid',
-                      },
-                      { parameters: `${invalidParameterNames.join(' , ')}` }
-                    ),
-                  },
-                  status: DynamicCallStatus.FAILED,
-                },
-              },
-            },
-          ],
-        })
-      );
+      showErrorWhenDependenciesNotReady(nodeId, groupId, parameterId, dependencyInfo, groupParameters, /* isTreeCall */ false, dispatch);
     }
   }
 }
@@ -1839,6 +1896,48 @@ export function shouldLoadDynamicInputs(nodeInputs: NodeInputs): boolean {
 
 export function isDynamicDataReadyToLoad({ dependentParameters }: DependencyInfo): boolean {
   return Object.keys(dependentParameters).every((key) => dependentParameters[key].isValid);
+}
+
+function showErrorWhenDependenciesNotReady(
+  nodeId: string,
+  groupId: string,
+  parameterId: string,
+  dependencyInfo: DependencyInfo,
+  groupParameters: ParameterInfo[],
+  isTreeCall: boolean,
+  dispatch: Dispatch
+): void {
+  const intl = getIntl();
+  const invalidParameterNames = Object.keys(dependencyInfo.dependentParameters)
+    .filter((key) => !dependencyInfo.dependentParameters[key].isValid)
+    .map((id) => groupParameters.find((param) => param.id === id)?.parameterName);
+
+  dispatch(
+    updateNodeParameters({
+      nodeId,
+      parameters: [
+        {
+          parameterId,
+          groupId,
+          propertiesToUpdate: {
+            dynamicData: {
+              error: {
+                name: isTreeCall ? 'DynamicTreeFailed' : 'DynamicListFailed',
+                message: intl.formatMessage(
+                  {
+                    defaultMessage: 'Required parameters {parameters} not set or invalid',
+                    description: 'Error message to show when required parameters are not set or invalid',
+                  },
+                  { parameters: `${invalidParameterNames.join(' , ')}` }
+                ),
+              },
+              status: DynamicCallStatus.FAILED,
+            },
+          },
+        },
+      ],
+    })
+  );
 }
 
 function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefinitionValue: boolean): string | undefined {
