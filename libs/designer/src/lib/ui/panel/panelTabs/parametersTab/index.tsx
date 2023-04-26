@@ -4,6 +4,7 @@ import type { ParameterGroup } from '../../../../core/state/operation/operationM
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import {
   useAllowUserToChangeConnection,
+  useConnectorName,
   useNodeConnectionName,
   useOperationInfo,
 } from '../../../../core/state/selectors/actionMetadataSelector';
@@ -15,6 +16,7 @@ import { getConnectionReference } from '../../../../core/utils/connectors/connec
 import { isRootNodeInGraph } from '../../../../core/utils/graph';
 import { addForeachToNode } from '../../../../core/utils/loops';
 import {
+  loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
   shouldUseParameterInGroup,
   updateParameterAndDependencies,
@@ -126,22 +128,27 @@ const ParameterSection = ({
     };
   });
   const rootState = useSelector((state: RootState) => state);
+  const displayNameResult = useConnectorName(operationInfo);
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState) => {
-      const { value, viewModel } = newState;
+      let { value } = newState;
+      const { viewModel } = newState;
+      const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
+      if (
+        (parameter?.type === constants.SWAGGER.TYPE.BOOLEAN && value.length === 1 && value[0]?.value === 'True') ||
+        value[0]?.value === 'False'
+      ) {
+        value = [{ ...value[0], value: value[0].value.toLowerCase() }];
+      }
+
       const propertiesToUpdate = { value, preservedValue: undefined } as Partial<ParameterInfo>;
 
       if (viewModel !== undefined) {
         propertiesToUpdate.editorViewModel = viewModel;
       }
-      const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
-      if (variables[nodeId]) {
-        if (parameter?.parameterKey === 'inputs.$.name') {
-          dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
-        } else if (parameter?.parameterKey === 'inputs.$.type') {
-          dispatch(updateVariableInfo({ id: nodeId, type: value[0]?.value }));
-        }
+      if (variables[nodeId] && (parameter?.parameterKey === 'inputs.$.name' || parameter?.parameterKey === 'inputs.$.type')) {
+        dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
       }
 
       updateParameterAndDependencies(
@@ -195,6 +202,38 @@ const ParameterSection = ({
       );
     }
   };
+
+  const getPickerCallbacks = (parameter: ParameterInfo) => ({
+    getFileSourceName: (): string => {
+      return displayNameResult.result;
+    },
+    getDisplayNameFromSelectedItem: (selectedItem: any): string => {
+      const dependency = dependencies.inputs[parameter.parameterKey];
+      const propertyPath = dependency.filePickerInfo?.titlePath ?? dependency.filePickerInfo?.browse.itemTitlePath;
+      return selectedItem[propertyPath ?? ''];
+    },
+    getValueFromSelectedItem: (selectedItem: any): string => {
+      const dependency = dependencies.inputs[parameter.parameterKey];
+      const propertyPath = dependency.filePickerInfo?.valuePath ?? dependency.filePickerInfo?.browse.itemValuePath;
+      return selectedItem[propertyPath ?? ''];
+    },
+    onFolderNavigation: (selectedItem: any | undefined): void => {
+      loadDynamicTreeItemsForParameter(
+        selectedItem,
+        nodeId,
+        group.id,
+        parameter.id,
+        operationInfo,
+        connectionReference,
+        nodeInputs,
+        nodeMetadata,
+        dependencies,
+        true /* showErrorWhenNotReady */,
+        dispatch,
+        idReplacements
+      );
+    },
+  });
 
   const getValueSegmentFromToken = async (
     parameterId: string,
@@ -259,8 +298,6 @@ const ParameterSection = ({
       const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel, conditionalVisibility };
       const { editor, editorOptions } = getEditorAndOptions(param, upstreamNodeIds ?? [], variables);
 
-      const isCodeEditor = editor?.toLowerCase() === 'code';
-
       const remappedValues: ValueSegment[] = value.map((v: ValueSegment) => {
         if (v.type !== ValueSegmentType.TOKEN) return v;
         const oldId = v.token?.actionName ?? '';
@@ -292,6 +329,7 @@ const ParameterSection = ({
           validationErrors,
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
+          pickerCallbacks: getPickerCallbacks(param),
           getTokenPicker: (
             editorId: string,
             labelId: string,
@@ -305,7 +343,7 @@ const ParameterSection = ({
               editorId,
               labelId,
               tokenPickerMode,
-              isCodeEditor,
+              editor?.toLowerCase() === 'code',
               closeTokenPicker,
               tokenPickerClicked,
               tokenClickedCallback
@@ -334,14 +372,20 @@ const getEditorAndOptions = (
   variables: Record<string, VariableDeclaration[]>
 ): { editor?: string; editorOptions?: any } => {
   const { editor, editorOptions } = parameter;
+  const supportedTypes: string[] = editorOptions?.supportedTypes ?? [];
   if (equals(editor, 'variablename')) {
     return {
       editor: 'dropdown',
       editorOptions: {
-        options: getAvailableVariables(variables, upstreamNodeIds).map((variable) => ({
-          value: variable.name,
-          displayName: variable.name,
-        })),
+        options: getAvailableVariables(variables, upstreamNodeIds)
+          .filter((variable) => {
+            if (supportedTypes?.length === 0) return true;
+            return supportedTypes.includes(variable.type);
+          })
+          .map((variable) => ({
+            value: variable.name,
+            displayName: variable.name,
+          })),
       },
     };
   }

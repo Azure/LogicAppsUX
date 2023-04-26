@@ -50,10 +50,11 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export interface PanelRootProps {
   panelLocation?: PanelLocation;
+  displayRuntimeInfo: boolean;
 }
 
 export const PanelRoot = (props: PanelRootProps): JSX.Element => {
-  const { panelLocation } = props;
+  const { panelLocation, displayRuntimeInfo } = props;
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -184,19 +185,19 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const getCommentMenuItem = (options: MenuItemOption[]): MenuItemOption[] => {
     const commentDescription = intl.formatMessage({
-      defaultMessage: 'Comment',
-      description: 'Comment text',
+      defaultMessage: 'Note',
+      description: 'Note text',
     });
     const disabledCommentAction = intl.formatMessage({
-      defaultMessage: 'Comments can only be added while editing the inputs of a step.',
-      description: 'Text to tell users why a comment is disabled',
+      defaultMessage: 'Notes can only be added while editing the inputs of a step.',
+      description: 'Text to tell users why notes are disabled',
     });
     const commentAdd = intl.formatMessage({
-      defaultMessage: 'Add a comment',
+      defaultMessage: 'Add a note',
       description: 'Text to tell users to click to add comments',
     });
     const commentDelete = intl.formatMessage({
-      defaultMessage: 'Delete comment',
+      defaultMessage: 'Delete note',
       description: 'Text to tell users to click to delete comments',
     });
 
@@ -261,7 +262,6 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const layerProps = {
     hostId: 'msla-layer-host',
-    styles: { root: { zIndex: 999998 } },
   };
 
   const commonPanelProps: CommonPanelProps = {
@@ -275,9 +275,9 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   return currentPanelMode === 'WorkflowParameters' ? (
     <WorkflowParametersPanel {...commonPanelProps} />
   ) : currentPanelMode === 'Discovery' ? (
-    <RecommendationPanelContext {...commonPanelProps} />
+    <RecommendationPanelContext {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
   ) : currentPanelMode === 'NodeSearch' ? (
-    <NodeSearchPanel {...commonPanelProps} />
+    <NodeSearchPanel {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
   ) : (
     <PanelContainer
       {...commonPanelProps}

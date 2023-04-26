@@ -1,13 +1,9 @@
 import type { Workflow } from '../../common/models/workflow';
 import { getConnectionsApiAndMapping } from '../actions/bjsworkflow/connections';
 import { parseWorkflowParameters } from '../actions/bjsworkflow/initialize';
-import {
-  initializeOperationMetadata,
-  initializeSwaggerDynamicData,
-  updateDynamicDataInNodes,
-} from '../actions/bjsworkflow/operationdeserializer';
+import { initializeOperationMetadata, updateDynamicDataInNodes } from '../actions/bjsworkflow/operationdeserializer';
 import { getConnectionsQuery } from '../queries/connections';
-import { initializeConnectionReferences } from '../state/connection/connectionSlice';
+import { addInvokerSupport, initializeConnectionReferences } from '../state/connection/connectionSlice';
 import { initializeStaticResultProperties } from '../state/staticresultschema/staticresultsSlice';
 import type { RootState } from '../store';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
@@ -32,12 +28,16 @@ export const initializeGraphState = createAsyncThunk<
     const deserializedWorkflow = BJSDeserialize(definition, runInstance);
     thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
     thunkAPI.dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
+    thunkAPI.dispatch(addInvokerSupport({ connectionReferences }));
     parseWorkflowParameters(parameters ?? {}, thunkAPI.dispatch);
 
-    await initializeSwaggerDynamicData(deserializedWorkflow);
-
     const asyncInitialize = async () => {
-      await initializeOperationMetadata(deserializedWorkflow, connectionReferences, parameters ?? {}, thunkAPI.dispatch);
+      await initializeOperationMetadata(
+        deserializedWorkflow,
+        thunkAPI.getState().connections.connectionReferences,
+        parameters ?? {},
+        thunkAPI.dispatch
+      );
       const actionsAndTriggers = deserializedWorkflow.actionData;
       await getConnectionsApiAndMapping(actionsAndTriggers, thunkAPI.getState, thunkAPI.dispatch);
       await updateDynamicDataInNodes(thunkAPI.getState, thunkAPI.dispatch);

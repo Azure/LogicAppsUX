@@ -52,6 +52,7 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
 
   // Boolean parameter
   else if (parameter?.type === ConnectionParameterTypes[ConnectionParameterTypes.bool]) {
+    if (value === undefined) setValue(false);
     inputComponent = <Checkbox checked={value} onChange={(e: any, checked?: boolean) => setValue(checked)} label={description} />;
   }
 

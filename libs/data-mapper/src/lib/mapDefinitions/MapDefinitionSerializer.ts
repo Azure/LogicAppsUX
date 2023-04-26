@@ -20,6 +20,7 @@ import { LogCategory, LogService } from '../utils/Logging.Utils';
 import { addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
 import { isObjectType, isSchemaNodeExtended } from '../utils/Schema.Utils';
 import yaml from 'js-yaml';
+import { merge } from 'lodash';
 
 interface OutputPathItem {
   key: string;
@@ -150,7 +151,12 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
               const functionValues = getInputValues(connections[input.reactFlowKey], connections, false);
               value = formatDirectAccess(functionValues[0], functionValues[1], functionValues[2]);
             } else {
-              value = collectFunctionValue(input.node, connections[input.reactFlowKey], connections);
+              value = collectFunctionValue(
+                input.node,
+                connections[input.reactFlowKey],
+                connections,
+                array.some((arrayItems) => arrayItems.repeating)
+              );
             }
           }
         }
@@ -352,13 +358,14 @@ const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathIte
       // When dealing with the map definition we need to access the previous path item, instead of the current
       const curPathItem = path[pathIndex - 1];
       const curItem = mapDefinition[curPathItem.key];
-      let newArray = curItem && Array.isArray(curItem) ? curItem : Array(pathItem.arrayIndex + 1);
+      let newArray: (any | undefined)[] = curItem && Array.isArray(curItem) ? curItem : Array(pathItem.arrayIndex + 1).fill(undefined);
       newArray = newArray.fill(undefined, newArray.length, pathItem.arrayIndex + 1);
 
       const arrayItem: MapDefinitionEntry = {};
       applyValueAtPath(arrayItem, path.slice(pathIndex + 1));
 
-      newArray[pathItem.arrayIndex] = { ...newArray[pathItem.arrayIndex], ...arrayItem };
+      const combinedArrayItem = merge(newArray[pathItem.arrayIndex], arrayItem);
+      newArray[pathItem.arrayIndex] = combinedArrayItem;
       mapDefinition[curPathItem.key] = newArray;
 
       // Return false to break loop

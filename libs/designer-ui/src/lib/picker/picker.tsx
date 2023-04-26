@@ -13,7 +13,7 @@ const calloutStyles: Partial<ICalloutContentStyles> = {
   },
   calloutMain: {
     maxHeight: 430,
-    width: 300,
+    width: 400,
     overflow: 'hidden',
   },
 };
@@ -25,6 +25,7 @@ export interface PickerProps {
   files: FileItem[];
   loadingFiles?: boolean;
   onCancel?: () => void;
+  handleFolderNavigation?: (selectedObject: any) => void;
 }
 
 export const Picker = ({ visible, onCancel, anchorId, currentPathSegments, files, loadingFiles }: PickerProps) => {
@@ -61,7 +62,7 @@ export const Picker = ({ visible, onCancel, anchorId, currentPathSegments, files
         <ul className="msla-picker-items">
           {files.map((file) => (
             <li key={file.text} className="msla-item">
-              <PickerItem text={file.text} type={file.type} onNavigation={file.onNavigation} onSelect={file.onSelect} />
+              <PickerItem text={file.text} type={file.type} onNavigation={file.onNavigation} onSelect={file.onSelect} value={file.value} />
             </li>
           ))}
         </ul>

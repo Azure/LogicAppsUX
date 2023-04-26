@@ -9,7 +9,7 @@ import {
   schemaNodeCardWidthDifference,
 } from '../constants/NodeConstants';
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { ConnectionDictionary } from '../models/Connection';
+import type { ConnectionDictionary, ConnectionUnit } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
 import { SchemaType } from '../models/Schema';
@@ -34,6 +34,12 @@ interface SimplifiedLayoutEdge {
 interface Size2D {
   width: number;
   height: number;
+}
+
+export interface ReactFlowIdParts {
+  sourceId: string;
+  destinationId: string | undefined;
+  portId: string | undefined;
 }
 
 // Hidden dummy node placed at 0,0 (same as source schema block) to allow initial load fitView to center diagram
@@ -85,7 +91,7 @@ export const useLayout = (
           // Convert the calculated layout to ReactFlow nodes + edges
           setReactFlowNodes([
             placeholderReactFlowNode,
-            ...convertToReactFlowNodes(computedLayout, sortedSourceSchemaNodes, currentFunctionNodes, [
+            ...convertToReactFlowNodes(computedLayout, selectedItemKey, sortedSourceSchemaNodes, currentFunctionNodes, [
               currentTargetSchemaNode,
               ...currentTargetSchemaNode.children,
             ]),
@@ -131,13 +137,14 @@ export const useLayout = (
 
 export const convertToReactFlowNodes = (
   layoutTree: RootLayoutNode,
+  selectedNodeId: string | undefined,
   currentSourceSchemaNodes: SchemaNodeExtended[],
   currentFunctionNodes: FunctionDictionary,
   currentTargetSchemaNodes: SchemaNodeExtended[]
 ): ReactFlowNode<CardProps>[] => {
   return [
     ...convertSourceSchemaToReactFlowNodes(layoutTree.children[0], currentSourceSchemaNodes),
-    ...convertFunctionsToReactFlowParentAndChildNodes(layoutTree.children[1], currentFunctionNodes),
+    ...convertFunctionsToReactFlowParentAndChildNodes(layoutTree.children[1], selectedNodeId, currentFunctionNodes),
     ...convertTargetSchemaToReactFlowNodes(layoutTree.children[2], currentTargetSchemaNodes),
   ];
 };
@@ -213,12 +220,15 @@ export const convertSchemaToReactFlowNodes = (
 
 const convertFunctionsToReactFlowParentAndChildNodes = (
   functionsLayoutTree: LayoutNode,
+  selectedNodeId: string | undefined,
   currentFunctionNodes: FunctionDictionary
 ): ReactFlowNode<FunctionCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<FunctionCardProps>[] = [];
 
   Object.entries(currentFunctionNodes).forEach(([functionKey, fnNode], idx) => {
     const layoutNode = functionsLayoutTree.children?.find((node) => node.id === functionKey);
+    const isSelectedNode = functionKey === selectedNodeId;
+
     if (!layoutNode || layoutNode.x === undefined || layoutNode.y === undefined) {
       LogService.error(LogCategory.ReactFlowUtils, 'convertFunctionsToReactFlowParentAndChildNodes', {
         message: 'Layout error: LayoutNode not found, or missing x/y',
@@ -248,6 +258,7 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
         x: layoutNode.x,
         y: layoutNode.y,
       },
+      zIndex: isSelectedNode ? 150 : 0,
     });
   });
 
@@ -314,6 +325,7 @@ export const useOverviewLayout = (
 };
 
 export const useGlobalViewLayout = (
+  selectedNodeId: string | undefined,
   flattenedSourceSchema: SchemaNodeDictionary,
   flattenedTargetSchema: SchemaNodeDictionary,
   connections: ConnectionDictionary
@@ -347,6 +359,7 @@ export const useGlobalViewLayout = (
           placeholderReactFlowNode,
           ...convertToReactFlowNodes(
             computedLayoutTree,
+            selectedNodeId,
             Object.values(flattenedSourceSchema),
             functionDictionary,
             Object.values(flattenedTargetSchema)
@@ -376,7 +389,7 @@ export const useGlobalViewLayout = (
           message: `${error}`,
         });
       });
-  }, [connections, flattenedSourceSchema, flattenedTargetSchema]);
+  }, [connections, flattenedSourceSchema, flattenedTargetSchema, selectedNodeId]);
 
   return [reactFlowNodes, reactFlowEdges];
 };
@@ -476,8 +489,44 @@ export const createReactFlowConnectionId = (sourceId: string, targetId: string, 
 
   return result;
 };
+
+export const getSplitIdsFromReactFlowConnectionId = (reactFlowId: string): ReactFlowIdParts => {
+  const sourceDestSplit = reactFlowId.split(reactFlowConnectionIdSeparator);
+  const destPortSplit = sourceDestSplit.length > 1 ? sourceDestSplit[1].split(reactFlowConnectionPortSeparator) : [undefined, undefined];
+
+  return {
+    sourceId: sourceDestSplit[0],
+    destinationId: destPortSplit[0],
+    portId: destPortSplit[1],
+  };
+};
 export const getSourceIdFromReactFlowConnectionId = (reactFlowId: string): string => reactFlowId.split(reactFlowConnectionIdSeparator)[0];
 export const getDestinationIdFromReactFlowConnectionId = (reactFlowId: string): string =>
   reactFlowId.split(reactFlowConnectionIdSeparator)[1].split(reactFlowConnectionPortSeparator, 1)[0];
 export const getPortFromReactFlowConnectionId = (reactFlowId: string): string | undefined =>
   reactFlowId.split(reactFlowConnectionPortSeparator)[1];
+
+export const isNodeHighlighted = (
+  isCurrentNodeSelected: boolean,
+  currentReactFlowId: string,
+  selectedItemConnectedNodes: ConnectionUnit[]
+): boolean => !isCurrentNodeSelected && selectedItemConnectedNodes.some((node) => node.reactFlowKey === currentReactFlowId);
+
+export const isEdgeHighlighted = (
+  isCurrentNodeSelected: boolean,
+  currentItemSplit: ReactFlowIdParts,
+  selectedItemConnectedNodes: ConnectionUnit[]
+): boolean => {
+  if (isCurrentNodeSelected) {
+    return false;
+  }
+
+  if (currentItemSplit.destinationId) {
+    return (
+      selectedItemConnectedNodes.some((node) => node.reactFlowKey === currentItemSplit.sourceId) &&
+      selectedItemConnectedNodes.some((node) => node.reactFlowKey === currentItemSplit.destinationId)
+    );
+  } else {
+    return selectedItemConnectedNodes.some((node) => node.reactFlowKey === currentItemSplit.sourceId);
+  }
+};

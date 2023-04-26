@@ -2,7 +2,7 @@ import Constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
-import { initEmptyConnectionMap } from '../../state/connection/connectionSlice';
+import { addInvokerSupport, initEmptyConnectionMap } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { updateNodeSettings, initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
@@ -10,6 +10,7 @@ import { changePanelNode, isolateTab, showDefaultTabs } from '../../state/panel/
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
+import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
@@ -93,8 +94,10 @@ const initializeOperationDetails = async (
   const operationManifestService = OperationManifestService();
   const staticResultService = StaticResultService();
 
-  const schema = staticResultService.getOperationResultSchema(connectorId, operationId);
-  schema.then((schema) => {
+  const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId);
+  let hasSchema;
+  schemaService.then((schema) => {
+    hasSchema = true;
     if (schema) {
       dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
     }
@@ -111,7 +114,7 @@ const initializeOperationDetails = async (
     isConnectionRequired = isConnectionRequiredForOperation(manifest);
 
     const { iconUri, brandColor } = manifest.properties;
-    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, undefined);
+    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs);
 
     if (parameterValues) {
@@ -198,12 +201,28 @@ const initializeOperationDetails = async (
   }
 
   // Re-update settings after we have valid operation data
+  const rootNodeId = getRootNodeDetails(state.workflow, connectorId);
   const operation = getState().workflow.operations[nodeId];
-  const settings = getOperationSettings(isTrigger, operationInfo, initData.nodeOutputs, manifest, swagger, operation);
+
+  const connectionReferences = state.connections.connectionReferences;
+  if (!state.connections.connectionReferences) {
+    dispatch(addInvokerSupport({ connectionReferences }));
+  }
+  const settings = getOperationSettings(
+    isTrigger,
+    operationInfo,
+    initData.nodeOutputs,
+    manifest,
+    swagger,
+    operation,
+    rootNodeId,
+    state.connections.connectionReferences,
+    dispatch
+  );
   dispatch(updateNodeSettings({ id: nodeId, settings }));
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);
-  dispatch(showDefaultTabs({ isScopeNode: operationInfo?.type.toLowerCase() === Constants.NODE.TYPE.SCOPE, hasSchema: !!schema }));
+  dispatch(showDefaultTabs({ isScopeNode: operationInfo?.type.toLowerCase() === Constants.NODE.TYPE.SCOPE, hasSchema: hasSchema }));
 };
 
 export const initializeSwitchCaseFromManifest = async (id: string, manifest: OperationManifest, dispatch: Dispatch): Promise<void> => {
@@ -306,4 +325,15 @@ const getOperationType = (operation: DiscoveryOperation<DiscoveryResultTypes>): 
       ? Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
       : Constants.NODE.TYPE.API_CONNECTION
     : operationType;
+};
+
+export const getRootNodeDetails = (workflowState: WorkflowState, connectorId: string): string | undefined => {
+  if (workflowState.graph?.children && connectorId.indexOf(Constants.INVOKER_CONNECTION.DATAVERSE_CONNECTOR_ID) > -1) {
+    for (const child of workflowState.graph.children) {
+      if (workflowState.graph?.id === 'root') {
+        return child.id;
+      }
+    }
+  }
+  return undefined;
 };

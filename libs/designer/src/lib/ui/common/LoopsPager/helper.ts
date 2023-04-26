@@ -1,3 +1,5 @@
+import constants from '../../../common/constants';
+import type { NodeOperation } from '../../../core/state/operation/operationMetadataSlice';
 import type { NodesMetadata } from '../../../core/state/workflow/workflowInterfaces';
 import { getAllParentsForNode } from '../../../core/utils/graph';
 
@@ -39,12 +41,20 @@ export const getForeachItemsCount = (action: LogicAppsV2.WorkflowRunAction): num
  * @param {NodesMetadata} nodesMetadata - Node run metadata.
  * @returns {string} Repetition name.
  */
-export const getRepetitionName = (index: number | undefined, id: string, nodesMetadata: NodesMetadata): string => {
+export const getRepetitionName = (
+  index: number | undefined,
+  id: string,
+  nodesMetadata: NodesMetadata,
+  operationInfo: Record<string, NodeOperation>
+): string => {
   let repetitionName = '';
   const parentsForNode = getAllParentsForNode(id, nodesMetadata);
   parentsForNode.forEach((parent) => {
-    const isRoot = nodesMetadata[parent]?.isRoot ?? false;
-    if (!isRoot) {
+    const isLoopScope = operationInfo[parent]?.type
+      ? operationInfo[parent]?.type.toLowerCase() === constants.NODE.TYPE.FOREACH ||
+        operationInfo[parent]?.type.toLowerCase() === constants.NODE.TYPE.UNTIL
+      : false;
+    if (isLoopScope) {
       const zeroBasedCurrent = nodesMetadata[parent]?.runIndex;
       repetitionName = repetitionName ? `${String(zeroBasedCurrent).padStart(6, '0')}-${repetitionName}` : String(index).padStart(6, '0');
     }

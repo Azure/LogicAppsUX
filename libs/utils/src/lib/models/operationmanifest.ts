@@ -77,6 +77,7 @@ export interface OperationManifestSetting<T> {
 export interface OperationManifestSettings {
   chunking?: OperationManifestSetting<UploadChunkMetadata>;
   concurrency?: OperationManifestSetting<void>;
+  invokerConnection?: OperationManifestSetting<void>;
   correlation?: OperationManifestSetting<void>;
   downloadChunking?: OperationManifestSetting<DownloadChunkMetadata>;
   operationOptions?: OperationManifestSetting<OperationOptions[]>;
@@ -188,6 +189,10 @@ export interface OperationManifestProperties {
   outputs?: SwaggerSchema;
   outputsSchema?: {
     outputPaths: InputsDependency[];
+  };
+
+  customSwagger?: {
+    location: string[];
   };
 
   /*

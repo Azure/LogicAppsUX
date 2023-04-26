@@ -35,6 +35,12 @@
       "value": "Select this if you are configuring an on-prem connection"
     }
   ],
+  "+W2vTp": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -650,6 +656,16 @@
       "value": "Enter a valid array."
     }
   ],
+  "2r30S9": [
+    {
+      "type": 0,
+      "value": "Insert a new step after "
+    },
+    {
+      "type": 1,
+      "value": "parentName"
+    }
+  ],
   "2ri1Kf": [
     {
       "type": 0,
@@ -764,6 +780,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) 다카"
+    }
+  ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Choose the type of user input"
     }
   ],
   "3Y8a6G": [
@@ -950,12 +972,6 @@
       "value": "필수 사항으로, 값을 원하는 매개 변수의 이름입니다."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "단계 입력을 편집하는 동안에만 주석을 추가할 수 있습니다."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1072,6 +1088,12 @@
     {
       "type": 0,
       "value": "하이브리드 커넥터"
+    }
+  ],
+  "61iT9C": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing Alt + / in the editor)"
     }
   ],
   "62Ypnr": [
@@ -1428,28 +1450,16 @@
       "value": "(UTC+07:00) 호브드"
     }
   ],
-  "90HY0L": [
-    {
-      "type": 0,
-      "value": "Insert a new step between "
-    },
-    {
-      "type": 1,
-      "value": "parent"
-    },
-    {
-      "type": 0,
-      "value": " and "
-    },
-    {
-      "type": 1,
-      "value": "child"
-    }
-  ],
   "90Q7Pw": [
     {
       "type": 0,
       "value": "값"
+    }
+  ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "File"
     }
   ],
   "92OUl9": [
@@ -1528,6 +1538,12 @@
     {
       "type": 0,
       "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "9atGYe": [
@@ -1630,6 +1646,16 @@
     {
       "type": 0,
       "value": "Insert data from previous step (You can also add by typing / in the editor)"
+    }
+  ],
+  "Aci186": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Add dynamic data pressing Alt + /"
     }
   ],
   "AgrMqq": [
@@ -1811,6 +1837,12 @@
       "value": "(UTC-05:00) 아바나"
     }
   ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Number"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1871,10 +1903,34 @@
       "value": "자격 증명 유형"
     }
   ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
+    }
+  ],
   "Cy9qeQ": [
     {
       "type": 0,
       "value": "(UTC+02:00) 헬싱키, 키예프, 리가, 소피아, 탈린, 빌뉴스"
+    }
+  ],
+  "CypYLs": [
+    {
+      "type": 0,
+      "value": "Insert a new step between "
+    },
+    {
+      "type": 1,
+      "value": "parentName"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "childName"
     }
   ],
   "Czt6YV": [
@@ -1981,6 +2037,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) 아조레스"
+    }
+  ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Add an input"
     }
   ],
   "DyYcJZ": [
@@ -2119,6 +2181,18 @@
     {
       "type": 0,
       "value": "(UTC-05:00) 동부 표준시(미국과 캐나다)"
+    }
+  ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
+    }
+  ],
+  "Ex4U46": [
+    {
+      "type": 0,
+      "value": "Use Invoker's Connection"
     }
   ],
   "ExaACE": [
@@ -2404,6 +2478,12 @@
     {
       "type": 0,
       "value": "배열"
+    }
+  ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "File Content"
     }
   ],
   "H17jEE": [
@@ -2742,6 +2822,12 @@
       "value": "이름:"
     }
   ],
+  "Jpox7O": [
+    {
+      "type": 0,
+      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+    }
+  ],
   "JpthWY": [
     {
       "type": 0,
@@ -2975,10 +3061,10 @@
       "value": "(UTC+00:00) 더블린, 에든버러, 리스본, 런던"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "주석 추가"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -3762,6 +3848,12 @@
       "value": "필수 사항으로, 양식 데이터 또는 양식 인코딩 응답이 있는 작업의 이름입니다."
     }
   ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
+    }
+  ],
   "Sh10cw": [
     {
       "type": 0,
@@ -3958,6 +4050,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) 브뤼셀, 코펜하겐, 마드리드, 파리"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
     }
   ],
   "Twfck/": [
@@ -4582,6 +4680,12 @@
       "value": "PFX 입력"
     }
   ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
@@ -4908,6 +5012,12 @@
       "value": "(UTC+05:30) 첸나이, 콜카타, 뭄바이, 뉴델리"
     }
   ],
+  "bv9QPA": [
+    {
+      "type": 0,
+      "value": "Date"
+    }
+  ],
   "bwfJdj": [
     {
       "type": 1,
@@ -5068,12 +5178,6 @@
       "value": "필수 항목으로, 첫 번째 Count 개체를 건너뛸 컬렉션입니다."
     }
   ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "주석 삭제"
-    }
-  ],
   "d4xMIx": [
     {
       "type": 0,
@@ -5184,6 +5288,12 @@
     {
       "type": 0,
       "value": "시간 초과됨"
+    }
+  ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "e00zot": [
@@ -5318,6 +5428,12 @@
       "value": "페이징 수가 최대값을 초과합니다."
     }
   ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5366,6 +5482,12 @@
     {
       "type": 0,
       "value": "무시됨"
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "g0a4Qe": [
@@ -5476,10 +5598,22 @@
       "value": "트리거 조건"
     }
   ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06:00) 서스캐처원"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "gpbgjJ": [
@@ -5498,6 +5632,12 @@
     {
       "type": 0,
       "value": "Select a Batch Workflow resource"
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "h1lQDa": [
@@ -5639,12 +5779,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "메모"
     }
   ],
   "iCSHJG": [
@@ -6323,6 +6457,12 @@
       "value": "End time"
     }
   ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "nRpM02": [
     {
       "type": 0,
@@ -6479,6 +6619,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) 살바도르"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -6868,6 +7014,12 @@
       "value": "새로 추가"
     }
   ],
+  "s+4LEa": [
+    {
+      "type": 0,
+      "value": "Open folder"
+    }
+  ],
   "s5RV9B": [
     {
       "type": 0,
@@ -7146,16 +7298,6 @@
       "value": "Status Code"
     }
   ],
-  "uIQrat": [
-    {
-      "type": 0,
-      "value": "Insert a new step after "
-    },
-    {
-      "type": 1,
-      "value": "parent"
-    }
-  ],
   "uIurld": [
     {
       "type": 0,
@@ -7262,6 +7404,12 @@
     {
       "type": 0,
       "value": "매개 변수에서 배열을 만듭니다."
+    }
+  ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Trigger date"
     }
   ],
   "v39HKj": [
@@ -7478,6 +7626,12 @@
       "value": "식의 결과가 true인지, 아니면 false인지 여부에 따라 지정된 값을 반환합니다."
     }
   ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
   "wkiETV": [
     {
       "type": 0,
@@ -7536,6 +7690,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
@@ -7698,6 +7858,12 @@
     {
       "type": 0,
       "value": "필드 추가"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "yxsn7s": [

@@ -2,7 +2,7 @@
 import Constants from '../../../common/constants';
 import type { WorkflowParameter } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
-import { getConnectorWithSwagger } from '../../queries/connections';
+import { getConnectorWithSwagger, getSwaggerFromEndpoint } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
 import { updateNodeSettings, updateNodeParameters, DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
@@ -44,18 +44,20 @@ import type {
 import { WorkflowService, LoggerService, LogEntryLevel, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { SchemaProperty, InputParameter } from '@microsoft/parsers-logic-apps';
+import type { SchemaProperty, InputParameter, SwaggerParser } from '@microsoft/parsers-logic-apps';
 import {
   isDynamicListExtension,
   isDynamicPropertiesExtension,
   isDynamicSchemaExtension,
+  isDynamicTreeExtension,
   isLegacyDynamicValuesExtension,
+  isLegacyDynamicValuesTreeExtension,
   DynamicSchemaType,
   ManifestParser,
   PropertyName,
 } from '@microsoft/parsers-logic-apps';
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
-import { clone, equals, ConnectionReferenceKeyFormat, unmap } from '@microsoft/utils-logic-apps';
+import type { OperationManifest, OperationManifestProperties } from '@microsoft/utils-logic-apps';
+import { clone, equals, ConnectionReferenceKeyFormat, unmap, getObjectPropertyValue } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface ServiceOptions {
@@ -83,6 +85,7 @@ export const parseWorkflowParameters = (parameters: Record<string, WorkflowParam
 export const getInputParametersFromManifest = (
   nodeId: string,
   manifest: OperationManifest,
+  customSwagger?: SwaggerParser,
   stepDefinition?: any
 ): NodeInputsWithDependencies => {
   const primaryInputParameters = new ManifestParser(manifest).getInputParameters(
@@ -134,7 +137,13 @@ export const getInputParametersFromManifest = (
 
       primaryInputParametersInArray = updateParameterWithValues(
         'inputs.$',
-        getInputsValueFromDefinitionForManifest(inputsLocation ?? ['inputs'], manifest, operationData, primaryInputParametersInArray),
+        getInputsValueFromDefinitionForManifest(
+          inputsLocation ?? ['inputs'],
+          manifest,
+          customSwagger,
+          operationData,
+          primaryInputParametersInArray
+        ),
         '',
         primaryInputParametersInArray,
         (!inputsLocation || !!inputsLocation.length) && !manifest.properties.inputsLocationSwapMap /* createInvisibleParameter */,
@@ -303,12 +312,44 @@ export const updateOutputsAndTokens = async (
   }
 };
 
-export const getInputDependencies = (nodeInputs: NodeInputs, allInputs: InputParameter[]): Record<string, DependencyInfo> => {
+export const getInputDependencies = (
+  nodeInputs: NodeInputs,
+  allInputs: InputParameter[],
+  swagger?: SwaggerParser
+): Record<string, DependencyInfo> => {
   const dependencies: Record<string, DependencyInfo> = {};
   for (const inputParameter of allInputs) {
     const { dynamicValues, dynamicSchema } = inputParameter;
     if (dynamicValues) {
-      if (isLegacyDynamicValuesExtension(dynamicValues) || isDynamicListExtension(dynamicValues)) {
+      if (isLegacyDynamicValuesTreeExtension(dynamicValues) && !!swagger?.api['x-ms-capabilities']) {
+        const pickerCapability = swagger.api['x-ms-capabilities'][Constants.PROPERTY.FILE_PICKER];
+        dependencies[inputParameter.key] = {
+          definition: dynamicValues,
+          dependencyType: 'TreeNavigation',
+          dependentParameters: {},
+          filePickerInfo: {
+            open: pickerCapability[Constants.PROPERTY.OPEN],
+            browse: pickerCapability[Constants.PROPERTY.BROWSE],
+            collectionPath: pickerCapability[Constants.PROPERTY.VALUE_COLLECTION],
+            valuePath: dynamicValues.extension['value-path'],
+            titlePath: pickerCapability[Constants.PROPERTY.VALUE_TITLE],
+            folderPropertyPath: pickerCapability[Constants.PROPERTY.VALUE_FOLDER_PROPERTY],
+            mediaPropertyPath: pickerCapability[Constants.PROPERTY.VALUE_MEDIA_PROPERTY],
+          },
+          parameter: inputParameter,
+        };
+      } else if (isDynamicTreeExtension(dynamicValues)) {
+        dependencies[inputParameter.key] = {
+          definition: dynamicValues,
+          dependencyType: 'TreeNavigation',
+          dependentParameters: {},
+          filePickerInfo: {
+            open: dynamicValues.extension.open,
+            browse: dynamicValues.extension.browse,
+          },
+          parameter: inputParameter,
+        };
+      } else if (isLegacyDynamicValuesExtension(dynamicValues) || isDynamicListExtension(dynamicValues)) {
         dependencies[inputParameter.key] = {
           definition: dynamicValues,
           dependencyType: 'ListValues',
@@ -400,4 +441,16 @@ export const updateAllUpstreamNodes = (state: RootState, dispatch: Dispatch): vo
   }
 
   dispatch(updateUpstreamNodes(payload));
+};
+
+export const getCustomSwaggerIfNeeded = async (
+  manifestProperties: OperationManifestProperties,
+  stepDefinition?: any
+): Promise<SwaggerParser | undefined> => {
+  const swaggerUrlLocation = manifestProperties.customSwagger?.location;
+  if (!swaggerUrlLocation || !stepDefinition) {
+    return undefined;
+  }
+
+  return getSwaggerFromEndpoint(getObjectPropertyValue(stepDefinition, swaggerUrlLocation));
 };

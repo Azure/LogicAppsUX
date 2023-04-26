@@ -66,6 +66,7 @@ export const useAllConnections = () => {
 export const useConnectionsForConnector = (connectorId: string) => {
   return useQuery([connectionKey, connectorId?.toLowerCase()], () => ConnectionService().getConnections(connectorId), {
     enabled: !!connectorId,
+    refetchOnMount: true,
   });
 };
 

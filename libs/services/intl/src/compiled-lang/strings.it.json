@@ -35,6 +35,12 @@
       "value": "Select this if you are configuring an on-prem connection"
     }
   ],
+  "+W2vTp": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -672,6 +678,16 @@
       "value": "Enter a valid array."
     }
   ],
+  "2r30S9": [
+    {
+      "type": 0,
+      "value": "Insert a new step after "
+    },
+    {
+      "type": 1,
+      "value": "parentName"
+    }
+  ],
   "2ri1Kf": [
     {
       "type": 0,
@@ -786,6 +802,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Dacca"
+    }
+  ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Choose the type of user input"
     }
   ],
   "3Y8a6G": [
@@ -972,12 +994,6 @@
       "value": "Obbligatorio. Nome del parametro di cui si desidera ottenere i valori."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "È possibile aggiungere i commenti solo durante la modifica degli input di un passaggio."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1094,6 +1110,12 @@
     {
       "type": 0,
       "value": "Connettore ibrido"
+    }
+  ],
+  "61iT9C": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing Alt + / in the editor)"
     }
   ],
   "62Ypnr": [
@@ -1450,28 +1472,16 @@
       "value": "(UTC+07:00) Hovd"
     }
   ],
-  "90HY0L": [
-    {
-      "type": 0,
-      "value": "Insert a new step between "
-    },
-    {
-      "type": 1,
-      "value": "parent"
-    },
-    {
-      "type": 0,
-      "value": " and "
-    },
-    {
-      "type": 1,
-      "value": "child"
-    }
-  ],
   "90Q7Pw": [
     {
       "type": 0,
       "value": "Valore"
+    }
+  ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "File"
     }
   ],
   "92OUl9": [
@@ -1550,6 +1560,12 @@
     {
       "type": 0,
       "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "9atGYe": [
@@ -1652,6 +1668,16 @@
     {
       "type": 0,
       "value": "Insert data from previous step (You can also add by typing / in the editor)"
+    }
+  ],
+  "Aci186": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Add dynamic data pressing Alt + /"
     }
   ],
   "AgrMqq": [
@@ -1855,6 +1881,12 @@
       "value": "(UTC-05:00) L'Avana"
     }
   ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Number"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1915,10 +1947,34 @@
       "value": "Tipo di credenziali"
     }
   ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
+    }
+  ],
   "Cy9qeQ": [
     {
       "type": 0,
       "value": "(UTC+2.00) Helsinki, Kiev, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
+  "CypYLs": [
+    {
+      "type": 0,
+      "value": "Insert a new step between "
+    },
+    {
+      "type": 1,
+      "value": "parentName"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "childName"
     }
   ],
   "Czt6YV": [
@@ -2025,6 +2081,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Azzorre"
+    }
+  ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Add an input"
     }
   ],
   "DyYcJZ": [
@@ -2163,6 +2225,18 @@
     {
       "type": 0,
       "value": "(UTC-5.00) Fuso orientale (USA e Canada)"
+    }
+  ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
+    }
+  ],
+  "Ex4U46": [
+    {
+      "type": 0,
+      "value": "Use Invoker's Connection"
     }
   ],
   "ExaACE": [
@@ -2470,6 +2544,12 @@
     {
       "type": 0,
       "value": "Array"
+    }
+  ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "File Content"
     }
   ],
   "H17jEE": [
@@ -2808,6 +2888,12 @@
       "value": "Nome:"
     }
   ],
+  "Jpox7O": [
+    {
+      "type": 0,
+      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+    }
+  ],
   "JpthWY": [
     {
       "type": 0,
@@ -3063,10 +3149,10 @@
       "value": "(UTC + 00.00) Dublino, Edimburgo, Lisbona, Londra"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "Aggiungere un commento"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -3880,6 +3966,12 @@
       "value": "Obbligatorio. Nome dell'azione con una risposta con dati del modulo o codifica per il modulo."
     }
   ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
+    }
+  ],
   "Sh10cw": [
     {
       "type": 0,
@@ -4076,6 +4168,12 @@
     {
       "type": 0,
       "value": "(UTC+1.00) Bruxelles, Copenaghen, Madrid, Parigi"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
     }
   ],
   "Twfck/": [
@@ -4700,6 +4798,12 @@
       "value": "Immetti file PFX"
     }
   ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
@@ -5026,6 +5130,12 @@
       "value": "(UTC+05.30) Chennai, Kolkata (Calcutta), Mumbai, Nuova Delhi"
     }
   ],
+  "bv9QPA": [
+    {
+      "type": 0,
+      "value": "Date"
+    }
+  ],
   "bwfJdj": [
     {
       "type": 0,
@@ -5186,12 +5296,6 @@
       "value": "Obbligatorio. Raccolta in cui ignorare i primi oggetti Count."
     }
   ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "Eliminare commento"
-    }
-  ],
   "d4xMIx": [
     {
       "type": 0,
@@ -5306,6 +5410,12 @@
     {
       "type": 0,
       "value": "scaduto"
+    }
+  ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "e00zot": [
@@ -5440,6 +5550,12 @@
       "value": "Il numero di paging supera il valore massimo"
     }
   ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5488,6 +5604,12 @@
     {
       "type": 0,
       "value": "Ignorato"
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "g0a4Qe": [
@@ -5598,10 +5720,22 @@
       "value": "Condizioni trigger"
     }
   ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06:00) Saskatchewan"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "gpbgjJ": [
@@ -5620,6 +5754,12 @@
     {
       "type": 0,
       "value": "Select a Batch Workflow resource"
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "h1lQDa": [
@@ -5783,12 +5923,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "Commento"
     }
   ],
   "iCSHJG": [
@@ -6471,6 +6605,12 @@
       "value": "End time"
     }
   ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "nRpM02": [
     {
       "type": 0,
@@ -6627,6 +6767,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Salvador"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7038,6 +7184,12 @@
       "value": "Aggiungi nuovo"
     }
   ],
+  "s+4LEa": [
+    {
+      "type": 0,
+      "value": "Open folder"
+    }
+  ],
   "s5RV9B": [
     {
       "type": 0,
@@ -7316,16 +7468,6 @@
       "value": "Status Code"
     }
   ],
-  "uIQrat": [
-    {
-      "type": 0,
-      "value": "Insert a new step after "
-    },
-    {
-      "type": 1,
-      "value": "parent"
-    }
-  ],
   "uIurld": [
     {
       "type": 0,
@@ -7432,6 +7574,12 @@
     {
       "type": 0,
       "value": "Crea una matrice dai parametri"
+    }
+  ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Trigger date"
     }
   ],
   "v39HKj": [
@@ -7652,6 +7800,12 @@
       "value": "Restituisce un valore specificato a seconda del fatto che l'espressione abbia restituito true o false"
     }
   ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
   "wkiETV": [
     {
       "type": 0,
@@ -7710,6 +7864,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
@@ -7872,6 +8032,12 @@
     {
       "type": 0,
       "value": "Aggiungi campo"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "yxsn7s": [

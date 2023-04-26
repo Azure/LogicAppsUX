@@ -53,3 +53,7 @@ __azurite_db_queue_extent__.json
 
 # ARM Token
 **/armToken.json
+
+# Generated Docusaurus files
+.docusaurus/
+.cache-loader/

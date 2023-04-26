@@ -10,25 +10,30 @@ import {
   getDestinationIdFromReactFlowConnectionId,
   getPortFromReactFlowConnectionId,
   getSourceIdFromReactFlowConnectionId,
+  getSplitIdsFromReactFlowConnectionId,
+  isEdgeHighlighted,
 } from '../../utils/ReactFlow.Util';
 import { ToolboxPanelTabs } from '../canvasToolbox/CanvasToolbox';
-import { Button, makeStyles, shorthands, tokens, Tooltip } from '@fluentui/react-components';
+import { Button, Tooltip, makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { Add20Filled } from '@fluentui/react-icons';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
 import React, { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
-import { BaseEdge, useNodes } from 'reactflow';
 import type { EdgeProps } from 'reactflow';
+import { BaseEdge, useNodes } from 'reactflow';
 
 const addFunctionBtnSize = 24;
 const parentPadding = 4;
 const parentTotalSize = addFunctionBtnSize + parentPadding * 2;
 
-const getLineColor = (isSelected: boolean, isHovered: boolean) => {
+const getLineColor = (isSelected: boolean, isHighlighted: boolean, isHovered: boolean) => {
   if (isSelected) {
     return tokens.colorCompoundBrandStroke;
+  }
+  if (isHighlighted) {
+    return tokens.colorBrandStroke2;
   } else {
     return isHovered ? tokens.colorNeutralStroke1Hover : tokens.colorNeutralStroke1;
   }
@@ -75,7 +80,11 @@ export const ConnectionEdge = (props: EdgeProps) => {
   const styles = useStyles();
   const reactFlowNodes = useNodes();
 
-  const inlineFunctionInputOutputKeys = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inlineFunctionInputOutputKeys);
+  const [sourceReactFlowKey, destinationRectFlowKey, _destinationPortReactFlowKey] = useSelector(
+    (state: RootState) => state.dataMap.curDataMapOperation.inlineFunctionInputOutputKeys
+  );
+  const selectedItemKeyParts = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKeyParts);
+  const selectedItemConnectedNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemConnectedNodes);
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -106,13 +115,22 @@ export const ConnectionEdge = (props: EdgeProps) => {
     };
   }, [reactFlowNodes, sourcePosition, targetPosition, sourceX, sourceY, targetX, targetY]);
 
+  const currentItemSplitIds = useMemo(() => getSplitIdsFromReactFlowConnectionId(id), [id]);
+
   const isAddingInlineFunctionOnThisEdge = useMemo(() => {
     return (
-      inlineFunctionInputOutputKeys.length === 2 &&
-      inlineFunctionInputOutputKeys[0] === getSourceIdFromReactFlowConnectionId(id) &&
-      inlineFunctionInputOutputKeys[1] === getDestinationIdFromReactFlowConnectionId(id)
+      selectedItemKeyParts &&
+      selectedItemKeyParts.destinationId &&
+      sourceReactFlowKey &&
+      sourceReactFlowKey === selectedItemKeyParts.sourceId &&
+      destinationRectFlowKey &&
+      destinationRectFlowKey === selectedItemKeyParts.destinationId
     );
-  }, [id, inlineFunctionInputOutputKeys]);
+  }, [destinationRectFlowKey, selectedItemKeyParts, sourceReactFlowKey]);
+
+  const isCurrentNodeHighlighted = useMemo<boolean>(() => {
+    return isEdgeHighlighted(!!selected, currentItemSplitIds, selectedItemConnectedNodes);
+  }, [currentItemSplitIds, selected, selectedItemConnectedNodes]);
 
   const onAddFunctionClick = (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -160,7 +178,7 @@ export const ConnectionEdge = (props: EdgeProps) => {
         {...props}
         style={{
           strokeWidth: tokens.strokeWidthThick,
-          stroke: getLineColor(!!selected, isHovered),
+          stroke: getLineColor(!!selected, isCurrentNodeHighlighted, isHovered),
         }}
         interactionWidth={10}
       />

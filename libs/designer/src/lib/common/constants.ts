@@ -179,6 +179,7 @@ export default {
     COPYABLE: 'copyable',
     DICTIONARY: 'dictionary',
     DROPDOWN: 'dropdown',
+    FILEPICKER: 'filepicker',
     SCHEMA: 'schema',
     STRING: 'string',
     TABLE: 'table',
@@ -191,6 +192,10 @@ export default {
   },
   ERROR_NAMES: {
     UNAUTHORIZED: 'Unauthorized',
+  },
+  FILEPICKER_TYPE: {
+    FILE: 'file',
+    FOLDER: 'folder',
   },
   FOREACH_CURRENT_ITEM_KEY: 'builtin.$.currentItem',
   FOREACH_CURRENT_ITEM_EXPRESSION_NAME: 'items',
@@ -243,6 +248,10 @@ export default {
   INT_MAX: 2147483647,
   INT_MIN: -2147483648,
   INTEGRATION_ACCOUNT_ARTIFACT_LOOKUP_ARTIFACT_TYPES: ['Schema', 'Map', 'Partner', 'Agreement'],
+  INVOKER_CONNECTION: {
+    DATAVERSE_CUD_TRIGGER: 'When_a_row_is_added,_modified_or_deleted',
+    DATAVERSE_CONNECTOR_ID: '/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps',
+  },
   ITEM: 'item()',
   LINKS: {
     CUSTOM_API: 'http://aka.ms/logicapps-customapi',
@@ -904,11 +913,12 @@ export default {
   },
   AZURE_RESOURCE_ACTION_TYPES: {
     SELECT_APIMANAGEMENT_ACTION: 'apimanagement',
-    SELECT_APIMANAGEMENT_TRIGGER: 'selectapimanagementtrigger',
+    SELECT_APIMANAGEMENT_TRIGGER: 'apimanagementtrigger',
     SELECT_APPSERVICE_ACTION: 'appservice',
-    SELECT_APPSERVICE_TRIGGER: 'selectappservicetrigger',
+    SELECT_APPSERVICE_TRIGGER: 'appservicetrigger',
     SELECT_FUNCTION_ACTION: 'azurefunction',
     SELECT_BATCH_WORKFLOW_ACTION: 'sendtobatch',
+    SELECT_BATCH_WORKFLOW_TRIGGER: 'sendtobatchtrigger',
     SELECT_MANUAL_WORKFLOW_ACTION: 'invokeworkflow',
   },
 };

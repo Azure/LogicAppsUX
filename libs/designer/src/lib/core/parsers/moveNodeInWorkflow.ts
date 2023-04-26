@@ -119,6 +119,8 @@ export const moveNodeInWorkflow = (
     if (state.operations[nodeId] as any) delete (state.operations[nodeId] as any).runAfter;
   }
 
+  state.isDirty = true;
+
   // Increase action count of graph
   if (nodesMetadata?.[newWorkflowGraph.id]) {
     nodesMetadata[newWorkflowGraph.id].actionCount = (nodesMetadata[newWorkflowGraph.id].actionCount ?? 0) + 1;
