@@ -3,7 +3,7 @@ import { runPostWorkflowCreateStepsFromCache } from './app/commands/createCodele
 import { validateFuncCoreToolsIsLatest } from './app/commands/funcCoreTools/validateFuncCoreToolsIsLatest';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
-import { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
+import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
@@ -43,7 +43,9 @@ export async function activate(context: vscode.ExtensionContext) {
     validateFuncCoreToolsIsLatest();
 
     ext.rgApi = await getResourceGroupsApi();
-    ext.azureAccountTreeItem = new AzureAccountTreeItemWithProjects();
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;
 
     callWithTelemetryAndErrorHandling(extensionCommand.validateLogicAppProjects, async (actionContext: IActionContext) => {
       await verifyVSCodeConfigOnActivate(actionContext, vscode.workspace.workspaceFolders);

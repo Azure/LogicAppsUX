@@ -16,7 +16,7 @@ export interface ISiteCreatedOptions extends IActionContext {
 export function showSiteCreated(site: ParsedSite, context: ISiteCreatedOptions): void {
   const message: string = site.isSlot
     ? localize('createdNewSlot', 'Successfully created slot "{0}": {1}', site.slotName, site.defaultHostUrl)
-    : localize('createdNewApp', 'Successfully created function app "{0}": {1}', site.fullName, site.defaultHostUrl);
+    : localize('createdNewApp', 'Successfully created logic app "{0}": {1}', site.fullName, site.defaultHostUrl);
 
   ext.outputChannel.appendLog(message);
 
