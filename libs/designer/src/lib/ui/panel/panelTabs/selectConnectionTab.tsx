@@ -11,7 +11,7 @@ import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/reac
 import { ConnectionService } from '@microsoft/designer-client-services-logic-apps';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { SelectConnection } from '@microsoft/designer-ui';
-import type { Connection } from '@microsoft/utils-logic-apps';
+import type { Connection, Connector } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -50,14 +50,14 @@ export const SelectConnectionTab = () => {
       dispatch(
         updateNodeConnection({
           nodeId: selectedNodeId,
-          connectionId: connection?.id as string,
-          connectorId: connector?.id as string,
+          connection,
+          connector: connector as Connector,
         })
       );
       ConnectionService().setupConnectionIfNeeded(connection);
       hideConnectionTabs();
     },
-    [dispatch, selectedNodeId, connector?.id, hideConnectionTabs]
+    [dispatch, selectedNodeId, connector, hideConnectionTabs]
   );
 
   const cancelSelectionCallback = useCallback(() => {
