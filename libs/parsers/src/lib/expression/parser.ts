@@ -1,7 +1,14 @@
 import { ExpressionExceptionCode } from '../common/exceptions/expression';
 import { ParserException } from '../common/exceptions/parser';
 import { isTemplateExpression } from '../common/helpers/expression';
-import type { Dereference, Expression, ExpressionFunction, ExpressionStringInterpolation, ExpressionToken } from '../models/expression';
+import type {
+  Dereference,
+  Expression,
+  ExpressionFunction,
+  ExpressionStringInterpolation,
+  ExpressionToken,
+  ExpressionLiteral,
+} from '../models/expression';
 import { ExpressionType, ExpressionTokenType } from '../models/expression';
 import { ExpressionScanner } from './scanner';
 import { equals } from '@microsoft/utils-logic-apps';
@@ -43,14 +50,14 @@ export class ExpressionParser {
     },
   ];
 
-  public static parseExpression(expression: string): Expression {
+  public static parseExpression(expression: string, isAliasPathParsingEnabled = false): Expression {
     const scanner = new ExpressionScanner(expression);
-    const parsedExpression = ExpressionParser._parseExpressionRecursively(scanner);
+    const parsedExpression = ExpressionParser._parseExpressionRecursively(scanner, 0, isAliasPathParsingEnabled);
     scanner.getTokenForTypeAndValue(ExpressionTokenType.EndOfData);
     return parsedExpression;
   }
 
-  public static parseTemplateExpression(expression: string): Expression {
+  public static parseTemplateExpression(expression: string, isAliasPathParsingEnabled = false): Expression {
     if (!isTemplateExpression(expression)) {
       throw new ParserException(ExpressionExceptionCode.UNRECOGNIZED_EXPRESSION, ExpressionExceptionCode.UNRECOGNIZED_EXPRESSION);
     }
@@ -62,14 +69,14 @@ export class ExpressionParser {
           value: expression.substring(1),
         };
       } else {
-        return ExpressionParser.parseExpression(expression.substring(1));
+        return ExpressionParser.parseExpression(expression.substring(1), isAliasPathParsingEnabled);
       }
     } else {
-      return ExpressionParser._parseStringInterpolationExpression(expression);
+      return ExpressionParser._parseStringInterpolationExpression(expression, isAliasPathParsingEnabled);
     }
   }
 
-  private static _parseExpressionRecursively(scanner: ExpressionScanner, index = 0): Expression {
+  private static _parseExpressionRecursively(scanner: ExpressionScanner, index = 0, isAliasPathParsingEnabled: boolean): Expression {
     if (index < this._tokenList.length) {
       const token = scanner.getTokenForTypeAndValue(ExpressionParser._tokenList[index].tokenType, ExpressionParser._tokenList[index].value);
       if (token) {
@@ -78,9 +85,9 @@ export class ExpressionParser {
           value: token.value,
         };
       }
-      return ExpressionParser._parseExpressionRecursively(scanner, index + 1);
+      return ExpressionParser._parseExpressionRecursively(scanner, index + 1, isAliasPathParsingEnabled);
     } else {
-      return this._parseFunctionExpression(scanner);
+      return this._parseFunctionExpression(scanner, isAliasPathParsingEnabled);
     }
   }
 
@@ -92,7 +99,7 @@ export class ExpressionParser {
     throw new ParserException(ExpressionExceptionCode.UNRECOGNIZED_EXPRESSION, ExpressionExceptionCode.UNRECOGNIZED_EXPRESSION);
   }
 
-  private static _parseFunctionExpression(scanner: ExpressionScanner): ExpressionFunction {
+  private static _parseFunctionExpression(scanner: ExpressionScanner, isAliasPathParsingEnabled: boolean): ExpressionFunction {
     let token: ExpressionToken | undefined = ExpressionParser._getTokenOrThrowException(scanner, ExpressionTokenType.Identifier);
 
     const startPosition = token.startPosition;
@@ -104,7 +111,7 @@ export class ExpressionParser {
     token = scanner.getTokenForTypeAndValue(ExpressionTokenType.RightParenthesis);
     if (!token) {
       do {
-        functionArguments.push(this._parseExpressionRecursively(scanner));
+        functionArguments.push(this._parseExpressionRecursively(scanner, 0, /*isAliasPathParsingEnabled*/ false));
       } while (scanner.getTokenForTypeAndValue(ExpressionTokenType.Comma));
 
       token = ExpressionParser._getTokenOrThrowException(scanner, ExpressionTokenType.RightParenthesis);
@@ -130,13 +137,26 @@ export class ExpressionParser {
       }
 
       if (scanner.getTokenForTypeAndValue(ExpressionTokenType.LeftSquareBracket)) {
-        const expression = this._parseExpressionRecursively(scanner);
+        const expression = this._parseExpressionRecursively(scanner, 0, /*isAliasPathParsingEnabled*/ false);
         token = ExpressionParser._getTokenOrThrowException(scanner, ExpressionTokenType.RightSquareBracket);
-        dereferences.push({
-          isSafe,
-          isDotNotation: false,
-          expression: expression,
-        });
+
+        // TODO: This might require to support string interpolation as well.
+        if (expression.type === ExpressionType.StringLiteral && isAliasPathParsingEnabled) {
+          // takes care of expressions that are nested such as ['body/value']
+          for (const expressionValue of (expression as ExpressionLiteral).value.split('/')) {
+            dereferences.push({
+              isSafe,
+              isDotNotation: false,
+              expression: { type: ExpressionType.StringLiteral, value: expressionValue },
+            });
+          }
+        } else {
+          dereferences.push({
+            isSafe,
+            isDotNotation: false,
+            expression: expression,
+          });
+        }
         continue;
       }
 
@@ -158,7 +178,10 @@ export class ExpressionParser {
     };
   }
 
-  private static _parseStringInterpolationExpression(expression: string): ExpressionStringInterpolation {
+  private static _parseStringInterpolationExpression(
+    expression: string,
+    isAliasPathParsingEnabled: boolean
+  ): ExpressionStringInterpolation {
     let previousPosition = 0;
     let currentPosition = 0;
     const segments: Expression[] = [];
@@ -204,7 +227,7 @@ export class ExpressionParser {
         );
       }
 
-      segments.push(this.parseExpression(expression.substring(startPosition + 2, currentPosition)));
+      segments.push(this.parseExpression(expression.substring(startPosition + 2, currentPosition), isAliasPathParsingEnabled));
       previousPosition = ++currentPosition;
     }
 
