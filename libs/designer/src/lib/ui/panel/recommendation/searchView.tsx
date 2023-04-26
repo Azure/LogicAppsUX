@@ -50,6 +50,27 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     [filters]
   );
 
+  const compareItems = (
+    a: Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>,
+    b: Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>
+  ): number => {
+    // isCustomApi can be undefined since it is up to the host to pass it; when
+    // undefined we default to false so that the custom checks are not true/executed
+    const isACustom: boolean = a.item.properties.isCustomApi || false;
+    const isBCustom: boolean = b.item.properties.isCustomApi || false;
+    if (isACustom && !isBCustom) return 1;
+    if (!isACustom && isBCustom) return -1;
+    if (a.score !== undefined && b.score !== undefined) {
+      if (a.score < b.score) return -1;
+      if (a.score > b.score) return 1;
+    }
+    // If a has no score and b does, put b first
+    if (a.score === undefined && b.score !== undefined) return 1;
+    // If b has no score and a does, put a first
+    if (a.score !== undefined && b.score === undefined) return -1;
+    return 0;
+  };
+
   const searchOptions = useMemo(
     () => ({
       includeScore: true,
@@ -86,7 +107,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     () => {
       if (!allOperations) return;
       const fuse = new Fuse(allOperations, searchOptions);
-      setSearchResults(fuse.search(searchTerm, { limit: 200 }).filter(filterItems));
+      setSearchResults(fuse.search(searchTerm, { limit: 200 }).filter(filterItems).sort(compareItems));
       setIsLoadingSearchResults(false);
     },
     [searchTerm, allOperations, filterItems, searchOptions],

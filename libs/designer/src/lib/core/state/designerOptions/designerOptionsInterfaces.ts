@@ -20,6 +20,7 @@ export interface DesignerOptionsState {
   isDarkMode?: boolean;
   servicesInitialized?: boolean;
   isConsumption?: boolean;
+  isXrmConnectionReferenceMode?: boolean;
 }
 
 export interface ServiceOptions {
