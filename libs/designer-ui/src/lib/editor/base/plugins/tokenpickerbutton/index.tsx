@@ -61,7 +61,7 @@ export const TokenPickerButton = ({ showOnLeft, openTokenPicker }: TokenPickerBu
           boxElem.style.top = `${top - 20}px`;
         }
         if (showOnLeft) {
-          boxElem.style.left = `${left - 40}px`;
+          boxElem.style.left = `${left - 38}px`;
         } else {
           boxElem.style.left = `${right - 20}px`;
         }

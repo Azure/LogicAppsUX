@@ -35,6 +35,12 @@
       "value": "Select this if you are configuring an on-prem connection"
     }
   ],
+  "+W2vTp": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -966,12 +972,6 @@
       "value": "必要。您需要之值所屬參數的名稱。"
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "只能在編輯步驟的輸入時新增註解。"
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1238,12 +1238,6 @@
       "value": "必要。取出子字串的字串。"
     }
   ],
-  "7Vyxu0": [
-    {
-      "type": 0,
-      "value": "Yes/No"
-    }
-  ],
   "7WVgiU": [
     {
       "type": 0,
@@ -1462,6 +1456,12 @@
       "value": "值"
     }
   ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "92OUl9": [
     {
       "type": 0,
@@ -1538,6 +1538,12 @@
     {
       "type": 0,
       "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "9atGYe": [
@@ -1831,6 +1837,12 @@
       "value": "(UTC-05:00) 哈瓦那"
     }
   ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Number"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1889,6 +1901,12 @@
     {
       "type": 0,
       "value": "認證類型"
+    }
+  ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "Cy9qeQ": [
@@ -2163,6 +2181,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) 東部時間 (美國及加拿大)"
+    }
+  ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
     }
   ],
   "Ex4U46": [
@@ -2454,6 +2478,12 @@
     {
       "type": 0,
       "value": "陣列"
+    }
+  ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "File Content"
     }
   ],
   "H17jEE": [
@@ -3031,10 +3061,10 @@
       "value": "(UTC+00:00) 都柏林，愛丁堡，里斯本，倫敦"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "新增註解"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -3818,6 +3848,12 @@
       "value": "必要。具有表單資料或表單編碼回應之行動的名稱。"
     }
   ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
+    }
+  ],
   "Sh10cw": [
     {
       "type": 0,
@@ -4014,6 +4050,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) 布魯塞爾，哥本哈根，馬德里，巴黎"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
     }
   ],
   "Twfck/": [
@@ -4296,12 +4338,6 @@
     {
       "type": 0,
       "value": "Error Type"
-    }
-  ],
-  "VggzRB": [
-    {
-      "type": 0,
-      "value": "Text"
     }
   ],
   "VlvlX1": [
@@ -4644,6 +4680,12 @@
       "value": "請輸入 PfX"
     }
   ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
@@ -4796,12 +4838,6 @@
     {
       "type": 0,
       "value": "不支援的 'in' 值: 參數中的 {value}"
-    }
-  ],
-  "a+6uyE": [
-    {
-      "type": 0,
-      "value": "File"
     }
   ],
   "a7j3gS": [
@@ -4976,6 +5012,12 @@
       "value": "(UTC+05:30) 辰內，加爾各答，孟拜，新德里"
     }
   ],
+  "bv9QPA": [
+    {
+      "type": 0,
+      "value": "Date"
+    }
+  ],
   "bwfJdj": [
     {
       "type": 0,
@@ -5054,12 +5096,6 @@
     {
       "type": 0,
       "value": "動態內容也可以從其他來源新增。"
-    }
-  ],
-  "cF4w+R": [
-    {
-      "type": 0,
-      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5144,12 +5180,6 @@
     {
       "type": 0,
       "value": "必要。要跳過第一個計數物件的集合。"
-    }
-  ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "刪除註解"
     }
   ],
   "d4xMIx": [
@@ -5266,6 +5296,12 @@
     {
       "type": 0,
       "value": "逾時"
+    }
+  ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "e00zot": [
@@ -5400,6 +5436,12 @@
       "value": "分頁計數超過最大值"
     }
   ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5448,6 +5490,12 @@
     {
       "type": 0,
       "value": "已略過"
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "g0a4Qe": [
@@ -5558,10 +5606,22 @@
       "value": "觸發條件"
     }
   ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06:00) 薩克其萬"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "gpbgjJ": [
@@ -5580,6 +5640,12 @@
     {
       "type": 0,
       "value": "Select a Batch Workflow resource"
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "h1lQDa": [
@@ -5721,12 +5787,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "註解"
     }
   ],
   "iCSHJG": [
@@ -6217,12 +6277,6 @@
       "value": "Select an action type"
     }
   ],
-  "lv9QyZ": [
-    {
-      "type": 0,
-      "value": "Email"
-    }
-  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6415,6 +6469,12 @@
       "value": "End time"
     }
   ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "nRpM02": [
     {
       "type": 0,
@@ -6571,6 +6631,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) 薩爾瓦多"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7352,6 +7418,12 @@
       "value": "從參數建立陣列"
     }
   ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Trigger date"
+    }
+  ],
   "v39HKj": [
     {
       "type": 0,
@@ -7570,6 +7642,12 @@
       "value": "根據運算式的結果為 True 或 False，傳回指定的值"
     }
   ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
   "wkiETV": [
     {
       "type": 0,
@@ -7628,6 +7706,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
@@ -7700,12 +7784,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) 國際標準時間+12"
-    }
-  ],
-  "xeREzb": [
-    {
-      "type": 0,
-      "value": "Number"
     }
   ],
   "xt5TeT": [
@@ -7796,6 +7874,12 @@
     {
       "type": 0,
       "value": "新增欄位"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "yxsn7s": [

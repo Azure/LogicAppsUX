@@ -35,6 +35,12 @@
       "value": "Select this if you are configuring an on-prem connection"
     }
   ],
+  "+W2vTp": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -988,12 +994,6 @@
       "value": "Obbligatorio. Nome del parametro di cui si desidera ottenere i valori."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "È possibile aggiungere i commenti solo durante la modifica degli input di un passaggio."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1260,12 +1260,6 @@
       "value": "Obbligatorio. Stringa da cui viene recuperata la sottostringa."
     }
   ],
-  "7Vyxu0": [
-    {
-      "type": 0,
-      "value": "Yes/No"
-    }
-  ],
   "7WVgiU": [
     {
       "type": 0,
@@ -1484,6 +1478,12 @@
       "value": "Valore"
     }
   ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "92OUl9": [
     {
       "type": 0,
@@ -1560,6 +1560,12 @@
     {
       "type": 0,
       "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "9atGYe": [
@@ -1875,6 +1881,12 @@
       "value": "(UTC-05:00) L'Avana"
     }
   ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Number"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1933,6 +1945,12 @@
     {
       "type": 0,
       "value": "Tipo di credenziali"
+    }
+  ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "Cy9qeQ": [
@@ -2207,6 +2225,12 @@
     {
       "type": 0,
       "value": "(UTC-5.00) Fuso orientale (USA e Canada)"
+    }
+  ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
     }
   ],
   "Ex4U46": [
@@ -2520,6 +2544,12 @@
     {
       "type": 0,
       "value": "Array"
+    }
+  ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "File Content"
     }
   ],
   "H17jEE": [
@@ -3119,10 +3149,10 @@
       "value": "(UTC + 00.00) Dublino, Edimburgo, Lisbona, Londra"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "Aggiungere un commento"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -3936,6 +3966,12 @@
       "value": "Obbligatorio. Nome dell'azione con una risposta con dati del modulo o codifica per il modulo."
     }
   ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
+    }
+  ],
   "Sh10cw": [
     {
       "type": 0,
@@ -4132,6 +4168,12 @@
     {
       "type": 0,
       "value": "(UTC+1.00) Bruxelles, Copenaghen, Madrid, Parigi"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
     }
   ],
   "Twfck/": [
@@ -4414,12 +4456,6 @@
     {
       "type": 0,
       "value": "Error Type"
-    }
-  ],
-  "VggzRB": [
-    {
-      "type": 0,
-      "value": "Text"
     }
   ],
   "VlvlX1": [
@@ -4762,6 +4798,12 @@
       "value": "Immetti file PFX"
     }
   ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
@@ -4914,12 +4956,6 @@
     {
       "type": 0,
       "value": "Valore 'in' non supportato: {value} nel parametro"
-    }
-  ],
-  "a+6uyE": [
-    {
-      "type": 0,
-      "value": "File"
     }
   ],
   "a7j3gS": [
@@ -5094,6 +5130,12 @@
       "value": "(UTC+05.30) Chennai, Kolkata (Calcutta), Mumbai, Nuova Delhi"
     }
   ],
+  "bv9QPA": [
+    {
+      "type": 0,
+      "value": "Date"
+    }
+  ],
   "bwfJdj": [
     {
       "type": 0,
@@ -5168,12 +5210,6 @@
     {
       "type": 0,
       "value": "È possibile aggiungere contenuto dinamico anche da altre origini."
-    }
-  ],
-  "cF4w+R": [
-    {
-      "type": 0,
-      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5258,12 +5294,6 @@
     {
       "type": 0,
       "value": "Obbligatorio. Raccolta in cui ignorare i primi oggetti Count."
-    }
-  ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "Eliminare commento"
     }
   ],
   "d4xMIx": [
@@ -5380,6 +5410,12 @@
     {
       "type": 0,
       "value": "scaduto"
+    }
+  ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "e00zot": [
@@ -5514,6 +5550,12 @@
       "value": "Il numero di paging supera il valore massimo"
     }
   ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5562,6 +5604,12 @@
     {
       "type": 0,
       "value": "Ignorato"
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "g0a4Qe": [
@@ -5672,10 +5720,22 @@
       "value": "Condizioni trigger"
     }
   ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06:00) Saskatchewan"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "gpbgjJ": [
@@ -5694,6 +5754,12 @@
     {
       "type": 0,
       "value": "Select a Batch Workflow resource"
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "h1lQDa": [
@@ -5857,12 +5923,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "Commento"
     }
   ],
   "iCSHJG": [
@@ -6353,12 +6413,6 @@
       "value": "Select an action type"
     }
   ],
-  "lv9QyZ": [
-    {
-      "type": 0,
-      "value": "Email"
-    }
-  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6551,6 +6605,12 @@
       "value": "End time"
     }
   ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "nRpM02": [
     {
       "type": 0,
@@ -6707,6 +6767,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Salvador"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7510,6 +7576,12 @@
       "value": "Crea una matrice dai parametri"
     }
   ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Trigger date"
+    }
+  ],
   "v39HKj": [
     {
       "type": 0,
@@ -7728,6 +7800,12 @@
       "value": "Restituisce un valore specificato a seconda del fatto che l'espressione abbia restituito true o false"
     }
   ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
   "wkiETV": [
     {
       "type": 0,
@@ -7786,6 +7864,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
@@ -7858,12 +7942,6 @@
     {
       "type": 0,
       "value": "(UTC+12.00) Coordinated Universal Time+12"
-    }
-  ],
-  "xeREzb": [
-    {
-      "type": 0,
-      "value": "Number"
     }
   ],
   "xt5TeT": [
@@ -7954,6 +8032,12 @@
     {
       "type": 0,
       "value": "Aggiungi campo"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "yxsn7s": [

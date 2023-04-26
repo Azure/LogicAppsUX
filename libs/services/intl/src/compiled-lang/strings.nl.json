@@ -51,6 +51,12 @@
       "value": "Select this if you are configuring an on-prem connection"
     }
   ],
+  "+W2vTp": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -993,12 +999,6 @@
       "value": "Vereist. De naam van de parameter met de gewenste waarden."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "Opmerkingen kunnen alleen worden toegevoegd tijdens de invoerfasen van een stap."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1265,12 +1265,6 @@
       "value": "Vereist. De tekenreeks waarvan de subtekenreeks wordt gebruikt."
     }
   ],
-  "7Vyxu0": [
-    {
-      "type": 0,
-      "value": "Yes/No"
-    }
-  ],
   "7WVgiU": [
     {
       "type": 0,
@@ -1505,6 +1499,12 @@
       "value": "Waarde"
     }
   ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "92OUl9": [
     {
       "type": 0,
@@ -1581,6 +1581,12 @@
     {
       "type": 0,
       "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "9atGYe": [
@@ -1901,6 +1907,12 @@
       "value": "(UTC-05:00) Havana"
     }
   ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Number"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1959,6 +1971,12 @@
     {
       "type": 0,
       "value": "Referentietype"
+    }
+  ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "Cy9qeQ": [
@@ -2233,6 +2251,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Eastern Time (VS en Canada)"
+    }
+  ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
     }
   ],
   "Ex4U46": [
@@ -2543,6 +2567,12 @@
     {
       "type": 0,
       "value": "Matrix"
+    }
+  ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "File Content"
     }
   ],
   "H17jEE": [
@@ -3159,10 +3189,10 @@
       "value": "(UTC+00:00) Dublin, Edinburgh, Lissabon, Londen"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "Opmerking toevoegen"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -3973,6 +4003,12 @@
       "value": "Vereist. De naam van de actie met een antwoord met formuliergegevens of -codes."
     }
   ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
+    }
+  ],
   "Sh10cw": [
     {
       "type": 0,
@@ -4169,6 +4205,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Brussel, Kopenhagen, Madrid, Parijs"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
     }
   ],
   "Twfck/": [
@@ -4451,12 +4493,6 @@
     {
       "type": 0,
       "value": "Error Type"
-    }
-  ],
-  "VggzRB": [
-    {
-      "type": 0,
-      "value": "Text"
     }
   ],
   "VlvlX1": [
@@ -4807,6 +4843,12 @@
       "value": "PFX invoeren"
     }
   ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
@@ -4959,12 +5001,6 @@
     {
       "type": 0,
       "value": "Niet-ondersteunde in-waarde: {value} in parameter"
-    }
-  ],
-  "a+6uyE": [
-    {
-      "type": 0,
-      "value": "File"
     }
   ],
   "a7j3gS": [
@@ -5139,6 +5175,12 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
     }
   ],
+  "bv9QPA": [
+    {
+      "type": 0,
+      "value": "Date"
+    }
+  ],
   "bwfJdj": [
     {
       "type": 0,
@@ -5213,12 +5255,6 @@
     {
       "type": 0,
       "value": "Dynamische inhoud kan ook worden toegevoegd vanuit andere bronnen."
-    }
-  ],
-  "cF4w+R": [
-    {
-      "type": 0,
-      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5303,12 +5339,6 @@
     {
       "type": 0,
       "value": "Vereist. De verzameling waarin de objecten van de eerste telling moeten worden overgeslagen."
-    }
-  ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "Opmerking verwijderen"
     }
   ],
   "d4xMIx": [
@@ -5425,6 +5455,12 @@
     {
       "type": 0,
       "value": "er is een time-out opgetreden"
+    }
+  ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "e00zot": [
@@ -5559,6 +5595,12 @@
       "value": "Het aantal pagineringen overschrijdt de maximumwaarde"
     }
   ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5603,6 +5645,12 @@
     {
       "type": 0,
       "value": "Genegeerd"
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "g0a4Qe": [
@@ -5713,10 +5761,22 @@
       "value": "Triggervoorwaarden"
     }
   ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06:00) Saskatchewan"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "gpbgjJ": [
@@ -5743,6 +5803,12 @@
     {
       "type": 0,
       "value": "Select a Batch Workflow resource"
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "h1lQDa": [
@@ -5903,12 +5969,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "Opmerking"
     }
   ],
   "iCSHJG": [
@@ -6407,12 +6467,6 @@
       "value": "Select an action type"
     }
   ],
-  "lv9QyZ": [
-    {
-      "type": 0,
-      "value": "Email"
-    }
-  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6605,6 +6659,12 @@
       "value": "End time"
     }
   ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "nRpM02": [
     {
       "type": 0,
@@ -6761,6 +6821,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Salvador"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7577,6 +7643,12 @@
       "value": "Er wordt een matrix van de parameters gemaakt"
     }
   ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Trigger date"
+    }
+  ],
   "v39HKj": [
     {
       "type": 0,
@@ -7795,6 +7867,12 @@
       "value": "Afhankelijk of de expressie resulteert in Waar of Onwaar wordt een opgegeven waarde geretourneerd"
     }
   ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
   "wkiETV": [
     {
       "type": 0,
@@ -7853,6 +7931,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
@@ -7925,12 +8009,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Coordinated Universal Time+12"
-    }
-  ],
-  "xeREzb": [
-    {
-      "type": 0,
-      "value": "Number"
     }
   ],
   "xt5TeT": [
@@ -8021,6 +8099,12 @@
     {
       "type": 0,
       "value": "Veld toevoegen"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "yxsn7s": [

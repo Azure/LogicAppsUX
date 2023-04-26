@@ -35,6 +35,12 @@
       "value": "Select this if you are configuring an on-prem connection"
     }
   ],
+  "+W2vTp": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -966,12 +972,6 @@
       "value": "Wajib. Nama parameter yang nilainya Anda inginkan."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "Komentar hanya dapat ditambahkan saat mengedit input langkah."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1238,12 +1238,6 @@
       "value": "Harus diisi. String dari substring yang diambil."
     }
   ],
-  "7Vyxu0": [
-    {
-      "type": 0,
-      "value": "Yes/No"
-    }
-  ],
   "7WVgiU": [
     {
       "type": 0,
@@ -1462,6 +1456,12 @@
       "value": "Nilai"
     }
   ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "92OUl9": [
     {
       "type": 0,
@@ -1538,6 +1538,12 @@
     {
       "type": 0,
       "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "9atGYe": [
@@ -1831,6 +1837,12 @@
       "value": "(UTC-05.00) Havana"
     }
   ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Number"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1889,6 +1901,12 @@
     {
       "type": 0,
       "value": "Tipe Kredensial"
+    }
+  ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "Cy9qeQ": [
@@ -2163,6 +2181,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Eastern Time (AS & Kanada)"
+    }
+  ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
     }
   ],
   "Ex4U46": [
@@ -2454,6 +2478,12 @@
     {
       "type": 0,
       "value": "Larik"
+    }
+  ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "File Content"
     }
   ],
   "H17jEE": [
@@ -3031,10 +3061,10 @@
       "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "Tambahkan komentar"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -3818,6 +3848,12 @@
       "value": "Wajib. Nama tindakan dengan data formulir atau respons dengan pengodean formulir."
     }
   ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
+    }
+  ],
   "Sh10cw": [
     {
       "type": 0,
@@ -4014,6 +4050,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Brussel, Kopenhagen, Madrid, Paris"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
     }
   ],
   "Twfck/": [
@@ -4296,12 +4338,6 @@
     {
       "type": 0,
       "value": "Error Type"
-    }
-  ],
-  "VggzRB": [
-    {
-      "type": 0,
-      "value": "Text"
     }
   ],
   "VlvlX1": [
@@ -4644,6 +4680,12 @@
       "value": "Masukkan Pfx"
     }
   ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
@@ -4796,12 +4838,6 @@
     {
       "type": 0,
       "value": "Nilai 'in' yang tidak didukung: {value} dalam Parameter"
-    }
-  ],
-  "a+6uyE": [
-    {
-      "type": 0,
-      "value": "File"
     }
   ],
   "a7j3gS": [
@@ -4976,6 +5012,12 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
     }
   ],
+  "bv9QPA": [
+    {
+      "type": 0,
+      "value": "Date"
+    }
+  ],
   "bwfJdj": [
     {
       "type": 0,
@@ -5050,12 +5092,6 @@
     {
       "type": 0,
       "value": "Konten dinamis juga dapat ditambahkan dari sumber lain."
-    }
-  ],
-  "cF4w+R": [
-    {
-      "type": 0,
-      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5140,12 +5176,6 @@
     {
       "type": 0,
       "value": "Harus diisi. Koleksi untuk melompati objek Hitungan pertama."
-    }
-  ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "Hapus komentar"
     }
   ],
   "d4xMIx": [
@@ -5262,6 +5292,12 @@
     {
       "type": 0,
       "value": "habis waktu"
+    }
+  ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "e00zot": [
@@ -5396,6 +5432,12 @@
       "value": "Jumlah halaman melebihi nilai maksimum"
     }
   ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5444,6 +5486,12 @@
     {
       "type": 0,
       "value": "Diabaikan"
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "g0a4Qe": [
@@ -5554,10 +5602,22 @@
       "value": "Kondisi Pemicu"
     }
   ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06.00) Saskatchewan"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "gpbgjJ": [
@@ -5576,6 +5636,12 @@
     {
       "type": 0,
       "value": "Select a Batch Workflow resource"
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "h1lQDa": [
@@ -5717,12 +5783,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "Komentar"
     }
   ],
   "iCSHJG": [
@@ -6213,12 +6273,6 @@
       "value": "Select an action type"
     }
   ],
-  "lv9QyZ": [
-    {
-      "type": 0,
-      "value": "Email"
-    }
-  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6411,6 +6465,12 @@
       "value": "End time"
     }
   ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "nRpM02": [
     {
       "type": 0,
@@ -6567,6 +6627,12 @@
     {
       "type": 0,
       "value": "(UTC-03.00) Salvador"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7348,6 +7414,12 @@
       "value": "Membuat array dari parameter"
     }
   ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Trigger date"
+    }
+  ],
   "v39HKj": [
     {
       "type": 0,
@@ -7566,6 +7638,12 @@
       "value": "Menampilkan nilai yang ditentukan berdasarkan apakah ekspresi menghasilkan true atau false"
     }
   ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
   "wkiETV": [
     {
       "type": 0,
@@ -7624,6 +7702,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
@@ -7696,12 +7780,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Waktu Universal Terkoordinasi+12"
-    }
-  ],
-  "xeREzb": [
-    {
-      "type": 0,
-      "value": "Number"
     }
   ],
   "xt5TeT": [
@@ -7792,6 +7870,12 @@
     {
       "type": 0,
       "value": "Tambah bidang"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "yxsn7s": [

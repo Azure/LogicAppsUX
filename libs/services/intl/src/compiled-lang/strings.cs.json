@@ -47,6 +47,12 @@
       "value": "Select this if you are configuring an on-prem connection"
     }
   ],
+  "+W2vTp": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -1023,12 +1029,6 @@
       "value": "Povinný parametr. Název parametru, jehož hodnoty požadujete."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "Komentáře je možné přidávat jenom při úpravách vstupů kroku."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1295,12 +1295,6 @@
       "value": "Vyžadováno. Řetězec, ze kterého se má získat podřetězec."
     }
   ],
-  "7Vyxu0": [
-    {
-      "type": 0,
-      "value": "Yes/No"
-    }
-  ],
   "7WVgiU": [
     {
       "type": 0,
@@ -1531,6 +1525,12 @@
       "value": "Hodnota"
     }
   ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "92OUl9": [
     {
       "type": 0,
@@ -1607,6 +1607,12 @@
     {
       "type": 0,
       "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "9atGYe": [
@@ -1949,6 +1955,12 @@
       "value": "(UTC-05:00) Havana"
     }
   ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Number"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -2007,6 +2019,12 @@
     {
       "type": 0,
       "value": "Typ přihlašovacích údajů"
+    }
+  ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "Cy9qeQ": [
@@ -2281,6 +2299,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Východ USA a Kanady"
+    }
+  ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
     }
   ],
   "Ex4U46": [
@@ -2613,6 +2637,12 @@
     {
       "type": 0,
       "value": "Pole"
+    }
+  ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "File Content"
     }
   ],
   "H17jEE": [
@@ -3251,10 +3281,10 @@
       "value": "(UTC+00:00) Dublin, Edinburgh, Lisabon, Londýn"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "Přidat komentář"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -4091,6 +4121,12 @@
       "value": "Povinný parametr. Název akce s odpovědí form-data nebo form-encoded."
     }
   ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
+    }
+  ],
   "Sh10cw": [
     {
       "type": 0,
@@ -4287,6 +4323,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Brusel, Kodaň, Madrid, Paříž"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
     }
   ],
   "Twfck/": [
@@ -4569,12 +4611,6 @@
     {
       "type": 0,
       "value": "Error Type"
-    }
-  ],
-  "VggzRB": [
-    {
-      "type": 0,
-      "value": "Text"
     }
   ],
   "VlvlX1": [
@@ -4925,6 +4961,12 @@
       "value": "Zadejte PFX."
     }
   ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
@@ -5085,12 +5127,6 @@
     {
       "type": 0,
       "value": " v parametru"
-    }
-  ],
-  "a+6uyE": [
-    {
-      "type": 0,
-      "value": "File"
     }
   ],
   "a7j3gS": [
@@ -5265,6 +5301,12 @@
       "value": "(UTC+05:30) Čennaj, Kolkata (Kalkata), Mumbaí (Bombaj), Dillí"
     }
   ],
+  "bv9QPA": [
+    {
+      "type": 0,
+      "value": "Date"
+    }
+  ],
   "bwfJdj": [
     {
       "type": 0,
@@ -5339,12 +5381,6 @@
     {
       "type": 0,
       "value": "Dynamický obsah se dá přidat i z jiných zdrojů."
-    }
-  ],
-  "cF4w+R": [
-    {
-      "type": 0,
-      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5429,12 +5465,6 @@
     {
       "type": 0,
       "value": "Vyžadováno. Kolekce, ze které se mají přeskočit první objekty Count."
-    }
-  ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "Odstranit komentář"
     }
   ],
   "d4xMIx": [
@@ -5551,6 +5581,12 @@
     {
       "type": 0,
       "value": "vypršel časový limit"
+    }
+  ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "e00zot": [
@@ -5685,6 +5721,12 @@
       "value": "Počet stránkování překračuje maximální hodnotu."
     }
   ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5729,6 +5771,12 @@
     {
       "type": 0,
       "value": "Ignorováno"
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "g0a4Qe": [
@@ -5839,10 +5887,22 @@
       "value": "Podmínky aktivační události"
     }
   ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06:00) Saskatchewan"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "gpbgjJ": [
@@ -5869,6 +5929,12 @@
     {
       "type": 0,
       "value": "Select a Batch Workflow resource"
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "h1lQDa": [
@@ -6051,12 +6117,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "Komentář"
     }
   ],
   "iCSHJG": [
@@ -6555,12 +6615,6 @@
       "value": "Select an action type"
     }
   ],
-  "lv9QyZ": [
-    {
-      "type": 0,
-      "value": "Email"
-    }
-  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6753,6 +6807,12 @@
       "value": "End time"
     }
   ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "nRpM02": [
     {
       "type": 0,
@@ -6909,6 +6969,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Salvador"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7743,6 +7809,12 @@
       "value": "Vytvoří z parametrů pole."
     }
   ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Trigger date"
+    }
+  ],
   "v39HKj": [
     {
       "type": 0,
@@ -7961,6 +8033,12 @@
       "value": "Vrátí zadanou hodnotu podle toho, jestli se daný výraz vyhodnotil jako true, nebo false."
     }
   ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
   "wkiETV": [
     {
       "type": 0,
@@ -8019,6 +8097,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
@@ -8091,12 +8175,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Koordinovaný univerzální čas (UTC)+12"
-    }
-  ],
-  "xeREzb": [
-    {
-      "type": 0,
-      "value": "Number"
     }
   ],
   "xt5TeT": [
@@ -8187,6 +8265,12 @@
     {
       "type": 0,
       "value": "Přidat pole"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "yxsn7s": [

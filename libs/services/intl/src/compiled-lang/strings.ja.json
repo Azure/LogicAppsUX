@@ -35,6 +35,12 @@
       "value": "Select this if you are configuring an on-prem connection"
     }
   ],
+  "+W2vTp": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -966,12 +972,6 @@
       "value": "必須。値を求める対象のパラメーターの名前。"
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "コメントを追加できるのは、ステップの入力を編集している間だけです。"
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1238,12 +1238,6 @@
       "value": "必須。取得する部分文字列が含まれる文字列。"
     }
   ],
-  "7Vyxu0": [
-    {
-      "type": 0,
-      "value": "Yes/No"
-    }
-  ],
   "7WVgiU": [
     {
       "type": 0,
@@ -1462,6 +1456,12 @@
       "value": "値"
     }
   ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "92OUl9": [
     {
       "type": 0,
@@ -1538,6 +1538,12 @@
     {
       "type": 0,
       "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "9atGYe": [
@@ -1831,6 +1837,12 @@
       "value": "(UTC-05:00) ハバナ"
     }
   ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Number"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1889,6 +1901,12 @@
     {
       "type": 0,
       "value": "資格情報の種類"
+    }
+  ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "Cy9qeQ": [
@@ -2163,6 +2181,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) 東部標準時 (米国およびカナダ)"
+    }
+  ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
     }
   ],
   "Ex4U46": [
@@ -2454,6 +2478,12 @@
     {
       "type": 0,
       "value": "アレイ"
+    }
+  ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "File Content"
     }
   ],
   "H17jEE": [
@@ -3031,10 +3061,10 @@
       "value": "(UTC+00:00) ダブリン、エジンバラ、リスボン、ロンドン"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "コメントの追加"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -3818,6 +3848,12 @@
       "value": "必須。form-data または form-encoded 応答を含むアクションの名前。"
     }
   ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
+    }
+  ],
   "Sh10cw": [
     {
       "type": 0,
@@ -4014,6 +4050,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) ブリュッセル、コペンハーゲン、マドリード、パリ"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
     }
   ],
   "Twfck/": [
@@ -4296,12 +4338,6 @@
     {
       "type": 0,
       "value": "Error Type"
-    }
-  ],
-  "VggzRB": [
-    {
-      "type": 0,
-      "value": "Text"
     }
   ],
   "VlvlX1": [
@@ -4644,6 +4680,12 @@
       "value": "PFX を入力"
     }
   ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
@@ -4796,12 +4838,6 @@
     {
       "type": 0,
       "value": "パラメーターでサポートされていない 'in' 値: {value}"
-    }
-  ],
-  "a+6uyE": [
-    {
-      "type": 0,
-      "value": "File"
     }
   ],
   "a7j3gS": [
@@ -4976,6 +5012,12 @@
       "value": "(UTC+05:30) チェンナイ、コルカタ、ムンバイ、ニューデリー"
     }
   ],
+  "bv9QPA": [
+    {
+      "type": 0,
+      "value": "Date"
+    }
+  ],
   "bwfJdj": [
     {
       "type": 1,
@@ -5050,12 +5092,6 @@
     {
       "type": 0,
       "value": "動的コンテンツは、他のソースからも追加できます。"
-    }
-  ],
-  "cF4w+R": [
-    {
-      "type": 0,
-      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5140,12 +5176,6 @@
     {
       "type": 0,
       "value": "必須。最初の Count 個のオブジェクトをスキップするコレクション。"
-    }
-  ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "コメントの削除"
     }
   ],
   "d4xMIx": [
@@ -5258,6 +5288,12 @@
     {
       "type": 0,
       "value": "タイムアウトしました"
+    }
+  ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "e00zot": [
@@ -5392,6 +5428,12 @@
       "value": "ページング数が最大値を超えています"
     }
   ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5440,6 +5482,12 @@
     {
       "type": 0,
       "value": "無視"
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "g0a4Qe": [
@@ -5550,10 +5598,22 @@
       "value": "トリガー条件"
     }
   ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06:00) サスカチェワン"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "gpbgjJ": [
@@ -5572,6 +5632,12 @@
     {
       "type": 0,
       "value": "Select a Batch Workflow resource"
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "h1lQDa": [
@@ -5713,12 +5779,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "コメント"
     }
   ],
   "iCSHJG": [
@@ -6205,12 +6265,6 @@
       "value": "Select an action type"
     }
   ],
-  "lv9QyZ": [
-    {
-      "type": 0,
-      "value": "Email"
-    }
-  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6403,6 +6457,12 @@
       "value": "End time"
     }
   ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "nRpM02": [
     {
       "type": 0,
@@ -6559,6 +6619,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) サルバドル"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7340,6 +7406,12 @@
       "value": "パラメーターからアレイを作成します"
     }
   ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Trigger date"
+    }
+  ],
   "v39HKj": [
     {
       "type": 0,
@@ -7554,6 +7626,12 @@
       "value": "式の結果が true と false のどちらになったかに基づいて、指定された値を返します"
     }
   ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
   "wkiETV": [
     {
       "type": 0,
@@ -7612,6 +7690,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
@@ -7684,12 +7768,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) 協定世界時+12"
-    }
-  ],
-  "xeREzb": [
-    {
-      "type": 0,
-      "value": "Number"
     }
   ],
   "xt5TeT": [
@@ -7780,6 +7858,12 @@
     {
       "type": 0,
       "value": "フィールドの追加"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "yxsn7s": [

@@ -11,10 +11,11 @@ export interface OperationSearchGroupProps {
   operationActionsData: OperationActionData[];
   onConnectorClick: (connectorId: string) => void;
   onOperationClick: (operationId: string) => void;
+  displayRuntimeInfo: boolean;
 }
 
 export const OperationSearchGroup = (props: OperationSearchGroupProps) => {
-  const { operationApi, operationActionsData, onConnectorClick, onOperationClick } = props;
+  const { operationApi, operationActionsData, onConnectorClick, onOperationClick, displayRuntimeInfo } = props;
   const { id, displayName, description, iconUri } = operationApi;
 
   const intl = useIntl();
@@ -35,13 +36,14 @@ export const OperationSearchGroup = (props: OperationSearchGroupProps) => {
         iconUrl={iconUri}
         category={category}
         isCard={false}
+        displayRuntimeInfo={displayRuntimeInfo}
       />
       <Link className="msla-op-search-group-see-more" onClick={() => onConnectorClick(id)}>
         {seeMoreText}
       </Link>
       <div className="msla-op-search-group">
         {operationActionsData?.slice(0, 3).map((op /* Only show 3 operations per group */) => (
-          <OperationSearchCard key={op?.id} operationActionData={op} onClick={onOperationClick} />
+          <OperationSearchCard key={op?.id} operationActionData={op} onClick={onOperationClick} displayRuntimeInfo={displayRuntimeInfo} />
         ))}
       </div>
     </div>

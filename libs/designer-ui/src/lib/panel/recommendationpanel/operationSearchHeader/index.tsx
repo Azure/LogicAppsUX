@@ -11,6 +11,7 @@ import { useIntl } from 'react-intl';
 interface OperationSearchHeaderProps {
   searchCallback: (s: string) => void;
   onGroupToggleChange: (ev?: React.FormEvent<HTMLElement | HTMLInputElement> | undefined, checked?: boolean | undefined) => void;
+  displayRuntimeInfo: boolean;
   isGrouped?: boolean;
   searchTerm?: string;
   filters?: Record<string, string>;
@@ -19,7 +20,16 @@ interface OperationSearchHeaderProps {
 }
 
 export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
-  const { searchCallback, onGroupToggleChange, isGrouped = false, searchTerm, filters, setFilters, isTriggerNode } = props;
+  const {
+    searchCallback,
+    onGroupToggleChange,
+    isGrouped = false,
+    searchTerm,
+    filters,
+    setFilters,
+    isTriggerNode,
+    displayRuntimeInfo,
+  } = props;
 
   const intl = useIntl();
 
@@ -73,14 +83,16 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
     <div className="msla-sub-heading-container">
       <DesignerSearchBox searchCallback={searchCallback} searchTerm={searchTerm} />
       <div style={{ display: 'grid', grid: 'auto-flow / 1fr 1fr', gridColumnGap: '8px' }}>
-        <Dropdown
-          label={intl.formatMessage({ defaultMessage: 'Runtime', description: 'Filter by label' })}
-          placeholder={intl.formatMessage({ defaultMessage: 'Select a runtime', description: 'Select a runtime placeholder' })}
-          selectedKeys={Object.entries(props.filters ?? {}).map(([k, v]) => `${k}-${v}`)}
-          onChange={onChange}
-          multiSelect
-          options={runtimeFilters}
-        />
+        {displayRuntimeInfo ? (
+          <Dropdown
+            label={intl.formatMessage({ defaultMessage: 'Runtime', description: 'Filter by label' })}
+            placeholder={intl.formatMessage({ defaultMessage: 'Select a runtime', description: 'Select a runtime placeholder' })}
+            selectedKeys={Object.entries(props.filters ?? {}).map(([k, v]) => `${k}-${v}`)}
+            onChange={onChange}
+            multiSelect
+            options={runtimeFilters}
+          />
+        ) : null}
         <Dropdown
           label={intl.formatMessage({ defaultMessage: 'Action Type', description: 'Filter by label' })}
           placeholder={intl.formatMessage({

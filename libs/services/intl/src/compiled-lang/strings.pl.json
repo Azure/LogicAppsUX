@@ -51,6 +51,12 @@
       "value": "Select this if you are configuring an on-prem connection"
     }
   ],
+  "+W2vTp": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -1031,12 +1037,6 @@
       "value": "Wymagane. Nazwa parametru z żądanymi wartościami."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "Komentarze można dodawać tylko podczas edytowania danych wejściowych kroku."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1303,12 +1303,6 @@
       "value": "Parametr wymagany. Ciąg, z którego został pobrany podciąg."
     }
   ],
-  "7Vyxu0": [
-    {
-      "type": 0,
-      "value": "Yes/No"
-    }
-  ],
   "7WVgiU": [
     {
       "type": 0,
@@ -1543,6 +1537,12 @@
       "value": "Wartość"
     }
   ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "92OUl9": [
     {
       "type": 0,
@@ -1619,6 +1619,12 @@
     {
       "type": 0,
       "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "9atGYe": [
@@ -1961,6 +1967,12 @@
       "value": "(UTC-05:00) Hawana"
     }
   ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Number"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -2019,6 +2031,12 @@
     {
       "type": 0,
       "value": "Typ poświadczeń"
+    }
+  ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "Cy9qeQ": [
@@ -2293,6 +2311,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Stany Zjednoczone i Kanada (czas wschodni)"
+    }
+  ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
     }
   ],
   "Ex4U46": [
@@ -2625,6 +2649,12 @@
     {
       "type": 0,
       "value": "Tablica"
+    }
+  ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "File Content"
     }
   ],
   "H17jEE": [
@@ -3267,10 +3297,10 @@
       "value": "(UTC+00:00) Dublin, Edynburg, Lizbona, Londyn"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "Dodaj komentarz"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -4103,6 +4133,12 @@
       "value": "Wymagane. Nazwa akcji z odpowiedzią w postaci danych formularza lub odpowiedzią zakodowaną w formularzu."
     }
   ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
+    }
+  ],
   "Sh10cw": [
     {
       "type": 0,
@@ -4299,6 +4335,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Bruksela, Kopenhaga, Madryt, Paryż"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
     }
   ],
   "Twfck/": [
@@ -4581,12 +4623,6 @@
     {
       "type": 0,
       "value": "Error Type"
-    }
-  ],
-  "VggzRB": [
-    {
-      "type": 0,
-      "value": "Text"
     }
   ],
   "VlvlX1": [
@@ -4937,6 +4973,12 @@
       "value": "Wprowadź certyfikat PFX"
     }
   ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
@@ -5097,12 +5139,6 @@
     {
       "type": 0,
       "value": "” w parametrze"
-    }
-  ],
-  "a+6uyE": [
-    {
-      "type": 0,
-      "value": "File"
     }
   ],
   "a7j3gS": [
@@ -5277,6 +5313,12 @@
       "value": "(UTC+05:30) Chennai, Kolkata (Kalkuta), Mumbaj (Bombaj), Nowe Delhi"
     }
   ],
+  "bv9QPA": [
+    {
+      "type": 0,
+      "value": "Date"
+    }
+  ],
   "bwfJdj": [
     {
       "type": 0,
@@ -5351,12 +5393,6 @@
     {
       "type": 0,
       "value": "Zawartość dynamiczną można również dodać z innych źródeł."
-    }
-  ],
-  "cF4w+R": [
-    {
-      "type": 0,
-      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5441,12 +5477,6 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Kolekcja, w której należy pominąć pierwsze obiekty (liczba)."
-    }
-  ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "Usuń komentarz"
     }
   ],
   "d4xMIx": [
@@ -5563,6 +5593,12 @@
     {
       "type": 0,
       "value": "przekroczono limit czasu"
+    }
+  ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "e00zot": [
@@ -5697,6 +5733,12 @@
       "value": "Liczba stronicowania przekracza wartość maksymalną"
     }
   ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5741,6 +5783,12 @@
     {
       "type": 0,
       "value": "Zignorowane"
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "g0a4Qe": [
@@ -5851,10 +5899,22 @@
       "value": "Warunki wyzwalacza"
     }
   ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06:00) Saskatchewan"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "gpbgjJ": [
@@ -5881,6 +5941,12 @@
     {
       "type": 0,
       "value": "Select a Batch Workflow resource"
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "h1lQDa": [
@@ -6063,12 +6129,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "Komentarz"
     }
   ],
   "iCSHJG": [
@@ -6575,12 +6635,6 @@
       "value": "Select an action type"
     }
   ],
-  "lv9QyZ": [
-    {
-      "type": 0,
-      "value": "Email"
-    }
-  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6773,6 +6827,12 @@
       "value": "End time"
     }
   ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "nRpM02": [
     {
       "type": 0,
@@ -6929,6 +6989,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Salwador"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7767,6 +7833,12 @@
       "value": "Tworzy tablicę z parametrów"
     }
   ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Trigger date"
+    }
+  ],
   "v39HKj": [
     {
       "type": 0,
@@ -7985,6 +8057,12 @@
       "value": "Zwraca określoną wartość zależnie od tego, czy wynikiem wyrażenia jest wartość true lub false"
     }
   ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
   "wkiETV": [
     {
       "type": 0,
@@ -8043,6 +8121,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
@@ -8115,12 +8199,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Uniwersalny czas koordynowany+12"
-    }
-  ],
-  "xeREzb": [
-    {
-      "type": 0,
-      "value": "Number"
     }
   ],
   "xt5TeT": [
@@ -8211,6 +8289,12 @@
     {
       "type": 0,
       "value": "Dodaj pole"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "yxsn7s": [

@@ -33,7 +33,12 @@ const SELECTION_STATES = {
   CUSTOM_SWAGGER: 'HTTP_SWAGGER',
 };
 
-export const RecommendationPanelContext = (props: CommonPanelProps) => {
+export type RecommendationPanelContextProps = {
+  displayRuntimeInfo: boolean;
+} & CommonPanelProps;
+
+export const RecommendationPanelContext = (props: RecommendationPanelContextProps) => {
+  const { displayRuntimeInfo } = props;
   const dispatch = useDispatch<AppDispatch>();
   const isConsumption = useIsConsumption();
   const isTrigger = useIsAddingTrigger();
@@ -145,6 +150,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
               filters={filters}
               onOperationClick={onOperationClick}
               isLoading={isLoadingOperations}
+              displayRuntimeInfo={displayRuntimeInfo}
             />
           ) : null,
           [SELECTION_STATES.SEARCH]: (
@@ -157,6 +163,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
                 filters={filters}
                 setFilters={setFilters}
                 isTriggerNode={isTrigger}
+                displayRuntimeInfo={displayRuntimeInfo}
               />
               {searchTerm ? (
                 <SearchView
@@ -166,9 +173,10 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
                   isLoading={isLoadingOperations}
                   filters={filters}
                   onOperationClick={onOperationClick}
+                  displayRuntimeInfo={displayRuntimeInfo}
                 />
               ) : (
-                <BrowseView filters={filters} />
+                <BrowseView filters={filters} isLoadingOperations={isLoadingOperations} displayRuntimeInfo={displayRuntimeInfo} />
               )}
             </>
           ),

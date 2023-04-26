@@ -51,6 +51,12 @@
       "value": "Select this if you are configuring an on-prem connection"
     }
   ],
+  "+W2vTp": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -993,12 +999,6 @@
       "value": "Kötelező megadni. Azon paraméter neve, melynek értékei szükségesek."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "Megjegyzéseket csak a lépés bemeneteinek szerkesztése közben adhat hozzá."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1265,12 +1265,6 @@
       "value": "Kötelező megadni. Az a sztring, amelyből a sztringrész származik."
     }
   ],
-  "7Vyxu0": [
-    {
-      "type": 0,
-      "value": "Yes/No"
-    }
-  ],
   "7WVgiU": [
     {
       "type": 0,
@@ -1505,6 +1499,12 @@
       "value": "Érték"
     }
   ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
   "92OUl9": [
     {
       "type": 0,
@@ -1581,6 +1581,12 @@
     {
       "type": 0,
       "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "9atGYe": [
@@ -1901,6 +1907,12 @@
       "value": "(UTC-05:00) Havanna"
     }
   ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Number"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1959,6 +1971,12 @@
     {
       "type": 0,
       "value": "Hitelesítő adatok típusa"
+    }
+  ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "Cy9qeQ": [
@@ -2233,6 +2251,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Keleti idő (Amerikai Egyesült Államok és Kanada)"
+    }
+  ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
     }
   ],
   "Ex4U46": [
@@ -2543,6 +2567,12 @@
     {
       "type": 0,
       "value": "Tömb"
+    }
+  ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "File Content"
     }
   ],
   "H17jEE": [
@@ -3163,10 +3193,10 @@
       "value": "(UTC+00:00) Dublin, Edinburgh, Lisszabon, London"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "Hozzászólás hozzáadása"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -3981,6 +4011,12 @@
       "value": "Kötelező megadni. Az űrlapadatokat tartalmazó vagy űrlapként formázott választ adó művelet neve."
     }
   ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
+    }
+  ],
   "Sh10cw": [
     {
       "type": 0,
@@ -4177,6 +4213,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Brüsszel, Koppenhága, Madrid, Párizs"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
     }
   ],
   "Twfck/": [
@@ -4459,12 +4501,6 @@
     {
       "type": 0,
       "value": "Error Type"
-    }
-  ],
-  "VggzRB": [
-    {
-      "type": 0,
-      "value": "Text"
     }
   ],
   "VlvlX1": [
@@ -4815,6 +4851,12 @@
       "value": "Adja meg a PFX-fájlt"
     }
   ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
@@ -4975,12 +5017,6 @@
     {
       "type": 0,
       "value": "” a paraméterben"
-    }
-  ],
-  "a+6uyE": [
-    {
-      "type": 0,
-      "value": "File"
     }
   ],
   "a7j3gS": [
@@ -5155,6 +5191,12 @@
       "value": "(UTC+05:30) Csennai, Kolkata (Kalkutta), Mumbai, Új-Delhi"
     }
   ],
+  "bv9QPA": [
+    {
+      "type": 0,
+      "value": "Date"
+    }
+  ],
   "bwfJdj": [
     {
       "type": 0,
@@ -5233,12 +5275,6 @@
     {
       "type": 0,
       "value": "Más forrásokból is hozzáadható dinamikus tartalom."
-    }
-  ],
-  "cF4w+R": [
-    {
-      "type": 0,
-      "value": "Date"
     }
   ],
   "cJm+ah": [
@@ -5323,12 +5359,6 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A gyűjtemény, melynek első Count objektumait ki kell hagyni."
-    }
-  ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "Hozzászólás törlése"
     }
   ],
   "d4xMIx": [
@@ -5445,6 +5475,12 @@
     {
       "type": 0,
       "value": "lejárt az időkorlátja"
+    }
+  ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "e00zot": [
@@ -5579,6 +5615,12 @@
       "value": "A lapozások száma meghaladja a maximális értéket"
     }
   ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5627,6 +5669,12 @@
     {
       "type": 0,
       "value": "Mellőzve"
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "g0a4Qe": [
@@ -5737,10 +5785,22 @@
       "value": "Aktiválási feltételek"
     }
   ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06:00) Saskatchewan"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "gpbgjJ": [
@@ -5767,6 +5827,12 @@
     {
       "type": 0,
       "value": "Select a Batch Workflow resource"
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "h1lQDa": [
@@ -5927,12 +5993,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "Megjegyzés"
     }
   ],
   "iCSHJG": [
@@ -6435,12 +6495,6 @@
       "value": "Select an action type"
     }
   ],
-  "lv9QyZ": [
-    {
-      "type": 0,
-      "value": "Email"
-    }
-  ],
   "lzBHHT": [
     {
       "type": 0,
@@ -6633,6 +6687,12 @@
       "value": "End time"
     }
   ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
   "nRpM02": [
     {
       "type": 0,
@@ -6789,6 +6849,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Salvador"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7605,6 +7671,12 @@
       "value": "Tömb létrehozása a paraméterekből."
     }
   ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Trigger date"
+    }
+  ],
   "v39HKj": [
     {
       "type": 0,
@@ -7823,6 +7895,12 @@
       "value": "Egy megadott értéket ad vissza annak alapján, hogy a kifejezés eredménye igaz-e, vagy hamis."
     }
   ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
   "wkiETV": [
     {
       "type": 0,
@@ -7881,6 +7959,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
@@ -7953,12 +8037,6 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Egyezményes világidő+12"
-    }
-  ],
-  "xeREzb": [
-    {
-      "type": 0,
-      "value": "Number"
     }
   ],
   "xt5TeT": [
@@ -8049,6 +8127,12 @@
     {
       "type": 0,
       "value": "Mező hozzáadása"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "yxsn7s": [
