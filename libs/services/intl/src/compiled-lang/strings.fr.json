@@ -51,6 +51,12 @@
       "value": "Select this if you are configuring an on-prem connection"
     }
   ],
+  "+W2vTp": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -1146,12 +1152,6 @@
       "value": "(UTC+08:45) Eucla"
     }
   ],
-  "6H3oG1": [
-    {
-      "type": 0,
-      "value": "Please enter or select a date (YYYY-MM-DD)"
-    }
-  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -1929,6 +1929,12 @@
       "value": "(UTC-05:00) Havane (La)"
     }
   ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Number"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1987,6 +1993,12 @@
     {
       "type": 0,
       "value": "Type d'informations d'identification"
+    }
+  ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "Cy9qeQ": [
@@ -2063,12 +2075,6 @@
     {
       "type": 0,
       "value": "Select a value"
-    }
-  ],
-  "DOf1/I": [
-    {
-      "type": 0,
-      "value": "Please enter your input"
     }
   ],
   "DWd9vy": [
@@ -2269,6 +2275,12 @@
       "value": "(UTC-05:00) Est (É.-U. et Canada)"
     }
   ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
+    }
+  ],
   "Ex4U46": [
     {
       "type": 0,
@@ -2291,12 +2303,6 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Irkoutsk"
-    }
-  ],
-  "F51kU8": [
-    {
-      "type": 0,
-      "value": "Please enter a number"
     }
   ],
   "F9dR1Q": [
@@ -2588,6 +2594,12 @@
       "value": "Tableau"
     }
   ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "File Content"
+    }
+  ],
   "H17jEE": [
     {
       "type": 0,
@@ -2816,12 +2828,6 @@
     {
       "type": 0,
       "value": "No properties"
-    }
-  ],
-  "Iwi+x0": [
-    {
-      "type": 0,
-      "value": "Please select yes or no"
     }
   ],
   "J/Kz1j": [
@@ -3425,12 +3431,6 @@
       "value": "Sélectionnez une identité"
     }
   ],
-  "Nro0qr": [
-    {
-      "type": 0,
-      "value": "Please enter an e-mail address"
-    }
-  ],
   "NvANon": [
     {
       "type": 0,
@@ -3559,12 +3559,6 @@
     {
       "type": 0,
       "value": "Retourne les résultats des actions de niveau supérieur dans l'action délimitée spécifiée, par exemple, une action For_each, Until ou Scope."
-    }
-  ],
-  "OcnU0i": [
-    {
-      "type": 0,
-      "value": "Please select file or image"
     }
   ],
   "OdNhwc": [
@@ -4050,6 +4044,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Nom de l'action avec une réponse encodée dans le formulaire ou avec des données de formulaire."
+    }
+  ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
     }
   ],
   "Sh10cw": [
@@ -4574,12 +4574,6 @@
       "value": "Obligatoire. Nom de la nouvelle propriété."
     }
   ],
-  "W7sa4b": [
-    {
-      "type": 0,
-      "value": "Enter title"
-    }
-  ],
   "WGwH45": [
     {
       "type": 0,
@@ -4882,6 +4876,12 @@
     {
       "type": 0,
       "value": "Entrer Pfx"
+    }
+  ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Yes/No"
     }
   ],
   "YaFjJQ": [
@@ -5492,6 +5492,12 @@
       "value": "délai dépassé"
     }
   ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Input"
+    }
+  ],
   "e00zot": [
     {
       "type": 0,
@@ -5624,6 +5630,12 @@
       "value": "Le nombre de paginations dépasse la valeur maximale"
     }
   ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5672,6 +5684,12 @@
     {
       "type": 0,
       "value": "Ignoré"
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "g0a4Qe": [
@@ -7670,6 +7688,12 @@
       "value": "Crée un tableau à partir des paramètres"
     }
   ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Trigger date"
+    }
+  ],
   "v39HKj": [
     {
       "type": 0,
@@ -8120,6 +8144,12 @@
     {
       "type": 0,
       "value": "Ajouter un champ"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "yxsn7s": [
