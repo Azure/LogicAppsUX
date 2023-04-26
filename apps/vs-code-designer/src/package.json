@@ -405,17 +405,17 @@
         },
         {
           "command": "azureResourceGroups.refresh",
-          "when": "view == azureResourceGroups && viewItem == siteFiles",
+          "when": "view == azureResourceGroups && viewItem =~ /azLogicApps.*siteFiles/",
           "group": "1@1"
         },
         {
           "command": "azureResourceGroups.refresh",
-          "when": "view == azureResourceGroups && viewItem == logFiles",
+          "when": "view == azureResourceGroups && viewItem =~ /azLogicApps.*logFiles/",
           "group": "1@1"
         },
         {
           "command": "azureResourceGroups.refresh",
-          "when": "view == azureResourceGroups && viewItem == folder",
+          "when": "view == azureResourceGroups && viewItem =~ /azLogicApps.*folder/",
           "group": "1@1"
         },
         {
