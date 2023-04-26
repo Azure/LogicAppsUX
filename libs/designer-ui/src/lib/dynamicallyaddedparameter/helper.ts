@@ -1,8 +1,10 @@
 import type { DynamicallyAddedParameterProps, DynamicallyAddedParameterTypeType, IDynamicallyAddedParameterProperties } from '.';
 import { DynamicallyAddedParameterType } from '.';
+import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
-import { guid } from '@microsoft/utils-logic-apps';
+import { getIntl } from '@microsoft/intl-logic-apps';
+import { generateUniqueName, guid } from '@microsoft/utils-logic-apps';
 
 export type DynamicallyAddedParameterIcon = string;
 
@@ -33,6 +35,78 @@ export function getIconForDynamicallyAddedParameterType(type: DynamicallyAddedPa
       return DynamicallyAddedParameterNumberIcon;
     case DynamicallyAddedParameterType.Date:
       return DynamicallyAddedParameterDateIcon;
+  }
+}
+
+export function getDefaultTitleForDynamicallyAddedParameterType(type: DynamicallyAddedParameterTypeType): string {
+  const intl = getIntl();
+  switch (type) {
+    case DynamicallyAddedParameterType.Text:
+      return intl.formatMessage({
+        defaultMessage: 'Input',
+        description: 'Placeholder title for a newly inserted Text parameter',
+      });
+    case DynamicallyAddedParameterType.Boolean:
+      return intl.formatMessage({
+        defaultMessage: 'Yes/No',
+        description: 'Placeholder title for a newly inserted Boolean parameter',
+      });
+    case DynamicallyAddedParameterType.File:
+      return intl.formatMessage({
+        defaultMessage: 'File Content',
+        description: 'Placeholder title for a newly inserted File parameter',
+      });
+    case DynamicallyAddedParameterType.Email:
+      return intl.formatMessage({
+        defaultMessage: 'Email',
+        description: 'Placeholder title for a newly inserted Email parameter',
+      });
+    case DynamicallyAddedParameterType.Number:
+      return intl.formatMessage({
+        defaultMessage: 'Number',
+        description: 'Placeholder title for a newly inserted Number parameter',
+      });
+    case DynamicallyAddedParameterType.Date:
+      return intl.formatMessage({
+        defaultMessage: 'Trigger date',
+        description: 'Placeholder title for a newly inserted Date parameter',
+      });
+  }
+}
+
+function getDescriptionForDynamicallyAddedParameterType(type: DynamicallyAddedParameterTypeType): string {
+  const intl = getIntl();
+  switch (type) {
+    case DynamicallyAddedParameterType.Text:
+      return intl.formatMessage({
+        defaultMessage: 'Please enter your input',
+        description: 'Placeholder description for a newly inserted Text parameter',
+      });
+    case DynamicallyAddedParameterType.Boolean:
+      return intl.formatMessage({
+        defaultMessage: 'Please select yes or no',
+        description: 'Placeholder description for a newly inserted Boolean parameter',
+      });
+    case DynamicallyAddedParameterType.File:
+      return intl.formatMessage({
+        defaultMessage: 'Please select file or image',
+        description: 'Placeholder description for a newly inserted File parameter',
+      });
+    case DynamicallyAddedParameterType.Email:
+      return intl.formatMessage({
+        defaultMessage: 'Please enter an e-mail address',
+        description: 'Placeholder description for a newly inserted Email parameter',
+      });
+    case DynamicallyAddedParameterType.Number:
+      return intl.formatMessage({
+        defaultMessage: 'Please enter a number',
+        description: 'Placeholder description for a newly inserted Number parameter',
+      });
+    case DynamicallyAddedParameterType.Date:
+      return intl.formatMessage({
+        defaultMessage: 'Please enter or select a date (YYYY-MM-DD)',
+        description: 'Placeholder description for a newly inserted Date parameter',
+      });
   }
 }
 
@@ -116,4 +190,69 @@ export function serialize(props: DynamicallyAddedParameterProps[]): ValueSegment
       value: JSON.stringify(rootObject),
     },
   ];
+}
+
+export function createDynamicallyAddedParameterProperties(
+  itemType: DynamicallyAddedParameterTypeType,
+  schemaKey: string
+): IDynamicallyAddedParameterProperties {
+  let format, fileProperties;
+  let type = '';
+  switch (itemType) {
+    case DynamicallyAddedParameterType.Date:
+    case DynamicallyAddedParameterType.Email:
+      type = constants.SWAGGER.TYPE.STRING;
+      format = itemType.toLowerCase();
+      break;
+    case DynamicallyAddedParameterType.Text:
+      type = constants.SWAGGER.TYPE.STRING;
+      break;
+    case DynamicallyAddedParameterType.File:
+      type = constants.SWAGGER.TYPE.OBJECT;
+      fileProperties = {
+        contentBytes: { type: constants.SWAGGER.TYPE.STRING, format: constants.SWAGGER.FORMAT.BYTE },
+        name: { type: constants.SWAGGER.TYPE.STRING },
+      };
+      break;
+    case DynamicallyAddedParameterType.Boolean:
+      type = constants.SWAGGER.TYPE.BOOLEAN;
+      break;
+    case DynamicallyAddedParameterType.Number:
+      type = constants.SWAGGER.TYPE.NUMBER;
+      break;
+  }
+
+  return {
+    description: getDescriptionForDynamicallyAddedParameterType(itemType),
+    format,
+    title: convertDynamicallyAddedSchemaKeyToTitle(schemaKey, itemType),
+    type,
+    properties: fileProperties,
+    'x-ms-content-hint': itemType,
+    'x-ms-dynamically-added': true,
+  };
+}
+
+export function generateDynamicParameterKey(
+  parameters: DynamicallyAddedParameterProps[],
+  typeHint: DynamicallyAddedParameterTypeType
+): string {
+  const currentKeys = parameters.map((parameter) => parameter.schemaKey);
+
+  const processedTypeHint = typeHint.toLowerCase().replace(/\s+/g, '');
+  const newTitle = generateUniqueName(processedTypeHint, currentKeys, 1);
+
+  return newTitle.replace(/\s+/g, '_');
+}
+
+function convertDynamicallyAddedSchemaKeyToTitle(name: string, itemType: DynamicallyAddedParameterTypeType): string {
+  const title = getDefaultTitleForDynamicallyAddedParameterType(itemType);
+  let result = title;
+
+  if (name && name.indexOf('_') > -1) {
+    const split = name.split('_');
+    result = `${title} ${split[1]}`;
+  }
+
+  return result;
 }
