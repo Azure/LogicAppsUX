@@ -46,7 +46,6 @@ export const BlockFormatDropDown = ({ editor, blockType, disabled = false }: Blo
   };
 
   const formatBulletList = () => {
-    console.log('hi');
     if (blockType !== 'bullet') {
       editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
     } else {
