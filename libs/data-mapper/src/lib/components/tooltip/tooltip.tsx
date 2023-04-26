@@ -12,7 +12,7 @@ export const DMTooltip: React.FC<DMTooltipProps> = (props) => {
 
   return (
     <Tooltip relationship="description" content={props.text} withArrow={true}>
-      <div style={{ height: '16px', width: '16px' }} onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
+      <div style={{ height: '16px' }} onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
         {isHover ? <Info16Filled {...iconFill} /> : <Info16Regular {...iconFill} />}
       </div>
     </Tooltip>
