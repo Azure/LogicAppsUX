@@ -9,6 +9,7 @@ import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { convertToStringLiteral, getSplitOnArrayAliasMetadata } from '@microsoft/parsers-logic-apps';
 import type {
   DownloadChunkMetadata,
+  LogicApps,
   LogicAppsV2,
   OperationManifest,
   OperationManifestSetting,
