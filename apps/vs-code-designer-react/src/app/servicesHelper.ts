@@ -19,7 +19,7 @@ import type {
   IHostService,
   IWorkflowService,
 } from '@microsoft/designer-client-services-logic-apps';
-import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
+import { HTTP_METHODS, clone } from '@microsoft/utils-logic-apps';
 import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
 import type { WebviewApi } from 'vscode-webview';
@@ -54,6 +54,8 @@ export const getDesignerServices = (
     appSettings = {},
     isStateful = false;
 
+  let connectionsData = { ...connectionData } ?? {};
+
   const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubServiceDetails;
 
   const armUrl = 'https://management.azure.com';
@@ -67,6 +69,7 @@ export const getDesignerServices = (
   }
 
   const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
+    connectionsData = addConnectionInJson(connectionAndSetting, connectionsData ?? {});
     return vscode.postMessage({
       command: ExtensionCommand.addConnection,
       connectionAndSetting,
@@ -80,7 +83,7 @@ export const getDesignerServices = (
     httpClient,
     apiHubServiceDetails,
     tenantId,
-    readConnections: () => Promise.resolve(connectionData),
+    readConnections: () => Promise.resolve(connectionsData),
     writeConnection: (connectionAndSetting: ConnectionAndAppSetting) => {
       return addConnectionData(connectionAndSetting);
     },
@@ -121,7 +124,7 @@ export const getDesignerServices = (
       }
 
       const connectionName = connectionId.split('/').splice(-1)[0];
-      const connnectionsInfo = { ...connectionData?.serviceProviderConnections, ...connectionData?.apiManagementConnections };
+      const connnectionsInfo = { ...connectionsData?.serviceProviderConnections, ...connectionsData?.apiManagementConnections };
       const connectionInfo = connnectionsInfo[connectionName];
 
       if (connectionInfo) {
@@ -263,4 +266,31 @@ export const getDesignerServices = (
     apimService,
     functionService,
   };
+};
+
+const addConnectionInJson = (connectionAndSetting: ConnectionAndAppSetting, connectionsJson: ConnectionsData): ConnectionsData => {
+  const { connectionData, connectionKey, pathLocation } = connectionAndSetting;
+
+  console.log('charlie', connectionData);
+  const pathToSetConnectionsData: any = clone(connectionsJson);
+
+  for (const path of pathLocation) {
+    if (!pathToSetConnectionsData[path]) {
+      pathToSetConnectionsData[path] = {};
+    }
+
+    console.log('charlie', connectionData);
+
+    if (pathToSetConnectionsData && pathToSetConnectionsData[path][connectionKey]) {
+      // TODO: To show this in a notification of info bar on the blade.
+      // const message = 'ConnectionKeyAlreadyExist - Connection key \'{0}\' already exists.'.format(connectionKey);
+      break;
+    } else {
+      pathToSetConnectionsData[path][connectionKey] = connectionData;
+    }
+  }
+
+  return pathToSetConnectionsData as ConnectionsData;
+
+  console.log('charlie 4', connectionData, pathToSetConnectionsData);
 };
