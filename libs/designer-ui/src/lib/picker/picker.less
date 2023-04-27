@@ -3,7 +3,7 @@
 @titleBorder: 1px solid rgb(211, 211, 211);
 @titleBackground: rgb(210, 210, 210);
 @itemTextPadding: 12px 0 10px 10px;
-@itemTextMaxWidth: calc(100% ~'-' 53px);
+@itemTextWidth: calc(100% ~'-' 53px);
 @itemHeight: 50px;
 @iconWidth: 28px;
 @iconHeight: 28px;
@@ -44,6 +44,19 @@ a.msla-picker {
       top: 0;
     }
   }
+}
+
+.msla-picker-no-items {
+  height: 30px;
+  padding-left: 20px;
+  padding-top: 10px;
+}
+
+.msla-picker-items-error {
+  color: rgb(224, 2, 2);
+  height: 30px;
+  padding-left: 20px;
+  padding-top: 10px;
 }
 
 .msla-picker-items {
@@ -98,7 +111,7 @@ a.msla-picker {
         vertical-align: top;
         display: inline-block;
         padding: @itemTextPadding;
-        max-width: @itemTextMaxWidth;
+        width: @itemTextWidth;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -120,6 +133,7 @@ a.msla-picker {
         display: inline-block;
         height: 70%;
         margin-top: 7px;
+        padding-right: 10px;
       }
     }
 
@@ -130,6 +144,8 @@ a.msla-picker {
       background-color: transparent;
       height: 100%;
       outline: none;
+      position: relative;
+      bottom: 10px;
 
       .msla-icon {
         width: 40px;
@@ -168,7 +184,7 @@ a.msla-picker {
       vertical-align: top;
       display: inline-block;
       padding: @itemTextPadding;
-      max-width: @itemTextMaxWidth;
+      width: @itemTextWidth;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

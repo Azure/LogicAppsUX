@@ -343,7 +343,7 @@ function hasValue(parameter: ResolvedParameter): boolean {
 export function getParameterEditorProps(
   parameter: InputParameter,
   shouldIgnoreDefaultValue = false,
-  nodeMetadata?: any
+  _nodeMetadata?: any
 ): ParameterEditorProps {
   const { dynamicValues, type, itemSchema, visibility, value, enum: schemaEnum } = parameter;
   let { editor, editorOptions, schema } = parameter;
@@ -407,7 +407,7 @@ export function getParameterEditorProps(
         : constants.FILEPICKER_TYPE.FILE;
     const fileFilters = isLegacyDynamicValuesTreeExtension(dynamicValues) ? dynamicValues.extension.parameters['fileFilter'] : undefined;
     editorOptions = { pickerType, fileFilters, items: undefined };
-    editorViewModel = { displayValue: nodeMetadata?.[value] ?? value, selectedItem: undefined };
+    editorViewModel = { displayValue: undefined, selectedItem: undefined };
   }
 
   return { editor, editorOptions, editorViewModel, schema };

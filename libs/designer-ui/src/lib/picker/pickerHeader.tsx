@@ -24,6 +24,16 @@ const bedcrumbStyles: Partial<IBreadcrumbStyles> = {
       fontSize: '14px',
     },
   },
+  itemLink: {
+    ':hover, :focus, :active, :hover:focus': {
+      backgroundColor: 'transparent',
+    },
+  },
+  overflowButton: {
+    ':hover, :focus, :active, :hover:focus, &.is-expanded': {
+      backgroundColor: 'transparent',
+    },
+  },
   root: {
     margin: 0,
   },
