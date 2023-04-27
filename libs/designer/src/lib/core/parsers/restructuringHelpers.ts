@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { isWorkflowOperationNode } from '../actions/bjsworkflow/serializer';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
 import { RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
@@ -50,8 +51,7 @@ export const reassignEdgeSources = (
   oldSourceId: string,
   newSourceId: string,
   graph: WorkflowNode,
-  isOldSourceTrigger: boolean,
-  isNewSourceTrigger: boolean
+  shouldHaveRunAfters = true
 ) => {
   if (!state) return;
 
@@ -61,14 +61,14 @@ export const reassignEdgeSources = (
   targetEdges.forEach((tEdge) => {
     if (graph.edges?.some((aEdge) => aEdge.source === newSourceId && aEdge.target === tEdge.target)) {
       removeEdge(state, oldSourceId, tEdge.target, graph);
-      moveRunAfterSource(state, tEdge.target, oldSourceId, newSourceId, isOldSourceTrigger, isNewSourceTrigger);
+      moveRunAfterSource(state, tEdge.target, oldSourceId, newSourceId, shouldHaveRunAfters);
     }
   });
 
   graph.edges = graph.edges?.map((edge) => {
     if (edge.source === oldSourceId) {
       setEdgeSource(edge, newSourceId);
-      moveRunAfterSource(state, edge.target, oldSourceId, newSourceId, isOldSourceTrigger, isNewSourceTrigger);
+      moveRunAfterSource(state, edge.target, oldSourceId, newSourceId, shouldHaveRunAfters);
     }
     return edge;
   });
@@ -101,23 +101,32 @@ export const moveRunAfterSource = (
   nodeId: string,
   oldSourceId: string,
   newSourceId: string,
-  isOldSourceTrigger: boolean,
-  isNewSourceTrigger: boolean
+  shouldHaveRunAfters: boolean
 ) => {
-  if (!state) return;
+  if (!state?.operations?.[nodeId]) return;
   const targetRunAfter = (state.operations[nodeId] as LogicAppsV2.ActionDefinition)?.runAfter ?? {};
-  if (!isNewSourceTrigger && !targetRunAfter?.[newSourceId]) {
-    targetRunAfter[newSourceId] = isOldSourceTrigger ? [RUN_AFTER_STATUS.SUCCEEDED] : targetRunAfter[oldSourceId];
+  if (shouldHaveRunAfters && !targetRunAfter?.[newSourceId]) {
+    targetRunAfter[newSourceId] = targetRunAfter[oldSourceId] ?? [RUN_AFTER_STATUS.SUCCEEDED];
   }
 
   delete targetRunAfter[oldSourceId];
+
+  if (Object.keys(targetRunAfter).length !== 0) {
+    (state.operations[nodeId] as LogicAppsV2.ActionDefinition).runAfter = targetRunAfter;
+  } else {
+    delete (state.operations[nodeId] as LogicAppsV2.ActionDefinition).runAfter;
+  }
 };
 
-export const applyIsRootNode = (state: WorkflowState, rootNodeId: string, graph: WorkflowNode, metadata: NodesMetadata) => {
-  graph.edges?.forEach((edge) => {
-    if (edge.source === rootNodeId && metadata?.[edge.target]) {
-      delete metadata[edge.target].isRoot;
-      (state.operations[edge.target] as LogicAppsV2.ActionDefinition).runAfter = {};
-    }
+export const applyIsRootNode = (state: WorkflowState, graph: WorkflowNode, metadata: NodesMetadata) => {
+  const rootNodeIds: string[] =
+    graph.edges?.reduce((acc, edge) => {
+      return !edge.source.includes('-#') ? acc?.filter((id) => id !== edge.target) : acc;
+    }, graph.children?.filter((node) => isWorkflowOperationNode(node))?.map((node) => node.id) ?? []) ?? [];
+
+  (graph.children ?? []).forEach((node) => {
+    const isRoot = rootNodeIds?.includes(node.id) ?? false;
+    if (metadata[node.id]) metadata[node.id].isRoot = isRoot;
+    if (isRoot) delete (state.operations[node.id] as LogicAppsV2.ActionDefinition)?.runAfter;
   });
 };

@@ -1,31 +1,31 @@
 # Logic Apps Designer
-### [2.11.1](https://github.com/Azure/LogicAppsUX/compare/v2.11.0...v2.11.1) (2023-04-27)
 
+### [2.11.1](https://github.com/Azure/LogicAppsUX/compare/v2.11.0...v2.11.1) (2023-04-27)
 
 ### Bug Fixes
 
-* **Data Mapper:** Reduce the feel of slowness with the prop pane ([#2104](https://github.com/Azure/LogicAppsUX/issues/2104)) ([d596377](https://github.com/Azure/LogicAppsUX/commit/d59637794a12a795e5a9926c8508c5ad49d7091f))
-* **designer:** Trigger Spliton issue ([#1931](https://github.com/Azure/LogicAppsUX/issues/1931)) ([8400096](https://github.com/Azure/LogicAppsUX/commit/840009613137a05a4f93613b23975b50343b4331))
-* **Power Automate:** Add conditional string rendering for designer when in xrmConnectionReferenceMode ([#2137](https://github.com/Azure/LogicAppsUX/issues/2137)) ([fd9bd6d](https://github.com/Azure/LogicAppsUX/commit/fd9bd6d4c2b5ce07553897371479cdd0982f8d9d))
-* **powerautomate:** Return empty schema object when manual trigger editor is initially loaded ([#2147](https://github.com/Azure/LogicAppsUX/issues/2147)) ([02e0d1f](https://github.com/Azure/LogicAppsUX/commit/02e0d1ff218d13198fbf1fb7badfa2e4dc9b215e))
+- **Data Mapper:** Reduce the feel of slowness with the prop pane ([#2104](https://github.com/Azure/LogicAppsUX/issues/2104)) ([d596377](https://github.com/Azure/LogicAppsUX/commit/d59637794a12a795e5a9926c8508c5ad49d7091f))
+- **designer:** Trigger Spliton issue ([#1931](https://github.com/Azure/LogicAppsUX/issues/1931)) ([8400096](https://github.com/Azure/LogicAppsUX/commit/840009613137a05a4f93613b23975b50343b4331))
+- **Power Automate:** Add conditional string rendering for designer when in xrmConnectionReferenceMode ([#2137](https://github.com/Azure/LogicAppsUX/issues/2137)) ([fd9bd6d](https://github.com/Azure/LogicAppsUX/commit/fd9bd6d4c2b5ce07553897371479cdd0982f8d9d))
+- **powerautomate:** Return empty schema object when manual trigger editor is initially loaded ([#2147](https://github.com/Azure/LogicAppsUX/issues/2147)) ([02e0d1f](https://github.com/Azure/LogicAppsUX/commit/02e0d1ff218d13198fbf1fb7badfa2e4dc9b215e))
 
 ## [2.11.0](https://github.com/Azure/LogicAppsUX/compare/v2.10.0...v2.11.0) (2023-04-26)
 
+## [2.8.0](https://github.com/Azure/LogicAppsUX/compare/v2.7.0...v2.8.0) (2023-04-21)
 
 ### Features
 
-* **designer:** Adding authentication editor for Http webhook operations auth parameter ([#2130](https://github.com/Azure/LogicAppsUX/issues/2130)) ([559d81b](https://github.com/Azure/LogicAppsUX/commit/559d81bbd7a751084b0e39eb5e74881320b741d7))
-* **designer:** Adding data flow to file-folder picker editor ([#2121](https://github.com/Azure/LogicAppsUX/issues/2121)) ([cecc43e](https://github.com/Azure/LogicAppsUX/commit/cecc43e5fe00973d11f47a16a7c6cc09dec342d0))
-
+- **designer:** Adding authentication editor for Http webhook operations auth parameter ([#2130](https://github.com/Azure/LogicAppsUX/issues/2130)) ([559d81b](https://github.com/Azure/LogicAppsUX/commit/559d81bbd7a751084b0e39eb5e74881320b741d7))
+- **designer:** Adding data flow to file-folder picker editor ([#2121](https://github.com/Azure/LogicAppsUX/issues/2121)) ([cecc43e](https://github.com/Azure/LogicAppsUX/commit/cecc43e5fe00973d11f47a16a7c6cc09dec342d0))
 
 ### Bug Fixes
 
-* **Data Mapper:** Fix JSON multi-property loop assignment ([#2136](https://github.com/Azure/LogicAppsUX/issues/2136)) ([6d83dad](https://github.com/Azure/LogicAppsUX/commit/6d83dad2eb5b44dbdef65ca71d145548ad60b13e))
-* **designer-ui:** Fix DynamicallyAddedParameter menu getting collapsed on mouseenter ([#2139](https://github.com/Azure/LogicAppsUX/issues/2139)) ([dd20166](https://github.com/Azure/LogicAppsUX/commit/dd20166a0b7f8bd0cbb8d4a61e7ca42ec8c27217))
-* **designer-ui:** Fix incorrect type when creating new DynamicallyAddedParameter and match key generation with v1 designer ([#2116](https://github.com/Azure/LogicAppsUX/issues/2116)) ([0bd1576](https://github.com/Azure/LogicAppsUX/commit/0bd157689d6287a9b580548fdf9a249b938ea45a))
-* **designer:** Change V3 token picker classname diff from V1 ([#2127](https://github.com/Azure/LogicAppsUX/issues/2127)) ([008237b](https://github.com/Azure/LogicAppsUX/commit/008237b017433f0ba90b618d9f41850f3c314dad))
-* **designer:** prioritize items with false/undefined isCustomApi property ([#2128](https://github.com/Azure/LogicAppsUX/issues/2128)) ([91bbb8f](https://github.com/Azure/LogicAppsUX/commit/91bbb8f80c568e29715a807cc8a4f9fabf3cd916))
-* **designer:** reverting Panel should validate params onBlur + Foreach shouldn't add another when selecting a token ([#2138](https://github.com/Azure/LogicAppsUX/issues/2138)) ([4947c8d](https://github.com/Azure/LogicAppsUX/commit/4947c8d74828d98ccaab1dc3ebfcb7fe7bdd3bc2)), closes [#2096](https://github.com/Azure/LogicAppsUX/issues/2096)
+- **Data Mapper:** Fix JSON multi-property loop assignment ([#2136](https://github.com/Azure/LogicAppsUX/issues/2136)) ([6d83dad](https://github.com/Azure/LogicAppsUX/commit/6d83dad2eb5b44dbdef65ca71d145548ad60b13e))
+- **designer-ui:** Fix DynamicallyAddedParameter menu getting collapsed on mouseenter ([#2139](https://github.com/Azure/LogicAppsUX/issues/2139)) ([dd20166](https://github.com/Azure/LogicAppsUX/commit/dd20166a0b7f8bd0cbb8d4a61e7ca42ec8c27217))
+- **designer-ui:** Fix incorrect type when creating new DynamicallyAddedParameter and match key generation with v1 designer ([#2116](https://github.com/Azure/LogicAppsUX/issues/2116)) ([0bd1576](https://github.com/Azure/LogicAppsUX/commit/0bd157689d6287a9b580548fdf9a249b938ea45a))
+- **designer:** Change V3 token picker classname diff from V1 ([#2127](https://github.com/Azure/LogicAppsUX/issues/2127)) ([008237b](https://github.com/Azure/LogicAppsUX/commit/008237b017433f0ba90b618d9f41850f3c314dad))
+- **designer:** prioritize items with false/undefined isCustomApi property ([#2128](https://github.com/Azure/LogicAppsUX/issues/2128)) ([91bbb8f](https://github.com/Azure/LogicAppsUX/commit/91bbb8f80c568e29715a807cc8a4f9fabf3cd916))
+- **designer:** reverting Panel should validate params onBlur + Foreach shouldn't add another when selecting a token ([#2138](https://github.com/Azure/LogicAppsUX/issues/2138)) ([4947c8d](https://github.com/Azure/LogicAppsUX/commit/4947c8d74828d98ccaab1dc3ebfcb7fe7bdd3bc2)), closes [#2096](https://github.com/Azure/LogicAppsUX/issues/2096)
 
 ## [2.10.0](https://github.com/Azure/LogicAppsUX/compare/v2.9.1...v2.10.0) (2023-04-25)
 
