@@ -17,13 +17,20 @@ body:
 
         The more information you fill in, the better we can help you.
 
-  - type: dropdown
-    id: sku
+  - type: textarea
+    id: description
     attributes:
      label: Describe the Bug with repro steps
      description: Provide a clear and concise description of the challenge you are running into.
-  - type: textarea
-    id: description
+     placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: sku
     attributes:
       label: What type of Logic App Is this happening in?
       options: 
@@ -43,17 +50,6 @@ body:
     validations:
       required: true
       
-  - type: textarea
-    id: description
-    attributes:
-      label: What type of Logic App Is this happening in?
-      description: Provide a clear and concise description of the challenge you are running into.
-      options: 
-        - Consumption (Portal)
-        - Standard (Portal)
-        - Standard (VSCode)
-    validations:
-      required: true
   - type: textarea
     id: workflow
     attributes:
