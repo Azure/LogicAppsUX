@@ -43,7 +43,8 @@ export interface IConnectionService {
     connectionId: string,
     connector: Connector,
     connectionInfo: ConnectionCreationInfo,
-    parametersMetadata?: ConnectionParametersMetadata
+    parametersMetadata?: ConnectionParametersMetadata,
+    shouldTestConnection?: boolean
   ): Promise<Connection>;
   createAndAuthorizeOAuthConnection(
     connectionId: string,
