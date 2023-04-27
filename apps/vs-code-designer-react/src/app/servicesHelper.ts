@@ -52,9 +52,8 @@ export const getDesignerServices = (
     panelId = '',
     workflowDetails: Record<string, any> = {},
     appSettings = {},
-    isStateful = false;
-
-  let connectionsData = { ...connectionData } ?? {};
+    isStateful = false,
+    connectionsData = { ...connectionData } ?? {};
 
   const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubServiceDetails;
 
@@ -70,6 +69,7 @@ export const getDesignerServices = (
 
   const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
     connectionsData = addConnectionInJson(connectionAndSetting, connectionsData ?? {});
+    appSettings = addOrUpdateAppSettings(connectionAndSetting.settings, appSettings ?? {});
     return vscode.postMessage({
       command: ExtensionCommand.addConnection,
       connectionAndSetting,
@@ -270,8 +270,6 @@ export const getDesignerServices = (
 
 const addConnectionInJson = (connectionAndSetting: ConnectionAndAppSetting, connectionsJson: ConnectionsData): ConnectionsData => {
   const { connectionData, connectionKey, pathLocation } = connectionAndSetting;
-
-  console.log('charlie', connectionData);
   const pathToSetConnectionsData: any = clone(connectionsJson);
 
   for (const path of pathLocation) {
@@ -279,11 +277,7 @@ const addConnectionInJson = (connectionAndSetting: ConnectionAndAppSetting, conn
       pathToSetConnectionsData[path] = {};
     }
 
-    console.log('charlie', connectionData);
-
     if (pathToSetConnectionsData && pathToSetConnectionsData[path][connectionKey]) {
-      // TODO: To show this in a notification of info bar on the blade.
-      // const message = 'ConnectionKeyAlreadyExist - Connection key \'{0}\' already exists.'.format(connectionKey);
       break;
     } else {
       pathToSetConnectionsData[path][connectionKey] = connectionData;
@@ -291,6 +285,16 @@ const addConnectionInJson = (connectionAndSetting: ConnectionAndAppSetting, conn
   }
 
   return pathToSetConnectionsData as ConnectionsData;
+};
 
-  console.log('charlie 4', connectionData, pathToSetConnectionsData);
+const addOrUpdateAppSettings = (settings: Record<string, string>, originalSettings: Record<string, string>): Record<string, string> => {
+  const updatedSettings: any = clone(originalSettings);
+
+  const settingsToAdd = Object.keys(settings);
+
+  for (const settingKey of settingsToAdd) {
+    updatedSettings[settingKey] = settings[settingKey];
+  }
+
+  return updatedSettings;
 };
