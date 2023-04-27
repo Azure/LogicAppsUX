@@ -1,3 +1,4 @@
+import constants from '../../../common/constants';
 import { loadParameterValuesFromDefault, toParameterInfoMap } from './helper';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { OutputMapKey, SchemaProcessor, toInputParameter } from '@microsoft/parsers-logic-apps';
@@ -38,9 +39,20 @@ export const getRecurrenceParameters = (recurrence: RecurrenceSetting | undefine
     .getSchemaProperties(schema)
     .map((item) => toInputParameter(item, true /* suppressCasting */));
 
+  const defaultRecurrence = {
+    frequency: constants.DEFAULT_FREQUENCY_VALUE,
+    interval: constants.DEFAULT_INTERVAL_VALUE,
+  };
+
+  for (const parameter of recurrenceParameters) {
+    if (!parameter.default) {
+      parameter.default = defaultRecurrence;
+    }
+  }
+
   if (operationDefinition) {
     for (const parameter of recurrenceParameters) {
-      parameter.value = operationDefinition.recurrence;
+      parameter.value = operationDefinition?.recurrence ?? defaultRecurrence;
     }
   } else {
     loadParameterValuesFromDefault(map(recurrenceParameters, OutputMapKey));
