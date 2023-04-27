@@ -43,43 +43,5 @@ export async function createNewCodeProjectFromCommand(
 }
 
 export async function createNewCodeProjectInternal(context: IActionContext, options: ICreateFunctionOptions): Promise<void> {
-  addLocalFuncTelemetry(context);
-
-  const language: ProjectLanguage | undefined = (options.language as ProjectLanguage) || getGlobalSetting(projectLanguageSetting);
-  const version: string = options.version || getGlobalSetting(funcVersionSetting) || (await tryGetLocalFuncVersion()) || latestGAVersion;
-  const projectTemplateKey: string | undefined = getGlobalSetting(projectTemplateKeySetting);
-  const wizardContext: Partial<IFunctionWizardContext> & IActionContext = Object.assign(context, options, {
-    language,
-    version: tryParseFuncVersion(version),
-    projectTemplateKey,
-  });
-
-  if (options.folderPath) {
-    FolderListStep.setProjectPath(wizardContext, options.folderPath);
-  }
-
-  if (options.suppressOpenFolder) {
-    wizardContext.openBehavior = OpenBehavior.dontOpen;
-  } else if (!wizardContext.openBehavior) {
-    wizardContext.openBehavior = getWorkspaceSetting(projectOpenBehaviorSetting);
-    context.telemetry.properties.openBehaviorFromSetting = String(!!wizardContext.openBehavior);
-  }
-
-  const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
-    title: localize('createNewCodeProject', 'Create new code project'),
-    promptSteps: [new FolderListStep(), new NewProjectTypeStep(options.templateId, options.functionSettings), new OpenBehaviorStep()],
-    executeSteps: [new OpenFolderStep()],
-  });
-
-  await wizard.prompt();
-  await wizard.execute();
-
-  await createArtifactsFolder(context as IFunctionWizardContext);
-
-  window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
-}
-
-async function createArtifactsFolder(context: IFunctionWizardContext): Promise<void> {
-  fse.mkdirSync(path.join(context.projectPath, 'Artifacts', 'Maps'), { recursive: true });
-  fse.mkdirSync(path.join(context.projectPath, 'Artifacts', 'Schemas'), { recursive: true });
+ 
 }
