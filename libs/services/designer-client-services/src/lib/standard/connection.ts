@@ -17,6 +17,7 @@ import {
   ConnectionType,
   ResourceIdentityType,
   equals,
+  optional,
   isArmResourceId,
   isIdentityAssociatedWithLogicApp,
   safeSetObjectPropertyValue,
@@ -43,6 +44,7 @@ interface ServiceProviderConnectionModel {
   serviceProvider: {
     id: string;
   };
+  parameterSetName?: string;
   displayName?: string;
 }
 
@@ -595,6 +597,7 @@ function convertToServiceProviderConnectionsData(
     connectionKey,
     connectionData: {
       parameterValues: {},
+      ...optional('parameterSetName', connectionParametersSetValues?.name),
       serviceProvider: { id: connectorId },
       displayName,
     },
