@@ -65,6 +65,7 @@ export enum extensionCommand {
   viewContent = 'azureLogicAppsStandard.viewContent',
   openFile = 'azureLogicAppsStandard.openFile',
   createNewProject = 'azureLogicAppsStandard.createNewProject',
+  createNewCodeProject = 'azureLogicAppsStandard.createNewCodeProject',
   createCodeless = 'azureLogicAppsStandard.createCodeless',
   createLogicApp = 'azureLogicAppsStandard.createLogicApp',
   createLogicAppAdvanced = 'azureLogicAppsStandard.createLogicAppAdvanced',
