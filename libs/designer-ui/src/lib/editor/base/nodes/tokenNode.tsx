@@ -93,6 +93,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
 
   createDOM() {
     const dom = document.createElement('span');
+    dom.id = this.toString();
     return dom;
   }
 

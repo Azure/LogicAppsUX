@@ -1,7 +1,7 @@
 import type { ComplexArrayItem, ComplexArrayItems, SimpleArrayItem } from '..';
 import type { ValueSegment } from '../../editor';
-import { ValueSegmentType } from '../../editor';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
+import { convertSegmentsToString } from '../../editor/base/utils/parsesegments';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import { guid } from '@microsoft/utils-logic-apps';
 
@@ -189,19 +189,4 @@ const validateComplexArrayItem = (
     }
   }
   return true;
-};
-
-const convertSegmentsToString = (input: ValueSegment[], nodeMap?: Map<string, ValueSegment>): string => {
-  let text = '';
-  input.forEach((segment) => {
-    if (segment.type === ValueSegmentType.LITERAL) {
-      text += segment.value;
-    } else if (segment.token) {
-      const { title, value, brandColor } = segment.token;
-      const string = `$[${title},${value},${brandColor}]$`;
-      text += string;
-      nodeMap?.set(string, segment);
-    }
-  });
-  return text;
 };
