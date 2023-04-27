@@ -1,4 +1,14 @@
 # Logic Apps Designer
+### [2.11.1](https://github.com/Azure/LogicAppsUX/compare/v2.11.0...v2.11.1) (2023-04-27)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Reduce the feel of slowness with the prop pane ([#2104](https://github.com/Azure/LogicAppsUX/issues/2104)) ([d596377](https://github.com/Azure/LogicAppsUX/commit/d59637794a12a795e5a9926c8508c5ad49d7091f))
+* **designer:** Trigger Spliton issue ([#1931](https://github.com/Azure/LogicAppsUX/issues/1931)) ([8400096](https://github.com/Azure/LogicAppsUX/commit/840009613137a05a4f93613b23975b50343b4331))
+* **Power Automate:** Add conditional string rendering for designer when in xrmConnectionReferenceMode ([#2137](https://github.com/Azure/LogicAppsUX/issues/2137)) ([fd9bd6d](https://github.com/Azure/LogicAppsUX/commit/fd9bd6d4c2b5ce07553897371479cdd0982f8d9d))
+* **powerautomate:** Return empty schema object when manual trigger editor is initially loaded ([#2147](https://github.com/Azure/LogicAppsUX/issues/2147)) ([02e0d1f](https://github.com/Azure/LogicAppsUX/commit/02e0d1ff218d13198fbf1fb7badfa2e4dc9b215e))
+
 ## [2.11.0](https://github.com/Azure/LogicAppsUX/compare/v2.10.0...v2.11.0) (2023-04-26)
 
 
