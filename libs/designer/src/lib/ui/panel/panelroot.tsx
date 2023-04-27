@@ -1,7 +1,7 @@
 import constants from '../../common/constants';
 import type { AppDispatch, RootState } from '../../core';
 import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
-import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useIsXrmConnectionReferenceMode, useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateParameterValidation } from '../../core/state/operation/operationMetadataSlice';
 import { useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import {
@@ -31,12 +31,12 @@ import { validateParameter } from '../../core/utils/parameters/helper';
 import { NodeSearchPanel } from './nodeSearchPanel';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
-import { createConnectionTab } from './panelTabs/createConnectionTab';
+import { getCreateConnectionTab } from './panelTabs/createConnectionTab';
 import { loadingTab } from './panelTabs/loadingTab';
 import { monitoringTab } from './panelTabs/monitoringTab/monitoringTab';
 import { parametersTab } from './panelTabs/parametersTab';
 import { scratchTab } from './panelTabs/scratchTab';
-import { selectConnectionTab } from './panelTabs/selectConnectionTab';
+import { getSelectConnectionTab } from './panelTabs/selectConnectionTab';
 import { settingsTab } from './panelTabs/settingsTab';
 import { testingTab } from './panelTabs/testingTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
@@ -79,8 +79,31 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   const operationInfo = useOperationInfo(selectedNode);
   let showCommentBox = !isNullOrUndefined(comment);
   const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
+  const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
 
   useEffect(() => {
+    const selectConnectionTabTitle = isXrmConnectionReferenceMode
+      ? intl.formatMessage({
+          defaultMessage: 'Select Connection Reference',
+          description: 'Title for the select connection reference tab',
+        })
+      : intl.formatMessage({
+          defaultMessage: 'Select Connection',
+          description: 'Title for the select connection tab',
+        });
+    const selectConnectionTab = getSelectConnectionTab(selectConnectionTabTitle);
+
+    const createConnectionTabTitle = isXrmConnectionReferenceMode
+      ? intl.formatMessage({
+          defaultMessage: 'Create Connection Reference',
+          description: 'Title for the create connection reference tab',
+        })
+      : intl.formatMessage({
+          defaultMessage: 'Create Connection',
+          description: 'Title for the create connection tab',
+        });
+    const createConnectionTab = getCreateConnectionTab(createConnectionTabTitle);
+
     const tabs = [
       monitoringTab,
       parametersTab,
@@ -96,7 +119,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       tabs.push(scratchTab);
     }
     dispatch(registerPanelTabs(tabs));
-  }, [dispatch]);
+  }, [dispatch, isXrmConnectionReferenceMode, intl]);
 
   useEffect(() => {
     dispatch(

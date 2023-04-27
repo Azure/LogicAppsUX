@@ -707,6 +707,12 @@
       "value": "Save"
     }
   ],
+  "30njcn": [
+    {
+      "type": 0,
+      "value": "Create Connection"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -1417,6 +1423,12 @@
     {
       "type": 0,
       "value": "Zaman uyumsuz düzen seçildiğinde, uzak sunucu 202 (Kabul Edildi) yanıtı göndererek isteğin işlenmek üzere kabul edildiğini belirtirse Logic Apps altyapısı, bir sona erme durumuna ulaşılana kadar yanıtın konum üst bilgisinde belirtilen URL'yi yoklamayı sürdürür."
+    }
+  ],
+  "8luJ2j": [
+    {
+      "type": 0,
+      "value": "Create Connection Reference"
     }
   ],
   "8pPivj": [
@@ -2563,6 +2575,12 @@
       "value": "Daha fazla tanılama bilgisi: x-ms-client-request-id is {clientRequestId}."
     }
   ],
+  "HOchry": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -2891,6 +2909,12 @@
     {
       "type": 0,
       "value": "Bir dizedeki karakterlerin bir alt kümesini döndürür"
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Change connection reference"
     }
   ],
   "KX1poC": [
@@ -4191,6 +4215,12 @@
     {
       "type": 0,
       "value": "Bir dizeyi belirli bir dize ile değiştirir"
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Logical Name"
     }
   ],
   "UR1CS5": [
@@ -6411,6 +6441,12 @@
       "value": "URL, giriş dizesini kodlar"
     }
   ],
+  "mQotIu": [
+    {
+      "type": 0,
+      "value": "Select Connection"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7259,6 +7295,12 @@
     {
       "type": 0,
       "value": " sa"
+    }
+  ],
+  "tJMHcJ": [
+    {
+      "type": 0,
+      "value": "Select Connection Reference"
     }
   ],
   "tLZ9Sh": [

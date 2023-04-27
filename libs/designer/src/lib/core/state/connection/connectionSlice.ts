@@ -1,6 +1,7 @@
 import Constants from '../../../common/constants';
 import type { ConnectionReferences } from '../../../common/models/workflow';
 import { ImpersonationSource } from '../../../common/models/workflow';
+import type { ConnectionPayload } from '../../actions/bjsworkflow/connections';
 import { resetWorkflowState } from '../global';
 import { equals, getUniqueName } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
@@ -30,8 +31,10 @@ export const connectionSlice = createSlice({
     initializeConnectionsMappings: (state, action: PayloadAction<ConnectionMapping>) => {
       state.connectionsMapping = action.payload;
     },
-    changeConnectionMapping: (state, action: PayloadAction<{ nodeId: NodeId; connectionId: string; connectorId: string }>) => {
-      const { nodeId, connectionId, connectorId } = action.payload;
+    changeConnectionMapping: (state, action: PayloadAction<ConnectionPayload>) => {
+      const { nodeId, connection, connector, connectionProperties, authentication } = action.payload;
+      const connectionId = connection.id;
+      const connectorId = connector.id;
       const existingReferenceKey = Object.keys(state.connectionReferences).find((referenceKey) => {
         const reference = state.connectionReferences[referenceKey];
         return equals(reference.api.id, connectorId) && equals(reference.connection.id, connectionId);
@@ -45,6 +48,8 @@ export const connectionSlice = createSlice({
           api: { id: connectorId },
           connection: { id: connectionId },
           connectionName: connectionId.split('/').at(-1) as string,
+          connectionProperties,
+          authentication,
         };
         state.connectionsMapping[nodeId] = newReferenceKey;
       }
