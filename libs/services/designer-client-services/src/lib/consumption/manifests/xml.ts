@@ -1,5 +1,5 @@
-import { SettingScope } from '@microsoft/utils-logic-apps';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
+import { SettingScope } from '@microsoft/utils-logic-apps';
 
 const connector: any = {
   id: 'connectionProviders/xmlOperations',

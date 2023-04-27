@@ -9,7 +9,7 @@
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true
   },
-  "files": ["../../types/LogicAppsV2.d.ts"],
+  "files": [],
   "include": [],
   "references": [
     {

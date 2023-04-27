@@ -6,6 +6,7 @@ import { addEdgeFromRunAfter, removeEdgeFromRunAfter, updateRunAfter } from '../
 import type { SettingsSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
 import type { RunAfterActionDetailsProps } from './runafterconfiguration';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';

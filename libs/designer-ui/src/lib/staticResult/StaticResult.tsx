@@ -2,6 +2,7 @@ import type { StaticResultRootSchemaType } from '.';
 import constants from '../constants';
 import { StaticResultProperties } from './staticResultProperties';
 import { Icon, useTheme } from '@fluentui/react';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
