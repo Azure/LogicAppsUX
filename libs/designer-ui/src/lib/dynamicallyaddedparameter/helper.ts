@@ -192,6 +192,24 @@ export function serialize(props: DynamicallyAddedParameterProps[]): ValueSegment
   ];
 }
 
+export function getEmptySchemaValueSegmentForInitialization() {
+  const rootObject = {
+    schema: {
+      type: 'object',
+      properties: {},
+      required: [],
+    },
+  };
+
+  return [
+    {
+      id: guid(),
+      type: ValueSegmentType.LITERAL,
+      value: JSON.stringify(rootObject),
+    },
+  ];
+}
+
 export function createDynamicallyAddedParameterProperties(
   itemType: DynamicallyAddedParameterTypeType,
   schemaKey: string

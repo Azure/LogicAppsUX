@@ -338,7 +338,6 @@ function hasValue(parameter: ResolvedParameter): boolean {
   return !!parameter?.value;
 }
 
-// TODO - Need to figure out a way to get the managedIdentity for the app for authentication editor
 export function getParameterEditorProps(
   parameter: InputParameter,
   shouldIgnoreDefaultValue = false,

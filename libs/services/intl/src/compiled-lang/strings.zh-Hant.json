@@ -696,6 +696,12 @@
       "value": "Save"
     }
   ],
+  "30njcn": [
+    {
+      "type": 0,
+      "value": "Create Connection"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -1406,6 +1412,12 @@
     {
       "type": 0,
       "value": "在非同步模式下，若遠端伺服器指出已接受該要求進行處理，且回應為 202 (已接受)，Logic Apps 引擎會繼續輪詢回應位置標頭中所指定的 URL，直到達到終止狀態為止。"
+    }
+  ],
+  "8luJ2j": [
+    {
+      "type": 0,
+      "value": "Create Connection Reference"
     }
   ],
   "8pPivj": [
@@ -2534,6 +2546,12 @@
       "value": "其他診斷資訊: x-ms-client-request-id 是 {clientRequestId}。"
     }
   ],
+  "HOchry": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -2862,6 +2880,12 @@
     {
       "type": 0,
       "value": "從字串傳回一部分的字元"
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Change connection reference"
     }
   ],
   "KX1poC": [
@@ -4140,6 +4164,12 @@
     {
       "type": 0,
       "value": "以指定字串取代字串"
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Logical Name"
     }
   ],
   "UR1CS5": [
@@ -6361,6 +6391,12 @@
       "value": "編碼輸入字串的 URL"
     }
   ],
+  "mQotIu": [
+    {
+      "type": 0,
+      "value": "Select Connection"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7198,6 +7234,12 @@
     {
       "type": 0,
       "value": " 小時"
+    }
+  ],
+  "tJMHcJ": [
+    {
+      "type": 0,
+      "value": "Select Connection Reference"
     }
   ],
   "tLZ9Sh": [

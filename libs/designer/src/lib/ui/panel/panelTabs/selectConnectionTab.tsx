@@ -3,7 +3,7 @@ import type { AppDispatch } from '../../../core';
 import { updateNodeConnection } from '../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
-import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useIsXrmConnectionReferenceMode, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, selectPanelTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useNodeConnectionId } from '../../../core/state/selectors/actionMetadataSelector';
@@ -11,7 +11,7 @@ import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/reac
 import { ConnectionService } from '@microsoft/designer-client-services-logic-apps';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { SelectConnection } from '@microsoft/designer-ui';
-import type { Connection } from '@microsoft/utils-logic-apps';
+import type { Connection, Connector } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -23,6 +23,7 @@ export const SelectConnectionTab = () => {
   const selectedNodeId = useSelectedNodeId();
   const currentConnectionId = useNodeConnectionId(selectedNodeId);
   const isMonitoringView = useMonitoringView();
+  const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
 
   const hideConnectionTabs = useCallback(() => {
     dispatch(showDefaultTabs({ isMonitoringView }));
@@ -50,14 +51,14 @@ export const SelectConnectionTab = () => {
       dispatch(
         updateNodeConnection({
           nodeId: selectedNodeId,
-          connectionId: connection?.id as string,
-          connectorId: connector?.id as string,
+          connection,
+          connector: connector as Connector,
         })
       );
       ConnectionService().setupConnectionIfNeeded(connection);
       hideConnectionTabs();
     },
-    [dispatch, selectedNodeId, connector?.id, hideConnectionTabs]
+    [dispatch, selectedNodeId, connector, hideConnectionTabs]
   );
 
   const cancelSelectionCallback = useCallback(() => {
@@ -86,15 +87,18 @@ export const SelectConnectionTab = () => {
       saveSelectionCallback={saveSelectionCallback}
       cancelSelectionCallback={cancelSelectionCallback}
       createConnectionCallback={createConnectionCallback}
+      isXrmConnectionReferenceMode={!!isXrmConnectionReferenceMode}
     />
   );
 };
 
-export const selectConnectionTab: PanelTab = {
-  title: 'Select Connection',
-  name: constants.PANEL_TAB_NAMES.CONNECTION_SELECTOR,
-  description: 'Select Connection Tab',
-  visible: true,
-  content: <SelectConnectionTab />,
-  order: 0,
-};
+export function getSelectConnectionTab(title: string): PanelTab {
+  return {
+    title: title,
+    name: constants.PANEL_TAB_NAMES.CONNECTION_SELECTOR,
+    description: 'Select Connection Tab',
+    visible: true,
+    content: <SelectConnectionTab />,
+    order: 0,
+  };
+}

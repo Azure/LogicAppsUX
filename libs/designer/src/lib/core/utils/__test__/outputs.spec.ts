@@ -1,4 +1,5 @@
 import { getUpdatedManifestForSpiltOn } from '../outputs';
+import { onNewEmail } from '@microsoft/parsers-logic-apps';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
 import { ConnectionReferenceKeyFormat } from '@microsoft/utils-logic-apps';
 
@@ -66,15 +67,29 @@ describe('Outputs Utilities', () => {
           },
         },
       };
-      const splitOn = "@triggerOutputs()?['body']";
 
-      const result = getUpdatedManifestForSpiltOn(sampleManifest, splitOn);
-
+      const triggerOutputsSplitOn = "@triggerOutputs()?['body']";
+      const triggerOutputsSplitOnResult = getUpdatedManifestForSpiltOn(sampleManifest, triggerOutputsSplitOn);
       // Ensure the original is not modified.
       expect(sampleManifest.properties.outputs.properties.body.items.properties.importance['x-ms-property-name-alias']).toBe('importance');
+      // Ensure non-OpenAPI manifest has the correct format for alias.
+      expect(triggerOutputsSplitOnResult.properties.outputs.properties.body.properties.importance['x-ms-property-name-alias']).toBe(
+        'body/importance'
+      );
 
-      // Ensure the result has the correct format for alias.
-      expect(result.properties.outputs.properties.body.properties.importance['x-ms-property-name-alias']).toBe('body/importance');
+      const triggerBodySplitOn = "@triggerBody()?['value']";
+      const triggerBodySplitOnResult = getUpdatedManifestForSpiltOn(onNewEmail, triggerBodySplitOn);
+      // Ensure the original is not modified.
+      expect(onNewEmail.properties.outputs.properties.body.properties.value.items.properties.From['x-ms-property-name-alias']).toBe('From');
+      // Ensure OpenAPI manifest has the correct format for alias when using SplitOn string starting with triggerBody
+      expect(triggerBodySplitOnResult.properties.outputs.properties.body.properties.From['x-ms-property-name-alias']).toBe('body/From');
+
+      const aliasPathSplitOn = "@triggerOutputs()?['body/value']";
+      const aliasPathSplitOnResult = getUpdatedManifestForSpiltOn(onNewEmail, aliasPathSplitOn);
+      // Ensure the original is not modified.
+      expect(onNewEmail.properties.outputs.properties.body.properties.value.items.properties.From['x-ms-property-name-alias']).toBe('From');
+      // Ensure OpenAPI manifest has the correct alias format when using SplitOn with an alias path format.
+      expect(aliasPathSplitOnResult.properties.outputs.properties.body.properties.From['x-ms-property-name-alias']).toBe('body/From');
     });
   });
 });

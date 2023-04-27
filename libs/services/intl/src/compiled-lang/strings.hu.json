@@ -723,6 +723,12 @@
       "value": "Save"
     }
   ],
+  "30njcn": [
+    {
+      "type": 0,
+      "value": "Create Connection"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -1449,6 +1455,12 @@
     {
       "type": 0,
       "value": "Az aszinkron minta használata esetén ha a távoli kiszolgáló 202-es (Elfogadva) válasszal jelzi, hogy a kérelmet elfogadta feldolgozásra, a Logic Apps-motor addig folytatja a válasz helyet megjelölő fejlécében megadott URL-cím lekérdezését, amíg végállapotba nem kerül."
+    }
+  ],
+  "8luJ2j": [
+    {
+      "type": 0,
+      "value": "Create Connection Reference"
     }
   ],
   "8pPivj": [
@@ -2631,6 +2643,12 @@
       "value": "."
     }
   ],
+  "HOchry": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -2959,6 +2977,12 @@
     {
       "type": 0,
       "value": "Karakterek részhalmazát adja vissza egy sztringből."
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Change connection reference"
     }
   ],
   "KX1poC": [
@@ -4303,6 +4327,12 @@
     {
       "type": 0,
       "value": "Sztring lecserélése egy adott sztringre."
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Logical Name"
     }
   ],
   "UR1CS5": [
@@ -6579,6 +6609,12 @@
       "value": "A bemeneti sztringet URl-ként kódolja."
     }
   ],
+  "mQotIu": [
+    {
+      "type": 0,
+      "value": "Select Connection"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7451,6 +7487,12 @@
     {
       "type": 0,
       "value": " óra"
+    }
+  ],
+  "tJMHcJ": [
+    {
+      "type": 0,
+      "value": "Select Connection Reference"
     }
   ],
   "tLZ9Sh": [

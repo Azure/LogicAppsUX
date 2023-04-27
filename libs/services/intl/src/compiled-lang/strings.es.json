@@ -734,6 +734,12 @@
       "value": "Save"
     }
   ],
+  "30njcn": [
+    {
+      "type": 0,
+      "value": "Create Connection"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -1460,6 +1466,12 @@
     {
       "type": 0,
       "value": "Con el modelo asincrónico, si el servidor remoto indica que se acepta la solicitud para procesarla con una respuesta 202 (aceptada), el motor de Logic Apps sondeará la dirección URL especificada en el encabezado de ubicación de respuesta hasta alcanzar un estado terminal."
+    }
+  ],
+  "8luJ2j": [
+    {
+      "type": 0,
+      "value": "Create Connection Reference"
     }
   ],
   "8pPivj": [
@@ -2656,6 +2668,12 @@
       "value": "\"."
     }
   ],
+  "HOchry": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -2984,6 +3002,12 @@
     {
       "type": 0,
       "value": "Devuelve un subconjunto de caracteres de una cadena."
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Change connection reference"
     }
   ],
   "KX1poC": [
@@ -4338,6 +4362,12 @@
     {
       "type": 0,
       "value": "Reemplaza una cadena por otra cadena determinada."
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Logical Name"
     }
   ],
   "UR1CS5": [
@@ -6609,6 +6639,12 @@
       "value": "La dirección URL codifica la cadena de entrada."
     }
   ],
+  "mQotIu": [
+    {
+      "type": 0,
+      "value": "Select Connection"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7484,6 +7520,12 @@
     {
       "type": 0,
       "value": "h"
+    }
+  ],
+  "tJMHcJ": [
+    {
+      "type": 0,
+      "value": "Select Connection Reference"
     }
   ],
   "tLZ9Sh": [
