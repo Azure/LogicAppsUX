@@ -27,6 +27,7 @@ const OptionsStateSet = ({ options, children }: any) => {
         isMonitoringView: options.isMonitoringView,
         isDarkMode: options.isDarkMode,
         isConsumption: options.isConsumption,
+        isXrmConnectionReferenceMode: options.isXrmConnectionReferenceMode,
       })
     );
   }, [dispatch, options]);
