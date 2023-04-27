@@ -716,6 +716,12 @@
       "value": "Save"
     }
   ],
+  "30njcn": [
+    {
+      "type": 0,
+      "value": "Create Connection"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -1442,6 +1448,12 @@
     {
       "type": 0,
       "value": "在异步模式下，如果远程服务器指示处理 202 (已接受)响应的请求已被接受，逻辑应用将一直轮询在响应的位置标头中指定的 URL，直到达到终止状态。"
+    }
+  ],
+  "8luJ2j": [
+    {
+      "type": 0,
+      "value": "Create Connection Reference"
     }
   ],
   "8pPivj": [
@@ -2594,6 +2606,12 @@
       "value": "\"。"
     }
   ],
+  "HOchry": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -2922,6 +2940,12 @@
     {
       "type": 0,
       "value": "从字符串返回部分字符"
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Change connection reference"
     }
   ],
   "KX1poC": [
@@ -4232,6 +4256,12 @@
     {
       "type": 0,
       "value": "用给定字符串替换字符串"
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Logical Name"
     }
   ],
   "UR1CS5": [
@@ -6497,6 +6527,12 @@
       "value": "URL 对输入字符串进行编码"
     }
   ],
+  "mQotIu": [
+    {
+      "type": 0,
+      "value": "Select Connection"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7366,6 +7402,12 @@
     {
       "type": 0,
       "value": " 小时"
+    }
+  ],
+  "tJMHcJ": [
+    {
+      "type": 0,
+      "value": "Select Connection Reference"
     }
   ],
   "tLZ9Sh": [

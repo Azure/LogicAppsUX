@@ -723,6 +723,12 @@
       "value": "Save"
     }
   ],
+  "30njcn": [
+    {
+      "type": 0,
+      "value": "Create Connection"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -1449,6 +1455,12 @@
     {
       "type": 0,
       "value": "Beim asynchronen Muster fährt die Logic Apps-Engine mit dem Abruf der im Adressheader der Antwort angegebenen URL fort, bis ein Endstatus erreicht ist, sofern der Remoteserver mit einer 202-Antwort (Akzeptiert) signalisiert, dass die Anforderung zur Verarbeitung akzeptiert wird."
+    }
+  ],
+  "8luJ2j": [
+    {
+      "type": 0,
+      "value": "Create Connection Reference"
     }
   ],
   "8pPivj": [
@@ -2631,6 +2643,12 @@
       "value": "\"."
     }
   ],
+  "HOchry": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -2959,6 +2977,12 @@
     {
       "type": 0,
       "value": "Gibt eine Teilmenge von Zeichen aus einer Zeichenfolge zurück."
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Change connection reference"
     }
   ],
   "KX1poC": [
@@ -4303,6 +4327,12 @@
     {
       "type": 0,
       "value": "Ersetzt eine Zeichenfolge durch eine angegebene Zeichenfolge."
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Logical Name"
     }
   ],
   "UR1CS5": [
@@ -6567,6 +6597,12 @@
       "value": "URL codiert die Eingabezeichenfolge."
     }
   ],
+  "mQotIu": [
+    {
+      "type": 0,
+      "value": "Select Connection"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7423,6 +7459,12 @@
     {
       "type": 0,
       "value": "h"
+    }
+  ],
+  "tJMHcJ": [
+    {
+      "type": 0,
+      "value": "Select Connection Reference"
     }
   ],
   "tLZ9Sh": [

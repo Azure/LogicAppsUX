@@ -723,6 +723,12 @@
       "value": "Save"
     }
   ],
+  "30njcn": [
+    {
+      "type": 0,
+      "value": "Create Connection"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -1449,6 +1455,12 @@
     {
       "type": 0,
       "value": "Met het asynchrone patroon blijft de Logic Apps-engine navragen bij de URL die is opgegeven in de locatieheader van het antwoord tot een definitieve status wordt bereikt, als door de externe server wordt aangegeven dat de aanvraag is geaccepteerd voor verwerking met een 202 (Accepted)-antwoord."
+    }
+  ],
+  "8luJ2j": [
+    {
+      "type": 0,
+      "value": "Create Connection Reference"
     }
   ],
   "8pPivj": [
@@ -2631,6 +2643,12 @@
       "value": "."
     }
   ],
+  "HOchry": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -2959,6 +2977,12 @@
     {
       "type": 0,
       "value": "Er wordt een tekensubset van een tekenreeks geretourneerd"
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Change connection reference"
     }
   ],
   "KX1poC": [
@@ -4295,6 +4319,12 @@
     {
       "type": 0,
       "value": "Er wordt een tekenreeks vervangen door een opgegeven tekenreeks"
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Logical Name"
     }
   ],
   "UR1CS5": [
@@ -6551,6 +6581,12 @@
       "value": "De invoertekensreeks wordt door URL gecodeerd"
     }
   ],
+  "mQotIu": [
+    {
+      "type": 0,
+      "value": "Select Connection"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7423,6 +7459,12 @@
     {
       "type": 0,
       "value": "h"
+    }
+  ],
+  "tJMHcJ": [
+    {
+      "type": 0,
+      "value": "Select Connection Reference"
     }
   ],
   "tLZ9Sh": [

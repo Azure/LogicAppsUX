@@ -696,6 +696,12 @@
       "value": "Save"
     }
   ],
+  "30njcn": [
+    {
+      "type": 0,
+      "value": "Create Connection"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -1406,6 +1412,12 @@
     {
       "type": 0,
       "value": "비동기 패턴을 사용하면, 원격 서버가 202(수락됨) 응답을 통해 프로세싱에 대한 요청이 수락된 것으로 나타내는 경우 Logic Apps 엔진이 응답의 위치 헤더에 지정된 URL을 터미널 상태에 도달할 때까지 계속 폴링합니다."
+    }
+  ],
+  "8luJ2j": [
+    {
+      "type": 0,
+      "value": "Create Connection Reference"
     }
   ],
   "8pPivj": [
@@ -2534,6 +2546,12 @@
       "value": "추가 진단 정보: x-ms-client-request-id는 {clientRequestId}입니다."
     }
   ],
+  "HOchry": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -2862,6 +2880,12 @@
     {
       "type": 0,
       "value": "문자열에서 문자의 하위 집합을 반환합니다."
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Change connection reference"
     }
   ],
   "KX1poC": [
@@ -4140,6 +4164,12 @@
     {
       "type": 0,
       "value": "문자열을 지정된 문자열로 바꿉니다."
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Logical Name"
     }
   ],
   "UR1CS5": [
@@ -6349,6 +6379,12 @@
       "value": "URL로 입력 문자열을 인코딩합니다."
     }
   ],
+  "mQotIu": [
+    {
+      "type": 0,
+      "value": "Select Connection"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7186,6 +7222,12 @@
     {
       "type": 0,
       "value": "시간"
+    }
+  ],
+  "tJMHcJ": [
+    {
+      "type": 0,
+      "value": "Select Connection Reference"
     }
   ],
   "tLZ9Sh": [
