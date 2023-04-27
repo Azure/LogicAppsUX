@@ -1,6 +1,6 @@
 import { coreBadge } from '../../badges';
-import { SettingScope } from '@microsoft/utils-logic-apps';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
+import { SettingScope } from '@microsoft/utils-logic-apps';
 
 export const inlineCodeManifest = {
   properties: {

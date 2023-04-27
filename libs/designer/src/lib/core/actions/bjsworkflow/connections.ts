@@ -10,7 +10,13 @@ import { updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { getAllVariables } from '../../utils/variables';
 import type { IOperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import { WorkflowService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import type { Connection, ConnectionParameter, Connector, OperationManifest } from '@microsoft/utils-logic-apps';
+import type {
+  Connection,
+  ConnectionParameter,
+  Connector,
+  LogicAppsV2,
+  OperationManifest,
+} from '@microsoft/utils-logic-apps';
 import {
   ResourceIdentityType,
   isConnectionMultiAuthManagedIdentityType,

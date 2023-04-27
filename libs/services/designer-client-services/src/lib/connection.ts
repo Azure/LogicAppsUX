@@ -6,6 +6,7 @@ import type {
   ConnectionParameterSet as ParameterSet,
   ConnectionParameterSetValues,
   ConnectionMetadata,
+  OpenAPIV2,
 } from '@microsoft/utils-logic-apps';
 
 export interface ConnectorWithSwagger {

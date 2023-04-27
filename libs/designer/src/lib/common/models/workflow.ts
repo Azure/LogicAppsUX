@@ -1,3 +1,5 @@
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+
 export interface Workflow {
   definition: LogicAppsV2.WorkflowDefinition;
   connectionReferences: ConnectionReferences;

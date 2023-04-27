@@ -36,7 +36,7 @@ import {
   removeConnectionPrefix,
   isTemplateExpression,
 } from '@microsoft/parsers-logic-apps';
-import type { OperationInfo } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2, OperationInfo } from '@microsoft/utils-logic-apps';
 import { copyArray, map, RecurrenceType, equals, parsePathnameAndQueryKeyFromUri, startsWith, unmap } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 

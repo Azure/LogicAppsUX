@@ -2,6 +2,7 @@ import type { ChangeState, StaticResultRootSchemaType } from '..';
 import { Label, DropdownEditor } from '..';
 import { StaticResultProperty } from './staticResultProperty';
 import { formatShownProperties, getOptions, initializeShownProperties } from './util';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { createCopy } from '@microsoft/utils-logic-apps';
 import isEqual from 'lodash.isequal';
 import { useEffect, useState } from 'react';

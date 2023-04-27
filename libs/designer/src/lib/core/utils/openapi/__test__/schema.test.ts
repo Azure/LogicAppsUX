@@ -1,4 +1,5 @@
 import { getTitleOrSummary, isOneOf } from '../schema';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 
 describe('OpenAPI schema utilities', () => {
   describe('getTitleOrSummary', () => {

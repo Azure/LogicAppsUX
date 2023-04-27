@@ -4,7 +4,7 @@ import type {
   ParameterDeserializationOptions,
   ParameterSerializationOptions,
 } from '@microsoft/parsers-logic-apps';
-import type { Exception } from '@microsoft/utils-logic-apps';
+import type { Exception, OpenAPIV2 } from '@microsoft/utils-logic-apps';
 
 export interface ParameterInfo {
   alternativeKey?: string;

@@ -4,7 +4,7 @@ import type { IRunService } from '../run';
 import type { CallbackInfo } from '../workflow';
 import type { Runs, Run, ContentLink, BoundParameters } from '@microsoft/designer-ui';
 import { isCallbackInfoWithRelativePath, getCallbackUrl } from '@microsoft/designer-ui';
-import type { ArmResources } from '@microsoft/utils-logic-apps';
+import type { ArmResources, LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { ArgumentException, HTTP_METHODS, UnsupportedException, isString } from '@microsoft/utils-logic-apps';
 
 export interface RunServiceOptions {

@@ -4,6 +4,7 @@ import type { DropdownItem } from '../dropdown';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import { SchemaPropertyValueType } from './propertyEditor/PropertyEditorItem';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { capitalizeFirstLetter, guid } from '@microsoft/utils-logic-apps';
 
 export const parseStaticResultSchema = (staticResultSchema: OpenAPIV2.SchemaObject) => {

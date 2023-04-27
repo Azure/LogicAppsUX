@@ -4,7 +4,7 @@ import type { IHttpClient } from '../httpClient';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { FilePickerInfo, LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft/parsers-logic-apps';
 import { Types } from '@microsoft/parsers-logic-apps';
-import type { OperationInfo } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2, OperationInfo } from '@microsoft/utils-logic-apps';
 import {
   getPropertyValue,
   UnsupportedException,

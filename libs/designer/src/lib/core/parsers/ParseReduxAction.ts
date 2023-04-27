@@ -8,6 +8,7 @@ import { initializeStaticResultProperties } from '../state/staticresultschema/st
 import type { RootState } from '../store';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const initializeGraphState = createAsyncThunk<

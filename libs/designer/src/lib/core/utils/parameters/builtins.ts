@@ -1,7 +1,7 @@
 import { loadParameterValuesFromDefault, toParameterInfoMap } from './helper';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { OutputMapKey, SchemaProcessor, toInputParameter } from '@microsoft/parsers-logic-apps';
-import type { RecurrenceSetting } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2, RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import { map, RecurrenceType } from '@microsoft/utils-logic-apps';
 
 const getRecurrenceSchema = (recurrenceType?: RecurrenceType): OpenAPIV2.SchemaObject => {

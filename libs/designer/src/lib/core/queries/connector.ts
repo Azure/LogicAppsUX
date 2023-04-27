@@ -2,6 +2,7 @@ import { getReactQueryClient } from '../ReactQueryProvider';
 import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
 import { ConnectorService } from '@microsoft/designer-client-services-logic-apps';
 import type { FilePickerInfo, LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft/parsers-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 
 export const getLegacyDynamicValues = async (
   connectionId: string,

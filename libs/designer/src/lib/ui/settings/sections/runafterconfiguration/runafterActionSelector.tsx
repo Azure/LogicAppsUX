@@ -5,6 +5,7 @@ import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSele
 import { addEdgeFromRunAfter, removeEdgeFromRunAfter } from '../../../../core/state/workflow/workflowSlice';
 import { Menu, MenuTrigger, MenuList, MenuPopover, MenuButton, Label, MenuItemCheckbox, Input, Button } from '@fluentui/react-components';
 import { bundleIcon, Add20Regular, Add20Filled, Search24Regular, DismissRegular } from '@fluentui/react-icons';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import Fuse from 'fuse.js';
 import { useState, useMemo } from 'react';
 import { useIntl } from 'react-intl';

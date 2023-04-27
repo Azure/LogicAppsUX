@@ -10,6 +10,7 @@ import { useStaticResultProperties, useStaticResultSchema } from '../../../../co
 import { updateStaticResultProperties } from '../../../../core/state/staticresultschema/staticresultsSlice';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { StaticResultContainer } from '@microsoft/designer-ui';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
