@@ -1,5 +1,6 @@
 import type { CallbackInfo } from './workflow';
 import type { ContentLink, Runs, RunError, Run } from '@microsoft/designer-ui';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface IRunService {

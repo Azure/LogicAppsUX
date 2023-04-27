@@ -5,6 +5,7 @@ import type { DesignerOptionsState } from './state/designerOptions/designerOptio
 import { initializeServices } from './state/designerOptions/designerOptionsSlice';
 import { initRunInstance, initWorkflowSpec } from './state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from './store';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
 import React, { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

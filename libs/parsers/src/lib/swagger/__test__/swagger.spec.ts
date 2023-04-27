@@ -1,5 +1,6 @@
 import { SwaggerParser } from '../parser';
 import { Outlook } from './fixtures/outlook';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 
 describe('Swagger tests', () => {
   it('should be able to successfully parse and dereference swagger', async () => {

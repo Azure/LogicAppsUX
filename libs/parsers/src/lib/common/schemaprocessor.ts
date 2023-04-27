@@ -12,6 +12,7 @@ import {
   getParameterDynamicValues,
 } from './helpers/utils';
 import { getIntl } from '@microsoft/intl-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { aggregate, clone, equals, hasProperty, isNullOrUndefined } from '@microsoft/utils-logic-apps';
 
 export type Schema = OpenAPIV2.Schema;

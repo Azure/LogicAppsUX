@@ -1,5 +1,5 @@
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
-import type { SubgraphType } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2, SubgraphType } from '@microsoft/utils-logic-apps';
 
 export type SpecTypes = 'BJS' | 'CNCF';
 
