@@ -298,8 +298,14 @@ export async function getFolderItems(
     const connectionId = connectionReference?.connection.id as string;
     const { operationId, parameters: referenceParameters } = selectedValue ? browse : open;
     const pickerParameters = Object.keys(referenceParameters ?? {}).reduce((result: Record<string, any>, paramKey: string) => {
-      if (referenceParameters?.[paramKey]?.['value-property']) {
-        return { ...result, [paramKey]: getPropertyValue(selectedValue, referenceParameters[paramKey]['value-property']) };
+      if (referenceParameters?.[paramKey]?.selectedItemValuePath || referenceParameters?.[paramKey]?.['value-property']) {
+        return {
+          ...result,
+          [paramKey]: getPropertyValue(
+            selectedValue,
+            referenceParameters?.[paramKey]?.selectedItemValuePath || referenceParameters[paramKey]['value-property']
+          ),
+        };
       }
 
       return { ...result, [paramKey]: referenceParameters?.[paramKey] };

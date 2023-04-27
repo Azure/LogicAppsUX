@@ -41,7 +41,7 @@ export const FilePickerEditor = ({
   type,
   items,
   displayValue,
-  // fileFilters,
+  fileFilters,
   errorDetails,
   editorBlur,
   pickerCallbacks,
@@ -63,25 +63,25 @@ export const FilePickerEditor = ({
   }, [displayValue]);
 
   const { onFolderNavigation, getFileSourceName, getDisplayValueFromSelectedItem, getValueFromSelectedItem } = pickerCallbacks;
-  const fileSourceName = getFileSourceName?.();
+  const fileSourceName = getFileSourceName();
 
   const [titleSegments, setTitleSegments] = useState<IBreadcrumbItem[]>(getInitialTitleSegments(fileSourceName));
 
   const openFolderPicker = () => {
     if (!showPicker) {
       setTitleSegments(getInitialTitleSegments(fileSourceName));
-      onFolderNavigation?.(/* selectedItem */ undefined);
+      onFolderNavigation(/* selectedItem */ undefined);
       setShowPicker(true);
     }
   };
 
   const onFolderNavigated = (selectedItem: any) => {
-    onFolderNavigation?.(selectedItem);
-    const displayValue = getDisplayValueFromSelectedItem?.(selectedItem);
+    onFolderNavigation(selectedItem);
+    const displayValue = getDisplayValueFromSelectedItem(selectedItem);
     setTitleSegments([...titleSegments, { text: displayValue, key: displayValue, onClick: () => onFolderNavigated(selectedItem) }]);
   };
 
-  const onFolderSelected = (selectedItem: any) => {
+  const onFileFolderSelected = (selectedItem: any) => {
     if (showPicker) {
       setSelectedItem(selectedItem);
       setPickerDisplayValue([{ id: guid(), value: selectedItem.Path, type: ValueSegmentType.LITERAL }]);
@@ -92,7 +92,7 @@ export const FilePickerEditor = ({
   const handleBlur = () => {
     if (!selectedItem) return;
     const valueSegmentValue: ValueSegment[] = [
-      { id: guid(), type: ValueSegmentType.LITERAL, value: getValueFromSelectedItem?.(selectedItem) },
+      { id: guid(), type: ValueSegmentType.LITERAL, value: getValueFromSelectedItem(selectedItem) },
     ];
 
     editorBlur?.({
@@ -126,14 +126,28 @@ export const FilePickerEditor = ({
         anchorId={pickerIconId}
         loadingFiles={isLoading}
         currentPathSegments={titleSegments}
-        files={type === PickerItemType.FOLDER ? (items ?? []).filter((item) => item.isParent) : items ?? []}
+        files={filterItems(items, type, fileFilters)}
         errorDetails={errorDetails}
         onCancel={() => setShowPicker(false)}
         handleFolderNavigation={onFolderNavigated}
-        handleFolderSelected={onFolderSelected}
+        handleItemSelected={onFileFolderSelected}
       />
     </div>
   );
+};
+
+const filterItems = (items?: FileItem[], type?: string, fileFilters?: string[]): FileItem[] => {
+  if (!items || items.length === 0) return [];
+  let returnItems = items;
+  if (type === PickerItemType.FOLDER) {
+    returnItems = items.filter((item) => item.isParent);
+  }
+  if (fileFilters && fileFilters.length > 0) {
+    returnItems = returnItems.filter((item) => {
+      return fileFilters.includes(item.mediaType);
+    });
+  }
+  return returnItems;
 };
 
 const getInitialTitleSegments = (sourceName?: string): IBreadcrumbItem[] => {

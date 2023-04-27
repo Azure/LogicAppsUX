@@ -41,8 +41,8 @@ export interface FileItem {
   mediaType: PickerItemType;
   isParent?: boolean;
   value: any;
-  onSelect?: (selectedObject: any) => void;
-  onNavigation?: (selectedObject: any) => void;
+  onSelect: (selectedObject: any) => void;
+  onNavigation: (selectedObject: any) => void;
 }
 
 export const PickerItem = (props: FileItem) => {
@@ -79,7 +79,7 @@ const FolderItem = ({ displayName, mediaType, value, onSelect, onNavigation }: F
         className="msla-button msla-selection-section"
         title={displayName}
         tabIndex={selectionSectionTabIndex}
-        onClick={() => onSelect?.(value)}
+        onClick={() => onSelect(value)}
       >
         <Icon iconName={'FabricFolder'} styles={folderIconStyles} />
         <div className="msla-text">{displayName}</div>
@@ -90,7 +90,7 @@ const FolderItem = ({ displayName, mediaType, value, onSelect, onNavigation }: F
           className="msla-navigate-button"
           id={navId}
           iconProps={navigateIconProps}
-          onClick={() => onNavigation?.(value)}
+          onClick={() => onNavigation(value)}
         />
       </TooltipHost>
     </div>

@@ -99,6 +99,7 @@ interface DynamicTreePickerInfo {
   parameters?: Record<
     string,
     {
+      selectedItemValuePath: string;
       'value-property': string;
     }
   >;

@@ -26,8 +26,8 @@ export interface PickerProps {
   loadingFiles?: boolean;
   errorDetails?: { message: string };
   onCancel?: () => void;
-  handleFolderNavigation?: (selectedObject: any) => void;
-  handleFolderSelected?: (selectedObject: any) => void;
+  handleFolderNavigation: (selectedObject: any) => void;
+  handleItemSelected: (selectedObject: any) => void;
 }
 
 export const Picker = ({
@@ -38,7 +38,7 @@ export const Picker = ({
   loadingFiles,
   errorDetails,
   onCancel,
-  handleFolderSelected,
+  handleItemSelected,
   handleFolderNavigation,
 }: PickerProps) => {
   const intl = useIntl();
@@ -82,7 +82,7 @@ export const Picker = ({
                 displayName={file.displayName}
                 mediaType={file.mediaType}
                 onNavigation={handleFolderNavigation}
-                onSelect={handleFolderSelected}
+                onSelect={handleItemSelected}
                 value={file.value}
                 isParent={file.isParent}
               />
