@@ -9,8 +9,13 @@ export interface ConnectionReference {
   connection: { id: string };
   connectionName?: string;
   connectionProperties?: Record<string, any>;
-  authentication?: { type: string; identity?: string };
+  authentication?: ApiHubAuthentication;
   impersonation?: Impersonation;
+}
+
+export interface ApiHubAuthentication {
+  type: string;
+  identity?: string;
 }
 
 export interface Impersonation {

@@ -360,6 +360,7 @@ const getDesignerServices = (
   const workflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName),
     getAppIdentity: () => workflowApp.identity,
+    isExplicitAuthRequiredForManagedIdentity: () => true,
   };
 
   // const loggerService = new Stan({

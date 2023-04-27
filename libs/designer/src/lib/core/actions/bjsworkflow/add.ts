@@ -28,6 +28,7 @@ import { getOperationSettings } from './settings';
 import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
 import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
 import type {
+  Connector,
   DiscoveryOperation,
   DiscoveryResultTypes,
   OperationManifest,
@@ -91,6 +92,7 @@ const initializeOperationDetails = async (
   const isTrigger = isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata);
   const { type, kind, connectorId, operationId } = operationInfo;
   let isConnectionRequired = true;
+  let connector: Connector;
   const operationManifestService = OperationManifestService();
   const staticResultService = StaticResultService();
 
@@ -112,6 +114,7 @@ const initializeOperationDetails = async (
   if (operationManifestService.isSupported(type, kind)) {
     manifest = await getOperationManifest(operationInfo);
     isConnectionRequired = isConnectionRequiredForOperation(manifest);
+    connector = manifest.properties.connector as Connector;
 
     const { iconUri, brandColor } = manifest.properties;
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
@@ -143,8 +146,9 @@ const initializeOperationDetails = async (
     dispatch(initializeNodes([initData]));
     addTokensAndVariables(nodeId, type, { ...initData, manifest }, state, dispatch);
   } else {
-    const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
+    const { connector: swaggerConnector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
     swagger = parsedSwagger;
+    connector = swaggerConnector;
     const iconUri = getIconUriFromConnector(connector);
     const brandColor = getBrandColorFromConnector(connector);
 
@@ -197,7 +201,7 @@ const initializeOperationDetails = async (
       getState()
     );
   } else {
-    await trySetDefaultConnectionForNode(nodeId, connectorId, dispatch, isConnectionRequired);
+    await trySetDefaultConnectionForNode(nodeId, connector, dispatch, isConnectionRequired);
   }
 
   // Re-update settings after we have valid operation data
@@ -246,14 +250,15 @@ export const initializeSwitchCaseFromManifest = async (id: string, manifest: Ope
 
 export const trySetDefaultConnectionForNode = async (
   nodeId: string,
-  connectorId: string,
+  connector: Connector,
   dispatch: AppDispatch,
   isConnectionRequired: boolean
 ) => {
+  const connectorId = connector.id;
   const connections = (await getConnectionsForConnector(connectorId)).filter((c) => c.properties.overallStatus !== 'Error');
   if (connections.length > 0) {
     await ConnectionService().setupConnectionIfNeeded(connections[0]);
-    dispatch(updateNodeConnection({ nodeId, connectionId: connections[0].id, connectorId }));
+    dispatch(updateNodeConnection({ nodeId, connection: connections[0], connector }));
   } else if (isConnectionRequired) {
     dispatch(initEmptyConnectionMap(nodeId));
     dispatch(isolateTab(Constants.PANEL_TAB_NAMES.CONNECTION_CREATE));

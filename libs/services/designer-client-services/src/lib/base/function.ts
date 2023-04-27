@@ -21,7 +21,7 @@ export class BaseFunctionService implements IFunctionService {
     }
   }
 
-  protected getFunctionAppsRequestPath(): string {
+  private getFunctionAppsRequestPath(): string {
     return `/subscriptions/${this.options.subscriptionId}/providers/Microsoft.Web/sites`;
   }
 

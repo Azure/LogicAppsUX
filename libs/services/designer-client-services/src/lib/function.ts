@@ -1,7 +1,6 @@
 import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface IFunctionService {
-  [x: string]: any;
   fetchFunctionApps(): Promise<any>;
   fetchFunctionAppsFunctions(functionAppId: string): Promise<any>;
   fetchFunctionKey(functionId: string): Promise<any>;

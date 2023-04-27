@@ -24,7 +24,6 @@ type GetValuesFunction = (args: Record<string, any>) => Promise<ListDynamicValue
 type GetConfigurationFunction = (connectionId: string) => Promise<Record<string, any>>;
 
 export interface BaseConnectorServiceOptions {
-  [x: string]: any;
   apiVersion: string;
   baseUrl: string;
   httpClient: IHttpClient;
@@ -306,7 +305,7 @@ export abstract class BaseConnectorService implements IConnectorService {
     parameters: Record<string, any>,
     managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<any> {
-    const { baseUrl, apiHubServiceDetails, httpClient } = this.options;
+    const { baseUrl, apiVersion, apiHubServiceDetails, httpClient } = this.options;
     const intl = getIntl();
     const method = parameters['method'];
     const isManagedIdentityTypeConnection = !!managedIdentityProperties;
@@ -328,7 +327,7 @@ export abstract class BaseConnectorService implements IConnectorService {
       try {
         const response = await httpClient.post({
           uri,
-          queryParameters: { 'api-version': apiHubServiceDetails.apiVersion },
+          queryParameters: { 'api-version': apiVersion },
           content: { request, properties: managedIdentityProperties },
         });
 

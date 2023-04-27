@@ -16,6 +16,11 @@ export interface IWorkflowService {
    * Gets managed identity associated with workflow app.
    */
   getAppIdentity?(): ManagedIdentity | undefined;
+
+  /**
+   * Checks if explicit authentication is needed for managed identity connections.
+   */
+  isExplicitAuthRequiredForManagedIdentity?(): boolean;
 }
 
 let service: IWorkflowService;
