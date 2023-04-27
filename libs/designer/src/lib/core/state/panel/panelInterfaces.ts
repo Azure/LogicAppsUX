@@ -11,7 +11,6 @@ export interface PanelState {
   selectedOperationGroupId: string;
   selectedOperationId: string;
   addingTrigger: boolean;
-  tokenPickerVisibility: boolean;
 }
 
 export interface RelationshipIds {
