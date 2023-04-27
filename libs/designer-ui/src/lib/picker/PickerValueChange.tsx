@@ -20,7 +20,6 @@ export const PickerValueChange = ({ pickerDisplayValue, setEditorDisplayValue }:
     editor.update(() => {
       parseSegments(pickerDisplayValue, true);
     });
-    editor.focus();
   }, [editor, pickerDisplayValue]);
 
   const onChange = (editorState: EditorState) => {

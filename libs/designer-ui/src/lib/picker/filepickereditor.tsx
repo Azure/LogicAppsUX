@@ -44,7 +44,6 @@ export const FilePickerEditor = ({
   // fileFilters,
   errorDetails,
   editorBlur,
-  onChange,
   pickerCallbacks,
   ...baseEditorProps
 }: FilePickerEditorProps) => {
@@ -91,11 +90,15 @@ export const FilePickerEditor = ({
   };
 
   const handleBlur = () => {
+    if (!selectedItem) return;
     const valueSegmentValue: ValueSegment[] = [
       { id: guid(), type: ValueSegmentType.LITERAL, value: getValueFromSelectedItem?.(selectedItem) },
     ];
-    editorBlur?.({ value: valueSegmentValue });
-    onChange?.({ value: valueSegmentValue, viewModel: { hideErrorMessage: false, displayValue: editorDisplayValue, selectedItem } });
+
+    editorBlur?.({
+      value: valueSegmentValue,
+      viewModel: { displayValue: editorDisplayValue[0]?.value, selectedItem },
+    });
   };
 
   const openFolderLabel = intl.formatMessage({ defaultMessage: 'Open folder', description: 'Open folder label' });
