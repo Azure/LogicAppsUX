@@ -5,6 +5,8 @@ import { OutputMapKey, SchemaProcessor, toInputParameter } from '@microsoft/pars
 import type { RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import { map, RecurrenceType } from '@microsoft/utils-logic-apps';
 
+export type Sku = keyof typeof constants.SKU;
+
 const getRecurrenceSchema = (recurrenceType?: RecurrenceType): OpenAPIV2.SchemaObject => {
   return {
     type: 'object',
@@ -23,7 +25,11 @@ const getRecurrenceSchema = (recurrenceType?: RecurrenceType): OpenAPIV2.SchemaO
   };
 };
 
-export const getRecurrenceParameters = (recurrence: RecurrenceSetting | undefined, operationDefinition: any): ParameterInfo[] => {
+export const getRecurrenceParameters = (
+  recurrence: RecurrenceSetting | undefined,
+  operationDefinition: any,
+  sku?: Sku
+): ParameterInfo[] => {
   if (!recurrence || recurrence.type === RecurrenceType.None) {
     return [];
   }
@@ -39,10 +45,7 @@ export const getRecurrenceParameters = (recurrence: RecurrenceSetting | undefine
     .getSchemaProperties(schema)
     .map((item) => toInputParameter(item, true /* suppressCasting */));
 
-  const defaultRecurrence = {
-    frequency: constants.DEFAULT_FREQUENCY_VALUE,
-    interval: constants.DEFAULT_INTERVAL_VALUE,
-  };
+  const defaultRecurrence = getDefaultRecurrenceBySku(sku);
 
   for (const parameter of recurrenceParameters) {
     if (!parameter.default) {
@@ -60,3 +63,18 @@ export const getRecurrenceParameters = (recurrence: RecurrenceSetting | undefine
 
   return toParameterInfoMap(recurrenceParameters, operationDefinition);
 };
+
+export function getDefaultRecurrenceBySku(sku?: Sku): LogicApps.Recurrence {
+  if (!sku) return constants.DEFAULT_RECURRENCE.PREMIUM;
+
+  switch (sku) {
+    case constants.SKU.STANDARD:
+      return constants.DEFAULT_RECURRENCE.STANDARD;
+    case constants.SKU.PREMIUM:
+      return constants.DEFAULT_RECURRENCE.PREMIUM;
+    case constants.SKU.CONSUMPTION:
+      return constants.DEFAULT_RECURRENCE.CONSUMPTION;
+    default:
+      return constants.DEFAULT_RECURRENCE.FREE;
+  }
+}
