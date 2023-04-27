@@ -13,3 +13,4 @@ export { changePanelNode, clearPanel, switchToWorkflowParameters } from './state
 export { useSelectedNodeId } from './state/panel/panelSelectors';
 export { initializeServices } from './state/designerOptions/designerOptionsSlice';
 export { resetWorkflowState } from './state/global';
+export { validateParameter } from './utils/parameters/helper';
