@@ -696,6 +696,12 @@
       "value": "Save"
     }
   ],
+  "30njcn": [
+    {
+      "type": 0,
+      "value": "Create Connection"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
@@ -1406,6 +1412,12 @@
     {
       "type": 0,
       "value": "Dengan pola asinkron, jika server jarak jauh menunjukkan bahwa permintaan diterima untuk diproses dengan respons 202 (Diterima), mesin Logic Apps akan terus membuat polling URL yang ditentukan di header lokasi respons hingga mencapai status terminal."
+    }
+  ],
+  "8luJ2j": [
+    {
+      "type": 0,
+      "value": "Create Connection Reference"
     }
   ],
   "8pPivj": [
@@ -2534,6 +2546,12 @@
       "value": "Informasi diagnostik lainnya: x-ms-client-request-id adalah {clientRequestId}."
     }
   ],
+  "HOchry": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -2862,6 +2880,12 @@
     {
       "type": 0,
       "value": "Menampilkan subset karakter dari string"
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Change connection reference"
     }
   ],
   "KX1poC": [
@@ -4140,6 +4164,12 @@
     {
       "type": 0,
       "value": "Mengganti string dengan string yang diberikan"
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Logical Name"
     }
   ],
   "UR1CS5": [
@@ -6357,6 +6387,12 @@
       "value": "Url mengkodekan string input"
     }
   ],
+  "mQotIu": [
+    {
+      "type": 0,
+      "value": "Select Connection"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7194,6 +7230,12 @@
     {
       "type": 0,
       "value": "j"
+    }
+  ],
+  "tJMHcJ": [
+    {
+      "type": 0,
+      "value": "Select Connection Reference"
     }
   ],
   "tLZ9Sh": [
