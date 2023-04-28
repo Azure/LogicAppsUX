@@ -728,6 +728,12 @@
       "value": "标识符"
     }
   ],
+  "34Nt/B": [
+    {
+      "type": 0,
+      "value": "alt text for button icon"
+    }
+  ],
   "36RiST": [
     {
       "type": 0,
@@ -1919,6 +1925,12 @@
       "value": "折叠"
     }
   ],
+  "BrWQ0Z": [
+    {
+      "type": 0,
+      "value": "Select a managed identity"
+    }
+  ],
   "BuYrD3": [
     {
       "type": 0,
@@ -2792,6 +2804,12 @@
       "value": "异步模式"
     }
   ],
+  "J2Su6x": [
+    {
+      "type": 0,
+      "value": "Formatting options for font size"
+    }
+  ],
   "J5/7vN": [
     {
       "type": 0,
@@ -3123,6 +3141,12 @@
     {
       "type": 0,
       "value": "查看更多"
+    }
+  ],
+  "Lm9bnN": [
+    {
+      "type": 0,
+      "value": "Bullet List"
     }
   ],
   "LoGUT3": [
@@ -3549,6 +3573,12 @@
       "value": "选择托管标识"
     }
   ],
+  "P+7G62": [
+    {
+      "type": 0,
+      "value": "Heading 3"
+    }
+  ],
   "P+mWgV": [
     {
       "type": 0,
@@ -3755,6 +3785,12 @@
       "value": " 卡的关联菜单"
     }
   ],
+  "QZ5DZl": [
+    {
+      "type": 0,
+      "value": "alt text for chevron down"
+    }
+  ],
   "QZBPUx": [
     {
       "type": 0,
@@ -3922,6 +3958,12 @@
     {
       "type": 0,
       "value": "密码"
+    }
+  ],
+  "SGnTpt": [
+    {
+      "type": 0,
+      "value": "Heading 2"
     }
   ],
   "SJFVxf": [
@@ -4172,6 +4214,12 @@
     {
       "type": 0,
       "value": "Note"
+    }
+  ],
+  "Ttc0SM": [
+    {
+      "type": 0,
+      "value": "Heading 1"
     }
   ],
   "Twfck/": [
@@ -4820,6 +4868,12 @@
       "value": "Yes/No"
     }
   ],
+  "YWOKlU": [
+    {
+      "type": 0,
+      "value": "Numbered List"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
@@ -5342,6 +5396,12 @@
       "value": "了解详细信息"
     }
   ],
+  "dL9V5t": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "dOpdsP": [
     {
       "type": 0,
@@ -5746,6 +5806,12 @@
     {
       "type": 0,
       "value": "触发器条件"
+    }
+  ],
+  "gc6v4X": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "gfBWfH": [
@@ -6423,6 +6489,12 @@
     {
       "type": 0,
       "value": "无状态运行模式:"
+    }
+  ],
+  "lhL/KL": [
+    {
+      "type": 0,
+      "value": "Normal"
     }
   ],
   "ljAOR6": [
@@ -7270,6 +7342,12 @@
     {
       "type": 0,
       "value": "并行度"
+    }
+  ],
+  "sYQDN+": [
+    {
+      "type": 0,
+      "value": "Formatting options for font family"
     }
   ],
   "sZ0G/Z": [

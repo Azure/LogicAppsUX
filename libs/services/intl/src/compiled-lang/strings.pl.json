@@ -773,6 +773,12 @@
       "value": "Identyfikator"
     }
   ],
+  "34Nt/B": [
+    {
+      "type": 0,
+      "value": "alt text for button icon"
+    }
+  ],
   "36RiST": [
     {
       "type": 0,
@@ -1997,6 +2003,12 @@
       "value": "Zwiń"
     }
   ],
+  "BrWQ0Z": [
+    {
+      "type": 0,
+      "value": "Select a managed identity"
+    }
+  ],
   "BuYrD3": [
     {
       "type": 0,
@@ -2911,6 +2923,12 @@
       "value": "Wzorzec asynchroniczny"
     }
   ],
+  "J2Su6x": [
+    {
+      "type": 0,
+      "value": "Formatting options for font size"
+    }
+  ],
   "J5/7vN": [
     {
       "type": 0,
@@ -3283,6 +3301,12 @@
     {
       "type": 0,
       "value": "Zobacz więcej"
+    }
+  ],
+  "Lm9bnN": [
+    {
+      "type": 0,
+      "value": "Bullet List"
     }
   ],
   "LoGUT3": [
@@ -3709,6 +3733,12 @@
       "value": "Wybierz tożsamość zarządzaną"
     }
   ],
+  "P+7G62": [
+    {
+      "type": 0,
+      "value": "Heading 3"
+    }
+  ],
   "P+mWgV": [
     {
       "type": 0,
@@ -3915,6 +3945,12 @@
       "value": "title"
     }
   ],
+  "QZ5DZl": [
+    {
+      "type": 0,
+      "value": "alt text for chevron down"
+    }
+  ],
   "QZBPUx": [
     {
       "type": 0,
@@ -4115,6 +4151,12 @@
     {
       "type": 0,
       "value": "Hasło"
+    }
+  ],
+  "SGnTpt": [
+    {
+      "type": 0,
+      "value": "Heading 2"
     }
   ],
   "SJFVxf": [
@@ -4365,6 +4407,12 @@
     {
       "type": 0,
       "value": "Note"
+    }
+  ],
+  "Ttc0SM": [
+    {
+      "type": 0,
+      "value": "Heading 1"
     }
   ],
   "Twfck/": [
@@ -5009,6 +5057,12 @@
       "value": "Yes/No"
     }
   ],
+  "YWOKlU": [
+    {
+      "type": 0,
+      "value": "Numbered List"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
@@ -5527,6 +5581,12 @@
       "value": "Dowiedz się więcej"
     }
   ],
+  "dL9V5t": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "dOpdsP": [
     {
       "type": 0,
@@ -5927,6 +5987,12 @@
     {
       "type": 0,
       "value": "Warunki wyzwalacza"
+    }
+  ],
+  "gc6v4X": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "gfBWfH": [
@@ -6645,6 +6711,12 @@
     {
       "type": 0,
       "value": "Tryb uruchamiania bezstanowego:"
+    }
+  ],
+  "lhL/KL": [
+    {
+      "type": 0,
+      "value": "Normal"
     }
   ],
   "ljAOR6": [
@@ -7517,6 +7589,12 @@
     {
       "type": 0,
       "value": "Stopień równoległości"
+    }
+  ],
+  "sYQDN+": [
+    {
+      "type": 0,
+      "value": "Formatting options for font family"
     }
   ],
   "sZ0G/Z": [
