@@ -1,7 +1,7 @@
 import type { InputParameter } from '@microsoft/parsers-logic-apps';
 
 export interface OpenApiConnectionSerializedInputs {
-  parameters: Record<string, unknown>;
+  parameters?: Record<string, unknown>;
 }
 
 export class OpenApiOperationInputsBuilder {
@@ -16,7 +16,7 @@ export class OpenApiOperationInputsBuilder {
     inputsInDefinition: OpenApiConnectionSerializedInputs | undefined,
     inputParameters: InputParameter[]
   ): InputParameter[] {
-    if (!inputsInDefinition) {
+    if (!inputsInDefinition?.parameters) {
       return inputParameters;
     }
 
