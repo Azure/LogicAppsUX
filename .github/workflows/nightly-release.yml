@@ -2,6 +2,16 @@ name: Nightly Release
 
 on:
   workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
   repository_dispatch:
     types: [release]
   schedule:
@@ -10,6 +20,7 @@ on:
 env:
   AI_KEY: 3cf0d6ae-3327-414a-b7c1-12f31ef45eff
   NX_AI_CON_STR: InstrumentationKey=3cf0d6ae-3327-414a-b7c1-12f31ef45eff;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/
+  BUMP_COMMAND: npm run bump -- --release-as ${{ github.event.inputs.release_type || 'patch' }}
 
 jobs:
   bump-version:
@@ -29,7 +40,7 @@ jobs:
       - run: npm ci
 
       - name: 'Version Bump'
-        run: git config --global user.email $GITHUB_ACTOR && git config --global user.name release-automation-${GITHUB_ACTOR}@microsoft.com && npm run bump && npm install
+        run: git config --global user.email $GITHUB_ACTOR && git config --global user.name release-automation-${GITHUB_ACTOR}@microsoft.com && ${{ env.BUMP_COMMAND }} && npm install
 
       - name: Push changes
         uses: ad-m/github-push-action@master
@@ -56,7 +67,7 @@ jobs:
       - run: npm ci
 
       - name: 'Local Version Bump'
-        run: npm run bump -- --skip.commit --skip.tag
+        run: ${{ env.BUMP_COMMAND }} --skip.commit --skip.tag
 
       - name: 'Set DM VSIX aiKey in package.json'
         run: echo "`jq '.aiKey="${{ env.AI_KEY }}"' apps/vs-code-data-mapper/src/package.json`" > apps/vs-code-data-mapper/src/package.json
@@ -118,7 +129,7 @@ jobs:
           node-version: 16
       - run: npm ci
       - name: 'Local Version Bump'
-        run: npm run bump -- --skip.commit --skip.tag
+        run: ${{ env.BUMP_COMMAND }} --skip.commit --skip.tag
       - run: npm ci
       - run: npx nx build ${{ matrix.lib.package }}
       - name: Use .npmrc
