@@ -1,5 +1,6 @@
 import type { BaseEditorProps, ChangeHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
+import { notEqual } from '../editor/base/utils/helper';
 import type { ValueSegment } from '../editor/models/parameter';
 import { ValueSegmentType } from '../editor/models/parameter';
 import { Picker } from './picker';
@@ -93,7 +94,7 @@ export const FilePickerEditor = ({
         value: valueSegmentValue,
         viewModel: { displayValue: pickerDisplayValue[0]?.value, selectedItem: selectedItem },
       });
-    } else {
+    } else if (notEqual(editorDisplayValue, pickerDisplayValue)) {
       editorBlur?.({
         value: editorDisplayValue,
         viewModel: { displayValue: undefined, selectedItem: undefined },
