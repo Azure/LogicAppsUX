@@ -735,6 +735,12 @@
       "value": "Azonosító"
     }
   ],
+  "34Nt/B": [
+    {
+      "type": 0,
+      "value": "alt text for button icon"
+    }
+  ],
   "36RiST": [
     {
       "type": 0,
@@ -1937,6 +1943,12 @@
       "value": "Összecsukás"
     }
   ],
+  "BrWQ0Z": [
+    {
+      "type": 0,
+      "value": "Select a managed identity"
+    }
+  ],
   "BuYrD3": [
     {
       "type": 0,
@@ -2829,6 +2841,12 @@
       "value": "Aszinkron minta"
     }
   ],
+  "J2Su6x": [
+    {
+      "type": 0,
+      "value": "Formatting options for font size"
+    }
+  ],
   "J5/7vN": [
     {
       "type": 0,
@@ -3179,6 +3197,12 @@
     {
       "type": 0,
       "value": "Továbbiak megjelenítése"
+    }
+  ],
+  "Lm9bnN": [
+    {
+      "type": 0,
+      "value": "Bullet List"
     }
   ],
   "LoGUT3": [
@@ -3605,6 +3629,12 @@
       "value": "Felügyelt identitás kiválasztása"
     }
   ],
+  "P+7G62": [
+    {
+      "type": 0,
+      "value": "Heading 3"
+    }
+  ],
   "P+mWgV": [
     {
       "type": 0,
@@ -3815,6 +3845,12 @@
       "value": " kártya helyi menüje"
     }
   ],
+  "QZ5DZl": [
+    {
+      "type": 0,
+      "value": "alt text for chevron down"
+    }
+  ],
   "QZBPUx": [
     {
       "type": 0,
@@ -3993,6 +4029,12 @@
     {
       "type": 0,
       "value": "Jelszó"
+    }
+  ],
+  "SGnTpt": [
+    {
+      "type": 0,
+      "value": "Heading 2"
     }
   ],
   "SJFVxf": [
@@ -4243,6 +4285,12 @@
     {
       "type": 0,
       "value": "Note"
+    }
+  ],
+  "Ttc0SM": [
+    {
+      "type": 0,
+      "value": "Heading 1"
     }
   ],
   "Twfck/": [
@@ -4887,6 +4935,12 @@
       "value": "Yes/No"
     }
   ],
+  "YWOKlU": [
+    {
+      "type": 0,
+      "value": "Numbered List"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
@@ -5409,6 +5463,12 @@
       "value": "További információ"
     }
   ],
+  "dL9V5t": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "dOpdsP": [
     {
       "type": 0,
@@ -5813,6 +5873,12 @@
     {
       "type": 0,
       "value": "Aktiválási feltételek"
+    }
+  ],
+  "gc6v4X": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "gfBWfH": [
@@ -6505,6 +6571,12 @@
     {
       "type": 0,
       "value": "Állapot nélküli futtatási mód:"
+    }
+  ],
+  "lhL/KL": [
+    {
+      "type": 0,
+      "value": "Normal"
     }
   ],
   "ljAOR6": [
@@ -7355,6 +7427,12 @@
     {
       "type": 0,
       "value": "Párhuzamosság szintje"
+    }
+  ],
+  "sYQDN+": [
+    {
+      "type": 0,
+      "value": "Formatting options for font family"
     }
   ],
   "sZ0G/Z": [

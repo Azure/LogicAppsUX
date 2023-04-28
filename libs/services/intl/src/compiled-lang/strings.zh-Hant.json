@@ -708,6 +708,12 @@
       "value": "識別碼"
     }
   ],
+  "34Nt/B": [
+    {
+      "type": 0,
+      "value": "alt text for button icon"
+    }
+  ],
   "36RiST": [
     {
       "type": 0,
@@ -1867,6 +1873,12 @@
       "value": "摺疊"
     }
   ],
+  "BrWQ0Z": [
+    {
+      "type": 0,
+      "value": "Select a managed identity"
+    }
+  ],
   "BuYrD3": [
     {
       "type": 0,
@@ -2732,6 +2744,12 @@
       "value": "非同步模式"
     }
   ],
+  "J2Su6x": [
+    {
+      "type": 0,
+      "value": "Formatting options for font size"
+    }
+  ],
   "J5/7vN": [
     {
       "type": 0,
@@ -3047,6 +3065,12 @@
     {
       "type": 0,
       "value": "查看更多"
+    }
+  ],
+  "Lm9bnN": [
+    {
+      "type": 0,
+      "value": "Bullet List"
     }
   ],
   "LoGUT3": [
@@ -3457,6 +3481,12 @@
       "value": "選取受控身分識別"
     }
   ],
+  "P+7G62": [
+    {
+      "type": 0,
+      "value": "Heading 3"
+    }
+  ],
   "P+mWgV": [
     {
       "type": 0,
@@ -3663,6 +3693,12 @@
       "value": " 卡片的操作功能表"
     }
   ],
+  "QZ5DZl": [
+    {
+      "type": 0,
+      "value": "alt text for chevron down"
+    }
+  ],
   "QZBPUx": [
     {
       "type": 0,
@@ -3830,6 +3866,12 @@
     {
       "type": 0,
       "value": "密碼"
+    }
+  ],
+  "SGnTpt": [
+    {
+      "type": 0,
+      "value": "Heading 2"
     }
   ],
   "SJFVxf": [
@@ -4080,6 +4122,12 @@
     {
       "type": 0,
       "value": "Note"
+    }
+  ],
+  "Ttc0SM": [
+    {
+      "type": 0,
+      "value": "Heading 1"
     }
   ],
   "Twfck/": [
@@ -4716,6 +4764,12 @@
       "value": "Yes/No"
     }
   ],
+  "YWOKlU": [
+    {
+      "type": 0,
+      "value": "Numbered List"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
@@ -5230,6 +5284,12 @@
       "value": "深入了解"
     }
   ],
+  "dL9V5t": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "dOpdsP": [
     {
       "type": 0,
@@ -5634,6 +5694,12 @@
     {
       "type": 0,
       "value": "觸發條件"
+    }
+  ],
+  "gc6v4X": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "gfBWfH": [
@@ -6287,6 +6353,12 @@
     {
       "type": 0,
       "value": "無狀態執行模式:"
+    }
+  ],
+  "lhL/KL": [
+    {
+      "type": 0,
+      "value": "Normal"
     }
   ],
   "ljAOR6": [
@@ -7102,6 +7174,12 @@
     {
       "type": 0,
       "value": "平行處理原則的程度"
+    }
+  ],
+  "sYQDN+": [
+    {
+      "type": 0,
+      "value": "Formatting options for font family"
     }
   ],
   "sZ0G/Z": [
