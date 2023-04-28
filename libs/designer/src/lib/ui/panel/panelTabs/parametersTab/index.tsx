@@ -140,8 +140,8 @@ const ParameterSection = ({
       const { viewModel } = newState;
       const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
       if (
-        (parameter?.type === constants.SWAGGER.TYPE.BOOLEAN && value.length === 1 && value[0]?.value === 'True') ||
-        value[0]?.value === 'False'
+        (parameter?.type === constants.SWAGGER.TYPE.BOOLEAN && value.length === 1 && value[0]?.value?.toLowerCase() === 'true') ||
+        value[0]?.value?.toLowerCase() === 'false'
       ) {
         value = [{ ...value[0], value: value[0].value.toLowerCase() }];
       }
