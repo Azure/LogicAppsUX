@@ -13,41 +13,56 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const initializeGraphState = createAsyncThunk<
   DeserializedWorkflow,
-  { workflowDefinition: Workflow; runInstance: LogicAppsV2.RunInstanceDefinition | null | undefined },
+  {
+    workflowDefinition: Workflow;
+    runInstance: LogicAppsV2.RunInstanceDefinition | null | undefined;
+    shouldRecreateWorkflowGraph?: boolean;
+  },
   { state: RootState }
->('parser/deserialize', async (graphState: { workflowDefinition: Workflow; runInstance: any }, thunkAPI): Promise<DeserializedWorkflow> => {
-  const { workflowDefinition, runInstance } = graphState;
-  const { workflow } = thunkAPI.getState() as RootState;
-  const spec = workflow.workflowSpec;
+>(
+  'parser/deserialize',
+  async (
+    graphState: { workflowDefinition: Workflow; runInstance: any; shouldRecreateWorkflowGraph?: boolean },
+    thunkAPI
+  ): Promise<DeserializedWorkflow> => {
+    const { workflowDefinition, runInstance, shouldRecreateWorkflowGraph } = graphState;
+    const { workflow } = thunkAPI.getState() as RootState;
+    const spec = workflow.workflowSpec;
 
-  if (spec === undefined) {
-    throw new Error('Trying to import workflow without specifying the workflow type');
+    if (spec === undefined) {
+      throw new Error('Trying to import workflow without specifying the workflow type');
+    }
+    if (spec === 'BJS') {
+      getConnectionsQuery();
+      const { definition, connectionReferences, parameters } = workflowDefinition;
+      const deserializedWorkflow = BJSDeserialize(definition, runInstance);
+      // The host can specify whether the workflow graph should be recreated. This is used for scenarios where
+      // the flow is already loaded into the designer and recreating it will modify the existing node dimensions
+      if (shouldRecreateWorkflowGraph === false && workflow.graph) {
+        deserializedWorkflow.graph = workflow.graph;
+      }
+      thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
+      thunkAPI.dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
+      thunkAPI.dispatch(addInvokerSupport({ connectionReferences }));
+      parseWorkflowParameters(parameters ?? {}, thunkAPI.dispatch);
+
+      const asyncInitialize = async () => {
+        await initializeOperationMetadata(
+          deserializedWorkflow,
+          thunkAPI.getState().connections.connectionReferences,
+          parameters ?? {},
+          thunkAPI.dispatch
+        );
+        const actionsAndTriggers = deserializedWorkflow.actionData;
+        await getConnectionsApiAndMapping(actionsAndTriggers, thunkAPI.getState, thunkAPI.dispatch);
+        await updateDynamicDataInNodes(thunkAPI.getState, thunkAPI.dispatch);
+      };
+      asyncInitialize();
+
+      return deserializedWorkflow;
+    } else if (spec === 'CNCF') {
+      throw new Error('Spec not implemented.');
+    }
+    throw new Error('Invalid Workflow Spec');
   }
-  if (spec === 'BJS') {
-    getConnectionsQuery();
-    const { definition, connectionReferences, parameters } = workflowDefinition;
-    const deserializedWorkflow = BJSDeserialize(definition, runInstance);
-    thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
-    thunkAPI.dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
-    thunkAPI.dispatch(addInvokerSupport({ connectionReferences }));
-    parseWorkflowParameters(parameters ?? {}, thunkAPI.dispatch);
-
-    const asyncInitialize = async () => {
-      await initializeOperationMetadata(
-        deserializedWorkflow,
-        thunkAPI.getState().connections.connectionReferences,
-        parameters ?? {},
-        thunkAPI.dispatch
-      );
-      const actionsAndTriggers = deserializedWorkflow.actionData;
-      await getConnectionsApiAndMapping(actionsAndTriggers, thunkAPI.getState, thunkAPI.dispatch);
-      await updateDynamicDataInNodes(thunkAPI.getState, thunkAPI.dispatch);
-    };
-    asyncInitialize();
-
-    return deserializedWorkflow;
-  } else if (spec === 'CNCF') {
-    throw new Error('Spec not implemented.');
-  }
-  throw new Error('Invalid Workflow Spec');
-});
+);
