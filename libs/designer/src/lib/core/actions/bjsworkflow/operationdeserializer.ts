@@ -69,7 +69,8 @@ export const initializeOperationMetadata = async (
   deserializedWorkflow: DeserializedWorkflow,
   references: ConnectionReferences,
   workflowParameters: Record<string, WorkflowParameter>,
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  sku?: string
 ): Promise<void> => {
   initializeConnectorsForReferences(references);
 
@@ -88,7 +89,7 @@ export const initializeOperationMetadata = async (
     if (operationManifestService.isSupported(operation.type, operation.kind)) {
       promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, dispatch, graph, references));
     } else {
-      promises.push(initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, dispatch) as any);
+      promises.push(initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, dispatch, sku) as any);
     }
   }
 
@@ -138,7 +139,8 @@ export const initializeOperationDetailsForManifest = async (
   isTrigger: boolean,
   dispatch: Dispatch,
   graph?: WorkflowNode,
-  connectionReferences?: ConnectionReferences
+  connectionReferences?: ConnectionReferences,
+  sku?: string
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   const operation = { ..._operation };
   try {
@@ -165,7 +167,8 @@ export const initializeOperationDetailsForManifest = async (
         nodeId,
         manifest,
         customSwagger,
-        operation
+        operation,
+        sku
       );
 
       if (isTrigger) {
@@ -229,7 +232,8 @@ export const initializeOperationDetailsForManifest = async (
 
 const processChildGraphAndItsInputs = (
   manifest: OperationManifest,
-  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition
+  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
+  sku?: string
 ): NodeDataWithOperationMetadata[] => {
   const { subGraphDetails } = manifest.properties;
   const nodesData: NodeDataWithOperationMetadata[] = [];
@@ -246,7 +250,8 @@ const processChildGraphAndItsInputs = (
               subNodeKey,
               subManifest,
               /* customSwagger */ undefined,
-              subOperation[subNodeKey]
+              subOperation[subNodeKey],
+              sku
             );
             const subNodeOutputs = { outputs: {} };
             nodesData.push({
@@ -265,7 +270,8 @@ const processChildGraphAndItsInputs = (
           subGraphKey,
           subManifest,
           /* customSwagger */ undefined,
-          subOperation
+          subOperation,
+          sku
         );
         const nodeOutputs = { outputs: {} };
         nodesData.push({

@@ -86,7 +86,8 @@ export const getInputParametersFromManifest = (
   nodeId: string,
   manifest: OperationManifest,
   customSwagger?: SwaggerParser,
-  stepDefinition?: any
+  stepDefinition?: any,
+  sku?: string
 ): NodeInputsWithDependencies => {
   const primaryInputParameters = new ManifestParser(manifest).getInputParameters(
     false /* includeParentObject */,
@@ -166,7 +167,7 @@ export const getInputParametersFromManifest = (
     [ParameterGroupKeys.DEFAULT]: defaultParameterGroup,
   };
 
-  addRecurrenceParametersInGroup(parameterGroups, manifest.properties.recurrence, stepDefinition);
+  addRecurrenceParametersInGroup(parameterGroups, manifest.properties.recurrence, stepDefinition, sku);
 
   defaultParameterGroup.parameters = getParametersSortedByVisibility(defaultParameterGroup.parameters);
 

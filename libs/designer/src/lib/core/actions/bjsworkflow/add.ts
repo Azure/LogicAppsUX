@@ -156,7 +156,8 @@ const initializeOperationDetails = async (
       nodeId,
       isTrigger,
       parsedSwagger,
-      operationInfo
+      operationInfo,
+      state.designerOptions.sku
     );
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromSwagger(
       isTrigger,
@@ -229,8 +230,13 @@ const initializeOperationDetails = async (
   dispatch(showDefaultTabs({ isScopeNode: operationInfo?.type.toLowerCase() === Constants.NODE.TYPE.SCOPE, hasSchema: hasSchema }));
 };
 
-export const initializeSwitchCaseFromManifest = async (id: string, manifest: OperationManifest, dispatch: Dispatch): Promise<void> => {
-  const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(id, manifest);
+export const initializeSwitchCaseFromManifest = async (
+  id: string,
+  manifest: OperationManifest,
+  dispatch: Dispatch,
+  sku?: string
+): Promise<void> => {
+  const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(id, manifest, undefined, undefined, sku);
   const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
     manifest,
     false,

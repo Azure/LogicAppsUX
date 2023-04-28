@@ -666,7 +666,9 @@ export default {
   SEARCH_THROTTLE_LIMIT_IN_MS: 750, // Throttling limit for search in milliseconds
   SECURE_OBJECT: 'SecureObject',
   SKU: {
+    WORKFLOW_STANDARD: 'WorkflowStandard',
     STANDARD: 'Standard',
+    WORKFLOW_PREMIUM: 'WorkflowPremium',
     PREMIUM: 'Premium',
     CONSUMPTION: 'Consumption',
   },

@@ -89,6 +89,7 @@ export const designerOptionsSlice = createSlice({
       state.isDarkMode = action.payload.isDarkMode;
       state.isConsumption = action.payload.isConsumption;
       state.isXrmConnectionReferenceMode = action.payload.isXrmConnectionReferenceMode;
+      state.sku = action.payload.sku;
     },
   },
   extraReducers: (builder) => {

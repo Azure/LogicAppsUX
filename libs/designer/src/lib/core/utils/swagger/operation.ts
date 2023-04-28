@@ -54,7 +54,8 @@ export const initializeOperationDetailsForSwagger = async (
   operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
   references: ConnectionReferences,
   isTrigger: boolean,
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  sku?: string
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   try {
     const staticResultService = StaticResultService();
@@ -79,7 +80,8 @@ export const initializeOperationDetailsForSwagger = async (
         isTrigger,
         parsedSwagger,
         nodeOperationInfo,
-        operation
+        operation,
+        sku
       );
       const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromSwagger(
         isTrigger,
@@ -123,7 +125,8 @@ export const getInputParametersFromSwagger = (
   isTrigger: boolean,
   swagger: SwaggerParser,
   operationInfo: NodeOperation,
-  stepDefinition?: any
+  stepDefinition?: any,
+  sku?: string
 ): NodeInputsWithDependencies => {
   const { type, operationId } = operationInfo;
   const includeNotificationParameters = !equals(type, Constants.NODE.TYPE.API_CONNECTION);
@@ -199,7 +202,7 @@ export const getInputParametersFromSwagger = (
   const parameterGroups = { [ParameterGroupKeys.DEFAULT]: defaultParameterGroup };
 
   if (isTrigger && !isWebhookOperation && !(includeNotificationParameters && swagger.getRelatedNotificationOperationId(operationId))) {
-    addRecurrenceParametersInGroup(parameterGroups, { type: RecurrenceType.Basic }, stepDefinition);
+    addRecurrenceParametersInGroup(parameterGroups, { type: RecurrenceType.Basic }, stepDefinition, sku);
   }
 
   const dynamicInput = inputParametersAsArray.find((parameter) => parameter.dynamicSchema);

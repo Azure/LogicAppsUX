@@ -202,13 +202,14 @@ export function getParametersSortedByVisibility(parameters: ParameterInfo[]): Pa
 export function addRecurrenceParametersInGroup(
   parameterGroups: Record<string, ParameterGroup>,
   recurrence: RecurrenceSetting | undefined,
-  definition: any
+  definition: any,
+  sku?: string
 ): void {
   if (!recurrence) {
     return;
   }
 
-  const recurrenceParameters = getRecurrenceParameters(recurrence, definition);
+  const recurrenceParameters = getRecurrenceParameters(recurrence, definition, sku);
 
   if (recurrenceParameters.length) {
     const intl = getIntl();

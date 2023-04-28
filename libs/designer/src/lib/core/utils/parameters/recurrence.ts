@@ -79,8 +79,10 @@ export function getDefaultRecurrenceBySku(sku?: string): Recurrence {
 
   switch (sku) {
     case constants.SKU.STANDARD:
+    case constants.SKU.WORKFLOW_STANDARD:
       return constants.DEFAULT_RECURRENCE.STANDARD;
     case constants.SKU.PREMIUM:
+    case constants.SKU.WORKFLOW_PREMIUM:
       return constants.DEFAULT_RECURRENCE.PREMIUM;
     case constants.SKU.CONSUMPTION:
       return constants.DEFAULT_RECURRENCE.CONSUMPTION;
