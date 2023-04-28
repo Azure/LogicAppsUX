@@ -115,10 +115,7 @@ export const addForeachToNode = createAsyncThunk(
       foreachNodeId,
       foreachOperation,
       /* isTrigger */ false,
-      dispatch,
-      undefined,
-      undefined,
-      newState.designerOptions.sku
+      dispatch
     )) as NodeDataWithOperationMetadata[];
     updateTokenMetadataInForeachInputs(nodeInputs, token, newState);
     const manifest = await getOperationManifest(foreachOperationInfo);

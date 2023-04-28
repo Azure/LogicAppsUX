@@ -117,13 +117,7 @@ const initializeOperationDetails = async (
     connector = manifest.properties.connector as Connector;
 
     const { iconUri, brandColor } = manifest.properties;
-    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
-      nodeId,
-      manifest,
-      undefined,
-      undefined,
-      state.designerOptions.sku
-    );
+    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs);
 
     if (parameterValues) {
@@ -162,8 +156,7 @@ const initializeOperationDetails = async (
       nodeId,
       isTrigger,
       parsedSwagger,
-      operationInfo,
-      state.designerOptions.sku
+      operationInfo
     );
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromSwagger(
       isTrigger,
@@ -236,13 +229,8 @@ const initializeOperationDetails = async (
   dispatch(showDefaultTabs({ isScopeNode: operationInfo?.type.toLowerCase() === Constants.NODE.TYPE.SCOPE, hasSchema: hasSchema }));
 };
 
-export const initializeSwitchCaseFromManifest = async (
-  id: string,
-  manifest: OperationManifest,
-  dispatch: Dispatch,
-  sku?: string
-): Promise<void> => {
-  const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(id, manifest, undefined, undefined, sku);
+export const initializeSwitchCaseFromManifest = async (id: string, manifest: OperationManifest, dispatch: Dispatch): Promise<void> => {
+  const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(id, manifest);
   const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
     manifest,
     false,

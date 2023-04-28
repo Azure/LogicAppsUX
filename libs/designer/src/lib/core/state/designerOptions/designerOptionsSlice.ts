@@ -1,4 +1,3 @@
-import constants from '../../../common/constants';
 import type { DesignerOptionsState, ServiceOptions } from './designerOptionsInterfaces';
 import type { ILoggerService } from '@microsoft/designer-client-services-logic-apps';
 import {
@@ -27,7 +26,6 @@ const initialState: DesignerOptionsState = {
   servicesInitialized: false,
   isConsumption: false,
   isXrmConnectionReferenceMode: false,
-  sku: constants.SKU.STANDARD,
 };
 
 export const initializeServices = createAsyncThunk(
@@ -89,7 +87,6 @@ export const designerOptionsSlice = createSlice({
       state.isDarkMode = action.payload.isDarkMode;
       state.isConsumption = action.payload.isConsumption;
       state.isXrmConnectionReferenceMode = action.payload.isXrmConnectionReferenceMode;
-      state.sku = action.payload.sku;
     },
   },
   extraReducers: (builder) => {

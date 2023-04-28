@@ -491,24 +491,9 @@ export default {
     VALUE_TITLE: 'value-title',
   },
   RAW: 'Raw',
-  // Note: DEFAULT_RECURRENCE frequency should same with RECURRENCE_FREQUENCY_VALUES value
   DEFAULT_RECURRENCE: {
-    FREE: {
-      interval: 1,
-      frequency: 'Hour',
-    },
-    STANDARD: {
-      interval: 1,
-      frequency: 'Minute',
-    },
-    PREMIUM: {
-      interval: 15,
-      frequency: 'Second',
-    },
-    CONSUMPTION: {
-      interval: 3,
-      frequency: 'Minute',
-    },
+    interval: 3,
+    frequency: 'Minute',
   },
   RECURRENCE_FREQUENCY_VALUES: ['Month', 'Week', 'Day', 'Hour', 'Minute', 'Second'],
   RECURRENCE_TITLE_JOIN_SEPARATOR: ',',
@@ -665,13 +650,6 @@ export default {
   SCHEMA,
   SEARCH_THROTTLE_LIMIT_IN_MS: 750, // Throttling limit for search in milliseconds
   SECURE_OBJECT: 'SecureObject',
-  SKU: {
-    WORKFLOW_STANDARD: 'WorkflowStandard',
-    STANDARD: 'Standard',
-    WORKFLOW_PREMIUM: 'WorkflowPremium',
-    PREMIUM: 'Premium',
-    CONSUMPTION: 'Consumption',
-  },
   FLOW_STATUS: {
     ABORTED: 'Aborted',
     CANCELLED: 'Cancelled',

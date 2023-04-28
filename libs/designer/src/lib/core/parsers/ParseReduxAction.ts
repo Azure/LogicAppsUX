@@ -17,7 +17,7 @@ export const initializeGraphState = createAsyncThunk<
   { state: RootState }
 >('parser/deserialize', async (graphState: { workflowDefinition: Workflow; runInstance: any }, thunkAPI): Promise<DeserializedWorkflow> => {
   const { workflowDefinition, runInstance } = graphState;
-  const { workflow, designerOptions } = thunkAPI.getState() as RootState;
+  const { workflow } = thunkAPI.getState() as RootState;
   const spec = workflow.workflowSpec;
 
   if (spec === undefined) {
@@ -37,8 +37,7 @@ export const initializeGraphState = createAsyncThunk<
         deserializedWorkflow,
         thunkAPI.getState().connections.connectionReferences,
         parameters ?? {},
-        thunkAPI.dispatch,
-        designerOptions.sku
+        thunkAPI.dispatch
       );
       const actionsAndTriggers = deserializedWorkflow.actionData;
       await getConnectionsApiAndMapping(actionsAndTriggers, thunkAPI.getState, thunkAPI.dispatch);
