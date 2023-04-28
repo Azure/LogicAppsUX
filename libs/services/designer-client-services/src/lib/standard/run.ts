@@ -2,10 +2,14 @@ import { inputsResponse, outputsResponse } from '../__test__/__mocks__/monitorin
 import type { HttpRequestOptions, IHttpClient } from '../httpClient';
 import type { IRunService } from '../run';
 import type { CallbackInfo } from '../workflow';
-import type { Runs, Run, ContentLink, BoundParameters } from '@microsoft/designer-ui';
-import { isCallbackInfoWithRelativePath, getCallbackUrl } from '@microsoft/designer-ui';
-import type { ArmResources, LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { ArgumentException, HTTP_METHODS, UnsupportedException, isString } from '@microsoft/utils-logic-apps';
+import type { ArmResources, BoundParameters, ContentLink, LogicAppsV2, Run, Runs } from '@microsoft/utils-logic-apps';
+import {
+  isCallbackInfoWithRelativePath,
+  ArgumentException,
+  HTTP_METHODS,
+  UnsupportedException,
+  isString,
+} from '@microsoft/utils-logic-apps';
 
 export interface RunServiceOptions {
   apiVersion: string;
@@ -259,4 +263,7 @@ export class StandardRunService implements IRunService {
         throw new UnsupportedException(`Unsupported call connector method - '${method}'`);
     }
   }
+}
+function getCallbackUrl(_callbackInfo: CallbackInfo): any {
+  throw new Error('Function not implemented.');
 }

@@ -2,11 +2,11 @@ import { OverviewCommandBar } from './overviewcommandbar';
 import type { OverviewPropertiesProps } from './overviewproperties';
 import { OverviewProperties } from './overviewproperties';
 import { RunHistory } from './runhistory';
-import { isCallbackInfoWithRelativePath } from './types';
-import type { Run, RunDisplayItem, RunError, Runs } from './types';
+import type { RunDisplayItem } from './types';
 import { getCallbackUrl, isRunError, mapToRunItem } from './utils';
 import type { IIconProps, ITextFieldStyles } from '@fluentui/react';
 import { IconButton, MessageBar, MessageBarType, Pivot, PivotItem, TextField } from '@fluentui/react';
+import { Run, RunError, Runs, isCallbackInfoWithRelativePath } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useIntl } from 'react-intl';
@@ -97,7 +97,7 @@ export const Overview: React.FC<OverviewProps> = ({
 
     const response = await onVerifyRunId(value);
     if (isRunError(response)) {
-      return response.error.message;
+      return (response as RunError).error.message;
     } else {
       setRunItem(mapToRunItem(response));
       setNavigateDisabled(false);

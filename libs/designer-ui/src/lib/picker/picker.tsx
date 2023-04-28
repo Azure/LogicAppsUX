@@ -1,10 +1,10 @@
 import { PickerHeader } from './pickerHeader';
-import type { FileItem } from './pickerItem';
 import { PickerItem } from './pickerItem';
 import { Spinner } from '@fluentui/react';
 import type { IBreadcrumbItem } from '@fluentui/react/lib/Breadcrumb';
 import type { ICalloutContentStyles } from '@fluentui/react/lib/Callout';
 import { FocusTrapCallout } from '@fluentui/react/lib/Callout';
+import type { TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
 import { useIntl } from 'react-intl';
 
 const calloutStyles: Partial<ICalloutContentStyles> = {
@@ -22,12 +22,12 @@ export interface PickerProps {
   visible: boolean;
   anchorId: string;
   currentPathSegments: IBreadcrumbItem[];
-  files: FileItem[];
+  files: TreeDynamicValue[];
   loadingFiles?: boolean;
   errorDetails?: { message: string };
   onCancel?: () => void;
-  handleFolderNavigation: (selectedObject: any) => void;
-  handleItemSelected: (selectedObject: any) => void;
+  handleFolderNavigation: (item: TreeDynamicValue) => void;
+  handleItemSelected: (item: TreeDynamicValue) => void;
 }
 
 export const Picker = ({

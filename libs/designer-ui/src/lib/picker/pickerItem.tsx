@@ -1,6 +1,7 @@
 import { useId } from '../useId';
 import { Icon, IconButton, TooltipHost } from '@fluentui/react';
 import type { IIconStyles } from '@fluentui/react';
+import type { TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
 import { useIntl } from 'react-intl';
 
 export enum PickerItemType {
@@ -36,31 +37,26 @@ const folderIconStyles: IIconStyles = {
   },
 };
 
-export interface FileItem {
-  displayName: string;
-  mediaType: PickerItemType;
-  isParent?: boolean;
-  value: any;
-  onSelect: (selectedObject: any) => void;
-  onNavigation: (selectedObject: any) => void;
+export interface FileItemProps extends TreeDynamicValue {
+  onSelect: (item: TreeDynamicValue) => void;
+  onNavigation: (item: TreeDynamicValue) => void;
 }
 
-export const PickerItem = (props: FileItem) => {
-  return props.mediaType === PickerItemType.FOLDER || props.isParent ? <FolderItem {...props} /> : <FileItem {...props} />;
+export const PickerItem = (props: FileItemProps) => {
+  return props.isParent ? <FolderItem {...props} /> : <FileItem {...props} />;
 };
 
-const FileItem = ({ displayName, onSelect }: FileItem) => {
+const FileItem = ({ displayName, value, mediaType, isParent, onSelect }: FileItemProps) => {
   const { iconName, styles } = iconInfo.file;
   return (
-    <button className="msla-button msla-file" onClick={onSelect} title={displayName}>
+    <button className="msla-button msla-file" onClick={() => onSelect({ value, displayName, isParent, mediaType })} title={displayName}>
       <Icon iconName={iconName} styles={styles} />
       <div className="msla-text">{displayName}</div>
     </button>
   );
 };
-const FolderItem = ({ displayName, mediaType, value, onSelect, onNavigation }: FileItem) => {
-  const isFolderType = mediaType === PickerItemType.FOLDER;
-  const selectionSectionTabIndex = isFolderType ? 0 : -1;
+const FolderItem = ({ displayName, isParent, value, mediaType, onSelect, onNavigation }: FileItemProps) => {
+  const selectionSectionTabIndex = isParent ? 0 : -1;
   const { iconProps: navigateIconProps } = iconInfo.navigate;
   const navId = useId();
   const intl = useIntl();
@@ -79,7 +75,7 @@ const FolderItem = ({ displayName, mediaType, value, onSelect, onNavigation }: F
         className="msla-button msla-selection-section"
         title={displayName}
         tabIndex={selectionSectionTabIndex}
-        onClick={() => onSelect(value)}
+        onClick={() => onSelect({ value, displayName, isParent, mediaType })}
       >
         <Icon iconName={'FabricFolder'} styles={folderIconStyles} />
         <div className="msla-text">{displayName}</div>
@@ -90,7 +86,7 @@ const FolderItem = ({ displayName, mediaType, value, onSelect, onNavigation }: F
           className="msla-navigate-button"
           id={navId}
           iconProps={navigateIconProps}
-          onClick={() => onNavigation(value)}
+          onClick={() => onNavigation({ value, displayName, isParent, mediaType })}
         />
       </TooltipHost>
     </div>

@@ -4,11 +4,11 @@ import type { ValueSegment } from '../editor/models/parameter';
 import { ValueSegmentType } from '../editor/models/parameter';
 import { PickerValueChange } from './PickerValueChange';
 import { Picker } from './picker';
-import type { FileItem } from './pickerItem';
 import { PickerItemType } from './pickerItem';
 import type { IBreadcrumbItem, IIconProps, ITooltipHostStyles } from '@fluentui/react';
 import { TooltipHost, IconButton } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
+import type { TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
 import { guid } from '@microsoft/utils-logic-apps';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -22,7 +22,7 @@ export interface PickerCallbackHandlers {
 
 export interface FilePickerEditorProps extends BaseEditorProps {
   type: string;
-  items: FileItem[] | undefined;
+  items: TreeDynamicValue[] | undefined;
   displayValue?: string;
   fileFilters?: string[];
   isLoading?: boolean;
@@ -75,16 +75,16 @@ export const FilePickerEditor = ({
     }
   };
 
-  const onFolderNavigated = (selectedItem: any) => {
-    onFolderNavigation(selectedItem);
-    const displayValue = getDisplayValueFromSelectedItem(selectedItem);
+  const onFolderNavigated = (selectedItem: TreeDynamicValue) => {
+    onFolderNavigation(selectedItem.value);
+    const displayValue = selectedItem.displayName;
     setTitleSegments([...titleSegments, { text: displayValue, key: displayValue, onClick: () => onFolderNavigated(selectedItem) }]);
   };
 
-  const onFileFolderSelected = (selectedItem: any) => {
+  const onFileFolderSelected = (selectedItem: TreeDynamicValue) => {
     if (showPicker) {
-      setSelectedItem(selectedItem);
-      setPickerDisplayValue([{ id: guid(), value: getDisplayValueFromSelectedItem(selectedItem), type: ValueSegmentType.LITERAL }]);
+      setSelectedItem(selectedItem.value);
+      setPickerDisplayValue([{ id: guid(), value: getDisplayValueFromSelectedItem(selectedItem.value), type: ValueSegmentType.LITERAL }]);
       setShowPicker(false);
     }
   };
@@ -136,7 +136,7 @@ export const FilePickerEditor = ({
   );
 };
 
-const filterItems = (items?: FileItem[], type?: string, fileFilters?: string[]): FileItem[] => {
+const filterItems = (items?: TreeDynamicValue[], type?: string, fileFilters?: string[]): TreeDynamicValue[] => {
   if (!items || items.length === 0) return [];
   let returnItems = items;
   if (type === PickerItemType.FOLDER) {
@@ -144,7 +144,7 @@ const filterItems = (items?: FileItem[], type?: string, fileFilters?: string[]):
   }
   if (fileFilters && fileFilters.length > 0) {
     returnItems = returnItems.filter((item) => {
-      return fileFilters.includes(item.mediaType);
+      return fileFilters.includes(item.mediaType ?? '');
     });
   }
   return returnItems;
