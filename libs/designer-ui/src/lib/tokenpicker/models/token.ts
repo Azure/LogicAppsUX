@@ -1,4 +1,5 @@
 import type { TokenType } from '../../editor';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 
 export interface Token {
   key: string;

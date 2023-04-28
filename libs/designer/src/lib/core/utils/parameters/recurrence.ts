@@ -1,8 +1,21 @@
+import constants from '../../../common/constants';
 import { loadParameterValuesFromDefault, toParameterInfoMap } from './helper';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { OutputMapKey, SchemaProcessor, toInputParameter } from '@microsoft/parsers-logic-apps';
-import type { RecurrenceSetting } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2, RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import { map, RecurrenceType } from '@microsoft/utils-logic-apps';
+
+export interface Recurrence {
+  frequency: string | undefined;
+  interval: number | undefined;
+  startTime?: string;
+  timeZone?: string;
+  schedule?: {
+    hours?: string[];
+    minutes?: number[];
+    weekDays?: string[];
+  };
+}
 
 const getRecurrenceSchema = (recurrenceType?: RecurrenceType): OpenAPIV2.SchemaObject => {
   return {
@@ -22,7 +35,11 @@ const getRecurrenceSchema = (recurrenceType?: RecurrenceType): OpenAPIV2.SchemaO
   };
 };
 
-export const getRecurrenceParameters = (recurrence: RecurrenceSetting | undefined, operationDefinition: any): ParameterInfo[] => {
+export const getRecurrenceParameters = (
+  recurrence: RecurrenceSetting | undefined,
+  operationDefinition: any,
+  sku?: string
+): ParameterInfo[] => {
   if (!recurrence || recurrence.type === RecurrenceType.None) {
     return [];
   }
@@ -38,9 +55,17 @@ export const getRecurrenceParameters = (recurrence: RecurrenceSetting | undefine
     .getSchemaProperties(schema)
     .map((item) => toInputParameter(item, true /* suppressCasting */));
 
+  const defaultRecurrence = getDefaultRecurrenceBySku(sku);
+
+  for (const parameter of recurrenceParameters) {
+    if (!parameter.default) {
+      parameter.default = defaultRecurrence;
+    }
+  }
+
   if (operationDefinition) {
     for (const parameter of recurrenceParameters) {
-      parameter.value = operationDefinition.recurrence;
+      parameter.value = operationDefinition?.recurrence ?? defaultRecurrence;
     }
   } else {
     loadParameterValuesFromDefault(map(recurrenceParameters, OutputMapKey));
@@ -48,3 +73,18 @@ export const getRecurrenceParameters = (recurrence: RecurrenceSetting | undefine
 
   return toParameterInfoMap(recurrenceParameters, operationDefinition);
 };
+
+export function getDefaultRecurrenceBySku(sku?: string): Recurrence {
+  if (!sku) return constants.DEFAULT_RECURRENCE.PREMIUM;
+
+  switch (sku) {
+    case constants.SKU.STANDARD:
+      return constants.DEFAULT_RECURRENCE.STANDARD;
+    case constants.SKU.PREMIUM:
+      return constants.DEFAULT_RECURRENCE.PREMIUM;
+    case constants.SKU.CONSUMPTION:
+      return constants.DEFAULT_RECURRENCE.CONSUMPTION;
+    default:
+      return constants.DEFAULT_RECURRENCE.FREE;
+  }
+}

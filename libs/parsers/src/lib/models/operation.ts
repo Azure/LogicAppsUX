@@ -1,4 +1,4 @@
-import type { DownloadChunkMetadata, UploadChunkMetadata } from '@microsoft/utils-logic-apps';
+import type { DownloadChunkMetadata, OpenAPIV2, UploadChunkMetadata } from '@microsoft/utils-logic-apps';
 import { equals } from '@microsoft/utils-logic-apps';
 
 export interface EnumObject {

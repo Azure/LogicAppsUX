@@ -15,7 +15,7 @@ import type {
 import { ParametersProcessor } from './parameterprocessor';
 import { UriTemplateParser, UriTemplateGenerator } from './uritemplateparser';
 import APIParser from '@apidevtools/swagger-parser';
-import type { DownloadChunkMetadata, UploadChunkMetadata } from '@microsoft/utils-logic-apps';
+import type { DownloadChunkMetadata, OpenAPIV2, UploadChunkMetadata } from '@microsoft/utils-logic-apps';
 import { aggregate, equals, getPropertyValue, map, unmap } from '@microsoft/utils-logic-apps';
 
 interface GetOperationsOptions {
@@ -229,7 +229,7 @@ export class SwaggerParser {
    *    - A string with a relative URI
    * @arg {boolean} [includeBasePath]
    *    - True if the comparison should include the base path.
-   * @returns {Swagger.Operation}
+   * @returns {OpenAPIV2.OperationObject}
    *    - A JSON object with the Swagger for the matching operation if one was found, else undefined
    */
   getOperationByMethodAndPath(method: string, path: string, includeBasePath = false): OpenAPIV2.OperationObject {

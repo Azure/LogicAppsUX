@@ -1895,6 +1895,12 @@
       "value": "Collapse"
     }
   ],
+  "BrWQ0Z": [
+    {
+      "type": 0,
+      "value": "Select a managed identity"
+    }
+  ],
   "BuYrD3": [
     {
       "type": 0,
@@ -5339,6 +5345,12 @@
       "value": "Learn more"
     }
   ],
+  "dL9V5t": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "dOpdsP": [
     {
       "type": 0,
@@ -5743,6 +5755,12 @@
     {
       "type": 0,
       "value": "Trigger Conditions"
+    }
+  ],
+  "gc6v4X": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "gfBWfH": [

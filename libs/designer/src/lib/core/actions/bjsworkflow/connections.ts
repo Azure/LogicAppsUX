@@ -1,6 +1,7 @@
 import Constants from '../../../common/constants';
 import type { ApiHubAuthentication } from '../../../common/models/workflow';
-import { getOperationManifest } from '../../queries/operation';
+import { getConnection } from '../../queries/connections';
+import { getConnector, getOperationManifest } from '../../queries/operation';
 import { changeConnectionMapping, initializeConnectionsMappings } from '../../state/connection/connectionSlice';
 import type { Operations } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
@@ -9,8 +10,8 @@ import { isRootNodeInGraph } from '../../utils/graph';
 import { updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { getAllVariables } from '../../utils/variables';
 import type { IOperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import { WorkflowService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import type { Connection, ConnectionParameter, Connector, OperationManifest } from '@microsoft/utils-logic-apps';
+import { ConnectionService, WorkflowService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import type { Connection, ConnectionParameter, Connector, OperationManifest, LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import {
   ResourceIdentityType,
   isConnectionMultiAuthManagedIdentityType,
@@ -31,85 +32,135 @@ export interface ConnectionPayload {
   authentication?: ApiHubAuthentication;
 }
 
+export interface UpdateConnectionPayload {
+  nodeId: string;
+  connectorId: string;
+  connectionId: string;
+  connectionProperties?: Record<string, any>;
+  authentication?: ApiHubAuthentication;
+}
+
 export const updateNodeConnection = createAsyncThunk(
   'updateNodeConnection',
   async (payload: ConnectionPayload, { dispatch, getState }): Promise<void> => {
     const { nodeId, connector, connection } = payload;
 
-    const newPayload = {
-      ...payload,
-      authentication: getApiHubAuthenticationIfRequired(),
-      connectionProperties: getConnectionPropertiesIfRequired(connection, connector),
-    };
-    dispatch(changeConnectionMapping(newPayload));
-
-    const newState = getState() as RootState;
-
-    return updateDynamicDataInNode(
-      nodeId,
-      isRootNodeInGraph(nodeId, 'root', newState.workflow.nodesMetadata),
-      newState.operations.operationInfo[nodeId],
-      getConnectionReference(newState.connections, nodeId),
-      newState.operations.dependencies[nodeId],
-      newState.operations.inputParameters[nodeId],
-      newState.operations.actionMetadata[nodeId],
-      newState.operations.settings[nodeId],
-      getAllVariables(newState.tokens.variables),
+    return updateNodeConnectionAndProperties(
+      {
+        nodeId,
+        connectorId: connector.id,
+        connectionId: connection.id,
+        authentication: getApiHubAuthenticationIfRequired(),
+        connectionProperties: getConnectionPropertiesIfRequired(connection, connector),
+      },
       dispatch,
-      newState,
-      newState.workflow.newlyAddedOperations[nodeId] ? undefined : newState.workflow.operations[nodeId]
+      getState as () => RootState
     );
   }
 );
 
+const updateNodeConnectionAndProperties = async (
+  payload: UpdateConnectionPayload,
+  dispatch: Dispatch,
+  getState: () => RootState
+): Promise<void> => {
+  const { nodeId } = payload;
+  dispatch(changeConnectionMapping(payload));
+
+  const newState = getState() as RootState;
+  return updateDynamicDataInNode(
+    nodeId,
+    isRootNodeInGraph(nodeId, 'root', newState.workflow.nodesMetadata),
+    newState.operations.operationInfo[nodeId],
+    getConnectionReference(newState.connections, nodeId),
+    newState.operations.dependencies[nodeId],
+    newState.operations.inputParameters[nodeId],
+    newState.operations.actionMetadata[nodeId],
+    newState.operations.settings[nodeId],
+    getAllVariables(newState.tokens.variables),
+    dispatch,
+    newState,
+    newState.workflow.newlyAddedOperations[nodeId] ? undefined : newState.workflow.operations[nodeId]
+  );
+};
 const getConnectionPropertiesIfRequired = (connection: Connection, connector: Connector): Record<string, any> | undefined => {
   if (isConnectionMultiAuthManagedIdentityType(connection, connector)) {
-    const service = WorkflowService();
-    const identity = service.getAppIdentity?.();
-    let audience: string | undefined;
-
-    if (service.isExplicitAuthRequiredForManagedIdentity?.()) {
-      const isMultiAuth = connector.properties.connectionParameterSets !== undefined;
-      const parameterType = isMultiAuth
-        ? ConnectionParameterTypes[ConnectionParameterTypes.managedIdentity]
-        : ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting];
-      const parameters = getConnectionParametersWithType(connector, parameterType);
-      audience = isMultiAuth
-        ? parameters?.[0]?.managedIdentitySettings?.resourceUri
-        : parameters?.[0]?.oAuthSettings?.properties?.AzureActiveDirectoryResourceId;
-    }
-
+    const identity = WorkflowService().getAppIdentity?.();
     const userAssignedIdentity =
       equals(identity?.type, ResourceIdentityType.USER_ASSIGNED) && identity?.userAssignedIdentities
         ? Object.keys(identity?.userAssignedIdentities)[0]
         : undefined;
 
-    return {
-      authentication: {
-        type: 'ManagedServiceIdentity',
-        ...optional('identity', userAssignedIdentity),
-        ...optional('audience', audience),
-      },
-    };
+    return getConnectionProperties(connector, userAssignedIdentity);
   }
 
   return undefined;
+};
+
+const getConnectionProperties = (connector: Connector, userAssignedIdentity: string | undefined): Record<string, any> => {
+  let audience: string | undefined;
+  if (WorkflowService().isExplicitAuthRequiredForManagedIdentity?.()) {
+    const isMultiAuth = connector.properties.connectionParameterSets !== undefined;
+    const parameterType = isMultiAuth
+      ? ConnectionParameterTypes[ConnectionParameterTypes.managedIdentity]
+      : ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting];
+    const parameters = getConnectionParametersWithType(connector, parameterType);
+    audience = isMultiAuth
+      ? parameters?.[0]?.managedIdentitySettings?.resourceUri
+      : parameters?.[0]?.oAuthSettings?.properties?.AzureActiveDirectoryResourceId;
+  }
+
+  return {
+    authentication: {
+      type: 'ManagedServiceIdentity',
+      ...optional('identity', userAssignedIdentity),
+      ...optional('audience', audience),
+    },
+  };
 };
 
 const getApiHubAuthenticationIfRequired = (): ApiHubAuthentication | undefined => {
-  const service = WorkflowService();
-  const identity = service.getAppIdentity?.();
-
-  if (identity && service.isExplicitAuthRequiredForManagedIdentity?.()) {
-    const userAssignedIdentity =
-      equals(identity.type, ResourceIdentityType.USER_ASSIGNED) && identity.userAssignedIdentities
-        ? Object.keys(identity.userAssignedIdentities)[0]
-        : undefined;
-    return { type: 'ManagedServiceIdentity', ...optional('identity', userAssignedIdentity) };
-  }
-
-  return undefined;
+  const identity = WorkflowService().getAppIdentity?.();
+  const userAssignedIdentity =
+    equals(identity?.type, ResourceIdentityType.USER_ASSIGNED) && identity?.userAssignedIdentities
+      ? Object.keys(identity.userAssignedIdentities)[0]
+      : undefined;
+  return getApiHubAuthentication(userAssignedIdentity);
 };
+
+const getApiHubAuthentication = (userAssignedIdentity: string | undefined): ApiHubAuthentication | undefined => {
+  return WorkflowService().isExplicitAuthRequiredForManagedIdentity?.()
+    ? { type: 'ManagedServiceIdentity', ...optional('identity', userAssignedIdentity) }
+    : undefined;
+};
+
+export const updateIdentityChangeInConection = createAsyncThunk(
+  'updateIdentityChangeInConection',
+  async (payload: { nodeId: string; identity: string }, { dispatch, getState }): Promise<void> => {
+    const { nodeId, identity } = payload;
+    const userAssignedIdentity = identity !== Constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY ? identity : undefined;
+    const {
+      api: { id: connectorId },
+      connection: { id: connectionId },
+    } = getConnectionReference((getState() as RootState).connections, nodeId);
+    const connector = await getConnector(connectorId);
+    const connection = await getConnection(connectionId, connectorId);
+
+    await ConnectionService().setupConnectionIfNeeded(connection as Connection, userAssignedIdentity);
+
+    return updateNodeConnectionAndProperties(
+      {
+        nodeId,
+        connectorId,
+        connectionId,
+        authentication: getApiHubAuthentication(userAssignedIdentity),
+        connectionProperties: getConnectionProperties(connector, userAssignedIdentity),
+      },
+      dispatch,
+      getState as () => RootState
+    );
+  }
+);
 
 export async function getConnectionsMappingForNodes(operations: Operations, getState: () => RootState): Promise<Record<string, string>> {
   let connectionsMapping: Record<string, string> = {};

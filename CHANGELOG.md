@@ -1,5 +1,22 @@
 # Logic Apps Designer
 
+## [2.12.0](https://github.com/Azure/LogicAppsUX/compare/v2.11.1...v2.12.0) (2023-04-28)
+
+### Features
+
+- **designer:** Add parameterSet name for multi auth connections in service providers ([#2152](https://github.com/Azure/LogicAppsUX/issues/2152)) ([074bf86](https://github.com/Azure/LogicAppsUX/commit/074bf8686c63950aabd4eec90bc62686fdcb94db))
+- **designer:** Adding MSI support in connection creation and dynamic calls ([#2149](https://github.com/Azure/LogicAppsUX/issues/2149)) ([077bd80](https://github.com/Azure/LogicAppsUX/commit/077bd801a4dc9598187973d082bb84de15113d97))
+- **designer:** Expose `validateParameter` helper function ([#2151](https://github.com/Azure/LogicAppsUX/issues/2151)) ([c2df373](https://github.com/Azure/LogicAppsUX/commit/c2df37306dd9ac26dec2273b4b4602cb893975e6))
+- **designer:** HTML Editor ([#2146](https://github.com/Azure/LogicAppsUX/issues/2146)) ([6c2fc42](https://github.com/Azure/LogicAppsUX/commit/6c2fc42dcae9d25e4f10117d2acfe24305f38e15))
+
+### Bug Fixes
+
+- **designer:** "Run After" Bugfix around new root actions ([#2094](https://github.com/Azure/LogicAppsUX/issues/2094)) ([8974c7e](https://github.com/Azure/LogicAppsUX/commit/8974c7ebbaf9ca0df9a273da32c94c1241e90f1c))
+- **designer:** Fixing loading of display values and metadata serialization in file picker ([#2164](https://github.com/Azure/LogicAppsUX/issues/2164)) ([08faf4a](https://github.com/Azure/LogicAppsUX/commit/08faf4ab1f48eb83bf89ea10773ed964ce3aaf37))
+- **designer:** Fixing test connection call for service providers ([#2153](https://github.com/Azure/LogicAppsUX/issues/2153)) ([00dfc5b](https://github.com/Azure/LogicAppsUX/commit/00dfc5bd4fa97ce20ffb16bfa9120ce36f278c31))
+- **types:** Move LogicApps types to exportable files ([#2168](https://github.com/Azure/LogicAppsUX/issues/2168)) ([67486cc](https://github.com/Azure/LogicAppsUX/commit/67486cc6c881dbb3b81edcd6e0d1a45ebed6b279))
+- **vscode:** Update of connections and settings data in services ([#2169](https://github.com/Azure/LogicAppsUX/issues/2169)) ([a485450](https://github.com/Azure/LogicAppsUX/commit/a4854509869c574386bbbe8f139494fd82681716))
+
 ### [2.11.1](https://github.com/Azure/LogicAppsUX/compare/v2.11.0...v2.11.1) (2023-04-27)
 
 ### Bug Fixes

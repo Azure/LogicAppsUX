@@ -12,7 +12,7 @@
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true
   },
-  "files": ["../../types/Swagger.d.ts"],
+  "files": [],
   "include": [],
   "references": [
     {

@@ -27,9 +27,6 @@ export const useAllowUserToChangeConnection = (op: NodeOperation) => {
   return useIsConnectionRequired(op);
 };
 
-export const useNodeConnectionId = (nodeId: string): string =>
-  useSelector((state: RootState) => getConnectionId(state.connections, nodeId));
-
 export const useNodeConnectionName = (nodeId: string): QueryResult => {
   const { connectionId, connectorId } = useSelector((state: RootState) => {
     return nodeId
