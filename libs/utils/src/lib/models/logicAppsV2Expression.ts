@@ -1,8 +1,7 @@
 /**
  * https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2015-08-01-preview/workflowdefinition.json#
  */
-
-import type * as LogicAppsV2 from "./logicAppsV2";
+import type * as LogicAppsV2 from './logicAppsV2';
 
 export interface ExpressionAction extends LogicAppsV2.Action {
   kind: string;

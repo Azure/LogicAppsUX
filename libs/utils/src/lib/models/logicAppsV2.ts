@@ -2,11 +2,10 @@
  * https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-04-01-preview/workflowdefinition.json#
  * https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#
  */
-
-import type * as LogicApps from "./logicApps";
-import type * as Expression from "./logicAppsV2Expression";
-import type * as Integration from "./logicAppsV2Integration";
-import type * as Swagger from "./swagger";
+import type * as LogicApps from './logicApps';
+import type * as Expression from './logicAppsV2Expression';
+import type * as Integration from './logicAppsV2Integration';
+import type * as Swagger from './swagger';
 
 /* Action types */
 export interface Action extends Operation {

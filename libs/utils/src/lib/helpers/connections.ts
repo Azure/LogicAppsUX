@@ -185,7 +185,7 @@ export function getConnectionErrors(connection: Connection): ConnectionStatus[] 
 }
 
 // NOTE: This method is specifically for Multi-Auth type connectors.
-export function isConnectionMultiAuthManagedIdentityType(connection: Connection, connector: Connector): boolean {
+export function isConnectionMultiAuthManagedIdentityType(connection: Connection | undefined, connector: Connector | undefined): boolean {
   const connectionParameterValueSet = (connection?.properties as any)?.parameterValueSet;
   const connectorConnectionParameterSets = connector?.properties?.connectionParameterSets;
 

@@ -1,8 +1,7 @@
 /**
  * https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2015-08-01-preview/workflowdefinition.json#
  */
-
-import type * as LogicApps from "./logicApps";
+import type * as LogicApps from './logicApps';
 
 /* Content and Schema actions common types */
 

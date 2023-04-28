@@ -7,7 +7,7 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
   override async getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo> {
     if (isBuiltInOperation(definition)) {
       return getBuiltInOperationInfo(definition, isTrigger);
-    } else if (isServiceProviderOperation(definition)) {
+    } else if (isServiceProviderOperation(definition.type)) {
       return {
         connectorId: definition.inputs.serviceProviderConfiguration.serviceProviderId,
         operationId: definition.inputs.serviceProviderConfiguration.operationId,
@@ -50,7 +50,7 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
           brandColor,
           description,
           iconUri,
-          connection: equals(operationType, 'serviceprovider') ? { required: true, type: ConnectionType.ServiceProvider } : undefined,
+          connection: isServiceProviderOperation(operationType) ? { required: true, type: ConnectionType.ServiceProvider } : undefined,
           ...manifest,
         },
       };
@@ -62,6 +62,6 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
   }
 }
 
-function isServiceProviderOperation(definition: any): boolean {
-  return equals(definition.type, 'ServiceProvider');
+export function isServiceProviderOperation(operationType: string): boolean {
+  return equals(operationType, 'ServiceProvider');
 }

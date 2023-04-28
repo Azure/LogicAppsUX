@@ -10,7 +10,7 @@ export * from './gateway';
 export * from './subscription';
 export * from './theme';
 
-export * as LogicApps from "./logicApps";
-export * as LogicAppsV2 from "./logicAppsV2";
-export * as OpenAPIV2 from "./openApiV2";
-export * as Swagger from "./swagger";
+export * as LogicApps from './logicApps';
+export * as LogicAppsV2 from './logicAppsV2';
+export * as OpenAPIV2 from './openApiV2';
+export * as Swagger from './swagger';

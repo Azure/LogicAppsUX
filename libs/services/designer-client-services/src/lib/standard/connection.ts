@@ -263,7 +263,7 @@ export class StandardConnectionService extends BaseConnectionService {
     });
 
     try {
-      await this.createConnectionAclIfNeeded(connection);
+      await this._createConnectionAclIfNeeded(connection);
     } catch {
       // NOTE: Delete the connection created in this method if Acl creation failed.
       this.deleteConnection(connectionId);
@@ -284,11 +284,11 @@ export class StandardConnectionService extends BaseConnectionService {
   }
 
   // Run when assigning a conneciton to an operation
-  async setupConnectionIfNeeded(connection: Connection): Promise<void> {
-    await this.createConnectionAclIfNeeded(connection);
+  async setupConnectionIfNeeded(connection: Connection, identityId?: string): Promise<void> {
+    await this._createConnectionAclIfNeeded(connection, identityId);
   }
 
-  protected async createConnectionAclIfNeeded(connection: Connection): Promise<void> {
+  private async _createConnectionAclIfNeeded(connection: Connection, identityId?: string): Promise<void> {
     const { tenantId, workflowAppDetails } = this.options;
     if (!isArmResourceId(connection.id) || !workflowAppDetails) {
       return;
@@ -307,7 +307,7 @@ export class StandardConnectionService extends BaseConnectionService {
 
     const connectionAcls = (await this._getConnectionAcls(connection.id)) || [];
     const { identity, appName } = workflowAppDetails;
-    const identityDetailsForApiHubAuth = this._getIdentityDetailsForApiHubAuth(identity as ManagedIdentity, tenantId as string);
+    const identityDetailsForApiHubAuth = this._getIdentityDetailsForApiHubAuth(identity as ManagedIdentity, tenantId as string, identityId);
 
     try {
       if (
@@ -373,16 +373,26 @@ export class StandardConnectionService extends BaseConnectionService {
     });
   }
 
-  // NOTE: Use the system-assigned MI if exists, else use the first user assigned identity.
-  private _getIdentityDetailsForApiHubAuth(managedIdentity: ManagedIdentity, tenantId: string): { principalId: string; tenantId: string } {
-    return equals(managedIdentity.type, ResourceIdentityType.SYSTEM_ASSIGNED) ||
-      equals(managedIdentity.type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)
-      ? { principalId: managedIdentity.principalId as string, tenantId: managedIdentity.tenantId as string }
-      : {
-          principalId: managedIdentity.userAssignedIdentities?.[Object.keys(managedIdentity.userAssignedIdentities)[0]]
-            .principalId as string,
-          tenantId,
-        };
+  // NOTE: Use the system-assigned MI if exists, else use the first user assigned identity if identity is not specified.
+  private _getIdentityDetailsForApiHubAuth(
+    managedIdentity: ManagedIdentity,
+    tenantId: string,
+    identityIdForConnection: string | undefined
+  ): { principalId: string; tenantId: string } {
+    if (
+      !identityIdForConnection &&
+      (equals(managedIdentity.type, ResourceIdentityType.SYSTEM_ASSIGNED) ||
+        equals(managedIdentity.type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED))
+    ) {
+      return { principalId: managedIdentity.principalId as string, tenantId: managedIdentity.tenantId as string };
+    } else {
+      const identityKeys = Object.keys(managedIdentity.userAssignedIdentities ?? {});
+      const selectedIdentity = identityKeys.find((identityKey) => equals(identityKey, identityIdForConnection)) ?? identityKeys[0];
+      return {
+        principalId: managedIdentity.userAssignedIdentities?.[selectedIdentity].principalId as string,
+        tenantId,
+      };
+    }
   }
 
   async createAndAuthorizeOAuthConnection(
@@ -413,7 +423,7 @@ export class StandardConnectionService extends BaseConnectionService {
         await oAuthService.confirmConsentCodeForConnection(connectionId, loginResponse.code);
       }
 
-      await this.createConnectionAclIfNeeded(connection);
+      await this._createConnectionAclIfNeeded(connection);
 
       const fetchedConnection = await this.getConnection(connection.id);
       await this.testConnection(fetchedConnection);
