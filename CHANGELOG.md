@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [2.13.0](https://github.com/Azure/LogicAppsUX/compare/v2.12.0...v2.13.0) (2023-04-28)
+
+
+### Features
+
+* **designer:** Add Managed Identity picker in parameters view for MSI connections ([#2173](https://github.com/Azure/LogicAppsUX/issues/2173)) ([4637537](https://github.com/Azure/LogicAppsUX/commit/4637537110eb000fe081feb4816d06387091ebe6))
+* **designer:** Recurrence parameter defaults ([#2171](https://github.com/Azure/LogicAppsUX/issues/2171)) ([9066e79](https://github.com/Azure/LogicAppsUX/commit/9066e7961c1321e8ff32ee4ac3c01e81df42af47))
 
 ## [2.12.0](https://github.com/Azure/LogicAppsUX/compare/v2.11.1...v2.12.0) (2023-04-28)
 
