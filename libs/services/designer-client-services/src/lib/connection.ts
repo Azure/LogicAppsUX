@@ -52,7 +52,7 @@ export interface IConnectionService {
     connectionInfo: ConnectionCreationInfo,
     parametersMetadata: ConnectionParametersMetadata
   ): Promise<CreateConnectionResult>;
-  setupConnectionIfNeeded(connection: Connection): Promise<void>;
+  setupConnectionIfNeeded(connection: Connection, identityId?: string): Promise<void>;
   getUniqueConnectionName(connectorId: string, connectionNames: string[], connectorName: string): Promise<string>;
 }
 

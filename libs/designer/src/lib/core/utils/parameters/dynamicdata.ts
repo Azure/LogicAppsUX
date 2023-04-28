@@ -438,7 +438,6 @@ async function getManagedIdentityRequestProperties(
 
   let managedIdentityRequestProperties: ManagedIdentityRequestProperties | undefined;
 
-  // TODO - Update this when support for Managed identity is added.
   if (isManagedIdentityTypeConnection) {
     managedIdentityRequestProperties = {
       connection: { id: connection.id },
