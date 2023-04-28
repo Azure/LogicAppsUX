@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../extensionVariables';
-import { ProductionSlotTreeItem } from '../tree/slotsTree/ProductionSlotTreeItem';
-import type { SlotTreeItemBase } from '../tree/slotsTree/SlotTreeItemBase';
+import { LogicAppResourceTree } from '../tree/LogicAppResourceTree';
+import type { SlotTreeItem } from '../tree/slotsTree/SlotTreeItem';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { openReadOnlyJson } from '@microsoft/vscode-azext-utils';
 
-export async function viewProperties(context: IActionContext, node?: SlotTreeItemBase | ProductionSlotTreeItem): Promise<void> {
+export async function viewProperties(context: IActionContext, node?: SlotTreeItem): Promise<void> {
   if (!node) {
-    node = await ext.tree.showTreeItemPicker<ProductionSlotTreeItem>(ProductionSlotTreeItem.contextValue, context);
+    node = await ext.rgApi.appResourceTree.showTreeItemPicker<SlotTreeItem>(LogicAppResourceTree.productionContextValue, context);
   }
 
   const data = node.site;

@@ -14,6 +14,7 @@ import { localize } from '../../../localize';
 import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../utils/codeless/common';
 import { getAuthorizationToken, getCloudHost } from '../../utils/codeless/getAuthorizationToken';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
+import { getAccountCredentials } from '../../utils/credentials';
 import { getRandomHexString } from '../../utils/fs';
 import { delay } from '@azure/ms-rest-js';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
@@ -299,7 +300,7 @@ export async function exportLogicApp(): Promise<void> {
   const panelName: string = localize('export', 'Export');
   const panelGroupKey = ext.webViewKey.export;
   let accessToken: string;
-  const credentials: ServiceClientCredentials | undefined = await ext.azureAccountTreeItem.getAccountCredentials();
+  const credentials: ServiceClientCredentials | undefined = await getAccountCredentials();
   const apiVersion = '2021-03-01';
 
   const dialogOptions: vscode.OpenDialogOptions = {
