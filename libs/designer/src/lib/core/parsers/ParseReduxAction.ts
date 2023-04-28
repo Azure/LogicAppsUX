@@ -32,7 +32,7 @@ export const initializeGraphState = createAsyncThunk<
       getConnectionsQuery();
       const { definition, connectionReferences, parameters } = workflowDefinition;
       const deserializedWorkflow = BJSDeserialize(definition, runInstance);
-      if (shouldRecreateWorkflowGraph && workflow.graph) {
+      if (shouldRecreateWorkflowGraph === false && workflow.graph) {
         deserializedWorkflow.graph = workflow.graph;
       }
       thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
