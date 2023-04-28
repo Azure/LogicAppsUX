@@ -6,7 +6,8 @@ import type { RunDisplayItem } from './types';
 import { getCallbackUrl, isRunError, mapToRunItem } from './utils';
 import type { IIconProps, ITextFieldStyles } from '@fluentui/react';
 import { IconButton, MessageBar, MessageBarType, Pivot, PivotItem, TextField } from '@fluentui/react';
-import { Run, RunError, Runs, isCallbackInfoWithRelativePath } from '@microsoft/utils-logic-apps';
+import type { Run, RunError } from '@microsoft/utils-logic-apps';
+import { isCallbackInfoWithRelativePath } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useIntl } from 'react-intl';
@@ -163,5 +164,5 @@ export const Overview: React.FC<OverviewProps> = ({
   );
 };
 
-export { isRunError, Runs, Run, RunError, isCallbackInfoWithRelativePath, getCallbackUrl, mapToRunItem };
+export { isRunError, isCallbackInfoWithRelativePath, getCallbackUrl, mapToRunItem };
 export type { OverviewPropertiesProps };

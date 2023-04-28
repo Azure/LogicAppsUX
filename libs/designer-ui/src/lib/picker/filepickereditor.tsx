@@ -9,7 +9,7 @@ import type { IBreadcrumbItem, IIconProps, ITooltipHostStyles } from '@fluentui/
 import { TooltipHost, IconButton } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
 import type { TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
-import { guid } from '@microsoft/utils-logic-apps';
+import { equals, guid } from '@microsoft/utils-logic-apps';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -117,21 +117,21 @@ export const FilePickerEditor = ({
         tokenPickerButtonEditorProps={{ showOnLeft: true }}
       >
         <PickerValueChange pickerDisplayValue={pickerDisplayValue} setEditorDisplayValue={setEditorDisplayValue} />
+        <Picker
+          visible={showPicker}
+          anchorId={pickerIconId}
+          loadingFiles={isLoading}
+          currentPathSegments={titleSegments}
+          files={filterItems(items, type, fileFilters)}
+          errorDetails={errorDetails}
+          onCancel={() => setShowPicker(false)}
+          handleFolderNavigation={onFolderNavigated}
+          handleItemSelected={onFileFolderSelected}
+        />
       </BaseEditor>
       <TooltipHost content={openFolderLabel} calloutProps={calloutProps} styles={hostStyles}>
         <IconButton iconProps={folderIcon} aria-label={openFolderLabel} onClick={openFolderPicker} id={pickerIconId} />
       </TooltipHost>
-      <Picker
-        visible={showPicker}
-        anchorId={pickerIconId}
-        loadingFiles={isLoading}
-        currentPathSegments={titleSegments}
-        files={filterItems(items, type, fileFilters)}
-        errorDetails={errorDetails}
-        onCancel={() => setShowPicker(false)}
-        handleFolderNavigation={onFolderNavigated}
-        handleItemSelected={onFileFolderSelected}
-      />
     </div>
   );
 };
@@ -144,7 +144,7 @@ const filterItems = (items?: TreeDynamicValue[], type?: string, fileFilters?: st
   }
   if (fileFilters && fileFilters.length > 0) {
     returnItems = returnItems.filter((item) => {
-      return fileFilters.includes(item.mediaType ?? '');
+      return fileFilters.some((filter) => equals(filter, item.mediaType));
     });
   }
   return returnItems;
