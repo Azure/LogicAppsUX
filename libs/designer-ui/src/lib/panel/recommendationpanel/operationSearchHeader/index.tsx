@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-literals */
 import { DesignerSearchBox } from '../../../searchbox';
 import { Checkbox } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react/lib/Dropdown';
@@ -110,7 +109,6 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
       </div>
       {searchTerm ? (
         <div className="msla-flex-row">
-          {/* <span className="msla-search-heading-text">{searchResultsText}</span> */}
           <Checkbox label={groupByConnectorLabelText} onChange={onGroupToggleChange} checked={isGrouped} />
         </div>
       ) : null}
