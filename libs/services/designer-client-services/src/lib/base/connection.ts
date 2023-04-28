@@ -147,7 +147,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     shouldTestConnection?: boolean
   ): Promise<Connection>;
 
-  abstract setupConnectionIfNeeded(connection: Connection): Promise<void>;
+  abstract setupConnectionIfNeeded(connection: Connection, identityId?: string): Promise<void>;
 
   protected _getRequestForCreateConnection(connectorId: string, _connectionName: string, connectionInfo: ConnectionCreationInfo): any {
     const parameterValues = connectionInfo?.connectionParameters;

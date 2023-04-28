@@ -1,7 +1,12 @@
 import type { ConnectionReference } from '../../../common/models/workflow';
 import { getApiManagementSwagger } from '../../queries/connections';
 import type { ConnectionsStoreState } from '../../state/connection/connectionSlice';
-import { ApiManagementService, FunctionService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
+import {
+  ApiManagementService,
+  FunctionService,
+  WorkflowService,
+  isServiceProviderOperation,
+} from '@microsoft/designer-client-services-logic-apps';
 import type { AssistedConnectionProps } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { ConnectionParameterSet, ConnectionParameterSets, Connector, OperationManifest } from '@microsoft/utils-logic-apps';
@@ -134,7 +139,7 @@ export function getSupportedParameterSets(
     values: parameterSets.values.filter((parameterSet) => {
       if (containsManagedIdentityParameter(parameterSet)) {
         return (
-          !equals(operationType, 'serviceprovider') ||
+          !isServiceProviderOperation(operationType) ||
           identity?.type?.toLowerCase()?.includes(ResourceIdentityType.SYSTEM_ASSIGNED.toLowerCase())
         );
       }

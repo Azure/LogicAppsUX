@@ -20,36 +20,36 @@ body:
   - type: textarea
     id: description
     attributes:
-     label: Describe the Bug with repro steps
-     description: Provide a clear and concise description of the challenge you are running into.
-     placeholder: |
+      label: Describe the Bug with repro steps
+      description: Provide a clear and concise description of the challenge you are running into.
+      placeholder: |
         1. Go to '...'
         2. Click on '....'
         3. Scroll down to '....'
     validations:
       required: true
-      
+
   - type: dropdown
     id: sku
     attributes:
       label: What type of Logic App Is this happening in?
-      options: 
+      options:
         - Consumption (Portal)
         - Standard (Portal)
         - Standard (VSCode)
     validations:
       required: true
-  
+
   - type: dropdown
     id: deisgnerType
     attributes:
       label: Are you using Preview Designer or GA Designer
-      options: 
+      options:
         - Preview
         - Generally Available
     validations:
       required: true
-      
+
   - type: textarea
     id: workflow
     attributes:

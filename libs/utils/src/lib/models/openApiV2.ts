@@ -264,7 +264,6 @@ export interface LicenseObject {
   url?: string;
 }
 
-
 export interface IJsonSchema {
   id?: string;
   $schema?: string;

@@ -56,13 +56,7 @@ import {
   SchemaProcessor,
   WildIndexSegment,
 } from '@microsoft/parsers-logic-apps';
-import type {
-  Connection,
-  Connector,
-  OpenAPIV2,
-  OperationInfo,
-  OperationManifest,
-} from '@microsoft/utils-logic-apps';
+import type { Connection, Connector, OpenAPIV2, OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 import {
   first,
   getObjectPropertyValue,
@@ -444,7 +438,6 @@ async function getManagedIdentityRequestProperties(
 
   let managedIdentityRequestProperties: ManagedIdentityRequestProperties | undefined;
 
-  // TODO - Update this when support for Managed identity is added.
   if (isManagedIdentityTypeConnection) {
     managedIdentityRequestProperties = {
       connection: { id: connection.id },

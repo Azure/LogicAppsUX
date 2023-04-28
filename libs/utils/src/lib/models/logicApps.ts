@@ -1,8 +1,7 @@
 /**
  * https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2015-08-01-preview/workflowdefinition.json#
  */
-
-import type * as Integration from "./logicAppsIntegration";
+import type * as Integration from './logicAppsIntegration';
 
 /* Action types */
 
