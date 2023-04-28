@@ -117,7 +117,13 @@ const initializeOperationDetails = async (
     connector = manifest.properties.connector as Connector;
 
     const { iconUri, brandColor } = manifest.properties;
-    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
+    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
+      nodeId,
+      manifest,
+      undefined,
+      undefined,
+      state.designerOptions.sku
+    );
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs);
 
     if (parameterValues) {

@@ -87,7 +87,7 @@ export const initializeOperationMetadata = async (
       triggerNodeId = operationId;
     }
     if (operationManifestService.isSupported(operation.type, operation.kind)) {
-      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, dispatch, graph, references));
+      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, dispatch, graph, references, sku));
     } else {
       promises.push(initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, dispatch, sku) as any);
     }
@@ -198,7 +198,7 @@ export const initializeOperationDetailsForManifest = async (
         dispatch
       );
 
-      const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
+      const childGraphInputs = processChildGraphAndItsInputs(manifest, operation, sku);
 
       return [
         {
