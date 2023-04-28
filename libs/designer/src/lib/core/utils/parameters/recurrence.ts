@@ -5,7 +5,17 @@ import { OutputMapKey, SchemaProcessor, toInputParameter } from '@microsoft/pars
 import type { OpenAPIV2, RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import { map, RecurrenceType } from '@microsoft/utils-logic-apps';
 
-export type Sku = keyof typeof constants.SKU;
+export interface Recurrence {
+  frequency: string | undefined;
+  interval: number | undefined;
+  startTime?: string;
+  timeZone?: string;
+  schedule?: {
+    hours?: string[];
+    minutes?: number[];
+    weekDays?: string[];
+  };
+}
 
 const getRecurrenceSchema = (recurrenceType?: RecurrenceType): OpenAPIV2.SchemaObject => {
   return {
@@ -28,7 +38,7 @@ const getRecurrenceSchema = (recurrenceType?: RecurrenceType): OpenAPIV2.SchemaO
 export const getRecurrenceParameters = (
   recurrence: RecurrenceSetting | undefined,
   operationDefinition: any,
-  sku?: Sku
+  sku?: string
 ): ParameterInfo[] => {
   if (!recurrence || recurrence.type === RecurrenceType.None) {
     return [];
@@ -64,7 +74,7 @@ export const getRecurrenceParameters = (
   return toParameterInfoMap(recurrenceParameters, operationDefinition);
 };
 
-export function getDefaultRecurrenceBySku(sku?: Sku): LogicApps.Recurrence {
+export function getDefaultRecurrenceBySku(sku?: string): Recurrence {
   if (!sku) return constants.DEFAULT_RECURRENCE.PREMIUM;
 
   switch (sku) {
