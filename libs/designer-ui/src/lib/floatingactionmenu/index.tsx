@@ -209,12 +209,12 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
     <>
       <div className="msla-dynamic-added-params-container">
         {dynamicParameterProps.map((props) =>
-          props.properties['x-ms-dynamically-added'] === true ? <DynamicallyAddedParameter {...props} key={props.schemaKey} /> : undefined
+          props.properties['x-ms-dynamically-added'] === true ? <DynamicallyAddedParameter {...props} key={props.schemaKey} /> : null
         )}
       </div>
       <div className="msla-floating-action-menu-container">
-        {!expanded ? renderMenuButton() : undefined}
-        {expanded ? renderMenuItems() : undefined}
+        {!expanded ? renderMenuButton() : null}
+        {expanded ? renderMenuItems() : null}
       </div>
     </>
   );
