@@ -13,7 +13,11 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const initializeGraphState = createAsyncThunk<
   DeserializedWorkflow,
-  { workflowDefinition: Workflow; runInstance: LogicAppsV2.RunInstanceDefinition | null | undefined },
+  {
+    workflowDefinition: Workflow;
+    runInstance: LogicAppsV2.RunInstanceDefinition | null | undefined;
+    shouldRecreateWorkflowGraph?: boolean;
+  },
   { state: RootState }
 >(
   'parser/deserialize',
