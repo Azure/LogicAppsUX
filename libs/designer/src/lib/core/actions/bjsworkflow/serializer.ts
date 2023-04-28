@@ -32,7 +32,7 @@ import {
   DeserializationType,
   PropertySerializationType,
 } from '@microsoft/parsers-logic-apps';
-import type { LocationSwapMap, OperationManifest, SubGraphDetail } from '@microsoft/utils-logic-apps';
+import type { LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/utils-logic-apps';
 import {
   clone,
   deleteObjectProperty,

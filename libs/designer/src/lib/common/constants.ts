@@ -184,6 +184,7 @@ export default {
     STRING: 'string',
     TABLE: 'table',
     VARIABLE_NAME: 'variablename',
+    HTML: 'html',
   },
   EVENT_AUTH_COMPLETED: 'MSLA_AUTH_COMPLETED',
   ERROR_MESSAGES: {
@@ -664,6 +665,11 @@ export default {
   SCHEMA,
   SEARCH_THROTTLE_LIMIT_IN_MS: 750, // Throttling limit for search in milliseconds
   SECURE_OBJECT: 'SecureObject',
+  SKU: {
+    STANDARD: 'Standard',
+    PREMIUM: 'Premium',
+    CONSUMPTION: 'Consumption',
+  },
   FLOW_STATUS: {
     ABORTED: 'Aborted',
     CANCELLED: 'Cancelled',

@@ -1,6 +1,7 @@
 import { PropertyEditorItem, SchemaPropertyValueType } from './PropertyEditorItem';
 import type { IButtonStyles, IIconProps, ITextFieldStyles } from '@fluentui/react';
 import { DefaultButton, PrimaryButton, Callout, DirectionalHint, TextField } from '@fluentui/react';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { clone } from '@microsoft/utils-logic-apps';
 import isEqual from 'lodash.isequal';
 import { useEffect, useState } from 'react';

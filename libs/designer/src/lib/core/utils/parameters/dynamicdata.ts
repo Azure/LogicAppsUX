@@ -56,7 +56,7 @@ import {
   SchemaProcessor,
   WildIndexSegment,
 } from '@microsoft/parsers-logic-apps';
-import type { Connection, Connector, OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
+import type { Connection, Connector, OpenAPIV2, OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 import {
   first,
   getObjectPropertyValue,

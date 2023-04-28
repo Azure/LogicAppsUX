@@ -4,6 +4,7 @@ import type { RootState } from '../../store';
 import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
 import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
 import { operationIsAction } from './workflowInterfaces';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';

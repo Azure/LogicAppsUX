@@ -3,6 +3,7 @@ import type { RelationshipIds } from '../state/panel/panelInterfaces';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowNode } from './models/workflowNode';
 import { addNewEdge, reassignEdgeSources, reassignEdgeTargets, removeEdge, applyIsRootNode } from './restructuringHelpers';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 
 export interface MoveNodePayload {
   nodeId: string;

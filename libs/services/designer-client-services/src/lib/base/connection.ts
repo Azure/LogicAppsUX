@@ -9,7 +9,7 @@ import type {
 } from '../connection';
 import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
 import { SwaggerParser } from '@microsoft/parsers-logic-apps';
-import type { Connection, Connector } from '@microsoft/utils-logic-apps';
+import type { Connection, Connector, OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import {
   isCustomConnector,
   getUniqueName,

@@ -1,6 +1,6 @@
 import { coreBadge } from '../../badges';
-import { OutputSecureDataMode, SettingScope } from '@microsoft/utils-logic-apps';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
+import { OutputSecureDataMode, SettingScope } from '@microsoft/utils-logic-apps';
 
 export const composeManifest = {
   properties: {
