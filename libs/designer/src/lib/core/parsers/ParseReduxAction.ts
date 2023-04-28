@@ -13,11 +13,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const initializeGraphState = createAsyncThunk<
   DeserializedWorkflow,
-  {
-    workflowDefinition: Workflow;
-    runInstance: LogicAppsV2.RunInstanceDefinition | null | undefined;
-    shouldRecreateWorkflowGraph?: boolean;
-  },
+  { workflowDefinition: Workflow; runInstance: LogicAppsV2.RunInstanceDefinition | null | undefined },
   { state: RootState }
 >(
   'parser/deserialize',
@@ -36,9 +32,7 @@ export const initializeGraphState = createAsyncThunk<
       getConnectionsQuery();
       const { definition, connectionReferences, parameters } = workflowDefinition;
       const deserializedWorkflow = BJSDeserialize(definition, runInstance);
-      // The host can specify whether the workflow graph should be recreated. This is used for scenarios where
-      // the flow is already loaded into the designer and recreating it will modify the existing node dimensions
-      if (shouldRecreateWorkflowGraph === false && workflow.graph) {
+      if (shouldRecreateWorkflowGraph && workflow.graph) {
         deserializedWorkflow.graph = workflow.graph;
       }
       thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
