@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [2.15.0](https://github.com/Azure/LogicAppsUX/compare/v2.14.0...v2.15.0) (2023-04-28)
+
+
+### Features
+
+* **vscode:** Move extension tab to resources tab ([#2107](https://github.com/Azure/LogicAppsUX/issues/2107)) ([2a92423](https://github.com/Azure/LogicAppsUX/commit/2a92423abc7d02963416d11f5de44206baa7d69d))
+
+
+### Bug Fixes
+
+* **designer:** Update token picker location during scroll ([#2176](https://github.com/Azure/LogicAppsUX/issues/2176)) ([b89dbfa](https://github.com/Azure/LogicAppsUX/commit/b89dbfaa138b5301c6c6c7a9cbd75b3d83fa25bf))
+
 ## [2.14.0](https://github.com/Azure/LogicAppsUX/compare/v2.13.0...v2.14.0) (2023-04-28)
 
 
