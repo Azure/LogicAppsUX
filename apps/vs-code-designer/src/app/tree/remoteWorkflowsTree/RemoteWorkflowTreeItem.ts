@@ -15,7 +15,7 @@ import type { StringDictionary } from '@azure/arm-appservice';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { isEmptyString, HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import { AzExtTreeItem, DialogResponses } from '@microsoft/vscode-azext-utils';
-import type { AzExtParentTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
+import type { IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import { ProjectResource } from '@microsoft/vscode-extension';
 import type {
   ServiceProviderConnectionModel,
@@ -32,7 +32,7 @@ export class RemoteWorkflowTreeItem extends AzExtTreeItem {
   public readonly workflowFileContent: IWorkflowFileContent;
   public credentials: ServiceClientCredentials;
 
-  private constructor(parent: AzExtParentTreeItem, name: string, workflowFileContent: IWorkflowFileContent) {
+  private constructor(parent: RemoteWorkflowsTreeItem, name: string, workflowFileContent: IWorkflowFileContent) {
     super(parent);
     this.name = name;
     this.workflowFileContent = workflowFileContent;

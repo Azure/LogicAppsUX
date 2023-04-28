@@ -5,7 +5,7 @@
 import { connectionsFileName, managementApiPrefix, parametersFileName, workflowAppApiVersion } from '../../../constants';
 import { localize } from '../../../localize';
 import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
-import type { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
+import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { sendAzureRequest } from '../requestUtils';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -20,13 +20,13 @@ import type {
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-export async function getFileOrFolderContent(context: IActionContext, node: SlotTreeItemBase, filePath: string): Promise<string> {
+export async function getFileOrFolderContent(context: IActionContext, node: SlotTreeItem, filePath: string): Promise<string> {
   const url = `${node.id}/hostruntime/admin/vfs/${filePath}?api-version=${workflowAppApiVersion}&relativepath=1`;
   const response = await sendAzureRequest(url, context, 'GET', node.site.subscription);
   return response.bodyAsText;
 }
 
-export async function getParameters(context: IActionContext, node: SlotTreeItemBase): Promise<IParametersFileContent[]> {
+export async function getParameters(context: IActionContext, node: SlotTreeItem): Promise<IParametersFileContent[]> {
   const parametersData = await getParameterFileContent(context, node);
   const parameters: IParametersFileContent[] = [];
 
@@ -40,7 +40,7 @@ export async function getParameters(context: IActionContext, node: SlotTreeItemB
   return parameters;
 }
 
-export async function getParameterFileContent(context: IActionContext, node: SlotTreeItemBase): Promise<Record<string, Parameter>> {
+export async function getParameterFileContent(context: IActionContext, node: SlotTreeItem): Promise<Record<string, Parameter>> {
   try {
     const data = await getFileOrFolderContent(context, node, parametersFileName);
     return JSON.parse(data);
@@ -55,7 +55,7 @@ export async function getParameterFileContent(context: IActionContext, node: Slo
 }
 
 export async function getWorkflow(
-  node: SlotTreeItemBase,
+  node: SlotTreeItem,
   workflow: RemoteWorkflowTreeItem,
   context: IActionContext
 ): Promise<IWorkflowFileContent> {
@@ -64,7 +64,7 @@ export async function getWorkflow(
   return response.parsedBody;
 }
 
-export async function listWorkflows(node: SlotTreeItemBase, context: IActionContext): Promise<Record<string, any>[]> {
+export async function listWorkflows(node: SlotTreeItem, context: IActionContext): Promise<Record<string, any>[]> {
   const url = `${node.id}/hostruntime${managementApiPrefix}/workflows?api-version=${workflowAppApiVersion}`;
   try {
     const response = await sendAzureRequest(url, context, 'GET', node.site.subscription);
@@ -78,7 +78,7 @@ export async function listWorkflows(node: SlotTreeItemBase, context: IActionCont
   }
 }
 
-export async function getOptionalFileContent(context: IActionContext, node: SlotTreeItemBase, filePath: string): Promise<string> {
+export async function getOptionalFileContent(context: IActionContext, node: SlotTreeItem, filePath: string): Promise<string> {
   try {
     return await getFileOrFolderContent(context, node, filePath);
   } catch (error) {
@@ -91,7 +91,7 @@ export async function getOptionalFileContent(context: IActionContext, node: Slot
   }
 }
 
-async function getArtifactFiles(context: IActionContext, node: SlotTreeItemBase, folderPath: string): Promise<IArtifactFile[]> {
+async function getArtifactFiles(context: IActionContext, node: SlotTreeItem, folderPath: string): Promise<IArtifactFile[]> {
   try {
     const data = await getFileOrFolderContent(context, node, folderPath);
     const content = JSON.parse(data);
@@ -109,7 +109,7 @@ async function getArtifactFiles(context: IActionContext, node: SlotTreeItemBase,
   }
 }
 
-export async function getAllArtifacts(context: IActionContext, node: SlotTreeItemBase): Promise<Artifacts> {
+export async function getAllArtifacts(context: IActionContext, node: SlotTreeItem): Promise<Artifacts> {
   const mapArtifacts = await getArtifactFiles(context, node, 'Artifacts/Maps');
   const schemaArtifacts = await getArtifactFiles(context, node, 'Artifacts/Schemas');
   const artifacts: Artifacts = { maps: {}, schemas: [] };
@@ -142,7 +142,7 @@ export async function getAllArtifacts(context: IActionContext, node: SlotTreeIte
   return artifacts;
 }
 
-export async function getConnections(context: IActionContext, node: SlotTreeItemBase): Promise<IConnectionsFileContent[]> {
+export async function getConnections(context: IActionContext, node: SlotTreeItem): Promise<IConnectionsFileContent[]> {
   const connectionJson = await getOptionalFileContent(context, node, connectionsFileName);
   const connectionsData = JSON.parse(connectionJson);
   const functionConnections = connectionsData.functionConnections || {};

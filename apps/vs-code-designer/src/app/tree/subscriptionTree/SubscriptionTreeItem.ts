@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { logicAppKind, projectLanguageSetting, workflowappRuntime } from '../../../constants';
+import { projectLanguageSetting, workflowappRuntime } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { LogicAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppCreateStep';
@@ -15,7 +15,8 @@ import { getRandomHexString } from '../../utils/fs';
 import { getDefaultFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { isProjectCV, isRemoteProjectCV } from '../../utils/tree/projectContextValues';
 import { getFunctionsWorkerRuntime, getWorkspaceSettingFromAnyFolder } from '../../utils/vsCodeConfig/settings';
-import { ProductionSlotTreeItem } from '../slotsTree/ProductionSlotTreeItem';
+import { LogicAppResourceTree } from '../LogicAppResourceTree';
+import { SlotTreeItem } from '../slotsTree/SlotTreeItem';
 import type { Site, WebSiteManagementClient } from '@azure/arm-appservice';
 import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import {
@@ -82,9 +83,9 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       webAppCollection,
       'azLogicAppInvalidLogicApp',
       async (site: Site) => {
-        const parsedSite = new ParsedSite(site, this.subscription);
-        if (site.kind.includes(logicAppKind)) {
-          return new ProductionSlotTreeItem(this, parsedSite);
+        const resourceTree = new LogicAppResourceTree(this.subscription, site);
+        if (resourceTree.site.isWorkflowApp) {
+          return new SlotTreeItem(this, resourceTree);
         }
         return undefined;
       },
@@ -93,15 +94,14 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       }
     );
   }
-
-  public async createChildImpl(context: ICreateLogicAppContext): Promise<AzExtTreeItem> {
+  public static async createChild(context: ICreateLogicAppContext, subscription: SubscriptionTreeItem): Promise<SlotTreeItem> {
     const version: FuncVersion = await getDefaultFuncVersion(context);
     const language: string | undefined = getWorkspaceSettingFromAnyFolder(projectLanguageSetting);
 
     context.telemetry.properties.projectRuntime = version;
     context.telemetry.properties.projectLanguage = language;
 
-    const wizardContext: IFunctionAppWizardContext = Object.assign(context, this.subscription, {
+    const wizardContext: IFunctionAppWizardContext = Object.assign(context, subscription.subscription, {
       newSiteKind: AppKind.workflowapp,
       resourceGroupDeferLocationStep: true,
       version,
@@ -197,7 +197,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
     await wizard.execute();
 
-    const site = new ParsedSite(nonNullProp(wizardContext, 'site'), this.subscription);
+    const site = new ParsedSite(nonNullProp(wizardContext, 'site'), subscription.subscription);
     const client: SiteClient = await site.createClient(context);
 
     if (!client.isLinux) {
@@ -208,7 +208,9 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       }
     }
 
-    return new ProductionSlotTreeItem(this, site);
+    const resolved = new LogicAppResourceTree(subscription.subscription, nonNullProp(wizardContext, 'site'));
+    await ext.rgApi.appResourceTree.refresh(context);
+    return new SlotTreeItem(subscription, resolved);
   }
 
   public isAncestorOfImpl(contextValue: string | RegExp): boolean {

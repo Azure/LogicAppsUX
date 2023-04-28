@@ -75,7 +75,7 @@ export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
     }
 
     if (this.currentLoggedInSessions) {
-      return this._getCredentialsForSessions(this.currentLoggedInSessions, tenantId);
+      return this.getCredentialsForSessions(this.currentLoggedInSessions, tenantId);
     }
 
     return undefined;
@@ -108,7 +108,7 @@ export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
     return super.pickTreeItemImpl(expectedContextValues);
   }
 
-  private _getCredentialsForSessions(sessions: any, tenantId?: string): ServiceClientCredentials {
+  private getCredentialsForSessions(sessions: any, tenantId?: string): ServiceClientCredentials {
     if (tenantId) {
       const tenantDetails = sessions.filter((session) => session.tenantId.toLowerCase() == tenantId);
       return tenantDetails.length ? tenantDetails[0].credentials2 : sessions[0].credentials2;

@@ -8,7 +8,7 @@ import { getAllArtifacts, getOptionalFileContent, listWorkflows } from '../../ut
 import { getRequestTriggerSchema } from '../../utils/codeless/common';
 import { getThemedIconPath } from '../../utils/tree/assets';
 import { getProjectContextValue } from '../../utils/tree/projectContextValues';
-import type { SlotTreeItemBase } from '../slotsTree/SlotTreeItemBase';
+import type { SlotTreeItem } from '../slotsTree/SlotTreeItem';
 import { RemoteWorkflowTreeItem } from './RemoteWorkflowTreeItem';
 import { isNullOrEmpty } from '@microsoft/utils-logic-apps';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
@@ -19,7 +19,7 @@ import type { Artifacts, Parameter } from '@microsoft/vscode-extension';
 export class RemoteWorkflowsTreeItem extends AzExtParentTreeItem {
   public readonly label: string = localize('Workflows', 'Workflows');
   public readonly childTypeLabel: string = localize('Workflow', 'Workflow');
-  public readonly parent: SlotTreeItemBase;
+  public readonly parent: SlotTreeItem;
   public isReadOnly: boolean;
 
   private _artifacts: Artifacts;
@@ -28,12 +28,12 @@ export class RemoteWorkflowsTreeItem extends AzExtParentTreeItem {
   private _nextLink: string | undefined;
   public readonly _context: IActionContext;
 
-  private constructor(context: IActionContext, parent: SlotTreeItemBase) {
+  private constructor(context: IActionContext, parent: SlotTreeItem) {
     super(parent);
     this._context = context;
   }
 
-  public static async createWorkflowsTreeItem(context: IActionContext, parent: SlotTreeItemBase): Promise<RemoteWorkflowsTreeItem> {
+  public static async createWorkflowsTreeItem(context: IActionContext, parent: SlotTreeItem): Promise<RemoteWorkflowsTreeItem> {
     const ti: RemoteWorkflowsTreeItem = new RemoteWorkflowsTreeItem(context, parent);
     // initialize
     await ti.refreshImpl();

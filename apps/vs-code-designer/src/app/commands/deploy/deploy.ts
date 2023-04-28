@@ -13,12 +13,12 @@ import {
   workflowAppAADTenantId,
   kubernetesKind,
   showDeployConfirmationSetting,
+  logicAppFilter,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { ProductionSlotTreeItem } from '../../tree/slotsTree/ProductionSlotTreeItem';
-import { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
-import type { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
+import { LogicAppResourceTree } from '../../tree/LogicAppResourceTree';
+import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { createAclInConnectionIfNeeded, getConnectionsJson } from '../../utils/codeless/connection';
 import { getParametersJson } from '../../utils/codeless/parameter';
 import { isPathEqual, writeFormattedJson } from '../../utils/fs';
@@ -31,14 +31,12 @@ import {
   AdvancedIdentityTenantIdStep,
   AdvancedIdentityClientSecretStep,
 } from '../createLogicApp/createLogicAppSteps/AdvancedIdentityPromptSteps';
-import { getDeployNode as getInnerDeployNode } from './getDeployNode';
-import type { IDeployNode } from './getDeployNode';
 import { notifyDeployComplete } from './notifyDeployComplete';
 import { updateAppSettingsWithIdentityDetails } from './updateAppSettings';
 import { verifyAppSettings } from './verifyAppSettings';
 import type { SiteConfigResource, StringDictionary } from '@azure/arm-appservice';
 import { ResolutionService } from '@microsoft/parsers-logic-apps';
-import { deploy as innerDeploy, getDeployFsPath, runPreDeployTask } from '@microsoft/vscode-azext-azureappservice';
+import { deploy as innerDeploy, getDeployFsPath, runPreDeployTask, getDeployNode } from '@microsoft/vscode-azext-azureappservice';
 import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { ScmType } from '@microsoft/vscode-azext-azureappservice/out/src/ScmType';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -50,25 +48,25 @@ import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
 
 export async function deployProductionSlot(
   context: IActionContext,
-  target?: Uri | string | SlotTreeItemBase,
+  target?: Uri | string | SlotTreeItem,
   functionAppId?: string | Record<string, any>
 ): Promise<void> {
-  await deploy(context, target, functionAppId, ProductionSlotTreeItem.contextValue);
+  await deploy(context, target, functionAppId);
 }
 
 export async function deploySlot(
   context: IActionContext,
-  target?: Uri | string | SlotTreeItemBase,
+  target?: Uri | string | SlotTreeItem,
   functionAppId?: string | Record<string, any>
 ): Promise<void> {
-  await deploy(context, target, functionAppId, SlotTreeItem.contextValue);
+  await deploy(context, target, functionAppId, new RegExp(LogicAppResourceTree.pickSlotContextValue));
 }
 
 async function deploy(
   actionContext: IActionContext,
-  target: Uri | string | SlotTreeItemBase | undefined,
+  target: Uri | string | SlotTreeItem | undefined,
   functionAppId: string | Record<string, any> | undefined,
-  expectedContextValue: string
+  expectedContextValue?: string | RegExp
 ): Promise<void> {
   addLocalFuncTelemetry(actionContext);
 
@@ -80,7 +78,15 @@ async function deploy(
 
   ext.deploymentFolderPath = originalDeployFsPath;
 
-  const { node, isNewFunctionApp }: IDeployNode = await getInnerDeployNode(context, target, functionAppId, expectedContextValue);
+  const node: SlotTreeItem = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () =>
+    ext.rgApi.pickAppResource(
+      { ...context, suppressCreatePick: false },
+      {
+        filter: logicAppFilter,
+        expectedChildContextValue: expectedContextValue,
+      }
+    )
+  );
 
   const nodeKind = node.site.kind && node.site.kind.toLowerCase();
   const isWorkflowApp = nodeKind?.includes(logicAppKind);
@@ -120,13 +126,13 @@ async function deploy(
 
   identityWizardContext?.useAdvancedIdentity ? await updateAppSettingsWithIdentityDetails(context, node, identityWizardContext) : undefined;
 
-  await verifyAppSettings(context, node, version, language, originalDeployFsPath, isNewFunctionApp);
+  await verifyAppSettings(context, node, version, language, originalDeployFsPath, !context.isNewApp);
 
   const client = await node.site.createClient(actionContext);
   const siteConfig: SiteConfigResource = await client.getSiteConfig();
   const isZipDeploy: boolean = siteConfig.scmType !== ScmType.LocalGit && siteConfig.scmType !== ScmType.GitHub;
 
-  if (getWorkspaceSetting<boolean>(showDeployConfirmationSetting, workspaceFolder.uri.fsPath) && !isNewFunctionApp && isZipDeploy) {
+  if (getWorkspaceSetting<boolean>(showDeployConfirmationSetting, workspaceFolder.uri.fsPath) && !context.isNewApp && isZipDeploy) {
     const warning: string = localize(
       'confirmDeploy',
       'Are you sure you want to deploy to "{0}"? This will overwrite any previous deployment and cannot be undone.',
@@ -207,7 +213,7 @@ async function managedApiConnectionsExists(workspaceFolder: WorkspaceFolder): Pr
 }
 
 async function getProjectPathToDeploy(
-  node: SlotTreeItemBase,
+  node: SlotTreeItem,
   workspaceFolder: WorkspaceFolder,
   settingsToExclude: string[],
   originalDeployFsPath: string,
@@ -277,7 +283,7 @@ async function cleanAndRemoveDeployFolder(deployProjectPath: string): Promise<vo
   fse.rmdirSync(deployProjectPath);
 }
 
-async function checkAADDetailsExistsInAppSettings(node: SlotTreeItemBase, identityWizardContext: IIdentityWizardContext): Promise<boolean> {
+async function checkAADDetailsExistsInAppSettings(node: SlotTreeItem, identityWizardContext: IIdentityWizardContext): Promise<boolean> {
   const client = await node.site.createClient(identityWizardContext);
   const appSettings: StringDictionary | undefined = (await client.listApplicationSettings())?.properties;
   if (appSettings) {
