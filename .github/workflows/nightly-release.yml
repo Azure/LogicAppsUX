@@ -129,7 +129,7 @@ jobs:
           node-version: 16
       - run: npm ci
       - name: 'Local Version Bump'
-        run: ${{ env.BUMP_COMMAND }} -- --skip.commit --skip.tag
+        run: ${{ BUMP_COMMAND }} -- --skip.commit --skip.tag
       - run: npm ci
       - run: npx nx build ${{ matrix.lib.package }}
       - name: Use .npmrc
