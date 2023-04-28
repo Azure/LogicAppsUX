@@ -1,11 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 /* eslint-disable react/jsx-no-literals */
 import { DesignerSearchBox } from '../../../searchbox';
-import { Checkbox, Icon, IconButton, Link, Text } from '@fluentui/react';
+import { Checkbox } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react/lib/Dropdown';
-import { Dropdown, DropdownMenuItemType } from '@fluentui/react/lib/Dropdown';
-import { useCallback } from 'react';
+import { Dropdown } from '@fluentui/react/lib/Dropdown';
 import { useIntl } from 'react-intl';
 
 interface OperationSearchHeaderProps {
@@ -49,7 +46,12 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
   ];
 
   const actionTypeFilters = isTriggerNode
-    ? []
+    ? [
+        {
+          key: 'actionType-triggers',
+          text: intl.formatMessage({ defaultMessage: 'Triggers', description: 'Filter by Triggers category of connectors' }),
+        },
+      ]
     : [
         {
           key: 'actionType-triggers',
@@ -103,6 +105,7 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
           onChange={onChange}
           multiSelect
           options={actionTypeFilters}
+          disabled={isTriggerNode}
         />
       </div>
       {searchTerm ? (
