@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.13.1](https://github.com/Azure/LogicAppsUX/compare/v2.13.0...v2.13.1) (2023-04-28)
+
+
+### Bug Fixes
+
+* **designer:** Remove double quotation marks in parameters panel ([#2170](https://github.com/Azure/LogicAppsUX/issues/2170)) ([d033fce](https://github.com/Azure/LogicAppsUX/commit/d033fce9f1eec1239de642a4792ef5913bd4bfaf))
+
 ## [2.13.0](https://github.com/Azure/LogicAppsUX/compare/v2.12.0...v2.13.0) (2023-04-28)
 
 
