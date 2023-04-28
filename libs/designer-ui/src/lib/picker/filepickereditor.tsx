@@ -2,15 +2,16 @@ import type { BaseEditorProps, ChangeHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
 import type { ValueSegment } from '../editor/models/parameter';
 import { ValueSegmentType } from '../editor/models/parameter';
-import { PickerValueChange } from './PickerValueChange';
 import { Picker } from './picker';
 import { PickerItemType } from './pickerItem';
+import { EditorValueChange } from './plugins/EditorValueChange';
+import { UpdateEditorFromPicker } from './plugins/UpdateEditorFromPicker';
 import type { IBreadcrumbItem, IIconProps, ITooltipHostStyles } from '@fluentui/react';
 import { TooltipHost, IconButton } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
 import type { TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
 import { equals, guid } from '@microsoft/utils-logic-apps';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface PickerCallbackHandlers {
@@ -50,17 +51,10 @@ export const FilePickerEditor = ({
   const pickerIconId = useId();
   const intl = useIntl();
   const [selectedItem, setSelectedItem] = useState<any>();
-  const [editorDisplayValue, setEditorDisplayValue] = useState<ValueSegment[]>(
-    displayValue ? [{ id: guid(), value: displayValue, type: ValueSegmentType.LITERAL }] : initialValue
-  );
-  const [pickerDisplayValue, setPickerDisplayValue] = useState<ValueSegment[]>([]);
+  const initialDisplayValue = displayValue ? [{ id: guid(), value: displayValue, type: ValueSegmentType.LITERAL }] : initialValue;
+  const [editorDisplayValue, setEditorDisplayValue] = useState<ValueSegment[]>(initialDisplayValue);
+  const [pickerDisplayValue, setPickerDisplayValue] = useState<ValueSegment[]>(initialDisplayValue);
   const [showPicker, setShowPicker] = useState(false);
-
-  useEffect(() => {
-    if (displayValue) {
-      setPickerDisplayValue([{ id: guid(), value: displayValue, type: ValueSegmentType.LITERAL }]);
-    }
-  }, [displayValue]);
 
   const { onFolderNavigation, getFileSourceName, getDisplayValueFromSelectedItem, getValueFromSelectedItem } = pickerCallbacks;
   const fileSourceName = getFileSourceName();
@@ -90,15 +84,26 @@ export const FilePickerEditor = ({
   };
 
   const handleBlur = () => {
-    if (!selectedItem) return;
-    const valueSegmentValue: ValueSegment[] = [
-      { id: guid(), type: ValueSegmentType.LITERAL, value: getValueFromSelectedItem(selectedItem) },
-    ];
+    if (selectedItem) {
+      const valueSegmentValue: ValueSegment[] = [
+        { id: guid(), type: ValueSegmentType.LITERAL, value: getValueFromSelectedItem(selectedItem) },
+      ];
 
-    editorBlur?.({
-      value: valueSegmentValue,
-      viewModel: { displayValue: editorDisplayValue[0]?.value, selectedItem },
-    });
+      editorBlur?.({
+        value: valueSegmentValue,
+        viewModel: { displayValue: pickerDisplayValue[0]?.value, selectedItem: selectedItem },
+      });
+    } else {
+      editorBlur?.({
+        value: editorDisplayValue,
+        viewModel: { displayValue: undefined, selectedItem: undefined },
+      });
+    }
+  };
+
+  const clearPickerInfo = () => {
+    setSelectedItem(undefined);
+    setPickerDisplayValue([]);
   };
 
   const openFolderLabel = intl.formatMessage({ defaultMessage: 'Open folder', description: 'Open folder label' });
@@ -116,22 +121,27 @@ export const FilePickerEditor = ({
         isTrigger={baseEditorProps.isTrigger}
         tokenPickerButtonEditorProps={{ showOnLeft: true }}
       >
-        <PickerValueChange pickerDisplayValue={pickerDisplayValue} setEditorDisplayValue={setEditorDisplayValue} />
-        <Picker
-          visible={showPicker}
-          anchorId={pickerIconId}
-          loadingFiles={isLoading}
-          currentPathSegments={titleSegments}
-          files={filterItems(items, type, fileFilters)}
-          errorDetails={errorDetails}
-          onCancel={() => setShowPicker(false)}
-          handleFolderNavigation={onFolderNavigated}
-          handleItemSelected={onFileFolderSelected}
+        <EditorValueChange
+          pickerDisplayValue={pickerDisplayValue}
+          setEditorDisplayValue={setEditorDisplayValue}
+          clearPickerInfo={clearPickerInfo}
         />
+        <UpdateEditorFromPicker pickerDisplayValue={pickerDisplayValue} />
       </BaseEditor>
       <TooltipHost content={openFolderLabel} calloutProps={calloutProps} styles={hostStyles}>
         <IconButton iconProps={folderIcon} aria-label={openFolderLabel} onClick={openFolderPicker} id={pickerIconId} />
       </TooltipHost>
+      <Picker
+        visible={showPicker}
+        anchorId={pickerIconId}
+        loadingFiles={isLoading}
+        currentPathSegments={titleSegments}
+        files={filterItems(items, type, fileFilters)}
+        errorDetails={errorDetails}
+        onCancel={() => setShowPicker(false)}
+        handleFolderNavigation={onFolderNavigated}
+        handleItemSelected={onFileFolderSelected}
+      />
     </div>
   );
 };
