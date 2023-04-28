@@ -27,6 +27,7 @@ import type { ICallbackUrlResponse } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { readFileSync } from 'fs';
 import { basename, dirname, join } from 'path';
+import * as path from 'path';
 import * as vscode from 'vscode';
 
 export async function openOverview(context: IAzureConnectorsContext, node: vscode.Uri | RemoteWorkflowTreeItem | undefined): Promise<void> {
@@ -101,6 +102,11 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     vscode.ViewColumn.Active,
     options
   );
+
+  panel.iconPath = {
+    light: vscode.Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'Codeless.svg')),
+    dark: vscode.Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'Codeless.svg')),
+  };
 
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 

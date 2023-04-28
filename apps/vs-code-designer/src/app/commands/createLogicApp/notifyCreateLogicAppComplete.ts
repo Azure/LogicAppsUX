@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import type { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
+import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { MessageItem } from 'vscode';
@@ -12,9 +12,9 @@ import { window } from 'vscode';
 
 /**
  * Shows information message after the creation of Logic app has been completed and let user select post actions.
- * @param {SlotTreeItemBase} node - Logic app node structure.
+ * @param {SlotTreeItem} node - Logic app node structure.
  */
-export async function notifyCreateLogicAppComplete(node: SlotTreeItemBase): Promise<void> {
+export async function notifyCreateLogicAppComplete(node: SlotTreeItem): Promise<void> {
   const deployComplete: string = localize('creationComplete', 'Creation of "{0}" completed.', node.site.fullName);
   const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
 

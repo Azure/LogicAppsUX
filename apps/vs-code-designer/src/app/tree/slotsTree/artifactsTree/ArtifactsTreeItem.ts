@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../localize';
-import type { SlotTreeItemBase } from '../SlotTreeItemBase';
+import type { SlotTreeItem } from '../SlotTreeItem';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { FolderTreeItem } from '@microsoft/vscode-azext-azureappservice';
 
@@ -17,7 +17,7 @@ export class ArtifactsTreeItem extends FolderTreeItem {
 
   protected readonly _isRoot: boolean = false;
 
-  constructor(parent: SlotTreeItemBase, client: ParsedSite) {
+  constructor(parent: SlotTreeItem, client: ParsedSite) {
     super(parent, {
       site: client,
       label: localize('Artifacts', 'Artifacts'),

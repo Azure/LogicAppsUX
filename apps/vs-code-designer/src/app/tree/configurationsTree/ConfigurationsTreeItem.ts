@@ -5,7 +5,7 @@
 import { localize } from '../../../localize';
 import { getThemedIconPath } from '../../utils/tree/assets';
 import { getProjectContextValue } from '../../utils/tree/projectContextValues';
-import type { SlotTreeItemBase } from '../slotsTree/SlotTreeItemBase';
+import type { SlotTreeItem } from '../slotsTree/SlotTreeItem';
 import { ConnectionsTreeItem } from './connectionsTree/ConnectionsTreeItem';
 import { ParametersTreeItem } from './parametersTree/ParametersTreeItem';
 import { AppSettingsTreeItem } from '@microsoft/vscode-azext-azureappservice';
@@ -16,19 +16,19 @@ import { ProjectAccess, ProjectResource } from '@microsoft/vscode-extension';
 export class ConfigurationsTreeItem extends AzExtParentTreeItem {
   public static contextValue = 'azLogicAppsConfigurations';
   public readonly label: string = localize('Configurations', 'Configurations');
-  public readonly parent: SlotTreeItemBase;
+  public readonly parent: SlotTreeItem;
   public readonly appSettingsTreeItem: AppSettingsTreeItem;
   public isReadOnly: boolean;
 
   private _connectionsTreeItem: ConnectionsTreeItem;
   private _parametersTreeItem: ParametersTreeItem;
 
-  private constructor(parent: SlotTreeItemBase) {
+  private constructor(parent: SlotTreeItem) {
     super(parent);
     this.appSettingsTreeItem = new AppSettingsTreeItem(this, this.parent.site);
   }
 
-  public static async createConfigurationsTreeItem(parent: SlotTreeItemBase, context: IActionContext): Promise<ConfigurationsTreeItem> {
+  public static async createConfigurationsTreeItem(parent: SlotTreeItem, context: IActionContext): Promise<ConfigurationsTreeItem> {
     const treeItem: ConfigurationsTreeItem = new ConfigurationsTreeItem(parent);
     await treeItem.refreshImpl(context);
     return treeItem;

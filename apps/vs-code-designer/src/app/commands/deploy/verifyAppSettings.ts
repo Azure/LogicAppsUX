@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { extensionVersionKey, workerRuntimeKey } from '../../../constants';
 import { localize } from '../../../localize';
-import type { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
+import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { verifyDeploymentResourceGroup } from '../../utils/codeless/common';
 import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getFunctionsWorkerRuntime } from '../../utils/vsCodeConfig/settings';
@@ -17,7 +17,7 @@ import type { MessageItem } from 'vscode';
 /**
  * Verifies remote app settings.
  * @param {IActionContext} context - Command context.
- * @param {SlotTreeItemBase} node - Logic app node structure.
+ * @param {SlotTreeItem} node - Logic app node structure.
  * @param {FuncVersion} version - Function core tools local version.
  * @param {ProjectLanguage} language - Project local language.
  * @param {string} originalDeployFsPath - Workflow path to deploy.
@@ -25,7 +25,7 @@ import type { MessageItem } from 'vscode';
  */
 export async function verifyAppSettings(
   context: IActionContext,
-  node: SlotTreeItemBase,
+  node: SlotTreeItem,
   version: FuncVersion,
   language: ProjectLanguage,
   originalDeployFsPath: string,
@@ -102,12 +102,12 @@ export async function verifyVersionAndLanguage(
 /**
  * Gets remote resource group and verifies deployment of it.
  * @param {IActionContext} context - Command context.
- * @param {SlotTreeItemBase} node - Logic app node structure.
+ * @param {SlotTreeItem} node - Logic app node structure.
  * @param {string} originalDeployFsPath - Workflow path to deploy.
  */
 export async function verifyConnectionResourceGroup(
   context: IActionContext,
-  node: SlotTreeItemBase,
+  node: SlotTreeItem,
   originalDeployFsPath: string
 ): Promise<void> {
   const workflowResourceGroupRemote = node.site.resourceGroup;
