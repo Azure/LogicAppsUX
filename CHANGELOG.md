@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [2.14.0](https://github.com/Azure/LogicAppsUX/compare/v2.13.0...v2.14.0) (2023-04-28)
+
+
+### Features
+
+* **meta:** Release action update to specify release type  ([#2180](https://github.com/Azure/LogicAppsUX/issues/2180)) ([c8fbff6](https://github.com/Azure/LogicAppsUX/commit/c8fbff639684e52532aedb1169c949642fb1b628))
+
+
+### Bug Fixes
+
+* **designer:** Disable action type dropdown when is trigger node ([#2178](https://github.com/Azure/LogicAppsUX/issues/2178)) ([dda688b](https://github.com/Azure/LogicAppsUX/commit/dda688b2021756e0f3306aa124eaecb574feb880))
+* **designer:** Remove double quotation marks in parameters panel ([#2170](https://github.com/Azure/LogicAppsUX/issues/2170)) ([d033fce](https://github.com/Azure/LogicAppsUX/commit/d033fce9f1eec1239de642a4792ef5913bd4bfaf))
 
 ## [2.13.0](https://github.com/Azure/LogicAppsUX/compare/v2.12.0...v2.13.0) (2023-04-28)
 
