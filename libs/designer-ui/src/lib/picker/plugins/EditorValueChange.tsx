@@ -12,11 +12,12 @@ interface ChangeProps {
 
 export const EditorValueChange = ({ pickerDisplayValue, setEditorDisplayValue, clearPickerInfo }: ChangeProps) => {
   const onChange = (editorState: EditorState) => {
+    console.log('EditorValueChange');
     const newValue = serializeEditorState(editorState);
     if (notEqual(pickerDisplayValue, newValue)) {
       clearPickerInfo();
     }
     setEditorDisplayValue(newValue);
   };
-  return <OnChangePlugin onChange={onChange} />;
+  return <OnChangePlugin ignoreSelectionChange onChange={onChange} />;
 };
