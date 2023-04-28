@@ -665,6 +665,11 @@ export default {
   SCHEMA,
   SEARCH_THROTTLE_LIMIT_IN_MS: 750, // Throttling limit for search in milliseconds
   SECURE_OBJECT: 'SecureObject',
+  SKU: {
+    STANDARD: 'Standard',
+    PREMIUM: 'Premium',
+    CONSUMPTION: 'Consumption',
+  },
   FLOW_STATUS: {
     ABORTED: 'Aborted',
     CANCELLED: 'Cancelled',

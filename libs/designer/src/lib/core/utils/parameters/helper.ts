@@ -36,9 +36,9 @@ import { processPathInputs } from '../swagger/inputsbuilder';
 import { extractPathFromUri, getOperationIdFromDefinition } from '../swagger/operation';
 import { convertWorkflowParameterTypeToSwaggerType } from '../tokens';
 import { validateJSONParameter, validateStaticParameterInfo } from '../validation';
-import { getRecurrenceParameters } from './builtins';
 import { addCastToExpression, addFoldingCastToExpression } from './casting';
 import { getDynamicInputsFromSchema, getDynamicSchema, getDynamicValues, getFolderItems } from './dynamicdata';
+import { getRecurrenceParameters } from './recurrence';
 import {
   createLiteralValueSegment,
   isExpressionToken,

@@ -16,3 +16,7 @@ export const useIsConsumption = () => {
 export const useIsXrmConnectionReferenceMode = () => {
   return useSelector((state: RootState) => state.designerOptions.isXrmConnectionReferenceMode);
 };
+
+export const useSku = () => {
+  return useSelector((state: RootState) => state.designerOptions.sku);
+};
