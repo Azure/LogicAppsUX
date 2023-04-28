@@ -84,7 +84,7 @@ export const FilePickerEditor = ({
   const onFileFolderSelected = (selectedItem: any) => {
     if (showPicker) {
       setSelectedItem(selectedItem);
-      setPickerDisplayValue([{ id: guid(), value: selectedItem.Path, type: ValueSegmentType.LITERAL }]);
+      setPickerDisplayValue([{ id: guid(), value: getDisplayValueFromSelectedItem(selectedItem), type: ValueSegmentType.LITERAL }]);
       setShowPicker(false);
     }
   };

@@ -213,7 +213,7 @@ const ParameterSection = ({
     },
     getDisplayValueFromSelectedItem: (selectedItem: any): string => {
       const dependency = dependencies.inputs[parameter.parameterKey];
-      const propertyPath = dependency.filePickerInfo?.titlePath ?? dependency.filePickerInfo?.browse.itemTitlePath;
+      const propertyPath = dependency.filePickerInfo?.fullTitlePath ?? dependency.filePickerInfo?.browse.itemFullTitlePath;
       return selectedItem[propertyPath ?? ''];
     },
     getValueFromSelectedItem: (selectedItem: any): string => {

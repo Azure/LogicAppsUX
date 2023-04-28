@@ -303,7 +303,7 @@ export async function getFolderItems(
           ...result,
           [paramKey]: getPropertyValue(
             selectedValue,
-            referenceParameters?.[paramKey]?.selectedItemValuePath || referenceParameters[paramKey]['value-property']
+            referenceParameters?.[paramKey]?.selectedItemValuePath ?? referenceParameters[paramKey]?.['value-property'] ?? ''
           ),
         };
       }

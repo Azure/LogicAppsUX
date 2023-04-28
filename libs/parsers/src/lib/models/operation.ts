@@ -90,6 +90,7 @@ export interface FilePickerInfo {
   collectionPath?: string;
   valuePath?: string;
   titlePath?: string;
+  fullTitlePath?: string;
   folderPropertyPath?: string;
   mediaPropertyPath?: string;
 }
@@ -99,8 +100,8 @@ interface DynamicTreePickerInfo {
   parameters?: Record<
     string,
     {
-      selectedItemValuePath: string;
-      'value-property': string;
+      selectedItemValuePath?: string;
+      'value-property'?: string;
     }
   >;
   itemValuePath?: string;
