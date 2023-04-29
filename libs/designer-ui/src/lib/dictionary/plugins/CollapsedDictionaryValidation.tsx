@@ -60,7 +60,7 @@ export const CollapsedDictionaryValidation = ({
         isValid || (collapsedValue && showCollapsedValidation(collapsedValue)) ? 'hidden' : undefined
       )}
     >
-      <OnChangePlugin onChange={onChange} />
+      <OnChangePlugin ignoreSelectionChange onChange={onChange} />
       {errorMessage}
     </div>
   );

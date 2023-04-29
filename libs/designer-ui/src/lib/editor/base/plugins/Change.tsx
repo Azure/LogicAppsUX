@@ -12,5 +12,5 @@ export const Change = ({ setValue }: ChangeProps) => {
     const newValue = serializeEditorState(editorState);
     setValue(newValue);
   };
-  return <OnChangePlugin onChange={onChange} />;
+  return <OnChangePlugin ignoreSelectionChange onChange={onChange} />;
 };

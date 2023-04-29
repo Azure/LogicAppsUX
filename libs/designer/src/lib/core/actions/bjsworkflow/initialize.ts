@@ -333,6 +333,7 @@ export const getInputDependencies = (
             collectionPath: pickerCapability[Constants.PROPERTY.VALUE_COLLECTION],
             valuePath: dynamicValues.extension['value-path'],
             titlePath: pickerCapability[Constants.PROPERTY.VALUE_TITLE],
+            fullTitlePath: Constants.PATH,
             folderPropertyPath: pickerCapability[Constants.PROPERTY.VALUE_FOLDER_PROPERTY],
             mediaPropertyPath: pickerCapability[Constants.PROPERTY.VALUE_MEDIA_PROPERTY],
           },

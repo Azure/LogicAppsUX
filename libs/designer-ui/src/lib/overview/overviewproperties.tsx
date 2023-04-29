@@ -1,8 +1,8 @@
+import { getCallbackUrl } from './utils';
 import { Label, Link, Pivot, PivotItem, Text } from '@fluentui/react';
+import type { CallbackInfo } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import type { CallbackInfo } from './types';
-import { getCallbackUrl } from './utils';
 
 export interface OverviewPropertiesProps {
   callbackInfo?: CallbackInfo;

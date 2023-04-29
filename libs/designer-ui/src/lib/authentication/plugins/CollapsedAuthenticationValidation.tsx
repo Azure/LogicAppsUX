@@ -59,7 +59,7 @@ export const CollapsedAuthenticationValidation = ({
     <div
       className={css(className ?? 'msla-base-editor-validation', isValid || showCollapsedValidation(collapsedValue) ? 'hidden' : undefined)}
     >
-      <OnChangePlugin onChange={onChange} />
+      <OnChangePlugin ignoreSelectionChange onChange={onChange} />
       {errorMessage}
     </div>
   );

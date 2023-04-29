@@ -236,7 +236,7 @@ const TokenField = ({
         <FilePickerEditor
           className="msla-setting-token-editor-container"
           placeholder={placeholder}
-          BasePlugins={{ tokens: showTokens }}
+          BasePlugins={{ tokens: showTokens, clearEditor: true }}
           readonly={readOnly}
           initialValue={value}
           displayValue={editorViewModel.displayValue}

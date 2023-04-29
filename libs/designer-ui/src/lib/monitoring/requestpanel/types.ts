@@ -1,4 +1,4 @@
-import type { ContentLink, SecureData } from '../values/types';
+import type { ContentLink, SecureData } from '@microsoft/utils-logic-apps';
 
 export interface RequestHistory {
   properties: RequestHistoryProperties;

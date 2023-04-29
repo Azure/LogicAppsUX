@@ -19,7 +19,7 @@ export const Change = ({ setValue }: ChangeProps) => {
     const newValue = convertEditorState(editor, nodeMap);
     setValue(newValue);
   };
-  return <OnChangePlugin onChange={onChange} />;
+  return <OnChangePlugin ignoreSelectionChange onChange={onChange} />;
 };
 
 const convertEditorState = (editor: LexicalEditor, nodeMap: Map<string, ValueSegment>): ValueSegment[] => {

@@ -56,5 +56,5 @@ export const SerializeExpandedDictionary = ({ items, initialItem, index, type, s
       editor.focus();
     }
   };
-  return <OnChangePlugin onChange={onChange} />;
+  return <OnChangePlugin ignoreSelectionChange onChange={onChange} />;
 };

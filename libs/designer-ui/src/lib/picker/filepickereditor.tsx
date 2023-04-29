@@ -1,28 +1,30 @@
 import type { BaseEditorProps, ChangeHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
-import { Change } from '../editor/base/plugins/Change';
+import { notEqual } from '../editor/base/utils/helper';
 import type { ValueSegment } from '../editor/models/parameter';
-import type { PickerTitleInfo } from './models/PickerInfo';
+import { ValueSegmentType } from '../editor/models/parameter';
 import { Picker } from './picker';
-import type { FileItem } from './pickerItem';
+import { PickerItemType } from './pickerItem';
+import { EditorValueChange } from './plugins/EditorValueChange';
+import { UpdateEditorFromPicker } from './plugins/UpdateEditorFromPicker';
 import type { IBreadcrumbItem, IIconProps, ITooltipHostStyles } from '@fluentui/react';
 import { TooltipHost, IconButton } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
+import type { TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
+import { equals, guid } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export * from './models/PickerInfo';
-
 export interface PickerCallbackHandlers {
   getFileSourceName: () => string;
-  getDisplayNameFromSelectedItem: (selectedItem: any) => string;
+  getDisplayValueFromSelectedItem: (selectedItem: any) => string;
   getValueFromSelectedItem: (selectedItem: any) => string;
   onFolderNavigation: (selectedItem: any | undefined) => void;
 }
 
 export interface FilePickerEditorProps extends BaseEditorProps {
   type: string;
-  items: FileItem[] | undefined;
+  items: TreeDynamicValue[] | undefined;
   displayValue?: string;
   fileFilters?: string[];
   isLoading?: boolean;
@@ -38,35 +40,71 @@ const calloutProps = { gapSpace: 0 };
 export const FilePickerEditor = ({
   initialValue,
   isLoading = false,
+  type,
+  items,
+  displayValue,
+  fileFilters,
+  errorDetails,
   editorBlur,
-  onChange,
   pickerCallbacks,
   ...baseEditorProps
 }: FilePickerEditorProps) => {
-  const [value, setValue] = useState(initialValue);
-  const [showPicker, setShowPicker] = useState(false);
-  const [titleSegments] = useState<PickerTitleInfo[] | undefined>();
   const pickerIconId = useId();
   const intl = useIntl();
+  const [selectedItem, setSelectedItem] = useState<any>();
+  const initialDisplayValue = displayValue ? [{ id: guid(), value: displayValue, type: ValueSegmentType.LITERAL }] : initialValue;
+  const [editorDisplayValue, setEditorDisplayValue] = useState<ValueSegment[]>(initialDisplayValue);
+  const [pickerDisplayValue, setPickerDisplayValue] = useState<ValueSegment[]>(initialDisplayValue);
+  const [showPicker, setShowPicker] = useState(false);
 
-  const { onFolderNavigation: onFolderNavigated } = pickerCallbacks;
+  const { onFolderNavigation, getFileSourceName, getDisplayValueFromSelectedItem, getValueFromSelectedItem } = pickerCallbacks;
+  const fileSourceName = getFileSourceName();
 
-  const openTokenPicker = () => {
+  const [titleSegments, setTitleSegments] = useState<IBreadcrumbItem[]>(getInitialTitleSegments(fileSourceName));
+
+  const openFolderPicker = () => {
     if (!showPicker) {
-      onFolderNavigated?.(/* selectedItem */ undefined);
+      setTitleSegments(getInitialTitleSegments(fileSourceName));
+      onFolderNavigation(/* selectedItem */ undefined);
       setShowPicker(true);
     }
   };
 
-  const onValueChange = (newValue: ValueSegment[]): void => {
-    setValue(newValue);
-    // TODO: Make sure to update displayValue and selectedItem in viewModel.
-    onChange?.({ value: newValue, viewModel: { hideErrorMessage: true } });
+  const onFolderNavigated = (selectedItem: TreeDynamicValue) => {
+    onFolderNavigation(selectedItem.value);
+    const displayValue = selectedItem.displayName;
+    setTitleSegments([...titleSegments, { text: displayValue, key: displayValue, onClick: () => onFolderNavigated(selectedItem) }]);
   };
+
+  const onFileFolderSelected = (selectedItem: TreeDynamicValue) => {
+    if (showPicker) {
+      setSelectedItem(selectedItem.value);
+      setPickerDisplayValue([{ id: guid(), value: getDisplayValueFromSelectedItem(selectedItem.value), type: ValueSegmentType.LITERAL }]);
+      setShowPicker(false);
+    }
+  };
+
   const handleBlur = () => {
-    editorBlur?.({ value: value });
-    // TODO: Make sure to update displayValue and selectedItem in viewModel.
-    onChange?.({ value: value, viewModel: { hideErrorMessage: false } });
+    if (selectedItem) {
+      const valueSegmentValue: ValueSegment[] = [
+        { id: guid(), type: ValueSegmentType.LITERAL, value: getValueFromSelectedItem(selectedItem) },
+      ];
+
+      editorBlur?.({
+        value: valueSegmentValue,
+        viewModel: { displayValue: pickerDisplayValue[0]?.value, selectedItem: selectedItem },
+      });
+    } else if (notEqual(editorDisplayValue, pickerDisplayValue)) {
+      editorBlur?.({
+        value: editorDisplayValue,
+        viewModel: { displayValue: undefined, selectedItem: undefined },
+      });
+    }
+  };
+
+  const clearPickerInfo = () => {
+    setSelectedItem(undefined);
+    setPickerDisplayValue([]);
   };
 
   const openFolderLabel = intl.formatMessage({ defaultMessage: 'Open folder', description: 'Open folder label' });
@@ -75,10 +113,8 @@ export const FilePickerEditor = ({
       <BaseEditor
         readonly={baseEditorProps.readonly}
         className="msla-filepicker-editor"
-        BasePlugins={{
-          tokens: baseEditorProps.BasePlugins?.tokens ?? true,
-        }}
-        initialValue={value}
+        BasePlugins={{ ...baseEditorProps.BasePlugins }}
+        initialValue={editorDisplayValue}
         onBlur={handleBlur}
         onFocus={baseEditorProps.onFocus}
         getTokenPicker={baseEditorProps.getTokenPicker}
@@ -86,30 +122,47 @@ export const FilePickerEditor = ({
         isTrigger={baseEditorProps.isTrigger}
         tokenPickerButtonEditorProps={{ showOnLeft: true }}
       >
-        <Change setValue={onValueChange} />
+        <EditorValueChange
+          pickerDisplayValue={pickerDisplayValue}
+          setEditorDisplayValue={setEditorDisplayValue}
+          clearPickerInfo={clearPickerInfo}
+        />
+        <UpdateEditorFromPicker pickerDisplayValue={pickerDisplayValue} />
       </BaseEditor>
       <TooltipHost content={openFolderLabel} calloutProps={calloutProps} styles={hostStyles}>
-        <IconButton iconProps={folderIcon} aria-label={openFolderLabel} onClick={openTokenPicker} id={pickerIconId} disabled={true} />
+        <IconButton iconProps={folderIcon} aria-label={openFolderLabel} onClick={openFolderPicker} id={pickerIconId} />
       </TooltipHost>
       <Picker
         visible={showPicker}
         anchorId={pickerIconId}
         loadingFiles={isLoading}
-        currentPathSegments={getPathSegments(titleSegments)}
-        files={[]}
+        currentPathSegments={titleSegments}
+        files={filterItems(items, type, fileFilters)}
+        errorDetails={errorDetails}
         onCancel={() => setShowPicker(false)}
         handleFolderNavigation={onFolderNavigated}
+        handleItemSelected={onFileFolderSelected}
       />
     </div>
   );
 };
 
-const getPathSegments = (titleSegments?: PickerTitleInfo[]): IBreadcrumbItem[] => {
-  if (!titleSegments || titleSegments.length === 0) return [];
-  return titleSegments.map((titleSegment) => {
-    return {
-      text: titleSegment.title ?? '',
-      key: titleSegment.titleKey,
-    };
-  });
+const filterItems = (items?: TreeDynamicValue[], type?: string, fileFilters?: string[]): TreeDynamicValue[] => {
+  if (!items || items.length === 0) return [];
+  let returnItems = items;
+  if (type === PickerItemType.FOLDER) {
+    returnItems = items.filter((item) => item.isParent);
+  }
+  if (fileFilters && fileFilters.length > 0) {
+    returnItems = returnItems.filter((item) => {
+      return fileFilters.some((filter) => equals(filter, item.mediaType));
+    });
+  }
+  return returnItems;
+};
+
+const getInitialTitleSegments = (sourceName?: string): IBreadcrumbItem[] => {
+  if (!sourceName) return [];
+  const items: IBreadcrumbItem[] = [{ key: sourceName, text: sourceName }];
+  return items;
 };
