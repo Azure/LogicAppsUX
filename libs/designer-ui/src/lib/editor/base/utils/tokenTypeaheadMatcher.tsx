@@ -3,14 +3,14 @@ import type { LexicalEditor } from 'lexical';
 import { useCallback } from 'react';
 
 export type TriggerFn = (text: string, editor: LexicalEditor) => QueryMatch | null;
-export const PUNCTUATION = '\\.,\\+\\*\\?\\$\\@\\|#{}\\(\\)\\^\\-\\[\\]\\\\/!%\'"~=<>_:;';
+export const CHARACTER = /[\s\S]/;
 export function useTokenTypeaheadTriggerMatch(
   trigger: string,
   { minLength = 1, maxLength = 75 }: { minLength?: number; maxLength?: number }
 ): TriggerFn {
   return useCallback(
     (text: string) => {
-      const validChars = '[^' + trigger + PUNCTUATION + '\\s]';
+      const validChars = '[^' + trigger + CHARACTER + '\\s]';
       // eslint-disable-next-line no-useless-concat
       const TypeaheadTriggerRegex = new RegExp('(' + '[' + trigger + ']' + '((?:' + validChars + '){0,' + maxLength + '})' + ')$');
       const match = TypeaheadTriggerRegex.exec(text);
