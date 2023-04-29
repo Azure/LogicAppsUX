@@ -39,5 +39,5 @@ export const EditorChange = ({ item, items, index, setItems }: updateStateProps)
       editor.focus();
     }
   };
-  return <OnChangePlugin onChange={onChange} />;
+  return <OnChangePlugin ignoreSelectionChange onChange={onChange} />;
 };
