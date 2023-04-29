@@ -136,11 +136,11 @@ export function deserialize(value: ValueSegment[]): DynamicallyAddedParameterPro
   const rootObject = JSON.parse(value[0].value);
 
   const retval: DynamicallyAddedParameterProps[] = [];
-  for (const [schemaKey, propertiesUnknown] of Object.entries(rootObject?.schema?.properties)) {
+  for (const [schemaKey, propertiesUnknown] of Object.entries(rootObject?.properties)) {
     const properties = propertiesUnknown as IDynamicallyAddedParameterProperties;
     if (properties) {
       const icon = getIconForDynamicallyAddedParameterType(properties['x-ms-content-hint'] as DynamicallyAddedParameterTypeType);
-      const required = rootObject?.schema?.required?.includes(schemaKey);
+      const required = rootObject?.required?.includes(schemaKey);
       retval.push({
         icon,
         schemaKey,
@@ -176,11 +176,9 @@ export function serialize(props: DynamicallyAddedParameterProps[]): ValueSegment
     }, {});
 
   const rootObject = {
-    schema: {
-      type: 'object',
-      properties,
-      required: requiredArray,
-    },
+    type: 'object',
+    properties,
+    required: requiredArray,
   };
 
   return [
@@ -194,11 +192,9 @@ export function serialize(props: DynamicallyAddedParameterProps[]): ValueSegment
 
 export function getEmptySchemaValueSegmentForInitialization() {
   const rootObject = {
-    schema: {
-      type: 'object',
-      properties: {},
-      required: [],
-    },
+    type: 'object',
+    properties: {},
+    required: [],
   };
 
   return [

@@ -287,7 +287,7 @@ export async function getFolderItems(
   selectedValue: any | undefined,
   dependencyInfo: DependencyInfo,
   nodeInputs: NodeInputs,
-  nodeMetadata: any,
+  _nodeMetadata: any,
   operationInfo: OperationInfo,
   connectionReference: ConnectionReference | undefined,
   idReplacements: Record<string, string>
@@ -299,8 +299,14 @@ export async function getFolderItems(
     const connectionId = connectionReference?.connection.id as string;
     const { operationId, parameters: referenceParameters } = selectedValue ? browse : open;
     const pickerParameters = Object.keys(referenceParameters ?? {}).reduce((result: Record<string, any>, paramKey: string) => {
-      if (referenceParameters?.[paramKey]?.selectedItemValuePath) {
-        return { ...result, [paramKey]: getPropertyValue(selectedValue, referenceParameters[paramKey].selectedItemValuePath) };
+      if (referenceParameters?.[paramKey]?.selectedItemValuePath || referenceParameters?.[paramKey]?.['value-property']) {
+        return {
+          ...result,
+          [paramKey]: getPropertyValue(
+            selectedValue,
+            referenceParameters?.[paramKey]?.selectedItemValuePath ?? referenceParameters[paramKey]?.['value-property'] ?? ''
+          ),
+        };
       }
 
       return { ...result, [paramKey]: referenceParameters?.[paramKey] };
