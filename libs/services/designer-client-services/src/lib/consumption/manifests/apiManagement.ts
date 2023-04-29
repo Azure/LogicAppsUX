@@ -66,9 +66,14 @@ export const apiManagementActionManifest = {
               'x-ms-dynamic-list': {
                 dynamicState: {
                   operationId: 'getApimOperations',
-                  parameters: {},
                 },
-                parameters: {},
+                parameters: {
+                  type: 'object',
+                  apiId: {
+                    parameterReference: 'api.id',
+                    required: true,
+                  },
+                },
               },
             },
           },
@@ -86,6 +91,10 @@ export const apiManagementActionManifest = {
             },
             parameters: {
               type: 'object',
+              apiId: {
+                parameterReference: 'api.id',
+                required: true,
+              },
               operationId: {
                 parameterReference: 'apiManagement.operationId',
                 required: true,
