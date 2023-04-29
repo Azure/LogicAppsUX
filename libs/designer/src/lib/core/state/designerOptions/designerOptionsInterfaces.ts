@@ -21,7 +21,6 @@ export interface DesignerOptionsState {
   servicesInitialized?: boolean;
   isConsumption?: boolean;
   isXrmConnectionReferenceMode?: boolean;
-  sku?: string;
 }
 
 export interface ServiceOptions {

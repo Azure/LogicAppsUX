@@ -35,11 +35,7 @@ const getRecurrenceSchema = (recurrenceType?: RecurrenceType): OpenAPIV2.SchemaO
   };
 };
 
-export const getRecurrenceParameters = (
-  recurrence: RecurrenceSetting | undefined,
-  operationDefinition: any,
-  sku?: string
-): ParameterInfo[] => {
+export const getRecurrenceParameters = (recurrence: RecurrenceSetting | undefined, operationDefinition: any): ParameterInfo[] => {
   if (!recurrence || recurrence.type === RecurrenceType.None) {
     return [];
   }
@@ -55,7 +51,7 @@ export const getRecurrenceParameters = (
     .getSchemaProperties(schema)
     .map((item) => toInputParameter(item, true /* suppressCasting */));
 
-  const defaultRecurrence = getDefaultRecurrenceBySku(sku);
+  const defaultRecurrence = constants.DEFAULT_RECURRENCE;
 
   for (const parameter of recurrenceParameters) {
     if (!parameter.default) {
@@ -73,18 +69,3 @@ export const getRecurrenceParameters = (
 
   return toParameterInfoMap(recurrenceParameters, operationDefinition);
 };
-
-export function getDefaultRecurrenceBySku(sku?: string): Recurrence {
-  if (!sku) return constants.DEFAULT_RECURRENCE.PREMIUM;
-
-  switch (sku) {
-    case constants.SKU.STANDARD:
-      return constants.DEFAULT_RECURRENCE.STANDARD;
-    case constants.SKU.PREMIUM:
-      return constants.DEFAULT_RECURRENCE.PREMIUM;
-    case constants.SKU.CONSUMPTION:
-      return constants.DEFAULT_RECURRENCE.CONSUMPTION;
-    default:
-      return constants.DEFAULT_RECURRENCE.FREE;
-  }
-}
