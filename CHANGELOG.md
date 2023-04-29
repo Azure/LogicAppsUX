@@ -1,4 +1,16 @@
 # Logic Apps Designer
+### [2.15.2](https://github.com/Azure/LogicAppsUX/compare/v2.15.1...v2.15.2) (2023-04-29)
+
+
+### Features
+
+* **designer:** File picker ([#2165](https://github.com/Azure/LogicAppsUX/issues/2165)) ([c30fa26](https://github.com/Azure/LogicAppsUX/commit/c30fa26dac619a84ec0800bb9bb398cb8dda0a79))
+
+
+### Bug Fixes
+
+* **powerautomate:** Update manual trigger serialization to match manifest and render only dynamically added parameters ([#2177](https://github.com/Azure/LogicAppsUX/issues/2177)) ([19b9b40](https://github.com/Azure/LogicAppsUX/commit/19b9b40f917d641111262c8a3931119a99af1415))
+
 ### [2.15.1](https://github.com/Azure/LogicAppsUX/compare/v2.15.0...v2.15.1) (2023-04-29)
 
 
