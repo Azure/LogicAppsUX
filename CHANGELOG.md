@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.15.1](https://github.com/Azure/LogicAppsUX/compare/v2.15.0...v2.15.1) (2023-04-29)
+
+
+### Bug Fixes
+
+* **designer:** Consumption APIM dynamic data fetched properly, recurrence defaults passed properly ([#2182](https://github.com/Azure/LogicAppsUX/issues/2182)) ([0aa35b6](https://github.com/Azure/LogicAppsUX/commit/0aa35b624f72cb1c16b61d5cd3978706a50ee776))
+
 ## [2.15.0](https://github.com/Azure/LogicAppsUX/compare/v2.14.0...v2.15.0) (2023-04-28)
 
 
