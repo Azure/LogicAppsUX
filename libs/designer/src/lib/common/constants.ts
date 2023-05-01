@@ -184,6 +184,7 @@ export default {
     STRING: 'string',
     TABLE: 'table',
     VARIABLE_NAME: 'variablename',
+    HTML: 'html',
   },
   EVENT_AUTH_COMPLETED: 'MSLA_AUTH_COMPLETED',
   ERROR_MESSAGES: {
