@@ -371,6 +371,7 @@ export const {
   setRunIndex,
   setRepetitionRunData,
   setIsWorkflowDirty,
+  setIsGraphLocked,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;
