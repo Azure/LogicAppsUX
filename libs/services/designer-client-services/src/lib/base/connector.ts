@@ -1,11 +1,12 @@
-import type { IConnectorService, ListDynamicValue, ManagedIdentityRequestProperties } from '../connector';
+import type { IConnectorService, ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicValue } from '../connector';
 import { getClientRequestIdFromHeaders, pathCombine } from '../helpers';
 import type { IHttpClient } from '../httpClient';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft/parsers-logic-apps';
+import type { FilePickerInfo, LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft/parsers-logic-apps';
 import { Types } from '@microsoft/parsers-logic-apps';
-import type { OperationInfo } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2, OperationInfo } from '@microsoft/utils-logic-apps';
 import {
+  getPropertyValue,
   UnsupportedException,
   getJSONValue,
   getObjectPropertyValue,
@@ -23,7 +24,6 @@ type GetValuesFunction = (args: Record<string, any>) => Promise<ListDynamicValue
 type GetConfigurationFunction = (connectionId: string) => Promise<Record<string, any>>;
 
 export interface BaseConnectorServiceOptions {
-  [x: string]: any;
   apiVersion: string;
   baseUrl: string;
   httpClient: IHttpClient;
@@ -64,16 +64,9 @@ export abstract class BaseConnectorService implements IConnectorService {
     parameters: Record<string, any>,
     extension: LegacyDynamicValuesExtension,
     parameterArrayType: string,
-    isManagedIdentityTypeConnection?: boolean,
     managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<ListDynamicValue[]> {
-    const response = await this._executeAzureDynamicApi(
-      connectionId,
-      connectorId,
-      parameters,
-      isManagedIdentityTypeConnection,
-      managedIdentityProperties
-    );
+    const response = await this._executeAzureDynamicApi(connectionId, connectorId, parameters, managedIdentityProperties);
     const values = getObjectPropertyValue(response, extension['value-collection'] ? extension['value-collection'].split('/') : []);
     if (values && values.length) {
       return values.map((property: any) => {
@@ -112,7 +105,6 @@ export abstract class BaseConnectorService implements IConnectorService {
     _parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any,
-    nodeInputs: any,
     nodeMetadata: any
   ): Promise<ListDynamicValue[]> {
     const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
@@ -129,7 +121,6 @@ export abstract class BaseConnectorService implements IConnectorService {
         operationId,
         parameters: invokeParameters,
         configuration,
-        nodeInputs,
         nodeMetadata,
       });
     }
@@ -148,16 +139,9 @@ export abstract class BaseConnectorService implements IConnectorService {
     connectorId: string,
     parameters: Record<string, any>,
     extension: LegacyDynamicSchemaExtension,
-    isManagedIdentityTypeConnection?: boolean,
     managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<OpenAPIV2.SchemaObject | null> {
-    const response = await this._executeAzureDynamicApi(
-      connectionId,
-      connectorId,
-      parameters,
-      isManagedIdentityTypeConnection,
-      managedIdentityProperties
-    );
+    const response = await this._executeAzureDynamicApi(connectionId, connectorId, parameters, managedIdentityProperties);
 
     if (!response) {
       return null;
@@ -179,7 +163,6 @@ export abstract class BaseConnectorService implements IConnectorService {
     _parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any,
-    nodeInputs: any,
     nodeMetadata: any
   ): Promise<OpenAPIV2.SchemaObject> {
     const { baseUrl, apiVersion, getConfiguration, httpClient } = this.options;
@@ -200,7 +183,6 @@ export abstract class BaseConnectorService implements IConnectorService {
         parameters: invokeParameters,
         configuration,
         isInput,
-        nodeInputs,
         nodeMetadata,
       });
     }
@@ -212,6 +194,32 @@ export abstract class BaseConnectorService implements IConnectorService {
       content: { parameters: invokeParameters, configuration },
     });
     return this._getResponseFromDynamicApi(response, uri);
+  }
+
+  async getLegacyDynamicTreeItems(
+    connectionId: string,
+    connectorId: string,
+    parameters: Record<string, any>,
+    extension: LegacyDynamicValuesExtension,
+    pickerInfo: FilePickerInfo,
+    managedIdentityProperties?: ManagedIdentityRequestProperties
+  ): Promise<TreeDynamicValue[]> {
+    const response = await this._executeAzureDynamicApi(connectionId, connectorId, parameters, managedIdentityProperties);
+    const { collectionPath, titlePath, folderPropertyPath, mediaPropertyPath } = pickerInfo;
+    const values = collectionPath ? getPropertyValue(response, collectionPath) : response;
+
+    if (values && values.length) {
+      return values.map((value: any) => {
+        return {
+          value,
+          displayName: getPropertyValue(value, titlePath as string),
+          isParent: !!getPropertyValue(value, folderPropertyPath as string),
+          mediaType: mediaPropertyPath ? getPropertyValue(value, mediaPropertyPath) : undefined,
+        };
+      });
+    }
+
+    return response;
   }
 
   protected _isClientSupportedOperation(connectorId: string, operationId: string): boolean {
@@ -291,21 +299,21 @@ export abstract class BaseConnectorService implements IConnectorService {
       : errorMessage;
   }
 
-  protected async _executeAzureDynamicApi(
+  private async _executeAzureDynamicApi(
     connectionId: string,
     connectorId: string,
     parameters: Record<string, any>,
-    isManagedIdentityTypeConnection?: boolean,
     managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<any> {
-    const { baseUrl, apiHubServiceDetails, httpClient } = this.options;
+    const { baseUrl, apiVersion, apiHubServiceDetails, httpClient } = this.options;
     const intl = getIntl();
     const method = parameters['method'];
+    const isManagedIdentityTypeConnection = !!managedIdentityProperties;
     const uri = isManagedIdentityTypeConnection
       ? `${baseUrl}/dynamicInvoke`
       : isArmResourceId(connectorId)
       ? pathCombine(`${apiHubServiceDetails.baseUrl}/${connectionId}/extensions/proxy`, parameters['path'])
-      : pathCombine(`${baseUrl}/${connectionId}/extensions/proxy`, parameters['path']);
+      : pathCombine(`${baseUrl}/${connectionId}/extensions/proxy`, parameters['path']); // TODO - This code path should never hit, verify.
 
     if (isManagedIdentityTypeConnection) {
       const request = {
@@ -319,7 +327,7 @@ export abstract class BaseConnectorService implements IConnectorService {
       try {
         const response = await httpClient.post({
           uri,
-          queryParameters: { 'api-version': apiHubServiceDetails.apiVersion },
+          queryParameters: { 'api-version': apiVersion },
           content: { request, properties: managedIdentityProperties },
         });
 

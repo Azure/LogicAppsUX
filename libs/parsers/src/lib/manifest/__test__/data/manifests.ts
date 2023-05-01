@@ -1,4 +1,5 @@
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
+import { ConnectionReferenceKeyFormat } from '@microsoft/utils-logic-apps';
 
 export const createItem: OperationManifest = {
   properties: {
@@ -484,5 +485,8 @@ export const onNewEmail: OperationManifest = {
     triggerHint: 'To see it work now, send a new email in your inbox.',
     iconUri: 'https://connectoricons-prod.azureedge.net/office365/icon_1.0.1008.1183.png',
     brandColor: '#0072c6',
+    connectionReference: {
+      referenceKeyFormat: ConnectionReferenceKeyFormat.OpenApi,
+    },
   },
 };

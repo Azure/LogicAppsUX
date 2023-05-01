@@ -1,9 +1,10 @@
 import type { EnumObject, OutputMetadata, ParameterDynamicSchema, ParameterDynamicValues } from '../../models/operation';
-import { DynamicSchemaType, DynamicValuesType } from '../../models/operation';
+import { isDynamicTreeExtension, isLegacyDynamicValuesTreeExtension, DynamicSchemaType, DynamicValuesType } from '../../models/operation';
 import * as Constants from '../constants';
 import { OutputKeys } from '../constants';
 import { parseEx } from './keysutility';
 import { getIntl } from '@microsoft/intl-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { equals, isNullOrUndefined } from '@microsoft/utils-logic-apps';
 
 type SchemaObject = OpenAPIV2.SchemaObject;
@@ -178,6 +179,14 @@ export function getArrayOutputMetadata(schema: SchemaObject, required: boolean, 
   }
 
   return {};
+}
+
+export function getEditorForParameter(parameter: SchemaObject, dynamicValues: ParameterDynamicValues | undefined): string | undefined {
+  return dynamicValues
+    ? isLegacyDynamicValuesTreeExtension(dynamicValues) || isDynamicTreeExtension(dynamicValues)
+      ? 'filepicker'
+      : 'combobox'
+    : parameter[Constants.ExtensionProperties.Editor];
 }
 
 type MakeDefinitionReducer = (previous: Record<string, any>, current: string) => Record<string, any>;

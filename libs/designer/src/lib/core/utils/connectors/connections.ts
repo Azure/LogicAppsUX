@@ -1,11 +1,16 @@
 import type { ConnectionReference } from '../../../common/models/workflow';
 import { getApiManagementSwagger } from '../../queries/connections';
 import type { ConnectionsStoreState } from '../../state/connection/connectionSlice';
-import { ApiManagementService, FunctionService } from '@microsoft/designer-client-services-logic-apps';
+import {
+  ApiManagementService,
+  FunctionService,
+  WorkflowService,
+  isServiceProviderOperation,
+} from '@microsoft/designer-client-services-logic-apps';
 import type { AssistedConnectionProps } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Connector, OperationManifest } from '@microsoft/utils-logic-apps';
-import { ConnectionType } from '@microsoft/utils-logic-apps';
+import type { ConnectionParameterSet, ConnectionParameterSets, Connector, OperationManifest } from '@microsoft/utils-logic-apps';
+import { ConnectionParameterTypes, ResourceIdentityType, equals, ConnectionType } from '@microsoft/utils-logic-apps';
 
 export function getConnectionId(state: ConnectionsStoreState, nodeId: string): string {
   const { connectionsMapping, connectionReferences } = state;
@@ -110,7 +115,6 @@ export async function getConnectionParametersForAzureConnection(connectionType?:
     const fullUrl = api.basePath ? `${baseUrl}${api.basePath}` : baseUrl;
     const subscriptionKey = (api.securityDefinitions?.apiKeyHeader as any)?.name ?? 'NotFound';
 
-
     return {
       apiId: apimApiId,
       baseUrl: fullUrl,
@@ -119,4 +123,37 @@ export async function getConnectionParametersForAzureConnection(connectionType?:
   }
 
   return {};
+}
+
+export function getSupportedParameterSets(
+  parameterSets: ConnectionParameterSets | undefined,
+  operationType: string
+): ConnectionParameterSets | undefined {
+  if (!parameterSets) {
+    return undefined;
+  }
+
+  const identity = WorkflowService().getAppIdentity?.();
+  return {
+    ...parameterSets,
+    values: parameterSets.values.filter((parameterSet) => {
+      if (containsManagedIdentityParameter(parameterSet)) {
+        return (
+          !isServiceProviderOperation(operationType) ||
+          identity?.type?.toLowerCase()?.includes(ResourceIdentityType.SYSTEM_ASSIGNED.toLowerCase())
+        );
+      }
+
+      return true;
+    }),
+  };
+}
+
+function containsManagedIdentityParameter(parameterSet: ConnectionParameterSet): boolean {
+  const { parameters } = parameterSet;
+  return Object.keys(parameters).some(
+    (parameter) =>
+      parameters[parameter].type === ConnectionParameterTypes[ConnectionParameterTypes.managedIdentity] ||
+      equals(parameters[parameter].uiDefinition?.constraints?.default, 'managedserviceidentity')
+  );
 }

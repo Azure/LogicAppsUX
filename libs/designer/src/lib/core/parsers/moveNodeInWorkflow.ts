@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
 import type { RelationshipIds } from '../state/panel/panelInterfaces';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
-import { isRootNodeInGraph } from '../utils/graph';
 import type { WorkflowNode } from './models/workflowNode';
 import { addNewEdge, reassignEdgeSources, reassignEdgeTargets, removeEdge, applyIsRootNode } from './restructuringHelpers';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 
 export interface MoveNodePayload {
   nodeId: string;
@@ -65,8 +65,10 @@ export const moveNodeInWorkflow = (
     }
   } else {
     const parentId = (oldWorkflowGraph.edges ?? []).find((edge) => edge.target === nodeId)?.source ?? '';
-    const isNewSourceTrigger = isRootNodeInGraph(parentId, 'root', state.nodesMetadata);
-    reassignEdgeSources(state, nodeId, parentId, oldWorkflowGraph, /* isSourceTrigger */ false, isNewSourceTrigger);
+    const graphId = oldWorkflowGraph.id;
+    const isAfterTrigger = nodesMetadata[parentId ?? '']?.isRoot && graphId === 'root';
+    const shouldAddRunAfters = !isOldRoot && !isAfterTrigger;
+    reassignEdgeSources(state, nodeId, parentId, oldWorkflowGraph, shouldAddRunAfters);
     removeEdge(state, parentId, nodeId, oldWorkflowGraph);
   }
 
@@ -110,14 +112,14 @@ export const moveNodeInWorkflow = (
   }
   // 1 parent, X children
   else if (parentId) {
-    reassignEdgeSources(state, parentId, nodeId, newWorkflowGraph, isAfterTrigger, /* isNewSourceTrigger */ false);
+    reassignEdgeSources(state, parentId, nodeId, newWorkflowGraph);
     addNewEdge(state, parentId, nodeId, newWorkflowGraph, shouldAddRunAfters);
   }
 
-  if (isNewRoot) {
-    applyIsRootNode(state, nodeId, newWorkflowGraph, nodesMetadata);
-    if (state.operations[nodeId] as any) delete (state.operations[nodeId] as any).runAfter;
-  }
+  if (isNewRoot && (state.operations[nodeId] as any)) delete (state.operations[nodeId] as any).runAfter;
+  applyIsRootNode(state, newWorkflowGraph, nodesMetadata);
+
+  state.isDirty = true;
 
   // Increase action count of graph
   if (nodesMetadata?.[newWorkflowGraph.id]) {

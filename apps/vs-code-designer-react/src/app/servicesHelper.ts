@@ -19,7 +19,7 @@ import type {
   IHostService,
   IWorkflowService,
 } from '@microsoft/designer-client-services-logic-apps';
-import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
+import { HTTP_METHODS, clone } from '@microsoft/utils-logic-apps';
 import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
 import type { WebviewApi } from 'vscode-webview';
@@ -52,9 +52,12 @@ export const getDesignerServices = (
     panelId = '',
     workflowDetails: Record<string, any> = {},
     appSettings = {},
-    isStateful = false;
+    isStateful = false,
+    connectionsData = { ...connectionData } ?? {};
 
   const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubServiceDetails;
+
+  const armUrl = 'https://management.azure.com';
 
   if (panelMetadata) {
     authToken = panelMetadata.accessToken ?? '';
@@ -65,6 +68,8 @@ export const getDesignerServices = (
   }
 
   const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
+    connectionsData = addConnectionInJson(connectionAndSetting, connectionsData ?? {});
+    appSettings = addOrUpdateAppSettings(connectionAndSetting.settings, appSettings ?? {});
     return vscode.postMessage({
       command: ExtensionCommand.addConnection,
       connectionAndSetting,
@@ -78,7 +83,7 @@ export const getDesignerServices = (
     httpClient,
     apiHubServiceDetails,
     tenantId,
-    readConnections: () => Promise.resolve(connectionData),
+    readConnections: () => Promise.resolve(connectionsData),
     writeConnection: (connectionAndSetting: ConnectionAndAppSetting) => {
       return addConnectionData(connectionAndSetting);
     },
@@ -119,7 +124,7 @@ export const getDesignerServices = (
       }
 
       const connectionName = connectionId.split('/').splice(-1)[0];
-      const connnectionsInfo = { ...connectionData?.serviceProviderConnections, ...connectionData?.apiManagementConnections };
+      const connnectionsInfo = { ...connectionsData?.serviceProviderConnections, ...connectionsData?.apiManagementConnections };
       const connectionInfo = connnectionsInfo[connectionName];
 
       if (connectionInfo) {
@@ -203,7 +208,7 @@ export const getDesignerServices = (
   });
 
   const gatewayService = new BaseGatewayService({
-    baseUrl,
+    baseUrl: armUrl,
     httpClient,
     apiVersions: {
       subscription: apiVersion,
@@ -261,4 +266,35 @@ export const getDesignerServices = (
     apimService,
     functionService,
   };
+};
+
+const addConnectionInJson = (connectionAndSetting: ConnectionAndAppSetting, connectionsJson: ConnectionsData): ConnectionsData => {
+  const { connectionData, connectionKey, pathLocation } = connectionAndSetting;
+  const pathToSetConnectionsData: any = clone(connectionsJson);
+
+  for (const path of pathLocation) {
+    if (!pathToSetConnectionsData[path]) {
+      pathToSetConnectionsData[path] = {};
+    }
+
+    if (pathToSetConnectionsData && pathToSetConnectionsData[path][connectionKey]) {
+      break;
+    } else {
+      pathToSetConnectionsData[path][connectionKey] = connectionData;
+    }
+  }
+
+  return pathToSetConnectionsData as ConnectionsData;
+};
+
+const addOrUpdateAppSettings = (settings: Record<string, string>, originalSettings: Record<string, string>): Record<string, string> => {
+  const updatedSettings: any = clone(originalSettings);
+
+  const settingsToAdd = Object.keys(settings);
+
+  for (const settingKey of settingsToAdd) {
+    updatedSettings[settingKey] = settings[settingKey];
+  }
+
+  return updatedSettings;
 };

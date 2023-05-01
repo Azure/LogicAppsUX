@@ -51,6 +51,12 @@
       "value": "Select this if you are configuring an on-prem connection"
     }
   ],
+  "+W2vTp": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -670,6 +676,16 @@
       "value": "Enter a valid array."
     }
   ],
+  "2r30S9": [
+    {
+      "type": 0,
+      "value": "Insert a new step after "
+    },
+    {
+      "type": 1,
+      "value": "parentName"
+    }
+  ],
   "2ri1Kf": [
     {
       "type": 0,
@@ -700,10 +716,22 @@
       "value": "Save"
     }
   ],
+  "30njcn": [
+    {
+      "type": 0,
+      "value": "Create Connection"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
       "value": "标识符"
+    }
+  ],
+  "34Nt/B": [
+    {
+      "type": 0,
+      "value": "alt text for button icon"
     }
   ],
   "36RiST": [
@@ -784,6 +812,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00)达卡"
+    }
+  ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Choose the type of user input"
     }
   ],
   "3Y8a6G": [
@@ -970,12 +1004,6 @@
       "value": "必需。需要获取其值的参数的名称。"
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "只可在编辑某步骤的输入时添加注释。"
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1092,6 +1120,12 @@
     {
       "type": 0,
       "value": "混合连接器"
+    }
+  ],
+  "61iT9C": [
+    {
+      "type": 0,
+      "value": "Insert data from previous step (You can also add by typing Alt + / in the editor)"
     }
   ],
   "62Ypnr": [
@@ -1422,6 +1456,12 @@
       "value": "在异步模式下，如果远程服务器指示处理 202 (已接受)响应的请求已被接受，逻辑应用将一直轮询在响应的位置标头中指定的 URL，直到达到终止状态。"
     }
   ],
+  "8luJ2j": [
+    {
+      "type": 0,
+      "value": "Create Connection Reference"
+    }
+  ],
   "8pPivj": [
     {
       "type": 0,
@@ -1464,28 +1504,16 @@
       "value": "(UTC+07:00)科布多"
     }
   ],
-  "90HY0L": [
-    {
-      "type": 0,
-      "value": "Insert a new step between "
-    },
-    {
-      "type": 1,
-      "value": "parent"
-    },
-    {
-      "type": 0,
-      "value": " and "
-    },
-    {
-      "type": 1,
-      "value": "child"
-    }
-  ],
   "90Q7Pw": [
     {
       "type": 0,
       "value": "值"
+    }
+  ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "File"
     }
   ],
   "92OUl9": [
@@ -1564,6 +1592,12 @@
     {
       "type": 0,
       "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Text"
     }
   ],
   "9atGYe": [
@@ -1666,6 +1700,16 @@
     {
       "type": 0,
       "value": "Insert data from previous step (You can also add by typing / in the editor)"
+    }
+  ],
+  "Aci186": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Add dynamic data pressing Alt + /"
     }
   ],
   "AgrMqq": [
@@ -1863,6 +1907,12 @@
       "value": "(UTC-05:00) 哈瓦那"
     }
   ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Number"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1873,6 +1923,12 @@
     {
       "type": 0,
       "value": "折叠"
+    }
+  ],
+  "BrWQ0Z": [
+    {
+      "type": 0,
+      "value": "Select a managed identity"
     }
   ],
   "BuYrD3": [
@@ -1923,10 +1979,34 @@
       "value": "凭据类型"
     }
   ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
+    }
+  ],
   "Cy9qeQ": [
     {
       "type": 0,
       "value": "(UTC+02:00)赫尔辛基，基辅，里加，索非亚，塔林，维尔纽斯"
+    }
+  ],
+  "CypYLs": [
+    {
+      "type": 0,
+      "value": "Insert a new step between "
+    },
+    {
+      "type": 1,
+      "value": "parentName"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "childName"
     }
   ],
   "Czt6YV": [
@@ -2033,6 +2113,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00)亚速尔群岛"
+    }
+  ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Add an input"
     }
   ],
   "DyYcJZ": [
@@ -2171,6 +2257,18 @@
     {
       "type": 0,
       "value": "(UTC-05:00)东部时间(美国和加拿大)(& )"
+    }
+  ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
+    }
+  ],
+  "Ex4U46": [
+    {
+      "type": 0,
+      "value": "Use Invoker's Connection"
     }
   ],
   "ExaACE": [
@@ -2458,6 +2556,12 @@
       "value": "数组"
     }
   ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "File Content"
+    }
+  ],
   "H17jEE": [
     {
       "type": 0,
@@ -2512,6 +2616,12 @@
     {
       "type": 0,
       "value": "\"。"
+    }
+  ],
+  "HOchry": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one."
     }
   ],
   "HQ8/tk": [
@@ -2694,6 +2804,12 @@
       "value": "异步模式"
     }
   ],
+  "J2Su6x": [
+    {
+      "type": 0,
+      "value": "Formatting options for font size"
+    }
+  ],
   "J5/7vN": [
     {
       "type": 0,
@@ -2802,6 +2918,12 @@
       "value": "名称:"
     }
   ],
+  "Jpox7O": [
+    {
+      "type": 0,
+      "value": "When enabled, this action will run with the user from the \"Run as\" setting in the Dataverse trigger."
+    }
+  ],
   "JpthWY": [
     {
       "type": 0,
@@ -2836,6 +2958,12 @@
     {
       "type": 0,
       "value": "从字符串返回部分字符"
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Change connection reference"
     }
   ],
   "KX1poC": [
@@ -3015,6 +3143,12 @@
       "value": "查看更多"
     }
   ],
+  "Lm9bnN": [
+    {
+      "type": 0,
+      "value": "Bullet List"
+    }
+  ],
   "LoGUT3": [
     {
       "type": 0,
@@ -3051,10 +3185,10 @@
       "value": "(UTC+00:00)都柏林，爱丁堡，里斯本，伦敦"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "添加评论"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -3439,6 +3573,12 @@
       "value": "选择托管标识"
     }
   ],
+  "P+7G62": [
+    {
+      "type": 0,
+      "value": "Heading 3"
+    }
+  ],
   "P+mWgV": [
     {
       "type": 0,
@@ -3635,6 +3775,12 @@
       "value": "状态代码"
     }
   ],
+  "QIOOQU": [
+    {
+      "type": 0,
+      "value": "No Items"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 1,
@@ -3643,6 +3789,12 @@
     {
       "type": 0,
       "value": " 卡的关联菜单"
+    }
+  ],
+  "QZ5DZl": [
+    {
+      "type": 0,
+      "value": "alt text for chevron down"
     }
   ],
   "QZBPUx": [
@@ -3814,6 +3966,12 @@
       "value": "密码"
     }
   ],
+  "SGnTpt": [
+    {
+      "type": 0,
+      "value": "Heading 2"
+    }
+  ],
   "SJFVxf": [
     {
       "type": 0,
@@ -3852,6 +4010,12 @@
     {
       "type": 0,
       "value": "必需。包含表单数据或表单编码响应的操作的名称。"
+    }
+  ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
     }
   ],
   "Sh10cw": [
@@ -4052,6 +4216,18 @@
       "value": "(UTC+01:00)布鲁塞尔，哥本哈根，马德里，巴黎"
     }
   ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
+    }
+  ],
+  "Ttc0SM": [
+    {
+      "type": 0,
+      "value": "Heading 1"
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -4134,6 +4310,12 @@
     {
       "type": 0,
       "value": "用给定字符串替换字符串"
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Logical Name"
     }
   ],
   "UR1CS5": [
@@ -4686,6 +4868,18 @@
       "value": "输入 Pfx"
     }
   ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
+  "YWOKlU": [
+    {
+      "type": 0,
+      "value": "Numbered List"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
@@ -5020,6 +5214,12 @@
       "value": "(UTC+05:30)钦奈，加尔各答，孟买，新德里"
     }
   ],
+  "bv9QPA": [
+    {
+      "type": 0,
+      "value": "Date"
+    }
+  ],
   "bwfJdj": [
     {
       "type": 0,
@@ -5184,12 +5384,6 @@
       "value": "必需。要从中跳过第一批计数对象的集合。"
     }
   ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "删除评论"
-    }
-  ],
   "d4xMIx": [
     {
       "type": 0,
@@ -5206,6 +5400,12 @@
     {
       "type": 0,
       "value": "了解详细信息"
+    }
+  ],
+  "dL9V5t": [
+    {
+      "type": 0,
+      "value": "Managed identity"
     }
   ],
   "dOpdsP": [
@@ -5304,6 +5504,12 @@
     {
       "type": 0,
       "value": "已超时"
+    }
+  ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "e00zot": [
@@ -5438,6 +5644,12 @@
       "value": "分页计数超过最大值"
     }
   ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5486,6 +5698,12 @@
     {
       "type": 0,
       "value": "已忽略"
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "g0a4Qe": [
@@ -5596,10 +5814,28 @@
       "value": "触发器条件"
     }
   ],
+  "gc6v4X": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
+    }
+  ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06:00)萨斯喀彻温"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "gpbgjJ": [
@@ -5618,6 +5854,12 @@
     {
       "type": 0,
       "value": "Select a Batch Workflow resource"
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Number"
     }
   ],
   "h1lQDa": [
@@ -5767,12 +6009,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "评论"
     }
   ],
   "iCSHJG": [
@@ -6261,6 +6497,12 @@
       "value": "无状态运行模式:"
     }
   ],
+  "lhL/KL": [
+    {
+      "type": 0,
+      "value": "Normal"
+    }
+  ],
   "ljAOR6": [
     {
       "type": 0,
@@ -6361,6 +6603,12 @@
     {
       "type": 0,
       "value": "URL 对输入字符串进行编码"
+    }
+  ],
+  "mQotIu": [
+    {
+      "type": 0,
+      "value": "Select Connection"
     }
   ],
   "mYQFtf": [
@@ -6469,6 +6717,12 @@
     {
       "type": 0,
       "value": "End time"
+    }
+  ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Yes/No"
     }
   ],
   "nRpM02": [
@@ -6635,6 +6889,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00)萨尔瓦多"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7048,6 +7308,12 @@
       "value": "新增"
     }
   ],
+  "s+4LEa": [
+    {
+      "type": 0,
+      "value": "Open folder"
+    }
+  ],
   "s5RV9B": [
     {
       "type": 0,
@@ -7082,6 +7348,12 @@
     {
       "type": 0,
       "value": "并行度"
+    }
+  ],
+  "sYQDN+": [
+    {
+      "type": 0,
+      "value": "Formatting options for font family"
     }
   ],
   "sZ0G/Z": [
@@ -7216,6 +7488,12 @@
       "value": " 小时"
     }
   ],
+  "tJMHcJ": [
+    {
+      "type": 0,
+      "value": "Select Connection Reference"
+    }
+  ],
   "tLZ9Sh": [
     {
       "type": 0,
@@ -7326,16 +7604,6 @@
       "value": "Status Code"
     }
   ],
-  "uIQrat": [
-    {
-      "type": 0,
-      "value": "Insert a new step after "
-    },
-    {
-      "type": 1,
-      "value": "parent"
-    }
-  ],
   "uIurld": [
     {
       "type": 0,
@@ -7442,6 +7710,12 @@
     {
       "type": 0,
       "value": "通过参数创建数组"
+    }
+  ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Trigger date"
     }
   ],
   "v39HKj": [
@@ -7662,6 +7936,12 @@
       "value": "根据表达式的 true 或 false 结果返回指定值"
     }
   ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
   "wkiETV": [
     {
       "type": 0,
@@ -7720,6 +8000,12 @@
     {
       "type": 0,
       "value": "Status Code"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
     }
   ],
   "xC1zg3": [
@@ -7882,6 +8168,12 @@
     {
       "type": 0,
       "value": "添加字段"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "yxsn7s": [

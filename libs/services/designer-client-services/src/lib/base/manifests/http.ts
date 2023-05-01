@@ -1,5 +1,5 @@
-import { OperationOptions, RecurrenceType, SettingScope } from '@microsoft/utils-logic-apps';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
+import { OperationOptions, RecurrenceType, SettingScope } from '@microsoft/utils-logic-apps';
 
 const methodOptions = [
   { value: 'GET', displayName: 'GET' },
@@ -17,6 +17,17 @@ const connector = {
     displayName: 'HTTP',
   },
 } as any;
+const authenticationParameter = {
+  type: 'object',
+  title: 'Authentication',
+  description: 'Enter JSON object of authentication parameter',
+  'x-ms-visibility': 'advanced',
+  'x-ms-editor': 'authentication',
+  'x-ms-editor-options': {
+    supportedAuthTypes: ['None', 'Basic', 'ClientCertificate', 'ActiveDirectoryOAuth', 'Raw', 'ManagedServiceIdentity'],
+  },
+};
+
 const webhookParameters = {
   method: {
     type: 'string',
@@ -45,10 +56,7 @@ const webhookParameters = {
     description: 'Enter content',
     'x-ms-visibility': 'important',
   },
-  authentication: {
-    type: 'object',
-    title: 'Authentication',
-  },
+  authentication: authenticationParameter,
 };
 
 export const httpManifest = {
@@ -107,15 +115,7 @@ export const httpManifest = {
           description: 'Enter HTTP cookie',
           'x-ms-visibility': 'important',
         },
-        authentication: {
-          type: 'object',
-          title: 'Authentication',
-          description: 'Enter JSON object of authentication parameter',
-          'x-ms-editor': 'authentication',
-          'x-ms-editor-options': {
-            supportedAuthTypes: ['None', 'Basic', 'ClientCertificate', 'ActiveDirectoryOAuth', 'Raw', 'ManagedServiceIdentity'],
-          },
-        },
+        authentication: authenticationParameter,
       },
       required: ['uri', 'method'],
     },
@@ -194,7 +194,6 @@ export const httpTriggerManifest = {
   },
 } as OperationManifest;
 
-// TODO - Might need more metadata here if can be generalised.
 export const httpWithSwaggerManifest = {
   properties: {
     iconUri:
@@ -206,22 +205,21 @@ export const httpWithSwaggerManifest = {
     inputs: {
       type: 'object',
       properties: {
-        authentication: {
-          type: 'object',
-          title: 'Authentication',
-          description: 'Enter JSON object of authentication parameter',
-          'x-ms-visibility': 'advanced',
-          'x-ms-editor': 'authentication',
-          'x-ms-editor-options': {
-            supportedAuthTypes: ['None', 'Basic', 'ClientCertificate', 'ActiveDirectoryOAuth', 'Raw', 'ManagedServiceIdentity'],
-          },
-        },
+        authentication: authenticationParameter,
         // Dynamic Params
         operationId: {
           required: true,
           type: 'string',
           title: 'Swagger Operation',
           description: 'Swagger Operation',
+          'x-ms-serialization': { skip: true },
+          'x-ms-deserialization': {
+            type: 'swaggeroperationid',
+            parameterReference: 'operationId',
+            options: {
+              swaggerOperation: { methodPath: ['operationDetails', 'method'], uriPath: ['operationDetails', 'uri'] },
+            },
+          },
           'x-ms-dynamic-list': {
             dynamicState: {
               operationId: 'getSwaggerOperations',
@@ -280,6 +278,8 @@ export const httpWithSwaggerManifest = {
       },
     },
     isOutputsOptional: false,
+
+    customSwagger: { location: ['metadata', 'apiDefinitionUrl'] },
 
     connector,
 

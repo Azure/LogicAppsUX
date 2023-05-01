@@ -2,12 +2,14 @@ import type { ChangeState, StaticResultRootSchemaType } from '..';
 import { Label, DropdownEditor } from '..';
 import { StaticResultProperty } from './staticResultProperty';
 import { formatShownProperties, getOptions, initializeShownProperties } from './util';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { createCopy } from '@microsoft/utils-logic-apps';
 import isEqual from 'lodash.isequal';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 interface StaticResultPropertiesProps {
+  isRoot?: boolean;
   propertiesSchema: StaticResultRootSchemaType;
   required: string[];
   additionalPropertiesSchema?: boolean;
@@ -16,6 +18,7 @@ interface StaticResultPropertiesProps {
 }
 
 export const StaticResultProperties = ({
+  isRoot = false,
   propertiesSchema,
   required = [],
   propertyValues,
@@ -79,17 +82,20 @@ export const StaticResultProperties = ({
           />
         </div>
       </div>
-      {Object.entries(shownProperties).map(([propertyName, showProperty], key) => {
-        return showProperty && propertiesSchema[propertyName] ? (
-          <StaticResultProperty
-            schema={propertiesSchema[propertyName]}
-            key={key}
-            required={required.includes(propertyName)}
-            properties={propertyValues?.[propertyName]}
-            updateParentProperties={(newPropertyValue: any) => updatePropertyValues(propertyName, newPropertyValue)}
-          />
-        ) : null;
-      })}
+      <div className={!isRoot ? 'msla-static-result-properties-inner' : undefined}>
+        {Object.entries(shownProperties).map(([propertyName, showProperty], key) => {
+          return showProperty && propertiesSchema[propertyName] ? (
+            <StaticResultProperty
+              isRoot={isRoot}
+              schema={propertiesSchema[propertyName]}
+              key={key}
+              required={required.includes(propertyName)}
+              properties={propertyValues?.[propertyName]}
+              updateParentProperties={(newPropertyValue: any) => updatePropertyValues(propertyName, newPropertyValue)}
+            />
+          ) : null;
+        })}
+      </div>
     </div>
   );
 };

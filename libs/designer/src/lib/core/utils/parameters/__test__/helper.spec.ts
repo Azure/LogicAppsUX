@@ -1,5 +1,5 @@
-import { getParameterEditorProps, parameterValueToJSONString, parameterValueToString } from '../helper';
-import type { DictionaryEditorItemProps, ParameterInfo, ValueSegment } from '@microsoft/designer-ui';
+import { getParameterEditorProps, parameterValueToJSONString, parameterValueToString, getExpressionValueForOutputToken } from '../helper';
+import type { DictionaryEditorItemProps, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import type { DynamicListExtension, LegacyDynamicValuesExtension, InputParameter } from '@microsoft/parsers-logic-apps';
 import { DynamicValuesType, ExpressionType } from '@microsoft/parsers-logic-apps';
@@ -1832,8 +1832,26 @@ describe('core/utils/parameters/helper', () => {
         const result = getParameterEditorProps(inputParameter);
 
         expect(result).toMatchObject({
-          editor: undefined,
-          editorOptions: undefined,
+          editor: 'combobox',
+          editorOptions: {
+            options: [
+              {
+                displayName: '',
+                key: '',
+                value: '',
+              },
+              {
+                displayName: 'Yes',
+                key: 'Yes',
+                value: 'true',
+              },
+              {
+                displayName: 'No',
+                key: 'No',
+                value: 'false',
+              },
+            ],
+          },
           editorViewModel: undefined,
           schema: inputSchema,
         });
@@ -2236,6 +2254,63 @@ describe('core/utils/parameters/helper', () => {
           },
         });
       });
+    });
+  });
+
+  describe('getExpressionValueForOutputToken', () => {
+    const nodeType = 'Compose';
+    let token: OutputToken;
+    beforeEach(() => {
+      token = {
+        key: 'builtin.$.input',
+        brandColor: '#111',
+        type: 'string',
+        title: 'Title',
+        outputInfo: {
+          type: TokenType.OUTPUTS,
+          source: 'body',
+          required: true,
+        },
+      };
+    });
+
+    it('should get the body expression for outputs coming from body source in manifest based operation.', () => {
+      token.key = 'outputs.$.body.message.id';
+      token.outputInfo.actionName = 'Http';
+
+      expect(getExpressionValueForOutputToken(token, nodeType)).toEqual(`body('Http')['message']['id']`);
+
+      token.key = 'outputs.$.body.message.id';
+      token.outputInfo.required = false;
+      token.outputInfo.actionName = undefined;
+
+      expect(getExpressionValueForOutputToken(token, nodeType)).toEqual(`triggerBody()?['message']?['id']`);
+    });
+
+    it('should get the body expression for outputs coming from body source in swagger based operation.', () => {
+      token.key = 'body.$.message.id';
+      token.outputInfo.required = false;
+      token.outputInfo.actionName = 'Http';
+
+      expect(getExpressionValueForOutputToken(token, nodeType)).toEqual(`body('Http')?['message']?['id']`);
+
+      token.key = 'body.$.message.id';
+      token.outputInfo.required = true;
+      token.outputInfo.actionName = undefined;
+
+      expect(getExpressionValueForOutputToken(token, nodeType)).toEqual(`triggerBody()['message']['id']`);
+    });
+
+    it('should get the outputs expression for outputs coming from outputs directly.', () => {
+      token.key = 'outputs.$.message.id';
+      token.outputInfo.actionName = 'Http';
+
+      expect(getExpressionValueForOutputToken(token, nodeType)).toEqual(`outputs('Http')['message']['id']`);
+
+      token.key = 'outputs.$.message.id';
+      token.outputInfo.actionName = undefined;
+
+      expect(getExpressionValueForOutputToken(token, nodeType)).toEqual(`triggerOutputs()['message']['id']`);
     });
   });
 });

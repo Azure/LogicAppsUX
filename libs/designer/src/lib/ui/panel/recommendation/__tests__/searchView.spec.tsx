@@ -6,7 +6,17 @@ import { Provider } from 'react-redux';
 import TestRenderer from 'react-test-renderer';
 
 describe('search view', () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchInterval: false,
+        refetchIntervalInBackground: false,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
+        refetchOnMount: false,
+      },
+    },
+  });
   const wrapper = ({ children }: { children: JSX.Element }) => (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>

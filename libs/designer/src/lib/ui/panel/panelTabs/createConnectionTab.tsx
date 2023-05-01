@@ -7,13 +7,17 @@ import { useMonitoringView } from '../../../core/state/designerOptions/designerO
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useOperationInfo, useOperationManifest } from '../../../core/state/selectors/actionMetadataSelector';
-import { getAssistedConnectionProps, getConnectionParametersForAzureConnection } from '../../../core/utils/connectors/connections';
+import {
+  getAssistedConnectionProps,
+  getConnectionParametersForAzureConnection,
+  getSupportedParameterSets,
+} from '../../../core/utils/connectors/connections';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/designer-client-services-logic-apps';
 import { LogEntryLevel, LoggerService, ConnectionService } from '@microsoft/designer-client-services-logic-apps';
 import { CreateConnection } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
-import type { Connection, ConnectionParameterSet, ConnectionParameterSetValues } from '@microsoft/utils-logic-apps';
+import type { Connection, ConnectionParameterSet, ConnectionParameterSetValues, Connector } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -42,9 +46,9 @@ const CreateConnectionTab = () => {
 
   const applyNewConnection = useCallback(
     (newConnection: Connection, _newName: string) => {
-      dispatch(updateNodeConnection({ nodeId, connectionId: newConnection?.id, connectorId: connector?.id ?? '' }));
+      dispatch(updateNodeConnection({ nodeId, connection: newConnection, connector: connector as Connector }));
     },
-    [connector?.id, dispatch, nodeId]
+    [connector, dispatch, nodeId]
   );
 
   const assistedConnectionProps = useMemo(
@@ -151,10 +155,10 @@ const CreateConnectionTab = () => {
           applyNewConnection(connection, newName);
           dispatch(showDefaultTabs({ isMonitoringView }));
         } else if (err) {
-          setErrorMessage(err);
+          setErrorMessage(String(err));
         }
       } catch (error: any) {
-        setErrorMessage(error.responseText);
+        setErrorMessage(String(error?.responseText));
         const message = `Failed to create connection: ${error}`;
         LoggerService().log({
           level: LogEntryLevel.Error,
@@ -198,7 +202,7 @@ const CreateConnectionTab = () => {
       connectorDisplayName={connector.properties.displayName}
       connectorCapabilities={connector.properties.capabilities}
       connectionParameters={connector.properties.connectionParameters}
-      connectionParameterSets={connector.properties.connectionParameterSets}
+      connectionParameterSets={getSupportedParameterSets(connector.properties.connectionParameterSets, operationInfo.type)}
       createConnectionCallback={createConnectionCallback}
       isLoading={isLoading}
       cancelCallback={cancelCallback}
@@ -215,11 +219,13 @@ const CreateConnectionTab = () => {
   );
 };
 
-export const createConnectionTab: PanelTab = {
-  title: 'Create Connection',
-  name: constants.PANEL_TAB_NAMES.CONNECTION_CREATE,
-  description: 'Create Connection Tab',
-  visible: true,
-  content: <CreateConnectionTab />,
-  order: 0,
-};
+export function getCreateConnectionTab(title: string): PanelTab {
+  return {
+    title: title,
+    name: constants.PANEL_TAB_NAMES.CONNECTION_CREATE,
+    description: 'Create Connection Tab',
+    visible: true,
+    content: <CreateConnectionTab />,
+    order: 0,
+  };
+}

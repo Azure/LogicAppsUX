@@ -3,6 +3,7 @@ import { useActionMetadata, useNodeEdgeTargets, useNodeMetadata } from '../../co
 import { DropZone } from './dropzone';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { RunAfterIndicator } from './runAfterIndicator';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { getEdgeCenter, RUN_AFTER_STATUS } from '@microsoft/utils-logic-apps';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import React, { useMemo } from 'react';
@@ -15,6 +16,7 @@ interface EdgeContentProps {
   graphId: string;
   parentId?: string;
   childId?: string;
+  isLeaf?: boolean;
 }
 
 const EdgeContent = (props: EdgeContentProps) => (
@@ -27,7 +29,7 @@ const EdgeContent = (props: EdgeContentProps) => (
     requiredExtensions="http://www.w3.org/1999/xhtml"
   >
     <div style={{ padding: '4px' }}>
-      <DropZone graphId={props.graphId} parentId={props.parentId} childId={props.childId} />
+      <DropZone graphId={props.graphId} parentId={props.parentId} childId={props.childId} isLeaf={props.isLeaf} />
     </div>
   </foreignObject>
 );
@@ -91,6 +93,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const multipleSources = edgeSources.length > 1;
   const multipleTargets = edgeTargets.length > 1;
   const onlyEdge = !multipleSources && !multipleTargets;
+  const isLeaf = edgeTargets.length === 0;
 
   const dynamicMidEdgeY =
     multipleSources && !multipleTargets ? targetY - 64 : multipleTargets && !multipleSources ? sourceY + 64 : edgeCenterY;
@@ -159,6 +162,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
               graphId={graphId}
               parentId={!multipleSources ? source : undefined}
               childId={target}
+              isLeaf={isLeaf}
             />
           )}
         </>

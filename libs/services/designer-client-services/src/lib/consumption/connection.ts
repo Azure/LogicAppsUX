@@ -28,7 +28,8 @@ export class ConsumptionConnectionService extends BaseConnectionService {
     connectionId: string,
     connector: Connector,
     connectionInfo: ConnectionCreationInfo,
-    _parametersMetadata?: ConnectionParametersMetadata
+    _parametersMetadata?: ConnectionParametersMetadata,
+    shouldTestConnection = true
   ): Promise<Connection> {
     const connectionName = connectionId.split('/').at(-1) as string;
 
@@ -39,12 +40,10 @@ export class ConsumptionConnectionService extends BaseConnectionService {
     });
 
     try {
-      if (connector.properties.testConnectionUrl) await this.pretestServiceProviderConnection(connector, connectionInfo);
-
       if (!isArmResourceId(connector.id)) throw 'Connector id is not a valid ARM resource id.';
 
       const connection = await this.createConnectionInApiHub(connectionName, connector.id, connectionInfo);
-      await this.testConnection(connection);
+      if (shouldTestConnection) await this.testConnection(connection);
       LoggerService().endTrace(logId, { status: Status.Success });
       return connection;
     } catch (error) {
@@ -62,7 +61,11 @@ export class ConsumptionConnectionService extends BaseConnectionService {
     }
   }
 
-  async createConnectionInApiHub(connectionName: string, connectorId: string, connectionInfo: ConnectionCreationInfo): Promise<Connection> {
+  private async createConnectionInApiHub(
+    connectionName: string,
+    connectorId: string,
+    connectionInfo: ConnectionCreationInfo
+  ): Promise<Connection> {
     const {
       httpClient,
       apiHubServiceDetails: { apiVersion, baseUrl },
@@ -80,10 +83,8 @@ export class ConsumptionConnectionService extends BaseConnectionService {
     return connection;
   }
 
-  // Run when assigning a conneciton to an operation
   async setupConnectionIfNeeded(_connection: Connection): Promise<void> {
-    // In standard this is where we set access policies if needed
-    // TODO: Do we need to support anything here for consumption?
+    // No action needed for consumption connections.
   }
 
   async createAndAuthorizeOAuthConnection(
@@ -94,7 +95,13 @@ export class ConsumptionConnectionService extends BaseConnectionService {
   ): Promise<CreateConnectionResult> {
     try {
       const connector = await this.getConnector(connectorId);
-      const connection = await this.createConnection(connectionId, connector, connectionInfo, parametersMetadata);
+      const connection = await this.createConnection(
+        connectionId,
+        connector,
+        connectionInfo,
+        parametersMetadata,
+        /* shouldTestConnection */ false
+      );
       const oAuthService = OAuthService();
       const consentUrl = await oAuthService.fetchConsentUrlForConnection(connectionId);
       const oAuthPopupInstance: IOAuthPopup = oAuthService.openLoginPopup({ consentUrl });
@@ -106,9 +113,9 @@ export class ConsumptionConnectionService extends BaseConnectionService {
         await oAuthService.confirmConsentCodeForConnection(connectionId, loginResponse.code);
       }
 
-      await this.testConnection(connection);
-
       const fetchedConnection = await this.getConnection(connection.id);
+      await this.testConnection(fetchedConnection);
+
       return { connection: fetchedConnection };
     } catch (error: any) {
       try {

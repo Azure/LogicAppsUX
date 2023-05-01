@@ -1,4 +1,5 @@
-import type { LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft/parsers-logic-apps';
+import type { FilePickerInfo, LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft/parsers-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface ListDynamicValue {
@@ -6,6 +7,13 @@ export interface ListDynamicValue {
   displayName: string;
   description?: string;
   disabled?: boolean;
+}
+
+export interface TreeDynamicValue {
+  value: any;
+  displayName: string;
+  isParent: boolean;
+  mediaType?: string;
 }
 
 export interface ManagedIdentityRequestProperties {
@@ -22,13 +30,12 @@ export interface ManagedIdentityRequestProperties {
 
 export interface IConnectorService {
   /**
-   * Gets the item dynamic values for azure operations.
+   * Gets the item dynamic values for azure operations backed by swagger.
    * @arg {string} connectionId - The connection id.
    * @arg {string} connectorId - The connector id.
    * @arg {Record<string, any>} parameters - The operation parameters. Keyed by parameter name.
    * @arg {LegacyDynamicValuesExtension} extension - Dynamic value extension.
    * @arg {string} parameterArrayType - Dynamic values parameter collection array type.
-   * @arg {boolean} isManagedIdentityTypeConnection - If connection is a managed identity connection.
    * @arg {ManagedIdentityRequestProperties} managedIdentityProperties - Data to be sent in request payload for managed identity connections.
    * @return {Promise<ListDynamicValue[]>}
    */
@@ -38,7 +45,6 @@ export interface IConnectorService {
     parameters: Record<string, any>,
     extension: LegacyDynamicValuesExtension,
     parameterArrayType: string,
-    isManagedIdentityTypeConnection?: boolean,
     managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<ListDynamicValue[]>;
 
@@ -59,17 +65,15 @@ export interface IConnectorService {
     parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any,
-    nodeInputs: any,
     nodeMetadata: any
   ): Promise<ListDynamicValue[]>;
 
   /**
-   * Gets the dynamic schema for a parameter in azure operations.
+   * Gets the dynamic schema for a parameter in azure operations backed by swagger.
    * @arg {string} connectionId - The connection id.
    * @arg {string} connectorId - The connector id.
    * @arg {Record<string, any>} parameters - The operation parameters. Keyed by parameter name.
    * @arg {LegacyDynamicSchemaExtension} extension - Dynamic schema extension.
-   * @arg {boolean} isManagedIdentityTypeConnection - If connection is a managed identity connection.
    * @arg {ManagedIdentityRequestProperties} managedIdentityProperties - Data to be sent in request payload for managed identity connections.
    * @return {Promise<OpenAPIV2.SchemaObject | null>}
    */
@@ -78,7 +82,6 @@ export interface IConnectorService {
     connectorId: string,
     parameters: Record<string, any>,
     extension: LegacyDynamicSchemaExtension,
-    isManagedIdentityTypeConnection?: boolean,
     managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<OpenAPIV2.SchemaObject | null>;
 
@@ -99,9 +102,27 @@ export interface IConnectorService {
     parameterAlias: string | undefined,
     parameters: Record<string, any>,
     dynamicState: any,
-    nodeInputs: any,
     nodeMetadata: any
   ): Promise<OpenAPIV2.SchemaObject>;
+
+  /**
+   * Gets the tree dynamic values for azure operations backed by swagger.
+   * @arg {string} connectionId - The connection id.
+   * @arg {string} connectorId - The connector id.
+   * @arg {Record<string, any>} parameters - The operation parameters. Keyed by parameter name.
+   * @arg {LegacyDynamicValuesExtension} extension - Dynamic value extension.
+   * @arg {FilePickerInfo} pickerInfo - File picker info from swagger.
+   * @arg {ManagedIdentityRequestProperties} managedIdentityProperties - Data to be sent in request payload for managed identity connections.
+   * @return {Promise<TreeDynamicValue[]>}
+   */
+  getLegacyDynamicTreeItems(
+    connectionId: string,
+    connectorId: string,
+    parameters: Record<string, any>,
+    extension: LegacyDynamicValuesExtension,
+    pickerInfo: FilePickerInfo,
+    managedIdentityProperties?: ManagedIdentityRequestProperties
+  ): Promise<TreeDynamicValue[]>;
 }
 
 let service: IConnectorService;

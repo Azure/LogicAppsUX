@@ -1,8 +1,15 @@
 import Constants from '../../../common/constants';
 import type { ConnectionReference } from '../../../common/models/workflow';
+import { getCustomSwaggerIfNeeded } from '../../actions/bjsworkflow/initialize';
 import type { SerializedParameter } from '../../actions/bjsworkflow/serializer';
 import { getConnection, getConnectorWithSwagger } from '../../queries/connections';
-import { getDynamicSchemaProperties, getLegacyDynamicSchema, getLegacyDynamicValues, getListDynamicValues } from '../../queries/connector';
+import {
+  getDynamicSchemaProperties,
+  getLegacyDynamicSchema,
+  getLegacyDynamicTreeItems,
+  getLegacyDynamicValues,
+  getListDynamicValues,
+} from '../../queries/connector';
 import { getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import type { VariableDeclaration } from '../../state/tokensSlice';
@@ -14,10 +21,12 @@ import {
   getParameterFromName,
   loadParameterValuesFromDefault,
   parameterValueToString,
+  toParameterInfoMap,
   tryConvertStringToExpression,
 } from './helper';
-import type { ListDynamicValue, ManagedIdentityRequestProperties } from '@microsoft/designer-client-services-logic-apps';
+import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import type { ParameterInfo } from '@microsoft/designer-ui';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type {
@@ -30,6 +39,7 @@ import type {
   SwaggerParser,
 } from '@microsoft/parsers-logic-apps';
 import {
+  isLegacyDynamicValuesTreeExtension,
   parseEx,
   splitEx,
   removeConnectionPrefix,
@@ -46,7 +56,7 @@ import {
   SchemaProcessor,
   WildIndexSegment,
 } from '@microsoft/parsers-logic-apps';
-import type { Connection, OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
+import type { Connection, Connector, OpenAPIV2, OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 import {
   first,
   getObjectPropertyValue,
@@ -91,36 +101,19 @@ export async function getDynamicValues(
       parameter?.alias,
       operationParameters,
       dynamicState,
-      nodeInputs,
       nodeMetadata
     );
   } else if (isLegacyDynamicValuesExtension(definition)) {
     const { connectorId } = operationInfo;
     const connectionId = connectionReference?.connection.id as string;
     const { parameters, operationId } = definition.extension;
-    const operationParameters = getParametersForDynamicInvoke(parameters, nodeInputs, idReplacements);
     const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
-    const { method, path } = parsedSwagger.getOperationByOperationId(operationId as string);
-    const inputs = buildOperationDetailsFromControls(
-      operationParameters,
-      removeConnectionPrefix(path ?? ''),
-      /* encodePathComponents */ true,
-      method
+    const inputs = getParameterValuesForLegacyDynamicOperation(parsedSwagger, operationId, parameters, nodeInputs, idReplacements);
+    const managedIdentityRequestProperties = await getManagedIdentityRequestProperties(
+      connector,
+      connectionId,
+      connectionReference as ConnectionReference
     );
-    const connection = (await getConnection(connectionId, connectorId)) as Connection;
-    const isManagedIdentityTypeConnection =
-      isConnectionSingleAuthManagedIdentityType(connection) || isConnectionMultiAuthManagedIdentityType(connection, connector);
-    let managedIdentityRequestProperties: ManagedIdentityRequestProperties | undefined;
-
-    // TODO - Update this when support for Managed identity is added.
-    if (isManagedIdentityTypeConnection) {
-      managedIdentityRequestProperties = {
-        connection: { id: connection.id },
-        connectionRuntimeUrl: connection.properties.connectionRuntimeUrl as string,
-        connectionProperties: connectionReference?.connectionProperties as Record<string, any>,
-        authentication: connectionReference?.authentication as any,
-      };
-    }
 
     return getLegacyDynamicValues(
       connectionId,
@@ -128,7 +121,6 @@ export async function getDynamicValues(
       inputs,
       definition.extension,
       getArrayTypeForOutputs(parsedSwagger, operationId as string),
-      isManagedIdentityTypeConnection,
       managedIdentityRequestProperties
     );
   }
@@ -159,7 +151,9 @@ export async function getDynamicSchema(
 
       switch (dynamicState?.extension?.builtInOperation) {
         case 'getVariableSchema':
-          schema = { type: getSwaggerTypeFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean') };
+          schema = {
+            type: getSwaggerTypeFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean'),
+          };
           break;
         case 'getVariable':
           // eslint-disable-next-line no-case-declarations
@@ -174,7 +168,6 @@ export async function getDynamicSchema(
             parameter?.alias,
             operationParameters,
             dynamicState,
-            nodeInputs,
             nodeMetadata
           );
           break;
@@ -184,40 +177,16 @@ export async function getDynamicSchema(
     } else {
       const { connectorId } = operationInfo;
       const { parameters, operationId } = definition.extension;
-      const operationParameters = getParametersForDynamicInvoke(parameters, nodeInputs, idReplacements);
       const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
-      const { method, path } = parsedSwagger.getOperationByOperationId(operationId as string);
-      const inputs = buildOperationDetailsFromControls(
-        operationParameters,
-        removeConnectionPrefix(path ?? ''),
-        /* encodePathComponents */ true,
-        method
-      );
+      const inputs = getParameterValuesForLegacyDynamicOperation(parsedSwagger, operationId, parameters, nodeInputs, idReplacements);
       const connectionId = (connectionReference as ConnectionReference).connection.id;
-      const connection = (await getConnection(connectionId, connectorId)) as Connection;
-      const isManagedIdentityTypeConnection =
-        isConnectionSingleAuthManagedIdentityType(connection) || isConnectionMultiAuthManagedIdentityType(connection, connector);
-
-      let managedIdentityRequestProperties: ManagedIdentityRequestProperties | undefined;
-
-      // TODO - Update this when support for Managed identity is added.
-      if (isManagedIdentityTypeConnection) {
-        managedIdentityRequestProperties = {
-          connection: { id: connection.id },
-          connectionRuntimeUrl: connection.properties.connectionRuntimeUrl as string,
-          connectionProperties: (connectionReference as ConnectionReference).connectionProperties as Record<string, any>,
-          authentication: (connectionReference as ConnectionReference).authentication as any,
-        };
-      }
-
-      return getLegacyDynamicSchema(
+      const managedIdentityRequestProperties = await getManagedIdentityRequestProperties(
+        connector,
         connectionId,
-        connectorId,
-        inputs,
-        definition.extension,
-        isManagedIdentityTypeConnection,
-        managedIdentityRequestProperties
+        connectionReference as ConnectionReference
       );
+
+      return getLegacyDynamicSchema(connectionId, connectorId, inputs, definition.extension, managedIdentityRequestProperties);
     }
   } catch (error: any) {
     if (
@@ -304,19 +273,63 @@ export async function getDynamicInputsFromSchema(
 
   if (OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
     const manifest = await getOperationManifest(operationInfo);
-    const output = getManifestBasedInputParameters(
-      dynamicInputs,
-      dynamicParameter,
-      allInputKeys,
-      manifest,
-      operationDefinition,
-      operationInfo
-    );
-    return output;
+    const customSwagger = await getCustomSwaggerIfNeeded(manifest.properties, operationDefinition);
+    return getManifestBasedInputParameters(dynamicInputs, dynamicParameter, allInputKeys, manifest, customSwagger, operationDefinition);
   } else {
     const { parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
     return getSwaggerBasedInputParameters(dynamicInputs, dynamicParameter, parsedSwagger, operationInfo, operationDefinition);
   }
+}
+
+export async function getFolderItems(
+  selectedValue: any | undefined,
+  dependencyInfo: DependencyInfo,
+  nodeInputs: NodeInputs,
+  _nodeMetadata: any,
+  operationInfo: OperationInfo,
+  connectionReference: ConnectionReference | undefined,
+  idReplacements: Record<string, string>
+): Promise<TreeDynamicValue[]> {
+  const { definition, filePickerInfo } = dependencyInfo;
+  if (isLegacyDynamicValuesTreeExtension(definition) && filePickerInfo) {
+    const { open, browse } = filePickerInfo;
+    const { connectorId } = operationInfo;
+    const connectionId = connectionReference?.connection.id as string;
+    const { operationId, parameters: referenceParameters } = selectedValue ? browse : open;
+    const pickerParameters = Object.keys(referenceParameters ?? {}).reduce((result: Record<string, any>, paramKey: string) => {
+      if (referenceParameters?.[paramKey]?.selectedItemValuePath || referenceParameters?.[paramKey]?.['value-property']) {
+        return {
+          ...result,
+          [paramKey]: getPropertyValue(
+            selectedValue,
+            referenceParameters?.[paramKey]?.selectedItemValuePath ?? referenceParameters[paramKey]?.['value-property'] ?? ''
+          ),
+        };
+      }
+
+      return { ...result, [paramKey]: referenceParameters?.[paramKey] };
+    }, {});
+    const parameters = { ...definition.extension.parameters, ...pickerParameters };
+    const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
+    const inputs = getParameterValuesForLegacyDynamicOperation(parsedSwagger, operationId, parameters, nodeInputs, idReplacements);
+    const managedIdentityRequestProperties = await getManagedIdentityRequestProperties(
+      connector,
+      connectionId,
+      connectionReference as ConnectionReference
+    );
+
+    return getLegacyDynamicTreeItems(
+      connectionId,
+      connectorId,
+      operationId,
+      inputs,
+      definition.extension,
+      filePickerInfo,
+      managedIdentityRequestProperties
+    );
+  }
+
+  throw new UnsupportedException(`Dynamic extension '${definition.type}' is not implemented yet or not supported`);
 }
 
 function getParameterValuesForDynamicInvoke(
@@ -330,60 +343,119 @@ function getParameterValuesForDynamicInvoke(
   );
 }
 
+function getParameterValuesForLegacyDynamicOperation(
+  swagger: SwaggerParser,
+  operationId: string,
+  parameters: Record<string, any>,
+  nodeInputs: NodeInputs,
+  idReplacements: Record<string, string>
+): Record<string, any> {
+  const { method, path } = swagger.getOperationByOperationId(operationId as string);
+  const operationInputs = map(
+    toParameterInfoMap(
+      unmap(swagger.getInputParameters(operationId as string, { excludeInternalParameters: false, excludeInternalOperations: false }).byId)
+    ),
+    'parameterName'
+  );
+  const operationParameters = getParametersForDynamicInvoke(parameters, nodeInputs, idReplacements, operationInputs);
+  return buildOperationDetailsFromControls(
+    operationParameters,
+    removeConnectionPrefix(path ?? ''),
+    /* encodePathComponents */ true,
+    method
+  );
+}
+
 function getParametersForDynamicInvoke(
   referenceParameters: DynamicParameters,
   nodeInputs: NodeInputs,
-  idReplacements: Record<string, string>
+  idReplacements: Record<string, string>,
+  operationInputs?: Record<string, ParameterInfo>
 ): SerializedParameter[] {
   const intl = getIntl();
   const operationParameters: SerializedParameter[] = [];
 
   for (const [parameterName, parameter] of Object.entries(referenceParameters ?? {})) {
     const referenceParameterName = (parameter?.parameterReference ?? parameter?.parameter ?? 'undefined') as string;
-    if (referenceParameterName === 'undefined') continue;
-    const referencedParameter = getParameterFromName(nodeInputs, referenceParameterName);
+    const operationParameter = operationInputs?.[parameterName];
+    if (referenceParameterName === 'undefined') {
+      if (!operationParameter) {
+        continue;
+      }
 
-    if (!referencedParameter) {
-      throw new AssertionException(
-        AssertionErrorCode.INVALID_PARAMETER_DEPENDENCY,
-        intl.formatMessage(
-          {
-            defaultMessage: 'Parameter "{parameterName}" cannot be found for this operation',
-            description: 'Error message to show in dropdown when dependent parameter is not found',
-          },
-          { parameterName: referenceParameterName }
+      operationParameters.push({
+        ...operationParameter,
+        parameterName,
+        value: parameter,
+      });
+    } else {
+      const referencedParameter = getParameterFromName(nodeInputs, referenceParameterName);
+
+      if (!referencedParameter) {
+        throw new AssertionException(
+          AssertionErrorCode.INVALID_PARAMETER_DEPENDENCY,
+          intl.formatMessage(
+            {
+              defaultMessage: 'Parameter "{parameterName}" cannot be found for this operation',
+              description: 'Error message to show in dropdown when dependent parameter is not found',
+            },
+            { parameterName: referenceParameterName }
+          )
+        );
+      }
+
+      // Stamp with @parameters and @appsetting values here for some parameters
+
+      // Parameter tokens are supported.
+      if (
+        referencedParameter.value.some(
+          (segment) => segment.type === ValueSegmentType.TOKEN && segment.token?.tokenType !== TokenType.PARAMETER
         )
-      );
+      ) {
+        throw new ValidationException(
+          ValidationErrorCode.INVALID_VALUE_SEGMENT_TYPE,
+          intl.formatMessage({
+            defaultMessage: 'Value contains function expressions which cannot be resolved. Only constant values supported',
+            description: 'Error message to show in dropdown when dependent parameter value cannot be resolved',
+          })
+        );
+      }
+
+      operationParameters.push({
+        ...(operationParameter ?? referencedParameter),
+        parameterName,
+        value: getJSONValueFromString(
+          parameterValueToString(referencedParameter, false /* isDefinitionValue */, idReplacements),
+          referencedParameter.type
+        ),
+      });
     }
-
-    // Stamp with @parameters and @appsetting values here for some parameters
-
-    // Parameter tokens are supported.
-    if (
-      referencedParameter.value.some(
-        (segment) => segment.type === ValueSegmentType.TOKEN && segment.token?.tokenType !== TokenType.PARAMETER
-      )
-    ) {
-      throw new ValidationException(
-        ValidationErrorCode.INVALID_VALUE_SEGMENT_TYPE,
-        intl.formatMessage({
-          defaultMessage: 'Value contains function expressions which cannot be resolved. Only constant values supported',
-          description: 'Error message to show in dropdown when dependent parameter value cannot be resolved',
-        })
-      );
-    }
-
-    operationParameters.push({
-      ...referencedParameter,
-      parameterName,
-      value: getJSONValueFromString(
-        parameterValueToString(referencedParameter, false /* isDefinitionValue */, idReplacements),
-        referencedParameter.type
-      ),
-    });
   }
 
   return operationParameters;
+}
+
+async function getManagedIdentityRequestProperties(
+  connector: Connector,
+  connectionId: string,
+  connectionReference: ConnectionReference
+): Promise<ManagedIdentityRequestProperties | undefined> {
+  const connection = (await getConnection(connectionId, connector.id)) as Connection;
+  const isManagedIdentityTypeConnection =
+    isConnectionSingleAuthManagedIdentityType(connection) || isConnectionMultiAuthManagedIdentityType(connection, connector);
+
+  let managedIdentityRequestProperties: ManagedIdentityRequestProperties | undefined;
+
+  if (isManagedIdentityTypeConnection) {
+    managedIdentityRequestProperties = {
+      connection: { id: connection.id },
+      connectionRuntimeUrl: connection.properties.connectionRuntimeUrl as string,
+      connectionProperties: connectionReference.connectionProperties as Record<string, any>,
+      authentication: connectionReference.authentication as any,
+    };
+  }
+
+  return managedIdentityRequestProperties;
 }
 
 function getManifestBasedInputParameters(
@@ -391,13 +463,14 @@ function getManifestBasedInputParameters(
   dynamicParameter: InputParameter,
   allInputKeys: string[],
   manifest: OperationManifest,
-  operationDefinition: any,
-  operationInfo: NodeOperation
+  customSwagger: SwaggerParser | undefined,
+  operationDefinition: any
 ): InputParameter[] {
   let result: InputParameter[] = [];
   const stepInputs = getInputsValueFromDefinitionForManifest(
     manifest.properties?.inputsLocation ?? ['inputs'],
     manifest,
+    customSwagger,
     operationDefinition,
     dynamicInputs
   );
@@ -426,11 +499,6 @@ function getManifestBasedInputParameters(
     result.push(clonedInputParameter);
 
     knownKeys.add(clonedInputParameter.key);
-  }
-
-  const swaggerBasedDynamicDataOperationIds = ['httpswaggeraction', 'httpswaggertrigger', 'appservice'];
-  if (swaggerBasedDynamicDataOperationIds.includes(operationInfo?.operationId)) {
-    initializeSwaggerBasedDynamicPathParameters(result, dynamicParameter, operationDefinition);
   }
 
   if (stepInputs !== undefined && !manifest.properties.inputsLocationSwapMap) {
@@ -546,36 +614,6 @@ function getSwaggerBasedInputParameters(
     return result;
   } else {
     return dynamicInputParameters;
-  }
-}
-
-function initializeSwaggerBasedDynamicPathParameters(inputs: InputParameter[], dynamicParameter: InputParameter, operationDefinition: any) {
-  const swaggerKey = dynamicParameter.name;
-  const basePath = '';
-  const operationPath = inputs.find((input) => input.name === `${swaggerKey}.pathTemplate.template`)?.default;
-  const parameterKey = 'uri';
-  const propertyNames = parseEx(parameterKey).map((segment) => segment.value?.toString()) as string[];
-  const dynamicInputDefinition = safeSetObjectPropertyValue(
-    {},
-    propertyNames,
-    getObjectPropertyValue(operationDefinition.inputs, propertyNames)
-  );
-  const dynamicInputParameters = loadInputValuesFromDefinition(
-    dynamicInputDefinition as Record<string, any>,
-    inputs,
-    operationPath,
-    basePath as string
-  );
-
-  for (const inputParameter of inputs) {
-    if (inputParameter.default && inputParameter.value === undefined) {
-      inputParameter.value = inputParameter.default;
-    }
-    if (inputParameter.value === undefined) {
-      const inputKey = `${inputParameter.schema.in}.$.${inputParameter.schema.name}`;
-      const value = dynamicInputParameters.find((parameter) => parameter.key === inputKey)?.value;
-      inputParameter.value = value;
-    }
   }
 }
 

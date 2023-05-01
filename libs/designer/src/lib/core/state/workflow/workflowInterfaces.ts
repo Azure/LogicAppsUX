@@ -1,5 +1,5 @@
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
-import type { SubgraphType } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2, SubgraphType } from '@microsoft/utils-logic-apps';
 
 export type SpecTypes = 'BJS' | 'CNCF';
 
@@ -31,4 +31,5 @@ export interface WorkflowState {
   idReplacements: Record<string, string>;
   newlyAddedOperations: Record<string, string>;
   runInstance: LogicAppsV2.RunInstanceDefinition | null;
+  isDirty: boolean;
 }

@@ -9,6 +9,7 @@ import { Spinner, SpinnerSize, Text } from '@fluentui/react';
 import type { ConnectionCreationInfo } from '@microsoft/designer-client-services-logic-apps';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { isEmptyString, Theme } from '@microsoft/utils-logic-apps';
 import type { FileSystemConnectionInfo, StandardApp } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
@@ -111,6 +112,7 @@ export const App = () => {
 
   const { refetch, isError, isFetching, isLoading, isRefetching } = useQuery<any>(['runInstance', { runId }], getRunInstance, {
     refetchOnWindowFocus: false,
+    refetchOnMount: true,
     initialData: null,
     onSuccess: onRunInstanceSuccess,
     onError: onRunInstanceError,

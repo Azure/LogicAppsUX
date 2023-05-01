@@ -3,6 +3,7 @@ import { deserializePropertyValues, parseStaticResultSchema, serializePropertyVa
 import type { IButtonStyles } from '@fluentui/react';
 import { DefaultButton, PrimaryButton, Toggle } from '@fluentui/react';
 import type { Schema } from '@microsoft/parsers-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import isEqual from 'lodash.isequal';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -127,6 +128,7 @@ export const StaticResultContainer = ({
       />
       {showStaticResults ? (
         <StaticResult
+          isRoot={true}
           title={testingTitle}
           required={required}
           propertiesSchema={propertiesSchema}

@@ -43,9 +43,14 @@ export const addNodeToWorkflow = (
 
   state.operations[newNodeId] = { ...state.operations[newNodeId], type: payload.operation.type };
   state.newlyAddedOperations[newNodeId] = newNodeId;
+  state.isDirty = true;
 
   const isAfterTrigger = nodesMetadata[parentId ?? '']?.isRoot && graphId === 'root';
   const shouldAddRunAfters = !isRoot && !isAfterTrigger;
+
+  nodesMetadata[newNodeId] = { graphId, parentNodeId, isRoot };
+  state.operations[newNodeId] = { ...state.operations[newNodeId], type: payload.operation.type };
+  state.newlyAddedOperations[newNodeId] = newNodeId;
 
   // Parallel Branch creation, just add the singular node
   if (payload.isParallelBranch && parentId) {
@@ -66,11 +71,11 @@ export const addNodeToWorkflow = (
   }
   // 1 parent, X children
   else if (parentId) {
-    reassignEdgeSources(state, parentId, newNodeId, workflowGraph, !shouldAddRunAfters, /* isNewSourceTrigger */ false);
+    reassignEdgeSources(state, parentId, newNodeId, workflowGraph);
     addNewEdge(state, parentId, newNodeId, workflowGraph, shouldAddRunAfters);
   }
 
-  if (isRoot) applyIsRootNode(state, newNodeId, workflowGraph, nodesMetadata);
+  applyIsRootNode(state, workflowGraph, nodesMetadata);
 
   // Increase action count of graph
   if (nodesMetadata[workflowGraph.id]) {

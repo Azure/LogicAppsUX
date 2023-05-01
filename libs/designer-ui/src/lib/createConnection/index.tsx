@@ -141,6 +141,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
       const dependencyParam = constraints?.dependentParameter;
       if (dependencyParam && parameterValues[dependencyParam.parameter] !== dependencyParam.value) return false;
       if (parameter.type === ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]) return false;
+      if (parameter.type === ConnectionParameterTypes[ConnectionParameterTypes.managedIdentity]) return false;
       return true;
     },
     [parameterValues, useServicePrincipal]

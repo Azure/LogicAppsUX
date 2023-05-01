@@ -7,7 +7,13 @@ import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions
 import { useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
-import { useBrandColor, useIconUri, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
+import {
+  useAllOperations,
+  useBrandColor,
+  useIconUri,
+  useOperationInfo,
+  useOperationQuery,
+} from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import {
   useActionMetadata,
@@ -30,6 +36,7 @@ import { MessageBarType } from '@fluentui/react';
 import { RunService } from '@microsoft/designer-client-services-logic-apps';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { DeleteNodeModal, MenuItemType, ScopeCard } from '@microsoft/designer-ui';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
@@ -44,6 +51,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const scopeId = id.split('-#')[0];
 
   const node = useActionMetadata(scopeId);
+  const operationsInfo = useAllOperations();
 
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
@@ -56,11 +64,11 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const runInstance = useRunInstance();
   const runData = useRunData(scopeId);
   const nodesMetaData = useNodesMetadata();
+  const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo);
 
   const { status: statusRun, duration: durationRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
   const getRunRepetition = () => {
-    const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData);
     return RunService().getRepetition({ nodeId: scopeId, runId: runInstance?.id }, repetitionName);
   };
 
@@ -72,9 +80,10 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     refetch,
     isLoading: isRepetitionLoading,
     isRefetching: isRepetitionRefetching,
-  } = useQuery<any>(['runInstance', { scopeId: scopeId }], getRunRepetition, {
+  } = useQuery<any>(['runInstance', { nodeId: scopeId, runId: runInstance?.id, repetitionName }], getRunRepetition, {
     refetchOnWindowFocus: false,
     initialData: null,
+    refetchOnMount: true,
     onSuccess: onRunRepetitionSuccess,
     enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
   });
@@ -276,7 +285,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
         {showEmptyGraphComponents ? (
           !readOnly ? (
             <div className={'edge-drop-zone-container'}>
-              <DropZone graphId={scopeId} parentId={id} />
+              <DropZone graphId={scopeId} parentId={id} isLeaf={isLeaf} />
             </div>
           ) : (
             <p className="no-actions-text">No Actions</p>

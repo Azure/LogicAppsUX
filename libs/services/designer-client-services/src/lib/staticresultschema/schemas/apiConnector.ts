@@ -2,6 +2,7 @@ import type { StaticResultRootSchemaType } from './baseactionresult';
 import { HttpStaticResultSchema } from './httpresult';
 import type { Schema, SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { ExtensionProperties } from '@microsoft/parsers-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { clone } from '@microsoft/utils-logic-apps';
 
 /**
@@ -20,7 +21,7 @@ export const getStaticResultSchemaForAPIConnector = (
 /**
  * Wraps the static output schema to the operation schema.
  * @arg {Schema} outputSchema - the operation output schema.
- * @return {StaticResultRootSchema} - The root schema for connector operation.
+ * @return {StaticResultRootSchemaType} - The root schema for connector operation.
  */
 const wrapOutputsSchemaToOperationSchema = (outputSchema: Schema): Promise<StaticResultRootSchemaType> => {
   const schema = clone(HttpStaticResultSchema);

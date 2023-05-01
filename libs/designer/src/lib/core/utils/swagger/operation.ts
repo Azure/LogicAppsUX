@@ -36,7 +36,7 @@ import {
   removeConnectionPrefix,
   isTemplateExpression,
 } from '@microsoft/parsers-logic-apps';
-import type { OperationInfo } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2, OperationInfo } from '@microsoft/utils-logic-apps';
 import { copyArray, map, RecurrenceType, equals, parsePathnameAndQueryKeyFromUri, startsWith, unmap } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -62,15 +62,17 @@ export const initializeOperationDetailsForSwagger = async (
 
     if (operationInfo) {
       const { connectorId, operationId } = operationInfo;
-      const schema = staticResultService.getOperationResultSchema(connectorId, operationId);
-      schema.then((schema) => {
+
+      const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
+      dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
+      const { connector, parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
+
+      const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId, parsedSwagger);
+      schemaService.then((schema) => {
         if (schema) {
           dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
         }
       });
-      const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
-      dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
-      const { connector, parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
 
       const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromSwagger(
         nodeId,
@@ -205,7 +207,7 @@ export const getInputParametersFromSwagger = (
   defaultParameterGroup.parameters = getParametersSortedByVisibility(defaultParameterGroup.parameters);
 
   const nodeInputs = { dynamicLoadStatus: dynamicInput ? DynamicLoadStatus.NOTSTARTED : undefined, parameterGroups };
-  return { inputs: nodeInputs, dependencies: getInputDependencies(nodeInputs, inputParametersAsArray) };
+  return { inputs: nodeInputs, dependencies: getInputDependencies(nodeInputs, inputParametersAsArray, swagger) };
 };
 
 export const getOutputParametersFromSwagger = (
@@ -298,7 +300,7 @@ const getOperationInfo = async (
   }
 };
 
-const getOperationIdFromDefinition = (operationInputInfo: OperationInputInfo, swagger: SwaggerParser): string | undefined => {
+export const getOperationIdFromDefinition = (operationInputInfo: OperationInputInfo, swagger: SwaggerParser): string | undefined => {
   const operations = unmap(swagger.getOperations());
 
   if (!operationInputInfo.path && (!operationInputInfo.pathTemplate || !operationInputInfo.pathTemplate.template)) {
@@ -392,7 +394,7 @@ function getOperationInputInfoFromDefinition(swagger: SwaggerParser, operation: 
   }
 }
 
-function extractPathFromUri(baseUri: string, path: string): string {
+export function extractPathFromUri(baseUri: string, path: string): string {
   let basePath = path;
   let uri = baseUri;
   if (basePath && !startsWith(basePath, '/')) {

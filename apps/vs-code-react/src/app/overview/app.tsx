@@ -5,15 +5,26 @@ import type { RunDisplayItem } from '../../run-service';
 import type { OnErrorFn } from '@formatjs/intl';
 import { StandardRunService } from '@microsoft/designer-client-services-logic-apps';
 import type { CallbackInfo } from '@microsoft/designer-client-services-logic-apps';
-import type { OverviewPropertiesProps, Runs } from '@microsoft/designer-ui';
+import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
 import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
+import type { Runs } from '@microsoft/utils-logic-apps';
 import { HttpClient } from '@microsoft/vscode-extension';
 import { useCallback, useMemo } from 'react';
 import { IntlProvider } from 'react-intl';
 import { QueryClient, QueryClientProvider, useInfiniteQuery, useMutation } from 'react-query';
 import invariant from 'tiny-invariant';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchInterval: false,
+      refetchIntervalInBackground: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: true,
+    },
+  },
+});
 
 export interface AppProps {
   apiVersion: string;

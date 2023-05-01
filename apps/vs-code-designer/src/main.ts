@@ -1,20 +1,23 @@
+import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createCodeless/createCodelessSteps/WorkflowCreateStepBase';
 import { validateFuncCoreToolsIsLatest } from './app/commands/funcCoreTools/validateFuncCoreToolsIsLatest';
 import { registerCommands } from './app/commands/registerCommands';
-import { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
+import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
+import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
-import { extensionCommand } from './constants';
+import { extensionCommand, logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
 import {
-  AzExtTreeDataProvider,
   callWithTelemetryAndErrorHandling,
   createAzExtOutputChannel,
   registerEvent,
+  registerReportIssueCommand,
   registerUIExtensionVariables,
+  getAzExtResourceType,
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
@@ -39,12 +42,10 @@ export async function activate(context: vscode.ExtensionContext) {
     runPostWorkflowCreateStepsFromCache();
     validateFuncCoreToolsIsLatest();
 
-    ext.azureAccountTreeItem = new AzureAccountTreeItemWithProjects();
-    ext.tree = new AzExtTreeDataProvider(ext.azureAccountTreeItem, extensionCommand.loadMore);
-    ext.treeView = vscode.window.createTreeView(ext.treeViewName, {
-      treeDataProvider: ext.tree,
-      showCollapseAll: true,
-    });
+    ext.rgApi = await getResourceGroupsApi();
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;
 
     callWithTelemetryAndErrorHandling(extensionCommand.validateLogicAppProjects, async (actionContext: IActionContext) => {
       await verifyVSCodeConfigOnActivate(actionContext, vscode.workspace.workspaceFolders);
@@ -60,10 +61,12 @@ export async function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(ext.outputChannel);
     context.subscriptions.push(ext.azureAccountTreeItem);
-    context.subscriptions.push(ext.treeView);
 
+    registerReportIssueCommand(extensionCommand.reportIssue);
     registerCommands();
     registerFuncHostTaskEvents();
+
+    ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter), new LogicAppResolver());
 
     vscode.window.registerUriHandler(new UriHandler());
   });

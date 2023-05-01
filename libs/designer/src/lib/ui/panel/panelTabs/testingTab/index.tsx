@@ -7,9 +7,10 @@ import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { selectPanelTab } from '../../../../core/state/panel/panelSlice';
 import { useOperationInfo } from '../../../../core/state/selectors/actionMetadataSelector';
 import { useStaticResultProperties, useStaticResultSchema } from '../../../../core/state/staticresultschema/staitcresultsSelector';
-import { updateProperties } from '../../../../core/state/staticresultschema/staticresultsSlice';
+import { updateStaticResultProperties } from '../../../../core/state/staticresultschema/staticresultsSlice';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { StaticResultContainer } from '@microsoft/designer-ui';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -27,7 +28,7 @@ export const TestingPanel: React.FC = () => {
   const saveProperties = useCallback(
     (properties: OpenAPIV2.SchemaObject, updatedStaticResultOptions: StaticResultOption) => {
       dispatch(updateStaticResults({ id: selectedNode, staticResults: { name, staticResultOptions: updatedStaticResultOptions } }));
-      dispatch(updateProperties({ name, properties }));
+      dispatch(updateStaticResultProperties({ name, properties }));
       dispatch(selectPanelTab(constants.PANEL_TAB_NAMES.PARAMETERS));
     },
     [dispatch, name, selectedNode]

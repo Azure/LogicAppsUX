@@ -3,8 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../localize';
+import { showSiteCreated } from '../../commands/createLogicApp/showSiteCreated';
 import { getIconPath } from '../../utils/tree/assets';
-import type { ProductionSlotTreeItem } from './ProductionSlotTreeItem';
+import { LogicAppResourceTree } from '../LogicAppResourceTree';
 import { SlotTreeItem } from './SlotTreeItem';
 import type { Site, WebSiteManagementClient } from '@azure/arm-appservice';
 import { createSlot, createWebSiteClient, ParsedSite } from '@microsoft/vscode-azext-azureappservice';
@@ -17,11 +18,11 @@ export class SlotsTreeItem extends AzExtParentTreeItem {
   public readonly contextValue: string = SlotsTreeItem.contextValue;
   public readonly label: string = localize('slots', 'Slots');
   public readonly childTypeLabel: string = localize('slot', 'Slot');
-  public readonly parent: ProductionSlotTreeItem;
+  public readonly parent: SlotTreeItem;
 
   private _nextLink: string | undefined;
 
-  public constructor(parent: ProductionSlotTreeItem) {
+  public constructor(parent: SlotTreeItem) {
     super(parent);
   }
 
@@ -51,7 +52,7 @@ export class SlotsTreeItem extends AzExtParentTreeItem {
       webAppCollection,
       'azLogicAppInvalidSlot',
       async (site: Site) => {
-        return new SlotTreeItem(this, new ParsedSite(site, this.subscription));
+        return new SlotTreeItem(this, new LogicAppResourceTree(this.subscription, site));
       },
       (site: Site) => {
         return site.name;
@@ -67,6 +68,7 @@ export class SlotsTreeItem extends AzExtParentTreeItem {
       context
     );
     const parsedSite = new ParsedSite(newSite, this.subscription);
-    return new SlotTreeItem(this, parsedSite);
+    showSiteCreated(parsedSite, context);
+    return new SlotTreeItem(this, new LogicAppResourceTree(this.subscription, newSite));
   }
 }

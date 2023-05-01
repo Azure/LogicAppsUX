@@ -20,13 +20,14 @@ export interface DesignerProviderProps {
 const OptionsStateSet = ({ options, children }: any) => {
   const dispatch = useDispatch();
   useEffect(() => {
-    if (!options) return; // TODO: This dispatch keeps getting ran out of order in storybook, overwriting the options with null values each time.  This is just a quick temp safeguard.
+    if (!options) return;
     dispatch(
       initDesignerOptions({
         readOnly: options.readOnly,
         isMonitoringView: options.isMonitoringView,
         isDarkMode: options.isDarkMode,
         isConsumption: options.isConsumption,
+        isXrmConnectionReferenceMode: options.isXrmConnectionReferenceMode,
       })
     );
   }, [dispatch, options]);

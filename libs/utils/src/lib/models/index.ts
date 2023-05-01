@@ -7,5 +7,11 @@ export * from './operationDiscoveryResults';
 export * from './operationmanifest';
 export * from './workflowNode';
 export * from './gateway';
+export * from './run';
 export * from './subscription';
 export * from './theme';
+
+export * as LogicApps from './logicApps';
+export * as LogicAppsV2 from './logicAppsV2';
+export * as OpenAPIV2 from './openApiV2';
+export * as Swagger from './swagger';

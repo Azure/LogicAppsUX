@@ -4,9 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { func } from './constants';
-import type { AzExtTreeDataProvider, AzExtTreeItem, IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
+import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
+import type { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
 import type * as cp from 'child_process';
-import type { ExtensionContext, TreeView, WebviewPanel } from 'vscode';
+import type { ExtensionContext, WebviewPanel } from 'vscode';
 
 /**
  * Namespace for common variables used throughout the extension. They must be initialized in the activate() method of extension.ts
@@ -22,10 +23,11 @@ export namespace ext {
 
   // Tree item view
   export let azureAccountTreeItem: AzureAccountTreeItemWithProjects;
-  export let tree: AzExtTreeDataProvider;
-  export let treeView: TreeView<AzExtTreeItem>;
   export const treeViewName = 'azLogicApps';
   export let deploymentFolderPath: string;
+
+  // Resource group API
+  export let rgApi: AzureHostExtensionApi;
 
   // Functions
   export const funcCliPath: string = func;

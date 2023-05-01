@@ -39,10 +39,11 @@ import {
   initializeManifest,
   setManifest,
 } from './manifests/variables';
-import { ArgumentException, equals, UnsupportedException } from '@microsoft/utils-logic-apps';
 import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
+import { ArgumentException, equals, UnsupportedException } from '@microsoft/utils-logic-apps';
 
 const apimanagement = 'apimanagement';
+const apimanagementtrigger = 'apimanagementtrigger';
 const as2Encode = 'as2encode';
 const as2Decode = 'as2decode';
 const integrationaccountartifactlookup = 'integrationaccountartifactlookup';
@@ -128,6 +129,7 @@ const dataMapperConnectorId = 'connectionProviders/dataMapperOperations';
 
 const azurefunction = 'azurefunction';
 const appservice = 'appservice';
+const appservicetrigger = 'appservicetrigger';
 const invokeworkflow = 'invokeworkflow';
 
 export const supportedBaseManifestTypes = [
@@ -186,7 +188,6 @@ export const supportedBaseManifestTypes = [
 export type getAccessTokenType = () => Promise<string>;
 
 export interface BaseOperationManifestServiceOptions {
-  [x: string]: any;
   apiVersion: string;
   baseUrl: string;
   httpClient: IHttpClient;
@@ -314,7 +315,7 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
       if (equals(definition?.metadata?.swaggerSource, 'website')) {
         return {
           connectorId: appServiceConnectorId,
-          operationId: appservice,
+          operationId: isTrigger ? appservicetrigger : appservice,
         };
       } else {
         return {
@@ -403,19 +404,13 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
     case apimanagement:
       return {
         connectorId: apiManagementConnectorId,
-        operationId: apimanagement,
-      };
-
-    case sendtobatch:
-      return {
-        connectorId: batchConnectorId,
-        operationId: sendtobatch,
+        operationId: isTrigger ? apimanagementtrigger : apimanagement,
       };
 
     case appservice:
       return {
         connectorId: appServiceConnectorId,
-        operationId: appservice,
+        operationId: isTrigger ? appservicetrigger : appservice,
       };
 
     case azurefunction:
@@ -453,10 +448,6 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
 }
 
 const builtInOperationsMetadata: Record<string, OperationInfo> = {
-  [apimanagement]: {
-    connectorId: apiManagementConnectorId,
-    operationId: 'apiManagement',
-  },
   [appendtoarrayvariable]: {
     connectorId: variableConnectorId,
     operationId: appendtoarrayvariable,
@@ -476,6 +467,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [batch]: {
     connectorId: batchConnectorId,
     operationId: batch,
+  },
+  [sendtobatch]: {
+    connectorId: batchConnectorId,
+    operationId: sendtobatch,
   },
   [compose]: {
     connectorId: dataOperationConnectorId,
@@ -532,10 +527,6 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [select]: {
     connectorId: dataOperationConnectorId,
     operationId: select,
-  },
-  [sendtobatch]: {
-    connectorId: batchConnectorId,
-    operationId: sendtobatch,
   },
   [setvariable]: {
     connectorId: variableConnectorId,

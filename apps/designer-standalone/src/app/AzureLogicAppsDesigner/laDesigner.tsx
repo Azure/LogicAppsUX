@@ -21,6 +21,7 @@ import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
 import {
   ApiManagementInstanceService,
+  BaseAppServiceService,
   BaseGatewayService,
   BaseOAuthService,
   StandardConnectionService,
@@ -257,6 +258,7 @@ const getDesignerServices = (
     integrationAccountCallbackUrl: undefined,
   });
   const apiManagementService = new ApiManagementService({ service: apimService });
+  const appService = new BaseAppServiceService({ baseUrl: armUrl, apiVersion, subscriptionId, httpClient });
   const connectorService = new StandardConnectorService({
     apiVersion,
     baseUrl,
@@ -288,11 +290,10 @@ const getDesignerServices = (
         return apiManagementService.getOperationSchema(configuration.connection.apiId, parameters.operationId, isInput);
       },
       getSwaggerOperationSchema: (args: any) => {
-        const { nodeInputs, nodeMetadata, isInput } = args;
+        const { parameters, nodeMetadata, isInput } = args;
         const swaggerUrl = nodeMetadata?.['apiDefinitionUrl'];
-        const operationId = getParameterValueByName(nodeInputs, 'operationId');
-        if (!operationId || !swaggerUrl) return Promise.resolve();
-        return connectionService.getOperationSchema(swaggerUrl, operationId, isInput);
+        if (!swaggerUrl) return Promise.resolve();
+        return appService.getOperationSchema(swaggerUrl, parameters.operationId, isInput);
       },
     },
     valuesClient: {
@@ -304,7 +305,7 @@ const getDesignerServices = (
       getSwaggerOperations: (args: any) => {
         const { nodeMetadata } = args;
         const swaggerUrl = nodeMetadata?.['apiDefinitionUrl'];
-        return connectionService.getOperationsList(swaggerUrl);
+        return appService.getOperations(swaggerUrl);
       },
       getSchemaArtifacts: (args: any) => artifactService.getSchemaArtifacts(args.parameters.schemaSource),
       getApimOperations: (args: any) => {
@@ -325,7 +326,7 @@ const getDesignerServices = (
     workflowReferenceId: '',
   });
   const gatewayService = new BaseGatewayService({
-    baseUrl,
+    baseUrl: armUrl,
     httpClient,
     apiVersions: {
       subscription: apiVersion,
@@ -359,6 +360,7 @@ const getDesignerServices = (
   const workflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName),
     getAppIdentity: () => workflowApp.identity,
+    isExplicitAuthRequiredForManagedIdentity: () => true,
   };
 
   // const loggerService = new Stan({
@@ -368,6 +370,7 @@ const getDesignerServices = (
   // });
 
   return {
+    appService,
     connectionService,
     connectorService,
     gatewayService,
@@ -473,8 +476,5 @@ const getConnectionsToUpdate = (
 
   return connectionsToUpdate;
 };
-
-const getParameterValueByName = (nodeInputs: any, name: string) =>
-  nodeInputs.parameterGroups?.['default'].parameters.find((p: any) => p.parameterName === name)?.value?.[0].value;
 
 export default DesignerEditor;

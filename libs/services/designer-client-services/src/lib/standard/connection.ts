@@ -1,6 +1,7 @@
 import type { BaseConnectionServiceOptions } from '../base';
 import { BaseConnectionService } from '../base';
 import { apiManagementConnectorId, azureFunctionConnectorId } from '../base/operationmanifest';
+import type { HttpResponse } from '../common/exceptions';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata, CreateConnectionResult } from '../connection';
 import { LoggerService } from '../logger';
 import { LogEntryLevel, Status } from '../logging/logEntry';
@@ -16,6 +17,7 @@ import {
   ConnectionType,
   ResourceIdentityType,
   equals,
+  optional,
   isArmResourceId,
   isIdentityAssociatedWithLogicApp,
   safeSetObjectPropertyValue,
@@ -42,6 +44,7 @@ interface ServiceProviderConnectionModel {
   serviceProvider: {
     id: string;
   };
+  parameterSetName?: string;
   displayName?: string;
 }
 
@@ -154,7 +157,8 @@ export class StandardConnectionService extends BaseConnectionService {
     connectionId: string,
     connector: Connector,
     connectionInfo: ConnectionCreationInfo,
-    parametersMetadata?: ConnectionParametersMetadata
+    parametersMetadata?: ConnectionParametersMetadata,
+    shouldTestConnection = true
   ): Promise<Connection> {
     const connectionName = connectionId.split('/').at(-1) as string;
 
@@ -165,17 +169,10 @@ export class StandardConnectionService extends BaseConnectionService {
     });
 
     try {
-      if (connector.properties.testConnectionUrl) await this.pretestServiceProviderConnection(connector, connectionInfo);
-
       const connection = isArmResourceId(connector.id)
-        ? await this.createConnectionInApiHub(connectionName, connector.id, connectionInfo)
-        : await this.createConnectionInLocal(
-            connectionName,
-            connector.id,
-            connectionInfo,
-            parametersMetadata as ConnectionParametersMetadata
-          );
-      await this.testConnection(connection);
+        ? await this.createConnectionInApiHub(connectionName, connector.id, connectionInfo, shouldTestConnection)
+        : await this.createConnectionInLocal(connectionName, connector, connectionInfo, parametersMetadata as ConnectionParametersMetadata);
+
       LoggerService().endTrace(logId, { status: Status.Success });
       return connection;
     } catch (error) {
@@ -193,9 +190,9 @@ export class StandardConnectionService extends BaseConnectionService {
     }
   }
 
-  protected async createConnectionInLocal(
+  private async createConnectionInLocal(
     connectionName: string,
-    connectorId: string,
+    connector: Connector,
     connectionInfo: ConnectionCreationInfo,
     parametersMetadata: ConnectionParametersMetadata
   ): Promise<Connection> {
@@ -220,10 +217,10 @@ export class StandardConnectionService extends BaseConnectionService {
       throw new AssertionException(AssertionErrorCode.CALLBACK_NOTREGISTERED, 'Callback for write connection is not passed in service.');
     }
 
-    const { connectionsData, connection } = this._getConnectionsConfiguration(
+    const { connectionsData, connection } = await this._getConnectionsConfiguration(
       connectionName,
       connectionInfo,
-      connectorId,
+      connector,
       parametersMetadata
     );
 
@@ -233,7 +230,12 @@ export class StandardConnectionService extends BaseConnectionService {
     return connection;
   }
 
-  async createConnectionInApiHub(connectionName: string, connectorId: string, connectionInfo: ConnectionCreationInfo): Promise<Connection> {
+  private async createConnectionInApiHub(
+    connectionName: string,
+    connectorId: string,
+    connectionInfo: ConnectionCreationInfo,
+    shouldTestConnection: boolean
+  ): Promise<Connection> {
     const {
       httpClient,
       apiHubServiceDetails: { apiVersion, baseUrl },
@@ -261,7 +263,7 @@ export class StandardConnectionService extends BaseConnectionService {
     });
 
     try {
-      await this.createConnectionAclIfNeeded(connection);
+      await this._createConnectionAclIfNeeded(connection);
     } catch {
       // NOTE: Delete the connection created in this method if Acl creation failed.
       this.deleteConnection(connectionId);
@@ -274,15 +276,19 @@ export class StandardConnectionService extends BaseConnectionService {
       throw error;
     }
 
+    if (shouldTestConnection) {
+      await this.testConnection(connection);
+    }
+
     return connection;
   }
 
   // Run when assigning a conneciton to an operation
-  async setupConnectionIfNeeded(connection: Connection): Promise<void> {
-    await this.createConnectionAclIfNeeded(connection);
+  async setupConnectionIfNeeded(connection: Connection, identityId?: string): Promise<void> {
+    await this._createConnectionAclIfNeeded(connection, identityId);
   }
 
-  protected async createConnectionAclIfNeeded(connection: Connection): Promise<void> {
+  private async _createConnectionAclIfNeeded(connection: Connection, identityId?: string): Promise<void> {
     const { tenantId, workflowAppDetails } = this.options;
     if (!isArmResourceId(connection.id) || !workflowAppDetails) {
       return;
@@ -301,7 +307,7 @@ export class StandardConnectionService extends BaseConnectionService {
 
     const connectionAcls = (await this._getConnectionAcls(connection.id)) || [];
     const { identity, appName } = workflowAppDetails;
-    const identityDetailsForApiHubAuth = this._getIdentityDetailsForApiHubAuth(identity as ManagedIdentity, tenantId as string);
+    const identityDetailsForApiHubAuth = this._getIdentityDetailsForApiHubAuth(identity as ManagedIdentity, tenantId as string, identityId);
 
     try {
       if (
@@ -367,16 +373,26 @@ export class StandardConnectionService extends BaseConnectionService {
     });
   }
 
-  // NOTE: Use the system-assigned MI if exists, else use the first user assigned identity.
-  private _getIdentityDetailsForApiHubAuth(managedIdentity: ManagedIdentity, tenantId: string): { principalId: string; tenantId: string } {
-    return equals(managedIdentity.type, ResourceIdentityType.SYSTEM_ASSIGNED) ||
-      equals(managedIdentity.type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)
-      ? { principalId: managedIdentity.principalId as string, tenantId: managedIdentity.tenantId as string }
-      : {
-          principalId: managedIdentity.userAssignedIdentities?.[Object.keys(managedIdentity.userAssignedIdentities)[0]]
-            .principalId as string,
-          tenantId,
-        };
+  // NOTE: Use the system-assigned MI if exists, else use the first user assigned identity if identity is not specified.
+  private _getIdentityDetailsForApiHubAuth(
+    managedIdentity: ManagedIdentity,
+    tenantId: string,
+    identityIdForConnection: string | undefined
+  ): { principalId: string; tenantId: string } {
+    if (
+      !identityIdForConnection &&
+      (equals(managedIdentity.type, ResourceIdentityType.SYSTEM_ASSIGNED) ||
+        equals(managedIdentity.type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED))
+    ) {
+      return { principalId: managedIdentity.principalId as string, tenantId: managedIdentity.tenantId as string };
+    } else {
+      const identityKeys = Object.keys(managedIdentity.userAssignedIdentities ?? {});
+      const selectedIdentity = identityKeys.find((identityKey) => equals(identityKey, identityIdForConnection)) ?? identityKeys[0];
+      return {
+        principalId: managedIdentity.userAssignedIdentities?.[selectedIdentity].principalId as string,
+        tenantId,
+      };
+    }
   }
 
   async createAndAuthorizeOAuthConnection(
@@ -386,7 +402,13 @@ export class StandardConnectionService extends BaseConnectionService {
     parametersMetadata?: ConnectionParametersMetadata
   ): Promise<CreateConnectionResult> {
     const connector = await this.getConnector(connectorId);
-    const connection = await this.createConnection(connectionId, connector, connectionInfo, parametersMetadata);
+    const connection = await this.createConnection(
+      connectionId,
+      connector,
+      connectionInfo,
+      parametersMetadata,
+      /* shouldTestConnection */ false
+    );
     const oAuthService = OAuthService();
     let oAuthPopupInstance: IOAuthPopup | undefined;
 
@@ -401,11 +423,11 @@ export class StandardConnectionService extends BaseConnectionService {
         await oAuthService.confirmConsentCodeForConnection(connectionId, loginResponse.code);
       }
 
-      await this.createConnectionAclIfNeeded(connection);
-
-      await this.testConnection(connection);
+      await this._createConnectionAclIfNeeded(connection);
 
       const fetchedConnection = await this.getConnection(connection.id);
+      await this.testConnection(fetchedConnection);
+
       return { connection: fetchedConnection };
     } catch (error: any) {
       this.deleteConnection(connectionId);
@@ -420,15 +442,15 @@ export class StandardConnectionService extends BaseConnectionService {
     }
   }
 
-  private _getConnectionsConfiguration(
+  private async _getConnectionsConfiguration(
     connectionName: string,
     connectionInfo: ConnectionCreationInfo,
-    connectorId: string,
+    connector: Connector,
     parametersMetadata: ConnectionParametersMetadata
-  ): {
+  ): Promise<{
     connectionsData: ConnectionAndAppSetting<LocalConnectionModel>;
     connection: Connection;
-  } {
+  }> {
     const connectionType = parametersMetadata?.connectionMetadata?.type;
     let connectionsData;
     let connection;
@@ -450,15 +472,47 @@ export class StandardConnectionService extends BaseConnectionService {
         break;
       }
       default: {
-        connectionsData = convertToServiceProviderConnectionsData(connectionName, connectorId, connectionInfo, parametersMetadata);
+        const { connectionAndSettings, rawConnection } = convertToServiceProviderConnectionsData(
+          connectionName,
+          connector.id,
+          connectionInfo,
+          parametersMetadata
+        );
+        connectionsData = connectionAndSettings;
         connection = convertServiceProviderConnectionDataToConnection(
           connectionsData.connectionKey,
           connectionsData.connectionData as ServiceProviderConnectionModel
         );
+
+        if (connector.properties.testConnectionUrl) {
+          await this._testServiceProviderConnection(connector.properties.testConnectionUrl, rawConnection);
+        }
         break;
       }
     }
     return { connectionsData, connection };
+  }
+
+  private async _testServiceProviderConnection(
+    requestUrl: string,
+    connectionData: ServiceProviderConnectionModel
+  ): Promise<HttpResponse<any>> {
+    try {
+      const { httpClient, baseUrl, apiVersion } = this.options;
+      const response = await httpClient.post<any, any>({
+        uri: `${baseUrl.replace('/runtime/webhooks/workflow/api/management', '')}${requestUrl}`,
+        queryParameters: { 'api-version': apiVersion },
+        content: connectionData,
+      });
+
+      if (!response || response.status < 200 || response.status >= 300) {
+        throw response;
+      }
+
+      return response;
+    } catch (e: any) {
+      return Promise.reject(JSON.parse(e?.responseText));
+    }
   }
 }
 
@@ -530,7 +584,7 @@ function convertToServiceProviderConnectionsData(
   connectorId: string,
   connectionInfo: ConnectionCreationInfo,
   connectionParameterMetadata: ConnectionParametersMetadata
-): ConnectionAndAppSetting<ServiceProviderConnectionModel> {
+): { connectionAndSettings: ConnectionAndAppSetting<ServiceProviderConnectionModel>; rawConnection: ServiceProviderConnectionModel } {
   const {
     displayName,
     connectionParameters: connectionParameterValues,
@@ -553,16 +607,19 @@ function convertToServiceProviderConnectionsData(
     connectionKey,
     connectionData: {
       parameterValues: {},
+      ...optional('parameterSetName', connectionParametersSetValues?.name),
       serviceProvider: { id: connectorId },
       displayName,
     },
     settings: {},
     pathLocation: [serviceProviderLocation],
   };
+  const rawConnection = { ...connectionsData.connectionData };
 
   for (const parameterKey of Object.keys(parameterValues)) {
     const connectionParameter = connectionParameters?.[parameterKey] as ConnectionParameter;
     let parameterValue = parameterValues[parameterKey];
+    const rawValue = parameterValue;
     if (connectionParameter?.parameterSource === ConnectionParameterSource.AppConfiguration) {
       const appSettingName = `${escapeSpecialChars(connectionKey)}_${escapeSpecialChars(parameterKey)}`;
       connectionsData.settings[appSettingName] = parameterValues[parameterKey];
@@ -575,9 +632,14 @@ function convertToServiceProviderConnectionsData(
       [...(connectionParameter?.uiDefinition?.constraints?.propertyPath ?? []), parameterKey],
       parameterValue
     );
+    safeSetObjectPropertyValue(
+      rawConnection.parameterValues,
+      [...(connectionParameter?.uiDefinition?.constraints?.propertyPath ?? []), parameterKey],
+      rawValue
+    );
   }
 
-  return connectionsData;
+  return { connectionAndSettings: connectionsData, rawConnection };
 }
 
 function convertToFunctionsConnectionsData(

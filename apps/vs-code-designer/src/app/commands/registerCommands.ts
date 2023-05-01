@@ -5,8 +5,7 @@
 import { extensionCommand } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt';
-import { ProductionSlotTreeItem } from '../tree/slotsTree/ProductionSlotTreeItem';
-import { SlotTreeItem } from '../tree/slotsTree/SlotTreeItem';
+import { LogicAppResourceTree } from '../tree/LogicAppResourceTree';
 import { downloadAppSettings } from './appSettings/downloadAppSettings';
 import { editAppSetting } from './appSettings/editAppSetting';
 import { renameAppSetting } from './appSettings/renameAppSetting';
@@ -19,6 +18,7 @@ import { createCodeless } from './createCodeless/createCodeless';
 import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createLogicApp';
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
 import { createSlot } from './createSlot';
+import { deleteLogicApp } from './deleteLogicApp/deleteLogicApp';
 import { deleteNode } from './deleteNode';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
 import { connectToGitHub } from './deployments/connectToGitHub';
@@ -51,85 +51,75 @@ import { useSQLStorage } from './workflows/useSQLStorage';
 import { viewContent } from './workflows/viewContent';
 import { AppSettingsTreeItem, AppSettingTreeItem, registerSiteCommand } from '@microsoft/vscode-azext-azureappservice';
 import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
-import { registerCommand } from '@microsoft/vscode-azext-utils';
+import { registerCommand, registerCommandWithTreeNodeUnwrapping, unwrapTreeNodeCommandCallback } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
-import { commands } from 'vscode';
 
 export function registerCommands(): void {
-  registerCommand(extensionCommand.openDesigner, openDesigner);
-  registerCommand(
-    extensionCommand.loadMore,
-    async (context: IActionContext, node: AzExtTreeItem) => await ext.tree.loadMore(node, context)
-  );
-  registerCommand(extensionCommand.selectSubscriptions, () => commands.executeCommand(extensionCommand.azureSelectSubscriptions));
-  registerCommand(extensionCommand.openFile, (context: IActionContext, node: FileTreeItem) =>
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.openFile, (context: IActionContext, node: FileTreeItem) =>
     executeOnFunctions(openFile, context, context, node)
   );
-  registerCommand(extensionCommand.viewContent, viewContent);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.viewContent, viewContent);
   registerCommand(extensionCommand.createNewProject, createNewProjectFromCommand);
   registerCommand(extensionCommand.createCodeless, createCodeless);
-  registerCommand(extensionCommand.createLogicApp, createLogicApp);
-  registerCommand(extensionCommand.createLogicAppAdvanced, createLogicAppAdvanced);
-  registerSiteCommand(extensionCommand.deploy, deployProductionSlot);
-  registerSiteCommand(extensionCommand.deploySlot, deploySlot);
-  registerSiteCommand(extensionCommand.redeploy, redeployDeployment);
-  registerCommand(extensionCommand.showOutputChannel, () => {
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicApp, createLogicApp);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicAppAdvanced, createLogicAppAdvanced);
+  registerSiteCommand(extensionCommand.deploy, unwrapTreeNodeCommandCallback(deployProductionSlot));
+  registerSiteCommand(extensionCommand.deploySlot, unwrapTreeNodeCommandCallback(deploySlot));
+  registerSiteCommand(extensionCommand.redeploy, unwrapTreeNodeCommandCallback(redeployDeployment));
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.showOutputChannel, () => {
     ext.outputChannel.show();
   });
-  registerCommand(extensionCommand.startLogicApp, startLogicApp);
-  registerCommand(extensionCommand.stopLogicApp, stopLogicApp);
-  registerCommand(extensionCommand.restartLogicApp, restartLogicApp);
-  registerCommand(extensionCommand.pickProcess, pickFuncProcess);
-  registerCommand(extensionCommand.getDebugSymbolDll, getDebugSymbolDll);
-  registerCommand(
-    extensionCommand.deleteLogicApp,
-    async (context: IActionContext, node?: AzExtTreeItem) => await deleteNode(context, ProductionSlotTreeItem.contextValue, node)
-  );
-  registerCommand(extensionCommand.openOverview, openOverview);
-  registerCommand(extensionCommand.refresh, async (context: IActionContext, node?: AzExtTreeItem) => await ext.tree.refresh(context, node));
-  registerCommand(extensionCommand.exportLogicApp, exportLogicApp);
-  registerCommand(extensionCommand.reviewValidation, reviewValidation);
-  registerCommand(extensionCommand.switchToDotnetProject, switchToDotnetProject);
-  registerCommand(extensionCommand.openInPortal, openInPortal);
-  registerCommand(extensionCommand.browseWebsite, browseWebsite);
-  registerCommand(extensionCommand.viewProperties, viewProperties);
-  registerCommand(extensionCommand.createSlot, createSlot);
-  registerCommand(
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.startLogicApp, startLogicApp);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.stopLogicApp, stopLogicApp);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.restartLogicApp, restartLogicApp);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.pickProcess, pickFuncProcess);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.getDebugSymbolDll, getDebugSymbolDll);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.deleteLogicApp, deleteLogicApp);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.openOverview, openOverview);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.exportLogicApp, exportLogicApp);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.reviewValidation, reviewValidation);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.switchToDotnetProject, switchToDotnetProject);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.openInPortal, openInPortal);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.browseWebsite, browseWebsite);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.viewProperties, viewProperties);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.createSlot, createSlot);
+  registerCommandWithTreeNodeUnwrapping(
     extensionCommand.deleteSlot,
-    async (context: IActionContext, node?: AzExtTreeItem) => await deleteNode(context, SlotTreeItem.contextValue, node)
+    async (context: IActionContext, node?: AzExtTreeItem) => await deleteNode(context, LogicAppResourceTree.pickSlotContextValue, node)
   );
-  registerCommand(extensionCommand.swapSlot, swapSlot);
-  registerCommand(extensionCommand.startStreamingLogs, startStreamingLogs);
-  registerCommand(extensionCommand.stopStreamingLogs, stopStreamingLogs);
-  registerSiteCommand(extensionCommand.viewDeploymentLogs, viewDeploymentLogs);
-  registerCommand(extensionCommand.switchDebugMode, switchDebugMode);
-  registerCommand(
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.swapSlot, swapSlot);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.startStreamingLogs, startStreamingLogs);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.stopStreamingLogs, stopStreamingLogs);
+  registerSiteCommand(extensionCommand.viewDeploymentLogs, unwrapTreeNodeCommandCallback(viewDeploymentLogs));
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.switchDebugMode, switchDebugMode);
+  registerCommandWithTreeNodeUnwrapping(
     extensionCommand.toggleAppSettingVisibility,
     async (context: IActionContext, node: AppSettingTreeItem) => {
       await node.toggleValueVisibility(context);
     },
     250
   );
-  registerCommand(
+  registerCommandWithTreeNodeUnwrapping(
     extensionCommand.appSettingsAdd,
     async (context: IActionContext, node?: AzExtParentTreeItem) => await createChildNode(context, AppSettingsTreeItem.contextValue, node)
   );
-  registerCommand(
+  registerCommandWithTreeNodeUnwrapping(
     extensionCommand.appSettingsDelete,
     async (context: IActionContext, node?: AzExtTreeItem) => await deleteNode(context, AppSettingTreeItem.contextValue, node)
   );
-  registerCommand(extensionCommand.appSettingsDownload, downloadAppSettings);
-  registerCommand(extensionCommand.appSettingsEdit, editAppSetting);
-  registerCommand(extensionCommand.appSettingsRename, renameAppSetting);
-  registerCommand(extensionCommand.appSettingsToggleSlotSetting, toggleSlotSetting);
-  registerCommand(extensionCommand.appSettingsUpload, uploadAppSettings);
-  registerCommand(extensionCommand.configureWebhookRedirectEndpoint, configureWebhookRedirectEndpoint);
-  registerCommand(extensionCommand.useSQLStorage, useSQLStorage);
-  registerCommand(extensionCommand.connectToGitHub, connectToGitHub);
-  registerCommand(extensionCommand.disconnectRepo, disconnectRepo);
-  registerCommand(extensionCommand.viewCommitInGitHub, viewCommitInGitHub);
-  registerCommand(extensionCommand.enableAzureConnectors, enableAzureConnectors);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.appSettingsDownload, downloadAppSettings);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.appSettingsEdit, editAppSetting);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.appSettingsRename, renameAppSetting);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.appSettingsToggleSlotSetting, toggleSlotSetting);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.appSettingsUpload, uploadAppSettings);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.configureWebhookRedirectEndpoint, configureWebhookRedirectEndpoint);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.useSQLStorage, useSQLStorage);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.connectToGitHub, connectToGitHub);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.disconnectRepo, disconnectRepo);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.viewCommitInGitHub, viewCommitInGitHub);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.enableAzureConnectors, enableAzureConnectors);
   registerCommand(extensionCommand.initProjectForVSCode, initProjectForVSCode);
-  registerCommand(extensionCommand.configureDeploymentSource, configureDeploymentSource);
-  registerCommand(extensionCommand.startRemoteDebug, startRemoteDebug);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.configureDeploymentSource, configureDeploymentSource);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.startRemoteDebug, startRemoteDebug);
 }

@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
-import { isRootNodeInGraph } from '../utils/graph';
 import type { WorkflowNode } from './models/workflowNode';
 import { removeEdge, reassignEdgeSources, reassignEdgeTargets } from './restructuringHelpers';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 
 export interface DeleteNodePayload {
   nodeId: string;
@@ -46,8 +46,10 @@ export const deleteNodeFromWorkflow = (
     }
   } else {
     const parentId = (workflowGraph.edges ?? []).find((edge) => edge.target === nodeId)?.source ?? '';
-    const isNewSourceTrigger = isRootNodeInGraph(parentId, 'root', state.nodesMetadata);
-    reassignEdgeSources(state, nodeId, parentId, workflowGraph, /* isSourceTrigger */ false, isNewSourceTrigger);
+    const graphId = workflowGraph.id;
+    const isAfterTrigger = nodesMetadata[parentId ?? '']?.isRoot && graphId === 'root';
+    const shouldAddRunAfters = !isRoot && !isAfterTrigger;
+    reassignEdgeSources(state, nodeId, parentId, workflowGraph, shouldAddRunAfters);
     removeEdge(state, parentId, nodeId, workflowGraph);
   }
 
@@ -56,6 +58,7 @@ export const deleteNodeFromWorkflow = (
   delete nodesMetadata[nodeId];
   delete state.operations[nodeId];
   delete state.newlyAddedOperations[nodeId];
+  state.isDirty = true;
 
   // Decrease action count of graph
   if (nodesMetadata[workflowGraph.id]) {

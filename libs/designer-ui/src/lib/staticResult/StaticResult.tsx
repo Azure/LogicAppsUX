@@ -2,10 +2,12 @@ import type { StaticResultRootSchemaType } from '.';
 import constants from '../constants';
 import { StaticResultProperties } from './staticResultProperties';
 import { Icon, useTheme } from '@fluentui/react';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface StaticResultProps {
+  isRoot?: boolean;
   title: string;
   required?: string[];
   propertiesSchema?: OpenAPIV2.SchemaObject;
@@ -15,6 +17,7 @@ export interface StaticResultProps {
 }
 
 export const StaticResult = ({
+  isRoot = false,
   title,
   required = [],
   propertiesSchema = {},
@@ -37,17 +40,26 @@ export const StaticResult = ({
   });
   return (
     <div className="msla-static-result-container">
-      <button className="msla-static-result-container-header" onClick={() => setExpanded(!expanded)}>
-        <Icon
-          className="msla-static-result-container-header-icon"
-          aria-label={expanded ? `${expandLabel}` : `${collapseLabel}`}
-          iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
-          styles={{ root: { fontSize: 14, color: isInverted ? constants.STANDARD_TEXT_COLOR : constants.CHEVRON_ROOT_COLOR_LIGHT } }}
-        />
-        <div className="msla-static-result-container-header-text">{title}</div>
-      </button>
+      {!isRoot ? (
+        <button className="msla-static-result-container-header" onClick={() => setExpanded(!expanded)}>
+          <div className="msla-static-result-container-header-text">{title}</div>
+          <Icon
+            className="msla-static-result-container-header-icon"
+            aria-label={expanded ? `${expandLabel}` : `${collapseLabel}`}
+            iconName={expanded ? 'ChevronDownMed' : 'ChevronLeftMed'}
+            styles={{ root: { fontSize: 14, color: isInverted ? constants.INVERTED_TEXT_COLOR : constants.CHEVRON_ROOT_COLOR_LIGHT } }}
+          />
+        </button>
+      ) : (
+        <div>
+          <div className="msla-static-result-container-header-root">
+            <div className="msla-static-result-container-header-text">{title}</div>
+          </div>
+        </div>
+      )}
       {expanded ? (
         <StaticResultProperties
+          isRoot={isRoot}
           propertyValues={propertyValues}
           setPropertyValues={setPropertyValues}
           propertiesSchema={propertiesSchema as StaticResultRootSchemaType}

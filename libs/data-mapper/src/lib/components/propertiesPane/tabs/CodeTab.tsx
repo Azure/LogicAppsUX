@@ -48,7 +48,7 @@ export const CodeTab = ({ currentNode, contentHeight }: CodeTabProps) => {
       if (!fnNodeConnection) {
         return `${currentNode.functionName}()`;
       } else {
-        return collectFunctionValue(currentNode, fnNodeConnection, connectionDictionary);
+        return collectFunctionValue(currentNode, fnNodeConnection, connectionDictionary, false);
       }
     } else {
       const srcSchemaNode = sourceSchemaDictionary[addSourceReactFlowPrefix(currentNode.key)];
