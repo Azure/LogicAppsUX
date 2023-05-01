@@ -39,6 +39,7 @@ export const initialWorkflowState: WorkflowState = {
   idReplacements: {},
   newlyAddedOperations: {},
   isDirty: false,
+  isGraphLocked: false,
 };
 
 const placeholderNodeId = 'builtin:newWorkflowTrigger';
@@ -320,6 +321,9 @@ export const workflowSlice = createSlice({
     },
     setIsWorkflowDirty: (state: WorkflowState, action: PayloadAction<boolean>) => {
       state.isDirty = action.payload;
+    },
+    setIsGraphLocked: (state: WorkflowState, action: PayloadAction<boolean>) => {
+      state.isGraphLocked = action.payload;
     },
   },
   extraReducers: (builder) => {

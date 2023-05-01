@@ -14,16 +14,15 @@ export interface BJSWorkflowProviderProps {
   workflow: Workflow;
   runInstance?: LogicAppsV2.RunInstanceDefinition | null;
   children?: React.ReactNode;
-  shouldRecreateWorkflowGraph?: boolean;
 }
 
-const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, children, runInstance, shouldRecreateWorkflowGraph }) => {
+const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, children, runInstance }) => {
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     dispatch(initWorkflowSpec('BJS'));
     dispatch(initRunInstance(runInstance ?? null));
-    dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance, shouldRecreateWorkflowGraph }));
-  }, [dispatch, workflow, runInstance, shouldRecreateWorkflowGraph]);
+    dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance }));
+  }, [dispatch, workflow, runInstance]);
 
   return <>{children}</>;
 };

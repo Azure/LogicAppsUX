@@ -16,51 +16,46 @@ export const initializeGraphState = createAsyncThunk<
   {
     workflowDefinition: Workflow;
     runInstance: LogicAppsV2.RunInstanceDefinition | null | undefined;
-    shouldRecreateWorkflowGraph?: boolean;
   },
   { state: RootState }
->(
-  'parser/deserialize',
-  async (
-    graphState: { workflowDefinition: Workflow; runInstance: any; shouldRecreateWorkflowGraph?: boolean },
-    thunkAPI
-  ): Promise<DeserializedWorkflow> => {
-    const { workflowDefinition, runInstance, shouldRecreateWorkflowGraph } = graphState;
-    const { workflow } = thunkAPI.getState() as RootState;
-    const spec = workflow.workflowSpec;
+>('parser/deserialize', async (graphState: { workflowDefinition: Workflow; runInstance: any }, thunkAPI): Promise<DeserializedWorkflow> => {
+  const { workflowDefinition, runInstance } = graphState;
+  const { workflow } = thunkAPI.getState() as RootState;
+  const spec = workflow.workflowSpec;
 
-    if (spec === undefined) {
-      throw new Error('Trying to import workflow without specifying the workflow type');
-    }
-    if (spec === 'BJS') {
-      getConnectionsQuery();
-      const { definition, connectionReferences, parameters } = workflowDefinition;
-      const deserializedWorkflow = BJSDeserialize(definition, runInstance);
-      if (shouldRecreateWorkflowGraph === false && workflow.graph) {
-        deserializedWorkflow.graph = workflow.graph;
-      }
-      thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
-      thunkAPI.dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
-      thunkAPI.dispatch(addInvokerSupport({ connectionReferences }));
-      parseWorkflowParameters(parameters ?? {}, thunkAPI.dispatch);
-
-      const asyncInitialize = async () => {
-        await initializeOperationMetadata(
-          deserializedWorkflow,
-          thunkAPI.getState().connections.connectionReferences,
-          parameters ?? {},
-          thunkAPI.dispatch
-        );
-        const actionsAndTriggers = deserializedWorkflow.actionData;
-        await getConnectionsApiAndMapping(actionsAndTriggers, thunkAPI.getState, thunkAPI.dispatch);
-        await updateDynamicDataInNodes(thunkAPI.getState, thunkAPI.dispatch);
-      };
-      asyncInitialize();
-
-      return deserializedWorkflow;
-    } else if (spec === 'CNCF') {
-      throw new Error('Spec not implemented.');
-    }
-    throw new Error('Invalid Workflow Spec');
+  if (spec === undefined) {
+    throw new Error('Trying to import workflow without specifying the workflow type');
   }
-);
+  if (spec === 'BJS') {
+    getConnectionsQuery();
+    const { definition, connectionReferences, parameters } = workflowDefinition;
+    const deserializedWorkflow = BJSDeserialize(definition, runInstance);
+    // The host can decide whether to make updates to the graph object. In situations like updating the workflow
+    // after save, it makes sense to not update the graph to avoid resetting things like dimensions
+    if (workflow.isGraphLocked && workflow.graph) {
+      deserializedWorkflow.graph = workflow.graph;
+    }
+    thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
+    thunkAPI.dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
+    thunkAPI.dispatch(addInvokerSupport({ connectionReferences }));
+    parseWorkflowParameters(parameters ?? {}, thunkAPI.dispatch);
+
+    const asyncInitialize = async () => {
+      await initializeOperationMetadata(
+        deserializedWorkflow,
+        thunkAPI.getState().connections.connectionReferences,
+        parameters ?? {},
+        thunkAPI.dispatch
+      );
+      const actionsAndTriggers = deserializedWorkflow.actionData;
+      await getConnectionsApiAndMapping(actionsAndTriggers, thunkAPI.getState, thunkAPI.dispatch);
+      await updateDynamicDataInNodes(thunkAPI.getState, thunkAPI.dispatch);
+    };
+    asyncInitialize();
+
+    return deserializedWorkflow;
+  } else if (spec === 'CNCF') {
+    throw new Error('Spec not implemented.');
+  }
+  throw new Error('Invalid Workflow Spec');
+});
