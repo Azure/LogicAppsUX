@@ -204,17 +204,7 @@ const initializeOperationDetails = async (
   const rootNodeId = getRootNodeDetails(state.workflow, connectorId);
   const operation = getState().workflow.operations[nodeId];
 
-  const settings = getOperationSettings(
-    isTrigger,
-    operationInfo,
-    initData.nodeOutputs,
-    manifest,
-    swagger,
-    operation,
-    rootNodeId,
-    state.connections.connectionReferences,
-    dispatch
-  );
+  const settings = getOperationSettings(isTrigger, operationInfo, initData.nodeOutputs, manifest, swagger, operation, rootNodeId);
   dispatch(updateNodeSettings({ id: nodeId, settings }));
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);
