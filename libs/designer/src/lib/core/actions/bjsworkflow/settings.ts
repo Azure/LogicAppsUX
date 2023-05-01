@@ -1,6 +1,5 @@
 import Constants from '../../../common/constants';
 import type { ConnectionReferences } from '../../../common/models/workflow';
-import { addInvokerSupport } from '../../state/connection/connectionSlice';
 import type { NodeOperation, NodeOutputs } from '../../state/operation/operationMetadataSlice';
 import { getSplitOnOptions } from '../../utils/outputs';
 import { getTokenExpressionValue } from '../../utils/parameters/helper';
@@ -26,7 +25,6 @@ import {
   ValidationErrorCode,
   ValidationException,
 } from '@microsoft/utils-logic-apps';
-import type { Dispatch } from '@reduxjs/toolkit';
 
 type OperationManifestSettingType = UploadChunkMetadata | DownloadChunkMetadata | SecureDataOptions | OperationOptions[] | void;
 
@@ -121,9 +119,7 @@ export const getOperationSettings = (
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
   operation?: LogicAppsV2.OperationDefinition,
-  rootNodeId?: string,
-  connectionReferences?: ConnectionReferences,
-  dispatch?: Dispatch
+  rootNodeId?: string
 ): Settings => {
   const { operationId, type: nodeType } = operationInfo;
   return {
@@ -197,7 +193,7 @@ export const getOperationSettings = (
     },
     invokerConnection: {
       isSupported: isInvokerConnectionSupported(isTrigger, nodeType, rootNodeId),
-      value: invokerConnection(connectionReferences, dispatch),
+      value: invokerConnection(isTrigger, nodeType, rootNodeId, operationInfo.connectorId),
     },
   };
 };
@@ -877,16 +873,16 @@ const isInvokerConnectionSupported = (isTrigger: boolean, nodeType: string, root
 };
 
 const invokerConnection = (
-  connectionReferences: ConnectionReferences | undefined,
-  dispatch: Dispatch | undefined
+  isTrigger: boolean,
+  nodeType: string,
+  rootNodeId: string | undefined,
+  connectorId: string
 ): SimpleSetting<ConnectionReferences> | undefined => {
-  if (connectionReferences !== undefined) {
-    dispatch?.(addInvokerSupport({ connectionReferences }));
+  if (
+    isInvokerConnectionSupported(isTrigger, nodeType, rootNodeId) &&
+    connectorId === Constants.INVOKER_CONNECTION.DATAVERSE_CONNECTOR_ID
+  ) {
+    return { enabled: false };
   }
-  return connectionReferences
-    ? {
-        enabled: true,
-        value: connectionReferences,
-      }
-    : { enabled: false };
+  return { enabled: true };
 };
