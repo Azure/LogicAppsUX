@@ -6,7 +6,7 @@ export type TriggerFn = (text: string, editor: LexicalEditor) => QueryMatch | nu
 export const PUNCTUATION = '\\.,\\+\\*\\?\\$\\@\\|#{}\\(\\)\\^\\-\\[\\]\\\\/!%\'"~=<>_:;';
 export function useTokenTypeaheadTriggerMatch(
   trigger: string,
-  { minLength = 1, maxLength = 75 }: { minLength?: number; maxLength?: number }
+  { minLength = 1, maxLength = 1 }: { minLength?: number; maxLength?: number }
 ): TriggerFn {
   return useCallback(
     (text: string) => {
