@@ -68,6 +68,7 @@ exports[`lib/panel/panelHeader/main should render 1`] = `
   </div>
   <div
     className="msla-panel-card-header"
+    style={Object {}}
   >
     <div
       className="ms-Spinner msla-card-header-spinner root-121"
@@ -182,6 +183,7 @@ exports[`lib/panel/panelHeader/main should render with panel header menu 1`] = `
   </div>
   <div
     className="msla-panel-card-header"
+    style={Object {}}
   >
     <div
       className="ms-Spinner msla-card-header-spinner root-121"
