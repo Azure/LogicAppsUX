@@ -2854,13 +2854,6 @@ export function getJSONValueFromString(value: any, type: string): any {
     try {
       // The value is already a string. If the type is also a string, don't do any parsing
       if (type !== constants.SWAGGER.TYPE.STRING) {
-        if (type === constants.SWAGGER.TYPE.BOOLEAN) {
-          if (value.toLowerCase() === 'true') {
-            return true;
-          } else if (value.toLowerCase() === 'false') {
-            return false;
-          }
-        }
         parameterValue = JSON.parse(value);
       } else {
         parameterValue = value;
