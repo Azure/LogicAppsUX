@@ -136,15 +136,8 @@ const ParameterSection = ({
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState) => {
-      let { value } = newState;
-      const { viewModel } = newState;
+      const { value, viewModel } = newState;
       const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
-      if (
-        (parameter?.type === constants.SWAGGER.TYPE.BOOLEAN && value.length === 1 && value[0]?.value === 'True') ||
-        value[0]?.value === 'False'
-      ) {
-        value = [{ ...value[0], value: value[0].value.toLowerCase() }];
-      }
 
       const propertiesToUpdate = { value, preservedValue: undefined } as Partial<ParameterInfo>;
 
@@ -211,9 +204,9 @@ const ParameterSection = ({
     getFileSourceName: (): string => {
       return displayNameResult.result;
     },
-    getDisplayNameFromSelectedItem: (selectedItem: any): string => {
+    getDisplayValueFromSelectedItem: (selectedItem: any): string => {
       const dependency = dependencies.inputs[parameter.parameterKey];
-      const propertyPath = dependency.filePickerInfo?.titlePath ?? dependency.filePickerInfo?.browse.itemTitlePath;
+      const propertyPath = dependency.filePickerInfo?.fullTitlePath ?? dependency.filePickerInfo?.browse.itemFullTitlePath;
       return selectedItem[propertyPath ?? ''];
     },
     getValueFromSelectedItem: (selectedItem: any): string => {
@@ -223,10 +216,10 @@ const ParameterSection = ({
     },
     onFolderNavigation: (selectedItem: any | undefined): void => {
       loadDynamicTreeItemsForParameter(
-        selectedItem,
         nodeId,
         group.id,
         parameter.id,
+        selectedItem,
         operationInfo,
         connectionReference,
         nodeInputs,
