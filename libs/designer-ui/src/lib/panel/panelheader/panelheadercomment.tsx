@@ -5,7 +5,7 @@ import { Icon } from '@fluentui/react/lib/Icon';
 import type { ITextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { TextField } from '@fluentui/react/lib/TextField';
 import { css } from '@fluentui/react/lib/Utilities';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface PanelHeaderCommentProps {
@@ -32,7 +32,7 @@ export const PanelHeaderComment = ({
   const intl = useIntl();
 
   const [commentHasFocus, setCommentHasFocus] = useState(false);
-  const commentTextFieldRef = React.createRef<ITextField>();
+  const commentTextFieldRef = useRef<ITextField>(null);
 
   const commentLabel = intl.formatMessage({
     defaultMessage: 'Comment',
