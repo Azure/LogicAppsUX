@@ -7,7 +7,7 @@ export { store } from './store';
 export { useConnectionMapping, useConnectionRefs, useIsOperationMissingConnection } from './state/connection/connectionSelector';
 export type { NodeInputs } from './state/operation/operationMetadataSlice';
 export { useOperationsInputParameters } from './state/operation/operationSelector';
-export { discardAllChanges, setFocusNode, setIsWorkflowDirty } from './state/workflow/workflowSlice';
+export { discardAllChanges, setFocusNode, setIsGraphLocked, setIsWorkflowDirty } from './state/workflow/workflowSlice';
 export { useIsWorkflowDirty, useNodeDisplayName } from './state/workflow/workflowSelectors';
 export { serializeWorkflow } from './actions/bjsworkflow/serializer';
 export { changePanelNode, clearPanel, switchToWorkflowParameters } from './state/panel/panelSlice';
