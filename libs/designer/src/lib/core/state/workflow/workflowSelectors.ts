@@ -1,8 +1,10 @@
+import constants from '../../../common/constants';
 import type { WorkflowEdge, WorkflowNode } from '../../parsers/models/workflowNode';
 import type { RootState } from '../../store';
 import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
 import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
 import { operationIsAction } from './workflowInterfaces';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
@@ -45,8 +47,7 @@ export const useNodeDescription = (id: string) =>
 export const useShouldNodeFocus = (id: string) =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.focusedCanvasNodeId === id));
 
-export const useIsWorkflowDirty = () =>
-  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.isDirty));
+export const useIsWorkflowDirty = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.isDirty));
 
 export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (data) => {
   const rootNode = data.graph;
@@ -247,7 +248,12 @@ export const useParentRunIndex = (id: string | undefined): number | undefined =>
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       if (!id) return undefined;
-      const parents = getAllParentsForNode(id, state.nodesMetadata).filter((x) => !state.nodesMetadata[x].isRoot);
+      const parents = getAllParentsForNode(id, state.nodesMetadata).filter((x) =>
+        state.operations[x]?.type
+          ? state.operations[x].type.toLowerCase() === constants.NODE.TYPE.FOREACH ||
+            state.operations[x].type.toLowerCase() === constants.NODE.TYPE.UNTIL
+          : false
+      );
       return parents.length ? state.nodesMetadata[parents[0]].runIndex : undefined;
     })
   );

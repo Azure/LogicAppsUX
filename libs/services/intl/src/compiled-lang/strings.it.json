@@ -35,6 +35,12 @@
       "value": "Select this if you are configuring an on-prem connection"
     }
   ],
+  "+W2vTp": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -712,10 +718,22 @@
       "value": "Save"
     }
   ],
+  "30njcn": [
+    {
+      "type": 0,
+      "value": "Create Connection"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
       "value": "Identificatore"
+    }
+  ],
+  "34Nt/B": [
+    {
+      "type": 0,
+      "value": "alt text for button icon"
     }
   ],
   "36RiST": [
@@ -988,12 +1006,6 @@
       "value": "Obbligatorio. Nome del parametro di cui si desidera ottenere i valori."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "È possibile aggiungere i commenti solo durante la modifica degli input di un passaggio."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1134,12 +1146,6 @@
     {
       "type": 0,
       "value": "(UTC+08:45) Eucla"
-    }
-  ],
-  "6H3oG1": [
-    {
-      "type": 0,
-      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "6OSgRP": [
@@ -1434,6 +1440,12 @@
     {
       "type": 0,
       "value": "Con il modello asincrono, se il server remoto indica che la richiesta è stata accettata per l'elaborazione con una risposta 202 (Accettata), il motore di App per la logica continua a eseguire il poll dell'URL specificato nell'intestazione Location della risposta, fino a raggiungere uno stato terminale."
+    }
+  ],
+  "8luJ2j": [
+    {
+      "type": 0,
+      "value": "Create Connection Reference"
     }
   ],
   "8pPivj": [
@@ -1887,6 +1899,12 @@
       "value": "(UTC-05:00) L'Avana"
     }
   ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Number"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1897,6 +1915,12 @@
     {
       "type": 0,
       "value": "Comprimi"
+    }
+  ],
+  "BrWQ0Z": [
+    {
+      "type": 0,
+      "value": "Select a managed identity"
     }
   ],
   "BuYrD3": [
@@ -1945,6 +1969,12 @@
     {
       "type": 0,
       "value": "Tipo di credenziali"
+    }
+  ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "Cy9qeQ": [
@@ -2021,12 +2051,6 @@
     {
       "type": 0,
       "value": "Select a value"
-    }
-  ],
-  "DOf1/I": [
-    {
-      "type": 0,
-      "value": "Please enter your input"
     }
   ],
   "DWd9vy": [
@@ -2227,6 +2251,12 @@
       "value": "(UTC-5.00) Fuso orientale (USA e Canada)"
     }
   ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
+    }
+  ],
   "Ex4U46": [
     {
       "type": 0,
@@ -2249,12 +2279,6 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Irkutsk"
-    }
-  ],
-  "F51kU8": [
-    {
-      "type": 0,
-      "value": "Please enter a number"
     }
   ],
   "F9dR1Q": [
@@ -2546,6 +2570,12 @@
       "value": "Array"
     }
   ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "File Content"
+    }
+  ],
   "H17jEE": [
     {
       "type": 0,
@@ -2592,6 +2622,12 @@
     {
       "type": 0,
       "value": "Altre informazioni di diagnostica: x-ms-client-request-id è {clientRequestId}."
+    }
+  ],
+  "HOchry": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one."
     }
   ],
   "HQ8/tk": [
@@ -2768,16 +2804,16 @@
       "value": "No properties"
     }
   ],
-  "Iwi+x0": [
-    {
-      "type": 0,
-      "value": "Please select yes or no"
-    }
-  ],
   "J/Kz1j": [
     {
       "type": 0,
       "value": "Modello asincrono"
+    }
+  ],
+  "J2Su6x": [
+    {
+      "type": 0,
+      "value": "Formatting options for font size"
     }
   ],
   "J5/7vN": [
@@ -2928,6 +2964,12 @@
     {
       "type": 0,
       "value": "Restituisce un subset di caratteri da una stringa"
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Change connection reference"
     }
   ],
   "KX1poC": [
@@ -3113,6 +3155,12 @@
       "value": "Vedi altro"
     }
   ],
+  "Lm9bnN": [
+    {
+      "type": 0,
+      "value": "Bullet List"
+    }
+  ],
   "LoGUT3": [
     {
       "type": 0,
@@ -3149,10 +3197,10 @@
       "value": "(UTC + 00.00) Dublino, Edimburgo, Lisbona, Londra"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "Aggiungere un commento"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -3359,12 +3407,6 @@
       "value": "Selezionare un'identità"
     }
   ],
-  "Nro0qr": [
-    {
-      "type": 0,
-      "value": "Please enter an e-mail address"
-    }
-  ],
   "NvANon": [
     {
       "type": 0,
@@ -3479,12 +3521,6 @@
       "value": "Restituisce i risultati delle azioni di primo livello nell'azione con ambito specificata, ad esempio un'azione For_each, Until o Scope."
     }
   ],
-  "OcnU0i": [
-    {
-      "type": 0,
-      "value": "Please select file or image"
-    }
-  ],
   "OdNhwc": [
     {
       "type": 0,
@@ -3539,6 +3575,12 @@
     {
       "type": 0,
       "value": "Selezionare un'identità gestita"
+    }
+  ],
+  "P+7G62": [
+    {
+      "type": 0,
+      "value": "Heading 3"
     }
   ],
   "P+mWgV": [
@@ -3737,6 +3779,12 @@
       "value": "Codice stato"
     }
   ],
+  "QIOOQU": [
+    {
+      "type": 0,
+      "value": "No Items"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -3745,6 +3793,12 @@
     {
       "type": 1,
       "value": "title"
+    }
+  ],
+  "QZ5DZl": [
+    {
+      "type": 0,
+      "value": "alt text for chevron down"
     }
   ],
   "QZBPUx": [
@@ -3938,6 +3992,12 @@
       "value": "Password"
     }
   ],
+  "SGnTpt": [
+    {
+      "type": 0,
+      "value": "Heading 2"
+    }
+  ],
   "SJFVxf": [
     {
       "type": 0,
@@ -3976,6 +4036,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Nome dell'azione con una risposta con dati del modulo o codifica per il modulo."
+    }
+  ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
     }
   ],
   "Sh10cw": [
@@ -4176,6 +4242,18 @@
       "value": "(UTC+1.00) Bruxelles, Copenaghen, Madrid, Parigi"
     }
   ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
+    }
+  ],
+  "Ttc0SM": [
+    {
+      "type": 0,
+      "value": "Heading 1"
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -4258,6 +4336,12 @@
     {
       "type": 0,
       "value": "Sostituisce una stringa con una stringa specifica"
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Logical Name"
     }
   ],
   "UR1CS5": [
@@ -4492,12 +4576,6 @@
     {
       "type": 0,
       "value": "Obbligatorio. Nome della nuova proprietà."
-    }
-  ],
-  "W7sa4b": [
-    {
-      "type": 0,
-      "value": "Enter title"
     }
   ],
   "WGwH45": [
@@ -4802,6 +4880,18 @@
     {
       "type": 0,
       "value": "Immetti file PFX"
+    }
+  ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
+  "YWOKlU": [
+    {
+      "type": 0,
+      "value": "Numbered List"
     }
   ],
   "YaFjJQ": [
@@ -5296,12 +5386,6 @@
       "value": "Obbligatorio. Raccolta in cui ignorare i primi oggetti Count."
     }
   ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "Eliminare commento"
-    }
-  ],
   "d4xMIx": [
     {
       "type": 0,
@@ -5318,6 +5402,12 @@
     {
       "type": 0,
       "value": "Altre informazioni"
+    }
+  ],
+  "dL9V5t": [
+    {
+      "type": 0,
+      "value": "Managed identity"
     }
   ],
   "dOpdsP": [
@@ -5416,6 +5506,12 @@
     {
       "type": 0,
       "value": "scaduto"
+    }
+  ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "e00zot": [
@@ -5550,6 +5646,12 @@
       "value": "Il numero di paging supera il valore massimo"
     }
   ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5598,6 +5700,12 @@
     {
       "type": 0,
       "value": "Ignorato"
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "g0a4Qe": [
@@ -5706,6 +5814,12 @@
     {
       "type": 0,
       "value": "Condizioni trigger"
+    }
+  ],
+  "gc6v4X": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "gfBWfH": [
@@ -5911,12 +6025,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "Commento"
     }
   ],
   "iCSHJG": [
@@ -6389,6 +6497,12 @@
       "value": "Modalità di esecuzione senza stato:"
     }
   ],
+  "lhL/KL": [
+    {
+      "type": 0,
+      "value": "Normal"
+    }
+  ],
   "ljAOR6": [
     {
       "type": 0,
@@ -6489,6 +6603,12 @@
     {
       "type": 0,
       "value": "L'URL codifica la stringa di input"
+    }
+  ],
+  "mQotIu": [
+    {
+      "type": 0,
+      "value": "Select Connection"
     }
   ],
   "mYQFtf": [
@@ -6761,6 +6881,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Salvador"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7214,6 +7340,12 @@
       "value": "Grado di parallelismo"
     }
   ],
+  "sYQDN+": [
+    {
+      "type": 0,
+      "value": "Formatting options for font family"
+    }
+  ],
   "sZ0G/Z": [
     {
       "type": 0,
@@ -7344,6 +7476,12 @@
     {
       "type": 0,
       "value": "h"
+    }
+  ],
+  "tJMHcJ": [
+    {
+      "type": 0,
+      "value": "Select Connection Reference"
     }
   ],
   "tLZ9Sh": [
@@ -7562,6 +7700,12 @@
     {
       "type": 0,
       "value": "Crea una matrice dai parametri"
+    }
+  ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Trigger date"
     }
   ],
   "v39HKj": [
@@ -7848,6 +7992,12 @@
       "value": "Status Code"
     }
   ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
+    }
+  ],
   "xC1zg3": [
     {
       "type": 0,
@@ -8008,6 +8158,12 @@
     {
       "type": 0,
       "value": "Aggiungi campo"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "yxsn7s": [

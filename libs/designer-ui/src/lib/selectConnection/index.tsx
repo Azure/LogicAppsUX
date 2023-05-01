@@ -26,6 +26,7 @@ export interface SelectConnectionProps {
   saveSelectionCallback: (connection?: Connection) => void;
   cancelSelectionCallback: () => void;
   createConnectionCallback: () => void;
+  isXrmConnectionReferenceMode: boolean;
 }
 
 export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
@@ -37,6 +38,7 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
     saveSelectionCallback,
     cancelSelectionCallback,
     createConnectionCallback,
+    isXrmConnectionReferenceMode,
   } = props;
 
   const intl = useIntl();
@@ -123,10 +125,15 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
     },
     {
       key: 'name',
-      name: intl.formatMessage({
-        defaultMessage: 'Name',
-        description: 'Column header for connection name',
-      }),
+      name: isXrmConnectionReferenceMode
+        ? intl.formatMessage({
+            defaultMessage: 'Logical Name',
+            description: 'Column header for connection reference logical name',
+          })
+        : intl.formatMessage({
+            defaultMessage: 'Name',
+            description: 'Column header for connection name',
+          }),
       ariaLabel: intl.formatMessage({
         defaultMessage: 'Connection name',
         description: 'aria label description for connection name',
@@ -152,10 +159,15 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
     },
   ];
 
-  const componentDescription = intl.formatMessage({
-    defaultMessage: 'Select an existing connection or create a new one.',
-    description: 'Select an existing connection or create a new one.',
-  });
+  const componentDescription = isXrmConnectionReferenceMode
+    ? intl.formatMessage({
+        defaultMessage: 'Select an existing connection reference or create a new one.',
+        description: 'Select an existing connection reference or create a new one.',
+      })
+    : intl.formatMessage({
+        defaultMessage: 'Select an existing connection or create a new one.',
+        description: 'Select an existing connection or create a new one.',
+      });
 
   const identityErrorText = intl.formatMessage({
     defaultMessage: 'Invalid connection.',

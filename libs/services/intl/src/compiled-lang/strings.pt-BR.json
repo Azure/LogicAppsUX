@@ -35,6 +35,12 @@
       "value": "Select this if you are configuring an on-prem connection"
     }
   ],
+  "+W2vTp": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -712,10 +718,22 @@
       "value": "Save"
     }
   ],
+  "30njcn": [
+    {
+      "type": 0,
+      "value": "Create Connection"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
       "value": "Identificador"
+    }
+  ],
+  "34Nt/B": [
+    {
+      "type": 0,
+      "value": "alt text for button icon"
     }
   ],
   "36RiST": [
@@ -988,12 +1006,6 @@
       "value": "Necessário. O nome do parâmetro cujos valores você deseja."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "Comentários podem ser adicionados somente ao editar as saídas de uma etapa."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1134,12 +1146,6 @@
     {
       "type": 0,
       "value": "(UTC+08:45) Eucla"
-    }
-  ],
-  "6H3oG1": [
-    {
-      "type": 0,
-      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "6OSgRP": [
@@ -1430,6 +1436,12 @@
     {
       "type": 0,
       "value": "Com o padrão assíncrono, se o servidor remoto indicar que a solicitação é aceita para processamento com uma resposta 202 (aceitada), o mecanismo dos Aplicativos Lógicos continuarão sondando a URL especificada no cabeçalho de localização de resposta até alcançar um estado terminal."
+    }
+  ],
+  "8luJ2j": [
+    {
+      "type": 0,
+      "value": "Create Connection Reference"
     }
   ],
   "8pPivj": [
@@ -1883,6 +1895,12 @@
       "value": "(UTC-05:00) Havana"
     }
   ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Number"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1893,6 +1911,12 @@
     {
       "type": 0,
       "value": "Recolher"
+    }
+  ],
+  "BrWQ0Z": [
+    {
+      "type": 0,
+      "value": "Select a managed identity"
     }
   ],
   "BuYrD3": [
@@ -1941,6 +1965,12 @@
     {
       "type": 0,
       "value": "Tipo de Credencial"
+    }
+  ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "Cy9qeQ": [
@@ -2017,12 +2047,6 @@
     {
       "type": 0,
       "value": "Select a value"
-    }
-  ],
-  "DOf1/I": [
-    {
-      "type": 0,
-      "value": "Please enter your input"
     }
   ],
   "DWd9vy": [
@@ -2223,6 +2247,12 @@
       "value": "(UTC-05:00) Hora do Leste (EUA e Canadá)"
     }
   ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
+    }
+  ],
   "Ex4U46": [
     {
       "type": 0,
@@ -2245,12 +2275,6 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Irkutsk"
-    }
-  ],
-  "F51kU8": [
-    {
-      "type": 0,
-      "value": "Please enter a number"
     }
   ],
   "F9dR1Q": [
@@ -2542,6 +2566,12 @@
       "value": "Matriz"
     }
   ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "File Content"
+    }
+  ],
   "H17jEE": [
     {
       "type": 0,
@@ -2588,6 +2618,12 @@
     {
       "type": 0,
       "value": "Mais informações de diagnóstico: x-ms-client-request-id é {clientRequestId}."
+    }
+  ],
+  "HOchry": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one."
     }
   ],
   "HQ8/tk": [
@@ -2764,16 +2800,16 @@
       "value": "No properties"
     }
   ],
-  "Iwi+x0": [
-    {
-      "type": 0,
-      "value": "Please select yes or no"
-    }
-  ],
   "J/Kz1j": [
     {
       "type": 0,
       "value": "Padrão Assíncrono"
+    }
+  ],
+  "J2Su6x": [
+    {
+      "type": 0,
+      "value": "Formatting options for font size"
     }
   ],
   "J5/7vN": [
@@ -2924,6 +2960,12 @@
     {
       "type": 0,
       "value": "Retorna um subconjunto de caracteres de uma cadeia de caracteres"
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Change connection reference"
     }
   ],
   "KX1poC": [
@@ -3109,6 +3151,12 @@
       "value": "Ver mais"
     }
   ],
+  "Lm9bnN": [
+    {
+      "type": 0,
+      "value": "Bullet List"
+    }
+  ],
   "LoGUT3": [
     {
       "type": 0,
@@ -3145,10 +3193,10 @@
       "value": "(UTC+00:00) Dublin, Edimburgo, Lisboa, Londres"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "Adicionar um comentário"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -3355,12 +3403,6 @@
       "value": "Selecione uma identidade"
     }
   ],
-  "Nro0qr": [
-    {
-      "type": 0,
-      "value": "Please enter an e-mail address"
-    }
-  ],
   "NvANon": [
     {
       "type": 0,
@@ -3475,12 +3517,6 @@
       "value": "Retorna os resultados das ações de nível superior na ação com escopo especificada, como uma ação For_each, Until ou Scope."
     }
   ],
-  "OcnU0i": [
-    {
-      "type": 0,
-      "value": "Please select file or image"
-    }
-  ],
   "OdNhwc": [
     {
       "type": 0,
@@ -3527,6 +3563,12 @@
     {
       "type": 0,
       "value": "Selecionar uma identidade gerenciada"
+    }
+  ],
+  "P+7G62": [
+    {
+      "type": 0,
+      "value": "Heading 3"
     }
   ],
   "P+mWgV": [
@@ -3725,6 +3767,12 @@
       "value": "Código de status"
     }
   ],
+  "QIOOQU": [
+    {
+      "type": 0,
+      "value": "No Items"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -3733,6 +3781,12 @@
     {
       "type": 1,
       "value": "title"
+    }
+  ],
+  "QZ5DZl": [
+    {
+      "type": 0,
+      "value": "alt text for chevron down"
     }
   ],
   "QZBPUx": [
@@ -3926,6 +3980,12 @@
       "value": "Senha"
     }
   ],
+  "SGnTpt": [
+    {
+      "type": 0,
+      "value": "Heading 2"
+    }
+  ],
   "SJFVxf": [
     {
       "type": 0,
@@ -3964,6 +4024,12 @@
     {
       "type": 0,
       "value": "Necessário. O nome da ação com uma resposta de dados do formulário ou codificada no formulário."
+    }
+  ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
     }
   ],
   "Sh10cw": [
@@ -4164,6 +4230,18 @@
       "value": "(UTC+01:00) Bruxelas, Copenhague, Madri, Paris"
     }
   ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
+    }
+  ],
+  "Ttc0SM": [
+    {
+      "type": 0,
+      "value": "Heading 1"
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -4246,6 +4324,12 @@
     {
       "type": 0,
       "value": "Substitui uma cadeia de caracteres por uma determinada cadeia de caracteres"
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Logical Name"
     }
   ],
   "UR1CS5": [
@@ -4480,12 +4564,6 @@
     {
       "type": 0,
       "value": "Necessário. O nome da nova propriedade."
-    }
-  ],
-  "W7sa4b": [
-    {
-      "type": 0,
-      "value": "Enter title"
     }
   ],
   "WGwH45": [
@@ -4790,6 +4868,18 @@
     {
       "type": 0,
       "value": "Inserir Pfx"
+    }
+  ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
+  "YWOKlU": [
+    {
+      "type": 0,
+      "value": "Numbered List"
     }
   ],
   "YaFjJQ": [
@@ -5284,12 +5374,6 @@
       "value": "Necessário. A coleção da qual ignorar os primeiros objetos de Contagem."
     }
   ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "Excluir comentário"
-    }
-  ],
   "d4xMIx": [
     {
       "type": 0,
@@ -5306,6 +5390,12 @@
     {
       "type": 0,
       "value": "Saiba mais"
+    }
+  ],
+  "dL9V5t": [
+    {
+      "type": 0,
+      "value": "Managed identity"
     }
   ],
   "dOpdsP": [
@@ -5404,6 +5494,12 @@
     {
       "type": 0,
       "value": "tempo limite expirado"
+    }
+  ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "e00zot": [
@@ -5538,6 +5634,12 @@
       "value": "A contagem de paginação excede o valor máximo"
     }
   ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5586,6 +5688,12 @@
     {
       "type": 0,
       "value": "Ignorado"
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "g0a4Qe": [
@@ -5694,6 +5802,12 @@
     {
       "type": 0,
       "value": "Condições do Gatilho"
+    }
+  ],
+  "gc6v4X": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "gfBWfH": [
@@ -5899,12 +6013,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "Comentar"
     }
   ],
   "iCSHJG": [
@@ -6377,6 +6485,12 @@
       "value": "Modo de execução sem estado:"
     }
   ],
+  "lhL/KL": [
+    {
+      "type": 0,
+      "value": "Normal"
+    }
+  ],
   "ljAOR6": [
     {
       "type": 0,
@@ -6477,6 +6591,12 @@
     {
       "type": 0,
       "value": "A URL codifica a cadeia de caracteres de entrada"
+    }
+  ],
+  "mQotIu": [
+    {
+      "type": 0,
+      "value": "Select Connection"
     }
   ],
   "mYQFtf": [
@@ -6749,6 +6869,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Salvador"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7202,6 +7328,12 @@
       "value": "Grau de Paralelismo"
     }
   ],
+  "sYQDN+": [
+    {
+      "type": 0,
+      "value": "Formatting options for font family"
+    }
+  ],
   "sZ0G/Z": [
     {
       "type": 0,
@@ -7332,6 +7464,12 @@
     {
       "type": 0,
       "value": "h"
+    }
+  ],
+  "tJMHcJ": [
+    {
+      "type": 0,
+      "value": "Select Connection Reference"
     }
   ],
   "tLZ9Sh": [
@@ -7550,6 +7688,12 @@
     {
       "type": 0,
       "value": "Cria uma matriz usando os parâmetros"
+    }
+  ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Trigger date"
     }
   ],
   "v39HKj": [
@@ -7836,6 +7980,12 @@
       "value": "Status Code"
     }
   ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
+    }
+  ],
   "xC1zg3": [
     {
       "type": 0,
@@ -7996,6 +8146,12 @@
     {
       "type": 0,
       "value": "Adicionar campo"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "yxsn7s": [

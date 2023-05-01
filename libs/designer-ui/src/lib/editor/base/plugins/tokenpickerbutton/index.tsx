@@ -31,6 +31,7 @@ export const TokenPickerButton = ({ showOnLeft, openTokenPicker }: TokenPickerBu
   const [editor] = useLexicalComposerContext();
   const [anchorKey, setAnchorKey] = useState<NodeKey | null>(null);
   const boxRef = useRef<HTMLDivElement>(null);
+  const panel = document.getElementsByClassName('ms-Panel-scrollableContent')[0];
 
   const updateAnchorPoint = useCallback(() => {
     editor.getEditorState().read(() => {
@@ -61,7 +62,7 @@ export const TokenPickerButton = ({ showOnLeft, openTokenPicker }: TokenPickerBu
           boxElem.style.top = `${top - 20}px`;
         }
         if (showOnLeft) {
-          boxElem.style.left = `${left - 40}px`;
+          boxElem.style.left = `${left - 38}px`;
         } else {
           boxElem.style.left = `${right - 20}px`;
         }
@@ -71,11 +72,13 @@ export const TokenPickerButton = ({ showOnLeft, openTokenPicker }: TokenPickerBu
 
   useEffect(() => {
     window.addEventListener('resize', updatePosition);
+    panel?.addEventListener('scroll', updatePosition);
 
     return () => {
       window.removeEventListener('resize', updatePosition);
+      panel?.removeEventListener('scroll', updatePosition);
     };
-  }, [editor, updatePosition]);
+  }, [editor, updatePosition, panel]);
 
   useLayoutEffect(() => {
     updatePosition();

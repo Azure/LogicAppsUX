@@ -4,6 +4,7 @@ import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import type { RootState } from '../../../core/store';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { Peek } from '@microsoft/designer-ui';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { isNullOrEmpty } from '@microsoft/utils-logic-apps';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';

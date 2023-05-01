@@ -1,4 +1,6 @@
 import Constants from '../../../common/constants';
+import type { ConnectionReferences } from '../../../common/models/workflow';
+import { addInvokerSupport } from '../../state/connection/connectionSlice';
 import type { NodeOperation, NodeOutputs } from '../../state/operation/operationMetadataSlice';
 import { getSplitOnOptions } from '../../utils/outputs';
 import { getTokenExpressionValue } from '../../utils/parameters/helper';
@@ -7,6 +9,8 @@ import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { convertToStringLiteral, getSplitOnArrayAliasMetadata } from '@microsoft/parsers-logic-apps';
 import type {
   DownloadChunkMetadata,
+  LogicApps,
+  LogicAppsV2,
   OperationManifest,
   OperationManifestSetting,
   OperationManifestSettings,
@@ -22,6 +26,7 @@ import {
   ValidationErrorCode,
   ValidationException,
 } from '@microsoft/utils-logic-apps';
+import type { Dispatch } from '@reduxjs/toolkit';
 
 type OperationManifestSettingType = UploadChunkMetadata | DownloadChunkMetadata | SecureDataOptions | OperationOptions[] | void;
 
@@ -96,7 +101,7 @@ export interface Settings {
   uploadChunk?: SettingData<UploadChunk>;
   downloadChunkSize?: SettingData<number>;
   runAfter?: SettingData<GraphEdge[]>;
-  invokerConnection?: SettingData<SimpleSetting<boolean>>;
+  invokerConnection?: SettingData<SimpleSetting<ConnectionReferences>>;
 }
 
 /**
@@ -116,7 +121,9 @@ export const getOperationSettings = (
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
   operation?: LogicAppsV2.OperationDefinition,
-  rootNodeId?: string
+  rootNodeId?: string,
+  connectionReferences?: ConnectionReferences,
+  dispatch?: Dispatch
 ): Settings => {
   const { operationId, type: nodeType } = operationInfo;
   return {
@@ -190,7 +197,7 @@ export const getOperationSettings = (
     },
     invokerConnection: {
       isSupported: isInvokerConnectionSupported(isTrigger, nodeType, rootNodeId),
-      // value: TODO in next PR
+      value: invokerConnection(connectionReferences, dispatch),
     },
   };
 };
@@ -867,4 +874,19 @@ const isInvokerConnectionSupported = (isTrigger: boolean, nodeType: string, root
   } else {
     return false;
   }
+};
+
+const invokerConnection = (
+  connectionReferences: ConnectionReferences | undefined,
+  dispatch: Dispatch | undefined
+): SimpleSetting<ConnectionReferences> | undefined => {
+  if (connectionReferences !== undefined) {
+    dispatch?.(addInvokerSupport({ connectionReferences }));
+  }
+  return connectionReferences
+    ? {
+        enabled: true,
+        value: connectionReferences,
+      }
+    : { enabled: false };
 };

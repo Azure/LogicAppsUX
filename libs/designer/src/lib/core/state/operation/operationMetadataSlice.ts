@@ -4,8 +4,8 @@ import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults'
 import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
 import { resetWorkflowState } from '../global';
 import type { ParameterInfo } from '@microsoft/designer-ui';
-import type { InputParameter, OutputParameter } from '@microsoft/parsers-logic-apps';
-import type { OperationInfo } from '@microsoft/utils-logic-apps';
+import type { FilePickerInfo, InputParameter, OutputParameter, SwaggerParser } from '@microsoft/parsers-logic-apps';
+import type { OpenAPIV2, OperationInfo } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -32,6 +32,7 @@ export interface OutputInfo {
   source?: string;
   title: string;
   value?: string;
+  alias?: string;
 }
 
 export enum DynamicLoadStatus {
@@ -53,6 +54,7 @@ export interface NodeOutputs {
 }
 
 type DependencyType = 'StaticSchema' | 'ApiSchema' | 'ListValues' | 'TreeNavigation';
+
 export interface DependencyInfo {
   definition: any; // This is the dependency definition from manifest/swagger.
   dependencyType: DependencyType;
@@ -62,6 +64,7 @@ export interface DependencyInfo {
       isValid: boolean;
     }
   >;
+  filePickerInfo?: FilePickerInfo;
   parameter?: InputParameter | OutputParameter;
 }
 
@@ -137,6 +140,7 @@ interface AddDynamicInputsPayload {
   groupId: string;
   inputs: ParameterInfo[];
   newInputs: InputParameter[];
+  swagger?: SwaggerParser;
 }
 
 export interface UpdateParametersPayload {
@@ -179,7 +183,7 @@ export const operationMetadataSlice = createSlice({
       }
     },
     addDynamicInputs: (state, action: PayloadAction<AddDynamicInputsPayload>) => {
-      const { nodeId, groupId, inputs, newInputs: rawInputs } = action.payload;
+      const { nodeId, groupId, inputs, newInputs: rawInputs, swagger } = action.payload;
       if (state.inputParameters[nodeId] && state.inputParameters[nodeId].parameterGroups[groupId]) {
         const { parameters } = state.inputParameters[nodeId].parameterGroups[groupId];
         const newParameters = [...parameters];
@@ -194,7 +198,7 @@ export const operationMetadataSlice = createSlice({
         state.inputParameters[nodeId].parameterGroups[groupId].parameters = newParameters;
       }
 
-      const dependencies = getInputDependencies(state.inputParameters[nodeId], rawInputs);
+      const dependencies = getInputDependencies(state.inputParameters[nodeId], rawInputs, swagger);
       if (dependencies) {
         state.dependencies[nodeId].inputs = { ...state.dependencies[nodeId].inputs, ...dependencies };
       }

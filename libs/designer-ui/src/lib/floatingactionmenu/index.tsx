@@ -1,12 +1,18 @@
-import type { DynamicallyAddedParameterTypeType } from '../dynamicallyaddedparameter';
-import { DynamicallyAddedParameter, DynamicallyAddedParameterType } from '../dynamicallyaddedparameter';
-import { deserialize, serialize } from '../dynamicallyaddedparameter/helper';
+import type { DynamicallyAddedParameterProps, DynamicallyAddedParameterTypeType } from '../dynamicallyaddedparameter';
+import { DynamicallyAddedParameter } from '../dynamicallyaddedparameter';
+import {
+  createDynamicallyAddedParameterProperties,
+  deserialize,
+  generateDynamicParameterKey,
+  getEmptySchemaValueSegmentForInitialization,
+  serialize,
+} from '../dynamicallyaddedparameter/helper';
 import type { ValueSegment } from '../editor';
 import type { ChangeHandler } from '../editor/base';
 import { getMenuItemsForDynamicAddedParameters } from './helper';
 import { KeyCodes } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
-import { ValidationErrorCode, ValidationException, guid, safeSetObjectPropertyValue } from '@microsoft/utils-logic-apps';
+import { ValidationErrorCode, ValidationException, safeSetObjectPropertyValue } from '@microsoft/utils-logic-apps';
 import React from 'react';
 import { useIntl } from 'react-intl';
 
@@ -14,7 +20,6 @@ export interface FloatingActionMenuItem {
   type: DynamicallyAddedParameterTypeType;
   icon: string;
   label: string;
-  placeholder: string;
 }
 
 export interface FloatingActionMenuProps {
@@ -30,6 +35,15 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
     throw new ValidationException(ValidationErrorCode.INVALID_PARAMETERS, 'supportedTypes are necessary.');
   }
   const menuItems = getMenuItemsForDynamicAddedParameters(props.supportedTypes);
+
+  // Set an empty schema object in the value so that the object structure is what Flow-RP expects.
+  if (props.initialValue.length > 0 && !props.initialValue[0].value) {
+    const { onChange } = props;
+    if (onChange) {
+      const value = getEmptySchemaValueSegmentForInitialization();
+      onChange({ value });
+    }
+  }
 
   const intl = useIntl();
   const closeErrorButtonAriaLabel = intl.formatMessage({
@@ -62,7 +76,7 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
     }
   };
 
-  const dynamicParameterProps = deserialize(props.initialValue).map((prop) => ({
+  const dynamicParameterProps: DynamicallyAddedParameterProps[] = deserialize(props.initialValue).map((prop) => ({
     ...prop,
     onChange: onDynamicallyAddedParameterChange,
     onDelete: onDynamicallyAddedParameterDelete,
@@ -135,7 +149,6 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
         >
           <div className="msla-menu-item-logo" style={itemStyle} />
           <span className="msla-vertical-menu-item-label">{menuItem.label}</span>
-          <div className="msla-vertical-menu-item-add" />
         </div>
       );
     } else {
@@ -156,26 +169,14 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
     }
   };
 
-  const titlePlaceholder = intl.formatMessage({
-    defaultMessage: 'Enter title',
-    description: 'Placeholder for variable name for new dynamically added parameter',
-  });
-
   const addNewDynamicallyAddedParameter = (item: FloatingActionMenuItem) => {
-    const { icon, type, placeholder } = item;
-    const format =
-      type === DynamicallyAddedParameterType.Date || type === DynamicallyAddedParameterType.Email ? type.toLowerCase() : undefined;
+    const { icon, type: floatingActionMenuItemType } = item;
+
+    const schemaKey = generateDynamicParameterKey(dynamicParameterProps, item.type);
     dynamicParameterProps.push({
       icon,
-      schemaKey: guid(), // TODO: generate schemaKey
-      properties: {
-        description: placeholder,
-        format,
-        title: titlePlaceholder, // TODO: generate title based on schemaKey
-        type,
-        'x-ms-content-hint': type,
-        'x-ms-dynamically-added': true,
-      },
+      schemaKey,
+      properties: createDynamicallyAddedParameterProperties(floatingActionMenuItemType, schemaKey),
       required: true, // TODO: add functionality to allow making parameters optional
       onChange: onDynamicallyAddedParameterChange,
       onDelete: onDynamicallyAddedParameterDelete,
@@ -207,13 +208,13 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
   return (
     <>
       <div className="msla-dynamic-added-params-container">
-        {dynamicParameterProps.map((props) => (
-          <DynamicallyAddedParameter {...props} key={props.schemaKey} />
-        ))}
+        {dynamicParameterProps.map((props) =>
+          props.properties['x-ms-dynamically-added'] === true ? <DynamicallyAddedParameter {...props} key={props.schemaKey} /> : null
+        )}
       </div>
       <div className="msla-floating-action-menu-container">
-        {!expanded ? renderMenuButton() : undefined}
-        {expanded ? renderMenuItems() : undefined}
+        {!expanded ? renderMenuButton() : null}
+        {expanded ? renderMenuItems() : null}
       </div>
     </>
   );

@@ -1,9 +1,12 @@
 import type { ConnectionReference, ConnectionReferences } from '../../../common/models/workflow';
+import { getConnection } from '../../queries/connections';
 import type { RootState } from '../../store';
+import { getConnectionId, getConnectionReference } from '../../utils/connectors/connections';
 import { useOperationManifest, useOperationInfo } from '../selectors/actionMetadataSelector';
 import type { ConnectionMapping } from './connectionSlice';
-import { ConnectionService, GatewayService } from '@microsoft/designer-client-services-logic-apps';
+import { ConnectionService, GatewayService, isServiceProviderOperation } from '@microsoft/designer-client-services-logic-apps';
 import type { Connector } from '@microsoft/utils-logic-apps';
+import { isConnectionMultiAuthManagedIdentityType } from '@microsoft/utils-logic-apps';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
@@ -47,6 +50,26 @@ export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
   return connectorFromService ?? connectorFromManifest;
 };
 
+export const useNodeConnectionId = (nodeId: string): string =>
+  useSelector((state: RootState) => getConnectionId(state.connections, nodeId));
+
+const useConnectionByNodeId = (nodeId: string) => {
+  const operationInfo = useOperationInfo(nodeId);
+  const connectionId = useNodeConnectionId(nodeId);
+  return useQuery(
+    ['connection', { connectorId: operationInfo?.connectorId }, { connectionId }],
+    () => getConnection(connectionId, operationInfo.connectorId),
+    {
+      enabled: !!connectionId && !!operationInfo?.connectorId,
+      placeholderData: undefined,
+      cacheTime: 1000 * 60 * 60 * 24,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
+};
+
 export const useConnectionMapping = (): ConnectionMapping => {
   return useSelector((state: RootState) => {
     return state.connections.connectionsMapping;
@@ -67,4 +90,18 @@ export const useConnectionRefsByConnectorId = (connectorId?: string) => {
 export const useIsOperationMissingConnection = (nodeId: string) => {
   const connectionsMapping = useSelector((state: RootState) => state.connections.connectionsMapping);
   return Object.keys(connectionsMapping).includes(nodeId) && connectionsMapping[nodeId] === null;
+};
+
+export const useShowIdentitySelector = (nodeId: string): boolean => {
+  const connector = useConnectorByNodeId(nodeId);
+  const connectionQuery = useConnectionByNodeId(nodeId);
+  return useSelector((state: RootState) => {
+    const operationInfo = state.operations.operationInfo[nodeId];
+    const connectionReference = getConnectionReference(state.connections, nodeId);
+    if (connectionReference && !isServiceProviderOperation(operationInfo.type) && !connectionQuery.isLoading) {
+      return isConnectionMultiAuthManagedIdentityType(connectionQuery.data, connector);
+    }
+
+    return false;
+  });
 };

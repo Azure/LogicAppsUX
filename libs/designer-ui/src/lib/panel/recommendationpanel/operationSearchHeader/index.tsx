@@ -1,16 +1,13 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-/* eslint-disable react/jsx-no-literals */
 import { DesignerSearchBox } from '../../../searchbox';
-import { Checkbox, Icon, IconButton, Link, Text } from '@fluentui/react';
+import { Checkbox } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react/lib/Dropdown';
-import { Dropdown, DropdownMenuItemType } from '@fluentui/react/lib/Dropdown';
-import { useCallback } from 'react';
+import { Dropdown } from '@fluentui/react/lib/Dropdown';
 import { useIntl } from 'react-intl';
 
 interface OperationSearchHeaderProps {
   searchCallback: (s: string) => void;
   onGroupToggleChange: (ev?: React.FormEvent<HTMLElement | HTMLInputElement> | undefined, checked?: boolean | undefined) => void;
+  displayRuntimeInfo: boolean;
   isGrouped?: boolean;
   searchTerm?: string;
   filters?: Record<string, string>;
@@ -19,7 +16,16 @@ interface OperationSearchHeaderProps {
 }
 
 export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
-  const { searchCallback, onGroupToggleChange, isGrouped = false, searchTerm, filters, setFilters, isTriggerNode } = props;
+  const {
+    searchCallback,
+    onGroupToggleChange,
+    isGrouped = false,
+    searchTerm,
+    filters,
+    setFilters,
+    isTriggerNode,
+    displayRuntimeInfo,
+  } = props;
 
   const intl = useIntl();
 
@@ -39,7 +45,12 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
   ];
 
   const actionTypeFilters = isTriggerNode
-    ? []
+    ? [
+        {
+          key: 'actionType-triggers',
+          text: intl.formatMessage({ defaultMessage: 'Triggers', description: 'Filter by Triggers category of connectors' }),
+        },
+      ]
     : [
         {
           key: 'actionType-triggers',
@@ -73,14 +84,16 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
     <div className="msla-sub-heading-container">
       <DesignerSearchBox searchCallback={searchCallback} searchTerm={searchTerm} />
       <div style={{ display: 'grid', grid: 'auto-flow / 1fr 1fr', gridColumnGap: '8px' }}>
-        <Dropdown
-          label={intl.formatMessage({ defaultMessage: 'Runtime', description: 'Filter by label' })}
-          placeholder={intl.formatMessage({ defaultMessage: 'Select a runtime', description: 'Select a runtime placeholder' })}
-          selectedKeys={Object.entries(props.filters ?? {}).map(([k, v]) => `${k}-${v}`)}
-          onChange={onChange}
-          multiSelect
-          options={runtimeFilters}
-        />
+        {displayRuntimeInfo ? (
+          <Dropdown
+            label={intl.formatMessage({ defaultMessage: 'Runtime', description: 'Filter by label' })}
+            placeholder={intl.formatMessage({ defaultMessage: 'Select a runtime', description: 'Select a runtime placeholder' })}
+            selectedKeys={Object.entries(props.filters ?? {}).map(([k, v]) => `${k}-${v}`)}
+            onChange={onChange}
+            multiSelect
+            options={runtimeFilters}
+          />
+        ) : null}
         <Dropdown
           label={intl.formatMessage({ defaultMessage: 'Action Type', description: 'Filter by label' })}
           placeholder={intl.formatMessage({
@@ -91,11 +104,11 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
           onChange={onChange}
           multiSelect
           options={actionTypeFilters}
+          disabled={isTriggerNode}
         />
       </div>
       {searchTerm ? (
         <div className="msla-flex-row">
-          {/* <span className="msla-search-heading-text">{searchResultsText}</span> */}
           <Checkbox label={groupByConnectorLabelText} onChange={onGroupToggleChange} checked={isGrouped} />
         </div>
       ) : null}

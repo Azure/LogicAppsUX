@@ -36,7 +36,7 @@ import {
   removeConnectionPrefix,
   isTemplateExpression,
 } from '@microsoft/parsers-logic-apps';
-import type { OperationInfo } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2, OperationInfo } from '@microsoft/utils-logic-apps';
 import { copyArray, map, RecurrenceType, equals, parsePathnameAndQueryKeyFromUri, startsWith, unmap } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -207,7 +207,7 @@ export const getInputParametersFromSwagger = (
   defaultParameterGroup.parameters = getParametersSortedByVisibility(defaultParameterGroup.parameters);
 
   const nodeInputs = { dynamicLoadStatus: dynamicInput ? DynamicLoadStatus.NOTSTARTED : undefined, parameterGroups };
-  return { inputs: nodeInputs, dependencies: getInputDependencies(nodeInputs, inputParametersAsArray) };
+  return { inputs: nodeInputs, dependencies: getInputDependencies(nodeInputs, inputParametersAsArray, swagger) };
 };
 
 export const getOutputParametersFromSwagger = (

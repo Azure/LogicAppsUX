@@ -35,6 +35,12 @@
       "value": "Select this if you are configuring an on-prem connection"
     }
   ],
+  "+W2vTp": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -690,10 +696,22 @@
       "value": "Save"
     }
   ],
+  "30njcn": [
+    {
+      "type": 0,
+      "value": "Create Connection"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
       "value": "식별자"
+    }
+  ],
+  "34Nt/B": [
+    {
+      "type": 0,
+      "value": "alt text for button icon"
     }
   ],
   "36RiST": [
@@ -966,12 +984,6 @@
       "value": "필수 사항으로, 값을 원하는 매개 변수의 이름입니다."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "단계 입력을 편집하는 동안에만 주석을 추가할 수 있습니다."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1112,12 +1124,6 @@
     {
       "type": 0,
       "value": "(UTC+08:45) 유클라"
-    }
-  ],
-  "6H3oG1": [
-    {
-      "type": 0,
-      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "6OSgRP": [
@@ -1412,6 +1418,12 @@
     {
       "type": 0,
       "value": "비동기 패턴을 사용하면, 원격 서버가 202(수락됨) 응답을 통해 프로세싱에 대한 요청이 수락된 것으로 나타내는 경우 Logic Apps 엔진이 응답의 위치 헤더에 지정된 URL을 터미널 상태에 도달할 때까지 계속 폴링합니다."
+    }
+  ],
+  "8luJ2j": [
+    {
+      "type": 0,
+      "value": "Create Connection Reference"
     }
   ],
   "8pPivj": [
@@ -1843,6 +1855,12 @@
       "value": "(UTC-05:00) 아바나"
     }
   ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Number"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1853,6 +1871,12 @@
     {
       "type": 0,
       "value": "축소"
+    }
+  ],
+  "BrWQ0Z": [
+    {
+      "type": 0,
+      "value": "Select a managed identity"
     }
   ],
   "BuYrD3": [
@@ -1901,6 +1925,12 @@
     {
       "type": 0,
       "value": "자격 증명 유형"
+    }
+  ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "Cy9qeQ": [
@@ -1977,12 +2007,6 @@
     {
       "type": 0,
       "value": "Select a value"
-    }
-  ],
-  "DOf1/I": [
-    {
-      "type": 0,
-      "value": "Please enter your input"
     }
   ],
   "DWd9vy": [
@@ -2183,6 +2207,12 @@
       "value": "(UTC-05:00) 동부 표준시(미국과 캐나다)"
     }
   ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
+    }
+  ],
   "Ex4U46": [
     {
       "type": 0,
@@ -2205,12 +2235,6 @@
     {
       "type": 0,
       "value": "(UTC+08:00) 이르쿠츠크"
-    }
-  ],
-  "F51kU8": [
-    {
-      "type": 0,
-      "value": "Please enter a number"
     }
   ],
   "F9dR1Q": [
@@ -2480,6 +2504,12 @@
       "value": "배열"
     }
   ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "File Content"
+    }
+  ],
   "H17jEE": [
     {
       "type": 0,
@@ -2526,6 +2556,12 @@
     {
       "type": 0,
       "value": "추가 진단 정보: x-ms-client-request-id는 {clientRequestId}입니다."
+    }
+  ],
+  "HOchry": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one."
     }
   ],
   "HQ8/tk": [
@@ -2702,16 +2738,16 @@
       "value": "No properties"
     }
   ],
-  "Iwi+x0": [
-    {
-      "type": 0,
-      "value": "Please select yes or no"
-    }
-  ],
   "J/Kz1j": [
     {
       "type": 0,
       "value": "비동기 패턴"
+    }
+  ],
+  "J2Su6x": [
+    {
+      "type": 0,
+      "value": "Formatting options for font size"
     }
   ],
   "J5/7vN": [
@@ -2862,6 +2898,12 @@
     {
       "type": 0,
       "value": "문자열에서 문자의 하위 집합을 반환합니다."
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Change connection reference"
     }
   ],
   "KX1poC": [
@@ -3025,6 +3067,12 @@
       "value": "자세히 보기"
     }
   ],
+  "Lm9bnN": [
+    {
+      "type": 0,
+      "value": "Bullet List"
+    }
+  ],
   "LoGUT3": [
     {
       "type": 0,
@@ -3061,10 +3109,10 @@
       "value": "(UTC+00:00) 더블린, 에든버러, 리스본, 런던"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "주석 추가"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -3271,12 +3319,6 @@
       "value": "ID를 선택하세요."
     }
   ],
-  "Nro0qr": [
-    {
-      "type": 0,
-      "value": "Please enter an e-mail address"
-    }
-  ],
   "NvANon": [
     {
       "type": 0,
@@ -3391,12 +3433,6 @@
       "value": "지정된 범위 작업(예: For_each, Until 또는 Scope 작업)에서 최상위 작업의 결과를 반환합니다."
     }
   ],
-  "OcnU0i": [
-    {
-      "type": 0,
-      "value": "Please select file or image"
-    }
-  ],
   "OdNhwc": [
     {
       "type": 0,
@@ -3443,6 +3479,12 @@
     {
       "type": 0,
       "value": "관리 ID 선택"
+    }
+  ],
+  "P+7G62": [
+    {
+      "type": 0,
+      "value": "Heading 3"
     }
   ],
   "P+mWgV": [
@@ -3641,6 +3683,12 @@
       "value": "상태 코드"
     }
   ],
+  "QIOOQU": [
+    {
+      "type": 0,
+      "value": "No Items"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 1,
@@ -3649,6 +3697,12 @@
     {
       "type": 0,
       "value": " 카드에 대한 상황에 맞는 메뉴"
+    }
+  ],
+  "QZ5DZl": [
+    {
+      "type": 0,
+      "value": "alt text for chevron down"
     }
   ],
   "QZBPUx": [
@@ -3820,6 +3874,12 @@
       "value": "암호"
     }
   ],
+  "SGnTpt": [
+    {
+      "type": 0,
+      "value": "Heading 2"
+    }
+  ],
   "SJFVxf": [
     {
       "type": 0,
@@ -3858,6 +3918,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 양식 데이터 또는 양식 인코딩 응답이 있는 작업의 이름입니다."
+    }
+  ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
     }
   ],
   "Sh10cw": [
@@ -4058,6 +4124,18 @@
       "value": "(UTC+01:00) 브뤼셀, 코펜하겐, 마드리드, 파리"
     }
   ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
+    }
+  ],
+  "Ttc0SM": [
+    {
+      "type": 0,
+      "value": "Heading 1"
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -4140,6 +4218,12 @@
     {
       "type": 0,
       "value": "문자열을 지정된 문자열로 바꿉니다."
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Logical Name"
     }
   ],
   "UR1CS5": [
@@ -4374,12 +4458,6 @@
     {
       "type": 0,
       "value": "필수 항목으로, 새 속성의 이름입니다."
-    }
-  ],
-  "W7sa4b": [
-    {
-      "type": 0,
-      "value": "Enter title"
     }
   ],
   "WGwH45": [
@@ -4684,6 +4762,18 @@
     {
       "type": 0,
       "value": "PFX 입력"
+    }
+  ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
+  "YWOKlU": [
+    {
+      "type": 0,
+      "value": "Numbered List"
     }
   ],
   "YaFjJQ": [
@@ -5178,12 +5268,6 @@
       "value": "필수 항목으로, 첫 번째 Count 개체를 건너뛸 컬렉션입니다."
     }
   ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "주석 삭제"
-    }
-  ],
   "d4xMIx": [
     {
       "type": 0,
@@ -5200,6 +5284,12 @@
     {
       "type": 0,
       "value": "자세한 정보"
+    }
+  ],
+  "dL9V5t": [
+    {
+      "type": 0,
+      "value": "Managed identity"
     }
   ],
   "dOpdsP": [
@@ -5294,6 +5384,12 @@
     {
       "type": 0,
       "value": "시간 초과됨"
+    }
+  ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "e00zot": [
@@ -5428,6 +5524,12 @@
       "value": "페이징 수가 최대값을 초과합니다."
     }
   ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5476,6 +5578,12 @@
     {
       "type": 0,
       "value": "무시됨"
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "g0a4Qe": [
@@ -5584,6 +5692,12 @@
     {
       "type": 0,
       "value": "트리거 조건"
+    }
+  ],
+  "gc6v4X": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "gfBWfH": [
@@ -5767,12 +5881,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "메모"
     }
   ],
   "iCSHJG": [
@@ -6241,6 +6349,12 @@
       "value": "상태 비저장 실행 모드:"
     }
   ],
+  "lhL/KL": [
+    {
+      "type": 0,
+      "value": "Normal"
+    }
+  ],
   "ljAOR6": [
     {
       "type": 0,
@@ -6341,6 +6455,12 @@
     {
       "type": 0,
       "value": "URL로 입력 문자열을 인코딩합니다."
+    }
+  ],
+  "mQotIu": [
+    {
+      "type": 0,
+      "value": "Select Connection"
     }
   ],
   "mYQFtf": [
@@ -6613,6 +6733,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) 살바도르"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7044,6 +7170,12 @@
       "value": "병렬 처리 수준"
     }
   ],
+  "sYQDN+": [
+    {
+      "type": 0,
+      "value": "Formatting options for font family"
+    }
+  ],
   "sZ0G/Z": [
     {
       "type": 0,
@@ -7174,6 +7306,12 @@
     {
       "type": 0,
       "value": "시간"
+    }
+  ],
+  "tJMHcJ": [
+    {
+      "type": 0,
+      "value": "Select Connection Reference"
     }
   ],
   "tLZ9Sh": [
@@ -7392,6 +7530,12 @@
     {
       "type": 0,
       "value": "매개 변수에서 배열을 만듭니다."
+    }
+  ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Trigger date"
     }
   ],
   "v39HKj": [
@@ -7674,6 +7818,12 @@
       "value": "Status Code"
     }
   ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
+    }
+  ],
   "xC1zg3": [
     {
       "type": 0,
@@ -7834,6 +7984,12 @@
     {
       "type": 0,
       "value": "필드 추가"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "yxsn7s": [

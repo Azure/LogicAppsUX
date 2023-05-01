@@ -3,6 +3,7 @@ import constants from '../../../common/constants';
 import type { ConnectionReference, WorkflowParameter } from '../../../common/models/workflow';
 import type { NodeDataWithOperationMetadata } from '../../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../../actions/bjsworkflow/settings';
+import { getConnectorWithSwagger } from '../../queries/connections';
 import type {
   DependencyInfo,
   NodeDependencies,
@@ -13,6 +14,7 @@ import type {
   UpdateParametersPayload,
 } from '../../state/operation/operationMetadataSlice';
 import {
+  updateActionMetadata,
   removeParameterValidationError,
   updateParameterValidation,
   DynamicLoadStatus,
@@ -34,10 +36,9 @@ import { processPathInputs } from '../swagger/inputsbuilder';
 import { extractPathFromUri, getOperationIdFromDefinition } from '../swagger/operation';
 import { convertWorkflowParameterTypeToSwaggerType } from '../tokens';
 import { validateJSONParameter, validateStaticParameterInfo } from '../validation';
-import { getRecurrenceParameters } from './builtins';
 import { addCastToExpression, addFoldingCastToExpression } from './casting';
-import { getDynamicInputsFromSchema, getDynamicSchema, getDynamicValues } from './dynamicdata';
-import { requiresFilePickerEditor } from './picker';
+import { getDynamicInputsFromSchema, getDynamicSchema, getDynamicValues, getFolderItems } from './dynamicdata';
+import { getRecurrenceParameters } from './recurrence';
 import {
   createLiteralValueSegment,
   isExpressionToken,
@@ -53,7 +54,7 @@ import {
   isVariableToken,
   ValueSegmentConvertor,
 } from './segment';
-import { WorkflowService } from '@microsoft/designer-client-services-logic-apps';
+import { OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type {
   AuthProps,
   ComboboxItem,
@@ -92,6 +93,8 @@ import type {
   SwaggerParser,
 } from '@microsoft/parsers-logic-apps';
 import {
+  isDynamicTreeExtension,
+  isLegacyDynamicValuesTreeExtension,
   DeserializationType,
   PropertySerializationType,
   getKnownTitles,
@@ -253,7 +256,6 @@ export const getDependentParameters = (
 export function toParameterInfoMap(inputParameters: InputParameter[], stepDefinition?: any): ParameterInfo[] {
   const metadata = stepDefinition && stepDefinition.metadata;
   const result: ParameterInfo[] = [];
-
   for (const inputParameter of inputParameters) {
     if (!inputParameter.dynamicSchema) {
       const parameter = createParameterInfo(inputParameter, metadata);
@@ -273,12 +275,11 @@ export function toParameterInfoMap(inputParameters: InputParameter[], stepDefini
  */
 export function createParameterInfo(
   parameter: ResolvedParameter,
-  _metadata?: Record<string, string>,
+  metadata?: Record<string, string>,
   shouldIgnoreDefaultValue = false
 ): ParameterInfo {
-  const isFilePicker = requiresFilePickerEditor(parameter);
-  const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, shouldIgnoreDefaultValue, isFilePicker);
   const value = loadParameterValue(parameter);
+  const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, value, shouldIgnoreDefaultValue, metadata);
   const { alias, dependencies, encode, format, isDynamic, isUnknown, serialization, deserialization } = parameter;
   const info = {
     alias,
@@ -338,16 +339,19 @@ function hasValue(parameter: ResolvedParameter): boolean {
   return !!parameter?.value;
 }
 
-// TODO - Need to figure out a way to get the managedIdentity for the app for authentication editor
 export function getParameterEditorProps(
   parameter: InputParameter,
-  shouldIgnoreDefaultValue = false,
-  isFilePicker?: boolean
+  parameterValue: ValueSegment[],
+  shouldIgnoreDefaultValue: boolean,
+  nodeMetadata: Record<string, any> | undefined
 ): ParameterEditorProps {
-  const { dynamicValues, type, itemSchema, visibility, value, enum: schemaEnum } = parameter;
+  const { dynamicValues, type, itemSchema, visibility, value, enum: schemaEnum, format } = parameter;
   let { editor, editorOptions, schema } = parameter;
   let editorViewModel;
   if (!editor) {
+    if (format === constants.EDITOR.HTML) {
+      editor = constants.EDITOR.HTML;
+    }
     if (type === constants.SWAGGER.TYPE.ARRAY && !!itemSchema && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.ARRAY;
       editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
@@ -398,9 +402,22 @@ export function getParameterEditorProps(
     editorViewModel = editorOptions?.isOldFormat ? toSimpleQueryBuilderViewModel(value) : toConditionViewModel(value);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     editor = undefined;
-  } else if (isFilePicker) {
-    editor = constants.EDITOR.FILEPICKER;
+  } else if (editor === constants.EDITOR.FILEPICKER && dynamicValues) {
+    const pickerType =
+      (isLegacyDynamicValuesTreeExtension(dynamicValues) && dynamicValues.extension.parameters['isFolder']) ||
+      (isDynamicTreeExtension(dynamicValues) && dynamicValues.extension.settings.canSelectParentNodes)
+        ? constants.FILEPICKER_TYPE.FOLDER
+        : constants.FILEPICKER_TYPE.FILE;
+    const fileFilters = isLegacyDynamicValuesTreeExtension(dynamicValues) ? dynamicValues.extension.parameters['fileFilter'] : undefined;
+    editorOptions = { pickerType, fileFilters, items: undefined };
+
+    let displayValue: string | undefined;
+    if (parameterValue.length === 1 && isLiteralValueSegment(parameterValue[0])) {
+      displayValue = nodeMetadata?.[parameterValue[0].value];
+    }
+    editorViewModel = { displayValue, selectedItem: undefined };
   }
+
   return { editor, editorOptions, editorViewModel, schema };
 }
 
@@ -1510,6 +1527,8 @@ export async function updateParameterAndDependencies(
 
   dispatch(updateNodeParameters(payload));
 
+  updateNodeMetadataOnParameterUpdate(nodeId, updatedParameter, dispatch);
+
   if (operationInfo?.type?.toLowerCase() === 'until') {
     validateUntilAction(dispatch, nodeId, groupId, parameterId, nodeInputs.parameterGroups[groupId].parameters, properties);
   }
@@ -1529,6 +1548,16 @@ export async function updateParameterAndDependencies(
       rootState,
       operationDefinition
     );
+  }
+}
+
+function updateNodeMetadataOnParameterUpdate(nodeId: string, parameter: ParameterInfo, dispatch: Dispatch): void {
+  // Updating action metadata when file picker parameters have different display values than parameter value.
+  const { editor, editorViewModel, value } = parameter;
+  if (editor === constants.EDITOR.FILEPICKER && value.length === 1 && isLiteralValueSegment(value[0])) {
+    if (!!editorViewModel.displayValue && !equals(editorViewModel.displayValue, value[0].value)) {
+      dispatch(updateActionMetadata({ id: nodeId, actionMetadata: { [value[0].value]: editorViewModel.displayValue } }));
+    }
   }
 }
 
@@ -1701,8 +1730,103 @@ async function loadDynamicContentForInputsInNode(
         })) as ParameterInfo[];
 
         updateTokenMetadataInParameters(inputParameters, rootState);
-        dispatch(addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters, newInputs: schemaInputs }));
+
+        let swagger: SwaggerParser | undefined = undefined;
+        if (!OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
+          const { parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
+          swagger = parsedSwagger;
+        }
+
+        dispatch(
+          addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters, newInputs: schemaInputs, swagger })
+        );
       }
+    }
+  }
+}
+
+export async function loadDynamicTreeItemsForParameter(
+  nodeId: string,
+  groupId: string,
+  parameterId: string,
+  selectedValue: any | undefined,
+  operationInfo: NodeOperation,
+  connectionReference: ConnectionReference | undefined,
+  nodeInputs: NodeInputs,
+  nodeMetadata: any,
+  dependencies: NodeDependencies,
+  showErrorWhenNotReady: boolean,
+  dispatch: Dispatch,
+  idReplacements: Record<string, string> = {}
+): Promise<void> {
+  const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
+  const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as ParameterInfo;
+  if (!parameter) {
+    return;
+  }
+
+  const originalEditorOptions = parameter.editorOptions as any;
+  const dependencyInfo = dependencies.inputs[parameter.parameterKey];
+  if (dependencyInfo) {
+    if (isDynamicDataReadyToLoad(dependencyInfo)) {
+      dispatch(
+        updateNodeParameters({
+          nodeId,
+          parameters: [
+            {
+              parameterId,
+              groupId,
+              propertiesToUpdate: {
+                dynamicData: { status: DynamicCallStatus.STARTED },
+                editorOptions: { ...originalEditorOptions, items: [] },
+              },
+            },
+          ],
+        })
+      );
+
+      try {
+        const treeItems = await getFolderItems(
+          selectedValue,
+          dependencyInfo,
+          nodeInputs,
+          nodeMetadata,
+          operationInfo,
+          connectionReference,
+          idReplacements
+        );
+
+        dispatch(
+          updateNodeParameters({
+            nodeId,
+            parameters: [
+              {
+                parameterId,
+                groupId,
+                propertiesToUpdate: {
+                  dynamicData: { status: DynamicCallStatus.SUCCEEDED },
+                  editorOptions: { ...originalEditorOptions, items: treeItems },
+                },
+              },
+            ],
+          })
+        );
+      } catch (error) {
+        dispatch(
+          updateNodeParameters({
+            nodeId,
+            parameters: [
+              {
+                parameterId,
+                groupId,
+                propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.FAILED, error: error as Exception } },
+              },
+            ],
+          })
+        );
+      }
+    } else if (showErrorWhenNotReady) {
+      showErrorWhenDependenciesNotReady(nodeId, groupId, parameterId, dependencyInfo, groupParameters, /* isTreeCall */ true, dispatch);
     }
   }
 }
@@ -1779,37 +1903,7 @@ export async function loadDynamicValuesForParameter(
         );
       }
     } else if (showErrorWhenNotReady) {
-      const intl = getIntl();
-      const invalidParameterNames = Object.keys(dependencyInfo.dependentParameters)
-        .filter((key) => !dependencyInfo.dependentParameters[key].isValid)
-        .map((id) => groupParameters.find((param) => param.id === id)?.parameterName);
-
-      dispatch(
-        updateNodeParameters({
-          nodeId,
-          parameters: [
-            {
-              parameterId,
-              groupId,
-              propertiesToUpdate: {
-                dynamicData: {
-                  error: {
-                    name: 'DynamicListFailed',
-                    message: intl.formatMessage(
-                      {
-                        defaultMessage: 'Required parameters {parameters} not set or invalid',
-                        description: 'Error message to show when required parameters are not set or invalid',
-                      },
-                      { parameters: `${invalidParameterNames.join(' , ')}` }
-                    ),
-                  },
-                  status: DynamicCallStatus.FAILED,
-                },
-              },
-            },
-          ],
-        })
-      );
+      showErrorWhenDependenciesNotReady(nodeId, groupId, parameterId, dependencyInfo, groupParameters, /* isTreeCall */ false, dispatch);
     }
   }
 }
@@ -1820,6 +1914,48 @@ export function shouldLoadDynamicInputs(nodeInputs: NodeInputs): boolean {
 
 export function isDynamicDataReadyToLoad({ dependentParameters }: DependencyInfo): boolean {
   return Object.keys(dependentParameters).every((key) => dependentParameters[key].isValid);
+}
+
+function showErrorWhenDependenciesNotReady(
+  nodeId: string,
+  groupId: string,
+  parameterId: string,
+  dependencyInfo: DependencyInfo,
+  groupParameters: ParameterInfo[],
+  isTreeCall: boolean,
+  dispatch: Dispatch
+): void {
+  const intl = getIntl();
+  const invalidParameterNames = Object.keys(dependencyInfo.dependentParameters)
+    .filter((key) => !dependencyInfo.dependentParameters[key].isValid)
+    .map((id) => groupParameters.find((param) => param.id === id)?.parameterName);
+
+  dispatch(
+    updateNodeParameters({
+      nodeId,
+      parameters: [
+        {
+          parameterId,
+          groupId,
+          propertiesToUpdate: {
+            dynamicData: {
+              error: {
+                name: isTreeCall ? 'DynamicTreeFailed' : 'DynamicListFailed',
+                message: intl.formatMessage(
+                  {
+                    defaultMessage: 'Required parameters {parameters} not set or invalid',
+                    description: 'Error message to show when required parameters are not set or invalid',
+                  },
+                  { parameters: `${invalidParameterNames.join(' , ')}` }
+                ),
+              },
+              status: DynamicCallStatus.FAILED,
+            },
+          },
+        },
+      ],
+    })
+  );
 }
 
 function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefinitionValue: boolean): string | undefined {

@@ -1,4 +1,5 @@
 import constants from '../../../../common/constants';
+import { useShowIdentitySelector } from '../../../../core/state/connection/connectionSelector';
 import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
@@ -16,17 +17,18 @@ import { getConnectionReference } from '../../../../core/utils/connectors/connec
 import { isRootNodeInGraph } from '../../../../core/utils/graph';
 import { addForeachToNode } from '../../../../core/utils/loops';
 import {
+  loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
   shouldUseParameterInGroup,
   updateParameterAndDependencies,
 } from '../../../../core/utils/parameters/helper';
-import { getFilePickerCallbacks } from '../../../../core/utils/parameters/picker';
 import type { TokenGroup } from '../../../../core/utils/tokens';
 import { createValueSegmentFromToken, getExpressionTokenSections, getOutputTokenSections } from '../../../../core/utils/tokens';
 import { getAllVariables, getAvailableVariables } from '../../../../core/utils/variables';
 import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
+import { IdentitySelector } from './identityselector';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import { DynamicCallStatus, TokenPicker, ValueSegmentType } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode } from '@microsoft/designer-ui';
@@ -48,6 +50,7 @@ export const ParametersTab = () => {
   const connectionName = useNodeConnectionName(selectedNodeId);
   const operationInfo = useOperationInfo(selectedNodeId);
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
+  const showIdentitySelector = useShowIdentitySelector(selectedNodeId);
 
   const replacedIds = useReplacedIds();
   const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState, replacedIds);
@@ -79,6 +82,7 @@ export const ParametersTab = () => {
       {operationInfo && connectionName.isLoading === false && showConnectionDisplay ? (
         <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} />
       ) : null}
+      {showIdentitySelector ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
     </>
   );
 };
@@ -203,6 +207,38 @@ const ParameterSection = ({
     }
   };
 
+  const getPickerCallbacks = (parameter: ParameterInfo) => ({
+    getFileSourceName: (): string => {
+      return displayNameResult.result;
+    },
+    getDisplayValueFromSelectedItem: (selectedItem: any): string => {
+      const dependency = dependencies.inputs[parameter.parameterKey];
+      const propertyPath = dependency.filePickerInfo?.fullTitlePath ?? dependency.filePickerInfo?.browse.itemFullTitlePath;
+      return selectedItem[propertyPath ?? ''];
+    },
+    getValueFromSelectedItem: (selectedItem: any): string => {
+      const dependency = dependencies.inputs[parameter.parameterKey];
+      const propertyPath = dependency.filePickerInfo?.valuePath ?? dependency.filePickerInfo?.browse.itemValuePath;
+      return selectedItem[propertyPath ?? ''];
+    },
+    onFolderNavigation: (selectedItem: any | undefined): void => {
+      loadDynamicTreeItemsForParameter(
+        nodeId,
+        group.id,
+        parameter.id,
+        selectedItem,
+        operationInfo,
+        connectionReference,
+        nodeInputs,
+        nodeMetadata,
+        dependencies,
+        true /* showErrorWhenNotReady */,
+        dispatch,
+        idReplacements
+      );
+    },
+  });
+
   const getValueSegmentFromToken = async (
     parameterId: string,
     token: OutputToken,
@@ -266,8 +302,6 @@ const ParameterSection = ({
       const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel, conditionalVisibility };
       const { editor, editorOptions } = getEditorAndOptions(param, upstreamNodeIds ?? [], variables);
 
-      const isCodeEditor = editor?.toLowerCase() === 'code';
-
       const remappedValues: ValueSegment[] = value.map((v: ValueSegment) => {
         if (v.type !== ValueSegmentType.TOKEN) return v;
         const oldId = v.token?.actionName ?? '';
@@ -299,8 +333,7 @@ const ParameterSection = ({
           validationErrors,
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
-          pickerCallback: () =>
-            getFilePickerCallbacks(nodeId, group.id, param, displayNameResult.result, operationInfo, connectionReference, dispatch),
+          pickerCallbacks: getPickerCallbacks(param),
           getTokenPicker: (
             editorId: string,
             labelId: string,
@@ -314,7 +347,7 @@ const ParameterSection = ({
               editorId,
               labelId,
               tokenPickerMode,
-              isCodeEditor,
+              editor?.toLowerCase() === 'code',
               closeTokenPicker,
               tokenPickerClicked,
               tokenClickedCallback

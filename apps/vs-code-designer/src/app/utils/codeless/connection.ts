@@ -1,7 +1,7 @@
 import { connectionsFileName } from '../../../constants';
 import { localize } from '../../../localize';
 import { isCSharpProject } from '../../commands/initProjectForVSCode/detectProjectLanguage';
-import type { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
+import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { addOrUpdateLocalAppSettings } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { sendAzureRequest } from '../requestUtils';
@@ -255,12 +255,12 @@ export function resolveSettingsInConnection(
  * Creates acknowledge connections to managed api connections.
  * @param {IIdentityWizardContext} identityWizardContext - Identity context.
  * @param {string} connectionId - Connection ID.
- * @param {SlotTreeItemBase} node - Logic app node structure.
+ * @param {SlotTreeItem} node - Logic app node structure.
  */
 export async function createAclInConnectionIfNeeded(
   identityWizardContext: IIdentityWizardContext,
   connectionId: string,
-  node: SlotTreeItemBase
+  node: SlotTreeItem
 ): Promise<void> {
   if (
     (!node.site || !node.site.rawSite.identity || node.site.rawSite.identity.type !== 'SystemAssigned') &&
@@ -296,7 +296,7 @@ export async function createAclInConnectionIfNeeded(
 async function createAccessPolicyInConnection(
   identityWizardContext: IIdentityWizardContext,
   connectionId: string,
-  node: SlotTreeItemBase,
+  node: SlotTreeItem,
   identity: any
 ): Promise<void> {
   const accessToken = await getAuthorizationToken(undefined, undefined);

@@ -51,6 +51,12 @@
       "value": "Select this if you are configuring an on-prem connection"
     }
   ],
+  "+W2vTp": [
+    {
+      "type": 0,
+      "value": "Please enter an e-mail address"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -739,10 +745,22 @@
       "value": "Save"
     }
   ],
+  "30njcn": [
+    {
+      "type": 0,
+      "value": "Create Connection"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
       "value": "Идентификатор"
+    }
+  ],
+  "34Nt/B": [
+    {
+      "type": 0,
+      "value": "alt text for button icon"
     }
   ],
   "36RiST": [
@@ -1015,12 +1033,6 @@
       "value": "Требуется. Имя параметра, значения которого требуются."
     }
   ],
-  "4cVuMw": [
-    {
-      "type": 0,
-      "value": "Комментарии можно добавлять только при изменении входных данных шага."
-    }
-  ],
   "4j2MEv": [
     {
       "type": 0,
@@ -1161,12 +1173,6 @@
     {
       "type": 0,
       "value": "(UTC+08:45) Юкла"
-    }
-  ],
-  "6H3oG1": [
-    {
-      "type": 0,
-      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "6OSgRP": [
@@ -1477,6 +1483,12 @@
     {
       "type": 0,
       "value": "При использовании асинхронного шаблона применяется следующая схема: если удаленный сервер сообщает, что запрос принят к обработке, при помощи ответа \"202 (Принято)\", то подсистема Logic Apps продолжит опрашивать URL-адрес, указанный в заголовке расположения ответа, до тех пор, пока не будет достигнуто терминальное состояние."
+    }
+  ],
+  "8luJ2j": [
+    {
+      "type": 0,
+      "value": "Create Connection Reference"
     }
   ],
   "8pPivj": [
@@ -1957,6 +1969,12 @@
       "value": "(UTC-05:00) Гавана"
     }
   ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Number"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1967,6 +1985,12 @@
     {
       "type": 0,
       "value": "Свернуть"
+    }
+  ],
+  "BrWQ0Z": [
+    {
+      "type": 0,
+      "value": "Select a managed identity"
     }
   ],
   "BuYrD3": [
@@ -2015,6 +2039,12 @@
     {
       "type": 0,
       "value": "Тип учетных данных"
+    }
+  ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Please enter or select a date (YYYY-MM-DD)"
     }
   ],
   "Cy9qeQ": [
@@ -2091,12 +2121,6 @@
     {
       "type": 0,
       "value": "Select a value"
-    }
-  ],
-  "DOf1/I": [
-    {
-      "type": 0,
-      "value": "Please enter your input"
     }
   ],
   "DWd9vy": [
@@ -2297,6 +2321,12 @@
       "value": "(UTC-05:00) Восточное время (США и Канада)"
     }
   ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Please select yes or no"
+    }
+  ],
   "Ex4U46": [
     {
       "type": 0,
@@ -2319,12 +2349,6 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Иркутск"
-    }
-  ],
-  "F51kU8": [
-    {
-      "type": 0,
-      "value": "Please enter a number"
     }
   ],
   "F9dR1Q": [
@@ -2635,6 +2659,12 @@
       "value": "Массив"
     }
   ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "File Content"
+    }
+  ],
   "H17jEE": [
     {
       "type": 0,
@@ -2689,6 +2719,12 @@
     {
       "type": 0,
       "value": "\"."
+    }
+  ],
+  "HOchry": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one."
     }
   ],
   "HQ8/tk": [
@@ -2865,16 +2901,16 @@
       "value": "No properties"
     }
   ],
-  "Iwi+x0": [
-    {
-      "type": 0,
-      "value": "Please select yes or no"
-    }
-  ],
   "J/Kz1j": [
     {
       "type": 0,
       "value": "Асинхронный шаблон"
+    }
+  ],
+  "J2Su6x": [
+    {
+      "type": 0,
+      "value": "Formatting options for font size"
     }
   ],
   "J5/7vN": [
@@ -3025,6 +3061,12 @@
     {
       "type": 0,
       "value": "Возвращает подмножество символов из строки"
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Change connection reference"
     }
   ],
   "KX1poC": [
@@ -3245,6 +3287,12 @@
       "value": "Показать больше"
     }
   ],
+  "Lm9bnN": [
+    {
+      "type": 0,
+      "value": "Bullet List"
+    }
+  ],
   "LoGUT3": [
     {
       "type": 0,
@@ -3281,10 +3329,10 @@
       "value": "(UTC+00:00) Дублин, Эдинбург, Лиссабон, Лондон"
     }
   ],
-  "M0HMjE": [
+  "M/F2/O": [
     {
       "type": 0,
-      "value": "Добавить комментарий"
+      "value": "Notes can only be added while editing the inputs of a step."
     }
   ],
   "M0xrm+": [
@@ -3491,12 +3539,6 @@
       "value": "Выберите удостоверение."
     }
   ],
-  "Nro0qr": [
-    {
-      "type": 0,
-      "value": "Please enter an e-mail address"
-    }
-  ],
   "NvANon": [
     {
       "type": 0,
@@ -3627,12 +3669,6 @@
       "value": "Возвращает результаты действий верхнего уровня в заданном действии области, например For_each, Until или Scope."
     }
   ],
-  "OcnU0i": [
-    {
-      "type": 0,
-      "value": "Please select file or image"
-    }
-  ],
   "OdNhwc": [
     {
       "type": 0,
@@ -3679,6 +3715,12 @@
     {
       "type": 0,
       "value": "Выберите управляемое удостоверение"
+    }
+  ],
+  "P+7G62": [
+    {
+      "type": 0,
+      "value": "Heading 3"
     }
   ],
   "P+mWgV": [
@@ -3877,6 +3919,12 @@
       "value": "Код состояния"
     }
   ],
+  "QIOOQU": [
+    {
+      "type": 0,
+      "value": "No Items"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -3885,6 +3933,12 @@
     {
       "type": 1,
       "value": "title"
+    }
+  ],
+  "QZ5DZl": [
+    {
+      "type": 0,
+      "value": "alt text for chevron down"
     }
   ],
   "QZBPUx": [
@@ -4089,6 +4143,12 @@
       "value": "Пароль"
     }
   ],
+  "SGnTpt": [
+    {
+      "type": 0,
+      "value": "Heading 2"
+    }
+  ],
   "SJFVxf": [
     {
       "type": 0,
@@ -4127,6 +4187,12 @@
     {
       "type": 0,
       "value": "Требуется. Имя действия с ответом form-data или form-encoded."
+    }
+  ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Please enter your input"
     }
   ],
   "Sh10cw": [
@@ -4327,6 +4393,18 @@
       "value": "(UTC+01:00) Брюссель, Копенгаген, Мадрид, Париж"
     }
   ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Note"
+    }
+  ],
+  "Ttc0SM": [
+    {
+      "type": 0,
+      "value": "Heading 1"
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -4409,6 +4487,12 @@
     {
       "type": 0,
       "value": "Заменяет строку заданной строкой"
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Logical Name"
     }
   ],
   "UR1CS5": [
@@ -4643,12 +4727,6 @@
     {
       "type": 0,
       "value": "Требуется. Имя нового свойства."
-    }
-  ],
-  "W7sa4b": [
-    {
-      "type": 0,
-      "value": "Enter title"
     }
   ],
   "WGwH45": [
@@ -4961,6 +5039,18 @@
     {
       "type": 0,
       "value": "Введите PFX"
+    }
+  ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Yes/No"
+    }
+  ],
+  "YWOKlU": [
+    {
+      "type": 0,
+      "value": "Numbered List"
     }
   ],
   "YaFjJQ": [
@@ -5463,12 +5553,6 @@
       "value": "Обязательное поле. Коллекция, для которой необходимо пропустить указанное количество объектов с начала."
     }
   ],
-  "d3bSQA": [
-    {
-      "type": 0,
-      "value": "Удалить комментарий"
-    }
-  ],
   "d4xMIx": [
     {
       "type": 0,
@@ -5485,6 +5569,12 @@
     {
       "type": 0,
       "value": "Подробнее"
+    }
+  ],
+  "dL9V5t": [
+    {
+      "type": 0,
+      "value": "Managed identity"
     }
   ],
   "dOpdsP": [
@@ -5583,6 +5673,12 @@
     {
       "type": 0,
       "value": "время ожидания истекло"
+    }
+  ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "e00zot": [
@@ -5717,6 +5813,12 @@
       "value": "Число подкачки превышает максимальное значение"
     }
   ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Please select file or image"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -5761,6 +5863,12 @@
     {
       "type": 0,
       "value": "Пропущено"
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "Email"
     }
   ],
   "g0a4Qe": [
@@ -5869,6 +5977,12 @@
     {
       "type": 0,
       "value": "Условия триггера"
+    }
+  ],
+  "gc6v4X": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "gfBWfH": [
@@ -6101,12 +6215,6 @@
     {
       "type": 0,
       "value": "This contains an invalid value"
-    }
-  ],
-  "iBlvhu": [
-    {
-      "type": 0,
-      "value": "Комментарий"
     }
   ],
   "iCSHJG": [
@@ -6595,6 +6703,12 @@
       "value": "Режим запуска без отслеживания состояния:"
     }
   ],
+  "lhL/KL": [
+    {
+      "type": 0,
+      "value": "Normal"
+    }
+  ],
   "ljAOR6": [
     {
       "type": 0,
@@ -6695,6 +6809,12 @@
     {
       "type": 0,
       "value": "Выполняет кодировку URL входной строки"
+    }
+  ],
+  "mQotIu": [
+    {
+      "type": 0,
+      "value": "Select Connection"
     }
   ],
   "mYQFtf": [
@@ -6967,6 +7087,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Сальвадор"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Add a note"
     }
   ],
   "ox2Ou7": [
@@ -7455,6 +7581,12 @@
       "value": "Степень параллелизма"
     }
   ],
+  "sYQDN+": [
+    {
+      "type": 0,
+      "value": "Formatting options for font family"
+    }
+  ],
   "sZ0G/Z": [
     {
       "type": 0,
@@ -7585,6 +7717,12 @@
     {
       "type": 0,
       "value": " ч"
+    }
+  ],
+  "tJMHcJ": [
+    {
+      "type": 0,
+      "value": "Select Connection Reference"
     }
   ],
   "tLZ9Sh": [
@@ -7803,6 +7941,12 @@
     {
       "type": 0,
       "value": "Создает массив на основе параметров"
+    }
+  ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Trigger date"
     }
   ],
   "v39HKj": [
@@ -8089,6 +8233,12 @@
       "value": "Status Code"
     }
   ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Delete note"
+    }
+  ],
   "xC1zg3": [
     {
       "type": 0,
@@ -8249,6 +8399,12 @@
     {
       "type": 0,
       "value": "Добавить поле"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Please enter a number"
     }
   ],
   "yxsn7s": [

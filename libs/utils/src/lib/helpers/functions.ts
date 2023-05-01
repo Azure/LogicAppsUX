@@ -758,6 +758,36 @@ export function combineObjects(originalObjects: Record<string, any>, newObjects:
 }
 
 /**
+ * Performs a deep comparison of two objects of type Record<string, any>
+ * @arg {Record<string, any>} object1
+ * @arg {Record<string, any>} object2
+ * @returns true if the two objects are equal and false if not.
+ */
+export function deepCompareObjects(object1: Record<string, any> | undefined, object2: Record<string, any> | undefined): boolean {
+  if (object1 === undefined && object2 === undefined) {
+    return true;
+  }
+
+  const keys1 = Object.keys(object1 ?? {});
+  const keys2 = Object.keys(object2 ?? {});
+
+  if (keys1.length !== keys2.length || !object1 || !object2) {
+    return false;
+  }
+
+  for (const key of keys1) {
+    const val1 = object1[key];
+    const val2 = object2[key];
+    const areObjects = isObject(val1) && isObject(val2);
+
+    if ((areObjects && !deepCompareObjects(val1, val2)) || (!areObjects && val1 !== val2)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
  * @arg {string} value
  * @return {boolean}
  */

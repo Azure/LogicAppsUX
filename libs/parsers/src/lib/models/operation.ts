@@ -1,4 +1,5 @@
-import type { DownloadChunkMetadata, UploadChunkMetadata } from '@microsoft/utils-logic-apps';
+import type { DownloadChunkMetadata, OpenAPIV2, UploadChunkMetadata } from '@microsoft/utils-logic-apps';
+import { equals } from '@microsoft/utils-logic-apps';
 
 export interface EnumObject {
   displayName: string;
@@ -59,6 +60,10 @@ export function isLegacyDynamicValuesExtension(extension: ParameterDynamicValues
   return extension.type === DynamicValuesType.LegacyDynamicValues;
 }
 
+export function isLegacyDynamicValuesTreeExtension(extension: ParameterDynamicValues): extension is LegacyDynamicValues {
+  return isLegacyDynamicValuesExtension(extension) && equals(extension.extension.capability, 'file-picker');
+}
+
 export function isDynamicListExtension(extension: ParameterDynamicValues): extension is DynamicList {
   return extension.type === DynamicValuesType.DynamicList;
 }
@@ -70,13 +75,40 @@ export function isDynamicTreeExtension(extension: ParameterDynamicValues): exten
 export interface LegacyDynamicValuesExtension {
   capability?: string;
   builtInOperation?: string;
-  operationId?: string;
+  operationId: string;
   parameters: Record<string, any | { parameter: any }>;
   'value-path': string;
   'value-collection'?: string;
   'value-title'?: string;
   'value-description'?: string;
   'value-selectable'?: string;
+}
+
+export interface FilePickerInfo {
+  open: DynamicTreePickerInfo;
+  browse: DynamicTreePickerInfo;
+  collectionPath?: string;
+  valuePath?: string;
+  titlePath?: string;
+  fullTitlePath?: string;
+  folderPropertyPath?: string;
+  mediaPropertyPath?: string;
+}
+
+interface DynamicTreePickerInfo {
+  operationId: string;
+  parameters?: Record<
+    string,
+    {
+      selectedItemValuePath?: string;
+      'value-property'?: string;
+    }
+  >;
+  itemValuePath?: string;
+  itemTitlePath?: string;
+  itemIsParent?: string;
+  itemFullTitlePath?: string;
+  selectableFilter?: string;
 }
 
 export interface LegacyDynamicValues {
@@ -99,12 +131,8 @@ export interface DynamicTreeExtension {
     canSelectParentNodes: boolean;
     canSelectLeafNodes: boolean;
   };
-  open: {
-    parameters: DynamicParameters;
-  };
-  browse: {
-    parameters: DynamicParameters;
-  };
+  open: DynamicTreePickerInfo;
+  browse: DynamicTreePickerInfo;
   dynamicState: any;
 }
 

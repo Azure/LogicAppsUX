@@ -1,6 +1,7 @@
 import { DynamicSchemaType, DynamicValuesType } from '../../../models/operation';
 import { ExtensionProperties } from '../../constants';
 import { getParameterDynamicSchema, getParameterDynamicValues } from '../utils';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 
 type SchemaObject = OpenAPIV2.SchemaObject;
 

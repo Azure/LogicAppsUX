@@ -3,6 +3,7 @@ import { useActionMetadata, useNodeEdgeTargets, useNodeMetadata } from '../../co
 import { DropZone } from './dropzone';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { RunAfterIndicator } from './runAfterIndicator';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { getEdgeCenter, RUN_AFTER_STATUS } from '@microsoft/utils-logic-apps';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import React, { useMemo } from 'react';

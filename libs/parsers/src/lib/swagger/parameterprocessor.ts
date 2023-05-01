@@ -1,12 +1,19 @@
 /* eslint-disable no-case-declarations */
 import * as Constants from '../common/constants';
 import { create, encodePropertySegment } from '../common/helpers/keysutility';
-import { getEnum, getParameterDynamicSchema, getParameterDynamicValues, toSwaggerSchema } from '../common/helpers/utils';
+import {
+  getEditorForParameter,
+  getEnum,
+  getParameterDynamicSchema,
+  getParameterDynamicValues,
+  toSwaggerSchema,
+} from '../common/helpers/utils';
 import { SchemaProcessor } from '../common/schemaprocessor';
 import type { InputParameter, InputParameters } from '../models/operation';
 import { toInputParameter } from '../models/operation';
 import type { KeyProjectionOptions } from './parser';
 import { getIntl } from '@microsoft/intl-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { aggregate, equals, includes, map } from '@microsoft/utils-logic-apps';
 
 export interface ParametersProcessorOptions {
@@ -214,7 +221,7 @@ export class ParametersProcessor {
     const dynamicValues = getParameterDynamicValues(parameter as unknown as OpenAPIV2.SchemaObject);
     const $default = parameter.default,
       description = parameter.description,
-      editor = dynamicValues ? 'combobox' : parameter[Constants.ExtensionProperties.Editor],
+      editor = getEditorForParameter(parameter as unknown as OpenAPIV2.SchemaObject, dynamicValues),
       editorOptions = dynamicValues ? { options: [] } : parameter[Constants.ExtensionProperties.EditorOptions],
       encode = parameter[Constants.ExtensionProperties.Encode],
       $enum = getEnum(parameter as unknown as OpenAPIV2.SchemaObject, parameter.required),
