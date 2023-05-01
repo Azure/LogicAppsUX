@@ -88,7 +88,7 @@ export const Combobox = ({
     const updatedOptionkey = getSelectedKey(options, initialValue, isLoading);
     setSelectedKey(updatedOptionkey);
     setMode(getMode(updatedOptionkey, initialValue, isLoading));
-  }, [options]);
+  }, [isLoading]);
 
   const comboboxOptions = useMemo(() => {
     const loadingOption: ComboboxItem = {

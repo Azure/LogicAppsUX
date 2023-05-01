@@ -1,51 +1,47 @@
 # Logic Apps Designer
+
 ### [2.15.4](https://github.com/Azure/LogicAppsUX/compare/v2.15.3...v2.15.4) (2023-05-01)
 
 ### [2.15.3](https://github.com/Azure/LogicAppsUX/compare/v2.15.2...v2.15.3) (2023-04-30)
 
 ### [2.15.2](https://github.com/Azure/LogicAppsUX/compare/v2.15.1...v2.15.2) (2023-04-29)
 
+### [2.15.2](https://github.com/Azure/LogicAppsUX/compare/v2.15.1...v2.15.2) (2023-04-29)
 
 ### Features
 
-* **designer:** File picker ([#2165](https://github.com/Azure/LogicAppsUX/issues/2165)) ([c30fa26](https://github.com/Azure/LogicAppsUX/commit/c30fa26dac619a84ec0800bb9bb398cb8dda0a79))
-
+- **designer:** File picker ([#2165](https://github.com/Azure/LogicAppsUX/issues/2165)) ([c30fa26](https://github.com/Azure/LogicAppsUX/commit/c30fa26dac619a84ec0800bb9bb398cb8dda0a79))
 
 ### Bug Fixes
 
-* **powerautomate:** Update manual trigger serialization to match manifest and render only dynamically added parameters ([#2177](https://github.com/Azure/LogicAppsUX/issues/2177)) ([19b9b40](https://github.com/Azure/LogicAppsUX/commit/19b9b40f917d641111262c8a3931119a99af1415))
+- **powerautomate:** Update manual trigger serialization to match manifest and render only dynamically added parameters ([#2177](https://github.com/Azure/LogicAppsUX/issues/2177)) ([19b9b40](https://github.com/Azure/LogicAppsUX/commit/19b9b40f917d641111262c8a3931119a99af1415))
 
 ### [2.15.1](https://github.com/Azure/LogicAppsUX/compare/v2.15.0...v2.15.1) (2023-04-29)
 
-
 ### Bug Fixes
 
-* **designer:** Consumption APIM dynamic data fetched properly, recurrence defaults passed properly ([#2182](https://github.com/Azure/LogicAppsUX/issues/2182)) ([0aa35b6](https://github.com/Azure/LogicAppsUX/commit/0aa35b624f72cb1c16b61d5cd3978706a50ee776))
+- **designer:** Consumption APIM dynamic data fetched properly, recurrence defaults passed properly ([#2182](https://github.com/Azure/LogicAppsUX/issues/2182)) ([0aa35b6](https://github.com/Azure/LogicAppsUX/commit/0aa35b624f72cb1c16b61d5cd3978706a50ee776))
 
 ## [2.15.0](https://github.com/Azure/LogicAppsUX/compare/v2.14.0...v2.15.0) (2023-04-28)
 
-
 ### Features
 
-* **vscode:** Move extension tab to resources tab ([#2107](https://github.com/Azure/LogicAppsUX/issues/2107)) ([2a92423](https://github.com/Azure/LogicAppsUX/commit/2a92423abc7d02963416d11f5de44206baa7d69d))
-
+- **vscode:** Move extension tab to resources tab ([#2107](https://github.com/Azure/LogicAppsUX/issues/2107)) ([2a92423](https://github.com/Azure/LogicAppsUX/commit/2a92423abc7d02963416d11f5de44206baa7d69d))
 
 ### Bug Fixes
 
-* **designer:** Update token picker location during scroll ([#2176](https://github.com/Azure/LogicAppsUX/issues/2176)) ([b89dbfa](https://github.com/Azure/LogicAppsUX/commit/b89dbfaa138b5301c6c6c7a9cbd75b3d83fa25bf))
+- **designer:** Update token picker location during scroll ([#2176](https://github.com/Azure/LogicAppsUX/issues/2176)) ([b89dbfa](https://github.com/Azure/LogicAppsUX/commit/b89dbfaa138b5301c6c6c7a9cbd75b3d83fa25bf))
 
 ## [2.14.0](https://github.com/Azure/LogicAppsUX/compare/v2.13.0...v2.14.0) (2023-04-28)
 
-
 ### Features
 
-* **meta:** Release action update to specify release type  ([#2180](https://github.com/Azure/LogicAppsUX/issues/2180)) ([c8fbff6](https://github.com/Azure/LogicAppsUX/commit/c8fbff639684e52532aedb1169c949642fb1b628))
-
+- **meta:** Release action update to specify release type ([#2180](https://github.com/Azure/LogicAppsUX/issues/2180)) ([c8fbff6](https://github.com/Azure/LogicAppsUX/commit/c8fbff639684e52532aedb1169c949642fb1b628))
 
 ### Bug Fixes
 
-* **designer:** Disable action type dropdown when is trigger node ([#2178](https://github.com/Azure/LogicAppsUX/issues/2178)) ([dda688b](https://github.com/Azure/LogicAppsUX/commit/dda688b2021756e0f3306aa124eaecb574feb880))
-* **designer:** Remove double quotation marks in parameters panel ([#2170](https://github.com/Azure/LogicAppsUX/issues/2170)) ([d033fce](https://github.com/Azure/LogicAppsUX/commit/d033fce9f1eec1239de642a4792ef5913bd4bfaf))
+- **designer:** Disable action type dropdown when is trigger node ([#2178](https://github.com/Azure/LogicAppsUX/issues/2178)) ([dda688b](https://github.com/Azure/LogicAppsUX/commit/dda688b2021756e0f3306aa124eaecb574feb880))
+- **designer:** Remove double quotation marks in parameters panel ([#2170](https://github.com/Azure/LogicAppsUX/issues/2170)) ([d033fce](https://github.com/Azure/LogicAppsUX/commit/d033fce9f1eec1239de642a4792ef5913bd4bfaf))
 
 ## [2.13.0](https://github.com/Azure/LogicAppsUX/compare/v2.12.0...v2.13.0) (2023-04-28)
 
