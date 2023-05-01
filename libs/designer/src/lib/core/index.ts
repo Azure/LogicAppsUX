@@ -5,6 +5,7 @@ export { getReactQueryClient } from './ReactQueryProvider';
 export type { RootState, AppDispatch } from './store';
 export { store } from './store';
 export { useConnectionMapping, useConnectionRefs, useIsOperationMissingConnection } from './state/connection/connectionSelector';
+export type { NodeInputs } from './state/operation/operationMetadataSlice';
 export { useOperationsInputParameters } from './state/operation/operationSelector';
 export { discardAllChanges, setFocusNode, setIsWorkflowDirty } from './state/workflow/workflowSlice';
 export { useIsWorkflowDirty, useNodeDisplayName } from './state/workflow/workflowSelectors';

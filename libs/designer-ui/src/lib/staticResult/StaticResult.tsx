@@ -2,6 +2,7 @@ import type { StaticResultRootSchemaType } from '.';
 import constants from '../constants';
 import { StaticResultProperties } from './staticResultProperties';
 import { Icon, useTheme } from '@fluentui/react';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -46,7 +47,7 @@ export const StaticResult = ({
             className="msla-static-result-container-header-icon"
             aria-label={expanded ? `${expandLabel}` : `${collapseLabel}`}
             iconName={expanded ? 'ChevronDownMed' : 'ChevronLeftMed'}
-            styles={{ root: { fontSize: 14, color: isInverted ? constants.STANDARD_TEXT_COLOR : constants.CHEVRON_ROOT_COLOR_LIGHT } }}
+            styles={{ root: { fontSize: 14, color: isInverted ? constants.INVERTED_TEXT_COLOR : constants.CHEVRON_ROOT_COLOR_LIGHT } }}
           />
         </button>
       ) : (

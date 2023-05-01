@@ -1,4 +1,5 @@
-import type { ContentHash, ContentLink, SecureData, Xml } from './types';
+import type { Xml } from './types';
+import type { ContentHash, ContentLink, SecureData } from '@microsoft/utils-logic-apps';
 import { isObject } from '@microsoft/utils-logic-apps';
 
 export function isContentLink(value: any): value is ContentLink {

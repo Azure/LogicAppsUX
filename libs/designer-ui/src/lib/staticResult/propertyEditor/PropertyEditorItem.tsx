@@ -5,6 +5,7 @@ import { initializeCheckedDropdown, initializePropertyValueText } from '../util'
 import { ItemMenuButton } from './ItemMenuButton';
 import type { IButtonStyles, IContextualMenuItem, IContextualMenuProps, IContextualMenuStyles, ITextFieldStyles } from '@fluentui/react';
 import { IconButton, TextField } from '@fluentui/react';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { clone } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 

@@ -59,9 +59,7 @@ export const workflowDesignerLoadTimeout = 300000;
 // Commands
 export enum extensionCommand {
   openDesigner = 'azureLogicAppsStandard.openDesigner',
-  loadMore = 'azureLogicAppsStandard.loadMore',
   activate = 'azureLogicAppsStandard.activate',
-  selectSubscriptions = 'azureLogicAppsStandard.selectSubscriptions',
   viewContent = 'azureLogicAppsStandard.viewContent',
   openFile = 'azureLogicAppsStandard.openFile',
   createNewProject = 'azureLogicAppsStandard.createNewProject',
@@ -79,14 +77,12 @@ export enum extensionCommand {
   pickProcess = 'azureLogicAppsStandard.pickProcess',
   getDebugSymbolDll = 'azureLogicAppsStandard.getDebugSymbolDll',
   deleteLogicApp = 'azureLogicAppsStandard.deleteLogicApp',
-  refresh = 'azureLogicAppsStandard.refresh',
   switchToDotnetProject = 'azureLogicAppsStandard.switchToDotnetProject',
   openInPortal = 'azureLogicAppsStandard.openInPortal',
   azureFunctionsOpenFile = 'azureFunctions.openFile',
   azureFunctionsUninstallFuncCoreTools = 'azureFunctions.uninstallFuncCoreTools',
   azureFunctionsAppSettingsEncrypt = 'azureFunctions.appSettings.encrypt',
   azureFunctionsAppSettingsDecrypt = 'azureFunctions.appSettings.decrypt',
-  azureSelectSubscriptions = 'azure-account.selectSubscriptions',
   openOverview = 'azureLogicAppsStandard.openOverview',
   exportLogicApp = 'azureLogicAppsStandard.exportLogicApp',
   reviewValidation = 'azureLogicAppsStandard.reviewValidation',
@@ -117,6 +113,7 @@ export enum extensionCommand {
   configureDeploymentSource = 'azureLogicAppsStandard.configureDeploymentSource',
   startRemoteDebug = 'azureLogicAppsStandard.startRemoteDebug',
   validateLogicAppProjects = 'azureLogicAppsStandard.validateFunctionProjects',
+  reportIssue = 'azureLogicAppsStandard.reportIssue',
 }
 
 // Context
@@ -185,3 +182,8 @@ export const logicAppKind = 'workflowapp';
 export const logicAppKindAppSetting = 'workflowApp';
 
 export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';
+
+export const logicAppFilter = {
+  type: 'microsoft.web/sites',
+  kind: 'functionapp,workflowapp',
+};

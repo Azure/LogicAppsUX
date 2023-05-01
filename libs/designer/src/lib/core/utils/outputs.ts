@@ -26,7 +26,7 @@ import {
   isFunction,
   isStringLiteral,
 } from '@microsoft/parsers-logic-apps';
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2, OperationManifest } from '@microsoft/utils-logic-apps';
 import {
   ConnectionReferenceKeyFormat,
   getObjectPropertyValue,

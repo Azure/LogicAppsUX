@@ -1,4 +1,5 @@
 import constants from '../../../../common/constants';
+import { useShowIdentitySelector } from '../../../../core/state/connection/connectionSelector';
 import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
@@ -27,6 +28,7 @@ import { getAllVariables, getAvailableVariables } from '../../../../core/utils/v
 import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
+import { IdentitySelector } from './identityselector';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import { DynamicCallStatus, TokenPicker, ValueSegmentType } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode } from '@microsoft/designer-ui';
@@ -48,6 +50,7 @@ export const ParametersTab = () => {
   const connectionName = useNodeConnectionName(selectedNodeId);
   const operationInfo = useOperationInfo(selectedNodeId);
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
+  const showIdentitySelector = useShowIdentitySelector(selectedNodeId);
 
   const replacedIds = useReplacedIds();
   const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState, replacedIds);
@@ -79,6 +82,7 @@ export const ParametersTab = () => {
       {operationInfo && connectionName.isLoading === false && showConnectionDisplay ? (
         <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} />
       ) : null}
+      {showIdentitySelector ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
     </>
   );
 };
@@ -207,9 +211,9 @@ const ParameterSection = ({
     getFileSourceName: (): string => {
       return displayNameResult.result;
     },
-    getDisplayNameFromSelectedItem: (selectedItem: any): string => {
+    getDisplayValueFromSelectedItem: (selectedItem: any): string => {
       const dependency = dependencies.inputs[parameter.parameterKey];
-      const propertyPath = dependency.filePickerInfo?.titlePath ?? dependency.filePickerInfo?.browse.itemTitlePath;
+      const propertyPath = dependency.filePickerInfo?.fullTitlePath ?? dependency.filePickerInfo?.browse.itemFullTitlePath;
       return selectedItem[propertyPath ?? ''];
     },
     getValueFromSelectedItem: (selectedItem: any): string => {
@@ -219,10 +223,10 @@ const ParameterSection = ({
     },
     onFolderNavigation: (selectedItem: any | undefined): void => {
       loadDynamicTreeItemsForParameter(
-        selectedItem,
         nodeId,
         group.id,
         parameter.id,
+        selectedItem,
         operationInfo,
         connectionReference,
         nodeInputs,

@@ -9,7 +9,7 @@ import type {
 } from '../connection';
 import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
 import { SwaggerParser } from '@microsoft/parsers-logic-apps';
-import type { Connection, Connector } from '@microsoft/utils-logic-apps';
+import type { Connection, Connector, OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import {
   isCustomConnector,
   getUniqueName,
@@ -147,7 +147,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     shouldTestConnection?: boolean
   ): Promise<Connection>;
 
-  abstract setupConnectionIfNeeded(connection: Connection): Promise<void>;
+  abstract setupConnectionIfNeeded(connection: Connection, identityId?: string): Promise<void>;
 
   protected _getRequestForCreateConnection(connectorId: string, _connectionName: string, connectionInfo: ConnectionCreationInfo): any {
     const parameterValues = connectionInfo?.connectionParameters;
