@@ -136,15 +136,8 @@ const ParameterSection = ({
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState) => {
-      let { value } = newState;
-      const { viewModel } = newState;
+      const { value, viewModel } = newState;
       const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
-      if (
-        (parameter?.type === constants.SWAGGER.TYPE.BOOLEAN && value.length === 1 && value[0]?.value === 'True') ||
-        value[0]?.value === 'False'
-      ) {
-        value = [{ ...value[0], value: value[0].value.toLowerCase() }];
-      }
 
       const propertiesToUpdate = { value, preservedValue: undefined } as Partial<ParameterInfo>;
 

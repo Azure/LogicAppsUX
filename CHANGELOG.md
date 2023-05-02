@@ -1,8 +1,21 @@
 # Logic Apps Designer
 
+### [2.15.5](https://github.com/Azure/LogicAppsUX/compare/v2.15.4...v2.15.5) (2023-05-02)
+
+### Bug Fixes
+
+- **designer:** Fix focus on comment box when comment is empty ([#2197](https://github.com/Azure/LogicAppsUX/issues/2197)) ([a86584b](https://github.com/Azure/LogicAppsUX/commit/a86584bba65692567555bab4b92afd9acb9ecaee))
+- **designer:** add property to specify whether graph object is locked for updates [#2175](https://github.com/Azure/LogicAppsUX/issues/2175) ([#2196](https://github.com/Azure/LogicAppsUX/issues/2196)) ([6032618](https://github.com/Azure/LogicAppsUX/commit/6032618b7f364b5539d146aa86f9c79f865c3d94))
+- **designer:** expose `updateParameterValidation` helper function ([#2179](https://github.com/Azure/LogicAppsUX/issues/2179)) ([8c4a3ac](https://github.com/Azure/LogicAppsUX/commit/8c4a3acd7314dcd937b2957b790dce159cf61dfc))
+- **designer:** initializeVariable not showing correct boolean values ([#2186](https://github.com/Azure/LogicAppsUX/issues/2186)) ([5fccc83](https://github.com/Azure/LogicAppsUX/commit/5fccc831c025075b4f8e708fb5cee8da4ae42474))
+- **designer:** respect horizontal padding when panel is on the left ([#2198](https://github.com/Azure/LogicAppsUX/issues/2198)) ([5ebc0c2](https://github.com/Azure/LogicAppsUX/commit/5ebc0c231dbf1ec7f72bd210ba497f9804717bd8))
+- **designer:** Token Picker / Hide ([#2188](https://github.com/Azure/LogicAppsUX/issues/2188)) ([102adb0](https://github.com/Azure/LogicAppsUX/commit/102adb000f32c845622318cad491f04a40056257))
+
 ### [2.15.4](https://github.com/Azure/LogicAppsUX/compare/v2.15.3...v2.15.4) (2023-05-01)
 
 ### [2.15.3](https://github.com/Azure/LogicAppsUX/compare/v2.15.2...v2.15.3) (2023-04-30)
+
+### [2.15.2](https://github.com/Azure/LogicAppsUX/compare/v2.15.1...v2.15.2) (2023-04-29)
 
 ### [2.15.2](https://github.com/Azure/LogicAppsUX/compare/v2.15.1...v2.15.2) (2023-04-29)
 

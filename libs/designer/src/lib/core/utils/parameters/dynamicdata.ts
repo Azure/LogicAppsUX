@@ -153,7 +153,9 @@ export async function getDynamicSchema(
         case 'getVariableSchema':
           schema = {
             type: getSwaggerTypeFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean'),
+            enum: getSwaggerEnumFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean'),
           };
+
           break;
         case 'getVariable':
           // eslint-disable-next-line no-case-declarations
@@ -666,6 +668,15 @@ function getSwaggerTypeFromVariableType(variableType: string): string | undefine
     case 'array':
     case 'object':
       return variableType;
+    default:
+      return undefined;
+  }
+}
+
+function getSwaggerEnumFromVariableType(variableType: string): boolean[] | undefined {
+  switch (variableType) {
+    case 'boolean':
+      return [true, false];
     default:
       return undefined;
   }
