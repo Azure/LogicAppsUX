@@ -45,6 +45,9 @@ export default {
       trackedProperties: {
         scopes: [SettingScope.Action],
       },
+      concurrency: {
+        scopes: [SettingScope.Action],
+      },
     },
   },
 } as OperationManifest;
