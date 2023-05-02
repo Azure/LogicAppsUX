@@ -45,7 +45,7 @@ export const CollapsedArrayValidation = ({
 
   return (
     <div className={className ?? 'msla-base-editor-validation'}>
-      <OnChangePlugin onChange={onChange} />
+      <OnChangePlugin ignoreSelectionChange onChange={onChange} />
       {isValid || (collapsedValue && showCollapsedValidation(collapsedValue)) ? null : errorMessage ? errorMessage : defaultErrorMessage}
     </div>
   );
