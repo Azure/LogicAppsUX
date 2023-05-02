@@ -3,7 +3,7 @@ import type { OperationManifest } from '@microsoft/utils-logic-apps';
 
 describe('bjsworkflow initialize', () => {
   describe('getInputParametersFromManifest', () => {
-    test('works for an OpenAPI operation with input parameters', () => {
+    test('works for an OpenAPI operation with input parameters and values', () => {
       const manifest: OperationManifest = {
         properties: {
           description: 'This operation sends an email message.',
@@ -191,6 +191,52 @@ describe('bjsworkflow initialize', () => {
       expect(inputParameters.inputs.parameterGroups.default.parameters[1].value[0].value).toBe('test2');
       expect(inputParameters.inputs.parameterGroups.default.parameters[2].value[0].value).toBe('test1');
       expect(inputParameters.inputs.parameterGroups.default.parameters[9].value[0].value).toBe('Normal');
+    });
+
+    test('works for an OpenAPI operation with input parameters but no values', () => {
+      const manifest: OperationManifest = {
+        properties: {
+          description:
+            'Retrieves the profile of the current user. Learn more about available fields to select: https://developer.microsoft.com/en-us/graph/docs/api-reference/v1.0/resources/user#properties',
+          summary: 'Get my profile (V2)',
+          iconUri: 'https://connectoricons-df.azureedge.net/releases/v1.0.1626/1.0.1626.3238/office365users/icon.png',
+          brandColor: '#eb3c00',
+          inputs: {
+            type: 'object',
+            properties: {
+              $select: {
+                type: 'string',
+                title: 'Select fields',
+                description: 'Comma separated list of fields to select. Example: surname, department, jobTitle',
+                'x-ms-visibility': 'advanced',
+                'x-ms-property-name-alias': '$select',
+              },
+            },
+            required: [],
+          },
+          inputsLocation: ['inputs', 'parameters'],
+        },
+      };
+      const stepDefinition = {
+        runAfter: {},
+        type: 'OpenApiConnection',
+        inputs: {
+          host: {
+            apiId: '/providers/Microsoft.PowerApps/apis/shared_office365users',
+            operationId: 'MyProfile_V2',
+            connection: 'shared_office365users',
+          },
+          authentication: {
+            value: 'dummy',
+            type: 'Raw',
+          },
+        },
+      };
+
+      const inputParameters = getInputParametersFromManifest('Get_my_profile', manifest, undefined /* customSwagger */, stepDefinition);
+
+      expect(inputParameters.inputs.parameterGroups.default.parameters.length).toBe(1);
+      expect(inputParameters.inputs.parameterGroups.default.parameters[0].value[0].value).toBe('');
     });
   });
 });
