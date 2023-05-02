@@ -1,4 +1,6 @@
 import Constants from '../../../common/constants';
+import type { ConnectionReferences } from '../../../common/models/workflow';
+import { addInvokerSupport } from '../../state/connection/connectionSlice';
 import type { NodeOperation, NodeOutputs } from '../../state/operation/operationMetadataSlice';
 import { getSplitOnOptions } from '../../utils/outputs';
 import { getTokenExpressionValue } from '../../utils/parameters/helper';
@@ -24,6 +26,7 @@ import {
   ValidationErrorCode,
   ValidationException,
 } from '@microsoft/utils-logic-apps';
+import type { Dispatch } from '@reduxjs/toolkit';
 
 type OperationManifestSettingType = UploadChunkMetadata | DownloadChunkMetadata | SecureDataOptions | OperationOptions[] | void;
 
@@ -98,7 +101,7 @@ export interface Settings {
   uploadChunk?: SettingData<UploadChunk>;
   downloadChunkSize?: SettingData<number>;
   runAfter?: SettingData<GraphEdge[]>;
-  invokerConnection?: SettingData<SimpleSetting<boolean>>;
+  invokerConnection?: SettingData<SimpleSetting<ConnectionReferences>>;
 }
 
 /**
@@ -118,7 +121,9 @@ export const getOperationSettings = (
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
   operation?: LogicAppsV2.OperationDefinition,
-  rootNodeId?: string
+  rootNodeId?: string,
+  connectionReferences?: ConnectionReferences,
+  dispatch?: Dispatch
 ): Settings => {
   const { operationId, type: nodeType } = operationInfo;
   return {
@@ -192,7 +197,7 @@ export const getOperationSettings = (
     },
     invokerConnection: {
       isSupported: isInvokerConnectionSupported(isTrigger, nodeType, rootNodeId),
-      value: invokerConnection(isTrigger, nodeType, rootNodeId),
+      value: invokerConnection(connectionReferences, dispatch),
     },
   };
 };
@@ -871,9 +876,17 @@ const isInvokerConnectionSupported = (isTrigger: boolean, nodeType: string, root
   }
 };
 
-const invokerConnection = (isTrigger: boolean, nodeType: string, rootNodeId: string | undefined): SimpleSetting<boolean> | undefined => {
-  if (isInvokerConnectionSupported(isTrigger, nodeType, rootNodeId)) {
-    return { enabled: true };
+const invokerConnection = (
+  connectionReferences: ConnectionReferences | undefined,
+  dispatch: Dispatch | undefined
+): SimpleSetting<ConnectionReferences> | undefined => {
+  if (connectionReferences !== undefined) {
+    dispatch?.(addInvokerSupport({ connectionReferences }));
   }
-  return { enabled: false };
+  return connectionReferences
+    ? {
+        enabled: true,
+        value: connectionReferences,
+      }
+    : { enabled: false };
 };
