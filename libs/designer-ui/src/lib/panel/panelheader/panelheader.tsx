@@ -41,6 +41,7 @@ export interface PanelHeaderProps {
   title?: string;
   includeTitle: boolean;
   nodeId: string;
+  horizontalPadding: string;
   commentChange(panelCommentChangeEvent?: string): void;
   onDismissButtonClicked?(): void;
   onRenderWarningMessage?(): JSX.Element;
@@ -103,6 +104,7 @@ export const PanelHeader = ({
   title,
   includeTitle,
   nodeId,
+  horizontalPadding,
   commentChange,
   onDismissButtonClicked,
   onRenderWarningMessage,
@@ -224,7 +226,7 @@ export const PanelHeader = ({
       </div>
       {!noNodeOnCardLevel ? (
         <>
-          <div className="msla-panel-card-header">
+          <div className={'msla-panel-card-header'} style={isRight ? {} : { paddingLeft: horizontalPadding }}>
             {iconComponent}
             {includeTitle ? (
               <div className="msla-panel-card-title-container" hidden={isCollapsed}>

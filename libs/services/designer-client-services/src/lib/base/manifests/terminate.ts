@@ -41,12 +41,20 @@ export default {
               description: 'Enter error code',
               'x-ms-visibility': 'important',
               title: 'Code',
+              'x-ms-input-dependencies': {
+                type: 'visibility',
+                parameters: [{ name: 'runStatus', values: ['Failed'] }],
+              },
             },
             message: {
               type: 'string',
               description: 'Enter error message',
               'x-ms-visibility': 'important',
               title: 'Message',
+              'x-ms-input-dependencies': {
+                type: 'visibility',
+                parameters: [{ name: 'runStatus', values: ['Failed'] }],
+              },
             },
           },
         },
