@@ -1,4 +1,10 @@
-import { getParameterEditorProps, parameterValueToJSONString, parameterValueToString, getExpressionValueForOutputToken } from '../helper';
+import {
+  getParameterEditorProps,
+  parameterValueToJSONString,
+  parameterValueToString,
+  getExpressionValueForOutputToken,
+  updateParameterWithValues,
+} from '../helper';
 import type { DictionaryEditorItemProps, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import type { DynamicListExtension, LegacyDynamicValuesExtension, InputParameter } from '@microsoft/parsers-logic-apps';
@@ -2311,6 +2317,228 @@ describe('core/utils/parameters/helper', () => {
       token.outputInfo.actionName = undefined;
 
       expect(getExpressionValueForOutputToken(token, nodeType)).toEqual(`triggerOutputs()['message']['id']`);
+    });
+  });
+
+  describe('updateParameterWithValues', () => {
+    test('populates inputs for OpenAPI parameters', () => {
+      const availableInputParameters = [
+        {
+          alias: 'emailMessage/To',
+          description: 'Specify email addresses separated by semicolons like someone@contoso.com',
+          editor: 'combobox',
+          editorOptions: {
+            options: [],
+          },
+          format: 'email',
+          key: 'inputs.$.emailMessage.emailMessage/To',
+          name: 'emailMessage/To',
+          required: true,
+          schema: {
+            type: 'string',
+            title: 'To',
+            format: 'email',
+            description: 'Specify email addresses separated by semicolons like someone@contoso.com',
+            'x-ms-property-name-alias': 'emailMessage/To',
+          },
+          summary: '',
+          title: 'To',
+          type: 'string',
+        },
+        {
+          alias: 'emailMessage/Subject',
+          description: 'Specify the subject of the mail',
+          key: 'inputs.$.emailMessage.emailMessage/Subject',
+          name: 'emailMessage/Subject',
+          required: true,
+          schema: {
+            type: 'string',
+            title: 'Subject',
+            description: 'Specify the subject of the mail',
+            'x-ms-property-name-alias': 'emailMessage/Subject',
+          },
+          summary: '',
+          title: 'Subject',
+          type: 'string',
+        },
+        {
+          alias: 'emailMessage/Body',
+          description: 'Specify the body of the mail',
+          format: 'html',
+          key: 'inputs.$.emailMessage.emailMessage/Body',
+          name: 'emailMessage/Body',
+          required: true,
+          schema: {
+            type: 'string',
+            title: 'Body',
+            format: 'html',
+            description: 'Specify the body of the mail',
+            'x-ms-property-name-alias': 'emailMessage/Body',
+          },
+          summary: '',
+          title: 'Body',
+          type: 'string',
+        },
+        {
+          alias: 'emailMessage/From',
+          description:
+            'Email address to send mail from (requires "Send as" or "Send on behalf of" permission for that mailbox). For more info on granting permissions please refer https://docs.microsoft.com/office365/admin/manage/send-email-as-distribution-list',
+          format: 'email',
+          key: 'inputs.$.emailMessage.emailMessage/From',
+          name: 'emailMessage/From',
+          required: false,
+          schema: {
+            type: 'string',
+            title: 'From (Send as)',
+            format: 'email',
+            description:
+              'Email address to send mail from (requires "Send as" or "Send on behalf of" permission for that mailbox). For more info on granting permissions please refer https://docs.microsoft.com/office365/admin/manage/send-email-as-distribution-list',
+            'x-ms-property-name-alias': 'emailMessage/From',
+          },
+          summary: '',
+          title: 'From (Send as)',
+          type: 'string',
+        },
+        {
+          alias: 'emailMessage/Cc',
+          description: 'Specify email addresses separated by semicolons like someone@contoso.com',
+          editor: 'combobox',
+          editorOptions: {
+            options: [],
+          },
+          format: 'email',
+          key: 'inputs.$.emailMessage.emailMessage/Cc',
+          name: 'emailMessage/Cc',
+          required: false,
+          schema: {
+            type: 'string',
+            title: 'CC',
+            'x-ms-dynamic-list': {
+              builtInOperation: 'AadGraph.GetUsers',
+              itemValuePath: 'mail',
+              parameters: {},
+            },
+            format: 'email',
+            description: 'Specify email addresses separated by semicolons like someone@contoso.com',
+            'x-ms-property-name-alias': 'emailMessage/Cc',
+          },
+          summary: '',
+          title: 'CC',
+          type: 'string',
+        },
+        {
+          alias: 'emailMessage/Bcc',
+          description: 'Specify email addresses separated by semicolons like someone@contoso.com',
+          editor: 'combobox',
+          editorOptions: {
+            options: [],
+          },
+          format: 'email',
+          key: 'inputs.$.emailMessage.emailMessage/Bcc',
+          name: 'emailMessage/Bcc',
+          required: false,
+          schema: {
+            type: 'string',
+            title: 'BCC',
+            format: 'email',
+            description: 'Specify email addresses separated by semicolons like someone@contoso.com',
+            'x-ms-property-name-alias': 'emailMessage/Bcc',
+          },
+          summary: '',
+          title: 'BCC',
+          type: 'string',
+        },
+        {
+          alias: 'emailMessage/Attachments',
+          description: 'Attachments',
+          key: 'inputs.$.emailMessage.emailMessage/Attachments',
+          name: 'emailMessage/Attachments',
+          required: false,
+          schema: {
+            type: 'array',
+            title: 'Attachments',
+            description: 'Attachments',
+            'x-ms-property-name-alias': 'emailMessage/Attachments',
+          },
+          summary: '',
+          title: 'Attachments',
+          type: 'array',
+        },
+        {
+          alias: 'emailMessage/Sensitivity',
+          description: 'Sensitivity',
+          editor: 'combobox',
+          editorOptions: {
+            options: [],
+          },
+          key: 'inputs.$.emailMessage.emailMessage/Sensitivity',
+          name: 'emailMessage/Sensitivity',
+          required: false,
+          schema: {
+            type: 'string',
+            title: 'Sensitivity',
+            description: 'Sensitivity',
+            'x-ms-property-name-alias': 'emailMessage/Sensitivity',
+          },
+          summary: '',
+          title: 'Sensitivity',
+          type: 'string',
+        },
+        {
+          alias: 'emailMessage/ReplyTo',
+          description: 'The email addresses to use when replying',
+          format: 'email',
+          key: 'inputs.$.emailMessage.emailMessage/ReplyTo',
+          name: 'emailMessage/ReplyTo',
+          required: false,
+          schema: {
+            type: 'string',
+            title: 'Reply To',
+            format: 'email',
+            description: 'The email addresses to use when replying',
+            'x-ms-property-name-alias': 'emailMessage/ReplyTo',
+          },
+          summary: '',
+          title: 'Reply To',
+          type: 'string',
+        },
+        {
+          alias: 'emailMessage/Importance',
+          description: 'Importance',
+          key: 'inputs.$.emailMessage.emailMessage/Importance',
+          name: 'emailMessage/Importance',
+          required: false,
+          schema: {
+            type: 'string',
+            title: 'Importance',
+            description: 'Importance',
+            'x-ms-property-name-alias': 'emailMessage/Importance',
+          },
+          summary: '',
+          title: 'Importance',
+          type: 'string',
+        },
+      ];
+
+      const updatedInputParameters = updateParameterWithValues(
+        'inputs.$',
+        {
+          'emailMessage/Body': 'test1',
+          'emailMessage/Importance': 'Normal',
+          'emailMessage/Subject': 'test2',
+          'emailMessage/To': 'johndoe@example.com',
+        },
+        '' /* parameterLocation */,
+        availableInputParameters,
+        true /* createInvisibleParameter */,
+        false /* useDefault */
+      );
+
+      expect(updatedInputParameters.length).toBe(availableInputParameters.length);
+      expect(updatedInputParameters[0].value).toBe('johndoe@example.com');
+      expect(updatedInputParameters[1].value).toBe('test2');
+      expect(updatedInputParameters[2].value).toBe('test1');
+      expect(updatedInputParameters[9].value).toBe('Normal');
     });
   });
 });
