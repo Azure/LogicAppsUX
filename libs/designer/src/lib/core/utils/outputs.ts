@@ -416,7 +416,13 @@ export const loadDynamicOutputsInNode = async (
         dispatch(
           addDynamicTokens({
             nodeId,
-            tokens: convertOutputsToTokens(nodeId, operationInfo.type, dynamicOutputs, { iconUri, brandColor }, settings),
+            tokens: convertOutputsToTokens(
+              isTrigger ? undefined : nodeId,
+              operationInfo.type,
+              dynamicOutputs,
+              { iconUri, brandColor },
+              settings
+            ),
           })
         );
       }
