@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { RootState } from './store';
-import type { TokenSelectorViewProps, TrackedProperty } from '@microsoft/designer-client-services-logic-apps';
+import type { TokenSelectorViewProps } from '@microsoft/designer-client-services-logic-apps';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -33,8 +33,10 @@ const initialState: WorkflowLoadingState = {
       { name: 'test', type: 'string' },
       { name: 'test2', type: 'string' },
     ],
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onCompleted: (props: TrackedProperty[]) => {},
+    onCompleted: () => {
+      console.log('Continuing');
+    },
+    businessID: 'testID',
   },
   monitoringView: false,
   darkMode: false,

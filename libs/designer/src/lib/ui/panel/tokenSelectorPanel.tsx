@@ -50,6 +50,16 @@ const Header = (props: HeaderProps) => {
   return <Label className="msla-properties-header-text">{props.text}</Label>;
 };
 
+const getInitialValues = (trackedProperties: TrackedProperty[]) => {
+  return trackedProperties.reduce((map, property) => {
+    if (property.values) {
+      // eslint-disable-next-line no-param-reassign
+      map[property.name] = property.values;
+    }
+    return map;
+  }, {} as Record<string, ValueSegment[]>);
+};
+
 export const TokenSelectorPanel = (props: CommonPanelProps) => {
   const intl = useIntl();
   const intlText = {
@@ -86,21 +96,27 @@ export const TokenSelectorPanel = (props: CommonPanelProps) => {
   };
 
   const selectedNodeId = useSelectedNodeId();
-  const tokenSelectorProps = useTokenSelectorData();
-  if (!tokenSelectorProps) {
-    throw Error(intlText.PROPS_UNDEFINED_ERROR);
-  }
   const nodeMetadata = useNodeMetadata(selectedNodeId);
   const { tokenState, workflowParametersState } = useSelector((state: RootState) => ({
     tokenState: state.tokens,
     workflowParametersState: state.workflowParameters,
   }));
   const nodeType = useSelector((state: RootState) => state.operations.operationInfo[selectedNodeId]?.type);
+
+  const tokenSelectorProps = useTokenSelectorData();
+  if (!tokenSelectorProps) {
+    throw Error(intlText.PROPS_UNDEFINED_ERROR);
+  }
   const trackedProperties = tokenSelectorProps.trackedProperties;
-  const [values, setValues] = useState<Record<string, ValueSegment[]>>({});
+  const [values, setValues] = useState<Record<string, ValueSegment[]>>(getInitialValues(trackedProperties));
+  const [businessID, setBusinessID] = useState<string>(tokenSelectorProps.businessID ?? '');
   const onValuesChanged = useCallback((id: string, newState: ChangeState) => {
     const { value } = newState;
     setValues((prevValues) => ({ ...prevValues, [id]: value }));
+  }, []);
+
+  const onBusinessIdChange = useCallback((_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
+    setBusinessID(newValue ?? '');
   }, []);
 
   const onContinueClick = useCallback(() => {
@@ -110,21 +126,20 @@ export const TokenSelectorPanel = (props: CommonPanelProps) => {
     });
 
     const updatedProperties: TrackedProperty[] = [];
-
     Object.keys(values).forEach((key) => {
       // Convert the value segments to a token string.
       // The key should be a property name.
       const property = trackedProperties.find((property) => property.name === key);
-
       if (!property) {
         throw Error(valueNotFoundError);
       }
 
-      const tokenString = values[key].map((valueSegment) => valueSegment.value).join('@');
-      updatedProperties.push({ ...property, token: tokenString ? `@${tokenString}` : '' });
+      const valueTokens = values[key];
+      updatedProperties.push({ ...property, values: valueTokens });
     });
-    tokenSelectorProps.onCompleted(updatedProperties);
-  }, [values, trackedProperties, intl, tokenSelectorProps]);
+
+    tokenSelectorProps.onCompleted(updatedProperties, selectedNodeId, businessID);
+  }, [values, trackedProperties, intl, tokenSelectorProps, selectedNodeId, businessID]);
 
   const operationInfo = useOperationInfo(selectedNodeId);
 
@@ -177,6 +192,7 @@ export const TokenSelectorPanel = (props: CommonPanelProps) => {
             nodeId={selectedNodeId}
             nodeType={nodeType}
             trackedProperties={trackedProperties}
+            values={values}
             tokenGroup={tokenGroup}
             expressionGroup={expressionGroup}
             onValuesChanged={onValuesChanged}
@@ -185,8 +201,8 @@ export const TokenSelectorPanel = (props: CommonPanelProps) => {
         <Stack.Item>
           <Header text={intlText.BUSINESS_IDENTIFIER_TITLE} />
           <Text>{intlText.BUSINESS_IDENTIFIER_DESCRIPTION}</Text>
-          <FormLabel style={{ marginTop: '30px' }} label="Run ID">
-            <TextField className="text-field-standard-input" />
+          <FormLabel style={{ marginTop: '30px' }} label={intlText.BUSINESS_IDENTIFIER_TITLE}>
+            <TextField value={businessID} className="text-field-standard-input" onChange={onBusinessIdChange} />
           </FormLabel>
         </Stack.Item>
         <PrimaryButton text={intlText.CONTINUE} onClick={() => onContinueClick()} className="primary-button-footer" />
@@ -195,12 +211,11 @@ export const TokenSelectorPanel = (props: CommonPanelProps) => {
   );
 };
 
-// TODO (tmauldin): Replace with with callback from props
-
 const TokenSelectorSection = ({
   nodeId,
   nodeType,
   trackedProperties,
+  values,
   tokenGroup,
   expressionGroup,
   onValuesChanged,
@@ -208,6 +223,7 @@ const TokenSelectorSection = ({
   nodeId: string;
   nodeType?: string;
   trackedProperties: TrackedProperty[];
+  values: Record<string, ValueSegment[]>;
   tokenGroup: TokenGroup[];
   expressionGroup: TokenGroup[];
   onValuesChanged: (id: string, newState: ChangeState) => void;
@@ -279,7 +295,7 @@ const TokenSelectorSection = ({
     return {
       label,
       showTokens: true,
-      value: [],
+      value: values[label] ?? [],
       tokenEditor: true,
       isTrigger,
       isCallback: nodeType?.toLowerCase() === constants.NODE.TYPE.HTTP_WEBHOOK,
