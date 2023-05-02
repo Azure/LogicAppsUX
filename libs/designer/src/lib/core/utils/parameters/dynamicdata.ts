@@ -320,15 +320,7 @@ export async function getFolderItems(
       connectionReference as ConnectionReference
     );
 
-    return getLegacyDynamicTreeItems(
-      connectionId,
-      connectorId,
-      operationId,
-      inputs,
-      definition.extension,
-      filePickerInfo,
-      managedIdentityRequestProperties
-    );
+    return getLegacyDynamicTreeItems(connectionId, connectorId, operationId, inputs, filePickerInfo, managedIdentityRequestProperties);
   }
 
   throw new UnsupportedException(`Dynamic extension '${definition.type}' is not implemented yet or not supported`);
