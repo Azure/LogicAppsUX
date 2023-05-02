@@ -1,5 +1,4 @@
 import Constants from '../../../common/constants';
-import type { ConnectionReferences } from '../../../common/models/workflow';
 import type { NodeOperation, NodeOutputs } from '../../state/operation/operationMetadataSlice';
 import { getSplitOnOptions } from '../../utils/outputs';
 import { getTokenExpressionValue } from '../../utils/parameters/helper';
@@ -99,7 +98,7 @@ export interface Settings {
   uploadChunk?: SettingData<UploadChunk>;
   downloadChunkSize?: SettingData<number>;
   runAfter?: SettingData<GraphEdge[]>;
-  invokerConnection?: SettingData<SimpleSetting<ConnectionReferences>>;
+  invokerConnection?: SettingData<SimpleSetting<boolean>>;
 }
 
 /**
@@ -193,7 +192,7 @@ export const getOperationSettings = (
     },
     invokerConnection: {
       isSupported: isInvokerConnectionSupported(isTrigger, nodeType, rootNodeId),
-      value: invokerConnection(isTrigger, nodeType, rootNodeId, operationInfo.connectorId),
+      value: invokerConnection(isTrigger, nodeType, rootNodeId),
     },
   };
 };
@@ -872,17 +871,9 @@ const isInvokerConnectionSupported = (isTrigger: boolean, nodeType: string, root
   }
 };
 
-const invokerConnection = (
-  isTrigger: boolean,
-  nodeType: string,
-  rootNodeId: string | undefined,
-  connectorId: string
-): SimpleSetting<ConnectionReferences> | undefined => {
-  if (
-    isInvokerConnectionSupported(isTrigger, nodeType, rootNodeId) &&
-    connectorId === Constants.INVOKER_CONNECTION.DATAVERSE_CONNECTOR_ID
-  ) {
-    return { enabled: false };
+const invokerConnection = (isTrigger: boolean, nodeType: string, rootNodeId: string | undefined): SimpleSetting<boolean> | undefined => {
+  if (isInvokerConnectionSupported(isTrigger, nodeType, rootNodeId)) {
+    return { enabled: true };
   }
-  return { enabled: true };
+  return { enabled: false };
 };
