@@ -68,6 +68,15 @@
         }
       },
       {
+        "command": "azureLogicAppsStandard.createCodeNewProject",
+        "title": "Create New Code Project...",
+        "category": "Azure Logic Apps",
+        "icon": {
+          "light": "assets/light/CreateNewCodeProject.svg",
+          "dark": "assets/dark/CreateNewCodeProject.svg"
+        }
+      },
+      {
         "command": "azureLogicAppsStandard.createCodeless",
         "title": "Create Workflow...",
         "category": "Azure Logic Apps",
@@ -303,6 +312,11 @@
       "view/title": [
         {
           "command": "azureLogicAppsStandard.createNewProject",
+          "when": "view == azureWorkspace",
+          "group": "navigation@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.createNewCodeProject",
           "when": "view == azureWorkspace",
           "group": "navigation@1"
         },
