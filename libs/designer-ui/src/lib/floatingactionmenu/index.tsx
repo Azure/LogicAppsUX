@@ -4,6 +4,7 @@ import {
   createDynamicallyAddedParameterProperties,
   deserialize,
   generateDynamicParameterKey,
+  getEmptySchemaValueSegmentForInitialization,
   serialize,
 } from '../dynamicallyaddedparameter/helper';
 import type { ValueSegment } from '../editor';
@@ -34,6 +35,15 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
     throw new ValidationException(ValidationErrorCode.INVALID_PARAMETERS, 'supportedTypes are necessary.');
   }
   const menuItems = getMenuItemsForDynamicAddedParameters(props.supportedTypes);
+
+  // Set an empty schema object in the value so that the object structure is what Flow-RP expects.
+  if (props.initialValue.length > 0 && !props.initialValue[0].value) {
+    const { onChange } = props;
+    if (onChange) {
+      const value = getEmptySchemaValueSegmentForInitialization();
+      onChange({ value });
+    }
+  }
 
   const intl = useIntl();
   const closeErrorButtonAriaLabel = intl.formatMessage({
@@ -198,13 +208,13 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
   return (
     <>
       <div className="msla-dynamic-added-params-container">
-        {dynamicParameterProps.map((props) => (
-          <DynamicallyAddedParameter {...props} key={props.schemaKey} />
-        ))}
+        {dynamicParameterProps.map((props) =>
+          props.properties['x-ms-dynamically-added'] === true ? <DynamicallyAddedParameter {...props} key={props.schemaKey} /> : null
+        )}
       </div>
       <div className="msla-floating-action-menu-container">
-        {!expanded ? renderMenuButton() : undefined}
-        {expanded ? renderMenuItems() : undefined}
+        {!expanded ? renderMenuButton() : null}
+        {expanded ? renderMenuItems() : null}
       </div>
     </>
   );

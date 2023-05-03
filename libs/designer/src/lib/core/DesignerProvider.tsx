@@ -29,6 +29,7 @@ const OptionsStateSet = ({ options, children }: any) => {
         tokenSelectorViewProps: options.tokenSelectorViewProps,
         isDarkMode: options.isDarkMode,
         isConsumption: options.isConsumption,
+        isXrmConnectionReferenceMode: options.isXrmConnectionReferenceMode,
       })
     );
   }, [dispatch, options]);

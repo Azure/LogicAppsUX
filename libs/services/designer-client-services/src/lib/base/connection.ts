@@ -9,7 +9,7 @@ import type {
 } from '../connection';
 import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
 import { SwaggerParser } from '@microsoft/parsers-logic-apps';
-import type { Connection, Connector } from '@microsoft/utils-logic-apps';
+import type { Connection, Connector, OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import {
   isCustomConnector,
   getUniqueName,
@@ -143,16 +143,11 @@ export abstract class BaseConnectionService implements IConnectionService {
     connectionId: string,
     connector: Connector,
     connectionInfo: ConnectionCreationInfo,
-    parametersMetadata?: ConnectionParametersMetadata
+    parametersMetadata?: ConnectionParametersMetadata,
+    shouldTestConnection?: boolean
   ): Promise<Connection>;
 
-  abstract createConnectionInApiHub(
-    connectionName: string,
-    connectorId: string,
-    connectionInfo: ConnectionCreationInfo
-  ): Promise<Connection>;
-
-  abstract setupConnectionIfNeeded(connection: Connection): Promise<void>;
+  abstract setupConnectionIfNeeded(connection: Connection, identityId?: string): Promise<void>;
 
   protected _getRequestForCreateConnection(connectorId: string, _connectionName: string, connectionInfo: ConnectionCreationInfo): any {
     const parameterValues = connectionInfo?.connectionParameters;
@@ -233,48 +228,6 @@ export abstract class BaseConnectionService implements IConnectionService {
       return response;
     } catch (error: any) {
       return Promise.reject(error);
-    }
-  }
-
-  protected async pretestServiceProviderConnection(
-    connector: Connector,
-    connectionInfo: ConnectionCreationInfo
-  ): Promise<HttpResponse<any>> {
-    try {
-      const { testConnectionUrl } = connector.properties;
-      if (!testConnectionUrl) return Promise.reject();
-      const { httpClient, baseUrl, apiVersion } = this.options;
-      const queryParameters = { 'api-version': apiVersion };
-      const { connectionParameters = {}, connectionParametersSet } = connectionInfo;
-
-      let content: any = {
-        parameterSetName: connectionParametersSet?.name,
-        serviceProvider: { id: connector.id },
-      };
-
-      if (connectionParametersSet?.name === 'connectionString') {
-        content = { ...content, parameterValues: { ...connectionParameters } };
-      } else {
-        content = {
-          ...content,
-          parameterValues: {
-            authProvider: {
-              type: connectionParametersSet?.name,
-              ...connectionParameters,
-            },
-            fullyQualifiedNamespace: connectionParameters?.['fullyQualifiedNamespace'],
-          },
-        };
-      }
-
-      const uri = `${baseUrl.replace('/runtime/webhooks/workflow/api/management', '')}${testConnectionUrl}`;
-      const requestOptions: HttpRequestOptions<any> = { uri, queryParameters, content };
-      const response = await httpClient.post<any, any>(requestOptions);
-
-      if (!response || response.status < 200 || response.status >= 300) throw response;
-      return response;
-    } catch (e: any) {
-      return Promise.reject(JSON.parse(e?.responseText));
     }
   }
 

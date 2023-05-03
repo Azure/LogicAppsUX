@@ -27,11 +27,9 @@ export type AzureOperationsFetchResponse = ContinuationTokenResponse<DiscoveryOp
 export type DiscoveryOpArray = DiscoveryOperation<DiscoveryResultTypes>[];
 
 export interface BaseSearchServiceOptions {
-  [x: string]: any;
   apiVersion: string;
   baseUrl: string;
   apiHubServiceDetails: {
-    [x: string]: any;
     apiVersion: string;
     subscriptionId: string;
     location: string;

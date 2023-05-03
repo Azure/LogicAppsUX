@@ -6,6 +6,7 @@ import type {
   ConnectionParameterSet as ParameterSet,
   ConnectionParameterSetValues,
   ConnectionMetadata,
+  OpenAPIV2,
 } from '@microsoft/utils-logic-apps';
 
 export interface ConnectorWithSwagger {
@@ -43,7 +44,8 @@ export interface IConnectionService {
     connectionId: string,
     connector: Connector,
     connectionInfo: ConnectionCreationInfo,
-    parametersMetadata?: ConnectionParametersMetadata
+    parametersMetadata?: ConnectionParametersMetadata,
+    shouldTestConnection?: boolean
   ): Promise<Connection>;
   createAndAuthorizeOAuthConnection(
     connectionId: string,
@@ -51,7 +53,7 @@ export interface IConnectionService {
     connectionInfo: ConnectionCreationInfo,
     parametersMetadata: ConnectionParametersMetadata
   ): Promise<CreateConnectionResult>;
-  setupConnectionIfNeeded(connection: Connection): Promise<void>;
+  setupConnectionIfNeeded(connection: Connection, identityId?: string): Promise<void>;
   getUniqueConnectionName(connectorId: string, connectionNames: string[], connectorName: string): Promise<string>;
 }
 

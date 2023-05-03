@@ -1,8 +1,9 @@
 import Constants from '../../../common/constants';
 import type { ConnectionReferences } from '../../../common/models/workflow';
 import { ImpersonationSource } from '../../../common/models/workflow';
+import type { UpdateConnectionPayload } from '../../actions/bjsworkflow/connections';
 import { resetWorkflowState } from '../global';
-import { equals, getUniqueName } from '@microsoft/utils-logic-apps';
+import { deepCompareObjects, equals, getUniqueName } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -30,11 +31,15 @@ export const connectionSlice = createSlice({
     initializeConnectionsMappings: (state, action: PayloadAction<ConnectionMapping>) => {
       state.connectionsMapping = action.payload;
     },
-    changeConnectionMapping: (state, action: PayloadAction<{ nodeId: NodeId; connectionId: string; connectorId: string }>) => {
-      const { nodeId, connectionId, connectorId } = action.payload;
+    changeConnectionMapping: (state, action: PayloadAction<UpdateConnectionPayload>) => {
+      const { nodeId, connectionId, connectorId, connectionProperties, authentication } = action.payload;
       const existingReferenceKey = Object.keys(state.connectionReferences).find((referenceKey) => {
         const reference = state.connectionReferences[referenceKey];
-        return equals(reference.api.id, connectorId) && equals(reference.connection.id, connectionId);
+        return (
+          equals(reference.api.id, connectorId) &&
+          equals(reference.connection.id, connectionId) &&
+          deepCompareObjects(reference.connectionProperties, connectionProperties)
+        );
       });
 
       if (existingReferenceKey) {
@@ -45,6 +50,8 @@ export const connectionSlice = createSlice({
           api: { id: connectorId },
           connection: { id: connectionId },
           connectionName: connectionId.split('/').at(-1) as string,
+          connectionProperties,
+          authentication,
         };
         state.connectionsMapping[nodeId] = newReferenceKey;
       }

@@ -39,8 +39,8 @@ import {
   initializeManifest,
   setManifest,
 } from './manifests/variables';
-import { ArgumentException, equals, UnsupportedException } from '@microsoft/utils-logic-apps';
 import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
+import { ArgumentException, equals, UnsupportedException } from '@microsoft/utils-logic-apps';
 
 const apimanagement = 'apimanagement';
 const apimanagementtrigger = 'apimanagementtrigger';
@@ -188,7 +188,6 @@ export const supportedBaseManifestTypes = [
 export type getAccessTokenType = () => Promise<string>;
 
 export interface BaseOperationManifestServiceOptions {
-  [x: string]: any;
   apiVersion: string;
   baseUrl: string;
   httpClient: IHttpClient;

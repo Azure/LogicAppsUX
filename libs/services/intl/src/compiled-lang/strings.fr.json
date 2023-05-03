@@ -734,10 +734,22 @@
       "value": "Save"
     }
   ],
+  "30njcn": [
+    {
+      "type": 0,
+      "value": "Create Connection"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
       "value": "Identificateur"
+    }
+  ],
+  "34Nt/B": [
+    {
+      "type": 0,
+      "value": "alt text for button icon"
     }
   ],
   "36RiST": [
@@ -1462,6 +1474,12 @@
       "value": "Avec le modèle asynchrone, si le serveur distant indique que le traitement de la demande est accepté avec la réponse 202 (Accepté), le moteur Logic Apps continue à interroger l'URL spécifiée dans l'en-tête d'emplacement de la réponse jusqu'à atteindre un état terminal."
     }
   ],
+  "8luJ2j": [
+    {
+      "type": 0,
+      "value": "Create Connection Reference"
+    }
+  ],
   "8pPivj": [
     {
       "type": 0,
@@ -1945,6 +1963,12 @@
     {
       "type": 0,
       "value": "Réduire"
+    }
+  ],
+  "BrWQ0Z": [
+    {
+      "type": 0,
+      "value": "Select a managed identity"
     }
   ],
   "BuYrD3": [
@@ -2656,6 +2680,12 @@
       "value": " »."
     }
   ],
+  "HOchry": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -2836,6 +2866,12 @@
       "value": "Modèle asynchrone"
     }
   ],
+  "J2Su6x": [
+    {
+      "type": 0,
+      "value": "Formatting options for font size"
+    }
+  ],
   "J5/7vN": [
     {
       "type": 0,
@@ -2984,6 +3020,12 @@
     {
       "type": 0,
       "value": "Retourne un sous-ensemble de caractères à partir d'une chaîne"
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Change connection reference"
     }
   ],
   "KX1poC": [
@@ -3183,6 +3225,12 @@
     {
       "type": 0,
       "value": "Voir plus"
+    }
+  ],
+  "Lm9bnN": [
+    {
+      "type": 0,
+      "value": "Bullet List"
     }
   ],
   "LoGUT3": [
@@ -3609,6 +3657,12 @@
       "value": "Sélectionner une identité managée"
     }
   ],
+  "P+7G62": [
+    {
+      "type": 0,
+      "value": "Heading 3"
+    }
+  ],
   "P+mWgV": [
     {
       "type": 0,
@@ -3805,6 +3859,12 @@
       "value": "Code d'état"
     }
   ],
+  "QIOOQU": [
+    {
+      "type": 0,
+      "value": "No Items"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -3813,6 +3873,12 @@
     {
       "type": 1,
       "value": "title"
+    }
+  ],
+  "QZ5DZl": [
+    {
+      "type": 0,
+      "value": "alt text for chevron down"
     }
   ],
   "QZBPUx": [
@@ -4004,6 +4070,12 @@
     {
       "type": 0,
       "value": "Mot de passe"
+    }
+  ],
+  "SGnTpt": [
+    {
+      "type": 0,
+      "value": "Heading 2"
     }
   ],
   "SJFVxf": [
@@ -4256,6 +4328,12 @@
       "value": "Note"
     }
   ],
+  "Ttc0SM": [
+    {
+      "type": 0,
+      "value": "Heading 1"
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -4338,6 +4416,12 @@
     {
       "type": 0,
       "value": "Remplace une chaîne par une chaîne donnée"
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Logical Name"
     }
   ],
   "UR1CS5": [
@@ -4884,6 +4968,12 @@
       "value": "Yes/No"
     }
   ],
+  "YWOKlU": [
+    {
+      "type": 0,
+      "value": "Numbered List"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
@@ -5394,6 +5484,12 @@
       "value": "En savoir plus"
     }
   ],
+  "dL9V5t": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "dOpdsP": [
     {
       "type": 0,
@@ -5798,6 +5894,12 @@
     {
       "type": 0,
       "value": "Conditions du déclencheur"
+    }
+  ],
+  "gc6v4X": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "gfBWfH": [
@@ -6491,6 +6593,12 @@
       "value": "Mode d’exécution sans état :"
     }
   ],
+  "lhL/KL": [
+    {
+      "type": 0,
+      "value": "Normal"
+    }
+  ],
   "ljAOR6": [
     {
       "type": 0,
@@ -6591,6 +6699,12 @@
     {
       "type": 0,
       "value": "L'URL encode la chaîne d'entrée"
+    }
+  ],
+  "mQotIu": [
+    {
+      "type": 0,
+      "value": "Select Connection"
     }
   ],
   "mYQFtf": [
@@ -7338,6 +7452,12 @@
       "value": "Degré de parallélisme"
     }
   ],
+  "sYQDN+": [
+    {
+      "type": 0,
+      "value": "Formatting options for font family"
+    }
+  ],
   "sZ0G/Z": [
     {
       "type": 0,
@@ -7468,6 +7588,12 @@
     {
       "type": 0,
       "value": " h"
+    }
+  ],
+  "tJMHcJ": [
+    {
+      "type": 0,
+      "value": "Select Connection Reference"
     }
   ],
   "tLZ9Sh": [

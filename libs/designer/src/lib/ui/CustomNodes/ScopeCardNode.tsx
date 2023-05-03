@@ -36,6 +36,7 @@ import { MessageBarType } from '@fluentui/react';
 import { RunService } from '@microsoft/designer-client-services-logic-apps';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { DeleteNodeModal, MenuItemType, ScopeCard } from '@microsoft/designer-ui';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';

@@ -753,10 +753,22 @@
       "value": "Save"
     }
   ],
+  "30njcn": [
+    {
+      "type": 0,
+      "value": "Create Connection"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
       "value": "Identifikátor"
+    }
+  ],
+  "34Nt/B": [
+    {
+      "type": 0,
+      "value": "alt text for button icon"
     }
   ],
   "36RiST": [
@@ -1477,6 +1489,12 @@
       "value": "Pokud u asynchronního zpracování vzdálený server označí přijetí žádosti o zpracování pomocí odpovědi 202 (Přijato), modul Logic Apps bude i nadále pokračovat v cyklickém dotazování adresy URL zadané v hlavičce umístění odpovědi, dokud se nedosáhne konečného stavu."
     }
   ],
+  "8luJ2j": [
+    {
+      "type": 0,
+      "value": "Create Connection Reference"
+    }
+  ],
   "8pPivj": [
     {
       "type": 0,
@@ -1971,6 +1989,12 @@
     {
       "type": 0,
       "value": "Sbalit"
+    }
+  ],
+  "BrWQ0Z": [
+    {
+      "type": 0,
+      "value": "Select a managed identity"
     }
   ],
   "BuYrD3": [
@@ -2701,6 +2725,12 @@
       "value": "."
     }
   ],
+  "HOchry": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -2881,6 +2911,12 @@
       "value": "Asynchronní zpracování"
     }
   ],
+  "J2Su6x": [
+    {
+      "type": 0,
+      "value": "Formatting options for font size"
+    }
+  ],
   "J5/7vN": [
     {
       "type": 0,
@@ -3025,6 +3061,12 @@
     {
       "type": 0,
       "value": "Vrátí podmnožinu znaků z řetězce."
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Change connection reference"
     }
   ],
   "KX1poC": [
@@ -3243,6 +3285,12 @@
     {
       "type": 0,
       "value": "Zobrazit více"
+    }
+  ],
+  "Lm9bnN": [
+    {
+      "type": 0,
+      "value": "Bullet List"
     }
   ],
   "LoGUT3": [
@@ -3673,6 +3721,12 @@
       "value": "Vyberte spravovanou identitu"
     }
   ],
+  "P+7G62": [
+    {
+      "type": 0,
+      "value": "Heading 3"
+    }
+  ],
   "P+mWgV": [
     {
       "type": 0,
@@ -3869,6 +3923,12 @@
       "value": "Stavový kód"
     }
   ],
+  "QIOOQU": [
+    {
+      "type": 0,
+      "value": "No Items"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -3877,6 +3937,12 @@
     {
       "type": 1,
       "value": "title"
+    }
+  ],
+  "QZ5DZl": [
+    {
+      "type": 0,
+      "value": "alt text for chevron down"
     }
   ],
   "QZBPUx": [
@@ -4079,6 +4145,12 @@
     {
       "type": 0,
       "value": "Heslo"
+    }
+  ],
+  "SGnTpt": [
+    {
+      "type": 0,
+      "value": "Heading 2"
     }
   ],
   "SJFVxf": [
@@ -4331,6 +4403,12 @@
       "value": "Note"
     }
   ],
+  "Ttc0SM": [
+    {
+      "type": 0,
+      "value": "Heading 1"
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -4413,6 +4491,12 @@
     {
       "type": 0,
       "value": "Nahradí řetězec daným řetězcem."
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Logical Name"
     }
   ],
   "UR1CS5": [
@@ -4967,6 +5051,12 @@
       "value": "Yes/No"
     }
   ],
+  "YWOKlU": [
+    {
+      "type": 0,
+      "value": "Numbered List"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
@@ -5485,6 +5575,12 @@
       "value": "Další informace"
     }
   ],
+  "dL9V5t": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "dOpdsP": [
     {
       "type": 0,
@@ -5885,6 +5981,12 @@
     {
       "type": 0,
       "value": "Podmínky aktivační události"
+    }
+  ],
+  "gc6v4X": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "gfBWfH": [
@@ -6597,6 +6699,12 @@
       "value": "Bezstavový režim spuštění:"
     }
   ],
+  "lhL/KL": [
+    {
+      "type": 0,
+      "value": "Normal"
+    }
+  ],
   "ljAOR6": [
     {
       "type": 0,
@@ -6697,6 +6805,12 @@
     {
       "type": 0,
       "value": "Zakóduje vstupní řetězec jako adresu URL."
+    }
+  ],
+  "mQotIu": [
+    {
+      "type": 0,
+      "value": "Select Connection"
     }
   ],
   "mYQFtf": [
@@ -7459,6 +7573,12 @@
       "value": "Stupeň paralelismu"
     }
   ],
+  "sYQDN+": [
+    {
+      "type": 0,
+      "value": "Formatting options for font family"
+    }
+  ],
   "sZ0G/Z": [
     {
       "type": 0,
@@ -7589,6 +7709,12 @@
     {
       "type": 0,
       "value": " h"
+    }
+  ],
+  "tJMHcJ": [
+    {
+      "type": 0,
+      "value": "Select Connection Reference"
     }
   ],
   "tLZ9Sh": [

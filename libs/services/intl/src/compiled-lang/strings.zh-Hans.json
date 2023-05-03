@@ -716,10 +716,22 @@
       "value": "Save"
     }
   ],
+  "30njcn": [
+    {
+      "type": 0,
+      "value": "Create Connection"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
       "value": "标识符"
+    }
+  ],
+  "34Nt/B": [
+    {
+      "type": 0,
+      "value": "alt text for button icon"
     }
   ],
   "36RiST": [
@@ -1444,6 +1456,12 @@
       "value": "在异步模式下，如果远程服务器指示处理 202 (已接受)响应的请求已被接受，逻辑应用将一直轮询在响应的位置标头中指定的 URL，直到达到终止状态。"
     }
   ],
+  "8luJ2j": [
+    {
+      "type": 0,
+      "value": "Create Connection Reference"
+    }
+  ],
   "8pPivj": [
     {
       "type": 0,
@@ -1905,6 +1923,12 @@
     {
       "type": 0,
       "value": "折叠"
+    }
+  ],
+  "BrWQ0Z": [
+    {
+      "type": 0,
+      "value": "Select a managed identity"
     }
   ],
   "BuYrD3": [
@@ -2594,6 +2618,12 @@
       "value": "\"。"
     }
   ],
+  "HOchry": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -2774,6 +2804,12 @@
       "value": "异步模式"
     }
   ],
+  "J2Su6x": [
+    {
+      "type": 0,
+      "value": "Formatting options for font size"
+    }
+  ],
   "J5/7vN": [
     {
       "type": 0,
@@ -2922,6 +2958,12 @@
     {
       "type": 0,
       "value": "从字符串返回部分字符"
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Change connection reference"
     }
   ],
   "KX1poC": [
@@ -3099,6 +3141,12 @@
     {
       "type": 0,
       "value": "查看更多"
+    }
+  ],
+  "Lm9bnN": [
+    {
+      "type": 0,
+      "value": "Bullet List"
     }
   ],
   "LoGUT3": [
@@ -3525,6 +3573,12 @@
       "value": "选择托管标识"
     }
   ],
+  "P+7G62": [
+    {
+      "type": 0,
+      "value": "Heading 3"
+    }
+  ],
   "P+mWgV": [
     {
       "type": 0,
@@ -3721,6 +3775,12 @@
       "value": "状态代码"
     }
   ],
+  "QIOOQU": [
+    {
+      "type": 0,
+      "value": "No Items"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 1,
@@ -3729,6 +3789,12 @@
     {
       "type": 0,
       "value": " 卡的关联菜单"
+    }
+  ],
+  "QZ5DZl": [
+    {
+      "type": 0,
+      "value": "alt text for chevron down"
     }
   ],
   "QZBPUx": [
@@ -3898,6 +3964,12 @@
     {
       "type": 0,
       "value": "密码"
+    }
+  ],
+  "SGnTpt": [
+    {
+      "type": 0,
+      "value": "Heading 2"
     }
   ],
   "SJFVxf": [
@@ -4150,6 +4222,12 @@
       "value": "Note"
     }
   ],
+  "Ttc0SM": [
+    {
+      "type": 0,
+      "value": "Heading 1"
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -4232,6 +4310,12 @@
     {
       "type": 0,
       "value": "用给定字符串替换字符串"
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Logical Name"
     }
   ],
   "UR1CS5": [
@@ -4790,6 +4874,12 @@
       "value": "Yes/No"
     }
   ],
+  "YWOKlU": [
+    {
+      "type": 0,
+      "value": "Numbered List"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
@@ -5312,6 +5402,12 @@
       "value": "了解详细信息"
     }
   ],
+  "dL9V5t": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "dOpdsP": [
     {
       "type": 0,
@@ -5716,6 +5812,12 @@
     {
       "type": 0,
       "value": "触发器条件"
+    }
+  ],
+  "gc6v4X": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "gfBWfH": [
@@ -6395,6 +6497,12 @@
       "value": "无状态运行模式:"
     }
   ],
+  "lhL/KL": [
+    {
+      "type": 0,
+      "value": "Normal"
+    }
+  ],
   "ljAOR6": [
     {
       "type": 0,
@@ -6495,6 +6603,12 @@
     {
       "type": 0,
       "value": "URL 对输入字符串进行编码"
+    }
+  ],
+  "mQotIu": [
+    {
+      "type": 0,
+      "value": "Select Connection"
     }
   ],
   "mYQFtf": [
@@ -7236,6 +7350,12 @@
       "value": "并行度"
     }
   ],
+  "sYQDN+": [
+    {
+      "type": 0,
+      "value": "Formatting options for font family"
+    }
+  ],
   "sZ0G/Z": [
     {
       "type": 0,
@@ -7366,6 +7486,12 @@
     {
       "type": 0,
       "value": " 小时"
+    }
+  ],
+  "tJMHcJ": [
+    {
+      "type": 0,
+      "value": "Select Connection Reference"
     }
   ],
   "tLZ9Sh": [

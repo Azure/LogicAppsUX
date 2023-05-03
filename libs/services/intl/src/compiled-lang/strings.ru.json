@@ -745,10 +745,22 @@
       "value": "Save"
     }
   ],
+  "30njcn": [
+    {
+      "type": 0,
+      "value": "Create Connection"
+    }
+  ],
   "33+WHG": [
     {
       "type": 0,
       "value": "Идентификатор"
+    }
+  ],
+  "34Nt/B": [
+    {
+      "type": 0,
+      "value": "alt text for button icon"
     }
   ],
   "36RiST": [
@@ -1473,6 +1485,12 @@
       "value": "При использовании асинхронного шаблона применяется следующая схема: если удаленный сервер сообщает, что запрос принят к обработке, при помощи ответа \"202 (Принято)\", то подсистема Logic Apps продолжит опрашивать URL-адрес, указанный в заголовке расположения ответа, до тех пор, пока не будет достигнуто терминальное состояние."
     }
   ],
+  "8luJ2j": [
+    {
+      "type": 0,
+      "value": "Create Connection Reference"
+    }
+  ],
   "8pPivj": [
     {
       "type": 0,
@@ -1967,6 +1985,12 @@
     {
       "type": 0,
       "value": "Свернуть"
+    }
+  ],
+  "BrWQ0Z": [
+    {
+      "type": 0,
+      "value": "Select a managed identity"
     }
   ],
   "BuYrD3": [
@@ -2697,6 +2721,12 @@
       "value": "\"."
     }
   ],
+  "HOchry": [
+    {
+      "type": 0,
+      "value": "Select an existing connection reference or create a new one."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -2877,6 +2907,12 @@
       "value": "Асинхронный шаблон"
     }
   ],
+  "J2Su6x": [
+    {
+      "type": 0,
+      "value": "Formatting options for font size"
+    }
+  ],
   "J5/7vN": [
     {
       "type": 0,
@@ -3025,6 +3061,12 @@
     {
       "type": 0,
       "value": "Возвращает подмножество символов из строки"
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Change connection reference"
     }
   ],
   "KX1poC": [
@@ -3243,6 +3285,12 @@
     {
       "type": 0,
       "value": "Показать больше"
+    }
+  ],
+  "Lm9bnN": [
+    {
+      "type": 0,
+      "value": "Bullet List"
     }
   ],
   "LoGUT3": [
@@ -3669,6 +3717,12 @@
       "value": "Выберите управляемое удостоверение"
     }
   ],
+  "P+7G62": [
+    {
+      "type": 0,
+      "value": "Heading 3"
+    }
+  ],
   "P+mWgV": [
     {
       "type": 0,
@@ -3865,6 +3919,12 @@
       "value": "Код состояния"
     }
   ],
+  "QIOOQU": [
+    {
+      "type": 0,
+      "value": "No Items"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -3873,6 +3933,12 @@
     {
       "type": 1,
       "value": "title"
+    }
+  ],
+  "QZ5DZl": [
+    {
+      "type": 0,
+      "value": "alt text for chevron down"
     }
   ],
   "QZBPUx": [
@@ -4075,6 +4141,12 @@
     {
       "type": 0,
       "value": "Пароль"
+    }
+  ],
+  "SGnTpt": [
+    {
+      "type": 0,
+      "value": "Heading 2"
     }
   ],
   "SJFVxf": [
@@ -4327,6 +4399,12 @@
       "value": "Note"
     }
   ],
+  "Ttc0SM": [
+    {
+      "type": 0,
+      "value": "Heading 1"
+    }
+  ],
   "Twfck/": [
     {
       "type": 0,
@@ -4409,6 +4487,12 @@
     {
       "type": 0,
       "value": "Заменяет строку заданной строкой"
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Logical Name"
     }
   ],
   "UR1CS5": [
@@ -4963,6 +5047,12 @@
       "value": "Yes/No"
     }
   ],
+  "YWOKlU": [
+    {
+      "type": 0,
+      "value": "Numbered List"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
@@ -5481,6 +5571,12 @@
       "value": "Подробнее"
     }
   ],
+  "dL9V5t": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "dOpdsP": [
     {
       "type": 0,
@@ -5881,6 +5977,12 @@
     {
       "type": 0,
       "value": "Условия триггера"
+    }
+  ],
+  "gc6v4X": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "gfBWfH": [
@@ -6601,6 +6703,12 @@
       "value": "Режим запуска без отслеживания состояния:"
     }
   ],
+  "lhL/KL": [
+    {
+      "type": 0,
+      "value": "Normal"
+    }
+  ],
   "ljAOR6": [
     {
       "type": 0,
@@ -6701,6 +6809,12 @@
     {
       "type": 0,
       "value": "Выполняет кодировку URL входной строки"
+    }
+  ],
+  "mQotIu": [
+    {
+      "type": 0,
+      "value": "Select Connection"
     }
   ],
   "mYQFtf": [
@@ -7467,6 +7581,12 @@
       "value": "Степень параллелизма"
     }
   ],
+  "sYQDN+": [
+    {
+      "type": 0,
+      "value": "Formatting options for font family"
+    }
+  ],
   "sZ0G/Z": [
     {
       "type": 0,
@@ -7597,6 +7717,12 @@
     {
       "type": 0,
       "value": " ч"
+    }
+  ],
+  "tJMHcJ": [
+    {
+      "type": 0,
+      "value": "Select Connection Reference"
     }
   ],
   "tLZ9Sh": [

@@ -14,6 +14,7 @@ import type {
   UpdateParametersPayload,
 } from '../../state/operation/operationMetadataSlice';
 import {
+  updateActionMetadata,
   removeParameterValidationError,
   updateParameterValidation,
   DynamicLoadStatus,
@@ -35,9 +36,9 @@ import { processPathInputs } from '../swagger/inputsbuilder';
 import { extractPathFromUri, getOperationIdFromDefinition } from '../swagger/operation';
 import { convertWorkflowParameterTypeToSwaggerType } from '../tokens';
 import { validateJSONParameter, validateStaticParameterInfo } from '../validation';
-import { getRecurrenceParameters } from './builtins';
 import { addCastToExpression, addFoldingCastToExpression } from './casting';
 import { getDynamicInputsFromSchema, getDynamicSchema, getDynamicValues, getFolderItems } from './dynamicdata';
+import { getRecurrenceParameters } from './recurrence';
 import {
   createLiteralValueSegment,
   isExpressionToken,
@@ -133,6 +134,7 @@ import {
   includes,
   isNullOrUndefined,
   isObject,
+  isString,
   startsWith,
   unmap,
   UnsupportedException,
@@ -255,7 +257,6 @@ export const getDependentParameters = (
 export function toParameterInfoMap(inputParameters: InputParameter[], stepDefinition?: any): ParameterInfo[] {
   const metadata = stepDefinition && stepDefinition.metadata;
   const result: ParameterInfo[] = [];
-
   for (const inputParameter of inputParameters) {
     if (!inputParameter.dynamicSchema) {
       const parameter = createParameterInfo(inputParameter, metadata);
@@ -278,8 +279,8 @@ export function createParameterInfo(
   metadata?: Record<string, string>,
   shouldIgnoreDefaultValue = false
 ): ParameterInfo {
-  const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, shouldIgnoreDefaultValue, metadata);
   const value = loadParameterValue(parameter);
+  const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, value, shouldIgnoreDefaultValue, metadata);
   const { alias, dependencies, encode, format, isDynamic, isUnknown, serialization, deserialization } = parameter;
   const info = {
     alias,
@@ -339,16 +340,19 @@ function hasValue(parameter: ResolvedParameter): boolean {
   return !!parameter?.value;
 }
 
-// TODO - Need to figure out a way to get the managedIdentity for the app for authentication editor
 export function getParameterEditorProps(
   parameter: InputParameter,
-  shouldIgnoreDefaultValue = false,
-  nodeMetadata?: any
+  parameterValue: ValueSegment[],
+  shouldIgnoreDefaultValue: boolean,
+  nodeMetadata: Record<string, any> | undefined
 ): ParameterEditorProps {
-  const { dynamicValues, type, itemSchema, visibility, value, enum: schemaEnum } = parameter;
+  const { dynamicValues, type, itemSchema, visibility, value, enum: schemaEnum, format } = parameter;
   let { editor, editorOptions, schema } = parameter;
   let editorViewModel;
   if (!editor) {
+    if (format === constants.EDITOR.HTML) {
+      editor = constants.EDITOR.HTML;
+    }
     if (type === constants.SWAGGER.TYPE.ARRAY && !!itemSchema && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.ARRAY;
       editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
@@ -407,7 +411,12 @@ export function getParameterEditorProps(
         : constants.FILEPICKER_TYPE.FILE;
     const fileFilters = isLegacyDynamicValuesTreeExtension(dynamicValues) ? dynamicValues.extension.parameters['fileFilter'] : undefined;
     editorOptions = { pickerType, fileFilters, items: undefined };
-    editorViewModel = { displayValue: nodeMetadata?.[value] ?? value, selectedItem: undefined };
+
+    let displayValue: string | undefined;
+    if (parameterValue.length === 1 && isLiteralValueSegment(parameterValue[0])) {
+      displayValue = nodeMetadata?.[parameterValue[0].value];
+    }
+    editorViewModel = { displayValue, selectedItem: undefined };
   }
 
   return { editor, editorOptions, editorViewModel, schema };
@@ -1073,6 +1082,9 @@ export function updateParameterWithValues(
           if (valueExpandable) {
             for (const descendantInputParameter of descendantInputParameters) {
               const extraSegments = getExtraSegments(descendantInputParameter.key, parameterKey);
+              if (descendantInputParameter.alias) {
+                reduceRedundantSegments(extraSegments);
+              }
               const descendantValue = getPropertyValueWithSpecifiedPathSegments(clonedParameterValue, extraSegments);
               let alternativeParameterKeyExtraSegment: Segment[] | null = null;
 
@@ -1316,6 +1328,30 @@ function getExtraSegments(key: string, ancestorKey: string): Segment[] {
   return childSegments.slice(startIndex);
 }
 
+function reduceRedundantSegments(segments: Segment[]): void {
+  for (let i = 0; i < segments.length - 1; i++) {
+    const segment = segments[i];
+    const nextSegment = segments[i + 1];
+
+    // Both segments must be properties and have string values to be reduced.
+    if (
+      segment.type !== SegmentType.Property ||
+      nextSegment.type !== SegmentType.Property ||
+      !isString(segment.value) ||
+      !isString(nextSegment.value)
+    ) {
+      continue;
+    }
+
+    // Reduce the segments down to one if the next segment starts with the current segment.
+    // Example: ['emailMessage', 'emailMessage/To'] should be reduced to ['emailMessage/To'].
+    if (nextSegment.value.startsWith(`${segment.value}/`)) {
+      segments.splice(i, 1);
+      i--;
+    }
+  }
+}
+
 export function transformInputParameter(inputParameter: InputParameter, parameterValue: any, invisible = false): InputParameter {
   return { ...inputParameter, hideInUI: invisible, value: parameterValue };
 }
@@ -1519,6 +1555,8 @@ export async function updateParameterAndDependencies(
 
   dispatch(updateNodeParameters(payload));
 
+  updateNodeMetadataOnParameterUpdate(nodeId, updatedParameter, dispatch);
+
   if (operationInfo?.type?.toLowerCase() === 'until') {
     validateUntilAction(dispatch, nodeId, groupId, parameterId, nodeInputs.parameterGroups[groupId].parameters, properties);
   }
@@ -1538,6 +1576,16 @@ export async function updateParameterAndDependencies(
       rootState,
       operationDefinition
     );
+  }
+}
+
+function updateNodeMetadataOnParameterUpdate(nodeId: string, parameter: ParameterInfo, dispatch: Dispatch): void {
+  // Updating action metadata when file picker parameters have different display values than parameter value.
+  const { editor, editorViewModel, value } = parameter;
+  if (editor === constants.EDITOR.FILEPICKER && value.length === 1 && isLiteralValueSegment(value[0])) {
+    if (!!editorViewModel.displayValue && !equals(editorViewModel.displayValue, value[0].value)) {
+      dispatch(updateActionMetadata({ id: nodeId, actionMetadata: { [value[0].value]: editorViewModel.displayValue } }));
+    }
   }
 }
 

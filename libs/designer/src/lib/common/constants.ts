@@ -184,6 +184,7 @@ export default {
     STRING: 'string',
     TABLE: 'table',
     VARIABLE_NAME: 'variablename',
+    HTML: 'html',
   },
   EVENT_AUTH_COMPLETED: 'MSLA_AUTH_COMPLETED',
   ERROR_MESSAGES: {
@@ -491,24 +492,9 @@ export default {
     VALUE_TITLE: 'value-title',
   },
   RAW: 'Raw',
-  // Note: DEFAULT_RECURRENCE frequency should same with RECURRENCE_FREQUENCY_VALUES value
   DEFAULT_RECURRENCE: {
-    FREE: {
-      interval: 1,
-      frequency: 'Hour',
-    },
-    STANDARD: {
-      interval: 1,
-      frequency: 'Minute',
-    },
-    PREMIUM: {
-      interval: 15,
-      frequency: 'Second',
-    },
-    CONSUMPTION: {
-      interval: 3,
-      frequency: 'Minute',
-    },
+    interval: 3,
+    frequency: 'Minute',
   },
   RECURRENCE_FREQUENCY_VALUES: ['Month', 'Week', 'Day', 'Hour', 'Minute', 'Second'],
   RECURRENCE_TITLE_JOIN_SEPARATOR: ',',

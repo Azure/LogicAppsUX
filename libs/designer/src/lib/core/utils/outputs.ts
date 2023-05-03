@@ -26,8 +26,9 @@ import {
   isFunction,
   isStringLiteral,
 } from '@microsoft/parsers-logic-apps';
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2, OperationManifest } from '@microsoft/utils-logic-apps';
 import {
+  ConnectionReferenceKeyFormat,
   getObjectPropertyValue,
   safeSetObjectPropertyValue,
   unmap,
@@ -54,6 +55,7 @@ export const toOutputInfo = (output: OutputParameter): OutputInfo => {
     source,
     required,
     visibility,
+    alias,
   } = output;
 
   return {
@@ -70,7 +72,26 @@ export const toOutputInfo = (output: OutputParameter): OutputInfo => {
     source,
     required,
     description,
+    alias,
   };
+};
+
+export const removeAliasingKeyRedundancies = (openAPIkey: string): string => {
+  // Aliased outputs (e.g., OpenAPI) may appear in the following format:
+  //   'outputs.$.body.foo.foo/bar.foo/bar/baz'
+  // This function converts an OpenAPI operation key to a non-redundant format as such:
+  //   'outputs.$.body.foo/bar/baz'
+  const pathSegments = openAPIkey.split('.');
+  for (let i = 0; i < pathSegments.length - 1; i++) {
+    const currentPathSegmentStringValue = pathSegments[i];
+    const nextPathSegmentStringValue = pathSegments[i + 1];
+
+    if (nextPathSegmentStringValue.startsWith(`${currentPathSegmentStringValue}/`)) {
+      pathSegments.splice(i, 1);
+      i--;
+    }
+  }
+  return pathSegments.join('.');
 };
 
 export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitOn: string | undefined): OperationManifest => {
@@ -91,11 +112,13 @@ export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitO
       throw new AssertionException(AssertionErrorCode.INVALID_SPLITON, invalidSplitOn);
     }
 
-    const parsedValue = ExpressionParser.parseTemplateExpression(splitOn);
+    const isAliasPathParsingEnabled = manifest.properties.connectionReference?.referenceKeyFormat === ConnectionReferenceKeyFormat.OpenApi;
+    const parsedValue = ExpressionParser.parseTemplateExpression(splitOn, isAliasPathParsingEnabled);
     const properties: string[] = [];
     let manifestSection = updatedManifest.properties.outputs;
     if (isSupportedSplitOnExpression(parsedValue)) {
       const { dereferences, name } = parsedValue as ExpressionFunction;
+
       if (equals(name, 'triggerBody')) {
         properties.push('body');
       }
@@ -198,9 +221,15 @@ export const isSupportedSplitOnExpression = (expression: Expression): boolean =>
 };
 
 export const getSplitOnOptions = (outputs: NodeOutputs): string[] => {
-  const arrayOutputs = unmap(outputs.originalOutputs ?? outputs.outputs).filter((output) =>
+  let arrayOutputs = unmap(outputs.originalOutputs ?? outputs.outputs).filter((output) =>
     equals(output.type, Constants.SWAGGER.TYPE.ARRAY)
   );
+
+  // make sure keys are not redundant due to aliasing key format
+  arrayOutputs = arrayOutputs.map((output) => {
+    if (!output.alias) return output;
+    return { ...output, key: removeAliasingKeyRedundancies(output.key) };
+  });
 
   // NOTE: The isInsideArray flag is unreliable, as this is reset when calculating
   // if an output is inside a splitOn array. If the entire body is an array, all other array
@@ -288,6 +317,7 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
 const getSplitOnArrayName = (splitOnValue: string): string | undefined => {
   if (isTemplateExpression(splitOnValue)) {
     try {
+      // TODO: Might require aliasing path parsing support
       const parsedValue = ExpressionParser.parseTemplateExpression(splitOnValue);
       if (isSupportedSplitOnExpression(parsedValue)) {
         const { dereferences } = parsedValue as ExpressionFunction;
@@ -386,7 +416,13 @@ export const loadDynamicOutputsInNode = async (
         dispatch(
           addDynamicTokens({
             nodeId,
-            tokens: convertOutputsToTokens(nodeId, operationInfo.type, dynamicOutputs, { iconUri, brandColor }, settings),
+            tokens: convertOutputsToTokens(
+              isTrigger ? undefined : nodeId,
+              operationInfo.type,
+              dynamicOutputs,
+              { iconUri, brandColor },
+              settings
+            ),
           })
         );
       }

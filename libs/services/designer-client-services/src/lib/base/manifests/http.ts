@@ -1,5 +1,5 @@
-import { OperationOptions, RecurrenceType, SettingScope } from '@microsoft/utils-logic-apps';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
+import { OperationOptions, RecurrenceType, SettingScope } from '@microsoft/utils-logic-apps';
 
 const methodOptions = [
   { value: 'GET', displayName: 'GET' },
@@ -150,7 +150,11 @@ export const httpManifest = {
       },
       operationOptions: {
         scopes: [SettingScope.Action],
-        options: [OperationOptions.Asynchronous, OperationOptions.DisableAutomaticDecompression, OperationOptions.SuppressWorkflowHeaders],
+        options: [
+          OperationOptions.DisableAsyncPattern,
+          OperationOptions.DisableAutomaticDecompression,
+          OperationOptions.SuppressWorkflowHeaders,
+        ],
       },
       paging: {
         scopes: [SettingScope.Action],
@@ -290,7 +294,11 @@ export const httpWithSwaggerManifest = {
       },
       operationOptions: {
         scopes: [SettingScope.Action],
-        options: [OperationOptions.Asynchronous, OperationOptions.DisableAutomaticDecompression, OperationOptions.SuppressWorkflowHeaders],
+        options: [
+          OperationOptions.DisableAsyncPattern,
+          OperationOptions.DisableAutomaticDecompression,
+          OperationOptions.SuppressWorkflowHeaders,
+        ],
       },
       requestOptions: {
         scopes: [SettingScope.Action],

@@ -40,8 +40,6 @@ export class ConsumptionConnectionService extends BaseConnectionService {
     });
 
     try {
-      if (connector.properties.testConnectionUrl) await this.pretestServiceProviderConnection(connector, connectionInfo);
-
       if (!isArmResourceId(connector.id)) throw 'Connector id is not a valid ARM resource id.';
 
       const connection = await this.createConnectionInApiHub(connectionName, connector.id, connectionInfo);
@@ -63,7 +61,11 @@ export class ConsumptionConnectionService extends BaseConnectionService {
     }
   }
 
-  async createConnectionInApiHub(connectionName: string, connectorId: string, connectionInfo: ConnectionCreationInfo): Promise<Connection> {
+  private async createConnectionInApiHub(
+    connectionName: string,
+    connectorId: string,
+    connectionInfo: ConnectionCreationInfo
+  ): Promise<Connection> {
     const {
       httpClient,
       apiHubServiceDetails: { apiVersion, baseUrl },
@@ -81,10 +83,8 @@ export class ConsumptionConnectionService extends BaseConnectionService {
     return connection;
   }
 
-  // Run when assigning a conneciton to an operation
   async setupConnectionIfNeeded(_connection: Connection): Promise<void> {
-    // In standard this is where we set access policies if needed
-    // TODO: Do we need to support anything here for consumption?
+    // No action needed for consumption connections.
   }
 
   async createAndAuthorizeOAuthConnection(
@@ -95,7 +95,13 @@ export class ConsumptionConnectionService extends BaseConnectionService {
   ): Promise<CreateConnectionResult> {
     try {
       const connector = await this.getConnector(connectorId);
-      const connection = await this.createConnection(connectionId, connector, connectionInfo, parametersMetadata, false);
+      const connection = await this.createConnection(
+        connectionId,
+        connector,
+        connectionInfo,
+        parametersMetadata,
+        /* shouldTestConnection */ false
+      );
       const oAuthService = OAuthService();
       const consentUrl = await oAuthService.fetchConsentUrlForConnection(connectionId);
       const oAuthPopupInstance: IOAuthPopup = oAuthService.openLoginPopup({ consentUrl });

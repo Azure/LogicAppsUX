@@ -20,3 +20,7 @@ export const useTokenSelectorData = () => {
 export const useIsConsumption = () => {
   return useSelector((state: RootState) => state.designerOptions.isConsumption);
 };
+
+export const useIsXrmConnectionReferenceMode = () => {
+  return useSelector((state: RootState) => state.designerOptions.isXrmConnectionReferenceMode);
+};

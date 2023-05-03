@@ -32,7 +32,7 @@ import {
   DeserializationType,
   PropertySerializationType,
 } from '@microsoft/parsers-logic-apps';
-import type { LocationSwapMap, OperationManifest, SubGraphDetail } from '@microsoft/utils-logic-apps';
+import type { LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/utils-logic-apps';
 import {
   clone,
   deleteObjectProperty,
@@ -517,6 +517,10 @@ interface OpenApiConnectionInfo {
   host: LogicAppsV2.OpenApiConnectionHost;
 }
 
+interface HybridTriggerConnectionInfo {
+  host: LogicAppsV2.HybridTriggerConnectionHost;
+}
+
 interface ServiceProviderConnectionConfigInfo {
   serviceProviderConfiguration: {
     connectionName: string;
@@ -529,7 +533,13 @@ const serializeHost = (
   nodeId: string,
   manifest: OperationManifest,
   rootState: RootState
-): FunctionConnectionInfo | ApiManagementConnectionInfo | OpenApiConnectionInfo | ServiceProviderConnectionConfigInfo | undefined => {
+):
+  | FunctionConnectionInfo
+  | ApiManagementConnectionInfo
+  | OpenApiConnectionInfo
+  | ServiceProviderConnectionConfigInfo
+  | HybridTriggerConnectionInfo
+  | undefined => {
   if (!manifest.properties.connectionReference) {
     return undefined;
   }
@@ -566,6 +576,14 @@ const serializeHost = (
           connectionName: referenceKey,
           operationId,
           serviceProviderId: connectorId,
+        },
+      };
+    case ConnectionReferenceKeyFormat.HybridTrigger:
+      return {
+        host: {
+          connection: {
+            name: "@parameters('$connections')[" + referenceKey + "]['connectionId']",
+          },
         },
       };
     default:
@@ -694,7 +712,7 @@ const serializeSubGraph = async (
   return result;
 };
 
-const isWorkflowOperationNode = (node: WorkflowNode) =>
+export const isWorkflowOperationNode = (node: WorkflowNode) =>
   node.type === WORKFLOW_NODE_TYPES.OPERATION_NODE || node.type === WORKFLOW_NODE_TYPES.GRAPH_NODE;
 //#endregion
 

@@ -56,7 +56,7 @@ import {
   SchemaProcessor,
   WildIndexSegment,
 } from '@microsoft/parsers-logic-apps';
-import type { Connection, Connector, OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
+import type { Connection, Connector, OpenAPIV2, OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 import {
   first,
   getObjectPropertyValue,
@@ -151,7 +151,11 @@ export async function getDynamicSchema(
 
       switch (dynamicState?.extension?.builtInOperation) {
         case 'getVariableSchema':
-          schema = { type: getSwaggerTypeFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean') };
+          schema = {
+            type: getSwaggerTypeFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean'),
+            enum: getSwaggerEnumFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean'),
+          };
+
           break;
         case 'getVariable':
           // eslint-disable-next-line no-case-declarations
@@ -283,7 +287,7 @@ export async function getFolderItems(
   selectedValue: any | undefined,
   dependencyInfo: DependencyInfo,
   nodeInputs: NodeInputs,
-  nodeMetadata: any,
+  _nodeMetadata: any,
   operationInfo: OperationInfo,
   connectionReference: ConnectionReference | undefined,
   idReplacements: Record<string, string>
@@ -295,8 +299,14 @@ export async function getFolderItems(
     const connectionId = connectionReference?.connection.id as string;
     const { operationId, parameters: referenceParameters } = selectedValue ? browse : open;
     const pickerParameters = Object.keys(referenceParameters ?? {}).reduce((result: Record<string, any>, paramKey: string) => {
-      if (referenceParameters?.[paramKey]?.selectedItemValuePath) {
-        return { ...result, [paramKey]: getPropertyValue(selectedValue, referenceParameters[paramKey].selectedItemValuePath) };
+      if (referenceParameters?.[paramKey]?.selectedItemValuePath || referenceParameters?.[paramKey]?.['value-property']) {
+        return {
+          ...result,
+          [paramKey]: getPropertyValue(
+            selectedValue,
+            referenceParameters?.[paramKey]?.selectedItemValuePath ?? referenceParameters[paramKey]?.['value-property'] ?? ''
+          ),
+        };
       }
 
       return { ...result, [paramKey]: referenceParameters?.[paramKey] };
@@ -310,15 +320,7 @@ export async function getFolderItems(
       connectionReference as ConnectionReference
     );
 
-    return getLegacyDynamicTreeItems(
-      connectionId,
-      connectorId,
-      operationId,
-      inputs,
-      definition.extension,
-      filePickerInfo,
-      managedIdentityRequestProperties
-    );
+    return getLegacyDynamicTreeItems(connectionId, connectorId, operationId, inputs, filePickerInfo, managedIdentityRequestProperties);
   }
 
   throw new UnsupportedException(`Dynamic extension '${definition.type}' is not implemented yet or not supported`);
@@ -438,7 +440,6 @@ async function getManagedIdentityRequestProperties(
 
   let managedIdentityRequestProperties: ManagedIdentityRequestProperties | undefined;
 
-  // TODO - Update this when support for Managed identity is added.
   if (isManagedIdentityTypeConnection) {
     managedIdentityRequestProperties = {
       connection: { id: connection.id },
@@ -659,6 +660,15 @@ function getSwaggerTypeFromVariableType(variableType: string): string | undefine
     case 'array':
     case 'object':
       return variableType;
+    default:
+      return undefined;
+  }
+}
+
+function getSwaggerEnumFromVariableType(variableType: string): boolean[] | undefined {
+  switch (variableType) {
+    case 'boolean':
+      return [true, false];
     default:
       return undefined;
   }
