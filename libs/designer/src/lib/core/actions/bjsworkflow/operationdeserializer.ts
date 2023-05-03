@@ -89,8 +89,10 @@ export const initializeOperationMetadata = async (
           const childOperation = operations[child.id];
           if ('inputs' in childOperation) {
             const rootNodeOperationInfo = childOperation.inputs.host;
-            const { apiId: connectorId, operationId } = rootNodeOperationInfo;
-            rootNodeManifest = await getOperationManifest({ connectorId, operationId });
+            if (rootNodeOperationInfo) {
+              const { apiId: connectorId, operationId } = rootNodeOperationInfo;
+              rootNodeManifest = await getOperationManifest({ connectorId, operationId });
+            }
           }
         }
       }
