@@ -10,6 +10,7 @@ import type { IProjectWizardContext } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import type { Progress } from 'vscode';
 
+// Used to create a step in the Azure Logic Apps Standard wizard
 export abstract class ProjectCodeCreateStepBase extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 10;
 
@@ -18,6 +19,7 @@ export abstract class ProjectCodeCreateStepBase extends AzureWizardExecuteStep<I
     progress: Progress<{ message?: string | undefined; increment?: number | undefined }>
   ): Promise<void>;
 
+  // Creates the project directory
   public async execute(
     context: IProjectWizardContext,
     progress: Progress<{ message?: string | undefined; increment?: number | undefined }>
@@ -31,6 +33,7 @@ export abstract class ProjectCodeCreateStepBase extends AzureWizardExecuteStep<I
 
     await this.executeCore(context, progress);
 
+    // Initializes a git repository if one is not already present
     if ((await isGitInstalled(context.workspacePath)) && !(await isInsideRepo(context.workspacePath))) {
       await gitInit(context.workspacePath);
     }
