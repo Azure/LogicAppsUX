@@ -144,8 +144,12 @@ const ParameterSection = ({
       if (viewModel !== undefined) {
         propertiesToUpdate.editorViewModel = viewModel;
       }
-      if (variables[nodeId] && (parameter?.parameterKey === 'inputs.$.name' || parameter?.parameterKey === 'inputs.$.type')) {
-        dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
+      if (variables[nodeId]) {
+        if (parameter?.parameterKey === 'inputs.$.name') {
+          dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
+        } else if (parameter?.parameterKey === 'inputs.$.type') {
+          dispatch(updateVariableInfo({ id: nodeId, type: value[0]?.value }));
+        }
       }
 
       updateParameterAndDependencies(
