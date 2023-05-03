@@ -1,4 +1,16 @@
 # Logic Apps Designer
+### [2.15.6](https://github.com/Azure/LogicAppsUX/compare/v2.15.5...v2.15.6) (2023-05-03)
+
+
+### Bug Fixes
+
+* **designer:** Add concurrency to for each action ([#2195](https://github.com/Azure/LogicAppsUX/issues/2195)) ([f4012eb](https://github.com/Azure/LogicAppsUX/commit/f4012eb4e2cc4f28852ee66be793fcacf45c9052))
+* **designer:** Code & Message should be shown conditionally for Terminate action ([#2205](https://github.com/Azure/LogicAppsUX/issues/2205)) ([d3b2094](https://github.com/Azure/LogicAppsUX/commit/d3b2094bd6bd8ad37796a3182b58112793db77a8))
+* **designer:** Dynamic content was incorrectly cached for swagger based operations ([#2206](https://github.com/Azure/LogicAppsUX/issues/2206)) ([3e62b1c](https://github.com/Azure/LogicAppsUX/commit/3e62b1c9f18e51d6e6295bb3d165622fe2400370))
+* **designer:** Fix expression for dynamic trigger output tokens ([#2201](https://github.com/Azure/LogicAppsUX/issues/2201)) ([1527be1](https://github.com/Azure/LogicAppsUX/commit/1527be1cb083c8b965b5a779a7273cbd6fc2d413))
+* **designer:** Fixing the operation setting for async pattern in http manifest ([#2207](https://github.com/Azure/LogicAppsUX/issues/2207)) ([f6df515](https://github.com/Azure/LogicAppsUX/commit/f6df51524e179bc5ece45331ad6ec47b1ed370e8))
+* **openapi:** Make parameters optional in OpenAPI builder ([#2184](https://github.com/Azure/LogicAppsUX/issues/2184)) ([81f73f3](https://github.com/Azure/LogicAppsUX/commit/81f73f3be97473cfcadee788701a488f4419b97f))
+
 ### [2.15.5](https://github.com/Azure/LogicAppsUX/compare/v2.15.4...v2.15.5) (2023-05-02)
 
 
