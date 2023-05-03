@@ -59,6 +59,11 @@ export interface ArrayViewModel {
    * @member {any} itemSchema - the associated item schema for the array parameter used in UI.
    */
   itemSchema?: any;
+
+  /**
+   * @member {boolean} complexArray - the associated item schema for the array parameter used in UI.
+   */
+  complexArray?: boolean;
 }
 
 export interface ItemPropertyViewModel {

@@ -15,7 +15,7 @@ export interface CollapsedArrayProps {
   readOnly?: boolean;
   isTrigger?: boolean;
   itemSchema?: ItemSchemaItemProps[];
-  dimensionalSchema: unknown[];
+  dimensionalSchema: ItemSchemaItemProps[];
   setCollapsedValue: (val: ValueSegment[]) => void;
   setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItems[]) => void);
   setIsValid: (b: boolean) => void;
@@ -29,7 +29,7 @@ export const CollapsedArray = ({
   collapsedValue,
   readOnly,
   isTrigger,
-  itemSchema,
+  dimensionalSchema,
   getTokenPicker,
   setItems,
   setIsValid,
@@ -80,7 +80,7 @@ export const CollapsedArray = ({
             className={'msla-collapsed-editor-validation'}
             isValid={isValid}
             collapsedValue={collapsedValue}
-            itemSchema={itemSchema}
+            itemSchema={dimensionalSchema}
             setCollapsedValue={setCollapsedValue}
             setIsValid={setIsValid}
             setItems={setItems}

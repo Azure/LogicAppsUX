@@ -90,9 +90,12 @@
     padding: 0 @padding;
 
     .msla-array-item {
-      margin: 4px;
-      padding: 4px 4px 4px 4px;
-      border: 1px solid @defaultBorderColor;
+      margin-left: 6px;
+      &.complex {
+        margin: 4px;
+        padding: 4px 4px 4px 4px;
+        border: 1px solid @defaultBorderColor;
+      }
 
       .msla-array-item-header {
         display: flex;

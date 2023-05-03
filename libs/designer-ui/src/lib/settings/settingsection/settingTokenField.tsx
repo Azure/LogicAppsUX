@@ -177,7 +177,7 @@ const TokenField = ({
       return (
         <ArrayEditor
           labelId={labelId}
-          type={editorViewModel.itemSchema ? ArrayType.COMPLEX : ArrayType.SIMPLE}
+          type={editorViewModel.complexArray ? ArrayType.COMPLEX : ArrayType.SIMPLE}
           labelProps={{ text: label ? `${label} Item` : 'Array Item' }}
           placeholder={placeholder}
           readonly={readOnly}

@@ -166,7 +166,6 @@ export const validationAndSerializeComplexArray = (
       setItems([]);
     } else {
       const jsonEditor = JSON.parse(editorString);
-      console.log(jsonEditor);
       const returnItems: ComplexArrayItems[] = [];
       jsonEditor.forEach((jsonEditorItem: any, index: number) => {
         const flatJSON = flattenObject(jsonEditorItem);

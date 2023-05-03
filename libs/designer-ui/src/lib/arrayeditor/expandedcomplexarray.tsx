@@ -5,7 +5,7 @@ import { notEqual } from '../editor/base/utils/helper';
 import { ItemMenuButton, renderLabel } from './expandedsimplearray';
 import type { ItemSchemaItemProps } from './util/util';
 import type { IIconProps } from '@fluentui/react';
-import { DefaultButton } from '@fluentui/react';
+import { css, DefaultButton } from '@fluentui/react';
 import { guid } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
@@ -53,7 +53,7 @@ export const ExpandedComplexArray = ({
     <div className="msla-array-container msla-array-item-container">
       {allItems.map((item, index) => {
         return (
-          <div key={index} className="msla-array-item">
+          <div key={index} className={css('msla-array-item', 'complex')}>
             {item.items.map((complexItems, i) => {
               return (
                 <div key={item.key + i}>

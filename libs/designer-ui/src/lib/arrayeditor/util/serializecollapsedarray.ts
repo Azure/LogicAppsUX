@@ -31,7 +31,6 @@ export const serializeComplexArray = (
   editor.getEditorState().read(() => {
     const nodeMap = new Map<string, ValueSegment>();
     const editorString = getChildrenNodes($getRoot(), nodeMap);
-    console.log(editorString);
     validationAndSerializeComplexArray(editorString, nodeMap, itemSchema, setItems, setIsValid, undefined, setErrorMessage);
   });
 };
