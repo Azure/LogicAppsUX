@@ -517,6 +517,10 @@ interface OpenApiConnectionInfo {
   host: LogicAppsV2.OpenApiConnectionHost;
 }
 
+interface HybridTriggerConnectionInfo {
+  host: LogicAppsV2.HybridTriggerConnectionHost;
+}
+
 interface ServiceProviderConnectionConfigInfo {
   serviceProviderConfiguration: {
     connectionName: string;
@@ -529,7 +533,13 @@ const serializeHost = (
   nodeId: string,
   manifest: OperationManifest,
   rootState: RootState
-): FunctionConnectionInfo | ApiManagementConnectionInfo | OpenApiConnectionInfo | ServiceProviderConnectionConfigInfo | undefined => {
+):
+  | FunctionConnectionInfo
+  | ApiManagementConnectionInfo
+  | OpenApiConnectionInfo
+  | ServiceProviderConnectionConfigInfo
+  | HybridTriggerConnectionInfo
+  | undefined => {
   if (!manifest.properties.connectionReference) {
     return undefined;
   }
@@ -566,6 +576,14 @@ const serializeHost = (
           connectionName: referenceKey,
           operationId,
           serviceProviderId: connectorId,
+        },
+      };
+    case ConnectionReferenceKeyFormat.HybridTrigger:
+      return {
+        host: {
+          connection: {
+            name: "@parameters('$connections')[" + referenceKey + "]['connectionId']",
+          },
         },
       };
     default:

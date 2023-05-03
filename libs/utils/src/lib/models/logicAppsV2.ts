@@ -112,6 +112,14 @@ export interface OpenApiConnectionHost {
   connection: ApiConnectionHostConnection;
 }
 
+export interface HybridTriggerConnectionHost {
+  connection: HybridTriggerConnectionHostType;
+}
+
+export interface HybridTriggerConnectionHostType {
+  name: ApiConnectionHostConnection;
+}
+
 export interface ApiConnectionHostType {
   api: ApiConnectionHostApi;
   connection: ApiConnectionHostConnection;

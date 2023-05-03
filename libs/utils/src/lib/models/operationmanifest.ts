@@ -57,6 +57,7 @@ export enum ConnectionReferenceKeyFormat {
   Function = 'function',
   OpenApi = 'openapi',
   ServiceProvider = 'serviceprovider',
+  HybridTrigger = 'hybridtrigger',
 }
 
 export interface ActionSetting {
