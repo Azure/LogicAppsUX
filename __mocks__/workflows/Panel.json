@@ -30,7 +30,7 @@
           ]
         },
         "runAfter": {},
-        "invokerconnection": false
+        "isInvokerConnectionEnabled": false
       },
       "Parse_JSON": {
         "type": "ParseJson",
@@ -58,7 +58,7 @@
         "runAfter": {
           "Initialize_ArrayVariable": ["SUCCEEDED"]
         },
-        "invokerconnection": false
+        "isInvokerConnectionEnabled": false
       },
       "Filter_array": {
         "type": "Query",
@@ -69,14 +69,14 @@
         "runAfter": {
           "Parse_JSON": ["SUCCEEDED"]
         },
-        "invokerconnection": false
+        "isInvokerConnectionEnabled": false
       }
     },
     "contentVersion": "1.0.0.0",
     "outputs": {},
     "triggers": {
       "manual": {
-        "invokerconnection": false,
+        "isInvokerConnectionEnabled": false,
         "type": "Request",
         "kind": "Http",
         "inputs": {
