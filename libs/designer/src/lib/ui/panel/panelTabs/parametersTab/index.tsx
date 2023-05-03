@@ -136,23 +136,20 @@ const ParameterSection = ({
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState) => {
-      let { value } = newState;
-      const { viewModel } = newState;
+      const { value, viewModel } = newState;
       const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
-      if (
-        (parameter?.type === constants.SWAGGER.TYPE.BOOLEAN && value.length === 1 && value[0]?.value === 'True') ||
-        value[0]?.value === 'False'
-      ) {
-        value = [{ ...value[0], value: value[0].value.toLowerCase() }];
-      }
 
       const propertiesToUpdate = { value, preservedValue: undefined } as Partial<ParameterInfo>;
 
       if (viewModel !== undefined) {
         propertiesToUpdate.editorViewModel = viewModel;
       }
-      if (variables[nodeId] && (parameter?.parameterKey === 'inputs.$.name' || parameter?.parameterKey === 'inputs.$.type')) {
-        dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
+      if (variables[nodeId]) {
+        if (parameter?.parameterKey === 'inputs.$.name') {
+          dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
+        } else if (parameter?.parameterKey === 'inputs.$.type') {
+          dispatch(updateVariableInfo({ id: nodeId, type: value[0]?.value }));
+        }
       }
 
       updateParameterAndDependencies(
