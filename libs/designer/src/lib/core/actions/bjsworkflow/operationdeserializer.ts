@@ -39,7 +39,7 @@ import {
   StaticResultService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { InputParameter, OutputParameter } from '@microsoft/parsers-logic-apps';
-import type { LogicAppsV2, OperationManifest } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2, OperationManifest, OperationManifestSettings } from '@microsoft/utils-logic-apps';
 import { isArmResourceId, uniqueArray, getPropertyValue, map, aggregate, equals } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -82,11 +82,26 @@ export const initializeOperationMetadata = async (
   for (const [operationId, operation] of Object.entries(operations)) {
     const isTrigger = isRootNodeInGraph(operationId, 'root', nodesMetadata);
 
+    let rootNodeManifest;
+    if (graph?.children !== undefined)
+      for (const child of graph.children) {
+        if (graph?.id === 'root') {
+          const childOperation = operations[child.id];
+          if ('inputs' in childOperation) {
+            const rootNodeOperationInfo = childOperation.inputs.host;
+            const { apiId: connectorId, operationId } = rootNodeOperationInfo;
+            rootNodeManifest = await getOperationManifest({ connectorId, operationId });
+          }
+        }
+      }
+
     if (isTrigger) {
       triggerNodeId = operationId;
     }
     if (operationManifestService.isSupported(operation.type, operation.kind)) {
-      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, dispatch, graph));
+      promises.push(
+        initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, dispatch, rootNodeManifest?.properties?.settings)
+      );
     } else {
       promises.push(initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, dispatch) as any);
     }
@@ -137,7 +152,7 @@ export const initializeOperationDetailsForManifest = async (
   _operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
   isTrigger: boolean,
   dispatch: Dispatch,
-  graph?: WorkflowNode
+  rootNodeManifestSettings?: OperationManifestSettings
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   const operation = { ..._operation };
   try {
@@ -178,10 +193,7 @@ export const initializeOperationDetailsForManifest = async (
         isTrigger ? (operation as LogicAppsV2.TriggerDefinition).splitOn : undefined
       );
       const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
-      let rootNodeId = '';
-      if (graph?.children) {
-        rootNodeId = graph?.children[0].id;
-      }
+
       const settings = getOperationSettings(
         isTrigger,
         nodeOperationInfo,
@@ -189,7 +201,7 @@ export const initializeOperationDetailsForManifest = async (
         manifest,
         undefined /* swagger */,
         operation,
-        rootNodeId
+        rootNodeManifestSettings
       );
 
       const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);

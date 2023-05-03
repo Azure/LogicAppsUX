@@ -3,7 +3,7 @@ import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import { addInvokerSupport, initEmptyConnectionMap } from '../../state/connection/connectionSlice';
-import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
+import type { NodeData, NodeOperation, OperationMetadataState } from '../../state/operation/operationMetadataSlice';
 import { updateNodeSettings, initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { changePanelNode, isolateTab, showDefaultTabs } from '../../state/panel/panelSlice';
@@ -205,8 +205,9 @@ const initializeOperationDetails = async (
   }
 
   // Re-update settings after we have valid operation data
-  const rootNodeId = getRootNodeDetails(state.workflow, connectorId);
   const operation = getState().workflow.operations[nodeId];
+
+  const rootNodeManifest = await getRootNodeManifest(state.workflow, state.operations);
 
   const connectionReferences = state.connections.connectionReferences;
   if (!state.connections.connectionReferences) {
@@ -219,9 +220,7 @@ const initializeOperationDetails = async (
     manifest,
     swagger,
     operation,
-    rootNodeId,
-    state.connections.connectionReferences,
-    dispatch
+    rootNodeManifest?.properties?.settings
   );
   dispatch(updateNodeSettings({ id: nodeId, settings }));
 
@@ -332,11 +331,16 @@ const getOperationType = (operation: DiscoveryOperation<DiscoveryResultTypes>): 
     : operationType;
 };
 
-export const getRootNodeDetails = (workflowState: WorkflowState, connectorId: string): string | undefined => {
-  if (workflowState.graph?.children && connectorId.indexOf(Constants.INVOKER_CONNECTION.DATAVERSE_CONNECTOR_ID) > -1) {
+export const getRootNodeManifest = async (
+  workflowState: WorkflowState,
+  operations: OperationMetadataState
+): Promise<OperationManifest | undefined> => {
+  if (workflowState?.graph?.children !== undefined) {
     for (const child of workflowState.graph.children) {
       if (workflowState.graph?.id === 'root') {
-        return child.id;
+        const rootNodeOperationInfo = operations.operationInfo[child.id];
+        const { connectorId, operationId } = rootNodeOperationInfo;
+        return await getOperationManifest({ connectorId, operationId });
       }
     }
   }
