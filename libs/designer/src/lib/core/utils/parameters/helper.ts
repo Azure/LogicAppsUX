@@ -134,6 +134,7 @@ import {
   includes,
   isNullOrUndefined,
   isObject,
+  isString,
   startsWith,
   unmap,
   UnsupportedException,
@@ -1081,6 +1082,9 @@ export function updateParameterWithValues(
           if (valueExpandable) {
             for (const descendantInputParameter of descendantInputParameters) {
               const extraSegments = getExtraSegments(descendantInputParameter.key, parameterKey);
+              if (descendantInputParameter.alias) {
+                reduceRedundantSegments(extraSegments);
+              }
               const descendantValue = getPropertyValueWithSpecifiedPathSegments(clonedParameterValue, extraSegments);
               let alternativeParameterKeyExtraSegment: Segment[] | null = null;
 
@@ -1322,6 +1326,30 @@ function getExtraSegments(key: string, ancestorKey: string): Segment[] {
   }
 
   return childSegments.slice(startIndex);
+}
+
+function reduceRedundantSegments(segments: Segment[]): void {
+  for (let i = 0; i < segments.length - 1; i++) {
+    const segment = segments[i];
+    const nextSegment = segments[i + 1];
+
+    // Both segments must be properties and have string values to be reduced.
+    if (
+      segment.type !== SegmentType.Property ||
+      nextSegment.type !== SegmentType.Property ||
+      !isString(segment.value) ||
+      !isString(nextSegment.value)
+    ) {
+      continue;
+    }
+
+    // Reduce the segments down to one if the next segment starts with the current segment.
+    // Example: ['emailMessage', 'emailMessage/To'] should be reduced to ['emailMessage/To'].
+    if (nextSegment.value.startsWith(`${segment.value}/`)) {
+      segments.splice(i, 1);
+      i--;
+    }
+  }
 }
 
 export function transformInputParameter(inputParameter: InputParameter, parameterValue: any, invisible = false): InputParameter {
