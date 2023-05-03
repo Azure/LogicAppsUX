@@ -1,9 +1,7 @@
-import type { ValueSegment } from '@microsoft/designer-ui';
-
 export type TrackedProperty = {
   name: string;
   type: string;
-  values?: ValueSegment[];
+  tokens?: any;
 };
 
 export interface TokenSelectorViewProps {

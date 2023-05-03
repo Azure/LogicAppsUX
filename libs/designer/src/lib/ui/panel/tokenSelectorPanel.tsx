@@ -52,9 +52,9 @@ const Header = (props: HeaderProps) => {
 
 const getInitialValues = (trackedProperties: TrackedProperty[]) => {
   return trackedProperties.reduce((map, property) => {
-    if (property.values) {
+    if (property.tokens) {
       // eslint-disable-next-line no-param-reassign
-      map[property.name] = property.values;
+      map[property.name] = property.tokens;
     }
     return map;
   }, {} as Record<string, ValueSegment[]>);
@@ -135,7 +135,7 @@ export const TokenSelectorPanel = (props: CommonPanelProps) => {
       }
 
       const valueTokens = values[key];
-      updatedProperties.push({ ...property, values: valueTokens });
+      updatedProperties.push({ ...property, tokens: valueTokens });
     });
 
     tokenSelectorProps.onCompleted(updatedProperties, selectedNodeId, businessID);
