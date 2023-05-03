@@ -101,9 +101,12 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       });
 
   useEffect(() => {
-    const selectConnectionTab = getSelectConnectionTab(selectConnectionTabTitle);
-    dispatch(registerPanelTabs([selectConnectionTab]));
-  }, [dispatch, selectConnectionTabTitle]);
+    const tabs = [monitoringTab, parametersTab, settingsTab, codeViewTab, testingTab, aboutTab, loadingTab];
+    if (process.env.NODE_ENV !== 'production') {
+      tabs.push(scratchTab);
+    }
+    dispatch(registerPanelTabs(tabs));
+  }, [dispatch]);
 
   useEffect(() => {
     const createConnectionTab = getCreateConnectionTab(createConnectionTabTitle);
@@ -111,12 +114,9 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   }, [dispatch, createConnectionTabTitle]);
 
   useEffect(() => {
-    const tabs = [monitoringTab, parametersTab, settingsTab, codeViewTab, testingTab, aboutTab, loadingTab];
-    if (process.env.NODE_ENV !== 'production') {
-      tabs.push(scratchTab);
-    }
-    dispatch(registerPanelTabs(tabs));
-  }, [dispatch]);
+    const selectConnectionTab = getSelectConnectionTab(selectConnectionTabTitle);
+    dispatch(registerPanelTabs([selectConnectionTab]));
+  }, [dispatch, selectConnectionTabTitle]);
 
   useEffect(() => {
     dispatch(
