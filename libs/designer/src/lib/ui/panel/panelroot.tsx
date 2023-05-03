@@ -81,45 +81,42 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
   const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
 
+  const selectConnectionTabTitle = isXrmConnectionReferenceMode
+    ? intl.formatMessage({
+        defaultMessage: 'Select Connection Reference',
+        description: 'Title for the select connection reference tab',
+      })
+    : intl.formatMessage({
+        defaultMessage: 'Select Connection',
+        description: 'Title for the select connection tab',
+      });
+  const createConnectionTabTitle = isXrmConnectionReferenceMode
+    ? intl.formatMessage({
+        defaultMessage: 'Create Connection Reference',
+        description: 'Title for the create connection reference tab',
+      })
+    : intl.formatMessage({
+        defaultMessage: 'Create Connection',
+        description: 'Title for the create connection tab',
+      });
+
   useEffect(() => {
-    const selectConnectionTabTitle = isXrmConnectionReferenceMode
-      ? intl.formatMessage({
-          defaultMessage: 'Select Connection Reference',
-          description: 'Title for the select connection reference tab',
-        })
-      : intl.formatMessage({
-          defaultMessage: 'Select Connection',
-          description: 'Title for the select connection tab',
-        });
-    const selectConnectionTab = getSelectConnectionTab(selectConnectionTabTitle);
-
-    const createConnectionTabTitle = isXrmConnectionReferenceMode
-      ? intl.formatMessage({
-          defaultMessage: 'Create Connection Reference',
-          description: 'Title for the create connection reference tab',
-        })
-      : intl.formatMessage({
-          defaultMessage: 'Create Connection',
-          description: 'Title for the create connection tab',
-        });
-    const createConnectionTab = getCreateConnectionTab(createConnectionTabTitle);
-
-    const tabs = [
-      monitoringTab,
-      parametersTab,
-      settingsTab,
-      codeViewTab,
-      testingTab,
-      createConnectionTab,
-      selectConnectionTab,
-      aboutTab,
-      loadingTab,
-    ];
+    const tabs = [monitoringTab, parametersTab, settingsTab, codeViewTab, testingTab, aboutTab, loadingTab];
     if (process.env.NODE_ENV !== 'production') {
       tabs.push(scratchTab);
     }
     dispatch(registerPanelTabs(tabs));
-  }, [dispatch, isXrmConnectionReferenceMode, intl]);
+  }, [dispatch]);
+
+  useEffect(() => {
+    const createConnectionTab = getCreateConnectionTab(createConnectionTabTitle);
+    dispatch(registerPanelTabs([createConnectionTab]));
+  }, [dispatch, createConnectionTabTitle]);
+
+  useEffect(() => {
+    const selectConnectionTab = getSelectConnectionTab(selectConnectionTabTitle);
+    dispatch(registerPanelTabs([selectConnectionTab]));
+  }, [dispatch, selectConnectionTabTitle]);
 
   useEffect(() => {
     dispatch(
