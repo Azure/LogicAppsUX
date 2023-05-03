@@ -5,6 +5,7 @@ import { BaseEditor } from '../editor/base';
 import { Label } from '../label';
 import type { LabelProps } from '../label';
 import { CollapsedArrayValidation } from './plugins/CollapsedArrayValidation';
+import type { ItemSchemaItemProps } from './util/util';
 import { useIntl } from 'react-intl';
 
 export interface CollapsedArrayProps {
@@ -13,7 +14,7 @@ export interface CollapsedArrayProps {
   collapsedValue: ValueSegment[];
   readOnly?: boolean;
   isTrigger?: boolean;
-  itemSchema?: unknown;
+  itemSchema?: ItemSchemaItemProps[];
   dimensionalSchema: unknown[];
   setCollapsedValue: (val: ValueSegment[]) => void;
   setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItems[]) => void);

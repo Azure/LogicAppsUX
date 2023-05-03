@@ -54,6 +54,11 @@ export interface ArrayViewModel {
    * @member {InputParameter} itemInputParameter - the associated item input parameter for the array parameter.
    */
   itemInputParameter: InputParameter;
+
+  /**
+   * @member {any} itemSchema - the associated item schema for the array parameter used in UI.
+   */
+  itemSchema?: any;
 }
 
 export interface ItemPropertyViewModel {

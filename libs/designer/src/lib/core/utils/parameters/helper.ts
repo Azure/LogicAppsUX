@@ -351,10 +351,11 @@ export function getParameterEditorProps(
   if (!editor) {
     if (format === constants.EDITOR.HTML) {
       editor = constants.EDITOR.HTML;
-    }
-    if (type === constants.SWAGGER.TYPE.ARRAY && !!itemSchema && !equals(visibility, Visibility.Internal)) {
+    } else if (type === constants.SWAGGER.TYPE.ARRAY && !!itemSchema && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.ARRAY;
       editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
+      editorViewModel.itemSchema = toArrayViewModelSchema(itemSchema);
+      console.log(editorViewModel.itemSchema);
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
     } else if ((schemaEnum || schema?.enum || schema?.[ExtensionProperties.CustomEnum]) && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.COMBOBOX;
@@ -385,9 +386,6 @@ export function getParameterEditorProps(
         ...editorOptions,
         options: schemaEnumOptions,
       };
-    } else if (type === constants.SWAGGER.TYPE.ARRAY && !equals(visibility, Visibility.Internal) && schema?.itemSchema) {
-      editorViewModel = toArrayViewModel(schema);
-      editor = constants.EDITOR.ARRAY;
     } else {
       editorOptions = undefined;
     }
@@ -461,27 +459,20 @@ const convertStringToInputParameter = (
   };
 };
 
-// Create Array Editor View Model
-const toArrayViewModel = (input: any): { schema: any } => {
-  const schema: any = destructureSchema(input.itemSchema);
-  return { schema };
-};
-
-const destructureSchema = (schema: any): any => {
-  if (!schema) {
-    return;
+// Create Array Editor View Model Schema
+const toArrayViewModelSchema = (itemSchema: any): any => {
+  if (Array.isArray(itemSchema)) {
+    return itemSchema.map((item) => toArrayViewModelSchema(item));
+  } else if (itemSchema !== null && typeof itemSchema === constants.SWAGGER.TYPE.OBJECT) {
+    const result: { [key: string]: any } = {};
+    Object.keys(itemSchema).forEach((key) => {
+      const value = itemSchema[key];
+      const newKey = key === 'x-ms-summary' ? 'title' : key;
+      result[newKey] = toArrayViewModelSchema(value);
+    });
+    return result;
   }
-  if (schema.type && schema.type !== 'object') {
-    return { ...schema };
-  }
-  if (schema.type === 'object' && schema.properties) {
-    return destructureSchema(schema.properties);
-  }
-  const newSchema: any = {};
-  for (const schemaItem of Object.keys(schema)) {
-    newSchema[schemaItem] = destructureSchema(schema[schemaItem]);
-  }
-  return newSchema;
+  return itemSchema;
 };
 
 // Create SimpleQueryBuilder Editor View Model

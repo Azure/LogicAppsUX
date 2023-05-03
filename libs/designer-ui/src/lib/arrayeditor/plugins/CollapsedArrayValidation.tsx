@@ -3,6 +3,7 @@ import type { ValueSegment } from '../../editor';
 import { serializeEditorState } from '../../editor/base/utils/editorToSegement';
 import { showCollapsedValidation } from '../../editor/base/utils/helper';
 import { serializeSimpleArray, serializeComplexArray } from '../util/serializecollapsedarray';
+import type { ItemSchemaItemProps } from '../util/util';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState } from 'lexical';
@@ -13,7 +14,7 @@ export interface CollapsedArrayValidationProps {
   defaultErrorMessage: string;
   isValid: boolean;
   collapsedValue?: ValueSegment[];
-  itemSchema?: unknown;
+  itemSchema?: ItemSchemaItemProps[];
   setIsValid: (b: boolean) => void;
   setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItems[]) => void);
   setCollapsedValue: (val: ValueSegment[]) => void;

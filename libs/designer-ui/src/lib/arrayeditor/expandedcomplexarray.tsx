@@ -3,6 +3,7 @@ import { StringEditor } from '..';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { notEqual } from '../editor/base/utils/helper';
 import { ItemMenuButton, renderLabel } from './expandedsimplearray';
+import type { ItemSchemaItemProps } from './util/util';
 import type { IIconProps } from '@fluentui/react';
 import { DefaultButton } from '@fluentui/react';
 import { guid } from '@microsoft/utils-logic-apps';
@@ -13,7 +14,7 @@ const addItemButtonIconProps: IIconProps = {
 };
 
 export interface ExpandedComplexArrayProps {
-  dimensionalSchema: any[];
+  dimensionalSchema: ItemSchemaItemProps[];
   allItems: ComplexArrayItems[];
   canDeleteLastItem: boolean;
   readOnly?: boolean;
