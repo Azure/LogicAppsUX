@@ -3,12 +3,20 @@ import type { NodeDataWithOperationMetadata } from '../actions/bjsworkflow/opera
 import type { Settings } from '../actions/bjsworkflow/settings';
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 import type { NodeOperation, OutputInfo } from '../state/operation/operationMetadataSlice';
+import { updateRepetitionContext } from '../state/operation/operationMetadataSlice';
 import type { TokensState } from '../state/tokensSlice';
 import type { NodesMetadata } from '../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition, WorkflowParametersState } from '../state/workflowparameters/workflowparametersSlice';
-import type { RootState } from '../store';
+import type { AppDispatch, RootState } from '../store';
 import { getAllNodesInsideNode, getTriggerNodeId, getUpstreamNodeIds } from './graph';
-import { getForeachActionName, getRepetitionNodeIds, getTokenExpressionValueForManifestBasedOperation, shouldAddForeach } from './loops';
+import {
+  addForeachToNode,
+  getForeachActionName,
+  getRepetitionContext,
+  getRepetitionNodeIds,
+  getTokenExpressionValueForManifestBasedOperation,
+  shouldAddForeach,
+} from './loops';
 import { removeAliasingKeyRedundancies } from './outputs';
 import {
   ensureExpressionValue,
@@ -112,7 +120,7 @@ export const convertOutputsToTokens = (
   // TODO - Look at repetition context to get foreach context correctly in tokens and for splitOn
 
   return Object.keys(outputs).map((outputKey) => {
-    const { key, name, type, isAdvanced, required, format, source, isInsideArray, parentArray, itemSchema, value, alias } =
+    const { key, name, type, isAdvanced, required, format, source, isInsideArray, parentArray, itemSchema, schema, value, alias } =
       outputs[outputKey];
     return {
       key: alias ? removeAliasingKeyRedundancies(key) : key,
@@ -131,6 +139,7 @@ export const convertOutputsToTokens = (
         isSecure,
         actionName: nodeId,
         arrayDetails: isInsideArray ? { itemSchema, parentArray } : undefined,
+        schema,
       },
     };
   });
@@ -232,14 +241,15 @@ export const createValueSegmentFromToken = async (
   parameterId: string,
   token: OutputToken,
   addImplicitForeachIfNeeded: boolean,
-  rootState: RootState
-): Promise<{ segment: ValueSegment; foreachDetails?: { arrayValue: string | undefined } }> => {
+  rootState: RootState,
+  dispatch: AppDispatch
+): Promise<ValueSegment> => {
   const tokenOwnerNodeId = token.outputInfo.actionName ?? getTriggerNodeId(rootState.workflow);
   const nodeType = rootState.operations.operationInfo[tokenOwnerNodeId].type;
   const tokenValueSegment = convertTokenToValueSegment(token, nodeType);
 
   if (!addImplicitForeachIfNeeded) {
-    return { segment: tokenValueSegment };
+    return tokenValueSegment;
   }
 
   if (tokenValueSegment.token?.tokenType !== TokenType.PARAMETER && tokenValueSegment.token?.tokenType !== TokenType.VARIABLE) {
@@ -251,11 +261,32 @@ export const createValueSegmentFromToken = async (
       token,
       rootState
     );
+    let newRootState = rootState;
+    let newRepetitionContext = repetitionContext;
 
-    if (parentArrayKey && repetitionContext) {
+    if (shouldAdd) {
+      const { payload: newState } = await dispatch(addForeachToNode({ arrayName: parentArrayValue, nodeId, token }));
+      newRootState = newState as RootState;
+      newRepetitionContext = await getRepetitionContext(
+        nodeId,
+        getTriggerNodeId(newRootState.workflow),
+        newRootState.operations.operationInfo,
+        newRootState.operations.inputParameters,
+        newRootState.operations.settings,
+        newRootState.workflow.nodesMetadata,
+        /* includeSelf */ false,
+        newRootState.workflow.idReplacements
+      );
+    }
+
+    if (newRepetitionContext) {
+      dispatch(updateRepetitionContext({ id: nodeId, repetition: newRepetitionContext }));
+    }
+
+    if (parentArrayKey && newRepetitionContext) {
       (tokenValueSegment.token as Token).arrayDetails = {
         ...tokenValueSegment.token?.arrayDetails,
-        loopSource: getForeachActionName(repetitionContext, parentArrayKey, tokenOwnerActionName),
+        loopSource: getForeachActionName(newRepetitionContext, parentArrayKey, tokenOwnerActionName),
       };
     }
 
@@ -284,14 +315,12 @@ export const createValueSegmentFromToken = async (
 
     if (tokenValueSegment.token) {
       const oldId = tokenValueSegment.token.actionName ?? '';
-      const newId = rootState.workflow.idReplacements[oldId] ?? oldId;
+      const newId = newRootState.workflow.idReplacements[oldId] ?? oldId;
       tokenValueSegment.token.remappedValue = tokenValueSegment.value.replace(oldId, newId);
     }
-
-    return shouldAdd ? { segment: tokenValueSegment, foreachDetails: { arrayValue: parentArrayValue } } : { segment: tokenValueSegment };
   }
 
-  return { segment: tokenValueSegment };
+  return tokenValueSegment;
 };
 
 const convertTokenToValueSegment = (token: OutputToken, nodeType: string): ValueSegment => {
@@ -304,7 +333,7 @@ const convertTokenToValueSegment = (token: OutputToken, nodeType: string): Value
     : TokenType.OUTPUTS;
 
   const { key, brandColor, icon, title, description, name, type, outputInfo } = token;
-  const { actionName, required, format, source, isSecure, arrayDetails } = outputInfo;
+  const { actionName, required, format, source, isSecure, arrayDetails, schema } = outputInfo;
   const segmentToken: Token = {
     key,
     name,
@@ -326,6 +355,7 @@ const convertTokenToValueSegment = (token: OutputToken, nodeType: string): Value
           loopSource: equals(nodeType, Constants.NODE.TYPE.UNTIL) ? actionName : undefined,
         }
       : undefined,
+    schema,
     value: getExpressionValueForOutputToken(token, nodeType),
   };
 
