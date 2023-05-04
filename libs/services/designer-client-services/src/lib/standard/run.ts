@@ -9,6 +9,7 @@ import {
   HTTP_METHODS,
   UnsupportedException,
   isString,
+  getCallbackUrl,
 } from '@microsoft/utils-logic-apps';
 
 export interface RunServiceOptions {
@@ -263,7 +264,4 @@ export class StandardRunService implements IRunService {
         throw new UnsupportedException(`Unsupported call connector method - '${method}'`);
     }
   }
-}
-function getCallbackUrl(_callbackInfo: CallbackInfo): any {
-  throw new Error('Function not implemented.');
 }
