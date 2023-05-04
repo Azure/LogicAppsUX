@@ -52,8 +52,6 @@ export const ParametersTab = () => {
   const showIdentitySelector = useShowIdentitySelector(selectedNodeId);
 
   const replacedIds = useReplacedIds();
-  const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState, replacedIds);
-  const expressionGroup = getExpressionTokenSections();
 
   if (!operationInfo && !nodeMetadata?.subgraphType) {
     return (
@@ -62,6 +60,9 @@ export const ParametersTab = () => {
       </div>
     );
   }
+
+  const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState, replacedIds);
+  const expressionGroup = getExpressionTokenSections();
 
   return (
     <>

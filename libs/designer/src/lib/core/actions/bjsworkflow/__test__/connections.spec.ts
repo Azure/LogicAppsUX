@@ -6,7 +6,7 @@ import {
 } from '../../../actions/bjsworkflow/connections';
 import type { OperationMetadataState } from '../../../state/operation/operationMetadataSlice';
 import type { RootState } from '../../../store';
-import type { StandardOperationManifestServiceOptions, IHttpClient } from '@microsoft/designer-client-services-logic-apps';
+import type { IHttpClient } from '@microsoft/designer-client-services-logic-apps';
 import {
   InitOperationManifestService,
   StandardOperationManifestService,
@@ -28,12 +28,20 @@ class MockHttpClient implements IHttpClient {
     const a: unknown = {};
     return a as ReturnType;
   }
+  put<ReturnType>() {
+    const a: unknown = {};
+    return a as ReturnType;
+  }
+  delete<ReturnType>() {
+    const a: unknown = {};
+    return a as ReturnType;
+  }
 }
 
 const nodeId = '1';
 const connectionName = 'name123';
 const mockHttp = new MockHttpClient();
-const serviceOptions: StandardOperationManifestServiceOptions = {
+const serviceOptions: any = {
   apiVersion: 'version',
   baseUrl: 'url',
   httpClient: mockHttp,
