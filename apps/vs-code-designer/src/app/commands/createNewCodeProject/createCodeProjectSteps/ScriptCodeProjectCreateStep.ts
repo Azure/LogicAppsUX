@@ -6,7 +6,7 @@ import { gitignoreFileName, hostFileName, localSettingsFileName, workerRuntimeKe
 import { addDefaultBundle } from '../../../utils/bundleFeed';
 import { confirmOverwriteFile, writeFormattedJson } from '../../../utils/fs';
 import { getFunctionsWorkerRuntime } from '../../../utils/vsCodeConfig/settings';
-import { ProjectCreateStepBase } from './ProjectCreateStepBase';
+import { ProjectCodeCreateStepBase } from '../ProjectCodeCreateStepBase';
 import { nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IHostJsonV1, IHostJsonV2, ILocalSettingsJson, IProjectWizardContext } from '@microsoft/vscode-extension';
@@ -16,7 +16,7 @@ import * as os from 'os';
 import * as path from 'path';
 import type { Progress } from 'vscode';
 
-export class ScriptProjectCreateStep extends ProjectCreateStepBase {
+export class ScriptProjectCreateStep extends ProjectCodeCreateStepBase {
   //set of files that should be ignored when creating a script project.
   protected funcignore: string[] = [
     '__blobstorage__',
@@ -31,6 +31,7 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
   protected gitignore = '';
   protected supportsManagedDependencies = false;
 
+  // creates script project
   public async executeCore(
     context: IProjectWizardContext,
     _progress: Progress<{ message?: string | undefined; increment?: number | undefined }>

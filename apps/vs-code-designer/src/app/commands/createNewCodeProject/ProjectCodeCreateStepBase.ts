@@ -10,40 +10,60 @@ import type { IProjectWizardContext } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
 import type { Progress } from 'vscode';
 
-// Used to create a step in the Azure Logic Apps Standard wizard
+/**
+ * This abstract class represents a step in the Azure Logic Apps Standard wizard that creates a new project.
+ */
 export abstract class ProjectCodeCreateStepBase extends AzureWizardExecuteStep<IProjectWizardContext> {
+  // Set the priority of the step
   public priority = 10;
 
+  /**
+   * Executes the core logic for the step.
+   * @param context The project wizard context.
+   * @param progress The progress object to report progress updates to.
+   */
   public abstract executeCore(
     context: IProjectWizardContext,
     progress: Progress<{ message?: string | undefined; increment?: number | undefined }>
   ): Promise<void>;
 
-  // Creates the project directory
+  /**
+   * Creates the project directory and executes the core logic for the step.
+   * @param context The project wizard context.
+   * @param progress The progress object to report progress updates to.
+   */
   public async execute(
     context: IProjectWizardContext,
     progress: Progress<{ message?: string | undefined; increment?: number | undefined }>
   ): Promise<void> {
+    // Set telemetry properties
     context.telemetry.properties.projectLanguage = context.language;
     context.telemetry.properties.projectRuntime = context.version;
     context.telemetry.properties.openBehavior = context.openBehavior;
 
+    // Create the project directory
     progress.report({ message: localize('creating', 'Creating new project...') });
     await fse.ensureDir(context.projectPath);
 
+    // Execute the core logic for the step
     await this.executeCore(context, progress);
 
-    // Initializes a git repository if one is not already present
+    // Initialize a git repository if one is not already present
     if ((await isGitInstalled(context.workspacePath)) && !(await isInsideRepo(context.workspacePath))) {
       await gitInit(context.workspacePath);
     }
 
-    // OpenFolderStep sometimes restarts the extension host. Adding a second event here to see if we're losing any telemetry
+    // Log telemetry for the step
     await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.createNewCodeProjectStarted', (startedContext: IActionContext) => {
       Object.assign(startedContext, context);
     });
   }
 
+  /**
+   * Determines whether the step should be executed.
+   * @param context The project wizard context.
+   * @returns True if the step should be executed, false otherwise.
+   */
   public shouldExecute(_context: IProjectWizardContext): boolean {
     return true;
   }

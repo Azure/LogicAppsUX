@@ -8,10 +8,13 @@ import { window } from 'vscode';
 export class FolderListStepCodeProject extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
 
-  public static setProjectPath(context: Partial<IProjectWizardContext>, projectPath: string, workspaceName: string): void {
+  public static setWorkspaceName(context: Partial<IProjectWizardContext>, workspaceName: string): void {
+    context.workspaceName = workspaceName;
+  }
+
+  public static setProjectPath(context: Partial<IProjectWizardContext>, projectPath: string): void {
     context.projectPath = projectPath;
     context.workspaceFolder = getContainingWorkspace(projectPath);
-    context.workspaceName = workspaceName;
     context.workspacePath = (context.workspaceFolder && context.workspaceFolder.uri.fsPath) || projectPath;
     if (context.workspaceFolder) {
       context.openBehavior = OpenBehavior.alreadyOpen;
@@ -33,10 +36,10 @@ export class FolderListStepCodeProject extends AzureWizardPromptStep<IProjectWiz
     }
 
     if (workspaceName) {
-      context.workspaceName = workspaceName.trim();
+      FolderListStepCodeProject.setWorkspaceName(context, workspaceName.trim());
     }
 
-    FolderListStepCodeProject.setProjectPath(context, selectedFolder, workspaceName);
+    FolderListStepCodeProject.setProjectPath(context, selectedFolder);
   }
 
   public shouldPrompt(context: IProjectWizardContext): boolean {

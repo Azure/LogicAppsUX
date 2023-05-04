@@ -53,7 +53,7 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
   });
 
   if (options.folderPath) {
-    FolderListStep.setProjectPath(wizardContext, options.folderPath);
+    FolderListStepCodeProject.setProjectPath(wizardContext, options.folderPath);
   }
 
   if (options.suppressOpenFolder) {
@@ -64,7 +64,7 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
   }
 
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
-    title: localize('createNewProject', 'Create new project'),
+    title: localize('createNewCodeProject', 'Create new code project'),
     promptSteps: [
       new FolderListStepCodeProject(),
       new NewProjectTypeStep(options.templateId, options.functionSettings),

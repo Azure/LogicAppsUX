@@ -44,10 +44,14 @@ export interface IProjectTreeItem {
 }
 
 export interface IProjectWizardContext extends IActionContext {
+  projectName?: string;
+  workflowStateType?: any;
   projectPath: string;
   version: FuncVersion;
   workspacePath: string;
-  workspaceName: string;
+  workspaceName?: string;
+  invokedFunctionName?: string;
+  invokedFunctionNamespace?: string;
   workspaceFolder: WorkspaceFolder | undefined;
   projectTemplateKey: string | undefined;
   language?: ProjectLanguage;
