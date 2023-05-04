@@ -3,7 +3,8 @@ import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
 import { getChildrenNodes } from '../../editor/base/utils/helper';
-import { convertComplexItemtoSchema, validationAndSerializeComplexArray, validationAndSerializeSimpleArray } from './util';
+import type { ItemSchemaItemProps } from './util';
+import { convertComplexItemsToArray, validationAndSerializeComplexArray, validationAndSerializeSimpleArray } from './util';
 import { guid } from '@microsoft/utils-logic-apps';
 import type { LexicalEditor } from 'lexical';
 import { $getRoot } from 'lexical';
@@ -22,7 +23,7 @@ export const serializeSimpleArray = (
 
 export const serializeComplexArray = (
   editor: LexicalEditor,
-  itemSchema: unknown,
+  itemSchema: ItemSchemaItemProps[],
   setItems: (items: ComplexArrayItems[]) => void,
   setIsValid: (b: boolean) => void,
   setErrorMessage: (s: string) => void
@@ -50,25 +51,15 @@ export const parseSimpleItems = (items: SimpleArrayItem[]): ValueSegment[] => {
   return parsedItems;
 };
 
-export const parseComplexItems = (allItems: ComplexArrayItems[], itemSchema: any): ValueSegment[] => {
+export const parseComplexItems = (allItems: ComplexArrayItems[], itemSchema: ItemSchemaItemProps[]): ValueSegment[] => {
   if (allItems.length === 0) {
     return [{ id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  null\n]' }];
   }
-  const currItems = allItems.filter((allItem) => {
-    let bool = false;
-    allItem.items.forEach((item) => {
-      if (item.value.length > 0) {
-        bool = true;
-      }
-    });
-    return bool;
-  });
-
   const arrayVal: any = [];
   const nodeMap = new Map<string, ValueSegment>();
-  currItems.forEach((allItems) => {
-    const { items } = allItems;
-    arrayVal.push(convertComplexItemtoSchema(itemSchema, items, nodeMap));
+  allItems.forEach((currItem) => {
+    const { items } = currItem;
+    arrayVal.push(convertComplexItemsToArray(itemSchema, items, nodeMap));
   });
   return convertStringToSegments(JSON.stringify(arrayVal, null, 4), true, nodeMap);
 };

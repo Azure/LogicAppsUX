@@ -1,25 +1,57 @@
 import type { ComplexArrayItem, ComplexArrayItems, SimpleArrayItem } from '..';
+import constants from '../../constants';
 import type { ValueSegment } from '../../editor';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
 import { convertSegmentsToString } from '../../editor/base/utils/parsesegments';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import { guid } from '@microsoft/utils-logic-apps';
 
-export const getOneDimensionalSchema = (itemSchema: any): any[] => {
-  const flattenedSchema = flattenObject(itemSchema);
-  const returnVal = Object.keys(flattenedSchema).map((key) => {
-    return { type: flattenedSchema[key].type, title: key, isRequired: flattenedSchema[key].isRequired };
-  });
-  return returnVal;
+export interface ItemSchemaItemProps {
+  title: string;
+  type: string;
+  isRequired: boolean;
+  description: string;
+  key: string;
+}
+
+export const getOneDimensionalSchema = (itemSchema: any, isRequired?: any): ItemSchemaItemProps[] => {
+  const flattenedSchema: ItemSchemaItemProps[] = [];
+  if (!itemSchema) {
+    return flattenedSchema;
+  }
+  if (itemSchema.type === constants.SWAGGER.TYPE.OBJECT && itemSchema.properties) {
+    const required = itemSchema.required ?? [];
+    Object.keys(itemSchema.properties).forEach((key) => {
+      const value = itemSchema.properties[key];
+      if (value) {
+        getOneDimensionalSchema(value, required.includes(key)).forEach((item) => {
+          const currItem = item;
+          if (!item.key) {
+            currItem.key = key;
+          }
+          flattenedSchema.push(currItem);
+        });
+      }
+    });
+  } else {
+    flattenedSchema.push({
+      title: itemSchema.title,
+      type: itemSchema.type,
+      isRequired: isRequired ?? false,
+      description: itemSchema.description ?? '',
+      key: '',
+    });
+  }
+  return flattenedSchema;
 };
 
-export const flattenObject = (obj: any) => {
+const flattenObject = (obj: any) => {
   const flattened: any = {};
 
   Object.keys(obj).forEach((key) => {
     const value = obj[key];
 
-    if (typeof value === 'object' && value !== null && !Array.isArray(value) && !value.type) {
+    if (typeof value === constants.SWAGGER.TYPE.OBJECT && value !== null && !Array.isArray(value) && !value.type) {
       Object.assign(flattened, flattenObject(value));
     } else {
       flattened[key] = value;
@@ -29,23 +61,28 @@ export const flattenObject = (obj: any) => {
   return flattened;
 };
 
-export const convertComplexItemtoSchema = (currItems: any, complexItems: ComplexArrayItem[], nodeMap?: Map<string, ValueSegment>) => {
-  const schemafiedItem = JSON.parse(JSON.stringify(currItems));
-  Object.keys(currItems).forEach((key) => {
-    const value = currItems[key];
-    if (value && !Array.isArray(value) && !value.type) {
-      schemafiedItem[key] = convertComplexItemtoSchema(value, complexItems, nodeMap);
-    } else {
-      const valueSegments: ValueSegment[] =
-        complexItems.find((item) => {
-          return item.title === key;
-        })?.value ?? [];
-      const stringValue = convertSegmentsToString(valueSegments, nodeMap);
-      schemafiedItem[key] = stringValue;
+// Converts Complex Array Items values to be a string from valuesegment
+export const convertComplexItemsToArray = (
+  itemSchema: ItemSchemaItemProps[],
+  items: ComplexArrayItem[],
+  nodeMap?: Map<string, ValueSegment>
+) => {
+  const returnItem: any = {};
+  itemSchema.forEach((item) => {
+    if (item.isRequired) {
+      returnItem[item.key] = '';
     }
   });
-
-  return schemafiedItem;
+  items.forEach((item) => {
+    const segments = item.value;
+    const stringValue = convertSegmentsToString(segments, nodeMap);
+    const itemSchemaItem = itemSchema.find((schemaItem) => {
+      return schemaItem.title === item.title;
+    });
+    const itemKey = itemSchemaItem?.key ?? item.title;
+    returnItem[itemKey] = stringValue;
+  });
+  return returnItem;
 };
 
 export const initializeSimpleArrayItems = (
@@ -99,7 +136,7 @@ export const validationAndSerializeSimpleArray = (
 
 export const initializeComplexArrayItems = (
   initialValue: ValueSegment[],
-  dimensionalSchema: unknown[],
+  dimensionalSchema: ItemSchemaItemProps[],
   setItems: (items: ComplexArrayItems[]) => void,
   setIsValid: (b: boolean) => void,
   setCollapsed: (b: boolean) => void
@@ -112,7 +149,7 @@ export const initializeComplexArrayItems = (
 export const validationAndSerializeComplexArray = (
   editorString: string,
   nodeMap: Map<string, ValueSegment>,
-  itemSchema: any,
+  itemSchema: ItemSchemaItemProps[],
   setItems: (items: ComplexArrayItems[]) => void,
   setIsValid: (b: boolean) => void,
   setCollapsed?: (b: boolean) => void,
@@ -130,14 +167,17 @@ export const validationAndSerializeComplexArray = (
     } else {
       const jsonEditor = JSON.parse(editorString);
       const returnItems: ComplexArrayItems[] = [];
-      jsonEditor.forEach((jsonEditorItem: unknown, index: number) => {
+      jsonEditor.forEach((jsonEditorItem: any, index: number) => {
         const flatJSON = flattenObject(jsonEditorItem);
         const returnVal = Object.keys(flatJSON).map((key) => {
-          if (
-            !getOneDimensionalSchema(itemSchema)
-              .map((item) => item.title)
-              .includes(key)
-          ) {
+          if (itemSchema.map((item) => item.key).includes(key)) {
+            const item = itemSchema.find((item) => item.key === key);
+            return {
+              title: item?.title ?? key,
+              value: convertStringToSegments(flatJSON[key], true, nodeMap),
+              description: item?.description ?? '',
+            };
+          } else {
             const intl = getIntl();
             const errorMessage = intl.formatMessage(
               {
@@ -149,10 +189,9 @@ export const validationAndSerializeComplexArray = (
             setErrorMessage?.(errorMessage);
             throw Error();
           }
-          return { title: key, value: convertStringToSegments(flatJSON[key], true, nodeMap) };
         });
         if (!validateComplexArrayItem(itemSchema, returnVal, index, setErrorMessage)) {
-          throw Error;
+          throw Error();
         }
         returnItems.push({ key: guid(), items: returnVal });
         setErrorMessage?.('');
@@ -167,22 +206,21 @@ export const validationAndSerializeComplexArray = (
 };
 
 const validateComplexArrayItem = (
-  itemSchema: any,
+  itemSchema: ItemSchemaItemProps[],
   complexArrayItem: ComplexArrayItem[],
   index: number,
   setErrorMessage?: (s: string) => void
 ): boolean => {
   const items = complexArrayItem.map((item) => item.title);
-  const dimensionalSchema = getOneDimensionalSchema(itemSchema);
-  for (let i = 0; i < dimensionalSchema.length; i++) {
-    if (dimensionalSchema[i].isRequired && !items.includes(dimensionalSchema[i].title)) {
+  for (let i = 0; i < itemSchema.length; i++) {
+    if (itemSchema[i].isRequired && !items.includes(itemSchema[i].title)) {
       const intl = getIntl();
       const errorMessage = intl.formatMessage(
         {
           defaultMessage: 'Array Element {index} is missing required property {property}',
           description: 'Error message for missing required property',
         },
-        { index, property: dimensionalSchema[i].title }
+        { index, property: itemSchema[i].title }
       );
       setErrorMessage?.(errorMessage);
       return false;
