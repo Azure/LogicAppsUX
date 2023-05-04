@@ -1066,12 +1066,12 @@ export function updateParameterWithValues(
           if (valueExpandable) {
             const dynamicSchemaKeyPrefixes: string[] = [];
             for (const descendantInputParameter of descendantInputParameters) {
-              if (descendantInputParameter.dynamicSchema) {
-                dynamicSchemaKeyPrefixes.push(`${descendantInputParameter.alias}/`);
-              }
               const extraSegments = getExtraSegments(descendantInputParameter.key, parameterKey);
               if (descendantInputParameter.alias) {
                 reduceRedundantSegments(extraSegments);
+                if (descendantInputParameter.dynamicSchema) {
+                  dynamicSchemaKeyPrefixes.push(`${descendantInputParameter.alias}/`);
+                }
               }
               const descendantValue = getPropertyValueWithSpecifiedPathSegments(clonedParameterValue, extraSegments);
               let alternativeParameterKeyExtraSegment: Segment[] | null = null;
