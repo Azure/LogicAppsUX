@@ -171,7 +171,12 @@ export const validationAndSerializeComplexArray = (
         const flatJSON = flattenObject(jsonEditorItem);
         const returnVal = Object.keys(flatJSON).map((key) => {
           if (itemSchema.map((item) => item.key).includes(key)) {
-            return { title: key, value: convertStringToSegments(flatJSON[key], true, nodeMap) };
+            const item = itemSchema.find((item) => item.key === key);
+            return {
+              title: item?.title ?? key,
+              value: convertStringToSegments(flatJSON[key], true, nodeMap),
+              description: item?.description ?? '',
+            };
           } else {
             const intl = getIntl();
             const errorMessage = intl.formatMessage(
@@ -208,7 +213,7 @@ const validateComplexArrayItem = (
 ): boolean => {
   const items = complexArrayItem.map((item) => item.title);
   for (let i = 0; i < itemSchema.length; i++) {
-    if (itemSchema[i].isRequired && !items.includes(itemSchema[i].key)) {
+    if (itemSchema[i].isRequired && !items.includes(itemSchema[i].title)) {
       const intl = getIntl();
       const errorMessage = intl.formatMessage(
         {

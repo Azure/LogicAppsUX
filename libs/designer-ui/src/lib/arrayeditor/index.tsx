@@ -17,6 +17,7 @@ export enum ArrayType {
 
 export interface ComplexArrayItem {
   title: string;
+  description: string;
   value: ValueSegment[];
 }
 export interface ComplexArrayItems {
@@ -57,7 +58,6 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   let dimensionalSchema: ItemSchemaItemProps[] = [];
   if (type === ArrayType.COMPLEX) {
     dimensionalSchema = getOneDimensionalSchema(itemSchema);
-    // console.log(dimensionalSchema);
   }
 
   useEffect(() => {
