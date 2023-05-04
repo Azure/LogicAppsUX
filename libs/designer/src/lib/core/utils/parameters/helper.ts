@@ -1064,7 +1064,11 @@ export function updateParameterWithValues(
           const valueExpandable =
             isObject(clonedParameterValue) || (Array.isArray(clonedParameterValue) && clonedParameterValue.length === 1);
           if (valueExpandable) {
+            const dynamicSchemaKeyPrefixes: string[] = [];
             for (const descendantInputParameter of descendantInputParameters) {
+              if (descendantInputParameter.dynamicSchema) {
+                dynamicSchemaKeyPrefixes.push(`${descendantInputParameter.alias}/`);
+              }
               const extraSegments = getExtraSegments(descendantInputParameter.key, parameterKey);
               if (descendantInputParameter.alias) {
                 reduceRedundantSegments(extraSegments);
@@ -1102,6 +1106,9 @@ export function updateParameterWithValues(
             // for the rest properties, create corresponding invisible parameter to preserve the value when serialize
             if (createInvisibleParameter) {
               for (const restPropertyName of Object.keys(clonedParameterValue)) {
+                if (dynamicSchemaKeyPrefixes.some((prefix) => restPropertyName.startsWith(prefix))) {
+                  continue;
+                }
                 const propertyValue = clonedParameterValue[restPropertyName];
                 if (propertyValue !== undefined) {
                   const childKeySegments = [...keySegments, { value: restPropertyName, type: SegmentType.Property }];
