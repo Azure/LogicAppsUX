@@ -15,7 +15,6 @@ import { useNodeMetadata, useReplacedIds } from '../../../../core/state/workflow
 import type { AppDispatch, RootState } from '../../../../core/store';
 import { getConnectionReference } from '../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../core/utils/graph';
-import { addForeachToNode } from '../../../../core/utils/loops';
 import {
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
@@ -144,8 +143,12 @@ const ParameterSection = ({
       if (viewModel !== undefined) {
         propertiesToUpdate.editorViewModel = viewModel;
       }
-      if (variables[nodeId] && (parameter?.parameterKey === 'inputs.$.name' || parameter?.parameterKey === 'inputs.$.type')) {
-        dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
+      if (variables[nodeId]) {
+        if (parameter?.parameterKey === 'inputs.$.name') {
+          dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
+        } else if (parameter?.parameterKey === 'inputs.$.type') {
+          dispatch(updateVariableInfo({ id: nodeId, type: value[0]?.value }));
+        }
       }
 
       updateParameterAndDependencies(
@@ -237,18 +240,7 @@ const ParameterSection = ({
     token: OutputToken,
     addImplicitForeachIfNeeded: boolean
   ): Promise<ValueSegment> => {
-    const { segment, foreachDetails } = await createValueSegmentFromToken(
-      nodeId,
-      parameterId,
-      token,
-      addImplicitForeachIfNeeded,
-      rootState
-    );
-    if (foreachDetails) {
-      dispatch(addForeachToNode({ arrayName: foreachDetails.arrayValue, nodeId, token }));
-    }
-
-    return segment;
+    return createValueSegmentFromToken(nodeId, parameterId, token, addImplicitForeachIfNeeded, rootState, dispatch);
   };
 
   const getTokenPicker = (

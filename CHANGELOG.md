@@ -1,4 +1,13 @@
 # Logic Apps Designer
+### [2.15.7](https://github.com/Azure/LogicAppsUX/compare/v2.15.6...v2.15.7) (2023-05-04)
+
+
+### Bug Fixes
+
+* **designer:** Add a new connection host enum type for hybrid trigger ([#2200](https://github.com/Azure/LogicAppsUX/issues/2200)) ([21d0e92](https://github.com/Azure/LogicAppsUX/commit/21d0e92e4cbe0270b6bcb5575c8586e96a9eff97))
+* **designer:** Address duplicate parameter pivot, showing pivots that should be hidden ([#2211](https://github.com/Azure/LogicAppsUX/issues/2211)) ([5e4bc4a](https://github.com/Azure/LogicAppsUX/commit/5e4bc4afdb344a5b656b3f611c8efe77f39e3e0a))
+* **designer:** reverting a change to variable change ([#2217](https://github.com/Azure/LogicAppsUX/issues/2217)) ([dc4da10](https://github.com/Azure/LogicAppsUX/commit/dc4da10cd10871b2ff76977c0a7fa35121cea59a))
+
 ### [2.15.6](https://github.com/Azure/LogicAppsUX/compare/v2.15.5...v2.15.6) (2023-05-03)
 
 
