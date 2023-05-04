@@ -17,46 +17,73 @@ export class TokenSegmentConvertor {
    * @return {ValueSegment | null}
    */
   public tryConvertToDynamicContentTokenSegment(expression: ExpressionFunction): ValueSegment | null {
+    const value =
+      expression.startPosition === 0
+        ? expression.expression
+        : expression.expression.substring(expression.startPosition, expression.endPosition);
     if (TokenSegmentConvertor.isOutputToken(expression)) {
       const source = this._getTokenSource(expression);
       const step = TokenSegmentConvertor.getTokenStep(expression.arguments);
       const name = this._getTokenName(expression, source);
       const outputKey = this._getOutputKey(expression);
       const required = !!this._isTokenRequired(expression, source);
-      const value =
-        expression.startPosition === 0
-          ? expression.expression
-          : expression.expression.substring(expression.startPosition, expression.endPosition);
 
       return createTokenValueSegment(createOutputToken(outputKey, step, source, name, required), value);
     } else if (this._isParameterToken(expression)) {
       const parameterName = (expression.arguments[0] as ExpressionLiteral).value;
-      const value =
-        expression.startPosition === 0
-          ? expression.expression
-          : expression.expression.substring(expression.startPosition, expression.endPosition);
+
       return createTokenValueSegment(createParameterToken(parameterName), value);
     } else if (TokenSegmentConvertor.isVariableToken(expression)) {
       const variableName = (expression.arguments[0] as ExpressionLiteral).value;
-      const value =
-        expression.startPosition === 0
-          ? expression.expression
-          : expression.expression.substring(expression.startPosition, expression.endPosition);
+
       return createTokenValueSegment(createVariableToken(variableName), value);
     } else if (TokenSegmentConvertor.isItemToken(expression)) {
-      // TODO - Implement for item tokens when repetition context is in store.
-      return null;
+      const source = this._getTokenSource(expression);
+      const name = this._getTokenName(expression, source);
+      const outputKey = this._getOutputKey(expression);
+      const required = !!this._isTokenRequired(expression, source);
+
+      return createTokenValueSegment(
+        {
+          arrayDetails: {},
+          name,
+          required,
+          source: OutputSource.Body,
+          tokenType: expression.dereferences.length === 0 ? TokenType.ITEM : TokenType.OUTPUTS,
+          title: name,
+          key: outputKey,
+          value,
+        },
+        value
+      );
     } else if (TokenSegmentConvertor.isItemsToken(expression)) {
-      // TODO - Implement for items tokens when repetition context is in store.
-      return null;
+      const actionExpression = expression.arguments[0] as ExpressionLiteral;
+      const loopSource = actionExpression.value;
+      const source = this._getTokenSource(expression);
+      const name = this._getTokenName(expression, source);
+      const outputKey = this._getOutputKey(expression);
+      const required = !!this._isTokenRequired(expression, source);
+
+      return createTokenValueSegment(
+        {
+          actionName: loopSource,
+          arrayDetails: {
+            loopSource,
+          },
+          name,
+          required,
+          source: OutputSource.Body,
+          tokenType: expression.dereferences.length === 0 ? TokenType.ITEM : TokenType.OUTPUTS,
+          title: name,
+          key: outputKey,
+          value,
+        },
+        value
+      );
     } else if (TokenSegmentConvertor.isIterationIndexesToken(expression)) {
       const functionArguments = expression.arguments;
       const actionExpression = functionArguments[0] as ExpressionLiteral;
       const loopSource = actionExpression.value;
-      const value =
-        expression.startPosition === 0
-          ? expression.expression
-          : expression.expression.substring(expression.startPosition, expression.endPosition);
       return createTokenValueSegment(
         {
           arrayDetails: { loopSource },

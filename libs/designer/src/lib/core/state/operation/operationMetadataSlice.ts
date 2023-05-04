@@ -2,6 +2,7 @@ import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import type { SettingData, Settings, SimpleSetting } from '../../actions/bjsworkflow/settings';
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
 import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
+import type { RepetitionContext } from '../../utils/parameters/helper';
 import { resetWorkflowState } from '../global';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { FilePickerInfo, InputParameter, OutputParameter, SwaggerParser } from '@microsoft/parsers-logic-apps';
@@ -29,6 +30,7 @@ export interface OutputInfo {
   name: string;
   parentArray?: string;
   required?: boolean;
+  schema?: OpenAPIV2.SchemaObject;
   source?: string;
   title: string;
   value?: string;
@@ -87,6 +89,7 @@ export interface OperationMetadataState {
   settings: Record<string, Settings>;
   actionMetadata: Record<string, any>;
   staticResults: Record<string, NodeStaticResults>;
+  repetitionInfos: Record<string, RepetitionContext>;
 }
 
 const initialState: OperationMetadataState = {
@@ -98,6 +101,7 @@ const initialState: OperationMetadataState = {
   operationMetadata: {},
   actionMetadata: {},
   staticResults: {},
+  repetitionInfos: {},
 };
 
 export interface AddNodeOperationPayload extends NodeOperation {
@@ -118,6 +122,7 @@ export interface NodeData {
   staticResult?: NodeStaticResults;
   settings?: Settings;
   actionMetadata?: Record<string, any>;
+  repetitionInfo?: RepetitionContext;
 }
 
 interface AddSettingsPayload {
@@ -171,7 +176,8 @@ export const operationMetadataSlice = createSlice({
       for (const nodeData of action.payload) {
         if (!nodeData) return;
 
-        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, actionMetadata, staticResult } = nodeData;
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, actionMetadata, staticResult, repetitionInfo } =
+          nodeData;
         state.inputParameters[id] = nodeInputs;
         state.outputParameters[id] = nodeOutputs;
         state.dependencies[id] = nodeDependencies;
@@ -180,11 +186,22 @@ export const operationMetadataSlice = createSlice({
         if (settings) {
           state.settings[id] = settings;
         }
+
         if (staticResult) {
           state.staticResults[id] = staticResult;
         }
-        if (actionMetadata) state.actionMetadata[id] = actionMetadata;
-        if (settings) state.settings[id] = settings;
+
+        if (actionMetadata) {
+          state.actionMetadata[id] = actionMetadata;
+        }
+
+        if (settings) {
+          state.settings[id] = settings;
+        }
+
+        if (repetitionInfo) {
+          state.repetitionInfos[id] = repetitionInfo;
+        }
       }
     },
     addDynamicInputs: (state, action: PayloadAction<AddDynamicInputsPayload>) => {
@@ -329,6 +346,13 @@ export const operationMetadataSlice = createSlice({
         ...actionMetadata,
       };
     },
+    updateRepetitionContext: (state, action: PayloadAction<{ id: string; repetition: RepetitionContext }>) => {
+      const { id, repetition } = action.payload;
+      state.repetitionInfos[id] = {
+        ...state.repetitionInfos[id],
+        ...repetition,
+      };
+    },
     deinitializeOperationInfo: (state, action: PayloadAction<{ id: string }>) => {
       const { id } = action.payload;
       delete state.operationInfo[id];
@@ -370,6 +394,7 @@ export const {
   removeParameterValidationError,
   updateOutputs,
   updateActionMetadata,
+  updateRepetitionContext,
   deinitializeOperationInfo,
   deinitializeNodes,
   updateInvokerSetting,
