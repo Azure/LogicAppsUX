@@ -162,7 +162,7 @@ export const updateIdentityChangeInConection = createAsyncThunk(
   }
 );
 
-export async function getConnectionsMappingForNodes(operations: Operations, getState: () => RootState): Promise<Record<string, string>> {
+async function getConnectionsMappingForNodes(operations: Operations, getState: () => RootState): Promise<Record<string, string>> {
   let connectionsMapping: Record<string, string> = {};
   const operationManifestService = OperationManifestService();
 

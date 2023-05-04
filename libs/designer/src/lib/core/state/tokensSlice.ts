@@ -56,7 +56,8 @@ export const tokensSlice = createSlice({
             ...variable,
             name: name,
           }));
-        } else if (type) {
+        }
+        if (type) {
           state.variables[id] = state.variables[id].map((variable) => ({
             ...variable,
             type: type,
