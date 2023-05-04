@@ -8,6 +8,7 @@ import { initializeStaticResultProperties } from '../state/staticresultschema/st
 import type { RootState } from '../store';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
+import type { WorkflowNode } from './models/workflowNode';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
@@ -29,14 +30,7 @@ export const initializeGraphState = createAsyncThunk<
     const deserializedWorkflow = BJSDeserialize(definition, runInstance);
     // For situations where there is an existing workflow, respect the node heights so that
     // they are not reset
-    const previousChildren = workflow?.graph?.children || [];
-    const deserializedChildren = deserializedWorkflow?.graph?.children || [];
-    for (const node of deserializedChildren) {
-      const previousNode = previousChildren.find((item) => item.id === node.id);
-      if (previousNode?.height) {
-        node.height = previousNode.height;
-      }
-    }
+    updateChildrenHeight(workflow?.graph?.children || [], deserializedWorkflow?.graph?.children || []);
 
     thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
     thunkAPI.dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
@@ -62,3 +56,17 @@ export const initializeGraphState = createAsyncThunk<
   }
   throw new Error('Invalid Workflow Spec');
 });
+
+function updateChildrenHeight(currentChildren: WorkflowNode[], previousChildren: WorkflowNode[]) {
+  for (const node of currentChildren) {
+    const previousNode = previousChildren.find((item) => item.id === node.id);
+    if (previousNode?.height) {
+      node.height = previousNode.height;
+    }
+
+    // Update children only if the current node was found
+    if (previousNode) {
+      updateChildrenHeight(node.children || [], previousNode.children || []);
+    }
+  }
+}
