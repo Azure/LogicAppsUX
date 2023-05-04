@@ -95,7 +95,7 @@ export const ExpandedSimpleArray = ({
   );
 };
 
-export const renderLabel = (index: number, labelName: string, isRequired?: boolean): JSX.Element => {
+export const renderLabel = (index: number, labelName?: string, isRequired?: boolean): JSX.Element => {
   return (
     <div className="msla-array-editor-label">
       <Label text={labelName + ' - ' + (index + 1)} isRequiredField={isRequired ?? false} />

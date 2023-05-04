@@ -1,9 +1,11 @@
+import { initializeArrayViewModel } from '../../editors/array';
 import {
   getParameterEditorProps,
   parameterValueToJSONString,
   parameterValueToString,
   getExpressionValueForOutputToken,
   updateParameterWithValues,
+  toArrayViewModelSchema,
 } from '../helper';
 import type { DictionaryEditorItemProps, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
@@ -1681,12 +1683,11 @@ describe('core/utils/parameters/helper', () => {
     describe('gets props for array data types which', () => {
       it('are accurate for "Select" -> "From"', () => {
         const dataType = 'array';
-        const itemSchema = undefined;
+        const itemSchema = {};
         const inputSchema = {
           required: true,
           title: 'From',
           type: dataType,
-          itemSchema: {},
         };
         const inputParameter: InputParameter = {
           editor: undefined,
@@ -1705,7 +1706,11 @@ describe('core/utils/parameters/helper', () => {
         expect(result).toMatchObject({
           editor: dataType,
           editorOptions: undefined,
-          editorViewModel: { schema: {} },
+          editorViewModel: {
+            ...initializeArrayViewModel(inputParameter, false),
+            itemSchema: toArrayViewModelSchema(inputParameter.itemSchema),
+            complexArray: false,
+          },
           schema: inputSchema,
         });
       });
