@@ -179,7 +179,7 @@ async function getConnectionsMappingForNodes(operations: Operations, getState: (
   return connectionsMapping;
 }
 
-const getConnectionMappingForNode = (
+export const getConnectionMappingForNode = (
   operation: LogicAppsV2.OperationDefinition,
   nodeId: string,
   operationManifestService: IOperationManifestService,
