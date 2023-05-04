@@ -58,29 +58,26 @@ export interface SerializeOptions {
 }
 
 export const serializeWorkflow = async (rootState: RootState, options?: SerializeOptions): Promise<Workflow> => {
-  if (!options?.skipValidation) {
-    const operationsWithSettingsErrors = (Object.entries(rootState.settings.validationErrors) ?? []).filter(
-      ([_id, errorArr]) => errorArr.length > 0
+  const operationsWithSettingsErrors = (Object.entries(rootState.settings.validationErrors) ?? []).filter(
+    ([_id, errorArr]) => errorArr.length > 0
+  );
+  if (operationsWithSettingsErrors.length > 0) {
+    throw new Error(
+      'Workflow has settings validation errors on the following operations: ' +
+        operationsWithSettingsErrors.map(([id, _errorArr]) => id).join(', ')
     );
-    if (operationsWithSettingsErrors.length > 0) {
-      throw new Error(
-        'Workflow has settings validation errors on the following operations: ' +
-          operationsWithSettingsErrors.map(([id, _errorArr]) => id).join(', ')
-      );
-    }
+  }
 
-    const operationsWithParameterErrors = (Object.entries(rootState.operations.inputParameters) ?? []).filter(
-      ([_id, nodeInputs]: [id: string, i: NodeInputs]) =>
-        Object.values(nodeInputs.parameterGroups).some((parameterGroup: ParameterGroup) =>
-          parameterGroup.parameters.some((parameter: ParameterInfo) => (parameter?.validationErrors?.length ?? 0) > 0)
-        )
+  const operationsWithParameterErrors = (Object.entries(rootState.operations.inputParameters) ?? []).filter(
+    ([_id, nodeInputs]: [id: string, i: NodeInputs]) =>
+      Object.values(nodeInputs.parameterGroups).some((parameterGroup: ParameterGroup) =>
+        parameterGroup.parameters.some((parameter: ParameterInfo) => (parameter?.validationErrors?.length ?? 0) > 0)
+      )
+  );
+  if (operationsWithParameterErrors.length > 0) {
+    throw new Error(
+      'Workflow has parameter validation errors on the following operations: ' + operationsWithParameterErrors.map(([id]) => id).join(', ')
     );
-    if (operationsWithParameterErrors.length > 0) {
-      throw new Error(
-        'Workflow has parameter validation errors on the following operations: ' +
-          operationsWithParameterErrors.map(([id]) => id).join(', ')
-      );
-    }
   }
 
   const { connectionsMapping, connectionReferences: referencesObject } = rootState.connections;
@@ -734,20 +731,11 @@ const serializeSettings = (
   const timeout = settings.timeout?.isSupported && settings.timeout.value ? { timeout: settings.timeout.value } : undefined;
   const trackedProperties = settings.trackedProperties?.value;
 
-  if (settings.invokerConnection?.value?.enabled === true) {
-    return {
-      ...optional('correlation', settings.correlation?.value),
-      ...optional('isInvokerConnectionEnabled', settings.invokerConnection?.value?.enabled),
-      ...optional('conditions', conditions),
-      ...optional('limit', timeout),
-      ...optional('operationOptions', getSerializedOperationOptions(operationId, settings, rootState)),
-      ...optional('runtimeConfiguration', getSerializedRuntimeConfiguration(operationId, settings, nodeStaticResults, rootState)),
-      ...optional('trackedProperties', trackedProperties),
-      ...(getSplitOn(isTrigger, settings) ?? {}),
-    };
-  }
   return {
     ...optional('correlation', settings.correlation?.value),
+    ...(settings.invokerConnection?.value?.enabled
+      ? optional('isInvokerConnectionEnabled', settings.invokerConnection?.value?.enabled)
+      : {}),
     ...optional('conditions', conditions),
     ...optional('limit', timeout),
     ...optional('operationOptions', getSerializedOperationOptions(operationId, settings, rootState)),
