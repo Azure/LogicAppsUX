@@ -21,7 +21,12 @@ import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '.
 import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
 import { setVariableMetadata, getVariableDeclarations, getAllVariables } from '../../utils/variables';
 import { isConnectionRequiredForOperation, updateNodeConnection } from './connections';
-import { getInputParametersFromManifest, getOutputParametersFromManifest, updateAllUpstreamNodes } from './initialize';
+import {
+  getInputParametersFromManifest,
+  getOutputParametersFromManifest,
+  updateAllUpstreamNodes,
+  updateTriggerNodeManifestForInvokerSettings,
+} from './initialize';
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings } from './settings';
@@ -213,16 +218,9 @@ const initializeOperationDetails = async (
   if (!state.connections.connectionReferences) {
     dispatch(addInvokerSupport({ connectionReferences }));
   }
-  const settings = getOperationSettings(
-    isTrigger,
-    operationInfo,
-    initData.nodeOutputs,
-    manifest,
-    swagger,
-    operation,
-    rootNodeManifest?.properties?.settings
-  );
+  const settings = getOperationSettings(isTrigger, operationInfo, initData.nodeOutputs, manifest, swagger, operation);
   dispatch(updateNodeSettings({ id: nodeId, settings }));
+  updateTriggerNodeManifestForInvokerSettings(isTrigger, rootNodeManifest, nodeId, dispatch);
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);
   dispatch(showDefaultTabs({ isScopeNode: operationInfo?.type.toLowerCase() === Constants.NODE.TYPE.SCOPE, hasSchema: hasSchema }));

@@ -117,8 +117,7 @@ export const getOperationSettings = (
   nodeOutputs: NodeOutputs,
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
-  operation?: LogicAppsV2.OperationDefinition,
-  rootNodeManifest?: OperationManifestSettings | undefined
+  operation?: LogicAppsV2.OperationDefinition
 ): Settings => {
   const { operationId, type: nodeType } = operationInfo;
   return {
@@ -189,10 +188,6 @@ export const getOperationSettings = (
     runAfter: {
       isSupported: getRunAfter(operation).length > 0,
       value: getRunAfter(operation),
-    },
-    invokerConnection: {
-      isSupported: isInvokerConnectionSupported(isTrigger, manifest, rootNodeManifest),
-      value: invokerConnection(isTrigger, manifest),
     },
   };
 };
@@ -860,19 +855,4 @@ const isSettingSupportedFromOperationManifest = <T>(
     (!operationManifestSetting.scopes ||
       operationManifestSetting.scopes.findIndex((scope) => equals(scope, isTrigger ? SettingScope.Trigger : SettingScope.Action)) >= 0)
   );
-};
-
-const isInvokerConnectionSupported = (
-  isTrigger: boolean,
-  manifest?: OperationManifest,
-  rootNodeManifestSettings?: OperationManifestSettings
-): boolean => {
-  if (!isTrigger && manifest && rootNodeManifestSettings?.invokerConnection) {
-    return true;
-  }
-  return false;
-};
-
-const invokerConnection = (isTrigger: boolean, manifest?: OperationManifest): SimpleSetting<boolean> | undefined => {
-  return isInvokerConnectionSupported(isTrigger, manifest) ? { enabled: true } : { enabled: false };
 };

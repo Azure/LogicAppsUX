@@ -30,6 +30,7 @@ import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
   updateCallbackUrlInInputs,
+  updateTriggerNodeManifestForInvokerSettings,
 } from './initialize';
 import { getOperationSettings } from './settings';
 import {
@@ -39,7 +40,7 @@ import {
   StaticResultService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { InputParameter, OutputParameter } from '@microsoft/parsers-logic-apps';
-import type { LogicAppsV2, OperationManifest, OperationManifestSettings } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2, OperationManifest } from '@microsoft/utils-logic-apps';
 import { isArmResourceId, uniqueArray, getPropertyValue, map, aggregate, equals } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -82,28 +83,11 @@ export const initializeOperationMetadata = async (
   for (const [operationId, operation] of Object.entries(operations)) {
     const isTrigger = isRootNodeInGraph(operationId, 'root', nodesMetadata);
 
-    let rootNodeManifest;
-    if (graph?.children !== undefined)
-      for (const child of graph.children) {
-        if (graph?.id === 'root') {
-          const childOperation = operations[child.id];
-          if ('inputs' in childOperation) {
-            const rootNodeOperationInfo = childOperation.inputs.host;
-            if (rootNodeOperationInfo) {
-              const { apiId: connectorId, operationId } = rootNodeOperationInfo;
-              rootNodeManifest = await getOperationManifest({ connectorId, operationId });
-            }
-          }
-        }
-      }
-
     if (isTrigger) {
       triggerNodeId = operationId;
     }
     if (operationManifestService.isSupported(operation.type, operation.kind)) {
-      promises.push(
-        initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, dispatch, rootNodeManifest?.properties?.settings)
-      );
+      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, dispatch));
     } else {
       promises.push(initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, dispatch) as any);
     }
@@ -121,6 +105,15 @@ export const initializeOperationMetadata = async (
       })
     )
   );
+
+  for (let i = 0; i < allNodeData.length; i++) {
+    updateTriggerNodeManifestForInvokerSettings(
+      i === 0 ? true : false,
+      allNodeData[0].id === triggerNodeId ? allNodeData[0].manifest : undefined,
+      allNodeData[i].id,
+      dispatch
+    );
+  }
 
   const variables = initializeVariables(operations, allNodeData);
   dispatch(
@@ -153,8 +146,7 @@ export const initializeOperationDetailsForManifest = async (
   nodeId: string,
   _operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
   isTrigger: boolean,
-  dispatch: Dispatch,
-  rootNodeManifestSettings?: OperationManifestSettings
+  dispatch: Dispatch
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   const operation = { ..._operation };
   try {
@@ -196,15 +188,7 @@ export const initializeOperationDetailsForManifest = async (
       );
       const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
-      const settings = getOperationSettings(
-        isTrigger,
-        nodeOperationInfo,
-        nodeOutputs,
-        manifest,
-        undefined /* swagger */,
-        operation,
-        rootNodeManifestSettings
-      );
+      const settings = getOperationSettings(isTrigger, nodeOperationInfo, nodeOutputs, manifest, undefined /* swagger */, operation);
 
       const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
 

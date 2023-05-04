@@ -8,7 +8,6 @@
             "actions": {
               "Action-1-Compose": {
                 "inputs": "test",
-                "isInvokerConnectionEnabled": false,
                 "type": "Compose"
               }
             },
@@ -27,13 +26,11 @@
           "actions": {
             "Default-Compose": {
               "inputs": "test",
-              "isInvokerConnectionEnabled": false,
               "type": "Compose"
             }
           }
         },
         "expression": "@triggerBody()",
-        "isInvokerConnectionEnabled": false,
         "runAfter": {},
         "type": "Switch"
       },
@@ -47,7 +44,6 @@
             }
           ]
         },
-        "isInvokerConnectionEnabled": false,
         "runAfter": {
           "Switch": ["SUCCEEDED"]
         },
@@ -66,7 +62,6 @@
           "method": "PUT",
           "uri": "http://uri.com"
         },
-        "isInvokerConnectionEnabled": false,
         "recurrence": {
           "frequency": "Hour",
           "interval": 3,

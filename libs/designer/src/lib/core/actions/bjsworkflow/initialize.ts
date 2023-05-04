@@ -5,6 +5,7 @@ import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger, getSwaggerFromEndpoint } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
+import { updateInvokerSetting } from '../../state/operation/operationMetadataSlice';
 import { updateNodeSettings, updateNodeParameters, DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
 import type { UpdateUpstreamNodesPayload } from '../../state/tokensSlice';
 import { updateTokens, updateUpstreamNodes } from '../../state/tokensSlice';
@@ -441,4 +442,20 @@ export const getCustomSwaggerIfNeeded = async (
   }
 
   return getSwaggerFromEndpoint(getObjectPropertyValue(stepDefinition, swaggerUrlLocation));
+};
+
+export const updateTriggerNodeManifestForInvokerSettings = (
+  isTrigger: boolean,
+  tiggerNodeManifest: OperationManifest | undefined,
+  actionid: string,
+  dispatch: Dispatch
+): void => {
+  if (isTrigger) {
+    const invokerSetting = { isSupported: false, value: { enabled: false } };
+    dispatch(updateInvokerSetting({ id: actionid, invokerSetting }));
+  }
+  if (!isTrigger && tiggerNodeManifest?.properties?.settings?.invokerConnection) {
+    const invokerSetting = { isSupported: true, value: { enabled: false } };
+    dispatch(updateInvokerSetting({ id: actionid, invokerSetting }));
+  }
 };

@@ -733,7 +733,7 @@ const serializeSettings = (
 
   return {
     ...optional('correlation', settings.correlation?.value),
-    ...optional('isInvokerConnectionEnabled', settings.invokerConnection?.value?.enabled),
+    ...optional('isInvokerConnectionEnabled', settings.invokerConnection?.value?.enabled === true),
     ...optional('conditions', conditions),
     ...optional('limit', timeout),
     ...optional('operationOptions', getSerializedOperationOptions(operationId, settings, rootState)),
