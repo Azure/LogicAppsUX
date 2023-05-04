@@ -13,7 +13,7 @@ import type {
 import { getOperationSettings } from '../../actions/bjsworkflow/settings';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import type { DependencyInfo, NodeInputs, NodeOperation, OutputInfo } from '../../state/operation/operationMetadataSlice';
-import { DynamicLoadStatus, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
+import { ErrorLevel, updateErrorDetails, DynamicLoadStatus, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../card';
 import { toOutputInfo, updateOutputsForBatchingTrigger } from '../outputs';
@@ -106,14 +106,15 @@ export const initializeOperationDetailsForSwagger = async (
 
     throw new Error('Operation info could not be found for a swagger operation');
   } catch (error) {
-    const errorMessage = `Unable to initialize operation details for swagger based operation - ${nodeId}. Error details - ${error}`;
+    const message = `Unable to initialize operation details for swagger based operation - ${nodeId}. Error details - ${error}`;
     LoggerService().log({
       level: LogEntryLevel.Error,
       area: 'operation deserializer',
-      message: errorMessage,
+      message,
       error: error instanceof Error ? error : undefined,
     });
 
+    dispatch(updateErrorDetails({ id: nodeId, errorInfo: { level: ErrorLevel.Critical, error, message } }));
     return;
   }
 };

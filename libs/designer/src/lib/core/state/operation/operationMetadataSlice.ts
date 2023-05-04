@@ -80,6 +80,18 @@ export interface OperationMetadata {
   brandColor: string;
 }
 
+export enum ErrorLevel {
+  Critical = 0,
+  Default = 1,
+}
+
+export interface ErrorInfo {
+  error: any;
+  level: ErrorLevel;
+  message: string;
+  code?: number;
+}
+
 export interface OperationMetadataState {
   operationInfo: Record<string, NodeOperation>;
   inputParameters: Record<string, NodeInputs>;
@@ -90,6 +102,7 @@ export interface OperationMetadataState {
   actionMetadata: Record<string, any>;
   staticResults: Record<string, NodeStaticResults>;
   repetitionInfos: Record<string, RepetitionContext>;
+  errors: Record<string, ErrorInfo>;
 }
 
 const initialState: OperationMetadataState = {
@@ -102,6 +115,7 @@ const initialState: OperationMetadataState = {
   actionMetadata: {},
   staticResults: {},
   repetitionInfos: {},
+  errors: {},
 };
 
 export interface AddNodeOperationPayload extends NodeOperation {
@@ -348,6 +362,14 @@ export const operationMetadataSlice = createSlice({
         ...repetition,
       };
     },
+    updateErrorDetails: (state, action: PayloadAction<{ id: string; errorInfo?: ErrorInfo; clear?: boolean }>) => {
+      const { id, errorInfo, clear } = action.payload;
+      if (errorInfo) {
+        state.errors[id] = errorInfo;
+      } else if (clear) {
+        delete state.errors[id];
+      }
+    },
     deinitializeOperationInfo: (state, action: PayloadAction<{ id: string }>) => {
       const { id } = action.payload;
       delete state.operationInfo[id];
@@ -386,6 +408,7 @@ export const {
   updateOutputs,
   updateActionMetadata,
   updateRepetitionContext,
+  updateErrorDetails,
   deinitializeOperationInfo,
   deinitializeNodes,
 } = operationMetadataSlice.actions;

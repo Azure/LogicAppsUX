@@ -1,7 +1,7 @@
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
 import type { RootState } from '../../store';
 import { shouldUseParameterInGroup } from '../../utils/parameters/helper';
-import type { NodeInputs } from './operationMetadataSlice';
+import type { ErrorInfo, NodeInputs } from './operationMetadataSlice';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
 
@@ -23,6 +23,12 @@ export const getOperationInputParameters = (rootState: RootState, nodeId: string
   }
 
   return allParameters;
+};
+
+export const useOperationErrorInfo = (nodeId: string): ErrorInfo | undefined => {
+  return useSelector((rootState: RootState) => {
+    return rootState.operations.errors[nodeId];
+  });
 };
 
 export const useOperationsInputParameters = (): Record<string, NodeInputs> => {

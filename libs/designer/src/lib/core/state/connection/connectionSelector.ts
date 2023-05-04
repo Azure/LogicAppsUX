@@ -98,7 +98,7 @@ export const useShowIdentitySelector = (nodeId: string): boolean => {
   return useSelector((state: RootState) => {
     const operationInfo = state.operations.operationInfo[nodeId];
     const connectionReference = getConnectionReference(state.connections, nodeId);
-    if (connectionReference && !isServiceProviderOperation(operationInfo.type) && !connectionQuery.isLoading) {
+    if (connectionReference && !isServiceProviderOperation(operationInfo?.type) && !connectionQuery.isLoading) {
       return isConnectionMultiAuthManagedIdentityType(connectionQuery.data, connector);
     }
 
