@@ -50,6 +50,7 @@ export const toOutputInfo = (output: OutputParameter): OutputInfo => {
     itemSchema,
     parentArray,
     title,
+    schema,
     summary,
     description,
     source,
@@ -69,6 +70,7 @@ export const toOutputInfo = (output: OutputParameter): OutputInfo => {
     itemSchema,
     parentArray,
     title: title ?? summary ?? description ?? name,
+    schema,
     source,
     required,
     description,
@@ -273,7 +275,7 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
           if (segment.type === ValueSegmentType.TOKEN) {
             // We only support getting schema from array tokens for now.
             if (segment.token?.type === Constants.SWAGGER.TYPE.ARRAY) {
-              schemaToReplace = segment.token.arrayDetails?.itemSchema ?? undefined;
+              schemaToReplace = segment.token.schema ?? undefined;
             }
           } else {
             // TODO - Add code to generate schema from value input

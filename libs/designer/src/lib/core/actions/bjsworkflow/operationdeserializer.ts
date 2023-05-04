@@ -15,9 +15,12 @@ import type { NodesMetadata, Operations } from '../../state/workflow/workflowInt
 import type { RootState } from '../../store';
 import { getConnectionReference } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
+import { getRepetitionContext } from '../../utils/loops';
+import type { RepetitionContext } from '../../utils/parameters/helper';
 import {
   flattenAndUpdateViewModel,
   getAllInputParameters,
+  shouldIncludeSelfForRepetitionReference,
   updateDynamicDataInNode,
   updateTokenMetadata,
 } from '../../utils/parameters/helper';
@@ -93,14 +96,24 @@ export const initializeOperationMetadata = async (
   }
 
   const allNodeData = aggregate((await Promise.all(promises)).filter((data) => !!data) as NodeDataWithOperationMetadata[][]);
-
-  updateTokenMetadataInParameters(allNodeData, operations, workflowParameters, nodesMetadata, triggerNodeId);
+  const repetitionInfos = await initializeRepetitionInfos(triggerNodeId, allNodeData, nodesMetadata);
+  updateTokenMetadataInParameters(allNodeData, operations, workflowParameters, nodesMetadata, triggerNodeId, repetitionInfos);
   dispatch(
     initializeNodes(
       allNodeData.map((data) => {
         const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, staticResult } = data;
         const actionMetadata = nodesMetadata?.[id]?.actionMetadata;
-        return { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, actionMetadata, staticResult };
+        return {
+          id,
+          nodeInputs,
+          nodeOutputs,
+          nodeDependencies,
+          settings,
+          operationMetadata,
+          actionMetadata,
+          staticResult,
+          repetitionInfo: repetitionInfos[id],
+        };
       })
     )
   );
@@ -288,7 +301,8 @@ const updateTokenMetadataInParameters = (
   operations: Operations,
   workflowParameters: Record<string, WorkflowParameter>,
   nodesMetadata: NodesMetadata,
-  triggerNodeId: string
+  triggerNodeId: string,
+  repetitionInfos: Record<string, RepetitionContext>
 ) => {
   const nodesData = map(nodes, 'id');
   const actionNodes = nodes
@@ -297,7 +311,8 @@ const updateTokenMetadataInParameters = (
     .reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {});
 
   for (const nodeData of nodes) {
-    const allParameters = getAllInputParameters(nodeData.nodeInputs);
+    const { id, nodeInputs } = nodeData;
+    const allParameters = getAllInputParameters(nodeInputs);
     for (const parameter of allParameters) {
       const segments = parameter.value;
 
@@ -306,6 +321,7 @@ const updateTokenMetadataInParameters = (
           if (isTokenValueSegment(segment)) {
             return updateTokenMetadata(
               segment,
+              repetitionInfos[id],
               actionNodes,
               triggerNodeId,
               nodesData,
@@ -323,6 +339,7 @@ const updateTokenMetadataInParameters = (
       const viewModel = parameter.editorViewModel;
       if (viewModel) {
         flattenAndUpdateViewModel(
+          repetitionInfos[id],
           viewModel,
           actionNodes,
           triggerNodeId,
@@ -416,6 +433,48 @@ const initializeVariables = (
   }
 
   return declarations;
+};
+
+const initializeRepetitionInfos = async (
+  triggerNodeId: string,
+  nodesData: NodeDataWithOperationMetadata[],
+  nodesMetadata: NodesMetadata
+): Promise<Record<string, RepetitionContext>> => {
+  const promises: Promise<{ id: string; repetition: RepetitionContext }>[] = [];
+  const { operationInfos, inputs, settings } = nodesData.reduce(
+    (
+      result: { operationInfos: Record<string, NodeOperation>; inputs: Record<string, NodeInputs>; settings: Record<string, any> },
+      currentNode: NodeDataWithOperationMetadata
+    ) => {
+      const { id, nodeInputs, operationInfo, settings } = currentNode;
+      result.operationInfos[id] = operationInfo as NodeOperation;
+      result.inputs[id] = nodeInputs;
+      result.settings[id] = settings;
+
+      return result;
+    },
+    { operationInfos: {}, inputs: {}, settings: {} }
+  );
+
+  const getNodeRepetition = async (nodeId: string, includeSelf: boolean): Promise<{ id: string; repetition: RepetitionContext }> => {
+    const repetition = await getRepetitionContext(nodeId, triggerNodeId, operationInfos, inputs, settings, nodesMetadata, includeSelf);
+    return { id: nodeId, repetition };
+  };
+
+  for (const nodeData of nodesData) {
+    const { id, manifest } = nodeData;
+    const includeSelf = manifest ? shouldIncludeSelfForRepetitionReference(manifest) : false;
+    promises.push(getNodeRepetition(id, includeSelf));
+  }
+
+  const allRepetitions = (await Promise.all(promises)).filter((data) => !!data);
+  return allRepetitions.reduce(
+    (result: Record<string, RepetitionContext>, { id, repetition }: { id: string; repetition: RepetitionContext }) => ({
+      ...result,
+      [id]: repetition,
+    }),
+    {}
+  );
 };
 
 export const updateDynamicDataInNodes = async (getState: () => RootState, dispatch: Dispatch): Promise<void> => {
