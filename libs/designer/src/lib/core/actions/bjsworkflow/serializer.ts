@@ -731,9 +731,20 @@ const serializeSettings = (
   const timeout = settings.timeout?.isSupported && settings.timeout.value ? { timeout: settings.timeout.value } : undefined;
   const trackedProperties = settings.trackedProperties?.value;
 
+  if (settings.invokerConnection?.value?.enabled === true) {
+    return {
+      ...optional('correlation', settings.correlation?.value),
+      ...optional('isInvokerConnectionEnabled', settings.invokerConnection?.value?.enabled),
+      ...optional('conditions', conditions),
+      ...optional('limit', timeout),
+      ...optional('operationOptions', getSerializedOperationOptions(operationId, settings, rootState)),
+      ...optional('runtimeConfiguration', getSerializedRuntimeConfiguration(operationId, settings, nodeStaticResults, rootState)),
+      ...optional('trackedProperties', trackedProperties),
+      ...(getSplitOn(isTrigger, settings) ?? {}),
+    };
+  }
   return {
     ...optional('correlation', settings.correlation?.value),
-    ...optional('isInvokerConnectionEnabled', settings.invokerConnection?.value?.enabled === true),
     ...optional('conditions', conditions),
     ...optional('limit', timeout),
     ...optional('operationOptions', getSerializedOperationOptions(operationId, settings, rootState)),
