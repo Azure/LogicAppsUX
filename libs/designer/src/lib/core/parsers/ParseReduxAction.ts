@@ -27,11 +27,17 @@ export const initializeGraphState = createAsyncThunk<
     getConnectionsQuery();
     const { definition, connectionReferences, parameters } = workflowDefinition;
     const deserializedWorkflow = BJSDeserialize(definition, runInstance);
-    // The host can decide whether to make updates to the graph object. In situations like updating the workflow
-    // after save, it makes sense to not update the graph to avoid resetting things like dimensions
-    if (workflow.isGraphLocked && workflow.graph) {
-      deserializedWorkflow.graph = workflow.graph;
+    // For situations where there is an existing workflow, respect the node heights so that
+    // they are not reset
+    const previousChildren = workflow?.graph?.children || [];
+    const deserializedChildren = deserializedWorkflow?.graph?.children || [];
+    for (const node of deserializedChildren) {
+      const previousNode = previousChildren.find((item) => item.id === node.id);
+      if (previousNode?.height) {
+        node.height = previousNode.height;
+      }
     }
+
     thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
     thunkAPI.dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
     thunkAPI.dispatch(addInvokerSupport({ connectionReferences }));
