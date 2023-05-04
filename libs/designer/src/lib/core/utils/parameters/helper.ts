@@ -28,7 +28,7 @@ import type { WorkflowParameterDefinition } from '../../state/workflowparameters
 import type { RootState } from '../../store';
 import { initializeArrayViewModel } from '../editors/array';
 import { getAllParentsForNode, getFirstParentOfType, getTriggerNodeId } from '../graph';
-import { getParentArrayKey, isForeachActionNameForLoopsource } from '../loops';
+import { getParentArrayKey, isForeachActionNameForLoopsource, parseForeach } from '../loops';
 import { isOneOf } from '../openapi/schema';
 import { loadDynamicOutputsInNode } from '../outputs';
 import { hasSecureOutputs } from '../setting';
@@ -134,6 +134,7 @@ import {
   includes,
   isNullOrUndefined,
   isObject,
+  isString,
   startsWith,
   unmap,
   UnsupportedException,
@@ -692,9 +693,7 @@ export function shouldIncludeSelfForRepetitionReference(manifest: OperationManif
 export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
   const valueObject = parameter.isNotificationUrl ? `@${constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}` : parameter.value;
 
-  let valueSegments = convertToValueSegments(valueObject, undefined /* repetitionContext */, !parameter.suppressCasting /* shouldUncast */);
-
-  // TODO - Need to set value display name correctly from metadata for file/folder picker.
+  let valueSegments = convertToValueSegments(valueObject, !parameter.suppressCasting /* shouldUncast */);
 
   valueSegments = compressSegments(valueSegments);
 
@@ -747,14 +746,9 @@ export function convertToTokenExpression(value: any): string {
   }
 }
 
-export function convertToValueSegments(
-  value: any,
-  repetitionContext: RepetitionContext | undefined,
-  shouldUncast: boolean
-): ValueSegment[] {
+export function convertToValueSegments(value: any, shouldUncast: boolean): ValueSegment[] {
   try {
     const convertor = new ValueSegmentConvertor({
-      repetitionContext,
       shouldUncast,
       rawModeEnabled: true,
     });
@@ -1081,6 +1075,9 @@ export function updateParameterWithValues(
           if (valueExpandable) {
             for (const descendantInputParameter of descendantInputParameters) {
               const extraSegments = getExtraSegments(descendantInputParameter.key, parameterKey);
+              if (descendantInputParameter.alias) {
+                reduceRedundantSegments(extraSegments);
+              }
               const descendantValue = getPropertyValueWithSpecifiedPathSegments(clonedParameterValue, extraSegments);
               let alternativeParameterKeyExtraSegment: Segment[] | null = null;
 
@@ -1322,6 +1319,30 @@ function getExtraSegments(key: string, ancestorKey: string): Segment[] {
   }
 
   return childSegments.slice(startIndex);
+}
+
+function reduceRedundantSegments(segments: Segment[]): void {
+  for (let i = 0; i < segments.length - 1; i++) {
+    const segment = segments[i];
+    const nextSegment = segments[i + 1];
+
+    // Both segments must be properties and have string values to be reduced.
+    if (
+      segment.type !== SegmentType.Property ||
+      nextSegment.type !== SegmentType.Property ||
+      !isString(segment.value) ||
+      !isString(nextSegment.value)
+    ) {
+      continue;
+    }
+
+    // Reduce the segments down to one if the next segment starts with the current segment.
+    // Example: ['emailMessage', 'emailMessage/To'] should be reduced to ['emailMessage/To'].
+    if (nextSegment.value.startsWith(`${segment.value}/`)) {
+      segments.splice(i, 1);
+      i--;
+    }
+  }
 }
 
 export function transformInputParameter(inputParameter: InputParameter, parameterValue: any, invisible = false): InputParameter {
@@ -1729,7 +1750,7 @@ async function loadDynamicContentForInputsInNode(
           schema: input,
         })) as ParameterInfo[];
 
-        updateTokenMetadataInParameters(inputParameters, rootState);
+        updateTokenMetadataInParameters(nodeId, inputParameters, rootState);
 
         let swagger: SwaggerParser | undefined = undefined;
         if (!OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
@@ -2303,7 +2324,7 @@ function getClosestRepetitionReference(repetitionContext: RepetitionContext): Re
   return undefined;
 }
 
-export function updateTokenMetadataInParameters(parameters: ParameterInfo[], rootState: RootState): void {
+export function updateTokenMetadataInParameters(nodeId: string, parameters: ParameterInfo[], rootState: RootState): void {
   const {
     workflow: { operations, nodesMetadata },
     operations: { operationMetadata, outputParameters, settings },
@@ -2326,6 +2347,7 @@ export function updateTokenMetadataInParameters(parameters: ParameterInfo[], roo
     {}
   );
 
+  const repetitionContext = rootState.operations.repetitionInfos[nodeId];
   for (const parameter of parameters) {
     const segments = parameter.value;
 
@@ -2334,6 +2356,7 @@ export function updateTokenMetadataInParameters(parameters: ParameterInfo[], roo
         if (isTokenValueSegment(segment)) {
           return updateTokenMetadata(
             segment,
+            repetitionContext,
             actionNodes,
             triggerNodeId,
             nodesData,
@@ -2349,12 +2372,23 @@ export function updateTokenMetadataInParameters(parameters: ParameterInfo[], roo
     }
     const viewModel = parameter.editorViewModel;
     if (viewModel) {
-      flattenAndUpdateViewModel(viewModel, actionNodes, triggerNodeId, nodesData, operations, definitions, nodesMetadata, parameter.type);
+      flattenAndUpdateViewModel(
+        repetitionContext,
+        viewModel,
+        actionNodes,
+        triggerNodeId,
+        nodesData,
+        operations,
+        definitions,
+        nodesMetadata,
+        parameter.type
+      );
     }
   }
 }
 
 export const flattenAndUpdateViewModel = (
+  repetitionContext: RepetitionContext,
   items: any,
   actionNodes: Record<string, string>,
   triggerNodeId: string,
@@ -2371,6 +2405,7 @@ export const flattenAndUpdateViewModel = (
       if (!isTokenValueSegment(keyItem)) return keyItem;
       const valueSegmentToUpdate = updateTokenMetadata(
         keyItem,
+        repetitionContext,
         actionNodes,
         triggerNodeId,
         nodes,
@@ -2388,6 +2423,7 @@ export const flattenAndUpdateViewModel = (
   Object.entries(items).forEach(([itemKey, itemValue]) => {
     if (typeof itemValue === 'object') {
       replacedItems[itemKey] = flattenAndUpdateViewModel(
+        repetitionContext,
         itemValue,
         actionNodes,
         triggerNodeId,
@@ -2412,6 +2448,7 @@ export const flattenAndUpdateViewModel = (
 
 export function updateTokenMetadata(
   valueSegment: ValueSegment,
+  repetitionContext: RepetitionContext,
   actionNodes: Record<string, string>,
   triggerNodeId: string,
   nodes: Record<string, Partial<NodeDataWithOperationMetadata>>,
@@ -2446,14 +2483,24 @@ export function updateTokenMetadata(
       break;
   }
 
-  const { name, actionName, arrayDetails } = valueSegment.token as SegmentToken;
-  const tokenNodeId = actionName ? getPropertyValue(actionNodes, actionName) : triggerNodeId;
+  if (token.arrayDetails && repetitionContext) {
+    const repetitionReference = getRepetitionReference(repetitionContext, token.arrayDetails.loopSource);
+    const repetitionValue = repetitionReference?.repetitionValue;
+    const { step, path, fullPath } = parseForeach(repetitionValue, repetitionContext);
+    token.arrayDetails = {
+      ...token.arrayDetails,
+      parentArrayKey: fullPath,
+      parentArrayName: path,
+    };
+    token.actionName = step;
 
-  if (arrayDetails?.loopSource) {
-    // TODO - If the token comes from foreach with literal value, need to update tokenNodeId with foreach branding.
-    // Need to store repetition context in store to avoid re-calculation everytime.
+    if (!token.arrayDetails.loopSource && equals(repetitionReference?.actionType, constants.NODE.TYPE.FOREACH)) {
+      token.arrayDetails.loopSource = repetitionReference?.actionName;
+    }
   }
 
+  const { actionName, arrayDetails, name } = token;
+  const tokenNodeId = actionName ? getPropertyValue(actionNodes, actionName) : triggerNodeId;
   const { settings, nodeOutputs, operationMetadata } = nodes[tokenNodeId] ?? {};
   const tokenNodeOperation = operations[tokenNodeId];
   const nodeType = tokenNodeOperation?.type;
@@ -2505,7 +2552,9 @@ export function updateTokenMetadata(
     token.type = nodeOutputInfo.type;
     token.format = nodeOutputInfo.format;
     token.name = nodeOutputInfo.name;
+    token.schema = nodeOutputInfo.schema;
     token.description = nodeOutputInfo.description;
+    token.source = nodeOutputInfo.source;
     token.required = token.required !== undefined ? token.required : nodeOutputInfo.required;
 
     if (arrayDetails || outputInsideForeach) {
@@ -2574,7 +2623,7 @@ function getOutputByTokenInfo(
   const normalizedTokenName = decodePropertySegment(getNormalizedTokenName(name));
   for (const output of outputs) {
     const bothNotInArray = !arrayDetails && !output.isInsideArray;
-    const sameArray = equals(getNormalizedName(arrayDetails?.parentArrayName || ''), getNormalizedName(output.parentArray || ''));
+    const sameArray = isOutputInSameArray(tokenInfo, output);
     const sameName = decodePropertySegment(getNormalizedTokenName(output.name)) === normalizedTokenName;
     // Optional outputs end up getting ? added to their name. This should be stripped out on alias comparison.
     if (sameName && (sameArray || bothNotInArray)) {
@@ -2589,6 +2638,28 @@ function getOutputByTokenInfo(
   }
 
   return undefined;
+}
+
+function isOutputInSameArray(token: SegmentToken, output: OutputInfo): boolean {
+  const { source, arrayDetails } = token;
+  if (arrayDetails?.parentArrayName && output.parentArray && output.source !== source) {
+    const tokenArray =
+      source === OutputSource.Body && output.source === OutputSource.Outputs
+        ? arrayDetails.parentArrayName === OutputKeys.Body
+          ? 'body'
+          : `body.${arrayDetails.parentArrayName}`
+        : arrayDetails.parentArrayName;
+    const outputArray =
+      output.source === OutputSource.Body && source === OutputSource.Outputs
+        ? output.parentArray === OutputKeys.Body
+          ? 'body'
+          : `body.${output.parentArray}`
+        : output.parentArray;
+
+    return equals(getNormalizedName(tokenArray), getNormalizedName(outputArray));
+  } else {
+    return equals(getNormalizedName(arrayDetails?.parentArrayName || ''), getNormalizedName(output.parentArray || ''));
+  }
 }
 
 function getOutputsByType(allOutputs: OutputInfo[], type = constants.SWAGGER.TYPE.ANY): OutputInfo[] {
