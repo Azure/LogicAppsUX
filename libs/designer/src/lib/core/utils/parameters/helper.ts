@@ -461,7 +461,7 @@ const convertStringToInputParameter = (
 };
 
 // Create Array Editor View Model Schema
-const toArrayViewModelSchema = (itemSchema: any): any => {
+export const toArrayViewModelSchema = (itemSchema: any): any => {
   if (Array.isArray(itemSchema)) {
     return itemSchema.map((item) => toArrayViewModelSchema(item));
   } else if (itemSchema !== null && typeof itemSchema === constants.SWAGGER.TYPE.OBJECT) {
