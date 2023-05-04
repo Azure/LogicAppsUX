@@ -9,6 +9,7 @@ import type { WorkflowParameterDefinition, WorkflowParametersState } from '../st
 import type { RootState } from '../store';
 import { getAllNodesInsideNode, getTriggerNodeId, getUpstreamNodeIds } from './graph';
 import { getForeachActionName, getRepetitionNodeIds, getTokenExpressionValueForManifestBasedOperation, shouldAddForeach } from './loops';
+import { removeAliasingKeyRedundancies } from './outputs';
 import {
   ensureExpressionValue,
   FxBrandColor,
@@ -111,9 +112,10 @@ export const convertOutputsToTokens = (
   // TODO - Look at repetition context to get foreach context correctly in tokens and for splitOn
 
   return Object.keys(outputs).map((outputKey) => {
-    const { key, name, type, isAdvanced, required, format, source, isInsideArray, parentArray, itemSchema, value } = outputs[outputKey];
+    const { key, name, type, isAdvanced, required, format, source, isInsideArray, parentArray, itemSchema, value, alias } =
+      outputs[outputKey];
     return {
-      key,
+      key: alias ? removeAliasingKeyRedundancies(key) : key,
       brandColor,
       icon,
       title: getTokenTitle(outputs[outputKey]),
