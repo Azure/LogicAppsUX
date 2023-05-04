@@ -58,26 +58,29 @@ export interface SerializeOptions {
 }
 
 export const serializeWorkflow = async (rootState: RootState, options?: SerializeOptions): Promise<Workflow> => {
-  const operationsWithSettingsErrors = (Object.entries(rootState.settings.validationErrors) ?? []).filter(
-    ([_id, errorArr]) => errorArr.length > 0
-  );
-  if (operationsWithSettingsErrors.length > 0) {
-    throw new Error(
-      'Workflow has settings validation errors on the following operations: ' +
-        operationsWithSettingsErrors.map(([id, _errorArr]) => id).join(', ')
+  if (!options?.skipValidation) {
+    const operationsWithSettingsErrors = (Object.entries(rootState.settings.validationErrors) ?? []).filter(
+      ([_id, errorArr]) => errorArr.length > 0
     );
-  }
+    if (operationsWithSettingsErrors.length > 0) {
+      throw new Error(
+        'Workflow has settings validation errors on the following operations: ' +
+          operationsWithSettingsErrors.map(([id, _errorArr]) => id).join(', ')
+      );
+    }
 
-  const operationsWithParameterErrors = (Object.entries(rootState.operations.inputParameters) ?? []).filter(
-    ([_id, nodeInputs]: [id: string, i: NodeInputs]) =>
-      Object.values(nodeInputs.parameterGroups).some((parameterGroup: ParameterGroup) =>
-        parameterGroup.parameters.some((parameter: ParameterInfo) => (parameter?.validationErrors?.length ?? 0) > 0)
-      )
-  );
-  if (operationsWithParameterErrors.length > 0) {
-    throw new Error(
-      'Workflow has parameter validation errors on the following operations: ' + operationsWithParameterErrors.map(([id]) => id).join(', ')
+    const operationsWithParameterErrors = (Object.entries(rootState.operations.inputParameters) ?? []).filter(
+      ([_id, nodeInputs]: [id: string, i: NodeInputs]) =>
+        Object.values(nodeInputs.parameterGroups).some((parameterGroup: ParameterGroup) =>
+          parameterGroup.parameters.some((parameter: ParameterInfo) => (parameter?.validationErrors?.length ?? 0) > 0)
+        )
     );
+    if (operationsWithParameterErrors.length > 0) {
+      throw new Error(
+        'Workflow has parameter validation errors on the following operations: ' +
+          operationsWithParameterErrors.map(([id]) => id).join(', ')
+      );
+    }
   }
 
   const { connectionsMapping, connectionReferences: referencesObject } = rootState.connections;
