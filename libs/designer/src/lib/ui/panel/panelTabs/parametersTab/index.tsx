@@ -15,7 +15,6 @@ import { useNodeMetadata, useReplacedIds } from '../../../../core/state/workflow
 import type { AppDispatch, RootState } from '../../../../core/store';
 import { getConnectionReference } from '../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../core/utils/graph';
-import { addForeachToNode } from '../../../../core/utils/loops';
 import {
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
@@ -237,18 +236,7 @@ const ParameterSection = ({
     token: OutputToken,
     addImplicitForeachIfNeeded: boolean
   ): Promise<ValueSegment> => {
-    const { segment, foreachDetails } = await createValueSegmentFromToken(
-      nodeId,
-      parameterId,
-      token,
-      addImplicitForeachIfNeeded,
-      rootState
-    );
-    if (foreachDetails) {
-      dispatch(addForeachToNode({ arrayName: foreachDetails.arrayValue, nodeId, token }));
-    }
-
-    return segment;
+    return createValueSegmentFromToken(nodeId, parameterId, token, addImplicitForeachIfNeeded, rootState, dispatch);
   };
 
   const getTokenPicker = (
