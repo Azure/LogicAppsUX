@@ -7,7 +7,7 @@ import type { ConnectorWithParsedSwagger } from '../../queries/connections';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeData, NodeInputs, NodeOperation, NodeOutputs } from '../../state/operation/operationMetadataSlice';
-import { initializeOperationInfo, initializeNodes } from '../../state/operation/operationMetadataSlice';
+import { ErrorLevel, updateErrorDetails, initializeOperationInfo, initializeNodes } from '../../state/operation/operationMetadataSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
@@ -223,14 +223,15 @@ export const initializeOperationDetailsForManifest = async (
 
     return;
   } catch (error) {
-    const errorMessage = `Unable to initialize operation details for operation - ${nodeId}. Error details - ${error}`;
+    const message = `Unable to initialize operation details for operation - ${nodeId}. Error details - ${error}`;
     LoggerService().log({
       level: LogEntryLevel.Error,
       area: 'operation deserializer',
-      message: errorMessage,
+      message,
       error: error instanceof Error ? error : undefined,
     });
 
+    dispatch(updateErrorDetails({ id: nodeId, errorInfo: { level: ErrorLevel.Critical, error, message } }));
     return;
   }
 };
@@ -476,33 +477,35 @@ export const updateDynamicDataInNodes = async (getState: () => RootState, dispat
   const rootState = getState();
   const {
     workflow: { nodesMetadata, operations },
-    operations: { inputParameters, settings, dependencies, operationInfo, actionMetadata },
+    operations: { inputParameters, settings, dependencies, operationInfo, actionMetadata, errors },
     tokens: { variables },
     connections,
   } = rootState;
   const allVariables = getAllVariables(variables);
   for (const [nodeId, operation] of Object.entries(operations)) {
-    const nodeDependencies = dependencies[nodeId];
-    const nodeInputs = inputParameters[nodeId];
-    const nodeMetadata = actionMetadata[nodeId];
-    const nodeSettings = settings[nodeId];
-    const isTrigger = isRootNodeInGraph(nodeId, 'root', nodesMetadata);
-    const nodeOperationInfo = operationInfo[nodeId];
-    const connectionReference = getConnectionReference(connections, nodeId);
+    if (errors[nodeId]?.level !== ErrorLevel.Critical) {
+      const nodeDependencies = dependencies[nodeId];
+      const nodeInputs = inputParameters[nodeId];
+      const nodeMetadata = actionMetadata[nodeId];
+      const nodeSettings = settings[nodeId];
+      const isTrigger = isRootNodeInGraph(nodeId, 'root', nodesMetadata);
+      const nodeOperationInfo = operationInfo[nodeId];
+      const connectionReference = getConnectionReference(connections, nodeId);
 
-    updateDynamicDataInNode(
-      nodeId,
-      isTrigger,
-      nodeOperationInfo,
-      connectionReference,
-      nodeDependencies,
-      nodeInputs,
-      nodeMetadata,
-      nodeSettings,
-      allVariables,
-      dispatch,
-      rootState,
-      operation
-    );
+      updateDynamicDataInNode(
+        nodeId,
+        isTrigger,
+        nodeOperationInfo,
+        connectionReference,
+        nodeDependencies,
+        nodeInputs,
+        nodeMetadata,
+        nodeSettings,
+        allVariables,
+        dispatch,
+        rootState,
+        operation
+      );
+    }
   }
 };

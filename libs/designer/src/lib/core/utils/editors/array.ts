@@ -54,6 +54,16 @@ export interface ArrayViewModel {
    * @member {InputParameter} itemInputParameter - the associated item input parameter for the array parameter.
    */
   itemInputParameter: InputParameter;
+
+  /**
+   * @member {any} itemSchema - the associated item schema for the array parameter used in UI.
+   */
+  itemSchema?: any;
+
+  /**
+   * @member {boolean} complexArray - the associated item schema for the array parameter used in UI.
+   */
+  complexArray?: boolean;
 }
 
 export interface ItemPropertyViewModel {
