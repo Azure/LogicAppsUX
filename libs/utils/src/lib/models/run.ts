@@ -1,5 +1,3 @@
-import { isObject } from '../helpers';
-
 export interface Run {
   id: string;
   name: string;
@@ -77,8 +75,4 @@ export interface CallbackInfoWithRelativePath {
 
 export interface CallbackInfoWithValue {
   value: string;
-}
-
-export function isCallbackInfoWithRelativePath(value: any): value is CallbackInfoWithRelativePath {
-  return isObject(value) && typeof value.relativePath === 'string';
 }

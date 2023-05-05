@@ -1,6 +1,6 @@
-import { getCallbackUrl } from './utils';
 import type { ICommandBarItemProps } from '@fluentui/react';
 import { CommandBar } from '@fluentui/react';
+import { getCallbackUrl } from '@microsoft/utils-logic-apps';
 import type { CallbackInfo } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
