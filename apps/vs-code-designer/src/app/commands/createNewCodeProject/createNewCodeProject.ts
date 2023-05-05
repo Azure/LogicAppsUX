@@ -9,7 +9,7 @@ import { getGlobalSetting, getWorkspaceSetting } from '../../utils/vsCodeConfig/
 import { OpenBehaviorStepCodeProject } from './OpenBehaviorStepCodeProject';
 import { OpenFolderStepCodeProject } from './OpenFolderStepsCodeProject';
 import { FolderListStepCodeProject } from './createCodeProjectSteps/FolderListStepCodeProject';
-//import { NewProjectTypeStep } from './createProjectSteps/NewProjectTypeStep';
+import { NewCodeProjectTypeStep } from './createCodeProjectSteps/NewCodeProjectTypeStep';
 import { isString } from '@microsoft/utils-logic-apps';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -67,7 +67,7 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
     title: localize('createNewCodeProject', 'Create new code project'),
     promptSteps: [
       new FolderListStepCodeProject(),
-      new NewProjectTypeStep(options.templateId, options.functionSettings),
+      new NewCodeProjectTypeStep(options.templateId, options.functionSettings),
       new OpenBehaviorStepCodeProject(),
     ],
     executeSteps: [new OpenFolderStepCodeProject()],

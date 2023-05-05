@@ -16,8 +16,11 @@ import * as os from 'os';
 import * as path from 'path';
 import type { Progress } from 'vscode';
 
+/**
+ * This class represents a step that creates the contents of a new script project.
+ */
 export class ScriptProjectCreateStep extends ProjectCodeCreateStepBase {
-  //set of files that should be ignored when creating a script project.
+  // Set of files that should be ignored when creating a script project.
   protected funcignore: string[] = [
     '__blobstorage__',
     '__queuestorage__',
@@ -31,19 +34,26 @@ export class ScriptProjectCreateStep extends ProjectCodeCreateStepBase {
   protected gitignore = '';
   protected supportsManagedDependencies = false;
 
-  // creates script project
+  /**
+   * Executes the step to create the contents of the project.
+   * @param context The project wizard context.
+   * @param _progress The progress object to use for reporting progress.
+   */
   public async executeCore(
     context: IProjectWizardContext,
     _progress: Progress<{ message?: string | undefined; increment?: number | undefined }>
   ): Promise<void> {
+    // Get the version of the Azure Functions runtime
     const version: FuncVersion = nonNullProp(context, 'version');
-    const hostJsonPath: string = path.join(context.projectPath, hostFileName);
 
+    // Create the host.json file
+    const hostJsonPath: string = path.join(context.projectPath, hostFileName);
     if (await confirmOverwriteFile(context, hostJsonPath)) {
       const hostJson: IHostJsonV2 | IHostJsonV1 = version === FuncVersion.v1 ? {} : await this.getHostContent(context);
       await writeFormattedJson(hostJsonPath, hostJson);
     }
 
+    // Create the local.settings.json file
     const localSettingsJsonPath: string = path.join(context.projectPath, localSettingsFileName);
     if (await confirmOverwriteFile(context, localSettingsJsonPath)) {
       const localSettingsJson: ILocalSettingsJson = {
@@ -55,13 +65,14 @@ export class ScriptProjectCreateStep extends ProjectCodeCreateStepBase {
 
       const functionsWorkerRuntime: string | undefined = getFunctionsWorkerRuntime(context.language);
       if (functionsWorkerRuntime) {
-        // tslint:disable-next-line:no-non-null-assertion
+        // Add the Functions worker runtime to the local.settings.json file
         localSettingsJson.Values[workerRuntimeKey] = functionsWorkerRuntime;
       }
 
       await writeFormattedJson(localSettingsJsonPath, localSettingsJson);
     }
 
+    // Create the .gitignore file
     const gitignorePath: string = path.join(context.projectPath, gitignoreFileName);
     if (await confirmOverwriteFile(context, gitignorePath)) {
       await fse.writeFile(
@@ -78,12 +89,18 @@ __azurite_db*__.json`)
       );
     }
 
+    // Create the .funcignore file
     const funcIgnorePath: string = path.join(context.projectPath, '.funcignore');
     if (await confirmOverwriteFile(context, funcIgnorePath)) {
       await fse.writeFile(funcIgnorePath, this.funcignore.sort().join(os.EOL));
     }
   }
 
+  /**
+   * Gets the contents of the host.json file for the specified context.
+   * @param context The action context.
+   * @returns The contents of the host.json file.
+   */
   protected async getHostContent(context: IActionContext): Promise<IHostJsonV2> {
     const hostJson: IHostJsonV2 = {
       version: '2.0',
@@ -97,6 +114,7 @@ __azurite_db*__.json`)
       },
     };
 
+    // Add the default bundle to the host.json file
     await addDefaultBundle(context, hostJson);
 
     return hostJson;
