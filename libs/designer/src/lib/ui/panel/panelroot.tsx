@@ -2,8 +2,8 @@ import constants from '../../common/constants';
 import type { AppDispatch, RootState } from '../../core';
 import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { useIsXrmConnectionReferenceMode, useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { updateParameterValidation } from '../../core/state/operation/operationMetadataSlice';
-import { useParameterValidationErrors } from '../../core/state/operation/operationSelector';
+import { ErrorLevel, updateParameterValidation } from '../../core/state/operation/operationMetadataSlice';
+import { useOperationErrorInfo, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import {
   useCurrentPanelModePanelMode,
   useIsPanelCollapsed,
@@ -106,6 +106,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       tabs.push(scratchTab);
     }
     dispatch(registerPanelTabs(tabs));
+    dispatch(clearPanel());
   }, [dispatch]);
 
   useEffect(() => {
@@ -274,6 +275,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   const dismissPanel = () => dispatch(clearPanel());
 
   const opQuery = useOperationQuery(selectedNode);
+  const errorInfo = useOperationErrorInfo(selectedNode);
 
   const isLoading = useMemo(() => {
     if (nodeMetaData?.subgraphType) return false;
@@ -304,7 +306,8 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       cardIcon={iconUri}
       comment={comment}
       noNodeSelected={!selectedNode}
-      isError={opQuery?.isError}
+      isError={errorInfo?.level === ErrorLevel.Critical || opQuery?.isError}
+      errorMessage={errorInfo?.message}
       isLoading={isLoading}
       panelScope={PanelScope.CardLevel}
       panelHeaderControlType={getPanelHeaderControlType() ? PanelHeaderControlType.DISMISS_BUTTON : PanelHeaderControlType.MENU}

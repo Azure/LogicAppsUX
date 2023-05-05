@@ -352,10 +352,11 @@ export function getParameterEditorProps(
   if (!editor) {
     if (format === constants.EDITOR.HTML) {
       editor = constants.EDITOR.HTML;
-    }
-    if (type === constants.SWAGGER.TYPE.ARRAY && !!itemSchema && !equals(visibility, Visibility.Internal)) {
+    } else if (type === constants.SWAGGER.TYPE.ARRAY && !!itemSchema && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.ARRAY;
       editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
+      editorViewModel.itemSchema = toArrayViewModelSchema(itemSchema);
+      editorViewModel.complexArray = itemSchema?.type === constants.SWAGGER.TYPE.OBJECT;
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
     } else if ((schemaEnum || schema?.enum || schema?.[ExtensionProperties.CustomEnum]) && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.COMBOBOX;
@@ -386,9 +387,6 @@ export function getParameterEditorProps(
         ...editorOptions,
         options: schemaEnumOptions,
       };
-    } else if (type === constants.SWAGGER.TYPE.ARRAY && !equals(visibility, Visibility.Internal) && schema?.itemSchema) {
-      editorViewModel = toArrayViewModel(schema);
-      editor = constants.EDITOR.ARRAY;
     } else {
       editorOptions = undefined;
     }
@@ -462,27 +460,20 @@ const convertStringToInputParameter = (
   };
 };
 
-// Create Array Editor View Model
-const toArrayViewModel = (input: any): { schema: any } => {
-  const schema: any = destructureSchema(input.itemSchema);
-  return { schema };
-};
-
-const destructureSchema = (schema: any): any => {
-  if (!schema) {
-    return;
+// Create Array Editor View Model Schema
+export const toArrayViewModelSchema = (itemSchema: any): any => {
+  if (Array.isArray(itemSchema)) {
+    return itemSchema.map((item) => toArrayViewModelSchema(item));
+  } else if (itemSchema !== null && typeof itemSchema === constants.SWAGGER.TYPE.OBJECT) {
+    const result: { [key: string]: any } = {};
+    Object.keys(itemSchema).forEach((key) => {
+      const value = itemSchema[key];
+      const newKey = key === 'x-ms-summary' ? 'title' : key;
+      result[newKey] = toArrayViewModelSchema(value);
+    });
+    return result;
   }
-  if (schema.type && schema.type !== 'object') {
-    return { ...schema };
-  }
-  if (schema.type === 'object' && schema.properties) {
-    return destructureSchema(schema.properties);
-  }
-  const newSchema: any = {};
-  for (const schemaItem of Object.keys(schema)) {
-    newSchema[schemaItem] = destructureSchema(schema[schemaItem]);
-  }
-  return newSchema;
+  return itemSchema;
 };
 
 // Create SimpleQueryBuilder Editor View Model
@@ -1073,10 +1064,14 @@ export function updateParameterWithValues(
           const valueExpandable =
             isObject(clonedParameterValue) || (Array.isArray(clonedParameterValue) && clonedParameterValue.length === 1);
           if (valueExpandable) {
+            const dynamicSchemaKeyPrefixes: string[] = [];
             for (const descendantInputParameter of descendantInputParameters) {
               const extraSegments = getExtraSegments(descendantInputParameter.key, parameterKey);
               if (descendantInputParameter.alias) {
                 reduceRedundantSegments(extraSegments);
+                if (descendantInputParameter.dynamicSchema) {
+                  dynamicSchemaKeyPrefixes.push(`${descendantInputParameter.alias}/`);
+                }
               }
               const descendantValue = getPropertyValueWithSpecifiedPathSegments(clonedParameterValue, extraSegments);
               let alternativeParameterKeyExtraSegment: Segment[] | null = null;
@@ -1111,6 +1106,9 @@ export function updateParameterWithValues(
             // for the rest properties, create corresponding invisible parameter to preserve the value when serialize
             if (createInvisibleParameter) {
               for (const restPropertyName of Object.keys(clonedParameterValue)) {
+                if (dynamicSchemaKeyPrefixes.some((prefix) => restPropertyName.startsWith(prefix))) {
+                  continue;
+                }
                 const propertyValue = clonedParameterValue[restPropertyName];
                 if (propertyValue !== undefined) {
                   const childKeySegments = [...keySegments, { value: restPropertyName, type: SegmentType.Property }];

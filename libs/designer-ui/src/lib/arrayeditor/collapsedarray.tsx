@@ -5,6 +5,7 @@ import { BaseEditor } from '../editor/base';
 import { Label } from '../label';
 import type { LabelProps } from '../label';
 import { CollapsedArrayValidation } from './plugins/CollapsedArrayValidation';
+import type { ItemSchemaItemProps } from './util/util';
 import { useIntl } from 'react-intl';
 
 export interface CollapsedArrayProps {
@@ -13,8 +14,8 @@ export interface CollapsedArrayProps {
   collapsedValue: ValueSegment[];
   readOnly?: boolean;
   isTrigger?: boolean;
-  itemSchema?: unknown;
-  dimensionalSchema: unknown[];
+  itemSchema?: ItemSchemaItemProps[];
+  dimensionalSchema: ItemSchemaItemProps[];
   setCollapsedValue: (val: ValueSegment[]) => void;
   setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItems[]) => void);
   setIsValid: (b: boolean) => void;
@@ -28,7 +29,7 @@ export const CollapsedArray = ({
   collapsedValue,
   readOnly,
   isTrigger,
-  itemSchema,
+  dimensionalSchema,
   getTokenPicker,
   setItems,
   setIsValid,
@@ -79,7 +80,7 @@ export const CollapsedArray = ({
             className={'msla-collapsed-editor-validation'}
             isValid={isValid}
             collapsedValue={collapsedValue}
-            itemSchema={itemSchema}
+            itemSchema={dimensionalSchema}
             setCollapsedValue={setCollapsedValue}
             setIsValid={setIsValid}
             setItems={setItems}
