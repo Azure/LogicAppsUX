@@ -2,7 +2,7 @@ import Constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
-import { addInvokerSupport, initEmptyConnectionMap } from '../../state/connection/connectionSlice';
+import { initEmptyConnectionMap } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation, OperationMetadataState } from '../../state/operation/operationMetadataSlice';
 import { updateNodeSettings, initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
@@ -214,10 +214,6 @@ const initializeOperationDetails = async (
 
   const triggerNodeManifest = await getTriggerNodeManifest(state.workflow, state.operations);
 
-  const connectionReferences = state.connections.connectionReferences;
-  if (!state.connections.connectionReferences) {
-    dispatch(addInvokerSupport({ connectionReferences }));
-  }
   const settings = getOperationSettings(isTrigger, operationInfo, initData.nodeOutputs, manifest, swagger, operation);
   dispatch(updateNodeSettings({ id: nodeId, settings }));
   if (triggerNodeManifest) {
