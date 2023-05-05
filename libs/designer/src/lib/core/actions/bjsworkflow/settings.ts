@@ -189,6 +189,10 @@ export const getOperationSettings = (
       isSupported: getRunAfter(operation).length > 0,
       value: getRunAfter(operation),
     },
+    invokerConnection: {
+      isSupported: false,
+      value: { enabled: false },
+    },
   };
 };
 

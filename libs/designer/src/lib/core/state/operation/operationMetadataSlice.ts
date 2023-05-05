@@ -1,5 +1,5 @@
 import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
-import type { SettingData, Settings, SimpleSetting } from '../../actions/bjsworkflow/settings';
+import type { Settings } from '../../actions/bjsworkflow/settings';
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
 import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
 import type { RepetitionContext } from '../../utils/parameters/helper';
@@ -160,11 +160,6 @@ interface AddDynamicInputsPayload {
   inputs: ParameterInfo[];
   newInputs: InputParameter[];
   swagger?: SwaggerParser;
-}
-
-interface AddInvokerSettingPayload {
-  id: string;
-  invokerSetting: SettingData<SimpleSetting<boolean>>;
 }
 
 export interface UpdateParametersPayload {
@@ -390,10 +385,6 @@ export const operationMetadataSlice = createSlice({
         delete state.actionMetadata[id];
       }
     },
-    updateInvokerSetting: (state, action: PayloadAction<AddInvokerSettingPayload>) => {
-      const { id, invokerSetting } = action.payload;
-      state.settings[id].invokerConnection = invokerSetting;
-    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
@@ -420,7 +411,6 @@ export const {
   updateErrorDetails,
   deinitializeOperationInfo,
   deinitializeNodes,
-  updateInvokerSetting,
 } = operationMetadataSlice.actions;
 
 export default operationMetadataSlice.reducer;

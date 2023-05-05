@@ -33,7 +33,7 @@ import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
   updateCallbackUrlInInputs,
-  updateTriggerNodeManifestForInvokerSettings,
+  updateInvokerSettings,
 } from './initialize';
 import { getOperationSettings } from './settings';
 import {
@@ -119,13 +119,14 @@ export const initializeOperationMetadata = async (
     )
   );
 
-  for (let i = 0; i < allNodeData.length; i++) {
-    updateTriggerNodeManifestForInvokerSettings(
-      i === 0 ? true : false,
-      allNodeData[0].id === triggerNodeId ? allNodeData[0].manifest : undefined,
-      allNodeData[i].id,
-      dispatch
-    );
+  const triggerNodeManifest = allNodeData.find((nodeData) => nodeData.id === triggerNodeId)?.manifest;
+  if (triggerNodeManifest) {
+    for (const nodeData of allNodeData) {
+      const { id, settings } = nodeData;
+      if (settings) {
+        updateInvokerSettings(id === triggerNodeId, triggerNodeManifest, id, settings, dispatch);
+      }
+    }
   }
 
   const variables = initializeVariables(operations, allNodeData);

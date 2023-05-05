@@ -14,7 +14,7 @@ import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
-import { isRootNodeInGraph } from '../../utils/graph';
+import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
 import { getParameterFromName, updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { createLiteralValueSegment } from '../../utils/parameters/segment';
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
@@ -25,7 +25,7 @@ import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
   updateAllUpstreamNodes,
-  updateTriggerNodeManifestForInvokerSettings,
+  updateInvokerSettings,
 } from './initialize';
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
@@ -212,7 +212,7 @@ const initializeOperationDetails = async (
   // Re-update settings after we have valid operation data
   const operation = getState().workflow.operations[nodeId];
 
-  const rootNodeManifest = await getRootNodeManifest(state.workflow, state.operations);
+  const triggerNodeManifest = await getTriggerNodeManifest(state.workflow, state.operations);
 
   const connectionReferences = state.connections.connectionReferences;
   if (!state.connections.connectionReferences) {
@@ -220,7 +220,9 @@ const initializeOperationDetails = async (
   }
   const settings = getOperationSettings(isTrigger, operationInfo, initData.nodeOutputs, manifest, swagger, operation);
   dispatch(updateNodeSettings({ id: nodeId, settings }));
-  updateTriggerNodeManifestForInvokerSettings(isTrigger, rootNodeManifest, nodeId, dispatch);
+  if (triggerNodeManifest) {
+    updateInvokerSettings(isTrigger, triggerNodeManifest, nodeId, settings, dispatch);
+  }
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);
   dispatch(showDefaultTabs({ isScopeNode: operationInfo?.type.toLowerCase() === Constants.NODE.TYPE.SCOPE, hasSchema: hasSchema }));
@@ -329,18 +331,15 @@ const getOperationType = (operation: DiscoveryOperation<DiscoveryResultTypes>): 
     : operationType;
 };
 
-export const getRootNodeManifest = async (
+export const getTriggerNodeManifest = async (
   workflowState: WorkflowState,
   operations: OperationMetadataState
 ): Promise<OperationManifest | undefined> => {
-  if (workflowState?.graph?.children !== undefined) {
-    for (const child of workflowState.graph.children) {
-      if (workflowState.graph?.id === 'root') {
-        const rootNodeOperationInfo = operations.operationInfo[child.id];
-        const { connectorId, operationId } = rootNodeOperationInfo;
-        return await getOperationManifest({ connectorId, operationId });
-      }
-    }
+  const triggerNodeId = getTriggerNodeId(workflowState);
+  const operationInfo = operations.operationInfo[triggerNodeId];
+  if (operationInfo && OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
+    const { connectorId, operationId } = operationInfo;
+    return getOperationManifest({ connectorId, operationId });
   }
   return undefined;
 };
