@@ -221,6 +221,12 @@
       "value": "Returns the start of the hour to a string timestamp passed in"
     }
   ],
+  "08e2rO": [
+    {
+      "type": 0,
+      "value": "The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection."
+    }
+  ],
   "09B9CU": [
     {
       "type": 0,
@@ -4723,6 +4729,12 @@
       "value": "Target schema element cannot be deleted."
     }
   ],
+  "Xj4xwI": [
+    {
+      "type": 0,
+      "value": "The managed identity used with this operation no longer exists. To continue, select an available identity or change the connection."
+    }
+  ],
   "XkBxv5": [
     {
       "type": 0,
@@ -7419,6 +7431,12 @@
     {
       "type": 0,
       "value": "This function provides you details for the workflow itself at runtime"
+    }
+  ],
+  "tMdcE1": [
+    {
+      "type": 0,
+      "value": "Invalid connection, please update your connection to load complete details"
     }
   ],
   "tNoZx2": [
