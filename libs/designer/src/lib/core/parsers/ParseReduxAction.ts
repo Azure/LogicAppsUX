@@ -30,7 +30,8 @@ export const initializeGraphState = createAsyncThunk<
     const deserializedWorkflow = BJSDeserialize(definition, runInstance);
     // For situations where there is an existing workflow, respect the node heights so that
     // they are not reset
-    updateChildrenHeight(workflow?.graph?.children || [], deserializedWorkflow?.graph?.children || []);
+    const previousGraphFlattened = flattenWorkflowNodes(deserializedWorkflow?.graph?.children || []);
+    updateChildrenHeight(workflow?.graph?.children || [], previousGraphFlattened);
 
     thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
     thunkAPI.dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
@@ -60,13 +61,28 @@ export const initializeGraphState = createAsyncThunk<
 function updateChildrenHeight(currentChildren: WorkflowNode[], previousChildren: WorkflowNode[]) {
   for (const node of currentChildren) {
     const previousNode = previousChildren.find((item) => item.id === node.id);
-    if (previousNode?.height) {
+    if (previousNode?.height && previousNode?.width) {
       node.height = previousNode.height;
+      node.width = previousNode.width;
     }
+    updateChildrenHeight(node.children || [], previousChildren);
+  }
+}
 
-    // Update children only if the current node was found
-    if (previousNode) {
-      updateChildrenHeight(node.children || [], previousNode.children || []);
+function flattenWorkflowNodes(nodes: WorkflowNode[]): WorkflowNode[] {
+  const result: WorkflowNode[] = [];
+
+  for (const node of nodes) {
+    result.push({ ...node });
+    if (node.children) {
+      const flattenedChildren = flattenWorkflowNodes(node.children);
+      result.push(...flattenedChildren);
+      // make a copy of the current node before modifying its children
+      const nodeCopy = { ...node };
+      nodeCopy.children = undefined;
+      result.push(nodeCopy);
     }
   }
+
+  return result;
 }
