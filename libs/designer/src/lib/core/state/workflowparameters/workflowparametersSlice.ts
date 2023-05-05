@@ -18,11 +18,13 @@ export interface WorkflowParameterDefinition extends WorkflowParameter {
 export interface WorkflowParametersState {
   definitions: Record<string, WorkflowParameterDefinition>;
   validationErrors: Record<string, Record<string, string | undefined>>;
+  isDirty: boolean;
 }
 
 export const initialState: WorkflowParametersState = {
   definitions: {},
   validationErrors: {},
+  isDirty: false,
 };
 
 export const validateParameter = (
@@ -161,11 +163,13 @@ export const workflowParametersSlice = createSlice({
       const parameterId = guid();
       state.definitions[parameterId] = { isEditable: true, type: UIConstants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY, name: '' };
       state.validationErrors[parameterId] = {};
+      state.isDirty = true;
     },
     deleteParameter: (state, action: PayloadAction<string>) => {
       const parameterId = action.payload;
       delete state.validationErrors[parameterId];
       delete state.definitions[parameterId];
+      state.isDirty = true;
     },
     updateParameter: (state, action: PayloadAction<WorkflowParameterUpdateEvent>) => {
       const {
@@ -194,6 +198,10 @@ export const workflowParametersSlice = createSlice({
         ...state.validationErrors[id],
         ...validationErrors,
       };
+      state.isDirty = true;
+    },
+    setIsWorkflowParametersDirty: (state, action: PayloadAction<boolean>) => {
+      state.isDirty = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -201,6 +209,7 @@ export const workflowParametersSlice = createSlice({
   },
 });
 
-export const { initializeParameters, addParameter, deleteParameter, updateParameter } = workflowParametersSlice.actions;
+export const { initializeParameters, addParameter, deleteParameter, updateParameter, setIsWorkflowParametersDirty } =
+  workflowParametersSlice.actions;
 
 export default workflowParametersSlice.reducer;

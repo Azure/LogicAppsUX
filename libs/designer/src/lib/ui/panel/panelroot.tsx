@@ -106,6 +106,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       tabs.push(scratchTab);
     }
     dispatch(registerPanelTabs(tabs));
+    dispatch(clearPanel());
   }, [dispatch]);
 
   useEffect(() => {
