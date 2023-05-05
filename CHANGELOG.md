@@ -1,4 +1,22 @@
 # Logic Apps Designer
+### [2.15.9](https://github.com/Azure/LogicAppsUX/compare/v2.15.8...v2.15.9) (2023-05-05)
+
+
+### Features
+
+* **designer:** Workflow Parameters - Dirty State ([#2245](https://github.com/Azure/LogicAppsUX/issues/2245)) ([381e139](https://github.com/Azure/LogicAppsUX/commit/381e139c996a7602fca4059e666773f292f700ec))
+
+### [2.15.8](https://github.com/Azure/LogicAppsUX/compare/v2.15.7...v2.15.8) (2023-05-05)
+
+
+### Bug Fixes
+
+* **designer:** Adding error details in panel and card when operation cannot be deserialized ([#2237](https://github.com/Azure/LogicAppsUX/issues/2237)) ([9229cdc](https://github.com/Azure/LogicAppsUX/commit/9229cdcdcf678f85da660608b5477e0447465e26))
+* **designer:** Adding support for items token and updating repetition context for token addition ([#2222](https://github.com/Azure/LogicAppsUX/issues/2222)) ([78c7185](https://github.com/Azure/LogicAppsUX/commit/78c7185b6b1911ae5bab7987a84920ad26be45f3))
+* **designer:** Integration of Complex Array Editor ([#2233](https://github.com/Azure/LogicAppsUX/issues/2233)) ([ff96edd](https://github.com/Azure/LogicAppsUX/commit/ff96edd42d0aed17f5ddd488b21dcdf261302ead))
+* **designer:** Removing output token redundancies when dealing with outputs based on aliasing ([#2236](https://github.com/Azure/LogicAppsUX/issues/2236)) ([0d2c587](https://github.com/Azure/LogicAppsUX/commit/0d2c5873e1982aa635ebde4623a0bd1cf19296b6))
+* **designer:** Use skipValidation to skip throwing errors in serializeWorkflow ([#2235](https://github.com/Azure/LogicAppsUX/issues/2235)) ([af448c3](https://github.com/Azure/LogicAppsUX/commit/af448c37cffd8631628138113597a6a60748d5c7))
+* **openapi:** Fix dynamic schema params being duplicated ([#2238](https://github.com/Azure/LogicAppsUX/issues/2238)) ([6394c8b](https://github.com/Azure/LogicAppsUX/commit/6394c8b22a261729b277e48e1089228c653129b8))
 
 ### [2.15.7](https://github.com/Azure/LogicAppsUX/compare/v2.15.6...v2.15.7) (2023-05-04)
 
