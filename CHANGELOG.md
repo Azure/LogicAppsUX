@@ -66,8 +66,6 @@
 
 ### [2.15.2](https://github.com/Azure/LogicAppsUX/compare/v2.15.1...v2.15.2) (2023-04-29)
 
-### [2.15.2](https://github.com/Azure/LogicAppsUX/compare/v2.15.1...v2.15.2) (2023-04-29)
-
 ### Features
 
 - **designer:** File picker ([#2165](https://github.com/Azure/LogicAppsUX/issues/2165)) ([c30fa26](https://github.com/Azure/LogicAppsUX/commit/c30fa26dac619a84ec0800bb9bb398cb8dda0a79))

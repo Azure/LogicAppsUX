@@ -40,6 +40,7 @@ import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
   updateCallbackUrlInInputs,
+  updateInvokerSettings,
 } from './initialize';
 import { getOperationSettings } from './settings';
 import type { Settings } from './settings';
@@ -98,7 +99,7 @@ export const initializeOperationMetadata = async (
       triggerNodeId = operationId;
     }
     if (operationManifestService.isSupported(operation.type, operation.kind)) {
-      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, dispatch, graph, references));
+      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, dispatch));
     } else {
       promises.push(initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, dispatch) as any);
     }
@@ -126,6 +127,16 @@ export const initializeOperationMetadata = async (
       })
     )
   );
+
+  const triggerNodeManifest = allNodeData.find((nodeData) => nodeData.id === triggerNodeId)?.manifest;
+  if (triggerNodeManifest) {
+    for (const nodeData of allNodeData) {
+      const { id, settings } = nodeData;
+      if (settings) {
+        updateInvokerSettings(id === triggerNodeId, triggerNodeManifest, id, settings, dispatch);
+      }
+    }
+  }
 
   const variables = initializeVariables(operations, allNodeData);
   dispatch(
@@ -158,9 +169,7 @@ export const initializeOperationDetailsForManifest = async (
   nodeId: string,
   _operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
   isTrigger: boolean,
-  dispatch: Dispatch,
-  graph?: WorkflowNode,
-  connectionReferences?: ConnectionReferences
+  dispatch: Dispatch
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   const operation = { ..._operation };
   try {
@@ -201,21 +210,8 @@ export const initializeOperationDetailsForManifest = async (
         isTrigger ? (operation as LogicAppsV2.TriggerDefinition).splitOn : undefined
       );
       const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
-      let rootNodeId = '';
-      if (graph?.children) {
-        rootNodeId = graph?.children[0].id;
-      }
-      const settings = getOperationSettings(
-        isTrigger,
-        nodeOperationInfo,
-        nodeOutputs,
-        manifest,
-        undefined /* swagger */,
-        operation,
-        rootNodeId,
-        connectionReferences,
-        dispatch
-      );
+
+      const settings = getOperationSettings(isTrigger, nodeOperationInfo, nodeOutputs, manifest, undefined /* swagger */, operation);
 
       const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
 
