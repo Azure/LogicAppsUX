@@ -73,15 +73,15 @@ function flattenWorkflowNodes(nodes: WorkflowNode[]): WorkflowNode[] {
   const result: WorkflowNode[] = [];
 
   for (const node of nodes) {
-    result.push({ ...node });
     if (node.children) {
       const flattenedChildren = flattenWorkflowNodes(node.children);
       result.push(...flattenedChildren);
-      // make a copy of the current node before modifying its children
-      const nodeCopy = { ...node };
-      nodeCopy.children = undefined;
-      result.push(nodeCopy);
     }
+
+    // make a copy of the current node before modifying its children
+    const nodeCopy = { ...node };
+    nodeCopy.children = undefined;
+    result.push(nodeCopy);
   }
 
   return result;
