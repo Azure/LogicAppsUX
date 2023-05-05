@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.15.9](https://github.com/Azure/LogicAppsUX/compare/v2.15.8...v2.15.9) (2023-05-05)
+
+
+### Features
+
+* **designer:** Workflow Parameters - Dirty State ([#2245](https://github.com/Azure/LogicAppsUX/issues/2245)) ([381e139](https://github.com/Azure/LogicAppsUX/commit/381e139c996a7602fca4059e666773f292f700ec))
+
 ### [2.15.8](https://github.com/Azure/LogicAppsUX/compare/v2.15.7...v2.15.8) (2023-05-05)
 
 
