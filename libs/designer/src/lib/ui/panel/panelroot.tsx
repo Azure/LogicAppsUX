@@ -267,6 +267,10 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
     dispatch(replaceId({ originalId: selectedNode, newId }));
   };
 
+  const onCommentChange = (newDescription?: string) => {
+    dispatch(setNodeDescription({ nodeId: selectedNode, description: newDescription }));
+  };
+
   const handleDelete = (): void => {
     dispatch(deleteOperation({ nodeId: selectedNode, isTrigger: isTriggerNode }));
     // TODO: 12798935 Analytics (event logging)
@@ -334,9 +338,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
         togglePanel();
       }}
       trackEvent={handleTrackEvent}
-      onCommentChange={(value) => {
-        dispatch(setNodeDescription({ nodeId: selectedNode, description: value }));
-      }}
+      onCommentChange={onCommentChange}
       title={selectedNodeDisplayName}
       onTitleChange={onTitleChange}
     />
