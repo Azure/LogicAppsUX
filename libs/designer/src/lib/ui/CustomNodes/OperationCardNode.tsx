@@ -220,7 +220,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     if (errorInfo) {
       return {
         errorMessage: errorInfo.message,
-        errorLevel: errorInfo.level === ErrorLevel.Critical ? MessageBarType.error : MessageBarType.severeWarning,
+        errorLevel: errorInfo.level !== ErrorLevel.Default ? MessageBarType.error : MessageBarType.severeWarning,
       };
     }
 

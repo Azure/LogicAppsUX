@@ -80,6 +80,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   let showCommentBox = !isNullOrUndefined(comment);
   const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
   const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
+  const errorInfo = useOperationErrorInfo(selectedNode);
 
   const selectConnectionTabTitle = isXrmConnectionReferenceMode
     ? intl.formatMessage({
@@ -175,9 +176,9 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const parameterValidationErrors = useParameterValidationErrors(selectedNode);
   useEffect(() => {
-    const hasErrors = parameterValidationErrors?.length > 0;
+    const hasErrors = parameterValidationErrors?.length > 0 || errorInfo?.level === ErrorLevel.Connection;
     dispatch(setTabError({ tabName: 'parameters', hasErrors, nodeId: selectedNode }));
-  }, [dispatch, parameterValidationErrors?.length, selectedNode]);
+  }, [dispatch, errorInfo?.level, parameterValidationErrors?.length, selectedNode]);
 
   useEffect(() => {
     collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);
@@ -275,7 +276,6 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   const dismissPanel = () => dispatch(clearPanel());
 
   const opQuery = useOperationQuery(selectedNode);
-  const errorInfo = useOperationErrorInfo(selectedNode);
 
   const isLoading = useMemo(() => {
     if (nodeMetaData?.subgraphType) return false;

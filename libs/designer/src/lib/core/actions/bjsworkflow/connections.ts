@@ -3,9 +3,10 @@ import type { ApiHubAuthentication } from '../../../common/models/workflow';
 import { getConnection } from '../../queries/connections';
 import { getConnector, getOperationManifest } from '../../queries/operation';
 import { changeConnectionMapping, initializeConnectionsMappings } from '../../state/connection/connectionSlice';
+import { updateErrorDetails } from '../../state/operation/operationMetadataSlice';
 import type { Operations } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
-import { getConnectionReference } from '../../utils/connectors/connections';
+import { getConnectionReference, isConnectionMultiAuthManagedIdentityType } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
 import { updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { getAllVariables } from '../../utils/variables';
@@ -14,7 +15,6 @@ import { ConnectionService, WorkflowService, OperationManifestService } from '@m
 import type { Connection, ConnectionParameter, Connector, OperationManifest, LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import {
   ResourceIdentityType,
-  isConnectionMultiAuthManagedIdentityType,
   optional,
   isHiddenConnectionParameter,
   ConnectionParameterTypes,
@@ -45,6 +45,7 @@ export const updateNodeConnection = createAsyncThunk(
   async (payload: ConnectionPayload, { dispatch, getState }): Promise<void> => {
     const { nodeId, connector, connection } = payload;
 
+    dispatch(updateErrorDetails({ id: nodeId, clear: true }));
     return updateNodeConnectionAndProperties(
       {
         nodeId,
@@ -148,6 +149,7 @@ export const updateIdentityChangeInConection = createAsyncThunk(
 
     await ConnectionService().setupConnectionIfNeeded(connection as Connection, userAssignedIdentity);
 
+    dispatch(updateErrorDetails({ id: nodeId, clear: true }));
     return updateNodeConnectionAndProperties(
       {
         nodeId,

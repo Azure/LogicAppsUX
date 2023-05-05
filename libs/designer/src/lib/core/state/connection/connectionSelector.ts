@@ -1,12 +1,11 @@
 import type { ConnectionReference, ConnectionReferences } from '../../../common/models/workflow';
 import { getConnection } from '../../queries/connections';
 import type { RootState } from '../../store';
-import { getConnectionId, getConnectionReference } from '../../utils/connectors/connections';
+import { getConnectionId, getConnectionReference, isConnectionMultiAuthManagedIdentityType } from '../../utils/connectors/connections';
 import { useOperationManifest, useOperationInfo } from '../selectors/actionMetadataSelector';
 import type { ConnectionMapping } from './connectionSlice';
 import { ConnectionService, GatewayService, isServiceProviderOperation } from '@microsoft/designer-client-services-logic-apps';
 import type { Connector } from '@microsoft/utils-logic-apps';
-import { isConnectionMultiAuthManagedIdentityType } from '@microsoft/utils-logic-apps';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 

@@ -1,15 +1,26 @@
+import constants from '../../../common/constants';
 import type { ConnectionReference } from '../../../common/models/workflow';
-import { getApiManagementSwagger } from '../../queries/connections';
+import { getApiManagementSwagger, getConnection } from '../../queries/connections';
+import { getOperationManifest } from '../../queries/operation';
 import type { ConnectionsStoreState } from '../../state/connection/connectionSlice';
+import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import {
   ApiManagementService,
   FunctionService,
+  OperationManifestService,
   WorkflowService,
   isServiceProviderOperation,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { AssistedConnectionProps } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { ConnectionParameterSet, ConnectionParameterSets, Connector, OperationManifest } from '@microsoft/utils-logic-apps';
+import type {
+  Connection,
+  ConnectionParameterSet,
+  ConnectionParameterSets,
+  Connector,
+  ManagedIdentity,
+  OperationManifest,
+} from '@microsoft/utils-logic-apps';
 import { ConnectionParameterTypes, ResourceIdentityType, equals, ConnectionType } from '@microsoft/utils-logic-apps';
 
 export function getConnectionId(state: ConnectionsStoreState, nodeId: string): string {
@@ -21,6 +32,25 @@ export function getConnectionId(state: ConnectionsStoreState, nodeId: string): s
 export function getConnectionReference(state: ConnectionsStoreState, nodeId: string): ConnectionReference {
   const { connectionsMapping, connectionReferences } = state;
   return connectionReferences[connectionsMapping[nodeId] ?? ''];
+}
+
+export async function isConnectionReferenceValid(
+  operationInfo: NodeOperation,
+  reference: ConnectionReference | undefined
+): Promise<boolean> {
+  const { type, kind, connectorId, operationId } = operationInfo;
+  if (OperationManifestService().isSupported(type, kind)) {
+    const manifest = await getOperationManifest({ connectorId, operationId });
+    if (!manifest?.properties?.connection?.required) {
+      return true;
+    }
+  }
+  if (!reference) {
+    return false;
+  }
+
+  const connection = await getConnection(reference.connection.id, connectorId);
+  return !connection?.properties?.statuses?.some((status) => equals(status.status, 'error'));
 }
 
 export function getAssistedConnectionProps(connector: Connector, manifest?: OperationManifest): AssistedConnectionProps | undefined {
@@ -147,6 +177,53 @@ export function getSupportedParameterSets(
       return true;
     }),
   };
+}
+
+export function isIdentityPresentInLogicApp(identity: string, managedIdentity: ManagedIdentity): boolean {
+  const identitiesInLogicApp = [];
+  const type = managedIdentity.type;
+  if (equals(type, ResourceIdentityType.SYSTEM_ASSIGNED) || equals(type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)) {
+    identitiesInLogicApp.push(constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY);
+  }
+
+  if (equals(type, ResourceIdentityType.USER_ASSIGNED) || equals(type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)) {
+    for (const identity of Object.keys(managedIdentity.userAssignedIdentities ?? {})) {
+      identitiesInLogicApp.push(identity);
+    }
+  }
+
+  return identitiesInLogicApp.includes(identity);
+}
+
+// NOTE: This method is specifically for Multi-Auth type connectors.
+export function isConnectionMultiAuthManagedIdentityType(connection: Connection | undefined, connector: Connector | undefined): boolean {
+  const connectionParameterValueSet = (connection?.properties as any)?.parameterValueSet;
+  const connectorConnectionParameterSets = connector?.properties?.connectionParameterSets;
+
+  if (connectorConnectionParameterSets && connectionParameterValueSet) {
+    /* NOTE: Look into the parameterValueSet from the connector manifest that has the same name as the parameterValueSet of the connection to see if
+          it has a managedIdentity type parameter. */
+    const parameterValueSetWithSameName = connectorConnectionParameterSets.values?.filter(
+      (value) => value.name === connectionParameterValueSet.name
+    )[0];
+    const parameters = parameterValueSetWithSameName?.parameters || {};
+    for (const parameter of Object.keys(parameters)) {
+      if (parameters[parameter].type === ConnectionParameterTypes[ConnectionParameterTypes.managedIdentity]) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+const ALT_PARAMETER_VALUE_TYPE = 'Alternative';
+// NOTE: This method is specifically for Single-Auth type connectors.
+export function isConnectionSingleAuthManagedIdentityType(connection: Connection): boolean {
+  return !!(connection?.properties?.parameterValueType === ALT_PARAMETER_VALUE_TYPE) && !isMultiAuthConnection(connection);
+}
+
+function isMultiAuthConnection(connection: Connection | undefined): boolean {
+  return connection !== undefined && (connection.properties as any).parameterValueSet !== undefined;
 }
 
 function containsManagedIdentityParameter(parameterSet: ConnectionParameterSet): boolean {
