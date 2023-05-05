@@ -1,6 +1,7 @@
 import type { SettingProps } from './settingtoggle';
-import { Slider } from '@fluentui/react';
+import { Slider, TextField } from '@fluentui/react';
 import React, { useCallback, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 export type ValueChangeHandler = (value: number) => void;
 export interface CustomValueSliderProps extends SettingProps {
@@ -17,37 +18,82 @@ export const CustomValueSlider = ({
   readOnly = false,
   maxVal = 100,
   minVal = 0,
-  defaultValue = (minVal + maxVal) / 2,
+  defaultValue = 20,
   customLabel,
   sliderLabel,
   onValueChange,
 }: CustomValueSliderProps): JSX.Element | null => {
-  const [sliderCount, setCount] = useState(value ?? defaultValue);
+  const intl = useIntl();
+
+  const [sliderValue, setSliderValue] = useState(value ?? defaultValue);
   const onSliderValueChanged = useCallback((value: number) => {
-    setCount(value);
+    setSliderValue(value);
+    setTextValue(value.toString());
   }, []);
 
-  const onValueConfirmed = useCallback(
+  const onSliderValueConfirmed = useCallback(
     (_: any, value: number, __: any) => {
       onValueChange?.(value);
     },
     [onValueChange]
   );
 
+  const [textValue, setTextValue] = useState<string | undefined>((value ?? defaultValue).toString());
+  const valTextToNumber = useCallback(
+    (value: string | undefined) => {
+      if (!value) return;
+      let val = parseInt(value);
+      if (isNaN(val)) return;
+      if (val < minVal) val = minVal;
+      if (val > maxVal) val = maxVal;
+      return val;
+    },
+    [maxVal, minVal]
+  );
+  const onTextValueChanged = useCallback(
+    (_: any, value: string | undefined) => {
+      setTextValue(value);
+      const newValue = valTextToNumber(value);
+      if (newValue) setSliderValue(newValue);
+    },
+    [valTextToNumber]
+  );
+  const onTextValueBlur = useCallback(() => {
+    const newValue = valTextToNumber(textValue) ?? defaultValue;
+    onValueChange?.(newValue);
+    setSliderValue(newValue);
+    setTextValue(newValue.toString());
+  }, [defaultValue, onValueChange, textValue, valTextToNumber]);
+
+  const sliderAriaLabel = intl.formatMessage({
+    defaultMessage: 'Text field for slider',
+    description: 'Aria label for text field for slider',
+  });
+
   return (
     <>
       {customLabel && customLabel()}
-      <div style={{ width: '100%' }}>
-        <Slider
-          label={sliderLabel}
-          ariaLabel={sliderLabel}
-          disabled={readOnly}
-          max={maxVal}
-          min={minVal}
-          showValue={true}
-          value={sliderCount}
-          onChange={onSliderValueChanged}
-          onChanged={onValueConfirmed}
+      <div style={{ width: '100%', display: 'flex', alignItems: 'flex-end', gap: '8px' }}>
+        <div style={{ flex: '1 1 auto' }}>
+          <Slider
+            label={sliderLabel}
+            ariaLabel={sliderLabel}
+            disabled={readOnly}
+            max={maxVal}
+            min={minVal}
+            showValue={false}
+            value={sliderValue}
+            onChange={onSliderValueChanged}
+            onChanged={onSliderValueConfirmed}
+          />
+        </div>
+        <TextField
+          type={'number'}
+          aria-label={sliderAriaLabel}
+          onChange={onTextValueChanged}
+          onBlur={onTextValueBlur}
+          value={textValue}
+          style={{ maxWidth: '60px' }}
         />
       </div>
     </>
