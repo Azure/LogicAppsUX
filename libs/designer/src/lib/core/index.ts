@@ -8,11 +8,14 @@ export { useConnectionMapping, useConnectionRefs, useIsOperationMissingConnectio
 export type { NodeInputs } from './state/operation/operationMetadataSlice';
 export { useOperationsInputParameters } from './state/operation/operationSelector';
 export { discardAllChanges, setFocusNode, setIsGraphLocked, setIsWorkflowDirty } from './state/workflow/workflowSlice';
-export { useIsWorkflowDirty, useNodeDisplayName } from './state/workflow/workflowSelectors';
+export { useIsWorkflowDirty, useNodeDisplayName, useNodeMetadata } from './state/workflow/workflowSelectors';
 export { serializeWorkflow } from './actions/bjsworkflow/serializer';
-export { changePanelNode, clearPanel, switchToWorkflowParameters } from './state/panel/panelSlice';
+export { changePanelNode, clearPanel, switchToWorkflowParameters, collapsePanel } from './state/panel/panelSlice';
+export { useOperationInfo } from './state/selectors/actionMetadataSelector';
+export { useReplacedIds } from './state/workflow/workflowSelectors';
 export { useSelectedNodeId } from './state/panel/panelSelectors';
 export { initializeServices } from './state/designerOptions/designerOptionsSlice';
 export { resetWorkflowState } from './state/global';
 export { validateParameter } from './utils/parameters/helper';
+export { getOutputTokenSections, getExpressionTokenSections } from './utils/tokens';
 export { updateParameterValidation } from './state/operation/operationMetadataSlice';
