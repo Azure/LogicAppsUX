@@ -197,9 +197,9 @@ export const General = ({
       {
         settingType: 'CustomValueSlider',
         settingProp: {
-          maxVal: 100,
-          minVal: 0,
-          value: concurrency?.value?.value ?? 50,
+          maxVal: constants.CONCURRENCY_ACTION_SLIDER_LIMITS.MAX,
+          minVal: constants.CONCURRENCY_ACTION_SLIDER_LIMITS.MIN,
+          value: concurrency?.value?.value ?? constants.CONCURRENCY_ACTION_SLIDER_LIMITS.DEFAULT,
           onValueChange: onConcurrencyValueChange,
           sliderLabel: degreeOfParallelism,
           readOnly,

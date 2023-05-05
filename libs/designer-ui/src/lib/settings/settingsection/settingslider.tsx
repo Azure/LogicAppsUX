@@ -1,6 +1,6 @@
 import type { SettingProps } from './settingtoggle';
 import { Slider } from '@fluentui/react';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 export type ValueChangeHandler = (value: number) => void;
 export interface CustomValueSliderProps extends SettingProps {
@@ -23,44 +23,33 @@ export const CustomValueSlider = ({
   onValueChange,
 }: CustomValueSliderProps): JSX.Element | null => {
   const [sliderCount, setCount] = useState(value ?? defaultValue);
-  const onSliderValueChanged = (value: number): void => {
+  const onSliderValueChanged = useCallback((value: number) => {
     setCount(value);
-    onValueChange?.(value);
-  };
+  }, []);
 
-  if (customLabel) {
-    return (
-      <>
-        {customLabel()}
-        <div className="msla-setting-input">
-          <Slider
-            label={sliderLabel}
-            ariaLabel={sliderLabel}
-            disabled={readOnly}
-            max={maxVal}
-            min={minVal}
-            showValue={true}
-            value={sliderCount}
-            onChange={onSliderValueChanged}
-          />
-        </div>
-      </>
-    );
-  }
+  const onValueConfirmed = useCallback(
+    (_: any, value: number, __: any) => {
+      onValueChange?.(value);
+    },
+    [onValueChange]
+  );
 
   return (
-    <div className="msla-setting-input">
-      <Slider
-        label={sliderLabel}
-        ariaLabel={sliderLabel}
-        defaultValue={defaultValue}
-        disabled={readOnly}
-        max={maxVal}
-        min={minVal}
-        showValue={true}
-        value={sliderCount}
-        onChange={onSliderValueChanged}
-      />
-    </div>
+    <>
+      {customLabel && customLabel()}
+      <div style={{ width: '100%' }}>
+        <Slider
+          label={sliderLabel}
+          ariaLabel={sliderLabel}
+          disabled={readOnly}
+          max={maxVal}
+          min={minVal}
+          showValue={true}
+          value={sliderCount}
+          onChange={onSliderValueChanged}
+          onChanged={onValueConfirmed}
+        />
+      </div>
+    </>
   );
 };
