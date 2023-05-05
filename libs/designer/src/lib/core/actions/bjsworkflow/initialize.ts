@@ -450,11 +450,6 @@ export const updateInvokerSettings = (
   settings: Settings,
   dispatch: Dispatch
 ): void => {
-  // if (isTrigger) {
-  //   const invokerSetting = { isSupported: false, value: { enabled: false } };
-  //   dispatch(updateInvokerSetting({ id: nodeId, invokerSetting }));
-  // }
-  // else
   if (!isTrigger && tiggerNodeManifest?.properties?.settings?.invokerConnection) {
     dispatch(updateNodeSettings({ id: nodeId, settings: { invokerConnection: { ...settings.invokerConnection, isSupported: true } } }));
   }
