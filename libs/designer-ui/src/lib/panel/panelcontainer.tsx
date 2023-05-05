@@ -34,6 +34,7 @@ export type PanelContainerProps = {
   comment?: string;
   noNodeSelected: boolean;
   isError?: boolean;
+  errorMessage?: string;
   isLoading?: boolean;
   panelScope: PanelScope;
   pivotDisabled?: boolean;
@@ -62,6 +63,7 @@ export const PanelContainer = ({
   panelLocation,
   noNodeSelected,
   isError,
+  errorMessage,
   isLoading,
   panelScope,
   panelHeaderControlType,
@@ -172,7 +174,7 @@ export const PanelContainer = ({
               <Spinner size={SpinnerSize.large} />
             </div>
           ) : isError ? (
-            <MessageBar messageBarType={MessageBarType.error}>{panelErrorMessage}</MessageBar>
+            <MessageBar messageBarType={MessageBarType.error}>{errorMessage ?? panelErrorMessage}</MessageBar>
           ) : (
             <div className="msla-panel-page">
               <PanelPivot
