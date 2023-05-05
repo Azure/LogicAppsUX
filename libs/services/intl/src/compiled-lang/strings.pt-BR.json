@@ -3877,6 +3877,12 @@
       "value": "Os gatilhos não podem ser excluídos."
     }
   ],
+  "R0/Vx4": [
+    {
+      "type": 0,
+      "value": "Text field for slider"
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,

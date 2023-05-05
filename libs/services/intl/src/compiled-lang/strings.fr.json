@@ -3969,6 +3969,12 @@
       "value": "Les déclencheurs ne peuvent pas être supprimés."
     }
   ],
+  "R0/Vx4": [
+    {
+      "type": 0,
+      "value": "Text field for slider"
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
