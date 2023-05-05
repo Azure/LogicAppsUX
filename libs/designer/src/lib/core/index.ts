@@ -9,6 +9,8 @@ export type { NodeInputs } from './state/operation/operationMetadataSlice';
 export { useOperationsInputParameters } from './state/operation/operationSelector';
 export { discardAllChanges, setFocusNode, setIsGraphLocked, setIsWorkflowDirty } from './state/workflow/workflowSlice';
 export { useIsWorkflowDirty, useNodeDisplayName } from './state/workflow/workflowSelectors';
+export { useIsWorkflowParametersDirty } from './state/workflowparameters/workflowparametersselector';
+export { useIsDesignerDirty, resetDesignerDirtyState } from './state/global';
 export { serializeWorkflow } from './actions/bjsworkflow/serializer';
 export { changePanelNode, clearPanel, switchToWorkflowParameters } from './state/panel/panelSlice';
 export { useSelectedNodeId } from './state/panel/panelSelectors';
