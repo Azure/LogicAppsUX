@@ -82,11 +82,12 @@ export interface OperationMetadata {
 
 export enum ErrorLevel {
   Critical = 0,
-  Default = 1,
+  Connection = 1,
+  Default = 2,
 }
 
 export interface ErrorInfo {
-  error: any;
+  error?: any;
   level: ErrorLevel;
   message: string;
   code?: number;

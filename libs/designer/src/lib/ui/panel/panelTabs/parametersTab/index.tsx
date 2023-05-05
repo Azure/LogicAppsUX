@@ -2,6 +2,8 @@ import constants from '../../../../common/constants';
 import { useShowIdentitySelector } from '../../../../core/state/connection/connectionSelector';
 import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../core/state/operation/operationMetadataSlice';
+import { ErrorLevel } from '../../../../core/state/operation/operationMetadataSlice';
+import { useOperationErrorInfo } from '../../../../core/state/operation/operationSelector';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import {
   useAllowUserToChangeConnection,
@@ -28,7 +30,7 @@ import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
-import { Spinner, SpinnerSize } from '@fluentui/react';
+import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import { DynamicCallStatus, TokenPicker, ValueSegmentType } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode } from '@microsoft/designer-ui';
 import { equals } from '@microsoft/utils-logic-apps';
@@ -50,6 +52,7 @@ export const ParametersTab = () => {
   const operationInfo = useOperationInfo(selectedNodeId);
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
   const showIdentitySelector = useShowIdentitySelector(selectedNodeId);
+  const errorInfo = useOperationErrorInfo(selectedNodeId);
 
   const replacedIds = useReplacedIds();
 
@@ -66,6 +69,11 @@ export const ParametersTab = () => {
 
   return (
     <>
+      {errorInfo ? (
+        <MessageBar messageBarType={errorInfo.level === ErrorLevel.Default ? MessageBarType.severeWarning : MessageBarType.error}>
+          {errorInfo.message}
+        </MessageBar>
+      ) : null}
       {Object.keys(inputs?.parameterGroups ?? {}).map((sectionName) => (
         <div key={sectionName}>
           <ParameterSection
