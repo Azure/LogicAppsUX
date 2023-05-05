@@ -442,3 +442,15 @@ export const getCustomSwaggerIfNeeded = async (
 
   return getSwaggerFromEndpoint(getObjectPropertyValue(stepDefinition, swaggerUrlLocation));
 };
+
+export const updateInvokerSettings = (
+  isTrigger: boolean,
+  tiggerNodeManifest: OperationManifest | undefined,
+  nodeId: string,
+  settings: Settings,
+  dispatch: Dispatch
+): void => {
+  if (!isTrigger && tiggerNodeManifest?.properties?.settings?.invokerConnection) {
+    dispatch(updateNodeSettings({ id: nodeId, settings: { invokerConnection: { ...settings.invokerConnection, isSupported: true } } }));
+  }
+};
