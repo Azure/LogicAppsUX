@@ -882,7 +882,6 @@ export default {
   WEBHOOK_PATH_POSTFIX: '/$subscriptions',
   WILD_INDEX_SEGMENT: '[*]',
   WORKFLOW: 'workflow',
-  X_MS_USER_AGENT: 'x-ms-user-agent',
   STATUS_CODES: {
     NO_CONTENT: 204,
     OK: 200,
