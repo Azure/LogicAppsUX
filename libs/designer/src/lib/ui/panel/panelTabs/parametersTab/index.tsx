@@ -70,7 +70,15 @@ export const ParametersTab = () => {
   return (
     <>
       {errorInfo ? (
-        <MessageBar messageBarType={errorInfo.level === ErrorLevel.Default ? MessageBarType.severeWarning : MessageBarType.error}>
+        <MessageBar
+          messageBarType={
+            errorInfo.level === ErrorLevel.DynamicInputs || errorInfo.level === ErrorLevel.Default
+              ? MessageBarType.severeWarning
+              : errorInfo.level === ErrorLevel.DynamicOutputs
+              ? MessageBarType.warning
+              : MessageBarType.error
+          }
+        >
           {errorInfo.message}
         </MessageBar>
       ) : null}

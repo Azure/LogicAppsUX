@@ -2915,6 +2915,12 @@
       "value": "Required. The numeric format string."
     }
   ],
+  "JtV9ju": [
+    {
+      "type": 0,
+      "value": "Failed to retrive dynamic inputs. Error details: {message}"
+    }
+  ],
   "JzqgNM": [
     {
       "type": 0,
@@ -7873,6 +7879,16 @@
     {
       "type": 0,
       "value": "Menu"
+    }
+  ],
+  "wit5UT": [
+    {
+      "type": 0,
+      "value": "Failed to retrive dynamic outputs, outputs of this operation might not be visible in subsequent actions. Error details: "
+    },
+    {
+      "type": 1,
+      "value": "message"
     }
   ],
   "wkiETV": [
