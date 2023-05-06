@@ -102,7 +102,7 @@ const ParameterSection = ({
   expressionGroup: TokenGroup[];
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const [sectionExpanded, setSectionExpanded] = useState<boolean>(false);
+  const [sectionExpanded, setSectionExpanded] = useState<boolean>(true);
   const {
     isTrigger,
     nodeInputs,
@@ -253,14 +253,30 @@ const ParameterSection = ({
     tokenPickerClicked?: (b: boolean) => void,
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
-    const codeEditorFilteredTokens = tokenGroup.filter((group) => {
-      return group.id !== 'workflowparameters' && group.id !== 'variables';
-    });
+    const parameterType = (nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === parameterId) ?? {})?.type;
+
+    const filteredTokenGroup = tokenGroup.map((group) => ({
+      ...group,
+      tokens: group.tokens.filter((token: OutputToken) => {
+        if (isCodeEditor) {
+          return !(
+            token.outputInfo.functionName === constants.FUNCTION_NAME.VARIABLES ||
+            token.outputInfo.functionName === constants.FUNCTION_NAME.PARAMETERS ||
+            token.outputInfo.arrayDetails ||
+            token.key === constants.UNTIL_CURRENT_ITERATION_INDEX_KEY ||
+            token.key === constants.FOREACH_CURRENT_ITEM_KEY
+          );
+        }
+        return true;
+        // return token.type === parameterType || token.type === 'any';
+      }),
+    }));
+    // .filter((group) => {
     return (
       <TokenPicker
         editorId={editorId}
         labelId={labelId}
-        tokenGroup={isCodeEditor ? codeEditorFilteredTokens : tokenGroup}
+        tokenGroup={filteredTokenGroup}
         expressionGroup={expressionGroup}
         tokenPickerFocused={tokenPickerClicked}
         initialMode={tokenPickerMode}
@@ -332,7 +348,7 @@ const ParameterSection = ({
               editorId,
               labelId,
               tokenPickerMode,
-              editor?.toLowerCase() === 'code',
+              editor?.toLowerCase() === constants.EDITOR.CODE,
               closeTokenPicker,
               tokenPickerClicked,
               tokenClickedCallback
