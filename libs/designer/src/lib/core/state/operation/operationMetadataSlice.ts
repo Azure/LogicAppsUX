@@ -83,7 +83,9 @@ export interface OperationMetadata {
 export enum ErrorLevel {
   Critical = 0,
   Connection = 1,
-  Default = 2,
+  DynamicInputs = 2,
+  DynamicOutputs = 3,
+  Default = 4,
 }
 
 export interface ErrorInfo {
@@ -103,7 +105,7 @@ export interface OperationMetadataState {
   actionMetadata: Record<string, any>;
   staticResults: Record<string, NodeStaticResults>;
   repetitionInfos: Record<string, RepetitionContext>;
-  errors: Record<string, ErrorInfo>;
+  errors: Record<string, Record<ErrorLevel, ErrorInfo | undefined>>;
 }
 
 const initialState: OperationMetadataState = {
@@ -250,6 +252,10 @@ export const operationMetadataSlice = createSlice({
           ].parameters.filter((parameter) => !parameter.info.isDynamic);
         }
       }
+
+      if (state.errors[nodeId]?.[ErrorLevel.DynamicInputs]) {
+        delete state.errors[nodeId][ErrorLevel.DynamicInputs];
+      }
     },
     clearDynamicOutputs: (state, action: PayloadAction<string>) => {
       const nodeId = action.payload;
@@ -264,6 +270,10 @@ export const operationMetadataSlice = createSlice({
           },
           {}
         ) as Record<string, OutputInfo>;
+      }
+
+      if (state.errors[nodeId]?.[ErrorLevel.DynamicOutputs]) {
+        delete state.errors[nodeId][ErrorLevel.DynamicOutputs];
       }
     },
     updateNodeSettings: (state, action: PayloadAction<AddSettingsPayload>) => {
@@ -366,7 +376,7 @@ export const operationMetadataSlice = createSlice({
     updateErrorDetails: (state, action: PayloadAction<{ id: string; errorInfo?: ErrorInfo; clear?: boolean }>) => {
       const { id, errorInfo, clear } = action.payload;
       if (errorInfo) {
-        state.errors[id] = errorInfo;
+        state.errors[id] = { ...state.errors[id], [errorInfo.level]: errorInfo };
       } else if (clear) {
         delete state.errors[id];
       }

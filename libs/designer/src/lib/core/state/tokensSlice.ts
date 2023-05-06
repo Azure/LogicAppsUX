@@ -1,4 +1,5 @@
 import { resetWorkflowState } from './global';
+import { clearDynamicOutputs } from './operation/operationMetadataSlice';
 import type { OutputToken as Token } from '@microsoft/designer-ui';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -102,6 +103,12 @@ export const tokensSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(clearDynamicOutputs, (state, action: PayloadAction<string>) => {
+      const nodeId = action.payload;
+      if (state.outputTokens[nodeId]) {
+        state.outputTokens[nodeId].tokens = state.outputTokens[nodeId].tokens.filter((token) => !token.outputInfo.isDynamic);
+      }
+    });
     builder.addCase(resetWorkflowState, () => initialState);
   },
 });

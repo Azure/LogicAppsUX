@@ -292,7 +292,7 @@ const getSelectedKey = (options: ComboboxItem[], initialValue?: ValueSegment[], 
   if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
     return (
       options.find((option) => {
-        return option.value === initialValue[0].value;
+        return normalizeValue(option.value) === normalizeValue(initialValue[0].value);
       })?.key ?? ''
     );
   }
@@ -303,4 +303,8 @@ const getSelectedValue = (options: ComboboxItem[], key: string): any => {
   return options.find((option) => {
     return option.key === key;
   })?.value;
+};
+
+const normalizeValue = (value: any): string => {
+  return typeof value !== 'string' ? JSON.stringify(value) : value;
 };

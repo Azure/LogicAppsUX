@@ -2,6 +2,7 @@ import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults'
 import type { RootState } from '../../store';
 import { shouldUseParameterInGroup } from '../../utils/parameters/helper';
 import type { ErrorInfo, NodeInputs } from './operationMetadataSlice';
+import { ErrorLevel } from './operationMetadataSlice';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
 
@@ -27,7 +28,7 @@ export const getOperationInputParameters = (rootState: RootState, nodeId: string
 
 export const useOperationErrorInfo = (nodeId: string): ErrorInfo | undefined => {
   return useSelector((rootState: RootState) => {
-    return rootState.operations.errors[nodeId];
+    return getTopErrorInOperation(rootState.operations.errors[nodeId]);
   });
 };
 
@@ -70,4 +71,22 @@ export const useParameterValidationErrors = (nodeId: string) => {
       .flat()
       .filter((error) => error);
   });
+};
+
+const getTopErrorInOperation = (errors: Record<ErrorLevel, ErrorInfo | undefined>): ErrorInfo | undefined => {
+  if (!errors) {
+    return undefined;
+  } else if (errors[ErrorLevel.Critical]) {
+    return errors[ErrorLevel.Critical];
+  } else if (errors[ErrorLevel.Connection]) {
+    return errors[ErrorLevel.Connection];
+  } else if (errors[ErrorLevel.DynamicInputs]) {
+    return errors[ErrorLevel.DynamicInputs];
+  } else if (errors[ErrorLevel.DynamicOutputs]) {
+    return errors[ErrorLevel.DynamicOutputs];
+  } else if (errors[ErrorLevel.Default]) {
+    return errors[ErrorLevel.Default];
+  } else {
+    return undefined;
+  }
 };

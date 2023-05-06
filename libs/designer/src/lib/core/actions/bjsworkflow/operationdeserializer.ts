@@ -493,7 +493,7 @@ export const updateDynamicDataInNodes = async (getState: () => RootState, dispat
   } = rootState;
   const allVariables = getAllVariables(variables);
   for (const [nodeId, operation] of Object.entries(operations)) {
-    if (errors[nodeId]?.level !== ErrorLevel.Critical) {
+    if (!errors[nodeId]?.[ErrorLevel.Critical]) {
       const nodeDependencies = dependencies[nodeId];
       const nodeInputs = inputParameters[nodeId];
       const nodeMetadata = actionMetadata[nodeId];
