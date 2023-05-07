@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.15.12](https://github.com/Azure/LogicAppsUX/compare/v2.15.11...v2.15.12) (2023-05-07)
+
+
+### Features
+
+* **designer:** Showing dynamic content load errors in card ([#2264](https://github.com/Azure/LogicAppsUX/issues/2264)) ([b2ce1c1](https://github.com/Azure/LogicAppsUX/commit/b2ce1c1f4a774ce77ecc37ff4ba7df192efee44b))
+
 ### [2.15.11](https://github.com/Azure/LogicAppsUX/compare/v2.15.10...v2.15.11) (2023-05-06)
 
 
