@@ -6,6 +6,7 @@ import { CollapsedArray } from './collapsedarray';
 import { ExpandedComplexArray } from './expandedcomplexarray';
 import { ExpandedSimpleArray } from './expandedsimplearray';
 import { parseComplexItems, parseSimpleItems } from './util/serializecollapsedarray';
+import type { ItemSchemaItemProps } from './util/util';
 import { getOneDimensionalSchema, initializeComplexArrayItems, initializeSimpleArrayItems } from './util/util';
 import { useEffect, useState } from 'react';
 
@@ -16,6 +17,7 @@ export enum ArrayType {
 
 export interface ComplexArrayItem {
   title: string;
+  description: string;
   value: ValueSegment[];
 }
 export interface ComplexArrayItems {
@@ -34,7 +36,7 @@ export interface ArrayEditorProps extends BaseEditorProps {
   canDeleteLastItem?: boolean;
   disableToggle?: boolean;
   labelProps: LabelProps;
-  itemSchema?: unknown;
+  itemSchema?: any;
   type: ArrayType.COMPLEX | ArrayType.SIMPLE;
 }
 
@@ -53,7 +55,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue);
   const [items, setItems] = useState<ComplexArrayItems[] | SimpleArrayItem[]>([]);
   const [isValid, setIsValid] = useState<boolean>(false);
-  let dimensionalSchema: unknown[] = [];
+  let dimensionalSchema: ItemSchemaItemProps[] = [];
   if (type === ArrayType.COMPLEX) {
     dimensionalSchema = getOneDimensionalSchema(itemSchema);
   }
@@ -82,7 +84,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   const updateComplexItems = (newItems: ComplexArrayItems[]) => {
     setItems(newItems);
     if (type === ArrayType.COMPLEX) {
-      const objectValue = parseComplexItems(newItems, itemSchema);
+      const objectValue = parseComplexItems(newItems, dimensionalSchema);
       setCollapsedValue(objectValue);
       if (!collapsed) {
         onChange?.({ value: objectValue });

@@ -14,8 +14,11 @@ import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
+const horizontalPadding = '2rem';
+const verticalPadding = '1rem';
+
 const panelStyles: Partial<IPanelStyles> = {
-  content: { padding: '1rem 2rem' },
+  content: { padding: verticalPadding + ' ' + horizontalPadding },
   main: { overflow: 'hidden' },
   scrollableContent: { height: '100%' },
 };
@@ -31,6 +34,7 @@ export type PanelContainerProps = {
   comment?: string;
   noNodeSelected: boolean;
   isError?: boolean;
+  errorMessage?: string;
   isLoading?: boolean;
   panelScope: PanelScope;
   pivotDisabled?: boolean;
@@ -59,6 +63,7 @@ export const PanelContainer = ({
   panelLocation,
   noNodeSelected,
   isError,
+  errorMessage,
   isLoading,
   panelScope,
   panelHeaderControlType,
@@ -105,6 +110,7 @@ export const PanelContainer = ({
           isError={isError}
           isLoading={isLoading}
           comment={comment}
+          horizontalPadding={horizontalPadding}
           commentChange={onCommentChange}
           toggleCollapse={toggleCollapse}
           onTitleChange={onTitleChange}
@@ -168,7 +174,7 @@ export const PanelContainer = ({
               <Spinner size={SpinnerSize.large} />
             </div>
           ) : isError ? (
-            <MessageBar messageBarType={MessageBarType.error}>{panelErrorMessage}</MessageBar>
+            <MessageBar messageBarType={MessageBarType.error}>{errorMessage ?? panelErrorMessage}</MessageBar>
           ) : (
             <div className="msla-panel-page">
               <PanelPivot

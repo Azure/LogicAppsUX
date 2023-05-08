@@ -3775,6 +3775,12 @@
       "value": "状态代码"
     }
   ],
+  "QIOOQU": [
+    {
+      "type": 0,
+      "value": "No Items"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 1,
@@ -3877,6 +3883,12 @@
     {
       "type": 0,
       "value": "无法删除触发器。"
+    }
+  ],
+  "R0/Vx4": [
+    {
+      "type": 0,
+      "value": "Text field for slider"
     }
   ],
   "RFjYpH": [

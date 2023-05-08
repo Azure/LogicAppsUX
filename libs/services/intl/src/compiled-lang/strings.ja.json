@@ -3683,6 +3683,12 @@
       "value": "状態コード"
     }
   ],
+  "QIOOQU": [
+    {
+      "type": 0,
+      "value": "No Items"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 1,
@@ -3785,6 +3791,12 @@
     {
       "type": 0,
       "value": "トリガーを削除できません。"
+    }
+  ],
+  "R0/Vx4": [
+    {
+      "type": 0,
+      "value": "Text field for slider"
     }
   ],
   "RFjYpH": [

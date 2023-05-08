@@ -3823,6 +3823,12 @@
       "value": "Statuscode"
     }
   ],
+  "QIOOQU": [
+    {
+      "type": 0,
+      "value": "No Items"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -3929,6 +3935,12 @@
     {
       "type": 0,
       "value": "Triggers kunnen niet worden verwijderd."
+    }
+  ],
+  "R0/Vx4": [
+    {
+      "type": 0,
+      "value": "Text field for slider"
     }
   ],
   "RFjYpH": [

@@ -3919,6 +3919,12 @@
       "value": "Код состояния"
     }
   ],
+  "QIOOQU": [
+    {
+      "type": 0,
+      "value": "No Items"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -4021,6 +4027,12 @@
     {
       "type": 0,
       "value": "Триггеры удалить невозможно."
+    }
+  ],
+  "R0/Vx4": [
+    {
+      "type": 0,
+      "value": "Text field for slider"
     }
   ],
   "RFjYpH": [

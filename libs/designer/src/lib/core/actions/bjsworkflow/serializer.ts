@@ -58,26 +58,29 @@ export interface SerializeOptions {
 }
 
 export const serializeWorkflow = async (rootState: RootState, options?: SerializeOptions): Promise<Workflow> => {
-  const operationsWithSettingsErrors = (Object.entries(rootState.settings.validationErrors) ?? []).filter(
-    ([_id, errorArr]) => errorArr.length > 0
-  );
-  if (operationsWithSettingsErrors.length > 0) {
-    throw new Error(
-      'Workflow has settings validation errors on the following operations: ' +
-        operationsWithSettingsErrors.map(([id, _errorArr]) => id).join(', ')
+  if (!options?.skipValidation) {
+    const operationsWithSettingsErrors = (Object.entries(rootState.settings.validationErrors) ?? []).filter(
+      ([_id, errorArr]) => errorArr.length > 0
     );
-  }
+    if (operationsWithSettingsErrors.length > 0) {
+      throw new Error(
+        'Workflow has settings validation errors on the following operations: ' +
+          operationsWithSettingsErrors.map(([id, _errorArr]) => id).join(', ')
+      );
+    }
 
-  const operationsWithParameterErrors = (Object.entries(rootState.operations.inputParameters) ?? []).filter(
-    ([_id, nodeInputs]: [id: string, i: NodeInputs]) =>
-      Object.values(nodeInputs.parameterGroups).some((parameterGroup: ParameterGroup) =>
-        parameterGroup.parameters.some((parameter: ParameterInfo) => (parameter?.validationErrors?.length ?? 0) > 0)
-      )
-  );
-  if (operationsWithParameterErrors.length > 0) {
-    throw new Error(
-      'Workflow has parameter validation errors on the following operations: ' + operationsWithParameterErrors.map(([id]) => id).join(', ')
+    const operationsWithParameterErrors = (Object.entries(rootState.operations.inputParameters) ?? []).filter(
+      ([_id, nodeInputs]: [id: string, i: NodeInputs]) =>
+        Object.values(nodeInputs.parameterGroups).some((parameterGroup: ParameterGroup) =>
+          parameterGroup.parameters.some((parameter: ParameterInfo) => (parameter?.validationErrors?.length ?? 0) > 0)
+        )
     );
+    if (operationsWithParameterErrors.length > 0) {
+      throw new Error(
+        'Workflow has parameter validation errors on the following operations: ' +
+          operationsWithParameterErrors.map(([id]) => id).join(', ')
+      );
+    }
   }
 
   const { connectionsMapping, connectionReferences: referencesObject } = rootState.connections;
@@ -517,6 +520,10 @@ interface OpenApiConnectionInfo {
   host: LogicAppsV2.OpenApiConnectionHost;
 }
 
+interface HybridTriggerConnectionInfo {
+  host: LogicAppsV2.HybridTriggerConnectionHost;
+}
+
 interface ServiceProviderConnectionConfigInfo {
   serviceProviderConfiguration: {
     connectionName: string;
@@ -529,7 +536,13 @@ const serializeHost = (
   nodeId: string,
   manifest: OperationManifest,
   rootState: RootState
-): FunctionConnectionInfo | ApiManagementConnectionInfo | OpenApiConnectionInfo | ServiceProviderConnectionConfigInfo | undefined => {
+):
+  | FunctionConnectionInfo
+  | ApiManagementConnectionInfo
+  | OpenApiConnectionInfo
+  | ServiceProviderConnectionConfigInfo
+  | HybridTriggerConnectionInfo
+  | undefined => {
   if (!manifest.properties.connectionReference) {
     return undefined;
   }
@@ -566,6 +579,14 @@ const serializeHost = (
           connectionName: referenceKey,
           operationId,
           serviceProviderId: connectorId,
+        },
+      };
+    case ConnectionReferenceKeyFormat.HybridTrigger:
+      return {
+        host: {
+          connection: {
+            name: "@parameters('$connections')[" + referenceKey + "]['connectionId']",
+          },
         },
       };
     default:
@@ -715,6 +736,9 @@ const serializeSettings = (
 
   return {
     ...optional('correlation', settings.correlation?.value),
+    ...(settings.invokerConnection?.value?.enabled
+      ? optional('isInvokerConnectionEnabled', settings.invokerConnection?.value?.enabled)
+      : {}),
     ...optional('conditions', conditions),
     ...optional('limit', timeout),
     ...optional('operationOptions', getSerializedOperationOptions(operationId, settings, rootState)),

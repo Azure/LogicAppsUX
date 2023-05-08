@@ -3831,6 +3831,12 @@
       "value": "Állapotkód"
     }
   ],
+  "QIOOQU": [
+    {
+      "type": 0,
+      "value": "No Items"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -3937,6 +3943,12 @@
     {
       "type": 0,
       "value": "Az eseményindítók nem törölhetők."
+    }
+  ],
+  "R0/Vx4": [
+    {
+      "type": 0,
+      "value": "Text field for slider"
     }
   ],
   "RFjYpH": [

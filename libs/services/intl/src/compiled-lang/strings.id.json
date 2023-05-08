@@ -3683,6 +3683,12 @@
       "value": "Kode status"
     }
   ],
+  "QIOOQU": [
+    {
+      "type": 0,
+      "value": "No Items"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -3785,6 +3791,12 @@
     {
       "type": 0,
       "value": "Pemicu tidak dapat dihapus."
+    }
+  ],
+  "R0/Vx4": [
+    {
+      "type": 0,
+      "value": "Text field for slider"
     }
   ],
   "RFjYpH": [

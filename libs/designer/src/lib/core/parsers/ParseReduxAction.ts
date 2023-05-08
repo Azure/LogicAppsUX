@@ -3,7 +3,7 @@ import { getConnectionsApiAndMapping } from '../actions/bjsworkflow/connections'
 import { parseWorkflowParameters } from '../actions/bjsworkflow/initialize';
 import { initializeOperationMetadata, updateDynamicDataInNodes } from '../actions/bjsworkflow/operationdeserializer';
 import { getConnectionsQuery } from '../queries/connections';
-import { addInvokerSupport, initializeConnectionReferences } from '../state/connection/connectionSlice';
+import { initializeConnectionReferences } from '../state/connection/connectionSlice';
 import { initializeStaticResultProperties } from '../state/staticresultschema/staticresultsSlice';
 import type { RootState } from '../store';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
@@ -27,9 +27,13 @@ export const initializeGraphState = createAsyncThunk<
     getConnectionsQuery();
     const { definition, connectionReferences, parameters } = workflowDefinition;
     const deserializedWorkflow = BJSDeserialize(definition, runInstance);
+    // The host can decide whether to make updates to the graph object. In situations like updating the workflow
+    // after save, it makes sense to not update the graph to avoid resetting things like dimensions
+    if (workflow.isGraphLocked && workflow.graph) {
+      deserializedWorkflow.graph = workflow.graph;
+    }
     thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
     thunkAPI.dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
-    thunkAPI.dispatch(addInvokerSupport({ connectionReferences }));
     parseWorkflowParameters(parameters ?? {}, thunkAPI.dispatch);
 
     const asyncInitialize = async () => {

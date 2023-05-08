@@ -3823,6 +3823,12 @@
       "value": "Statuskod"
     }
   ],
+  "QIOOQU": [
+    {
+      "type": 0,
+      "value": "No Items"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -3929,6 +3935,12 @@
     {
       "type": 0,
       "value": "Det går inte att ta bort utlösare."
+    }
+  ],
+  "R0/Vx4": [
+    {
+      "type": 0,
+      "value": "Text field for slider"
     }
   ],
   "RFjYpH": [

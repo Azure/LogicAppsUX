@@ -13,6 +13,7 @@ import {
 import { getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import type { VariableDeclaration } from '../../state/tokensSlice';
+import { isConnectionMultiAuthManagedIdentityType, isConnectionSingleAuthManagedIdentityType } from '../connectors/connections';
 import { buildOperationDetailsFromControls, loadInputValuesFromDefinition } from '../swagger/inputsbuilder';
 import {
   getArrayTypeForOutputs,
@@ -61,8 +62,6 @@ import {
   first,
   getObjectPropertyValue,
   safeSetObjectPropertyValue,
-  isConnectionMultiAuthManagedIdentityType,
-  isConnectionSingleAuthManagedIdentityType,
   UnsupportedException,
   UnsupportedExceptionCode,
   UnsupportedExceptionName,
@@ -320,15 +319,7 @@ export async function getFolderItems(
       connectionReference as ConnectionReference
     );
 
-    return getLegacyDynamicTreeItems(
-      connectionId,
-      connectorId,
-      operationId,
-      inputs,
-      definition.extension,
-      filePickerInfo,
-      managedIdentityRequestProperties
-    );
+    return getLegacyDynamicTreeItems(connectionId, connectorId, operationId, inputs, filePickerInfo, managedIdentityRequestProperties);
   }
 
   throw new UnsupportedException(`Dynamic extension '${definition.type}' is not implemented yet or not supported`);
