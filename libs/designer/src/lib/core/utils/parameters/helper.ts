@@ -358,7 +358,7 @@ export function getParameterEditorProps(
       editor = constants.EDITOR.ARRAY;
       editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
       editorViewModel.itemSchema = toArrayViewModelSchema(itemSchema);
-      editorViewModel.complexArray = itemSchema?.type === constants.SWAGGER.TYPE.OBJECT;
+      editorViewModel.complexArray = itemSchema?.type === constants.SWAGGER.TYPE.OBJECT && itemSchema.properties;
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
     } else if ((schemaEnum || schema?.enum || schema?.[ExtensionProperties.CustomEnum]) && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.COMBOBOX;
@@ -444,11 +444,11 @@ const convertStringToInputParameter = (
   }
   const hasExpression = containsExpression(value);
   let newValue = value;
-  if (removeQuotesFromExpression) {
-    newValue = removeQuotes(newValue);
-  }
   if (trimExpression) {
     newValue = newValue.trim();
+  }
+  if (removeQuotesFromExpression) {
+    newValue = removeQuotes(newValue);
   }
   if (hasExpression && convertIfContainsExpression && !newValue.startsWith('@')) {
     newValue = `@${newValue}`;
