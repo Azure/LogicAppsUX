@@ -29,8 +29,8 @@ export const initializeGraphState = createAsyncThunk<
     const { definition, connectionReferences, parameters } = workflowDefinition;
     const deserializedWorkflow = BJSDeserialize(definition, runInstance);
     // For situations where there is an existing workflow, respect the node dimensions so that they are not reset
-    const previousGraphFlattened = flattenWorkflowNodes(deserializedWorkflow?.graph?.children || []);
-    updateChildrenDimensions(workflow?.graph?.children || [], previousGraphFlattened);
+    const previousGraphFlattened = flattenWorkflowNodes(workflow.graph?.children || []);
+    updateChildrenDimensions(deserializedWorkflow?.graph?.children || [], previousGraphFlattened);
 
     thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
     thunkAPI.dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
