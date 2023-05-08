@@ -35,6 +35,8 @@ import {
 } from '@microsoft/parsers-logic-apps';
 import type { LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/utils-logic-apps';
 import {
+  SerializationErrorCode,
+  SerializationException,
   clone,
   deleteObjectProperty,
   getObjectPropertyValue,
@@ -66,14 +68,17 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
       ([_id, errors]) => !!errors[ErrorLevel.Connection]
     );
     if (operationsWithConnectionErrors.length > 0) {
-      throw new Error(
+      const invalidNodes = operationsWithConnectionErrors.map(([id]) => id).join(', ');
+      throw new SerializationException(
+        SerializationErrorCode.INVALID_CONNECTIONS,
         intl.formatMessage(
           {
             defaultMessage: 'Workflow has invalid connections on the following operations: {invalidNodes}',
             description: 'Error message to show when there are invalid connections in the nodes.',
           },
-          { invalidNodes: operationsWithConnectionErrors.map(([id]) => id).join(', ') }
-        )
+          { invalidNodes }
+        ),
+        { errorMessage: `Workflow has invalid connections on the following operations: ${invalidNodes}` }
       );
     }
 
@@ -81,14 +86,17 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
       ([_id, errorArr]) => errorArr.length > 0
     );
     if (operationsWithSettingsErrors.length > 0) {
-      throw new Error(
+      const invalidNodes = operationsWithSettingsErrors.map(([id, _errorArr]) => id).join(', ');
+      throw new SerializationException(
+        SerializationErrorCode.INVALID_SETTINS,
         intl.formatMessage(
           {
             defaultMessage: 'Workflow has settings validation errors on the following operations: {invalidNodes}',
             description: 'Error message to show when there are invalid connections in the nodes.',
           },
-          { invalidNodes: operationsWithSettingsErrors.map(([id, _errorArr]) => id).join(', ') }
-        )
+          { invalidNodes }
+        ),
+        { errorMessage: `Workflow has settings validation errors on the following operations: ${invalidNodes}` }
       );
     }
 
@@ -99,14 +107,17 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
         )
     );
     if (operationsWithParameterErrors.length > 0) {
-      throw new Error(
+      const invalidNodes = operationsWithParameterErrors.map(([id]) => id).join(', ');
+      throw new SerializationException(
+        SerializationErrorCode.INVALID_PARAMETERS,
         intl.formatMessage(
           {
             defaultMessage: 'Workflow has parameter validation errors on the following operations: {invalidNodes}',
             description: 'Error message to show when there are invalid connections in the nodes.',
           },
-          { invalidNodes: operationsWithParameterErrors.map(([id]) => id).join(', ') }
-        )
+          { invalidNodes }
+        ),
+        { errorMessage: `Workflow has parameter validation errors on the following operations: ${invalidNodes}` }
       );
     }
   }
