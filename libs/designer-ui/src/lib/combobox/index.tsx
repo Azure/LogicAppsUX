@@ -82,9 +82,11 @@ export const Combobox = ({
   const [selectedKey, setSelectedKey] = useState<string>(optionKey);
   const [searchValue, setSearchValue] = useState<string>('');
   const [canAutoFocus, setCanAutoFocus] = useState(false);
+  const firstLoad = useRef(true);
 
   useEffect(() => {
-    if (!errorDetails && !isLoading) {
+    if (firstLoad.current || (!errorDetails && !isLoading)) {
+      firstLoad.current = false;
       const updatedOptionkey = getSelectedKey(options, initialValue, isLoading);
       setSelectedKey(updatedOptionkey);
       setMode(getMode(updatedOptionkey, initialValue, isLoading));
