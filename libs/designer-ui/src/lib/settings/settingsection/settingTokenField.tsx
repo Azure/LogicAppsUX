@@ -264,7 +264,14 @@ const TokenField = ({
     //     />
     //   );
     case 'floatingactionmenu': {
-      return <FloatingActionMenu supportedTypes={editorOptions?.supportedTypes} initialValue={value} onChange={onValueChange} />;
+      return (
+        <FloatingActionMenu
+          supportedTypes={editorOptions?.supportedTypes}
+          useStaticInputs={editorOptions?.useStaticInputs}
+          initialValue={value}
+          onChange={onValueChange}
+        />
+      );
     }
 
     default:

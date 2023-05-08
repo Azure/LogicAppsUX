@@ -17,6 +17,7 @@ export interface Token {
     format?: string;
     source?: string;
     isSecure?: boolean;
+    isDynamic?: boolean;
     arrayDetails?: {
       itemSchema?: OpenAPIV2.SchemaObject;
       parentArray?: string;

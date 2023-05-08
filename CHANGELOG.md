@@ -1,5 +1,36 @@
 # Logic Apps Designer
 
+### [2.15.13](https://github.com/Azure/LogicAppsUX/compare/v2.15.12...v2.15.13) (2023-05-08)
+
+### [2.15.12](https://github.com/Azure/LogicAppsUX/compare/v2.15.11...v2.15.12) (2023-05-07)
+
+### [2.15.2](https://github.com/Azure/LogicAppsUX/compare/v2.15.1...v2.15.2) (2023-04-29)
+
+### Features
+
+- **designer:** Showing dynamic content load errors in card ([#2264](https://github.com/Azure/LogicAppsUX/issues/2264)) ([b2ce1c1](https://github.com/Azure/LogicAppsUX/commit/b2ce1c1f4a774ce77ecc37ff4ba7df192efee44b))
+
+### [2.15.11](https://github.com/Azure/LogicAppsUX/compare/v2.15.10...v2.15.11) (2023-05-06)
+
+### Bug Fixes
+
+- **designer:** Fix 'select connection' table sizing causing scrollbar ([#2260](https://github.com/Azure/LogicAppsUX/issues/2260)) ([3a2e9e5](https://github.com/Azure/LogicAppsUX/commit/3a2e9e5a397686c6b9b01a8e18ea5cbc0cb7b588))
+- **designer:** Fix invoker connection toggle behavior ([#2194](https://github.com/Azure/LogicAppsUX/issues/2194)) ([07886b4](https://github.com/Azure/LogicAppsUX/commit/07886b424b52bb2d2cf1f8119be182877b9fb34f))
+- **designer:** More user interactions now trigger dirty state ([#2259](https://github.com/Azure/LogicAppsUX/issues/2259)) ([94ef600](https://github.com/Azure/LogicAppsUX/commit/94ef6004778c69dcd476cd20c7bc52bb7f4e8d0b))
+- **vscode:** Adding extra headers for user agent in all http calls ([#2257](https://github.com/Azure/LogicAppsUX/issues/2257)) ([34376bc](https://github.com/Azure/LogicAppsUX/commit/34376bce347a2e4595ce5e90845070a538ac61b3))
+
+### [2.15.10](https://github.com/Azure/LogicAppsUX/compare/v2.15.9...v2.15.10) (2023-05-05)
+
+### Features
+
+- **designer:** Show appropriate error messages when loading operations during deserialization failures ([#2254](https://github.com/Azure/LogicAppsUX/issues/2254)) ([87c67b4](https://github.com/Azure/LogicAppsUX/commit/87c67b4c9cc7c6378d2d7d5c8fa9bb705b4f88e4))
+
+### Bug Fixes
+
+- **designer:** Usability improvements for Concurrency slider ([#2247](https://github.com/Azure/LogicAppsUX/issues/2247)) ([0e3e20d](https://github.com/Azure/LogicAppsUX/commit/0e3e20d0fa8b5d9cd983835352dae79d946874a8))
+- **vscode:** Get credentials for designer ([#2256](https://github.com/Azure/LogicAppsUX/issues/2256)) ([0242a8e](https://github.com/Azure/LogicAppsUX/commit/0242a8eab6c498ab98bcc8e63a892b23e7db8c56))
+- **vscode:** Run trigger in overview page ([#2246](https://github.com/Azure/LogicAppsUX/issues/2246)) ([a65a0dd](https://github.com/Azure/LogicAppsUX/commit/a65a0dd2904d4112b1222f35283539d4e30b0fe4))
+
 ### [2.15.9](https://github.com/Azure/LogicAppsUX/compare/v2.15.8...v2.15.9) (2023-05-05)
 
 ### Features
@@ -50,8 +81,6 @@
 ### [2.15.4](https://github.com/Azure/LogicAppsUX/compare/v2.15.3...v2.15.4) (2023-05-01)
 
 ### [2.15.3](https://github.com/Azure/LogicAppsUX/compare/v2.15.2...v2.15.3) (2023-04-30)
-
-### [2.15.2](https://github.com/Azure/LogicAppsUX/compare/v2.15.1...v2.15.2) (2023-04-29)
 
 ### [2.15.2](https://github.com/Azure/LogicAppsUX/compare/v2.15.1...v2.15.2) (2023-04-29)
 

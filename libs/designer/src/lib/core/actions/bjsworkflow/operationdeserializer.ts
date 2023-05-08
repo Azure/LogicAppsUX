@@ -1,19 +1,26 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
-import type { ConnectionReferences, WorkflowParameter } from '../../../common/models/workflow';
+import type { ConnectionReference, ConnectionReferences, WorkflowParameter } from '../../../common/models/workflow';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import type { ConnectorWithParsedSwagger } from '../../queries/connections';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
-import type { DependencyInfo, NodeData, NodeInputs, NodeOperation, NodeOutputs } from '../../state/operation/operationMetadataSlice';
+import type {
+  DependencyInfo,
+  NodeData,
+  NodeDependencies,
+  NodeInputs,
+  NodeOperation,
+  NodeOutputs,
+} from '../../state/operation/operationMetadataSlice';
 import { ErrorLevel, updateErrorDetails, initializeOperationInfo, initializeNodes } from '../../state/operation/operationMetadataSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import type { NodesMetadata, Operations } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
-import { getConnectionReference } from '../../utils/connectors/connections';
+import { getConnectionReference, isConnectionReferenceValid } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
 import { getRepetitionContext } from '../../utils/loops';
 import type { RepetitionContext } from '../../utils/parameters/helper';
@@ -33,14 +40,17 @@ import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
   updateCallbackUrlInInputs,
+  updateInvokerSettings,
 } from './initialize';
 import { getOperationSettings } from './settings';
+import type { Settings } from './settings';
 import {
   LogEntryLevel,
   LoggerService,
   OperationManifestService,
   StaticResultService,
 } from '@microsoft/designer-client-services-logic-apps';
+import { getIntl } from '@microsoft/intl-logic-apps';
 import type { InputParameter, OutputParameter } from '@microsoft/parsers-logic-apps';
 import type { LogicAppsV2, OperationManifest } from '@microsoft/utils-logic-apps';
 import { isArmResourceId, uniqueArray, getPropertyValue, map, aggregate, equals } from '@microsoft/utils-logic-apps';
@@ -89,7 +99,7 @@ export const initializeOperationMetadata = async (
       triggerNodeId = operationId;
     }
     if (operationManifestService.isSupported(operation.type, operation.kind)) {
-      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, dispatch, graph, references));
+      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, dispatch));
     } else {
       promises.push(initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, dispatch) as any);
     }
@@ -117,6 +127,16 @@ export const initializeOperationMetadata = async (
       })
     )
   );
+
+  const triggerNodeManifest = allNodeData.find((nodeData) => nodeData.id === triggerNodeId)?.manifest;
+  if (triggerNodeManifest) {
+    for (const nodeData of allNodeData) {
+      const { id, settings } = nodeData;
+      if (settings) {
+        updateInvokerSettings(id === triggerNodeId, triggerNodeManifest, id, settings, dispatch);
+      }
+    }
+  }
 
   const variables = initializeVariables(operations, allNodeData);
   dispatch(
@@ -149,9 +169,7 @@ export const initializeOperationDetailsForManifest = async (
   nodeId: string,
   _operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
   isTrigger: boolean,
-  dispatch: Dispatch,
-  graph?: WorkflowNode,
-  connectionReferences?: ConnectionReferences
+  dispatch: Dispatch
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   const operation = { ..._operation };
   try {
@@ -192,21 +210,8 @@ export const initializeOperationDetailsForManifest = async (
         isTrigger ? (operation as LogicAppsV2.TriggerDefinition).splitOn : undefined
       );
       const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
-      let rootNodeId = '';
-      if (graph?.children) {
-        rootNodeId = graph?.children[0].id;
-      }
-      const settings = getOperationSettings(
-        isTrigger,
-        nodeOperationInfo,
-        nodeOutputs,
-        manifest,
-        undefined /* swagger */,
-        operation,
-        rootNodeId,
-        connectionReferences,
-        dispatch
-      );
+
+      const settings = getOperationSettings(isTrigger, nodeOperationInfo, nodeOutputs, manifest, undefined /* swagger */, operation);
 
       const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
 
@@ -488,7 +493,7 @@ export const updateDynamicDataInNodes = async (getState: () => RootState, dispat
   } = rootState;
   const allVariables = getAllVariables(variables);
   for (const [nodeId, operation] of Object.entries(operations)) {
-    if (errors[nodeId]?.level !== ErrorLevel.Critical) {
+    if (!errors[nodeId]?.[ErrorLevel.Critical]) {
       const nodeDependencies = dependencies[nodeId];
       const nodeInputs = inputParameters[nodeId];
       const nodeMetadata = actionMetadata[nodeId];
@@ -497,7 +502,7 @@ export const updateDynamicDataInNodes = async (getState: () => RootState, dispat
       const nodeOperationInfo = operationInfo[nodeId];
       const connectionReference = getConnectionReference(connections, nodeId);
 
-      updateDynamicDataInNode(
+      updateDynamicDataForValidConnection(
         nodeId,
         isTrigger,
         nodeOperationInfo,
@@ -512,5 +517,52 @@ export const updateDynamicDataInNodes = async (getState: () => RootState, dispat
         operation
       );
     }
+  }
+};
+
+const updateDynamicDataForValidConnection = async (
+  nodeId: string,
+  isTrigger: boolean,
+  operationInfo: NodeOperation,
+  reference: ConnectionReference,
+  dependencies: NodeDependencies,
+  nodeInputs: NodeInputs,
+  nodeMetadata: Record<string, any>,
+  settings: Settings,
+  variables: any,
+  dispatch: Dispatch,
+  rootState: RootState,
+  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition
+): Promise<void> => {
+  const isValidConnection = await isConnectionReferenceValid(operationInfo, reference);
+
+  if (isValidConnection) {
+    updateDynamicDataInNode(
+      nodeId,
+      isTrigger,
+      operationInfo,
+      reference,
+      dependencies,
+      nodeInputs,
+      nodeMetadata,
+      settings,
+      variables,
+      dispatch,
+      rootState,
+      operation
+    );
+  } else {
+    dispatch(
+      updateErrorDetails({
+        id: nodeId,
+        errorInfo: {
+          level: ErrorLevel.Connection,
+          message: getIntl().formatMessage({
+            defaultMessage: 'Invalid connection, please update your connection to load complete details',
+            description: 'Error message to show on connection error during deserialization',
+          }),
+        },
+      })
+    );
   }
 };

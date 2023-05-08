@@ -14,6 +14,8 @@ import type {
   UpdateParametersPayload,
 } from '../../state/operation/operationMetadataSlice';
 import {
+  ErrorLevel,
+  updateErrorDetails,
   updateActionMetadata,
   removeParameterValidationError,
   updateParameterValidation,
@@ -356,7 +358,7 @@ export function getParameterEditorProps(
       editor = constants.EDITOR.ARRAY;
       editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
       editorViewModel.itemSchema = toArrayViewModelSchema(itemSchema);
-      editorViewModel.complexArray = itemSchema?.type === constants.SWAGGER.TYPE.OBJECT;
+      editorViewModel.complexArray = itemSchema?.type === constants.SWAGGER.TYPE.OBJECT && itemSchema.properties;
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
     } else if ((schemaEnum || schema?.enum || schema?.[ExtensionProperties.CustomEnum]) && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.COMBOBOX;
@@ -442,11 +444,11 @@ const convertStringToInputParameter = (
   }
   const hasExpression = containsExpression(value);
   let newValue = value;
-  if (removeQuotesFromExpression) {
-    newValue = removeQuotes(newValue);
-  }
   if (trimExpression) {
     newValue = newValue.trim();
+  }
+  if (removeQuotesFromExpression) {
+    newValue = removeQuotes(newValue);
   }
   if (hasExpression && convertIfContainsExpression && !newValue.startsWith('@')) {
     newValue = `@${newValue}`;
@@ -1731,34 +1733,52 @@ async function loadDynamicContentForInputsInNode(
       dispatch(clearDynamicInputs(nodeId));
 
       if (isDynamicDataReadyToLoad(info)) {
-        const inputSchema = await getDynamicSchema(info, allInputs, nodeMetadata, operationInfo, connectionReference, variables);
-        const allInputParameters = getAllInputParameters(allInputs);
-        const allInputKeys = allInputParameters.map((param) => param.parameterKey);
-        const schemaInputs = inputSchema
-          ? await getDynamicInputsFromSchema(
-              inputSchema,
-              info.parameter as InputParameter,
-              operationInfo,
-              allInputKeys,
-              operationDefinition
-            )
-          : [];
-        const inputParameters = schemaInputs.map((input) => ({
-          ...createParameterInfo(input),
-          schema: input,
-        })) as ParameterInfo[];
+        try {
+          const inputSchema = await getDynamicSchema(info, allInputs, nodeMetadata, operationInfo, connectionReference, variables);
+          const allInputParameters = getAllInputParameters(allInputs);
+          const allInputKeys = allInputParameters.map((param) => param.parameterKey);
+          const schemaInputs = inputSchema
+            ? await getDynamicInputsFromSchema(
+                inputSchema,
+                info.parameter as InputParameter,
+                operationInfo,
+                allInputKeys,
+                operationDefinition
+              )
+            : [];
+          const inputParameters = schemaInputs.map((input) => ({
+            ...createParameterInfo(input),
+            schema: input,
+          })) as ParameterInfo[];
 
-        updateTokenMetadataInParameters(nodeId, inputParameters, rootState);
+          updateTokenMetadataInParameters(nodeId, inputParameters, rootState);
 
-        let swagger: SwaggerParser | undefined = undefined;
-        if (!OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
-          const { parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
-          swagger = parsedSwagger;
+          let swagger: SwaggerParser | undefined = undefined;
+          if (!OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
+            const { parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
+            swagger = parsedSwagger;
+          }
+
+          dispatch(
+            addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters, newInputs: schemaInputs, swagger })
+          );
+        } catch (error: any) {
+          const message = error.message as string;
+          const errorMessage = getIntl().formatMessage(
+            {
+              defaultMessage: `Failed to retrive dynamic inputs. Error details: '{message}'`,
+              description: 'Error message to show when loading dynamic inputs failed',
+            },
+            { message }
+          );
+
+          dispatch(
+            updateErrorDetails({
+              id: nodeId,
+              errorInfo: { level: ErrorLevel.DynamicInputs, message: errorMessage, error, code: error.code },
+            })
+          );
         }
-
-        dispatch(
-          addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters, newInputs: schemaInputs, swagger })
-        );
       }
     }
   }
@@ -1907,7 +1927,7 @@ export async function loadDynamicValuesForParameter(
             ],
           })
         );
-      } catch (error) {
+      } catch (error: any) {
         dispatch(
           updateNodeParameters({
             nodeId,
@@ -1915,7 +1935,7 @@ export async function loadDynamicValuesForParameter(
               {
                 parameterId,
                 groupId,
-                propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.FAILED, error: error as Exception } },
+                propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.FAILED, error: { ...error, message: error.message } } },
               },
             ],
           })
