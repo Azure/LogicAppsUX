@@ -167,7 +167,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     }
 
     wizardContext.activityTitle = localize(
-      'functionAppCreateActivityTitle',
+      'logicAppCreateActivityTitle',
       'Creating Logic App "{0}"',
       nonNullProp(wizardContext, 'newSiteName')
     );
