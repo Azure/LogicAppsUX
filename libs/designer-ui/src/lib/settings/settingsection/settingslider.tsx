@@ -1,7 +1,6 @@
 import type { SettingProps } from './settingtoggle';
 import { Slider, TextField } from '@fluentui/react';
-import React, { useCallback, useState } from 'react';
-import { useIntl } from 'react-intl';
+import { useCallback, useState } from 'react';
 
 export type ValueChangeHandler = (value: number) => void;
 export interface CustomValueSliderProps extends SettingProps {
@@ -22,9 +21,8 @@ export const CustomValueSlider = ({
   customLabel,
   sliderLabel,
   onValueChange,
+  ariaLabel,
 }: CustomValueSliderProps): JSX.Element | null => {
-  const intl = useIntl();
-
   const [sliderValue, setSliderValue] = useState(value ?? defaultValue);
   const onSliderValueChanged = useCallback((value: number) => {
     setSliderValue(value);
@@ -65,11 +63,6 @@ export const CustomValueSlider = ({
     setTextValue(newValue.toString());
   }, [defaultValue, onValueChange, textValue, valTextToNumber]);
 
-  const sliderAriaLabel = intl.formatMessage({
-    defaultMessage: 'Text field for slider',
-    description: 'Aria label for text field for slider',
-  });
-
   return (
     <>
       {customLabel && customLabel()}
@@ -77,7 +70,7 @@ export const CustomValueSlider = ({
         <div style={{ flex: '1 1 auto' }}>
           <Slider
             label={sliderLabel}
-            ariaLabel={sliderLabel}
+            ariaLabel={ariaLabel}
             disabled={readOnly}
             max={maxVal}
             min={minVal}
@@ -89,7 +82,7 @@ export const CustomValueSlider = ({
         </div>
         <TextField
           type={'number'}
-          aria-label={sliderAriaLabel}
+          aria-label={ariaLabel}
           onChange={onTextValueChanged}
           onBlur={onTextValueBlur}
           value={textValue}

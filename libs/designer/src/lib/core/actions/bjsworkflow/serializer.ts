@@ -594,9 +594,9 @@ const serializeHost = (
         AssertionErrorCode.UNSUPPORTED_MANIFEST_CONNECTION_REFERENCE_FORMAT,
         intl.formatMessage(
           {
-            defaultMessage: `Unsupported manifest connection reference format: '{referenceKeyFormat}'`,
+            defaultMessage: `Unsupported manifest connection reference format: ''{referenceKeyFormat}''`,
             description:
-              'Error message to show when reference format is unsupported, {referenceKeyFormat} will be replaced based on action definition',
+              'Error message to show when reference format is unsupported, {referenceKeyFormat} will be replaced based on action definition. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
           },
           {
             referenceKeyFormat,
@@ -736,6 +736,9 @@ const serializeSettings = (
 
   return {
     ...optional('correlation', settings.correlation?.value),
+    ...(settings.invokerConnection?.value?.enabled
+      ? optional('isInvokerConnectionEnabled', settings.invokerConnection?.value?.enabled)
+      : {}),
     ...optional('conditions', conditions),
     ...optional('limit', timeout),
     ...optional('operationOptions', getSerializedOperationOptions(operationId, settings, rootState)),

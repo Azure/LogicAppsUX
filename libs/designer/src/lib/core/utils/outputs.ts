@@ -5,7 +5,7 @@ import type { Settings } from '../actions/bjsworkflow/settings';
 import { getConnectorWithSwagger } from '../queries/connections';
 import { getOperationManifest } from '../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../state/operation/operationMetadataSlice';
-import { clearDynamicOutputs, addDynamicOutputs } from '../state/operation/operationMetadataSlice';
+import { ErrorLevel, updateErrorDetails, clearDynamicOutputs, addDynamicOutputs } from '../state/operation/operationMetadataSlice';
 import { addDynamicTokens } from '../state/tokensSlice';
 import { getBrandColorFromConnector, getIconUriFromConnector } from './card';
 import { getTokenExpressionValueForManifestBasedOperation } from './loops';
@@ -140,8 +140,9 @@ export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitO
           AssertionErrorCode.INVALID_SPLITON,
           intl.formatMessage(
             {
-              defaultMessage: `Invalid split on value '{splitOn}', cannot find in outputs.`,
-              description: 'Error message for when split on value not found in operation outputs.',
+              defaultMessage: `Invalid split on value ''{splitOn}'', cannot find in outputs.`,
+              description:
+                'Error message for when split on value not found in operation outputs. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
             },
             { splitOn }
           )
@@ -154,8 +155,9 @@ export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitO
         AssertionErrorCode.INVALID_SPLITON,
         intl.formatMessage(
           {
-            defaultMessage: `Invalid type on split on value '{splitOn}', split on not in array.`,
-            description: 'Error message for when split on array is invalid.',
+            defaultMessage: `Invalid type on split on value ''{splitOn}'', split on not in array.`,
+            description:
+              'Error message for when split on array is invalid. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
           },
           { splitOn }
         )
@@ -390,43 +392,63 @@ export const loadDynamicOutputsInNode = async (
       if (info.dependencyType === 'StaticSchema') {
         updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings, /* shouldProcessSettings */ true);
       } else {
-        const outputSchema = await getDynamicSchema(info, nodeInputs, nodeMetadata, operationInfo, connectionReference);
-        let schemaOutputs = outputSchema ? getDynamicOutputsFromSchema(outputSchema, info.parameter as OutputParameter) : {};
+        try {
+          const outputSchema = await getDynamicSchema(info, nodeInputs, nodeMetadata, operationInfo, connectionReference);
+          let schemaOutputs = outputSchema ? getDynamicOutputsFromSchema(outputSchema, info.parameter as OutputParameter) : {};
 
-        if (settings.splitOn?.value?.enabled) {
-          schemaOutputs = updateOutputsForBatchingTrigger(schemaOutputs, settings.splitOn?.value?.value);
+          if (settings.splitOn?.value?.enabled) {
+            schemaOutputs = updateOutputsForBatchingTrigger(schemaOutputs, settings.splitOn?.value?.value);
+          }
+
+          const dynamicOutputs = Object.keys(schemaOutputs).reduce((result: Record<string, OutputInfo>, outputKey: string) => {
+            const outputInfo = toOutputInfo(schemaOutputs[outputKey]);
+            return { ...result, [outputInfo.key]: outputInfo };
+          }, {});
+
+          dispatch(addDynamicOutputs({ nodeId, outputs: dynamicOutputs }));
+
+          let iconUri: string, brandColor: string;
+          if (OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
+            const manifest = await getOperationManifest(operationInfo);
+            iconUri = manifest.properties.iconUri;
+            brandColor = manifest.properties.brandColor;
+          } else {
+            const { connector } = await getConnectorWithSwagger(operationInfo.connectorId);
+            iconUri = getIconUriFromConnector(connector);
+            brandColor = getBrandColorFromConnector(connector);
+          }
+
+          dispatch(
+            addDynamicTokens({
+              nodeId,
+              tokens: convertOutputsToTokens(
+                isTrigger ? undefined : nodeId,
+                operationInfo.type,
+                dynamicOutputs,
+                { iconUri, brandColor },
+                settings
+              ),
+            })
+          );
+        } catch (error: any) {
+          const message = error.message as string;
+          const errorMessage = getIntl().formatMessage(
+            {
+              defaultMessage: `Failed to retrive dynamic outputs, outputs of this operation might not be visible in subsequent actions. Error details: {message}`,
+              description: 'Error message to show when loading dynamic outputs failed.',
+            },
+            {
+              message,
+            }
+          );
+
+          dispatch(
+            updateErrorDetails({
+              id: nodeId,
+              errorInfo: { level: ErrorLevel.DynamicOutputs, message: errorMessage, error, code: error.code },
+            })
+          );
         }
-
-        const dynamicOutputs = Object.keys(schemaOutputs).reduce((result: Record<string, OutputInfo>, outputKey: string) => {
-          const outputInfo = toOutputInfo(schemaOutputs[outputKey]);
-          return { ...result, [outputInfo.key]: outputInfo };
-        }, {});
-
-        dispatch(addDynamicOutputs({ nodeId, outputs: dynamicOutputs }));
-
-        let iconUri: string, brandColor: string;
-        if (OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
-          const manifest = await getOperationManifest(operationInfo);
-          iconUri = manifest.properties.iconUri;
-          brandColor = manifest.properties.brandColor;
-        } else {
-          const { connector } = await getConnectorWithSwagger(operationInfo.connectorId);
-          iconUri = getIconUriFromConnector(connector);
-          brandColor = getBrandColorFromConnector(connector);
-        }
-
-        dispatch(
-          addDynamicTokens({
-            nodeId,
-            tokens: convertOutputsToTokens(
-              isTrigger ? undefined : nodeId,
-              operationInfo.type,
-              dynamicOutputs,
-              { iconUri, brandColor },
-              settings
-            ),
-          })
-        );
       }
     }
   }

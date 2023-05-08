@@ -217,10 +217,12 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   });
 
   const { errorMessage, errorLevel } = useMemo(() => {
-    if (errorInfo) {
+    if (errorInfo && errorInfo.level !== ErrorLevel.DynamicOutputs) {
+      const { message, level } = errorInfo;
       return {
-        errorMessage: errorInfo.message,
-        errorLevel: errorInfo.level !== ErrorLevel.Default ? MessageBarType.error : MessageBarType.severeWarning,
+        errorMessage: message,
+        errorLevel:
+          level !== ErrorLevel.Default && level !== ErrorLevel.DynamicInputs ? MessageBarType.error : MessageBarType.severeWarning,
       };
     }
 

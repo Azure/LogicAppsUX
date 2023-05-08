@@ -35,6 +35,7 @@ import { DynamicCallStatus, TokenPicker, ValueSegmentType } from '@microsoft/des
 import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode } from '@microsoft/designer-ui';
 import { equals } from '@microsoft/utils-logic-apps';
 import { useCallback, useState } from 'react';
+import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const ParametersTab = () => {
@@ -56,6 +57,11 @@ export const ParametersTab = () => {
 
   const replacedIds = useReplacedIds();
 
+  const emptyParametersMessage = useIntl().formatMessage({
+    defaultMessage: 'No additional information is needed for this step. You will be able to use the outputs in subsequent steps.',
+    description: 'Message to show when there are no parameters to author in operation.',
+  });
+
   if (!operationInfo && !nodeMetadata?.subgraphType) {
     return (
       <div className="msla-loading-container">
@@ -70,9 +76,20 @@ export const ParametersTab = () => {
   return (
     <>
       {errorInfo ? (
-        <MessageBar messageBarType={errorInfo.level === ErrorLevel.Default ? MessageBarType.severeWarning : MessageBarType.error}>
+        <MessageBar
+          messageBarType={
+            errorInfo.level === ErrorLevel.DynamicInputs || errorInfo.level === ErrorLevel.Default
+              ? MessageBarType.severeWarning
+              : errorInfo.level === ErrorLevel.DynamicOutputs
+              ? MessageBarType.warning
+              : MessageBarType.error
+          }
+        >
           {errorInfo.message}
         </MessageBar>
+      ) : null}
+      {!hasParametersToAuthor(inputs?.parameterGroups ?? {}) ? (
+        <MessageBar messageBarType={MessageBarType.info}>{emptyParametersMessage}</MessageBar>
       ) : null}
       {Object.keys(inputs?.parameterGroups ?? {}).map((sectionName) => (
         <div key={sectionName}>
@@ -389,6 +406,10 @@ const getEditorAndOptions = (
   }
 
   return { editor, editorOptions };
+};
+
+const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>): boolean => {
+  return Object.keys(parameterGroups).some((key) => parameterGroups[key].parameters.filter((p) => !p.hideInUI).length > 0);
 };
 
 export const parametersTab: PanelTab = {
