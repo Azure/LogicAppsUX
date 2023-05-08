@@ -1,9 +1,14 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../localize';
 import { getContainingWorkspace, selectWorkspaceFolder } from '../../../utils/workspace';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import { OpenBehavior } from '@microsoft/vscode-extension';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
 
+//Currently not being used by command - keeping file just in case I need it for now
 export class FolderListStepCodeProject extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
 
