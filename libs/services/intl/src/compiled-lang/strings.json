@@ -83,6 +83,12 @@
       "value": "Pagination"
     }
   ],
+  "+ym4nO": [
+    {
+      "type": 0,
+      "value": "Tracked Properties"
+    }
+  ],
   "//nQG4": [
     {
       "type": 0,
@@ -1267,6 +1273,12 @@
       "value": "Required. The string from which the substring is taken."
     }
   ],
+  "7S2wtE": [
+    {
+      "type": 0,
+      "value": "Schema Validation"
+    }
+  ],
   "7WVgiU": [
     {
       "type": 0,
@@ -1887,6 +1899,12 @@
     {
       "type": 0,
       "value": "Number"
+    }
+  ],
+  "BeqBP7": [
+    {
+      "type": 0,
+      "value": "Automatic Decompression"
     }
   ],
   "Bn8iTS": [
@@ -2613,12 +2631,6 @@
     {
       "type": 0,
       "value": "Headers"
-    }
-  ],
-  "HXLutF": [
-    {
-      "type": 0,
-      "value": "Key"
     }
   ],
   "Hbqlzk": [
@@ -3727,6 +3739,16 @@
       "value": "Add dynamic data or expressions by inserting a /"
     }
   ],
+  "Q8zxeb": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " Key"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -3853,12 +3875,6 @@
       "value": "Triggers cannot be deleted."
     }
   ],
-  "R0/Vx4": [
-    {
-      "type": 0,
-      "value": "Text field for slider"
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -3931,12 +3947,6 @@
     {
       "type": 0,
       "value": "issue"
-    }
-  ],
-  "S8P4N5": [
-    {
-      "type": 0,
-      "value": "Delete"
     }
   ],
   "SADSSs": [
@@ -5261,6 +5271,12 @@
       "value": "panel"
     }
   ],
+  "c7tRg/": [
+    {
+      "type": 0,
+      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger."
+    }
+  ],
   "c8UPLp": [
     {
       "type": 0,
@@ -5671,12 +5687,6 @@
     {
       "type": 0,
       "value": "Email"
-    }
-  ],
-  "g0a4Qe": [
-    {
-      "type": 0,
-      "value": "Value"
     }
   ],
   "g1zwch": [
@@ -6535,6 +6545,16 @@
       "value": "Function deleted."
     }
   ],
+  "mGPqAg": [
+    {
+      "type": 0,
+      "value": "Delete "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -6605,6 +6625,16 @@
     {
       "type": 0,
       "value": "Enter password as plain text or use a secure parameter"
+    }
+  ],
+  "mvu5xN": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " Value"
     }
   ],
   "mwEHSX": [
@@ -7003,6 +7033,12 @@
     {
       "type": 0,
       "value": "Adds an integer number of seconds to a string timestamp passed in"
+    }
+  ],
+  "q8vnZQ": [
+    {
+      "type": 0,
+      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned."
     }
   ],
   "q9hf8i": [

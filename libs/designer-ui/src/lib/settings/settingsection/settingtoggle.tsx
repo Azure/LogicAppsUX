@@ -5,6 +5,7 @@ export type ToggleChangeHandler = (e: React.MouseEvent<HTMLElement>, checked?: b
 
 export interface SettingProps {
   readOnly?: boolean;
+  ariaLabel?: string;
   customLabel?: () => JSX.Element;
 }
 
@@ -18,6 +19,7 @@ export const SettingToggle = ({
   checked,
   label,
   customLabel,
+  ariaLabel,
   onText,
   offText,
 }: SettingToggleProps): JSX.Element | null => {
@@ -33,6 +35,7 @@ export const SettingToggle = ({
           offText={offText}
           onChange={onToggleInputChange}
           label={label}
+          ariaLabel={ariaLabel}
         />
       </>
     );
@@ -47,6 +50,7 @@ export const SettingToggle = ({
       offText={offText}
       onChange={onToggleInputChange}
       label={label}
+      ariaLabel={ariaLabel}
     />
   );
 };
