@@ -594,7 +594,7 @@ const serializeHost = (
         AssertionErrorCode.UNSUPPORTED_MANIFEST_CONNECTION_REFERENCE_FORMAT,
         intl.formatMessage(
           {
-            defaultMessage: `Unsupported manifest connection reference format: '{referenceKeyFormat}'`,
+            defaultMessage: `Unsupported manifest connection reference format: ''{referenceKeyFormat}''`,
             description:
               'Error message to show when reference format is unsupported, {referenceKeyFormat} will be replaced based on action definition',
           },

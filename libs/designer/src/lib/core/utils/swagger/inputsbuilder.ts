@@ -88,7 +88,7 @@ export function buildOperationDetailsFromControls(
       default:
         throw new UnsupportedException(
           intl.formatMessage(
-            { defaultMessage: `Unsupported 'in' value : '{value}' in Parameter`, description: 'Error message' },
+            { defaultMessage: `Unsupported 'in' value : ''{value}'' in Parameter`, description: 'Error message' },
             { value: parameter.info.in }
           )
         );

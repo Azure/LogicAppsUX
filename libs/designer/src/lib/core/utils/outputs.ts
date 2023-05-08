@@ -140,7 +140,7 @@ export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitO
           AssertionErrorCode.INVALID_SPLITON,
           intl.formatMessage(
             {
-              defaultMessage: `Invalid split on value '{splitOn}', cannot find in outputs.`,
+              defaultMessage: `Invalid split on value ''{splitOn}'', cannot find in outputs.`,
               description: 'Error message for when split on value not found in operation outputs.',
             },
             { splitOn }
@@ -154,7 +154,7 @@ export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitO
         AssertionErrorCode.INVALID_SPLITON,
         intl.formatMessage(
           {
-            defaultMessage: `Invalid type on split on value '{splitOn}', split on not in array.`,
+            defaultMessage: `Invalid type on split on value ''{splitOn}'', split on not in array.`,
             description: 'Error message for when split on array is invalid.',
           },
           { splitOn }

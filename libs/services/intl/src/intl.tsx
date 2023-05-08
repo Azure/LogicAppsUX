@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-useless-fragment */
 import React from 'react';
 import type { IntlShape } from 'react-intl';
 import { createIntl, createIntlCache, useIntl } from 'react-intl';

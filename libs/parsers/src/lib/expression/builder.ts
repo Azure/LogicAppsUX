@@ -72,7 +72,7 @@ export class ExpressionBuilder {
         throw new ExpressionBuilderException(
           getIntl().formatMessage(
             {
-              defaultMessage: `Invalid expression type '{type}'.`,
+              defaultMessage: `Invalid expression type ''{type}''.`,
               description: 'Error message on invalid expression type during building',
             },
             { type: expression.type }

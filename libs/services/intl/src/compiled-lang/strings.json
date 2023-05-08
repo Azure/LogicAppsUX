@@ -1167,6 +1167,20 @@
       "value": "(UTC+09:30) Adelaide"
     }
   ],
+  "6etACJ": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: '"
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "6gZ4I3": [
     {
       "type": 0,
@@ -1839,6 +1853,28 @@
     {
       "type": 0,
       "value": "Clear custom value"
+    }
+  ],
+  "BH26vZ": [
+    {
+      "type": 0,
+      "value": "Error code: '"
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": "', Message: '"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "BHe7qY": [
@@ -2609,12 +2645,6 @@
       "value": "Month"
     }
   ],
-  "HJIZrG": [
-    {
-      "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
-    }
-  ],
   "HOchry": [
     {
       "type": 0,
@@ -3087,12 +3117,6 @@
       "value": "Creating..."
     }
   ],
-  "LOwePI": [
-    {
-      "type": 0,
-      "value": "Invalid type on split on value {splitOn}, split on not in array."
-    }
-  ],
   "LR/3Lr": [
     {
       "type": 0,
@@ -3153,6 +3177,20 @@
       "value": "Add"
     }
   ],
+  "Lt0C82": [
+    {
+      "type": 0,
+      "value": "Error executing the api '"
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "Lub7NN": [
     {
       "type": 0,
@@ -3187,6 +3225,20 @@
     {
       "type": 0,
       "value": "Code view"
+    }
+  ],
+  "M1jOmP": [
+    {
+      "type": 0,
+      "value": "Alt/Option + click to download '"
+    },
+    {
+      "type": 1,
+      "value": "displayName"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "M48CGd": [
@@ -3781,6 +3833,20 @@
       "value": " card"
     }
   ],
+  "QWUgqu": [
+    {
+      "type": 0,
+      "value": "Unsupported 'in' value : '"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "' in Parameter"
+    }
+  ],
   "QZ5DZl": [
     {
       "type": 0,
@@ -4313,6 +4379,20 @@
       "value": "Logical Name"
     }
   ],
+  "UPjJ2k": [
+    {
+      "type": 0,
+      "value": "Invalid split on value '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "', cannot find in outputs."
+    }
+  ],
   "UR1CS5": [
     {
       "type": 0,
@@ -4805,12 +4885,6 @@
       "value": "More Info"
     }
   ],
-  "Y7yyKD": [
-    {
-      "type": 0,
-      "value": "Invalid expression type {type}."
-    }
-  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -5015,12 +5089,6 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Tomsk"
-    }
-  ],
-  "Zr0yTE": [
-    {
-      "type": 0,
-      "value": "Unsupported 'in' value : {value} in Parameter"
     }
   ],
   "a7j3gS": [
@@ -5815,12 +5883,6 @@
       "value": "Delete"
     }
   ],
-  "gpbgjJ": [
-    {
-      "type": 0,
-      "value": "Invalid split on value {splitOn}, cannot find in outputs."
-    }
-  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -5899,12 +5961,6 @@
     {
       "type": 0,
       "value": "Returns the result from subtracting two numbers"
-    }
-  ],
-  "hdnZ9Y": [
-    {
-      "type": 0,
-      "value": "Alt/Option + click to download {displayName}"
     }
   ],
   "hic23z": [
@@ -6099,6 +6155,20 @@
       "value": "s"
     }
   ],
+  "irGw0o": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is '"
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "isnFBi": [
     {
       "type": 0,
@@ -6217,12 +6287,6 @@
     {
       "type": 0,
       "value": "Unable to generate schema"
-    }
-  ],
-  "jjYA4u": [
-    {
-      "type": 0,
-      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
     }
   ],
   "juR40n": [
@@ -6909,12 +6973,6 @@
       "value": "(UTC+13:00) Samoa"
     }
   ],
-  "p7YGxW": [
-    {
-      "type": 0,
-      "value": "Error executing the api {parameters}."
-    }
-  ],
   "pC2nr2": [
     {
       "type": 0,
@@ -7081,12 +7139,6 @@
     {
       "type": 0,
       "value": "Required"
-    }
-  ],
-  "qTqSqD": [
-    {
-      "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
     }
   ],
   "qUMXpq": [
@@ -7621,6 +7673,20 @@
       "value": "Show me"
     }
   ],
+  "uYwh1f": [
+    {
+      "type": 0,
+      "value": "Invalid expression type '"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "uZH8Qs": [
     {
       "type": 0,
@@ -8051,6 +8117,20 @@
     {
       "type": 0,
       "value": "Returns the path from a URI. If path is not specified, returns '/'"
+    }
+  ],
+  "xZ8ps7": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "', split on not in array."
     }
   ],
   "xZhieP": [
