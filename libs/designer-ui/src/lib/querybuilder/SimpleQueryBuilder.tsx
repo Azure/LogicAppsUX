@@ -68,7 +68,7 @@ export const SimpleQueryBuilder = ({ getTokenPicker, items, readonly, onChange }
 
   const handleUpdateRootProps = (newState: ChangeState) => {
     setCurrValue(newState.value[0].value);
-    setRootProp(convertValueToRootProp(newState.value));
+    setRootProp(convertValueToRootProp(newState.value, items));
   };
 
   return (
@@ -117,16 +117,20 @@ const convertRootPropToValue = (rootProps: RowItemProps): string => {
   return `@${rootProps.operator}(${op1},${op2})`;
 };
 
-const convertValueToRootProp = (value: ValueSegment[]): GroupItems => {
+const convertValueToRootProp = (value: ValueSegment[], items: RowItemProps): GroupItems => {
   const input = value[0].value;
   const operation: string = input.substring(input.indexOf('@') + 1, input.indexOf('('));
   const operations = input.split(',');
-  const operand1: ValueSegment[] = [
-    { id: guid(), type: ValueSegmentType.LITERAL, value: removeQuotes(operations[0].substring(operations[0].indexOf('(') + 1).trim()) },
-  ];
-  const operand2: ValueSegment[] = [
-    { id: guid(), type: ValueSegmentType.LITERAL, value: removeQuotes(operations[1].substring(0, operations[1].indexOf(')')).trim()) },
-  ];
+  const operand1Value = removeQuotes(operations[0].substring(operations[0].indexOf('(') + 1).trim());
+  const operand2Value = removeQuotes(operations[1].substring(0, operations[1].lastIndexOf(')')).trim());
+  const operand1: ValueSegment[] =
+    items.operand1.length === 1 && operand1Value === items.operand1[0].value
+      ? items.operand1
+      : [{ id: guid(), type: ValueSegmentType.LITERAL, value: operand1Value }];
+  const operand2: ValueSegment[] =
+    items.operand2.length === 1 && operand2Value === items.operand2[0].value
+      ? items.operand2
+      : [{ id: guid(), type: ValueSegmentType.LITERAL, value: operand2Value }];
   return { operator: operation, operand1, operand2, type: GroupType.ROW };
 };
 
@@ -134,10 +138,7 @@ const getOperationValue = (valSegment?: ValueSegment): string => {
   if (!valSegment) {
     return '';
   }
-  let currValue = valSegment.value;
-  if (valSegment.type === ValueSegmentType.TOKEN) {
-    currValue = '@' + currValue;
-  }
+  const currValue = valSegment.value;
   const opeartionHasQuote = checkIfShouldHaveQuotes(valSegment);
   return `${opeartionHasQuote ? "'" : ''}${currValue}${opeartionHasQuote ? "'" : ''}`;
 };
