@@ -37,7 +37,7 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
     });
 
     // Create the .cs file
-    const csFilePath = path.join(context.projectPath, context.projectName, 'Function', `${methodName}.cs`);
+    const csFilePath = path.join(context.projectPath, context.workspaceName, 'Function', `${methodName}.cs`);
     const csFileContent = `using System;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
@@ -57,7 +57,7 @@ namespace ${namespace}
     await fs.writeFile(csFilePath, csFileContent);
 
     // Create the .csproj file
-    const csprojFilePath = path.join(context.projectPath, context.projectName, 'Function', `${methodName}.csproj`);
+    const csprojFilePath = path.join(context.projectPath, context.workspaceName, 'Function', `${methodName}.csproj`);
     const csprojFileContent = `<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>

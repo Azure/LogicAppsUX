@@ -38,7 +38,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     context.language = ProjectLanguage.JavaScript;
 
     // Create Function and LogicApp folders
-    const projectPath = path.join(context.projectPath, context.projectName);
+    const projectPath = path.join(context.projectPath, context.workspaceName);
     const functionFolderPath = path.join(projectPath, 'Function');
     const logicAppFolderPath = path.join(projectPath, 'LogicApp');
     await fs.ensureDir(functionFolderPath);
@@ -67,7 +67,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
 
     // If the project type is Bundle, create the project files and folders under the LogicApp folder
     if (projectType === WorkflowProjectType.Bundle) {
-      const workflowProjectPath = path.join(context.projectPath, context.projectName, 'LogicApp');
+      const workflowProjectPath = path.join(context.projectPath, context.workspaceName, 'LogicApp');
       executeSteps.push(new WorkflowCodeProjectCreateStep(workflowProjectPath));
     }
 

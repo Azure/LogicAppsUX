@@ -6,23 +6,25 @@ import { localize } from '../../../../localize';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import { OpenBehavior } from '@microsoft/vscode-extension';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
+import * as path from 'path';
 
 export class setWorkspaceName extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
 
-  public static setProjectName(context: Partial<IProjectWizardContext>, projectName: string): void {
-    context.workspaceName = projectName;
+  public async prompt(context: IProjectWizardContext): Promise<void> {
+    context.workspaceName = await context.ui.showInputBox({
+      placeHolder: localize('setWorkspaceName', 'Workspace name'),
+      prompt: localize('workspaceNamePrompt', 'Provide a Workspace name'),
+    });
+
+    context.workspacePath = path.join(context.projectPath, context.workspaceName);
+
     if (context.workspaceFolder) {
       context.openBehavior = OpenBehavior.alreadyOpen;
     }
   }
 
-  public async prompt(context: IProjectWizardContext): Promise<void> {
-    const placeHolder: string = localize('setWorkspaceName', 'Select workspace Name');
-    setWorkspaceName.setProjectName(context, placeHolder);
-  }
-
-  public shouldPrompt(context: IProjectWizardContext): boolean {
-    return !context.projectName;
+  public shouldPrompt(_context: IProjectWizardContext): boolean {
+    return true;
   }
 }
