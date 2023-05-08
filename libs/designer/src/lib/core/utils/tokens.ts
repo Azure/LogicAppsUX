@@ -17,6 +17,7 @@ import {
   getTokenExpressionValueForManifestBasedOperation,
   shouldAddForeach,
 } from './loops';
+import { removeAliasingKeyRedundancies } from './outputs';
 import {
   ensureExpressionValue,
   FxBrandColor,
@@ -119,10 +120,24 @@ export const convertOutputsToTokens = (
   // TODO - Look at repetition context to get foreach context correctly in tokens and for splitOn
 
   return Object.keys(outputs).map((outputKey) => {
-    const { key, name, type, isAdvanced, required, format, source, isInsideArray, parentArray, itemSchema, schema, value } =
-      outputs[outputKey];
-    return {
+    const {
       key,
+      name,
+      type,
+      isAdvanced,
+      required,
+      format,
+      source,
+      isInsideArray,
+      isDynamic,
+      parentArray,
+      itemSchema,
+      schema,
+      value,
+      alias,
+    } = outputs[outputKey];
+    return {
+      key: alias ? removeAliasingKeyRedundancies(key) : key,
       brandColor,
       icon,
       title: getTokenTitle(outputs[outputKey]),
@@ -136,6 +151,7 @@ export const convertOutputsToTokens = (
         format,
         source,
         isSecure,
+        isDynamic,
         actionName: nodeId,
         arrayDetails: isInsideArray ? { itemSchema, parentArray } : undefined,
         schema,

@@ -2,8 +2,8 @@ import constants from '../../common/constants';
 import type { AppDispatch, RootState } from '../../core';
 import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { useIsXrmConnectionReferenceMode, useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { updateParameterValidation } from '../../core/state/operation/operationMetadataSlice';
-import { useParameterValidationErrors } from '../../core/state/operation/operationSelector';
+import { ErrorLevel, updateParameterValidation } from '../../core/state/operation/operationMetadataSlice';
+import { useOperationErrorInfo, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import {
   useCurrentPanelModePanelMode,
   useIsPanelCollapsed,
@@ -80,6 +80,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   let showCommentBox = !isNullOrUndefined(comment);
   const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
   const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
+  const errorInfo = useOperationErrorInfo(selectedNode);
 
   const selectConnectionTabTitle = isXrmConnectionReferenceMode
     ? intl.formatMessage({
@@ -106,6 +107,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       tabs.push(scratchTab);
     }
     dispatch(registerPanelTabs(tabs));
+    dispatch(clearPanel());
   }, [dispatch]);
 
   useEffect(() => {
@@ -174,9 +176,9 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const parameterValidationErrors = useParameterValidationErrors(selectedNode);
   useEffect(() => {
-    const hasErrors = parameterValidationErrors?.length > 0;
+    const hasErrors = parameterValidationErrors?.length > 0 || errorInfo?.level === ErrorLevel.Connection;
     dispatch(setTabError({ tabName: 'parameters', hasErrors, nodeId: selectedNode }));
-  }, [dispatch, parameterValidationErrors?.length, selectedNode]);
+  }, [dispatch, errorInfo?.level, parameterValidationErrors?.length, selectedNode]);
 
   useEffect(() => {
     collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);
@@ -265,6 +267,10 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
     dispatch(replaceId({ originalId: selectedNode, newId }));
   };
 
+  const onCommentChange = (newDescription?: string) => {
+    dispatch(setNodeDescription({ nodeId: selectedNode, description: newDescription }));
+  };
+
   const handleDelete = (): void => {
     dispatch(deleteOperation({ nodeId: selectedNode, isTrigger: isTriggerNode }));
     // TODO: 12798935 Analytics (event logging)
@@ -304,7 +310,8 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       cardIcon={iconUri}
       comment={comment}
       noNodeSelected={!selectedNode}
-      isError={opQuery?.isError}
+      isError={errorInfo?.level === ErrorLevel.Critical || opQuery?.isError}
+      errorMessage={errorInfo?.message}
       isLoading={isLoading}
       panelScope={PanelScope.CardLevel}
       panelHeaderControlType={getPanelHeaderControlType() ? PanelHeaderControlType.DISMISS_BUTTON : PanelHeaderControlType.MENU}
@@ -331,9 +338,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
         togglePanel();
       }}
       trackEvent={handleTrackEvent}
-      onCommentChange={(value) => {
-        dispatch(setNodeDescription({ nodeId: selectedNode, description: value }));
-      }}
+      onCommentChange={onCommentChange}
       title={selectedNodeDisplayName}
       onTitleChange={onTitleChange}
     />

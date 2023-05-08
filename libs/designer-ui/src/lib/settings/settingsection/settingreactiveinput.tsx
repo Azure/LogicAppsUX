@@ -24,6 +24,7 @@ export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
   onToggleLabel,
   offToggleLabel,
   onValueChange,
+  ariaLabel,
 }: ReactiveToggleProps): JSX.Element | null => {
   const [checkedState, setChecked] = useState(checked ?? false);
   const onToggleInputChange = (e: React.MouseEvent<HTMLElement>, checked?: boolean): void => {
@@ -38,6 +39,7 @@ export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
         {customLabel()}
         <SettingToggle
           checked={checkedState}
+          ariaLabel={ariaLabel}
           readOnly={readOnly}
           onToggleInputChange={onToggleInputChange}
           onText={onToggleLabel}
@@ -46,6 +48,7 @@ export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
         {checkedState ? (
           <SettingTextField
             id={textFieldId}
+            ariaLabel={ariaLabel}
             value={textFieldValue}
             label={textFieldLabel}
             readOnly={readOnly}
@@ -60,6 +63,7 @@ export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
         <SettingToggle
           checked={checkedState}
           readOnly={readOnly}
+          ariaLabel={ariaLabel}
           onToggleInputChange={onToggleInputChange}
           onText={onToggleLabel}
           offText={offToggleLabel}
@@ -67,6 +71,7 @@ export const ReactiveToggle: React.FC<ReactiveToggleProps> = ({
         {checkedState ? (
           <SettingTextField
             id={textFieldId}
+            ariaLabel={ariaLabel}
             value={textFieldValue}
             label={textFieldLabel}
             readOnly={readOnly}

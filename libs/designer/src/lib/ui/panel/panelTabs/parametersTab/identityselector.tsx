@@ -1,14 +1,15 @@
 import constants from '../../../../common/constants';
 import { updateIdentityChangeInConection } from '../../../../core/actions/bjsworkflow/connections';
+import { ErrorLevel, updateErrorDetails } from '../../../../core/state/operation/operationMetadataSlice';
 import type { AppDispatch, RootState } from '../../../../core/store';
-import { getConnectionReference } from '../../../../core/utils/connectors/connections';
+import { getConnectionReference, isIdentityPresentInLogicApp } from '../../../../core/utils/connectors/connections';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { Dropdown, FontSizes, Label } from '@fluentui/react';
 import { WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
-import { ResourceIdentityType, equals } from '@microsoft/utils-logic-apps';
+import { isIdentityAssociatedWithLogicApp, ResourceIdentityType, equals } from '@microsoft/utils-logic-apps';
 import type { FormEvent } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { IntlShape } from 'react-intl';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -52,6 +53,30 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
   });
 
   const [selectedKey, setSelectedKey] = useState(selectedIdentity);
+
+  useEffect(() => {
+    if (!isIdentityPresentInLogicApp(selectedKey, identity)) {
+      dispatch(
+        updateErrorDetails({
+          id: nodeId,
+          errorInfo: {
+            level: ErrorLevel.Connection,
+            message: isIdentityAssociatedWithLogicApp(identity)
+              ? intl.formatMessage({
+                  defaultMessage:
+                    'The managed identity used with this operation no longer exists. To continue, select an available identity or change the connection.',
+                  description: 'Erorr mesade when managed identity is not present in logic apps',
+                })
+              : intl.formatMessage({
+                  defaultMessage:
+                    'The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection.',
+                  description: 'Error message when logic app doesnt have managed identities',
+                }),
+          },
+        })
+      );
+    }
+  }, [identity, dispatch, selectedKey, nodeId, intl]);
 
   const handleUpdateIdentity = (_event: FormEvent, option?: IDropdownOption) => {
     if (option) {

@@ -2,6 +2,8 @@ import constants from '../../../../common/constants';
 import { useShowIdentitySelector } from '../../../../core/state/connection/connectionSelector';
 import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../core/state/operation/operationMetadataSlice';
+import { ErrorLevel } from '../../../../core/state/operation/operationMetadataSlice';
+import { useOperationErrorInfo } from '../../../../core/state/operation/operationSelector';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import {
   useAllowUserToChangeConnection,
@@ -28,11 +30,12 @@ import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
-import { Spinner, SpinnerSize } from '@fluentui/react';
+import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import { DynamicCallStatus, TokenPicker, ValueSegmentType } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode } from '@microsoft/designer-ui';
 import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
 import { useCallback, useState } from 'react';
+import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const ParametersTab = () => {
@@ -50,10 +53,14 @@ export const ParametersTab = () => {
   const operationInfo = useOperationInfo(selectedNodeId);
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
   const showIdentitySelector = useShowIdentitySelector(selectedNodeId);
+  const errorInfo = useOperationErrorInfo(selectedNodeId);
 
   const replacedIds = useReplacedIds();
-  const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState, replacedIds);
-  const expressionGroup = getExpressionTokenSections();
+
+  const emptyParametersMessage = useIntl().formatMessage({
+    defaultMessage: 'No additional information is needed for this step. You will be able to use the outputs in subsequent steps.',
+    description: 'Message to show when there are no parameters to author in operation.',
+  });
 
   if (!operationInfo && !nodeMetadata?.subgraphType) {
     return (
@@ -63,8 +70,27 @@ export const ParametersTab = () => {
     );
   }
 
+  const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState, replacedIds);
+  const expressionGroup = getExpressionTokenSections();
+
   return (
     <>
+      {errorInfo ? (
+        <MessageBar
+          messageBarType={
+            errorInfo.level === ErrorLevel.DynamicInputs || errorInfo.level === ErrorLevel.Default
+              ? MessageBarType.severeWarning
+              : errorInfo.level === ErrorLevel.DynamicOutputs
+              ? MessageBarType.warning
+              : MessageBarType.error
+          }
+        >
+          {errorInfo.message}
+        </MessageBar>
+      ) : null}
+      {!hasParametersToAuthor(inputs?.parameterGroups ?? {}) ? (
+        <MessageBar messageBarType={MessageBarType.info}>{emptyParametersMessage}</MessageBar>
+      ) : null}
       {Object.keys(inputs?.parameterGroups ?? {}).map((sectionName) => (
         <div key={sectionName}>
           <ParameterSection
@@ -398,6 +424,10 @@ const getEditorAndOptions = (
   }
 
   return { editor, editorOptions };
+};
+
+const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>): boolean => {
+  return Object.keys(parameterGroups).some((key) => parameterGroups[key].parameters.filter((p) => !p.hideInUI).length > 0);
 };
 
 export const parametersTab: PanelTab = {
