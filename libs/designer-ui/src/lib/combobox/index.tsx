@@ -85,7 +85,7 @@ export const Combobox = ({
   const firstLoad = useRef(true);
 
   useEffect(() => {
-    if (firstLoad.current || (!errorDetails && !isLoading)) {
+    if ((firstLoad.current || !errorDetails) && !isLoading) {
       firstLoad.current = false;
       const updatedOptionkey = getSelectedKey(options, initialValue, isLoading);
       setSelectedKey(updatedOptionkey);
