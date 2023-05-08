@@ -253,6 +253,13 @@ export const operationMetadataSlice = createSlice({
         }
       }
 
+      const inputDependencies = state.dependencies[nodeId]?.inputs;
+      for (const inputKey of Object.keys(inputDependencies ?? {})) {
+        if (inputDependencies[inputKey].parameter?.isDynamic) {
+          delete state.dependencies[nodeId].inputs[inputKey];
+        }
+      }
+
       if (state.errors[nodeId]?.[ErrorLevel.DynamicInputs]) {
         delete state.errors[nodeId][ErrorLevel.DynamicInputs];
       }
