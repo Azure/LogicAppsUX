@@ -6,9 +6,9 @@ import { funcVersionSetting, projectLanguageSetting, projectOpenBehaviorSetting,
 import { localize } from '../../../localize';
 import { addLocalFuncTelemetry, tryGetLocalFuncVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getGlobalSetting, getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
+import { FolderListStep } from '../createNewProject/createProjectSteps/FolderListStep';
 import { OpenBehaviorStepCodeProject } from './OpenBehaviorStepCodeProject';
 import { OpenFolderStepCodeProject } from './OpenFolderStepCodeProject';
-import { FolderListStepCodeProject } from './createCodeProjectSteps/FolderListStepCodeProject';
 import { NewCodeProjectTypeStep } from './createCodeProjectSteps/NewCodeProjectTypeStep';
 import { setWorkspaceName } from './createCodeProjectSteps/SetWorkspaceName';
 import { isString } from '@microsoft/utils-logic-apps';
@@ -54,7 +54,7 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
   });
 
   if (options.folderPath) {
-    FolderListStepCodeProject.setProjectPath(wizardContext, options.folderPath);
+    new FolderListStep.setProjectPath(wizardContext, options.folderPath);
   }
 
   if (options.suppressOpenFolder) {
@@ -67,7 +67,7 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
     title: localize('createNewCodeProject', 'Create new code project'),
     promptSteps: [
-      new FolderListStepCodeProject(),
+      new FolderListStep(),
       new setWorkspaceName(),
       new NewCodeProjectTypeStep(options.templateId, options.functionSettings),
       new OpenBehaviorStepCodeProject(),
