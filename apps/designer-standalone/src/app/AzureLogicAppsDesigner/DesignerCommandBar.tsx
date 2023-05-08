@@ -41,7 +41,7 @@ export const DesignerCommandBar = ({
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
     const serializedWorkflow = await serializeBJSWorkflow(designerState, {
-      skipValidation: true,
+      skipValidation: false,
       ignoreNonCriticalErrors: true,
     });
     await saveWorkflow(serializedWorkflow);
