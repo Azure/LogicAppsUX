@@ -208,8 +208,18 @@ export const Combobox = ({
 
   const handleClearClick = () => {
     setSelectedKey('');
-    updateOptions('');
+    setSearchValue('');
+    comboBoxRef.current?.focus(true);
     setMode(Mode.Default);
+    onChange?.({
+      value: [
+        {
+          id: guid(),
+          type: ValueSegmentType.LITERAL,
+          value: '',
+        },
+      ],
+    });
   };
 
   const handleBlur = () => {
