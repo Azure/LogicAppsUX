@@ -101,15 +101,6 @@ const initializeOperationDetails = async (
   const operationManifestService = OperationManifestService();
   const staticResultService = StaticResultService();
 
-  const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId);
-  let hasSchema;
-  schemaService.then((schema) => {
-    hasSchema = true;
-    if (schema) {
-      dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
-    }
-  });
-
   dispatch(changePanelNode(nodeId));
   dispatch(isolateTab(Constants.PANEL_TAB_NAMES.LOADING));
 
@@ -208,6 +199,15 @@ const initializeOperationDetails = async (
   } else {
     await trySetDefaultConnectionForNode(nodeId, connector, dispatch, isConnectionRequired);
   }
+
+  const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId, swagger);
+  let hasSchema;
+  schemaService.then((schema) => {
+    hasSchema = true;
+    if (schema) {
+      dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
+    }
+  });
 
   // Re-update settings after we have valid operation data
   const operation = getState().workflow.operations[nodeId];
