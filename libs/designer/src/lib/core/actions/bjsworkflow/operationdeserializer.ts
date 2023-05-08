@@ -491,6 +491,7 @@ export const updateDynamicDataInNodes = async (getState: () => RootState, dispat
     tokens: { variables },
     connections,
   } = rootState;
+  const dynamicDataUpdatePromises: Promise<void>[] = [];
   const allVariables = getAllVariables(variables);
   for (const [nodeId, operation] of Object.entries(operations)) {
     if (!errors[nodeId]?.[ErrorLevel.Critical]) {
@@ -502,22 +503,25 @@ export const updateDynamicDataInNodes = async (getState: () => RootState, dispat
       const nodeOperationInfo = operationInfo[nodeId];
       const connectionReference = getConnectionReference(connections, nodeId);
 
-      updateDynamicDataForValidConnection(
-        nodeId,
-        isTrigger,
-        nodeOperationInfo,
-        connectionReference,
-        nodeDependencies,
-        nodeInputs,
-        nodeMetadata,
-        nodeSettings,
-        allVariables,
-        dispatch,
-        rootState,
-        operation
+      dynamicDataUpdatePromises.push(
+        updateDynamicDataForValidConnection(
+          nodeId,
+          isTrigger,
+          nodeOperationInfo,
+          connectionReference,
+          nodeDependencies,
+          nodeInputs,
+          nodeMetadata,
+          nodeSettings,
+          allVariables,
+          dispatch,
+          rootState,
+          operation
+        )
       );
     }
   }
+  await Promise.all(dynamicDataUpdatePromises);
 };
 
 const updateDynamicDataForValidConnection = async (
