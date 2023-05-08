@@ -322,6 +322,7 @@ export const workflowSlice = createSlice({
     setIsWorkflowDirty: (state: WorkflowState, action: PayloadAction<boolean>) => {
       state.isDirty = action.payload;
     },
+    /** @deprecated this will be removed in a follow up PR */
     setIsGraphLocked: (state: WorkflowState, action: PayloadAction<boolean>) => {
       state.isGraphLocked = action.payload;
     },

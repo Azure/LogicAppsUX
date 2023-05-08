@@ -32,5 +32,6 @@ export interface WorkflowState {
   newlyAddedOperations: Record<string, string>;
   runInstance: LogicAppsV2.RunInstanceDefinition | null;
   isDirty: boolean;
+  /** @deprecated this will be removed in a follow up PR */
   isGraphLocked: boolean;
 }
