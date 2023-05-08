@@ -15,8 +15,7 @@ import type {
 import { Spinner, SpinnerSize, IconButton, TooltipHost, SelectableOptionMenuItemType, ComboBox } from '@fluentui/react';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import { guid } from '@microsoft/utils-logic-apps';
-import { useUpdateEffect } from '@react-hookz/web';
-import { useRef, useState, useCallback, useMemo } from 'react';
+import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
 enum Mode {
@@ -83,11 +82,16 @@ export const Combobox = ({
   const [selectedKey, setSelectedKey] = useState<string>(optionKey);
   const [searchValue, setSearchValue] = useState<string>('');
   const [canAutoFocus, setCanAutoFocus] = useState(false);
+  const firstLoad = useRef(true);
 
-  useUpdateEffect(() => {
-    const updatedOptionkey = getSelectedKey(options, initialValue, isLoading);
-    setSelectedKey(updatedOptionkey);
-    setMode(getMode(updatedOptionkey, initialValue, isLoading));
+  useEffect(() => {
+    if ((firstLoad.current || !errorDetails) && !isLoading) {
+      firstLoad.current = false;
+      const updatedOptionkey = getSelectedKey(options, initialValue, isLoading);
+      setSelectedKey(updatedOptionkey);
+      setMode(getMode(updatedOptionkey, initialValue, isLoading));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
   const comboboxOptions = useMemo(() => {
@@ -204,8 +208,18 @@ export const Combobox = ({
 
   const handleClearClick = () => {
     setSelectedKey('');
-    updateOptions('');
+    setSearchValue('');
+    comboBoxRef.current?.focus(true);
     setMode(Mode.Default);
+    onChange?.({
+      value: [
+        {
+          id: guid(),
+          type: ValueSegmentType.LITERAL,
+          value: '',
+        },
+      ],
+    });
   };
 
   const handleBlur = () => {
