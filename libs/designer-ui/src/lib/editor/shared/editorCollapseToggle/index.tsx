@@ -2,9 +2,8 @@ import KeyValueMode from '../../../card/images/key_value_mode.svg';
 import KeyValueModeInverted from '../../../card/images/key_value_mode_inverted.svg';
 import TextMode from '../../../card/images/text_mode.svg';
 import TextModeInverted from '../../../card/images/text_mode_inverted.svg';
-import { isHighContrastBlack } from '../../../utils';
 import type { ICalloutProps, ITooltipHostStyles } from '@fluentui/react';
-import { IconButton, TooltipHost, DirectionalHint } from '@fluentui/react';
+import { useTheme, IconButton, TooltipHost, DirectionalHint } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
 export interface EditorCollapseToggleProps {
@@ -27,12 +26,12 @@ export const EditorCollapseToggle: React.FC<EditorCollapseToggleProps> = ({
   toggleCollapsed,
 }): JSX.Element => {
   const intl = useIntl();
+  const { isInverted } = useTheme();
+
   const handleToggle = (e: React.MouseEvent<HTMLButtonElement>): void => {
     e.stopPropagation();
     toggleCollapsed();
   };
-
-  const isInverted = isHighContrastBlack();
 
   const PARAMETER_EXPAND_ICON_DESC = intl.formatMessage({
     defaultMessage: 'Switch to detail inputs for array item',
