@@ -88,7 +88,11 @@ export function buildOperationDetailsFromControls(
       default:
         throw new UnsupportedException(
           intl.formatMessage(
-            { defaultMessage: `Unsupported 'in' value : ''{value}'' in Parameter`, description: 'Error message' },
+            {
+              defaultMessage: `Unsupported 'in' value : ''{value}'' in Parameter`,
+              description:
+                'Error message for unsupported values. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
+            },
             { value: parameter.info.in }
           )
         );

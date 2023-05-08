@@ -73,7 +73,8 @@ export class ExpressionBuilder {
           getIntl().formatMessage(
             {
               defaultMessage: `Invalid expression type ''{type}''.`,
-              description: 'Error message on invalid expression type during building',
+              description:
+                'Error message on invalid expression type during building. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
             },
             { type: expression.type }
           ),
