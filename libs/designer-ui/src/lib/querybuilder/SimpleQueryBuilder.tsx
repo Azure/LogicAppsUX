@@ -131,7 +131,6 @@ const convertValueToRootProp = (value: ValueSegment[], items: RowItemProps): Gro
     items.operand2.length === 1 && operand2Value === items.operand2[0].value
       ? items.operand2
       : [{ id: guid(), type: ValueSegmentType.LITERAL, value: operand2Value }];
-  // const operand2: ValueSegment[] = [{ id: guid(), type: ValueSegmentType.LITERAL, value: operand2Value }];
   return { operator: operation, operand1, operand2, type: GroupType.ROW };
 };
 
