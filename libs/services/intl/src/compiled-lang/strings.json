@@ -1075,6 +1075,16 @@
       "value": "Enter a valid double."
     }
   ],
+  "5FINOY": [
+    {
+      "type": 0,
+      "value": "Workflow has parameter validation errors on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -2629,6 +2639,16 @@
     {
       "type": 0,
       "value": "File Content"
+    }
+  ],
+  "H/QVod": [
+    {
+      "type": 0,
+      "value": "Workflow has settings validation errors on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
     }
   ],
   "H17jEE": [
@@ -4635,6 +4655,16 @@
     {
       "type": 0,
       "value": "Required. The first integer in the array."
+    }
+  ],
+  "WTZvGW": [
+    {
+      "type": 0,
+      "value": "Workflow has invalid connections on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
     }
   ],
   "WUe3DY": [
