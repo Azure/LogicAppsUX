@@ -10,6 +10,7 @@ import { LogicAppHostingPlanStep } from '../../commands/createLogicApp/createLog
 import { AzureStorageAccountStep } from '../../commands/deploy/storageAccountSteps/AzureStorageAccountStep';
 import { CustomLocationStorageAccountStep } from '../../commands/deploy/storageAccountSteps/CustomLocationStorageAccountStep';
 import { enableFileLogging } from '../../commands/logstream/enableFileLogging';
+import { createActivityContext } from '../../utils/activityUtils';
 import { verifyDeploymentResourceGroup } from '../../utils/codeless/common';
 import { getRandomHexString } from '../../utils/fs';
 import { getDefaultFuncVersion } from '../../utils/funcCoreTools/funcVersion';
@@ -107,6 +108,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       version,
       language,
       newSiteRuntime: workflowappRuntime,
+      ...(await createActivityContext()),
     });
 
     if (version === FuncVersion.v1) {
@@ -164,7 +166,12 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       executeSteps.unshift(new AppServicePlanCreateStep());
     }
 
-    context.showCreatingTreeItem(nonNullProp(wizardContext, 'newSiteName'));
+    wizardContext.activityTitle = localize(
+      'logicAppCreateActivityTitle',
+      'Creating Logic App "{0}"',
+      nonNullProp(wizardContext, 'newSiteName')
+    );
+
     context.telemetry.properties.os = wizardContext.newSiteOS;
     context.telemetry.properties.runtime = wizardContext.newSiteRuntime;
 

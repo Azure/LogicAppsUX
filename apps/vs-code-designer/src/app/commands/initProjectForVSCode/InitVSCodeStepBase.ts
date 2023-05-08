@@ -17,6 +17,7 @@ import {
   extensionsFileName,
   extensionCommand,
   functionsExtensionId,
+  vscodeFolderName,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -80,7 +81,7 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
 
     context.telemetry.properties.isProjectInSubDir = String(isSubpath(context.workspacePath, context.projectPath));
 
-    const vscodePath: string = path.join(context.workspacePath, '.vscode');
+    const vscodePath: string = path.join(context.workspacePath, vscodeFolderName);
     await fse.ensureDir(vscodePath);
     await this.writeTasksJson(context, vscodePath);
     await this.writeLaunchJson(context, context.workspaceFolder, vscodePath, version);

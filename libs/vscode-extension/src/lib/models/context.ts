@@ -1,7 +1,7 @@
 import type { StorageOptions } from './connection';
 import type { FuncVersion } from './functions';
 import type { IAppServiceWizardContext } from '@microsoft/vscode-azext-azureappservice';
-import type { IActionContext, ICreateChildImplContext } from '@microsoft/vscode-azext-utils';
+import type { ExecuteActivityContext, IActionContext, ICreateChildImplContext } from '@microsoft/vscode-azext-utils';
 
 export interface IIdentityWizardContext extends IActionContext {
   clientId?: string;
@@ -11,7 +11,7 @@ export interface IIdentityWizardContext extends IActionContext {
   useAdvancedIdentity?: boolean;
 }
 
-export interface IFunctionAppWizardContext extends IAppServiceWizardContext {
+export interface IFunctionAppWizardContext extends IAppServiceWizardContext, ICreateChildImplContext, ExecuteActivityContext {
   version: FuncVersion;
   language: string | undefined;
   newSiteRuntime?: string;
