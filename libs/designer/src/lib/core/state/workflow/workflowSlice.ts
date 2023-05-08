@@ -39,7 +39,6 @@ export const initialWorkflowState: WorkflowState = {
   idReplacements: {},
   newlyAddedOperations: {},
   isDirty: false,
-  isGraphLocked: false,
 };
 
 const placeholderNodeId = 'builtin:newWorkflowTrigger';
@@ -322,10 +321,6 @@ export const workflowSlice = createSlice({
     setIsWorkflowDirty: (state: WorkflowState, action: PayloadAction<boolean>) => {
       state.isDirty = action.payload;
     },
-    /** @deprecated this will be removed in a follow up PR */
-    setIsGraphLocked: (state: WorkflowState, action: PayloadAction<boolean>) => {
-      state.isGraphLocked = action.payload;
-    },
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -389,7 +384,6 @@ export const {
   setRunIndex,
   setRepetitionRunData,
   setIsWorkflowDirty,
-  setIsGraphLocked,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

@@ -17,7 +17,6 @@ export const initialState: WorkflowState = {
   newlyAddedOperations: {},
   isDirty: false,
   runInstance: null,
-  isGraphLocked: false,
 };
 
 const createMockNode = (id: string) => ({
