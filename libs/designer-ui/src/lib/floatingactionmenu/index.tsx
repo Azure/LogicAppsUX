@@ -24,6 +24,7 @@ export interface FloatingActionMenuItem {
 
 export interface FloatingActionMenuProps {
   supportedTypes: Array<string>;
+  useStaticInputs: boolean |  undefined;
   initialValue: ValueSegment[];
   onChange?: ChangeHandler;
 }
@@ -40,7 +41,7 @@ export const FloatingActionMenu = (props: FloatingActionMenuProps): JSX.Element 
   if (props.initialValue.length > 0 && !props.initialValue[0].value) {
     const { onChange } = props;
     if (onChange) {
-      const value = getEmptySchemaValueSegmentForInitialization();
+      const value = getEmptySchemaValueSegmentForInitialization(!!props.useStaticInputs);
       onChange({ value });
     }
   }

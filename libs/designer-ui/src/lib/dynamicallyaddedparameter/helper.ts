@@ -190,12 +190,16 @@ export function serialize(props: DynamicallyAddedParameterProps[]): ValueSegment
   ];
 }
 
-export function getEmptySchemaValueSegmentForInitialization() {
-  const rootObject = {
+export function getEmptySchemaValueSegmentForInitialization(useStaticInputs: boolean) {
+  let rootObject: {type: string, properties: unknown, required: string[]} = {
     type: 'object',
     properties: {},
     required: [],
   };
+
+  if (useStaticInputs) {
+    rootObject = rootObjectWithStaticInputs;
+  }
 
   return [
     {
@@ -270,3 +274,84 @@ function convertDynamicallyAddedSchemaKeyToTitle(name: string, itemType: Dynamic
 
   return result;
 }
+
+const rootObjectWithStaticInputs = {
+  type: "object",
+  properties: {
+    "key-button-date": {
+      title: "Date",
+      type: "string",
+      "x-ms-dynamically-added": false
+    },
+    location: {
+      type: "object",
+      properties: {
+        fullAddress: {
+          title: "Full address",
+          type: "string",
+          "x-ms-dynamically-added": false
+        },
+        address: {
+          type: 'object',
+          properties: {
+            countryOrRegion: {
+              title: 'Country/Region',
+              type: 'string',
+              'x-ms-dynamically-added': false,
+            },
+            city: {
+              title: 'City',
+              type: 'string',
+              'x-ms-dynamically-added': false,
+            },
+            state: {
+              title: 'State',
+              type: 'string',
+              'x-ms-dynamically-added': false,
+            },
+            street: {
+              title: 'Street',
+              type: 'string',
+              'x-ms-dynamically-added': false,
+            },
+            postalCode: {
+              title: 'Postal code',
+              type: 'string',
+              'x-ms-dynamically-added': false,
+            },
+          },
+          required: [
+              "countryOrRegion",
+              "city",
+              "state",
+              "street",
+              "postalCode"
+          ]
+        },
+        coordinates: {
+          type: "object",
+          properties: {
+            latitude: {
+              title: 'Latitude',
+              type: 'number',
+              'x-ms-dynamically-added': false,
+            },
+            longitude: {
+              title: 'Longitude',
+              type: 'number',
+              'x-ms-dynamically-added': false,
+            },
+          },
+          required: [
+              "latitude",
+              "longitude"
+          ]
+        }
+      }
+    },
+  },
+  required: [
+    "key-button-date",
+    "location",
+  ],
+};
