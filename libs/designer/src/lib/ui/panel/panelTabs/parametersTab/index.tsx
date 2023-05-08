@@ -31,7 +31,7 @@ import { IdentitySelector } from './identityselector';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import { DynamicCallStatus, TokenPicker, ValueSegmentType } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode } from '@microsoft/designer-ui';
-import { equals } from '@microsoft/utils-logic-apps';
+import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
 import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -254,6 +254,9 @@ const ParameterSection = ({
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
     const parameterType = (nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === parameterId) ?? {})?.type;
+    const supportedTypes: string[] = parameterType
+      ? getPropertyValue(constants.TOKENS, parameterType) || [constants.SWAGGER.TYPE.ANY, parameterType]
+      : null;
 
     const filteredTokenGroup = tokenGroup.map((group) => ({
       ...group,
@@ -267,11 +270,10 @@ const ParameterSection = ({
             token.key === constants.FOREACH_CURRENT_ITEM_KEY
           );
         }
-        return true;
-        // return token.type === parameterType || token.type === 'any';
+        return supportedTypes.some((supportedType) => equals(supportedType, token.type));
       }),
     }));
-    // .filter((group) => {
+
     return (
       <TokenPicker
         editorId={editorId}
