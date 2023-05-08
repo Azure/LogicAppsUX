@@ -22,6 +22,7 @@ export interface SimpleDictionaryItemProps {
   allowDeletion?: boolean;
   item: SimpleDictionaryRowModel;
   readOnly?: boolean;
+  ariaLabel?: string;
   onChange?: EventHandler<SimpleDictionaryChangeModel>;
   onDelete?: EventHandler<SimpleDictionaryRowModel>;
 }
@@ -37,6 +38,7 @@ export const SimpleDictionaryItem: React.FC<SimpleDictionaryItemProps> = ({
   readOnly,
   onChange,
   onDelete,
+  ariaLabel,
 }): JSX.Element => {
   const intl = useIntl();
 
@@ -45,19 +47,29 @@ export const SimpleDictionaryItem: React.FC<SimpleDictionaryItemProps> = ({
     description: 'Label for delete button',
   });
 
-  const itemKeyAriaLabel = intl.formatMessage({
-    defaultMessage: 'Key',
-    description: 'Accessibility Label for dictionary text key field',
-  });
+  const itemKeyAriaLabel = intl.formatMessage(
+    {
+      defaultMessage: '{name} Key',
+      description: 'Accessibility Label for dictionary text key field',
+    },
+    {
+      name: ariaLabel,
+    }
+  );
   const dictionaryItemKeyPlaceholder = intl.formatMessage({
     defaultMessage: 'Key',
     description: 'A placeholder for the dictionary key',
   });
-  const itemValueAriaLabel = intl.formatMessage({
-    // defaultMessage: `${format(unformattedItemValueAriaLabel, itemIndex)}`,
-    defaultMessage: 'Value',
-    description: 'Accessibility Label for the dictionary text value field',
-  });
+  const itemValueAriaLabel = intl.formatMessage(
+    {
+      // defaultMessage: `${format(unformattedItemValueAriaLabel, itemIndex)}`,
+      defaultMessage: '{name} Value',
+      description: 'Accessibility Label for the dictionary text value field',
+    },
+    {
+      name: ariaLabel,
+    }
+  );
   const dictionaryItemValuePlaceholder = intl.formatMessage({
     defaultMessage: 'Value',
     description: 'A placeholder for the dictionary value field',

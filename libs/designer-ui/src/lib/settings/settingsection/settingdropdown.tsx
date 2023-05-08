@@ -42,6 +42,7 @@ export const SettingDropdown = ({
   selectedValue,
   onSelectionChanged,
   customLabel,
+  ariaLabel,
 }: SettingDropdownProps): JSX.Element | null => {
   const mapDropdownItemsToIDropdownOptions = (items: DropdownItem[]): IDropdownOption[] => {
     return items.map(({ disabled, title: text, value: key }: DropdownItem) => ({
@@ -56,6 +57,7 @@ export const SettingDropdown = ({
       <Dropdown
         className="msla-setting-section-dropdown"
         id={id}
+        ariaLabel={ariaLabel}
         disabled={readOnly}
         options={mapDropdownItemsToIDropdownOptions(items)}
         selectedKey={selectedValue}

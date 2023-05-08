@@ -18,17 +18,6 @@ export const DataHandling = ({
   expanded,
   onHeaderClick,
 }: DataHandlingSectionProps): JSX.Element => {
-  const requestSchemaValidationLabel = (
-    <SettingLabel
-      labelText="Schema Validation"
-      infoTooltipText="Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned."
-      isChild={false}
-    />
-  );
-  const automaticDecompressionLabel = (
-    <SettingLabel labelText="Automatic Decompression" infoTooltipText="Automatically decompress gzip response." isChild={false} />
-  );
-
   const intl = useIntl();
 
   const dataHandlingTitle = intl.formatMessage({
@@ -44,6 +33,35 @@ export const DataHandling = ({
     description: 'label when setting is off',
   });
 
+  const requestSchemaValidationLabelText = intl.formatMessage({
+    defaultMessage: 'Schema Validation',
+    description: 'A label for the schema validation setting',
+  });
+  const automaticDecompressionLabelText = intl.formatMessage({
+    defaultMessage: 'Automatic Decompression',
+    description: 'A label for the automatic decompression setting',
+  });
+  const requestSchemaValidationLabel = (
+    <SettingLabel
+      labelText={requestSchemaValidationLabelText}
+      infoTooltipText={intl.formatMessage({
+        defaultMessage: 'Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned.',
+        description: 'tool tip explaining what schema validation setting does',
+      })}
+      isChild={false}
+    />
+  );
+  const automaticDecompressionLabel = (
+    <SettingLabel
+      labelText={automaticDecompressionLabelText}
+      infoTooltipText={intl.formatMessage({
+        defaultMessage:
+          'Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger.',
+        description: 'tool tip explaining what automatic decompression setting does',
+      })}
+      isChild={false}
+    />
+  );
   const dataHandlingSectionProps: SettingsSectionProps = {
     id: 'dataHandling',
     title: dataHandlingTitle,
@@ -62,6 +80,7 @@ export const DataHandling = ({
           inlineLabel: true,
           onText,
           offText,
+          ariaLabel: automaticDecompressionLabelText,
         },
         visible: disableAutomaticDecompression?.isSupported,
       },
@@ -74,6 +93,7 @@ export const DataHandling = ({
           customLabel: () => requestSchemaValidationLabel,
           onText,
           offText,
+          ariaLabel: requestSchemaValidationLabelText,
         },
         visible: requestSchemaValidation?.isSupported,
       },

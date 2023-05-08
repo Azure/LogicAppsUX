@@ -14,11 +14,17 @@ export interface SettingDictionaryProps extends SettingProps {
   label?: string;
 }
 
-export function SettingDictionary({ values, readOnly, onDictionaryChange, onTextFieldChange }: SettingDictionaryProps): JSX.Element | null {
+export function SettingDictionary({
+  values,
+  readOnly,
+  onDictionaryChange,
+  onTextFieldChange,
+  ariaLabel,
+}: SettingDictionaryProps): JSX.Element | null {
   if (values === undefined || isObject(values)) {
-    return <ValuesInDictionary values={values} readOnly={readOnly} onDictionaryChange={onDictionaryChange} />;
+    return <ValuesInDictionary values={values} readOnly={readOnly} onDictionaryChange={onDictionaryChange} ariaLabel={ariaLabel} />;
   } else {
-    return <ValuesInTextField values={values} readOnly={readOnly} onTextFieldChange={onTextFieldChange} />;
+    return <ValuesInTextField values={values} readOnly={readOnly} onTextFieldChange={onTextFieldChange} ariaLabel={ariaLabel} />;
   }
 }
 
@@ -40,7 +46,7 @@ function ValuesInDictionary({ values, readOnly, onDictionaryChange, label }: Set
   );
 }
 
-function ValuesInTextField({ values, readOnly, onTextFieldChange, customLabel, label }: SettingDictionaryProps): JSX.Element {
+function ValuesInTextField({ values, readOnly, onTextFieldChange, customLabel, label, ariaLabel }: SettingDictionaryProps): JSX.Element {
   const textFieldStyles: Partial<ITextFieldStyles> = {
     fieldGroup: { height: 24, width: '100%', display: 'inline', marginRight: 8 },
     wrapper: { display: 'inline-flex', width: '100%' },
@@ -62,6 +68,7 @@ function ValuesInTextField({ values, readOnly, onTextFieldChange, customLabel, l
         value={valuesInString}
         onChange={onTextFieldChange}
         styles={textFieldStyles}
+        ariaLabel={ariaLabel}
       />
     </>
   ) : (
@@ -73,6 +80,7 @@ function ValuesInTextField({ values, readOnly, onTextFieldChange, customLabel, l
         value={valuesInString}
         onChange={handleTextFieldChange}
         styles={textFieldStyles}
+        ariaLabel={ariaLabel}
       />
     </div>
   );

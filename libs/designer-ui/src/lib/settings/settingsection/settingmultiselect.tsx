@@ -23,6 +23,7 @@ export const MultiSelectSetting: React.FC<MultiSelectSettingProps> = ({
   selections,
   onSelectionChange,
   customLabel,
+  ariaLabel,
 }: MultiSelectSettingProps): JSX.Element | null => {
   const [userSelections, setUserSelections] = useState(selections);
   const handleSelectionChange = (selection: MultiSelectOption, checked: boolean): void => {
@@ -39,6 +40,7 @@ export const MultiSelectSetting: React.FC<MultiSelectSettingProps> = ({
               disabled={readOnly}
               checked={userSelections.includes(option)}
               label={option.label}
+              ariaLabel={ariaLabel}
               onRenderLabel={customLabel}
               onChange={(_, checked) => handleSelectionChange(option, !!checked)}
             />

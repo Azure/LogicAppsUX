@@ -3,19 +3,28 @@ import type { EventHandler } from '../../../eventhandler';
 import { Label } from '../../../label';
 import { useId } from '../../../useId';
 import { SimpleDictionaryItem } from './simpledictionaryitem';
-import type { SimpleDictionaryItemProps, SimpleDictionaryRowModel, SimpleDictionaryChangeModel } from './simpledictionaryitem';
+import type { SimpleDictionaryRowModel, SimpleDictionaryChangeModel } from './simpledictionaryitem';
 import { useDebouncedEffect } from '@react-hookz/web';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { useIntl } from 'react-intl';
 
 export interface SimpleDictionaryProps {
   disabled?: boolean;
   title?: string;
   readOnly?: boolean;
   value?: Record<string, string>;
+  ariaLabel?: string;
   onChange?: EventHandler<Record<string, string> | undefined>;
 }
 
-export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({ disabled, title, readOnly, value, onChange }): JSX.Element => {
+export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
+  disabled,
+  title,
+  readOnly,
+  value,
+  onChange,
+  ariaLabel,
+}): JSX.Element => {
   const [values, setValues] = useState([
     ...Object.entries(value ?? {}).map(([key, value], index) => ({
       key,
@@ -25,6 +34,7 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({ disabled, ti
     { key: '', value: '', index: Object.keys(value ?? {}).length },
   ]);
 
+  const intl = useIntl();
   useDebouncedEffect(
     () => {
       onChange?.(
@@ -68,11 +78,17 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({ disabled, ti
   };
 
   const dictionaryFieldID = useId('anInput');
+
+  //TODO: Move this to a proper setting
+  const trackedPropertiesString = intl.formatMessage({
+    defaultMessage: 'Tracked Properties',
+    description: 'Label for the Tracked Properties field in the settings section',
+  });
   return (
     <>
       <div className="msla-input-parameter-label">
         <div className="msla-dictionary-control-label">
-          <Label htmlFor={dictionaryFieldID} text={'Tracked Properties'} />
+          <Label htmlFor={dictionaryFieldID} text={trackedPropertiesString} />
         </div>
       </div>
       <div id={dictionaryFieldID}>
@@ -80,6 +96,7 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({ disabled, ti
           <SimpleDictionaryItem
             item={{ key: x.key, value: x.value, index: x.index }}
             key={x.index}
+            ariaLabel={`${ariaLabel} ${x.index}`}
             allowDeletion={x.index + 1 !== values.length}
             disabled={disabled}
             readOnly={readOnly}
