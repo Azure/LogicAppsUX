@@ -9,9 +9,6 @@ import { ProjectLanguage, WorkflowProjectType } from '@microsoft/vscode-extensio
 import * as fs from 'fs-extra';
 import * as path from 'path';
 
-/**
- * This class represents a prompt step that allows the user to select a project type for their new project.
- */
 export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext> {
   // Hide the step count in the wizard UI
   public hideStepCount = true;
@@ -38,8 +35,9 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     context.workflowProjectType = WorkflowProjectType.Bundle;
     context.language = ProjectLanguage.JavaScript;
 
-    // Create Function and LogicApp folders
+    // Create project directory and subdirectories
     const projectPath = path.join(context.projectPath, context.workspaceName);
+    await fs.ensureDir(projectPath);
     const functionFolderPath = path.join(projectPath, 'Function');
     const logicAppFolderPath = path.join(projectPath, 'LogicApp');
     await fs.ensureDir(functionFolderPath);
@@ -48,15 +46,18 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     // Set the Logic App and Functions folder paths as properties of the AzureWizard
     context.logicAppFolderPath = logicAppFolderPath;
     context.functionFolderPath = functionFolderPath;
+
+    // Create the workspace file
+    await this.createWorkspaceFile(context);
   }
 
   /**
    * Determines whether the user should be prompted to select a project type.
    * @param context The project wizard context.
-   * @returns True if the user has not yet selected a project type, false otherwise.
+   * @returns True if the user has not yet selected a project type or if the workflowProjectType is WorkflowProjectType.Bundle, false otherwise.
    */
   public shouldPrompt(context: IProjectWizardContext): boolean {
-    return context.workflowProjectType === undefined;
+    return context.workflowProjectType === undefined || context.workflowProjectType === WorkflowProjectType.Bundle;
   }
 
   /**
@@ -70,11 +71,15 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     const promptSteps: AzureWizardPromptStep<IProjectWizardContext>[] = [];
     const projectType: WorkflowProjectType = nonNullProp(context, 'workflowProjectType');
 
-    // If the project type is Bundle, create the project files and folders under the LogicApp folder
-    if (projectType === WorkflowProjectType.Bundle) {
-      const workflowProjectPath = path.join(context.projectPath, context.workspaceName, 'LogicApp');
-      executeSteps.push(new WorkflowCodeProjectCreateStep(workflowProjectPath));
+    // Set the workflow project path based on the project type
+    let workflowProjectPath: string;
+    if (projectType === WorkflowProjectType.Functions) {
+      workflowProjectPath = context.functionFolderPath;
+    } else {
+      workflowProjectPath = path.join(context.projectPath, context.workspaceName, 'LogicApp');
     }
+
+    executeSteps.push(new WorkflowCodeProjectCreateStep(workflowProjectPath));
 
     // Add any necessary steps to initialize the project for VS Code
     await addInitVSCodeStepsCodeProject(context, executeSteps);
@@ -93,5 +98,23 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     );
 
     return wizardOptions;
+  }
+
+  private async createWorkspaceFile(context: IProjectWizardContext): Promise<void> {
+    const projectPath = path.join(context.projectPath, context.workspaceName);
+    const workspaceFilePath = path.join(projectPath, `${context.workspaceName}.code-workspace`);
+    const workspaceData = {
+      folders: [
+        {
+          name: 'Function',
+          path: './Function',
+        },
+        {
+          name: 'LogicApp',
+          path: './LogicApp',
+        },
+      ],
+    };
+    await fs.writeJSON(workspaceFilePath, workspaceData, { spaces: 2 });
   }
 }

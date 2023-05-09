@@ -6,7 +6,7 @@ import { gitignoreFileName, hostFileName, localSettingsFileName, workerRuntimeKe
 import { addDefaultBundle } from '../../../../utils/bundleFeed';
 import { confirmOverwriteFile, writeFormattedJson } from '../../../../utils/fs';
 import { getFunctionsWorkerRuntime } from '../../../../utils/vsCodeConfig/settings';
-import { ProjectCodeCreateStepBase } from '../../ProjectCodeCreateStepBase';
+import { ProjectCodeCreateStepBase } from '../../CodeProjectBase/ProjectCodeCreateStepBase';
 import { nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IHostJsonV1, IHostJsonV2, ILocalSettingsJson, IProjectWizardContext } from '@microsoft/vscode-extension';

@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-escape */
 import { FunctionConfigFile } from './FunctionConfigFile';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
@@ -52,105 +51,133 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
    */
   private async createCsFile(functionFolderPath: string, methodName: string, namespace: string): Promise<void> {
     const csFilePath = path.join(functionFolderPath, `${methodName}.cs`);
-    const csFileContent = `/------------------------------------------------------------
-    // Copyright (c) Microsoft Corporation.  All rights reserved.
-    //------------------------------------------------------------
-    
-    namespace ${namespace}
+    const csFileContent = `//------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+//------------------------------------------------------------
+
+namespace ${namespace}
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using Microsoft.Azure.Functions.Extensions.Workflows.WorkflowActionTrigger;
+    using Microsoft.Azure.WebJobs;
+    /// <summary>
+    /// The flow invoked function.
+    /// </summary>
+    public static class ${methodName}
     {
-        using System;
-        using System.Collections.Generic;
-        using System.Threading.Tasks;
-        using Microsoft.Azure.Functions.Extensions.Workflows.WorkflowActionTrigger;
-        using Microsoft.Azure.WebJobs;
         /// <summary>
-        /// The flow invoked function.
+        /// Run method.
         /// </summary>
-        public static class ${methodName}
+        /// <param name=\\"parameter1\\">The parameter 1.</param>
+        /// <param name=\\"parameter2\\">The parameter 2.</param>
+        /*
+        [FunctionName(\\"FlowInvokedFunction\\")]
+        public static Task<Wrapper> Run([WorkflowActionTrigger] string parameter1, int parameter2)
+        {
+            var result = new Wrapper
+            {
+                RandomProperty = new Dictionary<string, object>(){
+                    [\\"parameter1\\"] = parameter1,
+                    [\\"parameter2\\"] = parameter2
+                }
+            };
+
+            return Task.FromResult(result); 
+        }
+
+        /// <summary>
+        /// The wrapper.
+        /// </summary>
+        public class Wrapper
         {
             /// <summary>
-            /// Run method.
+            /// Gets or sets the .NET Framework worker output.
             /// </summary>
-            /// <param name="parameter1">The parameter 1.</param>
-            /// <param name="parameter2">The parameter 2.</param>
-            [FunctionName("${methodName}")]
-            public static Task<Wrapper> Run([WorkflowActionTrigger] string parameter1, int parameter2)
-            {
-                var result = new Wrapper
-                {
-                    RandomProperty = new Dictionary<string, object>(){
-                        ["parameter1"] = parameter1,
-                        ["parameter2"] = parameter2
-                    }
-                };
-    
-                return Task.FromResult(result); 
-            }
-    
-            /// <summary>
-            /// The wrapper.
-            /// </summary>
-            public class Wrapper
-            {
-                /// <summary>
-                /// Gets or sets the .NET Framework worker output.
-                /// </summary>
-                public Dictionary<string, object> RandomProperty { get; set; }
-            }
+            public Dictionary<string, object> RandomProperty { get; set; }
         }
-     }`;
+*/
+
+        [FunctionName(\\"GetWeather\\")]
+        public static Task<Weather> Run([WorkflowActionTrigger] int zipCode, string temperatureScale)
+        {
+            Random rnd = new Random();
+            var currentTemp = temperatureScale == \\"Celcius\\" ? rnd.Next(1,30) : rnd.Next(40,90);
+            var lowTemp = currentTemp -10;
+            varTemp = currentTemp +10;
+
+
+            var weather = new Weather()
+            {
+                ZipCode=zipCode,
+                CurrentWeather = String.Format(\\"The current weather is {0} {1}\\",currentTemp, temperatureScale),
+                DayLow = String.Format(\\"The low for the day is {0} {1}\\", lowTemp, temperatureScale),
+                DayHigh = String.Format(\\"The high for the day is {0} {1}\\", highTemp,temperatureScale)
+            };
+
+            return Task.FromResult(weather); 
+        }
+
+        public class Weather
+        {
+            /// <summary>
+            /// Gets or sets the .NET Framework worker output.
+            /// </summary>
+            public int ZipCode {get;set;}
+            public string CurrentWeather {get;set;}
+            public string DayLow {get;set;}
+            
+            public string DayHigh {get;set;}
+        }
+    }
+ }`;
     await fs.writeFile(csFilePath, csFileContent);
   }
 
-  /**
-   * Creates the .csproj file inside the functions folder.
-   * @param functionFolderPath The path to the functions folder.
-   * @param methodName The name of the method.
-   */
   private async createCsprojFile(functionFolderPath: string, methodName: string): Promise<void> {
     const csprojFilePath = path.join(functionFolderPath, `${methodName}.csproj`);
-    const csprojFileContent = `<Project Sdk="Microsoft.NET.Sdk">
-      <PropertyGroup>
-        <IsPackable>false</IsPackable>
-        <TargetFramework>net472</TargetFramework>
-        <AzureFunctionsVersion>v4</AzureFunctionsVersion>
-        <OutputType>Library</OutputType>
-        <PlatformTarget>x64</PlatformTarget>
-        <!-- Please replace 'LogicAppFolder' with the name of your folder that contains your logic app project. -->
-        <LogicAppFolder>logicAppFolderName</LogicAppFolder>
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </PropertyGroup>
+    const csprojFileContent = `<Project Sdk=\\"Microsoft.NET.Sdk\\">
+    <PropertyGroup>
+      <IsPackable>false</IsPackable>
+      <TargetFramework>net472</TargetFramework>
+      <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+      <OutputType>Library</OutputType>
+      <PlatformTarget>x64</PlatformTarget>
+      <!-- Please replace 'LogicAppFolder' with the name of your folder that contains your logic app project. -->
+      <LogicAppFolder>LogicApp</LogicAppFolder>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  </PropertyGroup>
 
+    <ItemGroup>
+    <!-- Please ensure you have the 'Microsoft.Azure.Functions.Extensions.Workflows.WorkflowActionTrigger' package and the 'Microsoft.Azure.WebJobs.Core' dependency. -->
+    <PackageReference Include=\\"Microsoft.Azure.Functions.Extensions.Workflows.WorkflowActionTrigger\\" Version=\\"1.0.0\\" />
+    <PackageReference Include=\\"Microsoft.NET.Sdk.Functions\\" Version=\\"1.0.24\\" />
+    <PackageReference Include=\\"Microsoft.Azure.WebJobs.Core\\" Version=\\"3.0.33\\" />
+    </ItemGroup>
+
+    <Target Name=\\"CopyExtensionFiles\\" AfterTargets=\\"_GenerateFunctionsPostBuild\\">
       <ItemGroup>
-      <!-- Please ensure you have the 'Microsoft.Azure.Functions.Extensions.Workflows.WorkflowActionTrigger' package and the 'Microsoft.Azure.WebJobs.Core' dependency. -->
-      <PackageReference Include="Microsoft.Azure.Functions.Extensions.Workflows.WorkflowActionTrigger" Version="1.0.0" />
-      <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.24" />
-      <PackageReference Include="Microsoft.Azure.WebJobs.Core" Version="3.0.33" />
+          <CopyFiles Include=\\"$(MSBuildProjectDirectory)\\bin\\Debug\\net472\\**\\*.*\\" CopyToOutputDirectory=\\"PreserveNewest\\" />
+      </ItemGroup>
+      <Message Importance=\\"High\\" Text=\\"$(MSBuildProjectDirectory)\\"/>
+      <Copy SourceFiles=\\"@(CopyFiles)\\" DestinationFolder=\\"..\\\\$(LogicAppFolder)\\\\lib\\\\custom\\\\%(RecursiveDir)\\"  SkipUnchangedFiles=\\"true\\" />
+      <ItemGroup>
+          <MoveFiles Include=\\"..\\\\$(LogicAppFolder)\\\\lib\\\\custom\\\\bin\\\\*.*\\" />
       </ItemGroup>
 
-      <Target Name="CopyExtensionFiles" AfterTargets="_GenerateFunctionsPostBuild">
-        <ItemGroup>
-            <CopyFiles Include="$(MSBuildProjectDirectory)\bin\Debug\net472\**\*.*" CopyToOutputDirectory="PreserveNewest" />
-        </ItemGroup>
-        <Message Importance="High" Text="$(MSBuildProjectDirectory)"/>
-        <Copy SourceFiles="@(CopyFiles)" DestinationFolder="..\$(LogicAppFolder)\lib\custom\%(RecursiveDir)"  SkipUnchangedFiles="true" />
-        <ItemGroup>
-            <MoveFiles Include="..\$(LogicAppFolder)\lib\custom\bin\*.*" />
-        </ItemGroup>
-
-      <Move SourceFiles="@(MoveFiles)" DestinationFolder="..\$(LogicAppFolder)\lib\custom\net472" />
-        <ItemGroup>
-          <DirsToClean Include="..\$(LogicAppFolder)\lib\custom\bin"/>
-        </ItemGroup>
-          <RemoveDir Directories="@(DirsToClean)" />
-        </Target>
-
+    <Move SourceFiles=\\"@(MoveFiles)\\" DestinationFolder=\\"..\\\\$(LogicAppFolder)\\\\lib\\\\custom\\\\net472\\" />
       <ItemGroup>
-          <Reference Include="Microsoft.CSharp" />
+        <DirsToClean Include=\\"..\\\\$(LogicAppFolder)\\\\lib\\\\custom\\\\bin\\"/>
       </ItemGroup>
+        <RemoveDir Directories=\\"@(DirsToClean)\\" />
+      </Target>
 
-    </Project>`;
+    <ItemGroup>
+        <Reference Include=\\"Microsoft.CSharp\\" />
+    </ItemGroup>
 
+  </Project>`;
     await fs.writeFile(csprojFilePath, csprojFileContent);
   }
 }

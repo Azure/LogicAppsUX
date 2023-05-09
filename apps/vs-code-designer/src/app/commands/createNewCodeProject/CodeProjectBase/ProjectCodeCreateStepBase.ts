@@ -2,8 +2,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localize } from '../../../localize';
-import { gitInit, isGitInstalled, isInsideRepo } from '../../utils/git';
+import { localize } from '../../../../localize';
+import { gitInit, isGitInstalled, isInsideRepo } from '../../../utils/git';
 import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';

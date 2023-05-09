@@ -34,7 +34,11 @@ export class OpenFolderStepCodeProject extends AzureWizardExecuteStep<IProjectWi
       workspace.updateWorkspaceFolders(openFolders.length, 0, { uri: uri, name: workspaceNameStr });
     } else {
       // Otherwise, open the folder in a new or existing window
-      await commands.executeCommand('vscode.openFolder', uri, context.openBehavior === OpenBehavior.openInNewWindow /* forceNewWindow */);
+      if (context.openBehavior === OpenBehavior.openInCurrentWindow) {
+        await commands.executeCommand('vscode.openFolder', uri, false /* forceNewWindow */);
+      } else {
+        await commands.executeCommand('vscode.openFolder', uri, true /* forceNewWindow */);
+      }
     }
   }
 
