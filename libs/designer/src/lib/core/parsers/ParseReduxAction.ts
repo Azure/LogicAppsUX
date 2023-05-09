@@ -29,8 +29,8 @@ export const initializeGraphState = createAsyncThunk<
     const { definition, connectionReferences, parameters } = workflowDefinition;
     const deserializedWorkflow = BJSDeserialize(definition, runInstance);
     // For situations where there is an existing workflow, respect the node dimensions so that they are not reset
-    const previousGraphFlattened = flattenWorkflowNodes(deserializedWorkflow?.graph?.children || []);
-    updateChildrenDimensions(workflow?.graph?.children || [], previousGraphFlattened);
+    const previousGraphFlattened = flattenWorkflowNodes(workflow.graph?.children || []);
+    updateChildrenDimensions(deserializedWorkflow?.graph?.children || [], previousGraphFlattened);
 
     thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
     thunkAPI.dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
@@ -56,7 +56,7 @@ export const initializeGraphState = createAsyncThunk<
   throw new Error('Invalid Workflow Spec');
 });
 
-function updateChildrenDimensions(currentChildren: WorkflowNode[], previousChildren: WorkflowNode[]) {
+export function updateChildrenDimensions(currentChildren: WorkflowNode[], previousChildren: WorkflowNode[]) {
   for (const node of currentChildren) {
     const previousNode = previousChildren.find((item) => item.id === node.id);
     if (previousNode?.height && previousNode?.width) {
@@ -67,7 +67,7 @@ function updateChildrenDimensions(currentChildren: WorkflowNode[], previousChild
   }
 }
 
-function flattenWorkflowNodes(nodes: WorkflowNode[]): WorkflowNode[] {
+export function flattenWorkflowNodes(nodes: WorkflowNode[]): WorkflowNode[] {
   const result: WorkflowNode[] = [];
 
   for (const node of nodes) {

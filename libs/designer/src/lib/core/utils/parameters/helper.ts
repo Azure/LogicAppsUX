@@ -118,7 +118,7 @@ import {
   SegmentType,
   Visibility,
 } from '@microsoft/parsers-logic-apps';
-import type { Exception, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
+import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import {
   deleteObjectProperties,
   deleteObjectProperty,
@@ -358,7 +358,7 @@ export function getParameterEditorProps(
       editor = constants.EDITOR.ARRAY;
       editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
       editorViewModel.itemSchema = toArrayViewModelSchema(itemSchema);
-      editorViewModel.complexArray = itemSchema?.type === constants.SWAGGER.TYPE.OBJECT;
+      editorViewModel.complexArray = itemSchema?.type === constants.SWAGGER.TYPE.OBJECT && itemSchema.properties;
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
     } else if ((schemaEnum || schema?.enum || schema?.[ExtensionProperties.CustomEnum]) && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.COMBOBOX;
@@ -444,11 +444,11 @@ const convertStringToInputParameter = (
   }
   const hasExpression = containsExpression(value);
   let newValue = value;
-  if (removeQuotesFromExpression) {
-    newValue = removeQuotes(newValue);
-  }
   if (trimExpression) {
     newValue = newValue.trim();
+  }
+  if (removeQuotesFromExpression) {
+    newValue = removeQuotes(newValue);
   }
   if (hasExpression && convertIfContainsExpression && !newValue.startsWith('@')) {
     newValue = `@${newValue}`;
@@ -1734,7 +1734,16 @@ async function loadDynamicContentForInputsInNode(
 
       if (isDynamicDataReadyToLoad(info)) {
         try {
-          const inputSchema = await getDynamicSchema(info, allInputs, nodeMetadata, operationInfo, connectionReference, variables);
+          const inputSchema = await tryGetInputDynamicSchema(
+            nodeId,
+            operationInfo,
+            info,
+            allInputs,
+            nodeMetadata,
+            variables,
+            connectionReference,
+            dispatch
+          );
           const allInputParameters = getAllInputParameters(allInputs);
           const allInputKeys = allInputParameters.map((param) => param.parameterKey);
           const schemaInputs = inputSchema
@@ -1766,7 +1775,7 @@ async function loadDynamicContentForInputsInNode(
           const message = error.message as string;
           const errorMessage = getIntl().formatMessage(
             {
-              defaultMessage: `Failed to retrive dynamic inputs. Error details: '{message}'`,
+              defaultMessage: `Failed to retrive dynamic inputs. Error details: ''{message}''`,
               description: 'Error message to show when loading dynamic inputs failed',
             },
             { message }
@@ -1953,6 +1962,45 @@ export function shouldLoadDynamicInputs(nodeInputs: NodeInputs): boolean {
 
 export function isDynamicDataReadyToLoad({ dependentParameters }: DependencyInfo): boolean {
   return Object.keys(dependentParameters).every((key) => dependentParameters[key].isValid);
+}
+
+async function tryGetInputDynamicSchema(
+  nodeId: string,
+  operationInfo: NodeOperation,
+  dependencyInfo: DependencyInfo,
+  allInputs: NodeInputs,
+  nodeMetadata: any,
+  variables: VariableDeclaration[],
+  connectionReference: ConnectionReference | undefined,
+  dispatch: Dispatch
+): Promise<OpenAPIV2.SchemaObject | null> {
+  try {
+    const schema = await getDynamicSchema(dependencyInfo, allInputs, nodeMetadata, operationInfo, connectionReference, variables);
+    return schema;
+  } catch (error: any) {
+    if (!dependencyInfo.parameter?.required) {
+      throw error;
+    }
+
+    const message = error.message as string;
+    const errorMessage = getIntl().formatMessage(
+      {
+        defaultMessage: `Failed to retrive dynamic inputs. Error details: ''{message}''`,
+        description: 'Error message to show when loading dynamic inputs failed',
+      },
+      { message }
+    );
+
+    dispatch(
+      updateErrorDetails({
+        id: nodeId,
+        errorInfo: { level: ErrorLevel.DynamicInputs, message: errorMessage, error, code: error.code },
+      })
+    );
+
+    // For required parameters empty schema would help user to construct the inputs instead of runtime failures.
+    return {};
+  }
 }
 
 function showErrorWhenDependenciesNotReady(
