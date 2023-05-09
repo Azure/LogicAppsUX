@@ -19,7 +19,7 @@ import { TemplateCategory, TemplatePromptResult } from '@microsoft/vscode-extens
 /**
  * This class represents a prompt step that allows the user to select a workflow type for their Azure Functions project.
  */
-export class CodeProjectWorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizardContext> {
+export class CodeWorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   // Hide the step count in the wizard UI
   public hideStepCount = true;
 
@@ -43,11 +43,8 @@ export class CodeProjectWorkflowStateTypeStep extends AzureWizardPromptStep<IFun
    * @param options The options for the step.
    * @returns A new instance of the odeProject class.
    */
-  public static async create(
-    _context: IFunctionWizardContext,
-    options: IWorkflowStateTypeStepOptions
-  ): Promise<CodeProjectWorkflowStateTypeStep> {
-    return new CodeProjectWorkflowStateTypeStep(options.triggerSettings, options.isProjectWizard);
+  public static async create(_context: IFunctionWizardContext, options: IWorkflowStateTypeStepOptions): Promise<CodeWorkflowStateTypeStep> {
+    return new CodeWorkflowStateTypeStep(options.triggerSettings, options.isProjectWizard);
   }
 
   /**

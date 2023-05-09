@@ -1,5 +1,5 @@
 import { WorkflowCodeProjectCreateStep } from './WorkflowCodeProjectCreateStep';
-import { InvokeFunctionProjectSetup } from './createFunction/InvokeFunctionSetup';
+import { InvokeFunctionProjectSetup } from './createFunction/InvokeFunctionProjectSetup';
 import { CodeProjectWorkflowStateTypeStep } from './createLogicApp/CodeProjectWorkflowStateTypeStep';
 import { addInitVSCodeStepsCodeProject } from './createLogicApp/initLogicAppCodeProjectVScode/InitLanguageStep';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';

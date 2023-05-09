@@ -35,17 +35,17 @@ import * as path from 'path';
 import type { MessageItem } from 'vscode';
 
 // This class creates a new workflow for a codeless Azure Function project
-export class CodelessFunctionProjectWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionWizardContext> {
+export class FunctionProjectWorkflow extends WorkflowCreateStepBase<IFunctionWizardContext> {
   // Private constructor to prevent direct instantiation of this class
   private constructor() {
     super();
   }
 
-  // Static method that creates a new instance of the CodelessFunctionProjectWorkflowCreateStep class and returns it
-  public static async createStep(context: IActionContext): Promise<CodelessFunctionProjectWorkflowCreateStep> {
+  // Static method that creates a new instance of the FunctionProjectWorkflow class and returns it
+  public static async createStep(context: IActionContext): Promise<FunctionProjectWorkflow> {
     // Ensure that the .NET Core SDK is installed on the user's machine
     await validateDotnetInstalled(context);
-    return new CodelessFunctionProjectWorkflowCreateStep();
+    return new FunctionProjectWorkflow();
   }
 
   // Async method that creates a new workflow for the codeless Azure Function project
