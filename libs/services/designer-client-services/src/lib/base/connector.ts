@@ -138,7 +138,7 @@ export abstract class BaseConnectorService implements IConnectorService {
   }
 
   getTreeDynamicValues(
-    _connectionId: string,
+    _connectionId: string | undefined,
     _connectorId: string,
     _operationId: string,
     _parameterAlias: string | undefined,

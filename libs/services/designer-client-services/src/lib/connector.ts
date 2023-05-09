@@ -94,7 +94,7 @@ export interface IConnectorService {
    * @return {Promise<TreeDynamicValue[]>}
    */
   getTreeDynamicValues(
-    connectionId: string,
+    connectionId: string | undefined,
     connectorId: string,
     operationId: string,
     parameterAlias: string | undefined,
