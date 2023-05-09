@@ -1,7 +1,9 @@
 import type { AzureResourcePickerProps } from '../azureResourcePicker';
 import { AzureResourcePicker } from '../azureResourcePicker';
 import { filterRecord } from '../utils';
+import LegacyManagedIdentityDropdown from './legacyManagedIdentityPicker';
 import { UniversalConnectionParameter } from './universalConnectionParameter';
+import type { IDropdownOption } from '@fluentui/react';
 import {
   MessageBarType,
   MessageBar,
@@ -13,7 +15,6 @@ import {
   PrimaryButton,
   TextField,
   TooltipHost,
-  Link,
 } from '@fluentui/react';
 import type {
   ConnectionParameter,
@@ -21,6 +22,7 @@ import type {
   ConnectionParameterSetParameter,
   ConnectionParameterSets,
   Gateway,
+  ManagedIdentity,
   Subscription,
 } from '@microsoft/utils-logic-apps';
 import {
@@ -29,6 +31,7 @@ import {
   SERVICE_PRINCIPLE_CONSTANTS,
   connectorContainsAllServicePrinicipalConnectionParameters,
   isServicePrinicipalConnectionParameter,
+  usesLegacyManagedIdentity,
 } from '@microsoft/utils-logic-apps';
 import type { FormEvent } from 'react';
 import { useCallback, useMemo, useState } from 'react';
@@ -39,12 +42,16 @@ export interface CreateConnectionProps {
   connectorCapabilities?: string[];
   connectionParameters?: Record<string, ConnectionParameter>;
   connectionParameterSets?: ConnectionParameterSets;
+  connectionAlternativeParameters?: Record<string, ConnectionParameter>;
+  identity?: ManagedIdentity;
   isLoading?: boolean;
   createConnectionCallback?: (
     newName?: string,
     selectedParameterSet?: ConnectionParameterSet,
     parameterValues?: Record<string, any>,
-    isOAuthConnection?: boolean
+    isOAuthConnection?: boolean,
+    alternativeParameterValues?: Record<string, any>,
+    identitySelected?: string
   ) => void;
   cancelCallback?: () => void;
   hideCancelButton?: boolean;
@@ -60,12 +67,20 @@ export interface CreateConnectionProps {
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
+enum LegacyMultiAuthOptions {
+  oauth = 0,
+  servicePrincipal = 1,
+  managedIdentity = 2,
+}
+
 export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const {
     connectorDisplayName,
     connectorCapabilities,
     connectionParameters,
     connectionParameterSets,
+    connectionAlternativeParameters,
+    identity,
     isLoading,
     createConnectionCallback,
     cancelCallback,
@@ -95,7 +110,13 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     [selectedParamSetIndex]
   );
 
-  const singleAuthParams = useMemo(() => connectionParameters ?? {}, [connectionParameters]);
+  const singleAuthParams = useMemo(
+    () => ({
+      ...(connectionParameters ?? {}),
+      // ...connectionAlternativeParameters ?? {}, // TODO: Riley - This is where we would add in legacy MI params
+    }),
+    [connectionParameters]
+  );
   const multiAuthParams = useMemo(
     () => connectionParameterSets?.values[selectedParamSetIndex].parameters ?? {},
     [connectionParameterSets, selectedParamSetIndex]
@@ -127,16 +148,38 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     [singleAuthParams]
   );
 
-  const showServicePrincipalButton = useMemo(() => supportsServicePrincipalConnection, [supportsServicePrincipalConnection]);
-  const [useServicePrincipal, setUseServicePrincipal] = useState<boolean>(false);
-  const toggleServicePrincipal = () => {
-    setUseServicePrincipal(!useServicePrincipal);
-  };
+  const supportsLegacyManagedIdentityConnection = useMemo(
+    () => usesLegacyManagedIdentity(connectionAlternativeParameters),
+    [connectionAlternativeParameters]
+  );
+
+  const showLegacyMultiAuth = useMemo(
+    () => supportsServicePrincipalConnection || supportsLegacyManagedIdentityConnection,
+    [supportsServicePrincipalConnection, supportsLegacyManagedIdentityConnection]
+  );
+
+  const servicePrincipalSelected = useMemo(
+    () => showLegacyMultiAuth && selectedParamSetIndex === LegacyMultiAuthOptions.servicePrincipal,
+    [selectedParamSetIndex, showLegacyMultiAuth]
+  );
+
+  const legacyManagedIdentitySelected = useMemo(
+    () => showLegacyMultiAuth && selectedParamSetIndex === LegacyMultiAuthOptions.managedIdentity,
+    [selectedParamSetIndex, showLegacyMultiAuth]
+  );
+
+  const [selectedManagedIdentity, setSelectedManagedIdentity] = useState<string | undefined>(undefined);
+
+  const onLegacyManagedIdentityChange = useCallback((_: any, option?: IDropdownOption<any>) => {
+    setSelectedManagedIdentity(option?.key.toString());
+  }, []);
 
   const isParamVisible = useCallback(
     (key: string, parameter: ParamType) => {
       const constraints = parameter?.uiDefinition?.constraints;
-      if (useServicePrincipal) return isServicePrinicipalConnectionParameter(key) && isServicePrincipalParameterVisible(key, parameter);
+      if (servicePrincipalSelected)
+        return isServicePrinicipalConnectionParameter(key) && isServicePrincipalParameterVisible(key, parameter);
+      if (legacyManagedIdentitySelected) return false; // TODO: Riley - Only show the managed identity parameters (which is none for now)
       if (constraints?.hidden === 'true' || constraints?.hideInUI === 'true') return false;
       const dependencyParam = constraints?.dependentParameter;
       if (dependencyParam && parameterValues[dependencyParam.parameter] !== dependencyParam.value) return false;
@@ -144,7 +187,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
       if (parameter.type === ConnectionParameterTypes[ConnectionParameterTypes.managedIdentity]) return false;
       return true;
     },
-    [parameterValues, useServicePrincipal]
+    [parameterValues, servicePrincipalSelected, legacyManagedIdentitySelected]
   );
 
   const unfilteredParameters: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = useMemo(
@@ -191,8 +234,8 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
 
   // Don't show name for simple connections
   const showNameInput = useMemo(
-    () => isMultiAuth || Object.keys(parametersByCapability['general'] ?? {}).length > 0,
-    [isMultiAuth, parametersByCapability]
+    () => isMultiAuth || Object.keys(parametersByCapability['general'] ?? {}).length > 0 || legacyManagedIdentitySelected,
+    [isMultiAuth, parametersByCapability, legacyManagedIdentitySelected]
   );
 
   const hasOAuth = useMemo(
@@ -200,7 +243,10 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     [checkOAuthCallback, enabledCapabilities, isMultiAuth, multiAuthParams, singleAuthParams]
   );
 
-  const isUsingOAuth = useMemo(() => hasOAuth && !useServicePrincipal, [hasOAuth, useServicePrincipal]);
+  const isUsingOAuth = useMemo(
+    () => hasOAuth && !servicePrincipalSelected && !legacyManagedIdentitySelected,
+    [hasOAuth, servicePrincipalSelected, legacyManagedIdentitySelected]
+  );
 
   const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
   const validParams = useMemo(() => {
@@ -231,21 +277,28 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     ) {
       const oauthValue = SERVICE_PRINCIPLE_CONSTANTS.GRANT_TYPE_VALUES.CODE;
       const servicePrincipalValue = SERVICE_PRINCIPLE_CONSTANTS.GRANT_TYPE_VALUES.CLIENT_CREDENTIALS;
-      visibleParameterValues[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE] = useServicePrincipal
+      visibleParameterValues[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE] = servicePrincipalSelected
         ? servicePrincipalValue
         : oauthValue;
     }
+
+    const alternativeParameterValues = legacyManagedIdentitySelected ? {} : undefined;
+    const identitySelected = legacyManagedIdentitySelected ? selectedManagedIdentity : undefined;
 
     return createConnectionCallback?.(
       showNameInput ? connectionDisplayName : '',
       connectionParameterSets?.values[selectedParamSetIndex],
       visibleParameterValues,
-      isUsingOAuth
+      isUsingOAuth,
+      alternativeParameterValues,
+      identitySelected
     );
   }, [
     parameterValues,
     supportsServicePrincipalConnection,
     unfilteredParameters,
+    legacyManagedIdentitySelected,
+    selectedManagedIdentity,
     createConnectionCallback,
     showNameInput,
     connectionDisplayName,
@@ -253,7 +306,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     selectedParamSetIndex,
     isUsingOAuth,
     capabilityEnabledParameters,
-    useServicePrincipal,
+    servicePrincipalSelected,
   ]);
 
   // INTL STRINGS
@@ -336,18 +389,52 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     description: 'Tooltip for on-prem gateway connection checkbox',
   });
 
-  const servicePrincipalTooltipText = intl.formatMessage({
-    defaultMessage: 'Use a service principal to connect using application permissions.',
-    description: 'Tooltip for service principal connection checkbox',
+  const legacyMultiAuthLabelText = intl.formatMessage({
+    defaultMessage: 'Authentication',
+    description: 'Label for legacy multi auth dropdown',
   });
 
-  const servicePrincipalLearnMoreURL =
-    'https://learn.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal';
-
-  const learnMoreText = intl.formatMessage({
-    defaultMessage: 'Learn more',
-    description: 'Learn more link text',
+  const oAuthDropdownText = intl.formatMessage({
+    defaultMessage: 'OAuth',
+    description: 'Dropdown text for OAuth connection',
   });
+
+  const servicePrincipalDropdownText = intl.formatMessage({
+    defaultMessage: 'Service Principal',
+    description: 'Dropdown text for service principal connection',
+  });
+
+  const legacyManagedIdentityDropdownText = intl.formatMessage({
+    defaultMessage: 'Managed Identity',
+    description: 'Dropdown text for legacy managed identity connection',
+  });
+
+  const legacyMultiAuthOptions: IDropdownOption<any>[] = useMemo(() => {
+    return [
+      {
+        key: LegacyMultiAuthOptions.oauth,
+        text: oAuthDropdownText,
+      },
+      supportsServicePrincipalConnection
+        ? {
+            key: LegacyMultiAuthOptions.servicePrincipal,
+            text: servicePrincipalDropdownText,
+          }
+        : undefined,
+      supportsLegacyManagedIdentityConnection
+        ? {
+            key: LegacyMultiAuthOptions.managedIdentity,
+            text: legacyManagedIdentityDropdownText,
+          }
+        : undefined,
+    ].filter((opt) => opt !== undefined) as IDropdownOption<any>[];
+  }, [
+    legacyManagedIdentityDropdownText,
+    oAuthDropdownText,
+    servicePrincipalDropdownText,
+    supportsLegacyManagedIdentityConnection,
+    supportsServicePrincipalConnection,
+  ]);
 
   const connectorDescription = useMemo(() => {
     if (isUsingOAuth) return authDescriptionText;
@@ -384,30 +471,22 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
 
       {/* Parameters */}
       <div className="connection-params-container">
-        {/* ServicePrincipal support */}
-        {showServicePrincipalButton && (
-          <div className="param-row center" style={{ margin: '8px 0px' }}>
-            <Checkbox
-              label={intl.formatMessage({
-                defaultMessage: 'Connect via Service Principal',
-                description: 'Checkbox label for using an Service Pricipal connection',
-              })}
-              checked={useServicePrincipal}
-              onChange={() => toggleServicePrincipal()}
+        {/* Legacy Multi-Auth */}
+        {showLegacyMultiAuth && (
+          <div className="param-row">
+            <Label className="label" required htmlFor={'legacy-connection-param-set-select'} disabled={isLoading}>
+              {legacyMultiAuthLabelText}
+            </Label>
+            <Dropdown
+              id="legacy-connection-param-set-select"
+              className="connection-parameter-input"
+              selectedKey={selectedParamSetIndex}
+              onChange={onAuthDropdownChange}
               disabled={isLoading}
+              ariaLabel={legacyMultiAuthLabelText}
+              // placeholder={connectionParameterSets?.uiDefinition?.description}
+              options={legacyMultiAuthOptions}
             />
-            <TooltipHost
-              content={
-                <p>
-                  {servicePrincipalTooltipText}
-                  <Link href={servicePrincipalLearnMoreURL} target="_blank" rel="noopener noreferrer">
-                    {learnMoreText}
-                  </Link>
-                </p>
-              }
-            >
-              <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
-            </TooltipHost>
           </div>
         )}
 
@@ -427,6 +506,16 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
               value={connectionDisplayName}
               onChange={(e: any, val?: string) => setConnectionDisplayName(val ?? '')}
             />
+          </div>
+        )}
+
+        {/* Legacy Managed Identity Selection */}
+        {legacyManagedIdentitySelected && (
+          <div className="param-row">
+            <Label className="label" required htmlFor={'connection-param-set-select'} disabled={isLoading}>
+              {legacyManagedIdentityDropdownText}
+            </Label>
+            <LegacyManagedIdentityDropdown identity={identity} onChange={onLegacyManagedIdentityChange} disabled={isLoading} />
           </div>
         )}
 

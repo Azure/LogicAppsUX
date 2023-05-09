@@ -33,9 +33,9 @@ export const SerializeExpandedDictionary = ({ items, initialItem, index, type, s
         }
         $setSelection(null);
       });
+      setIsDelete(true);
     }
     setItemLength(items.length);
-    setIsDelete(true);
   }, [editor, index, itemLength, items, type]);
 
   const onChange = (editorState: EditorState) => {
