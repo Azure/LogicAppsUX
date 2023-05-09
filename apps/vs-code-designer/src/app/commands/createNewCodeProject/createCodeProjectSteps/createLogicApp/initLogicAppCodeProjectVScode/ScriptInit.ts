@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { extInstallTaskName, func, funcWatchProblemMatcher, hostStartCommand } from '../../../../../../constants';
 import { getLocalFuncCoreToolsVersion } from '../../../../../utils/funcCoreTools/funcVersion';
-import { InitVSCodeStepBaseCodeProject } from './InitVSCodeStepBaseCodeProject';
+import { InitVSCodeStepBaseCodeProject } from './InitCodeProject';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
 import { FuncVersion } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';

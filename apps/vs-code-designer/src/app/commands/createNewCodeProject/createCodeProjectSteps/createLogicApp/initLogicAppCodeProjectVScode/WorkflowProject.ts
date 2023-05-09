@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { extensionCommand, func, funcWatchProblemMatcher, hostStartCommand } from '../../../../../../constants';
-import { ScriptInitVSCodeStepCodeProject } from './ScriptInitVSCodeStepCodeProject';
+import { ScriptInitVSCodeStepCodeProject } from './ScriptInit';
 import type { IProjectWizardContext, ITaskInputs, ISettingToAdd } from '@microsoft/vscode-extension';
 import type { TaskDefinition } from 'vscode';
 
