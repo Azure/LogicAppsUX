@@ -26,7 +26,7 @@ export const AuthenticationProperty = ({
       </div>
       <div className="msla-authentication-editor-expanded-editor-container">
         <StringEditor
-          editorValueType={AuthProperty.type}
+          valueType={AuthProperty.type}
           className="msla-authentication-editor-expanded-editor"
           initialValue={initialValue}
           placeholder={AuthProperty.placeHolder}

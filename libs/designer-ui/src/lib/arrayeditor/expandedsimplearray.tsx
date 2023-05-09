@@ -32,7 +32,7 @@ export interface ExpandedSimpleArrayProps {
   readOnly?: boolean;
   isTrigger?: boolean;
   placeholder?: string;
-  editorValueType?: string;
+  valueType?: string;
   getTokenPicker: GetTokenPickerHandler;
   setItems: (newItems: SimpleArrayItem[]) => void;
 }
@@ -44,7 +44,7 @@ export const ExpandedSimpleArray = ({
   readOnly,
   isTrigger,
   placeholder,
-  editorValueType,
+  valueType,
   getTokenPicker,
   setItems,
 }: ExpandedSimpleArrayProps): JSX.Element => {
@@ -85,7 +85,7 @@ export const ExpandedSimpleArray = ({
             </div>
             <StringEditor
               className="msla-array-editor-container-expanded"
-              editorValueType={editorValueType}
+              valueType={valueType}
               initialValue={item.value ?? []}
               isTrigger={isTrigger}
               editorBlur={(newState) => handleArrayElementSaved(item.value ?? [], newState, index)}

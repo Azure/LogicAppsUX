@@ -72,7 +72,7 @@ export const ExpandedComplexArray = ({
                     ) : null}
                   </div>
                   <StringEditor
-                    editorValueType={schemaItem?.type}
+                    valueType={schemaItem?.type}
                     className="msla-array-editor-container-expanded"
                     initialValue={complexItem?.value ?? []}
                     getTokenPicker={getTokenPicker}

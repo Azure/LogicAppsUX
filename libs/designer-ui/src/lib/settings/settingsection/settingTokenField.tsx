@@ -42,7 +42,6 @@ export interface SettingTokenFieldProps extends SettingProps {
   expressionGroup?: TokenGroup[];
   isTrigger?: boolean;
   isCallback?: boolean;
-  editorValueType?: string;
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
   pickerCallbacks?: PickerCallbackHandlers;
@@ -151,7 +150,7 @@ const TokenField = ({
           readonly={readOnly}
           initialValue={value}
           initialItems={editorViewModel.items}
-          editorValueType={editorOptions.valueType}
+          valueType={editorOptions.valueType}
           isTrigger={isTrigger}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}

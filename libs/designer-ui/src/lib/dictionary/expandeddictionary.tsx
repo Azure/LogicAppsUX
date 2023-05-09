@@ -74,7 +74,7 @@ export const ExpandedDictionary = ({
                 BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
                 getTokenPicker={getTokenPicker}
                 onFocus={() => addItem(index)}
-                editorValueType={keyType}
+                valueType={keyType}
               >
                 <SerializeExpandedDictionary
                   items={items}
@@ -95,7 +95,7 @@ export const ExpandedDictionary = ({
                 BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
                 getTokenPicker={getTokenPicker}
                 onFocus={() => addItem(index)}
-                editorValueType={valueType}
+                valueType={valueType}
               >
                 <SerializeExpandedDictionary
                   items={items}

@@ -117,7 +117,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
       ) : type === ArrayType.SIMPLE ? (
         <ExpandedSimpleArray
           placeholder={placeholder}
-          editorValueType={itemSchema.type}
+          valueType={itemSchema.type}
           items={items as SimpleArrayItem[]}
           labelProps={labelProps}
           readOnly={baseEditorProps.readonly}
