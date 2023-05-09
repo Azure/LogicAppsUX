@@ -31,7 +31,7 @@ import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
-import { DynamicCallStatus, TokenPicker, ValueSegmentType } from '@microsoft/designer-ui';
+import { DynamicCallStatus, TokenPicker, TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode } from '@microsoft/designer-ui';
 import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
 import { useCallback, useState } from 'react';
@@ -284,17 +284,15 @@ const ParameterSection = ({
       editorType ??
       (nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === parameterId) ?? {})?.type ??
       constants.SWAGGER.TYPE.ANY;
-    const supportedTypes: string[] = parameterType
-      ? getPropertyValue(constants.TOKENS, parameterType) || [constants.SWAGGER.TYPE.ANY, parameterType]
-      : null;
+    const supportedTypes: string[] = parameterType ? getPropertyValue(constants.TOKENS, parameterType) : null;
 
     const filteredTokenGroup = tokenGroup.map((group) => ({
       ...group,
       tokens: group.tokens.filter((token: OutputToken) => {
         if (isCodeEditor) {
           return !(
-            token.outputInfo.functionName === constants.FUNCTION_NAME.VARIABLES ||
-            token.outputInfo.functionName === constants.FUNCTION_NAME.PARAMETERS ||
+            token.outputInfo.type === TokenType.VARIABLE ||
+            token.outputInfo.type === TokenType.PARAMETER ||
             token.outputInfo.arrayDetails ||
             token.key === constants.UNTIL_CURRENT_ITERATION_INDEX_KEY ||
             token.key === constants.FOREACH_CURRENT_ITEM_KEY
