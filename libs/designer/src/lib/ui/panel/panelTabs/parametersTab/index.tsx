@@ -284,7 +284,7 @@ const ParameterSection = ({
       editorType ??
       (nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === parameterId) ?? {})?.type ??
       constants.SWAGGER.TYPE.ANY;
-    const supportedTypes: string[] = parameterType ? getPropertyValue(constants.TOKENS, parameterType) : null;
+    const supportedTypes: string[] = getPropertyValue(constants.TOKENS, parameterType);
 
     const filteredTokenGroup = tokenGroup.map((group) => ({
       ...group,
