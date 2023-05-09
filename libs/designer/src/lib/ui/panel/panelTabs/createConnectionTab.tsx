@@ -1,6 +1,13 @@
 import constants from '../../../common/constants';
 import type { AppDispatch, RootState } from '../../../core';
-import { getConnectionMetadata, needsOAuth, updateNodeConnection } from '../../../core/actions/bjsworkflow/connections';
+import type { ConnectionPayload } from '../../../core/actions/bjsworkflow/connections';
+import {
+  getApiHubAuthentication,
+  getConnectionMetadata,
+  getConnectionProperties,
+  needsOAuth,
+  updateNodeConnection,
+} from '../../../core/actions/bjsworkflow/connections';
 import { getUniqueConnectionName } from '../../../core/queries/connections';
 import { useConnectorByNodeId, useGateways, useSubscriptions } from '../../../core/state/connection/connectionSelector';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
@@ -53,8 +60,16 @@ const CreateConnectionTab = () => {
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
   const applyNewConnection = useCallback(
-    (newConnection: Connection, _newName: string) => {
-      dispatch(updateNodeConnection({ nodeId, connection: newConnection, connector: connector as Connector }));
+    (newConnection: Connection, selectedIdentity?: string) => {
+      const payload: ConnectionPayload = { nodeId, connection: newConnection, connector: connector as Connector };
+
+      if (selectedIdentity) {
+        const userAssignedIdentity = selectedIdentity !== constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY ? selectedIdentity : undefined;
+        payload.connectionProperties = getConnectionProperties(connector as Connector, userAssignedIdentity);
+        payload.authentication = getApiHubAuthentication(userAssignedIdentity);
+      }
+
+      dispatch(updateNodeConnection(payload));
     },
     [connector, dispatch, nodeId]
   );
@@ -92,7 +107,8 @@ const CreateConnectionTab = () => {
       selectedParameterSet?: ConnectionParameterSet,
       parameterValues: Record<string, any> = {},
       isOAuthConnection?: boolean,
-      extraConnectionInfo?: Record<string, any>
+      alternativeParameterValues?: Record<string, any>,
+      identitySelected?: string
     ) => {
       if (!connector?.id) return;
 
@@ -134,7 +150,7 @@ const CreateConnectionTab = () => {
           displayName,
           connectionParametersSet: selectedParameterSet ? connectionParameterSetValues : undefined,
           connectionParameters: outputParameterValues,
-          ...extraConnectionInfo,
+          alternativeParameterValues,
         };
 
         const parametersMetadata: ConnectionParametersMetadata = {
@@ -162,7 +178,7 @@ const CreateConnectionTab = () => {
         }
 
         if (connection) {
-          applyNewConnection(connection, newName);
+          applyNewConnection(connection, identitySelected);
           dispatch(showDefaultTabs({ isMonitoringView }));
         } else if (err) {
           setErrorMessage(String(err));

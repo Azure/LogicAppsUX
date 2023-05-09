@@ -173,7 +173,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     _connectionName: string,
     connectionInfo: ConnectionCreationInfo
   ): any {
-    const alternativeParameterValues = connectionInfo?.internalAlternativeParameterValues ?? {};
+    const alternativeParameterValues = connectionInfo?.alternativeParameterValues ?? {};
     const displayName = connectionInfo?.displayName;
     const {
       apiHubServiceDetails: { location },

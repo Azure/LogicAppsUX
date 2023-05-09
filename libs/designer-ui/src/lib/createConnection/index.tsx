@@ -50,7 +50,8 @@ export interface CreateConnectionProps {
     selectedParameterSet?: ConnectionParameterSet,
     parameterValues?: Record<string, any>,
     isOAuthConnection?: boolean,
-    extraConnectionInfo?: Record<string, any>
+    alternativeParameterValues?: Record<string, any>,
+    identitySelected?: string
   ) => void;
   cancelCallback?: () => void;
   hideCancelButton?: boolean;
@@ -167,6 +168,12 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     [selectedParamSetIndex, showLegacyMultiAuth]
   );
 
+  const [selectedManagedIdentity, setSelectedManagedIdentity] = useState<string | undefined>(undefined);
+
+  const onLegacyManagedIdentityChange = useCallback((_: any, option?: IDropdownOption<any>) => {
+    setSelectedManagedIdentity(option?.key.toString());
+  }, []);
+
   const isParamVisible = useCallback(
     (key: string, parameter: ParamType) => {
       const constraints = parameter?.uiDefinition?.constraints;
@@ -275,24 +282,23 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
         : oauthValue;
     }
 
-    const extraConnectionInfo = legacyManagedIdentitySelected
-      ? {
-          internalAlternativeParameterValues: {},
-          externalAlternativeParameterValues: {},
-        }
-      : undefined;
+    const alternativeParameterValues = legacyManagedIdentitySelected ? {} : undefined;
+    const identitySelected = legacyManagedIdentitySelected ? selectedManagedIdentity : undefined;
 
     return createConnectionCallback?.(
       showNameInput ? connectionDisplayName : '',
       connectionParameterSets?.values[selectedParamSetIndex],
       visibleParameterValues,
       isUsingOAuth,
-      extraConnectionInfo
+      alternativeParameterValues,
+      identitySelected
     );
   }, [
     parameterValues,
     supportsServicePrincipalConnection,
     unfilteredParameters,
+    legacyManagedIdentitySelected,
+    selectedManagedIdentity,
     createConnectionCallback,
     showNameInput,
     connectionDisplayName,
@@ -301,7 +307,6 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     isUsingOAuth,
     capabilityEnabledParameters,
     servicePrincipalSelected,
-    legacyManagedIdentitySelected,
   ]);
 
   // INTL STRINGS
@@ -430,12 +435,6 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     supportsLegacyManagedIdentityConnection,
     supportsServicePrincipalConnection,
   ]);
-
-  const [_selectedManagedIdentity, setSelectedManagedIdentity] = useState<string | undefined>(undefined);
-
-  const onLegacyManagedIdentityChange = useCallback((_: any, option?: IDropdownOption<any>) => {
-    setSelectedManagedIdentity(option?.key.toString());
-  }, []);
 
   const connectorDescription = useMemo(() => {
     if (isUsingOAuth) return authDescriptionText;
