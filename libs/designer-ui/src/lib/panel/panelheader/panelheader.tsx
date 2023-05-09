@@ -226,7 +226,7 @@ export const PanelHeader = ({
       </div>
       {!noNodeOnCardLevel ? (
         <>
-          <div className={'msla-panel-card-header'} style={isRight ? {} : { paddingLeft: horizontalPadding }}>
+          <div className={'msla-panel-card-header'} style={isRight || isCollapsed ? {} : { paddingLeft: horizontalPadding }}>
             {iconComponent}
             {includeTitle ? (
               <div className="msla-panel-card-title-container" hidden={isCollapsed}>
