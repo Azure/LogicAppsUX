@@ -1,4 +1,5 @@
 /* eslint-disable no-useless-escape */
+import { FunctionConfigFile } from './FunctionConfigFile';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
 import * as fs from 'fs-extra';
@@ -28,6 +29,10 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
 
     // Create the .csproj file inside the functions folder
     await this.createCsprojFile(functionFolderPath, methodName);
+
+    // Generate the VS Code configuration files in the specified folder
+    const createConfigFiles = new FunctionConfigFile();
+    await createConfigFiles.prompt(context);
   }
 
   /**
