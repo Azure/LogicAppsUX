@@ -365,8 +365,6 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       />
       <DeleteNodeModal
         nodeId={selectedNode}
-        // nodeIcon={iconUriResult.result}
-        // brandColor={brandColor}
         nodeType={WORKFLOW_NODE_TYPES.GRAPH_NODE}
         isOpen={showDeleteModal}
         onDismiss={() => setShowDeleteModal(false)}
