@@ -295,16 +295,11 @@ export async function getFolderItems(
 ): Promise<TreeDynamicValue[]> {
   const { definition, filePickerInfo, parameter } = dependencyInfo;
 
-  if (!filePickerInfo) {
-    throw new UnsupportedException('File picker information does not exist.');
-  }
-
-  const { open, browse } = filePickerInfo;
-  const { connectorId } = operationInfo;
-  const connectionId = connectionReference?.connection.id as string;
-  const { operationId, parameters: referenceParameters } = selectedValue ? browse : open;
-
-  if (isLegacyDynamicValuesTreeExtension(definition)) {
+  if (isLegacyDynamicValuesTreeExtension(definition) && filePickerInfo) {
+    const { open, browse } = filePickerInfo;
+    const { connectorId } = operationInfo;
+    const connectionId = connectionReference?.connection.id as string;
+    const { operationId, parameters: referenceParameters } = selectedValue ? browse : open;
     const pickerParameters = Object.keys(referenceParameters ?? {}).reduce((result: Record<string, any>, paramKey: string) => {
       if (referenceParameters?.[paramKey]?.selectedItemValuePath || referenceParameters?.[paramKey]?.['value-property']) {
         return {
@@ -328,17 +323,17 @@ export async function getFolderItems(
     );
 
     return getLegacyDynamicTreeItems(connectionId, connectorId, operationId, inputs, filePickerInfo, managedIdentityRequestProperties);
-  } else if (isDynamicTreeExtension(definition)) {
-    const pickerParameters = Object.keys(referenceParameters ?? {}).reduce((result: Record<string, any>, paramKey: string) => {
-      return { ...result, [paramKey]: referenceParameters?.[paramKey] };
-    }, {});
-    const parameters = { ...pickerParameters };
+  } else if (isDynamicTreeExtension(definition) && filePickerInfo) {
+    const { open, browse } = filePickerInfo;
+    const { connectorId } = operationInfo;
+    const connectionId = connectionReference?.connection.id as string;
+    const { operationId, parameters } = selectedValue ? browse : open;
 
-    const operationParameters = getParameterValuesForDynamicInvoke(parameters, nodeInputs, idReplacements);
+    const operationParameters = getParameterValuesForDynamicInvoke(parameters as DynamicParameters, nodeInputs, idReplacements);
 
-    let dynamicState = { ...definition.extension.dynamicState };
+    let dynamicState = definition.extension.dynamicState;
     if (selectedValue) {
-      dynamicState = { ...dynamicState, selectionState: { id: selectedValue.id } };
+      dynamicState = { ...dynamicState, selectionState: selectedValue.selectionState };
     }
 
     return getDynamicTreeItems(connectionId, connectorId, operationId, parameter?.alias, operationParameters, dynamicState);

@@ -203,20 +203,6 @@ export const getDynamicTreeItems = async (
     () => service.getTreeDynamicValues(connectionId, connectorId, operationId, parameterAlias, parameters, dynamicState)
   );
 
-  if (values && values.length) {
-    return values.map((treeDynamicValue: any) => {
-      return {
-        displayName: treeDynamicValue.displayName,
-        isParent: treeDynamicValue.isParent,
-        value: {
-          id: treeDynamicValue.dynamicState?.selectionState?.id,
-          [dynamicState.dynamicExtension.browse.itemValuePath]: treeDynamicValue.value,
-          [dynamicState.dynamicExtension.browse.itemFullTitlePath]: treeDynamicValue.fullyQualifiedDisplayName,
-        },
-      };
-    });
-  }
-
   return values;
 };
 
