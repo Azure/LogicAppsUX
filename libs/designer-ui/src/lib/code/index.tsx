@@ -118,7 +118,15 @@ export function CodeEditor({
         />
       ) : null}
       {getInTokenPicker()
-        ? getTokenPicker?.(editorId, callOutLabelId, undefined, closeTokenPicker, onClickTokenPicker, tokenClicked)
+        ? getTokenPicker?.(
+            editorId,
+            callOutLabelId,
+            undefined /* TokenPickerMode: undefined uses legacy tokenpicker */,
+            undefined /* Editortype: undefined defaults to parameter type */,
+            closeTokenPicker,
+            onClickTokenPicker,
+            tokenClicked
+          )
         : null}
     </div>
   );

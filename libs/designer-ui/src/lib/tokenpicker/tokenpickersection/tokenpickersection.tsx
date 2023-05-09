@@ -64,7 +64,11 @@ export const TokenPickerSection = ({
   return (
     <div
       className="msla-token-picker-sections"
-      style={{ height: fullScreen ? windowDimensions.height - (expressionEditorCurrentHeight + 287) : 550 }}
+      style={{
+        maxHeight: fullScreen
+          ? windowDimensions.height - (expressionEditorCurrentHeight + 287)
+          : Math.min(windowDimensions.height - 100, 550),
+      }}
     >
       {searchQuery && noItems ? <TokenPickerNoMatches /> : null}
       {noDynamicContent && (selectedKey === TokenPickerMode.TOKEN_EXPRESSION || selectedKey === TokenPickerMode.TOKEN) ? (
