@@ -50,7 +50,7 @@ export async function isConnectionReferenceValid(
   }
 
   const connection = await getConnection(reference.connection.id, connectorId);
-  return !connection?.properties?.statuses?.some((status) => equals(status.status, 'error'));
+  return !!connection && !connection.properties?.statuses?.some((status) => equals(status.status, 'error'));
 }
 
 export function getAssistedConnectionProps(connector: Connector, manifest?: OperationManifest): AssistedConnectionProps | undefined {
