@@ -45,7 +45,7 @@ import { WorkflowParametersPanel } from './workflowparameterspanel';
 import type { CommonPanelProps, MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { DeleteNodeModal } from '@microsoft/designer-ui';
 import { MenuItemType, PanelContainer, PanelHeaderControlType, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
-import { isNullOrUndefined, SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
+import { isNullOrUndefined, isScopeOperation, SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -201,14 +201,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   const handleDeleteClick = () => setShowDeleteModal(true);
   const handleDelete = () => {
     // TODO: 12798935 Analytics (event logging)
-    const scopeNodeTypes = [
-      constants.NODE.TYPE.IF,
-      constants.NODE.TYPE.SWITCH,
-      constants.NODE.TYPE.FOREACH,
-      constants.NODE.TYPE.SCOPE,
-      constants.NODE.TYPE.UNTIL,
-    ];
-    if (scopeNodeTypes.includes(operationInfo?.type.toLowerCase())) {
+    if (isScopeOperation(operationInfo?.type)) {
       const scopeId = selectedNode.split('-#')[0];
       dispatch(deleteGraphNode({ graphId: scopeId ?? '', graphNode }));
     } else {
