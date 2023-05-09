@@ -16,7 +16,9 @@ export interface ExpandedDictionaryProps {
   isTrigger?: boolean;
   readonly?: boolean;
   keyTitle?: string;
+  keyType?: string;
   valueTitle?: string;
+  valueType?: string;
   setItems: (items: DictionaryEditorItemProps[]) => void;
   getTokenPicker: GetTokenPickerHandler;
 }
@@ -26,7 +28,9 @@ export const ExpandedDictionary = ({
   isTrigger,
   readonly,
   keyTitle,
+  keyType,
   valueTitle,
+  valueType,
   getTokenPicker,
   setItems,
 }: ExpandedDictionaryProps): JSX.Element => {
@@ -70,6 +74,7 @@ export const ExpandedDictionary = ({
                 BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
                 getTokenPicker={getTokenPicker}
                 onFocus={() => addItem(index)}
+                valueType={keyType}
               >
                 <SerializeExpandedDictionary
                   items={items}
@@ -90,6 +95,7 @@ export const ExpandedDictionary = ({
                 BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
                 getTokenPicker={getTokenPicker}
                 onFocus={() => addItem(index)}
+                valueType={valueType}
               >
                 <SerializeExpandedDictionary
                   items={items}
