@@ -1,6 +1,7 @@
-import { addInitVSCodeSteps } from '../../initProjectForVSCode/InitVSCodeLanguageStep';
-import { CodeProjectWorkflowStateTypeStep } from './CodeProjectWorkflowStateTypeStep';
 import { WorkflowCodeProjectCreateStep } from './WorkflowCodeProjectCreateStep';
+import { InvokeFunctionProjectSetup } from './createFunction/InvokeFunctionSetup';
+import { CodeProjectWorkflowStateTypeStep } from './createLogicApp/CodeProjectWorkflowStateTypeStep';
+import { addInitVSCodeStepsCodeProject } from './createLogicApp/initLogicAppCodeProjectVScode/InitVSCodeLanguageStepCodeProject';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
@@ -43,6 +44,10 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     const logicAppFolderPath = path.join(projectPath, 'LogicApp');
     await fs.ensureDir(functionFolderPath);
     await fs.ensureDir(logicAppFolderPath);
+
+    // Set the Logic App and Functions folder paths as properties of the AzureWizard
+    context.logicAppFolderPath = logicAppFolderPath;
+    context.functionFolderPath = functionFolderPath;
   }
 
   /**
@@ -72,12 +77,13 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     }
 
     // Add any necessary steps to initialize the project for VS Code
-    await addInitVSCodeSteps(context, executeSteps);
+    await addInitVSCodeStepsCodeProject(context, executeSteps);
 
     // Create the sub-wizard options object
     const wizardOptions: IWizardOptions<IProjectWizardContext> = { promptSteps, executeSteps };
 
     // Add any necessary prompt steps to the sub-wizard
+    promptSteps.push(new InvokeFunctionProjectSetup());
     promptSteps.push(
       await CodeProjectWorkflowStateTypeStep.create(context, {
         isProjectWizard: true,

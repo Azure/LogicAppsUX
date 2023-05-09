@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { ScriptProjectCreateStep } from './ScriptProjectCreateStep';
+import { ScriptProjectCreateStep } from './createLogicApp/ScriptProjectCreateStep';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
 import type { Progress } from 'vscode';
 

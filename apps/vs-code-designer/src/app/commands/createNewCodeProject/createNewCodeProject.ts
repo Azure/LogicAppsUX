@@ -11,6 +11,8 @@ import { OpenBehaviorStepCodeProject } from './OpenBehaviorStepCodeProject';
 import { OpenFolderStepCodeProject } from './OpenFolderStepCodeProject';
 import { NewCodeProjectTypeStep } from './createCodeProjectSteps/NewCodeProjectTypeStep';
 import { setWorkspaceName } from './createCodeProjectSteps/SetWorkspaceName';
+import { setMethodName } from './createCodeProjectSteps/createFunction/setMethodName';
+import { setNameSpace } from './createCodeProjectSteps/createFunction/setNamepSpace';
 import { isString } from '@microsoft/utils-logic-apps';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -69,6 +71,8 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
     promptSteps: [
       new FolderListStep(),
       new setWorkspaceName(),
+      new setMethodName(),
+      new setNameSpace(),
       new NewCodeProjectTypeStep(options.templateId, options.functionSettings),
       new OpenBehaviorStepCodeProject(),
     ],
