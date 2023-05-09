@@ -44,13 +44,6 @@ export interface IProjectTreeItem {
 }
 
 export interface IProjectWizardContext extends IActionContext {
-  languageModel(
-    context: IProjectWizardContext,
-    vscodePath: string,
-    language: ProjectLanguage,
-    languageModel: any,
-    version: FuncVersion
-  ): unknown;
   namespaceName?: string;
   methodName?: string;
   functionFolderPath?: string;
