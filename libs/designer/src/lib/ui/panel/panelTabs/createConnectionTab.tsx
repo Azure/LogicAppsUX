@@ -14,10 +14,16 @@ import {
 } from '../../../core/utils/connectors/connections';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/designer-client-services-logic-apps';
-import { LogEntryLevel, LoggerService, ConnectionService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService, ConnectionService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import { CreateConnection } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
-import type { Connection, ConnectionParameterSet, ConnectionParameterSetValues, Connector } from '@microsoft/utils-logic-apps';
+import type {
+  Connection,
+  ConnectionParameterSet,
+  ConnectionParameterSetValues,
+  Connector,
+  ManagedIdentity,
+} from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -39,6 +45,8 @@ const CreateConnectionTab = () => {
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState('');
   const gatewaysQuery = useGateways(selectedSubscriptionId, connector?.id ?? '');
   const availableGateways = useMemo(() => gatewaysQuery.data, [gatewaysQuery]);
+
+  const identity = WorkflowService().getAppIdentity?.() as ManagedIdentity;
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -83,7 +91,8 @@ const CreateConnectionTab = () => {
       displayName?: string,
       selectedParameterSet?: ConnectionParameterSet,
       parameterValues: Record<string, any> = {},
-      isOAuthConnection?: boolean
+      isOAuthConnection?: boolean,
+      extraConnectionInfo?: Record<string, any>
     ) => {
       if (!connector?.id) return;
 
@@ -125,6 +134,7 @@ const CreateConnectionTab = () => {
           displayName,
           connectionParametersSet: selectedParameterSet ? connectionParameterSetValues : undefined,
           connectionParameters: outputParameterValues,
+          ...extraConnectionInfo,
         };
 
         const parametersMetadata: ConnectionParametersMetadata = {
@@ -203,6 +213,8 @@ const CreateConnectionTab = () => {
       connectorCapabilities={connector.properties.capabilities}
       connectionParameters={connector.properties.connectionParameters}
       connectionParameterSets={getSupportedParameterSets(connector.properties.connectionParameterSets, operationInfo.type)}
+      connectionAlternativeParameters={connector.properties?.connectionAlternativeParameters}
+      identity={identity}
       createConnectionCallback={createConnectionCallback}
       isLoading={isLoading}
       cancelCallback={cancelCallback}

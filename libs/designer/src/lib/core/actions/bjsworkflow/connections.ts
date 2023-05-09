@@ -6,7 +6,11 @@ import { changeConnectionMapping, initializeConnectionsMappings } from '../../st
 import { updateErrorDetails } from '../../state/operation/operationMetadataSlice';
 import type { Operations } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
-import { getConnectionReference, isConnectionMultiAuthManagedIdentityType } from '../../utils/connectors/connections';
+import {
+  getConnectionReference,
+  isConnectionMultiAuthManagedIdentityType,
+  isConnectionSingleAuthManagedIdentityType,
+} from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
 import { updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { getAllVariables } from '../../utils/variables';
@@ -85,7 +89,7 @@ const updateNodeConnectionAndProperties = async (
   );
 };
 const getConnectionPropertiesIfRequired = (connection: Connection, connector: Connector): Record<string, any> | undefined => {
-  if (isConnectionMultiAuthManagedIdentityType(connection, connector)) {
+  if (isConnectionMultiAuthManagedIdentityType(connection, connector) || isConnectionSingleAuthManagedIdentityType(connection)) {
     const identity = WorkflowService().getAppIdentity?.();
     const userAssignedIdentity =
       equals(identity?.type, ResourceIdentityType.USER_ASSIGNED) && identity?.userAssignedIdentities

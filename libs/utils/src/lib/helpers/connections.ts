@@ -151,6 +151,13 @@ export function connectorContainsAllServicePrinicipalConnectionParameters(
   );
 }
 
+export function usesLegacyManagedIdentity(alternativeParameters?: Record<string, ConnectionParameter>): boolean {
+  return (
+    alternativeParameters?.['authentication']?.uiDefinition?.schema?.['x-ms-editor-options']?.supportedAuthTypes?.[0] ==
+    'ManagedServiceIdentity'
+  );
+}
+
 function _isConnectionParameterHidden(connectionParameter: ConnectionParameter): boolean {
   return connectionParameter?.uiDefinition?.constraints?.hidden === 'true';
 }
