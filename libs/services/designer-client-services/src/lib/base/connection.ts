@@ -170,10 +170,11 @@ export abstract class BaseConnectionService implements IConnectionService {
 
   protected _getRequestForCreateConnectionWithAlternativeParameters(
     connectorId: string,
-    connectionName: string,
-    properties: ConnectionCreationInfo
+    _connectionName: string,
+    connectionInfo: ConnectionCreationInfo
   ): any {
-    const alternativeParameterValues = properties?.internalAlternativeParameterValues;
+    const alternativeParameterValues = connectionInfo?.alternativeParameterValues ?? {};
+    const displayName = connectionInfo?.displayName;
     const {
       apiHubServiceDetails: { location },
     } = this.options;
@@ -185,7 +186,7 @@ export abstract class BaseConnectionService implements IConnectionService {
         },
         parameterValueType: 'Alternative',
         alternativeParameterValues,
-        displayName: properties?.displayName,
+        displayName,
       },
       kind: this._vVersion,
       location,
