@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import Constants from '../../../common/constants';
 import type { WorkflowParameter } from '../../../common/models/workflow';
 import { convertWorkflowParameterTypeToSwaggerType } from '../../utils/tokens';
@@ -36,120 +37,79 @@ export const validateParameter = (
 ): string | undefined => {
   const intl = getIntl();
 
-  if (equals(keyToValidate, 'name')) {
-    const { name } = data;
-    if (!name) {
-      return intl.formatMessage({
-        defaultMessage: 'Must provide name of parameter.',
-        description: 'Error message when the workflow parameter name is empty.',
-      });
-    }
+  switch (keyToValidate?.toLowerCase()) {
+    case 'name':
+      const { name } = data;
+      if (!name) {
+        return intl.formatMessage({
+          defaultMessage: 'Must provide name of parameter.',
+          description: 'Error message when the workflow parameter name is empty.',
+        });
+      }
 
-    const duplicateParameters = Object.keys(allDefinitions).filter(
-      (parameterId) => parameterId !== id && equals(allDefinitions[parameterId].name, name)
-    );
+      const duplicateParameters = Object.keys(allDefinitions).filter(
+        (parameterId) => parameterId !== id && equals(allDefinitions[parameterId].name, name)
+      );
 
-    return duplicateParameters.length > 0
-      ? intl.formatMessage({
-          defaultMessage: 'Parameter name already exists.',
-          description: 'Error message when the workflow parameter name already exists.',
-        })
-      : undefined;
-  } else if (equals(keyToValidate, 'value')) {
-    const { type = 'object', value } = data;
-    if (value === '' || value === undefined) {
-      if (!required) return undefined;
-      return intl.formatMessage({
-        defaultMessage: 'Must provide value for parameter.',
-        description: 'Error message when the workflow parameter value is empty.',
-      });
-    }
+      return duplicateParameters.length > 0
+        ? intl.formatMessage({
+            defaultMessage: 'Parameter name already exists.',
+            description: 'Error message when the workflow parameter name already exists.',
+          })
+        : undefined;
 
-    const swaggerType = convertWorkflowParameterTypeToSwaggerType(type);
-    let error = validateType(swaggerType, /* parameterFormat */ '', value);
+    case 'value':
+    case 'defaultvalue':
+      const valueToValidate = equals(keyToValidate, 'value') ? data.value : data.defaultValue;
+      const { type } = data;
+      if (valueToValidate === '' || valueToValidate === undefined) {
+        if (!required) return undefined;
+        return intl.formatMessage({
+          defaultMessage: 'Must provide value for parameter.',
+          description: 'Error message when the workflow parameter value is empty.',
+        });
+      }
 
-    if (error) return error;
+      const swaggerType = convertWorkflowParameterTypeToSwaggerType(type);
+      let error = validateType(swaggerType, /* parameterFormat */ '', valueToValidate);
 
-    switch (swaggerType) {
-      case Constants.SWAGGER.TYPE.ARRAY:
-        // eslint-disable-next-line no-case-declarations
-        let isInvalid = false;
-        try {
-          isInvalid = !Array.isArray(JSON.parse(value));
-        } catch {
-          isInvalid = true;
-        }
+      if (error) return error;
 
-        error = isInvalid
-          ? intl.formatMessage({ defaultMessage: 'Enter a valid array.', description: 'Error validation message' })
-          : undefined;
-        break;
+      switch (swaggerType) {
+        case Constants.SWAGGER.TYPE.ARRAY:
+          // eslint-disable-next-line no-case-declarations
+          let isInvalid = false;
+          try {
+            isInvalid = !Array.isArray(JSON.parse(valueToValidate));
+          } catch {
+            isInvalid = true;
+          }
 
-      case Constants.SWAGGER.TYPE.OBJECT:
-      case Constants.SWAGGER.TYPE.BOOLEAN:
-        try {
-          JSON.parse(value);
-        } catch {
-          error =
-            swaggerType === Constants.SWAGGER.TYPE.BOOLEAN
-              ? intl.formatMessage({ defaultMessage: 'Enter a valid boolean.', description: 'Error validation message' })
-              : intl.formatMessage({ defaultMessage: 'Enter a valid json.', description: 'Error validation message' });
-        }
-        break;
+          error = isInvalid
+            ? intl.formatMessage({ defaultMessage: 'Enter a valid array.', description: 'Error validation message' })
+            : undefined;
+          break;
 
-      default:
-        break;
-    }
-    return error;
-  } else if (equals(keyToValidate, 'defaultValue')) {
-    const { type, defaultValue } = data;
-    if (defaultValue === '' || defaultValue === undefined) {
-      if (!required) return undefined;
-      return intl.formatMessage({
-        defaultMessage: 'Must provide default value for parameter.',
-        description: 'Error message when the workflow parameter value is empty.',
-      });
-    }
+        case Constants.SWAGGER.TYPE.OBJECT:
+        case Constants.SWAGGER.TYPE.BOOLEAN:
+          try {
+            JSON.parse(valueToValidate);
+          } catch {
+            error =
+              swaggerType === Constants.SWAGGER.TYPE.BOOLEAN
+                ? intl.formatMessage({ defaultMessage: 'Enter a valid boolean.', description: 'Error validation message' })
+                : intl.formatMessage({ defaultMessage: 'Enter a valid json.', description: 'Error validation message' });
+          }
+          break;
 
-    const swaggerType = convertWorkflowParameterTypeToSwaggerType(type);
-    let error = validateType(swaggerType, /* parameterFormat */ '', defaultValue);
+        default:
+          break;
+      }
+      return error;
 
-    if (error) return error;
-
-    switch (swaggerType) {
-      case Constants.SWAGGER.TYPE.ARRAY:
-        // eslint-disable-next-line no-case-declarations
-        let isInvalid = false;
-        try {
-          isInvalid = !Array.isArray(JSON.parse(defaultValue));
-        } catch {
-          isInvalid = true;
-        }
-
-        error = isInvalid
-          ? intl.formatMessage({ defaultMessage: 'Enter a valid array.', description: 'Error validation message' })
-          : undefined;
-        break;
-
-      case Constants.SWAGGER.TYPE.OBJECT:
-      case Constants.SWAGGER.TYPE.BOOLEAN:
-        try {
-          JSON.parse(defaultValue);
-        } catch {
-          error =
-            swaggerType === Constants.SWAGGER.TYPE.BOOLEAN
-              ? intl.formatMessage({ defaultMessage: 'Enter a valid boolean.', description: 'Error validation message' })
-              : intl.formatMessage({ defaultMessage: 'Enter a valid json.', description: 'Error validation message' });
-        }
-        break;
-
-      default:
-        break;
-    }
-    return error;
+    default:
+      return undefined;
   }
-
-  return undefined;
 };
 
 export const workflowParametersSlice = createSlice({
