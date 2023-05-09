@@ -128,7 +128,7 @@ const ParameterSection = ({
   expressionGroup: TokenGroup[];
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const [sectionExpanded, setSectionExpanded] = useState<boolean>(true);
+  const [sectionExpanded, setSectionExpanded] = useState<boolean>(false);
   const {
     isTrigger,
     nodeInputs,
