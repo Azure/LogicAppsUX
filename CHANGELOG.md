@@ -1,4 +1,18 @@
 # Logic Apps Designer
+### [2.15.15](https://github.com/Azure/LogicAppsUX/compare/v2.15.14...v2.15.15) (2023-05-09)
+
+
+### Features
+
+* **designer:** Handling partially loaded or error nodes during serialization. ([#2275](https://github.com/Azure/LogicAppsUX/issues/2275)) ([cd2c9ec](https://github.com/Azure/LogicAppsUX/commit/cd2c9ec0dd48d245a534b7489068b4b421f4d1d3))
+
+
+### Bug Fixes
+
+* **designer:** adding unit tests for respecting workflow dimensions logic ([#2278](https://github.com/Azure/LogicAppsUX/issues/2278)) ([367f7b2](https://github.com/Azure/LogicAppsUX/commit/367f7b2bd58d1fde5b169dd5be87500e7d83faa1))
+* **designer:** remove deprecated isGraphLocked property ([#2281](https://github.com/Azure/LogicAppsUX/issues/2281)) ([ff24eeb](https://github.com/Azure/LogicAppsUX/commit/ff24eeb0c0267a3b2ea878f6b5676a57ae3f14a5))
+* **vscode:** Show creating remote logic app in activity log ([#2280](https://github.com/Azure/LogicAppsUX/issues/2280)) ([16bc653](https://github.com/Azure/LogicAppsUX/commit/16bc65316ab81c9f5c0620857e5f7520e0edb609))
+
 ### [2.15.14](https://github.com/Azure/LogicAppsUX/compare/v2.15.13...v2.15.14) (2023-05-08)
 
 
