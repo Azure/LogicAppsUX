@@ -43,6 +43,7 @@ export interface TokenPickerProps {
   labelId: string;
   getValueSegmentFromToken: GetValueSegmentHandler;
   tokenGroup?: TokenGroup[];
+  filteredTokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
   // if initialMode is undefined, it is Legacy TokenPicker
   initialMode?: TokenPickerMode;
@@ -55,6 +56,7 @@ export function TokenPicker({
   editorId,
   labelId,
   tokenGroup,
+  filteredTokenGroup,
   expressionGroup,
   initialMode,
   tokenPickerFocused,
@@ -228,7 +230,7 @@ export function TokenPicker({
               />
             </div>
             <TokenPickerSection
-              tokenGroup={tokenGroup ?? []}
+              tokenGroup={(selectedKey === TokenPickerMode.TOKEN ? filteredTokenGroup : tokenGroup) ?? []}
               expressionGroup={expressionGroup ?? []}
               expressionEditorRef={expressionEditorRef}
               selectedKey={selectedKey}

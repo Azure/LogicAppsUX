@@ -69,6 +69,7 @@ export const ScratchTab = () => {
     editorId: string,
     labelId: string,
     tokenPickerMode?: TokenPickerMode,
+    _editorValueType?: string,
     closeTokenPicker?: () => void,
     onClick?: (b: boolean) => void,
     tokenClicked?: (token: ValueSegment) => void

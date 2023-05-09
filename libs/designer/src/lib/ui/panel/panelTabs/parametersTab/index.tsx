@@ -274,12 +274,16 @@ const ParameterSection = ({
     editorId: string,
     labelId: string,
     tokenPickerMode?: TokenPickerMode,
+    editorType?: string,
     isCodeEditor?: boolean,
     closeTokenPicker?: () => void,
     tokenPickerClicked?: (b: boolean) => void,
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
-    const parameterType = (nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === parameterId) ?? {})?.type;
+    const parameterType =
+      editorType ??
+      (nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === parameterId) ?? {})?.type ??
+      constants.SWAGGER.TYPE.ANY;
     const supportedTypes: string[] = parameterType
       ? getPropertyValue(constants.TOKENS, parameterType) || [constants.SWAGGER.TYPE.ANY, parameterType]
       : null;
@@ -304,7 +308,8 @@ const ParameterSection = ({
       <TokenPicker
         editorId={editorId}
         labelId={labelId}
-        tokenGroup={filteredTokenGroup}
+        tokenGroup={tokenGroup}
+        filteredTokenGroup={filteredTokenGroup}
         expressionGroup={expressionGroup}
         tokenPickerFocused={tokenPickerClicked}
         initialMode={tokenPickerMode}
@@ -367,6 +372,7 @@ const ParameterSection = ({
             editorId: string,
             labelId: string,
             tokenPickerMode?: TokenPickerMode,
+            editorType?: string,
             closeTokenPicker?: () => void,
             tokenPickerClicked?: (b: boolean) => void,
             tokenClickedCallback?: (token: ValueSegment) => void
@@ -376,6 +382,7 @@ const ParameterSection = ({
               editorId,
               labelId,
               tokenPickerMode,
+              editorType,
               editor?.toLowerCase() === constants.EDITOR.CODE,
               closeTokenPicker,
               tokenPickerClicked,

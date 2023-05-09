@@ -44,6 +44,7 @@ export type GetTokenPickerHandler = (
   editorId: string,
   labelId: string,
   tokenPickerMode?: TokenPickerMode,
+  editorType?: string,
   closeTokenPicker?: () => void,
   tokenPickerClicked?: (b: boolean) => void,
   tokenClickedCallback?: (token: ValueSegment) => void
@@ -67,6 +68,7 @@ export interface BaseEditorProps {
   showCallbackTokens?: boolean;
   labelId?: string;
   label?: string;
+  editorValueType?: string;
   tokenPickerButtonEditorProps?: TokenPickerButtonEditorProps;
   onChange?: ChangeHandler;
   onBlur?: () => void;
@@ -97,6 +99,7 @@ export const BaseEditor = ({
   isTrigger,
   showCallbackTokens,
   tokenPickerButtonEditorProps,
+  editorValueType,
   onFocus,
   onBlur,
   getTokenPicker,
@@ -206,7 +209,7 @@ export const BaseEditor = ({
           {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
           {children}
           {(!isTrigger || showCallbackTokens) && tokens && getInTokenPicker()
-            ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, closeTokenPicker, tokenPickerClicked)
+            ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, editorValueType, closeTokenPicker, tokenPickerClicked)
             : null}
         </div>
 

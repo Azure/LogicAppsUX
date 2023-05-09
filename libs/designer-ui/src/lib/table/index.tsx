@@ -15,6 +15,7 @@ export interface TableEditorProps extends DictionaryEditorProps {
   labelId: string;
   titles: string[];
   keys: string[];
+  types: string[];
 }
 
 const dropdownStyles: Partial<IDropdownStyles> = {
@@ -45,6 +46,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({
   initialValue,
   columnMode,
   titles,
+  types,
   readonly,
   labelId,
   placeholder,
@@ -87,6 +89,8 @@ export const TableEditor: React.FC<TableEditorProps> = ({
             labelId={labelId}
             keyTitle={titles[0]}
             valueTitle={titles[1]}
+            editorKeyType={types[0]}
+            editorValueType={types[1]}
             dictionaryType={DictionaryType.TABLE}
             placeholder={placeholder}
             readonly={readonly}

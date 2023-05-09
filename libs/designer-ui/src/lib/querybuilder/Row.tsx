@@ -1,6 +1,7 @@
 import type { GroupedItems, GroupItems } from '.';
 import { GroupType } from '.';
 import { Checkbox } from '../checkbox';
+import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
@@ -251,6 +252,7 @@ export const Row = ({
       )}
       <div className="msla-querybuilder-row-content">
         <StringEditor
+          editorValueType={constants.SWAGGER.TYPE.ANY}
           readonly={readonly}
           className={'msla-querybuilder-row-value-input'}
           initialValue={operand1}
@@ -262,6 +264,7 @@ export const Row = ({
         />
         <RowDropdown disabled={readonly || key.length === 0} condition={operator} onChange={handleSelectedOption} key={operator} />
         <StringEditor
+          editorValueType={constants.SWAGGER.TYPE.ANY}
           readonly={readonly || key.length === 0}
           className={'msla-querybuilder-row-value-input'}
           initialValue={operand2}

@@ -16,6 +16,7 @@ export const StringEditor = ({
   initialValue,
   labelId,
   clearEditorOnTokenInsertion,
+  editorValueType,
   editorBlur,
   onChange,
   ...baseEditorProps
@@ -41,6 +42,7 @@ export const StringEditor = ({
         clearEditor: clearEditorOnTokenInsertion,
         singleValueSegment: clearEditorOnTokenInsertion,
       }}
+      editorValueType={editorValueType}
       readonly={baseEditorProps.readonly}
       isTrigger={baseEditorProps.isTrigger}
       showCallbackTokens={baseEditorProps.showCallbackTokens}
