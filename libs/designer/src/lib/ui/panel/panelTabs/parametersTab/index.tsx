@@ -235,12 +235,18 @@ const ParameterSection = ({
     },
     getDisplayValueFromSelectedItem: (selectedItem: any): string => {
       const dependency = dependencies.inputs[parameter.parameterKey];
-      const propertyPath = dependency.filePickerInfo?.fullTitlePath ?? dependency.filePickerInfo?.browse.itemFullTitlePath;
+      const propertyPath =
+        dependency.filePickerInfo?.fullTitlePath ??
+        dependency.filePickerInfo?.browse.itemFullTitlePath ??
+        dependency.definition?.extension?.dynamicState?.dynamicExtension?.browse.itemFullTitlePath;
       return selectedItem[propertyPath ?? ''];
     },
     getValueFromSelectedItem: (selectedItem: any): string => {
       const dependency = dependencies.inputs[parameter.parameterKey];
-      const propertyPath = dependency.filePickerInfo?.valuePath ?? dependency.filePickerInfo?.browse.itemValuePath;
+      const propertyPath =
+        dependency.filePickerInfo?.valuePath ??
+        dependency.filePickerInfo?.browse.itemValuePath ??
+        dependency.definition?.extension?.dynamicState?.dynamicExtension?.browse.itemValuePath;
       return selectedItem[propertyPath ?? ''];
     },
     onFolderNavigation: (selectedItem: any | undefined): void => {

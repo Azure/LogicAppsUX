@@ -1,4 +1,4 @@
-import type { IConnectorService, ListDynamicValue, ManagedIdentityRequestProperties } from '../connector';
+import type { IConnectorService, ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicValue } from '../connector';
 import { getClientRequestIdFromHeaders, pathCombine } from '../helpers';
 import type { IHttpClient } from '../httpClient';
 import { getIntl } from '@microsoft/intl-logic-apps';
@@ -135,6 +135,17 @@ export abstract class BaseConnectorService implements IConnectorService {
       content: { parameters: invokeParameters, configuration },
     });
     return this._getResponseFromDynamicApi(response, uri);
+  }
+
+  getTreeDynamicValues(
+    _connectionId: string,
+    _connectorId: string,
+    _operationId: string,
+    _parameterAlias: string | undefined,
+    _parameters: Record<string, any>,
+    _dynamicState: any
+  ): Promise<TreeDynamicValue[]> {
+    throw new UnsupportedException('Unsupported dynamic call connector method - getTreeDynamicValues');
   }
 
   protected _isClientSupportedOperation(connectorId: string, operationId: string): boolean {

@@ -82,6 +82,25 @@ export interface IConnectorService {
     dynamicState: any,
     nodeMetadata: any
   ): Promise<OpenAPIV2.SchemaObject>;
+
+  /**
+   * Gets the tree dynamic values.
+   * @arg {string} connectionId - The connection id.
+   * @arg {string} connectorId - The connector id.
+   * @arg {string} operationId - The operation id for the parameter whose dynamic values must be fetched.
+   * @arg {string} parameterAlias - The parameter alias for the parameter whose dynamic values must be fetched.
+   * @arg {Record<string, any>} parameters - The operation parameters. Keyed by parameter id.
+   * @arg {any} dynamicState - Dynamic state required for invocation.
+   * @return {Promise<TreeDynamicValue[]>}
+   */
+  getTreeDynamicValues(
+    connectionId: string,
+    connectorId: string,
+    operationId: string,
+    parameterAlias: string | undefined,
+    parameters: Record<string, any>,
+    dynamicState: any
+  ): Promise<TreeDynamicValue[]>;
 }
 
 let service: IConnectorService;

@@ -181,6 +181,45 @@ export const getLegacyDynamicTreeItems = async (
   return response;
 };
 
+export const getDynamicTreeItems = async (
+  connectionId: string,
+  connectorId: string,
+  operationId: string,
+  parameterAlias: string | undefined,
+  parameters: Record<string, any>,
+  dynamicState: any
+): Promise<TreeDynamicValue[]> => {
+  const queryClient = getReactQueryClient();
+  const service = ConnectorService();
+
+  const values = await queryClient.fetchQuery(
+    [
+      'dynamictreeitems',
+      connectionId.toLowerCase(),
+      connectorId.toLowerCase(),
+      operationId?.toLowerCase(),
+      getParametersKey(parameters).toLowerCase(),
+    ],
+    () => service.getTreeDynamicValues(connectionId, connectorId, operationId, parameterAlias, parameters, dynamicState)
+  );
+
+  if (values && values.length) {
+    return values.map((treeDynamicValue: any) => {
+      return {
+        displayName: treeDynamicValue.displayName,
+        isParent: treeDynamicValue.isParent,
+        value: {
+          id: treeDynamicValue.dynamicState?.selectionState?.id,
+          [dynamicState.dynamicExtension.browse.itemValuePath]: treeDynamicValue.value,
+          [dynamicState.dynamicExtension.browse.itemFullTitlePath]: treeDynamicValue.fullyQualifiedDisplayName,
+        },
+      };
+    });
+  }
+
+  return values;
+};
+
 const getParametersKey = (parameters: Record<string, any>): string => {
   return Object.keys(parameters).reduce(
     (result: string, parameterKey: string) => `${result}, ${parameterKey}-${JSON.stringify(parameters[parameterKey])}`,
