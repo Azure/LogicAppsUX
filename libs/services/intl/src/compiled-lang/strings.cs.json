@@ -95,6 +95,12 @@
       "value": "Stránkování"
     }
   ],
+  "+ym4nO": [
+    {
+      "type": 0,
+      "value": "Tracked Properties"
+    }
+  ],
   "//nQG4": [
     {
       "type": 0,
@@ -227,10 +233,38 @@
       "value": "Trigger"
     }
   ],
+  "04AwK7": [
+    {
+      "type": 0,
+      "value": "Error code: '"
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": "', Message: '"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
       "value": "Vrátí začátek hodiny do předaného řetězcového časového razítka."
+    }
+  ],
+  "08e2rO": [
+    {
+      "type": 0,
+      "value": "The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection."
     }
   ],
   "09B9CU": [
@@ -1087,6 +1121,16 @@
       "value": "Enter a valid double."
     }
   ],
+  "5FINOY": [
+    {
+      "type": 0,
+      "value": "Workflow has parameter validation errors on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -1109,6 +1153,20 @@
     {
       "type": 0,
       "value": "Vrátí první prvek v předaném poli nebo řetězci."
+    }
+  ],
+  "5akc1Q": [
+    {
+      "type": 0,
+      "value": "Unsupported 'in' value : '"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "' in Parameter"
     }
   ],
   "5b0sKi": [
@@ -1305,6 +1363,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Řetězec, ze kterého se má získat podřetězec."
+    }
+  ],
+  "7S2wtE": [
+    {
+      "type": 0,
+      "value": "Schema Validation"
     }
   ],
   "7WVgiU": [
@@ -1619,6 +1683,20 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9W0lck": [
+    {
+      "type": 0,
+      "value": "Invalid split on value '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "', cannot find in outputs."
     }
   ],
   "9YGcT2": [
@@ -1979,6 +2057,12 @@
       "value": "Number"
     }
   ],
+  "BeqBP7": [
+    {
+      "type": 0,
+      "value": "Automatic Decompression"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1995,6 +2079,12 @@
     {
       "type": 0,
       "value": "Select a managed identity"
+    }
+  ],
+  "BtL7UI": [
+    {
+      "type": 0,
+      "value": "No additional information is needed for this step. You will be able to use the outputs in subsequent steps."
     }
   ],
   "BuYrD3": [
@@ -2125,6 +2215,20 @@
     {
       "type": 0,
       "value": "Select a value"
+    }
+  ],
+  "DQV7aK": [
+    {
+      "type": 0,
+      "value": "Alt/Option + click to download '"
+    },
+    {
+      "type": 1,
+      "value": "displayName"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "DWd9vy": [
@@ -2669,6 +2773,16 @@
       "value": "File Content"
     }
   ],
+  "H/QVod": [
+    {
+      "type": 0,
+      "value": "Workflow has settings validation errors on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "H17jEE": [
     {
       "type": 0,
@@ -2711,20 +2825,6 @@
       "value": "Month"
     }
   ],
-  "HJIZrG": [
-    {
-      "type": 0,
-      "value": "Další diagnostické informace: x-ms-client-request-id je "
-    },
-    {
-      "type": 1,
-      "value": "clientRequestId"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "HOchry": [
     {
       "type": 0,
@@ -2741,12 +2841,6 @@
     {
       "type": 0,
       "value": "Headers"
-    }
-  ],
-  "HXLutF": [
-    {
-      "type": 0,
-      "value": "Klíč"
     }
   ],
   "Hbqlzk": [
@@ -2873,6 +2967,20 @@
     {
       "type": 0,
       "value": "Error Code"
+    }
+  ],
+  "IjEKvh": [
+    {
+      "type": 0,
+      "value": "Error executing the api '"
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "IjZFjQ": [
@@ -3213,20 +3321,6 @@
     {
       "type": 0,
       "value": "Vytváření…"
-    }
-  ],
-  "LOwePI": [
-    {
-      "type": 0,
-      "value": "Neplatný typ hodnoty rozdělení „"
-    },
-    {
-      "type": 1,
-      "value": "splitOn"
-    },
-    {
-      "type": 0,
-      "value": "“ – rozdělení není v poli."
     }
   ],
   "LR/3Lr": [
@@ -3911,6 +4005,16 @@
       "value": "Add dynamic data or expressions by inserting a /"
     }
   ],
+  "Q8zxeb": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " Key"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -4033,12 +4137,6 @@
       "value": "Aktivační události nelze odstranit."
     }
   ],
-  "R0/Vx4": [
-    {
-      "type": 0,
-      "value": "Text field for slider"
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -4135,12 +4233,6 @@
       "value": "issue"
     }
   ],
-  "S8P4N5": [
-    {
-      "type": 0,
-      "value": "Odstranit"
-    }
-  ],
   "SADSSs": [
     {
       "type": 0,
@@ -4227,6 +4319,20 @@
     {
       "type": 0,
       "value": "Hotovo"
+    }
+  ],
+  "Sw+u4M": [
+    {
+      "type": 0,
+      "value": "Failed to retrive dynamic inputs. Error details: '"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "SyFXM3": [
@@ -4763,6 +4869,16 @@
       "value": "Povinný parametr. První celé číslo v poli."
     }
   ],
+  "WTZvGW": [
+    {
+      "type": 0,
+      "value": "Workflow has invalid connections on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -4931,10 +5047,30 @@
       "value": "Count"
     }
   ],
+  "Xew1Df": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is '"
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "Xj0Gr/": [
     {
       "type": 0,
       "value": "Target schema element cannot be deleted."
+    }
+  ],
+  "Xj4xwI": [
+    {
+      "type": 0,
+      "value": "The managed identity used with this operation no longer exists. To continue, select an available identity or change the connection."
     }
   ],
   "XkBxv5": [
@@ -4989,20 +5125,6 @@
     {
       "type": 0,
       "value": "Další informace"
-    }
-  ],
-  "Y7yyKD": [
-    {
-      "type": 0,
-      "value": "Typ výrazu "
-    },
-    {
-      "type": 1,
-      "value": "type"
-    },
-    {
-      "type": 0,
-      "value": " je neplatný."
     }
   ],
   "Y9kBz5": [
@@ -5209,20 +5331,6 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Tomská oblast"
-    }
-  ],
-  "Zr0yTE": [
-    {
-      "type": 0,
-      "value": "Nepodporovaná hodnota in: "
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": " v parametru"
     }
   ],
   "a7j3gS": [
@@ -5471,6 +5579,12 @@
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "c7tRg/": [
+    {
+      "type": 0,
+      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger."
     }
   ],
   "c8UPLp": [
@@ -5881,12 +5995,6 @@
       "value": "Email"
     }
   ],
-  "g0a4Qe": [
-    {
-      "type": 0,
-      "value": "Hodnota"
-    }
-  ],
   "g1zwch": [
     {
       "type": 0,
@@ -6013,20 +6121,6 @@
       "value": "Delete"
     }
   ],
-  "gpbgjJ": [
-    {
-      "type": 0,
-      "value": "Neplatná hodnota rozdělení „"
-    },
-    {
-      "type": 1,
-      "value": "splitOn"
-    },
-    {
-      "type": 0,
-      "value": "“ – nelze najít ve výstupech."
-    }
-  ],
   "gu9o9z": [
     {
       "type": 0,
@@ -6127,16 +6221,6 @@
     {
       "type": 0,
       "value": "Vrátí výsledek rozdílu daných dvou čísel."
-    }
-  ],
-  "hdnZ9Y": [
-    {
-      "type": 0,
-      "value": "Stisknutí Alt/Option + kliknutím stáhnete "
-    },
-    {
-      "type": 1,
-      "value": "displayName"
     }
   ],
   "hic23z": [
@@ -6459,16 +6543,6 @@
       "value": "Nepovedlo se vygenerovat schéma."
     }
   ],
-  "jjYA4u": [
-    {
-      "type": 0,
-      "value": "Nepodporovaný formát odkazu na připojení manifestu: "
-    },
-    {
-      "type": 1,
-      "value": "referenceKeyFormat"
-    }
-  ],
   "juR40n": [
     {
       "type": 0,
@@ -6789,6 +6863,16 @@
       "value": "Funkce se odstranila."
     }
   ],
+  "mGPqAg": [
+    {
+      "type": 0,
+      "value": "Delete "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -6811,6 +6895,20 @@
     {
       "type": 0,
       "value": "Zakóduje vstupní řetězec jako adresu URL."
+    }
+  ],
+  "mPuXlv": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "', split on not in array."
     }
   ],
   "mQotIu": [
@@ -6859,6 +6957,16 @@
     {
       "type": 0,
       "value": "Zadejte heslo jako prostý text nebo použijte zabezpečený parametr."
+    }
+  ],
+  "mvu5xN": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " Value"
     }
   ],
   "mwEHSX": [
@@ -7133,20 +7241,6 @@
       "value": "(UTC+13:00) Samoa"
     }
   ],
-  "p7YGxW": [
-    {
-      "type": 0,
-      "value": "Při provádění rozhraní API "
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": " došlo k chybě."
-    }
-  ],
   "pC2nr2": [
     {
       "type": 0,
@@ -7267,10 +7361,30 @@
       "value": "Přidá celočíselný počet sekund do předaného řetězcového časového razítka."
     }
   ],
+  "q8vnZQ": [
+    {
+      "type": 0,
+      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned."
+    }
+  ],
   "q9hf8i": [
     {
       "type": 0,
       "value": "(UTC+04:00) Astrachaň, Uljanovsk"
+    }
+  ],
+  "qAlTD5": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: '"
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "qGfwxW": [
@@ -7307,24 +7421,6 @@
     {
       "type": 0,
       "value": "Povinné"
-    }
-  ],
-  "qTqSqD": [
-    {
-      "type": 0,
-      "value": "Kód chyby: "
-    },
-    {
-      "type": 1,
-      "value": "errorCode"
-    },
-    {
-      "type": 0,
-      "value": ", zpráva: "
-    },
-    {
-      "type": 1,
-      "value": "message"
     }
   ],
   "qUMXpq": [
@@ -7733,6 +7829,12 @@
     {
       "type": 0,
       "value": "Tato funkce poskytuje podrobnosti samotného pracovního postupu za běhu."
+    }
+  ],
+  "tMdcE1": [
+    {
+      "type": 0,
+      "value": "Invalid connection, please update your connection to load complete details"
     }
   ],
   "tNoZx2": [
@@ -8171,6 +8273,16 @@
       "value": "Menu"
     }
   ],
+  "wit5UT": [
+    {
+      "type": 0,
+      "value": "Failed to retrive dynamic outputs, outputs of this operation might not be visible in subsequent actions. Error details: "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    }
+  ],
   "wkiETV": [
     {
       "type": 0,
@@ -8373,6 +8485,20 @@
     {
       "type": 0,
       "value": "Zvolit hodnotu"
+    }
+  ],
+  "yjierd": [
+    {
+      "type": 0,
+      "value": "Invalid expression type '"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "yoCi15": [
