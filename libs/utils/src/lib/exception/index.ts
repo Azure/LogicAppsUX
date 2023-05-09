@@ -7,3 +7,4 @@ export * from './unsupported';
 export * from './user';
 export * from './validation';
 export * from './invalidFormat';
+export * from './serialization';
