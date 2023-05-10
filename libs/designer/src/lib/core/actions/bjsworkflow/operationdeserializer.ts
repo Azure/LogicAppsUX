@@ -39,6 +39,7 @@ import {
   getCustomSwaggerIfNeeded,
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
+  getParsedManifest,
   updateCallbackUrlInInputs,
   updateInvokerSettings,
 } from './initialize';
@@ -184,7 +185,8 @@ export const initializeOperationDetailsForManifest = async (
       dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
 
       const { connectorId, operationId } = nodeOperationInfo;
-      const schema = staticResultService.getOperationResultSchema(connectorId, operationId);
+      const parsedManifest = getParsedManifest(manifest);
+      const schema = staticResultService.getOperationResultSchema(connectorId, operationId, parsedManifest);
       schema.then((schema) => {
         if (schema) {
           dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));

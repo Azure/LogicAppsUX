@@ -4,6 +4,7 @@ import {
   flatFileConnectorId,
   flatfiledecoding,
   flatfileencoding,
+  http,
   httpaction,
   httpConnectorId,
   httpswaggeraction,
@@ -20,8 +21,8 @@ import { FlatFileEncodingStaticResultSchema } from './schemas/flatfileencoding';
 import { HttpStaticResultSchema } from './schemas/httpresult';
 import { ParseJsonStaticResultSchema } from './schemas/parseJson';
 import { QueryStaticResultSchema } from './schemas/query';
-import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
-import { isCustomConnector, isManagedConnector, isSharedManagedConnector } from '@microsoft/utils-logic-apps';
+import type { ManifestParser, SwaggerParser } from '@microsoft/parsers-logic-apps';
+import { isCustomConnector, isManagedConnector, isSharedManagedConnectorFromPApps, isSharedManagedConnector } from '@microsoft/utils-logic-apps';
 
 /**
  * Factory method to provide the static result root schema for an operation
@@ -30,7 +31,7 @@ export class StaticResultSchemaService implements IStaticResultSchemaService {
   getOperationResultSchema(
     connectorId: string,
     operationId: string,
-    swaggerParser?: SwaggerParser
+    parser?: SwaggerParser | ManifestParser
   ): Promise<StaticResultRootSchemaType | undefined> {
     switch (connectorId.toLowerCase()) {
       case httpConnectorId.toLowerCase():
@@ -70,8 +71,8 @@ export class StaticResultSchemaService implements IStaticResultSchemaService {
 
         break;
       default:
-        if ((isSharedManagedConnector(connectorId) || isCustomConnector(connectorId) || isManagedConnector(connectorId)) && swaggerParser) {
-          return getStaticResultSchemaForAPIConnector(operationId, swaggerParser);
+        if ((isSharedManagedConnector(connectorId) || isSharedManagedConnectorFromPApps(connectorId) || isCustomConnector(connectorId) || isManagedConnector(connectorId)) && parser) {
+          return getStaticResultSchemaForAPIConnector(operationId, parser);
         }
 
         break;
