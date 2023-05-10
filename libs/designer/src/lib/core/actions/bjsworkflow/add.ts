@@ -24,7 +24,6 @@ import { isConnectionRequiredForOperation, updateNodeConnection } from './connec
 import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
-  getParsedManifest,
   updateAllUpstreamNodes,
   updateInvokerSettings,
 } from './initialize';
@@ -32,7 +31,8 @@ import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings } from './settings';
 import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
-import type { ManifestParser, SwaggerParser } from '@microsoft/parsers-logic-apps';
+import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
+import  { ManifestParser } from '@microsoft/parsers-logic-apps';
 import type {
   Connector,
   DiscoveryOperation,
@@ -117,7 +117,7 @@ const initializeOperationDetails = async (
     const { iconUri, brandColor } = manifest.properties;
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs);
-    parsedManifest = getParsedManifest(manifest);
+    parsedManifest = new ManifestParser(manifest);
 
     if (parameterValues) {
       // For actions with selected Azure Resources
