@@ -1514,12 +1514,6 @@
       "value": "Menambahkan jumlah bilangan bulat hari ke tanda waktu string yang diberikan"
     }
   ],
-  "8yjjTX": [
-    {
-      "type": 0,
-      "value": "Connect via Service Principal"
-    }
-  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -2147,6 +2141,12 @@
     {
       "type": 0,
       "value": "Show mini-map"
+    }
+  ],
+  "DjbVKU": [
+    {
+      "type": 0,
+      "value": "OAuth"
     }
   ],
   "DkF25I": [
@@ -3447,6 +3447,12 @@
       "value": "Menampilkan representasi biner dari nilai"
     }
   ],
+  "O/fh9A": [
+    {
+      "type": 0,
+      "value": "Service Principal"
+    }
+  ],
   "O27gKq": [
     {
       "type": 0,
@@ -4216,12 +4222,6 @@
       "value": "ID permintaan klien"
     }
   ],
-  "TeRxLv": [
-    {
-      "type": 0,
-      "value": "Use a service principal to connect using application permissions."
-    }
-  ],
   "TgcgXE": [
     {
       "type": 0,
@@ -4914,6 +4914,12 @@
     {
       "type": 0,
       "value": "Masukkan Pfx"
+    }
+  ],
+  "YRk271": [
+    {
+      "type": 0,
+      "value": "Authentication"
     }
   ],
   "YUbSFS": [
@@ -6141,12 +6147,6 @@
       "value": "Uji"
     }
   ],
-  "izS5yQ": [
-    {
-      "type": 0,
-      "value": "Learn more"
-    }
-  ],
   "j1VU25": [
     {
       "type": 0,
@@ -6265,12 +6265,6 @@
     {
       "type": 0,
       "value": "Wajib. String dengtan pengodean base64."
-    }
-  ],
-  "k1N9Si": [
-    {
-      "type": 0,
-      "value": "Must provide default value for parameter."
     }
   ],
   "k41+13": [
@@ -6415,6 +6409,12 @@
     {
       "type": 0,
       "value": " menit"
+    }
+  ],
+  "l72gf4": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
     }
   ],
   "lFve22": [

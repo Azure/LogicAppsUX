@@ -1514,12 +1514,6 @@
       "value": "渡された文字列のタイムスタンプに日数を表す整数を加算します"
     }
   ],
-  "8yjjTX": [
-    {
-      "type": 0,
-      "value": "Connect via Service Principal"
-    }
-  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -2147,6 +2141,12 @@
     {
       "type": 0,
       "value": "Show mini-map"
+    }
+  ],
+  "DjbVKU": [
+    {
+      "type": 0,
+      "value": "OAuth"
     }
   ],
   "DkF25I": [
@@ -3447,6 +3447,12 @@
       "value": "値のバイナリ表現を返します"
     }
   ],
+  "O/fh9A": [
+    {
+      "type": 0,
+      "value": "Service Principal"
+    }
+  ],
   "O27gKq": [
     {
       "type": 0,
@@ -4216,12 +4222,6 @@
       "value": "クライアント要求 ID"
     }
   ],
-  "TeRxLv": [
-    {
-      "type": 0,
-      "value": "Use a service principal to connect using application permissions."
-    }
-  ],
   "TgcgXE": [
     {
       "type": 0,
@@ -4914,6 +4914,12 @@
     {
       "type": 0,
       "value": "PFX を入力"
+    }
+  ],
+  "YRk271": [
+    {
+      "type": 0,
+      "value": "Authentication"
     }
   ],
   "YUbSFS": [
@@ -6133,12 +6139,6 @@
       "value": "テスト"
     }
   ],
-  "izS5yQ": [
-    {
-      "type": 0,
-      "value": "Learn more"
-    }
-  ],
   "j1VU25": [
     {
       "type": 0,
@@ -6257,12 +6257,6 @@
     {
       "type": 0,
       "value": "必須。Base64 でエンコードされた文字列。"
-    }
-  ],
-  "k1N9Si": [
-    {
-      "type": 0,
-      "value": "Must provide default value for parameter."
     }
   ],
   "k41+13": [
@@ -6407,6 +6401,12 @@
     {
       "type": 0,
       "value": " 分"
+    }
+  ],
+  "l72gf4": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
     }
   ],
   "lFve22": [
