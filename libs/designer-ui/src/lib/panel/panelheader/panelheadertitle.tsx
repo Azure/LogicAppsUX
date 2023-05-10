@@ -15,12 +15,13 @@ const titleTextFieldStyle: Partial<ITextFieldStyles> = {
   },
 };
 
+export type TitleChangeHandler = (newValue: string) => { valid: boolean; oldValue?: string };
 export interface PanelHeaderTitleProps {
   readOnlyMode?: boolean;
   renameTitleDisabled?: boolean;
   titleValue?: string;
   titleId?: string;
-  onChange: (newValue: string) => void;
+  onChange: TitleChangeHandler;
 }
 
 export const PanelHeaderTitle = ({
@@ -35,14 +36,32 @@ export const PanelHeaderTitle = ({
   const titleTextFieldRef = React.createRef<ITextField>();
 
   const [newTitleValue, setNewTitleValue] = useState(titleValue);
+  const [validValue, setValidValue] = useState(titleValue);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const onTitleChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
-    onChange(newValue || '');
+    const result = onChange(newValue || '');
+    if (!result.valid) {
+      setErrorMessage(
+        intl.formatMessage({
+          defaultMessage: 'The name already exists or is invalid, please update it before proceeding.',
+          description: 'Text for invalid operation title name',
+        })
+      );
+      setValidValue(result.oldValue);
+    } else {
+      setErrorMessage('');
+    }
+
     setNewTitleValue(newValue || '');
   };
 
   const onTitleBlur = (): void => {
-    onChange(newTitleValue || '');
+    if (errorMessage) {
+      onChange(validValue || '');
+      setNewTitleValue(validValue);
+      setErrorMessage('');
+    }
   };
 
   const readOnly = readOnlyMode || renameTitleDisabled;
@@ -62,6 +81,7 @@ export const PanelHeaderTitle = ({
       maxLength={constants.PANEL.MAX_TITLE_LENGTH}
       borderless
       value={newTitleValue}
+      errorMessage={errorMessage}
       onChange={onTitleChange}
       onBlur={onTitleBlur}
       onKeyDown={handleOnEscapeDown}

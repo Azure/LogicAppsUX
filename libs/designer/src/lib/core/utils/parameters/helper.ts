@@ -2811,17 +2811,17 @@ export function parameterValueToString(
         ...parameterInfo,
         value: parameterInfo.value.map((val) => {
           const oldId = val.token?.actionName ?? '';
-          if (val.token && idReplacements[oldId]) {
+          if (isTokenValueSegment(val) && idReplacements[oldId]) {
             const newId = idReplacements[oldId];
             didRemap = true;
             return {
               ...val,
-              value: val.value?.replace(`'${oldId}'`, `'${newId}'`),
+              value: val.value?.replaceAll(`'${oldId}'`, `'${newId}'`),
               token: {
                 ...val.token,
                 actionName: newId,
               },
-            };
+            } as ValueSegment;
           }
           return val;
         }),
