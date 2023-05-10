@@ -2,6 +2,7 @@ import { WorkflowCodeProjectCreateStep } from './WorkflowCodeProjectCreateStep';
 import { InvokeFunctionProjectSetup } from './createFunction/InvokeFunctionProjectSetup';
 import { CodeProjectWorkflowStateTypeStep } from './createLogicApp/CodeProjectWorkflowStateTypeStep';
 import { addInitVSCodeStepsCodeProject } from './createLogicApp/initLogicAppCodeProjectVScode/InitLanguageStep';
+import { DesignerConfig } from './createLogicApp/workflowDesigner/DesignerConfig';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
@@ -46,6 +47,10 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     // Set the Logic App and Functions folder paths as properties of the AzureWizard
     context.logicAppFolderPath = logicAppFolderPath;
     context.functionFolderPath = functionFolderPath;
+
+    // Generate the VS Code configuration files in the specified folder
+    const createDesignerConfigFiles = new DesignerConfig();
+    await createDesignerConfigFiles.prompt(context);
 
     // Create the workspace file
     await this.createWorkspaceFile(context);
