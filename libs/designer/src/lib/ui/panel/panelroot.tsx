@@ -43,9 +43,16 @@ import { testingTab } from './panelTabs/testingTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { WorkflowParametersPanel } from './workflowparameterspanel';
 import type { CommonPanelProps, MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
-import { DeleteNodeModal } from '@microsoft/designer-ui';
-import { MenuItemType, PanelContainer, PanelHeaderControlType, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
-import { isNullOrUndefined, isScopeOperation, isSubGraphNode, SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
+import {
+  DeleteNodeModal,
+  MenuItemType,
+  PanelContainer,
+  PanelHeaderControlType,
+  PanelLocation,
+  PanelScope,
+  PanelSize,
+} from '@microsoft/designer-ui';
+import { isNullOrUndefined, isScopeOperation, isSubGraphNode, SUBGRAPH_TYPES } from '@microsoft/utils-logic-apps';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -357,13 +364,15 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
         title={selectedNodeDisplayName}
         onTitleChange={onTitleChange}
       />
-      <DeleteNodeModal
-        nodeId={selectedNode}
-        nodeType={graphNode?.type || WORKFLOW_NODE_TYPES.GRAPH_NODE}
-        isOpen={showDeleteModal}
-        onDismiss={() => setShowDeleteModal(false)}
-        onConfirm={handleDelete}
-      />
+      {graphNode?.type && (
+        <DeleteNodeModal
+          nodeId={selectedNode}
+          nodeType={graphNode.type}
+          isOpen={showDeleteModal}
+          onDismiss={() => setShowDeleteModal(false)}
+          onConfirm={handleDelete}
+        />
+      )}
     </>
   );
 };
