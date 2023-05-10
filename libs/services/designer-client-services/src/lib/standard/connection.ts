@@ -511,7 +511,7 @@ export class StandardConnectionService extends BaseConnectionService {
 
       return response;
     } catch (e: any) {
-      return Promise.reject(JSON.parse(e?.responseText));
+      return Promise.reject(e);
     }
   }
 }
