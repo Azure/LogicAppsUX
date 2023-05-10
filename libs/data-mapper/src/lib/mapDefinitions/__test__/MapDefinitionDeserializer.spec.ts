@@ -1761,7 +1761,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[9][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/text/*/itemNumber');
       });
 
-      it.skip('creates a many-to-one loop connections', () => {
+      it('creates a many-to-one loop connections', () => {
         simpleMap['root'] = {
           TargetMadeUp: {
             ManySingleArray: {
@@ -1783,29 +1783,26 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries.length).toEqual(5);
 
-        expect(resultEntries[1][0]).toEqual('source-/root/SourceMadeUp/ManySingleArray/*');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManySingleArray/*');
+        expect(resultEntries[0][0]).toEqual('source-/root/SourceMadeUp/ManySingleArray/*');
+        expect(resultEntries[0][1]).toBeTruthy();
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManySingleArray/*');
 
         expect(resultEntries[1][0]).toEqual('source-/root/SourceMadeUp/ManySingleArray/*/*');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManySingleArray/*/*');
+        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManySingleArray/*');
 
-        expect(resultEntries[1][0]).toEqual('source-/root/SourceMadeUp/ManySingleArray/*/*/SourceMadeUp_NeedAProp');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManySingleArray/*/*/TargetMadeUp_NeedAProp');
+        expect(resultEntries[2][0]).toEqual('source-/root/SourceMadeUp/ManySingleArray/*/*/SourceMadeUp_NeedAProp');
+        expect(resultEntries[2][1]).toBeTruthy();
+        expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManySingleArray/*/TargetMadeUp_NeedAProp');
 
-        expect(resultEntries[1][0]).toEqual('target-/root/TargetMadeUp/ManySingleArray/*');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManySingleArray/*');
+        expect(resultEntries[3][0]).toEqual('target-/root/TargetMadeUp/ManySingleArray/*');
+        expect(resultEntries[3][1]).toBeTruthy();
+        expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManySingleArray/*/*');
+        expect((resultEntries[3][1].inputs[0][1] as ConnectionUnit).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManySingleArray/*');
 
-        expect(resultEntries[1][0]).toEqual('target-/root/TargetMadeUp/ManySingleArray/*/*');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManySingleArray/*/*');
-
-        expect(resultEntries[1][0]).toEqual('target-/root/TargetMadeUp/ManySingleArray/*/*/TargetMadeUp_NeedAProp');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        expect(resultEntries[4][0]).toEqual('target-/root/TargetMadeUp/ManySingleArray/*/TargetMadeUp_NeedAProp');
+        expect(resultEntries[4][1]).toBeTruthy();
+        expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
           'source-/root/SourceMadeUp/ManySingleArray/*/*/SourceMadeUp_NeedAProp'
         );
       });

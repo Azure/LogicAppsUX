@@ -1,4 +1,19 @@
 # Logic Apps Designer
+### [2.15.17](https://github.com/Azure/LogicAppsUX/compare/v2.15.16...v2.15.17) (2023-05-10)
+
+
+### Features
+
+* **designer:** Adding folder picker for manifest based operations ([#2284](https://github.com/Azure/LogicAppsUX/issues/2284)) ([69ef285](https://github.com/Azure/LogicAppsUX/commit/69ef28514e8bfbf0c0dee80329d6de9d14dfaf44))
+
+
+### Bug Fixes
+
+* **Data Mapper:** More loops improvements ([#2322](https://github.com/Azure/LogicAppsUX/issues/2322)) ([e5ca150](https://github.com/Azure/LogicAppsUX/commit/e5ca150375edb60f0ee91b373287dd80d6ccf114))
+* **designer:** Deep copy for connections data ([#2306](https://github.com/Azure/LogicAppsUX/issues/2306)) ([9feb127](https://github.com/Azure/LogicAppsUX/commit/9feb1276982af20d1c3c4fd950efed3e63289001))
+* **designer:** Deleting trigger no longer gives invalid RunAfter to children ([#2308](https://github.com/Azure/LogicAppsUX/issues/2308)) ([94728cf](https://github.com/Azure/LogicAppsUX/commit/94728cf58622413be4f083624077aefc3cf79ba6))
+* **designer:** Deletion of ForEach operation causes designer to crash ([#2295](https://github.com/Azure/LogicAppsUX/issues/2295)) ([0dda96f](https://github.com/Azure/LogicAppsUX/commit/0dda96fc98a798814670083180619702c0b4deb2))
+
 ### [2.15.16](https://github.com/Azure/LogicAppsUX/compare/v2.15.15...v2.15.16) (2023-05-10)
 
 
