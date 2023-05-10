@@ -258,7 +258,7 @@ export class StandardConnectionService extends BaseConnectionService {
     const connection = await httpClient.put<any, Connection>({
       uri: `${baseUrl}${connectionId}`,
       queryParameters: { 'api-version': apiVersion },
-      content: connectionInfo?.externalAlternativeParameterValues
+      content: connectionInfo?.alternativeParameterValues
         ? this._getRequestForCreateConnectionWithAlternativeParameters(connectorId, connectionName, connectionInfo)
         : this._getRequestForCreateConnection(connectorId, connectionName, connectionInfo),
     });
@@ -512,7 +512,7 @@ export class StandardConnectionService extends BaseConnectionService {
 
       return response;
     } catch (e: any) {
-      return Promise.reject(JSON.parse(e?.responseText));
+      return Promise.reject(e);
     }
   }
 }

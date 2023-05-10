@@ -1,9 +1,9 @@
-import type { SimpleArrayItem } from '..';
-import type { GetTokenPickerHandler } from '../editor/base';
-import { BaseEditor } from '../editor/base';
+import type { SimpleArrayItem, ValueSegment } from '..';
+import { StringEditor } from '..';
+import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
+import { notEqual } from '../editor/base/utils/helper';
 import { Label } from '../label';
 import type { LabelProps } from '../label';
-import { EditorChange } from './plugins/EditorChange';
 import type { IContextualMenuProps, IIconProps, IIconStyles } from '@fluentui/react';
 import { IconButton, TooltipHost, DefaultButton } from '@fluentui/react';
 import { guid } from '@microsoft/utils-logic-apps';
@@ -31,6 +31,8 @@ export interface ExpandedSimpleArrayProps {
   canDeleteLastItem: boolean;
   readOnly?: boolean;
   isTrigger?: boolean;
+  placeholder?: string;
+  valueType?: string;
   getTokenPicker: GetTokenPickerHandler;
   setItems: (newItems: SimpleArrayItem[]) => void;
 }
@@ -41,6 +43,8 @@ export const ExpandedSimpleArray = ({
   canDeleteLastItem,
   readOnly,
   isTrigger,
+  placeholder,
+  valueType,
   getTokenPicker,
   setItems,
 }: ExpandedSimpleArrayProps): JSX.Element => {
@@ -55,11 +59,19 @@ export const ExpandedSimpleArray = ({
     setItems(items.filter((_, i) => i !== index));
   };
 
+  const handleArrayElementSaved = (prevVal: ValueSegment[], newState: ChangeState, index: number) => {
+    if (notEqual(prevVal, newState.value)) {
+      const newItems = JSON.parse(JSON.stringify(items));
+      newItems[index].value = newState.value;
+      setItems(newItems);
+    }
+  };
+
   return (
     <div className="msla-array-container msla-array-item-container">
       {items.map((item, index) => {
         return (
-          <div key={index} className="msla-array-item">
+          <div key={item.key + index} className="msla-array-item">
             <div className="msla-array-item-header">
               {renderLabel(index, labelProps.text, true)}
               <div className="msla-array-item-commands">
@@ -71,15 +83,15 @@ export const ExpandedSimpleArray = ({
                 />
               </div>
             </div>
-            <BaseEditor
+            <StringEditor
               className="msla-array-editor-container-expanded"
+              valueType={valueType}
               initialValue={item.value ?? []}
-              BasePlugins={{ tokens: true, clearEditor: true }}
               isTrigger={isTrigger}
+              editorBlur={(newState) => handleArrayElementSaved(item.value ?? [], newState, index)}
+              placeholder={placeholder}
               getTokenPicker={getTokenPicker}
-            >
-              <EditorChange item={item.value ?? []} items={items} setItems={setItems} index={index} />
-            </BaseEditor>
+            />
           </div>
         );
       })}
