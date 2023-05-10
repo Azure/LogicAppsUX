@@ -1568,12 +1568,6 @@
       "value": "Adiciona um número inteiro de dias a um carimbo de data/hora de cadeia"
     }
   ],
-  "8yjjTX": [
-    {
-      "type": 0,
-      "value": "Connect via Service Principal"
-    }
-  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -2239,6 +2233,12 @@
     {
       "type": 0,
       "value": "Show mini-map"
+    }
+  ],
+  "DjbVKU": [
+    {
+      "type": 0,
+      "value": "OAuth"
     }
   ],
   "DkF25I": [
@@ -3607,6 +3607,12 @@
       "value": "Devolve uma representação binária de um valor"
     }
   ],
+  "O/fh9A": [
+    {
+      "type": 0,
+      "value": "Service Principal"
+    }
+  ],
   "O27gKq": [
     {
       "type": 0,
@@ -4414,12 +4420,6 @@
       "value": "ID de pedido do cliente"
     }
   ],
-  "TeRxLv": [
-    {
-      "type": 0,
-      "value": "Use a service principal to connect using application permissions."
-    }
-  ],
   "TgcgXE": [
     {
       "type": 0,
@@ -5112,6 +5112,12 @@
     {
       "type": 0,
       "value": "Introduzir Pfx"
+    }
+  ],
+  "YRk271": [
+    {
+      "type": 0,
+      "value": "Authentication"
     }
   ],
   "YUbSFS": [
@@ -6369,12 +6375,6 @@
       "value": "Testar"
     }
   ],
-  "izS5yQ": [
-    {
-      "type": 0,
-      "value": "Learn more"
-    }
-  ],
   "j1VU25": [
     {
       "type": 0,
@@ -6493,12 +6493,6 @@
     {
       "type": 0,
       "value": "Obrigatório. A cadeia codificada em base64."
-    }
-  ],
-  "k1N9Si": [
-    {
-      "type": 0,
-      "value": "Must provide default value for parameter."
     }
   ],
   "k41+13": [
@@ -6643,6 +6637,12 @@
     {
       "type": 0,
       "value": " minutos"
+    }
+  ],
+  "l72gf4": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
     }
   ],
   "lFve22": [
