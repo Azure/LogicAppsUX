@@ -1,5 +1,5 @@
-import { dataMapperApiVersions } from '.';
 import type { GenerateXsltResponse, TestMapResponse } from '.';
+import { dataMapperApiVersions } from '.';
 import type { Schema } from '../../../models';
 import type { FunctionManifest } from '../../../models/Function';
 
@@ -80,7 +80,7 @@ export class DataMapperApiService {
   // NOTE: From BPM repo, looks like two schema files with the same name will prefer the JSON one
   async getSchemaFile(schemaFilename: string): Promise<Schema> {
     const headers = this.getHeaders();
-    const schemaFileUri = this.getSchemaFileUri(schemaFilename.split('.')[0]);
+    const schemaFileUri = this.getSchemaFileUri(schemaFilename.substring(0, schemaFilename.lastIndexOf('.')));
     const response = await fetch(schemaFileUri, { headers, method: 'GET' });
 
     if (!response.ok) {
