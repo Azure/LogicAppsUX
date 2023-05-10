@@ -4,7 +4,6 @@ import {
   flatFileConnectorId,
   flatfiledecoding,
   flatfileencoding,
-  http,
   httpaction,
   httpConnectorId,
   httpswaggeraction,
