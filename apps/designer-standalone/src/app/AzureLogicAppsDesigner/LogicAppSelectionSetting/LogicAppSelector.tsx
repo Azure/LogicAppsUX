@@ -51,7 +51,6 @@ export const LogicAppSelector = () => {
     { enabled: !!workflowName && !!monitoringView }
   );
 
-  console.log('charlie', runInstances);
   const appOptions: IComboBoxOption[] =
     appList?.map((app) => {
       return {
@@ -71,6 +70,17 @@ export const LogicAppSelector = () => {
       })
       .sort((a, b) => a.text.localeCompare(b.text)) ?? [];
 
+  const runOptions =
+    runInstances?.value
+      ?.map<IDropdownOption>((runInstance) => {
+        return {
+          key: runInstance.name ?? '',
+          text: `${runInstance.name} (${runInstance.name})`,
+        };
+      })
+      .sort((a, b) => a.text.localeCompare(b.text)) ?? [];
+
+  console.log('charlie', runOptions);
   return (
     <Stack {...columnProps}>
       <ComboBox
@@ -98,11 +108,11 @@ export const LogicAppSelector = () => {
       />
       {monitoringView ? (
         <Dropdown
-          placeholder={appId ? ([].length > 0 ? 'Select a Run Instance' : 'No Run Instances to Select') : 'Select a Workflow First'}
+          placeholder={appId ? (runOptions.length > 0 ? 'Select a Run Instance' : 'No Run Instances to Select') : 'Select a Workflow First'}
           label="RunInstance"
-          options={[]}
+          options={runOptions}
           selectedKey={workflowName}
-          disabled={true}
+          disabled={runOptions.length === 0 || !appId}
           defaultValue={workflowName}
           onChange={(_, option) => {
             console.log(option);
