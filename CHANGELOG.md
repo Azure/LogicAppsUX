@@ -1,4 +1,34 @@
 # Logic Apps Designer
+### [2.15.16](https://github.com/Azure/LogicAppsUX/compare/v2.15.15...v2.15.16) (2023-05-10)
+
+
+### Features
+
+* **designer:** Legacy Managed Identity connection support ([#2285](https://github.com/Azure/LogicAppsUX/issues/2285)) ([0a981c3](https://github.com/Azure/LogicAppsUX/commit/0a981c3a09fd0598179dd40a05358c7edde2a772))
+* **designer:** Support Type Filtering in Token Picker ([#2292](https://github.com/Azure/LogicAppsUX/issues/2292)) ([459b9c6](https://github.com/Azure/LogicAppsUX/commit/459b9c684566b2e6d3a3f820f1b748bb55b7efbc))
+
+
+### Bug Fixes
+
+* **designer:** do not set Panel header horizontal padding when Panel is collapsed ([#2298](https://github.com/Azure/LogicAppsUX/issues/2298)) ([507ff58](https://github.com/Azure/LogicAppsUX/commit/507ff5807db290518c0b5e742be240b2bedb6f14))
+* **designer:** Fixing request trigger settings for supress workflow headers ([#2291](https://github.com/Azure/LogicAppsUX/issues/2291)) ([1e3d8c5](https://github.com/Azure/LogicAppsUX/commit/1e3d8c5ffa6d0f6b8c79c4029f793bcf23655fee))
+* **designer:** Fixing the value type being sent to workflow parameter… ([#2297](https://github.com/Azure/LogicAppsUX/issues/2297)) ([669e70d](https://github.com/Azure/LogicAppsUX/commit/669e70db8b7ddc90ad80feea9a07a2dc6a59615f))
+* **designer:** TestConnection errors now show properly in panel ([#2301](https://github.com/Azure/LogicAppsUX/issues/2301)) ([698c176](https://github.com/Azure/LogicAppsUX/commit/698c17644acbba1800d3ff0d30b6dfce7df2aa18))
+
+### [2.15.15](https://github.com/Azure/LogicAppsUX/compare/v2.15.14...v2.15.15) (2023-05-09)
+
+
+### Features
+
+* **designer:** Handling partially loaded or error nodes during serialization. ([#2275](https://github.com/Azure/LogicAppsUX/issues/2275)) ([cd2c9ec](https://github.com/Azure/LogicAppsUX/commit/cd2c9ec0dd48d245a534b7489068b4b421f4d1d3))
+
+
+### Bug Fixes
+
+* **designer:** adding unit tests for respecting workflow dimensions logic ([#2278](https://github.com/Azure/LogicAppsUX/issues/2278)) ([367f7b2](https://github.com/Azure/LogicAppsUX/commit/367f7b2bd58d1fde5b169dd5be87500e7d83faa1))
+* **designer:** remove deprecated isGraphLocked property ([#2281](https://github.com/Azure/LogicAppsUX/issues/2281)) ([ff24eeb](https://github.com/Azure/LogicAppsUX/commit/ff24eeb0c0267a3b2ea878f6b5676a57ae3f14a5))
+* **vscode:** Show creating remote logic app in activity log ([#2280](https://github.com/Azure/LogicAppsUX/issues/2280)) ([16bc653](https://github.com/Azure/LogicAppsUX/commit/16bc65316ab81c9f5c0620857e5f7520e0edb609))
+
 ### [2.15.14](https://github.com/Azure/LogicAppsUX/compare/v2.15.13...v2.15.14) (2023-05-08)
 
 

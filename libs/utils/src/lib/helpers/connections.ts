@@ -3,6 +3,7 @@ import { ResourceIdentityType } from '../models';
 import { ConnectionParameterTypes } from '../models/connector';
 import type { Connector, ConnectionParameter } from '../models/connector';
 import { equals, hasProperty } from './functions';
+import type { IntlShape } from 'react-intl';
 
 export function isArmResourceId(resourceId: string): boolean {
   return resourceId ? resourceId.startsWith('/subscriptions/') : false;
@@ -149,6 +150,35 @@ export function connectorContainsAllServicePrinicipalConnectionParameters(
     hasProperty(connectionParameters, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE) &&
     hasProperty(connectionParameters, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)
   );
+}
+
+export function usesLegacyManagedIdentity(alternativeParameters?: Record<string, ConnectionParameter>): boolean {
+  return (
+    alternativeParameters?.['authentication']?.uiDefinition?.schema?.['x-ms-editor-options']?.supportedAuthTypes?.[0] ===
+    'ManagedServiceIdentity'
+  );
+}
+
+export function getIdentityDropdownOptions(managedIdentity: ManagedIdentity | undefined, intl: IntlShape): any[] {
+  const options: any[] = [];
+  if (!managedIdentity) return options;
+  const { type, userAssignedIdentities } = managedIdentity;
+  const systemAssigned = intl.formatMessage({
+    defaultMessage: 'System-assigned managed identity',
+    description: 'Text for system assigned managed identity',
+  });
+
+  if (equals(type, ResourceIdentityType.SYSTEM_ASSIGNED) || equals(type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)) {
+    options.push({ key: 'System-assigned managed identity', text: systemAssigned });
+  }
+
+  if (equals(type, ResourceIdentityType.USER_ASSIGNED) || equals(type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)) {
+    for (const identity of Object.keys(userAssignedIdentities ?? {})) {
+      options.push({ key: identity, text: identity.split('/').at(-1) ?? identity });
+    }
+  }
+
+  return options;
 }
 
 function _isConnectionParameterHidden(connectionParameter: ConnectionParameter): boolean {
