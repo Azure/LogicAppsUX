@@ -377,8 +377,16 @@ export const qualifyLoopRelativeSourceKeys = (targetKey: string): string => {
   return qualifiedTargetKey;
 };
 
-export const getTargetValueWithoutLoops = (targetKey: string): string => {
-  return targetKey.replaceAll(/\$for\(((?!\)).)+\)\//g, targetKey.indexOf('/*,') !== -1 || targetKey.indexOf('/*)') !== -1 ? '*/' : '');
+export const getTargetValueWithoutLoops = (targetKey: string, targetArrayDepth: number): string => {
+  let result = targetKey;
+  const matchedLoops = targetKey.match(/\$for\(((?!\)).)+\)\//g) || [];
+  // Start from the bottom and work up
+  matchedLoops.reverse();
+  matchedLoops.forEach((match, index) => {
+    result = result.replace(match, index < targetArrayDepth ? '*/' : '');
+  });
+
+  return result;
 };
 
 export const addParentConnectionForRepeatingElementsNested = (
