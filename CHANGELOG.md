@@ -1,21 +1,130 @@
 # Logic Apps Designer
-### [2.15.5](https://github.com/Azure/LogicAppsUX/compare/v2.15.4...v2.15.5) (2023-05-02)
+### [2.15.16](https://github.com/Azure/LogicAppsUX/compare/v2.15.15...v2.15.16) (2023-05-10)
+
+
+### Features
+
+* **designer:** Legacy Managed Identity connection support ([#2285](https://github.com/Azure/LogicAppsUX/issues/2285)) ([0a981c3](https://github.com/Azure/LogicAppsUX/commit/0a981c3a09fd0598179dd40a05358c7edde2a772))
+* **designer:** Support Type Filtering in Token Picker ([#2292](https://github.com/Azure/LogicAppsUX/issues/2292)) ([459b9c6](https://github.com/Azure/LogicAppsUX/commit/459b9c684566b2e6d3a3f820f1b748bb55b7efbc))
 
 
 ### Bug Fixes
 
-* **designer:**  Fix focus on comment box when comment is empty ([#2197](https://github.com/Azure/LogicAppsUX/issues/2197)) ([a86584b](https://github.com/Azure/LogicAppsUX/commit/a86584bba65692567555bab4b92afd9acb9ecaee))
-* **designer:** add property to specify whether graph object is locked for updates [#2175](https://github.com/Azure/LogicAppsUX/issues/2175) ([#2196](https://github.com/Azure/LogicAppsUX/issues/2196)) ([6032618](https://github.com/Azure/LogicAppsUX/commit/6032618b7f364b5539d146aa86f9c79f865c3d94))
-* **designer:** expose `updateParameterValidation` helper function ([#2179](https://github.com/Azure/LogicAppsUX/issues/2179)) ([8c4a3ac](https://github.com/Azure/LogicAppsUX/commit/8c4a3acd7314dcd937b2957b790dce159cf61dfc))
-* **designer:** initializeVariable not showing correct boolean values ([#2186](https://github.com/Azure/LogicAppsUX/issues/2186)) ([5fccc83](https://github.com/Azure/LogicAppsUX/commit/5fccc831c025075b4f8e708fb5cee8da4ae42474))
-* **designer:** respect horizontal padding when panel is on the left ([#2198](https://github.com/Azure/LogicAppsUX/issues/2198)) ([5ebc0c2](https://github.com/Azure/LogicAppsUX/commit/5ebc0c231dbf1ec7f72bd210ba497f9804717bd8))
-* **designer:** Token Picker / Hide ([#2188](https://github.com/Azure/LogicAppsUX/issues/2188)) ([102adb0](https://github.com/Azure/LogicAppsUX/commit/102adb000f32c845622318cad491f04a40056257))
+* **designer:** do not set Panel header horizontal padding when Panel is collapsed ([#2298](https://github.com/Azure/LogicAppsUX/issues/2298)) ([507ff58](https://github.com/Azure/LogicAppsUX/commit/507ff5807db290518c0b5e742be240b2bedb6f14))
+* **designer:** Fixing request trigger settings for supress workflow headers ([#2291](https://github.com/Azure/LogicAppsUX/issues/2291)) ([1e3d8c5](https://github.com/Azure/LogicAppsUX/commit/1e3d8c5ffa6d0f6b8c79c4029f793bcf23655fee))
+* **designer:** Fixing the value type being sent to workflow parameter… ([#2297](https://github.com/Azure/LogicAppsUX/issues/2297)) ([669e70d](https://github.com/Azure/LogicAppsUX/commit/669e70db8b7ddc90ad80feea9a07a2dc6a59615f))
+* **designer:** TestConnection errors now show properly in panel ([#2301](https://github.com/Azure/LogicAppsUX/issues/2301)) ([698c176](https://github.com/Azure/LogicAppsUX/commit/698c17644acbba1800d3ff0d30b6dfce7df2aa18))
+
+### [2.15.15](https://github.com/Azure/LogicAppsUX/compare/v2.15.14...v2.15.15) (2023-05-09)
+
+
+### Features
+
+* **designer:** Handling partially loaded or error nodes during serialization. ([#2275](https://github.com/Azure/LogicAppsUX/issues/2275)) ([cd2c9ec](https://github.com/Azure/LogicAppsUX/commit/cd2c9ec0dd48d245a534b7489068b4b421f4d1d3))
+
+
+### Bug Fixes
+
+* **designer:** adding unit tests for respecting workflow dimensions logic ([#2278](https://github.com/Azure/LogicAppsUX/issues/2278)) ([367f7b2](https://github.com/Azure/LogicAppsUX/commit/367f7b2bd58d1fde5b169dd5be87500e7d83faa1))
+* **designer:** remove deprecated isGraphLocked property ([#2281](https://github.com/Azure/LogicAppsUX/issues/2281)) ([ff24eeb](https://github.com/Azure/LogicAppsUX/commit/ff24eeb0c0267a3b2ea878f6b5676a57ae3f14a5))
+* **vscode:** Show creating remote logic app in activity log ([#2280](https://github.com/Azure/LogicAppsUX/issues/2280)) ([16bc653](https://github.com/Azure/LogicAppsUX/commit/16bc65316ab81c9f5c0620857e5f7520e0edb609))
+
+### [2.15.14](https://github.com/Azure/LogicAppsUX/compare/v2.15.13...v2.15.14) (2023-05-08)
+
+
+### Bug Fixes
+
+* **designer:** Combobox ErrorDetails Fix + Update placeholders to wrap single quotation marks ([#2269](https://github.com/Azure/LogicAppsUX/issues/2269)) ([d8a5474](https://github.com/Azure/LogicAppsUX/commit/d8a54742152dea3a6522abb587d83d5f88ed86d3))
+* **designer:** Current time operation produces an error on save ([#2272](https://github.com/Azure/LogicAppsUX/issues/2272)) ([846bb4a](https://github.com/Azure/LogicAppsUX/commit/846bb4a7c6c456a7a236a5ec225495d417cc2175))
+* **designer:** fix serialization and deserialization of simple query builder (oldFormat Condition Editor) ([#2270](https://github.com/Azure/LogicAppsUX/issues/2270)) ([c0ff0be](https://github.com/Azure/LogicAppsUX/commit/c0ff0be720676cf4d12ddc74d338433b536f15e0))
+* **designer:** pass the right parameters to respect node dimensions ([#2274](https://github.com/Azure/LogicAppsUX/issues/2274)) ([63bd644](https://github.com/Azure/LogicAppsUX/commit/63bd6440f73947b8aacd26967dda2bf6092b37a5))
+* **designer:** properly link the correct aria label to the correct setting ([#2267](https://github.com/Azure/LogicAppsUX/issues/2267)) ([cff4648](https://github.com/Azure/LogicAppsUX/commit/cff4648c8842053f9847c629fbe0f8d24b22c0c8))
+* **designer:** respect existing node dimensions when there is a workflow already loaded by the designer ([#2239](https://github.com/Azure/LogicAppsUX/issues/2239)) ([0f4a53f](https://github.com/Azure/LogicAppsUX/commit/0f4a53fdeb5a78b59883b9ac58757bdf6062419c))
+* **designer:** Static Results not showing on add for swagger-based in connectors ([#2277](https://github.com/Azure/LogicAppsUX/issues/2277)) ([52f6033](https://github.com/Azure/LogicAppsUX/commit/52f603371f64e15602c1c63043b014a7ff008e71))
+* **designer:** Update for darkmode for editorToggleButton ([#2273](https://github.com/Azure/LogicAppsUX/issues/2273)) ([04fc183](https://github.com/Azure/LogicAppsUX/commit/04fc18343483e7f322f6a0755737b0bbde04ddd5))
+* **Power Automate:** Add static inputs option to floatingactionmenu editor ([#2265](https://github.com/Azure/LogicAppsUX/issues/2265)) ([ec1e0b4](https://github.com/Azure/LogicAppsUX/commit/ec1e0b492fe5bbb692544f3a8b0ab31e64f62afa))
+
+### [2.15.13](https://github.com/Azure/LogicAppsUX/compare/v2.15.12...v2.15.13) (2023-05-08)
+
+### [2.15.12](https://github.com/Azure/LogicAppsUX/compare/v2.15.11...v2.15.12) (2023-05-07)
+
+### [2.15.2](https://github.com/Azure/LogicAppsUX/compare/v2.15.1...v2.15.2) (2023-04-29)
+
+### Features
+
+- **designer:** Showing dynamic content load errors in card ([#2264](https://github.com/Azure/LogicAppsUX/issues/2264)) ([b2ce1c1](https://github.com/Azure/LogicAppsUX/commit/b2ce1c1f4a774ce77ecc37ff4ba7df192efee44b))
+
+### [2.15.11](https://github.com/Azure/LogicAppsUX/compare/v2.15.10...v2.15.11) (2023-05-06)
+
+### Bug Fixes
+
+- **designer:** Fix 'select connection' table sizing causing scrollbar ([#2260](https://github.com/Azure/LogicAppsUX/issues/2260)) ([3a2e9e5](https://github.com/Azure/LogicAppsUX/commit/3a2e9e5a397686c6b9b01a8e18ea5cbc0cb7b588))
+- **designer:** Fix invoker connection toggle behavior ([#2194](https://github.com/Azure/LogicAppsUX/issues/2194)) ([07886b4](https://github.com/Azure/LogicAppsUX/commit/07886b424b52bb2d2cf1f8119be182877b9fb34f))
+- **designer:** More user interactions now trigger dirty state ([#2259](https://github.com/Azure/LogicAppsUX/issues/2259)) ([94ef600](https://github.com/Azure/LogicAppsUX/commit/94ef6004778c69dcd476cd20c7bc52bb7f4e8d0b))
+- **vscode:** Adding extra headers for user agent in all http calls ([#2257](https://github.com/Azure/LogicAppsUX/issues/2257)) ([34376bc](https://github.com/Azure/LogicAppsUX/commit/34376bce347a2e4595ce5e90845070a538ac61b3))
+
+### [2.15.10](https://github.com/Azure/LogicAppsUX/compare/v2.15.9...v2.15.10) (2023-05-05)
+
+### Features
+
+- **designer:** Show appropriate error messages when loading operations during deserialization failures ([#2254](https://github.com/Azure/LogicAppsUX/issues/2254)) ([87c67b4](https://github.com/Azure/LogicAppsUX/commit/87c67b4c9cc7c6378d2d7d5c8fa9bb705b4f88e4))
+
+### Bug Fixes
+
+- **designer:** Usability improvements for Concurrency slider ([#2247](https://github.com/Azure/LogicAppsUX/issues/2247)) ([0e3e20d](https://github.com/Azure/LogicAppsUX/commit/0e3e20d0fa8b5d9cd983835352dae79d946874a8))
+- **vscode:** Get credentials for designer ([#2256](https://github.com/Azure/LogicAppsUX/issues/2256)) ([0242a8e](https://github.com/Azure/LogicAppsUX/commit/0242a8eab6c498ab98bcc8e63a892b23e7db8c56))
+- **vscode:** Run trigger in overview page ([#2246](https://github.com/Azure/LogicAppsUX/issues/2246)) ([a65a0dd](https://github.com/Azure/LogicAppsUX/commit/a65a0dd2904d4112b1222f35283539d4e30b0fe4))
+
+### [2.15.9](https://github.com/Azure/LogicAppsUX/compare/v2.15.8...v2.15.9) (2023-05-05)
+
+### Features
+
+- **designer:** Workflow Parameters - Dirty State ([#2245](https://github.com/Azure/LogicAppsUX/issues/2245)) ([381e139](https://github.com/Azure/LogicAppsUX/commit/381e139c996a7602fca4059e666773f292f700ec))
+
+### [2.15.8](https://github.com/Azure/LogicAppsUX/compare/v2.15.7...v2.15.8) (2023-05-05)
+
+### Bug Fixes
+
+- **designer:** Adding error details in panel and card when operation cannot be deserialized ([#2237](https://github.com/Azure/LogicAppsUX/issues/2237)) ([9229cdc](https://github.com/Azure/LogicAppsUX/commit/9229cdcdcf678f85da660608b5477e0447465e26))
+- **designer:** Adding support for items token and updating repetition context for token addition ([#2222](https://github.com/Azure/LogicAppsUX/issues/2222)) ([78c7185](https://github.com/Azure/LogicAppsUX/commit/78c7185b6b1911ae5bab7987a84920ad26be45f3))
+- **designer:** Integration of Complex Array Editor ([#2233](https://github.com/Azure/LogicAppsUX/issues/2233)) ([ff96edd](https://github.com/Azure/LogicAppsUX/commit/ff96edd42d0aed17f5ddd488b21dcdf261302ead))
+- **designer:** Removing output token redundancies when dealing with outputs based on aliasing ([#2236](https://github.com/Azure/LogicAppsUX/issues/2236)) ([0d2c587](https://github.com/Azure/LogicAppsUX/commit/0d2c5873e1982aa635ebde4623a0bd1cf19296b6))
+- **designer:** Use skipValidation to skip throwing errors in serializeWorkflow ([#2235](https://github.com/Azure/LogicAppsUX/issues/2235)) ([af448c3](https://github.com/Azure/LogicAppsUX/commit/af448c37cffd8631628138113597a6a60748d5c7))
+- **openapi:** Fix dynamic schema params being duplicated ([#2238](https://github.com/Azure/LogicAppsUX/issues/2238)) ([6394c8b](https://github.com/Azure/LogicAppsUX/commit/6394c8b22a261729b277e48e1089228c653129b8))
+
+### [2.15.7](https://github.com/Azure/LogicAppsUX/compare/v2.15.6...v2.15.7) (2023-05-04)
+
+### Bug Fixes
+
+- **designer:** Add a new connection host enum type for hybrid trigger ([#2200](https://github.com/Azure/LogicAppsUX/issues/2200)) ([21d0e92](https://github.com/Azure/LogicAppsUX/commit/21d0e92e4cbe0270b6bcb5575c8586e96a9eff97))
+- **designer:** Address duplicate parameter pivot, showing pivots that should be hidden ([#2211](https://github.com/Azure/LogicAppsUX/issues/2211)) ([5e4bc4a](https://github.com/Azure/LogicAppsUX/commit/5e4bc4afdb344a5b656b3f611c8efe77f39e3e0a))
+- **designer:** reverting a change to variable change ([#2217](https://github.com/Azure/LogicAppsUX/issues/2217)) ([dc4da10](https://github.com/Azure/LogicAppsUX/commit/dc4da10cd10871b2ff76977c0a7fa35121cea59a))
+
+### [2.15.6](https://github.com/Azure/LogicAppsUX/compare/v2.15.5...v2.15.6) (2023-05-03)
+
+### Bug Fixes
+
+- **designer:** Add concurrency to for each action ([#2195](https://github.com/Azure/LogicAppsUX/issues/2195)) ([f4012eb](https://github.com/Azure/LogicAppsUX/commit/f4012eb4e2cc4f28852ee66be793fcacf45c9052))
+- **designer:** Code & Message should be shown conditionally for Terminate action ([#2205](https://github.com/Azure/LogicAppsUX/issues/2205)) ([d3b2094](https://github.com/Azure/LogicAppsUX/commit/d3b2094bd6bd8ad37796a3182b58112793db77a8))
+- **designer:** Dynamic content was incorrectly cached for swagger based operations ([#2206](https://github.com/Azure/LogicAppsUX/issues/2206)) ([3e62b1c](https://github.com/Azure/LogicAppsUX/commit/3e62b1c9f18e51d6e6295bb3d165622fe2400370))
+- **designer:** Fix expression for dynamic trigger output tokens ([#2201](https://github.com/Azure/LogicAppsUX/issues/2201)) ([1527be1](https://github.com/Azure/LogicAppsUX/commit/1527be1cb083c8b965b5a779a7273cbd6fc2d413))
+- **designer:** Fixing the operation setting for async pattern in http manifest ([#2207](https://github.com/Azure/LogicAppsUX/issues/2207)) ([f6df515](https://github.com/Azure/LogicAppsUX/commit/f6df51524e179bc5ece45331ad6ec47b1ed370e8))
+- **openapi:** Make parameters optional in OpenAPI builder ([#2184](https://github.com/Azure/LogicAppsUX/issues/2184)) ([81f73f3](https://github.com/Azure/LogicAppsUX/commit/81f73f3be97473cfcadee788701a488f4419b97f))
+
+### [2.15.5](https://github.com/Azure/LogicAppsUX/compare/v2.15.4...v2.15.5) (2023-05-02)
+
+### Bug Fixes
+
+- **designer:** Fix focus on comment box when comment is empty ([#2197](https://github.com/Azure/LogicAppsUX/issues/2197)) ([a86584b](https://github.com/Azure/LogicAppsUX/commit/a86584bba65692567555bab4b92afd9acb9ecaee))
+- **designer:** add property to specify whether graph object is locked for updates [#2175](https://github.com/Azure/LogicAppsUX/issues/2175) ([#2196](https://github.com/Azure/LogicAppsUX/issues/2196)) ([6032618](https://github.com/Azure/LogicAppsUX/commit/6032618b7f364b5539d146aa86f9c79f865c3d94))
+- **designer:** expose `updateParameterValidation` helper function ([#2179](https://github.com/Azure/LogicAppsUX/issues/2179)) ([8c4a3ac](https://github.com/Azure/LogicAppsUX/commit/8c4a3acd7314dcd937b2957b790dce159cf61dfc))
+- **designer:** initializeVariable not showing correct boolean values ([#2186](https://github.com/Azure/LogicAppsUX/issues/2186)) ([5fccc83](https://github.com/Azure/LogicAppsUX/commit/5fccc831c025075b4f8e708fb5cee8da4ae42474))
+- **designer:** respect horizontal padding when panel is on the left ([#2198](https://github.com/Azure/LogicAppsUX/issues/2198)) ([5ebc0c2](https://github.com/Azure/LogicAppsUX/commit/5ebc0c231dbf1ec7f72bd210ba497f9804717bd8))
+- **designer:** Token Picker / Hide ([#2188](https://github.com/Azure/LogicAppsUX/issues/2188)) ([102adb0](https://github.com/Azure/LogicAppsUX/commit/102adb000f32c845622318cad491f04a40056257))
 
 ### [2.15.4](https://github.com/Azure/LogicAppsUX/compare/v2.15.3...v2.15.4) (2023-05-01)
 
 ### [2.15.3](https://github.com/Azure/LogicAppsUX/compare/v2.15.2...v2.15.3) (2023-04-30)
-
-### [2.15.2](https://github.com/Azure/LogicAppsUX/compare/v2.15.1...v2.15.2) (2023-04-29)
 
 ### [2.15.2](https://github.com/Azure/LogicAppsUX/compare/v2.15.1...v2.15.2) (2023-04-29)
 

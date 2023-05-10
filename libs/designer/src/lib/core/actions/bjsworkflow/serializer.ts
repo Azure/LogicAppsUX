@@ -4,6 +4,7 @@ import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { NodeInputs, NodeOperation, ParameterGroup } from '../../state/operation/operationMetadataSlice';
+import { ErrorLevel } from '../../state/operation/operationMetadataSlice';
 import { getOperationInputParameters } from '../../state/operation/operationSelector';
 import type { RootState } from '../../store';
 import { getNode, getTriggerNodeId, isRootNode, isRootNodeInGraph } from '../../utils/graph';
@@ -34,6 +35,8 @@ import {
 } from '@microsoft/parsers-logic-apps';
 import type { LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/utils-logic-apps';
 import {
+  SerializationErrorCode,
+  SerializationException,
   clone,
   deleteObjectProperty,
   getObjectPropertyValue,
@@ -58,38 +61,78 @@ export interface SerializeOptions {
 }
 
 export const serializeWorkflow = async (rootState: RootState, options?: SerializeOptions): Promise<Workflow> => {
-  const operationsWithSettingsErrors = (Object.entries(rootState.settings.validationErrors) ?? []).filter(
-    ([_id, errorArr]) => errorArr.length > 0
-  );
-  if (operationsWithSettingsErrors.length > 0) {
-    throw new Error(
-      'Workflow has settings validation errors on the following operations: ' +
-        operationsWithSettingsErrors.map(([id, _errorArr]) => id).join(', ')
-    );
-  }
+  if (!options?.skipValidation) {
+    const intl = getIntl();
 
-  const operationsWithParameterErrors = (Object.entries(rootState.operations.inputParameters) ?? []).filter(
-    ([_id, nodeInputs]: [id: string, i: NodeInputs]) =>
-      Object.values(nodeInputs.parameterGroups).some((parameterGroup: ParameterGroup) =>
-        parameterGroup.parameters.some((parameter: ParameterInfo) => (parameter?.validationErrors?.length ?? 0) > 0)
-      )
-  );
-  if (operationsWithParameterErrors.length > 0) {
-    throw new Error(
-      'Workflow has parameter validation errors on the following operations: ' + operationsWithParameterErrors.map(([id]) => id).join(', ')
+    const operationsWithConnectionErrors = Object.entries(rootState.operations.errors).filter(
+      ([_id, errors]) => !!errors[ErrorLevel.Connection]
     );
+    if (operationsWithConnectionErrors.length > 0) {
+      const invalidNodes = operationsWithConnectionErrors.map(([id]) => id).join(', ');
+      throw new SerializationException(
+        SerializationErrorCode.INVALID_CONNECTIONS,
+        intl.formatMessage(
+          {
+            defaultMessage: 'Workflow has invalid connections on the following operations: {invalidNodes}',
+            description: 'Error message to show when there are invalid connections in the nodes.',
+          },
+          { invalidNodes }
+        ),
+        { errorMessage: `Workflow has invalid connections on the following operations: ${invalidNodes}` }
+      );
+    }
+
+    const operationsWithSettingsErrors = (Object.entries(rootState.settings.validationErrors) ?? []).filter(
+      ([_id, errorArr]) => errorArr.length > 0
+    );
+    if (operationsWithSettingsErrors.length > 0) {
+      const invalidNodes = operationsWithSettingsErrors.map(([id, _errorArr]) => id).join(', ');
+      throw new SerializationException(
+        SerializationErrorCode.INVALID_SETTINS,
+        intl.formatMessage(
+          {
+            defaultMessage: 'Workflow has settings validation errors on the following operations: {invalidNodes}',
+            description: 'Error message to show when there are invalid connections in the nodes.',
+          },
+          { invalidNodes }
+        ),
+        { errorMessage: `Workflow has settings validation errors on the following operations: ${invalidNodes}` }
+      );
+    }
+
+    const operationsWithParameterErrors = (Object.entries(rootState.operations.inputParameters) ?? []).filter(
+      ([_id, nodeInputs]: [id: string, i: NodeInputs]) =>
+        Object.values(nodeInputs.parameterGroups).some((parameterGroup: ParameterGroup) =>
+          parameterGroup.parameters.some((parameter: ParameterInfo) => (parameter?.validationErrors?.length ?? 0) > 0)
+        )
+    );
+    if (operationsWithParameterErrors.length > 0) {
+      const invalidNodes = operationsWithParameterErrors.map(([id]) => id).join(', ');
+      throw new SerializationException(
+        SerializationErrorCode.INVALID_PARAMETERS,
+        intl.formatMessage(
+          {
+            defaultMessage: 'Workflow has parameter validation errors on the following operations: {invalidNodes}',
+            description: 'Error message to show when there are invalid connections in the nodes.',
+          },
+          { invalidNodes }
+        ),
+        { errorMessage: `Workflow has parameter validation errors on the following operations: ${invalidNodes}` }
+      );
+    }
   }
 
   const { connectionsMapping, connectionReferences: referencesObject } = rootState.connections;
   const workflowParameters = rootState.workflowParameters.definitions;
   const connectionReferences = Object.keys(connectionsMapping).reduce((references: ConnectionReferences, nodeId: string) => {
     const referenceKey = connectionsMapping[nodeId];
-    if (!referenceKey) return references;
-    const reference = referencesObject[referenceKey];
+    if (!referenceKey || !referencesObject[referenceKey]) {
+      return references;
+    }
 
     return {
       ...references,
-      [referenceKey]: reference,
+      [referenceKey]: referencesObject[referenceKey],
     };
   }, {});
 
@@ -180,6 +223,12 @@ export const serializeOperation = async (
   operationId: string,
   _options?: SerializeOptions
 ): Promise<LogicAppsV2.OperationDefinition | null> => {
+  const errors = rootState.operations.errors[operationId];
+
+  if (errors?.[ErrorLevel.Critical]) {
+    return rootState.workflow.operations[operationId];
+  }
+
   const operation = rootState.operations.operationInfo[operationId];
 
   // TODO: Add logic to identify if this operation is in Recommendation phase.
@@ -215,7 +264,6 @@ export const serializeOperation = async (
     };
   }
 
-  // TODO - We might have to just serialize bare minimum data for partially loaded node.
   return serializedOperation;
 };
 
@@ -517,6 +565,10 @@ interface OpenApiConnectionInfo {
   host: LogicAppsV2.OpenApiConnectionHost;
 }
 
+interface HybridTriggerConnectionInfo {
+  host: LogicAppsV2.HybridTriggerConnectionHost;
+}
+
 interface ServiceProviderConnectionConfigInfo {
   serviceProviderConfiguration: {
     connectionName: string;
@@ -529,7 +581,13 @@ const serializeHost = (
   nodeId: string,
   manifest: OperationManifest,
   rootState: RootState
-): FunctionConnectionInfo | ApiManagementConnectionInfo | OpenApiConnectionInfo | ServiceProviderConnectionConfigInfo | undefined => {
+):
+  | FunctionConnectionInfo
+  | ApiManagementConnectionInfo
+  | OpenApiConnectionInfo
+  | ServiceProviderConnectionConfigInfo
+  | HybridTriggerConnectionInfo
+  | undefined => {
   if (!manifest.properties.connectionReference) {
     return undefined;
   }
@@ -568,14 +626,22 @@ const serializeHost = (
           serviceProviderId: connectorId,
         },
       };
+    case ConnectionReferenceKeyFormat.HybridTrigger:
+      return {
+        host: {
+          connection: {
+            name: "@parameters('$connections')[" + referenceKey + "]['connectionId']",
+          },
+        },
+      };
     default:
       throw new AssertionException(
         AssertionErrorCode.UNSUPPORTED_MANIFEST_CONNECTION_REFERENCE_FORMAT,
         intl.formatMessage(
           {
-            defaultMessage: `Unsupported manifest connection reference format: '{referenceKeyFormat}'`,
+            defaultMessage: `Unsupported manifest connection reference format: ''{referenceKeyFormat}''`,
             description:
-              'Error message to show when reference format is unsupported, {referenceKeyFormat} will be replaced based on action definition',
+              'Error message to show when reference format is unsupported, {referenceKeyFormat} will be replaced based on action definition. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
           },
           {
             referenceKeyFormat,
@@ -715,6 +781,9 @@ const serializeSettings = (
 
   return {
     ...optional('correlation', settings.correlation?.value),
+    ...(settings.invokerConnection?.value?.enabled
+      ? optional('isInvokerConnectionEnabled', settings.invokerConnection?.value?.enabled)
+      : {}),
     ...optional('conditions', conditions),
     ...optional('limit', timeout),
     ...optional('operationOptions', getSerializedOperationOptions(operationId, settings, rootState)),

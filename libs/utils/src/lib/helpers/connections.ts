@@ -3,6 +3,7 @@ import { ResourceIdentityType } from '../models';
 import { ConnectionParameterTypes } from '../models/connector';
 import type { Connector, ConnectionParameter } from '../models/connector';
 import { equals, hasProperty } from './functions';
+import type { IntlShape } from 'react-intl';
 
 export function isArmResourceId(resourceId: string): boolean {
   return resourceId ? resourceId.startsWith('/subscriptions/') : false;
@@ -118,8 +119,6 @@ export function isHiddenConnectionParameter(
   return showServicePrincipal === isServicePrincipalParameter && _isConnectionParameterHidden(connectionParameters[connectionParameterKey]);
 }
 
-const ALT_PARAMETER_VALUE_TYPE = 'Alternative';
-
 export const SERVICE_PRINCIPLE_CONSTANTS = {
   CONFIG_ITEM_KEYS: {
     TOKEN_CLIENT_ID: 'token:clientId',
@@ -153,6 +152,35 @@ export function connectorContainsAllServicePrinicipalConnectionParameters(
   );
 }
 
+export function usesLegacyManagedIdentity(alternativeParameters?: Record<string, ConnectionParameter>): boolean {
+  return (
+    alternativeParameters?.['authentication']?.uiDefinition?.schema?.['x-ms-editor-options']?.supportedAuthTypes?.[0] ===
+    'ManagedServiceIdentity'
+  );
+}
+
+export function getIdentityDropdownOptions(managedIdentity: ManagedIdentity | undefined, intl: IntlShape): any[] {
+  const options: any[] = [];
+  if (!managedIdentity) return options;
+  const { type, userAssignedIdentities } = managedIdentity;
+  const systemAssigned = intl.formatMessage({
+    defaultMessage: 'System-assigned managed identity',
+    description: 'Text for system assigned managed identity',
+  });
+
+  if (equals(type, ResourceIdentityType.SYSTEM_ASSIGNED) || equals(type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)) {
+    options.push({ key: 'System-assigned managed identity', text: systemAssigned });
+  }
+
+  if (equals(type, ResourceIdentityType.USER_ASSIGNED) || equals(type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)) {
+    for (const identity of Object.keys(userAssignedIdentities ?? {})) {
+      options.push({ key: identity, text: identity.split('/').at(-1) ?? identity });
+    }
+  }
+
+  return options;
+}
+
 function _isConnectionParameterHidden(connectionParameter: ConnectionParameter): boolean {
   return connectionParameter?.uiDefinition?.constraints?.hidden === 'true';
 }
@@ -182,36 +210,6 @@ export const isIdentityAssociatedWithLogicApp = (managedIdentity: ManagedIdentit
 
 export function getConnectionErrors(connection: Connection): ConnectionStatus[] {
   return (connection?.properties?.statuses ?? []).filter((status) => status.status.toLowerCase() === 'error');
-}
-
-// NOTE: This method is specifically for Multi-Auth type connectors.
-export function isConnectionMultiAuthManagedIdentityType(connection: Connection | undefined, connector: Connector | undefined): boolean {
-  const connectionParameterValueSet = (connection?.properties as any)?.parameterValueSet;
-  const connectorConnectionParameterSets = connector?.properties?.connectionParameterSets;
-
-  if (connectorConnectionParameterSets && connectionParameterValueSet) {
-    /* NOTE: Look into the parameterValueSet from the connector manifest that has the same name as the parameterValueSet of the connection to see if
-          it has a managedIdentity type parameter. */
-    const parameterValueSetWithSameName = connectorConnectionParameterSets.values?.filter(
-      (value) => value.name === connectionParameterValueSet.name
-    )[0];
-    const parameters = parameterValueSetWithSameName?.parameters || {};
-    for (const parameter of Object.keys(parameters)) {
-      if (parameters[parameter].type === ConnectionParameterTypes[ConnectionParameterTypes.managedIdentity]) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-// NOTE: This method is specifically for Single-Auth type connectors.
-export function isConnectionSingleAuthManagedIdentityType(connection: Connection): boolean {
-  return !!(connection?.properties?.parameterValueType === ALT_PARAMETER_VALUE_TYPE) && !isMultiAuthConnection(connection);
-}
-
-function isMultiAuthConnection(connection: Connection | undefined): boolean {
-  return connection !== undefined && (connection.properties as any).parameterValueSet !== undefined;
 }
 
 export function fallbackConnectorUrl(iconUrl: string): string {

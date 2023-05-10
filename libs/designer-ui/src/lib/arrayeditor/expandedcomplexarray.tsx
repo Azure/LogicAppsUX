@@ -3,8 +3,9 @@ import { StringEditor } from '..';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { notEqual } from '../editor/base/utils/helper';
 import { ItemMenuButton, renderLabel } from './expandedsimplearray';
+import type { ItemSchemaItemProps } from './util/util';
 import type { IIconProps } from '@fluentui/react';
-import { DefaultButton } from '@fluentui/react';
+import { css, DefaultButton } from '@fluentui/react';
 import { guid } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
@@ -13,7 +14,7 @@ const addItemButtonIconProps: IIconProps = {
 };
 
 export interface ExpandedComplexArrayProps {
-  dimensionalSchema: any[];
+  dimensionalSchema: ItemSchemaItemProps[];
   allItems: ComplexArrayItems[];
   canDeleteLastItem: boolean;
   readOnly?: boolean;
@@ -52,12 +53,13 @@ export const ExpandedComplexArray = ({
     <div className="msla-array-container msla-array-item-container">
       {allItems.map((item, index) => {
         return (
-          <div key={index} className="msla-array-item">
-            {item.items.map((complexItems, i) => {
+          <div key={index} className={css('msla-array-item', 'complex')}>
+            {dimensionalSchema.map((schemaItem: ItemSchemaItemProps, i) => {
+              const complexItem = item.items.find((complexItem) => complexItem.title === schemaItem.title);
               return (
                 <div key={item.key + i}>
                   <div className="msla-array-item-header">
-                    {renderLabel(index, dimensionalSchema[i].title, dimensionalSchema[i].isRequired)}
+                    {renderLabel(index, schemaItem?.title, schemaItem?.isRequired)}
                     {i === 0 ? (
                       <div className="msla-array-item-commands">
                         <ItemMenuButton
@@ -70,10 +72,12 @@ export const ExpandedComplexArray = ({
                     ) : null}
                   </div>
                   <StringEditor
+                    valueType={schemaItem?.type}
                     className="msla-array-editor-container-expanded"
-                    initialValue={complexItems.value ?? []}
+                    initialValue={complexItem?.value ?? []}
                     getTokenPicker={getTokenPicker}
-                    editorBlur={(newState) => handleArrayElementSaved(complexItems.value, newState, index, i)}
+                    editorBlur={(newState) => handleArrayElementSaved(complexItem?.value ?? [], newState, index, i)}
+                    placeholder={complexItem?.description}
                   />
                 </div>
               );
@@ -92,7 +96,7 @@ export const ExpandedComplexArray = ({
               {
                 key: guid(),
                 items: dimensionalSchema.map((item) => {
-                  return { title: item.title, value: [] };
+                  return { title: item.title, value: [], description: item.description };
                 }),
               },
             ])

@@ -13,8 +13,6 @@ import { initializeParameters } from '../../state/workflowparameters/workflowpar
 import type { RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
-import type { OpenApiConnectionSerializedInputs } from '../../utils/openapi/inputsbuilder';
-import { OpenApiOperationInputsBuilder } from '../../utils/openapi/inputsbuilder';
 import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedManifestForSpiltOn, toOutputInfo } from '../../utils/outputs';
 import {
   addRecurrenceParametersInGroup,
@@ -31,7 +29,6 @@ import {
 import { createLiteralValueSegment } from '../../utils/parameters/segment';
 import { getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
-import { isOpenApiConnectionType } from './connections';
 import type { NodeInputsWithDependencies, NodeOutputsWithDependencies } from './operationdeserializer';
 import type { Settings } from './settings';
 import type {
@@ -103,53 +100,43 @@ export const getInputParametersFromManifest = (
   let primaryInputParametersInArray = unmap(primaryInputParameters);
 
   if (stepDefinition) {
-    const nodeType: string | undefined = stepDefinition.type;
-    if (nodeType && isOpenApiConnectionType(nodeType)) {
-      const stepDefinitionInputs: OpenApiConnectionSerializedInputs | undefined = stepDefinition.inputs;
+    const { inputsLocation } = manifest.properties;
+    const operationData = clone(stepDefinition);
 
-      primaryInputParametersInArray = new OpenApiOperationInputsBuilder().loadStaticInputValuesFromDefinition(
-        stepDefinitionInputs,
-        primaryInputParametersInArray
-      );
-    } else {
-      const { inputsLocation } = manifest.properties;
-      const operationData = clone(stepDefinition);
-
-      // In the case of retry policy, it is treated as an input
-      // avoid pushing a parameter for it as it is already being
-      // handled in the settings store.
-      // NOTE: this could be expanded to more settings that are treated as inputs.
-      if (
-        manifest.properties.settings &&
-        manifest.properties.settings.retryPolicy &&
-        operationData.inputs &&
-        operationData.inputs[PropertyName.RETRYPOLICY]
-      ) {
-        delete operationData.inputs.retryPolicy;
-      }
-
-      if (
-        manifest.properties.connectionReference &&
-        manifest.properties.connectionReference.referenceKeyFormat === ConnectionReferenceKeyFormat.Function
-      ) {
-        delete operationData.inputs.function;
-      }
-
-      primaryInputParametersInArray = updateParameterWithValues(
-        'inputs.$',
-        getInputsValueFromDefinitionForManifest(
-          inputsLocation ?? ['inputs'],
-          manifest,
-          customSwagger,
-          operationData,
-          primaryInputParametersInArray
-        ),
-        '',
-        primaryInputParametersInArray,
-        (!inputsLocation || !!inputsLocation.length) && !manifest.properties.inputsLocationSwapMap /* createInvisibleParameter */,
-        false /* useDefault */
-      );
+    // In the case of retry policy, it is treated as an input
+    // avoid pushing a parameter for it as it is already being
+    // handled in the settings store.
+    // NOTE: this could be expanded to more settings that are treated as inputs.
+    if (
+      manifest.properties.settings &&
+      manifest.properties.settings.retryPolicy &&
+      operationData.inputs &&
+      operationData.inputs[PropertyName.RETRYPOLICY]
+    ) {
+      delete operationData.inputs.retryPolicy;
     }
+
+    if (
+      manifest.properties.connectionReference &&
+      manifest.properties.connectionReference.referenceKeyFormat === ConnectionReferenceKeyFormat.Function
+    ) {
+      delete operationData.inputs.function;
+    }
+
+    primaryInputParametersInArray = updateParameterWithValues(
+      'inputs.$',
+      getInputsValueFromDefinitionForManifest(
+        inputsLocation ?? ['inputs'],
+        manifest,
+        customSwagger,
+        operationData,
+        primaryInputParametersInArray
+      ),
+      '',
+      primaryInputParametersInArray,
+      (!inputsLocation || !!inputsLocation.length) && !manifest.properties.inputsLocationSwapMap /* createInvisibleParameter */,
+      false /* useDefault */
+    );
   } else {
     loadParameterValuesArrayFromDefault(primaryInputParametersInArray);
   }
@@ -454,4 +441,16 @@ export const getCustomSwaggerIfNeeded = async (
   }
 
   return getSwaggerFromEndpoint(getObjectPropertyValue(stepDefinition, swaggerUrlLocation));
+};
+
+export const updateInvokerSettings = (
+  isTrigger: boolean,
+  tiggerNodeManifest: OperationManifest | undefined,
+  nodeId: string,
+  settings: Settings,
+  dispatch: Dispatch
+): void => {
+  if (!isTrigger && tiggerNodeManifest?.properties?.settings?.invokerConnection) {
+    dispatch(updateNodeSettings({ id: nodeId, settings: { invokerConnection: { ...settings.invokerConnection, isSupported: true } } }));
+  }
 };
