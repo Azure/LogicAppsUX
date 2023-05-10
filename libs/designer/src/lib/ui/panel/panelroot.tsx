@@ -26,7 +26,7 @@ import {
 import { useIconUri, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useHasSchema } from '../../core/state/staticresultschema/staitcresultsSelector';
 import { useNodeDescription, useNodeDisplayName, useNodeMetadata, useWorkflowNode } from '../../core/state/workflow/workflowSelectors';
-import { replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
+import { deleteSwitchCase, replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import { isRootNodeInGraph } from '../../core/utils/graph';
 import { validateParameter } from '../../core/utils/parameters/helper';
 import { NodeSearchPanel } from './nodeSearchPanel';
@@ -45,7 +45,7 @@ import { WorkflowParametersPanel } from './workflowparameterspanel';
 import type { CommonPanelProps, MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { DeleteNodeModal } from '@microsoft/designer-ui';
 import { MenuItemType, PanelContainer, PanelHeaderControlType, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
-import { isNullOrUndefined, isScopeOperation, SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
+import { isNullOrUndefined, isScopeOperation, isSubGraphNode, SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -69,8 +69,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   const selectedNodeDisplayName = useNodeDisplayName(selectedNode);
   const currentPanelMode = useCurrentPanelModePanelMode();
 
-  const scopeId = selectedNode.split('-#')[0];
-  const graphNode = useWorkflowNode(scopeId) as WorkflowNode;
+  const graphNode = useWorkflowNode(selectedNode) as WorkflowNode;
 
   const [width, setWidth] = useState(PanelSize.Auto);
 
@@ -201,9 +200,11 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   const handleDeleteClick = () => setShowDeleteModal(true);
   const handleDelete = () => {
     // TODO: 12798935 Analytics (event logging)
-    if (isScopeOperation(operationInfo?.type)) {
-      const scopeId = selectedNode.split('-#')[0];
-      dispatch(deleteGraphNode({ graphId: scopeId ?? '', graphNode }));
+    if (operationInfo && isScopeOperation(operationInfo.type)) {
+      dispatch(deleteGraphNode({ graphId: selectedNode, graphNode }));
+    } else if (isSubGraphNode(graphNode.type)) {
+      dispatch(deleteGraphNode({ graphId: selectedNode, graphNode: graphNode }));
+      dispatch(deleteSwitchCase({ caseId: selectedNode, nodeId: nodeMetaData?.graphId ?? '' }));
     } else {
       dispatch(deleteOperation({ nodeId: selectedNode, isTrigger: isTriggerNode }));
     }
@@ -358,7 +359,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       />
       <DeleteNodeModal
         nodeId={selectedNode}
-        nodeType={WORKFLOW_NODE_TYPES.GRAPH_NODE}
+        nodeType={graphNode?.type || WORKFLOW_NODE_TYPES.GRAPH_NODE}
         isOpen={showDeleteModal}
         onDismiss={() => setShowDeleteModal(false)}
         onConfirm={handleDelete}
