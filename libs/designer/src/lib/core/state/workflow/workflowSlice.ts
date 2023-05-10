@@ -147,7 +147,7 @@ export const workflowSlice = createSlice({
         graph.children = [...(graph?.children ?? []), placeholderNode];
         state.nodesMetadata[placeholderNodeId] = { graphId, isRoot: true };
         for (const childId of existingChildren) {
-          addNewEdge(state, placeholderNodeId, childId, graph);
+          addNewEdge(state, placeholderNodeId, childId, graph, false);
         }
       } else {
         deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
