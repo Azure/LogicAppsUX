@@ -21,6 +21,7 @@ import {
   isArmResourceId,
   isIdentityAssociatedWithLogicApp,
   safeSetObjectPropertyValue,
+  createCopy,
 } from '@microsoft/utils-logic-apps';
 
 interface ConnectionAcl {
@@ -614,7 +615,7 @@ function convertToServiceProviderConnectionsData(
     settings: {},
     pathLocation: [serviceProviderLocation],
   };
-  const rawConnection = { ...connectionsData.connectionData };
+  const rawConnection = createCopy(connectionsData.connectionData);
 
   for (const parameterKey of Object.keys(parameterValues)) {
     const connectionParameter = connectionParameters?.[parameterKey] as ConnectionParameter;
