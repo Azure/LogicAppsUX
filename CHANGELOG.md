@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.15.18](https://github.com/Azure/LogicAppsUX/compare/v2.15.17...v2.15.18) (2023-05-11)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Fix schemas with . in the file name ([#2328](https://github.com/Azure/LogicAppsUX/issues/2328)) ([e2f50d4](https://github.com/Azure/LogicAppsUX/commit/e2f50d4c0483d68c39ad47465288b8046355fe0e))
+
 ### [2.15.17](https://github.com/Azure/LogicAppsUX/compare/v2.15.16...v2.15.17) (2023-05-10)
 
 
