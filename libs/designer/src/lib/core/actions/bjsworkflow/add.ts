@@ -200,7 +200,7 @@ const initializeOperationDetails = async (
       initData.settings as Settings,
       getAllVariables(getState().tokens.variables),
       dispatch,
-      getState()
+      getState
     );
   } else {
     await trySetDefaultConnectionForNode(nodeId, connector, dispatch, isConnectionRequired);
