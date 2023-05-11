@@ -6,6 +6,7 @@ import { PanelScope, PanelLocation } from './panelUtil';
 import { PanelContent } from './panelcontent';
 import type { PanelHeaderControlType } from './panelheader/panelheader';
 import { PanelHeader } from './panelheader/panelheader';
+import type { TitleChangeHandler } from './panelheader/panelheadertitle';
 import { PanelPivot } from './panelpivot';
 import type { ILayerProps } from '@fluentui/react';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
@@ -53,7 +54,7 @@ export type PanelContainerProps = {
   toggleCollapse: () => void;
   onCommentChange: (panelCommentChangeEvent?: string) => void;
   renderHeader?: (props?: IPanelProps, defaultrender?: IPanelHeaderRenderer, headerTextId?: string) => JSX.Element;
-  onTitleChange: (newValue: string) => void;
+  onTitleChange: TitleChangeHandler;
 } & CommonPanelProps;
 
 export const PanelContainer = ({

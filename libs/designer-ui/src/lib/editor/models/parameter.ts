@@ -93,7 +93,6 @@ export interface Token {
   tokenType: TokenType;
   type?: string;
   value?: string;
-  remappedValue?: string;
 }
 
 export enum TokenType {

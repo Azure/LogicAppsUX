@@ -27,7 +27,7 @@ import { useIconUri, useOperationInfo, useOperationQuery } from '../../core/stat
 import { useHasSchema } from '../../core/state/staticresultschema/staitcresultsSelector';
 import { useNodeDescription, useNodeDisplayName, useNodeMetadata, useWorkflowNode } from '../../core/state/workflow/workflowSelectors';
 import { deleteSwitchCase, replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
-import { isRootNodeInGraph } from '../../core/utils/graph';
+import { isOperationNameValid, isRootNodeInGraph } from '../../core/utils/graph';
 import { validateParameter } from '../../core/utils/parameters/helper';
 import { NodeSearchPanel } from './nodeSearchPanel';
 import { aboutTab } from './panelTabs/aboutTab';
@@ -72,7 +72,11 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const collapsed = useIsPanelCollapsed();
   const selectedNode = useSelectedNodeId();
-  const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata));
+  const { isTriggerNode, nodesMetadata, idReplacements } = useSelector((state: RootState) => ({
+    isTriggerNode: isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata),
+    nodesMetadata: state.workflow.nodesMetadata,
+    idReplacements: state.workflow.idReplacements,
+  }));
   const selectedNodeDisplayName = useNodeDisplayName(selectedNode);
   const currentPanelMode = useCurrentPanelModePanelMode();
 
@@ -289,8 +293,11 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
     dispatch(setNodeDescription({ nodeId: selectedNode, ...(showCommentBox && { description: '' }) }));
   };
 
-  const onTitleChange = (newId: string) => {
+  const onTitleChange = (newId: string): { valid: boolean; oldValue?: string } => {
+    const isValid = isOperationNameValid(selectedNode, newId, isTriggerNode, nodesMetadata, idReplacements);
     dispatch(replaceId({ originalId: selectedNode, newId }));
+
+    return { valid: isValid, oldValue: isValid ? newId : selectedNode };
   };
 
   const onCommentChange = (newDescription?: string) => {

@@ -6,6 +6,7 @@ import { getOperationManifest } from '../../queries/operation';
 import type { NodeInputs, NodeOperation, ParameterGroup } from '../../state/operation/operationMetadataSlice';
 import { ErrorLevel } from '../../state/operation/operationMetadataSlice';
 import { getOperationInputParameters } from '../../state/operation/operationSelector';
+import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
 import { getNode, getTriggerNodeId, isRootNode, isRootNodeInGraph } from '../../utils/graph';
 import {
@@ -123,7 +124,6 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
   }
 
   const { connectionsMapping, connectionReferences: referencesObject } = rootState.connections;
-  const workflowParameters = rootState.workflowParameters.definitions;
   const connectionReferences = Object.keys(connectionsMapping).reduce((references: ConnectionReferences, nodeId: string) => {
     const referenceKey = connectionsMapping[nodeId];
     if (!referenceKey || !referencesObject[referenceKey]) {
@@ -136,34 +136,6 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
     };
   }, {});
 
-  const parameters = Object.keys(workflowParameters).reduce((result: Record<string, WorkflowParameter>, parameterId: string) => {
-    const parameter = workflowParameters[parameterId];
-    const parameterDefinition: any = { ...parameter };
-    const value = parameterDefinition.value;
-    const defaultValue = parameterDefinition.defaultValue;
-
-    delete parameterDefinition['name'];
-    delete parameterDefinition['isEditable'];
-
-    parameterDefinition.value = equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING)
-      ? value
-      : value === ''
-      ? undefined
-      : typeof value !== 'string'
-      ? value
-      : JSON.parse(value);
-
-    parameterDefinition.defaultValue = equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING)
-      ? defaultValue
-      : defaultValue === ''
-      ? undefined
-      : typeof defaultValue !== 'string'
-      ? defaultValue
-      : JSON.parse(defaultValue);
-
-    return { ...result, [parameter.name]: parameterDefinition };
-  }, {});
-
   const serializedWorkflow: Workflow = {
     definition: {
       $schema: Constants.SCHEMA.GA_20160601.URL,
@@ -174,7 +146,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
       triggers: await getTrigger(rootState, options),
     },
     connectionReferences,
-    parameters,
+    parameters: getWorkflowParameters(rootState.workflowParameters.definitions),
   };
   return serializedWorkflow;
 };
@@ -216,6 +188,38 @@ const getTrigger = async (rootState: RootState, options?: SerializeOptions): Pro
           {}) as LogicAppsV2.TriggerDefinition,
       }
     : {};
+};
+
+const getWorkflowParameters = (
+  workflowParameters: Record<string, WorkflowParameterDefinition>
+): Record<string, WorkflowParameter> | undefined => {
+  return Object.keys(workflowParameters).reduce((result: Record<string, WorkflowParameter>, parameterId: string) => {
+    const parameter = workflowParameters[parameterId];
+    const parameterDefinition: any = { ...parameter };
+    const value = parameterDefinition.value;
+    const defaultValue = parameterDefinition.defaultValue;
+
+    delete parameterDefinition['name'];
+    delete parameterDefinition['isEditable'];
+
+    parameterDefinition.value = equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING)
+      ? value
+      : value === ''
+      ? undefined
+      : typeof value !== 'string'
+      ? value
+      : JSON.parse(value);
+
+    parameterDefinition.defaultValue = equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING)
+      ? defaultValue
+      : defaultValue === ''
+      ? undefined
+      : typeof defaultValue !== 'string'
+      ? defaultValue
+      : JSON.parse(defaultValue);
+
+    return { ...result, [parameter.name]: parameterDefinition };
+  }, {});
 };
 
 export const serializeOperation = async (
@@ -344,6 +348,18 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
     ...optional('recurrence', recurrence),
     ...serializeSettings(operationId, nodeSettings, nodeStaticResults, isTrigger, rootState),
   };
+};
+
+const getRunAfter = (operation: LogicAppsV2.ActionDefinition, idReplacements: Record<string, string>): LogicAppsV2.RunAfter => {
+  if (!operation.runAfter) {
+    return {};
+  }
+  return Object.entries(operation.runAfter).reduce((acc: LogicAppsV2.RunAfter, [key, value]) => {
+    return {
+      ...acc,
+      [idReplacements[key] ?? key]: value,
+    };
+  }, {});
 };
 
 //#region Parameters Serialization
@@ -1000,15 +1016,3 @@ const getSplitOn = (
   };
 };
 //#endregion
-
-const getRunAfter = (operation: LogicAppsV2.ActionDefinition, idReplacements: Record<string, string>): LogicAppsV2.RunAfter => {
-  if (!operation.runAfter) {
-    return {};
-  }
-  return Object.entries(operation.runAfter).reduce((acc: LogicAppsV2.RunAfter, [key, value]) => {
-    return {
-      ...acc,
-      [idReplacements[key] ?? key]: value,
-    };
-  }, {});
-};

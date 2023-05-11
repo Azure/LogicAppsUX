@@ -32,7 +32,7 @@ import type { Settings } from './settings';
 import { getOperationSettings } from './settings';
 import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
 import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
-import  { ManifestParser } from '@microsoft/parsers-logic-apps';
+import { ManifestParser } from '@microsoft/parsers-logic-apps';
 import type {
   Connector,
   DiscoveryOperation,

@@ -26,7 +26,7 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
   value.forEach((segment) => {
     const segmentValue = segment.value;
     if (segment.type === ValueSegmentType.TOKEN && segment.token) {
-      const { brandColor, icon, title, name, remappedValue, tokenType } = segment.token;
+      const { brandColor, icon, title, name, value, tokenType } = segment.token;
       if (tokenType === TokenType.FX) {
         const expressionValue: Expression = ExpressionParser.parseExpression(segmentValue);
         const token = $createTokenNode({
@@ -43,7 +43,7 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
           data: segment,
           brandColor,
           icon: icon,
-          value: remappedValue ?? segmentValue,
+          value: value ?? segmentValue,
         });
         tokensEnabled && paragraph.append(token);
       } else {
@@ -91,7 +91,7 @@ export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): R
   value.forEach((segment) => {
     const segmentValue = segment.value;
     if (segment.type === ValueSegmentType.TOKEN && segment.token) {
-      const { brandColor, icon, title, name, remappedValue, tokenType } = segment.token;
+      const { brandColor, icon, title, name, value, tokenType } = segment.token;
       if (tokenType === TokenType.FX) {
         const expressionValue: Expression = ExpressionParser.parseExpression(segmentValue);
         const token = $createTokenNode({
@@ -108,7 +108,7 @@ export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): R
           data: segment,
           brandColor,
           icon: icon,
-          value: remappedValue ?? segmentValue,
+          value: value ?? segmentValue,
         });
         tokensEnabled && paragraph.append(token);
       } else {

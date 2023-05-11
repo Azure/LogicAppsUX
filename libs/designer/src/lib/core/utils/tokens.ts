@@ -28,6 +28,7 @@ import {
   httpWebhookIcon,
   ParameterBrandColor,
   ParameterIcon,
+  remapTokenSegmentValue,
   shouldIncludeSelfForRepetitionReference,
 } from './parameters/helper';
 import { createTokenValueSegment } from './parameters/segment';
@@ -329,9 +330,7 @@ export const createValueSegmentFromToken = async (
     }
 
     if (tokenValueSegment.token) {
-      const oldId = tokenValueSegment.token.actionName ?? '';
-      const newId = newRootState.workflow.idReplacements[oldId] ?? oldId;
-      tokenValueSegment.token.remappedValue = tokenValueSegment.value.replace(oldId, newId);
+      tokenValueSegment.token.value = remapTokenSegmentValue(tokenValueSegment, rootState.workflow.idReplacements).value.value;
     }
   }
 
@@ -432,7 +431,7 @@ export const convertWorkflowParameterTypeToSwaggerType = (type: string | undefin
 };
 
 const rewriteValueId = (id: string, value: string, replacementIds: Record<string, string>): string => {
-  return value.replace(id, replacementIds[id] ?? id);
+  return value.replaceAll(id, replacementIds[id] ?? id);
 };
 const getListCallbackUrlToken = (nodeId: string): TokenGroup => {
   const callbackUrlToken: OutputToken = {
