@@ -20,8 +20,8 @@ export default function InsertTokenNode(): null {
       (payload: TokenNodeProps) => {
         const selection = $getSelection();
         if ($isRangeSelection(selection) && payload.data.token) {
-          const { remappedValue, value } = payload.data.token;
-          const tokenNode = $createTokenNode({ ...payload, value: remappedValue ?? value });
+          const { value } = payload.data.token;
+          const tokenNode = $createTokenNode({ ...payload, value });
           selection.insertNodes([tokenNode]);
         }
         return true;

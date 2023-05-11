@@ -13,6 +13,9 @@ const titleTextFieldStyle: Partial<ITextFieldStyles> = {
   root: {
     marginTop: '5px',
   },
+  errorMessage: {
+    paddingLeft: '8px',
+  },
 };
 
 export type TitleChangeHandler = (newValue: string) => { valid: boolean; oldValue?: string };

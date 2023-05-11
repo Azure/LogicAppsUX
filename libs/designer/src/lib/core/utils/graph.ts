@@ -222,4 +222,4 @@ export const isOperationNameValid = (
   return !allNodesExceptionSubGraphNodes.some((nodeName) => equals(nodeName, name));
 };
 
-export const transformOperationTitle = (title: string): string => title.replaceAll(' ', '_').replaceAll('#', '');
+export const transformOperationTitle = (title: string): string => title.replaceAll(' ', '_');

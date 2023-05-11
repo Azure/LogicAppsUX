@@ -66,6 +66,7 @@ import type {
   ParameterInfo,
   RowItemProps,
   Token as SegmentToken,
+  Token,
   ValueSegment,
 } from '@microsoft/designer-ui';
 import {
@@ -2805,28 +2806,10 @@ export function parameterValueToString(
   isDefinitionValue: boolean,
   idReplacements?: Record<string, string>
 ): string | undefined {
-  let didRemap = false;
-  const remappedParameterInfo = idReplacements
-    ? {
-        ...parameterInfo,
-        value: parameterInfo.value.map((val) => {
-          const oldId = val.token?.actionName ?? '';
-          if (isTokenValueSegment(val) && idReplacements[oldId]) {
-            const newId = idReplacements[oldId];
-            didRemap = true;
-            return {
-              ...val,
-              value: val.value?.replaceAll(`'${oldId}'`, `'${newId}'`),
-              token: {
-                ...val.token,
-                actionName: newId,
-              },
-            } as ValueSegment;
-          }
-          return val;
-        }),
-      }
-    : parameterInfo;
+  const { value: remappedValue, didRemap } = idReplacements
+    ? remapValueSegmentsWithNewIds(parameterInfo.value, idReplacements)
+    : { value: parameterInfo.value, didRemap: false };
+  const remappedParameterInfo = idReplacements ? { ...parameterInfo, value: remappedValue } : parameterInfo;
 
   if (didRemap) delete remappedParameterInfo.preservedValue;
 
@@ -3001,6 +2984,60 @@ export function getJSONValueFromString(value: any, type: string): any {
   }
 
   return parameterValue;
+}
+
+export function remapValueSegmentsWithNewIds(
+  segments: ValueSegment[],
+  idReplacements: Record<string, string>
+): { value: ValueSegment[]; didRemap: boolean } {
+  let didRemap = false;
+  const value = segments.map((segment) => {
+    if (isTokenValueSegment(segment)) {
+      const result = remapTokenSegmentValue(segment, idReplacements);
+      didRemap = result.didRemap;
+      return result.value;
+    }
+
+    return segment;
+  });
+
+  return { value, didRemap };
+}
+
+export function remapTokenSegmentValue(
+  segment: ValueSegment,
+  idReplacements: Record<string, string>
+): { value: ValueSegment; didRemap: boolean } {
+  let didRemap = false;
+  let newSegment = segment;
+  const { actionName, arrayDetails } = segment.token as Token;
+  const oldId = isOutputTokenValueSegment(segment) ? (arrayDetails ? arrayDetails?.loopSource : actionName) : '';
+  const newId = idReplacements[oldId ?? ''];
+
+  if (oldId && newId) {
+    didRemap = true;
+    const newValue = segment.value?.replaceAll(`'${oldId}'`, `'${newId}'`);
+
+    newSegment = {
+      ...segment,
+      value: newValue,
+      token: arrayDetails
+        ? { ...segment.token, arrayDetails: { ...arrayDetails, loopSource: newId }, value: newValue }
+        : { ...segment.token, actionName: newId, value: newValue },
+    } as ValueSegment;
+  } else if (isFunctionValueSegment(segment)) {
+    let newSegmentValue = segment.value;
+    for (const id of Object.keys(idReplacements)) {
+      if (!didRemap && newSegmentValue?.includes(`'${id}`)) {
+        didRemap = true;
+      }
+      newSegmentValue = newSegmentValue?.replaceAll(`'${id}'`, `'${idReplacements[id]}'`);
+    }
+
+    newSegment = { ...segment, value: newSegmentValue, token: { ...segment.token, value: newSegmentValue } } as ValueSegment;
+  }
+
+  return { value: newSegment, didRemap };
 }
 
 /**
