@@ -1,10 +1,10 @@
 /* eslint-disable no-param-reassign */
 import DataMapperExt from '../DataMapperExt';
 import { dataMapDefinitionsPath, draftMapDefinitionSuffix, schemasPath, supportedDataMapDefinitionFileExts } from '../extensionConfig';
+import { loadMapDefinition } from '@microsoft/logic-apps-data-mapper';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling, registerCommand } from '@microsoft/vscode-azext-utils';
 import { existsSync as fileExistsSync, promises as fs } from 'fs';
-import * as yaml from 'js-yaml';
 import * as path from 'path';
 import { Uri, window } from 'vscode';
 
@@ -65,15 +65,15 @@ const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
     }
   }
 
-  const mapDefinition = yaml.load(
-    await fs.readFile(draftFileIsFoundAndShouldBeUsed ? draftMapDefinitionPath : mapDefinitionPath, 'utf-8')
-  ) as {
-    $sourceSchema: string;
-    $targetSchema: string;
-    [key: string]: any;
-  };
+  const fileContents = await fs.readFile(draftFileIsFoundAndShouldBeUsed ? draftMapDefinitionPath : mapDefinitionPath, 'utf-8');
+  const mapDefinition = loadMapDefinition(fileContents);
 
-  if (!mapDefinition.$sourceSchema || !mapDefinition.$targetSchema) {
+  if (
+    !mapDefinition.$sourceSchema ||
+    typeof mapDefinition.$sourceSchema !== 'string' ||
+    !mapDefinition.$targetSchema ||
+    typeof mapDefinition.$targetSchema !== 'string'
+  ) {
     context.telemetry.properties.eventDescription = 'Attempted to load invalid map, missing schema definitions';
     DataMapperExt.showError('Invalid data map definition: $sourceSchema and $targetSchema must be defined.');
     return;
