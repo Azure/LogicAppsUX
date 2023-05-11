@@ -114,7 +114,10 @@ const initializeOperationDetails = async (
     isConnectionRequired = isConnectionRequiredForOperation(manifest);
     connector = manifest.properties.connector as Connector;
 
-    const { iconUri, brandColor } = manifest.properties;
+    const { iconUri: operationIcon, brandColor: operationBrandColor } = manifest.properties;
+    const { iconUri: connectorIcon, brandColor: connectorBrandColor } = connector.properties;
+    const iconUri = operationIcon ?? connectorIcon;
+    const brandColor = operationBrandColor ?? connectorBrandColor;
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs);
     parsedManifest = new ManifestParser(manifest);
