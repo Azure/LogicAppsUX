@@ -21,7 +21,12 @@ import { HttpStaticResultSchema } from './schemas/httpresult';
 import { ParseJsonStaticResultSchema } from './schemas/parseJson';
 import { QueryStaticResultSchema } from './schemas/query';
 import type { ManifestParser, SwaggerParser } from '@microsoft/parsers-logic-apps';
-import { isCustomConnector, isManagedConnector, isSharedManagedConnectorFromPApps, isSharedManagedConnector } from '@microsoft/utils-logic-apps';
+import {
+  isCustomConnector,
+  isManagedConnector,
+  isSharedManagedConnectorFromPApps,
+  isSharedManagedConnector,
+} from '@microsoft/utils-logic-apps';
 
 /**
  * Factory method to provide the static result root schema for an operation
@@ -70,7 +75,13 @@ export class StaticResultSchemaService implements IStaticResultSchemaService {
 
         break;
       default:
-        if ((isSharedManagedConnector(connectorId) || isSharedManagedConnectorFromPApps(connectorId) || isCustomConnector(connectorId) || isManagedConnector(connectorId)) && parser) {
+        if (
+          (isSharedManagedConnector(connectorId) ||
+            isSharedManagedConnectorFromPApps(connectorId) ||
+            isCustomConnector(connectorId) ||
+            isManagedConnector(connectorId)) &&
+          parser
+        ) {
           return getStaticResultSchemaForAPIConnector(operationId, parser);
         }
 
