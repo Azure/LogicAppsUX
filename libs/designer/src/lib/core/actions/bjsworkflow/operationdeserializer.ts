@@ -515,7 +515,7 @@ export const updateDynamicDataInNodes = async (getState: () => RootState, dispat
         nodeSettings,
         allVariables,
         dispatch,
-        rootState,
+        getState,
         operation
       );
     }
@@ -533,7 +533,7 @@ const updateDynamicDataForValidConnection = async (
   settings: Settings,
   variables: any,
   dispatch: Dispatch,
-  rootState: RootState,
+  getState: () => RootState,
   operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition
 ): Promise<void> => {
   const isValidConnection = await isConnectionReferenceValid(operationInfo, reference);
@@ -550,7 +550,7 @@ const updateDynamicDataForValidConnection = async (
       settings,
       variables,
       dispatch,
-      rootState,
+      getState,
       operation
     );
   } else {

@@ -84,7 +84,7 @@ const updateNodeConnectionAndProperties = async (
     newState.operations.settings[nodeId],
     getAllVariables(newState.tokens.variables),
     dispatch,
-    newState,
+    getState,
     newState.workflow.newlyAddedOperations[nodeId] ? undefined : newState.workflow.operations[nodeId]
   );
 };

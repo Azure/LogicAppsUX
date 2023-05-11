@@ -1632,7 +1632,7 @@ export async function updateDynamicDataInNode(
   settings: Settings,
   variables: VariableDeclaration[],
   dispatch: Dispatch,
-  rootState: RootState,
+  getState: () => RootState,
   operationDefinition?: any
 ): Promise<void> {
   await loadDynamicData(
@@ -1646,14 +1646,15 @@ export async function updateDynamicDataInNode(
     settings,
     variables,
     dispatch,
-    rootState,
+    getState(),
     operationDefinition
   );
 
-  for (const parameterKey of Object.keys(dependencies.inputs)) {
-    const dependencyInfo = dependencies.inputs[parameterKey];
+  const { operations } = getState();
+  for (const parameterKey of Object.keys(operations.dependencies[nodeId]?.inputs ?? {})) {
+    const dependencyInfo = operations.dependencies[nodeId].inputs[parameterKey];
     if (dependencyInfo.dependencyType === 'ListValues') {
-      const details = getGroupAndParameterFromParameterKey(nodeInputs, parameterKey);
+      const details = getGroupAndParameterFromParameterKey(operations.inputParameters[nodeId] ?? {}, parameterKey);
       if (details) {
         loadDynamicValuesForParameter(
           nodeId,
@@ -1661,9 +1662,9 @@ export async function updateDynamicDataInNode(
           details.parameter.id,
           operationInfo,
           connectionReference,
-          nodeInputs,
-          nodeMetadata,
-          dependencies,
+          operations.inputParameters[nodeId],
+          operations.actionMetadata[nodeId],
+          operations.dependencies[nodeId],
           false /* showErrorWhenNotReady */,
           dispatch
         );
@@ -1701,7 +1702,7 @@ async function loadDynamicData(
   }
 
   if (Object.keys(dependencies?.inputs ?? {}).length) {
-    loadDynamicContentForInputsInNode(
+    await loadDynamicContentForInputsInNode(
       nodeId,
       dependencies.inputs,
       operationInfo,
