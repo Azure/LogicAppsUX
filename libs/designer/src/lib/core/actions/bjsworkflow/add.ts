@@ -32,6 +32,7 @@ import type { Settings } from './settings';
 import { getOperationSettings } from './settings';
 import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
 import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
+import  { ManifestParser } from '@microsoft/parsers-logic-apps';
 import type {
   Connector,
   DiscoveryOperation,
@@ -107,6 +108,7 @@ const initializeOperationDetails = async (
   let initData: NodeData;
   let manifest: OperationManifest | undefined = undefined;
   let swagger: SwaggerParser | undefined = undefined;
+  let parsedManifest: ManifestParser | undefined = undefined;
   if (operationManifestService.isSupported(type, kind)) {
     manifest = await getOperationManifest(operationInfo);
     isConnectionRequired = isConnectionRequiredForOperation(manifest);
@@ -115,6 +117,7 @@ const initializeOperationDetails = async (
     const { iconUri, brandColor } = manifest.properties;
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs);
+    parsedManifest = new ManifestParser(manifest);
 
     if (parameterValues) {
       // For actions with selected Azure Resources
@@ -200,7 +203,7 @@ const initializeOperationDetails = async (
     await trySetDefaultConnectionForNode(nodeId, connector, dispatch, isConnectionRequired);
   }
 
-  const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId, swagger);
+  const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId, swagger || parsedManifest);
   let hasSchema;
   schemaService.then((schema) => {
     hasSchema = true;
