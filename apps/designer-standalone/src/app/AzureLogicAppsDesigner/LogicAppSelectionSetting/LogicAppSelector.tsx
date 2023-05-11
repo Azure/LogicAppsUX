@@ -1,7 +1,7 @@
 import { environment } from '../../../environments/environment';
 import type { AppDispatch, RootState } from '../../../state/store';
-import { changeAppid, changeResourcePath, changeWorkflowName } from '../../../state/workflowLoadingSlice';
-import type { WorkflowList } from '../Models/WorkflowListTypes';
+import { changeAppid, changeResourcePath, changeRunId, changeWorkflowName } from '../../../state/workflowLoadingSlice';
+import type { WorkflowList, RunList } from '../Models/WorkflowListTypes';
 import { useFetchStandardApps } from '../Queries/FetchStandardApps';
 import type { IComboBoxOption, IDropdownOption, IStackProps, IComboBoxStyles } from '@fluentui/react';
 import { ComboBox, Dropdown, Stack } from '@fluentui/react';
@@ -19,7 +19,7 @@ const resourceIdValidation =
   /^\/subscriptions\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/resourceGroups\/[a-zA-Z0-9](?:[a-zA-Z0-9-_]*[a-zA-Z0-9])?\/providers\/[a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_./]+$/;
 
 export const LogicAppSelector = () => {
-  const { appId, workflowName, monitoringView } = useSelector((state: RootState) => state.workflowLoader);
+  const { appId, workflowName, runId, monitoringView } = useSelector((state: RootState) => state.workflowLoader);
   const { data: appList } = useFetchStandardApps();
   const validApp = appId ? resourceIdValidation.test(appId) : false;
   const dispatch = useDispatch<AppDispatch>();
@@ -38,7 +38,7 @@ export const LogicAppSelector = () => {
     ['getListOfRunInstances', appId, workflowName],
     async () => {
       if (!validApp) return null;
-      const results = await axios.get<WorkflowList>(
+      const results = await axios.get<RunList>(
         `https://management.azure.com${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs?api-version=2018-11-01`,
         {
           headers: {
@@ -75,12 +75,11 @@ export const LogicAppSelector = () => {
       ?.map<IDropdownOption>((runInstance) => {
         return {
           key: runInstance.name ?? '',
-          text: `${runInstance.name} (${runInstance.name})`,
+          text: `${runInstance.name} (${runInstance.properties.status})`,
         };
       })
       .sort((a, b) => a.text.localeCompare(b.text)) ?? [];
 
-  console.log('charlie', runOptions);
   return (
     <Stack {...columnProps}>
       <ComboBox
@@ -111,11 +110,11 @@ export const LogicAppSelector = () => {
           placeholder={appId ? (runOptions.length > 0 ? 'Select a Run Instance' : 'No Run Instances to Select') : 'Select a Workflow First'}
           label="RunInstance"
           options={runOptions}
-          selectedKey={workflowName}
+          selectedKey={runId}
           disabled={runOptions.length === 0 || !appId}
-          defaultValue={workflowName}
+          defaultValue={runId}
           onChange={(_, option) => {
-            console.log(option);
+            dispatch(changeRunId(option?.key as string));
           }}
         />
       ) : null}

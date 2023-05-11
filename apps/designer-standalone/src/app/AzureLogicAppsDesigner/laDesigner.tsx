@@ -40,16 +40,17 @@ const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
 
 const DesignerEditor = () => {
-  const {
-    id: workflowId,
-    isReadOnly,
-    isDarkMode,
-  } = useSelector((state: RootState) => ({
+  const { id: workflowId } = useSelector((state: RootState) => ({
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     id: state.workflowLoader.resourcePath!,
-    isReadOnly: state.workflowLoader.readOnly,
-    isDarkMode: state.workflowLoader.darkMode,
   }));
+
+  const {
+    readOnly: isReadOnly,
+    darkMode: isDarkMode,
+    monitoringView,
+    runInstance,
+  } = useSelector((state: RootState) => state.workflowLoader);
 
   const workflowName = workflowId.split('/').splice(-1)[0];
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
@@ -179,9 +180,9 @@ const DesignerEditor = () => {
 
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
-      <DesignerProvider locale={'en-US'} options={{ services, isDarkMode, readOnly: isReadOnly }}>
+      <DesignerProvider locale={'en-US'} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView: monitoringView }}>
         {workflow?.definition ? (
-          <BJSWorkflowProvider workflow={{ definition: workflow?.definition, connectionReferences, parameters }}>
+          <BJSWorkflowProvider workflow={{ definition: workflow?.definition, connectionReferences, parameters }} runInstance={runInstance}>
             <div style={{ height: 'inherit', width: 'inherit' }}>
               <DesignerCommandBar
                 id={workflowId}
