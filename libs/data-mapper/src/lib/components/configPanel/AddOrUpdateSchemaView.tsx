@@ -1,7 +1,7 @@
 import { ConfigPanelView } from '../../core/state/PanelSlice';
 import type { RootState } from '../../core/state/Store';
 import { SchemaType } from '../../models';
-import { PrimaryButton, Stack, TextField, ChoiceGroup, Dropdown, MessageBar, MessageBarType, Text } from '@fluentui/react';
+import { PrimaryButton, Stack, TextField, ChoiceGroup, MessageBar, MessageBarType, Text, VirtualizedComboBox } from '@fluentui/react';
 import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
@@ -208,13 +208,16 @@ export const AddOrUpdateSchemaView = ({
       )}
 
       {uploadType === UploadSchemaTypes.SelectFrom && (
-        <Dropdown
+        <VirtualizedComboBox
           aria-label={dropdownAriaLabel}
-          selectedKey={selectedSchema ? selectedSchema.key : undefined}
-          placeholder={schemaDropdownPlaceholder}
+          label={schemaDropdownPlaceholder}
           options={dataMapDropdownOptions ?? []}
           onChange={(_e, option) => onSelectOption(option)}
+          allowFreeform
+          autoComplete="on"
           errorMessage={errorMessage}
+          selectedKey={selectedSchema ? selectedSchema.key : undefined}
+          dropdownWidth={200}
         />
       )}
     </div>
