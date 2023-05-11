@@ -38,8 +38,8 @@ export class StandardRunService implements IRunService {
     const { uri, contentSize } = contentLink;
     const { httpClient } = this.options;
 
+    // 2^18
     if (contentSize > 262144) {
-      // 2^18
       return undefined;
     }
 

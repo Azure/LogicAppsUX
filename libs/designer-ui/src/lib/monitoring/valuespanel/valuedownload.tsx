@@ -16,7 +16,7 @@ export const ValueDownload: React.FC<ValueDownloadProps> = ({ href }) => {
   };
 
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
-    e.preventDefault();
+    e.stopPropagation();
   };
 
   return (
