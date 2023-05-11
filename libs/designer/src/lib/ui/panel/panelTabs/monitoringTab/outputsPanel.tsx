@@ -62,7 +62,7 @@ export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandCo
         <ValuesPanel
           brandColor={brandColor}
           headerText={intlText.outputs}
-          linkText={intlText.showOutputs}
+          linkText={isNullOrUndefined(values) ? '' : intlText.showOutputs}
           showLink={!!uri}
           values={values}
           labelledBy={`outputs-${nodeId}`}
@@ -70,6 +70,8 @@ export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandCo
           showMore={showMore}
           onMoreClick={onMoreClick}
           onLinkClick={onSeeRawOutputsClick}
+          isDownload={isNullOrUndefined(values)}
+          link={uri}
         />
       ) : null}
     </>
