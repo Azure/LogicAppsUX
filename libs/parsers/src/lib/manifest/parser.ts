@@ -124,7 +124,7 @@ export class ManifestParser {
       outputKey: SwaggerConstants.OutputKeys.Outputs,
     };
 
-    const selectedManifestOutputsSchema = this.getOutputsSchema(outputs);
+    const selectedManifestOutputsSchema = this.getOutputSchema(outputs);
 
     const schemaProperties = new SchemaProcessor(schemaProcessorOptions).getSchemaProperties(selectedManifestOutputsSchema as SchemaObject);
     const outputParameters = schemaProperties.map((item) =>
@@ -142,10 +142,15 @@ export class ManifestParser {
     return map(filteredOutputParameters, SwaggerConstants.OutputMapKey);
   }
 
-  private getOutputsSchema(outputs: any | undefined): SchemaObject | undefined {
+  /**
+   * Gets the output schema from the outputs.
+   * @arg {any} [outputs] - The outputs.
+   * @return {SchemaObject}
+   */
+  public getOutputSchema(outputs: any | undefined): SchemaObject {
     const alternativeSchema = this.getAlternativeOutputSchema(outputs);
 
-    return alternativeSchema || this._operationManifest.properties.outputs;
+    return alternativeSchema || this._operationManifest.properties.outputs || {};
   }
 
   private getAlternativeOutputSchema(outputs: any | undefined): SchemaObject | undefined {

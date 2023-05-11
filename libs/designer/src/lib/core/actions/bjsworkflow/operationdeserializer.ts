@@ -52,6 +52,7 @@ import {
 } from '@microsoft/designer-client-services-logic-apps';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { InputParameter, OutputParameter } from '@microsoft/parsers-logic-apps';
+import { ManifestParser } from '@microsoft/parsers-logic-apps';
 import type { LogicAppsV2, OperationManifest } from '@microsoft/utils-logic-apps';
 import { isArmResourceId, uniqueArray, getPropertyValue, map, aggregate, equals } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -184,7 +185,8 @@ export const initializeOperationDetailsForManifest = async (
       dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
 
       const { connectorId, operationId } = nodeOperationInfo;
-      const schema = staticResultService.getOperationResultSchema(connectorId, operationId);
+      const parsedManifest = new ManifestParser(manifest);
+      const schema = staticResultService.getOperationResultSchema(connectorId, operationId, parsedManifest);
       schema.then((schema) => {
         if (schema) {
           dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
