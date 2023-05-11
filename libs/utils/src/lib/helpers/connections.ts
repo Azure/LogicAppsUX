@@ -3,6 +3,7 @@ import { ResourceIdentityType } from '../models';
 import { ConnectionParameterTypes } from '../models/connector';
 import type { Connector, ConnectionParameter } from '../models/connector';
 import { equals, hasProperty } from './functions';
+import type { IntlShape } from 'react-intl';
 
 export function isArmResourceId(resourceId: string): boolean {
   return resourceId ? resourceId.startsWith('/subscriptions/') : false;
@@ -53,6 +54,19 @@ export const isSharedManagedConnector = (connectorId: string) => {
   if (!equals(fields[4], 'microsoft.web')) return false;
   if (!equals(fields[5], 'locations')) return false;
   if (!equals(fields[7], 'managedapis')) return false;
+
+  return true;
+};
+
+export const isSharedManagedConnectorFromPApps = (connectorId: string) => {
+  // Note: connectorId format: /providers/Microsoft.PowerApps/apis/{connector}
+  const fields = connectorId.split('/');
+  if (fields.length !== 5) return false;
+
+  if (!equals(fields[1], 'providers')) return false;
+  if (!equals(fields[2], 'microsoft.powerapps')) return false;
+  if (!equals(fields[3], 'apis')) return false;
+  if (!fields[4].startsWith('shared_')) return false;
 
   return true;
 };
@@ -149,6 +163,35 @@ export function connectorContainsAllServicePrinicipalConnectionParameters(
     hasProperty(connectionParameters, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE) &&
     hasProperty(connectionParameters, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)
   );
+}
+
+export function usesLegacyManagedIdentity(alternativeParameters?: Record<string, ConnectionParameter>): boolean {
+  return (
+    alternativeParameters?.['authentication']?.uiDefinition?.schema?.['x-ms-editor-options']?.supportedAuthTypes?.[0] ===
+    'ManagedServiceIdentity'
+  );
+}
+
+export function getIdentityDropdownOptions(managedIdentity: ManagedIdentity | undefined, intl: IntlShape): any[] {
+  const options: any[] = [];
+  if (!managedIdentity) return options;
+  const { type, userAssignedIdentities } = managedIdentity;
+  const systemAssigned = intl.formatMessage({
+    defaultMessage: 'System-assigned managed identity',
+    description: 'Text for system assigned managed identity',
+  });
+
+  if (equals(type, ResourceIdentityType.SYSTEM_ASSIGNED) || equals(type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)) {
+    options.push({ key: 'System-assigned managed identity', text: systemAssigned });
+  }
+
+  if (equals(type, ResourceIdentityType.USER_ASSIGNED) || equals(type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)) {
+    for (const identity of Object.keys(userAssignedIdentities ?? {})) {
+      options.push({ key: identity, text: identity.split('/').at(-1) ?? identity });
+    }
+  }
+
+  return options;
 }
 
 function _isConnectionParameterHidden(connectionParameter: ConnectionParameter): boolean {

@@ -20,6 +20,7 @@ import { isRootNodeInGraph } from '../../../../core/utils/graph';
 import {
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
+  remapValueSegmentsWithNewIds,
   shouldUseParameterInGroup,
   updateParameterAndDependencies,
 } from '../../../../core/utils/parameters/helper';
@@ -31,9 +32,9 @@ import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
-import { DynamicCallStatus, TokenPicker, ValueSegmentType } from '@microsoft/designer-ui';
+import { DynamicCallStatus, TokenPicker, TokenType } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode } from '@microsoft/designer-ui';
-import { equals } from '@microsoft/utils-logic-apps';
+import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -274,19 +275,40 @@ const ParameterSection = ({
     editorId: string,
     labelId: string,
     tokenPickerMode?: TokenPickerMode,
+    editorType?: string,
     isCodeEditor?: boolean,
     closeTokenPicker?: () => void,
     tokenPickerClicked?: (b: boolean) => void,
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
-    const codeEditorFilteredTokens = tokenGroup.filter((group) => {
-      return group.id !== 'workflowparameters' && group.id !== 'variables';
-    });
+    const parameterType =
+      editorType ??
+      (nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === parameterId) ?? {})?.type ??
+      constants.SWAGGER.TYPE.ANY;
+    const supportedTypes: string[] = getPropertyValue(constants.TOKENS, parameterType);
+
+    const filteredTokenGroup = tokenGroup.map((group) => ({
+      ...group,
+      tokens: group.tokens.filter((token: OutputToken) => {
+        if (isCodeEditor) {
+          return !(
+            token.outputInfo.type === TokenType.VARIABLE ||
+            token.outputInfo.type === TokenType.PARAMETER ||
+            token.outputInfo.arrayDetails ||
+            token.key === constants.UNTIL_CURRENT_ITERATION_INDEX_KEY ||
+            token.key === constants.FOREACH_CURRENT_ITEM_KEY
+          );
+        }
+        return supportedTypes.some((supportedType) => equals(supportedType, token.type));
+      }),
+    }));
+
     return (
       <TokenPicker
         editorId={editorId}
         labelId={labelId}
-        tokenGroup={isCodeEditor ? codeEditorFilteredTokens : tokenGroup}
+        tokenGroup={tokenGroup}
+        filteredTokenGroup={filteredTokenGroup}
         expressionGroup={expressionGroup}
         tokenPickerFocused={tokenPickerClicked}
         initialMode={tokenPickerMode}
@@ -313,20 +335,7 @@ const ParameterSection = ({
       const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel, conditionalVisibility };
       const { editor, editorOptions } = getEditorAndOptions(param, upstreamNodeIds ?? [], variables);
 
-      const remappedValues: ValueSegment[] = value.map((v: ValueSegment) => {
-        if (v.type !== ValueSegmentType.TOKEN) return v;
-        const oldId = v.token?.actionName ?? '';
-        const newId = idReplacements[oldId] ?? '';
-        if (!newId) return v;
-        const remappedValue = v.value?.replace(`'${oldId}'`, `'${newId}'`) ?? '';
-        return {
-          ...v,
-          token: {
-            ...v.token,
-            remappedValue,
-          },
-        } as ValueSegment;
-      });
+      const { value: remappedValues } = remapValueSegmentsWithNewIds(value, idReplacements);
 
       return {
         settingType: 'SettingTokenField',
@@ -349,6 +358,7 @@ const ParameterSection = ({
             editorId: string,
             labelId: string,
             tokenPickerMode?: TokenPickerMode,
+            editorType?: string,
             closeTokenPicker?: () => void,
             tokenPickerClicked?: (b: boolean) => void,
             tokenClickedCallback?: (token: ValueSegment) => void
@@ -358,7 +368,8 @@ const ParameterSection = ({
               editorId,
               labelId,
               tokenPickerMode,
-              editor?.toLowerCase() === 'code',
+              editorType,
+              editor?.toLowerCase() === constants.EDITOR.CODE,
               closeTokenPicker,
               tokenPickerClicked,
               tokenClickedCallback

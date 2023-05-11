@@ -99,6 +99,12 @@
       "value": "Paginierung"
     }
   ],
+  "+ym4nO": [
+    {
+      "type": 0,
+      "value": "Tracked Properties"
+    }
+  ],
   "//nQG4": [
     {
       "type": 0,
@@ -231,10 +237,38 @@
       "value": "Trigger"
     }
   ],
+  "04AwK7": [
+    {
+      "type": 0,
+      "value": "Error code: '"
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": "', Message: '"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
       "value": "Gibt den Anfang der Stunde an einen übergebenen Zeichenfolgen-Zeitstempel zurück."
+    }
+  ],
+  "08e2rO": [
+    {
+      "type": 0,
+      "value": "The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection."
     }
   ],
   "09B9CU": [
@@ -1057,6 +1091,16 @@
       "value": "Enter a valid double."
     }
   ],
+  "5FINOY": [
+    {
+      "type": 0,
+      "value": "Workflow has parameter validation errors on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -1079,6 +1123,20 @@
     {
       "type": 0,
       "value": "Gibt das erste Element im übergebenen Array oder in der übergebenen Zeichenfolge zurück."
+    }
+  ],
+  "5akc1Q": [
+    {
+      "type": 0,
+      "value": "Unsupported 'in' value : '"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "' in Parameter"
     }
   ],
   "5b0sKi": [
@@ -1275,6 +1333,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Zeichenfolge, aus der die Teilzeichenfolge entnommen wird."
+    }
+  ],
+  "7S2wtE": [
+    {
+      "type": 0,
+      "value": "Schema Validation"
     }
   ],
   "7WVgiU": [
@@ -1493,12 +1557,6 @@
       "value": "Fügt einem übergebenen Zeichenfolgen-Zeitstempel eine ganze Zahl von Tagen hinzu."
     }
   ],
-  "8yjjTX": [
-    {
-      "type": 0,
-      "value": "Connect via Service Principal"
-    }
-  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -1593,6 +1651,20 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9W0lck": [
+    {
+      "type": 0,
+      "value": "Invalid split on value '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "', cannot find in outputs."
     }
   ],
   "9YGcT2": [
@@ -1931,6 +2003,12 @@
       "value": "Number"
     }
   ],
+  "BeqBP7": [
+    {
+      "type": 0,
+      "value": "Automatic Decompression"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1947,6 +2025,12 @@
     {
       "type": 0,
       "value": "Select a managed identity"
+    }
+  ],
+  "BtL7UI": [
+    {
+      "type": 0,
+      "value": "No additional information is needed for this step. You will be able to use the outputs in subsequent steps."
     }
   ],
   "BuYrD3": [
@@ -2079,6 +2163,20 @@
       "value": "Select a value"
     }
   ],
+  "DQV7aK": [
+    {
+      "type": 0,
+      "value": "Alt/Option + click to download '"
+    },
+    {
+      "type": 1,
+      "value": "displayName"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "DWd9vy": [
     {
       "type": 0,
@@ -2113,6 +2211,12 @@
     {
       "type": 0,
       "value": "Show mini-map"
+    }
+  ],
+  "DjbVKU": [
+    {
+      "type": 0,
+      "value": "OAuth"
     }
   ],
   "DkF25I": [
@@ -2599,6 +2703,16 @@
       "value": "File Content"
     }
   ],
+  "H/QVod": [
+    {
+      "type": 0,
+      "value": "Workflow has settings validation errors on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "H17jEE": [
     {
       "type": 0,
@@ -2641,20 +2755,6 @@
       "value": "Month"
     }
   ],
-  "HJIZrG": [
-    {
-      "type": 0,
-      "value": "Weitere Diagnoseinformationen: x-ms-client-request-id ist \""
-    },
-    {
-      "type": 1,
-      "value": "clientRequestId"
-    },
-    {
-      "type": 0,
-      "value": "\"."
-    }
-  ],
   "HOchry": [
     {
       "type": 0,
@@ -2671,12 +2771,6 @@
     {
       "type": 0,
       "value": "Headers"
-    }
-  ],
-  "HXLutF": [
-    {
-      "type": 0,
-      "value": "Schlüssel"
     }
   ],
   "Hbqlzk": [
@@ -2803,6 +2897,20 @@
     {
       "type": 0,
       "value": "Error Code"
+    }
+  ],
+  "IjEKvh": [
+    {
+      "type": 0,
+      "value": "Error executing the api '"
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "IjZFjQ": [
@@ -3125,20 +3233,6 @@
     {
       "type": 0,
       "value": "Wird erstellt..."
-    }
-  ],
-  "LOwePI": [
-    {
-      "type": 0,
-      "value": "Ungültiger Typ des „Aufteilung auf“-Werts „"
-    },
-    {
-      "type": 1,
-      "value": "splitOn"
-    },
-    {
-      "type": 0,
-      "value": "“. „Aufteilung auf“ nicht in Array."
     }
   ],
   "LR/3Lr": [
@@ -3467,6 +3561,12 @@
     {
       "type": 0,
       "value": "Gibt eine Binärdarstellung eines Werts zurück."
+    }
+  ],
+  "O/fh9A": [
+    {
+      "type": 0,
+      "value": "Service Principal"
     }
   ],
   "O27gKq": [
@@ -3819,6 +3919,16 @@
       "value": "Add dynamic data or expressions by inserting a /"
     }
   ],
+  "Q8zxeb": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " Key"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -3945,12 +4055,6 @@
       "value": "Trigger können nicht gelöscht werden."
     }
   ],
-  "R0/Vx4": [
-    {
-      "type": 0,
-      "value": "Text field for slider"
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -4023,12 +4127,6 @@
     {
       "type": 0,
       "value": "issue"
-    }
-  ],
-  "S8P4N5": [
-    {
-      "type": 0,
-      "value": "Löschen"
     }
   ],
   "SADSSs": [
@@ -4117,6 +4215,20 @@
     {
       "type": 0,
       "value": "Fertig"
+    }
+  ],
+  "Sw+u4M": [
+    {
+      "type": 0,
+      "value": "Failed to retrive dynamic inputs. Error details: '"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "SyFXM3": [
@@ -4255,12 +4367,6 @@
     {
       "type": 0,
       "value": "Clientanforderungs-ID"
-    }
-  ],
-  "TeRxLv": [
-    {
-      "type": 0,
-      "value": "Use a service principal to connect using application permissions."
     }
   ],
   "TgcgXE": [
@@ -4653,6 +4759,16 @@
       "value": "Erforderlich. Die erste ganze Zahl im Array."
     }
   ],
+  "WTZvGW": [
+    {
+      "type": 0,
+      "value": "Workflow has invalid connections on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -4821,10 +4937,30 @@
       "value": "Count"
     }
   ],
+  "Xew1Df": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is '"
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "Xj0Gr/": [
     {
       "type": 0,
       "value": "Target schema element cannot be deleted."
+    }
+  ],
+  "Xj4xwI": [
+    {
+      "type": 0,
+      "value": "The managed identity used with this operation no longer exists. To continue, select an available identity or change the connection."
     }
   ],
   "XkBxv5": [
@@ -4881,20 +5017,6 @@
       "value": "Weitere Informationen"
     }
   ],
-  "Y7yyKD": [
-    {
-      "type": 0,
-      "value": "Ungültiger Ausdruckstyp \""
-    },
-    {
-      "type": 1,
-      "value": "type"
-    },
-    {
-      "type": 0,
-      "value": "\"."
-    }
-  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -4939,6 +5061,12 @@
     {
       "type": 0,
       "value": "PFX eingeben"
+    }
+  ],
+  "YRk271": [
+    {
+      "type": 0,
+      "value": "Authentication"
     }
   ],
   "YUbSFS": [
@@ -5099,12 +5227,6 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Tomsk"
-    }
-  ],
-  "Zr0yTE": [
-    {
-      "type": 0,
-      "value": "Nicht unterstützter \"in\"-Wert: {value} im Parameter"
     }
   ],
   "a7j3gS": [
@@ -5357,6 +5479,12 @@
     {
       "type": 0,
       "value": "Bereich"
+    }
+  ],
+  "c7tRg/": [
+    {
+      "type": 0,
+      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger."
     }
   ],
   "c8UPLp": [
@@ -5771,12 +5899,6 @@
       "value": "Email"
     }
   ],
-  "g0a4Qe": [
-    {
-      "type": 0,
-      "value": "Wert"
-    }
-  ],
   "g1zwch": [
     {
       "type": 0,
@@ -5873,6 +5995,12 @@
       "value": "Time Zone"
     }
   ],
+  "gUp23R": [
+    {
+      "type": 0,
+      "value": "The name already exists or is invalid, please update it before proceeding."
+    }
+  ],
   "gWRF8m": [
     {
       "type": 0,
@@ -5901,20 +6029,6 @@
     {
       "type": 0,
       "value": "Delete"
-    }
-  ],
-  "gpbgjJ": [
-    {
-      "type": 0,
-      "value": "Ungültiger „Aufteilung auf“-Wert „"
-    },
-    {
-      "type": 1,
-      "value": "splitOn"
-    },
-    {
-      "type": 0,
-      "value": "“. Er kann nicht in den Ausgaben gefunden werden."
     }
   ],
   "gu9o9z": [
@@ -5995,12 +6109,6 @@
     {
       "type": 0,
       "value": "Gibt das Ergebnis aus der Subtraktion von zwei Zahlen zurück."
-    }
-  ],
-  "hdnZ9Y": [
-    {
-      "type": 0,
-      "value": "ALT/OPTION + Klicken Sie, um {displayName} herunterzuladen"
     }
   ],
   "hic23z": [
@@ -6215,12 +6323,6 @@
       "value": "Test"
     }
   ],
-  "izS5yQ": [
-    {
-      "type": 0,
-      "value": "Learn more"
-    }
-  ],
   "j1VU25": [
     {
       "type": 0,
@@ -6323,20 +6425,6 @@
       "value": "Das Schema kann nicht generiert werden"
     }
   ],
-  "jjYA4u": [
-    {
-      "type": 0,
-      "value": "Nicht unterstütztes Referenzformat für Manifestverbindung: „"
-    },
-    {
-      "type": 1,
-      "value": "referenceKeyFormat"
-    },
-    {
-      "type": 0,
-      "value": "“"
-    }
-  ],
   "juR40n": [
     {
       "type": 0,
@@ -6353,12 +6441,6 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Base64-codierte Zeichenfolge."
-    }
-  ],
-  "k1N9Si": [
-    {
-      "type": 0,
-      "value": "Must provide default value for parameter."
     }
   ],
   "k41+13": [
@@ -6503,6 +6585,12 @@
     {
       "type": 0,
       "value": " Minuten"
+    }
+  ],
+  "l72gf4": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
     }
   ],
   "lFve22": [
@@ -6657,6 +6745,16 @@
       "value": "Funktion gelöscht."
     }
   ],
+  "mGPqAg": [
+    {
+      "type": 0,
+      "value": "Delete "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -6679,6 +6777,20 @@
     {
       "type": 0,
       "value": "URL codiert die Eingabezeichenfolge."
+    }
+  ],
+  "mPuXlv": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "', split on not in array."
     }
   ],
   "mQotIu": [
@@ -6727,6 +6839,16 @@
     {
       "type": 0,
       "value": "Geben Sie das Kennwort in Nur-Text-Form oder als sicheren Parameter ein."
+    }
+  ],
+  "mvu5xN": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " Value"
     }
   ],
   "mwEHSX": [
@@ -7001,20 +7123,6 @@
       "value": "(UTC+13:00) Samoa"
     }
   ],
-  "p7YGxW": [
-    {
-      "type": 0,
-      "value": "Fehler beim Ausführen der API „"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "“."
-    }
-  ],
   "pC2nr2": [
     {
       "type": 0,
@@ -7135,10 +7243,30 @@
       "value": "Fügt einem übergebenen Zeichenfolgen-Zeitstempel eine ganze Zahl von Sekunden hinzu."
     }
   ],
+  "q8vnZQ": [
+    {
+      "type": 0,
+      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned."
+    }
+  ],
   "q9hf8i": [
     {
       "type": 0,
       "value": "(UTC+04:00) Astrachan, Uljanowsk"
+    }
+  ],
+  "qAlTD5": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: '"
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "qGfwxW": [
@@ -7175,12 +7303,6 @@
     {
       "type": 0,
       "value": "Erforderlich"
-    }
-  ],
-  "qTqSqD": [
-    {
-      "type": 0,
-      "value": "Fehlercode: {errorCode}, Meldung: {message}."
     }
   ],
   "qUMXpq": [
@@ -7567,6 +7689,12 @@
     {
       "type": 0,
       "value": "Diese Funktion stellt Ihnen Details für den Workflow selbst zur Laufzeit bereit."
+    }
+  ],
+  "tMdcE1": [
+    {
+      "type": 0,
+      "value": "Invalid connection, please update your connection to load complete details"
     }
   ],
   "tNoZx2": [
@@ -8005,6 +8133,16 @@
       "value": "Menu"
     }
   ],
+  "wit5UT": [
+    {
+      "type": 0,
+      "value": "Failed to retrive dynamic outputs, outputs of this operation might not be visible in subsequent actions. Error details: "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    }
+  ],
   "wkiETV": [
     {
       "type": 0,
@@ -8207,6 +8345,20 @@
     {
       "type": 0,
       "value": "Wert auswählen"
+    }
+  ],
+  "yjierd": [
+    {
+      "type": 0,
+      "value": "Invalid expression type '"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "yoCi15": [

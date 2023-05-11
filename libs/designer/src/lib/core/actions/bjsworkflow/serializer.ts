@@ -4,7 +4,9 @@ import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { NodeInputs, NodeOperation, ParameterGroup } from '../../state/operation/operationMetadataSlice';
+import { ErrorLevel } from '../../state/operation/operationMetadataSlice';
 import { getOperationInputParameters } from '../../state/operation/operationSelector';
+import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
 import { getNode, getTriggerNodeId, isRootNode, isRootNodeInGraph } from '../../utils/graph';
 import {
@@ -34,6 +36,8 @@ import {
 } from '@microsoft/parsers-logic-apps';
 import type { LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/utils-logic-apps';
 import {
+  SerializationErrorCode,
+  SerializationException,
   clone,
   deleteObjectProperty,
   getObjectPropertyValue,
@@ -59,13 +63,41 @@ export interface SerializeOptions {
 
 export const serializeWorkflow = async (rootState: RootState, options?: SerializeOptions): Promise<Workflow> => {
   if (!options?.skipValidation) {
+    const intl = getIntl();
+
+    const operationsWithConnectionErrors = Object.entries(rootState.operations.errors).filter(
+      ([_id, errors]) => !!errors[ErrorLevel.Connection]
+    );
+    if (operationsWithConnectionErrors.length > 0) {
+      const invalidNodes = operationsWithConnectionErrors.map(([id]) => id).join(', ');
+      throw new SerializationException(
+        SerializationErrorCode.INVALID_CONNECTIONS,
+        intl.formatMessage(
+          {
+            defaultMessage: 'Workflow has invalid connections on the following operations: {invalidNodes}',
+            description: 'Error message to show when there are invalid connections in the nodes.',
+          },
+          { invalidNodes }
+        ),
+        { errorMessage: `Workflow has invalid connections on the following operations: ${invalidNodes}` }
+      );
+    }
+
     const operationsWithSettingsErrors = (Object.entries(rootState.settings.validationErrors) ?? []).filter(
       ([_id, errorArr]) => errorArr.length > 0
     );
     if (operationsWithSettingsErrors.length > 0) {
-      throw new Error(
-        'Workflow has settings validation errors on the following operations: ' +
-          operationsWithSettingsErrors.map(([id, _errorArr]) => id).join(', ')
+      const invalidNodes = operationsWithSettingsErrors.map(([id, _errorArr]) => id).join(', ');
+      throw new SerializationException(
+        SerializationErrorCode.INVALID_SETTINS,
+        intl.formatMessage(
+          {
+            defaultMessage: 'Workflow has settings validation errors on the following operations: {invalidNodes}',
+            description: 'Error message to show when there are invalid connections in the nodes.',
+          },
+          { invalidNodes }
+        ),
+        { errorMessage: `Workflow has settings validation errors on the following operations: ${invalidNodes}` }
       );
     }
 
@@ -76,52 +108,32 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
         )
     );
     if (operationsWithParameterErrors.length > 0) {
-      throw new Error(
-        'Workflow has parameter validation errors on the following operations: ' +
-          operationsWithParameterErrors.map(([id]) => id).join(', ')
+      const invalidNodes = operationsWithParameterErrors.map(([id]) => id).join(', ');
+      throw new SerializationException(
+        SerializationErrorCode.INVALID_PARAMETERS,
+        intl.formatMessage(
+          {
+            defaultMessage: 'Workflow has parameter validation errors on the following operations: {invalidNodes}',
+            description: 'Error message to show when there are invalid connections in the nodes.',
+          },
+          { invalidNodes }
+        ),
+        { errorMessage: `Workflow has parameter validation errors on the following operations: ${invalidNodes}` }
       );
     }
   }
 
   const { connectionsMapping, connectionReferences: referencesObject } = rootState.connections;
-  const workflowParameters = rootState.workflowParameters.definitions;
   const connectionReferences = Object.keys(connectionsMapping).reduce((references: ConnectionReferences, nodeId: string) => {
     const referenceKey = connectionsMapping[nodeId];
-    if (!referenceKey) return references;
-    const reference = referencesObject[referenceKey];
+    if (!referenceKey || !referencesObject[referenceKey]) {
+      return references;
+    }
 
     return {
       ...references,
-      [referenceKey]: reference,
+      [referenceKey]: referencesObject[referenceKey],
     };
-  }, {});
-
-  const parameters = Object.keys(workflowParameters).reduce((result: Record<string, WorkflowParameter>, parameterId: string) => {
-    const parameter = workflowParameters[parameterId];
-    const parameterDefinition: any = { ...parameter };
-    const value = parameterDefinition.value;
-    const defaultValue = parameterDefinition.defaultValue;
-
-    delete parameterDefinition['name'];
-    delete parameterDefinition['isEditable'];
-
-    parameterDefinition.value = equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING)
-      ? value
-      : value === ''
-      ? undefined
-      : typeof value !== 'string'
-      ? value
-      : JSON.parse(value);
-
-    parameterDefinition.defaultValue = equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING)
-      ? defaultValue
-      : defaultValue === ''
-      ? undefined
-      : typeof defaultValue !== 'string'
-      ? defaultValue
-      : JSON.parse(defaultValue);
-
-    return { ...result, [parameter.name]: parameterDefinition };
   }, {});
 
   const serializedWorkflow: Workflow = {
@@ -134,7 +146,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
       triggers: await getTrigger(rootState, options),
     },
     connectionReferences,
-    parameters,
+    parameters: getWorkflowParameters(rootState.workflowParameters.definitions),
   };
   return serializedWorkflow;
 };
@@ -178,11 +190,49 @@ const getTrigger = async (rootState: RootState, options?: SerializeOptions): Pro
     : {};
 };
 
+const getWorkflowParameters = (
+  workflowParameters: Record<string, WorkflowParameterDefinition>
+): Record<string, WorkflowParameter> | undefined => {
+  return Object.keys(workflowParameters).reduce((result: Record<string, WorkflowParameter>, parameterId: string) => {
+    const parameter = workflowParameters[parameterId];
+    const parameterDefinition: any = { ...parameter };
+    const value = parameterDefinition.value;
+    const defaultValue = parameterDefinition.defaultValue;
+
+    delete parameterDefinition['name'];
+    delete parameterDefinition['isEditable'];
+
+    parameterDefinition.value = equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING)
+      ? value
+      : value === ''
+      ? undefined
+      : typeof value !== 'string'
+      ? value
+      : JSON.parse(value);
+
+    parameterDefinition.defaultValue = equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING)
+      ? defaultValue
+      : defaultValue === ''
+      ? undefined
+      : typeof defaultValue !== 'string'
+      ? defaultValue
+      : JSON.parse(defaultValue);
+
+    return { ...result, [parameter.name]: parameterDefinition };
+  }, {});
+};
+
 export const serializeOperation = async (
   rootState: RootState,
   operationId: string,
   _options?: SerializeOptions
 ): Promise<LogicAppsV2.OperationDefinition | null> => {
+  const errors = rootState.operations.errors[operationId];
+
+  if (errors?.[ErrorLevel.Critical]) {
+    return rootState.workflow.operations[operationId];
+  }
+
   const operation = rootState.operations.operationInfo[operationId];
 
   // TODO: Add logic to identify if this operation is in Recommendation phase.
@@ -218,7 +268,6 @@ export const serializeOperation = async (
     };
   }
 
-  // TODO - We might have to just serialize bare minimum data for partially loaded node.
   return serializedOperation;
 };
 
@@ -299,6 +348,18 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
     ...optional('recurrence', recurrence),
     ...serializeSettings(operationId, nodeSettings, nodeStaticResults, isTrigger, rootState),
   };
+};
+
+const getRunAfter = (operation: LogicAppsV2.ActionDefinition, idReplacements: Record<string, string>): LogicAppsV2.RunAfter => {
+  if (!operation.runAfter) {
+    return {};
+  }
+  return Object.entries(operation.runAfter).reduce((acc: LogicAppsV2.RunAfter, [key, value]) => {
+    return {
+      ...acc,
+      [idReplacements[key] ?? key]: value,
+    };
+  }, {});
 };
 
 //#region Parameters Serialization
@@ -955,15 +1016,3 @@ const getSplitOn = (
   };
 };
 //#endregion
-
-const getRunAfter = (operation: LogicAppsV2.ActionDefinition, idReplacements: Record<string, string>): LogicAppsV2.RunAfter => {
-  if (!operation.runAfter) {
-    return {};
-  }
-  return Object.entries(operation.runAfter).reduce((acc: LogicAppsV2.RunAfter, [key, value]) => {
-    return {
-      ...acc,
-      [idReplacements[key] ?? key]: value,
-    };
-  }, {});
-};
