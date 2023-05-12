@@ -62,7 +62,7 @@ export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColo
         <ValuesPanel
           brandColor={brandColor}
           headerText={intlText.inputs}
-          linkText={intlText.showInputs}
+          linkText={isNullOrUndefined(values) ? '' : intlText.showInputs}
           showLink={!!uri}
           values={values}
           labelledBy={`inputs-${nodeId}`}
@@ -70,6 +70,8 @@ export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColo
           showMore={showMore}
           onMoreClick={onMoreClick}
           onLinkClick={onSeeRawInputsClick}
+          isDownload={isNullOrUndefined(values)}
+          link={uri}
         />
       ) : null}
     </>
