@@ -65,6 +65,7 @@ import type {
   ParameterInfo,
   RowItemProps,
   Token as SegmentToken,
+  Token,
   ValueSegment,
 } from '@microsoft/designer-ui';
 import {
@@ -1636,7 +1637,7 @@ export async function updateDynamicDataInNode(
   settings: Settings,
   variables: VariableDeclaration[],
   dispatch: Dispatch,
-  rootState: RootState,
+  getState: () => RootState,
   operationDefinition?: any
 ): Promise<void> {
   await loadDynamicData(
@@ -1650,14 +1651,15 @@ export async function updateDynamicDataInNode(
     settings,
     variables,
     dispatch,
-    rootState,
+    getState(),
     operationDefinition
   );
 
-  for (const parameterKey of Object.keys(dependencies.inputs)) {
-    const dependencyInfo = dependencies.inputs[parameterKey];
+  const { operations } = getState();
+  for (const parameterKey of Object.keys(operations.dependencies[nodeId]?.inputs ?? {})) {
+    const dependencyInfo = operations.dependencies[nodeId].inputs[parameterKey];
     if (dependencyInfo.dependencyType === 'ListValues') {
-      const details = getGroupAndParameterFromParameterKey(nodeInputs, parameterKey);
+      const details = getGroupAndParameterFromParameterKey(operations.inputParameters[nodeId] ?? {}, parameterKey);
       if (details) {
         loadDynamicValuesForParameter(
           nodeId,
@@ -1665,9 +1667,9 @@ export async function updateDynamicDataInNode(
           details.parameter.id,
           operationInfo,
           connectionReference,
-          nodeInputs,
-          nodeMetadata,
-          dependencies,
+          operations.inputParameters[nodeId],
+          operations.actionMetadata[nodeId],
+          operations.dependencies[nodeId],
           false /* showErrorWhenNotReady */,
           dispatch
         );
@@ -1705,7 +1707,7 @@ async function loadDynamicData(
   }
 
   if (Object.keys(dependencies?.inputs ?? {}).length) {
-    loadDynamicContentForInputsInNode(
+    await loadDynamicContentForInputsInNode(
       nodeId,
       dependencies.inputs,
       operationInfo,
@@ -2806,28 +2808,10 @@ export function parameterValueToString(
   isDefinitionValue: boolean,
   idReplacements?: Record<string, string>
 ): string | undefined {
-  let didRemap = false;
-  const remappedParameterInfo = idReplacements
-    ? {
-        ...parameterInfo,
-        value: parameterInfo.value.map((val) => {
-          const oldId = val.token?.actionName ?? '';
-          if (val.token && idReplacements[oldId]) {
-            const newId = idReplacements[oldId];
-            didRemap = true;
-            return {
-              ...val,
-              value: val.value?.replace(`'${oldId}'`, `'${newId}'`),
-              token: {
-                ...val.token,
-                actionName: newId,
-              },
-            };
-          }
-          return val;
-        }),
-      }
-    : parameterInfo;
+  const { value: remappedValue, didRemap } = idReplacements
+    ? remapValueSegmentsWithNewIds(parameterInfo.value, idReplacements)
+    : { value: parameterInfo.value, didRemap: false };
+  const remappedParameterInfo = idReplacements ? { ...parameterInfo, value: remappedValue } : parameterInfo;
 
   if (didRemap) delete remappedParameterInfo.preservedValue;
 
@@ -3002,6 +2986,60 @@ export function getJSONValueFromString(value: any, type: string): any {
   }
 
   return parameterValue;
+}
+
+export function remapValueSegmentsWithNewIds(
+  segments: ValueSegment[],
+  idReplacements: Record<string, string>
+): { value: ValueSegment[]; didRemap: boolean } {
+  let didRemap = false;
+  const value = segments.map((segment) => {
+    if (isTokenValueSegment(segment)) {
+      const result = remapTokenSegmentValue(segment, idReplacements);
+      didRemap = result.didRemap;
+      return result.value;
+    }
+
+    return segment;
+  });
+
+  return { value, didRemap };
+}
+
+export function remapTokenSegmentValue(
+  segment: ValueSegment,
+  idReplacements: Record<string, string>
+): { value: ValueSegment; didRemap: boolean } {
+  let didRemap = false;
+  let newSegment = segment;
+  const { actionName, arrayDetails } = segment.token as Token;
+  const oldId = isOutputTokenValueSegment(segment) ? (arrayDetails ? arrayDetails?.loopSource : actionName) : '';
+  const newId = idReplacements[oldId ?? ''];
+
+  if (oldId && newId) {
+    didRemap = true;
+    const newValue = segment.value?.replaceAll(`'${oldId}'`, `'${newId}'`);
+
+    newSegment = {
+      ...segment,
+      value: newValue,
+      token: arrayDetails
+        ? { ...segment.token, arrayDetails: { ...arrayDetails, loopSource: newId }, value: newValue }
+        : { ...segment.token, actionName: newId, value: newValue },
+    } as ValueSegment;
+  } else if (isFunctionValueSegment(segment)) {
+    let newSegmentValue = segment.value;
+    for (const id of Object.keys(idReplacements)) {
+      if (!didRemap && newSegmentValue?.includes(`'${id}`)) {
+        didRemap = true;
+      }
+      newSegmentValue = newSegmentValue?.replaceAll(`'${id}'`, `'${idReplacements[id]}'`);
+    }
+
+    newSegment = { ...segment, value: newSegmentValue, token: { ...segment.token, value: newSegmentValue } } as ValueSegment;
+  }
+
+  return { value: newSegment, didRemap };
 }
 
 /**

@@ -1536,12 +1536,6 @@
       "value": "Aggiunge un numero intero di giorni al timestamp in formato stringa passato"
     }
   ],
-  "8yjjTX": [
-    {
-      "type": 0,
-      "value": "Connect via Service Principal"
-    }
-  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -2191,6 +2185,12 @@
     {
       "type": 0,
       "value": "Show mini-map"
+    }
+  ],
+  "DjbVKU": [
+    {
+      "type": 0,
+      "value": "OAuth"
     }
   ],
   "DkF25I": [
@@ -3535,6 +3535,12 @@
       "value": "Restituisce una rappresentazione binaria di un valore"
     }
   ],
+  "O/fh9A": [
+    {
+      "type": 0,
+      "value": "Service Principal"
+    }
+  ],
   "O27gKq": [
     {
       "type": 0,
@@ -4334,12 +4340,6 @@
       "value": "ID richiesta client"
     }
   ],
-  "TeRxLv": [
-    {
-      "type": 0,
-      "value": "Use a service principal to connect using application permissions."
-    }
-  ],
   "TgcgXE": [
     {
       "type": 0,
@@ -5032,6 +5032,12 @@
     {
       "type": 0,
       "value": "Immetti file PFX"
+    }
+  ],
+  "YRk271": [
+    {
+      "type": 0,
+      "value": "Authentication"
     }
   ],
   "YUbSFS": [
@@ -5956,6 +5962,12 @@
       "value": "Time Zone"
     }
   ],
+  "gUp23R": [
+    {
+      "type": 0,
+      "value": "The name already exists or is invalid, please update it before proceeding."
+    }
+  ],
   "gWRF8m": [
     {
       "type": 0,
@@ -6281,12 +6293,6 @@
       "value": "Test"
     }
   ],
-  "izS5yQ": [
-    {
-      "type": 0,
-      "value": "Learn more"
-    }
-  ],
   "j1VU25": [
     {
       "type": 0,
@@ -6405,12 +6411,6 @@
     {
       "type": 0,
       "value": "Obbligatorio. Stringa con codifica Base64."
-    }
-  ],
-  "k1N9Si": [
-    {
-      "type": 0,
-      "value": "Must provide default value for parameter."
     }
   ],
   "k41+13": [
@@ -6555,6 +6555,12 @@
     {
       "type": 0,
       "value": " minuti"
+    }
+  ],
+  "l72gf4": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
     }
   ],
   "lFve22": [
