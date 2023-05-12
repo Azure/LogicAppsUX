@@ -23,6 +23,7 @@ export const DocumentationItem = ({ description, link, openWindow, onClick }: Do
   return (
     <div>
       {description ? <span>{description}</span> : null}
+      <br />
       {link ? (
         <a href={link.url} target="_blank" rel="noopener noreferrer" onClick={handleLinkClicked}>
           {link.urlDescription}
