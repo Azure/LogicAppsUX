@@ -255,7 +255,7 @@ export const operationMetadataSlice = createSlice({
 
       const inputDependencies = state.dependencies[nodeId]?.inputs;
       for (const inputKey of Object.keys(inputDependencies ?? {})) {
-        if (inputDependencies[inputKey].parameter?.isDynamic) {
+        if (inputDependencies[inputKey].parameter?.isDynamic && inputDependencies[inputKey].dependencyType !== 'ApiSchema') {
           delete state.dependencies[nodeId].inputs[inputKey];
         }
       }
