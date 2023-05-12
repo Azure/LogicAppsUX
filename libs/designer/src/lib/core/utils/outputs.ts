@@ -434,7 +434,7 @@ export const loadDynamicOutputsInNode = async (
           const message = error.message as string;
           const errorMessage = getIntl().formatMessage(
             {
-              defaultMessage: `Failed to retrive dynamic outputs, outputs of this operation might not be visible in subsequent actions. Error details: {message}`,
+              defaultMessage: `Failed to retrieve dynamic outputs, outputs of this operation might not be visible in subsequent actions. Error details: {message}`,
               description: 'Error message to show when loading dynamic outputs failed.',
             },
             {
