@@ -31,7 +31,6 @@ export const ExpandedComplexArray = ({
   readOnly,
   getTokenPicker,
   setItems,
-  itemKey = guid(),
 }: ExpandedComplexArrayProps): JSX.Element => {
   const intl = useIntl();
 
@@ -52,10 +51,23 @@ export const ExpandedComplexArray = ({
     }
   };
 
-  const handleNestedArraySaved = (newComplexItems: ComplexArrayItems[], index: number, innerIndex: number) => {
+  const handleNestedArraySaved = (
+    newComplexItems: ComplexArrayItems[],
+    index: number,
+    innerIndex: number,
+    schemaItem: ItemSchemaItemProps
+  ) => {
     const newItems = [...allItems];
+    if (allItems[index].items[innerIndex].key !== schemaItem.key) {
+      const slicedArray = allItems[index].items;
+      newItems[index].items = [
+        ...slicedArray.slice(0, innerIndex),
+        { key: schemaItem.key, title: schemaItem.title, description: schemaItem.description, value: [] },
+        ...slicedArray.slice(innerIndex),
+      ];
+    }
     newItems[index].items[innerIndex].arrayItems = newComplexItems;
-    setItems(newItems);
+    setItems(JSON.parse(JSON.stringify(newItems)));
   };
 
   return (
@@ -68,20 +80,20 @@ export const ExpandedComplexArray = ({
               return (
                 <div key={complexItem?.arrayItems?.length ?? ' ' + i}>
                   {schemaItem.type === constants.SWAGGER.TYPE.ARRAY && schemaItem.items ? (
-                    <>
+                    <div>
                       <Label> {schemaItem.title} </Label>
                       <ExpandedComplexArray
                         dimensionalSchema={schemaItem.items}
-                        allItems={complexItem?.arrayItems ?? []}
+                        allItems={complexItem?.arrayItems ?? ([] as ComplexArrayItems[])}
                         canDeleteLastItem={canDeleteLastItem}
                         readOnly={readOnly}
                         getTokenPicker={getTokenPicker}
                         setItems={(newItems) => {
-                          handleNestedArraySaved(newItems, index, i);
+                          handleNestedArraySaved(newItems, index, i, schemaItem);
                         }}
-                        itemKey={schemaItem.key}
+                        itemKey={guid()}
                       />
-                    </>
+                    </div>
                   ) : (
                     <>
                       <div className="msla-array-item-header">
@@ -118,17 +130,17 @@ export const ExpandedComplexArray = ({
           className="msla-array-add-item-button"
           iconProps={addItemButtonIconProps}
           text={addItemButtonLabel}
-          onClick={() =>
+          onClick={() => {
             setItems([
               ...allItems,
               {
-                key: itemKey,
+                key: guid(),
                 items: dimensionalSchema.map((item) => {
                   return { key: item.key, title: item.title, value: [], description: item.description };
                 }),
               },
-            ])
-          }
+            ]);
+          }}
         />
       </div>
     </div>

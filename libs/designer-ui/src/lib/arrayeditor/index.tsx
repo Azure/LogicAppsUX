@@ -134,6 +134,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           isTrigger={baseEditorProps.isTrigger}
           readOnly={baseEditorProps.readonly}
           itemSchema={itemSchema}
+          isComplex={isComplex}
           setItems={isComplex ? updateComplexItems : updateSimpleItems}
           setIsValid={setIsValid}
           getTokenPicker={getTokenPicker}

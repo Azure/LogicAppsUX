@@ -13,6 +13,7 @@ export interface CollapsedArrayValidationProps {
   isValid: boolean;
   collapsedValue?: ValueSegment[];
   itemSchema?: ArrayItemSchema;
+  isComplex: boolean;
   setIsValid: (b: boolean) => void;
   setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItems[]) => void);
   setCollapsedValue: (val: ValueSegment[]) => void;
@@ -24,6 +25,7 @@ export const CollapsedArrayValidation = ({
   defaultErrorMessage,
   collapsedValue,
   itemSchema,
+  isComplex,
   setIsValid,
   setItems,
   setCollapsedValue,
@@ -32,7 +34,7 @@ export const CollapsedArrayValidation = ({
 
   const onChange = (editorState: EditorState) => {
     editorState.read(() => {
-      if (itemSchema) {
+      if (isComplex && itemSchema) {
         serializeComplexArray(editor, itemSchema, setItems as (complexItems: ComplexArrayItems[]) => void, setIsValid);
       } else {
         serializeSimpleArray(editor, setItems as (simpleItems: SimpleArrayItem[]) => void, setIsValid);

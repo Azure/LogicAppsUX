@@ -242,21 +242,5 @@ const convertObjectToComplexArrayItemArray = (
       });
     }
   });
-
-  if (itemSchema.required) {
-    itemSchema.required.forEach((requiredKey) => {
-      if (!items.find((item) => item.key === requiredKey)) {
-        const itemSchemaProperty = itemSchema.properties?.[requiredKey];
-        if (itemSchemaProperty) {
-          items.push({
-            key: itemSchemaProperty.key,
-            title: itemSchemaProperty.title ?? itemSchema.key.split('.').slice(-1)[0],
-            description: itemSchemaProperty.description ?? '',
-            value: [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }],
-          });
-        }
-      }
-    });
-  }
   return items;
 };

@@ -14,6 +14,7 @@ export interface CollapsedArrayProps {
   readOnly?: boolean;
   isTrigger?: boolean;
   itemSchema: ArrayItemSchema;
+  isComplex: boolean;
   setCollapsedValue: (val: ValueSegment[]) => void;
   setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItems[]) => void);
   setIsValid: (b: boolean) => void;
@@ -28,6 +29,7 @@ export const CollapsedArray = ({
   readOnly,
   isTrigger,
   itemSchema,
+  isComplex,
   getTokenPicker,
   setItems,
   setIsValid,
@@ -79,6 +81,7 @@ export const CollapsedArray = ({
             isValid={isValid}
             collapsedValue={collapsedValue}
             itemSchema={itemSchema}
+            isComplex={isComplex}
             setCollapsedValue={setCollapsedValue}
             setIsValid={setIsValid}
             setItems={setItems}
