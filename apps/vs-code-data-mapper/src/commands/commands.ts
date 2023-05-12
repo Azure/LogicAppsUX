@@ -68,6 +68,14 @@ const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
   const fileContents = await fs.readFile(draftFileIsFoundAndShouldBeUsed ? draftMapDefinitionPath : mapDefinitionPath, 'utf-8');
   const mapDefinition = loadMapDefinition(fileContents);
 
+  /*   const mapDefinition = yaml.load(
+    fileContents
+  ) as {
+    $sourceSchema: string;
+    $targetSchema: string;
+    [key: string]: any;
+  }; */
+
   if (
     !mapDefinition.$sourceSchema ||
     typeof mapDefinition.$sourceSchema !== 'string' ||

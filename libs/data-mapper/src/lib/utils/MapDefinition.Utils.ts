@@ -15,6 +15,7 @@ export const loadMapDefinition = (mapDefinitionString: string | undefined): MapD
     return {};
   }
 };
+
 const fixMapDefinitionCustomValues = (mapDefinition: MapDefinitionEntry) => {
   for (const key in mapDefinition) {
     const curElement = mapDefinition[key];

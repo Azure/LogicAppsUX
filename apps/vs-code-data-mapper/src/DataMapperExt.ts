@@ -5,8 +5,8 @@ import type { MapDefinitionData } from '@microsoft/logic-apps-data-mapper';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { ChildProcess } from 'child_process';
 import * as path from 'path';
-import { Uri, ViewColumn, window, workspace } from 'vscode';
 import type { ExtensionContext } from 'vscode';
+import { Uri, ViewColumn, window, workspace } from 'vscode';
 
 type DataMapperPanelDictionary = { [key: string]: DataMapperPanel }; // key == dataMapName
 
@@ -19,17 +19,17 @@ export default class DataMapperExt {
 
   public static panelManagers: DataMapperPanelDictionary = {};
 
-  public static async openDataMapperPanel(dataMapName: string, loadMapDefinitionData?: MapDefinitionData) {
+  public static async openDataMapperPanel(dataMapName: string, mapDefinitionData?: MapDefinitionData) {
     const workflowFolder = DataMapperExt.getWorkspaceFolderFsPath();
 
     if (workflowFolder) {
       await startBackendRuntime(workflowFolder);
 
-      DataMapperExt.createOrShow(dataMapName, loadMapDefinitionData);
+      DataMapperExt.createOrShow(dataMapName, mapDefinitionData);
     }
   }
 
-  public static createOrShow(dataMapName: string, loadMapDefinitionData?: MapDefinitionData) {
+  public static createOrShow(dataMapName: string, mapDefinitionData?: MapDefinitionData) {
     // If a panel has already been created, re-show it
     if (DataMapperExt.panelManagers[dataMapName]) {
       // NOTE: Shouldn't need to re-send runtime port if webview has already been loaded/set up
@@ -57,7 +57,7 @@ export default class DataMapperExt {
       dark: Uri.file(path.join(DataMapperExt.context.extensionPath, 'assets', 'wand-dark.png')),
     };
     DataMapperExt.panelManagers[dataMapName].updateWebviewPanelTitle();
-    DataMapperExt.panelManagers[dataMapName].loadMapDefinitionData = loadMapDefinitionData;
+    DataMapperExt.panelManagers[dataMapName].mapDefinitionData = mapDefinitionData;
 
     // From here, VSIX will handle any other initial-load-time events once receive webviewLoaded msg
   }
