@@ -692,6 +692,21 @@
             "description": "Show a warning if multiple installs of Azure Functions Core Tools are detected.",
             "default": true
           },
+          "azureLogicAppsStandard.validateDotNetSDK": {
+            "type": "boolean",
+            "description": "Validate the .Net SDK 6 is installed before debugging.",
+            "default": true
+          },
+          "azureLogicAppsStandard.showDotNetSDKWarning": {
+            "type": "boolean",
+            "description": "Show a warning if your installed version of .NET SDK 6 is out-of-date.",
+            "default": true
+          },
+          "azureLogicAppsStandard.showMultiDotNetSDKWarning": {
+            "type": "boolean",
+            "description": "Show a warning if multiple installs of .NET SDK 6 are detected.",
+            "default": true
+          },
           "azureLogicAppsStandard.requestTimeout": {
             "type": "number",
             "description": "The timeout (in seconds) to be used when making requests, for example getting the latest templates.",

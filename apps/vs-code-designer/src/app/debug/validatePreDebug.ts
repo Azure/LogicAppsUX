@@ -10,6 +10,7 @@ import {
   localSettingsFileName,
 } from '../../constants';
 import { localize } from '../../localize';
+import { validateDotNetSDKIsInstalled } from '../commands/dotNetSDK/validateDotNetSDKIsInstalled';
 import { validateFuncCoreToolsInstalled } from '../commands/funcCoreTools/validateFuncCoreToolsInstalled';
 import { getAzureWebJobsStorage, setLocalAppSetting } from '../utils/appSettings/localSettings';
 import { tryGetFunctionProjectRoot } from '../utils/verifyIsProject';
@@ -23,7 +24,7 @@ import * as azureStorage from 'azure-storage';
 import * as vscode from 'vscode';
 
 /**
- * Validates functions core tools is installed and azure emulator is running
+ * Validates .net sdk 6 and functions core tools is installed and azure emulator is running
  * @param {IActionContext} context - Command context.
  * @param {vscode.DebugConfiguration} debugConfig - Workspace debug configuration.
  * @returns {IPreDebugValidateResult} Structure to determine if debug should continue.
@@ -35,11 +36,15 @@ export async function preDebugValidate(context: IActionContext, debugConfig: vsc
 
   try {
     context.telemetry.properties.lastValidateStep = 'funcInstalled';
-    const message: string = localize(
+    let message: string = localize(
       'installFuncTools',
       'You must have the Azure Functions Core Tools installed to debug your local functions.'
     );
     shouldContinue = await validateFuncCoreToolsInstalled(context, message, workspace.uri.fsPath);
+
+    context.telemetry.properties.lastValidateStep = 'funcInstalled';
+    message = localize('installDotNetSDK', 'You must have the .Net SDK 6 installed to debug your local functions.');
+    shouldContinue = await validateDotNetSDKIsInstalled(context, message, workspace.uri.fsPath);
 
     if (shouldContinue) {
       context.telemetry.properties.lastValidateStep = 'getProjectRoot';

@@ -29,6 +29,12 @@ export const funcPackageName = 'azure-functions-core-tools';
 export const defaultFuncPort = '7071';
 export const isolatedSdkName = 'Microsoft.Azure.Functions.Worker.Sdk';
 
+// DotNet SDK
+export const dotnet = 'dotnet';
+export const dotNetSDK = 'dotNetSDK';
+export const dotNetPackageName = 'Microsoft.DotNet.SDK.6';
+export const dotNetSDKMajorVersion = 6;
+
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
 export const workflowResourceGroupNameKey = 'WORKFLOWS_RESOURCE_GROUP_NAME';
@@ -80,6 +86,7 @@ export enum extensionCommand {
   openInPortal = 'azureLogicAppsStandard.openInPortal',
   azureFunctionsOpenFile = 'azureFunctions.openFile',
   azureFunctionsUninstallFuncCoreTools = 'azureFunctions.uninstallFuncCoreTools',
+  azureFunctionsUninstallDotNetSDK = 'azureFunctions.uninstallDotNetSDK',
   azureFunctionsAppSettingsEncrypt = 'azureFunctions.appSettings.encrypt',
   azureFunctionsAppSettingsDecrypt = 'azureFunctions.appSettings.decrypt',
   openOverview = 'azureLogicAppsStandard.openOverview',
@@ -136,6 +143,7 @@ export const projectTemplateKeySetting = 'projectTemplateKey';
 export const projectOpenBehaviorSetting = 'projectOpenBehavior';
 export const stopFuncTaskPostDebugSetting = 'stopFuncTaskPostDebug';
 export const validateFuncCoreToolsSetting = 'validateFuncCoreTools';
+export const validateDotNetSDKSetting = 'validateDotNetSDK';
 export const showDeployConfirmationSetting = 'showDeployConfirmation';
 export const deploySubpathSetting = 'deploySubpath';
 export const preDeployTaskSetting = 'preDeployTask';
@@ -162,6 +170,7 @@ export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Work
 
 // .NET
 export enum DotnetVersion {
+  netsdk6 = '6',
   net6 = 'net6.0',
   net3 = 'netcoreapp3.1',
   net2 = 'netcoreapp2.1',
@@ -172,6 +181,7 @@ export enum DotnetVersion {
 export enum PackageManager {
   npm = 'npm',
   brew = 'brew',
+  winget = 'winget',
 }
 
 // Resources

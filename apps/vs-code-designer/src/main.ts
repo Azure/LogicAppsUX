@@ -1,5 +1,6 @@
 import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createCodeless/createCodelessSteps/WorkflowCreateStepBase';
+import { validateDotNetSDKIsLatest } from './app/commands/dotNetSDK/validateDotNetSDKIsLatest';
 import { validateFuncCoreToolsIsLatest } from './app/commands/funcCoreTools/validateFuncCoreToolsIsLatest';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
@@ -40,6 +41,8 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
     runPostWorkflowCreateStepsFromCache();
+    validateDotNetSDKIsLatest();
+    // TODO: Validate NPM Install
     validateFuncCoreToolsIsLatest();
 
     ext.rgApi = await getResourceGroupsApi();
