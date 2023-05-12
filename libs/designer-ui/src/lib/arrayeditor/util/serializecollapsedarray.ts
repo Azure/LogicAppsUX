@@ -9,6 +9,8 @@ import { guid } from '@microsoft/utils-logic-apps';
 import type { LexicalEditor } from 'lexical';
 import { $getRoot } from 'lexical';
 
+const emptyArrayValue = [{ id: guid(), type: ValueSegmentType.LITERAL, value: '[]' }];
+
 export const serializeSimpleArray = (
   editor: LexicalEditor,
   setItems: (items: SimpleArrayItem[]) => void,
@@ -34,20 +36,27 @@ export const serializeComplexArray = (
   });
 };
 
-export const parseSimpleItems = (items: SimpleArrayItem[]): ValueSegment[] => {
+export const parseSimpleItems = (
+  items: SimpleArrayItem[],
+  itemSchema: ArrayItemSchema,
+  castParameter: CastHandler
+): { castedValue: ValueSegment[]; uncastedValue: ValueSegment[] } => {
   if (items.length === 0) {
-    return [{ id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  null\n]' }];
+    return { castedValue: emptyArrayValue, uncastedValue: emptyArrayValue };
   }
-  const parsedItems: ValueSegment[] = [];
-  parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  "' });
+  const { type, format } = itemSchema;
+  const castedArraySegments: ValueSegment[] = [];
+  const uncastedArraySegments: ValueSegment[] = [];
+  castedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  "' });
+  uncastedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  "' });
   items.forEach((item, index) => {
     const { value } = item;
-    value?.forEach((segment) => {
-      parsedItems.push(segment);
-    });
-    parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: index < items.length - 1 ? '",\n  "' : '"\n]' });
+    castedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: castParameter(value, type, format) });
+    uncastedArraySegments.push(...value);
+    castedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: index < items.length - 1 ? '",\n  "' : '"\n]' });
+    uncastedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: index < items.length - 1 ? '",\n  "' : '"\n]' });
   });
-  return parsedItems;
+  return { uncastedValue: uncastedArraySegments, castedValue: castedArraySegments };
 };
 
 export const parseComplexItems = (
@@ -55,9 +64,8 @@ export const parseComplexItems = (
   itemSchema: ArrayItemSchema,
   castParameter: CastHandler
 ): { castedValue: ValueSegment[]; uncastedValue: ValueSegment[] } => {
-  const emptyValue = [{ id: guid(), type: ValueSegmentType.LITERAL, value: '[]' }];
   if (allItems.length === 0) {
-    return { castedValue: emptyValue, uncastedValue: emptyValue };
+    return { castedValue: emptyArrayValue, uncastedValue: emptyArrayValue };
   }
   const castedArrayVal: any = [];
   const uncastedArrayVal: any = [];

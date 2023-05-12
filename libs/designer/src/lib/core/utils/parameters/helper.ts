@@ -357,7 +357,6 @@ export function getParameterEditorProps(
     } else if (type === constants.SWAGGER.TYPE.ARRAY && !!itemSchema && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.ARRAY;
       editorViewModel = toArrayViewModelSchema(itemSchema);
-      console.log(editorViewModel);
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
     } else if ((schemaEnum || schema?.enum || schema?.[ExtensionProperties.CustomEnum]) && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.COMBOBOX;

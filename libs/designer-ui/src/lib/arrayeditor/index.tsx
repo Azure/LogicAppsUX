@@ -92,13 +92,13 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
 
   const updateSimpleItems = (newItems: SimpleArrayItem[]) => {
     setItems(newItems);
-    const objectValue = parseSimpleItems(newItems);
-    setCollapsedValue(objectValue);
-
+    const objectValue = parseSimpleItems(newItems, itemSchema, castParameter);
+    const { castedValue, uncastedValue } = objectValue;
+    setCollapsedValue(uncastedValue);
     if (!collapsed) {
       onChange?.({
-        value: objectValue,
-        viewModel: { arrayType, itemSchema },
+        value: castedValue,
+        viewModel: { arrayType, itemSchema, uncastedValue },
       });
     }
   };
@@ -112,7 +112,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
     if (!collapsed) {
       onChange?.({
         value: castedValue,
-        viewModel: { arrayType, itemSchema, uncastedValue: objectValue },
+        viewModel: { arrayType, itemSchema, uncastedValue },
       });
     }
   };
