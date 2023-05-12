@@ -319,6 +319,12 @@ export function parseAuthEditor(authType: AuthenticationType, items: AuthProps):
       updateValues(values, AUTHENTICATION_PROPERTIES.RAW_VALUE, items.raw?.rawValue);
       break;
     case AuthenticationType.MSI:
+      if (items.msi?.msiIdentity) {
+        updateValues(values, AUTHENTICATION_PROPERTIES.MSI_IDENTITY, [
+          { id: guid(), type: ValueSegmentType.LITERAL, value: items.msi.msiIdentity },
+        ]);
+      }
+
       updateValues(values, AUTHENTICATION_PROPERTIES.MSI_AUDIENCE, items.msi?.msiAudience);
       break;
     case AuthenticationType.OAUTH:
@@ -390,6 +396,7 @@ export const serializeAuthentication = (
         break;
       case AuthenticationType.MSI:
         returnItems.msi = {
+          msiIdentity: jsonEditor.identity,
           msiAudience: convertStringToSegments(jsonEditor.audience, true, nodeMap),
         };
         break;

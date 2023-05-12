@@ -118,7 +118,6 @@ export const AuthenticationEditor = ({
           <MSIAuthentication
             identity={options?.identity}
             msiProps={msi}
-            onManagedIdentityChange={onManagedIdentityDropdownChange}
             getTokenPicker={getTokenPicker}
             setCurrentProps={setCurrentProps}
           />
@@ -133,12 +132,6 @@ export const AuthenticationEditor = ({
           format("Unsupported authentication type '{0}'.", option)
         );
     }
-  };
-
-  const onManagedIdentityDropdownChange = (_event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void => {
-    setCurrentProps((prevState: AuthProps) => ({
-      msi: { ...prevState.msi, msiIdentity: item.text as string },
-    }));
   };
 
   const handleKeyChange = (_event?: React.FormEvent<HTMLDivElement>, item?: IDropdownOption) => {
