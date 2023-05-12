@@ -1,26 +1,24 @@
 # Logic Apps Designer
-### [2.15.20](https://github.com/Azure/LogicAppsUX/compare/v2.15.19...v2.15.20) (2023-05-12)
 
+### [2.15.20](https://github.com/Azure/LogicAppsUX/compare/v2.15.19...v2.15.20) (2023-05-12)
 
 ### Bug Fixes
 
-* **Designer:** Fixed crash with manifest not having connector property  ([#2345](https://github.com/Azure/LogicAppsUX/issues/2345)) ([6bb3e4d](https://github.com/Azure/LogicAppsUX/commit/6bb3e4dfd23cb0e5a22e397b474afba7302f3f5a))
-* **designer:** When outputs are too large to show, monitoring view will show a download link to the file ([#2344](https://github.com/Azure/LogicAppsUX/issues/2344)) ([7a0b9df](https://github.com/Azure/LogicAppsUX/commit/7a0b9dfe4a88ad0e3dd4d5147fe6cbb6982e1c5b))
+- **Designer:** Fixed crash with manifest not having connector property ([#2345](https://github.com/Azure/LogicAppsUX/issues/2345)) ([6bb3e4d](https://github.com/Azure/LogicAppsUX/commit/6bb3e4dfd23cb0e5a22e397b474afba7302f3f5a))
+- **designer:** When outputs are too large to show, monitoring view will show a download link to the file ([#2344](https://github.com/Azure/LogicAppsUX/issues/2344)) ([7a0b9df](https://github.com/Azure/LogicAppsUX/commit/7a0b9dfe4a88ad0e3dd4d5147fe6cbb6982e1c5b))
 
 ### [2.15.19](https://github.com/Azure/LogicAppsUX/compare/v2.15.18...v2.15.19) (2023-05-11)
 
-
 ### Features
 
-* **designer:** Add static results support for manifest operations ([#2325](https://github.com/Azure/LogicAppsUX/issues/2325)) ([9c9497d](https://github.com/Azure/LogicAppsUX/commit/9c9497dfc5a686d3563befeea8d033cba2087bc5))
-
+- **designer:** Add static results support for manifest operations ([#2325](https://github.com/Azure/LogicAppsUX/issues/2325)) ([9c9497d](https://github.com/Azure/LogicAppsUX/commit/9c9497dfc5a686d3563befeea8d033cba2087bc5))
 
 ### Bug Fixes
 
-* **Data Mapper:** Allow events to pass through on the panel ([#2342](https://github.com/Azure/LogicAppsUX/issues/2342)) ([1d8201e](https://github.com/Azure/LogicAppsUX/commit/1d8201e1a75d2eb1db717ca01b4d87d0c3fe6f5a))
-* **Designer:** Added extra icon and brand color fallbacks ([#2341](https://github.com/Azure/LogicAppsUX/issues/2341)) ([9f4b628](https://github.com/Azure/LogicAppsUX/commit/9f4b628f8b91bddfa32bfae539ad63629e9afc9d))
-* **designer:** Fixing renaming of operation names with validation and token updates ([#2333](https://github.com/Azure/LogicAppsUX/issues/2333)) ([2d14124](https://github.com/Azure/LogicAppsUX/commit/2d14124dd235ba8ce3987094a72463a9e3473e94))
-* **designer:** Loading dynamic values for dynamic parameters during deserializations ([#2337](https://github.com/Azure/LogicAppsUX/issues/2337)) ([66a06e5](https://github.com/Azure/LogicAppsUX/commit/66a06e59a34f3035dd5a3d7c836d4a628d80a15e))
+- **Data Mapper:** Allow events to pass through on the panel ([#2342](https://github.com/Azure/LogicAppsUX/issues/2342)) ([1d8201e](https://github.com/Azure/LogicAppsUX/commit/1d8201e1a75d2eb1db717ca01b4d87d0c3fe6f5a))
+- **Designer:** Added extra icon and brand color fallbacks ([#2341](https://github.com/Azure/LogicAppsUX/issues/2341)) ([9f4b628](https://github.com/Azure/LogicAppsUX/commit/9f4b628f8b91bddfa32bfae539ad63629e9afc9d))
+- **designer:** Fixing renaming of operation names with validation and token updates ([#2333](https://github.com/Azure/LogicAppsUX/issues/2333)) ([2d14124](https://github.com/Azure/LogicAppsUX/commit/2d14124dd235ba8ce3987094a72463a9e3473e94))
+- **designer:** Loading dynamic values for dynamic parameters during deserializations ([#2337](https://github.com/Azure/LogicAppsUX/issues/2337)) ([66a06e5](https://github.com/Azure/LogicAppsUX/commit/66a06e59a34f3035dd5a3d7c836d4a628d80a15e))
 
 ### [2.15.18](https://github.com/Azure/LogicAppsUX/compare/v2.15.17...v2.15.18) (2023-05-11)
 
