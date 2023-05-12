@@ -1,6 +1,6 @@
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
-import type { BaseEditorProps } from '../editor/base';
+import type { BaseEditorProps, CastHandler } from '../editor/base';
 import type { LabelProps } from '../label';
 import { CollapsedArray } from './collapsedarray';
 import { ExpandedComplexArray } from './expandedcomplexarray';
@@ -50,19 +50,21 @@ export interface ArrayEditorProps extends BaseEditorProps {
   disableToggle?: boolean;
   labelProps: LabelProps;
   itemSchema: ArrayItemSchema;
-  type: ArrayType.COMPLEX | ArrayType.SIMPLE;
+  arrayType: ArrayType;
+  castParameter: CastHandler;
 }
 
 export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   canDeleteLastItem = true,
   disableToggle = false,
   initialValue,
-  type,
+  arrayType,
   labelProps,
   itemSchema,
   placeholder,
   getTokenPicker,
   onChange,
+  castParameter,
   ...baseEditorProps
 }): JSX.Element => {
   const [collapsed, setCollapsed] = useState(false);
@@ -70,14 +72,15 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   const [items, setItems] = useState<ComplexArrayItems[] | SimpleArrayItem[]>([]);
   const [isValid, setIsValid] = useState<boolean>(false);
 
+  const isComplex = useMemo(() => arrayType === ArrayType.COMPLEX, [arrayType]);
+
   const dimensionalSchema: ItemSchemaItemProps[] = useMemo(() => {
-    if (type === ArrayType.SIMPLE) return [];
-    console.log(getOneDimensionalSchema(itemSchema));
+    if (!isComplex) return [];
     return getOneDimensionalSchema(itemSchema);
-  }, [itemSchema, type]);
+  }, [isComplex, itemSchema]);
 
   useEffect(() => {
-    type === ArrayType.COMPLEX
+    arrayType === ArrayType.COMPLEX
       ? initializeComplexArrayItems(initialValue, itemSchema, setItems, setIsValid, setCollapsed)
       : initializeSimpleArrayItems(initialValue, setItems, setIsValid, setCollapsed);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -95,27 +98,30 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
     if (!collapsed) {
       onChange?.({
         value: objectValue,
+        viewModel: { arrayType, itemSchema },
       });
     }
   };
 
   const updateComplexItems = (newItems: ComplexArrayItems[]) => {
     setItems(newItems);
-    if (type === ArrayType.COMPLEX) {
-      console.log(newItems);
-      const objectValue = parseComplexItems(newItems, itemSchema);
-      console.log(objectValue);
-      setCollapsedValue(objectValue);
-      if (!collapsed) {
-        onChange?.({
-          value: objectValue,
-        });
-      }
+    // we want to supress casting for when switching between expanded and collapsed array, but cast when serializing
+    const objectValue = parseComplexItems(newItems, itemSchema, castParameter);
+    const { castedValue, uncastedValue } = objectValue;
+    setCollapsedValue(uncastedValue);
+    if (!collapsed) {
+      onChange?.({
+        value: castedValue,
+        viewModel: { arrayType, itemSchema, uncastedValue: objectValue },
+      });
     }
   };
 
   const handleBlur = (): void => {
-    onChange?.({ value: collapsedValue });
+    onChange?.({
+      value: collapsedValue,
+      viewModel: { arrayType, itemSchema },
+    });
   };
 
   return (
@@ -128,13 +134,22 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           isTrigger={baseEditorProps.isTrigger}
           readOnly={baseEditorProps.readonly}
           itemSchema={itemSchema}
-          setItems={type === ArrayType.SIMPLE ? updateSimpleItems : updateComplexItems}
+          setItems={isComplex ? updateComplexItems : updateSimpleItems}
           setIsValid={setIsValid}
           getTokenPicker={getTokenPicker}
           onBlur={handleBlur}
           setCollapsedValue={setCollapsedValue}
         />
-      ) : type === ArrayType.SIMPLE ? (
+      ) : isComplex ? (
+        <ExpandedComplexArray
+          dimensionalSchema={dimensionalSchema}
+          allItems={items as ComplexArrayItems[]}
+          readOnly={baseEditorProps.readonly}
+          canDeleteLastItem={canDeleteLastItem}
+          setItems={updateComplexItems}
+          getTokenPicker={getTokenPicker}
+        />
+      ) : (
         <ExpandedSimpleArray
           placeholder={placeholder}
           valueType={itemSchema.type}
@@ -144,15 +159,6 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           isTrigger={baseEditorProps.isTrigger}
           canDeleteLastItem={canDeleteLastItem}
           setItems={updateSimpleItems}
-          getTokenPicker={getTokenPicker}
-        />
-      ) : (
-        <ExpandedComplexArray
-          dimensionalSchema={dimensionalSchema}
-          allItems={items as ComplexArrayItems[]}
-          readOnly={baseEditorProps.readonly}
-          canDeleteLastItem={canDeleteLastItem}
-          setItems={updateComplexItems}
           getTokenPicker={getTokenPicker}
         />
       )}

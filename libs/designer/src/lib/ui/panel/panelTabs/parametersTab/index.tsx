@@ -20,6 +20,7 @@ import { isRootNodeInGraph } from '../../../../core/utils/graph';
 import {
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
+  parameterValueToString,
   shouldUseParameterInGroup,
   updateParameterAndDependencies,
 } from '../../../../core/utils/parameters/helper';
@@ -110,6 +111,10 @@ export const ParametersTab = () => {
       {showIdentitySelector ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
     </>
   );
+};
+
+const castParameterToString = (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean): string => {
+  return parameterValueToString({ value, type: type ?? 'string', info: { format }, suppressCasting } as ParameterInfo, false) ?? '';
 };
 
 const ParameterSection = ({
@@ -366,6 +371,8 @@ const ParameterSection = ({
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
           pickerCallbacks: getPickerCallbacks(param),
+          onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
+            castParameterToString(value, type, format, suppressCasting),
           getTokenPicker: (
             editorId: string,
             labelId: string,

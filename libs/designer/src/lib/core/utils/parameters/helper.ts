@@ -68,6 +68,7 @@ import type {
   ValueSegment,
 } from '@microsoft/designer-ui';
 import {
+  ArrayType,
   removeQuotes,
   RowDropdownOptions,
   GroupDropdownOptions,
@@ -460,10 +461,10 @@ const convertStringToInputParameter = (
   };
 };
 
-export const toArrayViewModelSchema = (schema: any): { isComplexArray: boolean; itemSchema: any } => {
+export const toArrayViewModelSchema = (schema: any): { arrayType: ArrayType; itemSchema: any } => {
   const itemSchema = parseArrayItemSchema(schema);
-  const isComplexArray = Boolean(schema?.type === constants.SWAGGER.TYPE.OBJECT && schema.properties);
-  return { isComplexArray, itemSchema };
+  const arrayType = schema?.type === constants.SWAGGER.TYPE.OBJECT && schema.properties ? ArrayType.COMPLEX : ArrayType.SIMPLE;
+  return { arrayType, itemSchema };
 };
 
 // Create Array Editor View Model Schema

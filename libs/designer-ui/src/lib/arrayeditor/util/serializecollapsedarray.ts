@@ -1,6 +1,7 @@
 import type { ArrayItemSchema, ComplexArrayItems, SimpleArrayItem } from '..';
 import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
+import type { CastHandler } from '../../editor/base';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
 import { getChildrenNodes } from '../../editor/base/utils/helper';
 import { convertComplexItemsToArray, validationAndSerializeComplexArray, validationAndSerializeSimpleArray } from './util';
@@ -49,15 +50,25 @@ export const parseSimpleItems = (items: SimpleArrayItem[]): ValueSegment[] => {
   return parsedItems;
 };
 
-export const parseComplexItems = (allItems: ComplexArrayItems[], itemSchema: ArrayItemSchema): ValueSegment[] => {
+export const parseComplexItems = (
+  allItems: ComplexArrayItems[],
+  itemSchema: ArrayItemSchema,
+  castParameter: CastHandler
+): { castedValue: ValueSegment[]; uncastedValue: ValueSegment[] } => {
+  const emptyValue = [{ id: guid(), type: ValueSegmentType.LITERAL, value: '[]' }];
   if (allItems.length === 0) {
-    return [{ id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  null\n]' }];
+    return { castedValue: emptyValue, uncastedValue: emptyValue };
   }
-  const arrayVal: any = [];
+  const castedArrayVal: any = [];
+  const uncastedArrayVal: any = [];
   const nodeMap = new Map<string, ValueSegment>();
   allItems.forEach((currItem) => {
     const { items } = currItem;
-    arrayVal.push(convertComplexItemsToArray(itemSchema, items, nodeMap));
+    castedArrayVal.push(convertComplexItemsToArray(itemSchema, items, nodeMap, /*suppress casting*/ false, castParameter));
+    uncastedArrayVal.push(convertComplexItemsToArray(itemSchema, items, nodeMap, /*suppress casting*/ true, castParameter));
   });
-  return convertStringToSegments(JSON.stringify(arrayVal, null, 4), true, nodeMap);
+  return {
+    castedValue: convertStringToSegments(JSON.stringify(castedArrayVal, null, 4), true, nodeMap),
+    uncastedValue: convertStringToSegments(JSON.stringify(uncastedArrayVal, null, 4), true, nodeMap),
+  };
 };

@@ -1,12 +1,12 @@
 import type { ArrayItemSchema, ComplexArrayItem, ComplexArrayItems, SimpleArrayItem } from '..';
 import constants from '../../constants';
-import type { ParameterInfo, ValueSegment } from '../../editor';
+import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
+import type { CastHandler } from '../../editor/base';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
 import { convertSegmentsToString } from '../../editor/base/utils/parsesegments';
 import { guid } from '@microsoft/utils-logic-apps';
 
-export type CastHandler = (parameter: ParameterInfo) => string | undefined;
 export interface ItemSchemaItemProps {
   key: string;
   title: string;
@@ -48,7 +48,13 @@ export const getOneDimensionalSchema = (itemSchema: ArrayItemSchema, isRequired?
 };
 
 // Converts Complex Array Items values to be a string from valuesegment
-export const convertComplexItemsToArray = (itemSchema: ArrayItemSchema, items: ComplexArrayItem[], nodeMap?: Map<string, ValueSegment>) => {
+export const convertComplexItemsToArray = (
+  itemSchema: ArrayItemSchema,
+  items: ComplexArrayItem[],
+  nodeMap?: Map<string, ValueSegment>,
+  suppressCasting?: boolean,
+  castParameter?: CastHandler
+) => {
   const returnItem: any = {};
 
   if (itemSchema.type === constants.SWAGGER.TYPE.OBJECT && itemSchema.properties) {
@@ -64,13 +70,13 @@ export const convertComplexItemsToArray = (itemSchema: ArrayItemSchema, items: C
             const arrayVal: any = [];
             arrayItems.forEach((arrayItem) => {
               if (value.items) {
-                arrayVal.push(convertComplexItemsToArray(value.items, arrayItem.items, nodeMap));
+                arrayVal.push(convertComplexItemsToArray(value.items, arrayItem.items, nodeMap, suppressCasting, castParameter));
               }
             });
             returnItem[keyName] = arrayVal;
           }
         } else {
-          returnItem[keyName] = convertComplexItemsToArray(value, items, nodeMap);
+          returnItem[keyName] = convertComplexItemsToArray(value, items, nodeMap, suppressCasting, castParameter);
         }
       }
     });
@@ -86,8 +92,16 @@ export const convertComplexItemsToArray = (itemSchema: ArrayItemSchema, items: C
     });
     if (complexItem) {
       const segments = complexItem.value;
+
+      // we need to convert to string to extract tokens to repopulate later
       const stringValue = convertSegmentsToString(segments, nodeMap);
-      return stringValue;
+      const castedValue = castParameter?.(
+        [{ id: guid(), type: ValueSegmentType.LITERAL, value: stringValue }],
+        itemSchema.type,
+        itemSchema.format,
+        suppressCasting
+      );
+      return castedValue ?? stringValue;
     }
   }
   return returnItem;
@@ -174,7 +188,6 @@ export const validationAndSerializeComplexArray = (
     } else {
       const jsonEditor = JSON.parse(editorString);
       const returnItems: ComplexArrayItems[] = [];
-      console.log(jsonEditor);
       jsonEditor.forEach((jsonEditorItem: any) => {
         const complexItem = convertObjectToComplexArrayItemArray(jsonEditorItem, itemSchema, nodeMap);
         returnItems.push({ key: itemSchema.key, items: complexItem });
@@ -233,7 +246,6 @@ const convertObjectToComplexArrayItemArray = (
   if (itemSchema.required) {
     itemSchema.required.forEach((requiredKey) => {
       if (!items.find((item) => item.key === requiredKey)) {
-        console.log(itemSchema.properties?.[requiredKey]);
         const itemSchemaProperty = itemSchema.properties?.[requiredKey];
         if (itemSchemaProperty) {
           items.push({
