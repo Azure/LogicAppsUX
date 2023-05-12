@@ -357,7 +357,7 @@ export function getParameterEditorProps(
       editor = constants.EDITOR.HTML;
     } else if (type === constants.SWAGGER.TYPE.ARRAY && !!itemSchema && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.ARRAY;
-      editorViewModel = toArrayViewModelSchema(itemSchema);
+      editorViewModel = { ...toArrayViewModelSchema(itemSchema), uncastedValue: parameterValue };
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
     } else if ((schemaEnum || schema?.enum || schema?.[ExtensionProperties.CustomEnum]) && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.COMBOBOX;
