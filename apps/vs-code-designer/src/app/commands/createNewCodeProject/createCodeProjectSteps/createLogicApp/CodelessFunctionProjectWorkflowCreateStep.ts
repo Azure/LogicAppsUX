@@ -53,6 +53,7 @@ export class CodelessFunctionProjectWorkflowCreateStep extends WorkflowCreateSte
     // Get the function template and function name from the IFunctionWizardContext object
     const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     const functionPath: string = path.join(context.projectPath, nonNullProp(context, 'functionName'));
+    const methodName = context.methodName;
 
     // Create empty stateful and stateless definition objects
     const emptyStatefulDefinition: StandardApp = {
@@ -62,10 +63,10 @@ export class CodelessFunctionProjectWorkflowCreateStep extends WorkflowCreateSte
           Invoke_a_function_in_this_Logic_App: {
             type: 'InvokeFunction',
             inputs: {
-              functionName: 'FlowInvokedFunction',
+              functionName: '' + methodName + '',
               parameters: {
-                parameter1: 'hello',
-                parameter2: 1,
+                zipCode: 85396,
+                parameter2: 'Celcius',
               },
             },
             runAfter: {},
@@ -102,10 +103,10 @@ export class CodelessFunctionProjectWorkflowCreateStep extends WorkflowCreateSte
           Invoke_a_function_in_this_Logic_App: {
             type: 'InvokeFunction',
             inputs: {
-              functionName: 'FlowInvokedFunction',
+              functionName: '' + methodName + '',
               parameters: {
-                parameter1: 'hello',
-                parameter2: 1,
+                zipCode: 85396,
+                parameter2: 'Celcius',
               },
             },
             runAfter: {},
