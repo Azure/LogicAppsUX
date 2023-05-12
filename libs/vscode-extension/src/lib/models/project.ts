@@ -51,8 +51,6 @@ export interface IProjectWizardContext extends IActionContext {
   projectPath: string;
   version: FuncVersion;
   workspacePath: string;
-  projectName?: string;
-  workflowStateType?: any;
   workspaceFolder: WorkspaceFolder | undefined;
   projectTemplateKey: string | undefined;
   language?: ProjectLanguage;
@@ -60,8 +58,6 @@ export interface IProjectWizardContext extends IActionContext {
   workerRuntime?: IWorkerRuntime;
   openBehavior?: OpenBehavior;
   workspaceName?: string;
-  invokedFunctionName?: string;
-  invokedFunctionNamespace?: string;
   workflowProjectType?: WorkflowProjectType;
   generateFromOpenAPI?: boolean;
   openApiSpecificationFile?: Uri[];

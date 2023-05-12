@@ -39,8 +39,8 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
    * @param context The project wizard context.
    * @returns True if the user has not yet set up an Azure Function project, false otherwise.
    */
-  public shouldPrompt(context: IProjectWizardContext): boolean {
-    return !context.invokedFunctionName;
+  public shouldPrompt(_context: IProjectWizardContext): boolean {
+    return true;
   }
 
   /**
