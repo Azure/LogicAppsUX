@@ -83,7 +83,9 @@ export function TokenPickerHeader({ fullScreen, closeTokenPicker, setFullScreen 
           iconProps={{ iconName: 'Info' }}
           title={infoMessage}
           ariaLabel={infoMessage}
-          onClick={() => console.log('info')}
+          onClick={() =>
+            window.open('https://learn.microsoft.com/en-us/azure/logic-apps/workflow-definition-language-functions-reference', '_blank')
+          }
           styles={buttonStyles}
         />
       </div>
