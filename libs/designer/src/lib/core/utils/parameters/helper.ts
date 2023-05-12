@@ -2178,7 +2178,7 @@ export function getParameterFromId(nodeInputs: NodeInputs, parameterId: string):
 export function parameterHasValue(parameter: ParameterInfo): boolean {
   const value = parameter.value;
 
-  if (!isNullOrUndefined(parameter.preservedValue) && parameter.preservedValue !== '') {
+  if (!isUndefinedOrEmptyString(parameter.preservedValue)) {
     return true;
   }
 
