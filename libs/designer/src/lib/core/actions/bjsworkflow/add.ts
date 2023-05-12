@@ -13,7 +13,7 @@ import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
-import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
+import { getBrandColorFromConnector, getBrandColorFromManifest, getIconUriFromConnector, getIconUriFromManifest } from '../../utils/card';
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
 import { getParameterFromName, updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { createLiteralValueSegment } from '../../utils/parameters/segment';
@@ -32,6 +32,7 @@ import type { Settings } from './settings';
 import { getOperationSettings } from './settings';
 import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
 import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
+import { ManifestParser } from '@microsoft/parsers-logic-apps';
 import type {
   Connector,
   DiscoveryOperation,
@@ -97,7 +98,7 @@ const initializeOperationDetails = async (
   const isTrigger = isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata);
   const { type, kind, connectorId, operationId } = operationInfo;
   let isConnectionRequired = true;
-  let connector: Connector;
+  let connector: Connector | undefined;
   const operationManifestService = OperationManifestService();
   const staticResultService = StaticResultService();
 
@@ -107,14 +108,17 @@ const initializeOperationDetails = async (
   let initData: NodeData;
   let manifest: OperationManifest | undefined = undefined;
   let swagger: SwaggerParser | undefined = undefined;
+  let parsedManifest: ManifestParser | undefined = undefined;
   if (operationManifestService.isSupported(type, kind)) {
     manifest = await getOperationManifest(operationInfo);
     isConnectionRequired = isConnectionRequiredForOperation(manifest);
-    connector = manifest.properties.connector as Connector;
+    connector = manifest.properties?.connector;
 
-    const { iconUri, brandColor } = manifest.properties;
+    const iconUri = getIconUriFromManifest(manifest);
+    const brandColor = getBrandColorFromManifest(manifest);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs);
+    parsedManifest = new ManifestParser(manifest);
 
     if (parameterValues) {
       // For actions with selected Azure Resources
@@ -194,13 +198,13 @@ const initializeOperationDetails = async (
       initData.settings as Settings,
       getAllVariables(getState().tokens.variables),
       dispatch,
-      getState()
+      getState
     );
-  } else {
+  } else if (connector) {
     await trySetDefaultConnectionForNode(nodeId, connector, dispatch, isConnectionRequired);
   }
 
-  const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId, swagger);
+  const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId, swagger || parsedManifest);
   let hasSchema;
   schemaService.then((schema) => {
     hasSchema = true;
