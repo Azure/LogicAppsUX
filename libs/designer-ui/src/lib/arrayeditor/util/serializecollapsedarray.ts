@@ -1,9 +1,8 @@
-import type { ComplexArrayItems, SimpleArrayItem } from '..';
+import type { ArrayItemSchema, ComplexArrayItems, SimpleArrayItem } from '..';
 import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
 import { getChildrenNodes } from '../../editor/base/utils/helper';
-import type { ItemSchemaItemProps } from './util';
 import { convertComplexItemsToArray, validationAndSerializeComplexArray, validationAndSerializeSimpleArray } from './util';
 import { guid } from '@microsoft/utils-logic-apps';
 import type { LexicalEditor } from 'lexical';
@@ -23,15 +22,14 @@ export const serializeSimpleArray = (
 
 export const serializeComplexArray = (
   editor: LexicalEditor,
-  itemSchema: ItemSchemaItemProps[],
+  itemSchema: ArrayItemSchema,
   setItems: (items: ComplexArrayItems[]) => void,
-  setIsValid: (b: boolean) => void,
-  setErrorMessage: (s: string) => void
+  setIsValid: (b: boolean) => void
 ) => {
   editor.getEditorState().read(() => {
     const nodeMap = new Map<string, ValueSegment>();
     const editorString = getChildrenNodes($getRoot(), nodeMap);
-    validationAndSerializeComplexArray(editorString, nodeMap, itemSchema, setItems, setIsValid, undefined, setErrorMessage);
+    validationAndSerializeComplexArray(editorString, nodeMap, itemSchema, setItems, setIsValid, undefined);
   });
 };
 
@@ -51,7 +49,7 @@ export const parseSimpleItems = (items: SimpleArrayItem[]): ValueSegment[] => {
   return parsedItems;
 };
 
-export const parseComplexItems = (allItems: ComplexArrayItems[], itemSchema: ItemSchemaItemProps[]): ValueSegment[] => {
+export const parseComplexItems = (allItems: ComplexArrayItems[], itemSchema: ArrayItemSchema): ValueSegment[] => {
   if (allItems.length === 0) {
     return [{ id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  null\n]' }];
   }

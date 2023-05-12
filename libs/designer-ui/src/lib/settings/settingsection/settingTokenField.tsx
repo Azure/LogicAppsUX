@@ -150,7 +150,7 @@ const TokenField = ({
           readonly={readOnly}
           initialValue={value}
           initialItems={editorViewModel.items}
-          valueType={editorOptions.valueType}
+          valueType={editorOptions?.valueType}
           isTrigger={isTrigger}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
@@ -179,7 +179,7 @@ const TokenField = ({
       return (
         <ArrayEditor
           labelId={labelId}
-          type={editorViewModel.complexArray ? ArrayType.COMPLEX : ArrayType.SIMPLE}
+          type={editorViewModel.isComplexArray ? ArrayType.COMPLEX : ArrayType.SIMPLE}
           labelProps={{ text: label ? `${label} Item` : 'Array Item' }}
           placeholder={placeholder}
           readonly={readOnly}

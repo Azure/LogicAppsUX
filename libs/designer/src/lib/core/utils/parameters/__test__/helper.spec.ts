@@ -1,4 +1,3 @@
-import { initializeArrayViewModel } from '../../editors/array';
 import {
   getParameterEditorProps,
   parameterValueToJSONString,
@@ -1706,11 +1705,7 @@ describe('core/utils/parameters/helper', () => {
         expect(result).toMatchObject({
           editor: dataType,
           editorOptions: undefined,
-          editorViewModel: {
-            ...initializeArrayViewModel(inputParameter, false),
-            itemSchema: toArrayViewModelSchema(inputParameter.itemSchema),
-            complexArray: false,
-          },
+          editorViewModel: toArrayViewModelSchema(inputParameter.itemSchema),
           schema: inputSchema,
         });
       });

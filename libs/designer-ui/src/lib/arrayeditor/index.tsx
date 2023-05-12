@@ -8,17 +8,30 @@ import { ExpandedSimpleArray } from './expandedsimplearray';
 import { parseComplexItems, parseSimpleItems } from './util/serializecollapsedarray';
 import type { ItemSchemaItemProps } from './util/util';
 import { getOneDimensionalSchema, initializeComplexArrayItems, initializeSimpleArrayItems } from './util/util';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 export enum ArrayType {
   COMPLEX = 'complex',
   SIMPLE = 'simple',
 }
 
+export interface ArrayItemSchema {
+  type: string;
+  key: string;
+  title?: string;
+  properties?: Record<string, ArrayItemSchema>;
+  items?: ArrayItemSchema;
+  required?: string[];
+  description?: string;
+  format?: string;
+}
+
 export interface ComplexArrayItem {
+  key: string;
   title: string;
   description: string;
   value: ValueSegment[];
+  arrayItems?: ComplexArrayItems[];
 }
 export interface ComplexArrayItems {
   key: string;
@@ -36,7 +49,7 @@ export interface ArrayEditorProps extends BaseEditorProps {
   canDeleteLastItem?: boolean;
   disableToggle?: boolean;
   labelProps: LabelProps;
-  itemSchema?: any;
+  itemSchema: ArrayItemSchema;
   type: ArrayType.COMPLEX | ArrayType.SIMPLE;
 }
 
@@ -56,17 +69,19 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue);
   const [items, setItems] = useState<ComplexArrayItems[] | SimpleArrayItem[]>([]);
   const [isValid, setIsValid] = useState<boolean>(false);
-  let dimensionalSchema: ItemSchemaItemProps[] = [];
-  if (type === ArrayType.COMPLEX) {
-    dimensionalSchema = getOneDimensionalSchema(itemSchema);
-  }
+
+  const dimensionalSchema: ItemSchemaItemProps[] = useMemo(() => {
+    if (type === ArrayType.SIMPLE) return [];
+    console.log(getOneDimensionalSchema(itemSchema));
+    return getOneDimensionalSchema(itemSchema);
+  }, [itemSchema, type]);
 
   useEffect(() => {
     type === ArrayType.COMPLEX
-      ? initializeComplexArrayItems(initialValue, dimensionalSchema, setItems, setIsValid, setCollapsed)
+      ? initializeComplexArrayItems(initialValue, itemSchema, setItems, setIsValid, setCollapsed)
       : initializeSimpleArrayItems(initialValue, setItems, setIsValid, setCollapsed);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dimensionalSchema]);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -78,17 +93,23 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
     setCollapsedValue(objectValue);
 
     if (!collapsed) {
-      onChange?.({ value: objectValue });
+      onChange?.({
+        value: objectValue,
+      });
     }
   };
 
   const updateComplexItems = (newItems: ComplexArrayItems[]) => {
     setItems(newItems);
     if (type === ArrayType.COMPLEX) {
-      const objectValue = parseComplexItems(newItems, dimensionalSchema);
+      console.log(newItems);
+      const objectValue = parseComplexItems(newItems, itemSchema);
+      console.log(objectValue);
       setCollapsedValue(objectValue);
       if (!collapsed) {
-        onChange?.({ value: objectValue });
+        onChange?.({
+          value: objectValue,
+        });
       }
     }
   };
@@ -107,7 +128,6 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           isTrigger={baseEditorProps.isTrigger}
           readOnly={baseEditorProps.readonly}
           itemSchema={itemSchema}
-          dimensionalSchema={dimensionalSchema}
           setItems={type === ArrayType.SIMPLE ? updateSimpleItems : updateComplexItems}
           setIsValid={setIsValid}
           getTokenPicker={getTokenPicker}
