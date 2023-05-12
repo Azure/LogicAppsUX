@@ -20,6 +20,8 @@ import { isRootNodeInGraph } from '../../../../core/utils/graph';
 import {
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
+  parameterValueToString,
+  remapValueSegmentsWithNewIds,
   shouldUseParameterInGroup,
   updateParameterAndDependencies,
 } from '../../../../core/utils/parameters/helper';
@@ -31,7 +33,7 @@ import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
-import { DynamicCallStatus, TokenPicker, TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+import { DynamicCallStatus, TokenPicker, TokenType } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode } from '@microsoft/designer-ui';
 import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
 import { useCallback, useState } from 'react';
@@ -334,20 +336,7 @@ const ParameterSection = ({
       const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel, conditionalVisibility };
       const { editor, editorOptions } = getEditorAndOptions(param, upstreamNodeIds ?? [], variables);
 
-      const remappedValues: ValueSegment[] = value.map((v: ValueSegment) => {
-        if (v.type !== ValueSegmentType.TOKEN) return v;
-        const oldId = v.token?.actionName ?? '';
-        const newId = idReplacements[oldId] ?? '';
-        if (!newId) return v;
-        const remappedValue = v.value?.replace(`'${oldId}'`, `'${newId}'`) ?? '';
-        return {
-          ...v,
-          token: {
-            ...v.token,
-            remappedValue,
-          },
-        } as ValueSegment;
-      });
+      const { value: remappedValues } = remapValueSegmentsWithNewIds(value, idReplacements);
 
       return {
         settingType: 'SettingTokenField',
@@ -366,6 +355,8 @@ const ParameterSection = ({
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
           pickerCallbacks: getPickerCallbacks(param),
+          onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
+            parameterValueToString({ value, type: type ?? 'string', info: { format }, suppressCasting } as ParameterInfo, false) ?? '',
           getTokenPicker: (
             editorId: string,
             labelId: string,

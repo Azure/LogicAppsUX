@@ -35,8 +35,13 @@ export class StandardRunService implements IRunService {
   }
 
   async getContent(contentLink: ContentLink): Promise<any> {
-    const { uri } = contentLink;
+    const { uri, contentSize } = contentLink;
     const { httpClient } = this.options;
+
+    // 2^18
+    if (contentSize > 262144) {
+      return undefined;
+    }
 
     if (!uri) {
       throw new Error();

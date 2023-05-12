@@ -182,6 +182,7 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
       isFooterAtBottom={true}
       overlayProps={{ isDarkThemed: currentTheme === 'dark' }}
       isLightDismiss
+      layerProps={{ eventBubblingEnabled: true }}
     >
       <Pivot
         selectedKey={selectedPivotItem}
