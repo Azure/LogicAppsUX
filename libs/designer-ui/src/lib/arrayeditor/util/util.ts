@@ -36,8 +36,8 @@ export const getOneDimensionalSchema = (itemSchema: ArrayItemSchema, isRequired?
     const isArray = itemSchema.type === constants.SWAGGER.TYPE.ARRAY && itemSchema.items?.properties;
     flattenedSchema.push({
       key: itemSchema.key,
-      title: itemSchema.title ?? itemSchema.key.split('.').slice(-1)[0],
-      type: isArray ? constants.SWAGGER.TYPE.ARRAY : itemSchema.type,
+      title: itemSchema.title ?? (itemSchema.key.split('.').at(-1) as string),
+      type: itemSchema.type,
       isRequired: !isArray && isRequired,
       description: itemSchema.description ?? '',
       format: itemSchema.format,
@@ -60,7 +60,7 @@ export const convertComplexItemsToArray = (
   if (itemSchema.type === constants.SWAGGER.TYPE.OBJECT && itemSchema.properties) {
     Object.entries(itemSchema.properties).forEach(([key, value]) => {
       if (key !== 'key' && items) {
-        const keyName = value.key.split('.').slice(-1)[0];
+        const keyName = value.key.split('.').at(-1) as string;
         // handle nested array items
         if (value.type === constants.SWAGGER.TYPE.ARRAY && value.items?.properties) {
           const arrayItems = items.find((item) => {
@@ -226,7 +226,7 @@ const convertObjectToComplexArrayItemArray = (
       });
       items.push({
         key: itemSchemaProperty.key,
-        title: itemSchemaProperty.title ?? itemSchema.key.split('.').slice(-1)[0],
+        title: itemSchemaProperty.title ?? (itemSchema.key.split('.').at(-1) as string),
         description: itemSchemaProperty.description ?? '',
         value: [],
         arrayItems,
@@ -236,7 +236,7 @@ const convertObjectToComplexArrayItemArray = (
     } else {
       items.push({
         key: itemSchemaProperty.key,
-        title: itemSchemaProperty.title ?? itemSchema.key.split('.').slice(-1)[0],
+        title: itemSchemaProperty.title ?? (itemSchema.key.split('.').at(-1) as string),
         description: itemSchemaProperty.description ?? '',
         value: convertStringToSegments(value, true, nodeMap),
       });

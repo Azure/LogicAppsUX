@@ -114,10 +114,6 @@ export const ParametersTab = () => {
   );
 };
 
-const castParameterToString = (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean): string => {
-  return parameterValueToString({ value, type: type ?? 'string', info: { format }, suppressCasting } as ParameterInfo, false) ?? '';
-};
-
 const ParameterSection = ({
   nodeId,
   nodeType,
@@ -360,7 +356,7 @@ const ParameterSection = ({
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
           pickerCallbacks: getPickerCallbacks(param),
           onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
-            castParameterToString(value, type, format, suppressCasting),
+            parameterValueToString({ value, type: type ?? 'string', info: { format }, suppressCasting } as ParameterInfo, false) ?? '',
           getTokenPicker: (
             editorId: string,
             labelId: string,

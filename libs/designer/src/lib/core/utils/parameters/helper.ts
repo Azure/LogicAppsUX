@@ -461,10 +461,10 @@ const convertStringToInputParameter = (
   };
 };
 
-export const toArrayViewModelSchema = (schema: any): { arrayType: ArrayType; itemSchema: any } => {
+export const toArrayViewModelSchema = (schema: any): { arrayType: ArrayType; itemSchema: any; uncastedValue: undefined } => {
   const itemSchema = parseArrayItemSchema(schema);
   const arrayType = schema?.type === constants.SWAGGER.TYPE.OBJECT && schema.properties ? ArrayType.COMPLEX : ArrayType.SIMPLE;
-  return { arrayType, itemSchema };
+  return { arrayType, itemSchema, uncastedValue: undefined };
 };
 
 // Create Array Editor View Model Schema
