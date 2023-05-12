@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [2.15.20](https://github.com/Azure/LogicAppsUX/compare/v2.15.19...v2.15.20) (2023-05-12)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed crash with manifest not having connector property  ([#2345](https://github.com/Azure/LogicAppsUX/issues/2345)) ([6bb3e4d](https://github.com/Azure/LogicAppsUX/commit/6bb3e4dfd23cb0e5a22e397b474afba7302f3f5a))
+* **designer:** When outputs are too large to show, monitoring view will show a download link to the file ([#2344](https://github.com/Azure/LogicAppsUX/issues/2344)) ([7a0b9df](https://github.com/Azure/LogicAppsUX/commit/7a0b9dfe4a88ad0e3dd4d5147fe6cbb6982e1c5b))
+
 ### [2.15.19](https://github.com/Azure/LogicAppsUX/compare/v2.15.18...v2.15.19) (2023-05-11)
 
 
