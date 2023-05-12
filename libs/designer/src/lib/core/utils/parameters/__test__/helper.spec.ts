@@ -1750,35 +1750,7 @@ describe('core/utils/parameters/helper', () => {
           },
         });
 
-        const {
-          expanded: editorViewModelExpanded,
-          inputParameter: editorViewModelInputParameter,
-          itemInputParameter: editorViewModelItemInputParameter,
-          items: editorViewModelItems,
-        } = editorViewModel;
-
-        expect(editorViewModelExpanded).toBe(true);
-        expect(editorViewModelInputParameter).toMatchObject(inputParameter);
-
-        expect(editorViewModelItemInputParameter).toMatchObject({
-          isInsideArray: true,
-          isNested: false,
-          key: 'inputs.$.events.[*]',
-          name: 'events.[*]',
-          parentArray: 'events',
-          required: true,
-          schema: itemSchema,
-          summary: '',
-          title: 'Event Grid Events Item',
-          type: 'object',
-        });
-
-        expect(Array.isArray(editorViewModelItems)).toBe(true);
-        expect(editorViewModelItems.length).toBe(1);
-        expect(editorViewModelItems[0].expanded).toBe(true);
-        expect(editorViewModelItems[0].key).toBe('inputs.$.events.[0]');
-        expect(Array.isArray(editorViewModelItems[0].properties)).toBe(true);
-        expect(editorViewModelItems[0].properties.length).toBe(2);
+        expect(editorViewModel).toMatchObject(toArrayViewModelSchema(inputParameter.itemSchema));
       });
     });
 
