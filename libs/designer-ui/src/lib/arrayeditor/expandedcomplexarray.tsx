@@ -1,11 +1,12 @@
 import type { ComplexArrayItems, ValueSegment } from '..';
 import { StringEditor } from '..';
+import constants from '../constants';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { notEqual } from '../editor/base/utils/helper';
 import { ItemMenuButton, renderLabel } from './expandedsimplearray';
 import type { ItemSchemaItemProps } from './util/util';
 import type { IIconProps } from '@fluentui/react';
-import { css, DefaultButton } from '@fluentui/react';
+import { Label, css, DefaultButton } from '@fluentui/react';
 import { guid } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
@@ -20,6 +21,8 @@ export interface ExpandedComplexArrayProps {
   readOnly?: boolean;
   getTokenPicker: GetTokenPickerHandler;
   setItems: (newItems: ComplexArrayItems[]) => void;
+  itemKey?: string;
+  isNested?: boolean;
 }
 
 export const ExpandedComplexArray = ({
@@ -29,6 +32,7 @@ export const ExpandedComplexArray = ({
   readOnly,
   getTokenPicker,
   setItems,
+  isNested = false,
 }: ExpandedComplexArrayProps): JSX.Element => {
   const intl = useIntl();
 
@@ -49,36 +53,75 @@ export const ExpandedComplexArray = ({
     }
   };
 
+  const handleNestedArraySaved = (
+    newComplexItems: ComplexArrayItems[],
+    index: number,
+    innerIndex: number,
+    schemaItem: ItemSchemaItemProps
+  ) => {
+    const newItems = [...allItems];
+    if (allItems[index].items[innerIndex].key !== schemaItem.key) {
+      const slicedArray = allItems[index].items;
+      newItems[index].items = [
+        ...slicedArray.slice(0, innerIndex),
+        { key: schemaItem.key, title: schemaItem.title, description: schemaItem.description, value: [] },
+        ...slicedArray.slice(innerIndex),
+      ];
+    }
+    newItems[index].items[innerIndex].arrayItems = newComplexItems;
+    setItems(JSON.parse(JSON.stringify(newItems)));
+  };
+
   return (
     <div className="msla-array-container msla-array-item-container">
       {allItems.map((item, index) => {
         return (
-          <div key={index} className={css('msla-array-item', 'complex')}>
+          <div key={item.key + index} className={css('msla-array-item', 'complex', isNested && 'isNested')}>
             {dimensionalSchema.map((schemaItem: ItemSchemaItemProps, i) => {
-              const complexItem = item.items.find((complexItem) => complexItem.title === schemaItem.title);
+              const complexItem = item.items.find((complexItem) => complexItem.key === schemaItem.key);
               return (
-                <div key={item.key + i}>
-                  <div className="msla-array-item-header">
-                    {renderLabel(index, schemaItem?.title, schemaItem?.isRequired)}
-                    {i === 0 ? (
-                      <div className="msla-array-item-commands">
-                        <ItemMenuButton
-                          disabled={!!readOnly}
-                          itemKey={index}
-                          visible={canDeleteLastItem || allItems.length > 1}
-                          onDeleteItem={(index) => deleteItem(index)}
-                        />
+                <div key={complexItem?.arrayItems?.length ?? ' ' + i}>
+                  {schemaItem.type === constants.SWAGGER.TYPE.ARRAY && schemaItem.items ? (
+                    <div>
+                      <Label> {schemaItem.title} </Label>
+                      <ExpandedComplexArray
+                        dimensionalSchema={schemaItem.items}
+                        allItems={complexItem?.arrayItems ?? ([] as ComplexArrayItems[])}
+                        canDeleteLastItem={canDeleteLastItem}
+                        readOnly={readOnly}
+                        getTokenPicker={getTokenPicker}
+                        setItems={(newItems) => {
+                          handleNestedArraySaved(newItems, index, i, schemaItem);
+                        }}
+                        isNested={true}
+                        itemKey={guid()}
+                      />
+                    </div>
+                  ) : (
+                    <>
+                      <div className="msla-array-item-header">
+                        {renderLabel(index, schemaItem?.title, schemaItem?.isRequired)}
+                        {i === 0 ? (
+                          <div className="msla-array-item-commands">
+                            <ItemMenuButton
+                              disabled={!!readOnly}
+                              itemKey={index}
+                              visible={canDeleteLastItem || allItems.length > 1}
+                              onDeleteItem={(index) => deleteItem(index)}
+                            />
+                          </div>
+                        ) : null}
                       </div>
-                    ) : null}
-                  </div>
-                  <StringEditor
-                    valueType={schemaItem?.type}
-                    className="msla-array-editor-container-expanded"
-                    initialValue={complexItem?.value ?? []}
-                    getTokenPicker={getTokenPicker}
-                    editorBlur={(newState) => handleArrayElementSaved(complexItem?.value ?? [], newState, index, i)}
-                    placeholder={complexItem?.description}
-                  />
+                      <StringEditor
+                        valueType={schemaItem?.type}
+                        className="msla-array-editor-container-expanded"
+                        initialValue={complexItem?.value ?? []}
+                        getTokenPicker={getTokenPicker}
+                        editorBlur={(newState) => handleArrayElementSaved(complexItem?.value ?? [], newState, index, i)}
+                        placeholder={complexItem?.description}
+                      />
+                    </>
+                  )}
                 </div>
               );
             })}
@@ -90,17 +133,17 @@ export const ExpandedComplexArray = ({
           className="msla-array-add-item-button"
           iconProps={addItemButtonIconProps}
           text={addItemButtonLabel}
-          onClick={() =>
+          onClick={() => {
             setItems([
               ...allItems,
               {
                 key: guid(),
                 items: dimensionalSchema.map((item) => {
-                  return { title: item.title, value: [], description: item.description };
+                  return { key: item.key, title: item.title, value: [], description: item.description };
                 }),
               },
-            ])
-          }
+            ]);
+          }}
         />
       </div>
     </div>

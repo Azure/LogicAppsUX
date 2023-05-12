@@ -52,6 +52,7 @@ export type GetTokenPickerHandler = (
 
 export type ChangeHandler = (newState: ChangeState) => void;
 export type CallbackHandler = () => void;
+export type CastHandler = (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) => string;
 
 export interface DictionaryCallbackProps {
   addItem: (index: number) => void;
