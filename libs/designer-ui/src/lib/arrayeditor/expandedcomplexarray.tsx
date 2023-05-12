@@ -22,6 +22,7 @@ export interface ExpandedComplexArrayProps {
   getTokenPicker: GetTokenPickerHandler;
   setItems: (newItems: ComplexArrayItems[]) => void;
   itemKey?: string;
+  isNested?: boolean;
 }
 
 export const ExpandedComplexArray = ({
@@ -31,6 +32,7 @@ export const ExpandedComplexArray = ({
   readOnly,
   getTokenPicker,
   setItems,
+  isNested = false,
 }: ExpandedComplexArrayProps): JSX.Element => {
   const intl = useIntl();
 
@@ -74,7 +76,7 @@ export const ExpandedComplexArray = ({
     <div className="msla-array-container msla-array-item-container">
       {allItems.map((item, index) => {
         return (
-          <div key={item.key + index} className={css('msla-array-item', 'complex')}>
+          <div key={item.key + index} className={css('msla-array-item', 'complex', isNested && 'isNested')}>
             {dimensionalSchema.map((schemaItem: ItemSchemaItemProps, i) => {
               const complexItem = item.items.find((complexItem) => complexItem.key === schemaItem.key);
               return (
@@ -91,6 +93,7 @@ export const ExpandedComplexArray = ({
                         setItems={(newItems) => {
                           handleNestedArraySaved(newItems, index, i, schemaItem);
                         }}
+                        isNested={true}
                         itemKey={guid()}
                       />
                     </div>

@@ -93,7 +93,10 @@
       &.complex {
         margin: 4px;
         padding: 4px 4px 4px 4px;
-        border: 1px solid @defaultBorderColor;
+        border: 1px dashed @defaultBorderColor;
+      }
+      &.isNested {
+        border: 1px dotted @defaultBorderColor;
       }
 
       .msla-array-item-header {
