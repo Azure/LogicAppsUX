@@ -1782,7 +1782,7 @@ async function loadDynamicContentForInputsInNode(
           const message = error.message as string;
           const errorMessage = getIntl().formatMessage(
             {
-              defaultMessage: `Failed to retrive dynamic inputs. Error details: ''{message}''`,
+              defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,
               description: 'Error message to show when loading dynamic inputs failed',
             },
             { message }
@@ -1992,7 +1992,7 @@ async function tryGetInputDynamicSchema(
     const message = error.message as string;
     const errorMessage = getIntl().formatMessage(
       {
-        defaultMessage: `Failed to retrive dynamic inputs. Error details: ''{message}''`,
+        defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,
         description: 'Error message to show when loading dynamic inputs failed',
       },
       { message }
@@ -2179,7 +2179,7 @@ export function getParameterFromId(nodeInputs: NodeInputs, parameterId: string):
 export function parameterHasValue(parameter: ParameterInfo): boolean {
   const value = parameter.value;
 
-  if (!isNullOrUndefined(parameter.preservedValue)) {
+  if (!isUndefinedOrEmptyString(parameter.preservedValue)) {
     return true;
   }
 
