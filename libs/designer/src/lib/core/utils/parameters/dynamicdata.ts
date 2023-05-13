@@ -47,7 +47,6 @@ import {
   splitEx,
   removeConnectionPrefix,
   isLegacyDynamicValuesExtension,
-  ExtensionProperties,
   isDynamicPropertiesExtension,
   isDynamicListExtension,
   decodePropertySegment,
@@ -139,11 +138,7 @@ export async function getDynamicSchema(
   idReplacements: Record<string, string> = {}
 ): Promise<OpenAPIV2.SchemaObject | null> {
   const { parameter, definition } = dependencyInfo;
-  const emptySchema = {
-    [ExtensionProperties.Alias]: parameter?.alias,
-    title: parameter?.title,
-    description: parameter?.description,
-  };
+  const emptySchema = { ...parameter?.schema };
   try {
     if (isDynamicPropertiesExtension(definition)) {
       const { dynamicState, parameters } = definition.extension;

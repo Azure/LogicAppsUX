@@ -16,21 +16,23 @@ interface MSIAuthenticationProps {
   msiProps: MSIProps;
   identity?: ManagedIdentity;
   getTokenPicker: GetTokenPickerHandler;
-  onManagedIdentityChange(event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
 }
 
-export const MSIAuthentication = ({
-  identity,
-  msiProps,
-  getTokenPicker,
-  onManagedIdentityChange,
-  setCurrentProps,
-}: MSIAuthenticationProps): JSX.Element => {
+export const MSIAuthentication = ({ identity, msiProps, getTokenPicker, setCurrentProps }: MSIAuthenticationProps): JSX.Element => {
   const intl = useIntl();
   const { options, errorMessage: error } = getManagedIdentityData(identity, msiProps.msiIdentity, intl);
   const [errorMessage] = useState(error);
   const [managedIdentityDropdownOptions] = useState<IDropdownOption[]>(options);
+
+  const onManagedIdentityChange = (_event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void => {
+    setCurrentProps((prevState: AuthProps) => ({
+      msi: {
+        ...prevState.msi,
+        msiIdentity: item.key === ResourceIdentityType.SYSTEM_ASSIGNED ? undefined : (item.key as ResourceIdentityType),
+      },
+    }));
+  };
 
   const updateMsiAudience = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
@@ -103,29 +105,31 @@ const getManagedIdentityData = (
   });
   const userAssignedIdentities = containsUserAssignedIdentities(identity) ? getUserAssignedIdentities(identity) : undefined;
   if (identity?.type) {
-    if (
+    const supportsUserAssignedIdentity =
       equals(identity.type, ResourceIdentityType.USER_ASSIGNED) ||
-      equals(identity.type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)
-    ) {
-      if (userAssignedIdentities) {
-        identityOptions.push(...userAssignedIdentities);
-      }
-
-      if (selectedManagedIdentityKey && userAssignedIdentities?.find((userIdentity) => userIdentity.key === selectedManagedIdentityKey)) {
-        identityOptions.push({ key: selectedManagedIdentityKey, text: getIdentityDisplayName(selectedManagedIdentityKey) });
-        errorMessage = invalidUserAssignedManagedIdentity;
-      }
-    }
-    if (
+      equals(identity.type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED);
+    const supportsSystemAssignedIdentity =
       equals(identity.type, ResourceIdentityType.SYSTEM_ASSIGNED) ||
-      equals(identity.type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)
-    ) {
-      identityOptions.push({ key: ResourceIdentityType.SYSTEM_ASSIGNED, text: systemAssignedManagedIdentity });
+      equals(identity.type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED);
+    if (supportsUserAssignedIdentity && userAssignedIdentities) {
+      identityOptions.push(...userAssignedIdentities);
+    }
 
-      if (selectedManagedIdentityKey && equals(identity.type, ResourceIdentityType.SYSTEM_ASSIGNED)) {
-        identityOptions.push({ key: selectedManagedIdentityKey, text: getIdentityDisplayName(selectedManagedIdentityKey) });
-        errorMessage = userIdentityNotSupported;
-      }
+    if (supportsSystemAssignedIdentity) {
+      identityOptions.push({ key: ResourceIdentityType.SYSTEM_ASSIGNED, text: systemAssignedManagedIdentity });
+    }
+
+    if (isSystemAssignedIdentity(selectedManagedIdentityKey) && !supportsSystemAssignedIdentity) {
+      errorMessage = userIdentityNotSupported;
+    }
+
+    if (
+      selectedManagedIdentityKey &&
+      !isSystemAssignedIdentity(selectedManagedIdentityKey) &&
+      !userAssignedIdentities?.find((userIdentity) => userIdentity.key === selectedManagedIdentityKey)
+    ) {
+      identityOptions.push({ key: selectedManagedIdentityKey, text: getIdentityDisplayName(selectedManagedIdentityKey) });
+      errorMessage = invalidUserAssignedManagedIdentity;
     }
   }
 
@@ -147,4 +151,8 @@ const getUserAssignedIdentities = (identity: ManagedIdentity | undefined): IDrop
 
 const getIdentityDisplayName = (msiIdentity: string): string => {
   return msiIdentity.split('/').slice(-1)[0];
+};
+
+const isSystemAssignedIdentity = (key: string | undefined): boolean => {
+  return !key || key === ResourceIdentityType.SYSTEM_ASSIGNED;
 };

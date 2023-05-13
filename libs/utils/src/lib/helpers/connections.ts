@@ -58,6 +58,19 @@ export const isSharedManagedConnector = (connectorId: string) => {
   return true;
 };
 
+export const isSharedManagedConnectorFromPApps = (connectorId: string) => {
+  // Note: connectorId format: /providers/Microsoft.PowerApps/apis/{connector}
+  const fields = connectorId.split('/');
+  if (fields.length !== 5) return false;
+
+  if (!equals(fields[1], 'providers')) return false;
+  if (!equals(fields[2], 'microsoft.powerapps')) return false;
+  if (!equals(fields[3], 'apis')) return false;
+  if (!fields[4].startsWith('shared_')) return false;
+
+  return true;
+};
+
 export function getAuthRedirect(connector?: Connector): string | undefined {
   if (!connector) return undefined;
   const authParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]);
