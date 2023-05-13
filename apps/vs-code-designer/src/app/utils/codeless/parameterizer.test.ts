@@ -28,10 +28,10 @@ describe('parameterizeConnectionReference()', () => {
 
     const expected = {
       api: {
-        id: "/subscriptions/@appsetting('WORKFLOWS_SUBSCRIPTION_ID')/providers/Microsoft.Web/locations/@appsetting('WORKFLOWS_LOCATION_NAME')/managedApis/applicationinsights",
+        id: "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/providers/Microsoft.Web/locations/@{appsetting('WORKFLOWS_LOCATION_NAME')}/managedApis/applicationinsights",
       },
       connection: {
-        id: "/subscriptions/@appsetting('WORKFLOWS_SUBSCRIPTION_ID')/resourceGroups/@appsetting('WORKFLOWS_RESOURCE_GROUP_NAME')/providers/Microsoft.Web/connections/applicationinsights",
+        id: "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/resourceGroups/@{appsetting('WORKFLOWS_RESOURCE_GROUP_NAME')}/providers/Microsoft.Web/connections/applicationinsights",
       },
       connectionRuntimeUrl: "@parameters('applicationinsightsConnectionRuntimeUrl')",
       authentication: "@parameters('applicationinsightsAuthentication')",

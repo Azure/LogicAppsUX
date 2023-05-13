@@ -28,15 +28,15 @@ export function parameterizeConnectionReference(
 
 function parameterizeApiId(id: string): string {
   const segments = id.split(DELIMITER);
-  segments[SUBSCRIPTION_INDEX] = getAppSettingToken(workflowSubscriptionIdKey);
-  segments[API_LOCATION_INDEX] = getAppSettingToken(workflowLocationKey);
+  segments[SUBSCRIPTION_INDEX] = getAppSettingToken(workflowSubscriptionIdKey, true);
+  segments[API_LOCATION_INDEX] = getAppSettingToken(workflowLocationKey, true);
   return segments.join(DELIMITER);
 }
 
 function parameterizeConnectionId(id: string): string {
   const segments = id.split(DELIMITER);
-  segments[SUBSCRIPTION_INDEX] = getAppSettingToken(workflowSubscriptionIdKey);
-  segments[CONNECTION_RESOURCE_GROUP_INDEX] = getAppSettingToken(workflowResourceGroupNameKey);
+  segments[SUBSCRIPTION_INDEX] = getAppSettingToken(workflowSubscriptionIdKey, true);
+  segments[CONNECTION_RESOURCE_GROUP_INDEX] = getAppSettingToken(workflowResourceGroupNameKey, true);
   return segments.join(DELIMITER);
 }
 
@@ -63,12 +63,12 @@ function parameterizeProperty(name: string, value: any, type: string, parameters
   return getParametersToken(name);
 }
 
-function getAppSettingToken(name: string): string {
-  return `@appsetting('${name}')`;
+function getAppSettingToken(name: string, interpolated = false): string {
+  return `@${interpolated ? '{' : ''}appsetting('${name}')${interpolated ? '}' : ''}`;
 }
 
-function getParametersToken(name: string): string {
-  return `@parameters('${name}')`;
+function getParametersToken(name: string, interpolated = false): string {
+  return `@${interpolated ? '{' : ''}parameters('${name}')${interpolated ? '}' : ''}`;
 }
 
 function GetParameter(type: string, value: any): Parameter {
