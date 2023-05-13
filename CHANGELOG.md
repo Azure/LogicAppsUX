@@ -1,4 +1,40 @@
 # Logic Apps Designer
+### [2.15.21](https://github.com/Azure/LogicAppsUX/compare/v2.15.20...v2.15.21) (2023-05-13)
+
+
+### Features
+
+* **designer:** Added Casting to Array Editor/ Fixed Complex Array Editor ([#2362](https://github.com/Azure/LogicAppsUX/issues/2362)) ([794c0a8](https://github.com/Azure/LogicAppsUX/commit/794c0a88ce0b95a109660e6ed295cb51b7afda85))
+* **vscode:** Mode deploy button to workspace deploy menu ([#2370](https://github.com/Azure/LogicAppsUX/issues/2370)) ([8c52252](https://github.com/Azure/LogicAppsUX/commit/8c52252f1212ced955f9cea3acd05e9d0ddd5c32))
+
+
+### Bug Fixes
+
+* **designer:** Fix Links in TokenPicker and About Tab ([#2367](https://github.com/Azure/LogicAppsUX/issues/2367)) ([89af76f](https://github.com/Azure/LogicAppsUX/commit/89af76f3a5ee1001a753d6bef09f8cd5671d5e04))
+* **designer:** Fixing the title prefix for dynamic inputs in manifest based operations ([#2364](https://github.com/Azure/LogicAppsUX/issues/2364)) ([4790f5d](https://github.com/Azure/LogicAppsUX/commit/4790f5d77f7a1cf00aff949972436b1fdbc7d0f4))
+* **designer:** making editorOptions optional values in editors ([#2371](https://github.com/Azure/LogicAppsUX/issues/2371)) ([1fc0963](https://github.com/Azure/LogicAppsUX/commit/1fc09635338091128a60991d4e913436e77763aa))
+* **designer:** Persisting identity values for MSI auth in http ([#2369](https://github.com/Azure/LogicAppsUX/issues/2369)) ([4b23fa5](https://github.com/Azure/LogicAppsUX/commit/4b23fa5afece6afc3fea40c2c48aa80a04dda90f))
+* **designer:** Treat empty string as though the parameter has no value ([#2348](https://github.com/Azure/LogicAppsUX/issues/2348)) ([16ad151](https://github.com/Azure/LogicAppsUX/commit/16ad1511862d529fc7ba4875d6ad39281dcc8725))
+
+### [2.15.20](https://github.com/Azure/LogicAppsUX/compare/v2.15.19...v2.15.20) (2023-05-12)
+
+### Bug Fixes
+
+- **Designer:** Fixed crash with manifest not having connector property ([#2345](https://github.com/Azure/LogicAppsUX/issues/2345)) ([6bb3e4d](https://github.com/Azure/LogicAppsUX/commit/6bb3e4dfd23cb0e5a22e397b474afba7302f3f5a))
+- **designer:** When outputs are too large to show, monitoring view will show a download link to the file ([#2344](https://github.com/Azure/LogicAppsUX/issues/2344)) ([7a0b9df](https://github.com/Azure/LogicAppsUX/commit/7a0b9dfe4a88ad0e3dd4d5147fe6cbb6982e1c5b))
+
+### [2.15.19](https://github.com/Azure/LogicAppsUX/compare/v2.15.18...v2.15.19) (2023-05-11)
+
+### Features
+
+- **designer:** Add static results support for manifest operations ([#2325](https://github.com/Azure/LogicAppsUX/issues/2325)) ([9c9497d](https://github.com/Azure/LogicAppsUX/commit/9c9497dfc5a686d3563befeea8d033cba2087bc5))
+
+### Bug Fixes
+
+- **Data Mapper:** Allow events to pass through on the panel ([#2342](https://github.com/Azure/LogicAppsUX/issues/2342)) ([1d8201e](https://github.com/Azure/LogicAppsUX/commit/1d8201e1a75d2eb1db717ca01b4d87d0c3fe6f5a))
+- **Designer:** Added extra icon and brand color fallbacks ([#2341](https://github.com/Azure/LogicAppsUX/issues/2341)) ([9f4b628](https://github.com/Azure/LogicAppsUX/commit/9f4b628f8b91bddfa32bfae539ad63629e9afc9d))
+- **designer:** Fixing renaming of operation names with validation and token updates ([#2333](https://github.com/Azure/LogicAppsUX/issues/2333)) ([2d14124](https://github.com/Azure/LogicAppsUX/commit/2d14124dd235ba8ce3987094a72463a9e3473e94))
+- **designer:** Loading dynamic values for dynamic parameters during deserializations ([#2337](https://github.com/Azure/LogicAppsUX/issues/2337)) ([66a06e5](https://github.com/Azure/LogicAppsUX/commit/66a06e59a34f3035dd5a3d7c836d4a628d80a15e))
 
 ### [2.15.18](https://github.com/Azure/LogicAppsUX/compare/v2.15.17...v2.15.18) (2023-05-11)
 

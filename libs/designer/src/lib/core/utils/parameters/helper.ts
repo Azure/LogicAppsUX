@@ -28,7 +28,6 @@ import type { VariableDeclaration } from '../../state/tokensSlice';
 import type { NodesMetadata, Operations as Actions } from '../../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
-import { initializeArrayViewModel } from '../editors/array';
 import { getAllParentsForNode, getFirstParentOfType, getTriggerNodeId } from '../graph';
 import { getParentArrayKey, isForeachActionNameForLoopsource, parseForeach } from '../loops';
 import { isOneOf } from '../openapi/schema';
@@ -70,6 +69,7 @@ import type {
   ValueSegment,
 } from '@microsoft/designer-ui';
 import {
+  ArrayType,
   removeQuotes,
   RowDropdownOptions,
   GroupDropdownOptions,
@@ -346,8 +346,8 @@ function hasValue(parameter: ResolvedParameter): boolean {
 export function getParameterEditorProps(
   parameter: InputParameter,
   parameterValue: ValueSegment[],
-  shouldIgnoreDefaultValue: boolean,
-  nodeMetadata: Record<string, any> | undefined
+  _shouldIgnoreDefaultValue: boolean,
+  nodeMetadata?: Record<string, any>
 ): ParameterEditorProps {
   const { dynamicValues, type, itemSchema, visibility, value, enum: schemaEnum, format } = parameter;
   let { editor, editorOptions, schema } = parameter;
@@ -357,9 +357,7 @@ export function getParameterEditorProps(
       editor = constants.EDITOR.HTML;
     } else if (type === constants.SWAGGER.TYPE.ARRAY && !!itemSchema && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.ARRAY;
-      editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
-      editorViewModel.itemSchema = toArrayViewModelSchema(itemSchema);
-      editorViewModel.complexArray = itemSchema?.type === constants.SWAGGER.TYPE.OBJECT && itemSchema.properties;
+      editorViewModel = { ...toArrayViewModelSchema(itemSchema), uncastedValue: parameterValue };
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
     } else if ((schemaEnum || schema?.enum || schema?.[ExtensionProperties.CustomEnum]) && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.COMBOBOX;
@@ -471,16 +469,23 @@ const convertStringToInputParameter = (
   };
 };
 
+export const toArrayViewModelSchema = (schema: any): { arrayType: ArrayType; itemSchema: any; uncastedValue: undefined } => {
+  const itemSchema = parseArrayItemSchema(schema);
+  const arrayType = schema?.type === constants.SWAGGER.TYPE.OBJECT && schema.properties ? ArrayType.COMPLEX : ArrayType.SIMPLE;
+  return { arrayType, itemSchema, uncastedValue: undefined };
+};
+
 // Create Array Editor View Model Schema
-export const toArrayViewModelSchema = (itemSchema: any): any => {
+export const parseArrayItemSchema = (itemSchema: any, itemPath = ''): any => {
   if (Array.isArray(itemSchema)) {
-    return itemSchema.map((item) => toArrayViewModelSchema(item));
+    return itemSchema.map((item) => parseArrayItemSchema(item, itemPath));
   } else if (itemSchema !== null && typeof itemSchema === constants.SWAGGER.TYPE.OBJECT) {
-    const result: { [key: string]: any } = {};
+    const result: { [key: string]: any } = { key: itemPath };
     Object.keys(itemSchema).forEach((key) => {
       const value = itemSchema[key];
       const newKey = key === 'x-ms-summary' ? 'title' : key;
-      result[newKey] = toArrayViewModelSchema(value);
+      const newPath = key !== 'properties' && key !== 'items' ? (itemPath ? `${itemPath}.${key}` : key) : itemPath;
+      result[newKey] = parseArrayItemSchema(value, newPath);
     });
     return result;
   }
@@ -1785,7 +1790,7 @@ async function loadDynamicContentForInputsInNode(
           const message = error.message as string;
           const errorMessage = getIntl().formatMessage(
             {
-              defaultMessage: `Failed to retrive dynamic inputs. Error details: ''{message}''`,
+              defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,
               description: 'Error message to show when loading dynamic inputs failed',
             },
             { message }
@@ -1995,7 +2000,7 @@ async function tryGetInputDynamicSchema(
     const message = error.message as string;
     const errorMessage = getIntl().formatMessage(
       {
-        defaultMessage: `Failed to retrive dynamic inputs. Error details: ''{message}''`,
+        defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,
         description: 'Error message to show when loading dynamic inputs failed',
       },
       { message }
@@ -2079,16 +2084,12 @@ function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefi
       return undefined;
     case constants.EDITOR.CONDITION:
       return editorOptions?.isOldFormat
-        ? serializeSimpleQueryBuilder(editorViewModel)
+        ? (editorViewModel.value as string)
         : JSON.stringify(recurseSerializeCondition(parameter, editorViewModel.items, isDefinitionValue));
     default:
       return undefined;
   }
 }
-
-export const serializeSimpleQueryBuilder = (editorViewModel: any): string => {
-  return editorViewModel.value;
-};
 
 export const recurseSerializeCondition = (parameter: ParameterInfo, editorViewModel: any, isDefinitionValue: boolean): any => {
   const returnVal: any = {};
@@ -2186,7 +2187,7 @@ export function getParameterFromId(nodeInputs: NodeInputs, parameterId: string):
 export function parameterHasValue(parameter: ParameterInfo): boolean {
   const value = parameter.value;
 
-  if (!isNullOrUndefined(parameter.preservedValue)) {
+  if (!isUndefinedOrEmptyString(parameter.preservedValue)) {
     return true;
   }
 
