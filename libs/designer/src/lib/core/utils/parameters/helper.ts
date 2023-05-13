@@ -401,7 +401,15 @@ export function getParameterEditorProps(
     editorViewModel = toAuthenticationViewModel(value);
     editorOptions = { ...editorOptions, identity: WorkflowService().getAppIdentity?.() };
   } else if (editor === constants.EDITOR.CONDITION) {
-    editorViewModel = editorOptions?.isOldFormat ? toSimpleQueryBuilderViewModel(value) : toConditionViewModel(value);
+    let modifiedValue = value;
+    // V1 designer does not add the "And" conditional when only one expression is entered
+    // Add the conditional if undefined and the current condition is valid
+    if (!getConditionalSelectedOption(value)) {
+      modifiedValue = {
+        and: [value],
+      };
+    }
+    editorViewModel = editorOptions?.isOldFormat ? toSimpleQueryBuilderViewModel(value) : toConditionViewModel(modifiedValue);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     editor = undefined;
   } else if (editor === constants.EDITOR.FILEPICKER && dynamicValues) {
