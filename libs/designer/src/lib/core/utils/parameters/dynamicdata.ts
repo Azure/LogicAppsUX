@@ -156,7 +156,12 @@ export async function getDynamicSchema(
         case 'getVariable':
           // eslint-disable-next-line no-case-declarations
           const variable = variables.find((variable) => variable.name === operationParameters['name']);
-          schema = variable ? { type: getSwaggerTypeFromVariableType(variable.type?.toLowerCase()) } : {};
+          schema = variable
+            ? {
+                type: getSwaggerTypeFromVariableType(variable.type?.toLowerCase()),
+                enum: getSwaggerEnumFromVariableType(variable.type?.toLowerCase()),
+              }
+            : {};
           break;
         default:
           schema = await getDynamicSchemaProperties(
