@@ -1,6 +1,11 @@
 import type { MapDefinitionEntry } from '../models';
 import * as yaml from 'js-yaml';
 
+/*
+  Note: This method is copied into the commands.ts file in the vs-code-data-mapper package
+  if this method gets updated, both need to be updated to keep them in sync. This method is the source of
+  truth for both spots. This set up exists as a copy to avoid a package import issue.
+  */
 export const loadMapDefinition = (mapDefinitionString: string | undefined): MapDefinitionEntry => {
   if (mapDefinitionString) {
     // Add extra escapes around custom string values, so that we don't lose which ones are which

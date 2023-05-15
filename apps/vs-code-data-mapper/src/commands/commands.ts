@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 import DataMapperExt from '../DataMapperExt';
 import { dataMapDefinitionsPath, draftMapDefinitionSuffix, schemasPath, supportedDataMapDefinitionFileExts } from '../extensionConfig';
-import { loadMapDefinition } from '@microsoft/logic-apps-data-mapper';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling, registerCommand } from '@microsoft/vscode-azext-utils';
 import { existsSync as fileExistsSync, promises as fs } from 'fs';
@@ -66,15 +65,7 @@ const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
   }
 
   const fileContents = await fs.readFile(draftFileIsFoundAndShouldBeUsed ? draftMapDefinitionPath : mapDefinitionPath, 'utf-8');
-  const mapDefinition = loadMapDefinition(fileContents);
-
-  /*   const mapDefinition = yaml.load(
-    fileContents
-  ) as {
-    $sourceSchema: string;
-    $targetSchema: string;
-    [key: string]: any;
-  }; */
+  const mapDefinition = DataMapperExt.loadMapDefinition(fileContents);
 
   if (
     !mapDefinition.$sourceSchema ||
