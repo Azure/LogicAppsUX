@@ -26,6 +26,11 @@ export class WorkflowInitCodeProject extends ScriptInit {
         command: hostStartCommand,
         problemMatcher: funcWatchProblemMatcher,
         isBackground: true,
+        label: 'func: host start',
+        group: {
+          kind: 'build',
+          isDefault: true,
+        },
       },
     ];
   }

@@ -2,10 +2,9 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { gitignoreFileName, hostFileName, localSettingsFileName, workerRuntimeKey } from '../../../../constants';
+import { gitignoreFileName, hostFileName, localSettingsFileName } from '../../../../constants';
 import { addDefaultBundle } from '../../../utils/bundleFeed';
 import { confirmOverwriteFile, writeFormattedJson } from '../../../utils/fs';
-import { getFunctionsWorkerRuntime } from '../../../utils/vsCodeConfig/settings';
 import { ProjectCodeCreateStepBase } from '../CodeProjectBase/ProjectCodeCreateStepBase';
 import { nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -59,15 +58,12 @@ export class ScriptProjectCreateStep extends ProjectCodeCreateStepBase {
       const localSettingsJson: ILocalSettingsJson = {
         IsEncrypted: false,
         Values: {
-          AzureWebJobsStorage: '',
+          AzureWebJobsStorage: 'UseDevelopmentStorage=true',
+          FUNCTIONS_WORKER_RUNTIME: 'dotnet-isolated',
+          WORKFLOWS_SUBSCRIPTION_ID: '',
+          AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
         },
       };
-
-      const functionsWorkerRuntime: string | undefined = getFunctionsWorkerRuntime(context.language);
-      if (functionsWorkerRuntime) {
-        // Add the Functions worker runtime to the local.settings.json file
-        localSettingsJson.Values[workerRuntimeKey] = functionsWorkerRuntime;
-      }
 
       await writeFormattedJson(localSettingsJsonPath, localSettingsJson);
     }

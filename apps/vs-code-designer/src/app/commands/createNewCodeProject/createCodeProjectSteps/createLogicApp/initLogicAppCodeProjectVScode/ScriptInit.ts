@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { extInstallTaskName, func, funcWatchProblemMatcher, hostStartCommand } from '../../../../../../constants';
 import { getLocalFuncCoreToolsVersion } from '../../../../../utils/funcCoreTools/funcVersion';
-import { InitVSCodeStepBaseCodeProject } from './InitCodeProject';
+import { InitCodeProject } from './InitCodeProject';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
 import { FuncVersion } from '@microsoft/vscode-extension';
 import * as fse from 'fs-extra';
@@ -15,7 +15,7 @@ import type { TaskDefinition } from 'vscode';
 /**
  * Base class for all projects based on a simple script (i.e. JavaScript, C# Script, Bash, etc.) that don't require compilation
  */
-export class ScriptInitVSCodeStepCodeProject extends InitVSCodeStepBaseCodeProject {
+export class ScriptInit extends InitCodeProject {
   protected useFuncExtensionsInstall = false;
 
   protected getTasks(): TaskDefinition[] {

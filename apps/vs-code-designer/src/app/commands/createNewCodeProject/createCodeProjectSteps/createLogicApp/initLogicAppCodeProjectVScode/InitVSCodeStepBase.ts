@@ -54,7 +54,7 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { TaskDefinition, DebugConfiguration, WorkspaceFolder } from 'vscode';
 
-export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWizardContext> {
+export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 20;
   protected preDeployTask?: string;
   protected settings: ISettingToAdd[] = [];
