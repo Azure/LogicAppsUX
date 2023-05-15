@@ -536,7 +536,7 @@ const getConditionalSelectedOption = (input: any): GroupDropdownOptions | undefi
   return undefined;
 };
 
-const canConvertToComplexCondition = (input: any): boolean => {
+export const canConvertToComplexCondition = (input: any): boolean => {
   let inputKeys = Object.keys(input);
   if (inputKeys.length !== 1) {
     return false;

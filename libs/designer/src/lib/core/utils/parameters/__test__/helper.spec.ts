@@ -1,4 +1,5 @@
 import {
+  canConvertToComplexCondition,
   getParameterEditorProps,
   parameterValueToJSONString,
   parameterValueToString,
@@ -2511,6 +2512,71 @@ describe('core/utils/parameters/helper', () => {
       expect(updatedInputParameters[1].value).toBe('test2');
       expect(updatedInputParameters[2].value).toBe('test1');
       expect(updatedInputParameters[9].value).toBe('Normal');
+    });
+  });
+
+  describe('canConvertToComplexCondition', () => {
+    const equalsObject = {
+      equals: ["@outputs('Get_manager')?['body/mail']", "@triggerOutputs()?['body/from']"],
+    };
+
+    const containsObject = {
+      contains: ["@outputs('Get_manager')?['body/mail']", "@triggerOutputs()?['body/from']"],
+    };
+
+    const invalidObject = {
+      invalidKey: ["@outputs('Get_manager')?['body/mail']", "@triggerOutputs()?['body/from']"],
+    };
+
+    test('returns true if input has only one key and it is a valid dropdown value', () => {
+      const result = canConvertToComplexCondition(equalsObject);
+      expect(result).toBe(true);
+    });
+
+    test('returns false if input has more than one key', () => {
+      const input = {
+        ...equalsObject,
+        ...containsObject,
+      };
+      const result = canConvertToComplexCondition(input);
+      expect(result).toBe(false);
+    });
+
+    test('returns false if input has "not" key but its value has more than one key', () => {
+      const input = {
+        not: {
+          ...equalsObject,
+          ...containsObject,
+        },
+      };
+      const result = canConvertToComplexCondition(input);
+      expect(result).toBe(false);
+    });
+
+    test('returns true if input has "not" key and its value has only one valid dropdown value', () => {
+      const input = {
+        not: {
+          ...containsObject,
+        },
+      };
+      const result = canConvertToComplexCondition(input);
+      expect(result).toBe(true);
+    });
+
+    test('returns false if input has "not" key but its value is not a valid dropdown value', () => {
+      const input = {
+        not: {
+          ...invalidObject,
+        },
+      };
+      const result = canConvertToComplexCondition(input);
+      expect(result).toBe(false);
+    });
+
+    test('returns false if input is an empty object', () => {
+      const input = {};
+      const result = canConvertToComplexCondition(input);
+      expect(result).toBe(false);
     });
   });
 });
