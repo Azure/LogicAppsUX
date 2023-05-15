@@ -2,6 +2,7 @@ import { environment } from '../../../environments/environment';
 import type { CallbackInfo, ConnectionsData, ParametersData, Workflow } from '../Models/Workflow';
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { useQuery } from 'react-query';
@@ -23,6 +24,29 @@ export const useWorkflowAndArtifactsStandard = (workflowId: string) => {
       return response.data;
     },
     {
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
+};
+
+export const useRunInstanceStandard = (workflowId: string, workflowName: string, runId: string) => {
+  return useQuery(
+    ['getRunInstance', workflowId, workflowName, runId],
+    async () => {
+      const results = await axios.get<LogicAppsV2.RunInstanceDefinition>(
+        `https://management.azure.com${workflowId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs/${runId}?api-version=2018-11-01&$expand=properties/actions,workflow/properties`,
+        {
+          headers: {
+            Authorization: `Bearer ${environment.armToken}`,
+          },
+        }
+      );
+      return results.data;
+    },
+    {
+      enabled: !!workflowName && !!runId,
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,

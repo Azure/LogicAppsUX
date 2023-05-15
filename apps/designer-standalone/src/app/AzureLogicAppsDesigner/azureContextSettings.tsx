@@ -1,7 +1,6 @@
 import type { RootState, AppDispatch } from '../../state/store';
 import {
   clearWorkflowDetails,
-  loadRun,
   loadWorkflow,
   setConsumption,
   setDarkMode,
@@ -30,7 +29,6 @@ const AzureContextSettings = () => {
     (_: unknown, checked?: boolean) => {
       dispatch(setMonitoringView(!!checked));
       if (checked) {
-        dispatch(loadRun());
         dispatch(loadWorkflow());
       }
     },

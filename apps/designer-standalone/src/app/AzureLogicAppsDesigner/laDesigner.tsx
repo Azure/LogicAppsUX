@@ -60,8 +60,7 @@ const DesignerEditor = () => {
   const { data: tenantId } = useCurrentTenantId();
 
   const [designerID, setDesignerID] = React.useState(guid());
-
-  const workflow = data?.properties.files[Artifact.WorkflowFile];
+  const [workflow, _setWorkflow] = React.useState(data?.properties.files[Artifact.WorkflowFile]);
   const connectionsData = data?.properties.files[Artifact.ConnectionsFile] ?? {};
   const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
   const parameters = data?.properties.files[Artifact.ParametersFile] ?? {};

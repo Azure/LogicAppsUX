@@ -50,7 +50,6 @@ export const LogicAppSelector = () => {
     },
     { enabled: !!workflowName && !!monitoringView }
   );
-
   const appOptions: IComboBoxOption[] =
     appList?.map((app) => {
       return {
