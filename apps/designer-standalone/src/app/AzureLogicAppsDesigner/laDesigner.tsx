@@ -14,6 +14,7 @@ import {
   saveWorkflowStandard,
   useAppSettings,
   useCurrentTenantId,
+  useRunInstanceStandard,
   useWorkflowAndArtifactsStandard,
   useWorkflowApp,
 } from './Services/WorkflowAndArtifacts';
@@ -32,6 +33,7 @@ import {
 import type { Workflow } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import { clone, equals, guid, isArmResourceId } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import isEqual from 'lodash.isequal';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
@@ -49,7 +51,8 @@ const DesignerEditor = () => {
     readOnly: isReadOnly,
     darkMode: isDarkMode,
     monitoringView,
-    runInstance,
+    runId,
+    appId,
   } = useSelector((state: RootState) => state.workflowLoader);
 
   const workflowName = workflowId.split('/').splice(-1)[0];
@@ -58,12 +61,22 @@ const DesignerEditor = () => {
   const { data: settingsData, isLoading: settingsLoading, isError: settingsIsError, error: settingsError } = useAppSettings(siteResourceId);
   const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId);
   const { data: tenantId } = useCurrentTenantId();
-
   const [designerID, setDesignerID] = React.useState(guid());
-  const [workflow, _setWorkflow] = React.useState(data?.properties.files[Artifact.WorkflowFile]);
+  const [workflow, setWorkflow] = React.useState(data?.properties.files[Artifact.WorkflowFile]);
   const connectionsData = data?.properties.files[Artifact.ConnectionsFile] ?? {};
   const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
   const parameters = data?.properties.files[Artifact.ParametersFile] ?? {};
+
+  const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
+    if (monitoringView) {
+      const standardAppInstance = {
+        ...workflow,
+        definition: runDefinition.properties.workflow.properties.definition,
+      };
+      setWorkflow(standardAppInstance);
+    }
+  };
+  const { data: runInstanceData } = useRunInstanceStandard(workflowName, onRunInstanceSuccess, appId, runId);
 
   const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
     addConnectionInJson(connectionAndSetting, connectionsData ?? {});
@@ -125,6 +138,10 @@ const DesignerEditor = () => {
     }
   }, []);
 
+  React.useEffect(() => {
+    setWorkflow(data?.properties.files[Artifact.WorkflowFile]);
+  }, [data?.properties.files]);
+
   if (isLoading || appLoading || settingsLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
@@ -181,7 +198,10 @@ const DesignerEditor = () => {
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider locale={'en-US'} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView: monitoringView }}>
         {workflow?.definition ? (
-          <BJSWorkflowProvider workflow={{ definition: workflow?.definition, connectionReferences, parameters }} runInstance={runInstance}>
+          <BJSWorkflowProvider
+            workflow={{ definition: workflow?.definition, connectionReferences, parameters }}
+            runInstance={runInstanceData}
+          >
             <div style={{ height: 'inherit', width: 'inherit' }}>
               <DesignerCommandBar
                 id={workflowId}

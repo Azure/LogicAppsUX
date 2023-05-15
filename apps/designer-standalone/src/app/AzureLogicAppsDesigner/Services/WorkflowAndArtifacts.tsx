@@ -31,12 +31,17 @@ export const useWorkflowAndArtifactsStandard = (workflowId: string) => {
   );
 };
 
-export const useRunInstanceStandard = (workflowId: string, workflowName: string, runId: string) => {
+export const useRunInstanceStandard = (
+  workflowName: string,
+  onRunInstanceSuccess: (data: LogicAppsV2.RunInstanceDefinition) => void,
+  appId?: string,
+  runId?: string
+) => {
   return useQuery(
-    ['getRunInstance', workflowId, workflowName, runId],
+    ['getRunInstance', appId, workflowName, runId],
     async () => {
       const results = await axios.get<LogicAppsV2.RunInstanceDefinition>(
-        `https://management.azure.com${workflowId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs/${runId}?api-version=2018-11-01&$expand=properties/actions,workflow/properties`,
+        `https://management.azure.com${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs/${runId}?api-version=2018-11-01&$expand=properties/actions,workflow/properties`,
         {
           headers: {
             Authorization: `Bearer ${environment.armToken}`,
@@ -50,6 +55,7 @@ export const useRunInstanceStandard = (workflowId: string, workflowName: string,
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
+      onSuccess: onRunInstanceSuccess,
     }
   );
 };
