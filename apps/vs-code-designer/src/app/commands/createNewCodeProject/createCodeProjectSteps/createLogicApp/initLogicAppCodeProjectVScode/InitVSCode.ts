@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../../../localize';
 import { DotnetInitVSCodeStep } from '../../../../initProjectForVSCode/DotnetInitVSCodeStep';
-import { WorkflowInitCodeProject } from './WorkflowInitCodeProject';
+import { WorkflowInitCodeProject } from './WorkflowCode';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
