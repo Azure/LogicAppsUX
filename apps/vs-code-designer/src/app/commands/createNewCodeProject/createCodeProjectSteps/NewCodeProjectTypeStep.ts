@@ -1,7 +1,6 @@
 import { WorkflowCodeProjectCreateStep } from './WorkflowCodeProjectCreateStep';
 import { InvokeFunctionProjectSetup } from './createFunction/InvokeFunctionProjectSetup';
 import { CodeProjectWorkflowStateTypeStep } from './createLogicApp/CodeProjectWorkflowStateTypeStep';
-import { addInitVSCodeSteps } from './createLogicApp/initLogicAppCodeProjectVScode/InitVSCodeStep';
 import { DesignerConfig } from './createLogicApp/workflowDesigner/DesignerConfig';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
@@ -9,6 +8,7 @@ import type { IProjectWizardContext } from '@microsoft/vscode-extension';
 import { ProjectLanguage, WorkflowProjectType } from '@microsoft/vscode-extension';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { addInitVSCodeSteps } from './createLogicApp/initLogicAppCodeProjectVScode/InitVSCode';
 
 export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizardContext> {
   // Hide the step count in the wizard UI
