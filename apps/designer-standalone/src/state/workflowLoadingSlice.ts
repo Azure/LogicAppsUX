@@ -74,9 +74,6 @@ export const workflowLoadingSlice = createSlice({
     changeRunId: (state, action: PayloadAction<string>) => {
       state.runId = action.payload;
     },
-    changeRunInstance: (state, action: PayloadAction<LogicAppsV2.RunInstanceDefinition | null>) => {
-      state.runInstance = action.payload;
-    },
     changeResourcePath: (state, action: PayloadAction<string>) => {
       state.resourcePath = action.payload;
     },
@@ -135,7 +132,6 @@ export const {
   setConsumption,
   setIsLocalSelected,
   changeRunId,
-  changeRunInstance,
 } = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;
