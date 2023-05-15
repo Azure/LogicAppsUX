@@ -28,6 +28,7 @@ import {
   StandardConnectionService,
   StandardConnectorService,
   StandardOperationManifestService,
+  StandardRunService,
   StandardSearchService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { Workflow } from '@microsoft/logic-apps-designer';
@@ -389,6 +390,13 @@ const getDesignerServices = (
   //   designerID,
   // });
 
+  const runService = new StandardRunService({
+    apiVersion,
+    baseUrl,
+    workflowName,
+    httpClient,
+  });
+
   return {
     appService,
     connectionService,
@@ -400,6 +408,7 @@ const getDesignerServices = (
     oAuthService,
     workflowService,
     apimService,
+    runService,
   };
 };
 
