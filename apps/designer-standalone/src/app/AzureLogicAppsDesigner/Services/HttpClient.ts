@@ -10,13 +10,14 @@ export class HttpClient implements IHttpClient {
   }
 
   async get<ReturnType>(options: HttpRequestOptions<any>): Promise<ReturnType> {
+    const isArmId = isArmResourceId(options.uri);
     const requestUrl = getRequestUrl(options);
-    const isArmId = requestUrl.startsWith('https://management.azure.com');
     const auth = isArmId
       ? {
           Authorization: `Bearer ${environment.armToken}`,
         }
       : {};
+
     const response = await axios.get(requestUrl, {
       headers: {
         ...this._extraHeaders,
@@ -112,4 +113,8 @@ function getExtraHeaders(): Record<string, string> {
   return {
     'x-ms-user-agent': `LogicAppsDesigner/(host localdesigner)`,
   };
+}
+
+function isArmResourceId(resourceId: string): boolean {
+  return resourceId ? resourceId.indexOf('/subscriptions/') !== -1 : false;
 }
