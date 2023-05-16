@@ -1,4 +1,4 @@
-import { ArrayEditor, ArrayType } from '../../arrayeditor';
+import { ArrayEditor } from '../../arrayeditor';
 import { AuthenticationEditor } from '../../authentication';
 import { CodeEditor } from '../../code';
 import { Combobox } from '../../combobox';
@@ -6,7 +6,7 @@ import { CopyInputControl } from '../../copyinputcontrol';
 import { DictionaryEditor } from '../../dictionary';
 import { DropdownEditor } from '../../dropdown';
 import type { ValueSegment } from '../../editor';
-import type { CallbackHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
+import type { CallbackHandler, CastHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { FloatingActionMenu } from '../../floatingactionmenu';
@@ -44,6 +44,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   isCallback?: boolean;
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
+  onCastParameter: CastHandler;
   pickerCallbacks?: PickerCallbackHandlers;
   getTokenPicker: GetTokenPickerHandler;
   validationErrors?: string[];
@@ -85,6 +86,7 @@ const TokenField = ({
   onValueChange,
   onComboboxMenuOpen,
   hideValidationErrors,
+  onCastParameter,
   getTokenPicker,
 }: SettingTokenFieldProps & { labelId: string }) => {
   const dropdownOptions = editorOptions?.options?.value ?? editorOptions?.options ?? [];
@@ -150,6 +152,7 @@ const TokenField = ({
           readonly={readOnly}
           initialValue={value}
           initialItems={editorViewModel.items}
+          valueType={editorOptions?.valueType}
           isTrigger={isTrigger}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
@@ -164,9 +167,10 @@ const TokenField = ({
           initialValue={value}
           initialItems={editorViewModel.items}
           columnMode={editorViewModel.columnMode}
-          columns={editorOptions.columns.count}
-          titles={editorOptions.columns.titles}
-          keys={editorOptions.columns.keys}
+          columns={editorOptions?.columns?.count}
+          titles={editorOptions?.columns?.titles}
+          keys={editorOptions?.columns?.keys}
+          types={editorOptions?.columns?.types}
           isTrigger={isTrigger}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
@@ -177,14 +181,15 @@ const TokenField = ({
       return (
         <ArrayEditor
           labelId={labelId}
-          type={editorViewModel.schema ? ArrayType.COMPLEX : ArrayType.SIMPLE}
+          arrayType={editorViewModel.arrayType}
           labelProps={{ text: label ? `${label} Item` : 'Array Item' }}
           placeholder={placeholder}
           readonly={readOnly}
-          initialValue={value}
+          initialValue={editorViewModel.uncastedValue}
           isTrigger={isTrigger}
           getTokenPicker={getTokenPicker}
-          itemSchema={editorViewModel?.schema}
+          itemSchema={editorViewModel.itemSchema}
+          castParameter={onCastParameter}
           onChange={onValueChange}
         />
       );
@@ -264,7 +269,14 @@ const TokenField = ({
     //     />
     //   );
     case 'floatingactionmenu': {
-      return <FloatingActionMenu supportedTypes={editorOptions?.supportedTypes} initialValue={value} onChange={onValueChange} />;
+      return (
+        <FloatingActionMenu
+          supportedTypes={editorOptions?.supportedTypes}
+          useStaticInputs={editorOptions?.useStaticInputs}
+          initialValue={value}
+          onChange={onValueChange}
+        />
+      );
     }
 
     default:

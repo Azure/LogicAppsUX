@@ -2,8 +2,8 @@ import './pseudoCommandBar.less';
 import type { IModalStyles } from '@fluentui/react';
 import { ActionButton, Modal } from '@fluentui/react';
 import { MonacoEditor, EditorLanguage } from '@microsoft/designer-ui';
-import type { Workflow } from '@microsoft/logic-apps-designer';
-import { serializeWorkflow, switchToWorkflowParameters } from '@microsoft/logic-apps-designer';
+import type { Workflow, AppDispatch } from '@microsoft/logic-apps-designer';
+import { resetDesignerDirtyState, serializeWorkflow, switchToWorkflowParameters, useIsDesignerDirty } from '@microsoft/logic-apps-designer';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -15,7 +15,7 @@ const modalStyles: Partial<IModalStyles> = {
 
 export const PseudoCommandBar = () => {
   const state = useSelector((state: any) => state);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [showSerialization, setShowSeralization] = useState(false);
   const [serializedWorkflow, setSerializedWorkflow] = useState<Workflow>();
@@ -24,14 +24,33 @@ export const PseudoCommandBar = () => {
     setShowSeralization(true);
   };
 
+  const isDirty = useIsDesignerDirty();
+
   return (
     <div className="pseudo-command-bar">
-      <ActionButton iconProps={{ iconName: 'Code' }} text="Code View" onClick={serializeCallback} />
+      <ActionButton
+        iconProps={{ iconName: 'Save' }}
+        text="Save"
+        disabled={!isDirty}
+        onClick={() => {
+          alert("Congrats you saved the workflow! (Not really, you're in standalone)");
+          dispatch(resetDesignerDirtyState());
+        }}
+      />
+      <ActionButton
+        iconProps={{ iconName: 'Clear' }}
+        text="Discard"
+        disabled={!isDirty}
+        onClick={() => {
+          dispatch(resetDesignerDirtyState());
+        }}
+      />
       <ActionButton
         iconProps={{ iconName: 'Parameter' }}
         text="Workflow Parameters"
         onClick={() => dispatch(switchToWorkflowParameters())}
       />
+      <ActionButton iconProps={{ iconName: 'Code' }} text="Code View" onClick={serializeCallback} />
 
       {/* Code view modal */}
       <Modal

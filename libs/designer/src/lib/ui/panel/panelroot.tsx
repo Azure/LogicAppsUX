@@ -1,9 +1,10 @@
 import constants from '../../common/constants';
 import type { AppDispatch, RootState } from '../../core';
-import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
+import { deleteGraphNode, deleteOperation } from '../../core/actions/bjsworkflow/delete';
+import type { WorkflowNode } from '../../core/parsers/models/workflowNode';
 import { useIsXrmConnectionReferenceMode, useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { updateParameterValidation } from '../../core/state/operation/operationMetadataSlice';
-import { useParameterValidationErrors } from '../../core/state/operation/operationSelector';
+import { ErrorLevel, updateParameterValidation } from '../../core/state/operation/operationMetadataSlice';
+import { useOperationErrorInfo, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import {
   useCurrentPanelModePanelMode,
   useIsPanelCollapsed,
@@ -24,9 +25,9 @@ import {
 } from '../../core/state/panel/panelSlice';
 import { useIconUri, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useHasSchema } from '../../core/state/staticresultschema/staitcresultsSelector';
-import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
-import { replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
-import { isRootNodeInGraph } from '../../core/utils/graph';
+import { useNodeDescription, useNodeDisplayName, useNodeMetadata, useWorkflowNode } from '../../core/state/workflow/workflowSelectors';
+import { deleteSwitchCase, replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
+import { isOperationNameValid, isRootNodeInGraph } from '../../core/utils/graph';
 import { validateParameter } from '../../core/utils/parameters/helper';
 import { NodeSearchPanel } from './nodeSearchPanel';
 import { aboutTab } from './panelTabs/aboutTab';
@@ -42,8 +43,16 @@ import { testingTab } from './panelTabs/testingTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { WorkflowParametersPanel } from './workflowparameterspanel';
 import type { CommonPanelProps, MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
-import { MenuItemType, PanelContainer, PanelHeaderControlType, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
-import { isNullOrUndefined, SUBGRAPH_TYPES } from '@microsoft/utils-logic-apps';
+import {
+  DeleteNodeModal,
+  MenuItemType,
+  PanelContainer,
+  PanelHeaderControlType,
+  PanelLocation,
+  PanelScope,
+  PanelSize,
+} from '@microsoft/designer-ui';
+import { isNullOrUndefined, isScopeOperation, isSubGraphNode, SUBGRAPH_TYPES } from '@microsoft/utils-logic-apps';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -63,9 +72,15 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const collapsed = useIsPanelCollapsed();
   const selectedNode = useSelectedNodeId();
-  const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata));
+  const { isTriggerNode, nodesMetadata, idReplacements } = useSelector((state: RootState) => ({
+    isTriggerNode: isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata),
+    nodesMetadata: state.workflow.nodesMetadata,
+    idReplacements: state.workflow.idReplacements,
+  }));
   const selectedNodeDisplayName = useNodeDisplayName(selectedNode);
   const currentPanelMode = useCurrentPanelModePanelMode();
+
+  const graphNode = useWorkflowNode(selectedNode) as WorkflowNode;
 
   const [width, setWidth] = useState(PanelSize.Auto);
 
@@ -80,46 +95,45 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   let showCommentBox = !isNullOrUndefined(comment);
   const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
   const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
+  const errorInfo = useOperationErrorInfo(selectedNode);
+
+  const selectConnectionTabTitle = isXrmConnectionReferenceMode
+    ? intl.formatMessage({
+        defaultMessage: 'Select Connection Reference',
+        description: 'Title for the select connection reference tab',
+      })
+    : intl.formatMessage({
+        defaultMessage: 'Select Connection',
+        description: 'Title for the select connection tab',
+      });
+  const createConnectionTabTitle = isXrmConnectionReferenceMode
+    ? intl.formatMessage({
+        defaultMessage: 'Create Connection Reference',
+        description: 'Title for the create connection reference tab',
+      })
+    : intl.formatMessage({
+        defaultMessage: 'Create Connection',
+        description: 'Title for the create connection tab',
+      });
 
   useEffect(() => {
-    const selectConnectionTabTitle = isXrmConnectionReferenceMode
-      ? intl.formatMessage({
-          defaultMessage: 'Select Connection Reference',
-          description: 'Title for the select connection reference tab',
-        })
-      : intl.formatMessage({
-          defaultMessage: 'Select Connection',
-          description: 'Title for the select connection tab',
-        });
-    const selectConnectionTab = getSelectConnectionTab(selectConnectionTabTitle);
-
-    const createConnectionTabTitle = isXrmConnectionReferenceMode
-      ? intl.formatMessage({
-          defaultMessage: 'Create Connection Reference',
-          description: 'Title for the create connection reference tab',
-        })
-      : intl.formatMessage({
-          defaultMessage: 'Create Connection',
-          description: 'Title for the create connection tab',
-        });
-    const createConnectionTab = getCreateConnectionTab(createConnectionTabTitle);
-
-    const tabs = [
-      monitoringTab,
-      parametersTab,
-      settingsTab,
-      codeViewTab,
-      testingTab,
-      createConnectionTab,
-      selectConnectionTab,
-      aboutTab,
-      loadingTab,
-    ];
+    const tabs = [monitoringTab, parametersTab, settingsTab, codeViewTab, testingTab, aboutTab, loadingTab];
     if (process.env.NODE_ENV !== 'production') {
       tabs.push(scratchTab);
     }
     dispatch(registerPanelTabs(tabs));
-  }, [dispatch, isXrmConnectionReferenceMode, intl]);
+    dispatch(clearPanel());
+  }, [dispatch]);
+
+  useEffect(() => {
+    const createConnectionTab = getCreateConnectionTab(createConnectionTabTitle);
+    dispatch(registerPanelTabs([createConnectionTab]));
+  }, [dispatch, createConnectionTabTitle]);
+
+  useEffect(() => {
+    const selectConnectionTab = getSelectConnectionTab(selectConnectionTabTitle);
+    dispatch(registerPanelTabs([selectConnectionTab]));
+  }, [dispatch, selectConnectionTabTitle]);
 
   useEffect(() => {
     dispatch(
@@ -177,9 +191,9 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const parameterValidationErrors = useParameterValidationErrors(selectedNode);
   useEffect(() => {
-    const hasErrors = parameterValidationErrors?.length > 0;
+    const hasErrors = parameterValidationErrors?.length > 0 || errorInfo?.level === ErrorLevel.Connection;
     dispatch(setTabError({ tabName: 'parameters', hasErrors, nodeId: selectedNode }));
-  }, [dispatch, parameterValidationErrors?.length, selectedNode]);
+  }, [dispatch, errorInfo?.level, parameterValidationErrors?.length, selectedNode]);
 
   useEffect(() => {
     collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);
@@ -192,6 +206,21 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   const expand = useCallback(() => {
     dispatch(expandPanel());
   }, [dispatch]);
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const handleDeleteClick = () => setShowDeleteModal(true);
+  const handleDelete = () => {
+    // TODO: 12798935 Analytics (event logging)
+    if (operationInfo && isScopeOperation(operationInfo.type)) {
+      dispatch(deleteGraphNode({ graphId: selectedNode, graphNode }));
+    } else if (isSubGraphNode(graphNode.type)) {
+      dispatch(deleteGraphNode({ graphId: selectedNode, graphNode: graphNode }));
+      dispatch(deleteSwitchCase({ caseId: selectedNode, nodeId: nodeMetaData?.graphId ?? '' }));
+    } else {
+      dispatch(deleteOperation({ nodeId: selectedNode, isTrigger: isTriggerNode }));
+    }
+    setShowDeleteModal(false);
+  };
 
   const getPanelHeaderControlType = (): boolean => {
     // TODO: 13067650
@@ -254,7 +283,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       iconName: 'Delete',
       title: deleteDescription,
       type: MenuItemType.Advanced,
-      onClick: handleDelete,
+      onClick: handleDeleteClick,
     });
     return options;
   };
@@ -264,13 +293,15 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
     dispatch(setNodeDescription({ nodeId: selectedNode, ...(showCommentBox && { description: '' }) }));
   };
 
-  const onTitleChange = (newId: string) => {
+  const onTitleChange = (newId: string): { valid: boolean; oldValue?: string } => {
+    const isValid = isOperationNameValid(selectedNode, newId, isTriggerNode, nodesMetadata, idReplacements);
     dispatch(replaceId({ originalId: selectedNode, newId }));
+
+    return { valid: isValid, oldValue: isValid ? newId : selectedNode };
   };
 
-  const handleDelete = (): void => {
-    dispatch(deleteOperation({ nodeId: selectedNode, isTrigger: isTriggerNode }));
-    // TODO: 12798935 Analytics (event logging)
+  const onCommentChange = (newDescription?: string) => {
+    dispatch(setNodeDescription({ nodeId: selectedNode, description: newDescription }));
   };
 
   const togglePanel = (): void => (!collapsed ? collapse() : expand());
@@ -302,44 +333,54 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   ) : currentPanelMode === 'NodeSearch' ? (
     <NodeSearchPanel {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
   ) : (
-    <PanelContainer
-      {...commonPanelProps}
-      cardIcon={iconUri}
-      comment={comment}
-      noNodeSelected={!selectedNode}
-      isError={opQuery?.isError}
-      isLoading={isLoading}
-      panelScope={PanelScope.CardLevel}
-      panelHeaderControlType={getPanelHeaderControlType() ? PanelHeaderControlType.DISMISS_BUTTON : PanelHeaderControlType.MENU}
-      panelHeaderMenu={getPanelHeaderMenu()}
-      selectedTab={selectedPanelTab}
-      showCommentBox={showCommentBox}
-      tabs={registeredTabs}
-      nodeId={selectedNode}
-      onDismissButtonClicked={handleDelete}
-      readOnlyMode={readOnly}
-      setSelectedTab={setSelectedTab}
-      toggleCollapse={() => {
-        //only run validation when collapsing the panel
-        if (!collapsed) {
-          Object.keys(inputs?.parameterGroups ?? {}).forEach((parameterGroup) => {
-            inputs.parameterGroups[parameterGroup].parameters.forEach((parameter) => {
-              const validationErrors = validateParameter(parameter, parameter.value);
-              dispatch(
-                updateParameterValidation({ nodeId: selectedNode, groupId: parameterGroup, parameterId: parameter.id, validationErrors })
-              );
+    <>
+      <PanelContainer
+        {...commonPanelProps}
+        cardIcon={iconUri}
+        comment={comment}
+        noNodeSelected={!selectedNode}
+        isError={errorInfo?.level === ErrorLevel.Critical || opQuery?.isError}
+        errorMessage={errorInfo?.message}
+        isLoading={isLoading}
+        panelScope={PanelScope.CardLevel}
+        panelHeaderControlType={getPanelHeaderControlType() ? PanelHeaderControlType.DISMISS_BUTTON : PanelHeaderControlType.MENU}
+        panelHeaderMenu={getPanelHeaderMenu()}
+        selectedTab={selectedPanelTab}
+        showCommentBox={showCommentBox}
+        tabs={registeredTabs}
+        nodeId={selectedNode}
+        onDismissButtonClicked={handleDelete}
+        readOnlyMode={readOnly}
+        setSelectedTab={setSelectedTab}
+        toggleCollapse={() => {
+          //only run validation when collapsing the panel
+          if (!collapsed) {
+            Object.keys(inputs?.parameterGroups ?? {}).forEach((parameterGroup) => {
+              inputs.parameterGroups[parameterGroup].parameters.forEach((parameter) => {
+                const validationErrors = validateParameter(parameter, parameter.value);
+                dispatch(
+                  updateParameterValidation({ nodeId: selectedNode, groupId: parameterGroup, parameterId: parameter.id, validationErrors })
+                );
+              });
             });
-          });
-        }
-        togglePanel();
-      }}
-      trackEvent={handleTrackEvent}
-      onCommentChange={(value) => {
-        dispatch(setNodeDescription({ nodeId: selectedNode, description: value }));
-      }}
-      title={selectedNodeDisplayName}
-      onTitleChange={onTitleChange}
-    />
+          }
+          togglePanel();
+        }}
+        trackEvent={handleTrackEvent}
+        onCommentChange={onCommentChange}
+        title={selectedNodeDisplayName}
+        onTitleChange={onTitleChange}
+      />
+      {graphNode?.type && (
+        <DeleteNodeModal
+          nodeId={selectedNode}
+          nodeType={graphNode.type}
+          isOpen={showDeleteModal}
+          onDismiss={() => setShowDeleteModal(false)}
+          onConfirm={handleDelete}
+        />
+      )}
+    </>
   );
 };
 

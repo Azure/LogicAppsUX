@@ -5,6 +5,7 @@ import type { SerializedParameter } from '../../actions/bjsworkflow/serializer';
 import { getConnection, getConnectorWithSwagger } from '../../queries/connections';
 import {
   getDynamicSchemaProperties,
+  getDynamicTreeItems,
   getLegacyDynamicSchema,
   getLegacyDynamicTreeItems,
   getLegacyDynamicValues,
@@ -13,6 +14,7 @@ import {
 import { getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import type { VariableDeclaration } from '../../state/tokensSlice';
+import { isConnectionMultiAuthManagedIdentityType, isConnectionSingleAuthManagedIdentityType } from '../connectors/connections';
 import { buildOperationDetailsFromControls, loadInputValuesFromDefinition } from '../swagger/inputsbuilder';
 import {
   getArrayTypeForOutputs,
@@ -40,11 +42,11 @@ import type {
 } from '@microsoft/parsers-logic-apps';
 import {
   isLegacyDynamicValuesTreeExtension,
+  isDynamicTreeExtension,
   parseEx,
   splitEx,
   removeConnectionPrefix,
   isLegacyDynamicValuesExtension,
-  ExtensionProperties,
   isDynamicPropertiesExtension,
   isDynamicListExtension,
   decodePropertySegment,
@@ -61,8 +63,6 @@ import {
   first,
   getObjectPropertyValue,
   safeSetObjectPropertyValue,
-  isConnectionMultiAuthManagedIdentityType,
-  isConnectionSingleAuthManagedIdentityType,
   UnsupportedException,
   UnsupportedExceptionCode,
   UnsupportedExceptionName,
@@ -138,11 +138,7 @@ export async function getDynamicSchema(
   idReplacements: Record<string, string> = {}
 ): Promise<OpenAPIV2.SchemaObject | null> {
   const { parameter, definition } = dependencyInfo;
-  const emptySchema = {
-    [ExtensionProperties.Alias]: parameter?.alias,
-    title: parameter?.title,
-    description: parameter?.description,
-  };
+  const emptySchema = { ...parameter?.schema };
   try {
     if (isDynamicPropertiesExtension(definition)) {
       const { dynamicState, parameters } = definition.extension;
@@ -160,7 +156,12 @@ export async function getDynamicSchema(
         case 'getVariable':
           // eslint-disable-next-line no-case-declarations
           const variable = variables.find((variable) => variable.name === operationParameters['name']);
-          schema = variable ? { type: getSwaggerTypeFromVariableType(variable.type?.toLowerCase()) } : {};
+          schema = variable
+            ? {
+                type: getSwaggerTypeFromVariableType(variable.type?.toLowerCase()),
+                enum: getSwaggerEnumFromVariableType(variable.type?.toLowerCase()),
+              }
+            : {};
           break;
         default:
           schema = await getDynamicSchemaProperties(
@@ -292,7 +293,8 @@ export async function getFolderItems(
   connectionReference: ConnectionReference | undefined,
   idReplacements: Record<string, string>
 ): Promise<TreeDynamicValue[]> {
-  const { definition, filePickerInfo } = dependencyInfo;
+  const { definition, filePickerInfo, parameter } = dependencyInfo;
+
   if (isLegacyDynamicValuesTreeExtension(definition) && filePickerInfo) {
     const { open, browse } = filePickerInfo;
     const { connectorId } = operationInfo;
@@ -321,6 +323,20 @@ export async function getFolderItems(
     );
 
     return getLegacyDynamicTreeItems(connectionId, connectorId, operationId, inputs, filePickerInfo, managedIdentityRequestProperties);
+  } else if (isDynamicTreeExtension(definition) && filePickerInfo) {
+    const { open, browse } = filePickerInfo;
+    const { connectorId } = operationInfo;
+    const connectionId = connectionReference?.connection.id as string;
+    const { operationId, parameters } = selectedValue ? browse : open;
+
+    const operationParameters = getParameterValuesForDynamicInvoke(parameters as DynamicParameters, nodeInputs, idReplacements);
+
+    let dynamicState = definition.extension.dynamicState;
+    if (selectedValue) {
+      dynamicState = { ...dynamicState, selectionState: selectedValue.selectionState };
+    }
+
+    return getDynamicTreeItems(connectionId, connectorId, operationId, parameter?.alias, operationParameters, dynamicState);
   }
 
   throw new UnsupportedException(`Dynamic extension '${definition.type}' is not implemented yet or not supported`);

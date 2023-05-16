@@ -2,6 +2,8 @@ import constants from '../../../../common/constants';
 import { useShowIdentitySelector } from '../../../../core/state/connection/connectionSelector';
 import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../core/state/operation/operationMetadataSlice';
+import { ErrorLevel } from '../../../../core/state/operation/operationMetadataSlice';
+import { useOperationErrorInfo } from '../../../../core/state/operation/operationSelector';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import {
   useAllowUserToChangeConnection,
@@ -15,10 +17,11 @@ import { useNodeMetadata, useReplacedIds } from '../../../../core/state/workflow
 import type { AppDispatch, RootState } from '../../../../core/store';
 import { getConnectionReference } from '../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../core/utils/graph';
-import { addForeachToNode } from '../../../../core/utils/loops';
 import {
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
+  parameterValueToString,
+  remapValueSegmentsWithNewIds,
   shouldUseParameterInGroup,
   updateParameterAndDependencies,
 } from '../../../../core/utils/parameters/helper';
@@ -29,11 +32,12 @@ import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
-import { Spinner, SpinnerSize } from '@fluentui/react';
-import { DynamicCallStatus, TokenPicker, ValueSegmentType } from '@microsoft/designer-ui';
+import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
+import { DynamicCallStatus, TokenPicker, TokenType } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode } from '@microsoft/designer-ui';
-import { equals } from '@microsoft/utils-logic-apps';
+import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
 import { useCallback, useState } from 'react';
+import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const ParametersTab = () => {
@@ -51,10 +55,14 @@ export const ParametersTab = () => {
   const operationInfo = useOperationInfo(selectedNodeId);
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
   const showIdentitySelector = useShowIdentitySelector(selectedNodeId);
+  const errorInfo = useOperationErrorInfo(selectedNodeId);
 
   const replacedIds = useReplacedIds();
-  const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState, replacedIds);
-  const expressionGroup = getExpressionTokenSections();
+
+  const emptyParametersMessage = useIntl().formatMessage({
+    defaultMessage: 'No additional information is needed for this step. You will be able to use the outputs in subsequent steps.',
+    description: 'Message to show when there are no parameters to author in operation.',
+  });
 
   if (!operationInfo && !nodeMetadata?.subgraphType) {
     return (
@@ -64,8 +72,27 @@ export const ParametersTab = () => {
     );
   }
 
+  const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState, replacedIds);
+  const expressionGroup = getExpressionTokenSections();
+
   return (
     <>
+      {errorInfo ? (
+        <MessageBar
+          messageBarType={
+            errorInfo.level === ErrorLevel.DynamicInputs || errorInfo.level === ErrorLevel.Default
+              ? MessageBarType.severeWarning
+              : errorInfo.level === ErrorLevel.DynamicOutputs
+              ? MessageBarType.warning
+              : MessageBarType.error
+          }
+        >
+          {errorInfo.message}
+        </MessageBar>
+      ) : null}
+      {!hasParametersToAuthor(inputs?.parameterGroups ?? {}) ? (
+        <MessageBar messageBarType={MessageBarType.info}>{emptyParametersMessage}</MessageBar>
+      ) : null}
       {Object.keys(inputs?.parameterGroups ?? {}).map((sectionName) => (
         <div key={sectionName}>
           <ParameterSection
@@ -144,8 +171,12 @@ const ParameterSection = ({
       if (viewModel !== undefined) {
         propertiesToUpdate.editorViewModel = viewModel;
       }
-      if (variables[nodeId] && (parameter?.parameterKey === 'inputs.$.name' || parameter?.parameterKey === 'inputs.$.type')) {
-        dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
+      if (variables[nodeId]) {
+        if (parameter?.parameterKey === 'inputs.$.name') {
+          dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
+        } else if (parameter?.parameterKey === 'inputs.$.type') {
+          dispatch(updateVariableInfo({ id: nodeId, type: value[0]?.value }));
+        }
       }
 
       updateParameterAndDependencies(
@@ -237,18 +268,7 @@ const ParameterSection = ({
     token: OutputToken,
     addImplicitForeachIfNeeded: boolean
   ): Promise<ValueSegment> => {
-    const { segment, foreachDetails } = await createValueSegmentFromToken(
-      nodeId,
-      parameterId,
-      token,
-      addImplicitForeachIfNeeded,
-      rootState
-    );
-    if (foreachDetails) {
-      dispatch(addForeachToNode({ arrayName: foreachDetails.arrayValue, nodeId, token }));
-    }
-
-    return segment;
+    return createValueSegmentFromToken(nodeId, parameterId, token, addImplicitForeachIfNeeded, rootState, dispatch);
   };
 
   const getTokenPicker = (
@@ -256,19 +276,40 @@ const ParameterSection = ({
     editorId: string,
     labelId: string,
     tokenPickerMode?: TokenPickerMode,
+    editorType?: string,
     isCodeEditor?: boolean,
     closeTokenPicker?: () => void,
     tokenPickerClicked?: (b: boolean) => void,
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
-    const codeEditorFilteredTokens = tokenGroup.filter((group) => {
-      return group.id !== 'workflowparameters' && group.id !== 'variables';
-    });
+    const parameterType =
+      editorType ??
+      (nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === parameterId) ?? {})?.type ??
+      constants.SWAGGER.TYPE.ANY;
+    const supportedTypes: string[] = getPropertyValue(constants.TOKENS, parameterType);
+
+    const filteredTokenGroup = tokenGroup.map((group) => ({
+      ...group,
+      tokens: group.tokens.filter((token: OutputToken) => {
+        if (isCodeEditor) {
+          return !(
+            token.outputInfo.type === TokenType.VARIABLE ||
+            token.outputInfo.type === TokenType.PARAMETER ||
+            token.outputInfo.arrayDetails ||
+            token.key === constants.UNTIL_CURRENT_ITERATION_INDEX_KEY ||
+            token.key === constants.FOREACH_CURRENT_ITEM_KEY
+          );
+        }
+        return supportedTypes.some((supportedType) => equals(supportedType, token.type));
+      }),
+    }));
+
     return (
       <TokenPicker
         editorId={editorId}
         labelId={labelId}
-        tokenGroup={isCodeEditor ? codeEditorFilteredTokens : tokenGroup}
+        tokenGroup={tokenGroup}
+        filteredTokenGroup={filteredTokenGroup}
         expressionGroup={expressionGroup}
         tokenPickerFocused={tokenPickerClicked}
         initialMode={tokenPickerMode}
@@ -295,20 +336,7 @@ const ParameterSection = ({
       const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel, conditionalVisibility };
       const { editor, editorOptions } = getEditorAndOptions(param, upstreamNodeIds ?? [], variables);
 
-      const remappedValues: ValueSegment[] = value.map((v: ValueSegment) => {
-        if (v.type !== ValueSegmentType.TOKEN) return v;
-        const oldId = v.token?.actionName ?? '';
-        const newId = idReplacements[oldId] ?? '';
-        if (!newId) return v;
-        const remappedValue = v.value?.replace(`'${oldId}'`, `'${newId}'`) ?? '';
-        return {
-          ...v,
-          token: {
-            ...v.token,
-            remappedValue,
-          },
-        } as ValueSegment;
-      });
+      const { value: remappedValues } = remapValueSegmentsWithNewIds(value, idReplacements);
 
       return {
         settingType: 'SettingTokenField',
@@ -327,10 +355,13 @@ const ParameterSection = ({
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
           pickerCallbacks: getPickerCallbacks(param),
+          onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
+            parameterValueToString({ value, type: type ?? 'string', info: { format }, suppressCasting } as ParameterInfo, false) ?? '',
           getTokenPicker: (
             editorId: string,
             labelId: string,
             tokenPickerMode?: TokenPickerMode,
+            editorType?: string,
             closeTokenPicker?: () => void,
             tokenPickerClicked?: (b: boolean) => void,
             tokenClickedCallback?: (token: ValueSegment) => void
@@ -340,7 +371,8 @@ const ParameterSection = ({
               editorId,
               labelId,
               tokenPickerMode,
-              editor?.toLowerCase() === 'code',
+              editorType,
+              editor?.toLowerCase() === constants.EDITOR.CODE,
               closeTokenPicker,
               tokenPickerClicked,
               tokenClickedCallback
@@ -388,6 +420,10 @@ const getEditorAndOptions = (
   }
 
   return { editor, editorOptions };
+};
+
+const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>): boolean => {
+  return Object.keys(parameterGroups).some((key) => parameterGroups[key].parameters.filter((p) => !p.hideInUI).length > 0);
 };
 
 export const parametersTab: PanelTab = {

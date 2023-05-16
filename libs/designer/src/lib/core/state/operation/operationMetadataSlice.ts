@@ -2,6 +2,7 @@ import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
 import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
+import type { RepetitionContext } from '../../utils/parameters/helper';
 import { resetWorkflowState } from '../global';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { FilePickerInfo, InputParameter, OutputParameter, SwaggerParser } from '@microsoft/parsers-logic-apps';
@@ -29,6 +30,7 @@ export interface OutputInfo {
   name: string;
   parentArray?: string;
   required?: boolean;
+  schema?: OpenAPIV2.SchemaObject;
   source?: string;
   title: string;
   value?: string;
@@ -78,6 +80,21 @@ export interface OperationMetadata {
   brandColor: string;
 }
 
+export enum ErrorLevel {
+  Critical = 0,
+  Connection = 1,
+  DynamicInputs = 2,
+  DynamicOutputs = 3,
+  Default = 4,
+}
+
+export interface ErrorInfo {
+  error?: any;
+  level: ErrorLevel;
+  message: string;
+  code?: number;
+}
+
 export interface OperationMetadataState {
   operationInfo: Record<string, NodeOperation>;
   inputParameters: Record<string, NodeInputs>;
@@ -87,6 +104,8 @@ export interface OperationMetadataState {
   settings: Record<string, Settings>;
   actionMetadata: Record<string, any>;
   staticResults: Record<string, NodeStaticResults>;
+  repetitionInfos: Record<string, RepetitionContext>;
+  errors: Record<string, Record<ErrorLevel, ErrorInfo | undefined>>;
 }
 
 const initialState: OperationMetadataState = {
@@ -98,6 +117,8 @@ const initialState: OperationMetadataState = {
   operationMetadata: {},
   actionMetadata: {},
   staticResults: {},
+  repetitionInfos: {},
+  errors: {},
 };
 
 export interface AddNodeOperationPayload extends NodeOperation {
@@ -118,6 +139,7 @@ export interface NodeData {
   staticResult?: NodeStaticResults;
   settings?: Settings;
   actionMetadata?: Record<string, any>;
+  repetitionInfo?: RepetitionContext;
 }
 
 interface AddSettingsPayload {
@@ -166,7 +188,8 @@ export const operationMetadataSlice = createSlice({
       for (const nodeData of action.payload) {
         if (!nodeData) return;
 
-        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, actionMetadata, staticResult } = nodeData;
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, actionMetadata, staticResult, repetitionInfo } =
+          nodeData;
         state.inputParameters[id] = nodeInputs;
         state.outputParameters[id] = nodeOutputs;
         state.dependencies[id] = nodeDependencies;
@@ -175,11 +198,22 @@ export const operationMetadataSlice = createSlice({
         if (settings) {
           state.settings[id] = settings;
         }
+
         if (staticResult) {
           state.staticResults[id] = staticResult;
         }
-        if (actionMetadata) state.actionMetadata[id] = actionMetadata;
-        if (settings) state.settings[id] = settings;
+
+        if (actionMetadata) {
+          state.actionMetadata[id] = actionMetadata;
+        }
+
+        if (settings) {
+          state.settings[id] = settings;
+        }
+
+        if (repetitionInfo) {
+          state.repetitionInfos[id] = repetitionInfo;
+        }
       }
     },
     addDynamicInputs: (state, action: PayloadAction<AddDynamicInputsPayload>) => {
@@ -218,6 +252,17 @@ export const operationMetadataSlice = createSlice({
           ].parameters.filter((parameter) => !parameter.info.isDynamic);
         }
       }
+
+      const inputDependencies = state.dependencies[nodeId]?.inputs;
+      for (const inputKey of Object.keys(inputDependencies ?? {})) {
+        if (inputDependencies[inputKey].parameter?.isDynamic && inputDependencies[inputKey].dependencyType !== 'ApiSchema') {
+          delete state.dependencies[nodeId].inputs[inputKey];
+        }
+      }
+
+      if (state.errors[nodeId]?.[ErrorLevel.DynamicInputs]) {
+        delete state.errors[nodeId][ErrorLevel.DynamicInputs];
+      }
     },
     clearDynamicOutputs: (state, action: PayloadAction<string>) => {
       const nodeId = action.payload;
@@ -232,6 +277,10 @@ export const operationMetadataSlice = createSlice({
           },
           {}
         ) as Record<string, OutputInfo>;
+      }
+
+      if (state.errors[nodeId]?.[ErrorLevel.DynamicOutputs]) {
+        delete state.errors[nodeId][ErrorLevel.DynamicOutputs];
       }
     },
     updateNodeSettings: (state, action: PayloadAction<AddSettingsPayload>) => {
@@ -324,6 +373,21 @@ export const operationMetadataSlice = createSlice({
         ...actionMetadata,
       };
     },
+    updateRepetitionContext: (state, action: PayloadAction<{ id: string; repetition: RepetitionContext }>) => {
+      const { id, repetition } = action.payload;
+      state.repetitionInfos[id] = {
+        ...state.repetitionInfos[id],
+        ...repetition,
+      };
+    },
+    updateErrorDetails: (state, action: PayloadAction<{ id: string; errorInfo?: ErrorInfo; clear?: boolean }>) => {
+      const { id, errorInfo, clear } = action.payload;
+      if (errorInfo) {
+        state.errors[id] = { ...state.errors[id], [errorInfo.level]: errorInfo };
+      } else if (clear) {
+        delete state.errors[id];
+      }
+    },
     deinitializeOperationInfo: (state, action: PayloadAction<{ id: string }>) => {
       const { id } = action.payload;
       delete state.operationInfo[id];
@@ -361,6 +425,8 @@ export const {
   removeParameterValidationError,
   updateOutputs,
   updateActionMetadata,
+  updateRepetitionContext,
+  updateErrorDetails,
   deinitializeOperationInfo,
   deinitializeNodes,
 } = operationMetadataSlice.actions;

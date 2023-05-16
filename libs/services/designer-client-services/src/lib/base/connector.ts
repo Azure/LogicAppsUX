@@ -1,4 +1,4 @@
-import type { IConnectorService, ListDynamicValue, ManagedIdentityRequestProperties } from '../connector';
+import type { IConnectorService, ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicValue } from '../connector';
 import { getClientRequestIdFromHeaders, pathCombine } from '../helpers';
 import type { IHttpClient } from '../httpClient';
 import { getIntl } from '@microsoft/intl-logic-apps';
@@ -137,6 +137,17 @@ export abstract class BaseConnectorService implements IConnectorService {
     return this._getResponseFromDynamicApi(response, uri);
   }
 
+  getTreeDynamicValues(
+    _connectionId: string | undefined,
+    _connectorId: string,
+    _operationId: string,
+    _parameterAlias: string | undefined,
+    _parameters: Record<string, any>,
+    _dynamicState: any
+  ): Promise<TreeDynamicValue[]> {
+    throw new UnsupportedException('Unsupported dynamic call connector method - getTreeDynamicValues');
+  }
+
   protected _isClientSupportedOperation(connectorId: string, operationId: string): boolean {
     return this.options.clientSupportedOperations.some(
       (operationInfo) => equals(connectorId, operationInfo.connectorId) && equals(operationId, operationInfo.operationId)
@@ -194,8 +205,9 @@ export abstract class BaseConnectorService implements IConnectorService {
       const errorCode = statusCode;
       errorMessage = intl.formatMessage(
         {
-          defaultMessage: "Error code: '{errorCode}', Message: '{message}'.",
-          description: 'Dynamic call error message',
+          defaultMessage: `Error code: ''{errorCode}'', Message: ''{message}''.`,
+          description:
+            'Dynamic call error message. Do not remove the double single quotes around the placeholder texts, as it is needed to wrap the placeholder text in single quotes.',
         },
         { errorCode, message }
       );
@@ -206,8 +218,9 @@ export abstract class BaseConnectorService implements IConnectorService {
     return clientRequestId
       ? `${errorMessage} ${intl.formatMessage(
           {
-            defaultMessage: "More diagnostic information: x-ms-client-request-id is '{clientRequestId}'.",
-            description: 'Diagnostics information on error message',
+            defaultMessage: "More diagnostic information: x-ms-client-request-id is ''{clientRequestId}''.",
+            description:
+              'Diagnostics information on error message. Do not remove the double single quotes around the placeholder texts, as it is needed to wrap the placeholder text in single quotes.',
           },
           { clientRequestId }
         )}`
@@ -254,8 +267,9 @@ export abstract class BaseConnectorService implements IConnectorService {
             ? ex.message
             : intl.formatMessage(
                 {
-                  defaultMessage: "Error executing the api '{parameters}'.",
-                  description: 'Error message when execute dynamic api in managed connector',
+                  defaultMessage: "Error executing the api ''{parameters}''.",
+                  description:
+                    'Error message when execute dynamic api in managed connector. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
                 },
                 { parameters: parameters['path'] }
               ),
@@ -292,8 +306,9 @@ export abstract class BaseConnectorService implements IConnectorService {
             ? ex.message
             : intl.formatMessage(
                 {
-                  defaultMessage: "Error executing the api '{parameters}'.",
-                  description: 'Error message when execute dynamic api in managed connector',
+                  defaultMessage: "Error executing the api ''{parameters}''.",
+                  description:
+                    'Error message when execute dynamic api in managed connector. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
                 },
                 { parameters: parameters['path'] }
               ),

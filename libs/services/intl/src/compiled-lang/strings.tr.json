@@ -83,6 +83,12 @@
       "value": "Sayfalandırma"
     }
   ],
+  "+ym4nO": [
+    {
+      "type": 0,
+      "value": "Tracked Properties"
+    }
+  ],
   "//nQG4": [
     {
       "type": 0,
@@ -215,10 +221,38 @@
       "value": "Tetikleyici"
     }
   ],
+  "04AwK7": [
+    {
+      "type": 0,
+      "value": "Error code: '"
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": "', Message: '"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
       "value": "Geçirilen bir dize zaman damgası için saatin başlangıcını döndürür"
+    }
+  ],
+  "08e2rO": [
+    {
+      "type": 0,
+      "value": "The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection."
     }
   ],
   "09B9CU": [
@@ -1041,6 +1075,16 @@
       "value": "Enter a valid double."
     }
   ],
+  "5FINOY": [
+    {
+      "type": 0,
+      "value": "Workflow has parameter validation errors on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -1063,6 +1107,20 @@
     {
       "type": 0,
       "value": "Geçirilen dizi veya dizedeki ilk öğeyi döndürür"
+    }
+  ],
+  "5akc1Q": [
+    {
+      "type": 0,
+      "value": "Unsupported 'in' value : '"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "' in Parameter"
     }
   ],
   "5b0sKi": [
@@ -1259,6 +1317,12 @@
     {
       "type": 0,
       "value": "Gerekli. Alt dizenin alındığı dize."
+    }
+  ],
+  "7S2wtE": [
+    {
+      "type": 0,
+      "value": "Schema Validation"
     }
   ],
   "7WVgiU": [
@@ -1461,12 +1525,6 @@
       "value": "Geçirilen dize zaman damgasına tamsayı cinsinden bir gün sayısı ekler"
     }
   ],
-  "8yjjTX": [
-    {
-      "type": 0,
-      "value": "Connect via Service Principal"
-    }
-  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -1489,24 +1547,6 @@
     {
       "type": 0,
       "value": "File"
-    }
-  ],
-  "92OUl9": [
-    {
-      "type": 0,
-      "value": "Array Element "
-    },
-    {
-      "type": 1,
-      "value": "index"
-    },
-    {
-      "type": 0,
-      "value": " is missing required property "
-    },
-    {
-      "type": 1,
-      "value": "property"
     }
   ],
   "93Gj/n": [
@@ -1561,6 +1601,20 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9W0lck": [
+    {
+      "type": 0,
+      "value": "Invalid split on value '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "', cannot find in outputs."
     }
   ],
   "9YGcT2": [
@@ -1883,6 +1937,12 @@
       "value": "Number"
     }
   ],
+  "BeqBP7": [
+    {
+      "type": 0,
+      "value": "Automatic Decompression"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1899,6 +1959,12 @@
     {
       "type": 0,
       "value": "Select a managed identity"
+    }
+  ],
+  "BtL7UI": [
+    {
+      "type": 0,
+      "value": "No additional information is needed for this step. You will be able to use the outputs in subsequent steps."
     }
   ],
   "BuYrD3": [
@@ -2031,6 +2097,20 @@
       "value": "Select a value"
     }
   ],
+  "DQV7aK": [
+    {
+      "type": 0,
+      "value": "Alt/Option + click to download '"
+    },
+    {
+      "type": 1,
+      "value": "displayName"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "DWd9vy": [
     {
       "type": 0,
@@ -2065,6 +2145,12 @@
     {
       "type": 0,
       "value": "Show mini-map"
+    }
+  ],
+  "DjbVKU": [
+    {
+      "type": 0,
+      "value": "OAuth"
     }
   ],
   "DkF25I": [
@@ -2539,6 +2625,16 @@
       "value": "File Content"
     }
   ],
+  "H/QVod": [
+    {
+      "type": 0,
+      "value": "Workflow has settings validation errors on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "H17jEE": [
     {
       "type": 0,
@@ -2581,12 +2677,6 @@
       "value": "Month"
     }
   ],
-  "HJIZrG": [
-    {
-      "type": 0,
-      "value": "Daha fazla tanılama bilgisi: x-ms-client-request-id is {clientRequestId}."
-    }
-  ],
   "HOchry": [
     {
       "type": 0,
@@ -2603,12 +2693,6 @@
     {
       "type": 0,
       "value": "Headers"
-    }
-  ],
-  "HXLutF": [
-    {
-      "type": 0,
-      "value": "Anahtar"
     }
   ],
   "Hbqlzk": [
@@ -2725,6 +2809,16 @@
       "value": "Geçirilen bir dize zaman damgasını UTC'den hedef saat dilimine dönüştürür"
     }
   ],
+  "IX1OiA": [
+    {
+      "type": 0,
+      "value": "Failed to retrieve dynamic outputs, outputs of this operation might not be visible in subsequent actions. Error details: "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    }
+  ],
   "IXy91L": [
     {
       "type": 0,
@@ -2735,6 +2829,20 @@
     {
       "type": 0,
       "value": "Error Code"
+    }
+  ],
+  "IjEKvh": [
+    {
+      "type": 0,
+      "value": "Error executing the api '"
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "IjZFjQ": [
@@ -3059,12 +3167,6 @@
       "value": "Oluşturuluyor..."
     }
   ],
-  "LOwePI": [
-    {
-      "type": 0,
-      "value": "Bölünmüş {splitOn} değerinde tür geçersiz, bölünme dizide değil."
-    }
-  ],
   "LR/3Lr": [
     {
       "type": 0,
@@ -3375,6 +3477,12 @@
     {
       "type": 0,
       "value": "Bir değerin ikili gösterimini döndürür"
+    }
+  ],
+  "O/fh9A": [
+    {
+      "type": 0,
+      "value": "Service Principal"
     }
   ],
   "O27gKq": [
@@ -3711,6 +3819,16 @@
       "value": "Add dynamic data or expressions by inserting a /"
     }
   ],
+  "Q8zxeb": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " Key"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -3905,12 +4023,6 @@
     {
       "type": 0,
       "value": "issue"
-    }
-  ],
-  "S8P4N5": [
-    {
-      "type": 0,
-      "value": "Sil"
     }
   ],
   "SADSSs": [
@@ -4137,12 +4249,6 @@
     {
       "type": 0,
       "value": "İstemci istek kimliği"
-    }
-  ],
-  "TeRxLv": [
-    {
-      "type": 0,
-      "value": "Use a service principal to connect using application permissions."
     }
   ],
   "TgcgXE": [
@@ -4535,6 +4641,16 @@
       "value": "Gerekli. Dizideki ilk tamsayı."
     }
   ],
+  "WTZvGW": [
+    {
+      "type": 0,
+      "value": "Workflow has invalid connections on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -4703,10 +4819,30 @@
       "value": "Count"
     }
   ],
+  "Xew1Df": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is '"
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "Xj0Gr/": [
     {
       "type": 0,
       "value": "Target schema element cannot be deleted."
+    }
+  ],
+  "Xj4xwI": [
+    {
+      "type": 0,
+      "value": "The managed identity used with this operation no longer exists. To continue, select an available identity or change the connection."
     }
   ],
   "XkBxv5": [
@@ -4763,12 +4899,6 @@
       "value": "Daha Fazla Bilgi"
     }
   ],
-  "Y7yyKD": [
-    {
-      "type": 0,
-      "value": "Geçersiz ifade türü {type}."
-    }
-  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -4813,6 +4943,12 @@
     {
       "type": 0,
       "value": "PFX girin"
+    }
+  ],
+  "YRk271": [
+    {
+      "type": 0,
+      "value": "Authentication"
     }
   ],
   "YUbSFS": [
@@ -4973,12 +5109,6 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Tomsk"
-    }
-  ],
-  "Zr0yTE": [
-    {
-      "type": 0,
-      "value": "Parametrede desteklenmeyen 'in' değeri: {value}"
     }
   ],
   "a7j3gS": [
@@ -5227,6 +5357,12 @@
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "c7tRg/": [
+    {
+      "type": 0,
+      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger."
     }
   ],
   "c8UPLp": [
@@ -5637,12 +5773,6 @@
       "value": "Email"
     }
   ],
-  "g0a4Qe": [
-    {
-      "type": 0,
-      "value": "Değer"
-    }
-  ],
   "g1zwch": [
     {
       "type": 0,
@@ -5739,6 +5869,12 @@
       "value": "Time Zone"
     }
   ],
+  "gUp23R": [
+    {
+      "type": 0,
+      "value": "The name already exists or is invalid, please update it before proceeding."
+    }
+  ],
   "gWRF8m": [
     {
       "type": 0,
@@ -5767,12 +5903,6 @@
     {
       "type": 0,
       "value": "Delete"
-    }
-  ],
-  "gpbgjJ": [
-    {
-      "type": 0,
-      "value": "Bölünmüş {splitOn} değeri geçersiz, çıkışlarda bulunamıyor."
     }
   ],
   "gu9o9z": [
@@ -5853,12 +5983,6 @@
     {
       "type": 0,
       "value": "İki sayı arasındaki çıkarma işleminin sonucunu döndürür"
-    }
-  ],
-  "hdnZ9Y": [
-    {
-      "type": 0,
-      "value": "{displayName} indirmek için Alt/Option + tıklama"
     }
   ],
   "hic23z": [
@@ -6061,12 +6185,6 @@
       "value": "Sına"
     }
   ],
-  "izS5yQ": [
-    {
-      "type": 0,
-      "value": "Learn more"
-    }
-  ],
   "j1VU25": [
     {
       "type": 0,
@@ -6169,12 +6287,6 @@
       "value": "Şema oluşturulamıyor"
     }
   ],
-  "jjYA4u": [
-    {
-      "type": 0,
-      "value": "Desteklenmeyen bildirim bağlantısı başvuru biçimi: {referenceKeyFormat}"
-    }
-  ],
   "juR40n": [
     {
       "type": 0,
@@ -6191,12 +6303,6 @@
     {
       "type": 0,
       "value": "Gerekli. Base64 kodlamalı dize."
-    }
-  ],
-  "k1N9Si": [
-    {
-      "type": 0,
-      "value": "Must provide default value for parameter."
     }
   ],
   "k41+13": [
@@ -6343,6 +6449,12 @@
       "value": " dakika"
     }
   ],
+  "l72gf4": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
+    }
+  ],
   "lFve22": [
     {
       "type": 0,
@@ -6435,24 +6547,6 @@
       "value": "Select an action type"
     }
   ],
-  "lzBHHT": [
-    {
-      "type": 0,
-      "value": "Array Element "
-    },
-    {
-      "type": 1,
-      "value": "index"
-    },
-    {
-      "type": 0,
-      "value": " has unknown property "
-    },
-    {
-      "type": 1,
-      "value": "property"
-    }
-  ],
   "lztiwS": [
     {
       "type": 0,
@@ -6495,6 +6589,16 @@
       "value": "İşlev silindi."
     }
   ],
+  "mGPqAg": [
+    {
+      "type": 0,
+      "value": "Delete "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -6517,6 +6621,20 @@
     {
       "type": 0,
       "value": "URL, giriş dizesini kodlar"
+    }
+  ],
+  "mPuXlv": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "', split on not in array."
     }
   ],
   "mQotIu": [
@@ -6565,6 +6683,16 @@
     {
       "type": 0,
       "value": "Parolayı düz metin olarak girin veya güvenli bir parametre kullanın"
+    }
+  ],
+  "mvu5xN": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " Value"
     }
   ],
   "mwEHSX": [
@@ -6839,12 +6967,6 @@
       "value": "(UTC+13:00) Samoa"
     }
   ],
-  "p7YGxW": [
-    {
-      "type": 0,
-      "value": "{parameters} API’si yürütülürken hata oluştu."
-    }
-  ],
   "pC2nr2": [
     {
       "type": 0,
@@ -6965,10 +7087,30 @@
       "value": "Geçirilen dize zaman damgasına tamsayı cinsinden bir saniye sayısı ekler"
     }
   ],
+  "q8vnZQ": [
+    {
+      "type": 0,
+      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned."
+    }
+  ],
   "q9hf8i": [
     {
       "type": 0,
       "value": "(UTC+04:00) Astrakhan, Ulyanovsk"
+    }
+  ],
+  "qAlTD5": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: '"
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "qGfwxW": [
@@ -7005,12 +7147,6 @@
     {
       "type": 0,
       "value": "Gerekli"
-    }
-  ],
-  "qTqSqD": [
-    {
-      "type": 0,
-      "value": "Hata kodu: {errorCode}, İleti: {message}."
     }
   ],
   "qUMXpq": [
@@ -7327,6 +7463,20 @@
       "value": "İstemci Sertifikası"
     }
   ],
+  "sytRna": [
+    {
+      "type": 0,
+      "value": "Failed to retrieve dynamic inputs. Error details: '"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -7397,6 +7547,12 @@
     {
       "type": 0,
       "value": "Bu işlev, çalışma zamanındaki iş akışı hakkında ayrıntılar sağlar"
+    }
+  ],
+  "tMdcE1": [
+    {
+      "type": 0,
+      "value": "Invalid connection, please update your connection to load complete details"
     }
   ],
   "tNoZx2": [
@@ -8033,6 +8189,20 @@
     {
       "type": 0,
       "value": "Bir değer seçin"
+    }
+  ],
+  "yjierd": [
+    {
+      "type": 0,
+      "value": "Invalid expression type '"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "yoCi15": [

@@ -1,9 +1,10 @@
 import type { DictionaryEditorItemProps } from '.';
+import type { ChangeState } from '..';
 import type { GetTokenPickerHandler } from '../editor/base';
-import { BaseEditor } from '../editor/base';
+import { StringEditor } from '../editor/string';
 import { DictionaryDeleteButton } from './expandeddictionarydelete';
-import { SerializeExpandedDictionary } from './plugins/SerializeExpandedDictionary';
 import { isEmpty } from './util/helper';
+import { guid } from '@microsoft/utils-logic-apps';
 import { useRef } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -16,7 +17,9 @@ export interface ExpandedDictionaryProps {
   isTrigger?: boolean;
   readonly?: boolean;
   keyTitle?: string;
+  keyType?: string;
   valueTitle?: string;
+  valueType?: string;
   setItems: (items: DictionaryEditorItemProps[]) => void;
   getTokenPicker: GetTokenPickerHandler;
 }
@@ -26,7 +29,9 @@ export const ExpandedDictionary = ({
   isTrigger,
   readonly,
   keyTitle,
+  keyType,
   valueTitle,
+  valueType,
   getTokenPicker,
   setItems,
 }: ExpandedDictionaryProps): JSX.Element => {
@@ -45,7 +50,18 @@ export const ExpandedDictionary = ({
 
   const addItem = (index: number) => {
     if (index === items.length - 1 && !isEmpty(items[index])) {
-      setItems([...items, { key: [], value: [] }]);
+      setItems([...items, { key: [], value: [], id: guid() }]);
+    }
+  };
+
+  const handleBlur = (newState: ChangeState, index: number, type: ExpandedDictionaryEditorType) => {
+    const updatedValue = newState.value;
+    if (type === ExpandedDictionaryEditorType.KEY) {
+      const updatedItems = [...items.slice(0, index), { ...items[index], key: updatedValue }, ...items.slice(index + 1)];
+      setItems(updatedItems);
+    } else {
+      const updatedItems = [...items.slice(0, index), { ...items[index], value: updatedValue }, ...items.slice(index + 1)];
+      setItems(updatedItems);
     }
   };
 
@@ -59,9 +75,9 @@ export const ExpandedDictionary = ({
       ) : null}
       {items.map((item, index) => {
         return (
-          <div key={index} className="msla-dictionary-editor-item">
+          <div key={item.id} className="msla-dictionary-editor-item">
             <div className="msla-dictionary-item-cell" aria-label={`dict-item-${index}`} ref={(el) => (editorRef.current[index] = el)}>
-              <BaseEditor
+              <StringEditor
                 className="msla-dictionary-editor-container-expanded"
                 placeholder={keyPlaceholder}
                 initialValue={item.key ?? []}
@@ -70,35 +86,23 @@ export const ExpandedDictionary = ({
                 BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
                 getTokenPicker={getTokenPicker}
                 onFocus={() => addItem(index)}
-              >
-                <SerializeExpandedDictionary
-                  items={items}
-                  initialItem={item.key}
-                  index={index}
-                  type={ExpandedDictionaryEditorType.KEY}
-                  setItems={setItems}
-                />
-              </BaseEditor>
+                valueType={keyType}
+                editorBlur={(newState: ChangeState) => handleBlur(newState, index, ExpandedDictionaryEditorType.KEY)}
+              />
             </div>
             <div className="msla-dictionary-item-cell" ref={(el) => (editorRef.current[index] = el)}>
-              <BaseEditor
+              <StringEditor
                 className="msla-dictionary-editor-container-expanded"
                 placeholder={valuePlaceholder}
                 initialValue={item.value ?? []}
                 isTrigger={isTrigger}
                 readonly={readonly}
-                BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
+                BasePlugins={{ tokens: true, autoFocus: false }}
                 getTokenPicker={getTokenPicker}
                 onFocus={() => addItem(index)}
-              >
-                <SerializeExpandedDictionary
-                  items={items}
-                  initialItem={item.value}
-                  index={index}
-                  type={ExpandedDictionaryEditorType.VALUE}
-                  setItems={setItems}
-                />
-              </BaseEditor>
+                valueType={valueType}
+                editorBlur={(newState: ChangeState) => handleBlur(newState, index, ExpandedDictionaryEditorType.VALUE)}
+              />
             </div>
             <DictionaryDeleteButton items={items} index={index} setItems={setItems} />
           </div>

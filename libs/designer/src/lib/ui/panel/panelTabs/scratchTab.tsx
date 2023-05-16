@@ -6,9 +6,8 @@ import {
   AuthenticationType,
   Combobox,
   RowDropdownOptions,
-  GroupType,
-  ArrayEditor,
-  ArrayType, // DictionaryEditor,
+  GroupType, // ArrayEditor,
+  // ArrayType, // DictionaryEditor,
   // TokenType,
   // GroupType,
   // GroupDropdownOptions,
@@ -19,7 +18,7 @@ import {
   EditorLanguage, // HTMLEditor,
   TokenPicker, // TokenType,
   // DictionaryEditor,
-  testTokenSegment, // SchemaEditor, // Combobox,
+  // testTokenSegment, // SchemaEditor, // Combobox,
   // ArrayEditor,
   Scratch, // StringEditor,
   AuthenticationEditor, // DropdownEditor,
@@ -69,6 +68,7 @@ export const ScratchTab = () => {
     editorId: string,
     labelId: string,
     tokenPickerMode?: TokenPickerMode,
+    _valueType?: string,
     closeTokenPicker?: () => void,
     onClick?: (b: boolean) => void,
     tokenClicked?: (token: ValueSegment) => void
@@ -174,7 +174,7 @@ getTokenPicker={GetTokenPicker}
           type={AuthenticationType.BASIC}
           authenticationValue={{}}
         />
-        <ArrayEditor
+        {/* <ArrayEditor
           labelId=""
           type={ArrayType.SIMPLE}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
@@ -210,7 +210,7 @@ getTokenPicker={GetTokenPicker}
             { id: guid(), type: ValueSegmentType.LITERAL, value: '",\n            "p2": ""\n        }\n    }\n]' },
           ]}
           getTokenPicker={GetTokenPicker}
-        />
+        /> */}
 
         <Combobox
           labelId=""

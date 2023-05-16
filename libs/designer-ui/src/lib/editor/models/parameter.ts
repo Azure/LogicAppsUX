@@ -87,12 +87,12 @@ export interface Token {
   key: string;
   name?: string;
   required?: boolean;
+  schema?: OpenAPIV2.SchemaObject;
   source?: string;
   title: string;
   tokenType: TokenType;
   type?: string;
   value?: string;
-  remappedValue?: string;
 }
 
 export enum TokenType {

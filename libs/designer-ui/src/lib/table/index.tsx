@@ -11,10 +11,11 @@ import { useState } from 'react';
 
 export interface TableEditorProps extends DictionaryEditorProps {
   columnMode: ColumnMode;
-  columns: number;
   labelId: string;
-  titles: string[];
-  keys: string[];
+  columns?: number;
+  titles?: string[];
+  keys?: string[];
+  types?: string[];
 }
 
 const dropdownStyles: Partial<IDropdownStyles> = {
@@ -45,6 +46,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({
   initialValue,
   columnMode,
   titles,
+  types,
   readonly,
   labelId,
   placeholder,
@@ -85,8 +87,10 @@ export const TableEditor: React.FC<TableEditorProps> = ({
         <div className="msla-table-editor-container">
           <DictionaryEditor
             labelId={labelId}
-            keyTitle={titles[0]}
-            valueTitle={titles[1]}
+            keyTitle={titles?.[0]}
+            valueTitle={titles?.[1]}
+            keyType={types?.[0]}
+            valueType={types?.[1]}
             dictionaryType={DictionaryType.TABLE}
             placeholder={placeholder}
             readonly={readonly}
