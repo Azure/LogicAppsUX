@@ -216,7 +216,7 @@ export const BaseEditor = ({
 
         {(!isTrigger || showCallbackTokens) && tokens && isEditorFocused && !getInTokenPicker() ? (
           createPortal(
-            <TokenPickerButton openTokenPicker={openTokenPicker} showOnLeft={tokenPickerButtonEditorProps?.showOnLeft} />,
+            <TokenPickerButton openTokenPicker={openTokenPicker} showOnRight={tokenPickerButtonEditorProps?.showOnRight} />,
             document.body
           )
         ) : (

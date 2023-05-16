@@ -19,14 +19,14 @@ const expressionButtonProps: IIconProps = {
 };
 
 export interface TokenPickerButtonEditorProps {
-  showOnLeft?: boolean;
+  showOnRight?: boolean;
 }
 
 interface TokenPickerButtonProps extends TokenPickerButtonEditorProps {
   openTokenPicker: (mode: TokenPickerMode) => void;
 }
 
-export const TokenPickerButton = ({ showOnLeft, openTokenPicker }: TokenPickerButtonProps): JSX.Element => {
+export const TokenPickerButton = ({ showOnRight, openTokenPicker }: TokenPickerButtonProps): JSX.Element => {
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
   const [anchorKey, setAnchorKey] = useState<NodeKey | null>(null);
@@ -61,14 +61,14 @@ export const TokenPickerButton = ({ showOnLeft, openTokenPicker }: TokenPickerBu
         } else {
           boxElem.style.top = `${top - 20}px`;
         }
-        if (showOnLeft) {
-          boxElem.style.left = `${left - 38}px`;
-        } else {
+        if (showOnRight) {
           boxElem.style.left = `${right - 20}px`;
+        } else {
+          boxElem.style.left = `${left - 38}px`;
         }
       }
     }
-  }, [anchorKey, editor, showOnLeft]);
+  }, [anchorKey, editor, showOnRight]);
 
   useEffect(() => {
     window.addEventListener('resize', updatePosition);
