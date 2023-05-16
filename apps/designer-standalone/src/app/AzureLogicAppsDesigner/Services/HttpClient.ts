@@ -10,11 +10,19 @@ export class HttpClient implements IHttpClient {
   }
 
   async get<ReturnType>(options: HttpRequestOptions<any>): Promise<ReturnType> {
-    const response = await axios.get(getRequestUrl(options), {
+    const isArmId = isArmResourceId(options.uri);
+    const requestUrl = getRequestUrl(options);
+    const auth = isArmId
+      ? {
+          Authorization: `Bearer ${environment.armToken}`,
+        }
+      : {};
+
+    const response = await axios.get(requestUrl, {
       headers: {
         ...this._extraHeaders,
         ...options.headers,
-        Authorization: `Bearer ${environment.armToken}`,
+        ...auth,
       },
     });
     return response.data;
@@ -105,4 +113,8 @@ function getExtraHeaders(): Record<string, string> {
   return {
     'x-ms-user-agent': `LogicAppsDesigner/(host localdesigner)`,
   };
+}
+
+function isArmResourceId(resourceId: string): boolean {
+  return resourceId ? resourceId.indexOf('/subscriptions/') !== -1 : false;
 }
