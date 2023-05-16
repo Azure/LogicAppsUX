@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.15.24](https://github.com/Azure/LogicAppsUX/compare/v2.15.23...v2.15.24) (2023-05-16)
+
+
+### Bug Fixes
+
+* **designer:** Add "And" conditional if condition expression does not follow complex condition syntax, but the current condition is still valid ([#2375](https://github.com/Azure/LogicAppsUX/issues/2375)) ([945e313](https://github.com/Azure/LogicAppsUX/commit/945e31336b8649d96d9daa89059a94d34cce5dca))
+
 ### [2.15.23](https://github.com/Azure/LogicAppsUX/compare/v2.15.22...v2.15.23) (2023-05-15)
 
 ### [2.15.22](https://github.com/Azure/LogicAppsUX/compare/v2.15.20...v2.15.22) (2023-05-14)
