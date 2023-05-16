@@ -5,47 +5,51 @@
 import { AzureWizardExecuteStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
 import { OpenBehavior } from '@microsoft/vscode-extension';
+import * as fs from 'fs';
+import * as path from 'path';
 import { commands, Uri, workspace } from 'vscode';
 
 /**
- * This class represents a step in the Azure Logic Apps Standard wizard that opens the project folder.
+ * A class that extends AzureWizardExecuteStep and is responsible for opening a folder in VS Code.
  */
 export class OpenFolderStepCodeProject extends AzureWizardExecuteStep<IProjectWizardContext> {
-  // Set the priority of the step
   public priority = 250;
 
   /**
-   * Opens the project folder in the specified behavior.
-   * @param context The project wizard context.
+   * Executes the step to open the folder in VS Code.
+   * @param context The context object for the project wizard.
+   * @returns A Promise that resolves to void.
    */
   public async execute(context: IProjectWizardContext): Promise<void> {
     const openFolders = workspace.workspaceFolders || [];
+    let uri: Uri;
+    const workspaceName = context.workspaceName;
 
-    // If the open behavior is "Add to workspace" and there are no open folders, change the behavior to "Open in current window"
+    // Check if .code-workspace file exists in project path
+    const workspaceFilePath = path.join(context.projectPath, workspaceName, '.code-workspace');
+    if (fs.existsSync(workspaceFilePath)) {
+      uri = Uri.file(workspaceFilePath);
+    } else {
+      uri = Uri.file(context.workspacePath);
+    }
+
+    // Check if user has selected to add folder to workspace and update workspace accordingly
     if (context.openBehavior === OpenBehavior.addToWorkspace && openFolders.length === 0) {
       context.openBehavior = OpenBehavior.openInCurrentWindow;
     }
 
-    const uri: Uri = Uri.file(context.workspacePath);
-    const workspaceNameStr: string = context.workspaceName as string;
-
-    // If the open behavior is "Add to workspace", add the folder to the workspace
     if (context.openBehavior === OpenBehavior.addToWorkspace) {
-      workspace.updateWorkspaceFolders(openFolders.length, 0, { uri: uri, name: workspaceNameStr });
+      workspace.updateWorkspaceFolders(openFolders.length, 0, { uri: uri });
     } else {
-      // Otherwise, open the folder in a new or existing window
-      if (context.openBehavior === OpenBehavior.openInCurrentWindow) {
-        await commands.executeCommand('vscode.openFolder', uri, false /* forceNewWindow */);
-      } else {
-        await commands.executeCommand('vscode.openFolder', uri, true /* forceNewWindow */);
-      }
+      // Open folder using executeCommand method of commands object with vscode.openFolder command
+      await commands.executeCommand('vscode.openFolder', uri, context.openBehavior === OpenBehavior.openInNewWindow /* forceNewWindow */);
     }
   }
 
   /**
-   * Determines whether the step should be executed.
-   * @param context The project wizard context.
-   * @returns True if the step should be executed, false otherwise.
+   * Determines whether this step should be executed based on the user's input.
+   * @param context The context object for the project wizard.
+   * @returns A boolean value indicating whether this step should be executed.
    */
   public shouldExecute(context: IProjectWizardContext): boolean {
     return !!context.openBehavior && context.openBehavior !== OpenBehavior.alreadyOpen && context.openBehavior !== OpenBehavior.dontOpen;
