@@ -7,7 +7,7 @@ import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTr
 import { startDesignTimeApi, stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
-import { isFunctionProject, tryGetFunctionProjectRoot } from './app/utils/verifyIsProject';
+import { tryGetFunctionProjectRoot } from './app/utils/verifyIsProject';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
 import { getWorkspaceFolder } from './app/utils/workspace';
 import { extensionCommand, logicAppFilter } from './constants';
@@ -41,13 +41,14 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.properties.isActivationEvent = 'true';
     activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
-    const test = await isFunctionProject(this.projectPath);
-    const workspace = await getWorkspaceFolder(this.projectPath);
-    const test2 = await tryGetFunctionProjectRoot(activateContext, workspace);
+    if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
+      const workspace = await getWorkspaceFolder(activateContext);
+      const projectPath = await tryGetFunctionProjectRoot(activateContext, workspace);
+      if (projectPath) {
+        startDesignTimeApi(projectPath);
+      }
+    }
 
-    console.log('charlie', test, test2);
-
-    startDesignTimeApi(this.projectPath);
     runPostWorkflowCreateStepsFromCache();
     validateFuncCoreToolsIsLatest();
 
