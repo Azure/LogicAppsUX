@@ -4,10 +4,12 @@ import { validateFuncCoreToolsIsLatest } from './app/commands/funcCoreTools/vali
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
-import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
+import { startDesignTimeApi, stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
+import { isFunctionProject, tryGetFunctionProjectRoot } from './app/utils/verifyIsProject';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
+import { getWorkspaceFolder } from './app/utils/workspace';
 import { extensionCommand, logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
@@ -39,6 +41,13 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.properties.isActivationEvent = 'true';
     activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
+    const test = await isFunctionProject(this.projectPath);
+    const workspace = await getWorkspaceFolder(this.projectPath);
+    const test2 = await tryGetFunctionProjectRoot(activateContext, workspace);
+
+    console.log('charlie', test, test2);
+
+    startDesignTimeApi(this.projectPath);
     runPostWorkflowCreateStepsFromCache();
     validateFuncCoreToolsIsLatest();
 
