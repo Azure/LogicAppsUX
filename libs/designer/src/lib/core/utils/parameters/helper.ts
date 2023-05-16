@@ -399,7 +399,17 @@ export function getParameterEditorProps(
     editorViewModel = toAuthenticationViewModel(value);
     editorOptions = { ...editorOptions, identity: WorkflowService().getAppIdentity?.() };
   } else if (editor === constants.EDITOR.CONDITION) {
-    editorViewModel = editorOptions?.isOldFormat ? toSimpleQueryBuilderViewModel(value) : toConditionViewModel(value);
+    const isOldFormat = editorOptions?.isOldFormat;
+    let modifiedValue = value;
+    // V1 designer does not add the "And" conditional when only one expression is entered
+    // Add the the "And" conditional if condition expression does not follow complex condition syntax,
+    // but the current condition is still valid
+    if (!isOldFormat && !getConditionalSelectedOption(value) && canConvertToComplexCondition(value)) {
+      modifiedValue = {
+        and: [value],
+      };
+    }
+    editorViewModel = isOldFormat ? toSimpleQueryBuilderViewModel(value) : toConditionViewModel(modifiedValue);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     editor = undefined;
   } else if (editor === constants.EDITOR.FILEPICKER && dynamicValues) {
@@ -524,6 +534,22 @@ const getConditionalSelectedOption = (input: any): GroupDropdownOptions | undefi
     return GroupDropdownOptions.OR;
   }
   return undefined;
+};
+
+const canConvertToComplexCondition = (input: any): boolean => {
+  let inputKeys = Object.keys(input);
+  if (inputKeys.length !== 1) {
+    return false;
+  }
+  let dropdownVal = inputKeys[0];
+  if (dropdownVal === 'not') {
+    inputKeys = Object.keys(input?.['not']);
+    if (inputKeys.length !== 1) {
+      return false;
+    }
+    dropdownVal = inputKeys[0];
+  }
+  return Object.values<string>(RowDropdownOptions).includes(dropdownVal);
 };
 
 function recurseConditionalItems(input: any, selectedOption?: GroupDropdownOptions): (RowItemProps | GroupItemProps)[] {
