@@ -14,6 +14,7 @@ import { FloatingActionMenu } from '../../floatingactionmenu';
 import type { PickerCallbackHandlers } from '../../picker/filepickereditor';
 import { FilePickerEditor } from '../../picker/filepickereditor';
 import { QueryBuilderEditor } from '../../querybuilder';
+import { HybridQueryBuilderEditor } from '../../querybuilder/HybridQueryBuilder';
 import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
 import { ScheduleEditor } from '../../recurrence';
 import { SchemaEditor } from '../../schemaeditor';
@@ -215,6 +216,13 @@ const TokenField = ({
           items={JSON.parse(JSON.stringify(editorViewModel.items))}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
+        />
+      ) : editorViewModel.isHybridEditor ? (
+        <HybridQueryBuilderEditor
+          readonly={readOnly}
+          groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
+          onChange={onValueChange}
+          getTokenPicker={getTokenPicker}
         />
       ) : (
         <QueryBuilderEditor
