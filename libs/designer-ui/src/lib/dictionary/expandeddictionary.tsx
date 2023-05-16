@@ -3,7 +3,6 @@ import type { ChangeState } from '..';
 import type { GetTokenPickerHandler } from '../editor/base';
 import { StringEditor } from '../editor/string';
 import { DictionaryDeleteButton } from './expandeddictionarydelete';
-// import { SerializeExpandedDictionary } from './plugins/SerializeExpandedDictionary';
 import { isEmpty } from './util/helper';
 import { guid } from '@microsoft/utils-logic-apps';
 import { useRef } from 'react';
