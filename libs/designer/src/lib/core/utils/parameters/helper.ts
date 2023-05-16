@@ -569,13 +569,14 @@ function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[]
     const keys = Object.keys(valueToParse);
     for (const itemKey of keys) {
       items.push({
+        id: guid(),
         key: loadParameterValue(convertStringToInputParameter(itemKey)),
         value: loadParameterValue(convertStringToInputParameter(valueToParse[itemKey])),
       });
     }
 
     if (!keys.length) {
-      items.push({ key: [createLiteralValueSegment('')], value: [createLiteralValueSegment('')] });
+      items.push({ key: [createLiteralValueSegment('')], value: [createLiteralValueSegment('')], id: guid() });
     }
   } else {
     items = undefined;
@@ -586,12 +587,13 @@ function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[]
 
 // Create Table Editor View Model
 function toTableViewModel(value: any, editorOptions: any): { items: DictionaryEditorItemProps[]; columnMode: ColumnMode } {
-  const placeholderItem = { key: [createLiteralValueSegment('')], value: [createLiteralValueSegment('')] };
+  const placeholderItem = { key: [createLiteralValueSegment('')], value: [createLiteralValueSegment('')], id: guid() };
   if (Array.isArray(value)) {
     const keys = editorOptions.columns.keys;
     const items: DictionaryEditorItemProps[] = [];
     for (const item of value) {
       items.push({
+        id: guid(),
         key: loadParameterValue(convertStringToInputParameter(item[keys[0]])),
         value: loadParameterValue(convertStringToInputParameter(item[keys[1]])),
       });
