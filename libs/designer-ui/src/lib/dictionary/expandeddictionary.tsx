@@ -88,7 +88,7 @@ export const ExpandedDictionary = ({
                 onFocus={() => addItem(index)}
                 valueType={keyType}
                 editorBlur={(newState: ChangeState) => handleBlur(newState, index, ExpandedDictionaryEditorType.KEY)}
-              ></StringEditor>
+              />
             </div>
             <div className="msla-dictionary-item-cell" ref={(el) => (editorRef.current[index] = el)}>
               <StringEditor
@@ -102,7 +102,7 @@ export const ExpandedDictionary = ({
                 onFocus={() => addItem(index)}
                 valueType={valueType}
                 editorBlur={(newState: ChangeState) => handleBlur(newState, index, ExpandedDictionaryEditorType.VALUE)}
-              ></StringEditor>
+              />
             </div>
             <DictionaryDeleteButton items={items} index={index} setItems={setItems} />
           </div>
