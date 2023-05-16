@@ -4,6 +4,27 @@ export interface WorkflowList {
   id?: null;
 }
 
+export interface RunList {
+  value?: RunValue[];
+  nextLink?: null;
+  id?: null;
+}
+
+export interface RunValue {
+  properties: {
+    waitEndTime: string;
+    startTime: string;
+    endTime: string;
+    status: string;
+    workflow: Record<string, any>;
+    trigger: Record<string, any>;
+    outputs: Record<string, any>;
+  };
+  id: string;
+  name: string;
+  type: string;
+}
+
 export interface Value {
   id?: string;
   name?: string;

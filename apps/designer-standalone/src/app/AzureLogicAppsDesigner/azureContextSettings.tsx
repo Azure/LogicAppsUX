@@ -1,7 +1,6 @@
 import type { RootState, AppDispatch } from '../../state/store';
 import {
   clearWorkflowDetails,
-  loadRun,
   loadWorkflow,
   setConsumption,
   setDarkMode,
@@ -30,7 +29,6 @@ const AzureContextSettings = () => {
     (_: unknown, checked?: boolean) => {
       dispatch(setMonitoringView(!!checked));
       if (checked) {
-        dispatch(loadRun());
         dispatch(loadWorkflow());
       }
     },
@@ -47,11 +45,9 @@ const AzureContextSettings = () => {
       />
       <Checkbox label="Dark Mode" checked={darkMode} onChange={(_, checked) => dispatch(setDarkMode(!!checked))} />
       <Checkbox label="isLocal" checked={isLocalSelected} onChange={(_, checked) => handleCheckLocalSetting(checked)} />
+      <Checkbox label="Monitoring View" checked={monitoringView} onChange={changeMonitoringView} />
       {isLocalSelected && (
-        <>
-          <Checkbox label="Monitoring View" checked={monitoringView} onChange={changeMonitoringView} />
-          <Checkbox label="Consumption" checked={consumption} onChange={(_, checked) => dispatch(setConsumption(!!checked))} />
-        </>
+        <Checkbox label="Consumption" checked={consumption} onChange={(_, checked) => dispatch(setConsumption(!!checked))} />
       )}
     </div>
   );

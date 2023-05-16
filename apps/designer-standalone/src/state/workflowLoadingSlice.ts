@@ -9,6 +9,7 @@ export interface WorkflowLoadingState {
   resourcePath?: string;
   appId?: string;
   workflowName?: string;
+  runId?: string;
   workflowDefinition: LogicAppsV2.WorkflowDefinition | null;
   runInstance: LogicAppsV2.RunInstanceDefinition | null;
   connections: ConnectionReferences;
@@ -70,12 +71,16 @@ export const workflowLoadingSlice = createSlice({
     changeWorkflowName: (state, action: PayloadAction<string>) => {
       state.workflowName = action.payload;
     },
+    changeRunId: (state, action: PayloadAction<string>) => {
+      state.runId = action.payload;
+    },
     changeResourcePath: (state, action: PayloadAction<string>) => {
       state.resourcePath = action.payload;
     },
     clearWorkflowDetails: (state) => {
       state.appId = undefined;
       state.workflowName = undefined;
+      state.runId = undefined;
       state.resourcePath = '';
     },
     setReadOnly: (state, action: PayloadAction<boolean>) => {
@@ -126,6 +131,7 @@ export const {
   setDarkMode,
   setConsumption,
   setIsLocalSelected,
+  changeRunId,
 } = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;
