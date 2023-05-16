@@ -2578,5 +2578,15 @@ describe('core/utils/parameters/helper', () => {
       const result = canConvertToComplexCondition(input);
       expect(result).toBe(false);
     });
+
+    test('returns false if input is undefined', () => {
+      const result = canConvertToComplexCondition(undefined);
+      expect(result).toBe(false);
+    });
+
+    test('returns false if input is null', () => {
+      const result = canConvertToComplexCondition(null);
+      expect(result).toBe(false);
+    });
   });
 });
