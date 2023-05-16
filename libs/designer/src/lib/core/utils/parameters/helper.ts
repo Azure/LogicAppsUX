@@ -492,8 +492,24 @@ const toSimpleQueryBuilderViewModel = (input: any): { isOldFormat: boolean; item
     const operations = input.split(',');
     const operand1String = operations[0].substring(operations[0].indexOf('(') + 1);
     const operand2String = operations[1].substring(0, operations[1].lastIndexOf(')'));
-    operand1 = loadParameterValue(convertStringToInputParameter(operand1String, true, true, true));
-    operand2 = loadParameterValue(convertStringToInputParameter(operand2String, true, true, true));
+    operand1 = loadParameterValue(
+      convertStringToInputParameter(
+        operand1String,
+        /* removeQuotesFromExpression */ true,
+        /*  trimExpression */ true,
+        /*convertIfContainsExpression */ true
+      )
+    );
+    console.log(operand1);
+    console.log(convertStringToInputParameter(operand2String, true, true, true));
+    operand2 = loadParameterValue(
+      convertStringToInputParameter(
+        operand2String,
+        /* removeQuotesFromExpression */ true,
+        /*  trimExpression */ true,
+        /*convertIfContainsExpression */ true
+      )
+    );
   } catch {
     operation = 'equals';
     operand1 = [];

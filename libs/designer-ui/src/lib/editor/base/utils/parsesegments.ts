@@ -34,7 +34,7 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
           data: segment,
           brandColor,
           icon: icon,
-          value: segmentValue,
+          value: segmentValue ?? value,
         });
         tokensEnabled && paragraph.append(token);
       } else if (title || name) {
@@ -43,7 +43,7 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
           data: segment,
           brandColor,
           icon: icon,
-          value: value ?? segmentValue,
+          value: segmentValue ?? value,
         });
         tokensEnabled && paragraph.append(token);
       } else {
@@ -99,7 +99,7 @@ export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): R
           data: segment,
           brandColor,
           icon: icon,
-          value: segmentValue,
+          value: segmentValue ?? value,
         });
         tokensEnabled && paragraph.append(token);
       } else if (title || name) {
@@ -108,7 +108,7 @@ export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): R
           data: segment,
           brandColor,
           icon: icon,
-          value: value ?? segmentValue,
+          value: segmentValue ?? value,
         });
         tokensEnabled && paragraph.append(token);
       } else {

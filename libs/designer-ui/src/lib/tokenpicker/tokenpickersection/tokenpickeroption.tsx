@@ -183,6 +183,7 @@ export const TokenPickerOptions = ({
                         <div className="msla-token-picker-option-title">{token.title}</div>
                         <div className="msla-token-picker-option-description">{token.description}</div>
                       </div>
+                      <div className="msla-token-picker-option-type">{token.type}</div>
                     </div>
                   </button>
                 );
