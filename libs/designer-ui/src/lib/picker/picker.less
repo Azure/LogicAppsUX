@@ -54,9 +54,10 @@ a.msla-picker {
 
 .msla-picker-items-error {
   color: rgb(224, 2, 2);
-  height: 30px;
-  padding-left: 20px;
-  padding-top: 10px;
+  overflow-y: auto;
+  min-height: 30px;
+  max-height: @maxPickerHeight;
+  padding: 10px 20px;
 }
 
 .msla-picker-items {

@@ -6,6 +6,7 @@ import { initializeDictionaryValidation } from '../editor/base/utils/helper';
 import { CollapsedDictionary } from './collapsedDictionary';
 import { ExpandedDictionary } from './expandeddictionary';
 import { convertItemsToSegments } from './util/deserializecollapseddictionary';
+import { guid } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 
 export enum DictionaryType {
@@ -13,6 +14,7 @@ export enum DictionaryType {
   TABLE = 'table',
 }
 export interface DictionaryEditorItemProps {
+  id: string;
   key: ValueSegment[];
   value: ValueSegment[];
 }
@@ -78,7 +80,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
         />
       ) : (
         <ExpandedDictionary
-          items={items ?? [{ key: [], value: [] }]}
+          items={items ?? [{ key: [], value: [], id: guid() }]}
           isTrigger={baseEditorProps.isTrigger}
           readonly={baseEditorProps.readonly}
           keyTitle={keyTitle}

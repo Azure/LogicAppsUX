@@ -25,6 +25,7 @@ export interface AuthProperty {
 interface CollapsedAuthEditorItems {
   key: ValueSegment[];
   value: ValueSegment[];
+  id: string;
 }
 
 const intl = getIntl();
@@ -344,6 +345,7 @@ export function parseAuthEditor(authType: AuthenticationType, items: AuthProps):
     {
       key: [{ type: ValueSegmentType.LITERAL, id: guid(), value: AUTHENTICATION_PROPERTIES.TYPE.name }],
       value: [{ type: ValueSegmentType.LITERAL, id: guid(), value: authType }],
+      id: guid(),
     },
     ...values,
   ];
@@ -356,6 +358,7 @@ const updateValues = (values: CollapsedAuthEditorItems[], property: AuthProperty
     values.push({
       key: [{ type: ValueSegmentType.LITERAL, id: guid(), value: property.name }],
       value: val ?? [{ type: ValueSegmentType.LITERAL, id: guid(), value: '' }],
+      id: guid(),
     });
   }
 };
