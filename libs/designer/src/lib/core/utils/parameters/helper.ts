@@ -399,7 +399,11 @@ export function getParameterEditorProps(
     editorViewModel = toAuthenticationViewModel(value);
     editorOptions = { ...editorOptions, identity: WorkflowService().getAppIdentity?.() };
   } else if (editor === constants.EDITOR.CONDITION) {
-    editorViewModel = editorOptions?.isOldFormat ? toSimpleQueryBuilderViewModel(value) : toConditionViewModel(value);
+    editorViewModel = editorOptions?.isOldFormat
+      ? toSimpleQueryBuilderViewModel(value)
+      : editorOptions?.isHybridEditor
+      ? toHybridConditionViewModel(value)
+      : toConditionViewModel(value);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     editor = undefined;
   } else if (editor === constants.EDITOR.FILEPICKER && dynamicValues) {
@@ -520,6 +524,45 @@ const toSimpleQueryBuilderViewModel = (input: any): { isOldFormat: boolean; item
     isOldFormat: true,
     items: { type: GroupType.ROW, operator: operation, operand1, operand2 },
   };
+};
+
+export const canConvertToComplexCondition = (input: any): boolean => {
+  if (!input) {
+    return false;
+  }
+  let inputKeys = Object.keys(input);
+  if (inputKeys.length !== 1) {
+    return false;
+  }
+  let dropdownVal = inputKeys[0];
+  if (dropdownVal === 'not') {
+    inputKeys = Object.keys(input?.['not']);
+    if (inputKeys.length !== 1) {
+      return false;
+    }
+    dropdownVal = inputKeys[0];
+  }
+  return Object.values<string>(RowDropdownOptions).includes(dropdownVal);
+};
+
+// Create HybridQueryBuilder Editor View Model
+export const toHybridConditionViewModel = (input: any): { items: GroupItemProps } => {
+  let modifiedInput = input;
+  // V1 designer does not add the "And" conditional when only one expression is entered
+  // Add the the "And" conditional if condition expression does not follow complex condition syntax,
+  // but the current condition is still valid
+  if (!getConditionalSelectedOption(input) && canConvertToComplexCondition(input)) {
+    modifiedInput = {
+      and: [input],
+    };
+  }
+  const getConditionOption = getConditionalSelectedOption(modifiedInput);
+  const items: GroupItemProps = {
+    type: GroupType.GROUP,
+    condition: getConditionOption,
+    items: recurseConditionalItems(modifiedInput, getConditionOption),
+  };
+  return { items };
 };
 
 // Create QueryBuilder Editor View Model
