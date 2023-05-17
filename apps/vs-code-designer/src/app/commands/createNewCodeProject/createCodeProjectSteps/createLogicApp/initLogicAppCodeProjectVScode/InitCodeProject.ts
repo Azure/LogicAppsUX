@@ -19,7 +19,7 @@ import {
 } from '../../../../../../constants';
 import { ext } from '../../../../../../extensionVariables';
 import { localize } from '../../../../../../localize';
-import { isSubpath, confirmEditJsonFile } from '../../../../../utils/fs';
+import { isSubpath, confirmEditJsonFile, isPathEqual } from '../../../../../utils/fs';
 import {
   getDebugConfigs,
   getLaunchVersion,
@@ -112,6 +112,50 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
     return true;
   }
 
+  /**
+ * Overwrites the tasks.json file with the specified content.
+ * @param context The project wizard context.
+
+public async overwriteTasksJson(context: IProjectWizardContext): Promise<void> {
+  const tasksJsonPath: string = path.join(context.projectPath, '.vscode', 'Tasks.json');
+  const tasksJsonContent = `{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "generateDebugSymbols",
+        "command": "dotnet",
+        "args": [
+          "\${input:getDebugSymbolDll}"
+        ],
+        "type": "process",
+        "problemMatcher": "$msCompile"
+      },
+      {
+        "type": "func",
+        "command": "host start",
+        "problemMatcher": "$func-watch",
+        "isBackground": true,
+        "label": "func: host start",
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        }
+      }
+    ],
+    "inputs": [
+      {
+        "id": "getDebugSymbolDll",
+        "type": "command",
+        "command": "azureLogicAppsStandard.getDebugSymbolDll"
+      }
+    ]
+  }`;
+
+  if (await confirmOverwriteFile(context, tasksJsonPath)) {
+    await fse.writeFile(tasksJsonPath, tasksJsonContent);
+  }
+}
+*/
   protected setDeploySubpath(context: IProjectWizardContext, deploySubpath: string): string {
     deploySubpath = this.addSubDir(context, deploySubpath);
     this.settings.push({ key: deploySubpathSetting, value: deploySubpath });
@@ -126,6 +170,15 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
 
   private async writeTasksJson(context: IProjectWizardContext, vscodePath: string): Promise<void> {
     const newTasks: TaskDefinition[] = this.getTasks();
+    for (const task of newTasks) {
+      let cwd: string = (task.options && task.options.cwd) || '.';
+      cwd = this.addSubDir(context, cwd);
+      if (!isPathEqual(cwd, '.')) {
+        task.options = task.options || {};
+        // always use posix for debug config
+        task.options.cwd = path.posix.join('${workspaceFolder}', cwd);
+      }
+    }
     const versionMismatchError: Error = new Error(
       localize('versionMismatchError', 'The version in your {0} must be "{1}" to work with Azure Functions.', tasksFileName, tasksVersion)
     );
