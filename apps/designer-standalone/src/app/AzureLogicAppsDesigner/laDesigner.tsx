@@ -127,7 +127,7 @@ const DesignerEditor = () => {
         canonicalLocation
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID]
+    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID]
   );
 
   // Our iframe root element is given a strange padding (not in this repo), this removes it
