@@ -51,7 +51,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     panelName = `${vscode.workspace.name}-${workflowName}-overview`;
     workflowContent = JSON.parse(readFileSync(workflowFilePath, 'utf8'));
     baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
-    apiVersion = '2019-10-01-edge-preview';
+    apiVersion = '2018-11-01';
     accessToken = '';
     const triggerName = getRequestTriggerName(workflowContent.definition);
     callbackInfo = await getLocalWorkflowCallbackInfo(
