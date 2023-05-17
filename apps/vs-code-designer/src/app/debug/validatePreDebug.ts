@@ -42,8 +42,8 @@ export async function preDebugValidate(context: IActionContext, debugConfig: vsc
     );
     shouldContinue = await validateFuncCoreToolsInstalled(context, message, workspace.uri.fsPath);
 
-    context.telemetry.properties.lastValidateStep = 'funcInstalled';
-    message = localize('installDotNetSDK', 'You must have the .Net SDK 6 installed to debug your local functions.');
+    context.telemetry.properties.lastValidateStep = 'dotNetSDKInstalled';
+    message = localize('installDotNetSDK', 'You must have .Net SDK 6 installed.');
     shouldContinue = await validateDotNetSDKIsInstalled(context, message, workspace.uri.fsPath);
 
     if (shouldContinue) {

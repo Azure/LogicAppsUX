@@ -32,7 +32,8 @@ export const isolatedSdkName = 'Microsoft.Azure.Functions.Worker.Sdk';
 // DotNet SDK
 export const dotnet = 'dotnet';
 export const dotNetSDK = 'dotNetSDK';
-export const dotNetPackageName = 'Microsoft.DotNet.SDK.6';
+export const dotNetPackageName = 'Microsoft.DotNet.SDK';
+export const dotNetAptPackageName = 'dotnet-sdk';
 export const dotNetSDKMajorVersion = 6;
 
 // Workflow
@@ -86,7 +87,6 @@ export enum extensionCommand {
   openInPortal = 'azureLogicAppsStandard.openInPortal',
   azureFunctionsOpenFile = 'azureFunctions.openFile',
   azureFunctionsUninstallFuncCoreTools = 'azureFunctions.uninstallFuncCoreTools',
-  azureFunctionsUninstallDotNetSDK = 'azureFunctions.uninstallDotNetSDK',
   azureFunctionsAppSettingsEncrypt = 'azureFunctions.appSettings.encrypt',
   azureFunctionsAppSettingsDecrypt = 'azureFunctions.appSettings.decrypt',
   openOverview = 'azureLogicAppsStandard.openOverview',
@@ -120,6 +120,8 @@ export enum extensionCommand {
   startRemoteDebug = 'azureLogicAppsStandard.startRemoteDebug',
   validateLogicAppProjects = 'azureLogicAppsStandard.validateFunctionProjects',
   reportIssue = 'azureLogicAppsStandard.reportIssue',
+  installDotNetSDK = "'azureLogicAppsStandard.installDotNetSDK'",
+  uninstallDotNetSDK = "'azureLogicAppsStandard.uninstallDotNetSDK'",
 }
 
 // Context

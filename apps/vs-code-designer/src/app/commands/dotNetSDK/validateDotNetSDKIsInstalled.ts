@@ -6,6 +6,7 @@ import type { PackageManager } from '../../../constants';
 import { validateDotNetSDKSetting } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
+import { getLocalDotNetSDKVersion } from '../../utils/dotnet/dotNetVersion';
 import { getDotNetPackageManager } from '../../utils/dotnet/getDotNetPackageManager';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
@@ -15,7 +16,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { MessageItem } from 'vscode';
 
 /**
- * Checks if functions core tools is installed, and installs it if needed.
+ * Checks if .NET SDK is installed, and installs it if needed.
  * @param {IActionContext} context - Workflow file path.
  * @param {string} message - Message for warning.
  * @param {string} fsPath - Workspace file system path.
@@ -52,12 +53,11 @@ export async function validateDotNetSDKIsInstalled(context: IActionContext, mess
         await installDotNetSDK();
         installed = true;
       } else if (input === DialogResponses.learnMore) {
-        await openUrl('https://aka.ms/Dqur4e'); // TODO - installing dotNetSDK short url
+        await openUrl('https://dotnet.microsoft.com/en-us/download/dotnet/6.0');
       }
     }
   });
 
-  // validate that Func Tools was installed only if user confirmed
   if (input === install && !installed) {
     if (
       (await context.ui.showWarningMessage(
@@ -65,7 +65,7 @@ export async function validateDotNetSDKIsInstalled(context: IActionContext, mess
         DialogResponses.learnMore
       )) === DialogResponses.learnMore
     ) {
-      await openUrl('https://aka.ms/Dqur4e'); // TODO - installing dotNetSDK short url
+      await openUrl('https://dotnet.microsoft.com/en-us/download/dotnet/6.0');
     }
   }
 
@@ -73,13 +73,13 @@ export async function validateDotNetSDKIsInstalled(context: IActionContext, mess
 }
 
 /**
- * Check is functions core tools is installed.
+ * Check is .net sdk 6 is installed.
  * @returns {Promise<boolean>} Returns true if installed, otherwise returns false.
  */
 export async function isDotNetSDKInstalled(): Promise<boolean> {
   try {
     await executeCommand(undefined, undefined, ext.dotNetCliPath, '--version');
-    return true;
+    return getLocalDotNetSDKVersion() != null ? true : false;
   } catch (error) {
     return false;
   }

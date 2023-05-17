@@ -60,8 +60,8 @@ export async function getDefaultDotNetSDKVersion(context: IActionContext): Promi
 }
 
 /**
- * Gets dotnet version from local cli command.
- * @returns {Promise<FuncVersion | undefined>} Functions core tools version.
+ * Gets .NET SDK version from local cli command.
+ * @returns {Promise<string | undefined>} .NET SDK version.
  */
 export async function tryGetLocalDotNetVersion(): Promise<DotnetVersion | undefined> {
   try {
@@ -78,7 +78,7 @@ export async function tryGetLocalDotNetVersion(): Promise<DotnetVersion | undefi
 
 /**
  * Executes version command and gets it from cli.
- * @returns {Promise<string | null>} Functions core tools version.
+ * @returns {Promise<string | null>} .NET SDK version.
  */
 export async function getLocalDotNetSDKVersion(): Promise<string | null> {
   const output: string = await executeCommand(undefined, undefined, ext.dotNetCliPath, '--list-sdks');
@@ -118,7 +118,7 @@ export async function getNewestDotNetSDKVersion(
   try {
     switch (packageManager) {
       case PackageManager.winget:
-        version = await executeCommand(undefined, undefined, 'winget', 'search', dotNetPackageName);
+        version = await executeCommand(undefined, undefined, 'winget', 'search', `${dotNetPackageName}.${dotNetSDKMajorVersion}`);
         version = version.split('\n')[2]; // Skip headers
         match = version.match(versionRegex);
         if (match) {

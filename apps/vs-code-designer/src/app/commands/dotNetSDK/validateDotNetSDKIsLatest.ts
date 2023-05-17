@@ -4,11 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 import type { DotnetVersion, PackageManager } from '../../../constants';
 import { localize } from '../../../localize';
-import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { getLocalDotNetSDKVersion, getNewestDotNetSDKVersion, tryParseDotNetVersion } from '../../utils/dotnet/dotNetVersion';
 import { getDotNetPackageManager } from '../../utils/dotnet/getDotNetPackageManager';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
-import { uninstallDotNetSDK } from './uninstallDotNetSDK';
 import { updateDotNetSDK } from './updateDotNetSDK';
 import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -26,7 +24,6 @@ export async function validateDotNetSDKIsLatest(): Promise<void> {
     const showDotNetSDKWarningKey = 'showDotNetSDKWarning';
     const showDotNetSDKWarning = !!getWorkspaceSetting<boolean>(showDotNetSDKWarningKey);
 
-    // If dotnet is installed
     if (showDotNetSDKWarning || showMultiDotNetSDKsWarning) {
       const packageManagers: PackageManager[] = await getDotNetPackageManager(context, true /* isDotNetSDKInstalled */);
       let packageManager: PackageManager;
@@ -37,22 +34,6 @@ export async function validateDotNetSDKIsLatest(): Promise<void> {
       } else if (packageManagers.length === 1) {
         packageManager = packageManagers[0];
         context.telemetry.properties.packageManager = packageManager;
-      } else {
-        context.telemetry.properties.multiDotNet = 'true';
-
-        if (showMultiDotNetSDKsWarning) {
-          const message: string = localize('multipleInstalls', 'Detected multiple installs of the .Net SDK 6.');
-          const selectUninstall: MessageItem = { title: localize('selectUninstall', 'Select version to uninstall') };
-          const result: MessageItem = await context.ui.showWarningMessage(message, selectUninstall, DialogResponses.dontWarnAgain);
-
-          if (result === selectUninstall) {
-            await executeOnFunctions(uninstallDotNetSDK, context, packageManagers);
-          } else if (result === DialogResponses.dontWarnAgain) {
-            await updateGlobalSetting(showMultiDotNetSDKWarningKey, false);
-          }
-        }
-
-        return;
       }
 
       if (showDotNetSDKWarning) {
@@ -72,14 +53,14 @@ export async function validateDotNetSDKIsLatest(): Promise<void> {
         if (!newestVersion) {
           return;
         }
-        context.telemetry.properties.newestVersion = newestVersion;
 
         if (semver.major(newestVersion) === semver.major(localVersion) && semver.gt(newestVersion, localVersion)) {
           context.telemetry.properties.outOfDateFunc = 'true';
 
           const message: string = localize(
             'outdatedDotNetSDK',
-            'Update .Net SDK 6 to latest ({0}) for the best experience.',
+            'Update your .Net SDK 6 ({0}) to latest ({1}) for the best experience.',
+            localVersion,
             newestVersion
           );
           const update: MessageItem = { title: 'Update' };

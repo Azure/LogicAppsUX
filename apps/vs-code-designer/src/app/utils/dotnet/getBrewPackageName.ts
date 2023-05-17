@@ -2,24 +2,23 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { dotNetSDKMajorVersion } from '../../../constants';
-import { dotNetPackageName } from '../../../constants';
+import { dotnet, dotNetSDKMajorVersion } from '../../../constants';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 
 /**
- * Gets functions core tools brew package name.
+ * Gets .NET SDK brew package name.
  * @returns {string} Returns full package name for brew.
  */
 export function getBrewPackageName(): string {
-  return `${dotNetPackageName}@${dotNetSDKMajorVersion}`;
+  return `${dotnet}@${dotNetSDKMajorVersion}`;
 }
 
 /**
  * Gets installed functions core tools brew package.
  * @returns {Promise<string | undefined>} Returns installed full package name for brew.
  */
+const brewPackageName: string = getBrewPackageName();
 export async function tryGetInstalledBrewPackageName(): Promise<string | undefined> {
-  const brewPackageName: string = getBrewPackageName();
   if (await isBrewPackageInstalled(brewPackageName)) {
     return brewPackageName;
   }
