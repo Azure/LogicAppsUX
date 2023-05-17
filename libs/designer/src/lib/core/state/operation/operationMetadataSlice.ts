@@ -333,7 +333,10 @@ export const operationMetadataSlice = createSlice({
       );
       if (index > -1) {
         state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].conditionalVisibility = value;
-        if (value === false) state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].value = [];
+        if (value === false) {
+          state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].value = [];
+          state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].preservedValue = undefined;
+        }
       }
     },
     updateParameterValidation: (
