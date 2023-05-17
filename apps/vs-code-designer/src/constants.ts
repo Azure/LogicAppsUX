@@ -120,8 +120,8 @@ export enum extensionCommand {
   startRemoteDebug = 'azureLogicAppsStandard.startRemoteDebug',
   validateLogicAppProjects = 'azureLogicAppsStandard.validateFunctionProjects',
   reportIssue = 'azureLogicAppsStandard.reportIssue',
-  installDotNetSDK = "'azureLogicAppsStandard.installDotNetSDK'",
-  uninstallDotNetSDK = "'azureLogicAppsStandard.uninstallDotNetSDK'",
+  installDotNetSDK = 'azureLogicAppsStandard.installDotNetSDK',
+  uninstallDotNetSDK = 'azureLogicAppsStandard.uninstallDotNetSDK',
 }
 
 // Context
