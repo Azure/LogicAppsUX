@@ -511,7 +511,11 @@ function getManifestBasedInputParameters(
     knownKeys.add(clonedInputParameter.key);
   }
 
-  if (stepInputs !== undefined && !manifest.properties.inputsLocationSwapMap) {
+  if (
+    !operationDefinition.metadata?.noUnknownParametersWithManifest &&
+    stepInputs !== undefined &&
+    !manifest.properties.inputsLocationSwapMap
+  ) {
     // load unknown inputs not in the schema by key.
     const resultParameters = map(result, 'key');
     loadUnknownManifestBasedParameters(keyPrefix, '', stepInputs, resultParameters, new Set<string>(), knownKeys);
