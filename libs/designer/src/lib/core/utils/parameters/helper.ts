@@ -2306,7 +2306,7 @@ function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) 
  * Example: Batch trigger
  */
 function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputParameter[], customSwagger?: SwaggerParser) {
-  if (!inputsValue || typeof inputsValue !== 'object') {
+  if (!inputsValue || typeof inputsValue !== 'object' || Array.isArray(inputsValue)) {
     return inputsValue;
   }
 
