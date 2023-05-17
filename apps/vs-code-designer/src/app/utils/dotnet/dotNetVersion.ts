@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { DotnetVersion, PackageManager, dotNetPackageName, dotNetSDKMajorVersion, funcVersionSetting } from '../../../constants';
+import { DotnetVersion, PackageManager, dotNetPackageName, dotNetSDKMajorVersion, dotNetSDKVersionSetting } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { getWorkspaceSettingFromAnyFolder } from '../vsCodeConfig/settings';
@@ -38,12 +38,12 @@ export function tryGetMajorVersion(data: string): string | undefined {
 }
 
 /**
- * Gets default functions core tools version either from open workspace, local cli or backup.
+ * Gets default .Net SDK  version either from open workspace, local cli or backup.
  * @param {string} context - Command context.
  * @returns {Promise<DotnetVersion>} Major version.
  */
 export async function getDefaultDotNetSDKVersion(context: IActionContext): Promise<DotnetVersion> {
-  let version: DotnetVersion | undefined = tryParseDotNetVersion(getWorkspaceSettingFromAnyFolder(funcVersionSetting));
+  let version: DotnetVersion | undefined = tryParseDotNetVersion(getWorkspaceSettingFromAnyFolder(dotNetSDKVersionSetting));
   context.telemetry.properties.runtimeSource = 'VSCodeSetting';
 
   if (isNullOrUndefined(version)) {
@@ -52,7 +52,7 @@ export async function getDefaultDotNetSDKVersion(context: IActionContext): Promi
   }
 
   if (isNullOrUndefined(version)) {
-    version = DotnetVersion.net6;
+    version = DotnetVersion.netsdk6;
     context.telemetry.properties.runtimeSource = 'Backup';
   }
 

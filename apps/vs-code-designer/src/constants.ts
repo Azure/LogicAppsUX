@@ -140,6 +140,7 @@ export const gitCommand = 'git';
 // Project settings
 export const projectLanguageSetting = 'projectLanguage';
 export const funcVersionSetting = 'projectRuntime';
+export const dotNetSDKVersionSetting = 'dotNetSDK';
 export const projectSubpathSetting = 'projectSubpath';
 export const projectTemplateKeySetting = 'projectTemplateKey';
 export const projectOpenBehaviorSetting = 'projectOpenBehavior';

@@ -14,7 +14,7 @@ export function getBrewPackageName(): string {
 }
 
 /**
- * Gets installed functions core tools brew package.
+ * Gets installed dot net sdk brew package.
  * @returns {Promise<string | undefined>} Returns installed full package name for brew.
  */
 const brewPackageName: string = getBrewPackageName();
