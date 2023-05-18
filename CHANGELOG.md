@@ -1,4 +1,14 @@
 # Logic Apps Designer
+### [2.15.31](https://github.com/Azure/LogicAppsUX/compare/v2.15.22...v2.15.31) (2023-05-18)
+
+
+### Bug Fixes
+
+* **designer:** Fixed connections passing empty non-required parameters ([#2437](https://github.com/Azure/LogicAppsUX/issues/2437)) ([35aec3c](https://github.com/Azure/LogicAppsUX/commit/35aec3cf3df6fb3f6c13e6757e1e5237dd9251c9))
+* **designer:** Fixing the output names when they have encoded properties ([#2445](https://github.com/Azure/LogicAppsUX/issues/2445)) ([66e7dd8](https://github.com/Azure/LogicAppsUX/commit/66e7dd8ca6e997b666f25f4afc20ef9051c7fef5))
+* **designer:** Resolve parameters and appsettings tokens during parameter evaluation in dynamic calls ([#2434](https://github.com/Azure/LogicAppsUX/issues/2434)) ([#2436](https://github.com/Azure/LogicAppsUX/issues/2436)) ([0559fd8](https://github.com/Azure/LogicAppsUX/commit/0559fd861204e5c8bc4d5639cda762c2224941f7))
+* **designer:** Shows Tokenpicker on Triggers ([#2447](https://github.com/Azure/LogicAppsUX/issues/2447)) ([8794f6b](https://github.com/Azure/LogicAppsUX/commit/8794f6b45c0ee630611bff41e0d22a0ec67eb63a))
+* **designer:** Special case array actions being converted to Object on initializing, then breaking Runtime on Save ([#2444](https://github.com/Azure/LogicAppsUX/issues/2444)) ([1fe3f3c](https://github.com/Azure/LogicAppsUX/commit/1fe3f3c2dbb5ce1d3f6d52002b3e2dfa721dda0e))
 
 ### [2.15.30](https://github.com/Azure/LogicAppsUX/compare/v2.15.20...v2.15.30) (2023-05-14)
 
