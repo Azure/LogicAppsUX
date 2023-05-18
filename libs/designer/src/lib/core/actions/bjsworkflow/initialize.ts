@@ -133,7 +133,9 @@ export const getInputParametersFromManifest = (
       ),
       '',
       primaryInputParametersInArray,
-      (!inputsLocation || !!inputsLocation.length) && !manifest.properties.inputsLocationSwapMap /* createInvisibleParameter */,
+      !operationData.metadata?.noUnknownParametersWithManifest &&
+        (!inputsLocation || !!inputsLocation.length) &&
+        !manifest.properties.inputsLocationSwapMap /* createInvisibleParameter */,
       false /* useDefault */
     );
   } else {
