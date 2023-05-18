@@ -119,7 +119,7 @@ const CreateConnectionTab = () => {
 
       if (selectedParameterSet) {
         const requiredParameters = Object.entries(selectedParameterSet?.parameters)?.filter(
-          ([, parameter]) => parameter?.uiDefinition.constraints?.required
+          ([, parameter]) => parameter?.uiDefinition.constraints?.required === 'true'
         );
         requiredParameters?.forEach(([key, parameter]) => {
           if (!outputParameterValues?.[key]) {
@@ -146,6 +146,7 @@ const CreateConnectionTab = () => {
             return acc;
           }, {}),
         };
+
         const connectionInfo: ConnectionCreationInfo = {
           displayName,
           connectionParametersSet: selectedParameterSet ? connectionParameterSetValues : undefined,
