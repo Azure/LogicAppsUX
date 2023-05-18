@@ -11,8 +11,9 @@ import { reservedMapNodeParamsArray } from '../constants/MapDefinitionConstants'
 import type { SchemaNodeExtended } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
-import { FunctionCategory, ifPseudoFunctionKey } from '../models/Function';
-import { isConnectionUnit } from './Connection.Utils';
+import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
+import { isConnectionUnit, isCustomValue } from './Connection.Utils';
+import { getInputValues } from './DataMap.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 import { isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid } from '@microsoft/utils-logic-apps';
@@ -122,4 +123,57 @@ export const isKeyAnIndexValue = (key: string): boolean => key.startsWith('$') &
 
 export const isIfAndGuid = (key: string) => {
   return key.startsWith(ifPseudoFunctionKey) && isAGuid(key.substring(ifPseudoFunctionKey.length + 1));
+};
+
+export const functionDropDownItemText = (key: string, node: FunctionData, connections: ConnectionDictionary) => {
+  let fnInputValues: string[] = [];
+  const connection = connections[key];
+
+  if (connection) {
+    fnInputValues = Object.values(connection.inputs)
+      .flat()
+      .map((input) => {
+        if (!input) {
+          return undefined;
+        }
+
+        if (isCustomValue(input)) {
+          return input;
+        }
+
+        if (isFunctionData(input.node)) {
+          if (input.node.key === indexPseudoFunctionKey) {
+            const sourceNode = connections[input.reactFlowKey].inputs[0][0];
+            return isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node) ? calculateIndexValue(sourceNode.node) : '';
+          }
+
+          if (functionInputHasInputs(input.reactFlowKey, connections)) {
+            return `${input.node.functionName}(...)`;
+          } else {
+            return `${input.node.functionName}()`;
+          }
+        }
+
+        // Source schema node
+        return input.node.name;
+      })
+      .filter((value) => !!value) as string[];
+  }
+
+  const inputs = connections[key].inputs[0];
+  const sourceNode = inputs && inputs[0];
+  let nodeName: string;
+  if (node.key === indexPseudoFunctionKey && isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node)) {
+    nodeName = calculateIndexValue(sourceNode.node);
+  } else if (node.key === directAccessPseudoFunctionKey) {
+    const functionValues = getInputValues(connections[key], connections);
+    nodeName =
+      functionValues.length === 3
+        ? formatDirectAccess(functionValues[0], functionValues[1], functionValues[2])
+        : getFunctionOutputValue(fnInputValues, node.functionName);
+  } else {
+    nodeName = getFunctionOutputValue(fnInputValues, node.functionName);
+  }
+
+  return nodeName;
 };

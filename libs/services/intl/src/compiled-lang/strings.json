@@ -5,6 +5,12 @@
       "value": "Testing"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -1207,6 +1213,12 @@
       "value": "Cancel"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
+    }
+  ],
   "6XR3FS": [
     {
       "type": 0,
@@ -1713,12 +1725,6 @@
       "value": "Done"
     }
   ],
-  "AX7dq3": [
-    {
-      "type": 0,
-      "value": "Input node type does not match the schema node's type"
-    }
-  ],
   "AYaqW/": [
     {
       "type": 0,
@@ -1871,10 +1877,10 @@
       "value": "Either a single format specifier character or a custom format pattern that indicates how to format the value of this timestamp. If format is not provided, the ISO 8601 format ('o') is used."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Clear custom value"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BHe7qY": [
@@ -2127,12 +2133,6 @@
     {
       "type": 0,
       "value": "Duration"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Custom value does not match the schema node's type"
     }
   ],
   "DfS13/": [
@@ -2855,12 +2855,6 @@
       "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
     }
   ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Advanced options"
-    }
-  ],
   "Ip7Iax": [
     {
       "type": 0,
@@ -3555,12 +3549,6 @@
       "value": "Connection Name"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Enter custom value"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -3649,12 +3637,6 @@
     {
       "type": 0,
       "value": "Required. This value is the number of integers that is in the array."
-    }
-  ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Default value"
     }
   ],
   "P4rEwD": [
@@ -3773,12 +3755,6 @@
     {
       "type": 0,
       "value": "(UTC-04:00) Turks and Caicos"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Do not generate if no value"
     }
   ],
   "PvWTxR": [
@@ -4671,6 +4647,12 @@
       "value": "Remove"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -4981,12 +4963,6 @@
     {
       "type": 0,
       "value": "Search Tips"
-    }
-  ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Custom value does not match one of the allowed types for this input"
     }
   ],
   "YlesUQ": [
@@ -5431,12 +5407,6 @@
     {
       "type": 0,
       "value": "Cancelled"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Input node type does not match one of the allowed types for this input"
     }
   ],
   "cmTCsW": [
@@ -7387,6 +7357,12 @@
     {
       "type": 0,
       "value": "Add Case"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sW47JR": [
