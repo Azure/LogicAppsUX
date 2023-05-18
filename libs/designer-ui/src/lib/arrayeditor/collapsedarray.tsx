@@ -12,7 +12,6 @@ export interface CollapsedArrayProps {
   isValid?: boolean;
   collapsedValue: ValueSegment[];
   readOnly?: boolean;
-  isTrigger?: boolean;
   itemSchema: ArrayItemSchema;
   isComplex: boolean;
   setCollapsedValue: (val: ValueSegment[]) => void;
@@ -27,7 +26,6 @@ export const CollapsedArray = ({
   isValid = true,
   collapsedValue,
   readOnly,
-  isTrigger,
   itemSchema,
   isComplex,
   getTokenPicker,
@@ -69,7 +67,6 @@ export const CollapsedArray = ({
             tabbable: true,
           }}
           readonly={readOnly}
-          isTrigger={isTrigger}
           placeholder={editorPlaceHolder}
           initialValue={collapsedValue?.length > 0 ? collapsedValue : ([] as ValueSegment[])}
           onBlur={onBlur}
