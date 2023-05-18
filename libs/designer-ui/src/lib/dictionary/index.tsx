@@ -67,7 +67,6 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
       {collapsed && !(dictionaryType === DictionaryType.TABLE) ? (
         <CollapsedDictionary
           isValid={isValid}
-          isTrigger={baseEditorProps.isTrigger}
           readonly={baseEditorProps.readonly}
           collapsedValue={collapsedValue}
           getTokenPicker={getTokenPicker}
@@ -79,7 +78,6 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
       ) : (
         <ExpandedDictionary
           items={items ?? [{ key: [], value: [] }]}
-          isTrigger={baseEditorProps.isTrigger}
           readonly={baseEditorProps.readonly}
           keyTitle={keyTitle}
           valueTitle={valueTitle}

@@ -13,7 +13,6 @@ export enum ExpandedDictionaryEditorType {
 }
 export interface ExpandedDictionaryProps {
   items: DictionaryEditorItemProps[];
-  isTrigger?: boolean;
   readonly?: boolean;
   keyTitle?: string;
   keyType?: string;
@@ -25,7 +24,6 @@ export interface ExpandedDictionaryProps {
 
 export const ExpandedDictionary = ({
   items,
-  isTrigger,
   readonly,
   keyTitle,
   keyType,
@@ -69,7 +67,6 @@ export const ExpandedDictionary = ({
                 className="msla-dictionary-editor-container-expanded"
                 placeholder={keyPlaceholder}
                 initialValue={item.key ?? []}
-                isTrigger={isTrigger}
                 readonly={readonly}
                 BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
                 getTokenPicker={getTokenPicker}
@@ -90,7 +87,6 @@ export const ExpandedDictionary = ({
                 className="msla-dictionary-editor-container-expanded"
                 placeholder={valuePlaceholder}
                 initialValue={item.value ?? []}
-                isTrigger={isTrigger}
                 readonly={readonly}
                 BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
                 getTokenPicker={getTokenPicker}
