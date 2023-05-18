@@ -10,9 +10,10 @@ import {
 import { reservedMapNodeParamsArray } from '../constants/MapDefinitionConstants';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
-import type { FunctionData, FunctionDictionary } from '../models/Function';
-import { FunctionCategory, ifPseudoFunctionKey } from '../models/Function';
+import type { FunctionData } from '../models/Function';
+import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import { getConnectedTargetSchemaNodes, isConnectionUnit, isCustomValue } from './Connection.Utils';
+import { getInputValues } from './DataMap.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 import { addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
@@ -80,19 +81,13 @@ export const functionInputHasInputs = (fnInputReactFlowKey: string, connections:
   return !!fnInputConnection && Object.values(fnInputConnection.inputs).some((inputConArr) => inputConArr.length > 0);
 };
 
-export const getIndexValueForCurrentConnection = (currentConnection: Connection, connections: ConnectionDictionary): string => {
-  const firstInput = currentConnection.inputs[0][0];
-
-  if (isCustomValue(firstInput)) {
-    return firstInput;
-  } else if (isConnectionUnit(firstInput)) {
-    const node = firstInput.node;
-    if (isSchemaNodeExtended(node)) {
-      return calculateIndexValue(node);
-    } else {
-      // Function, try moving back the chain to find the source
-      return getIndexValueForCurrentConnection(connections[firstInput.reactFlowKey], connections);
-    }
+export const getIndexValueForCurrentConnection = (currentConnection: Connection): string => {
+  const inputNode =
+    isConnectionUnit(currentConnection.inputs[0][0]) && isSchemaNodeExtended(currentConnection.inputs[0][0].node)
+      ? currentConnection.inputs[0][0].node
+      : undefined;
+  if (inputNode) {
+    return calculateIndexValue(inputNode);
   } else {
     LogService.error(LogCategory.FunctionUtils, 'getIndexValueForCurrentConnection', {
       message: `Didn't find inputNode to make index value`,
@@ -158,4 +153,56 @@ export const getFunctionLocationsForAllFunctions = (
     }
   }
   return functionNodes;
+};
+export const functionDropDownItemText = (key: string, node: FunctionData, connections: ConnectionDictionary) => {
+  let fnInputValues: string[] = [];
+  const connection = connections[key];
+
+  if (connection) {
+    fnInputValues = Object.values(connection.inputs)
+      .flat()
+      .map((input) => {
+        if (!input) {
+          return undefined;
+        }
+
+        if (isCustomValue(input)) {
+          return input;
+        }
+
+        if (isFunctionData(input.node)) {
+          if (input.node.key === indexPseudoFunctionKey) {
+            const sourceNode = connections[input.reactFlowKey].inputs[0][0];
+            return isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node) ? calculateIndexValue(sourceNode.node) : '';
+          }
+
+          if (functionInputHasInputs(input.reactFlowKey, connections)) {
+            return `${input.node.functionName}(...)`;
+          } else {
+            return `${input.node.functionName}()`;
+          }
+        }
+
+        // Source schema node
+        return input.node.name;
+      })
+      .filter((value) => !!value) as string[];
+  }
+
+  const inputs = connections[key].inputs[0];
+  const sourceNode = inputs && inputs[0];
+  let nodeName: string;
+  if (node.key === indexPseudoFunctionKey && isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node)) {
+    nodeName = calculateIndexValue(sourceNode.node);
+  } else if (node.key === directAccessPseudoFunctionKey) {
+    const functionValues = getInputValues(connections[key], connections);
+    nodeName =
+      functionValues.length === 3
+        ? formatDirectAccess(functionValues[0], functionValues[1], functionValues[2])
+        : getFunctionOutputValue(fnInputValues, node.functionName);
+  } else {
+    nodeName = getFunctionOutputValue(fnInputValues, node.functionName);
+  }
+
+  return nodeName;
 };
