@@ -32,7 +32,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
   private panelMetadata: IDesignerPanelMetadata;
 
   constructor(context: IActionContext, runId: string, workflowFilePath: string) {
-    const apiVersion = '2018-11-01';
+    const apiVersion = '2019-10-01-edge-preview';
 
     super(context, runId, workflowFilePath, true, apiVersion);
   }
@@ -59,7 +59,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
     this.projectPath = await getFunctionProjectRoot(this.context, this.workflowFilePath);
     const connectionsData = await getConnectionsFromFile(this.context, this.workflowFilePath);
     const parametersData = await getParametersFromFile(this.context, this.workflowFilePath);
-    this.baseUrl = `http://localhost:${ext.workflowDesignTimePort}${managementApiPrefix}`;
+    this.baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
 
     if (this.projectPath) {
       this.localSettings = (await getLocalSettingsJson(this.context, path.join(this.projectPath, localSettingsFileName))).Values;

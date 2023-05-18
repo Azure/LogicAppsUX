@@ -60,7 +60,7 @@ export class CodelessFunctiontWorkflow extends WorkflowCreateStepBase<IFunctionW
       definition: {
         $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
         actions: {
-          Invoke_a_function_in_this_Logic_App: {
+          Call_a_local_function_in_this_logic_app: {
             type: 'InvokeFunction',
             inputs: {
               functionName: '' + methodName + '',
@@ -76,15 +76,15 @@ export class CodelessFunctiontWorkflow extends WorkflowCreateStepBase<IFunctionW
             kind: 'http',
             inputs: {
               statusCode: 200,
-              body: "@body('Invoke_a_function_in_this_Logic_App')",
+              body: "@body('Call_a_local_function_in_this_logic_app')",
             },
             runAfter: {
-              Invoke_a_function_in_this_Logic_App: ['Succeeded'],
+              Call_a_local_function_in_this_logic_app: ['Succeeded'],
             },
           },
         },
         triggers: {
-          manual: {
+          When_a_HTTP_request_is_received: {
             type: 'Request',
             kind: 'Http',
             inputs: {},
@@ -100,7 +100,7 @@ export class CodelessFunctiontWorkflow extends WorkflowCreateStepBase<IFunctionW
       definition: {
         $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
         actions: {
-          Invoke_a_function_in_this_Logic_App: {
+          Call_a_local_function_in_this_logic_app: {
             type: 'InvokeFunction',
             inputs: {
               functionName: '' + methodName + '',
@@ -116,15 +116,15 @@ export class CodelessFunctiontWorkflow extends WorkflowCreateStepBase<IFunctionW
             kind: 'http',
             inputs: {
               statusCode: 200,
-              body: "@body('Invoke_a_function_in_this_Logic_App')",
+              body: "@body('Call_a_local_function_in_this_logic_app')",
             },
             runAfter: {
-              Invoke_a_function_in_this_Logic_App: ['Succeeded'],
+              Call_a_local_function_in_this_logic_app: ['Succeeded'],
             },
           },
         },
         triggers: {
-          manual: {
+          When_a_HTTP_request_is_received: {
             type: 'Request',
             kind: 'Http',
             inputs: {},
