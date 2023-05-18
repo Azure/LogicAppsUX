@@ -1,4 +1,29 @@
 # Logic Apps Designer
+## [2.17.0](https://github.com/Azure/LogicAppsUX/compare/v2.16.0...v2.17.0) (2023-05-18)
+
+
+### Bug Fixes
+
+* **designer:** Allow operations to specify unknown parameters to not be rendered or serialized ([#2401](https://github.com/Azure/LogicAppsUX/issues/2401)) ([8133450](https://github.com/Azure/LogicAppsUX/commit/81334507b944bffbae65bba7c7c1333e7eadb13e))
+* **designer:** Clear preserved value when removing parameters from original view ([#2417](https://github.com/Azure/LogicAppsUX/issues/2417)) ([080b2b2](https://github.com/Azure/LogicAppsUX/commit/080b2b26f4bae33c41c13c564d4169531419a97d))
+
+## [2.16.0](https://github.com/Azure/LogicAppsUX/compare/v2.15.25...v2.16.0) (2023-05-17)
+
+
+### Bug Fixes
+
+* **designer:** standalone to get workflow kind ([#2411](https://github.com/Azure/LogicAppsUX/issues/2411)) ([81cbf8e](https://github.com/Azure/LogicAppsUX/commit/81cbf8ed7d10891671827ada8537def25210223a))
+
+### [2.15.25](https://github.com/Azure/LogicAppsUX/compare/v2.15.24...v2.15.25) (2023-05-17)
+
+
+### Bug Fixes
+
+* **designer): Revert "fix(designer:** Add "And" conditional if condition expression does not follow complex condition syntax, but the current condition is still valid" ([#2395](https://github.com/Azure/LogicAppsUX/issues/2395)) ([3acb4b1](https://github.com/Azure/LogicAppsUX/commit/3acb4b13dab5fd2e646b7063eba0cb7fc984a6d2)), closes [#2375](https://github.com/Azure/LogicAppsUX/issues/2375)
+* **designer:** Add HybridQueryBuilder and isHybridEditor flag ([#2398](https://github.com/Azure/LogicAppsUX/issues/2398)) ([f75294d](https://github.com/Azure/LogicAppsUX/commit/f75294dd661b6bd2d1f0405f82c11ae4a30d5d54))
+* **designer:** Cleanup of Dictionary Editor ([#2393](https://github.com/Azure/LogicAppsUX/issues/2393)) ([5c16b06](https://github.com/Azure/LogicAppsUX/commit/5c16b066121496c5d7f60954bd559c646476f7af))
+* **designer:** Small dark mode node error colors fix ([#2400](https://github.com/Azure/LogicAppsUX/issues/2400)) ([97f8a5a](https://github.com/Azure/LogicAppsUX/commit/97f8a5a18f3eef80980cc02203b5c5e0d8f37260))
+
 ### [2.15.24](https://github.com/Azure/LogicAppsUX/compare/v2.15.23...v2.15.24) (2023-05-16)
 
 
