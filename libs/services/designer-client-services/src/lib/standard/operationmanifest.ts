@@ -41,15 +41,15 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
       });
 
       const {
-        properties: { brandColor, description, iconUri, manifest, operationType },
+        properties: { brandColor, description, iconUri, manifest, operationType, api },
       } = response;
 
       // TODO: Remove below patching of connection when backend api sends correct information for service providers
       const operationManifest = {
         properties: {
-          brandColor,
+          brandColor: brandColor ?? api?.brandColor,
           description,
-          iconUri,
+          iconUri: iconUri ?? api?.iconUri,
           connection: isServiceProviderOperation(operationType) ? { required: true, type: ConnectionType.ServiceProvider } : undefined,
           ...manifest,
         },

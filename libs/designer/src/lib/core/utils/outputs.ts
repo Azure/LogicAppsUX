@@ -7,6 +7,7 @@ import { getOperationManifest } from '../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../state/operation/operationMetadataSlice';
 import { ErrorLevel, updateErrorDetails, clearDynamicOutputs, addDynamicOutputs } from '../state/operation/operationMetadataSlice';
 import { addDynamicTokens } from '../state/tokensSlice';
+import type { WorkflowParameterDefinition } from '../state/workflowparameters/workflowparametersSlice';
 import { getBrandColorFromConnector, getIconUriFromConnector } from './card';
 import { getTokenExpressionValueForManifestBasedOperation } from './loops';
 import { getDynamicOutputsFromSchema, getDynamicSchema } from './parameters/dynamicdata';
@@ -382,6 +383,7 @@ export const loadDynamicOutputsInNode = async (
   nodeInputs: NodeInputs,
   nodeMetadata: any,
   settings: Settings,
+  workflowParameters: Record<string, WorkflowParameterDefinition>,
   dispatch: Dispatch
 ): Promise<void> => {
   for (const outputKey of Object.keys(outputDependencies)) {
@@ -393,7 +395,16 @@ export const loadDynamicOutputsInNode = async (
         updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings, /* shouldProcessSettings */ true);
       } else {
         try {
-          const outputSchema = await getDynamicSchema(info, nodeInputs, nodeMetadata, operationInfo, connectionReference);
+          const outputSchema = await getDynamicSchema(
+            info,
+            nodeInputs,
+            nodeMetadata,
+            operationInfo,
+            connectionReference,
+            /* variables */ undefined,
+            /* idReplacements */ undefined,
+            workflowParameters
+          );
           let schemaOutputs = outputSchema ? getDynamicOutputsFromSchema(outputSchema, info.parameter as OutputParameter) : {};
 
           if (settings.splitOn?.value?.enabled) {
