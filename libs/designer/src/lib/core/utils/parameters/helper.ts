@@ -121,6 +121,7 @@ import {
 } from '@microsoft/parsers-logic-apps';
 import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import {
+  createCopy,
   deleteObjectProperties,
   deleteObjectProperty,
   getObjectPropertyValue,
@@ -2306,12 +2307,12 @@ function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) 
  * Example: Batch trigger
  */
 function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputParameter[], customSwagger?: SwaggerParser) {
-  if (!inputsValue || typeof inputsValue !== 'object' || Array.isArray(inputsValue)) {
+  if (!inputsValue || typeof inputsValue !== 'object') {
     return inputsValue;
   }
 
   const propertyNameParameters = allInputs.filter((input) => !!input.serialization?.property);
-  const finalValue = clone(inputsValue);
+  const finalValue = createCopy(inputsValue);
 
   for (const propertyParameter of propertyNameParameters) {
     const { name, serialization } = propertyParameter;
