@@ -44,8 +44,6 @@ export const StringEditor = ({
       }}
       valueType={valueType}
       readonly={baseEditorProps.readonly}
-      isTrigger={baseEditorProps.isTrigger}
-      showCallbackTokens={baseEditorProps.showCallbackTokens}
       getTokenPicker={baseEditorProps.getTokenPicker}
       onBlur={handleBlur}
       onFocus={baseEditorProps.onFocus}

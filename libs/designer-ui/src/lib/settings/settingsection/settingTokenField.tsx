@@ -41,8 +41,6 @@ export interface SettingTokenFieldProps extends SettingProps {
   showTokens?: boolean;
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
-  isTrigger?: boolean;
-  isCallback?: boolean;
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
   onCastParameter: CastHandler;
@@ -76,8 +74,6 @@ const TokenField = ({
   placeholder,
   readOnly,
   value,
-  isTrigger,
-  isCallback,
   isLoading,
   errorDetails,
   showTokens,
@@ -117,7 +113,6 @@ const TokenField = ({
           getTokenPicker={getTokenPicker}
           language={EditorLanguage.javascript}
           onChange={onValueChange}
-          isTrigger={isTrigger}
           readonly={readOnly}
           placeholder={placeholder}
         />
@@ -133,7 +128,6 @@ const TokenField = ({
           initialValue={value}
           options={dropdownOptions.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
           useOption={true}
-          isTrigger={isTrigger}
           isLoading={isLoading}
           errorDetails={errorDetails}
           getTokenPicker={getTokenPicker}
@@ -154,7 +148,6 @@ const TokenField = ({
           initialValue={value}
           initialItems={editorViewModel.items}
           valueType={editorOptions?.valueType}
-          isTrigger={isTrigger}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
         />
@@ -172,7 +165,6 @@ const TokenField = ({
           titles={editorOptions?.columns?.titles}
           keys={editorOptions?.columns?.keys}
           types={editorOptions?.columns?.types}
-          isTrigger={isTrigger}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
         />
@@ -187,7 +179,6 @@ const TokenField = ({
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={editorViewModel.uncastedValue}
-          isTrigger={isTrigger}
           getTokenPicker={getTokenPicker}
           itemSchema={editorViewModel.itemSchema}
           castParameter={onCastParameter}
@@ -295,8 +286,6 @@ const TokenField = ({
           placeholder={placeholder}
           BasePlugins={{ tokens: showTokens }}
           readonly={readOnly}
-          isTrigger={isTrigger}
-          showCallbackTokens={isCallback}
           initialValue={value}
           editorBlur={onValueChange}
           getTokenPicker={getTokenPicker}

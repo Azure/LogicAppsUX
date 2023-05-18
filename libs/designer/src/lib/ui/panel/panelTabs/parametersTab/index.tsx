@@ -98,7 +98,6 @@ export const ParametersTab = () => {
           <ParameterSection
             key={selectedNodeId}
             nodeId={selectedNodeId}
-            nodeType={nodeType}
             group={inputs.parameterGroups[sectionName]}
             readOnly={readOnly}
             tokenGroup={tokenGroup}
@@ -116,14 +115,12 @@ export const ParametersTab = () => {
 
 const ParameterSection = ({
   nodeId,
-  nodeType,
   group,
   readOnly,
   tokenGroup,
   expressionGroup,
 }: {
   nodeId: string;
-  nodeType?: string;
   group: ParameterGroup;
   readOnly: boolean | undefined;
   tokenGroup: TokenGroup[];
@@ -351,8 +348,6 @@ const ParameterSection = ({
           editor,
           editorOptions,
           tokenEditor: true,
-          isTrigger,
-          isCallback: nodeType?.toLowerCase() === constants.NODE.TYPE.HTTP_WEBHOOK,
           isLoading: dynamicData?.status === DynamicCallStatus.STARTED,
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,

@@ -119,7 +119,6 @@ export const FilePickerEditor = ({
         onFocus={baseEditorProps.onFocus}
         getTokenPicker={baseEditorProps.getTokenPicker}
         placeholder={baseEditorProps.placeholder}
-        isTrigger={baseEditorProps.isTrigger}
         tokenPickerButtonEditorProps={{ showOnLeft: true }}
       >
         <EditorValueChange
