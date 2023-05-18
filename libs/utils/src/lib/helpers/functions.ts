@@ -937,3 +937,12 @@ export function findAncestorElement(
 export function hasInvalidChars(str: string, invalidChars: string[]): boolean {
   return invalidChars.some((invalidChar) => includes(str, invalidChar));
 }
+
+/**
+ * Returns true if true or "true"
+ * @arg {any} value - A value to compare.
+ * @return {boolean} - True if true or "true"
+ */
+export function isTrue(value: any): boolean {
+  return value === true || value === 'true';
+}
