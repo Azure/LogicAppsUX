@@ -31,7 +31,6 @@ import type {
   Connector,
   ManagedIdentity,
 } from '@microsoft/utils-logic-apps';
-import { isTrue } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -119,8 +118,8 @@ const CreateConnectionTab = () => {
       let outputParameterValues = parameterValues;
 
       if (selectedParameterSet) {
-        const requiredParameters = Object.entries(selectedParameterSet?.parameters)?.filter(([, parameter]) =>
-          isTrue(parameter?.uiDefinition.constraints?.required)
+        const requiredParameters = Object.entries(selectedParameterSet?.parameters)?.filter(
+          ([, parameter]) => parameter?.uiDefinition.constraints?.required === 'true'
         );
         requiredParameters?.forEach(([key, parameter]) => {
           if (!outputParameterValues?.[key]) {
