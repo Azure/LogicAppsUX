@@ -143,6 +143,7 @@ const ParameterSection = ({
     operationDefinition,
     connectionReference,
     idReplacements,
+    workflowParameters,
   } = useSelector((state: RootState) => {
     return {
       isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
@@ -156,6 +157,7 @@ const ParameterSection = ({
       operationDefinition: state.workflow.newlyAddedOperations[nodeId] ? undefined : state.workflow.operations[nodeId],
       connectionReference: getConnectionReference(state.connections, nodeId),
       idReplacements: state.workflow.idReplacements,
+      workflowParameters: state.workflowParameters.definitions,
     };
   });
   const rootState = useSelector((state: RootState) => state);
@@ -226,7 +228,8 @@ const ParameterSection = ({
         dependencies,
         true /* showErrorWhenNotReady */,
         dispatch,
-        idReplacements
+        idReplacements,
+        workflowParameters
       );
     }
   };
@@ -258,7 +261,8 @@ const ParameterSection = ({
         dependencies,
         true /* showErrorWhenNotReady */,
         dispatch,
-        idReplacements
+        idReplacements,
+        workflowParameters
       );
     },
   });
