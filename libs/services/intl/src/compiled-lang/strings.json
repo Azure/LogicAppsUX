@@ -5,6 +5,12 @@
       "value": "Testing"
     }
   ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match the schema node's type"
+    }
+  ],
   "+0cO6t": [
     {
       "type": 0,
@@ -1159,6 +1165,12 @@
       "value": "Cancel"
     }
   ],
+  "6WmLx1": [
+    {
+      "type": 0,
+      "value": "Warning: input node type does not match one of the allowed types for this input"
+    }
+  ],
   "6ZviI7": [
     {
       "type": 0,
@@ -1899,10 +1911,10 @@
       "value": "Either a single format specifier character or a custom format pattern that indicates how to format the value of this timestamp. If format is not provided, the ISO 8601 format ('o') is used."
     }
   ],
-  "BEZWxB": [
+  "BCgiRh": [
     {
       "type": 0,
-      "value": "Clear custom value"
+      "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
   "BFTwRN": [
@@ -2279,12 +2291,6 @@
     {
       "type": 0,
       "value": "Duration"
-    }
-  ],
-  "DZc8wP": [
-    {
-      "type": 0,
-      "value": "Custom value does not match the schema node's type"
     }
   ],
   "Dhu3IS": [
@@ -3065,12 +3071,6 @@
     {
       "type": 0,
       "value": "'."
-    }
-  ],
-  "IooQu1": [
-    {
-      "type": 0,
-      "value": "Advanced options"
     }
   ],
   "IsVhkH": [
@@ -3865,12 +3865,6 @@
       "value": "Connection Name"
     }
   ],
-  "OL5S5H": [
-    {
-      "type": 0,
-      "value": "Enter custom value"
-    }
-  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -4031,12 +4025,6 @@
       "value": "Required. This value is the number of integers that is in the array."
     }
   ],
-  "P2rzqn": [
-    {
-      "type": 0,
-      "value": "Default value"
-    }
-  ],
   "P3Zpc4": [
     {
       "type": 0,
@@ -4141,12 +4129,6 @@
     {
       "type": 0,
       "value": "Connection errors"
-    }
-  ],
-  "PtqSHp": [
-    {
-      "type": 0,
-      "value": "Do not generate if no value"
     }
   ],
   "Pudllg": [
@@ -4491,12 +4473,6 @@
     {
       "type": 0,
       "value": "Convert the parameter to an integer"
-    }
-  ],
-  "SKy5tj": [
-    {
-      "type": 0,
-      "value": "The input node type doesn't match the schema node's type."
     }
   ],
   "SLJkRn": [
@@ -5183,6 +5159,12 @@
       "value": "Remove"
     }
   ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Custom value)"
+    }
+  ],
   "WgoP7R": [
     {
       "type": 0,
@@ -5577,12 +5559,6 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
-    }
-  ],
-  "Yh5OVd": [
-    {
-      "type": 0,
-      "value": "Custom value does not match one of the allowed types for this input"
     }
   ],
   "YiOybp": [
@@ -6035,12 +6011,6 @@
     {
       "type": 0,
       "value": "Bold (⌘B)"
-    }
-  ],
-  "cjcEOf": [
-    {
-      "type": 0,
-      "value": "Input node type does not match one of the allowed types for this input"
     }
   ],
   "cmTCsW": [
@@ -8293,6 +8263,12 @@
     {
       "type": 0,
       "value": "Add Case"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warning: custom value does not match the schema node's type"
     }
   ],
   "sVQe34": [
