@@ -21,7 +21,7 @@ export default class DataMapperPanel {
 
   public dataMapName: string;
   public dataMapStateIsDirty: boolean;
-  public loadMapDefinitionData: MapDefinitionData | undefined;
+  public mapDefinitionData: MapDefinitionData | undefined;
 
   constructor(panel: WebviewPanel, dataMapName: string) {
     this.panel = panel;
@@ -142,15 +142,15 @@ export default class DataMapperPanel {
   }
 
   public handleLoadMapDefinitionIfAny() {
-    if (this.loadMapDefinitionData) {
+    if (this.mapDefinitionData) {
       this.sendMsgToWebview({
         command: 'loadDataMap',
-        data: this.loadMapDefinitionData,
+        data: this.mapDefinitionData,
       });
 
       this.checkForAndSetXsltFilename();
 
-      this.loadMapDefinitionData = undefined;
+      this.mapDefinitionData = undefined;
     }
   }
 

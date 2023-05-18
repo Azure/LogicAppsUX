@@ -1,11 +1,10 @@
 import type { MapDefDropdownOption } from '../components/DevToolbox';
 import type { RootState } from './Store';
-import { functionMock } from '@microsoft/logic-apps-data-mapper';
-import type { MapDefinitionEntry, FunctionData } from '@microsoft/logic-apps-data-mapper';
+import type { FunctionData, MapDefinitionEntry } from '@microsoft/logic-apps-data-mapper';
+import { functionMock, loadMapDefinition } from '@microsoft/logic-apps-data-mapper';
 import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import * as yaml from 'js-yaml';
 
 export enum LoadingMethod {
   File = 'file',
@@ -38,7 +37,7 @@ export const loadDataMap = createAsyncThunk('loadDataMap', async (_: void, thunk
     return null;
   } else {
     try {
-      const mapDefinition = yaml.load(currentState.dataMapDataLoader.rawDefinition?.data?.mapDefinitionString ?? '') as MapDefinitionEntry;
+      const mapDefinition = loadMapDefinition(currentState.dataMapDataLoader.rawDefinition?.data?.mapDefinitionString ?? '');
       return mapDefinition;
     } catch {
       return null;
