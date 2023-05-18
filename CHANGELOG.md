@@ -1,39 +1,36 @@
 # Logic Apps Designer
-### [2.15.22](https://github.com/Azure/LogicAppsUX/compare/v2.15.20...v2.15.22) (2023-05-14)
 
+### [2.15.30](https://github.com/Azure/LogicAppsUX/compare/v2.15.20...v2.15.30) (2023-05-14)
 
 ### Features
 
-* **designer:** Added Casting to Array Editor/ Fixed Complex Array Editor ([#2362](https://github.com/Azure/LogicAppsUX/issues/2362)) ([794c0a8](https://github.com/Azure/LogicAppsUX/commit/794c0a88ce0b95a109660e6ed295cb51b7afda85))
-* **vs-code-designer:** externalize connection parameterization when authoring ([#2368](https://github.com/Azure/LogicAppsUX/issues/2368)) ([becbc50](https://github.com/Azure/LogicAppsUX/commit/becbc503164fbb5a3c60ff0cdd68f0d9dd986f42))
-* **vscode:** Mode deploy button to workspace deploy menu ([#2370](https://github.com/Azure/LogicAppsUX/issues/2370)) ([8c52252](https://github.com/Azure/LogicAppsUX/commit/8c52252f1212ced955f9cea3acd05e9d0ddd5c32))
-
+- **designer:** Added Casting to Array Editor/ Fixed Complex Array Editor ([#2362](https://github.com/Azure/LogicAppsUX/issues/2362)) ([794c0a8](https://github.com/Azure/LogicAppsUX/commit/794c0a88ce0b95a109660e6ed295cb51b7afda85))
+- **vs-code-designer:** externalize connection parameterization when authoring ([#2368](https://github.com/Azure/LogicAppsUX/issues/2368)) ([becbc50](https://github.com/Azure/LogicAppsUX/commit/becbc503164fbb5a3c60ff0cdd68f0d9dd986f42))
+- **vscode:** Mode deploy button to workspace deploy menu ([#2370](https://github.com/Azure/LogicAppsUX/issues/2370)) ([8c52252](https://github.com/Azure/LogicAppsUX/commit/8c52252f1212ced955f9cea3acd05e9d0ddd5c32))
 
 ### Bug Fixes
 
-* **designer:** Fix Links in TokenPicker and About Tab ([#2367](https://github.com/Azure/LogicAppsUX/issues/2367)) ([89af76f](https://github.com/Azure/LogicAppsUX/commit/89af76f3a5ee1001a753d6bef09f8cd5671d5e04))
-* **designer:** Fixing the title prefix for dynamic inputs in manifest based operations ([#2364](https://github.com/Azure/LogicAppsUX/issues/2364)) ([4790f5d](https://github.com/Azure/LogicAppsUX/commit/4790f5d77f7a1cf00aff949972436b1fdbc7d0f4))
-* **designer:** making editorOptions optional values in editors ([#2371](https://github.com/Azure/LogicAppsUX/issues/2371)) ([1fc0963](https://github.com/Azure/LogicAppsUX/commit/1fc09635338091128a60991d4e913436e77763aa))
-* **designer:** Persisting identity values for MSI auth in http ([#2369](https://github.com/Azure/LogicAppsUX/issues/2369)) ([4b23fa5](https://github.com/Azure/LogicAppsUX/commit/4b23fa5afece6afc3fea40c2c48aa80a04dda90f))
-* **designer:** Treat empty string as though the parameter has no value ([#2348](https://github.com/Azure/LogicAppsUX/issues/2348)) ([16ad151](https://github.com/Azure/LogicAppsUX/commit/16ad1511862d529fc7ba4875d6ad39281dcc8725))
-* **designer:** Update setVariable Boolean dropdown ([#2374](https://github.com/Azure/LogicAppsUX/issues/2374)) ([eb07ccd](https://github.com/Azure/LogicAppsUX/commit/eb07ccdc3d676d422b4f9fc9e51335f5fe6015a0))
+- **designer:** Fix Links in TokenPicker and About Tab ([#2367](https://github.com/Azure/LogicAppsUX/issues/2367)) ([89af76f](https://github.com/Azure/LogicAppsUX/commit/89af76f3a5ee1001a753d6bef09f8cd5671d5e04))
+- **designer:** Fixing the title prefix for dynamic inputs in manifest based operations ([#2364](https://github.com/Azure/LogicAppsUX/issues/2364)) ([4790f5d](https://github.com/Azure/LogicAppsUX/commit/4790f5d77f7a1cf00aff949972436b1fdbc7d0f4))
+- **designer:** making editorOptions optional values in editors ([#2371](https://github.com/Azure/LogicAppsUX/issues/2371)) ([1fc0963](https://github.com/Azure/LogicAppsUX/commit/1fc09635338091128a60991d4e913436e77763aa))
+- **designer:** Persisting identity values for MSI auth in http ([#2369](https://github.com/Azure/LogicAppsUX/issues/2369)) ([4b23fa5](https://github.com/Azure/LogicAppsUX/commit/4b23fa5afece6afc3fea40c2c48aa80a04dda90f))
+- **designer:** Treat empty string as though the parameter has no value ([#2348](https://github.com/Azure/LogicAppsUX/issues/2348)) ([16ad151](https://github.com/Azure/LogicAppsUX/commit/16ad1511862d529fc7ba4875d6ad39281dcc8725))
+- **designer:** Update setVariable Boolean dropdown ([#2374](https://github.com/Azure/LogicAppsUX/issues/2374)) ([eb07ccd](https://github.com/Azure/LogicAppsUX/commit/eb07ccdc3d676d422b4f9fc9e51335f5fe6015a0))
 
 ### [2.15.21](https://github.com/Azure/LogicAppsUX/compare/v2.15.20...v2.15.21) (2023-05-13)
 
-
 ### Features
 
-* **designer:** Added Casting to Array Editor/ Fixed Complex Array Editor ([#2362](https://github.com/Azure/LogicAppsUX/issues/2362)) ([794c0a8](https://github.com/Azure/LogicAppsUX/commit/794c0a88ce0b95a109660e6ed295cb51b7afda85))
-* **vscode:** Mode deploy button to workspace deploy menu ([#2370](https://github.com/Azure/LogicAppsUX/issues/2370)) ([8c52252](https://github.com/Azure/LogicAppsUX/commit/8c52252f1212ced955f9cea3acd05e9d0ddd5c32))
-
+- **designer:** Added Casting to Array Editor/ Fixed Complex Array Editor ([#2362](https://github.com/Azure/LogicAppsUX/issues/2362)) ([794c0a8](https://github.com/Azure/LogicAppsUX/commit/794c0a88ce0b95a109660e6ed295cb51b7afda85))
+- **vscode:** Mode deploy button to workspace deploy menu ([#2370](https://github.com/Azure/LogicAppsUX/issues/2370)) ([8c52252](https://github.com/Azure/LogicAppsUX/commit/8c52252f1212ced955f9cea3acd05e9d0ddd5c32))
 
 ### Bug Fixes
 
-* **designer:** Fix Links in TokenPicker and About Tab ([#2367](https://github.com/Azure/LogicAppsUX/issues/2367)) ([89af76f](https://github.com/Azure/LogicAppsUX/commit/89af76f3a5ee1001a753d6bef09f8cd5671d5e04))
-* **designer:** Fixing the title prefix for dynamic inputs in manifest based operations ([#2364](https://github.com/Azure/LogicAppsUX/issues/2364)) ([4790f5d](https://github.com/Azure/LogicAppsUX/commit/4790f5d77f7a1cf00aff949972436b1fdbc7d0f4))
-* **designer:** making editorOptions optional values in editors ([#2371](https://github.com/Azure/LogicAppsUX/issues/2371)) ([1fc0963](https://github.com/Azure/LogicAppsUX/commit/1fc09635338091128a60991d4e913436e77763aa))
-* **designer:** Persisting identity values for MSI auth in http ([#2369](https://github.com/Azure/LogicAppsUX/issues/2369)) ([4b23fa5](https://github.com/Azure/LogicAppsUX/commit/4b23fa5afece6afc3fea40c2c48aa80a04dda90f))
-* **designer:** Treat empty string as though the parameter has no value ([#2348](https://github.com/Azure/LogicAppsUX/issues/2348)) ([16ad151](https://github.com/Azure/LogicAppsUX/commit/16ad1511862d529fc7ba4875d6ad39281dcc8725))
+- **designer:** Fix Links in TokenPicker and About Tab ([#2367](https://github.com/Azure/LogicAppsUX/issues/2367)) ([89af76f](https://github.com/Azure/LogicAppsUX/commit/89af76f3a5ee1001a753d6bef09f8cd5671d5e04))
+- **designer:** Fixing the title prefix for dynamic inputs in manifest based operations ([#2364](https://github.com/Azure/LogicAppsUX/issues/2364)) ([4790f5d](https://github.com/Azure/LogicAppsUX/commit/4790f5d77f7a1cf00aff949972436b1fdbc7d0f4))
+- **designer:** making editorOptions optional values in editors ([#2371](https://github.com/Azure/LogicAppsUX/issues/2371)) ([1fc0963](https://github.com/Azure/LogicAppsUX/commit/1fc09635338091128a60991d4e913436e77763aa))
+- **designer:** Persisting identity values for MSI auth in http ([#2369](https://github.com/Azure/LogicAppsUX/issues/2369)) ([4b23fa5](https://github.com/Azure/LogicAppsUX/commit/4b23fa5afece6afc3fea40c2c48aa80a04dda90f))
+- **designer:** Treat empty string as though the parameter has no value ([#2348](https://github.com/Azure/LogicAppsUX/issues/2348)) ([16ad151](https://github.com/Azure/LogicAppsUX/commit/16ad1511862d529fc7ba4875d6ad39281dcc8725))
 
 ### [2.15.20](https://github.com/Azure/LogicAppsUX/compare/v2.15.19...v2.15.20) (2023-05-12)
 
