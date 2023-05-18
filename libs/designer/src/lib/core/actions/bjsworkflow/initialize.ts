@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
 import type { WorkflowParameter } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
@@ -80,7 +79,7 @@ export const parseWorkflowParameters = (parameters: Record<string, WorkflowParam
 };
 
 export const getInputParametersFromManifest = (
-  nodeId: string,
+  _nodeId: string,
   manifest: OperationManifest,
   customSwagger?: SwaggerParser,
   stepDefinition?: any
