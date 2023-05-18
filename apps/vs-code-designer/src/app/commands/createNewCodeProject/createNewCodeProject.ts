@@ -6,8 +6,8 @@ import { funcVersionSetting, projectLanguageSetting, projectOpenBehaviorSetting,
 import { localize } from '../../../localize';
 import { addLocalFuncTelemetry, tryGetLocalFuncVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getGlobalSetting, getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
+import { OpenBehaviorStep } from '../createNewProject/OpenBehaviorStep';
 import { FolderListStep } from '../createNewProject/createProjectSteps/FolderListStep';
-import { OpenBehaviorStepCodeProject } from './CodeProjectBase/OpenBehaviorStepCodeProject';
 import { OpenFolderStepCodeProject } from './CodeProjectBase/OpenFolderStepCodeProject';
 import { NewCodeProjectTypeStep } from './createCodeProjectSteps/NewCodeProjectTypeStep';
 import { setWorkspaceName } from './createCodeProjectSteps/SetWorkspaceName';
@@ -74,7 +74,7 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
       new setMethodName(),
       new setNameSpace(),
       new NewCodeProjectTypeStep(options.templateId, options.functionSettings),
-      new OpenBehaviorStepCodeProject(),
+      new OpenBehaviorStep(),
     ],
     executeSteps: [new OpenFolderStepCodeProject()],
   });
