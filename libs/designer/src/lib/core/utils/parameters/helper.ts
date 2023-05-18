@@ -121,6 +121,7 @@ import {
 } from '@microsoft/parsers-logic-apps';
 import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import {
+  createCopy,
   deleteObjectProperties,
   deleteObjectProperty,
   getObjectPropertyValue,
@@ -2286,7 +2287,7 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
   }
 
   const propertyNameParameters = allInputs.filter((input) => !!input.serialization?.property);
-  const finalValue = clone(inputsValue);
+  const finalValue = createCopy(inputsValue);
 
   for (const propertyParameter of propertyNameParameters) {
     const { name, serialization } = propertyParameter;
