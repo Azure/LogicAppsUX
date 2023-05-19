@@ -1,5 +1,5 @@
+import { getBrandColorRgbA } from '../../card/utils';
 import Constants from '../../constants';
-import { hexToRgbA } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 export interface SecureDataSectionProps {
@@ -7,7 +7,7 @@ export interface SecureDataSectionProps {
   headerText: string;
 }
 
-export const SecureDataSection: React.FC<SecureDataSectionProps> = ({ brandColor, headerText }) => {
+export const SecureDataSection: React.FC<SecureDataSectionProps> = ({ brandColor = Constants.DEFAULT_BRAND_COLOR, headerText }) => {
   const intl = useIntl();
 
   const Resources = {
@@ -18,7 +18,7 @@ export const SecureDataSection: React.FC<SecureDataSectionProps> = ({ brandColor
   };
 
   const borderStyle = {
-    borderColor: hexToRgbA(brandColor || Constants.DEFAULT_BRAND_COLOR, 0.7),
+    borderColor: getBrandColorRgbA(brandColor, 0.7),
   };
 
   return (
