@@ -294,6 +294,7 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
               schemaToReplace = {
                 properties: parameters.reduce((properties: Record<string, any>, parameter: string) => {
                   return {
+                    ...properties,
                     [parameter]: {
                       type: Constants.SWAGGER.TYPE.STRING,
                       title: parameter,
