@@ -196,7 +196,7 @@ const getUpdatedAliasInItemProperties = (schemaItem: OpenAPIV2.SchemaObject | un
     }
   }
 
-  return properties;
+  return schemaItem;
 };
 
 const convertSchemaAliasesForSplitOn = (schema: OpenAPIV2.SchemaObject): void => {
