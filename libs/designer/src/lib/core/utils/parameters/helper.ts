@@ -2802,7 +2802,9 @@ function getOutputsByType(allOutputs: OutputInfo[], type = constants.SWAGGER.TYP
     return allOutputs;
   }
 
-  return allOutputs.filter((output) => equals(type, output.type));
+  return allOutputs.filter((output) => {
+    return !Array.isArray(output.type) && equals(type, output.type);
+  });
 }
 
 export function getTitleFromTokenName(tokenName: string, parentArray: string, parentArrayTitle?: string): string {
