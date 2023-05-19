@@ -107,7 +107,7 @@ export const initializeOperationMetadata = async (
   }
 
   const allNodeData = aggregate((await Promise.all(promises)).filter((data) => !!data) as NodeDataWithOperationMetadata[][]);
-  const repetitionInfos = await initializeRepetitionInfos(triggerNodeId, allNodeData, nodesMetadata);
+  const repetitionInfos = await initializeRepetitionInfos(triggerNodeId, operations, allNodeData, nodesMetadata);
   updateTokenMetadataInParameters(allNodeData, operations, workflowParameters, nodesMetadata, triggerNodeId, repetitionInfos);
   dispatch(
     initializeNodes(
@@ -445,6 +445,7 @@ const initializeVariables = (
 
 const initializeRepetitionInfos = async (
   triggerNodeId: string,
+  allOperations: Operations,
   nodesData: NodeDataWithOperationMetadata[],
   nodesMetadata: NodesMetadata
 ): Promise<Record<string, RepetitionContext>> => {
@@ -464,8 +465,14 @@ const initializeRepetitionInfos = async (
     { operationInfos: {}, inputs: {}, settings: {} }
   );
 
+  const splitOn = settings[triggerNodeId]
+    ? settings[triggerNodeId].splitOn?.value?.enabled
+      ? (settings[triggerNodeId].splitOn?.value?.value as string)
+      : undefined
+    : (allOperations[triggerNodeId] as LogicAppsV2.Trigger)?.splitOn;
+
   const getNodeRepetition = async (nodeId: string, includeSelf: boolean): Promise<{ id: string; repetition: RepetitionContext }> => {
-    const repetition = await getRepetitionContext(nodeId, triggerNodeId, operationInfos, inputs, settings, nodesMetadata, includeSelf);
+    const repetition = await getRepetitionContext(nodeId, operationInfos, inputs, nodesMetadata, includeSelf, splitOn);
     return { id: nodeId, repetition };
   };
 
