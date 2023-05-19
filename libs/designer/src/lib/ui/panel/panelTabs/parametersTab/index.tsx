@@ -302,7 +302,7 @@ const ParameterSection = ({
           );
         }
         return supportedTypes.some((supportedType) => {
-          return Array.isArray(token.type) ? false : equals(supportedType, token.type);
+          return !Array.isArray(token.type) && equals(supportedType, token.type);
         });
       }),
     }));

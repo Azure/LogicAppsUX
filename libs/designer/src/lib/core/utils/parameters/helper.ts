@@ -2803,7 +2803,7 @@ function getOutputsByType(allOutputs: OutputInfo[], type = constants.SWAGGER.TYP
   }
 
   return allOutputs.filter((output) => {
-    return Array.isArray(output.type) ? false : equals(type, output.type);
+    return !Array.isArray(output.type) && equals(type, output.type);
   });
 }
 
