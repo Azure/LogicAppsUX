@@ -4,6 +4,12 @@ In Visual Studio Code, you can use the Azure Logic Apps (Standard) extension to 
 
 > Sign up today for your free Azure account and receive 12 months of free popular services, $200 free credit and 25+ always free services 👉 [Start Free](https://azure.microsoft.com/free/open-source).
 
+## Logic apps (standard) to resources tab
+
+🎉 Version 2.15.15 and bigger: Logic apps standard extension now follows the desing pattern that the rest of the azure extensions are following; this implies removing our extension tab and move the remote logic apps tree structure into the resources tab in the azure panel. You will be able to see your remote apps when opening the Logic App dropdown. This also applies to the ribbon buttons that we used to have in our tab title, those were migrated to the workspace tab.
+
+![Logic Apps in resources](assets/logicAppResources.png)
+
 ## Known issues
 
 You can see known issues [here](https://github.com/Azure/LogicAppsUX/issues).
