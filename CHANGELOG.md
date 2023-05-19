@@ -1,4 +1,14 @@
 # Logic Apps Designer
+### [2.15.32](https://github.com/Azure/LogicAppsUX/compare/v2.15.31...v2.15.32) (2023-05-19)
+
+
+### Bug Fixes
+
+* **designer:** hotfix of properties ([#2461](https://github.com/Azure/LogicAppsUX/issues/2461)) ([a02364c](https://github.com/Azure/LogicAppsUX/commit/a02364c3e4f7bd2bfae182f2e6a1b96535687eff)), closes [#2450](https://github.com/Azure/LogicAppsUX/issues/2450)
+* **designer:** Properly catching invalid brand color values ([#2457](https://github.com/Azure/LogicAppsUX/issues/2457)) ([72e500c](https://github.com/Azure/LogicAppsUX/commit/72e500c540e92e39789be9b2333945172aaed8b4))
+* **designer:** Workflow crashing when getting outputs of schema with multiple types ([#2460](https://github.com/Azure/LogicAppsUX/issues/2460)) ([bccbce0](https://github.com/Azure/LogicAppsUX/commit/bccbce0550cf3e685abd289ef95953c755e58bc9))
+* **desinger:** Fixing deserialiation when operation cannot be loaded for triggers ([#2458](https://github.com/Azure/LogicAppsUX/issues/2458)) ([bdb0e49](https://github.com/Azure/LogicAppsUX/commit/bdb0e499353c079de7d3881897a5a959f2166c94))
+
 ### [2.15.31](https://github.com/Azure/LogicAppsUX/compare/v2.15.22...v2.15.31) (2023-05-18)
 
 
