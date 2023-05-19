@@ -301,7 +301,9 @@ const ParameterSection = ({
             token.key === constants.FOREACH_CURRENT_ITEM_KEY
           );
         }
-        return supportedTypes.some((supportedType) => equals(supportedType, token.type));
+        return supportedTypes.some((supportedType) => {
+          return !Array.isArray(token.type) && equals(supportedType, token.type);
+        });
       }),
     }));
 
