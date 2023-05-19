@@ -121,6 +121,7 @@ import {
 } from '@microsoft/parsers-logic-apps';
 import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import {
+  createCopy,
   deleteObjectProperties,
   deleteObjectProperty,
   getObjectPropertyValue,
@@ -1700,7 +1701,7 @@ export async function updateDynamicDataInNode(
     operationDefinition
   );
 
-  const { operations } = getState();
+  const { operations, workflowParameters } = getState();
   for (const parameterKey of Object.keys(operations.dependencies[nodeId]?.inputs ?? {})) {
     const dependencyInfo = operations.dependencies[nodeId].inputs[parameterKey];
     if (dependencyInfo.dependencyType === 'ListValues') {
@@ -1716,7 +1717,9 @@ export async function updateDynamicDataInNode(
           operations.actionMetadata[nodeId],
           operations.dependencies[nodeId],
           false /* showErrorWhenNotReady */,
-          dispatch
+          dispatch,
+          /* idReplacements */ undefined,
+          workflowParameters.definitions
         );
       }
     }
@@ -1747,6 +1750,7 @@ async function loadDynamicData(
       nodeInputs,
       nodeMetadata,
       settings,
+      rootState.workflowParameters.definitions,
       dispatch
     );
   }
@@ -1794,6 +1798,7 @@ async function loadDynamicContentForInputsInNode(
             nodeMetadata,
             variables,
             connectionReference,
+            rootState.workflowParameters.definitions,
             dispatch
           );
           const allInputParameters = getAllInputParameters(allInputs);
@@ -1857,7 +1862,8 @@ export async function loadDynamicTreeItemsForParameter(
   dependencies: NodeDependencies,
   showErrorWhenNotReady: boolean,
   dispatch: Dispatch,
-  idReplacements: Record<string, string> = {}
+  idReplacements: Record<string, string> = {},
+  workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<void> {
   const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
   const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as ParameterInfo;
@@ -1893,7 +1899,8 @@ export async function loadDynamicTreeItemsForParameter(
           nodeMetadata,
           operationInfo,
           connectionReference,
-          idReplacements
+          idReplacements,
+          workflowParameters
         );
 
         dispatch(
@@ -1942,7 +1949,8 @@ export async function loadDynamicValuesForParameter(
   dependencies: NodeDependencies,
   showErrorWhenNotReady: boolean,
   dispatch: Dispatch,
-  idReplacements: Record<string, string> = {}
+  idReplacements: Record<string, string> = {},
+  workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<void> {
   const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
   const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as ParameterInfo;
@@ -1973,7 +1981,8 @@ export async function loadDynamicValuesForParameter(
           nodeMetadata,
           operationInfo,
           connectionReference,
-          idReplacements
+          idReplacements,
+          workflowParameters
         );
 
         dispatch(
@@ -2024,10 +2033,20 @@ async function tryGetInputDynamicSchema(
   nodeMetadata: any,
   variables: VariableDeclaration[],
   connectionReference: ConnectionReference | undefined,
+  workflowParameters: Record<string, WorkflowParameterDefinition>,
   dispatch: Dispatch
 ): Promise<OpenAPIV2.SchemaObject | null> {
   try {
-    const schema = await getDynamicSchema(dependencyInfo, allInputs, nodeMetadata, operationInfo, connectionReference, variables);
+    const schema = await getDynamicSchema(
+      dependencyInfo,
+      allInputs,
+      nodeMetadata,
+      operationInfo,
+      connectionReference,
+      variables,
+      /* idReplacements */ undefined,
+      workflowParameters
+    );
     return schema;
   } catch (error: any) {
     if (!dependencyInfo.parameter?.required) {
@@ -2232,8 +2251,10 @@ export function parameterHasValue(parameter: ParameterInfo): boolean {
 }
 
 export function parameterValidForDynamicCall(parameter: ParameterInfo): boolean {
-  const hasTokenSegment = parameter.value.some((segment) => segment.type === ValueSegmentType.TOKEN);
-  return parameter.required ? parameterHasValue(parameter) && !hasTokenSegment : !hasTokenSegment;
+  const hasOutputTokenSegment = parameter.value.some(
+    (segment) => segment.type === ValueSegmentType.TOKEN && segment.token?.tokenType !== TokenType.PARAMETER
+  );
+  return parameter.required ? parameterHasValue(parameter) && !hasOutputTokenSegment : !hasOutputTokenSegment;
 }
 
 export function getGroupAndParameterFromParameterKey(
@@ -2311,7 +2332,7 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
   }
 
   const propertyNameParameters = allInputs.filter((input) => !!input.serialization?.property);
-  const finalValue = clone(inputsValue);
+  const finalValue = createCopy(inputsValue);
 
   for (const propertyParameter of propertyNameParameters) {
     const { name, serialization } = propertyParameter;
@@ -2781,7 +2802,9 @@ function getOutputsByType(allOutputs: OutputInfo[], type = constants.SWAGGER.TYP
     return allOutputs;
   }
 
-  return allOutputs.filter((output) => equals(type, output.type));
+  return allOutputs.filter((output) => {
+    return !Array.isArray(output.type) && equals(type, output.type);
+  });
 }
 
 export function getTitleFromTokenName(tokenName: string, parentArray: string, parentArrayTitle?: string): string {

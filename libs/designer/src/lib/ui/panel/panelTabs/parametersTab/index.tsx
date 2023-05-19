@@ -98,7 +98,6 @@ export const ParametersTab = () => {
           <ParameterSection
             key={selectedNodeId}
             nodeId={selectedNodeId}
-            nodeType={nodeType}
             group={inputs.parameterGroups[sectionName]}
             readOnly={readOnly}
             tokenGroup={tokenGroup}
@@ -116,14 +115,12 @@ export const ParametersTab = () => {
 
 const ParameterSection = ({
   nodeId,
-  nodeType,
   group,
   readOnly,
   tokenGroup,
   expressionGroup,
 }: {
   nodeId: string;
-  nodeType?: string;
   group: ParameterGroup;
   readOnly: boolean | undefined;
   tokenGroup: TokenGroup[];
@@ -143,6 +140,7 @@ const ParameterSection = ({
     operationDefinition,
     connectionReference,
     idReplacements,
+    workflowParameters,
   } = useSelector((state: RootState) => {
     return {
       isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
@@ -156,6 +154,7 @@ const ParameterSection = ({
       operationDefinition: state.workflow.newlyAddedOperations[nodeId] ? undefined : state.workflow.operations[nodeId],
       connectionReference: getConnectionReference(state.connections, nodeId),
       idReplacements: state.workflow.idReplacements,
+      workflowParameters: state.workflowParameters.definitions,
     };
   });
   const rootState = useSelector((state: RootState) => state);
@@ -226,7 +225,8 @@ const ParameterSection = ({
         dependencies,
         true /* showErrorWhenNotReady */,
         dispatch,
-        idReplacements
+        idReplacements,
+        workflowParameters
       );
     }
   };
@@ -258,7 +258,8 @@ const ParameterSection = ({
         dependencies,
         true /* showErrorWhenNotReady */,
         dispatch,
-        idReplacements
+        idReplacements,
+        workflowParameters
       );
     },
   });
@@ -300,7 +301,9 @@ const ParameterSection = ({
             token.key === constants.FOREACH_CURRENT_ITEM_KEY
           );
         }
-        return supportedTypes.some((supportedType) => equals(supportedType, token.type));
+        return supportedTypes.some((supportedType) => {
+          return !Array.isArray(token.type) && equals(supportedType, token.type);
+        });
       }),
     }));
 
@@ -347,8 +350,6 @@ const ParameterSection = ({
           editor,
           editorOptions,
           tokenEditor: true,
-          isTrigger,
-          isCallback: nodeType?.toLowerCase() === constants.NODE.TYPE.HTTP_WEBHOOK,
           isLoading: dynamicData?.status === DynamicCallStatus.STARTED,
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,
