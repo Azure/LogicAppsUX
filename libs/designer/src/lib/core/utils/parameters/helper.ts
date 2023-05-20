@@ -845,7 +845,7 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
   }
 }
 
-function getTokenExpressionMethodFromKey(key: string, actionName: string | undefined): string {
+export function getTokenExpressionMethodFromKey(key: string, actionName: string | undefined): string {
   const segments = parseEx(key);
   if (segments.length >= 2 && segments[0].value === OutputSource.Body && segments[1].value === '$') {
     return actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
@@ -862,7 +862,8 @@ export function generateExpressionFromKey(
   tokenKey: string,
   actionName: string | undefined,
   isInsideArray: boolean,
-  required: boolean
+  required: boolean,
+  overrideMethod = true
 ): string {
   const segments = parseEx(tokenKey);
   segments.shift();
@@ -870,7 +871,7 @@ export function generateExpressionFromKey(
   const result = [];
   // NOTE: Use @body for tokens that come from the body path like outputs.$.Body.weather
   let rootMethod = method;
-  if (!isInsideArray && segments[0]?.value?.toString()?.toLowerCase() === OutputSource.Body) {
+  if (overrideMethod && !isInsideArray && segments[0]?.value?.toString()?.toLowerCase() === OutputSource.Body) {
     segments.shift();
     rootMethod = actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
   }
