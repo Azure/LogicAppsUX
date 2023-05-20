@@ -257,12 +257,20 @@ export const createValueSegmentFromToken = async (
   parameterId: string,
   token: OutputToken,
   addImplicitForeachIfNeeded: boolean,
+  addLatestActionName: boolean,
   rootState: RootState,
   dispatch: AppDispatch
 ): Promise<ValueSegment> => {
   const tokenOwnerNodeId = token.outputInfo.actionName ?? getTriggerNodeId(rootState.workflow);
   const nodeType = rootState.operations.operationInfo[tokenOwnerNodeId].type;
   const tokenValueSegment = convertTokenToValueSegment(token, nodeType);
+
+  if (addLatestActionName && tokenValueSegment.token?.actionName) {
+    const newActionId = rootState.workflow.idReplacements[tokenValueSegment.token.actionName];
+    if (newActionId && newActionId !== tokenValueSegment.token.actionName) {
+      tokenValueSegment.token.actionName = newActionId;
+    }
+  }
 
   if (!addImplicitForeachIfNeeded) {
     return tokenValueSegment;
