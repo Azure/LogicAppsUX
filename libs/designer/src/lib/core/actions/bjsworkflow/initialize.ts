@@ -293,7 +293,7 @@ export const updateOutputsAndTokens = async (
 
   // NOTE: Split On setting changes as outputs of trigger changes, so we will be recalculating such settings in this block for triggers.
   if (shouldProcessSettings && isTrigger) {
-    const isSplitOnSupported = getSplitOnOptions(nodeOutputs).length > 0;
+    const isSplitOnSupported = getSplitOnOptions(nodeOutputs, supportsManifest).length > 0;
     if (settings.splitOn?.isSupported !== isSplitOnSupported) {
       dispatch(updateNodeSettings({ id: nodeId, settings: { splitOn: { ...settings.splitOn, isSupported: isSplitOnSupported } } }));
     }
