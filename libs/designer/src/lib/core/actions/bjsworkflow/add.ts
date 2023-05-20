@@ -117,7 +117,13 @@ const initializeOperationDetails = async (
     const iconUri = getIconUriFromManifest(manifest);
     const brandColor = getBrandColorFromManifest(manifest);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
-    const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs);
+    const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
+      manifest,
+      isTrigger,
+      nodeInputs,
+      /* splitOnValue */ undefined
+    );
+    let updatedOutputs = nodeOutputs;
     parsedManifest = new ManifestParser(manifest);
 
     if (parameterValues) {
@@ -134,10 +140,16 @@ const initializeOperationDetails = async (
 
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
     const settings = getOperationSettings(isTrigger, operationInfo, nodeOutputs, manifest, /* swagger */ undefined);
+
+    // We should update the outputs when splitOn is enabled.
+    if (isTrigger && settings.splitOn?.value?.value) {
+      updatedOutputs = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs, settings.splitOn?.value?.value).outputs;
+    }
+
     initData = {
       id: nodeId,
       nodeInputs,
-      nodeOutputs,
+      nodeOutputs: updatedOutputs,
       nodeDependencies,
       settings,
       operationMetadata: { iconUri, brandColor },
@@ -234,7 +246,7 @@ export const initializeSwitchCaseFromManifest = async (id: string, manifest: Ope
     manifest,
     false,
     nodeInputs,
-    undefined
+    /* splitOnValue */ undefined
   );
   const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
   const initData = {

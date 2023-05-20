@@ -511,7 +511,7 @@ export const getTokenExpressionValueForManifestBasedOperation = (
     ? `${Constants.OUTPUTS}(${convertToStringLiteral(actionName)})`
     : Constants.TRIGGER_OUTPUTS_OUTPUT;
 
-  return generateExpressionFromKey(method, key, actionName, isInsideArray, required);
+  return generateExpressionFromKey(method, key, actionName, isInsideArray, required, /* overrideMethod */ false);
 };
 
 /**
