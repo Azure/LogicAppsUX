@@ -1,7 +1,7 @@
 import type { ArrayItemSchema, ComplexArrayItem, ComplexArrayItems, SimpleArrayItem } from '..';
 import constants from '../../constants';
 import type { ValueSegment } from '../../editor';
-import { ValueSegmentType } from '../../editor';
+// import { ValueSegmentType } from '../../editor';
 import type { CastHandler } from '../../editor/base';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
 import { convertSegmentsToString } from '../../editor/base/utils/parsesegments';
@@ -95,13 +95,8 @@ export const convertComplexItemsToArray = (
 
       // we need to convert to string to extract tokens to repopulate later
       const stringValue = convertSegmentsToString(segments, nodeMap);
-      const castedValue = castParameter?.(
-        [{ id: guid(), type: ValueSegmentType.LITERAL, value: stringValue }],
-        itemSchema.type,
-        itemSchema.format,
-        suppressCasting
-      );
-      return castedValue ?? stringValue;
+      const castedValue = castParameter?.(segments, itemSchema.type, itemSchema.format, suppressCasting);
+      return suppressCasting ? stringValue : castedValue;
     }
   }
   return returnItem;
