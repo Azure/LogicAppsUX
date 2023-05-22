@@ -6,7 +6,7 @@ import type { PackageManager } from '../../../constants';
 import { validateDotNetSDKSetting } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { getLocalDotNetSDKVersion } from '../../utils/dotnet/dotNetVersion';
+import { addLocalDotNetSDKTelemetry, getLocalDotNetSDKVersion } from '../../utils/dotnet/dotNetVersion';
 import { getDotNetPackageManager } from '../../utils/dotnet/getDotNetPackageManager';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
@@ -29,6 +29,8 @@ export async function validateDotNetSDKIsInstalled(context: IActionContext, mess
 
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateDotNetSDKIsInstalled', async (innerContext: IActionContext) => {
     innerContext.errorHandling.suppressDisplay = true;
+
+    addLocalDotNetSDKTelemetry(context);
 
     if (!getWorkspaceSetting<boolean>(validateDotNetSDKSetting, fsPath)) {
       innerContext.telemetry.properties.validatDotNetSDK = 'false';
@@ -79,7 +81,7 @@ export async function validateDotNetSDKIsInstalled(context: IActionContext, mess
 export async function isDotNetSDKInstalled(): Promise<boolean> {
   try {
     await executeCommand(undefined, undefined, ext.dotNetCliPath, '--version');
-    return getLocalDotNetSDKVersion() != null ? true : false;
+    return !!getLocalDotNetSDKVersion();
   } catch (error) {
     return false;
   }

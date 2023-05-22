@@ -5,6 +5,7 @@
 import { DotnetVersion, PackageManager, dotNetPackageName, dotNetSDKMajorVersion, dotNetSDKVersionSetting } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { executeCommand } from '../funcCoreTools/cpUtils';
+import { tryGetMajorVersion } from '../funcCoreTools/funcVersion';
 import { getWorkspaceSettingFromAnyFolder } from '../vsCodeConfig/settings';
 import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -25,16 +26,6 @@ export function tryParseDotNetVersion(data: string | undefined): DotnetVersion |
   }
 
   return undefined;
-}
-
-/**
- * Gets major version of package.
- * @param {string} data - Package version.
- * @returns {string | undefined} Major version.
- */
-export function tryGetMajorVersion(data: string): string | undefined {
-  const match: RegExpMatchArray | null = data.match(/^[~v]?([0-9]+)/i);
-  return match ? match[1] : undefined;
 }
 
 /**

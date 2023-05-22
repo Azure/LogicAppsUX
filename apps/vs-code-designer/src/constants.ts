@@ -154,6 +154,7 @@ export const pickProcessTimeoutSetting = 'pickProcessTimeout';
 export const show64BitWarningSetting = 'show64BitWarning';
 export const showProjectWarningSetting = 'showProjectWarning';
 export const showTargetFrameworkWarningSetting = 'showTargetFrameworkWarning';
+export const PlatformPackageManagerSetting = 'PlatformPackageManager';
 
 // Project
 export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';
@@ -185,6 +186,13 @@ export enum PackageManager {
   npm = 'npm',
   brew = 'brew',
   winget = 'winget',
+}
+
+// Operating System Platforms
+export enum Platform {
+  windows = 'win32',
+  mac = 'darwin',
+  linux = 'linux',
 }
 
 // Resources

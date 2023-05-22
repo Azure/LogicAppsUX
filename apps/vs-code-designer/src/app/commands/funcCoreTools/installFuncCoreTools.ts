@@ -6,8 +6,8 @@ import { funcPackageName, PackageManager } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
-import { getBrewPackageName } from '../../utils/funcCoreTools/getBrewPackageName';
 import { getNpmDistTag } from '../../utils/funcCoreTools/getNpmDistTag';
+import { getFuncCoreToolsBrewPackageName } from '../../utils/packageManagers/getBrewPackageName';
 import { promptForFuncVersion } from '../../utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { FuncVersion, INpmDistTag } from '@microsoft/vscode-extension';
@@ -22,7 +22,7 @@ export async function installFuncCoreTools(
   ext.outputChannel.show();
 
   const distTag: INpmDistTag = await getNpmDistTag(context, version);
-  const brewPackageName: string = getBrewPackageName(version);
+  const brewPackageName: string = getFuncCoreToolsBrewPackageName(version);
 
   switch (packageManagers[0]) {
     case PackageManager.npm:

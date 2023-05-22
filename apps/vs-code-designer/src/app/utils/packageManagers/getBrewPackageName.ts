@@ -2,17 +2,25 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { funcPackageName } from '../../../constants';
-import { executeCommand } from './cpUtils';
-import { tryGetMajorVersion } from './funcVersion';
+import { dotnet, funcPackageName, dotNetSDKMajorVersion } from '../../../constants';
+import { executeCommand } from '../funcCoreTools/cpUtils';
+import { tryGetMajorVersion } from '../funcCoreTools/funcVersion';
 import { FuncVersion } from '@microsoft/vscode-extension';
+
+/**
+ * Gets .NET SDK brew package name.
+ * @returns {string} Returns full package name for brew.
+ */
+export function getDotNetSDKBrewPackageName(): string {
+  return `${dotnet}@${dotNetSDKMajorVersion}`;
+}
 
 /**
  * Gets functions core tools brew package name.
  * @param {FuncVersion} version - Package version.
  * @returns {string} Returns full package name for brew.
  */
-export function getBrewPackageName(version: FuncVersion): string {
+export function getFuncCoreToolsBrewPackageName(version: FuncVersion): string {
   return `${funcPackageName}@${tryGetMajorVersion(version)}`;
 }
 
@@ -21,8 +29,8 @@ export function getBrewPackageName(version: FuncVersion): string {
  * @param {FuncVersion} version - Package version.
  * @returns {Promise<string | undefined>} Returns installed full package name for brew.
  */
-export async function tryGetInstalledBrewPackageName(version: FuncVersion): Promise<string | undefined> {
-  const brewPackageName: string = getBrewPackageName(version);
+export async function tryGetInstalledFuncCoreToolsBrewPackageName(version: FuncVersion): Promise<string | undefined> {
+  const brewPackageName: string = getFuncCoreToolsBrewPackageName(version);
   if (await isBrewPackageInstalled(brewPackageName)) {
     return brewPackageName;
   } else {
@@ -53,4 +61,15 @@ async function isBrewPackageInstalled(packageName: string): Promise<boolean> {
   } catch (error) {
     return false;
   }
+}
+
+/**
+ * Gets installed dot net sdk brew package.
+ * @returns {Promise<string | undefined>} Returns installed full package name for brew.
+ */
+export async function tryGetInstalledBrewPackageName(brewPackageName: string): Promise<string | undefined> {
+  if (await isBrewPackageInstalled(brewPackageName)) {
+    return brewPackageName;
+  }
+  return undefined;
 }

@@ -300,7 +300,7 @@
       },
       {
         "command": "azureLogicAppsStandard.installDotNetSDK",
-        "title": "Install .NET SDK 6",
+        "title": "Install or Update .NET SDK 6",
         "category": "Azure Logic Apps"
       },
       {
@@ -764,6 +764,20 @@
           "azureLogicAppsStandard.showTargetFrameworkWarning": {
             "type": "boolean",
             "description": "Show a warning when an Azure Functions .NET project was detected that has mismatched target frameworks.",
+            "default": true
+          },
+          "azureLogicAppsStandard.PlatformPackageManager": {
+            "type": "string",
+            "enum": [
+              "winget",
+              "brew",
+              "apt-get"
+            ],
+            "description": "Package Manager across Operating System Platforms"
+          },
+          "azureLogicAppsStandard.showMissingPackageManagerWarning": {
+            "type": "boolean",
+            "description": "Show a warning when an expected Package Manager is missing.",
             "default": true
           }
         }
