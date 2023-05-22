@@ -22,6 +22,7 @@ export const funcIgnoreFileName = '.funcignore';
 export const func = 'func';
 export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
 export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
+export const ProjectDirectoryPath = 'ProjectDirectoryPath';
 export const extensionVersionKey = 'FUNCTIONS_EXTENSION_VERSION';
 export const hostStartCommand = 'host start';
 export const hostStartTaskName = `${func}: ${hostStartCommand}`;
