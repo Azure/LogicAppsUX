@@ -137,7 +137,7 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
 
   private async createCsprojFile(functionFolderPath: string, methodName: string): Promise<void> {
     const csprojFilePath = path.join(functionFolderPath, `${methodName}.csproj`);
-    const csprojFileContent = `<Project Sdk="Microsoft.NET.Sdk">
+    const csprojFileContent = `<Project Sdk="Microsoft.NET.Sdk" InitialTargets="Compile">
     <PropertyGroup>
       <IsPackable>false</IsPackable>
       <TargetFramework>net472</TargetFramework>
@@ -151,12 +151,21 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
   
     <ItemGroup>
     <!-- Please ensure you have the 'Microsoft.Azure.Functions.Extensions.Workflows.WorkflowActionTrigger' package and the 'Microsoft.Azure.WebJobs.Core' dependency. -->
-     <PackageReference Include="Microsoft.Azure.Functions.Extensions.Workflows.WorkflowActionTrigger" Version="1.0.0" />
-     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.24" />
-     <PackageReference Include="Microsoft.Azure.WebJobs.Core" Version="3.0.33" />
+      <PackageReference Include="Microsoft.Azure.WebJobs.Core" Version="3.0.33" />
+      <PackageReference Include="Microsoft.Azure.Workflows.Webjobs.Sdk" version="4.0.4736-preview"></PackageReference>
+      <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.24" />
+      <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+      <PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.10" />
     </ItemGroup>
+
+    <Target Name="Task" AfterTargets="Compile">
+    <ItemGroup>
+        <DirsToClean2 Include="..\\$(LogicAppFolder)\\lib\\custom" />
+      </ItemGroup>
+      <RemoveDir Directories="@(DirsToClean2)" />
+    </Target>
   
-    <Target Name="CopyExtensionFiles" AfterTargets="_GenerateFunctionsPostBuild">
+    <Target Name="CopyExtensionFiles" AfterTargets="ParameterizedFunctionJsonGenerator"
       <ItemGroup>
           <CopyFiles Include="$(MSBuildProjectDirectory)\\bin\\Debug\\net472\\**\\*.*" CopyToOutputDirectory="PreserveNewest" />
       </ItemGroup>
