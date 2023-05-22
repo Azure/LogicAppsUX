@@ -212,6 +212,8 @@ button.item.msla-dropdown-item-active img {
     tab-size: 1;
     padding-inline-start: 13px;
     padding-bottom: 60px;
+    max-height: 300px;
+    overflow-y: scroll;
     &.readonly {
       background-color: rgba(128, 128, 128, 0.1);
     }
@@ -230,7 +232,7 @@ button.item.msla-dropdown-item-active img {
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 95%;
-    margin-top: -80px;
+    margin-top: -81px;
     margin-left: 15px;
     font-size: 15px;
     user-select: none;
@@ -353,4 +355,32 @@ button.item.msla-dropdown-item-active img {
   margin-top: 15px;
   width: 100%;
   height: 20px;
+}
+
+.msla-html-link-editor {
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  max-width: 360px;
+  width: 100%;
+  opacity: 0;
+  background-color: #fff;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  border-radius: 0 0 8px 8px;
+  transition: opacity 0.5s;
+  will-change: transform;
+
+  .msla-html-link-view,
+  .msla-html-link-edit {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    a {
+      padding: 6px;
+      overflow-x: 'auto';
+      max-width: 78%;
+    }
+  }
 }

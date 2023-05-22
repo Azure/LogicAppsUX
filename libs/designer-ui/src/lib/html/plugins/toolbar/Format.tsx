@@ -1,16 +1,27 @@
 import constants from '../../../constants';
 import { isApple } from '../../../helper';
 import fontColorSvg from '../icons/font-color.svg';
+import link from '../icons/link.svg';
 import paintBucketSvg from '../icons/paint-bucket.svg';
 import bold from '../icons/type-bold.svg';
 import italic from '../icons/type-italic.svg';
 import underline from '../icons/type-underline.svg';
 import { DropdownColorPicker } from './DropdownColorPicker';
+import { getSelectedNode, sanitizeUrl } from './helper/functions';
 import { useTheme } from '@fluentui/react';
+import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { $patchStyleText, $getSelectionStyleValueForProperty } from '@lexical/selection';
 import { mergeRegister } from '@lexical/utils';
 import type { LexicalEditor } from 'lexical';
-import { COMMAND_PRIORITY_CRITICAL, SELECTION_CHANGE_COMMAND, $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND } from 'lexical';
+import {
+  COMMAND_PRIORITY_NORMAL,
+  KEY_MODIFIER_COMMAND,
+  COMMAND_PRIORITY_CRITICAL,
+  SELECTION_CHANGE_COMMAND,
+  $getSelection,
+  $isRangeSelection,
+  FORMAT_TEXT_COMMAND,
+} from 'lexical';
 import { useCallback, useEffect, useState } from 'react';
 
 interface FormatProps {
@@ -27,10 +38,19 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
   const [bgColor, setBgColor] = useState<string>(
     isInverted ? constants.INVERTED_EDITOR_BACKGROUND_COLOR : constants.STANDARD_EDITOR_BACKGROUND_COLOR
   );
+  const [isLink, setIsLink] = useState(false);
 
   const updateFormat = useCallback(() => {
     const selection = $getSelection();
+
     if ($isRangeSelection(selection)) {
+      const node = getSelectedNode(selection);
+      const parent = node.getParent();
+      if ($isLinkNode(parent) || $isLinkNode(node)) {
+        setIsLink(true);
+      } else {
+        setIsLink(false);
+      }
       setIsBold(selection.hasFormat('bold'));
       setIsItalic(selection.hasFormat('italic'));
       setIsUnderline(selection.hasFormat('underline'));
@@ -48,6 +68,16 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
   }, [isInverted]);
 
   useEffect(() => {
+    return mergeRegister(
+      activeEditor.registerUpdateListener(({ editorState }) => {
+        editorState.read(() => {
+          updateFormat();
+        });
+      })
+    );
+  }, [activeEditor, updateFormat]);
+
+  useEffect(() => {
     return activeEditor.registerCommand(
       SELECTION_CHANGE_COMMAND,
       (_payload) => {
@@ -57,6 +87,23 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
       COMMAND_PRIORITY_CRITICAL
     );
   }, [activeEditor, updateFormat]);
+
+  useEffect(() => {
+    return activeEditor.registerCommand(
+      KEY_MODIFIER_COMMAND,
+      (payload) => {
+        const event: KeyboardEvent = payload;
+        const { code, ctrlKey, metaKey } = event;
+
+        if (code === 'KeyK' && (ctrlKey || metaKey)) {
+          event.preventDefault();
+          return activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl('https://'));
+        }
+        return false;
+      },
+      COMMAND_PRIORITY_NORMAL
+    );
+  }, [activeEditor, isLink]);
 
   const applyStyleText = useCallback(
     (styles: Record<string, string>) => {
@@ -84,15 +131,13 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
     [applyStyleText]
   );
 
-  useEffect(() => {
-    return mergeRegister(
-      activeEditor.registerUpdateListener(({ editorState }) => {
-        editorState.read(() => {
-          updateFormat();
-        });
-      })
-    );
-  }, [activeEditor, updateFormat]);
+  const insertLink = useCallback(() => {
+    if (!isLink) {
+      activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl('https://'));
+    } else {
+      activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+    }
+  }, [activeEditor, isLink]);
 
   return (
     <>
@@ -131,6 +176,15 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         disabled={readonly}
       >
         <img className={'format'} src={underline} alt={'underline icon'} />
+      </button>
+      <button
+        disabled={readonly}
+        onClick={insertLink}
+        className={'toolbar-item spaced ' + (isLink ? 'active' : '')}
+        aria-label="Insert link"
+        title="Insert link"
+      >
+        <img className={'format'} src={link} alt={'link icon'} />
       </button>
       <DropdownColorPicker
         editor={activeEditor}
