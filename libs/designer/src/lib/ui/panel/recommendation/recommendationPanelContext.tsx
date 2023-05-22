@@ -130,7 +130,7 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
   });
 
   return (
-    <RecommendationPanel placeholder={''} {...props}>
+    <RecommendationPanel placeholder={''} isTrigger={isTrigger} {...props}>
       {selectionState !== SELECTION_STATES.SEARCH || selectedOperationGroupId ? (
         <div className={'msla-sub-heading-container'}>
           <Link onClick={navigateBack} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
