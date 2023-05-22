@@ -47,7 +47,6 @@ export class DesignerConfig extends AzureWizardPromptStep<IProjectWizardContext>
             'Runtime.WorkflowOperationDiscoveryHostMode': 'true',
             'Runtime.IsInvokeFunctionActionEnabled': 'true',
             AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
-            ProjectDirectoryPath: path.join(folderPath),
           },
         },
       },
@@ -66,6 +65,7 @@ export class DesignerConfig extends AzureWizardPromptStep<IProjectWizardContext>
       Values: {
         AzureWebJobsSecretStorageType: 'Files',
         FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+        ProjectDirectoryPath: path.join(folderPath),
       },
     };
     await fs.writeJson(filePath, content, { spaces: 2 });

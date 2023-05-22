@@ -109,6 +109,10 @@ export class FunctionConfigFile extends AzureWizardPromptStep<IProjectWizardCont
           command: 'dotnet',
           type: 'process',
           args: ['build', '${workspaceFolder}'],
+          group: {
+            kind: 'build',
+            isDefault: true,
+          },
         },
       ],
     };

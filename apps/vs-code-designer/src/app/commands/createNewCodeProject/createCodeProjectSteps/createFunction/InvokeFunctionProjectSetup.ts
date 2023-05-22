@@ -165,7 +165,7 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
       <RemoveDir Directories="@(DirsToClean2)" />
     </Target>
   
-    <Target Name="CopyExtensionFiles" AfterTargets="ParameterizedFunctionJsonGenerator"
+    <Target Name="CopyExtensionFiles" AfterTargets="ParameterizedFunctionJsonGenerator">
       <ItemGroup>
           <CopyFiles Include="$(MSBuildProjectDirectory)\\bin\\Debug\\net472\\**\\*.*" CopyToOutputDirectory="PreserveNewest" />
       </ItemGroup>
