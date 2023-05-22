@@ -6,10 +6,10 @@ import {
   DataMapDataProvider,
   DataMapperDesigner,
   DataMapperDesignerProvider,
+  InitDataMapperApiService,
   defaultDataMapperApiServiceOptions,
   getFunctions,
   getSelectedSchema,
-  InitDataMapperApiService,
 } from '@microsoft/logic-apps-data-mapper';
 import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import { useCallback, useContext, useEffect, useState } from 'react';
@@ -52,12 +52,6 @@ export const App = () => {
     [vscode]
   );
 
-  const saveStateCall = (dataMapDefinition: string, dataMapXslt: string) => {
-    saveDataMapDefinition(dataMapDefinition);
-
-    saveDataMap(dataMapXslt);
-  };
-
   const addSchemaFromFile = (selectedSchemaFile: SchemaFile) => {
     sendMsgToVsix({
       command: 'addSchemaFromFile',
@@ -71,14 +65,14 @@ export const App = () => {
     });
   }, [sendMsgToVsix]);
 
-  const saveDataMapDefinition = (dataMapDefinition: string) => {
+  const saveMapDefinitionCall = (dataMapDefinition: string) => {
     sendMsgToVsix({
       command: 'saveDataMapDefinition',
       data: dataMapDefinition,
     });
   };
 
-  const saveDataMap = (dataMapXslt: string) => {
+  const saveXsltCall = (dataMapXslt: string) => {
     sendMsgToVsix({
       command: 'saveDataMapXslt',
       data: dataMapXslt,
@@ -207,7 +201,8 @@ export const App = () => {
         theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? ThemeType.Light : ThemeType.Dark}
       >
         <DataMapperDesigner
-          saveStateCall={saveStateCall}
+          saveMapDefinitionCall={saveMapDefinitionCall}
+          saveXsltCall={saveXsltCall}
           saveDraftStateCall={saveDraftDataMapDefinition}
           addSchemaFromFile={addSchemaFromFile}
           readCurrentSchemaOptions={readLocalFileOptions}

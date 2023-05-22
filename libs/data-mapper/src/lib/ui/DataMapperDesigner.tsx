@@ -5,11 +5,11 @@ import type { SchemaFile } from '../components/configPanel/AddOrUpdateSchemaView
 import { ConfigPanel } from '../components/configPanel/ConfigPanel';
 import { GlobalView } from '../components/globalView/GlobalView';
 import { MapOverview } from '../components/mapOverview/MapOverview';
-import { errorNotificationAutoHideDuration, NotificationTypes } from '../components/notification/Notification';
+import { NotificationTypes, errorNotificationAutoHideDuration } from '../components/notification/Notification';
 import {
+  PropertiesPane,
   basePropPaneContentHeight,
   canvasAreaAndPropPaneMargin,
-  PropertiesPane,
   propPaneTopBarHeight,
 } from '../components/propertiesPane/PropertiesPane';
 import { SidePane, SidePanelTabValue } from '../components/sidePane/SidePane';
@@ -91,7 +91,8 @@ const useStyles = makeStyles({
 });
 
 export interface DataMapperDesignerProps {
-  saveStateCall: (dataMapDefinition: string, dataMapXslt: string) => void;
+  saveMapDefinitionCall: (dataMapDefinition: string) => void;
+  saveXsltCall: (dataMapXslt: string) => void;
   saveDraftStateCall?: (dataMapDefinition: string) => void;
   addSchemaFromFile?: (selectedSchemaFile: SchemaFile) => void;
   readCurrentSchemaOptions?: () => void;
@@ -101,7 +102,8 @@ export interface DataMapperDesignerProps {
 }
 
 export const DataMapperDesigner = ({
-  saveStateCall,
+  saveMapDefinitionCall,
+  saveXsltCall,
   saveDraftStateCall,
   addSchemaFromFile,
   readCurrentSchemaOptions,
@@ -183,35 +185,51 @@ export const DataMapperDesigner = ({
       );
     }
 
+    saveMapDefinitionCall(dataMapDefinition);
+
+    dispatch(
+      saveDataMap({
+        sourceSchemaExtended: sourceSchema,
+        targetSchemaExtended: targetSchema,
+      })
+    );
+  }, [currentConnections, flattenedTargetSchema, dataMapDefinition, dispatch, saveMapDefinitionCall, sourceSchema, targetSchema]);
+
+  const onGenerateClick = useCallback(() => {
+    const errors = collectErrorsForMapChecker(currentConnections, flattenedTargetSchema);
+
+    if (errors.length > 0) {
+      dispatch(
+        showNotification({
+          type: NotificationTypes.MapHasErrorsAtSave,
+          msgParam: errors.length,
+          autoHideDurationMs: errorNotificationAutoHideDuration,
+        })
+      );
+    }
+
     generateDataMapXslt(dataMapDefinition)
       .then((xsltStr) => {
-        saveStateCall(dataMapDefinition, xsltStr);
+        saveXsltCall(xsltStr);
 
-        dispatch(
-          saveDataMap({
-            sourceSchemaExtended: sourceSchema,
-            targetSchemaExtended: targetSchema,
-          })
-        );
-
-        LogService.log(LogCategory.DataMapperDesigner, 'onSaveClick', {
-          message: 'Successfully saved map definition and generated xslt',
+        LogService.log(LogCategory.DataMapperDesigner, 'onGenerateClick', {
+          message: 'Successfully generated xslt',
         });
       })
       .catch((error: Error) => {
-        LogService.error(LogCategory.DataMapperDesigner, 'onSaveClick', {
+        LogService.error(LogCategory.DataMapperDesigner, 'onGenerateClick', {
           message: error.message,
         });
 
         dispatch(
           showNotification({
-            type: NotificationTypes.SaveFailed,
+            type: NotificationTypes.GenerateFailed,
             msgBody: error.message,
             autoHideDurationMs: errorNotificationAutoHideDuration,
           })
         );
       });
-  }, [currentConnections, flattenedTargetSchema, dataMapDefinition, saveStateCall, dispatch, sourceSchema, targetSchema]);
+  }, [currentConnections, flattenedTargetSchema, dataMapDefinition, dispatch, saveXsltCall]);
 
   // NOTE: Putting this useEffect here for vis next to onSave
   useEffect(() => {
@@ -293,6 +311,7 @@ export const DataMapperDesigner = ({
           showMapOverview={showMapOverview}
           showGlobalView={showGlobalView}
           setShowGlobalView={setShowGlobalView}
+          onGenerateClick={onGenerateClick}
         />
 
         <div id="editorView" style={{ display: 'flex', flex: '1 1 1px' }}>

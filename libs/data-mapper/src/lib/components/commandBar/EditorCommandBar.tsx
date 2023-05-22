@@ -3,68 +3,19 @@ import { closeModal, openDiscardWarningModal, WarningModalState } from '../../co
 import { openDefaultConfigPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
-import type { IButtonStyles, ICommandBarItemProps } from '@fluentui/react';
-import { CommandBar, ContextualMenuItemType } from '@fluentui/react';
-import { tokens } from '@fluentui/react-components';
+import { makeStyles, shorthands, Toolbar, ToolbarButton, ToolbarDivider, ToolbarGroup } from '@fluentui/react-components';
+import {
+  Play20Regular,
+  Save20Regular,
+  Settings20Regular,
+  ArrowUndo20Regular,
+  ArrowRedo20Regular,
+  Dismiss20Regular,
+  OrganizationHorizontal20Regular,
+} from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
-
-const cmdBarStyles = {
-  root: {
-    backgroundColor: tokens.colorNeutralBackground4,
-    marginBottom: '8px',
-    borderBottom: 'none',
-  },
-  primarySet: {
-    backgroundColor: tokens.colorNeutralBackground4,
-  },
-  secondarySet: {
-    backgroundColor: tokens.colorNeutralBackground4,
-  },
-};
-
-const cmdBarItemBgStyles = {
-  style: {
-    backgroundColor: tokens.colorNeutralBackground4,
-  },
-};
-
-const cmdBarButtonStyles: IButtonStyles = {
-  label: {
-    color: tokens.colorNeutralForeground1,
-  },
-  icon: {
-    color: tokens.colorBrandForeground1,
-  },
-  splitButtonDivider: {
-    color: tokens.colorNeutralStroke1,
-  },
-  labelDisabled: {
-    color: tokens.colorNeutralForegroundDisabled,
-  },
-  iconDisabled: {
-    color: tokens.colorNeutralForegroundDisabled,
-  },
-};
-
-const divider: ICommandBarItemProps = {
-  key: 'global-divider',
-  itemType: ContextualMenuItemType.Divider,
-  iconProps: {
-    iconName: 'Separator',
-  },
-  iconOnly: true,
-  disabled: true,
-  buttonStyles: {
-    root: {
-      width: 10,
-      minWidth: 'unset',
-    },
-    ...cmdBarButtonStyles,
-  },
-  ...cmdBarItemBgStyles,
-};
 
 export interface EditorCommandBarProps {
   onSaveClick: () => void;
@@ -74,10 +25,21 @@ export interface EditorCommandBarProps {
   showMapOverview: boolean;
   showGlobalView: boolean;
   setShowGlobalView: (showGlobalView: boolean) => void;
+  onGenerateClick: () => void;
 }
 
+const useStyles = makeStyles({
+  toolbar: {
+    justifyContent: 'space-between',
+  },
+  button: {
+    ...shorthands.padding('5px', '0px'),
+    minWidth: '80px',
+  },
+});
+
 export const EditorCommandBar = (props: EditorCommandBarProps) => {
-  const { onSaveClick, onUndoClick, onRedoClick, onTestClick, showMapOverview, showGlobalView, setShowGlobalView } = props;
+  const { onSaveClick, onUndoClick, onRedoClick, onTestClick, showMapOverview, showGlobalView, setShowGlobalView, onGenerateClick } = props;
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -105,9 +67,17 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
 
   const Resources = useMemo(
     () => ({
+      COMMAND_BAR_ARIA: intl.formatMessage({
+        defaultMessage: 'Use left and right arrow keys to navigate between commands',
+        description: 'Aria describing the way to control the keyboard navigation',
+      }),
       SAVE: intl.formatMessage({
         defaultMessage: 'Save',
         description: 'Button text for save the changes',
+      }),
+      GENERATE: intl.formatMessage({
+        defaultMessage: 'Generate',
+        description: 'Button text for generate the map',
       }),
       UNDO: intl.formatMessage({
         defaultMessage: 'Undo',
@@ -169,122 +139,68 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
     [intl]
   );
 
+  const farGroupStyles = useStyles();
   const bothSchemasDefined = sourceSchema && targetSchema;
 
-  const items: ICommandBarItemProps[] = useMemo(
-    () => [
-      {
-        key: 'save',
-        text: Resources.SAVE,
-        ariaLabel: Resources.SAVE,
-        iconProps: { iconName: 'Save' },
-        onClick: onSaveClick,
-        disabled: !bothSchemasDefined || !isStateDirty,
-        buttonStyles: cmdBarButtonStyles,
-        ...cmdBarItemBgStyles,
-      },
-      {
-        key: 'undo',
-        text: Resources.UNDO,
-        ariaLabel: Resources.UNDO,
-        iconProps: { iconName: 'Undo' },
-        onClick: onUndoClick,
-        disabled: undoStack.length === 0,
-        buttonStyles: cmdBarButtonStyles,
-        ...cmdBarItemBgStyles,
-      },
-      {
-        key: 'redo',
-        text: Resources.REDO,
-        ariaLabel: Resources.REDO,
-        iconProps: { iconName: 'Redo' },
-        onClick: onRedoClick,
-        disabled: redoStack.length === 0,
-        buttonStyles: cmdBarButtonStyles,
-        ...cmdBarItemBgStyles,
-      },
-      {
-        key: 'discard',
-        text: Resources.DISCARD,
-        ariaLabel: Resources.DISCARD,
-        iconProps: { iconName: 'Cancel' },
-        onClick: triggerDiscardWarningModal,
-        disabled: !isStateDirty,
-        buttonStyles: cmdBarButtonStyles,
-        ...cmdBarItemBgStyles,
-      },
-      {
-        ...divider,
-        key: 'discard-test-divider',
-        ariaLabel: Resources.DIVIDER,
-      },
-      {
-        key: 'test',
-        text: Resources.RUN_TEST,
-        ariaLabel: Resources.RUN_TEST,
-        iconProps: { iconName: 'Play' },
-        onClick: onTestClick,
-        disabled: !xsltFilename,
-        buttonStyles: cmdBarButtonStyles,
-        ...cmdBarItemBgStyles,
-      },
-      {
-        key: 'overview',
-        text: showGlobalView ? Resources.MAP_OVERVIEW : Resources.GLOBAL_VIEW,
-        ariaLabel: showGlobalView ? Resources.MAP_OVERVIEW : Resources.GLOBAL_VIEW,
-        iconProps: { iconName: 'Relationship' },
-        onClick: () => setShowGlobalView(!showGlobalView),
-        disabled: !showMapOverview || !bothSchemasDefined,
-        buttonStyles: cmdBarButtonStyles,
-        ...cmdBarItemBgStyles,
-      },
-      {
-        ...divider,
-        key: 'test-config-divider',
-        ariaLabel: Resources.DIVIDER,
-      },
-      {
-        key: 'configuration',
-        text: Resources.CONFIGURATION,
-        ariaLabel: Resources.CONFIGURATION,
-        iconProps: { iconName: 'Settings' },
-        onClick: () => {
-          dispatch(openDefaultConfigPanelView());
+  return (
+    <Toolbar size="medium" aria-label={Resources.COMMAND_BAR_ARIA} className={farGroupStyles.toolbar}>
+      <ToolbarGroup>
+        <ToolbarButton
+          aria-label={Resources.SAVE}
+          icon={<Save20Regular />}
+          disabled={!bothSchemasDefined || !isStateDirty}
+          onClick={onSaveClick}
+          className={farGroupStyles.button}
+        >
+          {Resources.SAVE}
+        </ToolbarButton>
+        <ToolbarButton aria-label={Resources.UNDO} icon={<ArrowUndo20Regular />} disabled={undoStack.length === 0} onClick={onUndoClick}>
+          {Resources.UNDO}
+        </ToolbarButton>
+        <ToolbarButton aria-label={Resources.REDO} icon={<ArrowRedo20Regular />} disabled={redoStack.length === 0} onClick={onRedoClick}>
+          {Resources.REDO}
+        </ToolbarButton>
+        <ToolbarButton
+          aria-label={Resources.DISCARD}
+          icon={<Dismiss20Regular />}
+          disabled={!isStateDirty}
+          onClick={triggerDiscardWarningModal}
+        >
+          {Resources.DISCARD}
+        </ToolbarButton>
+        <ToolbarDivider />
+        <ToolbarButton aria-label={Resources.RUN_TEST} icon={<Play20Regular />} disabled={!xsltFilename} onClick={onTestClick}>
+          {Resources.RUN_TEST}
+        </ToolbarButton>
+        <ToolbarButton
+          aria-label={showGlobalView ? Resources.MAP_OVERVIEW : Resources.GLOBAL_VIEW}
+          icon={<OrganizationHorizontal20Regular />}
+          disabled={!showMapOverview || !bothSchemasDefined}
+          onClick={() => setShowGlobalView(!showGlobalView)}
+        >
+          {showGlobalView ? Resources.MAP_OVERVIEW : Resources.GLOBAL_VIEW}
+        </ToolbarButton>
+        <ToolbarDivider />
+        <ToolbarButton
+          aria-label={Resources.CONFIGURATION}
+          icon={<Settings20Regular />}
+          disabled={!showMapOverview || !bothSchemasDefined}
+          onClick={() => {
+            dispatch(openDefaultConfigPanelView());
 
-          LogService.log(LogCategory.DefaultConfigView, 'openOrCloseConfigPanel', {
-            message: 'Opened configuration panel',
-          });
-        },
-        buttonStyles: cmdBarButtonStyles,
-        ...cmdBarItemBgStyles,
-      },
-    ],
-    [
-      Resources.SAVE,
-      Resources.UNDO,
-      Resources.REDO,
-      Resources.DISCARD,
-      Resources.DIVIDER,
-      Resources.RUN_TEST,
-      Resources.CONFIGURATION,
-      Resources.MAP_OVERVIEW,
-      Resources.GLOBAL_VIEW,
-      onSaveClick,
-      bothSchemasDefined,
-      isStateDirty,
-      onUndoClick,
-      undoStack.length,
-      onRedoClick,
-      redoStack.length,
-      triggerDiscardWarningModal,
-      onTestClick,
-      xsltFilename,
-      showMapOverview,
-      showGlobalView,
-      setShowGlobalView,
-      dispatch,
-    ]
+            LogService.log(LogCategory.DefaultConfigView, 'openOrCloseConfigPanel', {
+              message: 'Opened configuration panel',
+            });
+          }}
+        >
+          {Resources.CONFIGURATION}
+        </ToolbarButton>
+      </ToolbarGroup>
+      <ToolbarGroup style={{ marginRight: '40px' }}>
+        <ToolbarButton aria-label={Resources.GENERATE} appearance="primary" disabled={!bothSchemasDefined} onClick={onGenerateClick}>
+          {Resources.GENERATE}
+        </ToolbarButton>
+      </ToolbarGroup>
+    </Toolbar>
   );
-
-  return <CommandBar items={items} ariaLabel="Use left and right arrow keys to navigate between commands" styles={cmdBarStyles} />;
 };
