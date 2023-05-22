@@ -267,9 +267,10 @@ const ParameterSection = ({
   const getValueSegmentFromToken = async (
     parameterId: string,
     token: OutputToken,
-    addImplicitForeachIfNeeded: boolean
+    addImplicitForeachIfNeeded: boolean,
+    addLatestActionName: boolean
   ): Promise<ValueSegment> => {
-    return createValueSegmentFromToken(nodeId, parameterId, token, addImplicitForeachIfNeeded, rootState, dispatch);
+    return createValueSegmentFromToken(nodeId, parameterId, token, addImplicitForeachIfNeeded, addLatestActionName, rootState, dispatch);
   };
 
   const getTokenPicker = (
@@ -317,7 +318,7 @@ const ParameterSection = ({
         tokenPickerFocused={tokenPickerClicked}
         initialMode={tokenPickerMode}
         getValueSegmentFromToken={(token: OutputToken, addImplicitForeach: boolean) =>
-          getValueSegmentFromToken(parameterId, token, addImplicitForeach)
+          getValueSegmentFromToken(parameterId, token, addImplicitForeach, !!isCodeEditor)
         }
         tokenClickedCallback={tokenClickedCallback}
         closeTokenPicker={closeTokenPicker}
