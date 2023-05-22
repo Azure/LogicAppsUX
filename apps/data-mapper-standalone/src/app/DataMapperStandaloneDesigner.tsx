@@ -33,10 +33,12 @@ export const DataMapperStandaloneDesigner = () => {
 
   const [functionDisplay, setFunctionDisplayExpanded] = useState<boolean>(true);
 
-  const saveStateCall = (dataMapDefinition: string, dataMapXslt: string) => {
-    // We don't need to persist this to telemetry
+  const saveMapDefinitionCall = (dataMapDefinition: string) => {
     console.log('Map Definition\n===============');
     console.log(dataMapDefinition);
+  };
+
+  const saveXsltCall = (dataMapXslt: string) => {
     console.log('\nXSLT\n===============');
     console.log(dataMapXslt);
   };
@@ -87,7 +89,8 @@ export const DataMapperStandaloneDesigner = () => {
             theme={theme}
           >
             <DataMapperDesigner
-              saveStateCall={saveStateCall}
+              saveMapDefinitionCall={saveMapDefinitionCall}
+              saveXsltCall={saveXsltCall}
               setFunctionDisplayExpanded={setFunctionDisplayExpanded}
               useExpandedFunctionCards={functionDisplay}
             />
