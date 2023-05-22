@@ -16,7 +16,7 @@ Extension toolbar buttons have now migrated to the Workspace section.
 
 ## Known issues
 
-You can see known issues [here](https://github.com/Azure/LogicAppsUX/issues).
+For known issues, see [GitHub issues - Azure Logic Apps](https://github.com/Azure/LogicAppsUX/issues).
 
 ## Providing feedback
 
