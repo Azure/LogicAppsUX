@@ -12,6 +12,7 @@ import {
   isString,
   getCallbackUrl,
   isNullOrUndefined,
+  isBoolean,
 } from '@microsoft/utils-logic-apps';
 
 export interface RunServiceOptions {
@@ -246,7 +247,7 @@ export class StandardRunService implements IRunService {
     }
 
     const dictionaryResponse =
-      isString(response) || isNumber(response as any) || Array.isArray(response)
+      isString(response) || isNumber(response as any) || Array.isArray(response) || isBoolean(response)
         ? { [isInput ? 'Inputs' : 'Outputs']: response }
         : response;
 
