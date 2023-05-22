@@ -16,7 +16,6 @@ export class DesignerConfig extends AzureWizardPromptStep<IProjectWizardContext>
    */
   public async prompt(context: IProjectWizardContext): Promise<void> {
     const folderPath = context.logicAppFolderPath;
-
     // Create the necessary files and folders for VS Code under the Logic App folder path
     await fs.ensureDir(folderPath);
     const configPath: string = path.join(folderPath, 'workflow-designtime');
@@ -44,9 +43,7 @@ export class DesignerConfig extends AzureWizardPromptStep<IProjectWizardContext>
       extensions: {
         workflow: {
           settings: {
-            'Runtime.WorkflowOperationDiscoveryHostMode': 'true',
             'Runtime.IsInvokeFunctionActionEnabled': 'true',
-            AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
           },
         },
       },
@@ -60,12 +57,13 @@ export class DesignerConfig extends AzureWizardPromptStep<IProjectWizardContext>
    */
   private async generateLocalSettingsJson(folderPath: string): Promise<void> {
     const filePath = path.join(folderPath, 'local.settings.json');
+    const designerProjPath: string = folderPath;
     const content = {
       IsEncrypted: false,
       Values: {
         AzureWebJobsSecretStorageType: 'Files',
         FUNCTIONS_WORKER_RUNTIME: 'dotnet',
-        ProjectDirectoryPath: path.join(folderPath),
+        ProjectDirectoryPath: designerProjPath,
       },
     };
     await fs.writeJson(filePath, content, { spaces: 2 });

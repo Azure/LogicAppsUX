@@ -42,7 +42,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
   constructor(context: IActionContext, node: Uri) {
     const workflowName = path.basename(path.dirname(node.fsPath));
-    const apiVersion = '2019-10-01-edge-preview';
+    const apiVersion = '2018-11-01';
     const panelName = `${workspace.name}-${workflowName}`;
     const panelGroupKey = ext.webViewKey.designerLocal;
 
