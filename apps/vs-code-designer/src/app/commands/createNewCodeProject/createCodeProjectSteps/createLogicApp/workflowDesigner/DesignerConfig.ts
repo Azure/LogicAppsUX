@@ -46,6 +46,7 @@ export class DesignerConfig extends AzureWizardPromptStep<IProjectWizardContext>
           settings: {
             'Runtime.WorkflowOperationDiscoveryHostMode': 'true',
             'Runtime.IsInvokeFunctionActionEnabled': 'true',
+            AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
           },
         },
       },

@@ -26,7 +26,7 @@ export class OpenFolderStepCodeProject extends AzureWizardExecuteStep<IProjectWi
     const workspaceName = context.workspaceName;
 
     // Check if .code-workspace file exists in project path
-    const workspaceFilePath = path.join(context.projectPath, workspaceName, '.code-workspace');
+    const workspaceFilePath = path.join(context.workspacePath, `${workspaceName}.code-workspace`);
     if (fs.existsSync(workspaceFilePath)) {
       uri = Uri.file(workspaceFilePath);
     } else {
