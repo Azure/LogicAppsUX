@@ -2,6 +2,7 @@ import { inputsResponse, outputsResponse } from '../__test__/__mocks__/monitorin
 import type { HttpRequestOptions, IHttpClient } from '../httpClient';
 import type { IRunService } from '../run';
 import type { CallbackInfo } from '../workflow';
+import { isNumber } from '@microsoft/parsers-logic-apps';
 import type { ArmResources, BoundParameters, ContentLink, LogicAppsV2, Run, Runs } from '@microsoft/utils-logic-apps';
 import {
   isCallbackInfoWithRelativePath,
@@ -10,6 +11,8 @@ import {
   UnsupportedException,
   isString,
   getCallbackUrl,
+  isNullOrUndefined,
+  isBoolean,
 } from '@microsoft/utils-logic-apps';
 
 export interface RunServiceOptions {
@@ -239,11 +242,14 @@ export class StandardRunService implements IRunService {
    * @returns {BoundParameters} List of parametes.
    */
   parseActionLink(response: Record<string, any>, isInput: boolean): BoundParameters {
-    if (!response) {
+    if (isNullOrUndefined(response)) {
       return response;
     }
 
-    const dictionaryResponse = isString(response) ? { [isInput ? 'Inputs' : 'Outputs']: response } : response;
+    const dictionaryResponse =
+      isString(response) || isNumber(response as any) || Array.isArray(response) || isBoolean(response)
+        ? { [isInput ? 'Inputs' : 'Outputs']: response }
+        : response;
 
     return Object.keys(dictionaryResponse).reduce((prev, current) => {
       return { ...prev, [current]: { displayName: current, value: dictionaryResponse[current] } };
