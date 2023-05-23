@@ -18,13 +18,10 @@ export async function validateDotNetSDKIsLatest(): Promise<void> {
     context.errorHandling.suppressDisplay = true;
     context.telemetry.properties.isActivationEvent = 'true';
 
-    const showMultiDotNetSDKWarningKey = 'showMultiDotNetSDKWarning';
-    const showMultiDotNetSDKsWarning = !!getWorkspaceSetting<boolean>(showMultiDotNetSDKWarningKey);
-
     const showDotNetSDKWarningKey = 'showDotNetSDKWarning';
     const showDotNetSDKWarning = !!getWorkspaceSetting<boolean>(showDotNetSDKWarningKey);
 
-    if (showDotNetSDKWarning || showMultiDotNetSDKsWarning) {
+    if (showDotNetSDKWarning) {
       const packageManagers: PackageManager[] = await getDotNetPackageManager(context, true /* isDotNetSDKInstalled */);
       let packageManager: PackageManager;
 

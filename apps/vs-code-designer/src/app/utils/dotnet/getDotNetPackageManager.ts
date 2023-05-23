@@ -21,7 +21,8 @@ export async function getDotNetPackageManager(context: IActionContext, isDotNetS
 
   switch (process.platform) {
     case Platform.linux:
-      // https://learn.microsoft.com/en-us/dotnet/core/install/linux-scripted-manual
+      await executeCommand(undefined, undefined, 'sudo', 'apt-get', '--help');
+      result.push(PackageManager.aptitude);
       break;
     case Platform.mac:
       if (await hasBrew(isDotNetSDKInstalled, getDotNetSDKBrewPackageName())) {

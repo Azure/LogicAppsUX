@@ -35,6 +35,7 @@ export const dotNetSDK = 'dotNetSDK';
 export const dotNetPackageName = 'Microsoft.DotNet.SDK';
 export const dotNetAptPackageName = 'dotnet-sdk';
 export const dotNetSDKMajorVersion = 6;
+export const dotNetSDKLatestVersion = '6.0.408';
 
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
@@ -186,6 +187,7 @@ export enum PackageManager {
   npm = 'npm',
   brew = 'brew',
   winget = 'winget',
+  aptitude = 'apt-get',
 }
 
 // Operating System Platforms

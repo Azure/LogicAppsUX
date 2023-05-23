@@ -2,7 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { DotnetVersion, PackageManager, dotNetPackageName, dotNetSDKMajorVersion, dotNetSDKVersionSetting } from '../../../constants';
+import {
+  DotnetVersion,
+  PackageManager,
+  dotNetPackageName,
+  dotNetSDKLatestVersion,
+  dotNetSDKMajorVersion,
+  dotNetSDKVersionSetting,
+} from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { tryGetMajorVersion } from '../funcCoreTools/funcVersion';
@@ -116,6 +123,11 @@ export async function getNewestDotNetSDKVersion(
           context.telemetry.properties.newestDotNetSDKVersion = match[0];
           return match[0];
         }
+        break;
+
+      case PackageManager.brew:
+      case PackageManager.aptitude:
+        return dotNetSDKLatestVersion;
     }
   } catch (error) {
     context.telemetry.properties.latestRuntimeError = parseError(error).message;
