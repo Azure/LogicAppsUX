@@ -117,7 +117,7 @@ export const FunctionList = () => {
 
         // Create dictionary for Function Categories
         Object.values(FunctionCategory).forEach((category) => {
-          const categoryItem = {} as FunctionDataTreeItem;
+          const categoryItem = { isExpanded: false } as FunctionDataTreeItem;
           categoryItem.children = [];
           categoryItem.key = `${functionCategoryItemKeyPrefix}${category}`;
 

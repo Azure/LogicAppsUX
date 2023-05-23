@@ -32,12 +32,11 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
   const styles = useTreeStyles();
   const contextMenu = useCardContextMenu();
 
-  const [isExpanded, { toggle: toggleExpanded }] = useBoolean(level === 0);
+  const [isNodeExpanded, { toggle: toggleExpanded }] = useBoolean(node.isExpanded !== undefined ? node.isExpanded : level === 0);
   const [isHovered, { setFalse: setNotHovered, setTrue: setIsHovered }] = useBoolean(false);
   const [isChevronHovered, { setFalse: setChevronNotHovered, setTrue: setChevronIsHovered }] = useBoolean(false);
 
   const hasChildren = useMemo<boolean>(() => !!(node.children && node.children.length > 0), [node]);
-  const isNodeExpanded = useMemo<boolean>(() => (node.isExpanded === undefined ? isExpanded : node.isExpanded), [node, isExpanded]);
 
   const expandTreeNodeLoc = intl.formatMessage({
     defaultMessage: 'Expand tree node',
