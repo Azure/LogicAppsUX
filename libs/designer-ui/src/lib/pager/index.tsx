@@ -1,6 +1,6 @@
 import type { IIconProps, IIconStyles, ITextFieldStyles } from '@fluentui/react';
 import { Icon, IconButton, Text, TextField, TooltipHost } from '@fluentui/react';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
 export type PageChangeEventHandler = (e: PageChangeEventArgs) => void;
@@ -71,6 +71,10 @@ export const Pager: React.FC<PagerProps> = ({
   onChange,
 }) => {
   const [current, setCurrent] = React.useState(initialCurrent);
+
+  useEffect(() => {
+    setCurrent(initialCurrent);
+  }, [initialCurrent]);
 
   let failedMax = 0,
     failedMin = 0;
