@@ -2287,12 +2287,6 @@
       "value": "Add an action"
     }
   ],
-  "EV9iRu": [
-    {
-      "type": 0,
-      "value": "未能保存。"
-    }
-  ],
   "EYqGxA": [
     {
       "type": 0,
@@ -5528,6 +5522,12 @@
       "value": "Schema is missing required inputs"
     }
   ],
+  "dBxX0M": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
+    }
+  ],
   "dDYCuU": [
     {
       "type": 0,
@@ -5544,6 +5544,12 @@
     {
       "type": 0,
       "value": "更新"
+    }
+  ],
+  "dPa7+6": [
+    {
+      "type": 0,
+      "value": "Generate"
     }
   ],
   "dQmi91": [
@@ -5660,6 +5666,12 @@
     {
       "type": 0,
       "value": "Clear"
+    }
+  ],
+  "e9bIKh": [
+    {
+      "type": 0,
+      "value": "Failed to generate XSLT."
     }
   ],
   "eFet4K": [
@@ -7380,6 +7392,12 @@
     {
       "type": 0,
       "value": "返回值的 URI 编码表示形式"
+    }
+  ],
+  "rd6fai": [
+    {
+      "type": 0,
+      "value": "Use left and right arrow keys to navigate between commands"
     }
   ],
   "rsdJcV": [

@@ -2050,7 +2050,7 @@ async function tryGetInputDynamicSchema(
     );
     return schema;
   } catch (error: any) {
-    if (!dependencyInfo.parameter?.required) {
+    if (!dependencyInfo.parameter?.required && !(dependencyInfo.parameter as InputParameter).value) {
       throw error;
     }
 
