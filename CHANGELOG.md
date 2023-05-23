@@ -1,4 +1,16 @@
 # Logic Apps Designer
+### [2.15.33](https://github.com/Azure/LogicAppsUX/compare/v2.15.32...v2.15.33) (2023-05-23)
+
+
+### Bug Fixes
+
+* **designer:** Add empty schema when dynamic input fails and has value in definition ([#2479](https://github.com/Azure/LogicAppsUX/issues/2479)) ([e164489](https://github.com/Azure/LogicAppsUX/commit/e1644893bc6c37e253779b21f4a4d17f94ac2680))
+* **designer:** Do not fail loading outputs when outputs do not have array schema or no schema at all ([#2510](https://github.com/Azure/LogicAppsUX/issues/2510)) ([b0d9c83](https://github.com/Azure/LogicAppsUX/commit/b0d9c833aab8e455e4183c5aa63b00a4d51a9c23))
+* **designer:** Fixed connections with non-optional gateway parameters ([#2523](https://github.com/Azure/LogicAppsUX/issues/2523)) ([b9d80f0](https://github.com/Azure/LogicAppsUX/commit/b9d80f0d16e68f8c5e30a419afa22768d9d547e6))
+* **designer:** Mark dependent parameters as valid for even output token references for dynamic call ([#2522](https://github.com/Azure/LogicAppsUX/issues/2522)) ([808b753](https://github.com/Azure/LogicAppsUX/commit/808b75348e55502fe7d80430fed4ea426660464e))
+* **designer:** multiline support for ssh ([#2516](https://github.com/Azure/LogicAppsUX/issues/2516)) ([e94895c](https://github.com/Azure/LogicAppsUX/commit/e94895c1268aba58504c36746806d010997b51dd))
+* **designer:** SplitOn setting not showing up settings even on enabled ([#2464](https://github.com/Azure/LogicAppsUX/issues/2464)) ([0feadb7](https://github.com/Azure/LogicAppsUX/commit/0feadb73b817531a8d92f9f16eb29f8f3aed50eb))
+
 ### [2.15.32](https://github.com/Azure/LogicAppsUX/compare/v2.15.31...v2.15.32) (2023-05-19)
 
 
