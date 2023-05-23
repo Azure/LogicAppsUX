@@ -84,6 +84,7 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
 
     inputComponent = (
       <TextField
+        styles={{ fieldGroup: { minHeight: '24px' } }}
         id={parameterKey}
         className="connection-parameter-input"
         disabled={isLoading}
@@ -93,6 +94,10 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
         ariaLabel={description}
         placeholder={description}
         value={value}
+        multiline={type !== 'password'}
+        autoAdjustHeight
+        resizable={false}
+        rows={1}
         onChange={(e: any, newVal?: string) => setValue(newVal)}
       />
     );
