@@ -1,4 +1,34 @@
 # Logic Apps Designer
+## [2.18.0](https://github.com/Azure/LogicAppsUX/compare/v2.17.0...v2.18.0) (2023-05-22)
+
+
+### Features
+
+* **Data Mapper:** Separate the save and generate command ([#2476](https://github.com/Azure/LogicAppsUX/issues/2476)) ([e1fd8bc](https://github.com/Azure/LogicAppsUX/commit/e1fd8bc4b98f8eb799c79a637e3effe823e3f2f8))
+* **vscode:** Add APP_KIND and ProjectDirectoryPath values to settings file ([#2465](https://github.com/Azure/LogicAppsUX/issues/2465)) ([f850f55](https://github.com/Azure/LogicAppsUX/commit/f850f559f1358974cd62a844b381b5055599459a))
+* **vscode:** Update readme with resources tab implementation ([#2466](https://github.com/Azure/LogicAppsUX/issues/2466)) ([7d8a1d6](https://github.com/Azure/LogicAppsUX/commit/7d8a1d6e0c61bc6576068b95920d236688651ebd))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Fix custom values strings deserializing ([#2432](https://github.com/Azure/LogicAppsUX/issues/2432)) ([8db277e](https://github.com/Azure/LogicAppsUX/commit/8db277e0af999b3c326b050b30305e6c851b1f39))
+* **Data Mapper:** Stop refs for identical items ([#2428](https://github.com/Azure/LogicAppsUX/issues/2428)) ([daada4a](https://github.com/Azure/LogicAppsUX/commit/daada4a083befa07277cc28379e41219f04c556d))
+* **designer:** Add empty schema when dynamic input fails and has value in definition ([#2479](https://github.com/Azure/LogicAppsUX/issues/2479)) ([a648c17](https://github.com/Azure/LogicAppsUX/commit/a648c17982fd86efa1e08ab7b95028c8040ad631))
+* **designer:** Fix issue where expanding or collapsing conditions would open panel ([#2468](https://github.com/Azure/LogicAppsUX/issues/2468)) ([e543927](https://github.com/Azure/LogicAppsUX/commit/e54392768790c7172135bb1d7241f5ff465d9cbd))
+* **designer:** Fixed connections passing empty non-required parameters ([#2435](https://github.com/Azure/LogicAppsUX/issues/2435)) ([2ce2a73](https://github.com/Azure/LogicAppsUX/commit/2ce2a73a7c07f37bbbe9a0a571793310d66107db))
+* **designer:** Fixing the output names when they have encoded properties ([#2438](https://github.com/Azure/LogicAppsUX/issues/2438)) ([240a900](https://github.com/Azure/LogicAppsUX/commit/240a9008dbad082541f9c3aac47db1f3240e7af5))
+* **designer:** Generate relative path parameters properties correctly ([#2450](https://github.com/Azure/LogicAppsUX/issues/2450)) ([b96054e](https://github.com/Azure/LogicAppsUX/commit/b96054ef1c6cc93e937903fe4891750ca6d831f2))
+* **designer:** Instead of converting casted segments to literal, use segments intead ([#2469](https://github.com/Azure/LogicAppsUX/issues/2469)) ([d187e0d](https://github.com/Azure/LogicAppsUX/commit/d187e0df13a792de74b7f250a770cbd5a8bcce09))
+* **designer:** Properly catching invalid brand color values ([#2456](https://github.com/Azure/LogicAppsUX/issues/2456)) ([3957936](https://github.com/Azure/LogicAppsUX/commit/39579367750a1a20c00d63395499a3318a8a85f5))
+* **designer:** Resolve parameters and appsettings tokens during parameter evaluation in dynamic calls ([#2434](https://github.com/Azure/LogicAppsUX/issues/2434)) ([fd520c3](https://github.com/Azure/LogicAppsUX/commit/fd520c3c86fa7d7ffa46270fbd559204f7173871))
+* **designer:** segment values are not showing properly ([#2463](https://github.com/Azure/LogicAppsUX/issues/2463)) ([c2a3780](https://github.com/Azure/LogicAppsUX/commit/c2a3780237e8197186431a2eb65824148409830d))
+* **designer:** Shows Tokenpicker on Triggers ([#2442](https://github.com/Azure/LogicAppsUX/issues/2442)) ([a58bf10](https://github.com/Azure/LogicAppsUX/commit/a58bf10b490e6d55581494d7e1c634f230621a75))
+* **designer:** Special case array actions being converted to Object on initializing, then breaking Runtime on Save ([#2409](https://github.com/Azure/LogicAppsUX/issues/2409)) ([9923308](https://github.com/Azure/LogicAppsUX/commit/9923308050be9803fea1e049590c082cfb6ddca1))
+* **designer:** SplitOn setting not showing up settings even on enabled ([#2464](https://github.com/Azure/LogicAppsUX/issues/2464)) ([7431d7d](https://github.com/Azure/LogicAppsUX/commit/7431d7db8717a87fed9db11fc75ec0b246d51b85))
+* **designer:** Updating latest token action name for code editors ([#2467](https://github.com/Azure/LogicAppsUX/issues/2467)) ([d5f0059](https://github.com/Azure/LogicAppsUX/commit/d5f005941f3a6b5d4988fd62644ecceea2373a28))
+* **designer:** Workflow crashing when getting outputs of schema with multiple types ([#2454](https://github.com/Azure/LogicAppsUX/issues/2454)) ([077021c](https://github.com/Azure/LogicAppsUX/commit/077021ca329c8134d8a928d214aca1c008e36dcb))
+* **desinger:** Fixing deserialiation when operation cannot be loaded for triggers ([#2458](https://github.com/Azure/LogicAppsUX/issues/2458)) ([33bb52d](https://github.com/Azure/LogicAppsUX/commit/33bb52db1a64e387385fcad181160a4122a642f5))
+
 ## [2.17.0](https://github.com/Azure/LogicAppsUX/compare/v2.16.0...v2.17.0) (2023-05-18)
 
 
