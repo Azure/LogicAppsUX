@@ -2252,10 +2252,7 @@ export function parameterHasValue(parameter: ParameterInfo): boolean {
 }
 
 export function parameterValidForDynamicCall(parameter: ParameterInfo): boolean {
-  const hasOutputTokenSegment = parameter.value.some(
-    (segment) => segment.type === ValueSegmentType.TOKEN && segment.token?.tokenType !== TokenType.PARAMETER
-  );
-  return parameter.required ? parameterHasValue(parameter) && !hasOutputTokenSegment : !hasOutputTokenSegment;
+  return !parameter.required || parameterHasValue(parameter);
 }
 
 export function getGroupAndParameterFromParameterKey(
