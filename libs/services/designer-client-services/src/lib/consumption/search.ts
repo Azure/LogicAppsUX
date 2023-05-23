@@ -32,8 +32,9 @@ export class ConsumptionSearchService extends BaseSearchService {
         'api-version': apiVersion,
         $filter: `properties/trigger eq null and type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
       };
-      const response = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters, 1);
-      return response;
+      // const response = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters, 1);
+      const { value } = await this.getAzureResourceByPage(uri, queryParameters, page, 100);
+      return value;
     } catch (error) {
       return [];
     }
