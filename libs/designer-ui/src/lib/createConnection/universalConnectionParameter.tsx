@@ -88,6 +88,9 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
         id={parameterKey}
         className="connection-parameter-input"
         disabled={isLoading}
+        autoComplete="off"
+        type={type}
+        canRevealPassword
         ariaLabel={description}
         placeholder={description}
         value={value}
