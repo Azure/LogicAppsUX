@@ -12,7 +12,7 @@ import { initializeParameters } from '../../state/workflowparameters/workflowpar
 import type { RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
-import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedManifestForSpiltOn, toOutputInfo } from '../../utils/outputs';
+import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedManifestForSplitOn, toOutputInfo } from '../../utils/outputs';
 import {
   addRecurrenceParametersInGroup,
   getAllInputParameters,
@@ -188,7 +188,7 @@ export const getOutputParametersFromManifest = (
       };
     }, {});
 
-    manifestToParse = getUpdatedManifestForSpiltOn(manifestToParse, splitOnValue);
+    manifestToParse = getUpdatedManifestForSplitOn(manifestToParse, splitOnValue);
   }
 
   const operationOutputs = new ManifestParser(manifestToParse).getOutputParameters(
