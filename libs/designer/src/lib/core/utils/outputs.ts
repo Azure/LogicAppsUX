@@ -102,7 +102,7 @@ export const removeAliasingKeyRedundancies = (openAPIkey: string): string => {
   return pathSegments.join('.');
 };
 
-export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitOn: string | undefined): OperationManifest => {
+export const getUpdatedManifestForSplitOn = (manifest: OperationManifest, splitOn: string | undefined): OperationManifest => {
   const intl = getIntl();
   const invalidSplitOn = intl.formatMessage(
     {
@@ -156,6 +156,14 @@ export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitO
       }
     }
 
+    if (manifestSection.type === undefined) {
+      updatedManifest.properties.outputs = {
+        properties: { ...updatedManifest.properties.outputs.properties, body: {} },
+        type: Constants.SWAGGER.TYPE.OBJECT,
+      };
+      return updatedManifest;
+    }
+
     if (manifestSection.type !== Constants.SWAGGER.TYPE.ARRAY) {
       throw new AssertionException(
         AssertionErrorCode.INVALID_SPLITON,
@@ -175,6 +183,7 @@ export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitO
 
     updatedManifest.properties.outputs = {
       properties: {
+        ...updatedManifest.properties.outputs.properties,
         body: updatedManifestItems,
       },
       type: Constants.SWAGGER.TYPE.OBJECT,
