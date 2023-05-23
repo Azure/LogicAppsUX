@@ -5,7 +5,7 @@ import { SchemaFileFormat, SchemaType, directAccessPseudoFunction, ifPseudoFunct
 import type { ConnectionDictionary } from '../../models/Connection';
 import { applyConnectionValue } from '../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
-import { convertSchemaToSchemaExtended, flattenSchemaIntoSortArray } from '../../utils/Schema.Utils';
+import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { generateMapDefinitionBody, generateMapDefinitionHeader } from '../MapDefinitionSerializer';
 import {
   comprehensiveSourceSchema,
@@ -47,8 +47,6 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
       const targetSchema: Schema = targetMockSchema;
       const extendedTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(targetSchema);
 
-      const targetSchemaSortArray = flattenSchemaIntoSortArray(extendedTargetSchema.schemaTreeRoot);
-
       it('Generates body with passthrough', () => {
         const sourceNode = extendedSourceSchema.schemaTreeRoot.children[0];
         const targetNode = extendedTargetSchema.schemaTreeRoot.children[0];
@@ -75,7 +73,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:Root']);
@@ -110,7 +108,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           input: '"CustomValue"',
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:Root']);
@@ -157,7 +155,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:Root']);
@@ -225,7 +223,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:Root']);
@@ -318,7 +316,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:Root']);
@@ -424,7 +422,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:Root']);
@@ -495,7 +493,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:Root']);
@@ -562,7 +560,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:Root']);
@@ -647,7 +645,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:TargetSchemaRoot']);
@@ -756,7 +754,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:TargetSchemaRoot']);
@@ -864,7 +862,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:Root']);
@@ -946,7 +944,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:Root']);
@@ -1018,7 +1016,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:Root']);
@@ -1118,7 +1116,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:Root']);
@@ -1233,7 +1231,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:TargetSchemaRoot']);
@@ -1359,7 +1357,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:Root']);
@@ -1488,7 +1486,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:Root']);
@@ -1582,7 +1580,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:Root']);
@@ -1738,7 +1736,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           input: '2',
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:Root']);
@@ -1897,7 +1895,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:Root']);
@@ -1966,8 +1964,6 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
       const targetSchema: Schema = targetMockJsonSchema;
       const extendedTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(targetSchema);
 
-      const targetSchemaSortArray = flattenSchemaIntoSortArray(extendedTargetSchema.schemaTreeRoot);
-
       it('Generates body with passthrough', () => {
         const rootSourceNode = extendedSourceSchema.schemaTreeRoot;
         const rootTargetNode = extendedTargetSchema.schemaTreeRoot;
@@ -2001,7 +1997,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootObject = mapDefinition['root'] as MapDefinitionEntry;
@@ -2068,7 +2064,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootObject = mapDefinition['root'] as MapDefinitionEntry;
@@ -2152,7 +2148,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootObject = mapDefinition['root'] as MapDefinitionEntry;
@@ -2237,7 +2233,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootObject = mapDefinition['root'] as MapDefinitionEntry;
@@ -2313,7 +2309,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootObject = mapDefinition['root'] as MapDefinitionEntry;
@@ -2402,7 +2398,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootObject = mapDefinition['root'] as MapDefinitionEntry;
@@ -2485,7 +2481,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootObject = mapDefinition['root'] as MapDefinitionEntry;
@@ -2567,7 +2563,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootObject = mapDefinition['root'] as MapDefinitionEntry;
@@ -2658,7 +2654,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootObject = mapDefinition['root'] as MapDefinitionEntry;
@@ -2734,7 +2730,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootObject = mapDefinition['root'] as MapDefinitionEntry;
@@ -2821,7 +2817,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootObject = mapDefinition['root'] as MapDefinitionEntry;
@@ -2930,7 +2926,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootObject = mapDefinition['root'] as MapDefinitionEntry;
@@ -3039,7 +3035,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootObject = mapDefinition['root'] as MapDefinitionEntry;
@@ -3149,7 +3145,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootObject = mapDefinition['root'] as MapDefinitionEntry;
@@ -3268,7 +3264,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootObject = mapDefinition['root'] as MapDefinitionEntry;
@@ -3349,7 +3345,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootObject = mapDefinition['root'] as MapDefinitionEntry;
@@ -3491,7 +3487,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootObject = mapDefinition['root'] as MapDefinitionEntry;
@@ -3600,7 +3596,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           },
         });
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootObject = mapDefinition['root'] as MapDefinitionEntry;
