@@ -14,6 +14,8 @@ import type {
   UpdateParametersPayload,
 } from '../../state/operation/operationMetadataSlice';
 import {
+  ErrorLevel,
+  updateErrorDetails,
   updateActionMetadata,
   removeParameterValidationError,
   updateParameterValidation,
@@ -26,7 +28,6 @@ import type { VariableDeclaration } from '../../state/tokensSlice';
 import type { NodesMetadata, Operations as Actions } from '../../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
-import { initializeArrayViewModel } from '../editors/array';
 import { getAllParentsForNode, getFirstParentOfType, getTriggerNodeId } from '../graph';
 import { getParentArrayKey, isForeachActionNameForLoopsource, parseForeach } from '../loops';
 import { isOneOf } from '../openapi/schema';
@@ -64,9 +65,11 @@ import type {
   ParameterInfo,
   RowItemProps,
   Token as SegmentToken,
+  Token,
   ValueSegment,
 } from '@microsoft/designer-ui';
 import {
+  ArrayType,
   removeQuotes,
   RowDropdownOptions,
   GroupDropdownOptions,
@@ -116,8 +119,9 @@ import {
   SegmentType,
   Visibility,
 } from '@microsoft/parsers-logic-apps';
-import type { Exception, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
+import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import {
+  createCopy,
   deleteObjectProperties,
   deleteObjectProperty,
   getObjectPropertyValue,
@@ -343,8 +347,8 @@ function hasValue(parameter: ResolvedParameter): boolean {
 export function getParameterEditorProps(
   parameter: InputParameter,
   parameterValue: ValueSegment[],
-  shouldIgnoreDefaultValue: boolean,
-  nodeMetadata: Record<string, any> | undefined
+  _shouldIgnoreDefaultValue: boolean,
+  nodeMetadata?: Record<string, any>
 ): ParameterEditorProps {
   const { dynamicValues, type, itemSchema, visibility, value, enum: schemaEnum, format } = parameter;
   let { editor, editorOptions, schema } = parameter;
@@ -352,10 +356,9 @@ export function getParameterEditorProps(
   if (!editor) {
     if (format === constants.EDITOR.HTML) {
       editor = constants.EDITOR.HTML;
-    }
-    if (type === constants.SWAGGER.TYPE.ARRAY && !!itemSchema && !equals(visibility, Visibility.Internal)) {
+    } else if (type === constants.SWAGGER.TYPE.ARRAY && !!itemSchema && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.ARRAY;
-      editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
+      editorViewModel = { ...toArrayViewModelSchema(itemSchema), uncastedValue: parameterValue };
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
     } else if ((schemaEnum || schema?.enum || schema?.[ExtensionProperties.CustomEnum]) && !equals(visibility, Visibility.Internal)) {
       editor = constants.EDITOR.COMBOBOX;
@@ -386,9 +389,6 @@ export function getParameterEditorProps(
         ...editorOptions,
         options: schemaEnumOptions,
       };
-    } else if (type === constants.SWAGGER.TYPE.ARRAY && !equals(visibility, Visibility.Internal) && schema?.itemSchema) {
-      editorViewModel = toArrayViewModel(schema);
-      editor = constants.EDITOR.ARRAY;
     } else {
       editorOptions = undefined;
     }
@@ -400,7 +400,11 @@ export function getParameterEditorProps(
     editorViewModel = toAuthenticationViewModel(value);
     editorOptions = { ...editorOptions, identity: WorkflowService().getAppIdentity?.() };
   } else if (editor === constants.EDITOR.CONDITION) {
-    editorViewModel = editorOptions?.isOldFormat ? toSimpleQueryBuilderViewModel(value) : toConditionViewModel(value);
+    editorViewModel = editorOptions?.isOldFormat
+      ? toSimpleQueryBuilderViewModel(value)
+      : editorOptions?.isHybridEditor
+      ? toHybridConditionViewModel(value)
+      : toConditionViewModel(value);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     editor = undefined;
   } else if (editor === constants.EDITOR.FILEPICKER && dynamicValues) {
@@ -444,11 +448,11 @@ const convertStringToInputParameter = (
   }
   const hasExpression = containsExpression(value);
   let newValue = value;
-  if (removeQuotesFromExpression) {
-    newValue = removeQuotes(newValue);
-  }
   if (trimExpression) {
     newValue = newValue.trim();
+  }
+  if (removeQuotesFromExpression) {
+    newValue = removeQuotes(newValue);
   }
   if (hasExpression && convertIfContainsExpression && !newValue.startsWith('@')) {
     newValue = `@${newValue}`;
@@ -462,27 +466,27 @@ const convertStringToInputParameter = (
   };
 };
 
-// Create Array Editor View Model
-const toArrayViewModel = (input: any): { schema: any } => {
-  const schema: any = destructureSchema(input.itemSchema);
-  return { schema };
+export const toArrayViewModelSchema = (schema: any): { arrayType: ArrayType; itemSchema: any; uncastedValue: undefined } => {
+  const itemSchema = parseArrayItemSchema(schema);
+  const arrayType = schema?.type === constants.SWAGGER.TYPE.OBJECT && schema.properties ? ArrayType.COMPLEX : ArrayType.SIMPLE;
+  return { arrayType, itemSchema, uncastedValue: undefined };
 };
 
-const destructureSchema = (schema: any): any => {
-  if (!schema) {
-    return;
+// Create Array Editor View Model Schema
+export const parseArrayItemSchema = (itemSchema: any, itemPath = ''): any => {
+  if (Array.isArray(itemSchema)) {
+    return itemSchema.map((item) => parseArrayItemSchema(item, itemPath));
+  } else if (itemSchema !== null && typeof itemSchema === constants.SWAGGER.TYPE.OBJECT) {
+    const result: { [key: string]: any } = { key: itemPath };
+    Object.keys(itemSchema).forEach((key) => {
+      const value = itemSchema[key];
+      const newKey = key === 'x-ms-summary' ? 'title' : key;
+      const newPath = key !== 'properties' && key !== 'items' ? (itemPath ? `${itemPath}.${key}` : key) : itemPath;
+      result[newKey] = parseArrayItemSchema(value, newPath);
+    });
+    return result;
   }
-  if (schema.type && schema.type !== 'object') {
-    return { ...schema };
-  }
-  if (schema.type === 'object' && schema.properties) {
-    return destructureSchema(schema.properties);
-  }
-  const newSchema: any = {};
-  for (const schemaItem of Object.keys(schema)) {
-    newSchema[schemaItem] = destructureSchema(schema[schemaItem]);
-  }
-  return newSchema;
+  return itemSchema;
 };
 
 // Create SimpleQueryBuilder Editor View Model
@@ -505,6 +509,45 @@ const toSimpleQueryBuilderViewModel = (input: any): { isOldFormat: boolean; item
     isOldFormat: true,
     items: { type: GroupType.ROW, operator: operation, operand1, operand2 },
   };
+};
+
+export const canConvertToComplexCondition = (input: any): boolean => {
+  if (!input) {
+    return false;
+  }
+  let inputKeys = Object.keys(input);
+  if (inputKeys.length !== 1) {
+    return false;
+  }
+  let dropdownVal = inputKeys[0];
+  if (dropdownVal === 'not') {
+    inputKeys = Object.keys(input?.['not']);
+    if (inputKeys.length !== 1) {
+      return false;
+    }
+    dropdownVal = inputKeys[0];
+  }
+  return Object.values<string>(RowDropdownOptions).includes(dropdownVal);
+};
+
+// Create HybridQueryBuilder Editor View Model
+export const toHybridConditionViewModel = (input: any): { items: GroupItemProps } => {
+  let modifiedInput = input;
+  // V1 designer does not add the "And" conditional when only one expression is entered
+  // Add the the "And" conditional if condition expression does not follow complex condition syntax,
+  // but the current condition is still valid
+  if (!getConditionalSelectedOption(input) && canConvertToComplexCondition(input)) {
+    modifiedInput = {
+      and: [input],
+    };
+  }
+  const getConditionOption = getConditionalSelectedOption(modifiedInput);
+  const items: GroupItemProps = {
+    type: GroupType.GROUP,
+    condition: getConditionOption,
+    items: recurseConditionalItems(modifiedInput, getConditionOption),
+  };
+  return { items };
 };
 
 // Create QueryBuilder Editor View Model
@@ -570,13 +613,14 @@ function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[]
     const keys = Object.keys(valueToParse);
     for (const itemKey of keys) {
       items.push({
+        id: guid(),
         key: loadParameterValue(convertStringToInputParameter(itemKey)),
         value: loadParameterValue(convertStringToInputParameter(valueToParse[itemKey])),
       });
     }
 
     if (!keys.length) {
-      items.push({ key: [createLiteralValueSegment('')], value: [createLiteralValueSegment('')] });
+      items.push({ key: [createLiteralValueSegment('')], value: [createLiteralValueSegment('')], id: guid() });
     }
   } else {
     items = undefined;
@@ -587,12 +631,13 @@ function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[]
 
 // Create Table Editor View Model
 function toTableViewModel(value: any, editorOptions: any): { items: DictionaryEditorItemProps[]; columnMode: ColumnMode } {
-  const placeholderItem = { key: [createLiteralValueSegment('')], value: [createLiteralValueSegment('')] };
+  const placeholderItem = { key: [createLiteralValueSegment('')], value: [createLiteralValueSegment('')], id: guid() };
   if (Array.isArray(value)) {
     const keys = editorOptions.columns.keys;
     const items: DictionaryEditorItemProps[] = [];
     for (const item of value) {
       items.push({
+        id: guid(),
         key: loadParameterValue(convertStringToInputParameter(item[keys[0]])),
         value: loadParameterValue(convertStringToInputParameter(item[keys[1]])),
       });
@@ -845,7 +890,7 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
   }
 }
 
-function getTokenExpressionMethodFromKey(key: string, actionName: string | undefined): string {
+export function getTokenExpressionMethodFromKey(key: string, actionName: string | undefined): string {
   const segments = parseEx(key);
   if (segments.length >= 2 && segments[0].value === OutputSource.Body && segments[1].value === '$') {
     return actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
@@ -862,7 +907,8 @@ export function generateExpressionFromKey(
   tokenKey: string,
   actionName: string | undefined,
   isInsideArray: boolean,
-  required: boolean
+  required: boolean,
+  overrideMethod = true
 ): string {
   const segments = parseEx(tokenKey);
   segments.shift();
@@ -870,7 +916,7 @@ export function generateExpressionFromKey(
   const result = [];
   // NOTE: Use @body for tokens that come from the body path like outputs.$.Body.weather
   let rootMethod = method;
-  if (!isInsideArray && segments[0]?.value?.toString()?.toLowerCase() === OutputSource.Body) {
+  if (overrideMethod && !isInsideArray && segments[0]?.value?.toString()?.toLowerCase() === OutputSource.Body) {
     segments.shift();
     rootMethod = actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
   }
@@ -1073,10 +1119,14 @@ export function updateParameterWithValues(
           const valueExpandable =
             isObject(clonedParameterValue) || (Array.isArray(clonedParameterValue) && clonedParameterValue.length === 1);
           if (valueExpandable) {
+            const dynamicSchemaKeyPrefixes: string[] = [];
             for (const descendantInputParameter of descendantInputParameters) {
               const extraSegments = getExtraSegments(descendantInputParameter.key, parameterKey);
               if (descendantInputParameter.alias) {
                 reduceRedundantSegments(extraSegments);
+                if (descendantInputParameter.dynamicSchema) {
+                  dynamicSchemaKeyPrefixes.push(`${descendantInputParameter.alias}/`);
+                }
               }
               const descendantValue = getPropertyValueWithSpecifiedPathSegments(clonedParameterValue, extraSegments);
               let alternativeParameterKeyExtraSegment: Segment[] | null = null;
@@ -1111,6 +1161,9 @@ export function updateParameterWithValues(
             // for the rest properties, create corresponding invisible parameter to preserve the value when serialize
             if (createInvisibleParameter) {
               for (const restPropertyName of Object.keys(clonedParameterValue)) {
+                if (dynamicSchemaKeyPrefixes.some((prefix) => restPropertyName.startsWith(prefix))) {
+                  continue;
+                }
                 const propertyValue = clonedParameterValue[restPropertyName];
                 if (propertyValue !== undefined) {
                   const childKeySegments = [...keySegments, { value: restPropertyName, type: SegmentType.Property }];
@@ -1631,7 +1684,7 @@ export async function updateDynamicDataInNode(
   settings: Settings,
   variables: VariableDeclaration[],
   dispatch: Dispatch,
-  rootState: RootState,
+  getState: () => RootState,
   operationDefinition?: any
 ): Promise<void> {
   await loadDynamicData(
@@ -1645,14 +1698,15 @@ export async function updateDynamicDataInNode(
     settings,
     variables,
     dispatch,
-    rootState,
+    getState(),
     operationDefinition
   );
 
-  for (const parameterKey of Object.keys(dependencies.inputs)) {
-    const dependencyInfo = dependencies.inputs[parameterKey];
+  const { operations, workflowParameters } = getState();
+  for (const parameterKey of Object.keys(operations.dependencies[nodeId]?.inputs ?? {})) {
+    const dependencyInfo = operations.dependencies[nodeId].inputs[parameterKey];
     if (dependencyInfo.dependencyType === 'ListValues') {
-      const details = getGroupAndParameterFromParameterKey(nodeInputs, parameterKey);
+      const details = getGroupAndParameterFromParameterKey(operations.inputParameters[nodeId] ?? {}, parameterKey);
       if (details) {
         loadDynamicValuesForParameter(
           nodeId,
@@ -1660,11 +1714,13 @@ export async function updateDynamicDataInNode(
           details.parameter.id,
           operationInfo,
           connectionReference,
-          nodeInputs,
-          nodeMetadata,
-          dependencies,
+          operations.inputParameters[nodeId],
+          operations.actionMetadata[nodeId],
+          operations.dependencies[nodeId],
           false /* showErrorWhenNotReady */,
-          dispatch
+          dispatch,
+          /* idReplacements */ undefined,
+          workflowParameters.definitions
         );
       }
     }
@@ -1695,12 +1751,13 @@ async function loadDynamicData(
       nodeInputs,
       nodeMetadata,
       settings,
+      rootState.workflowParameters.definitions,
       dispatch
     );
   }
 
   if (Object.keys(dependencies?.inputs ?? {}).length) {
-    loadDynamicContentForInputsInNode(
+    await loadDynamicContentForInputsInNode(
       nodeId,
       dependencies.inputs,
       operationInfo,
@@ -1733,34 +1790,62 @@ async function loadDynamicContentForInputsInNode(
       dispatch(clearDynamicInputs(nodeId));
 
       if (isDynamicDataReadyToLoad(info)) {
-        const inputSchema = await getDynamicSchema(info, allInputs, nodeMetadata, operationInfo, connectionReference, variables);
-        const allInputParameters = getAllInputParameters(allInputs);
-        const allInputKeys = allInputParameters.map((param) => param.parameterKey);
-        const schemaInputs = inputSchema
-          ? await getDynamicInputsFromSchema(
-              inputSchema,
-              info.parameter as InputParameter,
-              operationInfo,
-              allInputKeys,
-              operationDefinition
-            )
-          : [];
-        const inputParameters = schemaInputs.map((input) => ({
-          ...createParameterInfo(input),
-          schema: input,
-        })) as ParameterInfo[];
+        try {
+          const inputSchema = await tryGetInputDynamicSchema(
+            nodeId,
+            operationInfo,
+            info,
+            allInputs,
+            nodeMetadata,
+            variables,
+            connectionReference,
+            rootState.workflowParameters.definitions,
+            dispatch
+          );
+          const allInputParameters = getAllInputParameters(allInputs);
+          const allInputKeys = allInputParameters.map((param) => param.parameterKey);
+          const schemaInputs = inputSchema
+            ? await getDynamicInputsFromSchema(
+                inputSchema,
+                info.parameter as InputParameter,
+                operationInfo,
+                allInputKeys,
+                operationDefinition
+              )
+            : [];
+          const inputParameters = schemaInputs.map((input) => ({
+            ...createParameterInfo(input),
+            schema: input,
+          })) as ParameterInfo[];
 
-        updateTokenMetadataInParameters(nodeId, inputParameters, rootState);
+          updateTokenMetadataInParameters(nodeId, inputParameters, rootState);
 
-        let swagger: SwaggerParser | undefined = undefined;
-        if (!OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
-          const { parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
-          swagger = parsedSwagger;
+          let swagger: SwaggerParser | undefined = undefined;
+          if (!OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
+            const { parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
+            swagger = parsedSwagger;
+          }
+
+          dispatch(
+            addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters, newInputs: schemaInputs, swagger })
+          );
+        } catch (error: any) {
+          const message = error.message as string;
+          const errorMessage = getIntl().formatMessage(
+            {
+              defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,
+              description: 'Error message to show when loading dynamic inputs failed',
+            },
+            { message }
+          );
+
+          dispatch(
+            updateErrorDetails({
+              id: nodeId,
+              errorInfo: { level: ErrorLevel.DynamicInputs, message: errorMessage, error, code: error.code },
+            })
+          );
         }
-
-        dispatch(
-          addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters, newInputs: schemaInputs, swagger })
-        );
       }
     }
   }
@@ -1778,7 +1863,8 @@ export async function loadDynamicTreeItemsForParameter(
   dependencies: NodeDependencies,
   showErrorWhenNotReady: boolean,
   dispatch: Dispatch,
-  idReplacements: Record<string, string> = {}
+  idReplacements: Record<string, string> = {},
+  workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<void> {
   const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
   const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as ParameterInfo;
@@ -1814,7 +1900,8 @@ export async function loadDynamicTreeItemsForParameter(
           nodeMetadata,
           operationInfo,
           connectionReference,
-          idReplacements
+          idReplacements,
+          workflowParameters
         );
 
         dispatch(
@@ -1863,7 +1950,8 @@ export async function loadDynamicValuesForParameter(
   dependencies: NodeDependencies,
   showErrorWhenNotReady: boolean,
   dispatch: Dispatch,
-  idReplacements: Record<string, string> = {}
+  idReplacements: Record<string, string> = {},
+  workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<void> {
   const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
   const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as ParameterInfo;
@@ -1894,7 +1982,8 @@ export async function loadDynamicValuesForParameter(
           nodeMetadata,
           operationInfo,
           connectionReference,
-          idReplacements
+          idReplacements,
+          workflowParameters
         );
 
         dispatch(
@@ -1909,7 +1998,7 @@ export async function loadDynamicValuesForParameter(
             ],
           })
         );
-      } catch (error) {
+      } catch (error: any) {
         dispatch(
           updateNodeParameters({
             nodeId,
@@ -1917,7 +2006,7 @@ export async function loadDynamicValuesForParameter(
               {
                 parameterId,
                 groupId,
-                propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.FAILED, error: error as Exception } },
+                propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.FAILED, error: { ...error, message: error.message } } },
               },
             ],
           })
@@ -1935,6 +2024,55 @@ export function shouldLoadDynamicInputs(nodeInputs: NodeInputs): boolean {
 
 export function isDynamicDataReadyToLoad({ dependentParameters }: DependencyInfo): boolean {
   return Object.keys(dependentParameters).every((key) => dependentParameters[key].isValid);
+}
+
+async function tryGetInputDynamicSchema(
+  nodeId: string,
+  operationInfo: NodeOperation,
+  dependencyInfo: DependencyInfo,
+  allInputs: NodeInputs,
+  nodeMetadata: any,
+  variables: VariableDeclaration[],
+  connectionReference: ConnectionReference | undefined,
+  workflowParameters: Record<string, WorkflowParameterDefinition>,
+  dispatch: Dispatch
+): Promise<OpenAPIV2.SchemaObject | null> {
+  try {
+    const schema = await getDynamicSchema(
+      dependencyInfo,
+      allInputs,
+      nodeMetadata,
+      operationInfo,
+      connectionReference,
+      variables,
+      /* idReplacements */ undefined,
+      workflowParameters
+    );
+    return schema;
+  } catch (error: any) {
+    if (!dependencyInfo.parameter?.required && !(dependencyInfo.parameter as InputParameter).value) {
+      throw error;
+    }
+
+    const message = error.message as string;
+    const errorMessage = getIntl().formatMessage(
+      {
+        defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,
+        description: 'Error message to show when loading dynamic inputs failed',
+      },
+      { message }
+    );
+
+    dispatch(
+      updateErrorDetails({
+        id: nodeId,
+        errorInfo: { level: ErrorLevel.DynamicInputs, message: errorMessage, error, code: error.code },
+      })
+    );
+
+    // For required parameters empty schema would help user to construct the inputs instead of runtime failures.
+    return {};
+  }
 }
 
 function showErrorWhenDependenciesNotReady(
@@ -2003,16 +2141,12 @@ function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefi
       return undefined;
     case constants.EDITOR.CONDITION:
       return editorOptions?.isOldFormat
-        ? serializeSimpleQueryBuilder(editorViewModel)
+        ? (editorViewModel.value as string)
         : JSON.stringify(recurseSerializeCondition(parameter, editorViewModel.items, isDefinitionValue));
     default:
       return undefined;
   }
 }
-
-export const serializeSimpleQueryBuilder = (editorViewModel: any): string => {
-  return editorViewModel.value;
-};
 
 export const recurseSerializeCondition = (parameter: ParameterInfo, editorViewModel: any, isDefinitionValue: boolean): any => {
   const returnVal: any = {};
@@ -2110,7 +2244,7 @@ export function getParameterFromId(nodeInputs: NodeInputs, parameterId: string):
 export function parameterHasValue(parameter: ParameterInfo): boolean {
   const value = parameter.value;
 
-  if (!isNullOrUndefined(parameter.preservedValue)) {
+  if (!isUndefinedOrEmptyString(parameter.preservedValue)) {
     return true;
   }
 
@@ -2118,8 +2252,10 @@ export function parameterHasValue(parameter: ParameterInfo): boolean {
 }
 
 export function parameterValidForDynamicCall(parameter: ParameterInfo): boolean {
-  const hasTokenSegment = parameter.value.some((segment) => segment.type === ValueSegmentType.TOKEN);
-  return parameter.required ? parameterHasValue(parameter) && !hasTokenSegment : !hasTokenSegment;
+  const hasOutputTokenSegment = parameter.value.some(
+    (segment) => segment.type === ValueSegmentType.TOKEN && segment.token?.tokenType !== TokenType.PARAMETER
+  );
+  return parameter.required ? parameterHasValue(parameter) && !hasOutputTokenSegment : !hasOutputTokenSegment;
 }
 
 export function getGroupAndParameterFromParameterKey(
@@ -2197,7 +2333,7 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
   }
 
   const propertyNameParameters = allInputs.filter((input) => !!input.serialization?.property);
-  const finalValue = clone(inputsValue);
+  const finalValue = createCopy(inputsValue);
 
   for (const propertyParameter of propertyNameParameters) {
     const { name, serialization } = propertyParameter;
@@ -2667,7 +2803,9 @@ function getOutputsByType(allOutputs: OutputInfo[], type = constants.SWAGGER.TYP
     return allOutputs;
   }
 
-  return allOutputs.filter((output) => equals(type, output.type));
+  return allOutputs.filter((output) => {
+    return !Array.isArray(output.type) && equals(type, output.type);
+  });
 }
 
 export function getTitleFromTokenName(tokenName: string, parentArray: string, parentArrayTitle?: string): string {
@@ -2739,28 +2877,10 @@ export function parameterValueToString(
   isDefinitionValue: boolean,
   idReplacements?: Record<string, string>
 ): string | undefined {
-  let didRemap = false;
-  const remappedParameterInfo = idReplacements
-    ? {
-        ...parameterInfo,
-        value: parameterInfo.value.map((val) => {
-          const oldId = val.token?.actionName ?? '';
-          if (val.token && idReplacements[oldId]) {
-            const newId = idReplacements[oldId];
-            didRemap = true;
-            return {
-              ...val,
-              value: val.value?.replace(`'${oldId}'`, `'${newId}'`),
-              token: {
-                ...val.token,
-                actionName: newId,
-              },
-            };
-          }
-          return val;
-        }),
-      }
-    : parameterInfo;
+  const { value: remappedValue, didRemap } = idReplacements
+    ? remapValueSegmentsWithNewIds(parameterInfo.value, idReplacements)
+    : { value: parameterInfo.value, didRemap: false };
+  const remappedParameterInfo = idReplacements ? { ...parameterInfo, value: remappedValue } : parameterInfo;
 
   if (didRemap) delete remappedParameterInfo.preservedValue;
 
@@ -2935,6 +3055,60 @@ export function getJSONValueFromString(value: any, type: string): any {
   }
 
   return parameterValue;
+}
+
+export function remapValueSegmentsWithNewIds(
+  segments: ValueSegment[],
+  idReplacements: Record<string, string>
+): { value: ValueSegment[]; didRemap: boolean } {
+  let didRemap = false;
+  const value = segments.map((segment) => {
+    if (isTokenValueSegment(segment)) {
+      const result = remapTokenSegmentValue(segment, idReplacements);
+      didRemap = result.didRemap;
+      return result.value;
+    }
+
+    return segment;
+  });
+
+  return { value, didRemap };
+}
+
+export function remapTokenSegmentValue(
+  segment: ValueSegment,
+  idReplacements: Record<string, string>
+): { value: ValueSegment; didRemap: boolean } {
+  let didRemap = false;
+  let newSegment = segment;
+  const { actionName, arrayDetails } = segment.token as Token;
+  const oldId = isOutputTokenValueSegment(segment) ? (arrayDetails ? arrayDetails?.loopSource : actionName) : '';
+  const newId = idReplacements[oldId ?? ''];
+
+  if (oldId && newId) {
+    didRemap = true;
+    const newValue = segment.value?.replaceAll(`'${oldId}'`, `'${newId}'`);
+
+    newSegment = {
+      ...segment,
+      value: newValue,
+      token: arrayDetails
+        ? { ...segment.token, arrayDetails: { ...arrayDetails, loopSource: newId }, value: newValue }
+        : { ...segment.token, actionName: newId, value: newValue },
+    } as ValueSegment;
+  } else if (isFunctionValueSegment(segment)) {
+    let newSegmentValue = segment.value;
+    for (const id of Object.keys(idReplacements)) {
+      if (!didRemap && newSegmentValue?.includes(`'${id}`)) {
+        didRemap = true;
+      }
+      newSegmentValue = newSegmentValue?.replaceAll(`'${id}'`, `'${idReplacements[id]}'`);
+    }
+
+    newSegment = { ...segment, value: newSegmentValue, token: { ...segment.token, value: newSegmentValue } } as ValueSegment;
+  }
+
+  return { value: newSegment, didRemap };
 }
 
 /**

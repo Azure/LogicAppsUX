@@ -1,15 +1,15 @@
 import constants from '../../../../common/constants';
 import { updateIdentityChangeInConection } from '../../../../core/actions/bjsworkflow/connections';
+import { ErrorLevel, updateErrorDetails } from '../../../../core/state/operation/operationMetadataSlice';
 import type { AppDispatch, RootState } from '../../../../core/store';
-import { getConnectionReference } from '../../../../core/utils/connectors/connections';
+import { getConnectionReference, isIdentityPresentInLogicApp } from '../../../../core/utils/connectors/connections';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { Dropdown, FontSizes, Label } from '@fluentui/react';
 import { WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
-import { ResourceIdentityType, equals } from '@microsoft/utils-logic-apps';
+import { isIdentityAssociatedWithLogicApp, equals, getIdentityDropdownOptions } from '@microsoft/utils-logic-apps';
 import type { FormEvent } from 'react';
-import { useState } from 'react';
-import type { IntlShape } from 'react-intl';
+import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -42,7 +42,7 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const identity = WorkflowService().getAppIdentity?.() as ManagedIdentity;
-  const options = getDropdownOptions(identity, intl);
+  const options = getIdentityDropdownOptions(identity, intl);
 
   const selectedIdentity = useSelector((state: RootState) => {
     const { connectionProperties } = getConnectionReference(state.connections, nodeId);
@@ -52,6 +52,30 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
   });
 
   const [selectedKey, setSelectedKey] = useState(selectedIdentity);
+
+  useEffect(() => {
+    if (!isIdentityPresentInLogicApp(selectedKey, identity)) {
+      dispatch(
+        updateErrorDetails({
+          id: nodeId,
+          errorInfo: {
+            level: ErrorLevel.Connection,
+            message: isIdentityAssociatedWithLogicApp(identity)
+              ? intl.formatMessage({
+                  defaultMessage:
+                    'The managed identity used with this operation no longer exists. To continue, select an available identity or change the connection.',
+                  description: 'Erorr mesade when managed identity is not present in logic apps',
+                })
+              : intl.formatMessage({
+                  defaultMessage:
+                    'The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection.',
+                  description: 'Error message when logic app doesnt have managed identities',
+                }),
+          },
+        })
+      );
+    }
+  }, [identity, dispatch, selectedKey, nodeId, intl]);
 
   const handleUpdateIdentity = (_event: FormEvent, option?: IDropdownOption) => {
     if (option) {
@@ -71,7 +95,7 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
 
   return (
     <div className="connection-info">
-      {<Label className="label">{labelText}</Label>}
+      <Label className="label">{labelText}</Label>
       <Dropdown
         ariaLabel={labelText}
         disabled={readOnly}
@@ -83,25 +107,4 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
       />
     </div>
   );
-};
-
-const getDropdownOptions = (managedIdentity: ManagedIdentity, intl: IntlShape): IDropdownOption[] => {
-  const options: IDropdownOption[] = [];
-  const { type, userAssignedIdentities } = managedIdentity;
-  const systemAssigned = intl.formatMessage({
-    defaultMessage: 'System-assigned managed identity',
-    description: 'Text for system assigned managed identity',
-  });
-
-  if (equals(type, ResourceIdentityType.SYSTEM_ASSIGNED) || equals(type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)) {
-    options.push({ key: constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY, text: systemAssigned });
-  }
-
-  if (equals(type, ResourceIdentityType.USER_ASSIGNED) || equals(type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)) {
-    for (const identity of Object.keys(userAssignedIdentities ?? {})) {
-      options.push({ key: identity, text: identity.split('/').at(-1) ?? identity });
-    }
-  }
-
-  return options;
 };

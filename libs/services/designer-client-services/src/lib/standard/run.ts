@@ -9,6 +9,7 @@ import {
   HTTP_METHODS,
   UnsupportedException,
   isString,
+  getCallbackUrl,
 } from '@microsoft/utils-logic-apps';
 
 export interface RunServiceOptions {
@@ -34,8 +35,13 @@ export class StandardRunService implements IRunService {
   }
 
   async getContent(contentLink: ContentLink): Promise<any> {
-    const { uri } = contentLink;
+    const { uri, contentSize } = contentLink;
     const { httpClient } = this.options;
+
+    // 2^18
+    if (contentSize > 262144) {
+      return undefined;
+    }
 
     if (!uri) {
       throw new Error();
@@ -263,7 +269,4 @@ export class StandardRunService implements IRunService {
         throw new UnsupportedException(`Unsupported call connector method - '${method}'`);
     }
   }
-}
-function getCallbackUrl(_callbackInfo: CallbackInfo): any {
-  throw new Error('Function not implemented.');
 }

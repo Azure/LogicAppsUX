@@ -9,16 +9,16 @@ import { isWorkflowNode } from '../../parsers/models/workflowNode';
 import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
 import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
 import { addNewEdge } from '../../parsers/restructuringHelpers';
-import { getImmediateSourceNodeIds } from '../../utils/graph';
+import { getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
 import { resetWorkflowState } from '../global';
-import { updateNodeParameters } from '../operation/operationMetadataSlice';
+import { updateNodeParameters, updateNodeSettings, updateStaticResults } from '../operation/operationMetadataSlice';
 import type { SpecTypes, WorkflowState } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { equals, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from 'reactflow';
 
@@ -39,7 +39,6 @@ export const initialWorkflowState: WorkflowState = {
   idReplacements: {},
   newlyAddedOperations: {},
   isDirty: false,
-  isGraphLocked: false,
 };
 
 const placeholderNodeId = 'builtin:newWorkflowTrigger';
@@ -148,7 +147,7 @@ export const workflowSlice = createSlice({
         graph.children = [...(graph?.children ?? []), placeholderNode];
         state.nodesMetadata[placeholderNodeId] = { graphId, isRoot: true };
         for (const childId of existingChildren) {
-          addNewEdge(state, placeholderNodeId, childId, graph);
+          addNewEdge(state, placeholderNodeId, childId, graph, false);
         }
       } else {
         deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
@@ -317,13 +316,15 @@ export const workflowSlice = createSlice({
     },
     replaceId: (state: WorkflowState, action: PayloadAction<{ originalId: string; newId: string }>) => {
       const { originalId, newId } = action.payload;
-      state.idReplacements[originalId] = newId.replaceAll(' ', '_').replaceAll('#', '');
+      const normalizedId = transformOperationTitle(newId);
+      if (originalId === normalizedId) {
+        delete state.idReplacements[originalId];
+      } else {
+        state.idReplacements[originalId] = normalizedId;
+      }
     },
     setIsWorkflowDirty: (state: WorkflowState, action: PayloadAction<boolean>) => {
       state.isDirty = action.payload;
-    },
-    setIsGraphLocked: (state: WorkflowState, action: PayloadAction<boolean>) => {
-      state.isGraphLocked = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -339,10 +340,27 @@ export const workflowSlice = createSlice({
     builder.addCase(updateNodeParameters, (state, action) => {
       state.isDirty = state.isDirty || action.payload.isUserAction || false;
     });
-    builder.addCase(updateNodeConnection.fulfilled, (state) => {
-      state.isDirty = true;
-    });
     builder.addCase(resetWorkflowState, () => initialWorkflowState);
+    builder.addMatcher(
+      isAnyOf(
+        addNode,
+        moveNode,
+        deleteNode,
+        addSwitchCase,
+        deleteSwitchCase,
+        addSwitchCase,
+        addImplicitForeachNode,
+        setNodeDescription,
+        updateRunAfter,
+        replaceId,
+        updateNodeSettings,
+        updateNodeConnection.fulfilled,
+        updateStaticResults
+      ),
+      (state) => {
+        state.isDirty = true;
+      }
+    );
   },
 });
 
@@ -371,7 +389,6 @@ export const {
   setRunIndex,
   setRepetitionRunData,
   setIsWorkflowDirty,
-  setIsGraphLocked,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

@@ -27,6 +27,7 @@ export const SettingTextField: React.FC<SettingTextFieldProps> = ({
   customLabel,
   onValueChange,
   defaultValue,
+  ariaLabel,
 }): JSX.Element | null => {
   const [textVal, setVal] = useState(value ?? '');
   const handleTextInputChange = (_: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined): void => {
@@ -45,7 +46,7 @@ export const SettingTextField: React.FC<SettingTextFieldProps> = ({
         className="msla-setting-section-textField"
         id={id}
         label={!customLabel ? label : ''}
-        ariaLabel={label}
+        ariaLabel={ariaLabel}
         value={textVal}
         defaultValue={defaultValue}
         placeholder={placeholder}

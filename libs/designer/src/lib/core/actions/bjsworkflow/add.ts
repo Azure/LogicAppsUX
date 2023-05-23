@@ -2,8 +2,8 @@ import Constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
-import { addInvokerSupport, initEmptyConnectionMap } from '../../state/connection/connectionSlice';
-import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
+import { initEmptyConnectionMap } from '../../state/connection/connectionSlice';
+import type { NodeData, NodeOperation, OperationMetadataState } from '../../state/operation/operationMetadataSlice';
 import { updateNodeSettings, initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { changePanelNode, isolateTab, showDefaultTabs } from '../../state/panel/panelSlice';
@@ -13,20 +13,26 @@ import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
-import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
-import { isRootNodeInGraph } from '../../utils/graph';
+import { getBrandColorFromConnector, getBrandColorFromManifest, getIconUriFromConnector, getIconUriFromManifest } from '../../utils/card';
+import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
 import { getParameterFromName, updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { createLiteralValueSegment } from '../../utils/parameters/segment';
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
 import { setVariableMetadata, getVariableDeclarations, getAllVariables } from '../../utils/variables';
 import { isConnectionRequiredForOperation, updateNodeConnection } from './connections';
-import { getInputParametersFromManifest, getOutputParametersFromManifest, updateAllUpstreamNodes } from './initialize';
+import {
+  getInputParametersFromManifest,
+  getOutputParametersFromManifest,
+  updateAllUpstreamNodes,
+  updateInvokerSettings,
+} from './initialize';
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings } from './settings';
 import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
 import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
+import { ManifestParser } from '@microsoft/parsers-logic-apps';
 import type {
   Connector,
   DiscoveryOperation,
@@ -92,18 +98,9 @@ const initializeOperationDetails = async (
   const isTrigger = isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata);
   const { type, kind, connectorId, operationId } = operationInfo;
   let isConnectionRequired = true;
-  let connector: Connector;
+  let connector: Connector | undefined;
   const operationManifestService = OperationManifestService();
   const staticResultService = StaticResultService();
-
-  const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId);
-  let hasSchema;
-  schemaService.then((schema) => {
-    hasSchema = true;
-    if (schema) {
-      dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
-    }
-  });
 
   dispatch(changePanelNode(nodeId));
   dispatch(isolateTab(Constants.PANEL_TAB_NAMES.LOADING));
@@ -111,14 +108,23 @@ const initializeOperationDetails = async (
   let initData: NodeData;
   let manifest: OperationManifest | undefined = undefined;
   let swagger: SwaggerParser | undefined = undefined;
+  let parsedManifest: ManifestParser | undefined = undefined;
   if (operationManifestService.isSupported(type, kind)) {
     manifest = await getOperationManifest(operationInfo);
     isConnectionRequired = isConnectionRequiredForOperation(manifest);
-    connector = manifest.properties.connector as Connector;
+    connector = manifest.properties?.connector;
 
-    const { iconUri, brandColor } = manifest.properties;
+    const iconUri = getIconUriFromManifest(manifest);
+    const brandColor = getBrandColorFromManifest(manifest);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
-    const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs);
+    const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
+      manifest,
+      isTrigger,
+      nodeInputs,
+      /* splitOnValue */ undefined
+    );
+    let updatedOutputs = nodeOutputs;
+    parsedManifest = new ManifestParser(manifest);
 
     if (parameterValues) {
       // For actions with selected Azure Resources
@@ -134,10 +140,16 @@ const initializeOperationDetails = async (
 
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
     const settings = getOperationSettings(isTrigger, operationInfo, nodeOutputs, manifest, /* swagger */ undefined);
+
+    // We should update the outputs when splitOn is enabled.
+    if (isTrigger && settings.splitOn?.value?.value) {
+      updatedOutputs = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs, settings.splitOn?.value?.value).outputs;
+    }
+
     initData = {
       id: nodeId,
       nodeInputs,
-      nodeOutputs,
+      nodeOutputs: updatedOutputs,
       nodeDependencies,
       settings,
       operationMetadata: { iconUri, brandColor },
@@ -198,32 +210,31 @@ const initializeOperationDetails = async (
       initData.settings as Settings,
       getAllVariables(getState().tokens.variables),
       dispatch,
-      getState()
+      getState
     );
-  } else {
+  } else if (connector) {
     await trySetDefaultConnectionForNode(nodeId, connector, dispatch, isConnectionRequired);
   }
 
+  const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId, swagger || parsedManifest);
+  let hasSchema;
+  schemaService.then((schema) => {
+    hasSchema = true;
+    if (schema) {
+      dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
+    }
+  });
+
   // Re-update settings after we have valid operation data
-  const rootNodeId = getRootNodeDetails(state.workflow, connectorId);
   const operation = getState().workflow.operations[nodeId];
 
-  const connectionReferences = state.connections.connectionReferences;
-  if (!state.connections.connectionReferences) {
-    dispatch(addInvokerSupport({ connectionReferences }));
-  }
-  const settings = getOperationSettings(
-    isTrigger,
-    operationInfo,
-    initData.nodeOutputs,
-    manifest,
-    swagger,
-    operation,
-    rootNodeId,
-    state.connections.connectionReferences,
-    dispatch
-  );
+  const triggerNodeManifest = await getTriggerNodeManifest(state.workflow, state.operations);
+
+  const settings = getOperationSettings(isTrigger, operationInfo, initData.nodeOutputs, manifest, swagger, operation);
   dispatch(updateNodeSettings({ id: nodeId, settings }));
+  if (triggerNodeManifest) {
+    updateInvokerSettings(isTrigger, triggerNodeManifest, nodeId, settings, dispatch);
+  }
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);
   dispatch(showDefaultTabs({ isScopeNode: operationInfo?.type.toLowerCase() === Constants.NODE.TYPE.SCOPE, hasSchema: hasSchema }));
@@ -235,7 +246,7 @@ export const initializeSwitchCaseFromManifest = async (id: string, manifest: Ope
     manifest,
     false,
     nodeInputs,
-    undefined
+    /* splitOnValue */ undefined
   );
   const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
   const initData = {
@@ -332,13 +343,15 @@ const getOperationType = (operation: DiscoveryOperation<DiscoveryResultTypes>): 
     : operationType;
 };
 
-export const getRootNodeDetails = (workflowState: WorkflowState, connectorId: string): string | undefined => {
-  if (workflowState.graph?.children && connectorId.indexOf(Constants.INVOKER_CONNECTION.DATAVERSE_CONNECTOR_ID) > -1) {
-    for (const child of workflowState.graph.children) {
-      if (workflowState.graph?.id === 'root') {
-        return child.id;
-      }
-    }
+export const getTriggerNodeManifest = async (
+  workflowState: WorkflowState,
+  operations: OperationMetadataState
+): Promise<OperationManifest | undefined> => {
+  const triggerNodeId = getTriggerNodeId(workflowState);
+  const operationInfo = operations.operationInfo[triggerNodeId];
+  if (operationInfo && OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
+    const { connectorId, operationId } = operationInfo;
+    return getOperationManifest({ connectorId, operationId });
   }
   return undefined;
 };

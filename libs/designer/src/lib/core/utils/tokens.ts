@@ -17,6 +17,7 @@ import {
   getTokenExpressionValueForManifestBasedOperation,
   shouldAddForeach,
 } from './loops';
+import { removeAliasingKeyRedundancies } from './outputs';
 import {
   ensureExpressionValue,
   FxBrandColor,
@@ -27,10 +28,11 @@ import {
   httpWebhookIcon,
   ParameterBrandColor,
   ParameterIcon,
+  remapTokenSegmentValue,
   shouldIncludeSelfForRepetitionReference,
 } from './parameters/helper';
 import { createTokenValueSegment } from './parameters/segment';
-import { hasSecureOutputs } from './setting';
+import { getSplitOnValue, hasSecureOutputs } from './setting';
 import { getVariableTokens } from './variables';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
@@ -119,10 +121,24 @@ export const convertOutputsToTokens = (
   // TODO - Look at repetition context to get foreach context correctly in tokens and for splitOn
 
   return Object.keys(outputs).map((outputKey) => {
-    const { key, name, type, isAdvanced, required, format, source, isInsideArray, parentArray, itemSchema, schema, value } =
-      outputs[outputKey];
-    return {
+    const {
       key,
+      name,
+      type,
+      isAdvanced,
+      required,
+      format,
+      source,
+      isInsideArray,
+      isDynamic,
+      parentArray,
+      itemSchema,
+      schema,
+      value,
+      alias,
+    } = outputs[outputKey];
+    return {
+      key: alias ? removeAliasingKeyRedundancies(key) : key,
       brandColor,
       icon,
       title: getTokenTitle(outputs[outputKey]),
@@ -136,6 +152,7 @@ export const convertOutputsToTokens = (
         format,
         source,
         isSecure,
+        isDynamic,
         actionName: nodeId,
         arrayDetails: isInsideArray ? { itemSchema, parentArray } : undefined,
         schema,
@@ -240,12 +257,20 @@ export const createValueSegmentFromToken = async (
   parameterId: string,
   token: OutputToken,
   addImplicitForeachIfNeeded: boolean,
+  addLatestActionName: boolean,
   rootState: RootState,
   dispatch: AppDispatch
 ): Promise<ValueSegment> => {
   const tokenOwnerNodeId = token.outputInfo.actionName ?? getTriggerNodeId(rootState.workflow);
   const nodeType = rootState.operations.operationInfo[tokenOwnerNodeId].type;
   const tokenValueSegment = convertTokenToValueSegment(token, nodeType);
+
+  if (addLatestActionName && tokenValueSegment.token?.actionName) {
+    const newActionId = rootState.workflow.idReplacements[tokenValueSegment.token.actionName];
+    if (newActionId && newActionId !== tokenValueSegment.token.actionName) {
+      tokenValueSegment.token.actionName = newActionId;
+    }
+  }
 
   if (!addImplicitForeachIfNeeded) {
     return tokenValueSegment;
@@ -268,12 +293,11 @@ export const createValueSegmentFromToken = async (
       newRootState = newState as RootState;
       newRepetitionContext = await getRepetitionContext(
         nodeId,
-        getTriggerNodeId(newRootState.workflow),
         newRootState.operations.operationInfo,
         newRootState.operations.inputParameters,
-        newRootState.operations.settings,
         newRootState.workflow.nodesMetadata,
         /* includeSelf */ false,
+        getSplitOnValue(newRootState.workflow, newRootState.operations),
         newRootState.workflow.idReplacements
       );
     }
@@ -313,9 +337,7 @@ export const createValueSegmentFromToken = async (
     }
 
     if (tokenValueSegment.token) {
-      const oldId = tokenValueSegment.token.actionName ?? '';
-      const newId = newRootState.workflow.idReplacements[oldId] ?? oldId;
-      tokenValueSegment.token.remappedValue = tokenValueSegment.value.replace(oldId, newId);
+      tokenValueSegment.token.value = remapTokenSegmentValue(tokenValueSegment, rootState.workflow.idReplacements).value.value;
     }
   }
 
@@ -416,7 +438,7 @@ export const convertWorkflowParameterTypeToSwaggerType = (type: string | undefin
 };
 
 const rewriteValueId = (id: string, value: string, replacementIds: Record<string, string>): string => {
-  return value.replace(id, replacementIds[id] ?? id);
+  return value.replaceAll(id, replacementIds[id] ?? id);
 };
 const getListCallbackUrlToken = (nodeId: string): TokenGroup => {
   const callbackUrlToken: OutputToken = {

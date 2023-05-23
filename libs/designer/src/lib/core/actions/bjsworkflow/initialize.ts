@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
 import type { WorkflowParameter } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
@@ -80,7 +79,7 @@ export const parseWorkflowParameters = (parameters: Record<string, WorkflowParam
 };
 
 export const getInputParametersFromManifest = (
-  nodeId: string,
+  _nodeId: string,
   manifest: OperationManifest,
   customSwagger?: SwaggerParser,
   stepDefinition?: any
@@ -134,7 +133,9 @@ export const getInputParametersFromManifest = (
       ),
       '',
       primaryInputParametersInArray,
-      (!inputsLocation || !!inputsLocation.length) && !manifest.properties.inputsLocationSwapMap /* createInvisibleParameter */,
+      !operationData.metadata?.noUnknownParametersWithManifest &&
+        (!inputsLocation || !!inputsLocation.length) &&
+        !manifest.properties.inputsLocationSwapMap /* createInvisibleParameter */,
       false /* useDefault */
     );
   } else {
@@ -292,7 +293,7 @@ export const updateOutputsAndTokens = async (
 
   // NOTE: Split On setting changes as outputs of trigger changes, so we will be recalculating such settings in this block for triggers.
   if (shouldProcessSettings && isTrigger) {
-    const isSplitOnSupported = getSplitOnOptions(nodeOutputs).length > 0;
+    const isSplitOnSupported = getSplitOnOptions(nodeOutputs, supportsManifest).length > 0;
     if (settings.splitOn?.isSupported !== isSplitOnSupported) {
       dispatch(updateNodeSettings({ id: nodeId, settings: { splitOn: { ...settings.splitOn, isSupported: isSplitOnSupported } } }));
     }
@@ -441,4 +442,16 @@ export const getCustomSwaggerIfNeeded = async (
   }
 
   return getSwaggerFromEndpoint(getObjectPropertyValue(stepDefinition, swaggerUrlLocation));
+};
+
+export const updateInvokerSettings = (
+  isTrigger: boolean,
+  tiggerNodeManifest: OperationManifest | undefined,
+  nodeId: string,
+  settings: Settings,
+  dispatch: Dispatch
+): void => {
+  if (!isTrigger && tiggerNodeManifest?.properties?.settings?.invokerConnection) {
+    dispatch(updateNodeSettings({ id: nodeId, settings: { invokerConnection: { ...settings.invokerConnection, isSupported: true } } }));
+  }
 };

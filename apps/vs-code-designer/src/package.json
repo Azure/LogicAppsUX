@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "2.15.7",
+  "version": "2.18.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -80,10 +80,8 @@
         "command": "azureLogicAppsStandard.deploy",
         "title": "Deploy to Logic App...",
         "category": "Azure Logic Apps",
-        "icon": {
-          "light": "assets/light/deploy.svg",
-          "dark": "assets/dark/deploy.svg"
-        }
+        "icon": "$(cloud-upload)",
+        "enablement": "!virtualWorkspace"
       },
       {
         "command": "azureLogicAppsStandard.deploySlot",
@@ -300,6 +298,13 @@
       }
     ],
     "menus": {
+      "azureWorkspaceDeploy": [
+        {
+          "command": "azureLogicAppsStandard.deploy",
+          "when": "view == azureWorkspace",
+          "group": "navigation@1"
+        }
+      ],
       "view/title": [
         {
           "command": "azureLogicAppsStandard.createNewProject",
@@ -310,11 +315,6 @@
           "command": "azureLogicAppsStandard.createCodeless",
           "when": "view == azureWorkspace",
           "group": "navigation@2"
-        },
-        {
-          "command": "azureLogicAppsStandard.deploy",
-          "when": "view == azureWorkspace",
-          "group": "navigation@3"
         },
         {
           "command": "azureLogicAppsStandard.exportLogicApp",

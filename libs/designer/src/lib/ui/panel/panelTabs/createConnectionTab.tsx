@@ -1,6 +1,13 @@
 import constants from '../../../common/constants';
 import type { AppDispatch, RootState } from '../../../core';
-import { getConnectionMetadata, needsOAuth, updateNodeConnection } from '../../../core/actions/bjsworkflow/connections';
+import type { ConnectionPayload } from '../../../core/actions/bjsworkflow/connections';
+import {
+  getApiHubAuthentication,
+  getConnectionMetadata,
+  getConnectionProperties,
+  needsOAuth,
+  updateNodeConnection,
+} from '../../../core/actions/bjsworkflow/connections';
 import { getUniqueConnectionName } from '../../../core/queries/connections';
 import { useConnectorByNodeId, useGateways, useSubscriptions } from '../../../core/state/connection/connectionSelector';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
@@ -14,10 +21,16 @@ import {
 } from '../../../core/utils/connectors/connections';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/designer-client-services-logic-apps';
-import { LogEntryLevel, LoggerService, ConnectionService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService, ConnectionService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import { CreateConnection } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
-import type { Connection, ConnectionParameterSet, ConnectionParameterSetValues, Connector } from '@microsoft/utils-logic-apps';
+import type {
+  Connection,
+  ConnectionParameterSet,
+  ConnectionParameterSetValues,
+  Connector,
+  ManagedIdentity,
+} from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -40,13 +53,23 @@ const CreateConnectionTab = () => {
   const gatewaysQuery = useGateways(selectedSubscriptionId, connector?.id ?? '');
   const availableGateways = useMemo(() => gatewaysQuery.data, [gatewaysQuery]);
 
+  const identity = WorkflowService().getAppIdentity?.() as ManagedIdentity;
+
   const [isLoading, setIsLoading] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
   const applyNewConnection = useCallback(
-    (newConnection: Connection, _newName: string) => {
-      dispatch(updateNodeConnection({ nodeId, connection: newConnection, connector: connector as Connector }));
+    (newConnection: Connection, selectedIdentity?: string) => {
+      const payload: ConnectionPayload = { nodeId, connection: newConnection, connector: connector as Connector };
+
+      if (selectedIdentity) {
+        const userAssignedIdentity = selectedIdentity !== constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY ? selectedIdentity : undefined;
+        payload.connectionProperties = getConnectionProperties(connector as Connector, userAssignedIdentity);
+        payload.authentication = getApiHubAuthentication(userAssignedIdentity);
+      }
+
+      dispatch(updateNodeConnection(payload));
     },
     [connector, dispatch, nodeId]
   );
@@ -83,7 +106,9 @@ const CreateConnectionTab = () => {
       displayName?: string,
       selectedParameterSet?: ConnectionParameterSet,
       parameterValues: Record<string, any> = {},
-      isOAuthConnection?: boolean
+      isOAuthConnection?: boolean,
+      alternativeParameterValues?: Record<string, any>,
+      identitySelected?: string
     ) => {
       if (!connector?.id) return;
 
@@ -94,7 +119,7 @@ const CreateConnectionTab = () => {
 
       if (selectedParameterSet) {
         const requiredParameters = Object.entries(selectedParameterSet?.parameters)?.filter(
-          ([, parameter]) => parameter?.uiDefinition.constraints?.required
+          ([, parameter]) => parameter?.uiDefinition.constraints?.required === 'true'
         );
         requiredParameters?.forEach(([key, parameter]) => {
           if (!outputParameterValues?.[key]) {
@@ -121,10 +146,12 @@ const CreateConnectionTab = () => {
             return acc;
           }, {}),
         };
+
         const connectionInfo: ConnectionCreationInfo = {
           displayName,
           connectionParametersSet: selectedParameterSet ? connectionParameterSetValues : undefined,
           connectionParameters: outputParameterValues,
+          alternativeParameterValues,
         };
 
         const parametersMetadata: ConnectionParametersMetadata = {
@@ -152,7 +179,7 @@ const CreateConnectionTab = () => {
         }
 
         if (connection) {
-          applyNewConnection(connection, newName);
+          applyNewConnection(connection, identitySelected);
           dispatch(showDefaultTabs({ isMonitoringView }));
         } else if (err) {
           setErrorMessage(String(err));
@@ -203,6 +230,8 @@ const CreateConnectionTab = () => {
       connectorCapabilities={connector.properties.capabilities}
       connectionParameters={connector.properties.connectionParameters}
       connectionParameterSets={getSupportedParameterSets(connector.properties.connectionParameterSets, operationInfo.type)}
+      connectionAlternativeParameters={connector.properties?.connectionAlternativeParameters}
+      identity={identity}
       createConnectionCallback={createConnectionCallback}
       isLoading={isLoading}
       cancelCallback={cancelCallback}

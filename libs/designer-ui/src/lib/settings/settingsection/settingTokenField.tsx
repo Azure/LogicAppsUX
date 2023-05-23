@@ -1,4 +1,4 @@
-import { ArrayEditor, ArrayType } from '../../arrayeditor';
+import { ArrayEditor } from '../../arrayeditor';
 import { AuthenticationEditor } from '../../authentication';
 import { CodeEditor } from '../../code';
 import { Combobox } from '../../combobox';
@@ -6,7 +6,7 @@ import { CopyInputControl } from '../../copyinputcontrol';
 import { DictionaryEditor } from '../../dictionary';
 import { DropdownEditor } from '../../dropdown';
 import type { ValueSegment } from '../../editor';
-import type { CallbackHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
+import type { CallbackHandler, CastHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { FloatingActionMenu } from '../../floatingactionmenu';
@@ -14,6 +14,7 @@ import { FloatingActionMenu } from '../../floatingactionmenu';
 import type { PickerCallbackHandlers } from '../../picker/filepickereditor';
 import { FilePickerEditor } from '../../picker/filepickereditor';
 import { QueryBuilderEditor } from '../../querybuilder';
+import { HybridQueryBuilderEditor } from '../../querybuilder/HybridQueryBuilder';
 import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
 import { ScheduleEditor } from '../../recurrence';
 import { SchemaEditor } from '../../schemaeditor';
@@ -40,10 +41,9 @@ export interface SettingTokenFieldProps extends SettingProps {
   showTokens?: boolean;
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
-  isTrigger?: boolean;
-  isCallback?: boolean;
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
+  onCastParameter: CastHandler;
   pickerCallbacks?: PickerCallbackHandlers;
   getTokenPicker: GetTokenPickerHandler;
   validationErrors?: string[];
@@ -74,8 +74,6 @@ const TokenField = ({
   placeholder,
   readOnly,
   value,
-  isTrigger,
-  isCallback,
   isLoading,
   errorDetails,
   showTokens,
@@ -85,6 +83,7 @@ const TokenField = ({
   onValueChange,
   onComboboxMenuOpen,
   hideValidationErrors,
+  onCastParameter,
   getTokenPicker,
 }: SettingTokenFieldProps & { labelId: string }) => {
   const dropdownOptions = editorOptions?.options?.value ?? editorOptions?.options ?? [];
@@ -114,7 +113,6 @@ const TokenField = ({
           getTokenPicker={getTokenPicker}
           language={EditorLanguage.javascript}
           onChange={onValueChange}
-          isTrigger={isTrigger}
           readonly={readOnly}
           placeholder={placeholder}
         />
@@ -130,7 +128,6 @@ const TokenField = ({
           initialValue={value}
           options={dropdownOptions.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
           useOption={true}
-          isTrigger={isTrigger}
           isLoading={isLoading}
           errorDetails={errorDetails}
           getTokenPicker={getTokenPicker}
@@ -150,7 +147,7 @@ const TokenField = ({
           readonly={readOnly}
           initialValue={value}
           initialItems={editorViewModel.items}
-          isTrigger={isTrigger}
+          valueType={editorOptions?.valueType}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
         />
@@ -164,10 +161,10 @@ const TokenField = ({
           initialValue={value}
           initialItems={editorViewModel.items}
           columnMode={editorViewModel.columnMode}
-          columns={editorOptions.columns.count}
-          titles={editorOptions.columns.titles}
-          keys={editorOptions.columns.keys}
-          isTrigger={isTrigger}
+          columns={editorOptions?.columns?.count}
+          titles={editorOptions?.columns?.titles}
+          keys={editorOptions?.columns?.keys}
+          types={editorOptions?.columns?.types}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
         />
@@ -177,14 +174,14 @@ const TokenField = ({
       return (
         <ArrayEditor
           labelId={labelId}
-          type={editorViewModel.schema ? ArrayType.COMPLEX : ArrayType.SIMPLE}
+          arrayType={editorViewModel.arrayType}
           labelProps={{ text: label ? `${label} Item` : 'Array Item' }}
           placeholder={placeholder}
           readonly={readOnly}
-          initialValue={value}
-          isTrigger={isTrigger}
+          initialValue={editorViewModel.uncastedValue}
           getTokenPicker={getTokenPicker}
-          itemSchema={editorViewModel?.schema}
+          itemSchema={editorViewModel.itemSchema}
+          castParameter={onCastParameter}
           onChange={onValueChange}
         />
       );
@@ -210,6 +207,13 @@ const TokenField = ({
           items={JSON.parse(JSON.stringify(editorViewModel.items))}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
+        />
+      ) : editorViewModel.isHybridEditor ? (
+        <HybridQueryBuilderEditor
+          readonly={readOnly}
+          groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
+          onChange={onValueChange}
+          getTokenPicker={getTokenPicker}
         />
       ) : (
         <QueryBuilderEditor
@@ -264,7 +268,14 @@ const TokenField = ({
     //     />
     //   );
     case 'floatingactionmenu': {
-      return <FloatingActionMenu supportedTypes={editorOptions?.supportedTypes} initialValue={value} onChange={onValueChange} />;
+      return (
+        <FloatingActionMenu
+          supportedTypes={editorOptions?.supportedTypes}
+          useStaticInputs={editorOptions?.useStaticInputs}
+          initialValue={value}
+          onChange={onValueChange}
+        />
+      );
     }
 
     default:
@@ -275,8 +286,6 @@ const TokenField = ({
           placeholder={placeholder}
           BasePlugins={{ tokens: showTokens }}
           readonly={readOnly}
-          isTrigger={isTrigger}
-          showCallbackTokens={isCallback}
           initialValue={value}
           editorBlur={onValueChange}
           getTokenPicker={getTokenPicker}

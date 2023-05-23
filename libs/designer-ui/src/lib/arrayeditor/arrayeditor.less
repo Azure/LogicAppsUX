@@ -18,8 +18,7 @@
     flex: 1 1 100%;
 
     &.msla-array-editor-collapsed {
-      padding: 10px 0px 40px @padding;
-      display: flex;
+      padding: 10px 0px 25px @padding;
 
       .msla-input-parameter-label {
         align-self: center;
@@ -90,7 +89,16 @@
     padding: 0 @padding;
 
     .msla-array-item {
-      padding-left: 6px;
+      margin-left: 6px;
+      &.complex {
+        margin: 4px;
+        padding: 4px 4px 4px 4px;
+        border: 1px dashed @defaultBorderColor;
+      }
+      &.isNested {
+        border: 1px dotted @defaultBorderColor;
+      }
+
       .msla-array-item-header {
         display: flex;
         justify-content: space-between;
@@ -99,7 +107,7 @@
       .msla-array-editor-container-expanded {
         width: 100%;
         border-radius: 2px;
-        padding-bottom: 20px;
+        padding-bottom: 5px;
         position: relative;
 
         .editor-input {
@@ -108,7 +116,7 @@
           font-size: 15px;
           tab-size: 1;
           min-height: 30px;
-          line-height: 30px;
+          line-height: 20px;
           padding-inline-start: 5px;
           &.readonly {
             background-color: rgba(128, 128, 128, 0.1);
@@ -117,6 +125,8 @@
             outline: 2px solid @primary_focus_blue;
           }
           p {
+            padding-top: 5px;
+            padding-bottom: 2px;
             margin: 0;
           }
         }
@@ -127,7 +137,7 @@
           text-overflow: ellipsis;
           white-space: nowrap;
           width: 95%;
-          margin-top: -23px;
+          margin-top: -25px;
           margin-left: 5px;
           font-size: 15px;
           user-select: none;
@@ -173,7 +183,7 @@
   }
   .msla-collapsed-editor-validation {
     width: 50%;
-    position: relative;
+    position: absolute;
     color: rgb(224, 2, 2);
     left: 4px;
     font-size: 14px;

@@ -928,3 +928,12 @@ export function findAncestorElement(
 
   return undefined;
 }
+
+/**
+ * Returns true if the string has invalid chars in it.
+ * @arg {string} str - A string to compare.
+ * @return {string[]} - List of invalid chars
+ */
+export function hasInvalidChars(str: string, invalidChars: string[]): boolean {
+  return invalidChars.some((invalidChar) => includes(str, invalidChar));
+}

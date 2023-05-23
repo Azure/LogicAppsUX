@@ -98,6 +98,39 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(employeeChildren[1][1]).toEqual('/ns0:Root/DirectTranslation/EmployeeName');
       });
 
+      it('Generates body with a custom value', () => {
+        const targetNode = extendedTargetSchema.schemaTreeRoot.children[0];
+        const mapDefinition: MapDefinitionEntry = {};
+        const connections: ConnectionDictionary = {};
+
+        applyConnectionValue(connections, {
+          targetNode: targetNode.children[0].children[1],
+          targetNodeReactFlowKey: addReactFlowPrefix(targetNode.children[0].children[1].key, SchemaType.Target),
+          findInputSlot: true,
+          input: '"CustomValue"',
+        });
+
+        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+
+        expect(Object.keys(mapDefinition).length).toEqual(1);
+        const rootChildren = Object.entries(mapDefinition['ns0:Root']);
+        expect(rootChildren.length).toEqual(1);
+        expect(rootChildren[0][0]).toEqual('DirectTranslation');
+        expect(rootChildren[0][1]).not.toBe('string');
+
+        const directTranslationObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['DirectTranslation'] as MapDefinitionEntry;
+        const directTranslationChildren = Object.entries(directTranslationObject);
+        expect(directTranslationChildren.length).toEqual(1);
+        expect(directTranslationChildren[0][0]).toEqual('Employee');
+        expect(directTranslationChildren[0][1]).not.toBe('string');
+
+        const employeeObject = directTranslationObject['Employee'] as MapDefinitionEntry;
+        const employeeChildren = Object.entries(employeeObject);
+        expect(employeeChildren.length).toEqual(1);
+        expect(employeeChildren[0][0]).toEqual('Name');
+        expect(employeeChildren[0][1]).toEqual('"CustomValue"');
+      });
+
       it('Generates body with value object', () => {
         const sourceNode = extendedSourceSchema.schemaTreeRoot.children[1].children[0];
         const targetNode = extendedTargetSchema.schemaTreeRoot.children[1].children[0];
