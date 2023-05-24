@@ -18,4 +18,6 @@ export * from './common/models/workflow';
 export { default as Constants } from './common/constants';
 export { serializeWorkflow as serializeBJSWorkflow } from './core/actions/bjsworkflow/serializer';
 export { updateCallbackUrl } from './core/actions/bjsworkflow/initialize';
+export { getTokensFromWorkflow } from './core/utils/tokens';
+export { parameterValueToString } from './core/utils/parameters/helper';
 export { ReactQueryProvider } from './core/ReactQueryProvider';

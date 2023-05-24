@@ -1,6 +1,16 @@
 import Constants from '../../common/constants';
+import type { Workflow } from '../../common/models/workflow';
+import {
+  initializeConnectorsForReferences,
+  initializeOperationDetailsForManifest,
+  initializeOutputTokensForOperations,
+  initializeRepetitionInfos,
+  initializeVariables,
+  updateTokenMetadataInParameters,
+} from '../actions/bjsworkflow/operationdeserializer';
 import type { NodeDataWithOperationMetadata } from '../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../actions/bjsworkflow/settings';
+import { Deserialize as BJSDeserialize } from '../parsers/BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 import type { NodeOperation, OutputInfo } from '../state/operation/operationMetadataSlice';
 import { updateRepetitionContext } from '../state/operation/operationMetadataSlice';
@@ -8,7 +18,7 @@ import type { TokensState } from '../state/tokensSlice';
 import type { NodesMetadata } from '../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition, WorkflowParametersState } from '../state/workflowparameters/workflowparametersSlice';
 import type { AppDispatch, RootState } from '../store';
-import { getAllNodesInsideNode, getTriggerNodeId, getUpstreamNodeIds } from './graph';
+import { getAllNodesInsideNode, getTriggerNodeId, getUpstreamNodeIds, isRootNodeInGraph } from './graph';
 import {
   addForeachToNode,
   getForeachActionName,
@@ -33,14 +43,20 @@ import {
 } from './parameters/helper';
 import { createTokenValueSegment } from './parameters/segment';
 import { getSplitOnValue, hasSecureOutputs } from './setting';
+import { initializeOperationDetailsForSwagger } from './swagger/operation';
 import { getVariableTokens } from './variables';
-import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import {
+  InitConnectionService,
+  InitOperationManifestService,
+  OperationManifestService,
+} from '@microsoft/designer-client-services-logic-apps';
+import type { IOperationManifestService, IConnectionService } from '@microsoft/designer-client-services-logic-apps';
 import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
 import { UIConstants, TemplateFunctions, TokenType } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import { getKnownTitles, OutputKeys } from '@microsoft/parsers-logic-apps';
-import type { BuiltInOutput, OperationManifest } from '@microsoft/utils-logic-apps';
-import { labelCase, unmap, equals } from '@microsoft/utils-logic-apps';
+import type { BuiltInOutput, LogicAppsV2, OperationManifest } from '@microsoft/utils-logic-apps';
+import { labelCase, unmap, equals, aggregate } from '@microsoft/utils-logic-apps';
 
 export interface TokenGroup {
   id: string;
@@ -188,6 +204,74 @@ export const getExpressionTokenSections = (): TokenGroup[] => {
       tokens,
     };
   });
+};
+
+type TokenServices = { operationManifestService: IOperationManifestService; connectionService: IConnectionService };
+
+/**
+ * Used for getting token UI data ad hoc via workflow definition
+ */
+export const getTokensFromWorkflow = async (
+  workflowDefinition: Workflow,
+  services: TokenServices,
+  runInstance?: LogicAppsV2.RunInstanceDefinition
+) => {
+  const { definition, connectionReferences, parameters } = workflowDefinition;
+  const deserializedWorkflow = BJSDeserialize(definition, runInstance ?? null);
+  InitConnectionService(services.connectionService);
+  InitOperationManifestService(services.operationManifestService);
+
+  initializeConnectorsForReferences(connectionReferences);
+
+  const promises: Promise<NodeDataWithOperationMetadata[] | undefined>[] = [];
+  const { actionData: operations, graph, nodesMetadata } = deserializedWorkflow;
+
+  let triggerNodeId = '';
+
+  for (const [operationId, operation] of Object.entries(operations)) {
+    const isTrigger = isRootNodeInGraph(operationId, 'root', nodesMetadata);
+
+    if (isTrigger) {
+      triggerNodeId = operationId;
+    }
+    if (services.operationManifestService.isSupported(operation.type, operation.kind)) {
+      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger));
+    } else {
+      promises.push(initializeOperationDetailsForSwagger(operationId, operation, connectionReferences, !!isTrigger) as any);
+    }
+  }
+
+  const allNodeData = aggregate((await Promise.all(promises)).filter((data) => !!data) as NodeDataWithOperationMetadata[][]);
+  const repetitionInfos = await initializeRepetitionInfos(triggerNodeId, operations, allNodeData, nodesMetadata);
+  updateTokenMetadataInParameters(allNodeData, operations, parameters ?? {}, nodesMetadata, triggerNodeId, repetitionInfos);
+
+  const outputTokens = initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata);
+  const variables = initializeVariables(operations, allNodeData);
+  const variableTokens: Record<string, OutputToken[]> = {};
+
+  for (const [nodeId, nodeTokens] of Object.entries(outputTokens)) {
+    const nodeType = allNodeData.find((nodeData) => nodeData.id === nodeId)?.operationInfo?.type ?? '';
+    nodeTokens.tokens = nodeTokens.tokens.map((token) => {
+      return {
+        ...token,
+        value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', {}),
+      };
+    });
+    variableTokens[nodeId] = getVariableTokens(variables, nodeTokens).map((outputToken) => {
+      return {
+        ...outputToken,
+        value: rewriteValueId(outputToken.outputInfo.actionName ?? '', getExpressionValueForOutputToken(outputToken, nodeType) ?? '', {}),
+      };
+    });
+  }
+
+  const expressionTokens = getExpressionTokenSections();
+
+  return {
+    outputTokens,
+    variableTokens,
+    expressionTokens,
+  };
 };
 
 export const getOutputTokenSections = (

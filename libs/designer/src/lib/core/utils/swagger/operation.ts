@@ -49,12 +49,15 @@ interface OperationInputInfo {
   };
 }
 
+/**
+ * @param dispatch - Not required if only need to get the return data.
+ */
 export const initializeOperationDetailsForSwagger = async (
   nodeId: string,
   operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
   references: ConnectionReferences,
   isTrigger: boolean,
-  dispatch: Dispatch
+  dispatch?: Dispatch
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   try {
     const staticResultService = StaticResultService();
@@ -64,13 +67,13 @@ export const initializeOperationDetailsForSwagger = async (
       const { connectorId, operationId } = operationInfo;
 
       const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
-      dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
+      dispatch?.(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
       const { connector, parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
 
       const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId, parsedSwagger);
       schemaService.then((schema) => {
         if (schema) {
-          dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
+          dispatch?.(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
         }
       });
 
@@ -114,7 +117,7 @@ export const initializeOperationDetailsForSwagger = async (
       error: error instanceof Error ? error : undefined,
     });
 
-    dispatch(updateErrorDetails({ id: nodeId, errorInfo: { level: ErrorLevel.Critical, error, message } }));
+    dispatch?.(updateErrorDetails({ id: nodeId, errorInfo: { level: ErrorLevel.Critical, error, message } }));
     return;
   }
 };

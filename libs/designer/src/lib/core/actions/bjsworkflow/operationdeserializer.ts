@@ -148,7 +148,7 @@ export const initializeOperationMetadata = async (
   );
 };
 
-const initializeConnectorsForReferences = async (references: ConnectionReferences): Promise<ConnectorWithParsedSwagger[]> => {
+export const initializeConnectorsForReferences = async (references: ConnectionReferences): Promise<ConnectorWithParsedSwagger[]> => {
   const connectorIds = uniqueArray(Object.keys(references || {}).map((key) => references[key].api.id));
   const connectorPromises: Promise<ConnectorWithParsedSwagger | undefined>[] = [];
 
@@ -166,11 +166,14 @@ const initializeConnectorsForReferences = async (references: ConnectionReference
   return (await Promise.all(connectorPromises)).filter((result) => !!result) as ConnectorWithParsedSwagger[];
 };
 
+/**
+ * @param dispatch - Not required if only need to get the return data.
+ */
 export const initializeOperationDetailsForManifest = async (
   nodeId: string,
   _operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
   isTrigger: boolean,
-  dispatch: Dispatch
+  dispatch?: Dispatch
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   const operation = { ..._operation };
   try {
@@ -182,14 +185,14 @@ export const initializeOperationDetailsForManifest = async (
       const manifest = await getOperationManifest(operationInfo);
       const { iconUri, brandColor } = manifest.properties;
 
-      dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
+      dispatch?.(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
 
       const { connectorId, operationId } = nodeOperationInfo;
       const parsedManifest = new ManifestParser(manifest);
       const schema = staticResultService.getOperationResultSchema(connectorId, operationId, parsedManifest);
       schema.then((schema) => {
         if (schema) {
-          dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
+          dispatch?.(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
         }
       });
 
@@ -243,7 +246,7 @@ export const initializeOperationDetailsForManifest = async (
       error: error instanceof Error ? error : undefined,
     });
 
-    dispatch(updateErrorDetails({ id: nodeId, errorInfo: { level: ErrorLevel.Critical, error, message } }));
+    dispatch?.(updateErrorDetails({ id: nodeId, errorInfo: { level: ErrorLevel.Critical, error, message } }));
     return;
   }
 };
@@ -304,7 +307,7 @@ const processChildGraphAndItsInputs = (
   return nodesData;
 };
 
-const updateTokenMetadataInParameters = (
+export const updateTokenMetadataInParameters = (
   nodes: NodeDataWithOperationMetadata[],
   operations: Operations,
   workflowParameters: Record<string, WorkflowParameter>,
@@ -362,7 +365,7 @@ const updateTokenMetadataInParameters = (
   }
 };
 
-const initializeOutputTokensForOperations = (
+export const initializeOutputTokensForOperations = (
   allNodesData: NodeDataWithOperationMetadata[],
   operations: Operations,
   graph: WorkflowNode,
@@ -418,7 +421,7 @@ const initializeOutputTokensForOperations = (
   return result;
 };
 
-const initializeVariables = (
+export const initializeVariables = (
   operations: Operations,
   allNodesData: NodeDataWithOperationMetadata[]
 ): Record<string, VariableDeclaration[]> => {
@@ -443,7 +446,7 @@ const initializeVariables = (
   return declarations;
 };
 
-const initializeRepetitionInfos = async (
+export const initializeRepetitionInfos = async (
   triggerNodeId: string,
   allOperations: Operations,
   nodesData: NodeDataWithOperationMetadata[],
