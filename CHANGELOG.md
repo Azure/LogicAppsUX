@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.15.35](https://github.com/Azure/LogicAppsUX/compare/v2.15.34...v2.15.35) (2023-05-24)
+
+
+### Bug Fixes
+
+* **designer:** Catch exception for when cors is not established for m… ([#2547](https://github.com/Azure/LogicAppsUX/issues/2547)) ([dee7fbe](https://github.com/Azure/LogicAppsUX/commit/dee7fbebc159a40654f148e1e77c525885f2a423)), closes [#2524](https://github.com/Azure/LogicAppsUX/issues/2524)
+
 ### [2.15.34](https://github.com/Azure/LogicAppsUX/compare/v2.15.33...v2.15.34) (2023-05-24)
 
 
