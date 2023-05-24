@@ -65,7 +65,14 @@ function WrappedStaticResultProperty({
   updateParentProperties,
 }: StaticResultPropertyProps): JSX.Element {
   const intl = useIntl();
-  const [inputValue, setInputValue] = useState((typeof properties === 'string' ? properties : schema?.default ?? '') as string);
+  const [inputValue, setInputValue] = useState(
+    (typeof properties === 'string' || typeof properties === 'number' || typeof properties === 'boolean'
+      ? properties
+      : Object.keys(properties).length > 0
+      ? JSON.stringify(properties, null, 2)
+      : schema?.default ?? '') as string
+  );
+
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const getEnumValues = (): IDropdownOption[] => {
@@ -113,7 +120,11 @@ function WrappedStaticResultProperty({
 
   const updateParentProps = () => {
     if (!errorMessage) {
-      updateParentProperties(inputValue);
+      try {
+        updateParentProperties(JSON.parse(inputValue));
+      } catch {
+        updateParentProperties(inputValue);
+      }
     }
   };
 
