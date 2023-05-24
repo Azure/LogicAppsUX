@@ -1,4 +1,14 @@
 # Logic Apps Designer
+### [2.15.34](https://github.com/Azure/LogicAppsUX/compare/v2.15.33...v2.15.34) (2023-05-24)
+
+
+### Bug Fixes
+
+* **designer:** added support for objects in static results ([#2545](https://github.com/Azure/LogicAppsUX/issues/2545)) ([953510a](https://github.com/Azure/LogicAppsUX/commit/953510a2da1c0ce9d8bd3522053a02b3ae5727ae))
+* **designer:** Fix filtering of function apps which have more than one type of kind ([#2536](https://github.com/Azure/LogicAppsUX/issues/2536)) ([76065b2](https://github.com/Azure/LogicAppsUX/commit/76065b2702829526fab8c0f0b5f9a9a9e3540cd2))
+* **designer:** make it so we split on outer most comma in simple query builder ([#2546](https://github.com/Azure/LogicAppsUX/issues/2546)) ([f1a3082](https://github.com/Azure/LogicAppsUX/commit/f1a3082f056114660a3527d60d7fdfe378cffe73))
+* **designer:** Render schedule editor only when recurrence values are literal segments ([#2535](https://github.com/Azure/LogicAppsUX/issues/2535)) ([5881d2a](https://github.com/Azure/LogicAppsUX/commit/5881d2a32facda07854aedd3fea8f595d8817648))
+
 ### [2.15.33](https://github.com/Azure/LogicAppsUX/compare/v2.15.32...v2.15.33) (2023-05-23)
 
 
