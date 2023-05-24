@@ -421,6 +421,10 @@ export function getParameterEditorProps(
       displayValue = nodeMetadata?.[parameterValue[0].value];
     }
     editorViewModel = { displayValue, selectedItem: undefined };
+  } else if (editor === constants.EDITOR.RECURRENCE) {
+    if (parameterValue.some(isTokenValueSegment)) {
+      editor = undefined;
+    }
   }
 
   return { editor, editorOptions, editorViewModel, schema };
