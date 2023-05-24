@@ -1,8 +1,8 @@
 import { ConfigPanelView } from '../../core/state/PanelSlice';
 import type { RootState } from '../../core/state/Store';
 import { SchemaType } from '../../models';
-import { PrimaryButton, Stack, TextField, ChoiceGroup, Dropdown, MessageBar, MessageBarType, Text } from '@fluentui/react';
-import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
+import { PrimaryButton, Stack, TextField, ChoiceGroup, MessageBar, MessageBarType, Text, VirtualizedComboBox } from '@fluentui/react';
+import type { IChoiceGroupOption, IComboBox, IComboBoxOption } from '@fluentui/react';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -25,9 +25,9 @@ export interface SchemaFile {
 
 export interface AddOrUpdateSchemaViewProps {
   schemaType?: SchemaType;
-  selectedSchema?: IDropdownOption;
+  selectedSchema?: string;
   selectedSchemaFile?: SchemaFile;
-  setSelectedSchema: (item: IDropdownOption<any> | undefined) => void;
+  setSelectedSchema: (item: string | undefined) => void;
   setSelectedSchemaFile: (item?: SchemaFile) => void;
   errorMessage: string;
   uploadType: UploadSchemaTypes;
@@ -46,7 +46,6 @@ export const AddOrUpdateSchemaView = ({
 }: AddOrUpdateSchemaViewProps) => {
   const intl = useIntl();
   const schemaFileInputRef = useRef<HTMLInputElement>(null);
-
   const { sourceSchema: curSourceSchema, targetSchema: curTargetSchema } = useSelector(
     (state: RootState) => state.dataMap.curDataMapOperation
   );
@@ -120,7 +119,7 @@ export const AddOrUpdateSchemaView = ({
   }, [intl, schemaType]);
 
   const onSelectOption = useCallback(
-    (option?: IDropdownOption) => {
+    (option?: string) => {
       setSelectedSchema(option);
     },
     [setSelectedSchema]
@@ -164,10 +163,20 @@ export const AddOrUpdateSchemaView = ({
     [availableSchemaList]
   );
 
+  const [matchingOptions, setMatchingOptions] = React.useState([...dataMapDropdownOptions]);
+
   const isOverwritingSchema = useMemo(
     () => (schemaType === SchemaType.Source ? !!curSourceSchema : !!curTargetSchema),
     [schemaType, curSourceSchema, curTargetSchema]
   );
+
+  const updateOptions = (_e: React.FormEvent<IComboBox>, value: IComboBoxOption | undefined) => {
+    if (value?.text) {
+      const matches = dataMapDropdownOptions.filter((o) => o.key.toLowerCase().indexOf(value?.text?.toLowerCase()) === 0);
+      setMatchingOptions(matches);
+    }
+    onSelectOption(value?.text);
+  };
 
   return (
     <div>
@@ -208,15 +217,20 @@ export const AddOrUpdateSchemaView = ({
       )}
 
       {uploadType === UploadSchemaTypes.SelectFrom && (
-        <Dropdown
+        <VirtualizedComboBox
           aria-label={dropdownAriaLabel}
-          selectedKey={selectedSchema ? selectedSchema.key : undefined}
-          placeholder={schemaDropdownPlaceholder}
-          options={dataMapDropdownOptions ?? []}
-          onChange={(_e, option) => onSelectOption(option)}
+          label={schemaDropdownPlaceholder}
+          options={matchingOptions}
+          onChange={updateOptions}
+          allowFreeform
+          autoComplete="on"
           errorMessage={errorMessage}
+          selectedKey={selectedSchema}
+          dropdownWidth={200}
         />
       )}
     </div>
   );
 };
+
+//const optionWithPath = ()
