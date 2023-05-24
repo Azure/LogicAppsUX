@@ -1,12 +1,11 @@
 import type { StaticResultRootSchemaType } from '..';
-import { EditorLanguage, MonacoEditor, RequiredMarkerSide, Label } from '..';
+import { RequiredMarkerSide, Label } from '..';
 import constants from '../constants';
 import { StaticResult } from './StaticResult';
 import { PropertyEditor } from './propertyEditor';
 import type { IDropdownOption, IDropdownStyles, ITextFieldStyles } from '@fluentui/react';
 import { Dropdown, TextField } from '@fluentui/react';
 import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import { useFunctionalState } from '@react-hookz/web';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -67,16 +66,13 @@ function WrappedStaticResultProperty({
 }: StaticResultPropertyProps): JSX.Element {
   const intl = useIntl();
   const [inputValue, setInputValue] = useState(
-    (typeof properties === 'string'
+    (typeof properties === 'string' || typeof properties === 'number' || typeof properties === 'boolean'
       ? properties
       : Object.keys(properties).length > 0
       ? JSON.stringify(properties, null, 2)
       : schema?.default ?? '') as string
   );
 
-  const [getCodeEditorValue, setCodeEditorValue] = useFunctionalState(
-    Object.keys(properties).length > 0 ? properties : schema.default ?? ''
-  );
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const getEnumValues = (): IDropdownOption[] => {
@@ -132,12 +128,6 @@ function WrappedStaticResultProperty({
     }
   };
 
-  const updateCodeParentProps = () => {
-    if (!errorMessage) {
-      updateParentProperties(inputValue ? inputValue : getCodeEditorValue());
-    }
-  };
-
   const updateParentPropsWithObject = (input: any) => {
     updateParentProperties(input);
   };
@@ -156,27 +146,6 @@ function WrappedStaticResultProperty({
               label={schema.title}
               required={required}
               placeholder={dropdownPlaceHolder}
-            />
-          );
-        } else if (schema['editor'] === 'code') {
-          return (
-            <MonacoEditor
-              label={schema.title}
-              value={getCodeEditorValue() ? JSON.stringify(getCodeEditorValue()) : inputValue}
-              fontSize={13}
-              lineNumbers="off"
-              language={EditorLanguage.json}
-              onContentChanged={(e) => {
-                try {
-                  if (e.value) {
-                    setCodeEditorValue(JSON.parse(e.value));
-                    setInputValue('');
-                  }
-                } catch {
-                  setInputValue(e.value ?? '');
-                }
-              }}
-              onBlur={updateCodeParentProps}
             />
           );
         } else {
