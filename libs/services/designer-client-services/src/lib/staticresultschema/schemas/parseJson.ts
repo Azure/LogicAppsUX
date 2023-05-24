@@ -143,6 +143,7 @@ function getValidationErrorSchema(): Schema {
       },
       schema: {
         type: 'object',
+        editor: 'code',
         title: STATIC_RESULT_VALIDATION_ERROR_SCHEMA,
       },
       childErrors: {

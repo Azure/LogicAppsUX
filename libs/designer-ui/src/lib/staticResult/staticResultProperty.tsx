@@ -1,11 +1,12 @@
 import type { StaticResultRootSchemaType } from '..';
-import { RequiredMarkerSide, Label } from '..';
+import { EditorLanguage, MonacoEditor, RequiredMarkerSide, Label } from '..';
 import constants from '../constants';
 import { StaticResult } from './StaticResult';
 import { PropertyEditor } from './propertyEditor';
 import type { IDropdownOption, IDropdownStyles, ITextFieldStyles } from '@fluentui/react';
 import { Dropdown, TextField } from '@fluentui/react';
 import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import { useFunctionalState } from '@react-hookz/web';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -41,8 +42,8 @@ const dropdownRootStyles: Partial<IDropdownStyles> = {
 };
 
 export const textFieldStyles: Partial<ITextFieldStyles> = {
-  fieldGroup: { height: 30, width: '100%', fontSize: 14 },
-  wrapper: { width: '100%', maxHeight: 40, alignItems: 'center', paddingBottom: 14 },
+  fieldGroup: { width: '100%', fontSize: 14, minHeight: 30 },
+  wrapper: { width: '100%', alignItems: 'center', paddingBottom: 14 },
 };
 
 interface StaticResultPropertyProps {
@@ -65,7 +66,17 @@ function WrappedStaticResultProperty({
   updateParentProperties,
 }: StaticResultPropertyProps): JSX.Element {
   const intl = useIntl();
-  const [inputValue, setInputValue] = useState((typeof properties === 'string' ? properties : schema?.default ?? '') as string);
+  const [inputValue, setInputValue] = useState(
+    (typeof properties === 'string'
+      ? properties
+      : Object.keys(properties).length > 0
+      ? JSON.stringify(properties, null, 2)
+      : schema?.default ?? '') as string
+  );
+
+  const [getCodeEditorValue, setCodeEditorValue] = useFunctionalState(
+    Object.keys(properties).length > 0 ? properties : schema.default ?? ''
+  );
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const getEnumValues = (): IDropdownOption[] => {
@@ -113,7 +124,17 @@ function WrappedStaticResultProperty({
 
   const updateParentProps = () => {
     if (!errorMessage) {
-      updateParentProperties(inputValue);
+      try {
+        updateParentProperties(JSON.parse(inputValue));
+      } catch {
+        updateParentProperties(inputValue);
+      }
+    }
+  };
+
+  const updateCodeParentProps = () => {
+    if (!errorMessage) {
+      updateParentProperties(inputValue ? inputValue : getCodeEditorValue());
     }
   };
 
@@ -137,6 +158,27 @@ function WrappedStaticResultProperty({
               placeholder={dropdownPlaceHolder}
             />
           );
+        } else if (schema['editor'] === 'code') {
+          return (
+            <MonacoEditor
+              label={schema.title}
+              value={getCodeEditorValue() ? JSON.stringify(getCodeEditorValue()) : inputValue}
+              fontSize={13}
+              lineNumbers="off"
+              language={EditorLanguage.json}
+              onContentChanged={(e) => {
+                try {
+                  if (e.value) {
+                    setCodeEditorValue(JSON.parse(e.value));
+                    setInputValue('');
+                  }
+                } catch {
+                  setInputValue(e.value ?? '');
+                }
+              }}
+              onBlur={updateCodeParentProps}
+            />
+          );
         } else {
           return (
             <TextField
@@ -149,6 +191,9 @@ function WrappedStaticResultProperty({
                 setInputValue(newVal ?? '');
               }}
               onBlur={updateParentProps}
+              multiline
+              autoAdjustHeight
+              rows={1}
             />
           );
         }
@@ -206,6 +251,9 @@ function WrappedStaticResultProperty({
               setInputValue(newVal ?? '');
             }}
             onBlur={updateParentProps}
+            multiline
+            autoAdjustHeight
+            rows={1}
           />
         );
     }
