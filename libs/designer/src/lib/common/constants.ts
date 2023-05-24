@@ -185,6 +185,7 @@ export default {
     TABLE: 'table',
     VARIABLE_NAME: 'variablename',
     HTML: 'html',
+    RECURRENCE: 'recurrence',
   },
   EVENT_AUTH_COMPLETED: 'MSLA_AUTH_COMPLETED',
   ERROR_MESSAGES: {
