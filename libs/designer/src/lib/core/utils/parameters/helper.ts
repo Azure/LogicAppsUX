@@ -494,9 +494,9 @@ const toSimpleQueryBuilderViewModel = (input: any): { isOldFormat: boolean; item
   let operand1: ValueSegment[], operand2: ValueSegment[], operation: string;
   try {
     operation = input.substring(input.indexOf('@') + 1, input.indexOf('('));
-    const operations = input.split(',');
-    const operand1String = operations[0].substring(operations[0].indexOf('(') + 1);
-    const operand2String = operations[1].substring(0, operations[1].lastIndexOf(')'));
+    const operandSubstring = input.substring(input.indexOf('(') + 1, input.lastIndexOf(')'));
+    const operand1String = operandSubstring.substring(0, getOuterMostCommaIndex(operandSubstring));
+    const operand2String = operandSubstring.substring(getOuterMostCommaIndex(operandSubstring) + 1);
     operand1 = loadParameterValue(convertStringToInputParameter(operand1String, true, true, true));
     operand2 = loadParameterValue(convertStringToInputParameter(operand2String, true, true, true));
   } catch {
@@ -509,6 +509,23 @@ const toSimpleQueryBuilderViewModel = (input: any): { isOldFormat: boolean; item
     isOldFormat: true,
     items: { type: GroupType.ROW, operator: operation, operand1, operand2 },
   };
+};
+
+const getOuterMostCommaIndex = (input: string): number => {
+  let outermostCommaIndex = -1;
+  let openParenthesesCount = 0;
+
+  for (let i = 0; i < input.length; i++) {
+    if (input[i] === '(') {
+      openParenthesesCount++;
+    } else if (input[i] === ')') {
+      openParenthesesCount--;
+    } else if (input[i] === ',' && openParenthesesCount === 0) {
+      outermostCommaIndex = i;
+      break;
+    }
+  }
+  return outermostCommaIndex;
 };
 
 // Create QueryBuilder Editor View Model
