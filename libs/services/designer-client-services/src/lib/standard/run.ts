@@ -10,6 +10,7 @@ import {
   UnsupportedException,
   isString,
   getCallbackUrl,
+  isNullOrUndefined,
 } from '@microsoft/utils-logic-apps';
 
 export interface RunServiceOptions {
