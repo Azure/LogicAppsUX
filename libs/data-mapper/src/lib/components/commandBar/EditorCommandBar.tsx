@@ -5,13 +5,14 @@ import type { AppDispatch, RootState } from '../../core/state/Store';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { makeStyles, shorthands, Toolbar, ToolbarButton, ToolbarDivider, ToolbarGroup } from '@fluentui/react-components';
 import {
+  ArrowRedo20Regular,
+  ArrowUndo20Regular,
+  Dismiss20Regular,
+  Globe20Regular,
+  OrganizationHorizontal20Regular,
   Play20Regular,
   Save20Regular,
   Settings20Regular,
-  ArrowUndo20Regular,
-  ArrowRedo20Regular,
-  Dismiss20Regular,
-  OrganizationHorizontal20Regular,
 } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -23,6 +24,7 @@ export interface EditorCommandBarProps {
   onRedoClick: () => void;
   onTestClick: () => void;
   showMapOverview: boolean;
+  setShowMapOverview: (showMapOverview: boolean) => void;
   showGlobalView: boolean;
   setShowGlobalView: (showGlobalView: boolean) => void;
   onGenerateClick: () => void;
@@ -39,7 +41,17 @@ const useStyles = makeStyles({
 });
 
 export const EditorCommandBar = (props: EditorCommandBarProps) => {
-  const { onSaveClick, onUndoClick, onRedoClick, onTestClick, showMapOverview, showGlobalView, setShowGlobalView, onGenerateClick } = props;
+  const {
+    onSaveClick,
+    onUndoClick,
+    onRedoClick,
+    onTestClick,
+    showMapOverview,
+    setShowMapOverview,
+    showGlobalView,
+    setShowGlobalView,
+    onGenerateClick,
+  } = props;
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -131,6 +143,10 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         defaultMessage: 'Global view',
         description: 'Button text for whole overview',
       }),
+      RETURN: intl.formatMessage({
+        defaultMessage: 'Return',
+        description: 'Button text for returning to the canvas',
+      }),
       DIVIDER: intl.formatMessage({
         defaultMessage: 'Divider',
         description: 'Aria label for divider',
@@ -173,18 +189,32 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
           {Resources.RUN_TEST}
         </ToolbarButton>
         <ToolbarButton
-          aria-label={showGlobalView ? Resources.MAP_OVERVIEW : Resources.GLOBAL_VIEW}
+          aria-label={showMapOverview ? Resources.RETURN : Resources.MAP_OVERVIEW}
           icon={<OrganizationHorizontal20Regular />}
-          disabled={!showMapOverview || !bothSchemasDefined}
-          onClick={() => setShowGlobalView(!showGlobalView)}
+          disabled={!bothSchemasDefined}
+          onClick={() => {
+            setShowMapOverview(!showMapOverview);
+            setShowGlobalView(false);
+          }}
         >
-          {showGlobalView ? Resources.MAP_OVERVIEW : Resources.GLOBAL_VIEW}
+          {showMapOverview ? Resources.RETURN : Resources.MAP_OVERVIEW}
+        </ToolbarButton>
+        <ToolbarButton
+          aria-label={showGlobalView ? Resources.RETURN : Resources.GLOBAL_VIEW}
+          icon={<Globe20Regular />}
+          disabled={!bothSchemasDefined}
+          onClick={() => {
+            setShowMapOverview(false);
+            setShowGlobalView(!showGlobalView);
+          }}
+        >
+          {showGlobalView ? Resources.RETURN : Resources.GLOBAL_VIEW}
         </ToolbarButton>
         <ToolbarDivider />
         <ToolbarButton
           aria-label={Resources.CONFIGURATION}
           icon={<Settings20Regular />}
-          disabled={!showMapOverview || !bothSchemasDefined}
+          disabled={!bothSchemasDefined}
           onClick={() => {
             dispatch(openDefaultConfigPanelView());
 

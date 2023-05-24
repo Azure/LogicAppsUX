@@ -12,6 +12,7 @@ import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import { directAccessPseudoFunctionKey, indexPseudoFunction } from '../../models/Function';
 import { findLast } from '../../utils/Array.Utils';
 import {
+  applyConnectionValue,
   bringInParentSourceNodesForRepeating,
   collectSourceNodesForConnectionChain,
   collectTargetNodesForConnectionChain,
@@ -24,7 +25,6 @@ import {
   getTargetSchemaNodeConnections,
   isConnectionUnit,
   nodeHasSpecificInputEventually,
-  applyConnectionValue,
 } from '../../utils/Connection.Utils';
 import {
   addAncestorNodesToCanvas,
@@ -164,6 +164,10 @@ export const dataMapSlice = createSlice({
         state.pristineDataMap.flattenedTargetSchema = flattenedSchema;
         state.pristineDataMap.targetSchemaOrdering = targetSchemaSortArray;
       }
+
+      if (state.curDataMapOperation.sourceSchema && state.curDataMapOperation.targetSchema) {
+        state.curDataMapOperation.currentTargetSchemaNode = state.curDataMapOperation.targetSchema.schemaTreeRoot;
+      }
     },
 
     setInitialDataMap: (state, action: PayloadAction<InitialDataMapAction>) => {
@@ -185,7 +189,7 @@ export const dataMapSlice = createSlice({
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
         currentSourceSchemaNodes: [],
-        currentTargetSchemaNode: undefined,
+        currentTargetSchemaNode: targetSchema.schemaTreeRoot,
       };
 
       state.curDataMapOperation = newState;

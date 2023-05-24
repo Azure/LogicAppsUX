@@ -423,7 +423,7 @@ const addChildNodesForOverview = (
 ): void => {
   const baseSchemaNodeData = {
     schemaType: isSourceSchema ? SchemaType.Source : SchemaType.Target,
-    displayChevron: !isSourceSchema && sourceSchemaSpecified,
+    displayChevron: false,
     displayHandle: false,
     disabled: false,
     connectionStatus: !isSourceSchema && targetSchemaStates ? targetSchemaStates[curNode.key] : undefined,

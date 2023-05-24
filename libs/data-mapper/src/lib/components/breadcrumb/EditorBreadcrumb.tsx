@@ -184,9 +184,7 @@ const convertToBreadcrumbItems = (
   const rootItem: IBreadcrumbItem = {
     key: schema.name,
     text: schema.name,
-    onClick: () => {
-      dispatch(setCurrentTargetSchemaNode(undefined));
-    },
+    disabled: true,
   };
 
   const breadcrumbItems = [rootItem];
