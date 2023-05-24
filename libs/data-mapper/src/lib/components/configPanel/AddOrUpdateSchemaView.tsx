@@ -174,11 +174,14 @@ export const AddOrUpdateSchemaView = ({
 
   const updateOptions: ComboboxProps['onChange'] = (event) => {
     const value = event.target.value.trim();
-    if (value && value.length > 0) {
-      const matches = dataMapDropdownOptions.filter((o) => o.key.toLowerCase().indexOf(value?.toLowerCase()) === 0);
+    const matches = dataMapDropdownOptions.filter((o) => o.key.toLowerCase().indexOf(value?.toLowerCase()) === 0);
+    if (value.length !== 0) {
       setMatchingOptions(matches);
+    } else setMatchingOptions(dataMapDropdownOptions);
+
+    if (value) {
+      onSelectOption(value);
     }
-    onSelectOption(value);
   };
 
   const formattedOptions =
