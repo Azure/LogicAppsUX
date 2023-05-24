@@ -282,8 +282,8 @@ export const DataMapperDesigner = ({
   };
 
   const getCanvasAreaHeight = () => {
-    // PropPane isn't shown when in Overview, so canvas can use full height
-    if (showMapOverview) {
+    // PropPane isn't shown when in the other views, so canvas can use full height
+    if (showMapOverview || showGlobalView) {
       return centerViewHeight - 8;
     }
 
@@ -362,7 +362,7 @@ export const DataMapperDesigner = ({
                 </Stack>
               </div>
 
-              {!showMapOverview && (
+              {!(showMapOverview || showGlobalView) && (
                 <PropertiesPane
                   selectedItemKey={selectedItemKey ?? ''}
                   isExpanded={isPropPaneExpanded}

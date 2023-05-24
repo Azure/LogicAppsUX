@@ -166,7 +166,7 @@ export const dataMapSlice = createSlice({
       }
 
       if (state.curDataMapOperation.sourceSchema && state.curDataMapOperation.targetSchema) {
-        state.curDataMapOperation.currentTargetSchemaNode = action.payload.schema.schemaTreeRoot;
+        state.curDataMapOperation.currentTargetSchemaNode = state.curDataMapOperation.targetSchema.schemaTreeRoot;
       }
     },
 
