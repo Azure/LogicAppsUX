@@ -1,3 +1,5 @@
+import { equals } from '@microsoft/utils-logic-apps';
+
 export function pathCombine(url: string, path: string): string {
   let pathUrl: string;
 
@@ -37,4 +39,13 @@ export function cleanSwaggerOperationPathValue(value: string): string {
 
 export function areSwaggerOperationPathsMatching(path1: string, path2: string): boolean {
   return cleanSwaggerOperationPathValue(path1) === cleanSwaggerOperationPathValue(path2);
+}
+
+export function isFunctionContainer(kind: any): boolean {
+  if (typeof kind !== 'string') return false;
+
+  const kinds = kind.split(',');
+  return (
+    kinds.some(($kind) => equals($kind, 'functionapp')) && !kinds.some(($kind) => equals($kind, 'botapp') || equals($kind, 'workflowapp'))
+  );
 }

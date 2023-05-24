@@ -1,8 +1,9 @@
 import type { IAppServiceService } from '../appService';
 import type { ListDynamicValue } from '../connector';
+import { isFunctionContainer } from '../helpers';
 import type { IHttpClient } from '../httpClient';
 import { ResponseCodes, SwaggerParser } from '@microsoft/parsers-logic-apps';
-import { ArgumentException, equals, unmap } from '@microsoft/utils-logic-apps';
+import { ArgumentException, unmap } from '@microsoft/utils-logic-apps';
 
 export interface BaseAppServiceServiceOptions {
   baseUrl: string;
@@ -143,13 +144,4 @@ function connectorIsAppService(connector: any): boolean {
   const url = connector?.properties?.siteConfig?.apiDefinition?.url;
   const allowedOrigins = connector?.properties?.siteConfig?.cors;
   return url && allowedOrigins;
-}
-
-export function isFunctionContainer(kind: any): boolean {
-  if (typeof kind !== 'string') return false;
-
-  const kinds = kind.split(',');
-  return (
-    kinds.some(($kind) => equals($kind, 'functionapp')) && !kinds.some(($kind) => equals($kind, 'botapp') || equals($kind, 'workflowapp'))
-  );
 }
