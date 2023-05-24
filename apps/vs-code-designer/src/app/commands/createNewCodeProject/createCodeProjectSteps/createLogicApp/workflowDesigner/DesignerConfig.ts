@@ -25,7 +25,7 @@ export class DesignerConfig extends AzureWizardPromptStep<IProjectWizardContext>
     await this.generateHostJson(configPath);
 
     //generate local.settings.json
-    await this.generateLocalSettingsJson(configPath);
+    await this.generateLocalSettingsJson(configPath, context);
   }
 
   /**
@@ -43,6 +43,7 @@ export class DesignerConfig extends AzureWizardPromptStep<IProjectWizardContext>
       extensions: {
         workflow: {
           settings: {
+            'Runtime.WorkflowOperationDiscoveryHostMode': 'true',
             'Runtime.IsInvokeFunctionActionEnabled': 'true',
           },
         },
@@ -55,9 +56,9 @@ export class DesignerConfig extends AzureWizardPromptStep<IProjectWizardContext>
    * Generates the local.settings.json file in the specified folder.
    * @param folderPath The path to the folder where the local.settings.json file should be generated.
    */
-  private async generateLocalSettingsJson(folderPath: string): Promise<void> {
+  private async generateLocalSettingsJson(folderPath: string, context: IProjectWizardContext): Promise<void> {
     const filePath = path.join(folderPath, 'local.settings.json');
-    const designerProjPath: string = folderPath;
+    const designerProjPath: string = context.logicAppFolderPath;
     const content = {
       IsEncrypted: false,
       Values: {

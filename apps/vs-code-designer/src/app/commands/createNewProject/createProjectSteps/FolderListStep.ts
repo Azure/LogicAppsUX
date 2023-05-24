@@ -1,3 +1,7 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../localize';
 import { getContainingWorkspace, selectWorkspaceFolder } from '../../../utils/workspace';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
