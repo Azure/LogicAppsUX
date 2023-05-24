@@ -1,8 +1,10 @@
 import { ConfigPanelView } from '../../core/state/PanelSlice';
 import type { RootState } from '../../core/state/Store';
 import { SchemaType } from '../../models';
-import { PrimaryButton, Stack, TextField, ChoiceGroup, Dropdown, MessageBar, MessageBarType, Text } from '@fluentui/react';
-import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
+import { PrimaryButton, Stack, TextField, ChoiceGroup, MessageBar, MessageBarType, Text } from '@fluentui/react';
+import type { IChoiceGroupOption } from '@fluentui/react';
+import type { ComboboxProps } from '@fluentui/react-components';
+import { Combobox, Option } from '@fluentui/react-components';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -25,9 +27,9 @@ export interface SchemaFile {
 
 export interface AddOrUpdateSchemaViewProps {
   schemaType?: SchemaType;
-  selectedSchema?: IDropdownOption;
+  selectedSchema?: string;
   selectedSchemaFile?: SchemaFile;
-  setSelectedSchema: (item: IDropdownOption<any> | undefined) => void;
+  setSelectedSchema: (item: string | undefined) => void;
   setSelectedSchemaFile: (item?: SchemaFile) => void;
   errorMessage: string;
   uploadType: UploadSchemaTypes;
@@ -46,7 +48,6 @@ export const AddOrUpdateSchemaView = ({
 }: AddOrUpdateSchemaViewProps) => {
   const intl = useIntl();
   const schemaFileInputRef = useRef<HTMLInputElement>(null);
-
   const { sourceSchema: curSourceSchema, targetSchema: curTargetSchema } = useSelector(
     (state: RootState) => state.dataMap.curDataMapOperation
   );
@@ -120,7 +121,7 @@ export const AddOrUpdateSchemaView = ({
   }, [intl, schemaType]);
 
   const onSelectOption = useCallback(
-    (option?: IDropdownOption) => {
+    (option?: string) => {
       setSelectedSchema(option);
     },
     [setSelectedSchema]
@@ -164,10 +165,28 @@ export const AddOrUpdateSchemaView = ({
     [availableSchemaList]
   );
 
+  const [matchingOptions, setMatchingOptions] = React.useState([...dataMapDropdownOptions]);
+
   const isOverwritingSchema = useMemo(
     () => (schemaType === SchemaType.Source ? !!curSourceSchema : !!curTargetSchema),
     [schemaType, curSourceSchema, curTargetSchema]
   );
+
+  const updateOptions: ComboboxProps['onChange'] = (event) => {
+    const value = event.target.value.trim();
+    if (value && value.length > 0) {
+      const matches = dataMapDropdownOptions.filter((o) => o.key.toLowerCase().indexOf(value?.toLowerCase()) === 0);
+      setMatchingOptions(matches);
+    }
+    onSelectOption(value);
+  };
+
+  const formattedOptions =
+    matchingOptions.length !== 0
+      ? matchingOptions.map((option) => optionWithPath(option.key))
+      : dataMapDropdownOptions.map((option) => optionWithPath(option.key));
+  console.log(errorMessage); // danielle need to find a place to put this
+  console.log(selectedSchema);
 
   return (
     <div>
@@ -208,15 +227,27 @@ export const AddOrUpdateSchemaView = ({
       )}
 
       {uploadType === UploadSchemaTypes.SelectFrom && (
-        <Dropdown
+        <Combobox
           aria-label={dropdownAriaLabel}
-          selectedKey={selectedSchema ? selectedSchema.key : undefined}
           placeholder={schemaDropdownPlaceholder}
-          options={dataMapDropdownOptions ?? []}
-          onChange={(_e, option) => onSelectOption(option)}
-          errorMessage={errorMessage}
-        />
+          onChange={updateOptions}
+          freeform={true}
+          autoComplete="on"
+          //errorMessage={errorMessage}
+          //selectedKey={selectedSchema}
+          //dropdownWidth={200}
+        >
+          {formattedOptions}
+        </Combobox>
       )}
     </div>
+  );
+};
+
+const optionWithPath: React.FC<string> = (option: string) => {
+  return (
+    <Option text={option}>
+      <div>{option}</div>
+    </Option>
   );
 };

@@ -9,7 +9,6 @@ import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import type { SchemaFile } from './AddOrUpdateSchemaView';
 import { AddOrUpdateSchemaView, UploadSchemaTypes } from './AddOrUpdateSchemaView';
 import { DefaultConfigView } from './DefaultConfigView';
-import type { IDropdownOption } from '@fluentui/react';
 import { DefaultButton, Panel, PrimaryButton } from '@fluentui/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -43,28 +42,20 @@ export const ConfigPanel = ({
   const currentTheme = useSelector((state: RootState) => state.app.theme);
 
   const [uploadType, setUploadType] = useState<UploadSchemaTypes>(UploadSchemaTypes.SelectFrom);
-  const [selectedSourceSchema, setSelectedSourceSchema] = useState<IDropdownOption>();
-  const [selectedTargetSchema, setSelectedTargetSchema] = useState<IDropdownOption>();
+  const [selectedSourceSchema, setSelectedSourceSchema] = useState<string>();
+  const [selectedTargetSchema, setSelectedTargetSchema] = useState<string>();
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
   const [errorMessage, setErrorMessage] = useState('');
 
-  const fetchedSourceSchema = useQuery(
-    [selectedSourceSchema?.text],
-    async () => await getSelectedSchema(selectedSourceSchema?.text ?? ''),
-    {
-      ...schemaFileQuerySettings,
-      enabled: selectedSourceSchema !== undefined,
-    }
-  );
+  const fetchedSourceSchema = useQuery([selectedSourceSchema], async () => await getSelectedSchema(selectedSourceSchema ?? ''), {
+    ...schemaFileQuerySettings,
+    enabled: selectedSourceSchema !== undefined,
+  });
 
-  const fetchedTargetSchema = useQuery(
-    [selectedTargetSchema?.text],
-    async () => await getSelectedSchema(selectedTargetSchema?.text ?? ''),
-    {
-      ...schemaFileQuerySettings,
-      enabled: selectedTargetSchema !== undefined,
-    }
-  );
+  const fetchedTargetSchema = useQuery([selectedTargetSchema], async () => await getSelectedSchema(selectedTargetSchema ?? ''), {
+    ...schemaFileQuerySettings,
+    enabled: selectedTargetSchema !== undefined,
+  });
 
   const addLoc = intl.formatMessage({
     defaultMessage: 'Add',
@@ -192,9 +183,9 @@ export const ConfigPanel = ({
 
     if (uploadType === UploadSchemaTypes.SelectFrom) {
       if (schemaType === SchemaType.Source) {
-        isNoNewSchemaSelected = !selectedSourceSchema || selectedSourceSchema.key === curDataMapOperation.sourceSchema?.name;
+        isNoNewSchemaSelected = !selectedSourceSchema || selectedSourceSchema === curDataMapOperation.sourceSchema?.name;
       } else {
-        isNoNewSchemaSelected = !selectedTargetSchema || selectedTargetSchema.key === curDataMapOperation.targetSchema?.name;
+        isNoNewSchemaSelected = !selectedTargetSchema || selectedTargetSchema === curDataMapOperation.targetSchema?.name;
       }
     } else {
       isNoNewSchemaSelected = !selectedSchemaFile;
