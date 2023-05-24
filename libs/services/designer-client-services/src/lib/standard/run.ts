@@ -19,6 +19,7 @@ export interface RunServiceOptions {
   apiVersion: string;
   baseUrl: string;
   httpClient: IHttpClient;
+  updateCors?: () => void;
   accessToken?: string;
   workflowName: string;
   isDev?: boolean;
@@ -217,6 +218,7 @@ export class StandardRunService implements IRunService {
    */
   async getActionLinks(actionMetadata: { inputsLink?: ContentLink; outputsLink?: ContentLink }, nodeId: string): Promise<any> {
     const { inputsLink, outputsLink } = actionMetadata ?? {};
+    const { updateCors } = this.options;
     let inputs: Record<string, any> = {};
     let outputs: Record<string, any> = {};
 
@@ -226,13 +228,22 @@ export class StandardRunService implements IRunService {
       return Promise.resolve({ inputs: this.parseActionLink(inputs, true), outputs: this.parseActionLink(outputs, false) });
     }
 
-    if (outputsLink && outputsLink.uri) {
-      outputs = await this.getContent(outputsLink);
+    try {
+      if (outputsLink && outputsLink.uri) {
+        outputs = await this.getContent(outputsLink);
+      }
+      if (inputsLink && inputsLink.uri) {
+        inputs = await this.getContent(inputsLink);
+      }
+    } catch (e: any) {
+      if (e.message.includes('Failed to fetch') && !isNullOrUndefined(updateCors)) {
+        updateCors();
+      } else {
+        throw new Error(e.message);
+      }
     }
-    if (inputsLink && inputsLink.uri) {
-      inputs = await this.getContent(inputsLink);
-    }
-    return { inputs: this.parseActionLink(inputs, true), outputs: this.parseActionLink(outputs, false) };
+
+    return { inputs, outputs };
   }
 
   /**
