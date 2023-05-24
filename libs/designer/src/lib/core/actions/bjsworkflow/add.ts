@@ -219,8 +219,8 @@ const initializeOperationDetails = async (
   const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId, swagger || parsedManifest);
   let hasSchema;
   schemaService.then((schema) => {
-    hasSchema = true;
     if (schema) {
+      hasSchema = true;
       dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
     }
   });

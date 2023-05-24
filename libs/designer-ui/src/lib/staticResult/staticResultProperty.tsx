@@ -41,8 +41,8 @@ const dropdownRootStyles: Partial<IDropdownStyles> = {
 };
 
 export const textFieldStyles: Partial<ITextFieldStyles> = {
-  fieldGroup: { height: 30, width: '100%', fontSize: 14 },
-  wrapper: { width: '100%', maxHeight: 40, alignItems: 'center', paddingBottom: 14 },
+  fieldGroup: { width: '100%', fontSize: 14, minHeight: 30 },
+  wrapper: { width: '100%', alignItems: 'center', paddingBottom: 14 },
 };
 
 interface StaticResultPropertyProps {
@@ -174,6 +174,9 @@ function WrappedStaticResultProperty({
             onChange={validateInteger}
             errorMessage={errorMessage}
             onBlur={updateParentProps}
+            multiline
+            autoAdjustHeight
+            rows={1}
           />
         );
       case constants.SWAGGER.TYPE.ARRAY:
@@ -217,6 +220,9 @@ function WrappedStaticResultProperty({
               setInputValue(newVal ?? '');
             }}
             onBlur={updateParentProps}
+            multiline
+            autoAdjustHeight
+            rows={1}
           />
         );
     }
