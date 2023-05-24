@@ -1,4 +1,28 @@
 # Logic Apps Designer
+## [2.19.0](https://github.com/Azure/LogicAppsUX/compare/v2.18.0...v2.19.0) (2023-05-24)
+
+
+### Features
+
+* **Data Mapper:** Brute force order some of the map definition ([#2483](https://github.com/Azure/LogicAppsUX/issues/2483)) ([fa622d8](https://github.com/Azure/LogicAppsUX/commit/fa622d88c5ae8c380290338ab1f5a5e5ccfc0d0b))
+* **Data Mapper:** Collapse function category at start ([#2517](https://github.com/Azure/LogicAppsUX/issues/2517)) ([2820c00](https://github.com/Azure/LogicAppsUX/commit/2820c0035be67a8e7b3177b893e848e4dbf42716))
+* **designer:** Increased search request size, search loading is now faster ([#2232](https://github.com/Azure/LogicAppsUX/issues/2232)) ([7de4199](https://github.com/Azure/LogicAppsUX/commit/7de4199ed89b2d57f5615fbc2eb8280bcb7b04dd))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Reduce false positives for Map checker types ([#2119](https://github.com/Azure/LogicAppsUX/issues/2119)) ([8ffa25f](https://github.com/Azure/LogicAppsUX/commit/8ffa25f33d4c08c5d3eb5c0965a40eb269a549a9))
+* **designer:** Catch exception for when cors is not established for monitoring view ([#2524](https://github.com/Azure/LogicAppsUX/issues/2524)) ([0613b2e](https://github.com/Azure/LogicAppsUX/commit/0613b2eb939ab28ed0f0b7ba044d8a2a60ba8c40))
+* **designer:** Do not fail loading outputs when outputs do not have array schema or no schema at all ([#2510](https://github.com/Azure/LogicAppsUX/issues/2510)) ([559de37](https://github.com/Azure/LogicAppsUX/commit/559de37f2d7e767b1ffb4d2b5c1a0b24837471c7))
+* **designer:** Fix filtering of function apps which have more than one type of kind ([#2536](https://github.com/Azure/LogicAppsUX/issues/2536)) ([3eef440](https://github.com/Azure/LogicAppsUX/commit/3eef440d6e2f51ab73f527da9b9d78468fe6c0a1))
+* **designer:** Fix inputs/outputs and pager in nested for each loops ([#2480](https://github.com/Azure/LogicAppsUX/issues/2480)) ([836754b](https://github.com/Azure/LogicAppsUX/commit/836754b4c6ce6aee7a8bea1127257d8684b60dcd))
+* **designer:** Fixed connections with non-optional gateway parameters ([#2519](https://github.com/Azure/LogicAppsUX/issues/2519)) ([ae583f0](https://github.com/Azure/LogicAppsUX/commit/ae583f008a25774bc25201ddf3bfb49ac9c29310))
+* **designer:** Fixing recommendation header for trigger ([#2484](https://github.com/Azure/LogicAppsUX/issues/2484)) ([b412be9](https://github.com/Azure/LogicAppsUX/commit/b412be95621c0bae8dcc8ee83e80c42e77ad2c4d))
+* **designer:** Mark dependent parameters as valid for even output token references for dynamic call ([#2518](https://github.com/Azure/LogicAppsUX/issues/2518)) ([a2aad55](https://github.com/Azure/LogicAppsUX/commit/a2aad55da9e3dfcb0f9650aa83e1496e5c2580ea))
+* **designer:** Render schedule editor only when recurrence values are literal segments ([#2535](https://github.com/Azure/LogicAppsUX/issues/2535)) ([3f47c51](https://github.com/Azure/LogicAppsUX/commit/3f47c5199d06bf7f218359f1a986b07d8c8b8b4a))
+* **designer:** support multiline for connection creation ([#2513](https://github.com/Azure/LogicAppsUX/issues/2513)) ([6975d35](https://github.com/Azure/LogicAppsUX/commit/6975d35c04cc93eea3cf3000ae72f31ffd16374a))
+* **vscode:** Invoke workflow showing the input parameter fields ([#2515](https://github.com/Azure/LogicAppsUX/issues/2515)) ([72e215f](https://github.com/Azure/LogicAppsUX/commit/72e215f42ba6070b59853dd9574922bd933cadd5))
+
 ## [2.18.0](https://github.com/Azure/LogicAppsUX/compare/v2.17.0...v2.18.0) (2023-05-22)
 
 
