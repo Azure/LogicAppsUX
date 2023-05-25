@@ -33,9 +33,9 @@ export const isolatedSdkName = 'Microsoft.Azure.Functions.Worker.Sdk';
 export const dotnet = 'dotnet';
 export const dotNetSDK = 'dotNetSDK';
 export const dotNetPackageName = 'Microsoft.DotNet.SDK';
-export const dotNetAptPackageName = 'dotnet-sdk';
 export const dotNetSDKMajorVersion = 6;
 export const dotNetSDKLatestVersion = '6.0.408';
+export const dotNetInstallScript = 'https://dot.net/v1/dotnet-install.sh';
 
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
@@ -187,7 +187,7 @@ export enum PackageManager {
   npm = 'npm',
   brew = 'brew',
   winget = 'winget',
-  aptitude = 'apt-get',
+  wget = 'wget',
 }
 
 // Operating System Platforms

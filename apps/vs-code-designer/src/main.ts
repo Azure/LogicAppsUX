@@ -9,9 +9,8 @@ import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { getPackageManager } from './app/utils/packageManagers/getPackageManager';
-import { getWorkspaceSetting } from './app/utils/vsCodeConfig/settings';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
-import { PlatformPackageManagerSetting, extensionCommand, logicAppFilter } from './constants';
+import { extensionCommand, logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
 import {
@@ -45,11 +44,9 @@ export async function activate(context: vscode.ExtensionContext) {
     runPostWorkflowCreateStepsFromCache();
 
     getPackageManager();
-    if (getWorkspaceSetting(PlatformPackageManagerSetting)) {
-      validateDotNetSDKIsLatest();
-      // TODO: Validate NPM Install
-      validateFuncCoreToolsIsLatest();
-    }
+    validateDotNetSDKIsLatest();
+    // TODO: Validate NPM Install
+    validateFuncCoreToolsIsLatest();
 
     ext.rgApi = await getResourceGroupsApi();
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

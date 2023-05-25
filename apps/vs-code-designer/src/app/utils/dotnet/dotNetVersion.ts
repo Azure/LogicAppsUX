@@ -126,7 +126,7 @@ export async function getNewestDotNetSDKVersion(
         break;
 
       case PackageManager.brew:
-      case PackageManager.aptitude:
+      case PackageManager.wget:
         return dotNetSDKLatestVersion;
     }
   } catch (error) {

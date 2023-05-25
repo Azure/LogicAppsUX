@@ -52,7 +52,7 @@ export async function validateDotNetSDKIsInstalled(context: IActionContext, mess
       innerContext.telemetry.properties.dialogResult = input.title;
 
       if (input === install) {
-        await installDotNetSDK();
+        await installDotNetSDK(innerContext);
         installed = true;
       } else if (input === DialogResponses.learnMore) {
         await openUrl('https://dotnet.microsoft.com/en-us/download/dotnet/6.0');

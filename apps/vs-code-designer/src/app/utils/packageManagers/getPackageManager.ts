@@ -21,8 +21,8 @@ export async function getPackageManager(): Promise<void> {
 
     switch (process.platform) {
       case Platform.linux:
-        await executeCommand(undefined, undefined, 'sudo', 'apt-get', '--version');
-        await updateGlobalSetting(platformPackageManagerKey, 'apt-get');
+        await executeCommand(undefined, undefined, 'wget', '--version');
+        await updateGlobalSetting(platformPackageManagerKey, 'wget');
         break;
       case Platform.windows:
         await executeCommand(undefined, undefined, 'winget', '--version');

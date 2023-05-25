@@ -766,7 +766,7 @@
             "enum": [
               "winget",
               "brew",
-              "apt-get"
+              "wget"
             ],
             "description": "Package Manager across Operating System Platforms"
           },
