@@ -1086,6 +1086,12 @@
       "value": "Line Number"
     }
   ],
+  "5OvGgn": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -4868,6 +4874,12 @@
       "value": "傳回資料 URI 的二進位表示法"
     }
   ],
+  "YABOLz": [
+    {
+      "type": 0,
+      "value": "Body Item"
+    }
+  ],
   "YCFhzp": [
     {
       "type": 0,
@@ -6465,6 +6477,12 @@
     {
       "type": 0,
       "value": "Functions"
+    }
+  ],
+  "lUm6fl": [
+    {
+      "type": 0,
+      "value": "Return"
     }
   ],
   "lZT0JI": [
