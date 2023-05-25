@@ -79,30 +79,34 @@ export async function tryGetLocalDotNetVersion(): Promise<DotnetVersion | undefi
  * @returns {Promise<string | null>} .NET SDK version.
  */
 export async function getLocalDotNetSDKVersion(): Promise<string | null> {
-  const output: string = await executeCommand(undefined, undefined, ext.dotNetCliPath, '--list-sdks');
+  try {
+    const output: string = await executeCommand(undefined, undefined, ext.dotNetCliPath, '--list-sdks');
 
-  // Creates an array of versions from output
-  const sdkList: string[] = output.split(/\r?\n/);
-  const directoryRegex = /\[.*?\]/;
-  let version: string | null = '-1';
-  sdkList.forEach((sdkVersion) => {
-    // Removes directory using regex
-    const match = sdkVersion.match(directoryRegex);
-    if (match) {
-      const directory = match[0];
-      const checkVersion = semver.clean(sdkVersion.replace(directory, ''));
+    // Creates an array of versions from output
+    const sdkList: string[] = output.split(/\r?\n/);
+    const directoryRegex = /\[.*?\]/;
+    let version: string | null = '-1';
+    sdkList.forEach((sdkVersion) => {
+      // Removes directory using regex
+      const match = sdkVersion.match(directoryRegex);
+      if (match) {
+        const directory = match[0];
+        const checkVersion = semver.clean(sdkVersion.replace(directory, ''));
 
-      if (semver.major(checkVersion) == dotNetSDKMajorVersion) {
-        // List of sdk is in-order and therefore the version will be latest.
-        version = checkVersion;
+        if (semver.major(checkVersion) == dotNetSDKMajorVersion) {
+          // List of sdk is in-order and therefore the version will be latest.
+          version = checkVersion;
+        }
       }
-    }
-  });
+    });
 
-  if (version && version != '-1') {
-    return version;
+    if (version && version != '-1') {
+      return version;
+    }
+    return null;
+  } catch (error) {
+    return null;
   }
-  return null;
 }
 
 export async function getNewestDotNetSDKVersion(

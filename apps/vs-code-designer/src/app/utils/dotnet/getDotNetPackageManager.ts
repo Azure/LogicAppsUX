@@ -21,7 +21,7 @@ export async function getDotNetPackageManager(context: IActionContext, isDotNetS
 
   switch (process.platform) {
     case Platform.linux:
-      await executeCommand(undefined, undefined, 'sudo', 'wget', '--version');
+      await executeCommand(undefined, undefined, 'sudo', 'wget', '--help');
       result.push(PackageManager.wget);
       break;
     case Platform.mac:
@@ -38,6 +38,7 @@ export async function getDotNetPackageManager(context: IActionContext, isDotNetS
       } catch (error) {
         throw new Error(localize('noWinget', 'Failed to verify winget install'));
       }
-      return result;
+      break;
   }
+  return result;
 }
