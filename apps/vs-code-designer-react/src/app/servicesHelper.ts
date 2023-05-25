@@ -141,8 +141,7 @@ export const getDesignerServices = (
     schemaClient: {
       getWorkflowSwagger: (args) => {
         const workflowName = args.parameters.name;
-        const workflowSchemas = JSON.stringify(workflowDetails);
-        return Promise.resolve(workflowSchemas[workflowName] || {});
+        return Promise.resolve(workflowDetails[workflowName] || {});
       },
       getApimOperationSchema: (args: any) => {
         const { configuration, parameters, isInput } = args;
