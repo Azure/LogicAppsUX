@@ -160,6 +160,9 @@ function WrappedStaticResultProperty({
                 setInputValue(newVal ?? '');
               }}
               onBlur={updateParentProps}
+              multiline
+              autoAdjustHeight
+              rows={1}
             />
           );
         }
@@ -174,9 +177,6 @@ function WrappedStaticResultProperty({
             onChange={validateInteger}
             errorMessage={errorMessage}
             onBlur={updateParentProps}
-            multiline
-            autoAdjustHeight
-            rows={1}
           />
         );
       case constants.SWAGGER.TYPE.ARRAY:
