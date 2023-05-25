@@ -17,8 +17,13 @@
             "actions": {},
             "case": "test-2"
           },
-          "Third_Case": {
-            "actions": {},
+          "Broken_Case": {
+            "actions": {
+              "Broken_Case": {
+                "inputs": "test2",
+                "type": "Compose"
+              }
+            },
             "case": "test-3"
           }
         },
