@@ -54,8 +54,8 @@ export const SimpleQueryBuilder = ({ getTokenPicker, items, readonly, onChange }
   });
 
   useEffect(() => {
-    setRootProp(items);
-  }, [items, setRootProp]);
+    setCurrValue(convertRootPropToValue(items));
+  }, [items]);
 
   useUpdateEffect(() => {
     onChange?.({
@@ -118,7 +118,7 @@ export const SimpleQueryBuilder = ({ getTokenPicker, items, readonly, onChange }
 const convertRootPropToValue = (rootProps: RowItemProps): string => {
   const op1: string = rootProps.operand1?.[0]?.value ? getOperationValue(rootProps.operand1?.[0]) : 'null';
   const op2: string = rootProps.operand2?.[0]?.value ? getOperationValue(rootProps.operand2?.[0]) : 'null';
-  return `@${rootProps.operator}(${op1},${op2})`;
+  return `@${rootProps.operator ?? 'equals'}(${op1},${op2})`;
 };
 
 const convertValueToRootProp = (value: ValueSegment[], items: RowItemProps): GroupItems => {
