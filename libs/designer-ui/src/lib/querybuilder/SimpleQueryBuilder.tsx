@@ -10,7 +10,7 @@ import { ActionButton, FontSizes } from '@fluentui/react';
 import { isBoolean, isNumber } from '@microsoft/parsers-logic-apps';
 import { guid } from '@microsoft/utils-logic-apps';
 import { useFunctionalState, useUpdateEffect } from '@react-hookz/web';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface SimpleQueryBuilderProps {
@@ -52,6 +52,10 @@ export const SimpleQueryBuilder = ({ getTokenPicker, items, readonly, onChange }
     defaultMessage: 'Edit in basic mode',
     description: 'Button Label when clicked to swith to basic editor',
   });
+
+  useEffect(() => {
+    setRootProp(items);
+  }, [items, setRootProp]);
 
   useUpdateEffect(() => {
     onChange?.({
