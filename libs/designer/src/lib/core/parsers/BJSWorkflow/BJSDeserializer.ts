@@ -13,6 +13,7 @@ import {
   equals,
   isNullOrEmpty,
   isNullOrUndefined,
+  getUniqueName,
 } from '@microsoft/utils-logic-apps';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
@@ -127,7 +128,7 @@ const buildGraphFromActions = (
           continue;
         }
         const caseAction: any = action.cases?.[key];
-        const newCaseId = getNewCaseId(allActionNames, key);
+        const { name: newCaseId } = getUniqueName(allActionNames, key);
         allActionNames.push(newCaseId);
         if (caseAction) {
           action.cases = {
@@ -439,11 +440,4 @@ const getAllActionNames = (actions: LogicAppsV2.Actions | undefined, names: stri
     }
   }
   return names;
-};
-
-const getNewCaseId = (actionNames: string[], caseName: string) => {
-  let newCaseName = caseName;
-  let count = 1;
-  while (actionNames.includes(newCaseName)) newCaseName = `${newCaseName}_${count++}`;
-  return newCaseName;
 };
