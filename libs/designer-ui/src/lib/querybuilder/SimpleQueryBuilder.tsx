@@ -10,7 +10,7 @@ import { ActionButton, FontSizes } from '@fluentui/react';
 import { isBoolean, isNumber } from '@microsoft/parsers-logic-apps';
 import { guid } from '@microsoft/utils-logic-apps';
 import { useFunctionalState, useUpdateEffect } from '@react-hookz/web';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface SimpleQueryBuilderProps {
@@ -52,6 +52,10 @@ export const SimpleQueryBuilder = ({ getTokenPicker, items, readonly, onChange }
     defaultMessage: 'Edit in basic mode',
     description: 'Button Label when clicked to swith to basic editor',
   });
+
+  useEffect(() => {
+    setCurrValue(convertRootPropToValue(items));
+  }, [items]);
 
   useUpdateEffect(() => {
     onChange?.({
@@ -114,7 +118,7 @@ export const SimpleQueryBuilder = ({ getTokenPicker, items, readonly, onChange }
 const convertRootPropToValue = (rootProps: RowItemProps): string => {
   const op1: string = rootProps.operand1?.[0]?.value ? getOperationValue(rootProps.operand1?.[0]) : 'null';
   const op2: string = rootProps.operand2?.[0]?.value ? getOperationValue(rootProps.operand2?.[0]) : 'null';
-  return `@${rootProps.operator}(${op1},${op2})`;
+  return `@${rootProps.operator ?? 'equals'}(${op1},${op2})`;
 };
 
 const convertValueToRootProp = (value: ValueSegment[], items: RowItemProps): GroupItems => {
