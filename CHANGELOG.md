@@ -1,4 +1,18 @@
 # Logic Apps Designer
+### [2.15.38](https://github.com/Azure/LogicAppsUX/compare/v2.15.37...v2.15.38) (2023-05-25)
+
+
+### Bug Fixes
+
+* **designer:** added support for objects in static results ([#2560](https://github.com/Azure/LogicAppsUX/issues/2560)) ([b775215](https://github.com/Azure/LogicAppsUX/commit/b7752151b979a4393ad3c8ec0281611a20c2d7a3))
+* **designer:** Cherry pick for monitoring view ([#2554](https://github.com/Azure/LogicAppsUX/issues/2554)) ([02c8dda](https://github.com/Azure/LogicAppsUX/commit/02c8dda3b56dcd44e411da0148214e4b9deffcb1)), closes [#2480](https://github.com/Azure/LogicAppsUX/issues/2480) [#2551](https://github.com/Azure/LogicAppsUX/issues/2551)
+* **designer:** Do not allow naming cases same as action names in workflow ([#2552](https://github.com/Azure/LogicAppsUX/issues/2552)) ([8d8eb05](https://github.com/Azure/LogicAppsUX/commit/8d8eb0565e96c9fd9c3f9267ff065bbc820c6ef7))
+* **designer:** Instead of converting casted segments to literal, use segments intead ([#2559](https://github.com/Azure/LogicAppsUX/issues/2559)) ([bd95e50](https://github.com/Azure/LogicAppsUX/commit/bd95e509a72b183538b99d648cfdb6511c1c410c))
+* **designer:** Load spliton from definition during deserialization instead of default when disabled ([#2564](https://github.com/Azure/LogicAppsUX/issues/2564)) ([54c90f7](https://github.com/Azure/LogicAppsUX/commit/54c90f75eeed52a86308bad375125ef286b290da))
+* **designer:** Preventing crash when switch cases have non-unique names ([#2565](https://github.com/Azure/LogicAppsUX/issues/2565)) ([08b67fb](https://github.com/Azure/LogicAppsUX/commit/08b67fbf4f1f09165c1e7f59657078e481fd151a))
+* **designer:** Showing only multi auth connection parameters when both legacy and multi auth is present ([#2563](https://github.com/Azure/LogicAppsUX/issues/2563)) ([3d5b5b6](https://github.com/Azure/LogicAppsUX/commit/3d5b5b695ce1e6754bce10814a683d0564ebb412))
+* **designer:** SimpleQueryBuilder editor not updating on deserialization ([#2567](https://github.com/Azure/LogicAppsUX/issues/2567)) ([e3d8092](https://github.com/Azure/LogicAppsUX/commit/e3d8092034d2193eb614cc9fdcca736b142ecb78))
+
 ### [2.15.37](https://github.com/Azure/LogicAppsUX/compare/v2.15.36...v2.15.37) (2023-05-24)
 
 
