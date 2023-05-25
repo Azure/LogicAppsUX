@@ -1097,6 +1097,12 @@
       "value": "Line Number"
     }
   ],
+  "5OvGgn": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -4919,6 +4925,12 @@
       "value": "Bir veri URI'sinin ikili gösterimini döndürür"
     }
   ],
+  "YABOLz": [
+    {
+      "type": 0,
+      "value": "Body Item"
+    }
+  ],
   "YCFhzp": [
     {
       "type": 0,
@@ -6515,6 +6527,12 @@
     {
       "type": 0,
       "value": "Functions"
+    }
+  ],
+  "lUm6fl": [
+    {
+      "type": 0,
+      "value": "Return"
     }
   ],
   "lZT0JI": [
