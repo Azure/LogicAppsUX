@@ -296,7 +296,7 @@ export default class DataMapperPanel {
         data: this.dataMapName,
       });
     } else {
-      DataMapperExt.showError(`XSLT data map file not detected for ${this.dataMapName} - save your data map to generate it`); // XXX
+      DataMapperExt.showWarning(`XSLT file not detected for ${this.dataMapName}`);
     }
   }
 

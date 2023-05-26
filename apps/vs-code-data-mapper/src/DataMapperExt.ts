@@ -68,6 +68,11 @@ export default class DataMapperExt {
     DataMapperExt.outputChannel.show();
   }
 
+  public static showWarning(errMsg: string) {
+    DataMapperExt.log(errMsg);
+    window.showWarningMessage(errMsg);
+  }
+
   public static showError(errMsg: string) {
     DataMapperExt.log(errMsg);
     window.showErrorMessage(errMsg);

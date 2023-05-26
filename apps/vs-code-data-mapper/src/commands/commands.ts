@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import DataMapperExt from '../DataMapperExt';
 import { dataMapDefinitionsPath, draftMapDefinitionSuffix, schemasPath, supportedDataMapDefinitionFileExts } from '../extensionConfig';
+import type { MapDefinitionEntry } from '@microsoft/logic-apps-data-mapper';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling, registerCommand } from '@microsoft/vscode-azext-utils';
 import { existsSync as fileExistsSync, promises as fs } from 'fs';
@@ -64,8 +65,18 @@ const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
     }
   }
 
-  const fileContents = await fs.readFile(draftFileIsFoundAndShouldBeUsed ? draftMapDefinitionPath : mapDefinitionPath, 'utf-8');
-  const mapDefinition = DataMapperExt.loadMapDefinition(fileContents);
+  let mapDefinition: MapDefinitionEntry = {};
+  // Try to load the draft file first
+  if (draftFileIsFoundAndShouldBeUsed) {
+    const fileContents = await fs.readFile(draftMapDefinitionPath, 'utf-8');
+    mapDefinition = DataMapperExt.loadMapDefinition(fileContents);
+  }
+
+  //If there is no draft file, or the draft file fails to deserialize, fall back to the base file
+  if (Object.keys(mapDefinition).length === 0) {
+    const fileContents = await fs.readFile(mapDefinitionPath, 'utf-8');
+    mapDefinition = DataMapperExt.loadMapDefinition(fileContents);
+  }
 
   if (
     !mapDefinition.$sourceSchema ||
@@ -74,7 +85,7 @@ const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
     typeof mapDefinition.$targetSchema !== 'string'
   ) {
     context.telemetry.properties.eventDescription = 'Attempted to load invalid map, missing schema definitions';
-    DataMapperExt.showError('Invalid data map definition: $sourceSchema and $targetSchema must be defined.');
+    DataMapperExt.showError('Invalid map definition: $sourceSchema and $targetSchema must be defined.');
     return;
   }
 
