@@ -1,3 +1,4 @@
+import { convertUIElementNameToAutomationId } from '../../utils';
 import { useCardKeyboardInteraction } from '../hooks';
 import { getCardStyle } from '../utils';
 import AddNodeIcon from './addNodeIcon.svg';
@@ -53,7 +54,6 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
   });
 
   const title = addCardType === ADD_CARD_TYPE.TRIGGER ? triggerTitle : actionTitle;
-  const automationId = title.replace(/\W/g, '_').toLowerCase();
 
   const triggerTooltipHeading = intl.formatMessage({
     defaultMessage: 'Triggers',
@@ -99,7 +99,7 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
           className={css('msla-panel-card-container', selected && 'msla-panel-card-container-selected')}
           style={getCardStyle(brandColor)}
           data-testid={`card-${title}`}
-          data-automation-id={`card-${automationId}`}
+          data-automation-id={`card-${convertUIElementNameToAutomationId(title)}`}
           onClick={handleClick}
           onKeyDown={keyboardInteraction.keyDown}
           onKeyUp={keyboardInteraction.keyUp}

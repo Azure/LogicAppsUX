@@ -107,10 +107,6 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
 
   const buttonId = `msla-edge-button-${parentId}-${childId}`.replace(/\W/g, '-');
 
-  const plusButtonAutomationId = `msla-plus-button-${parentId}-${childId}`.replace(/\W/g, '-');
-  const addActionButtonAutomationId = `msla-add-action-${parentId}-${childId}`.replace(/\W/g, '-');
-  const addParallelBranchButtonAutomationId = `msla-add-parallel-branch-${parentId}-${childId}`.replace(/\W/g, '-');
-
   const showParallelBranchButton = !isLeaf && parentId;
 
   return (
@@ -126,7 +122,12 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
       )}
       {!isOver && (
         <>
-          <ActionButtonV2 id={buttonId} title={tooltipText} onClick={actionButtonClick} dataAutomationId={plusButtonAutomationId} />
+          <ActionButtonV2
+            id={buttonId}
+            title={tooltipText}
+            onClick={actionButtonClick}
+            dataAutomationId={`msla-plus-button-${parentId}-${childId}`.replace(/\W/g, '-')}
+          />
           {showCallout && (
             <Callout
               role="dialog"
@@ -142,7 +143,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
                   <ActionButton
                     iconProps={{ imageProps: { src: AddNodeIcon } }}
                     onClick={openAddNodePanel}
-                    data-automation-id={addActionButtonAutomationId}
+                    data-automation-id={`msla-add-action-${parentId}-${childId}`.replace(/\W/g, '-')}
                   >
                     {newActionText}
                   </ActionButton>
@@ -150,7 +151,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
                     <ActionButton
                       iconProps={{ imageProps: { src: AddBranchIcon } }}
                       onClick={addParallelBranch}
-                      data-automation-id={addParallelBranchButtonAutomationId}
+                      data-automation-id={`msla-add-parallel-branch-${parentId}-${childId}`.replace(/\W/g, '-')}
                     >
                       {newBranchText}
                     </ActionButton>

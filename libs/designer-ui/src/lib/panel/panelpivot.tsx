@@ -1,4 +1,4 @@
-import { TrafficLightDot } from '..';
+import { TrafficLightDot, convertUIElementNameToAutomationId } from '..';
 import constants from '../constants';
 import type { PageActionTelemetryData } from '../telemetry/models';
 import type { PanelTab } from './panelUtil';
@@ -66,17 +66,20 @@ export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange, nodeId
   );
 };
 
-function customRenderer(
-  link?: IPivotItemProps,
-  defaultRenderer?: (link?: IPivotItemProps) => JSX.Element | null
-  // isInverted?: boolean
-): JSX.Element | null {
-  // const themeName = isInverted ? 'dark' : 'light';
+function customRenderer(link?: IPivotItemProps, defaultRenderer?: (link?: IPivotItemProps) => JSX.Element | null): JSX.Element | null {
   if (!link || !defaultRenderer) {
     return null;
   }
-  const navTabDataAutomationId = `msla-panel-pivot-item-${link.headerText?.replace(/\W/g, '_').toLowerCase()}`;
-  return <div data-automation-id={navTabDataAutomationId}>{defaultRenderer({ ...link, itemIcon: undefined })}</div>;
+
+  return (
+    <div
+      data-automation-id={`msla-panel-pivot-item-${convertUIElementNameToAutomationId(
+        link.headerText === undefined ? '' : link.headerText
+      )}`}
+    >
+      {defaultRenderer({ ...link, itemIcon: undefined })}
+    </div>
+  );
 }
 
 function customRendererWithErrors(
@@ -88,9 +91,13 @@ function customRendererWithErrors(
   if (!link || !defaultRenderer) {
     return null;
   }
-  const navTabwithErrorsDataAutomationId = `msla-panel-pivot-item-with-errors-${link.headerText?.replace(/\W/g, '_').toLowerCase()}`;
+
   return (
-    <div data-automation-id={navTabwithErrorsDataAutomationId}>
+    <div
+      data-automation-id={`msla-panel-pivot-item-with-errors-${convertUIElementNameToAutomationId(
+        link.headerText === undefined ? '' : link.headerText
+      )}`}
+    >
       {defaultRenderer({ ...link, itemIcon: undefined })}
       <span className="msla-workflowpanel-pivot-error-icon">
         <TrafficLightDot fill={RUN_AFTER_COLORS[themeName]['FAILED']} />

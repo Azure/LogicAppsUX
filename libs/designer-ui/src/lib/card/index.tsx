@@ -1,4 +1,5 @@
 import { StatusPill } from '../monitoring';
+import { convertUIElementNameToAutomationId } from '../utils';
 import { CardContextMenu } from './cardcontextmenu';
 import { CardFooter } from './cardfooter';
 import { ErrorBanner } from './errorbanner';
@@ -107,8 +108,6 @@ export const Card: React.FC<CardProps> = ({
     [icon, isLoading, errorMessage]
   );
 
-  const automationId = title.replace(/\W/g, '_').toLowerCase();
-
   return (
     <div ref={dragPreview} style={{ position: 'relative' }}>
       <div
@@ -126,7 +125,7 @@ export const Card: React.FC<CardProps> = ({
         )}
         style={getCardStyle(brandColor)}
         data-testid={`card-${title}`}
-        data-automation-id={`card-${automationId}`}
+        data-automation-id={`card-${convertUIElementNameToAutomationId(title)}`}
         onClick={handleClick}
         onContextMenu={contextMenu.handle}
         onKeyDown={keyboardInteraction.keyDown}
