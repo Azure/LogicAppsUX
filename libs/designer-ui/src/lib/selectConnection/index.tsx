@@ -77,11 +77,13 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
   // Assign connection on initial load
   useEffect(() => {
     if (currentConnectionId) {
-      setSelect((currentSelect) => {
-        const index = connections.findIndex((conn) => areIdLeavesEqual(conn.id, currentConnectionId));
-        currentSelect.setIndexSelected(index, true, false);
-        return currentSelect;
-      });
+      const index = connections.findIndex((conn) => areIdLeavesEqual(conn.id, currentConnectionId));
+      if (index >= 0) {
+        setSelect((currentSelect) => {
+          currentSelect.setIndexSelected(index, true, false);
+          return currentSelect;
+        });
+      }
     }
   }, [connections, currentConnectionId]);
 

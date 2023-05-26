@@ -49,7 +49,7 @@ export async function isConnectionReferenceValid(
     return false;
   }
 
-  const connection = await getConnection(reference.connection.id, connectorId);
+  const connection = await getConnection(reference.connection.id, connectorId, /* fetchResourceIfNeeded */true);
   return !!connection && !connection.properties?.statuses?.some((status) => equals(status.status, 'error'));
 }
 
