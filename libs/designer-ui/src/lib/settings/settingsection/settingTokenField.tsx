@@ -102,6 +102,7 @@ const TokenField = ({
           multiSelect={!!editorOptions?.multiSelect}
           serialization={editorOptions?.serialization}
           onChange={onValueChange}
+          data-automation-id={`msla-setting-token-editor-dropdowneditor-${label}`}
         />
       );
 
@@ -115,6 +116,7 @@ const TokenField = ({
           onChange={onValueChange}
           readonly={readOnly}
           placeholder={placeholder}
+          data-automation-id={`msla-setting-token-editor-codeeditor-${label}`}
         />
       );
 
@@ -133,11 +135,20 @@ const TokenField = ({
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           onMenuOpen={onComboboxMenuOpen}
+          data-automation-id={`msla-setting-token-editor-combobox-${label}`}
         />
       );
 
     case 'schema':
-      return <SchemaEditor label={label} readonly={readOnly} initialValue={value} onChange={onValueChange} />;
+      return (
+        <SchemaEditor
+          label={label}
+          readonly={readOnly}
+          initialValue={value}
+          onChange={onValueChange}
+          data-automation-id={`msla-setting-token-editor-schemaeditor-${label}`}
+        />
+      );
 
     case 'dictionary':
       return (
@@ -150,6 +161,7 @@ const TokenField = ({
           valueType={editorOptions?.valueType}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
+          data-automation-id={`msla-setting-token-editor-dictionaryeditor-${label}`}
         />
       );
 
@@ -167,6 +179,7 @@ const TokenField = ({
           types={editorOptions?.columns?.types}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
+          data-automation-id={`msla-setting-token-editor-tableditor-${label}`}
         />
       );
 
@@ -183,6 +196,7 @@ const TokenField = ({
           itemSchema={editorViewModel.itemSchema}
           castParameter={onCastParameter}
           onChange={onValueChange}
+          data-automation-id={`msla-setting-token-editor-scheduleeditor-${label}`}
         />
       );
 
@@ -197,6 +211,7 @@ const TokenField = ({
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           BasePlugins={{ tokens: showTokens }}
+          data-automation-id={`msla-setting-token-editor-authenticationeditor-${label}`}
         />
       );
 
@@ -207,6 +222,7 @@ const TokenField = ({
           items={JSON.parse(JSON.stringify(editorViewModel.items))}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
+          data-automation-id={`msla-setting-token-editor-simplequerybuildereditor-${label}`}
         />
       ) : editorViewModel.isHybridEditor ? (
         <HybridQueryBuilderEditor
@@ -214,6 +230,7 @@ const TokenField = ({
           groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
           onChange={onValueChange}
           getTokenPicker={getTokenPicker}
+          data-automation-id={`msla-setting-token-editor-hybridquerybuildereditor-${label}`}
         />
       ) : (
         <QueryBuilderEditor
@@ -221,6 +238,7 @@ const TokenField = ({
           groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
           onChange={onValueChange}
           getTokenPicker={getTokenPicker}
+          data-automation-id={`msla-setting-token-editor-querybuildereditor-${label}`}
         />
       );
 
@@ -232,6 +250,7 @@ const TokenField = ({
           showPreview={editorOptions?.showPreview}
           initialValue={value}
           onChange={onValueChange}
+          data-automation-id={`msla-setting-token-editor-scheduleeditor-${label}`}
         />
       );
 
@@ -253,6 +272,7 @@ const TokenField = ({
           editorBlur={onValueChange}
           getTokenPicker={getTokenPicker}
           onChange={hideValidationErrors}
+          data-automation-id={`msla-setting-token-editor-filepickereditor-${label}`}
         />
       );
     // todo when html editor is ready
@@ -274,6 +294,7 @@ const TokenField = ({
           useStaticInputs={editorOptions?.useStaticInputs}
           initialValue={value}
           onChange={onValueChange}
+          data-automation-id={`msla-setting-token-editor-floatingactionmenu-${label}`}
         />
       );
     }
@@ -290,6 +311,7 @@ const TokenField = ({
           editorBlur={onValueChange}
           getTokenPicker={getTokenPicker}
           onChange={hideValidationErrors}
+          data-automation-id={`msla-setting-token-editor-stringeditor-${label}`}
         />
       );
   }

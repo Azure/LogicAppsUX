@@ -164,7 +164,11 @@ export const TokenPickerOptions = ({
             ) : null}
             <span> {section.label}</span>
             {searchQuery || !hasAdvanced(section.tokens) ? null : (
-              <button className="msla-token-picker-section-header-button" onClick={handleMoreLess}>
+              <button
+                className="msla-token-picker-section-header-button"
+                onClick={handleMoreLess}
+                data-automation-id={`msla-token-picker-section-header-button-${section.label.replace(/\W/g, '_').toLowerCase()}`}
+              >
                 <span> {moreOptions ? buttonTextMore : buttonTextLess}</span>
               </button>
             )}
