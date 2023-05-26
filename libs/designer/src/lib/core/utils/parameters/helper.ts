@@ -2173,11 +2173,7 @@ const iterateSimpleQueryBuilderEditor = (itemValue: ValueSegment[], isRowFormat:
   // otherwise we iterate through row items and concatenate the values
   let stringValue = '';
   itemValue.forEach((segment) => {
-    if (segment.type === ValueSegmentType.LITERAL) {
-      stringValue += segment.value;
-    } else if (segment.type === ValueSegmentType.TOKEN) {
-      stringValue += segment.value;
-    }
+    stringValue += segment.value;
   });
   return stringValue;
 };
