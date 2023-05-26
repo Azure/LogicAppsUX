@@ -1,4 +1,14 @@
 # Logic Apps Designer
+## [2.21.0](https://github.com/Azure/LogicAppsUX/compare/v2.20.0...v2.21.0) (2023-05-26)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Fall back to base file if the draft is invalid ([#2568](https://github.com/Azure/LogicAppsUX/issues/2568)) ([7d4033f](https://github.com/Azure/LogicAppsUX/commit/7d4033f0fffe5a5e1f828800e03772f6d5f4f11b))
+* **designer:** Fixed issue where some connection parameter dropdowns were passing name text as value ([#2581](https://github.com/Azure/LogicAppsUX/issues/2581)) ([6f7e24f](https://github.com/Azure/LogicAppsUX/commit/6f7e24fefc0ac3c1e6bb46c610270f9a3d504175))
+* **designer:** Load connection when not present in resource group ([#2570](https://github.com/Azure/LogicAppsUX/issues/2570)) ([9092cec](https://github.com/Azure/LogicAppsUX/commit/9092cec1c30a17f240ac581018e1be7d471f9b61))
+* **designer:** Simple Query Builder Update (support for advanced mode) ([#2578](https://github.com/Azure/LogicAppsUX/issues/2578)) ([bfba9cb](https://github.com/Azure/LogicAppsUX/commit/bfba9cbb07b79601799ed6b9f8ad209bddf20344))
+
 ## [2.20.0](https://github.com/Azure/LogicAppsUX/compare/v2.19.0...v2.20.0) (2023-05-25)
 
 
