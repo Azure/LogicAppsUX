@@ -107,6 +107,8 @@ export const Card: React.FC<CardProps> = ({
     [icon, isLoading, errorMessage]
   );
 
+  const automationId = title.replace(/\W/g, '_').toLowerCase();
+
   return (
     <div ref={dragPreview} style={{ position: 'relative' }}>
       <div
@@ -124,6 +126,7 @@ export const Card: React.FC<CardProps> = ({
         )}
         style={getCardStyle(brandColor)}
         data-testid={`card-${title}`}
+        data-automation-id={`card-${automationId}`}
         onClick={handleClick}
         onContextMenu={contextMenu.handle}
         onKeyDown={keyboardInteraction.keyDown}

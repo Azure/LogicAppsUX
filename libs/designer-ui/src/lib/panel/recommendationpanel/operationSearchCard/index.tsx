@@ -31,8 +31,15 @@ export const OperationSearchCard = (props: OperationSearchCardProps) => {
     onClick(operationActionData.id, apiId);
   };
 
+  const searchResultDataAutomationId = `msla-op-search-result-${title.replace(/\W/g, '_').toLowerCase()}`;
+
   return (
-    <button className="msla-op-search-card-container" onClick={() => onCardClick()} style={style}>
+    <button
+      className="msla-op-search-card-container"
+      onClick={() => onCardClick()}
+      style={style}
+      data-automation-id={searchResultDataAutomationId}
+    >
       <div className="msla-op-search-card-color-line" style={{ background: brandColor }} />
       {showImage && iconUri ? <Image className="msla-op-search-card-image" alt={title} src={iconUri} /> : null}
       <Text className="msla-op-search-card-name">{title}</Text>

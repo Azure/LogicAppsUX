@@ -56,9 +56,9 @@ export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange, nodeId
       >
         {Object.entries(tabs).map(([name, { visible, tabErrors, title }]) => {
           return visible && tabErrors?.[nodeId] ? (
-            <PivotItem key={name} itemKey={name} headerText={title} onRenderItemLink={customRenderer} />
+            <PivotItem key={name} itemKey={name} headerText={title} onRenderItemLink={customRendererWithErrors} />
           ) : visible ? (
-            <PivotItem key={name} itemKey={name} headerText={title} />
+            <PivotItem key={name} itemKey={name} headerText={title} onRenderItemLink={customRenderer} />
           ) : null;
         })}
       </Pivot>
@@ -68,6 +68,19 @@ export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange, nodeId
 
 function customRenderer(
   link?: IPivotItemProps,
+  defaultRenderer?: (link?: IPivotItemProps) => JSX.Element | null
+  // isInverted?: boolean
+): JSX.Element | null {
+  // const themeName = isInverted ? 'dark' : 'light';
+  if (!link || !defaultRenderer) {
+    return null;
+  }
+  const navTabDataAutomationId = `msla-panel-pivot-item-${link.headerText?.replace(/\W/g, '_').toLowerCase()}`;
+  return <div data-automation-id={navTabDataAutomationId}>{defaultRenderer({ ...link, itemIcon: undefined })}</div>;
+}
+
+function customRendererWithErrors(
+  link?: IPivotItemProps,
   defaultRenderer?: (link?: IPivotItemProps) => JSX.Element | null,
   isInverted?: boolean
 ): JSX.Element | null {
@@ -75,12 +88,13 @@ function customRenderer(
   if (!link || !defaultRenderer) {
     return null;
   }
+  const navTabwithErrorsDataAutomationId = `msla-panel-pivot-item-with-errors-${link.headerText?.replace(/\W/g, '_').toLowerCase()}`;
   return (
-    <>
+    <div data-automation-id={navTabwithErrorsDataAutomationId}>
       {defaultRenderer({ ...link, itemIcon: undefined })}
       <span className="msla-workflowpanel-pivot-error-icon">
         <TrafficLightDot fill={RUN_AFTER_COLORS[themeName]['FAILED']} />
       </span>
-    </>
+    </div>
   );
 }

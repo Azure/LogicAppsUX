@@ -107,6 +107,10 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
 
   const buttonId = `msla-edge-button-${parentId}-${childId}`.replace(/\W/g, '-');
 
+  const plusButtonAutomationId = `msla-plus-button-${parentId}-${childId}`.replace(/\W/g, '-');
+  const addActionButtonAutomationId = `msla-add-action-${parentId}-${childId}`.replace(/\W/g, '-');
+  const addParallelBranchButtonAutomationId = `msla-add-parallel-branch-${parentId}-${childId}`.replace(/\W/g, '-');
+
   const showParallelBranchButton = !isLeaf && parentId;
 
   return (
@@ -122,7 +126,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
       )}
       {!isOver && (
         <>
-          <ActionButtonV2 id={buttonId} title={tooltipText} onClick={actionButtonClick} />
+          <ActionButtonV2 id={buttonId} title={tooltipText} onClick={actionButtonClick} dataAutomationId={plusButtonAutomationId} />
           {showCallout && (
             <Callout
               role="dialog"
@@ -135,11 +139,19 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
             >
               <FocusZone>
                 <div className="msla-add-context-menu">
-                  <ActionButton iconProps={{ imageProps: { src: AddNodeIcon } }} onClick={openAddNodePanel}>
+                  <ActionButton
+                    iconProps={{ imageProps: { src: AddNodeIcon } }}
+                    onClick={openAddNodePanel}
+                    data-automation-id={addActionButtonAutomationId}
+                  >
                     {newActionText}
                   </ActionButton>
                   {showParallelBranchButton ? (
-                    <ActionButton iconProps={{ imageProps: { src: AddBranchIcon } }} onClick={addParallelBranch}>
+                    <ActionButton
+                      iconProps={{ imageProps: { src: AddBranchIcon } }}
+                      onClick={addParallelBranch}
+                      data-automation-id={addParallelBranchButtonAutomationId}
+                    >
                       {newBranchText}
                     </ActionButton>
                   ) : null}
