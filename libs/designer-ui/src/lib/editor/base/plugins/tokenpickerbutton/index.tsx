@@ -57,7 +57,12 @@ export const TokenPickerButton = ({ showOnLeft, openTokenPicker }: TokenPickerBu
         const { right, left } = rootElement.getBoundingClientRect();
         const { top } = anchorElement.getBoundingClientRect();
         if (anchorElement?.childNodes[0]?.nodeName === 'BR') {
-          boxElem.style.top = `${top - 15}px`;
+          // some of our editors have smaller heights, so we need to adjust the position of the tokenpicker editor
+          if (rootElement.clientHeight === 24) {
+            boxElem.style.top = `${top - 16}px`;
+          } else {
+            boxElem.style.top = `${top - 15}px`;
+          }
         } else {
           boxElem.style.top = `${top - 20}px`;
         }

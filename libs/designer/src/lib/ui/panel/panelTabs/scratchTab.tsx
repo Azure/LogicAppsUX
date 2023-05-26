@@ -4,15 +4,14 @@ import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import type { OutputToken, PanelTab, TokenPickerMode, ValueSegment } from '@microsoft/designer-ui';
 import {
   AuthenticationType,
-  Combobox,
-  RowDropdownOptions,
-  GroupType, // ArrayEditor,
-  // ArrayType, // DictionaryEditor,
-  // TokenType,
-  // GroupType,
-  // GroupDropdownOptions,
-  // QueryBuilderEditor, // DictionaryType, // EditorLanguage,
-  SimpleQueryBuilder,
+  Combobox, // RowDropdownOptions,
+  // GroupType, // ArrayEditor,
+  // // ArrayType, // DictionaryEditor,
+  // // TokenType,
+  // // GroupType,
+  // // GroupDropdownOptions,
+  // // QueryBuilderEditor, // DictionaryType, // EditorLanguage,
+  // SimpleQueryBuilder,
   ValueSegmentType,
   CodeEditor,
   EditorLanguage, // HTMLEditor,
@@ -379,12 +378,12 @@ getTokenPicker={GetTokenPicker}
           getTokenPicker={GetTokenPicker}
         /> */}
         {/* <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail"           getTokenPicker={GetTokenPicker}*/}
-        {
+        {/* {
           <SimpleQueryBuilder
             getTokenPicker={GetTokenPicker}
             items={{ type: GroupType.ROW, operand1: [], operand2: [], operator: RowDropdownOptions.EQUALS }}
           />
-        }
+        } */}
       </>
     );
   };
