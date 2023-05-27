@@ -2,6 +2,7 @@ import { processNodeType } from '../../../html/plugins/toolbar/helper/functions'
 import { getExpressionTokenTitle } from '../../../tokenpicker/util';
 import type { ValueSegment } from '../../models/parameter';
 import { TokenType, ValueSegmentType } from '../../models/parameter';
+import { $createExtendedTextNode } from '../nodes/extendedTextNode';
 import { $createTokenNode } from '../nodes/tokenNode';
 import { defaultInitialConfig, htmlNodes } from './initialConfig';
 import { createHeadlessEditor } from '@lexical/headless';
@@ -14,7 +15,7 @@ import type { HeadingNode } from '@lexical/rich-text';
 import { $isHeadingNode } from '@lexical/rich-text';
 import type { Expression } from '@microsoft/parsers-logic-apps';
 import { ExpressionParser } from '@microsoft/parsers-logic-apps';
-import type { LexicalNode, ParagraphNode, RootNode } from 'lexical';
+import type { LexicalNode, ParagraphNode, RootNode, TextFormatType } from 'lexical';
 import { $createParagraphNode, $isTextNode, $isLineBreakNode, $isParagraphNode, $createTextNode, $getRoot } from 'lexical';
 
 export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean): RootNode => {
@@ -44,7 +45,6 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
       currNode.getChildren().forEach((childNode) => {
         // LinkNodes are a special case because they are within a paragraph node
         if ($isLinkNode(childNode)) {
-          console.log('here');
           const linkNode = $createLinkNode(childNode.getURL());
           childNode.getChildren().forEach((listItemChildNode) => {
             appendChildrenNode(linkNode, listItemChildNode, nodeMap, tokensEnabled);
@@ -77,6 +77,58 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
   return root;
 };
 
+export const appendStringSegment = (
+  paragraph: ParagraphNode | HeadingNode | ListNode | ListItemNode | LinkNode,
+  value: string,
+  childNodeStyles?: string,
+  childNodeFormat?: number | TextFormatType,
+  nodeMap?: Map<string, ValueSegment>,
+  tokensEnabled?: boolean
+) => {
+  let currIndex = 0;
+  let prevIndex = 0;
+  while (currIndex < value.length) {
+    if (value.substring(currIndex - 2, currIndex) === '$[') {
+      if (value.substring(prevIndex, currIndex - 2)) {
+        paragraph.append($createExtendedTextNode(value.substring(prevIndex, currIndex - 2), childNodeStyles, childNodeFormat));
+      }
+      const newIndex = value.indexOf(']$', currIndex) + 2;
+      if (nodeMap && tokensEnabled) {
+        const tokenSegment = nodeMap.get(value.substring(currIndex - 2, newIndex));
+        if (tokenSegment && tokenSegment.token) {
+          const segmentValue = tokenSegment.value;
+          const { brandColor, icon, title, name, value, tokenType } = tokenSegment.token;
+          if (tokenType === TokenType.FX) {
+            const expressionValue: Expression = ExpressionParser.parseExpression(segmentValue);
+            const token = $createTokenNode({
+              title: getExpressionTokenTitle(expressionValue) ?? segmentValue ?? title,
+              data: tokenSegment,
+              brandColor,
+              icon: icon,
+              value: segmentValue,
+            });
+            tokensEnabled && paragraph.append(token);
+          } else if (title || name) {
+            const token = $createTokenNode({
+              title: title ?? name,
+              data: tokenSegment,
+              brandColor,
+              icon: icon,
+              value: segmentValue ?? value,
+            });
+            tokensEnabled && paragraph.append(token);
+          } else {
+            throw new Error('Token Node is missing title or name');
+          }
+        }
+      }
+      prevIndex = currIndex = newIndex;
+    }
+    currIndex++;
+  }
+  paragraph.append($createExtendedTextNode(value.substring(prevIndex, currIndex), childNodeStyles, childNodeFormat));
+};
+
 // Appends the children Nodes while parsing for TokenNodes
 const appendChildrenNode = (
   paragraph: ParagraphNode | HeadingNode | ListNode | ListItemNode | LinkNode,
@@ -86,39 +138,9 @@ const appendChildrenNode = (
 ) => {
   if ($isTextNode(childNode)) {
     const textContent = childNode.getTextContent();
-    if (nodeMap.has(textContent)) {
-      const tokenSegment = nodeMap.get(textContent);
-      if (!tokenSegment || !tokenSegment.token) {
-        paragraph.append(childNode);
-      } else {
-        const segmentValue = tokenSegment.value;
-        const { brandColor, icon, title, name, value, tokenType } = tokenSegment.token;
-        if (tokenType === TokenType.FX) {
-          const expressionValue: Expression = ExpressionParser.parseExpression(segmentValue);
-          const token = $createTokenNode({
-            title: getExpressionTokenTitle(expressionValue) ?? segmentValue ?? title,
-            data: tokenSegment,
-            brandColor,
-            icon: icon,
-            value: segmentValue,
-          });
-          tokensEnabled && paragraph.append(token);
-        } else if (title || name) {
-          const token = $createTokenNode({
-            title: title ?? name,
-            data: tokenSegment,
-            brandColor,
-            icon: icon,
-            value: segmentValue ?? value,
-          });
-          tokensEnabled && paragraph.append(token);
-        } else {
-          throw new Error('Token Node is missing title or name');
-        }
-      }
-    } else {
-      paragraph.append(childNode);
-    }
+    const childNodeStyles = childNode.getStyle();
+    const childNodeFormat = childNode.getFormat();
+    appendStringSegment(paragraph, textContent, childNodeStyles, childNodeFormat, nodeMap, tokensEnabled);
   } else {
     paragraph.append(childNode);
   }

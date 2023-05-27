@@ -1,4 +1,4 @@
-import type { DOMConversion, DOMConversionMap, DOMConversionOutput, SerializedTextNode } from 'lexical';
+import type { DOMConversion, DOMConversionMap, DOMConversionOutput, SerializedTextNode, TextFormatType } from 'lexical';
 import { $isTextNode, TextNode } from 'lexical';
 
 // Since the TextNode is foundational to all Lexical packages, including the
@@ -99,4 +99,11 @@ function patchStyleConversion(
       },
     };
   };
+}
+
+export function $createExtendedTextNode(text: string, styles?: string, format?: number | TextFormatType) {
+  const newNode = new ExtentedTextNode(text);
+  newNode.setStyle(styles ?? '');
+  newNode.setFormat(format ?? 0);
+  return newNode;
 }
