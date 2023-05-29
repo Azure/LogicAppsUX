@@ -1,4 +1,5 @@
 import type { MenuItemOption } from '../../card/types';
+import { convertUIElementNameToAutomationId } from '../../utils';
 import { PanelLocation, PanelScope } from '../panelUtil';
 import { PanelHeaderComment } from './panelheadercomment';
 import { PanelHeaderTitle } from './panelheadertitle';
@@ -161,7 +162,7 @@ export const PanelHeader = ({
       onClick: item.onClick,
       iconOnly: true,
       disabled: item.disabled,
-      'data-automation-id': `msla-panel-overflow-${item.title.replace(/\W/g, '_').toLowerCase()}`,
+      'data-automation-id': `msla-panel-overflow-${convertUIElementNameToAutomationId(item.title)}`,
     }));
 
     return (

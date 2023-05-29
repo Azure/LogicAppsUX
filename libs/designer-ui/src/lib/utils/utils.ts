@@ -355,5 +355,5 @@ export const getConnectorCategoryString = (connectorId: string): string => {
 };
 
 export const convertUIElementNameToAutomationId = (uiElementName: string): string => {
-  return uiElementName.replace(/\W/g, '_').toLowerCase();
+  return uiElementName === null ? '' : uiElementName.replace(/\W/g, '_').toLowerCase();
 };
