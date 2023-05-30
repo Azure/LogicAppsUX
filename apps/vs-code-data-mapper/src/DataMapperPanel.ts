@@ -103,11 +103,11 @@ export default class DataMapperPanel {
         break;
       }
       case 'saveDataMapDefinition': {
-        this.saveDataMap(true, msg.data);
+        this.saveMapDefinition(msg.data);
         break;
       }
       case 'saveDataMapXslt': {
-        this.saveDataMap(false, msg.data);
+        this.saveMapXslt(msg.data);
         break;
       }
       case 'saveDraftDataMapDefinition': {
@@ -210,33 +210,52 @@ export default class DataMapperPanel {
     });
   }
 
-  public saveDataMap(isDefinition: boolean, fileContents: string) {
-    callWithTelemetryAndErrorHandlingSync('azureDataMapper.saveDataMap', (_context: IActionContext) => {
-      // If mapDef, check for and delete *draft* map definition as it's no longer needed
-      if (isDefinition) {
-        this.deleteDraftDataMapDefinition();
-      }
+  public saveMapDefinition(mapDefinition: string) {
+    callWithTelemetryAndErrorHandlingSync('azureDataMapper.saveMapDefinition', (_context: IActionContext) => {
+      // Delete *draft* map definition as it's no longer needed
+      this.deleteDraftDataMapDefinition();
 
-      const fileName = `${this.dataMapName}${isDefinition ? mapDefinitionExtension : mapXsltExtension}`;
-      const dataMapFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), isDefinition ? dataMapDefinitionsPath : dataMapsPath);
+      const fileName = `${this.dataMapName}${mapDefinitionExtension}`;
+      const dataMapFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapDefinitionsPath);
       const filePath = path.join(dataMapFolderPath, fileName);
 
       // Mkdir as extra insurance that directory exists so file can be written
       // - harmless if directory already exists
       fs.mkdir(dataMapFolderPath, { recursive: true })
         .then(() => {
-          fs.writeFile(filePath, fileContents, 'utf8').then(() => {
-            if (!isDefinition) {
-              // If XSLT, show notification and re-check/set xslt filename
-              const openMapBtnText = `Open ${fileName}`;
-              window.showInformationMessage('Map saved and .XSLT file generated.', openMapBtnText).then((clickedButton?: string) => {
-                if (clickedButton && clickedButton === openMapBtnText) {
-                  workspace.openTextDocument(filePath).then(window.showTextDocument);
-                }
-              });
+          fs.writeFile(filePath, mapDefinition, 'utf8').then(() => {
+            // If XSLT, show notification and re-check/set xslt filename
+            const openMapBtnText = `Open ${fileName}`;
+            window.showInformationMessage('Map saved', openMapBtnText).then((clickedButton?: string) => {
+              if (clickedButton && clickedButton === openMapBtnText) {
+                workspace.openTextDocument(filePath).then(window.showTextDocument);
+              }
+            });
+          });
+        })
+        .catch(DataMapperExt.showError);
+    });
+  }
 
-              this.checkForAndSetXsltFilename();
-            }
+  public saveMapXslt(mapXslt: string) {
+    callWithTelemetryAndErrorHandlingSync('azureDataMapper.saveMapXslt', (_context: IActionContext) => {
+      const fileName = `${this.dataMapName}${mapXsltExtension}`;
+      const dataMapFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapsPath);
+      const filePath = path.join(dataMapFolderPath, fileName);
+
+      // Mkdir as extra insurance that directory exists so file can be written
+      // - harmless if directory already exists
+      fs.mkdir(dataMapFolderPath, { recursive: true })
+        .then(() => {
+          fs.writeFile(filePath, mapXslt, 'utf8').then(() => {
+            const openMapBtnText = `Open ${fileName}`;
+            window.showInformationMessage('Map XSLT generated.', openMapBtnText).then((clickedButton?: string) => {
+              if (clickedButton && clickedButton === openMapBtnText) {
+                workspace.openTextDocument(filePath).then(window.showTextDocument);
+              }
+            });
+
+            this.checkForAndSetXsltFilename();
           });
         })
         .catch(DataMapperExt.showError);
@@ -277,7 +296,7 @@ export default class DataMapperPanel {
         data: this.dataMapName,
       });
     } else {
-      DataMapperExt.showError(`XSLT data map file not detected for ${this.dataMapName} - save your data map to generate it`);
+      DataMapperExt.showWarning(`XSLT file not detected for ${this.dataMapName}`);
     }
   }
 

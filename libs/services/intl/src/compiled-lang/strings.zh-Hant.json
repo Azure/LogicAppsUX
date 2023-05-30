@@ -1086,6 +1086,12 @@
       "value": "Line Number"
     }
   ],
+  "5OvGgn": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -2235,12 +2241,6 @@
       "value": "Add an action"
     }
   ],
-  "EV9iRu": [
-    {
-      "type": 0,
-      "value": "無法儲存。"
-    }
-  ],
   "EYqGxA": [
     {
       "type": 0,
@@ -2363,6 +2363,12 @@
     {
       "type": 0,
       "value": "(UTC+05:45) 加德滿都"
+    }
+  ],
+  "FIL1Nt": [
+    {
+      "type": 0,
+      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
     }
   ],
   "FIT7i0": [
@@ -4874,6 +4880,12 @@
       "value": "傳回資料 URI 的二進位表示法"
     }
   ],
+  "YABOLz": [
+    {
+      "type": 0,
+      "value": "Body Item"
+    }
+  ],
   "YCFhzp": [
     {
       "type": 0,
@@ -5440,6 +5452,12 @@
       "value": "Schema is missing required inputs"
     }
   ],
+  "dBxX0M": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
+    }
+  ],
   "dDYCuU": [
     {
       "type": 0,
@@ -5456,6 +5474,12 @@
     {
       "type": 0,
       "value": "更新"
+    }
+  ],
+  "dPa7+6": [
+    {
+      "type": 0,
+      "value": "Generate"
     }
   ],
   "dQmi91": [
@@ -5572,6 +5596,12 @@
     {
       "type": 0,
       "value": "Clear"
+    }
+  ],
+  "e9bIKh": [
+    {
+      "type": 0,
+      "value": "Failed to generate XSLT."
     }
   ],
   "eFet4K": [
@@ -6455,6 +6485,12 @@
       "value": "Functions"
     }
   ],
+  "lUm6fl": [
+    {
+      "type": 0,
+      "value": "Return"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -7276,6 +7312,12 @@
     {
       "type": 0,
       "value": "傳回值的 URI 編碼表示法"
+    }
+  ],
+  "rd6fai": [
+    {
+      "type": 0,
+      "value": "Use left and right arrow keys to navigate between commands"
     }
   ],
   "rsdJcV": [

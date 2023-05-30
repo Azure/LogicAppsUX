@@ -204,7 +204,8 @@ const TokenField = ({
       return editorViewModel.isOldFormat ? (
         <SimpleQueryBuilder
           readonly={readOnly}
-          items={JSON.parse(JSON.stringify(editorViewModel.items))}
+          itemValue={editorViewModel.itemValue ?? value}
+          isRowFormat={editorViewModel.isRowFormat}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
         />
