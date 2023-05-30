@@ -58,6 +58,38 @@ export function addFolderToBuildPath(xmlBuildFile: Record<string, any>, folderNa
   return xmlBuildFile;
 }
 
+export function addLibToPublishPath(xmlBuildFile: Record<string, any>): Record<string, any> {
+  const itemGroup: Record<string, any> = {
+    Target: {
+      $: {
+        Name: 'CopyDynamicLibraries',
+        AfterTargets: '_GenerateFunctionsExtensionsMetadataPostPublish',
+      },
+      Copy: {
+        $: {
+          SourceFiles: '@(LibDirectory)',
+          DestinationFiles: `@(LibDirectory->'$(MSBuildProjectDirectory)${path.sep}$(PublishUrl)${path.sep}lib${path.sep}%(RecursiveDir)%(Filename)%(Extension)')`,
+        },
+      },
+    },
+  };
+  xmlBuildFile['Project'] = {
+    ...xmlBuildFile['Project'],
+    ...itemGroup,
+  };
+
+  const itemGroup1 = {
+    LibDirectory: {
+      $: {
+        Include: `$(MSBuildProjectDirectory)${path.sep}lib${path.sep}**${path.sep}*`,
+      },
+    },
+  };
+  xmlBuildFile['Project']['ItemGroup'].push(itemGroup1);
+
+  return xmlBuildFile;
+}
+
 export function addNugetPackagesToBuildFile(xmlBuildFile: Record<string, any>): Record<string, any> {
   const packageName = 'Microsoft.Azure.Workflows.WebJobs.Extension';
   const packageVersion = '1.2.*';

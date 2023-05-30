@@ -14,6 +14,7 @@ import {
   addFolderToBuildPath,
   writeBuildFileToDisk,
   addFileToBuildPath,
+  addLibToPublishPath,
 } from '../../utils/codeless/updateBuildFile';
 import { getProjFiles, getTemplateKeyFromProjFile } from '../../utils/dotnet/dotnet';
 import { validateDotnetInstalled, getFramework, executeDotnetTemplateCommand } from '../../utils/dotnet/executeDotnetTemplateCommand';
@@ -164,6 +165,10 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
     xmlBuildFile = addFileToBuildPath(xmlBuildFile, connectionFile);
   }
 
+  if (projectArtifacts['lib']) {
+    xmlBuildFile = addLibToPublishPath(xmlBuildFile);
+  }
+
   await writeBuildFileToDisk(context, xmlBuildFile, target.fsPath);
 }
 
@@ -211,6 +216,7 @@ async function getArtifactNamesFromProject(target: vscode.Uri): Promise<{ [key: 
     workflows: [],
     connections: [],
     artifacts: [],
+    lib: [],
   };
   const files = await fse.readdir(target.fsPath);
   for (const file of files) {
@@ -223,6 +229,12 @@ async function getArtifactNamesFromProject(target: vscode.Uri): Promise<{ [key: 
       artifactDict['artifacts'].push(file);
       continue;
     }
+
+    if (file == 'lib') {
+      artifactDict['lib'].push(file);
+      continue;
+    }
+
     const filePath: string = path.join(target.fsPath, file);
     if (await (await fse.stat(filePath)).isDirectory()) {
       const workflowFiles: string[] = await fse.readdir(filePath);
