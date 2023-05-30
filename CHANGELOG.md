@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.18.2](https://github.com/Azure/LogicAppsUX/compare/v2.18.1...v2.18.2) (2023-05-30)
+
+
+### Bug Fixes
+
+* **vscode): Revert "feat(vs-code-designer:** externalize connection p… ([#2614](https://github.com/Azure/LogicAppsUX/issues/2614)) ([ba19d2e](https://github.com/Azure/LogicAppsUX/commit/ba19d2ef55cbbb65dcdc9850835a655d38d0d8c5)), closes [#2613](https://github.com/Azure/LogicAppsUX/issues/2613) [#2368](https://github.com/Azure/LogicAppsUX/issues/2368)
+
 ### [2.18.1](https://github.com/Azure/LogicAppsUX/compare/v2.15.38...v2.18.1) (2023-05-26)
 
 ## [2.18.0](https://github.com/Azure/LogicAppsUX/compare/v2.15.32...v2.18.0) (2023-05-22)
