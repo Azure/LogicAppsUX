@@ -1151,6 +1151,12 @@
       "value": "Line Number"
     }
   ],
+  "5OvGgn": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1745,6 +1751,12 @@
     {
       "type": 0,
       "value": "Typ uwierzytelniania"
+    }
+  ],
+  "AEguAy": [
+    {
+      "type": 0,
+      "value": "Empty value"
     }
   ],
   "AGCm1p": [
@@ -2359,12 +2371,6 @@
       "value": "Add an action"
     }
   ],
-  "EV9iRu": [
-    {
-      "type": 0,
-      "value": "Nie można zapisać."
-    }
-  ],
   "EYqGxA": [
     {
       "type": 0,
@@ -2487,6 +2493,12 @@
     {
       "type": 0,
       "value": "(UTC+05:45) Katmandu"
+    }
+  ],
+  "FIL1Nt": [
+    {
+      "type": 0,
+      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
     }
   ],
   "FIT7i0": [
@@ -4243,6 +4255,20 @@
       "value": "issue"
     }
   ],
+  "Rq2U5n": [
+    {
+      "type": 0,
+      "value": "Unrecognized expression '"
+    },
+    {
+      "type": 1,
+      "value": "expression"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "SADSSs": [
     {
       "type": 0,
@@ -5123,6 +5149,12 @@
       "value": "Zwraca binarną reprezentację identyfikatora URI danych"
     }
   ],
+  "YABOLz": [
+    {
+      "type": 0,
+      "value": "Body Item"
+    }
+  ],
   "YCFhzp": [
     {
       "type": 0,
@@ -5685,6 +5717,12 @@
       "value": "Schema is missing required inputs"
     }
   ],
+  "dBxX0M": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
+    }
+  ],
   "dDYCuU": [
     {
       "type": 0,
@@ -5701,6 +5739,12 @@
     {
       "type": 0,
       "value": "Aktualizuj"
+    }
+  ],
+  "dPa7+6": [
+    {
+      "type": 0,
+      "value": "Generate"
     }
   ],
   "dQmi91": [
@@ -5817,6 +5861,12 @@
     {
       "type": 0,
       "value": "Clear"
+    }
+  ],
+  "e9bIKh": [
+    {
+      "type": 0,
+      "value": "Failed to generate XSLT."
     }
   ],
   "eFet4K": [
@@ -6737,6 +6787,12 @@
       "value": "Functions"
     }
   ],
+  "lUm6fl": [
+    {
+      "type": 0,
+      "value": "Return"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -7591,6 +7647,12 @@
     {
       "type": 0,
       "value": "Zwraca reprezentację wartości zakodowaną jako identyfikator URI"
+    }
+  ],
+  "rd6fai": [
+    {
+      "type": 0,
+      "value": "Use left and right arrow keys to navigate between commands"
     }
   ],
   "rsdJcV": [

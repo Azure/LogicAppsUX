@@ -3,12 +3,16 @@ import { getIntl } from '@microsoft/intl-logic-apps';
 
 const intl = getIntl();
 const QUERY_OUTPUT_TITLE = intl.formatMessage({
-  defaultMessage: 'Output',
-  description: 'The title of the output field in the static result query action',
+  defaultMessage: 'Body',
+  description: 'The title of the body field in the static result query action',
 });
 const STATIC_RESULT_OPERATION_OUTPUT_TITLE = intl.formatMessage({
   defaultMessage: 'Output',
   description: 'The title of the output field in the static result query action',
+});
+const STATIC_RESULT_OPERATION_BODY_ITEM = intl.formatMessage({
+  defaultMessage: 'Body Item',
+  description: 'The title of the child item field in the static result query action',
 });
 
 /**
@@ -23,7 +27,7 @@ export const QueryStaticResultSchema = {
         body: {
           type: 'array',
           title: QUERY_OUTPUT_TITLE,
-          items: {},
+          items: { title: STATIC_RESULT_OPERATION_BODY_ITEM },
         },
       },
       type: 'object',

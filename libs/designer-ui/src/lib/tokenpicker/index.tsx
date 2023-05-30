@@ -240,7 +240,7 @@ export function TokenPicker({
               setExpression={setExpression}
               getValueSegmentFromToken={getValueSegmentFromToken}
               tokenClickedCallback={tokenClickedCallback}
-              noDynamicContent={!isDynamicContentAvailable(tokenGroup ?? [])}
+              noDynamicContent={!isDynamicContentAvailable(filteredTokenGroup ?? [])}
               expressionEditorCurrentHeight={expressionEditorCurrentHeight}
             />
             {initialMode === TokenPickerMode.EXPRESSION ? (

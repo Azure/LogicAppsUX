@@ -337,7 +337,12 @@ export class SchemaProcessor {
         required: this.options.required,
         schema,
         summary: this._getSummary(summary, ''),
-        title: this._getTitle(schema.title || schema[SwaggerConstants.ExtensionProperties.Summary], this.options.currentKey as string, key),
+        title: this._getTitle(
+          schema.title || schema[SwaggerConstants.ExtensionProperties.Summary],
+          this.options.currentKey as string,
+          key,
+          name
+        ),
         type: SwaggerConstants.Types.Object,
         visibility: this._getVisibility(schema),
       });
@@ -485,7 +490,8 @@ export class SchemaProcessor {
     let title = this._getTitle(
       schema.title || schema[SwaggerConstants.ExtensionProperties.Summary],
       this.options.currentKey as string,
-      keyPrefix
+      keyPrefix,
+      name as string
     );
     const summary = this._getSummary(schema[SwaggerConstants.ExtensionProperties.Summary], '');
     const type = (schema.type as string) || SwaggerConstants.Types.Any;
@@ -545,13 +551,13 @@ export class SchemaProcessor {
     return summaryPrefix && summaryText ? `${summaryPrefix} ${summaryText}` : summaryText;
   }
 
-  private _getTitle(title: string, key: string, keyPrefix: string): string {
+  private _getTitle(title: string, key: string, keyPrefix: string, name: string): string {
     const intl = getIntl();
     const titleText = title
       ? title
       : key === ParameterKeyUtility.WildIndexSegment
       ? intl.formatMessage({ defaultMessage: 'Item', description: 'Label for single item inside an array.' })
-      : getKnownTitlesFromKey(keyPrefix) ?? getKnownTitles(key);
+      : getKnownTitlesFromKey(keyPrefix) ?? getKnownTitles(name) ?? key;
     const titlePrefix = this.options.titlePrefix || this.options.summaryPrefix;
 
     return titlePrefix && titleText ? `${titlePrefix} ${titleText}` : titleText;

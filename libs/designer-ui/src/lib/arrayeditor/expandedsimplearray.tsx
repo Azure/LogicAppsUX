@@ -30,7 +30,6 @@ export interface ExpandedSimpleArrayProps {
   items: SimpleArrayItem[];
   canDeleteLastItem: boolean;
   readOnly?: boolean;
-  isTrigger?: boolean;
   placeholder?: string;
   valueType?: string;
   getTokenPicker: GetTokenPickerHandler;
@@ -42,7 +41,6 @@ export const ExpandedSimpleArray = ({
   items,
   canDeleteLastItem,
   readOnly,
-  isTrigger,
   placeholder,
   valueType,
   getTokenPicker,
@@ -87,7 +85,6 @@ export const ExpandedSimpleArray = ({
               className="msla-array-editor-container-expanded"
               valueType={valueType}
               initialValue={item.value ?? []}
-              isTrigger={isTrigger}
               editorBlur={(newState) => handleArrayElementSaved(item.value ?? [], newState, index)}
               placeholder={placeholder}
               getTokenPicker={getTokenPicker}

@@ -239,7 +239,6 @@ export const Combobox = ({
             onBlur={handleBlur}
             getTokenPicker={baseEditorProps.getTokenPicker}
             placeholder={baseEditorProps.placeholder}
-            isTrigger={baseEditorProps.isTrigger}
           >
             <Change setValue={setValue} />
           </BaseEditor>

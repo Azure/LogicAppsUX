@@ -32,7 +32,7 @@ import {
   shouldIncludeSelfForRepetitionReference,
 } from './parameters/helper';
 import { createTokenValueSegment } from './parameters/segment';
-import { hasSecureOutputs } from './setting';
+import { getSplitOnValue, hasSecureOutputs } from './setting';
 import { getVariableTokens } from './variables';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
@@ -259,12 +259,20 @@ export const createValueSegmentFromToken = async (
   parameterId: string,
   token: OutputToken,
   addImplicitForeachIfNeeded: boolean,
+  addLatestActionName: boolean,
   rootState: RootState,
   dispatch: AppDispatch
 ): Promise<ValueSegment> => {
   const tokenOwnerNodeId = token.outputInfo.actionName ?? getTriggerNodeId(rootState.workflow);
   const nodeType = rootState.operations.operationInfo[tokenOwnerNodeId].type;
   const tokenValueSegment = convertTokenToValueSegment(token, nodeType);
+
+  if (addLatestActionName && tokenValueSegment.token?.actionName) {
+    const newActionId = rootState.workflow.idReplacements[tokenValueSegment.token.actionName];
+    if (newActionId && newActionId !== tokenValueSegment.token.actionName) {
+      tokenValueSegment.token.actionName = newActionId;
+    }
+  }
 
   if (!addImplicitForeachIfNeeded) {
     return tokenValueSegment;
@@ -287,12 +295,11 @@ export const createValueSegmentFromToken = async (
       newRootState = newState as RootState;
       newRepetitionContext = await getRepetitionContext(
         nodeId,
-        getTriggerNodeId(newRootState.workflow),
         newRootState.operations.operationInfo,
         newRootState.operations.inputParameters,
-        newRootState.operations.settings,
         newRootState.workflow.nodesMetadata,
         /* includeSelf */ false,
+        getSplitOnValue(newRootState.workflow, newRootState.operations),
         newRootState.workflow.idReplacements
       );
     }

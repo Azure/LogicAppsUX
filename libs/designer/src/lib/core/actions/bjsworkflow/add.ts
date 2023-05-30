@@ -4,7 +4,7 @@ import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queri
 import { getOperationManifest } from '../../queries/operation';
 import { initEmptyConnectionMap } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation, OperationMetadataState } from '../../state/operation/operationMetadataSlice';
-import { updateNodeSettings, initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
+import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { changePanelNode, isolateTab, showDefaultTabs } from '../../state/panel/panelSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
@@ -117,7 +117,13 @@ const initializeOperationDetails = async (
     const iconUri = getIconUriFromManifest(manifest);
     const brandColor = getBrandColorFromManifest(manifest);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
-    const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs);
+    const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
+      manifest,
+      isTrigger,
+      nodeInputs,
+      /* splitOnValue */ undefined
+    );
+    let updatedOutputs = nodeOutputs;
     parsedManifest = new ManifestParser(manifest);
 
     if (parameterValues) {
@@ -134,10 +140,16 @@ const initializeOperationDetails = async (
 
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
     const settings = getOperationSettings(isTrigger, operationInfo, nodeOutputs, manifest, /* swagger */ undefined);
+
+    // We should update the outputs when splitOn is enabled.
+    if (isTrigger && settings.splitOn?.value?.value) {
+      updatedOutputs = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs, settings.splitOn?.value?.value).outputs;
+    }
+
     initData = {
       id: nodeId,
       nodeInputs,
-      nodeOutputs,
+      nodeOutputs: updatedOutputs,
       nodeDependencies,
       settings,
       operationMetadata: { iconUri, brandColor },
@@ -207,21 +219,16 @@ const initializeOperationDetails = async (
   const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId, swagger || parsedManifest);
   let hasSchema;
   schemaService.then((schema) => {
-    hasSchema = true;
     if (schema) {
+      hasSchema = true;
       dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
     }
   });
 
-  // Re-update settings after we have valid operation data
-  const operation = getState().workflow.operations[nodeId];
-
   const triggerNodeManifest = await getTriggerNodeManifest(state.workflow, state.operations);
 
-  const settings = getOperationSettings(isTrigger, operationInfo, initData.nodeOutputs, manifest, swagger, operation);
-  dispatch(updateNodeSettings({ id: nodeId, settings }));
   if (triggerNodeManifest) {
-    updateInvokerSettings(isTrigger, triggerNodeManifest, nodeId, settings, dispatch);
+    updateInvokerSettings(isTrigger, triggerNodeManifest, nodeId, initData.settings as Settings, dispatch);
   }
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);
@@ -234,7 +241,7 @@ export const initializeSwitchCaseFromManifest = async (id: string, manifest: Ope
     manifest,
     false,
     nodeInputs,
-    undefined
+    /* splitOnValue */ undefined
   );
   const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
   const initData = {
