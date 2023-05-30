@@ -83,6 +83,12 @@
       "value": "Penomoran halaman"
     }
   ],
+  "+ym4nO": [
+    {
+      "type": 0,
+      "value": "Tracked Properties"
+    }
+  ],
   "//nQG4": [
     {
       "type": 0,
@@ -215,10 +221,38 @@
       "value": "Pemicu"
     }
   ],
+  "04AwK7": [
+    {
+      "type": 0,
+      "value": "Error code: '"
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": "', Message: '"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
       "value": "Menampilkan permulaan jam ke tanda waktu string yang diberikan"
+    }
+  ],
+  "08e2rO": [
+    {
+      "type": 0,
+      "value": "The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection."
     }
   ],
   "09B9CU": [
@@ -1030,6 +1064,16 @@
       "value": "Enter a valid double."
     }
   ],
+  "5FINOY": [
+    {
+      "type": 0,
+      "value": "Workflow has parameter validation errors on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -1042,6 +1086,12 @@
       "value": "Line Number"
     }
   ],
+  "5OvGgn": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1052,6 +1102,20 @@
     {
       "type": 0,
       "value": "Menampilkan elemen pertama pada array atau string yang diberikan"
+    }
+  ],
+  "5akc1Q": [
+    {
+      "type": 0,
+      "value": "Unsupported 'in' value : '"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "' in Parameter"
     }
   ],
   "5b0sKi": [
@@ -1248,6 +1312,12 @@
     {
       "type": 0,
       "value": "Harus diisi. String dari substring yang diambil."
+    }
+  ],
+  "7S2wtE": [
+    {
+      "type": 0,
+      "value": "Schema Validation"
     }
   ],
   "7WVgiU": [
@@ -1450,12 +1520,6 @@
       "value": "Menambahkan jumlah bilangan bulat hari ke tanda waktu string yang diberikan"
     }
   ],
-  "8yjjTX": [
-    {
-      "type": 0,
-      "value": "Connect via Service Principal"
-    }
-  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -1478,24 +1542,6 @@
     {
       "type": 0,
       "value": "File"
-    }
-  ],
-  "92OUl9": [
-    {
-      "type": 0,
-      "value": "Array Element "
-    },
-    {
-      "type": 1,
-      "value": "index"
-    },
-    {
-      "type": 0,
-      "value": " is missing required property "
-    },
-    {
-      "type": 1,
-      "value": "property"
     }
   ],
   "93Gj/n": [
@@ -1550,6 +1596,20 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9W0lck": [
+    {
+      "type": 0,
+      "value": "Invalid split on value '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "', cannot find in outputs."
     }
   ],
   "9YGcT2": [
@@ -1610,6 +1670,12 @@
     {
       "type": 0,
       "value": "Tipe Autentikasi"
+    }
+  ],
+  "AEguAy": [
+    {
+      "type": 0,
+      "value": "Empty value"
     }
   ],
   "AGCm1p": [
@@ -1861,6 +1927,12 @@
       "value": "Number"
     }
   ],
+  "BeqBP7": [
+    {
+      "type": 0,
+      "value": "Automatic Decompression"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1877,6 +1949,12 @@
     {
       "type": 0,
       "value": "Select a managed identity"
+    }
+  ],
+  "BtL7UI": [
+    {
+      "type": 0,
+      "value": "No additional information is needed for this step. You will be able to use the outputs in subsequent steps."
     }
   ],
   "BuYrD3": [
@@ -2009,6 +2087,20 @@
       "value": "Select a value"
     }
   ],
+  "DQV7aK": [
+    {
+      "type": 0,
+      "value": "Alt/Option + click to download '"
+    },
+    {
+      "type": 1,
+      "value": "displayName"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "DWd9vy": [
     {
       "type": 0,
@@ -2043,6 +2135,12 @@
     {
       "type": 0,
       "value": "Show mini-map"
+    }
+  ],
+  "DjbVKU": [
+    {
+      "type": 0,
+      "value": "OAuth"
     }
   ],
   "DkF25I": [
@@ -2141,12 +2239,6 @@
     {
       "type": 0,
       "value": "Add an action"
-    }
-  ],
-  "EV9iRu": [
-    {
-      "type": 0,
-      "value": "Gagal menyimpan."
     }
   ],
   "EYqGxA": [
@@ -2271,6 +2363,12 @@
     {
       "type": 0,
       "value": "(UTC+05.45) Kathmandu"
+    }
+  ],
+  "FIL1Nt": [
+    {
+      "type": 0,
+      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
     }
   ],
   "FIT7i0": [
@@ -2510,6 +2608,16 @@
       "value": "File Content"
     }
   ],
+  "H/QVod": [
+    {
+      "type": 0,
+      "value": "Workflow has settings validation errors on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "H17jEE": [
     {
       "type": 0,
@@ -2552,12 +2660,6 @@
       "value": "Month"
     }
   ],
-  "HJIZrG": [
-    {
-      "type": 0,
-      "value": "Informasi diagnostik lainnya: x-ms-client-request-id adalah {clientRequestId}."
-    }
-  ],
   "HOchry": [
     {
       "type": 0,
@@ -2574,12 +2676,6 @@
     {
       "type": 0,
       "value": "Headers"
-    }
-  ],
-  "HXLutF": [
-    {
-      "type": 0,
-      "value": "Kunci"
     }
   ],
   "Hbqlzk": [
@@ -2696,6 +2792,16 @@
       "value": "Mengonversi tanda waktu string yang diberikan dari UTC ke zona waktu target"
     }
   ],
+  "IX1OiA": [
+    {
+      "type": 0,
+      "value": "Failed to retrieve dynamic outputs, outputs of this operation might not be visible in subsequent actions. Error details: "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    }
+  ],
   "IXy91L": [
     {
       "type": 0,
@@ -2706,6 +2812,20 @@
     {
       "type": 0,
       "value": "Error Code"
+    }
+  ],
+  "IjEKvh": [
+    {
+      "type": 0,
+      "value": "Error executing the api '"
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "IjZFjQ": [
@@ -3019,12 +3139,6 @@
       "value": "Membuat..."
     }
   ],
-  "LOwePI": [
-    {
-      "type": 0,
-      "value": "Tipe pemisahan tidak valid pada nilai {splitOn}, pemisahan tidak dalam array."
-    }
-  ],
   "LR/3Lr": [
     {
       "type": 0,
@@ -3335,6 +3449,12 @@
     {
       "type": 0,
       "value": "Menampilkan representasi biner dari nilai"
+    }
+  ],
+  "O/fh9A": [
+    {
+      "type": 0,
+      "value": "Service Principal"
     }
   ],
   "O27gKq": [
@@ -3671,6 +3791,16 @@
       "value": "Add dynamic data or expressions by inserting a /"
     }
   ],
+  "Q8zxeb": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " Key"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -3793,12 +3923,6 @@
       "value": "Pemicu tidak dapat dihapus."
     }
   ],
-  "R0/Vx4": [
-    {
-      "type": 0,
-      "value": "Text field for slider"
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -3862,10 +3986,18 @@
       "value": "issue"
     }
   ],
-  "S8P4N5": [
+  "Rq2U5n": [
     {
       "type": 0,
-      "value": "Hapus"
+      "value": "Unrecognized expression '"
+    },
+    {
+      "type": 1,
+      "value": "expression"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "SADSSs": [
@@ -4092,12 +4224,6 @@
     {
       "type": 0,
       "value": "ID permintaan klien"
-    }
-  ],
-  "TeRxLv": [
-    {
-      "type": 0,
-      "value": "Use a service principal to connect using application permissions."
     }
   ],
   "TgcgXE": [
@@ -4490,6 +4616,16 @@
       "value": "Wajib. Bilangan bulat pertama dalam array."
     }
   ],
+  "WTZvGW": [
+    {
+      "type": 0,
+      "value": "Workflow has invalid connections on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -4658,10 +4794,30 @@
       "value": "Count"
     }
   ],
+  "Xew1Df": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is '"
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "Xj0Gr/": [
     {
       "type": 0,
       "value": "Target schema element cannot be deleted."
+    }
+  ],
+  "Xj4xwI": [
+    {
+      "type": 0,
+      "value": "The managed identity used with this operation no longer exists. To continue, select an available identity or change the connection."
     }
   ],
   "XkBxv5": [
@@ -4718,16 +4874,16 @@
       "value": "Info Selengkapnya"
     }
   ],
-  "Y7yyKD": [
-    {
-      "type": 0,
-      "value": "Tipe ekspresi tidak valid {type}."
-    }
-  ],
   "Y9kBz5": [
     {
       "type": 0,
       "value": "Menampilkan representasi biner dari URI data"
+    }
+  ],
+  "YABOLz": [
+    {
+      "type": 0,
+      "value": "Body Item"
     }
   ],
   "YCFhzp": [
@@ -4768,6 +4924,12 @@
     {
       "type": 0,
       "value": "Masukkan Pfx"
+    }
+  ],
+  "YRk271": [
+    {
+      "type": 0,
+      "value": "Authentication"
     }
   ],
   "YUbSFS": [
@@ -4928,12 +5090,6 @@
     {
       "type": 0,
       "value": "(UTC+07.00) Tomsk"
-    }
-  ],
-  "Zr0yTE": [
-    {
-      "type": 0,
-      "value": "Nilai 'in' yang tidak didukung: {value} dalam Parameter"
     }
   ],
   "a7j3gS": [
@@ -5184,6 +5340,12 @@
       "value": "panel"
     }
   ],
+  "c7tRg/": [
+    {
+      "type": 0,
+      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger."
+    }
+  ],
   "c8UPLp": [
     {
       "type": 0,
@@ -5286,6 +5448,12 @@
       "value": "Schema is missing required inputs"
     }
   ],
+  "dBxX0M": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
+    }
+  ],
   "dDYCuU": [
     {
       "type": 0,
@@ -5302,6 +5470,12 @@
     {
       "type": 0,
       "value": "Perbarui"
+    }
+  ],
+  "dPa7+6": [
+    {
+      "type": 0,
+      "value": "Generate"
     }
   ],
   "dQmi91": [
@@ -5418,6 +5592,12 @@
     {
       "type": 0,
       "value": "Clear"
+    }
+  ],
+  "e9bIKh": [
+    {
+      "type": 0,
+      "value": "Failed to generate XSLT."
     }
   ],
   "eFet4K": [
@@ -5596,12 +5776,6 @@
       "value": "Email"
     }
   ],
-  "g0a4Qe": [
-    {
-      "type": 0,
-      "value": "Nilai"
-    }
-  ],
   "g1zwch": [
     {
       "type": 0,
@@ -5698,6 +5872,12 @@
       "value": "Time Zone"
     }
   ],
+  "gUp23R": [
+    {
+      "type": 0,
+      "value": "The name already exists or is invalid, please update it before proceeding."
+    }
+  ],
   "gWRF8m": [
     {
       "type": 0,
@@ -5726,12 +5906,6 @@
     {
       "type": 0,
       "value": "Delete"
-    }
-  ],
-  "gpbgjJ": [
-    {
-      "type": 0,
-      "value": "Pemisahan tidak valid pada nilai {splitOn}, tidak dapat menemukan dalam output."
     }
   ],
   "gu9o9z": [
@@ -5801,12 +5975,6 @@
     {
       "type": 0,
       "value": "Menampilkan hasil pengurangan dua angka tersebut"
-    }
-  ],
-  "hdnZ9Y": [
-    {
-      "type": 0,
-      "value": "Alt/Option + klik untuk mengunduh {displayName}"
     }
   ],
   "hic23z": [
@@ -6013,12 +6181,6 @@
       "value": "Uji"
     }
   ],
-  "izS5yQ": [
-    {
-      "type": 0,
-      "value": "Learn more"
-    }
-  ],
   "j1VU25": [
     {
       "type": 0,
@@ -6121,12 +6283,6 @@
       "value": "Tidak dapat membuat skema"
     }
   ],
-  "jjYA4u": [
-    {
-      "type": 0,
-      "value": "Format referensi koneksi manifes tidak didukung: {referenceKeyFormat}"
-    }
-  ],
   "juR40n": [
     {
       "type": 0,
@@ -6143,12 +6299,6 @@
     {
       "type": 0,
       "value": "Wajib. String dengtan pengodean base64."
-    }
-  ],
-  "k1N9Si": [
-    {
-      "type": 0,
-      "value": "Must provide default value for parameter."
     }
   ],
   "k41+13": [
@@ -6295,6 +6445,12 @@
       "value": " menit"
     }
   ],
+  "l72gf4": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
+    }
+  ],
   "lFve22": [
     {
       "type": 0,
@@ -6323,6 +6479,12 @@
     {
       "type": 0,
       "value": "Functions"
+    }
+  ],
+  "lUm6fl": [
+    {
+      "type": 0,
+      "value": "Return"
     }
   ],
   "lZT0JI": [
@@ -6387,24 +6549,6 @@
       "value": "Select an action type"
     }
   ],
-  "lzBHHT": [
-    {
-      "type": 0,
-      "value": "Array Element "
-    },
-    {
-      "type": 1,
-      "value": "index"
-    },
-    {
-      "type": 0,
-      "value": " has unknown property "
-    },
-    {
-      "type": 1,
-      "value": "property"
-    }
-  ],
   "lztiwS": [
     {
       "type": 0,
@@ -6447,6 +6591,16 @@
       "value": "Fungsi dihapus."
     }
   ],
+  "mGPqAg": [
+    {
+      "type": 0,
+      "value": "Delete "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -6469,6 +6623,20 @@
     {
       "type": 0,
       "value": "Url mengkodekan string input"
+    }
+  ],
+  "mPuXlv": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "', split on not in array."
     }
   ],
   "mQotIu": [
@@ -6517,6 +6685,16 @@
     {
       "type": 0,
       "value": "Masukkan kata sandi sebagai teks biasa atau gunakan parameter yang aman"
+    }
+  ],
+  "mvu5xN": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " Value"
     }
   ],
   "mwEHSX": [
@@ -6791,12 +6969,6 @@
       "value": "(UTC+13.00) Samoa"
     }
   ],
-  "p7YGxW": [
-    {
-      "type": 0,
-      "value": "Kesalahan saat menjalankan api {parameters}."
-    }
-  ],
   "pC2nr2": [
     {
       "type": 0,
@@ -6917,10 +7089,30 @@
       "value": "Menambahkan jumlah bilangan bulat detik ke tanda waktu string yang diberikan"
     }
   ],
+  "q8vnZQ": [
+    {
+      "type": 0,
+      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned."
+    }
+  ],
   "q9hf8i": [
     {
       "type": 0,
       "value": "(UTC+04:00) Astrakhan, Ulyanovsk"
+    }
+  ],
+  "qAlTD5": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: '"
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "qGfwxW": [
@@ -6957,12 +7149,6 @@
     {
       "type": 0,
       "value": "Wajib diisi"
-    }
-  ],
-  "qTqSqD": [
-    {
-      "type": 0,
-      "value": "Kode kesalahan: {errorCode}, Pesan: {message}."
     }
   ],
   "qUMXpq": [
@@ -7124,6 +7310,12 @@
       "value": "Menampilkan representasi dengan pengodean URI dari nilai"
     }
   ],
+  "rd6fai": [
+    {
+      "type": 0,
+      "value": "Use left and right arrow keys to navigate between commands"
+    }
+  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -7268,6 +7460,20 @@
       "value": "Sertifikat Klien"
     }
   ],
+  "sytRna": [
+    {
+      "type": 0,
+      "value": "Failed to retrieve dynamic inputs. Error details: '"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -7338,6 +7544,12 @@
     {
       "type": 0,
       "value": "Fungsi ini menyediakan detail untuk alur kerja itu sendiri pada runtime"
+    }
+  ],
+  "tMdcE1": [
+    {
+      "type": 0,
+      "value": "Invalid connection, please update your connection to load complete details"
     }
   ],
   "tNoZx2": [
@@ -7978,6 +8190,20 @@
     {
       "type": 0,
       "value": "Pilih nilai"
+    }
+  ],
+  "yjierd": [
+    {
+      "type": 0,
+      "value": "Invalid expression type '"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "yoCi15": [

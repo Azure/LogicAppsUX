@@ -43,6 +43,7 @@ export interface TokenPickerProps {
   labelId: string;
   getValueSegmentFromToken: GetValueSegmentHandler;
   tokenGroup?: TokenGroup[];
+  filteredTokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
   // if initialMode is undefined, it is Legacy TokenPicker
   initialMode?: TokenPickerMode;
@@ -55,6 +56,7 @@ export function TokenPicker({
   editorId,
   labelId,
   tokenGroup,
+  filteredTokenGroup,
   expressionGroup,
   initialMode,
   tokenPickerFocused,
@@ -190,7 +192,7 @@ export function TokenPicker({
           style={
             fullScreen
               ? { height: windowDimensions.height - 100, width: windowDimensions.width - (parseInt(PanelSize.Medium, 10) + 40) }
-              : { maxHeight: '550px', width: '400px' }
+              : { maxHeight: Math.min(windowDimensions.height - 100, 550), width: '400px' }
           }
         >
           <div className="msla-token-picker">
@@ -228,7 +230,7 @@ export function TokenPicker({
               />
             </div>
             <TokenPickerSection
-              tokenGroup={tokenGroup ?? []}
+              tokenGroup={(selectedKey === TokenPickerMode.TOKEN ? filteredTokenGroup : tokenGroup) ?? []}
               expressionGroup={expressionGroup ?? []}
               expressionEditorRef={expressionEditorRef}
               selectedKey={selectedKey}
@@ -238,7 +240,7 @@ export function TokenPicker({
               setExpression={setExpression}
               getValueSegmentFromToken={getValueSegmentFromToken}
               tokenClickedCallback={tokenClickedCallback}
-              noDynamicContent={!isDynamicContentAvailable(tokenGroup ?? [])}
+              noDynamicContent={!isDynamicContentAvailable(filteredTokenGroup ?? [])}
               expressionEditorCurrentHeight={expressionEditorCurrentHeight}
             />
             {initialMode === TokenPickerMode.EXPRESSION ? (

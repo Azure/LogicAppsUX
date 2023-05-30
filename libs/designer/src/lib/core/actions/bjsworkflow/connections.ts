@@ -6,7 +6,11 @@ import { changeConnectionMapping, initializeConnectionsMappings } from '../../st
 import { updateErrorDetails } from '../../state/operation/operationMetadataSlice';
 import type { Operations } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
-import { getConnectionReference, isConnectionMultiAuthManagedIdentityType } from '../../utils/connectors/connections';
+import {
+  getConnectionReference,
+  isConnectionMultiAuthManagedIdentityType,
+  isConnectionSingleAuthManagedIdentityType,
+} from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
 import { updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { getAllVariables } from '../../utils/variables';
@@ -43,7 +47,7 @@ export interface UpdateConnectionPayload {
 export const updateNodeConnection = createAsyncThunk(
   'updateNodeConnection',
   async (payload: ConnectionPayload, { dispatch, getState }): Promise<void> => {
-    const { nodeId, connector, connection } = payload;
+    const { nodeId, connector, connection, connectionProperties, authentication } = payload;
 
     dispatch(updateErrorDetails({ id: nodeId, clear: true }));
     return updateNodeConnectionAndProperties(
@@ -51,8 +55,8 @@ export const updateNodeConnection = createAsyncThunk(
         nodeId,
         connectorId: connector.id,
         connectionId: connection.id,
-        authentication: getApiHubAuthenticationIfRequired(),
-        connectionProperties: getConnectionPropertiesIfRequired(connection, connector),
+        authentication: authentication ?? getApiHubAuthenticationIfRequired(),
+        connectionProperties: connectionProperties ?? getConnectionPropertiesIfRequired(connection, connector),
       },
       dispatch,
       getState as () => RootState
@@ -80,12 +84,12 @@ const updateNodeConnectionAndProperties = async (
     newState.operations.settings[nodeId],
     getAllVariables(newState.tokens.variables),
     dispatch,
-    newState,
+    getState,
     newState.workflow.newlyAddedOperations[nodeId] ? undefined : newState.workflow.operations[nodeId]
   );
 };
 const getConnectionPropertiesIfRequired = (connection: Connection, connector: Connector): Record<string, any> | undefined => {
-  if (isConnectionMultiAuthManagedIdentityType(connection, connector)) {
+  if (isConnectionMultiAuthManagedIdentityType(connection, connector) || isConnectionSingleAuthManagedIdentityType(connection)) {
     const identity = WorkflowService().getAppIdentity?.();
     const userAssignedIdentity =
       equals(identity?.type, ResourceIdentityType.USER_ASSIGNED) && identity?.userAssignedIdentities
@@ -98,7 +102,7 @@ const getConnectionPropertiesIfRequired = (connection: Connection, connector: Co
   return undefined;
 };
 
-const getConnectionProperties = (connector: Connector, userAssignedIdentity: string | undefined): Record<string, any> => {
+export const getConnectionProperties = (connector: Connector, userAssignedIdentity: string | undefined): Record<string, any> => {
   let audience: string | undefined;
   if (WorkflowService().isExplicitAuthRequiredForManagedIdentity?.()) {
     const isMultiAuth = connector.properties.connectionParameterSets !== undefined;
@@ -129,7 +133,7 @@ const getApiHubAuthenticationIfRequired = (): ApiHubAuthentication | undefined =
   return getApiHubAuthentication(userAssignedIdentity);
 };
 
-const getApiHubAuthentication = (userAssignedIdentity: string | undefined): ApiHubAuthentication | undefined => {
+export const getApiHubAuthentication = (userAssignedIdentity: string | undefined): ApiHubAuthentication | undefined => {
   return WorkflowService().isExplicitAuthRequiredForManagedIdentity?.()
     ? { type: 'ManagedServiceIdentity', ...optional('identity', userAssignedIdentity) }
     : undefined;

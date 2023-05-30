@@ -1,12 +1,12 @@
-name: Nightly Release
-
+name: Production Build
+run-name: Production Build - [${{ github.event.inputs.branch }}][${{ github.event.inputs.release_type || 'no_type_specified' }}]
 on:
   workflow_dispatch:
     inputs:
       release_type:
         description: 'Release type'
         required: true
-        default: 'patch'
+        default: 'minor'
         type: choice
         options:
           - major
@@ -14,13 +14,11 @@ on:
           - patch
   repository_dispatch:
     types: [release]
-  schedule:
-    - cron: '0 0 * * *'
 
 env:
   AI_KEY: 3cf0d6ae-3327-414a-b7c1-12f31ef45eff
   NX_AI_CON_STR: InstrumentationKey=3cf0d6ae-3327-414a-b7c1-12f31ef45eff;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/
-  BUMP_COMMAND: npm run bump -- --release-as ${{ github.event.inputs.release_type || 'patch' }}
+  BUMP_COMMAND: npm run bump -- --release-as ${{ github.event.inputs.release_type || 'minor' }}
 
 jobs:
   bump-version:

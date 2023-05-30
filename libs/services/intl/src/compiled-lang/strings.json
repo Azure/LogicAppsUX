@@ -1097,6 +1097,12 @@
       "value": "Line Number"
     }
   ],
+  "5OvGgn": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1525,12 +1531,6 @@
       "value": "Adds an integer number of days to a string timestamp passed in"
     }
   ],
-  "8yjjTX": [
-    {
-      "type": 0,
-      "value": "Connect via Service Principal"
-    }
-  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -1553,24 +1553,6 @@
     {
       "type": 0,
       "value": "File"
-    }
-  ],
-  "92OUl9": [
-    {
-      "type": 0,
-      "value": "Array Element "
-    },
-    {
-      "type": 1,
-      "value": "index"
-    },
-    {
-      "type": 0,
-      "value": " is missing required property "
-    },
-    {
-      "type": 1,
-      "value": "property"
     }
   ],
   "93Gj/n": [
@@ -1699,6 +1681,12 @@
     {
       "type": 0,
       "value": "Authentication Type"
+    }
+  ],
+  "AEguAy": [
+    {
+      "type": 0,
+      "value": "Empty value"
     }
   ],
   "AGCm1p": [
@@ -2171,6 +2159,12 @@
       "value": "Show mini-map"
     }
   ],
+  "DjbVKU": [
+    {
+      "type": 0,
+      "value": "OAuth"
+    }
+  ],
   "DkF25I": [
     {
       "type": 0,
@@ -2267,12 +2261,6 @@
     {
       "type": 0,
       "value": "Add an action"
-    }
-  ],
-  "EV9iRu": [
-    {
-      "type": 0,
-      "value": "Failed to save."
     }
   ],
   "EYqGxA": [
@@ -2397,6 +2385,12 @@
     {
       "type": 0,
       "value": "(UTC+05:45) Kathmandu"
+    }
+  ],
+  "FIL1Nt": [
+    {
+      "type": 0,
+      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
     }
   ],
   "FIT7i0": [
@@ -2829,6 +2823,16 @@
     {
       "type": 0,
       "value": "Converts a string timestamp passed in from a UTC to a target time zone"
+    }
+  ],
+  "IX1OiA": [
+    {
+      "type": 0,
+      "value": "Failed to retrieve dynamic outputs, outputs of this operation might not be visible in subsequent actions. Error details: "
+    },
+    {
+      "type": 1,
+      "value": "message"
     }
   ],
   "IXy91L": [
@@ -3491,6 +3495,12 @@
       "value": "Returns a binary representation of a value"
     }
   ],
+  "O/fh9A": [
+    {
+      "type": 0,
+      "value": "Service Principal"
+    }
+  ],
   "O27gKq": [
     {
       "type": 0,
@@ -4035,6 +4045,20 @@
       "value": "issue"
     }
   ],
+  "Rq2U5n": [
+    {
+      "type": 0,
+      "value": "Unrecognized expression '"
+    },
+    {
+      "type": 1,
+      "value": "expression"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "SADSSs": [
     {
       "type": 0,
@@ -4121,20 +4145,6 @@
     {
       "type": 0,
       "value": "Done"
-    }
-  ],
-  "Sw+u4M": [
-    {
-      "type": 0,
-      "value": "Failed to retrive dynamic inputs. Error details: '"
-    },
-    {
-      "type": 1,
-      "value": "message"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "SyFXM3": [
@@ -4273,12 +4283,6 @@
     {
       "type": 0,
       "value": "Client request ID"
-    }
-  ],
-  "TeRxLv": [
-    {
-      "type": 0,
-      "value": "Use a service principal to connect using application permissions."
     }
   ],
   "TgcgXE": [
@@ -4935,6 +4939,12 @@
       "value": "Returns a binary representation of a data URI"
     }
   ],
+  "YABOLz": [
+    {
+      "type": 0,
+      "value": "Body Item"
+    }
+  ],
   "YCFhzp": [
     {
       "type": 0,
@@ -4973,6 +4983,12 @@
     {
       "type": 0,
       "value": "Enter Pfx"
+    }
+  ],
+  "YRk271": [
+    {
+      "type": 0,
+      "value": "Authentication"
     }
   ],
   "YUbSFS": [
@@ -5491,6 +5507,12 @@
       "value": "Schema is missing required inputs"
     }
   ],
+  "dBxX0M": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
+    }
+  ],
   "dDYCuU": [
     {
       "type": 0,
@@ -5507,6 +5529,12 @@
     {
       "type": 0,
       "value": "Update"
+    }
+  ],
+  "dPa7+6": [
+    {
+      "type": 0,
+      "value": "Generate"
     }
   ],
   "dQmi91": [
@@ -5623,6 +5651,12 @@
     {
       "type": 0,
       "value": "Clear"
+    }
+  ],
+  "e9bIKh": [
+    {
+      "type": 0,
+      "value": "Failed to generate XSLT."
     }
   ],
   "eFet4K": [
@@ -5895,6 +5929,12 @@
     {
       "type": 0,
       "value": "Time Zone"
+    }
+  ],
+  "gUp23R": [
+    {
+      "type": 0,
+      "value": "The name already exists or is invalid, please update it before proceeding."
     }
   ],
   "gWRF8m": [
@@ -6211,12 +6251,6 @@
       "value": "Test"
     }
   ],
-  "izS5yQ": [
-    {
-      "type": 0,
-      "value": "Learn more"
-    }
-  ],
   "j1VU25": [
     {
       "type": 0,
@@ -6335,12 +6369,6 @@
     {
       "type": 0,
       "value": "Required. The base64 encoded string."
-    }
-  ],
-  "k1N9Si": [
-    {
-      "type": 0,
-      "value": "Must provide default value for parameter."
     }
   ],
   "k41+13": [
@@ -6487,6 +6515,12 @@
       "value": " minutes"
     }
   ],
+  "l72gf4": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
+    }
+  ],
   "lFve22": [
     {
       "type": 0,
@@ -6515,6 +6549,12 @@
     {
       "type": 0,
       "value": "Functions"
+    }
+  ],
+  "lUm6fl": [
+    {
+      "type": 0,
+      "value": "Return"
     }
   ],
   "lZT0JI": [
@@ -6577,24 +6617,6 @@
     {
       "type": 0,
       "value": "Select an action type"
-    }
-  ],
-  "lzBHHT": [
-    {
-      "type": 0,
-      "value": "Array Element "
-    },
-    {
-      "type": 1,
-      "value": "index"
-    },
-    {
-      "type": 0,
-      "value": " has unknown property "
-    },
-    {
-      "type": 1,
-      "value": "property"
     }
   ],
   "lztiwS": [
@@ -7369,6 +7391,12 @@
       "value": "Returns a URI encoded representation of a value"
     }
   ],
+  "rd6fai": [
+    {
+      "type": 0,
+      "value": "Use left and right arrow keys to navigate between commands"
+    }
+  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -7511,6 +7539,20 @@
     {
       "type": 0,
       "value": "Client Certificate"
+    }
+  ],
+  "sytRna": [
+    {
+      "type": 0,
+      "value": "Failed to retrieve dynamic inputs. Error details: '"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "t+XCkg": [
@@ -8025,16 +8067,6 @@
     {
       "type": 0,
       "value": "Menu"
-    }
-  ],
-  "wit5UT": [
-    {
-      "type": 0,
-      "value": "Failed to retrive dynamic outputs, outputs of this operation might not be visible in subsequent actions. Error details: "
-    },
-    {
-      "type": 1,
-      "value": "message"
     }
   ],
   "wkiETV": [

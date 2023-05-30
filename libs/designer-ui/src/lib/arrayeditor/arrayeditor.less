@@ -18,8 +18,7 @@
     flex: 1 1 100%;
 
     &.msla-array-editor-collapsed {
-      padding: 10px 0px 40px @padding;
-      display: flex;
+      padding: 10px 0px 25px @padding;
 
       .msla-input-parameter-label {
         align-self: center;
@@ -94,7 +93,10 @@
       &.complex {
         margin: 4px;
         padding: 4px 4px 4px 4px;
-        border: 1px solid @defaultBorderColor;
+        border: 1px dashed @defaultBorderColor;
+      }
+      &.isNested {
+        border: 1px dotted @defaultBorderColor;
       }
 
       .msla-array-item-header {
@@ -105,7 +107,7 @@
       .msla-array-editor-container-expanded {
         width: 100%;
         border-radius: 2px;
-        padding-bottom: 20px;
+        padding-bottom: 5px;
         position: relative;
 
         .editor-input {
@@ -181,7 +183,7 @@
   }
   .msla-collapsed-editor-validation {
     width: 50%;
-    position: relative;
+    position: absolute;
     color: rgb(224, 2, 2);
     left: 4px;
     font-size: 14px;

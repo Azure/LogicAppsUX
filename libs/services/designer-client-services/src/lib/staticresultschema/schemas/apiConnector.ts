@@ -1,6 +1,6 @@
 import type { StaticResultRootSchemaType } from './baseactionresult';
 import { HttpStaticResultSchema } from './httpresult';
-import type { Schema, SwaggerParser } from '@microsoft/parsers-logic-apps';
+import type { ManifestParser, Schema, SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { ExtensionProperties } from '@microsoft/parsers-logic-apps';
 import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { clone } from '@microsoft/utils-logic-apps';
@@ -12,9 +12,9 @@ import { clone } from '@microsoft/utils-logic-apps';
  */
 export const getStaticResultSchemaForAPIConnector = (
   operationId: string,
-  swaggerParser: SwaggerParser
+  parser: SwaggerParser | ManifestParser
 ): Promise<StaticResultRootSchemaType | undefined> => {
-  const outputSchema = swaggerParser.getOutputSchema(operationId);
+  const outputSchema = parser.getOutputSchema(operationId);
   return wrapOutputsSchemaToOperationSchema(outputSchema);
 };
 

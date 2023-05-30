@@ -112,7 +112,6 @@ export default {
       },
     } as any,
 
-    // TODO - Need manifest implementation for splitOn, custom tracking id and trigger conditions
     settings: {
       secureData: {},
       concurrency: {
@@ -123,7 +122,7 @@ export default {
       },
       operationOptions: {
         scopes: [SettingScope.Trigger],
-        options: [OperationOptions.SuppressWorkflowHeaders, OperationOptions.EnableSchemaValidation],
+        options: [OperationOptions.SuppressWorkflowHeadersOnResponse, OperationOptions.EnableSchemaValidation],
       },
     },
   },

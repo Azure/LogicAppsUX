@@ -44,6 +44,7 @@ export type GetTokenPickerHandler = (
   editorId: string,
   labelId: string,
   tokenPickerMode?: TokenPickerMode,
+  valueType?: string,
   closeTokenPicker?: () => void,
   tokenPickerClicked?: (b: boolean) => void,
   tokenClickedCallback?: (token: ValueSegment) => void
@@ -51,6 +52,7 @@ export type GetTokenPickerHandler = (
 
 export type ChangeHandler = (newState: ChangeState) => void;
 export type CallbackHandler = () => void;
+export type CastHandler = (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) => string;
 
 export interface DictionaryCallbackProps {
   addItem: (index: number) => void;
@@ -63,10 +65,9 @@ export interface BaseEditorProps {
   BasePlugins?: BasePlugins;
   initialValue: ValueSegment[];
   children?: React.ReactNode;
-  isTrigger?: boolean;
-  showCallbackTokens?: boolean;
   labelId?: string;
   label?: string;
+  valueType?: string;
   tokenPickerButtonEditorProps?: TokenPickerButtonEditorProps;
   onChange?: ChangeHandler;
   onBlur?: () => void;
@@ -94,9 +95,8 @@ export const BaseEditor = ({
   initialValue,
   children,
   labelId,
-  isTrigger,
-  showCallbackTokens,
   tokenPickerButtonEditorProps,
+  valueType,
   onFocus,
   onBlur,
   getTokenPicker,
@@ -205,12 +205,12 @@ export const BaseEditor = ({
           {tokens ? <DeleteTokenNode /> : null}
           {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
           {children}
-          {(!isTrigger || showCallbackTokens) && tokens && getInTokenPicker()
-            ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, closeTokenPicker, tokenPickerClicked)
+          {tokens && getInTokenPicker()
+            ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType, closeTokenPicker, tokenPickerClicked)
             : null}
         </div>
 
-        {(!isTrigger || showCallbackTokens) && tokens && isEditorFocused && !getInTokenPicker() ? (
+        {tokens && isEditorFocused && !getInTokenPicker() ? (
           createPortal(
             <TokenPickerButton openTokenPicker={openTokenPicker} showOnLeft={tokenPickerButtonEditorProps?.showOnLeft} />,
             document.body

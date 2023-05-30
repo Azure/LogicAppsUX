@@ -687,92 +687,6 @@
   margin-left: 6px;
 }
 
-.msla-theme-dark {
-  .msla-tab-component-container {
-    .msla-card,
-    .msla-card-placeolder {
-      background-color: inherit;
-    }
-  }
-
-  .msla-card-header {
-    color: @ms-color-black;
-
-    .msla-card-title-group {
-      .msla-card-header-title-view {
-        color: @ms-color-black;
-
-        .msla-card-header-title-tag {
-          color: @ms-color-neutralTertiary;
-        }
-      }
-
-      .msla-ise {
-        border-color: @ms-color-neutralTertiary;
-        color: @ms-color-neutralTertiary;
-      }
-    }
-  }
-
-  .msla-badge {
-    border-color: @ms-color-neutralTertiary;
-    color: @ms-color-neutralTertiary;
-  }
-
-  .msla-badges {
-    border-top: 1px solid @ms-color-primaryBorder;
-
-    .panel-card-v2-badge {
-      &.active {
-        color: @ms-color-neutralTertiary;
-
-        &:focus {
-          outline: 1px solid #a19f9d;
-        }
-        &:hover {
-          background-color: @ms-color-neutralLighter;
-        }
-        &:active {
-          background-color: @ms-color-neutralLight;
-        }
-      }
-
-      &.inactive {
-        color: #a19f9d;
-      }
-    }
-  }
-
-  .msla-panel-card-container {
-    .msla-panel-card-error {
-      &.error,
-      &.blocked {
-        color: #f1707b;
-      }
-
-      &.severeWarning {
-        color: #fce100;
-      }
-
-      &.success {
-        color: #92c353;
-      }
-
-      &.info,
-      &.warning {
-        color: #a19f9d;
-      }
-    }
-  }
-
-  .errorMessage-managed-identity {
-    color: #f1707b;
-    .managed-identity-link {
-      color: #69afe5;
-    }
-  }
-}
-
 .msla-selection-box {
   pointer-events: none;
   position: absolute;
@@ -1209,4 +1123,90 @@
 .msla-content-fit {
   width: 100%;
   height: 100%;
+}
+
+.msla-theme-dark {
+  .msla-tab-component-container {
+    .msla-card,
+    .msla-card-placeolder {
+      background-color: inherit;
+    }
+  }
+
+  .msla-card-header {
+    color: @ms-color-black;
+
+    .msla-card-title-group {
+      .msla-card-header-title-view {
+        color: @ms-color-black;
+
+        .msla-card-header-title-tag {
+          color: @ms-color-neutralTertiary;
+        }
+      }
+
+      .msla-ise {
+        border-color: @ms-color-neutralTertiary;
+        color: @ms-color-neutralTertiary;
+      }
+    }
+  }
+
+  .msla-badge {
+    border-color: @ms-color-neutralTertiary;
+    color: @ms-color-neutralTertiary;
+  }
+
+  .msla-badges {
+    border-top: 1px solid @ms-color-primaryBorder;
+
+    .panel-card-v2-badge {
+      &.active {
+        color: @ms-color-neutralTertiary;
+
+        &:focus {
+          outline: 1px solid #a19f9d;
+        }
+        &:hover {
+          background-color: @ms-color-neutralLighter;
+        }
+        &:active {
+          background-color: @ms-color-neutralLight;
+        }
+      }
+
+      &.inactive {
+        color: #a19f9d;
+      }
+    }
+  }
+
+  .msla-panel-card-container {
+    .msla-panel-card-error {
+      &.error,
+      &.blocked {
+        color: #f1707b;
+      }
+
+      &.severeWarning {
+        color: #fce100;
+      }
+
+      &.success {
+        color: #92c353;
+      }
+
+      &.info,
+      &.warning {
+        color: #a19f9d;
+      }
+    }
+  }
+
+  .errorMessage-managed-identity {
+    color: #f1707b;
+    .managed-identity-link {
+      color: #69afe5;
+    }
+  }
 }

@@ -52,6 +52,7 @@ import {
 } from '@microsoft/designer-client-services-logic-apps';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { InputParameter, OutputParameter } from '@microsoft/parsers-logic-apps';
+import { ManifestParser } from '@microsoft/parsers-logic-apps';
 import type { LogicAppsV2, OperationManifest } from '@microsoft/utils-logic-apps';
 import { isArmResourceId, uniqueArray, getPropertyValue, map, aggregate, equals } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -106,7 +107,7 @@ export const initializeOperationMetadata = async (
   }
 
   const allNodeData = aggregate((await Promise.all(promises)).filter((data) => !!data) as NodeDataWithOperationMetadata[][]);
-  const repetitionInfos = await initializeRepetitionInfos(triggerNodeId, allNodeData, nodesMetadata);
+  const repetitionInfos = await initializeRepetitionInfos(triggerNodeId, operations, allNodeData, nodesMetadata);
   updateTokenMetadataInParameters(allNodeData, operations, workflowParameters, nodesMetadata, triggerNodeId, repetitionInfos);
   dispatch(
     initializeNodes(
@@ -184,7 +185,8 @@ export const initializeOperationDetailsForManifest = async (
       dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
 
       const { connectorId, operationId } = nodeOperationInfo;
-      const schema = staticResultService.getOperationResultSchema(connectorId, operationId);
+      const parsedManifest = new ManifestParser(manifest);
+      const schema = staticResultService.getOperationResultSchema(connectorId, operationId, parsedManifest);
       schema.then((schema) => {
         if (schema) {
           dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
@@ -443,6 +445,7 @@ const initializeVariables = (
 
 const initializeRepetitionInfos = async (
   triggerNodeId: string,
+  allOperations: Operations,
   nodesData: NodeDataWithOperationMetadata[],
   nodesMetadata: NodesMetadata
 ): Promise<Record<string, RepetitionContext>> => {
@@ -462,8 +465,14 @@ const initializeRepetitionInfos = async (
     { operationInfos: {}, inputs: {}, settings: {} }
   );
 
+  const splitOn = settings[triggerNodeId]
+    ? settings[triggerNodeId].splitOn?.value?.enabled
+      ? (settings[triggerNodeId].splitOn?.value?.value as string)
+      : undefined
+    : (allOperations[triggerNodeId] as LogicAppsV2.Trigger)?.splitOn;
+
   const getNodeRepetition = async (nodeId: string, includeSelf: boolean): Promise<{ id: string; repetition: RepetitionContext }> => {
-    const repetition = await getRepetitionContext(nodeId, triggerNodeId, operationInfos, inputs, settings, nodesMetadata, includeSelf);
+    const repetition = await getRepetitionContext(nodeId, operationInfos, inputs, nodesMetadata, includeSelf, splitOn);
     return { id: nodeId, repetition };
   };
 
@@ -513,7 +522,7 @@ export const updateDynamicDataInNodes = async (getState: () => RootState, dispat
         nodeSettings,
         allVariables,
         dispatch,
-        rootState,
+        getState,
         operation
       );
     }
@@ -531,7 +540,7 @@ const updateDynamicDataForValidConnection = async (
   settings: Settings,
   variables: any,
   dispatch: Dispatch,
-  rootState: RootState,
+  getState: () => RootState,
   operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition
 ): Promise<void> => {
   const isValidConnection = await isConnectionReferenceValid(operationInfo, reference);
@@ -548,7 +557,7 @@ const updateDynamicDataForValidConnection = async (
       settings,
       variables,
       dispatch,
-      rootState,
+      getState,
       operation
     );
   } else {
