@@ -5,8 +5,11 @@ import { BlockFormatDropDown } from './DropdownBlockFormat';
 import { Format } from './Format';
 import { CLOSE_DROPDOWN_COMMAND } from './helper/Dropdown';
 import { FontDropDown, FontDropDownType } from './helper/FontDropDown';
+import { TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { $isListNode, ListNode } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
+import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { $isHeadingNode } from '@lexical/rich-text';
 import { $getSelectionStyleValueForProperty } from '@lexical/selection';
 import { mergeRegister, $getNearestNodeOfType, $findMatchingParent } from '@lexical/utils';
@@ -17,6 +20,7 @@ import {
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
   COMMAND_PRIORITY_CRITICAL,
+  COMMAND_PRIORITY_NORMAL,
   REDO_COMMAND,
   SELECTION_CHANGE_COMMAND,
   UNDO_COMMAND,
@@ -123,9 +127,35 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
           return false;
         },
         COMMAND_PRIORITY_CRITICAL
+      ),
+      activeEditor.registerCommand<boolean>(
+        TOGGLE_LINK_COMMAND,
+        (payload) => {
+          setCanRedo(payload);
+          return false;
+        },
+        COMMAND_PRIORITY_NORMAL
       )
     );
   }, [editor, activeEditor, updateToolbar]);
+
+  // close dropdowns when panel is scrolled
+  useEffect(() => {
+    function handleScroll() {
+      activeEditor.dispatchCommand(CLOSE_DROPDOWN_COMMAND, undefined);
+    }
+
+    const scrollableContent = document.querySelector('.ms-Panel-scrollableContent');
+    if (scrollableContent) {
+      scrollableContent.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      if (scrollableContent) {
+        scrollableContent.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [activeEditor]);
 
   return (
     <div className="msla-html-editor-toolbar">
@@ -165,6 +195,8 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
       <FontDropDown fontDropdownType={FontDropDownType.FONTSIZE} value={fontSize} editor={editor} disabled={readonly} />
       <Divider />
       <Format activeEditor={activeEditor} readonly={readonly} />
+      <ListPlugin />
+      <LinkPlugin />
     </div>
   );
 };
