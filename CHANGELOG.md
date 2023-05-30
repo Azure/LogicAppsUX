@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [2.22.0](https://github.com/Azure/LogicAppsUX/compare/v2.21.0...v2.22.0) (2023-05-30)
+
+
+### Features
+
+* **designer:** HTML Editor ([#2601](https://github.com/Azure/LogicAppsUX/issues/2601)) ([0a03f6e](https://github.com/Azure/LogicAppsUX/commit/0a03f6e5c9985894afb3d9157317a3a83f6e2621))
+
+
+### Bug Fixes
+
+* **designer:** Issue where Filepicker was not showing subfolders ([#2603](https://github.com/Azure/LogicAppsUX/issues/2603)) ([a3ba491](https://github.com/Azure/LogicAppsUX/commit/a3ba491e46b411b7e7f2ecf105e51841ac7fc381))
+* **designer:** Run after now triggers dirty state ([#2605](https://github.com/Azure/LogicAppsUX/issues/2605)) ([ea6455c](https://github.com/Azure/LogicAppsUX/commit/ea6455cce17043be9f3101408d1cc4a0c8bff6d3))
+* **designer:** Settings were overridden during action/trigger addition ([#2610](https://github.com/Azure/LogicAppsUX/issues/2610)) ([8b48325](https://github.com/Azure/LogicAppsUX/commit/8b483258213fe6ac1d5a398d131e2ffd9b16b634))
 
 ## [2.21.0](https://github.com/Azure/LogicAppsUX/compare/v2.20.0...v2.21.0) (2023-05-26)
 
