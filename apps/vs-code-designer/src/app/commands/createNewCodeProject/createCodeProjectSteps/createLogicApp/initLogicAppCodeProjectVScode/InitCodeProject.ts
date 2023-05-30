@@ -66,7 +66,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
 
   protected getDebugConfiguration(version: FuncVersion): DebugConfiguration {
     return {
-      name: localize('attachToNetFunc', 'Attach to Logic App'),
+      name: localize('attachToNetFunc', 'Attach to logic app'),
       type: version === FuncVersion.v1 ? 'clr' : 'coreclr',
       request: 'attach',
       processId: `\${command:${extensionCommand.pickProcess}}`,

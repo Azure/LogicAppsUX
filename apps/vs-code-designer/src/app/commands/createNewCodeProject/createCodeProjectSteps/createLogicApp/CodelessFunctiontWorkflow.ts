@@ -240,7 +240,6 @@ export class CodelessFunctiontWorkflow extends WorkflowCreateStepBase<IFunctionW
         }
       }
     }
-
     return defaultValue;
   }
 }

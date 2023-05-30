@@ -14,7 +14,7 @@ export class setWorkspaceName extends AzureWizardPromptStep<IProjectWizardContex
   public async prompt(context: IProjectWizardContext): Promise<void> {
     context.workspaceName = await context.ui.showInputBox({
       placeHolder: localize('setWorkspaceName', 'Workspace name'),
-      prompt: localize('workspaceNamePrompt', 'Provide a Workspace name'),
+      prompt: localize('workspaceNamePrompt', 'Provide a workspace name'),
     });
 
     context.workspacePath = path.join(context.projectPath, context.workspaceName);
