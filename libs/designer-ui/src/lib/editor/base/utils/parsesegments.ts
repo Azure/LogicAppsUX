@@ -59,7 +59,7 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
           });
           paragraph.append(listItemNode);
         }
-        // Non line break nodes are appended to the paragraph node
+        // Non line break nodes are parsed  and appended to the paragraph node
         else if (!$isLineBreakNode(childNode)) {
           appendChildrenNode(paragraph, childNode, nodeMap, tokensEnabled);
         }
@@ -81,6 +81,28 @@ export const parseHtmlSegments = (value: ValueSegment[], tokensEnabled?: boolean
   return root;
 };
 
+// Appends the children Nodes while parsing for TokenNodes
+const appendChildrenNode = (
+  paragraph: ParagraphNode | HeadingNode | ListNode | ListItemNode | LinkNode,
+  childNode: LexicalNode,
+  nodeMap: Map<string, ValueSegment>,
+  tokensEnabled?: boolean
+) => {
+  // if is a text node, parse for tokens
+  if ($isTextNode(childNode)) {
+    const textContent = childNode.getTextContent();
+    const childNodeStyles = childNode.getStyle();
+    const childNodeFormat = childNode.getFormat();
+    // we need to pass in the styles and format of the parent node to the children node
+    // because Lexical text nodes do not have styles or format
+    // and we'll need to use the ExtendedTextNode to apply the styles and format
+    appendStringSegment(paragraph, textContent, childNodeStyles, childNodeFormat, nodeMap, tokensEnabled);
+  } else {
+    paragraph.append(childNode);
+  }
+};
+
+// Splits up text content into their respective nodes
 export const appendStringSegment = (
   paragraph: ParagraphNode | HeadingNode | ListNode | ListItemNode | LinkNode,
   value: string,
@@ -97,11 +119,13 @@ export const appendStringSegment = (
         paragraph.append($createExtendedTextNode(value.substring(prevIndex, currIndex - 2), childNodeStyles, childNodeFormat));
       }
       const newIndex = value.indexOf(']$', currIndex) + 2;
+      // token is found in the text
       if (nodeMap && tokensEnabled) {
         const tokenSegment = nodeMap.get(value.substring(currIndex - 2, newIndex));
         if (tokenSegment && tokenSegment.token) {
           const segmentValue = tokenSegment.value;
           const { brandColor, icon, title, name, value, tokenType } = tokenSegment.token;
+          // Expression token handling
           if (tokenType === TokenType.FX) {
             const expressionValue: Expression = ExpressionParser.parseExpression(segmentValue);
             const token = $createTokenNode({
@@ -112,7 +136,9 @@ export const appendStringSegment = (
               value: segmentValue,
             });
             tokensEnabled && paragraph.append(token);
-          } else if (title || name) {
+          }
+          // other token handling
+          else if (title || name) {
             const token = $createTokenNode({
               title: title ?? name,
               data: tokenSegment,
@@ -131,23 +157,6 @@ export const appendStringSegment = (
     currIndex++;
   }
   paragraph.append($createExtendedTextNode(value.substring(prevIndex, currIndex), childNodeStyles, childNodeFormat));
-};
-
-// Appends the children Nodes while parsing for TokenNodes
-const appendChildrenNode = (
-  paragraph: ParagraphNode | HeadingNode | ListNode | ListItemNode | LinkNode,
-  childNode: LexicalNode,
-  nodeMap: Map<string, ValueSegment>,
-  tokensEnabled?: boolean
-) => {
-  if ($isTextNode(childNode)) {
-    const textContent = childNode.getTextContent();
-    const childNodeStyles = childNode.getStyle();
-    const childNodeFormat = childNode.getFormat();
-    appendStringSegment(paragraph, textContent, childNodeStyles, childNodeFormat, nodeMap, tokensEnabled);
-  } else {
-    paragraph.append(childNode);
-  }
 };
 
 export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): RootNode => {
