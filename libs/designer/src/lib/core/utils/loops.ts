@@ -4,7 +4,7 @@ import { updateAllUpstreamNodes } from '../actions/bjsworkflow/initialize';
 import type { NodeDataWithOperationMetadata } from '../actions/bjsworkflow/operationdeserializer';
 import { initializeOperationDetailsForManifest } from '../actions/bjsworkflow/operationdeserializer';
 import { getOperationManifest } from '../queries/operation';
-import type { NodeInputs, NodeOperation, NodeOutputs } from '../state/operation/operationMetadataSlice';
+import type { NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../state/operation/operationMetadataSlice';
 import { initializeNodes } from '../state/operation/operationMetadataSlice';
 import type { NodesMetadata, Operations } from '../state/workflow/workflowInterfaces';
 import { addImplicitForeachNode } from '../state/workflow/workflowSlice';
@@ -12,6 +12,7 @@ import type { RootState } from '../store';
 import { getAllParentsForNode, getNewNodeId, getTriggerNodeId } from './graph';
 import type { RepetitionContext, RepetitionReference } from './parameters/helper';
 import {
+  getTokenExpressionMethodFromKey,
   generateExpressionFromKey,
   getAllInputParameters,
   updateTokenMetadata,
@@ -80,28 +81,41 @@ export const shouldAddForeach = async (
     state.workflow.idReplacements
   );
   const tokenOwnerNodeId = token.outputInfo.actionName ?? getTriggerNodeId(state.workflow);
+  const tokenOwnerOperationInfo = state.operations.operationInfo[tokenOwnerNodeId];
+  const areOutputsManifestBased = OperationManifestService().isSupported(tokenOwnerOperationInfo.type, tokenOwnerOperationInfo.kind);
   const parentArrayKey = getParentArrayKey(token.key);
-  const parentArrayValue = getParentArrayExpression(
+  const data = getParentArrayExpression(
     token.outputInfo.actionName,
     parentArrayKey,
     repetitionContext,
     state.operations.outputParameters[tokenOwnerNodeId],
-    state.operations.operationInfo[tokenOwnerNodeId]
-  ) as string;
+    areOutputsManifestBased
+  );
   const isSplitOn = isExpressionEqualToNodeSplitOn(
-    parentArrayValue,
+    data?.expression as string,
     state.operations.settings[tokenOwnerNodeId].splitOn?.value?.enabled
       ? state.operations.settings[tokenOwnerNodeId].splitOn?.value?.value
       : undefined
   );
   // TODO: Need a way to determine if token is item token already
-  const alreadyInLoop = repetitionContext.repetitionReferences.some(
-    (repetitionReference) =>
-      typeof repetitionReference.repetitionValue === 'string' && equals(repetitionReference.repetitionValue, parentArrayValue)
-  );
+  const alreadyInLoop = repetitionContext.repetitionReferences.some((repetitionReference) => {
+    const { repetitionValue } = repetitionReference;
+    if (typeof repetitionValue !== 'string') {
+      return false;
+    }
+
+    return checkArrayInRepetition(
+      token.outputInfo.actionName,
+      repetitionValue,
+      parentArrayKey,
+      data?.expression,
+      data?.output,
+      areOutputsManifestBased
+    );
+  });
 
   // TODO: Need to handle array of array as input.
-  return { shouldAdd: !isSplitOn && !alreadyInLoop, parentArrayKey, parentArrayValue, repetitionContext };
+  return { shouldAdd: !isSplitOn && !alreadyInLoop, parentArrayKey, parentArrayValue: data?.expression as string, repetitionContext };
 };
 
 export const addForeachToNode = createAsyncThunk(
@@ -220,8 +234,8 @@ const getParentArrayExpression = (
   parentArrayKey: string | undefined,
   repetitionContext: RepetitionContext,
   nodeOutputs: NodeOutputs,
-  operationInfo: NodeOperation
-): string | undefined => {
+  areOutputsManifestBased: boolean
+): { expression: string; output: OutputInfo } | undefined => {
   if (!parentArrayKey) {
     return undefined;
   }
@@ -243,15 +257,13 @@ const getParentArrayExpression = (
     parentArrayTokenInfo.source = parentArrayOutput.source;
   }
 
-  const areOutputsManifestBased = OperationManifestService().isSupported(operationInfo.type, operationInfo.kind);
-
   for (const repetitionReference of repetitionContext.repetitionReferences) {
     if (
       equals(sanitizedParentArrayKey, repetitionReference.repetitionPath) &&
       ((isNullOrUndefined(tokenOwnerActionName) && isNullOrUndefined(repetitionReference.repetitionStep)) ||
         equals(tokenOwnerActionName, repetitionReference.repetitionStep))
     ) {
-      return repetitionReference.repetitionValue;
+      return { expression: repetitionReference.repetitionValue, output: parentArrayOutput };
     } else if (
       isAncestorKey(sanitizedParentArrayKey, repetitionReference.repetitionPath) &&
       ((isNullOrUndefined(tokenOwnerActionName) && isNullOrUndefined(repetitionReference.repetitionStep)) ||
@@ -268,15 +280,45 @@ const getParentArrayExpression = (
     }
   }
 
-  return areOutputsManifestBased
-    ? `@${getTokenExpressionValueForManifestBasedOperation(
-        parentArrayTokenInfo.key,
-        !!parentArrayTokenInfo.arrayDetails,
-        parentArrayTokenInfo.arrayDetails?.loopSource,
-        tokenOwnerActionName,
-        !!parentArrayTokenInfo.required
-      )}`
-    : `@${getTokenExpressionValue(parentArrayTokenInfo)}`;
+  return {
+    expression: areOutputsManifestBased
+      ? `@${getTokenExpressionValueForManifestBasedOperation(
+          parentArrayTokenInfo.key,
+          !!parentArrayTokenInfo.arrayDetails,
+          parentArrayTokenInfo.arrayDetails?.loopSource,
+          tokenOwnerActionName,
+          !!parentArrayTokenInfo.required
+        )}`
+      : `@${getTokenExpressionValue(parentArrayTokenInfo)}`,
+    output: parentArrayOutput,
+  };
+};
+
+const checkArrayInRepetition = (
+  actionName: string | undefined,
+  repetitionValue: string,
+  tokenKey: string | undefined,
+  tokenValue: string | undefined,
+  outputInfo: OutputInfo | undefined,
+  areOutputsManifestBased: boolean
+): boolean => {
+  if (equals(repetitionValue, tokenValue)) {
+    return true;
+  }
+
+  if (areOutputsManifestBased && tokenKey) {
+    const method = getTokenExpressionMethodFromKey(tokenKey, actionName);
+    const sanitizedValue = `@${generateExpressionFromKey(
+      method,
+      tokenKey,
+      actionName,
+      !!outputInfo?.isInsideArray,
+      !!outputInfo?.required
+    )}`;
+    return equals(repetitionValue, sanitizedValue);
+  }
+
+  return false;
 };
 
 // Directly checking the node type, because cannot make async calls while adding token from picker to editor.
