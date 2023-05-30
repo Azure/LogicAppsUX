@@ -255,7 +255,7 @@ export const operationMetadataSlice = createSlice({
 
       const inputDependencies = state.dependencies[nodeId]?.inputs;
       for (const inputKey of Object.keys(inputDependencies ?? {})) {
-        if (inputDependencies[inputKey].parameter?.isDynamic) {
+        if (inputDependencies[inputKey].parameter?.isDynamic && inputDependencies[inputKey].dependencyType !== 'ApiSchema') {
           delete state.dependencies[nodeId].inputs[inputKey];
         }
       }
@@ -333,7 +333,10 @@ export const operationMetadataSlice = createSlice({
       );
       if (index > -1) {
         state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].conditionalVisibility = value;
-        if (value === false) state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].value = [];
+        if (value === false) {
+          state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].value = [];
+          state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].preservedValue = undefined;
+        }
       }
     },
     updateParameterValidation: (

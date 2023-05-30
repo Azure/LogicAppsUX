@@ -4,22 +4,20 @@ import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import type { OutputToken, PanelTab, TokenPickerMode, ValueSegment } from '@microsoft/designer-ui';
 import {
   AuthenticationType,
-  Combobox,
-  RowDropdownOptions,
-  GroupType,
-  ArrayEditor,
-  ArrayType, // DictionaryEditor,
-  // TokenType,
-  // GroupType,
-  // GroupDropdownOptions,
-  // QueryBuilderEditor, // DictionaryType, // EditorLanguage,
-  SimpleQueryBuilder,
+  Combobox, // RowDropdownOptions,
+  // GroupType, // ArrayEditor,
+  // // ArrayType, // DictionaryEditor,
+  // // TokenType,
+  // // GroupType,
+  // // GroupDropdownOptions,
+  // // QueryBuilderEditor, // DictionaryType, // EditorLanguage,
+  // SimpleQueryBuilder,
   ValueSegmentType,
   CodeEditor,
   EditorLanguage, // HTMLEditor,
   TokenPicker, // TokenType,
   // DictionaryEditor,
-  testTokenSegment, // SchemaEditor, // Combobox,
+  // testTokenSegment, // SchemaEditor, // Combobox,
   // ArrayEditor,
   Scratch, // StringEditor,
   AuthenticationEditor, // DropdownEditor,
@@ -69,6 +67,7 @@ export const ScratchTab = () => {
     editorId: string,
     labelId: string,
     tokenPickerMode?: TokenPickerMode,
+    _valueType?: string,
     closeTokenPicker?: () => void,
     onClick?: (b: boolean) => void,
     tokenClicked?: (token: ValueSegment) => void
@@ -174,7 +173,7 @@ getTokenPicker={GetTokenPicker}
           type={AuthenticationType.BASIC}
           authenticationValue={{}}
         />
-        <ArrayEditor
+        {/* <ArrayEditor
           labelId=""
           type={ArrayType.SIMPLE}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
@@ -210,7 +209,7 @@ getTokenPicker={GetTokenPicker}
             { id: guid(), type: ValueSegmentType.LITERAL, value: '",\n            "p2": ""\n        }\n    }\n]' },
           ]}
           getTokenPicker={GetTokenPicker}
-        />
+        /> */}
 
         <Combobox
           labelId=""
@@ -379,12 +378,12 @@ getTokenPicker={GetTokenPicker}
           getTokenPicker={GetTokenPicker}
         /> */}
         {/* <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail"           getTokenPicker={GetTokenPicker}*/}
-        {
+        {/* {
           <SimpleQueryBuilder
             getTokenPicker={GetTokenPicker}
             items={{ type: GroupType.ROW, operand1: [], operand2: [], operator: RowDropdownOptions.EQUALS }}
           />
-        }
+        } */}
       </>
     );
   };

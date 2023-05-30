@@ -24,6 +24,7 @@ import {
 } from './parameters/helper';
 import { isTokenValueSegment } from './parameters/segment';
 import { TokenSegmentConvertor } from './parameters/tokensegment';
+import { getSplitOnValue } from './setting';
 import { foreachOperationInfo, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { OutputToken, Token } from '@microsoft/designer-ui';
 import { TokenType } from '@microsoft/designer-ui';
@@ -71,12 +72,11 @@ export const shouldAddForeach = async (
   const includeSelf = manifest ? shouldIncludeSelfForRepetitionReference(manifest, parameter?.parameterName) : false;
   const repetitionContext = await getRepetitionContext(
     nodeId,
-    getTriggerNodeId(state.workflow),
     state.operations.operationInfo,
     state.operations.inputParameters,
-    state.operations.settings,
     state.workflow.nodesMetadata,
     includeSelf,
+    getSplitOnValue(state.workflow, state.operations),
     state.workflow.idReplacements
   );
   const tokenOwnerNodeId = token.outputInfo.actionName ?? getTriggerNodeId(state.workflow);
@@ -129,12 +129,11 @@ export const addForeachToNode = createAsyncThunk(
 
     const repetitionInfo = await getRepetitionContext(
       foreachNodeId,
-      getTriggerNodeId(newState.workflow),
       newState.operations.operationInfo,
       { ...newState.operations.inputParameters, [foreachNodeId]: nodeInputs },
-      { ...newState.operations.settings, [foreachNodeId]: settings },
       newState.workflow.nodesMetadata,
       /* includeSelf */ false,
+      getSplitOnValue(newState.workflow, newState.operations),
       newState.workflow.idReplacements
     );
 
@@ -176,20 +175,14 @@ export const getRepetitionNodeIds = (
 
 export const getRepetitionContext = async (
   nodeId: string,
-  triggerNodeId: string,
   operationInfos: Record<string, NodeOperation>,
   allInputs: Record<string, NodeInputs>,
-  allSettings: Record<string, any>,
   nodesMetadata: NodesMetadata,
   includeSelf: boolean,
+  splitOn: string | undefined,
   idReplacements?: Record<string, string>
 ): Promise<RepetitionContext> => {
   const repetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos, includeSelf);
-  const splitOn =
-    triggerNodeId && allSettings[triggerNodeId].splitOn?.value?.enabled
-      ? (allSettings[triggerNodeId].splitOn?.value?.value as string)
-      : undefined;
-
   const repetitionReferences = (
     await Promise.all(
       repetitionNodeIds.map((repetitionNodeId) => getRepetitionReference(repetitionNodeId, operationInfos, allInputs, idReplacements))
@@ -518,7 +511,7 @@ export const getTokenExpressionValueForManifestBasedOperation = (
     ? `${Constants.OUTPUTS}(${convertToStringLiteral(actionName)})`
     : Constants.TRIGGER_OUTPUTS_OUTPUT;
 
-  return generateExpressionFromKey(method, key, actionName, isInsideArray, required);
+  return generateExpressionFromKey(method, key, actionName, isInsideArray, required, /* overrideMethod */ false);
 };
 
 /**

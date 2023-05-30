@@ -5,6 +5,7 @@ import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { getSplitOnOptions } from '../../../core/utils/outputs';
 import type { SettingsSectionProps } from '../settingsection';
 import { SettingsSection, SettingLabel } from '../settingsection';
+import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { DropdownSelectionChangeHandler, ExpressionChangeHandler } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -42,7 +43,10 @@ export const General = ({
 }: GeneralSectionProps): JSX.Element => {
   const intl = useIntl();
   const nodeId = useSelectedNodeId();
-  const nodeOutputs = useSelector((state: RootState) => state.operations.outputParameters[nodeId]);
+  const { nodeOutputs, operationInfo } = useSelector((state: RootState) => ({
+    nodeOutputs: state.operations.outputParameters[nodeId],
+    operationInfo: state.operations.operationInfo[nodeId],
+  }));
   const generalTitle = intl.formatMessage({
     defaultMessage: 'General',
     description: 'title for general setting section',
@@ -154,7 +158,9 @@ export const General = ({
         settingProp: {
           id: 'arrayValue',
           readOnly: readOnly || !splitOn?.value?.enabled,
-          items: getSplitOnOptions(nodeOutputs).map((option) => ({ title: option, value: option })),
+          items: getSplitOnOptions(nodeOutputs, OperationManifestService().isSupported(operationInfo?.type, operationInfo?.kind)).map(
+            (option) => ({ title: option, value: option })
+          ),
           selectedValue: splitOn?.value?.value,
           onSelectionChanged: onSplitOnSelectionChanged,
           customLabel: () => arrayDropdownLabel,

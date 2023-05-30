@@ -2,6 +2,7 @@ import type { MenuItemOption } from '../../card/types';
 import { convertUIElementNameToAutomationId } from '../../utils';
 import { PanelLocation, PanelScope } from '../panelUtil';
 import { PanelHeaderComment } from './panelheadercomment';
+import type { TitleChangeHandler } from './panelheadertitle';
 import { PanelHeaderTitle } from './panelheadertitle';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { IButton, IButtonStyles } from '@fluentui/react/lib/Button';
@@ -47,7 +48,7 @@ export interface PanelHeaderProps {
   onDismissButtonClicked?(): void;
   onRenderWarningMessage?(): JSX.Element;
   toggleCollapse: () => void;
-  onTitleChange: (newValue: string) => void;
+  onTitleChange: TitleChangeHandler;
 }
 export enum PanelHeaderControlType {
   DISMISS_BUTTON,
@@ -231,7 +232,7 @@ export const PanelHeader = ({
       </div>
       {!noNodeOnCardLevel ? (
         <>
-          <div className={'msla-panel-card-header'} style={isRight ? {} : { paddingLeft: horizontalPadding }}>
+          <div className={'msla-panel-card-header'} style={isRight || isCollapsed ? {} : { paddingLeft: horizontalPadding }}>
             {iconComponent}
             {includeTitle ? (
               <div className="msla-panel-card-title-container" hidden={isCollapsed}>

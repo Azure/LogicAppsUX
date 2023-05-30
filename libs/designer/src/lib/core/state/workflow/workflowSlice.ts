@@ -9,7 +9,7 @@ import { isWorkflowNode } from '../../parsers/models/workflowNode';
 import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
 import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
 import { addNewEdge } from '../../parsers/restructuringHelpers';
-import { getImmediateSourceNodeIds } from '../../utils/graph';
+import { getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
 import { resetWorkflowState } from '../global';
 import { updateNodeParameters, updateNodeSettings, updateStaticResults } from '../operation/operationMetadataSlice';
 import type { SpecTypes, WorkflowState } from './workflowInterfaces';
@@ -39,7 +39,6 @@ export const initialWorkflowState: WorkflowState = {
   idReplacements: {},
   newlyAddedOperations: {},
   isDirty: false,
-  isGraphLocked: false,
 };
 
 const placeholderNodeId = 'builtin:newWorkflowTrigger';
@@ -148,7 +147,7 @@ export const workflowSlice = createSlice({
         graph.children = [...(graph?.children ?? []), placeholderNode];
         state.nodesMetadata[placeholderNodeId] = { graphId, isRoot: true };
         for (const childId of existingChildren) {
-          addNewEdge(state, placeholderNodeId, childId, graph);
+          addNewEdge(state, placeholderNodeId, childId, graph, false);
         }
       } else {
         deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
@@ -317,14 +316,15 @@ export const workflowSlice = createSlice({
     },
     replaceId: (state: WorkflowState, action: PayloadAction<{ originalId: string; newId: string }>) => {
       const { originalId, newId } = action.payload;
-      state.idReplacements[originalId] = newId.replaceAll(' ', '_').replaceAll('#', '');
+      const normalizedId = transformOperationTitle(newId);
+      if (originalId === normalizedId) {
+        delete state.idReplacements[originalId];
+      } else {
+        state.idReplacements[originalId] = normalizedId;
+      }
     },
     setIsWorkflowDirty: (state: WorkflowState, action: PayloadAction<boolean>) => {
       state.isDirty = action.payload;
-    },
-    /** @deprecated this will be removed in a follow up PR */
-    setIsGraphLocked: (state: WorkflowState, action: PayloadAction<boolean>) => {
-      state.isGraphLocked = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -352,6 +352,8 @@ export const workflowSlice = createSlice({
         addImplicitForeachNode,
         setNodeDescription,
         updateRunAfter,
+        removeEdgeFromRunAfter,
+        addEdgeFromRunAfter,
         replaceId,
         updateNodeSettings,
         updateNodeConnection.fulfilled,
@@ -389,7 +391,6 @@ export const {
   setRunIndex,
   setRepetitionRunData,
   setIsWorkflowDirty,
-  setIsGraphLocked,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

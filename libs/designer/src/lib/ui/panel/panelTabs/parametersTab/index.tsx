@@ -20,6 +20,8 @@ import { isRootNodeInGraph } from '../../../../core/utils/graph';
 import {
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
+  parameterValueToString,
+  remapValueSegmentsWithNewIds,
   shouldUseParameterInGroup,
   updateParameterAndDependencies,
 } from '../../../../core/utils/parameters/helper';
@@ -31,9 +33,9 @@ import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
-import { DynamicCallStatus, TokenPicker, ValueSegmentType } from '@microsoft/designer-ui';
+import { DynamicCallStatus, TokenPicker, TokenType } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode } from '@microsoft/designer-ui';
-import { equals } from '@microsoft/utils-logic-apps';
+import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -96,7 +98,6 @@ export const ParametersTab = () => {
           <ParameterSection
             key={selectedNodeId}
             nodeId={selectedNodeId}
-            nodeType={nodeType}
             group={inputs.parameterGroups[sectionName]}
             readOnly={readOnly}
             tokenGroup={tokenGroup}
@@ -114,14 +115,12 @@ export const ParametersTab = () => {
 
 const ParameterSection = ({
   nodeId,
-  nodeType,
   group,
   readOnly,
   tokenGroup,
   expressionGroup,
 }: {
   nodeId: string;
-  nodeType?: string;
   group: ParameterGroup;
   readOnly: boolean | undefined;
   tokenGroup: TokenGroup[];
@@ -141,6 +140,7 @@ const ParameterSection = ({
     operationDefinition,
     connectionReference,
     idReplacements,
+    workflowParameters,
   } = useSelector((state: RootState) => {
     return {
       isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
@@ -154,6 +154,7 @@ const ParameterSection = ({
       operationDefinition: state.workflow.newlyAddedOperations[nodeId] ? undefined : state.workflow.operations[nodeId],
       connectionReference: getConnectionReference(state.connections, nodeId),
       idReplacements: state.workflow.idReplacements,
+      workflowParameters: state.workflowParameters.definitions,
     };
   });
   const rootState = useSelector((state: RootState) => state);
@@ -224,7 +225,8 @@ const ParameterSection = ({
         dependencies,
         true /* showErrorWhenNotReady */,
         dispatch,
-        idReplacements
+        idReplacements,
+        workflowParameters
       );
     }
   };
@@ -236,12 +238,12 @@ const ParameterSection = ({
     getDisplayValueFromSelectedItem: (selectedItem: any): string => {
       const dependency = dependencies.inputs[parameter.parameterKey];
       const propertyPath = dependency.filePickerInfo?.fullTitlePath ?? dependency.filePickerInfo?.browse.itemFullTitlePath;
-      return selectedItem[propertyPath ?? ''];
+      return getPropertyValue(selectedItem, propertyPath ?? '');
     },
     getValueFromSelectedItem: (selectedItem: any): string => {
       const dependency = dependencies.inputs[parameter.parameterKey];
       const propertyPath = dependency.filePickerInfo?.valuePath ?? dependency.filePickerInfo?.browse.itemValuePath;
-      return selectedItem[propertyPath ?? ''];
+      return getPropertyValue(selectedItem, propertyPath ?? '');
     },
     onFolderNavigation: (selectedItem: any | undefined): void => {
       loadDynamicTreeItemsForParameter(
@@ -256,7 +258,8 @@ const ParameterSection = ({
         dependencies,
         true /* showErrorWhenNotReady */,
         dispatch,
-        idReplacements
+        idReplacements,
+        workflowParameters
       );
     },
   });
@@ -264,9 +267,10 @@ const ParameterSection = ({
   const getValueSegmentFromToken = async (
     parameterId: string,
     token: OutputToken,
-    addImplicitForeachIfNeeded: boolean
+    addImplicitForeachIfNeeded: boolean,
+    addLatestActionName: boolean
   ): Promise<ValueSegment> => {
-    return createValueSegmentFromToken(nodeId, parameterId, token, addImplicitForeachIfNeeded, rootState, dispatch);
+    return createValueSegmentFromToken(nodeId, parameterId, token, addImplicitForeachIfNeeded, addLatestActionName, rootState, dispatch);
   };
 
   const getTokenPicker = (
@@ -274,24 +278,47 @@ const ParameterSection = ({
     editorId: string,
     labelId: string,
     tokenPickerMode?: TokenPickerMode,
+    editorType?: string,
     isCodeEditor?: boolean,
     closeTokenPicker?: () => void,
     tokenPickerClicked?: (b: boolean) => void,
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
-    const codeEditorFilteredTokens = tokenGroup.filter((group) => {
-      return group.id !== 'workflowparameters' && group.id !== 'variables';
-    });
+    const parameterType =
+      editorType ??
+      (nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === parameterId) ?? {})?.type ??
+      constants.SWAGGER.TYPE.ANY;
+    const supportedTypes: string[] = getPropertyValue(constants.TOKENS, parameterType);
+
+    const filteredTokenGroup = tokenGroup.map((group) => ({
+      ...group,
+      tokens: group.tokens.filter((token: OutputToken) => {
+        if (isCodeEditor) {
+          return !(
+            token.outputInfo.type === TokenType.VARIABLE ||
+            token.outputInfo.type === TokenType.PARAMETER ||
+            token.outputInfo.arrayDetails ||
+            token.key === constants.UNTIL_CURRENT_ITERATION_INDEX_KEY ||
+            token.key === constants.FOREACH_CURRENT_ITEM_KEY
+          );
+        }
+        return supportedTypes.some((supportedType) => {
+          return !Array.isArray(token.type) && equals(supportedType, token.type);
+        });
+      }),
+    }));
+
     return (
       <TokenPicker
         editorId={editorId}
         labelId={labelId}
-        tokenGroup={isCodeEditor ? codeEditorFilteredTokens : tokenGroup}
+        tokenGroup={tokenGroup}
+        filteredTokenGroup={filteredTokenGroup}
         expressionGroup={expressionGroup}
         tokenPickerFocused={tokenPickerClicked}
         initialMode={tokenPickerMode}
         getValueSegmentFromToken={(token: OutputToken, addImplicitForeach: boolean) =>
-          getValueSegmentFromToken(parameterId, token, addImplicitForeach)
+          getValueSegmentFromToken(parameterId, token, addImplicitForeach, !!isCodeEditor)
         }
         tokenClickedCallback={tokenClickedCallback}
         closeTokenPicker={closeTokenPicker}
@@ -313,20 +340,7 @@ const ParameterSection = ({
       const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel, conditionalVisibility };
       const { editor, editorOptions } = getEditorAndOptions(param, upstreamNodeIds ?? [], variables);
 
-      const remappedValues: ValueSegment[] = value.map((v: ValueSegment) => {
-        if (v.type !== ValueSegmentType.TOKEN) return v;
-        const oldId = v.token?.actionName ?? '';
-        const newId = idReplacements[oldId] ?? '';
-        if (!newId) return v;
-        const remappedValue = v.value?.replace(`'${oldId}'`, `'${newId}'`) ?? '';
-        return {
-          ...v,
-          token: {
-            ...v.token,
-            remappedValue,
-          },
-        } as ValueSegment;
-      });
+      const { value: remappedValues } = remapValueSegmentsWithNewIds(value, idReplacements);
 
       return {
         settingType: 'SettingTokenField',
@@ -337,18 +351,19 @@ const ParameterSection = ({
           editor,
           editorOptions,
           tokenEditor: true,
-          isTrigger,
-          isCallback: nodeType?.toLowerCase() === constants.NODE.TYPE.HTTP_WEBHOOK,
           isLoading: dynamicData?.status === DynamicCallStatus.STARTED,
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
           pickerCallbacks: getPickerCallbacks(param),
+          onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
+            parameterValueToString({ value, type: type ?? 'string', info: { format }, suppressCasting } as ParameterInfo, false) ?? '',
           getTokenPicker: (
             editorId: string,
             labelId: string,
             tokenPickerMode?: TokenPickerMode,
+            editorType?: string,
             closeTokenPicker?: () => void,
             tokenPickerClicked?: (b: boolean) => void,
             tokenClickedCallback?: (token: ValueSegment) => void
@@ -358,7 +373,8 @@ const ParameterSection = ({
               editorId,
               labelId,
               tokenPickerMode,
-              editor?.toLowerCase() === 'code',
+              editorType,
+              editor?.toLowerCase() === constants.EDITOR.CODE,
               closeTokenPicker,
               tokenPickerClicked,
               tokenClickedCallback

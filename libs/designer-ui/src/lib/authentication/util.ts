@@ -25,6 +25,7 @@ export interface AuthProperty {
 interface CollapsedAuthEditorItems {
   key: ValueSegment[];
   value: ValueSegment[];
+  id: string;
 }
 
 const intl = getIntl();
@@ -319,6 +320,12 @@ export function parseAuthEditor(authType: AuthenticationType, items: AuthProps):
       updateValues(values, AUTHENTICATION_PROPERTIES.RAW_VALUE, items.raw?.rawValue);
       break;
     case AuthenticationType.MSI:
+      if (items.msi?.msiIdentity) {
+        updateValues(values, AUTHENTICATION_PROPERTIES.MSI_IDENTITY, [
+          { id: guid(), type: ValueSegmentType.LITERAL, value: items.msi.msiIdentity },
+        ]);
+      }
+
       updateValues(values, AUTHENTICATION_PROPERTIES.MSI_AUDIENCE, items.msi?.msiAudience);
       break;
     case AuthenticationType.OAUTH:
@@ -338,6 +345,7 @@ export function parseAuthEditor(authType: AuthenticationType, items: AuthProps):
     {
       key: [{ type: ValueSegmentType.LITERAL, id: guid(), value: AUTHENTICATION_PROPERTIES.TYPE.name }],
       value: [{ type: ValueSegmentType.LITERAL, id: guid(), value: authType }],
+      id: guid(),
     },
     ...values,
   ];
@@ -350,6 +358,7 @@ const updateValues = (values: CollapsedAuthEditorItems[], property: AuthProperty
     values.push({
       key: [{ type: ValueSegmentType.LITERAL, id: guid(), value: property.name }],
       value: val ?? [{ type: ValueSegmentType.LITERAL, id: guid(), value: '' }],
+      id: guid(),
     });
   }
 };
@@ -390,6 +399,7 @@ export const serializeAuthentication = (
         break;
       case AuthenticationType.MSI:
         returnItems.msi = {
+          msiIdentity: jsonEditor.identity,
           msiAudience: convertStringToSegments(jsonEditor.audience, true, nodeMap),
         };
         break;

@@ -60,11 +60,16 @@ export const FilePickerEditor = ({
   const { onFolderNavigation, getFileSourceName, getDisplayValueFromSelectedItem, getValueFromSelectedItem } = pickerCallbacks;
   const fileSourceName = getFileSourceName();
 
-  const [titleSegments, setTitleSegments] = useState<IBreadcrumbItem[]>(getInitialTitleSegments(fileSourceName));
+  const [titleSegments, setTitleSegments] = useState<IBreadcrumbItem[]>([]);
+
+  const onRootClicked = () => {
+    setTitleSegments(getInitialTitleSegments(fileSourceName, onRootClicked));
+    onFolderNavigation(/* selectedItem */ undefined);
+  };
 
   const openFolderPicker = () => {
     if (!showPicker) {
-      setTitleSegments(getInitialTitleSegments(fileSourceName));
+      setTitleSegments(getInitialTitleSegments(fileSourceName, onRootClicked));
       onFolderNavigation(/* selectedItem */ undefined);
       setShowPicker(true);
     }
@@ -77,6 +82,9 @@ export const FilePickerEditor = ({
   };
 
   const onFileFolderSelected = (selectedItem: TreeDynamicValue) => {
+    if (type === PickerItemType.FILE && selectedItem.isParent) {
+      return;
+    }
     if (showPicker) {
       setSelectedItem(selectedItem.value);
       setPickerDisplayValue([{ id: guid(), value: getDisplayValueFromSelectedItem(selectedItem.value), type: ValueSegmentType.LITERAL }]);
@@ -119,7 +127,6 @@ export const FilePickerEditor = ({
         onFocus={baseEditorProps.onFocus}
         getTokenPicker={baseEditorProps.getTokenPicker}
         placeholder={baseEditorProps.placeholder}
-        isTrigger={baseEditorProps.isTrigger}
         tokenPickerButtonEditorProps={{ showOnLeft: true }}
       >
         <EditorValueChange
@@ -155,14 +162,14 @@ const filterItems = (items?: TreeDynamicValue[], type?: string, fileFilters?: st
   }
   if (fileFilters && fileFilters.length > 0) {
     returnItems = returnItems.filter((item) => {
-      return fileFilters.some((filter) => equals(filter, item.mediaType));
+      return fileFilters.some((filter) => equals(filter, item.mediaType) || item.isParent);
     });
   }
   return returnItems;
 };
 
-const getInitialTitleSegments = (sourceName?: string): IBreadcrumbItem[] => {
+const getInitialTitleSegments = (sourceName?: string, onRootClicked?: () => void): IBreadcrumbItem[] => {
   if (!sourceName) return [];
-  const items: IBreadcrumbItem[] = [{ key: sourceName, text: sourceName }];
+  const items: IBreadcrumbItem[] = [{ key: sourceName, text: sourceName, onClick: onRootClicked }];
   return items;
 };
