@@ -352,6 +352,8 @@ export const workflowSlice = createSlice({
         addImplicitForeachNode,
         setNodeDescription,
         updateRunAfter,
+        removeEdgeFromRunAfter,
+        addEdgeFromRunAfter,
         replaceId,
         updateNodeSettings,
         updateNodeConnection.fulfilled,
