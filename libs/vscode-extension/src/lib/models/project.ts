@@ -44,6 +44,10 @@ export interface IProjectTreeItem {
 }
 
 export interface IProjectWizardContext extends IActionContext {
+  namespaceName?: string;
+  methodName?: string;
+  functionFolderPath?: string;
+  logicAppFolderPath?: string;
   projectPath: string;
   version: FuncVersion;
   workspacePath: string;
@@ -53,6 +57,7 @@ export interface IProjectWizardContext extends IActionContext {
   languageFilter?: RegExp;
   workerRuntime?: IWorkerRuntime;
   openBehavior?: OpenBehavior;
+  workspaceName?: string;
   workflowProjectType?: WorkflowProjectType;
   generateFromOpenAPI?: boolean;
   openApiSpecificationFile?: Uri[];
