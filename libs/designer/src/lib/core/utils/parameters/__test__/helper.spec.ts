@@ -1997,12 +1997,6 @@ describe('core/utils/parameters/helper', () => {
           editorOptions: options,
           editorViewModel: {
             ...options,
-            items: {
-              operand1: [],
-              operand2: [],
-              operator: 'equals',
-              type: 'row',
-            },
           },
           schema: inputSchema,
         });
