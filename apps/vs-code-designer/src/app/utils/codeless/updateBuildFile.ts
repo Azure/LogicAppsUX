@@ -68,7 +68,7 @@ export function addLibToPublishPath(xmlBuildFile: Record<string, any>): Record<s
       Copy: {
         $: {
           SourceFiles: '@(LibDirectory)',
-          DestinationFiles: "@(LibDirectory->'$(MSBuildProjectDirectory)\\$(PublishUrl)\\lib\\%(RecursiveDir)%(Filename)%(Extension)')",
+          DestinationFiles: `@(LibDirectory->'$(MSBuildProjectDirectory)${path.sep}$(PublishUrl)${path.sep}lib${path.sep}%(RecursiveDir)%(Filename)%(Extension)')`,
         },
       },
     },
@@ -81,7 +81,7 @@ export function addLibToPublishPath(xmlBuildFile: Record<string, any>): Record<s
   const itemGroup1 = {
     LibDirectory: {
       $: {
-        Include: '$(MSBuildProjectDirectory)\\lib\\**\\*',
+        Include: `$(MSBuildProjectDirectory)${path.sep}lib${path.sep}**${path.sep}*`,
       },
     },
   };

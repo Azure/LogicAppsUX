@@ -192,8 +192,8 @@ async function deploy(
  * @param fsPath publish path for logic app extension
  */
 async function cleanupPublishBinPath(context: IActionContext, fsPath: string): Promise<void> {
-  const netFxWorkerBinPath = `${fsPath}\\bin\\NetFxWorker`;
-  const netFxWorkerAssetPath = `${fsPath}\\NetFxWorker`;
+  const netFxWorkerBinPath = path.join(fsPath, 'bin', 'NetFxWorker');
+  const netFxWorkerAssetPath = path.join(fsPath, 'NetFxWorker');
   if (await fse.pathExists(netFxWorkerBinPath)) {
     return fse.move(netFxWorkerBinPath, netFxWorkerAssetPath, { overwrite: true });
   }
