@@ -23,6 +23,7 @@ import {
   FORMAT_TEXT_COMMAND,
 } from 'lexical';
 import { useCallback, useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 interface FormatProps {
   activeEditor: LexicalEditor;
@@ -39,6 +40,7 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
     isInverted ? constants.INVERTED_EDITOR_BACKGROUND_COLOR : constants.STANDARD_EDITOR_BACKGROUND_COLOR
   );
   const [isLink, setIsLink] = useState(false);
+  const intl = useIntl();
 
   const updateFormat = useCallback(() => {
     const selection = $getSelection();
@@ -139,6 +141,61 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
     }
   }, [activeEditor, isLink]);
 
+  const boldTitleMac = intl.formatMessage({
+    defaultMessage: 'Bold (⌘B)',
+    description: 'Command for bold text for Mac users',
+  });
+  const boldTitleMacAriaLabel = intl.formatMessage({
+    defaultMessage: 'Format text as bold. Shortcut: ⌘B',
+    description: 'label to make bold text for Mac users',
+  });
+  const boldTitleNonMac = intl.formatMessage({
+    defaultMessage: 'Bold (Ctrl+B)',
+    description: 'Command for bold text for non-mac users',
+  });
+  const boldTitleNonMacAriaLabel = intl.formatMessage({
+    defaultMessage: 'Format text as bold. Shortcut: Ctrl+B',
+    description: 'label to make bold text for nonMac users',
+  });
+
+  const italicTitleMac = intl.formatMessage({
+    defaultMessage: 'Italic (⌘I)',
+    description: 'Command for italic text for Mac users',
+  });
+  const italicTitleMacAriaLabel = intl.formatMessage({
+    defaultMessage: 'Format text as italic. Shortcut: ⌘I',
+    description: 'label to make italic text for Mac users',
+  });
+  const italicTitleNonMac = intl.formatMessage({
+    defaultMessage: 'Italic (Ctrl+I)',
+    description: 'Command for italic text for non-mac users',
+  });
+  const italicTitleNonMacAriaLabel = intl.formatMessage({
+    defaultMessage: 'Format text as italic. Shortcut: Ctrl+I',
+    description: 'label to make italic text for nonMac users',
+  });
+
+  const underlineTitleMac = intl.formatMessage({
+    defaultMessage: 'Underline (⌘U)',
+    description: 'Command for underline text for Mac users',
+  });
+  const underlineTitleMacAriaLabel = intl.formatMessage({
+    defaultMessage: 'Format text as underline. Shortcut: ⌘U',
+    description: 'label to make underline text for Mac users',
+  });
+  const underlineTitleNonMac = intl.formatMessage({
+    defaultMessage: 'Underline (Ctrl+U)',
+    description: 'Command for underline text for non-mac users',
+  });
+  const underlineTitleNonMacAriaLabel = intl.formatMessage({
+    defaultMessage: 'Format text as underline. Shortcut: Ctrl+U',
+    description: 'label to make underline text for nonMac users',
+  });
+  const insertLinkLabel = intl.formatMessage({
+    defaultMessage: 'Insert Link',
+    description: 'label to insert link',
+  });
+
   return (
     <>
       <button
@@ -147,8 +204,8 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
         }}
         className={'toolbar-item spaced ' + (isBold ? 'active' : '')}
-        title={isApple() ? 'Bold (⌘B)' : 'Bold (Ctrl+B)'}
-        aria-label={`Format text as bold. Shortcut: ${isApple() ? '⌘B' : 'Ctrl+B'}`}
+        title={isApple() ? boldTitleMac : boldTitleNonMac}
+        aria-label={isApple() ? boldTitleMacAriaLabel : boldTitleNonMacAriaLabel}
         disabled={readonly}
       >
         <img className={'format'} src={bold} alt={'bold icon'} />
@@ -159,8 +216,8 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
         }}
         className={'toolbar-item spaced ' + (isItalic ? 'active' : '')}
-        title={isApple() ? 'Italic (⌘I)' : 'Italic (Ctrl+I)'}
-        aria-label={`Format text as italics. Shortcut: ${isApple() ? '⌘I' : 'Ctrl+I'}`}
+        title={isApple() ? italicTitleMac : italicTitleNonMac}
+        aria-label={isApple() ? italicTitleMacAriaLabel : italicTitleNonMacAriaLabel}
         disabled={readonly}
       >
         <img className={'format'} src={italic} alt={'italic icon'} />
@@ -171,8 +228,8 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
         }}
         className={'toolbar-item spaced ' + (isUnderline ? 'active' : '')}
-        title={isApple() ? 'Underline (⌘U)' : 'Underline (Ctrl+U)'}
-        aria-label={`Format text to underlined. Shortcut: ${isApple() ? '⌘U' : 'Ctrl+U'}`}
+        title={isApple() ? underlineTitleMac : underlineTitleNonMac}
+        aria-label={isApple() ? underlineTitleMacAriaLabel : underlineTitleNonMacAriaLabel}
         disabled={readonly}
       >
         <img className={'format'} src={underline} alt={'underline icon'} />
@@ -181,8 +238,8 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         disabled={readonly}
         onClick={insertLink}
         className={'toolbar-item spaced ' + (isLink ? 'active' : '')}
-        aria-label="Insert link"
-        title="Insert link"
+        aria-label={insertLinkLabel}
+        title={insertLinkLabel}
       >
         <img className={'format'} src={link} alt={'link icon'} />
       </button>

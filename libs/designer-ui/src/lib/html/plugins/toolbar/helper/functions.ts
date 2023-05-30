@@ -16,11 +16,8 @@ export function getSelectedNode(selection: RangeSelection): TextNode | ElementNo
     return anchorNode;
   }
   const isBackward = selection.isBackward();
-  if (isBackward) {
-    return $isAtNodeEnd(focus) ? anchorNode : focusNode;
-  } else {
-    return $isAtNodeEnd(anchor) ? anchorNode : focusNode;
-  }
+  const atEnd = $isAtNodeEnd(isBackward ? focus : anchor);
+  return atEnd ? anchorNode : focusNode;
 }
 
 const SUPPORTED_URL_PROTOCOLS = new Set(['http:', 'https:', 'mailto:', 'sms:', 'tel:']);
