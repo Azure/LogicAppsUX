@@ -179,6 +179,7 @@ export const TokenPickerOptions = ({
                 return (
                   <button
                     className="msla-token-picker-section-option"
+                    data-automation-id={`msla-token-picker-section-option-${j}`}
                     key={`token-picker-option-${j}`}
                     onClick={() => handleTokenClicked(token)}
                   >
