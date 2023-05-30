@@ -19,34 +19,33 @@ export async function getPackageManager(): Promise<void> {
     const showMissingPackageManagerWarningKey = 'showMissingPackageManagerWarning';
     const platformPackageManagerKey = 'PlatformPackageManager';
 
-    switch (process.platform) {
-      case Platform.linux:
-        await executeCommand(undefined, undefined, 'wget', '--version');
-        await updateGlobalSetting(platformPackageManagerKey, 'wget');
-        break;
-      case Platform.windows:
-        await executeCommand(undefined, undefined, 'winget', '--version');
-        await updateGlobalSetting(platformPackageManagerKey, 'winget');
-        break;
-      case Platform.mac:
-        await executeCommand(undefined, undefined, 'brew', '--version');
-        await updateGlobalSetting(platformPackageManagerKey, 'brew');
-        break;
-      default: {
-        // Package Manager expected missing.
-        const message: string = localize('missingPackageManager', 'Missing expected Package Manager');
-
-        let result: MessageItem;
-
-        do {
-          result = await context.ui.showWarningMessage(message, DialogResponses.dontWarnAgain);
-          if (result === DialogResponses.dontWarnAgain) {
-            await updateGlobalSetting(showMissingPackageManagerWarningKey, false);
-          }
-        } while (result === DialogResponses.learnMore);
+    try {
+      switch (process.platform) {
+        case Platform.linux:
+          await executeCommand(undefined, undefined, 'wget', '--version');
+          await updateGlobalSetting(platformPackageManagerKey, 'wget');
+          break;
+        case Platform.windows:
+          await executeCommand(undefined, undefined, 'winget', '--version');
+          await updateGlobalSetting(platformPackageManagerKey, 'winget');
+          break;
+        case Platform.mac:
+          await executeCommand(undefined, undefined, 'brew', '--version');
+          await updateGlobalSetting(platformPackageManagerKey, 'brew');
+          break;
       }
-    }
 
-    context.telemetry.properties.getPackageManager = getWorkspaceSetting<string>(platformPackageManagerKey);
+      context.telemetry.properties.getPackageManager = getWorkspaceSetting<string>(platformPackageManagerKey);
+    } catch (error) {
+      // Package Manager expected missing.
+      const message: string = localize('missingPackageManager', 'Missing expected Package Manager');
+      let result: MessageItem;
+      do {
+        result = await context.ui.showWarningMessage(message, DialogResponses.dontWarnAgain);
+        if (result === DialogResponses.dontWarnAgain) {
+          await updateGlobalSetting(showMissingPackageManagerWarningKey, false);
+        }
+      } while (result === DialogResponses.learnMore);
+    }
   });
 }
