@@ -6,6 +6,7 @@ import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLink';
 import ClearEditor from './plugins/ClearEditor';
 import DeleteTokenNode from './plugins/DeleteTokenNode';
+import FloatingLinkEditorPlugin from './plugins/FloatingLinkEditor';
 import IgnoreTab from './plugins/IgnoreTab';
 import InsertTokenNode from './plugins/InsertTokenNode';
 import OnBlur from './plugins/OnBlur';
@@ -26,7 +27,6 @@ import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
-import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { useFunctionalState } from '@react-hookz/web';
 import { useEffect, useRef, useState } from 'react';
@@ -109,9 +109,17 @@ export const BaseEditor = ({
   const [isEditorFocused, setIsEditorFocused] = useState(false);
   const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
   const [tokenPickerMode, setTokenPickerMode] = useState<TokenPickerMode | undefined>();
+  const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
+
+  const onRef = (_floatingAnchorElem: HTMLDivElement) => {
+    if (_floatingAnchorElem !== null) {
+      setFloatingAnchorElem(_floatingAnchorElem);
+    }
+  };
 
   useEffect(() => {
     if (containerRef.current && placeholderRef.current) {
+      onRef(containerRef.current);
       const containerWidth = containerRef.current.clientWidth;
       const placeholderWidth = placeholderRef.current.clientWidth;
       setIsOverflowed(placeholderWidth > containerWidth);
@@ -189,7 +197,6 @@ export const BaseEditor = ({
           <span id={id} hidden={true}>
             {describedByMessage}
           </span>
-          {toolbar ? <ListPlugin /> : null}
           {treeView ? <TreeView /> : null}
           {autoFocus ? <AutoFocus /> : null}
           {history ? <History /> : null}
@@ -204,6 +211,7 @@ export const BaseEditor = ({
           {tokens ? <InsertTokenNode /> : null}
           {tokens ? <DeleteTokenNode /> : null}
           {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
+          {toolbar && floatingAnchorElem ? <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} /> : null}
           {children}
           {tokens && getInTokenPicker()
             ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType, closeTokenPicker, tokenPickerClicked)
