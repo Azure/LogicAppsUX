@@ -1,4 +1,4 @@
-name: Deploy Storybook
+name: Deploy Documentation
 
 on:
   workflow_dispatch:
@@ -7,10 +7,10 @@ on:
   push:
     branches:
       - main
-#   pull_request:
-#     types: [opened, synchronize, reopened, closed, labeled]
-#     branches:
-#       - main
+  pull_request:
+    types: [opened, synchronize, reopened, closed, labeled]
+    branches:
+      - main
 
 jobs:
   build_and_deploy_job:
@@ -18,11 +18,11 @@ jobs:
       (
         github.event_name == 'push' 
         || (github.event_name == 'pull_request' && github.event.action != 'closed') 
-        || (github.event.label.name == 'Storybook')
+        || (github.event.label.name == 'Documentation')
       ) 
       && github.actor != 'csigs'
       &&  github.actor != 'azure-logic-apps-automation' 
-      && (contains(github.event.pull_request.labels.*.name, 'Storybook') || github.event_name == 'push')
+      && (contains(github.event.pull_request.labels.*.name, 'Documentation') || github.event_name == 'push')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
