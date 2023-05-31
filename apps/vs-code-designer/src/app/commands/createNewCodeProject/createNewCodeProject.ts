@@ -6,10 +6,13 @@ import { funcVersionSetting, projectLanguageSetting, projectOpenBehaviorSetting,
 import { localize } from '../../../localize';
 import { addLocalFuncTelemetry, tryGetLocalFuncVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getGlobalSetting, getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
-import { OpenBehaviorStep } from './OpenBehaviorStep';
-import { OpenFolderStep } from './OpenFolderStep';
-import { FolderListStep } from './createProjectSteps/FolderListStep';
-import { NewProjectTypeStep } from './createProjectSteps/NewProjectTypeStep';
+import { OpenBehaviorStep } from '../createNewProject/OpenBehaviorStep';
+import { FolderListStep } from '../createNewProject/createProjectSteps/FolderListStep';
+import { OpenFolderStepCodeProject } from './CodeProjectBase/OpenFolderStepCodeProject';
+import { NewCodeProjectTypeStep } from './createCodeProjectSteps/NewCodeProjectTypeStep';
+import { setWorkspaceName } from './createCodeProjectSteps/SetWorkspaceName';
+import { setMethodName } from './createCodeProjectSteps/createFunction/setMethodName';
+import { setNameSpace } from './createCodeProjectSteps/createFunction/setNamepSpace';
 import { isString } from '@microsoft/utils-logic-apps';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -19,7 +22,7 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import { window } from 'vscode';
 
-export async function createNewProjectFromCommand(
+export async function createNewCodeProjectFromCommand(
   context: IActionContext,
   folderPath?: string | undefined,
   language?: ProjectLanguage,
@@ -29,7 +32,7 @@ export async function createNewProjectFromCommand(
   functionName?: string,
   functionSettings?: { [key: string]: string | undefined }
 ): Promise<void> {
-  await createNewProjectInternal(context, {
+  await createNewCodeProjectInternal(context, {
     folderPath: isString(folderPath) ? folderPath : undefined,
     templateId,
     functionName,
@@ -40,7 +43,7 @@ export async function createNewProjectFromCommand(
   });
 }
 
-export async function createNewProjectInternal(context: IActionContext, options: ICreateFunctionOptions): Promise<void> {
+export async function createNewCodeProjectInternal(context: IActionContext, options: ICreateFunctionOptions): Promise<void> {
   addLocalFuncTelemetry(context);
 
   const language: ProjectLanguage | undefined = (options.language as ProjectLanguage) || getGlobalSetting(projectLanguageSetting);
@@ -53,7 +56,7 @@ export async function createNewProjectInternal(context: IActionContext, options:
   });
 
   if (options.folderPath) {
-    FolderListStep.setProjectPath(wizardContext, options.folderPath);
+    new FolderListStep.setProjectPath(wizardContext, options.folderPath);
   }
 
   if (options.suppressOpenFolder) {
@@ -64,16 +67,22 @@ export async function createNewProjectInternal(context: IActionContext, options:
   }
 
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
-    title: localize('createNewProject', 'Create new project'),
-    promptSteps: [new FolderListStep(), new NewProjectTypeStep(options.templateId, options.functionSettings), new OpenBehaviorStep()],
-    executeSteps: [new OpenFolderStep()],
+    title: localize('createNewCodeProject', 'Create new code project'),
+    promptSteps: [
+      new FolderListStep(),
+      new setWorkspaceName(),
+      new setMethodName(),
+      new setNameSpace(),
+      new NewCodeProjectTypeStep(options.templateId, options.functionSettings),
+      new OpenBehaviorStep(),
+    ],
+    executeSteps: [new OpenFolderStepCodeProject()],
   });
 
   await wizard.prompt();
   await wizard.execute();
 
   await createArtifactsFolder(context as IFunctionWizardContext);
-  await createLibFolder(context as IFunctionWizardContext);
 
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
 }
@@ -81,10 +90,4 @@ export async function createNewProjectInternal(context: IActionContext, options:
 async function createArtifactsFolder(context: IFunctionWizardContext): Promise<void> {
   fse.mkdirSync(path.join(context.projectPath, 'Artifacts', 'Maps'), { recursive: true });
   fse.mkdirSync(path.join(context.projectPath, 'Artifacts', 'Schemas'), { recursive: true });
-}
-
-async function createLibFolder(context: IFunctionWizardContext): Promise<void> {
-  fse.mkdirSync(path.join(context.projectPath, 'lib', 'builtinOperationSdks', 'JAR'), { recursive: true });
-  fse.mkdirSync(path.join(context.projectPath, 'lib', 'builtinOperationSdks', 'net472'), { recursive: true });
-  fse.mkdirSync(path.join(context.projectPath, 'lib', 'custom', 'net472'), { recursive: true });
 }

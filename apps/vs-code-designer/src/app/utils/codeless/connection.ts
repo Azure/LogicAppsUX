@@ -9,7 +9,6 @@ import { tryGetFunctionProjectRoot } from '../verifyIsProject';
 import { getContainingWorkspace } from '../workspace';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import { getParametersJson } from './parameter';
-import * as parameterizer from './parameterizer';
 import { addNewFileInCSharpProject } from './updateBuildFile';
 import { HTTP_METHODS, isString } from '@microsoft/utils-logic-apps';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
@@ -119,8 +118,7 @@ async function getConnectionReference(
   reference: any,
   accessToken: string,
   workflowBaseManagementUri: string,
-  settingsToAdd: Record<string, string>,
-  parametersToAdd: any
+  settingsToAdd: Record<string, string>
 ): Promise<ConnectionReferenceModel> {
   const {
     api: { id: apiId },
@@ -140,7 +138,7 @@ async function getConnectionReference(
       const appSettingKey = `${referenceKey}-connectionKey`;
       settingsToAdd[appSettingKey] = response.connectionKey;
 
-      const connectionReference: ConnectionReferenceModel = {
+      return {
         api: { id: apiId },
         connection: { id: connectionId },
         connectionRuntimeUrl: response.runtimeUrls.length ? response.runtimeUrls[0] : '',
@@ -151,10 +149,6 @@ async function getConnectionReference(
         },
         connectionProperties,
       };
-
-      parameterizer.parameterizeConnectionReference(connectionReference, referenceKey, parametersToAdd);
-
-      return connectionReference;
     })
     .catch((error) => {
       throw new Error(`Error in fetching connection keys for ${connectionId}. ${error}`);
@@ -166,8 +160,7 @@ export async function getConnectionsAndSettingsToUpdate(
   workflowFilePath: string,
   connectionReferences: any,
   azureTenantId: string,
-  workflowBaseManagementUri: string,
-  parametersFromDefinition: any
+  workflowBaseManagementUri: string
 ): Promise<ConnectionAndSettings> {
   const projectPath = await getFunctionProjectRoot(context, workflowFilePath);
   const connectionsDataString = projectPath ? await getConnectionsJson(projectPath) : '';
@@ -187,8 +180,7 @@ export async function getConnectionsAndSettingsToUpdate(
         reference,
         accessToken,
         workflowBaseManagementUri,
-        settingsToAdd,
-        parametersFromDefinition
+        settingsToAdd
       );
     }
   }
