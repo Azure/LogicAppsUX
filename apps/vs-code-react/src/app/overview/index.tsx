@@ -23,6 +23,7 @@ export const OverviewApp: React.FC = () => {
       workflowProperties={vscodeState.workflowProperties}
       accessToken={vscodeState.accessToken}
       corsNotice={vscodeState.corsNotice}
+      hostVersion={vscodeState.hostVersion}
     ></App>
   ) : null;
 };

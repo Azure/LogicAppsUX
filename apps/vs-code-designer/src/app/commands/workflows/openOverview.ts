@@ -126,6 +126,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             accessToken: accessToken,
             workflowProperties: workflowProps,
             project: 'overview',
+            hostVersion: ext.extensionVersion,
           },
         });
         // Just shipping the access Token every 5 seconds is easier and more

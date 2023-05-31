@@ -18,6 +18,7 @@ export interface designerState {
   fileSystemConnections: Record<string, any>;
   iaMapArtifacts: ListDynamicValue[];
   oauthRedirectUrl: string;
+  hostVersion: string;
 }
 
 const initialState: designerState = {
@@ -44,6 +45,7 @@ const initialState: designerState = {
   fileSystemConnections: {},
   iaMapArtifacts: [],
   oauthRedirectUrl: '',
+  hostVersion: '',
 };
 
 export const designerSlice = createSlice({
@@ -62,6 +64,7 @@ export const designerSlice = createSlice({
         oauthRedirectUrl,
         isMonitoringView,
         runId,
+        hostVersion,
       } = action.payload;
 
       state.panelMetaData = panelMetadata;
@@ -75,6 +78,7 @@ export const designerSlice = createSlice({
       state.runId = runId;
       state.tenantId = apiHubServiceDetails?.tenantId;
       state.oauthRedirectUrl = oauthRedirectUrl;
+      state.hostVersion = hostVersion;
     },
     updateCallbackUrl: (state, action: PayloadAction<any>) => {
       const { callbackInfo } = action.payload;

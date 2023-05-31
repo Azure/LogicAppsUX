@@ -18,6 +18,8 @@ export const vscodeFolderName = '.vscode';
 export const workflowFileName = 'workflow.json';
 export const funcIgnoreFileName = '.funcignore';
 
+export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
+
 // Functions
 export const func = 'func';
 export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';

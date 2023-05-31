@@ -347,6 +347,7 @@ export async function exportLogicApp(): Promise<void> {
             accessToken,
             cloudHost,
             project: 'export',
+            hostVersion: ext.extensionVersion,
           },
         });
         interval = setInterval(async () => {

@@ -93,6 +93,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
             isLocal: this.isLocal,
             isMonitoringView: this.isMonitoringView,
             workflowDetails: this.workflowDetails,
+            hostVersion: ext.extensionVersion,
           },
         });
         break;

@@ -19,6 +19,7 @@ export namespace ext {
   export let workflowDesignChildProcess: cp.ChildProcess | undefined;
   export let outputChannel: IAzExtOutputChannel;
   export let workflowRuntimePort: number;
+  export let extensionVersion: string;
   export const prefix = 'azureLogicAppsStandard';
 
   // Tree item view
