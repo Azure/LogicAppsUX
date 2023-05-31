@@ -3191,6 +3191,12 @@
       "value": "actionCount"
     }
   ],
+  "KYX5Do": [
+    {
+      "type": 0,
+      "value": "Underline (⌘U)"
+    }
+  ],
   "KZOa5l": [
     {
       "type": 0,
@@ -3337,6 +3343,12 @@
     {
       "type": 0,
       "value": "Bullet List"
+    }
+  ],
+  "Lnqh6h": [
+    {
+      "type": 0,
+      "value": "Bold (Ctrl+B)"
     }
   ],
   "LoGUT3": [
@@ -4188,6 +4200,12 @@
     {
       "type": 0,
       "value": "'"
+    }
+  ],
+  "S138/4": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: ⌘B"
     }
   ],
   "SADSSs": [
@@ -5104,6 +5122,12 @@
       "value": "Cadena"
     }
   ],
+  "YJlS8E": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: Ctrl+U"
+    }
+  ],
   "YKXmKD": [
     {
       "type": 0,
@@ -5114,6 +5138,12 @@
     {
       "type": 0,
       "value": "Especificar el archivo PFX"
+    }
+  ],
+  "YR1uWE": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: Ctrl+B"
     }
   ],
   "YRk271": [
@@ -5138,6 +5168,12 @@
     {
       "type": 0,
       "value": "Devuelve una matriz o un objeto simple con todos los elementos que hay en dicha matriz u objeto pasados a esta función. Los parámetros de la función pueden ser un conjunto de objetos o un conjunto de matrices (y no una combinación de ellos). Si hay dos objetos con el mismo nombre en la salida final, el último objeto con ese nombre es el que aparecerá en el objeto final."
+    }
+  ],
+  "YdQw4/": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: ⌘I"
     }
   ],
   "YfwZJO": [
@@ -5590,6 +5626,12 @@
       "value": "Seleccione una identidad"
     }
   ],
+  "ciLkfU": [
+    {
+      "type": 0,
+      "value": "Bold (⌘B)"
+    }
+  ],
   "cj+kyo": [
     {
       "type": 0,
@@ -5718,6 +5760,12 @@
       "value": "Close"
     }
   ],
+  "dfmH55": [
+    {
+      "type": 0,
+      "value": "Italic (Ctrl+I)"
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -5836,6 +5884,12 @@
     {
       "type": 0,
       "value": "Enter an integer"
+    }
+  ],
+  "elD6+N": [
+    {
+      "type": 0,
+      "value": "Italic (⌘I)"
     }
   ],
   "epOMnV": [
@@ -6030,6 +6084,12 @@
     {
       "type": 0,
       "value": "Nombre de conexión"
+    }
+  ],
+  "gIx5ys": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: Ctrl+I"
     }
   ],
   "gKq3Jv": [
@@ -6769,6 +6829,12 @@
       "value": "Select an action type"
     }
   ],
+  "lwlg2K": [
+    {
+      "type": 0,
+      "value": "Underline (Ctrl+U)"
+    }
+  ],
   "lztiwS": [
     {
       "type": 0,
@@ -7335,6 +7401,12 @@
       "value": "'"
     }
   ],
+  "qBkxGU": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: ⌘U"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -7804,6 +7876,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Novosibirsk"
+    }
+  ],
+  "tUCptx": [
+    {
+      "type": 0,
+      "value": "Insert Link"
     }
   ],
   "tUYXRA": [
