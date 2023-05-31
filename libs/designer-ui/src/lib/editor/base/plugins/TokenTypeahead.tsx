@@ -1,6 +1,5 @@
 import { TokenPickerMode } from '../../../tokenpicker';
 import { useTokenTypeaheadTriggerMatch } from '../utils/tokenTypeaheadMatcher';
-import type { OpenTokenPickerProps } from './OpenTokenPicker';
 import { Icon, Text, css, useTheme } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { LexicalTypeaheadMenuPlugin, TypeaheadOption } from '@lexical/react/LexicalTypeaheadMenuPlugin';
@@ -66,7 +65,12 @@ function TokenMenuItem({
   );
 }
 
-export const TokenTypeAheadPlugin = ({ openTokenPicker }: OpenTokenPickerProps) => {
+interface TokenTypeAheadPluginProps {
+  openTokenPicker: (tokenPickerMode: TokenPickerMode) => void;
+  isEditorFocused?: boolean;
+}
+
+export const TokenTypeAheadPlugin = ({ openTokenPicker, isEditorFocused }: TokenTypeAheadPluginProps) => {
   const [editor] = useLexicalComposerContext();
   const { isInverted } = useTheme();
   const checkForTriggerMatch = useTokenTypeaheadTriggerMatch('/', {
@@ -121,7 +125,7 @@ export const TokenTypeAheadPlugin = ({ openTokenPicker }: OpenTokenPickerProps) 
           return null;
         }
 
-        return anchorElementRef.current && options.length
+        return anchorElementRef.current && options.length && isEditorFocused
           ? ReactDOM.createPortal(
               <div className={css(isInverted ? 'msla-theme-dark' : null)} onMouseDown={(e) => e.preventDefault()}>
                 <div className="typeahead-popover">
