@@ -122,7 +122,7 @@ export const TokenPickerButton = ({ showOnLeft, openTokenPicker }: TokenPickerBu
               iconProps={expressionButtonProps}
               styles={{ root: 'bottom-root-button-style' }}
               className="msla-token-picker-entrypoint-button-dynamic-content"
-              data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"
+              data-automation-id="msla-token-picker-entrypoint-button-expression"
               onClick={() => openTokenPicker(TokenPickerMode.EXPRESSION)}
             />
           </TooltipHost>
