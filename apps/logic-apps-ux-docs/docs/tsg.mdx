@@ -14,7 +14,7 @@ If you're experiencing any issues with Logic Apps Designer, please follow the st
 
 Our current main method of mitigation is to fall back to the now legacy version of Designer. This can be done by using the following URL to navigate to your Logic App. This will hopefully allow you to continue working while we investigate your issue.
 
-**[Link to access legacy designer](https://portal.azure.com/?microsoft_azure_ema_forceFallbackToOldDesigner=true#view)**
+**[Link to access legacy designer](https://aka.ms/lafallback)**
 
 :::note
 
@@ -50,7 +50,7 @@ If you are experiencing issues with a specific workflow, please provide the work
 
 Providing console errors are very helpful for our engineers to quickly pinpoint the source of an issue. To collect console errors, please follow the steps below:
 
-1. Open the developer tools in your browser with the keyboard shortcut `Ctrl+Shift+I`
+1. Open the developer tools in your browser with the keyboard shortcut `Ctrl+Shift+I (Win)` or `Cmd+Opt+I (Mac)`
 2. Select the **Console** tab
 3. If you see any errors, you can right-click on the error and select **Save as...** to save the error to a text file
 4. Otherwise you can also copy/paste as needed
@@ -59,7 +59,7 @@ Providing console errors are very helpful for our engineers to quickly pinpoint 
 
 If you are experiencing issues with the designer loading, or with any network requests, collecting a HAR file will help us investigate the issue. To collect a HAR file, please follow the steps below:
 
-1. Open the developer tools in your browser with the keyboard shortcut `Ctrl+Shift+I`
+1. Open the developer tools in your browser with the keyboard shortcut `Ctrl+Shift+I (Win)` or `Cmd+Opt+I (Mac)`
 2. Select the **Network** tab
 3. Refresh the page and reproduce the issue
 4. Once you have reproduced the issue, right-click anywhere in the grid of network requests, select **Save as HAR with Content**, and save the file to your computer
@@ -71,15 +71,16 @@ These network logs may contain sensitive information, so please do not share the
 
 :::
 
-### Finding your portal version
+### Finding your session ID or portal extension version
 
-To get the currently active portal version follow these steps:
+To get your session ID or currently active portal version follow these steps:
 
 1. Navigate to a workflow
-2. Open the Azure monitoring tools with `Ctrl+Alt+D`
+2. Open the Azure monitoring tools with `Ctrl+Alt+D (Win)` or `Ctrl+Opt+D (Mac)`
 3. In the bottom right of the designer there should be a yellow box
-4. Find the line `Loaded extensions:` and click on `Details`
-5. You will find the currently active designer version next to the line that says `Microsoft_Azure_EMA:`
+4. You will find your **session ID** near the top of the list next to `Session ID:`
+5. To get your **portal extension version** find the line `Loaded extensions: #` and click on `Details`
+6. You will find your version next to the line that says `Microsoft_Azure_EMA:`
 
 ![](./img/tsg/portalVersionBox.png)
 
@@ -89,3 +90,7 @@ Some things that may indicate a backend issue are:
 
 - Failed network requests in the browser developer tools
 - Issue being reproducible between new and legacy designer
+
+## Azure support
+
+If your issue is urgent you may want to consider bringing in Azure support as well and working with them directly. You can find more information on how to do this **[here](https://docs.microsoft.com/en-us/azure/azure-portal/supportability/how-to-create-azure-support-request)**.

@@ -265,7 +265,6 @@ export const updateOutputsAndTokens = async (
   let tokens: OutputToken[];
   if (supportsManifest) {
     const manifest = await getOperationManifest(operationInfo);
-    console.log('### manifest', manifest);
     nodeOutputs = getOutputParametersFromManifest(manifest, isTrigger, inputs, splitOnValue).outputs;
     tokens = [
       ...getBuiltInTokens(manifest),
