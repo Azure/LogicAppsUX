@@ -227,6 +227,7 @@ export function TokenPicker({
                 onChange={(_, newValue) => {
                   setSearchQuery(newValue ?? '');
                 }}
+                data-automation-id="msla-token-picker-search"
               />
             </div>
             <TokenPickerSection
