@@ -1,4 +1,18 @@
 # Logic Apps Designer
+## [2.23.0](https://github.com/Azure/LogicAppsUX/compare/v2.22.0...v2.23.0) (2023-05-31)
+
+
+### Features
+
+* **vscode:** Add New Code Project Command  ([#2427](https://github.com/Azure/LogicAppsUX/issues/2427)) ([6f50ee3](https://github.com/Azure/LogicAppsUX/commit/6f50ee3e73f471a2b8c34f2980963a75fe785881))
+* **vscode:** Adding DLL Upload Experience and NetFxWorker upload ([#2588](https://github.com/Azure/LogicAppsUX/issues/2588)) ([0466e2b](https://github.com/Azure/LogicAppsUX/commit/0466e2b6e689aa7b3065446fa9fdc9b449fd247e))
+
+
+### Bug Fixes
+
+* **designer:** Doing output/body expression comparison for manifest based operation during implicit foreach addition ([#2616](https://github.com/Azure/LogicAppsUX/issues/2616)) ([6ef166d](https://github.com/Azure/LogicAppsUX/commit/6ef166d0301e204394c3b2259638cdaab3743ec0))
+* **vscode): Revert "feat(vs-code-designer:** externalize connection parameterizati… ([#2613](https://github.com/Azure/LogicAppsUX/issues/2613)) ([7fa8b72](https://github.com/Azure/LogicAppsUX/commit/7fa8b7200d079989544839d4058298976b555aea)), closes [#2368](https://github.com/Azure/LogicAppsUX/issues/2368)
+
 ## [2.22.0](https://github.com/Azure/LogicAppsUX/compare/v2.21.0...v2.22.0) (2023-05-30)
 
 
