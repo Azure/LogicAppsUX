@@ -196,7 +196,7 @@ const TokenField = ({
           itemSchema={editorViewModel.itemSchema}
           castParameter={onCastParameter}
           onChange={onValueChange}
-          data-automation-id={`msla-setting-token-editor-scheduleeditor-${label}`}
+          data-automation-id={`msla-setting-token-editor-arrayeditor-${label}`}
         />
       );
 
