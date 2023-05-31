@@ -21,7 +21,7 @@ export async function installDotNetSDK(context: IActionContext): Promise<void> {
     case Platform.linux: {
       // Notifies Users of script download.
       const message: string = localize('downloadDotNetInstallScript', 'Downloading .Net Install Script');
-      const download: MessageItem = { title: 'Download' };
+      const download: MessageItem = { title: localize('download', 'Download') };
 
       let result: MessageItem;
       do {
