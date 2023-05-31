@@ -1,18 +1,22 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+import { logicAppsStandardExtensionId } from '../../constants';
 import * as vscode from 'vscode';
 
-// Get the extension's information
+/**
+ * Gets extension version from the pacakge.json version.
+ * @returns {string} Extension version.
+ */
 export const getExtensionVersion = (): string => {
-  const extension = vscode.extensions.getExtension('ms-azuretools.vscode-azurelogicapps');
+  const extension = vscode.extensions.getExtension(logicAppsStandardExtensionId);
 
   if (extension) {
-    // Access the package.json information
     const { packageJSON } = extension;
 
     if (packageJSON) {
-      // Retrieve the version
       const version = packageJSON.version;
-
-      // Do something with the version
       return version;
     }
   }
