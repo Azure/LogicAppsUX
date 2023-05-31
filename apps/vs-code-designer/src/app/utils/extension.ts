@@ -6,7 +6,7 @@ import { logicAppsStandardExtensionId } from '../../constants';
 import * as vscode from 'vscode';
 
 /**
- * Gets extension version from the pacakge.json version.
+ * Gets extension version from the package.json version.
  * @returns {string} Extension version.
  */
 export const getExtensionVersion = (): string => {
