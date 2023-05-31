@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [2.24.0](https://github.com/Azure/LogicAppsUX/compare/v2.23.0...v2.24.0) (2023-05-31)
+
+
+### Features
+
+* **Power Automate:** Add automation ids for editors and token picker components ([#2583](https://github.com/Azure/LogicAppsUX/issues/2583)) ([548abda](https://github.com/Azure/LogicAppsUX/commit/548abda566f6a3028e61edbdcd714829f86b3c4a))
+* **Power Automate:** Added data automation ids for main designer components for use in automated testing ([#2579](https://github.com/Azure/LogicAppsUX/issues/2579)) ([d32e2d5](https://github.com/Azure/LogicAppsUX/commit/d32e2d5d4dda34434183fc38224fd0a9d30f337f))
+* **vscode:** Add host version to http headers in extension httpClient ([#2625](https://github.com/Azure/LogicAppsUX/issues/2625)) ([b6832c8](https://github.com/Azure/LogicAppsUX/commit/b6832c82c8e74d937ea18bbd32a05d969eac0afe))
+
+
+### Bug Fixes
+
+* **designer:** Fixed style change for token picker ([#2282](https://github.com/Azure/LogicAppsUX/issues/2282)) ([315ee3b](https://github.com/Azure/LogicAppsUX/commit/315ee3bdcfcdfae077ca71f9aa82c66a98b508be))
+* **designer:** Recalculate token expression when adding it from picker to parameter ([#2617](https://github.com/Azure/LogicAppsUX/issues/2617)) ([a9a6aed](https://github.com/Azure/LogicAppsUX/commit/a9a6aed6a2ef1e728073216484af04eee863cac8))
+* **designer:** Unfocusing an Editor ending in '/' would still show the typeahead menu ([#2624](https://github.com/Azure/LogicAppsUX/issues/2624)) ([99f4d7f](https://github.com/Azure/LogicAppsUX/commit/99f4d7f34b72a66a44e7177d17e2f5e9bb4e6aa2))
+
 ## [2.23.0](https://github.com/Azure/LogicAppsUX/compare/v2.22.0...v2.23.0) (2023-05-31)
 
 
