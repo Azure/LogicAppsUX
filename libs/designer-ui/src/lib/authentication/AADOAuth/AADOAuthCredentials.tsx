@@ -1,6 +1,7 @@
 import type { AuthProps, ClientCertificateProps } from '..';
 import type { ValueSegment } from '../../editor';
 import type { ChangeState, GetTokenPickerHandler } from '../../editor/base';
+import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { AuthenticationProperty } from '../AuthenticationProperty';
 import { CertificateAuthentication } from '../CertificateAuth';
 import { AUTHENTICATION_PROPERTIES } from '../util';
@@ -12,6 +13,8 @@ interface AadOAuthCredentialsProps {
   selectedCredTypeKey: string;
   secret?: ValueSegment[];
   clientCertificateProps: ClientCertificateProps;
+  readonly?: boolean;
+  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   getTokenPicker: GetTokenPickerHandler;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
 }
@@ -20,8 +23,8 @@ export const AadOAuthCredentials = ({
   selectedCredTypeKey,
   secret,
   clientCertificateProps,
-  getTokenPicker,
   setCurrentProps,
+  ...props
 }: AadOAuthCredentialsProps): JSX.Element => {
   const updateOAuthTypeSecret = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
@@ -35,18 +38,18 @@ export const AadOAuthCredentials = ({
       case AuthenticationOAuthType.SECRET:
         return (
           <AuthenticationProperty
+            {...props}
             initialValue={secret}
             AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET}
-            getTokenPicker={getTokenPicker}
             onBlur={updateOAuthTypeSecret}
           />
         );
       case AuthenticationOAuthType.CERTIFICATE:
         return (
           <CertificateAuthentication
+            {...props}
             clientCertificateProps={clientCertificateProps}
             isOAuth={true}
-            getTokenPicker={getTokenPicker}
             setCurrentProps={setCurrentProps}
           />
         );

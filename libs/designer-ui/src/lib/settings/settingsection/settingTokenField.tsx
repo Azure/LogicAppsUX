@@ -7,6 +7,7 @@ import { DictionaryEditor } from '../../dictionary';
 import { DropdownEditor } from '../../dropdown';
 import type { ValueSegment } from '../../editor';
 import type { CallbackHandler, CastHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
+import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { FloatingActionMenu } from '../../floatingactionmenu';
@@ -45,6 +46,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   onComboboxMenuOpen?: CallbackHandler;
   onCastParameter: CastHandler;
   pickerCallbacks?: PickerCallbackHandlers;
+  tokenpickerButtonProps?: TokenPickerButtonEditorProps;
   getTokenPicker: GetTokenPickerHandler;
   validationErrors?: string[];
   hideValidationErrors?: ChangeHandler;
@@ -80,6 +82,7 @@ const TokenField = ({
   label,
   labelId,
   pickerCallbacks,
+  tokenpickerButtonProps,
   onValueChange,
   onComboboxMenuOpen,
   hideValidationErrors,
@@ -148,6 +151,7 @@ const TokenField = ({
           initialValue={value}
           initialItems={editorViewModel.items}
           valueType={editorOptions?.valueType}
+          tokenPickerButtonProps={tokenpickerButtonProps}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
         />
@@ -165,6 +169,7 @@ const TokenField = ({
           titles={editorOptions?.columns?.titles}
           keys={editorOptions?.columns?.keys}
           types={editorOptions?.columns?.types}
+          tokenPickerButtonProps={tokenpickerButtonProps}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
         />
@@ -179,6 +184,7 @@ const TokenField = ({
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={editorViewModel.uncastedValue}
+          tokenPickerButtonProps={tokenpickerButtonProps}
           getTokenPicker={getTokenPicker}
           itemSchema={editorViewModel.itemSchema}
           castParameter={onCastParameter}
@@ -197,6 +203,8 @@ const TokenField = ({
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           BasePlugins={{ tokens: showTokens }}
+          readonly={readOnly}
+          tokenPickerButtonProps={tokenpickerButtonProps}
         />
       );
 
@@ -252,6 +260,7 @@ const TokenField = ({
           isLoading={isLoading}
           errorDetails={errorDetails}
           editorBlur={onValueChange}
+          tokenPickerButtonProps={tokenpickerButtonProps}
           getTokenPicker={getTokenPicker}
           onChange={hideValidationErrors}
         />
@@ -263,6 +272,7 @@ const TokenField = ({
           placeholder={placeholder}
           BasePlugins={{ tokens: showTokens }}
           readonly={readOnly}
+          tokenPickerButtonProps={tokenpickerButtonProps}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
         />
@@ -287,6 +297,7 @@ const TokenField = ({
           BasePlugins={{ tokens: showTokens }}
           readonly={readOnly}
           initialValue={value}
+          tokenPickerButtonProps={tokenpickerButtonProps}
           editorBlur={onValueChange}
           getTokenPicker={getTokenPicker}
           onChange={hideValidationErrors}

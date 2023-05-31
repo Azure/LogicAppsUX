@@ -6305,6 +6305,12 @@
       "value": "Elements and mappings not connected to a target element are removed."
     }
   ],
+  "ixutP5": [
+    {
+      "type": 0,
+      "value": "Enter a valid table."
+    }
+  ],
   "iy8rNf": [
     {
       "type": 0,

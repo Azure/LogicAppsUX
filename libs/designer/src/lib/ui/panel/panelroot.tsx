@@ -22,6 +22,7 @@ import {
   selectPanelTab,
   setTabError,
   setTabVisibility,
+  updatePanelLocation,
 } from '../../core/state/panel/panelSlice';
 import { useIconUri, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useHasSchema } from '../../core/state/staticresultschema/staitcresultsSelector';
@@ -115,6 +116,10 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
         defaultMessage: 'Create Connection',
         description: 'Title for the create connection tab',
       });
+
+  useEffect(() => {
+    dispatch(updatePanelLocation(panelLocation));
+  }, [dispatch, panelLocation]);
 
   useEffect(() => {
     const tabs = [monitoringTab, parametersTab, settingsTab, codeViewTab, testingTab, aboutTab, loadingTab];

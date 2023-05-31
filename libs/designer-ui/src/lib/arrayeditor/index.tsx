@@ -62,7 +62,6 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   labelProps,
   itemSchema,
   placeholder,
-  getTokenPicker,
   onChange,
   castParameter,
   ...baseEditorProps
@@ -128,44 +127,41 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
     <div className="msla-array-editor-container">
       {collapsed ? (
         <CollapsedArray
+          {...baseEditorProps}
           labelProps={labelProps}
           isValid={isValid}
           collapsedValue={collapsedValue}
-          readOnly={baseEditorProps.readonly}
           itemSchema={itemSchema}
           isComplex={isComplex}
           setItems={isComplex ? updateComplexItems : updateSimpleItems}
           setIsValid={setIsValid}
-          getTokenPicker={getTokenPicker}
           onBlur={handleBlur}
           setCollapsedValue={setCollapsedValue}
         />
       ) : isComplex ? (
         <ExpandedComplexArray
+          {...baseEditorProps}
           dimensionalSchema={dimensionalSchema}
           allItems={items as ComplexArrayItems[]}
-          readOnly={baseEditorProps.readonly}
           canDeleteLastItem={canDeleteLastItem}
           setItems={updateComplexItems}
-          getTokenPicker={getTokenPicker}
         />
       ) : (
         <ExpandedSimpleArray
+          {...baseEditorProps}
           placeholder={placeholder}
           valueType={itemSchema.type}
           items={items as SimpleArrayItem[]}
           labelProps={labelProps}
-          readOnly={baseEditorProps.readonly}
           canDeleteLastItem={canDeleteLastItem}
           setItems={updateSimpleItems}
-          getTokenPicker={getTokenPicker}
         />
       )}
       <div className="msla-array-commands">
         {!disableToggle ? (
           <EditorCollapseToggle
             collapsed={collapsed}
-            disabled={(!isValid || baseEditorProps.readonly) && collapsed}
+            disabled={baseEditorProps.readonly || (!isValid && collapsed)}
             toggleCollapsed={toggleCollapsed}
           />
         ) : null}

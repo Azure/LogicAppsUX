@@ -2,6 +2,7 @@ import type { SimpleArrayItem, ComplexArrayItems, ArrayItemSchema } from '.';
 import type { ValueSegment } from '../editor';
 import type { GetTokenPickerHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
+import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
 import { Label } from '../label';
 import type { LabelProps } from '../label';
 import { CollapsedArrayValidation } from './plugins/CollapsedArrayValidation';
@@ -11,28 +12,28 @@ export interface CollapsedArrayProps {
   labelProps?: LabelProps;
   isValid?: boolean;
   collapsedValue: ValueSegment[];
-  readOnly?: boolean;
+  readonly?: boolean;
+  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
+  getTokenPicker: GetTokenPickerHandler;
   itemSchema: ArrayItemSchema;
   isComplex: boolean;
   setCollapsedValue: (val: ValueSegment[]) => void;
   setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItems[]) => void);
   setIsValid: (b: boolean) => void;
   onBlur?: () => void;
-  getTokenPicker: GetTokenPickerHandler;
 }
 
 export const CollapsedArray = ({
   labelProps,
   isValid = true,
   collapsedValue,
-  readOnly,
   itemSchema,
   isComplex,
-  getTokenPicker,
   setItems,
   setIsValid,
   onBlur,
   setCollapsedValue,
+  ...props
 }: CollapsedArrayProps): JSX.Element => {
   const intl = useIntl();
 
@@ -61,16 +62,15 @@ export const CollapsedArray = ({
       {labelProps ? renderLabel() : null}
       <div className="msla-array-content">
         <BaseEditor
+          {...props}
           className="msla-collapsed-editor-container"
           BasePlugins={{
             tokens: true,
             tabbable: true,
           }}
-          readonly={readOnly}
           placeholder={editorPlaceHolder}
           initialValue={collapsedValue?.length > 0 ? collapsedValue : ([] as ValueSegment[])}
           onBlur={onBlur}
-          getTokenPicker={getTokenPicker}
         >
           <CollapsedArrayValidation
             defaultErrorMessage={defaultErrorMessage}

@@ -1,6 +1,7 @@
 import constants from '../../../common/constants';
 import type { RelationshipIds, PanelState } from './panelInterfaces';
 import type { PanelTab } from '@microsoft/designer-ui';
+import { PanelLocation } from '@microsoft/designer-ui';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -10,6 +11,7 @@ const initialState: PanelState = {
   relationshipIds: {
     graphId: 'root',
   },
+  panelLocation: PanelLocation.Right,
   isParallelBranch: false,
   registeredTabs: {},
   selectedTabName: undefined,
@@ -34,6 +36,11 @@ export const panelSlice = createSlice({
       state.currentState = undefined;
       state.selectedNode = '';
       state.selectedOperationGroupId = '';
+    },
+    updatePanelLocation: (state, action: PayloadAction<PanelLocation | undefined>) => {
+      if (action.payload && action.payload !== state.panelLocation) {
+        state.panelLocation = action.payload;
+      }
     },
     changePanelNode: (state, action: PayloadAction<string>) => {
       if (!action) return;
@@ -157,6 +164,7 @@ export const {
   expandPanel,
   collapsePanel,
   clearPanel,
+  updatePanelLocation,
   changePanelNode,
   expandDiscoveryPanel,
   selectOperationGroupId,

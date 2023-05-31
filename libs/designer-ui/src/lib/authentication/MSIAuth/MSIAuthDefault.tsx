@@ -1,5 +1,6 @@
 import type { MSIProps } from '..';
 import type { ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
+import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
 import { AuthenticationProperty } from '../AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES } from '../util';
@@ -9,6 +10,8 @@ import { useIntl } from 'react-intl';
 
 interface MSIAuthenticationDefaultProps {
   msiProps: MSIProps;
+  readonly?: boolean;
+  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   getTokenPicker: GetTokenPickerHandler;
   onManagedIdentityChange(event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void;
   onBlur: ChangeHandler;
@@ -16,9 +19,9 @@ interface MSIAuthenticationDefaultProps {
 
 export const MSIAuthenticationDefault = ({
   msiProps,
-  getTokenPicker,
   onManagedIdentityChange,
   onBlur,
+  ...props
 }: MSIAuthenticationDefaultProps): JSX.Element => {
   const intl = useIntl();
 
@@ -50,6 +53,7 @@ export const MSIAuthenticationDefault = ({
   return (
     <>
       <AuthenticationDropdown
+        readonly={props.readonly}
         dropdownPlaceholder={MSIAuthPlaceholder}
         dropdownLabel={MSIAuthLabel}
         errorMessage={authNotEnabledError}
@@ -57,12 +61,7 @@ export const MSIAuthenticationDefault = ({
         options={managedIdentityOption}
         onChange={onManagedIdentityChange}
       />
-      <AuthenticationProperty
-        initialValue={msiAudience}
-        AuthProperty={AUTHENTICATION_PROPERTIES.MSI_AUDIENCE}
-        getTokenPicker={getTokenPicker}
-        onBlur={onBlur}
-      />
+      <AuthenticationProperty {...props} initialValue={msiAudience} AuthProperty={AUTHENTICATION_PROPERTIES.MSI_AUDIENCE} onBlur={onBlur} />
     </>
   );
 };
