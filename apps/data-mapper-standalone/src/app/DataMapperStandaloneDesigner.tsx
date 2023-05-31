@@ -10,9 +10,9 @@ import {
   DataMapDataProvider,
   DataMapperDesigner,
   DataMapperDesignerProvider,
+  InitDataMapperApiService,
   defaultDataMapperApiServiceOptions,
   getFunctions,
-  InitDataMapperApiService,
 } from '@microsoft/logic-apps-data-mapper';
 import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import { useEffect, useState } from 'react';
@@ -26,12 +26,19 @@ export const DataMapperStandaloneDesigner = () => {
   const armToken = useSelector((state: RootState) => state.dataMapDataLoader.armToken);
 
   const xsltFilename = useSelector((state: RootState) => state.dataMapDataLoader.xsltFilename);
+  const xsltContent = useSelector((state: RootState) => state.dataMapDataLoader.xsltContent);
   const mapDefinition = useSelector((state: RootState) => state.dataMapDataLoader.mapDefinition);
   const fetchedFunctions = useSelector((state: RootState) => state.dataMapDataLoader.fetchedFunctions);
   const sourceSchema = useSelector((state: RootState) => state.schemaDataLoader.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.schemaDataLoader.targetSchema);
 
   const [functionDisplay, setFunctionDisplayExpanded] = useState<boolean>(true);
+
+  // Standalone uses default/dev runtime settings - can just run 'func host start' in the workflow root
+  InitDataMapperApiService({
+    ...defaultDataMapperApiServiceOptions,
+    accessToken: armToken,
+  });
 
   const saveMapDefinitionCall = (dataMapDefinition: string) => {
     console.log('Map Definition\n===============');
@@ -51,12 +58,6 @@ export const DataMapperStandaloneDesigner = () => {
         dispatch(dataMapDataLoaderSlice.actions.changeFetchedFunctions(fnManifest));
       }
     };
-
-    // Standalone uses default/dev runtime settings - can just run 'func host start' in the workflow root
-    InitDataMapperApiService({
-      ...defaultDataMapperApiServiceOptions,
-      accessToken: armToken,
-    });
 
     fetchFunctionList();
   }, [dispatch, armToken]);
@@ -81,6 +82,7 @@ export const DataMapperStandaloneDesigner = () => {
         <DataMapperDesignerProvider locale="en-US" theme={theme} options={{}}>
           <DataMapDataProvider
             xsltFilename={xsltFilename}
+            xsltContent={xsltContent}
             mapDefinition={mapDefinition}
             sourceSchema={sourceSchema}
             targetSchema={targetSchema}
