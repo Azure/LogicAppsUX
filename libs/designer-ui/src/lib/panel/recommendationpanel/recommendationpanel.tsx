@@ -8,6 +8,7 @@ import { useIntl } from 'react-intl';
 export * from './interfaces';
 
 export type RecommendationPanelProps = {
+  isTrigger: boolean;
   placeholder: string;
   toggleCollapse: () => void;
 } & CommonPanelProps;
@@ -16,10 +17,9 @@ export const RecommendationPanel: React.FC<PropsWithChildren<RecommendationPanel
   const { isInverted } = useTheme();
 
   const intl = useIntl();
-  const headingText = intl.formatMessage({
-    defaultMessage: 'Add an action',
-    description: 'Text for the "Add Action" page header',
-  });
+  const headingText = props.isTrigger
+    ? intl.formatMessage({ defaultMessage: 'Add a trigger', description: 'Text for the "Add Trigger" page header' })
+    : intl.formatMessage({ defaultMessage: 'Add an action', description: 'Text for the "Add Action" page header' });
 
   return (
     <Panel

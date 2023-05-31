@@ -1,4 +1,5 @@
 import type { IFunctionService } from '../function';
+import { isFunctionContainer } from '../helpers';
 import type { IHttpClient } from '../httpClient';
 import { ArgumentException } from '@microsoft/utils-logic-apps';
 
@@ -31,7 +32,7 @@ export class BaseFunctionService implements IFunctionService {
       queryParameters: { 'api-version': this.options.apiVersion },
     });
 
-    const apps = functionAppsResponse.value.filter((app: any) => app.kind === 'functionapp');
+    const apps = functionAppsResponse.value.filter((app: any) => isFunctionContainer(app.kind));
     return apps;
   }
 

@@ -62,7 +62,7 @@
         "type": "Query",
         "inputs": {
           "from": "@body('Parse_JSON')",
-          "where": "@equals(test,@triggerBody()?['string'])"
+          "where": "@notcontains(length(split(item(), '|')?[0]),length(split(item(), '|')?[0]))"
         },
         "runAfter": {
           "Parse_JSON": ["SUCCEEDED"]

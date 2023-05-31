@@ -1,3 +1,4 @@
+import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
@@ -5,6 +6,7 @@ import { initializeDictionaryValidation } from '../editor/base/utils/helper';
 import { CollapsedDictionary } from './collapsedDictionary';
 import { ExpandedDictionary } from './expandeddictionary';
 import { convertItemsToSegments } from './util/deserializecollapseddictionary';
+import { guid } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 
 export enum DictionaryType {
@@ -12,6 +14,7 @@ export enum DictionaryType {
   TABLE = 'table',
 }
 export interface DictionaryEditorItemProps {
+  id: string;
   key: ValueSegment[];
   value: ValueSegment[];
 }
@@ -21,6 +24,7 @@ export interface DictionaryEditorProps extends BaseEditorProps {
   initialItems?: DictionaryEditorItemProps[];
   keyTitle?: string;
   valueTitle?: string;
+  keyType?: string;
   dictionaryType?: DictionaryType;
 }
 
@@ -31,6 +35,8 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   keyTitle,
   valueTitle,
   dictionaryType = DictionaryType.DEFAULT,
+  keyType = constants.SWAGGER.TYPE.STRING,
+  valueType,
   getTokenPicker,
   onChange,
   ...baseEditorProps
@@ -63,7 +69,6 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
       {collapsed && !(dictionaryType === DictionaryType.TABLE) ? (
         <CollapsedDictionary
           isValid={isValid}
-          isTrigger={baseEditorProps.isTrigger}
           readonly={baseEditorProps.readonly}
           collapsedValue={collapsedValue}
           getTokenPicker={getTokenPicker}
@@ -74,11 +79,12 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
         />
       ) : (
         <ExpandedDictionary
-          items={items ?? [{ key: [], value: [] }]}
-          isTrigger={baseEditorProps.isTrigger}
+          items={items ?? [{ key: [], value: [], id: guid() }]}
           readonly={baseEditorProps.readonly}
           keyTitle={keyTitle}
           valueTitle={valueTitle}
+          keyType={keyType}
+          valueType={valueType}
           setItems={updateItems}
           getTokenPicker={getTokenPicker}
         />

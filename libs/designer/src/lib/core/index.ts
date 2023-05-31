@@ -7,7 +7,7 @@ export { store } from './store';
 export { useConnectionMapping, useConnectionRefs, useIsOperationMissingConnection } from './state/connection/connectionSelector';
 export type { NodeInputs } from './state/operation/operationMetadataSlice';
 export { useOperationsInputParameters } from './state/operation/operationSelector';
-export { discardAllChanges, setFocusNode, setIsGraphLocked, setIsWorkflowDirty } from './state/workflow/workflowSlice';
+export { discardAllChanges, setFocusNode, setIsWorkflowDirty } from './state/workflow/workflowSlice';
 export { useIsWorkflowDirty, useNodeDisplayName, useNodeMetadata } from './state/workflow/workflowSelectors';
 export { useIsWorkflowParametersDirty } from './state/workflowparameters/workflowparametersselector';
 export { useIsDesignerDirty, resetDesignerDirtyState } from './state/global';

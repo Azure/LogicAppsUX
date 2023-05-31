@@ -26,12 +26,13 @@ export const AuthenticationProperty = ({
       </div>
       <div className="msla-authentication-editor-expanded-editor-container">
         <StringEditor
+          valueType={AuthProperty.type}
           className="msla-authentication-editor-expanded-editor"
           initialValue={initialValue}
           placeholder={AuthProperty.placeHolder}
           BasePlugins={{ tokens: true }}
           getTokenPicker={getTokenPicker}
-          onChange={onBlur}
+          editorBlur={onBlur}
         />
       </div>
     </div>

@@ -83,6 +83,12 @@
       "value": "改ページ"
     }
   ],
+  "+ym4nO": [
+    {
+      "type": 0,
+      "value": "Tracked Properties"
+    }
+  ],
   "//nQG4": [
     {
       "type": 0,
@@ -215,10 +221,38 @@
       "value": "トリガー"
     }
   ],
+  "04AwK7": [
+    {
+      "type": 0,
+      "value": "Error code: '"
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": "', Message: '"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
       "value": "渡された文字列のタイムスタンプに時刻の開始を返します"
+    }
+  ],
+  "08e2rO": [
+    {
+      "type": 0,
+      "value": "The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection."
     }
   ],
   "09B9CU": [
@@ -1030,6 +1064,16 @@
       "value": "Enter a valid double."
     }
   ],
+  "5FINOY": [
+    {
+      "type": 0,
+      "value": "Workflow has parameter validation errors on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -1042,6 +1086,12 @@
       "value": "Line Number"
     }
   ],
+  "5OvGgn": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1052,6 +1102,20 @@
     {
       "type": 0,
       "value": "渡されたアレイまたは文字列の最初の要素を返します"
+    }
+  ],
+  "5akc1Q": [
+    {
+      "type": 0,
+      "value": "Unsupported 'in' value : '"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "' in Parameter"
     }
   ],
   "5b0sKi": [
@@ -1248,6 +1312,12 @@
     {
       "type": 0,
       "value": "必須。取得する部分文字列が含まれる文字列。"
+    }
+  ],
+  "7S2wtE": [
+    {
+      "type": 0,
+      "value": "Schema Validation"
     }
   ],
   "7WVgiU": [
@@ -1450,12 +1520,6 @@
       "value": "渡された文字列のタイムスタンプに日数を表す整数を加算します"
     }
   ],
-  "8yjjTX": [
-    {
-      "type": 0,
-      "value": "Connect via Service Principal"
-    }
-  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -1478,24 +1542,6 @@
     {
       "type": 0,
       "value": "File"
-    }
-  ],
-  "92OUl9": [
-    {
-      "type": 0,
-      "value": "Array Element "
-    },
-    {
-      "type": 1,
-      "value": "index"
-    },
-    {
-      "type": 0,
-      "value": " is missing required property "
-    },
-    {
-      "type": 1,
-      "value": "property"
     }
   ],
   "93Gj/n": [
@@ -1550,6 +1596,20 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9W0lck": [
+    {
+      "type": 0,
+      "value": "Invalid split on value '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "', cannot find in outputs."
     }
   ],
   "9YGcT2": [
@@ -1610,6 +1670,12 @@
     {
       "type": 0,
       "value": "認証の種類"
+    }
+  ],
+  "AEguAy": [
+    {
+      "type": 0,
+      "value": "Empty value"
     }
   ],
   "AGCm1p": [
@@ -1861,6 +1927,12 @@
       "value": "Number"
     }
   ],
+  "BeqBP7": [
+    {
+      "type": 0,
+      "value": "Automatic Decompression"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1877,6 +1949,12 @@
     {
       "type": 0,
       "value": "Select a managed identity"
+    }
+  ],
+  "BtL7UI": [
+    {
+      "type": 0,
+      "value": "No additional information is needed for this step. You will be able to use the outputs in subsequent steps."
     }
   ],
   "BuYrD3": [
@@ -2009,6 +2087,20 @@
       "value": "Select a value"
     }
   ],
+  "DQV7aK": [
+    {
+      "type": 0,
+      "value": "Alt/Option + click to download '"
+    },
+    {
+      "type": 1,
+      "value": "displayName"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "DWd9vy": [
     {
       "type": 0,
@@ -2043,6 +2135,12 @@
     {
       "type": 0,
       "value": "Show mini-map"
+    }
+  ],
+  "DjbVKU": [
+    {
+      "type": 0,
+      "value": "OAuth"
     }
   ],
   "DkF25I": [
@@ -2141,12 +2239,6 @@
     {
       "type": 0,
       "value": "Add an action"
-    }
-  ],
-  "EV9iRu": [
-    {
-      "type": 0,
-      "value": "保存できませんでした。"
     }
   ],
   "EYqGxA": [
@@ -2271,6 +2363,12 @@
     {
       "type": 0,
       "value": "(UTC+05:45) カトマンズ"
+    }
+  ],
+  "FIL1Nt": [
+    {
+      "type": 0,
+      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
     }
   ],
   "FIT7i0": [
@@ -2510,6 +2608,16 @@
       "value": "File Content"
     }
   ],
+  "H/QVod": [
+    {
+      "type": 0,
+      "value": "Workflow has settings validation errors on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "H17jEE": [
     {
       "type": 0,
@@ -2552,12 +2660,6 @@
       "value": "Month"
     }
   ],
-  "HJIZrG": [
-    {
-      "type": 0,
-      "value": "詳細な診断情報: x-ms-client-request-id は {clientRequestId} です。"
-    }
-  ],
   "HOchry": [
     {
       "type": 0,
@@ -2574,12 +2676,6 @@
     {
       "type": 0,
       "value": "Headers"
-    }
-  ],
-  "HXLutF": [
-    {
-      "type": 0,
-      "value": "キー"
     }
   ],
   "Hbqlzk": [
@@ -2696,6 +2792,16 @@
       "value": "渡される文字列タイムスタンプを UTC からターゲット タイム ゾーンに変換します"
     }
   ],
+  "IX1OiA": [
+    {
+      "type": 0,
+      "value": "Failed to retrieve dynamic outputs, outputs of this operation might not be visible in subsequent actions. Error details: "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    }
+  ],
   "IXy91L": [
     {
       "type": 0,
@@ -2706,6 +2812,20 @@
     {
       "type": 0,
       "value": "Error Code"
+    }
+  ],
+  "IjEKvh": [
+    {
+      "type": 0,
+      "value": "Error executing the api '"
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "IjZFjQ": [
@@ -3019,12 +3139,6 @@
       "value": "作成中..."
     }
   ],
-  "LOwePI": [
-    {
-      "type": 0,
-      "value": "値 {splitOn} の分割の種類が無効です。分割が配列にありません。"
-    }
-  ],
   "LR/3Lr": [
     {
       "type": 0,
@@ -3335,6 +3449,12 @@
     {
       "type": 0,
       "value": "値のバイナリ表現を返します"
+    }
+  ],
+  "O/fh9A": [
+    {
+      "type": 0,
+      "value": "Service Principal"
     }
   ],
   "O27gKq": [
@@ -3671,6 +3791,16 @@
       "value": "Add dynamic data or expressions by inserting a /"
     }
   ],
+  "Q8zxeb": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " Key"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -3793,12 +3923,6 @@
       "value": "トリガーを削除できません。"
     }
   ],
-  "R0/Vx4": [
-    {
-      "type": 0,
-      "value": "Text field for slider"
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -3862,10 +3986,18 @@
       "value": "issue"
     }
   ],
-  "S8P4N5": [
+  "Rq2U5n": [
     {
       "type": 0,
-      "value": "削除"
+      "value": "Unrecognized expression '"
+    },
+    {
+      "type": 1,
+      "value": "expression"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "SADSSs": [
@@ -4092,12 +4224,6 @@
     {
       "type": 0,
       "value": "クライアント要求 ID"
-    }
-  ],
-  "TeRxLv": [
-    {
-      "type": 0,
-      "value": "Use a service principal to connect using application permissions."
     }
   ],
   "TgcgXE": [
@@ -4490,6 +4616,16 @@
       "value": "必須。アレイ内の最初の整数。"
     }
   ],
+  "WTZvGW": [
+    {
+      "type": 0,
+      "value": "Workflow has invalid connections on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -4658,10 +4794,30 @@
       "value": "Count"
     }
   ],
+  "Xew1Df": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is '"
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "Xj0Gr/": [
     {
       "type": 0,
       "value": "Target schema element cannot be deleted."
+    }
+  ],
+  "Xj4xwI": [
+    {
+      "type": 0,
+      "value": "The managed identity used with this operation no longer exists. To continue, select an available identity or change the connection."
     }
   ],
   "XkBxv5": [
@@ -4718,16 +4874,16 @@
       "value": "詳細情報"
     }
   ],
-  "Y7yyKD": [
-    {
-      "type": 0,
-      "value": "式の型 {type} が無効です。"
-    }
-  ],
   "Y9kBz5": [
     {
       "type": 0,
       "value": "データ URI のバイナリ表現を返します"
+    }
+  ],
+  "YABOLz": [
+    {
+      "type": 0,
+      "value": "Body Item"
     }
   ],
   "YCFhzp": [
@@ -4768,6 +4924,12 @@
     {
       "type": 0,
       "value": "PFX を入力"
+    }
+  ],
+  "YRk271": [
+    {
+      "type": 0,
+      "value": "Authentication"
     }
   ],
   "YUbSFS": [
@@ -4928,12 +5090,6 @@
     {
       "type": 0,
       "value": "(UTC+07:00) トムスク"
-    }
-  ],
-  "Zr0yTE": [
-    {
-      "type": 0,
-      "value": "パラメーターでサポートされていない 'in' 値: {value}"
     }
   ],
   "a7j3gS": [
@@ -5184,6 +5340,12 @@
       "value": "パネル"
     }
   ],
+  "c7tRg/": [
+    {
+      "type": 0,
+      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger."
+    }
+  ],
   "c8UPLp": [
     {
       "type": 0,
@@ -5286,6 +5448,12 @@
       "value": "Schema is missing required inputs"
     }
   ],
+  "dBxX0M": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
+    }
+  ],
   "dDYCuU": [
     {
       "type": 0,
@@ -5302,6 +5470,12 @@
     {
       "type": 0,
       "value": "更新"
+    }
+  ],
+  "dPa7+6": [
+    {
+      "type": 0,
+      "value": "Generate"
     }
   ],
   "dQmi91": [
@@ -5414,6 +5588,12 @@
     {
       "type": 0,
       "value": "Clear"
+    }
+  ],
+  "e9bIKh": [
+    {
+      "type": 0,
+      "value": "Failed to generate XSLT."
     }
   ],
   "eFet4K": [
@@ -5592,12 +5772,6 @@
       "value": "Email"
     }
   ],
-  "g0a4Qe": [
-    {
-      "type": 0,
-      "value": "値"
-    }
-  ],
   "g1zwch": [
     {
       "type": 0,
@@ -5694,6 +5868,12 @@
       "value": "Time Zone"
     }
   ],
+  "gUp23R": [
+    {
+      "type": 0,
+      "value": "The name already exists or is invalid, please update it before proceeding."
+    }
+  ],
   "gWRF8m": [
     {
       "type": 0,
@@ -5722,12 +5902,6 @@
     {
       "type": 0,
       "value": "Delete"
-    }
-  ],
-  "gpbgjJ": [
-    {
-      "type": 0,
-      "value": "値 {splitOn} の分割が無効です。出力で見つかりません。"
     }
   ],
   "gu9o9z": [
@@ -5797,12 +5971,6 @@
     {
       "type": 0,
       "value": "2 つの数値を減算した結果を返します"
-    }
-  ],
-  "hdnZ9Y": [
-    {
-      "type": 0,
-      "value": "Alt または Option キーを押しながらクリックして {displayName} をダウンロードします"
     }
   ],
   "hic23z": [
@@ -6005,12 +6173,6 @@
       "value": "テスト"
     }
   ],
-  "izS5yQ": [
-    {
-      "type": 0,
-      "value": "Learn more"
-    }
-  ],
   "j1VU25": [
     {
       "type": 0,
@@ -6113,12 +6275,6 @@
       "value": "スキーマを生成できません"
     }
   ],
-  "jjYA4u": [
-    {
-      "type": 0,
-      "value": "サポートされていないマニフェスト接続参照形式: {referenceKeyFormat}"
-    }
-  ],
   "juR40n": [
     {
       "type": 0,
@@ -6135,12 +6291,6 @@
     {
       "type": 0,
       "value": "必須。Base64 でエンコードされた文字列。"
-    }
-  ],
-  "k1N9Si": [
-    {
-      "type": 0,
-      "value": "Must provide default value for parameter."
     }
   ],
   "k41+13": [
@@ -6287,6 +6437,12 @@
       "value": " 分"
     }
   ],
+  "l72gf4": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
+    }
+  ],
   "lFve22": [
     {
       "type": 0,
@@ -6315,6 +6471,12 @@
     {
       "type": 0,
       "value": "Functions"
+    }
+  ],
+  "lUm6fl": [
+    {
+      "type": 0,
+      "value": "Return"
     }
   ],
   "lZT0JI": [
@@ -6379,24 +6541,6 @@
       "value": "Select an action type"
     }
   ],
-  "lzBHHT": [
-    {
-      "type": 0,
-      "value": "Array Element "
-    },
-    {
-      "type": 1,
-      "value": "index"
-    },
-    {
-      "type": 0,
-      "value": " has unknown property "
-    },
-    {
-      "type": 1,
-      "value": "property"
-    }
-  ],
   "lztiwS": [
     {
       "type": 0,
@@ -6439,6 +6583,16 @@
       "value": "関数が削除されました。"
     }
   ],
+  "mGPqAg": [
+    {
+      "type": 0,
+      "value": "Delete "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -6461,6 +6615,20 @@
     {
       "type": 0,
       "value": "URL で入力文字列をエンコードします"
+    }
+  ],
+  "mPuXlv": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "', split on not in array."
     }
   ],
   "mQotIu": [
@@ -6509,6 +6677,16 @@
     {
       "type": 0,
       "value": "パスワードをプレーンテキストとして入力するか、セキュリティで保護されたパラメーターを使用してください"
+    }
+  ],
+  "mvu5xN": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " Value"
     }
   ],
   "mwEHSX": [
@@ -6783,12 +6961,6 @@
       "value": "(UTC+13:00) サモア"
     }
   ],
-  "p7YGxW": [
-    {
-      "type": 0,
-      "value": "API {parameters} の実行でエラーが発生しました。"
-    }
-  ],
   "pC2nr2": [
     {
       "type": 0,
@@ -6909,10 +7081,30 @@
       "value": "渡された文字列のタイムスタンプに秒数を表す整数を加算します"
     }
   ],
+  "q8vnZQ": [
+    {
+      "type": 0,
+      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned."
+    }
+  ],
   "q9hf8i": [
     {
       "type": 0,
       "value": "(UTC+04:00) アストラハン、ウリヤノフスク"
+    }
+  ],
+  "qAlTD5": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: '"
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "qGfwxW": [
@@ -6949,12 +7141,6 @@
     {
       "type": 0,
       "value": "必須"
-    }
-  ],
-  "qTqSqD": [
-    {
-      "type": 0,
-      "value": "エラー コード: {errorCode}、メッセージ: {message}。"
     }
   ],
   "qUMXpq": [
@@ -7116,6 +7302,12 @@
       "value": "値の URI でエンコードされた表現を返します"
     }
   ],
+  "rd6fai": [
+    {
+      "type": 0,
+      "value": "Use left and right arrow keys to navigate between commands"
+    }
+  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -7260,6 +7452,20 @@
       "value": "クライアント証明書"
     }
   ],
+  "sytRna": [
+    {
+      "type": 0,
+      "value": "Failed to retrieve dynamic inputs. Error details: '"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -7330,6 +7536,12 @@
     {
       "type": 0,
       "value": "この関数は、実行時のワークフロー自体の詳細を返します"
+    }
+  ],
+  "tMdcE1": [
+    {
+      "type": 0,
+      "value": "Invalid connection, please update your connection to load complete details"
     }
   ],
   "tNoZx2": [
@@ -7966,6 +8178,20 @@
     {
       "type": 0,
       "value": "値を選択してください"
+    }
+  ],
+  "yjierd": [
+    {
+      "type": 0,
+      "value": "Invalid expression type '"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "yoCi15": [
