@@ -3143,6 +3143,12 @@
       "value": "actionCount"
     }
   ],
+  "KYX5Do": [
+    {
+      "type": 0,
+      "value": "Underline (⌘U)"
+    }
+  ],
   "KZOa5l": [
     {
       "type": 0,
@@ -3273,6 +3279,12 @@
     {
       "type": 0,
       "value": "Bullet List"
+    }
+  ],
+  "Lnqh6h": [
+    {
+      "type": 0,
+      "value": "Bold (Ctrl+B)"
     }
   ],
   "LoGUT3": [
@@ -4116,6 +4128,12 @@
     {
       "type": 0,
       "value": "'"
+    }
+  ],
+  "S138/4": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: ⌘B"
     }
   ],
   "SADSSs": [
@@ -5032,6 +5050,12 @@
       "value": "Stringa"
     }
   ],
+  "YJlS8E": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: Ctrl+U"
+    }
+  ],
   "YKXmKD": [
     {
       "type": 0,
@@ -5042,6 +5066,12 @@
     {
       "type": 0,
       "value": "Immetti file PFX"
+    }
+  ],
+  "YR1uWE": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: Ctrl+B"
     }
   ],
   "YRk271": [
@@ -5066,6 +5096,12 @@
     {
       "type": 0,
       "value": "Restituisce un singolo oggetto o matrice con tutti gli elementi inclusi nella matrice o nell'oggetto passato a questa funzione. I parametri per la funzione possono essere costituiti da un set di oggetti o un set di matrici, ma non da una combinazione di entrambi. Se nell'output finale sono presenti due oggetti con lo stesso nome, nell'oggetto finale sarà visualizzato l'ultimo oggetto con tale nome."
+    }
+  ],
+  "YdQw4/": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: ⌘I"
     }
   ],
   "YfwZJO": [
@@ -5518,6 +5554,12 @@
       "value": "Selezionare un'identità"
     }
   ],
+  "ciLkfU": [
+    {
+      "type": 0,
+      "value": "Bold (⌘B)"
+    }
+  ],
   "cj+kyo": [
     {
       "type": 0,
@@ -5646,6 +5688,12 @@
       "value": "Close"
     }
   ],
+  "dfmH55": [
+    {
+      "type": 0,
+      "value": "Italic (Ctrl+I)"
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -5764,6 +5812,12 @@
     {
       "type": 0,
       "value": "Enter an integer"
+    }
+  ],
+  "elD6+N": [
+    {
+      "type": 0,
+      "value": "Italic (⌘I)"
     }
   ],
   "epOMnV": [
@@ -5958,6 +6012,12 @@
     {
       "type": 0,
       "value": "Nome della connessione"
+    }
+  ],
+  "gIx5ys": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: Ctrl+I"
     }
   ],
   "gKq3Jv": [
@@ -6689,6 +6749,12 @@
       "value": "Select an action type"
     }
   ],
+  "lwlg2K": [
+    {
+      "type": 0,
+      "value": "Underline (Ctrl+U)"
+    }
+  ],
   "lztiwS": [
     {
       "type": 0,
@@ -7255,6 +7321,12 @@
       "value": "'"
     }
   ],
+  "qBkxGU": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: ⌘U"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -7724,6 +7796,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Novosibirsk"
+    }
+  ],
+  "tUCptx": [
+    {
+      "type": 0,
+      "value": "Insert Link"
     }
   ],
   "tUYXRA": [
