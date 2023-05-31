@@ -332,7 +332,7 @@ export const createValueSegmentFromToken = async (
           !!tokenValueSegment.token?.required
         );
       } else {
-        ensureExpressionValue(tokenValueSegment);
+        ensureExpressionValue(tokenValueSegment, /* calculateValue */ true);
       }
     }
 

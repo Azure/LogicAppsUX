@@ -854,10 +854,10 @@ export function shouldUseParameterInGroup(parameter: ParameterInfo, allParameter
   return true;
 }
 
-export function ensureExpressionValue(valueSegment: ValueSegment): void {
+export function ensureExpressionValue(valueSegment: ValueSegment, calculateValue = false): void {
   if (isTokenValueSegment(valueSegment)) {
     // eslint-disable-next-line no-param-reassign
-    valueSegment.value = getTokenExpressionValue(valueSegment.token as SegmentToken, valueSegment.value);
+    valueSegment.value = getTokenExpressionValue(valueSegment.token as SegmentToken, calculateValue ? undefined : valueSegment.value);
   }
 }
 
@@ -1016,7 +1016,7 @@ function getNonOpenApiTokenExpressionValue(token: SegmentToken): string {
   // TODO: Need to have a full story for showing/hiding tokens that represent item().
   if (arrayDetails) {
     if (arrayDetails.loopSource) {
-      return `@items(${convertToStringLiteral(arrayDetails.loopSource)})${propertyPath}`;
+      return `items(${convertToStringLiteral(arrayDetails.loopSource)})${propertyPath}`;
     } else {
       return `${constants.ITEM}${propertyPath}`;
     }
