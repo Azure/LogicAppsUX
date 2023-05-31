@@ -2435,6 +2435,12 @@
       "value": "(UTC+05:45) Kathmandu"
     }
   ],
+  "FIL1Nt": [
+    {
+      "type": 0,
+      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
+    }
+  ],
   "FIT7i0": [
     {
       "type": 0,
@@ -3149,6 +3155,12 @@
       "value": "actionCount"
     }
   ],
+  "KYX5Do": [
+    {
+      "type": 0,
+      "value": "Underline (⌘U)"
+    }
+  ],
   "KZOa5l": [
     {
       "type": 0,
@@ -3295,6 +3307,12 @@
     {
       "type": 0,
       "value": "Bullet List"
+    }
+  ],
+  "Lnqh6h": [
+    {
+      "type": 0,
+      "value": "Bold (Ctrl+B)"
     }
   ],
   "LoGUT3": [
@@ -4139,6 +4157,12 @@
     {
       "type": 0,
       "value": "'"
+    }
+  ],
+  "S138/4": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: ⌘B"
     }
   ],
   "SADSSs": [
@@ -5055,6 +5079,12 @@
       "value": "Zeichenfolge"
     }
   ],
+  "YJlS8E": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: Ctrl+U"
+    }
+  ],
   "YKXmKD": [
     {
       "type": 0,
@@ -5065,6 +5095,12 @@
     {
       "type": 0,
       "value": "PFX eingeben"
+    }
+  ],
+  "YR1uWE": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: Ctrl+B"
     }
   ],
   "YRk271": [
@@ -5089,6 +5125,12 @@
     {
       "type": 0,
       "value": "Gibt ein einzelnes Array oder Objekt mit allen Elementen zurück, die sich entweder in einem Array oder in einem Objekt befinden, das an diese Funktion übergeben wurde. Bei den Parametern für die Funktion kann es sich entweder um einen Satz Objekte oder um einen Satz Arrays handeln (keine Mischung aus beidem). Wenn in der finalen Ausgabe zwei Objekte mit dem gleichen Namen vorhanden sind, wird das letzte Objekt mit diesem Namen in das endgültige Objekt aufgenommen."
+    }
+  ],
+  "YdQw4/": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: ⌘I"
     }
   ],
   "YfwZJO": [
@@ -5545,6 +5587,12 @@
       "value": "Wählen Sie eine Identität aus."
     }
   ],
+  "ciLkfU": [
+    {
+      "type": 0,
+      "value": "Bold (⌘B)"
+    }
+  ],
   "cj+kyo": [
     {
       "type": 0,
@@ -5673,6 +5721,12 @@
       "value": "Close"
     }
   ],
+  "dfmH55": [
+    {
+      "type": 0,
+      "value": "Italic (Ctrl+I)"
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -5791,6 +5845,12 @@
     {
       "type": 0,
       "value": "Enter an integer"
+    }
+  ],
+  "elD6+N": [
+    {
+      "type": 0,
+      "value": "Italic (⌘I)"
     }
   ],
   "epOMnV": [
@@ -5985,6 +6045,12 @@
     {
       "type": 0,
       "value": "Verbindungsname"
+    }
+  ],
+  "gIx5ys": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: Ctrl+I"
     }
   ],
   "gKq3Jv": [
@@ -6713,6 +6779,12 @@
       "value": "Select an action type"
     }
   ],
+  "lwlg2K": [
+    {
+      "type": 0,
+      "value": "Underline (Ctrl+U)"
+    }
+  ],
   "lztiwS": [
     {
       "type": 0,
@@ -7279,6 +7351,12 @@
       "value": "'"
     }
   ],
+  "qBkxGU": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: ⌘U"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -7737,6 +7815,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Nowosibirsk"
+    }
+  ],
+  "tUCptx": [
+    {
+      "type": 0,
+      "value": "Insert Link"
     }
   ],
   "tUYXRA": [

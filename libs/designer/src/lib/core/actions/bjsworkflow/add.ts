@@ -4,7 +4,7 @@ import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queri
 import { getOperationManifest } from '../../queries/operation';
 import { initEmptyConnectionMap } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation, OperationMetadataState } from '../../state/operation/operationMetadataSlice';
-import { updateNodeSettings, initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
+import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { changePanelNode, isolateTab, showDefaultTabs } from '../../state/panel/panelSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
@@ -225,15 +225,10 @@ const initializeOperationDetails = async (
     }
   });
 
-  // Re-update settings after we have valid operation data
-  const operation = getState().workflow.operations[nodeId];
-
   const triggerNodeManifest = await getTriggerNodeManifest(state.workflow, state.operations);
 
-  const settings = getOperationSettings(isTrigger, operationInfo, initData.nodeOutputs, manifest, swagger, operation);
-  dispatch(updateNodeSettings({ id: nodeId, settings }));
   if (triggerNodeManifest) {
-    updateInvokerSettings(isTrigger, triggerNodeManifest, nodeId, settings, dispatch);
+    updateInvokerSettings(isTrigger, triggerNodeManifest, nodeId, initData.settings as Settings, dispatch);
   }
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);

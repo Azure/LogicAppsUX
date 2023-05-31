@@ -249,7 +249,9 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
 
   // Don't show name for simple connections
   const showNameInput = useMemo(
-    () => !(isUsingOAuth && !isMultiAuth) && (isMultiAuth || Object.keys(capabilityEnabledParameters ?? {}).length > 0 || legacyManagedIdentitySelected),
+    () =>
+      !(isUsingOAuth && !isMultiAuth) &&
+      (isMultiAuth || Object.keys(capabilityEnabledParameters ?? {}).length > 0 || legacyManagedIdentitySelected),
     [isUsingOAuth, isMultiAuth, capabilityEnabledParameters, legacyManagedIdentitySelected]
   );
 

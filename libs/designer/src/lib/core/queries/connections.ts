@@ -55,8 +55,8 @@ export const useConnectionById = (connectionId: string, connectorId: string) => 
     } else {
       return {
         isLoading: isConnectionLoading,
-        result: connection
-      }
+        result: connection,
+      };
     }
   }
 
@@ -114,11 +114,11 @@ const useConnectionResource = (connectionId: string) => {
     enabled: !!connectionId,
     refetchOnMount: false,
   });
-}
+};
 
 const getConnectionFromResource = async (connectionId: string) => {
   const queryClient = getReactQueryClient();
   return queryClient.fetchQuery(['connection', connectionId?.toLowerCase()], async () => {
-    return await ConnectionService().getConnection(connectionId)
+    return await ConnectionService().getConnection(connectionId);
   });
 };
