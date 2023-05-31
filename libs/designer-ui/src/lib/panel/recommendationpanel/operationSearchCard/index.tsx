@@ -1,4 +1,5 @@
 import { InfoDot } from '../../../infoDot';
+import { convertUIElementNameToAutomationId } from '../../../utils';
 import type { OperationActionData } from '../interfaces';
 import { Text, Image } from '@fluentui/react';
 import { useIntl } from 'react-intl';
@@ -32,7 +33,12 @@ export const OperationSearchCard = (props: OperationSearchCardProps) => {
   };
 
   return (
-    <button className="msla-op-search-card-container" onClick={() => onCardClick()} style={style}>
+    <button
+      className="msla-op-search-card-container"
+      onClick={() => onCardClick()}
+      style={style}
+      data-automation-id={`msla-op-search-result-${convertUIElementNameToAutomationId(title)}`}
+    >
       <div className="msla-op-search-card-color-line" style={{ background: brandColor }} />
       {showImage && iconUri ? <Image className="msla-op-search-card-image" alt={title} src={iconUri} /> : null}
       <Text className="msla-op-search-card-name">{title}</Text>

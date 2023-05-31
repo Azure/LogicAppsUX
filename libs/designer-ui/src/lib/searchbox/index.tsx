@@ -22,6 +22,7 @@ export const DesignerSearchBox: React.FC<SearchBoxProps> = (props) => {
       className="msla-search-box"
       onChange={(_event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => searchCallback(newValue ?? '')}
       value={searchTerm}
+      data-automation-id="msla-search-box"
     />
   );
 };

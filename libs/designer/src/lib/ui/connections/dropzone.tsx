@@ -122,7 +122,12 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
       )}
       {!isOver && (
         <>
-          <ActionButtonV2 id={buttonId} title={tooltipText} onClick={actionButtonClick} />
+          <ActionButtonV2
+            id={buttonId}
+            title={tooltipText}
+            onClick={actionButtonClick}
+            dataAutomationId={`msla-plus-button-${parentId}-${childId}`.replace(/\W/g, '-')}
+          />
           {showCallout && (
             <Callout
               role="dialog"
@@ -135,11 +140,19 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
             >
               <FocusZone>
                 <div className="msla-add-context-menu">
-                  <ActionButton iconProps={{ imageProps: { src: AddNodeIcon } }} onClick={openAddNodePanel}>
+                  <ActionButton
+                    iconProps={{ imageProps: { src: AddNodeIcon } }}
+                    onClick={openAddNodePanel}
+                    data-automation-id={`msla-add-action-${parentId}-${childId}`.replace(/\W/g, '-')}
+                  >
                     {newActionText}
                   </ActionButton>
                   {showParallelBranchButton ? (
-                    <ActionButton iconProps={{ imageProps: { src: AddBranchIcon } }} onClick={addParallelBranch}>
+                    <ActionButton
+                      iconProps={{ imageProps: { src: AddBranchIcon } }}
+                      onClick={addParallelBranch}
+                      data-automation-id={`msla-add-parallel-branch-${parentId}-${childId}`.replace(/\W/g, '-')}
+                    >
                       {newBranchText}
                     </ActionButton>
                   ) : null}
