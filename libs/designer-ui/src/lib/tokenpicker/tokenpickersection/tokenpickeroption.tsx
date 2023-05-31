@@ -4,6 +4,7 @@ import type { ValueSegment } from '../../editor';
 import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
 import { SINGLE_VALUE_SEGMENT } from '../../editor/base/plugins/SingleValueSegment';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
+import { convertUIElementNameToAutomationId } from '../../utils';
 import type { Token, TokenGroup } from '../models/token';
 import { Icon } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -167,7 +168,7 @@ export const TokenPickerOptions = ({
               <button
                 className="msla-token-picker-section-header-button"
                 onClick={handleMoreLess}
-                data-automation-id={`msla-token-picker-section-header-button-${section.label.replace(/\W/g, '_').toLowerCase()}`}
+                data-automation-id={`msla-token-picker-section-header-button-${convertUIElementNameToAutomationId(section.label)}`}
               >
                 <span> {moreOptions ? buttonTextMore : buttonTextLess}</span>
               </button>

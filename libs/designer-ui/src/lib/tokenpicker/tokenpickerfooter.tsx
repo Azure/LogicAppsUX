@@ -97,6 +97,7 @@ export function TokenPickerFooter({ expression, expressionToBeUpdated, setExpres
   return (
     <div className="msla-token-picker-footer">
       <PrimaryButton
+        data-automation-id="msla-token-picker-expression-addorupdate-button"
         text={expressionToBeUpdated ? tokenPickerUpdate : tokenPickerAdd}
         onClick={onUpdateOrAddClicked}
         style={{ marginLeft: '10px', height: '28px', fontSize: '14px' }}
