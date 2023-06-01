@@ -937,3 +937,19 @@ export function findAncestorElement(
 export function hasInvalidChars(str: string, invalidChars: string[]): boolean {
   return invalidChars.some((invalidChar) => includes(str, invalidChar));
 }
+
+/**
+ * Returns the property value from an object, using a case-insensitive search on the property key.
+ * @arg {Record<string, any>} object - The object.
+ * @arg {string} propertyKey - The property key.
+ */
+export function getCaseInsensitiveProperty(object: Record<string, any>, propertyKey?: string): any {
+  if (!propertyKey) return undefined;
+  for (const key of Object.keys(object)) {
+    if (equals(key, propertyKey, true)) {
+      return object[key];
+    }
+  }
+
+  return undefined;
+}
