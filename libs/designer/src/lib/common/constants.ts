@@ -324,6 +324,7 @@ export default {
       ELSE: 'else',
       SWITCH_CASE: 'switchcase',
       SWITCH_DEFAULT: 'switchdefault',
+      PLACEHOLDER_TRIGGER: 'builtin:newWorkflowTrigger',
       // Action and trigger types.
       API_CONNECTION_WEBHOOK: 'apiconnectionwebhook',
       API_CONNECTION: 'apiconnection',

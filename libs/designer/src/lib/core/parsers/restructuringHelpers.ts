@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import constants from '../../common/constants';
 import { isWorkflowOperationNode } from '../actions/bjsworkflow/serializer';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
@@ -126,7 +127,7 @@ export const applyIsRootNode = (state: WorkflowState, graph: WorkflowNode, metad
     }, graph.children?.filter((node) => isWorkflowOperationNode(node))?.map((node) => node.id) ?? []) ?? [];
 
   (graph.children ?? []).forEach((node) => {
-    const isRoot = rootNodeIds?.includes(node.id) ?? false;
+    const isRoot = node.id === constants.NODE.TYPE.PLACEHOLDER_TRIGGER ? true : rootNodeIds?.includes(node.id) ?? false;
     if (metadata[node.id]) metadata[node.id].isRoot = isRoot;
     if (isRoot) delete (state.operations[node.id] as LogicAppsV2.ActionDefinition)?.runAfter;
   });
