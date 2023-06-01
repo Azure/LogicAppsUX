@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [2.25.0](https://github.com/Azure/LogicAppsUX/compare/v2.24.0...v2.25.0) (2023-06-01)
+
+
+### Features
+
+* **Data Mapper:** Handle situations where the generated XSLT and the mapping don't match ([#2630](https://github.com/Azure/LogicAppsUX/issues/2630)) ([4d3b287](https://github.com/Azure/LogicAppsUX/commit/4d3b287db36afe87de192b2456385bc65eeab9c5))
+* **vscode:** Update templates for Custom Code  ([#2629](https://github.com/Azure/LogicAppsUX/issues/2629)) ([1cd38df](https://github.com/Azure/LogicAppsUX/commit/1cd38dfc03da2e4294d54d58097f638799ccd206))
+
+
+### Bug Fixes
+
+* **designer:** Add validation for isRoot placeholder trigger node ([#2641](https://github.com/Azure/LogicAppsUX/issues/2641)) ([67855af](https://github.com/Azure/LogicAppsUX/commit/67855af93a9bc50d99f5dedbbc3f99e8f493460b))
+* **Designer:** Fixed issue with case-insensitive dependency parameters ([#2635](https://github.com/Azure/LogicAppsUX/issues/2635)) ([89db58f](https://github.com/Azure/LogicAppsUX/commit/89db58f4c67712d5f4cc7a5ed0a2df843941c8d6))
+* **designer:** Handling implicit foreach addition for nested arrays and also fixing multiple foreach additions when not needed ([#2636](https://github.com/Azure/LogicAppsUX/issues/2636)) ([3bf6f8b](https://github.com/Azure/LogicAppsUX/commit/3bf6f8b8bd73b5832018fb09748edbee7d096c3e))
+* **vscode): Revert "feat(vscode:** Add New Code Project Command ([#2427](https://github.com/Azure/LogicAppsUX/issues/2427))" ([#2638](https://github.com/Azure/LogicAppsUX/issues/2638)) ([5fb81f6](https://github.com/Azure/LogicAppsUX/commit/5fb81f6b1adbb0aaf3e92e32760c15cecc94e7f0)), closes [#2629](https://github.com/Azure/LogicAppsUX/issues/2629)
+
 ## [2.24.0](https://github.com/Azure/LogicAppsUX/compare/v2.23.0...v2.24.0) (2023-05-31)
 
 
