@@ -148,7 +148,7 @@ export default class DataMapperPanel {
         data: this.mapDefinitionData,
       });
 
-      this.checkForAndSetXsltFilename();
+      this.checkAndSetXslt();
 
       this.mapDefinitionData = undefined;
     }
@@ -255,7 +255,7 @@ export default class DataMapperPanel {
               }
             });
 
-            this.checkForAndSetXsltFilename();
+            this.checkAndSetXslt();
           });
         })
         .catch(DataMapperExt.showError);
@@ -268,7 +268,7 @@ export default class DataMapperPanel {
     const filePath = path.join(dataMapDefFolderPath, mapDefileName);
 
     // Mkdir as extra insurance that directory exists so file can be written
-    // - harmless if directory already exists
+    // Harmless if directory already exists
     fs.mkdir(dataMapDefFolderPath, { recursive: true })
       .then(() => {
         fs.writeFile(filePath, mapDefFileContents, 'utf8');
@@ -287,13 +287,18 @@ export default class DataMapperPanel {
     }
   }
 
-  public checkForAndSetXsltFilename() {
+  public checkAndSetXslt() {
     const expectedXsltPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapsPath, `${this.dataMapName}${mapXsltExtension}`);
 
     if (fileExistsSync(expectedXsltPath)) {
-      this.sendMsgToWebview({
-        command: 'setXsltFilename',
-        data: this.dataMapName,
+      fs.readFile(expectedXsltPath, 'utf-8').then((fileContents) => {
+        this.sendMsgToWebview({
+          command: 'setXsltData',
+          data: {
+            filename: this.dataMapName,
+            fileContents,
+          },
+        });
       });
     } else {
       DataMapperExt.showWarning(`XSLT file not detected for ${this.dataMapName}`);

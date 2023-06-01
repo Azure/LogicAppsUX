@@ -5,12 +5,13 @@ type FetchSchemaData = { fileName: string; type: SchemaType };
 type SchemaPathData = { path: string; type: SchemaType };
 
 export type MapDefinitionData = { mapDefinition: MapDefinitionEntry; sourceSchemaFileName: string; targetSchemaFileName: string };
+export type XsltData = { filename: string; fileContents: string };
 
 export type MessageToWebview =
   | { command: 'fetchSchema'; data: FetchSchemaData }
   | { command: 'loadDataMap'; data: MapDefinitionData }
   | { command: 'showAvailableSchemas'; data: string[] }
-  | { command: 'setXsltFilename'; data: string }
+  | { command: 'setXsltData'; data: XsltData }
   | { command: 'setRuntimePort'; data: string }
   | { command: 'getConfigurationSetting'; data: boolean };
 

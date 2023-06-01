@@ -73,6 +73,7 @@ export interface DataMapOperationState {
   selectedItemKeyParts?: ReactFlowIdParts;
   selectedItemConnectedNodes: ConnectionUnit[];
   xsltFilename: string;
+  xsltContent: string;
   inlineFunctionInputOutputKeys: string[];
   lastAction: string;
 }
@@ -86,6 +87,7 @@ const emptyPristineState: DataMapOperationState = {
   flattenedTargetSchema: {},
   targetSchemaOrdering: [],
   xsltFilename: '',
+  xsltContent: '',
   inlineFunctionInputOutputKeys: [],
   selectedItemConnectedNodes: [],
   lastAction: 'Pristine',
@@ -139,6 +141,11 @@ export const dataMapSlice = createSlice({
     setXsltFilename: (state, action: PayloadAction<string>) => {
       state.curDataMapOperation.xsltFilename = action.payload;
       state.pristineDataMap.xsltFilename = action.payload;
+    },
+
+    setXsltContent: (state, action: PayloadAction<string>) => {
+      state.curDataMapOperation.xsltContent = action.payload;
+      state.pristineDataMap.xsltContent = action.payload;
     },
 
     setInitialSchema: (state, action: PayloadAction<InitialSchemaAction>) => {
@@ -575,6 +582,7 @@ export const dataMapSlice = createSlice({
 export const {
   deleteConnection,
   setXsltFilename,
+  setXsltContent,
   setInitialSchema,
   setInitialDataMap,
   changeSourceSchema,
