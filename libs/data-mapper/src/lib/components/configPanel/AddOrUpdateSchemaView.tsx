@@ -1,10 +1,10 @@
 import { ConfigPanelView } from '../../core/state/PanelSlice';
 import type { RootState } from '../../core/state/Store';
 import { SchemaType } from '../../models';
-import { PrimaryButton, Stack, TextField, ChoiceGroup, MessageBar, MessageBarType, Text } from '@fluentui/react';
-import type { IChoiceGroupOption } from '@fluentui/react';
+import { PrimaryButton, Stack, TextField, ChoiceGroup, MessageBar, MessageBarType } from '@fluentui/react';
+import type { IChoiceGroupOption, IStackTokens } from '@fluentui/react';
 import type { ComboboxProps } from '@fluentui/react-components';
-import { Combobox, Option } from '@fluentui/react-components';
+import { makeStyles, shorthands, tokens, Combobox, Option, Text } from '@fluentui/react-components';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -160,10 +160,7 @@ export const AddOrUpdateSchemaView = ({
     [addNewLoc, selectExistingLoc]
   );
 
-  const dataMapDropdownOptions = useMemo(
-    () => availableSchemaList?.map((file) => ({ key: file, text: file })) ?? [],
-    [availableSchemaList]
-  );
+  const dataMapDropdownOptions = useMemo(() => availableSchemaList ?? [], [availableSchemaList]);
 
   const [matchingOptions, setMatchingOptions] = React.useState([...dataMapDropdownOptions]);
 
@@ -175,7 +172,7 @@ export const AddOrUpdateSchemaView = ({
   const updateOptions: ComboboxProps['onChange'] = (event) => {
     const value = event.target.value.trim();
     if (value && value.length > 0) {
-      const matches = dataMapDropdownOptions.filter((o) => o.key.toLowerCase().indexOf(value?.toLowerCase()) === 0);
+      const matches = dataMapDropdownOptions.filter((o) => o.toLowerCase().indexOf(value?.toLowerCase()) === 0);
       setMatchingOptions(matches);
     }
     onSelectOption(value);
@@ -183,10 +180,15 @@ export const AddOrUpdateSchemaView = ({
 
   const formattedOptions =
     matchingOptions.length !== 0
-      ? matchingOptions.map((option) => optionWithPath(option.key))
-      : dataMapDropdownOptions.map((option) => optionWithPath(option.key));
+      ? matchingOptions.map((option) => optionWithPath(option))
+      : dataMapDropdownOptions.map((option) => optionWithPath(option));
+  // danielle sort options
   console.log(errorMessage); // danielle need to find a place to put this
   console.log(selectedSchema);
+
+  // const sortOptionsByPath = (fileNames: { key: string; text: string }[]) => {
+  //   console.log(fileNames);
+  // };
 
   return (
     <div>
@@ -231,6 +233,7 @@ export const AddOrUpdateSchemaView = ({
           aria-label={dropdownAriaLabel}
           placeholder={schemaDropdownPlaceholder}
           onChange={updateOptions}
+          onOptionSelect={(e, data) => setSelectedSchema(data.optionValue)}
           freeform={true}
           autoComplete="on"
           //errorMessage={errorMessage}
@@ -244,10 +247,32 @@ export const AddOrUpdateSchemaView = ({
   );
 };
 
+const useStyles = makeStyles({
+  option: {
+    ...shorthands.borderBottom('.5px', 'solid', tokens.colorNeutralStroke1),
+  },
+});
+
 const optionWithPath: React.FC<string> = (option: string) => {
+  const lastIndexOfSlash = option.lastIndexOf('/'); // danielle windows vs mac
+  const fileName = lastIndexOfSlash !== -1 ? option.slice(lastIndexOfSlash + 1, option.length + 1) : option;
+  const filePath = option.slice(0, lastIndexOfSlash + 1);
+
+  // styling
+  const stackTokens: IStackTokens = {
+    childrenGap: 5,
+  };
+
+  // danielle fix
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const styles = useStyles();
+
   return (
-    <Option text={option}>
-      <div>{option}</div>
+    <Option text={option} value={option} className={styles.option}>
+      <Stack tokens={stackTokens} style={{ width: '100%' }}>
+        <Text size={200}>{fileName}</Text>
+        {filePath.length !== 0 && <Text size={100}>{filePath}</Text>}
+      </Stack>
     </Option>
   );
 };

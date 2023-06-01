@@ -47,12 +47,12 @@ export const ConfigPanel = ({
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
   const [errorMessage, setErrorMessage] = useState('');
 
-  const fetchedSourceSchema = useQuery([selectedSourceSchema], async () => await getSelectedSchema(selectedSourceSchema ?? ''), {
+  const fetchedSourceSchema = useQuery([selectedSourceSchema], async () => await getSelectedSchema(selectedSourceSchema ?? '', ''), {
     ...schemaFileQuerySettings,
     enabled: selectedSourceSchema !== undefined,
   });
 
-  const fetchedTargetSchema = useQuery([selectedTargetSchema], async () => await getSelectedSchema(selectedTargetSchema ?? ''), {
+  const fetchedTargetSchema = useQuery([selectedTargetSchema], async () => await getSelectedSchema(selectedTargetSchema ?? '', ''), {
     ...schemaFileQuerySettings,
     enabled: selectedTargetSchema !== undefined,
   });
