@@ -33,6 +33,7 @@ export interface AppProps {
   corsNotice?: string;
   accessToken?: string;
   onOpenRun(run: RunDisplayItem): void;
+  hostVersion?: string;
 }
 
 export const App: React.FC<AppProps> = (props) => {
@@ -51,9 +52,9 @@ export const App: React.FC<AppProps> = (props) => {
   );
 };
 
-const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseUrl, accessToken, onOpenRun, corsNotice }) => {
+const OverviewApp: React.FC<AppProps> = ({ workflowProperties, apiVersion, baseUrl, accessToken, onOpenRun, corsNotice, hostVersion }) => {
   const runService = useMemo(() => {
-    const httpClient = new HttpClient({ accessToken: accessToken, baseUrl, apiHubBaseUrl: '' });
+    const httpClient = new HttpClient({ accessToken: accessToken, baseUrl, apiHubBaseUrl: '', hostVersion });
 
     return new StandardRunService({
       baseUrl,

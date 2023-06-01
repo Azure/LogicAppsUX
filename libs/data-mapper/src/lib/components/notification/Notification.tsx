@@ -32,6 +32,7 @@ export interface NotificationData {
 const defaultNotificationAutoHideDuration = 5000; // ms
 export const deletedNotificationAutoHideDuration = 3000;
 export const errorNotificationAutoHideDuration = 7000;
+export const disabledAutoHide = -1;
 
 const useStyles = makeStyles({
   toast: {
@@ -44,7 +45,7 @@ const useStyles = makeStyles({
     boxShadow: tokens.shadow16,
     backgroundColor: tokens.colorNeutralBackground1,
     ...shorthands.padding('12px'),
-    zIndex: 12,
+    zIndex: 120,
   },
   msgTitle: {
     ...typographyStyles.body1Strong,
@@ -76,6 +77,10 @@ export const Notification = (props: NotificationProps) => {
 
   const notificationIcon = useMemo(() => {
     switch (type) {
+      // Warning icon
+      //case NotificationTypes.None:
+      //return <Warning20Filled style={{ color: tokens.colorPaletteGoldBorderActive, marginRight: 8 }} />;
+
       // Error icon
       case NotificationTypes.GenerateFailed:
       case NotificationTypes.MapHasErrorsAtSave:
@@ -219,7 +224,7 @@ export const Notification = (props: NotificationProps) => {
           </StackItem>
         );
     }
-  }, [dispatch, onClose, showMeLoc, styles.actionButton, openMapChecker, type, undoLoc]);
+  }, [type, styles.actionButton, openMapChecker, showMeLoc, undoLoc, onClose, dispatch]);
 
   return (
     <div className={styles.toast}>

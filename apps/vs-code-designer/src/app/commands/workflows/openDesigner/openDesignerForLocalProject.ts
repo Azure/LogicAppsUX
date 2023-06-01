@@ -176,6 +176,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             isMonitoringView: this.isMonitoringView,
             workflowDetails: this.workflowDetails,
             oauthRedirectUrl: this.oauthRedirectUrl,
+            hostVersion: ext.extensionVersion,
           },
         });
         break;

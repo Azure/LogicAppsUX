@@ -390,7 +390,7 @@ export const DataMapperDesigner = ({
           setFunctionDisplayExpanded={setFunctionDisplayExpanded}
           useExpandedFunctionCards={useExpandedFunctionCards}
         />
-        <TestMapPanel isOpen={isTestMapPanelOpen} onClose={() => setTestMapPanelOpen(false)} />
+        <TestMapPanel mapDefinition={dataMapDefinition} isOpen={isTestMapPanelOpen} onClose={() => setTestMapPanelOpen(false)} />
       </div>
     </DndProvider>
   );

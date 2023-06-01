@@ -353,3 +353,7 @@ export const getConnectorCategoryString = (connectorId: string): string => {
 
   return isBuiltInConnector(connectorId) ? builtInText : isCustomConnector(connectorId) ? customText : azureText;
 };
+
+export const convertUIElementNameToAutomationId = (uiElementName: string): string => {
+  return uiElementName?.replace(/\W/g, '_')?.toLowerCase();
+};
