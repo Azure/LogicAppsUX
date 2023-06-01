@@ -187,9 +187,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
       if (legacyManagedIdentitySelected) return false; // TODO: Riley - Only show the managed identity parameters (which is none for now)
       if (constraints?.hidden === 'true' || constraints?.hideInUI === 'true') return false;
       const dependentParam = constraints?.dependentParameter;
-      if (dependentParam?.parameter) {
-        if (getPropertyValue(parameterValues, dependentParam.parameter) !== dependentParam.value) return false;
-      }
+      if (dependentParam?.parameter && getPropertyValue(parameterValues, dependentParam.parameter) !== dependentParam.value) return false;
       if (parameter.type === ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]) return false;
       if (parameter.type === ConnectionParameterTypes[ConnectionParameterTypes.managedIdentity]) return false;
       return true;
