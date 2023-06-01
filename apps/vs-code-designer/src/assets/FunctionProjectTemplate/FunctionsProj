@@ -11,31 +11,44 @@
  </PropertyGroup>
 
   <ItemGroup>
-    <!-- Please ensure you have the 'Microsoft.Azure.Functions.Extensions.Workflows.WorkflowActionTrigger' package and the 'Microsoft.Azure.WebJobs.Core' dependency. -->
-    <PackageReference Include="Microsoft.Azure.Functions.Extensions.Workflows.WorkflowActionTrigger" Version="1.0.0" />
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.0.0" />
+  <!-- Make sure that you have the 'Microsoft.Azure.Functions.Extensions.Workflows.WorkflowActionTrigger' package and the 'Microsoft.Azure.WebJobs.Core' dependency. -->
     <PackageReference Include="Microsoft.Azure.WebJobs.Core" Version="3.0.33" />
+     <PackageReference Include="Microsoft.Azure.Workflows.Webjobs.Sdk" version="1.0.1-preview"></PackageReference> 
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.24" />
   </ItemGroup>
 
-  <Target Name="CopyExtensionFiles" AfterTargets="_GenerateFunctionsPostBuild">
+<Target Name="Task" AfterTargets="Compile">
     <ItemGroup>
-      <CopyFiles Include="$(MSBuildProjectDirectory)\\bin\\Debug\\net472\\**\\*.*" CopyToOutputDirectory="PreserveNewest" />
+        <DirsToClean2 Include="..\$(LogicAppFolder)\lib\custom" />
+      </ItemGroup>
+      <RemoveDir Directories="@(DirsToClean2)" />
+ </Target>
+ 
+  <Target Name="CopyExtensionFiles" AfterTargets="ParameterizedFunctionJsonGenerator">
+    <ItemGroup>
+        <CopyFiles Include="$(MSBuildProjectDirectory)\bin\Debug\net472\**\*.*" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
-    <Message Importance="High" Text="$(MSBuildProjectDirectory)"/>
-    <Copy SourceFiles="@(CopyFiles)" DestinationFolder="..\\$(LogicAppFolder)\\lib\\custom\\%(RecursiveDir)"  SkipUnchangedFiles="true" />
+    <Message Importance="High" Text="$(MSBuildProjectDirectory)" />
+    <Message Importance="High" Text="Hello $([MSBuild]::Unescape('$(MSBuildProjectDirectory)'))\$(OutputPath)bin\Microsoft.Azure.Functions.Extensions.Workflows.Sdk.BuildTasks.dll" />
+    <Copy SourceFiles="@(CopyFiles)" DestinationFolder="..\$(LogicAppFolder)\lib\custom\%(RecursiveDir)" SkipUnchangedFiles="true" />
     <ItemGroup>
-      <MoveFiles Include="..\\$(LogicAppFolder)\\lib\\custom\\bin\\*.*" />
+        <MoveFiles Include="..\$(LogicAppFolder)\lib\custom\bin\*.*" />
     </ItemGroup>
 
-   <Move SourceFiles="@(MoveFiles)" DestinationFolder="..\\$(LogicAppFolder)\\lib\\custom\\net472" />
+   <Move SourceFiles="@(MoveFiles)" DestinationFolder="..\$(LogicAppFolder)\lib\custom\net472" />
     <ItemGroup>
-       <DirsToClean Include="..\\$(LogicAppFolder)\\lib\\custom\\bin"/>
+       <DirsToClean Include="..\$(LogicAppFolder)\lib\custom\bin" />
      </ItemGroup>
        <RemoveDir Directories="@(DirsToClean)" />
+
     </Target>
 
   <ItemGroup>
       <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="bin\Debug\net472\" />
   </ItemGroup>
 
 </Project>
