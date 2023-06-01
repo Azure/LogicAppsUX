@@ -279,17 +279,12 @@ export const createValueSegmentFromToken = async (
   if (tokenValueSegment.token?.tokenType !== TokenType.PARAMETER && tokenValueSegment.token?.tokenType !== TokenType.VARIABLE) {
     const tokenOwnerActionName = token.outputInfo.actionName;
     const tokenOwnerOperationInfo = rootState.operations.operationInfo[tokenOwnerNodeId];
-    const { shouldAdd, parentArrayKey, parentArrayValue, repetitionContext } = await shouldAddForeach(
-      nodeId,
-      parameterId,
-      token,
-      rootState
-    );
+    const { shouldAdd, arrayDetails, repetitionContext } = await shouldAddForeach(nodeId, parameterId, token, rootState);
     let newRootState = rootState;
     let newRepetitionContext = repetitionContext;
 
     if (shouldAdd) {
-      const { payload: newState } = await dispatch(addForeachToNode({ arrayName: parentArrayValue, nodeId, token }));
+      const { payload: newState } = await dispatch(addForeachToNode({ arrayDetails, nodeId, token }));
       newRootState = newState as RootState;
       newRepetitionContext = await getRepetitionContext(
         nodeId,
@@ -306,10 +301,10 @@ export const createValueSegmentFromToken = async (
       dispatch(updateRepetitionContext({ id: nodeId, repetition: newRepetitionContext }));
     }
 
-    if (parentArrayKey && newRepetitionContext) {
+    if (arrayDetails?.length && newRepetitionContext) {
       (tokenValueSegment.token as Token).arrayDetails = {
         ...tokenValueSegment.token?.arrayDetails,
-        loopSource: getForeachActionName(newRepetitionContext, parentArrayKey, tokenOwnerActionName),
+        loopSource: getForeachActionName(newRepetitionContext, arrayDetails[0].parentArrayKey, tokenOwnerActionName),
       };
     }
 

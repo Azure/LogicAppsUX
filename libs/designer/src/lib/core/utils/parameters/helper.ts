@@ -2649,13 +2649,15 @@ export function updateTokenMetadata(
   if (token.arrayDetails && repetitionContext) {
     const repetitionReference = getRepetitionReference(repetitionContext, token.arrayDetails.loopSource);
     const repetitionValue = repetitionReference?.repetitionValue;
-    const { step, path, fullPath } = parseForeach(repetitionValue, repetitionContext);
-    token.arrayDetails = {
-      ...token.arrayDetails,
-      parentArrayKey: fullPath,
-      parentArrayName: path,
-    };
-    token.actionName = step;
+    if (repetitionValue) {
+      const { step, path, fullPath } = parseForeach(repetitionValue, repetitionContext);
+      token.arrayDetails = {
+        ...token.arrayDetails,
+        parentArrayKey: fullPath,
+        parentArrayName: path,
+      };
+      token.actionName = step;
+    }
 
     if (!token.arrayDetails.loopSource && equals(repetitionReference?.actionType, constants.NODE.TYPE.FOREACH)) {
       token.arrayDetails.loopSource = repetitionReference?.actionName;
