@@ -11,9 +11,9 @@ import {
   localEmulatorConnectionString,
   extensionBundleId,
   defaultVersionRange,
-} from '../../../../constants';
-import { localize } from '../../../../localize';
-import { setLocalAppSetting } from '../../../utils/appSettings/localSettings';
+} from '../../../../../constants';
+import { localize } from '../../../../../localize';
+import { setLocalAppSetting } from '../../../../utils/appSettings/localSettings';
 import {
   addFolderToBuildPath,
   addNugetPackagesToBuildFile,
@@ -21,11 +21,11 @@ import {
   suppressJavaScriptBuildWarnings,
   updateFunctionsSDKVersion,
   writeBuildFileToDisk,
-} from '../../../utils/codeless/updateBuildFile';
-import { getFramework, validateDotnetInstalled } from '../../../utils/dotnet/executeDotnetTemplateCommand';
-import { writeFormattedJson } from '../../../utils/fs';
-import { parseJson } from '../../../utils/parseJson';
-import { WorkflowCreateStepBase } from '../../createCodeless/createCodelessSteps/WorkflowCreateStepBase';
+} from '../../../../utils/codeless/updateBuildFile';
+import { getFramework, validateDotnetInstalled } from '../../../../utils/dotnet/executeDotnetTemplateCommand';
+import { writeFormattedJson } from '../../../../utils/fs';
+import { parseJson } from '../../../../utils/parseJson';
+import { WorkflowCreateStepBase } from '../../../createCodeless/createCodelessSteps/WorkflowCreateStepBase';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses, nonNullProp, parseError } from '@microsoft/vscode-azext-utils';
 import { WorkflowProjectType, MismatchBehavior } from '@microsoft/vscode-extension';
@@ -35,17 +35,17 @@ import * as path from 'path';
 import type { MessageItem } from 'vscode';
 
 // This class creates a new workflow for a codeless Azure Function project
-export class CodelessFunctionProjectWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionWizardContext> {
+export class CodelessFunctiontWorkflow extends WorkflowCreateStepBase<IFunctionWizardContext> {
   // Private constructor to prevent direct instantiation of this class
   private constructor() {
     super();
   }
 
   // Static method that creates a new instance of the CodelessFunctionProjectWorkflowCreateStep class and returns it
-  public static async createStep(context: IActionContext): Promise<CodelessFunctionProjectWorkflowCreateStep> {
+  public static async createStep(context: IActionContext): Promise<CodelessFunctiontWorkflow> {
     // Ensure that the .NET Core SDK is installed on the user's machine
     await validateDotnetInstalled(context);
-    return new CodelessFunctionProjectWorkflowCreateStep();
+    return new CodelessFunctiontWorkflow();
   }
 
   // Async method that creates a new workflow for the codeless Azure Function project
@@ -53,19 +53,20 @@ export class CodelessFunctionProjectWorkflowCreateStep extends WorkflowCreateSte
     // Get the function template and function name from the IFunctionWizardContext object
     const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     const functionPath: string = path.join(context.projectPath, nonNullProp(context, 'functionName'));
+    const methodName = context.methodName;
 
     // Create empty stateful and stateless definition objects
     const emptyStatefulDefinition: StandardApp = {
       definition: {
         $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
         actions: {
-          Invoke_a_function_in_this_Logic_App: {
+          Call_a_local_function_in_this_logic_app: {
             type: 'InvokeFunction',
             inputs: {
-              functionName: 'FlowInvokedFunction',
+              functionName: '' + methodName + '',
               parameters: {
-                parameter1: 'hello',
-                parameter2: 1,
+                zipCode: 85396,
+                temperatureScale: 'Celcius',
               },
             },
             runAfter: {},
@@ -75,15 +76,15 @@ export class CodelessFunctionProjectWorkflowCreateStep extends WorkflowCreateSte
             kind: 'http',
             inputs: {
               statusCode: 200,
-              body: "@body('Invoke_a_function_in_this_Logic_App')",
+              body: "@body('Call_a_local_function_in_this_logic_app')",
             },
             runAfter: {
-              Invoke_a_function_in_this_Logic_App: ['Succeeded'],
+              Call_a_local_function_in_this_logic_app: ['Succeeded'],
             },
           },
         },
         triggers: {
-          manual: {
+          When_a_HTTP_request_is_received: {
             type: 'Request',
             kind: 'Http',
             inputs: {},
@@ -99,13 +100,13 @@ export class CodelessFunctionProjectWorkflowCreateStep extends WorkflowCreateSte
       definition: {
         $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
         actions: {
-          Invoke_a_function_in_this_Logic_App: {
+          Call_a_local_function_in_this_logic_app: {
             type: 'InvokeFunction',
             inputs: {
-              functionName: 'FlowInvokedFunction',
+              functionName: '' + methodName + '',
               parameters: {
-                parameter1: 'hello',
-                parameter2: 1,
+                zipCode: 85396,
+                temperatureScale: 'Celcius',
               },
             },
             runAfter: {},
@@ -115,15 +116,15 @@ export class CodelessFunctionProjectWorkflowCreateStep extends WorkflowCreateSte
             kind: 'http',
             inputs: {
               statusCode: 200,
-              body: "@body('Invoke_a_function_in_this_Logic_App')",
+              body: "@body('Call_a_local_function_in_this_logic_app')",
             },
             runAfter: {
-              Invoke_a_function_in_this_Logic_App: ['Succeeded'],
+              Call_a_local_function_in_this_logic_app: ['Succeeded'],
             },
           },
         },
         triggers: {
-          manual: {
+          When_a_HTTP_request_is_received: {
             type: 'Request',
             kind: 'Http',
             inputs: {},
@@ -239,6 +240,7 @@ export class CodelessFunctionProjectWorkflowCreateStep extends WorkflowCreateSte
         }
       }
     }
+
     return defaultValue;
   }
 }
