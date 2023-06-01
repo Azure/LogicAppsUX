@@ -12,7 +12,7 @@ export class setNameSpace extends AzureWizardPromptStep<IProjectWizardContext> {
   public async prompt(context: IProjectWizardContext): Promise<void> {
     context.namespaceName = await context.ui.showInputBox({
       placeHolder: localize('setNameSpace', 'nameSpace'),
-      prompt: localize('methodNamePrompt', 'Provide a Namespace for Logic App Project'),
+      prompt: localize('methodNamePrompt', 'Provide a namespace for functions app project'),
     });
   }
 

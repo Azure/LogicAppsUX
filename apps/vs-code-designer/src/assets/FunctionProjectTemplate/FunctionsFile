@@ -16,7 +16,7 @@ namespace <%= namespace %>
     public static class <%= methodName %>
     {
         /// <summary>
-        /// Executes the flow.
+        /// Executes the logic app workflow.
         /// </summary>
         /// <param name="zipCode">The zip code.</param>
         /// <param name="temperatureScale">The temperature scale (e.g., Celsius or Fahrenheit).</param>

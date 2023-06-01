@@ -11,10 +11,9 @@
  </PropertyGroup>
 
   <ItemGroup>
-  <!-- Make sure that you have the 'Microsoft.Azure.Functions.Extensions.Workflows.WorkflowActionTrigger' package and the 'Microsoft.Azure.WebJobs.Core' dependency. -->
     <PackageReference Include="Microsoft.Azure.WebJobs.Core" Version="3.0.33" />
-     <PackageReference Include="Microsoft.Azure.Workflows.Webjobs.Sdk" version="1.0.1-preview"></PackageReference> 
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.24" />
+    <PackageReference Include="Microsoft.Azure.Workflows.WebJobs.Sdk" Version="1.0.1-preview" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.2.0" />
   </ItemGroup>
 
 <Target Name="Task" AfterTargets="Compile">
@@ -40,15 +39,12 @@
        <DirsToClean Include="..\$(LogicAppFolder)\lib\custom\bin" />
      </ItemGroup>
        <RemoveDir Directories="@(DirsToClean)" />
-
-    </Target>
-
+  </Target>
+  
   <ItemGroup>
       <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="bin\Debug\net472\" />
   </ItemGroup>
-
 </Project>

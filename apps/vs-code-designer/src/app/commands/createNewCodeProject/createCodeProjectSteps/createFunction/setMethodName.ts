@@ -11,8 +11,8 @@ export class setMethodName extends AzureWizardPromptStep<IProjectWizardContext> 
 
   public async prompt(context: IProjectWizardContext): Promise<void> {
     context.methodName = await context.ui.showInputBox({
-      placeHolder: localize('setMethodName', 'Method name'),
-      prompt: localize('methodNamePrompt', 'Provide a Function Name for Logic App Project'),
+      placeHolder: localize('setFunctioname', 'Function name'),
+      prompt: localize('functionNamePrompt', 'Provide a function name for functions app project'),
     });
   }
 
