@@ -1,4 +1,13 @@
 # Logic Apps Designer
+### [2.24.1](https://github.com/Azure/LogicAppsUX/compare/v2.24.0...v2.24.1) (2023-06-01)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed issue with case-insensitive dependency parameters ([#2635](https://github.com/Azure/LogicAppsUX/issues/2635)) ([068c249](https://github.com/Azure/LogicAppsUX/commit/068c249cf60c67b5f965943417d5bfdd445eb3a1))
+* **designer:** Handling implicit foreach addition for nested arrays and also fixing multiple foreach additions when not needed ([#2636](https://github.com/Azure/LogicAppsUX/issues/2636)) ([822c3ba](https://github.com/Azure/LogicAppsUX/commit/822c3bab399672b06ba9fa70586463e4638bc400))
+* **vscode): Revert "feat(vscode:** Add New Code Project Command  ([#2427](https://github.com/Azure/LogicAppsUX/issues/2427))" ([#2637](https://github.com/Azure/LogicAppsUX/issues/2637)) ([319d412](https://github.com/Azure/LogicAppsUX/commit/319d412c0c11f5a830bcb4a91bb7d16aa8deb6fb))
+
 ## [2.24.0](https://github.com/Azure/LogicAppsUX/compare/v2.23.0...v2.24.0) (2023-05-31)
 
 
