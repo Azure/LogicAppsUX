@@ -1086,6 +1086,12 @@
       "value": "Line Number"
     }
   ],
+  "5OvGgn": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -2359,6 +2365,12 @@
       "value": "(UTC+05:45) 加德滿都"
     }
   ],
+  "FIL1Nt": [
+    {
+      "type": 0,
+      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
+    }
+  ],
   "FIT7i0": [
     {
       "type": 0,
@@ -3043,6 +3055,12 @@
       "value": "actionCount"
     }
   ],
+  "KYX5Do": [
+    {
+      "type": 0,
+      "value": "Underline (⌘U)"
+    }
+  ],
   "KZOa5l": [
     {
       "type": 0,
@@ -3173,6 +3191,12 @@
     {
       "type": 0,
       "value": "Bullet List"
+    }
+  ],
+  "Lnqh6h": [
+    {
+      "type": 0,
+      "value": "Bold (Ctrl+B)"
     }
   ],
   "LoGUT3": [
@@ -3986,6 +4010,12 @@
     {
       "type": 0,
       "value": "'"
+    }
+  ],
+  "S138/4": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: ⌘B"
     }
   ],
   "SADSSs": [
@@ -4868,6 +4898,12 @@
       "value": "傳回資料 URI 的二進位表示法"
     }
   ],
+  "YABOLz": [
+    {
+      "type": 0,
+      "value": "Body Item"
+    }
+  ],
   "YCFhzp": [
     {
       "type": 0,
@@ -4896,6 +4932,12 @@
       "value": "字串"
     }
   ],
+  "YJlS8E": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: Ctrl+U"
+    }
+  ],
   "YKXmKD": [
     {
       "type": 0,
@@ -4906,6 +4948,12 @@
     {
       "type": 0,
       "value": "請輸入 PfX"
+    }
+  ],
+  "YR1uWE": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: Ctrl+B"
     }
   ],
   "YRk271": [
@@ -4930,6 +4978,12 @@
     {
       "type": 0,
       "value": "傳回單一陣列或物件，其於陣列或物件中的所有元素均會傳入此函式。函式的參數可以是一組物件，也可以是一組陣列 (但不可兩者混合)。若兩個物件具有相同的名稱，則在最終物件中會出現該名稱的最後一個物件。"
+    }
+  ],
+  "YdQw4/": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: ⌘I"
     }
   ],
   "YfwZJO": [
@@ -5386,6 +5440,12 @@
       "value": "請選取身分識別"
     }
   ],
+  "ciLkfU": [
+    {
+      "type": 0,
+      "value": "Bold (⌘B)"
+    }
+  ],
   "cj+kyo": [
     {
       "type": 0,
@@ -5514,6 +5574,12 @@
       "value": "Close"
     }
   ],
+  "dfmH55": [
+    {
+      "type": 0,
+      "value": "Italic (Ctrl+I)"
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -5632,6 +5698,12 @@
     {
       "type": 0,
       "value": "Enter an integer"
+    }
+  ],
+  "elD6+N": [
+    {
+      "type": 0,
+      "value": "Italic (⌘I)"
     }
   ],
   "epOMnV": [
@@ -5826,6 +5898,12 @@
     {
       "type": 0,
       "value": "連線名稱"
+    }
+  ],
+  "gIx5ys": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: Ctrl+I"
     }
   ],
   "gKq3Jv": [
@@ -6467,6 +6545,12 @@
       "value": "Functions"
     }
   ],
+  "lUm6fl": [
+    {
+      "type": 0,
+      "value": "Return"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -6527,6 +6611,12 @@
     {
       "type": 0,
       "value": "Select an action type"
+    }
+  ],
+  "lwlg2K": [
+    {
+      "type": 0,
+      "value": "Underline (Ctrl+U)"
     }
   ],
   "lztiwS": [
@@ -7095,6 +7185,12 @@
       "value": "'"
     }
   ],
+  "qBkxGU": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: ⌘U"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -7542,6 +7638,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) 新西伯利亞"
+    }
+  ],
+  "tUCptx": [
+    {
+      "type": 0,
+      "value": "Insert Link"
     }
   ],
   "tUYXRA": [

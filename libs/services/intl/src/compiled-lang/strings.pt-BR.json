@@ -1108,6 +1108,12 @@
       "value": "Line Number"
     }
   ],
+  "5OvGgn": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -2399,6 +2405,12 @@
       "value": "(UTC+05:45) Katmandu"
     }
   ],
+  "FIL1Nt": [
+    {
+      "type": 0,
+      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
+    }
+  ],
   "FIT7i0": [
     {
       "type": 0,
@@ -3127,6 +3139,12 @@
       "value": "actionCount"
     }
   ],
+  "KYX5Do": [
+    {
+      "type": 0,
+      "value": "Underline (⌘U)"
+    }
+  ],
   "KZOa5l": [
     {
       "type": 0,
@@ -3257,6 +3275,12 @@
     {
       "type": 0,
       "value": "Bullet List"
+    }
+  ],
+  "Lnqh6h": [
+    {
+      "type": 0,
+      "value": "Bold (Ctrl+B)"
     }
   ],
   "LoGUT3": [
@@ -4092,6 +4116,12 @@
     {
       "type": 0,
       "value": "'"
+    }
+  ],
+  "S138/4": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: ⌘B"
     }
   ],
   "SADSSs": [
@@ -4974,6 +5004,12 @@
       "value": "Retorna uma representação binária de um URI de dados"
     }
   ],
+  "YABOLz": [
+    {
+      "type": 0,
+      "value": "Body Item"
+    }
+  ],
   "YCFhzp": [
     {
       "type": 0,
@@ -5002,6 +5038,12 @@
       "value": "Cadeia de Caracteres"
     }
   ],
+  "YJlS8E": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: Ctrl+U"
+    }
+  ],
   "YKXmKD": [
     {
       "type": 0,
@@ -5012,6 +5054,12 @@
     {
       "type": 0,
       "value": "Inserir Pfx"
+    }
+  ],
+  "YR1uWE": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: Ctrl+B"
     }
   ],
   "YRk271": [
@@ -5036,6 +5084,12 @@
     {
       "type": 0,
       "value": "Retorna uma única matriz ou um único objeto com todos os elementos que estão na matriz ou no objeto passados para esta função. Os parâmetros para a função podem ser um conjunto de objetos ou um conjunto de matrizes (não uma mistura deles). Se houver dois objetos com o mesmo nome na saída final, o último objeto com esse nome aparecerá no objeto final."
+    }
+  ],
+  "YdQw4/": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: ⌘I"
     }
   ],
   "YfwZJO": [
@@ -5488,6 +5542,12 @@
       "value": "Selecione uma identidade"
     }
   ],
+  "ciLkfU": [
+    {
+      "type": 0,
+      "value": "Bold (⌘B)"
+    }
+  ],
   "cj+kyo": [
     {
       "type": 0,
@@ -5616,6 +5676,12 @@
       "value": "Close"
     }
   ],
+  "dfmH55": [
+    {
+      "type": 0,
+      "value": "Italic (Ctrl+I)"
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -5734,6 +5800,12 @@
     {
       "type": 0,
       "value": "Enter an integer"
+    }
+  ],
+  "elD6+N": [
+    {
+      "type": 0,
+      "value": "Italic (⌘I)"
     }
   ],
   "epOMnV": [
@@ -5928,6 +6000,12 @@
     {
       "type": 0,
       "value": "Nome da conexão"
+    }
+  ],
+  "gIx5ys": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: Ctrl+I"
     }
   ],
   "gKq3Jv": [
@@ -6591,6 +6669,12 @@
       "value": "Functions"
     }
   ],
+  "lUm6fl": [
+    {
+      "type": 0,
+      "value": "Return"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -6651,6 +6735,12 @@
     {
       "type": 0,
       "value": "Select an action type"
+    }
+  ],
+  "lwlg2K": [
+    {
+      "type": 0,
+      "value": "Underline (Ctrl+U)"
     }
   ],
   "lztiwS": [
@@ -7219,6 +7309,12 @@
       "value": "'"
     }
   ],
+  "qBkxGU": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: ⌘U"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -7688,6 +7784,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Novosibirsk"
+    }
+  ],
+  "tUCptx": [
+    {
+      "type": 0,
+      "value": "Insert Link"
     }
   ],
   "tUYXRA": [

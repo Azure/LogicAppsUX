@@ -10,7 +10,7 @@ import type { CallbackHandler, CastHandler, ChangeHandler, GetTokenPickerHandler
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { FloatingActionMenu } from '../../floatingactionmenu';
-// import { HTMLEditor } from '../../html';
+import { HTMLEditor } from '../../html';
 import type { PickerCallbackHandlers } from '../../picker/filepickereditor';
 import { FilePickerEditor } from '../../picker/filepickereditor';
 import { QueryBuilderEditor } from '../../querybuilder';
@@ -204,7 +204,8 @@ const TokenField = ({
       return editorViewModel.isOldFormat ? (
         <SimpleQueryBuilder
           readonly={readOnly}
-          items={JSON.parse(JSON.stringify(editorViewModel.items))}
+          itemValue={editorViewModel.itemValue ?? value}
+          isRowFormat={editorViewModel.isRowFormat}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
         />
@@ -255,18 +256,17 @@ const TokenField = ({
           onChange={hideValidationErrors}
         />
       );
-    // todo when html editor is ready
-    // case 'html':
-    //   return (
-    //     <HTMLEditor
-    //       initialValue={value}
-    //       placeholder={placeholder}
-    //       BasePlugins={{ tokens: showTokens }}
-    //       readonly={readOnly}
-    //       getTokenPicker={getTokenPicker}
-    //       onChange={onValueChange}
-    //     />
-    //   );
+    case 'html':
+      return (
+        <HTMLEditor
+          initialValue={value}
+          placeholder={placeholder}
+          BasePlugins={{ tokens: showTokens }}
+          readonly={readOnly}
+          getTokenPicker={getTokenPicker}
+          onChange={onValueChange}
+        />
+      );
     case 'floatingactionmenu': {
       return (
         <FloatingActionMenu
