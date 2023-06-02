@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [2.24.2](https://github.com/Azure/LogicAppsUX/compare/v2.24.1...v2.24.2) (2023-06-02)
+
+
+### Bug Fixes
+
+* **designer:** Adding Preview tag for operations marked as preview in release status ([#2648](https://github.com/Azure/LogicAppsUX/issues/2648)) ([19edfe8](https://github.com/Azure/LogicAppsUX/commit/19edfe8ef32d332b3ed75d8102a39d3ca63a1d25))
+* **designer:** Persist pagination toggle setting info in store ([#2645](https://github.com/Azure/LogicAppsUX/issues/2645)) ([d4fd7d2](https://github.com/Azure/LogicAppsUX/commit/d4fd7d26cca08e351efb9be2fbb19d479a4934d9))
+
 ### [2.24.1](https://github.com/Azure/LogicAppsUX/compare/v2.24.0...v2.24.1) (2023-06-01)
 
 
