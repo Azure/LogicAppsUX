@@ -192,7 +192,9 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             this.panelMetadata.azureDetails?.workflowManagementBaseUrl
           );
         } catch (err) {
-          console.log(err);
+          const errorMessage = localize('SaveWorkflowError', 'Unable to save workflow. {0}', err.message);
+          window.showErrorMessage(errorMessage);
+          throw new Error(errorMessage);
         }
         break;
       }
