@@ -3507,6 +3507,12 @@
       "value": "Headers"
     }
   ],
+  "NHnG2S": [
+    {
+      "type": 0,
+      "value": "The generated XSLT does not match the current mapping."
+    }
+  ],
   "NPUFgH": [
     {
       "type": 0,
@@ -5627,6 +5633,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Sammlung, in der die ersten Count-Objekte übersprungen werden sollen."
+    }
+  ],
+  "ctI9Pp": [
+    {
+      "type": 0,
+      "value": "Generate XSLT first before attempting to test mappings."
     }
   ],
   "d4xMIx": [

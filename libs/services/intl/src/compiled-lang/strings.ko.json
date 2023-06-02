@@ -3391,6 +3391,12 @@
       "value": "Headers"
     }
   ],
+  "NHnG2S": [
+    {
+      "type": 0,
+      "value": "The generated XSLT does not match the current mapping."
+    }
+  ],
   "NPUFgH": [
     {
       "type": 0,
@@ -5476,6 +5482,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 첫 번째 Count 개체를 건너뛸 컬렉션입니다."
+    }
+  ],
+  "ctI9Pp": [
+    {
+      "type": 0,
+      "value": "Generate XSLT first before attempting to test mappings."
     }
   ],
   "d4xMIx": [
