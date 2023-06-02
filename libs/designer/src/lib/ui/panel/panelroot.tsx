@@ -316,6 +316,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const layerProps = {
     hostId: 'msla-layer-host',
+    eventBubblingEnabled: true,
   };
 
   const commonPanelProps: CommonPanelProps = {
