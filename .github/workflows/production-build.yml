@@ -1,5 +1,5 @@
 name: Production Build
-run-name: Production Build - [${{ github.event.inputs.branch }}][${{ github.event.inputs.release_type || 'no_type_specified' }}]
+run-name: Production Build - [${{ github.ref_name }}][${{ github.event.inputs.release_type || 'no_type_specified' }}]
 on:
   workflow_dispatch:
     inputs:
@@ -136,3 +136,24 @@ jobs:
           dot-npmrc: ${{ secrets.PUBLISHING_PAT }}
           working-directory: ${{ matrix.lib.dist }}
       - run: cd ${{ matrix.lib.dist }} && npm publish
+
+  hotfix-branch:
+    needs: bump-version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Github Action
+        uses: actions/checkout@master
+        with:
+          token: ${{ secrets.AUTOMATION_PAT }}
+          fetch-depth: 0
+      - name: Get Previous tag
+        id: previoustag
+        uses: 'WyriHaximus/github-action-get-previous-tag@v1'
+        with:
+          fallback: 0.0.0
+      - name: Create Branch
+        uses: peterjgrainger/action-create-branch@v2.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.AUTOMATION_PAT }}
+        with:
+          branch: 'hotfix/v${{ steps.previoustag.outputs.tag }}'
