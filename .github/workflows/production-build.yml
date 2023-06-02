@@ -157,3 +157,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.AUTOMATION_PAT }}
         with:
           branch: 'hotfix/v${{ steps.previoustag.outputs.tag }}'
+
+  delete-old-hotfixes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Run delete-old-branches-action
+        uses: beatlabs/delete-old-branches-action@v0.0.9
+        with:
+          repo_token: ${{ secrets.AUTOMATION_PAT }}
+          date: '2 months ago'
+          dry_run: true
+          # Only delete branches that start with "hotfix/", this protect is inverted on that string
+          extra_protected_branch_regex: ^(?!hotfix/).*/
+          exclude_open_pr_branches: true
