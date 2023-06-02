@@ -16,9 +16,6 @@ export interface NodesMetadata {
   };
 }
 export type Operations = Record<string, LogicAppsV2.OperationDefinition>;
-export const operationIsAction = (operation: LogicAppsV2.OperationDefinition): operation is LogicAppsV2.ActionDefinition => {
-  return (operation as any).runAfter;
-};
 
 export interface WorkflowState {
   workflowSpec?: SpecTypes;

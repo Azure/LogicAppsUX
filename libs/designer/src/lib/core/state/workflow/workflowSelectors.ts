@@ -3,7 +3,6 @@ import type { WorkflowEdge, WorkflowNode } from '../../parsers/models/workflowNo
 import type { RootState } from '../../store';
 import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
 import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
-import { operationIsAction } from './workflowInterfaces';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
@@ -180,6 +179,9 @@ export const useNodeGraphId = (nodeId: string): string => {
   );
 };
 
+const operationIsAction = (operation: LogicAppsV2.OperationDefinition): operation is LogicAppsV2.ActionDefinition => {
+  return (operation as any).runAfter;
+};
 export const useGetAllAncestors = (nodeId: string) => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {

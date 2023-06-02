@@ -52,13 +52,25 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const allAncestors = useGetAllAncestors(childId ?? '');
   const parentGID = useNodeGraphId(parentId ?? '');
   const childGID = useNodeGraphId(childId ?? '');
+
   const [{ isOver, canDrop }, drop] = useDrop(
     () => ({
       accept: 'BOX',
       drop: () => ({ graphId, parentId, childId }),
       canDrop: (item: { id: string; dependencies?: string[]; graphId?: string }) => {
+        // if moving into/outof scoped nodes
         if (item.graphId !== parentGID && item.graphId !== childGID) {
-          return false;
+          // move into a scope
+          if (graphParents.includes(item.graphId ?? '')) {
+            return true;
+          }
+          // move outside a scope
+          for (const dec of item.dependencies ?? []) {
+            if (!allAncestors.has(dec)) {
+              return false;
+            }
+          }
+          return true;
         }
         for (const dec of item.dependencies ?? []) {
           if (!allAncestors.has(dec)) {
