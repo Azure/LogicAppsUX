@@ -40,6 +40,10 @@ export const initialWorkflowState: WorkflowState = {
   idReplacements: {},
   newlyAddedOperations: {},
   isDirty: false,
+  originalDefinition: {
+    $schema: constants.SCHEMA.GA_20160601.URL,
+    contentVersion: '1.0.0.0',
+  },
 };
 
 export const workflowSlice = createSlice({
@@ -330,10 +334,12 @@ export const workflowSlice = createSlice({
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
     builder.addCase(initializeGraphState.fulfilled, (state, action) => {
-      state.graph = action.payload.graph;
-      state.operations = action.payload.actionData;
-      state.nodesMetadata = action.payload.nodesMetadata;
-      state.focusedCanvasNodeId = Object.entries(action?.payload?.actionData ?? {}).find(
+      const { deserializedWorkflow, originalDefinition } = action.payload;
+      state.originalDefinition = originalDefinition;
+      state.graph = deserializedWorkflow.graph;
+      state.operations = deserializedWorkflow.actionData;
+      state.nodesMetadata = deserializedWorkflow.nodesMetadata;
+      state.focusedCanvasNodeId = Object.entries(deserializedWorkflow?.actionData ?? {}).find(
         ([, value]) => !(value as LogicAppsV2.ActionDefinition).runAfter
       )?.[0];
     });

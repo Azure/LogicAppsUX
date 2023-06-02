@@ -6,7 +6,7 @@ import { deleteGraphNode } from '../../core/actions/bjsworkflow/delete';
 import { getOperationManifest } from '../../core/queries/operation';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
+import { changePanelNode, isolateTab, showDefaultTabs } from '../../core/state/panel/panelSlice';
 import { useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import {
   useActionMetadata,
@@ -71,6 +71,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
         dispatch(setFocusNode(newCaseId));
       } else {
         dispatch(changePanelNode(_id));
+        dispatch(isolateTab(constants.PANEL_TAB_NAMES.PARAMETERS));
         dispatch(showDefaultTabs({ isMonitoringView }));
       }
     },

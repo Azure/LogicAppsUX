@@ -12,11 +12,16 @@ import type { WorkflowNode } from './models/workflowNode';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
+interface InitWorkflowPayload {
+  deserializedWorkflow: DeserializedWorkflow;
+  originalDefinition: LogicAppsV2.WorkflowDefinition;
+}
+
 export const initializeGraphState = createAsyncThunk<
-  DeserializedWorkflow,
+  InitWorkflowPayload,
   { workflowDefinition: Workflow; runInstance: LogicAppsV2.RunInstanceDefinition | null | undefined },
   { state: RootState }
->('parser/deserialize', async (graphState: { workflowDefinition: Workflow; runInstance: any }, thunkAPI): Promise<DeserializedWorkflow> => {
+>('parser/deserialize', async (graphState: { workflowDefinition: Workflow; runInstance: any }, thunkAPI): Promise<InitWorkflowPayload> => {
   const { workflowDefinition, runInstance } = graphState;
   const { workflow } = thunkAPI.getState() as RootState;
   const spec = workflow.workflowSpec;
@@ -49,7 +54,7 @@ export const initializeGraphState = createAsyncThunk<
     };
     asyncInitialize();
 
-    return deserializedWorkflow;
+    return { deserializedWorkflow, originalDefinition: definition };
   } else if (spec === 'CNCF') {
     throw new Error('Spec not implemented.');
   }

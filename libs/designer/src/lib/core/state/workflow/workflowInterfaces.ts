@@ -32,4 +32,5 @@ export interface WorkflowState {
   newlyAddedOperations: Record<string, string>;
   runInstance: LogicAppsV2.RunInstanceDefinition | null;
   isDirty: boolean;
+  originalDefinition: LogicAppsV2.WorkflowDefinition;
 }
