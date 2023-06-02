@@ -377,6 +377,15 @@ function NetworkingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: b
     });
   };
 
+  const onPaginationToggle = (checked: boolean): void => {
+    updateSettings({
+      paging: {
+        isSupported: !!paging?.isSupported,
+        value: { ...paging?.value, enabled: checked },
+      },
+    });
+  };
+
   const onPaginationValueChange = (newVal: string): void => {
     updateSettings({
       paging: {
@@ -487,6 +496,7 @@ function NetworkingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: b
     onAsyncPatternToggle,
     onAsyncResponseToggle,
     onContentTransferToggle,
+    onPaginationToggle,
     onPaginationValueChange,
     onRequestOptionsChange,
     onHeadersOnResponseToggle,
