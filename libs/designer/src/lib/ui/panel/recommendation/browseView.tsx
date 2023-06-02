@@ -1,4 +1,4 @@
-import { useAllConnectors } from '../../../core/queries/browse';
+import { useAllApiIdsWithActions, useAllApiIdsWithTriggers, useAllConnectors } from '../../../core/queries/browse';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { BrowseGrid } from '@microsoft/designer-ui';
 import type { Connector } from '@microsoft/utils-logic-apps';
@@ -19,6 +19,9 @@ export const BrowseView = ({
 
   const { data: allConnectors, isLoading } = useAllConnectors();
 
+  const allApiIdsWithActions = useAllApiIdsWithActions();
+  const allApiIdsWithTriggers = useAllApiIdsWithTriggers();
+
   const filterItems = useCallback(
     (connector: Connector): boolean => {
       if (filters['runtime']) {
@@ -29,16 +32,18 @@ export const BrowseView = ({
 
       if (filters['actionType']) {
         const capabilities = connector.properties?.capabilities ?? [];
-        if (capabilities.length === 0) return true;
-        const supportsActions = capabilities.includes('actions');
-        const supportsTriggers = capabilities.includes('triggers');
+        const ignoreCapabilities = capabilities.length === 0;
+        const supportsActions =
+          (ignoreCapabilities || capabilities.includes('actions')) && allApiIdsWithActions.data.includes(connector.id);
+        const supportsTriggers =
+          (ignoreCapabilities || capabilities.includes('triggers')) && allApiIdsWithTriggers.data.includes(connector.id);
         if (filters['actionType'].toLowerCase() === 'triggers' && !supportsTriggers) return false;
         else if (filters['actionType'].toLowerCase() === 'actions' && !supportsActions) return false;
       }
 
       return true;
     },
-    [filters]
+    [filters, allApiIdsWithActions, allApiIdsWithTriggers]
   );
 
   const sortedConnectors = useMemo(() => {
