@@ -3459,6 +3459,12 @@
       "value": "Headers"
     }
   ],
+  "NHnG2S": [
+    {
+      "type": 0,
+      "value": "The generated XSLT does not match the current mapping."
+    }
+  ],
   "NPUFgH": [
     {
       "type": 0,
@@ -5568,6 +5574,12 @@
     {
       "type": 0,
       "value": "必需。要从中跳过第一批计数对象的集合。"
+    }
+  ],
+  "ctI9Pp": [
+    {
+      "type": 0,
+      "value": "Generate XSLT first before attempting to test mappings."
     }
   ],
   "d4xMIx": [
