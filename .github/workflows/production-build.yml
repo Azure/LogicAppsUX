@@ -160,6 +160,7 @@ jobs:
 
   delete-old-hotfixes:
     runs-on: ubuntu-latest
+    if: github.event.inputs.release_type == 'minor' || github.event.inputs.release_type == 'major'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
