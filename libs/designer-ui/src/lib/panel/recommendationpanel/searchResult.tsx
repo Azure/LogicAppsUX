@@ -136,4 +136,5 @@ export const OperationActionDataFromOperation = (operation: DiscoveryOperation<D
   isTrigger: !!operation.properties?.trigger,
   isBuiltIn: isBuiltInConnector(operation.properties.api.id),
   apiId: operation.properties.api.id,
+  releaseStatus: operation.properties.annotation?.status,
 });

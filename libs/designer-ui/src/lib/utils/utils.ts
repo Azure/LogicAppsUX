@@ -1,6 +1,6 @@
 import Constants from '../constants';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import { isBuiltInConnector, isCustomConnector } from '@microsoft/utils-logic-apps';
+import { equals, isBuiltInConnector, isCustomConnector } from '@microsoft/utils-logic-apps';
 
 /**
  * Returns a string with a duration, possibly abbreviated, e.g., 15s or 15 second(s)
@@ -356,4 +356,10 @@ export const getConnectorCategoryString = (connectorId: string): string => {
 
 export const convertUIElementNameToAutomationId = (uiElementName: string): string => {
   return uiElementName?.replace(/\W/g, '_')?.toLowerCase();
+};
+
+export const getPreviewTag = (status: string | undefined): string | undefined => {
+  return equals(status, 'preview')
+    ? getIntl().formatMessage({ defaultMessage: 'Preview', description: 'Preview tag for preview connector' })
+    : undefined;
 };

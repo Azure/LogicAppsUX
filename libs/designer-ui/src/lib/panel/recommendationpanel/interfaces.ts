@@ -10,4 +10,5 @@ export interface OperationActionData {
   isTrigger: boolean;
   isBuiltIn?: boolean;
   apiId?: string;
+  releaseStatus?: string;
 }
