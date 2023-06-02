@@ -182,14 +182,19 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         break;
       }
       case ExtensionCommand.save: {
-        await this.saveWorkflow(
-          this.workflowFilePath,
-          this.panelMetadata.workflowContent,
-          msg,
-          this.panelMetadata.azureDetails?.tenantId,
-          this.panelMetadata.azureDetails?.workflowManagementBaseUrl
-        );
-        await this.validateWorkflow(this.panelMetadata.workflowContent);
+        try {
+          await this.validateWorkflow(this.panelMetadata.workflowContent);
+          await this.saveWorkflow(
+            this.workflowFilePath,
+            this.panelMetadata.workflowContent,
+            msg,
+            this.panelMetadata.azureDetails?.tenantId,
+            this.panelMetadata.azureDetails?.workflowManagementBaseUrl
+          );
+        } catch (err) {
+          console.log(err);
+        }
+
         break;
       }
       case ExtensionCommand.addConnection: {
@@ -274,6 +279,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     });
   }
 
+  /**
+   * Calls the validate api to validate the workflow schema.
+   * @param {any} workflow - Workflow schema to validate.
+   */
   private async validateWorkflow(workflow: any): Promise<void> {
     const url = `http://localhost:${ext.workflowDesignTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validate?api-version=${this.apiVersion}`;
     try {
@@ -281,13 +290,14 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         url,
         method: HTTP_METHODS.POST,
         headers: { ['Content-Type']: 'application/json' },
-        body: JSON.stringify({ properties: workflow }),
+        body: { properties: workflow },
       });
     } catch (error) {
       if (error.statusCode !== 404) {
         const errorMessage = localize('workflowValidationFailed', 'Workflow validation failed: ') + error.message;
         await window.showErrorMessage(errorMessage, localize('OK', 'OK'));
       }
+      throw error;
     }
   }
 
