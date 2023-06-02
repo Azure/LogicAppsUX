@@ -194,7 +194,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         } catch (err) {
           console.log(err);
         }
-
         break;
       }
       case ExtensionCommand.addConnection: {
@@ -225,6 +224,14 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     }
   }
 
+  /**
+   * Saves workflow locally in the workflow.json.
+   * @param {string} filePath - File path of file to save the workflow.
+   * @param {any} workflow - Local workflow schema before changes .
+   * @param {any} workflowToSave - Workflow schema to save.
+   * @param {string} azureTenantId - Tenant id from azure.
+   * @param {string} workflowBaseManagementUri - Workflow base url.
+   */
   private async saveWorkflow(
     filePath: string,
     workflow: any,
