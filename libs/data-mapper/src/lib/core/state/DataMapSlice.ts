@@ -795,7 +795,7 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
 
     functionMultipleLocations
       ? (curDataMapState.notificationData = {
-          type: NotificationTypes.FunctionNodeDeleted,
+          type: NotificationTypes.FunctionNodePartiallyDeleted,
           autoHideDurationMs: deletedNotificationAutoHideDuration,
         })
       : (curDataMapState.notificationData = {
