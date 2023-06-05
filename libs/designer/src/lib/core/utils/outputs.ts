@@ -306,7 +306,9 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
             }
           } else {
             // TODO - Add code to generate schema from value input
-            schemaToReplace = generateSchemaFromJsonString(segment.value);
+            try {
+              schemaToReplace = generateSchemaFromJsonString(segment.value);
+            } catch {} // eslint-disable-line no-empty
           }
           break;
 
