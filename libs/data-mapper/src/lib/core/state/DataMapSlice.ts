@@ -717,7 +717,7 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
     if (potentialSrcSchemaNodeConnection && potentialSrcSchemaNodeConnection.outputs.length > 0) {
       // Check that there's no outputs on the current canvas level by checking for outputs in current function and target schema nodes
       const hasOutputsOnCurrentCanvasLevel = potentialSrcSchemaNodeConnection.outputs.some((output) => {
-        const potentialConnectedFnNode = currentDataMap.functionNodes[output.reactFlowKey]; // XXX Might need to filter based on the target node
+        const potentialConnectedFnNode = currentDataMap.functionNodes[output.reactFlowKey];
         const potentialConnectedTargetNode = currentDataMap.currentTargetSchemaNode;
 
         if (potentialConnectedFnNode) {
@@ -777,13 +777,15 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
       (location) => location.key !== currentDataMap.currentTargetSchemaNode?.key
     );
 
+    let functionMultipleLocations = false;
     if (filteredLocations.length === 0) {
       delete newFunctionsState[reactFlowKey];
     } else {
-      newFunctionsState[reactFlowKey].functionLocations = filteredLocations; // XXX Notifications that nodes exist elsewhere on the map
+      newFunctionsState[reactFlowKey].functionLocations = filteredLocations;
+      functionMultipleLocations = true;
     }
 
-    deleteNodeFromConnections(currentDataMap.dataMapConnections, reactFlowKey); // XXX double check on this
+    deleteNodeFromConnections(currentDataMap.dataMapConnections, reactFlowKey);
 
     currentDataMap.selectedItemKey = undefined;
     currentDataMap.selectedItemKeyParts = undefined;
@@ -791,10 +793,15 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
 
     doDataMapOperation(curDataMapState, { ...currentDataMap, functionNodes: newFunctionsState }, 'Delete function by key');
 
-    curDataMapState.notificationData = {
-      type: NotificationTypes.FunctionNodeDeleted,
-      autoHideDurationMs: deletedNotificationAutoHideDuration,
-    };
+    functionMultipleLocations
+      ? (curDataMapState.notificationData = {
+          type: NotificationTypes.FunctionNodeDeleted,
+          autoHideDurationMs: deletedNotificationAutoHideDuration,
+        })
+      : (curDataMapState.notificationData = {
+          type: NotificationTypes.FunctionNodeDeleted,
+          autoHideDurationMs: deletedNotificationAutoHideDuration,
+        });
 
     return;
   }
@@ -869,7 +876,6 @@ export const addParentConnectionForRepeatingElements = (
         );
 
         if (!parentsAlreadyConnected) {
-          // XXX Check on this
           if (!indexFnRfKey) {
             applyConnectionValue(dataMapConnections, {
               targetNode: parentTargetNode,
