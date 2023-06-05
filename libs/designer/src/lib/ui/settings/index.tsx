@@ -6,7 +6,7 @@ import { updateNodeSettings } from '../../core/state/operation/operationMetadata
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { setTabError } from '../../core/state/panel/panelSlice';
 import { setExpandedSections, ValidationErrorKeys, type ValidationError } from '../../core/state/setting/settingSlice';
-import { updateTokenSecureStatus } from '../../core/state/tokensSlice';
+import { updateTokenSecureStatus } from '../../core/state/tokens/tokensSlice';
 import type { RootState } from '../../core/store';
 import { isRootNodeInGraph } from '../../core/utils/graph';
 import { isSecureOutputsLinkedToInputs } from '../../core/utils/setting';

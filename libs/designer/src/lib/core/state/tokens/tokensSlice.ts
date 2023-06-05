@@ -1,5 +1,5 @@
-import { resetWorkflowState } from './global';
-import { clearDynamicOutputs } from './operation/operationMetadataSlice';
+import { resetWorkflowState } from '../global';
+import { clearDynamicOutputs } from '../operation/operationMetadataSlice';
 import type { OutputToken as Token } from '@microsoft/designer-ui';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';

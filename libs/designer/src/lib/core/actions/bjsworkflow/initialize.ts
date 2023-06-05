@@ -5,8 +5,8 @@ import { getConnectorWithSwagger, getSwaggerFromEndpoint } from '../../queries/c
 import { getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
 import { updateNodeSettings, updateNodeParameters, DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
-import type { UpdateUpstreamNodesPayload } from '../../state/tokensSlice';
-import { updateTokens, updateUpstreamNodes } from '../../state/tokensSlice';
+import type { UpdateUpstreamNodesPayload } from '../../state/tokens/tokensSlice';
+import { updateTokens, updateUpstreamNodes } from '../../state/tokens/tokensSlice';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import { initializeParameters } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';

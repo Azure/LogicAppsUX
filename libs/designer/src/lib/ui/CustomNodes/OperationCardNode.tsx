@@ -129,7 +129,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
         isDragging: monitor.isDragging(),
       }),
     }),
-    [readOnly, metadata]
+    [readOnly, metadata, dependencies]
   );
 
   const selected = useIsNodeSelected(id);

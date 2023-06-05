@@ -16,8 +16,8 @@ import type {
 } from '../../state/operation/operationMetadataSlice';
 import { ErrorLevel, updateErrorDetails, initializeOperationInfo, initializeNodes } from '../../state/operation/operationMetadataSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
-import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
-import { initializeTokensAndVariables } from '../../state/tokensSlice';
+import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
+import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import type { NodesMetadata, Operations } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
 import { getConnectionReference, isConnectionReferenceValid } from '../../utils/connectors/connections';

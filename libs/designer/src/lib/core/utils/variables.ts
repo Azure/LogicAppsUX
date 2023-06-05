@@ -1,6 +1,6 @@
 import Constants from '../../common/constants';
 import type { NodeInputs } from '../state/operation/operationMetadataSlice';
-import type { NodeTokens, VariableDeclaration } from '../state/tokensSlice';
+import type { NodeTokens, VariableDeclaration } from '../state/tokens/tokensSlice';
 import { ParameterGroupKeys } from './parameters/helper';
 import type { OutputToken as Token } from '@microsoft/designer-ui';
 import { TokenType } from '@microsoft/designer-ui';

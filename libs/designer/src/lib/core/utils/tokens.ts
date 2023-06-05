@@ -4,7 +4,7 @@ import type { Settings } from '../actions/bjsworkflow/settings';
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 import type { NodeOperation, OutputInfo } from '../state/operation/operationMetadataSlice';
 import { updateRepetitionContext } from '../state/operation/operationMetadataSlice';
-import type { TokensState } from '../state/tokensSlice';
+import type { TokensState } from '../state/tokens/tokensSlice';
 import type { NodesMetadata } from '../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition, WorkflowParametersState } from '../state/workflowparameters/workflowparametersSlice';
 import type { AppDispatch, RootState } from '../store';

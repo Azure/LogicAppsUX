@@ -4,7 +4,7 @@ import { DropZone } from './dropzone';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { RunAfterIndicator } from './runAfterIndicator';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { getEdgeCenter, RUN_AFTER_STATUS } from '@microsoft/utils-logic-apps';
+import { containsIdTag, removeIdTag, getEdgeCenter, RUN_AFTER_STATUS } from '@microsoft/utils-logic-apps';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import React, { useMemo } from 'react';
 import { getSmoothStepPath } from 'reactflow';
@@ -64,7 +64,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const edgeSources = Object.keys(operationData?.runAfter ?? {});
   const edgeTargets = useNodeEdgeTargets(source);
   const nodeMetadata = useNodeMetadata(source);
-  const sourceId = source.includes('-#') ? source.split('-#')[0] : undefined;
+  const sourceId = containsIdTag(source) ? removeIdTag(source) : undefined;
   const graphId = sourceId ?? nodeMetadata?.graphId ?? '';
   const [edgeCenterX, edgeCenterY] = getEdgeCenter({
     sourceX,
