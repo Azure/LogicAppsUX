@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [2.24.3](https://github.com/Azure/LogicAppsUX/compare/v2.24.2...v2.24.3) (2023-06-05)
+
+
+### Bug Fixes
+
+* **vscode:** Copy/Paste commands in vscode for Mac ([#2653](https://github.com/Azure/LogicAppsUX/issues/2653)) ([#2664](https://github.com/Azure/LogicAppsUX/issues/2664)) ([508cfdc](https://github.com/Azure/LogicAppsUX/commit/508cfdc7f704af0bb2e299f6f8b85d16af68b90e))
+* **vscode:** Create an OAuth connection to Key vault  ([#2670](https://github.com/Azure/LogicAppsUX/issues/2670)) ([f112847](https://github.com/Azure/LogicAppsUX/commit/f112847a4083d81e88d608e1d654798bc874c2aa)), closes [#2657](https://github.com/Azure/LogicAppsUX/issues/2657)
+
 ### [2.24.2](https://github.com/Azure/LogicAppsUX/compare/v2.24.1...v2.24.2) (2023-06-02)
 
 
