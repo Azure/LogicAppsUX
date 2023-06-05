@@ -4,7 +4,7 @@ import { isWorkflowOperationNode } from '../actions/bjsworkflow/serializer';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
+import { containsIdTag, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
 
 ///////////////////////////////////////////////////////////
 // EDGES
@@ -123,7 +123,7 @@ export const moveRunAfterSource = (
 export const applyIsRootNode = (state: WorkflowState, graph: WorkflowNode, metadata: NodesMetadata) => {
   const rootNodeIds: string[] =
     graph.edges?.reduce((acc, edge) => {
-      return !edge.source.includes('-#') ? acc?.filter((id) => id !== edge.target) : acc;
+      return !containsIdTag(edge.source) ? acc?.filter((id) => id !== edge.target) : acc;
     }, graph.children?.filter((node) => isWorkflowOperationNode(node))?.map((node) => node.id) ?? []) ?? [];
 
   (graph.children ?? []).forEach((node) => {
