@@ -7,6 +7,7 @@ import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { LogicAppsV2, SubgraphType } from '@microsoft/utils-logic-apps';
 import {
+  containsIdTag,
   WORKFLOW_NODE_TYPES,
   WORKFLOW_EDGE_TYPES,
   SUBGRAPH_TYPES,
@@ -256,7 +257,7 @@ const processScopeActions = (
         graphId: graphId,
         parentNodeId: graphId === 'root' ? undefined : graphId,
         subgraphType,
-        actionCount: graph.children.filter((node) => !node.id.includes('-#'))?.length ?? -1,
+        actionCount: graph.children.filter((node) => !containsIdTag(node.id))?.length ?? -1,
       },
     };
   };
