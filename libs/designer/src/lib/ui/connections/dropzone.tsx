@@ -9,7 +9,7 @@ import { ActionButton, Callout, DirectionalHint, FocusZone } from '@fluentui/rea
 import { useBoolean } from '@fluentui/react-hooks';
 import { css } from '@fluentui/utilities';
 import { ActionButtonV2 } from '@microsoft/designer-ui';
-import { guid } from '@microsoft/utils-logic-apps';
+import { containsIdTag, guid, removeIdTag } from '@microsoft/utils-logic-apps';
 import { useCallback } from 'react';
 import { useDrop } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -49,8 +49,8 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds, isParallelBranch: true }));
   }, [dispatch, graphId, parentId]);
 
-  const upstreamNodesOfChild = useUpstreamNodes(cleanSubgraphId(childId) ?? cleanSubgraphId(parentId));
-  const immediateAncestor = useGetAllOperationNodesWithin((parentId?.split('-#') ?? []).length > 1 ? '' : cleanSubgraphId(parentId) ?? '');
+  const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? parentId ?? graphId));
+  const immediateAncestor = useGetAllOperationNodesWithin(parentId && !containsIdTag(parentId) ? parentId : '');
   const upstreamNodes = new Set([...upstreamNodesOfChild, ...immediateAncestor]);
 
   const [{ isOver, canDrop }, drop] = useDrop(
@@ -65,6 +65,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
           }
         }
         // TODO: Support preventing moving a node below downstream output
+        // TODO: Support calculating dependencies when dragging of scopes
         return item.id !== childId && item.id !== parentId;
       },
       collect: (monitor) => ({
@@ -163,8 +164,4 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
       )}
     </div>
   );
-};
-
-const cleanSubgraphId = (id?: string) => {
-  return id?.split('-#')[0];
 };
