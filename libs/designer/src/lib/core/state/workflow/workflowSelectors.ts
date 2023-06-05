@@ -181,7 +181,7 @@ export const useNodeGraphId = (nodeId: string): string => {
 };
 
 // BFS search for nodeId
-const getChildrenOfNodeId = (childrenNodes: Set<string>, rootNode?: WorkflowNode, nodeId?: string) => {
+const getChildrenOfNodeId = (childrenNodes: string[], nodeId: string, rootNode?: WorkflowNode) => {
   if (!rootNode) return undefined;
 
   const queue = new Queue<WorkflowNode>();
@@ -205,13 +205,13 @@ const getChildrenOfNodeId = (childrenNodes: Set<string>, rootNode?: WorkflowNode
 };
 
 // Adds all childrenIds
-const getAllChildren = (currNode: WorkflowNode, childrenNodes: Set<string>) => {
+const getAllChildren = (currNode: WorkflowNode, childrenNodes: string[]) => {
   if (currNode.children) {
     for (const child of currNode.children) {
       getAllChildren(child, childrenNodes);
     }
   } else if (currNode.type === WORKFLOW_NODE_TYPES.OPERATION_NODE) {
-    childrenNodes.add(currNode.id);
+    childrenNodes.push(currNode.id);
   }
 };
 
@@ -220,9 +220,8 @@ export const useGetAllOperationNodesWithin = (nodeId: string) => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       const graphNodes = state.graph;
-      const childrenNodes = new Set<string>();
-      getChildrenOfNodeId(childrenNodes, graphNodes ?? undefined, nodeId);
-
+      const childrenNodes: string[] = [];
+      getChildrenOfNodeId(childrenNodes, nodeId, graphNodes ?? undefined);
       return childrenNodes;
     })
   );
