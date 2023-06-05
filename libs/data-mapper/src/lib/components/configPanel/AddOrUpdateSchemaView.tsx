@@ -1,6 +1,7 @@
 import { ConfigPanelView } from '../../core/state/PanelSlice';
 import type { RootState } from '../../core/state/Store';
 import { SchemaType } from '../../models';
+import { getFileNameAndPath } from '../../utils';
 import { PrimaryButton, Stack, TextField, ChoiceGroup, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IChoiceGroupOption, IStackTokens } from '@fluentui/react';
 import type { ComboboxProps } from '@fluentui/react-components';
@@ -8,6 +9,8 @@ import { makeStyles, shorthands, tokens, Combobox, Option, Text } from '@fluentu
 import React, { useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
+
+// import {sortPaths } from 'sort-paths'
 
 const acceptedSchemaFileInputExtensions = '.xsd';
 
@@ -175,12 +178,16 @@ export const AddOrUpdateSchemaView = ({
       const matches = dataMapDropdownOptions.filter((o) => o.toLowerCase().indexOf(value?.toLowerCase()) === 0);
       setMatchingOptions(matches);
     }
+    if (value.length === 0) {
+      setMatchingOptions(dataMapDropdownOptions);
+    }
     onSelectOption(value);
   };
 
+  const sortedOptions: string[] = matchingOptions;
   const formattedOptions =
-    matchingOptions.length !== 0
-      ? matchingOptions.map((option) => optionWithPath(option))
+    sortedOptions.length !== 0
+      ? sortedOptions.map((option) => optionWithPath(option))
       : dataMapDropdownOptions.map((option) => optionWithPath(option));
   // danielle sort options
   console.log(errorMessage); // danielle need to find a place to put this
@@ -254,9 +261,7 @@ const useStyles = makeStyles({
 });
 
 const optionWithPath: React.FC<string> = (option: string) => {
-  const lastIndexOfSlash = option.lastIndexOf('/'); // danielle windows vs mac
-  const fileName = lastIndexOfSlash !== -1 ? option.slice(lastIndexOfSlash + 1, option.length + 1) : option;
-  const filePath = option.slice(0, lastIndexOfSlash + 1);
+  const [fileName, filePath] = getFileNameAndPath(option);
 
   // styling
   const stackTokens: IStackTokens = {

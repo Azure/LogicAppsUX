@@ -48,8 +48,8 @@ export class DataMapperApiService {
 
   private getBaseUri = () => `${this.options.baseUrl}:${this.options.port}`;
 
-  private getSchemaFileUri = (schemaFilename: string) =>
-    `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/schemas/${schemaFilename}/contents/schemaTree`;
+  private getSchemaFileUri = (schemaFilename: string, schemaFilePath: string) =>
+    `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/schemas/${schemaFilename}/contents/schemaTree?relativePath=${schemaFilePath}`;
 
   private getFunctionsManifestUri = () =>
     `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/mapTransformations?api-version=${dataMapperApiVersions.Oct2019Edge}`;
@@ -78,9 +78,10 @@ export class DataMapperApiService {
   }
 
   // NOTE: From BPM repo, looks like two schema files with the same name will prefer the JSON one
-  async getSchemaFile(schemaFilename: string): Promise<Schema> {
+  async getSchemaFile(schemaFilename: string, schemaFilePath: string): Promise<Schema> {
     const headers = this.getHeaders();
-    const schemaFileUri = this.getSchemaFileUri(schemaFilename.substring(0, schemaFilename.lastIndexOf('.')));
+    const schemaFileUri = this.getSchemaFileUri(schemaFilename.substring(0, schemaFilename.lastIndexOf('.')), schemaFilePath);
+    console.log(schemaFileUri);
     const response = await fetch(schemaFileUri, { headers, method: 'GET' });
 
     if (!response.ok) {
