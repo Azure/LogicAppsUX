@@ -338,7 +338,7 @@ function shouldHideInUI(parameter: ResolvedParameter): boolean {
 }
 
 function shouldSoftHide(parameter: ResolvedParameter): boolean {
-  return !parameter.required && getVisibility(parameter) !== constants.VISIBILITY.IMPORTANT;
+  return !parameter.required && !equals(getVisibility(parameter), constants.VISIBILITY.IMPORTANT);
 }
 
 function hasValue(parameter: ResolvedParameter): boolean {
