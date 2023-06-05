@@ -81,19 +81,7 @@ export const App = () => {
       vscode,
       oauthRedirectUrl
     );
-  }, [
-    baseUrl,
-    apiVersion,
-    apiHubServiceDetails,
-    tenantId,
-    isLocal,
-    connectionData,
-    panelMetaData,
-    vscode,
-    oauthRedirectUrl,
-    dispatch,
-    hostVersion,
-  ]);
+  }, [baseUrl, apiVersion, apiHubServiceDetails, tenantId, isLocal, connectionData, panelMetaData, vscode, oauthRedirectUrl, dispatch]);
 
   const connectionReferences: ConnectionReferences = useMemo(() => {
     return convertConnectionsDataToReferences(connectionData);
