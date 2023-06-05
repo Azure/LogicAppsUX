@@ -149,6 +149,9 @@ export const areInputTypesValidForFunction = (functionData: FunctionData, connec
               inputValMatchedOneOfAllowedTypes = true;
             }
           }
+        } else {
+          // Ignore undefined for type checking
+          inputValMatchedOneOfAllowedTypes = true;
         }
       });
 

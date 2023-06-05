@@ -7,7 +7,7 @@ import { FunctionNodePropertiesTab } from './tabs/FunctionNodePropertiesTab';
 import { SchemaNodePropertiesTab } from './tabs/SchemaNodePropertiesTab';
 import { TestTab } from './tabs/TestTab';
 import { Stack } from '@fluentui/react';
-import { Button, Divider, makeStyles, shorthands, Tab, TabList, Text, tokens, typographyStyles } from '@fluentui/react-components';
+import { Button, Divider, Tab, TabList, Text, makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleDown20Regular, ChevronDoubleUp20Regular, Delete20Regular } from '@fluentui/react-icons';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -70,7 +70,7 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
-  const functionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
+  const functionNodesDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.functionNodes);
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
   const [currentNode, setCurrentNode] = useState<UnknownNode>(undefined);
@@ -199,10 +199,10 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
     // Spread operator to get new reference for each node so PropPane stuff re-renders properly
     const sourceSchemaNode = sourceSchemaDictionary[selectedItemKey] ? { ...sourceSchemaDictionary[selectedItemKey] } : undefined;
     const targetSchemaNode = targetSchemaDictionary[selectedItemKey] ? { ...targetSchemaDictionary[selectedItemKey] } : undefined;
-    const functionNode = functionDictionary[selectedItemKey] ? { ...functionDictionary[selectedItemKey] } : undefined;
+    const functionNode = functionNodesDictionary[selectedItemKey] ? { ...functionNodesDictionary[selectedItemKey] } : undefined;
 
-    setCurrentNode(sourceSchemaNode ?? targetSchemaNode ?? functionNode ?? undefined);
-  }, [selectedItemKey, sourceSchemaDictionary, functionDictionary, targetSchemaDictionary]);
+    setCurrentNode(sourceSchemaNode ?? targetSchemaNode ?? functionNode?.functionData ?? undefined);
+  }, [selectedItemKey, sourceSchemaDictionary, functionNodesDictionary, targetSchemaDictionary]);
 
   useEffect(() => {
     setTabToDisplay(PropertiesPaneTabs.Properties);
