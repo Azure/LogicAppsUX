@@ -1,5 +1,6 @@
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
-import { useAllGraphParents, useGetAllAncestors, useNodeDisplayName, useNodeGraphId } from '../../core/state/workflow/workflowSelectors';
+import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
+import { useNodeDisplayName, useGetAllOperationNodesWithin } from '../../core/state/workflow/workflowSelectors';
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
@@ -48,36 +49,22 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds, isParallelBranch: true }));
   }, [dispatch, graphId, parentId]);
 
-  const graphParents = useAllGraphParents(graphId);
-  const allAncestors = useGetAllAncestors(childId ?? '');
-  const parentGID = useNodeGraphId(parentId ?? '');
-  const childGID = useNodeGraphId(childId ?? '');
+  const upstreamNodesOfChild = useUpstreamNodes(cleanSubgraphId(childId) ?? cleanSubgraphId(parentId));
+  const immediateAncestor = useGetAllOperationNodesWithin((parentId?.split('-#') ?? []).length > 1 ? '' : cleanSubgraphId(parentId) ?? '');
+  const upstreamNodes = new Set([...upstreamNodesOfChild, ...immediateAncestor]);
 
   const [{ isOver, canDrop }, drop] = useDrop(
     () => ({
       accept: 'BOX',
       drop: () => ({ graphId, parentId, childId }),
       canDrop: (item: { id: string; dependencies?: string[]; graphId?: string }) => {
-        // if moving into/outof scoped nodes
-        if (item.graphId !== parentGID && item.graphId !== childGID) {
-          // move into a scope
-          if (graphParents.includes(item.graphId ?? '')) {
-            return true;
-          }
-          // move outside a scope
-          for (const dec of item.dependencies ?? []) {
-            if (!allAncestors.has(dec)) {
-              return false;
-            }
-          }
-          return true;
-        }
+        // This supports preventing moving a node with a dependency above its upstream node
         for (const dec of item.dependencies ?? []) {
-          if (!allAncestors.has(dec)) {
+          if (!upstreamNodes.has(dec)) {
             return false;
           }
         }
-        if (graphParents.includes(item.id)) return false;
+        // TODO: Support preventing moving a node below downstream output
         return item.id !== childId && item.id !== parentId;
       },
       collect: (monitor) => ({
@@ -85,7 +72,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
         canDrop: monitor.canDrop(),
       }),
     }),
-    [graphId, parentId, childId]
+    [graphId, parentId, childId, upstreamNodes]
   );
 
   const parentName = useNodeDisplayName(parentId);
@@ -176,4 +163,8 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
       )}
     </div>
   );
+};
+
+const cleanSubgraphId = (id?: string) => {
+  return id?.split('-#')[0];
 };

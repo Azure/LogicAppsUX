@@ -7,6 +7,7 @@ import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
+import Queue from 'yocto-queue';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
 
@@ -179,28 +180,50 @@ export const useNodeGraphId = (nodeId: string): string => {
   );
 };
 
-const operationIsAction = (operation: LogicAppsV2.OperationDefinition): operation is LogicAppsV2.ActionDefinition => {
-  return (operation as any).runAfter;
+// BFS search for nodeId
+const getChildrenOfNodeId = (childrenNodes: Set<string>, rootNode?: WorkflowNode, nodeId?: string) => {
+  if (!rootNode) return undefined;
+
+  const queue = new Queue<WorkflowNode>();
+  queue.enqueue(rootNode);
+
+  while (queue.size > 0) {
+    const current = queue.dequeue();
+    if (current && current.id === nodeId) return getAllChildren(current, childrenNodes);
+    if (current?.id === nodeId) {
+      return current;
+    }
+
+    if (current?.children) {
+      for (const child of current.children) {
+        queue.enqueue(child);
+      }
+    }
+  }
+
+  return undefined;
 };
-export const useGetAllAncestors = (nodeId: string) => {
+
+// Adds all childrenIds
+const getAllChildren = (currNode: WorkflowNode, childrenNodes: Set<string>) => {
+  if (currNode.children) {
+    for (const child of currNode.children) {
+      getAllChildren(child, childrenNodes);
+    }
+  } else if (currNode.type === WORKFLOW_NODE_TYPES.OPERATION_NODE) {
+    childrenNodes.add(currNode.id);
+  }
+};
+
+// given a nodeId, return all operation nodes within if a scope
+export const useGetAllOperationNodesWithin = (nodeId: string) => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
-      const ancestors = new Set();
-      const operationData = state.operations[nodeId];
-      if (operationData && operationIsAction(operationData)) {
-        let currentParent = Object.keys(operationData?.runAfter ?? {});
-        while (currentParent.length) {
-          const currentChild = currentParent.pop();
-          ancestors.add(currentChild);
-          const parentOperation = currentChild ? state.operations[currentChild] : null;
-          if (parentOperation && operationIsAction(parentOperation)) {
-            const newAncestors = Object.keys(parentOperation?.runAfter ?? {});
-            currentParent = [...currentParent, ...newAncestors];
-          }
-        }
-      }
+      const graphNodes = state.graph;
+      const childrenNodes = new Set<string>();
+      getChildrenOfNodeId(childrenNodes, graphNodes ?? undefined, nodeId);
 
-      return ancestors;
+      return childrenNodes;
     })
   );
 };
