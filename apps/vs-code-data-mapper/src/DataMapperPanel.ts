@@ -156,10 +156,6 @@ export default class DataMapperPanel {
 
   public getNestedSchemas(fileName: string, parentPath: string, filesToDisplay: string[]) {
     const rootPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath);
-    if (fileName === '.DS_Store') {
-      // danielle try removing
-      return;
-    }
     const absolutePath = path.join(rootPath, parentPath, fileName);
     if (statSync(absolutePath).isDirectory()) {
       readdirSync(absolutePath).forEach((childFileName) => {

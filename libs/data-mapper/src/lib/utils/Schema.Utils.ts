@@ -31,10 +31,10 @@ export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended =>
 };
 
 export const getFileNameAndPath = (fullPath: string): [string, string] => {
-  fullPath.replace('\\', '/');
-  const lastIndexOfSlash = fullPath.lastIndexOf('/');
-  const fileName = lastIndexOfSlash !== -1 ? fullPath.slice(lastIndexOfSlash + 1, fullPath.length + 1) : fullPath;
-  const filePath = fullPath.slice(0, lastIndexOfSlash + 1);
+  const normalizedPath = fullPath.replace(`\\`, '/');
+  const lastIndexOfSlash = normalizedPath.lastIndexOf('/');
+  const fileName = lastIndexOfSlash !== -1 ? normalizedPath.slice(lastIndexOfSlash + 1, normalizedPath.length + 1) : normalizedPath;
+  const filePath = normalizedPath.slice(0, lastIndexOfSlash + 1);
   return [fileName, filePath];
 };
 
