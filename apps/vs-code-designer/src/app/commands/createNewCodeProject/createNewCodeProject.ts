@@ -67,7 +67,7 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
   }
 
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
-    title: localize('createNewCodeProject', 'Create new custom logic app workspace'),
+    title: localize('createNewCodeProject', 'Create workspace for custom logic app'),
     promptSteps: [
       new FolderListStep(),
       new setWorkspaceName(),
