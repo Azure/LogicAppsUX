@@ -10,7 +10,7 @@ import * as path from 'path';
 import { commands, Uri, workspace } from 'vscode';
 
 /**
- * A class that extends AzureWizardExecuteStep and is responsible for opening a folder in VS Code.
+ * A class that extends AzureWizardExecuteStep and is responsible for opening a folder in Visual Studio Code.
  */
 export class OpenFolderStepCodeProject extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 250;
