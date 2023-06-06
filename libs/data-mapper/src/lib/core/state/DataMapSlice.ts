@@ -12,6 +12,7 @@ import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import { directAccessPseudoFunctionKey, indexPseudoFunction } from '../../models/Function';
 import { findLast } from '../../utils/Array.Utils';
 import {
+  applyConnectionValue,
   bringInParentSourceNodesForRepeating,
   collectSourceNodesForConnectionChain,
   collectTargetNodesForConnectionChain,
@@ -24,7 +25,6 @@ import {
   getTargetSchemaNodeConnections,
   isConnectionUnit,
   nodeHasSpecificInputEventually,
-  applyConnectionValue,
 } from '../../utils/Connection.Utils';
 import {
   addAncestorNodesToCanvas,
@@ -73,6 +73,7 @@ export interface DataMapOperationState {
   selectedItemKeyParts?: ReactFlowIdParts;
   selectedItemConnectedNodes: ConnectionUnit[];
   xsltFilename: string;
+  xsltContent: string;
   inlineFunctionInputOutputKeys: string[];
   lastAction: string;
 }
@@ -86,6 +87,7 @@ const emptyPristineState: DataMapOperationState = {
   flattenedTargetSchema: {},
   targetSchemaOrdering: [],
   xsltFilename: '',
+  xsltContent: '',
   inlineFunctionInputOutputKeys: [],
   selectedItemConnectedNodes: [],
   lastAction: 'Pristine',
@@ -141,6 +143,11 @@ export const dataMapSlice = createSlice({
       state.pristineDataMap.xsltFilename = action.payload;
     },
 
+    setXsltContent: (state, action: PayloadAction<string>) => {
+      state.curDataMapOperation.xsltContent = action.payload;
+      state.pristineDataMap.xsltContent = action.payload;
+    },
+
     setInitialSchema: (state, action: PayloadAction<InitialSchemaAction>) => {
       const flattenedSchema = flattenSchemaIntoDictionary(action.payload.schema, action.payload.schemaType);
 
@@ -164,6 +171,10 @@ export const dataMapSlice = createSlice({
         state.pristineDataMap.flattenedTargetSchema = flattenedSchema;
         state.pristineDataMap.targetSchemaOrdering = targetSchemaSortArray;
       }
+
+      if (state.curDataMapOperation.sourceSchema && state.curDataMapOperation.targetSchema) {
+        state.curDataMapOperation.currentTargetSchemaNode = state.curDataMapOperation.targetSchema.schemaTreeRoot;
+      }
     },
 
     setInitialDataMap: (state, action: PayloadAction<InitialDataMapAction>) => {
@@ -185,7 +196,7 @@ export const dataMapSlice = createSlice({
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
         currentSourceSchemaNodes: [],
-        currentTargetSchemaNode: undefined,
+        currentTargetSchemaNode: targetSchema.schemaTreeRoot,
       };
 
       state.curDataMapOperation = newState;
@@ -571,6 +582,7 @@ export const dataMapSlice = createSlice({
 export const {
   deleteConnection,
   setXsltFilename,
+  setXsltContent,
   setInitialSchema,
   setInitialDataMap,
   changeSourceSchema,

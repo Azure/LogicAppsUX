@@ -1,4 +1,4 @@
-import { ArrayEditor, ArrayType } from '../../arrayeditor';
+import { ArrayEditor } from '../../arrayeditor';
 import { AuthenticationEditor } from '../../authentication';
 import { CodeEditor } from '../../code';
 import { Combobox } from '../../combobox';
@@ -6,14 +6,15 @@ import { CopyInputControl } from '../../copyinputcontrol';
 import { DictionaryEditor } from '../../dictionary';
 import { DropdownEditor } from '../../dropdown';
 import type { ValueSegment } from '../../editor';
-import type { CallbackHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
+import type { CallbackHandler, CastHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { FloatingActionMenu } from '../../floatingactionmenu';
-// import { HTMLEditor } from '../../html';
+import { HTMLEditor } from '../../html';
 import type { PickerCallbackHandlers } from '../../picker/filepickereditor';
 import { FilePickerEditor } from '../../picker/filepickereditor';
 import { QueryBuilderEditor } from '../../querybuilder';
+import { HybridQueryBuilderEditor } from '../../querybuilder/HybridQueryBuilder';
 import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
 import { ScheduleEditor } from '../../recurrence';
 import { SchemaEditor } from '../../schemaeditor';
@@ -40,10 +41,9 @@ export interface SettingTokenFieldProps extends SettingProps {
   showTokens?: boolean;
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
-  isTrigger?: boolean;
-  isCallback?: boolean;
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
+  onCastParameter: CastHandler;
   pickerCallbacks?: PickerCallbackHandlers;
   getTokenPicker: GetTokenPickerHandler;
   validationErrors?: string[];
@@ -74,8 +74,6 @@ const TokenField = ({
   placeholder,
   readOnly,
   value,
-  isTrigger,
-  isCallback,
   isLoading,
   errorDetails,
   showTokens,
@@ -85,6 +83,7 @@ const TokenField = ({
   onValueChange,
   onComboboxMenuOpen,
   hideValidationErrors,
+  onCastParameter,
   getTokenPicker,
 }: SettingTokenFieldProps & { labelId: string }) => {
   const dropdownOptions = editorOptions?.options?.value ?? editorOptions?.options ?? [];
@@ -103,6 +102,7 @@ const TokenField = ({
           multiSelect={!!editorOptions?.multiSelect}
           serialization={editorOptions?.serialization}
           onChange={onValueChange}
+          data-automation-id={`msla-setting-token-editor-dropdowneditor-${label}`}
         />
       );
 
@@ -114,9 +114,9 @@ const TokenField = ({
           getTokenPicker={getTokenPicker}
           language={EditorLanguage.javascript}
           onChange={onValueChange}
-          isTrigger={isTrigger}
           readonly={readOnly}
           placeholder={placeholder}
+          data-automation-id={`msla-setting-token-editor-codeeditor-${label}`}
         />
       );
 
@@ -130,17 +130,25 @@ const TokenField = ({
           initialValue={value}
           options={dropdownOptions.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
           useOption={true}
-          isTrigger={isTrigger}
           isLoading={isLoading}
           errorDetails={errorDetails}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           onMenuOpen={onComboboxMenuOpen}
+          data-automation-id={`msla-setting-token-editor-combobox-${label}`}
         />
       );
 
     case 'schema':
-      return <SchemaEditor label={label} readonly={readOnly} initialValue={value} onChange={onValueChange} />;
+      return (
+        <SchemaEditor
+          label={label}
+          readonly={readOnly}
+          initialValue={value}
+          onChange={onValueChange}
+          data-automation-id={`msla-setting-token-editor-schemaeditor-${label}`}
+        />
+      );
 
     case 'dictionary':
       return (
@@ -150,9 +158,10 @@ const TokenField = ({
           readonly={readOnly}
           initialValue={value}
           initialItems={editorViewModel.items}
-          isTrigger={isTrigger}
+          valueType={editorOptions?.valueType}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
+          data-automation-id={`msla-setting-token-editor-dictionaryeditor-${label}`}
         />
       );
 
@@ -164,12 +173,13 @@ const TokenField = ({
           initialValue={value}
           initialItems={editorViewModel.items}
           columnMode={editorViewModel.columnMode}
-          columns={editorOptions.columns.count}
-          titles={editorOptions.columns.titles}
-          keys={editorOptions.columns.keys}
-          isTrigger={isTrigger}
+          columns={editorOptions?.columns?.count}
+          titles={editorOptions?.columns?.titles}
+          keys={editorOptions?.columns?.keys}
+          types={editorOptions?.columns?.types}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
+          data-automation-id={`msla-setting-token-editor-tableditor-${label}`}
         />
       );
 
@@ -177,15 +187,16 @@ const TokenField = ({
       return (
         <ArrayEditor
           labelId={labelId}
-          type={editorViewModel.schema ? ArrayType.COMPLEX : ArrayType.SIMPLE}
+          arrayType={editorViewModel.arrayType}
           labelProps={{ text: label ? `${label} Item` : 'Array Item' }}
           placeholder={placeholder}
           readonly={readOnly}
-          initialValue={value}
-          isTrigger={isTrigger}
+          initialValue={editorViewModel.uncastedValue}
           getTokenPicker={getTokenPicker}
-          itemSchema={editorViewModel?.schema}
+          itemSchema={editorViewModel.itemSchema}
+          castParameter={onCastParameter}
           onChange={onValueChange}
+          data-automation-id={`msla-setting-token-editor-arrayeditor-${label}`}
         />
       );
 
@@ -200,6 +211,7 @@ const TokenField = ({
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           BasePlugins={{ tokens: showTokens }}
+          data-automation-id={`msla-setting-token-editor-authenticationeditor-${label}`}
         />
       );
 
@@ -207,9 +219,19 @@ const TokenField = ({
       return editorViewModel.isOldFormat ? (
         <SimpleQueryBuilder
           readonly={readOnly}
-          items={JSON.parse(JSON.stringify(editorViewModel.items))}
+          itemValue={editorViewModel.itemValue ?? value}
+          isRowFormat={editorViewModel.isRowFormat}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
+          data-automation-id={`msla-setting-token-editor-simplequerybuildereditor-${label}`}
+        />
+      ) : editorViewModel.isHybridEditor ? (
+        <HybridQueryBuilderEditor
+          readonly={readOnly}
+          groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
+          onChange={onValueChange}
+          getTokenPicker={getTokenPicker}
+          data-automation-id={`msla-setting-token-editor-hybridquerybuildereditor-${label}`}
         />
       ) : (
         <QueryBuilderEditor
@@ -217,6 +239,7 @@ const TokenField = ({
           groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
           onChange={onValueChange}
           getTokenPicker={getTokenPicker}
+          data-automation-id={`msla-setting-token-editor-querybuildereditor-${label}`}
         />
       );
 
@@ -228,6 +251,7 @@ const TokenField = ({
           showPreview={editorOptions?.showPreview}
           initialValue={value}
           onChange={onValueChange}
+          data-automation-id={`msla-setting-token-editor-scheduleeditor-${label}`}
         />
       );
 
@@ -249,22 +273,30 @@ const TokenField = ({
           editorBlur={onValueChange}
           getTokenPicker={getTokenPicker}
           onChange={hideValidationErrors}
+          data-automation-id={`msla-setting-token-editor-filepickereditor-${label}`}
         />
       );
-    // todo when html editor is ready
-    // case 'html':
-    //   return (
-    //     <HTMLEditor
-    //       initialValue={value}
-    //       placeholder={placeholder}
-    //       BasePlugins={{ tokens: showTokens }}
-    //       readonly={readOnly}
-    //       getTokenPicker={getTokenPicker}
-    //       onChange={onValueChange}
-    //     />
-    //   );
+    case 'html':
+      return (
+        <HTMLEditor
+          initialValue={value}
+          placeholder={placeholder}
+          BasePlugins={{ tokens: showTokens }}
+          readonly={readOnly}
+          getTokenPicker={getTokenPicker}
+          onChange={onValueChange}
+        />
+      );
     case 'floatingactionmenu': {
-      return <FloatingActionMenu supportedTypes={editorOptions?.supportedTypes} initialValue={value} onChange={onValueChange} />;
+      return (
+        <FloatingActionMenu
+          supportedTypes={editorOptions?.supportedTypes}
+          useStaticInputs={editorOptions?.useStaticInputs}
+          initialValue={value}
+          onChange={onValueChange}
+          data-automation-id={`msla-setting-token-editor-floatingactionmenu-${label}`}
+        />
+      );
     }
 
     default:
@@ -275,12 +307,11 @@ const TokenField = ({
           placeholder={placeholder}
           BasePlugins={{ tokens: showTokens }}
           readonly={readOnly}
-          isTrigger={isTrigger}
-          showCallbackTokens={isCallback}
           initialValue={value}
           editorBlur={onValueChange}
           getTokenPicker={getTokenPicker}
           onChange={hideValidationErrors}
+          data-automation-id={`msla-setting-token-editor-stringeditor-${label}`}
         />
       );
   }

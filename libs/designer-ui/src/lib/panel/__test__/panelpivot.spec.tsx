@@ -1,12 +1,12 @@
 import type { PanelPivotProps } from '../panelpivot';
 import { PanelPivot } from '../panelpivot';
-import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
 describe('ui/workflowparameters/workflowparameter', () => {
   let minimal: PanelPivotProps, renderer: ReactShallowRenderer.ShallowRenderer;
   beforeEach(() => {
     minimal = {
+      nodeId: '',
       isCollapsed: false,
       tabs: {},
       onTabChange: jest.fn(),

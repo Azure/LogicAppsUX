@@ -5,6 +5,7 @@ import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { getSplitOnOptions } from '../../../core/utils/outputs';
 import type { SettingsSectionProps } from '../settingsection';
 import { SettingsSection, SettingLabel } from '../settingsection';
+import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { DropdownSelectionChangeHandler, ExpressionChangeHandler } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -42,7 +43,10 @@ export const General = ({
 }: GeneralSectionProps): JSX.Element => {
   const intl = useIntl();
   const nodeId = useSelectedNodeId();
-  const nodeOutputs = useSelector((state: RootState) => state.operations.outputParameters[nodeId]);
+  const { nodeOutputs, operationInfo } = useSelector((state: RootState) => ({
+    nodeOutputs: state.operations.outputParameters[nodeId],
+    operationInfo: state.operations.operationInfo[nodeId],
+  }));
   const generalTitle = intl.formatMessage({
     defaultMessage: 'General',
     description: 'title for general setting section',
@@ -145,6 +149,7 @@ export const General = ({
           customLabel: () => splitOnLabel,
           onText,
           offText,
+          ariaLabel: splitOnTitle,
         },
         visible: splitOn?.isSupported,
       },
@@ -153,10 +158,13 @@ export const General = ({
         settingProp: {
           id: 'arrayValue',
           readOnly: readOnly || !splitOn?.value?.enabled,
-          items: getSplitOnOptions(nodeOutputs).map((option) => ({ title: option, value: option })),
+          items: getSplitOnOptions(nodeOutputs, OperationManifestService().isSupported(operationInfo?.type, operationInfo?.kind)).map(
+            (option) => ({ title: option, value: option })
+          ),
           selectedValue: splitOn?.value?.value,
           onSelectionChanged: onSplitOnSelectionChanged,
           customLabel: () => arrayDropdownLabel,
+          ariaLabel: arrayDropdownTitle,
         },
         visible: splitOn?.isSupported,
       },
@@ -168,6 +176,7 @@ export const General = ({
           readOnly: readOnly || !splitOn?.value?.enabled,
           customLabel: () => clientTrackingIdLabel,
           onValueChange: (_, newVal) => onClientTrackingIdChange(newVal as string),
+          ariaLabel: clientTrackingId,
         },
         visible: splitOn?.isSupported,
       },
@@ -179,6 +188,7 @@ export const General = ({
           customLabel: () => timeoutLabel,
           readOnly,
           onValueChange: (_, newValue) => onTimeoutValueChange(newValue as string),
+          ariaLabel: actionTimeoutTitle,
         },
         visible: timeout?.isSupported,
       },
@@ -191,18 +201,20 @@ export const General = ({
           customLabel: () => concurrencyLabel,
           onText,
           offText,
+          ariaLabel: concurrencyTitle,
         },
         visible: concurrency?.isSupported,
       },
       {
         settingType: 'CustomValueSlider',
         settingProp: {
-          maxVal: 100,
-          minVal: 0,
-          value: concurrency?.value?.value ?? 50,
+          maxVal: constants.CONCURRENCY_ACTION_SLIDER_LIMITS.MAX,
+          minVal: constants.CONCURRENCY_ACTION_SLIDER_LIMITS.MIN,
+          value: concurrency?.value?.value ?? constants.CONCURRENCY_ACTION_SLIDER_LIMITS.DEFAULT,
           onValueChange: onConcurrencyValueChange,
           sliderLabel: degreeOfParallelism,
           readOnly,
+          ariaLabel: concurrencyTitle,
         },
         visible: concurrency?.value?.enabled === true,
       },
@@ -213,6 +225,7 @@ export const General = ({
           readOnly,
           customLabel: () => triggerConditionsLabel,
           onExpressionsChange: onTriggerConditionsChange,
+          ariaLabel: triggerConditionsTitle,
         },
         visible: conditionExpressions?.isSupported,
       },
@@ -225,6 +238,7 @@ export const General = ({
           customLabel: () => invokerConnectionLabel,
           onText,
           offText,
+          ariaLabel: invokerConnectionTitle,
         },
         visible: invokerConnection?.isSupported,
       },

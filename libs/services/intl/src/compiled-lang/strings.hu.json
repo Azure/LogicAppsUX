@@ -99,6 +99,12 @@
       "value": "Oldalakra tördelés"
     }
   ],
+  "+ym4nO": [
+    {
+      "type": 0,
+      "value": "Tracked Properties"
+    }
+  ],
   "//nQG4": [
     {
       "type": 0,
@@ -231,10 +237,38 @@
       "value": "Aktiválás"
     }
   ],
+  "04AwK7": [
+    {
+      "type": 0,
+      "value": "Error code: '"
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": "', Message: '"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
       "value": "Egy átadott sztring típusú időbélyegből az óra kezdetét adja vissza."
+    }
+  ],
+  "08e2rO": [
+    {
+      "type": 0,
+      "value": "The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection."
     }
   ],
   "09B9CU": [
@@ -1057,6 +1091,16 @@
       "value": "Enter a valid double."
     }
   ],
+  "5FINOY": [
+    {
+      "type": 0,
+      "value": "Workflow has parameter validation errors on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -1069,6 +1113,12 @@
       "value": "Line Number"
     }
   ],
+  "5OvGgn": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1079,6 +1129,20 @@
     {
       "type": 0,
       "value": "Az átadott tömb vagy sztring első elemét adja vissza."
+    }
+  ],
+  "5akc1Q": [
+    {
+      "type": 0,
+      "value": "Unsupported 'in' value : '"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "' in Parameter"
     }
   ],
   "5b0sKi": [
@@ -1275,6 +1339,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az a sztring, amelyből a sztringrész származik."
+    }
+  ],
+  "7S2wtE": [
+    {
+      "type": 0,
+      "value": "Schema Validation"
     }
   ],
   "7WVgiU": [
@@ -1493,12 +1563,6 @@
       "value": "Egy, a napok számát egész számmal megadó érték hozzáadása az átadott sztring típusú időbélyeghez."
     }
   ],
-  "8yjjTX": [
-    {
-      "type": 0,
-      "value": "Connect via Service Principal"
-    }
-  ],
   "9/UeTh": [
     {
       "type": 0,
@@ -1521,24 +1585,6 @@
     {
       "type": 0,
       "value": "File"
-    }
-  ],
-  "92OUl9": [
-    {
-      "type": 0,
-      "value": "Array Element "
-    },
-    {
-      "type": 1,
-      "value": "index"
-    },
-    {
-      "type": 0,
-      "value": " is missing required property "
-    },
-    {
-      "type": 1,
-      "value": "property"
     }
   ],
   "93Gj/n": [
@@ -1593,6 +1639,20 @@
     {
       "type": 0,
       "value": "12"
+    }
+  ],
+  "9W0lck": [
+    {
+      "type": 0,
+      "value": "Invalid split on value '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "', cannot find in outputs."
     }
   ],
   "9YGcT2": [
@@ -1653,6 +1713,12 @@
     {
       "type": 0,
       "value": "Hitelesítés típusa"
+    }
+  ],
+  "AEguAy": [
+    {
+      "type": 0,
+      "value": "Empty value"
     }
   ],
   "AGCm1p": [
@@ -1931,6 +1997,12 @@
       "value": "Number"
     }
   ],
+  "BeqBP7": [
+    {
+      "type": 0,
+      "value": "Automatic Decompression"
+    }
+  ],
   "Bn8iTS": [
     {
       "type": 0,
@@ -1947,6 +2019,12 @@
     {
       "type": 0,
       "value": "Select a managed identity"
+    }
+  ],
+  "BtL7UI": [
+    {
+      "type": 0,
+      "value": "No additional information is needed for this step. You will be able to use the outputs in subsequent steps."
     }
   ],
   "BuYrD3": [
@@ -2079,6 +2157,20 @@
       "value": "Select a value"
     }
   ],
+  "DQV7aK": [
+    {
+      "type": 0,
+      "value": "Alt/Option + click to download '"
+    },
+    {
+      "type": 1,
+      "value": "displayName"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "DWd9vy": [
     {
       "type": 0,
@@ -2113,6 +2205,12 @@
     {
       "type": 0,
       "value": "Show mini-map"
+    }
+  ],
+  "DjbVKU": [
+    {
+      "type": 0,
+      "value": "OAuth"
     }
   ],
   "DkF25I": [
@@ -2211,12 +2309,6 @@
     {
       "type": 0,
       "value": "Add an action"
-    }
-  ],
-  "EV9iRu": [
-    {
-      "type": 0,
-      "value": "A mentés nem sikerült."
     }
   ],
   "EYqGxA": [
@@ -2341,6 +2433,12 @@
     {
       "type": 0,
       "value": "(UTC+05:45) Katmandu"
+    }
+  ],
+  "FIL1Nt": [
+    {
+      "type": 0,
+      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
     }
   ],
   "FIT7i0": [
@@ -2599,6 +2697,16 @@
       "value": "File Content"
     }
   ],
+  "H/QVod": [
+    {
+      "type": 0,
+      "value": "Workflow has settings validation errors on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "H17jEE": [
     {
       "type": 0,
@@ -2641,20 +2749,6 @@
       "value": "Month"
     }
   ],
-  "HJIZrG": [
-    {
-      "type": 0,
-      "value": "További diagnosztikai információ: az x-mS-client-request-id: "
-    },
-    {
-      "type": 1,
-      "value": "clientRequestId"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "HOchry": [
     {
       "type": 0,
@@ -2671,12 +2765,6 @@
     {
       "type": 0,
       "value": "Headers"
-    }
-  ],
-  "HXLutF": [
-    {
-      "type": 0,
-      "value": "Kulcs"
     }
   ],
   "Hbqlzk": [
@@ -2793,6 +2881,16 @@
       "value": "Egy UTC formátumban átadott sztring típusú időbélyeg konvertálása egy célidőzónára"
     }
   ],
+  "IX1OiA": [
+    {
+      "type": 0,
+      "value": "Failed to retrieve dynamic outputs, outputs of this operation might not be visible in subsequent actions. Error details: "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    }
+  ],
   "IXy91L": [
     {
       "type": 0,
@@ -2803,6 +2901,20 @@
     {
       "type": 0,
       "value": "Error Code"
+    }
+  ],
+  "IjEKvh": [
+    {
+      "type": 0,
+      "value": "Error executing the api '"
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "IjZFjQ": [
@@ -3043,6 +3155,12 @@
       "value": "actionCount"
     }
   ],
+  "KYX5Do": [
+    {
+      "type": 0,
+      "value": "Underline (⌘U)"
+    }
+  ],
   "KZOa5l": [
     {
       "type": 0,
@@ -3127,20 +3245,6 @@
       "value": "Létrehozás..."
     }
   ],
-  "LOwePI": [
-    {
-      "type": 0,
-      "value": "Érvénytelen típusú érték szerinti felosztás: „"
-    },
-    {
-      "type": 1,
-      "value": "splitOn"
-    },
-    {
-      "type": 0,
-      "value": "”. A felosztás nincs a tömbben."
-    }
-  ],
   "LR/3Lr": [
     {
       "type": 0,
@@ -3203,6 +3307,12 @@
     {
       "type": 0,
       "value": "Bullet List"
+    }
+  ],
+  "Lnqh6h": [
+    {
+      "type": 0,
+      "value": "Bold (Ctrl+B)"
     }
   ],
   "LoGUT3": [
@@ -3397,6 +3507,12 @@
       "value": "Headers"
     }
   ],
+  "NHnG2S": [
+    {
+      "type": 0,
+      "value": "The generated XSLT does not match the current mapping."
+    }
+  ],
   "NPUFgH": [
     {
       "type": 0,
@@ -3467,6 +3583,12 @@
     {
       "type": 0,
       "value": "Egy értéket bináris értékként ad vissza."
+    }
+  ],
+  "O/fh9A": [
+    {
+      "type": 0,
+      "value": "Service Principal"
     }
   ],
   "O27gKq": [
@@ -3819,6 +3941,16 @@
       "value": "Add dynamic data or expressions by inserting a /"
     }
   ],
+  "Q8zxeb": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " Key"
+    }
+  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -4019,10 +4151,24 @@
       "value": "issue"
     }
   ],
-  "S8P4N5": [
+  "Rq2U5n": [
     {
       "type": 0,
-      "value": "Törlés"
+      "value": "Unrecognized expression '"
+    },
+    {
+      "type": 1,
+      "value": "expression"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
+  "S138/4": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: ⌘B"
     }
   ],
   "SADSSs": [
@@ -4249,12 +4395,6 @@
     {
       "type": 0,
       "value": "Ügyfélkérelem azonosítója"
-    }
-  ],
-  "TeRxLv": [
-    {
-      "type": 0,
-      "value": "Use a service principal to connect using application permissions."
     }
   ],
   "TgcgXE": [
@@ -4647,6 +4787,16 @@
       "value": "Kötelező megadni. A tömbben található első egész szám."
     }
   ],
+  "WTZvGW": [
+    {
+      "type": 0,
+      "value": "Workflow has invalid connections on the following operations: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -4815,10 +4965,30 @@
       "value": "Count"
     }
   ],
+  "Xew1Df": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is '"
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "Xj0Gr/": [
     {
       "type": 0,
       "value": "Target schema element cannot be deleted."
+    }
+  ],
+  "Xj4xwI": [
+    {
+      "type": 0,
+      "value": "The managed identity used with this operation no longer exists. To continue, select an available identity or change the connection."
     }
   ],
   "XkBxv5": [
@@ -4875,24 +5045,16 @@
       "value": "További információ"
     }
   ],
-  "Y7yyKD": [
-    {
-      "type": 0,
-      "value": "A(z) "
-    },
-    {
-      "type": 1,
-      "value": "type"
-    },
-    {
-      "type": 0,
-      "value": " érvénytelen kifejezéstípus"
-    }
-  ],
   "Y9kBz5": [
     {
       "type": 0,
       "value": "Adat-URI bináris értékként való visszaadása."
+    }
+  ],
+  "YABOLz": [
+    {
+      "type": 0,
+      "value": "Body Item"
     }
   ],
   "YCFhzp": [
@@ -4923,6 +5085,12 @@
       "value": "Sztring"
     }
   ],
+  "YJlS8E": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: Ctrl+U"
+    }
+  ],
   "YKXmKD": [
     {
       "type": 0,
@@ -4933,6 +5101,18 @@
     {
       "type": 0,
       "value": "Adja meg a PFX-fájlt"
+    }
+  ],
+  "YR1uWE": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: Ctrl+B"
+    }
+  ],
+  "YRk271": [
+    {
+      "type": 0,
+      "value": "Authentication"
     }
   ],
   "YUbSFS": [
@@ -4951,6 +5131,12 @@
     {
       "type": 0,
       "value": "Egyetlen olyan tömböt vagy objektumot ad vissza, amely a függvénynek átadott tömbök vagy objektumok bármelyikében szereplő elemeket tartalmazza. A függvény paramétereit egy objektumhalmazban vagy egy tömbökből álló halmazban (a kettő kombinációjával viszont nem) lehet megadni. Két egyforma nevű objektum szereplése esetén a végső objektumban az utolsó adott nevű objektum fog megjelenni."
+    }
+  ],
+  "YdQw4/": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: ⌘I"
     }
   ],
   "YfwZJO": [
@@ -5093,20 +5279,6 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Tomszk"
-    }
-  ],
-  "Zr0yTE": [
-    {
-      "type": 0,
-      "value": "Nem támogatott „in” érték: „"
-    },
-    {
-      "type": 1,
-      "value": "value"
-    },
-    {
-      "type": 0,
-      "value": "” a paraméterben"
     }
   ],
   "a7j3gS": [
@@ -5361,6 +5533,12 @@
       "value": "panel"
     }
   ],
+  "c7tRg/": [
+    {
+      "type": 0,
+      "value": "Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger."
+    }
+  ],
   "c8UPLp": [
     {
       "type": 0,
@@ -5415,6 +5593,12 @@
       "value": "Válasszon identitást"
     }
   ],
+  "ciLkfU": [
+    {
+      "type": 0,
+      "value": "Bold (⌘B)"
+    }
+  ],
   "cj+kyo": [
     {
       "type": 0,
@@ -5451,6 +5635,12 @@
       "value": "Kötelező megadni. A gyűjtemény, melynek első Count objektumait ki kell hagyni."
     }
   ],
+  "ctI9Pp": [
+    {
+      "type": 0,
+      "value": "Generate XSLT first before attempting to test mappings."
+    }
+  ],
   "d4xMIx": [
     {
       "type": 0,
@@ -5461,6 +5651,12 @@
     {
       "type": 0,
       "value": "Schema is missing required inputs"
+    }
+  ],
+  "dBxX0M": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
     }
   ],
   "dDYCuU": [
@@ -5479,6 +5675,12 @@
     {
       "type": 0,
       "value": "Frissítés"
+    }
+  ],
+  "dPa7+6": [
+    {
+      "type": 0,
+      "value": "Generate"
     }
   ],
   "dQmi91": [
@@ -5529,6 +5731,12 @@
     {
       "type": 0,
       "value": "Close"
+    }
+  ],
+  "dfmH55": [
+    {
+      "type": 0,
+      "value": "Italic (Ctrl+I)"
     }
   ],
   "dgAu27": [
@@ -5597,6 +5805,12 @@
       "value": "Clear"
     }
   ],
+  "e9bIKh": [
+    {
+      "type": 0,
+      "value": "Failed to generate XSLT."
+    }
+  ],
   "eFet4K": [
     {
       "type": 0,
@@ -5643,6 +5857,12 @@
     {
       "type": 0,
       "value": "Enter an integer"
+    }
+  ],
+  "elD6+N": [
+    {
+      "type": 0,
+      "value": "Italic (⌘I)"
     }
   ],
   "epOMnV": [
@@ -5773,12 +5993,6 @@
       "value": "Email"
     }
   ],
-  "g0a4Qe": [
-    {
-      "type": 0,
-      "value": "Érték"
-    }
-  ],
   "g1zwch": [
     {
       "type": 0,
@@ -5845,6 +6059,12 @@
       "value": "Kapcsolat neve"
     }
   ],
+  "gIx5ys": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: Ctrl+I"
+    }
+  ],
   "gKq3Jv": [
     {
       "type": 0,
@@ -5875,6 +6095,12 @@
       "value": "Time Zone"
     }
   ],
+  "gUp23R": [
+    {
+      "type": 0,
+      "value": "The name already exists or is invalid, please update it before proceeding."
+    }
+  ],
   "gWRF8m": [
     {
       "type": 0,
@@ -5903,20 +6129,6 @@
     {
       "type": 0,
       "value": "Delete"
-    }
-  ],
-  "gpbgjJ": [
-    {
-      "type": 0,
-      "value": "Érvénytelen érték szerinti felosztás: „"
-    },
-    {
-      "type": 1,
-      "value": "splitOn"
-    },
-    {
-      "type": 0,
-      "value": "”. Nem található a kimenetekben."
     }
   ],
   "gu9o9z": [
@@ -5997,20 +6209,6 @@
     {
       "type": 0,
       "value": "Két szám kivonásának eredményét adja vissza."
-    }
-  ],
-  "hdnZ9Y": [
-    {
-      "type": 0,
-      "value": "A(z) „"
-    },
-    {
-      "type": 1,
-      "value": "displayName"
-    },
-    {
-      "type": 0,
-      "value": "“ letöltéséhez nyomja le az Alt/Option billentyűt, és kattintson"
     }
   ],
   "hic23z": [
@@ -6225,12 +6423,6 @@
       "value": "Tesztelés"
     }
   ],
-  "izS5yQ": [
-    {
-      "type": 0,
-      "value": "Learn more"
-    }
-  ],
   "j1VU25": [
     {
       "type": 0,
@@ -6333,16 +6525,6 @@
       "value": "Nem sikerült létrehozni a sémát"
     }
   ],
-  "jjYA4u": [
-    {
-      "type": 0,
-      "value": "Nem támogatott jegyzékfájlkapcsolat hivatkozásának formátuma: "
-    },
-    {
-      "type": 1,
-      "value": "referenceKeyFormat"
-    }
-  ],
   "juR40n": [
     {
       "type": 0,
@@ -6359,12 +6541,6 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A Base64 kódolású sztring."
-    }
-  ],
-  "k1N9Si": [
-    {
-      "type": 0,
-      "value": "Must provide default value for parameter."
     }
   ],
   "k41+13": [
@@ -6511,6 +6687,12 @@
       "value": " perc"
     }
   ],
+  "l72gf4": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
+    }
+  ],
   "lFve22": [
     {
       "type": 0,
@@ -6539,6 +6721,12 @@
     {
       "type": 0,
       "value": "Functions"
+    }
+  ],
+  "lUm6fl": [
+    {
+      "type": 0,
+      "value": "Return"
     }
   ],
   "lZT0JI": [
@@ -6603,22 +6791,10 @@
       "value": "Select an action type"
     }
   ],
-  "lzBHHT": [
+  "lwlg2K": [
     {
       "type": 0,
-      "value": "Array Element "
-    },
-    {
-      "type": 1,
-      "value": "index"
-    },
-    {
-      "type": 0,
-      "value": " has unknown property "
-    },
-    {
-      "type": 1,
-      "value": "property"
+      "value": "Underline (Ctrl+U)"
     }
   ],
   "lztiwS": [
@@ -6663,6 +6839,16 @@
       "value": "A függvény törölve."
     }
   ],
+  "mGPqAg": [
+    {
+      "type": 0,
+      "value": "Delete "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -6685,6 +6871,20 @@
     {
       "type": 0,
       "value": "A bemeneti sztringet URl-ként kódolja."
+    }
+  ],
+  "mPuXlv": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "', split on not in array."
     }
   ],
   "mQotIu": [
@@ -6733,6 +6933,16 @@
     {
       "type": 0,
       "value": "Adja meg a jelszót egyszerű szövegként, vagy használjon biztonságos paramétert"
+    }
+  ],
+  "mvu5xN": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " Value"
     }
   ],
   "mwEHSX": [
@@ -7007,20 +7217,6 @@
       "value": "(UTC+13:00) Szamoa"
     }
   ],
-  "p7YGxW": [
-    {
-      "type": 0,
-      "value": "Hiba történt az API „"
-    },
-    {
-      "type": 1,
-      "value": "parameters"
-    },
-    {
-      "type": 0,
-      "value": "” paraméterekkel való végrehajtása közben."
-    }
-  ],
   "pC2nr2": [
     {
       "type": 0,
@@ -7141,10 +7337,36 @@
       "value": "Egy egész számmal megadott másodpercszám hozzáadása az átadott sztring típusú időbélyeghez."
     }
   ],
+  "q8vnZQ": [
+    {
+      "type": 0,
+      "value": "Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned."
+    }
+  ],
   "q9hf8i": [
     {
       "type": 0,
       "value": "(UTC+04:00) Asztrahán, Uljanovszk"
+    }
+  ],
+  "qAlTD5": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: '"
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
+  "qBkxGU": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: ⌘U"
     }
   ],
   "qGfwxW": [
@@ -7181,28 +7403,6 @@
     {
       "type": 0,
       "value": "Kötelező"
-    }
-  ],
-  "qTqSqD": [
-    {
-      "type": 0,
-      "value": "Hibakód: "
-    },
-    {
-      "type": 1,
-      "value": "errorCode"
-    },
-    {
-      "type": 0,
-      "value": ", üzenet: "
-    },
-    {
-      "type": 1,
-      "value": "message"
-    },
-    {
-      "type": 0,
-      "value": "."
     }
   ],
   "qUMXpq": [
@@ -7375,6 +7575,12 @@
       "value": "Egy értéket URI-ként kódolt értékként ad vissza."
     }
   ],
+  "rd6fai": [
+    {
+      "type": 0,
+      "value": "Use left and right arrow keys to navigate between commands"
+    }
+  ],
   "rsdJcV": [
     {
       "type": 0,
@@ -7519,6 +7725,20 @@
       "value": "Ügyféltanúsítvány"
     }
   ],
+  "sytRna": [
+    {
+      "type": 0,
+      "value": "Failed to retrieve dynamic inputs. Error details: '"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -7591,6 +7811,12 @@
       "value": "Ez a függvény futásidőben magáról a munkafolyamatról szolgáltat adatokat."
     }
   ],
+  "tMdcE1": [
+    {
+      "type": 0,
+      "value": "Invalid connection, please update your connection to load complete details"
+    }
+  ],
   "tNoZx2": [
     {
       "type": 0,
@@ -7601,6 +7827,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Novoszibirszk"
+    }
+  ],
+  "tUCptx": [
+    {
+      "type": 0,
+      "value": "Insert Link"
     }
   ],
   "tUYXRA": [
@@ -8229,6 +8461,20 @@
     {
       "type": 0,
       "value": "Válasszon egy értéket"
+    }
+  ],
+  "yjierd": [
+    {
+      "type": 0,
+      "value": "Invalid expression type '"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "yoCi15": [

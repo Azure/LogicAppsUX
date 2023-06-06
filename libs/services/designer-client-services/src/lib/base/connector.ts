@@ -2,16 +2,10 @@ import type { IConnectorService, ListDynamicValue, ManagedIdentityRequestPropert
 import { getClientRequestIdFromHeaders, pathCombine } from '../helpers';
 import type { IHttpClient } from '../httpClient';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { FilePickerInfo, LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft/parsers-logic-apps';
-import { Types } from '@microsoft/parsers-logic-apps';
 import type { OpenAPIV2, OperationInfo } from '@microsoft/utils-logic-apps';
 import {
-  getPropertyValue,
   UnsupportedException,
-  getJSONValue,
-  getObjectPropertyValue,
   isArmResourceId,
-  isNullOrUndefined,
   ArgumentException,
   ConnectorServiceErrorCode,
   ConnectorServiceException,
@@ -58,44 +52,13 @@ export abstract class BaseConnectorService implements IConnectorService {
     }
   }
 
-  async getLegacyDynamicValues(
+  async getLegacyDynamicContent(
     connectionId: string,
     connectorId: string,
     parameters: Record<string, any>,
-    extension: LegacyDynamicValuesExtension,
-    parameterArrayType: string,
     managedIdentityProperties?: ManagedIdentityRequestProperties
-  ): Promise<ListDynamicValue[]> {
-    const response = await this._executeAzureDynamicApi(connectionId, connectorId, parameters, managedIdentityProperties);
-    const values = getObjectPropertyValue(response, extension['value-collection'] ? extension['value-collection'].split('/') : []);
-    if (values && values.length) {
-      return values.map((property: any) => {
-        let value: any, displayName: any;
-        let isSelectable = true;
-
-        if (parameterArrayType && parameterArrayType !== Types.Object) {
-          displayName = value = getJSONValue(property);
-        } else {
-          value = getObjectPropertyValue(property, extension['value-path'].split('/'));
-          displayName = extension['value-title'] ? getObjectPropertyValue(property, extension['value-title'].split('/')) : value;
-        }
-
-        const description = extension['value-description']
-          ? getObjectPropertyValue(property, extension['value-description'].split('/'))
-          : undefined;
-
-        if (extension['value-selectable']) {
-          const selectableValue = getObjectPropertyValue(property, extension['value-selectable'].split('/'));
-          if (!isNullOrUndefined(selectableValue)) {
-            isSelectable = selectableValue;
-          }
-        }
-
-        return { value, displayName, description, disabled: !isSelectable };
-      });
-    }
-
-    return response;
+  ): Promise<any> {
+    return this._executeAzureDynamicApi(connectionId, connectorId, parameters, managedIdentityProperties);
   }
 
   async getListDynamicValues(
@@ -132,28 +95,6 @@ export abstract class BaseConnectorService implements IConnectorService {
       content: { parameters: invokeParameters, configuration },
     });
     return this._getResponseFromDynamicApi(response, uri);
-  }
-
-  async getLegacyDynamicSchema(
-    connectionId: string,
-    connectorId: string,
-    parameters: Record<string, any>,
-    extension: LegacyDynamicSchemaExtension,
-    managedIdentityProperties?: ManagedIdentityRequestProperties
-  ): Promise<OpenAPIV2.SchemaObject | null> {
-    const response = await this._executeAzureDynamicApi(connectionId, connectorId, parameters, managedIdentityProperties);
-
-    if (!response) {
-      return null;
-    }
-
-    const schemaPath = extension['value-path'] ? extension['value-path'].split('/') : undefined;
-    return schemaPath
-      ? getObjectPropertyValue(
-          response,
-          schemaPath.length && equals(schemaPath[schemaPath.length - 1], 'properties') ? schemaPath.splice(-1, 1) : schemaPath
-        ) ?? null
-      : { properties: response, type: Types.Object };
   }
 
   async getDynamicSchema(
@@ -196,30 +137,15 @@ export abstract class BaseConnectorService implements IConnectorService {
     return this._getResponseFromDynamicApi(response, uri);
   }
 
-  async getLegacyDynamicTreeItems(
-    connectionId: string,
-    connectorId: string,
-    parameters: Record<string, any>,
-    extension: LegacyDynamicValuesExtension,
-    pickerInfo: FilePickerInfo,
-    managedIdentityProperties?: ManagedIdentityRequestProperties
+  getTreeDynamicValues(
+    _connectionId: string | undefined,
+    _connectorId: string,
+    _operationId: string,
+    _parameterAlias: string | undefined,
+    _parameters: Record<string, any>,
+    _dynamicState: any
   ): Promise<TreeDynamicValue[]> {
-    const response = await this._executeAzureDynamicApi(connectionId, connectorId, parameters, managedIdentityProperties);
-    const { collectionPath, titlePath, folderPropertyPath, mediaPropertyPath } = pickerInfo;
-    const values = collectionPath ? getPropertyValue(response, collectionPath) : response;
-
-    if (values && values.length) {
-      return values.map((value: any) => {
-        return {
-          value,
-          displayName: getPropertyValue(value, titlePath as string),
-          isParent: !!getPropertyValue(value, folderPropertyPath as string),
-          mediaType: mediaPropertyPath ? getPropertyValue(value, mediaPropertyPath) : undefined,
-        };
-      });
-    }
-
-    return response;
+    throw new UnsupportedException('Unsupported dynamic call connector method - getTreeDynamicValues');
   }
 
   protected _isClientSupportedOperation(connectorId: string, operationId: string): boolean {
@@ -279,8 +205,9 @@ export abstract class BaseConnectorService implements IConnectorService {
       const errorCode = statusCode;
       errorMessage = intl.formatMessage(
         {
-          defaultMessage: "Error code: '{errorCode}', Message: '{message}'.",
-          description: 'Dynamic call error message',
+          defaultMessage: `Error code: ''{errorCode}'', Message: ''{message}''.`,
+          description:
+            'Dynamic call error message. Do not remove the double single quotes around the placeholder texts, as it is needed to wrap the placeholder text in single quotes.',
         },
         { errorCode, message }
       );
@@ -291,8 +218,9 @@ export abstract class BaseConnectorService implements IConnectorService {
     return clientRequestId
       ? `${errorMessage} ${intl.formatMessage(
           {
-            defaultMessage: "More diagnostic information: x-ms-client-request-id is '{clientRequestId}'.",
-            description: 'Diagnostics information on error message',
+            defaultMessage: "More diagnostic information: x-ms-client-request-id is ''{clientRequestId}''.",
+            description:
+              'Diagnostics information on error message. Do not remove the double single quotes around the placeholder texts, as it is needed to wrap the placeholder text in single quotes.',
           },
           { clientRequestId }
         )}`
@@ -339,8 +267,9 @@ export abstract class BaseConnectorService implements IConnectorService {
             ? ex.message
             : intl.formatMessage(
                 {
-                  defaultMessage: "Error executing the api '{parameters}'.",
-                  description: 'Error message when execute dynamic api in managed connector',
+                  defaultMessage: "Error executing the api ''{parameters}''.",
+                  description:
+                    'Error message when execute dynamic api in managed connector. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
                 },
                 { parameters: parameters['path'] }
               ),
@@ -377,8 +306,9 @@ export abstract class BaseConnectorService implements IConnectorService {
             ? ex.message
             : intl.formatMessage(
                 {
-                  defaultMessage: "Error executing the api '{parameters}'.",
-                  description: 'Error message when execute dynamic api in managed connector',
+                  defaultMessage: "Error executing the api ''{parameters}''.",
+                  description:
+                    'Error message when execute dynamic api in managed connector. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
                 },
                 { parameters: parameters['path'] }
               ),

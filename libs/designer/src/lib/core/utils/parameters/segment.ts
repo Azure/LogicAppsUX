@@ -1,4 +1,3 @@
-import type { RepetitionContext } from './helper';
 import { VariableBrandColor, FxIcon, ParameterIcon, VariableIcon } from './helper';
 import { JsonSplitter } from './jsonsplitter';
 import { TokenSegmentConvertor } from './tokensegment';
@@ -20,11 +19,6 @@ import { format, guid, isNullOrUndefined, startsWith, UnsupportedException } fro
  * The options for value segment convertor.
  */
 export interface ValueSegmentConvertorOptions {
-  /**
-   * @member [RepetitionContext] repetitionContext - The repetition context.
-   */
-  repetitionContext?: RepetitionContext;
-
   /**
    * @member {boolean} shouldUncast - The value indicating whether uncasting should be done.
    */

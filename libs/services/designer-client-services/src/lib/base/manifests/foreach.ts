@@ -17,10 +17,10 @@ export default {
         foreach: {
           title: 'Select an output from previous steps',
           description: 'Select an output from previous steps',
-          required: true,
           type: 'array',
         },
       },
+      required: ['foreach'],
     },
     inputsLocation: [],
     isInputsOptional: false,
@@ -43,6 +43,9 @@ export default {
 
     settings: {
       trackedProperties: {
+        scopes: [SettingScope.Action],
+      },
+      concurrency: {
         scopes: [SettingScope.Action],
       },
     },

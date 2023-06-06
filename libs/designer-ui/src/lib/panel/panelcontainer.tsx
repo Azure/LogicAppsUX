@@ -6,6 +6,7 @@ import { PanelScope, PanelLocation } from './panelUtil';
 import { PanelContent } from './panelcontent';
 import type { PanelHeaderControlType } from './panelheader/panelheader';
 import { PanelHeader } from './panelheader/panelheader';
+import type { TitleChangeHandler } from './panelheader/panelheadertitle';
 import { PanelPivot } from './panelpivot';
 import type { ILayerProps } from '@fluentui/react';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
@@ -14,8 +15,11 @@ import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
+const horizontalPadding = '2rem';
+const verticalPadding = '1rem';
+
 const panelStyles: Partial<IPanelStyles> = {
-  content: { padding: '1rem 2rem' },
+  content: { padding: verticalPadding + ' ' + horizontalPadding },
   main: { overflow: 'hidden' },
   scrollableContent: { height: '100%' },
 };
@@ -31,6 +35,7 @@ export type PanelContainerProps = {
   comment?: string;
   noNodeSelected: boolean;
   isError?: boolean;
+  errorMessage?: string;
   isLoading?: boolean;
   panelScope: PanelScope;
   pivotDisabled?: boolean;
@@ -49,7 +54,7 @@ export type PanelContainerProps = {
   toggleCollapse: () => void;
   onCommentChange: (panelCommentChangeEvent?: string) => void;
   renderHeader?: (props?: IPanelProps, defaultrender?: IPanelHeaderRenderer, headerTextId?: string) => JSX.Element;
-  onTitleChange: (newValue: string) => void;
+  onTitleChange: TitleChangeHandler;
 } & CommonPanelProps;
 
 export const PanelContainer = ({
@@ -59,6 +64,7 @@ export const PanelContainer = ({
   panelLocation,
   noNodeSelected,
   isError,
+  errorMessage,
   isLoading,
   panelScope,
   panelHeaderControlType,
@@ -105,6 +111,7 @@ export const PanelContainer = ({
           isError={isError}
           isLoading={isLoading}
           comment={comment}
+          horizontalPadding={horizontalPadding}
           commentChange={onCommentChange}
           toggleCollapse={toggleCollapse}
           onTitleChange={onTitleChange}
@@ -168,7 +175,7 @@ export const PanelContainer = ({
               <Spinner size={SpinnerSize.large} />
             </div>
           ) : isError ? (
-            <MessageBar messageBarType={MessageBarType.error}>{panelErrorMessage}</MessageBar>
+            <MessageBar messageBarType={MessageBarType.error}>{errorMessage ?? panelErrorMessage}</MessageBar>
           ) : (
             <div className="msla-panel-page">
               <PanelPivot

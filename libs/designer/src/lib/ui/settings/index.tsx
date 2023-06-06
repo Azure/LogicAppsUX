@@ -124,13 +124,14 @@ function GeneralSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: bool
   }, [dispatch, nodeId, operations, triggerValidation]);
 
   const onConcurrencyToggle = (checked: boolean): void => {
+    const value = checked ? concurrency?.value?.value ?? constants.CONCURRENCY_ACTION_SLIDER_LIMITS.DEFAULT : undefined;
     dispatch(
       updateNodeSettings({
         id: nodeId,
         settings: {
           concurrency: {
             isSupported: !!concurrency?.isSupported,
-            value: { value: concurrency?.value?.value ?? undefined, enabled: checked },
+            value: { value, enabled: checked },
           },
         },
       })
@@ -376,6 +377,15 @@ function NetworkingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: b
     });
   };
 
+  const onPaginationToggle = (checked: boolean): void => {
+    updateSettings({
+      paging: {
+        isSupported: !!paging?.isSupported,
+        value: { ...paging?.value, enabled: checked },
+      },
+    });
+  };
+
   const onPaginationValueChange = (newVal: string): void => {
     updateSettings({
       paging: {
@@ -486,6 +496,7 @@ function NetworkingSettings({ nodeId, readOnly }: { nodeId: string; readOnly?: b
     onAsyncPatternToggle,
     onAsyncResponseToggle,
     onContentTransferToggle,
+    onPaginationToggle,
     onPaginationValueChange,
     onRequestOptionsChange,
     onHeadersOnResponseToggle,

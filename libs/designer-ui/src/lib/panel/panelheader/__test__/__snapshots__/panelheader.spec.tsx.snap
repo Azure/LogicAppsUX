@@ -19,6 +19,7 @@ exports[`lib/panel/panelHeader/main should render 1`] = `
       <button
         aria-label="Collapse/Expand"
         className="ms-Button ms-Button--icon root-110"
+        data-automation-id="msla-panel-header-collapse-nav"
         data-is-focusable={true}
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -68,6 +69,7 @@ exports[`lib/panel/panelHeader/main should render 1`] = `
   </div>
   <div
     className="msla-panel-card-header"
+    style={Object {}}
   >
     <div
       className="ms-Spinner msla-card-header-spinner root-121"
@@ -133,6 +135,7 @@ exports[`lib/panel/panelHeader/main should render with panel header menu 1`] = `
       <button
         aria-label="Collapse/Expand"
         className="ms-Button ms-Button--icon root-110"
+        data-automation-id="msla-panel-header-collapse-nav"
         data-is-focusable={true}
         onClick={[Function]}
         onKeyDown={[Function]}
@@ -182,6 +185,7 @@ exports[`lib/panel/panelHeader/main should render with panel header menu 1`] = `
   </div>
   <div
     className="msla-panel-card-header"
+    style={Object {}}
   >
     <div
       className="ms-Spinner msla-card-header-spinner root-121"

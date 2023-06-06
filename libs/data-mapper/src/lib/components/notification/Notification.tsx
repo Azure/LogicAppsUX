@@ -1,14 +1,14 @@
 import { undoDataMapOperation } from '../../core/state/DataMapSlice';
 import type { AppDispatch } from '../../core/state/Store';
 import { Stack, StackItem } from '@fluentui/react';
-import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
+import { Button, Text, makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
 import { Delete20Regular, Dismiss20Regular, DismissCircle20Filled, Info20Filled } from '@fluentui/react-icons';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
 export enum NotificationTypes {
-  SaveFailed = 'saveFailed',
+  GenerateFailed = 'generateFailed',
   MapHasErrorsAtSave = 'mapHasErrorsAtSave',
   SourceNodeRemoved = 'sourceNodeRemoved',
   SourceNodeRemoveFailed = 'sourceNodeRemoveFailed',
@@ -32,6 +32,7 @@ export interface NotificationData {
 const defaultNotificationAutoHideDuration = 5000; // ms
 export const deletedNotificationAutoHideDuration = 3000;
 export const errorNotificationAutoHideDuration = 7000;
+export const disabledAutoHide = -1;
 
 const useStyles = makeStyles({
   toast: {
@@ -44,7 +45,7 @@ const useStyles = makeStyles({
     boxShadow: tokens.shadow16,
     backgroundColor: tokens.colorNeutralBackground1,
     ...shorthands.padding('12px'),
-    zIndex: 12,
+    zIndex: 120,
   },
   msgTitle: {
     ...typographyStyles.body1Strong,
@@ -76,8 +77,12 @@ export const Notification = (props: NotificationProps) => {
 
   const notificationIcon = useMemo(() => {
     switch (type) {
+      // Warning icon
+      //case NotificationTypes.None:
+      //return <Warning20Filled style={{ color: tokens.colorPaletteGoldBorderActive, marginRight: 8 }} />;
+
       // Error icon
-      case NotificationTypes.SaveFailed:
+      case NotificationTypes.GenerateFailed:
       case NotificationTypes.MapHasErrorsAtSave:
       case NotificationTypes.RepeatingConnectionCannotDelete:
       case NotificationTypes.SourceNodeRemoveFailed:
@@ -119,9 +124,9 @@ export const Notification = (props: NotificationProps) => {
 
   const LocResources = useMemo<{ [key: string]: string }>(
     () => ({
-      [NotificationTypes.SaveFailed]: intl.formatMessage({
-        defaultMessage: 'Failed to save.',
-        description: 'Message on failed save',
+      [NotificationTypes.GenerateFailed]: intl.formatMessage({
+        defaultMessage: 'Failed to generate XSLT.',
+        description: 'Message on failed generation',
       }),
       [NotificationTypes.MapHasErrorsAtSave]: intl.formatMessage(
         {
@@ -219,7 +224,7 @@ export const Notification = (props: NotificationProps) => {
           </StackItem>
         );
     }
-  }, [dispatch, onClose, showMeLoc, styles.actionButton, openMapChecker, type, undoLoc]);
+  }, [type, styles.actionButton, openMapChecker, showMeLoc, undoLoc, onClose, dispatch]);
 
   return (
     <div className={styles.toast}>

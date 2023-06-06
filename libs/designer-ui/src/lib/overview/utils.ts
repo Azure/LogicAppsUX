@@ -1,24 +1,7 @@
 import { getDurationString } from '../utils';
 import type { RunDisplayItem } from './types';
-import type { CallbackInfo, Run, RunError } from '@microsoft/utils-logic-apps';
-import { isCallbackInfoWithRelativePath, isObject } from '@microsoft/utils-logic-apps';
-
-export function getCallbackUrl(callbackInfo: CallbackInfo | undefined): string | undefined {
-  if (!callbackInfo) {
-    return undefined;
-  }
-
-  if (!isCallbackInfoWithRelativePath(callbackInfo)) {
-    return callbackInfo.value;
-  }
-
-  const { basePath = '', queries = {}, relativePath } = callbackInfo;
-  const queryString = Object.entries(queries)
-    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-    .join('&');
-
-  return basePath + (relativePath.startsWith('/') ? relativePath : `/${relativePath}`) + (queryString ? `?${queryString}` : '');
-}
+import type { Run, RunError } from '@microsoft/utils-logic-apps';
+import { isObject } from '@microsoft/utils-logic-apps';
 
 export function isRunError(value: any): value is RunError {
   return isObject(value) && isObject(value.error) && typeof value.error.code === 'string' && typeof value.error.message === 'string';

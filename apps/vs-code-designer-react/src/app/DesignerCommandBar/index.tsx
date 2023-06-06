@@ -38,7 +38,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
     const { definition, parameters, connectionReferences } = await serializeBJSWorkflow(designerState, {
-      skipValidation: true,
+      skipValidation: false,
       ignoreNonCriticalErrors: true,
     });
     await vscode.postMessage({

@@ -1,3 +1,4 @@
+import constants from '../../../common/constants';
 import { updateNodeConnection } from '../../actions/bjsworkflow/connections';
 import { initializeGraphState } from '../../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
@@ -9,16 +10,16 @@ import { isWorkflowNode } from '../../parsers/models/workflowNode';
 import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
 import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
 import { addNewEdge } from '../../parsers/restructuringHelpers';
-import { getImmediateSourceNodeIds } from '../../utils/graph';
+import { getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
 import { resetWorkflowState } from '../global';
-import { updateNodeParameters } from '../operation/operationMetadataSlice';
+import { updateNodeParameters, updateNodeSettings, updateStaticResults } from '../operation/operationMetadataSlice';
 import type { SpecTypes, WorkflowState } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { equals, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from 'reactflow';
 
@@ -39,9 +40,12 @@ export const initialWorkflowState: WorkflowState = {
   idReplacements: {},
   newlyAddedOperations: {},
   isDirty: false,
+  originalDefinition: {
+    $schema: constants.SCHEMA.GA_20160601.URL,
+    contentVersion: '1.0.0.0',
+  },
 };
 
-const placeholderNodeId = 'builtin:newWorkflowTrigger';
 export const workflowSlice = createSlice({
   name: 'workflow',
   initialState: initialWorkflowState,
@@ -64,12 +68,12 @@ export const workflowSlice = createSlice({
       if (!graph) throw new Error('graph not set');
 
       if (action.payload.isTrigger) {
-        deleteWorkflowNode(placeholderNodeId, graph);
-        delete state.nodesMetadata[placeholderNodeId];
+        deleteWorkflowNode(constants.NODE.TYPE.PLACEHOLDER_TRIGGER, graph);
+        delete state.nodesMetadata[constants.NODE.TYPE.PLACEHOLDER_TRIGGER];
 
         if (graph.edges?.length) {
           graph.edges = graph.edges.map((edge) => {
-            if (equals(edge.source, placeholderNodeId)) {
+            if (equals(edge.source, constants.NODE.TYPE.PLACEHOLDER_TRIGGER)) {
               // eslint-disable-next-line no-param-reassign
               edge.source = action.payload.nodeId;
             }
@@ -135,7 +139,7 @@ export const workflowSlice = createSlice({
 
       if (isTrigger) {
         const placeholderNode = {
-          id: placeholderNodeId,
+          id: constants.NODE.TYPE.PLACEHOLDER_TRIGGER,
           width: 200,
           height: 44,
           type: WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE,
@@ -145,9 +149,9 @@ export const workflowSlice = createSlice({
         deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
 
         graph.children = [...(graph?.children ?? []), placeholderNode];
-        state.nodesMetadata[placeholderNodeId] = { graphId, isRoot: true };
+        state.nodesMetadata[constants.NODE.TYPE.PLACEHOLDER_TRIGGER] = { graphId, isRoot: true };
         for (const childId of existingChildren) {
-          addNewEdge(state, placeholderNodeId, childId, graph);
+          addNewEdge(state, constants.NODE.TYPE.PLACEHOLDER_TRIGGER, childId, graph, false);
         }
       } else {
         deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
@@ -316,7 +320,12 @@ export const workflowSlice = createSlice({
     },
     replaceId: (state: WorkflowState, action: PayloadAction<{ originalId: string; newId: string }>) => {
       const { originalId, newId } = action.payload;
-      state.idReplacements[originalId] = newId.replaceAll(' ', '_').replaceAll('#', '');
+      const normalizedId = transformOperationTitle(newId);
+      if (originalId === normalizedId) {
+        delete state.idReplacements[originalId];
+      } else {
+        state.idReplacements[originalId] = normalizedId;
+      }
     },
     setIsWorkflowDirty: (state: WorkflowState, action: PayloadAction<boolean>) => {
       state.isDirty = action.payload;
@@ -325,20 +334,41 @@ export const workflowSlice = createSlice({
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
     builder.addCase(initializeGraphState.fulfilled, (state, action) => {
-      state.graph = action.payload.graph;
-      state.operations = action.payload.actionData;
-      state.nodesMetadata = action.payload.nodesMetadata;
-      state.focusedCanvasNodeId = Object.entries(action?.payload?.actionData ?? {}).find(
+      const { deserializedWorkflow, originalDefinition } = action.payload;
+      state.originalDefinition = originalDefinition;
+      state.graph = deserializedWorkflow.graph;
+      state.operations = deserializedWorkflow.actionData;
+      state.nodesMetadata = deserializedWorkflow.nodesMetadata;
+      state.focusedCanvasNodeId = Object.entries(deserializedWorkflow?.actionData ?? {}).find(
         ([, value]) => !(value as LogicAppsV2.ActionDefinition).runAfter
       )?.[0];
     });
     builder.addCase(updateNodeParameters, (state, action) => {
       state.isDirty = state.isDirty || action.payload.isUserAction || false;
     });
-    builder.addCase(updateNodeConnection.fulfilled, (state) => {
-      state.isDirty = true;
-    });
     builder.addCase(resetWorkflowState, () => initialWorkflowState);
+    builder.addMatcher(
+      isAnyOf(
+        addNode,
+        moveNode,
+        deleteNode,
+        addSwitchCase,
+        deleteSwitchCase,
+        addSwitchCase,
+        addImplicitForeachNode,
+        setNodeDescription,
+        updateRunAfter,
+        removeEdgeFromRunAfter,
+        addEdgeFromRunAfter,
+        replaceId,
+        updateNodeSettings,
+        updateNodeConnection.fulfilled,
+        updateStaticResults
+      ),
+      (state) => {
+        state.isDirty = true;
+      }
+    );
   },
 });
 

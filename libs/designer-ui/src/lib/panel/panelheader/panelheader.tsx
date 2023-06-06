@@ -1,6 +1,8 @@
 import type { MenuItemOption } from '../../card/types';
+import { convertUIElementNameToAutomationId } from '../../utils';
 import { PanelLocation, PanelScope } from '../panelUtil';
 import { PanelHeaderComment } from './panelheadercomment';
+import type { TitleChangeHandler } from './panelheadertitle';
 import { PanelHeaderTitle } from './panelheadertitle';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { IButton, IButtonStyles } from '@fluentui/react/lib/Button';
@@ -41,11 +43,12 @@ export interface PanelHeaderProps {
   title?: string;
   includeTitle: boolean;
   nodeId: string;
+  horizontalPadding: string;
   commentChange(panelCommentChangeEvent?: string): void;
   onDismissButtonClicked?(): void;
   onRenderWarningMessage?(): JSX.Element;
   toggleCollapse: () => void;
-  onTitleChange: (newValue: string) => void;
+  onTitleChange: TitleChangeHandler;
 }
 export enum PanelHeaderControlType {
   DISMISS_BUTTON,
@@ -103,6 +106,7 @@ export const PanelHeader = ({
   title,
   includeTitle,
   nodeId,
+  horizontalPadding,
   commentChange,
   onDismissButtonClicked,
   onRenderWarningMessage,
@@ -159,6 +163,7 @@ export const PanelHeader = ({
       onClick: item.onClick,
       iconOnly: true,
       disabled: item.disabled,
+      'data-automation-id': `msla-panel-overflow-${convertUIElementNameToAutomationId(item.title)}`,
     }));
 
     return (
@@ -196,10 +201,12 @@ export const PanelHeader = ({
       defaultMessage: 'More commands',
       description: 'Label for commands in panel header',
     });
+
     return (
       <TooltipHost calloutProps={calloutProps} content={PanelHeaderMenuCommands}>
         <IconButton
           ariaLabel={PanelHeaderMenuCommands}
+          data-automation-id="msla-panel-header-more-options"
           styles={overflowStyle}
           componentRef={menuButtonRef}
           menuIconProps={menuIconProps}
@@ -219,12 +226,13 @@ export const PanelHeader = ({
             iconProps={{ iconName: getCollapseIconName }}
             styles={collapseIconStyle}
             onClick={toggleCollapse}
+            data-automation-id="msla-panel-header-collapse-nav"
           />
         </TooltipHost>
       </div>
       {!noNodeOnCardLevel ? (
         <>
-          <div className="msla-panel-card-header">
+          <div className={'msla-panel-card-header'} style={isRight || isCollapsed ? {} : { paddingLeft: horizontalPadding }}>
             {iconComponent}
             {includeTitle ? (
               <div className="msla-panel-card-title-container" hidden={isCollapsed}>

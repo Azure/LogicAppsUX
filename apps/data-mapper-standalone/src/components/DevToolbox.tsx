@@ -1,9 +1,9 @@
 import {
-  fullTranscriptMapDefinitionString,
   comprehensiveMapDefinition,
+  fullTranscriptMapDefinitionString,
   transcriptJsonMapDefinitionString,
 } from '../../../../__mocks__/mapDefinitions';
-import { dataMapDataLoaderSlice, loadDataMap, LoadingMethod } from '../state/DataMapDataLoader';
+import { LoadingMethod, dataMapDataLoaderSlice, loadDataMap } from '../state/DataMapDataLoader';
 import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
 import { DevApiTester } from './DevApiTester';
@@ -63,7 +63,7 @@ const targetSchemaFileOptions: SchemaFileData[] = [
 const mapSchemaFileOptionsToDropdownOptions = (schemaFileData: SchemaFileData[]) =>
   schemaFileData.map<IDropdownOption>((schemaOpt) => ({
     key: schemaOpt.filename,
-    text: `[${schemaOpt.schemaFormat}] ${schemaOpt.filename.split('.')[0]}`,
+    text: `[${schemaOpt.schemaFormat}] ${schemaOpt.filename.substring(0, schemaOpt.filename.lastIndexOf('.'))}`,
   }));
 const sourceSchemaDropdownOptions = mapSchemaFileOptionsToDropdownOptions(sourceSchemaFileOptions);
 const targetSchemaDropdownOptions = mapSchemaFileOptionsToDropdownOptions(targetSchemaFileOptions);

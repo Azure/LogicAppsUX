@@ -3,11 +3,26 @@ import type { HttpRequestOptions, IHttpClient } from '@microsoft/designer-client
 import axios from 'axios';
 
 export class HttpClient implements IHttpClient {
+  private _extraHeaders: Record<string, any>;
+
+  constructor() {
+    this._extraHeaders = getExtraHeaders();
+  }
+
   async get<ReturnType>(options: HttpRequestOptions<any>): Promise<ReturnType> {
-    const response = await axios.get(getRequestUrl(options), {
+    const isArmId = isArmResourceId(options.uri);
+    const requestUrl = getRequestUrl(options);
+    const auth = isArmId
+      ? {
+          Authorization: `Bearer ${environment.armToken}`,
+        }
+      : {};
+
+    const response = await axios.get(requestUrl, {
       headers: {
+        ...this._extraHeaders,
         ...options.headers,
-        Authorization: `Bearer ${environment.armToken}`,
+        ...auth,
       },
     });
     return response.data;
@@ -17,6 +32,7 @@ export class HttpClient implements IHttpClient {
   async post<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
     const response = await axios.post(getRequestUrl(options), options.content, {
       headers: {
+        ...this._extraHeaders,
         ...options.headers,
         'Content-Type': 'application/json',
         Authorization: `Bearer ${environment.armToken}`,
@@ -37,6 +53,7 @@ export class HttpClient implements IHttpClient {
   async put<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
     const response = await axios.put(getRequestUrl(options), options.content, {
       headers: {
+        ...this._extraHeaders,
         ...options.headers,
         'Content-Type': 'application/json',
         Authorization: `Bearer ${environment.armToken}`,
@@ -57,6 +74,7 @@ export class HttpClient implements IHttpClient {
   async delete<ReturnType>(options: HttpRequestOptions<unknown>): Promise<ReturnType> {
     const response = await axios.delete(getRequestUrl(options), {
       headers: {
+        ...this._extraHeaders,
         ...options.headers,
         Authorization: `Bearer ${environment.armToken}`,
       },
@@ -89,4 +107,14 @@ function getRequestUrl(options: HttpRequestOptions<unknown>): string {
 
 function isSuccessResponse(statusCode: number): boolean {
   return statusCode >= 200 && statusCode <= 299;
+}
+
+function getExtraHeaders(): Record<string, string> {
+  return {
+    'x-ms-user-agent': `LogicAppsDesigner/(host localdesigner)`,
+  };
+}
+
+function isArmResourceId(resourceId: string): boolean {
+  return resourceId ? resourceId.indexOf('/subscriptions/') !== -1 : false;
 }
