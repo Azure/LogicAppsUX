@@ -38,7 +38,7 @@ export class FunctionConfigFile extends AzureWizardPromptStep<IProjectWizardCont
   /**
    * Determines whether the user should be prompted to generate the Visual Studio Code configuration files.
    * @param context The project wizard context.
-   * @returns True if the user has not yet generated the VS Code configuration files, false otherwise.
+   * @returns True if the user hasn't yet generated the Visual Studio Code configuration files. Otherwise, returns False.
    */
   public shouldPrompt(context: IProjectWizardContext): boolean {
     return !fs.existsSync(path.join(context.functionFolderPath, '.vscode'));
