@@ -88,12 +88,12 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
     // Define the Logic App folder path using the context property of the wizard
     const logicAppFolderPath = context.logicAppFolderPath;
 
-    // Create the necessary files and folders for VS Code under the Logic App folder path
+    // Create the necessary files and folders for Visual Studio Code under the logic app folder path.
     await fse.ensureDir(logicAppFolderPath);
     const vscodePath: string = path.join(logicAppFolderPath, '.vscode');
     await fse.ensureDir(vscodePath);
 
-    // Write the necessary VS Code configuration files
+    // Write the necessary Visual Studio Code configuration files.
     await this.writeTasksJson(context, vscodePath);
     await this.writeLaunchJson(context, context.workspaceFolder, vscodePath, version);
     await this.writeSettingsJson(context, vscodePath, language, version);
@@ -173,8 +173,8 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
       localize('versionMismatchError', 'The version in your {0} must be "{1}" to work with Azure Functions.', tasksFileName, tasksVersion)
     );
 
-    // Use VS Code api to update config if folder is open and it's not a multi-root workspace (https://github.com/Microsoft/vscode-azurefunctions/issues/1235)
-    // The VS Code api is better for several reasons, including:
+    // Use the Visual Studio Code API to update config, if the folder is open and isn't a multi-root workspace (https://github.com/Microsoft/vscode-azurefunctions/issues/1235).
+    // The Visual Studio Code API is better for several reasons:
     // 1. It handles comments in json files
     // 2. It sends the 'onDidChangeConfiguration' event
     if (context.workspaceFolder && !isMultiRootWorkspace()) {
@@ -273,10 +273,10 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
         )
       );
 
-      // Use VS Code api to update config if folder is open and it's not a multi-root workspace (https://github.com/Microsoft/vscode-azurefunctions/issues/1235)
-      // The VS Code api is better for several reasons, including:
-      // 1. It handles comments in json files
-      // 2. It sends the 'onDidChangeConfiguration' event
+      // Use the Visual Studio Code API to update config, if the folder is open and isn't a multi-root workspace (https://github.com/Microsoft/vscode-azurefunctions/issues/1235).
+      // The Visual Studio Code API is better for several reasons:
+      // - The API handles comments in JSON files.
+      // - The API sends the 'onDidChangeConfiguration' event.
       if (folder && !isMultiRootWorkspace()) {
         const currentVersion: string | undefined = getLaunchVersion(folder);
         if (!currentVersion) {
@@ -319,7 +319,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
     const settings: ISettingToAdd[] = this.settings.concat(
       { key: projectLanguageSetting, value: language },
       { key: funcVersionSetting, value: version },
-      // We want the terminal to be open after F5, not the debug console (Since http triggers are printed in the terminal)
+      // We want the terminal to open after F5, not the debug console because HTTP triggers are printed in the terminal.
       { prefix: 'debug', key: 'internalConsoleOptions', value: 'neverOpen' }
     );
 
@@ -333,7 +333,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
     }
 
     if (context.workspaceFolder) {
-      // Use VS Code api to update config if folder is open
+      // Use Visual Studio Code API to update config if folder is open
       for (const setting of settings) {
         await updateWorkspaceSetting(setting.key, setting.value, context.workspacePath, setting.prefix);
       }

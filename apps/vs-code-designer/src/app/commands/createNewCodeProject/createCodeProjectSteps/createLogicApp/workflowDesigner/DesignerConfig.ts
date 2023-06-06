@@ -16,7 +16,7 @@ export class DesignerConfig extends AzureWizardPromptStep<IProjectWizardContext>
    */
   public async prompt(context: IProjectWizardContext): Promise<void> {
     const folderPath = context.logicAppFolderPath;
-    // Create the necessary files and folders for VS Code under the Logic App folder path
+    // Create the necessary files and folders for Visual Studio Code under the logic app folder path
     await fs.ensureDir(folderPath);
     const configPath: string = path.join(folderPath, 'workflow-designtime');
     await fs.ensureDir(configPath);
@@ -70,9 +70,9 @@ export class DesignerConfig extends AzureWizardPromptStep<IProjectWizardContext>
   }
 
   /**
-   * Determines whether the user should be prompted to generate the VS Code configuration files.
+   * Determines whether the user should be prompted to generate the Visual Studio Code configuration files.
    * @param context The project wizard context.
-   * @returns True if the user has not yet generated the VS Code configuration files, false otherwise.
+   * @returns True if the user has not yet generated the Visual Studio Code configuration files, false otherwise.
    */
   public shouldPrompt(context: IProjectWizardContext): boolean {
     return !fs.existsSync(path.join(context.logicAppFolderPath, 'workflow-designtime'));
