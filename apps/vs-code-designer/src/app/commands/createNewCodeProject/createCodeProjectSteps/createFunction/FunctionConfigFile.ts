@@ -4,7 +4,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 
 /**
- * This class represents a prompt step that generates the VS Code configuration files in the specified folder.
+ * This class represents a prompt step that generates the Visual Studio Code configuration files in the specified folder.
  */
 export class FunctionConfigFile extends AzureWizardPromptStep<IProjectWizardContext> {
   // Hide the step count in the wizard UI
