@@ -16,7 +16,7 @@ export class DesignerConfig extends AzureWizardPromptStep<IProjectWizardContext>
    */
   public async prompt(context: IProjectWizardContext): Promise<void> {
     const folderPath = context.logicAppFolderPath;
-    // Create the necessary files and folders for VS Code under the Logic App folder path
+    // Create the necessary files and folders for Visual Studio Code under the logic app folder path
     await fs.ensureDir(folderPath);
     const configPath: string = path.join(folderPath, 'workflow-designtime');
     await fs.ensureDir(configPath);
