@@ -12,7 +12,7 @@ import { OpenFolderStepCodeProject } from './CodeProjectBase/OpenFolderStepCodeP
 import { NewCodeProjectTypeStep } from './createCodeProjectSteps/NewCodeProjectTypeStep';
 import { setWorkspaceName } from './createCodeProjectSteps/SetWorkspaceName';
 import { setMethodName } from './createCodeProjectSteps/createFunction/setMethodName';
-import { setNameSpace } from './createCodeProjectSteps/createFunction/setNamepSpace';
+import { setNameSpace } from './createCodeProjectSteps/createFunction/setNameSpace';
 import { isString } from '@microsoft/utils-logic-apps';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
