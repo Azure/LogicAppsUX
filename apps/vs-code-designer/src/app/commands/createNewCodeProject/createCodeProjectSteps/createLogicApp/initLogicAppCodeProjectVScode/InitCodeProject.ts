@@ -267,7 +267,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
       const versionMismatchError: Error = new Error(
         localize(
           'versionMismatchError',
-          'The version in your {0} must be "{1}" to work with Azure Functions.',
+          'To work with Azure Functions, your '{0}' file must have the version set to '{1}'.',
           launchFileName,
           launchVersion
         )
