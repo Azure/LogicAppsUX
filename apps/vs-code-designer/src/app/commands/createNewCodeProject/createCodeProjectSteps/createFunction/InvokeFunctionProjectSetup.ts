@@ -29,7 +29,7 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
     // Create the .csproj file inside the functions folder
     await this.createCsprojFile(functionFolderPath, methodName);
 
-    // Generate the VS Code configuration files in the specified folder
+    // Generate the Visual Studio Code configuration files in the specified folder.
     const createConfigFiles = new FunctionConfigFile();
     await createConfigFiles.prompt(context);
   }
