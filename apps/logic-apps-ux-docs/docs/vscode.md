@@ -34,7 +34,9 @@ To run the Visual Studio Code extension in debug mode, follow these steps:
 
 1.  In Visual Studio Code, open the repo folder.
 2.  On the Activity bar to the left side, select **Run and Debug**. (Keyboard: Ctrl+Shift+D)
-3.  From the drop-down list near the top, select **Run Designer Extension In Dev Mode**, then select **Start debugging**.
+3.  From the drop-down list near the top, select ...
+    a. **Build, Run and Debug Designer Extension In Dev Mode**, then select **Start debugging**. This will build and run the extension. Breakpoints from 'vs-code-data-mapper' should be linked when running.
+    b. **Run Designer Extension In Dev Mode** will not build the extension but immediately run it.
 
 When the debugging session starts, a new Visual Studio Code workspace displays prompts for the running app. You can now add [breakpoints](https://code.visualstudio.com/docs/editor/debugging#_breakpoints) and debug the app using the [debug actions](https://code.visualstudio.com/docs/editor/debugging#_debug-actions).
 
