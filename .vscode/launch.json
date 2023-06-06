@@ -23,7 +23,8 @@
       "args": ["--extensionDevelopmentPath=${workspaceFolder}/dist/apps/vs-code-data-mapper"],
       "trace": false,
       "internalConsoleOptions": "openOnFirstSessionStart",
-      "outFiles": ["${workspaceFolder}/dist/apps/vs-code-data-mapper"]
+      "preLaunchTask": "npm: build:vscode-datamapper",
+      "outFiles": ["${workspaceFolder}/dist/apps/vs-code-data-mapper/*.js"]
     }
   ]
 }
