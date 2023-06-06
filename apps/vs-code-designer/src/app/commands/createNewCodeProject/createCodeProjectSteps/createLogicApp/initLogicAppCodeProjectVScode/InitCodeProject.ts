@@ -93,7 +93,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
     const vscodePath: string = path.join(logicAppFolderPath, '.vscode');
     await fse.ensureDir(vscodePath);
 
-    // Write the necessary VS Code configuration files
+    // Write the necessary Visual Studio Code configuration files.
     await this.writeTasksJson(context, vscodePath);
     await this.writeLaunchJson(context, context.workspaceFolder, vscodePath, version);
     await this.writeSettingsJson(context, vscodePath, language, version);
