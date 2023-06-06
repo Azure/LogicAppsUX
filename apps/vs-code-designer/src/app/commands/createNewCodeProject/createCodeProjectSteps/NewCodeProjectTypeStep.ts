@@ -86,7 +86,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
 
     executeSteps.push(new WorkflowCodeProjectCreateStep(workflowProjectPath));
 
-    // Add any necessary steps to initialize the project for VS Code
+    // Add any necessary steps to initialize the project for Visual Studio Code.
     await addInitVSCodeSteps(context, executeSteps);
 
     // Create the sub-wizard options object
