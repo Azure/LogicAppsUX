@@ -275,7 +275,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
 
       // Use the Visual Studio Code API to update config, if the folder is open and isn't a multi-root workspace (https://github.com/Microsoft/vscode-azurefunctions/issues/1235).
       // The Visual Studio Code API is better for several reasons:
-      // 1. It handles comments in json files
+      // - The API handles comments in JSON files.
       // 2. It sends the 'onDidChangeConfiguration' event
       if (folder && !isMultiRootWorkspace()) {
         const currentVersion: string | undefined = getLaunchVersion(folder);
