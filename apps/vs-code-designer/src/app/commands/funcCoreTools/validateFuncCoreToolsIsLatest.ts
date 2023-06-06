@@ -6,9 +6,9 @@ import { PackageManager } from '../../../constants';
 import { localize } from '../../../localize';
 import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { getLocalFuncCoreToolsVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
-import { getBrewPackageName } from '../../utils/funcCoreTools/getBrewPackageName';
 import { getFuncPackageManagers } from '../../utils/funcCoreTools/getFuncPackageManagers';
 import { getNpmDistTag } from '../../utils/funcCoreTools/getNpmDistTag';
+import { getFuncCoreToolsBrewPackageName } from '../../utils/packageManagers/getBrewPackageName';
 import { sendRequestWithExtTimeout } from '../../utils/requestUtils';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { uninstallFuncCoreTools } from './uninstallFuncCoreTools';
@@ -113,7 +113,7 @@ async function getNewestFunctionRuntimeVersion(
 ): Promise<string | undefined> {
   try {
     if (packageManager === PackageManager.brew) {
-      const packageName: string = getBrewPackageName(versionFromSetting);
+      const packageName: string = getFuncCoreToolsBrewPackageName(versionFromSetting);
       const brewRegistryUri = `https://raw.githubusercontent.com/Azure/homebrew-functions/master/Formula/${packageName}.rb`;
       const response = await sendRequestWithExtTimeout(context, { url: brewRegistryUri, method: HTTP_METHODS.GET });
       const brewInfo: string = response.bodyAsText;

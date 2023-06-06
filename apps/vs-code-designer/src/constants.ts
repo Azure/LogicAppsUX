@@ -32,6 +32,14 @@ export const funcPackageName = 'azure-functions-core-tools';
 export const defaultFuncPort = '7071';
 export const isolatedSdkName = 'Microsoft.Azure.Functions.Worker.Sdk';
 
+// DotNet SDK
+export const dotnet = 'dotnet';
+export const dotNetSDK = 'dotNetSDK';
+export const dotNetPackageName = 'Microsoft.DotNet.SDK';
+export const dotNetSDKMajorVersion = 6;
+export const dotNetSDKLatestVersion = '6.0.408';
+export const dotNetInstallScript = 'https://dot.net/v1/dotnet-install.sh';
+
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
 export const workflowResourceGroupNameKey = 'WORKFLOWS_RESOURCE_GROUP_NAME';
@@ -116,6 +124,8 @@ export enum extensionCommand {
   startRemoteDebug = 'azureLogicAppsStandard.startRemoteDebug',
   validateLogicAppProjects = 'azureLogicAppsStandard.validateFunctionProjects',
   reportIssue = 'azureLogicAppsStandard.reportIssue',
+  installDotNetSDK = 'azureLogicAppsStandard.installDotNetSDK',
+  uninstallDotNetSDK = 'azureLogicAppsStandard.uninstallDotNetSDK',
 }
 
 // Context
@@ -134,11 +144,13 @@ export const gitCommand = 'git';
 // Project settings
 export const projectLanguageSetting = 'projectLanguage';
 export const funcVersionSetting = 'projectRuntime';
+export const dotNetSDKVersionSetting = 'dotNetSDK';
 export const projectSubpathSetting = 'projectSubpath';
 export const projectTemplateKeySetting = 'projectTemplateKey';
 export const projectOpenBehaviorSetting = 'projectOpenBehavior';
 export const stopFuncTaskPostDebugSetting = 'stopFuncTaskPostDebug';
 export const validateFuncCoreToolsSetting = 'validateFuncCoreTools';
+export const validateDotNetSDKSetting = 'validateDotNetSDK';
 export const showDeployConfirmationSetting = 'showDeployConfirmation';
 export const deploySubpathSetting = 'deploySubpath';
 export const preDeployTaskSetting = 'preDeployTask';
@@ -146,6 +158,7 @@ export const pickProcessTimeoutSetting = 'pickProcessTimeout';
 export const show64BitWarningSetting = 'show64BitWarning';
 export const showProjectWarningSetting = 'showProjectWarning';
 export const showTargetFrameworkWarningSetting = 'showTargetFrameworkWarning';
+export const PlatformPackageManagerSetting = 'PlatformPackageManager';
 
 // Project
 export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';
@@ -165,6 +178,7 @@ export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Work
 
 // .NET
 export enum DotnetVersion {
+  netsdk6 = '6',
   net6 = 'net6.0',
   net3 = 'netcoreapp3.1',
   net2 = 'netcoreapp2.1',
@@ -175,6 +189,15 @@ export enum DotnetVersion {
 export enum PackageManager {
   npm = 'npm',
   brew = 'brew',
+  winget = 'winget',
+  wget = 'wget',
+}
+
+// Operating System Platforms
+export enum Platform {
+  windows = 'win32',
+  mac = 'darwin',
+  linux = 'linux',
 }
 
 // Resources

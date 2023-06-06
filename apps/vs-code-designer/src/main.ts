@@ -1,5 +1,6 @@
 import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createCodeless/createCodelessSteps/WorkflowCreateStepBase';
+import { validateDotNetSDKIsLatest } from './app/commands/dotNetSDK/validateDotNetSDKIsLatest';
 import { validateFuncCoreToolsIsLatest } from './app/commands/funcCoreTools/validateFuncCoreToolsIsLatest';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
@@ -8,6 +9,7 @@ import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
+import { getPackageManager } from './app/utils/packageManagers/getPackageManager';
 import { verifyVSCodeConfigOnActivate } from './app/utils/vsCodeConfig/verifyVSCodeConfigOnActivate';
 import { extensionCommand, logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
@@ -41,6 +43,10 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
     runPostWorkflowCreateStepsFromCache();
+
+    getPackageManager();
+    validateDotNetSDKIsLatest();
+    // TODO: Validate NPM Install
     validateFuncCoreToolsIsLatest();
 
     ext.extensionVersion = getExtensionVersion();

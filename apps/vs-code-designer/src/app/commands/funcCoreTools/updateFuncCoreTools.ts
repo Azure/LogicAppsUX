@@ -6,8 +6,8 @@ import { PackageManager, funcPackageName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
-import { getBrewPackageName, tryGetInstalledBrewPackageName } from '../../utils/funcCoreTools/getBrewPackageName';
 import { getNpmDistTag } from '../../utils/funcCoreTools/getNpmDistTag';
+import { getFuncCoreToolsBrewPackageName, tryGetInstalledBrewPackageName } from '../../utils/packageManagers/getBrewPackageName';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { FuncVersion, INpmDistTag } from '@microsoft/vscode-extension';
@@ -16,8 +16,8 @@ export async function updateFuncCoreTools(context: IActionContext, packageManage
   ext.outputChannel.show();
 
   const distTag: INpmDistTag = await getNpmDistTag(context, version);
-  const brewPackageName: string = getBrewPackageName(version);
-  const installedBrewPackageName: string = nonNullValue(await tryGetInstalledBrewPackageName(version), 'brewPackageName');
+  const brewPackageName: string = getFuncCoreToolsBrewPackageName(version);
+  const installedBrewPackageName: string = nonNullValue(await tryGetInstalledBrewPackageName(brewPackageName), 'brewPackageName');
 
   switch (packageManager) {
     case PackageManager.npm:

@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { funcPackageName, PackageManager } from '../../../constants';
+import { tryGetInstalledBrewPackageName } from '../packageManagers/getBrewPackageName';
 import { executeCommand } from './cpUtils';
-import { tryGetInstalledBrewPackageName } from './getBrewPackageName';
 import { FuncVersion } from '@microsoft/vscode-extension';
 
 /**
