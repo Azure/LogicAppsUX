@@ -5,7 +5,7 @@ import { deinitializeNodes, deinitializeOperationInfo } from '../../state/operat
 import { clearPanel } from '../../state/panel/panelSlice';
 import { setValidationError } from '../../state/setting/settingSlice';
 import { deinitializeStaticResultProperty } from '../../state/staticresultschema/staticresultsSlice';
-import { deinitializeTokensAndVariables } from '../../state/tokensSlice';
+import { deinitializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import { clearFocusNode, deleteNode } from '../../state/workflow/workflowSlice';
 import { updateAllUpstreamNodes } from './initialize';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';

@@ -8,8 +8,8 @@ import { initializeNodes, initializeOperationInfo } from '../../state/operation/
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { changePanelNode, isolateTab, showDefaultTabs } from '../../state/panel/panelSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
-import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
-import { initializeTokensAndVariables } from '../../state/tokensSlice';
+import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
+import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';

@@ -13,7 +13,7 @@ import {
 } from '../../queries/connector';
 import { getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation } from '../../state/operation/operationMetadataSlice';
-import type { VariableDeclaration } from '../../state/tokensSlice';
+import type { VariableDeclaration } from '../../state/tokens/tokensSlice';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import { isConnectionMultiAuthManagedIdentityType, isConnectionSingleAuthManagedIdentityType } from '../connectors/connections';
 import { buildOperationDetailsFromControls, loadInputValuesFromDefinition } from '../swagger/inputsbuilder';
