@@ -48,7 +48,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     context.logicAppFolderPath = logicAppFolderPath;
     context.functionFolderPath = functionFolderPath;
 
-    // Generate the VS Code configuration files in the specified folder
+    // Generate the Visual Studio Code configuration files in the specified folder.
     const createDesignerConfigFiles = new DesignerConfig();
     await createDesignerConfigFiles.prompt(context);
 
