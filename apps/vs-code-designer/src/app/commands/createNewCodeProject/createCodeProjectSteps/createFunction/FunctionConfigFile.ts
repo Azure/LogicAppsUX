@@ -11,7 +11,7 @@ export class FunctionConfigFile extends AzureWizardPromptStep<IProjectWizardCont
   public hideStepCount = true;
 
   /**
-   * Generates the VS Code configuration files in the specified folder.
+   * Generates the Visual Studio Code configuration files in the specified folder.
    * @param context The project wizard context.
    */
   public async prompt(context: IProjectWizardContext): Promise<void> {
