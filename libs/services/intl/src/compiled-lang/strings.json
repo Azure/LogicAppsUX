@@ -1743,6 +1743,16 @@
       "value": "(UTC+06:30) Yangon (Rangoon)"
     }
   ],
+  "AbZRJ7": [
+    {
+      "type": 0,
+      "value": "select all text in "
+    },
+    {
+      "type": 1,
+      "value": "label"
+    }
+  ],
   "AcdX+2": [
     {
       "type": 0,
@@ -3283,6 +3293,20 @@
     {
       "type": 0,
       "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
+    }
+  ],
+  "LxPh9u": [
+    {
+      "type": 0,
+      "value": "copy value of "
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " to clipboard"
     }
   ],
   "M/F2/O": [
