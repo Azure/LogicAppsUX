@@ -16,7 +16,7 @@ export class OpenFolderStepCodeProject extends AzureWizardExecuteStep<IProjectWi
   public priority = 250;
 
   /**
-   * Executes the step to open the folder in VS Code.
+   * Executes the step to open the folder in Visual Studio Code.
    * @param context The context object for the project wizard.
    * @returns A Promise that resolves to void.
    */
