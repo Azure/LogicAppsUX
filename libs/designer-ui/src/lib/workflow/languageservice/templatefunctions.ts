@@ -640,7 +640,7 @@ const Resources = {
     description: 'Required string parameter to be used as key for formDataMultiValues function',
   }),
   TOKEN_FUNCTION_CONVERSION_MULTIPARTBODY: intl.formatMessage({
-    defaultMessage: 'Returns the body for a part in a multipart output of an action',
+    defaultMessage: 'Returns the body for a part in a multipart output from an action.',
     description: 'Label for description of custom multipartBody Function',
   }),
   TOKEN_PARAMETER_MULTIPARTBODY_ACTIONNAME: intl.formatMessage({

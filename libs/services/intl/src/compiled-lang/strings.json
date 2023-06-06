@@ -29,18 +29,6 @@
       "value": "Failed loading the schema. Please try again."
     }
   ],
-  "+JCU+Y": [
-    {
-      "type": 0,
-      "value": "Select this if you are configuring an on-prem connection"
-    }
-  ],
-  "+W2vTp": [
-    {
-      "type": 0,
-      "value": "Please enter an e-mail address"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -65,18 +53,6 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haiti"
-    }
-  ],
-  "+g+mch": [
-    {
-      "type": 0,
-      "value": "Returns the body for a part in a multipart output of an action"
-    }
-  ],
-  "+iMTt7": [
-    {
-      "type": 0,
-      "value": "Check to select this connection"
     }
   ],
   "+jnjtp": [
@@ -1123,6 +1099,12 @@
       "value": "Authority"
     }
   ],
+  "5UPOY+": [
+    {
+      "type": 0,
+      "value": "Select this if you are configuring an on-premises connection."
+    }
+  ],
   "5aa76N": [
     {
       "type": 0,
@@ -1317,6 +1299,12 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Lord Howe Island"
+    }
+  ],
+  "7LMY4I": [
+    {
+      "type": 0,
+      "value": "Enter an email address."
     }
   ],
   "7LmpNN": [
@@ -1739,38 +1727,10 @@
       "value": "Done"
     }
   ],
-  "AX7dq3": [
-    {
-      "type": 0,
-      "value": "Input node type does not match the schema node's type"
-    }
-  ],
   "AYaqW/": [
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangoon)"
-    }
-  ],
-  "AcdX+2": [
-    {
-      "type": 0,
-      "value": "Insert data from previous step (You can also add by typing / in the editor)"
-    }
-  ],
-  "Aci186": [
-    {
-      "type": 1,
-      "value": "label"
-    },
-    {
-      "type": 0,
-      "value": " Add dynamic data pressing Alt + /"
-    }
-  ],
-  "AgrMqq": [
-    {
-      "type": 0,
-      "value": "Type of {0} is {1}."
     }
   ],
   "AheXMN": [
@@ -2213,6 +2173,12 @@
     {
       "type": 0,
       "value": "Ctrl + Y"
+    }
+  ],
+  "DzT6Hs": [
+    {
+      "type": 0,
+      "value": "Returns the body for a part in a multipart output from an action."
     }
   ],
   "E+HsWF": [
@@ -2859,6 +2825,16 @@
     {
       "type": 0,
       "value": "Error Code"
+    }
+  ],
+  "IdOhPY": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " To add dynamic data, press the Alt + '/' keys."
     }
   ],
   "IjEKvh": [
@@ -4113,6 +4089,12 @@
       "value": "Convert the parameter to an integer"
     }
   ],
+  "SKy5tj": [
+    {
+      "type": 0,
+      "value": "The input node type doesn't match the schema node's type."
+    }
+  ],
   "SLJkRn": [
     {
       "type": 0,
@@ -5201,6 +5183,12 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Tomsk"
+    }
+  ],
+  "a06OQw": [
+    {
+      "type": 0,
+      "value": "Select the checkbox to choose this connection."
     }
   ],
   "a7j3gS": [
@@ -6659,6 +6647,12 @@
       "value": "Return"
     }
   ],
+  "lUvgiW": [
+    {
+      "type": 0,
+      "value": "The type for {0} is {1}."
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -7139,6 +7133,12 @@
     {
       "type": 0,
       "value": "Headers"
+    }
+  ],
+  "p1IEXb": [
+    {
+      "type": 0,
+      "value": "Enter the data from previous step. You can also add data by typing the '/' character."
     }
   ],
   "p1Qtm5": [
