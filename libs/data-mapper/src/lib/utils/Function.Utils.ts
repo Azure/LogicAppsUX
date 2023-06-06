@@ -10,7 +10,7 @@ import {
 import { reservedMapNodeParamsArray } from '../constants/MapDefinitionConstants';
 import type { SchemaNodeExtended } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
-import type { FunctionData } from '../models/Function';
+import type { FunctionData, FunctionDictionary } from '../models/Function';
 import { FunctionCategory, ifPseudoFunctionKey } from '../models/Function';
 import { isConnectionUnit } from './Connection.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
@@ -123,3 +123,8 @@ export const isKeyAnIndexValue = (key: string): boolean => key.startsWith('$') &
 export const isIfAndGuid = (key: string) => {
   return key.startsWith(ifPseudoFunctionKey) && isAGuid(key.substring(ifPseudoFunctionKey.length + 1));
 };
+
+export const functionsForLocation = (functions: FunctionDictionary, targetKey: string) =>
+  Object.fromEntries(
+    Object.entries(functions).filter(([_key, value]) => value.functionLocations.some((location) => location.key === targetKey))
+  );

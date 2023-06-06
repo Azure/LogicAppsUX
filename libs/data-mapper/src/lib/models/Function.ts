@@ -1,4 +1,5 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
+import type { SchemaNodeExtended } from './Schema';
 import { NormalizedDataType } from './Schema';
 
 export interface FunctionManifest {
@@ -41,8 +42,16 @@ export enum FunctionCategory {
   Utility = 'Utilities',
 }
 
-export type FunctionDictionary = { [key: string]: FunctionData };
+export interface CreatedFunction {
+  // Should be the target schema to display this on
+  functionLocations: SchemaNodeExtended[];
+  functionData: FunctionData;
+}
 
+// The key is the function guid, also used in the connection dict
+export type FunctionDictionary = { [key: string]: CreatedFunction };
+
+//#region Pseudo Functions
 export const indexPseudoFunctionKey = 'index';
 export const indexPseudoFunction: FunctionData = {
   key: indexPseudoFunctionKey,
@@ -125,6 +134,7 @@ export const directAccessPseudoFunction: FunctionData = {
 };
 
 export const pseudoFunctions: FunctionData[] = [indexPseudoFunction, ifPseudoFunction, directAccessPseudoFunction];
+//#endregion
 
 // Used in Standalone when the function host isn't running, or for testing
 export const functionMock: FunctionData[] = [
