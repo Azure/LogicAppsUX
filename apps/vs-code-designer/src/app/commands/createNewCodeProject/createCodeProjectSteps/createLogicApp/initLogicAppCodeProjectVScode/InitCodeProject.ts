@@ -88,7 +88,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
     // Define the Logic App folder path using the context property of the wizard
     const logicAppFolderPath = context.logicAppFolderPath;
 
-    // Create the necessary files and folders for VS Code under the Logic App folder path
+    // Create the necessary files and folders for Visual Studio Code under the logic app folder path.
     await fse.ensureDir(logicAppFolderPath);
     const vscodePath: string = path.join(logicAppFolderPath, '.vscode');
     await fse.ensureDir(vscodePath);
