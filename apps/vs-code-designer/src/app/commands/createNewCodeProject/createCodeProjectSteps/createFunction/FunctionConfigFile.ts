@@ -17,7 +17,7 @@ export class FunctionConfigFile extends AzureWizardPromptStep<IProjectWizardCont
   public async prompt(context: IProjectWizardContext): Promise<void> {
     const folderPath = context.functionFolderPath;
 
-    // Create the necessary files and folders for VS Code under the Logic App folder path
+    // Create the necessary files and folders for Visual Studio Code under the logic app folder path.
     await fs.ensureDir(folderPath);
     const vscodePath: string = path.join(folderPath, '.vscode');
     await fs.ensureDir(vscodePath);
