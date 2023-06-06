@@ -333,7 +333,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
     }
 
     if (context.workspaceFolder) {
-      // Use VS Code api to update config if folder is open
+      // Use Visual Studio Code API to update config if folder is open
       for (const setting of settings) {
         await updateWorkspaceSetting(setting.key, setting.value, context.workspacePath, setting.prefix);
       }
