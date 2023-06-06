@@ -1086,6 +1086,12 @@
       "value": "Line Number"
     }
   ],
+  "5OvGgn": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -2359,6 +2365,12 @@
       "value": "(UTC+05:45) カトマンズ"
     }
   ],
+  "FIL1Nt": [
+    {
+      "type": 0,
+      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
+    }
+  ],
   "FIT7i0": [
     {
       "type": 0,
@@ -3043,6 +3055,12 @@
       "value": "actionCount"
     }
   ],
+  "KYX5Do": [
+    {
+      "type": 0,
+      "value": "Underline (⌘U)"
+    }
+  ],
   "KZOa5l": [
     {
       "type": 0,
@@ -3173,6 +3191,12 @@
     {
       "type": 0,
       "value": "Bullet List"
+    }
+  ],
+  "Lnqh6h": [
+    {
+      "type": 0,
+      "value": "Bold (Ctrl+B)"
     }
   ],
   "LoGUT3": [
@@ -3365,6 +3389,12 @@
     {
       "type": 0,
       "value": "Headers"
+    }
+  ],
+  "NHnG2S": [
+    {
+      "type": 0,
+      "value": "The generated XSLT does not match the current mapping."
     }
   ],
   "NPUFgH": [
@@ -3986,6 +4016,12 @@
     {
       "type": 0,
       "value": "'"
+    }
+  ],
+  "S138/4": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: ⌘B"
     }
   ],
   "SADSSs": [
@@ -4868,6 +4904,12 @@
       "value": "データ URI のバイナリ表現を返します"
     }
   ],
+  "YABOLz": [
+    {
+      "type": 0,
+      "value": "Body Item"
+    }
+  ],
   "YCFhzp": [
     {
       "type": 0,
@@ -4896,6 +4938,12 @@
       "value": "文字列"
     }
   ],
+  "YJlS8E": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: Ctrl+U"
+    }
+  ],
   "YKXmKD": [
     {
       "type": 0,
@@ -4906,6 +4954,12 @@
     {
       "type": 0,
       "value": "PFX を入力"
+    }
+  ],
+  "YR1uWE": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: Ctrl+B"
     }
   ],
   "YRk271": [
@@ -4930,6 +4984,12 @@
     {
       "type": 0,
       "value": "この関数に渡されるアレイまたはオブジェクト内にあるすべての要素を含む単一のアレイまたはオブジェクトを返します。この関数のパラメーターには、一連のオブジェクトまたは一連のアレイを指定できます (混在させることはできません)。最終的な出力に同じ名前のオブジェクトが 2 つある場合は、その名前の付いた最後のオブジェクトが最終的なオブジェクトに表示されます。"
+    }
+  ],
+  "YdQw4/": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: ⌘I"
     }
   ],
   "YfwZJO": [
@@ -5382,6 +5442,12 @@
       "value": "ID を選択してください"
     }
   ],
+  "ciLkfU": [
+    {
+      "type": 0,
+      "value": "Bold (⌘B)"
+    }
+  ],
   "cj+kyo": [
     {
       "type": 0,
@@ -5416,6 +5482,12 @@
     {
       "type": 0,
       "value": "必須。最初の Count 個のオブジェクトをスキップするコレクション。"
+    }
+  ],
+  "ctI9Pp": [
+    {
+      "type": 0,
+      "value": "Generate XSLT first before attempting to test mappings."
     }
   ],
   "d4xMIx": [
@@ -5504,6 +5576,12 @@
     {
       "type": 0,
       "value": "Close"
+    }
+  ],
+  "dfmH55": [
+    {
+      "type": 0,
+      "value": "Italic (Ctrl+I)"
     }
   ],
   "dgAu27": [
@@ -5624,6 +5702,12 @@
     {
       "type": 0,
       "value": "Enter an integer"
+    }
+  ],
+  "elD6+N": [
+    {
+      "type": 0,
+      "value": "Italic (⌘I)"
     }
   ],
   "epOMnV": [
@@ -5818,6 +5902,12 @@
     {
       "type": 0,
       "value": "接続名"
+    }
+  ],
+  "gIx5ys": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: Ctrl+I"
     }
   ],
   "gKq3Jv": [
@@ -6455,6 +6545,12 @@
       "value": "Functions"
     }
   ],
+  "lUm6fl": [
+    {
+      "type": 0,
+      "value": "Return"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -6515,6 +6611,12 @@
     {
       "type": 0,
       "value": "Select an action type"
+    }
+  ],
+  "lwlg2K": [
+    {
+      "type": 0,
+      "value": "Underline (Ctrl+U)"
     }
   ],
   "lztiwS": [
@@ -7083,6 +7185,12 @@
       "value": "'"
     }
   ],
+  "qBkxGU": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: ⌘U"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -7530,6 +7638,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) ノボシビルスク"
+    }
+  ],
+  "tUCptx": [
+    {
+      "type": 0,
+      "value": "Insert Link"
     }
   ],
   "tUYXRA": [

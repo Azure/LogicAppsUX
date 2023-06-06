@@ -4,12 +4,12 @@ import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queri
 import { getOperationManifest } from '../../queries/operation';
 import { initEmptyConnectionMap } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation, OperationMetadataState } from '../../state/operation/operationMetadataSlice';
-import { updateNodeSettings, initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
+import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { changePanelNode, isolateTab, showDefaultTabs } from '../../state/panel/panelSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
-import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
-import { initializeTokensAndVariables } from '../../state/tokensSlice';
+import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
+import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
@@ -219,21 +219,16 @@ const initializeOperationDetails = async (
   const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId, swagger || parsedManifest);
   let hasSchema;
   schemaService.then((schema) => {
-    hasSchema = true;
     if (schema) {
+      hasSchema = true;
       dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
     }
   });
 
-  // Re-update settings after we have valid operation data
-  const operation = getState().workflow.operations[nodeId];
-
   const triggerNodeManifest = await getTriggerNodeManifest(state.workflow, state.operations);
 
-  const settings = getOperationSettings(isTrigger, operationInfo, initData.nodeOutputs, manifest, swagger, operation);
-  dispatch(updateNodeSettings({ id: nodeId, settings }));
   if (triggerNodeManifest) {
-    updateInvokerSettings(isTrigger, triggerNodeManifest, nodeId, settings, dispatch);
+    updateInvokerSettings(isTrigger, triggerNodeManifest, nodeId, initData.settings as Settings, dispatch);
   }
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);

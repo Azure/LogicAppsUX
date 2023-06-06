@@ -138,10 +138,8 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
 
   const serializedWorkflow: Workflow = {
     definition: {
-      $schema: Constants.SCHEMA.GA_20160601.URL,
+      ...rootState.workflow.originalDefinition,
       actions: await getActions(rootState, options),
-      contentVersion: '1.0.0.0',
-      outputs: {}, // TODO - Should get this from original definition
       ...(Object.keys(rootState?.staticResults?.properties).length > 0 ? { staticResults: rootState.staticResults.properties } : {}),
       triggers: await getTrigger(rootState, options),
     },

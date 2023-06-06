@@ -24,7 +24,7 @@ import {
   clearDynamicInputs,
   updateNodeParameters,
 } from '../../state/operation/operationMetadataSlice';
-import type { VariableDeclaration } from '../../state/tokensSlice';
+import type { VariableDeclaration } from '../../state/tokens/tokensSlice';
 import type { NodesMetadata, Operations as Actions } from '../../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
@@ -69,8 +69,9 @@ import type {
   ValueSegment,
 } from '@microsoft/designer-ui';
 import {
-  ArrayType,
   removeQuotes,
+  ArrayType,
+  getOuterMostCommaIndex,
   RowDropdownOptions,
   GroupDropdownOptions,
   GroupType,
@@ -337,7 +338,7 @@ function shouldHideInUI(parameter: ResolvedParameter): boolean {
 }
 
 function shouldSoftHide(parameter: ResolvedParameter): boolean {
-  return !parameter.required && getVisibility(parameter) !== constants.VISIBILITY.IMPORTANT;
+  return !parameter.required && !equals(getVisibility(parameter), constants.VISIBILITY.IMPORTANT);
 }
 
 function hasValue(parameter: ResolvedParameter): boolean {
@@ -494,24 +495,36 @@ export const parseArrayItemSchema = (itemSchema: any, itemPath = ''): any => {
 };
 
 // Create SimpleQueryBuilder Editor View Model
-const toSimpleQueryBuilderViewModel = (input: any): { isOldFormat: boolean; items: RowItemProps } => {
-  let operand1: ValueSegment[], operand2: ValueSegment[], operation: string;
-  try {
-    operation = input.substring(input.indexOf('@') + 1, input.indexOf('('));
-    const operations = input.split(',');
-    const operand1String = operations[0].substring(operations[0].indexOf('(') + 1);
-    const operand2String = operations[1].substring(0, operations[1].lastIndexOf(')'));
-    operand1 = loadParameterValue(convertStringToInputParameter(operand1String, true, true, true));
-    operand2 = loadParameterValue(convertStringToInputParameter(operand2String, true, true, true));
-  } catch {
-    operation = 'equals';
-    operand1 = [];
-    operand2 = [];
+const toSimpleQueryBuilderViewModel = (
+  input: any
+): { isOldFormat: boolean; itemValue: ValueSegment[] | undefined; isRowFormat: boolean } => {
+  const advancedModeResult = { isOldFormat: true, isRowFormat: false, itemValue: undefined };
+  let operand1: ValueSegment, operand2: ValueSegment, operationLiteral: ValueSegment;
+  const separatorLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `,` };
+  const endingLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `)` };
+  // default value
+  if (!input || input.length === 0) {
+    return { isOldFormat: true, isRowFormat: true, itemValue: [{ id: guid(), type: ValueSegmentType.LITERAL, value: "@equals('','')" }] };
   }
 
+  if (!input.includes('@') || !input.includes(',')) {
+    return advancedModeResult;
+  }
+
+  try {
+    operationLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: input.substring(input.indexOf('@'), input.indexOf('(') + 1) };
+    const operandSubstring = input.substring(input.indexOf('(') + 1, input.lastIndexOf(')'));
+    const operand1String = operandSubstring.substring(0, getOuterMostCommaIndex(operandSubstring));
+    const operand2String = operandSubstring.substring(getOuterMostCommaIndex(operandSubstring) + 1);
+    operand1 = loadParameterValue(convertStringToInputParameter(operand1String, true, true, true))[0];
+    operand2 = loadParameterValue(convertStringToInputParameter(operand2String, true, true, true))[0];
+  } catch (e) {
+    return advancedModeResult;
+  }
   return {
     isOldFormat: true,
-    items: { type: GroupType.ROW, operator: operation, operand1, operand2 },
+    isRowFormat: true,
+    itemValue: [operationLiteral, operand1, separatorLiteral, operand2, endingLiteral],
   };
 };
 
@@ -841,10 +854,10 @@ export function shouldUseParameterInGroup(parameter: ParameterInfo, allParameter
   return true;
 }
 
-export function ensureExpressionValue(valueSegment: ValueSegment): void {
+export function ensureExpressionValue(valueSegment: ValueSegment, calculateValue = false): void {
   if (isTokenValueSegment(valueSegment)) {
     // eslint-disable-next-line no-param-reassign
-    valueSegment.value = getTokenExpressionValue(valueSegment.token as SegmentToken, valueSegment.value);
+    valueSegment.value = getTokenExpressionValue(valueSegment.token as SegmentToken, calculateValue ? undefined : valueSegment.value);
   }
 }
 
@@ -1003,7 +1016,7 @@ function getNonOpenApiTokenExpressionValue(token: SegmentToken): string {
   // TODO: Need to have a full story for showing/hiding tokens that represent item().
   if (arrayDetails) {
     if (arrayDetails.loopSource) {
-      return `@items(${convertToStringLiteral(arrayDetails.loopSource)})${propertyPath}`;
+      return `items(${convertToStringLiteral(arrayDetails.loopSource)})${propertyPath}`;
     } else {
       return `${constants.ITEM}${propertyPath}`;
     }
@@ -2145,12 +2158,25 @@ function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefi
       return undefined;
     case constants.EDITOR.CONDITION:
       return editorOptions?.isOldFormat
-        ? (editorViewModel.value as string)
+        ? iterateSimpleQueryBuilderEditor(editorViewModel.itemValue, editorViewModel.isRowFormat)
         : JSON.stringify(recurseSerializeCondition(parameter, editorViewModel.items, isDefinitionValue));
     default:
       return undefined;
   }
 }
+
+const iterateSimpleQueryBuilderEditor = (itemValue: ValueSegment[], isRowFormat: boolean): string | undefined => {
+  // if it is in advanced mode, we use loadParameterValue to get the value
+  if (!isRowFormat) {
+    return undefined;
+  }
+  // otherwise we iterate through row items and concatenate the values
+  let stringValue = '';
+  itemValue.forEach((segment) => {
+    stringValue += segment.value;
+  });
+  return stringValue;
+};
 
 export const recurseSerializeCondition = (parameter: ParameterInfo, editorViewModel: any, isDefinitionValue: boolean): any => {
   const returnVal: any = {};
@@ -2623,13 +2649,15 @@ export function updateTokenMetadata(
   if (token.arrayDetails && repetitionContext) {
     const repetitionReference = getRepetitionReference(repetitionContext, token.arrayDetails.loopSource);
     const repetitionValue = repetitionReference?.repetitionValue;
-    const { step, path, fullPath } = parseForeach(repetitionValue, repetitionContext);
-    token.arrayDetails = {
-      ...token.arrayDetails,
-      parentArrayKey: fullPath,
-      parentArrayName: path,
-    };
-    token.actionName = step;
+    if (repetitionValue) {
+      const { step, path, fullPath } = parseForeach(repetitionValue, repetitionContext);
+      token.arrayDetails = {
+        ...token.arrayDetails,
+        parentArrayKey: fullPath,
+        parentArrayName: path,
+      };
+      token.actionName = step;
+    }
 
     if (!token.arrayDetails.loopSource && equals(repetitionReference?.actionType, constants.NODE.TYPE.FOREACH)) {
       token.arrayDetails.loopSource = repetitionReference?.actionName;

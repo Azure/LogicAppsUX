@@ -34,6 +34,7 @@ export const App = () => {
     oauthRedirectUrl,
     isMonitoringView,
     runId,
+    hostVersion,
   } = vscodeState;
   const [standardApp, setStandardApp] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [runInstance, setRunInstance] = useState<LogicAppsV2.RunInstanceDefinition | null>(null);
@@ -79,9 +80,22 @@ export const App = () => {
       panelMetaData,
       fileSystemConnectionCreate,
       vscode,
-      oauthRedirectUrl
+      oauthRedirectUrl,
+      hostVersion
     );
-  }, [baseUrl, apiVersion, apiHubServiceDetails, tenantId, isLocal, connectionData, panelMetaData, vscode, oauthRedirectUrl, dispatch]);
+  }, [
+    baseUrl,
+    apiVersion,
+    apiHubServiceDetails,
+    tenantId,
+    isLocal,
+    connectionData,
+    panelMetaData,
+    vscode,
+    oauthRedirectUrl,
+    dispatch,
+    hostVersion,
+  ]);
 
   const connectionReferences: ConnectionReferences = useMemo(() => {
     return convertConnectionsDataToReferences(connectionData);

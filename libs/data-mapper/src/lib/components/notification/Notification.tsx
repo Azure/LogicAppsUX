@@ -14,6 +14,7 @@ export enum NotificationTypes {
   SourceNodeRemoveFailed = 'sourceNodeRemoveFailed',
   TargetNodeCannotDelete = 'targetNodeCannotDelete',
   RepeatingConnectionCannotDelete = 'repeatingConnectionCannotDelete',
+  FunctionNodePartiallyDeleted = 'functionNodePartiallyDeleted',
   FunctionNodeDeleted = 'functionNodeDeleted',
   ConnectionDeleted = 'connectionDeleted',
   ArrayConnectionAdded = 'arrayConnectionAdded',
@@ -32,6 +33,7 @@ export interface NotificationData {
 const defaultNotificationAutoHideDuration = 5000; // ms
 export const deletedNotificationAutoHideDuration = 3000;
 export const errorNotificationAutoHideDuration = 7000;
+export const disabledAutoHide = -1;
 
 const useStyles = makeStyles({
   toast: {
@@ -44,7 +46,7 @@ const useStyles = makeStyles({
     boxShadow: tokens.shadow16,
     backgroundColor: tokens.colorNeutralBackground1,
     ...shorthands.padding('12px'),
-    zIndex: 12,
+    zIndex: 120,
   },
   msgTitle: {
     ...typographyStyles.body1Strong,
@@ -76,6 +78,10 @@ export const Notification = (props: NotificationProps) => {
 
   const notificationIcon = useMemo(() => {
     switch (type) {
+      // Warning icon
+      //case NotificationTypes.None:
+      //return <Warning20Filled style={{ color: tokens.colorPaletteGoldBorderActive, marginRight: 8 }} />;
+
       // Error icon
       case NotificationTypes.GenerateFailed:
       case NotificationTypes.MapHasErrorsAtSave:
@@ -88,6 +94,7 @@ export const Notification = (props: NotificationProps) => {
       // Delete icon
       case NotificationTypes.SourceNodeRemoved:
       case NotificationTypes.ConnectionDeleted:
+      case NotificationTypes.FunctionNodePartiallyDeleted:
       case NotificationTypes.FunctionNodeDeleted:
         return <Delete20Regular style={{ color: tokens.colorNeutralForeground1, marginRight: 8 }} />;
 
@@ -157,6 +164,10 @@ export const Notification = (props: NotificationProps) => {
         defaultMessage: `Target schema element cannot be deleted.`,
         description: 'Message informing that target element cannot be removed',
       }),
+      [NotificationTypes.FunctionNodePartiallyDeleted]: intl.formatMessage({
+        defaultMessage: `Function removed from current location. Function exists elsewhere.`,
+        description: 'Message on deleting connection that exists in multiple spots',
+      }),
       [NotificationTypes.FunctionNodeDeleted]: intl.formatMessage({
         defaultMessage: `Function deleted.`,
         description: 'Message on deleting connection',
@@ -219,7 +230,7 @@ export const Notification = (props: NotificationProps) => {
           </StackItem>
         );
     }
-  }, [dispatch, onClose, showMeLoc, styles.actionButton, openMapChecker, type, undoLoc]);
+  }, [type, styles.actionButton, openMapChecker, showMeLoc, undoLoc, onClose, dispatch]);
 
   return (
     <div className={styles.toast}>

@@ -132,6 +132,7 @@ export const DataMapperDesigner = ({
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
   const [isSidePaneExpanded, setIsSidePaneExpanded] = useState(false);
   const [sidePaneTab, setSidePaneTab] = useState(SidePanelTabValue.OutputTree);
+  const [showMapOverview, setShowMapOverview] = useState(false);
   const [showGlobalView, setShowGlobalView] = useState(false);
 
   const dataMapDefinition = useMemo<string>(() => {
@@ -162,8 +163,6 @@ export const DataMapperDesigner = ({
 
     return '';
   }, [sourceSchema, targetSchema, currentConnections, targetSchemaSortArray, saveDraftStateCall]);
-
-  const showMapOverview = useMemo<boolean>(() => !targetSchema || !currentTargetSchemaNode, [targetSchema, currentTargetSchemaNode]);
 
   const onSubmitSchemaFileSelection = (schemaFile: SchemaFile) => {
     if (addSchemaFromFile) {
@@ -283,8 +282,8 @@ export const DataMapperDesigner = ({
   };
 
   const getCanvasAreaHeight = () => {
-    // PropPane isn't shown when in Overview, so canvas can use full height
-    if (showMapOverview) {
+    // PropPane isn't shown when in the other views, so canvas can use full height
+    if (showMapOverview || showGlobalView) {
       return centerViewHeight - 8;
     }
 
@@ -309,6 +308,7 @@ export const DataMapperDesigner = ({
           onRedoClick={onRedoClick}
           onTestClick={() => setTestMapPanelOpen(true)}
           showMapOverview={showMapOverview}
+          setShowMapOverview={setShowMapOverview}
           showGlobalView={showGlobalView}
           setShowGlobalView={setShowGlobalView}
           onGenerateClick={onGenerateClick}
@@ -334,15 +334,12 @@ export const DataMapperDesigner = ({
                       backgroundColor: tokens.colorNeutralBackground4,
                     }}
                   >
-                    {showMapOverview ? (
-                      showGlobalView ? (
-                        <GlobalView />
-                      ) : (
-                        <MapOverview />
-                      )
+                    {!currentTargetSchemaNode || showMapOverview ? (
+                      <MapOverview />
+                    ) : showGlobalView ? (
+                      <GlobalView />
                     ) : (
                       <ReactFlowProvider>
-                        {/* TODO: Update width calculations once Code View becomes resizable */}
                         <ReactFlowWrapper
                           canvasBlockHeight={getCanvasAreaHeight()}
                           canvasBlockWidth={centerViewWidth}
@@ -365,7 +362,7 @@ export const DataMapperDesigner = ({
                 </Stack>
               </div>
 
-              {!showMapOverview && (
+              {!(showMapOverview || showGlobalView) && (
                 <PropertiesPane
                   selectedItemKey={selectedItemKey ?? ''}
                   isExpanded={isPropPaneExpanded}
@@ -393,7 +390,7 @@ export const DataMapperDesigner = ({
           setFunctionDisplayExpanded={setFunctionDisplayExpanded}
           useExpandedFunctionCards={useExpandedFunctionCards}
         />
-        <TestMapPanel isOpen={isTestMapPanelOpen} onClose={() => setTestMapPanelOpen(false)} />
+        <TestMapPanel mapDefinition={dataMapDefinition} isOpen={isTestMapPanelOpen} onClose={() => setTestMapPanelOpen(false)} />
       </div>
     </DndProvider>
   );

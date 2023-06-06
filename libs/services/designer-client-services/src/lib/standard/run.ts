@@ -243,7 +243,7 @@ export class StandardRunService implements IRunService {
       }
     }
 
-    return { inputs, outputs };
+    return { inputs: this.parseActionLink(inputs, true), outputs: this.parseActionLink(outputs, false) };
   }
 
   /**

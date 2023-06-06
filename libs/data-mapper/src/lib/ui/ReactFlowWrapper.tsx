@@ -65,7 +65,7 @@ export const ReactFlowWrapper = ({
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   // NOTE: Includes nodes added from toolbox, and nodes with connection chains to target schema nodes on the current target schema level
   const currentSourceSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceSchemaNodes);
-  const currentFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
+  const functionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.functionNodes);
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
@@ -103,10 +103,10 @@ export const ReactFlowWrapper = ({
     if (connection.target && connection.source) {
       const source = connection.source.startsWith(sourcePrefix)
         ? flattenedSourceSchema[connection.source]
-        : currentFunctionNodes[connection.source];
+        : functionNodes[connection.source].functionData;
       const destination = connection.target.startsWith(targetPrefix)
         ? flattenedTargetSchema[connection.target]
-        : currentFunctionNodes[connection.target];
+        : functionNodes[connection.target].functionData;
 
       dispatch(
         makeConnection({
@@ -161,7 +161,7 @@ export const ReactFlowWrapper = ({
 
   const [nodes, edges, diagramSize] = useLayout(
     currentSourceSchemaNodes,
-    currentFunctionNodes,
+    functionNodes,
     currentTargetSchemaNode,
     connections,
     selectedItemKey,

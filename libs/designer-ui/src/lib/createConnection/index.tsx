@@ -30,6 +30,7 @@ import {
   ConnectionParameterTypes,
   SERVICE_PRINCIPLE_CONSTANTS,
   connectorContainsAllServicePrinicipalConnectionParameters,
+  getPropertyValue,
   isServicePrinicipalConnectionParameter,
   usesLegacyManagedIdentity,
 } from '@microsoft/utils-logic-apps';
@@ -158,8 +159,8 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   );
 
   const showLegacyMultiAuth = useMemo(
-    () => supportsServicePrincipalConnection || supportsLegacyManagedIdentityConnection,
-    [supportsServicePrincipalConnection, supportsLegacyManagedIdentityConnection]
+    () => !isMultiAuth && (supportsServicePrincipalConnection || supportsLegacyManagedIdentityConnection),
+    [isMultiAuth, supportsServicePrincipalConnection, supportsLegacyManagedIdentityConnection]
   );
 
   const servicePrincipalSelected = useMemo(
@@ -185,8 +186,8 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
         return isServicePrinicipalConnectionParameter(key) && isServicePrincipalParameterVisible(key, parameter);
       if (legacyManagedIdentitySelected) return false; // TODO: Riley - Only show the managed identity parameters (which is none for now)
       if (constraints?.hidden === 'true' || constraints?.hideInUI === 'true') return false;
-      const dependencyParam = constraints?.dependentParameter;
-      if (dependencyParam && parameterValues[dependencyParam.parameter] !== dependencyParam.value) return false;
+      const dependentParam = constraints?.dependentParameter;
+      if (dependentParam?.parameter && getPropertyValue(parameterValues, dependentParam.parameter) !== dependentParam.value) return false;
       if (parameter.type === ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]) return false;
       if (parameter.type === ConnectionParameterTypes[ConnectionParameterTypes.managedIdentity]) return false;
       return true;
@@ -237,12 +238,6 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     return output ?? {};
   }, [enabledCapabilities, parametersByCapability]);
 
-  // Don't show name for simple connections
-  const showNameInput = useMemo(
-    () => isMultiAuth || Object.keys(capabilityEnabledParameters ?? {}).length > 0 || legacyManagedIdentitySelected,
-    [isMultiAuth, capabilityEnabledParameters, legacyManagedIdentitySelected]
-  );
-
   const hasOAuth = useMemo(
     () => checkOAuthCallback(isMultiAuth ? multiAuthParams : singleAuthParams) && !enabledCapabilities.includes(Capabilities.gateway),
     [checkOAuthCallback, enabledCapabilities, isMultiAuth, multiAuthParams, singleAuthParams]
@@ -251,6 +246,14 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const isUsingOAuth = useMemo(
     () => hasOAuth && !servicePrincipalSelected && !legacyManagedIdentitySelected,
     [hasOAuth, servicePrincipalSelected, legacyManagedIdentitySelected]
+  );
+
+  // Don't show name for simple connections
+  const showNameInput = useMemo(
+    () =>
+      !(isUsingOAuth && !isMultiAuth) &&
+      (isMultiAuth || Object.keys(capabilityEnabledParameters ?? {}).length > 0 || legacyManagedIdentitySelected),
+    [isUsingOAuth, isMultiAuth, capabilityEnabledParameters, legacyManagedIdentitySelected]
   );
 
   const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
@@ -291,7 +294,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     const identitySelected = legacyManagedIdentitySelected ? selectedManagedIdentity : undefined;
 
     return createConnectionCallback?.(
-      showNameInput ? connectionDisplayName : '',
+      showNameInput ? connectionDisplayName : undefined,
       connectionParameterSets?.values[selectedParamSetIndex],
       visibleParameterValues,
       isUsingOAuth,

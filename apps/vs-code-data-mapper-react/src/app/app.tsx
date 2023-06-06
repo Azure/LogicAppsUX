@@ -35,6 +35,7 @@ export const App = () => {
   const [vsCodeTheme, setVsCodeTheme] = useState<VsCodeThemeType>(getVscodeTheme());
 
   const xsltFilename = useSelector((state: RootState) => state.dataMapDataLoader.xsltFilename);
+  const xsltContent = useSelector((state: RootState) => state.dataMapDataLoader.xsltContent);
   const mapDefinition = useSelector((state: RootState) => state.dataMapDataLoader.mapDefinition);
   const sourceSchemaFilename = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchemaFilename);
   const sourceSchema = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchema);
@@ -45,6 +46,13 @@ export const App = () => {
   const useExpandedFunctionCards = useSelector((state: RootState) => state.dataMapDataLoader.useExpandedFunctionCards);
 
   const runtimePort = useSelector((state: RootState) => state.dataMapDataLoader.runtimePort);
+
+  if (runtimePort) {
+    InitDataMapperApiService({
+      ...defaultDataMapperApiServiceOptions,
+      port: runtimePort ?? defaultDataMapperApiServiceOptions.port,
+    });
+  }
 
   const sendMsgToVsix = useCallback(
     (msg: MessageToVsix) => {
@@ -195,6 +203,7 @@ export const App = () => {
     >
       <DataMapDataProvider
         xsltFilename={xsltFilename}
+        xsltContent={xsltContent}
         mapDefinition={mapDefinition}
         sourceSchema={sourceSchema}
         targetSchema={targetSchema}

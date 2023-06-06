@@ -1151,6 +1151,12 @@
       "value": "Line Number"
     }
   ],
+  "5OvGgn": [
+    {
+      "type": 0,
+      "value": "Body"
+    }
+  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -2489,6 +2495,12 @@
       "value": "(UTC+05:45) Katmandu"
     }
   ],
+  "FIL1Nt": [
+    {
+      "type": 0,
+      "value": "Condition is too complex or invalid. Unable to switch to basic mode"
+    }
+  ],
   "FIT7i0": [
     {
       "type": 0,
@@ -3247,6 +3259,12 @@
       "value": "actionCount"
     }
   ],
+  "KYX5Do": [
+    {
+      "type": 0,
+      "value": "Underline (⌘U)"
+    }
+  ],
   "KZOa5l": [
     {
       "type": 0,
@@ -3393,6 +3411,12 @@
     {
       "type": 0,
       "value": "Bullet List"
+    }
+  ],
+  "Lnqh6h": [
+    {
+      "type": 0,
+      "value": "Bold (Ctrl+B)"
     }
   ],
   "LoGUT3": [
@@ -3585,6 +3609,12 @@
     {
       "type": 0,
       "value": "Headers"
+    }
+  ],
+  "NHnG2S": [
+    {
+      "type": 0,
+      "value": "The generated XSLT does not match the current mapping."
     }
   ],
   "NPUFgH": [
@@ -4255,6 +4285,12 @@
     {
       "type": 0,
       "value": "'"
+    }
+  ],
+  "S138/4": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: ⌘B"
     }
   ],
   "SADSSs": [
@@ -5137,6 +5173,12 @@
       "value": "Zwraca binarną reprezentację identyfikatora URI danych"
     }
   ],
+  "YABOLz": [
+    {
+      "type": 0,
+      "value": "Body Item"
+    }
+  ],
   "YCFhzp": [
     {
       "type": 0,
@@ -5165,6 +5207,12 @@
       "value": "Ciąg"
     }
   ],
+  "YJlS8E": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: Ctrl+U"
+    }
+  ],
   "YKXmKD": [
     {
       "type": 0,
@@ -5175,6 +5223,12 @@
     {
       "type": 0,
       "value": "Wprowadź certyfikat PFX"
+    }
+  ],
+  "YR1uWE": [
+    {
+      "type": 0,
+      "value": "Format text as bold. Shortcut: Ctrl+B"
     }
   ],
   "YRk271": [
@@ -5199,6 +5253,12 @@
     {
       "type": 0,
       "value": "Zwraca pojedynczą tablicę lub obiekt ze wszystkimi elementami z dowolnej tablicy lub obiektu przekazanego do tej funkcji. Parametry funkcji mogą być zestawem obiektów lub zestawem tablic (nie ich kombinacją). Jeśli w końcowych danych wyjściowych istnieją dwa obiekty o tej samej nazwie, ostatni obiekt o danej nazwie jest wyświetlany w obiekcie końcowym."
+    }
+  ],
+  "YdQw4/": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: ⌘I"
     }
   ],
   "YfwZJO": [
@@ -5651,6 +5711,12 @@
       "value": "Wybierz tożsamość"
     }
   ],
+  "ciLkfU": [
+    {
+      "type": 0,
+      "value": "Bold (⌘B)"
+    }
+  ],
   "cj+kyo": [
     {
       "type": 0,
@@ -5685,6 +5751,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Kolekcja, w której należy pominąć pierwsze obiekty (liczba)."
+    }
+  ],
+  "ctI9Pp": [
+    {
+      "type": 0,
+      "value": "Generate XSLT first before attempting to test mappings."
     }
   ],
   "d4xMIx": [
@@ -5777,6 +5849,12 @@
     {
       "type": 0,
       "value": "Close"
+    }
+  ],
+  "dfmH55": [
+    {
+      "type": 0,
+      "value": "Italic (Ctrl+I)"
     }
   ],
   "dgAu27": [
@@ -5897,6 +5975,12 @@
     {
       "type": 0,
       "value": "Enter an integer"
+    }
+  ],
+  "elD6+N": [
+    {
+      "type": 0,
+      "value": "Italic (⌘I)"
     }
   ],
   "epOMnV": [
@@ -6087,6 +6171,12 @@
     {
       "type": 0,
       "value": "Nazwa połączenia"
+    }
+  ],
+  "gIx5ys": [
+    {
+      "type": 0,
+      "value": "Format text as italic. Shortcut: Ctrl+I"
     }
   ],
   "gKq3Jv": [
@@ -6769,6 +6859,12 @@
       "value": "Functions"
     }
   ],
+  "lUm6fl": [
+    {
+      "type": 0,
+      "value": "Return"
+    }
+  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -6829,6 +6925,12 @@
     {
       "type": 0,
       "value": "Select an action type"
+    }
+  ],
+  "lwlg2K": [
+    {
+      "type": 0,
+      "value": "Underline (Ctrl+U)"
     }
   ],
   "lztiwS": [
@@ -7397,6 +7499,12 @@
       "value": "'"
     }
   ],
+  "qBkxGU": [
+    {
+      "type": 0,
+      "value": "Format text as underline. Shortcut: ⌘U"
+    }
+  ],
   "qGfwxW": [
     {
       "type": 0,
@@ -7877,6 +7985,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Nowosybirsk"
+    }
+  ],
+  "tUCptx": [
+    {
+      "type": 0,
+      "value": "Insert Link"
     }
   ],
   "tUYXRA": [
