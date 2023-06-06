@@ -1,3 +1,5 @@
+import { css, useTheme } from '@fluentui/react';
+
 type Props = Readonly<{
   'data-test-id'?: string;
   label: string;
@@ -7,12 +9,13 @@ type Props = Readonly<{
 }>;
 
 export function TextInput({ label, value, onChange, placeholder = '', 'data-test-id': dataTestId }: Props): JSX.Element {
+  const { isInverted } = useTheme();
   return (
-    <div className="Input__wrapper">
-      <label className="Input__label">{label}</label>
+    <div className="msla-colorpicker-input-wrapper">
+      <label className="msla-colorpicker-input-label">{label}</label>
       <input
         type="text"
-        className="Input__input"
+        className={css('msla-colorpicker-input', isInverted && 'inverted')}
         placeholder={placeholder}
         value={value}
         onChange={(e) => {

@@ -5,6 +5,7 @@ import { BlockFormatDropDown } from './DropdownBlockFormat';
 import { Format } from './Format';
 import { CLOSE_DROPDOWN_COMMAND } from './helper/Dropdown';
 import { FontDropDown, FontDropDownType } from './helper/FontDropDown';
+import { css, useTheme } from '@fluentui/react';
 import { TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { $isListNode, ListNode } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -202,5 +203,6 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
 };
 
 const Divider = (): JSX.Element => {
-  return <div className="msla-toolbar-divider" />;
+  const { isInverted } = useTheme();
+  return <div className={css('msla-toolbar-divider', isInverted && 'inverted')} />;
 };
