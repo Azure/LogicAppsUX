@@ -78,7 +78,7 @@
       },
       {
         "command": "azureLogicAppsStandard.createCodeless",
-        "title": "Create Workflow...",
+        "title": "Create workflow...",
         "category": "Azure Logic Apps",
         "icon": {
           "light": "assets/light/Codeless.svg",
