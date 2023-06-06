@@ -47,6 +47,20 @@
       "value": "(UTC+08:00) Kuala Lumpur, Singapore"
     }
   ],
+  "+ZSBrq": [
+    {
+      "type": 0,
+      "value": "Context menu for "
+    },
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": " card"
+    }
+  ],
   "+dlOgj": [
     {
       "type": 0,
@@ -1085,12 +1099,6 @@
       "value": "invalidNodes"
     }
   ],
-  "5HGtu7": [
-    {
-      "type": 0,
-      "value": "Function removed from current location. Function exists elsewhere."
-    }
-  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -1741,16 +1749,6 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangoon)"
-    }
-  ],
-  "AbZRJ7": [
-    {
-      "type": 0,
-      "value": "select all text in "
-    },
-    {
-      "type": 1,
-      "value": "label"
     }
   ],
   "AcdX+2": [
@@ -3295,20 +3293,6 @@
       "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
     }
   ],
-  "LxPh9u": [
-    {
-      "type": 0,
-      "value": "copy value of "
-    },
-    {
-      "type": 1,
-      "value": "label"
-    },
-    {
-      "type": 0,
-      "value": " to clipboard"
-    }
-  ],
   "M/F2/O": [
     {
       "type": 0,
@@ -3909,20 +3893,6 @@
     {
       "type": 0,
       "value": "No Items"
-    }
-  ],
-  "QQYzHC": [
-    {
-      "type": 0,
-      "value": "Context menu for "
-    },
-    {
-      "type": 1,
-      "value": "title"
-    },
-    {
-      "type": 0,
-      "value": " card"
     }
   ],
   "QZ5DZl": [
@@ -4709,6 +4679,16 @@
     {
       "type": 0,
       "value": "Clear"
+    }
+  ],
+  "WK6hZX": [
+    {
+      "type": 0,
+      "value": "Select all text in "
+    },
+    {
+      "type": 1,
+      "value": "label"
     }
   ],
   "WLj8DH": [
@@ -6033,6 +6013,20 @@
       "value": "Info"
     }
   ],
+  "gRyFIu": [
+    {
+      "type": 0,
+      "value": "Copy value of "
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " to clipboard"
+    }
+  ],
   "gTXyUo": [
     {
       "type": 0,
@@ -7005,6 +6999,12 @@
     {
       "type": 0,
       "value": "Returns the last element in the array or string passed in"
+    }
+  ],
+  "o/FgET": [
+    {
+      "type": 0,
+      "value": "Function was removed from the current location and currently exists elsewhere."
     }
   ],
   "o14STH": [
