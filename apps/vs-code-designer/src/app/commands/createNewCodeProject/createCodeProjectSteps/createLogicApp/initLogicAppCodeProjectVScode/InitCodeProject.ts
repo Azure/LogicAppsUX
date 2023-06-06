@@ -319,7 +319,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
     const settings: ISettingToAdd[] = this.settings.concat(
       { key: projectLanguageSetting, value: language },
       { key: funcVersionSetting, value: version },
-      // We want the terminal to be open after F5, not the debug console (Since http triggers are printed in the terminal)
+      // We want the terminal to open after F5, not the debug console because HTTP triggers are printed in the terminal.
       { prefix: 'debug', key: 'internalConsoleOptions', value: 'neverOpen' }
     );
 
