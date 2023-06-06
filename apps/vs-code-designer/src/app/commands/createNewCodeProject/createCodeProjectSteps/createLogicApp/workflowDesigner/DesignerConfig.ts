@@ -72,7 +72,7 @@ export class DesignerConfig extends AzureWizardPromptStep<IProjectWizardContext>
   /**
    * Determines whether the user should be prompted to generate the VS Code configuration files.
    * @param context The project wizard context.
-   * @returns True if the user has not yet generated the VS Code configuration files, false otherwise.
+   * @returns True if the user has not yet generated the Visual Studio Code configuration files, false otherwise.
    */
   public shouldPrompt(context: IProjectWizardContext): boolean {
     return !fs.existsSync(path.join(context.logicAppFolderPath, 'workflow-designtime'));
