@@ -1,7 +1,8 @@
 import type { IFunctionService } from '../function';
 import { isFunctionContainer } from '../helpers';
 import type { IHttpClient } from '../httpClient';
-import { ArgumentException } from '@microsoft/utils-logic-apps';
+import { SwaggerParser } from '@microsoft/parsers-logic-apps';
+import { ArgumentException, unmap } from '@microsoft/utils-logic-apps';
 
 export interface BaseFunctionServiceOptions {
   baseUrl: string;
@@ -50,5 +51,48 @@ export class BaseFunctionService implements IFunctionService {
       queryParameters: { 'api-version': this.options.apiVersion },
     });
     return keysResponse?.default ?? 'NotFound';
+  }
+
+  private async fetchApiDefinitionUrl(functionAppId: string) {
+    const response = await this.options.httpClient.get<any>({
+      uri: `https://management.azure.com/${functionAppId}/config/web`,
+      queryParameters: { 'api-version': this.options.apiVersion },
+    });
+    if (!response?.properties?.apiDefinition?.url) {
+      throw new Error('ApiDefinitionUrl not found');
+    }
+    return response?.properties?.apiDefinition?.url ?? '';
+  }
+
+  private async fetchApiDefinition(apiDefinitionUrl: string) {
+    const response = await this.options.httpClient.get<any>({
+      uri: apiDefinitionUrl,
+    });
+    return response;
+  }
+
+  private async fetchFunctionAppSwagger(functionAppId: string) {
+    const apiDefinitionUrl = await this.fetchApiDefinitionUrl(functionAppId);
+    const response = await this.fetchApiDefinition(apiDefinitionUrl);
+    const swaggerDoc = await SwaggerParser.parse(response);
+    return new SwaggerParser(swaggerDoc);
+  }
+
+  async fetchFunctionAppsSwaggerFunctions(functionAppId: string) {
+    try {
+      const swagger = await this.fetchFunctionAppSwagger(functionAppId);
+
+      const functions = swagger.getOperations();
+
+      return unmap(functions).map((swaggerFunction: any) => ({
+        id: swaggerFunction.operationId,
+        // value: swaggerFunction.operationId,
+        name: swaggerFunction.summary ?? swaggerFunction.operationId,
+        // description: swaggerFunction.description,
+      }));
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
   }
 }

@@ -23,6 +23,7 @@ import { WorkflowUtility } from './Utilities/Workflow';
 import {
   ApiManagementInstanceService,
   BaseAppServiceService,
+  BaseFunctionService,
   BaseGatewayService,
   BaseOAuthService,
   StandardConnectionService,
@@ -238,6 +239,8 @@ const getDesignerServices = (
   const workflowIdWithHostRuntime = `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}`;
   const { subscriptionId, resourceGroup } = new ArmParser(workflowId);
 
+  const defaultServiceParams = { baseUrl, httpClient, apiVersion };
+
   const connectionService = new StandardConnectionService({
     baseUrl,
     apiVersion,
@@ -281,9 +284,7 @@ const getDesignerServices = (
   const apiManagementService = new ApiManagementService({ service: apimService });
   const appService = new BaseAppServiceService({ baseUrl: armUrl, apiVersion, subscriptionId, httpClient });
   const connectorService = new StandardConnectorService({
-    apiVersion,
-    baseUrl,
-    httpClient,
+    ...defaultServiceParams,
     clientSupportedOperations: [
       ['connectionProviders/localWorkflowOperation', 'invokeWorkflow'],
       ['connectionProviders/xmlOperations', 'xmlValidation'],
@@ -355,24 +356,17 @@ const getDesignerServices = (
     },
   });
 
-  const operationManifestService = new StandardOperationManifestService({
-    apiVersion,
-    baseUrl,
-    httpClient,
-  });
+  const operationManifestService = new StandardOperationManifestService(defaultServiceParams);
   const searchService = new StandardSearchService({
-    baseUrl,
-    apiVersion,
-    httpClient,
+    ...defaultServiceParams,
     apiHubServiceDetails: { apiVersion: '2018-07-01-preview', subscriptionId, location },
     showStatefulOperations: isStateful,
     isDev: false,
   });
 
   const oAuthService = new BaseOAuthService({
+    ...defaultServiceParams,
     apiVersion: '2018-07-01-preview',
-    baseUrl,
-    httpClient,
     subscriptionId,
     resourceGroup,
     location,
@@ -383,6 +377,11 @@ const getDesignerServices = (
     getAppIdentity: () => workflowApp.identity,
     isExplicitAuthRequiredForManagedIdentity: () => true,
   };
+
+  const functionService = new BaseFunctionService({
+    ...defaultServiceParams,
+    subscriptionId,
+  });
 
   // const loggerService = new Stan({
   //   resourceID: workflowId,
@@ -408,6 +407,7 @@ const getDesignerServices = (
     oAuthService,
     workflowService,
     apimService,
+    functionService,
     runService,
   };
 };

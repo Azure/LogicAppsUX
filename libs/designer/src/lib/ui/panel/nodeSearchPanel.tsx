@@ -65,8 +65,8 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
     defaultMessage: 'Go To Operation',
   });
   const searchOperation = intl.formatMessage({
-    description: 'Placeholder for search box that searches operations',
     defaultMessage: 'Search for operation',
+    description: 'Placeholder for search box that searches operations',
   });
   return (
     <Panel

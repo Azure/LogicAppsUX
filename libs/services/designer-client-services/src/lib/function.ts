@@ -4,6 +4,7 @@ export interface IFunctionService {
   fetchFunctionApps(): Promise<any>;
   fetchFunctionAppsFunctions(functionAppId: string): Promise<any>;
   fetchFunctionKey(functionId: string): Promise<any>;
+  fetchFunctionAppsSwaggerFunctions(functionAppId: string): Promise<any>;
 }
 
 let service: IFunctionService;

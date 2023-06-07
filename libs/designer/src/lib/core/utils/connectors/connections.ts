@@ -21,7 +21,7 @@ import type {
   ManagedIdentity,
   OperationManifest,
 } from '@microsoft/utils-logic-apps';
-import { ConnectionParameterTypes, ResourceIdentityType, equals, ConnectionType } from '@microsoft/utils-logic-apps';
+import { ConnectionParameterTypes, ResourceIdentityType, equals, ConnectionType, getObjectName } from '@microsoft/utils-logic-apps';
 
 export function getConnectionId(state: ConnectionsStoreState, nodeId: string): string {
   const { connectionsMapping, connectionReferences } = state;
@@ -68,7 +68,14 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
   ];
   if (manifest?.properties.connection?.type === ConnectionType.Function) {
     const functionAppsCallback = () => FunctionService().fetchFunctionApps();
-    const functionsCallback = (functionApp?: any) => FunctionService().fetchFunctionAppsFunctions(functionApp.id ?? '');
+    const fetchSubResourcesCallback = (functionApp?: any) => {
+      const functions = FunctionService().fetchFunctionAppsFunctions(functionApp.id ?? '');
+      const swaggerFunctions = FunctionService().fetchFunctionAppsSwaggerFunctions(functionApp.id ?? '');
+      return Promise.all([functions, swaggerFunctions]).then(([functions, swaggerFunctions]) => {
+        console.log('### Functions', { functions, swaggerFunctions });
+        return functions.concat(swaggerFunctions);
+      });
+    };
     const functionAppsLoadingText = intl.formatMessage({
       defaultMessage: 'Loading Function Apps...',
       description: 'Text for loading function apps',
@@ -79,7 +86,11 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
       description: 'Label for function app selection',
     });
 
-    const getColumns = (functionApp: any) => [functionApp?.name, functionApp?.properties?.resourceGroup, functionApp?.location];
+    const getColumns = (functionApp: any) => [getObjectName(functionApp), functionApp?.properties?.resourceGroup, functionApp?.location];
+
+    const getSubResourceName = (azureFunction: any) => {
+      return getObjectName(azureFunction).split('/').slice(1).join('/');
+    };
 
     return {
       resourceType: 'functionApps',
@@ -89,8 +100,8 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
       getColumns,
       getResourcesCallback: functionAppsCallback,
       loadingText: functionAppsLoadingText,
-      getSubResourceName: (azureFunction: any) => azureFunction.name.split('/')[1],
-      fetchSubResourcesCallback: functionsCallback,
+      getSubResourceName,
+      fetchSubResourcesCallback,
     };
   } else if (manifest?.properties.connection?.type === ConnectionType.ApiManagement) {
     const apiInstancesCallback = () => ApiManagementService().fetchApiManagementInstances();
