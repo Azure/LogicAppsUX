@@ -18,6 +18,7 @@ export interface WorkflowLoadingState {
   darkMode: boolean;
   consumption: boolean;
   isLocalSelected: boolean;
+  showChatBot?: boolean;
 }
 
 const initialState: WorkflowLoadingState = {
@@ -30,6 +31,7 @@ const initialState: WorkflowLoadingState = {
   darkMode: false,
   consumption: false,
   isLocalSelected: false,
+  showChatBot: false,
 };
 
 type WorkflowPayload = {
@@ -101,6 +103,9 @@ export const workflowLoadingSlice = createSlice({
     setIsLocalSelected: (state, action: PayloadAction<boolean>) => {
       state.isLocalSelected = action.payload;
     },
+    setIsChatBotEnabled: (state, action: PayloadAction<boolean>) => {
+      state.showChatBot = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload | null>) => {
@@ -131,6 +136,7 @@ export const {
   setDarkMode,
   setConsumption,
   setIsLocalSelected,
+  setIsChatBotEnabled,
   changeRunId,
 } = workflowLoadingSlice.actions;
 
