@@ -11,7 +11,7 @@
     "test:all": "nx run-many --all --target=test --parallel",
     "test:e2e": "nx run designer-e2e:e2e",
     "test:e2e:ci": "nx run designer-e2e:e2e:ci",
-    "lint": "nx affected --target=lint --parallel",
+    "lint": "nx affected --target=lint --base=dev/devops --parallel",
     "lint:fix": "nx affected --target=lint --fix",
     "prepare": "husky install",
     "pretty": "nx format:write --uncommitted --parallel",

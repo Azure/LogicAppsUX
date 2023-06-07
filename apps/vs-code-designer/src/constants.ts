@@ -29,6 +29,7 @@ export const extensionVersionKey = 'FUNCTIONS_EXTENSION_VERSION';
 export const hostStartCommand = 'host start';
 export const hostStartTaskName = `${func}: ${hostStartCommand}`;
 export const funcPackageName = 'azure-functions-core-tools';
+export const wingetFuncPackageName = 'Microsoft.Azure.FunctionsCoreTools';
 export const defaultFuncPort = '7071';
 export const isolatedSdkName = 'Microsoft.Azure.Functions.Worker.Sdk';
 

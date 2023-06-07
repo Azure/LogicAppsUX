@@ -2,9 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { PackageManager } from '../../../constants';
+import { PackageManager, wingetFuncPackageName } from '../../../constants';
 import { localize } from '../../../localize';
 import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
+import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
 import { getLocalFuncCoreToolsVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getFuncPackageManagers } from '../../utils/funcCoreTools/getFuncPackageManagers';
 import { getNpmDistTag } from '../../utils/funcCoreTools/getNpmDistTag';
@@ -74,6 +75,7 @@ export async function validateFuncCoreToolsIsLatest(): Promise<void> {
         if (!newestVersion) {
           return;
         }
+        context.telemetry.properties.newestVersion = newestVersion;
 
         if (semver.major(newestVersion) === semver.major(localVersion) && semver.gt(newestVersion, localVersion)) {
           context.telemetry.properties.outOfDateFunc = 'true';
@@ -122,8 +124,29 @@ async function getNewestFunctionRuntimeVersion(
       if (matches && matches.length > 1) {
         return matches[1];
       }
-    } else {
+    } else if (packageManager == PackageManager.npm) {
       return (await getNpmDistTag(context, versionFromSetting)).value;
+    } else if (packageManager == PackageManager.winget) {
+      return wingetNewestFuncVersion(packageManager, context);
+    }
+  } catch (error) {
+    context.telemetry.properties.latestRuntimeError = parseError(error).message;
+  }
+
+  return undefined;
+}
+
+async function wingetNewestFuncVersion(packageManager: PackageManager | undefined, context: IActionContext): Promise<string> {
+  let version: string | null;
+  let match: RegExpMatchArray | null;
+  const versionRegex = /\b\d+\.\d+\.\d+\b/g;
+
+  try {
+    version = await executeCommand(undefined, undefined, 'winget', 'search', `${wingetFuncPackageName}`);
+    version = version.split('\n')[2]; // Skip headers
+    match = version.match(versionRegex);
+    if (match) {
+      return match[0];
     }
   } catch (error) {
     context.telemetry.properties.latestRuntimeError = parseError(error).message;

@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { funcPackageName, PackageManager } from '../../../constants';
+import { funcPackageName, PackageManager, Platform } from '../../../constants';
 import { tryGetInstalledBrewPackageName } from '../packageManagers/getBrewPackageName';
 import { executeCommand } from './cpUtils';
 import { FuncVersion } from '@microsoft/vscode-extension';
@@ -18,11 +18,14 @@ export async function getFuncPackageManagers(isFuncInstalled: boolean): Promise<
     case 'linux':
       // https://github.com/Microsoft/vscode-azurefunctions/issues/311
       break;
+    case Platform.windows:
+      result.push(PackageManager.winget);
+      break;
     case 'darwin':
       if (await hasBrew(isFuncInstalled)) {
         result.push(PackageManager.brew);
       }
-    // fall through to check npm on both mac and windows
+    // fall through to check npm on mac
     default:
       try {
         isFuncInstalled
