@@ -179,6 +179,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             hostVersion: ext.extensionVersion,
           },
         });
+        await this.validateWorkflow(this.panelMetadata.workflowContent);
         break;
       }
       case ExtensionCommand.save: {
