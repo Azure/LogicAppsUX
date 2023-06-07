@@ -37,16 +37,18 @@ export class BaseFunctionService implements IFunctionService {
   }
 
   async fetchFunctionAppsFunctions(functionAppId: string) {
+    const { baseUrl } = this.options;
     const functionsResponse = await this.options.httpClient.get<any>({
-      uri: `https://management.azure.com/${functionAppId}/functions`,
+      uri: `${baseUrl}/${functionAppId}/functions`,
       queryParameters: { 'api-version': this.options.apiVersion },
     });
     return functionsResponse?.value ?? [];
   }
 
   async fetchFunctionKey(functionId: string) {
+    const { baseUrl } = this.options;
     const keysResponse = await this.options.httpClient.post<any, any>({
-      uri: `https://management.azure.com/${functionId}/listkeys`,
+      uri: `${baseUrl}/${functionId}/listkeys`,
       queryParameters: { 'api-version': this.options.apiVersion },
     });
     return keysResponse?.default ?? 'NotFound';
