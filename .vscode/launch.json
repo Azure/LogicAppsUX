@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "configurations": [
     {
-      "name": "Run Designer Extension In Dev Mode",
+      "name": "Run Designer Extension in Dev Mode",
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",

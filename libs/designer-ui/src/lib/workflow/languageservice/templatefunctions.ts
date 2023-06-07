@@ -260,7 +260,7 @@ const Resources = {
     description: 'Required collection parameters to check union function on',
   }),
   TOKEN_FUNCTION_COLLECTION_FIRST: intl.formatMessage({
-    defaultMessage: 'Returns the first element in the array or string passed in',
+    defaultMessage: 'Returns the first element from the passed-in array or string.',
     description: 'Label for description of custom first Function',
   }),
   TOKEN_PARAMETER_FIRST_COLLECTION: intl.formatMessage({
