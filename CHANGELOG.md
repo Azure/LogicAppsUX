@@ -7,8 +7,6 @@
 - **Data Mapper:** Handle situations where the generated XSLT and the mapping don't match ([#2630](https://github.com/Azure/LogicAppsUX/issues/2630)) ([4d3b287](https://github.com/Azure/LogicAppsUX/commit/4d3b287db36afe87de192b2456385bc65eeab9c5))
 - **vscode:** Update templates for Custom Code ([#2629](https://github.com/Azure/LogicAppsUX/issues/2629)) ([1cd38df](https://github.com/Azure/LogicAppsUX/commit/1cd38dfc03da2e4294d54d58097f638799ccd206))
 
-### [2.15.5](https://github.com/Azure/LogicAppsUX/compare/v2.15.4...v2.15.5) (2023-05-02)
-
 ### Bug Fixes
 
 - **designer:** Add validation for isRoot placeholder trigger node ([#2641](https://github.com/Azure/LogicAppsUX/issues/2641)) ([67855af](https://github.com/Azure/LogicAppsUX/commit/67855af93a9bc50d99f5dedbbc3f99e8f493460b))
