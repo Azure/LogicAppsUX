@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.24.4](https://github.com/Azure/LogicAppsUX/compare/v2.24.3...v2.24.4) (2023-06-07)
+
+
+### Bug Fixes
+
+* **Designer:** Fixes Mooncake function app service issue ([#2694](https://github.com/Azure/LogicAppsUX/issues/2694)) ([3846189](https://github.com/Azure/LogicAppsUX/commit/3846189350545560fdfb61353f9439004d987054))
+
 ### [2.24.3](https://github.com/Azure/LogicAppsUX/compare/v2.24.2...v2.24.3) (2023-06-05)
 
 
