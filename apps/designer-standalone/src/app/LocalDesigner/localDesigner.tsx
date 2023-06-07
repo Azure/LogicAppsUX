@@ -1,6 +1,7 @@
 import type { RootState } from '../../state/store';
 import { HttpClient } from './httpClient';
 import { PseudoCommandBar } from './pseudoCommandBar';
+import { Chatbot } from '@microsoft/chatbot';
 import {
   StandardConnectionService,
   StandardOperationManifestService,
@@ -109,7 +110,7 @@ const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST'
 const hostService = { fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type) };
 
 export const LocalDesigner = () => {
-  const { workflowDefinition, readOnly, monitoringView, darkMode, consumption, connections, runInstance } = useSelector(
+  const { workflowDefinition, readOnly, monitoringView, darkMode, consumption, connections, runInstance, showChatBot } = useSelector(
     (state: RootState) => state.workflowLoader
   );
   const designerProviderProps = {
@@ -144,6 +145,7 @@ export const LocalDesigner = () => {
         >
           <PseudoCommandBar />
           <Designer />
+          {showChatBot ? <Chatbot /> : null}
         </BJSWorkflowProvider>
       ) : null}
     </DesignerProvider>
