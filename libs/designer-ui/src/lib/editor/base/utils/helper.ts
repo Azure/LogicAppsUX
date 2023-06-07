@@ -254,7 +254,7 @@ function checkForUnknownProperties(authentication: any, authType: Authentication
           )
         : format(
             intl.formatMessage({
-              defaultMessage: "Invalid properties '{0}' for authentication type '{1}'.",
+              defaultMessage: "The '{0}' properties are invalid for the '{1}' authentication type.",
               description: 'Error message when having multiple invalid authentication properties',
             }),
             invalidProperties.join(', '),

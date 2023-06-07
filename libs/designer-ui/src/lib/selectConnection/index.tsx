@@ -178,7 +178,7 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
 
   const checkButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Select the checkbox to choose this connection.',
-    description: 'aria label description for check button',
+    description: 'Aria label description for check button',
   });
 
   const buttonAddText = intl.formatMessage({

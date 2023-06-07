@@ -11,22 +11,16 @@
       "value": "Function display"
     }
   ],
-  "+20fdv": [
-    {
-      "type": 0,
-      "value": "Invalid properties {0} for authentication type {1}."
-    }
-  ],
-  "+3efoo": [
-    {
-      "type": 0,
-      "value": "No schema is added"
-    }
-  ],
   "+DxBpE": [
     {
       "type": 0,
       "value": "Failed loading the schema. Please try again."
+    }
+  ],
+  "+Uvo/p": [
+    {
+      "type": 0,
+      "value": "Alt text for down chevron"
     }
   ],
   "+W9fkq": [
@@ -53,18 +47,6 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haiti"
-    }
-  ],
-  "+jnjtp": [
-    {
-      "type": 0,
-      "value": "Select a Manual Workflow resource"
-    }
-  ],
-  "+lpuMl": [
-    {
-      "type": 0,
-      "value": "Required. The value to return if the expression is 'false'."
     }
   ],
   "+xiT4Q": [
@@ -527,6 +509,12 @@
     {
       "type": 0,
       "value": "Each run after configuration must have at least one status checked"
+    }
+  ],
+  "1dlfUe": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data, communicate between systems, or run other tasks."
     }
   ],
   "1ejxkP": [
@@ -1059,12 +1047,6 @@
       "value": "14"
     }
   ],
-  "5+MuPz": [
-    {
-      "type": 0,
-      "value": "Enter a valid double."
-    }
-  ],
   "5FINOY": [
     {
       "type": 0,
@@ -1097,12 +1079,6 @@
     {
       "type": 0,
       "value": "Authority"
-    }
-  ],
-  "5UPOY+": [
-    {
-      "type": 0,
-      "value": "Select this if you are configuring an on-premises connection."
     }
   ],
   "5aa76N": [
@@ -1299,12 +1275,6 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Lord Howe Island"
-    }
-  ],
-  "7LMY4I": [
-    {
-      "type": 0,
-      "value": "Enter an email address."
     }
   ],
   "7LmpNN": [
@@ -2175,12 +2145,6 @@
       "value": "Ctrl + Y"
     }
   ],
-  "DzT6Hs": [
-    {
-      "type": 0,
-      "value": "Returns the body for a part in a multipart output from an action."
-    }
-  ],
   "E+HsWF": [
     {
       "type": 0,
@@ -2463,6 +2427,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "hours"
+    }
+  ],
+  "FYtDP0": [
+    {
+      "type": 0,
+      "value": "Enter an email address."
     }
   ],
   "Fgq3Db": [
@@ -2857,6 +2827,12 @@
       "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
     }
   ],
+  "Io48jC": [
+    {
+      "type": 0,
+      "value": "The {0} properties are invalid for the {1} authentication type."
+    }
+  ],
   "IooQu1": [
     {
       "type": 0,
@@ -3047,6 +3023,12 @@
     {
       "type": 0,
       "value": "Change connection reference"
+    }
+  ],
+  "KP0Rr2": [
+    {
+      "type": 0,
+      "value": "Enter a valid Double number."
     }
   ],
   "KX1poC": [
@@ -3533,6 +3515,12 @@
       "value": "Required. A string that contains the time zone name of the source time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details."
     }
   ],
+  "ODQCKj": [
+    {
+      "type": 0,
+      "value": "Converts the input to a JSON type value."
+    }
+  ],
   "OEEuUu": [
     {
       "type": 0,
@@ -3843,6 +3831,12 @@
       "value": "Add dynamic data or expressions by inserting a /"
     }
   ],
+  "Q8HCYK": [
+    {
+      "type": 0,
+      "value": "No items"
+    }
+  ],
   "Q8zxeb": [
     {
       "type": 1,
@@ -3853,28 +3847,10 @@
       "value": " Key"
     }
   ],
-  "QEp3C8": [
-    {
-      "type": 0,
-      "value": "Convert the input to a JSON type value"
-    }
-  ],
   "QGbUXX": [
     {
       "type": 0,
       "value": "Status code"
-    }
-  ],
-  "QIOOQU": [
-    {
-      "type": 0,
-      "value": "No Items"
-    }
-  ],
-  "QZ5DZl": [
-    {
-      "type": 0,
-      "value": "alt text for chevron down"
     }
   ],
   "QZBPUx": [
@@ -4673,18 +4649,6 @@
       "value": "label"
     }
   ],
-  "WLj8DH": [
-    {
-      "type": 0,
-      "value": "Please enter a valid dictionary"
-    }
-  ],
-  "WOOYW1": [
-    {
-      "type": 0,
-      "value": "Actions perform operations on data or communicate between systems to execute."
-    }
-  ],
   "WS9kXD": [
     {
       "type": 0,
@@ -5185,12 +5149,6 @@
       "value": "(UTC+07:00) Tomsk"
     }
   ],
-  "a06OQw": [
-    {
-      "type": 0,
-      "value": "Select the checkbox to choose this connection."
-    }
-  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -5487,6 +5445,12 @@
       "value": "(UTC+11:00) Chokurdakh"
     }
   ],
+  "cUW5m8": [
+    {
+      "type": 0,
+      "value": "Select the checkbox to choose this connection."
+    }
+  ],
   "cVIZTQ": [
     {
       "type": 0,
@@ -5497,6 +5461,12 @@
     {
       "type": 0,
       "value": "Error Message"
+    }
+  ],
+  "ceVB5l": [
+    {
+      "type": 0,
+      "value": "Returns the body for a part in a multipart output from an action."
     }
   ],
   "cgq/+y": [
@@ -5551,6 +5521,12 @@
     {
       "type": 0,
       "value": "Generate XSLT first before attempting to test mappings."
+    }
+  ],
+  "d+MjsE": [
+    {
+      "type": 0,
+      "value": "Enter a valid dictionary."
     }
   ],
   "d4xMIx": [
@@ -6557,6 +6533,12 @@
       "value": "Returns true if two values are equal"
     }
   ],
+  "kkMrF6": [
+    {
+      "type": 0,
+      "value": "Select this if you are configuring an on-premises connection."
+    }
+  ],
   "klpJg1": [
     {
       "type": 0,
@@ -6929,6 +6911,12 @@
       "value": "Required. The number of time units the desired time is in the future."
     }
   ],
+  "nNWAAh": [
+    {
+      "type": 0,
+      "value": "No schema is added."
+    }
+  ],
   "nOWGAV": [
     {
       "type": 0,
@@ -7265,6 +7253,18 @@
     {
       "type": 0,
       "value": "Convert the parameter to a string"
+    }
+  ],
+  "q4ChjK": [
+    {
+      "type": 0,
+      "value": "Select workflow with 'manual' trigger"
+    }
+  ],
+  "q5TkqE": [
+    {
+      "type": 0,
+      "value": "Required. The value to return if the expression is false."
     }
   ],
   "q87X20": [

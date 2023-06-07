@@ -328,7 +328,7 @@ const Resources = {
     description: 'Required value parameter to return given if function is true',
   }),
   TOKEN_PARAMETER_IF_VALUEIFFALSE: intl.formatMessage({
-    defaultMessage: "Required. The value to return if the expression is 'false'.",
+    defaultMessage: 'Required. The value to return if the expression is false.',
     description: 'Required value parameter to return given if function is false',
   }),
   TOKEN_FUNCTION_LOGICAL_EQUALS: intl.formatMessage({
@@ -416,7 +416,7 @@ const Resources = {
     description: 'Label for conversion functions',
   }),
   TOKEN_FUNCTION_CONVERSION_JSON: intl.formatMessage({
-    defaultMessage: 'Convert the input to a JSON type value',
+    defaultMessage: 'Converts the input to a JSON type value.',
     description: 'Label for description of custom json Function',
   }),
   TOKEN_PARAMETER_JSON_VALUE: intl.formatMessage({
@@ -641,7 +641,7 @@ const Resources = {
   }),
   TOKEN_FUNCTION_CONVERSION_MULTIPARTBODY: intl.formatMessage({
     defaultMessage: 'Returns the body for a part in a multipart output from an action.',
-    description: 'Label for description of custom multipartBody Function',
+    description: "Label for the description of the custom 'multipartBody' function",
   }),
   TOKEN_PARAMETER_MULTIPARTBODY_ACTIONNAME: intl.formatMessage({
     defaultMessage: 'Required. The name of the action with a multipart response.',
