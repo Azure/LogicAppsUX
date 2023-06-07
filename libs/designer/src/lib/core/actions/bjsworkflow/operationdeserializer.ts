@@ -234,13 +234,13 @@ export const initializeOperationDetailsForManifest = async (
     }
 
     return;
-  } catch (error) {
+  } catch (error: any) {
     const message = `Unable to initialize operation details for operation - ${nodeId}. Error details - ${error}`;
     LoggerService().log({
       level: LogEntryLevel.Error,
       area: 'operation deserializer',
       message,
-      error: error instanceof Error ? error : undefined,
+      error,
     });
 
     dispatch(updateErrorDetails({ id: nodeId, errorInfo: { level: ErrorLevel.Critical, error, message } }));
