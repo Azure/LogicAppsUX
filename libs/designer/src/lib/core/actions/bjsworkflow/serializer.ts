@@ -141,7 +141,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
       ...rootState.workflow.originalDefinition,
       actions: await getActions(rootState, options),
       ...(Object.keys(rootState?.staticResults?.properties).length > 0 ? { staticResults: rootState.staticResults.properties } : {}),
-      triggers: await getTrigger(rootState, options),
+      triggers: rootState.panel.addingTrigger ? {} : await getTrigger(rootState, options),
     },
     connectionReferences,
     parameters: getWorkflowParameters(rootState.workflowParameters.definitions),
@@ -232,9 +232,6 @@ export const serializeOperation = async (
   }
 
   const operation = rootState.operations.operationInfo[operationId];
-
-  // TODO: Add logic to identify if this operation is in Recommendation phase.
-  // If in recommendation phase then return null;
 
   let serializedOperation: LogicAppsV2.OperationDefinition;
   if (OperationManifestService().isSupported(operation.type, operation.kind)) {

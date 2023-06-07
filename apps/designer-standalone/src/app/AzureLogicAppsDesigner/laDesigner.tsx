@@ -20,6 +20,7 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
+import { Chatbot } from '@microsoft/chatbot';
 import {
   ApiManagementInstanceService,
   BaseAppServiceService,
@@ -54,6 +55,7 @@ const DesignerEditor = () => {
     monitoringView,
     runId,
     appId,
+    showChatBot,
   } = useSelector((state: RootState) => state.workflowLoader);
 
   const workflowName = workflowId.split('/').splice(-1)[0];
@@ -213,6 +215,7 @@ const DesignerEditor = () => {
                 isDarkMode={isDarkMode}
               />
               <Designer />
+              {showChatBot ? <Chatbot /> : null}
             </div>
           </BJSWorkflowProvider>
         ) : null}
