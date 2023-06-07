@@ -1,5 +1,6 @@
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
-import { useAllGraphParents, useGetAllAncestors, useNodeDisplayName, useNodeGraphId } from '../../core/state/workflow/workflowSelectors';
+import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
+import { useNodeDisplayName, useGetAllOperationNodesWithin } from '../../core/state/workflow/workflowSelectors';
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
@@ -8,7 +9,7 @@ import { ActionButton, Callout, DirectionalHint, FocusZone } from '@fluentui/rea
 import { useBoolean } from '@fluentui/react-hooks';
 import { css } from '@fluentui/utilities';
 import { ActionButtonV2 } from '@microsoft/designer-ui';
-import { guid } from '@microsoft/utils-logic-apps';
+import { containsIdTag, guid, removeIdTag } from '@microsoft/utils-logic-apps';
 import { useCallback } from 'react';
 import { useDrop } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -48,24 +49,23 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds, isParallelBranch: true }));
   }, [dispatch, graphId, parentId]);
 
-  const graphParents = useAllGraphParents(graphId);
-  const allAncestors = useGetAllAncestors(childId ?? '');
-  const parentGID = useNodeGraphId(parentId ?? '');
-  const childGID = useNodeGraphId(childId ?? '');
+  const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? parentId ?? graphId));
+  const immediateAncestor = useGetAllOperationNodesWithin(parentId && !containsIdTag(parentId) ? parentId : '');
+  const upstreamNodes = new Set([...upstreamNodesOfChild, ...immediateAncestor]);
+
   const [{ isOver, canDrop }, drop] = useDrop(
     () => ({
       accept: 'BOX',
       drop: () => ({ graphId, parentId, childId }),
       canDrop: (item: { id: string; dependencies?: string[]; graphId?: string }) => {
-        if (item.graphId !== parentGID && item.graphId !== childGID) {
-          return false;
-        }
+        // This supports preventing moving a node with a dependency above its upstream node
         for (const dec of item.dependencies ?? []) {
-          if (!allAncestors.has(dec)) {
+          if (!upstreamNodes.has(dec)) {
             return false;
           }
         }
-        if (graphParents.includes(item.id)) return false;
+        // TODO: Support preventing moving a node below downstream output
+        // TODO: Support calculating dependencies when dragging of scopes
         return item.id !== childId && item.id !== parentId;
       },
       collect: (monitor) => ({
@@ -73,7 +73,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
         canDrop: monitor.canDrop(),
       }),
     }),
-    [graphId, parentId, childId]
+    [graphId, parentId, childId, upstreamNodes]
   );
 
   const parentName = useNodeDisplayName(parentId);
@@ -122,7 +122,12 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
       )}
       {!isOver && (
         <>
-          <ActionButtonV2 id={buttonId} title={tooltipText} onClick={actionButtonClick} />
+          <ActionButtonV2
+            id={buttonId}
+            title={tooltipText}
+            onClick={actionButtonClick}
+            dataAutomationId={`msla-plus-button-${parentId}-${childId}`.replace(/\W/g, '-')}
+          />
           {showCallout && (
             <Callout
               role="dialog"
@@ -135,11 +140,19 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
             >
               <FocusZone>
                 <div className="msla-add-context-menu">
-                  <ActionButton iconProps={{ imageProps: { src: AddNodeIcon } }} onClick={openAddNodePanel}>
+                  <ActionButton
+                    iconProps={{ imageProps: { src: AddNodeIcon } }}
+                    onClick={openAddNodePanel}
+                    data-automation-id={`msla-add-action-${parentId}-${childId}`.replace(/\W/g, '-')}
+                  >
                     {newActionText}
                   </ActionButton>
                   {showParallelBranchButton ? (
-                    <ActionButton iconProps={{ imageProps: { src: AddBranchIcon } }} onClick={addParallelBranch}>
+                    <ActionButton
+                      iconProps={{ imageProps: { src: AddBranchIcon } }}
+                      onClick={addParallelBranch}
+                      data-automation-id={`msla-add-parallel-branch-${parentId}-${childId}`.replace(/\W/g, '-')}
+                    >
                       {newBranchText}
                     </ActionButton>
                   ) : null}

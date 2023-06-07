@@ -52,6 +52,7 @@ export const ExpressionsEditor = ({
   maximumExpressions,
   readOnly = false,
   onChange,
+  ariaLabel,
 }: ExpressionsEditorProps): JSX.Element => {
   const intl = useIntl();
   const addCondition = intl.formatMessage({
@@ -103,7 +104,7 @@ export const ExpressionsEditor = ({
       {expressions.length < (defaultProps.maximumExpressions ?? 10) ? (
         <ActionButton disabled={readOnly} iconProps={addIconProps} text={addCondition} onClick={handleAddClick} />
       ) : null}
-      <Expressions expressions={expressions} readOnly={readOnly} onChange={handleChange} onDelete={handleDelete} />
+      <Expressions ariaLabel={ariaLabel} expressions={expressions} readOnly={readOnly} onChange={handleChange} onDelete={handleDelete} />
     </>
   );
 };
@@ -114,11 +115,21 @@ export interface ExpressionsProps extends SettingProps {
   onDelete(index: number): void;
 }
 
-export const Expressions = ({ expressions, readOnly = false, onChange, onDelete }: ExpressionsProps): JSX.Element => {
+export const Expressions = ({ expressions, readOnly = false, onChange, onDelete, ariaLabel }: ExpressionsProps): JSX.Element => {
   return (
     <>
       {expressions.map((expression, index) => {
-        return <Expression key={index} expression={expression} index={index} readOnly={readOnly} onChange={onChange} onDelete={onDelete} />;
+        return (
+          <Expression
+            key={index}
+            expression={expression}
+            index={index}
+            readOnly={readOnly}
+            onChange={onChange}
+            onDelete={onDelete}
+            ariaLabel={`${ariaLabel} ${index}`}
+          />
+        );
       })}
     </>
   );
@@ -131,7 +142,7 @@ export interface ExpressionProps extends SettingProps {
   onDelete(index: number): void;
 }
 
-export const Expression = ({ expression, index, readOnly = false, onChange, onDelete }: ExpressionProps): JSX.Element => {
+export const Expression = ({ expression, index, readOnly = false, onChange, onDelete, ariaLabel }: ExpressionProps): JSX.Element => {
   const intl = useIntl();
 
   const enterValueError = intl.formatMessage({
@@ -139,10 +150,15 @@ export const Expression = ({ expression, index, readOnly = false, onChange, onDe
     description: 'error displayed when no value is entered',
   });
 
-  const deleteValue = intl.formatMessage({
-    defaultMessage: 'Delete',
-    description: 'type and label to delete a value',
-  });
+  const deleteValue = intl.formatMessage(
+    {
+      defaultMessage: 'Delete {name}',
+      description: 'type and label to delete a value',
+    },
+    {
+      name: ariaLabel,
+    }
+  );
 
   const deleteIconButtonProps: IIconProps = {
     iconName: 'Clear',
@@ -171,6 +187,7 @@ export const Expression = ({ expression, index, readOnly = false, onChange, onDe
         value={expression}
         onChange={handleChange}
         onGetErrorMessage={handleGetErrorMessage}
+        ariaLabel={ariaLabel}
       />
       <TooltipHost content={deleteValue}>
         <IconButton

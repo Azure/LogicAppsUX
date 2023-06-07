@@ -4,7 +4,13 @@ import type { AppDispatch } from '../../core';
 import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useParameterStaticResult, useParameterValidationErrors, useTokenDependencies } from '../../core/state/operation/operationSelector';
+import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
+import {
+  useOperationErrorInfo,
+  useParameterStaticResult,
+  useParameterValidationErrors,
+  useTokenDependencies,
+} from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
 import {
@@ -53,7 +59,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const dispatch = useDispatch<AppDispatch>();
   const operationsInfo = useAllOperations();
-
+  const errorInfo = useOperationErrorInfo(id);
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
   const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
@@ -123,7 +129,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
         isDragging: monitor.isDragging(),
       }),
     }),
-    [readOnly, metadata]
+    [readOnly, metadata, dependencies]
   );
 
   const selected = useIsNodeSelected(id);
@@ -211,23 +217,41 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   });
 
   const { errorMessage, errorLevel } = useMemo(() => {
-    if (opQuery?.isError) return { errorMessage: opManifestErrorText, errorLevel: MessageBarType.error };
-    if (settingValidationErrors?.length > 0) return { errorMessage: settingValidationErrorText, errorLevel: MessageBarType.severeWarning };
-    if (parameterValidationErrors?.length > 0)
+    if (errorInfo && errorInfo.level !== ErrorLevel.DynamicOutputs) {
+      const { message, level } = errorInfo;
+      return {
+        errorMessage: message,
+        errorLevel:
+          level !== ErrorLevel.Default && level !== ErrorLevel.DynamicInputs ? MessageBarType.error : MessageBarType.severeWarning,
+      };
+    }
+
+    if (opQuery?.isError) {
+      return { errorMessage: opManifestErrorText, errorLevel: MessageBarType.error };
+    }
+
+    if (settingValidationErrors?.length > 0) {
+      return { errorMessage: settingValidationErrorText, errorLevel: MessageBarType.severeWarning };
+    }
+
+    if (parameterValidationErrors?.length > 0) {
       return { errorMessage: parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
+    }
 
     if (isMonitoringView) {
       return getMonitoringError(errorRun, statusRun, codeRun);
     }
+
     return { errorMessage: undefined, errorLevel: undefined };
   }, [
+    errorInfo,
     opQuery?.isError,
-    opManifestErrorText,
     settingValidationErrors?.length,
-    settingValidationErrorText,
     parameterValidationErrors?.length,
-    parameterValidationErrorText,
     isMonitoringView,
+    opManifestErrorText,
+    settingValidationErrorText,
+    parameterValidationErrorText,
     errorRun,
     statusRun,
     codeRun,

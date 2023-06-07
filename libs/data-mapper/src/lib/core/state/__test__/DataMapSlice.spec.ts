@@ -144,9 +144,10 @@ describe('DataMapSlice', () => {
     it('Delete node with no connections', () => {
       const connections: ConnectionDictionary = {};
 
-      deleteNodeFromConnections(connections, destinationId);
+      const newConnections = deleteNodeFromConnections(connections, destinationId);
 
       expect(Object.keys(connections).length).toEqual(0);
+      expect(Object.keys(newConnections).length).toEqual(0);
     });
 
     it('Delete node with a connection', () => {
@@ -161,16 +162,18 @@ describe('DataMapSlice', () => {
           node: node,
         },
       });
-      deleteNodeFromConnections(connections, destinationId);
 
-      expect(Object.keys(connections).length).toEqual(1);
+      const newConnections = deleteNodeFromConnections(connections, destinationId);
 
-      expect(connections[sourceId]).toBeDefined();
-      expect(connections[sourceId].self).toBeDefined();
-      expect(connections[sourceId].outputs.length).toEqual(0);
-      expect(flattenInputs(connections[sourceId].inputs).length).toEqual(0);
+      expect(Object.keys(connections).length).toEqual(2);
+      expect(Object.keys(newConnections).length).toEqual(1);
 
-      expect(connections[destinationId]).toBeUndefined();
+      expect(newConnections[sourceId]).toBeDefined();
+      expect(newConnections[sourceId].self).toBeDefined();
+      expect(newConnections[sourceId].outputs.length).toEqual(0);
+      expect(flattenInputs(newConnections[sourceId].inputs).length).toEqual(0);
+
+      expect(newConnections[destinationId]).toBeUndefined();
     });
 
     it('Delete function node', () => {
@@ -195,21 +198,22 @@ describe('DataMapSlice', () => {
         },
       });
 
-      deleteNodeFromConnections(connections, functionId);
+      const newConnections = deleteNodeFromConnections(connections, functionId);
 
-      expect(Object.keys(connections).length).toEqual(2);
+      expect(Object.keys(connections).length).toEqual(3);
+      expect(Object.keys(newConnections).length).toEqual(2);
 
-      expect(connections[sourceId]).toBeDefined();
-      expect(connections[sourceId].self).toBeDefined();
-      expect(connections[sourceId].outputs.length).toEqual(0);
-      expect(flattenInputs(connections[sourceId].inputs).length).toEqual(0);
+      expect(newConnections[sourceId]).toBeDefined();
+      expect(newConnections[sourceId].self).toBeDefined();
+      expect(newConnections[sourceId].outputs.length).toEqual(0);
+      expect(flattenInputs(newConnections[sourceId].inputs).length).toEqual(0);
 
-      expect(connections[functionId]).toBeUndefined();
+      expect(newConnections[functionId]).toBeUndefined();
 
-      expect(connections[destinationId]).toBeDefined();
-      expect(connections[destinationId].self).toBeDefined();
-      expect(connections[destinationId].outputs.length).toEqual(0);
-      expect(flattenInputs(connections[destinationId].inputs).length).toEqual(0);
+      expect(newConnections[destinationId]).toBeDefined();
+      expect(newConnections[destinationId].self).toBeDefined();
+      expect(newConnections[destinationId].outputs.length).toEqual(0);
+      expect(flattenInputs(newConnections[destinationId].inputs).length).toEqual(0);
     });
   });
 

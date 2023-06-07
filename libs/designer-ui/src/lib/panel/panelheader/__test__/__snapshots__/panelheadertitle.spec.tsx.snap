@@ -10,12 +10,16 @@ exports[`ui/panel/panelheadertitle should construct. 1`] = `
       "current": null,
     }
   }
+  errorMessage=""
   maxLength={80}
   onBlur={[Function]}
   onChange={[Function]}
   onKeyDown={[Function]}
   styles={
     Object {
+      "errorMessage": Object {
+        "paddingLeft": "8px",
+      },
       "fieldGroup": Object {
         "background": "inherit",
       },

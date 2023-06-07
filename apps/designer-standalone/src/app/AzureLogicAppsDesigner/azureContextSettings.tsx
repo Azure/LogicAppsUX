@@ -1,10 +1,10 @@
 import type { RootState, AppDispatch } from '../../state/store';
 import {
   clearWorkflowDetails,
-  loadRun,
   loadWorkflow,
   setConsumption,
   setDarkMode,
+  setIsChatBotEnabled,
   setIsLocalSelected,
   setMonitoringView,
   setReadOnly,
@@ -14,7 +14,7 @@ import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const AzureContextSettings = () => {
-  const { readOnly, monitoringView, darkMode, isLocalSelected, consumption } = useSelector((state: RootState) => {
+  const { readOnly, monitoringView, darkMode, isLocalSelected, consumption, showChatBot } = useSelector((state: RootState) => {
     return state.workflowLoader;
   });
   const dispatch = useDispatch<AppDispatch>();
@@ -30,7 +30,6 @@ const AzureContextSettings = () => {
     (_: unknown, checked?: boolean) => {
       dispatch(setMonitoringView(!!checked));
       if (checked) {
-        dispatch(loadRun());
         dispatch(loadWorkflow());
       }
     },
@@ -47,12 +46,11 @@ const AzureContextSettings = () => {
       />
       <Checkbox label="Dark Mode" checked={darkMode} onChange={(_, checked) => dispatch(setDarkMode(!!checked))} />
       <Checkbox label="isLocal" checked={isLocalSelected} onChange={(_, checked) => handleCheckLocalSetting(checked)} />
+      <Checkbox label="Monitoring View" checked={monitoringView} onChange={changeMonitoringView} />
       {isLocalSelected && (
-        <>
-          <Checkbox label="Monitoring View" checked={monitoringView} onChange={changeMonitoringView} />
-          <Checkbox label="Consumption" checked={consumption} onChange={(_, checked) => dispatch(setConsumption(!!checked))} />
-        </>
+        <Checkbox label="Consumption" checked={consumption} onChange={(_, checked) => dispatch(setConsumption(!!checked))} />
       )}
+      <Checkbox label="Chatbot" checked={showChatBot} onChange={(_, checked) => dispatch(setIsChatBotEnabled(!!checked))} />
     </div>
   );
 };

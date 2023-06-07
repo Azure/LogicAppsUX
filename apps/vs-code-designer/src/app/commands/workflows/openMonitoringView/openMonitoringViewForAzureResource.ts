@@ -117,6 +117,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
             isLocal: this.isLocal,
             isMonitoringView: this.isMonitoringView,
             runId: this.runName,
+            hostVersion: ext.extensionVersion,
           },
         });
         break;

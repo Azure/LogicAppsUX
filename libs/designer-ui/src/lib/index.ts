@@ -52,6 +52,7 @@ export * from './monitoring';
 export * from './monitoring/statuspill/images';
 export * from './overview';
 export * from './querybuilder';
+export * from './querybuilder/HybridQueryBuilder';
 export * from './querybuilder/SimpleQueryBuilder';
 export * from './pager';
 export * from './peek';

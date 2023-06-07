@@ -8,3 +8,4 @@ export * from './flow-utils';
 export * from './operations';
 export * from './logicapps';
 export * from './recurrence';
+export * from './run';

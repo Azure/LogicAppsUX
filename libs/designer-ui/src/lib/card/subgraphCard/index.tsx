@@ -141,7 +141,6 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           className={css('msla-subgraph-card', data.size)}
           style={colorVars}
           onClick={(e) => {
-            handleTitleClick(e);
             handleCollapse?.(e);
           }}
           onKeyDown={keyboardInteraction.keyUp}

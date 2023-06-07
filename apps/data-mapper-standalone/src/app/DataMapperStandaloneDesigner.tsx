@@ -10,9 +10,9 @@ import {
   DataMapDataProvider,
   DataMapperDesigner,
   DataMapperDesignerProvider,
+  InitDataMapperApiService,
   defaultDataMapperApiServiceOptions,
   getFunctions,
-  InitDataMapperApiService,
 } from '@microsoft/logic-apps-data-mapper';
 import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import { useEffect, useState } from 'react';
@@ -26,6 +26,7 @@ export const DataMapperStandaloneDesigner = () => {
   const armToken = useSelector((state: RootState) => state.dataMapDataLoader.armToken);
 
   const xsltFilename = useSelector((state: RootState) => state.dataMapDataLoader.xsltFilename);
+  const xsltContent = useSelector((state: RootState) => state.dataMapDataLoader.xsltContent);
   const mapDefinition = useSelector((state: RootState) => state.dataMapDataLoader.mapDefinition);
   const fetchedFunctions = useSelector((state: RootState) => state.dataMapDataLoader.fetchedFunctions);
   const sourceSchema = useSelector((state: RootState) => state.schemaDataLoader.sourceSchema);
@@ -33,10 +34,18 @@ export const DataMapperStandaloneDesigner = () => {
 
   const [functionDisplay, setFunctionDisplayExpanded] = useState<boolean>(true);
 
-  const saveStateCall = (dataMapDefinition: string, dataMapXslt: string) => {
-    // We don't need to persist this to telemetry
+  // Standalone uses default/dev runtime settings - can just run 'func host start' in the workflow root
+  InitDataMapperApiService({
+    ...defaultDataMapperApiServiceOptions,
+    accessToken: armToken,
+  });
+
+  const saveMapDefinitionCall = (dataMapDefinition: string) => {
     console.log('Map Definition\n===============');
     console.log(dataMapDefinition);
+  };
+
+  const saveXsltCall = (dataMapXslt: string) => {
     console.log('\nXSLT\n===============');
     console.log(dataMapXslt);
   };
@@ -49,12 +58,6 @@ export const DataMapperStandaloneDesigner = () => {
         dispatch(dataMapDataLoaderSlice.actions.changeFetchedFunctions(fnManifest));
       }
     };
-
-    // Standalone uses default/dev runtime settings - can just run 'func host start' in the workflow root
-    InitDataMapperApiService({
-      ...defaultDataMapperApiServiceOptions,
-      accessToken: armToken,
-    });
 
     fetchFunctionList();
   }, [dispatch, armToken]);
@@ -79,6 +82,7 @@ export const DataMapperStandaloneDesigner = () => {
         <DataMapperDesignerProvider locale="en-US" theme={theme} options={{}}>
           <DataMapDataProvider
             xsltFilename={xsltFilename}
+            xsltContent={xsltContent}
             mapDefinition={mapDefinition}
             sourceSchema={sourceSchema}
             targetSchema={targetSchema}
@@ -87,7 +91,8 @@ export const DataMapperStandaloneDesigner = () => {
             theme={theme}
           >
             <DataMapperDesigner
-              saveStateCall={saveStateCall}
+              saveMapDefinitionCall={saveMapDefinitionCall}
+              saveXsltCall={saveXsltCall}
               setFunctionDisplayExpanded={setFunctionDisplayExpanded}
               useExpandedFunctionCards={functionDisplay}
             />

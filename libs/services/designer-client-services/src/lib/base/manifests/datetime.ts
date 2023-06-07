@@ -744,6 +744,11 @@ export const currentTimeManifest = {
     description: 'Gets the current time in UTC.',
     summary: 'Current time',
 
+    inputs: {
+      'x-ms-visibility': 'hideInUI',
+      default: {},
+    },
+
     outputs: {
       type: 'object',
       required: ['body'],

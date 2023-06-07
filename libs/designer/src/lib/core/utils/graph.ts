@@ -1,8 +1,9 @@
 import { isWorkflowGraph } from '../parsers/models/workflowNode';
 import type { WorkflowEdge, WorkflowNode } from '../parsers/models/workflowNode';
 import type { NodesMetadata, Operations, WorkflowState } from '../state/workflow/workflowInterfaces';
+import { isTemplateExpression } from '@microsoft/parsers-logic-apps';
 import type { WorkflowEdgeType, WorkflowNodeType } from '@microsoft/utils-logic-apps';
-import { equals, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
+import { hasInvalidChars, startsWith, equals, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs';
 
 export const isRootNodeInGraph = (nodeId: string, graphId: string, nodesMetadata: NodesMetadata): boolean => {
@@ -186,3 +187,28 @@ export const getFirstParentOfType = (
 
   return undefined;
 };
+
+export const isOperationNameValid = (
+  nodeId: string,
+  newName: string,
+  isTrigger: boolean,
+  nodesMetadata: NodesMetadata,
+  idReplacements: Record<string, string>
+): boolean => {
+  const name = transformOperationTitle(newName);
+
+  // Check for invalid characters.
+  if (!nodesMetadata[nodeId]?.subgraphType && !isTrigger && startsWith(name, 'internal.')) {
+    return false;
+  }
+
+  if (!name || isTemplateExpression(name) || name.length > 80 || hasInvalidChars(name, [':', '#'])) {
+    return false;
+  }
+
+  // Check for name uniqueness.
+  const allNodes = Object.keys(nodesMetadata).map((id) => idReplacements[id] ?? id);
+  return !allNodes.some((nodeName) => equals(nodeName, name));
+};
+
+export const transformOperationTitle = (title: string): string => title.replaceAll(' ', '_');

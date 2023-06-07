@@ -9,6 +9,7 @@ export interface NetworkingSectionProps extends SectionProps {
   onAsyncResponseToggle: ToggleHandler;
   onRequestOptionsChange: TextChangeHandler;
   onSuppressHeadersToggle: ToggleHandler;
+  onPaginationToggle: ToggleHandler;
   onPaginationValueChange: TextChangeHandler;
   onHeadersOnResponseToggle: ToggleHandler;
   onContentTransferToggle: ToggleHandler;
@@ -34,6 +35,7 @@ export const Networking = ({
   onAsyncResponseToggle,
   onRequestOptionsChange,
   onSuppressHeadersToggle,
+  onPaginationToggle,
   onPaginationValueChange,
   onHeadersOnResponseToggle,
   onContentTransferToggle,
@@ -211,6 +213,7 @@ export const Networking = ({
         inlineLabel: true,
         onText,
         offText,
+        ariaLabel: asyncPatternTitle,
       },
       visible: disableAsyncPattern?.isSupported,
     };
@@ -230,6 +233,7 @@ export const Networking = ({
         customLabel: () => asyncResponseCustomLabel,
         onText,
         offText,
+        ariaLabel: asyncResponseTitle,
       },
       visible: asynchronous?.isSupported,
     };
@@ -249,6 +253,7 @@ export const Networking = ({
         placeholder: 'Example: PT1S',
         customLabel: () => requestOptionsCustomLabel,
         onValueChange: (_, newVal) => onRequestOptionsChange(newVal as string),
+        ariaLabel: requestOptionsTitle,
       },
       visible: requestOptions?.isSupported,
     };
@@ -268,6 +273,7 @@ export const Networking = ({
         onText,
         offText,
         onToggleInputChange: (_, checked) => onSuppressHeadersToggle(!!checked),
+        ariaLabel: suppressWorkflowHeadersTitle,
       },
       visible: suppressWorkflowHeaders?.isSupported,
     };
@@ -280,12 +286,14 @@ export const Networking = ({
       settingProp: {
         readOnly,
         textFieldLabel: threshold,
-        textFieldValue: paging?.value?.toString() ?? '',
+        textFieldValue: paging?.value?.value?.toString() ?? '',
         checked: paging?.value?.enabled,
         onToggleLabel: onText,
         offToggleLabel: offText,
+        onToggleInputChange: (_, checked) => onPaginationToggle(!!checked),
         onValueChange: (_, newVal) => onPaginationValueChange(newVal as string),
         customLabel: () => pagingCustomLabel,
+        ariaLabel: paginationTitle,
       },
       visible: paging?.isSupported,
     };
@@ -304,6 +312,7 @@ export const Networking = ({
         onText,
         offText,
         onToggleInputChange: (_, checked) => onHeadersOnResponseToggle(!!checked),
+        ariaLabel: workflowHeadersOnResponseTitle,
       },
       visible: suppressWorkflowHeadersOnResponse?.isSupported,
     };
@@ -323,6 +332,7 @@ export const Networking = ({
         offText,
         onToggleInputChange: (_, checked) => onContentTransferToggle(!!checked),
         customLabel: () => contentTransferLabel,
+        ariaLabel: contentTransferTitle,
       },
       visible: uploadChunk?.isSupported || downloadChunkSize?.isSupported,
     };
@@ -349,6 +359,7 @@ export const Networking = ({
         selectedValue: retryPolicy?.value?.type,
         onSelectionChanged: onRetryPolicyChange,
         customLabel: () => retryPolicyLabel,
+        ariaLabel: retryPolicyTypeTitle,
       },
       visible: retryPolicy?.isSupported,
     };
@@ -366,6 +377,7 @@ export const Networking = ({
         customLabel: () => retryCountLabel,
         onValueChange: (_, newVal) => onRetryCountChange(newVal as string),
         required: true,
+        ariaLabel: retryPolicyCountTitle,
       },
       visible:
         retryPolicy?.isSupported &&
@@ -388,6 +400,7 @@ export const Networking = ({
         customLabel: () => retryIntervalLabel,
         onValueChange: (_, newVal) => onRetryIntervalChange(newVal as string),
         required: true,
+        ariaLabel: retryPolicyIntervalTitle,
       },
       visible:
         retryPolicy?.isSupported &&
@@ -409,6 +422,7 @@ export const Networking = ({
         placeholder: retryPolicyMinIntervalPlaceholder,
         customLabel: () => retryMinIntervalLabel,
         onValueChange: (_, newVal) => onRetryMinIntervalChange(newVal as string),
+        ariaLabel: retryPolicyMinIntervalTitle,
       },
       visible: retryPolicy?.isSupported && retryPolicy?.value?.type === constants.RETRY_POLICY_TYPE.EXPONENTIAL,
     };
@@ -427,6 +441,7 @@ export const Networking = ({
         placeholder: retryPolicyMaxIntervalPlaceholder,
         customLabel: () => retryMaxIntervalLabel,
         onValueChange: (_, newVal) => onRetryMaxIntervalChange(newVal as string),
+        ariaLabel: retryPolicyMaxIntervalTitle,
       },
       visible: retryPolicy?.isSupported && retryPolicy?.value?.type === constants.RETRY_POLICY_TYPE.EXPONENTIAL,
     };

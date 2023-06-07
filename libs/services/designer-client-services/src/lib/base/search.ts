@@ -66,7 +66,12 @@ export abstract class BaseSearchService implements ISearchService {
   public abstract getCustomOperationsByPage(page: number): Promise<DiscoveryOpArray>;
   public abstract getBuiltInOperations(): Promise<DiscoveryOpArray>;
 
-  async getAzureResourceByPage(uri: string, queryParams?: any, pageNumber = 0): Promise<{ value: any[]; hasMore: boolean }> {
+  async getAzureResourceByPage(
+    uri: string,
+    queryParams?: any,
+    pageNumber = 0,
+    pageSize = 2500
+  ): Promise<{ value: any[]; hasMore: boolean }> {
     if (this._isDev) return { value: [], hasMore: false };
 
     const {
@@ -74,7 +79,6 @@ export abstract class BaseSearchService implements ISearchService {
       httpClient,
     } = this.options;
 
-    const pageSize = 250; // This is the number of results that can be returned in a single call
     const queryParameters: QueryParameters = {
       'api-version': apiVersion,
       $top: pageSize.toString(),
@@ -88,42 +92,6 @@ export abstract class BaseSearchService implements ISearchService {
     } catch (error) {
       return { value: [], hasMore: false };
     }
-  }
-
-  async batchAzureResourceRequests(uri: string, queryParams?: any): Promise<any[]> {
-    const batchSize = 50; // Number of calls to make in parallel
-
-    const output: any[] = [];
-    let batchIteration = 0;
-    let continueFetching = true;
-
-    while (continueFetching) {
-      await Promise.all(
-        Array.from(Array(batchSize).keys()).map(async (index) => {
-          const pageNum = batchIteration * batchSize + index;
-          const { value, hasMore } = await this.getAzureResourceByPage(uri, queryParams, pageNum);
-          output.push(...value);
-          if (index === batchSize - 1) {
-            continueFetching = hasMore;
-          }
-        })
-      );
-      batchIteration++;
-    }
-
-    return output;
-  }
-
-  async pagedBatchAzureResourceRequests(batchIteration: number, uri: string, queryParams?: any, batchSize = 50): Promise<any[]> {
-    const output: any[] = [];
-    await Promise.all(
-      Array.from(Array(batchSize).keys()).map(async (index) => {
-        const pageNum = batchIteration * batchSize + index;
-        const { value } = await this.getAzureResourceByPage(uri, queryParams, pageNum);
-        output.push(...value);
-      })
-    );
-    return output;
   }
 
   async getAzureResourceRecursive(uri: string, queryParams: any): Promise<any[]> {
@@ -160,7 +128,8 @@ export abstract class BaseSearchService implements ISearchService {
       $filter: "type eq 'Microsoft.Web/locations/managedApis/apiOperations' and properties/integrationServiceEnvironmentResourceId eq null",
     };
 
-    const operations = await this.batchAzureResourceRequests(uri, queryParameters);
+    // const operations = await this.batchAzureResourceRequests(uri, queryParameters);
+    const operations = await this.getAzureResourceRecursive(uri, queryParameters);
 
     LoggerService().endTrace(traceId, { status: Status.Success });
     return operations;
@@ -180,8 +149,9 @@ export abstract class BaseSearchService implements ISearchService {
       $filter: "type eq 'Microsoft.Web/locations/managedApis/apiOperations' and properties/integrationServiceEnvironmentResourceId eq null",
     };
 
-    const values = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters);
-    return values;
+    // const values = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters);
+    const { value } = await this.getAzureResourceByPage(uri, queryParameters, page);
+    return value;
   }
 
   abstract getAllConnectors(): Promise<Connector[]>;
@@ -197,7 +167,8 @@ export abstract class BaseSearchService implements ISearchService {
       apiHubServiceDetails: { location, subscriptionId },
     } = this.options;
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
-    const responseArray = await this.batchAzureResourceRequests(uri);
+    // const responseArray = await this.batchAzureResourceRequests(uri);
+    const responseArray = await this.getAzureResourceRecursive(uri, undefined);
     return this.moveGeneralInformation(responseArray);
   }
 
@@ -215,8 +186,10 @@ export abstract class BaseSearchService implements ISearchService {
       apiHubServiceDetails: { location, subscriptionId },
     } = this.options;
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
-    const responseArray = await this.pagedBatchAzureResourceRequests(page, uri, undefined, 5);
-    return this.moveGeneralInformation(responseArray);
+    // const responseArray = await this.pagedBatchAzureResourceRequests(page, uri, undefined, 5);
+    const { value } = await this.getAzureResourceByPage(uri, undefined, page);
+
+    return this.moveGeneralInformation(value);
   }
 
   async getAllCustomApiOperations(): Promise<DiscoveryOpArray> {
@@ -229,7 +202,9 @@ export abstract class BaseSearchService implements ISearchService {
         'api-version': apiVersion,
         $filter: `properties/trigger eq null and type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
       };
-      const response = await this.batchAzureResourceRequests(uri, queryParameters);
+      // const response = await this.batchAzureResourceRequests(uri, queryParameters);
+      const response = await this.getAzureResourceRecursive(uri, queryParameters);
+
       return response;
     } catch (error) {
       return [];
@@ -246,7 +221,9 @@ export abstract class BaseSearchService implements ISearchService {
         'api-version': apiVersion,
         $filter: `${ISE_RESOURCE_ID} eq null`,
       };
-      const response = await this.batchAzureResourceRequests(uri, queryParameters);
+      // const response = await this.batchAzureResourceRequests(uri, queryParameters);
+      const response = await this.getAzureResourceRecursive(uri, queryParameters);
+
       const locationFilteredResponse = response.filter((connector: any) => equals(connector.location, location));
       return locationFilteredResponse;
     } catch (error) {

@@ -1,6 +1,6 @@
 import type { SettingProps } from './settingtoggle';
-import { Slider } from '@fluentui/react';
-import React, { useState } from 'react';
+import { Slider, TextField } from '@fluentui/react';
+import { useCallback, useState } from 'react';
 
 export type ValueChangeHandler = (value: number) => void;
 export interface CustomValueSliderProps extends SettingProps {
@@ -17,50 +17,78 @@ export const CustomValueSlider = ({
   readOnly = false,
   maxVal = 100,
   minVal = 0,
-  defaultValue = (minVal + maxVal) / 2,
+  defaultValue = 20,
   customLabel,
   sliderLabel,
   onValueChange,
+  ariaLabel,
 }: CustomValueSliderProps): JSX.Element | null => {
-  const [sliderCount, setCount] = useState(value ?? defaultValue);
-  const onSliderValueChanged = (value: number): void => {
-    setCount(value);
-    onValueChange?.(value);
-  };
+  const [sliderValue, setSliderValue] = useState(value ?? defaultValue);
+  const onSliderValueChanged = useCallback((value: number) => {
+    setSliderValue(value);
+    setTextValue(value.toString());
+  }, []);
 
-  if (customLabel) {
-    return (
-      <>
-        {customLabel()}
-        <div className="msla-setting-input">
+  const onSliderValueConfirmed = useCallback(
+    (_: any, value: number, __: any) => {
+      onValueChange?.(value);
+    },
+    [onValueChange]
+  );
+
+  const [textValue, setTextValue] = useState<string | undefined>((value ?? defaultValue).toString());
+  const valTextToNumber = useCallback(
+    (value: string | undefined) => {
+      if (!value) return;
+      let val = parseInt(value);
+      if (isNaN(val)) return;
+      if (val < minVal) val = minVal;
+      if (val > maxVal) val = maxVal;
+      return val;
+    },
+    [maxVal, minVal]
+  );
+  const onTextValueChanged = useCallback(
+    (_: any, value: string | undefined) => {
+      setTextValue(value);
+      const newValue = valTextToNumber(value);
+      if (newValue) setSliderValue(newValue);
+    },
+    [valTextToNumber]
+  );
+  const onTextValueBlur = useCallback(() => {
+    const newValue = valTextToNumber(textValue) ?? defaultValue;
+    onValueChange?.(newValue);
+    setSliderValue(newValue);
+    setTextValue(newValue.toString());
+  }, [defaultValue, onValueChange, textValue, valTextToNumber]);
+
+  return (
+    <>
+      {customLabel && customLabel()}
+      <div style={{ width: '100%', display: 'flex', alignItems: 'flex-end', gap: '8px' }}>
+        <div style={{ flex: '1 1 auto' }}>
           <Slider
             label={sliderLabel}
-            ariaLabel={sliderLabel}
+            ariaLabel={ariaLabel}
             disabled={readOnly}
             max={maxVal}
             min={minVal}
-            showValue={true}
-            value={sliderCount}
+            showValue={false}
+            value={sliderValue}
             onChange={onSliderValueChanged}
+            onChanged={onSliderValueConfirmed}
           />
         </div>
-      </>
-    );
-  }
-
-  return (
-    <div className="msla-setting-input">
-      <Slider
-        label={sliderLabel}
-        ariaLabel={sliderLabel}
-        defaultValue={defaultValue}
-        disabled={readOnly}
-        max={maxVal}
-        min={minVal}
-        showValue={true}
-        value={sliderCount}
-        onChange={onSliderValueChanged}
-      />
-    </div>
+        <TextField
+          type={'number'}
+          aria-label={ariaLabel}
+          onChange={onTextValueChanged}
+          onBlur={onTextValueBlur}
+          value={textValue}
+          style={{ maxWidth: '60px' }}
+        />
+      </div>
+    </>
   );
 };
