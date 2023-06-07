@@ -182,20 +182,14 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         break;
       }
       case ExtensionCommand.save: {
-        try {
-          await this.validateWorkflow(this.panelMetadata.workflowContent);
-          await this.saveWorkflow(
-            this.workflowFilePath,
-            this.panelMetadata.workflowContent,
-            msg,
-            this.panelMetadata.azureDetails?.tenantId,
-            this.panelMetadata.azureDetails?.workflowManagementBaseUrl
-          );
-        } catch (err) {
-          const errorMessage = localize('SaveWorkflowError', 'Unable to save workflow. {0}', err.message);
-          window.showErrorMessage(errorMessage);
-          throw new Error(errorMessage);
-        }
+        await this.saveWorkflow(
+          this.workflowFilePath,
+          this.panelMetadata.workflowContent,
+          msg,
+          this.panelMetadata.azureDetails?.tenantId,
+          this.panelMetadata.azureDetails?.workflowManagementBaseUrl
+        );
+        await this.validateWorkflow(this.panelMetadata.workflowContent);
         break;
       }
       case ExtensionCommand.addConnection: {
@@ -306,7 +300,9 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         const errorMessage = localize('workflowValidationFailed', 'Workflow validation failed: ') + error.message;
         await window.showErrorMessage(errorMessage, localize('OK', 'OK'));
       } else {
-        throw error;
+        const errorMessage = localize('workflowValidationError', 'Unable to validate workflow. {0}', error.message);
+        window.showErrorMessage(errorMessage);
+        throw new Error(errorMessage);
       }
     }
   }
